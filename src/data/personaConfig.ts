@@ -826,7 +826,14 @@ export const PERSONA_LIBRARY_CATEGORIES: Record<PersonaId, string[]> = {
     'International Frameworks',
   ],
   researcher: [],
-  ops: ['PKI Certificate Management', 'Protocols', 'Government & Policy', 'Migration Guidance'],
+  ops: [
+    'PKI Certificate Management',
+    'Protocols',
+    'Government & Policy',
+    'Migration Guidance',
+    'NIST Standards',
+    'Algorithm Specifications',
+  ],
   curious: ['Migration Guidance', 'Government & Policy'],
 }
 

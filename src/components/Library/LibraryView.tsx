@@ -25,7 +25,6 @@ import {
   SlidersHorizontal,
   X,
   BookmarkCheck,
-  Sparkles,
 } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { ContentUpdatesFeed } from '@/components/ui/ContentUpdatesFeed'
@@ -34,6 +33,10 @@ import { LIBRARY_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import debounce from 'lodash/debounce'
 import { useAchievementStore } from '@/store/useAchievementStore'
 import { LIBRARY_CURIOUS_PICKS } from '@/data/libraryCuriousPicks'
+import { LIBRARY_EXECUTIVE_PICKS } from '@/data/libraryExecutivePicks'
+import { LIBRARY_OPS_PICKS } from '@/data/libraryOpsPicks'
+import { PersonaPicksPanel } from './PersonaPicksPanel'
+import type { PersonaId } from '@/data/learningPersonas'
 import { logLibrarySearch, logEvent, personaLabel } from '../../utils/analytics'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
@@ -55,6 +58,22 @@ import {
 } from '../common/TrustTierFilter'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { SemanticSearchHint } from '@/components/common/SemanticSearchHint'
+
+// Persona-aware default sort. Explicit `?sort=` always wins; this only seeds
+// the initial value when the URL is silent.
+const DEFAULT_SORT_BY_PERSONA: Record<PersonaId, SortOption> = {
+  executive: 'newest',
+  developer: 'referenceId',
+  architect: 'urgency',
+  researcher: 'mostCited',
+  ops: 'urgency',
+  curious: 'newest',
+}
+
+function defaultSortForPersona(persona: PersonaId | null | undefined): SortOption {
+  if (!persona) return 'newest'
+  return DEFAULT_SORT_BY_PERSONA[persona] ?? 'newest' // eslint-disable-line security/detect-object-injection
+}
 
 const URGENCY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -131,88 +150,6 @@ const ORG_CANONICAL_MAP: Record<string, string> = {
   // 'NIS Korea', 'NIS Korea', 'Samsung System LSI', 'Thales'
 }
 
-// Maps raw CSV applicable_industries values → canonical industry names (matching AVAILABLE_INDUSTRIES).
-// Normalizes aliases, abbreviations, and sub-categories so the dropdown shows clean canonical names
-// and persona-selected industry (e.g. "Finance & Banking") correctly matches library documents.
-// Tags not in this map are excluded from the dropdown but still matched under "All".
-// Note: Automotive, Aerospace, Retail & E-Commerce have no tagged documents yet — they won't appear.
-const INDUSTRY_CANONICAL_MAP: Record<string, string> = {
-  // Finance & Banking
-  Finance: 'Finance & Banking',
-  Banking: 'Finance & Banking',
-  'Finance & Banking': 'Finance & Banking',
-
-  // Government & Defense
-  Government: 'Government & Defense',
-  Gov: 'Government & Defense',
-  'Federal Government': 'Government & Defense',
-  Defense: 'Government & Defense',
-  'Government & Defense': 'Government & Defense',
-
-  // Healthcare
-  Healthcare: 'Healthcare',
-  'Regulated industries': 'Healthcare',
-  Pharmaceutical: 'Healthcare',
-
-  // Telecommunications
-  Telecom: 'Telecommunications',
-  Telecommunications: 'Telecommunications',
-  'Mobile Networks': 'Telecommunications',
-  '5G': 'Telecommunications',
-  GSMA: 'Telecommunications',
-
-  // Technology
-  IT: 'Technology',
-  'Software Development': 'Technology',
-  Enterprise: 'Technology',
-  'Enterprise IT': 'Technology',
-  Cloud: 'Technology',
-  'Cloud Security': 'Technology',
-  Web: 'Technology',
-  'Web APIs': 'Technology',
-  IoT: 'Technology',
-  'Embedded Systems': 'Technology',
-  Firmware: 'Technology',
-  'Hardware Security': 'Technology',
-  'HSM Vendors': 'Technology',
-  'Certificate Authorities': 'Technology',
-  'Web PKI': 'Technology',
-  PKI: 'Technology',
-  'ICT Products': 'Technology',
-  Protocol: 'Technology',
-  'Data Protection': 'Technology',
-  'Identity Management': 'Technology',
-  'Secure Messaging': 'Technology',
-  Messaging: 'Technology',
-  Email: 'Technology',
-  'Email Security': 'Technology',
-  'Document Signing': 'Technology',
-  VPN: 'Technology',
-  'Remote Access': 'Technology',
-  DNS: 'Technology',
-  'Constrained Devices': 'Technology',
-
-  // Energy & Utilities
-  'Critical Infrastructure': 'Energy & Utilities',
-  Energy: 'Energy & Utilities',
-  'Energy & Utilities': 'Energy & Utilities',
-
-  // Education
-  Research: 'Education',
-  Academia: 'Education',
-  'Cryptography Research': 'Education',
-
-  // Long-term Archival — loosely Technology or Government; map to Technology
-  Archival: 'Technology',
-  'Long-term Archival': 'Technology',
-  'High Security': 'Technology',
-
-  // Catch-alls (skip in dropdown — appear under "All")
-  'All industries': 'All',
-  Global: 'All',
-  Mobile: 'All',
-}
-
 /** Find a library item by referenceId, searching top-level and nested children */
 function findByRef(
   items: LibraryItem[],
@@ -233,34 +170,35 @@ function findByRef(
 
 export const LibraryView: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const { selectedIndustry: storeIndustry, selectedPersona } = usePersonaStore()
+  const { selectedPersona } = usePersonaStore()
   const { libraryBookmarks, showOnlyLibraryBookmarks, setShowOnlyLibraryBookmarks } =
     useBookmarkStore()
-  const [activeCategory, setActiveCategory] = useState<string>(() => {
-    const urlCat = searchParams.get('cat')
-    if (urlCat) return urlCat
-    if (selectedPersona) {
-      const prefs = PERSONA_LIBRARY_CATEGORIES[selectedPersona] ?? [] // eslint-disable-line security/detect-object-injection
-      if (prefs.length > 0) return prefs[0]
-    }
-    return 'All'
-  })
+  // Sidebar selection — defaults to 'All' so the persona-preferred filter
+  // (below) does the narrowing.  Explicit ?cat= still wins.
+  const [activeCategory, setActiveCategory] = useState<string>(
+    () => searchParams.get('cat') ?? 'All'
+  )
   const [activeOrg, setActiveOrg] = useState<string>(() => searchParams.get('org') ?? 'All')
-  const [activeIndustry, setActiveIndustry] = useState<string>(
-    () => searchParams.get('ind') ?? storeIndustry ?? 'All'
-  )
-  const [activeRegion, setActiveRegion] = useState<string>(
-    () => searchParams.get('region') ?? 'All'
-  )
+  // Region / Industry single-select state was dropped in the P04 audit drawer
+  // consolidation (PR 3) — see the migration shim further down that converts
+  // legacy `?region=`/`?ind=` URLs into the multi-select `geo[]`/`sector[]`
+  // arrays. The corresponding state vars + URL writes are intentionally gone.
   const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
   const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
   const [viewMode, setViewMode] = useState<ViewMode>(
     () => (searchParams.get('view') as ViewMode | null) ?? 'cards'
   )
-  const [sortBy, setSortBy] = useState<SortOption>(
-    () => (searchParams.get('sort') as SortOption | null) ?? 'newest'
-  )
+  const [sortBy, setSortBy] = useState<SortOption>(() => {
+    // Explicit ?sort= always wins.
+    const fromUrl = searchParams.get('sort') as SortOption | null
+    if (fromUrl) return fromUrl
+    // Otherwise pick a persona-aware default.
+    return defaultSortForPersona(selectedPersona)
+  })
   const [cswp39Only, setCswp39Only] = useState<boolean>(() => searchParams.get('cswp39') === '1')
+  const [certRelevantOnly, setCertRelevantOnly] = useState<boolean>(
+    () => searchParams.get('cert') === '1'
+  )
   const [lifecycleBucket, setLifecycleBucket] = useState<string>(
     () => searchParams.get('lifecycle') ?? 'All'
   )
@@ -268,6 +206,37 @@ export const LibraryView: React.FC = () => {
   const sectorFilter = useSectorFilter()
   const tierFilter = useTrustTierFilter()
   const [showFilters, setShowFilters] = useState(false)
+  const [showAdvancedDrawer, setShowAdvancedDrawer] = useState(false)
+  // P04 audit, PR 4 — Curious minimum-viable mode.  When persona=curious and
+  // the user hasn't expanded the page, only the header + picks panel + a
+  // single "Browse the full library" CTA render above the fold.  Shareable
+  // via `?expand=1`.
+  const [browseFullLibrary, setBrowseFullLibrary] = useState<boolean>(
+    () => searchParams.get('expand') === '1'
+  )
+  // Personas with a tight default drawer (3 axes: Organization, Country/Region,
+  // Doc Status).  Sector + Trust Tier sit behind an "Advanced" expander.
+  // Researcher and architect see all 5 expanded — they explicitly want depth.
+  const drawerIsTrimmed = selectedPersona === 'executive' || selectedPersona === 'curious'
+
+  // True when the full library shell (sidebar, activity feed, controls,
+  // results grid) should render.  For non-curious personas this is always
+  // true; curious users must click "Browse the full library" first.
+  const showFullPage = selectedPersona !== 'curious' || browseFullLibrary
+
+  // Persist `?expand=1` so the curious-mode override is shareable.
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (browseFullLibrary) next.set('expand', '1')
+        else next.delete('expand')
+        return next
+      },
+      { replace: true }
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [browseFullLibrary])
   const [highlightedDocId, setHighlightedDocId] = useState<string | null>(
     () => searchParams.get('doc') ?? null
   )
@@ -276,6 +245,42 @@ export const LibraryView: React.FC = () => {
     const ref = searchParams.get('ref')
     return ref ? findByRef(libraryData, ref) : null
   })
+
+  // Region / Industry single-select → multi-select migration shim
+  // (P04 audit, PR 3 — one-release window). Chatbot deep links and bookmarked
+  // URLs from before the consolidation use `?region=X` / `?ind=X` against the
+  // single-select dropdowns. The drawer now only exposes the multi-select
+  // GeoFilter (`geo[]`) and SectorFilter (`sector[]`). At mount, migrate any
+  // legacy single-select value into the multi-select array and drop the old
+  // param so the URL converges on the new shape.
+  useEffect(() => {
+    const legacyRegion = searchParams.get('region')
+    const legacyInd = searchParams.get('ind')
+    if (!legacyRegion && !legacyInd) return
+    if (import.meta.env.DEV) {
+      console.warn(
+        '[Library] Migrating legacy single-select filter URL params (region/ind) ' +
+          'into multi-select equivalents (geo[]/sector[]). Update any bookmarks/links.'
+      )
+    }
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (legacyRegion && legacyRegion !== 'All' && next.getAll('geo').length === 0) {
+          next.append('geo', legacyRegion)
+        }
+        if (legacyInd && legacyInd !== 'All' && next.getAll('sector').length === 0) {
+          next.append('sector', legacyInd)
+        }
+        next.delete('region')
+        next.delete('ind')
+        return next
+      },
+      { replace: true }
+    )
+    // Only runs once at mount; no dependency drift expected.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // ?doc=<refId> — scroll-to-card + 3 s highlight, then clear
   useEffect(() => {
@@ -314,16 +319,13 @@ export const LibraryView: React.FC = () => {
 
     const nextCat = searchParams.get('cat') ?? 'All'
     const nextOrg = searchParams.get('org') ?? 'All'
-    const nextInd = searchParams.get('ind') ?? storeIndustry ?? 'All'
-    const nextRegion = searchParams.get('region') ?? 'All'
     const nextQ = searchParams.get('q') ?? ''
     const nextView = (searchParams.get('view') as ViewMode | null) ?? 'cards'
-    const nextSort = (searchParams.get('sort') as SortOption | null) ?? 'newest'
+    const nextSort =
+      (searchParams.get('sort') as SortOption | null) ?? defaultSortForPersona(selectedPersona)
 
     setActiveCategory((prev) => (prev !== nextCat ? nextCat : prev))
     setActiveOrg((prev) => (prev !== nextOrg ? nextOrg : prev))
-    setActiveIndustry((prev) => (prev !== nextInd ? nextInd : prev))
-    setActiveRegion((prev) => (prev !== nextRegion ? nextRegion : prev))
     setFilterText((prev) => (prev !== nextQ ? nextQ : prev))
     setInputValue((prev) => (prev !== nextQ ? nextQ : prev))
     setViewMode((prev) => (prev !== nextView ? nextView : prev))
@@ -332,11 +334,15 @@ export const LibraryView: React.FC = () => {
       const next = searchParams.get('cswp39') === '1'
       return prev !== next ? next : prev
     })
+    setCertRelevantOnly((prev) => {
+      const next = searchParams.get('cert') === '1'
+      return prev !== next ? next : prev
+    })
     setLifecycleBucket((prev) => {
       const next = searchParams.get('lifecycle') ?? 'All'
       return prev !== next ? next : prev
     })
-  }, [searchParams, storeIndustry])
+  }, [searchParams, selectedPersona])
 
   /** Write all current filter state back to the URL. Call with overrides for the value that
    *  just changed so the URL reflects it immediately without waiting for a state flush.
@@ -346,12 +352,11 @@ export const LibraryView: React.FC = () => {
     (overrides: {
       cat?: string
       org?: string
-      ind?: string
-      region?: string
       q?: string
       view?: ViewMode
       sort?: SortOption
       cswp39?: boolean
+      cert?: boolean
       lifecycle?: string
     }) => {
       setSearchParams(
@@ -359,30 +364,30 @@ export const LibraryView: React.FC = () => {
           const next = new URLSearchParams(prev)
           const cat = overrides.cat ?? activeCategory
           const org = overrides.org ?? activeOrg
-          const ind = overrides.ind ?? activeIndustry
-          const region = overrides.region ?? activeRegion
           const q = overrides.q ?? filterText
           const view = overrides.view ?? viewMode
           const sort = overrides.sort ?? sortBy
           const cswp39Flag = overrides.cswp39 ?? cswp39Only
+          const certFlag = overrides.cert ?? certRelevantOnly
           const lifecycle = overrides.lifecycle ?? lifecycleBucket
 
           if (cat !== 'All') next.set('cat', cat)
           else next.delete('cat')
           if (org !== 'All') next.set('org', org)
           else next.delete('org')
-          if (ind !== 'All') next.set('ind', ind)
-          else next.delete('ind')
-          if (region !== 'All') next.set('region', region)
-          else next.delete('region')
           if (q) next.set('q', q)
           else next.delete('q')
           if (view !== 'cards') next.set('view', view)
           else next.delete('view')
-          if (sort !== 'newest') next.set('sort', sort)
+          // Only persist `sort` to the URL when it differs from the current
+          // persona's default — keeps URLs clean while still letting an
+          // explicit override survive a copy/paste.
+          if (sort !== defaultSortForPersona(selectedPersona)) next.set('sort', sort)
           else next.delete('sort')
           if (cswp39Flag) next.set('cswp39', '1')
           else next.delete('cswp39')
+          if (certFlag) next.set('cert', '1')
+          else next.delete('cert')
           if (lifecycle !== 'All') next.set('lifecycle', lifecycle)
           else next.delete('lifecycle')
           return next
@@ -393,14 +398,14 @@ export const LibraryView: React.FC = () => {
     [
       activeCategory,
       activeOrg,
-      activeIndustry,
-      activeRegion,
       filterText,
       viewMode,
       sortBy,
       cswp39Only,
+      certRelevantOnly,
       lifecycleBucket,
       setSearchParams,
+      selectedPersona,
     ]
   )
 
@@ -432,16 +437,13 @@ export const LibraryView: React.FC = () => {
     []
   )
 
-  const industries = useMemo(() => {
-    const set = new Set<string>()
-    libraryData.forEach((item) => {
-      item.applicableIndustries?.forEach((ind) => {
-        const canonical = INDUSTRY_CANONICAL_MAP[ind?.trim()]
-        if (canonical && canonical !== 'All') set.add(canonical)
-      })
-    })
-    return ['All', ...Array.from(set).sort()]
-  }, [])
+  // Cert-relevant allowlist — LIBRARY_OPS_PICKS referenceIds.  Used by the
+  // primary-row "Cert-relevant" chip (P04 audit, PR 3.e) to narrow the corpus
+  // to the curated cert-anchored set without forcing the ops persona.
+  const certRelevantIdSet = useMemo<Set<string>>(
+    () => new Set(LIBRARY_OPS_PICKS.map((p) => p.referenceId)),
+    []
+  )
 
   const orgs = useMemo(() => {
     const o = new Set<string>()
@@ -454,19 +456,6 @@ export const LibraryView: React.FC = () => {
       }
     })
     return ['All', ...Array.from(o).sort()]
-  }, [])
-
-  const regions = useMemo(() => {
-    const r = new Set<string>()
-    libraryData.forEach((item) => {
-      if (item.regionScope) {
-        item.regionScope.split(';').forEach((s) => {
-          const v = s.trim()
-          if (v && v !== 'Global') r.add(v)
-        })
-      }
-    })
-    return ['All', 'Global', ...Array.from(r).sort()]
   }, [])
 
   // Lifecycle bucket options with item counts for the filter dropdown
@@ -506,6 +495,34 @@ export const LibraryView: React.FC = () => {
 
   const totalHasUpdates = activityItems.length > 0
 
+  // Persona-preferred set — used as a default multi-category filter when
+  // the user has not picked an explicit category. Researcher's empty array
+  // short-circuits to "no narrowing". ?prefs=off opts back to the full corpus.
+  const personaPreferredCategories = useMemo<string[]>(() => {
+    if (searchParams.get('prefs') === 'off') return []
+    if (!selectedPersona) return []
+    return PERSONA_LIBRARY_CATEGORIES[selectedPersona] ?? [] // eslint-disable-line security/detect-object-injection
+  }, [selectedPersona, searchParams])
+
+  const personaPreferredActive = personaPreferredCategories.length > 0 && activeCategory === 'All'
+
+  // When persona changes, the user has effectively asked for a new set of
+  // defaults — strip a lingering ?prefs=off so the new persona's preferred
+  // narrowing applies.
+  useEffect(() => {
+    if (searchParams.get('prefs') === 'off') {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          next.delete('prefs')
+          return next
+        },
+        { replace: true }
+      )
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedPersona])
+
   // Phase 3 — semantic search supplement. The hook returns ranked
   // referenceIds when the embedding runtime is ready. The lexical
   // filter below remains the floor; matching referenceIds are
@@ -522,24 +539,13 @@ export const LibraryView: React.FC = () => {
   const filteredItems = useMemo(() => {
     return libraryData.filter((item) => {
       // Category filter
-      if (activeCategory !== 'All' && !item.categories.includes(activeCategory)) {
-        return false
-      }
-
-      // Industry filter — match via canonical map to normalize CSV aliases.
-      // Items with no industry tags, or tagged "All industries"/"Global", are universally
-      // applicable and pass through regardless of the selected industry.
-      if (activeIndustry !== 'All') {
-        const itemCanonicals =
-          item.applicableIndustries
-            ?.map((ind) => INDUSTRY_CANONICAL_MAP[ind?.trim()])
-            .filter(Boolean) ?? []
-        if (
-          itemCanonicals.length > 0 &&
-          !itemCanonicals.includes('All') &&
-          !itemCanonicals.includes(activeIndustry)
-        )
-          return false
+      if (activeCategory !== 'All') {
+        if (!item.categories.includes(activeCategory)) return false
+      } else if (personaPreferredActive) {
+        // Persona-default narrowing: keep items whose categories intersect
+        // the persona's preferred set when the user has not picked one.
+        const hit = item.categories?.some((c) => personaPreferredCategories.includes(c))
+        if (!hit) return false
       }
 
       // Organization filter — match against canonical names
@@ -553,21 +559,11 @@ export const LibraryView: React.FC = () => {
         if (!itemCanonicalOrgs.includes(activeOrg)) return false
       }
 
-      // Region/country filter — items tagged 'Global' always pass through
-      if (activeRegion !== 'All') {
-        const itemRegions = item.regionScope
-          ? item.regionScope
-              .split(';')
-              .map((s) => s.trim())
-              .filter(Boolean)
-          : []
-        if (
-          itemRegions.length > 0 &&
-          !itemRegions.includes('Global') &&
-          !itemRegions.includes(activeRegion)
-        )
-          return false
-      }
+      // Region + Industry single-select filters were removed in the PR 3
+      // drawer-consolidation pass (P04 audit). Use the multi-select
+      // GeoFilter (`geo[]`) and SectorFilter (`sector[]`) instead — both
+      // are evaluated below. Legacy `?region=X` / `?ind=X` URLs are
+      // migrated into those arrays by the shim at mount.
 
       // Geo filter (multi-select, URL param: geo[])
       if (geoFilter.length > 0) {
@@ -595,6 +591,9 @@ export const LibraryView: React.FC = () => {
       // CSWP 39 enriched-only filter
       if (cswp39Only && !maturityByRefId.has(item.referenceId)) return false
 
+      // Cert-relevant allowlist filter (P04 audit, PR 3.e)
+      if (certRelevantOnly && !certRelevantIdSet.has(item.referenceId)) return false
+
       // Lifecycle status bucket filter
       if (lifecycleBucket !== 'All' && item.documentStatusBucket !== lifecycleBucket) return false
 
@@ -617,8 +616,6 @@ export const LibraryView: React.FC = () => {
   }, [
     activeCategory,
     activeOrg,
-    activeIndustry,
-    activeRegion,
     geoFilter,
     sectorFilter,
     filterText,
@@ -626,8 +623,12 @@ export const LibraryView: React.FC = () => {
     showOnlyLibraryBookmarks,
     libraryBookmarks,
     cswp39Only,
+    certRelevantOnly,
+    certRelevantIdSet,
     lifecycleBucket,
     tierFilter,
+    personaPreferredActive,
+    personaPreferredCategories,
   ])
 
   // Persona-preferred categories for secondary sort boost
@@ -658,6 +659,17 @@ export const LibraryView: React.FC = () => {
           const aOrder = URGENCY_ORDER[a.migrationUrgency] ?? 99
           const bOrder = URGENCY_ORDER[b.migrationUrgency] ?? 99
           return aOrder - bOrder
+        })
+        break
+      case 'mostCited':
+        // Researcher default — highest `citationCount` first.
+        // Fallback to `lastUpdateDate` when counts tie (including 0/0 — the
+        // case where the corpus has not yet been enriched with citations).
+        items.sort((a, b) => {
+          const aCount = a.citationCount ?? 0
+          const bCount = b.citationCount ?? 0
+          if (bCount !== aCount) return bCount - aCount
+          return new Date(b.lastUpdateDate).getTime() - new Date(a.lastUpdateDate).getTime()
         })
         break
     }
@@ -784,61 +796,90 @@ export const LibraryView: React.FC = () => {
         onExport={handleExportCsv}
       />
 
-      {/* Curious "start here" picks (P04-P1-02) — curated entry list above the
-          activity feed so a first-time visitor doesn't bounce off the 400+ row
-          dataset. Renders only when persona is curious. */}
+      {/* Persona picks panel (P04 audit, PR 2). Renders a curated list of
+          high-signal documents above the main library grid for personas with
+          a defined "picks" set: curious / executive / ops. Other personas
+          (developer / architect / researcher) see no panel. */}
       {selectedPersona === 'curious' && (
-        <section className="glass-panel p-4 border border-primary/30 bg-primary/5 rounded-lg">
-          <div className="flex items-center gap-2 mb-3">
-            <Sparkles size={14} className="text-primary" aria-hidden="true" />
-            <h3 className="text-sm font-semibold text-foreground">Start here</h3>
-            <span className="text-xs text-muted-foreground">
-              5 canonical PQC docs picked for first-time readers
-            </span>
-          </div>
-          <ul className="space-y-2">
-            {LIBRARY_CURIOUS_PICKS.map((pick) => {
-              const item = libraryData.find((d) => d.referenceId === pick.referenceId)
-              return (
-                <li key={pick.referenceId}>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => {
-                      if (item) openDetail(item)
-                    }}
-                    disabled={!item}
-                    className="w-full h-auto text-left rounded-md border border-border bg-card/40 px-3 py-2 hover:border-primary/40 hover:bg-card transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-start gap-0.5 whitespace-normal"
-                  >
-                    <span className="text-sm font-semibold text-foreground">{pick.label}</span>
-                    <span className="text-xs text-muted-foreground leading-snug">{pick.blurb}</span>
-                  </Button>
-                </li>
-              )
-            })}
-          </ul>
-        </section>
+        <PersonaPicksPanel
+          personaId="curious"
+          title="Start here"
+          subtitle="3 canonical PQC docs picked for first-time readers"
+          picks={LIBRARY_CURIOUS_PICKS}
+          resolveItem={(refId) => libraryData.find((d) => d.referenceId === refId)}
+          onOpen={openDetail}
+        />
+      )}
+      {selectedPersona === 'executive' && (
+        <PersonaPicksPanel
+          personaId="executive"
+          title="Boardroom set"
+          subtitle="Regulator-level PQC documents for executive decision-making"
+          picks={LIBRARY_EXECUTIVE_PICKS}
+          resolveItem={(refId) => libraryData.find((d) => d.referenceId === refId)}
+          onOpen={openDetail}
+        />
+      )}
+      {selectedPersona === 'ops' && (
+        <PersonaPicksPanel
+          personaId="ops"
+          title="Cert-relevant set"
+          subtitle="FIPS / CMVP-anchored documents for certification work"
+          picks={LIBRARY_OPS_PICKS}
+          resolveItem={(refId) => libraryData.find((d) => d.referenceId === refId)}
+          onOpen={openDetail}
+        />
+      )}
+
+      {/* Curious minimum-viable mode (P04 audit, PR 4) — hide the full shell
+          (activity feed, category sidebar, controls bar, results grid) behind
+          a single "Browse the full library" CTA so curious users see only
+          header + picks + this button above the fold. */}
+      {selectedPersona === 'curious' && !browseFullLibrary && (
+        <div className="flex flex-col items-start gap-2">
+          <Button
+            variant="gradient"
+            onClick={() => {
+              setBrowseFullLibrary(true)
+              logEvent('Library', 'Curious Browse Full', 'open')
+            }}
+            className="text-sm"
+          >
+            Browse the full library
+          </Button>
+          <p className="text-xs text-muted-foreground">
+            All {libraryData.length} documents, filters, and the activity feed.
+          </p>
+        </div>
       )}
 
       {/* Zone 1: Activity Feed */}
-      <ActivityFeed
-        items={activityItems}
-        onSelect={openDetail}
-        datasetUpdated={libraryMetadata?.lastUpdate}
-      />
+      {showFullPage && (
+        <ActivityFeed
+          items={activityItems}
+          onSelect={openDetail}
+          datasetUpdated={libraryMetadata?.lastUpdate}
+        />
+      )}
 
-      <ContentUpdatesFeed domain="library" limit={5} title="Recent Library Revisions" />
+      {showFullPage && (
+        <ContentUpdatesFeed domain="library" limit={5} title="Recent Library Revisions" />
+      )}
 
       {/* Category pills (desktop) */}
-      <CategorySidebar
-        categories={categoryInfo}
-        active={activeCategory}
-        onSelect={handleCategorySelect}
-        totalCount={libraryData.length}
-        totalHasUpdates={totalHasUpdates}
-      />
+      {showFullPage && (
+        <CategorySidebar
+          categories={categoryInfo}
+          active={activeCategory}
+          onSelect={handleCategorySelect}
+          totalCount={libraryData.length}
+          totalHasUpdates={totalHasUpdates}
+          personaPreferredActive={personaPreferredActive}
+        />
+      )}
 
       {/* Controls Bar */}
+      {showFullPage && (
       <div className="bg-card border border-border rounded-lg shadow-sm p-3 space-y-3">
         {/* Top Row: Search + Essential Controls */}
         <div className="flex flex-wrap items-center gap-2 w-full text-sm">
@@ -866,8 +907,6 @@ export const LibraryView: React.FC = () => {
               showFilters ||
               activeCategory !== 'All' ||
               activeOrg !== 'All' ||
-              activeIndustry !== 'All' ||
-              activeRegion !== 'All' ||
               lifecycleBucket !== 'All'
                 ? 'bg-primary/10 border-primary/30 text-primary'
                 : 'bg-muted/30 border-border text-foreground hover:bg-muted/50'
@@ -879,8 +918,6 @@ export const LibraryView: React.FC = () => {
             {/* Show badge if filters are active */}
             {(activeCategory !== 'All' ||
               activeOrg !== 'All' ||
-              activeIndustry !== 'All' ||
-              activeRegion !== 'All' ||
               lifecycleBucket !== 'All') && <span className="w-2 h-2 rounded-full bg-primary" />}
           </Button>
 
@@ -918,6 +955,99 @@ export const LibraryView: React.FC = () => {
           >
             CSWP 39 ({cswp39EnrichedCount})
           </Button>
+
+          {/* Cert-relevant chip (P04 audit, PR 3.e) — filters to the curated
+              LIBRARY_OPS_PICKS allowlist (FIPS 203/204/205, SP 800-208, etc.) */}
+          <Button
+            variant="ghost"
+            onClick={() => {
+              const next = !certRelevantOnly
+              setCertRelevantOnly(next)
+              syncFiltersToUrl({ cert: next })
+              logEvent('Library', 'Filter CertRelevant', next ? 'on' : 'off')
+            }}
+            className={`inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border transition-colors font-medium whitespace-nowrap min-h-[44px] ${
+              certRelevantOnly
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+            }`}
+            aria-pressed={certRelevantOnly}
+            title="Show only the curated cert-relevant document set (FIPS / CMVP anchors)"
+          >
+            Cert-relevant ({certRelevantIdSet.size})
+          </Button>
+
+          {/* Lifecycle pill row (P04 audit, PR 3.e) — one-click access to the
+              Final / Draft / Expired / Withdrawn buckets without opening the
+              drawer.  Bound to the existing `lifecycleBucket` state, so the
+              drawer dropdown and these pills stay in sync.
+              Implements the WAI-ARIA radiogroup keyboard pattern: arrow keys
+              move focus + activate the next/previous pill (with roving
+              tabindex so Tab cycles through the row as one stop). */}
+          {(() => {
+            const LIFECYCLE_PILLS = [
+              { id: 'Published', label: 'Final' },
+              { id: 'Draft', label: 'Draft' },
+              { id: 'Expired', label: 'Expired' },
+              { id: 'Superseded', label: 'Withdrawn' },
+            ] as const
+            const activeIdx = LIFECYCLE_PILLS.findIndex((p) => p.id === lifecycleBucket)
+            // Roving-tabindex anchor: the active pill, or the first if none active.
+            const tabbableIdx = activeIdx >= 0 ? activeIdx : 0
+            return (
+              <div
+                className="flex items-center gap-1"
+                role="radiogroup"
+                aria-label="Lifecycle"
+                // Radiogroup itself isn't tab-reachable — focus lives on the
+                // individual radios (roving tabindex above). tabIndex={-1}
+                // keeps it programmatically focusable, satisfying the
+                // jsx-a11y interactive-supports-focus rule without breaking
+                // the WAI-ARIA radio pattern.
+                tabIndex={-1}
+                onKeyDown={(e) => {
+                  if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
+                  const focused = document.activeElement as HTMLElement | null
+                  const buttons = Array.from(
+                    e.currentTarget.querySelectorAll<HTMLButtonElement>('button[role=radio]')
+                  )
+                  const i = buttons.findIndex((b) => b === focused)
+                  if (i < 0) return
+                  e.preventDefault()
+                  const delta = e.key === 'ArrowRight' ? 1 : -1
+                  const nextI = (i + delta + buttons.length) % buttons.length
+                  buttons[nextI]?.focus()
+                  buttons[nextI]?.click()
+                }}
+              >
+                {LIFECYCLE_PILLS.map((opt, idx) => {
+                  const active = lifecycleBucket === opt.id
+                  return (
+                    <Button
+                      key={opt.id}
+                      variant="ghost"
+                      role="radio"
+                      aria-checked={active}
+                      tabIndex={idx === tabbableIdx ? 0 : -1}
+                      onClick={() => {
+                        const next = active ? 'All' : opt.id
+                        setLifecycleBucket(next)
+                        syncFiltersToUrl({ lifecycle: next })
+                        logEvent('Library', 'Filter Lifecycle', next)
+                      }}
+                      className={`inline-flex items-center text-xs px-2.5 py-1.5 rounded-md border transition-colors font-medium whitespace-nowrap min-h-[36px] ${
+                        active
+                          ? 'border-primary bg-primary/10 text-primary'
+                          : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+                      }`}
+                    >
+                      {opt.label}
+                    </Button>
+                  )
+                })}
+              </div>
+            )
+          })()}
 
           {viewMode === 'cards' && (
             <div className="hidden sm:block">
@@ -965,23 +1095,6 @@ export const LibraryView: React.FC = () => {
             </div>
 
             <div className="flex-1 min-w-[160px]">
-              <span className="text-xs font-medium text-muted-foreground mb-1 block">Industry</span>
-              <FilterDropdown
-                items={industries}
-                selectedId={activeIndustry}
-                onSelect={(ind) => {
-                  setActiveIndustry(ind)
-                  syncFiltersToUrl({ ind })
-                  logEvent('Library', 'Filter Industry', ind)
-                }}
-                defaultLabel="Industry"
-                noContainer
-                opaque
-                className="mb-0 w-full"
-              />
-            </div>
-
-            <div className="flex-1 min-w-[160px]">
               <span className="text-xs font-medium text-muted-foreground mb-1 block">
                 Doc Status
               </span>
@@ -1004,39 +1117,45 @@ export const LibraryView: React.FC = () => {
               <span className="text-xs font-medium text-muted-foreground mb-1 block">
                 Country / Region
               </span>
-              <FilterDropdown
-                items={regions}
-                selectedId={activeRegion}
-                onSelect={(region) => {
-                  setActiveRegion(region)
-                  syncFiltersToUrl({ region })
-                  logEvent('Library', 'Filter Region', region)
-                }}
-                defaultLabel="Country / Region"
-                noContainer
-                opaque
-                className="mb-0 w-full"
-              />
-            </div>
-
-            <div className="flex-1 min-w-[160px]">
-              <span className="text-xs font-medium text-muted-foreground mb-1 block">
-                Geography
-              </span>
               <GeoFilter options={[]} className="w-full" />
             </div>
 
-            <div className="flex-1 min-w-[160px]">
-              <span className="text-xs font-medium text-muted-foreground mb-1 block">Sector</span>
-              <SectorFilter className="w-full" />
-            </div>
+            {(!drawerIsTrimmed || showAdvancedDrawer) && (
+              <div
+                id="library-advanced-drawer"
+                className="contents"
+                role={drawerIsTrimmed ? 'region' : undefined}
+                aria-label={drawerIsTrimmed ? 'Advanced filters' : undefined}
+              >
+                <div className="flex-1 min-w-[160px]">
+                  <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                    Sector
+                  </span>
+                  <SectorFilter className="w-full" />
+                </div>
 
-            <div className="flex-1 min-w-[160px]">
-              <span className="text-xs font-medium text-muted-foreground mb-1 block">
-                Trust tier
-              </span>
-              <TrustTierFilter className="w-full" />
-            </div>
+                <div className="flex-1 min-w-[160px]">
+                  <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                    Trust tier
+                  </span>
+                  <TrustTierFilter className="w-full" />
+                </div>
+              </div>
+            )}
+
+            {drawerIsTrimmed && (
+              <div className="w-full flex justify-start">
+                <Button
+                  variant="link"
+                  onClick={() => setShowAdvancedDrawer((v) => !v)}
+                  className="text-xs h-auto p-0"
+                  aria-expanded={showAdvancedDrawer}
+                  aria-controls="library-advanced-drawer"
+                >
+                  {showAdvancedDrawer ? 'Hide advanced' : 'Advanced (Sector, Trust tier)'}
+                </Button>
+              </div>
+            )}
 
             {/* Sort Dropdown for Mobile (Inside filters drawer) */}
             {viewMode === 'cards' && (
@@ -1058,12 +1177,10 @@ export const LibraryView: React.FC = () => {
           </div>
         )}
       </div>
+      )}
 
       {/* Active Filter Chips */}
-      {(activeOrg !== 'All' ||
-        activeIndustry !== 'All' ||
-        activeRegion !== 'All' ||
-        filterText !== '') && (
+      {showFullPage && (activeOrg !== 'All' || filterText !== '') && (
         <div className="flex flex-wrap items-center gap-2 text-xs">
           {filterText && (
             <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
@@ -1098,47 +1215,13 @@ export const LibraryView: React.FC = () => {
               </Button>
             </span>
           )}
-          {activeIndustry !== 'All' && (
-            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
-              <span className="text-muted-foreground">Industry:</span> {activeIndustry}
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  setActiveIndustry('All')
-                  syncFiltersToUrl({ ind: 'All' })
-                }}
-                className="text-muted-foreground hover:text-foreground"
-                aria-label="Clear industry filter"
-              >
-                <X size={12} aria-hidden="true" />
-              </Button>
-            </span>
-          )}
-          {activeRegion !== 'All' && (
-            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
-              <span className="text-muted-foreground">Region:</span> {activeRegion}
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  setActiveRegion('All')
-                  syncFiltersToUrl({ region: 'All' })
-                }}
-                className="text-muted-foreground hover:text-foreground"
-                aria-label="Clear region filter"
-              >
-                <X size={12} aria-hidden="true" />
-              </Button>
-            </span>
-          )}
           <Button
             variant="ghost"
             onClick={() => {
               setActiveOrg('All')
-              setActiveIndustry('All')
-              setActiveRegion('All')
               setFilterText('')
               setInputValue('')
-              syncFiltersToUrl({ org: 'All', ind: 'All', region: 'All', q: '' })
+              syncFiltersToUrl({ org: 'All', q: '' })
             }}
             className="text-muted-foreground hover:text-foreground underline decoration-muted-foreground/30 hover:decoration-muted-foreground transition-all ml-1"
           >
@@ -1148,11 +1231,39 @@ export const LibraryView: React.FC = () => {
       )}
 
       {/* Results count */}
-      <div className="space-y-1">
-        <p className="text-xs text-muted-foreground">
-          {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''}
-          {activeCategory !== 'All' && ` in ${activeCategory}`}
-        </p>
+      {showFullPage && (
+      <div className="space-y-1" role="status" aria-live="polite">
+        {personaPreferredActive ? (
+          <div className="glass-panel inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-md text-xs">
+            <span className="text-muted-foreground">
+              Showing {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''} matched
+              to your role
+            </span>
+            <span className="text-muted-foreground/60">·</span>
+            <Button
+              variant="link"
+              onClick={() => {
+                setSearchParams(
+                  (prev) => {
+                    const next = new URLSearchParams(prev)
+                    next.set('prefs', 'off')
+                    return next
+                  },
+                  { replace: true }
+                )
+                logEvent('Library', 'Persona Prefs Off', personaLabel())
+              }}
+              className="text-xs h-auto p-0"
+            >
+              See all {libraryData.length}
+            </Button>
+          </div>
+        ) : (
+          <p className="text-xs text-muted-foreground">
+            {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''}
+            {activeCategory !== 'All' && ` in ${activeCategory}`}
+          </p>
+        )}
         <SemanticSearchHint
           mode={semantic.mode}
           loading={semantic.loading}
@@ -1161,27 +1272,29 @@ export const LibraryView: React.FC = () => {
           noun="related documents"
         />
       </div>
+      )}
 
       {/* Content area */}
-      {viewMode === 'cards' ? (
-        <DocumentCardGrid
-          items={sortedItems}
-          onViewDetails={openDetail}
-          highlightedRefId={highlightedDocId}
-        />
-      ) : (
-        <>
-          <div className="hidden md:block">{renderTableView()}</div>
-          <div className="md:hidden">
-            <DocumentCardGrid
-              items={sortedItems}
-              onViewDetails={openDetail}
-              showHierarchicalAccordion
-              highlightedRefId={highlightedDocId}
-            />
-          </div>
-        </>
-      )}
+      {showFullPage &&
+        (viewMode === 'cards' ? (
+          <DocumentCardGrid
+            items={sortedItems}
+            onViewDetails={openDetail}
+            highlightedRefId={highlightedDocId}
+          />
+        ) : (
+          <>
+            <div className="hidden md:block">{renderTableView()}</div>
+            <div className="md:hidden">
+              <DocumentCardGrid
+                items={sortedItems}
+                onViewDetails={openDetail}
+                showHierarchicalAccordion
+                highlightedRefId={highlightedDocId}
+              />
+            </div>
+          </>
+        ))}
 
       {/* Detail Popover */}
       <LibraryDetailPopover

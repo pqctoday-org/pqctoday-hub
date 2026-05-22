@@ -3,8 +3,15 @@
  * Curated "start here" library picks for the curious persona (P04-P1-02).
  *
  * Surfaced above the main library grid on `/library` when the active persona
- * is curious, so a first-time visitor lands on 5 readable, canonical PQC docs
+ * is curious, so a first-time visitor lands on 3 readable, canonical PQC docs
  * instead of a sortable 400+ row table.
+ *
+ * Trimmed from 5 → 3 picks under P04 audit P2.b (2026-05-22). FIPS-204
+ * (ML-DSA) and FIPS-205 (SLH-DSA) were dropped because they are reachable via
+ * the FIPS-203 ↔ IR-8547 hub-and-spoke relationship — a curious reader who
+ * lands on ML-KEM or the transition timeline naturally pivots to the
+ * signature-side standards from the related-docs links. The 3-pick set keeps
+ * the "minimum viable mode" (PR 4) above-the-fold target tight.
  *
  * `referenceId` values match `LibraryItem.referenceId` from the canonical
  * library CSV — they wire directly into the existing `openDetail()` flow.
@@ -28,19 +35,7 @@ export const LIBRARY_CURIOUS_PICKS: readonly LibraryCuriousPick[] = [
     referenceId: 'FIPS 203',
     label: 'FIPS 203 — ML-KEM',
     blurb:
-      'The first NIST-standardised post-quantum algorithm (August 2024). Replaces RSA / ECDH for key exchange. If you only read one algorithm spec, this is the one.',
-  },
-  {
-    referenceId: 'FIPS 204',
-    label: 'FIPS 204 — ML-DSA',
-    blurb:
-      "The post-quantum signature standard. Replaces RSA / ECDSA for digital signatures. Signatures are ~3 KB — much larger than today's 64-256 bytes, which is why PKI rotations get heavier.",
-  },
-  {
-    referenceId: 'FIPS 205',
-    label: 'FIPS 205 — SLH-DSA',
-    blurb:
-      'A hash-based backup signature scheme. Slower and bulkier than ML-DSA, but its security relies only on the underlying hash function — useful for the longest-lived signing keys (firmware, root CAs).',
+      'The first NIST-standardised post-quantum algorithm (August 2024). Replaces RSA / ECDH for key exchange. If you only read one algorithm spec, this is the one. (FIPS 204 / 205 — ML-DSA and SLH-DSA — are reachable from this doc\'s related-standards links.)',
   },
   {
     referenceId: 'RFC-9964',

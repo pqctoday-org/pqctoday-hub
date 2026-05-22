@@ -6,9 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ComplianceTable } from './ComplianceTable'
 import {
   ComplianceLandscape,
-  DeadlineTimeline,
   type FrameworkSortOption,
 } from './ComplianceLandscape'
+import { DeadlineTimelineGate } from './DeadlineTimelineGate'
+import { AboutThisPageStrip } from './AboutThisPageStrip'
+import { PersonaHintCta } from './PersonaHintCta'
 import { CrossTabSearchHint, type LandscapeTab } from './CrossTabSearchHint'
 import { useComplianceRefresh } from './services'
 import {
@@ -30,8 +32,6 @@ import {
 } from '../common/TrustTierFilter'
 import { MoreTabsMenu } from './MoreTabsMenu'
 import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
-import { LearningFrameBanner } from './LearningFrameBanner'
-import { GlossaryStrip } from './GlossaryStrip'
 import { LandscapeTab as LandscapeTabBody } from './LandscapeTab'
 import { LandscapeTypeFacet, type LandscapeType } from './LandscapeTypeFacet'
 import { ExecutiveTimelineView } from './views/ExecutiveTimelineView'
@@ -55,7 +55,6 @@ import { useApplicability } from '@/hooks/useApplicability'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { logComplianceFilter } from '../../utils/analytics'
 import { PageHeader } from '../common/PageHeader'
-import { ContentUpdatesFeed } from '@/components/ui/ContentUpdatesFeed'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { COMPLIANCE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -198,7 +197,7 @@ function timelineEventToRow(ev: TimelineEvent): TimelineDocumentRow {
  * differs. Profile override is plumbed identically so the workshop deep-link
  * `?country=Australia&ind=Government & Defense` works regardless of persona.
  */
-function ForYouSection() {
+function ForYouSection({ onExportCsv }: { onExportCsv?: () => void }) {
   const persona = usePersonaStore((s) => s.selectedPersona)
   const selectedIndustries = usePersonaStore((s) => s.selectedIndustries)
   const storeCountry = useAssessmentFormStore((s) => s.country)
@@ -247,7 +246,7 @@ function ForYouSection() {
   return (
     <>
       {persona === 'executive' ? (
-        <ExecutiveTimelineView {...callbacks} />
+        <ExecutiveTimelineView {...callbacks} onExportCsv={onExportCsv} />
       ) : persona === 'architect' ? (
         <ArchitectStandardsView {...callbacks} />
       ) : persona === 'researcher' ? (
@@ -320,6 +319,7 @@ function MobileViewToggle({
   evref,
   onClearEvref,
   onNavigateToCswp39,
+  onExportCsv,
   landscapeProps,
   tableProps,
 }: {
@@ -328,6 +328,7 @@ function MobileViewToggle({
   onCswp39Jump: (targetTab: MobileSection, searchQuery: string) => void
   evref?: string
   onClearEvref?: () => void
+  onExportCsv?: () => void
   onNavigateToCswp39?: (refId: string) => void
   landscapeProps: {
     orgFilter: string
@@ -477,7 +478,7 @@ function MobileViewToggle({
           <div className="flex flex-wrap gap-2">
             <RoleFilter syncWithPersona />
           </div>
-          <ForYouSection />
+          <ForYouSection onExportCsv={onExportCsv} />
         </div>
       )}
       {isExploreSection(section) && (
@@ -702,6 +703,24 @@ export const ComplianceView = () => {
     [setActiveTab, syncFiltersToUrl]
   )
 
+  const handlePersonaHintNavigate = useCallback(
+    (section: MobileSection) => {
+      setActiveTab(section)
+      syncFiltersToUrl({ tab: section })
+      logComplianceFilter('PersonaHint', section)
+      setCswp39JumpActive(false)
+      requestAnimationFrame(() => {
+        document
+          .getElementById('compliance-tabs')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        document
+          .getElementById('compliance-tabs-mobile')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    },
+    [setActiveTab, syncFiltersToUrl]
+  )
+
   const handleCswp39Jump = useCallback(
     (targetTab: MobileSection, searchQuery: string) => {
       // Bypass the debounced search path — its stale closure of syncFiltersToUrl
@@ -788,10 +807,7 @@ export const ComplianceView = () => {
 
       {selectedPersona === 'curious' && <PreviewBanner pageContext="GRC, Executive, Architect" />}
 
-      <LearningFrameBanner />
-      <GlossaryStrip />
-
-      <ContentUpdatesFeed domain="compliance" limit={5} title="Recent Compliance Revisions" />
+      <AboutThisPageStrip />
 
       {exportError && (
         <div
@@ -816,8 +832,11 @@ export const ComplianceView = () => {
         </div>
       )}
 
-      {/* New-to-compliance intro — 3-column structured brief with direct CTAs. */}
-      {!introDismissed && (
+      {/* New-to-compliance intro — 3-column structured brief with direct CTAs.
+          Suppressed entirely when a persona hint is going to render: the hint
+          is strictly more targeted, and showing both creates duplicate
+          onboarding chrome above the tab body. */}
+      {!introDismissed && !(complianceHint && complianceHintLabel) && (
         <div className="rounded-lg border border-secondary/20 bg-secondary/5 p-4 space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
@@ -907,22 +926,24 @@ export const ComplianceView = () => {
         </div>
       )}
 
-      {/* Persona/industry context hint */}
+      {/* Persona/industry context hint — one-click navigation to the
+          recommended compliance section. */}
       {complianceHint && complianceHintLabel && (
-        <div className="flex items-start gap-3 p-3 rounded-lg border border-primary/20 bg-primary/5 text-sm">
-          <Info size={16} className="text-primary mt-0.5 shrink-0" />
-          <div className="space-y-0.5">
-            <span className="font-semibold text-foreground">
-              {complianceHintLabel}:{' '}
-              <span className="text-primary">{complianceHint.sectionLabel}</span>
-            </span>
-            <p className="text-muted-foreground text-xs">{complianceHint.rationale}</p>
-          </div>
-        </div>
+        <PersonaHintCta
+          label={complianceHintLabel}
+          hint={complianceHint}
+          onNavigate={handlePersonaHintNavigate}
+        />
       )}
 
-      {/* PQC deadline timeline — horizontally scrollable on mobile, full stacked view on desktop. */}
-      <DeadlineTimeline frameworks={deadlineTimelineFrameworks} label={deadlineTimelineLabel} />
+      {/* PQC deadline timeline — persona-gated. Full timeline for
+          executive/ops/null; narrative line for curious; closed disclosure
+          for developer/architect/researcher. */}
+      <DeadlineTimelineGate
+        persona={selectedPersona}
+        frameworks={deadlineTimelineFrameworks}
+        label={deadlineTimelineLabel}
+      />
 
       {/* Jump-back banner — visible after CSWP.39 cross-walk navigation */}
       {cswp39JumpActive && activeTab !== 'cswp39' && (
@@ -969,6 +990,7 @@ export const ComplianceView = () => {
           evref={evref}
           onClearEvref={handleClearEvref}
           onNavigateToCswp39={handleNavigateToCswp39}
+          onExportCsv={handleExportCsv}
           landscapeProps={{
             orgFilter: lsOrg,
             industryFilter: lsIndustry,
@@ -1093,7 +1115,7 @@ export const ComplianceView = () => {
             <div className="flex flex-wrap gap-2">
               <RoleFilter syncWithPersona />
             </div>
-            <ForYouSection />
+            <ForYouSection onExportCsv={handleExportCsv} />
           </TabsContent>
 
           {/* ── Landscape — unified surface with a type facet ── */}
