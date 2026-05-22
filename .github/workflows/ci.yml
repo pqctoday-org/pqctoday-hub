@@ -103,20 +103,28 @@ jobs:
         run: DS_SEVERITY=ERROR npx tsx scripts/validate-data-integrity.ts
         continue-on-error: true
 
-      - name: Validate threats proof rule (TP-1 + TP-2 + TP-3, BLOCKING)
-        # Enforces the 2026-05-21 rule: every active threat row in
-        # quantum_threats_hsm_industries_*.csv must have a downloadable,
-        # ≥ 5 KB on-disk proof under public/threats/ (TP-1/TP-2), AND
-        # every non-empty `trusted_source_id` must resolve to the
-        # authoritative-sources catalog's `id` column (TP-3, added 2026-
-        # 05-21 once the catalog gained an `id` primary key). See
-        # reports/threats-gap-fixes-05212026.md for the audit that led to
-        # the rule. Strictly blocking — exits non-zero on any TP-1/TP-2
-        # finding. Re-source or mark status='deprecated' to clear.
+      - name: Validate threats proof rule (TP-2 + TP-3, BLOCKING)
+        # TP-2 (local_file path must live under public/threats/) and TP-3
+        # (trusted_source_id must resolve to the authoritative-sources
+        # catalog id) are stringly-checkable invariants that don't depend
+        # on disk presence.
+        #
+        # TP-1 (on-disk proof file ≥ 5 KB) was DROPPED from CI 2026-05-21
+        # because public/threats/*.pdf and public/threats/*.html are
+        # gitignored (.gitignore:280-281) — a CI gate that asserts files
+        # MUST exist when the gitignore says they MUST NOT be checked in
+        # is a self-contradiction guaranteed to false-positive on every
+        # clean checkout. The threats UI never consumes `local_file` at
+        # runtime (the column is metadata/provenance only — verified by
+        # tracing transformThreat() in src/data/threatsData.ts), so the
+        # invariant gates nothing the user sees. The TP-1 check still
+        # exists in scripts/validators/threats-proof-rule.ts for local
+        # dev use after a manual download run; it just isn't enforced in
+        # CI.
         run: |
           npx tsx -e "
             import { runThreatsProofRule } from './scripts/validators/threats-proof-rule.ts'
-            const results = runThreatsProofRule()
+            const results = runThreatsProofRule().filter((r) => r.id !== 'TP-1')
             let failed = false
             for (const r of results) {
               const ok = r.status === 'PASS'
