@@ -43,7 +43,6 @@ import {
   MODULE_CATALOG,
   MODULE_TRACKS,
   MODULE_STEP_COUNTS,
-  MODULE_TO_TRACK,
   LEARN_SECTIONS,
   WORKSHOP_STEPS,
 } from './moduleData'
@@ -723,13 +722,27 @@ const ModuleTracksGrid = ({
     }
   }, [selectedPersona, sortBy, setResearcherSortOverride])
 
-  // Dropdown → store: changing role in the grid updates the persona store
+  // Dropdown → store: changing role in the grid updates the persona store.
+  // When the user re-selects curious from the role pill, we explicitly reset the
+  // "Show me everything" escape so they return to their curated path (plan P0-3
+  // re-entry requirement). Selecting any non-curious persona also clears the
+  // escape since it only ever applied to curious.
   const handlePersonaFilterChange = useCallback(
     (id: string) => {
       setSelectedPersonaFilter(id)
       setPersona(id === 'All' ? null : (id as PersonaId))
+      if (id !== 'All') {
+        setShowEverything(false)
+        // Snap viewMode back to the persona's curated default unless the user is
+        // a researcher (no path) — they keep stack mode.
+        if (id === 'researcher') {
+          setViewMode('stack')
+        } else {
+          setViewMode('path')
+        }
+      }
     },
-    [setPersona]
+    [setPersona, setShowEverything]
   )
 
   const isModuleRelevant = useCallback(
