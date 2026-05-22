@@ -10,18 +10,21 @@
  *
  * `referenceId` values match `LibraryItem.referenceId` in the canonical CSV.
  *
- * Deferred to a follow-up CSV-data task (none of these exist as of the
- * 05222026 library CSV; substituting unrelated IDs would dilute the panel):
+ * Audit plan called for ~10 picks; this file ships 7. The `CMVP-IG-D.K`
+ * placeholder from the original plan is satisfied by `NIST-FIPS140-3-IG-PQC`
+ * — the FIPS 140-3 Implementation Guidance for PQC, which is the canonical
+ * CMVP IG document covering ML-KEM / ML-DSA / SLH-DSA validation rules.
+ * It was already in the library CSV; the audit plan just used a less-precise
+ * shorthand.
  *
- *   - Four most-cited CC PP-Modules — Common Criteria Protection Profile
- *     Modules. Audit plan §P1 calls them out by category, not by specific
- *     ID, so the data task is twofold: (1) decide which four to ship, and
- *     (2) add their rows to the library CSV with proper enrichment.
- *   - `CMVP-IG-D.K` — NIST CMVP Implementation Guidance section D.K. The
- *     program-management peer of `CMVP-MGMT-MANUAL` (already in this list).
+ * Still deferred (would bring this list to ~11):
  *
- * Once those four-plus-one rows land in the CSV, append them here as picks
- * 7–11 to hit the audit plan's ~10-entry target.
+ *   - Four most-cited CC Protection Profile Modules. The audit plan calls
+ *     them out by category, not by specific ID. Naming them requires either
+ *     (a) CC citation data we don't currently track, or (b) product input on
+ *     which four PP-Modules are most cert-relevant for the ops persona. Once
+ *     decided, the data task is to add their rows to the library CSV (with
+ *     proper enrichment) and append them here as picks 8–11.
  */
 import type { LibraryCuriousPick } from './libraryCuriousPicks'
 
@@ -63,6 +66,12 @@ export const LIBRARY_OPS_PICKS: readonly LibraryOpsPick[] = [
     label: 'CMVP Management Manual',
     blurb:
       "The program-management bible: how FIPS 140-3 validations are submitted, reviewed, and tracked. Cert-relevant ops can't ship without internalising this.",
+  },
+  {
+    referenceId: 'NIST-FIPS140-3-IG-PQC',
+    label: 'FIPS 140-3 IG — Post-Quantum Cryptography',
+    blurb:
+      "The CMVP Implementation Guidance for PQC: defines how ML-KEM, ML-DSA, and SLH-DSA must be implemented to pass FIPS 140-3 validation. Pair with the CMVP Management Manual for the full submission lifecycle.",
   },
 ] as const
 

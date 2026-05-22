@@ -8,14 +8,9 @@
  * documents instead of the full corpus.
  *
  * `referenceId` values match `LibraryItem.referenceId` in the canonical CSV.
- * Picks that do not yet exist in the corpus are intentionally omitted rather
- * than wired to broken IDs. Deferred to a follow-up CSV-data task:
- *
- *   - `CISA-Quantum-Readiness-Roadmap` — the August-2023 CISA/NSA/NIST joint
- *     migration guidance. Closest existing IDs in the CSV (`US-CISA-ACDI-
- *     Strategy-2024`, `CISA-PQC-CATEGORY-LIST-2026`, `US-CISA-PQC-OT-2024`)
- *     cover related but distinct surfaces, so they're not a substitute. When
- *     the row is added, drop it in this list as the 8th boardroom pick.
+ * Now at the full audit-plan target of 8 picks — `CISA-Quantum-Readiness-
+ * Roadmap` was added as a new library CSV row in `library_05222026_r2.csv`
+ * to close the last open executive picks slot.
  */
 import type { LibraryCuriousPick } from './libraryCuriousPicks'
 
@@ -63,6 +58,12 @@ export const LIBRARY_EXECUTIVE_PICKS: readonly LibraryExecutivePick[] = [
     label: 'UK NCSC — Migration Timelines',
     blurb:
       "The UK's official PQC timeline: discovery by 2028, critical systems migrated by 2031, full migration by 2035. Aligns closely with US NIST IR 8547.",
+  },
+  {
+    referenceId: 'CISA-Quantum-Readiness-Roadmap',
+    label: 'CISA Quantum-Readiness Roadmap',
+    blurb:
+      "The August-2023 CISA/NSA/NIST joint migration playbook: establish governance, inventory vulnerable crypto, assess priorities, engage vendors. The most-cited US federal readiness document; downstream of NIST IR 8547 and upstream of every department-level PQC migration plan.",
   },
 ] as const
 
