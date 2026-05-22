@@ -44,7 +44,7 @@ jobs:
 
       - name: Open issue on drift
         if: steps.audit.outcome == 'failure'
-        uses: peter-evans/create-issue-from-file@v5
+        uses: peter-evans/create-issue-from-file@v6
         with:
           title: 'Trusted-source drift detected (week of ${{ github.run_id }})'
           content-filepath: public/data/trusted-source-drift-report.md
