@@ -255,7 +255,11 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
                   val.startsWith('Classic-McEliece-') ||
                   val.startsWith('SLH-DSA-') ||
                   val.startsWith('FN-DSA-') ||
-                  val.startsWith('LMS-')
+                  val.startsWith('LMS-') ||
+                  val.startsWith('MAYO-') ||
+                  val.startsWith('CROSS-') ||
+                  val.startsWith('OV-') ||
+                  val.startsWith('SNOVA-')
                 ) {
                   // HQC, FrodoKEM, Classic McEliece, SLH-DSA, or FN-DSA - pass the full algorithm name
                   if (onUnifiedChange) {
@@ -284,6 +288,9 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
                 { id: 'FrodoKEM-640-AES', label: 'FrodoKEM-640-AES (Level 1)' },
                 { id: 'FrodoKEM-976-AES', label: 'FrodoKEM-976-AES (Level 3)' },
                 { id: 'FrodoKEM-1344-AES', label: 'FrodoKEM-1344-AES (Level 5)' },
+                { id: 'FrodoKEM-640-SHAKE', label: 'FrodoKEM-640-SHAKE (Level 1)' },
+                { id: 'FrodoKEM-976-SHAKE', label: 'FrodoKEM-976-SHAKE (Level 3)' },
+                { id: 'FrodoKEM-1344-SHAKE', label: 'FrodoKEM-1344-SHAKE (Level 5)' },
                 { id: 'Classic-McEliece-348864', label: 'Classic McEliece 348864' },
                 { id: 'Classic-McEliece-460896', label: 'Classic McEliece 460896' },
                 { id: 'Classic-McEliece-6688128', label: 'Classic McEliece 6688128' },
@@ -306,6 +313,43 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
                 { id: 'SLH-DSA-SHAKE-256s', label: 'SLH-DSA-SHAKE-256s (Level 5, Small)' },
                 { id: 'FN-DSA-512', label: 'FN-DSA-512 / Falcon-512 (Level 1)' },
                 { id: 'FN-DSA-1024', label: 'FN-DSA-1024 / Falcon-1024 (Level 5)' },
+                { id: 'FN-DSA-padded-512', label: 'FN-DSA-padded-512 (Level 1, CT)' },
+                { id: 'FN-DSA-padded-1024', label: 'FN-DSA-padded-1024 (Level 5, CT)' },
+                { id: 'MAYO-1', label: 'MAYO-1 (Level 1, Round 2)' },
+                { id: 'MAYO-2', label: 'MAYO-2 (Level 1, Round 2)' },
+                { id: 'MAYO-3', label: 'MAYO-3 (Level 3, Round 2)' },
+                { id: 'MAYO-5', label: 'MAYO-5 (Level 5, Round 2)' },
+                {
+                  id: 'CROSS-RSDP-128-balanced',
+                  label: 'CROSS-RSDP-128-balanced (Level 1, Round 2)',
+                },
+                {
+                  id: 'CROSS-RSDP-192-balanced',
+                  label: 'CROSS-RSDP-192-balanced (Level 3, Round 2)',
+                },
+                {
+                  id: 'CROSS-RSDP-256-balanced',
+                  label: 'CROSS-RSDP-256-balanced (Level 5, Round 2)',
+                },
+                {
+                  id: 'CROSS-RSDPg-128-balanced',
+                  label: 'CROSS-RSDPg-128-balanced (Level 1, Round 2)',
+                },
+                {
+                  id: 'CROSS-RSDPg-192-balanced',
+                  label: 'CROSS-RSDPg-192-balanced (Level 3, Round 2)',
+                },
+                {
+                  id: 'CROSS-RSDPg-256-balanced',
+                  label: 'CROSS-RSDPg-256-balanced (Level 5, Round 2)',
+                },
+                { id: 'OV-Ip', label: 'OV-Ip / UOV (Level 1, Round 2)' },
+                { id: 'OV-Is', label: 'OV-Is / UOV (Level 1, Round 2)' },
+                { id: 'OV-III', label: 'OV-III / UOV (Level 3, Round 2)' },
+                { id: 'OV-V', label: 'OV-V / UOV (Level 5, Round 2)' },
+                { id: 'SNOVA-24-5-4', label: 'SNOVA-24-5-4 (Level 1, Round 2)' },
+                { id: 'SNOVA-29-6-5', label: 'SNOVA-29-6-5 (Level 3, Round 2)' },
+                { id: 'SNOVA-49-11-3', label: 'SNOVA-49-11-3 (Level 5, Round 2)' },
                 { id: 'LMS-SHA256-H10', label: 'LMS SHA-256 H=10 (1,024 sigs)' },
                 { id: 'LMS-SHA256-H15', label: 'LMS SHA-256 H=15 (32,768 sigs)' },
                 { id: 'LMS-SHA256-H20', label: 'LMS SHA-256 H=20 (1,048,576 sigs)' },

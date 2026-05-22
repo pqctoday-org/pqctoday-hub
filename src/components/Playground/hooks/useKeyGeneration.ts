@@ -183,10 +183,17 @@ export const useKeyGeneration = ({
             result: `PK: ${keypair.publicKey.length}B, SK: ${keypair.secretKey.length}B`,
             executionTime: end - start,
           })
-        } else if (algorithm.startsWith('SLH-DSA') || algorithm.startsWith('FN-DSA')) {
-          // SLH-DSA and FN-DSA (Falcon) via liboqs
+        } else if (
+          algorithm.startsWith('SLH-DSA') ||
+          algorithm.startsWith('FN-DSA') ||
+          algorithm.startsWith('MAYO') ||
+          algorithm.startsWith('CROSS-') ||
+          algorithm.startsWith('OV-') ||
+          algorithm.startsWith('SNOVA')
+        ) {
+          // SLH-DSA, FN-DSA, MAYO, CROSS, OV, SNOVA via liboqs
           algoName = algorithm
-          logger.debug('[Playground] Generating SLH-DSA/FN-DSA keys...', algoName)
+          logger.debug('[Playground] Generating liboqs sig keys...', algoName)
           const keypair = await LIBOQS_SIG.generateKey({ name: algoName })
 
           newKeys = [

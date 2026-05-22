@@ -1260,6 +1260,10 @@ const SignVerifyTabSoftware: React.FC = () => {
     algo.startsWith('ML-DSA') ||
     algo.startsWith('SLH-DSA') ||
     algo.startsWith('FN-DSA') ||
+    algo.startsWith('MAYO') ||
+    algo.startsWith('CROSS-') ||
+    algo.startsWith('OV-') ||
+    algo.startsWith('SNOVA') ||
     algo.startsWith('LMS-') ||
     algo.startsWith('RSA') ||
     algo.startsWith('ECDSA') ||
@@ -1324,8 +1328,22 @@ const SignVerifyTabSoftware: React.FC = () => {
                   scheme = 'SLH-DSA (Hash-Based)'
                   hash = key.algorithm.includes('SHA2') ? 'SHA2' : 'SHAKE'
                 } else if (key.algorithm.startsWith('FN-DSA')) {
-                  scheme = 'FN-DSA / Falcon'
+                  scheme = key.algorithm.includes('padded')
+                    ? 'FN-DSA / Falcon (padded, CT)'
+                    : 'FN-DSA / Falcon'
                   hash = 'SHAKE-256'
+                } else if (key.algorithm.startsWith('MAYO')) {
+                  scheme = 'MAYO (MQ-based)'
+                  hash = 'AES-CTR / SHAKE'
+                } else if (key.algorithm.startsWith('CROSS-')) {
+                  scheme = 'CROSS (code-based)'
+                  hash = 'SHAKE-256'
+                } else if (key.algorithm.startsWith('OV-')) {
+                  scheme = 'OV / UOV (multivariate)'
+                  hash = 'SHA-256 / SHAKE'
+                } else if (key.algorithm.startsWith('SNOVA')) {
+                  scheme = 'SNOVA (structured MQ)'
+                  hash = 'AES-CTR / SHAKE'
                 } else if (key.algorithm.startsWith('LMS-')) {
                   scheme = 'LMS/HSS (Stateful)'
                   hash = 'SHA-256'
@@ -1443,8 +1461,22 @@ const SignVerifyTabSoftware: React.FC = () => {
                   scheme = 'SLH-DSA (Hash-Based)'
                   hash = key.algorithm.includes('SHA2') ? 'SHA2' : 'SHAKE'
                 } else if (key.algorithm.startsWith('FN-DSA')) {
-                  scheme = 'FN-DSA / Falcon'
+                  scheme = key.algorithm.includes('padded')
+                    ? 'FN-DSA / Falcon (padded, CT)'
+                    : 'FN-DSA / Falcon'
                   hash = 'SHAKE-256'
+                } else if (key.algorithm.startsWith('MAYO')) {
+                  scheme = 'MAYO (MQ-based)'
+                  hash = 'AES-CTR / SHAKE'
+                } else if (key.algorithm.startsWith('CROSS-')) {
+                  scheme = 'CROSS (code-based)'
+                  hash = 'SHAKE-256'
+                } else if (key.algorithm.startsWith('OV-')) {
+                  scheme = 'OV / UOV (multivariate)'
+                  hash = 'SHA-256 / SHAKE'
+                } else if (key.algorithm.startsWith('SNOVA')) {
+                  scheme = 'SNOVA (structured MQ)'
+                  hash = 'AES-CTR / SHAKE'
                 } else if (key.algorithm.startsWith('LMS-')) {
                   scheme = 'LMS/HSS (Stateful)'
                   hash = 'SHA-256'
