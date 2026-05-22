@@ -46,12 +46,15 @@ describe('PersonaPathView — phase partitioning (P0-4)', () => {
 
   it('renders one phase per checkpoint plus a terminal wrap-up for curious', () => {
     renderView('curious')
-    // Plan: curious has 4 checkpoints → 5 phases (4 named + wrap-up)
-    expect(screen.getByText(/Understanding the Threat/i)).toBeInTheDocument()
-    expect(screen.getByText(/Why It Matters/i)).toBeInTheDocument()
-    expect(screen.getByText(/What the World Is Doing/i)).toBeInTheDocument()
-    expect(screen.getByText(/Practical Foundations/i)).toBeInTheDocument()
-    expect(screen.getByText(/Wrap-up: Take the quiz/i)).toBeInTheDocument()
+    // Plan: curious has 4 checkpoints → 5 phases (4 named + wrap-up).
+    // P2-2 also surfaces each phase title in the sticky breadcrumb for curious,
+    // so titles appear twice (breadcrumb item + <summary> in <details>) — use
+    // getAllByText and assert ≥1 occurrence.
+    expect(screen.getAllByText(/Understanding the Threat/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Why It Matters/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/What the World Is Doing/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Practical Foundations/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Wrap-up: Take the quiz/i).length).toBeGreaterThan(0)
   })
 
   it('returns null when persona is unknown', () => {

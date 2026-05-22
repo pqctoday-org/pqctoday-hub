@@ -94,8 +94,13 @@ export const PersonaPathView = ({
               const isComplete = idx < currentPhaseIdx
               return (
                 <li key={phase.id} className="flex items-center gap-1">
-                  {idx > 0 && <span className="text-muted-foreground/50">›</span>}
+                  {idx > 0 && (
+                    <span aria-hidden="true" className="text-muted-foreground/50">
+                      ›
+                    </span>
+                  )}
                   <span
+                    aria-current={isCurrent ? 'step' : undefined}
                     className={
                       isCurrent
                         ? 'font-semibold text-primary px-1.5 py-0.5 rounded bg-primary/10'
@@ -105,6 +110,7 @@ export const PersonaPathView = ({
                     }
                     title={phase.title}
                   >
+                    {isComplete && <span className="sr-only">Completed: </span>}
                     {phase.title}
                   </span>
                 </li>

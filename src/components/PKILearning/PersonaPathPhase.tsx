@@ -81,9 +81,15 @@ export const PersonaPathPhase = ({
             'shrink-0 rounded-full p-1',
             isComplete ? 'bg-status-success/15 text-status-success' : 'bg-muted text-muted-foreground'
           )}
-          aria-hidden="true"
         >
-          {isComplete ? <Check size={14} /> : <Circle size={14} />}
+          <span className="sr-only">
+            {isComplete ? 'Phase complete: ' : 'Phase in progress: '}
+          </span>
+          {isComplete ? (
+            <Check size={14} aria-hidden="true" />
+          ) : (
+            <Circle size={14} aria-hidden="true" />
+          )}
         </span>
         <div className="flex-1 min-w-0 flex items-center gap-2 flex-wrap">
           <span
