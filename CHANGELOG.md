@@ -6,25 +6,11 @@ All notable changes to this project will be documented in this file.
 
 ## What's new — May 22, 2026
 
-**NIST Round 2 Additional Signature candidates now interactive in the Playground.** Four algorithm families that have never been hands-on-testable in the app are now wired into the key generator and sign/verify panel:
+Five additions across the Playground, Report, and Library:
 
-- **MAYO** (MAYO-1/2/3/5) — multivariate quadratic; the smallest public keys of any MQ scheme (MAYO-2: 5.4 kB pub, 180 B sig at Level 1). IoT and constrained-device story.
-- **CROSS** (6 balanced variants across RSDP + RSDPg families) — code-based signatures; structurally distinct from lattice and hash-tree constructions.
-- **OV / UOV** (Ip, Is, III, V) — multivariate base variants across all three NIST security levels.
-- **SNOVA** (24-5-4 / 29-6-5 / 49-11-3) — structured-MQ representatives at Levels 1, 3, and 5.
-
-Also added: **FN-DSA-padded** variants (Falcon constant-time signing — eliminates the timing side-channel present in standard Falcon) and **FrodoKEM-SHAKE** variants (complementing the existing AES variants). No new npm dependencies — all algorithms were already compiled into the installed `@oqs/liboqs-js@0.15.1` bundle.
-
----
-
-## What's new — May 22, 2026
-
-Two new library documents added and indexed:
-
-- **Preparing for Quantum Technologies — G7 Central Banks (May 2026).** Joint guidance from the Bank of Canada and Banque de France, issued through the G7 Cyber Expert Group. Covers PQC migration priorities for financial-sector participants including algorithm selection, hybrid transition strategies, and vendor readiness. Available in `/library` (ID: `G7-CB-QT-Financial-2026`).
-- **Quantum Threat: The Trillion-Dollar Security Race Is On — Citi GPS (January 2026).** Industry analysis covering the business and economic dimensions of PQC migration — market sizing, competitive dynamics, and risk exposure across financial services. Available in `/library` (ID: `Citi-GPS-Quantum-Threat-2026`).
-
-Both documents are fully enriched (migration urgency, algorithm coverage, regulatory dimension, deployment context) and searchable via the RAG corpus (now 11,245 chunks).
+- **NIST Round 2 Additional Signature candidates now interactive.** Four new algorithm families wired into the key generator and sign/verify panel: **MAYO** (MAYO-1/2/3/5, MQ-based, smallest public keys of any MQ scheme), **CROSS** (6 balanced variants across RSDP + RSDPg, code-based), **OV / UOV** (Ip/Is/III/V, multivariate), and **SNOVA** (24-5-4 / 29-6-5 / 49-11-3, structured-MQ). Also added: **FN-DSA-padded** (Falcon constant-time variants) and **FrodoKEM-SHAKE** (Level 1/3/5). No new npm dependencies — all were already in `@oqs/liboqs-js@0.15.1`.
+- **Report page shows a live progress bar on first load.** Comprehensive assessments can take 800–1500 ms to compute on slow machines. The pipeline now runs async with yields between each of its 16 stages, and the Report page renders an animated progress log during that window so you're not staring at a blank page.
+- **Two new library documents.** "Preparing for Quantum Technologies" (G7 Central Banks / Bank of Canada + Banque de France, May 2026) and "Quantum Threat: The Trillion-Dollar Security Race Is On" (Citi GPS, January 2026) — both enriched and searchable in `/library`.
 
 ---
 
