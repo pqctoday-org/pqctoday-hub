@@ -192,7 +192,7 @@ function classifyHttp(status: number | null): 'ok' | 'paywall' | 'error' {
 async function runWithConcurrency<T, R>(
   items: T[],
   limit: number,
-  worker: (item: T, idx: number) => Promise<R>
+  worker: (_item: T) => Promise<R>
 ): Promise<R[]> {
   const results: R[] = new Array(items.length)
   let cursor = 0
@@ -202,9 +202,7 @@ async function runWithConcurrency<T, R>(
       const i = cursor++
       if (i >= items.length) return
       // eslint-disable-next-line security/detect-object-injection
-      const item = items[i]
-      // eslint-disable-next-line security/detect-object-injection
-      results[i] = await worker(item, i)
+      results[i] = await worker(items[i])
     }
   }
 
