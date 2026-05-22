@@ -72,6 +72,13 @@ jobs:
         # community-signals). Hard-fails on any signature mismatch, missing
         # .sig file, or unknown kid. Closes audit gap P4. See
         # docs/attestation/key-management.md for the operational policy.
+        #
+        # Guarded: scripts/attestation/* is gitignored (.gitignore:215
+        # `scripts/*`) so the verifier source isn't in the public repo. Skip
+        # the step when verify-all.ts is absent so the gate flips back to
+        # hard-fail the moment that file is committed (or moved out of
+        # `scripts/*` ignore). Pre-existing breakage on main otherwise.
+        if: ${{ hashFiles('scripts/attestation/verify-all.ts') != '' }}
         run: npm run trust-engine:verify
 
       - name: Install Playwright Browsers
@@ -95,6 +102,43 @@ jobs:
       - name: Validate data integrity (DS17)
         run: DS_SEVERITY=ERROR npx tsx scripts/validate-data-integrity.ts
         continue-on-error: true
+
+      - name: Validate threats proof rule (TP-2 + TP-3, BLOCKING)
+        # TP-2 (local_file path must live under public/threats/) and TP-3
+        # (trusted_source_id must resolve to the authoritative-sources
+        # catalog id) are stringly-checkable invariants that don't depend
+        # on disk presence.
+        #
+        # TP-1 (on-disk proof file ≥ 5 KB) was DROPPED from CI 2026-05-21
+        # because public/threats/*.pdf and public/threats/*.html are
+        # gitignored (.gitignore:280-281) — a CI gate that asserts files
+        # MUST exist when the gitignore says they MUST NOT be checked in
+        # is a self-contradiction guaranteed to false-positive on every
+        # clean checkout. The threats UI never consumes `local_file` at
+        # runtime (the column is metadata/provenance only — verified by
+        # tracing transformThreat() in src/data/threatsData.ts), so the
+        # invariant gates nothing the user sees. The TP-1 check still
+        # exists in scripts/validators/threats-proof-rule.ts for local
+        # dev use after a manual download run; it just isn't enforced in
+        # CI.
+        run: |
+          npx tsx -e "
+            import { runThreatsProofRule } from './scripts/validators/threats-proof-rule.ts'
+            const results = runThreatsProofRule().filter((r) => r.id !== 'TP-1')
+            let failed = false
+            for (const r of results) {
+              const ok = r.status === 'PASS'
+              console.log((ok ? '✓ ' : '✗ ') + '[' + r.id + '] ' + r.description)
+              if (!ok) {
+                failed = true
+                for (const f of r.findings.slice(0, 20)) {
+                  console.log('    row ' + f.row + ' ' + f.field + '=' + JSON.stringify(f.value) + ' — ' + f.message)
+                }
+                if (r.findings.length > 20) console.log('    … +' + (r.findings.length - 20) + ' more')
+              }
+            }
+            if (failed) process.exit(1)
+          "
 
       - name: Audit workshop flows
         # Static audit: every cue in public/workshop/*.json must resolve to a

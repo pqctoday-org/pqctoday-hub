@@ -61,7 +61,7 @@ function resolveCountryParam(param: string | null, knownCountries: string[]): Re
   return { resolved: 'All', wasUnknown: param.toLowerCase() !== 'all' }
 }
 
-const TIMELINE_PERSONA_HINTS: Record<string, string> = {
+export const TIMELINE_PERSONA_HINTS: Record<string, string> = {
   executive:
     'Focus on regulatory deadlines — countries approaching 2025–2026 milestones need immediate procurement action.',
   developer:
@@ -70,6 +70,9 @@ const TIMELINE_PERSONA_HINTS: Record<string, string> = {
     'Map which countries have entered the Deploy or Validate phase — these migration patterns are production-ready.',
   researcher:
     'Toggle the region filter to compare migration velocity across blocs and identify adoption outliers.',
+  ops: 'Watch the Deploy phase column — countries entering it set the certificate-rotation clock for your fleet.',
+  curious:
+    'Each row is one country/region; bars show how far they have moved through five PQC migration phases.',
 }
 
 export const TimelineView = () => {

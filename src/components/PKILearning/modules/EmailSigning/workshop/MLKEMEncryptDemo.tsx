@@ -28,7 +28,12 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { ErrorAlert } from '@/components/ui/error-alert'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 import {
   CMSSigningService,
   isKemOnlyAlg,
@@ -95,6 +100,36 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
   const [stage, setStage] = useState<Stage>('idle')
   const [error, setError] = useState<string>('')
   const [result, setResult] = useState<StageResult>({})
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
+
+  const beginOp = (message: string) => {
+    const startedAt = performance.now()
+    setLogEntries((prev) => [...prev, { status: 'pending', message }])
+    return {
+      done: (label?: string) =>
+        setLogEntries((prev) => {
+          const next = [...prev]
+          const idx = next.length - 1
+          next[idx] = {
+            status: 'success',
+            message: label ?? message,
+            durationMs: Math.round(performance.now() - startedAt),
+          }
+          return next
+        }),
+      fail: (err: unknown) =>
+        setLogEntries((prev) => {
+          const next = [...prev]
+          const idx = next.length - 1
+          next[idx] = {
+            status: 'error',
+            message: `${message} — ${err instanceof Error ? err.message : String(err)}`,
+            durationMs: Math.round(performance.now() - startedAt),
+          }
+          return next
+        }),
+    }
+  }
 
   useEffect(() => {
     const svc = new CMSSigningService()
@@ -109,6 +144,7 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
     setStage('idle')
     setError('')
     setResult({})
+    setLogEntries([])
   }
 
   const needsCa = isKemOnlyAlg(alg)
@@ -118,16 +154,21 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
     if (!svc) return
     setError('')
     setResult({})
+    setLogEntries([])
+    let op = beginOp('Starting…')
     try {
       // KEM-only keys (ML-KEM-*, X25519) can't self-sign a cert, so we
       // mint an ML-DSA-65 CA first and issue Bob's KEM cert against it.
       // RSA can self-sign (it has both PSS sign and OAEP encrypt) — skip
       // the CA dance in that case.
       if (needsCa) {
+        op = beginOp(`Generating CA key (${CA_ALG})…`)
         setStage('ca-key')
         const caK = await svc.genKey(CA_ALG, CA_KEY_ID, useHsm)
         setResult((prev) => ({ ...prev, caKeyPem: caK.keyPem }))
+        op.done()
 
+        op = beginOp('Issuing CA certificate…')
         setStage('ca-cert')
         const caC = await svc.mkCert({
           keyId: CA_KEY_ID,
@@ -137,12 +178,18 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
           useHsm,
         })
         setResult((prev) => ({ ...prev, caCertPem: caC.certPem }))
+        op.done()
+      } else {
+        op.done('Skipped CA — alg self-signs')
       }
 
+      op = beginOp(`Generating recipient key (${alg})…`)
       setStage('genkey')
       const k = await svc.genKey(alg, KEY_ID, useHsm)
       setResult((prev) => ({ ...prev, keyPem: k.keyPem }))
+      op.done()
 
+      op = beginOp(needsCa ? 'Issuing CA-signed recipient cert…' : 'Issuing self-signed cert…')
       setStage('mkcert')
       const c = await svc.mkCert({
         keyId: KEY_ID,
@@ -155,7 +202,9 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
         issuerKeyId: needsCa ? CA_KEY_ID : undefined,
       })
       setResult((prev) => ({ ...prev, certPem: c.certPem }))
+      op.done()
 
+      op = beginOp(`Encrypting payload (${payload.length} bytes) with ${cipher}…`)
       setStage('encrypt')
       const e = await svc.encrypt({
         recipientCertId: CERT_ID,
@@ -163,7 +212,9 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
         cipher,
       })
       setResult((prev) => ({ ...prev, enveloped: e.enveloped }))
+      op.done(`Enveloped — ${e.enveloped.length} bytes (.p7m)`)
 
+      op = beginOp('Decrypting via recipient key…')
       setStage('decrypt')
       const d = await svc.decrypt({
         enveloped: e.enveloped,
@@ -177,9 +228,11 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
         decryptPayload: d.payload,
         decryptStderr: d.stderrTail,
       }))
+      op.done(d.ok ? 'Decrypt OK' : 'Decrypt completed (see result)')
 
       setStage('done')
     } catch (err) {
+      op.fail(err)
       setError(err instanceof Error ? err.message : String(err))
       setStage('error')
     }
@@ -299,12 +352,9 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
           />
         </label>
 
-        {error && (
-          <div className="flex items-start gap-2 rounded-md border border-status-error/30 bg-status-error/10 p-3 text-xs text-status-error">
-            <AlertTriangle size={14} className="mt-0.5 shrink-0" />
-            <pre className="flex-1 whitespace-pre-wrap font-mono">{error}</pre>
-          </div>
-        )}
+        {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} />}
+
+        {error && <ErrorAlert message={error} onRetry={run} />}
       </div>
 
       {(stage !== 'idle' || result.keyPem || result.caKeyPem) && (

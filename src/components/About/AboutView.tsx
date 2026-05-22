@@ -22,11 +22,11 @@ export function AboutView() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 md:space-y-8">
-      <AboutSection slug="release-notes">
-        <ReleaseNotesSection />
-      </AboutSection>
       <AboutSection slug="vision">
         <VisionSection />
+      </AboutSection>
+      <AboutSection slug="release-notes">
+        <ReleaseNotesSection />
       </AboutSection>
       <AboutSection slug="transparency">
         <TransparencySection />

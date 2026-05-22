@@ -38,6 +38,8 @@ export interface AssessmentFormState {
   infrastructure: string[]
   infrastructureUnknown: boolean
   infrastructureSubCategories: Record<string, string[]>
+  cryptoLibraries: string[]
+  infraAutomation: string[]
   vendorDependency: NonNullable<AssessmentInput['vendorDependency']> | ''
   vendorUnknown: boolean
   timelinePressure: NonNullable<AssessmentInput['timelinePressure']> | ''
@@ -76,6 +78,8 @@ export interface AssessmentFormState {
   toggleInfrastructure: (item: string) => void
   setInfrastructureUnknown: (val: boolean) => void
   setInfrastructureSubCategory: (layer: string, cats: string[]) => void
+  toggleCryptoLibrary: (lib: string) => void
+  toggleInfraAutomation: (tool: string) => void
   setVendorDependency: (dep: NonNullable<AssessmentInput['vendorDependency']>) => void
   setVendorUnknown: (val: boolean) => void
   setTimelinePressure: (pressure: NonNullable<AssessmentInput['timelinePressure']>) => void
@@ -116,6 +120,8 @@ const INITIAL_STATE = {
   infrastructure: [] as string[],
   infrastructureUnknown: false,
   infrastructureSubCategories: {} as Record<string, string[]>,
+  cryptoLibraries: [] as string[],
+  infraAutomation: [] as string[],
   vendorDependency: '' as NonNullable<AssessmentInput['vendorDependency']> | '',
   vendorUnknown: false,
   timelinePressure: '' as NonNullable<AssessmentInput['timelinePressure']> | '',
@@ -576,6 +582,22 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
           lastWizardUpdate: new Date().toISOString(),
         })),
 
+      toggleCryptoLibrary: (lib) =>
+        set((state) => ({
+          cryptoLibraries: state.cryptoLibraries.includes(lib)
+            ? state.cryptoLibraries.filter((l) => l !== lib)
+            : [...state.cryptoLibraries, lib],
+          lastWizardUpdate: new Date().toISOString(),
+        })),
+
+      toggleInfraAutomation: (tool) =>
+        set((state) => ({
+          infraAutomation: state.infraAutomation.includes(tool)
+            ? state.infraAutomation.filter((t) => t !== tool)
+            : [...state.infraAutomation, tool],
+          lastWizardUpdate: new Date().toISOString(),
+        })),
+
       setVendorDependency: (dep) =>
         set({
           vendorDependency: dep,
@@ -699,7 +721,7 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
     {
       name: 'pqc-assessment-form',
       storage: createJSONStorage(() => localStorage),
-      version: 1,
+      version: 2,
       migrate: (persistedState: unknown, version: number) => {
         let state = (persistedState ?? {}) as Record<string, unknown>
 
@@ -716,6 +738,12 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
         // compliance frameworks are shown (prevents unfiltered GSMA / all-frameworks display).
         if (!state.industry && ((state.currentStep as number) ?? 0) > 0) {
           state = { ...state, currentStep: 0 }
+        }
+
+        // V2: Add cryptoLibraries and infraAutomation toolchain arrays (Top-10 #10)
+        if (version < 2) {
+          if (!Array.isArray(state.cryptoLibraries)) state.cryptoLibraries = []
+          if (!Array.isArray(state.infraAutomation)) state.infraAutomation = []
         }
 
         return state
@@ -748,6 +776,8 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
         infrastructure: state.infrastructure,
         infrastructureUnknown: state.infrastructureUnknown,
         infrastructureSubCategories: state.infrastructureSubCategories,
+        cryptoLibraries: state.cryptoLibraries,
+        infraAutomation: state.infraAutomation,
         vendorDependency: state.vendorDependency,
         vendorUnknown: state.vendorUnknown,
         timelinePressure: state.timelinePressure,

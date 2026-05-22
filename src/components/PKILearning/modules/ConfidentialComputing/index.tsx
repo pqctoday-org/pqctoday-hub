@@ -230,6 +230,8 @@ export const ConfidentialComputingModule: React.FC = () => {
                 stepDescription={PARTS[currentPart].description}
                 stepIndex={currentPart}
                 totalSteps={PARTS.length}
+                steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
+                onStepClick={handlePartChange}
               />
               {currentPart === 0 && <TEEArchitectureExplorer key={`tee-arch-${configKey}`} />}
               {currentPart === 1 && <AttestationWorkshop key={`attestation-${configKey}`} />}

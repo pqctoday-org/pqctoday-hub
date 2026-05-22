@@ -191,6 +191,8 @@ export const PKIEnrollmentProtocolsModule: React.FC = () => {
                 stepDescription={WORKSHOP_STEPS[currentStep].description}
                 stepIndex={currentStep}
                 totalSteps={WORKSHOP_STEPS.length}
+                steps={WORKSHOP_STEPS.map((s) => ({ id: s.id, label: s.title }))}
+                onStepClick={handleStepChange}
               />
               {currentStep === 0 && <KeyGenStep onKeyReady={handleKeyReady} />}
               {currentStep === 1 && (

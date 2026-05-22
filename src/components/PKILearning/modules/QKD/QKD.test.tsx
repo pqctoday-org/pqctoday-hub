@@ -75,7 +75,9 @@ describe('QKDModule', () => {
   it('switches to Workshop tab on click', () => {
     renderModule()
     fireEvent.click(screen.getByText('Workshop'))
-    expect(screen.getByText('Part 1: BB84 Protocol')).toBeInTheDocument()
+    // Title renders in both the step heading (h2) and the stepper label,
+    // so use getAllByText after Gap A9 migration wired the WorkshopStepper.
+    expect(screen.getAllByText('Part 1: BB84 Protocol').length).toBeGreaterThan(0)
   })
 
   it('switches to Exercises tab on click', () => {

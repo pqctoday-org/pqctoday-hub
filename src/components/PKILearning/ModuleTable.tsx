@@ -154,7 +154,7 @@ export const ModuleTable = ({
             <th className="w-8 py-3 px-4" />
             <SortHeader label="Module" sk="title" sortKey={sortKey} onSort={handleSort} />
             <SortHeader
-              label="Track"
+              label="Path"
               sk="track"
               sortKey={sortKey}
               onSort={handleSort}
@@ -255,7 +255,7 @@ export const ModuleTable = ({
                   </div>
                 </td>
 
-                {/* Track */}
+                {/* Path */}
                 <td className="py-3 px-4 hidden md:table-cell">
                   <span
                     className={clsx(

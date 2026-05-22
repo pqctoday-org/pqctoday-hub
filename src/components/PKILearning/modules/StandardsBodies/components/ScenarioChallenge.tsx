@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { CheckCircle2, XCircle } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
+import { logQuizAnswer } from '@/utils/analytics'
 import { WORKSHOP_SCENARIOS } from '../data'
 
 export interface ScenarioAnswer {
@@ -53,6 +54,7 @@ export const ScenarioChallenge: React.FC<ScenarioChallengeProps> = ({
       answer.bodyType === scenario.correctBodyType &&
       answer.org === scenario.correctOrg &&
       answer.standard === scenario.correctStandard
+    logQuizAnswer(`standards-bodies:${scenario.id}`, isCorrect)
     updateAnswer({ submitted: true, correct: isCorrect })
   }
 

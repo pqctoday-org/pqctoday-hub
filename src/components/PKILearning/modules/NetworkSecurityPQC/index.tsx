@@ -239,6 +239,8 @@ export const NetworkSecurityPQCModule: React.FC = () => {
                 stepDescription={PARTS[currentPart].description}
                 stepIndex={currentPart}
                 totalSteps={PARTS.length}
+                steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
+                onStepClick={handlePartChange}
               />
               {currentPart === 0 && <NGFWCipherAnalyzer key={`ngfw-${configKey}`} />}
               {currentPart === 1 && <TLSInspectionLab key={`tls-${configKey}`} />}

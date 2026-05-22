@@ -1,26 +1,26 @@
 {
-  "generated": "2026-05-19T07:04:39.904Z",
-  "source": "src/data/quantum_threats_hsm_industries_05072026.csv",
+  "generated": "2026-05-21T16:44:53.206Z",
+  "source": "src/data/quantum_threats_hsm_industries_05212026.csv",
   "summary": {
     "downloaded": 0,
-    "skipped": 105,
-    "failed": 7,
-    "persisted_skip": 14
+    "skipped": 188,
+    "failed": 6,
+    "persisted_skip": 11
   },
   "entries": [
     {
       "threatId": "AERO-001",
       "title": "RTCA DO-326A / DO-356A Airworthiness Security",
-      "url": "https://www.rtca.org/wp-content/uploads/2020/02/DO-326A-Airworthiness-Security-Process-Specification.html",
-      "status": "cached",
-      "file": "public/threats/AERO-001.html"
+      "url": "https://www.faa.gov/aircraft/air_cert/design_approvals/dah/cybersecurity",
+      "status": "skipped",
+      "reason": "persisted: forbidden"
     },
     {
       "threatId": "AERO-002",
       "title": "NSA CNSA 2.0 Cybersecurity Advisory",
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/AERO-002.pdf"
     },
     {
       "threatId": "AERO-003",
@@ -60,72 +60,72 @@
     {
       "threatId": "CLOUD-001",
       "title": "Cloud Security Alliance Quantum-Safe Guidelines",
-      "url": "https://cloudsecurityalliance.org/research/working-groups/quantum-safe-security",
+      "url": "https://cloudsecurityalliance.org/research/topics/quantum-safe-security/",
       "status": "cached",
       "file": "public/threats/CLOUD-001.html"
     },
     {
       "threatId": "CLOUD-002",
       "title": "Cloud Security Alliance Quantum-Safe Security",
-      "url": "https://cloudsecurityalliance.org/research/working-groups/quantum-safe-security",
+      "url": "https://cloudsecurityalliance.org/research/topics/quantum-safe-security/",
       "status": "cached",
       "file": "public/threats/CLOUD-002.html"
     },
     {
       "threatId": "CLOUD-003",
       "title": "NIST IR 8547 / NIST SP 800-210",
-      "url": "https://csrc.nist.gov/pubs/ir/8547/ipd",
+      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf",
       "status": "cached",
-      "file": "public/threats/CLOUD-003.html"
+      "file": "public/threats/CLOUD-003.pdf"
     },
     {
       "threatId": "CLOUD-004",
       "title": "NIST SP 800-210 Cloud Access Control",
-      "url": "https://csrc.nist.gov/pubs/sp/800/210/final",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-210.pdf",
       "status": "cached",
-      "file": "public/threats/CLOUD-004.html"
+      "file": "public/threats/CLOUD-004.pdf"
     },
     {
       "threatId": "CROSS-001",
       "title": "IBM Institute for Business Value — Secure the Post-Quantum Future 2025",
-      "url": "https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/2025-quantum-safe-readiness",
+      "url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
       "status": "cached",
       "file": "public/threats/CROSS-001.html"
     },
     {
       "threatId": "CROSS-002",
-      "title": "NIST IR 8547 Transition to Post-Quantum Cryptography Standards",
-      "url": "https://csrc.nist.gov/pubs/ir/8547/ipd",
+      "title": "NIST IR 8547 (IPD, Nov 2024)",
+      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf",
       "status": "cached",
-      "file": "public/threats/CROSS-002.html"
+      "file": "public/threats/CROSS-002.pdf"
     },
     {
       "threatId": "CROSS-003",
       "title": "IBM Institute for Business Value — Secure the Post-Quantum Future 2025",
-      "url": "https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/2025-quantum-safe-readiness",
+      "url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
       "status": "cached",
       "file": "public/threats/CROSS-003.html"
     },
     {
       "threatId": "CROSS-004",
-      "title": "Global Risk Institute Quantum Threat Timeline 2025",
-      "url": "https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/",
+      "title": "GRI Quantum Threat Timeline Report 2024",
+      "url": "https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2024/",
       "status": "cached",
       "file": "public/threats/CROSS-004.html"
     },
     {
       "threatId": "CROSS-005",
       "title": "NIST FIPS 206 FN-DSA Status",
-      "url": "https://csrc.nist.gov/projects/pqc-dig-sig",
+      "url": "https://csrc.nist.gov/pubs/ir/8547/ipd",
       "status": "cached",
       "file": "public/threats/CROSS-005.html"
     },
     {
       "threatId": "CROSS-006",
       "title": "NIST Post-Quantum Cryptography Standardization",
-      "url": "https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption",
+      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf",
       "status": "cached",
-      "file": "public/threats/CROSS-006.html"
+      "file": "public/threats/CROSS-006.pdf"
     },
     {
       "threatId": "CROSS-007",
@@ -150,8 +150,8 @@
     },
     {
       "threatId": "CRYPTO-002",
-      "title": "Ethereum Foundation PQC Program",
-      "url": "https://ethereum.org/en/roadmap/future-proofing/",
+      "title": "Ethereum Foundation roadmap (account abstraction track)",
+      "url": "https://ethereum.org/roadmap/account-abstraction/",
       "status": "cached",
       "file": "public/threats/CRYPTO-002.html"
     },
@@ -171,7 +171,7 @@
     },
     {
       "threatId": "ENERGY-001",
-      "title": "IEC 62351 Power Systems Security Standards",
+      "title": "IEC 62351-3/-5/-9 (Power Systems Security)",
       "url": "https://webstore.iec.ch/publication/6912",
       "status": "cached",
       "file": "public/threats/ENERGY-001.html"
@@ -188,8 +188,8 @@
       "threatId": "ENERGY-003",
       "title": "University of Toronto Smart Grid Security Research",
       "url": "https://www.utoronto.ca/news/u-t-researcher-leads-effort-protect-power-utilities-quantum-attacks",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/ENERGY-003.html"
     },
     {
       "threatId": "ENERGY-004",
@@ -214,17 +214,17 @@
     },
     {
       "threatId": "FIN-003",
-      "title": "G7 Cyber Expert Group Statement (U.S. Treasury)",
-      "url": "https://home.treasury.gov/news/press-releases/sb0355",
+      "title": "BIS Papers No. 149 on Quantum Computing (Oct 2024)",
+      "url": "https://www.bis.org/publ/bppdf/bispap149.pdf",
       "status": "cached",
-      "file": "public/threats/FIN-003.html"
+      "file": "public/threats/FIN-003.pdf"
     },
     {
       "threatId": "FIN-004",
       "title": "NIST SP 800-227 KEM Recommendations",
-      "url": "https://csrc.nist.gov/pubs/sp/800/227/final",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-227.pdf",
       "status": "cached",
-      "file": "public/threats/FIN-004.html"
+      "file": "public/threats/FIN-004.pdf"
     },
     {
       "threatId": "FIN-005",
@@ -235,32 +235,31 @@
     },
     {
       "threatId": "AUS-FIN-001",
-      "title": "APRA CPS 234 + ASD ISM-1917",
-      "url": "https://www.apra.gov.au/cps-234-information-security",
-      "status": "failed",
-      "reason": "http-404",
-      "persistent": false
+      "title": "APRA CPS 234 + ASD ISM",
+      "url": "https://www.apra.gov.au/information-security",
+      "status": "cached",
+      "file": "public/threats/AUS-FIN-001.html"
     },
     {
       "threatId": "AUS-FIN-002",
       "title": "BIS Project Leap Phase 2 + FS-ISAC PQC Migration Timeline",
-      "url": "https://www.bis.org/publ/work1237.htm",
+      "url": "https://www.bis.org/publ/bppdf/bispap149.pdf",
       "status": "cached",
-      "file": "public/threats/AUS-FIN-002.html"
+      "file": "public/threats/AUS-FIN-002.pdf"
     },
     {
       "threatId": "GOV-001",
       "title": "NSA CNSA 2.0 Cybersecurity Advisory",
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/GOV-001.pdf"
     },
     {
       "threatId": "GOV-002",
       "title": "NSA CNSA 2.0 Guidance",
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/GOV-002.pdf"
     },
     {
       "threatId": "GOV-003",
@@ -280,16 +279,15 @@
       "threatId": "GOV-005",
       "title": "NSA CNSA 2.0 Cybersecurity Advisory",
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/GOV-005.pdf"
     },
     {
       "threatId": "AUS-GOV-001",
       "title": "ASD ACSC Annual Cyber Threat Report 2024–25",
       "url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/annual-cyber-threat-report-2024-2025",
-      "status": "failed",
-      "reason": "network-error: The operation was aborted due to timeout",
-      "persistent": false
+      "status": "cached",
+      "file": "public/threats/AUS-GOV-001.html"
     },
     {
       "threatId": "AUS-GOV-002",
@@ -309,7 +307,7 @@
     {
       "threatId": "HLTH-002",
       "title": "Thales 2025 Data Threat Report Healthcare Edition",
-      "url": "https://cpl.thalesgroup.com/healthcare-lifesciences-data-threat-report",
+      "url": "https://cpl.thalesgroup.com/data-threat-report",
       "status": "cached",
       "file": "public/threats/HLTH-002.html"
     },
@@ -343,7 +341,7 @@
     },
     {
       "threatId": "INS-002",
-      "title": "NY DFS Cybersecurity Regulation (23 NYCRR 500)",
+      "title": "NAIC Model Law #668 + IAIS Insurance Core Principles",
       "url": "https://www.dfs.ny.gov/industry_guidance/cybersecurity",
       "status": "cached",
       "file": "public/threats/INS-002.html"
@@ -371,10 +369,10 @@
     },
     {
       "threatId": "IOT-003",
-      "title": "IETF SUIT Working Group (RFC 9019)",
-      "url": "https://datatracker.ietf.org/wg/suit/",
+      "title": "IETF SUIT RFC 9019 + RFC 9644",
+      "url": "https://www.rfc-editor.org/rfc/rfc9019.txt",
       "status": "cached",
-      "file": "public/threats/IOT-003.html"
+      "file": "public/threats/IOT-003.txt"
     },
     {
       "threatId": "IOT-004",
@@ -407,23 +405,23 @@
     {
       "threatId": "IT-004",
       "title": "SLSA Supply Chain Security Framework (OpenSSF)",
-      "url": "https://slsa.dev/spec/v1.0/",
+      "url": "https://slsa.dev/spec/v1.0/levels",
       "status": "cached",
       "file": "public/threats/IT-004.html"
     },
     {
       "threatId": "IT-005",
       "title": "FIDO Alliance PQC Roadmap",
-      "url": "https://fidoalliance.org/white-paper-addressing-fido-alliances-technologies-in-post-quantum-world/",
-      "status": "cached",
-      "file": "public/threats/IT-005.html"
+      "url": "https://media.fidoalliance.org/wp-content/uploads/2025/01/FIDO_Alliance_White_Paper_Post-Quantum_Cryptography_Migration.pdf",
+      "status": "skipped",
+      "reason": "persisted: forbidden"
     },
     {
       "threatId": "LEG-001",
-      "title": "EU Regulation 910/2014 (eIDAS)",
-      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014R0910",
+      "title": "eIDAS Regulation EU 910/2014 + ETSI TS 119 312",
+      "url": "https://www.etsi.org/deliver/etsi_ts/119300_119399/119312/01.04.03_60/ts_119312v010403p.pdf",
       "status": "cached",
-      "file": "public/threats/LEG-001.html"
+      "file": "public/threats/LEG-001.pdf"
     },
     {
       "threatId": "LEG-002",
@@ -442,9 +440,9 @@
     {
       "threatId": "LEG-004",
       "title": "NIST SP 800-86 Guide to Integrating Forensic Techniques",
-      "url": "https://csrc.nist.gov/pubs/sp/800/86/final",
+      "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-86.pdf",
       "status": "cached",
-      "file": "public/threats/LEG-004.html"
+      "file": "public/threats/LEG-004.pdf"
     },
     {
       "threatId": "MEDIA-001",
@@ -490,7 +488,7 @@
     },
     {
       "threatId": "RAIL-001",
-      "title": "EN 50159 Railway Communication Security / ERA",
+      "title": "UNISIG Subset-037 / Subset-038 (ETCS Baseline 3)",
       "url": "https://www.era.europa.eu/domains/infrastructure/european-rail-traffic-management-system-ertms_en",
       "status": "cached",
       "file": "public/threats/RAIL-001.html"
@@ -512,16 +510,16 @@
     {
       "threatId": "RETAIL-002",
       "title": "NIST Cybersecurity Framework",
-      "url": "https://www.nist.gov/cyberframework",
+      "url": "https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29.pdf",
       "status": "cached",
-      "file": "public/threats/RETAIL-002.html"
+      "file": "public/threats/RETAIL-002.pdf"
     },
     {
       "threatId": "RETAIL-003",
       "title": "GS1 Global Standards",
       "url": "https://www.gs1.org/standards",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/RETAIL-003.html"
     },
     {
       "threatId": "SUPPLY-001",
@@ -547,16 +545,16 @@
     {
       "threatId": "TELCO-001",
       "title": "GSMA Security Guidelines",
-      "url": "https://www.gsma.com/solutions-and-impact/technologies/security/",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "url": "https://www.3gpp.org/specifications-technologies/specifications-by-series/security",
+      "status": "cached",
+      "file": "public/threats/TELCO-001.html"
     },
     {
       "threatId": "TELCO-002",
       "title": "GSMA Post-Quantum Telco Network Taskforce",
       "url": "https://www.gsma.com/solutions-and-impact/technologies/security/post-quantum-telco-network-task-force/",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/TELCO-002.html"
     },
     {
       "threatId": "TELCO-003",
@@ -569,28 +567,27 @@
       "threatId": "TELCO-004",
       "title": "GSMA eSIM Specification (SGP.22)",
       "url": "https://www.gsma.com/esim/",
-      "status": "skipped",
-      "reason": "generic-portal"
+      "status": "cached",
+      "file": "public/threats/TELCO-004.html"
     },
     {
       "threatId": "TELCO-005",
       "title": "ETSI ISG Quantum-Safe Cryptography / 3GPP",
-      "url": "https://www.etsi.org/technologies/quantum-safe-cryptography",
+      "url": "https://www.etsi.org/deliver/etsi_tr/103600_103699/103619/01.01.01_60/tr_103619v010101p.pdf",
       "status": "cached",
-      "file": "public/threats/TELCO-005.html"
+      "file": "public/threats/TELCO-005.pdf"
     },
     {
       "threatId": "WATER-001",
       "title": "EPA America's Water Infrastructure Act (AWIA) 2018 / CISA",
-      "url": "https://www.epa.gov/waterresilience/americas-water-infrastructure-act-2018-risk-assessments-and-emergency-response",
-      "status": "failed",
-      "reason": "http-404",
-      "persistent": false
+      "url": "https://www.epa.gov/waterresilience/awia-section-2013",
+      "status": "cached",
+      "file": "public/threats/WATER-001.html"
     },
     {
       "threatId": "WATER-002",
       "title": "AWWA Cybersecurity Guidance for Water Utilities",
-      "url": "https://www.awwa.org/resource/cybersecurity-guidance/",
+      "url": "https://www.cisa.gov/water",
       "status": "cached",
       "file": "public/threats/WATER-002.html"
     },
@@ -604,7 +601,7 @@
     {
       "threatId": "EDU-002",
       "title": "Internet2 InCommon Federation / Jisc Trust and Identity",
-      "url": "https://incommon.org/",
+      "url": "https://incommon.org/about",
       "status": "cached",
       "file": "public/threats/EDU-002.html"
     },
@@ -619,8 +616,8 @@
       "threatId": "EDU-004",
       "title": "CMMC 2.0 / NIST SP 800-171",
       "url": "https://dodcio.defense.gov/CMMC/",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/EDU-004.html"
     },
     {
       "threatId": "EDU-005",
@@ -646,9 +643,9 @@
     {
       "threatId": "CROSS-011",
       "title": "OpenSSH Post-Quantum Cryptography / GitHub Security",
-      "url": "https://github.blog/engineering/platform-security/post-quantum-security-for-ssh-access-on-github/",
+      "url": "https://www.openssh.com/txt/release-10.0",
       "status": "cached",
-      "file": "public/threats/CROSS-011.html"
+      "file": "public/threats/CROSS-011.txt"
     },
     {
       "threatId": "CROSS-012",
@@ -666,7 +663,7 @@
     },
     {
       "threatId": "RAIL-003",
-      "title": "UIC / ETSI FRMCS Specification",
+      "title": "ETSI TS 103 719 + 3GPP TS 22.289 / TS 23.289",
       "url": "https://www.globalrailwayreview.com/news/233331/frmcs-migration-rail-cyber-security/",
       "status": "cached",
       "file": "public/threats/RAIL-003.html"
@@ -675,22 +672,22 @@
       "threatId": "RAIL-004",
       "title": "FRA Positive Train Control Regulations (49 CFR 236)",
       "url": "https://railroads.dot.gov/elibrary/ptc-communications-cybersecurity-technology-review-and-concept-operations",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/RAIL-004.html"
     },
     {
       "threatId": "RAIL-005",
-      "title": "ISO/SAE 21434 / IEC 62443 Autonomous Rail",
+      "title": "IEEE 1474.x (CBTC Performance Requirements)",
       "url": "https://etech.iec.ch/issue/2025-02/cyber-security-for-autonomous-vehicles",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/RAIL-005.html"
     },
     {
       "threatId": "WATER-005",
       "title": "FERC Security Program for Hydropower Projects",
       "url": "https://www.ferc.gov/dam-safety-and-inspections/security-program-hydropower-projects",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/WATER-005.html"
     },
     {
       "threatId": "WATER-003",
@@ -715,21 +712,21 @@
     },
     {
       "threatId": "CI-002",
-      "title": "EU NIS2 Directive / ENISA PQC Guidance",
+      "title": "IEC 62351 series (Power Systems Security)",
       "url": "https://www.enisa.europa.eu/publications/post-quantum-cryptography-current-state-and-quantum-mitigation",
       "status": "cached",
       "file": "public/threats/CI-002.html"
     },
     {
       "threatId": "CI-003",
-      "title": "NIST SP 800-82 / IEC 62351 / ISA/IEC 62443",
+      "title": "TSA Security Directive SD-02C + PHMSA 49 CFR 192/195",
       "url": "https://www.nist.gov/publications/guide-operational-technology-ot-security",
       "status": "cached",
       "file": "public/threats/CI-003.html"
     },
     {
       "threatId": "CROSS-014",
-      "title": "NIST SP 800-57 Part 1 Rev 6 / Grover's algorithm (1996)",
+      "title": "NIST IR 8547 (IPD Nov 2024) + SP 800-131A Rev 2",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r6.ipd.pdf",
       "status": "cached",
       "file": "public/threats/CROSS-014.pdf"
@@ -744,9 +741,9 @@
     {
       "threatId": "CROSS-016",
       "title": "NIST SP 800-90A Rev 1 / NIST SP 800-90B",
-      "url": "https://csrc.nist.gov/publications/detail/sp/800-90a/rev-1/final",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90Ar1.pdf",
       "status": "cached",
-      "file": "public/threats/CROSS-016.html"
+      "file": "public/threats/CROSS-016.pdf"
     },
     {
       "threatId": "CROSS-017",
@@ -757,44 +754,620 @@
     },
     {
       "threatId": "CROSS-018",
-      "title": "NIST IR 8545 / BKZ 2.0 (Ducas-Nguyen 2011)",
-      "url": "https://csrc.nist.gov/pubs/ir/8545/final",
+      "title": "NIST SP 800-208 + NIST SP 800-213",
+      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2022/NIST.IR.8413-upd1.pdf",
       "status": "cached",
-      "file": "public/threats/CROSS-018.html"
+      "file": "public/threats/CROSS-018.pdf"
     },
     {
       "threatId": "HSM-001",
       "title": "NIST FIPS 140-3 Physical Security Requirements / IACR PQC fault attack research",
-      "url": "https://csrc.nist.gov/publications/detail/fips/140/3/final",
+      "url": "https://csrc.nist.gov/csrc/media/Projects/cryptographic-module-validation-program/documents/fips%20140-3/FIPS%20140-3%20IG.pdf",
       "status": "cached",
-      "file": "public/threats/HSM-001.html"
+      "file": "public/threats/HSM-001.pdf"
     },
     {
       "threatId": "IOT-005",
-      "title": "NIST SP 800-232 / ETSI EN 303 645 IoT Security / IETF SUIT WG",
+      "title": "NIST SP 800-213 + NISTIR 8259A",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-232.pdf",
       "status": "cached",
       "file": "public/threats/IOT-005.pdf"
     },
     {
       "threatId": "AUS-TEL-001",
-      "title": "ASD ISM-1917 + SOCI Act Critical Infrastructure Obligations",
-      "url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-cryptography",
-      "status": "failed",
-      "reason": "network-error: The operation was aborted due to timeout",
-      "persistent": false
+      "title": "SOCI Act 2018 + CIRMP Rules 2023",
+      "url": "https://www.legislation.gov.au/F2023L00112/asmade/text",
+      "status": "cached",
+      "file": "public/threats/AUS-TEL-001.html"
     },
     {
       "threatId": "IT-006",
       "title": "IACR ePrint / NIST PQC Security Analysis",
       "url": "https://eprint.iacr.org/",
-      "status": "skipped",
-      "reason": "root-homepage"
+      "status": "cached",
+      "file": "public/threats/IT-006.html"
     },
     {
       "threatId": "HSM-002",
       "title": "PKCS#11 v3.2 Specification / NIST SP 800-227",
-      "url": "https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/os/pkcs11-spec-v3.2-os.html",
+      "url": "https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/cs01/pkcs11-spec-v3.2-cs01.html",
+      "status": "cached",
+      "file": "public/threats/HSM-002.html"
+    },
+    {
+      "threatId": "THREAT-CI-126",
+      "title": "Smart Energy International / University of Toronto",
+      "url": "https://www.utoronto.ca/news/u-t-researchers-lead-quantum-security-project-protect-power-grids",
+      "status": "skipped",
+      "reason": "persisted: forbidden"
+    },
+    {
+      "threatId": "THREAT-HSM-126",
+      "title": "ABI Research HSM Analysis 2025",
+      "url": "https://www.abiresearch.com/blog/quantum-security-for-hardware-security-modules-hsms",
+      "status": "cached",
+      "file": "public/threats/THREAT-HSM-126.html"
+    },
+    {
+      "threatId": "AERO-004",
+      "title": "Boeing Quantum Computing Integration",
+      "url": "https://patentpc.com/blog/quantum-computing-in-aerospace-how-nasa-spacex-and-boeing-are-using-quantum-tech",
+      "status": "cached",
+      "file": "public/threats/AERO-004.html"
+    },
+    {
+      "threatId": "AERO-005",
+      "title": "FAA UAS Security Requirements",
+      "url": "https://www.faa.gov/uas/",
+      "status": "skipped",
+      "reason": "persisted: forbidden"
+    },
+    {
+      "threatId": "AERO-006",
+      "title": "SpaceX Starlink Quantum Security",
+      "url": "https://patentpc.com/blog/quantum-computing-in-aerospace-how-nasa-spacex-and-boeing-are-using-quantum-tech",
+      "status": "cached",
+      "file": "public/threats/AERO-006.html"
+    },
+    {
+      "threatId": "AERO-007",
+      "title": "Airbus EuroQCI Leadership",
+      "url": "https://www.airbus.com/en/newsroom/press-releases/2023/12/airbus-leads-consortium-to-deploy-quantum-communication-infrastructure-euroqci",
+      "status": "failed",
+      "reason": "http-404",
+      "persistent": false
+    },
+    {
+      "threatId": "AUTO-005",
+      "title": "CCC Digital Key 4.0",
+      "url": "https://carconnectivity.org/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "AUTO-006",
+      "title": "CharIN e.V. ISO 15118",
+      "url": "https://www.charin.global/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "AUTO-007",
+      "title": "PlaxidityX Autonomous Vehicle Security",
+      "url": "https://plaxidityx.com/blog/vehicle-vulnerability-management/how-quantum-computing-could-affect-the-automotive-landscape/",
+      "status": "cached",
+      "file": "public/threats/AUTO-007.html"
+    },
+    {
+      "threatId": "AUTO-008",
+      "title": "AIAG Cybersecurity Standards",
+      "url": "https://www.aiag.org/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "AUTO-009",
+      "title": "SAE Vehicle Cybersecurity",
+      "url": "https://www.sae.org/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "CLOUD-005",
+      "title": "Veeam Quantum-Safe Backup",
+      "url": "https://www.techtarget.com/searchdatabackup/feature/The-future-of-quantum-data-centers-Resilience-and-risk",
+      "status": "cached",
+      "file": "public/threats/CLOUD-005.html"
+    },
+    {
+      "threatId": "CLOUD-006",
+      "title": "Thales 2025 Data Threat Report",
+      "url": "https://cpl.thalesgroup.com/blog/data-security/ai-quantum-2025-data-threat-report",
+      "status": "cached",
+      "file": "public/threats/CLOUD-006.html"
+    },
+    {
+      "threatId": "CLOUD-007",
+      "title": "Cloud Database Security Standards",
+      "url": "https://www.cio.com/article/4058010/outpacing-risk-how-ai-quantum-and-cloud-are-reshaping-data-security-today.html",
+      "status": "cached",
+      "file": "public/threats/CLOUD-007.html"
+    },
+    {
+      "threatId": "CLOUD-008",
+      "title": "Quantum Data Center Integration",
+      "url": "https://www.spglobal.com/en/research-insights/special-reports/look-forward/data-center-frontiers/quantum-data-centers-disrupting-future",
+      "status": "skipped",
+      "reason": "persisted: forbidden"
+    },
+    {
+      "threatId": "CLOUD-009",
+      "title": "Thales Cloud Security Report",
+      "url": "https://cpl.thalesgroup.com/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "CLOUD-010",
+      "title": "Northwestern QubitVise Research",
+      "url": "https://thequantuminsider.com/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "CRYPTO-005",
+      "title": "NIST Threshold Cryptography",
+      "url": "https://csrc.nist.gov/projects/threshold-cryptography",
+      "status": "cached",
+      "file": "public/threats/CRYPTO-005.html"
+    },
+    {
+      "threatId": "CRYPTO-006",
+      "title": "Ledger Security",
+      "url": "https://www.ledger.com/academy/security",
+      "status": "cached",
+      "file": "public/threats/CRYPTO-006.html"
+    },
+    {
+      "threatId": "CRYPTO-007",
+      "title": "Bitcoin Improvement Proposals",
+      "url": "https://github.com/bitcoin/bips",
+      "status": "cached",
+      "file": "public/threats/CRYPTO-007.html"
+    },
+    {
+      "threatId": "CRYPTO-008",
+      "title": "Bitcoin Multi-sig",
+      "url": "https://bitcoinops.org/en/topics/multisignature/",
+      "status": "cached",
+      "file": "public/threats/CRYPTO-008.html"
+    },
+    {
+      "threatId": "CRYPTO-009",
+      "title": "Ethereum L2 Security",
+      "url": "https://l2beat.com/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "ENERGY-005",
+      "title": "IEEE 2030.5 Smart Energy Profile",
+      "url": "https://standards.ieee.org/ieee/2030.5/5897/",
+      "status": "cached",
+      "file": "public/threats/ENERGY-005.html"
+    },
+    {
+      "threatId": "ENERGY-006",
+      "title": "NRC Cybersecurity Requirements",
+      "url": "https://www.nrc.gov/security/cyber-security.html",
+      "status": "failed",
+      "reason": "http-404",
+      "persistent": false
+    },
+    {
+      "threatId": "ENERGY-007",
+      "title": "ENTSO-E Security Guidelines",
+      "url": "https://www.entsoe.eu/network_codes/",
+      "status": "cached",
+      "file": "public/threats/ENERGY-007.html"
+    },
+    {
+      "threatId": "ENERGY-008",
+      "title": "Smart Grid Security Standards",
+      "url": "https://www.nist.gov/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "ENERGY-009",
+      "title": "University of Toronto Grid Security",
+      "url": "https://www.utoronto.ca/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "FIN-009",
+      "title": "BIS Innovation Hub Project Leap",
+      "url": "https://www.bis.org/publ/bisbull88.htm",
+      "status": "cached",
+      "file": "public/threats/FIN-009.html"
+    },
+    {
+      "threatId": "FIN-010",
+      "title": "IBM Quantum Safe Migration",
+      "url": "https://www.theasianbanker.com/updates-and-articles/ibm-urges-financial-institutions-to-prepare-for-quantum-safe-transition",
+      "status": "cached",
+      "file": "public/threats/FIN-010.html"
+    },
+    {
+      "threatId": "FIN-011",
+      "title": "Federal Reserve Quantum Report",
+      "url": "https://www.atlantafed.org/blogs/take-on-payments/2025/02/03/quantum-payments--leap-into-future",
+      "status": "failed",
+      "reason": "http-404",
+      "persistent": false
+    },
+    {
+      "threatId": "FIN-012",
+      "title": "IBM Financial Sector Analysis",
+      "url": "https://www.ibm.com/quantum/quantum-safe",
+      "status": "cached",
+      "file": "public/threats/FIN-012.html"
+    },
+    {
+      "threatId": "FIN-013",
+      "title": "Bank for International Settlements",
+      "url": "https://www.bis.org/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "FIN-014",
+      "title": "G7 Cyber Expert Group Statement (U.S. Treasury)",
+      "url": "https://home.treasury.gov/news/press-releases/sb0355",
+      "status": "cached",
+      "file": "public/threats/FIN-014.html"
+    },
+    {
+      "threatId": "GOV-006",
+      "title": "CISA Post-Quantum Cryptography Initiative",
+      "url": "https://www.cisa.gov/quantum",
+      "status": "cached",
+      "file": "public/threats/GOV-006.html"
+    },
+    {
+      "threatId": "GOV-007",
+      "title": "NIST PQC Standardization",
+      "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
+      "status": "cached",
+      "file": "public/threats/GOV-007.html"
+    },
+    {
+      "threatId": "GOV-008",
+      "title": "NIST SP 800-208 Stateful HBS",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-208.pdf",
+      "status": "cached",
+      "file": "public/threats/GOV-008.pdf"
+    },
+    {
+      "threatId": "GOV-009",
+      "title": "Aerospace Corporation QKD Report",
+      "url": "https://aerospace.org/article/unlocking-quantum-key-distribution-space-asset-cybersecurity",
+      "status": "skipped",
+      "reason": "persisted: forbidden"
+    },
+    {
+      "threatId": "GOV-010",
+      "title": "UK Quantum Navigation Program",
+      "url": "https://www.aerospacetestinginternational.com/features/how-quantum-sensors-will-unlock-aviations-potential.html",
+      "status": "cached",
+      "file": "public/threats/GOV-010.html"
+    },
+    {
+      "threatId": "GOV-011",
+      "title": "NSA CNSA 2.0 Guidance",
+      "url": "https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF",
+      "status": "skipped",
+      "reason": "persisted: forbidden"
+    },
+    {
+      "threatId": "GOV-012",
+      "title": "CISA Quantum Initiative",
+      "url": "https://www.cisa.gov/quantum",
+      "status": "cached",
+      "file": "public/threats/GOV-012.html"
+    },
+    {
+      "threatId": "HLTH-008",
+      "title": "Quantum Cryptography Medical Devices",
+      "url": "https://www.nature.com/articles/s41746-025-02082-3",
+      "status": "cached",
+      "file": "public/threats/HLTH-008.html"
+    },
+    {
+      "threatId": "HLTH-009",
+      "title": "SEALSQ Medical PQC Integration",
+      "url": "https://www.globenewswire.com/news-release/2025/12/11/3203926/0/en/SEALSQ-Enters-the-Healthcare-Industry-Through-IC-Alps-Delivering-Custom-Integrated-Chip-Solutions-and-Post-Quantum-Protection-for-Next-Generation-Medical-Devices.html",
+      "status": "cached",
+      "file": "public/threats/HLTH-009.html"
+    },
+    {
+      "threatId": "HLTH-010",
+      "title": "FDA Medical Device Quantum Compliance",
+      "url": "https://www.medcrypt.com/blog/preparing-for-the-post-quantum-era-what-medical-device-manufacturers-need-to-know",
+      "status": "cached",
+      "file": "public/threats/HLTH-010.html"
+    },
+    {
+      "threatId": "HLTH-011",
+      "title": "Thales Healthcare Data Threat Report",
+      "url": "https://www.cdotrends.com/story/4822/healthcares-data-breach-victory-lap-gets-crashed-quantum-computing",
+      "status": "cached",
+      "file": "public/threats/HLTH-011.html"
+    },
+    {
+      "threatId": "HLTH-012",
+      "title": "Thales Healthcare Data Threat Report",
+      "url": "https://cpl.thalesgroup.com/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "HLTH-013",
+      "title": "FDA Medical Device Cybersecurity",
+      "url": "https://www.fda.gov/medical-devices/digital-health-center-excellence/cybersecurity",
+      "status": "cached",
+      "file": "public/threats/HLTH-013.html"
+    },
+    {
+      "threatId": "HLTH-014",
+      "title": "FDA Premarket Cybersecurity Guidance 2023",
+      "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/cybersecurity-medical-devices-quality-system-considerations-and-content-premarket-submissions",
+      "status": "cached",
+      "file": "public/threats/HLTH-014.html"
+    },
+    {
+      "threatId": "INS-004",
+      "title": "NAIC Cybersecurity Model Law",
+      "url": "https://content.naic.org/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "INS-005",
+      "title": "Insurance Blockchain Standards",
+      "url": "https://www.bis.org/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "IOT-006",
+      "title": "IEEE BAN Security",
+      "url": "https://standards.ieee.org/ieee/802.15.6/5752/",
+      "status": "cached",
+      "file": "public/threats/IOT-006.html"
+    },
+    {
+      "threatId": "IOT-007",
+      "title": "ETSI MEC Security",
+      "url": "https://www.etsi.org/technologies/multi-access-edge-computing",
+      "status": "cached",
+      "file": "public/threats/IOT-007.html"
+    },
+    {
+      "threatId": "IOT-008",
+      "title": "Smart Meter PQC Migration",
+      "url": "https://iotbreakthrough.com/is-iot-finally-secure-what-2025-taught-us-about-cyber-risk-in-connected-devices/",
+      "status": "cached",
+      "file": "public/threats/IOT-008.html"
+    },
+    {
+      "threatId": "IOT-009",
+      "title": "IoT Security Breakthrough",
+      "url": "https://iotbusinessnews.com/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "IT-007",
+      "title": "CA/Browser Forum PQC Requirements",
+      "url": "https://cabforum.org/",
+      "status": "skipped",
+      "reason": "generic-portal"
+    },
+    {
+      "threatId": "IT-008",
+      "title": "NIST FIPS 203/204/205 Post-Quantum Cryptography Standards",
+      "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
+      "status": "cached",
+      "file": "public/threats/IT-008.html"
+    },
+    {
+      "threatId": "IT-009",
+      "title": "PQShield Authentication Analysis",
+      "url": "https://pqshield.com/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "IT-010",
+      "title": "IBM Quantum Safe Migration Guide",
+      "url": "https://www.ibm.com/quantum/quantum-safe",
+      "status": "cached",
+      "file": "public/threats/IT-010.html"
+    },
+    {
+      "threatId": "LEG-005",
+      "title": "World Bank Land Administration",
+      "url": "https://www.worldbank.org/en/topic/land",
+      "status": "cached",
+      "file": "public/threats/LEG-005.html"
+    },
+    {
+      "threatId": "LEG-006",
+      "title": "National Notary Association",
+      "url": "https://www.nationalnotary.org/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "LEG-007",
+      "title": "EU Digital Identity Framework",
+      "url": "https://commission.europa.eu/strategy-and-policy/priorities-2019-2024/europe-fit-digital-age/european-digital-identity_en",
+      "status": "cached",
+      "file": "public/threats/LEG-007.html"
+    },
+    {
+      "threatId": "LEG-008",
+      "title": "AIIM Information Management",
+      "url": "https://www.aiim.org/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "MEDIA-004",
+      "title": "DVB Specifications",
+      "url": "https://dvb.org/specifications/",
+      "status": "cached",
+      "file": "public/threats/MEDIA-004.html"
+    },
+    {
+      "threatId": "MEDIA-005",
+      "title": "Content Delivery & Security Association",
+      "url": "https://www.mesalliance.org/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "MEDIA-006",
+      "title": "ARM TrustZone",
+      "url": "https://developer.arm.com/Architectures/TrustZone",
+      "status": "cached",
+      "file": "public/threats/MEDIA-006.html"
+    },
+    {
+      "threatId": "MEDIA-007",
+      "title": "Common Encryption CENC",
+      "url": "https://www.iso.org/standard/84637.html",
+      "status": "cached",
+      "file": "public/threats/MEDIA-007.html"
+    },
+    {
+      "threatId": "MEDIA-008",
+      "title": "Consumer Technology Association",
+      "url": "https://www.cta.tech/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "PCI-004",
+      "title": "PCI DSS 4.0 Tokenization Guidance",
+      "url": "https://www.pcisecuritystandards.org/document_library/?document=pci_dss",
+      "status": "cached",
+      "file": "public/threats/PCI-004.html"
+    },
+    {
+      "threatId": "PCI-005",
+      "title": "PCI DSS 4.0 Requirement 4.2",
+      "url": "https://www.pcisecuritystandards.org/document_library/?document=pci_dss",
+      "status": "cached",
+      "file": "public/threats/PCI-005.html"
+    },
+    {
+      "threatId": "PCI-006",
+      "title": "PCI PTS Device Security Requirements",
+      "url": "https://www.pcisecuritystandards.org/document_library/?category=pts_702c_device_702c_security",
+      "status": "cached",
+      "file": "public/threats/PCI-006.html"
+    },
+    {
+      "threatId": "RETAIL-004",
+      "title": "OWASP Mobile Security",
+      "url": "https://owasp.org/www-project-mobile-top-10/",
+      "status": "cached",
+      "file": "public/threats/RETAIL-004.html"
+    },
+    {
+      "threatId": "RETAIL-005",
+      "title": "E-Commerce Security Standards",
+      "url": "https://www.w3.org/standards/",
+      "status": "cached",
+      "file": "public/threats/RETAIL-005.html"
+    },
+    {
+      "threatId": "SUPPLY-004",
+      "title": "RIA Robot Security Standards",
+      "url": "https://www.robotics.org/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "SUPPLY-005",
+      "title": "Supply Chain Cyber Standards",
+      "url": "https://www.iso.org/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "TELCO-006",
+      "title": "5G Americas Telecom Security",
+      "url": "https://www.gsma.com/security/post-quantum-telco-network-taskforce/",
+      "status": "skipped",
+      "reason": "persisted: forbidden"
+    },
+    {
+      "threatId": "TELCO-007",
+      "title": "Ericsson Quantum Impact on 5G/6G",
+      "url": "https://www.ericsson.com/en/reports-and-papers/further-insights/impact-of-quantum-computing-on-5g-6g-security",
+      "status": "skipped",
+      "reason": "persisted: forbidden"
+    },
+    {
+      "threatId": "TELCO-008",
+      "title": "Telefonica Quantum-Safe Networks",
+      "url": "https://telecomanalysis.net/2025/08/04/the-quantum-threat-landscape-understanding-the-urgency/",
+      "status": "cached",
+      "file": "public/threats/TELCO-008.html"
+    },
+    {
+      "threatId": "TELCO-009",
+      "title": "5G Americas White Paper",
+      "url": "https://www.5gamericas.org/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "TELCO-010",
+      "title": "Ericsson 6G Security Research",
+      "url": "https://www.ericsson.com/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "threatId": "THREAT-FIN-126",
+      "title": "Federal Reserve Board FEDS Paper September 2025",
+      "url": "https://www.federalreserve.gov/econres/feds/harvest-now-decrypt-later-examining-post-quantum-cryptography-and-the-data-privacy-risks-for-distributed-ledger-networks.htm",
+      "status": "cached",
+      "file": "public/threats/THREAT-FIN-126.html"
+    },
+    {
+      "threatId": "THREAT-FIN-127",
+      "title": "FS-ISAC White Paper September 2025",
+      "url": "https://www.fsisac.com/hubfs/Knowledge/PQC/PreparingForAPostQuantumWorldByManagingCryptographicRisk.pdf",
+      "status": "cached",
+      "file": "public/threats/THREAT-FIN-127.pdf"
+    },
+    {
+      "threatId": "THREAT-GOV-126",
+      "title": "CISA/ATARC October 2025",
+      "url": "https://www.cisa.gov/quantum",
+      "status": "cached",
+      "file": "public/threats/THREAT-GOV-126.html"
+    },
+    {
+      "threatId": "THREAT-HC-126",
+      "title": "Thales 2025 Data Threat Report Healthcare Edition",
+      "url": "https://cpl.thalesgroup.com/resources/healthcare-data-threat-report",
       "status": "failed",
       "reason": "http-404",
       "persistent": false

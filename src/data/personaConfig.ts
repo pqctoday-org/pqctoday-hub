@@ -15,6 +15,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/business',
     '/assess',
     '/report',
+    '/algorithms',
     '/library',
     '/leaders',
     '/patents',
@@ -54,11 +55,23 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/assess',
     '/report',
     '/library',
+    '/leaders',
     '/playground',
     '/openssl',
     '/revisions',
   ],
-  curious: ['/explore', '/compliance', '/assess', '/report', '/library', '/leaders', '/revisions'],
+  curious: [
+    '/explore',
+    '/compliance',
+    '/assess',
+    '/report',
+    '/algorithms',
+    '/library',
+    '/leaders',
+    '/migrate',
+    '/playground',
+    '/revisions',
+  ],
 }
 
 /**

@@ -17,6 +17,7 @@ import {
   Container,
 } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
+import { PreviewBanner } from '../common/PreviewBanner'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { EmptyState } from '../ui/empty-state'
@@ -24,6 +25,7 @@ import { ReviewedBadge } from '../ui/ReviewedBadge'
 import { WORKSHOP_TOOLS, CATEGORIES, type ToolDifficulty } from './workshopRegistry'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { logEvent, personaLabel } from '@/utils/analytics'
 import type { PersonaId } from '@/data/learningPersonas'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 
@@ -138,8 +140,23 @@ const CuriousStartHere = () => {
     {
       n: 1,
       id: 'qrng-demo',
-      title: 'QRNG Demo',
-      caption: 'Visualise how randomness underpins all cryptographic security.',
+      title: 'See where randomness comes from',
+      caption:
+        'Quantum random numbers — the raw material every encryption key depends on. Watch one being made.',
+    },
+    {
+      n: 2,
+      id: 'tls-simulator',
+      title: 'Watch a website handshake',
+      caption:
+        'Every padlock icon hides a 50-millisecond conversation between browser and server. Step through it.',
+    },
+    {
+      n: 3,
+      id: 'hybrid-encrypt',
+      title: 'Try hybrid (old + new) encryption',
+      caption:
+        "How the world is migrating: keep today's algorithms running side-by-side with the new quantum-safe ones.",
     },
   ]
   return (
@@ -386,6 +403,10 @@ export const PlaygroundWorkshop = () => {
         shareText="Run real post-quantum cryptographic operations in your browser — key generation, PKCS#11 HSM, ML-KEM, ML-DSA and more via WASM."
       />
 
+      {selectedPersona === 'curious' && (
+        <PreviewBanner pageContext="Developer, Architect, Ops, Researcher" />
+      )}
+
       {/* Two-column layout on desktop: sticky left category sidebar + main content */}
       <div className="flex gap-6 items-start">
         {/* ── Left category sidebar (desktop only) ── */}
@@ -621,6 +642,7 @@ export const PlaygroundWorkshop = () => {
                       <div key={tool.id} className="relative">
                         <Link
                           to={`/playground/${tool.id}`}
+                          onClick={() => logEvent('Playground', 'Tool Open', personaLabel(tool.id))}
                           className="glass-panel p-4 h-auto text-left hover:border-primary/40 transition-colors cursor-pointer group items-start justify-start flex"
                         >
                           <div className="flex items-start gap-3 w-full">

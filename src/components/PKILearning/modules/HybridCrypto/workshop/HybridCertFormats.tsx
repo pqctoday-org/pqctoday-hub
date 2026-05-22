@@ -27,6 +27,7 @@ import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { Button } from '@/components/ui/button'
+import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
 
 const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
 
@@ -414,6 +415,27 @@ export const HybridCertFormats: React.FC = () => {
             standardization, and security properties.
           </p>
         </div>
+
+        <WhyThisMatters
+          title="Why Hybrid Certificates? Migration Without Breaking Relying Parties"
+          variant="info"
+        >
+          <p>
+            A &quot;harvest now, decrypt later&quot; adversary recording TLS today can break
+            RSA/ECDSA signatures retroactively once a cryptographically-relevant quantum computer
+            exists. Hybrid certificates let you deploy PQC signatures <em>without</em> abandoning
+            classical trust anchors — relying parties that don&apos;t support ML-DSA still validate
+            the RSA/ECDSA component, while PQC-capable clients get full quantum resistance.
+          </p>
+          <p className="mt-2">
+            Three approaches are compared here: <strong>dual-cert</strong> (two separate X.509
+            certificates, widest compatibility), <strong>catalyst/chameleon</strong> (classical cert
+            with a non-critical PQC extension — transparent to legacy verifiers), and{' '}
+            <strong>LAMPS composite</strong> (single OID, both algorithms required — strongest
+            binding, defined in draft-ietf-lamps-pq-composite-sigs). Pick the format that matches
+            your relying-party upgrade horizon.
+          </p>
+        </WhyThisMatters>
 
         {/* HSM not ready hint */}
         {!hsm.isReady && (

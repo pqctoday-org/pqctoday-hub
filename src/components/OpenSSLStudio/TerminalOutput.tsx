@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useOpenSSLStore } from './store'
-import { Trash2 } from 'lucide-react'
+import { Trash2, Copy, Check } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 
@@ -18,6 +18,15 @@ export const TerminalOutput = () => {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight
     }
   }, [logs, showStdout, showStderr, showDebug])
+
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [copiedAll, setCopiedAll] = useState(false)
+
+  const copyLine = useCallback(async (id: string, text: string) => {
+    await navigator.clipboard.writeText(text)
+    setCopiedId(id)
+    setTimeout(() => setCopiedId(null), 1500)
+  }, [])
 
   const filteredLogs = logs.filter((log) => {
     const isDebug = log.message.startsWith('[Debug]')
@@ -87,13 +96,30 @@ export const TerminalOutput = () => {
           </label>
         </div>
 
-        <Button
-          variant="ghost"
-          onClick={clearTerminalLogs}
-          className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
-        >
-          <Trash2 size={12} /> Clear
-        </Button>
+        <div className="flex items-center gap-1">
+          {filteredLogs.length > 0 && (
+            <Button
+              variant="ghost"
+              onClick={async () => {
+                await navigator.clipboard.writeText(filteredLogs.map((l) => l.message).join('\n'))
+                setCopiedAll(true)
+                setTimeout(() => setCopiedAll(false), 1500)
+              }}
+              className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+              aria-label="Copy all output"
+            >
+              {copiedAll ? <Check size={12} className="text-status-success" /> : <Copy size={12} />}
+              {copiedAll ? 'Copied' : 'Copy all'}
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            onClick={clearTerminalLogs}
+            className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+          >
+            <Trash2 size={12} /> Clear
+          </Button>
+        </div>
       </div>
 
       {/* Logs Area */}
@@ -145,10 +171,11 @@ export const TerminalOutput = () => {
             <colgroup>
               <col className="w-24 sm:w-40" />
               <col className="w-auto" />
+              <col className="w-7" />
             </colgroup>
             <tbody className="divide-y divide-border" data-testid="terminal-logs">
               {filteredLogs.map((log) => (
-                <tr key={log.id} className="hover:bg-muted/30 transition-colors">
+                <tr key={log.id} className="group hover:bg-muted/30 transition-colors">
                   <td className="px-1.5 sm:px-3 py-1 text-foreground/30 align-top whitespace-nowrap font-mono text-[9px] sm:text-[10px] select-none border-r border-border">
                     [{log.timestamp}]
                   </td>
@@ -163,6 +190,21 @@ export const TerminalOutput = () => {
                     )}
                   >
                     {log.message}
+                  </td>
+                  <td className="px-1 py-1 align-top w-7">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyLine(log.id, log.message)}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 h-auto min-h-0 rounded text-muted-foreground hover:text-foreground"
+                      aria-label="Copy line"
+                    >
+                      {copiedId === log.id ? (
+                        <Check size={11} className="text-status-success" />
+                      ) : (
+                        <Copy size={11} />
+                      )}
+                    </Button>
                   </td>
                 </tr>
               ))}

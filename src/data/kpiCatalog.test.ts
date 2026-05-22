@@ -174,6 +174,22 @@ describe('getKpiSet', () => {
     expect(ids.length).toBeGreaterThan(0)
     expect(ids).toContain('systems-inventoried')
   })
+
+  it('developer migration set covers the plan-spec dev KPIs (CC-05)', () => {
+    const ids = getKpiSet('developer', 'migration').map((k) => k.id)
+    // Plan §CC-05 calls out these as the developer-relevant migration KPIs.
+    // Asserting them all together turns the audit into a regression gate.
+    for (const required of [
+      'algorithms-migrated',
+      'hybrid-deployment',
+      'cbom-completeness',
+      'fips-validated',
+      'change-failure-rate',
+      'canary-coverage',
+    ]) {
+      expect(ids).toContain(required)
+    }
+  })
 })
 
 // ── Targets ────────────────────────────────────────────────────────────────

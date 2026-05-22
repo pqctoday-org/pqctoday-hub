@@ -226,9 +226,15 @@ export const LibraryView: React.FC = () => {
   const { selectedIndustry: storeIndustry, selectedPersona } = usePersonaStore()
   const { libraryBookmarks, showOnlyLibraryBookmarks, setShowOnlyLibraryBookmarks } =
     useBookmarkStore()
-  const [activeCategory, setActiveCategory] = useState<string>(
-    () => searchParams.get('cat') ?? 'All'
-  )
+  const [activeCategory, setActiveCategory] = useState<string>(() => {
+    const urlCat = searchParams.get('cat')
+    if (urlCat) return urlCat
+    if (selectedPersona) {
+      const prefs = PERSONA_LIBRARY_CATEGORIES[selectedPersona] ?? [] // eslint-disable-line security/detect-object-injection
+      if (prefs.length > 0) return prefs[0]
+    }
+    return 'All'
+  })
   const [activeOrg, setActiveOrg] = useState<string>(() => searchParams.get('org') ?? 'All')
   const [activeIndustry, setActiveIndustry] = useState<string>(
     () => searchParams.get('ind') ?? storeIndustry ?? 'All'
@@ -765,7 +771,11 @@ export const LibraryView: React.FC = () => {
       />
 
       {/* Zone 1: Activity Feed */}
-      <ActivityFeed items={activityItems} onSelect={openDetail} />
+      <ActivityFeed
+        items={activityItems}
+        onSelect={openDetail}
+        datasetUpdated={libraryMetadata?.lastUpdate}
+      />
 
       <ContentUpdatesFeed domain="library" limit={5} title="Recent Library Revisions" />
 

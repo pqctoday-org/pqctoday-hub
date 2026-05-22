@@ -224,6 +224,8 @@ export const CodeSigningModule: React.FC = () => {
                 stepDescription={PARTS[currentPart].description}
                 stepIndex={currentPart}
                 totalSteps={PARTS.length}
+                steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
+                onStepClick={handlePartChange}
               />
               {currentPart === 0 && <BinarySigning key={`binary-signing-${configKey}`} />}
               {currentPart === 1 && <CertChainBuilder key={`cert-chain-${configKey}`} />}

@@ -75,7 +75,11 @@ function getBaselineName(compareType: 'KEM' | 'Signature' | null): string | null
 export function AlgorithmsView() {
   const [searchParams, setSearchParams] = useSearchParams()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const viewAccess = usePersonaStore((s) => s.viewAccess)
+  const setAdvancedViewsUnlocked = usePersonaStore((s) => s.setAdvancedViewsUnlocked)
   const comparisonPanelRef = useRef<HTMLDivElement>(null)
+  const isCuriousPreview =
+    selectedPersona === 'curious' && viewAccess === 'preview' && !searchParams.get('highlight')
 
   // Strip is hidden when the page has any pre-set filter/tab/search state
   const hasActiveParams = useMemo(() => {
@@ -528,8 +532,51 @@ export function AlgorithmsView() {
         onApply={updateSearchParams}
       />
 
+      {/* Curious preview — hide the heavy comparison tables until they explicitly unlock */}
+      {isCuriousPreview && (
+        <div className="mt-6 rounded-lg border border-primary/30 bg-primary/5 p-6 md:p-8">
+          <h2 className="text-xl md:text-2xl font-bold text-gradient mb-3">
+            42 algorithms — three you actually need to know
+          </h2>
+          <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+            NIST selected three post-quantum algorithms in 2024 (FIPS 203 / 204 / 205): one for key
+            exchange (ML-KEM), one for general-purpose signatures (ML-DSA), and a hash-based backup
+            (SLH-DSA). Everything else on this page is either a classical algorithm being retired or
+            a candidate still in standardisation.
+          </p>
+          <ul className="text-sm text-foreground/90 space-y-2 mb-5">
+            <li>
+              <strong className="text-primary">ML-KEM-768</strong> — replaces RSA / ECDH for
+              encryption key exchange. Public key ~1.2 KB, ciphertext ~1.1 KB.
+            </li>
+            <li>
+              <strong className="text-primary">ML-DSA-65</strong> — replaces RSA / ECDSA for digital
+              signatures. Signature ~3.3 KB.
+            </li>
+            <li>
+              <strong className="text-primary">SLH-DSA-SHA2-128s</strong> — hash-based backup
+              signature for the highest-security scenarios. Signature ~7.8 KB.
+            </li>
+          </ul>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Button
+              variant="gradient"
+              onClick={() => setAdvancedViewsUnlocked(true)}
+              className="sm:w-auto"
+            >
+              Show full algorithm comparison
+            </Button>
+            <Link to="/learn/pqc-101">
+              <Button variant="outline" className="sm:w-auto">
+                Learn the basics first
+              </Button>
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Loading skeleton */}
-      {isLoading && (
+      {!isCuriousPreview && isLoading && (
         <div className="space-y-4">
           <Skeleton className="h-32 w-full rounded-lg" />
           <Skeleton className="h-32 w-full rounded-lg" />
@@ -539,7 +586,7 @@ export function AlgorithmsView() {
       )}
 
       {/* Filters + View */}
-      {!isLoading && (
+      {!isLoading && !isCuriousPreview && (
         <>
           {/* Shared filters */}
           <AlgorithmFilters
@@ -595,10 +642,10 @@ export function AlgorithmsView() {
                 <Network size={18} />
                 Protocol Support
                 <span
-                  className="rounded-sm bg-status-warning/20 text-status-warning px-1 py-0 text-[9px] font-bold uppercase tracking-wider"
-                  title="Work in progress — schema + data are evolving"
+                  className="rounded-sm bg-primary/15 text-primary px-1 py-0 text-[9px] font-bold uppercase tracking-wider"
+                  title="Tracks 14 IETF protocols across pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. Updated weekly from datatracker."
                 >
-                  WIP
+                  Beta
                 </span>
               </TabsTrigger>
             </TabsList>

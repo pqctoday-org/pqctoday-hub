@@ -8,6 +8,7 @@ import {
   type SensitivityTier,
 } from '../data/sensitivityConstants'
 import { Button } from '@/components/ui/button'
+import { logQuizAnswer } from '@/utils/analytics'
 
 interface ClassificationChallengeProps {
   assets: DataAsset[]
@@ -22,6 +23,10 @@ export const ClassificationChallenge: React.FC<ClassificationChallengeProps> = (
 
   const handleSelect = (scenarioId: string, tier: SensitivityTier) => {
     if (revealed.has(scenarioId)) return
+    const scenario = CLASSIFICATION_SCENARIOS.find((s) => s.id === scenarioId)
+    if (scenario) {
+      logQuizAnswer(`data-sensitivity:${scenarioId}`, tier === scenario.correctTier)
+    }
     setAnswers((prev) => ({ ...prev, [scenarioId]: tier }))
     setRevealed((prev) => new Set([...prev, scenarioId]))
   }

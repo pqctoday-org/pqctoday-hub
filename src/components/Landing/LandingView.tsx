@@ -23,6 +23,8 @@ import { PersonalizationSection } from './PersonalizationSection'
 import { OnboardingCTAs } from './OnboardingCTAs'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { TransparencyBanner } from './TransparencyBanner'
+import { PersonaChip } from '@/components/Persona/PersonaChip'
+import { logEvent, personaLabel } from '@/utils/analytics'
 import { useGoogleAuth } from '@/contexts/GoogleAuthContext'
 
 const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
@@ -64,6 +66,24 @@ const PERSONA_HERO_CTA: Record<
     primary: { label: 'Start Learning', path: '/learn' },
     secondary: { label: 'What Is the Quantum Threat?', path: '/learn/pqc-101' },
   },
+}
+
+// Persona-specific second-line urgency framing under the hero copy. Speaks to
+// each role's natural worry: deadlines for execs, library choices for devs,
+// hierarchy redesign for architects, evidence for researchers, fleet rotation
+// for ops, and "what is this" for the curious.
+export const PERSONA_HERO_TAGLINE: Record<string, string> = {
+  executive:
+    'Boards are asking now. CNSA 2.0 deadlines start landing in 2027 — get a defensible answer before the next audit cycle.',
+  developer:
+    'OpenSSL 3.x, BoringSSL, and JOSE are already shipping PQC. See the algorithms, test the libraries, and find the one that fits your stack.',
+  architect:
+    'Hybrid certs, composite signatures, and a 30 % key-size jump reshape every PKI. Map the redesign before it maps you.',
+  researcher:
+    'FIPS 203/204/205 are out, RFC 9964 just landed, and ACVP vectors are live. Trace the citations and KATs end-to-end.',
+  ops: 'Cert rotations get longer, keys get bigger, HSMs get pickier. Plan the cutover before the next renewal window.',
+  curious:
+    "Nothing breaks today. But what runs the padlock icon will look very different in five years — here's the short version.",
 }
 
 const DEFAULT_HERO_CTA = {
@@ -133,6 +153,12 @@ export const LandingView = () => {
     <div className="w-full space-y-16 md:space-y-24">
       {/* Hero Section */}
       <section className="text-center pt-8 md:pt-16">
+        {selectedPersona && (
+          <div className="flex justify-end mb-4 -mt-2">
+            <PersonaChip />
+          </div>
+        )}
+
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
           <p className="text-sm font-mono uppercase tracking-widest text-primary mb-4">
             Prepare for the Quantum Era
@@ -158,11 +184,24 @@ export const LandingView = () => {
           animate="visible"
           variants={fadeUp}
           custom={2}
-          className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8"
+          className="text-lg text-muted-foreground max-w-2xl mx-auto mb-3"
         >
           Quantum computers will break today's encryption. This free platform walks you from
           understanding the threat to deploying quantum-resistant cryptography — step by step.
         </motion.p>
+
+        {selectedPersona && PERSONA_HERO_TAGLINE[selectedPersona] && (
+          <motion.p
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            custom={2.2}
+            className="text-base text-foreground/85 max-w-2xl mx-auto mb-8 font-medium"
+          >
+            {PERSONA_HERO_TAGLINE[selectedPersona]}
+          </motion.p>
+        )}
+        {!selectedPersona && <div className="mb-5" />}
 
         {/* Resume banner — shown when a module is in-progress/completed */}
         {lastVisitedModule && (
@@ -221,7 +260,13 @@ export const LandingView = () => {
           custom={3}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <Link to={heroCta.primary.path} className="block sm:inline-block">
+          <Link
+            to={heroCta.primary.path}
+            onClick={() =>
+              logEvent('Landing', 'Hero CTA Primary', personaLabel(heroCta.primary.path))
+            }
+            className="block sm:inline-block"
+          >
             <Button
               variant="gradient"
               size="lg"
@@ -232,7 +277,13 @@ export const LandingView = () => {
               <ArrowRight className="ml-2" size={18} />
             </Button>
           </Link>
-          <Link to={heroCta.secondary.path} className="block sm:inline-block">
+          <Link
+            to={heroCta.secondary.path}
+            onClick={() =>
+              logEvent('Landing', 'Hero CTA Secondary', personaLabel(heroCta.secondary.path))
+            }
+            className="block sm:inline-block"
+          >
             <Button
               variant="outline"
               size="lg"

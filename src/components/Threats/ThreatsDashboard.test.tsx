@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { ThreatsDashboard } from './ThreatsDashboard'
@@ -7,6 +7,7 @@ import type { ThreatData } from '../../data/threatsData'
 import '@testing-library/jest-dom'
 import { Button } from '@/components/ui/button'
 import * as useSemanticSearchModule from '@/services/search/useSemanticSearch'
+import { usePersonaStore } from '@/store/usePersonaStore'
 
 vi.mock('@/services/search/useSemanticSearch', async () => {
   const actual = await vi.importActual<typeof useSemanticSearchModule>(
@@ -295,6 +296,46 @@ describe('ThreatsDashboard', () => {
       fireEvent.change(searchInput, { target: { value: 'paraphrase-only' } })
       // The semantic-only row should render in the table or card view.
       expect(screen.getAllByText('THR-002').length).toBeGreaterThan(0)
+    })
+  })
+
+  describe('Curious persona orientation card', () => {
+    beforeEach(() => {
+      usePersonaStore.getState().clearPersona()
+    })
+
+    afterEach(() => {
+      usePersonaStore.getState().clearPersona()
+    })
+
+    it('renders a plain-language orientation card for the curious persona — even with no industries selected', () => {
+      usePersonaStore.getState().setPersona('curious')
+      render(
+        <MemoryRouter>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      // The curious branch in personaSummary fires regardless of industry selection.
+      expect(
+        screen.getByText(
+          /known quantum-era threats — each one is a place where today's encryption could be broken/
+        )
+      ).toBeInTheDocument()
+    })
+
+    it('does NOT render the curious orientation card for other personas without industry selection', () => {
+      usePersonaStore.getState().setPersona('developer')
+      render(
+        <MemoryRouter>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      // The "known quantum-era threats" curious-specific copy must not leak.
+      expect(
+        screen.queryByText(
+          /known quantum-era threats — each one is a place where today's encryption could be broken/
+        )
+      ).not.toBeInTheDocument()
     })
   })
 })

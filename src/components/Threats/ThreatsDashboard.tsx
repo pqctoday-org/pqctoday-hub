@@ -342,7 +342,12 @@ export const ThreatsDashboard: React.FC = () => {
 
   // Persona-aware summary statistics
   const personaSummary = useMemo(() => {
-    if (!selectedPersona || selectedIndustries.length === 0) return null
+    if (!selectedPersona) return null
+    // Curious gets a plain-language intro regardless of industry selection
+    if (selectedPersona === 'curious') {
+      return `${threatsData.length} known quantum-era threats — each one is a place where today's encryption could be broken once a large quantum computer exists. Pick an industry below to see the ones closest to you.`
+    }
+    if (selectedIndustries.length === 0) return null
     const industryThreats = threatsData.filter((t) => selectedIndustries.includes(t.industry))
     const criticalHigh = industryThreats.filter(
       (t) => t.criticality === 'Critical' || t.criticality === 'High'
