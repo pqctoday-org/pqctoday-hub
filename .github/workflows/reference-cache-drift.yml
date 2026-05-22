@@ -72,7 +72,7 @@ jobs:
 
       - name: Open tracking issue when drift detected
         if: steps.summary.outputs.drift != '0' || steps.summary.outputs.size_mismatch != '0'
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
