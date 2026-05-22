@@ -29,6 +29,10 @@ interface CategorySidebarProps {
   onSelect: (category: string) => void
   totalCount: number
   totalHasUpdates: boolean
+  /** When true, the persona-preferred default narrowing is active. The "All"
+   *  pill is visually demoted because the user is currently looking at a
+   *  filtered slice, not the full corpus. */
+  personaPreferredActive?: boolean
 }
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
@@ -52,7 +56,9 @@ export const CategorySidebar = ({
   onSelect,
   totalCount,
   totalHasUpdates,
+  personaPreferredActive = false,
 }: CategorySidebarProps) => {
+  const allIsDemoted = personaPreferredActive && active === 'All'
   return (
     <nav
       className="flex flex-nowrap lg:flex-wrap items-center gap-2 overflow-x-auto lg:overflow-visible [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-2 lg:pb-0"
@@ -63,9 +69,10 @@ export const CategorySidebar = ({
         onClick={() => onSelect('All')}
         className={clsx(
           'flex items-center shrink-0 gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all',
-          active === 'All'
+          active === 'All' && !allIsDemoted
             ? 'bg-primary/10 text-primary border border-primary/30'
-            : 'text-muted-foreground hover:bg-muted/30 hover:text-foreground border border-transparent'
+            : 'text-muted-foreground hover:bg-muted/30 hover:text-foreground border border-transparent',
+          allIsDemoted && 'opacity-70'
         )}
         aria-current={active === 'All' ? 'page' : undefined}
       >

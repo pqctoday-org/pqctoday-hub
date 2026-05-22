@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { ComplianceView } from './ComplianceView'
 import '@testing-library/jest-dom'
 import { Button } from '@/components/ui/button'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
+import { useAssessmentStore } from '@/store/useAssessmentStore'
+import { logComplianceFilter } from '@/utils/analytics'
 
 // Mock the services module
 vi.mock('./services', () => ({
@@ -84,9 +88,13 @@ vi.mock('./MobileComplianceView', () => ({
   ),
 }))
 
-// Mock analytics
+// Mock analytics — keep this surface small and explicit so we notice when a
+// new caller is added. If a referenced symbol is missing, the failing test
+// names it in the stack and you add it here.
 vi.mock('../../utils/analytics', () => ({
   logComplianceFilter: vi.fn(),
+  logPreviewBannerShown: vi.fn(),
+  logPreviewBannerDismissed: vi.fn(),
 }))
 
 // Mock share/glossary buttons
@@ -108,6 +116,16 @@ describe('ComplianceView', () => {
   // and caught no behaviour. Copy assertions belong in E2E specs; mount-
   // doesn't-crash is implicitly verified by every interaction test below.
 
+  beforeEach(() => {
+    window.localStorage.clear()
+    vi.mocked(logComplianceFilter).mockClear()
+    usePersonaStore.setState({
+      selectedPersona: null,
+      selectedIndustries: [],
+      selectedRegion: null,
+    })
+  })
+
   it('shows cert records table when Records tab is clicked', () => {
     // 15s timeout: mounting ComplianceView pulls in maturityGovernanceData +
     // complianceData + the RAG-corpus init chain, which routinely exceeds
@@ -123,5 +141,96 @@ describe('ComplianceView', () => {
     const recordsButtons = screen.getAllByRole('button', { name: /^Records$/i })
     fireEvent.click(recordsButtons[0])
     expect(recordsButtons[0]).toBeInTheDocument()
+  }, 15000)
+
+  it('renders persona-hint CTA for Finance industry and logs analytics on click', () => {
+    usePersonaStore.setState({ selectedIndustries: ['Finance & Banking'] })
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    const ctas = screen.getAllByRole('button', {
+      name: /Go to Certification Schemes → FIPS 140-3/i,
+    })
+    expect(ctas.length).toBeGreaterThan(0)
+    fireEvent.click(ctas[0])
+    expect(logComplianceFilter).toHaveBeenCalledWith('PersonaHint', 'certification')
+  }, 15000)
+
+  it('suppresses the new-to-compliance intro card when a persona hint resolves', () => {
+    usePersonaStore.setState({ selectedIndustries: ['Finance & Banking'] })
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    expect(screen.queryByText(/New to PQC compliance\?/i)).not.toBeInTheDocument()
+  }, 15000)
+
+  it('shows the intro card when no industry/region hint resolves', () => {
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    expect(screen.getByText(/New to PQC compliance\?/i)).toBeInTheDocument()
+  }, 15000)
+
+  it('shows executive in-body CSV export when persona is executive', () => {
+    // ExecutiveTimelineView early-returns to a ProfileEditor when no
+    // country/industry is set, so we seed the assessment store before
+    // mounting. The CSV button lives inside the populated view body.
+    usePersonaStore.setState({
+      selectedPersona: 'executive',
+      selectedIndustries: ['Finance & Banking'],
+    })
+    useAssessmentFormStore.setState({
+      country: 'United States',
+      industry: 'Finance & Banking',
+    })
+    // useApplicability reads from useAssessmentStore (the wizard answers),
+    // NOT useAssessmentFormStore (the inline editor). Seed both so the
+    // executive view exits its empty-profile early-return.
+    useAssessmentStore.setState({
+      country: 'United States',
+      industry: 'Finance & Banking',
+    })
+    // Force ?tab=foryou — default landing tab is computed from the persona
+    // hint (Finance hint → certification), so without this the executive
+    // view never mounts and the in-body button can't render.
+    render(
+      <MemoryRouter initialEntries={['/compliance?tab=foryou']}>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    const exportButtons = screen.queryAllByRole('button', {
+      name: /Export audit-ready summary/i,
+    })
+    expect(exportButtons.length).toBeGreaterThan(0)
+  }, 15000)
+
+  it('shows curious narrative line instead of full deadline timeline', () => {
+    usePersonaStore.setState({ selectedPersona: 'curious' })
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    const narrative = screen.getByTestId('deadline-timeline-narrative')
+    expect(narrative).toBeInTheDocument()
+    expect(narrative.textContent ?? '').toMatch(/PQC mandates land between/i)
+  }, 15000)
+
+  it('collapses deadline timeline behind a disclosure for developer persona', () => {
+    usePersonaStore.setState({ selectedPersona: 'developer' })
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    // Disclosure button visible, full timeline title not yet rendered.
+    expect(screen.getByRole('button', { name: /Show deadline timeline/i })).toBeInTheDocument()
+    expect(screen.queryByText(/PQC Compliance Deadlines/)).not.toBeInTheDocument()
   }, 15000)
 })

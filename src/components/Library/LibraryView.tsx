@@ -236,15 +236,11 @@ export const LibraryView: React.FC = () => {
   const { selectedIndustry: storeIndustry, selectedPersona } = usePersonaStore()
   const { libraryBookmarks, showOnlyLibraryBookmarks, setShowOnlyLibraryBookmarks } =
     useBookmarkStore()
-  const [activeCategory, setActiveCategory] = useState<string>(() => {
-    const urlCat = searchParams.get('cat')
-    if (urlCat) return urlCat
-    if (selectedPersona) {
-      const prefs = PERSONA_LIBRARY_CATEGORIES[selectedPersona] ?? [] // eslint-disable-line security/detect-object-injection
-      if (prefs.length > 0) return prefs[0]
-    }
-    return 'All'
-  })
+  // Sidebar selection — defaults to 'All' so the persona-preferred filter
+  // (below) does the narrowing.  Explicit ?cat= still wins.
+  const [activeCategory, setActiveCategory] = useState<string>(
+    () => searchParams.get('cat') ?? 'All'
+  )
   const [activeOrg, setActiveOrg] = useState<string>(() => searchParams.get('org') ?? 'All')
   const [activeIndustry, setActiveIndustry] = useState<string>(
     () => searchParams.get('ind') ?? storeIndustry ?? 'All'
@@ -506,6 +502,34 @@ export const LibraryView: React.FC = () => {
 
   const totalHasUpdates = activityItems.length > 0
 
+  // Persona-preferred set — used as a default multi-category filter when
+  // the user has not picked an explicit category. Researcher's empty array
+  // short-circuits to "no narrowing". ?prefs=off opts back to the full corpus.
+  const personaPreferredCategories = useMemo<string[]>(() => {
+    if (searchParams.get('prefs') === 'off') return []
+    if (!selectedPersona) return []
+    return PERSONA_LIBRARY_CATEGORIES[selectedPersona] ?? [] // eslint-disable-line security/detect-object-injection
+  }, [selectedPersona, searchParams])
+
+  const personaPreferredActive = personaPreferredCategories.length > 0 && activeCategory === 'All'
+
+  // When persona changes, the user has effectively asked for a new set of
+  // defaults — strip a lingering ?prefs=off so the new persona's preferred
+  // narrowing applies.
+  useEffect(() => {
+    if (searchParams.get('prefs') === 'off') {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          next.delete('prefs')
+          return next
+        },
+        { replace: true }
+      )
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedPersona])
+
   // Phase 3 — semantic search supplement. The hook returns ranked
   // referenceIds when the embedding runtime is ready. The lexical
   // filter below remains the floor; matching referenceIds are
@@ -522,8 +546,13 @@ export const LibraryView: React.FC = () => {
   const filteredItems = useMemo(() => {
     return libraryData.filter((item) => {
       // Category filter
-      if (activeCategory !== 'All' && !item.categories.includes(activeCategory)) {
-        return false
+      if (activeCategory !== 'All') {
+        if (!item.categories.includes(activeCategory)) return false
+      } else if (personaPreferredActive) {
+        // Persona-default narrowing: keep items whose categories intersect
+        // the persona's preferred set when the user has not picked one.
+        const hit = item.categories?.some((c) => personaPreferredCategories.includes(c))
+        if (!hit) return false
       }
 
       // Industry filter — match via canonical map to normalize CSV aliases.
@@ -628,6 +657,8 @@ export const LibraryView: React.FC = () => {
     cswp39Only,
     lifecycleBucket,
     tierFilter,
+    personaPreferredActive,
+    personaPreferredCategories,
   ])
 
   // Persona-preferred categories for secondary sort boost
@@ -836,6 +867,7 @@ export const LibraryView: React.FC = () => {
         onSelect={handleCategorySelect}
         totalCount={libraryData.length}
         totalHasUpdates={totalHasUpdates}
+        personaPreferredActive={personaPreferredActive}
       />
 
       {/* Controls Bar */}
@@ -1149,10 +1181,37 @@ export const LibraryView: React.FC = () => {
 
       {/* Results count */}
       <div className="space-y-1">
-        <p className="text-xs text-muted-foreground">
-          {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''}
-          {activeCategory !== 'All' && ` in ${activeCategory}`}
-        </p>
+        {personaPreferredActive ? (
+          <div className="glass-panel inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-md text-xs">
+            <span className="text-muted-foreground">
+              Showing {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''} matched
+              to your role
+            </span>
+            <span className="text-muted-foreground/60">·</span>
+            <Button
+              variant="link"
+              onClick={() => {
+                setSearchParams(
+                  (prev) => {
+                    const next = new URLSearchParams(prev)
+                    next.set('prefs', 'off')
+                    return next
+                  },
+                  { replace: true }
+                )
+                logEvent('Library', 'Persona Prefs Off', personaLabel())
+              }}
+              className="text-xs h-auto p-0"
+            >
+              See all {libraryData.length}
+            </Button>
+          </div>
+        ) : (
+          <p className="text-xs text-muted-foreground">
+            {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''}
+            {activeCategory !== 'All' && ` in ${activeCategory}`}
+          </p>
+        )}
         <SemanticSearchHint
           mode={semantic.mode}
           loading={semantic.loading}
