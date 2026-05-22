@@ -23,8 +23,9 @@ interface PersonaPathPhaseProps {
   isModuleRelevant: (moduleId: string) => boolean
   /** Persona-relevant signal (for ModuleCard dim/highlight). */
   isModuleAboveLevel: (moduleId: string) => boolean
-  /** Optional badge label rendered next to the title (e.g. "Common Ground" for executive/curious). */
-  badge?: string
+  /** Set of module IDs that should display a "Common Ground" overlay badge.
+   *  Passed by PersonaPathView only when persona is executive/curious. */
+  commonGroundModuleIds?: Set<string>
   /** Callback when the user toggles the phase (writes to useLearnStore). */
   onToggle?: (expanded: boolean) => void
   /** Persisted expansion state. If undefined, defaultExpanded controls the initial state. */
@@ -40,7 +41,7 @@ export const PersonaPathPhase = ({
   onSelectModule,
   isModuleRelevant,
   isModuleAboveLevel,
-  badge,
+  commonGroundModuleIds,
   onToggle,
   expandedOverride,
 }: PersonaPathPhaseProps) => {
@@ -98,11 +99,6 @@ export const PersonaPathPhase = ({
           >
             {title}
           </span>
-          {badge && (
-            <span className="text-[9px] font-mono uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
-              {badge}
-            </span>
-          )}
         </div>
         <span className="text-xs text-muted-foreground shrink-0 tabular-nums">
           {completedCount} / {totalCount}
@@ -112,14 +108,24 @@ export const PersonaPathPhase = ({
         {moduleIds.map((id) => {
           const mod = MODULE_CATALOG[id]
           if (!mod) return null
+          const isCommonGround = commonGroundModuleIds?.has(id) ?? false
           return (
-            <ModuleCard
-              key={id}
-              module={mod}
-              onSelectModule={onSelectModule}
-              isRelevant={isModuleRelevant(id)}
-              isAboveLevel={isModuleAboveLevel(id)}
-            />
+            <div key={id} className="relative">
+              {isCommonGround && (
+                <span
+                  className="absolute top-2 right-2 z-10 text-[9px] font-mono uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 pointer-events-none"
+                  aria-label="Common Ground module"
+                >
+                  Common Ground
+                </span>
+              )}
+              <ModuleCard
+                module={mod}
+                onSelectModule={onSelectModule}
+                isRelevant={isModuleRelevant(id)}
+                isAboveLevel={isModuleAboveLevel(id)}
+              />
+            </div>
           )
         })}
       </div>

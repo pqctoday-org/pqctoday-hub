@@ -21,7 +21,7 @@ interface PersonaPathViewProps {
 }
 
 /** Module IDs counted as the "common ground" overlay between executive and curious paths. */
-const COMMON_GROUND_MODULE_IDS = new Set([
+export const COMMON_GROUND_MODULE_IDS = new Set([
   'pqc-101',
   'compliance-strategy',
   'vendor-risk',
@@ -131,8 +131,6 @@ export const PersonaPathView = ({
         const expandedOverride =
           // eslint-disable-next-line security/detect-object-injection
           key in phaseExpansion ? phaseExpansion[key] : undefined
-        const containsCommonGround =
-          showCommonGroundContext && phase.moduleIds.some((id) => COMMON_GROUND_MODULE_IDS.has(id))
         return (
           <PersonaPathPhase
             key={key}
@@ -144,7 +142,7 @@ export const PersonaPathView = ({
             onSelectModule={onSelectModule}
             isModuleRelevant={isModuleRelevant}
             isModuleAboveLevel={isModuleAboveLevel}
-            badge={containsCommonGround ? 'Common Ground' : undefined}
+            commonGroundModuleIds={showCommonGroundContext ? COMMON_GROUND_MODULE_IDS : undefined}
             expandedOverride={expandedOverride}
             onToggle={(expanded) => setPhaseExpanded(key, expanded)}
           />
