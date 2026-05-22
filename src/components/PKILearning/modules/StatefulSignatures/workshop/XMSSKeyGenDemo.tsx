@@ -6,7 +6,6 @@ import {
   ChevronUp,
   Key,
   PenLine,
-  AlertCircle,
   AlertTriangle,
   CheckCircle,
   Copy,
@@ -17,6 +16,11 @@ import { Button } from '@/components/ui/button'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
+import { ErrorAlert } from '@/components/ui/error-alert'
 import { useHSM, type UseHSMResult } from '@/hooks/useHSM'
 import {
   XMSS_PARAMETER_SETS,
@@ -118,6 +122,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
   const [keygenPhase, setKeygenPhase] = useState<'idle' | 'building' | 'done'>('idle')
   const [activeKeyHandle, setActiveKeyHandle] = useState<number | null>(null)
   const [opError, setOpError] = useState<string | null>(null)
+  const [opLogEntries, setOpLogEntries] = useState<LogEntry[]>([])
 
   // Signing State
   const [messageToSign, setMessageToSign] = useState<string>('Hello, world!')
@@ -185,6 +190,9 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
     setIsGenerating(true)
     setKeygenPhase('building')
     setOpError(null)
+    const opLabel = `Generating XMSS keypair (${selected.name}, tree height ${xmssHeight})…`
+    const startedAt = performance.now()
+    setOpLogEntries([{ status: 'pending', message: opLabel }])
     try {
       // Yield to browser so React can paint the progress bar at 0% before the
       // CSS animation starts (the animation runs on the compositor thread and
@@ -222,13 +230,28 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
         rawBytes: pubBytes,
         paramSet: ckpParam,
       })
+      setOpLogEntries([
+        {
+          status: 'success',
+          message: `Generated XMSS keypair (${selected.name}) — priv handle ${privHandle}, pub handle ${pubHandle}`,
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+      ])
     } catch (e: unknown) {
-      setOpError(e instanceof Error ? e.message : String(e))
+      const msg = e instanceof Error ? e.message : String(e)
+      setOpError(msg)
       setKeygenPhase('idle')
+      setOpLogEntries([
+        {
+          status: 'error',
+          message: `${opLabel} — ${msg}`,
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+      ])
     } finally {
       setIsGenerating(false)
     }
-  }, [hsm, ckpParam, selected.name])
+  }, [hsm, ckpParam, selected.name, xmssHeight])
 
   const handleSign = useCallback(async () => {
     if (
@@ -918,12 +941,9 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
         </div>
       )}
 
-      {opError && (
-        <div className="flex items-start gap-2 p-3 rounded-md border border-destructive/40 bg-destructive/5 text-destructive text-sm">
-          <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
-          <span className="font-mono break-all">{opError}</span>
-        </div>
-      )}
+      {opLogEntries.length > 0 && <WorkshopOperationLog entries={opLogEntries} />}
+
+      {opError && <ErrorAlert message={opError} onRetry={() => void handleGenerateKey()} />}
 
       {!isEmbedded && hsm.isReady && (
         <div className="space-y-4">
