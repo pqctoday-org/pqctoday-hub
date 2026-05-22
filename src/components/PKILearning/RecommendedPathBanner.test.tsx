@@ -27,7 +27,9 @@ describe('RecommendedPathBanner', () => {
 
     expect(screen.getByText(persona.label)).toBeInTheDocument()
     expect(
-      screen.getByText(new RegExp(`${moduleCount} modules · ${checkpointCount} checkpoints · ${expectedHours}`))
+      screen.getByText(
+        new RegExp(`${moduleCount} modules · ${checkpointCount} checkpoints · ${expectedHours}`)
+      )
     ).toBeInTheDocument()
   })
 
@@ -48,10 +50,27 @@ describe('RecommendedPathBanner', () => {
 
   it('hides the Resume button when every module is completed', () => {
     const persona = PERSONAS.executive
-    const allCompleted: Record<string, { status: 'completed'; completedSteps: string[]; learnSectionChecks: Record<string, boolean> }> = {}
+    const allCompleted: Record<
+      string,
+      {
+        status: 'completed'
+        completedSteps: string[]
+        learnSectionChecks: Record<string, boolean>
+        lastVisited: number
+        timeSpent: number
+        quizScores: Record<string, number>
+      }
+    > = {}
     for (const item of persona.pathItems) {
       if (item.type === 'module') {
-        allCompleted[item.moduleId] = { status: 'completed', completedSteps: [], learnSectionChecks: {} }
+        allCompleted[item.moduleId] = {
+          status: 'completed',
+          completedSteps: [],
+          learnSectionChecks: {},
+          lastVisited: 0,
+          timeSpent: 0,
+          quizScores: {},
+        }
       }
     }
     useModuleStore.setState({ modules: allCompleted })
