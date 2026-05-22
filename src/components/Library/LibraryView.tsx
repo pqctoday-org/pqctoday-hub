@@ -820,7 +820,7 @@ export const LibraryView: React.FC = () => {
         <PersonaPicksPanel
           personaId="curious"
           title="Start here"
-          subtitle="5 canonical PQC docs picked for first-time readers"
+          subtitle="3 canonical PQC docs picked for first-time readers"
           picks={LIBRARY_CURIOUS_PICKS}
           resolveItem={(refId) => libraryData.find((d) => d.referenceId === refId)}
           onOpen={openDetail}
