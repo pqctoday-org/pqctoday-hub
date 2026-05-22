@@ -105,5 +105,29 @@
     "reason": "fetch-failed",
     "note": "Returns 200 with 252 KB HTML to curl, but Node 20 undici fetch errors out with 'fetch failed' (likely TLS/SNI incompatibility). Future: fetch via Wayback or playwright fallback.",
     "date": "2026-05-22T19:50:00.000Z"
+  },
+  "https://www.ciena.com/insights/blog/2026/1.6t-quantum-safe-encryption-protecting-critical-data-at-scale": {
+    "label": "United States:Ciena — 1.6T Quantum-Safe Optical Encryption",
+    "reason": "forbidden",
+    "note": "Returns HTTP 403 to automated GET. Real source verified manually.",
+    "date": "2026-05-22T20:00:00.000Z"
+  },
+  "https://trustedcomputinggroup.org/": {
+    "label": "Global:TCG — TPM 2.0 v1.85 PQC Library Specification Draft (landing page)",
+    "reason": "forbidden",
+    "note": "Returns HTTP 403 to automated GET.",
+    "date": "2026-05-22T20:00:00.000Z"
+  },
+  "https://ndpc.gov.ng": {
+    "label": "Nigeria:NDPC — Nigeria Data Protection Act 2023 (landing)",
+    "reason": "forbidden",
+    "note": "Returns HTTP 403 to automated GET.",
+    "date": "2026-05-22T20:00:00.000Z"
+  },
+  "https://www.gsma.com/solutions-and-impact/technologies/security/gsma_resources/post-quantum-telco-network-impact-assessment-guidelines/": {
+    "label": "GSMA — PQ.03 v2.0 Guidelines",
+    "reason": "forbidden",
+    "note": "Returns HTTP 403 to automated GET. GSMA hardens its CDN against bots.",
+    "date": "2026-05-22T20:00:00.000Z"
   }
 }

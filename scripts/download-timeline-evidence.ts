@@ -21,7 +21,7 @@
  *   npm run download:timeline-evidence -- --full
  */
 
-import { readFileSync, mkdirSync, writeFileSync, existsSync, statSync } from 'fs'
+import { readFileSync, mkdirSync, writeFileSync, existsSync, statSync, readdirSync } from 'fs'
 import { createHash } from 'crypto'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -29,7 +29,27 @@ import Papa from 'papaparse'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
-const CSV_PATH = join(ROOT, 'src/data/timeline_05172026.csv')
+function findLatestTimelineCsv(): string {
+  const dir = join(ROOT, 'src/data')
+  const matches = readdirSync(dir)
+    .map((f) => {
+      // eslint-disable-next-line security/detect-unsafe-regex
+      const m = f.match(/^timeline_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)
+      if (!m) return null
+      const [, month, day, year, rev] = m
+      return {
+        path: join(dir, f),
+        date: new Date(parseInt(year), parseInt(month) - 1, parseInt(day)).getTime(),
+        revision: rev ? parseInt(rev) : 0,
+      }
+    })
+    .filter((x): x is { path: string; date: number; revision: number } => x !== null)
+    .sort((a, b) => (a.date !== b.date ? b.date - a.date : b.revision - a.revision))
+  if (matches.length === 0) throw new Error('No timeline_*.csv in src/data/')
+  return matches[0].path
+}
+
+const CSV_PATH = findLatestTimelineCsv()
 const OUTPUT_DIR = join(ROOT, 'public/timeline')
 const MANIFEST_DIR = join(OUTPUT_DIR, 'evidence')
 const MANIFEST_PATH = join(MANIFEST_DIR, 'manifest.json')
