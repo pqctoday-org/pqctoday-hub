@@ -4,6 +4,10 @@ import { Loader2, CheckCircle, XCircle, Info, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ErrorAlert } from '@/components/ui/error-alert'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 import { CodeBlock } from '@/components/ui/code-block'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
@@ -258,6 +262,7 @@ export const SLHDSALiveDemo: React.FC = () => {
   const [verifyResult, setVerifyResult] = useState<boolean | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState<string | null>(null)
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   // Track pre-hash used during signing for verify consistency
   const signPreHashRef = useRef<string>('')
@@ -283,6 +288,42 @@ export const SLHDSALiveDemo: React.FC = () => {
     [resetResults]
   )
 
+  // A7 — wrap an async op with a single pending→success/error log entry.
+  const runOp = useCallback(
+    async <T,>(label: string, fn: () => Promise<T> | T): Promise<T | null> => {
+      const startedAt = performance.now()
+      setLogEntries((prev) => [...prev, { status: 'pending', message: label }])
+      try {
+        const result = await fn()
+        setLogEntries((prev) => {
+          const next = [...prev]
+          next[next.length - 1] = {
+            status: 'success',
+            message: label.replace(/…$/, ''),
+
+            durationMs: Math.round(performance.now() - startedAt),
+          }
+          return next
+        })
+        return result
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err)
+        setLogEntries((prev) => {
+          const next = [...prev]
+          next[next.length - 1] = {
+            status: 'error',
+            message: `${label.replace(/…$/, '')} — ${msg}`,
+
+            durationMs: Math.round(performance.now() - startedAt),
+          }
+          return next
+        })
+        throw err
+      }
+    },
+    []
+  )
+
   const handleGenerateKey = useCallback(async () => {
     if (!hsm.isReady || !hsm.moduleRef.current) return
     setLoading('keygen')
@@ -290,33 +331,35 @@ export const SLHDSALiveDemo: React.FC = () => {
     setSignature(null)
     setVerifyResult(null)
     try {
-      const M = hsm.moduleRef.current as unknown as SoftHSMModule
-      const hSession = hsm.hSessionRef.current
-      const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(M, hSession, selectedParam.ckp)
-      setKeyHandles({ pub: pubHandle, priv: privHandle })
+      await runOp(`Generating SLH-DSA keypair (${selectedParam.label})…`, () => {
+        const M = hsm.moduleRef.current as unknown as SoftHSMModule
+        const hSession = hsm.hSessionRef.current
+        const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(M, hSession, selectedParam.ckp)
+        setKeyHandles({ pub: pubHandle, priv: privHandle })
 
-      hsm.addKey({
-        handle: pubHandle,
-        family: 'slh-dsa',
-        role: 'public',
-        label: `SLH-DSA Public Key (${selectedParam.label})`,
-        generatedAt: new Date().toISOString(),
-      })
-      hsm.addKey({
-        handle: privHandle,
-        family: 'slh-dsa',
-        role: 'private',
-        label: `SLH-DSA Private Key (${selectedParam.label})`,
-        generatedAt: new Date().toISOString(),
-      })
+        hsm.addKey({
+          handle: pubHandle,
+          family: 'slh-dsa',
+          role: 'public',
+          label: `SLH-DSA Public Key (${selectedParam.label})`,
+          generatedAt: new Date().toISOString(),
+        })
+        hsm.addKey({
+          handle: privHandle,
+          family: 'slh-dsa',
+          role: 'private',
+          label: `SLH-DSA Private Key (${selectedParam.label})`,
+          generatedAt: new Date().toISOString(),
+        })
 
-      const pubBytes = hsm_extractKeyValue(M, hSession, pubHandle)
-      setPubKeyHex(toHex(pubBytes))
+        const pubBytes = hsm_extractKeyValue(M, hSession, pubHandle)
+        setPubKeyHex(toHex(pubBytes))
+      })
     } catch (err) {
       setError(translateCryptoError(err instanceof Error ? err.message : String(err)))
     }
     setLoading(null)
-  }, [hsm, selectedParam.ckp, selectedParam.label])
+  }, [hsm, selectedParam.ckp, selectedParam.label, runOp])
 
   const handleSign = useCallback(async () => {
     if (!hsm.isReady || !hsm.moduleRef.current || !keyHandles) return
@@ -324,37 +367,41 @@ export const SLHDSALiveDemo: React.FC = () => {
     setError(null)
     setVerifyResult(null)
     try {
-      const M = hsm.moduleRef.current as unknown as SoftHSMModule
-      const hSession = hsm.hSessionRef.current
-      const opts = preHash ? { preHash: preHash as SLHDSAPreHash } : undefined
-      const sig = hsm_slhdsaSign(M, hSession, keyHandles.priv, message, opts)
-      setSignature(sig)
-      setSignedPreHash(preHash)
-      signPreHashRef.current = preHash
+      await runOp(`Signing message with SLH-DSA (${selectedParam.label})…`, () => {
+        const M = hsm.moduleRef.current as unknown as SoftHSMModule
+        const hSession = hsm.hSessionRef.current
+        const opts = preHash ? { preHash: preHash as SLHDSAPreHash } : undefined
+        const sig = hsm_slhdsaSign(M, hSession, keyHandles.priv, message, opts)
+        setSignature(sig)
+        setSignedPreHash(preHash)
+        signPreHashRef.current = preHash
+      })
     } catch (err) {
       setError(translateCryptoError(err instanceof Error ? err.message : String(err)))
     }
     setLoading(null)
-  }, [hsm, keyHandles, message, preHash])
+  }, [hsm, keyHandles, message, preHash, selectedParam.label, runOp])
 
   const handleVerify = useCallback(async () => {
     if (!hsm.isReady || !hsm.moduleRef.current || !keyHandles || !signature) return
     setLoading('verify')
     setError(null)
     try {
-      const M = hsm.moduleRef.current as unknown as SoftHSMModule
-      const hSession = hsm.hSessionRef.current
-      // Must use same pre-hash as signing
-      const opts = signPreHashRef.current
-        ? { preHash: signPreHashRef.current as SLHDSAPreHash }
-        : undefined
-      const ok = hsm_slhdsaVerify(M, hSession, keyHandles.pub, message, signature, opts)
-      setVerifyResult(ok)
+      await runOp(`Verifying SLH-DSA signature…`, () => {
+        const M = hsm.moduleRef.current as unknown as SoftHSMModule
+        const hSession = hsm.hSessionRef.current
+        // Must use same pre-hash as signing
+        const opts = signPreHashRef.current
+          ? { preHash: signPreHashRef.current as SLHDSAPreHash }
+          : undefined
+        const ok = hsm_slhdsaVerify(M, hSession, keyHandles.pub, message, signature, opts)
+        setVerifyResult(ok)
+      })
     } catch (err) {
       setError(translateCryptoError(err instanceof Error ? err.message : String(err)))
     }
     setLoading(null)
-  }, [hsm, keyHandles, signature, message])
+  }, [hsm, keyHandles, signature, message, runOp])
 
   return (
     <div className="space-y-6">
@@ -530,7 +577,11 @@ export const SLHDSALiveDemo: React.FC = () => {
           </div>
 
           {/* Error display */}
-          {error && <ErrorAlert message={error} />}
+          {logEntries.length > 0 && (
+            <WorkshopOperationLog entries={logEntries} className="max-h-40" />
+          )}
+
+          {error && <ErrorAlert message={error} onRetry={() => void handleGenerateKey()} />}
 
           {/* Results */}
           {pubKeyHex && (
