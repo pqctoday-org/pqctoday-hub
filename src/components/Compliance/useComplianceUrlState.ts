@@ -230,6 +230,11 @@ export function useComplianceUrlState() {
             if (q) next.set('q', q)
             if (sort !== 'deadline') next.set('sort', sort)
             if (view !== 'cards') next.set('view', view)
+            // Cross-tab pre-selection: honor an explicit rtab override even
+            // on landscape destinations so persona-hint sub-facets
+            // (Finance → ?rtab=fips) survive the jump from Certification
+            // Schemes to Records.
+            if (overrides.rtab && overrides.rtab !== 'all') next.set('rtab', overrides.rtab)
           } else {
             const rt = overrides.rtab ?? rtab
             const q = overrides.rq ?? recSearch

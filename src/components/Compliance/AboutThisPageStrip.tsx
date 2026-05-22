@@ -74,7 +74,14 @@ export function AboutThisPageStrip({ headerSlot }: AboutThisPageStripProps = {})
       className="rounded-lg border border-border bg-card"
       data-testid="compliance-about-strip"
     >
-      <summary className="flex items-center gap-2 px-3 py-2 cursor-pointer list-none select-none text-sm font-medium text-foreground hover:bg-muted/40 rounded-lg [&::-webkit-details-marker]:hidden">
+      <summary
+        // When the strip is expanded it is no longer decorative — it acts as
+        // the visible "current section" anchor for the rest of the about-page
+        // chrome. `aria-current="true"` tells screen readers it's the active
+        // landmark while expanded; absent (-> "false") when collapsed.
+        aria-current={open ? 'true' : undefined}
+        className="flex items-center gap-2 px-3 py-2 cursor-pointer list-none select-none text-sm font-medium text-foreground hover:bg-muted/40 rounded-lg [&::-webkit-details-marker]:hidden"
+      >
         <ChevronDown
           size={14}
           className={`text-muted-foreground transition-transform ${open ? '' : '-rotate-90'}`}

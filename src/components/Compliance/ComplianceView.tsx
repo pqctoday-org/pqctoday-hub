@@ -586,6 +586,17 @@ export const ComplianceView = () => {
     // memo after a dismissal write to localStorage.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [personaHintDismissKey, personaHintDismissTick])
+  // Stable identity label for analytics so the editorial mapping can be tuned
+  // per-industry/region (P2-3). Falls back to 'unknown' only when neither
+  // industry nor a region-hint is set, which the dismissPersonaHint /
+  // handlePersonaHintNavigate handlers never see in practice because they're
+  // unreachable without a resolved hint.
+  const personaHintIdentity = primaryIndustry
+    ? `industry:${primaryIndustry}`
+    : selectedRegion === 'eu'
+      ? 'region:eu'
+      : 'unknown'
+
   const dismissPersonaHint = useCallback(() => {
     if (!personaHintDismissKey) return
     try {
@@ -594,7 +605,8 @@ export const ComplianceView = () => {
       /* private browsing / quota — flag just won't persist this session */
     }
     setPersonaHintDismissTick((t) => t + 1)
-  }, [personaHintDismissKey])
+    logComplianceFilter('PersonaHintDismiss', personaHintIdentity)
+  }, [personaHintDismissKey, personaHintIdentity])
 
   const [exportError, setExportError] = useState<string | null>(null)
 
@@ -733,10 +745,22 @@ export const ComplianceView = () => {
   )
 
   const handlePersonaHintNavigate = useCallback(
-    (section: MobileSection) => {
+    (
+      section: MobileSection,
+      subFacet?: import('@/data/compliancePersonaHints').ComplianceHintSubFacet
+    ) => {
       setActiveTab(section)
-      syncFiltersToUrl({ tab: section })
+      // Apply the sub-facet (e.g. ?rtab=fips) alongside the tab jump so a
+      // Finance user landing on Certification Schemes has FIPS 140-3
+      // pre-filtered when they pivot to Records.
+      const urlOverrides: Parameters<typeof syncFiltersToUrl>[0] = { tab: section }
+      if (subFacet?.rtab) urlOverrides.rtab = subFacet.rtab
+      syncFiltersToUrl(urlOverrides)
+      // Existing `PersonaHint` event preserved for dashboards already wired
+      // to the section value. `PersonaHintCtaClick` carries the identity
+      // label so the editorial industry→section mapping can be tuned (P2-3).
       logComplianceFilter('PersonaHint', section)
+      logComplianceFilter('PersonaHintCtaClick', `${personaHintIdentity}→${section}`)
       setCswp39JumpActive(false)
       requestAnimationFrame(() => {
         document
@@ -747,7 +771,7 @@ export const ComplianceView = () => {
           ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       })
     },
-    [setActiveTab, syncFiltersToUrl]
+    [setActiveTab, syncFiltersToUrl, personaHintIdentity]
   )
 
   const handleCswp39Jump = useCallback(

@@ -2,14 +2,19 @@
 import { useEffect, useState } from 'react'
 import { Info, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import type { ComplianceHint } from '@/data/compliancePersonaHints'
+import type { ComplianceHint, ComplianceHintSubFacet } from '@/data/compliancePersonaHints'
 import type { MobileSection } from './useComplianceUrlState'
 
 interface PersonaHintCtaProps {
   /** Display label that contextualises the hint, e.g. "Finance & Banking focus". */
   label: string
   hint: ComplianceHint
-  onNavigate: (section: MobileSection) => void
+  /**
+   * Fired when the gradient CTA is clicked. `subFacet` carries the optional
+   * `rtab` (and future `pqcOnly`) pre-selection so the destination view can
+   * apply it alongside the tab jump.
+   */
+  onNavigate: (section: MobileSection, subFacet?: ComplianceHintSubFacet) => void
   onDismiss?: () => void
 }
 
@@ -49,7 +54,7 @@ export function PersonaHintCta({ label, hint, onNavigate, onDismiss }: PersonaHi
               size="sm"
               onClick={() => {
                 setAnnouncement(`Navigated to ${hint.sectionLabel}`)
-                onNavigate(hint.section as MobileSection)
+                onNavigate(hint.section as MobileSection, hint.subFacet)
               }}
               data-workshop-target="compliance-persona-hint-cta"
               aria-label={`Go to ${hint.sectionLabel}`}

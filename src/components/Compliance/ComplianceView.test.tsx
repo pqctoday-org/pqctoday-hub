@@ -288,4 +288,54 @@ describe('ComplianceView', () => {
       screen.queryAllByRole('button', { name: /Go to Certification Schemes/i }).length
     ).toBeGreaterThan(0)
   }, 15000)
+
+  it('persona-hint CTA also logs PersonaHintCtaClick with the industry→section identity', () => {
+    usePersonaStore.setState({ selectedIndustries: ['Finance & Banking'] })
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    fireEvent.click(screen.getAllByRole('button', { name: /Go to Certification Schemes/i })[0])
+    expect(logComplianceFilter).toHaveBeenCalledWith(
+      'PersonaHintCtaClick',
+      'industry:Finance & Banking→certification'
+    )
+  }, 15000)
+
+  it('persona-hint dismiss logs PersonaHintDismiss with industry identity', () => {
+    usePersonaStore.setState({ selectedIndustries: ['Finance & Banking'] })
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    fireEvent.click(screen.getAllByRole('button', { name: /Dismiss persona hint/i })[0])
+    expect(logComplianceFilter).toHaveBeenCalledWith(
+      'PersonaHintDismiss',
+      'industry:Finance & Banking'
+    )
+  }, 15000)
+
+  it('about-strip summary carries aria-current="true" when expanded', () => {
+    // First-visit heuristic: neither intro-dismissed nor about-expanded flag
+    // is set, so the strip mounts open. Summary must reflect aria-current.
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    const strips = screen.getAllByTestId('compliance-about-strip')
+    // Both desktop + mobile render the strip; both should be open + aria-current.
+    // <summary> has no standard ARIA role queryable via Testing Library so we
+    // reach into the element by tag — acceptable for a structural assertion.
+    /* eslint-disable testing-library/no-node-access */
+    for (const strip of strips) {
+      const summary = strip.querySelector('summary')
+      expect(summary).not.toBeNull()
+      expect(strip.hasAttribute('open')).toBe(true)
+      expect(summary?.getAttribute('aria-current')).toBe('true')
+    }
+    /* eslint-enable testing-library/no-node-access */
+  }, 15000)
 })
