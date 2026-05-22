@@ -243,6 +243,10 @@ scripts/*
 # against the latest Timeline CSV. Pure read-only against public data.
 !scripts/audit-timeline-aliases.ts
 
+# Parallel-session worktree helper — developer tooling, no crypto or data
+# secrets. Documented in CLAUDE.md ("Parallel sessions: use git worktrees").
+!scripts/new-worktree.sh
+
 # Compliance country-token audit — runs in CI. Validates every country/region
 # token in the latest compliance CSV resolves through COUNTRY_CODE_TO_NAME and
 # COUNTRY_TO_REGION in src/data/complianceData.ts. Pure read-only.

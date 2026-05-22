@@ -35,11 +35,19 @@ import { ModuleCard } from './ModuleCard'
 import { LearnViewToggle, type LearnViewMode } from './LearnViewToggle'
 import { LearnTrackStack } from './LearnTrackStack'
 import { ModuleTable, type ModuleTableItem } from './ModuleTable'
+import { PersonaPathView } from './PersonaPathView'
+import { RecommendedPathBanner } from './RecommendedPathBanner'
+import { usePersonaPathItems } from './usePersonaPathItems'
+import {
+  ResearcherTaxonomyFilter,
+  type TaxonomySelection,
+} from './ResearcherTaxonomyFilter'
+import { modulesByAlgorithm, modulesByStandard } from './moduleEnrichment'
+import { useLearnStore } from '../../store/useLearnStore'
 import {
   MODULE_CATALOG,
   MODULE_TRACKS,
   MODULE_STEP_COUNTS,
-  MODULE_TO_TRACK,
   LEARN_SECTIONS,
   WORKSHOP_STEPS,
 } from './moduleData'
@@ -259,6 +267,11 @@ interface DesktopLearnFilterPopoverProps {
   sortBy: LearnSortMode
   personaFilterItems: { id: string; label: string }[]
   selectedPersonaFilter: string
+  /** P2-4: hide the NICE Proficiency filter block (used for curious until they opt in). */
+  hideNiceFilter?: boolean
+  /** P2-4: when true, render a "Show advanced filters" link inside the popover. */
+  showAdvancedFiltersToggle?: boolean
+  onAdvancedFiltersOpen?: () => void
   onTrackChange: (v: string) => void
   onDifficultyChange: (v: string) => void
   onStatusChange: (v: string) => void
@@ -279,6 +292,9 @@ const DesktopLearnFilterPopover: React.FC<DesktopLearnFilterPopoverProps> = ({
   sortBy,
   personaFilterItems,
   selectedPersonaFilter,
+  hideNiceFilter,
+  showAdvancedFiltersToggle,
+  onAdvancedFiltersOpen,
   onTrackChange,
   onDifficultyChange,
   onStatusChange,
@@ -389,41 +405,55 @@ const DesktopLearnFilterPopover: React.FC<DesktopLearnFilterPopoverProps> = ({
             />
           </div>
 
-          <div className="space-y-1.5 pt-3 border-t border-border/50">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-              <GraduationCap size={11} aria-hidden="true" />
-              NICE Proficiency
-            </span>
-            <div className="flex rounded-md overflow-hidden border border-border">
+          {showAdvancedFiltersToggle && onAdvancedFiltersOpen && (
+            <div className="pt-3 border-t border-border/50">
               <Button
-                variant="ghost"
-                onClick={() => onNiceTierChange('All')}
-                className={clsx(
-                  'flex-1 h-7 text-[11px] rounded-none border-r border-border',
-                  selectedNiceTier === 'All'
-                    ? 'bg-muted/60 text-foreground font-medium'
-                    : 'text-muted-foreground hover:text-foreground'
-                )}
+                variant="link"
+                size="sm"
+                onClick={onAdvancedFiltersOpen}
+                className="text-[11px] p-0 h-auto"
               >
-                All
+                Show advanced filters
               </Button>
-              {NICE_TIERS.map((tier) => (
+            </div>
+          )}
+          {!hideNiceFilter && (
+            <div className="space-y-1.5 pt-3 border-t border-border/50">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                <GraduationCap size={11} aria-hidden="true" />
+                NICE Proficiency
+              </span>
+              <div className="flex rounded-md overflow-hidden border border-border">
                 <Button
-                  key={tier.id}
                   variant="ghost"
-                  onClick={() => onNiceTierChange(tier.id)}
+                  onClick={() => onNiceTierChange('All')}
                   className={clsx(
-                    'flex-1 h-7 text-[11px] rounded-none border-r border-border last:border-r-0',
-                    selectedNiceTier === tier.id
-                      ? 'bg-primary/10 text-primary font-medium'
+                    'flex-1 h-7 text-[11px] rounded-none border-r border-border',
+                    selectedNiceTier === 'All'
+                      ? 'bg-muted/60 text-foreground font-medium'
                       : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
-                  {tier.label}
+                  All
                 </Button>
-              ))}
+                {NICE_TIERS.map((tier) => (
+                  <Button
+                    key={tier.id}
+                    variant="ghost"
+                    onClick={() => onNiceTierChange(tier.id)}
+                    className={clsx(
+                      'flex-1 h-7 text-[11px] rounded-none border-r border-border last:border-r-0',
+                      selectedNiceTier === tier.id
+                        ? 'bg-primary/10 text-primary font-medium'
+                        : 'text-muted-foreground hover:text-foreground'
+                    )}
+                  >
+                    {tier.label}
+                  </Button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="space-y-1.5 pt-3 border-t border-border/50">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -460,6 +490,10 @@ export const Dashboard: React.FC = () => {
   const isEmbedded = useIsEmbedded()
   const reduced = usePrefersReducedMotion()
   const { modules } = useModuleStore()
+  // When path view is active for executive/curious, the persona's curated path already
+  // surfaces the common-ground modules with a badge — the standalone callout would
+  // duplicate them. Suppress the callout in that case; keep it for null persona.
+  const showEverything = useLearnStore((s) => s.showEverything)
 
   const activeModules = MODULE_TRACKS.flatMap((t) => t.modules)
 
@@ -550,12 +584,15 @@ export const Dashboard: React.FC = () => {
         />
       )}
 
-      {/* Common Ground callout — for executive, curious, or no-persona users */}
+      {/* Common Ground callout — shown only when path view ISN'T already surfacing these
+          modules. For executive/curious in default (non-showEverything) mode, PersonaPathView
+          renders the same five modules with a "Common Ground" badge, so the standalone
+          callout would duplicate them. Keep the callout for null persona (no path to show). */}
       {!isEmbedded &&
         (selectedPersona === null ||
           selectedPersona === undefined ||
-          selectedPersona === 'executive' ||
-          selectedPersona === 'curious') && (
+          ((selectedPersona === 'executive' || selectedPersona === 'curious') &&
+            showEverything)) && (
           <motion.div
             initial={{ opacity: 0, y: reduced ? 0 : -8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -656,17 +693,53 @@ const ModuleTracksGrid = ({
   const [selectedTrack, setSelectedTrack] = useState(initialTrack)
   const [selectedDifficulty, setSelectedDifficulty] = useState('All')
   const [selectedStatus, setSelectedStatus] = useState('All')
-  // Professional personas pre-select their learning path; curious users start with all modules visible to explore, but advanced topics are guarded in the carousel.
   // ?persona= URL param wins over the persona store on initial mount so chatbot deep links land precisely.
+  // Every persona — including curious — starts pre-filtered to its own curated path. The
+  // "Show me everything (advanced)" escape inside PersonaPathView resets this back to 'All'.
+  const effectivePersona: string | null = initialPersona ?? selectedPersona ?? null
   const [selectedPersonaFilter, setSelectedPersonaFilter] = useState<string>(
-    initialPersona ?? (selectedPersona === 'curious' ? 'All' : (selectedPersona ?? 'All'))
+    effectivePersona ?? 'All'
   )
-  const [sortBy, setSortBy] = useState<LearnSortMode>('default')
-  const [viewMode, setViewMode] = useState<LearnViewMode>('stack')
+  const showEverything = useLearnStore((s) => s.showEverything)
+  const setShowEverything = useLearnStore((s) => s.setShowEverything)
+  const researcherSortOverride = useLearnStore((s) => s.researcherSortOverride)
+  const setResearcherSortOverride = useLearnStore((s) => s.setResearcherSortOverride)
+  // Researcher: default to 'recently' so they land on the freshest content.
+  // showEverything (curious escape) wins over the persona-derived sort if engaged.
+  const initialSort: LearnSortMode = (() => {
+    if (showEverything) return 'default'
+    if (effectivePersona === 'researcher') {
+      return (researcherSortOverride as LearnSortMode) ?? 'recently'
+    }
+    return 'default'
+  })()
+  const [sortBy, setSortBy] = useState<LearnSortMode>(initialSort)
+  // viewMode default depends on the effective persona:
+  //  - researcher / null persona → 'stack' (navigation, not curation)
+  //  - showEverything engaged (curious only) → 'stack'
+  //  - every other persona → 'path' (their curated, phased view)
+  const initialViewMode: LearnViewMode = (() => {
+    if (showEverything) return 'stack'
+    if (!effectivePersona) return 'stack'
+    if (effectivePersona === 'researcher') return 'stack'
+    return 'path'
+  })()
+  const [viewMode, setViewMode] = useState<LearnViewMode>(initialViewMode)
   // Pre-populate from store only when user has explicitly overridden the tier
   const [selectedNiceTier, setSelectedNiceTier] = useState<NiceProficiencyTier | 'All'>(
     niceTierOverridden ? storeNiceTier : 'All'
   )
+  // P2-4: NICE Proficiency is jargon for new learners. Hide it from curious by
+  // default; reveal under an "Advanced filters" toggle so power users can still
+  // engage it without surfacing the chrome on first paint.
+  const [advancedFiltersOpen, setAdvancedFiltersOpen] = useState(false)
+  // P2-3: researcher-only secondary axis — browse by algorithm or standard.
+  // Selection narrows the filteredModuleIds set further; null means no extra
+  // filtering. Only applied when persona is researcher AND viewMode is stack.
+  const [taxonomySelection, setTaxonomySelection] = useState<TaxonomySelection>({
+    algorithm: null,
+    standard: null,
+  })
 
   // Show Curious Explorer path in curious mode (persona or experience level); professionals see professional roles
   const isCuriousMode = selectedPersona === 'curious' || experienceLevel === 'curious'
@@ -679,13 +752,35 @@ const ModuleTracksGrid = ({
     return () => clearTimeout(timer)
   }, [searchText])
 
-  // Dropdown → store: changing role in the grid updates the persona store
+  // Persist researcher sort selection across sessions so changing persona to researcher
+  // doesn't lose their chosen sort. Only writes when researcher is the active persona.
+  useEffect(() => {
+    if (selectedPersona === 'researcher') {
+      setResearcherSortOverride(sortBy)
+    }
+  }, [selectedPersona, sortBy, setResearcherSortOverride])
+
+  // Dropdown → store: changing role in the grid updates the persona store.
+  // When the user re-selects curious from the role pill, we explicitly reset the
+  // "Show me everything" escape so they return to their curated path (plan P0-3
+  // re-entry requirement). Selecting any non-curious persona also clears the
+  // escape since it only ever applied to curious.
   const handlePersonaFilterChange = useCallback(
     (id: string) => {
       setSelectedPersonaFilter(id)
       setPersona(id === 'All' ? null : (id as PersonaId))
+      if (id !== 'All') {
+        setShowEverything(false)
+        // Snap viewMode back to the persona's curated default unless the user is
+        // a researcher (no path) — they keep stack mode.
+        if (id === 'researcher') {
+          setViewMode('stack')
+        } else {
+          setViewMode('path')
+        }
+      }
     },
-    [setPersona]
+    [setPersona, setShowEverything]
   )
 
   const isModuleRelevant = useCallback(
@@ -739,33 +834,16 @@ const ModuleTracksGrid = ({
     setSortBy('default')
   }
 
-  // Build flat item list (for Cards and Table modes)
+  // Build flat item list (for Cards and Table modes). When a persona filter is active,
+  // delegate to the shared usePersonaPathItems helper so PersonaPathView and the
+  // cards/table renderers consume the same flat shape (Risk #2 in the plan).
+  const personaPathSummary = usePersonaPathItems(personaFilterActive ? selectedPersonaFilter : null)
   const flatItems = useMemo<ModuleTableItem[]>(() => {
-    if (personaFilterActive) {
-      const persona = PERSONAS[selectedPersonaFilter as PersonaId]
-      if (!persona) return []
-      return persona.pathItems.map((item) => {
-        if (item.type === 'module') {
-          const mod = MODULE_CATALOG[item.moduleId]
-          return {
-            kind: 'module' as const,
-            module: mod,
-            track: MODULE_TO_TRACK[item.moduleId] ?? '',
-          }
-        }
-        return {
-          kind: 'checkpoint' as const,
-          id: item.id,
-          label: item.label,
-          categoryCount: item.categories.length,
-          categories: item.categories,
-        }
-      })
-    }
+    if (personaPathSummary) return personaPathSummary.flatItems
     return MODULE_TRACKS.flatMap(({ track, modules: mods }) =>
       mods.map((module) => ({ kind: 'module' as const, module, track }))
     )
-  }, [personaFilterActive, selectedPersonaFilter])
+  }, [personaPathSummary])
 
   // Apply filters and sort to module items
   const filteredItems = useMemo<ModuleTableItem[]>(() => {
@@ -882,6 +960,18 @@ const ModuleTracksGrid = ({
             !modulePassesTierFilter(m.id, selectedNiceTier as NiceProficiencyTier)
           )
             return false
+          // P2-3: researcher-only taxonomy axis. When an algorithm or standard
+          // is selected, only modules tagged with that taxon survive.
+          if (selectedPersona === 'researcher') {
+            if (taxonomySelection.algorithm) {
+              const matching = modulesByAlgorithm(taxonomySelection.algorithm)
+              if (!matching.includes(m.id)) return false
+            }
+            if (taxonomySelection.standard) {
+              const matching = modulesByStandard(taxonomySelection.standard)
+              if (!matching.includes(m.id)) return false
+            }
+          }
           return true
         })
         .map((m) => m.id)
@@ -894,6 +984,8 @@ const ModuleTracksGrid = ({
     selectedNiceTier,
     personaFilterActive,
     selectedPersonaFilter,
+    selectedPersona,
+    taxonomySelection,
     allModules,
     modules,
     showOnlyLearnModules,
@@ -911,10 +1003,15 @@ const ModuleTracksGrid = ({
     [navigate]
   )
 
-  // In stack mode, Track filter is hidden (the stack itself is the track navigator)
-  const showTrackFilter = viewMode !== 'stack'
-  // Sort is disabled in stack mode and when persona filter active
-  const sortDisabled = viewMode === 'stack' || personaFilterActive
+  // In stack/path mode, Track filter is hidden (the stack itself is the track navigator;
+  // path mode renders its own checkpoint-bounded phases).
+  const showTrackFilter = viewMode !== 'stack' && viewMode !== 'path'
+  // Sort is meaningless in stack/path modes (their own ordering is intrinsic).
+  // For cards/table with a persona filter active, sort is allowed but a "Curated order"
+  // badge advertises the default so a custom sort is an explicit user choice.
+  const sortDisabled = viewMode === 'stack' || viewMode === 'path'
+  const curatedOrderActive = personaFilterActive && sortBy === 'default'
+  const sortChangedFromCurated = personaFilterActive && sortBy !== 'default'
 
   let activeFilterCount = 0
   if (selectedTrack !== 'All') activeFilterCount++
@@ -1045,7 +1142,24 @@ const ModuleTracksGrid = ({
                     ))}
                   </div>
                 </div>
-                <div className="space-y-2 flex flex-col pt-4 border-t border-border/50">
+                {isCuriousMode && !advancedFiltersOpen && (
+                  <div className="pt-4 border-t border-border/50">
+                    <Button
+                      variant="link"
+                      size="sm"
+                      onClick={() => setAdvancedFiltersOpen(true)}
+                      className="text-xs"
+                    >
+                      Show advanced filters
+                    </Button>
+                  </div>
+                )}
+                <div
+                  className={clsx(
+                    'space-y-2 flex flex-col pt-4 border-t border-border/50',
+                    isCuriousMode && !advancedFiltersOpen && 'hidden'
+                  )}
+                >
                   <span className="text-sm font-semibold text-foreground flex items-center gap-1.5">
                     <GraduationCap size={14} aria-hidden="true" />
                     NICE Proficiency
@@ -1086,7 +1200,11 @@ const ModuleTracksGrid = ({
                 </div>
                 <div className="space-y-2 flex flex-col pt-4 border-t border-border/50">
                   <span className="text-sm font-semibold text-foreground">View Mode</span>
-                  <LearnViewToggle mode={viewMode} onChange={setViewMode} />
+                  <LearnViewToggle
+                    mode={viewMode}
+                    onChange={setViewMode}
+                    pathAvailable={personaFilterActive}
+                  />
                 </div>
               </div>
             }
@@ -1125,6 +1243,9 @@ const ModuleTracksGrid = ({
           sortBy={sortBy}
           personaFilterItems={personaFilterItems}
           selectedPersonaFilter={selectedPersonaFilter}
+          hideNiceFilter={isCuriousMode && !advancedFiltersOpen}
+          showAdvancedFiltersToggle={isCuriousMode && !advancedFiltersOpen}
+          onAdvancedFiltersOpen={() => setAdvancedFiltersOpen(true)}
           onTrackChange={setSelectedTrack}
           onDifficultyChange={setSelectedDifficulty}
           onStatusChange={setSelectedStatus}
@@ -1154,8 +1275,33 @@ const ModuleTracksGrid = ({
           </Button>
         )}
 
+        {/* Curated-order badge — shown when a persona path is active and sort is the
+            persona's curated default. Replaces the silent sort-disable per P1-2. */}
+        {curatedOrderActive && (
+          <span
+            className="text-[10px] font-semibold uppercase tracking-wider text-secondary border border-secondary/30 bg-secondary/10 rounded-full px-2 py-1"
+            title="Sort follows the curated learning order for this persona"
+          >
+            Curated order
+          </span>
+        )}
+        {sortChangedFromCurated && (
+          <Button
+            variant="link"
+            size="sm"
+            onClick={() => setSortBy('default')}
+            className="text-xs"
+          >
+            Reset to curated
+          </Button>
+        )}
+
         {/* View toggle */}
-        <LearnViewToggle mode={viewMode} onChange={setViewMode} />
+        <LearnViewToggle
+                    mode={viewMode}
+                    onChange={setViewMode}
+                    pathAvailable={personaFilterActive}
+                  />
       </div>
 
       {/* Results count + clear (only in cards/table modes or when filters active in stack) */}
@@ -1193,16 +1339,69 @@ const ModuleTracksGrid = ({
         />
       )}
 
+      {/* ── Path mode (persona-curated phases) ── */}
+      {viewMode === 'path' && personaFilterActive && (
+        <div className="space-y-4">
+          {!isEmbedded && (
+            <RecommendedPathBanner
+              personaId={selectedPersonaFilter as PersonaId}
+              onResume={(id) => navigate(id)}
+            />
+          )}
+          <PersonaPathView
+            personaId={selectedPersonaFilter as PersonaId}
+            onSelectModule={(id) => {
+              logEvent('Learning', 'Path Module Click', personaLabel(id))
+              navigate(id)
+            }}
+            isModuleRelevant={isModuleRelevant}
+            isModuleAboveLevel={isModuleAboveLevel}
+            onShowEverything={() => {
+              setShowEverything(true)
+              setViewMode('stack')
+              setSelectedPersonaFilter('All')
+              setPersona(null)
+            }}
+          />
+          <details className="group">
+            <summary className="cursor-pointer text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-4 py-2 inline-flex items-center gap-2">
+              <span className="text-xs">▸</span>
+              Browse all {totalModuleCount} modules ({MODULE_TRACKS.length} tracks)
+            </summary>
+            <div className="mt-3">
+              <LearnTrackStack
+                navigate={navigate}
+                navigateToQuiz={navigateToQuiz}
+                filteredModuleIds={filteredModuleIds}
+                isModuleRelevant={isModuleRelevant}
+                isModuleAboveLevel={isModuleAboveLevel}
+                onClearFilters={clearFilters}
+              />
+            </div>
+          </details>
+        </div>
+      )}
+
       {/* ── Stack mode ── */}
       {viewMode === 'stack' && (
-        <LearnTrackStack
-          navigate={navigate}
-          navigateToQuiz={navigateToQuiz}
-          filteredModuleIds={filteredModuleIds}
-          isModuleRelevant={isModuleRelevant}
-          isModuleAboveLevel={isModuleAboveLevel}
-          onClearFilters={clearFilters}
-        />
+        <>
+          {/* P2-3: researcher 2nd-axis — browse modules by algorithm or standard.
+              Filter narrows filteredModuleIds via the predicate above. */}
+          {selectedPersona === 'researcher' && (
+            <ResearcherTaxonomyFilter
+              selection={taxonomySelection}
+              onChange={setTaxonomySelection}
+            />
+          )}
+          <LearnTrackStack
+            navigate={navigate}
+            navigateToQuiz={navigateToQuiz}
+            filteredModuleIds={filteredModuleIds}
+            isModuleRelevant={isModuleRelevant}
+            isModuleAboveLevel={isModuleAboveLevel}
+            onClearFilters={clearFilters}
+          />
+        </>
       )}
 
       {/* ── Cards mode ── */}
@@ -1300,7 +1499,7 @@ const ModuleTracksGrid = ({
         domain="module"
         limit={5}
         title="Module Content Updates"
-        defaultCollapsed={true}
+        defaultCollapsed={selectedPersona !== 'researcher'}
       />
     </div>
   )

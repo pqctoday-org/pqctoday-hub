@@ -1,5 +1,10 @@
 import { defineConfig, devices } from '@playwright/test'
 
+// Port can be overridden via PLAYWRIGHT_DEV_PORT for parallel worktrees that
+// can't all bind 5175 (see CLAUDE.md "Parallel sessions: use git worktrees").
+const DEV_PORT = parseInt(process.env.PLAYWRIGHT_DEV_PORT ?? '5175', 10)
+const BASE_URL = `http://localhost:${DEV_PORT}`
+
 export default defineConfig({
   testDir: './e2e',
   timeout: 30 * 1000,
@@ -14,7 +19,7 @@ export default defineConfig({
   use: {
     actionTimeout: 0,
     trace: 'on-first-retry',
-    baseURL: 'http://localhost:5175',
+    baseURL: BASE_URL,
   },
   projects: [
     {
@@ -23,8 +28,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run dev',
-    port: 5175,
+    command: `npm run dev -- --port ${DEV_PORT} --strictPort`,
+    port: DEV_PORT,
     reuseExistingServer: !process.env.CI,
     timeout: 30000,
   },
