@@ -28,14 +28,12 @@ function buildNarrative(frameworks: ComplianceFramework[]): NarrativeData | null
   const earliestYear = Math.min(...years)
   const latestYear = Math.max(...years)
   const today = new Date().getFullYear()
-  const future = withYears
-    .filter((x) => x.year >= today)
-    .sort((a, b) => a.year - b.year)
+  const future = withYears.filter((x) => x.year >= today).sort((a, b) => a.year - b.year)
   const next = future[0] ?? withYears.sort((a, b) => b.year - a.year)[0]
   return {
     earliestYear,
     latestYear,
-    nextDeadlineLabel: next ? `${next.fw.name} (${next.year})` : null,
+    nextDeadlineLabel: next ? `${next.fw.label} (${next.year})` : null,
   }
 }
 
@@ -45,11 +43,7 @@ function buildNarrative(frameworks: ComplianceFramework[]): NarrativeData | null
  *   curious                              → one-line narrative summary
  *   developer | architect | researcher  → closed disclosure (mounts on click)
  */
-export function DeadlineTimelineGate({
-  persona,
-  frameworks,
-  label,
-}: DeadlineTimelineGateProps) {
+export function DeadlineTimelineGate({ persona, frameworks, label }: DeadlineTimelineGateProps) {
   const [open, setOpen] = useState(false)
   const narrative = useMemo(() => buildNarrative(frameworks), [frameworks])
 
