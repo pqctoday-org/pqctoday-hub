@@ -161,9 +161,15 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     library docs that lack trust-score wiring. Same underlying gap:
   //     chunkToResource routing for these new resourceIds needs extending in
   //     trustScoreData.ts. Drive back down as wiring is added.
+  //     2026-05-21: bumped 107 → 113 — threats Phase 4-8 recovery
+  //     (82→106 active rows + AUS-GOV-001 / TELCO-005 correction clears)
+  //     emitted 6 more doc-enrichment chunks (RFC 7030, RFC 7296,
+  //     draft-reddy-cose-jose-pqc-hybrid-hpke, etc.) without trust-score
+  //     wiring. Same gap; same remediation. Drive back down via
+  //     trustScoreData.ts chunkToResource extension.
   timeline: 0,
   algorithms: 0,
-  'document-enrichment': 107,
+  'document-enrichment': 113,
 }
 
 /**
