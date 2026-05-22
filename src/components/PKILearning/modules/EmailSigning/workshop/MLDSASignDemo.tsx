@@ -450,7 +450,7 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
                   variant="ghost"
                   size="sm"
                   onClick={() => {
-                    const blob = new Blob([result.signedP7m!], {
+                    const blob = new Blob([result.signedP7m!.slice() as BlobPart], {
                       type: 'application/pkcs7-mime',
                     })
                     const url = URL.createObjectURL(blob)
