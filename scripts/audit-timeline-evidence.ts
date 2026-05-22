@@ -92,8 +92,7 @@ function main(): void {
   if (!existsSync(CSV_PATH)) fail(`CSV not found: ${CSV_PATH}`)
   if (!existsSync(MANIFEST_PATH)) {
     fail(
-      `Manifest not found: ${MANIFEST_PATH}\n` +
-        `Run \`npm run download:timeline-evidence\` first.`
+      `Manifest not found: ${MANIFEST_PATH}\n` + `Run \`npm run download:timeline-evidence\` first.`
     )
   }
 
@@ -112,9 +111,11 @@ function main(): void {
   const rowsWithCsvLocalFile = activeRows.filter((r) => !!r.local_file?.trim()).length
   const rowsResolved = manifest.entries.filter((e) => !!e.resolved_local_file).length
 
-  // Acceptable = ok | paywall. paywall is an acceptable proof-of-real-source
-  // even when access is locked.
-  const ACCEPTABLE: ReadonlySet<DownloadStatus> = new Set(['ok', 'paywall'])
+  // Acceptable = ok | paywall | skipped. paywall is an acceptable proof-of-real-source
+  // even when access is locked. skipped means the operator added the URL to
+  // public/timeline/skip-list.json (manually-verified real source, but auto-fetch
+  // blocked — e.g. WAF or TLS incompatibility); the skip-list entry is the audit trail.
+  const ACCEPTABLE: ReadonlySet<DownloadStatus> = new Set(['ok', 'paywall', 'skipped'])
 
   const problems = manifest.entries.filter((e) => !ACCEPTABLE.has(e.download_status))
 
@@ -156,7 +157,7 @@ function main(): void {
   console.log('')
 
   if (problems.length === 0) {
-    console.log(`PASS — every active row has acceptable evidence (ok or paywall).`)
+    console.log(`PASS — every active row has acceptable evidence (ok, paywall, or skipped).`)
     process.exit(0)
   }
 
