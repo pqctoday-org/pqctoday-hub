@@ -103,21 +103,22 @@ export const PERSONA_STAGE_GRANULARITY: Record<PersonaId, PersonaStageGranularit
 }
 
 /**
- * Collapse a raw `DraftStage` into the tier appropriate for the persona's
- * granularity. `na` always returns 0 (muted) regardless of persona to avoid
- * mis-colouring non-applicable cells.
+ * Collapse a raw `DraftStage` into the tier appropriate for the given
+ * granularity. `na` always returns 0 (muted) to avoid mis-colouring
+ * non-applicable cells.
  *
  * Tier mapping per granularity:
  *   binary  → {0, 7}                    RFC vs everything else
  *   ternary → {0, 1, 4, 7}              early / WG+ / RFC
  *   full    → DRAFT_STAGE_LEVEL[stage]  graduated 0..7 (current behaviour)
  */
-export function stageCollapse(stage: DraftStage, persona: PersonaId | null): StageTier {
+export function stageCollapseAt(
+  stage: DraftStage,
+  granularity: PersonaStageGranularity
+): StageTier {
   if (stage === 'na') return 0
   // eslint-disable-next-line security/detect-object-injection
   const raw = DRAFT_STAGE_LEVEL[stage]
-  // eslint-disable-next-line security/detect-object-injection
-  const granularity = persona ? PERSONA_STAGE_GRANULARITY[persona] : 'full'
   if (granularity === 'full') return raw as StageTier
   if (granularity === 'ternary') {
     if (raw >= 7) return 7
@@ -126,6 +127,18 @@ export function stageCollapse(stage: DraftStage, persona: PersonaId | null): Sta
     return 1
   }
   return raw === 7 ? 7 : 0
+}
+
+/** Resolve the persona's effective granularity (full when no persona). */
+export function granularityForPersona(persona: PersonaId | null): PersonaStageGranularity {
+  if (!persona) return 'full'
+  // eslint-disable-next-line security/detect-object-injection
+  return PERSONA_STAGE_GRANULARITY[persona]
+}
+
+/** Persona-keyed convenience wrapper for `stageCollapseAt`. */
+export function stageCollapse(stage: DraftStage, persona: PersonaId | null): StageTier {
+  return stageCollapseAt(stage, granularityForPersona(persona))
 }
 
 /** Short label for the stage chip (e.g. "WG LC", "IETF LC", "RFC"). */

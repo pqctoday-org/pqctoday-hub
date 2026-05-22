@@ -333,6 +333,48 @@ export function AlgorithmsView() {
     [updateSearchParams, personaDefaults.tab]
   )
 
+  // QuickView preset → multi-field filter writes (P1.2). NIST picks pins
+  // status=Certified + family=Lattice (the standardized FIPS 203/204/205
+  // family); FIPS-validated narrows to status=Certified across all families;
+  // Everything resets all filters back to "All".
+  const handleQuickView = useCallback(
+    (preset: 'nist-picks' | 'fips-validated' | 'everything') => {
+      if (preset === 'nist-picks') {
+        setFilterCryptoFamily('Lattice')
+        setFilterFunction('All')
+        setFilterStatus('Certified')
+        updateSearchParams({
+          family: 'Lattice',
+          fn: null,
+          status: 'Certified',
+        })
+      } else if (preset === 'fips-validated') {
+        setFilterCryptoFamily('All')
+        setFilterFunction('All')
+        setFilterStatus('Certified')
+        updateSearchParams({
+          family: null,
+          fn: null,
+          status: 'Certified',
+        })
+      } else {
+        setFilterCryptoFamily('All')
+        setFilterFunction('All')
+        setFilterSecurityLevel('All')
+        setFilterRegion('All')
+        setFilterStatus('All')
+        updateSearchParams({
+          family: null,
+          fn: null,
+          level: null,
+          region: null,
+          status: null,
+        })
+      }
+    },
+    [updateSearchParams]
+  )
+
   // --- Comparison handlers ---
   const handleToggleCompare = useCallback(
     (algoName: string) => {
@@ -631,6 +673,8 @@ export function AlgorithmsView() {
             filteredCount={filteredCount}
             totalCount={totalAlgoCount}
             availableLevels={availableLevels}
+            persona={selectedPersona}
+            onQuickView={handleQuickView}
           />
 
           {/* Cross-link to PQC Candidates module when filtering by Candidate status */}
