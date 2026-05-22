@@ -165,6 +165,14 @@ export const logExternalLink = (category: string, url: string) => {
   logEvent(category, 'External Link', url)
 }
 
+export const logAboutOutboundLink = (url: string) => {
+  logEvent('About', 'Outbound Link', personaLabel(url))
+}
+
+export const logAboutNextStepCta = (destination: string) => {
+  logEvent('About', 'Next Step CTA', personaLabel(destination))
+}
+
 // --- Patents tracking ---
 
 export const logPatentView = (patentNumber: string) => {
