@@ -252,6 +252,13 @@ scripts/*
 # classes that violate ux-standard.md §S1.2. Pure read-only against public src.
 !scripts/audit-semantic-tokens.ts
 
+# Timeline electronic-evidence pipeline — mirrors the threats-evidence pattern.
+# Downloads SourceUrl content per active CSV row to public/timeline/ and emits
+# public/timeline/evidence/manifest.json so the Gantt popover can prove its
+# claims are backed by on-disk documents. Audit script is the CI gate.
+!scripts/download-timeline-evidence.ts
+!scripts/audit-timeline-evidence.ts
+
 # Private CI workflows (compliance scraper runs locally, not in public CI)
 .github/workflows/update-compliance.yml
 
