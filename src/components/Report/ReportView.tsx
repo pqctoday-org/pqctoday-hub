@@ -97,12 +97,23 @@ export const ReportView: React.FC = () => {
   const { assessmentStatus, getInput, setResult, lastResult } = useAssessmentStore()
   useWorkflowPhaseTracker('assess')
   const input = getInput()
-  const result =
-    (assessmentStatus === 'complete' || assessmentStatus === 'in-progress') && input
-      ? computeAssessment(input)
-      : assessmentStatus === 'complete' && lastResult
-        ? lastResult
-        : null
+  // `getInput()` builds a fresh AssessmentInput on every store read, so plain
+  // useMemo([input]) never hits. Key on a stable serialization instead — the
+  // input is ~30 small primitive/array fields, so stringify is cheap relative
+  // to the 10-stage computeAssessment pipeline this guards against re-running
+  // on every render (was firing on every persona toggle, module-store update,
+  // or unrelated remount).
+  const inputKey = input ? JSON.stringify(input) : null
+  const result = useMemo(() => {
+    if ((assessmentStatus === 'complete' || assessmentStatus === 'in-progress') && input) {
+      return computeAssessment(input)
+    }
+    if (assessmentStatus === 'complete' && lastResult) {
+      return lastResult
+    }
+    return null
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputKey, assessmentStatus, lastResult])
   const persistedRef = useRef(false)
   const [searchParams] = useSearchParams()
 
