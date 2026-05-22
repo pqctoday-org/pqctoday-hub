@@ -14,12 +14,38 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const base = algoParam.replace(/-\d+$/, '')
       if (['ML-KEM', 'ML-DSA', 'SLH-DSA', 'FN-DSA'].includes(base)) return base
       if (algoParam === 'ML-KEM' || algoParam === 'ML-DSA') return algoParam
+      // Full-name algorithms — the entire param IS the algorithm identifier
+      if (
+        algoParam.startsWith('MAYO-') ||
+        algoParam.startsWith('CROSS-') ||
+        algoParam.startsWith('OV-') ||
+        algoParam.startsWith('SNOVA-') ||
+        algoParam.startsWith('HQC-') ||
+        algoParam.startsWith('FrodoKEM-') ||
+        algoParam.startsWith('Classic-McEliece-') ||
+        algoParam.startsWith('SLH-DSA-S') ||
+        algoParam.startsWith('FN-DSA-')
+      )
+        return algoParam
     }
     return 'ML-KEM'
   })
   const [keySize, setKeySize] = useState<string>(() => {
     const algoParam = new URLSearchParams(window.location.search).get('algo')
     if (algoParam) {
+      // Full-name algorithms use the entire param as keySize
+      if (
+        algoParam.startsWith('MAYO-') ||
+        algoParam.startsWith('CROSS-') ||
+        algoParam.startsWith('OV-') ||
+        algoParam.startsWith('SNOVA-') ||
+        algoParam.startsWith('HQC-') ||
+        algoParam.startsWith('FrodoKEM-') ||
+        algoParam.startsWith('Classic-McEliece-') ||
+        algoParam.startsWith('SLH-DSA-S') ||
+        algoParam.startsWith('FN-DSA-')
+      )
+        return algoParam
       // Extract key size suffix: 'ML-KEM-1024' → '1024', 'ML-DSA-44' → '44'
       const sizeMatch = algoParam.match(/-(\d+)$/)
       if (sizeMatch) return sizeMatch[1]

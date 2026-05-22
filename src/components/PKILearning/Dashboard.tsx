@@ -20,6 +20,7 @@ import {
 import clsx from 'clsx'
 import { useModuleStore } from '../../store/useModuleStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { logEvent, personaLabel } from '@/utils/analytics'
 import type { NiceProficiencyTier } from '../../data/niceFramework'
 import { getNiceMapping } from '../../data/niceModuleMapping'
 import { MODULE_INDUSTRY_RELEVANCE } from '../../data/personaConfig'
@@ -1242,7 +1243,10 @@ const ModuleTracksGrid = ({
                     <ModuleCard
                       key={`${item.module.id}-${idx}`}
                       module={item.module}
-                      onSelectModule={(id) => navigate(id)}
+                      onSelectModule={(id) => {
+                        logEvent('Learning', 'Module Card Click', personaLabel(id))
+                        navigate(id)
+                      }}
                       isRelevant={isModuleRelevant(item.module.id)}
                       isAboveLevel={isModuleAboveLevel(item.module.id)}
                     />

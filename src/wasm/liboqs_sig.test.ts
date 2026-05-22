@@ -18,6 +18,8 @@ const { mockInstance, mockFactory } = vi.hoisted(() => {
 vi.mock('@oqs/liboqs-js/sig', () => ({
   createFalcon512: mockFactory,
   createFalcon1024: mockFactory,
+  createFalconPadded512: mockFactory,
+  createFalconPadded1024: mockFactory,
   createSlhDsaSha2128f: mockFactory,
   createSlhDsaSha2128s: mockFactory,
   createSlhDsaSha2192f: mockFactory,
@@ -30,6 +32,23 @@ vi.mock('@oqs/liboqs-js/sig', () => ({
   createSlhDsaShake192s: mockFactory,
   createSlhDsaShake256f: mockFactory,
   createSlhDsaShake256s: mockFactory,
+  createMAYO1: mockFactory,
+  createMAYO2: mockFactory,
+  createMAYO3: mockFactory,
+  createMAYO5: mockFactory,
+  createCrossRsdp128Balanced: mockFactory,
+  createCrossRsdp192Balanced: mockFactory,
+  createCrossRsdp256Balanced: mockFactory,
+  createCrossRsdpg128Balanced: mockFactory,
+  createCrossRsdpg192Balanced: mockFactory,
+  createCrossRsdpg256Balanced: mockFactory,
+  createOVIp: mockFactory,
+  createOVIs: mockFactory,
+  createOVIII: mockFactory,
+  createOVV: mockFactory,
+  createSnova2454: mockFactory,
+  createSnova2965: mockFactory,
+  createSnova49113: mockFactory,
 }))
 
 import {
@@ -40,6 +59,10 @@ import {
   load,
   SLH_DSA_ALGORITHMS,
   FALCON_ALGORITHMS,
+  MAYO_ALGORITHMS,
+  CROSS_ALGORITHMS,
+  OV_ALGORITHMS,
+  SNOVA_ALGORITHMS,
 } from './liboqs_sig'
 
 describe('liboqs_sig', () => {
@@ -71,10 +94,36 @@ describe('liboqs_sig', () => {
       expect(SLH_DSA_ALGORITHMS).toContain('SLH-DSA-SHAKE-256s')
     })
 
-    it('exports both Falcon variants', () => {
-      expect(FALCON_ALGORITHMS).toHaveLength(2)
+    it('exports all Falcon variants including padded', () => {
+      expect(FALCON_ALGORITHMS).toHaveLength(4)
       expect(FALCON_ALGORITHMS).toContain('FN-DSA-512')
       expect(FALCON_ALGORITHMS).toContain('FN-DSA-1024')
+      expect(FALCON_ALGORITHMS).toContain('FN-DSA-padded-512')
+      expect(FALCON_ALGORITHMS).toContain('FN-DSA-padded-1024')
+    })
+
+    it('exports MAYO algorithm constants', () => {
+      expect(MAYO_ALGORITHMS).toHaveLength(4)
+      expect(MAYO_ALGORITHMS).toContain('MAYO-1')
+      expect(MAYO_ALGORITHMS).toContain('MAYO-5')
+    })
+
+    it('exports CROSS algorithm constants', () => {
+      expect(CROSS_ALGORITHMS).toHaveLength(6)
+      expect(CROSS_ALGORITHMS).toContain('CROSS-RSDP-128-balanced')
+      expect(CROSS_ALGORITHMS).toContain('CROSS-RSDPg-256-balanced')
+    })
+
+    it('exports OV algorithm constants', () => {
+      expect(OV_ALGORITHMS).toHaveLength(4)
+      expect(OV_ALGORITHMS).toContain('OV-Ip')
+      expect(OV_ALGORITHMS).toContain('OV-V')
+    })
+
+    it('exports SNOVA algorithm constants', () => {
+      expect(SNOVA_ALGORITHMS).toHaveLength(3)
+      expect(SNOVA_ALGORITHMS).toContain('SNOVA-24-5-4')
+      expect(SNOVA_ALGORITHMS).toContain('SNOVA-49-11-3')
     })
   })
 
@@ -132,6 +181,17 @@ describe('liboqs_sig', () => {
   describe('full sign/verify cycle', () => {
     it.each([...SLH_DSA_ALGORITHMS, ...FALCON_ALGORITHMS])(
       'keygen → sign → verify for %s',
+      async (algo) => {
+        const { publicKey, secretKey } = await generateKey({ name: algo })
+        const message = new Uint8Array([72, 101, 108, 108, 111]) // "Hello"
+        const signature = await sign(message, secretKey, algo)
+        const valid = await verify(signature, message, publicKey, algo)
+        expect(valid).toBe(true)
+      }
+    )
+
+    it.each([...MAYO_ALGORITHMS, ...CROSS_ALGORITHMS, ...OV_ALGORITHMS, ...SNOVA_ALGORITHMS])(
+      'keygen → sign → verify for %s (Round 2)',
       async (algo) => {
         const { publicKey, secretKey } = await generateKey({ name: algo })
         const message = new Uint8Array([72, 101, 108, 108, 111]) // "Hello"

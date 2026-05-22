@@ -44,6 +44,10 @@ import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { Button } from '@/components/ui/button'
 import { CopyButton } from '@/components/ui/CopyButton'
 import { ErrorAlert } from '@/components/ui/error-alert'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -198,6 +202,37 @@ function getHybridSigErrorHint(err: unknown): string {
 
 export const HybridSignatures: React.FC = () => {
   const [activeConstruction, setActiveConstruction] = useState<ConstructionId>('concatenation')
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
+
+  // Shared op-log helper. Pushes a pending entry, returns done/fail closers.
+  const beginOp = useCallback((message: string) => {
+    const startedAt = performance.now()
+    setLogEntries((prev) => [...prev, { status: 'pending', message }])
+    return {
+      done: (label?: string) =>
+        setLogEntries((prev) => {
+          const next = [...prev]
+          next[next.length - 1] = {
+            status: 'success',
+            message: label ?? message.replace(/…$/, ''),
+
+            durationMs: Math.round(performance.now() - startedAt),
+          }
+          return next
+        }),
+      fail: (err: unknown) =>
+        setLogEntries((prev) => {
+          const next = [...prev]
+          next[next.length - 1] = {
+            status: 'error',
+            message: `${message.replace(/…$/, '')} — ${err instanceof Error ? err.message : String(err)}`,
+
+            durationMs: Math.round(performance.now() - startedAt),
+          }
+          return next
+        }),
+    }
+  }, [])
   const [hsmInitAttempts, setHsmInitAttempts] = useState(0)
   const [signPhase, setSignPhase] = useState<string | null>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -290,6 +325,7 @@ export const HybridSignatures: React.FC = () => {
         verifyResult: null,
         recombinationResult: null,
       })
+      const op = beginOp(`Generating ${id} hybrid keypair…`)
       try {
         await new Promise((r) => setTimeout(r, 10))
         let keys: KeyState
@@ -301,13 +337,15 @@ export const HybridSignatures: React.FC = () => {
           keys = { backend: 'hsm', pair: hsmKeygen(M, hSession) }
         }
         updateState(id, { keys, loading: false })
+        op.done()
       } catch (err) {
         if (intervalRef.current) clearInterval(intervalRef.current)
         setSignPhase(null)
         updateState(id, { loading: false, error: getHybridSigErrorHint(err) })
+        op.fail(err)
       }
     },
-    [updateState]
+    [updateState, beginOp]
   )
 
   const handleSign = useCallback(
@@ -322,6 +360,7 @@ export const HybridSignatures: React.FC = () => {
           prev?.includes('EC-Schnorr') ? 'Computing ML-DSA-65 component (3,293B)…' : prev
         )
       }, 80)
+      const op = beginOp(`Signing message with ${id} hybrid construction…`)
       try {
         await new Promise((r) => setTimeout(r, 10))
         const msgBytes = new TextEncoder().encode(message)
@@ -341,13 +380,15 @@ export const HybridSignatures: React.FC = () => {
         updateState(id, { sigResult, loading: false })
         if (intervalRef.current) clearInterval(intervalRef.current)
         setSignPhase(null)
+        op.done()
       } catch (err) {
         if (intervalRef.current) clearInterval(intervalRef.current)
         setSignPhase(null)
         updateState(id, { loading: false, error: getHybridSigErrorHint(err) })
+        op.fail(err)
       }
     },
-    [state, message, updateState]
+    [state, message, updateState, beginOp]
   )
 
   const handleVerify = useCallback(
@@ -355,6 +396,7 @@ export const HybridSignatures: React.FC = () => {
       const { keys, sigResult } = state[id]
       if (!keys || !sigResult) return
       updateState(id, { loading: true, error: null })
+      const op = beginOp(`Verifying ${id} hybrid signature…`)
       try {
         await new Promise((r) => setTimeout(r, 10))
         const msgBytes = new TextEncoder().encode(message)
@@ -372,13 +414,15 @@ export const HybridSignatures: React.FC = () => {
           throw new Error('Backend mismatch')
         }
         updateState(id, { verifyResult, loading: false })
+        op.done()
       } catch (err) {
         if (intervalRef.current) clearInterval(intervalRef.current)
         setSignPhase(null)
         updateState(id, { loading: false, error: getHybridSigErrorHint(err) })
+        op.fail(err)
       }
     },
-    [state, message, updateState]
+    [state, message, updateState, beginOp]
   )
 
   const handleRecombinationAttack = useCallback(async () => {
@@ -700,8 +744,13 @@ export const HybridSignatures: React.FC = () => {
         )}
       </div>
 
+      {/* Operation log + indeterminate progress bar (A7) */}
+      {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} className="max-h-40" />}
+
       {/* Error */}
-      {current.error && <ErrorAlert message={current.error} />}
+      {current.error && (
+        <ErrorAlert message={current.error} onRetry={() => void handleKeygen(activeConstruction)} />
+      )}
 
       {/* Key info */}
       {current.keys && renderKeys(current.keys)}

@@ -382,6 +382,39 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
     icon: 'Building2',
     condition: (s) => s.businessToolsUsed.length >= 14,
   },
+
+  // ═══════════════════════════════════════════════════════════════
+  // CURIOUS-ONLY (CC-15) — exposed only to the curious persona via
+  // PERSONA_EXCLUDED_ACHIEVEMENTS in personaConfig.ts. Conditions read
+  // sectionsVisited entries seeded by Glossary / LibraryView / CuriousOrientationView.
+  // ═══════════════════════════════════════════════════════════════
+  {
+    id: 'first-jargon-decoded',
+    title: 'First Jargon Decoded',
+    description: 'Opened the glossary to look up a term',
+    category: 'cross-feature',
+    rarity: 'common',
+    icon: 'BookOpen',
+    condition: (s) => s.sectionsVisited.includes('curious:glossary-opened'),
+  },
+  {
+    id: 'first-standard-read',
+    title: 'First Standard Read',
+    description: 'Opened your first standard or RFC from the library',
+    category: 'cross-feature',
+    rarity: 'common',
+    icon: 'FileText',
+    condition: (s) => s.sectionsVisited.includes('curious:library-read'),
+  },
+  {
+    id: 'met-the-quantum-threat',
+    title: 'Met the Quantum Threat',
+    description: 'Read the plain-language compliance orientation',
+    category: 'cross-feature',
+    rarity: 'common',
+    icon: 'ShieldAlert',
+    condition: (s) => s.sectionsVisited.includes('curious:threats-orientation'),
+  },
 ]
 
 /** O(1) lookup map derived from catalog */

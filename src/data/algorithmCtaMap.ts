@@ -38,6 +38,7 @@ const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
   [
     'FN-DSA',
     {
+      try: '/playground/interactive?algo=FN-DSA-512&tab=sign_verify',
       spec: '/library?highlight=FIPS 206',
       why: '/learn/pqc-101',
     },
@@ -61,6 +62,7 @@ const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
   [
     'HQC',
     {
+      try: '/playground/interactive?algo=HQC-128&tab=keystore',
       spec: '/library?highlight=HQC Specification',
       why: '/learn/hybrid-crypto',
     },
@@ -68,7 +70,43 @@ const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
   [
     'FrodoKEM',
     {
+      try: '/playground/interactive?algo=FrodoKEM-640&tab=keystore',
       why: '/learn/hybrid-crypto',
+    },
+  ],
+  [
+    'MAYO',
+    {
+      try: '/playground/interactive?algo=MAYO-1&tab=sign_verify',
+      why: '/learn/pqc-101',
+    },
+  ],
+  [
+    'CROSS',
+    {
+      try: '/playground/interactive?algo=CROSS-RSDP-128-balanced&tab=sign_verify',
+      why: '/learn/pqc-101',
+    },
+  ],
+  [
+    'UOV',
+    {
+      try: '/playground/interactive?algo=OV-Ip&tab=sign_verify',
+      why: '/learn/pqc-101',
+    },
+  ],
+  [
+    'OV-',
+    {
+      try: '/playground/interactive?algo=OV-Ip&tab=sign_verify',
+      why: '/learn/pqc-101',
+    },
+  ],
+  [
+    'SNOVA',
+    {
+      try: '/playground/interactive?algo=SNOVA-24-5-4&tab=sign_verify',
+      why: '/learn/pqc-101',
     },
   ],
   [

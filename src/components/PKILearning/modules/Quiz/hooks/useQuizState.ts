@@ -8,6 +8,7 @@ import type {
   QuizScoreSummary,
   CategoryScore,
 } from '../types'
+import { logQuizAnswer } from '@/utils/analytics'
 
 type QuizAction =
   | { type: 'START_QUIZ'; questions: QuizQuestion[] }
@@ -167,8 +168,13 @@ export function useQuizState() {
   }, [])
 
   const submitAnswer = useCallback(() => {
+    const current = state.questions[state.currentIndex]
+    const answer = current ? state.answers[current.id] : undefined
+    if (current && answer !== undefined) {
+      logQuizAnswer(current.id, checkAnswer(current, answer))
+    }
     dispatch({ type: 'SUBMIT_ANSWER' })
-  }, [])
+  }, [state])
 
   const nextQuestion = useCallback(() => {
     dispatch({ type: 'NEXT_QUESTION' })

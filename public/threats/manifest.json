@@ -1,27 +1,26 @@
 {
-  "generated": "2026-05-21T15:47:30.240Z",
+  "generated": "2026-05-21T16:44:53.206Z",
   "source": "src/data/quantum_threats_hsm_industries_05212026.csv",
   "summary": {
     "downloaded": 0,
-    "skipped": 178,
-    "failed": 16,
-    "persisted_skip": 23
+    "skipped": 188,
+    "failed": 6,
+    "persisted_skip": 11
   },
   "entries": [
     {
       "threatId": "AERO-001",
       "title": "RTCA DO-326A / DO-356A Airworthiness Security",
       "url": "https://www.faa.gov/aircraft/air_cert/design_approvals/dah/cybersecurity",
-      "status": "failed",
-      "reason": "forbidden",
-      "persistent": true
+      "status": "skipped",
+      "reason": "persisted: forbidden"
     },
     {
       "threatId": "AERO-002",
       "title": "NSA CNSA 2.0 Cybersecurity Advisory",
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/AERO-002.pdf"
     },
     {
       "threatId": "AERO-003",
@@ -61,18 +60,16 @@
     {
       "threatId": "CLOUD-001",
       "title": "Cloud Security Alliance Quantum-Safe Guidelines",
-      "url": "https://cloudsecurityalliance.org/artifacts/quantum-safe-security-key-management-and-key-usage",
-      "status": "failed",
-      "reason": "http-404",
-      "persistent": false
+      "url": "https://cloudsecurityalliance.org/research/topics/quantum-safe-security/",
+      "status": "cached",
+      "file": "public/threats/CLOUD-001.html"
     },
     {
       "threatId": "CLOUD-002",
       "title": "Cloud Security Alliance Quantum-Safe Security",
-      "url": "https://cloudsecurityalliance.org/artifacts/quantum-safe-security-key-management-and-key-usage",
-      "status": "failed",
-      "reason": "http-404",
-      "persistent": false
+      "url": "https://cloudsecurityalliance.org/research/topics/quantum-safe-security/",
+      "status": "cached",
+      "file": "public/threats/CLOUD-002.html"
     },
     {
       "threatId": "CLOUD-003",
@@ -91,10 +88,9 @@
     {
       "threatId": "CROSS-001",
       "title": "IBM Institute for Business Value — Secure the Post-Quantum Future 2025",
-      "url": "https://www.ibm.com/downloads/cas/QYL8AVZN",
-      "status": "failed",
-      "reason": "http-404",
-      "persistent": false
+      "url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
+      "status": "cached",
+      "file": "public/threats/CROSS-001.html"
     },
     {
       "threatId": "CROSS-002",
@@ -106,10 +102,9 @@
     {
       "threatId": "CROSS-003",
       "title": "IBM Institute for Business Value — Secure the Post-Quantum Future 2025",
-      "url": "https://www.ibm.com/downloads/cas/QYL8AVZN",
-      "status": "failed",
-      "reason": "http-404",
-      "persistent": false
+      "url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
+      "status": "cached",
+      "file": "public/threats/CROSS-003.html"
     },
     {
       "threatId": "CROSS-004",
@@ -156,10 +151,9 @@
     {
       "threatId": "CRYPTO-002",
       "title": "Ethereum Foundation roadmap (account abstraction track)",
-      "url": "https://blog.ethereum.org/2024/05/30/state-of-eth-2",
-      "status": "failed",
-      "reason": "http-404",
-      "persistent": false
+      "url": "https://ethereum.org/roadmap/account-abstraction/",
+      "status": "cached",
+      "file": "public/threats/CRYPTO-002.html"
     },
     {
       "threatId": "CRYPTO-003",
@@ -194,8 +188,8 @@
       "threatId": "ENERGY-003",
       "title": "University of Toronto Smart Grid Security Research",
       "url": "https://www.utoronto.ca/news/u-t-researcher-leads-effort-protect-power-utilities-quantum-attacks",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/ENERGY-003.html"
     },
     {
       "threatId": "ENERGY-004",
@@ -257,15 +251,15 @@
       "threatId": "GOV-001",
       "title": "NSA CNSA 2.0 Cybersecurity Advisory",
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/GOV-001.pdf"
     },
     {
       "threatId": "GOV-002",
       "title": "NSA CNSA 2.0 Guidance",
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/GOV-002.pdf"
     },
     {
       "threatId": "GOV-003",
@@ -285,16 +279,15 @@
       "threatId": "GOV-005",
       "title": "NSA CNSA 2.0 Cybersecurity Advisory",
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/GOV-005.pdf"
     },
     {
       "threatId": "AUS-GOV-001",
       "title": "ASD ACSC Annual Cyber Threat Report 2024–25",
       "url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/annual-cyber-threat-report-2024-2025",
-      "status": "failed",
-      "reason": "network-error: The operation was aborted due to timeout",
-      "persistent": false
+      "status": "cached",
+      "file": "public/threats/AUS-GOV-001.html"
     },
     {
       "threatId": "AUS-GOV-002",
@@ -482,9 +475,9 @@
     {
       "threatId": "PCI-002",
       "title": "PCI Security Standards Council DSS 4.0.1",
-      "url": "https://docs-prv.pcisecuritystandards.org/PCI%20DSS/Standard/PCI-DSS-v4_0_1.pdf",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "url": "https://www.pcisecuritystandards.org/document_library/",
+      "status": "cached",
+      "file": "public/threats/PCI-002.html"
     },
     {
       "threatId": "PCI-003",
@@ -525,8 +518,8 @@
       "threatId": "RETAIL-003",
       "title": "GS1 Global Standards",
       "url": "https://www.gs1.org/standards",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/RETAIL-003.html"
     },
     {
       "threatId": "SUPPLY-001",
@@ -552,16 +545,16 @@
     {
       "threatId": "TELCO-001",
       "title": "GSMA Security Guidelines",
-      "url": "https://www.gsma.com/solutions-and-impact/technologies/security/",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "url": "https://www.3gpp.org/specifications-technologies/specifications-by-series/security",
+      "status": "cached",
+      "file": "public/threats/TELCO-001.html"
     },
     {
       "threatId": "TELCO-002",
       "title": "GSMA Post-Quantum Telco Network Taskforce",
       "url": "https://www.gsma.com/solutions-and-impact/technologies/security/post-quantum-telco-network-task-force/",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/TELCO-002.html"
     },
     {
       "threatId": "TELCO-003",
@@ -574,8 +567,8 @@
       "threatId": "TELCO-004",
       "title": "GSMA eSIM Specification (SGP.22)",
       "url": "https://www.gsma.com/esim/",
-      "status": "skipped",
-      "reason": "generic-portal"
+      "status": "cached",
+      "file": "public/threats/TELCO-004.html"
     },
     {
       "threatId": "TELCO-005",
@@ -594,10 +587,9 @@
     {
       "threatId": "WATER-002",
       "title": "AWWA Cybersecurity Guidance for Water Utilities",
-      "url": "https://www.awwa.org/Portals/0/AWWA/ETS/Resources/CybersecurityGuidance.pdf",
-      "status": "failed",
-      "reason": "http-404",
-      "persistent": false
+      "url": "https://www.cisa.gov/water",
+      "status": "cached",
+      "file": "public/threats/WATER-002.html"
     },
     {
       "threatId": "EDU-001",
@@ -609,10 +601,9 @@
     {
       "threatId": "EDU-002",
       "title": "Internet2 InCommon Federation / Jisc Trust and Identity",
-      "url": "https://incommon.org/federation/policies/incommon-federation-operating-procedures/",
-      "status": "failed",
-      "reason": "http-404",
-      "persistent": false
+      "url": "https://incommon.org/about",
+      "status": "cached",
+      "file": "public/threats/EDU-002.html"
     },
     {
       "threatId": "EDU-003",
@@ -625,8 +616,8 @@
       "threatId": "EDU-004",
       "title": "CMMC 2.0 / NIST SP 800-171",
       "url": "https://dodcio.defense.gov/CMMC/",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/EDU-004.html"
     },
     {
       "threatId": "EDU-005",
@@ -681,22 +672,22 @@
       "threatId": "RAIL-004",
       "title": "FRA Positive Train Control Regulations (49 CFR 236)",
       "url": "https://railroads.dot.gov/elibrary/ptc-communications-cybersecurity-technology-review-and-concept-operations",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/RAIL-004.html"
     },
     {
       "threatId": "RAIL-005",
       "title": "IEEE 1474.x (CBTC Performance Requirements)",
       "url": "https://etech.iec.ch/issue/2025-02/cyber-security-for-autonomous-vehicles",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/RAIL-005.html"
     },
     {
       "threatId": "WATER-005",
       "title": "FERC Security Program for Hydropower Projects",
       "url": "https://www.ferc.gov/dam-safety-and-inspections/security-program-hydropower-projects",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
+      "status": "cached",
+      "file": "public/threats/WATER-005.html"
     },
     {
       "threatId": "WATER-003",
@@ -785,17 +776,16 @@
     {
       "threatId": "AUS-TEL-001",
       "title": "SOCI Act 2018 + CIRMP Rules 2023",
-      "url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-cryptography",
-      "status": "failed",
-      "reason": "network-error: The operation was aborted due to timeout",
-      "persistent": false
+      "url": "https://www.legislation.gov.au/F2023L00112/asmade/text",
+      "status": "cached",
+      "file": "public/threats/AUS-TEL-001.html"
     },
     {
       "threatId": "IT-006",
       "title": "IACR ePrint / NIST PQC Security Analysis",
       "url": "https://eprint.iacr.org/",
-      "status": "skipped",
-      "reason": "root-homepage"
+      "status": "cached",
+      "file": "public/threats/IT-006.html"
     },
     {
       "threatId": "HSM-002",
@@ -971,7 +961,7 @@
       "title": "NRC Cybersecurity Requirements",
       "url": "https://www.nrc.gov/security/cyber-security.html",
       "status": "failed",
-      "reason": "network-error: The operation was aborted due to timeout",
+      "reason": "http-404",
       "persistent": false
     },
     {

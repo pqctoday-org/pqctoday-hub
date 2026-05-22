@@ -12,9 +12,11 @@ import {
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import JSZip from 'jszip'
 import { PageHeader } from '@/components/common/PageHeader'
+import { PreviewBanner } from '@/components/common/PreviewBanner'
 import { WorkflowBreadcrumb } from '@/components/shared/WorkflowBreadcrumb'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { logEvent, personaLabel } from '@/utils/analytics'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useWorkshopStore, isWorkshopActive } from '@/store/useWorkshopStore'
@@ -185,6 +187,7 @@ export function BusinessCenterView() {
   }, [])
 
   const handleZoneSelect = useCallback((zone: ZoneId) => {
+    logEvent('Business Center', 'Zone Select', personaLabel(zone))
     // flushSync ensures the panel expand/collapse is committed before we
     // measure scroll position — otherwise scrollIntoView uses stale layout
     // and the new panel ends up off-target after the re-render.
@@ -199,11 +202,28 @@ export function BusinessCenterView() {
   }, [])
 
   const handleZoneToggle = useCallback((zone: ZoneId) => {
-    setOpenZone((prev) => (prev === zone ? null : zone))
+    setOpenZone((prev) => {
+      const next = prev === zone ? null : zone
+      logEvent('Business Center', next ? 'Zone Open' : 'Zone Collapse', personaLabel(zone))
+      return next
+    })
   }, [])
 
   // Filter state
   const [typeFilter, setTypeFilter] = useState('all')
+
+  // Focus mode (P14-P1-03) — when true, the right pane renders ONLY the active
+  // zone; closed zones are hidden so the active one gets full vertical space.
+  // The left rail stays visible (intermediate+ density) so users can switch
+  // zones without losing context.
+  const [focusMode, setFocusMode] = useState(false)
+  const handleFocusToggle = useCallback(() => {
+    setFocusMode((prev) => {
+      const next = !prev
+      logEvent('Business Center', next ? 'Zone Focus On' : 'Zone Focus Off', personaLabel())
+      return next
+    })
+  }, [])
 
   // Drawer state. Create mode uses `drawerCreateType` with a null document; view/edit
   // use `drawerDoc` with createType cleared. The drawer itself handles the transition
@@ -269,6 +289,11 @@ export function BusinessCenterView() {
 
   const handleExportZip = useCallback(async () => {
     if (filteredArtifacts.length === 0) return
+    logEvent(
+      'Business Center',
+      'Export Artifacts ZIP',
+      personaLabel(`count=${filteredArtifacts.length}`)
+    )
     const zip = new JSZip()
     for (const doc of filteredArtifacts) {
       const safeName = doc.title.replace(/[^a-z0-9_\- ]/gi, '').replace(/\s+/g, '_')
@@ -327,6 +352,13 @@ export function BusinessCenterView() {
         country={metrics.country}
         completedAt={metrics.completedAt}
       />
+
+      {/* Curious users land here only via URL deep-link (PERSONA_NAV_PATHS.curious
+          omits /business). Show a soft preview banner instead of a hard 403 so
+          the page still teaches the shape of a PQC program. (P14-P0-01) */}
+      {selectedPersona === 'curious' && (
+        <PreviewBanner pageContext="GRC, Architect, Developer, Ops, Researcher" />
+      )}
 
       {/* Filter + Export bar — gated to advanced density. Basic/intermediate
            learners don't need a portfolio toolbar at the top; cross-zone
@@ -415,8 +447,25 @@ export function BusinessCenterView() {
                    density the Fig 3 diagram is the single source of zone nav. */}
               {density !== 'basic' && (
                 <aside className="hidden md:flex flex-col gap-1 w-72 shrink-0 sticky top-6 self-start">
-                  <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-3 mb-1">
-                    Zones
+                  <div className="flex items-center justify-between px-3 mb-1">
+                    <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
+                      Zones
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleFocusToggle}
+                      aria-pressed={focusMode}
+                      aria-label={
+                        focusMode
+                          ? 'Show all zones in the right pane'
+                          : 'Focus on the active zone only'
+                      }
+                      className="h-6 px-2 text-[10px] font-medium gap-1 text-muted-foreground hover:text-foreground"
+                    >
+                      {focusMode ? 'Show all' : 'Focus'}
+                    </Button>
                   </div>
                   {CSWP39_ZONE_ORDER.map((zone) => {
                     // eslint-disable-next-line security/detect-object-injection
@@ -459,20 +508,23 @@ export function BusinessCenterView() {
                 </aside>
               )}
 
-              {/* Zone panels */}
+              {/* Zone panels — focusMode hides closed zones so the active
+                   one gets the full vertical space (P14-P1-03). */}
               <div className="flex-1 min-w-0 space-y-3">
-                {CSWP39_ZONE_ORDER.map((zone) => (
-                  <CSWP39ZonePanel
-                    key={zone}
-                    zone={zone}
-                    metrics={metrics}
-                    open={zone === effectiveOpenZone}
-                    onToggle={() => handleZoneToggle(zone)}
-                    featuredArtifacts={allFeaturedArtifacts}
-                    density={density}
-                    {...zoneCallbacks}
-                  />
-                ))}
+                {CSWP39_ZONE_ORDER.filter((zone) => !focusMode || zone === effectiveOpenZone).map(
+                  (zone) => (
+                    <CSWP39ZonePanel
+                      key={zone}
+                      zone={zone}
+                      metrics={metrics}
+                      open={zone === effectiveOpenZone}
+                      onToggle={() => handleZoneToggle(zone)}
+                      featuredArtifacts={allFeaturedArtifacts}
+                      density={density}
+                      {...zoneCallbacks}
+                    />
+                  )
+                )}
                 <PillarDisclaimer className="px-1 pt-2" />
               </div>
             </div>
@@ -480,6 +532,20 @@ export function BusinessCenterView() {
 
           {/* Bottom cross-cut: learning bar */}
           <CompactLearningBar modules={metrics.execModuleProgress} />
+
+          {/* Hidden-by-lens transparency footer (P14-P1-04) — names the zones
+               this persona emphasizes so the user knows other lenses exist.
+               Renders only when a persona is selected. Acts as a soft invite
+               to switch role via the chip in the page header. */}
+          {selectedPersona && Object.keys(zoneEmphasis.featuredArtifacts).length > 0 && (
+            <div className="px-1 text-xs text-muted-foreground leading-relaxed border-t border-border/40 pt-3">
+              <span className="font-medium text-foreground">Your {selectedPersona} lens</span>{' '}
+              emphasizes the <span className="text-primary">{zoneEmphasis.defaultActiveZone}</span>{' '}
+              zone and a curated artifact set ({Object.keys(zoneEmphasis.featuredArtifacts).length}{' '}
+              of {CSWP39_ZONE_ORDER.length} zones featured). Switch persona via the chip in the page
+              header to see other lenses — every zone and artifact stays reachable.
+            </div>
+          )}
 
           {/* Glossary surface — primary NIST CSWP 39 definition + alternative
                framework definitions from Appendix B (FS-ISAC, ATIS, ETSI,

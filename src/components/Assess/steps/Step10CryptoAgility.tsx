@@ -9,6 +9,7 @@ import { Button } from '../../ui/button'
 import clsx from 'clsx'
 
 import { PersonaHint } from './PersonaHint'
+import { WhyWeAskHint } from './WhyWeAskHint'
 
 import { usePersonaStore } from '../../../store/usePersonaStore'
 import {
@@ -66,6 +67,7 @@ const Step10CryptoAgility = () => {
       </p>
 
       <PersonaHint stepKey="agility" />
+      <WhyWeAskHint stepKey="agility" />
 
       {/* Smart defaults escape hatch */}
       <Button

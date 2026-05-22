@@ -35,6 +35,7 @@ import { logMigrateAction } from '../../utils/analytics'
 import { MIGRATION_STEPS } from '../../data/migrationWorkflowData'
 import type { MigrationStep, SoftwareItem, PqcStats } from '../../types/MigrateTypes'
 import { PageHeader } from '../common/PageHeader'
+import { PreviewBanner } from '../common/PreviewBanner'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { MIGRATE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { useMigrateSelectionStore } from '../../store/useMigrateSelectionStore'
@@ -1034,6 +1035,10 @@ export const MigrateView: React.FC = () => {
         shareText="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance. Explore software readiness and migration steps."
         onExport={handleExportCsv}
       />
+
+      {persona === 'curious' && (
+        <PreviewBanner pageContext="Developer, Architect, Ops, Researcher" />
+      )}
 
       {/* Context strip — WIP disclaimer + workflow toggle + active filter banners */}
       <MigrateContextStrip
