@@ -93,5 +93,17 @@
     "label": "International:GSMA — Mobile Network Operator PQC Transition Window",
     "reason": "forbidden",
     "date": "2026-05-07T02:29:37.203Z"
+  },
+  "https://www.cyber.gov.au/business-government/secure-design/planning-for-post-quantum-cryptography": {
+    "label": "Australia:ASD — Planning for Post-Quantum Cryptography (canonical, multi-row)",
+    "reason": "forbidden",
+    "note": "Akamai/Cloudflare-style WAF returns 503 to any automated GET (verified via manual curl: HTTP/2 stream reset, exit 92). Referenced by 6 timeline rows. Future: fetch via Wayback (web.archive.org has 2025-09-23 snapshot).",
+    "date": "2026-05-22T19:50:00.000Z"
+  },
+  "https://inforegulator.org.za": {
+    "label": "South Africa:IR — Information Regulator (POPIA enforcement landing)",
+    "reason": "fetch-failed",
+    "note": "Returns 200 with 252 KB HTML to curl, but Node 20 undici fetch errors out with 'fetch failed' (likely TLS/SNI incompatibility). Future: fetch via Wayback or playwright fallback.",
+    "date": "2026-05-22T19:50:00.000Z"
   }
 }

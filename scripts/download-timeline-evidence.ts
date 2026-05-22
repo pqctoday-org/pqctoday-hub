@@ -33,6 +33,35 @@ const CSV_PATH = join(ROOT, 'src/data/timeline_05172026.csv')
 const OUTPUT_DIR = join(ROOT, 'public/timeline')
 const MANIFEST_DIR = join(OUTPUT_DIR, 'evidence')
 const MANIFEST_PATH = join(MANIFEST_DIR, 'manifest.json')
+const SKIP_LIST_PATH = join(OUTPUT_DIR, 'skip-list.json')
+
+// ─── Skip-list ────────────────────────────────────────────────────────────────
+// Mirrors the threats-side pattern: URLs that are known-real-but-uncollectable
+// (WAF-blocked, TLS-incompatible, manual-download-required) are recorded here
+// instead of being repeatedly retried. Two shapes:
+//   { reason, note?, date }                        → operator-acknowledged uncollectable
+//   { reason, localFile, refId?, note?, date }     → manually-sourced file lives at public/timeline/<localFile>
+
+interface SkipListEntry {
+  reason: string
+  note?: string
+  date: string
+  label?: string
+  localFile?: string
+  refId?: string
+  resolved?: string
+}
+
+function loadSkipList(): Record<string, SkipListEntry> {
+  if (!existsSync(SKIP_LIST_PATH)) return {}
+  try {
+    return JSON.parse(readFileSync(SKIP_LIST_PATH, 'utf8')) as Record<string, SkipListEntry>
+  } catch {
+    return {}
+  }
+}
+
+const SKIP_LIST = loadSkipList()
 
 const CONCURRENCY = 4
 const TIMEOUT_MS = 20_000
@@ -109,7 +138,13 @@ function shortHash(input: string): string {
   return createHash('sha256').update(input).digest('hex').slice(0, 8)
 }
 
-function rowKey(country: string, org: string, startYear: number, title: string, url: string): string {
+function rowKey(
+  country: string,
+  org: string,
+  startYear: number,
+  title: string,
+  url: string
+): string {
   return `TL-${slug(country)}-${slug(org)}-${startYear}-${shortHash(title + url)}`
 }
 
@@ -178,6 +213,18 @@ async function fetchWithRetry(url: string): Promise<FetchResult> {
     return fetchOnce(url)
   }
   return first
+}
+
+// Dedup concurrent fetches of the same URL — multiple CSV rows often cite the
+// same source page. Without this, concurrency=4 hits the same host N× in parallel
+// and triggers rate-limit / 503 responses.
+const inflight = new Map<string, Promise<FetchResult>>()
+async function fetchUrlOnceShared(url: string): Promise<FetchResult> {
+  const existing = inflight.get(url)
+  if (existing) return existing
+  const p = fetchWithRetry(url)
+  inflight.set(url, p)
+  return p
 }
 
 function classifyHttp(status: number | null): 'ok' | 'paywall' | 'error' {
@@ -256,10 +303,74 @@ async function processRow(p: ProcessedRow): Promise<TimelineManifestEntry> {
     }
   }
 
+  // Skip-list check — if the operator has flagged this URL as uncollectable or
+  // pointed at a manually-sourced file, honour that before attempting network.
+  // eslint-disable-next-line security/detect-object-injection
+  const skipEntry = sourceUrl ? SKIP_LIST[sourceUrl] : undefined
+  if (skipEntry) {
+    // Manual-download case: the operator put a file under public/timeline/.
+    if (skipEntry.localFile) {
+      const candidateRel = `public/timeline/${skipEntry.localFile}`
+      const candidateAbs = join(ROOT, candidateRel)
+      if (existsSync(candidateAbs)) {
+        try {
+          const st = statSync(candidateAbs)
+          if (st.isFile()) {
+            const ct = skipEntry.localFile.endsWith('.pdf')
+              ? 'application/pdf'
+              : skipEntry.localFile.endsWith('.html')
+                ? 'text/html'
+                : 'application/octet-stream'
+            return {
+              row_key: key,
+              country,
+              org,
+              title,
+              start_year: startYear,
+              source_url: sourceUrl,
+              source_url_quality: sourceUrlQuality,
+              confidence_score: confidenceScore,
+              csv_local_file: csvLocalFile,
+              resolved_local_file: candidateRel,
+              download_status: 'ok',
+              content_type: ct,
+              size_bytes: st.size,
+              http_status: null,
+              error_message: null,
+              downloaded_at: nowIso,
+              pre_existed: true,
+            }
+          }
+        } catch {
+          // fall through to skipped
+        }
+      }
+    }
+    // Pure skip case: URL is known-uncollectable. Record but don't fetch.
+    return {
+      row_key: key,
+      country,
+      org,
+      title,
+      start_year: startYear,
+      source_url: sourceUrl,
+      source_url_quality: sourceUrlQuality,
+      confidence_score: confidenceScore,
+      csv_local_file: csvLocalFile,
+      resolved_local_file: resolvedLocalFile,
+      download_status: 'skipped',
+      content_type: null,
+      size_bytes: onDiskBytes,
+      http_status: null,
+      error_message: `skip-list (${skipEntry.reason})${skipEntry.note ? ': ' + skipEntry.note : ''}`,
+      downloaded_at: nowIso,
+      pre_existed: preExisted,
+    }
+  }
+
   // Decide what to do based on mode.
   const shouldFetch =
-    MODE === 'full' ||
-    (MODE === 'fetch-missing' && !resolvedLocalFile && sourceUrl)
+    MODE === 'full' || (MODE === 'fetch-missing' && !resolvedLocalFile && sourceUrl)
 
   if (!sourceUrl) {
     return {
@@ -310,8 +421,8 @@ async function processRow(p: ProcessedRow): Promise<TimelineManifestEntry> {
     }
   }
 
-  // --fetch-missing or --full: do network.
-  const result = await fetchWithRetry(sourceUrl)
+  // --fetch-missing or --full: do network (dedup concurrent same-URL fetches).
+  const result = await fetchUrlOnceShared(sourceUrl)
   const classification = classifyHttp(result.status)
 
   if (classification === 'ok' && result.buffer) {
@@ -420,10 +531,8 @@ async function main(): Promise<void> {
     return { row, country, org, title, startYear, sourceUrl }
   })
 
-  const entries: TimelineManifestEntry[] = await runWithConcurrency(
-    processed,
-    CONCURRENCY,
-    (p) => processRow(p)
+  const entries: TimelineManifestEntry[] = await runWithConcurrency(processed, CONCURRENCY, (p) =>
+    processRow(p)
   )
 
   const statusCounts: Record<DownloadStatus, number> = {
