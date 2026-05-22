@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo } from 'react'
-import { ShieldAlert, BookOpen, Calendar, Link2 } from 'lucide-react'
+import { ShieldAlert, BookOpen, Calendar, Link2, FileDown } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
 import {
   groupByTier,
@@ -29,6 +30,12 @@ interface ExecutiveTimelineViewProps {
   onSelectThreat?: (item: ThreatData) => void
   onSelectTimeline?: (item: TimelineEvent) => void
   onSelectFramework?: (item: ComplianceFramework) => void
+  /**
+   * Triggers the audit-ready CSV export. When provided, a labelled button
+   * renders inside the body so executives don't have to hunt for the icon
+   * in the page header. Reuses the same callback the PageHeader fires.
+   */
+  onExportCsv?: () => void
 }
 
 /**
@@ -51,6 +58,7 @@ export function ExecutiveTimelineView({
   onSelectThreat,
   onSelectTimeline,
   onSelectFramework,
+  onExportCsv,
 }: ExecutiveTimelineViewProps) {
   const { profile, isEmpty, frameworks, library, threats, timeline, derivedFrameworks } =
     useApplicabilityWithPaths(profileOverride)
@@ -89,6 +97,34 @@ export function ExecutiveTimelineView({
       <div data-section-id="regulatory-clock" className="scroll-mt-20">
         <RegulatoryClock mandatoryFrameworks={mandatory} recognizedFrameworks={recognized} />
       </div>
+
+      {onExportCsv && (
+        <div
+          data-section-id="executive-csv-export"
+          className="flex items-start gap-3 p-3 rounded-lg border border-primary/20 bg-primary/5"
+        >
+          <FileDown size={16} className="text-primary mt-0.5 shrink-0" aria-hidden="true" />
+          <div className="flex-1 min-w-0 space-y-1">
+            <p className="text-sm font-semibold text-foreground">
+              Audit-ready compliance summary
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Generates a board-ready CSV of every mandate that applies to your profile.
+            </p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onExportCsv}
+            className="h-auto text-xs px-3 py-1.5 shrink-0"
+            data-workshop-target="compliance-executive-csv-export"
+          >
+            <FileDown size={12} />
+            Export audit-ready summary (CSV)
+          </Button>
+        </div>
+      )}
 
       <ValidationGantt
         frameworks={frameworks.map((f) => f.item)}
