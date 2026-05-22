@@ -25,7 +25,6 @@ import {
   SlidersHorizontal,
   X,
   BookmarkCheck,
-  Sparkles,
 } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { ContentUpdatesFeed } from '@/components/ui/ContentUpdatesFeed'
@@ -34,6 +33,10 @@ import { LIBRARY_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import debounce from 'lodash/debounce'
 import { useAchievementStore } from '@/store/useAchievementStore'
 import { LIBRARY_CURIOUS_PICKS } from '@/data/libraryCuriousPicks'
+import { LIBRARY_EXECUTIVE_PICKS } from '@/data/libraryExecutivePicks'
+import { LIBRARY_OPS_PICKS } from '@/data/libraryOpsPicks'
+import { PersonaPicksPanel } from './PersonaPicksPanel'
+import type { PersonaId } from '@/data/learningPersonas'
 import { logLibrarySearch, logEvent, personaLabel } from '../../utils/analytics'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
@@ -55,6 +58,22 @@ import {
 } from '../common/TrustTierFilter'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { SemanticSearchHint } from '@/components/common/SemanticSearchHint'
+
+// Persona-aware default sort. Explicit `?sort=` always wins; this only seeds
+// the initial value when the URL is silent.
+const DEFAULT_SORT_BY_PERSONA: Record<PersonaId, SortOption> = {
+  executive: 'newest',
+  developer: 'referenceId',
+  architect: 'urgency',
+  researcher: 'mostCited',
+  ops: 'urgency',
+  curious: 'newest',
+}
+
+function defaultSortForPersona(persona: PersonaId | null | undefined): SortOption {
+  if (!persona) return 'newest'
+  return DEFAULT_SORT_BY_PERSONA[persona] ?? 'newest' // eslint-disable-line security/detect-object-injection
+}
 
 const URGENCY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -253,9 +272,13 @@ export const LibraryView: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>(
     () => (searchParams.get('view') as ViewMode | null) ?? 'cards'
   )
-  const [sortBy, setSortBy] = useState<SortOption>(
-    () => (searchParams.get('sort') as SortOption | null) ?? 'newest'
-  )
+  const [sortBy, setSortBy] = useState<SortOption>(() => {
+    // Explicit ?sort= always wins.
+    const fromUrl = searchParams.get('sort') as SortOption | null
+    if (fromUrl) return fromUrl
+    // Otherwise pick a persona-aware default.
+    return defaultSortForPersona(selectedPersona)
+  })
   const [cswp39Only, setCswp39Only] = useState<boolean>(() => searchParams.get('cswp39') === '1')
   const [lifecycleBucket, setLifecycleBucket] = useState<string>(
     () => searchParams.get('lifecycle') ?? 'All'
@@ -314,7 +337,8 @@ export const LibraryView: React.FC = () => {
     const nextRegion = searchParams.get('region') ?? 'All'
     const nextQ = searchParams.get('q') ?? ''
     const nextView = (searchParams.get('view') as ViewMode | null) ?? 'cards'
-    const nextSort = (searchParams.get('sort') as SortOption | null) ?? 'newest'
+    const nextSort =
+      (searchParams.get('sort') as SortOption | null) ?? defaultSortForPersona(selectedPersona)
 
     setActiveCategory((prev) => (prev !== nextCat ? nextCat : prev))
     setActiveOrg((prev) => (prev !== nextOrg ? nextOrg : prev))
@@ -332,7 +356,7 @@ export const LibraryView: React.FC = () => {
       const next = searchParams.get('lifecycle') ?? 'All'
       return prev !== next ? next : prev
     })
-  }, [searchParams, storeIndustry])
+  }, [searchParams, storeIndustry, selectedPersona])
 
   /** Write all current filter state back to the URL. Call with overrides for the value that
    *  just changed so the URL reflects it immediately without waiting for a state flush.
@@ -375,7 +399,10 @@ export const LibraryView: React.FC = () => {
           else next.delete('q')
           if (view !== 'cards') next.set('view', view)
           else next.delete('view')
-          if (sort !== 'newest') next.set('sort', sort)
+          // Only persist `sort` to the URL when it differs from the current
+          // persona's default — keeps URLs clean while still letting an
+          // explicit override survive a copy/paste.
+          if (sort !== defaultSortForPersona(selectedPersona)) next.set('sort', sort)
           else next.delete('sort')
           if (cswp39Flag) next.set('cswp39', '1')
           else next.delete('cswp39')
@@ -397,6 +424,7 @@ export const LibraryView: React.FC = () => {
       cswp39Only,
       lifecycleBucket,
       setSearchParams,
+      selectedPersona,
     ]
   )
 
@@ -691,6 +719,17 @@ export const LibraryView: React.FC = () => {
           return aOrder - bOrder
         })
         break
+      case 'mostCited':
+        // Researcher default — highest `citationCount` first.
+        // Fallback to `lastUpdateDate` when counts tie (including 0/0 — the
+        // case where the corpus has not yet been enriched with citations).
+        items.sort((a, b) => {
+          const aCount = a.citationCount ?? 0
+          const bCount = b.citationCount ?? 0
+          if (bCount !== aCount) return bCount - aCount
+          return new Date(b.lastUpdateDate).getTime() - new Date(a.lastUpdateDate).getTime()
+        })
+        break
     }
 
     // Secondary: float persona-preferred categories to top (stable sort)
@@ -815,40 +854,39 @@ export const LibraryView: React.FC = () => {
         onExport={handleExportCsv}
       />
 
-      {/* Curious "start here" picks (P04-P1-02) — curated entry list above the
-          activity feed so a first-time visitor doesn't bounce off the 400+ row
-          dataset. Renders only when persona is curious. */}
+      {/* Persona picks panel (P04 audit, PR 2). Renders a curated list of
+          high-signal documents above the main library grid for personas with
+          a defined "picks" set: curious / executive / ops. Other personas
+          (developer / architect / researcher) see no panel. */}
       {selectedPersona === 'curious' && (
-        <section className="glass-panel p-4 border border-primary/30 bg-primary/5 rounded-lg">
-          <div className="flex items-center gap-2 mb-3">
-            <Sparkles size={14} className="text-primary" aria-hidden="true" />
-            <h3 className="text-sm font-semibold text-foreground">Start here</h3>
-            <span className="text-xs text-muted-foreground">
-              5 canonical PQC docs picked for first-time readers
-            </span>
-          </div>
-          <ul className="space-y-2">
-            {LIBRARY_CURIOUS_PICKS.map((pick) => {
-              const item = libraryData.find((d) => d.referenceId === pick.referenceId)
-              return (
-                <li key={pick.referenceId}>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => {
-                      if (item) openDetail(item)
-                    }}
-                    disabled={!item}
-                    className="w-full h-auto text-left rounded-md border border-border bg-card/40 px-3 py-2 hover:border-primary/40 hover:bg-card transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-start gap-0.5 whitespace-normal"
-                  >
-                    <span className="text-sm font-semibold text-foreground">{pick.label}</span>
-                    <span className="text-xs text-muted-foreground leading-snug">{pick.blurb}</span>
-                  </Button>
-                </li>
-              )
-            })}
-          </ul>
-        </section>
+        <PersonaPicksPanel
+          personaId="curious"
+          title="Start here"
+          subtitle="5 canonical PQC docs picked for first-time readers"
+          picks={LIBRARY_CURIOUS_PICKS}
+          resolveItem={(refId) => libraryData.find((d) => d.referenceId === refId)}
+          onOpen={openDetail}
+        />
+      )}
+      {selectedPersona === 'executive' && (
+        <PersonaPicksPanel
+          personaId="executive"
+          title="Boardroom set"
+          subtitle="Regulator-level PQC documents for executive decision-making"
+          picks={LIBRARY_EXECUTIVE_PICKS}
+          resolveItem={(refId) => libraryData.find((d) => d.referenceId === refId)}
+          onOpen={openDetail}
+        />
+      )}
+      {selectedPersona === 'ops' && (
+        <PersonaPicksPanel
+          personaId="ops"
+          title="Cert-relevant set"
+          subtitle="FIPS / CMVP-anchored documents for certification work"
+          picks={LIBRARY_OPS_PICKS}
+          resolveItem={(refId) => libraryData.find((d) => d.referenceId === refId)}
+          onOpen={openDetail}
+        />
       )}
 
       {/* Zone 1: Activity Feed */}

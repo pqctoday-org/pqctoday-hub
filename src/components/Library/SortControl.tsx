@@ -5,13 +5,14 @@ import clsx from 'clsx'
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 
-export type SortOption = 'newest' | 'name' | 'referenceId' | 'urgency'
+export type SortOption = 'newest' | 'name' | 'referenceId' | 'urgency' | 'mostCited'
 
 export const LIBRARY_SORT_OPTIONS: { id: SortOption; label: string }[] = [
   { id: 'newest', label: 'Newest first' },
   { id: 'name', label: 'Name A-Z' },
   { id: 'referenceId', label: 'Reference ID' },
   { id: 'urgency', label: 'Urgency' },
+  { id: 'mostCited', label: 'Most cited' },
 ]
 
 interface SortControlProps<T extends string = SortOption> {

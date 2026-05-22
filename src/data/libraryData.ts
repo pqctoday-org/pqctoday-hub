@@ -41,6 +41,10 @@ export interface LibraryItem {
   mathFamily?: string[]
   /** Standardisation-round lifecycle (`Standardised`, `Draft`, `Round 2`, etc.). Sourced from enrichment dimension `PQC Round`. */
   pqcRound?: string
+  /** Number of other library items that name this item in their `dependencies`
+   *  field. Derived in a single pass over `libraryData` at module load and
+   *  used as the researcher persona's default "Most cited" sort. */
+  citationCount?: number
 }
 
 // C-001: Single source of truth for categories
@@ -310,10 +314,26 @@ const statusMap =
     ? compareDatasets(currentItems, previousItems, 'referenceId')
     : new Map<string, ItemStatus>()
 
-// Inject status into current items and export
+// Build a citation count map: how many other items name THIS item in their
+// `dependencies` field. Single O(N) pass over `currentItems`. Used by the
+// "Most cited" sort (researcher default).
+const citationCounts = new Map<string, number>()
+for (const item of currentItems) {
+  if (!item.dependencies) continue
+  const deps = item.dependencies
+    .split(';')
+    .map((d) => d.trim())
+    .filter((d) => d && d !== item.referenceId)
+  for (const dep of deps) {
+    citationCounts.set(dep, (citationCounts.get(dep) ?? 0) + 1)
+  }
+}
+
+// Inject status + citationCount into current items and export
 export const libraryData: LibraryItem[] = currentItems.map((item) => ({
   ...item,
   status: statusMap.get(item.referenceId),
+  citationCount: citationCounts.get(item.referenceId) ?? 0,
 }))
 
 export const libraryMetadata = parsedMetadata
