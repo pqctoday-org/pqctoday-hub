@@ -7,6 +7,11 @@ import { ReportContent } from './ReportContent'
 import { ReportToc } from './ReportToc'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { computeAssessment } from '../../hooks/assessmentUtils'
+import { computeAssessmentAsync } from '../../hooks/assessment/orchestrator'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 import { useModuleStore } from '../../store/useModuleStore'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { REGION_COUNTRIES_MAP, getReportSectionConfig } from '../../data/personaConfig'
@@ -104,16 +109,78 @@ export const ReportView: React.FC = () => {
   // on every render (was firing on every persona toggle, module-store update,
   // or unrelated remount).
   const inputKey = input ? JSON.stringify(input) : null
-  const result = useMemo(() => {
+
+  // Async report-compute path: runs the 10-stage pipeline with yields between
+  // stages so React can paint a progress log while the pipeline grinds.
+  // First-mount on a comprehensive assessment is 800-1500ms on slow machines;
+  // each yield gives the browser ~16ms to paint, so the bar animates.
+  const [computeState, setComputeState] = useState<{
+    inputKey: string | null
+    result: ReturnType<typeof computeAssessment> | null
+    log: LogEntry[]
+    computing: boolean
+  }>({ inputKey: null, result: null, log: [], computing: false })
+
+  useEffect(() => {
+    let cancelled = false
     if ((assessmentStatus === 'complete' || assessmentStatus === 'in-progress') && input) {
-      return computeAssessment(input)
+      // Re-using a previously-computed result if the inputKey is unchanged
+      // (avoids re-running the pipeline on every render — same purpose the
+      // earlier useMemo served).
+      if (computeState.inputKey === inputKey && computeState.result) return
+      setComputeState((prev) => ({
+        inputKey,
+        result: null,
+        log: [],
+        computing: true,
+        // Keep the previously-computed result while we re-run so the UI
+        // doesn't flicker an empty state between persona toggles.
+        ...(prev.inputKey === inputKey ? { result: prev.result } : {}),
+      }))
+      computeAssessmentAsync(input, (label, durationMs) => {
+        if (cancelled) return
+        setComputeState((prev) => ({
+          ...prev,
+          log: [...prev.log, { status: 'success', message: label, durationMs }],
+        }))
+      })
+        .then((r) => {
+          if (cancelled) return
+          setComputeState((prev) => ({ ...prev, result: r, computing: false }))
+        })
+        .catch((err) => {
+          if (cancelled) return
+          setComputeState((prev) => ({
+            ...prev,
+            computing: false,
+            log: [
+              ...prev.log,
+              {
+                status: 'error',
+                message: `Assessment failed — ${err instanceof Error ? err.message : String(err)}`,
+              },
+            ],
+          }))
+        })
+    } else if (assessmentStatus === 'complete' && lastResult) {
+      setComputeState({
+        inputKey: null,
+        result: lastResult,
+        log: [],
+        computing: false,
+      })
+    } else {
+      setComputeState({ inputKey: null, result: null, log: [], computing: false })
     }
-    if (assessmentStatus === 'complete' && lastResult) {
-      return lastResult
+    return () => {
+      cancelled = true
     }
-    return null
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputKey, assessmentStatus, lastResult])
+
+  const result = computeState.result
+  const reportComputing = computeState.computing
+  const reportLogEntries = computeState.log
   const persistedRef = useRef(false)
   const [searchParams] = useSearchParams()
 
@@ -335,6 +402,28 @@ export const ReportView: React.FC = () => {
       completedSteps: ['assessment-completed'],
     })
   }, [assessmentStatus])
+
+  // Active compute state: assessment exists, result still pending. Show
+  // the progress log so users see the 10-stage pipeline grinding rather
+  // than a blank page or stale spinner.
+  if (!result && reportComputing) {
+    return (
+      <div className="animate-fade-in">
+        <div className="max-w-xl mx-auto py-12">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center justify-center p-4 rounded-full bg-muted mb-4">
+              <FileBarChart className="text-primary" size={28} />
+            </div>
+            <h1 className="text-xl font-bold text-foreground mb-2">Generating your report…</h1>
+            <p className="text-sm text-muted-foreground">
+              Running the 10-stage scoring pipeline. This takes 0.5–2 seconds on most machines.
+            </p>
+          </div>
+          <WorkshopOperationLog entries={reportLogEntries} className="max-h-72" />
+        </div>
+      </div>
+    )
+  }
 
   // Empty state: no assessment started and no persisted result
   if (!result) {
