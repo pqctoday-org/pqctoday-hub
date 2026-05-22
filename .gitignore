@@ -258,6 +258,8 @@ scripts/*
 # claims are backed by on-disk documents. Audit script is the CI gate.
 !scripts/download-timeline-evidence.ts
 !scripts/audit-timeline-evidence.ts
+!scripts/sync-timeline-csv-from-manifest.ts
+!scripts/wayback-snapshot-timeline.ts
 
 # Private CI workflows (compliance scraper runs locally, not in public CI)
 .github/workflows/update-compliance.yml
