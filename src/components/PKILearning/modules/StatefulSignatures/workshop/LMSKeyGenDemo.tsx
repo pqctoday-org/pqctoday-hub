@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react'
-import { Info, ChevronDown, ChevronUp, Key, PenLine, AlertCircle } from 'lucide-react'
+import { Info, ChevronDown, ChevronUp, Key, PenLine } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -23,6 +23,11 @@ import {
 import { hsm_generateStatefulKeyPair, hsm_statefulSignBytes } from '@/wasm/softhsm/pqc'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
+import { ErrorAlert } from '@/components/ui/error-alert'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
 
 const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
@@ -54,6 +59,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
   const [isGenerating, setIsGenerating] = useState(false)
   const [activeKeyHandle, setActiveKeyHandle] = useState<number | null>(null)
   const [opError, setOpError] = useState<string | null>(null)
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   // Signing State
   const [messageToSign, setMessageToSign] = useState<string>('Hello PQC World')
@@ -77,6 +83,9 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
     if (!hsm.isReady || !hsm.hSessionRef.current || !hsm.moduleRef.current) return
     setIsGenerating(true)
     setOpError(null)
+    const opLabel = `Generating LMS keypair (${selected.name}, tree height ${selected.treeHeight})…`
+    const startedAt = performance.now()
+    setLogEntries([{ status: 'pending', message: opLabel }])
     try {
       // Defer execution slightly to allow UI to show "Generating..."
       await new Promise((r) => setTimeout(r, 100))
@@ -107,8 +116,23 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
         label: `HSS Key (${selected.name})`,
         generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
+      setLogEntries([
+        {
+          status: 'success',
+          message: `${opLabel.replace('Generating', 'Generated').replace('…', '')} — handle ${privHandle}`,
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+      ])
     } catch (e: unknown) {
-      setOpError(translateCryptoError(e instanceof Error ? e.message : String(e)))
+      const msg = translateCryptoError(e instanceof Error ? e.message : String(e))
+      setOpError(msg)
+      setLogEntries([
+        {
+          status: 'error',
+          message: `${opLabel} — ${msg}`,
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+      ])
     } finally {
       setIsGenerating(false)
     }
@@ -530,12 +554,9 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
         </div>
       )}
 
-      {opError && (
-        <div className="flex items-start gap-2 p-3 rounded-md border border-destructive/40 bg-destructive/5 text-destructive text-sm">
-          <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
-          <span className="font-mono break-all">{opError}</span>
-        </div>
-      )}
+      {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} />}
+
+      {opError && <ErrorAlert message={opError} onRetry={() => void handleGenerateKey()} />}
 
       {hsm.isReady && (
         <div className="space-y-4">
