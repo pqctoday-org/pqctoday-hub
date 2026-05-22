@@ -68,6 +68,13 @@ async function readDocumentCount(page: Page): Promise<{ narrowed: boolean; count
   return { narrowed: false, count: m ? Number(m[1]) : Number.NaN }
 }
 
+// Eight tests hammering the same dev server in parallel hit Vite cold-start
+// races on the lazy /library route — pages return the SPA shell but the
+// route chunk isn't compiled yet. Serial mode keeps the runtime predictable
+// while still validating the same feature behaviors. CI already pins
+// workers=1 via playwright.config.ts, so this only affects local runs.
+test.describe.configure({ mode: 'serial' })
+
 test.describe('library — persona-overwhelm-p0', () => {
   // Full corpus ships ~830 docs (2026-05). Per-persona narrowing ranges
   // depend on how many categories the persona's preferred set spans:

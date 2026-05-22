@@ -170,7 +170,7 @@ function findByRef(
 
 export const LibraryView: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const { selectedIndustry: storeIndustry, selectedPersona } = usePersonaStore()
+  const { selectedPersona } = usePersonaStore()
   const { libraryBookmarks, showOnlyLibraryBookmarks, setShowOnlyLibraryBookmarks } =
     useBookmarkStore()
   // Sidebar selection — defaults to 'All' so the persona-preferred filter
@@ -179,12 +179,10 @@ export const LibraryView: React.FC = () => {
     () => searchParams.get('cat') ?? 'All'
   )
   const [activeOrg, setActiveOrg] = useState<string>(() => searchParams.get('org') ?? 'All')
-  const [activeIndustry, setActiveIndustry] = useState<string>(
-    () => searchParams.get('ind') ?? storeIndustry ?? 'All'
-  )
-  const [activeRegion, setActiveRegion] = useState<string>(
-    () => searchParams.get('region') ?? 'All'
-  )
+  // Region / Industry single-select state was dropped in the P04 audit drawer
+  // consolidation (PR 3) — see the migration shim further down that converts
+  // legacy `?region=`/`?ind=` URLs into the multi-select `geo[]`/`sector[]`
+  // arrays. The corresponding state vars + URL writes are intentionally gone.
   const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
   const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
   const [viewMode, setViewMode] = useState<ViewMode>(
@@ -321,8 +319,6 @@ export const LibraryView: React.FC = () => {
 
     const nextCat = searchParams.get('cat') ?? 'All'
     const nextOrg = searchParams.get('org') ?? 'All'
-    const nextInd = searchParams.get('ind') ?? storeIndustry ?? 'All'
-    const nextRegion = searchParams.get('region') ?? 'All'
     const nextQ = searchParams.get('q') ?? ''
     const nextView = (searchParams.get('view') as ViewMode | null) ?? 'cards'
     const nextSort =
@@ -330,8 +326,6 @@ export const LibraryView: React.FC = () => {
 
     setActiveCategory((prev) => (prev !== nextCat ? nextCat : prev))
     setActiveOrg((prev) => (prev !== nextOrg ? nextOrg : prev))
-    setActiveIndustry((prev) => (prev !== nextInd ? nextInd : prev))
-    setActiveRegion((prev) => (prev !== nextRegion ? nextRegion : prev))
     setFilterText((prev) => (prev !== nextQ ? nextQ : prev))
     setInputValue((prev) => (prev !== nextQ ? nextQ : prev))
     setViewMode((prev) => (prev !== nextView ? nextView : prev))
@@ -348,7 +342,7 @@ export const LibraryView: React.FC = () => {
       const next = searchParams.get('lifecycle') ?? 'All'
       return prev !== next ? next : prev
     })
-  }, [searchParams, storeIndustry, selectedPersona])
+  }, [searchParams, selectedPersona])
 
   /** Write all current filter state back to the URL. Call with overrides for the value that
    *  just changed so the URL reflects it immediately without waiting for a state flush.
@@ -358,8 +352,6 @@ export const LibraryView: React.FC = () => {
     (overrides: {
       cat?: string
       org?: string
-      ind?: string
-      region?: string
       q?: string
       view?: ViewMode
       sort?: SortOption
@@ -372,8 +364,6 @@ export const LibraryView: React.FC = () => {
           const next = new URLSearchParams(prev)
           const cat = overrides.cat ?? activeCategory
           const org = overrides.org ?? activeOrg
-          const ind = overrides.ind ?? activeIndustry
-          const region = overrides.region ?? activeRegion
           const q = overrides.q ?? filterText
           const view = overrides.view ?? viewMode
           const sort = overrides.sort ?? sortBy
@@ -385,10 +375,6 @@ export const LibraryView: React.FC = () => {
           else next.delete('cat')
           if (org !== 'All') next.set('org', org)
           else next.delete('org')
-          if (ind !== 'All') next.set('ind', ind)
-          else next.delete('ind')
-          if (region !== 'All') next.set('region', region)
-          else next.delete('region')
           if (q) next.set('q', q)
           else next.delete('q')
           if (view !== 'cards') next.set('view', view)
@@ -412,8 +398,6 @@ export const LibraryView: React.FC = () => {
     [
       activeCategory,
       activeOrg,
-      activeIndustry,
-      activeRegion,
       filterText,
       viewMode,
       sortBy,
@@ -996,40 +980,74 @@ export const LibraryView: React.FC = () => {
           {/* Lifecycle pill row (P04 audit, PR 3.e) — one-click access to the
               Final / Draft / Expired / Withdrawn buckets without opening the
               drawer.  Bound to the existing `lifecycleBucket` state, so the
-              drawer dropdown and these pills stay in sync. */}
-          <div className="flex items-center gap-1" role="radiogroup" aria-label="Lifecycle">
-            {(
-              [
-                { id: 'Published', label: 'Final' },
-                { id: 'Draft', label: 'Draft' },
-                { id: 'Expired', label: 'Expired' },
-                { id: 'Superseded', label: 'Withdrawn' },
-              ] as const
-            ).map((opt) => {
-              const active = lifecycleBucket === opt.id
-              return (
-                <Button
-                  key={opt.id}
-                  variant="ghost"
-                  role="radio"
-                  aria-checked={active}
-                  onClick={() => {
-                    const next = active ? 'All' : opt.id
-                    setLifecycleBucket(next)
-                    syncFiltersToUrl({ lifecycle: next })
-                    logEvent('Library', 'Filter Lifecycle', next)
-                  }}
-                  className={`inline-flex items-center text-xs px-2.5 py-1.5 rounded-md border transition-colors font-medium whitespace-nowrap min-h-[36px] ${
-                    active
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
-                  }`}
-                >
-                  {opt.label}
-                </Button>
-              )
-            })}
-          </div>
+              drawer dropdown and these pills stay in sync.
+              Implements the WAI-ARIA radiogroup keyboard pattern: arrow keys
+              move focus + activate the next/previous pill (with roving
+              tabindex so Tab cycles through the row as one stop). */}
+          {(() => {
+            const LIFECYCLE_PILLS = [
+              { id: 'Published', label: 'Final' },
+              { id: 'Draft', label: 'Draft' },
+              { id: 'Expired', label: 'Expired' },
+              { id: 'Superseded', label: 'Withdrawn' },
+            ] as const
+            const activeIdx = LIFECYCLE_PILLS.findIndex((p) => p.id === lifecycleBucket)
+            // Roving-tabindex anchor: the active pill, or the first if none active.
+            const tabbableIdx = activeIdx >= 0 ? activeIdx : 0
+            return (
+              <div
+                className="flex items-center gap-1"
+                role="radiogroup"
+                aria-label="Lifecycle"
+                // Radiogroup itself isn't tab-reachable — focus lives on the
+                // individual radios (roving tabindex above). tabIndex={-1}
+                // keeps it programmatically focusable, satisfying the
+                // jsx-a11y interactive-supports-focus rule without breaking
+                // the WAI-ARIA radio pattern.
+                tabIndex={-1}
+                onKeyDown={(e) => {
+                  if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
+                  const focused = document.activeElement as HTMLElement | null
+                  const buttons = Array.from(
+                    e.currentTarget.querySelectorAll<HTMLButtonElement>('button[role=radio]')
+                  )
+                  const i = buttons.findIndex((b) => b === focused)
+                  if (i < 0) return
+                  e.preventDefault()
+                  const delta = e.key === 'ArrowRight' ? 1 : -1
+                  const nextI = (i + delta + buttons.length) % buttons.length
+                  buttons[nextI]?.focus()
+                  buttons[nextI]?.click()
+                }}
+              >
+                {LIFECYCLE_PILLS.map((opt, idx) => {
+                  const active = lifecycleBucket === opt.id
+                  return (
+                    <Button
+                      key={opt.id}
+                      variant="ghost"
+                      role="radio"
+                      aria-checked={active}
+                      tabIndex={idx === tabbableIdx ? 0 : -1}
+                      onClick={() => {
+                        const next = active ? 'All' : opt.id
+                        setLifecycleBucket(next)
+                        syncFiltersToUrl({ lifecycle: next })
+                        logEvent('Library', 'Filter Lifecycle', next)
+                      }}
+                      className={`inline-flex items-center text-xs px-2.5 py-1.5 rounded-md border transition-colors font-medium whitespace-nowrap min-h-[36px] ${
+                        active
+                          ? 'border-primary bg-primary/10 text-primary'
+                          : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+                      }`}
+                    >
+                      {opt.label}
+                    </Button>
+                  )
+                })}
+              </div>
+            )
+          })()}
 
           {viewMode === 'cards' && (
             <div className="hidden sm:block">
@@ -1103,7 +1121,12 @@ export const LibraryView: React.FC = () => {
             </div>
 
             {(!drawerIsTrimmed || showAdvancedDrawer) && (
-              <>
+              <div
+                id="library-advanced-drawer"
+                className="contents"
+                role={drawerIsTrimmed ? 'region' : undefined}
+                aria-label={drawerIsTrimmed ? 'Advanced filters' : undefined}
+              >
                 <div className="flex-1 min-w-[160px]">
                   <span className="text-xs font-medium text-muted-foreground mb-1 block">
                     Sector
@@ -1117,7 +1140,7 @@ export const LibraryView: React.FC = () => {
                   </span>
                   <TrustTierFilter className="w-full" />
                 </div>
-              </>
+              </div>
             )}
 
             {drawerIsTrimmed && (
@@ -1127,6 +1150,7 @@ export const LibraryView: React.FC = () => {
                   onClick={() => setShowAdvancedDrawer((v) => !v)}
                   className="text-xs h-auto p-0"
                   aria-expanded={showAdvancedDrawer}
+                  aria-controls="library-advanced-drawer"
                 >
                   {showAdvancedDrawer ? 'Hide advanced' : 'Advanced (Sector, Trust tier)'}
                 </Button>
@@ -1208,7 +1232,7 @@ export const LibraryView: React.FC = () => {
 
       {/* Results count */}
       {showFullPage && (
-      <div className="space-y-1">
+      <div className="space-y-1" role="status" aria-live="polite">
         {personaPreferredActive ? (
           <div className="glass-panel inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-md text-xs">
             <span className="text-muted-foreground">

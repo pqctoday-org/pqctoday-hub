@@ -9,8 +9,19 @@
  * when the active persona is ops.
  *
  * `referenceId` values match `LibraryItem.referenceId` in the canonical CSV.
- * The CC PP-Module entries called out in the audit plan are intentionally
- * deferred until they are added to the library CSV.
+ *
+ * Deferred to a follow-up CSV-data task (none of these exist as of the
+ * 05222026 library CSV; substituting unrelated IDs would dilute the panel):
+ *
+ *   - Four most-cited CC PP-Modules — Common Criteria Protection Profile
+ *     Modules. Audit plan §P1 calls them out by category, not by specific
+ *     ID, so the data task is twofold: (1) decide which four to ship, and
+ *     (2) add their rows to the library CSV with proper enrichment.
+ *   - `CMVP-IG-D.K` — NIST CMVP Implementation Guidance section D.K. The
+ *     program-management peer of `CMVP-MGMT-MANUAL` (already in this list).
+ *
+ * Once those four-plus-one rows land in the CSV, append them here as picks
+ * 7–11 to hit the audit plan's ~10-entry target.
  */
 import type { LibraryCuriousPick } from './libraryCuriousPicks'
 

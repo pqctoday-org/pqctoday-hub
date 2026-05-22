@@ -8,8 +8,14 @@
  * documents instead of the full corpus.
  *
  * `referenceId` values match `LibraryItem.referenceId` in the canonical CSV.
- * Picks that do not yet exist in the corpus (e.g. CISA Quantum Readiness
- * Roadmap) are intentionally omitted rather than wired to broken IDs.
+ * Picks that do not yet exist in the corpus are intentionally omitted rather
+ * than wired to broken IDs. Deferred to a follow-up CSV-data task:
+ *
+ *   - `CISA-Quantum-Readiness-Roadmap` — the August-2023 CISA/NSA/NIST joint
+ *     migration guidance. Closest existing IDs in the CSV (`US-CISA-ACDI-
+ *     Strategy-2024`, `CISA-PQC-CATEGORY-LIST-2026`, `US-CISA-PQC-OT-2024`)
+ *     cover related but distinct surfaces, so they're not a substitute. When
+ *     the row is added, drop it in this list as the 8th boardroom pick.
  */
 import type { LibraryCuriousPick } from './libraryCuriousPicks'
 

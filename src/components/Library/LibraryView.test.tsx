@@ -34,7 +34,8 @@ vi.mock('react-router-dom', () => ({
   // collides with the real maturity CSV so this path is exercised — provide
   // a no-op anchor stand-in to avoid breaking unrelated tests.
   Link: ({ to, children, ...props }: { to: string; children: React.ReactNode }) => (
-    <a href={typeof to === 'string' ? to : '#'} {...props}>
+    // eslint-disable-next-line jsx-a11y/anchor-is-valid
+    <a href={typeof to === 'string' ? to : ''} {...props}>
       {children}
     </a>
   ),
@@ -627,6 +628,60 @@ describe('LibraryView — persona-overwhelm-p0', () => {
       const certChip = screen.getByRole('button', { name: /Cert-relevant \(/ })
       fireEvent.click(certChip)
       expect(screen.getByText(/1 document(?!s)/)).toBeInTheDocument()
+    })
+  })
+
+  describe('Accessibility polish (Gap #4)', () => {
+    it('matched-banner container is an aria-live status region', () => {
+      usePersonaStore.setState({ selectedPersona: 'executive' })
+      render(<LibraryView />)
+      // The results-count wrapper carries role="status" + aria-live="polite"
+      // so screen readers announce persona-narrowing count changes.
+      const status = screen
+        .getByText(/Showing 3 documents matched to your role/)
+        .closest('[role="status"]')
+      expect(status).not.toBeNull()
+      expect(status).toHaveAttribute('aria-live', 'polite')
+    })
+
+    it('lifecycle radiogroup applies roving tabindex (only one tabbable pill)', () => {
+      render(<LibraryView />)
+      const radios = screen.getAllByRole('radio', {
+        name: /Final|Draft|Expired|Withdrawn/,
+      })
+      // 4 pills + the View Toggle's Cards/Table radios — filter to lifecycle.
+      const lifecyclePills = radios.filter((r) =>
+        ['Final', 'Draft', 'Expired', 'Withdrawn'].includes(r.textContent ?? '')
+      )
+      expect(lifecyclePills.length).toBe(4)
+      const tabbable = lifecyclePills.filter((p) => p.getAttribute('tabindex') === '0')
+      expect(tabbable.length).toBe(1)
+    })
+
+    it('arrow key navigates the lifecycle radiogroup and activates the next pill', () => {
+      render(<LibraryView />)
+      const lifecyclePills = screen
+        .getAllByRole('radio')
+        .filter((r) => ['Final', 'Draft', 'Expired', 'Withdrawn'].includes(r.textContent ?? ''))
+      // Focus + activate the first pill so the keyboard handler has a starting
+      // position. (jsdom doesn't auto-focus on render.)
+      ;(lifecyclePills[0] as HTMLElement).focus()
+      fireEvent.click(lifecyclePills[0])
+      expect(lifecyclePills[0]).toHaveAttribute('aria-checked', 'true')
+      // ArrowRight from "Final" should move to "Draft" + activate it.
+      fireEvent.keyDown(lifecyclePills[0].parentElement!, { key: 'ArrowRight' })
+      expect(lifecyclePills[1]).toHaveAttribute('aria-checked', 'true')
+    })
+
+    it('Advanced expander wires aria-controls to the advanced drawer region', () => {
+      usePersonaStore.setState({ selectedPersona: 'executive' })
+      render(<LibraryView />)
+      // Open the Filters drawer first so the Advanced button is rendered.
+      const filtersBtn = screen.getByRole('button', { name: /Filters/i })
+      fireEvent.click(filtersBtn)
+      const advanced = screen.getByRole('button', { name: /Advanced \(Sector, Trust tier\)/ })
+      expect(advanced).toHaveAttribute('aria-controls', 'library-advanced-drawer')
+      expect(advanced).toHaveAttribute('aria-expanded', 'false')
     })
   })
 
