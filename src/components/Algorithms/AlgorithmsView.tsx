@@ -33,10 +33,12 @@ import { AlgorithmEntryStrip } from './AlgorithmEntryStrip'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { Button } from '../ui/button'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
+import { getAlgorithmDefaults, type AlgorithmTabId } from '../../data/personaConfig'
+import type { PersonaId } from '../../data/learningPersonas'
 
 const MAX_COMPARE = 6 // allows up to 3 classical+PQC pairs from the transition tab
 
-const ALGO_PERSONA_HINTS: Record<string, string> = {
+const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
   executive:
     'Start with FIPS-standardized picks: ML-KEM-768 and ML-DSA-65 — the required choices for US federal compliance.',
   developer:
@@ -45,6 +47,9 @@ const ALGO_PERSONA_HINTS: Record<string, string> = {
     'Use the Transition tab to find your classical algorithms and their recommended PQC replacements.',
   researcher:
     'Switch to the Detailed tab for full parameter sets, attack vectors, and cross-family security comparisons.',
+  ops: 'Filter Status = Certified and look for Production deployment chips on Protocol Support — these are the algorithms safe to deploy in OpenSSL, nginx and HSMs today.',
+  curious:
+    'You unlocked the full comparison. The three NIST picks (ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128s) are pre-highlighted; everything else is for specialists.',
 }
 
 /**
@@ -77,9 +82,15 @@ export function AlgorithmsView() {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const viewAccess = usePersonaStore((s) => s.viewAccess)
   const setAdvancedViewsUnlocked = usePersonaStore((s) => s.setAdvancedViewsUnlocked)
+  const algorithmsTabsVisited = usePersonaStore((s) => s.algorithmsTabsVisited)
+  const markAlgorithmsTabVisited = usePersonaStore((s) => s.markAlgorithmsTabVisited)
   const comparisonPanelRef = useRef<HTMLDivElement>(null)
   const isCuriousPreview =
     selectedPersona === 'curious' && viewAccess === 'preview' && !searchParams.get('highlight')
+
+  // Persona-derived defaults — used to seed first-paint tab / filter / highlight
+  // state when no URL params are present. Deep-links always win.
+  const personaDefaults = useMemo(() => getAlgorithmDefaults(selectedPersona), [selectedPersona])
 
   // Strip is hidden when the page has any pre-set filter/tab/search state
   const hasActiveParams = useMemo(() => {
@@ -99,23 +110,31 @@ export function AlgorithmsView() {
     return watched.some((key) => searchParams.has(key))
   }, [searchParams])
 
-  // --- Highlight from URL ---
+  // --- Highlight: URL deep-link wins, otherwise persona defaults apply when
+  //     no other URL state is present (executive / curious land with pinned
+  //     NIST picks; everyone else gets undefined). ---
   const highlightAlgorithms = useMemo(() => {
     const raw = searchParams.get('highlight')
-    if (!raw) return undefined
-    return new Set(
-      raw
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean)
-    )
-  }, [searchParams])
+    if (raw) {
+      return new Set(
+        raw
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean)
+      )
+    }
+    if (personaDefaults.highlight && !hasActiveParams) {
+      return new Set(personaDefaults.highlight)
+    }
+    return undefined
+  }, [searchParams, personaDefaults.highlight, hasActiveParams])
 
   // --- Active tab ---
-  const [activeTab, setActiveTab] = useState<'transition' | 'detailed' | 'support'>(() => {
+  const [activeTab, setActiveTab] = useState<AlgorithmTabId>(() => {
     const tab = searchParams.get('tab')
     if (tab === 'transition' || tab === 'detailed' || tab === 'support') return tab
-    return searchParams.get('highlight') ? 'detailed' : 'transition'
+    if (searchParams.get('highlight')) return 'detailed'
+    return personaDefaults.tab
   })
 
   useEffect(() => {
@@ -124,6 +143,22 @@ export function AlgorithmsView() {
       setActiveTab((prev) => (prev !== tab ? tab : prev))
     }
   }, [searchParams])
+
+  // P2.3: record tab visits so the curious-persona gate on Protocol Support
+  // can open after the user has explored Transition or Detailed at least once.
+  useEffect(() => {
+    if (activeTab === 'transition' || activeTab === 'detailed') {
+      markAlgorithmsTabVisited(activeTab)
+    }
+  }, [activeTab, markAlgorithmsTabVisited])
+
+  // Curious-only gate: hide Protocol Support until they have visited at
+  // least one of the friendlier tabs. Power personas and unlocked-curious
+  // users always see the third tab.
+  const hideSupportTab =
+    selectedPersona === 'curious' &&
+    !algorithmsTabsVisited.includes('transition') &&
+    !algorithmsTabsVisited.includes('detailed')
 
   // Reset all filters when arriving from command palette search so the highlighted
   // algorithm is always visible regardless of previously active filter state
@@ -171,16 +206,23 @@ export function AlgorithmsView() {
     })
   }, [])
 
-  // --- Filter state (synced to URL) ---
+  // --- Filter state (synced to URL). URL params win; otherwise the persona's
+  //     filter preset applies on first paint. ---
   const [filterCryptoFamily, setFilterCryptoFamily] = useState(
-    () => searchParams.get('family') || 'All'
+    () => searchParams.get('family') || personaDefaults.filters.family || 'All'
   )
-  const [filterFunction, setFilterFunction] = useState(() => searchParams.get('fn') || 'All')
+  const [filterFunction, setFilterFunction] = useState(
+    () => searchParams.get('fn') || personaDefaults.filters.fn || 'All'
+  )
   const [filterSecurityLevel, setFilterSecurityLevel] = useState(
-    () => searchParams.get('level') || 'All'
+    () => searchParams.get('level') || personaDefaults.filters.level || 'All'
   )
-  const [filterRegion, setFilterRegion] = useState(() => searchParams.get('region') || 'All')
-  const [filterStatus, setFilterStatus] = useState(() => searchParams.get('status') || 'All')
+  const [filterRegion, setFilterRegion] = useState(
+    () => searchParams.get('region') || personaDefaults.filters.region || 'All'
+  )
+  const [filterStatus, setFilterStatus] = useState(
+    () => searchParams.get('status') || personaDefaults.filters.status || 'All'
+  )
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '')
 
   // --- Comparison state (synced to URL) ---
@@ -300,9 +342,53 @@ export function AlgorithmsView() {
 
   const handleTabChange = useCallback(
     (t: string) => {
-      const tab = t as 'transition' | 'detailed'
+      const tab = t as AlgorithmTabId
       setActiveTab(tab)
-      updateSearchParams({ tab: tab !== 'transition' ? tab : null })
+      // Persist tabs that differ from the persona default; clear the param
+      // when the user returns to their default so the URL stays clean.
+      updateSearchParams({ tab: tab !== personaDefaults.tab ? tab : null })
+    },
+    [updateSearchParams, personaDefaults.tab]
+  )
+
+  // QuickView preset → multi-field filter writes (P1.2). NIST picks pins
+  // status=Certified + family=Lattice (the standardized FIPS 203/204/205
+  // family); FIPS-validated narrows to status=Certified across all families;
+  // Everything resets all filters back to "All".
+  const handleQuickView = useCallback(
+    (preset: 'nist-picks' | 'fips-validated' | 'everything') => {
+      if (preset === 'nist-picks') {
+        setFilterCryptoFamily('Lattice')
+        setFilterFunction('All')
+        setFilterStatus('Certified')
+        updateSearchParams({
+          family: 'Lattice',
+          fn: null,
+          status: 'Certified',
+        })
+      } else if (preset === 'fips-validated') {
+        setFilterCryptoFamily('All')
+        setFilterFunction('All')
+        setFilterStatus('Certified')
+        updateSearchParams({
+          family: null,
+          fn: null,
+          status: 'Certified',
+        })
+      } else {
+        setFilterCryptoFamily('All')
+        setFilterFunction('All')
+        setFilterSecurityLevel('All')
+        setFilterRegion('All')
+        setFilterStatus('All')
+        updateSearchParams({
+          family: null,
+          fn: null,
+          level: null,
+          region: null,
+          status: null,
+        })
+      }
     },
     [updateSearchParams]
   )
@@ -605,6 +691,8 @@ export function AlgorithmsView() {
             filteredCount={filteredCount}
             totalCount={totalAlgoCount}
             availableLevels={availableLevels}
+            persona={selectedPersona}
+            onQuickView={handleQuickView}
           />
 
           {/* Cross-link to PQC Candidates module when filtering by Candidate status */}
@@ -638,16 +726,18 @@ export function AlgorithmsView() {
                 <BarChart3 size={18} />
                 Detailed Comparison
               </TabsTrigger>
-              <TabsTrigger value="support" className="flex items-center gap-2">
-                <Network size={18} />
-                Protocol Support
-                <span
-                  className="rounded-sm bg-primary/15 text-primary px-1 py-0 text-[9px] font-bold uppercase tracking-wider"
-                  title="Tracks 14 IETF protocols across pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. Updated weekly from datatracker."
-                >
-                  Beta
-                </span>
-              </TabsTrigger>
+              {!hideSupportTab && (
+                <TabsTrigger value="support" className="flex items-center gap-2">
+                  <Network size={18} />
+                  Protocol Support
+                  <span
+                    className="rounded-sm bg-primary/15 text-primary px-1 py-0 text-[9px] font-bold uppercase tracking-wider"
+                    title="Tracks 14 IETF protocols across pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. Updated weekly from datatracker."
+                  >
+                    Beta
+                  </span>
+                </TabsTrigger>
+              )}
             </TabsList>
 
             <TabsContent value="transition">

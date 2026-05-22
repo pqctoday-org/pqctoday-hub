@@ -137,7 +137,14 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
       return {
         family: row.algorithm_family,
         name: row.algorithm,
-        cryptoFamily: row.cryptographic_family || '',
+        // P2.1 (2026-05-22): bare 'Hybrid' was renamed to 'Composite' to
+        // disambiguate from protocol-level "hybrid signature" (different
+        // concept). Older CSV snapshots ship with 'Hybrid', so the loader
+        // normalises both spellings to the canonical 'Composite' value.
+        // Compound labels (e.g. 'Hybrid (KEM + ABE)', 'Framework (Hybrid
+        // PKE)') are unaffected — only the exact 'Hybrid' string is mapped.
+        cryptoFamily:
+          row.cryptographic_family === 'Hybrid' ? 'Composite' : row.cryptographic_family || '',
         securityLevel: parseIntOrNull(row.nist_security_level),
         aesEquivalent: row.aes_equivalent,
         publicKeySize: parseInt(row.public_key_bytes, 10) || 0,
@@ -226,7 +233,7 @@ export function getCryptoFamilyColor(family: string): string {
       return 'bg-accent/10 text-accent border-accent/30'
     case 'Hash-based':
       return 'bg-success/10 text-success border-success/30'
-    case 'Hybrid':
+    case 'Composite':
       return 'bg-warning/10 text-warning border-warning/30'
     case 'Classical':
       return 'bg-muted/50 text-muted-foreground border-border'

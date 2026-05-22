@@ -7,19 +7,27 @@ import {
   SlidersHorizontal,
   Globe,
   CheckCircle,
+  Star,
+  BadgeCheck,
+  ListFilter,
 } from 'lucide-react'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { Input } from '../ui/input'
 import { useState } from 'react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
+import type { PersonaId } from '../../data/learningPersonas'
+import { granularityForPersona } from '../../data/pqcProtocolMatrix'
 
 export const CRYPTO_FAMILY_ITEMS = [
   { id: 'All', label: 'All Families' },
   { id: 'Lattice', label: 'Lattice' },
   { id: 'Code-based', label: 'Code-based' },
   { id: 'Hash-based', label: 'Hash-based' },
-  { id: 'Hybrid', label: 'Hybrid' },
+  // P2.1 (2026-05-22): renamed from 'Hybrid' to 'Composite (math)' to
+  // disambiguate from protocol-level "hybrid signature". The loader maps
+  // legacy CSV 'Hybrid' → 'Composite' so this id matches the data.
+  { id: 'Composite', label: 'Composite (math)' },
   { id: 'Multivariate', label: 'Multivariate' },
   { id: 'Isogeny', label: 'Isogeny' },
   { id: 'Classical', label: 'Classical' },
@@ -57,6 +65,8 @@ const LEVEL_ITEMS = [
   { id: '5', label: 'Level 5' },
 ]
 
+export type QuickViewPreset = 'nist-picks' | 'fips-validated' | 'everything'
+
 interface AlgorithmFiltersProps {
   cryptoFamily: string
   onCryptoFamilyChange: (id: string) => void
@@ -73,6 +83,83 @@ interface AlgorithmFiltersProps {
   filteredCount: number
   totalCount: number
   availableLevels?: number[]
+  /** Active persona — drives QuickView surface (binary personas hide the 5-dropdown bar by default). */
+  persona?: PersonaId | null
+  /** Called when a QuickView preset is selected. Implementation lives in AlgorithmsView. */
+  onQuickView?: (preset: QuickViewPreset) => void
+}
+
+/**
+ * Three-preset segmented control that replaces the 5-dropdown entry tax for
+ * binary personas (executive / ops / curious). Power personas (developer /
+ * architect / researcher) still see the dropdowns inline.
+ */
+function QuickViewSegmented({
+  status,
+  cryptoFamily,
+  functionGroup,
+  onQuickView,
+}: {
+  status: string
+  cryptoFamily: string
+  functionGroup: string
+  onQuickView: (preset: QuickViewPreset) => void
+}) {
+  // Reverse-derive the active preset from current filter state so the
+  // segmented chip shows which preset matches the live filters.
+  let active: QuickViewPreset | null = null
+  if (status === 'All' && cryptoFamily === 'All' && functionGroup === 'All') {
+    active = 'everything'
+  } else if (status === 'Certified' && cryptoFamily === 'Lattice') {
+    active = 'nist-picks'
+  } else if (status === 'Certified' && cryptoFamily === 'All' && functionGroup === 'All') {
+    active = 'fips-validated'
+  }
+
+  const options: Array<{ id: QuickViewPreset; label: string; icon: typeof Star; title: string }> = [
+    {
+      id: 'nist-picks',
+      label: 'NIST picks',
+      icon: Star,
+      title: 'FIPS 203/204/205 — ML-KEM, ML-DSA, SLH-DSA (Lattice-based standardized)',
+    },
+    {
+      id: 'fips-validated',
+      label: 'FIPS-validated',
+      icon: BadgeCheck,
+      title: 'All algorithms that have completed FIPS validation',
+    },
+    {
+      id: 'everything',
+      label: 'Everything',
+      icon: ListFilter,
+      title: 'Clear all filters — show every algorithm',
+    },
+  ]
+
+  return (
+    <div
+      className="inline-flex rounded-md border border-border bg-card p-0.5"
+      role="group"
+      aria-label="Quick filter presets"
+    >
+      {options.map(({ id, label, icon: Icon, title }) => (
+        <Button
+          key={id}
+          type="button"
+          variant={active === id ? 'gradient' : 'ghost'}
+          size="sm"
+          onClick={() => onQuickView(id)}
+          className="h-7 gap-1 px-2 text-xs"
+          aria-pressed={active === id}
+          title={title}
+        >
+          <Icon size={12} />
+          {label}
+        </Button>
+      ))}
+    </div>
+  )
 }
 
 export function AlgorithmFilters({
@@ -91,12 +178,19 @@ export function AlgorithmFilters({
   filteredCount,
   totalCount,
   availableLevels,
+  persona = null,
+  onQuickView,
 }: AlgorithmFiltersProps) {
   const levelItems = availableLevels
     ? LEVEL_ITEMS.filter((item) => item.id === 'All' || availableLevels.includes(parseInt(item.id)))
     : LEVEL_ITEMS
 
   const [isMobileOpen, setIsMobileOpen] = useState(false)
+  // Binary personas (executive / ops / curious) hide the five-dropdown bar by
+  // default — they get the QuickView segmented control as the primary entry
+  // point. Ternary / researcher / no-persona always see the full bar inline.
+  const isBinaryPersona = granularityForPersona(persona) === 'binary'
+  const [advancedOpen, setAdvancedOpen] = useState(!isBinaryPersona)
   const hasActiveFilters =
     cryptoFamily !== 'All' ||
     functionGroup !== 'All' ||
@@ -131,11 +225,52 @@ export function AlgorithmFilters({
         </Button>
       </div>
 
+      {/* QuickView segmented control + "More filters" disclosure for binary personas */}
+      {onQuickView && (
+        <div
+          className={clsx(
+            'flex flex-wrap items-center gap-2 mt-3 md:mt-0',
+            isMobileOpen ? 'flex' : 'hidden md:flex'
+          )}
+        >
+          <QuickViewSegmented
+            status={status}
+            cryptoFamily={cryptoFamily}
+            functionGroup={functionGroup}
+            onQuickView={onQuickView}
+          />
+          {isBinaryPersona && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setAdvancedOpen((v) => !v)}
+              className="h-7 gap-1 px-2 text-xs text-muted-foreground"
+              aria-expanded={advancedOpen}
+            >
+              <SlidersHorizontal size={12} />
+              {advancedOpen ? 'Hide filters' : 'More filters'}
+              <ChevronDown
+                size={12}
+                className={clsx('transition-transform', advancedOpen && 'rotate-180')}
+              />
+            </Button>
+          )}
+          <span
+            className="text-xs text-muted-foreground md:ml-auto whitespace-nowrap"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            Showing {filteredCount} of {totalCount}
+          </span>
+        </div>
+      )}
+
       {/* Filters Container (Hidden on mobile unless open) */}
       <div
         className={clsx(
           'flex-col md:flex-row md:items-center gap-3 mt-3 md:mt-0',
-          isMobileOpen ? 'flex' : 'hidden md:flex'
+          isMobileOpen ? 'flex' : 'hidden md:flex',
+          !advancedOpen && 'md:!hidden'
         )}
       >
         <div className="hidden md:flex items-center gap-2">
@@ -225,13 +360,15 @@ export function AlgorithmFilters({
           </p>
         </div>
 
-        <div
-          className="text-sm text-muted-foreground md:ml-auto whitespace-nowrap"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          Showing {filteredCount} of {totalCount} algorithms
-        </div>
+        {!onQuickView && (
+          <div
+            className="text-sm text-muted-foreground md:ml-auto whitespace-nowrap"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            Showing {filteredCount} of {totalCount} algorithms
+          </div>
+        )}
       </div>
     </div>
   )
