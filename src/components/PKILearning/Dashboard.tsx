@@ -262,6 +262,11 @@ interface DesktopLearnFilterPopoverProps {
   sortBy: LearnSortMode
   personaFilterItems: { id: string; label: string }[]
   selectedPersonaFilter: string
+  /** P2-4: hide the NICE Proficiency filter block (used for curious until they opt in). */
+  hideNiceFilter?: boolean
+  /** P2-4: when true, render a "Show advanced filters" link inside the popover. */
+  showAdvancedFiltersToggle?: boolean
+  onAdvancedFiltersOpen?: () => void
   onTrackChange: (v: string) => void
   onDifficultyChange: (v: string) => void
   onStatusChange: (v: string) => void
@@ -282,6 +287,9 @@ const DesktopLearnFilterPopover: React.FC<DesktopLearnFilterPopoverProps> = ({
   sortBy,
   personaFilterItems,
   selectedPersonaFilter,
+  hideNiceFilter,
+  showAdvancedFiltersToggle,
+  onAdvancedFiltersOpen,
   onTrackChange,
   onDifficultyChange,
   onStatusChange,
@@ -392,41 +400,55 @@ const DesktopLearnFilterPopover: React.FC<DesktopLearnFilterPopoverProps> = ({
             />
           </div>
 
-          <div className="space-y-1.5 pt-3 border-t border-border/50">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-              <GraduationCap size={11} aria-hidden="true" />
-              NICE Proficiency
-            </span>
-            <div className="flex rounded-md overflow-hidden border border-border">
+          {showAdvancedFiltersToggle && onAdvancedFiltersOpen && (
+            <div className="pt-3 border-t border-border/50">
               <Button
-                variant="ghost"
-                onClick={() => onNiceTierChange('All')}
-                className={clsx(
-                  'flex-1 h-7 text-[11px] rounded-none border-r border-border',
-                  selectedNiceTier === 'All'
-                    ? 'bg-muted/60 text-foreground font-medium'
-                    : 'text-muted-foreground hover:text-foreground'
-                )}
+                variant="link"
+                size="sm"
+                onClick={onAdvancedFiltersOpen}
+                className="text-[11px] p-0 h-auto"
               >
-                All
+                Show advanced filters
               </Button>
-              {NICE_TIERS.map((tier) => (
+            </div>
+          )}
+          {!hideNiceFilter && (
+            <div className="space-y-1.5 pt-3 border-t border-border/50">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                <GraduationCap size={11} aria-hidden="true" />
+                NICE Proficiency
+              </span>
+              <div className="flex rounded-md overflow-hidden border border-border">
                 <Button
-                  key={tier.id}
                   variant="ghost"
-                  onClick={() => onNiceTierChange(tier.id)}
+                  onClick={() => onNiceTierChange('All')}
                   className={clsx(
-                    'flex-1 h-7 text-[11px] rounded-none border-r border-border last:border-r-0',
-                    selectedNiceTier === tier.id
-                      ? 'bg-primary/10 text-primary font-medium'
+                    'flex-1 h-7 text-[11px] rounded-none border-r border-border',
+                    selectedNiceTier === 'All'
+                      ? 'bg-muted/60 text-foreground font-medium'
                       : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
-                  {tier.label}
+                  All
                 </Button>
-              ))}
+                {NICE_TIERS.map((tier) => (
+                  <Button
+                    key={tier.id}
+                    variant="ghost"
+                    onClick={() => onNiceTierChange(tier.id)}
+                    className={clsx(
+                      'flex-1 h-7 text-[11px] rounded-none border-r border-border last:border-r-0',
+                      selectedNiceTier === tier.id
+                        ? 'bg-primary/10 text-primary font-medium'
+                        : 'text-muted-foreground hover:text-foreground'
+                    )}
+                  >
+                    {tier.label}
+                  </Button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="space-y-1.5 pt-3 border-t border-border/50">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -702,6 +724,10 @@ const ModuleTracksGrid = ({
   const [selectedNiceTier, setSelectedNiceTier] = useState<NiceProficiencyTier | 'All'>(
     niceTierOverridden ? storeNiceTier : 'All'
   )
+  // P2-4: NICE Proficiency is jargon for new learners. Hide it from curious by
+  // default; reveal under an "Advanced filters" toggle so power users can still
+  // engage it without surfacing the chrome on first paint.
+  const [advancedFiltersOpen, setAdvancedFiltersOpen] = useState(false)
 
   // Show Curious Explorer path in curious mode (persona or experience level); professionals see professional roles
   const isCuriousMode = selectedPersona === 'curious' || experienceLevel === 'curious'
@@ -1090,7 +1116,24 @@ const ModuleTracksGrid = ({
                     ))}
                   </div>
                 </div>
-                <div className="space-y-2 flex flex-col pt-4 border-t border-border/50">
+                {isCuriousMode && !advancedFiltersOpen && (
+                  <div className="pt-4 border-t border-border/50">
+                    <Button
+                      variant="link"
+                      size="sm"
+                      onClick={() => setAdvancedFiltersOpen(true)}
+                      className="text-xs"
+                    >
+                      Show advanced filters
+                    </Button>
+                  </div>
+                )}
+                <div
+                  className={clsx(
+                    'space-y-2 flex flex-col pt-4 border-t border-border/50',
+                    isCuriousMode && !advancedFiltersOpen && 'hidden'
+                  )}
+                >
                   <span className="text-sm font-semibold text-foreground flex items-center gap-1.5">
                     <GraduationCap size={14} aria-hidden="true" />
                     NICE Proficiency
@@ -1174,6 +1217,9 @@ const ModuleTracksGrid = ({
           sortBy={sortBy}
           personaFilterItems={personaFilterItems}
           selectedPersonaFilter={selectedPersonaFilter}
+          hideNiceFilter={isCuriousMode && !advancedFiltersOpen}
+          showAdvancedFiltersToggle={isCuriousMode && !advancedFiltersOpen}
+          onAdvancedFiltersOpen={() => setAdvancedFiltersOpen(true)}
           onTrackChange={setSelectedTrack}
           onDifficultyChange={setSelectedDifficulty}
           onStatusChange={setSelectedStatus}
