@@ -233,4 +233,109 @@ describe('ComplianceView', () => {
     expect(screen.getByRole('button', { name: /Show deadline timeline/i })).toBeInTheDocument()
     expect(screen.queryByText(/PQC Compliance Deadlines/)).not.toBeInTheDocument()
   }, 15000)
+
+  it('announces persona-hint navigation via aria-live region', () => {
+    usePersonaStore.setState({ selectedIndustries: ['Finance & Banking'] })
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    // Both desktop + mobile render a live region — both should be empty at idle.
+    const regions = screen.getAllByTestId('persona-hint-live-region')
+    expect(regions.length).toBeGreaterThan(0)
+    expect(regions[0].textContent).toBe('')
+    fireEvent.click(screen.getAllByRole('button', { name: /Go to Certification Schemes/i })[0])
+    // After click, the region announces the destination. Re-query because
+    // React re-renders the surface, but the DOM node is still by testid.
+    expect(screen.getAllByTestId('persona-hint-live-region')[0].textContent).toMatch(
+      /Navigated to Certification Schemes/i
+    )
+  }, 15000)
+
+  it('persona-hint dismissal persists per industry and re-prompts on industry change', () => {
+    usePersonaStore.setState({ selectedIndustries: ['Finance & Banking'] })
+    const { unmount: unmount1 } = render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    // Hint visible for Finance — click dismiss.
+    expect(
+      screen.getAllByRole('button', { name: /Go to Certification Schemes/i }).length
+    ).toBeGreaterThan(0)
+    fireEvent.click(screen.getAllByRole('button', { name: /Dismiss persona hint/i })[0])
+    expect(screen.queryAllByRole('button', { name: /Go to Certification Schemes/i }).length).toBe(0)
+    unmount1()
+
+    // Re-mount with same industry — flag persisted, hint stays dismissed.
+    const { unmount: unmount2 } = render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    expect(screen.queryAllByRole('button', { name: /Go to Certification Schemes/i }).length).toBe(0)
+    unmount2()
+
+    // Switch industry — new key, hint re-appears.
+    usePersonaStore.setState({ selectedIndustries: ['Healthcare'] })
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    expect(
+      screen.queryAllByRole('button', { name: /Go to Certification Schemes/i }).length
+    ).toBeGreaterThan(0)
+  }, 15000)
+
+  it('persona-hint CTA also logs PersonaHintCtaClick with the industry→section identity', () => {
+    usePersonaStore.setState({ selectedIndustries: ['Finance & Banking'] })
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    fireEvent.click(screen.getAllByRole('button', { name: /Go to Certification Schemes/i })[0])
+    expect(logComplianceFilter).toHaveBeenCalledWith(
+      'PersonaHintCtaClick',
+      'industry:Finance & Banking→certification'
+    )
+  }, 15000)
+
+  it('persona-hint dismiss logs PersonaHintDismiss with industry identity', () => {
+    usePersonaStore.setState({ selectedIndustries: ['Finance & Banking'] })
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    fireEvent.click(screen.getAllByRole('button', { name: /Dismiss persona hint/i })[0])
+    expect(logComplianceFilter).toHaveBeenCalledWith(
+      'PersonaHintDismiss',
+      'industry:Finance & Banking'
+    )
+  }, 15000)
+
+  it('about-strip summary carries aria-current="true" when expanded', () => {
+    // First-visit heuristic: neither intro-dismissed nor about-expanded flag
+    // is set, so the strip mounts open. Summary must reflect aria-current.
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    const strips = screen.getAllByTestId('compliance-about-strip')
+    // Both desktop + mobile render the strip; both should be open + aria-current.
+    // <summary> has no standard ARIA role queryable via Testing Library so we
+    // reach into the element by tag — acceptable for a structural assertion.
+    /* eslint-disable testing-library/no-node-access */
+    for (const strip of strips) {
+      const summary = strip.querySelector('summary')
+      expect(summary).not.toBeNull()
+      expect(strip.hasAttribute('open')).toBe(true)
+      expect(summary?.getAttribute('aria-current')).toBe('true')
+    }
+    /* eslint-enable testing-library/no-node-access */
+  }, 15000)
 })

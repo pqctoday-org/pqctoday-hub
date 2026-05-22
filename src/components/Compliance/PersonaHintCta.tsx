@@ -1,14 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useEffect, useState } from 'react'
 import { Info, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import type { ComplianceHint } from '@/data/compliancePersonaHints'
+import type { ComplianceHint, ComplianceHintSubFacet } from '@/data/compliancePersonaHints'
 import type { MobileSection } from './useComplianceUrlState'
 
 interface PersonaHintCtaProps {
   /** Display label that contextualises the hint, e.g. "Finance & Banking focus". */
   label: string
   hint: ComplianceHint
-  onNavigate: (section: MobileSection) => void
+  /**
+   * Fired when the gradient CTA is clicked. `subFacet` carries the optional
+   * `rtab` (and future `pqcOnly`) pre-selection so the destination view can
+   * apply it alongside the tab jump.
+   */
+  onNavigate: (section: MobileSection, subFacet?: ComplianceHintSubFacet) => void
   onDismiss?: () => void
 }
 
@@ -22,6 +28,16 @@ interface PersonaHintCtaProps {
  * If a new section value is introduced, extend the cast at the call site.
  */
 export function PersonaHintCta({ label, hint, onNavigate, onDismiss }: PersonaHintCtaProps) {
+  // Live-region announcement on navigate so screen-reader users hear the tab
+  // change instead of a silent URL/DOM swap. Cleared after a short delay so
+  // the region doesn't re-announce the same string on unrelated re-renders.
+  const [announcement, setAnnouncement] = useState('')
+  useEffect(() => {
+    if (!announcement) return
+    const t = window.setTimeout(() => setAnnouncement(''), 1500)
+    return () => window.clearTimeout(t)
+  }, [announcement])
+
   return (
     <div
       className="flex flex-col gap-2 p-3 rounded-lg border border-primary/20 bg-primary/5 text-sm"
@@ -36,7 +52,10 @@ export function PersonaHintCta({ label, hint, onNavigate, onDismiss }: PersonaHi
               type="button"
               variant="gradient"
               size="sm"
-              onClick={() => onNavigate(hint.section as MobileSection)}
+              onClick={() => {
+                setAnnouncement(`Navigated to ${hint.sectionLabel}`)
+                onNavigate(hint.section as MobileSection, hint.subFacet)
+              }}
               data-workshop-target="compliance-persona-hint-cta"
               aria-label={`Go to ${hint.sectionLabel}`}
               className="h-auto text-xs px-3 py-1.5"
@@ -59,6 +78,15 @@ export function PersonaHintCta({ label, hint, onNavigate, onDismiss }: PersonaHi
           </Button>
         )}
       </div>
+      <span
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        data-testid="persona-hint-live-region"
+        className="sr-only"
+      >
+        {announcement}
+      </span>
     </div>
   )
 }

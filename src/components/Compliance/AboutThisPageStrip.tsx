@@ -21,6 +21,16 @@ function readInitialOpen(): boolean {
   }
 }
 
+interface AboutThisPageStripProps {
+  /**
+   * Optional content rendered inside the summary row, right-aligned. Used on
+   * mobile to host secondary filters (e.g. TrustTierFilter) that live inline
+   * in the tab bar on desktop. The slot stops click propagation so toggling
+   * the filter does not toggle the details.
+   */
+  headerSlot?: React.ReactNode
+}
+
 /**
  * Collapsible "About this page" strip wrapping LearningFrameBanner,
  * GlossaryStrip, and ContentUpdatesFeed in a single <details>. Counts as one
@@ -31,7 +41,7 @@ function readInitialOpen(): boolean {
  * user has interacted with anything that writes the intro flag, the default
  * flips to collapsed.
  */
-export function AboutThisPageStrip() {
+export function AboutThisPageStrip({ headerSlot }: AboutThisPageStripProps = {}) {
   const [open, setOpen] = useState<boolean>(readInitialOpen)
   const detailsRef = useRef<HTMLDetailsElement | null>(null)
 
@@ -64,7 +74,14 @@ export function AboutThisPageStrip() {
       className="rounded-lg border border-border bg-card"
       data-testid="compliance-about-strip"
     >
-      <summary className="flex items-center gap-2 px-3 py-2 cursor-pointer list-none select-none text-sm font-medium text-foreground hover:bg-muted/40 rounded-lg [&::-webkit-details-marker]:hidden">
+      <summary
+        // When the strip is expanded it is no longer decorative — it acts as
+        // the visible "current section" anchor for the rest of the about-page
+        // chrome. `aria-current="true"` tells screen readers it's the active
+        // landmark while expanded; absent (-> "false") when collapsed.
+        aria-current={open ? 'true' : undefined}
+        className="flex items-center gap-2 px-3 py-2 cursor-pointer list-none select-none text-sm font-medium text-foreground hover:bg-muted/40 rounded-lg [&::-webkit-details-marker]:hidden"
+      >
         <ChevronDown
           size={14}
           className={`text-muted-foreground transition-transform ${open ? '' : '-rotate-90'}`}
@@ -74,6 +91,16 @@ export function AboutThisPageStrip() {
         <span className="text-xs text-muted-foreground font-normal hidden sm:inline">
           Learning frame, glossary, recent revisions
         </span>
+        {headerSlot && (
+          <span
+            className="ml-2"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+            role="presentation"
+          >
+            {headerSlot}
+          </span>
+        )}
       </summary>
       <div className="px-3 pb-3 pt-1 space-y-4">
         <LearningFrameBanner />
