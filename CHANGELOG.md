@@ -4,6 +4,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## What's new — May 22, 2026
+
+Two new library documents added and indexed:
+
+- **Preparing for Quantum Technologies — G7 Central Banks (May 2026).** Joint guidance from the Bank of Canada and Banque de France, issued through the G7 Cyber Expert Group. Covers PQC migration priorities for financial-sector participants including algorithm selection, hybrid transition strategies, and vendor readiness. Available in `/library` (ID: `G7-CB-QT-Financial-2026`).
+- **Quantum Threat: The Trillion-Dollar Security Race Is On — Citi GPS (January 2026).** Industry analysis covering the business and economic dimensions of PQC migration — market sizing, competitive dynamics, and risk exposure across financial services. Available in `/library` (ID: `Citi-GPS-Quantum-Threat-2026`).
+
+Both documents are fully enriched (migration urgency, algorithm coverage, regulatory dimension, deployment context) and searchable via the RAG corpus (now 11,245 chunks).
+
+---
+
 ## What's new — May 20, 2026
 
 Four UX polish items across Algorithms, Learn, and Compliance:
