@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef } from 'react'
-import { Check, ChevronRight, Circle } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Check, ChevronRight, Circle, FlaskConical } from 'lucide-react'
 import clsx from 'clsx'
 import { MODULE_CATALOG } from './moduleData'
 import { ModuleCard } from './ModuleCard'
+import { Button } from '../ui/button'
+import { getPlaygroundToolForModule } from './moduleEnrichment'
 import { logEvent, personaLabel } from '@/utils/analytics'
+import type { PersonaId } from '@/data/learningPersonas'
 
 interface PersonaPathPhaseProps {
   /** Phase title (checkpoint label, or "Wrap-up: Take the quiz" for the terminal phase). */
@@ -26,6 +30,8 @@ interface PersonaPathPhaseProps {
   /** Set of module IDs that should display a "Common Ground" overlay badge.
    *  Passed by PersonaPathView only when persona is executive/curious. */
   commonGroundModuleIds?: Set<string>
+  /** Active persona — drives P2-1 "Try in playground" affordance for ops. */
+  personaId?: PersonaId
   /** Callback when the user toggles the phase (writes to useLearnStore). */
   onToggle?: (expanded: boolean) => void
   /** Persisted expansion state. If undefined, defaultExpanded controls the initial state. */
@@ -42,9 +48,11 @@ export const PersonaPathPhase = ({
   isModuleRelevant,
   isModuleAboveLevel,
   commonGroundModuleIds,
+  personaId,
   onToggle,
   expandedOverride,
 }: PersonaPathPhaseProps) => {
+  const navigate = useNavigate()
   const ref = useRef<HTMLDetailsElement>(null)
   const isComplete = totalCount > 0 && completedCount === totalCount
 
@@ -109,6 +117,9 @@ export const PersonaPathPhase = ({
           const mod = MODULE_CATALOG[id]
           if (!mod) return null
           const isCommonGround = commonGroundModuleIds?.has(id) ?? false
+          // P2-1: surface a "Try in playground" affordance for ops persona when the
+          // module has a curated Playground tool counterpart.
+          const playgroundTool = personaId === 'ops' ? getPlaygroundToolForModule(id) : undefined
           return (
             <div key={id} className="relative">
               {isCommonGround && (
@@ -125,6 +136,21 @@ export const PersonaPathPhase = ({
                 isRelevant={isModuleRelevant(id)}
                 isAboveLevel={isModuleAboveLevel(id)}
               />
+              {playgroundTool && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    logEvent('Learning', 'Path Playground Link Click', `${id} → ${playgroundTool}`)
+                    navigate(`/playground/${playgroundTool}`)
+                  }}
+                  className="absolute bottom-2 right-2 z-10 text-[10px] gap-1 h-7 px-2"
+                >
+                  <FlaskConical size={11} aria-hidden="true" />
+                  Try in playground
+                </Button>
+              )}
             </div>
           )
         })}

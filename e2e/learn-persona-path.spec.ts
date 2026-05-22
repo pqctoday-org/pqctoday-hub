@@ -129,4 +129,45 @@ test.describe('Learn — persona-path view', () => {
     })
     await expect(page.getByText(/Browse all \d+ modules/i)).toHaveCount(0)
   })
+
+  test('P2-1: ops persona sees the "Try in playground" affordance on mapped module cards', async ({
+    page,
+  }) => {
+    await seedPersona(page, 'ops')
+    await page.goto('/learn')
+
+    await expect(page.getByText(/Browse all \d+ modules/i).first()).toBeVisible({
+      timeout: 25000,
+    })
+    // Open every persona-path phase so the mapped module cards (and their
+    // "Try in playground" buttons) become visible in the accessibility tree.
+    await page.evaluate(() => {
+      document
+        .querySelectorAll<HTMLDetailsElement>('section[aria-label="Your curated learning path"] details')
+        .forEach((d) => {
+          d.open = true
+        })
+    })
+    await expect(
+      page.getByRole('button', { name: /Try in playground/i }).first()
+    ).toBeVisible({ timeout: 10000 })
+  })
+
+  test('P2-3: researcher persona sees the algorithm/standard taxonomy filter above stack', async ({
+    page,
+  }) => {
+    await seedPersona(page, 'researcher')
+    await page.goto('/learn')
+
+    const region = page.getByRole('region', {
+      name: /Researcher: browse modules by algorithm or standard/i,
+    })
+    await expect(region).toBeVisible({ timeout: 25000 })
+    // The two top-level chips are scoped inside the taxonomy region so they
+    // don't collide with the global "Algorithms view" nav button.
+    await region.getByRole('button', { name: 'Algorithm', exact: true }).click()
+    await expect(page.getByRole('listbox', { name: /Algorithms/i })).toBeVisible()
+    // ML-KEM option is one of the curated taxons
+    await expect(page.getByRole('option', { name: /ML-KEM/ })).toBeVisible()
+  })
 })

@@ -143,6 +143,7 @@ export const PersonaPathView = ({
             isModuleRelevant={isModuleRelevant}
             isModuleAboveLevel={isModuleAboveLevel}
             commonGroundModuleIds={showCommonGroundContext ? COMMON_GROUND_MODULE_IDS : undefined}
+            personaId={personaId}
             expandedOverride={expandedOverride}
             onToggle={(expanded) => setPhaseExpanded(key, expanded)}
           />

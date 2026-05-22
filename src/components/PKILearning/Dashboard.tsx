@@ -38,6 +38,11 @@ import { ModuleTable, type ModuleTableItem } from './ModuleTable'
 import { PersonaPathView } from './PersonaPathView'
 import { RecommendedPathBanner } from './RecommendedPathBanner'
 import { usePersonaPathItems } from './usePersonaPathItems'
+import {
+  ResearcherTaxonomyFilter,
+  type TaxonomySelection,
+} from './ResearcherTaxonomyFilter'
+import { modulesByAlgorithm, modulesByStandard } from './moduleEnrichment'
 import { useLearnStore } from '../../store/useLearnStore'
 import {
   MODULE_CATALOG,
@@ -728,6 +733,13 @@ const ModuleTracksGrid = ({
   // default; reveal under an "Advanced filters" toggle so power users can still
   // engage it without surfacing the chrome on first paint.
   const [advancedFiltersOpen, setAdvancedFiltersOpen] = useState(false)
+  // P2-3: researcher-only secondary axis — browse by algorithm or standard.
+  // Selection narrows the filteredModuleIds set further; null means no extra
+  // filtering. Only applied when persona is researcher AND viewMode is stack.
+  const [taxonomySelection, setTaxonomySelection] = useState<TaxonomySelection>({
+    algorithm: null,
+    standard: null,
+  })
 
   // Show Curious Explorer path in curious mode (persona or experience level); professionals see professional roles
   const isCuriousMode = selectedPersona === 'curious' || experienceLevel === 'curious'
@@ -948,6 +960,18 @@ const ModuleTracksGrid = ({
             !modulePassesTierFilter(m.id, selectedNiceTier as NiceProficiencyTier)
           )
             return false
+          // P2-3: researcher-only taxonomy axis. When an algorithm or standard
+          // is selected, only modules tagged with that taxon survive.
+          if (selectedPersona === 'researcher') {
+            if (taxonomySelection.algorithm) {
+              const matching = modulesByAlgorithm(taxonomySelection.algorithm)
+              if (!matching.includes(m.id)) return false
+            }
+            if (taxonomySelection.standard) {
+              const matching = modulesByStandard(taxonomySelection.standard)
+              if (!matching.includes(m.id)) return false
+            }
+          }
           return true
         })
         .map((m) => m.id)
@@ -960,6 +984,8 @@ const ModuleTracksGrid = ({
     selectedNiceTier,
     personaFilterActive,
     selectedPersonaFilter,
+    selectedPersona,
+    taxonomySelection,
     allModules,
     modules,
     showOnlyLearnModules,
@@ -1358,14 +1384,24 @@ const ModuleTracksGrid = ({
 
       {/* ── Stack mode ── */}
       {viewMode === 'stack' && (
-        <LearnTrackStack
-          navigate={navigate}
-          navigateToQuiz={navigateToQuiz}
-          filteredModuleIds={filteredModuleIds}
-          isModuleRelevant={isModuleRelevant}
-          isModuleAboveLevel={isModuleAboveLevel}
-          onClearFilters={clearFilters}
-        />
+        <>
+          {/* P2-3: researcher 2nd-axis — browse modules by algorithm or standard.
+              Filter narrows filteredModuleIds via the predicate above. */}
+          {selectedPersona === 'researcher' && (
+            <ResearcherTaxonomyFilter
+              selection={taxonomySelection}
+              onChange={setTaxonomySelection}
+            />
+          )}
+          <LearnTrackStack
+            navigate={navigate}
+            navigateToQuiz={navigateToQuiz}
+            filteredModuleIds={filteredModuleIds}
+            isModuleRelevant={isModuleRelevant}
+            isModuleAboveLevel={isModuleAboveLevel}
+            onClearFilters={clearFilters}
+          />
+        </>
       )}
 
       {/* ── Cards mode ── */}
