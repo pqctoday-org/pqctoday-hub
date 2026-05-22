@@ -70,6 +70,8 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/leaders',
     '/migrate',
     '/playground',
+    '/patents',
+    '/openssl',
     '/revisions',
   ],
 }
@@ -764,11 +766,41 @@ export const PERSONA_EXCLUDED_ACHIEVEMENTS: Record<PersonaId, string[]> = {
     'first-cert',
     'first-key',
     'five-keys',
+    // Curious-only (CC-15)
+    'first-jargon-decoded',
+    'first-standard-read',
+    'met-the-quantum-threat',
   ],
-  developer: ['first-exec-doc', 'business-first', 'business-strategist', 'business-complete'],
-  architect: ['first-exec-doc'],
-  researcher: [], // all paths available
-  ops: ['first-exec-doc'],
+  developer: [
+    'first-exec-doc',
+    'business-first',
+    'business-strategist',
+    'business-complete',
+    // Curious-only (CC-15)
+    'first-jargon-decoded',
+    'first-standard-read',
+    'met-the-quantum-threat',
+  ],
+  architect: [
+    'first-exec-doc',
+    // Curious-only (CC-15)
+    'first-jargon-decoded',
+    'first-standard-read',
+    'met-the-quantum-threat',
+  ],
+  researcher: [
+    // Curious-only (CC-15)
+    'first-jargon-decoded',
+    'first-standard-read',
+    'met-the-quantum-threat',
+  ],
+  ops: [
+    'first-exec-doc',
+    // Curious-only (CC-15)
+    'first-jargon-decoded',
+    'first-standard-read',
+    'met-the-quantum-threat',
+  ],
   curious: [
     'playground-first',
     'playground-breadth-3',
@@ -782,4 +814,142 @@ export const PERSONA_EXCLUDED_ACHIEVEMENTS: Record<PersonaId, string[]> = {
     'business-strategist',
     'business-complete',
   ],
+}
+
+/**
+ * Persona-aware primary-tab order for /compliance (P11-P1-01).
+ *
+ * Compliance has 6 logical tabs — `foryou`, `landscape`, `records`, `cswp39`,
+ * `standards`, `certification`. Researcher sees all six inline. Every other
+ * persona collapses to 3 primary tabs + a "More" overflow dropdown carrying
+ * the rest. Primary tabs render in the listed order.
+ *
+ * `foryou` is always first so the persona-tailored body is the default entry.
+ *
+ * Resolution: when no persona is selected, the default order `['foryou',
+ * 'landscape', 'records']` ships and the three remaining tabs collapse into
+ * "More" (matching the executive surface, which is the highest-traffic case).
+ */
+export type ComplianceTabId =
+  | 'foryou'
+  | 'landscape'
+  | 'records'
+  | 'cswp39'
+  | 'standards'
+  | 'certification'
+
+const ALL_COMPLIANCE_TABS: readonly ComplianceTabId[] = [
+  'foryou',
+  'landscape',
+  'records',
+  'cswp39',
+  'standards',
+  'certification',
+]
+
+export const PERSONA_COMPLIANCE_TABS: Record<PersonaId, readonly ComplianceTabId[]> = {
+  executive: ['foryou', 'landscape', 'records'],
+  architect: ['foryou', 'cswp39', 'landscape'],
+  developer: ['foryou', 'landscape', 'cswp39'],
+  ops: ['foryou', 'records', 'cswp39'],
+  researcher: ALL_COMPLIANCE_TABS,
+  curious: ['foryou', 'records', 'landscape'],
+}
+
+const DEFAULT_PRIMARY_COMPLIANCE_TABS: readonly ComplianceTabId[] = [
+  'foryou',
+  'landscape',
+  'records',
+]
+
+/**
+ * Returns the primary tab order for the active persona, falling back to a
+ * sensible 3-tab default for the no-persona case.
+ */
+export function getComplianceTabOrder(persona: PersonaId | null): readonly ComplianceTabId[] {
+  if (!persona) return DEFAULT_PRIMARY_COMPLIANCE_TABS
+  return PERSONA_COMPLIANCE_TABS[persona]
+}
+
+/**
+ * Returns the tabs that should be hidden behind the "More" menu for the
+ * active persona — i.e. every tab NOT in the persona's primary order.
+ */
+export function getComplianceOverflowTabs(persona: PersonaId | null): readonly ComplianceTabId[] {
+  const primary = new Set(getComplianceTabOrder(persona))
+  return ALL_COMPLIANCE_TABS.filter((t) => !primary.has(t))
+}
+
+/**
+ * Compliance frameworks each persona benefits from emphasizing in the
+ * landscape grid (P11-P1-02). Used to add a soft visual treatment to the
+ * FrameworkCard ring/badge — does NOT filter the list, so other frameworks
+ * remain reachable.
+ *
+ * Empty array means "no emphasis" (default rendering for every framework).
+ * Framework IDs come from `complianceData.ts` (case-sensitive).
+ */
+export const PERSONA_COMPLIANCE_FRAMEWORK_EMPHASIS: Partial<Record<PersonaId, readonly string[]>> =
+  {
+    executive: ['CNSA-2', 'DORA', 'NIS2', 'SOX', 'GDPR', 'PCI-DSS'],
+    developer: ['FIPS', 'FedRAMP', 'CMMC', 'CC', 'NIST', 'CNSA-2'],
+    architect: ['NIST', 'BSI', 'ANSSI', 'ENISA', 'CNSA-2', 'FIPS'],
+    ops: ['CNSA-2', 'FedRAMP', 'NIS2', 'PCI-DSS', 'DORA'],
+    researcher: ['NIST', 'ENISA', 'BSI', 'ANSSI', '3GPP-PQC', 'BIS-158-PQC'],
+    curious: ['NIST', 'ENISA', 'CNSA-2', 'GDPR', 'HIPAA'],
+  }
+
+export function isComplianceFrameworkEmphasized(
+  persona: PersonaId | null,
+  frameworkId: string
+): boolean {
+  if (!persona) return false
+  const set = PERSONA_COMPLIANCE_FRAMEWORK_EMPHASIS[persona]
+  if (!set) return false
+  return set.includes(frameworkId)
+}
+
+/**
+ * Persona-flavored maturity tier overlay for the awareness-score belt ladder.
+ *
+ * The 7 generic belts (White → Black) still drive scoring math, but Executive
+ * and Curious see role-relevant tier names alongside the belt — "Briefed →
+ * Aligned → Sponsoring → Board-Ready" for execs, "Aware → Informed → Confident
+ * → Quantum-Native" for curious. Other personas inherit the belt names as-is.
+ *
+ * Mapping: 7 belts collapse into 4 tiers
+ *   White / Yellow         → tier[0]
+ *   Orange / Green         → tier[1]
+ *   Blue / Brown           → tier[2]
+ *   Black                  → tier[3]
+ */
+export const PERSONA_BELT_TIER_LABELS: Partial<
+  Record<PersonaId, [string, string, string, string]>
+> = {
+  executive: ['Briefed', 'Aligned', 'Sponsoring', 'Board-Ready'],
+  curious: ['Aware', 'Informed', 'Confident', 'Quantum-Native'],
+}
+
+const BELT_TIER_INDEX: Record<string, 0 | 1 | 2 | 3> = {
+  'White Belt': 0,
+  'Yellow Belt': 0,
+  'Orange Belt': 1,
+  'Green Belt': 1,
+  'Blue Belt': 2,
+  'Brown Belt': 2,
+  'Black Belt': 3,
+}
+
+/**
+ * Returns a persona-flavored tier label for the active belt, or null when the
+ * persona doesn't have an override (developer / architect / ops / researcher
+ * keep the generic belt name). Returns null for unknown belt names too.
+ */
+export function getBeltTierLabel(persona: PersonaId | null, beltName: string): string | null {
+  if (!persona) return null
+  const tiers = PERSONA_BELT_TIER_LABELS[persona]
+  if (!tiers) return null
+  const idx = BELT_TIER_INDEX[beltName]
+  if (idx === undefined) return null
+  return tiers[idx]
 }

@@ -15,7 +15,7 @@
  * Reuses useApplicabilityWithPaths so the engine output is identical to other
  * For You views; only rendering differs.
  */
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Compass, BookOpen, ShieldCheck, CalendarDays, ArrowRight } from 'lucide-react'
 import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
@@ -27,6 +27,7 @@ import type { ComplianceFramework } from '../../../data/complianceData'
 import type { LibraryItem } from '../../../data/libraryData'
 import type { ThreatData } from '../../../data/threatsData'
 import type { TimelineEvent } from '../../../types/timeline'
+import { useAchievementStore } from '@/store/useAchievementStore'
 
 interface CuriousOrientationViewProps {
   profileOverride?: Partial<UserProfile>
@@ -65,6 +66,11 @@ export function CuriousOrientationView({
   onSelectFramework,
 }: CuriousOrientationViewProps) {
   const { profile, isEmpty, frameworks } = useApplicabilityWithPaths(profileOverride)
+
+  // CC-15: drive the met-the-quantum-threat achievement for curious users.
+  useEffect(() => {
+    useAchievementStore.getState().recordSectionVisit('curious:threats-orientation')
+  }, [])
   const grouped = useMemo(() => groupByTier(frameworks), [frameworks])
   const applicable: ComplianceFramework[] = useMemo(
     () =>

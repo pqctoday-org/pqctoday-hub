@@ -33,7 +33,8 @@ import Papa from 'papaparse'
 import type { CheckResult, Finding } from './types.js'
 
 const MIN_PROOF_BYTES = 5_000
-const DATA_DIR = path.join(process.cwd(), 'src/data')
+// Resolved lazily so callers (and unit tests) can change cwd before invoking.
+const dataDir = (): string => path.join(process.cwd(), 'src/data')
 
 interface ThreatRow {
   threat_id?: string
@@ -46,9 +47,9 @@ interface ThreatRow {
 }
 
 function findLatestThreatsCsv(): string | null {
-  if (!fs.existsSync(DATA_DIR)) return null
+  if (!fs.existsSync(dataDir())) return null
   const files = fs
-    .readdirSync(DATA_DIR)
+    .readdirSync(dataDir())
     .filter((f) => /^quantum_threats_hsm_industries_\d{8}(?:_r\d+)?\.csv$/.test(f))
   if (files.length === 0) return null
   files.sort((a, b) => {
@@ -60,13 +61,13 @@ function findLatestThreatsCsv(): string | null {
     }
     return parse(b) - parse(a)
   })
-  return path.join(DATA_DIR, files[0])
+  return path.join(dataDir(), files[0])
 }
 
 function findLatestSourcesCsv(): string | null {
-  if (!fs.existsSync(DATA_DIR)) return null
+  if (!fs.existsSync(dataDir())) return null
   const files = fs
-    .readdirSync(DATA_DIR)
+    .readdirSync(dataDir())
     .filter((f) => /^pqc_authoritative_sources_reference_\d{8}(?:_r\d+)?\.csv$/.test(f))
   if (files.length === 0) return null
   files.sort((a, b) => {
@@ -80,7 +81,7 @@ function findLatestSourcesCsv(): string | null {
     }
     return parse(b) - parse(a)
   })
-  return path.join(DATA_DIR, files[0])
+  return path.join(dataDir(), files[0])
 }
 
 function loadCatalogIds(): Set<string> | null {

@@ -34,6 +34,7 @@ import {
   REGION_BLOC_ORDER,
 } from '@/data/complianceData'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { isComplianceFrameworkEmphasized } from '@/data/personaConfig'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { NAICS_LABELS } from '@/components/common/SectorFilter'
 import { CountryFlag } from '@/components/common/CountryFlag'
@@ -395,12 +396,15 @@ function FrameworkCard({
   onNavigateToCswp39,
   onSelectDetail,
   highlighted,
+  personaEmphasis,
 }: {
   fw: ComplianceFramework
   maturityByRefId?: Map<string, MaturityRequirement[]>
   onNavigateToCswp39?: (refId: string) => void
   onSelectDetail?: (fw: ComplianceFramework) => void
   highlighted?: boolean
+  /** When true, adds a soft persona-relevance badge + tinted border. (P11-P1-02) */
+  personaEmphasis?: boolean
 }) {
   const [expanded, setExpanded] = useState(false)
   const [graphOpen, setGraphOpen] = useState(false)
@@ -431,7 +435,7 @@ function FrameworkCard({
     <div
       id={`fw-${fw.id}`}
       data-workshop-target={`compliance-framework-${fw.id}`}
-      className={`glass-panel p-4 space-y-3 flex flex-col scroll-mt-20 transition-shadow duration-300${onSelectDetail ? ' cursor-pointer' : ''} ${highlighted ? 'ring-2 ring-primary shadow-glow' : ''}`}
+      className={`glass-panel p-4 space-y-3 flex flex-col scroll-mt-20 transition-shadow duration-300${onSelectDetail ? ' cursor-pointer' : ''} ${highlighted ? 'ring-2 ring-primary shadow-glow' : personaEmphasis ? 'border-primary/40 bg-primary/[0.03]' : ''}`}
       onClick={onSelectDetail ? () => onSelectDetail(fw) : undefined}
       onKeyDown={
         onSelectDetail
@@ -458,7 +462,17 @@ function FrameworkCard({
           <ShieldAlert size={18} className="text-muted-foreground shrink-0 mt-0.5" />
         )}
         <div className="min-w-0 flex-1">
-          <h4 className="font-semibold text-foreground text-sm leading-tight">{fw.label}</h4>
+          <h4 className="font-semibold text-foreground text-sm leading-tight flex items-center gap-1.5 flex-wrap">
+            <span>{fw.label}</span>
+            {personaEmphasis && (
+              <span
+                className="inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30"
+                title="Highly relevant to your role"
+              >
+                For you
+              </span>
+            )}
+          </h4>
           <div className="flex items-center gap-2 flex-wrap">
             <TrustScoreBadge resourceType="compliance" resourceId={fw.id} size="sm" />
             {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
@@ -1087,7 +1101,7 @@ export function ComplianceLandscape({
   onSelectFramework,
 }: ComplianceLandscapeProps = {}) {
   const sourceFrameworks = frameworksProp ?? complianceFrameworks
-  const { selectedIndustries } = usePersonaStore()
+  const { selectedIndustries, selectedPersona } = usePersonaStore()
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
   const showOnlyMine = useComplianceSelectionStore((s) => s.showOnlyMine)
   const setShowOnlyMine = useComplianceSelectionStore((s) => s.setShowOnlyMine)
@@ -1628,6 +1642,7 @@ export function ComplianceLandscape({
                 onNavigateToCswp39={onNavigateToCswp39}
                 onSelectDetail={onSelectFramework}
                 highlighted={highlightFrameworkId === fw.id}
+                personaEmphasis={isComplianceFrameworkEmphasized(selectedPersona, fw.id)}
               />
             ))}
           </div>
