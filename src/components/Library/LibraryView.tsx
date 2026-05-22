@@ -291,10 +291,36 @@ export const LibraryView: React.FC = () => {
   const tierFilter = useTrustTierFilter()
   const [showFilters, setShowFilters] = useState(false)
   const [showAdvancedDrawer, setShowAdvancedDrawer] = useState(false)
+  // P04 audit, PR 4 — Curious minimum-viable mode.  When persona=curious and
+  // the user hasn't expanded the page, only the header + picks panel + a
+  // single "Browse the full library" CTA render above the fold.  Shareable
+  // via `?expand=1`.
+  const [browseFullLibrary, setBrowseFullLibrary] = useState<boolean>(
+    () => searchParams.get('expand') === '1'
+  )
   // Personas with a tight default drawer (3 axes: Organization, Country/Region,
   // Doc Status).  Sector + Trust Tier sit behind an "Advanced" expander.
   // Researcher and architect see all 5 expanded — they explicitly want depth.
   const drawerIsTrimmed = selectedPersona === 'executive' || selectedPersona === 'curious'
+
+  // True when the full library shell (sidebar, activity feed, controls,
+  // results grid) should render.  For non-curious personas this is always
+  // true; curious users must click "Browse the full library" first.
+  const showFullPage = selectedPersona !== 'curious' || browseFullLibrary
+
+  // Persist `?expand=1` so the curious-mode override is shareable.
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (browseFullLibrary) next.set('expand', '1')
+        else next.delete('expand')
+        return next
+      },
+      { replace: true }
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [browseFullLibrary])
   const [highlightedDocId, setHighlightedDocId] = useState<string | null>(
     () => searchParams.get('doc') ?? null
   )
@@ -927,26 +953,55 @@ export const LibraryView: React.FC = () => {
         />
       )}
 
-      {/* Zone 1: Activity Feed */}
-      <ActivityFeed
-        items={activityItems}
-        onSelect={openDetail}
-        datasetUpdated={libraryMetadata?.lastUpdate}
-      />
+      {/* Curious minimum-viable mode (P04 audit, PR 4) — hide the full shell
+          (activity feed, category sidebar, controls bar, results grid) behind
+          a single "Browse the full library" CTA so curious users see only
+          header + picks + this button above the fold. */}
+      {selectedPersona === 'curious' && !browseFullLibrary && (
+        <div className="flex flex-col items-start gap-2">
+          <Button
+            variant="gradient"
+            onClick={() => {
+              setBrowseFullLibrary(true)
+              logEvent('Library', 'Curious Browse Full', 'open')
+            }}
+            className="text-sm"
+          >
+            Browse the full library
+          </Button>
+          <p className="text-xs text-muted-foreground">
+            All {libraryData.length} documents, filters, and the activity feed.
+          </p>
+        </div>
+      )}
 
-      <ContentUpdatesFeed domain="library" limit={5} title="Recent Library Revisions" />
+      {/* Zone 1: Activity Feed */}
+      {showFullPage && (
+        <ActivityFeed
+          items={activityItems}
+          onSelect={openDetail}
+          datasetUpdated={libraryMetadata?.lastUpdate}
+        />
+      )}
+
+      {showFullPage && (
+        <ContentUpdatesFeed domain="library" limit={5} title="Recent Library Revisions" />
+      )}
 
       {/* Category pills (desktop) */}
-      <CategorySidebar
-        categories={categoryInfo}
-        active={activeCategory}
-        onSelect={handleCategorySelect}
-        totalCount={libraryData.length}
-        totalHasUpdates={totalHasUpdates}
-        personaPreferredActive={personaPreferredActive}
-      />
+      {showFullPage && (
+        <CategorySidebar
+          categories={categoryInfo}
+          active={activeCategory}
+          onSelect={handleCategorySelect}
+          totalCount={libraryData.length}
+          totalHasUpdates={totalHasUpdates}
+          personaPreferredActive={personaPreferredActive}
+        />
+      )}
 
       {/* Controls Bar */}
+      {showFullPage && (
       <div className="bg-card border border-border rounded-lg shadow-sm p-3 space-y-3">
         {/* Top Row: Search + Essential Controls */}
         <div className="flex flex-wrap items-center gap-2 w-full text-sm">
@@ -1204,9 +1259,10 @@ export const LibraryView: React.FC = () => {
           </div>
         )}
       </div>
+      )}
 
       {/* Active Filter Chips */}
-      {(activeOrg !== 'All' || filterText !== '') && (
+      {showFullPage && (activeOrg !== 'All' || filterText !== '') && (
         <div className="flex flex-wrap items-center gap-2 text-xs">
           {filterText && (
             <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
@@ -1257,6 +1313,7 @@ export const LibraryView: React.FC = () => {
       )}
 
       {/* Results count */}
+      {showFullPage && (
       <div className="space-y-1">
         {personaPreferredActive ? (
           <div className="glass-panel inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-md text-xs">
@@ -1297,27 +1354,29 @@ export const LibraryView: React.FC = () => {
           noun="related documents"
         />
       </div>
+      )}
 
       {/* Content area */}
-      {viewMode === 'cards' ? (
-        <DocumentCardGrid
-          items={sortedItems}
-          onViewDetails={openDetail}
-          highlightedRefId={highlightedDocId}
-        />
-      ) : (
-        <>
-          <div className="hidden md:block">{renderTableView()}</div>
-          <div className="md:hidden">
-            <DocumentCardGrid
-              items={sortedItems}
-              onViewDetails={openDetail}
-              showHierarchicalAccordion
-              highlightedRefId={highlightedDocId}
-            />
-          </div>
-        </>
-      )}
+      {showFullPage &&
+        (viewMode === 'cards' ? (
+          <DocumentCardGrid
+            items={sortedItems}
+            onViewDetails={openDetail}
+            highlightedRefId={highlightedDocId}
+          />
+        ) : (
+          <>
+            <div className="hidden md:block">{renderTableView()}</div>
+            <div className="md:hidden">
+              <DocumentCardGrid
+                items={sortedItems}
+                onViewDetails={openDetail}
+                showHierarchicalAccordion
+                highlightedRefId={highlightedDocId}
+              />
+            </div>
+          </>
+        ))}
 
       {/* Detail Popover */}
       <LibraryDetailPopover
