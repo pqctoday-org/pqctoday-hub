@@ -10,6 +10,10 @@ import {
   signJWS,
   type JwsAlg,
 } from '../jwtUtils'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 
 const HTTP_HEADER_LIMIT = 8192 // 8 KB common default
 
@@ -58,6 +62,7 @@ export const TokenSizeAnalyzer: React.FC = () => {
   const [measuredSigBytes, setMeasuredSigBytes] = useState<Record<string, number>>({})
   const [isMeasuring, setIsMeasuring] = useState(true)
   const [measureError, setMeasureError] = useState<string | null>(null)
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   const isPayloadValid = useMemo(() => {
     try {
@@ -81,6 +86,11 @@ export const TokenSizeAnalyzer: React.FC = () => {
       try {
         const out: Record<string, number> = {}
         for (const a of algsToMeasure) {
+          const opLabel = `Measuring ${a.jose} signature size…`
+          const startedAt = performance.now()
+          if (!cancelled) {
+            setLogEntries((prev) => [...prev, { status: 'pending', message: opLabel }])
+          }
           const kp = await generateJwsKeyPair({ alg: a.jose as JwsAlg, backend: 'noble' })
           const r = await signJWS({
             alg: a.jose as JwsAlg,
@@ -90,10 +100,33 @@ export const TokenSizeAnalyzer: React.FC = () => {
           })
           if (cancelled) return
           out[a.jose] = r.signature.length
+          setLogEntries((prev) => {
+            const next = [...prev]
+            next[next.length - 1] = {
+              status: 'success',
+              message: `Measured ${a.jose} — ${r.signature.length} bytes`,
+              durationMs: Math.round(performance.now() - startedAt),
+            }
+            return next
+          })
         }
         if (!cancelled) setMeasuredSigBytes(out)
       } catch (e) {
-        if (!cancelled) setMeasureError(e instanceof Error ? e.message : String(e))
+        const msg = e instanceof Error ? e.message : String(e)
+        if (!cancelled) {
+          setMeasureError(msg)
+          setLogEntries((prev) => {
+            const next = [...prev]
+            if (next.length > 0 && next[next.length - 1].status === 'pending') {
+              next[next.length - 1] = {
+                ...next[next.length - 1],
+                status: 'error',
+                message: `${next[next.length - 1].message.replace(/…$/, '')} — ${msg}`,
+              }
+            }
+            return next
+          })
+        }
       } finally {
         if (!cancelled) setIsMeasuring(false)
       }
@@ -159,6 +192,7 @@ export const TokenSizeAnalyzer: React.FC = () => {
           Measuring real signature sizes…
         </div>
       )}
+      {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} className="max-h-40" />}
       {measureError && (
         <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-destructive">
           Failed to measure: {measureError}
