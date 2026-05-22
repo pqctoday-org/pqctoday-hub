@@ -33,10 +33,12 @@ import { AlgorithmEntryStrip } from './AlgorithmEntryStrip'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { Button } from '../ui/button'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
+import { getAlgorithmDefaults, type AlgorithmTabId } from '../../data/personaConfig'
+import type { PersonaId } from '../../data/learningPersonas'
 
 const MAX_COMPARE = 6 // allows up to 3 classical+PQC pairs from the transition tab
 
-const ALGO_PERSONA_HINTS: Record<string, string> = {
+const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
   executive:
     'Start with FIPS-standardized picks: ML-KEM-768 and ML-DSA-65 — the required choices for US federal compliance.',
   developer:
@@ -45,6 +47,9 @@ const ALGO_PERSONA_HINTS: Record<string, string> = {
     'Use the Transition tab to find your classical algorithms and their recommended PQC replacements.',
   researcher:
     'Switch to the Detailed tab for full parameter sets, attack vectors, and cross-family security comparisons.',
+  ops: 'Filter Status = Certified and look for Production deployment chips on Protocol Support — these are the algorithms safe to deploy in OpenSSL, nginx and HSMs today.',
+  curious:
+    'You unlocked the full comparison. The three NIST picks (ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128s) are pre-highlighted; everything else is for specialists.',
 }
 
 /**
@@ -81,6 +86,10 @@ export function AlgorithmsView() {
   const isCuriousPreview =
     selectedPersona === 'curious' && viewAccess === 'preview' && !searchParams.get('highlight')
 
+  // Persona-derived defaults — used to seed first-paint tab / filter / highlight
+  // state when no URL params are present. Deep-links always win.
+  const personaDefaults = useMemo(() => getAlgorithmDefaults(selectedPersona), [selectedPersona])
+
   // Strip is hidden when the page has any pre-set filter/tab/search state
   const hasActiveParams = useMemo(() => {
     const watched = [
@@ -99,23 +108,31 @@ export function AlgorithmsView() {
     return watched.some((key) => searchParams.has(key))
   }, [searchParams])
 
-  // --- Highlight from URL ---
+  // --- Highlight: URL deep-link wins, otherwise persona defaults apply when
+  //     no other URL state is present (executive / curious land with pinned
+  //     NIST picks; everyone else gets undefined). ---
   const highlightAlgorithms = useMemo(() => {
     const raw = searchParams.get('highlight')
-    if (!raw) return undefined
-    return new Set(
-      raw
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean)
-    )
-  }, [searchParams])
+    if (raw) {
+      return new Set(
+        raw
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean)
+      )
+    }
+    if (personaDefaults.highlight && !hasActiveParams) {
+      return new Set(personaDefaults.highlight)
+    }
+    return undefined
+  }, [searchParams, personaDefaults.highlight, hasActiveParams])
 
   // --- Active tab ---
-  const [activeTab, setActiveTab] = useState<'transition' | 'detailed' | 'support'>(() => {
+  const [activeTab, setActiveTab] = useState<AlgorithmTabId>(() => {
     const tab = searchParams.get('tab')
     if (tab === 'transition' || tab === 'detailed' || tab === 'support') return tab
-    return searchParams.get('highlight') ? 'detailed' : 'transition'
+    if (searchParams.get('highlight')) return 'detailed'
+    return personaDefaults.tab
   })
 
   useEffect(() => {
@@ -171,16 +188,23 @@ export function AlgorithmsView() {
     })
   }, [])
 
-  // --- Filter state (synced to URL) ---
+  // --- Filter state (synced to URL). URL params win; otherwise the persona's
+  //     filter preset applies on first paint. ---
   const [filterCryptoFamily, setFilterCryptoFamily] = useState(
-    () => searchParams.get('family') || 'All'
+    () => searchParams.get('family') || personaDefaults.filters.family || 'All'
   )
-  const [filterFunction, setFilterFunction] = useState(() => searchParams.get('fn') || 'All')
+  const [filterFunction, setFilterFunction] = useState(
+    () => searchParams.get('fn') || personaDefaults.filters.fn || 'All'
+  )
   const [filterSecurityLevel, setFilterSecurityLevel] = useState(
-    () => searchParams.get('level') || 'All'
+    () => searchParams.get('level') || personaDefaults.filters.level || 'All'
   )
-  const [filterRegion, setFilterRegion] = useState(() => searchParams.get('region') || 'All')
-  const [filterStatus, setFilterStatus] = useState(() => searchParams.get('status') || 'All')
+  const [filterRegion, setFilterRegion] = useState(
+    () => searchParams.get('region') || personaDefaults.filters.region || 'All'
+  )
+  const [filterStatus, setFilterStatus] = useState(
+    () => searchParams.get('status') || personaDefaults.filters.status || 'All'
+  )
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '')
 
   // --- Comparison state (synced to URL) ---
@@ -300,11 +324,13 @@ export function AlgorithmsView() {
 
   const handleTabChange = useCallback(
     (t: string) => {
-      const tab = t as 'transition' | 'detailed'
+      const tab = t as AlgorithmTabId
       setActiveTab(tab)
-      updateSearchParams({ tab: tab !== 'transition' ? tab : null })
+      // Persist tabs that differ from the persona default; clear the param
+      // when the user returns to their default so the URL stays clean.
+      updateSearchParams({ tab: tab !== personaDefaults.tab ? tab : null })
     },
-    [updateSearchParams]
+    [updateSearchParams, personaDefaults.tab]
   )
 
   // --- Comparison handlers ---

@@ -79,6 +79,55 @@ export const DRAFT_STAGE_LEVEL: Record<DraftStage, number> = {
   'rfc-published': 7,
 }
 
+import type { PersonaId } from './learningPersonas'
+
+/** Persona granularity tiers for the Protocol Support heatmap palette.
+ *  - `binary`  collapses to {RFC | everything else} — executive/ops/curious
+ *  - `ternary` collapses to {RFC | WG+ | early} — developer/architect
+ *  - `full`    keeps the graduated 0–7 palette — researcher (current behaviour)
+ */
+export type PersonaStageGranularity = 'binary' | 'ternary' | 'full'
+
+/** Effective tier rendered by `dimensionStageTone()`. The full set (0..7) is
+ *  used only for researcher / no-persona; binary and ternary personas land on
+ *  a strict subset of {0, 1, 4, 7}. */
+export type StageTier = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
+
+export const PERSONA_STAGE_GRANULARITY: Record<PersonaId, PersonaStageGranularity> = {
+  executive: 'binary',
+  ops: 'binary',
+  curious: 'binary',
+  developer: 'ternary',
+  architect: 'ternary',
+  researcher: 'full',
+}
+
+/**
+ * Collapse a raw `DraftStage` into the tier appropriate for the persona's
+ * granularity. `na` always returns 0 (muted) regardless of persona to avoid
+ * mis-colouring non-applicable cells.
+ *
+ * Tier mapping per granularity:
+ *   binary  → {0, 7}                    RFC vs everything else
+ *   ternary → {0, 1, 4, 7}              early / WG+ / RFC
+ *   full    → DRAFT_STAGE_LEVEL[stage]  graduated 0..7 (current behaviour)
+ */
+export function stageCollapse(stage: DraftStage, persona: PersonaId | null): StageTier {
+  if (stage === 'na') return 0
+  // eslint-disable-next-line security/detect-object-injection
+  const raw = DRAFT_STAGE_LEVEL[stage]
+  // eslint-disable-next-line security/detect-object-injection
+  const granularity = persona ? PERSONA_STAGE_GRANULARITY[persona] : 'full'
+  if (granularity === 'full') return raw as StageTier
+  if (granularity === 'ternary') {
+    if (raw >= 7) return 7
+    if (raw >= 4) return 4
+    if (raw === 0) return 0
+    return 1
+  }
+  return raw === 7 ? 7 : 0
+}
+
 /** Short label for the stage chip (e.g. "WG LC", "IETF LC", "RFC"). */
 export const DRAFT_STAGE_SHORT: Record<DraftStage, string> = {
   none: 'None',

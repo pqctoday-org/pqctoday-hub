@@ -7,6 +7,7 @@ import {
   TRANSPORT_ISSUES,
   DRAFT_STAGE_LEVEL,
   DRAFT_STAGE_SHORT,
+  stageCollapse,
   type DeploymentPosture,
   type DimensionStatusValue,
   type LiveDeployment,
@@ -17,6 +18,8 @@ import {
   type OssLibrary,
   type PlaygroundTool,
 } from '../../data/pqcProtocolMatrix'
+import type { PersonaId } from '../../data/learningPersonas'
+import { usePersonaStore } from '../../store/usePersonaStore'
 import {
   ExternalLink,
   FlaskConical,
@@ -97,6 +100,8 @@ interface DimensionBadgeProps {
   compact?: boolean
   /** Transport-layer blocker names to surface in the compact tooltip (heatmap mode only). */
   blockerNames?: string[]
+  /** Active persona — drives the heatmap palette tier collapse. `null` means full 0..7 palette. */
+  persona?: PersonaId | null
 }
 
 /** Short display label for a draft slug: drop the boilerplate prefix so the
@@ -143,11 +148,16 @@ function dimensionTone(value: DimensionStatusValue): string {
  * `stage`, the matrix renders this finer gradient instead of the 5-bucket
  * coarse coloring. Uses semantic tokens only — no raw palette classes (see
  * CLAUDE.md UX rules).
+ *
+ * Persona collapses the 0..7 raw level into 2 / 3 / 8 tiers per
+ * `PERSONA_STAGE_GRANULARITY`. Binary personas (executive/ops/curious) only
+ * ever see tiers 0 and 7; ternary (developer/architect) see {0, 1, 4, 7};
+ * researcher / no-persona keeps the full graduated palette.
  */
-function dimensionStageTone(status: DimensionStatus): string {
+function dimensionStageTone(status: DimensionStatus, persona: PersonaId | null): string {
   if (!status.stage) return dimensionTone(status.value)
-  const level = DRAFT_STAGE_LEVEL[status.stage]
-  switch (level) {
+  const tier = stageCollapse(status.stage, persona)
+  switch (tier) {
     case 0:
       return 'bg-muted text-muted-foreground border-border'
     case 1:
@@ -251,11 +261,19 @@ function DimensionRefChip({ cellRef }: { cellRef: DimensionRef }) {
   )
 }
 
-function DimensionBadge({ status, compact = false, blockerNames }: DimensionBadgeProps) {
+function DimensionBadge({
+  status,
+  compact = false,
+  blockerNames,
+  persona = null,
+}: DimensionBadgeProps) {
   const useStage = Boolean(status.stage)
-  const toneClass = useStage ? dimensionStageTone(status) : dimensionTone(status.value)
+  const toneClass = useStage ? dimensionStageTone(status, persona) : dimensionTone(status.value)
   const stageLabel = status.stage ? DRAFT_STAGE_SHORT[status.stage] : null
   const stageLevel = status.stage ? DRAFT_STAGE_LEVEL[status.stage] : null
+  // Persona-collapsed tier — exposed via data-attr so E2E can assert palette
+  // count without scraping Tailwind class strings (see plan §Risks #2).
+  const stageTier = status.stage ? stageCollapse(status.stage, persona) : null
   // Build a comprehensive tooltip so compact mode loses nothing — hover gives
   // the stageNote, plain note, ref IDs, and any transport-layer blockers at a glance.
   const tooltipParts = [
@@ -275,6 +293,7 @@ function DimensionBadge({ status, compact = false, blockerNames }: DimensionBadg
         <span
           className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium ${toneClass}`}
           title={tooltip}
+          data-stage-tier={stageTier ?? undefined}
         >
           {stageLabel ? (
             <>
@@ -517,6 +536,7 @@ const RECOMMENDED_ROWS = PROTOCOL_MATRIX.filter((r) => r.recommended)
 
 export function PQCProtocolMatrix() {
   const [searchParams] = useSearchParams()
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const [viewMode, setViewMode] = useState<ViewMode>('heatmap')
   const [searchText, setSearchText] = useState('')
   const [statusFilter, setStatusFilter] = useState<DimensionStatusValue[]>([])
@@ -1004,6 +1024,7 @@ export function PQCProtocolMatrix() {
                       status={p.dimensions.pureKem}
                       compact={isHeatmap}
                       blockerNames={rowBlockerNames}
+                      persona={selectedPersona}
                     />
                   </td>
                   <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
@@ -1011,6 +1032,7 @@ export function PQCProtocolMatrix() {
                       status={p.dimensions.hybridKem}
                       compact={isHeatmap}
                       blockerNames={rowBlockerNames}
+                      persona={selectedPersona}
                     />
                   </td>
                   <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
@@ -1018,6 +1040,7 @@ export function PQCProtocolMatrix() {
                       status={p.dimensions.pureSig}
                       compact={isHeatmap}
                       blockerNames={rowBlockerNames}
+                      persona={selectedPersona}
                     />
                   </td>
                   <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
@@ -1025,6 +1048,7 @@ export function PQCProtocolMatrix() {
                       status={p.dimensions.hybridSig}
                       compact={isHeatmap}
                       blockerNames={rowBlockerNames}
+                      persona={selectedPersona}
                     />
                   </td>
                   <td className="px-3 py-3">
