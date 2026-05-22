@@ -282,6 +282,8 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
           stepDescription={WORKSHOP_STEPS[currentStep].description}
           stepIndex={currentStep}
           totalSteps={WORKSHOP_STEPS.length}
+          steps={WORKSHOP_STEPS.map((s) => ({ id: s.id, label: s.title }))}
+          onStepClick={setCurrentStep}
         />
         {currentStepComponent}
       </div>

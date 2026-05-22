@@ -174,9 +174,15 @@ function AnalyticsTracker() {
 
 import { ScrollToTop } from './components/Router/ScrollToTop'
 import { useTheme } from './hooks/useTheme'
+import { useUrlPersonaOverride } from './hooks/useUrlPersonaOverride'
 
 function ThemeApplier() {
   useTheme()
+  return null
+}
+
+function UrlPersonaOverride() {
+  useUrlPersonaOverride()
   return null
 }
 
@@ -397,6 +403,7 @@ function App() {
       <ScrollToTop />
       <AnalyticsTracker />
       <ThemeApplier />
+      <UrlPersonaOverride />
       <EmbedNavigationGuard />
       <AchievementChecker />
       <AchievementSectionTracker />

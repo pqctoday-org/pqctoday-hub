@@ -13,6 +13,34 @@ import { PersonaHint } from './PersonaHint'
 import { LAYERS } from '../../Migrate/InfrastructureStack'
 import { softwareData } from '../../../data/migrateData'
 
+const CRYPTO_LIBRARY_OPTIONS = [
+  'OpenSSL',
+  'BoringSSL',
+  'wolfSSL',
+  'Mbed TLS',
+  'liboqs',
+  'GnuTLS',
+  'NSS (Mozilla)',
+  '.NET cryptography',
+  'JCA / BouncyCastle',
+  'Go crypto',
+  'Rust crypto (RustCrypto)',
+  'PKCS#11 (HSM)',
+]
+
+const INFRA_AUTOMATION_OPTIONS = [
+  'Terraform',
+  'Ansible',
+  'cert-manager',
+  'HashiCorp Vault',
+  'AWS KMS / CloudHSM',
+  'Azure Key Vault / Managed HSM',
+  'GCP Cloud KMS',
+  'Smallstep / step-ca',
+  'Manual / scripted',
+  'None',
+]
+
 const VENDOR_OPTIONS = [
   {
     value: 'heavy-vendor' as const,
@@ -44,6 +72,10 @@ const Step11Infrastructure = () => {
     setInfrastructureUnknown,
     infrastructureSubCategories,
     setInfrastructureSubCategory,
+    cryptoLibraries = [],
+    toggleCryptoLibrary,
+    infraAutomation = [],
+    toggleInfraAutomation,
     vendorDependency,
     setVendorDependency,
     vendorUnknown,
@@ -412,6 +444,75 @@ const Step11Infrastructure = () => {
           })}
         </div>
       )}
+
+      {/* ── Crypto Toolchain (libraries + automation) ─────────────────── */}
+      <div className="border-t border-border pt-5 mt-2 space-y-4">
+        <div>
+          <h4 className="text-base font-bold text-foreground">
+            Which crypto libraries and automation are in your stack?
+          </h4>
+          <p className="text-xs text-muted-foreground mt-1">
+            Helps tailor library upgrade paths (OpenSSL 3.6, BoringSSL, etc.) and
+            certificate-rotation tooling recommendations. Skip if not applicable.
+          </p>
+        </div>
+
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+            Crypto libraries
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {CRYPTO_LIBRARY_OPTIONS.map((lib) => {
+              const isActive = cryptoLibraries.includes(lib)
+              return (
+                <Button
+                  key={lib}
+                  variant="ghost"
+                  type="button"
+                  onClick={() => toggleCryptoLibrary(lib)}
+                  aria-pressed={isActive}
+                  className={clsx(
+                    'h-auto text-xs px-2.5 py-1 rounded-full border',
+                    isActive
+                      ? 'bg-primary/10 text-primary border-primary/40 font-medium hover:bg-primary/10'
+                      : 'bg-background/30 text-muted-foreground border-border/40 hover:border-border hover:text-foreground hover:bg-transparent'
+                  )}
+                >
+                  {lib}
+                </Button>
+              )
+            })}
+          </div>
+        </div>
+
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+            Crypto / cert automation
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {INFRA_AUTOMATION_OPTIONS.map((tool) => {
+              const isActive = infraAutomation.includes(tool)
+              return (
+                <Button
+                  key={tool}
+                  variant="ghost"
+                  type="button"
+                  onClick={() => toggleInfraAutomation(tool)}
+                  aria-pressed={isActive}
+                  className={clsx(
+                    'h-auto text-xs px-2.5 py-1 rounded-full border',
+                    isActive
+                      ? 'bg-primary/10 text-primary border-primary/40 font-medium hover:bg-primary/10'
+                      : 'bg-background/30 text-muted-foreground border-border/40 hover:border-border hover:text-foreground hover:bg-transparent'
+                  )}
+                >
+                  {tool}
+                </Button>
+              )
+            })}
+          </div>
+        </div>
+      </div>
 
       {/* ── Vendor Dependency ─────────────────────────────────────────── */}
       <div className="border-t border-border pt-5 mt-2 space-y-3">

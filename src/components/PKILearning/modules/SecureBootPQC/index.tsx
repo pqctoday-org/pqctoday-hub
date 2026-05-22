@@ -230,6 +230,8 @@ export const SecureBootPQCModule: React.FC = () => {
                 stepDescription={PARTS[currentPart].description}
                 stepIndex={currentPart}
                 totalSteps={PARTS.length}
+                steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
+                onStepClick={handlePartChange}
               />
               {currentPart === 0 && <SecureBootChainAnalyzer key={`chain-${configKey}`} />}
               {currentPart === 1 && <FirmwareSigningMigrator key={`signing-${configKey}`} />}

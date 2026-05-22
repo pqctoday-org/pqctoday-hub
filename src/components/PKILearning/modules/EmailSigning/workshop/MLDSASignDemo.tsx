@@ -27,7 +27,14 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { ErrorAlert } from '@/components/ui/error-alert'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { CopyableOutput } from '@/components/ui/CopyableOutput'
+import { CopyButton } from '@/components/ui/CopyButton'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 import { CMSSigningService, isCompositeAlg, type CmsAlg } from '../services/CMSSigningService'
 import { smimeEnvelopeSigned } from '../services/smimeMultipart'
 
@@ -82,6 +89,39 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
   const [stage, setStage] = useState<Stage>('idle')
   const [error, setError] = useState<string>('')
   const [result, setResult] = useState<StageResult>({})
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
+
+  // Append a pending entry and return a closer that records duration on
+  // success or error. Per ux-standard.md §S4.13, the log keeps the full
+  // trace so users can inspect timing.
+  const beginOp = (message: string) => {
+    const startedAt = performance.now()
+    setLogEntries((prev) => [...prev, { status: 'pending', message }])
+    return {
+      done: (label?: string) =>
+        setLogEntries((prev) => {
+          const next = [...prev]
+          const idx = next.length - 1
+          next[idx] = {
+            status: 'success',
+            message: label ?? message,
+            durationMs: Math.round(performance.now() - startedAt),
+          }
+          return next
+        }),
+      fail: (err: unknown) =>
+        setLogEntries((prev) => {
+          const next = [...prev]
+          const idx = next.length - 1
+          next[idx] = {
+            status: 'error',
+            message: `${message} — ${err instanceof Error ? err.message : String(err)}`,
+            durationMs: Math.round(performance.now() - startedAt),
+          }
+          return next
+        }),
+    }
+  }
 
   useEffect(() => {
     const svc = new CMSSigningService()
@@ -96,6 +136,7 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
     setStage('idle')
     setError('')
     setResult({})
+    setLogEntries([])
   }
 
   const run = async () => {
@@ -103,11 +144,15 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
     if (!svc) return
     setError('')
     setResult({})
+    setLogEntries([])
+    let op = beginOp(`Generating ${alg} key pair${useHsm ? ' (HSM)' : ''}…`)
     try {
       setStage('genkey')
       const k = await svc.genKey(alg, KEY_ID, useHsm)
       setResult((prev) => ({ ...prev, keyPem: k.keyPem, pubPem: k.pubPem }))
+      op.done()
 
+      op = beginOp('Issuing self-signed certificate…')
       setStage('mkcert')
       const c = await svc.mkCert({
         keyId: KEY_ID,
@@ -118,7 +163,9 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
         alg,
       })
       setResult((prev) => ({ ...prev, certPem: c.certPem }))
+      op.done()
 
+      op = beginOp(`Signing payload (${payload.length} bytes) with CMS…`)
       setStage('sign')
       const s = await svc.sign({
         keyId: KEY_ID,
@@ -128,7 +175,9 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
         alg,
       })
       setResult((prev) => ({ ...prev, signedP7m: s.signedP7m }))
+      op.done(`Signed payload — ${s.signedP7m.length} bytes (.p7m)`)
 
+      op = beginOp('Verifying CMS signature…')
       setStage('verify')
       const v = await svc.verify({ signedP7m: s.signedP7m, certId: CERT_ID, useHsm, alg })
       setResult((prev) => ({
@@ -137,9 +186,11 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
         verifyPayload: v.payload,
         verifyStderr: v.stderrTail,
       }))
+      op.done(v.ok ? 'Signature verified OK' : 'Verify completed (see result)')
 
       setStage('done')
     } catch (err) {
+      op.fail(err)
       setError(err instanceof Error ? err.message : String(err))
       setStage('error')
     }
@@ -297,12 +348,9 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
           />
         </label>
 
-        {error && (
-          <div className="flex items-start gap-2 rounded-md border border-status-error/30 bg-status-error/10 p-3 text-xs text-status-error">
-            <AlertTriangle size={14} className="mt-0.5 shrink-0" />
-            <pre className="flex-1 whitespace-pre-wrap font-mono">{error}</pre>
-          </div>
-        )}
+        {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} />}
+
+        {error && <ErrorAlert message={error} onRetry={run} />}
       </div>
 
       {(stage !== 'idle' || result.keyPem) && (
@@ -393,15 +441,46 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
               </details>
             )}
             {result.signedP7m && (
+              <div className="mt-2 flex gap-2">
+                <CopyButton
+                  text={btoa(String.fromCharCode(...result.signedP7m))}
+                  label="Copy (base64)"
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    const blob = new Blob([result.signedP7m!.slice() as BlobPart], {
+                      type: 'application/pkcs7-mime',
+                    })
+                    const url = URL.createObjectURL(blob)
+                    const a = document.createElement('a')
+                    a.href = url
+                    a.download = 'signed.p7m'
+                    a.click()
+                    URL.revokeObjectURL(url)
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-lg border border-border bg-muted/20 hover:bg-muted/40 transition-colors"
+                  aria-label="Download signed.p7m"
+                >
+                  <Lock size={13} className="text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground font-medium">Download .p7m</span>
+                </Button>
+              </div>
+            )}
+            {result.signedP7m && (
               <details className="mt-2">
                 <summary className="cursor-pointer text-[11px] text-primary">
                   Show S/MIME envelope (.eml)
                 </summary>
-                <pre className="mt-1 max-h-48 max-w-full overflow-auto whitespace-pre-wrap break-all rounded bg-muted/30 p-1.5 font-mono text-[10px] leading-tight">
-                  {smimeEnvelopeSigned(result.signedP7m, {
+                <CopyableOutput
+                  value={smimeEnvelopeSigned(result.signedP7m, {
                     subject: 'PQC workshop signed message',
                   })}
-                </pre>
+                  rows={6}
+                  downloadFilename="signed-message.eml"
+                  className="mt-1"
+                />
               </details>
             )}
           </StageCard>

@@ -23,6 +23,7 @@ import type { AssessmentInput } from '../../hooks/assessmentTypes'
 import { PageHeader } from '../common/PageHeader'
 import { WorkflowBreadcrumb } from '../shared/WorkflowBreadcrumb'
 import { logReportViewed, logReportShareLinkOpened, logReportCta } from '@/utils/analytics'
+import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
 import { decodeShareToken } from '@/utils/reportShareToken'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
@@ -297,6 +298,7 @@ export const ReportView: React.FC = () => {
 
   // Empty state: no assessment started and no persisted result
   if (!result) {
+    const isCurious = selectedPersona === 'curious'
     return (
       <div className="animate-fade-in">
         <div className="max-w-lg mx-auto text-center py-16">
@@ -305,18 +307,31 @@ export const ReportView: React.FC = () => {
           </div>
           <h1 className="text-2xl font-bold text-foreground mb-3">No Report Yet</h1>
           <p className="text-muted-foreground mb-6">
-            Complete the PQC Risk Assessment to generate your personalized report with risk scores,
-            migration priorities, and actionable recommendations.
+            {isCurious
+              ? 'Curious what a finished report looks like? Browse an example before committing to the assessment — or jump straight in.'
+              : 'Complete the PQC Risk Assessment to generate your personalized report with risk scores, migration priorities, and actionable recommendations.'}
           </p>
-          <Link
-            to="/assess"
-            onClick={() => logReportCta('start-assessment')}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
-          >
-            <ClipboardCheck size={18} />
-            Start Assessment
-            <ArrowRight size={16} />
-          </Link>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {isCurious && (
+              <Link
+                to={EXAMPLE_REPORT_URL}
+                onClick={() => logReportCta('view-example')}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border bg-card text-foreground font-medium hover:border-primary/40 hover:bg-muted transition-colors"
+              >
+                <FileBarChart size={16} />
+                See an example report
+              </Link>
+            )}
+            <Link
+              to="/assess"
+              onClick={() => logReportCta('start-assessment')}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
+            >
+              <ClipboardCheck size={18} />
+              Start Assessment
+              <ArrowRight size={16} />
+            </Link>
+          </div>
         </div>
       </div>
     )

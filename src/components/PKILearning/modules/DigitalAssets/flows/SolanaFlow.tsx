@@ -19,7 +19,8 @@ import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { Input } from '@/components/ui/input'
-import { Skull, Check } from 'lucide-react'
+import { Switch } from '@/components/ui/switch'
+import { Skull } from 'lucide-react'
 
 interface SolanaFlowProps {
   onBack: () => void
@@ -500,37 +501,16 @@ const isValid = hsm_eddsaVerify(
         actionLabel: 'Verify Signature',
         customControls: (
           <div className="mb-4 flex items-start gap-3 rounded-lg border border-warning/20 bg-warning/10 p-3">
-            <div
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') setSimulateError((v) => !v)
-              }}
-              role="checkbox"
-              aria-checked={simulateError}
-              onClick={() => setSimulateError((v) => !v)}
-              className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors focus-visible:ring-2 focus-visible:ring-primary ${
-                simulateError
-                  ? 'border-warning bg-warning text-warning-foreground'
-                  : 'border-muted-foreground bg-transparent'
-              }`}
+            <Switch
+              checked={simulateError}
+              onCheckedChange={setSimulateError}
               aria-label="Simulate invalid signature"
-            >
-              {simulateError && <Check size={12} />}
-            </div>
+              className="mt-0.5 shrink-0"
+            />
             <div>
-              <div
-                className="text-sm font-medium text-foreground cursor-pointer select-none"
-                onClick={() => setSimulateError((v) => !v)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') setSimulateError((v) => !v)
-                }}
-                role="button"
-                tabIndex={0}
-              >
-                Simulate Invalid Signature
-              </div>
+              <p className="text-sm font-medium text-foreground">Simulate Invalid Signature</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                When checked, a byte of the signature is flipped before verification — Step 9 will
+                When enabled, a byte of the signature is flipped before verification — Step 9 will
                 show <span className="font-mono text-status-error font-bold">❌ INVALID</span>.
               </p>
             </div>

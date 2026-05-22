@@ -20,6 +20,7 @@ import {
 import clsx from 'clsx'
 import { useModuleStore } from '../../store/useModuleStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { logEvent, personaLabel } from '@/utils/analytics'
 import type { NiceProficiencyTier } from '../../data/niceFramework'
 import { getNiceMapping } from '../../data/niceModuleMapping'
 import { MODULE_INDUSTRY_RELEVANCE } from '../../data/personaConfig'
@@ -927,10 +928,10 @@ const ModuleTracksGrid = ({
       {/* Header */}
       <div className="mb-2 md:mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
             <BookOpen className="text-primary w-6 h-6 md:w-8 md:h-8" aria-hidden="true" />
             Learning Workshops
-          </h2>
+          </h1>
           <p className="hidden lg:block text-muted-foreground">
             Interactive hands-on workshops to master cryptographic concepts.
           </p>
@@ -1242,7 +1243,10 @@ const ModuleTracksGrid = ({
                     <ModuleCard
                       key={`${item.module.id}-${idx}`}
                       module={item.module}
-                      onSelectModule={(id) => navigate(id)}
+                      onSelectModule={(id) => {
+                        logEvent('Learning', 'Module Card Click', personaLabel(id))
+                        navigate(id)
+                      }}
                       isRelevant={isModuleRelevant(item.module.id)}
                       isAboveLevel={isModuleAboveLevel(item.module.id)}
                     />

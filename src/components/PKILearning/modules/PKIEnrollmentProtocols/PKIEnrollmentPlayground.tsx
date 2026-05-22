@@ -5,6 +5,8 @@ import { ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { KeyGenStep } from './workshop/KeyGenStep'
 import { CmpInitialReq } from './workshop/CmpInitialReq'
+import { EstSimpleEnroll } from './workshop/EstSimpleEnroll'
+import { CmpKemKeyUpdate } from './workshop/CmpKemKeyUpdate'
 
 /**
  * Playground-wrapper view for the PKI Enrollment Protocols workshop.
@@ -20,13 +22,14 @@ export const PKIEnrollmentPlayground: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="rounded-md border border-primary/30 bg-primary/5 p-3 text-sm">
-        Streamlined CMP Initial Request flow (RFC 4210 + RFC 9810) — generate an ML-DSA-65 key, then
-        enroll it against the in-WASM mock CA.{' '}
+        Four-step PKI enrollment showcase — RFC 4210 (CMP) · RFC 7030 (EST) · RFC 9810 (CMP KEM).
+        Generate a key, enroll via CMP, enroll the same key via EST, then perform a quantum-safe KEM
+        key update.{' '}
         <Link
           to="/learn/pki-enrollment-protocols?tab=workshop"
           className="text-primary hover:underline"
         >
-          Open the full module for EST, KEM update, and composite enrollment steps.
+          Open the full module for composite enrollment and cert inspection steps.
         </Link>
       </div>
 
@@ -45,6 +48,20 @@ export const PKIEnrollmentPlayground: React.FC = () => {
           Step 2 — CMP Initial Request (ML-DSA signed)
         </h3>
         <CmpInitialReq eeKeyPem={eeKeyPem} eeKeyAlgorithm={eeKeyAlgorithm} />
+      </section>
+
+      <section className="space-y-3">
+        <h3 className="text-lg font-semibold text-foreground">
+          Step 3 — EST simpleenroll (RFC 7030)
+        </h3>
+        <EstSimpleEnroll eeKeyPem={eeKeyPem} eeKeyAlgorithm={eeKeyAlgorithm} />
+      </section>
+
+      <section className="space-y-3">
+        <h3 className="text-lg font-semibold text-foreground">
+          Step 4 — CMP KEM Key Update (RFC 9810 encrCert POP)
+        </h3>
+        <CmpKemKeyUpdate />
       </section>
 
       <div className="pt-4 border-t border-border">

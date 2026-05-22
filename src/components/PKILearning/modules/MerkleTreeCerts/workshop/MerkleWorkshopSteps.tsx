@@ -166,6 +166,8 @@ export const MerkleWorkshopSteps: React.FC = () => {
           stepDescription={PARTS[currentPart].description}
           stepIndex={currentPart}
           totalSteps={PARTS.length}
+          steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
+          onStepClick={handlePartChange}
         />
         {(currentPart === 1 || currentPart === 2) && !sharedLevels && (
           <div className="mb-4 flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/5 px-3 py-2 text-sm text-muted-foreground">

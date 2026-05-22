@@ -18,6 +18,7 @@ import {
   PanelLeft,
   Network,
   ArrowRight,
+  Info,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { LogsTab } from './LogsTab'
@@ -163,6 +164,38 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
         <div className="lg:hidden glass-panel p-3 mb-4 flex items-center gap-2 text-sm text-muted-foreground">
           <Monitor size={16} className="shrink-0 text-primary" aria-hidden="true" />
           <span>Best experienced on desktop — scroll down for terminal and file manager.</span>
+        </div>
+      )}
+
+      {/* Executive redirect banner — this is a developer/operator tool, surface higher-level pages */}
+      {!embedded && selectedPersona === 'executive' && (
+        <div className="mb-4 flex items-start gap-3 px-4 py-3 rounded-lg bg-info/5 border border-info/30 text-sm">
+          <Info size={16} className="shrink-0 text-info mt-0.5" aria-hidden="true" />
+          <div className="flex-1">
+            <p className="text-foreground/90 font-medium mb-1">
+              OpenSSL Studio is a hands-on engineering tool.
+            </p>
+            <p className="text-xs text-muted-foreground mb-2 leading-relaxed">
+              You can explore freely below, but for executive-level PQC context you may prefer:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Link to="/compliance">
+                <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
+                  Compliance landscape →
+                </Button>
+              </Link>
+              <Link to="/migrate">
+                <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
+                  Migration framework →
+                </Button>
+              </Link>
+              <Link to="/algorithms">
+                <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
+                  Algorithm comparison →
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       )}
 

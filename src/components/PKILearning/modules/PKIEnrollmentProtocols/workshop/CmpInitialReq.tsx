@@ -12,7 +12,12 @@ import {
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ErrorAlert } from '@/components/ui/error-alert'
 import { CopyableOutput } from '@/components/ui/CopyableOutput'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 import { ensureMockCA, resetMockCA } from '../mock-ca/mockCA'
 import { CA_ROOT_CERT_PATH, CA_ROOT_KEY_PATH, EE_CERT_PATH, EE_KEY_PATH } from '../constants'
 
@@ -45,6 +50,7 @@ export const CmpInitialReq: React.FC<CmpInitialReqProps> = ({
   const [result, setResult] = useState<CmpResult | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [caReady, setCaReady] = useState(false)
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
   const initRef = useRef(false)
 
   // Auto-provision the mock CA on mount so the user has a one-click experience.
@@ -72,6 +78,10 @@ export const CmpInitialReq: React.FC<CmpInitialReqProps> = ({
     setError(null)
     setResult(null)
     setPhase('sending')
+    const startedAt = performance.now()
+    setLogEntries([
+      { status: 'pending', message: `Running CMP Initial Request (subject "${subject}")…` },
+    ])
     try {
       const ca = await ensureMockCA()
 
@@ -120,9 +130,24 @@ export const CmpInitialReq: React.FC<CmpInitialReqProps> = ({
       })
       onCertIssued?.(out.certPem)
       setPhase('done')
+      setLogEntries([
+        {
+          status: 'success',
+          message: `CMP IR completed — cert issued (${out.certPem.length} bytes PEM)`,
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+      ])
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      const msg = e instanceof Error ? e.message : String(e)
+      setError(msg)
       setPhase('error')
+      setLogEntries([
+        {
+          status: 'error',
+          message: `CMP IR failed — ${msg}`,
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+      ])
     }
   }
 
@@ -238,12 +263,9 @@ export const CmpInitialReq: React.FC<CmpInitialReqProps> = ({
         )}
       </div>
 
-      {error && (
-        <div className="rounded border border-status-error/30 bg-status-error/10 p-3 text-sm text-status-error flex items-start gap-2">
-          <AlertTriangle size={16} className="mt-0.5 shrink-0" />
-          <pre className="whitespace-pre-wrap font-mono text-xs">{error}</pre>
-        </div>
-      )}
+      {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} />}
+
+      {error && <ErrorAlert message={error} onRetry={handleSend} />}
 
       {result && (
         <div className="space-y-3">

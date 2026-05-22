@@ -227,6 +227,8 @@ export const OSPQCModule: React.FC = () => {
                 stepDescription={PARTS[currentPart].description}
                 stepIndex={currentPart}
                 totalSteps={PARTS.length}
+                steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
+                onStepClick={handlePartChange}
               />
               {currentPart === 0 && <OSCryptoInventory key={`inventory-${configKey}`} />}
               {currentPart === 1 && <SystemTLSConfigurator key={`tls-${configKey}`} />}

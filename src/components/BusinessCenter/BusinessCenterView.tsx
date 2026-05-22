@@ -12,9 +12,11 @@ import {
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import JSZip from 'jszip'
 import { PageHeader } from '@/components/common/PageHeader'
+import { PreviewBanner } from '@/components/common/PreviewBanner'
 import { WorkflowBreadcrumb } from '@/components/shared/WorkflowBreadcrumb'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { logEvent, personaLabel } from '@/utils/analytics'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useWorkshopStore, isWorkshopActive } from '@/store/useWorkshopStore'
@@ -185,6 +187,7 @@ export function BusinessCenterView() {
   }, [])
 
   const handleZoneSelect = useCallback((zone: ZoneId) => {
+    logEvent('Business Center', 'Zone Select', personaLabel(zone))
     // flushSync ensures the panel expand/collapse is committed before we
     // measure scroll position — otherwise scrollIntoView uses stale layout
     // and the new panel ends up off-target after the re-render.
@@ -199,7 +202,11 @@ export function BusinessCenterView() {
   }, [])
 
   const handleZoneToggle = useCallback((zone: ZoneId) => {
-    setOpenZone((prev) => (prev === zone ? null : zone))
+    setOpenZone((prev) => {
+      const next = prev === zone ? null : zone
+      logEvent('Business Center', next ? 'Zone Open' : 'Zone Collapse', personaLabel(zone))
+      return next
+    })
   }, [])
 
   // Filter state
@@ -269,6 +276,11 @@ export function BusinessCenterView() {
 
   const handleExportZip = useCallback(async () => {
     if (filteredArtifacts.length === 0) return
+    logEvent(
+      'Business Center',
+      'Export Artifacts ZIP',
+      personaLabel(`count=${filteredArtifacts.length}`)
+    )
     const zip = new JSZip()
     for (const doc of filteredArtifacts) {
       const safeName = doc.title.replace(/[^a-z0-9_\- ]/gi, '').replace(/\s+/g, '_')
@@ -327,6 +339,13 @@ export function BusinessCenterView() {
         country={metrics.country}
         completedAt={metrics.completedAt}
       />
+
+      {/* Curious users land here only via URL deep-link (PERSONA_NAV_PATHS.curious
+          omits /business). Show a soft preview banner instead of a hard 403 so
+          the page still teaches the shape of a PQC program. (P14-P0-01) */}
+      {selectedPersona === 'curious' && (
+        <PreviewBanner pageContext="GRC, Architect, Developer, Ops, Researcher" />
+      )}
 
       {/* Filter + Export bar — gated to advanced density. Basic/intermediate
            learners don't need a portfolio toolbar at the top; cross-zone

@@ -138,19 +138,19 @@ export const logArtifactGenerated = (moduleId: string, artifactType: string) => 
 }
 
 export const logAlgorithmView = (algorithmName: string) => {
-  logEvent('Algorithms', 'View Detail', algorithmName)
+  logEvent('Algorithms', 'View Detail', personaLabel(algorithmName))
 }
 
 export const logComplianceSearch = (query: string) => {
-  logEvent('Compliance', 'Search', query)
+  logEvent('Compliance', 'Search', personaLabel(query))
 }
 
 export const logComplianceFilter = (filterType: string, value: string) => {
-  logEvent('Compliance', 'Filter', `${filterType}:${value}`)
+  logEvent('Compliance', 'Filter', personaLabel(`${filterType}:${value}`))
 }
 
 export const logMigrateAction = (action: string, label?: string) => {
-  logEvent('Migrate', action, label)
+  logEvent('Migrate', action, personaLabel(label))
 }
 
 export const logLibrarySearch = (query: string) => {
@@ -228,15 +228,17 @@ export const logExploreUnlock = () => {
 // --- Report tracking ---
 
 export const logReportViewed = (industry: string, riskLevel: string) => {
-  logEvent('Report', 'Viewed', `${industry || 'unknown'}:${riskLevel}`)
+  logEvent('Report', 'Viewed', personaLabel(`${industry || 'unknown'}:${riskLevel}`))
 }
 
 export const logReportShareLinkOpened = () => {
-  logEvent('Report', 'Share Link Opened')
+  logEvent('Report', 'Share Link Opened', personaLabel())
 }
 
-export const logReportCta = (target: 'start-assessment' | 'complete-assessment') => {
-  logEvent('Report', 'CTA Click', target)
+export const logReportCta = (
+  target: 'start-assessment' | 'complete-assessment' | 'view-example'
+) => {
+  logEvent('Report', 'CTA Click', personaLabel(target))
 }
 
 // Scrub PII (emails, URLs) before sending query strings to GA4
@@ -341,19 +343,19 @@ export const logEmbedPolicyApplied = (
 // --- Assessment wizard tracking ---
 
 export const logAssessStart = () => {
-  logEvent('Assessment', 'Start')
+  logEvent('Assessment', 'Start', personaLabel())
 }
 
 export const logAssessStep = (step: number, label: string) => {
-  logEvent('Assessment', 'Step', `${step}:${label}`)
+  logEvent('Assessment', 'Step', personaLabel(`${step}:${label}`))
 }
 
 export const logAssessComplete = (personaResult: string) => {
-  logEvent('Assessment', 'Complete', personaResult)
+  logEvent('Assessment', 'Complete', personaLabel(personaResult))
 }
 
 export const logAssessReset = () => {
-  logEvent('Assessment', 'Reset')
+  logEvent('Assessment', 'Reset', personaLabel())
 }
 
 // --- Persona / personalization tracking ---
@@ -363,6 +365,18 @@ export const logPersonaSelected = (
   source: 'picker' | 'assessment' | 'embed' | 'switch'
 ) => {
   logEvent('Persona', 'Selected', `${persona}:${source}`)
+}
+
+export const logPersonaSwitchClicked = (source: 'nav' | 'landing-hero' | 'banner') => {
+  logEvent('Persona', 'Switch Clicked', personaLabel(source))
+}
+
+export const logPreviewBannerShown = (route: string) => {
+  logEvent('Preview Banner', 'Shown', personaLabel(route))
+}
+
+export const logPreviewBannerDismissed = (route: string) => {
+  logEvent('Preview Banner', 'Dismissed', personaLabel(route))
 }
 
 export const logRegionSelected = (region: string) => {

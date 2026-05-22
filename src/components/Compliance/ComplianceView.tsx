@@ -37,6 +37,9 @@ import { LandscapeTypeFacet, type LandscapeType } from './LandscapeTypeFacet'
 import { ExecutiveTimelineView } from './views/ExecutiveTimelineView'
 import { ArchitectStandardsView } from './views/ArchitectStandardsView'
 import { ResearcherEvidenceView } from './views/ResearcherEvidenceView'
+import { DeveloperImplementationView } from './views/DeveloperImplementationView'
+import { OpsRotationView } from './views/OpsRotationView'
+import { CuriousOrientationView } from './views/CuriousOrientationView'
 import { LibraryDetailPopover } from '@/components/Library/LibraryDetailPopover'
 import { ThreatDetailDialog } from '@/components/Threats/ThreatDetailDialog'
 import {
@@ -64,6 +67,7 @@ import { RoleFilter } from '../common/RoleFilter'
 import { normalizeCountry } from '@/utils/applicabilityEngine'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { useComplianceUrlState, type MobileSection } from './useComplianceUrlState'
+import { PreviewBanner } from '../common/PreviewBanner'
 import type { ViewMode } from '@/components/Library/ViewToggle'
 import { INDUSTRY_COMPLIANCE_HINT, REGION_COMPLIANCE_HINT } from '@/data/compliancePersonaHints'
 
@@ -166,8 +170,10 @@ function timelineEventToRow(ev: TimelineEvent): TimelineDocumentRow {
  *   executive  → ExecutiveTimelineView (regulatory clock + framework cards + milestones)
  *   architect  → ArchitectStandardsView (standards landscape + crypto-agility focus)
  *   researcher → ResearcherEvidenceView (full evidence browser + citation depth)
- *   developer  → ApplicabilityPanel (defaults to records tab via useComplianceUrlState)
- *   ops / curious / no persona → ApplicabilityPanel (generic recommendation surface)
+ *   developer  → DeveloperImplementationView (algorithm coverage + tool jumps + standards→impl)
+ *   ops        → OpsRotationView (deadline phases + toolchain jumps + framework timing table)
+ *   curious    → CuriousOrientationView (plain-language orientation + 1-2-3 framing)
+ *   no persona → ApplicabilityPanel (generic recommendation surface)
  *
  * All branches consume the same `useApplicability` engine output; only the rendering
  * differs. Profile override is plumbed identically so the workshop deep-link
@@ -227,6 +233,12 @@ function ForYouSection() {
         <ArchitectStandardsView {...callbacks} />
       ) : persona === 'researcher' ? (
         <ResearcherEvidenceView {...callbacks} />
+      ) : persona === 'developer' ? (
+        <DeveloperImplementationView {...callbacks} />
+      ) : persona === 'ops' ? (
+        <OpsRotationView {...callbacks} />
+      ) : persona === 'curious' ? (
+        <CuriousOrientationView {...callbacks} />
       ) : (
         <ApplicabilityPanel variant="tab" {...callbacks} />
       )}
@@ -500,6 +512,7 @@ export const ComplianceView = () => {
   const tierFilter = useTrustTierFilter()
   const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
   const { selectedIndustries, selectedRegion } = usePersonaStore()
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
   const addHistoryEvent = useHistoryStore((s) => s.addEvent)
 
@@ -743,6 +756,8 @@ export const ComplianceView = () => {
         shareText="Explore PQC compliance: standardization bodies, certification programs (FIPS 140-3, ACVP, Common Criteria), and regulatory frameworks."
         onExport={handleExportCsv}
       />
+
+      {selectedPersona === 'curious' && <PreviewBanner pageContext="GRC, Executive, Architect" />}
 
       <LearningFrameBanner />
       <GlossaryStrip />

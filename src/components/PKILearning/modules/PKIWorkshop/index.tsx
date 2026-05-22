@@ -354,6 +354,8 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({ playgroundMode = false
           stepDescription={parts[currentStep].description}
           stepIndex={currentStep}
           totalSteps={parts.length}
+          steps={parts.map((p) => ({ id: p.id, label: p.title }))}
+          onStepClick={handlePartChange}
         />
 
         <ArtifactSummaryStrip />

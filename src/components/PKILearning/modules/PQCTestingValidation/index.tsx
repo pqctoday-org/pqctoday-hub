@@ -253,6 +253,8 @@ export const PQCTestingValidationModule: React.FC = () => {
                 stepDescription={PARTS[currentPart].description}
                 stepIndex={currentPart}
                 totalSteps={PARTS.length}
+                steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
+                onStepClick={handlePartChange}
               />
               {currentPart === 0 && <PassiveDiscoveryLab key={`passive-${configKey}`} />}
               {currentPart === 1 && <ActivePQCScanner key={`active-${configKey}`} />}

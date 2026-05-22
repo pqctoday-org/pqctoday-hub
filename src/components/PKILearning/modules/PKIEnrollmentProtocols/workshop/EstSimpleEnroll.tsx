@@ -4,6 +4,11 @@ import { Loader2, Inbox, AlertTriangle, CheckCircle2, Info } from 'lucide-react'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ErrorAlert } from '@/components/ui/error-alert'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 import { ensureMockCA } from '../mock-ca/mockCA'
 import { CA_ROOT_CERT_PATH, CA_ROOT_KEY_PATH, EE_CERT_PATH, EE_KEY_PATH } from '../constants'
 
@@ -36,6 +41,7 @@ export const EstSimpleEnroll: React.FC<EstSimpleEnrollProps> = ({
   const [csrPem, setCsrPem] = useState<string | null>(null)
   const [pkcs7Pem, setPkcs7Pem] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   const handleRun = async () => {
     if (!eeKeyPem) {
@@ -46,6 +52,10 @@ export const EstSimpleEnroll: React.FC<EstSimpleEnrollProps> = ({
     setError(null)
     setCsrPem(null)
     setPkcs7Pem(null)
+    const startedAt = performance.now()
+    setLogEntries([
+      { status: 'pending', message: 'Building PKCS#10 CSR + simulating EST simpleenroll…' },
+    ])
     try {
       const ca = await ensureMockCA()
       const keyFileName = EE_KEY_PATH.replace(/^\//, '')
@@ -112,8 +122,23 @@ export const EstSimpleEnroll: React.FC<EstSimpleEnrollProps> = ({
       const p7File = p7Result.files.find((f) => f.name === p7Path.replace(/^\//, ''))
       if (!p7File) throw new Error('PKCS#7 wrap produced no output')
       setPkcs7Pem(new TextDecoder().decode(p7File.data))
+      setLogEntries([
+        {
+          status: 'success',
+          message: 'CSR + PKCS#7 envelope produced — issued cert ready downstream.',
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+      ])
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      const msg = e instanceof Error ? e.message : String(e)
+      setError(msg)
+      setLogEntries([
+        {
+          status: 'error',
+          message: `simpleenroll failed — ${msg}`,
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+      ])
     } finally {
       setBusy(false)
     }
@@ -159,12 +184,9 @@ export const EstSimpleEnroll: React.FC<EstSimpleEnrollProps> = ({
         {busy ? 'Building CSR + wrapping response…' : 'Run simpleenroll (CSR → PKCS#7)'}
       </Button>
 
-      {error && (
-        <div className="rounded border border-status-error/30 bg-status-error/10 p-3 text-sm text-status-error flex items-start gap-2">
-          <AlertTriangle size={16} className="mt-0.5 shrink-0" />
-          <pre className="whitespace-pre-wrap font-mono text-xs">{error}</pre>
-        </div>
-      )}
+      {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} />}
+
+      {error && <ErrorAlert message={error} onRetry={handleRun} />}
 
       {csrPem && (
         <details open className="rounded border border-border bg-muted/30 p-3">
