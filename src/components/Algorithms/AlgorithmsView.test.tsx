@@ -257,4 +257,92 @@ describe('AlgorithmsView', () => {
       ).not.toBeInTheDocument()
     })
   })
+
+  describe('Persona-aware defaults (P0.2 / P0.3 / P2.3)', () => {
+    beforeEach(() => {
+      // Reset persona state between cases so each test exercises a fresh init.
+      usePersonaStore.getState().clearPreferences()
+      global.innerWidth = 1024
+    })
+
+    afterEach(() => {
+      usePersonaStore.getState().clearPreferences()
+    })
+
+    it('executive lands on the Detailed tab on first paint', async () => {
+      usePersonaStore.getState().setPersona('executive')
+      render(
+        <MemoryRouter initialEntries={['/algorithms']}>
+          <AlgorithmsView />
+        </MemoryRouter>
+      )
+      // Detailed comparison mounts (its mocked test-id) instead of the transition view.
+      expect(await screen.findByTestId('algorithm-detailed')).toBeInTheDocument()
+    })
+
+    it('ops lands on the Transition tab on first paint', async () => {
+      usePersonaStore.getState().setPersona('ops')
+      render(
+        <MemoryRouter initialEntries={['/algorithms']}>
+          <AlgorithmsView />
+        </MemoryRouter>
+      )
+      expect(await screen.findByTestId('algorithm-comparison')).toBeInTheDocument()
+    })
+
+    it('URL ?tab=detailed wins over the developer persona default', async () => {
+      usePersonaStore.getState().setPersona('developer')
+      render(
+        <MemoryRouter initialEntries={['/algorithms?tab=detailed']}>
+          <AlgorithmsView />
+        </MemoryRouter>
+      )
+      expect(await screen.findByTestId('algorithm-detailed')).toBeInTheDocument()
+    })
+
+    it('renders a persona hint for every persona (no missing entries)', async () => {
+      const personas = ['executive', 'developer', 'architect', 'researcher', 'ops'] as const
+      for (const persona of personas) {
+        usePersonaStore.getState().setPersona(persona)
+        const { unmount } = render(
+          <MemoryRouter initialEntries={['/algorithms']}>
+            <AlgorithmsView />
+          </MemoryRouter>
+        )
+        // Every persona hint contains at least one of these stable, persona-specific phrases.
+        const hintMarkers: Record<typeof persona, RegExp> = {
+          executive: /FIPS-standardized picks/,
+          developer: /performance varies 10×/,
+          architect: /Use the Transition tab/,
+          researcher: /Switch to the Detailed tab/,
+          ops: /Production deployment chips/,
+        }
+        expect(await screen.findByText(hintMarkers[persona])).toBeInTheDocument()
+        unmount()
+      }
+    })
+
+    it('curious tab-visit gate records visits and ultimately reveals Protocol Support', async () => {
+      // Curious persona starts in preview; bypass the unlock teaser by
+      // simulating that the user has already unlocked the full view.
+      usePersonaStore.getState().setPersona('curious')
+      usePersonaStore.getState().setAdvancedViewsUnlocked(true)
+      // Sanity-check the gate's preconditions before AlgorithmsView mounts.
+      expect(usePersonaStore.getState().algorithmsTabsVisited).toEqual([])
+
+      render(
+        <MemoryRouter initialEntries={['/algorithms']}>
+          <AlgorithmsView />
+        </MemoryRouter>
+      )
+
+      // The Transition Guide is the curious default; the markAlgorithmsTabVisited
+      // effect fires on mount and records the visit, opening the gate.
+      await waitFor(() => {
+        expect(usePersonaStore.getState().algorithmsTabsVisited).toContain('transition')
+      })
+      // Once the visit is recorded, the Protocol Support tab is rendered.
+      expect(await screen.findByText('Protocol Support')).toBeInTheDocument()
+    })
+  })
 })
