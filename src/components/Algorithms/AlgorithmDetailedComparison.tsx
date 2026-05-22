@@ -35,6 +35,8 @@ import { Button } from '@/components/ui/button'
 import { ImplementationAttacksView } from './ImplementationAttacksView'
 import { KATView } from './KATView'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { getAlgorithmDefaults } from '@/data/personaConfig'
 
 type SortField = 'name' | 'type' | 'keygen' | 'sign' | 'verify' | 'ram' | 'optimization'
 type SortDir = 'asc' | 'desc'
@@ -60,8 +62,6 @@ interface AlgorithmDetailedComparisonProps {
   initialSection?: SubTab
 }
 
-const DEFAULT_OPEN_SECTIONS: SubTab[] = ['performance', 'security', 'sizes']
-
 export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonProps> = ({
   highlightAlgorithms,
   onInfoOpen,
@@ -72,8 +72,10 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
   onToggleCompare,
   initialSection,
 }) => {
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const [openSections, setOpenSections] = useState<Set<SubTab>>(() => {
-    const defaults = new Set<SubTab>(DEFAULT_OPEN_SECTIONS)
+    const personaSections = getAlgorithmDefaults(selectedPersona).openSections as SubTab[]
+    const defaults = new Set<SubTab>(personaSections)
     if (initialSection) defaults.add(initialSection)
     return defaults
   })
@@ -725,7 +727,8 @@ const HARDNESS_ASSUMPTIONS: Record<string, string> = {
   'Hash-based': 'Hash function collision and preimage resistance',
   Multivariate: 'Solving systems of multivariate quadratic equations (MQ problem)',
   Isogeny: 'Computing isogenies between supersingular elliptic curves',
-  Hybrid: 'Combination of classical (DLP/factoring) and PQC hardness assumptions',
+  // P2.1: renamed from 'Hybrid' to disambiguate from protocol-level hybrid signature.
+  Composite: 'Combination of classical (DLP/factoring) and PQC hardness assumptions',
   Classical: 'Integer factoring (RSA) or discrete logarithm (ECC/DH)',
 }
 
