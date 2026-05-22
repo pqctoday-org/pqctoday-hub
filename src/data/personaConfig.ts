@@ -76,6 +76,86 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
   ],
 }
 
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Algorithms page — per-persona default tab / filter preset / open-section set.
+ *
+ * Drives the first-paint experience on `/algorithms` when no URL params are
+ * present. Deep-links win; once any of {tab, family, fn, level, region, status,
+ * highlight, q, compare, section, subtab} are set in the URL, defaults give way
+ * to the URL-driven state. See `AlgorithmsView.tsx` `hasActiveParams`.
+ * ────────────────────────────────────────────────────────────────────────────── */
+
+export type AlgorithmTabId = 'transition' | 'detailed' | 'support'
+
+export type AlgorithmFilterKey = 'family' | 'fn' | 'level' | 'region' | 'status'
+
+export type AlgorithmSectionId =
+  | 'performance'
+  | 'security'
+  | 'sizes'
+  | 'usecases'
+  | 'attacks'
+  | 'kat'
+
+export interface AlgorithmDefaults {
+  /** First-paint tab. */
+  tab: AlgorithmTabId
+  /** Filter preset; keys map to the URL params used by AlgorithmsView. */
+  filters: Partial<Record<AlgorithmFilterKey, string>>
+  /** Sections open by default in the Detailed Comparison view. */
+  openSections: AlgorithmSectionId[]
+  /** Algorithm names to pre-highlight in the Detailed table. */
+  highlight?: string[]
+}
+
+export const ALGORITHM_PERSONA_DEFAULTS: Record<PersonaId, AlgorithmDefaults> = {
+  executive: {
+    tab: 'detailed',
+    filters: { status: 'Certified' },
+    openSections: ['sizes'],
+    highlight: ['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s', 'Falcon-512'],
+  },
+  ops: {
+    tab: 'transition',
+    filters: { status: 'Certified' },
+    openSections: ['sizes'],
+  },
+  developer: {
+    tab: 'transition',
+    filters: {},
+    openSections: ['sizes', 'performance'],
+  },
+  architect: {
+    tab: 'transition',
+    filters: {},
+    openSections: ['sizes', 'performance'],
+  },
+  researcher: {
+    tab: 'detailed',
+    filters: {},
+    openSections: ['performance', 'security', 'sizes', 'attacks', 'kat'],
+  },
+  curious: {
+    tab: 'transition',
+    filters: { status: 'Certified', fn: 'KEM' },
+    openSections: ['sizes'],
+    highlight: ['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s'],
+  },
+}
+
+const ALGORITHM_FALLBACK_DEFAULTS: AlgorithmDefaults = {
+  tab: 'transition',
+  filters: {},
+  openSections: ['performance', 'security', 'sizes'],
+}
+
+/** Resolve the algorithms-page defaults for the active persona, or a
+ *  developer-like baseline when no persona is selected. */
+export function getAlgorithmDefaults(persona: PersonaId | null): AlgorithmDefaults {
+  if (!persona) return ALGORITHM_FALLBACK_DEFAULTS
+  return ALGORITHM_PERSONA_DEFAULTS[persona] ?? ALGORITHM_FALLBACK_DEFAULTS
+}
+
 /**
  * Top 3 landing page feature card paths to badge as "Recommended" per persona.
  */

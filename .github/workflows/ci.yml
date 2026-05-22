@@ -60,6 +60,14 @@ jobs:
       - name: Audit timeline aliases
         run: npm run audit:timeline-aliases
 
+      - name: Audit timeline evidence (every active row resolves to local file)
+        # Verifies that every active row in the latest timeline_*.csv has an
+        # acceptable entry in public/timeline/evidence/manifest.json
+        # (download_status ∈ {ok, paywall, skipped}). Catches regressions
+        # where a CSV row is added without electronic evidence backing.
+        # Audit-only — no network calls, deterministic.
+        run: npm run audit:timeline-evidence
+
       - name: Audit compliance country tokens
         run: npm run audit:compliance-countries
 
@@ -179,7 +187,7 @@ jobs:
 
       - name: Apply WASM label
         if: github.event_name == 'pull_request' && steps.wasm-detect.outputs.wasm_changed == 'true'
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             github.rest.issues.addLabels({

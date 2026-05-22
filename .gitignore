@@ -243,6 +243,10 @@ scripts/*
 # against the latest Timeline CSV. Pure read-only against public data.
 !scripts/audit-timeline-aliases.ts
 
+# Parallel-session worktree helper — developer tooling, no crypto or data
+# secrets. Documented in CLAUDE.md ("Parallel sessions: use git worktrees").
+!scripts/new-worktree.sh
+
 # Compliance country-token audit — runs in CI. Validates every country/region
 # token in the latest compliance CSV resolves through COUNTRY_CODE_TO_NAME and
 # COUNTRY_TO_REGION in src/data/complianceData.ts. Pure read-only.
@@ -251,6 +255,17 @@ scripts/*
 # Semantic-token audit — CI gate that scans src/ for hardcoded Tailwind palette
 # classes that violate ux-standard.md §S1.2. Pure read-only against public src.
 !scripts/audit-semantic-tokens.ts
+
+# Timeline electronic-evidence pipeline — mirrors the threats-evidence pattern.
+# Downloads SourceUrl content per active CSV row to public/timeline/ and emits
+# public/timeline/evidence/manifest.json so the Gantt popover can prove its
+# claims are backed by on-disk documents. Audit script is the CI gate.
+!scripts/download-timeline-evidence.ts
+!scripts/audit-timeline-evidence.ts
+!scripts/sync-timeline-csv-from-manifest.ts
+!scripts/wayback-snapshot-timeline.ts
+!scripts/snapshot-timeline-via-playwright.ts
+!scripts/audit-timeline-enrichment-freshness.ts
 
 # Private CI workflows (compliance scraper runs locally, not in public CI)
 .github/workflows/update-compliance.yml

@@ -2,12 +2,18 @@
   "https://www.sdxcentral.com/articles/analysis/china-russia-to-adopt-slightly-different-pqc-standards-from-us/2022/10/": {
     "label": "China:CACR — CACR PQC Competition Results",
     "reason": "forbidden",
-    "date": "2026-02-27T04:18:47.211Z"
+    "date": "2026-02-27T04:18:47.211Z",
+    "localFile": "Playwright_www-sdxcentral-com_10.html",
+    "resolved": "2026-05-22T22:49:18.120Z",
+    "note": "Playwright snapshot (179241b) saved as Playwright_www-sdxcentral-com_10.html."
   },
   "https://www.gsma.com/solutions-and-impact/technologies/security/gsma_resources/post-quantum-cryptography-guidelines-for-telecom-use-cases-pq-03-2/": {
     "label": "International:GSMA — PQ.03 v2.0 Guidelines",
     "reason": "forbidden",
-    "date": "2026-02-27T04:19:06.844Z"
+    "date": "2026-02-27T04:19:06.844Z",
+    "localFile": "Wayback_www-gsma-com_post-quantum-cryptography-guidelines-for-telecom-use-cases-p.html",
+    "resolved": "2026-05-22T22:22:52.364Z",
+    "note": "Wayback snapshot 20260110211217 (85652b) saved as Wayback_www-gsma-com_post-quantum-cryptography-guidelines-for-telecom-use-cases-p.html."
   },
   "https://www.gov.il/en/departments/incd/govil-landing-page": {
     "label": "Israel:INCD — National Cybersecurity Strategy 2025-2028",
@@ -17,32 +23,50 @@
   "https://www.congress.gov/bill/117th-congress/house-bill/7535": {
     "label": "United States:Congress — Quantum Computing Cybersecurity Preparedness Act",
     "reason": "forbidden",
-    "date": "2026-02-27T04:19:46.382Z"
+    "date": "2026-02-27T04:19:46.382Z",
+    "localFile": "Wayback_www-congress-gov_7535.html",
+    "resolved": "2026-05-22T22:22:55.065Z",
+    "note": "Wayback snapshot 20260316221358 (360535b) saved as Wayback_www-congress-gov_7535.html."
   },
   "https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF": {
     "label": "United States:NSA — CNSA 2.0 Published",
     "reason": "forbidden",
-    "date": "2026-02-27T04:19:47.107Z"
+    "date": "2026-02-27T04:19:47.107Z",
+    "localFile": "Wayback_media-defense-gov_csa-cnsa-2-0-algorithms-pdf.pdf",
+    "resolved": "2026-05-22T22:22:56.863Z",
+    "note": "Wayback snapshot 20241215203633 (376129b) saved as Wayback_media-defense-gov_csa-cnsa-2-0-algorithms-pdf.pdf."
   },
   "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF": {
     "label": "United States:NSA — CNSA 2.0 Algorithms Revised",
     "reason": "forbidden",
-    "date": "2026-02-27T04:19:50.593Z"
+    "date": "2026-02-27T04:19:50.593Z",
+    "localFile": "Wayback_media-defense-gov_csa-cnsa-2-0-algorithms-pdf.pdf",
+    "resolved": "2026-05-22T22:22:58.893Z",
+    "note": "Wayback snapshot 20260423073320 (586858b) saved as Wayback_media-defense-gov_csa-cnsa-2-0-algorithms-pdf.pdf."
   },
   "https://www.nccoe.nist.gov/crypto-agility-considerations-migrating-post-quantum-cryptographic-algorithms": {
     "label": "United States:NIST NCCoE — PQC Interoperability Testing",
     "reason": "forbidden",
-    "date": "2026-02-27T04:19:59.968Z"
+    "date": "2026-02-27T04:19:59.968Z",
+    "localFile": "Wayback_www-nccoe-nist-gov_crypto-agility-considerations-migrating-post-quantum-cryptog.html",
+    "resolved": "2026-05-22T22:23:00.397Z",
+    "note": "Wayback snapshot 20260209202526 (112882b) saved as Wayback_www-nccoe-nist-gov_crypto-agility-considerations-migrating-post-quantum-cryptog.html."
   },
   "https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF": {
     "label": "United States:NSA — NSS Acquisitions CNSA 2.0 Required",
     "reason": "forbidden",
-    "date": "2026-02-27T04:20:00.655Z"
+    "date": "2026-02-27T04:20:00.655Z",
+    "localFile": "Wayback_media-defense-gov_csi-cnsa-2-0-faq-pdf.pdf",
+    "resolved": "2026-05-22T22:23:02.112Z",
+    "note": "Wayback snapshot 20260512204705 (441742b) saved as Wayback_media-defense-gov_csi-cnsa-2-0-faq-pdf.pdf."
   },
   "https://trustedcomputinggroup.org/resource/tpm-library-specification/": {
     "label": "Global:TCG — TPM 2.0 PQC Library Specification Draft",
     "reason": "forbidden",
-    "date": "2026-03-12T21:45:57.786Z"
+    "date": "2026-03-12T21:45:57.786Z",
+    "localFile": "Wayback_trustedcomputinggroup-org_tpm-library-specification.html",
+    "resolved": "2026-05-22T22:23:06.038Z",
+    "note": "Wayback snapshot 20260428184159 (143527b) saved as Wayback_trustedcomputinggroup-org_tpm-library-specification.html."
   },
   "https://cyber.gouv.fr/sites/default/files/document/follow_up_position_paper_on_post_quantum_cryptography.pdf": {
     "refId": "ANSSI-PQC-Follow-up",
@@ -93,5 +117,49 @@
     "label": "International:GSMA — Mobile Network Operator PQC Transition Window",
     "reason": "forbidden",
     "date": "2026-05-07T02:29:37.203Z"
+  },
+  "https://www.cyber.gov.au/business-government/secure-design/planning-for-post-quantum-cryptography": {
+    "label": "Australia:ASD — Planning for Post-Quantum Cryptography (canonical, multi-row)",
+    "reason": "forbidden",
+    "note": "Akamai/Cloudflare-style WAF returns 503 to any automated GET (verified via manual curl: HTTP/2 stream reset, exit 92). Referenced by 6 timeline rows. Future: fetch via Wayback (web.archive.org has 2025-09-23 snapshot).",
+    "date": "2026-05-22T19:50:00.000Z"
+  },
+  "https://inforegulator.org.za": {
+    "label": "South Africa:IR — Information Regulator (POPIA enforcement landing)",
+    "reason": "fetch-failed",
+    "note": "Returns 200 with 252 KB HTML to curl, but Node 20 undici fetch errors out with 'fetch failed' (likely TLS/SNI incompatibility). Future: fetch via Wayback or playwright fallback. Wayback snapshot 20260518175830 (241273b) saved as Wayback_inforegulator-org-za_index.html.",
+    "date": "2026-05-22T19:50:00.000Z",
+    "localFile": "Wayback_inforegulator-org-za_index.html",
+    "resolved": "2026-05-22T22:23:11.296Z"
+  },
+  "https://www.ciena.com/insights/blog/2026/1.6t-quantum-safe-encryption-protecting-critical-data-at-scale": {
+    "label": "United States:Ciena — 1.6T Quantum-Safe Optical Encryption",
+    "reason": "forbidden",
+    "note": "Returns HTTP 403 to automated GET. Real source verified manually. Wayback snapshot 20260306115535 (130345b) saved as Wayback_www-ciena-com_1-6t-quantum-safe-encryption-protecting-critical-data-at-sca.html.",
+    "date": "2026-05-22T20:00:00.000Z",
+    "localFile": "Wayback_www-ciena-com_1-6t-quantum-safe-encryption-protecting-critical-data-at-sca.html",
+    "resolved": "2026-05-22T22:23:13.820Z"
+  },
+  "https://trustedcomputinggroup.org/": {
+    "label": "Global:TCG — TPM 2.0 v1.85 PQC Library Specification Draft (landing page)",
+    "reason": "forbidden",
+    "note": "Returns HTTP 403 to automated GET. Wayback snapshot 20260519104022 (157411b) saved as Wayback_trustedcomputinggroup-org_index.html.",
+    "date": "2026-05-22T20:00:00.000Z",
+    "localFile": "Wayback_trustedcomputinggroup-org_index.html",
+    "resolved": "2026-05-22T22:23:15.491Z"
+  },
+  "https://ndpc.gov.ng": {
+    "label": "Nigeria:NDPC — Nigeria Data Protection Act 2023 (landing)",
+    "reason": "forbidden",
+    "note": "Returns HTTP 403 to automated GET. Wayback snapshot 20260406102057 (394459b) saved as Wayback_ndpc-gov-ng_index.html.",
+    "date": "2026-05-22T20:00:00.000Z",
+    "localFile": "Wayback_ndpc-gov-ng_index.html",
+    "resolved": "2026-05-22T22:23:17.149Z"
+  },
+  "https://www.gsma.com/solutions-and-impact/technologies/security/gsma_resources/post-quantum-telco-network-impact-assessment-guidelines/": {
+    "label": "GSMA — PQ.03 v2.0 Guidelines",
+    "reason": "forbidden",
+    "note": "Returns HTTP 403 to automated GET. GSMA hardens its CDN against bots.",
+    "date": "2026-05-22T20:00:00.000Z"
   }
 }

@@ -17,6 +17,7 @@ import {
   getTimelineEnrichmentKey,
 } from '../../data/timelineEnrichmentData'
 import { TimelineAnalysisPanel } from './TimelineAnalysisPanel'
+import { TimelineEvidenceBadge } from './TimelineEvidenceBadge'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
 import { Button } from '@/components/ui/button'
@@ -249,6 +250,27 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                   </div>
                 </div>
               </div>
+
+              {/* Electronic evidence — file/badge surface proves the
+                  primary event has on-disk evidence backing the source URL.
+                  Driven by the timeline evidence manifest pipeline
+                  (`npm run download:timeline-evidence`). */}
+              {primaryEvent &&
+                (primaryEvent.localFile ||
+                  primaryEvent.confidenceScore !== undefined ||
+                  primaryEvent.trustedSourceIdStatus) && (
+                  <div className="pt-3 border-t border-border">
+                    <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs mb-1.5">
+                      Electronic evidence
+                    </span>
+                    <TimelineEvidenceBadge
+                      confidenceScore={primaryEvent.confidenceScore}
+                      trustedSourceIdStatus={primaryEvent.trustedSourceIdStatus}
+                      localFile={primaryEvent.localFile}
+                      lastVerifiedDate={primaryEvent.sourceDate}
+                    />
+                  </div>
+                )}
 
               <div className="flex items-center gap-2">
                 <EndorseButton

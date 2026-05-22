@@ -7,6 +7,8 @@ import {
   TRANSPORT_ISSUES,
   DRAFT_STAGE_LEVEL,
   DRAFT_STAGE_SHORT,
+  stageCollapseAt,
+  granularityForPersona,
   type DeploymentPosture,
   type DimensionStatusValue,
   type LiveDeployment,
@@ -16,7 +18,10 @@ import {
   type DimensionRef,
   type OssLibrary,
   type PlaygroundTool,
+  type PersonaStageGranularity,
 } from '../../data/pqcProtocolMatrix'
+import { usePersonaStore } from '../../store/usePersonaStore'
+import { StageCollapseToggle } from './StageCollapseToggle'
 import {
   ExternalLink,
   FlaskConical,
@@ -97,6 +102,8 @@ interface DimensionBadgeProps {
   compact?: boolean
   /** Transport-layer blocker names to surface in the compact tooltip (heatmap mode only). */
   blockerNames?: string[]
+  /** Effective palette granularity — set at the table level from persona + any user override. */
+  granularity?: PersonaStageGranularity
 }
 
 /** Short display label for a draft slug: drop the boilerplate prefix so the
@@ -143,11 +150,16 @@ function dimensionTone(value: DimensionStatusValue): string {
  * `stage`, the matrix renders this finer gradient instead of the 5-bucket
  * coarse coloring. Uses semantic tokens only — no raw palette classes (see
  * CLAUDE.md UX rules).
+ *
+ * `granularity` collapses the 0..7 raw level into 2 / 3 / 8 tiers. Binary
+ * personas (executive/ops/curious) only ever see tiers 0 and 7; ternary
+ * (developer/architect) see {0, 1, 4, 7}; researcher / no-persona / explicit
+ * "Full" override keeps the full graduated palette.
  */
-function dimensionStageTone(status: DimensionStatus): string {
+function dimensionStageTone(status: DimensionStatus, granularity: PersonaStageGranularity): string {
   if (!status.stage) return dimensionTone(status.value)
-  const level = DRAFT_STAGE_LEVEL[status.stage]
-  switch (level) {
+  const tier = stageCollapseAt(status.stage, granularity)
+  switch (tier) {
     case 0:
       return 'bg-muted text-muted-foreground border-border'
     case 1:
@@ -251,11 +263,19 @@ function DimensionRefChip({ cellRef }: { cellRef: DimensionRef }) {
   )
 }
 
-function DimensionBadge({ status, compact = false, blockerNames }: DimensionBadgeProps) {
+function DimensionBadge({
+  status,
+  compact = false,
+  blockerNames,
+  granularity = 'full',
+}: DimensionBadgeProps) {
   const useStage = Boolean(status.stage)
-  const toneClass = useStage ? dimensionStageTone(status) : dimensionTone(status.value)
+  const toneClass = useStage ? dimensionStageTone(status, granularity) : dimensionTone(status.value)
   const stageLabel = status.stage ? DRAFT_STAGE_SHORT[status.stage] : null
   const stageLevel = status.stage ? DRAFT_STAGE_LEVEL[status.stage] : null
+  // Persona-collapsed tier — exposed via data-attr so E2E can assert palette
+  // count without scraping Tailwind class strings (see plan §Risks #2).
+  const stageTier = status.stage ? stageCollapseAt(status.stage, granularity) : null
   // Build a comprehensive tooltip so compact mode loses nothing — hover gives
   // the stageNote, plain note, ref IDs, and any transport-layer blockers at a glance.
   const tooltipParts = [
@@ -275,6 +295,7 @@ function DimensionBadge({ status, compact = false, blockerNames }: DimensionBadg
         <span
           className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium ${toneClass}`}
           title={tooltip}
+          data-stage-tier={stageTier ?? undefined}
         >
           {stageLabel ? (
             <>
@@ -517,6 +538,14 @@ const RECOMMENDED_ROWS = PROTOCOL_MATRIX.filter((r) => r.recommended)
 
 export function PQCProtocolMatrix() {
   const [searchParams] = useSearchParams()
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const personaGranularity = granularityForPersona(selectedPersona)
+  // User-side override; null means "follow persona default". Researcher / no
+  // persona never sees the toggle so the override stays null for them.
+  const [granularityOverride, setGranularityOverride] = useState<PersonaStageGranularity | null>(
+    null
+  )
+  const effectiveGranularity: PersonaStageGranularity = granularityOverride ?? personaGranularity
   const [viewMode, setViewMode] = useState<ViewMode>('heatmap')
   const [searchText, setSearchText] = useState('')
   const [statusFilter, setStatusFilter] = useState<DimensionStatusValue[]>([])
@@ -704,6 +733,15 @@ export function PQCProtocolMatrix() {
             </Button>
           </div>
         </div>
+        {personaGranularity !== 'full' && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1">
+            <StageCollapseToggle
+              persona={selectedPersona}
+              value={effectiveGranularity}
+              onChange={(next) => setGranularityOverride(next === personaGranularity ? null : next)}
+            />
+          </div>
+        )}
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-[11px]">
           <span className="text-muted-foreground">IETF stage</span>
           <div className="inline-flex overflow-hidden rounded-md border border-border text-[10px] tabular-nums">
@@ -1004,6 +1042,7 @@ export function PQCProtocolMatrix() {
                       status={p.dimensions.pureKem}
                       compact={isHeatmap}
                       blockerNames={rowBlockerNames}
+                      granularity={effectiveGranularity}
                     />
                   </td>
                   <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
@@ -1011,6 +1050,7 @@ export function PQCProtocolMatrix() {
                       status={p.dimensions.hybridKem}
                       compact={isHeatmap}
                       blockerNames={rowBlockerNames}
+                      granularity={effectiveGranularity}
                     />
                   </td>
                   <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
@@ -1018,6 +1058,7 @@ export function PQCProtocolMatrix() {
                       status={p.dimensions.pureSig}
                       compact={isHeatmap}
                       blockerNames={rowBlockerNames}
+                      granularity={effectiveGranularity}
                     />
                   </td>
                   <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
@@ -1025,6 +1066,7 @@ export function PQCProtocolMatrix() {
                       status={p.dimensions.hybridSig}
                       compact={isHeatmap}
                       blockerNames={rowBlockerNames}
+                      granularity={effectiveGranularity}
                     />
                   </td>
                   <td className="px-3 py-3">
