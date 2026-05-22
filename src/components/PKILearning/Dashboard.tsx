@@ -35,6 +35,10 @@ import { ModuleCard } from './ModuleCard'
 import { LearnViewToggle, type LearnViewMode } from './LearnViewToggle'
 import { LearnTrackStack } from './LearnTrackStack'
 import { ModuleTable, type ModuleTableItem } from './ModuleTable'
+import { PersonaPathView } from './PersonaPathView'
+import { RecommendedPathBanner } from './RecommendedPathBanner'
+import { usePersonaPathItems } from './usePersonaPathItems'
+import { useLearnStore } from '../../store/useLearnStore'
 import {
   MODULE_CATALOG,
   MODULE_TRACKS,
@@ -460,6 +464,10 @@ export const Dashboard: React.FC = () => {
   const isEmbedded = useIsEmbedded()
   const reduced = usePrefersReducedMotion()
   const { modules } = useModuleStore()
+  // When path view is active for executive/curious, the persona's curated path already
+  // surfaces the common-ground modules with a badge — the standalone callout would
+  // duplicate them. Suppress the callout in that case; keep it for null persona.
+  const showEverything = useLearnStore((s) => s.showEverything)
 
   const activeModules = MODULE_TRACKS.flatMap((t) => t.modules)
 
@@ -550,12 +558,15 @@ export const Dashboard: React.FC = () => {
         />
       )}
 
-      {/* Common Ground callout — for executive, curious, or no-persona users */}
+      {/* Common Ground callout — shown only when path view ISN'T already surfacing these
+          modules. For executive/curious in default (non-showEverything) mode, PersonaPathView
+          renders the same five modules with a "Common Ground" badge, so the standalone
+          callout would duplicate them. Keep the callout for null persona (no path to show). */}
       {!isEmbedded &&
         (selectedPersona === null ||
           selectedPersona === undefined ||
-          selectedPersona === 'executive' ||
-          selectedPersona === 'curious') && (
+          ((selectedPersona === 'executive' || selectedPersona === 'curious') &&
+            showEverything)) && (
           <motion.div
             initial={{ opacity: 0, y: reduced ? 0 : -8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -656,13 +667,38 @@ const ModuleTracksGrid = ({
   const [selectedTrack, setSelectedTrack] = useState(initialTrack)
   const [selectedDifficulty, setSelectedDifficulty] = useState('All')
   const [selectedStatus, setSelectedStatus] = useState('All')
-  // Professional personas pre-select their learning path; curious users start with all modules visible to explore, but advanced topics are guarded in the carousel.
   // ?persona= URL param wins over the persona store on initial mount so chatbot deep links land precisely.
+  // Every persona — including curious — starts pre-filtered to its own curated path. The
+  // "Show me everything (advanced)" escape inside PersonaPathView resets this back to 'All'.
+  const effectivePersona: string | null = initialPersona ?? selectedPersona ?? null
   const [selectedPersonaFilter, setSelectedPersonaFilter] = useState<string>(
-    initialPersona ?? (selectedPersona === 'curious' ? 'All' : (selectedPersona ?? 'All'))
+    effectivePersona ?? 'All'
   )
-  const [sortBy, setSortBy] = useState<LearnSortMode>('default')
-  const [viewMode, setViewMode] = useState<LearnViewMode>('stack')
+  const showEverything = useLearnStore((s) => s.showEverything)
+  const setShowEverything = useLearnStore((s) => s.setShowEverything)
+  const researcherSortOverride = useLearnStore((s) => s.researcherSortOverride)
+  const setResearcherSortOverride = useLearnStore((s) => s.setResearcherSortOverride)
+  // Researcher: default to 'recently' so they land on the freshest content.
+  // showEverything (curious escape) wins over the persona-derived sort if engaged.
+  const initialSort: LearnSortMode = (() => {
+    if (showEverything) return 'default'
+    if (effectivePersona === 'researcher') {
+      return (researcherSortOverride as LearnSortMode) ?? 'recently'
+    }
+    return 'default'
+  })()
+  const [sortBy, setSortBy] = useState<LearnSortMode>(initialSort)
+  // viewMode default depends on the effective persona:
+  //  - researcher / null persona → 'stack' (navigation, not curation)
+  //  - showEverything engaged (curious only) → 'stack'
+  //  - every other persona → 'path' (their curated, phased view)
+  const initialViewMode: LearnViewMode = (() => {
+    if (showEverything) return 'stack'
+    if (!effectivePersona) return 'stack'
+    if (effectivePersona === 'researcher') return 'stack'
+    return 'path'
+  })()
+  const [viewMode, setViewMode] = useState<LearnViewMode>(initialViewMode)
   // Pre-populate from store only when user has explicitly overridden the tier
   const [selectedNiceTier, setSelectedNiceTier] = useState<NiceProficiencyTier | 'All'>(
     niceTierOverridden ? storeNiceTier : 'All'
@@ -678,6 +714,14 @@ const ModuleTracksGrid = ({
     const timer = setTimeout(() => setDebouncedSearch(searchText), 150)
     return () => clearTimeout(timer)
   }, [searchText])
+
+  // Persist researcher sort selection across sessions so changing persona to researcher
+  // doesn't lose their chosen sort. Only writes when researcher is the active persona.
+  useEffect(() => {
+    if (selectedPersona === 'researcher') {
+      setResearcherSortOverride(sortBy)
+    }
+  }, [selectedPersona, sortBy, setResearcherSortOverride])
 
   // Dropdown → store: changing role in the grid updates the persona store
   const handlePersonaFilterChange = useCallback(
@@ -739,33 +783,16 @@ const ModuleTracksGrid = ({
     setSortBy('default')
   }
 
-  // Build flat item list (for Cards and Table modes)
+  // Build flat item list (for Cards and Table modes). When a persona filter is active,
+  // delegate to the shared usePersonaPathItems helper so PersonaPathView and the
+  // cards/table renderers consume the same flat shape (Risk #2 in the plan).
+  const personaPathSummary = usePersonaPathItems(personaFilterActive ? selectedPersonaFilter : null)
   const flatItems = useMemo<ModuleTableItem[]>(() => {
-    if (personaFilterActive) {
-      const persona = PERSONAS[selectedPersonaFilter as PersonaId]
-      if (!persona) return []
-      return persona.pathItems.map((item) => {
-        if (item.type === 'module') {
-          const mod = MODULE_CATALOG[item.moduleId]
-          return {
-            kind: 'module' as const,
-            module: mod,
-            track: MODULE_TO_TRACK[item.moduleId] ?? '',
-          }
-        }
-        return {
-          kind: 'checkpoint' as const,
-          id: item.id,
-          label: item.label,
-          categoryCount: item.categories.length,
-          categories: item.categories,
-        }
-      })
-    }
+    if (personaPathSummary) return personaPathSummary.flatItems
     return MODULE_TRACKS.flatMap(({ track, modules: mods }) =>
       mods.map((module) => ({ kind: 'module' as const, module, track }))
     )
-  }, [personaFilterActive, selectedPersonaFilter])
+  }, [personaPathSummary])
 
   // Apply filters and sort to module items
   const filteredItems = useMemo<ModuleTableItem[]>(() => {
@@ -911,10 +938,15 @@ const ModuleTracksGrid = ({
     [navigate]
   )
 
-  // In stack mode, Track filter is hidden (the stack itself is the track navigator)
-  const showTrackFilter = viewMode !== 'stack'
-  // Sort is disabled in stack mode and when persona filter active
-  const sortDisabled = viewMode === 'stack' || personaFilterActive
+  // In stack/path mode, Track filter is hidden (the stack itself is the track navigator;
+  // path mode renders its own checkpoint-bounded phases).
+  const showTrackFilter = viewMode !== 'stack' && viewMode !== 'path'
+  // Sort is meaningless in stack/path modes (their own ordering is intrinsic).
+  // For cards/table with a persona filter active, sort is allowed but a "Curated order"
+  // badge advertises the default so a custom sort is an explicit user choice.
+  const sortDisabled = viewMode === 'stack' || viewMode === 'path'
+  const curatedOrderActive = personaFilterActive && sortBy === 'default'
+  const sortChangedFromCurated = personaFilterActive && sortBy !== 'default'
 
   let activeFilterCount = 0
   if (selectedTrack !== 'All') activeFilterCount++
@@ -1086,7 +1118,11 @@ const ModuleTracksGrid = ({
                 </div>
                 <div className="space-y-2 flex flex-col pt-4 border-t border-border/50">
                   <span className="text-sm font-semibold text-foreground">View Mode</span>
-                  <LearnViewToggle mode={viewMode} onChange={setViewMode} />
+                  <LearnViewToggle
+                    mode={viewMode}
+                    onChange={setViewMode}
+                    pathAvailable={personaFilterActive}
+                  />
                 </div>
               </div>
             }
@@ -1154,8 +1190,33 @@ const ModuleTracksGrid = ({
           </Button>
         )}
 
+        {/* Curated-order badge — shown when a persona path is active and sort is the
+            persona's curated default. Replaces the silent sort-disable per P1-2. */}
+        {curatedOrderActive && (
+          <span
+            className="text-[10px] font-semibold uppercase tracking-wider text-secondary border border-secondary/30 bg-secondary/10 rounded-full px-2 py-1"
+            title="Sort follows the curated learning order for this persona"
+          >
+            Curated order
+          </span>
+        )}
+        {sortChangedFromCurated && (
+          <Button
+            variant="link"
+            size="sm"
+            onClick={() => setSortBy('default')}
+            className="text-xs"
+          >
+            Reset to curated
+          </Button>
+        )}
+
         {/* View toggle */}
-        <LearnViewToggle mode={viewMode} onChange={setViewMode} />
+        <LearnViewToggle
+                    mode={viewMode}
+                    onChange={setViewMode}
+                    pathAvailable={personaFilterActive}
+                  />
       </div>
 
       {/* Results count + clear (only in cards/table modes or when filters active in stack) */}
@@ -1191,6 +1252,49 @@ const ModuleTracksGrid = ({
           description="Try adjusting the search text or filter criteria."
           action={{ label: 'Clear filters', onClick: clearFilters }}
         />
+      )}
+
+      {/* ── Path mode (persona-curated phases) ── */}
+      {viewMode === 'path' && personaFilterActive && (
+        <div className="space-y-4">
+          {!isEmbedded && (
+            <RecommendedPathBanner
+              personaId={selectedPersonaFilter as PersonaId}
+              onResume={(id) => navigate(id)}
+            />
+          )}
+          <PersonaPathView
+            personaId={selectedPersonaFilter as PersonaId}
+            onSelectModule={(id) => {
+              logEvent('Learning', 'Path Module Click', personaLabel(id))
+              navigate(id)
+            }}
+            isModuleRelevant={isModuleRelevant}
+            isModuleAboveLevel={isModuleAboveLevel}
+            onShowEverything={() => {
+              setShowEverything(true)
+              setViewMode('stack')
+              setSelectedPersonaFilter('All')
+              setPersona(null)
+            }}
+          />
+          <details className="group">
+            <summary className="cursor-pointer text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-4 py-2 inline-flex items-center gap-2">
+              <span className="text-xs">▸</span>
+              Browse all {totalModuleCount} modules ({MODULE_TRACKS.length} tracks)
+            </summary>
+            <div className="mt-3">
+              <LearnTrackStack
+                navigate={navigate}
+                navigateToQuiz={navigateToQuiz}
+                filteredModuleIds={filteredModuleIds}
+                isModuleRelevant={isModuleRelevant}
+                isModuleAboveLevel={isModuleAboveLevel}
+                onClearFilters={clearFilters}
+              />
+            </div>
+          </details>
+        </div>
       )}
 
       {/* ── Stack mode ── */}
@@ -1300,7 +1404,7 @@ const ModuleTracksGrid = ({
         domain="module"
         limit={5}
         title="Module Content Updates"
-        defaultCollapsed={true}
+        defaultCollapsed={selectedPersona !== 'researcher'}
       />
     </div>
   )
