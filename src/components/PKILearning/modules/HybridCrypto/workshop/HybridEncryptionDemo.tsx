@@ -7,6 +7,7 @@ import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { StepWizard } from '@/components/PKILearning/modules/DigitalAssets/components/StepWizard'
 import type { Step } from '@/components/PKILearning/modules/DigitalAssets/components/StepWizard'
 import { useStepWizard } from '@/components/PKILearning/modules/DigitalAssets/hooks/useStepWizard'
+import { WorkshopOperationLog } from '@/components/PKILearning/common/WorkshopOperationLog'
 import {
   hsm_generateECKeyPair,
   hsm_generateMLKEMKeyPair,
@@ -589,6 +590,12 @@ export const HybridEncryptionDemo: React.FC = () => {
           error={wizard.error}
           isStepComplete={wizard.isStepComplete}
         />
+
+        {wizard.logEntries.length > 0 && (
+          <div className="mt-4">
+            <WorkshopOperationLog entries={wizard.logEntries} className="max-h-40" />
+          </div>
+        )}
       </div>
 
       {/* PKCS#11 call log */}

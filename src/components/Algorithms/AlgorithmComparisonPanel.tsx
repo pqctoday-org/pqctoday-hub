@@ -14,6 +14,7 @@ import {
   getEngineLabel,
   runBenchmark,
 } from '../../services/crypto/algorithmEngineResolver'
+import { WorkshopOperationLog, type LogEntry } from '../PKILearning/common/WorkshopOperationLog'
 import clsx from 'clsx'
 
 interface ComparisonField {
@@ -271,6 +272,7 @@ function BenchmarkSection({
   const [progress, setProgress] = useState('')
   const [runs, setRuns] = useState<BenchmarkRun[]>([])
   const [expandedAlgos, setExpandedAlgos] = useState<Set<string>>(new Set())
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   const toggleExpanded = useCallback((algoName: string) => {
     setExpandedAlgos((prev) => {
@@ -337,6 +339,7 @@ function BenchmarkSection({
     setRunning(true)
     setRuns([])
     setExpandedAlgos(new Set())
+    setLogEntries([])
     const allRuns: BenchmarkRun[] = []
 
     for (const algo of algorithms) {
@@ -345,6 +348,9 @@ function BenchmarkSection({
 
       setProgress(`Running ${algo.name}...`)
       for (let i = 0; i < opsCount; i++) {
+        const opLabel = `${algo.name} — run ${i + 1}/${opsCount}`
+        const startedAt = performance.now()
+        setLogEntries((prev) => [...prev, { status: 'pending', message: opLabel }])
         try {
           const result = await runBenchmark(algo.name)
           allRuns.push({
@@ -356,6 +362,17 @@ function BenchmarkSection({
             verifyDecapsTps: result.verifyDecapsMs > 0 ? 1000 / result.verifyDecapsMs : 0,
           })
           setRuns([...allRuns])
+          const signTps = result.signEncapsMs > 0 ? 1000 / result.signEncapsMs : 0
+          const verifyTps = result.verifyDecapsMs > 0 ? 1000 / result.verifyDecapsMs : 0
+          setLogEntries((prev) => {
+            const next = [...prev]
+            next[next.length - 1] = {
+              status: 'success',
+              message: `${opLabel} — keyGen ${result.keyGenMs.toFixed(1)}ms · sign/encap ${signTps.toFixed(0)} ops/s · verify/decap ${verifyTps.toFixed(0)} ops/s`,
+              durationMs: Math.round(performance.now() - startedAt),
+            }
+            return next
+          })
         } catch (err) {
           const message = err instanceof Error ? err.message : 'Unknown error'
           console.error(`[Benchmark] ${algo.name} run ${i + 1} failed:`, err)
@@ -369,6 +386,15 @@ function BenchmarkSection({
             error: message,
           })
           setRuns([...allRuns])
+          setLogEntries((prev) => {
+            const next = [...prev]
+            next[next.length - 1] = {
+              status: 'error',
+              message: `${opLabel} — ${message}`,
+              durationMs: Math.round(performance.now() - startedAt),
+            }
+            return next
+          })
         }
       }
     }
@@ -410,6 +436,10 @@ function BenchmarkSection({
           {running ? progress || 'Running...' : 'Run Benchmark'}
         </Button>
       </div>
+
+      {logEntries.length > 0 && (
+        <WorkshopOperationLog entries={logEntries} className="mb-4 max-h-48" />
+      )}
 
       {runs.length > 0 && (
         <div className="overflow-x-auto">

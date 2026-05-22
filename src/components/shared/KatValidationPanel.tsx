@@ -6,11 +6,16 @@
  * against NIST FIPS 203/204 ACVP test vectors and displays results inline.
  */
 import { useState } from 'react'
-import { ShieldCheck, Loader2, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { ShieldCheck, Loader2, CheckCircle, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useHSM } from '@/hooks/useHSM'
 import { runKAT } from '@/utils/katRunner'
 import type { KATResult, KatTestSpec } from '@/utils/katRunner'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
+import { ErrorAlert } from '@/components/ui/error-alert'
 
 interface KatValidationPanelProps {
   specs: KatTestSpec[]
@@ -27,23 +32,72 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
   const [results, setResults] = useState<KATResult[]>([])
   const [running, setRunning] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   const runKATs = async () => {
     setRunning(true)
     setError(null)
     setResults([])
+    setLogEntries([])
+
+    const beginOp = (message: string) => {
+      const startedAt = performance.now()
+      setLogEntries((prev) => [...prev, { status: 'pending', message }])
+      return {
+        done: (label?: string) => {
+          setLogEntries((prev) => {
+            const next = [...prev]
+            next[next.length - 1] = {
+              status: 'success',
+              message: label ?? message,
+              durationMs: Math.round(performance.now() - startedAt),
+            }
+            return next
+          })
+        },
+        fail: (label?: string) => {
+          setLogEntries((prev) => {
+            const next = [...prev]
+            next[next.length - 1] = {
+              status: 'error',
+              message: label ?? message,
+              durationMs: Math.round(performance.now() - startedAt),
+            }
+            return next
+          })
+        },
+      }
+    }
 
     try {
       if (!hsm.isReady) {
-        await hsm.initialize()
+        const op = beginOp('Initializing softhsmv3 HSM module…')
+        try {
+          await hsm.initialize()
+          op.done('softhsmv3 HSM module ready')
+        } catch (e) {
+          op.fail(`HSM init failed — ${e instanceof Error ? e.message : String(e)}`)
+          throw e
+        }
       }
       const M = hsm.moduleRef.current!
       const hSession = hsm.hSessionRef.current
       const out: KATResult[] = []
       for (const spec of specs) {
-        const r = await runKAT(M, hSession, spec)
-        out.push(r)
-        setResults([...out])
+        const op = beginOp(`Running ${spec.useCase || spec.id} via PKCS#11…`)
+        try {
+          const r = await runKAT(M, hSession, spec)
+          out.push(r)
+          setResults([...out])
+          op.done(
+            r.status === 'pass'
+              ? `Passed ${r.algorithm || spec.id} — ${r.details || 'all vectors validated'}`
+              : `${r.status.toUpperCase()} ${r.algorithm || spec.id} — ${r.details || 'no details'}`
+          )
+        } catch (e) {
+          op.fail(`${spec.useCase || spec.id} — ${e instanceof Error ? e.message : String(e)}`)
+          throw e
+        }
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : String(err))
@@ -88,13 +142,11 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
         </Button>
       </div>
 
+      {/* Operation log + progress bar (A7) */}
+      {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} className="max-h-48" />}
+
       {/* Error banner */}
-      {error && (
-        <div className="flex items-center gap-2 text-xs text-status-error bg-status-error/10 rounded-lg px-3 py-2">
-          <AlertCircle size={13} className="shrink-0" />
-          {error}
-        </div>
-      )}
+      {error && <ErrorAlert message={error} onRetry={() => void runKATs()} />}
 
       {/* Summary badges */}
       {done && (

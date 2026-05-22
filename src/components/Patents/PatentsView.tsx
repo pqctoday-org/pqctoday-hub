@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { ScrollText } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { PageHeader } from '@/components/common/PageHeader'
+import { PreviewBanner } from '@/components/common/PreviewBanner'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PatentsTable } from './PatentsTable'
 import type { SortKey, SortDir } from './PatentsTable'
@@ -211,6 +212,12 @@ export function PatentsView() {
         dataSource={dataSource}
         onExport={handleExport}
       />
+
+      {selectedPersona === 'curious' && (
+        <div className="px-4">
+          <PreviewBanner pageContext="Researcher, Architect, Developer" />
+        </div>
+      )}
 
       <div className="flex flex-1 flex-col overflow-hidden px-4 pb-4">
         <Tabs

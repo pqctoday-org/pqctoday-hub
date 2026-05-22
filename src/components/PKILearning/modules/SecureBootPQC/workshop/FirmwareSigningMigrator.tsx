@@ -51,6 +51,10 @@ import {
   type Step,
 } from '@/components/PKILearning/modules/DigitalAssets/components/StepWizard'
 import { ErrorAlert } from '@/components/ui/error-alert'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
 
 // ---------------------------------------------------------------------------
@@ -453,6 +457,7 @@ const HASH_ALGO_OPTIONS = ['SHA-256', 'SHA-384', 'SHA-512']
 export const FirmwareSigningMigrator: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false)
   const [signError, setSignError] = useState<string>('')
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   // StepWizard state
   const [wizardStep, setWizardStep] = useState(0)
@@ -696,6 +701,15 @@ export const FirmwareSigningMigrator: React.FC = () => {
     }
     setSignError('')
     setIsProcessing(true)
+
+    const startedAt = performance.now()
+    setLogEntries((prev) => [
+      ...prev,
+      {
+        status: 'pending',
+        message: `Dual-signing firmware: ${classicalAlgo} (classical) + ${pqcAlgo} (PQC)…`,
+      },
+    ])
     try {
       const M = hsm.moduleRef.current as unknown as SoftHSMModule
       const hSession = hsm.hSessionRef.current
@@ -764,10 +778,31 @@ export const FirmwareSigningMigrator: React.FC = () => {
         signerLabel: pqcAlgo,
       })
       setPqcCmsDer(pqcCms)
+      setLogEntries((prev) => {
+        const next = [...prev]
+        next[next.length - 1] = {
+          status: 'success',
+          message: `Dual-signed firmware: ${classicalAlgo} + ${pqcAlgo}`,
+
+          durationMs: Math.round(performance.now() - startedAt),
+        }
+        return next
+      })
     } catch (err) {
       setIsSimulationMode(true)
       console.error('[FirmwareSigningMigrator] sign error:', err)
-      setSignError(`Sign failed: ${err instanceof Error ? err.message : String(err)}`)
+      const msg = err instanceof Error ? err.message : String(err)
+      setSignError(`Sign failed: ${msg}`)
+      setLogEntries((prev) => {
+        const next = [...prev]
+        next[next.length - 1] = {
+          status: 'error',
+          message: `Dual-sign ${classicalAlgo} + ${pqcAlgo} — ${msg}`,
+
+          durationMs: Math.round(performance.now() - startedAt),
+        }
+        return next
+      })
     }
     setIsProcessing(false)
   }, [hsm, classicalAlgo, pqcAlgo, hashAlgo, fileBytes])
@@ -1415,7 +1450,12 @@ export const FirmwareSigningMigrator: React.FC = () => {
                   </span>
                 )}
               </div>
-              {signError && <ErrorAlert message={signError} />}
+              {logEntries.length > 0 && (
+                <WorkshopOperationLog entries={logEntries} className="max-h-32 mt-3" />
+              )}
+              {signError && (
+                <ErrorAlert message={signError} onRetry={() => void handleSignBoth()} />
+              )}
             </div>
           )}
 

@@ -7,6 +7,11 @@ import { ReportContent } from './ReportContent'
 import { ReportToc } from './ReportToc'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { computeAssessment } from '../../hooks/assessmentUtils'
+import { computeAssessmentAsync } from '../../hooks/assessment/orchestrator'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 import { useModuleStore } from '../../store/useModuleStore'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { REGION_COUNTRIES_MAP, getReportSectionConfig } from '../../data/personaConfig'
@@ -23,6 +28,10 @@ import type { AssessmentInput } from '../../hooks/assessmentTypes'
 import { PageHeader } from '../common/PageHeader'
 import { WorkflowBreadcrumb } from '../shared/WorkflowBreadcrumb'
 import { logReportViewed, logReportShareLinkOpened, logReportCta } from '@/utils/analytics'
+import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
+import { PersonaSuggestionCard } from '@/components/Assess/PersonaSuggestionCard'
+import { getBeltTierLabel } from '@/data/personaConfig'
+import { useAwarenessScore } from '@/hooks/useAwarenessScore'
 import { decodeShareToken } from '@/utils/reportShareToken'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
@@ -63,16 +72,115 @@ const REPORT_SECTION_ORDER: ReportSectionId[] = [
   'threatLandscape',
 ]
 
+/**
+ * Persona-flavored maturity tier chip rendered just under the page header
+ * (P15-P1-04). Only renders for personas with a tier-label override
+ * (executive, curious) per CC-13.
+ */
+function MaturityTierChip() {
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const { hasStarted, belt } = useAwarenessScore()
+  if (!hasStarted) return null
+  const tier = getBeltTierLabel(selectedPersona, belt.name)
+  if (!tier) return null
+  return (
+    <div className="mb-4 -mt-2 flex justify-center sm:justify-start">
+      <span className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border border-border bg-muted/30 text-muted-foreground">
+        <span
+          aria-hidden="true"
+          className="inline-block w-2 h-2 rounded-full"
+          style={{ backgroundColor: belt.color === '#F5F5F5' ? '#9CA3AF' : belt.color }}
+        />
+        <span className="text-foreground font-medium">{tier}</span>
+        <span className="text-muted-foreground">· {belt.name}</span>
+      </span>
+    </div>
+  )
+}
+
 export const ReportView: React.FC = () => {
   const { assessmentStatus, getInput, setResult, lastResult } = useAssessmentStore()
   useWorkflowPhaseTracker('assess')
   const input = getInput()
-  const result =
-    (assessmentStatus === 'complete' || assessmentStatus === 'in-progress') && input
-      ? computeAssessment(input)
-      : assessmentStatus === 'complete' && lastResult
-        ? lastResult
-        : null
+  // `getInput()` builds a fresh AssessmentInput on every store read, so plain
+  // useMemo([input]) never hits. Key on a stable serialization instead — the
+  // input is ~30 small primitive/array fields, so stringify is cheap relative
+  // to the 10-stage computeAssessment pipeline this guards against re-running
+  // on every render (was firing on every persona toggle, module-store update,
+  // or unrelated remount).
+  const inputKey = input ? JSON.stringify(input) : null
+
+  // Async report-compute path: runs the 10-stage pipeline with yields between
+  // stages so React can paint a progress log while the pipeline grinds.
+  // First-mount on a comprehensive assessment is 800-1500ms on slow machines;
+  // each yield gives the browser ~16ms to paint, so the bar animates.
+  const [computeState, setComputeState] = useState<{
+    inputKey: string | null
+    result: ReturnType<typeof computeAssessment> | null
+    log: LogEntry[]
+    computing: boolean
+  }>({ inputKey: null, result: null, log: [], computing: false })
+
+  useEffect(() => {
+    let cancelled = false
+    if ((assessmentStatus === 'complete' || assessmentStatus === 'in-progress') && input) {
+      // Re-using a previously-computed result if the inputKey is unchanged
+      // (avoids re-running the pipeline on every render — same purpose the
+      // earlier useMemo served).
+      if (computeState.inputKey === inputKey && computeState.result) return
+      setComputeState((prev) => ({
+        inputKey,
+        result: null,
+        log: [],
+        computing: true,
+        // Keep the previously-computed result while we re-run so the UI
+        // doesn't flicker an empty state between persona toggles.
+        ...(prev.inputKey === inputKey ? { result: prev.result } : {}),
+      }))
+      computeAssessmentAsync(input, (label, durationMs) => {
+        if (cancelled) return
+        setComputeState((prev) => ({
+          ...prev,
+          log: [...prev.log, { status: 'success', message: label, durationMs }],
+        }))
+      })
+        .then((r) => {
+          if (cancelled) return
+          setComputeState((prev) => ({ ...prev, result: r, computing: false }))
+        })
+        .catch((err) => {
+          if (cancelled) return
+          setComputeState((prev) => ({
+            ...prev,
+            computing: false,
+            log: [
+              ...prev.log,
+              {
+                status: 'error',
+                message: `Assessment failed — ${err instanceof Error ? err.message : String(err)}`,
+              },
+            ],
+          }))
+        })
+    } else if (assessmentStatus === 'complete' && lastResult) {
+      setComputeState({
+        inputKey: null,
+        result: lastResult,
+        log: [],
+        computing: false,
+      })
+    } else {
+      setComputeState({ inputKey: null, result: null, log: [], computing: false })
+    }
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputKey, assessmentStatus, lastResult])
+
+  const result = computeState.result
+  const reportComputing = computeState.computing
+  const reportLogEntries = computeState.log
   const persistedRef = useRef(false)
   const [searchParams] = useSearchParams()
 
@@ -295,8 +403,31 @@ export const ReportView: React.FC = () => {
     })
   }, [assessmentStatus])
 
+  // Active compute state: assessment exists, result still pending. Show
+  // the progress log so users see the 10-stage pipeline grinding rather
+  // than a blank page or stale spinner.
+  if (!result && reportComputing) {
+    return (
+      <div className="animate-fade-in">
+        <div className="max-w-xl mx-auto py-12">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center justify-center p-4 rounded-full bg-muted mb-4">
+              <FileBarChart className="text-primary" size={28} />
+            </div>
+            <h1 className="text-xl font-bold text-foreground mb-2">Generating your report…</h1>
+            <p className="text-sm text-muted-foreground">
+              Running the 10-stage scoring pipeline. This takes 0.5–2 seconds on most machines.
+            </p>
+          </div>
+          <WorkshopOperationLog entries={reportLogEntries} className="max-h-72" />
+        </div>
+      </div>
+    )
+  }
+
   // Empty state: no assessment started and no persisted result
   if (!result) {
+    const isCurious = selectedPersona === 'curious'
     return (
       <div className="animate-fade-in">
         <div className="max-w-lg mx-auto text-center py-16">
@@ -305,18 +436,31 @@ export const ReportView: React.FC = () => {
           </div>
           <h1 className="text-2xl font-bold text-foreground mb-3">No Report Yet</h1>
           <p className="text-muted-foreground mb-6">
-            Complete the PQC Risk Assessment to generate your personalized report with risk scores,
-            migration priorities, and actionable recommendations.
+            {isCurious
+              ? 'Curious what a finished report looks like? Browse an example before committing to the assessment — or jump straight in.'
+              : 'Complete the PQC Risk Assessment to generate your personalized report with risk scores, migration priorities, and actionable recommendations.'}
           </p>
-          <Link
-            to="/assess"
-            onClick={() => logReportCta('start-assessment')}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
-          >
-            <ClipboardCheck size={18} />
-            Start Assessment
-            <ArrowRight size={16} />
-          </Link>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {isCurious && (
+              <Link
+                to={EXAMPLE_REPORT_URL}
+                onClick={() => logReportCta('view-example')}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border bg-card text-foreground font-medium hover:border-primary/40 hover:bg-muted transition-colors"
+              >
+                <FileBarChart size={16} />
+                See an example report
+              </Link>
+            )}
+            <Link
+              to="/assess"
+              onClick={() => logReportCta('start-assessment')}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
+            >
+              <ClipboardCheck size={18} />
+              Start Assessment
+              <ArrowRight size={16} />
+            </Link>
+          </div>
         </div>
       </div>
     )
@@ -333,6 +477,11 @@ export const ReportView: React.FC = () => {
         shareTitle="PQC Assessment Report — Post-Quantum Cryptography Risk Analysis"
         shareText="View your personalized PQC risk score, migration priorities, and actionable recommendations."
       />
+
+      <MaturityTierChip />
+
+      <PersonaSuggestionCard />
+
       {/* Banner when viewing a shared report */}
       {searchParams.get('share') && (
         <motion.div

@@ -118,6 +118,48 @@ export interface StepContextInfo {
   proficiencyEffect?: string
 }
 
+/**
+ * Plain-English explanation of *why* each wizard step asks what it does (P13-P1-02).
+ *
+ * Surfaced inline for curious explorers and behind an info tooltip for every
+ * other persona, so first-time users understand how their answer shapes the
+ * report instead of clicking through 13 anonymous questions.
+ */
+export const WIZARD_STEP_RATIONALE: Record<string, string> = {
+  industry:
+    'Industry determines which compliance frameworks apply, which threats are most relevant, and which cryptographic use-cases dominate.',
+  country:
+    'Country drives the regulatory deadline clock — CNSA 2.0 for the US, BSI for Germany, ANSSI for France, ENISA / DORA for the EU bloc.',
+  crypto:
+    'Which algorithms you use today maps directly to which PQC replacements you need (RSA → ML-KEM / ML-DSA; ECDSA → ML-DSA; SHA-2 stays).',
+  sensitivity:
+    'Data sensitivity drives the "harvest now, decrypt later" risk window — the more sensitive and the longer it must stay secret, the sooner you must migrate.',
+  compliance:
+    'Compliance obligations set the hard deadlines and audit scope. Each framework has its own PQC mandate timeline.',
+  migration:
+    'Migration status sets your baseline — already started, planning, or unaware. The report tailors recommendations to where you are.',
+  'use-cases':
+    'Use cases tell us which protocols and surfaces will need PQC: TLS, S/MIME, signing, key escrow, HSM rotation. Each has its own migration playbook.',
+  retention:
+    "How long encrypted data must remain secret is the dominant HNDL-risk input. 10+ year retention means today's ciphertext is already at risk.",
+  credential:
+    'Credential lifetime determines how soon your existing PKI hits a forced cutover — long-lived certs delay decisions; short-lived credentials let you migrate piecewise.',
+  scale:
+    'Scale (system count + team size) shapes the cost + coordination dimensions of the migration roadmap, not the urgency.',
+  agility:
+    'Crypto agility — whether your code abstracts algorithms behind an interface — is the single biggest predictor of how fast you can migrate.',
+  infra:
+    'Infrastructure layers (cloud, hardware, libraries, HSMs) decide which PQC implementations you can actually pick from today.',
+  vendors:
+    'Vendor mix tells us how much of your migration depends on third-party roadmaps vs. in-house code.',
+  timeline:
+    'Timeline pressure (within 1y / 2-3y / no deadline) bands the report into "act now" vs. "plan it" vs. "monitor it" recommendations.',
+}
+
+export function getWizardStepRationale(stepKey: string): string | undefined {
+  return WIZARD_STEP_RATIONALE[resolveHintKey(stepKey)]
+}
+
 export const STEP_CONTEXT_INFO: Record<string, StepContextInfo> = {
   industry: {
     industryEffect:
@@ -805,9 +847,69 @@ export const PERSONA_INDUSTRY_STEP_HINTS: Record<
       },
     },
   },
-  developer: {},
-  architect: {},
+  developer: {
+    financebanking: {
+      compliance: {
+        hint: 'PCI-DSS v4 and FedRAMP often translate to library + crypto-module obligations — pin a FIPS 140-3 validated provider and gate token-format changes behind feature flags.',
+      },
+      'use-cases': {
+        hint: 'In finance code, cryptography typically backs TLS termination, mTLS to upstreams, JWT/JOSE token signing, and database column encryption. List the libraries each path uses today.',
+      },
+      retention: {
+        hint: 'Long retention windows mean ciphertext minted today must still resist a quantum attacker decades out — favor crypto-agile envelopes (KEM ciphertext + AEAD payload) over fixed RSA-OAEP.',
+      },
+    },
+    healthcare: {
+      compliance: {
+        hint: 'HIPAA + FDA Cybersecurity for connected devices push you toward signed firmware + verifiable key provenance. Hash-based signatures (SLH-DSA / LMS) survive the longest.',
+      },
+      'use-cases': {
+        hint: 'In healthcare code, cryptography backs EHR APIs (FHIR over TLS), DICOM transport, medical-device firmware signing, and HL7 envelope signing. Flag the device-firmware path — it has the longest replacement cycle.',
+      },
+    },
+  },
+  architect: {
+    financebanking: {
+      compliance: {
+        hint: 'CNSA 2.0 (2027 mandate for federal contracts), DORA (EU operational resilience), and PCI-DSS v4 shape the architecture. Plan hybrid + dual-cert PKI now; mandate-only pure-PQC later.',
+      },
+      sensitivity: {
+        hint: 'Architect view: customer PII, payment-card vaults, and settlement-system keys are your highest-blast-radius assets. Map each to its HSM partition + rotation cadence.',
+      },
+      'use-cases': {
+        hint: 'In finance architecture, cryptography backs SWIFT, card-network HSMs, intra-bank mTLS, and database envelope encryption. The SWIFT + card-HSM paths are the slowest to migrate — start there.',
+      },
+    },
+    healthcare: {
+      compliance: {
+        hint: 'HIPAA + FDA premarket cybersecurity guidance + EU MDR drive the architecture. Cryptographic agility in implantable / wearable devices is the hardest constraint.',
+      },
+      'use-cases': {
+        hint: 'In healthcare architecture, cryptography backs EHR ↔ HIE messaging, DICOM imaging, device-fleet PKI, and research-data exchange. Device PKI rotation is your bottleneck.',
+      },
+    },
+  },
   researcher: {},
-  ops: {},
+  ops: {
+    financebanking: {
+      compliance: {
+        hint: 'PCI-DSS + SOX + DORA all impose audited operational controls (key rotation cadence, HSM access logs, change windows). PQC migration extends every existing rotation runbook.',
+      },
+      'use-cases': {
+        hint: 'Ops view: certificate fleet (TLS, mTLS, card-network), HSM partition rotation, and S/MIME signing keys. Each has its own renewal window — map the soonest expiry first.',
+      },
+      retention: {
+        hint: 'Long-retention encrypted backups are the HNDL hot spot for ops — plan a re-encrypt pass under PQC envelopes before the harvest window closes.',
+      },
+    },
+    healthcare: {
+      'use-cases': {
+        hint: 'Ops view in healthcare: EHR TLS certs, device PKI fleets, VPN concentrator certs, and physical-access PKI. Device PKI is the slowest rotation cycle.',
+      },
+      retention: {
+        hint: 'HIPAA-driven 6–25 year retention means encrypted backups linger in HNDL range for decades — schedule periodic re-encrypt passes as PQC adoption matures.',
+      },
+    },
+  },
   curious: {},
 }

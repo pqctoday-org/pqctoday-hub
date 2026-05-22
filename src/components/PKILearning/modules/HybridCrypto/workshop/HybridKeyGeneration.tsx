@@ -6,6 +6,10 @@ import { hybridCryptoService, type KeyGenResult } from '../services/HybridCrypto
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { Button } from '@/components/ui/button'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 
 const HYBRID_KAT_SPECS: KatTestSpec[] = [
   {
@@ -66,6 +70,7 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
   const [results, setResults] = useState<Map<string, KeyGenResult>>(new Map())
   const [isGenerating, setIsGenerating] = useState(false)
   const [expandedPem, setExpandedPem] = useState<string | null>(null)
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   const algorithms = HYBRID_ALGORITHMS.filter((a) => a.category === category)
   const columns = [
@@ -98,9 +103,14 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
 
   const generateAll = async () => {
     setIsGenerating(true)
+    setLogEntries([])
     const newResults = new Map<string, KeyGenResult>()
 
     for (const algo of algorithms) {
+      const opLabel = `Generating ${algo.name} keypair…`
+      // eslint-disable-next-line react-hooks/purity
+      const startedAt = performance.now()
+      setLogEntries((prev) => [...prev, { status: 'pending', message: opLabel }])
       if (algo.opensslAlgorithm === 'SIMULATED') {
         // Hybrid: generate X25519 + ML-KEM-768 separately
         const x25519Result = await hybridCryptoService.generateKey(
@@ -142,6 +152,20 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
         const result = await hybridCryptoService.generateKey(algo.opensslAlgorithm, filename)
         newResults.set(algo.name, { ...result, algorithm: algo.name })
       }
+      const algoResult = newResults.get(algo.name)
+      setLogEntries((prev) => {
+        const next = [...prev]
+        const idx = next.length - 1
+        const failed = !!algoResult?.error
+        next[idx] = {
+          status: failed ? 'error' : 'success',
+          message: failed
+            ? `${opLabel.replace('…', '')} — ${algoResult?.error}`
+            : `${opLabel.replace('Generating', 'Generated').replace('…', '')} — ${algoResult?.timingMs ?? 0}ms`,
+          durationMs: Math.round(performance.now() - startedAt),
+        }
+        return next
+      })
     }
 
     setResults(newResults)
@@ -209,6 +233,9 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
           </>
         )}
       </Button>
+
+      {/* Operation log + indeterminate progress bar (A7) */}
+      {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} className="max-h-48" />}
 
       {/* Results grid */}
       {results.size > 0 && (

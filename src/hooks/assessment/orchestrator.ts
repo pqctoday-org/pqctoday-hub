@@ -365,6 +365,243 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
   }
 }
 
+/**
+ * Async variant of computeAssessment that yields to the browser paint loop
+ * between major stages. Lets callers (notably ReportView) render a progress
+ * indicator while the 10-stage scoring pipeline runs — without this, a
+ * comprehensive assessment on a slow machine blocks the main thread for
+ * 800-1500ms with no UI feedback.
+ *
+ * The yield is implemented with `setTimeout(0)` rather than `queueMicrotask`
+ * — micro-tasks run before paint, defeating the point.
+ *
+ * onStage fires after each stage completes, carrying the stage label + its
+ * durationMs. Pass a callback that pushes into a LogEntry[] state. The
+ * function is otherwise identical to the synchronous computeAssessment; the
+ * RETURN value is the same AssessmentResult.
+ */
+export async function computeAssessmentAsync(
+  input: AssessmentInput,
+  onStage?: (label: string, durationMs: number) => void
+): Promise<AssessmentResult> {
+  const yieldToPaint = () => new Promise<void>((resolve) => setTimeout(resolve, 0))
+  const stage = async <T>(label: string, fn: () => T): Promise<T> => {
+    const startedAt = performance.now()
+    const result = fn()
+
+    onStage?.(label, Math.round(performance.now() - startedAt))
+    await yieldToPaint()
+    return result
+  }
+
+  // Stage 1 — algorithm migration mapping
+  const algorithmMigrations = await stage('Mapping algorithms to migrations', () => {
+    return input.currentCryptoUnknown
+      ? [
+          {
+            classical: 'Unknown algorithms (inventory required)',
+            quantumVulnerable: true,
+            replacement: 'Complete a cryptographic asset inventory first',
+            urgency: 'immediate' as const,
+            notes:
+              'Cryptographic algorithms not identified. Conduct a full cryptographic asset inventory before migration planning.',
+          },
+        ]
+      : input.currentCrypto.map((algo) => {
+          // eslint-disable-next-line security/detect-object-injection
+          const info = ALGORITHM_DB[algo]
+          if (!info) {
+            return {
+              classical: algo,
+              quantumVulnerable: true,
+              replacement: 'Unknown — review manually',
+              urgency: 'immediate' as const,
+              notes:
+                'Algorithm not in assessment database. Treated as quantum-vulnerable (conservative). Manual review recommended.',
+            }
+          }
+          return {
+            classical: algo,
+            quantumVulnerable: info.quantumVulnerable,
+            replacement: info.replacement,
+            urgency: info.quantumVulnerable ? ('immediate' as const) : ('long-term' as const),
+            notes: info.notes,
+          }
+        })
+  })
+
+  // Stage 2 — compliance impact filtering
+  const filteredCompliance = await stage(
+    'Filtering compliance frameworks by industry/country',
+    () =>
+      input.complianceRequirements.filter((fw) => {
+        const framework = industryComplianceConfigs.find((f) => f.label === fw)
+        if (!framework) return true
+        const industryMatch =
+          framework.industries.includes(input.industry) || framework.industries.length >= 3
+        const countryMatch =
+          !input.country ||
+          input.country === 'Global' ||
+          framework.countries.length === 0 ||
+          framework.countries.includes('Global') ||
+          framework.countries.includes(input.country)
+        return industryMatch && countryMatch
+      })
+  )
+  const complianceImpacts: ComplianceImpact[] = filteredCompliance.map((fw) => {
+    // eslint-disable-next-line security/detect-object-injection
+    const info = COMPLIANCE_DB[fw]
+    if (!info) {
+      return {
+        framework: fw,
+        requiresPQC: null,
+        deadline: 'Unknown',
+        notes: 'Framework not in database — verify PQC requirements independently.',
+      }
+    }
+    return { framework: fw, ...info }
+  })
+  const vulnerableCount = algorithmMigrations.filter((a) => a.quantumVulnerable).length
+  const pqcCompliance = complianceImpacts.filter((c) => c.requiresPQC)
+
+  const hasExtendedInput = !!(
+    input.cryptoUseCases?.length ||
+    input.useCasesUnknown ||
+    input.dataRetention?.length ||
+    input.retentionUnknown ||
+    input.credentialLifetime?.length ||
+    input.credentialLifetimeUnknown ||
+    input.cryptoAgility ||
+    input.infrastructure?.length ||
+    input.infrastructureUnknown ||
+    input.systemCount ||
+    input.teamSize ||
+    input.vendorDependency ||
+    input.vendorUnknown ||
+    input.timelinePressure
+  )
+
+  let riskScore: number
+  let categoryScores: CategoryScores | undefined
+  let categoryDrivers: CategoryDrivers | undefined
+  let hndlRiskWindow: HNDLRiskWindow | undefined
+  let hnflRiskWindow: HNFLRiskWindow | undefined
+  let migrationEffort: MigrationEffortItem[] | undefined
+  let recommendedActions: RecommendedAction[]
+  let preBoostScore: number | undefined
+  let boosts: AssessmentResult['boosts'] | undefined
+
+  if (hasExtendedInput) {
+    // ── Compound scoring path (slow path) ──
+    const qe = await stage('Scoring quantum exposure', () =>
+      computeQuantumExposure(input, vulnerableCount)
+    )
+    const mc = await stage('Scoring migration complexity', () => computeMigrationComplexity(input))
+    const rp = await stage('Scoring regulatory pressure', () =>
+      computeRegulatoryPressure(input, complianceImpacts)
+    )
+    const or_ = await stage('Scoring organizational readiness', () =>
+      computeOrganizationalReadiness(input)
+    )
+    categoryScores = {
+      quantumExposure: qe,
+      migrationComplexity: mc,
+      regulatoryPressure: rp,
+      organizationalReadiness: or_,
+    }
+    const compositeResult = await stage('Computing composite risk score with boosts', () =>
+      computeCompositeScoreWithBoosts(categoryScores!, input)
+    )
+    riskScore = compositeResult.score
+    preBoostScore = compositeResult.preBoostScore
+    boosts = compositeResult.boosts
+    hndlRiskWindow = await stage('Computing HNDL risk window', () => computeHNDLRiskWindow(input))
+    hnflRiskWindow = await stage('Computing HNFL risk window', () => computeHNFLRiskWindow(input))
+    migrationEffort = await stage('Estimating migration effort', () =>
+      computeMigrationEffort(input)
+    )
+    categoryDrivers = await stage('Generating category drivers', () =>
+      generateCategoryDrivers(input, vulnerableCount, pqcCompliance.length)
+    )
+    recommendedActions = await stage('Building recommended actions', () =>
+      generateExtendedActions(input, vulnerableCount, pqcCompliance, migrationEffort!)
+    )
+  } else {
+    // ── Legacy additive scoring path — fast, single stage ──
+    const sync = computeAssessment(input)
+    onStage?.('Computing legacy quick assessment', 0)
+    return sync
+  }
+
+  if (input.persona) {
+    recommendedActions = reframeActionsForPersona(recommendedActions, input.persona)
+  }
+
+  const riskLevel: AssessmentResult['riskLevel'] =
+    riskScore <= 25 ? 'low' : riskScore <= 55 ? 'medium' : riskScore <= 75 ? 'high' : 'critical'
+
+  const narrative = await stage('Writing narrative summary', () =>
+    generateNarrative(input, riskScore, riskLevel, vulnerableCount, pqcCompliance.length)
+  )
+  const executiveSummary = await stage('Writing executive summary', () =>
+    generateExecutiveSummary(
+      input,
+      riskScore,
+      riskLevel,
+      vulnerableCount,
+      migrationEffort!,
+      hndlRiskWindow,
+      hnflRiskWindow,
+      pqcCompliance.length
+    )
+  )
+  const personaNarrative = await stage('Writing persona-flavored narrative', () =>
+    generatePersonaNarrative(
+      input.persona,
+      input,
+      riskScore,
+      riskLevel,
+      vulnerableCount,
+      migrationEffort,
+      categoryScores,
+      hndlRiskWindow,
+      hnflRiskWindow,
+      pqcCompliance.length
+    )
+  )
+  const assessmentProfile = buildAssessmentProfile(input, hasExtendedInput)
+  const keyFindings = await stage('Identifying key findings', () =>
+    generateKeyFindings(
+      input,
+      algorithmMigrations,
+      complianceImpacts,
+      hndlRiskWindow,
+      hnflRiskWindow
+    )
+  )
+
+  return {
+    riskScore,
+    riskLevel,
+    algorithmMigrations,
+    complianceImpacts,
+    recommendedActions,
+    narrative,
+    generatedAt: new Date().toISOString(),
+    categoryScores,
+    categoryDrivers,
+    hndlRiskWindow,
+    hnflRiskWindow,
+    migrationEffort,
+    executiveSummary,
+    personaNarrative,
+    assessmentProfile,
+    keyFindings,
+    preBoostScore,
+    boosts,
+  }
+}
+
 export function buildAssessmentProfile(
   input: AssessmentInput,
   hasExtended: boolean

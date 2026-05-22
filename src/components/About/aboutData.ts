@@ -159,6 +159,12 @@ export const CRYPTO_BUFF_SITES = [
     url: 'https://postquantum.com/',
   },
   {
+    label: 'Quantum Security Defence',
+    description:
+      'PQC news, analysis, and vendor coverage focused on the defence and government transition',
+    url: 'https://www.quantumsecuritydefence.com/',
+  },
+  {
     label: 'IACR ePrint Archive',
     description: 'Preprint server for cryptography research — where PQC papers appear first',
     url: 'https://eprint.iacr.org',

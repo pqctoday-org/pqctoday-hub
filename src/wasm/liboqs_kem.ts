@@ -11,6 +11,9 @@ import {
   createFrodoKEM640AES,
   createFrodoKEM976AES,
   createFrodoKEM1344AES,
+  createFrodoKEM640SHAKE,
+  createFrodoKEM976SHAKE,
+  createFrodoKEM1344SHAKE,
   createClassicMcEliece348864,
   createClassicMcEliece460896,
   createClassicMcEliece6688128,
@@ -59,7 +62,7 @@ const getInstance = async (algorithmName: string): Promise<MLKEMInstance> => {
       case 'HQC-256':
         createAlgo = createHQC256
         break
-      // FrodoKEM (accept both canonical short name and full -AES name)
+      // FrodoKEM AES (accept both canonical short name and full -AES name)
       case 'FrodoKEM-640':
       case 'FrodoKEM-640-AES':
         createAlgo = createFrodoKEM640AES
@@ -71,6 +74,16 @@ const getInstance = async (algorithmName: string): Promise<MLKEMInstance> => {
       case 'FrodoKEM-1344':
       case 'FrodoKEM-1344-AES':
         createAlgo = createFrodoKEM1344AES
+        break
+      // FrodoKEM SHAKE variants
+      case 'FrodoKEM-640-SHAKE':
+        createAlgo = createFrodoKEM640SHAKE
+        break
+      case 'FrodoKEM-976-SHAKE':
+        createAlgo = createFrodoKEM976SHAKE
+        break
+      case 'FrodoKEM-1344-SHAKE':
+        createAlgo = createFrodoKEM1344SHAKE
         break
       // Classic McEliece
       case 'Classic-McEliece-348864':

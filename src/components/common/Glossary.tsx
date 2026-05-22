@@ -8,6 +8,7 @@ import clsx from 'clsx'
 import { CategoryBadge } from '../ui/category-badge'
 import { Button } from '@/components/ui/button'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
+import { useAchievementStore } from '@/store/useAchievementStore'
 
 const categoryColors = {
   algorithm: 'text-primary',
@@ -64,6 +65,9 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   useEffect(() => {
     if (isOpen) {
       loadGlossary().then(setGlossaryTerms)
+      // CC-15: drive the first-jargon-decoded achievement for curious users.
+      // Idempotent — recordSectionVisit guards against duplicates.
+      useAchievementStore.getState().recordSectionVisit('curious:glossary-opened')
     }
   }, [isOpen])
 

@@ -11,7 +11,13 @@ import { sha256 } from '@noble/hashes/sha2.js'
 
 // Helper to detect which signing module to use
 const isLiboqsSigAlgorithm = (algo: string): boolean =>
-  algo.startsWith('SLH-DSA') || algo.startsWith('FN-DSA') || algo.startsWith('Falcon')
+  algo.startsWith('SLH-DSA') ||
+  algo.startsWith('FN-DSA') ||
+  algo.startsWith('Falcon') ||
+  algo.startsWith('MAYO') ||
+  algo.startsWith('CROSS-') ||
+  algo.startsWith('OV-') ||
+  algo.startsWith('SNOVA')
 
 interface UseDsaOperationsProps {
   keyStore: Key[]

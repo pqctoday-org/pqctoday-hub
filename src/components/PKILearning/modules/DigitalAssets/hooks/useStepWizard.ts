@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
 import type { Step } from '../components/StepWizard'
+import type { LogEntry } from '@/components/PKILearning/common/WorkshopOperationLog'
 
 interface UseStepWizardProps {
   steps: Step[]
@@ -13,6 +14,9 @@ export const useStepWizard = ({ steps, onBack }: UseStepWizardProps) => {
   const [output, setOutput] = useState<string | Record<string, string> | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isStepComplete, setIsStepComplete] = useState(false)
+  // A7 — per-step operation log fueling the WorkshopOperationLog progress
+  // bar. Consumers opt in by rendering <WorkshopOperationLog entries={logEntries} />.
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
@@ -37,6 +41,11 @@ export const useStepWizard = ({ steps, onBack }: UseStepWizardProps) => {
   const execute = async (action: () => Promise<string | Record<string, string>>) => {
     setIsExecuting(true)
     setError(null)
+    const stepTitle = steps[currentStep]?.title ?? `Step ${currentStep + 1}`
+    const opLabel = `${stepTitle}…`
+
+    const startedAt = performance.now()
+    setLogEntries((prev) => [...prev, { status: 'pending', message: opLabel }])
 
     try {
       const result = await action()
@@ -83,8 +92,29 @@ export const useStepWizard = ({ steps, onBack }: UseStepWizardProps) => {
       })
 
       setIsStepComplete(true)
+      setLogEntries((prev) => {
+        const next = [...prev]
+        next[next.length - 1] = {
+          status: 'success',
+          message: stepTitle,
+
+          durationMs: Math.round(performance.now() - startedAt),
+        }
+        return next
+      })
     } catch (err) {
-      setError(getErrorMessage(err))
+      const msg = getErrorMessage(err)
+      setError(msg)
+      setLogEntries((prev) => {
+        const next = [...prev]
+        next[next.length - 1] = {
+          status: 'error',
+          message: `${stepTitle} — ${msg}`,
+
+          durationMs: Math.round(performance.now() - startedAt),
+        }
+        return next
+      })
     } finally {
       setIsExecuting(false)
     }
@@ -96,6 +126,7 @@ export const useStepWizard = ({ steps, onBack }: UseStepWizardProps) => {
     setOutput(null)
     setError(null)
     setIsStepComplete(false)
+    setLogEntries([])
   }
 
   return {
@@ -104,6 +135,7 @@ export const useStepWizard = ({ steps, onBack }: UseStepWizardProps) => {
     output,
     error,
     isStepComplete,
+    logEntries,
     handleNext,
     handleBack,
     execute,
