@@ -39,6 +39,7 @@ import type { ReportSectionId, ReportCTA } from '../../data/personaConfig'
 import { PERSONAS } from '../../data/learningPersonas'
 import { complianceFrameworks } from '../../data/complianceData'
 import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
+import { TopThreeActions } from '../common/TopThreeActions'
 import { softwareData } from '../../data/migrateData'
 import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
@@ -52,6 +53,8 @@ import { ROICalculatorSection } from '../shared/ROICalculatorSection'
 import type { ROISummary } from '../shared/ROICalculatorSection'
 import { KPITrendingSection } from './KPITrendingSection'
 import { BoardBriefSection } from './BoardBriefSection'
+import { BoardPackExport } from './BoardPackExport'
+import { REPORT_SECTION_LABELS } from '../../data/reportSectionToCswp39'
 import { formatDriver } from '../../data/driverLabels'
 import { RiskGauge, riskConfig } from '../shared/widgets/RiskGauge'
 import { Button } from '../ui/button'
@@ -501,10 +504,8 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   const cfg = (sectionId: ReportSectionId) =>
     getReportSectionConfig(selectedPersona, sectionId, showFullReport)
 
-  /** Whether the current persona has any hidden sections (enables summary/full toggle). */
-  const hasSummaryMode = useMemo(() => {
-    if (!selectedPersona) return false
-    const sectionIds: ReportSectionId[] = [
+  const REPORT_SECTION_ORDER: ReportSectionId[] = useMemo(
+    () => [
       'countryTimeline',
       'riskScore',
       'keyFindings',
@@ -518,9 +519,17 @@ export const ReportContent: React.FC<AssessReportProps> = ({
       'migrationRoadmap',
       'migrationToolkit',
       'threatLandscape',
-    ]
-    return sectionIds.some((id) => getReportSectionConfig(selectedPersona, id).state === 'hidden')
-  }, [selectedPersona])
+    ],
+    []
+  )
+
+  /** Whether the current persona has any hidden sections (enables summary/full toggle). */
+  const hasSummaryMode = useMemo(() => {
+    if (!selectedPersona) return false
+    return REPORT_SECTION_ORDER.some(
+      (id) => getReportSectionConfig(selectedPersona, id).state === 'hidden'
+    )
+  }, [selectedPersona, REPORT_SECTION_ORDER])
 
   /** Top migrate catalog products relevant to this assessment's industry + infrastructure. */
   const relevantSoftware = useMemo(() => {
@@ -721,6 +730,30 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         {result.categoryScores ? 'Comprehensive Assessment' : 'Quick Assessment'}
                       </span>
                     </div>
+
+                    {/* Top-3 actions hero (P15-P1-02) — teases the highest-priority
+                      recommended actions before the full report scroll. Hidden in print. */}
+                    {result.recommendedActions.length > 0 && (
+                      <div className="print:hidden">
+                        <TopThreeActions
+                          source="report"
+                          heading="Do this first"
+                          actions={result.recommendedActions.slice(0, 3).map((a) => ({
+                            id: `action-${a.priority}`,
+                            label: a.action,
+                            description:
+                              a.category === 'immediate'
+                                ? 'Immediate · do now'
+                                : a.category === 'short-term'
+                                  ? 'Short-term · this quarter'
+                                  : 'Long-term · plan it',
+                            href: a.relatedModule
+                              ? `/learn/${a.relatedModule}`
+                              : '#report-section-recommendedActions',
+                          }))}
+                        />
+                      </div>
+                    )}
 
                     {/* CSWP.39 navigation legend — re-groups report sections under the 5-step
                       narrative shared with /business and /assess. Hidden in print. */}
@@ -1536,6 +1569,39 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       </div>
                     )}
 
+                    {/* Hidden-by-role footer (P15-P1-05) — surfaces sections this
+                        persona is currently hiding, with a click-to-show toggle. */}
+                    {selectedPersona &&
+                      hasSummaryMode &&
+                      !showFullReport &&
+                      (() => {
+                        const hidden = REPORT_SECTION_ORDER.filter(
+                          (id) => getReportSectionConfig(selectedPersona, id).state === 'hidden'
+                        )
+                        if (hidden.length === 0) return null
+                        return (
+                          <div className="glass-panel p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 print:hidden border-l-4 border-l-muted-foreground/30">
+                            <div className="text-xs text-muted-foreground leading-relaxed">
+                              <span className="font-medium text-foreground">
+                                {hidden.length} section{hidden.length !== 1 ? 's' : ''} hidden
+                              </span>{' '}
+                              for your {PERSONAS[selectedPersona].label} view:{' '}
+                              <span className="italic">
+                                {hidden.map((id) => REPORT_SECTION_LABELS[id] ?? id).join(' · ')}
+                              </span>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setShowFullReport(true)}
+                              className="text-xs h-7 px-3 border border-border whitespace-nowrap"
+                            >
+                              Show full report
+                            </Button>
+                          </div>
+                        )
+                      })()}
+
                     {/* Migration Workflow activation CTA */}
                     {!workflowActive && assessmentStatus === 'complete' && (
                       <div className="glass-panel p-4 print:hidden">
@@ -1577,6 +1643,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           <Briefcase size={16} />
                           Print Executive Brief
                         </Button>
+                        <BoardPackExport result={result} variant="outline" />
                         <Button
                           variant="ghost"
                           onClick={handleCSVExport}

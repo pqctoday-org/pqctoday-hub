@@ -35,6 +35,8 @@ interface PersonaState {
   niceTier: NiceProficiencyTier
   /** Whether niceTier was manually overridden (false = derived from persona default) */
   niceTierOverridden: boolean
+  /** Whether the curious-persona floating tour was completed or dismissed (CC-17) */
+  curiousGuideDismissed: boolean
   setPersona: (persona: PersonaId | null) => void
   clearPersona: () => void
   markPickerSeen: () => void
@@ -45,6 +47,7 @@ interface PersonaState {
   setViewAccess: (access: ViewAccess) => void
   setNiceTier: (tier: NiceProficiencyTier) => void
   resetNiceTier: () => void
+  dismissCuriousGuide: () => void
   /** Backwards-compat alias: true → 'unlocked', false → 'gated' */
   setAdvancedViewsUnlocked: (unlocked: boolean) => void
   clearPreferences: () => void
@@ -63,6 +66,7 @@ export const usePersonaStore = create<PersonaState>()(
       viewAccess: 'unlocked',
       niceTier: 'awareness',
       niceTierOverridden: false,
+      curiousGuideDismissed: false,
 
       setPersona: (persona) =>
         set((state) => ({
@@ -100,6 +104,8 @@ export const usePersonaStore = create<PersonaState>()(
           niceTierOverridden: false,
         })),
 
+      dismissCuriousGuide: () => set({ curiousGuideDismissed: true }),
+
       setAdvancedViewsUnlocked: (unlocked) => set({ viewAccess: unlocked ? 'unlocked' : 'gated' }),
 
       clearPreferences: () =>
@@ -113,12 +119,13 @@ export const usePersonaStore = create<PersonaState>()(
           viewAccess: 'unlocked',
           niceTier: 'awareness',
           niceTierOverridden: false,
+          curiousGuideDismissed: false,
         }),
     }),
     {
       name: 'pqc-learning-persona',
       storage: createJSONStorage(() => localStorage),
-      version: 6,
+      version: 7,
       migrate: (persisted: unknown, fromVersion: number) => {
         const s = (persisted ?? {}) as Record<string, unknown>
         if (fromVersion < 1) {
@@ -149,6 +156,10 @@ export const usePersonaStore = create<PersonaState>()(
           const persona = (s.selectedPersona as string | null) ?? null
           s.niceTier = PERSONA_DEFAULT_TIER[persona ?? ''] ?? 'awareness'
           s.niceTierOverridden = false
+        }
+        if (fromVersion < 7) {
+          // CC-17: track whether the curious-persona floating tour was dismissed.
+          s.curiousGuideDismissed = s.curiousGuideDismissed ?? false
         }
         return s
       },

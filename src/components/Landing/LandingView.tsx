@@ -2,16 +2,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import {
-  GraduationCap,
-  ArrowRight,
-  Save,
-  Upload,
-  Cloud,
-  CloudOff,
-  Loader2,
-  LogOut,
-} from 'lucide-react'
+import { ArrowRight, Save, Upload, Cloud, CloudOff, Loader2, LogOut } from 'lucide-react'
 import { Button } from '../ui/button'
 import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -24,6 +15,8 @@ import { OnboardingCTAs } from './OnboardingCTAs'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { TransparencyBanner } from './TransparencyBanner'
 import { PersonaChip } from '@/components/Persona/PersonaChip'
+import { ResumeBanner } from '@/components/common/ResumeBanner'
+import { CuriousGuide } from '@/components/common/CuriousGuide'
 import { logEvent, personaLabel } from '@/utils/analytics'
 import { useGoogleAuth } from '@/contexts/GoogleAuthContext'
 
@@ -136,19 +129,6 @@ export const LandingView = () => {
     })
   }, [])
 
-  // Resume banner — last module with in-progress or completed status
-  const lastVisitedModule = useMemo(() => {
-    const entries = Object.entries(moduleModules)
-      .filter(([, m]) => m.status !== 'not-started' && m.lastVisited)
-      .sort(([, a], [, b]) => b.lastVisited - a.lastVisited)
-    const topEntry = entries[0]
-    if (!topEntry) return null
-    const [moduleId] = topEntry
-    const catalog = MODULE_CATALOG[moduleId]
-    if (!catalog) return null
-    return { id: moduleId, title: catalog.title, path: `/learn/${moduleId}` }
-  }, [moduleModules])
-
   return (
     <div className="w-full space-y-16 md:space-y-24">
       {/* Hero Section */}
@@ -203,33 +183,10 @@ export const LandingView = () => {
         )}
         {!selectedPersona && <div className="mb-5" />}
 
-        {/* Resume banner — shown when a module is in-progress/completed */}
-        {lastVisitedModule && (
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            custom={2.4}
-            className="mb-4 flex justify-center"
-          >
-            <Link
-              to={lastVisitedModule.path}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/30 bg-primary/5 text-sm text-foreground hover:border-primary/60 hover:bg-primary/10 transition-colors group"
-            >
-              <GraduationCap size={15} className="text-primary shrink-0" aria-hidden="true" />
-              <span>
-                Continue{' '}
-                <span className="font-semibold group-hover:text-primary transition-colors">
-                  {lastVisitedModule.title}
-                </span>
-              </span>
-              <ArrowRight
-                size={13}
-                className="text-primary/60 group-hover:text-primary transition-colors"
-              />
-            </Link>
-          </motion.div>
-        )}
+        {/* Resume banner — shared component reused on Landing, Report, Business Center */}
+        <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={2.4}>
+          <ResumeBanner dismissKey="landing-hero" />
+        </motion.div>
 
         {/* Personalization Section */}
         <motion.div
@@ -368,6 +325,10 @@ export const LandingView = () => {
 
       {/* Transparency Banner */}
       <TransparencyBanner />
+
+      {/* Curious-persona floating tour — auto-mounts on first Landing visit when
+          persona is curious. Dismiss persists via usePersonaStore v7 migration. */}
+      <CuriousGuide />
 
       {/* Progress Management */}
       <section className="pt-4">
