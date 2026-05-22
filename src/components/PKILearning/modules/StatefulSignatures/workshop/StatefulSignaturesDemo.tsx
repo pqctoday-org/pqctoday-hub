@@ -6,6 +6,10 @@ import { Info, CheckCircle2, XCircle, ShieldCheck, ShieldAlert } from 'lucide-re
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { ErrorAlert } from '@/components/ui/error-alert'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 import { useHSM } from '@/hooks/useHSM'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -83,6 +87,7 @@ export function StatefulSignaturesDemo() {
   const [tamperSignature, setTamperSignature] = useState(false)
   const [isVerifying, setIsVerifying] = useState(false)
   const [verifyError, setVerifyError] = useState<string | null>(null)
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   // Rust pubHandle → C++ pubHandle
   const importedRustHandles = useRef(new Set<number>())
@@ -374,6 +379,10 @@ export function StatefulSignaturesDemo() {
     const selectedPubKey = hsm.keys.find((k) => k.handle === selectedPubHandle)
     const M = hsmCpp.moduleRef.current
     const session = hsmCpp.hSessionRef.current
+    const opLabel = `Cross-engine verify (${selectedPubKey?.family ?? 'stateful'} signature, C++ engine)…`
+    // eslint-disable-next-line react-hooks/purity
+    const startedAt = performance.now()
+    setLogEntries((prev) => [...prev, { status: 'pending', message: opLabel }])
     try {
       let msgBytes = new TextEncoder().encode(verifyMessage)
       let sigBytes = hexToBytes(verifySignatureHex)
@@ -401,8 +410,31 @@ export function StatefulSignaturesDemo() {
           ? '[C++] Result: CKR_OK (0x00000000) — Rust signature validated by C++ engine ✓'
           : `[C++] Result: 0x${ckrCode.toString(16).padStart(8, '0')} — signature invalid`
       )
+      setLogEntries((prev) => {
+        const next = [...prev]
+        next[next.length - 1] = {
+          status: ok ? 'success' : 'error',
+          message: ok
+            ? `Cross-engine verify — signature valid (CKR_OK)`
+            : `Cross-engine verify — signature invalid (0x${ckrCode.toString(16).padStart(8, '0')})`,
+          // eslint-disable-next-line react-hooks/purity
+          durationMs: Math.round(performance.now() - startedAt),
+        }
+        return next
+      })
     } catch (e) {
-      setVerifyError(e instanceof Error ? e.message : String(e))
+      const msg = e instanceof Error ? e.message : String(e)
+      setVerifyError(msg)
+      setLogEntries((prev) => {
+        const next = [...prev]
+        next[next.length - 1] = {
+          status: 'error',
+          message: `Cross-engine verify — ${msg}`,
+          // eslint-disable-next-line react-hooks/purity
+          durationMs: Math.round(performance.now() - startedAt),
+        }
+        return next
+      })
     } finally {
       setIsVerifying(false)
     }
@@ -496,7 +528,10 @@ export function StatefulSignaturesDemo() {
                       onRetry={() => hsmCpp.initialize()}
                     />
                   )}
-                  {verifyError && <ErrorAlert message={verifyError} />}
+                  {logEntries.length > 0 && (
+                    <WorkshopOperationLog entries={logEntries} className="max-h-40" />
+                  )}
+                  {verifyError && <ErrorAlert message={verifyError} onRetry={handleVerify} />}
                   {importError && <ErrorAlert message={importError} />}
 
                   {/* Step 1 — Select key pair */}
@@ -752,7 +787,10 @@ export function StatefulSignaturesDemo() {
                       onRetry={() => hsmCpp.initialize()}
                     />
                   )}
-                  {verifyError && <ErrorAlert message={verifyError} />}
+                  {logEntries.length > 0 && (
+                    <WorkshopOperationLog entries={logEntries} className="max-h-40" />
+                  )}
+                  {verifyError && <ErrorAlert message={verifyError} onRetry={handleVerify} />}
                   {importError && <ErrorAlert message={importError} />}
 
                   {/* Step 1 — Select key pair */}
