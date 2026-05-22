@@ -63,7 +63,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Open or update tracking issue
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           CM_C_REPORT: ${{ steps.validate.outputs.cm_c_report }}
         with:
