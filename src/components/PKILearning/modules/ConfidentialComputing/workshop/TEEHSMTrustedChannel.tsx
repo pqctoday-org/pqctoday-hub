@@ -25,6 +25,10 @@ import { ErrorAlert } from '@/components/ui/error-alert'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ScopeTransparencyBanner } from '@/components/ui/ScopeTransparencyBanner'
 import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
+import {
   TEE_HSM_INTEGRATIONS,
   QUANTUM_THREAT_VECTORS,
   MEMORY_ENCRYPTION_ENGINES,
@@ -254,6 +258,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
   const [liveResults, setLiveResults] = useState<ProvisioningResult[]>([])
   const [liveRunning, setLiveRunning] = useState(false)
   const [liveError, setLiveError] = useState<string | null>(null)
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   const runLiveDemo = useCallback(async () => {
     if (!hsm.moduleRef.current) return
@@ -263,10 +268,27 @@ export const TEEHSMTrustedChannel: React.FC = () => {
     hsm.clearLog()
     hsm.clearKeys()
 
+    const overallLabel = `Running TEE↔HSM provisioning (${pqcMode ? 'PQC' : 'classical'} flow)…`
+
+    const overallStartedAt = performance.now()
+    setLogEntries([{ status: 'pending', message: overallLabel }])
+
     const now = () => new Date().toLocaleTimeString()
     const addResult = (r: ProvisioningResult) => {
       setLiveResults((prev) => [...prev, r])
       setCompletedSteps((prev) => new Set([...prev, r.step - 1]))
+      setLogEntries((prev) => {
+        // Insert a per-step success entry just before the overall pending entry.
+        const next = [...prev]
+        const overallIdx = next.findIndex((e) => e.status === 'pending')
+        const stepEntry: LogEntry = {
+          status: 'success',
+          message: `Step ${r.step} — ${r.title}`,
+        }
+        if (overallIdx >= 0) next.splice(overallIdx, 0, stepEntry)
+        else next.push(stepEntry)
+        return next
+      })
     }
 
     try {
@@ -619,8 +641,36 @@ export const TEEHSMTrustedChannel: React.FC = () => {
           note: 'Protocol complete (classical). The enclave verified the HSM ECDSA attestation, then unwrapped the provisioning key using the ECDH-derived session KEK. Switch to PQC mode to see ML-DSA verify + ML-KEM decapsulate + HKDF key derivation.',
         })
       }
+      // Resolve the overall pending entry to success.
+      setLogEntries((prev) => {
+        const next = [...prev]
+        const idx = next.findIndex((e) => e.status === 'pending' && e.message === overallLabel)
+        if (idx >= 0) {
+          next[idx] = {
+            status: 'success',
+            message: `Provisioning complete (${pqcMode ? 'PQC' : 'classical'})`,
+
+            durationMs: Math.round(performance.now() - overallStartedAt),
+          }
+        }
+        return next
+      })
     } catch (e) {
-      setLiveError(translateCryptoError(e instanceof Error ? e.message : String(e)))
+      const msg = translateCryptoError(e instanceof Error ? e.message : String(e))
+      setLiveError(msg)
+      setLogEntries((prev) => {
+        const next = [...prev]
+        const idx = next.findIndex((e2) => e2.status === 'pending' && e2.message === overallLabel)
+        if (idx >= 0) {
+          next[idx] = {
+            status: 'error',
+            message: `${overallLabel} — ${msg}`,
+
+            durationMs: Math.round(performance.now() - overallStartedAt),
+          }
+        }
+        return next
+      })
     } finally {
       setLiveRunning(false)
     }
@@ -1186,7 +1236,11 @@ export const TEEHSMTrustedChannel: React.FC = () => {
             </Button>
           </div>
 
-          {liveError && <ErrorAlert message={liveError} />}
+          {logEntries.length > 0 && (
+            <WorkshopOperationLog entries={logEntries} className="max-h-48" />
+          )}
+
+          {liveError && <ErrorAlert message={liveError} onRetry={() => void runLiveDemo()} />}
 
           {liveResults.length > 0 && (
             <div className="space-y-2">
