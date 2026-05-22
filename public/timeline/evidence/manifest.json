@@ -1,15 +1,15 @@
 {
-  "generated_at": "2026-05-22T19:52:33.875Z",
-  "source_csv": "src/data/timeline_05172026.csv",
+  "generated_at": "2026-05-22T20:01:05.712Z",
+  "source_csv": "src/data/timeline_05222026.csv",
   "total_rows": 235,
   "active_rows": 235,
   "status_counts": {
     "ok": 221,
-    "paywall": 4,
+    "paywall": 0,
     "error": 0,
     "missing": 0,
     "no_url": 0,
-    "skipped": 10
+    "skipped": 14
   },
   "entries": [
     {
@@ -28,7 +28,7 @@
       "size_bytes": 289505,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.403Z",
+      "downloaded_at": "2026-05-22T20:01:05.706Z",
       "pre_existed": true
     },
     {
@@ -47,7 +47,7 @@
       "size_bytes": 124641,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.404Z",
+      "downloaded_at": "2026-05-22T20:01:05.707Z",
       "pre_existed": true
     },
     {
@@ -66,7 +66,7 @@
       "size_bytes": 140535,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.707Z",
       "pre_existed": true
     },
     {
@@ -85,7 +85,7 @@
       "size_bytes": 140535,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.707Z",
       "pre_existed": true
     },
     {
@@ -104,7 +104,7 @@
       "size_bytes": 140535,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.707Z",
       "pre_existed": true
     },
     {
@@ -123,7 +123,7 @@
       "size_bytes": 140535,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.707Z",
       "pre_existed": true
     },
     {
@@ -142,7 +142,7 @@
       "size_bytes": 308281,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.707Z",
       "pre_existed": true
     },
     {
@@ -161,7 +161,7 @@
       "size_bytes": 240380,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.707Z",
       "pre_existed": true
     },
     {
@@ -180,7 +180,7 @@
       "size_bytes": 308281,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.707Z",
       "pre_existed": true
     },
     {
@@ -199,7 +199,7 @@
       "size_bytes": 308281,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.707Z",
       "pre_existed": true
     },
     {
@@ -218,7 +218,7 @@
       "size_bytes": 308281,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.707Z",
       "pre_existed": true
     },
     {
@@ -237,7 +237,7 @@
       "size_bytes": 308281,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.707Z",
       "pre_existed": true
     },
     {
@@ -256,7 +256,7 @@
       "size_bytes": 64001,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.707Z",
       "pre_existed": true
     },
     {
@@ -275,7 +275,7 @@
       "size_bytes": 59561,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.707Z",
       "pre_existed": true
     },
     {
@@ -294,7 +294,7 @@
       "size_bytes": 53632,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.707Z",
       "pre_existed": true
     },
     {
@@ -313,7 +313,7 @@
       "size_bytes": 64001,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.707Z",
       "pre_existed": true
     },
     {
@@ -332,7 +332,7 @@
       "size_bytes": 20283,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.707Z",
       "pre_existed": true
     },
     {
@@ -351,7 +351,7 @@
       "size_bytes": 20720,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -370,7 +370,7 @@
       "size_bytes": 23415,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -389,7 +389,7 @@
       "size_bytes": null,
       "http_status": null,
       "error_message": "skip-list (forbidden): Akamai/Cloudflare-style WAF returns 503 to any automated GET (verified via manual curl: HTTP/2 stream reset, exit 92). Referenced by 6 timeline rows. Future: fetch via Wayback (web.archive.org has 2025-09-23 snapshot).",
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": false
     },
     {
@@ -408,7 +408,7 @@
       "size_bytes": 1204322,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -427,7 +427,7 @@
       "size_bytes": null,
       "http_status": null,
       "error_message": "skip-list (forbidden): Akamai/Cloudflare-style WAF returns 503 to any automated GET (verified via manual curl: HTTP/2 stream reset, exit 92). Referenced by 6 timeline rows. Future: fetch via Wayback (web.archive.org has 2025-09-23 snapshot).",
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": false
     },
     {
@@ -446,7 +446,7 @@
       "size_bytes": null,
       "http_status": null,
       "error_message": "skip-list (forbidden): Akamai/Cloudflare-style WAF returns 503 to any automated GET (verified via manual curl: HTTP/2 stream reset, exit 92). Referenced by 6 timeline rows. Future: fetch via Wayback (web.archive.org has 2025-09-23 snapshot).",
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": false
     },
     {
@@ -465,7 +465,7 @@
       "size_bytes": null,
       "http_status": null,
       "error_message": "skip-list (forbidden): Akamai/Cloudflare-style WAF returns 503 to any automated GET (verified via manual curl: HTTP/2 stream reset, exit 92). Referenced by 6 timeline rows. Future: fetch via Wayback (web.archive.org has 2025-09-23 snapshot).",
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": false
     },
     {
@@ -484,7 +484,7 @@
       "size_bytes": null,
       "http_status": null,
       "error_message": "skip-list (forbidden): Akamai/Cloudflare-style WAF returns 503 to any automated GET (verified via manual curl: HTTP/2 stream reset, exit 92). Referenced by 6 timeline rows. Future: fetch via Wayback (web.archive.org has 2025-09-23 snapshot).",
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": false
     },
     {
@@ -503,7 +503,7 @@
       "size_bytes": null,
       "http_status": null,
       "error_message": "skip-list (forbidden): Akamai/Cloudflare-style WAF returns 503 to any automated GET (verified via manual curl: HTTP/2 stream reset, exit 92). Referenced by 6 timeline rows. Future: fetch via Wayback (web.archive.org has 2025-09-23 snapshot).",
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": false
     },
     {
@@ -515,15 +515,15 @@
       "source_url": "https://www.cyber.gov.au/sites/default/files/2025-07/22.%20ISM%20-%20Guidelines%20for%20cryptography%20(June%202025).pdf",
       "source_url_quality": "url_authoritative",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/Australia_ASD_ISM_June_2025_Cryptography_Guidelines_Update.pdf",
       "resolved_local_file": "public/timeline/Australia_ASD_ISM_June_2025_Cryptography_Guidelines_Update.pdf",
       "download_status": "ok",
       "content_type": "application/pdf",
       "size_bytes": 1203207,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.405Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-australia-asd-2025-c989af34",
@@ -534,15 +534,15 @@
       "source_url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/annual-cyber-threat-report-2024-2025",
       "source_url_quality": "url_authoritative",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/Australia_ASD_ACSC_Annual_Cyber_Threat_Report_2024_25_PQC_as_a_National_Priority.html",
       "resolved_local_file": "public/timeline/Australia_ASD_ACSC_Annual_Cyber_Threat_Report_2024_25_PQC_as_a_National_Priority.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=UTF-8",
+      "content_type": "text/html",
       "size_bytes": 480484,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.438Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-australia-asd-2025-cf5b2d17",
@@ -553,15 +553,15 @@
       "source_url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/the-commonwealth-cyber-security-posture-in-2025",
       "source_url_quality": "url_authoritative",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/Australia_ASD_Commonwealth_Cyber_Security_Posture_in_2025.html",
       "resolved_local_file": "public/timeline/Australia_ASD_Commonwealth_Cyber_Security_Posture_in_2025.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=UTF-8",
+      "content_type": "text/html",
       "size_bytes": 371741,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.439Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-international-bis-2025-9534f976",
@@ -579,7 +579,7 @@
       "size_bytes": 26170,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.439Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -598,7 +598,7 @@
       "size_bytes": 161554,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.439Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -617,7 +617,7 @@
       "size_bytes": 2918388,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -636,7 +636,7 @@
       "size_bytes": 145705,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -655,7 +655,7 @@
       "size_bytes": 35987,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -674,7 +674,7 @@
       "size_bytes": 145705,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -693,7 +693,7 @@
       "size_bytes": 145705,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -712,7 +712,7 @@
       "size_bytes": 145705,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -731,7 +731,7 @@
       "size_bytes": 145705,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -750,7 +750,7 @@
       "size_bytes": 145705,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -769,7 +769,7 @@
       "size_bytes": 145705,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -788,7 +788,7 @@
       "size_bytes": 77159,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -807,7 +807,7 @@
       "size_bytes": 246496,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -826,7 +826,7 @@
       "size_bytes": 252246,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -845,7 +845,7 @@
       "size_bytes": 246496,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -864,7 +864,7 @@
       "size_bytes": 382269,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -883,7 +883,7 @@
       "size_bytes": 207320,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -902,7 +902,7 @@
       "size_bytes": 207320,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -921,7 +921,7 @@
       "size_bytes": 52269,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -940,7 +940,7 @@
       "size_bytes": 68912,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -959,7 +959,7 @@
       "size_bytes": 48932,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -978,7 +978,7 @@
       "size_bytes": 48932,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -990,15 +990,15 @@
       "source_url": "https://www.europol.europa.eu/publications-events/publications/quantum-safe-financial-forum-call-to-action",
       "source_url_quality": "url_authoritative",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/European_Union_Europol_QSFF_Call_to_Action.html",
       "resolved_local_file": "public/timeline/European_Union_Europol_QSFF_Call_to_Action.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=UTF-8",
+      "content_type": "text/html",
       "size_bytes": 39359,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.440Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-european-union-nis-cg-2025-e87e4345",
@@ -1016,7 +1016,7 @@
       "size_bytes": 45813,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -1035,7 +1035,7 @@
       "size_bytes": 58857,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -1054,7 +1054,7 @@
       "size_bytes": 48932,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -1073,7 +1073,7 @@
       "size_bytes": 48932,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -1092,7 +1092,7 @@
       "size_bytes": 48932,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -1111,7 +1111,7 @@
       "size_bytes": 7292,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -1130,7 +1130,7 @@
       "size_bytes": 172278,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.708Z",
       "pre_existed": true
     },
     {
@@ -1149,7 +1149,7 @@
       "size_bytes": 475650,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1168,7 +1168,7 @@
       "size_bytes": 27720,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1187,7 +1187,7 @@
       "size_bytes": 7292,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1206,7 +1206,7 @@
       "size_bytes": 29785,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1225,7 +1225,7 @@
       "size_bytes": 29785,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1244,7 +1244,7 @@
       "size_bytes": 29785,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1263,7 +1263,7 @@
       "size_bytes": 61651,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1282,7 +1282,7 @@
       "size_bytes": 61651,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1301,7 +1301,7 @@
       "size_bytes": 7292,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1320,7 +1320,7 @@
       "size_bytes": 61651,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1339,7 +1339,7 @@
       "size_bytes": 29785,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1358,7 +1358,7 @@
       "size_bytes": 7292,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1377,7 +1377,7 @@
       "size_bytes": 207320,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1396,7 +1396,7 @@
       "size_bytes": 3260451,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1415,7 +1415,7 @@
       "size_bytes": 822099,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1434,7 +1434,7 @@
       "size_bytes": 59843,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1453,7 +1453,7 @@
       "size_bytes": 94271,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1472,7 +1472,7 @@
       "size_bytes": 31869,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1491,7 +1491,7 @@
       "size_bytes": 59843,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1510,7 +1510,7 @@
       "size_bytes": 1823919,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1529,7 +1529,7 @@
       "size_bytes": 1654189,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1548,7 +1548,7 @@
       "size_bytes": 140034,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1567,7 +1567,7 @@
       "size_bytes": 207320,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1586,7 +1586,7 @@
       "size_bytes": 4057770,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1605,7 +1605,7 @@
       "size_bytes": 99126,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1624,7 +1624,7 @@
       "size_bytes": 113498,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.705Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1643,7 +1643,7 @@
       "size_bytes": 207320,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1662,7 +1662,7 @@
       "size_bytes": 207320,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1681,7 +1681,7 @@
       "size_bytes": 7789,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1700,7 +1700,7 @@
       "size_bytes": 70816,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.709Z",
       "pre_existed": true
     },
     {
@@ -1719,7 +1719,7 @@
       "size_bytes": 207320,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -1738,7 +1738,7 @@
       "size_bytes": 221684,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -1757,7 +1757,7 @@
       "size_bytes": 221684,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -1776,7 +1776,7 @@
       "size_bytes": 221684,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -1795,7 +1795,7 @@
       "size_bytes": 249896,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -1814,7 +1814,7 @@
       "size_bytes": 207320,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -1833,7 +1833,7 @@
       "size_bytes": 207320,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -1852,7 +1852,7 @@
       "size_bytes": 34462,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -1871,7 +1871,7 @@
       "size_bytes": 207320,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -1890,7 +1890,7 @@
       "size_bytes": 853817,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -1909,7 +1909,7 @@
       "size_bytes": 1544999,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -1928,7 +1928,7 @@
       "size_bytes": 853817,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -1947,7 +1947,7 @@
       "size_bytes": 19496,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -1966,7 +1966,7 @@
       "size_bytes": 207320,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -1985,7 +1985,7 @@
       "size_bytes": 207320,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2004,7 +2004,7 @@
       "size_bytes": 207320,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2023,7 +2023,7 @@
       "size_bytes": 207320,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2042,7 +2042,7 @@
       "size_bytes": 207320,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2061,7 +2061,7 @@
       "size_bytes": 207320,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2073,15 +2073,15 @@
       "source_url": "https://www.ncsc.gov.uk/whitepaper/next-steps-preparing-for-post-quantum-cryptography",
       "source_url_quality": "url_authoritative",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/United_Kingdom_NCSC_PQC_White_Paper_Updated.html",
       "resolved_local_file": "public/timeline/United_Kingdom_NCSC_PQC_White_Paper_Updated.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=UTF-8",
+      "content_type": "text/html",
       "size_bytes": 154794,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.706Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-united-kingdom-ncsc-2025-cfe98c13",
@@ -2092,15 +2092,15 @@
       "source_url": "https://www.ncsc.gov.uk/guidance/pqc-migration-timelines",
       "source_url_quality": "url_authoritative",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/United_Kingdom_NCSC_NCSC_PQC_Migration_Roadmap_Published.html",
       "resolved_local_file": "public/timeline/United_Kingdom_NCSC_NCSC_PQC_Migration_Roadmap_Published.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=UTF-8",
+      "content_type": "text/html",
       "size_bytes": 171910,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.850Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-united-kingdom-cmorg-2025-ba540613",
@@ -2118,7 +2118,7 @@
       "size_bytes": 276756,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.934Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2137,7 +2137,7 @@
       "size_bytes": 72951,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.934Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2149,15 +2149,15 @@
       "source_url": "https://www.ncsc.gov.uk/guidance/pqc-migration-timelines",
       "source_url_quality": "url_authoritative",
       "confidence_score": 60,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/United_Kingdom_NCSC_Discovery_Planning_Phase.html",
       "resolved_local_file": "public/timeline/United_Kingdom_NCSC_Discovery_Planning_Phase.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=UTF-8",
+      "content_type": "text/html",
       "size_bytes": 171910,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:19.934Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-united-kingdom-ncsc-2028-b8a79149",
@@ -2168,15 +2168,15 @@
       "source_url": "https://www.ncsc.gov.uk/guidance/pqc-migration-timelines",
       "source_url_quality": "url_authoritative",
       "confidence_score": 60,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/United_Kingdom_NCSC_Priority_Migration_Phase.html",
       "resolved_local_file": "public/timeline/United_Kingdom_NCSC_Priority_Migration_Phase.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=UTF-8",
+      "content_type": "text/html",
       "size_bytes": 171910,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.189Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-united-kingdom-ncsc-2031-44f4ff70",
@@ -2187,15 +2187,15 @@
       "source_url": "https://www.ncsc.gov.uk/guidance/pqc-migration-timelines",
       "source_url_quality": "url_authoritative",
       "confidence_score": 60,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/United_Kingdom_NCSC_NCSC_Full_Migration_Phase.html",
       "resolved_local_file": "public/timeline/United_Kingdom_NCSC_NCSC_Full_Migration_Phase.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=UTF-8",
+      "content_type": "text/html",
       "size_bytes": 171910,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.189Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-united-kingdom-ncsc-2035-6df32193",
@@ -2206,15 +2206,15 @@
       "source_url": "https://www.ncsc.gov.uk/guidance/pqc-migration-timelines",
       "source_url_quality": "url_authoritative",
       "confidence_score": 60,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/United_Kingdom_NCSC_Full_PQC_Compliance.html",
       "resolved_local_file": "public/timeline/United_Kingdom_NCSC_Full_PQC_Compliance.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=UTF-8",
+      "content_type": "text/html",
       "size_bytes": 171910,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.190Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-united-states-white-house-2022-4f5b63a1",
@@ -2232,7 +2232,7 @@
       "size_bytes": 164080,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.190Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2251,7 +2251,7 @@
       "size_bytes": 255063,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.190Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2270,7 +2270,7 @@
       "size_bytes": 207853,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2289,7 +2289,7 @@
       "size_bytes": 67507,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2308,7 +2308,7 @@
       "size_bytes": 67507,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2327,7 +2327,7 @@
       "size_bytes": 164080,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2346,7 +2346,7 @@
       "size_bytes": 46330,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2365,7 +2365,7 @@
       "size_bytes": 45265,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2384,7 +2384,7 @@
       "size_bytes": 1175607,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2403,7 +2403,7 @@
       "size_bytes": 57998,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2422,7 +2422,7 @@
       "size_bytes": 538388,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2441,7 +2441,7 @@
       "size_bytes": 1354180,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2460,7 +2460,7 @@
       "size_bytes": 67507,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2479,7 +2479,7 @@
       "size_bytes": 67507,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2498,7 +2498,7 @@
       "size_bytes": 93652,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2517,7 +2517,7 @@
       "size_bytes": 10449,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2536,7 +2536,7 @@
       "size_bytes": 293522,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2555,7 +2555,7 @@
       "size_bytes": 6830745,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2574,7 +2574,7 @@
       "size_bytes": 115403,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2593,7 +2593,7 @@
       "size_bytes": 37044,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2612,7 +2612,7 @@
       "size_bytes": 85805,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2631,7 +2631,7 @@
       "size_bytes": 67507,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2650,7 +2650,7 @@
       "size_bytes": 538388,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2669,7 +2669,7 @@
       "size_bytes": 61744,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2688,7 +2688,7 @@
       "size_bytes": 67507,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2707,7 +2707,7 @@
       "size_bytes": 93652,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2726,7 +2726,7 @@
       "size_bytes": 59180,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2745,7 +2745,7 @@
       "size_bytes": 45265,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2764,7 +2764,7 @@
       "size_bytes": 67507,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2783,7 +2783,7 @@
       "size_bytes": 59180,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2802,7 +2802,7 @@
       "size_bytes": 67507,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2821,7 +2821,7 @@
       "size_bytes": 67507,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2840,7 +2840,7 @@
       "size_bytes": 69757,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.710Z",
       "pre_existed": true
     },
     {
@@ -2859,7 +2859,7 @@
       "size_bytes": 59180,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -2878,7 +2878,7 @@
       "size_bytes": 70881,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -2897,7 +2897,7 @@
       "size_bytes": 308281,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -2916,7 +2916,7 @@
       "size_bytes": 946913,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -2935,7 +2935,7 @@
       "size_bytes": 56131,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -2954,7 +2954,7 @@
       "size_bytes": 98080,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -2973,7 +2973,7 @@
       "size_bytes": 223157,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.191Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -2992,7 +2992,7 @@
       "size_bytes": null,
       "http_status": null,
       "error_message": "skip-list (forbidden)",
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": false
     },
     {
@@ -3011,7 +3011,7 @@
       "size_bytes": 167383,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3030,7 +3030,7 @@
       "size_bytes": 39789,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3049,7 +3049,7 @@
       "size_bytes": 110427,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3068,7 +3068,7 @@
       "size_bytes": 69757,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3087,7 +3087,7 @@
       "size_bytes": 547236,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3106,7 +3106,7 @@
       "size_bytes": 167799,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3125,7 +3125,7 @@
       "size_bytes": 28911,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3144,7 +3144,7 @@
       "size_bytes": 13079,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3163,7 +3163,7 @@
       "size_bytes": 85619,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3182,7 +3182,7 @@
       "size_bytes": 82545,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3201,7 +3201,7 @@
       "size_bytes": 81940,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3220,7 +3220,7 @@
       "size_bytes": 81940,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3239,7 +3239,7 @@
       "size_bytes": 4451297,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3258,7 +3258,7 @@
       "size_bytes": 114004,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3277,7 +3277,7 @@
       "size_bytes": 853817,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3296,7 +3296,7 @@
       "size_bytes": 1982388,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3315,7 +3315,7 @@
       "size_bytes": 1982388,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3334,7 +3334,7 @@
       "size_bytes": 1982388,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3353,7 +3353,7 @@
       "size_bytes": 1982388,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3372,7 +3372,7 @@
       "size_bytes": 52788,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3391,7 +3391,7 @@
       "size_bytes": 70881,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3410,7 +3410,7 @@
       "size_bytes": 62079,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3429,7 +3429,7 @@
       "size_bytes": 62467,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3448,7 +3448,7 @@
       "size_bytes": 171227,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3467,7 +3467,7 @@
       "size_bytes": 675760,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3486,7 +3486,7 @@
       "size_bytes": 55003,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3505,7 +3505,7 @@
       "size_bytes": 33122,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3524,7 +3524,7 @@
       "size_bytes": 71499,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3543,7 +3543,7 @@
       "size_bytes": 5156707,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3562,7 +3562,7 @@
       "size_bytes": 489317,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3581,7 +3581,7 @@
       "size_bytes": 21181,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3600,7 +3600,7 @@
       "size_bytes": 249644,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3619,7 +3619,7 @@
       "size_bytes": 492787,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.192Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3638,7 +3638,7 @@
       "size_bytes": 361001,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.193Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3657,7 +3657,7 @@
       "size_bytes": 758922,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.193Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3676,7 +3676,7 @@
       "size_bytes": 724281,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.193Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3695,7 +3695,7 @@
       "size_bytes": 568388,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.193Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3707,15 +3707,15 @@
       "source_url": "https://digital-strategy.ec.europa.eu/en/library/recommendation-post-quantum-cryptography",
       "source_url_quality": "url_authoritative",
       "confidence_score": 60,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/European_Union_EC_Cryptographic_Inventory_Mandate.html",
       "resolved_local_file": "public/timeline/European_Union_EC_Cryptographic_Inventory_Mandate.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=UTF-8",
+      "content_type": "text/html",
       "size_bytes": 44803,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.193Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-european-union-ec-2027-62d75744",
@@ -3726,15 +3726,15 @@
       "source_url": "https://digital-strategy.ec.europa.eu/en/library/recommendation-post-quantum-cryptography",
       "source_url_quality": "url_authoritative",
       "confidence_score": 60,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/European_Union_EC_High-Priority_System_Migration_Begins.html",
       "resolved_local_file": "public/timeline/European_Union_EC_High-Priority_System_Migration_Begins.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=UTF-8",
+      "content_type": "text/html",
       "size_bytes": 44803,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.194Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-singapore-mas-2028-151fcc8b",
@@ -3752,7 +3752,7 @@
       "size_bytes": 853817,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.464Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3771,7 +3771,7 @@
       "size_bytes": 81940,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.464Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3790,7 +3790,7 @@
       "size_bytes": 81940,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.464Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3809,7 +3809,7 @@
       "size_bytes": 45265,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.464Z",
+      "downloaded_at": "2026-05-22T20:01:05.711Z",
       "pre_existed": true
     },
     {
@@ -3821,15 +3821,15 @@
       "source_url": "https://www.ncsc.gov.uk/whitepaper/next-steps-preparing-for-post-quantum-cryptography",
       "source_url_quality": "url_authoritative",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/United_Kingdom_NCSC_PQC_Whitepaper_Published.html",
       "resolved_local_file": "public/timeline/United_Kingdom_NCSC_PQC_Whitepaper_Published.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=UTF-8",
+      "content_type": "text/html",
       "size_bytes": 154794,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.464Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-united-states-nist-2020-e6bf4e5a",
@@ -3847,7 +3847,7 @@
       "size_bytes": 42606,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.465Z",
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
       "pre_existed": true
     },
     {
@@ -3866,7 +3866,7 @@
       "size_bytes": 4922757,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.465Z",
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
       "pre_existed": true
     },
     {
@@ -3885,7 +3885,7 @@
       "size_bytes": 23895,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.465Z",
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
       "pre_existed": true
     },
     {
@@ -3904,7 +3904,7 @@
       "size_bytes": null,
       "http_status": null,
       "error_message": "skip-list (forbidden)",
-      "downloaded_at": "2026-05-22T19:52:20.465Z",
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
       "pre_existed": false
     },
     {
@@ -3923,7 +3923,7 @@
       "size_bytes": 373810,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.465Z",
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
       "pre_existed": true
     },
     {
@@ -3942,7 +3942,7 @@
       "size_bytes": 157155,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.465Z",
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
       "pre_existed": true
     },
     {
@@ -3961,7 +3961,7 @@
       "size_bytes": 156793,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.465Z",
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
       "pre_existed": true
     },
     {
@@ -3980,7 +3980,7 @@
       "size_bytes": 583003,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.466Z",
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
       "pre_existed": true
     },
     {
@@ -3999,7 +3999,7 @@
       "size_bytes": 222199,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.466Z",
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
       "pre_existed": true
     },
     {
@@ -4011,15 +4011,15 @@
       "source_url": "https://www.idemia.com/press-release/idemia-secure-transactions-announces-its-first-hardware-accelerator-designed-post-quantum-cryptography-2025-03-18",
       "source_url_quality": "url_needs_review",
       "confidence_score": 60,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/France_IDEMIA_First_PQC_Hardware_Accelerator_Announced.html",
       "resolved_local_file": "public/timeline/France_IDEMIA_First_PQC_Hardware_Accelerator_Announced.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=UTF-8",
+      "content_type": "text/html",
       "size_bytes": 95678,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.466Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-germany-infineon-2025-556a21ae",
@@ -4030,15 +4030,15 @@
       "source_url": "https://www.infineon.com/market-news/2025/INFCSS202510-004",
       "source_url_quality": "url_needs_review",
       "confidence_score": 60,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/Germany_Infineon_First_CC_EAL6_PQC_Security_Controller.html",
       "resolved_local_file": "public/timeline/Germany_Infineon_First_CC_EAL6_PQC_Security_Controller.html",
       "download_status": "ok",
-      "content_type": "text/html;charset=utf-8",
+      "content_type": "text/html",
       "size_bytes": 1405537,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:20.544Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-united-states-ciena-2026-8b50ea97",
@@ -4051,12 +4051,12 @@
       "confidence_score": 60,
       "csv_local_file": null,
       "resolved_local_file": null,
-      "download_status": "paywall",
-      "content_type": "text/html; charset=UTF-8",
+      "download_status": "skipped",
+      "content_type": null,
       "size_bytes": null,
-      "http_status": 403,
-      "error_message": "HTTP 403",
-      "downloaded_at": "2026-05-22T19:52:20.997Z",
+      "http_status": null,
+      "error_message": "skip-list (forbidden): Returns HTTP 403 to automated GET. Real source verified manually.",
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
       "pre_existed": false
     },
     {
@@ -4068,15 +4068,15 @@
       "source_url": "https://www.advasecurity.com/en/newsroom/press-releases/20250925-adva-network-security-scores-world-first-with-bsi-approved-400g-encryption-solution",
       "source_url_quality": "url_needs_review",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/Germany_Adva_BSI-Approved_400G_PQC_Encryptor.html",
       "resolved_local_file": "public/timeline/Germany_Adva_BSI-Approved_400G_PQC_Encryptor.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=utf-8",
+      "content_type": "text/html",
       "size_bytes": 49451,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:21.085Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-united-states-openssl-2026-2f02b1d1",
@@ -4094,7 +4094,7 @@
       "size_bytes": 45400,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:21.086Z",
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
       "pre_existed": true
     },
     {
@@ -4113,7 +4113,7 @@
       "size_bytes": 586545,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:21.086Z",
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
       "pre_existed": true
     },
     {
@@ -4125,15 +4125,15 @@
       "source_url": "https://repositorio.iti.gov.br/instrucoes-normativas/IN2026_35_DOC_ICP_01.01_PQC.htm",
       "source_url_quality": "url_authoritative",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/Brazil_ITI_ICP-Brasil_Mandates_ML-DSA_and_ML-KEM_Certificate_Standards.html",
       "resolved_local_file": "public/timeline/Brazil_ITI_ICP-Brasil_Mandates_ML-DSA_and_ML-KEM_Certificate_Standards.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=UTF-8",
+      "content_type": "text/html",
       "size_bytes": 419893,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:21.087Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-international-itu-t-2021-5c8bb5e8",
@@ -4144,15 +4144,15 @@
       "source_url": "https://www.itu.int/rec/T-REC-X.1811-202104-P",
       "source_url_quality": "url_needs_review",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/International_ITU-T_ITU-T_X.1811_Quantum-Safe_Security_Guidelines_for_5G_Published.html",
       "resolved_local_file": "public/timeline/International_ITU-T_ITU-T_X.1811_Quantum-Safe_Security_Guidelines_for_5G_Published.html",
       "download_status": "ok",
       "content_type": "text/html",
       "size_bytes": 8879,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:21.384Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-african-union-auc-2023-b221267f",
@@ -4163,15 +4163,15 @@
       "source_url": "https://au.int/en/treaties/african-union-convention-cyber-security-and-personal-data-protection",
       "source_url_quality": "url_needs_review",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/African_Union_AUC_Malabo_Convention_Enters_Into_Force.html",
       "resolved_local_file": "public/timeline/African_Union_AUC_Malabo_Convention_Enters_Into_Force.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=utf-8",
+      "content_type": "text/html",
       "size_bytes": 149828,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:21.828Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-international-gsma-2026-544f8cb1",
@@ -4189,7 +4189,7 @@
       "size_bytes": null,
       "http_status": null,
       "error_message": "skip-list (forbidden)",
-      "downloaded_at": "2026-05-22T19:52:21.944Z",
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
       "pre_existed": false
     },
     {
@@ -4201,15 +4201,15 @@
       "source_url": "https://www.sca.gov.cn",
       "source_url_quality": "url_authoritative",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/China_ICCS_NGCC_Financial-Sector_PQC_Migration_Phase.html",
       "resolved_local_file": "public/timeline/China_ICCS_NGCC_Financial-Sector_PQC_Migration_Phase.html",
       "download_status": "ok",
       "content_type": "text/html",
       "size_bytes": 41846,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:21.944Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-g7-g7-ceg-2030-fe4b059e",
@@ -4220,15 +4220,15 @@
       "source_url": "https://home.treasury.gov/system/files/136/G7-CYBER-EXPERT-GROUP-STATEMENT-PLANNING-OPPORTUNITIES-RISKS-QUANTUM-COMPUTING.pdf",
       "source_url_quality": "url_authoritative",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/G7_G7_CEG_G7_Financial_Sector_Critical_Systems_PQC_Transition.pdf",
       "resolved_local_file": "public/timeline/G7_G7_CEG_G7_Financial_Sector_Critical_Systems_PQC_Transition.pdf",
       "download_status": "ok",
       "content_type": "application/pdf",
       "size_bytes": 283430,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:22.020Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-global-3gpp-sa3-2025-e6a08b40",
@@ -4239,15 +4239,15 @@
       "source_url": "https://www.3gpp.org/specifications-groups/sa-plenary/sa3-security",
       "source_url_quality": "url_needs_review",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/Global_3GPP_SA3_3GPP_TR_33.841_PQC_Study.html",
       "resolved_local_file": "public/timeline/Global_3GPP_SA3_3GPP_TR_33.841_PQC_Study.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=utf-8",
+      "content_type": "text/html",
       "size_bytes": 136886,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:22.419Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-global-tcg-2025-0249e43d",
@@ -4260,12 +4260,12 @@
       "confidence_score": 85,
       "csv_local_file": null,
       "resolved_local_file": null,
-      "download_status": "paywall",
-      "content_type": "text/html; charset=UTF-8",
+      "download_status": "skipped",
+      "content_type": null,
       "size_bytes": null,
-      "http_status": 403,
-      "error_message": "HTTP 403",
-      "downloaded_at": "2026-05-22T19:52:22.579Z",
+      "http_status": null,
+      "error_message": "skip-list (forbidden): Returns HTTP 403 to automated GET.",
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
       "pre_existed": false
     },
     {
@@ -4284,7 +4284,7 @@
       "size_bytes": null,
       "http_status": null,
       "error_message": "skip-list (fetch-failed): Returns 200 with 252 KB HTML to curl, but Node 20 undici fetch errors out with 'fetch failed' (likely TLS/SNI incompatibility). Future: fetch via Wayback or playwright fallback.",
-      "downloaded_at": "2026-05-22T19:52:22.783Z",
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
       "pre_existed": false
     },
     {
@@ -4298,12 +4298,12 @@
       "confidence_score": 85,
       "csv_local_file": null,
       "resolved_local_file": null,
-      "download_status": "paywall",
-      "content_type": "text/html",
+      "download_status": "skipped",
+      "content_type": null,
       "size_bytes": null,
-      "http_status": 403,
-      "error_message": "HTTP 403",
-      "downloaded_at": "2026-05-22T19:52:22.783Z",
+      "http_status": null,
+      "error_message": "skip-list (forbidden): Returns HTTP 403 to automated GET.",
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
       "pre_existed": false
     },
     {
@@ -4315,15 +4315,15 @@
       "source_url": "https://www.odpc.go.ke",
       "source_url_quality": "url_needs_review",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/Kenya_ODPC_ODPC_Guidance_on_Data_Protection_by_Design.html",
       "resolved_local_file": "public/timeline/Kenya_ODPC_ODPC_Guidance_on_Data_Protection_by_Design.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=UTF-8",
+      "content_type": "text/html",
       "size_bytes": 128286,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:23.540Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-egypt-mcit-2024-fb29496d",
@@ -4334,15 +4334,15 @@
       "source_url": "https://mcit.gov.eg",
       "source_url_quality": "url_authoritative",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/Egypt_MCIT_Law_151_2020_Executive_Regulations_Issued.html",
       "resolved_local_file": "public/timeline/Egypt_MCIT_Law_151_2020_Executive_Regulations_Issued.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=utf-8",
+      "content_type": "text/html",
       "size_bytes": 62791,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:24.446Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-global-openssl-2025-93371a2f",
@@ -4353,15 +4353,15 @@
       "source_url": "https://www.openssl.org/news/openssl-3.5-notes.html",
       "source_url_quality": "url_needs_review",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/Global_OpenSSL_OpenSSL_3.5.0_Native_PQC_Release.html",
       "resolved_local_file": "public/timeline/Global_OpenSSL_OpenSSL_3.5.0_Native_PQC_Release.html",
       "download_status": "ok",
       "content_type": "text/html",
       "size_bytes": 45881,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:24.553Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-united-states-nist-2026-04759ae6",
@@ -4372,15 +4372,15 @@
       "source_url": "https://csrc.nist.gov/pubs/ir/8547/ipd",
       "source_url_quality": "url_authoritative",
       "confidence_score": 85,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/United_States_NIST_NIST_IR_8547_IPD2_Published.html",
       "resolved_local_file": "public/timeline/United_States_NIST_NIST_IR_8547_IPD2_Published.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=utf-8",
+      "content_type": "text/html",
       "size_bytes": 45373,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:25.819Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-bis-bis-2025-e3ae24d2",
@@ -4391,15 +4391,15 @@
       "source_url": "https://www.bis.org/publ/bisbull88.htm",
       "source_url_quality": null,
       "confidence_score": null,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/BIS_BIS_Paper_158_Quantum_Roadmap.html",
       "resolved_local_file": "public/timeline/BIS_BIS_Paper_158_Quantum_Roadmap.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=UTF-8",
+      "content_type": "text/html",
       "size_bytes": 26946,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:27.055Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-gsma-gsma-2024-d86e089d",
@@ -4412,12 +4412,12 @@
       "confidence_score": null,
       "csv_local_file": null,
       "resolved_local_file": null,
-      "download_status": "paywall",
-      "content_type": "text/html; charset=UTF-8",
+      "download_status": "skipped",
+      "content_type": null,
       "size_bytes": null,
-      "http_status": 403,
-      "error_message": "HTTP 403",
-      "downloaded_at": "2026-05-22T19:52:27.521Z",
+      "http_status": null,
+      "error_message": "skip-list (forbidden): Returns HTTP 403 to automated GET. GSMA hardens its CDN against bots.",
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
       "pre_existed": false
     },
     {
@@ -4429,15 +4429,15 @@
       "source_url": "https://www.cisa.gov/quantum",
       "source_url_quality": null,
       "confidence_score": null,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/United_States_CISA_CISA_PQC_Product_Category_List_Publication.html",
       "resolved_local_file": "public/timeline/United_States_CISA_CISA_PQC_Product_Category_List_Publication.html",
       "download_status": "ok",
-      "content_type": "text/html; charset=UTF-8",
+      "content_type": "text/html",
       "size_bytes": 69757,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:27.671Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-my-pki-consortium-2025-16718420",
@@ -4448,15 +4448,15 @@
       "source_url": "https://pkic.org/2025/11/04/post-quantum-cryptography-conference-2025-concludes-with-urgent-call-for-global-migration-to-quantum-resistant-encryption-systems/",
       "source_url_quality": null,
       "confidence_score": null,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/MY_PKI_Consortium_PKI_Consortium_PQC_Conference_2025_Conclusions.html",
       "resolved_local_file": "public/timeline/MY_PKI_Consortium_PKI_Consortium_PQC_Conference_2025_Conclusions.html",
       "download_status": "ok",
       "content_type": "text/html",
       "size_bytes": 77150,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:27.946Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     },
     {
       "row_key": "TL-de-bsi-2025-cb5b1bda",
@@ -4467,15 +4467,15 @@
       "source_url": "https://www.bsi.bund.de/",
       "source_url_quality": null,
       "confidence_score": null,
-      "csv_local_file": null,
+      "csv_local_file": "public/timeline/DE_BSI_Germany_Quantum-Secure_ID_Card_Demonstrator.html",
       "resolved_local_file": "public/timeline/DE_BSI_Germany_Quantum-Secure_ID_Card_Demonstrator.html",
       "download_status": "ok",
-      "content_type": "text/html;charset=utf-8",
+      "content_type": "text/html",
       "size_bytes": 143856,
-      "http_status": 200,
+      "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T19:52:28.163Z",
-      "pre_existed": false
+      "downloaded_at": "2026-05-22T20:01:05.712Z",
+      "pre_existed": true
     }
   ]
 }
