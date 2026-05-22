@@ -17,7 +17,8 @@ vi.mock('@/utils/analytics', () => ({
   personaLabel: (l?: string) => l,
 }))
 
-const seedModules = (overrides: Record<string, { status: string; lastVisited: number }>) => {
+type ModuleStatus = 'not-started' | 'in-progress' | 'completed'
+const seedModules = (overrides: Record<string, { status: ModuleStatus; lastVisited: number }>) => {
   const baseModules = useModuleStore.getState().modules
   useModuleStore.setState({
     modules: {

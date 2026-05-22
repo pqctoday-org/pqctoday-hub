@@ -90,7 +90,10 @@ export function ExecutiveTimelineView({
         <RegulatoryClock mandatoryFrameworks={mandatory} recognizedFrameworks={recognized} />
       </div>
 
-      <ValidationGantt frameworks={frameworks} onSelectFramework={onSelectFramework} />
+      <ValidationGantt
+        frameworks={frameworks.map((f) => f.item)}
+        onSelectFramework={onSelectFramework}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Left column — framework cards by tier */}

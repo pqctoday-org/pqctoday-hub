@@ -1072,7 +1072,7 @@ export const ComplianceView = () => {
             {overflowTabs.length > 0 && (
               <MoreTabsMenu
                 activeTab={activeTab}
-                onSelect={(tab) => handleTabChange(tab)}
+                onSelect={(tab) => handleTabChange(tab as unknown as MobileSection)}
                 tabs={overflowTabs}
               />
             )}

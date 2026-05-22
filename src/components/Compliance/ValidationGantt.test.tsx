@@ -19,7 +19,7 @@ const fwStub = (overrides: Partial<ComplianceFramework>): ComplianceFramework =>
   enforcementBody: '',
   libraryRefs: [],
   timelineRefs: [],
-  bodyType: 'regulator',
+  bodyType: 'regulatory_body',
   ...overrides,
 })
 

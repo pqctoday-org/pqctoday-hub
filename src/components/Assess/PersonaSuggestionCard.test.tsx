@@ -19,7 +19,8 @@ vi.mock('@/data/learningPersonas', async (importOriginal) => {
   }
 })
 
-const seedComplete = (overrides: Partial<{ teamSize: string }> = {}) => {
+type TeamSize = '1-10' | '11-50' | '51-200' | '200-plus'
+const seedComplete = (overrides: Partial<{ teamSize: TeamSize }> = {}) => {
   useAssessmentStore.setState({
     assessmentStatus: 'complete',
     teamSize: overrides.teamSize ?? '11-50',
