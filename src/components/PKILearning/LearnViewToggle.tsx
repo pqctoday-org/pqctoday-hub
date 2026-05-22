@@ -1,33 +1,29 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { Layers, LayoutGrid, Route, Table } from 'lucide-react'
+import { Layers, LayoutGrid, Table } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 
-export type LearnViewMode = 'path' | 'stack' | 'cards' | 'table'
+export type LearnViewMode = 'stack' | 'cards' | 'table'
 
 interface LearnViewToggleProps {
   mode: LearnViewMode
   onChange: (mode: LearnViewMode) => void
-  /** Hide the 'path' option when no persona is active (path mode requires a persona). */
-  pathAvailable?: boolean
 }
 
 const OPTIONS: { value: LearnViewMode; label: string; icon: typeof Layers }[] = [
-  { value: 'path', label: 'Path', icon: Route },
   { value: 'stack', label: 'Stack', icon: Layers },
   { value: 'cards', label: 'Cards', icon: LayoutGrid },
   { value: 'table', label: 'Table', icon: Table },
 ]
 
-export const LearnViewToggle = ({ mode, onChange, pathAvailable = true }: LearnViewToggleProps) => {
-  const options = pathAvailable ? OPTIONS : OPTIONS.filter((o) => o.value !== 'path')
+export const LearnViewToggle = ({ mode, onChange }: LearnViewToggleProps) => {
   return (
     <div
       className="flex items-center bg-muted/30 rounded-lg p-0.5 border border-border"
       role="radiogroup"
       aria-label="View mode"
     >
-      {options.map(({ value, label, icon: Icon }) => (
+      {OPTIONS.map(({ value, label, icon: Icon }) => (
         <Button
           variant="ghost"
           key={value}
