@@ -38,13 +38,17 @@ export function SourcePassagesDrawer({ chunkId, className = '' }: SourcePassages
           setOpen((p) => !p)
         }}
         aria-expanded={open}
-        className="h-auto inline-flex items-center gap-1.5 text-[11px] px-1 py-0.5 text-muted-foreground hover:text-foreground"
+        className="h-auto w-full flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11px] px-1 py-0.5 text-left text-muted-foreground hover:text-foreground whitespace-normal break-words"
         title="View source evidence from the cached document"
       >
-        {open ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-        <Quote size={11} aria-hidden="true" />
-        Source evidence
-        <span className="text-muted-foreground/70">
+        {open ? (
+          <ChevronUp size={12} className="shrink-0" />
+        ) : (
+          <ChevronDown size={12} className="shrink-0" />
+        )}
+        <Quote size={11} aria-hidden="true" className="shrink-0" />
+        <span>Source evidence</span>
+        <span className="text-muted-foreground/70 min-w-0 break-words">
           ({attribution} · {summary})
         </span>
       </Button>
