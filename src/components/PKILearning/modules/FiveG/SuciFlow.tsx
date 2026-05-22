@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import type { Step } from '../DigitalAssets/components/StepWizard'
 import { StepWizard } from '../DigitalAssets/components/StepWizard'
 import { useStepWizard } from '../DigitalAssets/hooks/useStepWizard'
+import { WorkshopOperationLog } from '@/components/PKILearning/common/WorkshopOperationLog'
 import { FIVE_G_CONSTANTS } from './constants'
 import { FiveGDiagram } from './components/FiveGDiagram'
 import { GsmaTestDataModal } from './components/GsmaTestDataModal'
@@ -1682,6 +1683,10 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
                 : 'Finish & View Dashboard'
         }
       />
+
+      {wizard.logEntries.length > 0 && (
+        <WorkshopOperationLog entries={wizard.logEntries} className="max-h-40" />
+      )}
 
       {hsm.isReady && (
         <div className="space-y-4">
