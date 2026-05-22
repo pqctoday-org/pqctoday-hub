@@ -45,6 +45,7 @@ import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
 import { ReportCswp39Nav } from './ReportCswp39Nav'
 import { useThreatsData } from '../../hooks/useThreatsData'
+import { GlossaryAutoWrap } from '../PKILearning/common/GlossaryAutoWrap'
 import { MigrationRoadmap } from './MigrationRoadmap'
 import { MigrationToolkit } from './MigrationToolkit'
 import { ReportMethodologyModal } from './ReportMethodologyModal'
@@ -857,7 +858,13 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         </p>
                       )}
                       <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-muted-foreground">
-                        {result.personaNarrative ?? result.narrative}
+                        {selectedPersona === 'curious' ? (
+                          <GlossaryAutoWrap>
+                            {result.personaNarrative ?? result.narrative}
+                          </GlossaryAutoWrap>
+                        ) : (
+                          (result.personaNarrative ?? result.narrative)
+                        )}
                       </p>
                       {result.boosts &&
                         result.boosts.length > 0 &&
