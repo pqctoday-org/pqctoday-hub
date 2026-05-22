@@ -314,20 +314,28 @@ const statusMap =
     ? compareDatasets(currentItems, previousItems, 'referenceId')
     : new Map<string, ItemStatus>()
 
-// Build a citation count map: how many other items name THIS item in their
-// `dependencies` field. Single O(N) pass over `currentItems`. Used by the
-// "Most cited" sort (researcher default).
-const citationCounts = new Map<string, number>()
-for (const item of currentItems) {
-  if (!item.dependencies) continue
-  const deps = item.dependencies
-    .split(';')
-    .map((d) => d.trim())
-    .filter((d) => d && d !== item.referenceId)
-  for (const dep of deps) {
-    citationCounts.set(dep, (citationCounts.get(dep) ?? 0) + 1)
+/**
+ * Build a citation-count map: how many other items name THIS item in their
+ * `dependencies` field. Single O(N) pass. Used by the "Most cited" sort
+ * (researcher default). Exported so the derivation can be unit-tested
+ * against synthetic fixtures without re-loading the CSV.
+ */
+export function computeCitationCounts(items: Pick<LibraryItem, 'referenceId' | 'dependencies'>[]): Map<string, number> {
+  const counts = new Map<string, number>()
+  for (const item of items) {
+    if (!item.dependencies) continue
+    const deps = item.dependencies
+      .split(';')
+      .map((d) => d.trim())
+      .filter((d) => d && d !== item.referenceId)
+    for (const dep of deps) {
+      counts.set(dep, (counts.get(dep) ?? 0) + 1)
+    }
   }
+  return counts
 }
+
+const citationCounts = computeCitationCounts(currentItems)
 
 // Inject status + citationCount into current items and export
 export const libraryData: LibraryItem[] = currentItems.map((item) => ({
