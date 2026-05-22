@@ -4,10 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ComplianceTable } from './ComplianceTable'
-import {
-  ComplianceLandscape,
-  type FrameworkSortOption,
-} from './ComplianceLandscape'
+import { ComplianceLandscape, type FrameworkSortOption } from './ComplianceLandscape'
 import { DeadlineTimelineGate } from './DeadlineTimelineGate'
 import { AboutThisPageStrip } from './AboutThisPageStrip'
 import { PersonaHintCta } from './PersonaHintCta'
@@ -567,6 +564,38 @@ export const ComplianceView = () => {
       ? 'EU region'
       : null
 
+  // Per-industry/region dismissal — once a user clicks through (or X's out of)
+  // a hint, suppress it for that exact industry or region key only. Switching
+  // industry re-prompts because the storage key changes with the key string.
+  // Derive the flag from localStorage on every render (cheap), and bump
+  // `personaHintDismissTick` to force a recompute after a dismiss write.
+  const personaHintDismissKey = primaryIndustry
+    ? `compliance-persona-hint-dismissed-industry:${primaryIndustry}`
+    : selectedRegion === 'eu'
+      ? 'compliance-persona-hint-dismissed-region:eu'
+      : null
+  const [personaHintDismissTick, setPersonaHintDismissTick] = useState(0)
+  const personaHintDismissed = useMemo(() => {
+    if (!personaHintDismissKey || typeof window === 'undefined') return false
+    try {
+      return window.localStorage.getItem(personaHintDismissKey) === '1'
+    } catch {
+      return false
+    }
+    // `personaHintDismissTick` is deliberate: bumping it invalidates this
+    // memo after a dismissal write to localStorage.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [personaHintDismissKey, personaHintDismissTick])
+  const dismissPersonaHint = useCallback(() => {
+    if (!personaHintDismissKey) return
+    try {
+      window.localStorage.setItem(personaHintDismissKey, '1')
+    } catch {
+      /* private browsing / quota — flag just won't persist this session */
+    }
+    setPersonaHintDismissTick((t) => t + 1)
+  }, [personaHintDismissKey])
+
   const [exportError, setExportError] = useState<string | null>(null)
 
   // Intro banner dismissal — persists across sessions. Bump the version suffix
@@ -807,7 +836,13 @@ export const ComplianceView = () => {
 
       {selectedPersona === 'curious' && <PreviewBanner pageContext="GRC, Executive, Architect" />}
 
-      <AboutThisPageStrip />
+      <AboutThisPageStrip
+        headerSlot={
+          <span className="md:hidden" data-testid="about-strip-trust-tier-slot">
+            <TrustTierFilter />
+          </span>
+        }
+      />
 
       {exportError && (
         <div
@@ -836,7 +871,7 @@ export const ComplianceView = () => {
           Suppressed entirely when a persona hint is going to render: the hint
           is strictly more targeted, and showing both creates duplicate
           onboarding chrome above the tab body. */}
-      {!introDismissed && !(complianceHint && complianceHintLabel) && (
+      {!introDismissed && !(complianceHint && complianceHintLabel && !personaHintDismissed) && (
         <div className="rounded-lg border border-secondary/20 bg-secondary/5 p-4 space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
@@ -928,11 +963,12 @@ export const ComplianceView = () => {
 
       {/* Persona/industry context hint — one-click navigation to the
           recommended compliance section. */}
-      {complianceHint && complianceHintLabel && (
+      {complianceHint && complianceHintLabel && !personaHintDismissed && (
         <PersonaHintCta
           label={complianceHintLabel}
           hint={complianceHint}
           onNavigate={handlePersonaHintNavigate}
+          onDismiss={dismissPersonaHint}
         />
       )}
 

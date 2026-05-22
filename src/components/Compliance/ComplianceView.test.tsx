@@ -233,4 +233,59 @@ describe('ComplianceView', () => {
     expect(screen.getByRole('button', { name: /Show deadline timeline/i })).toBeInTheDocument()
     expect(screen.queryByText(/PQC Compliance Deadlines/)).not.toBeInTheDocument()
   }, 15000)
+
+  it('announces persona-hint navigation via aria-live region', () => {
+    usePersonaStore.setState({ selectedIndustries: ['Finance & Banking'] })
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    // Both desktop + mobile render a live region — both should be empty at idle.
+    const regions = screen.getAllByTestId('persona-hint-live-region')
+    expect(regions.length).toBeGreaterThan(0)
+    expect(regions[0].textContent).toBe('')
+    fireEvent.click(screen.getAllByRole('button', { name: /Go to Certification Schemes/i })[0])
+    // After click, the region announces the destination. Re-query because
+    // React re-renders the surface, but the DOM node is still by testid.
+    expect(screen.getAllByTestId('persona-hint-live-region')[0].textContent).toMatch(
+      /Navigated to Certification Schemes/i
+    )
+  }, 15000)
+
+  it('persona-hint dismissal persists per industry and re-prompts on industry change', () => {
+    usePersonaStore.setState({ selectedIndustries: ['Finance & Banking'] })
+    const { unmount: unmount1 } = render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    // Hint visible for Finance — click dismiss.
+    expect(
+      screen.getAllByRole('button', { name: /Go to Certification Schemes/i }).length
+    ).toBeGreaterThan(0)
+    fireEvent.click(screen.getAllByRole('button', { name: /Dismiss persona hint/i })[0])
+    expect(screen.queryAllByRole('button', { name: /Go to Certification Schemes/i }).length).toBe(0)
+    unmount1()
+
+    // Re-mount with same industry — flag persisted, hint stays dismissed.
+    const { unmount: unmount2 } = render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    expect(screen.queryAllByRole('button', { name: /Go to Certification Schemes/i }).length).toBe(0)
+    unmount2()
+
+    // Switch industry — new key, hint re-appears.
+    usePersonaStore.setState({ selectedIndustries: ['Healthcare'] })
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    expect(
+      screen.queryAllByRole('button', { name: /Go to Certification Schemes/i }).length
+    ).toBeGreaterThan(0)
+  }, 15000)
 })
