@@ -727,7 +727,8 @@ const HARDNESS_ASSUMPTIONS: Record<string, string> = {
   'Hash-based': 'Hash function collision and preimage resistance',
   Multivariate: 'Solving systems of multivariate quadratic equations (MQ problem)',
   Isogeny: 'Computing isogenies between supersingular elliptic curves',
-  Hybrid: 'Combination of classical (DLP/factoring) and PQC hardness assumptions',
+  // P2.1: renamed from 'Hybrid' to disambiguate from protocol-level hybrid signature.
+  Composite: 'Combination of classical (DLP/factoring) and PQC hardness assumptions',
   Classical: 'Integer factoring (RSA) or discrete logarithm (ECC/DH)',
 }
 

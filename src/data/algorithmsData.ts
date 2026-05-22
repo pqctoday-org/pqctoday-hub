@@ -115,12 +115,15 @@ export function getCryptoFamilyFromPQCName(pqcName: string): string {
     return 'Hash-based'
   if (n.startsWith('uov') || n.startsWith('mayo') || n.startsWith('snova')) return 'Multivariate'
   if (n.startsWith('sqisign')) return 'Isogeny'
-  if (n.includes('mlkem') && (n.startsWith('x25519') || n.startsWith('secp'))) return 'Hybrid'
-  if (n.startsWith('covercrypt') || n.startsWith('hpke-pq')) return 'Hybrid'
+  // P2.1: 'Hybrid' math family renamed to 'Composite' to disambiguate from
+  // protocol-level "hybrid signature". The crypto family for X25519+ML-KEM
+  // etc. is a Composite math construction.
+  if (n.includes('mlkem') && (n.startsWith('x25519') || n.startsWith('secp'))) return 'Composite'
+  if (n.startsWith('covercrypt') || n.startsWith('hpke-pq')) return 'Composite'
   // Composite: contains a PQC name alongside a classical algorithm name
   if (n.includes('ml-dsa') || n.includes('ml-kem')) {
     if (n.includes('rsa') || n.includes('ecdsa') || n.includes('ecdh') || n.includes('ed25519'))
-      return 'Hybrid'
+      return 'Composite'
   }
   if (
     n.startsWith('sha3') ||

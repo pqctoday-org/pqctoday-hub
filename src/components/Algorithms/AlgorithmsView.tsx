@@ -82,6 +82,8 @@ export function AlgorithmsView() {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const viewAccess = usePersonaStore((s) => s.viewAccess)
   const setAdvancedViewsUnlocked = usePersonaStore((s) => s.setAdvancedViewsUnlocked)
+  const algorithmsTabsVisited = usePersonaStore((s) => s.algorithmsTabsVisited)
+  const markAlgorithmsTabVisited = usePersonaStore((s) => s.markAlgorithmsTabVisited)
   const comparisonPanelRef = useRef<HTMLDivElement>(null)
   const isCuriousPreview =
     selectedPersona === 'curious' && viewAccess === 'preview' && !searchParams.get('highlight')
@@ -141,6 +143,22 @@ export function AlgorithmsView() {
       setActiveTab((prev) => (prev !== tab ? tab : prev))
     }
   }, [searchParams])
+
+  // P2.3: record tab visits so the curious-persona gate on Protocol Support
+  // can open after the user has explored Transition or Detailed at least once.
+  useEffect(() => {
+    if (activeTab === 'transition' || activeTab === 'detailed') {
+      markAlgorithmsTabVisited(activeTab)
+    }
+  }, [activeTab, markAlgorithmsTabVisited])
+
+  // Curious-only gate: hide Protocol Support until they have visited at
+  // least one of the friendlier tabs. Power personas and unlocked-curious
+  // users always see the third tab.
+  const hideSupportTab =
+    selectedPersona === 'curious' &&
+    !algorithmsTabsVisited.includes('transition') &&
+    !algorithmsTabsVisited.includes('detailed')
 
   // Reset all filters when arriving from command palette search so the highlighted
   // algorithm is always visible regardless of previously active filter state
@@ -708,16 +726,18 @@ export function AlgorithmsView() {
                 <BarChart3 size={18} />
                 Detailed Comparison
               </TabsTrigger>
-              <TabsTrigger value="support" className="flex items-center gap-2">
-                <Network size={18} />
-                Protocol Support
-                <span
-                  className="rounded-sm bg-primary/15 text-primary px-1 py-0 text-[9px] font-bold uppercase tracking-wider"
-                  title="Tracks 14 IETF protocols across pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. Updated weekly from datatracker."
-                >
-                  Beta
-                </span>
-              </TabsTrigger>
+              {!hideSupportTab && (
+                <TabsTrigger value="support" className="flex items-center gap-2">
+                  <Network size={18} />
+                  Protocol Support
+                  <span
+                    className="rounded-sm bg-primary/15 text-primary px-1 py-0 text-[9px] font-bold uppercase tracking-wider"
+                    title="Tracks 14 IETF protocols across pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. Updated weekly from datatracker."
+                  >
+                    Beta
+                  </span>
+                </TabsTrigger>
+              )}
             </TabsList>
 
             <TabsContent value="transition">

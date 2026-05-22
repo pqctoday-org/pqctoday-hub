@@ -37,6 +37,12 @@ interface PersonaState {
   niceTierOverridden: boolean
   /** Whether the curious-persona floating tour was completed or dismissed (CC-17) */
   curiousGuideDismissed: boolean
+  /**
+   * Algorithms-page tabs the user has visited at least once. P2.3 uses this
+   * to gate the Protocol Support tab for the curious persona — they must
+   * visit Transition or Detailed before the third tab becomes available.
+   */
+  algorithmsTabsVisited: string[]
   setPersona: (persona: PersonaId | null) => void
   clearPersona: () => void
   markPickerSeen: () => void
@@ -48,6 +54,7 @@ interface PersonaState {
   setNiceTier: (tier: NiceProficiencyTier) => void
   resetNiceTier: () => void
   dismissCuriousGuide: () => void
+  markAlgorithmsTabVisited: (tab: string) => void
   /** Backwards-compat alias: true → 'unlocked', false → 'gated' */
   setAdvancedViewsUnlocked: (unlocked: boolean) => void
   clearPreferences: () => void
@@ -67,6 +74,7 @@ export const usePersonaStore = create<PersonaState>()(
       niceTier: 'awareness',
       niceTierOverridden: false,
       curiousGuideDismissed: false,
+      algorithmsTabsVisited: [],
 
       setPersona: (persona) =>
         set((state) => ({
@@ -106,6 +114,12 @@ export const usePersonaStore = create<PersonaState>()(
 
       dismissCuriousGuide: () => set({ curiousGuideDismissed: true }),
 
+      markAlgorithmsTabVisited: (tab) =>
+        set((state) => {
+          if (state.algorithmsTabsVisited.includes(tab)) return state
+          return { algorithmsTabsVisited: [...state.algorithmsTabsVisited, tab] }
+        }),
+
       setAdvancedViewsUnlocked: (unlocked) => set({ viewAccess: unlocked ? 'unlocked' : 'gated' }),
 
       clearPreferences: () =>
@@ -120,12 +134,13 @@ export const usePersonaStore = create<PersonaState>()(
           niceTier: 'awareness',
           niceTierOverridden: false,
           curiousGuideDismissed: false,
+          algorithmsTabsVisited: [],
         }),
     }),
     {
       name: 'pqc-learning-persona',
       storage: createJSONStorage(() => localStorage),
-      version: 7,
+      version: 8,
       migrate: (persisted: unknown, fromVersion: number) => {
         const s = (persisted ?? {}) as Record<string, unknown>
         if (fromVersion < 1) {
@@ -160,6 +175,14 @@ export const usePersonaStore = create<PersonaState>()(
         if (fromVersion < 7) {
           // CC-17: track whether the curious-persona floating tour was dismissed.
           s.curiousGuideDismissed = s.curiousGuideDismissed ?? false
+        }
+        if (fromVersion < 8) {
+          // P2.3: track algorithms-page tab visits to gate Protocol Support
+          // for the curious persona. Default empty array so the gate engages
+          // until the user actually visits Transition or Detailed.
+          s.algorithmsTabsVisited = Array.isArray(s.algorithmsTabsVisited)
+            ? s.algorithmsTabsVisited
+            : []
         }
         return s
       },

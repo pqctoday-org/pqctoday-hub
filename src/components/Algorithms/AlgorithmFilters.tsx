@@ -24,7 +24,10 @@ export const CRYPTO_FAMILY_ITEMS = [
   { id: 'Lattice', label: 'Lattice' },
   { id: 'Code-based', label: 'Code-based' },
   { id: 'Hash-based', label: 'Hash-based' },
-  { id: 'Hybrid', label: 'Hybrid' },
+  // P2.1 (2026-05-22): renamed from 'Hybrid' to 'Composite (math)' to
+  // disambiguate from protocol-level "hybrid signature". The loader maps
+  // legacy CSV 'Hybrid' → 'Composite' so this id matches the data.
+  { id: 'Composite', label: 'Composite (math)' },
   { id: 'Multivariate', label: 'Multivariate' },
   { id: 'Isogeny', label: 'Isogeny' },
   { id: 'Classical', label: 'Classical' },
