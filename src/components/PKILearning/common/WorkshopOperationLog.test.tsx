@@ -33,4 +33,28 @@ describe('WorkshopOperationLog', () => {
     render(<WorkshopOperationLog entries={entries} />)
     expect(screen.getByText('[432ms]')).toBeInTheDocument()
   })
+
+  it('shows the indeterminate progress bar when any entry is pending', () => {
+    const entries: LogEntry[] = [
+      { status: 'success', message: 'Generated key', durationMs: 12 },
+      { status: 'pending', message: 'Signing...' },
+    ]
+    render(<WorkshopOperationLog entries={entries} />)
+    const bar = screen.getByRole('progressbar', { name: 'Operation in progress' })
+    expect(bar).toBeInTheDocument()
+    // Indeterminate — no aria-valuenow set.
+    expect(bar).not.toHaveAttribute('aria-valuenow')
+    // Log container reports busy state to assistive tech.
+    expect(screen.getByRole('log')).toHaveAttribute('aria-busy', 'true')
+  })
+
+  it('hides the progress bar when no entries are pending', () => {
+    const entries: LogEntry[] = [
+      { status: 'success', message: 'Generated key', durationMs: 12 },
+      { status: 'success', message: 'Signed', durationMs: 87 },
+    ]
+    render(<WorkshopOperationLog entries={entries} />)
+    expect(screen.queryByRole('progressbar', { name: 'Operation in progress' })).toBeNull()
+    expect(screen.getByRole('log')).toHaveAttribute('aria-busy', 'false')
+  })
 })

@@ -19,13 +19,16 @@ interface WorkshopOperationLogProps {
  *
  * Renders a scrollable monospace list of log entries with per-row status
  * icons. Auto-scrolls to the bottom on new entries. Announces changes to
- * screen readers via aria-live="polite".
+ * screen readers via aria-live="polite". When any entry is `pending`, an
+ * indeterminate progress bar runs at the top of the log so users can see
+ * an operation is in flight without reading the per-row icons.
  */
 export const WorkshopOperationLog: React.FC<WorkshopOperationLogProps> = ({
   entries,
   className,
 }) => {
   const bottomRef = useRef<HTMLDivElement>(null)
+  const hasPending = entries.some((e) => e.status === 'pending')
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'nearest' })
@@ -38,11 +41,21 @@ export const WorkshopOperationLog: React.FC<WorkshopOperationLogProps> = ({
       role="log"
       aria-live="polite"
       aria-label="Operation log"
+      aria-busy={hasPending}
       className={clsx(
         'bg-muted rounded-lg p-3 font-mono text-xs max-h-32 overflow-y-auto space-y-1',
         className
       )}
     >
+      {hasPending && (
+        <div
+          className="relative -m-1 mb-1 h-1 overflow-hidden rounded-full bg-primary/20"
+          role="progressbar"
+          aria-label="Operation in progress"
+        >
+          <div className="absolute inset-y-0 left-0 w-1/3 animate-workshop-progress rounded-full bg-primary" />
+        </div>
+      )}
       {entries.map((entry, idx) => (
         <div key={idx} className="flex items-start gap-1.5 min-w-0">
           <span className="shrink-0 mt-px">
