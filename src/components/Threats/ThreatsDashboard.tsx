@@ -21,10 +21,15 @@ import {
   useTrustTierFilter,
   matchesTrustTierFilter,
 } from '../common/TrustTierFilter'
-import { logEvent } from '../../utils/analytics'
+import { logEvent, personaLabel } from '../../utils/analytics'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
-import { INDUSTRY_TO_THREATS_MAP } from '../../data/personaConfig'
+import {
+  INDUSTRY_TO_THREATS_MAP,
+  PERSONA_THREATS_DEFAULT_INDUSTRIES,
+} from '../../data/personaConfig'
+import { PersonaDefaultsBanner } from '../common/PersonaDefaultsBanner'
+import { usePersonaDefaults } from '@/hooks/usePersonaDefaults'
 import clsx from 'clsx'
 import { PageHeader } from '../common/PageHeader'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
@@ -238,12 +243,36 @@ export const ThreatsDashboard: React.FC = () => {
     [semantic.mode, semantic.hits]
   )
 
+  // Persona-aware default industries — applies when the user has a persona
+  // set but no explicit industry picked, and hasn't opted out via ?prefs=off.
+  // The persona's PERSONA_THREATS_DEFAULT_INDUSTRIES list (e.g. executive →
+  // ['Finance & Banking', 'Government & Defense']) is mapped through
+  // INDUSTRY_TO_THREATS_MAP to threat-industry strings, which then act as
+  // a filter on the threats corpus. Researcher + curious have empty default
+  // sets → no narrowing.
+  const personaDefaults = usePersonaDefaults()
+  const personaDefaultThreatIndustries = useMemo<string[]>(() => {
+    if (personaDefaults.prefsOff) return []
+    if (!selectedPersona) return []
+    if (selectedIndustries.length > 0) return []
+    if (storeIndustries.length > 0) return []
+    const personaIndustryKeys = PERSONA_THREATS_DEFAULT_INDUSTRIES[selectedPersona] ?? [] // eslint-disable-line security/detect-object-injection
+    return personaIndustryKeys
+      .flatMap((key) => INDUSTRY_TO_THREATS_MAP[key] ?? []) // eslint-disable-line security/detect-object-injection
+      .filter((ind) => threatsData.some((d) => d.industry === ind))
+  }, [selectedPersona, selectedIndustries, storeIndustries, personaDefaults.prefsOff])
+  const personaDefaultActive = personaDefaultThreatIndustries.length > 0
+
   const filteredAndSortedData = useMemo(() => {
     let data = [...threatsData]
 
     // Filter by Industry (multi-select: empty = all)
     if (selectedIndustries.length > 0) {
       data = data.filter((item) => selectedIndustries.includes(item.industry))
+    } else if (personaDefaultActive) {
+      // Persona-default narrowing — applies only when no explicit industry is
+      // picked (above branch) and the user hasn't opted out via ?prefs=off.
+      data = data.filter((item) => personaDefaultThreatIndustries.includes(item.industry))
     }
 
     // Filter by Criticality
@@ -327,6 +356,8 @@ export const ThreatsDashboard: React.FC = () => {
     showOnlyThreats,
     myThreats,
     tierFilter,
+    personaDefaultActive,
+    personaDefaultThreatIndustries,
   ])
 
   // When a persona is set but no explicit industry filter is active, compute the persona's
@@ -402,6 +433,23 @@ export const ThreatsDashboard: React.FC = () => {
         <div className="glass-panel p-3 mb-4 flex items-center gap-2 text-sm text-muted-foreground">
           <Info size={14} className="text-primary flex-shrink-0" />
           <span>{personaSummary}</span>
+        </div>
+      )}
+
+      {/* Persona-aware default-filter banner — appears when persona has
+          a default-industries set, the user hasn't picked an explicit
+          industry, and hasn't opted out via ?prefs=off. */}
+      {personaDefaultActive && (
+        <div className="mb-4">
+          <PersonaDefaultsBanner
+            matchedCount={filteredAndSortedData.length}
+            totalCount={threatsData.length}
+            noun="threat"
+            onReset={() => {
+              personaDefaults.resetToFullSet()
+              logEvent('Threats', 'Persona Prefs Off', personaLabel())
+            }}
+          />
         </div>
       )}
 
