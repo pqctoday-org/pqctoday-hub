@@ -90,7 +90,7 @@ export function SandboxScenarioEmbed() {
     if (!baseUrl) return
     const ctrl = new AbortController()
     const timer = setTimeout(() => ctrl.abort(), REACHABILITY_TIMEOUT_MS)
-    fetch(`${baseUrl}${HEALTH_PATH}`, { mode: 'no-cors', signal: ctrl.signal })
+    fetch(`${baseUrl}${HEALTH_PATH}`, { mode: 'cors', signal: ctrl.signal })
       .then(() => setReach('reachable'))
       .catch(() => setReach('unreachable'))
       .finally(() => clearTimeout(timer))
@@ -108,7 +108,7 @@ export function SandboxScenarioEmbed() {
       vendorName: session.vendorName ?? 'PQC Timeline App',
       userId: session.userId ?? 'anonymous',
       scenarioId: scenario.id,
-      allowedRoutes: [`/embed/scenario/${scenario.id}`, '/embed'],
+      allowedRoutes: ['/*'],
       allowedOrigins: [window.location.origin],
       theme: document.documentElement.classList.contains('light') ? 'light' : 'dark',
       sessionId: session.sessionId,
