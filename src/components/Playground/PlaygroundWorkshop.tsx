@@ -336,8 +336,8 @@ export const PlaygroundWorkshop = () => {
   )
 
   const [showPersonaFilter, setShowPersonaFilter] = useState(true)
-  // WIP tools hidden by default; embed mode keeps them hidden (vendors require stable content)
-  const [wipFilter, setWipFilter] = useState<'all' | 'only' | 'hide'>('hide')
+  // WIP tools visible by default; embed mode hides them (vendors require stable content)
+  const [wipFilter, setWipFilter] = useState<'all' | 'only' | 'hide'>(isEmbedded ? 'hide' : 'all')
 
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const myPlaygroundTools = useBookmarkStore((s) => s.myPlaygroundTools)
@@ -491,6 +491,38 @@ export const PlaygroundWorkshop = () => {
                 </Button>
               )
             })}
+            {!isEmbedded && (
+              <Button
+                variant="ghost"
+                onClick={() =>
+                  setWipFilter((v) => (v === 'all' ? 'only' : v === 'only' ? 'hide' : 'all'))
+                }
+                className={`w-full justify-between text-xs px-2 py-1.5 h-auto rounded font-medium transition-colors mt-2 ${
+                  wipFilter === 'only'
+                    ? 'bg-status-warning/15 text-status-warning'
+                    : wipFilter === 'hide'
+                      ? 'text-muted-foreground/50 line-through hover:text-muted-foreground hover:no-underline'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+                }`}
+                title={
+                  wipFilter === 'all'
+                    ? 'Click to show only WIP tools'
+                    : wipFilter === 'only'
+                      ? 'Click to hide WIP tools'
+                      : 'Click to show all tools including WIP'
+                }
+              >
+                <span className="flex items-center gap-1.5">
+                  <Wrench className="w-3 h-3 shrink-0" aria-hidden="true" />
+                  {wipFilter === 'hide' ? 'WIP hidden' : 'WIP'}
+                </span>
+                {wipFilter !== 'hide' && (
+                  <span className="text-[10px] tabular-nums shrink-0 ml-1">
+                    {WORKSHOP_TOOLS.filter((t) => t.wip).length}
+                  </span>
+                )}
+              </Button>
+            )}
           </aside>
 
           {/* ── Main content ── */}
