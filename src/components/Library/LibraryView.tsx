@@ -18,6 +18,8 @@ import type { ViewMode } from './ViewToggle'
 import { SortControl } from './SortControl'
 import type { SortOption } from './SortControl'
 import { FilterDropdown } from '../common/FilterDropdown'
+import { PersonaDefaultsBanner } from '../common/PersonaDefaultsBanner'
+import { usePersonaDefaults } from '@/hooks/usePersonaDefaults'
 import { Search, FileSearch, BookOpen, SlidersHorizontal, X, BookmarkCheck } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { ContentUpdatesFeed } from '@/components/ui/ContentUpdatesFeed'
@@ -490,31 +492,17 @@ export const LibraryView: React.FC = () => {
 
   // Persona-preferred set — used as a default multi-category filter when
   // the user has not picked an explicit category. Researcher's empty array
-  // short-circuits to "no narrowing". ?prefs=off opts back to the full corpus.
+  // short-circuits to "no narrowing". `usePersonaDefaults()` owns the
+  // ?prefs=off URL state and the persona-change reset that previously
+  // lived inline here. See `@/hooks/usePersonaDefaults`.
+  const personaDefaults = usePersonaDefaults()
   const personaPreferredCategories = useMemo<string[]>(() => {
-    if (searchParams.get('prefs') === 'off') return []
+    if (personaDefaults.prefsOff) return []
     if (!selectedPersona) return []
     return PERSONA_LIBRARY_CATEGORIES[selectedPersona] ?? [] // eslint-disable-line security/detect-object-injection
-  }, [selectedPersona, searchParams])
+  }, [selectedPersona, personaDefaults.prefsOff])
 
   const personaPreferredActive = personaPreferredCategories.length > 0 && activeCategory === 'All'
-
-  // When persona changes, the user has effectively asked for a new set of
-  // defaults — strip a lingering ?prefs=off so the new persona's preferred
-  // narrowing applies.
-  useEffect(() => {
-    if (searchParams.get('prefs') === 'off') {
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams(prev)
-          next.delete('prefs')
-          return next
-        },
-        { replace: true }
-      )
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedPersona])
 
   // Phase 3 — semantic search supplement. The hook returns ranked
   // referenceIds when the embedding runtime is ready. The lexical
@@ -1227,30 +1215,15 @@ export const LibraryView: React.FC = () => {
       {showFullPage && (
         <div className="space-y-1" role="status" aria-live="polite">
           {personaPreferredActive ? (
-            <div className="glass-panel inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-md text-xs">
-              <span className="text-muted-foreground">
-                Showing {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''}{' '}
-                matched to your role
-              </span>
-              <span className="text-muted-foreground/60">·</span>
-              <Button
-                variant="link"
-                onClick={() => {
-                  setSearchParams(
-                    (prev) => {
-                      const next = new URLSearchParams(prev)
-                      next.set('prefs', 'off')
-                      return next
-                    },
-                    { replace: true }
-                  )
-                  logEvent('Library', 'Persona Prefs Off', personaLabel())
-                }}
-                className="text-xs h-auto p-0"
-              >
-                See all {libraryData.length}
-              </Button>
-            </div>
+            <PersonaDefaultsBanner
+              matchedCount={filteredItems.length}
+              totalCount={libraryData.length}
+              noun="document"
+              onReset={() => {
+                personaDefaults.resetToFullSet()
+                logEvent('Library', 'Persona Prefs Off', personaLabel())
+              }}
+            />
           ) : (
             <p className="text-xs text-muted-foreground">
               {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''}

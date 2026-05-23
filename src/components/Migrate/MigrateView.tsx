@@ -43,6 +43,8 @@ import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { useHistoryStore } from '@/store/useHistoryStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONA_MIGRATE_LAYERS } from '@/data/personaConfig'
+import { PersonaDefaultsBanner } from '@/components/common/PersonaDefaultsBanner'
+import { usePersonaDefaults } from '@/hooks/usePersonaDefaults'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { SemanticSearchHint } from '@/components/common/SemanticSearchHint'
 import { Button } from '../ui/button'
@@ -85,6 +87,7 @@ export const MigrateView: React.FC = () => {
   const addHistoryEvent = useHistoryStore((s) => s.addEvent)
   const persona = usePersonaStore((s) => s.selectedPersona)
   const preferredLayers = persona ? (PERSONA_MIGRATE_LAYERS[persona] ?? []) : [] // eslint-disable-line security/detect-object-injection
+  const personaDefaults = usePersonaDefaults()
   const [searchParams, setSearchParams] = useSearchParams()
   const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
   const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
@@ -445,6 +448,14 @@ export const MigrateView: React.FC = () => {
       : activeLayer
   const effectiveSubCategory = urlSubcatParam ?? activeSubCategory
 
+  // Persona-aware default narrowing. Active when the persona has a preferred
+  // infrastructure-layer set, the user hasn't picked an explicit layer (or
+  // opted out via ?prefs=off), and we're in a flat view (the per-layer
+  // grouped views already isolate layers by construction).
+  // Researcher + curious have empty PERSONA_MIGRATE_LAYERS → no narrowing.
+  const personaDefaultActive =
+    preferredLayers.length > 0 && effectiveLayer === 'All' && !personaDefaults.prefsOff
+
   const activeInfrastructureLayer = effectiveLayer as string
   const activeTab = effectiveSubCategory
   const hiddenSet = useMemo(() => new Set(hiddenProducts), [hiddenProducts])
@@ -784,6 +795,11 @@ export const MigrateView: React.FC = () => {
           const itemLayers = item.infrastructureLayer.split(',').map((l) => l.trim())
           if (!itemLayers.includes(effectiveLayer)) return false
         }
+      } else if (personaDefaultActive) {
+        // Persona-default narrowing — applies only when the user hasn't
+        // picked an explicit layer. Keeps items whose infrastructure layer
+        // overlaps with the persona's preferred set.
+        if (!isPersonaRelevant(item, preferredLayers)) return false
       }
       // Category filter (from dropdown in flat modes)
       if (flatCategoryFilter !== 'All') {
@@ -844,6 +860,9 @@ export const MigrateView: React.FC = () => {
     showOnlyMyProducts,
     myProductsSet,
     tierFilter,
+    personaDefaultActive,
+    preferredLayers,
+    effectiveViewMode,
   ])
 
   // PQC stats for all filtered products
@@ -1614,6 +1633,23 @@ export const MigrateView: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Persona-aware default-filter banner — appears when persona narrowing
+          is active (preferred layers set + no explicit layer chosen + no
+          ?prefs=off). One click on "See all" resets to the full catalog. */}
+      {personaDefaultActive && (
+        <div className="mb-2">
+          <PersonaDefaultsBanner
+            matchedCount={allFilteredProducts.length}
+            totalCount={softwareData.length}
+            noun="product"
+            onReset={() => {
+              personaDefaults.resetToFullSet()
+              logMigrateAction('Persona Prefs Off', persona ?? '(none)')
+            }}
+          />
+        </div>
+      )}
 
       {/* Catalog size banner — visible count + view-switch CTA */}
       <CatalogSizeBanner

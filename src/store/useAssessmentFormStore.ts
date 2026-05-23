@@ -51,7 +51,7 @@ export interface AssessmentFormState {
 
   // Actions
   setStep: (step: number) => void
-  setAssessmentMode: (mode: AssessmentMode) => void
+  setAssessmentMode: (mode: AssessmentMode | null) => void
   setIndustry: (industry: string) => void
   setCountry: (country: string) => void
   toggleCrypto: (algo: string) => void
