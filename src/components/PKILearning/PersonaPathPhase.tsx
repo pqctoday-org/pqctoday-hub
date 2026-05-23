@@ -88,12 +88,12 @@ export const PersonaPathPhase = ({
         <span
           className={clsx(
             'shrink-0 rounded-full p-1',
-            isComplete ? 'bg-status-success/15 text-status-success' : 'bg-muted text-muted-foreground'
+            isComplete
+              ? 'bg-status-success/15 text-status-success'
+              : 'bg-muted text-muted-foreground'
           )}
         >
-          <span className="sr-only">
-            {isComplete ? 'Phase complete: ' : 'Phase in progress: '}
-          </span>
+          <span className="sr-only">{isComplete ? 'Phase complete: ' : 'Phase in progress: '}</span>
           {isComplete ? (
             <Check size={14} aria-hidden="true" />
           ) : (
@@ -101,10 +101,7 @@ export const PersonaPathPhase = ({
           )}
         </span>
         <div className="flex-1 min-w-0 flex items-center gap-2 flex-wrap">
-          <span
-            className="text-sm font-semibold text-foreground line-clamp-1"
-            title={title}
-          >
+          <span className="text-sm font-semibold text-foreground line-clamp-1" title={title}>
             {title}
           </span>
         </div>

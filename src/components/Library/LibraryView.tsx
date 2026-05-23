@@ -18,14 +18,7 @@ import type { ViewMode } from './ViewToggle'
 import { SortControl } from './SortControl'
 import type { SortOption } from './SortControl'
 import { FilterDropdown } from '../common/FilterDropdown'
-import {
-  Search,
-  FileSearch,
-  BookOpen,
-  SlidersHorizontal,
-  X,
-  BookmarkCheck,
-} from 'lucide-react'
+import { Search, FileSearch, BookOpen, SlidersHorizontal, X, BookmarkCheck } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { ContentUpdatesFeed } from '@/components/ui/ContentUpdatesFeed'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
@@ -880,303 +873,303 @@ export const LibraryView: React.FC = () => {
 
       {/* Controls Bar */}
       {showFullPage && (
-      <div className="bg-card border border-border rounded-lg shadow-sm p-3 space-y-3">
-        {/* Top Row: Search + Essential Controls */}
-        <div className="flex flex-wrap items-center gap-2 w-full text-sm">
-          <div className="relative flex-1 min-w-[200px]">
-            <Search
-              size={18}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-              aria-hidden="true"
-            />
-            <input
-              type="text"
-              id="library-search"
-              placeholder="Search standards and drafts..."
-              aria-label="Search PQC standards library"
-              value={inputValue}
-              onChange={handleSearchChange}
-              className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
-            />
-          </div>
+        <div className="bg-card border border-border rounded-lg shadow-sm p-3 space-y-3">
+          {/* Top Row: Search + Essential Controls */}
+          <div className="flex flex-wrap items-center gap-2 w-full text-sm">
+            <div className="relative flex-1 min-w-[200px]">
+              <Search
+                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <input
+                type="text"
+                id="library-search"
+                placeholder="Search standards and drafts..."
+                aria-label="Search PQC standards library"
+                value={inputValue}
+                onChange={handleSearchChange}
+                className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
+              />
+            </div>
 
-          <Button
-            variant="ghost"
-            onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] rounded-lg border transition-all font-medium ${
-              showFilters ||
-              activeCategory !== 'All' ||
-              activeOrg !== 'All' ||
-              lifecycleBucket !== 'All'
-                ? 'bg-primary/10 border-primary/30 text-primary'
-                : 'bg-muted/30 border-border text-foreground hover:bg-muted/50'
-            }`}
-            aria-expanded={showFilters}
-          >
-            <SlidersHorizontal size={16} />
-            <span className="hidden sm:inline">Filters</span>
-            {/* Show badge if filters are active */}
-            {(activeCategory !== 'All' ||
-              activeOrg !== 'All' ||
-              lifecycleBucket !== 'All') && <span className="w-2 h-2 rounded-full bg-primary" />}
-          </Button>
-
-          {libraryBookmarks.length > 0 && (
             <Button
               variant="ghost"
-              onClick={() => setShowOnlyLibraryBookmarks(!showOnlyLibraryBookmarks)}
+              onClick={() => setShowFilters(!showFilters)}
+              className={`flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] rounded-lg border transition-all font-medium ${
+                showFilters ||
+                activeCategory !== 'All' ||
+                activeOrg !== 'All' ||
+                lifecycleBucket !== 'All'
+                  ? 'bg-primary/10 border-primary/30 text-primary'
+                  : 'bg-muted/30 border-border text-foreground hover:bg-muted/50'
+              }`}
+              aria-expanded={showFilters}
+            >
+              <SlidersHorizontal size={16} />
+              <span className="hidden sm:inline">Filters</span>
+              {/* Show badge if filters are active */}
+              {(activeCategory !== 'All' || activeOrg !== 'All' || lifecycleBucket !== 'All') && (
+                <span className="w-2 h-2 rounded-full bg-primary" />
+              )}
+            </Button>
+
+            {libraryBookmarks.length > 0 && (
+              <Button
+                variant="ghost"
+                onClick={() => setShowOnlyLibraryBookmarks(!showOnlyLibraryBookmarks)}
+                className={`inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border transition-colors font-medium whitespace-nowrap min-h-[44px] ${
+                  showOnlyLibraryBookmarks
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+                }`}
+                aria-pressed={showOnlyLibraryBookmarks}
+              >
+                <BookmarkCheck size={14} />
+                My ({libraryBookmarks.length})
+              </Button>
+            )}
+
+            <Button
+              variant="ghost"
+              onClick={() => {
+                const next = !cswp39Only
+                setCswp39Only(next)
+                syncFiltersToUrl({ cswp39: next })
+                logEvent('Library', 'Filter CSWP39', next ? 'on' : 'off')
+              }}
               className={`inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border transition-colors font-medium whitespace-nowrap min-h-[44px] ${
-                showOnlyLibraryBookmarks
+                cswp39Only
                   ? 'border-primary bg-primary/10 text-primary'
                   : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
               }`}
-              aria-pressed={showOnlyLibraryBookmarks}
+              aria-pressed={cswp39Only}
+              title="Show only documents with extracted CSWP 39 governance requirements"
             >
-              <BookmarkCheck size={14} />
-              My ({libraryBookmarks.length})
+              CSWP 39 ({cswp39EnrichedCount})
             </Button>
-          )}
 
-          <Button
-            variant="ghost"
-            onClick={() => {
-              const next = !cswp39Only
-              setCswp39Only(next)
-              syncFiltersToUrl({ cswp39: next })
-              logEvent('Library', 'Filter CSWP39', next ? 'on' : 'off')
-            }}
-            className={`inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border transition-colors font-medium whitespace-nowrap min-h-[44px] ${
-              cswp39Only
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
-            }`}
-            aria-pressed={cswp39Only}
-            title="Show only documents with extracted CSWP 39 governance requirements"
-          >
-            CSWP 39 ({cswp39EnrichedCount})
-          </Button>
-
-          {/* Cert-relevant chip (P04 audit, PR 3.e) — filters to the curated
+            {/* Cert-relevant chip (P04 audit, PR 3.e) — filters to the curated
               LIBRARY_OPS_PICKS allowlist (FIPS 203/204/205, SP 800-208, etc.) */}
-          <Button
-            variant="ghost"
-            onClick={() => {
-              const next = !certRelevantOnly
-              setCertRelevantOnly(next)
-              syncFiltersToUrl({ cert: next })
-              logEvent('Library', 'Filter CertRelevant', next ? 'on' : 'off')
-            }}
-            className={`inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border transition-colors font-medium whitespace-nowrap min-h-[44px] ${
-              certRelevantOnly
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
-            }`}
-            aria-pressed={certRelevantOnly}
-            title="Show only the curated cert-relevant document set (FIPS / CMVP anchors)"
-          >
-            Cert-relevant ({certRelevantIdSet.size})
-          </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                const next = !certRelevantOnly
+                setCertRelevantOnly(next)
+                syncFiltersToUrl({ cert: next })
+                logEvent('Library', 'Filter CertRelevant', next ? 'on' : 'off')
+              }}
+              className={`inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border transition-colors font-medium whitespace-nowrap min-h-[44px] ${
+                certRelevantOnly
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+              }`}
+              aria-pressed={certRelevantOnly}
+              title="Show only the curated cert-relevant document set (FIPS / CMVP anchors)"
+            >
+              Cert-relevant ({certRelevantIdSet.size})
+            </Button>
 
-          {/* Lifecycle pill row (P04 audit, PR 3.e) — one-click access to the
+            {/* Lifecycle pill row (P04 audit, PR 3.e) — one-click access to the
               Final / Draft / Expired / Withdrawn buckets without opening the
               drawer.  Bound to the existing `lifecycleBucket` state, so the
               drawer dropdown and these pills stay in sync.
               Implements the WAI-ARIA radiogroup keyboard pattern: arrow keys
               move focus + activate the next/previous pill (with roving
               tabindex so Tab cycles through the row as one stop). */}
-          {(() => {
-            const LIFECYCLE_PILLS = [
-              { id: 'Published', label: 'Final' },
-              { id: 'Draft', label: 'Draft' },
-              { id: 'Expired', label: 'Expired' },
-              { id: 'Superseded', label: 'Withdrawn' },
-            ] as const
-            const activeIdx = LIFECYCLE_PILLS.findIndex((p) => p.id === lifecycleBucket)
-            // Roving-tabindex anchor: the active pill, or the first if none active.
-            const tabbableIdx = activeIdx >= 0 ? activeIdx : 0
-            return (
-              <div
-                className="flex items-center gap-1"
-                role="radiogroup"
-                aria-label="Lifecycle"
-                // Radiogroup itself isn't tab-reachable — focus lives on the
-                // individual radios (roving tabindex above). tabIndex={-1}
-                // keeps it programmatically focusable, satisfying the
-                // jsx-a11y interactive-supports-focus rule without breaking
-                // the WAI-ARIA radio pattern.
-                tabIndex={-1}
-                onKeyDown={(e) => {
-                  if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
-                  const focused = document.activeElement as HTMLElement | null
-                  const buttons = Array.from(
-                    e.currentTarget.querySelectorAll<HTMLButtonElement>('button[role=radio]')
-                  )
-                  const i = buttons.findIndex((b) => b === focused)
-                  if (i < 0) return
-                  e.preventDefault()
-                  const delta = e.key === 'ArrowRight' ? 1 : -1
-                  const nextI = (i + delta + buttons.length) % buttons.length
-                  buttons[nextI]?.focus()
-                  buttons[nextI]?.click()
-                }}
-              >
-                {LIFECYCLE_PILLS.map((opt, idx) => {
-                  const active = lifecycleBucket === opt.id
-                  return (
-                    <Button
-                      key={opt.id}
-                      variant="ghost"
-                      role="radio"
-                      aria-checked={active}
-                      tabIndex={idx === tabbableIdx ? 0 : -1}
-                      onClick={() => {
-                        const next = active ? 'All' : opt.id
-                        setLifecycleBucket(next)
-                        syncFiltersToUrl({ lifecycle: next })
-                        logEvent('Library', 'Filter Lifecycle', next)
-                      }}
-                      className={`inline-flex items-center text-xs px-2.5 py-1.5 rounded-md border transition-colors font-medium whitespace-nowrap min-h-[36px] ${
-                        active
-                          ? 'border-primary bg-primary/10 text-primary'
-                          : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
-                      }`}
-                    >
-                      {opt.label}
-                    </Button>
-                  )
-                })}
-              </div>
-            )
-          })()}
+            {(() => {
+              const LIFECYCLE_PILLS = [
+                { id: 'Published', label: 'Final' },
+                { id: 'Draft', label: 'Draft' },
+                { id: 'Expired', label: 'Expired' },
+                { id: 'Superseded', label: 'Withdrawn' },
+              ] as const
+              const activeIdx = LIFECYCLE_PILLS.findIndex((p) => p.id === lifecycleBucket)
+              // Roving-tabindex anchor: the active pill, or the first if none active.
+              const tabbableIdx = activeIdx >= 0 ? activeIdx : 0
+              return (
+                <div
+                  className="flex items-center gap-1"
+                  role="radiogroup"
+                  aria-label="Lifecycle"
+                  // Radiogroup itself isn't tab-reachable — focus lives on the
+                  // individual radios (roving tabindex above). tabIndex={-1}
+                  // keeps it programmatically focusable, satisfying the
+                  // jsx-a11y interactive-supports-focus rule without breaking
+                  // the WAI-ARIA radio pattern.
+                  tabIndex={-1}
+                  onKeyDown={(e) => {
+                    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
+                    const focused = document.activeElement as HTMLElement | null
+                    const buttons = Array.from(
+                      e.currentTarget.querySelectorAll<HTMLButtonElement>('button[role=radio]')
+                    )
+                    const i = buttons.findIndex((b) => b === focused)
+                    if (i < 0) return
+                    e.preventDefault()
+                    const delta = e.key === 'ArrowRight' ? 1 : -1
+                    const nextI = (i + delta + buttons.length) % buttons.length
+                    buttons[nextI]?.focus()
+                    buttons[nextI]?.click()
+                  }}
+                >
+                  {LIFECYCLE_PILLS.map((opt, idx) => {
+                    const active = lifecycleBucket === opt.id
+                    return (
+                      <Button
+                        key={opt.id}
+                        variant="ghost"
+                        role="radio"
+                        aria-checked={active}
+                        tabIndex={idx === tabbableIdx ? 0 : -1}
+                        onClick={() => {
+                          const next = active ? 'All' : opt.id
+                          setLifecycleBucket(next)
+                          syncFiltersToUrl({ lifecycle: next })
+                          logEvent('Library', 'Filter Lifecycle', next)
+                        }}
+                        className={`inline-flex items-center text-xs px-2.5 py-1.5 rounded-md border transition-colors font-medium whitespace-nowrap min-h-[36px] ${
+                          active
+                            ? 'border-primary bg-primary/10 text-primary'
+                            : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+                        }`}
+                      >
+                        {opt.label}
+                      </Button>
+                    )
+                  })}
+                </div>
+              )
+            })()}
 
-          {viewMode === 'cards' && (
-            <div className="hidden sm:block">
-              <SortControl
-                value={sortBy}
-                onChange={(s) => {
-                  setSortBy(s)
-                  syncFiltersToUrl({ sort: s })
+            {viewMode === 'cards' && (
+              <div className="hidden sm:block">
+                <SortControl
+                  value={sortBy}
+                  onChange={(s) => {
+                    setSortBy(s)
+                    syncFiltersToUrl({ sort: s })
+                  }}
+                />
+              </div>
+            )}
+
+            <div className="hidden md:block">
+              <ViewToggle
+                mode={viewMode}
+                onChange={(mode) => {
+                  setViewMode(mode)
+                  syncFiltersToUrl({ view: mode })
                 }}
               />
+            </div>
+          </div>
+
+          {/* Expandable Advanced Filters */}
+          {showFilters && (
+            <div className="pt-3 border-t border-border flex flex-wrap gap-3 animate-in fade-in slide-in-from-top-2">
+              <div className="flex-1 min-w-[160px]">
+                <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                  Organization
+                </span>
+                <FilterDropdown
+                  items={orgs}
+                  selectedId={activeOrg}
+                  onSelect={(org) => {
+                    setActiveOrg(org)
+                    syncFiltersToUrl({ org })
+                    logEvent('Library', 'Filter Org', org)
+                  }}
+                  defaultLabel="Organization"
+                  noContainer
+                  opaque
+                  className="mb-0 w-full"
+                />
+              </div>
+
+              <div className="flex-1 min-w-[160px]">
+                <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                  Doc Status
+                </span>
+                <FilterDropdown
+                  items={lifecycleOptions}
+                  selectedId={lifecycleBucket}
+                  onSelect={(bucket) => {
+                    setLifecycleBucket(bucket)
+                    syncFiltersToUrl({ lifecycle: bucket })
+                    logEvent('Library', 'Filter Lifecycle', bucket)
+                  }}
+                  defaultLabel="Doc Status"
+                  noContainer
+                  opaque
+                  className="mb-0 w-full"
+                />
+              </div>
+
+              <div className="flex-1 min-w-[160px]">
+                <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                  Country / Region
+                </span>
+                <GeoFilter options={[]} className="w-full" />
+              </div>
+
+              {(!drawerIsTrimmed || showAdvancedDrawer) && (
+                <div
+                  id="library-advanced-drawer"
+                  className="contents"
+                  role={drawerIsTrimmed ? 'region' : undefined}
+                  aria-label={drawerIsTrimmed ? 'Advanced filters' : undefined}
+                >
+                  <div className="flex-1 min-w-[160px]">
+                    <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                      Sector
+                    </span>
+                    <SectorFilter className="w-full" />
+                  </div>
+
+                  <div className="flex-1 min-w-[160px]">
+                    <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                      Trust tier
+                    </span>
+                    <TrustTierFilter className="w-full" />
+                  </div>
+                </div>
+              )}
+
+              {drawerIsTrimmed && (
+                <div className="w-full flex justify-start">
+                  <Button
+                    variant="link"
+                    onClick={() => setShowAdvancedDrawer((v) => !v)}
+                    className="text-xs h-auto p-0"
+                    aria-expanded={showAdvancedDrawer}
+                    aria-controls="library-advanced-drawer"
+                  >
+                    {showAdvancedDrawer ? 'Hide advanced' : 'Advanced (Sector, Trust tier)'}
+                  </Button>
+                </div>
+              )}
+
+              {/* Sort Dropdown for Mobile (Inside filters drawer) */}
+              {viewMode === 'cards' && (
+                <div className="flex-1 min-w-[160px] sm:hidden">
+                  <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                    Sort By
+                  </span>
+                  <div className="w-full">
+                    <SortControl
+                      value={sortBy}
+                      onChange={(s) => {
+                        setSortBy(s)
+                        syncFiltersToUrl({ sort: s })
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           )}
-
-          <div className="hidden md:block">
-            <ViewToggle
-              mode={viewMode}
-              onChange={(mode) => {
-                setViewMode(mode)
-                syncFiltersToUrl({ view: mode })
-              }}
-            />
-          </div>
         </div>
-
-        {/* Expandable Advanced Filters */}
-        {showFilters && (
-          <div className="pt-3 border-t border-border flex flex-wrap gap-3 animate-in fade-in slide-in-from-top-2">
-            <div className="flex-1 min-w-[160px]">
-              <span className="text-xs font-medium text-muted-foreground mb-1 block">
-                Organization
-              </span>
-              <FilterDropdown
-                items={orgs}
-                selectedId={activeOrg}
-                onSelect={(org) => {
-                  setActiveOrg(org)
-                  syncFiltersToUrl({ org })
-                  logEvent('Library', 'Filter Org', org)
-                }}
-                defaultLabel="Organization"
-                noContainer
-                opaque
-                className="mb-0 w-full"
-              />
-            </div>
-
-            <div className="flex-1 min-w-[160px]">
-              <span className="text-xs font-medium text-muted-foreground mb-1 block">
-                Doc Status
-              </span>
-              <FilterDropdown
-                items={lifecycleOptions}
-                selectedId={lifecycleBucket}
-                onSelect={(bucket) => {
-                  setLifecycleBucket(bucket)
-                  syncFiltersToUrl({ lifecycle: bucket })
-                  logEvent('Library', 'Filter Lifecycle', bucket)
-                }}
-                defaultLabel="Doc Status"
-                noContainer
-                opaque
-                className="mb-0 w-full"
-              />
-            </div>
-
-            <div className="flex-1 min-w-[160px]">
-              <span className="text-xs font-medium text-muted-foreground mb-1 block">
-                Country / Region
-              </span>
-              <GeoFilter options={[]} className="w-full" />
-            </div>
-
-            {(!drawerIsTrimmed || showAdvancedDrawer) && (
-              <div
-                id="library-advanced-drawer"
-                className="contents"
-                role={drawerIsTrimmed ? 'region' : undefined}
-                aria-label={drawerIsTrimmed ? 'Advanced filters' : undefined}
-              >
-                <div className="flex-1 min-w-[160px]">
-                  <span className="text-xs font-medium text-muted-foreground mb-1 block">
-                    Sector
-                  </span>
-                  <SectorFilter className="w-full" />
-                </div>
-
-                <div className="flex-1 min-w-[160px]">
-                  <span className="text-xs font-medium text-muted-foreground mb-1 block">
-                    Trust tier
-                  </span>
-                  <TrustTierFilter className="w-full" />
-                </div>
-              </div>
-            )}
-
-            {drawerIsTrimmed && (
-              <div className="w-full flex justify-start">
-                <Button
-                  variant="link"
-                  onClick={() => setShowAdvancedDrawer((v) => !v)}
-                  className="text-xs h-auto p-0"
-                  aria-expanded={showAdvancedDrawer}
-                  aria-controls="library-advanced-drawer"
-                >
-                  {showAdvancedDrawer ? 'Hide advanced' : 'Advanced (Sector, Trust tier)'}
-                </Button>
-              </div>
-            )}
-
-            {/* Sort Dropdown for Mobile (Inside filters drawer) */}
-            {viewMode === 'cards' && (
-              <div className="flex-1 min-w-[160px] sm:hidden">
-                <span className="text-xs font-medium text-muted-foreground mb-1 block">
-                  Sort By
-                </span>
-                <div className="w-full">
-                  <SortControl
-                    value={sortBy}
-                    onChange={(s) => {
-                      setSortBy(s)
-                      syncFiltersToUrl({ sort: s })
-                    }}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
       )}
 
       {/* Active Filter Chips */}
@@ -1232,46 +1225,46 @@ export const LibraryView: React.FC = () => {
 
       {/* Results count */}
       {showFullPage && (
-      <div className="space-y-1" role="status" aria-live="polite">
-        {personaPreferredActive ? (
-          <div className="glass-panel inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-md text-xs">
-            <span className="text-muted-foreground">
-              Showing {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''} matched
-              to your role
-            </span>
-            <span className="text-muted-foreground/60">·</span>
-            <Button
-              variant="link"
-              onClick={() => {
-                setSearchParams(
-                  (prev) => {
-                    const next = new URLSearchParams(prev)
-                    next.set('prefs', 'off')
-                    return next
-                  },
-                  { replace: true }
-                )
-                logEvent('Library', 'Persona Prefs Off', personaLabel())
-              }}
-              className="text-xs h-auto p-0"
-            >
-              See all {libraryData.length}
-            </Button>
-          </div>
-        ) : (
-          <p className="text-xs text-muted-foreground">
-            {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''}
-            {activeCategory !== 'All' && ` in ${activeCategory}`}
-          </p>
-        )}
-        <SemanticSearchHint
-          mode={semantic.mode}
-          loading={semantic.loading}
-          query={filterText}
-          semanticHitCount={semantic.hits.length}
-          noun="related documents"
-        />
-      </div>
+        <div className="space-y-1" role="status" aria-live="polite">
+          {personaPreferredActive ? (
+            <div className="glass-panel inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-md text-xs">
+              <span className="text-muted-foreground">
+                Showing {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''}{' '}
+                matched to your role
+              </span>
+              <span className="text-muted-foreground/60">·</span>
+              <Button
+                variant="link"
+                onClick={() => {
+                  setSearchParams(
+                    (prev) => {
+                      const next = new URLSearchParams(prev)
+                      next.set('prefs', 'off')
+                      return next
+                    },
+                    { replace: true }
+                  )
+                  logEvent('Library', 'Persona Prefs Off', personaLabel())
+                }}
+                className="text-xs h-auto p-0"
+              >
+                See all {libraryData.length}
+              </Button>
+            </div>
+          ) : (
+            <p className="text-xs text-muted-foreground">
+              {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''}
+              {activeCategory !== 'All' && ` in ${activeCategory}`}
+            </p>
+          )}
+          <SemanticSearchHint
+            mode={semantic.mode}
+            loading={semantic.loading}
+            query={filterText}
+            semanticHitCount={semantic.hits.length}
+            noun="related documents"
+          />
+        </div>
       )}
 
       {/* Content area */}

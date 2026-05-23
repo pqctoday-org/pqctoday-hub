@@ -28,7 +28,10 @@ const renderDashboard = () =>
     </EmbedProvider>
   )
 
-const seedPersona = (personaId: PersonaId | null, extras: Partial<Record<string, unknown>> = {}) => {
+const seedPersona = (
+  personaId: PersonaId | null,
+  extras: Partial<Record<string, unknown>> = {}
+) => {
   usePersonaStore.setState({
     selectedPersona: personaId,
     selectedRegion: 'global',
@@ -55,9 +58,7 @@ describe('Dashboard — persona-path integration', () => {
     // Path view exposes the "Browse all" disclosure; stack-mode pages don't.
     expect(screen.getByText(/Browse all \d+ modules \(\d+ tracks\)/i)).toBeInTheDocument()
     // PersonaPathView mounts the curated section.
-    expect(
-      screen.getByRole('region', { name: /Your curated learning path/i })
-    ).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: /Your curated learning path/i })).toBeInTheDocument()
     // The 'Path' chip in the view toggle is the active radio.
     expect(screen.getByRole('radio', { name: /^Path/i })).toHaveAttribute('aria-checked', 'true')
   })

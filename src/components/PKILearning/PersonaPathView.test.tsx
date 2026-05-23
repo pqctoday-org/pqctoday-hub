@@ -11,7 +11,10 @@ import { PERSONAS } from '@/data/learningPersonas'
 const noop = () => {}
 const falseFn = () => false
 
-const renderView = (personaId: 'executive' | 'developer' | 'architect' | 'researcher' | 'ops' | 'curious', overrides?: { onShowEverything?: () => void }) =>
+const renderView = (
+  personaId: 'executive' | 'developer' | 'architect' | 'researcher' | 'ops' | 'curious',
+  overrides?: { onShowEverything?: () => void }
+) =>
   render(
     <MemoryRouter>
       <PersonaPathView

@@ -124,8 +124,7 @@ export const PersonaPathView = ({
           (id) => modules[id]?.status === 'completed'
         ).length
         const totalCount = phase.moduleIds.length
-        const containsNext =
-          nextIncompleteId !== null && phase.moduleIds.includes(nextIncompleteId)
+        const containsNext = nextIncompleteId !== null && phase.moduleIds.includes(nextIncompleteId)
         const defaultExpanded = containsNext
         const key = `${personaId}:${phase.id}`
         const expandedOverride =

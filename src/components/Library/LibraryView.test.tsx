@@ -521,9 +521,7 @@ describe('LibraryView — persona-overwhelm-p0', () => {
         render(<LibraryView />)
         const expectedCount = NARROWING[persona]
         expect(
-          screen.getByText(
-            new RegExp(`Showing ${expectedCount} documents? matched to your role`)
-          )
+          screen.getByText(new RegExp(`Showing ${expectedCount} documents? matched to your role`))
         ).toBeInTheDocument()
       })
     }

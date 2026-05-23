@@ -15,10 +15,7 @@ export interface LearnState {
   reset: () => void
 }
 
-const defaults: Pick<
-  LearnState,
-  'showEverything' | 'phaseExpansion' | 'researcherSortOverride'
-> = {
+const defaults: Pick<LearnState, 'showEverything' | 'phaseExpansion' | 'researcherSortOverride'> = {
   showEverything: false,
   phaseExpansion: {},
   researcherSortOverride: null,
@@ -45,7 +42,8 @@ export const useLearnStore = create<LearnState>()(
             : {}
 
         if (version < 1) {
-          state.showEverything = typeof state.showEverything === 'boolean' ? state.showEverything : false
+          state.showEverything =
+            typeof state.showEverything === 'boolean' ? state.showEverything : false
           state.phaseExpansion =
             typeof state.phaseExpansion === 'object' && state.phaseExpansion !== null
               ? state.phaseExpansion

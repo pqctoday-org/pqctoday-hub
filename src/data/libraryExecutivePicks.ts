@@ -21,7 +21,7 @@ export const LIBRARY_EXECUTIVE_PICKS: readonly LibraryExecutivePick[] = [
     referenceId: 'NIST-CSWP-39',
     label: 'NIST CSWP 39 — Cybersecurity Maturity',
     blurb:
-      "NIST's organisational-maturity yardstick: 189 requirements, mapped across governance, planning, and operations. The board-level answer to \"are we ready?\"",
+      'NIST\'s organisational-maturity yardstick: 189 requirements, mapped across governance, planning, and operations. The board-level answer to "are we ready?"',
   },
   {
     referenceId: 'NIST IR 8547',
@@ -33,13 +33,13 @@ export const LIBRARY_EXECUTIVE_PICKS: readonly LibraryExecutivePick[] = [
     referenceId: 'NSA CNSA 2.0',
     label: 'NSA CNSA 2.0 — National Security Suite',
     blurb:
-      "The US national-security baseline for PQC. Sets the floor for federal and defence systems and drives vendor roadmaps far beyond government users.",
+      'The US national-security baseline for PQC. Sets the floor for federal and defence systems and drives vendor roadmaps far beyond government users.',
   },
   {
     referenceId: 'ANSSI PQC Follow-up Paper',
     label: 'ANSSI — French PQC Position',
     blurb:
-      'France\'s national agency on hybrid-first PQC migration. The most quoted European counter-weight to NIST timelines.',
+      "France's national agency on hybrid-first PQC migration. The most quoted European counter-weight to NIST timelines.",
   },
   {
     referenceId: 'BSI TR-02102-1',
@@ -63,7 +63,7 @@ export const LIBRARY_EXECUTIVE_PICKS: readonly LibraryExecutivePick[] = [
     referenceId: 'CISA-Quantum-Readiness-Roadmap',
     label: 'CISA Quantum-Readiness Roadmap',
     blurb:
-      "The August-2023 CISA/NSA/NIST joint migration playbook: establish governance, inventory vulnerable crypto, assess priorities, engage vendors. The most-cited US federal readiness document; downstream of NIST IR 8547 and upstream of every department-level PQC migration plan.",
+      'The August-2023 CISA/NSA/NIST joint migration playbook: establish governance, inventory vulnerable crypto, assess priorities, engage vendors. The most-cited US federal readiness document; downstream of NIST IR 8547 and upstream of every department-level PQC migration plan.',
   },
 ] as const
 

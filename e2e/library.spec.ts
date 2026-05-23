@@ -157,9 +157,7 @@ test.describe('library — persona-overwhelm-p0', () => {
     await expect(browse).toBeVisible()
 
     // Shell elements are NOT in the DOM yet.
-    await expect(
-      page.getByRole('navigation', { name: /Library categories/i })
-    ).toHaveCount(0)
+    await expect(page.getByRole('navigation', { name: /Library categories/i })).toHaveCount(0)
     await expect(page.getByPlaceholder('Search standards and drafts...')).toHaveCount(0)
 
     await browse.click()
