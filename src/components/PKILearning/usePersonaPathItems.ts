@@ -36,7 +36,9 @@ export interface PersonaPathSummary {
  * Returns null when personaId is unknown (defensive — every PersonaId in the union is
  * present in PERSONAS but the input type is widened to string at deep-link boundaries).
  */
-export function usePersonaPathItems(personaId: string | null | undefined): PersonaPathSummary | null {
+export function usePersonaPathItems(
+  personaId: string | null | undefined
+): PersonaPathSummary | null {
   return useMemo(() => {
     if (!personaId) return null
     const persona = PERSONAS[personaId as PersonaId]

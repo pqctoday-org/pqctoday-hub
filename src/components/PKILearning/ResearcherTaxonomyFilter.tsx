@@ -38,10 +38,7 @@ export const ResearcherTaxonomyFilter = ({
   const activeLabel = selection.algorithm ?? selection.standard ?? null
 
   return (
-    <section
-      aria-label="Researcher: browse modules by algorithm or standard"
-      className="space-y-2"
-    >
+    <section aria-label="Researcher: browse modules by algorithm or standard" className="space-y-2">
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
           Browse by

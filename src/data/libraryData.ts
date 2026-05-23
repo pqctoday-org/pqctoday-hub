@@ -320,7 +320,9 @@ const statusMap =
  * (researcher default). Exported so the derivation can be unit-tested
  * against synthetic fixtures without re-loading the CSV.
  */
-export function computeCitationCounts(items: Pick<LibraryItem, 'referenceId' | 'dependencies'>[]): Map<string, number> {
+export function computeCitationCounts(
+  items: Pick<LibraryItem, 'referenceId' | 'dependencies'>[]
+): Map<string, number> {
   const counts = new Map<string, number>()
   for (const item of items) {
     if (!item.dependencies) continue
