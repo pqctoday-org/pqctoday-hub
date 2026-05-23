@@ -105,9 +105,7 @@ export function ExecutiveTimelineView({
         >
           <FileDown size={16} className="text-primary mt-0.5 shrink-0" aria-hidden="true" />
           <div className="flex-1 min-w-0 space-y-1">
-            <p className="text-sm font-semibold text-foreground">
-              Audit-ready compliance summary
-            </p>
+            <p className="text-sm font-semibold text-foreground">Audit-ready compliance summary</p>
             <p className="text-xs text-muted-foreground">
               Generates a board-ready CSV of every mandate that applies to your profile.
             </p>

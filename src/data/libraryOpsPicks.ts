@@ -35,19 +35,19 @@ export const LIBRARY_OPS_PICKS: readonly LibraryOpsPick[] = [
     referenceId: 'FIPS 203',
     label: 'FIPS 203 — ML-KEM',
     blurb:
-      "The first finalised NIST post-quantum standard. Required for any FIPS 140-3 module that claims PQC key-establishment support.",
+      'The first finalised NIST post-quantum standard. Required for any FIPS 140-3 module that claims PQC key-establishment support.',
   },
   {
     referenceId: 'FIPS 204',
     label: 'FIPS 204 — ML-DSA',
     blurb:
-      "Post-quantum digital signatures. ML-DSA-44/65/87 are the algorithms FIPS modules must implement to claim PQC signing support.",
+      'Post-quantum digital signatures. ML-DSA-44/65/87 are the algorithms FIPS modules must implement to claim PQC signing support.',
   },
   {
     referenceId: 'FIPS 205',
     label: 'FIPS 205 — SLH-DSA',
     blurb:
-      "Hash-based stateless signatures. Slower than ML-DSA but with stronger conservative-security claims — used in firmware and root-CA roles.",
+      'Hash-based stateless signatures. Slower than ML-DSA but with stronger conservative-security claims — used in firmware and root-CA roles.',
   },
   {
     referenceId: 'NIST SP 800-208',
@@ -59,7 +59,7 @@ export const LIBRARY_OPS_PICKS: readonly LibraryOpsPick[] = [
     referenceId: 'NIST SP 800-227',
     label: 'NIST SP 800-227 — KEM Recommendations',
     blurb:
-      "How to deploy KEMs safely: parameter selection, hybrid constructions, key-derivation rules. The how-to for FIPS 203 in real protocols.",
+      'How to deploy KEMs safely: parameter selection, hybrid constructions, key-derivation rules. The how-to for FIPS 203 in real protocols.',
   },
   {
     referenceId: 'CMVP-MGMT-MANUAL',
@@ -71,7 +71,7 @@ export const LIBRARY_OPS_PICKS: readonly LibraryOpsPick[] = [
     referenceId: 'NIST-FIPS140-3-IG-PQC',
     label: 'FIPS 140-3 IG — Post-Quantum Cryptography',
     blurb:
-      "The CMVP Implementation Guidance for PQC: defines how ML-KEM, ML-DSA, and SLH-DSA must be implemented to pass FIPS 140-3 validation. Pair with the CMVP Management Manual for the full submission lifecycle.",
+      'The CMVP Implementation Guidance for PQC: defines how ML-KEM, ML-DSA, and SLH-DSA must be implemented to pass FIPS 140-3 validation. Pair with the CMVP Management Manual for the full submission lifecycle.',
   },
 ] as const
 

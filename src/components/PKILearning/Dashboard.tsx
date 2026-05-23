@@ -38,10 +38,7 @@ import { ModuleTable, type ModuleTableItem } from './ModuleTable'
 import { PersonaPathView } from './PersonaPathView'
 import { RecommendedPathBanner } from './RecommendedPathBanner'
 import { usePersonaPathItems } from './usePersonaPathItems'
-import {
-  ResearcherTaxonomyFilter,
-  type TaxonomySelection,
-} from './ResearcherTaxonomyFilter'
+import { ResearcherTaxonomyFilter, type TaxonomySelection } from './ResearcherTaxonomyFilter'
 import { modulesByAlgorithm, modulesByStandard } from './moduleEnrichment'
 import { useLearnStore } from '../../store/useLearnStore'
 import {
@@ -1286,22 +1283,17 @@ const ModuleTracksGrid = ({
           </span>
         )}
         {sortChangedFromCurated && (
-          <Button
-            variant="link"
-            size="sm"
-            onClick={() => setSortBy('default')}
-            className="text-xs"
-          >
+          <Button variant="link" size="sm" onClick={() => setSortBy('default')} className="text-xs">
             Reset to curated
           </Button>
         )}
 
         {/* View toggle */}
         <LearnViewToggle
-                    mode={viewMode}
-                    onChange={setViewMode}
-                    pathAvailable={personaFilterActive}
-                  />
+          mode={viewMode}
+          onChange={setViewMode}
+          pathAvailable={personaFilterActive}
+        />
       </div>
 
       {/* Results count + clear (only in cards/table modes or when filters active in stack) */}

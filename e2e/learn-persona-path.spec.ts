@@ -66,9 +66,9 @@ test.describe('Learn — persona-path view', () => {
       // Path view exposes the "Browse all" details element. Stack-mode pages don't.
       // The hub is lazy-loaded; allow ample budget for the chunk to compile cold
       // (~6-8s observed for executive).
-      await expect(
-        page.getByText(/Browse all \d+ modules \(\d+ tracks\)/i).first()
-      ).toBeVisible({ timeout: 25000 })
+      await expect(page.getByText(/Browse all \d+ modules \(\d+ tracks\)/i).first()).toBeVisible({
+        timeout: 25000,
+      })
 
       // Catalog is collapsed behind <details> by default
       const details = page.locator('details').filter({
@@ -99,9 +99,9 @@ test.describe('Learn — persona-path view', () => {
     await page.goto('/learn')
 
     // Wait for path view to mount before clicking the escape.
-    await expect(
-      page.getByRole('button', { name: /Show me everything/i })
-    ).toBeVisible({ timeout: 25000 })
+    await expect(page.getByRole('button', { name: /Show me everything/i })).toBeVisible({
+      timeout: 25000,
+    })
     await page.getByRole('button', { name: /Show me everything/i }).click()
 
     // After the escape, the curated banner / Browse-all details element should
@@ -143,14 +143,16 @@ test.describe('Learn — persona-path view', () => {
     // "Try in playground" buttons) become visible in the accessibility tree.
     await page.evaluate(() => {
       document
-        .querySelectorAll<HTMLDetailsElement>('section[aria-label="Your curated learning path"] details')
+        .querySelectorAll<HTMLDetailsElement>(
+          'section[aria-label="Your curated learning path"] details'
+        )
         .forEach((d) => {
           d.open = true
         })
     })
-    await expect(
-      page.getByRole('button', { name: /Try in playground/i }).first()
-    ).toBeVisible({ timeout: 10000 })
+    await expect(page.getByRole('button', { name: /Try in playground/i }).first()).toBeVisible({
+      timeout: 10000,
+    })
   })
 
   test('P2-3: researcher persona sees the algorithm/standard taxonomy filter above stack', async ({

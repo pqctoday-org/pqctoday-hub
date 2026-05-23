@@ -147,7 +147,10 @@ export const MODULE_TAXONOMY: Readonly<Record<string, ModuleTaxonomyEntry>> = {
   'api-security-jwt': { algorithms: ['ML-DSA', 'SLH-DSA'], standards: ['JOSE', 'RFC 9421'] },
   'slh-dsa': { algorithms: ['SLH-DSA'], standards: ['FIPS 205'] },
   'stateful-signatures': { algorithms: ['LMS/XMSS'], standards: ['NIST SP 800-208'] },
-  'code-signing': { algorithms: ['ML-DSA', 'LMS/XMSS'], standards: ['FIPS 204', 'NIST SP 800-208'] },
+  'code-signing': {
+    algorithms: ['ML-DSA', 'LMS/XMSS'],
+    standards: ['FIPS 204', 'NIST SP 800-208'],
+  },
   'hsm-pqc': { algorithms: ['ML-KEM', 'ML-DSA'], standards: ['PKCS#11'] },
   'kms-pqc': { algorithms: ['ML-KEM'], standards: ['FIPS 203'] },
   'merkle-tree-certs': { algorithms: ['LMS/XMSS'], standards: ['NIST SP 800-208'] },

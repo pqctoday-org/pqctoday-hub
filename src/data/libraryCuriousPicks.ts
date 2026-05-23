@@ -35,7 +35,7 @@ export const LIBRARY_CURIOUS_PICKS: readonly LibraryCuriousPick[] = [
     referenceId: 'FIPS 203',
     label: 'FIPS 203 — ML-KEM',
     blurb:
-      'The first NIST-standardised post-quantum algorithm (August 2024). Replaces RSA / ECDH for key exchange. If you only read one algorithm spec, this is the one. (FIPS 204 / 205 — ML-DSA and SLH-DSA — are reachable from this doc\'s related-standards links.)',
+      "The first NIST-standardised post-quantum algorithm (August 2024). Replaces RSA / ECDH for key exchange. If you only read one algorithm spec, this is the one. (FIPS 204 / 205 — ML-DSA and SLH-DSA — are reachable from this doc's related-standards links.)",
   },
   {
     referenceId: 'RFC-9964',
