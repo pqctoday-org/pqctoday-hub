@@ -96,7 +96,7 @@ const ModeSelector: React.FC<{
 
 export const AssessView: React.FC = () => {
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const {
     assessmentStatus,
     markComplete,
@@ -130,6 +130,28 @@ export const AssessView: React.FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
+
+  // Persona-aware mode auto-skip — when the user has a persona with a
+  // recommended mode (PERSONA_RECOMMENDED_MODE) and no prior mode is set,
+  // skip the ModeSelector step and drop directly into the wizard.
+  // Respects:
+  //   - `?mode=` URL param (handled by the effect above, wins).
+  //   - `?prefs=off` URL param: shows ModeSelector even when persona
+  //     resolves a recommendation (user opted out via Switch-mode link).
+  //   - Prior `assessmentMode` in the persisted store (user already chose).
+  //
+  // Derived purely at render time (no useEffect). This avoids a race where
+  // the click handler on "Switch mode" sets both `?prefs=off` AND clears
+  // the mode, but an effect with stale deps re-applies the recommendation
+  // before the URL update propagates. Render-time derivation reads the
+  // current values atomically.
+  const personaAutoSkipApplies =
+    !assessmentMode &&
+    !!recommendedMode &&
+    searchParams.get('prefs') !== 'off' &&
+    !searchParams.get('mode')
+  const effectiveAssessmentMode =
+    assessmentMode ?? (personaAutoSkipApplies ? recommendedMode : null)
 
   // Command Center is only shown to executive / architect / ops personas.
   const personaSeesBusinessCenter = selectedPersona
@@ -276,10 +298,44 @@ export const AssessView: React.FC = () => {
         </motion.div>
       )}
 
-      {!assessmentMode ? (
+      {!effectiveAssessmentMode ? (
         <ModeSelector onSelect={handleModeSelect} recommendedMode={recommendedMode} />
       ) : (
-        <AssessWizard onComplete={handleComplete} mode={assessmentMode} />
+        <>
+          {/* "Switch mode" escape — always visible alongside the wizard so
+              the user can change mode without picking through the store.
+              Persona-auto-skipped users see it most prominently; users who
+              actively chose see it as a non-intrusive secondary link. */}
+          {recommendedMode && (
+            <div className="mb-3 text-xs text-muted-foreground">
+              You're in <span className="font-medium">{effectiveAssessmentMode}</span> mode.{' '}
+              <Button
+                variant="link"
+                className="text-xs h-auto p-0 align-baseline"
+                onClick={() => {
+                  // Set ?prefs=off so the render-time auto-skip computes
+                  // `effectiveAssessmentMode === null` and ModeSelector
+                  // renders again. Also clear the persisted assessmentMode
+                  // so the user can re-pick (the wizard reads from `mode`
+                  // prop which derives from effectiveAssessmentMode).
+                  setSearchParams(
+                    (prev) => {
+                      const next = new URLSearchParams(prev)
+                      next.set('prefs', 'off')
+                      return next
+                    },
+                    { replace: true }
+                  )
+                  setAssessmentMode(null)
+                }}
+                data-testid="assess-switch-mode"
+              >
+                Switch to {effectiveAssessmentMode === 'quick' ? 'comprehensive' : 'quick'} mode
+              </Button>
+            </div>
+          )}
+          <AssessWizard onComplete={handleComplete} mode={effectiveAssessmentMode} />
+        </>
       )}
     </div>
   )

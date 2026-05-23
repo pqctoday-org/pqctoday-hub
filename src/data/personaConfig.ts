@@ -43,6 +43,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/algorithms',
     '/library',
     '/playground',
+    '/openssl',
     '/leaders',
     '/patents',
     '/revisions',
@@ -71,7 +72,6 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/migrate',
     '/playground',
     '/patents',
-    '/openssl',
     '/revisions',
   ],
 }
@@ -225,6 +225,30 @@ export const REGION_COUNTRY_MAP: Record<Region, string | null> = {
  * Broad region → all matching country names in the timeline CSV data.
  * Used to power multi-country region filter in the Gantt chart.
  */
+/**
+ * Per-persona default region for /timeline when the user has no
+ * `selectedRegion` in the persona store and no `?region=` URL param.
+ *
+ * Per the persona-overwhelm audit (2026-05-22): every persona was landing
+ * on the same 40-country × ~225-event chart regardless of role. This map
+ * provides a sensible default region per persona so the Gantt chart is
+ * useful on first paint.
+ *
+ * Researcher = 'All' — the page is a research instrument for them.
+ * Other personas get a single region matched to their primary regulator
+ * or operating geography. Users can switch regions in the dropdown or
+ * opt out of the persona default via the "See all" reset link
+ * (which writes ?prefs=off).
+ */
+export const PERSONA_TIMELINE_REGION: Record<PersonaId, Region | 'All'> = {
+  executive: 'americas',
+  developer: 'americas',
+  architect: 'global',
+  researcher: 'All',
+  ops: 'americas',
+  curious: 'americas',
+}
+
 export const REGION_COUNTRIES_MAP: Record<Region, string[]> = {
   americas: ['United States', 'Canada'],
   eu: ['European Union', 'France', 'Germany', 'Italy', 'Spain', 'United Kingdom', 'Czech Republic'],
@@ -417,6 +441,32 @@ export const INDUSTRY_SLUG_TO_LABEL: Record<string, string> = {
   automotive: 'Automotive',
   aerospace: 'Aerospace',
   retail: 'Retail & E-Commerce',
+}
+
+/**
+ * Per-persona default industries for /threats when no industry is picked.
+ *
+ * The persona-overwhelm audit (2026-05-22) flagged that /threats renders
+ * the full unfiltered corpus when the user has a persona set but no
+ * industry — the only page on the site where persona alone doesn't
+ * pre-shape the view. This map provides a sensible default industry set
+ * per persona so the page is useful on first paint.
+ *
+ * Each value is an array of INDUSTRY_TO_THREATS_MAP keys; the resolver
+ * in `ThreatsDashboard` then maps these through INDUSTRY_TO_THREATS_MAP
+ * to actual threat-industry strings.
+ *
+ * Researcher + curious are intentionally empty: researcher wants the
+ * full corpus; curious gets a plain-language narrative card instead
+ * (see `personaSummary` in ThreatsDashboard).
+ */
+export const PERSONA_THREATS_DEFAULT_INDUSTRIES: Record<PersonaId, string[]> = {
+  executive: ['Finance & Banking', 'Government & Defense'],
+  developer: ['Technology'],
+  architect: ['Technology', 'Telecommunications'],
+  researcher: [],
+  ops: ['Energy & Utilities', 'Telecommunications'],
+  curious: [],
 }
 
 export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {

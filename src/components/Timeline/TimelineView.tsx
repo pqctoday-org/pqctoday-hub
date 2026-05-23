@@ -7,7 +7,7 @@ import { timelineData, timelineMetadata, transformToGanttData } from '../../data
 import type { GanttCountryData } from '../../types/timeline'
 import { FilterChip } from '../common/FilterChip'
 import { usePersonaStore } from '../../store/usePersonaStore'
-import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
+import { REGION_COUNTRIES_MAP, PERSONA_TIMELINE_REGION } from '../../data/personaConfig'
 import { COUNTRY_ALIASES } from '../../data/countryAliases'
 import { SimpleGanttChart } from './SimpleGanttChart'
 import { LeftNavTOC } from '@/components/common/LeftNavTOC'
@@ -85,11 +85,32 @@ export const TimelineView = () => {
 
   const [searchParams, setSearchParams] = useSearchParams()
 
-  // Region filter — preset from URL ?region= or persona preference
+  // Region filter — preset from (in order):
+  //   1. URL `?region=` deep-link
+  //   2. URL `?country=` deep-link → 'All' (country wins)
+  //   3. URL `?prefs=off` → 'All' (user explicitly opted out)
+  //   4. usePersonaStore.selectedRegion (user's stored region)
+  // The persona-default fallback (PERSONA_TIMELINE_REGION[persona]) lives in
+  // a useEffect below — Zustand's persist middleware may not have rehydrated
+  // the persona by the time this useState initialiser runs, so reading
+  // selectedPersona here is unreliable on first paint.
   const [regionFilter, setRegionFilter] = useState<string>(() => {
-    if (searchParams.get('country')) return 'All' // country deep-link → don't preset region
-    return searchParams.get('region') ?? usePersonaStore.getState().selectedRegion ?? 'All'
+    if (searchParams.get('country')) return 'All'
+    const urlRegion = searchParams.get('region')
+    if (urlRegion) return urlRegion
+    if (searchParams.get('prefs') === 'off') return 'All'
+    const storeRegion = usePersonaStore.getState().selectedRegion
+    if (storeRegion) return storeRegion
+    return 'All'
   })
+
+  // Persona-default region is applied inside the URL-sync useEffect below
+  // (the one keyed on `searchParams`). That effect already runs whenever
+  // searchParams changes — including on the rehydration re-render — so
+  // folding the persona-default into its logic keeps a single source of
+  // truth for the region value and avoids the two-effect race that
+  // otherwise overwrites the persona default on every re-render.
+  const storeSelectedRegion = usePersonaStore((s) => s.selectedRegion)
 
   // Country filter — preset from URL ?country= param if present (with alias resolution)
   const initialCountryParam = searchParams.get('country')
@@ -178,7 +199,21 @@ export const TimelineView = () => {
     const known = timelineData?.map((d) => d.countryName) ?? []
     const paramCountry = searchParams.get('country')
     const { resolved: nextCountry, wasUnknown } = resolveCountryParam(paramCountry, known)
-    const nextRegion = searchParams.get('region') ?? 'All'
+    // nextRegion precedence (persona-overwhelm rollout):
+    //   1. ?region= URL deep-link
+    //   2. ?country= deep-link → 'All' (country wins)
+    //   3. ?prefs=off → 'All' (user opted out of persona default)
+    //   4. usePersonaStore.selectedRegion (user's stored region)
+    //   5. PERSONA_TIMELINE_REGION[persona] (NEW)
+    //   6. 'All'
+    let nextRegion = searchParams.get('region') ?? 'All'
+    if (!searchParams.get('region') && !paramCountry && searchParams.get('prefs') !== 'off') {
+      if (storeSelectedRegion) nextRegion = storeSelectedRegion
+      else if (selectedPersona) {
+        const personaDefault = PERSONA_TIMELINE_REGION[selectedPersona] // eslint-disable-line security/detect-object-injection
+        if (personaDefault) nextRegion = personaDefault
+      }
+    }
     const nextQ = searchParams.get('q') ?? ''
 
     setCountryFilter((prev) => (prev !== nextCountry ? nextCountry : prev))
@@ -190,7 +225,8 @@ export const TimelineView = () => {
         duration: 4000,
       })
     }
-  }, [searchParams])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, selectedPersona, storeSelectedRegion])
 
   const tierFilter = useTrustTierFilter()
 

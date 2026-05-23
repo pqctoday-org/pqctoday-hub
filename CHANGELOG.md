@@ -4,6 +4,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## What's new — May 22, 2026 (evening)
+
+Seven additions completing the persona-overwhelm initiative across the remaining 5 pages:
+
+- **Migrate's product catalog now narrows by persona on first paint.** Executive lands on ~134 products in Cloud + AppServers (was 832 unfiltered). Developer lands on Libraries + Cloud + Database. Architect on Cloud + Network + AppServers + Security Stack. Ops on Network + Hardware + OS + Security Stack. Researcher + curious see the full corpus unchanged. A "Showing N products matched to your role · See all 832" banner appears whenever narrowing is active; one click writes `?prefs=off` and shows the full catalog. `PERSONA_MIGRATE_LAYERS` was always defined; the renderer was only using it as a sort tiebreaker — now it filters.
+- **Assess wizard auto-skips the mode picker when the persona implies the answer.** Executive + curious land directly inside Quick wizard. Developer / architect / researcher / ops land directly inside Comprehensive. A "Switch to {Comprehensive|Quick} mode" link is rendered above the wizard for users who want the other path. `?prefs=off` opts back to the ModeSelector. Wired via render-time derivation (not a useEffect) to avoid a state-propagation race.
+- **Playground gates the 35-tool grid behind a disclosure for curious users.** Curious now lands on the existing `CuriousStartHere` 3-step orientation panel as the page (not above the grid as before). A "Show full catalog (35 tools)" button reveals the sidebar + filters + grid on click and sets `?prefs=off`. Other personas see the full catalog unchanged — no behavior change for developer / architect / researcher / ops / executive.
+- **Threats now respects persona alone (no industry pick required).** New `PERSONA_THREATS_DEFAULT_INDUSTRIES` constant: executive → Finance & Banking + Government & Defense, developer → Technology, architect → Technology + Telecommunications, ops → Energy & Utilities + Telecommunications, researcher + curious → no narrowing. Previously the page rendered all 54 threats when no industry was picked, even if the user had selected a persona. Now executive lands on ~12 high-impact threats matched to Finance + Gov.
+- **Timeline lands every persona on a region-relevant slice instead of the full 40-country wall.** New `PERSONA_TIMELINE_REGION` constant: executive / developer / ops / curious → Americas, architect → Global, researcher → All (full corpus, preserved). URL `?region=` deep-link still wins; users who already set `selectedRegion` in their profile see that. Folded into the existing URL-sync `useEffect` so the persona default isn't overwritten on every re-render.
+- **`/openssl` nav-path fix.** Was incorrectly listed in `PERSONA_NAV_PATHS.curious` (sends users with "no technical background" to a CLI) and absent from `architect` (the persona most likely to use OpenSSL for crypto-agility planning). Two-line fix.
+- **Shared scaffolding for the "persona-aware default filter" pattern.** New `<PersonaDefaultsBanner>` + `usePersonaDefaults()` hook lifted out of LibraryView so the 4 new page integrations + the existing one all speak the same UX (banner copy, `?prefs=off` URL convention, persona-change reset behavior). LibraryView refactored to consume them; 65 existing Library tests pass without modification.
+
+The persona-overwhelm initiative is now complete for the 5 pages in scope. Two items are deferred to a follow-up PR: Timeline's `EventTypeFilter` component (needs a new CSV `category` column or string-inference classifier) and Leaders' curated top-15 (editorial work, list TBD).
+
+---
+
 ## What's new — May 22, 2026
 
 Six additions across the Playground, Algorithms, Report, and Library:
