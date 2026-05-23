@@ -225,6 +225,30 @@ export const REGION_COUNTRY_MAP: Record<Region, string | null> = {
  * Broad region → all matching country names in the timeline CSV data.
  * Used to power multi-country region filter in the Gantt chart.
  */
+/**
+ * Per-persona default region for /timeline when the user has no
+ * `selectedRegion` in the persona store and no `?region=` URL param.
+ *
+ * Per the persona-overwhelm audit (2026-05-22): every persona was landing
+ * on the same 40-country × ~225-event chart regardless of role. This map
+ * provides a sensible default region per persona so the Gantt chart is
+ * useful on first paint.
+ *
+ * Researcher = 'All' — the page is a research instrument for them.
+ * Other personas get a single region matched to their primary regulator
+ * or operating geography. Users can switch regions in the dropdown or
+ * opt out of the persona default via the "See all" reset link
+ * (which writes ?prefs=off).
+ */
+export const PERSONA_TIMELINE_REGION: Record<PersonaId, Region | 'All'> = {
+  executive: 'americas',
+  developer: 'americas',
+  architect: 'global',
+  researcher: 'All',
+  ops: 'americas',
+  curious: 'americas',
+}
+
 export const REGION_COUNTRIES_MAP: Record<Region, string[]> = {
   americas: ['United States', 'Canada'],
   eu: ['European Union', 'France', 'Germany', 'Italy', 'Spain', 'United Kingdom', 'Czech Republic'],
