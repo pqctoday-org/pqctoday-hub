@@ -238,6 +238,20 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
           {report.partialCoverage.join(', ')} — modules shown for completion.
         </p>
       )}
+
+      {/* NICE view deep-link */}
+      <div className="border-t border-border pt-4">
+        <Link
+          to={(() => {
+            const topRole = report.workRoleRecommendations[0]?.workRoleId
+            return topRole ? `/learn?view=nice&role=${topRole}` : '/learn?view=nice'
+          })()}
+          className="inline-flex items-center gap-2 text-xs font-medium text-primary hover:underline"
+        >
+          <ArrowRight size={13} />
+          Explore your curriculum in NICE Framework view
+        </Link>
+      </div>
     </div>
   )
 }

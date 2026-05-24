@@ -177,6 +177,13 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     isCommonGround: false,
   },
   {
+    moduleId: 'mls-group-messaging',
+    competencyAreas: ['CA-NETDEF', 'CA-CRYPTO'],
+    tier: 'practitioner',
+    workRoles: ['security-developer', 'network-security-specialist', 'security-architect'],
+    isCommonGround: false,
+  },
+  {
     moduleId: 'network-security-pqc',
     competencyAreas: ['CA-NETDEF', 'CA-SYSARCH'],
     tier: 'practitioner',
@@ -244,7 +251,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'merkle-tree-certs',
     competencyAreas: ['CA-CRYPTO', 'CA-IDENT'],
     tier: 'expert',
-    workRoles: ['security-architect', 'security-developer'],
+    workRoles: ['security-architect', 'security-developer', 'iam-specialist'],
     isCommonGround: false,
   },
   {
@@ -265,7 +272,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'code-signing',
     competencyAreas: ['CA-CRYPTO', 'CA-IDENT'],
     tier: 'practitioner',
-    workRoles: ['security-developer', 'security-architect'],
+    workRoles: ['security-developer', 'security-architect', 'iam-specialist'],
     isCommonGround: false,
   },
 
@@ -276,7 +283,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'email-signing',
     competencyAreas: ['CA-CRYPTO', 'CA-DATASEC', 'CA-IDENT'],
     tier: 'practitioner',
-    workRoles: ['security-developer', 'system-administrator'],
+    workRoles: ['security-developer', 'system-administrator', 'iam-specialist'],
     isCommonGround: false,
   },
 
@@ -312,14 +319,14 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'kms-pqc',
     competencyAreas: ['CA-CRYPTO', 'CA-DATASEC', 'CA-SYSARCH'],
     tier: 'practitioner',
-    workRoles: ['security-architect', 'system-administrator'],
+    workRoles: ['security-architect', 'system-administrator', 'iam-specialist'],
     isCommonGround: false,
   },
   {
     moduleId: 'hsm-pqc',
     competencyAreas: ['CA-CRYPTO', 'CA-SYSARCH'],
     tier: 'practitioner',
-    workRoles: ['security-architect', 'system-administrator'],
+    workRoles: ['security-architect', 'system-administrator', 'iam-specialist'],
     isCommonGround: false,
   },
   {
