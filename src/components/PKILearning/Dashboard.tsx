@@ -35,6 +35,7 @@ import { ModuleCard } from './ModuleCard'
 import { LearnViewToggle, type LearnViewMode } from './LearnViewToggle'
 import { LearnTrackStack } from './LearnTrackStack'
 import { ModuleTable, type ModuleTableItem } from './ModuleTable'
+import { NiceView } from './NiceView'
 import { PersonaPathView } from './PersonaPathView'
 import { RecommendedPathBanner } from './RecommendedPathBanner'
 import { usePersonaPathItems } from './usePersonaPathItems'
@@ -1002,11 +1003,11 @@ const ModuleTracksGrid = ({
 
   // In stack/path mode, Track filter is hidden (the stack itself is the track navigator;
   // path mode renders its own checkpoint-bounded phases).
-  const showTrackFilter = viewMode !== 'stack' && viewMode !== 'path'
-  // Sort is meaningless in stack/path modes (their own ordering is intrinsic).
+  const showTrackFilter = viewMode !== 'stack' && viewMode !== 'path' && viewMode !== 'nice'
+  // Sort is meaningless in stack/path/nice modes (their own ordering is intrinsic).
   // For cards/table with a persona filter active, sort is allowed but a "Curated order"
   // badge advertises the default so a custom sort is an explicit user choice.
-  const sortDisabled = viewMode === 'stack' || viewMode === 'path'
+  const sortDisabled = viewMode === 'stack' || viewMode === 'path' || viewMode === 'nice'
   const curatedOrderActive = personaFilterActive && sortBy === 'default'
   const sortChangedFromCurated = personaFilterActive && sortBy !== 'default'
 
@@ -1299,7 +1300,7 @@ const ModuleTracksGrid = ({
       {/* Results count + clear (only in cards/table modes or when filters active in stack) */}
       {filtersActive && (
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
-          {viewMode !== 'stack' && (
+          {viewMode !== 'stack' && viewMode !== 'nice' && (
             <span>
               Showing <span className="font-semibold text-foreground">{moduleItemCount}</span> of{' '}
               <span className="font-semibold">{totalModuleCount}</span> modules
@@ -1322,7 +1323,7 @@ const ModuleTracksGrid = ({
       )}
 
       {/* Empty state (cards/table only) */}
-      {viewMode !== 'stack' && moduleItemCount === 0 && (
+      {viewMode !== 'stack' && viewMode !== 'nice' && moduleItemCount === 0 && (
         <EmptyState
           icon={<Search size={32} />}
           title="No modules match your filters"
@@ -1486,6 +1487,9 @@ const ModuleTracksGrid = ({
           </motion.div>
         </AnimatePresence>
       )}
+
+      {/* ── NICE mode — competency-area view with work-role filter ── */}
+      {viewMode === 'nice' && <NiceView navigate={navigate} activePersonaId={selectedPersona} />}
 
       <ContentUpdatesFeed
         domain="module"
