@@ -659,7 +659,7 @@ const ModuleTracksGrid = ({
     niceTierOverridden,
   } = usePersonaStore()
   const { myLearnModules, showOnlyLearnModules, setShowOnlyLearnModules } = useBookmarkStore()
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const gridScrollRef = useRef<HTMLDivElement>(null)
 
   // Deep-link: ?track=<name> and ?persona=<id> preset filters from corpus chunks.
@@ -1003,6 +1003,24 @@ const ModuleTracksGrid = ({
     [navigate]
   )
 
+  // Sync ?view= param so the NICE deep-link round-trips correctly on refresh.
+  // Switching away from NICE clears the param; switching to NICE sets it.
+  const handleViewModeChange = useCallback(
+    (mode: LearnViewMode) => {
+      setViewMode(mode)
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          if (mode === 'nice') next.set('view', 'nice')
+          else next.delete('view')
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [setSearchParams]
+  )
+
   // In stack/path mode, Track filter is hidden (the stack itself is the track navigator;
   // path mode renders its own checkpoint-bounded phases).
   const showTrackFilter = viewMode !== 'stack' && viewMode !== 'path' && viewMode !== 'nice'
@@ -1202,7 +1220,7 @@ const ModuleTracksGrid = ({
                   <span className="text-sm font-semibold text-foreground">View Mode</span>
                   <LearnViewToggle
                     mode={viewMode}
-                    onChange={setViewMode}
+                    onChange={handleViewModeChange}
                     pathAvailable={personaFilterActive}
                   />
                 </div>
@@ -1294,7 +1312,7 @@ const ModuleTracksGrid = ({
         {/* View toggle */}
         <LearnViewToggle
           mode={viewMode}
-          onChange={setViewMode}
+          onChange={handleViewModeChange}
           pathAvailable={personaFilterActive}
         />
       </div>
