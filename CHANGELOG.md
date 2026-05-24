@@ -4,6 +4,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## What's new — May 24, 2026
+
+NICE Framework view for the Learn module:
+
+- **New "NICE" view in the Learning Workshops toggle.** A fifth view mode — alongside Path / Stack / Cards / Table — organises all 55 modules by NICE Cybersecurity Workforce Framework (NIST SP 800-181 Rev 1) Competency Areas. Select a Work Role chip at the top and the view highlights the Competency Areas core to that role, dims the rest, and rings every module that lists your role in its NICE mapping. Competency Areas appear in pedagogical order: Cryptography → Systems Security Architecture → Secure Programming → Network Defense → Identity Management → Data Security → Risk Management → Governance, Policy & Compliance. Each section shows the NICE CA code, a one-line description, representative TKS statement IDs, and a per-tier breakdown (Awareness / Practitioner / Expert) with live completion dots pulled from your progress store.
+- **Career-path pre-selection.** When you already have an active persona (Architect, Developer, Ops, Executive, Researcher), the NICE view opens with that persona's natural Work Role pre-selected — Security Architect, Security Developer, System Administrator, ISSO, or Systems Security Analyst respectively — and marks it with ★ in the chip strip. Selecting a different role or "All Roles" overrides it for the session.
+- **Role progress summary.** While a Work Role is active, the role card shows "X / Y relevant modules completed" across all Competency Areas for that role, de-duplicated across CAs.
+
+---
+
 ## What's new — May 22, 2026 (evening)
 
 Seven additions completing the persona-overwhelm initiative across the remaining 5 pages:

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { Layers, LayoutGrid, Route, Table } from 'lucide-react'
+import { Layers, LayoutGrid, Network, Route, Table } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 
-export type LearnViewMode = 'path' | 'stack' | 'cards' | 'table'
+export type LearnViewMode = 'path' | 'stack' | 'cards' | 'table' | 'nice'
 
 interface LearnViewToggleProps {
   mode: LearnViewMode
@@ -17,6 +17,7 @@ const OPTIONS: { value: LearnViewMode; label: string; icon: typeof Layers }[] = 
   { value: 'stack', label: 'Stack', icon: Layers },
   { value: 'cards', label: 'Cards', icon: LayoutGrid },
   { value: 'table', label: 'Table', icon: Table },
+  { value: 'nice', label: 'NICE', icon: Network },
 ]
 
 export const LearnViewToggle = ({ mode, onChange, pathAvailable = true }: LearnViewToggleProps) => {
