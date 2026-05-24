@@ -713,10 +713,12 @@ const ModuleTracksGrid = ({
   })()
   const [sortBy, setSortBy] = useState<LearnSortMode>(initialSort)
   // viewMode default depends on the effective persona:
+  //  - ?view=nice deep-link → 'nice' (from Assess report cross-link)
   //  - researcher / null persona → 'stack' (navigation, not curation)
   //  - showEverything engaged (curious only) → 'stack'
   //  - every other persona → 'path' (their curated, phased view)
   const initialViewMode: LearnViewMode = (() => {
+    if (searchParams.get('view') === 'nice') return 'nice'
     if (showEverything) return 'stack'
     if (!effectivePersona) return 'stack'
     if (effectivePersona === 'researcher') return 'stack'

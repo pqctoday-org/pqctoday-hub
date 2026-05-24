@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Network, CheckCircle2, Circle, Clock } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { useModuleStore } from '@/store/useModuleStore'
 import { NICE_COMPETENCY_AREAS, NICE_WORK_ROLES } from '@/data/niceFramework'
 import type {
@@ -81,15 +83,38 @@ interface NiceViewProps {
   activePersonaId?: string | null
 }
 
+const VALID_ROLE_IDS = new Set<string>(Object.keys(NICE_WORK_ROLES))
+
 export function NiceView({ navigate, activePersonaId }: NiceViewProps) {
   const moduleStates = useModuleStore((s) => s.modules)
+  const [searchParams, setSearchParams] = useSearchParams()
 
-  const defaultRole: NiceWorkRoleId | 'all' =
-    activePersonaId && PERSONA_DEFAULT_ROLE[activePersonaId]
-      ? PERSONA_DEFAULT_ROLE[activePersonaId]
-      : 'all'
+  // URL param wins over persona default so shared links land on the right role
+  const defaultRole: NiceWorkRoleId | 'all' = (() => {
+    const urlRole = searchParams.get('role')
+    if (urlRole && VALID_ROLE_IDS.has(urlRole)) return urlRole as NiceWorkRoleId
+    if (activePersonaId && PERSONA_DEFAULT_ROLE[activePersonaId])
+      return PERSONA_DEFAULT_ROLE[activePersonaId]
+    return 'all'
+  })()
 
   const [selectedRole, setSelectedRole] = useState<NiceWorkRoleId | 'all'>(defaultRole)
+
+  const handleRoleChange = useCallback(
+    (role: NiceWorkRoleId | 'all') => {
+      setSelectedRole(role)
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          if (role === 'all') next.delete('role')
+          else next.set('role', role)
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [setSearchParams]
+  )
 
   const workRoles = Object.values(NICE_WORK_ROLES)
   const selectedRoleData = selectedRole !== 'all' ? NICE_WORK_ROLES[selectedRole] : null
@@ -123,8 +148,23 @@ export function NiceView({ navigate, activePersonaId }: NiceViewProps) {
           </span>
         </div>
 
+        {/* Mobile: compact dropdown */}
+        <div className="sm:hidden">
+          <FilterDropdown
+            items={[
+              { id: 'all', label: 'All Roles' },
+              ...workRoles.map((r) => ({ id: r.id, label: r.title })),
+            ]}
+            selectedId={selectedRole}
+            onSelect={(id) => handleRoleChange(id as NiceWorkRoleId | 'all')}
+            defaultLabel="All Roles"
+            size="sm"
+          />
+        </div>
+
+        {/* Desktop: chip strip */}
         <div
-          className="flex flex-wrap gap-1.5"
+          className="hidden sm:flex flex-wrap gap-1.5"
           role="radiogroup"
           aria-label="NICE Work Role filter"
         >
@@ -133,7 +173,7 @@ export function NiceView({ navigate, activePersonaId }: NiceViewProps) {
             size="sm"
             role="radio"
             aria-checked={selectedRole === 'all'}
-            onClick={() => setSelectedRole('all')}
+            onClick={() => handleRoleChange('all')}
             className={clsx(
               'text-xs rounded-full px-3 py-1 h-auto border transition-all',
               selectedRole === 'all'
@@ -153,7 +193,7 @@ export function NiceView({ navigate, activePersonaId }: NiceViewProps) {
                 size="sm"
                 role="radio"
                 aria-checked={selectedRole === role.id}
-                onClick={() => setSelectedRole(selectedRole === role.id ? 'all' : role.id)}
+                onClick={() => handleRoleChange(selectedRole === role.id ? 'all' : role.id)}
                 className={clsx(
                   'text-xs rounded-full px-3 py-1 h-auto border transition-all',
                   selectedRole === role.id
