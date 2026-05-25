@@ -802,8 +802,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       toolId: 'tpm-playground',
       toolName: 'PQC TPM Workshop',
       testability: { pureKem: 'full', hybridKem: 'partial', pureSig: 'full', hybridSig: 'na' },
-      hybridKemNote:
-        "Educational Labeled-KEM construct; TCG v1.85 doesn't standardize hybrid",
+      hybridKemNote: "Educational Labeled-KEM construct; TCG v1.85 doesn't standardize hybrid",
     },
     gaps: [
       'Hybrid KEM is exposed as an educational Labeled-KEM construct only; TCG v1.85 §11 does not standardize a hybrid mode.',
