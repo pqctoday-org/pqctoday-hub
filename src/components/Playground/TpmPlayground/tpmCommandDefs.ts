@@ -136,6 +136,9 @@ const ALG_PARAM_MAP: Record<string, AlgParams> = {
   'MLDSA-44': { algId: 0x00a1, paramSet: 0x0001, isKem: false },
   'MLDSA-65': { algId: 0x00a1, paramSet: 0x0002, isKem: false },
   'MLDSA-87': { algId: 0x00a1, paramSet: 0x0003, isKem: false },
+  'HASHMLDSA-44': { algId: 0x00a2, paramSet: 0x0001, isKem: false },
+  'HASHMLDSA-65': { algId: 0x00a2, paramSet: 0x0002, isKem: false },
+  'HASHMLDSA-87': { algId: 0x00a2, paramSet: 0x0003, isKem: false },
 }
 
 const KEM_PK_SIZES: Record<string, number> = {
@@ -147,6 +150,9 @@ const DSA_PK_SIZES: Record<string, number> = {
   'MLDSA-44': 1312,
   'MLDSA-65': 1952,
   'MLDSA-87': 2592,
+  'HASHMLDSA-44': 1312,
+  'HASHMLDSA-65': 1952,
+  'HASHMLDSA-87': 2592,
 }
 
 export function getAlgParams(algorithm: string): AlgParams {
@@ -427,8 +433,19 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     why: 'Establishes the root of trust for PQC operations. An ML-KEM-768 primary key forms the Endorsement Key (EK) for key encapsulation. An ML-DSA-65 primary key forms the Attestation Key (AK) for platform identity signing.',
     showAlgorithm: true,
     params: (algorithm: string) => {
-      const { isKem } = getAlgParams(algorithm)
+      const { algId, isKem } = getAlgParams(algorithm)
       const pkSize = getPkSize(algorithm)
+      const isHashMldsa = algId === 0x00a2
+      const algLabel = isKem
+        ? `0x00A0 (TPM_ALG_MLKEM) — ${algorithm}`
+        : isHashMldsa
+          ? `0x00A2 (TPM_ALG_HASH_MLDSA) — ${algorithm}`
+          : `0x00A1 (TPM_ALG_MLDSA) — ${algorithm}`
+      const algDesc = isKem
+        ? 'ML-KEM: Module-Lattice Key Encapsulation Mechanism (FIPS 203). Replaces RSA/ECDH for quantum-safe key agreement.'
+        : isHashMldsa
+          ? 'HashML-DSA: pre-hash streaming variant of ML-DSA (FIPS 204 §5.4, TPM_ALG_HASH_MLDSA 0x00A2). Keys created with this algId are used with TPM2_SignSequenceStart / SignSequenceComplete.'
+          : 'ML-DSA: Module-Lattice Digital Signature Algorithm (FIPS 204). Replaces ECDSA/RSA for quantum-safe signing.'
       return [
         {
           name: 'primaryHandle',
@@ -441,12 +458,8 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
         {
           name: 'inPublic.type',
           tpmType: 'TPM_ALG_ID',
-          value: isKem
-            ? `0x00A0 (TPM_ALG_MLKEM) — ${algorithm}`
-            : `0x00A1 (TPM_ALG_MLDSA) — ${algorithm}`,
-          description: isKem
-            ? 'ML-KEM: Module-Lattice Key Encapsulation Mechanism (FIPS 203). Replaces RSA/ECDH for quantum-safe key agreement.'
-            : 'ML-DSA: Module-Lattice Digital Signature Algorithm (FIPS 204). Replaces ECDSA/RSA for quantum-safe signing.',
+          value: algLabel,
+          description: algDesc,
         },
         {
           name: 'inPublic.parameters.parameterSet',
@@ -1106,7 +1119,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     section: 'TCG Part 3 §17.5 Tables 89-90 (V1.85 RC4)',
     phase: 'use',
     requiresDsa: true,
-    showAlgorithm: false,
+    showAlgorithm: true,
     description:
       'Starts a streaming-message ML-DSA signing sequence. Returns a sequenceHandle that subsequent TPM2_SequenceUpdate calls accumulate into; the message is then signed by TPM2_SignSequenceComplete. Per §17.5.1, this is the streaming counterpart of TPM2_SignDigest — used when the message is too large to fit in a single TPM2B_DIGEST buffer or when the µ value must be computed inside the TPM.',
     why: 'Phase 4 (streaming) ML-DSA. Required for signing large firmware images, full attestation reports, or any message that exceeds the digest buffer limit. Pairs with TPM2_VerifySequenceComplete on the other end.',
@@ -1186,7 +1199,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     section: 'TCG Part 3 §20.6 Tables 124-125 (V1.85 RC4)',
     phase: 'use',
     requiresDsa: true,
-    showAlgorithm: false,
+    showAlgorithm: true,
     description:
       'Completes a streaming ML-DSA signing sequence. Appends a final message chunk to the accumulated buffer, then signs the full message with the key and returns the signature. The sequence handle is consumed (released by the TPM) regardless of whether signing succeeds.',
     why: 'Closes the streaming sign flow started by TPM2_SignSequenceStart. ML-DSA-65 signatures are 3309 bytes (FIPS 204 Table 3).',

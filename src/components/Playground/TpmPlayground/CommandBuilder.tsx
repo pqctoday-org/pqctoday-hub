@@ -76,7 +76,8 @@ const COMMAND_GROUPS = [
 // Algorithm options by relevance
 const KEM_ALGOS = ['MLKEM-512', 'MLKEM-768', 'MLKEM-1024']
 const DSA_ALGOS = ['MLDSA-44', 'MLDSA-65', 'MLDSA-87']
-const ALL_ALGOS = [...KEM_ALGOS, ...DSA_ALGOS]
+const HASHMLDSA_ALGOS = ['HASHMLDSA-44', 'HASHMLDSA-65', 'HASHMLDSA-87']
+const ALL_ALGOS = [...KEM_ALGOS, ...DSA_ALGOS, ...HASHMLDSA_ALGOS]
 
 // Hybrid Labeled-KEM combos (ML-KEM variant + classical curve). Educational
 // construct atop TCG v1.85 §11 Labeled KEM — TCG itself does NOT standardize a
@@ -97,15 +98,16 @@ function isHybridCommand(cmd: string): boolean {
 function getAlgoOptionsForCommand(cmd: string): string[] {
   if (cmd === 'TPM2_CreatePrimary') return ALL_ALGOS
   if (cmd === 'TPM2_Encapsulate' || cmd === 'TPM2_Decapsulate') return KEM_ALGOS
+  if (cmd === 'TPM2_SignDigest' || cmd === 'TPM2_VerifyDigestSignature') return DSA_ALGOS
   if (
-    cmd === 'TPM2_SignDigest' ||
-    cmd === 'TPM2_VerifyDigestSignature' ||
     cmd === 'TPM2_SignSequenceStart' ||
     cmd === 'TPM2_SignSequenceComplete' ||
     cmd === 'TPM2_VerifySequenceStart' ||
     cmd === 'TPM2_VerifySequenceComplete'
   ) {
-    return DSA_ALGOS
+    // HashML-DSA (0x00A2) is the primary use case for streaming sequence ops;
+    // pure ML-DSA (0x00A1) is also valid — show both groups.
+    return [...DSA_ALGOS, ...HASHMLDSA_ALGOS]
   }
   if (isHybridCommand(cmd)) return HYBRID_ALGOS
   return []
@@ -165,7 +167,9 @@ export function CommandBuilder({
   } | null>(null)
 
   const kemHandle = objects.find((o) => o.algorithm.startsWith('MLKEM'))?.handle ?? null
-  const dsaHandle = objects.find((o) => o.algorithm.startsWith('MLDSA'))?.handle ?? null
+  const dsaHandle =
+    objects.find((o) => o.algorithm.startsWith('MLDSA') || o.algorithm.startsWith('HASHMLDSA'))
+      ?.handle ?? null
 
   const cmdDef = getCommandDef(commandType)
   const algoOptions = getAlgoOptionsForCommand(commandType)
