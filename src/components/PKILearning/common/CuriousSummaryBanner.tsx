@@ -105,6 +105,7 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
   CryptoMgmtModernization: 'crypto-mgmt-modernization',
   PKIEnrollmentProtocols: 'pki-enrollment-protocols',
   MLSGroupMessaging: 'mls-group-messaging',
+  PQCCandidates: 'pqc-candidates',
 }
 
 /** Build a moduleId → markdown content lookup from the glob results */

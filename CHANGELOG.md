@@ -4,6 +4,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## What's new — May 30, 2026
+
+TLS and Merkle Tree Certificates — quantum downgrade attack coverage (Bas Westerbaan / Cloudflare Research):
+
+- **New "Downgrade Attack" tab in the TLS 1.3 Basics workshop.** An interactive three-mode scenario walkthrough — Normal connection (hybrid X25519MLKEM768), Under attack (MITM strips ML-KEM from ClientHello, server falls back to classical X25519), and With mitigations (PQ Lock + PQC Continuity blocks the downgrade). Each mode shows the full step-by-step packet flow with actor annotations and a summary comparison table for Maximum Compatibility / PQ Lock / PQC Continuity / MTC audit layer.
+- **TLS 1.3 Basics module updated (v1.0.0 → v1.1.0).** Four new Key Concepts: quantum downgrade attack (active MITM suppressing ML-KEM negotiation — distinct from passive HNDL harvesting), maximum compatibility mode (zero breakage, zero downgrade protection, incompatible with Continuity enforcement), PQ Lock / PQC HSTS (HTTP-layer browser cache, Chromium), and PQC Continuity / downgrade limit (`draft-sheffer-tls-pqc-continuity`, Sheffer; Westerbaan et al. — TLS-layer server-signed cached commitment). `draft-sheffer-tls-pqc-continuity` added as a referenced standard.
+- **Merkle Tree Certificates module updated (v1.0.0 → v1.1.0).** Two new Key Concepts: MTC as downgrade detection layer (public issuance log enables auditors to flag servers that revert from MTC-backed PQC certs to classical X.509 — a rollback attack signal) and Chrome CQRS coexistence (Quantum-Resistant Root Store runs alongside the existing Web PKI root store, enabling maximum compatibility with an auditable quantum-safe path). Overview updated with Westerbaan attribution.
+- **Hybrid Cryptography module updated.** New bullet on hybrid TLS negotiation downgrade risk — MITM can strip ML-KEM from key_share even when both endpoints support hybrid — with cross-reference to TLS Basics for the full PQ Lock / PQC Continuity mitigation treatment. Notes that composite signatures (single OID) prevent the analogous authentication downgrade.
+- **Four new library references** — all wired to the TLS Basics and Merkle Tree Certs reference tabs: **`draft-sheffer-tls-pqc-continuity`** (PQC Continuity: Downgrade Protection for TLS, Sheffer; Westerbaan; Aviram, IETF), **`Westerbaan-PQCrypto2025-Slides`** (invited PQCrypto 2025 talk by Bas Westerbaan, Cloudflare Research — covers max-compat mode, downgrade attack, PQ Lock, Continuity, MTC), **`Root-Causes-614-MTC-Downgrade`** (Root Causes Podcast ep. 614, Bas Westerbaan + Sectigo hosts), **`draft-reddy-lamps-x509-pq-commit`** (X.509 Extensions for PQC Continuity, certificate-layer complement to the TLS draft). `draft-ietf-tls-mldsa-03` (Hollebeek; Schmieg; Westerbaan) also linked to the TLS Basics module.
+- **PQCCandidates curious-summary wired in CuriousSummaryBanner.** Adds `PQCCandidates → 'pqc-candidates'` directory mapping so the curious-mode summary renders for the PQC Candidates module.
+
+---
+
 ## What's new — May 29–30, 2026
 
 Community and library additions:
