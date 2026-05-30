@@ -15,6 +15,7 @@ import { TLSIntroduction } from './components/TLSIntroduction'
 import { TLSExercises } from './components/TLSExercises'
 import { TLSConfigGenerator } from './components/TLSConfigGenerator'
 import { TLSSummary } from './components/TLSSummary'
+import { TLSDowngradeScenario } from './components/TLSDowngradeScenario'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateOpenSSLConfig } from './utils/configGenerator'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
@@ -54,7 +55,7 @@ const MODULE_ID = 'tls-basics'
 
 export const TLSBasicsModule: React.FC = () => {
   const deepLink = getModuleDeepLink({
-    validTabs: ['learn', 'workshop', 'exercises', 'references', 'tools'],
+    validTabs: ['learn', 'workshop', 'downgrade', 'exercises', 'references', 'tools'],
   })
   const [activeTab, setActiveTab] = useState(() => {
     // 'simulate' was the legacy internal tab name; redirect to canonical 'workshop'
@@ -406,6 +407,7 @@ export const TLSBasicsModule: React.FC = () => {
           tabs={[
             { value: 'learn', label: 'Learn' },
             { value: 'workshop', label: 'Workshop', hasDot: workshopDot },
+            { value: 'downgrade', label: 'Downgrade Attack' },
             { value: 'exercises', label: 'Exercises' },
             { value: 'references', label: 'References' },
             { value: 'tools', label: 'Tools & Products' },
@@ -596,6 +598,11 @@ export const TLSBasicsModule: React.FC = () => {
               </div>
             )}
           </div>
+        </TabsContent>
+
+        {/* Downgrade Attack Tab */}
+        <TabsContent value="downgrade">
+          <TLSDowngradeScenario />
         </TabsContent>
 
         {/* Exercises Tab */}

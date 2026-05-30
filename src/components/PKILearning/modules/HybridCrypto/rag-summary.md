@@ -26,6 +26,7 @@ The Hybrid Cryptography module teaches how to combine classical and post-quantum
 - **Composite signatures** combine ML-DSA with ECDSA or Ed25519 in a single operation; both must verify; single OID simplifies handling; prevents downgrade attacks
 - **Size trade-offs**: composite signatures are approximately 3.4 KB versus 72 bytes for ECDSA alone
 - **Hybrid KEMs in TLS 1.3**: X25519MLKEM768 integrates via the key_share extension; ClientHello key_share grows from 32 bytes (X25519) to 1,216 bytes (38× increase); may push ClientHello beyond a single TCP packet; ML-KEM-768 encap/decap adds ~0.1–0.3 ms per handshake; real-world measurements show <1% latency increase at P50
+- **Hybrid TLS negotiation downgrade risk**: during the transition period an active MITM adversary can strip the ML-KEM entry from the ClientHello key_share, forcing the server to fall back to classical X25519 — even when both endpoints support hybrid; this threat is addressed at the TLS protocol layer by PQ Lock and PQC Continuity (`draft-sheffer-tls-pqc-continuity`), covered in depth in the TLS 1.3 Basics module; composite signatures (single composite OID) prevent the analogous downgrade of authentication because both signature halves must verify together
 
 ## Workshop / Interactive Activities
 
