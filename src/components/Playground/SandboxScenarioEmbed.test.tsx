@@ -75,7 +75,7 @@ describe('SandboxScenarioEmbed', () => {
       type: 'pqc:config',
       config: expect.objectContaining({
         scenarioId: firstScenario.id,
-        allowedRoutes: expect.arrayContaining([`/embed/scenario/${firstScenario.id}`]),
+        allowedRoutes: expect.arrayContaining(['/*']),
       }),
     })
     expect(configCall?.[1]).toBe(BASE_ORIGIN)

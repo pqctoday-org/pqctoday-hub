@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:pqctoday-cbom-20260522",
+  "serialNumber": "urn:uuid:pqctoday-cbom-20260530",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-05-22T20:53:31.117Z",
+    "timestamp": "2026-05-30T04:03:03.794Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -538,9 +538,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "94870f2131ee5bd3",
+      "bom-ref": "d90156e9c386ed12",
       "name": "OpenSSL",
-      "version": "3.6.1",
+      "version": "3.6.2",
       "purl": "pkg:github/openssl/openssl",
       "cpe": "cpe:2.3:a:openssl:openssl:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -2517,9 +2517,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "936d16160cbceb20",
+      "bom-ref": "bb4e93d0e96dd454",
       "name": "strongSwan",
-      "version": "6.0.5",
+      "version": "6.0.6",
       "purl": "pkg:github/strongswan/strongswan",
       "cpe": "cpe:2.3:a:strongswan:strongswan:2.1.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -4110,11 +4110,11 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "parameterSetIdentifier": "ML-DSA",
           "primitive": "KEM"
         }
       },
-      "description": "step-ca v0.28.3+ supports X25519Kyber768 TLS with GODEBUG=tlsmlkem=1. ML-DSA signatures too large for practical certificate issuance.",
+      "description": "step-ca v0.28.3+ supports X25519MLKEM768 TLS with GODEBUG=tlsmlkem=1. ML-DSA signatures too large for practical certificate issuance.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -6028,7 +6028,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "The document does not mention any Post-Quantum Cryptography (PQC) algorithms, hybrid modes, or migration plans. It only lists \"tls13\" as a topic.",
+      "description": "HAProxy 3.x terminates TLS through its OpenSSL backend. With OpenSSL 3.5+ and oqs-provider, X25519MLKEM768 hybrid KEM TLS 1.3 is supported for edge termination today. HAProxy itself has no native PQC code; the capability flows entirely from the TLS library. Sandbox test 27 demonstrates real X25519MLKEM768 handshakes against a live HAProxy 3.x frontend.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -6062,7 +6062,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "60"
+          "value": "85"
         }
       ]
     },
@@ -13877,7 +13877,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "PostgreSQL: database. Uses OpenSSL for TLS. PQC TLS available with OpenSSL 3.5+.",
+      "description": "PostgreSQL 17.9 supports PQC TLS today via its OpenSSL backend — X25519MLKEM768 hybrid KEM TLS 1.3 client connections work with OpenSSL 3.5+ and oqs-provider configured. Data-at-rest PQC is separate: pg_tde extension adds quantum-safe key wrapping (planned PostgreSQL 18+). Sandbox test 21 confirms live X25519MLKEM768 TLS handshakes against PostgreSQL 17.9.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -32764,7 +32764,7 @@
           "primitive": "KEM"
         }
       },
-      "description": "PQC-capable via age encryption backend with -pq flag (hybrid X25519+Kyber768 key encapsulation). SOPS is encryption-backend agnostic; age v1.3+ post-quantum hybrid keys encrypt secrets at rest. Additional PQC KEMs available via age plugin system (age-plugin-sntrup761x25519). Supports AWS KMS Google Cloud KMS Azure Key Vault age and PGP backends.",
+      "description": "SOPS 3.9.x supports PQC encryption via the age-pq backend (hybrid ML-KEM-768 + X25519). Invoke with `age --pq` flag; SOPS wraps age transparently. Key management unchanged. Sandbox test 23 verifies encrypt+decrypt round-trip with PQC age keys. No FIPS 140-3 validation. Suitable for secrets-at-rest in cloud-native pipelines.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -32798,7 +32798,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "75"
+          "value": "80"
         }
       ]
     },
@@ -36938,6 +36938,814 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "85"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "962ab762744735cd",
+      "name": "Eclipse Mosquitto",
+      "version": "2.0.21",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Mosquitto 2.x uses OpenSSL for TLS. With OpenSSL 3.5+ and oqs-provider, MQTT TLS connections negotiate X25519MLKEM768 hybrid KEM TLS 1.3 today — no Mosquitto source changes needed. Mosquitto itself has no native PQC code; PQC capability flows from the TLS library. Sandbox test 31 confirms live X25519MLKEM768 MQTT TLS handshakes. Critical for IoT fleet migration: device firmware may need OpenSSL 3.5+ update.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/eclipse/mosquitto"
+        },
+        {
+          "type": "website",
+          "url": "https://mosquitto.org/blog/2024/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "eclipse-mosquitto"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "IoT Messaging Broker"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Application"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
+        },
+        {
+          "name": "pqctoday:cswp39_tags",
+          "value": "iot;tls;mqtt"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "da3b4638abe0deb1",
+      "name": "chrony (NTS-KE)",
+      "version": "4.6.1",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "chrony 4.5 implements NTS-KE (Network Time Security) using GnuTLS for TLS. GnuTLS does not yet ship native PQC support (liboqs integration is in progress in GnuTLS main branch). Until GnuTLS integrates and releases liboqs support, chrony cannot negotiate PQC TLS for NTS-KE. Sandbox test 28 confirms this limitation: chrony falls back to classical TLS 1.3 (X25519/P-256) even with a PQC-capable peer. Migration path: wait for GnuTLS 3.9+ with native PQC, then recompile chrony.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://git.tuxfamily.org/chrony/chrony.git"
+        },
+        {
+          "type": "website",
+          "url": "https://chrony-project.org/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "chrony-ntpd"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Network Time Protocol Daemon"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Infrastructure"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "90"
+        },
+        {
+          "name": "pqctoday:cswp39_tags",
+          "value": "ntp;time-sync;tls"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "260c13d9ed4fc83f",
+      "name": "osslsigncode",
+      "version": "2.9",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "Signature"
+        }
+      },
+      "description": "osslsigncode is an open-source Authenticode signing tool for PE/MSI/CAB files using OpenSSL. With OpenSSL 3.6+ linked, ML-DSA-65 signatures can be embedded in PE binaries today via custom OID. Sandbox test 17 demonstrates ML-DSA-65 PE signing and verification. Caveat: Windows Authenticode validation chain does not yet accept ML-DSA OIDs — dual-signing (classical + ML-DSA) is the migration path for cross-platform compatibility. No FIPS validation. Suitable for internal pipeline signing where verifier is under your control.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/mtrojnar/osslsigncode"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/mtrojnar/osslsigncode"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "osslsigncode"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Code Signing Tool"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "CI/CD"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
+        },
+        {
+          "name": "pqctoday:cswp39_tags",
+          "value": "code-signing;supply-chain;pe;authenticode"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "47a775f9407d9f8e",
+      "name": "OpenBao",
+      "version": "2.3.1",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "KEM"
+        }
+      },
+      "description": "OpenBao is an open-source fork of HashiCorp Vault (donated to LF Edge / OpenBao project, Apache-2.0). It supports PQC TLS for its listener via Go crypto stack (X25519MLKEM768 in Go 1.24+ tls package). The transit secrets engine does NOT yet natively support ML-DSA key generation (unlike Vault Enterprise 1.19+). Migration path: use OpenBao 2.x with Go 1.24+ for PQC transport; pair with oqs-provider for ML-DSA signing via OpenSSL subprocess. Actively tracked in OpenBao GitHub issues. Suitable for OSS-only deployments requiring open-source secrets management.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/openbao/openbao"
+        },
+        {
+          "type": "website",
+          "url": "https://openbao.org/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "openbao"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Secrets Management"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Platform"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "78"
+        },
+        {
+          "name": "pqctoday:cswp39_tags",
+          "value": "secrets-management;kms;transit;open-source"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "4e5fa3e1294fb6d7",
+      "name": "wireguard-go",
+      "version": "0.0.20230223",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "KEM"
+        }
+      },
+      "description": "Userspace WireGuard implementation in Go. Native Noise_IKpsk2 handshake uses Curve25519 (classical). Post-quantum security achieved by injecting an ML-KEM-768-derived shared secret as a 32-byte preshared-key (wg set peer preshared-key), giving Curve25519+ML-KEM hybrid protection against HNDL attacks. Used in pqctoday-sandbox test 29.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://git.zx2c4.com/wireguard-go"
+        },
+        {
+          "type": "website",
+          "url": "https://www.wireguard.com"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "wireguard-go"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "VPN and IPsec Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "7a470195e040bbb4",
+      "name": "Easy-RSA",
+      "version": "3.1.7",
+      "manufacturer": {
+        "name": "OpenVPN / Matt Caswell"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "Signature"
+        }
+      },
+      "description": "Easy-RSA 3.x is a CLI PKI management tool wrapping OpenSSL for CA setup, certificate signing, and revocation. It supports RSA (up to 8192-bit) and EC keys but has no native PQC algorithm support. Sandbox scenario 1 demonstrates the classical PKI flow (RSA-2048 CA → cert) then shows the migration path to ML-DSA-65 using OpenSSL with liboqs provider. Migration requires replacing Easy-RSA with a PQC-aware CA (step-ca, OpenSSL+liboqs) for ML-DSA certificate issuance.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/OpenVPN/easy-rsa"
+        },
+        {
+          "type": "website",
+          "url": "https://easy-rsa.readthedocs.io/en/latest/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "easyrsa-openvpn"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Public Key Infrastructure (PKI) Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "70"
+        },
+        {
+          "name": "pqctoday:cswp39_tags",
+          "value": "pki;classical-crypto"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "177ec67bf678611c",
+      "name": "Playwright",
+      "version": "1.44.x",
+      "manufacturer": {
+        "name": "Microsoft"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "KEM"
+        }
+      },
+      "description": "Playwright is a browser automation framework. In the PQC context it validates ML-KEM-768 hybrid TLS connections through real browser engines. Chromium 124+ supports X25519MLKEM768 (kyber hybrid); Firefox has experimental OQS-based PQC TLS. Sandbox scenario 6 navigates Playwright/Chromium to a PQC-TLS nginx server and asserts the negotiated cipher suite includes X25519MLKEM768. Playwright itself has no crypto logic — it exposes the TLS capabilities of the underlying browser engine.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/microsoft/playwright"
+        },
+        {
+          "type": "website",
+          "url": "https://playwright.dev"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "microsoft-playwright"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Protocol Analyzers"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "DevSecOps"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
+        },
+        {
+          "name": "pqctoday:cswp39_tags",
+          "value": "testing;tls;browser"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "d59290fd7a0c717e",
+      "name": "ns-3 Network Simulator",
+      "version": "3.42",
+      "manufacturer": {
+        "name": "ns-3 Consortium"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "ns-3 is a discrete-event network simulator used with the QKDNetSim module to simulate quantum key distribution (QKD) networks including BB84 protocol, QKD link authentication, and integration with classical IPsec/IKEv2. Supports simulation of hybrid quantum-classical network topologies. Sandbox QKD scenario uses ns-3 + QKDNetSim to model QKD network flows without requiring physical quantum hardware. Enables network engineers to evaluate QKD-enhanced security architectures before deployment.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://gitlab.com/nsnam/ns-3-dev"
+        },
+        {
+          "type": "website",
+          "url": "https://www.nsnam.org/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "ns3-network-simulator"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Quantum Key Distribution Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Research & Simulation"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
+        },
+        {
+          "name": "pqctoday:cswp39_tags",
+          "value": "qkd;simulation;network"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "6ae9d47ca307e633",
+      "name": "QKDNetSim",
+      "version": "2.x",
+      "manufacturer": {
+        "name": "QKDNetSim Project"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "QKDNetSim is an ns-3 module for simulating quantum key distribution networks. Implements BB84 protocol simulation, QKD link management, key relay across multi-hop networks, and integration with classical cryptographic protocols (IPsec, IKEv2). Enables network engineers to model and evaluate QKD-enhanced security architectures before hardware deployment. Used in sandbox with ns-3 to demonstrate a complete QKD-secured link without physical quantum hardware.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/QKDNetSim/QKDNetSim"
+        },
+        {
+          "type": "website",
+          "url": "https://www.qkdnetsim.info/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "qkdnetsim-module"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Quantum Key Distribution Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Research & Simulation"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "70"
+        },
+        {
+          "name": "pqctoday:cswp39_tags",
+          "value": "qkd;simulation;ns3"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "b8fa4890f8b5e76e",
+      "name": "SeQUeNCe",
+      "version": "0.6.x",
+      "manufacturer": {
+        "name": "Argonne National Laboratory / University of Chicago"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "SeQUeNCe (Simulator of QUantum Network Communication) is a Python-based quantum network simulation framework developed by Argonne National Laboratory and the University of Chicago. Simulates quantum repeaters, entanglement distribution, QKD protocols (BB84, E91), and quantum memory management. Used in sandbox to model quantum internet architecture and key delivery to classical endpoints. Enables researchers to prototype quantum network control planes without physical quantum hardware.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/sequence-toolbox/SeQUeNCe"
+        },
+        {
+          "type": "website",
+          "url": "https://sequence-toolbox.github.io/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "sequence-quantum-toolbox"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Quantum Key Distribution Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Research & Simulation"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
+        },
+        {
+          "name": "pqctoday:cswp39_tags",
+          "value": "qkd;simulation;quantum-repeater"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "f086d2ec73e27e2c",
+      "name": "OpenQKDNetwork",
+      "version": "1.x",
+      "manufacturer": {
+        "name": "Open-QKD-Network Project (Carleton University / ISARA)"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "KEM"
+        }
+      },
+      "description": "OpenQKDNetwork is a reference implementation and testbed framework for quantum key distribution network management. Provides key management APIs (ETSI GS QKD 014), QKD device abstraction, and integration patterns for delivering quantum-generated keys to classical IPsec/TLS endpoints. Sandbox uses it to demonstrate the classical API boundary where QKD-generated symmetric keys replace ML-KEM shared secrets for IPsec SA establishment.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/Open-QKD-Network/qkd-net"
+        },
+        {
+          "type": "website",
+          "url": "https://openqkdnetwork.ca/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "openqkdnetwork-qkd-net"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Quantum Key Distribution Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Research & Simulation"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "70"
+        },
+        {
+          "name": "pqctoday:cswp39_tags",
+          "value": "qkd;etsi;network-management"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "c2cf02c205d492c0",
+      "name": "age (file encryption)",
+      "version": "1.2.x",
+      "manufacturer": {
+        "name": "Filippo Valsorda"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "KEM"
+        }
+      },
+      "description": "age is a simple, modern file encryption tool by Filippo Valsorda. The age-pq plugin (github.com/FiloSottile/age-pq) adds hybrid ML-KEM-768 + X25519 key agreement using new Bech32-encoded PQC recipient addresses. SOPS 3.9.x transparently invokes age with PQC recipients when configured with the age-pq backend. Sandbox scenario 23 encrypts secrets with hybrid ML-KEM-768 keys and verifies decryption round-trip. No FIPS 140-3 validation; suitable for secrets-at-rest in cloud-native and GitOps pipelines.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/FiloSottile/age"
+        },
+        {
+          "type": "website",
+          "url": "https://age-encryption.org/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "filesottile-age-encryption"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Disk and File Encryption Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
+        },
+        {
+          "name": "pqctoday:cswp39_tags",
+          "value": "file-encryption;hybrid-crypto;mlkem"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "9ad0b22b18c402eb",
+      "name": "CBOMkit",
+      "version": "1.x",
+      "manufacturer": {
+        "name": "IBM Research"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "IBM's open-source CBOMkit toolkit generates Cryptography Bills of Materials (CBOM) in CycloneDX 1.6 format. Scans Java and Python source code and Docker images for cryptographic usage, annotating each finding with quantum-vulnerability status aligned to NIST CNSA 2.0. Integrates with OPA for policy enforcement — checking if detected algorithms are quantum-safe. Sandbox scenario cbom-compliance generates a CBOM for a sample application then evaluates it against a no-quantum-vulnerable-crypto Rego policy via OPA, showing real-time compliance violations.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/IBM/cbomkit"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/IBM/cbomkit"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "ibm-cbomkit"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Discovery Platforms"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "DevSecOps"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
+        },
+        {
+          "name": "pqctoday:cswp39_tags",
+          "value": "cbom;cryptographic-discovery;cyclonedx"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "1396f09d169912bd",
+      "name": "Open Policy Agent (OPA)",
+      "version": "0.65.x",
+      "manufacturer": {
+        "name": "Styra / CNCF"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "KEM"
+        }
+      },
+      "description": "OPA is a general-purpose policy engine using the Rego policy language for unified authorization across cloud-native stacks. In the PQC migration context, OPA enforces cryptographic policies — blocking Kubernetes deployments that use RSA-2048, flagging TLS configs without ML-KEM, or failing CI pipelines that include quantum-vulnerable algorithms in their CBOM. Sandbox cbom-compliance scenario feeds CBOMkit output to OPA, which evaluates a Rego policy to detect CNSA 2.0 violations and emit structured violation reports. OPA itself has no crypto; it is the policy enforcement layer above crypto discovery tools.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/open-policy-agent/opa"
+        },
+        {
+          "type": "website",
+          "url": "https://www.openpolicyagent.org/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "open-policy-agent-opa"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Agility Frameworks"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "DevSecOps"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
+        },
+        {
+          "name": "pqctoday:cswp39_tags",
+          "value": "policy;compliance;rego;kubernetes"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "4a58958cff728cb6",
+      "name": "cdxgen",
+      "version": "11.x",
+      "manufacturer": {
+        "name": "CycloneDX / OWASP"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "cdxgen generates CycloneDX SBOMs and CBOMs across 20+ ecosystems (Go, Python, Java, Rust, Debian/rpm packages, container images). The --include-crypto flag activates cryptographic discovery: it detects algorithm usage in source code and binaries, annotates each component with its cryptographic properties in CycloneDX 1.6 cryptoProperties format, and flags quantum-vulnerable algorithms. Sandbox scenarios use cdxgen to scan the running container filesystem (--type os) to produce a real CBOM covering OpenSSL version, softhsmv3, strongSwan, cosign and all installed tools — which OPA then evaluates against a CNSA 2.0 Rego policy.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/CycloneDX/cdxgen"
+        },
+        {
+          "type": "website",
+          "url": "https://cyclonedx.github.io/cdxgen/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "cyclonedx-cdxgen"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Discovery Platforms"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "DevSecOps"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "82"
+        },
+        {
+          "name": "pqctoday:cswp39_tags",
+          "value": "cbom;sbom;discovery;cyclonedx;devsecopss"
         }
       ]
     }
