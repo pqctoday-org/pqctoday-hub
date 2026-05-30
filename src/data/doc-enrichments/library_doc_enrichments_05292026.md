@@ -1,0 +1,41 @@
+## Labour-Tech-Defend-or-Depend-Policy-2025
+
+- **Reference ID**: Labour-Tech-Defend-or-Depend-Policy-2025
+- **Title**: Defend or Depend: The Battle for Defence Sovereignty
+- **Authors**: Labour Tech; Jack Shaw (editor); Steven Vaile; Dr. Joe Spencer; Naushabah Khan MP; Calvin Bailey MBE MP; John Blamire; Matt Albans; Alexi Bullen; Emma Baker; Richard Coates; Dr. Kieran N. Bjergstrom; Kira Lewis; Lewis Bailey
+- **Publication Date**: 2025-10-01
+- **Last Updated**: 2025-10-01
+- **Document Status**: Published
+- **Main Topic**: UK Labour Tech policy report on strengthening British defence sovereignty through quantum commercialisation, procurement reform, and sovereign industrial capability. Covers quantum cybersecurity (PQC), QKD, quantum sensing/PNT, and the strategic case for UK sovereign quantum technology. Steven Vaile (Director of Quantum Security Defence) contributes chapter "Quantum Commercialisation: From Rhetoric to Readiness" (pp. 22–23), arguing quantum-safe adoption is the fastest near-term route to value and calling for a UK Quantum Cybersecurity Buyer's Guide and mandatory quantum cyber resilience plans from FY26/27.
+- **PQC Algorithms Covered**: None named explicitly; NIST PQC / NCSC post-quantum migration implied throughout quantum cybersecurity chapter
+- **Quantum Threats Addressed**: Cryptographically relevant quantum computer; GNSS jamming/spoofing; harvest-now-decrypt-later implied in PQC urgency framing; quantum sensing as stealth-defeating threat vector
+- **Migration Timeline Info**: Mandate quantum cyber resilience plans from FY26/27; NCSC timelines cited as national spine for quantum-safe adoption; milestone-based contracts replacing flat-sum grants to accelerate commercialisation
+- **Applicable Regions / Bodies**: UK; EU; Five Eyes; NATO; NCSC; NQCC; MOD; Crown Commercial Service; BEIS; Global Quantum Intelligence
+- **Leaders Contributions Mentioned**: Steven Vaile (Director, Quantum Security Defence) — quantum commercialisation and PQC procurement reform; Dr. Joe Spencer (Quantum Defence Research Association) — quantum threat landscape and PQC remediation as near-term value; Dr. Kieran N. Bjergstrom (Quantum Technologies Associates) — quantum PNT for defence and prosperity
+- **PQC Products Mentioned**: UK Quantum Cybersecurity Vendor Directory & Buying Guide (proposed); Pathfinder procurement track (proposed)
+- **Protocols Covered**: QKD (battlefield communications); Post-Quantum Cryptography; quantum sensing/PNT; GNSS alternatives
+- **Infrastructure Layers**: MOD procurement; Crown Commercial Service; UK defence SME ecosystem; national critical infrastructure; GNSS/PNT systems; quantum communications networks
+- **Standardization Bodies**: NCSC; NIST (implied); NQCC; NATO; Five Eyes
+- **Compliance Frameworks Referenced**: UK Strategic Defence Review 2025; National Security and Investment Act 2021; UK Industrial Strategy; NCSC post-quantum migration guidance
+- **Classical Algorithms Referenced**: RSA (mentioned in context of quantum breaking threat); GPS/GNSS (as vulnerable infrastructure)
+- **Key Takeaways**: Quantum-safe adoption is the fastest near-term route to value; UK must publish a Quantum Cybersecurity Vendor Directory & Buying Guide via Crown Commercial Service; mandate quantum cyber resilience plans in all central procurements from FY26/27 aligned to NCSC milestones; recast flat grants as milestone-based contracts tied to TRL 4–6 prototypes; UK risks IP flight and sovereign capability erosion without urgent reform of grant and procurement culture; QKD and PNT represent complementary sovereign capability to PQC; sovereign quantum capability is both a national security and economic growth imperative
+- **Security Levels & Parameters**: None specified
+- **Hybrid & Transition Approaches**: PQC + QKD as complementary pathways; quantum-classical hybrid PNT for GNSS-denied environments
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker; Government; CISO; Defence Procurement; Quantum Industry
+- **Implementation Prerequisites**: Sovereign capability audit; quantum cyber resilience inventory; NCSC milestone alignment; milestone-based procurement frameworks
+- **Relevant PQC Today Features**: pqc-governance; quantum-threats; crypto-mgmt-modernization; pqc-risk-management; migration-program
+- **Implementation Attack Surface**: GNSS/PNT systems; classified communications; defence supply chain cryptography
+- **Cryptographic Discovery & Inventory**: Sovereign capability audit across full quantum stack; quantum cyber resilience plans mandated for central procurements
+- **Testing & Validation Methods**: Sovereign Defence Quantum T&E Hub (proposed); milestone-based contract validation against classical baselines

@@ -1,0 +1,41 @@
+## QFB-Portrait-Quantum-Technologies-Finance-2026
+
+- **Reference ID**: QFB-Portrait-Quantum-Technologies-Finance-2026
+- **Title**: A Portrait of Quantum Technologies in Finance
+- **Authors**: Oswaldo Zapata, PhD (editor/co-founder TQFB); Adrian Maguire; Alejandro Rodriguez Dominguez; Amir Rassol; André Costa; Carlos Arcila Barrera; Chinonso Onah; David Isaac; Francisco Castro; Genevieve Hayman; Jacob L. Cybulski; Jeremy Green; Joe Ghalbouni; John Galani; John Riley III; Khulud Almutairi; Lionel Martellini; Maylix Brianto; Melissa Hernández; Olga Mamlyga; Orlagh Neary; Pascal Halfmann; Rafal Pracht; Reinaldo Coelho; Santanu Ganguly; Sebastian Torres; Sebastian Zajac; Krzysztof Kuba; Sierra Clouse; Tatiana Mitrova; Tomasz Ćwik; Tse Loong Chin
+- **Publication Date**: 2026-05-01
+- **Last Updated**: 2026-05-01
+- **Document Status**: Published
+- **Main Topic**: 30-chapter practitioner compendium from The Quantum Finance Boardroom (TQFB) community. Covers the full spectrum of quantum technologies in finance: quantum computing for portfolio optimization, Monte Carlo simulation, asset management, and machine learning; quantum security including post-quantum cryptography (PQC), quantum-safe finance, and cryptographic standards; quantum workforce and talent strategy; quantum ethics and governance; regional quantum strategy (Saudi Arabia, EU, global); and venture capital in quantum finance. Chapter 24 (Santanu Ganguly) provides a dedicated deep-dive on Post-Quantum Cryptography including NIST FIPS 203/204/205 standards and a 3–5+ year engineering migration roadmap for financial institutions.
+- **PQC Algorithms Covered**: ML-KEM (FIPS 203); ML-DSA (FIPS 204); SLH-DSA (FIPS 205); NIST PQC standards broadly (Ch.24); cryptographic standards layer for finance (Ch.18 §18.4)
+- **Quantum Threats Addressed**: Cryptographically relevant quantum computer (CRQC); harvest-now-decrypt-later; quantum-enabled cyber threats; Q-Day risk for financial infrastructure; quantum computation as trust-layer shock (Ch.28)
+- **Migration Timeline Info**: Ch.24 presents a 3–5+ year PQC engineering migration roadmap for financial institutions; Ch.19 addresses quantum-safe migration for financial sector; Ch.11 covers the security imperative and what must happen next; Ch.14 argues quantum readiness should begin immediately ("Move Early, Move Smart, Don't Get Left Behind")
+- **Applicable Regions / Bodies**: Global; EU (DORA, EU regulatory layer Ch.18 §18.6); US (NIST); Saudi Arabia (Vision 2030, Ch.15); NIST; NCSC (implied); Basel III; financial regulators broadly
+- **Leaders Contributions Mentioned**: Jeremy Green (RAF Cyber Reserves, security architect — Ch.11 quantum security); Santanu Ganguly (Ch.24 PQC); Melissa Hernández (Ch.18 standards); Olga Mamlyga (Ch.19 quantum-safe finance); Tatiana Mitrova (Ch.28 quantum and security); Khulud Almutairi (Ch.15 Saudi quantum strategy); Jacob L. Cybulski (Ch.10 quantum ML/optimization, Deakin University)
+- **PQC Products Mentioned**: None specifically named; NIST-standardised algorithms as implementation targets
+- **Protocols Covered**: TLS (post-quantum TLS implied); digital signatures; key encapsulation; QKD (mentioned in security context); quantum sensing and timing
+- **Infrastructure Layers**: Financial trading infrastructure; payment systems; digital identity; banking cryptographic systems; cloud financial services; wealth management platforms
+- **Standardization Bodies**: NIST (FIPS 203/204/205, Ch.24); EU regulatory bodies (Ch.18 §18.6); ISACA; BCS; EC-Council (Jeremy Green credentials); CFTC; SEC (contributor affiliations)
+- **Compliance Frameworks Referenced**: EU DORA (Digital Operational Resilience Act, Ch.18); Basel III; NIST PQC standards; EU AI Act (mentioned in context); financial sector regulatory frameworks broadly
+- **Classical Algorithms Referenced**: RSA; ECC (vulnerable to CRQC, discussed in Ch.24 and Ch.11); AES (symmetric — quantum-resilient with key doubling)
+- **Key Takeaways**: PQC migration for financial institutions is urgent and actionable now — Ch.24 provides a concrete 3–5+ year roadmap; quantum-safe finance requires cryptographic inventory, hybrid transition approaches, and regulatory alignment (EU DORA); quantum computing in finance is maturing from hype to hybrid pragmatism — near-term value in optimization and Monte Carlo, not full fault-tolerant compute; talent and governance are the real bottlenecks, not hardware; financial institutions that act early on quantum readiness will have significant strategic advantage; quantum technologies converge with AI and cybersecurity into a single enterprise strategy
+- **Security Levels & Parameters**: NIST security levels L1/L3/L5 for ML-KEM/ML-DSA/SLH-DSA (Ch.24 §24.7); specific parameter sets not detailed beyond FIPS references
+- **Hybrid & Transition Approaches**: Hybrid quantum-classical computing as pragmatic near-term path (Ch.7, Ch.12); hybrid PQC/classical cryptographic transition implied in migration roadmap (Ch.24 §24.8)
+- **Pure PQC KEM Support**: Covered (ML-KEM/FIPS 203, Ch.24)
+- **Pure PQC KEM Evidence**: Ch.24 §24.7 NIST PQC Standards and How They Work; §24.8 Engineering Migration Roadmap
+- **Hybrid PQC KEM Support**: Implied in transition guidance
+- **Hybrid PQC KEM Evidence**: Ch.24 §24.8; Ch.19 §19.4
+- **Pure PQC Signature Support**: Covered (ML-DSA/FIPS 204, SLH-DSA/FIPS 205, Ch.24)
+- **Pure PQC Signature Evidence**: Ch.24 §24.7
+- **Hybrid PQC Signature Support**: Implied
+- **Hybrid PQC Signature Evidence**: Ch.24 §24.8 migration roadmap
+- **PQC Heatmap Protocols Covered**: TLS (implied); digital signatures in financial transactions
+- **PQC Heatmap Protocols Evidence**: Ch.24; Ch.18 §18.4 Cryptographic Standards Layer; Ch.19 §19.4
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: Quantum computing performance for finance discussed in Ch.22 (Monte Carlo), Ch.21 (optimization); PQC performance trade-offs not detailed
+- **Target Audience**: Executive; CISO; Finance Professional; Quant; Investor; Policy Maker; Security Architect
+- **Implementation Prerequisites**: Cryptographic inventory of financial systems; regulatory alignment (DORA); talent with quantum literacy; hybrid classical-quantum infrastructure planning
+- **Relevant PQC Today Features**: pqc-101; pqc-business-case; pqc-governance; pqc-risk-management; migration-program; exec-quantum-impact; quantum-threats; crypto-mgmt-modernization; standards-bodies
+- **Implementation Attack Surface**: Financial trading systems; payment infrastructure; banking PKI; digital identity in finance; wealth management data
+- **Cryptographic Discovery & Inventory**: Implicitly required as migration prerequisite (Ch.24 §24.8); cryptographic standards audit layer (Ch.18 §18.4)
+- **Testing & Validation Methods**: ML for PQC deployment monitoring and capacity control (Ch.24 §24.9); hybrid validation approaches implied in migration roadmap
