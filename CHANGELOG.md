@@ -4,6 +4,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## What's new — May 29–30, 2026
+
+Community and library additions:
+
+- **Steven Paul Vaile added to Community.** Founder of Quantum Security Defence and Applied Quantum; global advocate for quantum safety across government, defence, and education; contributor to the UK Labour-Tech "Defend or Depend" policy report on defence sovereignty; connects policymakers with PQC practitioners internationally. Country: UK. Category: Government / Public.
+- **Two new library documents — Labour-Tech "Defend or Depend" (2025).** UK Labour-Tech policy report on strengthening British defence sovereignty through quantum commercialisation, quantum cybersecurity (PQC + QKD), quantum sensing/PNT, and procurement reform. Steven Vaile's chapter calls quantum-safe adoption the fastest near-term route to value and proposes a UK Quantum Cybersecurity Vendor Directory and mandatory quantum cyber resilience plans from FY26/27 aligned to NCSC milestones.
+- **Two new library documents — "A Portrait of Quantum Technologies in Finance" (Quantum Finance Boardroom, May 2026).** 30-chapter practitioner compendium from the TQFB community. Chapter 24 (Santanu Ganguly) provides a dedicated deep-dive on Post-Quantum Cryptography including NIST FIPS 203/204/205 standards and a 3–5+ year engineering migration roadmap for financial institutions. Also covers quantum computing in finance (portfolio optimisation, Monte Carlo), quantum workforce strategy, ethics, governance, and regional quantum strategy.
+
+---
+
 ## What's new — May 24, 2026
 
 NICE Framework view for the Learn module:
