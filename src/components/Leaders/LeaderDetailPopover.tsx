@@ -1,5 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { X, Briefcase, Building2, MapPin, User, BookOpen, Clock, ShieldCheck } from 'lucide-react'
+import {
+  X,
+  Briefcase,
+  Building2,
+  MapPin,
+  User,
+  BookOpen,
+  ExternalLink,
+  Clock,
+  ShieldCheck,
+} from 'lucide-react'
 import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -222,18 +232,32 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
                 {leader.keyResourceUrl.length === 1 ? 'Key Resource' : 'Key Resources'}
               </p>
               <div className="flex flex-col gap-1">
-                {leader.keyResourceUrl.map((ref, i) => (
-                  <Link
-                    key={i}
-                    to={`/library?ref=${encodeURIComponent(ref)}`}
-                    onClick={onClose}
-                    className="text-sm font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-2"
-                    title={`Open in Library: ${ref}`}
-                  >
-                    <BookOpen size={12} className="shrink-0" aria-hidden="true" />
-                    <span className="truncate">{ref}</span>
-                  </Link>
-                ))}
+                {leader.keyResourceUrl.map((ref, i) =>
+                  ref.startsWith('http') ? (
+                    <a
+                      key={i}
+                      href={ref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-2"
+                      title={ref}
+                    >
+                      <ExternalLink size={12} className="shrink-0" aria-hidden="true" />
+                      <span className="truncate">{ref}</span>
+                    </a>
+                  ) : (
+                    <Link
+                      key={i}
+                      to={`/library?ref=${encodeURIComponent(ref)}`}
+                      onClick={onClose}
+                      className="text-sm font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-2"
+                      title={`Open in Library: ${ref}`}
+                    >
+                      <BookOpen size={12} className="shrink-0" aria-hidden="true" />
+                      <span className="truncate">{ref}</span>
+                    </Link>
+                  )
+                )}
               </div>
             </div>
           )}

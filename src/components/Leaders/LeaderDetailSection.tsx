@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef } from 'react'
-import { MapPin, BookOpen, Clock, ShieldCheck, X } from 'lucide-react'
+import { MapPin, BookOpen, ExternalLink, Clock, ShieldCheck, X } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import type { Leader } from '../../data/leadersData'
@@ -88,17 +88,31 @@ export const LeaderDetailSection = ({ leader, onClose }: LeaderDetailSectionProp
                 : `Key Resources (${leader.keyResourceUrl.length})`}
             </p>
             <div className="flex flex-col gap-0.5">
-              {leader.keyResourceUrl.slice(0, 6).map((ref, i) => (
-                <Link
-                  key={i}
-                  to={`/library?ref=${encodeURIComponent(ref)}`}
-                  className="text-xs font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-1.5"
-                  title={`Open in Library: ${ref}`}
-                >
-                  <BookOpen size={11} className="shrink-0" aria-hidden="true" />
-                  <span className="truncate">{ref}</span>
-                </Link>
-              ))}
+              {leader.keyResourceUrl.slice(0, 6).map((ref, i) =>
+                ref.startsWith('http') ? (
+                  <a
+                    key={i}
+                    href={ref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-1.5"
+                    title={ref}
+                  >
+                    <ExternalLink size={11} className="shrink-0" aria-hidden="true" />
+                    <span className="truncate">{ref}</span>
+                  </a>
+                ) : (
+                  <Link
+                    key={i}
+                    to={`/library?ref=${encodeURIComponent(ref)}`}
+                    className="text-xs font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-1.5"
+                    title={`Open in Library: ${ref}`}
+                  >
+                    <BookOpen size={11} className="shrink-0" aria-hidden="true" />
+                    <span className="truncate">{ref}</span>
+                  </Link>
+                )
+              )}
               {leader.keyResourceUrl.length > 6 && (
                 <span className="text-[10px] text-muted-foreground italic mt-0.5">
                   …and {leader.keyResourceUrl.length - 6} more
