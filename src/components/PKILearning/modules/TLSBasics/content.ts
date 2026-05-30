@@ -9,14 +9,15 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'tls-basics',
-  version: '1.0.0',
-  lastReviewed: '2026-03-28',
+  version: '1.1.0',
+  lastReviewed: '2026-05-30',
 
   standards: [
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('RFC 8446'),
     getStandard('NIST SP 800-227'),
+    getStandard('draft-sheffer-tls-pqc-continuity'),
   ],
 
   algorithms: [

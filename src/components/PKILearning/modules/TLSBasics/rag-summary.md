@@ -2,7 +2,7 @@
 
 ## Overview
 
-The TLS Basics module provides a comprehensive introduction to Transport Layer Security 1.3 (RFC 8446) and its post-quantum cryptography integration. It covers the TLS 1.3 protocol improvements over TLS 1.2, the 1-RTT handshake process, cipher suite simplification, key exchange mechanisms (classical ECDH, pure PQC ML-KEM, and hybrid X25519MLKEM768), the HKDF-based key schedule, and the trade-offs of PQC migration in TLS. The module includes a live TLS handshake simulator powered by OpenSSL WASM that demonstrates real handshake operations with configurable client and server parameters.
+The TLS Basics module provides a comprehensive introduction to Transport Layer Security 1.3 (RFC 8446) and its post-quantum cryptography integration. It covers the TLS 1.3 protocol improvements over TLS 1.2, the 1-RTT handshake process, cipher suite simplification, key exchange mechanisms (classical ECDH, pure PQC ML-KEM, and hybrid X25519MLKEM768), the HKDF-based key schedule, and the trade-offs of PQC migration in TLS. The module also covers active quantum downgrade attacks that threaten the transition period — where an adversary suppresses PQC negotiation entirely — and the layered mitigations developed by Bas Westerbaan (Cloudflare Research) and the IETF: maximum compatibility mode, PQ Lock/PQC HSTS, and PQC Continuity. The module includes a live TLS handshake simulator powered by OpenSSL WASM that demonstrates real handshake operations with configurable client and server parameters, including a downgrade attack scenario.
 
 ## Key Concepts
 
@@ -18,6 +18,10 @@ The TLS Basics module provides a comprehensive introduction to Transport Layer S
 - **PQC size trade-off** — ML-KEM-768 public keys are approximately 1,184 bytes versus 32 bytes for X25519, increasing handshake overhead
 - **Mutual TLS (mTLS)** — the simulator supports both standard TLS and mutual authentication where both client and server present certificates
 - **PQC certificate support** — the simulator includes pre-loaded ML-DSA-65 and ML-DSA-87 certificates for testing post-quantum authentication
+- **Quantum downgrade attack** (Westerbaan/Cloudflare) — an active MITM adversary intercepts the ClientHello and removes the ML-KEM key_share entry, forcing a fallback to classical-only ECDH; distinct from passive HNDL harvesting because it actively prevents PQC even when both endpoints support it
+- **Maximum compatibility mode** — the default server posture during transition: serve a classical certificate to any client, PQC only to capable clients; eliminates breakage but provides zero protection against downgrade attacks, and is fundamentally incompatible with PQC Continuity enforcement
+- **PQ Lock / PQC HSTS** — an HTTP-layer signal where a server tells the browser it supports PQC key exchange; the browser caches this signal and refuses future connections that omit PQC (implemented in Chromium, analogous to HSTS); provides session-level downgrade protection once the first PQC connection succeeds
+- **PQC Continuity / downgrade limit** (`draft-sheffer-tls-pqc-continuity`, Sheffer; Westerbaan et al.) — a TLS-layer cached commitment: the server declares a duration (the "downgrade limit," e.g., one year) and the client caches it, refusing classical-only connections within that window; pins the server to PQC across connection gaps, closing the attack surface that PQ Lock leaves open for first-visit interception
 
 ## Workshop / Interactive Activities
 
@@ -30,6 +34,10 @@ The workshop is a live TLS handshake simulator with the following features:
 - **TLS Comparison Table** — compares classical, hybrid, and pure PQC handshake configurations showing sizes, round trips, and security properties
 - **TLS Summary** — post-simulation analysis showing handshake trace events and success/failure status
 
+## Workshop / Interactive Activities (Downgrade Scenario)
+
+- **Downgrade Attack Scenario tab** — interactive walkthrough of a quantum downgrade attack: configure an attacker-in-the-middle that removes ML-KEM from the ClientHello key_share, observe the server falling back to X25519, and compare the negotiated session against a non-attacked connection; then apply PQ Lock and PQC Continuity mitigations and observe the attack being blocked
+
 ## Related Standards
 
 - RFC 8446 (TLS 1.3)
@@ -37,3 +45,4 @@ The workshop is a live TLS handshake simulator with the following features:
 - FIPS 204 (ML-DSA)
 - draft-ietf-tls-mlkem (ML-KEM for TLS 1.3)
 - RFC 8879 (TLS Certificate Compression)
+- draft-sheffer-tls-pqc-continuity (PQC Continuity: Downgrade Protection for TLS)

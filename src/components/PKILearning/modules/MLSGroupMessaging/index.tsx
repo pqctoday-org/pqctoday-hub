@@ -10,6 +10,7 @@ import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
+import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { MLSIntroduction } from './components/MLSIntroduction'
 import { TreeKEMVisualizer } from './workshop/TreeKEMVisualizer'
 import { ProviderArchitecture } from './workshop/ProviderArchitecture'
@@ -87,6 +88,7 @@ export const MLSGroupMessagingModule: React.FC = () => {
         <ModuleTabBar
           tabs={[
             { value: 'learn', label: 'Learn' },
+            { value: 'visual', label: 'Visual' },
             { value: 'workshop', label: 'Workshop', hasDot: workshopDot },
             { value: 'references', label: 'References' },
             { value: 'tools', label: 'Tools & Products' },
@@ -99,6 +101,10 @@ export const MLSGroupMessagingModule: React.FC = () => {
           <GlossaryAutoWrap>
             <MLSIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
+        </TabsContent>
+
+        <TabsContent value="visual">
+          <ModuleVisualTab moduleId={MODULE_ID} />
         </TabsContent>
 
         <TabsContent value="workshop">

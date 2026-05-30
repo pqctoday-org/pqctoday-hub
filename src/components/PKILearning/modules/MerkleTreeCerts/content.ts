@@ -9,8 +9,8 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'merkle-tree-certs',
-  version: '1.0.0',
-  lastReviewed: '2026-03-28',
+  version: '1.1.0',
+  lastReviewed: '2026-05-30',
 
   standards: [
     getStandard('FIPS 204'),
