@@ -61,6 +61,8 @@ export type QuizCategory =
   | 'pqc-testing-validation'
   | 'crypto-mgmt-modernization'
   | 'slh-dsa'
+  | 'mls-group-messaging'
+  | 'pqc-candidates'
 
 export interface QuizOption {
   id: string

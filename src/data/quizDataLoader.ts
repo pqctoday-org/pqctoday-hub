@@ -455,6 +455,18 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'Stateless hash-based digital signatures (FIPS 205) — SPHINCS+ standardised for post-quantum signing.',
       icon: 'TreePine',
     },
+    'mls-group-messaging': {
+      label: 'MLS Group Messaging',
+      description:
+        'Messaging Layer Security (RFC 9420) — PQC-hybrid group key establishment for secure group communication.',
+      icon: 'MessageSquare',
+    },
+    'pqc-candidates': {
+      label: 'PQC Candidates',
+      description:
+        'NIST Round 4 and on-ramp candidates — Falcon, HQC, FrodoKEM, Classic McEliece, and other post-quantum contenders.',
+      icon: 'FlaskConical',
+    },
   }
 
 // Compute question counts dynamically from loaded data
