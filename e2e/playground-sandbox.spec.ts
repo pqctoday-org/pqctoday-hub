@@ -6,12 +6,12 @@ const SANDBOX_ORIGIN = 'http://localhost:4000'
 // Stub the sandbox so the E2E does not require docker-compose to be running.
 // Fulfils:
 //  - /api/status → empty 200 (satisfies the reachability probe)
-//  - /embed/scenario/* → tiny HTML that posts pqc:ready immediately
+//  - /embed/scenarios/* → tiny HTML that posts pqc:ready immediately
 async function stubSandbox(page: import('@playwright/test').Page) {
   await page.route(`${SANDBOX_ORIGIN}/api/status`, (route) =>
     route.fulfill({ status: 200, body: '{}', contentType: 'application/json' })
   )
-  await page.route(`${SANDBOX_ORIGIN}/embed/scenario/**`, (route) =>
+  await page.route(`${SANDBOX_ORIGIN}/embed/scenarios/**`, (route) =>
     route.fulfill({
       status: 200,
       contentType: 'text/html',
@@ -108,7 +108,7 @@ test.describe('Playground — Sandbox category', () => {
     await expect(iframe).toBeVisible()
     await expect(iframe).toHaveAttribute(
       'src',
-      new RegExp(`${SANDBOX_ORIGIN.replace(/[/.]/g, '\\$&')}/embed/scenario/`)
+      new RegExp(`${SANDBOX_ORIGIN.replace(/[/.]/g, '\\$&')}/embed/scenarios/`)
     )
   })
 })
