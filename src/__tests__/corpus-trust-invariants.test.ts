@@ -169,7 +169,8 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     trustScoreData.ts chunkToResource extension.
   timeline: 0,
   algorithms: 0,
-  'document-enrichment': 113,
+  //     2026-05-31: bumped 113 → 118 — 5 new catalog enrichments (Tectia SSH, IVPN, libcrux, Trail of Bits ml-dsa, InfoSec Global AgileSec)
+  'document-enrichment': 118,
 }
 
 /**

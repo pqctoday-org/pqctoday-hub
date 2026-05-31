@@ -182,8 +182,8 @@ export function SandboxScenarioEmbed() {
     )
   }
 
-  const embedUrl = `${baseUrl}/embed/scenario/${encodeURIComponent(scenario.id)}`
-  const openUrl = `${baseUrl}/scenario/${encodeURIComponent(scenario.id)}`
+  const embedUrl = `${baseUrl}/embed/scenarios/${encodeURIComponent(scenario.id)}`
+  const openUrl = `${baseUrl}/scenarios/${encodeURIComponent(scenario.id)}`
 
   return (
     <div className="space-y-4">

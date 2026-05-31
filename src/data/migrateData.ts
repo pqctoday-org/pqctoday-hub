@@ -51,6 +51,9 @@ interface RawSoftwareItem {
   github_contribution_url?: string
   confidence_score?: string
   cswp39_tags?: string
+  status?: string
+  deprecated_at?: string
+  deprecated_reason?: string
 }
 
 function deriveCisaCategory(categoryName: string, layer: string): string {
@@ -121,68 +124,71 @@ const {
 } = loadLatestCSV<RawSoftwareItem, SoftwareItem>(
   modules,
   /catalog_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
-  (row) => ({
-    productId: row.product_id || '',
-    softwareName: row.software_name,
-    categoryId: row.category_id,
-    categoryName: row.category_name,
-    infrastructureLayer: row.infrastructure_layer,
-    cisaCategory:
-      row.cisa_category || deriveCisaCategory(row.category_name, row.infrastructure_layer),
-    pqcSupport: row.pqc_support,
-    pqcCapabilityDescription: row.pqc_capability_description,
-    licenseType: row.license_type,
-    license: row.license,
-    latestVersion: row.latest_version,
-    releaseDate: row.release_date,
-    fipsValidated: row.fips_validated,
-    pqcMigrationPriority: row.pqc_migration_priority,
-    primaryPlatforms: row.primary_platforms,
-    targetIndustries: row.target_industries,
-    authoritativeSource: row.authoritative_source,
-    repositoryUrl: row.repository_url,
-    productBrief: row.product_brief,
-    sourceType: row.source_type,
-    verificationStatus: deriveVerificationStatus(
-      row.verification_status,
-      row.proof_url,
-      row.validation_result,
-      row.evidence_flags,
-      row.proof_relevant_info
-    ),
-    lastVerifiedDate: row.last_verified_date,
-    migrationPhases: row.migration_phases || '',
-    learningModules: row.learning_modules || '',
-    vendorId: row.vendor_id || '',
-    peerReviewed: (row.peer_reviewed?.toLowerCase() as SoftwareItem['peerReviewed']) || undefined,
-    vettingBody: row.vetting_body
-      ? row.vetting_body
-          .split(';')
-          .map((s: string) => s.trim())
-          .filter(Boolean)
-      : undefined,
-    evidenceFlags: row.evidence_flags
-      ? row.evidence_flags
-          .split(';')
-          .map((s: string) => s.trim())
-          .filter(Boolean)
-      : undefined,
-    proofUrl: row.proof_url || undefined,
-    proofPublicationDate: row.proof_publication_date || undefined,
-    proofRelevantInfo: row.proof_relevant_info || undefined,
-    validationResult: (row.validation_result as SoftwareItem['validationResult']) || undefined,
-    correctionNotes: row.correction_notes || undefined,
-    quantumTech: (row.quantum_tech as SoftwareItem['quantumTech']) || undefined,
-    wip: row.wip === 'true',
-    githubContributionUrl: row.github_contribution_url?.trim() || undefined,
-    confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
-    cswp39Tags: row.cswp39_tags
-      ? row.cswp39_tags
-          .split(';')
-          .map((s) => s.trim())
-          .filter(Boolean)
-      : undefined,
-  }),
+  (row) => {
+    if (row.status && row.status !== 'active') return null
+    return {
+      productId: row.product_id || '',
+      softwareName: row.software_name,
+      categoryId: row.category_id,
+      categoryName: row.category_name,
+      infrastructureLayer: row.infrastructure_layer,
+      cisaCategory:
+        row.cisa_category || deriveCisaCategory(row.category_name, row.infrastructure_layer),
+      pqcSupport: row.pqc_support,
+      pqcCapabilityDescription: row.pqc_capability_description,
+      licenseType: row.license_type,
+      license: row.license,
+      latestVersion: row.latest_version,
+      releaseDate: row.release_date,
+      fipsValidated: row.fips_validated,
+      pqcMigrationPriority: row.pqc_migration_priority,
+      primaryPlatforms: row.primary_platforms,
+      targetIndustries: row.target_industries,
+      authoritativeSource: row.authoritative_source,
+      repositoryUrl: row.repository_url,
+      productBrief: row.product_brief,
+      sourceType: row.source_type,
+      verificationStatus: deriveVerificationStatus(
+        row.verification_status,
+        row.proof_url,
+        row.validation_result,
+        row.evidence_flags,
+        row.proof_relevant_info
+      ),
+      lastVerifiedDate: row.last_verified_date,
+      migrationPhases: row.migration_phases || '',
+      learningModules: row.learning_modules || '',
+      vendorId: row.vendor_id || '',
+      peerReviewed: (row.peer_reviewed?.toLowerCase() as SoftwareItem['peerReviewed']) || undefined,
+      vettingBody: row.vetting_body
+        ? row.vetting_body
+            .split(';')
+            .map((s: string) => s.trim())
+            .filter(Boolean)
+        : undefined,
+      evidenceFlags: row.evidence_flags
+        ? row.evidence_flags
+            .split(';')
+            .map((s: string) => s.trim())
+            .filter(Boolean)
+        : undefined,
+      proofUrl: row.proof_url || undefined,
+      proofPublicationDate: row.proof_publication_date || undefined,
+      proofRelevantInfo: row.proof_relevant_info || undefined,
+      validationResult: (row.validation_result as SoftwareItem['validationResult']) || undefined,
+      correctionNotes: row.correction_notes || undefined,
+      quantumTech: (row.quantum_tech as SoftwareItem['quantumTech']) || undefined,
+      wip: row.wip === 'true',
+      githubContributionUrl: row.github_contribution_url?.trim() || undefined,
+      confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
+      cswp39Tags: row.cswp39_tags
+        ? row.cswp39_tags
+            .split(';')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : undefined,
+    }
+  },
   true // withPrevious for status badges
 )
 
