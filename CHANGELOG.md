@@ -4,6 +4,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## What's new — May 30, 2026 (evening)
+
+Bug fix — sandbox embed routing:
+
+- **Fixed blank sandbox iframe and broken "Open externally" link on the Playground.** The hub was constructing sandbox URLs with a singular `/scenario/` path segment (`/embed/scenario/:id`, `/scenario/:id`) that does not exist in the sandbox router. The correct paths are plural — `/embed/scenarios/:id` for the iframe and `/scenarios/:id` for the external-link. In production (pqctoday.com) the iframe rendered a blank white page instead of the scenario; the "Open externally" button produced a 404. Works correctly in local dev because the sandbox's own 404 page redirects with a "Did you mean" hint. Fix: two-character change in `SandboxScenarioEmbed.tsx` lines 185–186.
+
+---
+
 ## What's new — May 30, 2026
 
 TLS and Merkle Tree Certificates — quantum downgrade attack coverage (Bas Westerbaan / Cloudflare Research):
