@@ -5,6 +5,22 @@
 All notable changes to this project will be documented in this file.
 Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
+## [3.17.3] - 2026-05-31
+
+New Algorand Post-Quantum Ledger library reference, MLX enrichment for 5 previously un-enriched docs, and updated Algorand product proof link.
+
+### Added
+
+- **Library reference `Algorand-Post-Quantum-Ledger`** [view:/library]: New entry for the Algorand Foundation blog post (Cosimo Bassi, 2026-05-14) describing Algorand's three-phase post-quantum roadmap — State Proofs with Falcon (deployed 2022), lazy migration for current account security (single-sig, multisig, LSig, App), and native PQC accounts (stateless/stateful Falcon) with consensus PQC planned. References the first MainNet Falcon transaction via LSig account abstraction (November 2025). Tagged `digital-assets`, lattice-based, High migration urgency. Linked to `algorand` and `algorand-falcon-mainnet` product records via `misc_info`.
+- **Document Analysis enrichment for 5 library docs** [view:/library]: MLX qwen3.6-27B enrichment of `library_doc_enrichments_05312026.md` populated `Algorand-Post-Quantum-Ledger` (24/39 dims), `draft-ietf-ipsecme-ikev2-mldsa` (23/39), `CSA-PQC-Guide-2025` (19/39), `NIST-SP-800-140Dr1` (18/39), and `NIST-CSWP-39` (16/39). DS05p2 carry-forward preserves 790 prior enrichments. Skipped `NIST-SP-800-140Cr1` (prior 7h 51m anomalous inference) and `APRA-CPS-234` (404 page detected by quality gate).
+- **RAG corpus refreshed** [view:/playground]: `public/data/rag-corpus.json` regenerated (11,291 chunks, 17.1 MB) — 1,911 document-enrichment chunks now include the 5 newly enriched library docs.
+
+### Updated
+
+- **`algorand` product record (`pqc_product_catalog_05312026.csv`)** [view:/migrate]: `proof_url` switched from the 2025 technical brief to the new May 2026 Post-Quantum Ledger post; `proof_publication_date` → `2026-05-14`; `proof_relevant_info` rewritten to summarize the three-phase roadmap and the November 2025 MainNet Falcon transaction; `last_verified_date` → `2026-05-31`.
+
+---
+
 ## [3.17.2] - 2026-05-30
 
 Learning persona paths and stack registry audit — all six personas now include recently-added modules; stack descriptions are accurate.
