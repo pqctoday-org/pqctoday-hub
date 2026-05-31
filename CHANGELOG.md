@@ -5,6 +5,21 @@
 All notable changes to this project will be documented in this file.
 Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
+## [3.17.1] - 2026-05-31
+
+Migrate catalog bug fix and 5 re-activated product entries.
+
+### Fixed
+
+- **81 deprecated products no longer visible in Migrate catalog** [view:/migrate]: `migrateData.ts` was missing a `status` filter — all deprecated rows from the May 2026 catalog refactor were loaded and rendered. They shared an empty `product_id`, causing all to map to the same React key (`''`) and appear as apparent duplicates (e.g. 5× AnyDesk 8.x). Active product count: 771 (was 852).
+- **Corpus generator skips enrichments for deprecated library entries** [view:/playground]: `processDocumentEnrichments()` now guards against emitting RAG chunks for deprecated library entries, removing 48 stale enrichment chunks and restoring the C3 trust-tier invariant.
+
+### Data
+
+- **5 deprecated product catalog entries re-activated** [view:/migrate]: Tectia SSH (SSH.COM), IVPN, libcrux (Cryspen), Trail of Bits ml-dsa, and InfoSec Global AgileSec restored after finding valid public proof URLs, downloading source pages, and running MLX enrichment (Qwen3.6-27B-4bit). Each entry has a `product_id`, `proof_url`, and `validation_result`. PQC support: IVPN and Trail of Bits ml-dsa VALIDATED; libcrux VALIDATED (formally verified ML-KEM + ML-DSA); Tectia SSH and InfoSec Global AgileSec PARTIALLY_VALIDATED.
+
+---
+
 ## [3.17.0] - 2026-05-30
 
 Persona intelligence across all 7 surfaces, NICE Framework workforce view, TLS downgrade protection workshop, and a sandbox routing fix.
