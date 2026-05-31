@@ -174,9 +174,13 @@ interface RawLibraryRow {
   confidence_score?: string
   math_family?: string
   pqc_round?: string
+  status?: string
+  deprecated_at?: string
+  deprecated_reason?: string
 }
 
-function transformLibraryRow(row: RawLibraryRow): LibraryItem {
+function transformLibraryRow(row: RawLibraryRow): LibraryItem | null {
+  if (row.status && row.status !== 'active') return null
   const moduleIds =
     row.module_ids && row.module_ids.trim() ? splitSemicolon(row.module_ids) : undefined
 
