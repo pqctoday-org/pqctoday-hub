@@ -522,9 +522,11 @@ export const LibraryView: React.FC = () => {
       // Category filter
       if (activeCategory !== 'All') {
         if (!item.categories.includes(activeCategory)) return false
-      } else if (personaPreferredActive) {
+      } else if (personaPreferredActive && !filterText) {
         // Persona-default narrowing: keep items whose categories intersect
         // the persona's preferred set when the user has not picked one.
+        // Suspended when a search query is active so the user can find any
+        // document regardless of their persona's preferred categories.
         const hit = item.categories?.some((c) => personaPreferredCategories.includes(c))
         if (!hit) return false
       }

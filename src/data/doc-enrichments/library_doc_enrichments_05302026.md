@@ -42604,3 +42604,113 @@
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
+
+## Circle-PQC-Roadmap-2026
+
+- **Reference ID**: Circle-PQC-Roadmap-2026
+- **Title**: Circle's Post-Quantum Security Roadmap: Securing blockchains smart contracts and digital assets for the quantum era
+- **Authors**: Circle; Stanford University (Dan Boneh)
+- **Publication Date**: 2026-05-30
+- **Last Updated**: 2026-05-30
+- **Document Status**: Published
+- **Main Topic**: Circle's three-phase post-quantum security roadmap for securing the Arc blockchain, USDC smart contracts, and digital assets against quantum threats.
+- **PQC Algorithms Covered**: ML-KEM, SLH-DSA, X-Wing
+- **Quantum Threats Addressed**: CRQC, Harvest Now Decrypt Later, Shor's Algorithm, Grover's Algorithm, at-rest forgery, retroactive privacy loss, consensus disruption, history rewrite, P2P session compromise, RPC interception, on-spend
+- **Migration Timeline Info**: Three-phase strategy: Readiness phase (assessing risk, SLH-DSA precompile, hybrid KEM); Transition phase (dual mode, hybrid signatures); Final phase (fully post-quantum switchover); 5-10 year window for regulatory guidance
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Mira Belenkiy; Duc V. Le; Gordon Liao; Vipin Singh Sehrawat; Dragos Rotaru; Sergey Gorbunov; Milap Sheth; Jay Logelin; Anthony De Abreu; Dan Boneh
+- **PQC Products Mentioned**: Arc blockchain; USDC; libp2p; Quantinuum Helios H2
+- **Protocols Covered**: TLS 1.3; HPKE; EVM; JSON-RPC; Noise; BIP 324; RLPx
+- **Infrastructure Layers**: Smart contracts; HSM; TEE; Cold storage; Backend infrastructure; Cloud service providers; Wallets
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: NIST standards; AML/CFT; Sanctions; Unclaimed-property; Escheat; Estate; Court-order frameworks
+- **Classical Algorithms Referenced**: ECC; ECDSA; Ed25519; BLS; ECDH; DH; ElGamal; RSA; AES; SHA-256; SHA-3; Keccak-256; Blake2/3; X25519; Groth16; PlonK; Halo2; Pedersen
+- **Key Takeaways**: Adopt a phased migration strategy (Readiness, Transition, Final) to balance security and compatibility; Use hybrid KEMs (X25519+ML-KEM) for TLS and memos to protect against harvest-now-decrypt-later; Implement SLH-DSA-SHA2-128s on-chain for smart contract signature verification; Avoid rushing PQC adoption if it requires exporting keys from HSMs to non-hardened CPUs; Plan for account recovery mechanisms to prevent permanent asset loss during signature cutoffs
+- **Security Levels & Parameters**: NIST security level 3; NIST level 1; SLH-DSA-SHA2-128s; X25519MLKEM768; 256-bit ECC curves; 1,200-1,450 logical qubits
+- **Hybrid & Transition Approaches**: X-Wing hybrid KEM; X25519MLKEM768; Dual mode operation; Hybrid signatures (ECDSA + PQC); Account abstraction; Upgradeable smart contracts
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "X25519MLKEM768 and HPKE with X-Wing"
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "Arc will support SLH-DSA signature verification"
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "USDC smart contracts will continue to support ECDSA-based interactions while also enabling post-quantum signatures"
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "TLS 1.3 with X25519MLKEM768"
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: Larger post-quantum signatures place immediate pressure on blockchain throughput; zkSTARK proofs are larger than zkSNARKs
+- **Target Audience**: Security Architect; Developer; CISO; Compliance Officer; Operations
+- **Implementation Prerequisites**: HSM provider support for PQC; TEE-based privacy layer; SLH-DSA on-chain precompile; Vendor PQC readiness assessment; Crypto inventory
+- **Relevant PQC Today Features**: Timeline; Threats; Migrate; Assess; Algorithms; hybrid-crypto; crypto-agility; digital-assets; hsm-pqc; vendor-risk; migration-program; pqc-risk-management
+- **Implementation Attack Surface**: Key export from HSM to non-hardened CPU; Conventional attacks on rushed implementations; ecrecover vulnerabilities
+- **Cryptographic Discovery & Inventory**: Comprehensive inventory of vulnerabilities; Crypto inventory; Assessment of third-party vendors
+- **Testing & Validation Methods**: Audited HSM changes; Quantum risk assessment
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Third-party vendor PQC readiness; Cloud service provider dependencies; Hardware wallet development cycles
+- **Deployment & Migration Complexity**: Three-phase migration; Dual mode operation; Breaking changes for non-upgradeable contracts; Account recovery mechanisms
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Governance prerequisites; Regulatory guidance development; Ecosystem compatibility assessment
+- **Math Family**: Hash-based; Lattice; Symmetric; Hybrid
+- **PQC Round**: Standardised
+- **Source Document**: circle_quantum_paper_05302026.pdf (606,561 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-30T19:42:03
+
+---
+
+## Circle-PQC-Roadmap-2026
+
+- **Reference ID**: Circle-PQC-Roadmap-2026
+- **Title**: Circle's Post-Quantum Security Roadmap: Securing blockchains smart contracts and digital assets for the quantum era
+- **Authors**: Circle; Stanford University (Dan Boneh)
+- **Publication Date**: 2026-05-30
+- **Last Updated**: 2026-05-30
+- **Document Status**: Published
+- **Main Topic**: Circle's three-phase post-quantum security roadmap for securing the Arc blockchain, USDC smart contracts, and digital assets against quantum threats.
+- **PQC Algorithms Covered**: ML-KEM, SLH-DSA, X-Wing
+- **Quantum Threats Addressed**: CRQC, Harvest Now Decrypt Later, Shor's Algorithm, Grover's Algorithm, at-rest forgery, retroactive privacy loss, consensus disruption, history rewrite, P2P session compromise, RPC interception, on-spend
+- **Migration Timeline Info**: Three-phase strategy: Readiness phase (assessing risk, SLH-DSA precompile, hybrid KEM); Transition phase (dual mode, hybrid signatures); Final phase (fully post-quantum switchover); 5-10 year window for regulatory guidance
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Mira Belenkiy; Duc V. Le; Gordon Liao; Vipin Singh Sehrawat; Dragos Rotaru; Sergey Gorbunov; Milap Sheth; Jay Logelin; Anthony De Abreu; Dan Boneh
+- **PQC Products Mentioned**: Arc blockchain; USDC; libp2p; Quantinuum Helios H2
+- **Protocols Covered**: TLS 1.3; HPKE; EVM; JSON-RPC; Noise; BIP 324; RLPx
+- **Infrastructure Layers**: Smart contracts; HSM; TEE; Cold storage; Backend infrastructure; Cloud service providers; Wallets
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: NIST standards; AML/CFT; Sanctions; Unclaimed-property; Escheat; Estate; Court-order frameworks
+- **Classical Algorithms Referenced**: ECC; ECDSA; Ed25519; BLS; ECDH; DH; ElGamal; RSA; AES; SHA-256; SHA-3; Keccak-256; Blake2/3; X25519; Groth16; PlonK; Halo2; Pedersen
+- **Key Takeaways**: Adopt a phased migration strategy (Readiness, Transition, Final) to balance security and compatibility; Use hybrid KEMs (X25519+ML-KEM) for TLS and memos to protect against harvest-now-decrypt-later; Implement SLH-DSA-SHA2-128s on-chain for smart contract signature verification; Avoid rushing PQC adoption if it requires exporting keys from HSMs to non-hardened CPUs; Plan for account recovery mechanisms to prevent permanent asset loss during signature cutoffs
+- **Security Levels & Parameters**: NIST security level 3; NIST level 1; SLH-DSA-SHA2-128s; X25519MLKEM768; 256-bit ECC curves; 1,200-1,450 logical qubits
+- **Hybrid & Transition Approaches**: X-Wing hybrid KEM; X25519MLKEM768; Dual mode operation; Hybrid signatures (ECDSA + PQC); Account abstraction; Upgradeable smart contracts
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "X25519MLKEM768 and HPKE with X-Wing"
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "Arc will support SLH-DSA signature verification"
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "USDC smart contracts will continue to support ECDSA-based interactions while also enabling post-quantum signatures"
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "TLS 1.3 with X25519MLKEM768"
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: Larger post-quantum signatures place immediate pressure on blockchain throughput; zkSTARK proofs are larger than zkSNARKs
+- **Target Audience**: Security Architect; Developer; CISO; Compliance Officer; Operations
+- **Implementation Prerequisites**: HSM provider support for PQC; TEE-based privacy layer; SLH-DSA on-chain precompile; Vendor PQC readiness assessment; Crypto inventory
+- **Relevant PQC Today Features**: Timeline; Threats; Migrate; Assess; Algorithms; hybrid-crypto; crypto-agility; digital-assets; hsm-pqc; vendor-risk; migration-program; pqc-risk-management
+- **Implementation Attack Surface**: Key export from HSM to non-hardened CPU; Conventional attacks on rushed implementations; ecrecover vulnerabilities
+- **Cryptographic Discovery & Inventory**: Comprehensive inventory of vulnerabilities; Crypto inventory; Assessment of third-party vendors
+- **Testing & Validation Methods**: Audited HSM changes; Quantum risk assessment
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Third-party vendor PQC readiness; Cloud service provider dependencies; Hardware wallet development cycles
+- **Deployment & Migration Complexity**: Three-phase migration; Dual mode operation; Breaking changes for non-upgradeable contracts; Account recovery mechanisms
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Governance prerequisites; Regulatory guidance development; Ecosystem compatibility assessment
+- **Math Family**: Hash-based; Lattice; Symmetric; Hybrid
+- **PQC Round**: Standardised
+- **Source Document**: circle_quantum_paper_05302026.pdf (606,561 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-30T19:42:10
+
+---

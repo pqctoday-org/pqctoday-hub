@@ -4,7 +4,7 @@
   "serialNumber": "urn:uuid:pqctoday-cbom-20260530",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-05-30T04:03:03.794Z",
+    "timestamp": "2026-05-30T23:59:51.893Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -37746,6 +37746,232 @@
         {
           "name": "pqctoday:cswp39_tags",
           "value": "cbom;sbom;discovery;cyclonedx;devsecopss"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "8553f6fecfb97920",
+      "name": "Red Hat Enterprise Linux 10.2",
+      "version": "10.2",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "Signature"
+        }
+      },
+      "description": "RHEL 10.2 GA May 6 2026. Extends RHEL 10.x PQC foundation with additional quantum-resistant features. Ships alongside Red Hat Certificate System 11.0 which integrates NIST-standardized ML-DSA signatures into PKI infrastructure. Defends against harvest-now-decrypt-later attacks. Continues unified PQC rollout across Red Hat enterprise Linux portfolio.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.redhat.com/en/about/press-releases/red-hat-delivers-post-quantum-readiness-and-ai-powered-automation-latest-versions-red-hat-enterprise-linux"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "red-hat-enterprise-linux-10-2"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Operating Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "OS"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Partial (OpenSSL FIPS 140-3 submitted; PQC not yet in FIPS module)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "90"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "3efe1df540d6470e",
+      "name": "Red Hat Enterprise Linux 9.8",
+      "version": "9.8",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "KEM"
+        }
+      },
+      "description": "RHEL 9.8 GA May 6 2026, released alongside RHEL 10.2. Extends PQC backport initiated in RHEL 9.7 (hybrid ML-KEM and ML-DSA subpolicy). Part of Red Hat unified PQC rollout across RHEL 9.x and 10.x. Provides PQC for organizations on RHEL 9 maintenance track.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.redhat.com/en/about/press-releases/red-hat-delivers-post-quantum-readiness-and-ai-powered-automation-latest-versions-red-hat-enterprise-linux"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "red-hat-enterprise-linux-9-8"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Operating Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "OS"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Partial (OpenSSL FIPS 140-3; PQC not in FIPS module)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "85"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "7f82c9eeb0fda38d",
+      "name": "Red Hat Trusted Artifact Signer",
+      "version": "Preview",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA, SLH-DSA",
+          "primitive": "Signature"
+        }
+      },
+      "description": "Red Hat Trusted Artifact Signer integrating PQC for software supply chain security via Sigstore. ML-DSA chosen over SLH-DSA for smaller signature size. Proof-of-concept using OpenSSL + Cloudflare CIRCL completed by Red Hat Emerging Technology Security Team. Target release: beginning of 2027.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.redhat.com/en/blog/building-levee-why-red-hats-post-quantum-strategy-already-production"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "red-hat-trusted-artifact-signer-pqc"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Software Supply Chain Security"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Application"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "300da4e1729cca20",
+      "name": "Red Hat Ansible Automation Platform",
+      "version": "2026+",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Ansible Automation Platform inherits PQC capabilities from RHEL components — not a standalone PQC implementation. PQC-enabled images and components integrating throughout 2026-2027 as RHEL PQC readiness matures. Customers inherit PQ-Capable and PQ-Ready cryptography by default as updates ship.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.redhat.com/en/blog/building-levee-why-red-hats-post-quantum-strategy-already-production"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "red-hat-ansible-automation-platform-pqc"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "IT Automation"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Application"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "6fcf5fee265a14a8",
+      "name": "Red Hat Certificate System 11.0",
+      "version": "11.0",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "Signature"
+        }
+      },
+      "description": "Red Hat Certificate System 11.0 GA May 6 2026. Integrates NIST-standardized ML-DSA signatures into PKI certificate infrastructure. Addresses harvest-now-decrypt-later risk for certificate-based authentication and long-lived certificates. Released alongside RHEL 10.2 and 9.8.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.redhat.com/en/about/press-releases/red-hat-delivers-post-quantum-readiness-and-ai-powered-automation-latest-versions-red-hat-enterprise-linux"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "red-hat-certificate-system-11"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "PKI / Certificate Management"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Infrastructure"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "90"
         }
       ]
     }
