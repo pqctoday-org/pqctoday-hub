@@ -639,5 +639,31 @@
     "definition": "The secure container wrapping IKEv2 payloads like Identifiers (IDi/IDr), Certificates (CERT), and Authentication (AUTH) data.",
     "complexity": "intermediate",
     "category": "protocol"
+  },
+  {
+    "term": "Messaging Layer Security",
+    "acronym": "MLS",
+    "definition": "IETF group-messaging protocol (RFC 9420, July 2023) that scales end-to-end encryption to large groups using TreeKEM. Deployed by WhatsApp, Cisco Webex, AWS Wickr, and Google Messages.",
+    "technicalNote": "Post-quantum ciphersuites are defined in draft-ietf-mls-pq-ciphersuites (ML-KEM + ML-DSA). Hybrid combiners are specified in draft-ietf-mls-combiner.",
+    "relatedModule": "/learn/mls-group-messaging",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "TreeKEM",
+    "definition": "The asynchronous ratcheting tree at the heart of MLS. Members are leaves of a binary tree; each branch holds a shared secret derived from its children, so Add / Remove / Update operations only touch the O(log N) nodes on the affected path.",
+    "technicalNote": "TreeKEM uses HPKE (RFC 9180) to encrypt path updates between members and provides both forward secrecy and post-compromise security.",
+    "relatedModule": "/learn/mls-group-messaging",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "EST",
+    "acronym": "Enrollment over Secure Transport",
+    "definition": "IETF certificate enrollment protocol (RFC 7030) used by devices to request, renew, and re-key X.509 certificates over TLS. Common in IoT, enterprise PKI, and 802.1X NAC enrolment.",
+    "technicalNote": "Often deployed alongside ACME (web-facing) and CMP (enterprise / 3GPP) as part of an automated CLM stack. PQC migration of EST mostly inherits from the underlying TLS and CSR algorithm choices.",
+    "relatedModule": "/learn/crypto-mgmt-modernization",
+    "complexity": "intermediate",
+    "category": "protocol"
   }
 ]

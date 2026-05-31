@@ -614,5 +614,27 @@
     "definition": "ANSSI's first-level security certification scheme for IT products. Faster and lighter than full Common Criteria; PQC products began entering CSPN catalogue in 2025.",
     "complexity": "intermediate",
     "category": "standard"
+  },
+  {
+    "term": "NIST IR 8528",
+    "definition": "NIST Internal Report (October 2024) documenting the nine third-round candidates in the PQC signature on-ramp. Covers four mathematical families: MPC-in-the-Head, multivariate, isogeny, and lattice.",
+    "relatedModule": "/library?ref=NIST IR 8528",
+    "complexity": "advanced",
+    "category": "standard"
+  },
+  {
+    "term": "CA/B Forum SC-081v3",
+    "definition": "CA/Browser Forum ballot (April 2025) that phases TLS certificate maximum validity from 398 days down to 200d (2026), 100d (2027), and 47d by March 2029. Forces every public-trust TLS deployment onto automated CLM.",
+    "relatedModule": "/learn/crypto-mgmt-modernization",
+    "complexity": "intermediate",
+    "category": "standard"
+  },
+  {
+    "term": "OMB M-23-02",
+    "definition": "US Office of Management and Budget memorandum (November 2022) requiring federal agencies to maintain an annual cryptographic inventory and a prioritised PQC migration plan through 2035.",
+    "technicalNote": "OMB M-23-02 is the policy backstop behind much of the federal PQC inventory cadence; it sits alongside CNSA 2.0 (NSS deadlines 2030/2033) as the recurring forcing function for cryptographic posture programs in federal scope.",
+    "relatedModule": "/learn/crypto-mgmt-modernization",
+    "complexity": "intermediate",
+    "category": "standard"
   }
 ]
