@@ -5,6 +5,20 @@
 All notable changes to this project will be documented in this file.
 Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
+## [3.17.2] - 2026-05-30
+
+Learning persona paths and stack registry audit — all six personas now include recently-added modules; stack descriptions are accurate.
+
+### Updated
+
+- **Learning persona paths extended to cover all active modules** [view:/learn]: Six personas updated to include modules that had been added to the library but were missing from recommended paths. MLS Group Messaging added to developer (Protocols phase), architect (Network & Key Infrastructure phase), and researcher (Protocols phase) paths. Stateful Signatures added to developer (Algorithms phase) and ops (HSM & Key Infrastructure phase) paths. PQC Candidates added to curious (Phase 1) and digital-id added to curious (Phase 4). Healthcare PQC and EMV Payment PQC added to executive path.
+- **Estimated path durations updated** [view:/learn]: Executive 725 → 865 min (+healthcare-pqc 60 min, +emv-payment-pqc 80 min); Developer 1430 → 1510 min (+mls-group-messaging 40 min, +stateful-signatures 40 min); Architect 1560 → 1600 min (+mls-group-messaging 40 min); Researcher 2600 → 2640 min (+mls-group-messaging 40 min); Ops 1450 → 1490 min (+stateful-signatures 40 min); Curious 680 → 815 min (+pqc-candidates 55 min, +digital-id 80 min).
+- **Learning stack descriptions refreshed** [view:/learn]: Protocols track now lists MLS group messaging and PKI enrollment (EST & CMP). Software Infrastructure now correctly names SLH-DSA and stateful hash sigs. Executive track now lists crypto posture management.
+- **Track quiz categories updated** [view:/learn]: MLS Group Messaging added to Protocols track quiz category set.
+- **Module topic summaries added for 3 modules** [view:/learn]: `pqc-candidates` (NIST FIPS 203–206, HQC, 4 candidate families, worldwide processes), `pki-enrollment-protocols` (EST RFC 7030, CMP RFC 9810, CRMF, 6-step OpenSSL 3.6 workshop), and `mls-group-messaging` (RFC 9420 TreeKEM, HPKE, PQC ciphersuites, HSM PKCS#11 v3.2 provider architecture).
+
+---
+
 ## [3.17.1] - 2026-05-31
 
 Migrate catalog bug fix and 5 re-activated product entries.

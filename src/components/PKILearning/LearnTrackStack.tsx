@@ -48,6 +48,7 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
   Protocols: [
     'tls-basics',
     'vpn-ssh-pqc',
+    'mls-group-messaging',
     'email-signing',
     'api-security-jwt',
     'pki-enrollment-protocols',
@@ -157,7 +158,7 @@ const TRACK_META: {
     track: 'Protocols',
     icon: Network,
     description:
-      'TLS, VPN/SSH, email signing, API security & JWT, web gateways, network security, PQC testing & validation',
+      'TLS, VPN/SSH, MLS group messaging, email signing, API security & JWT, PKI enrollment (EST & CMP), web gateways, network security, PQC testing & validation',
     colorClass: 'border',
     activeClass: 'bg-card border-info/60',
     colorToken: '--color-info',
@@ -176,7 +177,7 @@ const TRACK_META: {
     track: 'Software Infrastructure',
     icon: Server,
     description:
-      'PKI, secrets management, stateful sigs, Merkle tree certs, crypto APIs, database encryption, OS PQC',
+      'PKI, stateful hash sigs, SLH-DSA, Merkle tree certs, crypto APIs, secrets management, database encryption, OS PQC',
     colorClass: 'border',
     activeClass: 'bg-card border-warning/50',
     colorToken: '--color-warning',
@@ -194,7 +195,8 @@ const TRACK_META: {
   {
     track: 'Executive',
     icon: Briefcase,
-    description: 'Risk management, business case, governance, compliance, vendor risk, migration',
+    description:
+      'Risk management, business case, governance, compliance, crypto posture management, vendor risk, migration',
     colorClass: 'border',
     activeClass: 'bg-card border-destructive/60',
     colorToken: '--color-destructive',
