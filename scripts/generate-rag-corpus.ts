@@ -3415,6 +3415,10 @@ function processDocumentEnrichments(): RAGChunk[] {
       .reverse()[0]
 
     for (const [refId, fields] of enrichLookup) {
+      // Skip enrichment chunks for deprecated/inactive library entries so the
+      // corpus stays in sync with what the UI actually surfaces.
+      if (collection === 'library' && !getLibraryRefIds().has(refId)) continue
+
       const title = fields['Title'] || refId
       if (title === '---') continue
 
