@@ -2358,5 +2358,73 @@
     "definition": "Framework of policies, processes, and components that issues, distributes, validates, and revokes digital certificates. PQC migration of PKI requires new certificate, CRL/OCSP, and timestamp signature algorithms (e.g. ML-DSA).",
     "complexity": "beginner",
     "category": "concept"
+  },
+  {
+    "term": "MPC-in-the-Head",
+    "acronym": "MPCitH",
+    "definition": "A signature design that proves knowledge of a secret by simulating what a multi-party computation would output, then revealing just enough of the simulation to be verifiable. Used by FAEST (AES-based), MQOM (multivariate quadratic), and SDitH (syndrome decoding).",
+    "technicalNote": "MPCitH signatures are typically kilobytes — larger than lattice or multivariate — but security reduces to well-studied symmetric or combinatorial assumptions rather than newer algebraic structures.",
+    "relatedModule": "/learn/pqc-candidates",
+    "complexity": "advanced",
+    "category": "concept"
+  },
+  {
+    "term": "Isogeny-Based Cryptography",
+    "definition": "PQC algorithms built on the hardness of finding isogenies (structure-preserving maps) between supersingular elliptic curves. Offers the smallest combined public key + signature sizes of any PQC family. SQIsign is the leading on-ramp candidate.",
+    "technicalNote": "The earlier isogeny KEM SIKE was broken in 2022 by the Castryck–Decru attack. SQIsign uses a different mathematical structure that avoids the same exploit, but the field is young and conservative deployments treat it with caution.",
+    "relatedModule": "/learn/pqc-candidates",
+    "complexity": "advanced",
+    "category": "concept"
+  },
+  {
+    "term": "Multivariate Cryptography",
+    "definition": "PQC algorithms based on the hardness of solving systems of multivariate polynomial equations (usually quadratic) over a finite field. Produces tiny signatures and large public keys. Candidates include UOV, MAYO, QR-UOV, SNOVA.",
+    "technicalNote": "The 2025 Ran wedge attack hit several UOV / MAYO / SNOVA parameter sets. Reparameterisation to odd-characteristic fields restores security; QR-UOV was unscathed.",
+    "relatedModule": "/learn/pqc-candidates",
+    "complexity": "advanced",
+    "category": "concept"
+  },
+  {
+    "term": "PQC On-Ramp",
+    "definition": "NIST's ongoing standardization process for additional post-quantum signature algorithms beyond the August 2024 winners (ML-DSA, SLH-DSA, FN-DSA). Documented in NIST IR 8528 (Oct 2024); aims to provide algorithmic diversity beyond the lattice family.",
+    "technicalNote": "Nine third-round candidates remain across four families: MPC-in-the-Head (FAEST, MQOM, SDitH), multivariate (UOV, MAYO, QR-UOV, SNOVA), isogeny (SQIsign), and lattice (HAWK). Earliest projected standardization window is 2027.",
+    "relatedModule": "/learn/pqc-candidates",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "Cryptographic Posture Management",
+    "acronym": "CPM",
+    "definition": "The continuous, iterative management discipline of knowing what cryptography you have, keeping it healthy, and proving it across certificates, libraries, application software, and key material. Distinct from crypto-agility (capability) and from a CryptoCOE (operating model).",
+    "technicalNote": "CPM is organised around five pillars (Inventory, Governance, Lifecycle, Observability, Assurance) and a six-stage operational loop (Discover → Classify → Score → Remediate → Attest → Reassess) wrapped in a strategic annual PDCA cycle.",
+    "relatedModule": "/learn/crypto-mgmt-modernization",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "Certificate Lifecycle Management",
+    "acronym": "CLM",
+    "definition": "The provisioning, rotation, revocation, and retirement workflow for X.509 certificates across an enterprise. Becomes mathematically impossible to run manually under CA/B Forum SC-081v3's 47-day TLS cert validity (March 2029).",
+    "technicalNote": "Modern CLM is driven by ACME (RFC 8555), EST (RFC 7030), and CMP (RFC 4210). Shadow-cert discovery via Certificate Transparency logs is a standard input. Forrester TEI 2025 modelled 312% ROI on CLM automation for one vendor — treat as upper bound.",
+    "relatedModule": "/learn/crypto-mgmt-modernization",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "CryptoCOE",
+    "acronym": "Cryptographic Center of Excellence",
+    "definition": "An organisational operating model that centralises ownership of cryptography across an enterprise — answering 'who owns it?' for crypto-agility (capability) and CPM (program).",
+    "technicalNote": "Gartner (Mahdi / Lowans) reported ~50% lower PQC transition cost for organisations with a CryptoCOE in place before 2028. The CryptoCOE typically owns standards, exception handling, KMS / HSM platform decisions, and library / vendor approvals.",
+    "relatedModule": "/learn/crypto-mgmt-modernization",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "Hypertree",
+    "definition": "The multi-layer Merkle structure at the core of SLH-DSA. d layers of trees each of height h/d: the bottom layer authenticates a FORS public key; higher layers each authenticate a WOTS+ public key; the root of the topmost tree is the SLH-DSA public key.",
+    "technicalNote": "Increasing d makes signing faster (-f variants) but enlarges the signature. Decreasing d (-s variants) yields smaller signatures at the cost of more hash work per layer. Same security level at any choice of d within a parameter set.",
+    "relatedModule": "/learn/slh-dsa",
+    "complexity": "advanced",
+    "category": "concept"
   }
 ]

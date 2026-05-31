@@ -388,5 +388,87 @@
     "relatedModule": "/learn/hsm-pqc",
     "complexity": "advanced",
     "category": "algorithm"
+  },
+  {
+    "term": "HAWK",
+    "definition": "A lattice-based PQC signature candidate in the NIST signature on-ramp, designed as an integer-only alternative to FN-DSA (Falcon). Eliminates floating-point side-channel hazards that complicate Falcon implementations.",
+    "relatedModule": "/learn/pqc-candidates",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "MAYO",
+    "definition": "A multivariate signature candidate in the NIST signature on-ramp. Produces very small signatures (~420 bytes at NIST Cat 1) with relatively small public keys, derived from the Oil-and-Vinegar trapdoor.",
+    "technicalNote": "MAYO-2 lost ~30 bits of security in the 2025 Ran wedge attack. Reparameterisation to odd-characteristic fields restores the original target.",
+    "relatedModule": "/learn/pqc-candidates",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "UOV",
+    "acronym": "Unbalanced Oil and Vinegar",
+    "definition": "A multivariate signature scheme using more vinegar variables than oil variables. A NIST signature on-ramp candidate with tiny signatures but large public keys.",
+    "technicalNote": "The 2025 Ran wedge attack pushed 3 of 4 UOV parameter sets below their declared security level. Odd-characteristic-field reparameterisation is the proposed fix.",
+    "relatedModule": "/learn/pqc-candidates",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "SQIsign",
+    "definition": "An isogeny-based PQC signature candidate in the NIST on-ramp. Smallest combined public key + signature of any PQC candidate (~148 bytes at NIST Cat 1) — fits in a single network packet.",
+    "technicalNote": "Cousin scheme SIKE was broken in 2022 by the Castryck–Decru attack. SQIsign avoids the structural exploit but constant-time signing is still an open implementation challenge.",
+    "relatedModule": "/learn/pqc-candidates",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "FAEST",
+    "definition": "An MPC-in-the-Head signature candidate in the NIST signature on-ramp. Builds a signature out of a simulated multi-party computation over the AES block cipher.",
+    "technicalNote": "Security reduces to the one-wayness of AES, which is among the best-studied symmetric primitives. Signatures are kilobytes — large versus multivariate or isogeny candidates.",
+    "relatedModule": "/learn/pqc-candidates",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "MQOM",
+    "acronym": "Multivariate Quadratic on MPC-in-the-Head",
+    "definition": "An MPC-in-the-Head signature candidate in the NIST on-ramp whose security reduces to the hardness of solving systems of multivariate quadratic equations.",
+    "relatedModule": "/learn/pqc-candidates",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "SDitH",
+    "acronym": "Syndrome Decoding in the Head",
+    "definition": "An MPC-in-the-Head signature candidate in the NIST on-ramp whose security reduces to the hardness of syndrome decoding (the same combinatorial problem underlying code-based KEMs).",
+    "relatedModule": "/learn/pqc-candidates",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "SNOVA",
+    "definition": "A multivariate signature candidate in the NIST PQC signature on-ramp. Combines UOV-style trapdoors with a noncommutative algebra structure.",
+    "technicalNote": "Most SNOVA parameter sets were broken by the 2025 Ran wedge attack and require reparameterisation to remain candidates.",
+    "relatedModule": "/learn/pqc-candidates",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "WOTS+",
+    "acronym": "Winternitz One-Time Signature Plus",
+    "definition": "A hash-based one-time signature primitive that signs a message digest by walking chains of n-byte hash values. Used as the leaf-signing component inside SLH-DSA (FIPS 205) and the hypertree layers of LMS / XMSS.",
+    "technicalNote": "FIPS 205 fixes the Winternitz parameter lg_w=4. Chain lengths trade signature size against hash-round cost. A WOTS+ key signs exactly one message — reuse leaks the private key.",
+    "relatedModule": "/learn/slh-dsa",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "FORS",
+    "acronym": "Forest of Random Subsets",
+    "definition": "The few-time signature layer inside SLH-DSA (FIPS 205) that actually signs the message digest. Sits between the WOTS+ leaves and the hypertree, signing a k-subset of values using a-level hash trees.",
+    "technicalNote": "FORS parameters (k, a) directly control signature size and resistance to multi-target attacks. FORS is few-time rather than one-time: pseudorandom message-derived indices give a negligible reuse probability across SLH-DSA's lifetime.",
+    "relatedModule": "/learn/slh-dsa",
+    "complexity": "advanced",
+    "category": "algorithm"
   }
 ]
