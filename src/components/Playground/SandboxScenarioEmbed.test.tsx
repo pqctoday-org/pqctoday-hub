@@ -38,7 +38,7 @@ describe('SandboxScenarioEmbed', () => {
       const iframe = document.querySelector('iframe')
       expect(iframe).not.toBeNull()
       expect(iframe?.getAttribute('src')).toContain(
-        `/embed/scenario/${encodeURIComponent(firstScenario.id)}`
+        `/embed/scenarios/${encodeURIComponent(firstScenario.id)}`
       )
       expect(iframe?.getAttribute('data-scenario-id')).toBe(firstScenario.id)
     })
