@@ -176,7 +176,7 @@ export const ActivePQCScanner: React.FC = () => {
         <div className="grid sm:grid-cols-2 gap-2">
           {filteredTargets.map((t) => (
             <Button
-              variant="ghost"
+              variant="tile"
               key={t.id}
               onClick={() => toggleTarget(t.id)}
               className={`text-left p-3 rounded-lg border transition-all ${

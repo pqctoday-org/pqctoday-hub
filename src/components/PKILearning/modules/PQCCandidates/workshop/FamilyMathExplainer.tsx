@@ -25,7 +25,7 @@ export const FamilyMathExplainer: React.FC<FamilyMathExplainerProps> = ({ initia
           {FAMILY_LIST.map((f, i) => (
             <Button
               key={f.id}
-              variant="ghost"
+              variant="tile"
               onClick={() => setIdx(i)}
               className={`rounded-md border p-2 text-left transition-colors h-auto block ${
                 i === idx
