@@ -246,7 +246,7 @@ export const ACVPValidator: React.FC = () => {
             const isPQC = key.startsWith('ml')
             return (
               <Button
-                variant="ghost"
+                variant="tile"
                 key={key}
                 disabled={status !== 'idle' && status !== 'done'}
                 onClick={() => {
