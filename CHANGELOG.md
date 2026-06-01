@@ -5,6 +5,37 @@
 All notable changes to this project will be documented in this file.
 Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
+## [3.17.4] - 2026-05-31
+
+UI overspill fixes across recent learn-module workshops. Tile-pattern Buttons now correctly stack label + description instead of bleeding descriptions into neighboring grid cells.
+
+### Fixed
+
+- **Tile-selector Buttons stack label + description correctly** [view:/learn/pqc-testing-validation]: 10 tile-pattern Button instances were using `variant="ghost"` only, which inherits the base `inline-flex items-center whitespace-nowrap` from `button-variants.ts:5`. Stacked block-div children (label + description) rendered side-by-side instead of vertically, and descriptions bled across grid cells. Sites now also pass `size="tile"` to engage the dedicated tile size variant (`flex-col items-start justify-start text-left whitespace-normal gap-1`). Fixes Step 3 (Network Profile, Traffic Pattern) and Step 6 (Migration Phase) of PQC Testing & Validation; also Step 2 ActivePQCScanner target tiles, Step 7 ACVPValidator algorithm tiles, IoT/OT DTLS KEM + Signature selectors, PQCCandidates Family selector, AutomotivePQC SafetyCryptoAnalyzer function cards, and StandardsBodies desktop organization list.
+- **Cell overspill in 5 PKI Learning workshop components** [view:/learn]: MLDSASignDemo PEM/cert `<pre>` blocks now use `whitespace-pre-wrap break-all` (1.3 KB ML-DSA keys wrap inside the details panel instead of horizontal-scrolling); RandomGenerationDemo source-row `<th>` cells lost `whitespace-nowrap` so the source-comparison table fits narrow viewports; HybridCertFormats grid children gained `min-w-0` so per-format `<pre>` can shrink, and OID `<td>` cells gained `break-all`; CmpInitialReq grid children gained `min-w-0` so long DN values stop pushing the 2-col grid past the card; DrbgArchitectureDemo removed conflicting `truncate` (was clobbering `break-all`), swapped `h-[32px]` for `min-h-[32px]`, and added `overflow-hidden` so long nonce/personalization hex wraps cleanly.
+
+### Removed
+
+- **AISecurityPQC VRAM Sizing Calculator** [view:/learn/ai-security-pqc]: `VRAMSizingCalculator` workshop tool plus its `aiVramMath` helper + tests removed; corresponding entry pruned from module index and rag-summary.
+
+---
+
+## [3.17.3] - 2026-05-31
+
+New Algorand Post-Quantum Ledger library reference, MLX enrichment for 5 previously un-enriched docs, and updated Algorand product proof link.
+
+### Added
+
+- **Library reference `Algorand-Post-Quantum-Ledger`** [view:/library]: New entry for the Algorand Foundation blog post (Cosimo Bassi, 2026-05-14) describing Algorand's three-phase post-quantum roadmap — State Proofs with Falcon (deployed 2022), lazy migration for current account security (single-sig, multisig, LSig, App), and native PQC accounts (stateless/stateful Falcon) with consensus PQC planned. References the first MainNet Falcon transaction via LSig account abstraction (November 2025). Tagged `digital-assets`, lattice-based, High migration urgency. Linked to `algorand` and `algorand-falcon-mainnet` product records via `misc_info`.
+- **Document Analysis enrichment for 5 library docs** [view:/library]: MLX qwen3.6-27B enrichment of `library_doc_enrichments_05312026.md` populated `Algorand-Post-Quantum-Ledger` (24/39 dims), `draft-ietf-ipsecme-ikev2-mldsa` (23/39), `CSA-PQC-Guide-2025` (19/39), `NIST-SP-800-140Dr1` (18/39), and `NIST-CSWP-39` (16/39). DS05p2 carry-forward preserves 790 prior enrichments. Skipped `NIST-SP-800-140Cr1` (prior 7h 51m anomalous inference) and `APRA-CPS-234` (404 page detected by quality gate).
+- **RAG corpus refreshed** [view:/playground]: `public/data/rag-corpus.json` regenerated (11,291 chunks, 17.1 MB) — 1,911 document-enrichment chunks now include the 5 newly enriched library docs.
+
+### Updated
+
+- **`algorand` product record (`pqc_product_catalog_05312026.csv`)** [view:/migrate]: `proof_url` switched from the 2025 technical brief to the new May 2026 Post-Quantum Ledger post; `proof_publication_date` → `2026-05-14`; `proof_relevant_info` rewritten to summarize the three-phase roadmap and the November 2025 MainNet Falcon transaction; `last_verified_date` → `2026-05-31`.
+
+---
+
 ## [3.17.2] - 2026-05-30
 
 Learning persona paths and stack registry audit — all six personas now include recently-added modules; stack descriptions are accurate.

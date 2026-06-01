@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:pqctoday-cbom-20260530",
+  "serialNumber": "urn:uuid:pqctoday-cbom-20260531",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-05-30T23:59:51.893Z",
+    "timestamp": "2026-05-31T12:47:02.101Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -35004,12 +35004,20 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "b4b96d251817dcf4",
+      "bom-ref": "78ea2748f266742d",
       "name": "Tectia SSH (SSH.COM)",
-      "cryptoProperties": {
-        "assetType": "related-crypto-material"
+      "version": "Quantum-Safe Edition",
+      "manufacturer": {
+        "name": "SSH.COM"
       },
-      "description": "Tectia: Enterprise Post-Quantum SSH Implementation",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "KEM"
+        }
+      },
+      "description": "Tectia Quantum-Safe Edition integrates Crystals-Kyber (the NIST-selected ML-KEM predecessor) for post-quantum key exchange in SSH sessions. Announced August 2022 as the first enterprise SSH product with NIST-selected PQC. No FIPS 203 (ML-KEM) update confirmed as of 2026-05.",
       "externalReferences": [
         {
           "type": "website",
@@ -35019,7 +35027,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "ssh-com-tectia"
         },
         {
           "name": "pqctoday:category",
@@ -35036,6 +35044,10 @@
         {
           "name": "pqctoday:algorithm_source",
           "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "55"
         }
       ]
     },
@@ -35489,12 +35501,20 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "0f16f9624f029258",
+      "bom-ref": "11c31221fbf83b43",
       "name": "IVPN",
-      "cryptoProperties": {
-        "assetType": "related-crypto-material"
+      "version": "Current",
+      "manufacturer": {
+        "name": "IVPN"
       },
-      "description": "IVPN: Enabling Post-Quantum Protection in Desktop Clients",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, Classic-McEliece",
+          "primitive": "KEM"
+        }
+      },
+      "description": "IVPN implements quantum-resistant VPN connections via a hybrid KEM approach layered over WireGuard. Uses Kyber-1024 and Classic McEliece as post-quantum KEMs combined with X25519 via WireGuard PresharedKey rotation. Documented in official help centre.",
       "externalReferences": [
         {
           "type": "website",
@@ -35504,7 +35524,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "ivpn"
         },
         {
           "name": "pqctoday:category",
@@ -35521,6 +35541,10 @@
         {
           "name": "pqctoday:algorithm_source",
           "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "72"
         }
       ]
     },
@@ -36291,10 +36315,13 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "40e5e9fbe6e93f87",
+      "bom-ref": "ba7459dc9fefc52b",
       "name": "libcrux",
-      "version": "libcrux-ml-kem 0.0.6",
+      "version": "0.0.6",
       "purl": "pkg:github/cryspen/libcrux",
+      "manufacturer": {
+        "name": "Cryspen"
+      },
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -36302,7 +36329,7 @@
           "primitive": "KEM"
         }
       },
-      "description": "Formally verified Rust crypto library from Cryspen. Implements ML-KEM and ML-DSA with code extracted from HACL* and verified using the hax toolchain for functional correctness and runtime safety. Hybrid KEM support via XWing and X25519MlKem768Draft00. Used as a reference implementation in PQC interoperability testing by Cloudflare and Mozilla (Firefox NSS).",
+      "description": "Formally verified Rust implementation of ML-KEM and ML-DSA by Cryspen. Code extracted from HACL* and verified using the hax toolchain for panic-freedom and functional correctness. Supports all parameter sets for both algorithms. Used in production by Firefox and other projects.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -36316,7 +36343,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "cryspen-libcrux"
         },
         {
           "name": "pqctoday:category",
@@ -36333,23 +36360,30 @@
         {
           "name": "pqctoday:algorithm_source",
           "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "82"
         }
       ]
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "2977a50459f90a5d",
+      "bom-ref": "bda31d8f8862031f",
       "name": "Trail of Bits ml-dsa",
       "version": "v0.1.0",
       "purl": "pkg:github/trailofbits/ml-dsa",
+      "manufacturer": {
+        "name": "Trail of Bits"
+      },
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-DSA",
-          "primitive": "Signature"
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "KEM"
         }
       },
-      "description": "Side-channel resistant ML-DSA (FIPS 204) implementation in Go from Trail of Bits. Supports all three parameter sets: ML-DSA-44, ML-DSA-65, and ML-DSA-87. Designed with explicit focus on constant-time execution and resistance to timing and power analysis attacks. Passed all 51 ML-DSA conformance tests in the Crucible test battery.",
+      "description": "Constant-time pure Go implementation of ML-DSA (FIPS 204) by Trail of Bits. Supports ML-DSA-44, ML-DSA-65, and ML-DSA-87. Designed for side-channel resistance using Barrett reduction and branchless operations to avoid KyberSlash-style timing leaks.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -36363,7 +36397,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "trailofbits-ml-dsa"
         },
         {
           "name": "pqctoday:category",
@@ -36380,6 +36414,10 @@
         {
           "name": "pqctoday:algorithm_source",
           "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
         }
       ]
     },
@@ -36469,13 +36507,16 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "0156dcebe22c7724",
+      "bom-ref": "f62234035200467a",
       "name": "InfoSec Global AgileSec",
       "version": "2025 Release",
+      "manufacturer": {
+        "name": "InfoSec Global"
+      },
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "Analytics and SDK platform for crypto inventory and agility. Enables automated discovery and migration to PQC without code changes.",
+      "description": "AgileSec Analytics is a cryptographic discovery and agility platform that identifies quantum-vulnerable cryptography across enterprise systems and orchestrates migration to PQC. FedRAMP Moderate authorized (August 2025). Does not implement PQC algorithms directly — enables organisations to discover, inventory, and migrate their cryptographic assets to NIST-standardised PQC.",
       "externalReferences": [
         {
           "type": "website",
@@ -36485,7 +36526,7 @@
       "properties": [
         {
           "name": "pqctoday:product_id",
-          "value": ""
+          "value": "infosecglobal-agilesec"
         },
         {
           "name": "pqctoday:category",
@@ -36502,6 +36543,10 @@
         {
           "name": "pqctoday:algorithm_source",
           "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "65"
         }
       ]
     },

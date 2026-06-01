@@ -106,6 +106,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
           ).map(([id, info]) => (
             <Button
               variant="ghost"
+              size="tile"
               key={id}
               onClick={() => setNetworkProfile(id)}
               className={`text-left p-3 rounded-lg border transition-all ${
@@ -318,6 +319,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
             ).map(([id, info]) => (
               <Button
                 variant="ghost"
+                size="tile"
                 key={id}
                 onClick={() => setTrafficPattern(id)}
                 className={`text-left p-3 rounded-lg border transition-all h-auto ${

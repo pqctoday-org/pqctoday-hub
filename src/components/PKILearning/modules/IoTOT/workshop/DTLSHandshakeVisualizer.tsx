@@ -47,6 +47,7 @@ export const DTLSHandshakeVisualizer: React.FC = () => {
             {HANDSHAKE_KEM_OPTIONS.map((opt) => (
               <Button
                 variant="ghost"
+                size="tile"
                 key={opt.id}
                 onClick={() => setKemId(opt.id)}
                 className={`w-full p-2 rounded-lg border text-left transition-colors text-sm ${
@@ -74,6 +75,7 @@ export const DTLSHandshakeVisualizer: React.FC = () => {
             {HANDSHAKE_SIG_OPTIONS.map((opt) => (
               <Button
                 variant="ghost"
+                size="tile"
                 key={opt.id}
                 onClick={() => setSigId(opt.id)}
                 className={`w-full p-2 rounded-lg border text-left transition-colors text-sm ${

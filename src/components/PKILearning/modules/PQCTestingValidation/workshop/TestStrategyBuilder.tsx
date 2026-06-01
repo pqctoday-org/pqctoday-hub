@@ -134,6 +134,7 @@ export const TestStrategyBuilder: React.FC = () => {
           {PHASE_OPTIONS.map((p) => (
             <Button
               variant="ghost"
+              size="tile"
               key={p.id}
               onClick={() => setPhase(p.id)}
               className={`text-left p-3 rounded-lg border transition-all ${
