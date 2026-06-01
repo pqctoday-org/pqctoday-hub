@@ -379,7 +379,7 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
                 <summary className="cursor-pointer text-[11px] text-primary">
                   Show private key PEM
                 </summary>
-                <pre className="mt-1 max-h-40 max-w-full overflow-auto whitespace-pre rounded bg-muted/30 p-1.5 font-mono text-[10px] leading-tight">
+                <pre className="mt-1 max-h-40 max-w-full overflow-auto whitespace-pre-wrap break-all rounded bg-muted/30 p-1.5 font-mono text-[10px] leading-tight">
                   {result.keyPem}
                 </pre>
               </details>
@@ -402,7 +402,7 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
             {result.certPem && (
               <details className="mt-2">
                 <summary className="cursor-pointer text-[11px] text-primary">Show cert PEM</summary>
-                <pre className="mt-1 max-h-40 max-w-full overflow-auto whitespace-pre rounded bg-muted/30 p-1.5 font-mono text-[10px] leading-tight">
+                <pre className="mt-1 max-h-40 max-w-full overflow-auto whitespace-pre-wrap break-all rounded bg-muted/30 p-1.5 font-mono text-[10px] leading-tight">
                   {result.certPem}
                 </pre>
               </details>

@@ -1092,7 +1092,7 @@ function processMigrateSoftware(): RAGChunk[] {
       source: 'migrate',
       title: name,
       content,
-      category: sanitize(r.infrastructure_layer),
+      category: sanitize(r.infrastructure_layer) || sanitize(r.category_name) || 'Software',
       metadata: {
         categoryName: sanitize(r.category_name),
         fipsValidated: sanitize(r.fips_validated),

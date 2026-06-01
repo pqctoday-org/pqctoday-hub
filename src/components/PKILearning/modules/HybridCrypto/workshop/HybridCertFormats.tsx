@@ -489,7 +489,7 @@ export const HybridCertFormats: React.FC = () => {
               STATUS_BADGE_CLASSES[fmt.statusColor] ?? STATUS_BADGE_CLASSES['muted']
 
             return (
-              <div key={fmt.id} className="glass-panel p-5 space-y-4">
+              <div key={fmt.id} className="glass-panel p-5 space-y-4 min-w-0">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -772,7 +772,7 @@ export const HybridCertFormats: React.FC = () => {
                   <tr className="border-b border-border/50">
                     <td className="p-2 text-muted-foreground">Standard</td>
                     {HYBRID_CERT_FORMATS.map((fmt) => (
-                      <td key={fmt.id} className="p-2 text-center font-mono text-[10px]">
+                      <td key={fmt.id} className="p-2 text-center font-mono text-[10px] break-all">
                         {fmt.standard}
                       </td>
                     ))}

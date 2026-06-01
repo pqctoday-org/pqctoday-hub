@@ -180,6 +180,7 @@ export const OrganizationExplorer: React.FC<OrganizationExplorerProps> = ({
               return (
                 <Button
                   variant="ghost"
+                  size="tile"
                   key={org.id}
                   onClick={() => onOrgSelect(org.id)}
                   className={`text-left px-3 py-2.5 rounded-lg text-sm border transition-colors

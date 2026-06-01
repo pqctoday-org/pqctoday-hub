@@ -247,6 +247,7 @@ export const ACVPValidator: React.FC = () => {
             return (
               <Button
                 variant="ghost"
+                size="tile"
                 key={key}
                 disabled={status !== 'idle' && status !== 'done'}
                 onClick={() => {
