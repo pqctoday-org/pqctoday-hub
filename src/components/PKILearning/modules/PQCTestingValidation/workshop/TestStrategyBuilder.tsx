@@ -133,7 +133,8 @@ export const TestStrategyBuilder: React.FC = () => {
         <div className="grid sm:grid-cols-4 gap-2">
           {PHASE_OPTIONS.map((p) => (
             <Button
-              variant="tile"
+              variant="ghost"
+              size="tile"
               key={p.id}
               onClick={() => setPhase(p.id)}
               className={`text-left p-3 rounded-lg border transition-all ${
