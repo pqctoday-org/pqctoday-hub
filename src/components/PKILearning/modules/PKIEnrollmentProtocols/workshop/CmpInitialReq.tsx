@@ -207,7 +207,7 @@ export const CmpInitialReq: React.FC<CmpInitialReqProps> = ({
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-1">
+        <div className="space-y-1 min-w-0">
           <label htmlFor="cmp-ir-subject" className="text-sm font-medium text-foreground">
             Subject DN
           </label>
@@ -218,7 +218,7 @@ export const CmpInitialReq: React.FC<CmpInitialReqProps> = ({
             placeholder="/CN=…"
           />
         </div>
-        <div className="space-y-1">
+        <div className="space-y-1 min-w-0">
           <label htmlFor="cmp-ir-reference" className="text-sm font-medium text-foreground">
             Reference (senderKID)
           </label>

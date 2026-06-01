@@ -144,10 +144,7 @@ const TestComparisonTable: React.FC<{
               {enabledSources.map((id) => {
                 const src = SOURCES.find((s) => s.id === id)!
                 return (
-                  <th
-                    key={id}
-                    className="text-center py-2 px-2 text-muted-foreground font-medium whitespace-nowrap"
-                  >
+                  <th key={id} className="text-center py-2 px-2 text-muted-foreground font-medium">
                     {src.label}
                   </th>
                 )
