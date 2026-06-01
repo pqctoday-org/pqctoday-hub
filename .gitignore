@@ -239,6 +239,11 @@ scripts/*
 # liveDeployment text fields. Pure read-only against public data.
 !scripts/audit-matrix-refs.ts
 
+# Module infographic coverage audit — CI gate that fails the build if any
+# MODULE_CATALOG entry lacks public/images/infographics/pqcstd_<id>.png.
+# CuriousSummaryBanner has no fallback chain; missing PNG = broken image.
+!scripts/audit-module-infographics.ts
+
 # Timeline country-alias audit — CI gate that validates countryAliases.ts
 # against the latest Timeline CSV. Pure read-only against public data.
 !scripts/audit-timeline-aliases.ts

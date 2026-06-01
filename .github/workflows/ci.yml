@@ -57,6 +57,11 @@ jobs:
       - name: Audit protocol matrix refs
         run: npm run audit:matrix-refs
 
+      - name: Audit module infographic coverage
+        # Verifies every MODULE_CATALOG entry has public/images/infographics/pqcstd_<id>.png.
+        # CuriousSummaryBanner has no fallback chain — a missing PNG renders as a broken image.
+        run: npm run audit:module-infographics
+
       - name: Audit timeline aliases
         run: npm run audit:timeline-aliases
 
