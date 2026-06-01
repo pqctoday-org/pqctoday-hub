@@ -262,7 +262,7 @@ export const DrbgArchitectureDemo: React.FC = () => {
                   <span className="text-[10px] uppercase font-bold text-muted-foreground flex justify-between">
                     <span>Nonce — auto (16 bytes)</span>
                   </span>
-                  <div className="font-mono text-[10px] bg-muted/40 p-2 rounded break-all mt-1 h-[32px] flex items-center truncate">
+                  <div className="font-mono text-[10px] bg-muted/40 p-2 rounded break-all mt-1 min-h-[32px] flex items-center overflow-hidden">
                     {formatHex(nonce, 0)}
                   </div>
                   <label
