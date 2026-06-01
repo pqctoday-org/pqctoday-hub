@@ -5,6 +5,21 @@
 All notable changes to this project will be documented in this file.
 Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
+## [3.17.4] - 2026-05-31
+
+UI overspill fixes across recent learn-module workshops. Tile-pattern Buttons now correctly stack label + description instead of bleeding descriptions into neighboring grid cells.
+
+### Fixed
+
+- **Tile-selector Buttons stack label + description correctly** [view:/learn/pqc-testing-validation]: 10 tile-pattern Button instances were using `variant="ghost"` only, which inherits the base `inline-flex items-center whitespace-nowrap` from `button-variants.ts:5`. Stacked block-div children (label + description) rendered side-by-side instead of vertically, and descriptions bled across grid cells. Sites now also pass `size="tile"` to engage the dedicated tile size variant (`flex-col items-start justify-start text-left whitespace-normal gap-1`). Fixes Step 3 (Network Profile, Traffic Pattern) and Step 6 (Migration Phase) of PQC Testing & Validation; also Step 2 ActivePQCScanner target tiles, Step 7 ACVPValidator algorithm tiles, IoT/OT DTLS KEM + Signature selectors, PQCCandidates Family selector, AutomotivePQC SafetyCryptoAnalyzer function cards, and StandardsBodies desktop organization list.
+- **Cell overspill in 5 PKI Learning workshop components** [view:/learn]: MLDSASignDemo PEM/cert `<pre>` blocks now use `whitespace-pre-wrap break-all` (1.3 KB ML-DSA keys wrap inside the details panel instead of horizontal-scrolling); RandomGenerationDemo source-row `<th>` cells lost `whitespace-nowrap` so the source-comparison table fits narrow viewports; HybridCertFormats grid children gained `min-w-0` so per-format `<pre>` can shrink, and OID `<td>` cells gained `break-all`; CmpInitialReq grid children gained `min-w-0` so long DN values stop pushing the 2-col grid past the card; DrbgArchitectureDemo removed conflicting `truncate` (was clobbering `break-all`), swapped `h-[32px]` for `min-h-[32px]`, and added `overflow-hidden` so long nonce/personalization hex wraps cleanly.
+
+### Removed
+
+- **AISecurityPQC VRAM Sizing Calculator** [view:/learn/ai-security-pqc]: `VRAMSizingCalculator` workshop tool plus its `aiVramMath` helper + tests removed; corresponding entry pruned from module index and rag-summary.
+
+---
+
 ## [3.17.3] - 2026-05-31
 
 New Algorand Post-Quantum Ledger library reference, MLX enrichment for 5 previously un-enriched docs, and updated Algorand product proof link.

@@ -179,7 +179,8 @@ export const OrganizationExplorer: React.FC<OrganizationExplorerProps> = ({
               const isSelected = org.id === effectiveOrg.id
               return (
                 <Button
-                  variant="tile"
+                  variant="ghost"
+                  size="tile"
                   key={org.id}
                   onClick={() => onOrgSelect(org.id)}
                   className={`text-left px-3 py-2.5 rounded-lg text-sm border transition-colors

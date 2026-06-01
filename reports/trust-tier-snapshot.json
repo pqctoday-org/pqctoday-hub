@@ -1,20 +1,20 @@
 {
-  "measuredAt": "2026-05-31T12:49:01.665Z",
+  "measuredAt": "2026-05-31T21:47:15.449Z",
   "note": "Pre-SME-triage baseline for Phase 2 acceptance — re-run after admin-portal queues land to compare.",
   "overall": {
     "Authoritative": 81,
     "High": 655,
     "Moderate": 912,
-    "Low": 1668,
-    "total": 3316
+    "Low": 1669,
+    "total": 3317
   },
   "byResourceType": {
     "library": {
       "Authoritative": 0,
       "High": 181,
       "Moderate": 322,
-      "Low": 298,
-      "total": 801
+      "Low": 299,
+      "total": 802
     },
     "timeline": {
       "Authoritative": 0,
