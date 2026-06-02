@@ -5,16 +5,25 @@
 All notable changes to this project will be documented in this file.
 Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
-## [Unreleased] - 2026-06-01
+## [3.17.5] - 2026-06-02
 
-Remediation items from the 2026-06-01 bug triage land across two PRs; the WASM bundle bumps to a spec-compliant softhsmv3 build that fixes the KMS PQC envelope-encryption workshop.
+Two-day remediation pass against the 2026-06-01 bug triage (10 user-reported issues across the Learn catalog, KMS workshop, and hybrid-crypto workshop), plus three Rust-engine PKCS#11 v3.2 compliance fixes that surfaced during in-browser smoke testing. Shipped across 10 hub PRs + 3 pqctoday-hsm PRs; both `public/wasm/openssl.wasm` (C++ engine) and `public/wasm/softhsmrustv3_bg.wasm` (Rust engine) rebuilt against spec-compliant softhsmv3 sources.
 
 ### Fixed
 
-- **PKCS#11 v3.2 §4.11 strict compliance — CKA_CHECK_VALUE populated on every secret-key creation path** [view:/learn/kms-pqc][view:/learn/email-signing][view:/playground]: WASM bundle (`public/wasm/softhsm.{js,wasm}` and `src/vendor/softhsm-wasm/wasm/softhsm.{js,wasm}`) refreshed from [pqctoday-hsm PR #61](https://github.com/pqctoday-org/pqctoday-hsm/pull/61). `C_UnwrapKey` and four `C_DeriveKey` paths (HKDF, PBKD2, SP800-108 counter, SP800-108 feedback) now populate `CKA_CHECK_VALUE` consistently with `C_GenerateKey`, fixing the `CKR_ATTRIBUTE_TYPE_INVALID (0x12)` failure in the ML-KEM-768 / AES-KW envelope-encryption workshop. KCV algorithm corrected from SHA-256 to SHA-1 for non-AES symmetric keys (§6.8.2 / §6.58.2 / §6.59.2 — no PKCS#11 v3.x version permits SHA-256 for KCV; verified against v3.0, v3.1, v3.2 cs01 spec text). Verified end-to-end with a 13-assertion compliance test using OpenSSL as an independent oracle (byte-exact match across every patched path).
+- **PKCS#11 v3.2 §4.11 strict compliance on the C++ engine — CKA_CHECK_VALUE populated on every secret-key creation path** [view:/learn/kms-pqc][view:/learn/email-signing][view:/playground]: `openssl.wasm` rebuilt against `libsofthsmv3-static.a` from [pqctoday-hsm PR #61](https://github.com/pqctoday-org/pqctoday-hsm/pull/61). `C_UnwrapKey` and four `C_DeriveKey` paths (HKDF, PBKD2, SP800-108 counter, SP800-108 feedback) now populate `CKA_CHECK_VALUE` consistently with `C_GenerateKey`, fixing the `CKR_ATTRIBUTE_TYPE_INVALID (0x12)` failure in the ML-KEM-768 / AES-KW envelope-encryption workshop. KCV algorithm follows §6.8.2 / §6.58.2 / §6.59.2: SHA-1 for generic-secret / CHACHA20 / SALSA20; `AES-ECB(0)[0:3]` per §4.10.2 for cipher-bearing keys (no PKCS#11 v3.x version permits SHA-256 for KCV; verified against v3.0, v3.1, v3.2 cs01 spec text). Verified end-to-end with a 13-assertion compliance test using OpenSSL as an independent oracle.
+- **PKCS#11 v3.2 §4.10.2 / §4.11 compliance on the Rust engine — KCV populated on derive + unwrap + RSA public-key transport** [view:/learn/kms-pqc][view:/playground]: `softhsmrustv3_bg.wasm` rebuilt against [pqctoday-hsm PR #62](https://github.com/pqctoday-org/pqctoday-hsm/pull/62). PR #61's KCV fix only covered the C++ engine; the Rust engine had the same gap on `C_UnwrapKey`, `C_UnwrapKeyAuthenticated`, and both `C_DeriveKey` paths. The KMS PQC workshop defaults to the Rust engine so #10 stayed broken in production until this rebuild landed. Additionally, RSA `C_GenerateKeyPair` now stores the public key in packed `[n_len:4LE][n_bytes][e_bytes]` format under `CKA_VALUE` (alongside the spec-mandated `CKA_MODULUS` + `CKA_PUBLIC_EXPONENT`) — fixes `CKR_ARGUMENTS_BAD (0x07)` on `C_WrapKey(RSA-OAEP)` which the engine's parser expects.
+- **Rust engine — XMSS Stateful Sign+Verify ACVP test** [view:/playground]: Two bugs combined. (1) The hub's legacy `src/wasm/softhsm.ts` defined `CKM_XMSS = 0x00004035`; the correct value per PKCS#11 v3.2 §1225 / pkcs11t.h is `0x00004036`. Modular re-export at `src/wasm/softhsm/constants.ts:168` already had the right value, but `HsmAcvpTesting` imported from the legacy file. Wrong constant → Rust's `mech == CKM_XMSS` check failed → fall-through → `CKR_ARGUMENTS_BAD (0x07)`. (2) Rust's `C_GenerateKeyPair(CKM_XMSS_KEY_PAIR_GEN)` stored the raw `param_code` (0 when no `CK_XMSS_PARAMS` struct) in `CKA_XMSS_PARAM_SET` instead of the effective `xmss_param`; later `xmss_sign` read 0, hit the catch-all `_ => Err(CKR_FUNCTION_FAILED)` arm, and every sign failed. Both fixed via PR #283 (hub) + [pqctoday-hsm PR #63](https://github.com/pqctoday-org/pqctoday-hsm/pull/63).
+- **Rust engine — ECDSA P-521 Functional Sign+Verify ACVP test** [view:/playground]: Two bugs combined. (1) `get_sig_len(CKM_ECDSA_SHA512, _)` returned a hardcoded 64-byte length regardless of curve; P-521 needs 132 bytes (66 r + 66 s). Size-discovery returned 64, caller allocated 64, actual sign needed 132 → `CKR_BUFFER_TOO_SMALL (0x150)`. Consolidated all ECDSA arms into a curve-aware lookup (132 for P-521, 96 for P-384, 64 for P-256/k256). (2) `get_ec_point_sec1` only stripped DER short-form length (`0x04 <len ≤ 127> <data>`); P-521's 133-byte SEC1 point requires long-form (`0x04 0x81 0x85 <data>`). Strip helper returned the full DER-wrapped buffer to `VerifyingKey::from_sec1_bytes` → wrong public key → verify always failed on its own signature. Added long-form handling alongside short-form. Both fixes in PR #283 + pqctoday-hsm PR #63.
+- **Hybrid-crypto workshop — Pure ML-KEM-512/768/1024 cert generation produced 0-byte cert ("No such file or directory")** [view:/learn/hybrid-crypto]: OpenSSL `req -x509 -force_pubkey` doesn't reliably encode ML-KEM as a SubjectPublicKeyInfo in our 5.4 MB bundle (ML-KEM is exposed as a TLS named group, not as an X.509 SPKI encoder). Rerouted through `pkcs11-provider`'s X.509 cert-issuance path via `CMSSigningService.genKey + mkCert` with `useHsm=true` — the SPKI encoder used here is pkcs11-provider's own (proven by `MLKEMEncryptDemo`'s KEM-only flow). Includes the missing CA self-signed cert mint step (worker requires `/ssl/<issuerKeyId>.crt` to exist before any CA-issued mkCert call). Produces a real RFC 9935 cert PEM with the ML-KEM-768 SPKI signed by a transient ML-DSA-65 issuer; ML-KEM private keys never enter the WASM VFS. PRs #281 (initial) + #284 (CA self-sign step).
 - **Network Security PQC workshop step 6 crash** [view:/learn/network-security-pqc]: `PARTS` array had 6 entries but `WORKSHOP_STEPS` had only 5, so the `WorkshopStepper` read `.label` on `undefined` when the user clicked into step 6, triggering the `ErrorBoundary`. Added the missing `network-telemetry-analyzer` entry to both `WORKSHOP_STEPS` and `MODULE_STEP_COUNTS`.
 - **Module status never flipped to `'completed'` after the user clicks "Complete Module ✓"** [view:/learn]: PQC Candidates and Crypto Agility were the symptom; 20 modules across the Learn catalog share the same broken pattern. Centralized the fix in `useModuleStore.markStepComplete` so it auto-sets `status: 'completed'` when every step in `WORKSHOP_STEPS[moduleId]` has been marked. One store-level change, 20 modules fixed.
 - **PKCS#11 mechanism inspector showed raw hex for 5 mechanism codes** [view:/playground]: Added missing entries to `CKM_TABLE` for `CKM_EC_MONTGOMERY_KEY_PAIR_GEN` (0x1056), `CKM_EDDSA_PH` (0x80001057), `CKM_AES_KEY_WRAP_KWP` (0x210a), `CKM_KMAC_128` (0x80000100), `CKM_KMAC_256` (0x80000101). Verified against `pqctoday-hsm/src/wasm/softhsm.ts` exported `CKM_*` constants.
+- **TS6133 build failure on `tsc -b` in PR-281's `pqcVariant` parameter** [build]: `tsc -b` (production build mode) is stricter than `tsc --noEmit` (local typecheck) about unused parameters. Renamed unused param to `_pqcVariant` to satisfy the stricter check. Unblocked the Pages deploy.
+
+### Changed
+
+- **Library persona banner — richer info, accessible status region** [view:/library]: When a non-researcher persona is active, the matched-count line is always rendered with the persona name surface (e.g. "Showing 4 documents matched to your developer role"). When `status='New'` items are hidden by the persona narrow, an additional warning span ("1 newly added document hidden by your developer role") appends alongside the matched-count line — both visible together, not exclusive. Container styling switches to a warning border/background when `newHiddenCount > 0`. Restructured to put each piece in its own sibling `<span>` so accessibility tests can read each independently.
 
 ### Added
 
@@ -26,10 +35,25 @@ Remediation items from the 2026-06-01 bug triage land across two PRs; the WASM b
 
 - **OSCAL + CBOM exports regenerated** [view:/compliance][view:/migrate]: Stale May 2026 outputs refreshed to pick up new Tectia SSH (SSH.COM) Quantum-Safe Edition entry and recent migrate-catalog adds. Pure regeneration — no schema or content rule changes.
 
+### Build
+
+- **PWA precache size cap bumped 32 MB → 48 MB** [build]: `vite.config.ts` `maximumFileSizeToCacheInBytes` — the rebuilt `openssl.wasm` chunk crosses 33 MB after the softhsmv3 + pkcs11-provider archives statically link. Below the new cap, the SW now precaches the bundle (matches the `feedback-sw-wasm-cache.md` memory rule: precache only, no runtime CacheFirst).
+
 ### Related PRs
 
-- pqctoday-hub [#278](https://github.com/pqctoday-org/pqctoday-hub/pull/278) — Track A (network-security step 6, module auto-complete, PKCS#11 mech table)
-- pqctoday-hsm [#61](https://github.com/pqctoday-org/pqctoday-hsm/pull/61) — KCV PKCS#11 v3.2 §4.11 compliance (the source of the new WASM bundle)
+- **Hub-side (pqctoday-hub):**
+  - [#275](https://github.com/pqctoday-org/pqctoday-hub/pull/275) — Track A (network-security step 6, module auto-complete, PKCS#11 mech table) + NIST IR 8320E ref + 2 new library refs
+  - [#278](https://github.com/pqctoday-org/pqctoday-hub/pull/278) — Track A (initial bundle for network-security + module complete + mech table)
+  - [#279](https://github.com/pqctoday-org/pqctoday-hub/pull/279) — TS6133 build fix + persona banner restructure
+  - [#280](https://github.com/pqctoday-org/pqctoday-hub/pull/280) — openssl.wasm rebuild (C++ engine KCV)
+  - [#281](https://github.com/pqctoday-org/pqctoday-hub/pull/281) — Pure-KEM-via-HSM cert (initial)
+  - [#282](https://github.com/pqctoday-org/pqctoday-hub/pull/282) — softhsmrustv3 rebuild (Rust engine KCV + RSA-OAEP CKA_VALUE)
+  - [#283](https://github.com/pqctoday-org/pqctoday-hub/pull/283) — CKM_XMSS constant + Rust engine XMSS/P-521 WASM rebuild
+  - [#284](https://github.com/pqctoday-org/pqctoday-hub/pull/284) — Pure-KEM CA self-sign step (completes #281)
+- **HSM-side (pqctoday-hsm):**
+  - [#61](https://github.com/pqctoday-org/pqctoday-hsm/pull/61) — PKCS#11 v3.2 §4.11 KCV — C++ engine
+  - [#62](https://github.com/pqctoday-org/pqctoday-hsm/pull/62) — Rust engine KCV-on-derive/unwrap + RSA CKA_VALUE
+  - [#63](https://github.com/pqctoday-org/pqctoday-hsm/pull/63) — Rust engine XMSS param-set + ECDSA P-521 sig length + EC point long-form DER
 
 ---
 
