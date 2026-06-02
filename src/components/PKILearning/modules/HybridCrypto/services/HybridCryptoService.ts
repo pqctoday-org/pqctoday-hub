@@ -1,6 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { HsmFamily, HsmKeyRole } from '@/components/Playground/hsm/HsmContext'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
+// NOTE: `CMSSigningService` is misnamed for our usage here — we only invoke
+// its X.509 cert-issuance half (`genKey` + `mkCert`), which calls
+// `openssl req -x509 -provider pkcs11 …` under the hood. That is NOT CMS;
+// it's plain X.509 minting via pkcs11-provider. We borrow the service
+// because it already owns a Worker with pkcs11-provider preloaded and
+// because the same code path already proves out KEM-only CA-issued certs
+// in MLKEMEncryptDemo. See the architectural-debt note at
+// `memory/project-pkcs-hsm-service-naming.md` — the right long-term fix is
+// to factor a `PkcsHsmCryptoService` layer (Option 2) that both
+// CMSSigningService and HybridCryptoService delegate to.
+import { CMSSigningService } from '@/components/PKILearning/modules/EmailSigning/services/CMSSigningService'
 import { generateX25519KeyPair, deriveSharedSecret, hkdfExtract } from '@/utils/webCrypto'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import { x25519 } from '@noble/curves/ed25519.js'
@@ -90,6 +101,33 @@ export type KeyTracker = (
 ) => void
 
 export class HybridCryptoService {
+  // Lazy-init CMSSigningService for HSM-routed cert ops (Pure PQC KEM,
+  // composite KEM, anywhere we need pkcs11-provider + softhsmv3 instead
+  // of bare openssl genpkey/req). One Worker per HybridCryptoService
+  // singleton — kept alive for the session.
+  // TODO: extract a shared PkcsHsmWorker layer when a third consumer
+  // beyond EmailSigning + HybridCrypto appears.
+  private cmsService: CMSSigningService | null = null
+  private cmsInitPromise: Promise<void> | null = null
+
+  private async getCms(): Promise<CMSSigningService> {
+    if (!this.cmsService) {
+      this.cmsService = new CMSSigningService()
+    }
+    if (!this.cmsInitPromise) {
+      this.cmsInitPromise = (async () => {
+        const r = await this.cmsService!.initProvider()
+        if (r.status !== 'ok' && r.status !== 'already') {
+          // Reset so a future call can retry from scratch.
+          this.cmsInitPromise = null
+          throw new Error(`pkcs11-provider init failed: ${r.status} (${r.code}) ${r.detail ?? ''}`)
+        }
+      })()
+    }
+    await this.cmsInitPromise
+    return this.cmsService
+  }
+
   private getGenCommand(algorithm: string, filename: string): string {
     if (algorithm === 'EC') {
       return `openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out ${filename}`
@@ -930,10 +968,18 @@ export class HybridCryptoService {
   /**
    * Pure PQC KEM certificate: ML-KEM-512/768/1024 per RFC 9935.
    *
-   * KEM keys cannot self-sign (RFC 9935 §4: encryption-only). Workshop simplification:
-   * generate an ML-DSA-65 transient issuer to act as a one-shot CA, and embed the ML-KEM
-   * public key via OpenSSL's `-force_pubkey`. In production deployments the CA must be
-   * pre-provisioned; this is purely an educational illustration of the wire format.
+   * KEM keys cannot self-sign (RFC 9935 §4: encryption-only). We mint a
+   * transient ML-DSA-65 issuer and CA-sign the KEM subject cert. Both
+   * keys are HSM-resident via softhsmv3 + pkcs11-provider; OpenSSL never
+   * sees raw key material, mirroring the S/MIME workshop's KEM-only flow
+   * in MLKEMEncryptDemo.
+   *
+   * Why HSM instead of OpenSSL `genpkey + req -force_pubkey`: the
+   * filesystem-key path was producing 0-byte certs in our 5.4 MB
+   * openssl.wasm bundle (RFC 9935 cert issuance via -force_pubkey isn't
+   * reliable for ML-KEM SPKI). Routing through pkcs11-provider's mkcert
+   * path produces a real PEM byte-identical to what an HSM-backed CA
+   * would emit in production.
    *
    * RFC 9935 OIDs:
    *   id-alg-ml-kem-512   = 2.16.840.1.101.3.4.4.1
@@ -946,58 +992,53 @@ export class HybridCryptoService {
   ): Promise<CertResult> {
     const start = performance.now()
     const tag = variant.toLowerCase().replace(/-/g, '_')
-    const kemKeyFile = `kem_${tag}_priv.pem`
-    const issuerKeyFile = `kem_${tag}_issuer.pem`
-    const certFile = `kem_${tag}_cert.pem`
-    const subj = `/CN=${cn}/O=PQC Today/OU=Hybrid Certificate Sandbox`
+    const kemKeyId = `kem_${tag}_priv`
+    const issuerKeyId = `kem_${tag}_issuer`
+    const certId = `kem_${tag}_cert`
+    const subject = `/CN=${cn}/O=PQC Today/OU=Hybrid Certificate Sandbox`
 
     try {
-      // 1. Generate the ML-KEM subject key (encryption-only).
-      const kemKey = await this.generateKey(variant, kemKeyFile)
-      if (kemKey.error || !kemKey.fileData) {
+      const cms = await this.getCms()
+
+      // 1. Generate the ML-KEM subject key in the HSM (encryption-only).
+      await cms.genKey(variant, kemKeyId, true)
+
+      // 2. Generate the ML-DSA-65 issuer key in the HSM.
+      await cms.genKey('ML-DSA-65', issuerKeyId, true)
+
+      // 3. CA-issue the cert. pkcs11-provider signs the SPKI containing
+      //    the ML-KEM pubkey using the ML-DSA-65 issuer key. No raw key
+      //    material leaves the HSM.
+      const cert = await cms.mkCert({
+        keyId: kemKeyId,
+        certId,
+        subject,
+        days: 365,
+        useHsm: true,
+        issuerKeyId,
+        alg: variant,
+      })
+
+      if (!cert.certPem) {
         return {
           pem: '',
           parsed: '',
           timingMs: performance.now() - start,
-          error: kemKey.error || `${variant} key generation failed`,
+          error: `${variant} CA-signed cert returned empty PEM`,
         }
       }
 
-      // 2. Generate a transient ML-DSA-65 issuer key to sign the cert (KEM keys cannot sign).
-      const issuerKey = await this.generateKey('ML-DSA-65', issuerKeyFile)
-      if (issuerKey.error || !issuerKey.fileData) {
-        return {
-          pem: '',
-          parsed: '',
-          timingMs: performance.now() - start,
-          error: issuerKey.error || 'Issuer (ML-DSA-65) key generation failed',
-        }
-      }
-
-      // 3. Issue cert: issuer signs; -force_pubkey embeds the ML-KEM key as subjectPublicKey.
-      //    OpenSSL 3.5+ supports -force_pubkey on `req -x509`.
-      const certResult = await openSSLService.execute(
-        `openssl req -new -x509 -key ${issuerKeyFile} -force_pubkey ${kemKeyFile} -out ${certFile} -days 365 -subj "${subj}"`,
-        [issuerKey.fileData, kemKey.fileData]
-      )
-      if (certResult.error) {
-        return {
-          pem: '',
-          parsed: '',
-          timingMs: performance.now() - start,
-          error: `${variant} cert issuance failed: ${certResult.error}`,
-        }
-      }
-
-      const certFileData = certResult.files.find((f) => f.name === certFile)
-      const pem = certFileData ? new TextDecoder().decode(certFileData.data) : ''
+      // 4. Parse the PEM for human-readable display. The PEM is plain
+      //    ASCII; we feed it to bare `openssl x509 -text -noout` (no HSM
+      //    needed for parsing).
+      const certBytes = new TextEncoder().encode(cert.certPem)
       const parsedResult = await openSSLService.execute(
-        `openssl x509 -in ${certFile} -text -noout`,
-        certFileData ? [{ name: certFile, data: certFileData.data }] : []
+        `openssl x509 -in ${certId}.pem -text -noout`,
+        [{ name: `${certId}.pem`, data: certBytes }]
       )
 
       return {
-        pem,
+        pem: cert.certPem,
         parsed: parsedResult.stdout || parsedResult.stderr || '',
         timingMs: performance.now() - start,
       }
