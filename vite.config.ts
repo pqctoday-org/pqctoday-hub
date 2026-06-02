@@ -72,7 +72,7 @@ export default defineConfig({
       ],
       injectManifest: {
         globPatterns: ['**/*.{js,css,html,svg,png,wasm,json}'],
-        maximumFileSizeToCacheInBytes: 32 * 1024 * 1024, // 32 MB — accommodates the @huggingface/transformers ONNX Runtime SIMD WASM (~23.6 MB) loaded by the embedding-driven semantic-search pipeline, plus the existing softhsm/liboqs WASM bundles, with headroom for future growth.
+        maximumFileSizeToCacheInBytes: 48 * 1024 * 1024, // 48 MB — accommodates the @huggingface/transformers ONNX Runtime SIMD WASM (~23.6 MB) loaded by the embedding-driven semantic-search pipeline, plus the existing softhsm/liboqs WASM bundles, plus the App-* JS chunk which has grown to ~33.6 MB as of 2026-06-01 (CI failure at 32 MB triggered this bump). 48 MB leaves ~14 MB of headroom; further growth above ~45 MB should trigger a code-split refactor rather than another bump.
       },
       manifest: {
         name: 'PQC Today',
