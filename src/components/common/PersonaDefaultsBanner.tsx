@@ -58,19 +58,13 @@ export function PersonaDefaultsBanner({
       : `glass-panel inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-md text-xs ${className}`.trim()
   return (
     <div role="status" aria-live="polite" className={wrapperClass}>
-      {newHiddenCount > 0 ? (
+      <span className="text-muted-foreground">
+        {`Showing ${matchedCount} ${matchedPluralized} matched to ${roleLabel}`}
+      </span>
+      {hiddenCount > 0 && <span className="text-muted-foreground/80">({hiddenCount} hidden)</span>}
+      {newHiddenCount > 0 && (
         <span className="text-status-warning font-medium">
-          {newHiddenCount} newly added {newPluralized} hidden by {roleLabel}
-        </span>
-      ) : (
-        <span className="text-muted-foreground">
-          Showing {matchedCount} {matchedPluralized} matched to {roleLabel}
-          {hiddenCount > 0 && (
-            <>
-              {' '}
-              <span className="text-muted-foreground/80">({hiddenCount} hidden)</span>
-            </>
-          )}
+          {`· ${newHiddenCount} newly added ${newPluralized} hidden by ${roleLabel}`}
         </span>
       )}
       <span className="text-muted-foreground/60">·</span>
