@@ -5,6 +5,14 @@
 All notable changes to this project will be documented in this file.
 Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
+## [Unreleased]
+
+### Data
+
+- **G7 Central-Bank Quantum Technologies report — canonical BdF press-release URL + re-enriched** [view:/library]: `library_06022026.csv` carries forward the previous library set (DS05p2 — 798 prior enrichments preserved); `library_05312026.csv` archived per the 2-version rule. The `G7-CB-QT-Financial-2026` entry now uses the Banque de France publications landing → press-release URL (`url_homepage → url_authoritative`) instead of the watermarked draft URL; `local_file` refreshed to the 485 KB public final PDF (no `BDF-INTERNE` watermark); direct PDF URL captured in `misc_info`; confidence bumped 70 → 80. Re-enriched via MLX `qwen3.6:27b` on the clean source (20/39 dimensions populated). Full enrichment record at `src/data/doc-enrichments/library_doc_enrichments_06022026.md`.
+
+---
+
 ## [3.17.5] - 2026-06-02
 
 Two-day remediation pass against the 2026-06-01 bug triage (10 user-reported issues across the Learn catalog, KMS workshop, and hybrid-crypto workshop), plus three Rust-engine PKCS#11 v3.2 compliance fixes that surfaced during in-browser smoke testing. Shipped across 10 hub PRs + 3 pqctoday-hsm PRs; both `public/wasm/openssl.wasm` (C++ engine) and `public/wasm/softhsmrustv3_bg.wasm` (Rust engine) rebuilt against spec-compliant softhsmv3 sources.
