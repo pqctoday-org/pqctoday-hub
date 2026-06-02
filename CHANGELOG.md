@@ -16,6 +16,12 @@ Remediation items from the 2026-06-01 bug triage land across two PRs; the WASM b
 - **Module status never flipped to `'completed'` after the user clicks "Complete Module ✓"** [view:/learn]: PQC Candidates and Crypto Agility were the symptom; 20 modules across the Learn catalog share the same broken pattern. Centralized the fix in `useModuleStore.markStepComplete` so it auto-sets `status: 'completed'` when every step in `WORKSHOP_STEPS[moduleId]` has been marked. One store-level change, 20 modules fixed.
 - **PKCS#11 mechanism inspector showed raw hex for 5 mechanism codes** [view:/playground]: Added missing entries to `CKM_TABLE` for `CKM_EC_MONTGOMERY_KEY_PAIR_GEN` (0x1056), `CKM_EDDSA_PH` (0x80001057), `CKM_AES_KEY_WRAP_KWP` (0x210a), `CKM_KMAC_128` (0x80000100), `CKM_KMAC_256` (0x80000101). Verified against `pqctoday-hsm/src/wasm/softhsm.ts` exported `CKM_*` constants.
 
+### Added
+
+- **Two new library references** [view:/library]:
+  - **Quantum-Resilient Organizational Identity: Governance, Business Wallets, and PQC Corridors** (Couzens / Stöcker / Vasiliu-Feltes, 2026-05-31). Preprint distributed via LinkedIn; introduces the "PQC Corridor" governance + technical migration domain and treats business wallets, qVDRs, and vLEIs as cross-jurisdiction identity interfaces for B2B / B2G / G2G / M2M / agent-to-agent ecosystems.
+  - **Crypto News, June 2026** (Cloud Security Alliance, compiled by Dr. Dhananjoy Dey). CSA Quantum-Safe Security Working Group monthly newsletter covering cryptographic maturity, DST Task Force quantum-safe thinking, and PQC migration progress.
+
 ### Data
 
 - **OSCAL + CBOM exports regenerated** [view:/compliance][view:/migrate]: Stale May 2026 outputs refreshed to pick up new Tectia SSH (SSH.COM) Quantum-Safe Edition entry and recent migrate-catalog adds. Pure regeneration — no schema or content rule changes.
