@@ -994,8 +994,13 @@ export class HybridCryptoService {
     const tag = variant.toLowerCase().replace(/-/g, '_')
     const kemKeyId = `kem_${tag}_priv`
     const issuerKeyId = `kem_${tag}_issuer`
+    // The cms.worker derives the issuer cert path from `${issuerKeyId}.crt`,
+    // so the issuer's self-signed cert MUST be minted with certId=issuerKeyId
+    // (see EmailSigning/worker/cms.worker.ts §3196 "Convention").
+    const issuerCertId = issuerKeyId
     const certId = `kem_${tag}_cert`
     const subject = `/CN=${cn}/O=PQC Today/OU=Hybrid Certificate Sandbox`
+    const issuerSubject = '/CN=PQC Workshop CA/O=PQC Today/OU=Transient Issuer'
 
     try {
       const cms = await this.getCms()
@@ -1006,9 +1011,21 @@ export class HybridCryptoService {
       // 2. Generate the ML-DSA-65 issuer key in the HSM.
       await cms.genKey('ML-DSA-65', issuerKeyId, true)
 
-      // 3. CA-issue the cert. pkcs11-provider signs the SPKI containing
-      //    the ML-KEM pubkey using the ML-DSA-65 issuer key. No raw key
-      //    material leaves the HSM.
+      // 3. Mint the issuer's self-signed CA cert. The cms.worker requires
+      //    `/ssl/<issuerKeyId>.crt` to exist before any CA-issued mkCert
+      //    call; otherwise it errors with "issuer cert not found". Mirrors
+      //    MLKEMEncryptDemo's CA-then-subject pattern.
+      await cms.mkCert({
+        keyId: issuerKeyId,
+        certId: issuerCertId,
+        subject: issuerSubject,
+        days: 730,
+        useHsm: true,
+      })
+
+      // 4. CA-issue the subject cert. pkcs11-provider signs the SPKI
+      //    containing the ML-KEM pubkey using the ML-DSA-65 issuer key.
+      //    No raw key material leaves the HSM.
       const cert = await cms.mkCert({
         keyId: kemKeyId,
         certId,
