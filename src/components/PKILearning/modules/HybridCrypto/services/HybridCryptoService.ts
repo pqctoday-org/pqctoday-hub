@@ -1051,7 +1051,11 @@ export class HybridCryptoService {
    * accepted in the type signature for forward compatibility.
    */
   async generateCompositeKEMCert(
-    pqcVariant: 'ML-KEM-768',
+    // pqcVariant: only ML-KEM-768 is wired today; the parameter is kept in
+    // the signature as a forward-compat slot for the LAMPS draft's eventual
+    // ML-KEM-1024 composite variant. Renamed to _pqcVariant to silence
+    // TS6133 noUnusedParameters under the production `tsc -b` build.
+    _pqcVariant: 'ML-KEM-768',
     classicalVariant: 'X25519' | 'P-256',
     cn: string
   ): Promise<CertResult> {
