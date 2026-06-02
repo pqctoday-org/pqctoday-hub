@@ -9,7 +9,7 @@ import {
   logStepComplete,
   logArtifactGenerated,
 } from '../utils/analytics'
-import { LEARN_SECTIONS } from '../components/PKILearning/moduleData'
+import { LEARN_SECTIONS, WORKSHOP_STEPS } from '../components/PKILearning/moduleData'
 
 const MODULE_STORE_VERSION = 14
 const KPI_HISTORY_CAP = 30
@@ -124,12 +124,26 @@ export const useModuleStore = create<ModuleState>()(
           const module = state.modules[moduleId]
           if (module && !module.completedSteps.includes(stepId)) {
             logStepComplete(moduleId, module.completedSteps.length, workshopStep)
+            const completedSteps = [...module.completedSteps, stepId]
+            // Auto-flip status to 'completed' when every registered workshop step
+            // for this module has been marked. The set membership check guards
+            // against unrelated step ids (e.g. learn-tab ids that share this action).
+            const workshopStepIds = WORKSHOP_STEPS[moduleId]?.map((s) => s.id) ?? []
+            const allWorkshopDone =
+              workshopStepIds.length > 0 &&
+              workshopStepIds.every((id) => completedSteps.includes(id))
+            const nextStatus =
+              allWorkshopDone && module.status !== 'completed' ? 'completed' : module.status
+            if (allWorkshopDone && module.status !== 'completed') {
+              logModuleComplete(moduleId)
+            }
             return {
               modules: {
                 ...state.modules,
                 [moduleId]: {
                   ...module,
-                  completedSteps: [...module.completedSteps, stepId],
+                  completedSteps,
+                  status: nextStatus,
                 },
               },
               timestamp: Date.now(),
