@@ -66,16 +66,16 @@ export const AwsKmsPolicyLab: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Editor */}
-        <div className="glass-panel overflow-hidden flex flex-col h-[500px]">
-          <div className="bg-muted px-4 py-2 flex justify-between items-center border-b">
-            <span className="font-mono text-xs flex items-center gap-2">
-              <FileJson size={14} /> key-policy.json
+        <div className="min-w-0 glass-panel overflow-hidden flex flex-col h-[500px]">
+          <div className="bg-muted px-4 py-2 flex justify-between items-center border-b gap-2 flex-wrap">
+            <span className="font-mono text-xs flex items-center gap-2 min-w-0 truncate">
+              <FileJson size={14} className="shrink-0" /> key-policy.json
             </span>
             <Button
               variant="ghost"
               size="sm"
               onClick={insertSnippet}
-              className="h-6 text-[10px] px-2"
+              className="h-6 text-[10px] px-2 shrink-0"
             >
               Insert Solution Snippet
             </Button>
@@ -89,7 +89,7 @@ export const AwsKmsPolicyLab: React.FC = () => {
         </div>
 
         {/* Validation Dashboard */}
-        <div className="glass-panel p-6 flex flex-col justify-between h-[500px]">
+        <div className="min-w-0 glass-panel p-6 flex flex-col justify-between h-[500px]">
           <div>
             <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
               <Cloud size={20} /> Evaluation Engine
