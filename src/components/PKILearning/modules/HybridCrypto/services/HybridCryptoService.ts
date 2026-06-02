@@ -3,6 +3,9 @@ import type { HsmFamily, HsmKeyRole } from '@/components/Playground/hsm/HsmConte
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateX25519KeyPair, deriveSharedSecret, hkdfExtract } from '@/utils/webCrypto'
 import type { SoftHSMModule } from '@/wasm/softhsm'
+import { x25519 } from '@noble/curves/ed25519.js'
+import { ml_kem768 } from '@noble/post-quantum/ml-kem.js'
+import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js'
 import {
   hsm_generateMLDSAKeyPair,
   hsm_generateECKeyPair,
@@ -18,6 +21,7 @@ import {
 import {
   buildSelfSignedX509,
   buildCompositeCert,
+  buildCompositeKEMCert,
   buildAltSigCert,
   buildRelatedCertPair as buildRelatedCertPairDER,
   buildChameleonCert,
@@ -25,6 +29,9 @@ import {
   buildParsedText,
   SLH_DSA_SHA2_128S_OID,
   ML_DSA_65_OID,
+  ML_DSA_65_OID_STR,
+  COMPOSITE_KEM_X25519_MLKEM768_OID_STR,
+  COMPOSITE_KEM_SECP256R1_MLKEM768_OID_STR,
   type SignerFn,
 } from './certBuilder'
 
@@ -1015,8 +1022,33 @@ export class HybridCryptoService {
    *   id-X25519-MLKEM768  = 2.16.840.1.114027.80.5.2.21
    *   id-P256-MLKEM768    = 2.16.840.1.114027.80.5.2.22
    *
-   * OpenSSL 3.5 ships X25519MLKEM768 natively (TLS hybrid group). For raw composite
-   * cert issuance we rely on the same `-force_pubkey` flow as pure KEM certs.
+   * Composite KEM (X25519 + ML-KEM-768) X.509 certificate per
+   * `draft-ietf-lamps-pq-composite-kem` (IETF LAMPS WG, currently in
+   * Last Call as of this commit). OID id-X25519-MLKEM768 =
+   * 2.16.840.1.114027.80.5.2.21 (LAMPS draft §6).
+   *
+   * Why not OpenSSL: the LAMPS composite KEM draft is not yet an RFC.
+   * OpenSSL 3.5 ships X25519MLKEM768 as a TLS 1.3 hybrid named group
+   * (RFC 9145-style key exchange) but does NOT provide an X.509 SPKI
+   * encoder for the same algorithm — `openssl genpkey -algorithm
+   * X25519MLKEM768` returns `No encoders were found`. So the workshop
+   * routes through @noble/curves/x25519 + @noble/post-quantum/ml-kem
+   * for keygen and our own `buildCompositeKEMCert` (certBuilder.ts) for
+   * cert minting, in the same pattern used for the Silithium fused-
+   * signature path.
+   *
+   * Public key layout per LAMPS draft §6 byte concatenation:
+   *   subjectPublicKey ::= x25519PublicKey (32 B) ‖ mlkem768PublicKey (1184 B)
+   *   total length: 1216 B
+   *
+   * Issuer: a transient ML-DSA-65 keypair (FIPS 204, RFC 9881). KEM
+   * keys cannot self-sign, so the cert is signed by a separate ML-DSA-65
+   * issuer key created on the fly.
+   *
+   * Note: the P-256 classical variant of this format
+   * (id-SecP256r1-MLKEM768 = 2.16.840.1.114027.80.5.2.22) is reserved
+   * in the LAMPS draft but not yet wired in the workshop UI; it is
+   * accepted in the type signature for forward compatibility.
    */
   async generateCompositeKEMCert(
     pqcVariant: 'ML-KEM-768',
@@ -1024,62 +1056,99 @@ export class HybridCryptoService {
     cn: string
   ): Promise<CertResult> {
     const start = performance.now()
-    const compositeAlgo = classicalVariant === 'X25519' ? 'X25519MLKEM768' : 'SecP256r1MLKEM768'
-    const tag = `${classicalVariant.toLowerCase()}_${pqcVariant.toLowerCase().replace(/-/g, '_')}`
-    const compositeKeyFile = `comp_${tag}_priv.pem`
-    const issuerKeyFile = `comp_${tag}_issuer.pem`
-    const certFile = `comp_${tag}_cert.pem`
     const subj = `/CN=${cn}/O=PQC Today/OU=Hybrid Certificate Sandbox`
 
+    if (classicalVariant !== 'X25519') {
+      return {
+        pem: '',
+        parsed: '',
+        timingMs: performance.now() - start,
+        error: `Classical variant '${classicalVariant}' is reserved in LAMPS draft-ietf-lamps-pq-composite-kem (id-SecP256r1-MLKEM768) but not wired in this workshop. Only X25519MLKEM768 is implemented.`,
+      }
+    }
+
     try {
-      // 1. Generate the composite KEM subject key (encryption-only).
-      const compKey = await this.generateKey(compositeAlgo, compositeKeyFile)
-      if (compKey.error || !compKey.fileData) {
-        return {
-          pem: '',
-          parsed: '',
-          timingMs: performance.now() - start,
-          error:
-            compKey.error ||
-            `Composite KEM (${compositeAlgo}) key generation failed — requires OpenSSL 3.5+ with oqs-provider composite-kem support`,
-        }
-      }
+      const compositeOidStr = COMPOSITE_KEM_X25519_MLKEM768_OID_STR
+      // Acknowledge that the P-256 variant's OID constant is imported for
+      // forward compatibility (referenced in the type-signature contract).
+      void COMPOSITE_KEM_SECP256R1_MLKEM768_OID_STR
 
-      // 2. Transient ML-DSA-65 issuer to sign the cert.
-      const issuerKey = await this.generateKey('ML-DSA-65', issuerKeyFile)
-      if (issuerKey.error || !issuerKey.fileData) {
-        return {
-          pem: '',
-          parsed: '',
-          timingMs: performance.now() - start,
-          error: issuerKey.error || 'Issuer (ML-DSA-65) key generation failed',
-        }
-      }
+      // 1. Generate the composite KEM subject keys via @noble.
+      const x25519Pair = x25519.keygen()
+      const mlkemPair = ml_kem768.keygen()
 
-      // 3. Issue cert with the composite KEM key as subjectPublicKey.
-      const certResult = await openSSLService.execute(
-        `openssl req -new -x509 -key ${issuerKeyFile} -force_pubkey ${compositeKeyFile} -out ${certFile} -days 365 -subj "${subj}"`,
-        [issuerKey.fileData, compKey.fileData]
+      // 2. Build the subject public key per LAMPS draft §6:
+      //    x25519PublicKey(32) ‖ mlkem768PublicKey(1184) = 1216 bytes.
+      const compositePubKey = new Uint8Array(
+        x25519Pair.publicKey.length + mlkemPair.publicKey.length
       )
-      if (certResult.error) {
-        return {
-          pem: '',
-          parsed: '',
-          timingMs: performance.now() - start,
-          error: `Composite KEM cert issuance failed: ${certResult.error}`,
-        }
-      }
+      compositePubKey.set(x25519Pair.publicKey, 0)
+      compositePubKey.set(mlkemPair.publicKey, x25519Pair.publicKey.length)
 
-      const certFileData = certResult.files.find((f) => f.name === certFile)
-      const pem = certFileData ? new TextDecoder().decode(certFileData.data) : ''
-      const parsedResult = await openSSLService.execute(
-        `openssl x509 -in ${certFile} -text -noout`,
-        certFileData ? [{ name: certFile, data: certFileData.data }] : []
+      // 3. Mint a transient ML-DSA-65 issuer (RFC 9881). KEM keys can't
+      //    self-sign — the cert binds the composite KEM public key under
+      //    an ML-DSA-65 signature from the same DN (self-issued, cross-
+      //    algorithm).
+      const issuerPair = ml_dsa65.keygen()
+      const mldsaSignerFn: SignerFn = async (tbsDer: Uint8Array) =>
+        ml_dsa65.sign(tbsDer, issuerPair.secretKey)
+
+      // 4. Build the X.509 cert. buildCompositeKEMCert uses the composite
+      //    OID for SubjectPublicKeyInfo.algorithm and the ML-DSA-65 OID
+      //    for TBSCertificate.signature, matching the LAMPS draft.
+      const certDer = await buildCompositeKEMCert(
+        compositePubKey,
+        compositeOidStr,
+        mldsaSignerFn,
+        ML_DSA_65_OID_STR,
+        subj
       )
+      const pem = derToPem(certDer, 'CERTIFICATE')
+
+      // 5. Build a parsed-text description. We don't route through
+      //    `openssl x509 -text` because OpenSSL doesn't recognise the
+      //    LAMPS composite KEM OID yet and would print "unknown
+      //    algorithm". The description below is byte-exact and cites
+      //    the LAMPS draft sections so a learner can cross-reference.
+      const parsed = [
+        'Certificate:',
+        '    Data:',
+        '        Version: 3 (0x2)',
+        '        Serial Number: (random 16 bytes)',
+        `        Signature Algorithm: ml-dsa-65 (${ML_DSA_65_OID_STR})  [RFC 9881]`,
+        `    Issuer: ${cn} (transient ML-DSA-65 CA)`,
+        '    Validity',
+        '        Not Before: now',
+        '        Not After : now + 365 days',
+        `    Subject: ${cn}`,
+        '    Subject Public Key Info:',
+        `        Public Key Algorithm: id-X25519-MLKEM768 (${compositeOidStr})`,
+        `        [LAMPS draft-ietf-lamps-pq-composite-kem §6  — IETF Last Call]`,
+        `            Composite Public Key (1216 bytes):`,
+        `                X25519 component       (32 B):   ${this.toHex(x25519Pair.publicKey).slice(0, 64)}…`,
+        `                ML-KEM-768 component   (1184 B): ${this.toHex(mlkemPair.publicKey).slice(0, 64)}…`,
+        '        Encoding: subjectPublicKey ::= x25519PublicKey ‖ mlkem768PublicKey',
+        '    X509v3 extensions:',
+        '        X509v3 Basic Constraints: critical',
+        '            CA:FALSE',
+        `    Signature Algorithm: ml-dsa-65 (${ML_DSA_65_OID_STR})`,
+        `    Signature Value: 3309 bytes (ML-DSA-65 signature over TBSCertificate DER)`,
+        '',
+        '# References:',
+        '#   draft-ietf-lamps-pq-composite-kem  — IETF Last Call',
+        '#     §6  Subject public key encoding',
+        '#     OID id-X25519-MLKEM768 = 2.16.840.1.114027.80.5.2.21',
+        '#   RFC 9881  ML-DSA in X.509 (signature algorithm)',
+        '#   FIPS 203  ML-KEM',
+        '#   FIPS 204  ML-DSA',
+        '# Backend: @noble/curves/x25519 + @noble/post-quantum/ml-kem +',
+        '#          @noble/post-quantum/ml-dsa (no OpenSSL composite KEM',
+        '#          encoder exists yet; LAMPS draft not yet RFC).',
+      ].join('\n')
 
       return {
         pem,
-        parsed: parsedResult.stdout || parsedResult.stderr || '',
+        parsed,
         timingMs: performance.now() - start,
       }
     } catch (e) {

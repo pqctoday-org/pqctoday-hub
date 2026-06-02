@@ -3,9 +3,16 @@ import React, { useState } from 'react'
 import { Loader2, Play, BarChart3 } from 'lucide-react'
 import { HYBRID_ALGORITHMS } from '../constants'
 import { hybridCryptoService, type KeyGenResult } from '../services/HybridCryptoService'
+import { silithiumKeygen } from '../services/HybridSignatureService'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { Button } from '@/components/ui/button'
+
+/** Hex-encode a Uint8Array for display in the synthetic Silithium key dump. */
+const toHexDisplay = (data: Uint8Array): string =>
+  Array.from(data)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
 import {
   WorkshopOperationLog,
   type LogEntry,
@@ -145,6 +152,49 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
               mlkemResult.keyInfo,
             ].join('\n'),
             timingMs: x25519Result.timingMs + mlkemResult.timingMs,
+          })
+        }
+      } else if (algo.opensslAlgorithm === 'FUSED') {
+        // Silithium (Fused, ePrint 2025/2059) — no OpenSSL provider exists for
+        // this construction. Route to the @noble JS path that already powers
+        // the Hybrid Signatures sign/verify panel (HybridSignatureService.silithiumKeygen).
+        // eslint-disable-next-line react-hooks/purity
+        const start = performance.now()
+        try {
+          const pair = silithiumKeygen()
+          // eslint-disable-next-line react-hooks/purity
+          const timingMs = performance.now() - start
+          newResults.set(algo.name, {
+            algorithm: algo.name,
+            pemOutput: [
+              '--- secp256k1 EC-Schnorr Component (Classical) ---',
+              `Private Key (raw, ${pair.ecSk.length} B): ${toHexDisplay(pair.ecSk)}`,
+              `Public Key  (sec1, ${pair.ecPk.length} B): ${toHexDisplay(pair.ecPk)}`,
+              '',
+              '--- ML-DSA-65 Component (FIPS 204) ---',
+              `Private Key (raw, ${pair.mlSk.length} B): ${toHexDisplay(pair.mlSk)}`,
+              `Public Key  (raw, ${pair.mlPk.length} B): ${toHexDisplay(pair.mlPk)}`,
+              '',
+              '# Backend: @noble/curves/secp256k1 + @noble/post-quantum/ml-dsa',
+              '# No PEM encoding exists for the fused Silithium construction yet.',
+            ].join('\n'),
+            keyInfo: [
+              '--- secp256k1 EC-Schnorr ---',
+              `Curve: secp256k1, Private: ${pair.ecSk.length} B, Public (sec1-compressed): ${pair.ecPk.length} B`,
+              '--- ML-DSA-65 ---',
+              `Parameter set: ML-DSA-65 (FIPS 204), Private: ${pair.mlSk.length} B, Public: ${pair.mlPk.length} B`,
+            ].join('\n'),
+            timingMs,
+          })
+        } catch (e) {
+          // eslint-disable-next-line react-hooks/purity
+          const elapsed = performance.now() - start
+          newResults.set(algo.name, {
+            algorithm: algo.name,
+            pemOutput: '',
+            keyInfo: '',
+            timingMs: elapsed,
+            error: e instanceof Error ? e.message : String(e),
           })
         }
       } else {

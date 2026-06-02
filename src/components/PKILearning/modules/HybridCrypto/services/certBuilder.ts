@@ -37,6 +37,12 @@ import { parseCertificateInfo, oidToLabel } from './derParser'
 /** ML-DSA-65 — 2.16.840.1.101.3.4.3.18 (RFC 9881) */
 export const ML_DSA_65_OID_STR = '2.16.840.1.101.3.4.3.18'
 
+/** id-X25519-MLKEM768 — 2.16.840.1.114027.80.5.2.21 (draft-ietf-lamps-pq-composite-kem §6) */
+export const COMPOSITE_KEM_X25519_MLKEM768_OID_STR = '2.16.840.1.114027.80.5.2.21'
+
+/** id-SecP256r1-MLKEM768 — 2.16.840.1.114027.80.5.2.22 (draft-ietf-lamps-pq-composite-kem §6) */
+export const COMPOSITE_KEM_SECP256R1_MLKEM768_OID_STR = '2.16.840.1.114027.80.5.2.22'
+
 /** SLH-DSA-SHA2-128s — 2.16.840.1.101.3.4.3.20 (RFC 9909) */
 export const SLH_DSA_SHA2_128S_OID_STR = '2.16.840.1.101.3.4.3.20'
 
@@ -281,6 +287,62 @@ export async function buildSelfSignedX509(
   const tbsDer = serializeTBS(tbs)
   const signature = await signerFn(tbsDer)
   return buildCertificate(tbs, algId, signature)
+}
+
+// ---------------------------------------------------------------------------
+// 1b. Composite KEM certificate (X25519MLKEM768 + ML-DSA-65 issuer)
+//     Per draft-ietf-lamps-pq-composite-kem §6
+//
+//     Subject public key: id-X25519-MLKEM768 (2.16.840.1.114027.80.5.2.21)
+//     SubjectPublicKey:   x25519PublicKey(32B) || mlkem768PublicKey(1184B) = 1216B
+//     Signature:          signed by an external CA — here a transient ML-DSA-65
+//                         issuer (KEM keys cannot self-sign).
+//
+//     Asymmetric pattern: signature algorithm != subject public-key algorithm,
+//     so we cannot reuse buildSelfSignedX509 (which uses one AlgorithmIdentifier
+//     for both).
+// ---------------------------------------------------------------------------
+
+/**
+ * Build a self-issued X.509 v3 certificate carrying a composite KEM
+ * subject public key, signed by a separate signer (typically ML-DSA-65).
+ *
+ * @param compositePubKeyBytes  Subject public key bytes per LAMPS draft-19 §6:
+ *                              x25519PubKey(32) || mlkem768PubKey(1184) for
+ *                              X25519MLKEM768.
+ * @param compositeKemOidStr    OID for the composite KEM (e.g.
+ *                              COMPOSITE_KEM_X25519_MLKEM768_OID_STR).
+ * @param signerFn              Async signer over TBSCertificate DER bytes.
+ * @param signatureOidStr       OID for the signature algorithm (e.g.
+ *                              ML_DSA_65_OID_STR).
+ * @param subject               DN in OpenSSL slash format: `/CN=.../O=.../OU=...`
+ */
+export async function buildCompositeKEMCert(
+  compositePubKeyBytes: Uint8Array,
+  compositeKemOidStr: string,
+  signerFn: SignerFn,
+  signatureOidStr: string,
+  subject: string
+): Promise<Uint8Array> {
+  const subjectAlgId = buildAlgId(compositeKemOidStr)
+  const signatureAlgId = buildAlgId(signatureOidStr)
+  const { validity } = buildValidity()
+  const name = buildName(subject)
+
+  const tbs = new TBSCertificate({
+    version: Version.v3,
+    serialNumber: generateSerialBytes(),
+    signature: signatureAlgId,
+    issuer: name,
+    validity,
+    subject: name,
+    subjectPublicKeyInfo: buildSPKI(subjectAlgId, compositePubKeyBytes),
+    extensions: new Extensions([basicConstraintsExt()]),
+  })
+
+  const tbsDer = serializeTBS(tbs)
+  const signature = await signerFn(tbsDer)
+  return buildCertificate(tbs, signatureAlgId, signature)
 }
 
 // ---------------------------------------------------------------------------

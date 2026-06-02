@@ -614,6 +614,81 @@ export const LibraryView: React.FC = () => {
     personaPreferredCategories,
   ])
 
+  // Persona-narrow counterfactual: the set of items that would be visible
+  // if the persona-preferred category narrow were lifted, with every other
+  // filter applied. Powers the "X newly added documents hidden by your
+  // role" banner — without this, freshly added entries that fall outside
+  // the persona's preferred categories vanish silently.
+  const filteredItemsNoPersonaNarrow = useMemo(() => {
+    if (!personaPreferredActive) return filteredItems
+    return libraryData.filter((item) => {
+      if (activeCategory !== 'All' && !item.categories.includes(activeCategory)) return false
+      if (activeOrg !== 'All') {
+        const itemCanonicalOrgs = item.authorsOrOrganization
+          ? item.authorsOrOrganization
+              .split(';')
+              .map((s) => ORG_CANONICAL_MAP[s.trim()])
+              .filter(Boolean)
+          : []
+        if (!itemCanonicalOrgs.includes(activeOrg)) return false
+      }
+      if (geoFilter.length > 0) {
+        const regionValues = item.regionScope
+          ? item.regionScope
+              .split(';')
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : []
+        if (!matchesGeoFilter(geoFilter, regionValues)) return false
+      }
+      if (sectorFilter.length > 0) {
+        const industries = item.applicableIndustries ?? []
+        if (!matchesSectorFilter(sectorFilter, industries)) return false
+      }
+      if (!matchesTrustTierFilter(tierFilter, 'library', item.referenceId)) return false
+      if (showOnlyLibraryBookmarks && !libraryBookmarks.includes(item.referenceId)) return false
+      if (cswp39Only && !maturityByRefId.has(item.referenceId)) return false
+      if (certRelevantOnly && !certRelevantIdSet.has(item.referenceId)) return false
+      if (lifecycleBucket !== 'All' && item.documentStatusBucket !== lifecycleBucket) return false
+      if (!filterText) return true
+      const searchLower = filterText.toLowerCase()
+      const lexicalMatch =
+        item.documentTitle.toLowerCase().includes(searchLower) ||
+        item.referenceId.toLowerCase().includes(searchLower) ||
+        item.shortDescription?.toLowerCase().includes(searchLower) ||
+        item.categories?.some((cat) => cat.toLowerCase().includes(searchLower))
+      if (lexicalMatch) return true
+      if (semanticIdSet && semanticIdSet.has(item.referenceId.toLowerCase())) return true
+      return false
+    })
+  }, [
+    personaPreferredActive,
+    filteredItems,
+    activeCategory,
+    activeOrg,
+    geoFilter,
+    sectorFilter,
+    filterText,
+    semanticIdSet,
+    showOnlyLibraryBookmarks,
+    libraryBookmarks,
+    cswp39Only,
+    certRelevantOnly,
+    certRelevantIdSet,
+    lifecycleBucket,
+    tierFilter,
+  ])
+
+  // Count of newly added (loader-diff status='New') items that the persona
+  // narrow is currently hiding. Feeds the warning-style banner variant.
+  const newHiddenByPersonaCount = useMemo(() => {
+    if (!personaPreferredActive) return 0
+    const visibleIds = new Set(filteredItems.map((i) => i.referenceId))
+    return filteredItemsNoPersonaNarrow.filter(
+      (i) => i.status === 'New' && !visibleIds.has(i.referenceId)
+    ).length
+  }, [personaPreferredActive, filteredItems, filteredItemsNoPersonaNarrow])
+
   // Persona-preferred categories for secondary sort boost
   const preferredCategories = useMemo(() => {
     if (!selectedPersona) return []
@@ -1219,8 +1294,10 @@ export const LibraryView: React.FC = () => {
           {personaPreferredActive ? (
             <PersonaDefaultsBanner
               matchedCount={filteredItems.length}
-              totalCount={libraryData.length}
+              totalCount={filteredItemsNoPersonaNarrow.length}
               noun="document"
+              personaName={selectedPersona ?? undefined}
+              newHiddenCount={newHiddenByPersonaCount}
               onReset={() => {
                 personaDefaults.resetToFullSet()
                 logEvent('Library', 'Persona Prefs Off', personaLabel())

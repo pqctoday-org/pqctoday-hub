@@ -28,6 +28,15 @@ export interface PersonaDefaultsBannerProps {
   onReset: () => void
   /** Optional className to extend the wrapper styles. */
   className?: string
+  /** Optional persona display name (e.g. "Architect", "Executive"). When
+   *  provided, the banner names the persona explicitly so the user can
+   *  tell which role is currently narrowing the view. */
+  personaName?: string
+  /** Optional count of recently-added items (status='New' in the loader
+   *  diff) that are hidden by the persona narrowing. When > 0, the banner
+   *  uses a warning-style call-out so freshly added content doesn't get
+   *  silently buried behind the persona default. */
+  newHiddenCount?: number
 }
 
 export function PersonaDefaultsBanner({
@@ -36,20 +45,37 @@ export function PersonaDefaultsBanner({
   noun,
   onReset,
   className = '',
+  personaName,
+  newHiddenCount = 0,
 }: PersonaDefaultsBannerProps) {
-  const pluralizedNoun = matchedCount !== 1 ? `${noun}s` : noun
+  const matchedPluralized = matchedCount !== 1 ? `${noun}s` : noun
+  const newPluralized = newHiddenCount !== 1 ? `${noun}s` : noun
+  const hiddenCount = Math.max(totalCount - matchedCount, 0)
+  const roleLabel = personaName ? `your ${personaName} role` : 'your role'
+  const wrapperClass =
+    newHiddenCount > 0
+      ? `glass-panel inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-md text-xs border border-status-warning/30 bg-status-warning/5 ${className}`.trim()
+      : `glass-panel inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-md text-xs ${className}`.trim()
   return (
-    <div
-      role="status"
-      aria-live="polite"
-      className={`glass-panel inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-md text-xs ${className}`.trim()}
-    >
-      <span className="text-muted-foreground">
-        Showing {matchedCount} {pluralizedNoun} matched to your role
-      </span>
+    <div role="status" aria-live="polite" className={wrapperClass}>
+      {newHiddenCount > 0 ? (
+        <span className="text-status-warning font-medium">
+          {newHiddenCount} newly added {newPluralized} hidden by {roleLabel}
+        </span>
+      ) : (
+        <span className="text-muted-foreground">
+          Showing {matchedCount} {matchedPluralized} matched to {roleLabel}
+          {hiddenCount > 0 && (
+            <>
+              {' '}
+              <span className="text-muted-foreground/80">({hiddenCount} hidden)</span>
+            </>
+          )}
+        </span>
+      )}
       <span className="text-muted-foreground/60">·</span>
       <Button variant="link" onClick={onReset} className="text-xs h-auto p-0">
-        See all {totalCount}
+        Show all {totalCount}
       </Button>
     </div>
   )

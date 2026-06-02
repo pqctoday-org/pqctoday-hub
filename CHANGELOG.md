@@ -5,34 +5,31 @@
 All notable changes to this project will be documented in this file.
 Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
-## [3.17.4] - 2026-05-31
+## [Unreleased] - 2026-06-01
 
-UI overspill fixes across recent learn-module workshops. Tile-pattern Buttons now correctly stack label + description instead of bleeding descriptions into neighboring grid cells.
+Remediation items from the 2026-06-01 bug triage land across two PRs; the WASM bundle bumps to a spec-compliant softhsmv3 build that fixes the KMS PQC envelope-encryption workshop.
 
 ### Fixed
 
-- **Tile-selector Buttons stack label + description correctly** [view:/learn/pqc-testing-validation]: 10 tile-pattern Button instances were using `variant="ghost"` only, which inherits the base `inline-flex items-center whitespace-nowrap` from `button-variants.ts:5`. Stacked block-div children (label + description) rendered side-by-side instead of vertically, and descriptions bled across grid cells. Sites now also pass `size="tile"` to engage the dedicated tile size variant (`flex-col items-start justify-start text-left whitespace-normal gap-1`). Fixes Step 3 (Network Profile, Traffic Pattern) and Step 6 (Migration Phase) of PQC Testing & Validation; also Step 2 ActivePQCScanner target tiles, Step 7 ACVPValidator algorithm tiles, IoT/OT DTLS KEM + Signature selectors, PQCCandidates Family selector, AutomotivePQC SafetyCryptoAnalyzer function cards, and StandardsBodies desktop organization list.
-- **Cell overspill in 5 PKI Learning workshop components** [view:/learn]: MLDSASignDemo PEM/cert `<pre>` blocks now use `whitespace-pre-wrap break-all` (1.3 KB ML-DSA keys wrap inside the details panel instead of horizontal-scrolling); RandomGenerationDemo source-row `<th>` cells lost `whitespace-nowrap` so the source-comparison table fits narrow viewports; HybridCertFormats grid children gained `min-w-0` so per-format `<pre>` can shrink, and OID `<td>` cells gained `break-all`; CmpInitialReq grid children gained `min-w-0` so long DN values stop pushing the 2-col grid past the card; DrbgArchitectureDemo removed conflicting `truncate` (was clobbering `break-all`), swapped `h-[32px]` for `min-h-[32px]`, and added `overflow-hidden` so long nonce/personalization hex wraps cleanly.
-
-### Removed
-
-- **AISecurityPQC VRAM Sizing Calculator** [view:/learn/ai-security-pqc]: `VRAMSizingCalculator` workshop tool plus its `aiVramMath` helper + tests removed; corresponding entry pruned from module index and rag-summary.
-
----
-
-## [3.17.3] - 2026-05-31
-
-New Algorand Post-Quantum Ledger library reference, MLX enrichment for 5 previously un-enriched docs, and updated Algorand product proof link.
+- **PKCS#11 v3.2 §4.11 strict compliance — CKA_CHECK_VALUE populated on every secret-key creation path** [view:/learn/kms-pqc][view:/learn/email-signing][view:/playground]: WASM bundle (`public/wasm/softhsm.{js,wasm}` and `src/vendor/softhsm-wasm/wasm/softhsm.{js,wasm}`) refreshed from [pqctoday-hsm PR #61](https://github.com/pqctoday-org/pqctoday-hsm/pull/61). `C_UnwrapKey` and four `C_DeriveKey` paths (HKDF, PBKD2, SP800-108 counter, SP800-108 feedback) now populate `CKA_CHECK_VALUE` consistently with `C_GenerateKey`, fixing the `CKR_ATTRIBUTE_TYPE_INVALID (0x12)` failure in the ML-KEM-768 / AES-KW envelope-encryption workshop. KCV algorithm corrected from SHA-256 to SHA-1 for non-AES symmetric keys (§6.8.2 / §6.58.2 / §6.59.2 — no PKCS#11 v3.x version permits SHA-256 for KCV; verified against v3.0, v3.1, v3.2 cs01 spec text). Verified end-to-end with a 13-assertion compliance test using OpenSSL as an independent oracle (byte-exact match across every patched path).
+- **Network Security PQC workshop step 6 crash** [view:/learn/network-security-pqc]: `PARTS` array had 6 entries but `WORKSHOP_STEPS` had only 5, so the `WorkshopStepper` read `.label` on `undefined` when the user clicked into step 6, triggering the `ErrorBoundary`. Added the missing `network-telemetry-analyzer` entry to both `WORKSHOP_STEPS` and `MODULE_STEP_COUNTS`.
+- **Module status never flipped to `'completed'` after the user clicks "Complete Module ✓"** [view:/learn]: PQC Candidates and Crypto Agility were the symptom; 20 modules across the Learn catalog share the same broken pattern. Centralized the fix in `useModuleStore.markStepComplete` so it auto-sets `status: 'completed'` when every step in `WORKSHOP_STEPS[moduleId]` has been marked. One store-level change, 20 modules fixed.
+- **PKCS#11 mechanism inspector showed raw hex for 5 mechanism codes** [view:/playground]: Added missing entries to `CKM_TABLE` for `CKM_EC_MONTGOMERY_KEY_PAIR_GEN` (0x1056), `CKM_EDDSA_PH` (0x80001057), `CKM_AES_KEY_WRAP_KWP` (0x210a), `CKM_KMAC_128` (0x80000100), `CKM_KMAC_256` (0x80000101). Verified against `pqctoday-hsm/src/wasm/softhsm.ts` exported `CKM_*` constants.
 
 ### Added
 
-- **Library reference `Algorand-Post-Quantum-Ledger`** [view:/library]: New entry for the Algorand Foundation blog post (Cosimo Bassi, 2026-05-14) describing Algorand's three-phase post-quantum roadmap — State Proofs with Falcon (deployed 2022), lazy migration for current account security (single-sig, multisig, LSig, App), and native PQC accounts (stateless/stateful Falcon) with consensus PQC planned. References the first MainNet Falcon transaction via LSig account abstraction (November 2025). Tagged `digital-assets`, lattice-based, High migration urgency. Linked to `algorand` and `algorand-falcon-mainnet` product records via `misc_info`.
-- **Document Analysis enrichment for 5 library docs** [view:/library]: MLX qwen3.6-27B enrichment of `library_doc_enrichments_05312026.md` populated `Algorand-Post-Quantum-Ledger` (24/39 dims), `draft-ietf-ipsecme-ikev2-mldsa` (23/39), `CSA-PQC-Guide-2025` (19/39), `NIST-SP-800-140Dr1` (18/39), and `NIST-CSWP-39` (16/39). DS05p2 carry-forward preserves 790 prior enrichments. Skipped `NIST-SP-800-140Cr1` (prior 7h 51m anomalous inference) and `APRA-CPS-234` (404 page detected by quality gate).
-- **RAG corpus refreshed** [view:/playground]: `public/data/rag-corpus.json` regenerated (11,291 chunks, 17.1 MB) — 1,911 document-enrichment chunks now include the 5 newly enriched library docs.
+- **Two new library references** [view:/library]:
+  - **Quantum-Resilient Organizational Identity: Governance, Business Wallets, and PQC Corridors** (Couzens / Stöcker / Vasiliu-Feltes, 2026-05-31). Preprint distributed via LinkedIn; introduces the "PQC Corridor" governance + technical migration domain and treats business wallets, qVDRs, and vLEIs as cross-jurisdiction identity interfaces for B2B / B2G / G2G / M2M / agent-to-agent ecosystems.
+  - **Crypto News, June 2026** (Cloud Security Alliance, compiled by Dr. Dhananjoy Dey). CSA Quantum-Safe Security Working Group monthly newsletter covering cryptographic maturity, DST Task Force quantum-safe thinking, and PQC migration progress.
 
-### Updated
+### Data
 
-- **`algorand` product record (`pqc_product_catalog_05312026.csv`)** [view:/migrate]: `proof_url` switched from the 2025 technical brief to the new May 2026 Post-Quantum Ledger post; `proof_publication_date` → `2026-05-14`; `proof_relevant_info` rewritten to summarize the three-phase roadmap and the November 2025 MainNet Falcon transaction; `last_verified_date` → `2026-05-31`.
+- **OSCAL + CBOM exports regenerated** [view:/compliance][view:/migrate]: Stale May 2026 outputs refreshed to pick up new Tectia SSH (SSH.COM) Quantum-Safe Edition entry and recent migrate-catalog adds. Pure regeneration — no schema or content rule changes.
+
+### Related PRs
+
+- pqctoday-hub [#278](https://github.com/pqctoday-org/pqctoday-hub/pull/278) — Track A (network-security step 6, module auto-complete, PKCS#11 mech table)
+- pqctoday-hsm [#61](https://github.com/pqctoday-org/pqctoday-hsm/pull/61) — KCV PKCS#11 v3.2 §4.11 compliance (the source of the new WASM bundle)
 
 ---
 
