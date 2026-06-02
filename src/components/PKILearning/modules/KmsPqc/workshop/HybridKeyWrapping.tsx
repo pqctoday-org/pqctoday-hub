@@ -280,9 +280,9 @@ export const HybridKeyWrapping: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-background rounded-lg p-4 border border-border">
+                <div className="min-w-0 bg-background rounded-lg p-4 border border-border">
                   <div className="text-xs font-bold text-foreground mb-2">Combiner Formula</div>
-                  <pre className="text-[10px] font-mono text-foreground/80 whitespace-pre-wrap break-all">
+                  <pre className="text-[10px] font-mono text-foreground/80 whitespace-pre-wrap break-words overflow-x-auto">
                     {activeHybrid.combiner}
                   </pre>
                 </div>
@@ -384,11 +384,11 @@ export const HybridKeyWrapping: React.FC = () => {
             </div>
 
             {/* API code block for selected wrap mode */}
-            <div>
+            <div className="min-w-0">
               <div className="text-xs font-bold text-foreground mb-2">
                 {WRAP_MODE_LABELS[wrapMode].label} API Example
               </div>
-              <pre className="text-[10px] bg-background p-4 rounded border border-border overflow-x-auto font-mono whitespace-pre">
+              <pre className="text-[10px] bg-background p-4 rounded border border-border overflow-x-auto font-mono whitespace-pre max-w-full">
                 {PROVIDER_WRAP_EXAMPLES[selectedProvider]?.[wrapMode] ??
                   '// API example not available for this combination'}
               </pre>

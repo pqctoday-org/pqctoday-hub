@@ -87,12 +87,38 @@ const generateSimulatedQrng = (bytes: number): Uint8Array => {
   return buf
 }
 
+/**
+ * Generate a deliberately-weak PRNG sample for pedagogical contrast.
+ *
+ * Uses Math.random() with the high nibble masked off (`& 0x0F`), so every
+ * byte falls in the range 0..15. This produces a uniform-looking source
+ * to a casual eye but:
+ *   - the monobit frequency test fails (every byte loses 4 of its 8 bits
+ *     → ones-ratio collapses from ~0.5 to ~0.25)
+ *   - chi-squared blows up (only 16 of 256 buckets ever populated)
+ *   - SP 800-90B min-entropy collapses (∼4 bits/byte instead of ≥6)
+ *   - the histogram is visibly broken (1/16 of the x-axis populated)
+ *
+ * This is NOT a real-world weak RNG; it is an explicitly-broken source
+ * chosen to make BAD entropy visually obvious next to the CSPRNG /
+ * QRNG-simulated samples.
+ */
+const generateWeakPrng = (bytes: number): Uint8Array => {
+  const buf = new Uint8Array(bytes)
+  for (let i = 0; i < bytes; i++) {
+    buf[i] = Math.floor(Math.random() * 256) & 0x0f
+  }
+  return buf
+}
+
 export const QRNGDemo: React.FC = () => {
   const [sampleSize, setSampleSize] = useState<SampleSize>(64)
   const [qrngSample, setQrngSample] = useState<Uint8Array>(() => generateSimulatedQrng(64))
   const [trngData, setTrngData] = useState<Uint8Array | null>(null)
+  const [weakSample, setWeakSample] = useState<Uint8Array>(() => generateWeakPrng(64))
   const [qrngResults, setQrngResults] = useState<TestResult[] | null>(null)
   const [trngResults, setTrngResults] = useState<TestResult[] | null>(null)
+  const [weakResults, setWeakResults] = useState<TestResult[] | null>(null)
 
   const handleGenerateTRNG = useCallback(() => {
     const bytes = getRandomBytes(sampleSize)
@@ -100,23 +126,27 @@ export const QRNGDemo: React.FC = () => {
     // Clear previous comparison results when new TRNG data is generated
     setTrngResults(null)
     setQrngResults(null)
+    setWeakResults(null)
   }, [sampleSize])
 
   const handleCompare = useCallback(() => {
     if (!trngData) return
     setQrngResults(runAllTests(qrngSample))
     setTrngResults(runAllTests(trngData))
-  }, [qrngSample, trngData])
+    setWeakResults(runAllTests(weakSample))
+  }, [qrngSample, trngData, weakSample])
 
   const handleSizeChange = useCallback((size: SampleSize) => {
     setSampleSize(size)
     setQrngSample(generateSimulatedQrng(size))
+    setWeakSample(generateWeakPrng(size))
     setTrngData(null)
     setQrngResults(null)
     setTrngResults(null)
+    setWeakResults(null)
   }, [])
 
-  const hasComparison = qrngResults !== null && trngResults !== null
+  const hasComparison = qrngResults !== null && trngResults !== null && weakResults !== null
 
   return (
     <div className="space-y-6">
@@ -138,10 +168,12 @@ export const QRNGDemo: React.FC = () => {
       {/* Explanation Header */}
       <div className="glass-panel p-4">
         <p className="text-sm text-foreground leading-relaxed">
-          This step compares a pre-generated reference sample (representing QRNG-quality output)
-          with locally generated random data from your browser&apos;s CSPRNG (via Web Crypto API).
-          Both should pass the same statistical tests — the difference is the underlying entropy
-          source.
+          This step compares three sources side by side: a pre-generated reference sample
+          (representing QRNG-quality output), locally generated random data from your browser&apos;s
+          CSPRNG (Web Crypto API), and a deliberately-broken weak PRNG. The QRNG and CSPRNG should
+          pass every test &mdash; they are statistically indistinguishable at this sample size. The
+          weak PRNG should visibly fail several tests, illustrating what the tests are actually
+          designed to catch.
         </p>
       </div>
 
@@ -193,9 +225,9 @@ export const QRNGDemo: React.FC = () => {
       </div>
 
       {/* Side-by-side Comparison */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* QRNG Card */}
-        <div className="glass-panel p-4 space-y-3 relative">
+        <div className="min-w-0 glass-panel p-4 space-y-3 relative">
           <div className="absolute top-4 right-4 flex items-center">
             <span className="inline-flex items-center text-[10px] uppercase font-bold tracking-wider bg-warning/10 text-warning border border-warning/20 px-2 py-0.5 rounded">
               Simulated
@@ -215,7 +247,7 @@ export const QRNGDemo: React.FC = () => {
         </div>
 
         {/* CSPRNG Card */}
-        <div className="glass-panel p-4 space-y-3">
+        <div className="min-w-0 glass-panel p-4 space-y-3">
           <div className="flex items-center gap-2">
             <Cpu size={18} className="text-primary" />
             <h4 className="text-sm font-semibold text-foreground">CSPRNG (OS Entropy)</h4>
@@ -240,32 +272,60 @@ export const QRNGDemo: React.FC = () => {
             </div>
           )}
         </div>
+
+        {/* Weak PRNG Card — pedagogical contrast (visibly bad source) */}
+        <div className="min-w-0 glass-panel p-4 space-y-3 relative border border-status-error/30">
+          <div className="absolute top-4 right-4 flex items-center">
+            <span className="inline-flex items-center text-[10px] uppercase font-bold tracking-wider bg-status-error/10 text-status-error border border-status-error/20 px-2 py-0.5 rounded">
+              Broken
+            </span>
+          </div>
+          <div className="flex items-center gap-2 pr-20">
+            <Cpu size={18} className="text-status-error" />
+            <h4 className="text-sm font-semibold text-foreground">Weak PRNG</h4>
+          </div>
+          <span className="inline-flex items-center text-xs text-muted-foreground bg-muted/40 rounded-full px-2 py-0.5">
+            Math.random() &amp; 0x0F · high nibble forced to 0
+          </span>
+          <pre className="font-mono text-xs text-foreground bg-muted/30 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap break-all leading-relaxed">
+            {formatHex(weakSample)}
+          </pre>
+          <FrequencyHistogram data={weakSample} />
+        </div>
       </div>
 
       {/* Bit Structure Comparison */}
       {trngData && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="glass-panel p-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="min-w-0 glass-panel p-4">
             <p className="text-xs font-medium text-foreground mb-2">QRNG Bit Structure</p>
             <BitMatrixGrid data={qrngSample} compact />
           </div>
-          <div className="glass-panel p-4">
+          <div className="min-w-0 glass-panel p-4">
             <p className="text-xs font-medium text-foreground mb-2">CSPRNG Bit Structure</p>
             <BitMatrixGrid data={trngData} compact />
+          </div>
+          <div className="min-w-0 glass-panel p-4 border border-status-error/30">
+            <p className="text-xs font-medium text-foreground mb-2">Weak PRNG Bit Structure</p>
+            <BitMatrixGrid data={weakSample} compact />
           </div>
         </div>
       )}
 
       {/* Lag Plot Comparison */}
       {trngData && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="glass-panel p-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="min-w-0 glass-panel p-4">
             <p className="text-xs font-medium text-foreground mb-2">QRNG Autocorrelation</p>
             <LagPlot data={qrngSample} size={180} />
           </div>
-          <div className="glass-panel p-4">
+          <div className="min-w-0 glass-panel p-4">
             <p className="text-xs font-medium text-foreground mb-2">CSPRNG Autocorrelation</p>
             <LagPlot data={trngData} size={180} />
+          </div>
+          <div className="min-w-0 glass-panel p-4 border border-status-error/30">
+            <p className="text-xs font-medium text-foreground mb-2">Weak PRNG Autocorrelation</p>
+            <LagPlot data={weakSample} size={180} />
           </div>
         </div>
       )}
@@ -294,14 +354,17 @@ export const QRNGDemo: React.FC = () => {
                   <th className="text-right py-2 px-3 text-muted-foreground font-medium">
                     CSPRNG Value
                   </th>
-                  <th className="text-center py-2 pl-2 text-muted-foreground font-medium">
+                  <th className="text-center py-2 px-2 text-muted-foreground font-medium">
                     CSPRNG
                   </th>
+                  <th className="text-right py-2 px-3 text-status-error font-medium">Weak Value</th>
+                  <th className="text-center py-2 pl-2 text-status-error font-medium">Weak</th>
                 </tr>
               </thead>
               <tbody>
                 {qrngResults.map((qr, i) => {
                   const tr = trngResults[i]
+                  const wk = weakResults[i]
                   return (
                     <tr key={qr.name} className="border-b border-border/50">
                       <td className="py-2 pr-4">
@@ -319,9 +382,17 @@ export const QRNGDemo: React.FC = () => {
                       <td className="text-right py-2 px-3 font-mono text-xs text-foreground">
                         {formatTestValue(tr)}
                       </td>
-                      <td className="text-center py-2 pl-2">
+                      <td className="text-center py-2 px-2">
                         <div className="flex justify-center">
                           <PassFailIcon passed={tr.passed} />
+                        </div>
+                      </td>
+                      <td className="text-right py-2 px-3 font-mono text-xs text-foreground">
+                        {formatTestValue(wk)}
+                      </td>
+                      <td className="text-center py-2 pl-2">
+                        <div className="flex justify-center">
+                          <PassFailIcon passed={wk.passed} />
                         </div>
                       </td>
                     </tr>
@@ -335,21 +406,27 @@ export const QRNGDemo: React.FC = () => {
 
       {hasComparison && (
         <div className="mt-4 rounded-lg border border-border bg-muted/40 p-4">
-          <p className="text-sm font-semibold text-foreground">
-            Why use QRNG if the tests are identical?
+          <p className="text-sm font-semibold text-foreground">What the three sources tell you</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            <strong className="text-status-error">Weak PRNG</strong> visibly fails the histogram,
+            chi-squared, and min-entropy tests because it only ever emits values 0&ndash;15 (the
+            high nibble is forced to zero). This is what bad entropy actually looks like &mdash; and
+            it&apos;s exactly what the statistical tests are designed to catch.
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            <strong>QRNG-simulated</strong> and <strong>CSPRNG</strong> both pass every test because
+            at this sample size they are statistically indistinguishable. The simulated QRNG sample
+            is itself CSPRNG output &mdash; in a production system it would come from a hardware
+            quantum source (photon detection, vacuum fluctuations). The byte distributions look
+            identical because they are.
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
             Statistical tests measure <em>output quality</em>, not <em>source security</em>. A
             CSPRNG seeded with a compromised value (weak entropy, side-channel, backdoored RNG) can
-            produce output that passes all tests while being completely predictable to an attacker.
-            QRNG eliminates the seed entirely — randomness comes from quantum measurement, which is
-            physically irreducible and cannot be predicted even with unlimited compute.
-          </p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            For most applications, a properly seeded CSPRNG is sufficient. QRNG provides defense
-            against seed-level attacks — relevant in high-assurance, long-lived cryptographic
-            systems and post-quantum migration contexts where classical RNG assumptions may not
-            hold.
+            produce output that passes every test while being completely predictable to an attacker.
+            QRNG matters when you need provable seed unpredictability for long-lived cryptographic
+            material &mdash; not for everyday session keys, where a well-seeded CSPRNG (NIST FIPS
+            140-3 DRBG) is the standard.
           </p>
         </div>
       )}
@@ -360,9 +437,11 @@ export const QRNGDemo: React.FC = () => {
             variant="outline"
             onClick={() => {
               setQrngSample(generateSimulatedQrng(sampleSize))
+              setWeakSample(generateWeakPrng(sampleSize))
               setTrngData(null)
               setQrngResults(null)
               setTrngResults(null)
+              setWeakResults(null)
             }}
           >
             Try Another Sample

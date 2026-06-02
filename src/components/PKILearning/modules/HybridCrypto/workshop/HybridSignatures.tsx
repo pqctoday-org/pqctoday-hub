@@ -241,6 +241,7 @@ export const HybridSignatures: React.FC = () => {
     setHsmInitAttempts((n) => n + 1)
   }, [])
   const [hsmStatus, setHsmStatus] = useState<HsmStatus>('loading')
+  const [hsmInitError, setHsmInitError] = useState<string | null>(null)
   const hsmRef = useRef<{ M: SoftHSMModule; hSession: number } | null>(null)
 
   const [state, setState] = useState<Record<ConstructionId, ConstructionState>>({
@@ -274,24 +275,41 @@ export const HybridSignatures: React.FC = () => {
 
   useEffect(() => {
     let cancelled = false
+    setHsmInitError(null)
     async function init() {
+      // Stage tracker — populated as we cross each init boundary so the captured
+      // error message tells us WHICH step failed (module load vs token init vs session).
+      let stage = 'getSoftHSMCppModule'
       try {
         const M = await getSoftHSMCppModule()
+        stage = 'C_Initialize'
         try {
           hsm_initialize(M)
         } catch {
           // CKR_CRYPTOKI_ALREADY_INITIALIZED — module shared with Playground, proceed
         }
+        stage = 'C_GetSlotList'
         const slot0 = hsm_getFirstSlot(M)
+        stage = 'C_InitToken'
         const slot = hsm_initToken(M, slot0, 'softhsm', 'hybrid-sig-workshop')
+        stage = 'C_OpenSession + C_Login'
         const hSession = hsm_openUserSession(M, slot, 'softhsm', '1234')
         if (!cancelled) {
           hsmRef.current = { M, hSession }
           setHsmStatus('ready')
         }
       } catch (e) {
-        if (!cancelled) setHsmStatus('error')
-        console.warn('HybridSignatures: HSM init failed', e)
+        if (!cancelled) {
+          setHsmStatus('error')
+          const msg =
+            e instanceof Error
+              ? `${e.name}: ${e.message}`
+              : typeof e === 'string'
+                ? e
+                : JSON.stringify(e)
+          setHsmInitError(`Stage: ${stage}\n${msg}`)
+        }
+        console.error('HybridSignatures: HSM init failed', { stage, error: e })
       }
     }
     init()
@@ -531,26 +549,38 @@ export const HybridSignatures: React.FC = () => {
         </div>
       )}
       {hsmStatus === 'error' && (
-        <div className="flex items-center gap-2 flex-wrap text-xs text-status-error bg-status-error/5 border border-status-error/20 rounded-lg px-3 py-2">
-          <ShieldAlert size={13} className="shrink-0" />
-          <span className="text-sm">
-            softhsmv3 WASM failed to load — concatenation and nesting unavailable. Silithium still
-            works via @noble.
-          </span>
-          {hsmInitAttempts < 3 ? (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={retryInit}
-              className="h-7 text-xs gap-1 shrink-0 text-foreground"
-            >
-              <RotateCcw size={12} />
-              Retry
-            </Button>
-          ) : (
-            <span className="ml-auto font-medium">
-              WASM failed to load after 3 attempts — try refreshing the page.
+        <div className="flex flex-col gap-2 text-xs text-status-error bg-status-error/5 border border-status-error/20 rounded-lg px-3 py-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <ShieldAlert size={13} className="shrink-0" />
+            <span className="text-sm">
+              softhsmv3 WASM failed to load — concatenation and nesting unavailable. Silithium still
+              works via @noble.
             </span>
+            {hsmInitAttempts < 3 ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={retryInit}
+                className="h-7 text-xs gap-1 shrink-0 text-foreground"
+              >
+                <RotateCcw size={12} />
+                Retry
+              </Button>
+            ) : (
+              <span className="ml-auto font-medium">
+                WASM failed to load after 3 attempts — try refreshing the page.
+              </span>
+            )}
+          </div>
+          {hsmInitError && (
+            <details className="mt-1">
+              <summary className="cursor-pointer text-status-error/80 hover:text-status-error select-none">
+                Show diagnostic details
+              </summary>
+              <pre className="mt-2 text-[11px] font-mono whitespace-pre-wrap break-words bg-status-error/10 border border-status-error/20 rounded p-2 text-status-error/90 max-h-48 overflow-y-auto">
+                {hsmInitError}
+              </pre>
+            </details>
           )}
         </div>
       )}
