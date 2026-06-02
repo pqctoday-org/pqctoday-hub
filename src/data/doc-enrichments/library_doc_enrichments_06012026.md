@@ -43044,3 +43044,113 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-4bit
 - **Extraction Timestamp**: 2026-06-01T07:44:09
 
 ---
+
+## Spherity-PQC-Identity-Corridors-2026
+
+- **Reference ID**: Spherity-PQC-Identity-Corridors-2026
+- **Title**: Quantum-Resilient Organizational Identity: Governance, Business Wallets, and PQC Corridors
+- **Authors**: Brian Couzens (SITG Consulting); Dr. Carsten Stöcker (Spherity GmbH); Prof. Dr. Ingrid Vasiliu-Feltes (University of Miami Herbert Business School)
+- **Publication Date**: 2026-05-31
+- **Last Updated**: 2026-05-31
+- **Document Status**: Preprint
+- **Main Topic**: Governance and systems-architecture analysis for quantum-resilient organizational identity, introducing the PQC Corridor model for coordinated migration.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Harvest-now, decrypt-later; future forgery of legacy digital signatures; cryptographically relevant quantum computer (CRQC)
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Europe; NIST; NCSC; G7 Central Bank Quantum Technologies Working Group; UK AI Security Institute
+- **Leaders Contributions Mentioned**: Brian Couzens (Author); Dr. Carsten Stöcker (Author); Prof. Dr. Ingrid Vasiliu-Feltes (Author)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Digital identity; trust anchors; trust chains; business wallets; qualified Verifiable Data Registry (qVDR); Verifiable LEIs
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: Elliptic-curve public-key cryptography; ECDLP-256; secp256k1
+- **Key Takeaways**: Distinguish harvest-now-decrypt-later confidentiality risks from integrity and non-repudiation risks of signature forgery; adopt the PQC Corridor model to coordinate scope, legal assurance, and cryptographic profiles across actors; evolve identity governance from periodic compliance to continuous resilience with high cryptographic agility; utilize business wallets and qVDRs as functional substrates for verifiable credentials and audit trails; address systemic risks in organizational identity through cross-jurisdictional trust instruments like Verifiable LEIs
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: PQC Corridor; cryptographic agility; coexistence of legacy and quantum-safe standards
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; CISO; Compliance Officer; Policy Maker
+- **Implementation Prerequisites**: Cryptographic inventories; compatibility testing; coordination with counterparties; legal and organizational assurance alignment
+- **Relevant PQC Today Features**: pqc-governance; digital-id; pqc-risk-management; migration-program; crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: Cryptographic inventories
+- **Testing & Validation Methods**: Compatibility testing
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Supply chain risks; vendor coordination; third-party library trust (implied by ecosystem interdependence)
+- **Deployment & Migration Complexity**: Phased migration; coexistence of legacy and quantum-safe standards; network-effect bottleneck
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Governance prerequisites; continuous resilience governance; high legal or organizational assurance combined with high cryptographic agility
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: 1780362011967.pdf (1,196,493 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-06-01T21:38:29
+
+---
+
+## CSA-Crypto-News-June-2026
+
+- **Reference ID**: CSA-Crypto-News-June-2026
+- **Title**: Crypto News, June 2026
+- **Authors**: Cloud Security Alliance; Quantum-Safe Security Working Group; Dr. Dhananjoy Dey (IIIT Lucknow)
+- **Publication Date**: 2026-06-01
+- **Last Updated**: 2026-06-01
+- **Document Status**: Published
+- **Main Topic**: A June 2026 Cloud Security Alliance newsletter covering cryptographic maturity frameworks, PQC migration urgency, NIST standardization updates, and industry quantum-safe initiatives.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Harvest Now, Decrypt Later; Cryptographically Relevant Quantum Computer (CRQC)
+- **Migration Timeline Info**: Quantum advantage predicted by early 2030; Y2Q countdown clock reference
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Cloud Security Alliance, NIST, NSA, DST Task Force, U.S. Air Force, South Korea, India
+- **Leaders Contributions Mentioned**: Dhananjoy Dey (Compiler); Mehak Kalsi (Editorial Author); Jane Devry (Article 1 Author)
+- **PQC Products Mentioned**: Rocky Linux 10.2; PWR Flex 261Q; Quantum eMotion; eShield-Q; Terra Quantum Platform; LYNX Series; Quantum Sentinel Initiative; Apple Corecrypto
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Hardware security modules; Key management; Cloud workloads; Identity systems; IoT devices
+- **Standardization Bodies**: NIST; Cloud Security Alliance
+- **Compliance Frameworks Referenced**: CNSA 2.0; FIPS 203; FIPS 204; FIPS 205
+- **Classical Algorithms Referenced**: RSA; ECC
+- **Key Takeaways**: Organizations must establish cryptographic maturity and inventory before PQC migration; Harvest Now, Decrypt Later poses immediate risk to long-lived data; NIST FIPS 203/204/205 remain the gold standard for PQC solutions; Delaying PQC migration due to AI distractions creates significant security and financial risks; Cryptographic governance must be a board-level concern involving cross-functional coordination.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Crypto-agility; Phased migration strategies; Cryptographic inventory and discovery
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker
+- **Implementation Prerequisites**: Cryptographic inventory; Governance and policy management; Key lifecycle management; Crypto-agility; Risk prioritization; Third-party visibility
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Migrate; Assess; pqc-governance; crypto-agility; pqc-business-case; pqc-risk-management; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: Cryptographic inventory and discovery; Asset inventories; Certificate visibility; Key material audit
+- **Testing & Validation Methods**: Formal verification; Operational monitoring and validation
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: IoT devices; Embedded systems
+- **Supply Chain & Vendor Risk**: Third-party and supply chain visibility; Vendor PQC roadmap maturity; Procurement risk
+- **Deployment & Migration Complexity**: Migration planning; Phased migration strategies; Breaking changes; Backward compatibility
+- **Financial & Business Impact**: Financial impact of delaying PQC migration; Breach cost baselines; ROI projections
+- **Organizational Readiness**: Cryptographic Maturity Action Plan (CMAP); Governance prerequisites; Board-level reporting; Maturity assessment level
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: 1780334671652.pdf (1,362,522 bytes, 13,783 extracted chars)
+- **Extraction Timestamp**: 2026-06-01T21:40:53
+
+---

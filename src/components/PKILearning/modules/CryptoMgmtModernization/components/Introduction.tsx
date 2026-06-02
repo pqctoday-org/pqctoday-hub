@@ -1083,9 +1083,6 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                   Meta PQC Levels (5)
                 </th>
                 <th className="text-left p-2 border-b border-border">CMMI (5 levels)</th>
-                <th className="text-left p-2 border-b border-border text-secondary">
-                  ENISA / NCCoE (5 stages)
-                </th>
               </tr>
             </thead>
             <tbody>
@@ -1098,7 +1095,6 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 <td className="p-2 border-b border-border text-muted-foreground">
                   Level 1 · Initial
                 </td>
-                <td className="p-2 border-b border-border text-muted-foreground">1 · Awareness</td>
               </tr>
               <tr className="bg-muted/20">
                 <td className="p-2 border-b border-border font-medium text-muted-foreground">
@@ -1109,7 +1105,6 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 <td className="p-2 border-b border-border text-muted-foreground">
                   Level 2 · Managed
                 </td>
-                <td className="p-2 border-b border-border text-muted-foreground">2 · Assessment</td>
               </tr>
               <tr>
                 <td className="p-2 border-b border-border font-medium text-muted-foreground">
@@ -1120,7 +1115,6 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 <td className="p-2 border-b border-border text-muted-foreground">
                   Level 3 · Defined
                 </td>
-                <td className="p-2 border-b border-border text-muted-foreground">3 · Planning</td>
               </tr>
               <tr className="bg-muted/20">
                 <td className="p-2 border-b border-border font-medium text-muted-foreground">
@@ -1131,16 +1125,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 <td className="p-2 border-b border-border text-muted-foreground">
                   Level 4 · Quantitatively Managed
                 </td>
-                <td className="p-2 border-b border-border text-muted-foreground">
-                  4 · Implementation
-                </td>
               </tr>
               <tr>
                 <td className="p-2 font-medium text-muted-foreground">Continuous</td>
                 <td className="p-2 font-bold">Tier 4 · Adaptive</td>
                 <td className="p-2">PQ-Enabled</td>
                 <td className="p-2 text-muted-foreground">Level 5 · Optimizing</td>
-                <td className="p-2 text-muted-foreground">5 · Operations</td>
               </tr>
             </tbody>
           </table>
@@ -1149,9 +1139,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           <div className="bg-muted/40 rounded-lg p-3 border border-border">
             <div className="font-bold text-foreground mb-1">Scale difference</div>
             <p className="text-muted-foreground">
-              CSWP.39 uses 4 tiers — this module&apos;s native scale. Meta, CMMI, and ENISA/NCCoE
-              use 5 levels. CSWP.39 Tier 1 spans two Meta levels (PQ-Unaware and PQ-Aware) because
-              the spec treats both as &ldquo;Partial&rdquo; practice.
+              CSWP.39 uses 4 tiers — this module&apos;s native scale. Meta and CMMI use 5 levels.
+              CSWP.39 Tier 1 spans two Meta levels (PQ-Unaware and PQ-Aware) because the spec treats
+              both as &ldquo;Partial&rdquo; practice.
             </p>
           </div>
           <div className="bg-muted/40 rounded-lg p-3 border border-border">
@@ -1159,7 +1149,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <p className="text-muted-foreground">
               Meta&apos;s model is outcome-focused (is PQC actually running?). CSWP.39 is
               process-maturity focused (are practices repeatable?). CMMI is process-capability
-              focused. ENISA/NCCoE is project-phase focused.
+              focused. ENISA and NCCoE describe PQC migration stages (lifecycle phases), not
+              maturity levels, so they are deliberately omitted from this cross-walk.
             </p>
           </div>
         </div>
