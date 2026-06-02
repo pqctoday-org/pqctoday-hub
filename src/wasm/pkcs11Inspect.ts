@@ -260,7 +260,15 @@ const CKM_TABLE: Record<number, ConstEntry> = {
     name: 'CKM_EC_EDWARDS_KEY_PAIR_GEN',
     description: 'Ed25519/Ed448 key pair generation',
   },
+  0x00001056: {
+    name: 'CKM_EC_MONTGOMERY_KEY_PAIR_GEN',
+    description: 'Montgomery curve key pair generation (X25519/X448)',
+  },
   0x00001057: { name: 'CKM_EDDSA', description: 'EdDSA signature (Ed25519/Ed448)' },
+  0x80001057: {
+    name: 'CKM_EDDSA_PH',
+    description: 'EdDSA pre-hashed signature (Ed25519ph/Ed448ph) [VENDOR]',
+  },
   // AES (§2.14)
   0x00001080: { name: 'CKM_AES_KEY_GEN', description: 'AES key generation' },
   0x00001081: { name: 'CKM_AES_ECB', description: 'AES-ECB (no padding)' },
@@ -269,8 +277,15 @@ const CKM_TABLE: Record<number, ConstEntry> = {
   0x00001087: { name: 'CKM_AES_GCM', description: 'AES-GCM authenticated encryption' },
   0x0000108a: { name: 'CKM_AES_CMAC', description: 'AES-CMAC (NIST SP 800-38B)' },
   0x00002109: { name: 'CKM_AES_KEY_WRAP', description: 'AES Key Wrap (RFC 3394)' },
+  0x0000210a: {
+    name: 'CKM_AES_KEY_WRAP_KWP',
+    description: 'AES Key Wrap with Padding (NIST SP 800-38F §6.3)',
+  },
   // HKDF (§2.43)
   0x0000402a: { name: 'CKM_HKDF_DERIVE', description: 'HKDF key derivation (RFC 5869)' },
+  // KMAC (§2.x) — PKCS#11 v3.2 / vendor codes
+  0x80000100: { name: 'CKM_KMAC_128', description: 'KMAC128 (NIST SP 800-185) [VENDOR]' },
+  0x80000101: { name: 'CKM_KMAC_256', description: 'KMAC256 (NIST SP 800-185) [VENDOR]' },
   // AEAD and Stateful Signatures
   0x00001225: { name: 'CKM_CHACHA20_KEY_GEN', description: 'ChaCha20 key generation' },
   0x00004021: { name: 'CKM_CHACHA20_POLY1305', description: 'ChaCha20-Poly1305 AEAD' },
