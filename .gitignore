@@ -155,6 +155,9 @@ scripts/original_hook.ts
 # Playwright local state
 e2e/playwright-state.json
 
+# VSCode workspace files (developer-local; synced to pqctoday-priv if useful)
+*.code-workspace
+
 # === Private development files (synced to pqc-timeline-app-priv) ===
 
 # AI / Agent config
