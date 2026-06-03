@@ -44,6 +44,6 @@ export const content: ModuleContent = {
     overview:
       'ID: database-encryption-pqc. Track: Infrastructure. Level: Intermediate. Duration: 75 min. Workshop Steps: 5. This module covers quantum-safe migration for database encryption layers, TDE key management, BYOK/HYOK architecture, queryable encryption compatibility, and regulatory compliance for enterprise database fleets. ---',
     keyConcepts:
-      "AES-256 is quantum-safe: Grover's algorithm reduces effective bits from 256 to 128 — still above the 112-bit security minimum. No data file re-encryption needed. DEK wrapping is the PQC target: RSA-OAEP and ECDH used to wrap DEKs must be replaced with ML-KEM-1024. ML-KEM-1024 key sizes: Public key: 1,568 bytes (vs 256 bytes RSA-2048). Ciphertext: 1,568 bytes. ~6× metadata overhead per DEK — negligible for multi-TB databases.",
+      "AES-256 is quantum-safe: Grover's algorithm reduces effective bits from 256 to 128, which equals NIST PQC Level 1 (the post-quantum security floor). AES-256 stays usable but offers no margin above that floor — AES-192 and AES-128 fall below it after Grover. No data file re-encryption needed. DEK wrapping is the PQC target: RSA-OAEP and ECDH used to wrap DEKs must be replaced with ML-KEM-1024. ML-KEM-1024 key sizes: Public key: 1,568 bytes (vs 256 bytes RSA-2048). Ciphertext: 1,568 bytes. ~6× metadata overhead per DEK — negligible for multi-TB databases.",
   },
 }

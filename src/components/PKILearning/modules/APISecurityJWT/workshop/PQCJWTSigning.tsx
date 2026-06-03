@@ -24,7 +24,7 @@ const JWT_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'jwt-pqc-sigver',
     useCase: 'PQC JWT access token signing (ML-DSA-65)',
-    standard: 'RFC 9500 + FIPS 204',
+    standard: 'RFC 9964 + FIPS 204',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     kind: { type: 'mldsa-functional', variant: 65 },
     message: '{"sub":"1234567890","name":"PQC User","iat":1735689600,"alg":"ML-DSA-65"}',
@@ -609,7 +609,7 @@ export const PQCJWTSigning: React.FC = () => {
       <KatValidationPanel
         specs={JWT_KAT_SPECS}
         label="API Security JWT Known Answer Tests"
-        authorityNote="RFC 9500 · FIPS 203 · FIPS 204"
+        authorityNote="RFC 9964 · FIPS 203 · FIPS 204"
       />
     </div>
   )

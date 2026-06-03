@@ -136,8 +136,8 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
                 </div>
               </div>
               <p>
-                P-256 requires ~2,330 logical qubits. All ECC variants (P-256, P-384,{' '}
-                <InlineTooltip term="X25519">X25519</InlineTooltip>,{' '}
+                P-256 requires ~1,200 logical qubits (revised per Google Quantum AI, March 2026).
+                All ECC variants (P-256, P-384, <InlineTooltip term="X25519">X25519</InlineTooltip>,{' '}
                 <InlineTooltip term="Ed25519">Ed25519</InlineTooltip>) are equally broken.
               </p>
             </div>

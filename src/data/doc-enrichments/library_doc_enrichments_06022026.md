@@ -43151,6 +43151,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-4bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
+
 ## Bernstein-MLDSA-Bugs-2026
 
 - **Reference ID**: Bernstein-MLDSA-Bugs-2026
@@ -43205,4 +43206,3 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-4bit
 - **Extraction Timestamp**: 2026-06-02T22:19:01
 
 ---
-
