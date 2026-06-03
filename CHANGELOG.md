@@ -7,6 +7,16 @@ Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Learn-module factual inaccuracies — four confirmed defects from a parallel-agent audit** [view:/learn]:
+  - **Quantum Threats — P-256 logical-qubit prose contradicted the module's own data table** [view:/learn/quantum-threats]: `content.ts` keyConcepts said "P-256 requires approximately 2,330 logical qubits" while `data/quantumConstants.ts` was already revised to ≤1,200 logical qubits per the Google Quantum AI March 2026 result (with explicit attribution). Prose now matches the constants and cites the same revision.
+  - **Hybrid Crypto — RFC 9935 date drifted from the canonical protocol matrix** [view:/learn/hybrid-crypto]: `constants.ts` educationalNote said "RFC 9935 (October 2025)"; `pqcProtocolMatrix.ts` (source of truth) carries `stageNote: 'RFC 9935 published 2026-03'`. Corrected to March 2026.
+  - **Database Encryption PQC — Grover/AES-256 framing oversold the headroom** [view:/learn/database-encryption-pqc]: keyConcepts said post-Grover AES-256 is "still above the 112-bit security minimum", which understates the constraint. Rewritten to make explicit that 128-bit post-Grover security equals the NIST PQC Level 1 floor (no margin above) and that AES-192/AES-128 fall below it.
+  - **HSM PQC — PKCS#11 v3.2 status + mechanism names** [view:/learn/hsm-pqc]: relatedStandards labeled v3.2 as "OASIS PQC draft"; it is an OASIS Standard (June 2024) that adds the ML-KEM / ML-DSA / SLH-DSA mechanisms. keyConcepts mechanism list also had markdown-italic corruption (`CKM*ML_KEM*_, CKM*ML_DSA*_`) — replaced with the canonical PKCS#11 v3.2 mechanism names (`CKM_ML_KEM_KEY_PAIR_GEN`, `CKM_ML_KEM`, `CKM_ML_DSA_KEY_PAIR_GEN`, `CKM_ML_DSA`, `CKM_HASH_ML_DSA`, plus `CKK_ML_KEM` / `CKK_ML_DSA`).
+
+  Audit also flagged ~6 candidates that did **not** survive verification and were retracted (EO 14306 = June 2025 is correct; NIST SP 800-227 = Sep 2025 plausible; RFC 9810 does obsolete RFC 4210 per IETF; FDA Section 524B is a real FD&C Act provision added by the FY2023 PATCH Act). No changes made for retracted findings.
+
 ### Data
 
 - **G7 Central-Bank Quantum Technologies report — canonical BdF press-release URL + re-enriched** [view:/library]: `library_06022026.csv` carries forward the previous library set (DS05p2 — 798 prior enrichments preserved); `library_05312026.csv` archived per the 2-version rule. The `G7-CB-QT-Financial-2026` entry now uses the Banque de France publications landing → press-release URL (`url_homepage → url_authoritative`) instead of the watermarked draft URL; `local_file` refreshed to the 485 KB public final PDF (no `BDF-INTERNE` watermark); direct PDF URL captured in `misc_info`; confidence bumped 70 → 80. Re-enriched via MLX `qwen3.6:27b` on the clean source (20/39 dimensions populated). Full enrichment record at `src/data/doc-enrichments/library_doc_enrichments_06022026.md`.
