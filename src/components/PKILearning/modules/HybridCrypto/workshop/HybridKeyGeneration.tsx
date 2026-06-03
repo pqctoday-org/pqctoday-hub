@@ -22,7 +22,7 @@ const HYBRID_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'hybrid-mlkem-roundtrip',
     useCase: 'ML-KEM-768 key encapsulation',
-    standard: 'RFC 9843 + FIPS 203',
+    standard: 'FIPS 203',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
     kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
   },
@@ -37,7 +37,7 @@ const HYBRID_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'hybrid-mldsa-pqc',
     useCase: 'ML-DSA-65 PQC signature component',
-    standard: 'RFC 9843 + FIPS 204',
+    standard: 'FIPS 204',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     kind: { type: 'mldsa-functional', variant: 65 },
     message: 'Composite signature: classical=Ed25519,pqc=ML-DSA-65,format=CompositeML-DSA',
@@ -465,7 +465,7 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
       <KatValidationPanel
         specs={HYBRID_KAT_SPECS}
         label="Hybrid Crypto Known Answer Tests"
-        authorityNote="RFC 9843 · FIPS 203 · FIPS 204 · RFC 8032"
+        authorityNote="FIPS 203 · FIPS 204 · RFC 8032"
       />
     </div>
   )

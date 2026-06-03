@@ -429,7 +429,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '}', color: 'foreground', indent: 0 },
     ],
     educationalNote:
-      'RFC 9935 (October 2025) defines X.509 algorithm identifiers for ML-KEM-512/768/1024. KEM certificates are encryption-only per §4 — they cannot self-sign. This workshop uses OpenSSL 3.5+ to generate an ML-KEM-768 key and wrap it in a self-issued certificate carrier; in production a separate signing CA must endorse it. KEM certs enable PQ-safe key encapsulation at the X.509 layer (CMS, S/MIME, IKE certificate-based modes).',
+      'RFC 9935 (March 2026) defines X.509 algorithm identifiers for ML-KEM-512/768/1024. KEM certificates are encryption-only per §4 — they cannot self-sign. This workshop uses OpenSSL 3.5+ to generate an ML-KEM-768 key and wrap it in a self-issued certificate carrier; in production a separate signing CA must endorse it. KEM certs enable PQ-safe key encapsulation at the X.509 layer (CMS, S/MIME, IKE certificate-based modes).',
     classicalAlg: null,
     pqcAlg: 'ML-KEM-768',
   },
