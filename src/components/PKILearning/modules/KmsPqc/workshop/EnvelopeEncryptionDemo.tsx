@@ -1130,7 +1130,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                     `The 12-byte nonce is the SP 800-38D §5.2.1.1 recommended IV length for GCM. The 16-byte tag provides authenticated integrity — the ciphertext blob already contains it. ` +
                     `IV uniqueness is mandatory in GCM: reusing the same (key, IV) pair lets an attacker XOR two ciphertexts to cancel the keystream and recover both plaintexts, and to forge authentication tags (SP 800-38D §8). Prefer AES-KW when nonce management is operationally risky. ` +
                     `Store the KEM ciphertext alongside the wrapped DEK. ` +
-                    `Note: C_EncapsulateKey and C_DecapsulateKey are new in PKCS#11 v3.2 (OASIS 2023) — classic PKCS#11 had no native KEM primitives.`}
+                    `Note: C_EncapsulateKey and C_DecapsulateKey are new in PKCS#11 v3.2 (OASIS Standard, June 2024) — classic PKCS#11 had no native KEM primitives.`}
                 {displayStep.step === 5 &&
                   'Both paths recover the same 32-byte DEK. The KCV (CKA_CHECK_VALUE) confirms key integrity across the wrap/unwrap cycle. ' +
                     'Envelope encryption enables DEK rotation without re-encrypting any data — just generate a new DEK and re-wrap it with the same or new KEK. ' +
