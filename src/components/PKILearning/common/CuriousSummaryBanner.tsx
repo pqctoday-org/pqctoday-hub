@@ -156,18 +156,7 @@ export const CuriousSummaryBanner = ({
   }, [idealImgSrc])
 
   const handleImgError = () => {
-    // Fallback chain: pqcstd → nllm → gcp curious variant → gcp standard
-    if (imgSrc.startsWith('/images/infographics/pqcstd_')) {
-      setImgSrc(`/images/infographics/nllm_${moduleId}.jpg`)
-    } else if (imgSrc.startsWith('/images/infographics/nllm_')) {
-      setImgSrc(
-        isCuriousMode
-          ? `/images/infographics/gcp_${moduleId}-curious.png`
-          : `/images/infographics/gcp_${moduleId}.png`
-      )
-    } else if (imgSrc.includes('-curious.png')) {
-      setImgSrc(`/images/infographics/gcp_${moduleId}.png`)
-    }
+    // Single-variant policy: only pqcstd_*.png is shipped. No fallback chain.
   }
 
   if (!isCuriousMode && !isFullPage) return null
