@@ -7,6 +7,10 @@ Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
 ## [Unreleased]
 
+### Changed
+
+- **Learn → NICE view: hide non-relevant competency areas + modules when a role is picked** [view:/learn]: Previously, picking a NICE Work Role (e.g. "Security Architect") greyed-out non-core Competency Areas to `opacity-40` and dimmed individual modules to `opacity-60`, leaving all 37+ modules on screen at lower contrast — visually busy. Now: non-core CAs are hidden entirely, and within each remaining CA the module list is filtered to those whose `workRoles` array includes the picked role. `All Roles` (the default) is unchanged and still shows the full catalog. The `isSecondaryCA` opacity-60 (for modules appearing in a "borrowed" CA where their primary CA is elsewhere) is preserved — that's a different visual signal independent of role filtering. The "Core for {role}" badge + the role-summary "X/Y relevant modules completed" line continue to provide context. Cleanup is opacity removal + early-return: ~16 lines in [NiceView.tsx](src/components/PKILearning/NiceView.tsx).
+
 ### Fixed
 
 - **Learn-module factual inaccuracies — second-pass audit, four more defects in workshop sub-files** [view:/learn]:
