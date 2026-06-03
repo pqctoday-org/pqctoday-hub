@@ -43151,3 +43151,58 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-4bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
+## Bernstein-MLDSA-Bugs-2026
+
+- **Reference ID**: Bernstein-MLDSA-Bugs-2026
+- **Title**: Exploiting ML-DSA bugs
+- **Authors**: Daniel J. Bernstein (UIC; Academia Sinica Taiwan)
+- **Publication Date**: 2026-06-01
+- **Last Updated**: 2026-06-01
+- **Document Status**: Published
+- **Main Topic**: Cryptanalysis paper demonstrating that software bugs in ML-DSA implementations can be exploited to forge signatures in seconds, arguing for hybrid ECC+PQ deployment to mitigate risk.
+- **PQC Algorithms Covered**: ML-DSA, Dilithium, ML-KEM
+- **Quantum Threats Addressed**: Quantum attacks on ECC; Harvest Now Decrypt Later (implied by "breakable keys" estimates over time)
+- **Migration Timeline Info**: Estimates breakable key rates for years 2027 through 2039; notes NIST standardization of ML-DSA in 2024
+- **Applicable Regions / Bodies**: Regions: USA; Taiwan; Bodies: NIST; Academia Sinica; University of Illinois at Chicago
+- **Leaders Contributions Mentioned**: Daniel J. Bernstein (author, demonstrates exploitability); Kobeissi (announced vulnerabilities in libcrux); Blessing, Specter, and Weitzner (analyzed CVEs); Lyubashevsky (Principal Submitter of Dilithium)
+- **PQC Products Mentioned**: libcrux; NSS; OpenSSL; GnuTLS; Firefox; OpenSSH
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Cryptographic libraries; PKI (implied by signature context)
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: FIPS 203; FIPS 204; CVEs
+- **Classical Algorithms Referenced**: ECDSA; Ed25519; ECC; DH; X25519
+- **Key Takeaways**: Software vulnerabilities in ML-DSA can allow secret key recovery and signature forgery in 1 second; Hybrid ECC+PQ double-signing significantly reduces the number of breakable keys compared to solo PQ; Formal verification claims (e.g., libcrux) do not guarantee immunity to exploitable bugs; Organizations should quantify breakable key rates over time rather than relying on qualitative security benefits
+- **Security Levels & Parameters**: ML-DSA-44; Dilithium 1.0; Dilithium 3.4
+- **Hybrid & Transition Approaches**: Double-signing with ECC+PQ; Hybrid classic + post-quantum authentication
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "we should go straight to pure ML-DSA-44"
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "double-signing data with ECC+PQ"
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: Exploitable in 1 second on 1 laptop core; 0.450 CVEs per 1000 lines of code (NSS); 1.187 CVEs per 1000 lines of code (OpenSSL)
+- **Target Audience**: Security Architect; Developer; Researcher; CISO
+- **Implementation Prerequisites**: Open-source attack demos; access to public keys and signatures
+- **Relevant PQC Today Features**: pqc-risk-management; hybrid-crypto; code-signing; vendor-risk; pqc-business-case
+- **Implementation Attack Surface**: Software vulnerabilities; randomness reuse; signature malleability; non-conformant signatures; secret-key leakage
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Known-answer tests (KATs); code review; code testing; code verification; formal verification
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: Randomness-expansion details; randomness reuse
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Vulnerabilities in widely used cryptographic libraries (NSS, OpenSSL, GnuTLS); bugs in formally verified libraries (libcrux)
+- **Deployment & Migration Complexity**: Upgrade panic; rapid deployment risks; hybrid vs pure migration paths
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Risk assessment founded on facts; quantified cost-benefit comparisons
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Source Document**: Bernstein-MLDSA-Bugs-2026.pdf (545,559 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-06-02T22:19:01
+
+---
+
