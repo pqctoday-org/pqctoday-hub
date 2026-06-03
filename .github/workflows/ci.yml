@@ -223,6 +223,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: checks
+    # Branch protection on main rejects the in-job `git push` with GH006;
+    # the trust-engine provenance log (public/data/revisions.jsonl) is frozen
+    # until issue #294 lands the GitHub-App-based fix. Marking continue-on-error
+    # so the false-red CI signal stops drowning real failures.
+    continue-on-error: true
     permissions:
       contents: write
       pull-requests: read
