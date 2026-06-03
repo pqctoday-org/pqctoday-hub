@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo, useCallback } from 'react'
-import { Link, useSearchParams, useNavigate } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import {
   Search,
   Play,
@@ -10,51 +10,32 @@ import {
   ArrowRight,
   BookOpen,
   BookmarkCheck,
-  Bookmark,
-  Wrench,
-  ExternalLink,
   Mail,
   Container,
+  X,
 } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { PreviewBanner } from '../common/PreviewBanner'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { EmptyState } from '../ui/empty-state'
-import { ReviewedBadge } from '../ui/ReviewedBadge'
-import { WORKSHOP_TOOLS, CATEGORIES, type ToolDifficulty } from './workshopRegistry'
+import { WORKSHOP_TOOLS, CATEGORIES, type WorkshopTool } from './workshopRegistry'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { logEvent, personaLabel } from '@/utils/analytics'
-import { getCuriousToolDescription } from '@/data/playgroundCuriousDescriptions'
 import type { PersonaId } from '@/data/learningPersonas'
 import { usePersonaDefaults } from '@/hooks/usePersonaDefaults'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
-
-// ---------------------------------------------------------------------------
-// Difficulty badge
-// ---------------------------------------------------------------------------
-
-const DIFFICULTY_STYLES: Record<ToolDifficulty, string> = {
-  beginner: 'bg-status-success/10 text-status-success',
-  intermediate: 'bg-status-warning/10 text-status-warning',
-  advanced: 'bg-status-error/10 text-status-error',
-}
-
-const DifficultyBadge = ({ level }: { level: ToolDifficulty }) => (
-  <span
-    className={`inline-block text-[10px] px-1.5 py-0.5 rounded font-medium ${DIFFICULTY_STYLES[level]}`}
-  >
-    {level}
-  </span>
-)
-
-const WipBadge = () => (
-  <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-status-warning/15 text-status-warning font-medium border border-status-warning/30">
-    <Wrench className="w-2.5 h-2.5" aria-hidden="true" />
-    WIP
-  </span>
-)
+import { PlaygroundViewToggle, type PlaygroundViewMode } from './PlaygroundViewToggle'
+import { MobilePlaygroundFilterDrawer } from './MobilePlaygroundFilterDrawer'
+import { DesktopPlaygroundFilterPopover, type WipFilter } from './DesktopPlaygroundFilterPopover'
+import { ToolTaxonomyFilter } from './ToolTaxonomyFilter'
+import { toolMatchesAlgorithm } from './toolFilters'
+import { ToolCard, WipBadge } from './views/ToolCard'
+import { ToolStack } from './views/ToolStack'
+import { ToolTable } from './views/ToolTable'
+import { PlaygroundPersonaPathView } from './views/PlaygroundPersonaPathView'
+import { PlaygroundNiceView } from './views/PlaygroundNiceView'
 
 // ---------------------------------------------------------------------------
 // Persona display metadata
@@ -94,8 +75,22 @@ const PERSONA_META: Record<PersonaId, { label: string; subtitle: string; starter
     },
   }
 
+const PROFESSIONAL_PERSONA_FILTER_ITEMS = [
+  { id: 'All', label: 'All Roles' },
+  { id: 'executive', label: 'Executive / GRC' },
+  { id: 'developer', label: 'Developer / Engineer' },
+  { id: 'architect', label: 'Security Architect' },
+  { id: 'ops', label: 'IT Ops / DevOps' },
+  { id: 'researcher', label: 'Researcher' },
+]
+
+const CURIOUS_PERSONA_FILTER_ITEMS = [
+  { id: 'All', label: 'All Paths' },
+  { id: 'curious', label: 'Curious Explorer' },
+]
+
 // ---------------------------------------------------------------------------
-// Executive-specific callout (no technical tools fit executives — CTA to Assess)
+// Banners (preserved from previous implementation)
 // ---------------------------------------------------------------------------
 
 const ExecutiveBanner = () => (
@@ -132,10 +127,6 @@ const ExecutiveBanner = () => (
     </p>
   </div>
 )
-
-// ---------------------------------------------------------------------------
-// Curious Explorer guided start
-// ---------------------------------------------------------------------------
 
 const CuriousStartHere = () => {
   const steps = [
@@ -195,12 +186,8 @@ const CuriousStartHere = () => {
   )
 }
 
-// ---------------------------------------------------------------------------
-// Sandbox access request banner
-// ---------------------------------------------------------------------------
-
 const SandboxAccessBanner = () => (
-  <div className="glass-panel p-4 border-primary/20 space-y-3 mb-4">
+  <div className="glass-panel p-4 border-primary/20 space-y-3">
     <div className="flex items-start gap-3">
       <Container className="w-5 h-5 text-primary shrink-0 mt-0.5" aria-hidden="true" />
       <div className="min-w-0">
@@ -221,10 +208,6 @@ const SandboxAccessBanner = () => (
     </a>
   </div>
 )
-
-// ---------------------------------------------------------------------------
-// Persona recommended tools banner
-// ---------------------------------------------------------------------------
 
 const PersonaBanner = ({
   persona,
@@ -263,10 +246,6 @@ const PersonaBanner = ({
     </div>
   )
 }
-
-// ---------------------------------------------------------------------------
-// Hero cards
-// ---------------------------------------------------------------------------
 
 const HeroCard = ({
   to,
@@ -312,20 +291,22 @@ const HeroCard = ({
 // ---------------------------------------------------------------------------
 
 export const PlaygroundWorkshop = () => {
-  const navigate = useNavigate()
   const isEmbedded = useIsEmbedded()
   const [searchParams, setSearchParams] = useSearchParams()
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchText, setSearchText] = useState('')
 
-  // Sync ?cat= URL param ↔ activeCategory state
+  // ── URL-driven state ────────────────────────────────────────────────────
+  // ?cat=  : category
+  // ?view= : view mode (path/stack/cards/table/nice)
+  // ?role= : NICE role (handled inside PlaygroundNiceView)
   const activeCategoryFromUrl = searchParams.get('cat')
-  const activeCategory: string | null = activeCategoryFromUrl ?? null
+  const activeCategory: string = activeCategoryFromUrl ?? 'All'
   const setActiveCategory = useCallback(
-    (cat: string | null) => {
+    (cat: string) => {
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev)
-          if (cat) next.set('cat', cat)
+          if (cat && cat !== 'All') next.set('cat', cat)
           else next.delete('cat')
           return next
         },
@@ -335,29 +316,83 @@ export const PlaygroundWorkshop = () => {
     [setSearchParams]
   )
 
+  // ── Local filter state ──────────────────────────────────────────────────
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('All')
+  const [wipFilter, setWipFilter] = useState<WipFilter>(isEmbedded ? 'hide' : 'all')
   const [showPersonaFilter, setShowPersonaFilter] = useState(true)
-  // WIP tools visible by default; embed mode hides them (vendors require stable content)
-  const [wipFilter, setWipFilter] = useState<'all' | 'only' | 'hide'>(isEmbedded ? 'hide' : 'all')
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState<string | null>(null)
 
+  // Persona — synced with persona store (mirrors Learn's pattern)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const setPersona = usePersonaStore((s) => s.setPersona)
+  const [selectedPersonaFilter, setSelectedPersonaFilter] = useState<string>(
+    selectedPersona ?? 'All'
+  )
+  const isCuriousMode = selectedPersona === 'curious'
+  const personaFilterItems = isCuriousMode
+    ? CURIOUS_PERSONA_FILTER_ITEMS
+    : PROFESSIONAL_PERSONA_FILTER_ITEMS
+
+  // View mode — default 'cards' (preserves the existing visual feel)
+  const initialViewMode: PlaygroundViewMode = (() => {
+    const v = searchParams.get('view')
+    if (v === 'path' || v === 'stack' || v === 'cards' || v === 'table' || v === 'nice') return v
+    return 'cards'
+  })()
+  const [viewMode, setViewMode] = useState<PlaygroundViewMode>(initialViewMode)
+  const handleViewModeChange = useCallback(
+    (mode: PlaygroundViewMode) => {
+      setViewMode(mode)
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          if (mode === 'cards') next.delete('view')
+          else next.set('view', mode)
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [setSearchParams]
+  )
+
+  // Bookmarks
   const myPlaygroundTools = useBookmarkStore((s) => s.myPlaygroundTools)
-  const toggleMyPlaygroundTool = useBookmarkStore((s) => s.toggleMyPlaygroundTool)
   const showOnlyPlaygroundTools = useBookmarkStore((s) => s.showOnlyPlaygroundTools)
   const setShowOnlyPlaygroundTools = useBookmarkStore((s) => s.setShowOnlyPlaygroundTools)
 
-  const recommendedTools = useMemo(() => {
-    if (!selectedPersona) return []
-    return WORKSHOP_TOOLS.filter((t) => t.recommendedPersonas.includes(selectedPersona))
-  }, [selectedPersona])
+  // Persona handler — keeps persona store + local filter in sync
+  const handlePersonaFilterChange = useCallback(
+    (id: string) => {
+      setSelectedPersonaFilter(id)
+      setPersona(id === 'All' ? null : (id as PersonaId))
+    },
+    [setPersona]
+  )
+
+  // ── Filter pipeline ─────────────────────────────────────────────────────
+  // Persona-recommended pre-filter (when persona banner is "on"). Mirrors the
+  // existing behavior: only narrows when no search and no category and no
+  // other filter is doing the narrowing itself.
+  const personaRecommendedActive =
+    showPersonaFilter && !!selectedPersona && !searchText.trim() && activeCategory === 'All'
+
+  const baselineTools = personaRecommendedActive
+    ? WORKSHOP_TOOLS.filter((t) => t.recommendedPersonas.includes(selectedPersona))
+    : WORKSHOP_TOOLS
 
   const filteredTools = useMemo(() => {
-    let tools =
-      showPersonaFilter && selectedPersona && !searchQuery.trim() && !activeCategory
-        ? recommendedTools
-        : WORKSHOP_TOOLS
-    if (activeCategory) tools = tools.filter((t) => t.category === activeCategory)
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase()
+    let tools = baselineTools
+    if (activeCategory !== 'All') tools = tools.filter((t) => t.category === activeCategory)
+    if (selectedDifficulty !== 'All')
+      tools = tools.filter((t) => t.difficulty === selectedDifficulty)
+    if (selectedPersonaFilter !== 'All' && !personaRecommendedActive) {
+      tools = tools.filter((t) =>
+        t.recommendedPersonas.includes(selectedPersonaFilter as PersonaId)
+      )
+    }
+    if (searchText.trim()) {
+      const q = searchText.toLowerCase()
       tools = tools.filter(
         (t) =>
           t.name.toLowerCase().includes(q) ||
@@ -370,37 +405,80 @@ export const PlaygroundWorkshop = () => {
     if (showOnlyPlaygroundTools) tools = tools.filter((t) => myPlaygroundTools.includes(t.id))
     if (wipFilter === 'only') tools = tools.filter((t) => t.wip)
     if (wipFilter === 'hide') tools = tools.filter((t) => !t.wip)
+    if (selectedAlgorithm) tools = tools.filter((t) => toolMatchesAlgorithm(t, selectedAlgorithm))
     return tools
   }, [
-    searchQuery,
+    baselineTools,
     activeCategory,
-    showPersonaFilter,
-    selectedPersona,
-    recommendedTools,
+    selectedDifficulty,
+    selectedPersonaFilter,
+    personaRecommendedActive,
+    searchText,
     showOnlyPlaygroundTools,
     myPlaygroundTools,
     wipFilter,
+    selectedAlgorithm,
   ])
 
+  const recommendedCount = useMemo(() => {
+    if (!selectedPersona) return 0
+    return WORKSHOP_TOOLS.filter((t) => t.recommendedPersonas.includes(selectedPersona)).length
+  }, [selectedPersona])
+
+  // For grouped-by-category Cards layout
   const groupedTools = useMemo(() => {
-    const groups: Record<string, typeof WORKSHOP_TOOLS> = {}
+    const groups: Record<string, WorkshopTool[]> = {}
     for (const cat of CATEGORIES) {
       const tools = filteredTools.filter((t) => t.category === cat)
-      if (tools.length > 0) groups[cat] = tools
+      if (tools.length > 0) groups[cat] = tools // eslint-disable-line security/detect-object-injection
     }
     return groups
   }, [filteredTools])
 
-  const isPersonaFiltered =
-    showPersonaFilter && !!selectedPersona && !searchQuery.trim() && !activeCategory
+  // Active filter count for the popover/drawer badge
+  let activeFilterCount = 0
+  if (activeCategory !== 'All') activeFilterCount++
+  if (selectedDifficulty !== 'All') activeFilterCount++
+  if (selectedPersonaFilter !== 'All') activeFilterCount++
+  if (wipFilter !== (isEmbedded ? 'hide' : 'all')) activeFilterCount++
+  if (selectedAlgorithm) activeFilterCount++
 
-  // Curious minimum-viable mode (persona-overwhelm rollout): for curious
-  // users, the 35-tool grid with raw byte panes is hostile on first paint.
-  // Replace the catalog UI (sidebar + search + filters + grid) with the
-  // 3-step CuriousStartHere panel and a single "Show full catalog" CTA.
-  // ?prefs=off opts out (the user has explicitly chosen to see the catalog).
+  const filtersActive = activeFilterCount > 0 || searchText.trim() !== ''
+
+  const clearFilters = useCallback(() => {
+    setSearchText('')
+    setActiveCategory('All')
+    setSelectedDifficulty('All')
+    setSelectedPersonaFilter('All')
+    setPersona(null)
+    setWipFilter(isEmbedded ? 'hide' : 'all')
+    setSelectedAlgorithm(null)
+  }, [isEmbedded, setActiveCategory, setPersona])
+
+  // Curious minimum-viable mode — kept as-is
   const personaDefaults = usePersonaDefaults()
   const curiousMinimalMode = selectedPersona === 'curious' && !personaDefaults.prefsOff
+
+  // Path view is only available when a persona is selected
+  const pathAvailable = !!selectedPersona
+
+  // The filter content rendered inside the desktop popover & mobile drawer
+  const filterPanelContent = (
+    <DesktopPlaygroundFilterPopover
+      activeFilterCount={activeFilterCount}
+      personaFilterItems={personaFilterItems}
+      selectedPersonaFilter={selectedPersonaFilter}
+      onPersonaChange={handlePersonaFilterChange}
+      selectedCategory={activeCategory}
+      onCategoryChange={setActiveCategory}
+      selectedDifficulty={selectedDifficulty}
+      onDifficultyChange={setSelectedDifficulty}
+      wipFilter={wipFilter}
+      onWipChange={setWipFilter}
+      wipCount={WORKSHOP_TOOLS.filter((t) => t.wip).length}
+      onClear={clearFilters}
+    />
+  )
 
   return (
     <div>
@@ -417,7 +495,7 @@ export const PlaygroundWorkshop = () => {
         <PreviewBanner pageContext="Developer, Architect, Ops, Researcher" />
       )}
 
-      {/* Curious minimum-viable mode — show only orientation + CTA. */}
+      {/* Curious minimum-viable mode — orientation + CTA only */}
       {curiousMinimalMode && (
         <div className="space-y-4 mt-6">
           <CuriousStartHere />
@@ -441,365 +519,217 @@ export const PlaygroundWorkshop = () => {
         </div>
       )}
 
-      {/* Two-column layout on desktop: sticky left category sidebar + main content */}
       {!curiousMinimalMode && (
-        <div className="flex gap-6 items-start">
-          {/* ── Left category sidebar (desktop only) ── */}
-          <aside
-            className="hidden lg:block w-44 shrink-0 sticky top-20 space-y-0.5"
-            aria-label="Filter by category"
-          >
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground px-2 mb-2">
-              Category
-            </p>
-            <Button
-              variant="ghost"
-              onClick={() => setActiveCategory(null)}
-              className={`w-full justify-between text-xs px-2 py-1.5 h-auto rounded font-medium transition-colors ${
-                activeCategory === null
-                  ? 'bg-primary/10 text-primary'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
-              }`}
-            >
-              <span>All tools</span>
-              <span
-                className={`text-[10px] tabular-nums ${activeCategory === null ? 'text-primary' : 'text-muted-foreground/60'}`}
-              >
-                {WORKSHOP_TOOLS.length}
-              </span>
-            </Button>
-            {CATEGORIES.map((cat) => {
-              const count = WORKSHOP_TOOLS.filter((t) => t.category === cat).length
-              const isActive = activeCategory === cat
-              return (
-                <Button
-                  variant="ghost"
-                  key={cat}
-                  onClick={() => setActiveCategory(isActive ? null : cat)}
-                  className={`w-full justify-between text-xs px-2 py-1.5 h-auto rounded font-medium transition-colors ${
-                    isActive
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
-                  }`}
-                >
-                  <span className="text-left truncate">{cat}</span>
-                  <span
-                    className={`text-[10px] tabular-nums shrink-0 ml-1 ${isActive ? 'text-primary' : 'text-muted-foreground/60'}`}
-                  >
-                    {count}
-                  </span>
-                </Button>
-              )
-            })}
-            {!isEmbedded && (
-              <Button
-                variant="ghost"
-                onClick={() =>
-                  setWipFilter((v) => (v === 'all' ? 'only' : v === 'only' ? 'hide' : 'all'))
+        <div className="space-y-6 pt-4">
+          {/* Persona-specific entry points */}
+          {selectedPersona === 'executive' && <ExecutiveBanner />}
+          {selectedPersona === 'curious' && <CuriousStartHere />}
+
+          {/* Persona recommended banner (non-executive/curious) */}
+          {selectedPersona && selectedPersona !== 'executive' && selectedPersona !== 'curious' && (
+            <PersonaBanner
+              persona={selectedPersona}
+              recommendedCount={recommendedCount}
+              showingPersona={personaRecommendedActive}
+              onToggle={() => setShowPersonaFilter((v) => !v)}
+            />
+          )}
+
+          {/* ── Mobile: search + filter drawer ── */}
+          <div className="flex md:hidden items-center gap-2">
+            <div className="relative flex-1">
+              <Search
+                size={14}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <Input
+                type="search"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                placeholder="Search tools…"
+                aria-label="Search tools"
+                className="pl-8 h-[44px] text-sm rounded-lg"
+              />
+            </div>
+            <div className="w-[140px] shrink-0">
+              <MobilePlaygroundFilterDrawer
+                activeFilterCount={activeFilterCount}
+                onClearAll={clearFilters}
+                filterContent={
+                  <div className="space-y-6">
+                    {filterPanelContent}
+                    <div className="space-y-2 flex flex-col pt-4 border-t border-border/50">
+                      <span className="text-sm font-semibold text-foreground">View Mode</span>
+                      <PlaygroundViewToggle
+                        mode={viewMode}
+                        onChange={handleViewModeChange}
+                        pathAvailable={pathAvailable}
+                      />
+                    </div>
+                  </div>
                 }
-                className={`w-full justify-between text-xs px-2 py-1.5 h-auto rounded font-medium transition-colors mt-2 ${
-                  wipFilter === 'only'
-                    ? 'bg-status-warning/15 text-status-warning'
-                    : wipFilter === 'hide'
-                      ? 'text-muted-foreground/50 line-through hover:text-muted-foreground hover:no-underline'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
-                }`}
-                title={
-                  wipFilter === 'all'
-                    ? 'Click to show only WIP tools'
-                    : wipFilter === 'only'
-                      ? 'Click to hide WIP tools'
-                      : 'Click to show all tools including WIP'
-                }
-              >
-                <span className="flex items-center gap-1.5">
-                  <Wrench className="w-3 h-3 shrink-0" aria-hidden="true" />
-                  {wipFilter === 'hide' ? 'WIP hidden' : 'WIP'}
-                </span>
-                {wipFilter !== 'hide' && (
-                  <span className="text-[10px] tabular-nums shrink-0 ml-1">
-                    {WORKSHOP_TOOLS.filter((t) => t.wip).length}
-                  </span>
-                )}
-              </Button>
-            )}
-          </aside>
+              />
+            </div>
+          </div>
 
-          {/* ── Main content ── */}
-          <div className="flex-1 min-w-0 space-y-8">
-            {/* Persona-specific entry points */}
-            {selectedPersona === 'executive' && <ExecutiveBanner />}
-            {selectedPersona === 'curious' && <CuriousStartHere />}
-
-            {/* Persona recommended banner (non-executive/curious) */}
-            {selectedPersona &&
-              selectedPersona !== 'executive' &&
-              selectedPersona !== 'curious' && (
-                <PersonaBanner
-                  persona={selectedPersona}
-                  recommendedCount={recommendedTools.length}
-                  showingPersona={isPersonaFiltered}
-                  onToggle={() => setShowPersonaFilter((v) => !v)}
-                />
-              )}
-
-            {/* Search + filter */}
-            <div className="space-y-3">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                <div className="relative flex-1 w-full sm:max-w-md">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search tools, algorithms, or keywords..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">
-                    {filteredTools.length} tool{filteredTools.length !== 1 ? 's' : ''}
-                    {isPersonaFiltered && (
-                      <Button
-                        variant="ghost"
-                        onClick={() => setShowPersonaFilter(false)}
-                        className="ml-2 text-xs text-primary hover:underline"
-                      >
-                        Show all
-                      </Button>
-                    )}
-                  </span>
-                  {myPlaygroundTools.length > 0 && (
-                    <Button
-                      variant="ghost"
-                      onClick={() => setShowOnlyPlaygroundTools(!showOnlyPlaygroundTools)}
-                      className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
-                        showOnlyPlaygroundTools
-                          ? 'border-primary bg-primary/10 text-primary'
-                          : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
-                      }`}
-                      aria-pressed={showOnlyPlaygroundTools}
-                    >
-                      <BookmarkCheck size={12} />
-                      My ({myPlaygroundTools.length})
-                    </Button>
-                  )}
-                </div>
-              </div>
-
-              {/* Category filter pills — mobile/tablet only; desktop uses sidebar */}
-              <div className="flex flex-wrap gap-2 lg:hidden">
-                <Button
-                  variant="ghost"
-                  onClick={() => setActiveCategory(null)}
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
-                    activeCategory === null
-                      ? 'bg-primary/10 text-primary border-primary/30'
-                      : 'text-muted-foreground border-border hover:text-foreground hover:border-border/60'
-                  }`}
-                >
-                  All
-                  <span
-                    className={`text-[10px] px-1 rounded ${activeCategory === null ? 'text-primary' : 'text-muted-foreground'}`}
-                  >
-                    {WORKSHOP_TOOLS.length}
-                  </span>
-                </Button>
-                {CATEGORIES.map((cat) => {
-                  const count = WORKSHOP_TOOLS.filter((t) => t.category === cat).length
-                  const isActive = activeCategory === cat
-                  return (
-                    <Button
-                      variant="ghost"
-                      key={cat}
-                      onClick={() => setActiveCategory(isActive ? null : cat)}
-                      className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
-                        isActive
-                          ? 'bg-primary/10 text-primary border-primary/30'
-                          : 'text-muted-foreground border-border hover:text-foreground hover:border-border/60'
-                      }`}
-                    >
-                      {cat}
-                      <span
-                        className={`text-[10px] px-1 rounded ${isActive ? 'text-primary' : 'text-muted-foreground'}`}
-                      >
-                        {count}
-                      </span>
-                    </Button>
-                  )
-                })}
-                {!isEmbedded && (
-                  <Button
-                    variant="ghost"
-                    onClick={() =>
-                      setWipFilter((v) => (v === 'all' ? 'only' : v === 'only' ? 'hide' : 'all'))
-                    }
-                    className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
-                      wipFilter === 'only'
-                        ? 'bg-status-warning/15 text-status-warning border-status-warning/40'
-                        : wipFilter === 'hide'
-                          ? 'bg-muted text-muted-foreground border-border line-through'
-                          : 'text-muted-foreground border-border hover:text-foreground hover:border-border/60'
-                    }`}
-                    title={
-                      wipFilter === 'all'
-                        ? 'Click to show only WIP tools'
-                        : wipFilter === 'only'
-                          ? 'Click to hide WIP tools'
-                          : 'Click to show all tools'
-                    }
-                  >
-                    <Wrench className="w-3 h-3" aria-hidden="true" />
-                    {wipFilter === 'hide' ? 'WIP hidden' : 'WIP'}
-                    {wipFilter !== 'hide' && (
-                      <span
-                        className={`text-[10px] px-1 rounded ${wipFilter === 'only' ? 'text-status-warning' : 'text-muted-foreground'}`}
-                      >
-                        {WORKSHOP_TOOLS.filter((t) => t.wip).length}
-                      </span>
-                    )}
-                  </Button>
-                )}
-              </div>
+          {/* ── Desktop: controls bar ── */}
+          <div className="hidden md:flex flex-wrap items-center gap-2">
+            <div className="relative flex-1 min-w-[160px]">
+              <Search
+                size={14}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <Input
+                type="search"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                placeholder="Search tools, algorithms, or keywords…"
+                aria-label="Search tools"
+                className="pl-8 h-9 text-xs"
+              />
             </div>
 
-            {/* Hero cards — Playgrounds (hidden when category filter is active) */}
-            {!activeCategory && (
-              <div>
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                  Playgrounds
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <HeroCard
-                    to="/playground/interactive"
-                    icon={Play}
-                    title="Interactive Playground"
-                    description="Key generation, KEM & encryption, signing, hashing, symmetric operations — live via WebAssembly."
-                    badge="ML-KEM · ML-DSA · AES"
-                  />
-                  <HeroCard
-                    to="/playground/hsm"
-                    icon={Cpu}
-                    title="PKCS#11 HSM Playground"
-                    description="Real PKCS#11 v3.2 operations with SoftHSM WASM — dual C++/Rust engine cross-validation and ACVP."
-                  />
-                </div>
-              </div>
+            {filterPanelContent}
+
+            {myPlaygroundTools.length > 0 && (
+              <Button
+                variant="ghost"
+                onClick={() => setShowOnlyPlaygroundTools(!showOnlyPlaygroundTools)}
+                className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
+                  showOnlyPlaygroundTools
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+                }`}
+                aria-pressed={showOnlyPlaygroundTools}
+              >
+                <BookmarkCheck size={12} />
+                My ({myPlaygroundTools.length})
+              </Button>
             )}
 
-            {Object.keys(groupedTools).length === 0 && (
-              <EmptyState
-                icon={<Search className="w-6 h-6" />}
-                title={`No tools match \u201c${searchQuery}\u201d`}
+            <PlaygroundViewToggle
+              mode={viewMode}
+              onChange={handleViewModeChange}
+              pathAvailable={pathAvailable}
+            />
+          </div>
+
+          {/* Researcher algorithm taxonomy filter — only Stack/Cards modes */}
+          {selectedPersona === 'researcher' &&
+            (viewMode === 'stack' || viewMode === 'cards' || viewMode === 'table') && (
+              <ToolTaxonomyFilter
+                selectedAlgorithm={selectedAlgorithm}
+                onChange={setSelectedAlgorithm}
               />
             )}
 
-            {/* Tool grid by category */}
-            {CATEGORIES.map((category) => {
-              const tools = groupedTools[category]
-              if (!tools) return null
-              return (
-                <div key={category}>
-                  <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                    {category}
-                  </h4>
-                  {category === 'Sandbox' && <SandboxAccessBanner />}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {tools.map((tool) => {
-                      const Icon = tool.icon
-                      const isBookmarked = myPlaygroundTools.includes(tool.id)
-                      return (
-                        <div key={tool.id} className="relative">
-                          <Link
-                            to={`/playground/${tool.id}`}
-                            onClick={() =>
-                              logEvent('Playground', 'Tool Open', personaLabel(tool.id))
-                            }
-                            className="glass-panel p-4 h-auto text-left hover:border-primary/40 transition-colors cursor-pointer group items-start justify-start flex"
-                          >
-                            <div className="flex items-start gap-3 w-full">
-                              <Icon className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                              <div className="min-w-0 flex-1 pr-6">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <p className="font-medium text-foreground group-hover:text-primary transition-colors">
-                                    {tool.name}
-                                  </p>
-                                  <DifficultyBadge level={tool.difficulty} />
-                                  {tool.wip && <WipBadge />}
-                                </div>
-                                <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                                  {(selectedPersona === 'curious' &&
-                                    getCuriousToolDescription(tool.id)) ||
-                                    tool.description}
-                                </p>
-                                <div className="flex flex-wrap gap-1 mt-2">
-                                  {tool.algorithms.map((algo) => (
-                                    <span
-                                      key={algo}
-                                      className="inline-block text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground"
-                                    >
-                                      {algo}
-                                    </span>
-                                  ))}
-                                </div>
-                                {/* div wraps the badge to intercept clicks (the badge itself is the focusable target).
-                                  Same pattern as ModuleCard; the inner Badge handles its own keyboard interaction. */}
-                                {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-                                <div
-                                  onClick={(e) => {
-                                    e.preventDefault()
-                                    e.stopPropagation()
-                                    navigate(
-                                      `/revisions?domain=tool&entity=${encodeURIComponent(tool.pt_id)}`
-                                    )
-                                  }}
-                                >
-                                  <ReviewedBadge
-                                    domain="tool"
-                                    entityId={tool.pt_id}
-                                    className="mt-2"
-                                    onOpenDrilldown={() =>
-                                      navigate(
-                                        `/revisions?domain=tool&entity=${encodeURIComponent(tool.pt_id)}`
-                                      )
-                                    }
-                                  />
-                                </div>
-                                {tool.opensourceTool && (
-                                  <div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
-                                    <ExternalLink className="w-3 h-3 shrink-0" aria-hidden="true" />
-                                    <span className="truncate">{tool.opensourceTool.name}</span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </Link>
-                          <Button
-                            variant="ghost"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              toggleMyPlaygroundTool(tool.id)
-                            }}
-                            className={`absolute top-2 right-2 p-1 rounded transition-colors ${
-                              isBookmarked
-                                ? 'text-primary hover:text-primary/80'
-                                : 'text-muted-foreground/40 hover:text-primary'
-                            }`}
-                            aria-label={isBookmarked ? 'Remove from My Tools' : 'Add to My Tools'}
-                          >
-                            {isBookmarked ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
-                          </Button>
+          {/* Results count + clear */}
+          {filtersActive && (
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <span>
+                Showing{' '}
+                <span className="font-semibold text-foreground">{filteredTools.length}</span> of{' '}
+                <span className="font-semibold">{WORKSHOP_TOOLS.length}</span> tools
+              </span>
+              <Button
+                variant="link"
+                onClick={clearFilters}
+                className="p-0 h-auto flex items-center gap-1 font-medium"
+              >
+                <X size={12} aria-hidden="true" />
+                Clear filters
+              </Button>
+            </div>
+          )}
+
+          {/* Hero cards — only on Cards mode without category filter */}
+          {viewMode === 'cards' && activeCategory === 'All' && !filtersActive && (
+            <div>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                Playgrounds
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <HeroCard
+                  to="/playground/interactive"
+                  icon={Play}
+                  title="Interactive Playground"
+                  description="Key generation, KEM & encryption, signing, hashing, symmetric operations — live via WebAssembly."
+                  badge="ML-KEM · ML-DSA · AES"
+                />
+                <HeroCard
+                  to="/playground/hsm"
+                  icon={Cpu}
+                  title="PKCS#11 HSM Playground"
+                  description="Real PKCS#11 v3.2 operations with SoftHSM WASM — dual C++/Rust engine cross-validation and ACVP."
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Empty state */}
+          {filteredTools.length === 0 && (
+            <EmptyState
+              icon={<Search className="w-6 h-6" />}
+              title={
+                searchText ? `No tools match “${searchText}”` : 'No tools match the current filters'
+              }
+              action={{ label: 'Clear filters', onClick: clearFilters }}
+            />
+          )}
+
+          {/* ── View body ── */}
+          {filteredTools.length > 0 && (
+            <>
+              {viewMode === 'path' && selectedPersona && (
+                <PlaygroundPersonaPathView personaId={selectedPersona} tools={filteredTools} />
+              )}
+
+              {viewMode === 'stack' && (
+                <ToolStack
+                  tools={filteredTools}
+                  baselineTools={baselineTools}
+                  onClearFilters={clearFilters}
+                />
+              )}
+
+              {viewMode === 'cards' && (
+                <div className="space-y-8">
+                  {CATEGORIES.map((category) => {
+                    const tools = groupedTools[category] // eslint-disable-line security/detect-object-injection
+                    if (!tools) return null
+                    return (
+                      <div key={category}>
+                        <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                          {category}
+                        </h4>
+                        {category === 'Sandbox' && <SandboxAccessBanner />}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                          {tools.map((tool) => (
+                            <ToolCard key={tool.id} tool={tool} />
+                          ))}
                         </div>
-                      )
-                    })}
-                  </div>
+                      </div>
+                    )
+                  })}
                 </div>
-              )
-            })}
-          </div>
-          {/* end main content */}
+              )}
+
+              {viewMode === 'table' && (
+                <>
+                  {filteredTools.some((t) => t.category === 'Sandbox') && <SandboxAccessBanner />}
+                  <ToolTable tools={filteredTools} />
+                </>
+              )}
+
+              {viewMode === 'nice' && (
+                <PlaygroundNiceView tools={filteredTools} activePersonaId={selectedPersona} />
+              )}
+            </>
+          )}
         </div>
       )}
-      {/* end two-column flex */}
     </div>
   )
 }
