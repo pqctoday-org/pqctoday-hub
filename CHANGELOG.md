@@ -9,7 +9,15 @@ Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
 ### Fixed
 
-- **Learn-module factual inaccuracies — four confirmed defects from a parallel-agent audit** [view:/learn]:
+- **Learn-module factual inaccuracies — second-pass audit, four more defects in workshop sub-files** [view:/learn]:
+  - **APISecurityJWT KAT panel cited RFC 9500 instead of RFC 9964** [view:/learn/api-security-jwt]: `PQCJWTSigning.tsx` lines 27 and 612 had `standard: 'RFC 9500 + FIPS 204'` and `authorityNote="RFC 9500 · FIPS 203 · FIPS 204"`. RFC 9500 is "Standard Public Key Cryptography Test Keys" (Dec 2023, unrelated to JOSE). The same file's prose (lines 239, 359, 382, 393, 604) correctly cites **RFC 9964** ("ML-DSA for JOSE and COSE"). KAT spec metadata now matches.
+  - **HybridCrypto KAT panel cited RFC 9843 — wrong RFC entirely** [view:/learn/hybrid-crypto]: `HybridKeyGeneration.tsx` lines 25, 40, 468 had `RFC 9843 + FIPS 203/204`. RFC 9843 is "BGP-LS Extensions for IS-IS Flexible Algorithm Advertisement" — no PQC relationship. The KAT tests drive the FIPS primitives directly, so citations now drop the bogus RFC and reference FIPS 203 / FIPS 204 / RFC 8032 only.
+  - **KmsPqc envelope-encryption demo dated PKCS#11 v3.2 to 2023** [view:/learn/kms-pqc]: `EnvelopeEncryptionDemo.tsx:1133` said "(OASIS 2023)" — v3.1 is the 2023 release; v3.2 is the June 2024 OASIS Standard that introduced `C_EncapsulateKey` / `C_DecapsulateKey`.
+  - **QuantumThreats Introduction component still on the pre-revision qubit count** [view:/learn/quantum-threats]: `QuantumThreatsIntroduction.tsx:139` carried the old "~2,330 logical qubits" figure for P-256. The `content.ts` prose and `data/quantumConstants.ts` were updated to ≤1,200 (Google Quantum AI, March 2026) but this Introduction panel was missed. Now consistent across the whole module.
+
+  Same audit explicitly retracted four false-positive candidates (CNSA 2.0 "Sep 2022" is correct — the original NSA advisory; ECDSA-P256 DER signatures are ~70–72 bytes; NetworkSecurityPQC "108%" and VPNSSHModule "22× Rosenpass" claims are unsourced but not provably wrong). No changes for retracted items.
+
+- **Learn-module factual inaccuracies — first-pass audit, four confirmed defects** [view:/learn]:
   - **Quantum Threats — P-256 logical-qubit prose contradicted the module's own data table** [view:/learn/quantum-threats]: `content.ts` keyConcepts said "P-256 requires approximately 2,330 logical qubits" while `data/quantumConstants.ts` was already revised to ≤1,200 logical qubits per the Google Quantum AI March 2026 result (with explicit attribution). Prose now matches the constants and cites the same revision.
   - **Hybrid Crypto — RFC 9935 date drifted from the canonical protocol matrix** [view:/learn/hybrid-crypto]: `constants.ts` educationalNote said "RFC 9935 (October 2025)"; `pqcProtocolMatrix.ts` (source of truth) carries `stageNote: 'RFC 9935 published 2026-03'`. Corrected to March 2026.
   - **Database Encryption PQC — Grover/AES-256 framing oversold the headroom** [view:/learn/database-encryption-pqc]: keyConcepts said post-Grover AES-256 is "still above the 112-bit security minimum", which understates the constraint. Rewritten to make explicit that 128-bit post-Grover security equals the NIST PQC Level 1 floor (no margin above) and that AES-192/AES-128 fall below it.
