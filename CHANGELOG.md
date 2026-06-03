@@ -7,9 +7,14 @@ Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
 ## [Unreleased]
 
+### Added
+
+- **New library reference — *Exploiting ML-DSA bugs* (Bernstein, 2026-06-01)** [view:/library]: Cryptanalysis paper by Daniel J. Bernstein (UIC + Academia Sinica) reproducing two distinct ML-DSA software vulnerability patterns — the Dilithium 1.0 implementation flaw + the PlayStation 3 ECDSA-style randomness-reuse pattern — each forging signatures in ~1 second on a laptop core, with open-source attack demos that recover equivalent secret keys from a public key + a few signatures. Quantitatively estimates breakable-key rates over time for ML-DSA solo vs. Ed25519+ML-DSA hybrid signing. Added to `library_06022026_r1.csv` (same-day revision per `CSVmaintenance.md §3.4`) as `Bernstein-MLDSA-Bugs-2026` with `peer_reviewed=no` (preprint), `confidence_score=75`, `trusted_source_id=djb-cr-yp-to` (new entry pending registration). PDF archived at `public/library/Bernstein-MLDSA-Bugs-2026.pdf` (533 KB, cr.yp.to canonical, permanent ID `ddd73b60…`). Full MLX `qwen3.6:27b` enrichment will follow in a separate PR.
+
 ### Data
 
 - **G7 Central-Bank Quantum Technologies report — canonical BdF press-release URL + re-enriched** [view:/library]: `library_06022026.csv` carries forward the previous library set (DS05p2 — 798 prior enrichments preserved); `library_05312026.csv` archived per the 2-version rule. The `G7-CB-QT-Financial-2026` entry now uses the Banque de France publications landing → press-release URL (`url_homepage → url_authoritative`) instead of the watermarked draft URL; `local_file` refreshed to the 485 KB public final PDF (no `BDF-INTERNE` watermark); direct PDF URL captured in `misc_info`; confidence bumped 70 → 80. Re-enriched via MLX `qwen3.6:27b` on the clean source (20/39 dimensions populated). Full enrichment record at `src/data/doc-enrichments/library_doc_enrichments_06022026.md`.
+- **2-version-rule cleanup** [view:/library]: `library_06012026.csv` archived to `src/data/archive/` to make room for the new `_r1` revision.
 
 ---
 
