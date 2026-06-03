@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useMemo } from 'react'
 import { SlidersHorizontal, X, Wrench } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
@@ -41,11 +41,6 @@ const DIFFICULTY_ITEMS: { id: string; label: string }[] = [
   })),
 ]
 
-const CATEGORY_ITEMS = [
-  { id: 'All', label: 'All Categories' },
-  ...CATEGORIES.map((c) => ({ id: c, label: c })),
-]
-
 export const DesktopPlaygroundFilterPopover: React.FC<DesktopPlaygroundFilterPopoverProps> = ({
   activeFilterCount,
   personaFilterItems,
@@ -62,6 +57,11 @@ export const DesktopPlaygroundFilterPopover: React.FC<DesktopPlaygroundFilterPop
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+
+  const CATEGORY_ITEMS = useMemo(
+    () => [{ id: 'All', label: 'All Categories' }, ...CATEGORIES.map((c) => ({ id: c, label: c }))],
+    []
+  )
 
   useEffect(() => {
     const handleClickOutside = (e: Event) => {
