@@ -381,3 +381,6 @@ pki/issued/
 !pki/ca/*.pem
 !pki/vendors/*.pem
 src/.!*!.DS_Store
+
+# VSCode workspace files (per-developer, never committed)
+*.code-workspace
