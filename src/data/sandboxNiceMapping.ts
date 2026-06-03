@@ -103,23 +103,37 @@ const SCENARIO_WORK_ROLE_OVERRIDES: Record<string, NiceWorkRoleId[]> = {
   'supply-chain-signing': ['security-developer', 'is-security-manager'],
 }
 
-// Build the full mapping by iterating SANDBOX_SCENARIOS so it's always in sync.
-export const SANDBOX_NICE_MAP: SandboxNiceRef[] = SANDBOX_SCENARIOS.map((scenario) => {
-  const id = scenario.id
-  const overrideCas = SCENARIO_CA_OVERRIDES[id] // eslint-disable-line security/detect-object-injection
-  const competencyAreas = overrideCas ?? TRACK_DEFAULT_CAS[scenario.trackId]
-  const overrideRoles = SCENARIO_WORK_ROLE_OVERRIDES[id] // eslint-disable-line security/detect-object-injection
-  const workRoles = overrideRoles ?? TRACK_DEFAULT_WORK_ROLES[scenario.trackId]
-  return {
-    scenarioId: id,
-    competencyAreas,
-    tier: TIER_FROM_DIFFICULTY[scenario.difficulty],
-    workRoles,
-  }
-})
+// Built lazily on first access. Module-top-level `.map()` on the imported
+// SANDBOX_SCENARIOS array crashes in production when Vite's code-splitter
+// places this module in a chunk that evaluates before sandboxScenarios.ts —
+// the import binding is `undefined` at that point, and `.map()` throws.
+let _cachedMap: SandboxNiceRef[] | null = null
+let _byScenarioId: Map<string, SandboxNiceRef> | null = null
 
-const _byScenarioId = new Map(SANDBOX_NICE_MAP.map((r) => [r.scenarioId, r]))
+function buildMaps(): Map<string, SandboxNiceRef> {
+  if (_byScenarioId !== null) return _byScenarioId
+  _cachedMap = SANDBOX_SCENARIOS.map((scenario) => {
+    const id = scenario.id
+    const overrideCas = SCENARIO_CA_OVERRIDES[id] // eslint-disable-line security/detect-object-injection
+    const competencyAreas = overrideCas ?? TRACK_DEFAULT_CAS[scenario.trackId]
+    const overrideRoles = SCENARIO_WORK_ROLE_OVERRIDES[id] // eslint-disable-line security/detect-object-injection
+    const workRoles = overrideRoles ?? TRACK_DEFAULT_WORK_ROLES[scenario.trackId]
+    return {
+      scenarioId: id,
+      competencyAreas,
+      tier: TIER_FROM_DIFFICULTY[scenario.difficulty],
+      workRoles,
+    }
+  })
+  _byScenarioId = new Map(_cachedMap.map((r) => [r.scenarioId, r]))
+  return _byScenarioId
+}
+
+export function getSandboxNiceMap(): SandboxNiceRef[] {
+  if (_cachedMap === null) buildMaps()
+  return _cachedMap as SandboxNiceRef[]
+}
 
 export function getSandboxNiceMapping(scenarioId: string): SandboxNiceRef | undefined {
-  return _byScenarioId.get(scenarioId)
+  return buildMaps().get(scenarioId)
 }

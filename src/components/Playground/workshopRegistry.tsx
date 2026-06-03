@@ -27,6 +27,19 @@ import { lazyWithRetry } from '@/utils/lazyWithRetry'
 import type { PersonaId } from '@/data/learningPersonas'
 import { SANDBOX_SCENARIOS, type SandboxTrackId } from '@/data/sandboxScenarios'
 
+export const CATEGORIES = [
+  'OpenSSL Studio',
+  'HSM / PKCS#11',
+  'Entropy & Random',
+  'Certificates & Proofs',
+  'Digital Identity',
+  'Blockchain & Digital Assets',
+  'Protocol Simulations',
+  'Sandbox',
+] as const
+
+export type WorkshopCategory = (typeof CATEGORIES)[number]
+
 // ---------------------------------------------------------------------------
 // Tool registry — each entry describes a crypto-executing workshop component
 // ---------------------------------------------------------------------------
@@ -888,17 +901,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       url: 'https://github.com/openmls/openmls',
     },
   },
-]
-
-export const CATEGORIES = [
-  'OpenSSL Studio',
-  'HSM / PKCS#11',
-  'Entropy & Random',
-  'Certificates & Proofs',
-  'Digital Identity',
-  'Blockchain & Digital Assets',
-  'Protocol Simulations',
-  'Sandbox',
 ]
 
 /** Prefix applied to sandbox scenario ids to avoid collisions with native tools

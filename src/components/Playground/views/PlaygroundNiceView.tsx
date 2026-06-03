@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { Network, ExternalLink } from 'lucide-react'
+import { Network, ExternalLink, Container } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
@@ -79,17 +79,20 @@ interface PlaygroundNiceViewProps {
   activePersonaId?: string | null
 }
 
-const VALID_ROLE_IDS = new Set<string>(Object.keys(NICE_WORK_ROLES))
-
 export const PlaygroundNiceView: React.FC<PlaygroundNiceViewProps> = ({
   tools,
   activePersonaId,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams()
 
+  // Computed at render time so `NICE_WORK_ROLES` is guaranteed loaded — module
+  // top-level `Object.keys(NICE_WORK_ROLES)` crashes in production when Vite's
+  // chunk-splitter places niceFramework in a chunk that loads after this one.
+  const validRoleIds = useMemo(() => new Set<string>(Object.keys(NICE_WORK_ROLES)), [])
+
   const defaultRole: NiceWorkRoleId | 'all' = (() => {
     const urlRole = searchParams.get('role')
-    if (urlRole && VALID_ROLE_IDS.has(urlRole)) return urlRole as NiceWorkRoleId
+    if (urlRole && validRoleIds.has(urlRole)) return urlRole as NiceWorkRoleId
     if (activePersonaId && PERSONA_DEFAULT_ROLE[activePersonaId])
       return PERSONA_DEFAULT_ROLE[activePersonaId]
     return 'all'
@@ -284,19 +287,42 @@ export const PlaygroundNiceView: React.FC<PlaygroundNiceViewProps> = ({
                     <div className="flex flex-wrap gap-2">
                       {tierRefs.map(({ tool, isPrimary }) => {
                         const Icon = tool.icon
+                        const isSandbox = tool.category === 'Sandbox'
                         return (
                           <Link
                             key={tool.id}
                             to={`/playground/${tool.id}`}
                             className={clsx(
-                              'flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border bg-muted/20 hover:bg-muted/40 transition-all border-border',
+                              'flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border bg-muted/20 hover:bg-muted/40 transition-all',
+                              isSandbox ? 'border-status-info/30' : 'border-border',
                               !isPrimary && 'opacity-60'
                             )}
+                            title={isSandbox ? 'Sandbox scenario (Docker container)' : undefined}
                           >
-                            <Icon size={11} className="text-primary shrink-0" aria-hidden="true" />
+                            {isSandbox ? (
+                              <Container
+                                size={11}
+                                className="text-status-info shrink-0"
+                                aria-hidden="true"
+                              />
+                            ) : (
+                              <Icon
+                                size={11}
+                                className="text-primary shrink-0"
+                                aria-hidden="true"
+                              />
+                            )}
                             <span className="text-foreground max-w-[180px] truncate">
                               {tool.name}
                             </span>
+                            {isSandbox && (
+                              <span
+                                className="text-[9px] font-mono px-1 py-0.5 rounded bg-status-info/10 text-status-info border border-status-info/20 shrink-0"
+                                aria-label="Sandbox scenario"
+                              >
+                                SBX
+                              </span>
+                            )}
                             <ExternalLink
                               size={10}
                               className="text-muted-foreground shrink-0 ml-0.5"
