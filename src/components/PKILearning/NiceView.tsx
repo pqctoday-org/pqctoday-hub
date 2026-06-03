@@ -233,12 +233,21 @@ export function NiceView({ navigate, activePersonaId }: NiceViewProps) {
       {/* ── Competency Area sections ── */}
       {CA_ORDER.map((caId) => {
         const ca = NICE_COMPETENCY_AREAS[caId]
-        const caRefs = getModulesForCompetencyArea(caId)
-        if (caRefs.length === 0) return null
+        const allCaRefs = getModulesForCompetencyArea(caId)
+        if (allCaRefs.length === 0) return null
 
         const isCoreForRole =
           selectedRole !== 'all' && NICE_WORK_ROLES[selectedRole].competencyAreas.includes(caId)
-        const isDimmed = selectedRole !== 'all' && !isCoreForRole
+
+        // When a specific role is picked, hide non-core CAs entirely and
+        // filter modules to those tagged for that role. "All Roles" keeps
+        // the full catalog visible.
+        if (selectedRole !== 'all' && !isCoreForRole) return null
+        const caRefs =
+          selectedRole === 'all'
+            ? allCaRefs
+            : allCaRefs.filter((m) => m.workRoles.includes(selectedRole))
+        if (caRefs.length === 0) return null
 
         const caCompleted = caRefs.filter(
           (m) => moduleStates[m.moduleId]?.status === 'completed'
@@ -251,13 +260,7 @@ export function NiceView({ navigate, activePersonaId }: NiceViewProps) {
         }
 
         return (
-          <div
-            key={caId}
-            className={clsx(
-              'glass-panel overflow-hidden transition-opacity duration-200',
-              isDimmed ? 'opacity-40' : 'opacity-100'
-            )}
-          >
+          <div key={caId} className="glass-panel overflow-hidden">
             {/* CA header */}
             <div className="flex gap-0">
               {/* Accent strip */}
@@ -324,8 +327,9 @@ export function NiceView({ navigate, activePersonaId }: NiceViewProps) {
                         const mod = MODULE_CATALOG[ref.moduleId]
                         if (!mod) return null
                         const status = moduleStates[ref.moduleId]?.status ?? 'not-started'
-                        const isRoleMatch =
-                          selectedRole !== 'all' && ref.workRoles.includes(selectedRole)
+                        // Dim modules appearing in a "borrowed" CA (their
+                        // primary CA is elsewhere) so the duplicate listing
+                        // reads as secondary. Applies regardless of role.
                         const isSecondaryCA = ref.competencyAreas[0] !== caId
 
                         return (
@@ -341,7 +345,6 @@ export function NiceView({ navigate, activePersonaId }: NiceViewProps) {
                                 : status === 'in-progress'
                                   ? 'border-info/40 bg-info/5 hover:bg-info/10'
                                   : 'border-border bg-muted/20 hover:bg-muted/40',
-                              isRoleMatch && 'ring-1 ring-primary/50',
                               isSecondaryCA && 'opacity-60'
                             )}
                           >
