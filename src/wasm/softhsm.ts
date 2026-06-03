@@ -2108,7 +2108,13 @@ export const CKM_SHA3_256 = 0x2b0
 export const CKM_SHA3_512 = 0x2d0
 export const CKM_CHACHA20_POLY1305 = 0x00004021
 export const CKM_XMSS_KEY_PAIR_GEN = 0x00004034
-export const CKM_XMSS = 0x00004035
+// PKCS#11 v3.2 §1225 / pkcs11t.h: CKM_XMSS = 0x00004036. The prior 0x00004035
+// value was wrong and didn't match the C++ engine (vendor_mechanisms.h:85),
+// the Rust engine (rust/src/constants.rs:405), or src/wasm/softhsm/constants.ts
+// (the modular re-export). With the wrong value, C_SignInit succeeded but
+// C_Sign fell through to the non-stateful path → CKR_ARGUMENTS_BAD (0x07)
+// because stateful private keys don't expose CKA_VALUE.
+export const CKM_XMSS = 0x00004036
 export const CKM_LMS_KEY_PAIR_GEN = 0x80000001
 export const CKM_LMS = 0x80000002
 export const CKA_HSS_LMS_TYPE = 0x00000618

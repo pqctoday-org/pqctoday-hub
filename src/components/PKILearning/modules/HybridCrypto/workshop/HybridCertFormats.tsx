@@ -582,7 +582,7 @@ export const HybridCertFormats: React.FC = () => {
                           {fmt.id === 'pure-pqc-kem' &&
                             'Requires OpenSSL 3.5+ with ML-KEM support and -force_pubkey flag; KEM keys cannot self-sign, so a transient ML-DSA-65 issuer is used.'}
                           {fmt.id === 'composite-kem' &&
-                            'Requires OpenSSL 3.5+ with composite KEM (X25519MLKEM768) support via oqs-provider; signed by a transient ML-DSA-65 issuer (KEM keys cannot sign).'}
+                            'Per draft-ietf-lamps-pq-composite-kem §6 (IETF Last Call). OID id-X25519-MLKEM768 = 2.16.840.1.114027.80.5.2.21. SubjectPublicKey = x25519PubKey(32B) ‖ mlkem768PubKey(1184B). OpenSSL 3.5+ supports X25519MLKEM768 as a TLS hybrid named group but not as an X.509 SPKI encoder; this workshop mints the cert via @noble/curves/x25519 + @noble/post-quantum/ml-kem and signs it with a transient ML-DSA-65 issuer (RFC 9881), since KEM keys cannot self-sign.'}
                         </p>
                         {!isGeneratingThis && (
                           <Button

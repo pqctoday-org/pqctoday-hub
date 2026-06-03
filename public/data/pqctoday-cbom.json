@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:pqctoday-cbom-20260531",
+  "serialNumber": "urn:uuid:pqctoday-cbom-20260603",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-05-31T12:47:02.101Z",
+    "timestamp": "2026-06-03T03:22:42.173Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -546,7 +546,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-DSA-44, ML-DSA-65, ML-DSA-87, ML-KEM-1024, ML-KEM-512, ML-KEM-768",
+          "parameterSetIdentifier": "ML-DSA-44, ML-DSA-65, ML-DSA-87, ML-KEM-1024, ML-KEM-512, ML-KEM-768, SLH-DSA-SHA2-128s, SLH-DSA-SHA2-128f, SLH-DSA-SHA2-192s, SLH-DSA-SHA2-192f, SLH-DSA-SHA2-256s, SLH-DSA-SHA2-256f, SLH-DSA-SHAKE-128s, SLH-DSA-SHAKE-128f, SLH-DSA-SHAKE-192s, SLH-DSA-SHAKE-192f, SLH-DSA-SHAKE-256s, SLH-DSA-SHAKE-256f",
           "primitive": "KEM"
         }
       },
@@ -584,7 +584,7 @@
         },
         {
           "name": "pqctoday:algorithm_implementations",
-          "value": "ML-DSA-44 (OpenSSL 3.5+); ML-DSA-65 (OpenSSL 3.5+); ML-DSA-87 (OpenSSL 3.5+); ML-KEM-1024 (OpenSSL 3.5+); ML-KEM-512 (OpenSSL 3.5+); ML-KEM-768 (OpenSSL 3.5+)"
+          "value": "ML-DSA-44 (OpenSSL 3.5+); ML-DSA-65 (OpenSSL 3.5+); ML-DSA-87 (OpenSSL 3.5+); ML-KEM-1024 (OpenSSL 3.5+); ML-KEM-512 (OpenSSL 3.5+); ML-KEM-768 (OpenSSL 3.5+); SLH-DSA-SHA2-128s (OpenSSL 3.5+); SLH-DSA-SHA2-128f (OpenSSL 3.5+); SLH-DSA-SHA2-192s (OpenSSL 3.5+); SLH-DSA-SHA2-192f (OpenSSL 3.5+); SLH-DSA-SHA2-256s (OpenSSL 3.5+); SLH-DSA-SHA2-256f (OpenSSL 3.5+); SLH-DSA-SHAKE-128s (OpenSSL 3.5+); SLH-DSA-SHAKE-128f (OpenSSL 3.5+); SLH-DSA-SHAKE-192s (OpenSSL 3.5+); SLH-DSA-SHAKE-192f (OpenSSL 3.5+); SLH-DSA-SHAKE-256s (OpenSSL 3.5+); SLH-DSA-SHAKE-256f (OpenSSL 3.5+)"
         },
         {
           "name": "pqctoday:confidence_score",
@@ -1454,7 +1454,7 @@
           "primitive": "KEM"
         }
       },
-      "description": "Supports verified PQC algorithms including ML-KEM and ML-DSA via CNG and Certificate functions. Available to Windows Insiders and Linux customers. TLS 1.3 hybrid key exchange enabled in SymCrypt-OpenSSL version 1.9.0. Roadmap aims for early adoption by 2029 and full transition by 2033.",
+      "description": "Microsoft cryptographic library shipped with Windows + Azure. Supports ML-KEM (FIPS 203), ML-DSA (FIPS 204), plus stateful-hash signatures LMS (SymCrypt 103.6.0) and XMSS / XMSSMT (SymCrypt 103.5.0). Used by Windows TLS stack, Azure services, and SChannel.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -2212,7 +2212,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-DSA-44, ML-DSA-65, ML-DSA-87, ML-KEM-1024, ML-KEM-512, ML-KEM-768, SecP256r1MLKEM768, SecP384r1MLKEM1024, X25519MLKEM768",
+          "parameterSetIdentifier": "ML-DSA-44, ML-DSA-65, ML-DSA-87, ML-KEM-1024, ML-KEM-512, ML-KEM-768, X25519MLKEM768",
           "primitive": "KEM"
         }
       },
@@ -2250,7 +2250,7 @@
         },
         {
           "name": "pqctoday:algorithm_implementations",
-          "value": "ML-DSA-44 (BoringSSL (Google)); ML-DSA-65 (BoringSSL (Google)); ML-DSA-87 (BoringSSL (Google)); ML-KEM-1024 (BoringSSL (Google)); ML-KEM-512 (BoringSSL (Google)); ML-KEM-768 (BoringSSL (Google)); SecP256r1MLKEM768 (BoringSSL (Google Chrome)); SecP384r1MLKEM1024 (BoringSSL (Google Chrome)); X25519MLKEM768 (BoringSSL (Google Chrome))"
+          "value": "ML-DSA-44 (BoringSSL (Google)); ML-DSA-65 (BoringSSL (Google)); ML-DSA-87 (BoringSSL (Google)); ML-KEM-1024 (BoringSSL (Google)); ML-KEM-512 (BoringSSL (Google)); ML-KEM-768 (BoringSSL (Google)); X25519MLKEM768 (BoringSSL (Google Chrome))"
         },
         {
           "name": "pqctoday:confidence_score",
@@ -2422,7 +2422,7 @@
           "primitive": "KEM"
         }
       },
-      "description": "wolfCrypt embedded crypto library with ML-DSA, ML-KEM, LMS/HSS, and XMSS/XMSSMT support. Fastest stateful hash-based signature benchmarks — faster than Cisco hash-sigs reference. wolfBoot uses LMS/HSS for quantum-safe secure firmware boot signing on embedded/IoT devices. wolfPKCS11 provides PKCS#11 API for HSM-backed stateful key state management. Widely deployed in automotive, industrial, and aerospace.",
+      "description": "TLS/SSL library with PQC support across the FIPS 203/204/205 trio plus stateful-hash and Falcon families: ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA-SHA2/SHAKE-128/192/256{s,f} (added in wolfSSL 5.9.0), FN-DSA (Falcon-512/1024), and LMS/HSS + XMSS/XMSSMT stateful-hash signatures. Hybrid X25519+ML-KEM-768 supported for TLS 1.3 key exchange.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -2730,11 +2730,11 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "Classic-McEliece-348864, Classic-McEliece-460896, Classic-McEliece-8192128, FN-DSA-1024, FN-DSA-512, FrodoKEM-1344, FrodoKEM-640, FrodoKEM-976, HAWK-1024, HAWK-512, HQC-128, HQC-192, HQC-256, LMS-SHA256 (H20/W8), MAYO-1, MAYO-2, MAYO-3, MAYO-5, ML-DSA-44, ML-DSA-65, ML-DSA-87, ML-KEM-1024, ML-KEM-512, ML-KEM-768, SLH-DSA-SHA2-128f, SLH-DSA-SHA2-128s, SLH-DSA-SHA2-192f, SLH-DSA-SHA2-192s, SLH-DSA-SHA2-256f, SLH-DSA-SHA2-256s, SLH-DSA-SHAKE-128f, SLH-DSA-SHAKE-128s, SLH-DSA-SHAKE-192f, SLH-DSA-SHAKE-192s, SLH-DSA-SHAKE-256f, SLH-DSA-SHAKE-256s, SMAUG-T-128, SMAUG-T-192, SMAUG-T-256, XMSS-SHA2_20",
+          "parameterSetIdentifier": "Classic-McEliece-348864, Classic-McEliece-460896, Classic-McEliece-8192128, FN-DSA-1024, FN-DSA-512, FrodoKEM-1344, FrodoKEM-640, FrodoKEM-976, HQC-128, HQC-192, HQC-256, LMS-SHA256 (H20/W8), MAYO-1, MAYO-2, MAYO-3, MAYO-5, ML-DSA-44, ML-DSA-65, ML-DSA-87, ML-KEM-1024, ML-KEM-512, ML-KEM-768, SLH-DSA-SHA2-128f, SLH-DSA-SHA2-128s, SLH-DSA-SHA2-192f, SLH-DSA-SHA2-192s, SLH-DSA-SHA2-256f, SLH-DSA-SHA2-256s, SLH-DSA-SHAKE-128f, SLH-DSA-SHAKE-128s, SLH-DSA-SHAKE-192f, SLH-DSA-SHAKE-192s, SLH-DSA-SHAKE-256f, SLH-DSA-SHAKE-256s, XMSS-SHA2_20",
           "primitive": "KEM"
         }
       },
-      "description": "Open source C library providing implementations of quantum-safe KEMs (BIKE, Classic McEliece, FrodoKEM, HQC, Kyber, ML-KEM, NTRU, NTRU-Prime) and signature schemes (CROSS, Falcon, MAYO, ML-DSA, SLH-DSA, SNOVA, UOV). Includes stateful signatures (LMS, XMSS). Implements NIST standards ML-KEM (FIPS 203) and ML-DSA (FIPS 204). Status is for research and prototyping; not recommended for production or sensitive data.",
+      "description": "Open-Quantum-Safe C library implementing the IETF-relevant PQC algorithm set. KEMs: ML-KEM-512/768/1024, BIKE-L1/L3/L5, Classic-McEliece (8 parameter sets), FrodoKEM-640/976/1344 (AES + SHAKE), HQC-128/192/256, NTRU and NTRU-Prime families. Signatures: ML-DSA-44/65/87, SLH-DSA (all 12 SHA2/SHAKE variants), FN-DSA-512/1024, CROSS, MAYO-1/2/3/5, MQOM, SNOVA, UOV. Stateful-hash: LMS, XMSS.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -2768,7 +2768,7 @@
         },
         {
           "name": "pqctoday:algorithm_implementations",
-          "value": "Classic-McEliece-348864 (liboqs (Open Quantum Safe)); Classic-McEliece-460896 (liboqs (Open Quantum Safe)); Classic-McEliece-8192128 (liboqs (Open Quantum Safe)); FN-DSA-1024 (liboqs (Open Quantum Safe)); FN-DSA-512 (liboqs (Open Quantum Safe)); FrodoKEM-1344 (liboqs (Open Quantum Safe)); FrodoKEM-640 (liboqs (Open Quantum Safe)); FrodoKEM-976 (liboqs (Open Quantum Safe)); HAWK-1024 (liboqs (Open Quantum Safe)); HAWK-512 (liboqs (Open Quantum Safe)); HQC-128 (liboqs (Open Quantum Safe)); HQC-192 (liboqs (Open Quantum Safe)); HQC-256 (liboqs (Open Quantum Safe)); LMS-SHA256 (H20/W8) (liboqs (Open Quantum Safe)); MAYO-1 (liboqs (Open Quantum Safe)); MAYO-2 (liboqs (Open Quantum Safe)); MAYO-3 (liboqs (Open Quantum Safe)); MAYO-5 (liboqs (Open Quantum Safe)); ML-DSA-44 (liboqs (Open Quantum Safe)); ML-DSA-65 (liboqs (Open Quantum Safe)); ML-DSA-87 (liboqs (Open Quantum Safe)); ML-KEM-1024 (liboqs (Open Quantum Safe)); ML-KEM-512 (liboqs (Open Quantum Safe)); ML-KEM-768 (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-128f (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-128s (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-192f (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-192s (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-256f (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-256s (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-128f (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-128s (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-192f (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-192s (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-256f (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-256s (liboqs (Open Quantum Safe)); SMAUG-T-128 (liboqs (partial/experimental)); SMAUG-T-192 (liboqs (partial/experimental)); SMAUG-T-256 (liboqs (partial/experimental)); XMSS-SHA2_20 (liboqs (Open Quantum Safe))"
+          "value": "Classic-McEliece-348864 (liboqs (Open Quantum Safe)); Classic-McEliece-460896 (liboqs (Open Quantum Safe)); Classic-McEliece-8192128 (liboqs (Open Quantum Safe)); FN-DSA-1024 (liboqs (Open Quantum Safe)); FN-DSA-512 (liboqs (Open Quantum Safe)); FrodoKEM-1344 (liboqs (Open Quantum Safe)); FrodoKEM-640 (liboqs (Open Quantum Safe)); FrodoKEM-976 (liboqs (Open Quantum Safe)); HQC-128 (liboqs (Open Quantum Safe)); HQC-192 (liboqs (Open Quantum Safe)); HQC-256 (liboqs (Open Quantum Safe)); LMS-SHA256 (H20/W8) (liboqs (Open Quantum Safe)); MAYO-1 (liboqs (Open Quantum Safe)); MAYO-2 (liboqs (Open Quantum Safe)); MAYO-3 (liboqs (Open Quantum Safe)); MAYO-5 (liboqs (Open Quantum Safe)); ML-DSA-44 (liboqs (Open Quantum Safe)); ML-DSA-65 (liboqs (Open Quantum Safe)); ML-DSA-87 (liboqs (Open Quantum Safe)); ML-KEM-1024 (liboqs (Open Quantum Safe)); ML-KEM-512 (liboqs (Open Quantum Safe)); ML-KEM-768 (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-128f (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-128s (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-192f (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-192s (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-256f (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-256s (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-128f (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-128s (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-192f (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-192s (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-256f (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-256s (liboqs (Open Quantum Safe)); XMSS-SHA2_20 (liboqs (Open Quantum Safe))"
         },
         {
           "name": "pqctoday:confidence_score",
@@ -2789,7 +2789,7 @@
           "primitive": "KEM"
         }
       },
-      "description": "The OQS OpenSSL provider (oqs-provider / liboqs-provider) is the canonical bridge from liboqs to OpenSSL 3.x. It provides all NIST-standardized PQC algorithms (ML-KEM, ML-DSA, SLH-DSA, FN-DSA) plus round 4 candidates (HQC, BIKE, Classic McEliece) as an OpenSSL provider plugin. Enables PQC TLS 1.3, PQC X.509 certificates, and PQC key operations in any application using OpenSSL 3.x without code changes. Maintained by the Open Quantum Safe project.",
+      "description": "OpenSSL 3.x provider exposing the full liboqs algorithm matrix to OpenSSL applications: ML-KEM, ML-DSA, SLH-DSA, FN-DSA (Falcon), FrodoKEM (640/976/1344 in both AES and SHAKE variants), HQC, Classic McEliece, plus hybrid KeyShares pairing X25519/secp256r1/secp384r1 with ML-KEM and FrodoKEM for TLS 1.3.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -4162,7 +4162,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "Classic-McEliece-348864, Classic-McEliece-460896, Classic-McEliece-8192128, FN-DSA-1024, FN-DSA-512, FrodoKEM-1344, FrodoKEM-640, FrodoKEM-976, HQC-128, HQC-192, HQC-256, MAYO-1, MAYO-2, MAYO-3, MAYO-5, ML-DSA-44, ML-DSA-65, ML-DSA-87, ML-KEM-1024, ML-KEM-512, ML-KEM-768, SLH-DSA-SHA2-128f, SLH-DSA-SHA2-128s, SLH-DSA-SHA2-192f, SLH-DSA-SHA2-192s, SLH-DSA-SHA2-256f, SLH-DSA-SHA2-256s, SLH-DSA-SHAKE-128f, SLH-DSA-SHAKE-128s, SLH-DSA-SHAKE-192f, SLH-DSA-SHAKE-192s, SLH-DSA-SHAKE-256f, SLH-DSA-SHAKE-256s",
+          "parameterSetIdentifier": "Classic-McEliece-348864, Classic-McEliece-460896, Classic-McEliece-8192128, FN-DSA-1024, FN-DSA-512, HQC-128, HQC-192, HQC-256, MAYO-1, MAYO-2, MAYO-3, MAYO-5, ML-DSA-44, ML-DSA-65, ML-DSA-87, ML-KEM-1024, ML-KEM-512, ML-KEM-768, SLH-DSA-SHA2-128f, SLH-DSA-SHA2-128s, SLH-DSA-SHA2-192f, SLH-DSA-SHA2-192s, SLH-DSA-SHA2-256f, SLH-DSA-SHA2-256s, SLH-DSA-SHAKE-128f, SLH-DSA-SHAKE-128s, SLH-DSA-SHAKE-192f, SLH-DSA-SHAKE-192s, SLH-DSA-SHAKE-256f, SLH-DSA-SHAKE-256s",
           "primitive": "Other"
         }
       },
@@ -4200,7 +4200,7 @@
         },
         {
           "name": "pqctoday:algorithm_implementations",
-          "value": "Classic-McEliece-348864 (PQClean); Classic-McEliece-460896 (PQClean); Classic-McEliece-8192128 (PQClean); FN-DSA-1024 (PQClean); FN-DSA-512 (PQClean); FrodoKEM-1344 (PQClean); FrodoKEM-640 (PQClean); FrodoKEM-976 (PQClean); HQC-128 (PQClean); HQC-192 (PQClean); HQC-256 (PQClean); MAYO-1 (PQClean); MAYO-2 (PQClean); MAYO-3 (PQClean); MAYO-5 (PQClean); ML-DSA-44 (PQClean); ML-DSA-65 (PQClean); ML-DSA-87 (PQClean); ML-KEM-1024 (PQClean); ML-KEM-512 (PQClean); ML-KEM-768 (PQClean); SLH-DSA-SHA2-128f (PQClean); SLH-DSA-SHA2-128s (PQClean); SLH-DSA-SHA2-192f (PQClean); SLH-DSA-SHA2-192s (PQClean); SLH-DSA-SHA2-256f (PQClean); SLH-DSA-SHA2-256s (PQClean); SLH-DSA-SHAKE-128f (PQClean); SLH-DSA-SHAKE-128s (PQClean); SLH-DSA-SHAKE-192f (PQClean); SLH-DSA-SHAKE-192s (PQClean); SLH-DSA-SHAKE-256f (PQClean); SLH-DSA-SHAKE-256s (PQClean)"
+          "value": "Classic-McEliece-348864 (PQClean); Classic-McEliece-460896 (PQClean); Classic-McEliece-8192128 (PQClean); FN-DSA-1024 (PQClean); FN-DSA-512 (PQClean); HQC-128 (PQClean); HQC-192 (PQClean); HQC-256 (PQClean); MAYO-1 (PQClean); MAYO-2 (PQClean); MAYO-3 (PQClean); MAYO-5 (PQClean); ML-DSA-44 (PQClean); ML-DSA-65 (PQClean); ML-DSA-87 (PQClean); ML-KEM-1024 (PQClean); ML-KEM-512 (PQClean); ML-KEM-768 (PQClean); SLH-DSA-SHA2-128f (PQClean); SLH-DSA-SHA2-128s (PQClean); SLH-DSA-SHA2-192f (PQClean); SLH-DSA-SHA2-192s (PQClean); SLH-DSA-SHA2-256f (PQClean); SLH-DSA-SHA2-256s (PQClean); SLH-DSA-SHAKE-128f (PQClean); SLH-DSA-SHAKE-128s (PQClean); SLH-DSA-SHAKE-192f (PQClean); SLH-DSA-SHAKE-192s (PQClean); SLH-DSA-SHAKE-256f (PQClean); SLH-DSA-SHAKE-256s (PQClean)"
         },
         {
           "name": "pqctoday:confidence_score",
@@ -32045,7 +32045,7 @@
           "primitive": "KEM"
         }
       },
-      "description": "ML-KEM, ML-DSA, SLH-DSA, FN-DSA, FrodoKEM, HQC, Classic-McEliece, NTRU. Broadest PQC algorithm coverage of any Java/C# library.",
+      "description": "Java/C# crypto provider with broad PQC coverage: ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), FN-DSA (Falcon), FrodoKEM, HQC, Classic McEliece, plus stateful-hash LMS (added in BC 1.65, promoted to core provider in BC 1.76) and XMSS / XMSSMT (added in BC 1.68).",
       "externalReferences": [
         {
           "type": "vcs",
@@ -32099,7 +32099,7 @@
           "primitive": "KEM"
         }
       },
-      "description": "ML-KEM-768, X25519MLKEM768. TLS 1.3 hybrid PQC KEM in Firefox 128+ (July 2024). Underlies Firefox, Thunderbird, and Gecko.",
+      "description": "Network Security Services library powering Firefox and Thunderbird TLS. Implements ML-KEM-768 hybrids for TLS 1.3 key exchange: X25519MLKEM768 (default since NSS 3.107), plus SecP256r1MLKEM768 and SecP384r1MLKEM1024 (both added in NSS 3.118 — June 2026).",
       "externalReferences": [
         {
           "type": "vcs",
@@ -38017,6 +38017,161 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "90"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "54f3fe9af2625f99",
+      "name": "libgcrypt",
+      "version": "1.12.2",
+      "manufacturer": {
+        "name": "GnuPG Project"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, Classic-McEliece",
+          "primitive": "KEM"
+        }
+      },
+      "description": "General-purpose crypto library used by GnuPG and many GNU/Linux components. Version 1.11 added ML-KEM, SNTRUP761, Classic McEliece via the new KEM API; 1.12.0 added ML-DSA (Dilithium / FIPS 204) signature support.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://dev.gnupg.org/source/libgcrypt/"
+        },
+        {
+          "type": "website",
+          "url": "https://gnupg.org/software/libgcrypt/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "libgcrypt"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries,Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "d6a73db387800c5d",
+      "name": "libsodium",
+      "version": "1.0.22",
+      "manufacturer": {
+        "name": "Frank Denis (libsodium)"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "KEM"
+        }
+      },
+      "description": "Portable fork of NaCl providing modern misuse-resistant primitives (X25519, Ed25519, XChaCha20-Poly1305, Argon2). Maintainer has stated ML-KEM is on the roadmap pending SHA-3/SHAKE additions and hybrid standardization; no PQC algorithms ship today.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/jedisct1/libsodium"
+        },
+        {
+          "type": "website",
+          "url": "https://doc.libsodium.org/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "libsodium"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries,Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "93300cdaca862a96",
+      "name": "HPE Aruba ArubaOS-CX",
+      "version": "10.x",
+      "manufacturer": {
+        "name": "Hewlett Packard Enterprise (Aruba Networking)"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "KEM"
+        }
+      },
+      "description": "Network OS for HPE Aruba CX switching portfolio (campus, data center, aggregation). HPE Aruba authored a June-2025 IEEE 802.1AR amendment proposal adding ML-DSA (FIPS 204) OIDs to DevID/IDevID X.509 certificates for quantum-safe switch identity. No shipping ArubaOS-CX release announces ML-KEM/ML-DSA data-plane support yet.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.arubanetworks.com/products/switches/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "hpe-aruba-arubaos-cx"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Network Operating Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (legacy FIPS 140-2 modules; PQC modules not yet validated)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "70"
         }
       ]
     }

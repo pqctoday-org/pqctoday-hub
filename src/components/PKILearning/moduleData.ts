@@ -585,7 +585,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'confidential-computing': 5,
   'database-encryption-pqc': 5,
   'secrets-management-pqc': 5,
-  'network-security-pqc': 5,
+  'network-security-pqc': 6,
   'pqc-testing-validation': 7,
   'iam-pqc': 5,
   'energy-utilities-pqc': 5,
@@ -1370,6 +1370,7 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'ids-signature-updater', label: 'IDS Signature Updater' },
     { id: 'vendor-migration-matrix', label: 'Vendor Migration Matrix' },
     { id: 'ztna-pqc-designer', label: 'ZTNA PQC Designer' },
+    { id: 'network-telemetry-analyzer', label: 'Network Telemetry Analyzer' },
   ],
   'pqc-testing-validation': [
     { id: 'passive-discovery-lab', label: 'Passive Crypto Discovery Lab' },

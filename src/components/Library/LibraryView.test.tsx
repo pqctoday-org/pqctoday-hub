@@ -521,7 +521,9 @@ describe('LibraryView — persona-overwhelm-p0', () => {
         render(<LibraryView />)
         const expectedCount = NARROWING[persona]
         expect(
-          screen.getByText(new RegExp(`Showing ${expectedCount} documents? matched to your role`))
+          screen.getByText(
+            new RegExp(`Showing ${expectedCount} documents? matched to your \\w+ role`)
+          )
         ).toBeInTheDocument()
       })
     }
@@ -636,7 +638,7 @@ describe('LibraryView — persona-overwhelm-p0', () => {
       // The results-count wrapper carries role="status" + aria-live="polite"
       // so screen readers announce persona-narrowing count changes.
       const status = screen
-        .getByText(/Showing 3 documents matched to your role/)
+        .getByText(/Showing 3 documents matched to your \w+ role/)
         .closest('[role="status"]')
       expect(status).not.toBeNull()
       expect(status).toHaveAttribute('aria-live', 'polite')
