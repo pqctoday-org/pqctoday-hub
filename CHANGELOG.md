@@ -7,6 +7,10 @@ Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
 ## [Unreleased]
 
+## [3.18.0] - 2026-06-04
+
+Cuts the accumulated post-3.17.5 work — two `feat:` deliverables (Learn-style Playground view modes + filtering, live sandbox availability probe with contact-for-access popover), the PQC protocol matrix → library coverage closeout, the NICE-view filter behaviour change, four user-facing bug fixes (three Playground module-eval-order crashes + the sandbox-iframe terminal restoration), eight learn-module factual corrections across two audit passes, and a multi-source data refresh (catalog integrity sweep, 06042026 migrate-family CSVs, full compliance scrape, attestation regeneration, library refs).
+
 ### Added
 
 - **Playground — Learn-style view toggle + taxonomy filtering** [view:/playground]: `PlaygroundWorkshop.tsx` gains the same multi-view + filter UX already shipped on `/learn`. Five view modes via the new `PlaygroundViewToggle` (Path, Stack, Cards, Table, NICE — Path is hidden when no persona is active). Desktop filter popover (`DesktopPlaygroundFilterPopover.tsx`) + mobile drawer (`MobilePlaygroundFilterDrawer.tsx`) drive a shared taxonomy filter (`ToolTaxonomyFilter.tsx`, `toolFilters.ts`) so tools can be sliced by category, persona, and NICE work role. New view components under `src/components/Playground/views/`: `ToolStack`, `ToolTable`, `ToolCard`, `PlaygroundPersonaPathView`, `PlaygroundNiceView`. Tool ↔ NICE mapping in `src/data/toolNiceMapping.ts`; sandbox-scenario ↔ NICE mapping in `src/data/sandboxNiceMapping.ts`. `PlaygroundWorkshop` refactored end-to-end (~782 lines reworked) to render through the view registry. Branch-hygiene fix folded in: `.claude` + `tasks` worktree-glue symlinks accidentally tracked on the feature branch were removed before merge — committing those symlinks into the main worktree creates self-referencing loops that crash Vite's file watcher with `ELOOP`; `scripts/new-worktree.sh` continues to create them per-worktree but they are no longer in the tree.
