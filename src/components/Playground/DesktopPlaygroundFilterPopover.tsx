@@ -22,6 +22,8 @@ interface DesktopPlaygroundFilterPopoverProps {
   // Category
   selectedCategory: string
   onCategoryChange: (id: string) => void
+  /** When provided, restricts the category dropdown to this subset of `CATEGORIES`. */
+  availableCategories?: readonly string[]
   // Difficulty
   selectedDifficulty: string
   onDifficultyChange: (id: string) => void
@@ -48,6 +50,7 @@ export const DesktopPlaygroundFilterPopover: React.FC<DesktopPlaygroundFilterPop
   onPersonaChange,
   selectedCategory,
   onCategoryChange,
+  availableCategories,
   selectedDifficulty,
   onDifficultyChange,
   wipFilter,
@@ -58,10 +61,10 @@ export const DesktopPlaygroundFilterPopover: React.FC<DesktopPlaygroundFilterPop
   const [isOpen, setIsOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
-  const CATEGORY_ITEMS = useMemo(
-    () => [{ id: 'All', label: 'All Categories' }, ...CATEGORIES.map((c) => ({ id: c, label: c }))],
-    []
-  )
+  const CATEGORY_ITEMS = useMemo(() => {
+    const cats = availableCategories ?? CATEGORIES
+    return [{ id: 'All', label: 'All Categories' }, ...cats.map((c) => ({ id: c, label: c }))]
+  }, [availableCategories])
 
   useEffect(() => {
     const handleClickOutside = (e: Event) => {

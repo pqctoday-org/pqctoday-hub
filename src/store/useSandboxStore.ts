@@ -49,3 +49,19 @@ export const useSandboxStore = create<SandboxState>((set, get) => ({
 export function isSandboxAvailable(status: SandboxStatus): boolean {
   return status === 'online'
 }
+
+export const SANDBOX_CATEGORY = 'Sandbox' as const
+
+export function filterToolsBySandboxAvailability<T extends { category: string }>(
+  tools: readonly T[],
+  status: SandboxStatus
+): readonly T[] {
+  return isSandboxAvailable(status) ? tools : tools.filter((t) => t.category !== SANDBOX_CATEGORY)
+}
+
+export function availableCategoriesForSandboxStatus<C extends string>(
+  categories: readonly C[],
+  status: SandboxStatus
+): readonly C[] {
+  return isSandboxAvailable(status) ? categories : categories.filter((c) => c !== SANDBOX_CATEGORY)
+}
