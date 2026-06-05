@@ -53,6 +53,9 @@ test-results*.json
 lint_output.txt
 build_debug*.log
 
+# Local scratch / enrichment run artifacts
+tmp/
+
 # Environment
 .env
 
@@ -130,6 +133,7 @@ split_wizard.js
 test_parse.mjs
 test_parse_2.mjs
 test_personas.mjs
+test_load.mjs
 pqctoday_nextsteps_*.md
 scripts/fix_*.mjs
 scripts/fix_*.cjs
