@@ -9,7 +9,7 @@ Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
 ## [3.18.0] - 2026-06-04
 
-Cuts the accumulated post-3.17.5 work — two `feat:` deliverables (Learn-style Playground view modes + filtering, live sandbox availability probe with contact-for-access popover), the PQC protocol matrix → library coverage closeout, the NICE-view filter behaviour change, four user-facing bug fixes (three Playground module-eval-order crashes + the sandbox-iframe terminal restoration), eight learn-module factual corrections across two audit passes, and a multi-source data refresh (catalog integrity sweep, 06042026 migrate-family CSVs, full compliance scrape, attestation regeneration, library refs).
+Cuts the accumulated post-3.17.5 work — two `feat:` deliverables (Learn-style Playground view modes + filtering, live sandbox availability probe with contact-for-access popover), the PQC protocol matrix → library coverage closeout, the NICE-view filter behaviour change, four user-facing bug fixes (three Playground module-eval-order crashes + the sandbox-iframe terminal restoration), eight learn-module factual corrections across two audit passes, and a multi-source data refresh (catalog integrity sweep, 06042026 migrate-family CSVs, full compliance scrape, library refs).
 
 ### Added
 
