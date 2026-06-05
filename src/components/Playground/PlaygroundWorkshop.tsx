@@ -35,7 +35,11 @@ import { ToolTable } from './views/ToolTable'
 import { PlaygroundPersonaPathView } from './views/PlaygroundPersonaPathView'
 import { PlaygroundNiceView } from './views/PlaygroundNiceView'
 import { SandboxStatusToggle } from './SandboxStatusToggle'
-import { useSandboxStore, isSandboxAvailable } from '@/store/useSandboxStore'
+import {
+  useSandboxStore,
+  filterToolsBySandboxAvailability,
+  availableCategoriesForSandboxStatus,
+} from '@/store/useSandboxStore'
 
 // ---------------------------------------------------------------------------
 // Persona display metadata
@@ -340,7 +344,6 @@ export const PlaygroundWorkshop = () => {
 
   // Sandbox availability — drives whether 'Sandbox' category tools surface in the catalog
   const sandboxStatus = useSandboxStore((s) => s.status)
-  const sandboxAvailable = isSandboxAvailable(sandboxStatus)
 
   // Persona handler — keeps persona store + local filter in sync
   const handlePersonaFilterChange = useCallback(
@@ -359,9 +362,13 @@ export const PlaygroundWorkshop = () => {
     showPersonaFilter && !!selectedPersona && !searchText.trim() && activeCategory === 'All'
 
   const catalogTools = useMemo(
-    () =>
-      sandboxAvailable ? WORKSHOP_TOOLS : WORKSHOP_TOOLS.filter((t) => t.category !== 'Sandbox'),
-    [sandboxAvailable]
+    () => filterToolsBySandboxAvailability(WORKSHOP_TOOLS, sandboxStatus),
+    [sandboxStatus]
+  )
+
+  const availableCategories = useMemo(
+    () => availableCategoriesForSandboxStatus(CATEGORIES, sandboxStatus),
+    [sandboxStatus]
   )
 
   const baselineTools = personaRecommendedActive
@@ -458,6 +465,7 @@ export const PlaygroundWorkshop = () => {
       onPersonaChange={handlePersonaFilterChange}
       selectedCategory={activeCategory}
       onCategoryChange={setActiveCategory}
+      availableCategories={availableCategories}
       selectedDifficulty={selectedDifficulty}
       onDifficultyChange={setSelectedDifficulty}
       wipFilter={wipFilter}
