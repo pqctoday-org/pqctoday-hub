@@ -10,8 +10,6 @@ import {
   ArrowRight,
   BookOpen,
   BookmarkCheck,
-  Mail,
-  Container,
   X,
 } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
@@ -36,6 +34,8 @@ import { ToolStack } from './views/ToolStack'
 import { ToolTable } from './views/ToolTable'
 import { PlaygroundPersonaPathView } from './views/PlaygroundPersonaPathView'
 import { PlaygroundNiceView } from './views/PlaygroundNiceView'
+import { SandboxStatusToggle } from './SandboxStatusToggle'
+import { useSandboxStore, isSandboxAvailable } from '@/store/useSandboxStore'
 
 // ---------------------------------------------------------------------------
 // Persona display metadata
@@ -185,29 +185,6 @@ const CuriousStartHere = () => {
     </div>
   )
 }
-
-const SandboxAccessBanner = () => (
-  <div className="glass-panel p-4 border-primary/20 space-y-3">
-    <div className="flex items-start gap-3">
-      <Container className="w-5 h-5 text-primary shrink-0 mt-0.5" aria-hidden="true" />
-      <div className="min-w-0">
-        <p className="font-semibold text-foreground">Container Access Required</p>
-        <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-          Each Sandbox scenario runs inside an isolated Docker container hosted by PQC Today. To
-          enable these scenarios, request access and we will provision your environment — containers
-          are spun up on demand and destroyed after the session.
-        </p>
-      </div>
-    </div>
-    <a
-      href="mailto:pqctoday@gmail.com?subject=Sandbox%20Access%20Request"
-      className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-foreground text-sm font-medium rounded-lg transition-colors border border-primary/20"
-    >
-      <Mail className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-      pqctoday@gmail.com — Request access
-    </a>
-  </div>
-)
 
 const PersonaBanner = ({
   persona,
@@ -361,6 +338,10 @@ export const PlaygroundWorkshop = () => {
   const showOnlyPlaygroundTools = useBookmarkStore((s) => s.showOnlyPlaygroundTools)
   const setShowOnlyPlaygroundTools = useBookmarkStore((s) => s.setShowOnlyPlaygroundTools)
 
+  // Sandbox availability — drives whether 'Sandbox' category tools surface in the catalog
+  const sandboxStatus = useSandboxStore((s) => s.status)
+  const sandboxAvailable = isSandboxAvailable(sandboxStatus)
+
   // Persona handler — keeps persona store + local filter in sync
   const handlePersonaFilterChange = useCallback(
     (id: string) => {
@@ -377,9 +358,15 @@ export const PlaygroundWorkshop = () => {
   const personaRecommendedActive =
     showPersonaFilter && !!selectedPersona && !searchText.trim() && activeCategory === 'All'
 
+  const catalogTools = useMemo(
+    () =>
+      sandboxAvailable ? WORKSHOP_TOOLS : WORKSHOP_TOOLS.filter((t) => t.category !== 'Sandbox'),
+    [sandboxAvailable]
+  )
+
   const baselineTools = personaRecommendedActive
-    ? WORKSHOP_TOOLS.filter((t) => t.recommendedPersonas.includes(selectedPersona))
-    : WORKSHOP_TOOLS
+    ? catalogTools.filter((t) => t.recommendedPersonas.includes(selectedPersona))
+    : catalogTools
 
   const filteredTools = useMemo(() => {
     let tools = baselineTools
@@ -567,6 +554,10 @@ export const PlaygroundWorkshop = () => {
                         pathAvailable={pathAvailable}
                       />
                     </div>
+                    <div className="space-y-2 flex flex-col pt-4 border-t border-border/50">
+                      <span className="text-sm font-semibold text-foreground">Sandbox</span>
+                      <SandboxStatusToggle />
+                    </div>
                   </div>
                 }
               />
@@ -608,6 +599,8 @@ export const PlaygroundWorkshop = () => {
                 My ({myPlaygroundTools.length})
               </Button>
             )}
+
+            <SandboxStatusToggle />
 
             <PlaygroundViewToggle
               mode={viewMode}
@@ -704,7 +697,6 @@ export const PlaygroundWorkshop = () => {
                         <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                           {category}
                         </h4>
-                        {category === 'Sandbox' && <SandboxAccessBanner />}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                           {tools.map((tool) => (
                             <ToolCard key={tool.id} tool={tool} />
@@ -716,12 +708,7 @@ export const PlaygroundWorkshop = () => {
                 </div>
               )}
 
-              {viewMode === 'table' && (
-                <>
-                  {filteredTools.some((t) => t.category === 'Sandbox') && <SandboxAccessBanner />}
-                  <ToolTable tools={filteredTools} />
-                </>
-              )}
+              {viewMode === 'table' && <ToolTable tools={filteredTools} />}
 
               {viewMode === 'nice' && (
                 <PlaygroundNiceView tools={filteredTools} activePersonaId={selectedPersona} />
