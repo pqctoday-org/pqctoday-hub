@@ -36,9 +36,16 @@ public/vendor-roadmaps/**
 public/library/**
 public/compliance-docs/**
 
-# RAG corpus + embedding metadata are generator-emitted artefacts whose
-# byte content is signed and content-hashed by the trust-engine pipeline.
-# Reformatting them changes sha256 and breaks the corpusHash invariant
-# verified by src/__tests__/corpus-trust-invariants.test.ts.
+# Trust-engine attested artefacts — byte content is ML-DSA-65 signed.
+# Reformatting changes sha256 and breaks every signature, including the
+# corpusHash invariant verified by src/__tests__/corpus-trust-invariants.test.ts
+# and the CI verify-attestations gate.
 public/data/rag-corpus.json
 public/data/embeddings-meta.json
+public/data/pqctoday-oscal.json
+public/data/pqctoday-oscal-full.json
+public/data/pqctoday-oscal-governance.json
+public/data/pqctoday-oscal-assessment-plan.json
+public/data/pqctoday-cbom.json
+public/data/community-signals.json
+public/data/revisions.jsonl
