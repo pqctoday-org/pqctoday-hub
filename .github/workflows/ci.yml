@@ -86,13 +86,10 @@ jobs:
         # .sig file, or unknown kid. Closes audit gap P4. See
         # docs/attestation/key-management.md for the operational policy.
         #
-        # Guarded: scripts/attestation/* is gitignored (.gitignore:215
-        # `scripts/*`) so the verifier source isn't in the public repo. Skip
-        # the step when verify-all.ts is absent so the gate flips back to
-        # hard-fail the moment that file is committed (or moved out of
-        # `scripts/*` ignore). Pre-existing breakage on main otherwise.
-        if: ${{ hashFiles('scripts/attestation/verify-all.ts') != '' }}
-        run: npm run trust-engine:verify
+        # Runs against the public verifier `scripts/ci/verify-attestations.ts`
+        # (self-contained, no imports from gitignored `scripts/attestation/*`).
+        # The maintainer's signer stays private.
+        run: npm run verify-attestations
 
       - name: Install Playwright Browsers
         run: npx playwright install chromium --with-deps
