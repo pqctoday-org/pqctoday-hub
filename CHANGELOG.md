@@ -7,6 +7,10 @@ Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
 ## [Unreleased]
 
+### Changed
+
+- **Playground — Sandbox category hidden from the Filters dropdown when offline** [view:/playground]: Follow-up to the 3.18.0 live sandbox availability probe. The probe was already filtering `Sandbox`-category tools out of the tile grid when `isSandboxAvailable(status) === false`, but `DesktopPlaygroundFilterPopover` still listed `Sandbox` as a selectable Category option (sourced from the static `CATEGORIES` array in `workshopRegistry`). Picking it produced an empty grid with no explanation. Now: the popover accepts an optional `availableCategories` prop and `PlaygroundWorkshop` threads through the same status-filtered list (`availableCategoriesForSandboxStatus(CATEGORIES, sandboxStatus)`), so the dropdown only offers categories that actually have visible tools. Refactor extracted two pure helpers + a `SANDBOX_CATEGORY` constant from `useSandboxStore` and replaced the inline ternary in `PlaygroundWorkshop.catalogTools` with a call to `filterToolsBySandboxAvailability`. Mobile drawer covered by the same change — it renders the same `filterPanelContent` JSX instance. Invariant tests in `useSandboxStore.test.ts` drive the real `WORKSHOP_TOOLS` + `CATEGORIES` across all four `SandboxStatus` values (`idle | checking | offline | online`) and pin the contract: every non-`online` status produces zero `Sandbox`-category tools + a category list one entry shorter, while `online` returns both inputs unchanged.
+
 ## [3.18.0] - 2026-06-04
 
 Cuts the accumulated post-3.17.5 work — two `feat:` deliverables (Learn-style Playground view modes + filtering, live sandbox availability probe with contact-for-access popover), the PQC protocol matrix → library coverage closeout, the NICE-view filter behaviour change, four user-facing bug fixes (three Playground module-eval-order crashes + the sandbox-iframe terminal restoration), eight learn-module factual corrections across two audit passes, and a multi-source data refresh (catalog integrity sweep, 06042026 migrate-family CSVs, full compliance scrape, library refs).
