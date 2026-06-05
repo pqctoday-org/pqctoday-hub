@@ -32,6 +32,18 @@ const DATA_DIR = path.resolve(process.cwd(), 'src/data')
 const OUT_PATH = path.resolve(process.cwd(), 'public/data/pqctoday-cbom.json')
 const DRY_RUN = process.argv.includes('--dry-run')
 
+// Deterministic data-version date derived from the latest input CSV filename
+// (e.g. `pqc_product_catalog_06042026.csv` → `2026-06-04T00:00:00.000Z`).
+// Drives `serialNumber` + `metadata.timestamp` so identical input data always
+// produces a byte-identical CBOM — required for the trust-engine signature
+// chain to stay valid across rebuilds without a wall-clock-driven re-sign.
+function dataVersionFromCsvName(filename: string): string {
+  const m = filename.match(/_(\d{2})(\d{2})(\d{4})(?:_r\d+)?\.csv$/)
+  if (!m) throw new Error(`Cannot parse data-version date from CSV name: ${filename}`)
+  const [, mm, dd, yyyy] = m
+  return `${yyyy}-${mm}-${dd}T00:00:00.000Z`
+}
+
 interface RawProduct {
   product_id: string
   software_name: string
@@ -121,6 +133,12 @@ async function main() {
   const algoXref = await loadLatest<RawAlgoXref>('algo_product_xref_*.csv')
   const purlXref = await loadLatest<RawPurlXref>('migrate_purl_xref_*.csv')
   const cpeXref = await loadLatest<RawCpeXref>('migrate_cpe_xref_*.csv')
+
+  // Pick the most recent dated input as the data-version stamp.
+  const dataVersion = [products, algoXref, purlXref, cpeXref]
+    .map((x) => dataVersionFromCsvName(x.filename))
+    .sort()
+    .at(-1)!
 
   // ── Per-product xref indices ────────────────────────────────────────────
   // algo_product_xref has many rows per product (one per algorithm + impl);
@@ -251,10 +269,10 @@ async function main() {
   const cbom = {
     bomFormat: 'CycloneDX',
     specVersion: '1.6',
-    serialNumber: `urn:uuid:pqctoday-cbom-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}`,
+    serialNumber: `urn:uuid:pqctoday-cbom-${dataVersion.slice(0, 10).replace(/-/g, '')}`,
     version: 1,
     metadata: {
-      timestamp: new Date().toISOString(),
+      timestamp: dataVersion,
       tools: [{ name: 'pqctoday-hub', version: '1.0' }],
       component: {
         type: 'application',
