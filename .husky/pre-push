@@ -1,17 +1,14 @@
 # Verify trust-engine artifact signatures before pushing.
-# Each artifact is verified only if its .sig file exists, so the hook is
-# safe in early-bootstrap states (e.g. before CI has signed a new artifact).
-# Bypass with `git push --no-verify` if you intentionally rotated keys and
-# the new signatures haven't landed in CI yet.
+# Runs the public verify-attestations.ts (tracked, no dependency on the
+# private scripts/attestation/* signer). Skips silently when no .sig
+# files exist (early-bootstrap state).
+# Bypass with `git push --no-verify` if you intentionally rotated keys
+# and the new signatures haven't landed yet.
 set -e
 
-# attestation scripts are local-only (private repo) — skip in CI
+# Skip in CI — CI runs the same verifier as a dedicated workflow step.
 [ -n "$CI" ] && exit 0
 
-if [ -f public/data/revisions.jsonl.sig ]; then
-  npx tsx scripts/attestation/verify-revisions.ts
-fi
-
-if [ -f public/data/rag-corpus.json.sig ]; then
-  npx tsx scripts/attestation/verify-rag-corpus.ts
+if [ -f public/data/revisions.jsonl.sig ] || [ -f public/data/rag-corpus.json.sig ]; then
+  npx tsx scripts/ci/verify-attestations.ts
 fi
