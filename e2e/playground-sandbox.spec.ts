@@ -45,48 +45,12 @@ test.describe('Playground — Sandbox category', () => {
     await stubSandbox(page)
   })
 
-  // Sandbox tools all carry `wip: true` (workshopRegistry SANDBOX_TOOLS) and
-  // PlaygroundWorkshop hides WIP tools by default. The toggle isn't persisted,
-  // so the test must click it before filtering. From 'hide' one click → 'all'.
-  // The button shows "WIP hidden" in hide mode (with a Wrench icon).
-  async function unhideWipTools(page: import('@playwright/test').Page): Promise<void> {
-    // The WIP-hidden button is in a filter row that may be off-screen on smaller
-    // viewports. Dispatch the click event directly — the React onClick handler
-    // runs regardless of pointer/visibility checks.
-    await page.waitForFunction(
-      () => {
-        return Array.from(document.querySelectorAll('button')).some((b) =>
-          (b as HTMLButtonElement).innerText.trim().startsWith('WIP hidden')
-        )
-      },
-      undefined,
-      { timeout: 10000 }
-    )
-    await page.evaluate(() => {
-      const buttons = Array.from(document.querySelectorAll('button')) as HTMLButtonElement[]
-      const wipBtn = buttons.find((b) => b.innerText.trim().startsWith('WIP hidden'))
-      wipBtn?.click()
-    })
-  }
-
-  /** Click the desktop "Sandbox" category pill via the same JS-dispatch trick
-   *  used for the WIP toggle. There are multiple "Sandbox"-text buttons (desktop
-   *  pill + mobile pill). Match by class signature so we hit the pill, not a tool tile. */
-  async function selectSandboxCategory(page: import('@playwright/test').Page): Promise<void> {
-    await page.evaluate(() => {
-      const buttons = Array.from(document.querySelectorAll('button')) as HTMLButtonElement[]
-      const pill = buttons.find((b) => /^Sandbox\s*\d/.test(b.innerText.trim()))
-      pill?.click()
-    })
-  }
-
-  test('Sandbox category pill filters the grid to sandbox tiles', async ({ page }) => {
-    // Stay on a single page session: unhide WIP first (sets local React state),
-    // then click the Sandbox pill to apply the category filter. A second
-    // `page.goto` would remount PlaygroundWorkshop and reset wipFilter.
-    await page.goto('/playground')
-    await unhideWipTools(page)
-    await selectSandboxCategory(page)
+  test('?cat=Sandbox filters the grid to sandbox tiles', async ({ page }) => {
+    // PlaygroundWorkshop reads `?cat` from the URL (PlaygroundWorkshop.tsx:283),
+    // so navigating directly applies the category filter without clicking
+    // through the Filters popover. Default wipFilter is 'all' on non-embedded,
+    // so Sandbox tiles (which are wip: true) render unconditionally.
+    await page.goto('/playground?cat=Sandbox')
 
     const firstTile = page.locator('a[href^="/playground/sbx-"]').first()
     await expect(firstTile).toBeVisible({ timeout: 10000 })
@@ -127,9 +91,7 @@ test.describe('Playground — Sandbox category', () => {
   })
 
   test('clicking a sandbox tile renders the iframe for its scenario', async ({ page }) => {
-    await page.goto('/playground')
-    await unhideWipTools(page)
-    await selectSandboxCategory(page)
+    await page.goto('/playground?cat=Sandbox')
 
     const firstTile = page.locator('a[href^="/playground/sbx-"]').first()
     await expect(firstTile).toBeVisible({ timeout: 10000 })
