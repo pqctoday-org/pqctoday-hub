@@ -390,3 +390,7 @@ pki/issued/
 !pki/ca/*.pem
 !pki/vendors/*.pem
 src/.!*!.DS_Store
+
+# Large proof evidence cache (build-time; catalog references external proof_url)
+public/migrate-proofs/*.html
+public/migrate-proofs/*.pdf

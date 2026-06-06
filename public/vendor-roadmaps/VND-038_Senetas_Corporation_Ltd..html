@@ -1,0 +1,1162 @@
+
+<!doctype html>
+<html lang="en-GB" prefix="og: https://ogp.me/ns#">
+  <head><meta charset="utf-8"><script>if(navigator.userAgent.match(/MSIE|Internet Explorer/i)||navigator.userAgent.match(/Trident\/7\..*?rv:11/i)){var href=document.location.href;if(!href.match(/[?&]nowprocket/)){if(href.indexOf("?")==-1){if(href.indexOf("#")==-1){document.location.href=href+"?nowprocket=1"}else{document.location.href=href.replace("#","?nowprocket=1#")}}else{if(href.indexOf("#")==-1){document.location.href=href+"&nowprocket=1"}else{document.location.href=href.replace("#","&nowprocket=1#")}}}}</script><script>class RocketLazyLoadScripts{constructor(){this.triggerEvents=["keydown","mousedown","mousemove","touchmove","touchstart","touchend","wheel"],this.userEventHandler=this._triggerListener.bind(this),this.touchStartHandler=this._onTouchStart.bind(this),this.touchMoveHandler=this._onTouchMove.bind(this),this.touchEndHandler=this._onTouchEnd.bind(this),this.clickHandler=this._onClick.bind(this),this.interceptedClicks=[],window.addEventListener("pageshow",t=>{this.persisted=t.persisted}),window.addEventListener("DOMContentLoaded",()=>{this._preconnect3rdParties()}),this.delayedScripts={normal:[],async:[],defer:[]},this.trash=[],this.allJQueries=[]}_addUserInteractionListener(t){if(document.hidden){t._triggerListener();return}this.triggerEvents.forEach(e=>window.addEventListener(e,t.userEventHandler,{passive:!0})),window.addEventListener("touchstart",t.touchStartHandler,{passive:!0}),window.addEventListener("mousedown",t.touchStartHandler),document.addEventListener("visibilitychange",t.userEventHandler)}_removeUserInteractionListener(){this.triggerEvents.forEach(t=>window.removeEventListener(t,this.userEventHandler,{passive:!0})),document.removeEventListener("visibilitychange",this.userEventHandler)}_onTouchStart(t){"HTML"!==t.target.tagName&&(window.addEventListener("touchend",this.touchEndHandler),window.addEventListener("mouseup",this.touchEndHandler),window.addEventListener("touchmove",this.touchMoveHandler,{passive:!0}),window.addEventListener("mousemove",this.touchMoveHandler),t.target.addEventListener("click",this.clickHandler),this._renameDOMAttribute(t.target,"onclick","rocket-onclick"),this._pendingClickStarted())}_onTouchMove(t){window.removeEventListener("touchend",this.touchEndHandler),window.removeEventListener("mouseup",this.touchEndHandler),window.removeEventListener("touchmove",this.touchMoveHandler,{passive:!0}),window.removeEventListener("mousemove",this.touchMoveHandler),t.target.removeEventListener("click",this.clickHandler),this._renameDOMAttribute(t.target,"rocket-onclick","onclick"),this._pendingClickFinished()}_onTouchEnd(t){window.removeEventListener("touchend",this.touchEndHandler),window.removeEventListener("mouseup",this.touchEndHandler),window.removeEventListener("touchmove",this.touchMoveHandler,{passive:!0}),window.removeEventListener("mousemove",this.touchMoveHandler)}_onClick(t){t.target.removeEventListener("click",this.clickHandler),this._renameDOMAttribute(t.target,"rocket-onclick","onclick"),this.interceptedClicks.push(t),t.preventDefault(),t.stopPropagation(),t.stopImmediatePropagation(),this._pendingClickFinished()}_replayClicks(){window.removeEventListener("touchstart",this.touchStartHandler,{passive:!0}),window.removeEventListener("mousedown",this.touchStartHandler),this.interceptedClicks.forEach(t=>{t.target.dispatchEvent(new MouseEvent("click",{view:t.view,bubbles:!0,cancelable:!0}))})}_waitForPendingClicks(){return new Promise(t=>{this._isClickPending?this._pendingClickFinished=t:t()})}_pendingClickStarted(){this._isClickPending=!0}_pendingClickFinished(){this._isClickPending=!1}_renameDOMAttribute(t,e,r){t.hasAttribute&&t.hasAttribute(e)&&(event.target.setAttribute(r,event.target.getAttribute(e)),event.target.removeAttribute(e))}_triggerListener(){this._removeUserInteractionListener(this),"loading"===document.readyState?document.addEventListener("DOMContentLoaded",this._loadEverythingNow.bind(this)):this._loadEverythingNow()}_preconnect3rdParties(){let t=[];document.querySelectorAll("script[type=rocketlazyloadscript]").forEach(e=>{if(e.hasAttribute("src")){let r=new URL(e.src).origin;r!==location.origin&&t.push({src:r,crossOrigin:e.crossOrigin||"module"===e.getAttribute("data-rocket-type")})}}),t=[...new Map(t.map(t=>[JSON.stringify(t),t])).values()],this._batchInjectResourceHints(t,"preconnect")}async _loadEverythingNow(){this.lastBreath=Date.now(),this._delayEventListeners(this),this._delayJQueryReady(this),this._handleDocumentWrite(),this._registerAllDelayedScripts(),this._preloadAllScripts(),await this._loadScriptsFromList(this.delayedScripts.normal),await this._loadScriptsFromList(this.delayedScripts.defer),await this._loadScriptsFromList(this.delayedScripts.async);try{await this._triggerDOMContentLoaded(),await this._triggerWindowLoad()}catch(t){console.error(t)}window.dispatchEvent(new Event("rocket-allScriptsLoaded")),this._waitForPendingClicks().then(()=>{this._replayClicks()}),this._emptyTrash()}_registerAllDelayedScripts(){document.querySelectorAll("script[type=rocketlazyloadscript]").forEach(t=>{t.hasAttribute("data-rocket-src")?t.hasAttribute("async")&&!1!==t.async?this.delayedScripts.async.push(t):t.hasAttribute("defer")&&!1!==t.defer||"module"===t.getAttribute("data-rocket-type")?this.delayedScripts.defer.push(t):this.delayedScripts.normal.push(t):this.delayedScripts.normal.push(t)})}async _transformScript(t){return new Promise((await this._littleBreath(),navigator.userAgent.indexOf("Firefox/")>0||""===navigator.vendor)?e=>{let r=document.createElement("script");[...t.attributes].forEach(t=>{let e=t.nodeName;"type"!==e&&("data-rocket-type"===e&&(e="type"),"data-rocket-src"===e&&(e="src"),r.setAttribute(e,t.nodeValue))}),t.text&&(r.text=t.text),r.hasAttribute("src")?(r.addEventListener("load",e),r.addEventListener("error",e)):(r.text=t.text,e());try{t.parentNode.replaceChild(r,t)}catch(i){e()}}:async e=>{function r(){t.setAttribute("data-rocket-status","failed"),e()}try{let i=t.getAttribute("data-rocket-type"),n=t.getAttribute("data-rocket-src");t.text,i?(t.type=i,t.removeAttribute("data-rocket-type")):t.removeAttribute("type"),t.addEventListener("load",function r(){t.setAttribute("data-rocket-status","executed"),e()}),t.addEventListener("error",r),n?(t.removeAttribute("data-rocket-src"),t.src=n):t.src="data:text/javascript;base64,"+window.btoa(unescape(encodeURIComponent(t.text)))}catch(s){r()}})}async _loadScriptsFromList(t){let e=t.shift();return e&&e.isConnected?(await this._transformScript(e),this._loadScriptsFromList(t)):Promise.resolve()}_preloadAllScripts(){this._batchInjectResourceHints([...this.delayedScripts.normal,...this.delayedScripts.defer,...this.delayedScripts.async],"preload")}_batchInjectResourceHints(t,e){var r=document.createDocumentFragment();t.forEach(t=>{let i=t.getAttribute&&t.getAttribute("data-rocket-src")||t.src;if(i){let n=document.createElement("link");n.href=i,n.rel=e,"preconnect"!==e&&(n.as="script"),t.getAttribute&&"module"===t.getAttribute("data-rocket-type")&&(n.crossOrigin=!0),t.crossOrigin&&(n.crossOrigin=t.crossOrigin),t.integrity&&(n.integrity=t.integrity),r.appendChild(n),this.trash.push(n)}}),document.head.appendChild(r)}_delayEventListeners(t){let e={};function r(t,r){!function t(r){!e[r]&&(e[r]={originalFunctions:{add:r.addEventListener,remove:r.removeEventListener},eventsToRewrite:[]},r.addEventListener=function(){arguments[0]=i(arguments[0]),e[r].originalFunctions.add.apply(r,arguments)},r.removeEventListener=function(){arguments[0]=i(arguments[0]),e[r].originalFunctions.remove.apply(r,arguments)});function i(t){return e[r].eventsToRewrite.indexOf(t)>=0?"rocket-"+t:t}}(t),e[t].eventsToRewrite.push(r)}function i(t,e){let r=t[e];Object.defineProperty(t,e,{get:()=>r||function(){},set(i){t["rocket"+e]=r=i}})}r(document,"DOMContentLoaded"),r(window,"DOMContentLoaded"),r(window,"load"),r(window,"pageshow"),r(document,"readystatechange"),i(document,"onreadystatechange"),i(window,"onload"),i(window,"onpageshow")}_delayJQueryReady(t){let e;function r(r){if(r&&r.fn&&!t.allJQueries.includes(r)){r.fn.ready=r.fn.init.prototype.ready=function(e){return t.domReadyFired?e.bind(document)(r):document.addEventListener("rocket-DOMContentLoaded",()=>e.bind(document)(r)),r([])};let i=r.fn.on;r.fn.on=r.fn.init.prototype.on=function(){if(this[0]===window){function t(t){return t.split(" ").map(t=>"load"===t||0===t.indexOf("load.")?"rocket-jquery-load":t).join(" ")}"string"==typeof arguments[0]||arguments[0]instanceof String?arguments[0]=t(arguments[0]):"object"==typeof arguments[0]&&Object.keys(arguments[0]).forEach(e=>{delete Object.assign(arguments[0],{[t(e)]:arguments[0][e]})[e]})}return i.apply(this,arguments),this},t.allJQueries.push(r)}e=r}r(window.jQuery),Object.defineProperty(window,"jQuery",{get:()=>e,set(t){r(t)}})}async _triggerDOMContentLoaded(){this.domReadyFired=!0,await this._littleBreath(),document.dispatchEvent(new Event("rocket-DOMContentLoaded")),await this._littleBreath(),window.dispatchEvent(new Event("rocket-DOMContentLoaded")),await this._littleBreath(),document.dispatchEvent(new Event("rocket-readystatechange")),await this._littleBreath(),document.rocketonreadystatechange&&document.rocketonreadystatechange()}async _triggerWindowLoad(){await this._littleBreath(),window.dispatchEvent(new Event("rocket-load")),await this._littleBreath(),window.rocketonload&&window.rocketonload(),await this._littleBreath(),this.allJQueries.forEach(t=>t(window).trigger("rocket-jquery-load")),await this._littleBreath();let t=new Event("rocket-pageshow");t.persisted=this.persisted,window.dispatchEvent(t),await this._littleBreath(),window.rocketonpageshow&&window.rocketonpageshow({persisted:this.persisted})}_handleDocumentWrite(){let t=new Map;document.write=document.writeln=function(e){let r=document.currentScript;r||console.error("WPRocket unable to document.write this: "+e);let i=document.createRange(),n=r.parentElement,s=t.get(r);void 0===s&&(s=r.nextSibling,t.set(r,s));let a=document.createDocumentFragment();i.setStart(a,0),a.appendChild(i.createContextualFragment(e)),n.insertBefore(a,s)}}async _littleBreath(){Date.now()-this.lastBreath>45&&(await this._requestAnimFrame(),this.lastBreath=Date.now())}async _requestAnimFrame(){return document.hidden?new Promise(t=>setTimeout(t)):new Promise(t=>requestAnimationFrame(t))}_emptyTrash(){this.trash.forEach(t=>t.remove())}static run(){let t=new RocketLazyLoadScripts;t._addUserInteractionListener(t)}}RocketLazyLoadScripts.run();</script>
+  
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<script type="rocketlazyloadscript" data-minify="1" data-rocket-src="https://www.senetas.com/wp-content/cache/min/1/ajax/libs/jquery/3.5.1/jquery.min.js?ver=1780640649" defer></script>
+
+  <link data-minify="1" rel="stylesheet" href="https://www.senetas.com/wp-content/cache/min/1/ngm1zvg.css?ver=1780640648">
+	<!-- Google Tag Manager -->
+	<script type="rocketlazyloadscript">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+	})(window,document,'script','dataLayer','GTM-WV4WT54F');</script>
+	<!-- End Google Tag Manager -->
+	
+		<!-- Google Tag Manager -->
+	<script type="rocketlazyloadscript">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+	})(window,document,'script','dataLayer','GTM-M9MW5RMD');</script>
+	<!-- End Google Tag Manager -->
+	
+	<script type="rocketlazyloadscript" data-rocket-type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "v11k0ng8ex");
+</script>
+  <script type="rocketlazyloadscript" id="cookie-law-info-gcm-var-js">
+var _ckyGcm = {"status":true,"default_settings":[{"analytics":"denied","advertisement":"denied","functional":"denied","necessary":"granted","ad_user_data":"denied","ad_personalization":"denied","regions":"All"}],"wait_for_update":2000,"url_passthrough":false,"ads_data_redaction":false}</script>
+<script type="rocketlazyloadscript" id="cookie-law-info-gcm-js" data-rocket-type="text/javascript" data-rocket-src="https://www.senetas.com/wp-content/plugins/cookie-law-info/lite/frontend/js/gcm.min.js" defer></script> <script type="rocketlazyloadscript" data-minify="1" id="cookieyes" data-rocket-type="text/javascript" data-rocket-src="https://www.senetas.com/wp-content/cache/min/1/client_data/15ed76344d54228d4003b812/script.js?ver=1780640649" defer></script>
+	<!-- This site is optimized with the Yoast SEO Premium plugin v25.4 (Yoast SEO v27.7) - https://yoast.com/product/yoast-seo-premium-wordpress/ -->
+	<title>Post-Quantum Encryption - Senetas</title>
+	<meta name="description" content="Quantum computers will break today&#039;s encryption. Learn how post-quantum encryption protects your data now against current and future quantum threats — and why organisations can&#039;t afford to wait." />
+	<link rel="canonical" href="https://www.senetas.com/cybersecurity-challenges/post-quantum-encryption/" />
+	<meta property="og:locale" content="en_GB" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="Post-Quantum Encryption" />
+	<meta property="og:description" content="Quantum computers will break today&#039;s encryption. Learn how post-quantum encryption protects your data now against current and future quantum threats — and why organisations can&#039;t afford to wait." />
+	<meta property="og:url" content="https://www.senetas.com/cybersecurity-challenges/post-quantum-encryption/" />
+	<meta property="og:site_name" content="Senetas" />
+	<meta property="article:modified_time" content="2026-06-04T02:15:55+00:00" />
+	<meta property="og:image" content="https://www.senetas.com/wp-content/uploads/post-quantum-encryption-security.jpg" />
+	<meta property="og:image:width" content="1800" />
+	<meta property="og:image:height" content="400" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:site" content="@Senetas" />
+	<meta name="twitter:label1" content="Estimated reading time" />
+	<meta name="twitter:data1" content="6 minutes" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https:\/\/schema.org","@graph":[{"@type":"WebPage","@id":"https:\/\/www.senetas.com\/cybersecurity-challenges\/post-quantum-encryption\/","url":"https:\/\/www.senetas.com\/cybersecurity-challenges\/post-quantum-encryption\/","name":"Post-Quantum Encryption - Senetas","isPartOf":{"@id":"https:\/\/www.senetas.com\/#website"},"primaryImageOfPage":{"@id":"https:\/\/www.senetas.com\/cybersecurity-challenges\/post-quantum-encryption\/#primaryimage"},"image":{"@id":"https:\/\/www.senetas.com\/cybersecurity-challenges\/post-quantum-encryption\/#primaryimage"},"thumbnailUrl":"https:\/\/www.senetas.com\/wp-content\/uploads\/post-quantum-encryption-security.jpg","datePublished":"2020-06-19T10:54:44+00:00","dateModified":"2026-06-04T02:15:55+00:00","description":"Quantum computers will break today's encryption. Learn how post-quantum encryption protects your data now against current and future quantum threats — and why organisations can't afford to wait.","breadcrumb":{"@id":"https:\/\/www.senetas.com\/cybersecurity-challenges\/post-quantum-encryption\/#breadcrumb"},"inLanguage":"en-GB","potentialAction":[{"@type":"ReadAction","target":["https:\/\/www.senetas.com\/cybersecurity-challenges\/post-quantum-encryption\/"]}]},{"@type":"ImageObject","inLanguage":"en-GB","@id":"https:\/\/www.senetas.com\/cybersecurity-challenges\/post-quantum-encryption\/#primaryimage","url":"https:\/\/www.senetas.com\/wp-content\/uploads\/post-quantum-encryption-security.jpg","contentUrl":"https:\/\/www.senetas.com\/wp-content\/uploads\/post-quantum-encryption-security.jpg","width":1800,"height":400,"caption":"post quantum encryption security banner"},{"@type":"BreadcrumbList","@id":"https:\/\/www.senetas.com\/cybersecurity-challenges\/post-quantum-encryption\/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https:\/\/www.senetas.com\/"},{"@type":"ListItem","position":2,"name":"Cybersecurity Challenges","item":"https:\/\/www.senetas.com\/cybersecurity-challenges\/"},{"@type":"ListItem","position":3,"name":"Post-Quantum Encryption"}]},{"@type":"WebSite","@id":"https:\/\/www.senetas.com\/#website","url":"https:\/\/www.senetas.com\/","name":"Senetas","description":"High-Assurance Network Encryption","publisher":{"@id":"https:\/\/www.senetas.com\/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https:\/\/www.senetas.com\/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-GB"},{"@type":"Organization","@id":"https:\/\/www.senetas.com\/#organization","name":"Senetas Corporation Limited","alternateName":"Senetas","url":"https:\/\/www.senetas.com\/","logo":{"@type":"ImageObject","inLanguage":"en-GB","@id":"https:\/\/www.senetas.com\/#\/schema\/logo\/image\/","url":"https:\/\/www.senetas.com\/wp-content\/uploads\/Senetas-logo.png","contentUrl":"https:\/\/www.senetas.com\/wp-content\/uploads\/Senetas-logo.png","width":1820,"height":484,"caption":"Senetas Corporation Limited"},"image":{"@id":"https:\/\/www.senetas.com\/#\/schema\/logo\/image\/"},"sameAs":["https:\/\/x.com\/Senetas","https:\/\/www.linkedin.com\/company\/senetas\/","https:\/\/www.youtube.com\/user\/SenetasCorp"]}]}</script>
+	<!-- / Yoast SEO Premium plugin. -->
+
+
+
+<!-- Search Engine Optimization by Rank Math - https://rankmath.com/ -->
+<title>Post-Quantum Encryption - Senetas</title>
+<meta name="robots" content="index, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large"/>
+<link rel="canonical" href="https://www.senetas.com/cybersecurity-challenges/post-quantum-encryption/" />
+<meta property="og:locale" content="en_GB" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Post-Quantum Encryption - Senetas" />
+<meta property="og:url" content="https://www.senetas.com/cybersecurity-challenges/post-quantum-encryption/" />
+<meta property="og:site_name" content="Senetas" />
+<meta property="og:updated_time" content="2026-06-04T12:15:55+10:00" />
+<meta property="og:image" content="https://www.senetas.com/wp-content/uploads/post-quantum-encryption-security.jpg" />
+<meta property="og:image:secure_url" content="https://www.senetas.com/wp-content/uploads/post-quantum-encryption-security.jpg" />
+<meta property="og:image:width" content="1800" />
+<meta property="og:image:height" content="400" />
+<meta property="og:image:alt" content="post quantum encryption security banner" />
+<meta property="og:image:type" content="image/jpeg" />
+<meta property="article:published_time" content="2020-06-19T11:54:44+10:00" />
+<meta property="article:modified_time" content="2026-06-04T12:15:55+10:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Post-Quantum Encryption - Senetas" />
+<meta name="twitter:image" content="https://www.senetas.com/wp-content/uploads/post-quantum-encryption-security.jpg" />
+<meta name="twitter:label1" content="Time to read" />
+<meta name="twitter:data1" content="Less than a minute" />
+<script type="application/ld+json" class="rank-math-schema">{"@context":"https://schema.org","@graph":[{"@type":["ProfessionalService","Organization"],"@id":"https://www.senetas.com/#organization","name":"Senetas","url":"https://www.senetas.com","openingHours":["Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday 09:00-17:00"]},{"@type":"WebSite","@id":"https://www.senetas.com/#website","url":"https://www.senetas.com","name":"Senetas","publisher":{"@id":"https://www.senetas.com/#organization"},"inLanguage":"en-GB"},{"@type":"ImageObject","@id":"https://www.senetas.com/wp-content/uploads/post-quantum-encryption-security.jpg","url":"https://www.senetas.com/wp-content/uploads/post-quantum-encryption-security.jpg","width":"1800","height":"400","caption":"post quantum encryption security banner","inLanguage":"en-GB"},{"@type":"WebPage","@id":"https://www.senetas.com/cybersecurity-challenges/post-quantum-encryption/#webpage","url":"https://www.senetas.com/cybersecurity-challenges/post-quantum-encryption/","name":"Post-Quantum Encryption - Senetas","datePublished":"2020-06-19T11:54:44+10:00","dateModified":"2026-06-04T12:15:55+10:00","isPartOf":{"@id":"https://www.senetas.com/#website"},"primaryImageOfPage":{"@id":"https://www.senetas.com/wp-content/uploads/post-quantum-encryption-security.jpg"},"inLanguage":"en-GB"},{"@type":"Person","@id":"https://www.senetas.com/author/andrea/","name":"Andrea Vanunensmith","url":"https://www.senetas.com/author/andrea/","image":{"@type":"ImageObject","@id":"https://secure.gravatar.com/avatar/dc5311fc5b1e9eb617bd6c2d975a29072456cb5adf1e60f31004cb596208ebf9?s=96&amp;d=mm&amp;r=g","url":"https://secure.gravatar.com/avatar/dc5311fc5b1e9eb617bd6c2d975a29072456cb5adf1e60f31004cb596208ebf9?s=96&amp;d=mm&amp;r=g","caption":"Andrea Vanunensmith","inLanguage":"en-GB"},"worksFor":{"@id":"https://www.senetas.com/#organization"}},{"@type":"Article","headline":"Post-Quantum Encryption - Senetas","datePublished":"2020-06-19T11:54:44+10:00","dateModified":"2026-06-04T12:15:55+10:00","author":{"@id":"https://www.senetas.com/author/andrea/","name":"Andrea Vanunensmith"},"publisher":{"@id":"https://www.senetas.com/#organization"},"name":"Post-Quantum Encryption - Senetas","@id":"https://www.senetas.com/cybersecurity-challenges/post-quantum-encryption/#richSnippet","isPartOf":{"@id":"https://www.senetas.com/cybersecurity-challenges/post-quantum-encryption/#webpage"},"image":{"@id":"https://www.senetas.com/wp-content/uploads/post-quantum-encryption-security.jpg"},"inLanguage":"en-GB","mainEntityOfPage":{"@id":"https://www.senetas.com/cybersecurity-challenges/post-quantum-encryption/#webpage"}}]}</script>
+<!-- /Rank Math WordPress SEO plugin -->
+
+<link rel='dns-prefetch' href='//www.googletagmanager.com' />
+<link rel='dns-prefetch' href='//use.fontawesome.com' />
+
+<link href='https://www2.senetas.com' rel='preconnect' />
+<link href='https://go.pardot.com' rel='preconnect' />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://www.senetas.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.senetas.com%2Fcybersecurity-challenges%2Fpost-quantum-encryption%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://www.senetas.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.senetas.com%2Fcybersecurity-challenges%2Fpost-quantum-encryption%2F&#038;format=xml" />
+<style id="wp-img-auto-sizes-contain-inline-css">
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<style id="wp-emoji-styles-inline-css">
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+/*# sourceURL=wp-emoji-styles-inline-css */
+</style>
+<style id="wp-block-library-inline-css">
+:root{--wp-block-synced-color:#7a00df;--wp-block-synced-color--rgb:122,0,223;--wp-bound-block-color:var(--wp-block-synced-color);--wp-editor-canvas-background:#ddd;--wp-admin-theme-color:#007cba;--wp-admin-theme-color--rgb:0,124,186;--wp-admin-theme-color-darker-10:#006ba1;--wp-admin-theme-color-darker-10--rgb:0,107,160.5;--wp-admin-theme-color-darker-20:#005a87;--wp-admin-theme-color-darker-20--rgb:0,90,135;--wp-admin-border-width-focus:2px}@media (min-resolution:192dpi){:root{--wp-admin-border-width-focus:1.5px}}.wp-element-button{cursor:pointer}:root .has-very-light-gray-background-color{background-color:#eee}:root .has-very-dark-gray-background-color{background-color:#313131}:root .has-very-light-gray-color{color:#eee}:root .has-very-dark-gray-color{color:#313131}:root .has-vivid-green-cyan-to-vivid-cyan-blue-gradient-background{background:linear-gradient(135deg,#00d084,#0693e3)}:root .has-purple-crush-gradient-background{background:linear-gradient(135deg,#34e2e4,#4721fb 50%,#ab1dfe)}:root .has-hazy-dawn-gradient-background{background:linear-gradient(135deg,#faaca8,#dad0ec)}:root .has-subdued-olive-gradient-background{background:linear-gradient(135deg,#fafae1,#67a671)}:root .has-atomic-cream-gradient-background{background:linear-gradient(135deg,#fdd79a,#004a59)}:root .has-nightshade-gradient-background{background:linear-gradient(135deg,#330968,#31cdcf)}:root .has-midnight-gradient-background{background:linear-gradient(135deg,#020381,#2874fc)}:root{--wp--preset--font-size--normal:16px;--wp--preset--font-size--huge:42px}.has-regular-font-size{font-size:1em}.has-larger-font-size{font-size:2.625em}.has-normal-font-size{font-size:var(--wp--preset--font-size--normal)}.has-huge-font-size{font-size:var(--wp--preset--font-size--huge)}:root .has-text-align-center{text-align:center}:root .has-text-align-left{text-align:left}:root .has-text-align-right{text-align:right}.has-fit-text{white-space:nowrap!important}#end-resizable-editor-section{display:none}.aligncenter{clear:both}.items-justified-left{justify-content:flex-start}.items-justified-center{justify-content:center}.items-justified-right{justify-content:flex-end}.items-justified-space-between{justify-content:space-between}.screen-reader-text{word-wrap:normal!important;border:0;clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px}.screen-reader-text:focus{background-color:#ddd;clip-path:none;color:#444;display:block;font-size:1em;height:auto;left:5px;line-height:normal;padding:15px 23px 14px;text-decoration:none;top:5px;width:auto;z-index:100000}html :where(.has-border-color){border-style:solid}html :where([style*=border-color]){border-style:solid}html :where([style*=border-top-color]){border-top-style:solid}html :where([style*=border-right-color]){border-right-style:solid}html :where([style*=border-bottom-color]){border-bottom-style:solid}html :where([style*=border-left-color]){border-left-style:solid}html :where([style*=border-width]){border-style:solid}html :where([style*=border-top-width]){border-top-style:solid}html :where([style*=border-right-width]){border-right-style:solid}html :where([style*=border-bottom-width]){border-bottom-style:solid}html :where([style*=border-left-width]){border-left-style:solid}html :where(img[class*=wp-image-]){height:auto;max-width:100%}:where(figure){margin:0 0 1em}html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:var(--wp-admin--admin-bar--height,0px)}@media screen and (max-width:600px){html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:0px}}
+
+/*# sourceURL=/wp-includes/css/dist/block-library/common.min.css */
+</style>
+<style id="classic-theme-styles-inline-css">
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+/*# sourceURL=/wp-includes/css/classic-themes.min.css */
+</style>
+
+<style id="font-awesome-svg-styles-default-inline-css">
+.svg-inline--fa {
+  display: inline-block;
+  height: 1em;
+  overflow: visible;
+  vertical-align: -.125em;
+}
+/*# sourceURL=font-awesome-svg-styles-default-inline-css */
+</style>
+<link data-minify="1" rel='stylesheet' id='font-awesome-svg-styles-css' href='https://www.senetas.com/wp-content/cache/min/1/wp-content/uploads/font-awesome/v6.2.0/css/svg-with-js.css?ver=1780640648' media='all' />
+<style id="font-awesome-svg-styles-inline-css">
+   .wp-block-font-awesome-icon svg::before,
+   .wp-rich-text-font-awesome-icon svg::before {content: unset;}
+/*# sourceURL=font-awesome-svg-styles-inline-css */
+</style>
+<style id="global-styles-inline-css">
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgb(252,185,0) 0%,rgb(255,105,0) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgb(255,105,0) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgb(255, 255, 255), 6px 6px rgb(0, 0, 0);--wp--preset--shadow--crisp: 6px 6px 0px rgb(0, 0, 0);}:where(body) { margin: 0; }:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}body{padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;}:root :where(.wp-element-button, .wp-block-button__link){background-color: #32373c;border-width: 0;color: #fff;font-family: inherit;font-size: inherit;font-style: inherit;font-weight: inherit;letter-spacing: inherit;line-height: inherit;padding-top: calc(0.667em + 2px);padding-right: calc(1.333em + 2px);padding-bottom: calc(0.667em + 2px);padding-left: calc(1.333em + 2px);text-decoration: none;text-transform: inherit;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+/*# sourceURL=global-styles-inline-css */
+</style>
+
+<link data-minify="1" rel='stylesheet' id='extra-css-css' href='https://www.senetas.com/wp-content/cache/min/1/wp-content/themes/senetas2020/custom-v1.css?ver=1780640648' media='all' />
+<link data-minify="1" rel='stylesheet' id='font-awesome-official-css' href='https://www.senetas.com/wp-content/cache/min/1/releases/v6.2.0/css/all.css?ver=1780640648' media='all' crossorigin="anonymous" />
+<link rel='stylesheet' id='shiftnav-css' href='https://www.senetas.com/wp-content/plugins/shiftnav-pro/pro/assets/css/shiftnav.min.css?ver=1.6.1.2' media='all' />
+<link rel='stylesheet' id='ubermenu-css' href='https://www.senetas.com/wp-content/plugins/ubermenu/pro/assets/css/ubermenu.min.css?ver=3.8.5' media='all' />
+<link data-minify="1" rel='stylesheet' id='ubermenu-trans-black-css' href='https://www.senetas.com/wp-content/cache/min/1/wp-content/plugins/ubermenu/pro/assets/css/skins/trans_black.css?ver=1780640648' media='all' />
+<link data-minify="1" rel='stylesheet' id='ubermenu-font-awesome-all-css' href='https://www.senetas.com/wp-content/cache/min/1/wp-content/plugins/ubermenu/assets/fontawesome/css/all.min.css?ver=1780640648' media='all' />
+<link data-minify="1" rel='stylesheet' id='sage/css-css' href='https://www.senetas.com/wp-content/cache/min/1/wp-content/themes/senetas2020/dist/styles/main-6dd74e80e0.css?ver=1780640648' media='all' />
+<link data-minify="1" rel='stylesheet' id='shiftnav-font-awesome-css' href='https://www.senetas.com/wp-content/cache/min/1/wp-content/plugins/shiftnav-pro/assets/css/fontawesome/css/font-awesome.min.css?ver=1780640648' media='all' />
+<link data-minify="1" rel='stylesheet' id='shiftnav-standard-dark-css' href='https://www.senetas.com/wp-content/cache/min/1/wp-content/plugins/shiftnav-pro/assets/css/skins/standard-dark.css?ver=1780640648' media='all' />
+<link data-minify="1" rel='stylesheet' id='font-awesome-official-v4shim-css' href='https://www.senetas.com/wp-content/cache/min/1/releases/v6.2.0/css/v4-shims.css?ver=1780640649' media='all' crossorigin="anonymous" />
+<script type="rocketlazyloadscript" id="jquery-core-js" data-rocket-src="https://www.senetas.com/wp-includes/js/jquery/jquery.min.js?ver=3.7.1" defer></script>
+<script type="rocketlazyloadscript" id="jquery-migrate-js" data-rocket-src="https://www.senetas.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1" defer></script>
+
+<!-- Google tag (gtag.js) snippet added by Site Kit -->
+<!-- Google Analytics snippet added by Site Kit -->
+<script type="rocketlazyloadscript" id="google_gtagjs-js" data-rocket-src="https://www.googletagmanager.com/gtag/js?id=GT-WBLCHF2" async></script>
+<script type="rocketlazyloadscript" id="google_gtagjs-js-after">
+window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}
+gtag("set","linker",{"domains":["www.senetas.com"]});
+gtag("js", new Date());
+gtag("set", "developer_id.dZTNiMT", true);
+gtag("config", "GT-WBLCHF2");
+ window._googlesitekit = window._googlesitekit || {}; window._googlesitekit.throttledEvents = []; window._googlesitekit.gtagEvent = (name, data) => { var key = JSON.stringify( { name, data } ); if ( !! window._googlesitekit.throttledEvents[ key ] ) { return; } window._googlesitekit.throttledEvents[ key ] = true; setTimeout( () => { delete window._googlesitekit.throttledEvents[ key ]; }, 5 ); gtag( "event", name, { ...data, event_source: "site-kit" } ); }; 
+//# sourceURL=google_gtagjs-js-after
+</script>
+<link rel="https://api.w.org/" href="https://www.senetas.com/wp-json/" /><link rel="alternate" title="JSON" type="application/json" href="https://www.senetas.com/wp-json/wp/v2/pages/6520" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://www.senetas.com/xmlrpc.php?rsd" />
+<link rel='shortlink' href='https://www.senetas.com/?p=6520' />
+<meta name="generator" content="Site Kit by Google 1.179.0" /><!-- HFCM by 99 Robots - Snippet # 1: Google Analytics 4 -->
+<!-- Google tag (gtag.js) -->
+<script type="rocketlazyloadscript" async data-rocket-src="https://www.googletagmanager.com/gtag/js?id=G-LRJC722R60"></script>
+<script type="rocketlazyloadscript">
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LRJC722R60');
+</script>
+<!-- /end HFCM by 99 Robots -->
+
+	<!-- ShiftNav CSS
+	================================================================ -->
+	<style type="text/css" id="shiftnav-dynamic-css">
+
+	@media only screen and (min-width:1080px){ #shiftnav-toggle-main, .shiftnav-toggle-mobile{ display:none; } .shiftnav-wrap { padding-top:0 !important; } }
+	@media only screen and (max-width:1079px){ .banner{ display:none !important; } }
+
+/** ShiftNav Custom Menu Styles (Customizer) **/
+/* togglebar */
+#shiftnav-toggle-main { background:#001e60; color:#41b6e6; font-size:24px !important; }
+#shiftnav-toggle-main.shiftnav-toggle-main-entire-bar:before, #shiftnav-toggle-main .shiftnav-toggle-burger { font-size:24px; }
+/* shiftnav-main */
+.shiftnav.shiftnav-shiftnav-main ul.shiftnav-menu li.menu-item.shiftnav-active > .shiftnav-target, .shiftnav.shiftnav-shiftnav-main ul.shiftnav-menu li.menu-item.shiftnav-in-transition > .shiftnav-target, .shiftnav.shiftnav-shiftnav-main ul.shiftnav-menu.shiftnav-active-on-hover li.menu-item > .shiftnav-target:hover, .shiftnav.shiftnav-shiftnav-main ul.shiftnav-menu.shiftnav-active-highlight li.menu-item > .shiftnav-target:active { background:#51c3c6; }
+.shiftnav.shiftnav-shiftnav-main ul.shiftnav-menu li.menu-item.current-menu-item > .shiftnav-target, .shiftnav.shiftnav-shiftnav-main ul.shiftnav-menu li.menu-item ul.sub-menu .current-menu-item > .shiftnav-target, .shiftnav.shiftnav-shiftnav-main ul.shiftnav-menu > li.shiftnav-sub-accordion.current-menu-ancestor > .shiftnav-target, .shiftnav.shiftnav-shiftnav-main ul.shiftnav-menu > li.shiftnav-sub-shift.current-menu-ancestor > .shiftnav-target { background:#51c3c6; }
+.shiftnav.shiftnav-shiftnav-main ul.shiftnav-menu li.menu-item.shiftnav-highlight > .shiftnav-target, .shiftnav.shiftnav-shiftnav-main ul.shiftnav-menu li.menu-item ul.sub-menu .shiftnav-highlight > .shiftnav-target { background:#51c3c6; }
+
+
+/** ShiftNav Custom Tweaks (General Settings) **/
+#shiftnav-toggle-main .shiftnav-main-toggle-content {
+padding: 8px 20px;
+}
+/* Status: Loaded from Transient */
+
+	</style>
+	<!-- end ShiftNav CSS -->
+
+	<style id="ubermenu-custom-generated-css">
+/** Font Awesome 4 Compatibility **/
+.fa{font-style:normal;font-variant:normal;font-weight:normal;font-family:FontAwesome;}
+
+/** UberMenu Custom Menu Styles (Customizer) **/
+/* main */
+ .ubermenu-main { background-color:#51c3c6; background:-webkit-gradient(linear,left top,left bottom,from(#51c3c6),to(#51c3c6)); background:-webkit-linear-gradient(top,#51c3c6,#51c3c6); background:-moz-linear-gradient(top,#51c3c6,#51c3c6); background:-ms-linear-gradient(top,#51c3c6,#51c3c6); background:-o-linear-gradient(top,#51c3c6,#51c3c6); background:linear-gradient(top,#51c3c6,#51c3c6); }
+ .ubermenu.ubermenu-main { background:none; border:none; box-shadow:none; }
+ .ubermenu.ubermenu-main .ubermenu-item-level-0 > .ubermenu-target { border:none; box-shadow:none; }
+ .ubermenu.ubermenu-main.ubermenu-horizontal .ubermenu-submenu-drop.ubermenu-submenu-align-left_edge_bar, .ubermenu.ubermenu-main.ubermenu-horizontal .ubermenu-submenu-drop.ubermenu-submenu-align-full_width { left:0; }
+ .ubermenu.ubermenu-main.ubermenu-horizontal .ubermenu-item-level-0.ubermenu-active > .ubermenu-submenu-drop, .ubermenu.ubermenu-main.ubermenu-horizontal:not(.ubermenu-transition-shift) .ubermenu-item-level-0 > .ubermenu-submenu-drop { margin-top:0; }
+ .ubermenu-main .ubermenu-item-level-0 > .ubermenu-target { font-size:18px; text-transform:none; color:#ffffff; }
+ .ubermenu-main .ubermenu-item-level-0 > .ubermenu-target, .ubermenu-main .ubermenu-item-level-0 > .ubermenu-target.ubermenu-item-notext > .ubermenu-icon { line-height:21px; }
+ .ubermenu-main .ubermenu-nav .ubermenu-item.ubermenu-item-level-0 > .ubermenu-target { font-weight:normal; }
+ .ubermenu.ubermenu-main .ubermenu-item-level-0:hover > .ubermenu-target, .ubermenu-main .ubermenu-item-level-0.ubermenu-active > .ubermenu-target { color:#51c3c6; }
+ .ubermenu-main .ubermenu-item-level-0.ubermenu-current-menu-item > .ubermenu-target, .ubermenu-main .ubermenu-item-level-0.ubermenu-current-menu-parent > .ubermenu-target, .ubermenu-main .ubermenu-item-level-0.ubermenu-current-menu-ancestor > .ubermenu-target { color:#ffffff; }
+ .ubermenu-main .ubermenu-item.ubermenu-item-level-0 > .ubermenu-highlight { color:#ffffff; }
+ .ubermenu.ubermenu-main .ubermenu-item-level-0 { margin:0px; }
+ .ubermenu-main .ubermenu-submenu.ubermenu-submenu-drop { background-color:#004559; border:1px solid #004559; }
+ .ubermenu-main .ubermenu-item .ubermenu-submenu-drop { box-shadow:0 0 20px rgba(0,0,0, 0.5); }
+ .ubermenu-main .ubermenu-item-normal > .ubermenu-target,.ubermenu-main .ubermenu-submenu .ubermenu-target,.ubermenu-main .ubermenu-submenu .ubermenu-nonlink,.ubermenu-main .ubermenu-submenu .ubermenu-widget,.ubermenu-main .ubermenu-submenu .ubermenu-custom-content-padded,.ubermenu-main .ubermenu-submenu .ubermenu-retractor,.ubermenu-main .ubermenu-submenu .ubermenu-colgroup .ubermenu-column,.ubermenu-main .ubermenu-submenu.ubermenu-submenu-type-stack > .ubermenu-item-normal > .ubermenu-target,.ubermenu-main .ubermenu-submenu.ubermenu-submenu-padded { padding:10px 20px; }
+ .ubermenu-main .ubermenu-grid-row { padding-right:10px 20px; }
+ .ubermenu-main .ubermenu-grid-row .ubermenu-target { padding-right:0; }
+ .ubermenu-main.ubermenu-sub-indicators .ubermenu-submenu :not(.ubermenu-tabs-layout-right) .ubermenu-has-submenu-drop > .ubermenu-target { padding-right:25px; }
+ .ubermenu-main .ubermenu-submenu .ubermenu-item-header > .ubermenu-target, .ubermenu-main .ubermenu-tab > .ubermenu-target { font-size:18px; }
+ .ubermenu-main .ubermenu-item-normal > .ubermenu-target { color:#333333; font-size:16px; font-weight:normal; text-transform:none; }
+ .ubermenu.ubermenu-main .ubermenu-item-normal > .ubermenu-target:hover, .ubermenu.ubermenu-main .ubermenu-item-normal.ubermenu-active > .ubermenu-target { color:#ffffff; background-color:#51c3c6; }
+ .ubermenu-main .ubermenu-item-normal.ubermenu-current-menu-item > .ubermenu-target { color:#ffffff; }
+ .ubermenu.ubermenu-main .ubermenu-tabs .ubermenu-tabs-group > .ubermenu-tab > .ubermenu-target { font-weight:normal; }
+ .ubermenu.ubermenu-main .ubermenu-tab > .ubermenu-target { color:#ffffff; }
+ .ubermenu.ubermenu-main .ubermenu-submenu .ubermenu-tab.ubermenu-active > .ubermenu-target { color:#004559; }
+ .ubermenu-main .ubermenu-submenu .ubermenu-tab.ubermenu-current-menu-item > .ubermenu-target, .ubermenu-main .ubermenu-submenu .ubermenu-tab.ubermenu-current-menu-parent > .ubermenu-target, .ubermenu-main .ubermenu-submenu .ubermenu-tab.ubermenu-current-menu-ancestor > .ubermenu-target { color:#004559; background-color:#ffffff; }
+ .ubermenu.ubermenu-main .ubermenu-tab.ubermenu-active > .ubermenu-target { background-color:#ffffff; }
+ .ubermenu.ubermenu-main .ubermenu-tab-content-panel { background-color:#ffffff; }
+ .ubermenu.ubermenu-main .ubermenu-tabs-group .ubermenu-item-header > .ubermenu-target { color:#004559 !important; }
+ .ubermenu.ubermenu-main .ubermenu-tabs-group .ubermenu-item-normal > .ubermenu-target { color:#004559 !important; }
+ .ubermenu.ubermenu-main .ubermenu-tabs-group .ubermenu-target > .ubermenu-target-description { color:#666666 !important; }
+ .ubermenu.ubermenu-main .ubermenu-tabs-group { border-color:#ffffff; }
+ .ubermenu-main .ubermenu-target > .ubermenu-target-description { font-size:16px; }
+ .ubermenu-main .ubermenu-target > .ubermenu-target-description, .ubermenu-main .ubermenu-submenu .ubermenu-target > .ubermenu-target-description { color:#333333; }
+ .ubermenu-main.ubermenu-sticky .ubermenu-nav { width:1400px; max-width:100%; margin:0 auto; float:none; position:relative; }
+
+
+/** UberMenu Custom Menu Item Styles (Menu Item Settings) **/
+/* 163 */    .ubermenu .ubermenu-tabs.ubermenu-item-163 > .ubermenu-tabs-group > .ubermenu-tab > .ubermenu-tab-content-panel { padding:20px; }
+/* 6394 */   .ubermenu .ubermenu-tabs.ubermenu-item-6394 > .ubermenu-tabs-group > .ubermenu-tab > .ubermenu-tab-content-panel { padding:20px; }
+/* 6426 */   .ubermenu .ubermenu-tabs.ubermenu-item-6426 > .ubermenu-tabs-group > .ubermenu-tab > .ubermenu-tab-content-panel { padding:20px; }
+/* 6444 */   .ubermenu .ubermenu-tabs.ubermenu-item-6444 > .ubermenu-tabs-group > .ubermenu-tab > .ubermenu-tab-content-panel { padding:20px; }
+/* 6465 */   .ubermenu .ubermenu-tabs.ubermenu-item-6465 > .ubermenu-tabs-group > .ubermenu-tab > .ubermenu-tab-content-panel { padding:20px; }
+/* 6407 */   .ubermenu .ubermenu-active > .ubermenu-submenu.ubermenu-submenu-id-6407, .ubermenu .ubermenu-in-transition > .ubermenu-submenu.ubermenu-submenu-id-6407 { padding:39px 30px; }
+/* 6406 */   .ubermenu .ubermenu-active > .ubermenu-submenu.ubermenu-submenu-id-6406, .ubermenu .ubermenu-in-transition > .ubermenu-submenu.ubermenu-submenu-id-6406 { padding:39px 30px; }
+/* 7443 */   .ubermenu .ubermenu-item.ubermenu-item-7443 > .ubermenu-target { color:#004559; }
+             .ubermenu .ubermenu-item.ubermenu-item-7443.ubermenu-active > .ubermenu-target, .ubermenu .ubermenu-item.ubermenu-item-7443:hover > .ubermenu-target, .ubermenu .ubermenu-submenu .ubermenu-item.ubermenu-item-7443.ubermenu-active > .ubermenu-target, .ubermenu .ubermenu-submenu .ubermenu-item.ubermenu-item-7443:hover > .ubermenu-target { color:#51c3c6; }
+/* 123 */    .ubermenu .ubermenu-item.ubermenu-item-123 > .ubermenu-target { color:#004559; }
+             .ubermenu .ubermenu-item.ubermenu-item-123.ubermenu-active > .ubermenu-target, .ubermenu .ubermenu-item.ubermenu-item-123:hover > .ubermenu-target, .ubermenu .ubermenu-submenu .ubermenu-item.ubermenu-item-123.ubermenu-active > .ubermenu-target, .ubermenu .ubermenu-submenu .ubermenu-item.ubermenu-item-123:hover > .ubermenu-target { color:#51c3c6; }
+/* 122 */    .ubermenu .ubermenu-item.ubermenu-item-122 > .ubermenu-target { color:#004559; }
+             .ubermenu .ubermenu-item.ubermenu-item-122.ubermenu-active > .ubermenu-target, .ubermenu .ubermenu-item.ubermenu-item-122:hover > .ubermenu-target, .ubermenu .ubermenu-submenu .ubermenu-item.ubermenu-item-122.ubermenu-active > .ubermenu-target, .ubermenu .ubermenu-submenu .ubermenu-item.ubermenu-item-122:hover > .ubermenu-target { color:#51c3c6; }
+/* 125 */    .ubermenu .ubermenu-item.ubermenu-item-125 > .ubermenu-target { color:#004559; }
+             .ubermenu .ubermenu-item.ubermenu-item-125.ubermenu-active > .ubermenu-target, .ubermenu .ubermenu-item.ubermenu-item-125:hover > .ubermenu-target, .ubermenu .ubermenu-submenu .ubermenu-item.ubermenu-item-125.ubermenu-active > .ubermenu-target, .ubermenu .ubermenu-submenu .ubermenu-item.ubermenu-item-125:hover > .ubermenu-target { color:#51c3c6; }
+/* 126 */    .ubermenu .ubermenu-item.ubermenu-item-126 > .ubermenu-target { color:#004559; }
+             .ubermenu .ubermenu-item.ubermenu-item-126.ubermenu-active > .ubermenu-target, .ubermenu .ubermenu-item.ubermenu-item-126:hover > .ubermenu-target, .ubermenu .ubermenu-submenu .ubermenu-item.ubermenu-item-126.ubermenu-active > .ubermenu-target, .ubermenu .ubermenu-submenu .ubermenu-item.ubermenu-item-126:hover > .ubermenu-target { color:#51c3c6; }
+/* 6395 */   .ubermenu .ubermenu-active > .ubermenu-submenu.ubermenu-submenu-id-6395, .ubermenu .ubermenu-in-transition > .ubermenu-submenu.ubermenu-submenu-id-6395 { padding:40px 0px; }
+/* 6382 */   .ubermenu .ubermenu-item-6382 > .ubermenu-target.ubermenu-item-layout-image_left > .ubermenu-target-text { padding-left:270px; }
+/* 6383 */   .ubermenu .ubermenu-item-6383 > .ubermenu-target.ubermenu-item-layout-image_left > .ubermenu-target-text { padding-left:270px; }
+/* 6381 */   .ubermenu .ubermenu-item-6381 > .ubermenu-target.ubermenu-item-layout-image_left > .ubermenu-target-text { padding-left:210px; }
+/* 9196 */   .ubermenu .ubermenu-item-9196 > .ubermenu-target.ubermenu-item-layout-image_left > .ubermenu-target-text { padding-left:100px; }
+
+
+/** UberMenu Sticky CSS **/
+ .ubermenu.ubermenu-sticky, .ubermenu-responsive-toggle.ubermenu-sticky{ z-index:1000; } .ubermenu-sticky.ubermenu-sticky-full-width{ left:0; width:100%; max-width:100%; }
+ .ubermenu-sticky-full-width.ubermenu-sticky .ubermenu-nav{ padding-left:1px; }
+@media screen and (max-width: 959px){ 
+   .ubermenu-responsive-toggle.ubermenu-sticky{ height:43px; left:0; width:100% !important; } 
+   .ubermenu.ubermenu-sticky{ margin-top:43px; left:0; width:100% !important; } 
+
+	 .ubermenu-responsive-toggle,  .ubermenu,  .ubermenu.ubermenu-sticky{position:relative !important; margin:0 !important; min-height:0 !important; }
+	 .ubermenu.ubermenu-is-mobile.ubermenu-sticky.ubermenu-responsive-collapse{ max-height:0;}  /* Mobile Sticky */
+   .ubermenu.ubermenu-is-mobile.ubermenu-sticky { min-height:400px; max-height:600px; overflow-y:auto !important; -webkit-overflow-scrolling:touch; }
+   .ubermenu.ubermenu-is-mobile.ubermenu-sticky > .ubermenu-nav{ height:100%; }
+   .ubermenu.ubermenu-is-mobile.ubermenu-sticky .ubermenu-active > .ubermenu-submenu-drop{ max-height:none; }
+}
+/* Special Classes */  .ubermenu .ubermenu-item.um-sticky-only{ display:none !important; }  .ubermenu.ubermenu-sticky .ubermenu-item-level-0.um-sticky-only{ display:inline-block !important; }  .ubermenu.ubermenu-sticky .ubermenu-submenu .ubermenu-item.um-sticky-only{ display:block !important; }  .ubermenu .ubermenu-item-level-0.um-unsticky-only{ display:inline-block !important; }  .ubermenu .ubermenu-submenu .ubermenu-item.um-unsticky-only{ display:block !important; }  .ubermenu.ubermenu-sticky .ubermenu-item.um-unsticky-only{ display:none !important; }
+@media screen and (min-width:783px){ .admin-bar  .ubermenu.ubermenu-sticky, .admin-bar  .ubermenu-responsive-toggle.ubermenu-sticky{ margin-top:32px; } }
+@media screen and (min-width:783px) and (max-width:959px){ .admin-bar  .ubermenu.ubermenu-sticky{ margin-top:78px; } }
+@media screen and (min-width:600px) and (max-width:782px){ .admin-bar  .ubermenu.ubermenu-sticky, .admin-bar  .ubermenu-responsive-toggle.ubermenu-sticky{ margin-top:46px; } .admin-bar  .ubermenu.ubermenu-sticky{ margin-top:89px; } }
+
+/* Status: Loaded from Transient */
+
+</style><style>.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style><link rel="icon" href="https://www.senetas.com/wp-content/uploads/Senetas_Logo_RGB_Rev-1.png" sizes="32x32" />
+<link rel="icon" href="https://www.senetas.com/wp-content/uploads/Senetas_Logo_RGB_Rev-1.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://www.senetas.com/wp-content/uploads/Senetas_Logo_RGB_Rev-1.png" />
+<meta name="msapplication-TileImage" content="https://www.senetas.com/wp-content/uploads/Senetas_Logo_RGB_Rev-1.png" />
+<style id="wp-custom-css">
+@media (max-width: 1200px) {
+	.banner .container {
+		max-width: 100%;
+	}
+}
+.bg-grey {
+	background-color: #eaeaea;
+}
+.content-blocks {
+	min-height: 0;
+}
+
+@media screen and (max-width: 600px) {
+	.resource-block .search-form {
+
+	}
+	.resource-block .filters,
+	.resource-block .filters .btn {
+		display: block !important;
+	}
+	.resource-block .filters select {
+		margin:4px 0;
+	}
+}
+
+/* for subscribe button in the templates/content-single.php */
+.cremarc-hs-button {
+	background: #004559;
+	border-color: whitesmoke;
+	color: whitesmoke;
+	font-size: 12px;
+	line-height: 12px;
+	font-family: helvetica;
+	
+	margin: 0;
+	cursor: pointer;
+	display: inline-block;
+	font-weight: 700;
+	position: relative;
+	text-align: center;
+	transition: all .15s linear;
+	border-radius: 10px;
+	border-style: solid;
+	border-width: 1px;
+	padding: 12px 24px;
+}
+.page-id-103 #popmake-7561 {
+    padding: 30px;
+}
+
+
+/* EDITS FOR POST 8787 */
+.postid-8787 .entry-content li::marker {
+	font-weight: bold;
+}
+.dro-shadow {
+    border: 1px solid #00000024;
+    padding: 25px 30px;
+    min-height: 510px;
+    box-shadow: 0px 0px 12px 2px #00000026;
+}
+
+.postid-8880 h1{
+	max-width: 670px;
+}
+
+.stats-header {
+      margin-bottom: 28px;
+ margin-top: 28px;
+	font-weight: bold;
+    }
+    .stats-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 36px;
+      margin-bottom: 36px;
+    }
+    .stat-block {
+      flex: 1;
+      border-left: 1px solid #e0e0e0;
+      padding-left: 32px;
+      min-width: 150px;
+    }
+    .stat-block:first-child {
+      border-left: none;
+      padding-left: 0;
+    }
+    .stat-number {
+      font-size: 1.2em;
+      font-weight: 400;
+   
+    }
+    .stat-label {
+      margin-top: 6px;
+    }
+    .stat-desc {
+      margin-top: 12px;
+   
+    }
+
+.stat-block ul{
+	padding-left:15px;
+}
+
+@media screen and (max-width:996px){
+	.stats-container {
+   flex-direction: column;
+}
+	
+	.stat-block {
+    border-left: 0px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+    padding-left: 0px;
+		 padding-bottom: 25px;
+	}
+	
+	.stat-block:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+}
+
+ .video-container {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      padding-top: 30px; /* Optional top padding */
+      height: 0;
+      overflow: hidden;
+     
+	 max-width: 800px;
+    margin: auto;
+    }
+    .video-container iframe, 
+    .video-container object, 
+    .video-container embed {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+.device-table {
+  width: 100%;
+  border-collapse: collapse;
+	border-spacing:0px;
+}
+.device-table th, .device-table td {
+  border: 1px solid #222;
+  padding: 8px;
+  vertical-align: top;
+	border-spacing:0px;
+}
+.device-table th {
+  text-align: left;
+  font-weight: bold;
+}
+.device-table .feature-label {
+  font-weight: bold;
+}
+.device-table td .feature-title{
+	display:none;
+}
+@media screen and (max-width: 700px) {
+  .device-table,
+  .device-table thead,
+  .device-table tbody,
+  .device-table tr,
+  .device-table th,
+  .device-table td {
+    display: block;
+    width: 100%;
+		font-size: 14px;
+  }
+  .device-table thead th:first-of-type{
+    display: none;
+  }
+  .device-table tr {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 0px;
+  }
+  .device-table td {
+    flex: 1;
+    border: 1px solid #222;
+    margin-right: -1px;
+    min-width: 0;
+  }
+  .device-table td .feature-title {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  .device-table .feature-label {
+    display: none;
+  }
+	
+	.table-bordered, .table-bordered td, .table-bordered th{
+		font-size: 12px;
+		padding: 3px;
+	}
+}
+</style>
+<noscript><style id="rocket-lazyload-nojs-css">.rll-youtube-player, [data-lazy-src]{display:none !important;}</style></noscript>	
+	
+	<style>
+	.glossaryIndex{
+	display:flex;
+	flex-wrap: wrap;
+}
+.glossaryIndex > a{
+	padding: 0px 5px;
+    font-size: 30px;
+}
+.page-id-97 .content-blocks:nth-child(2){
+	position:sticky;
+	top:0;
+	position: -webkit-sticky;
+	z-index:999;
+	padding-bottom: 15px;
+}
+	#popmake-8487 button#toggleButton {
+    padding: 10px 25px;
+    border-radius: 22px;
+    border: none;
+    background: #51c3c6;
+    color: white;
+}
+@media only screen and (max-width: 600px) {
+  .glossaryIndex > a{
+	padding: 0px 4px;
+    font-size: 25px;
+}
+}
+	</style>
+</head>
+  <body class="wp-singular page-template-default page page-id-6520 page-child parent-pageid-59 wp-theme-senetas2020 post-quantum-encryption sidebar-primary">
+	  
+					
+	<!-- Google Tag Manager (noscript) -->
+	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WV4WT54F"
+	height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+	<!-- End Google Tag Manager (noscript) -->
+	  
+	  <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M9MW5RMD"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+			
+    <!--[if IE]>
+      <div class="alert alert-warning">
+        You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.      </div>
+    <![endif]-->
+    	<header class="banner banner-sml">
+		<div class="container" style="position: relative;">
+			<a class="logo" href="https://www.senetas.com/">
+<!-- 				<img width="156" height="58" src="https://www.senetas.com/wp-content/themes/senetas2020/dist/images/senetas-logo.svg" alt="Senetas Logo" style="width: 100%; height: auto;"> -->
+				<img width="1920" height="346" src="https://www.senetas.com/wp-content/uploads/Senetas_Logo_RGB_Rev.png" alt="Senetas Logo" style="width: 100%; height: auto;">
+			</a>
+			
+				<nav class="nav-alt">
+					
+					<div class="menu-alt-menu-container"><ul id="menu-alt-menu" class="alt-nav"><li id="menu-item-118" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-118"><a target="_blank" href="https://support.senetas.com/">Customer Support</a></li>
+<li id="menu-item-120" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-120"><a href="https://www.senetas.com/contact/">Contact Us</a></li>
+</ul></div>					<form role="search" method="get" class="search-form" action="https://www.senetas.com/">
+				<label>
+					<span class="screen-reader-text">Search for:</span>
+					<input type="search" class="search-field" placeholder="Search &hellip;" value="" name="s" />
+				</label>
+				<input type="submit" class="search-submit" value="Search" />
+			</form>				</nav>
+				<nav class="nav-primary">
+				  
+<!-- UberMenu [Configuration:main] [Theme Loc:primary_navigation] [Integration:auto] -->
+<a class="ubermenu-responsive-toggle ubermenu-responsive-toggle-main ubermenu-skin-trans-black ubermenu-loc-primary_navigation ubermenu-responsive-toggle-content-align-left ubermenu-responsive-toggle-align-full " tabindex="0" data-ubermenu-target="ubermenu-main-3-primary_navigation-2"   aria-label="Toggle Main Menu"><i class="fas fa-bars" ></i>Menu</a><nav id="ubermenu-main-3-primary_navigation-2" class="ubermenu ubermenu-nojs ubermenu-main ubermenu-menu-3 ubermenu-loc-primary_navigation ubermenu-responsive ubermenu-responsive-default ubermenu-responsive-collapse ubermenu-horizontal ubermenu-transition-fade ubermenu-trigger-hover_intent ubermenu-skin-trans-black  ubermenu-bar-align-full ubermenu-items-align-right ubermenu-bound ubermenu-disable-submenu-scroll ubermenu-retractors-responsive ubermenu-submenu-indicator-closes"><ul id="ubermenu-nav-main-3-primary_navigation" class="ubermenu-nav" data-title="Main Menu"><!-- begin Segment: Menu ID 4 --><li id="menu-item-121" class="ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-current-page-ancestor ubermenu-current-menu-ancestor ubermenu-current-page-parent ubermenu-current_page_ancestor ubermenu-item-has-children ubermenu-item-121 ubermenu-item-level-0 ubermenu-column ubermenu-column-auto ubermenu-has-submenu-drop ubermenu-has-submenu-mega" ><span class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" tabindex="0"><span class="ubermenu-target-title ubermenu-target-text">Cybersecurity Challenges</span></span><ul  class="ubermenu-submenu ubermenu-submenu-id-121 ubermenu-submenu-type-auto ubermenu-submenu-type-mega ubermenu-submenu-drop ubermenu-submenu-align-full_width"  ><!-- begin Tabs: [Tabs] 163 --><li id="menu-item-163" class="ubermenu-item ubermenu-tabs ubermenu-item-163 ubermenu-item-level-1 ubermenu-column ubermenu-column-full ubermenu-tab-layout-left ubermenu-tabs-show-default ubermenu-tabs-show-current"><ul  class="ubermenu-tabs-group ubermenu-tabs-group--trigger-mouseover ubermenu-column ubermenu-column-1-4 ubermenu-submenu ubermenu-submenu-id-163 ubermenu-submenu-type-auto ubermenu-submenu-type-tabs-group"  ><li id="menu-item-127" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-127 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/cybersecurity-challenges/why-is-encryption-important/"><span class="ubermenu-target-title ubermenu-target-text">Network Data Security</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-127 ubermenu-submenu-type-tab-content-panel"  ><!-- begin Tabs: [Tabs] 7800 --><li id="menu-item-7800" class="ubermenu-item ubermenu-tabs ubermenu-item-7800 ubermenu-item-level-3 ubermenu-column ubermenu-column-full ubermenu-tab-layout-left ubermenu-tabs-show-default ubermenu-tabs-show-current"><ul  class="ubermenu-tabs-group ubermenu-tabs-group--trigger-mouseover ubermenu-column ubermenu-column-1-4 ubermenu-submenu ubermenu-submenu-id-7800 ubermenu-submenu-type-auto ubermenu-submenu-type-tabs-group"  ><li id="menu-item-126" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-126 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/cybersecurity-challenges/why-is-encryption-important/network-independent-encryption/"><span class="ubermenu-target-title ubermenu-target-text">Network Independent Encryption</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-126 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-165" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-165 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-5 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Network Independent Encryption</h4>
+		<p>Senetas hardware has set the standard for secure Layer 2 encryption for many years. However, as networks have evolved to become increasingly virtualised and borderless, there is greater demand to add encryption security at Layers 3 and 4.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/encryption-overview/network-independent-encryption/">More</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/network-independent-encryption-menu.jpg" alt="Network independent encryption">
+	</div>
+</div></div></li></ul></li><li id="menu-item-125" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-125 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/cybersecurity-challenges/why-is-encryption-important/high-assurance-encryption/"><span class="ubermenu-target-title ubermenu-target-text">High-Assurance Encryption</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-125 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-167" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-167 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-5 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">High-Assurance Encryption</h4>
+		<p>Senetas designs, develops and manufactures certified high-assurance encryption hardware to protect all types of data in transit across all current network protocols and topologies.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/encryption-overview/high-assurance-encryption/">Find out how</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/high-assurance-encryption-menu.jpg" alt="High Assurance Encryption">
+	</div>
+</div></div></li></ul></li><li id="menu-item-122" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-122 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/cybersecurity-challenges/why-is-encryption-important/crypto-agility/"><span class="ubermenu-target-title ubermenu-target-text">Crypto-Agility</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-122 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-168" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-168 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-5 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Crypto-Agility</h4>
+		<p>The best encryption solutions are not only suitable for networks of all types, they occupy a barely perceptible presence on the network, are transparent to other devices and result in minimal latency. They also mitigate the threat of future technologies such as quantum computing.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/encryption-overview/crypto-agility/">Find out how</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/crypto-agility-menu.jpg" alt="Crypto-Agility">
+	</div>
+</div></div></li></ul></li><li id="menu-item-123" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-123 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/cybersecurity-challenges/why-is-encryption-important/encryption-key-management/"><span class="ubermenu-target-title ubermenu-target-text">Encryption Key Management</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-123 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-169" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-169 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-5 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Encryption Key Management</h4>
+		<p>Encryption depends upon secure key management to 
+ deliver the information needed to encrypt and decrypt frames. To ensure any breached data is rendered meaningless in the hands of an unauthorised user, it is essential to restrict access to the encryption keys themselves.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/encryption-overview/encryption-key-management/">Find out how</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/encryption-key-management-menu.jpg" alt="Encryption Key Management">
+	</div>
+</div></div></li></ul></li><li id="menu-item-7443" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-7443 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/cybersecurity-challenges/why-is-encryption-important/encryption-use-cases/"><span class="ubermenu-target-title ubermenu-target-text">Network Encryption Use Cases</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-7443 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-7446" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-7446 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-5 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Network Encryption Use Cases</h4>
+		<p>Senetas cybersecurity solutions protect data in transit across high-speed networks. Applications include SCADA Control Systems, CCTV Networks, Datacentre Services and Smart Cities.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/encryption-overview/encryption-use-cases/">Find out how</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="400" height="225" class="img-fluid img-center" src="/wp-content/uploads/Encryption-Use-Cases.jpg" alt="Encryption Use Cases">
+	</div>
+</div></div></li></ul></li></ul></li><!-- end Tabs: [Tabs] 7800 --></ul></li><li id="menu-item-7801" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-7801 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/cybersecurity-challenges/secure-file-sharing-and-collaboration/"><span class="ubermenu-target-title ubermenu-target-text">Secure Filesharing &#038; Storage</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-7801 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-7802" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-7802 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Secure Filesharing and  Storage</h4>
+		<p>As remote working becomes the new normal, cybercriminals are increasingly targeting more vulnerable users. The demand for secure filesharing, storage and collaboration has never been greater.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/cybersecurity-challenges/secure-file-sharing-and-collaboration/">More</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/why-encrypt-menu.jpg" alt="Why Encrypt">
+	</div>
+</div></div></li></ul></li><li id="menu-item-8180" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-current-menu-item ubermenu-page_item ubermenu-page-item-6520 ubermenu-current_page_item ubermenu-item-has-children ubermenu-item-8180 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/cybersecurity-challenges/post-quantum-encryption/"><span class="ubermenu-target-title ubermenu-target-text">Post Quantum Cryptography</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-8180 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-8181" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-8181 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Quantum Resistant Cryptography</h4>
+		<p>As cybersecurity experts and government agencies alike advocate for the migration to a quantum resilient stance, Senetas has already introduced post-quantum cryptography in the form of hybrid encryption.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/cybersecurity-challenges/post-quantum-encryption-security/">More</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/post-quantum-encryption-security-menu.jpg" alt="Post Quantum Encryption Security">
+	</div>
+</div></div></li></ul></li></ul></li><!-- end Tabs: [Tabs] 163 --></ul></li><!-- end Segment: 4 --><!-- begin Segment: Menu ID 5 --><li id="menu-item-129" class="ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-129 ubermenu-item-level-0 ubermenu-column ubermenu-column-auto ubermenu-has-submenu-drop ubermenu-has-submenu-mega" ><span class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" tabindex="0"><span class="ubermenu-target-title ubermenu-target-text">Products</span></span><ul  class="ubermenu-submenu ubermenu-submenu-id-129 ubermenu-submenu-type-auto ubermenu-submenu-type-mega ubermenu-submenu-drop ubermenu-submenu-align-full_width"  ><!-- begin Tabs: [Tabs] 6394 --><li id="menu-item-6394" class="ubermenu-item ubermenu-tabs ubermenu-item-6394 ubermenu-item-level-1 ubermenu-column ubermenu-column-full ubermenu-tab-layout-left ubermenu-tabs-show-default ubermenu-tabs-show-current"><ul  class="ubermenu-tabs-group ubermenu-tabs-group--trigger-mouseover ubermenu-column ubermenu-column-1-4 ubermenu-submenu ubermenu-submenu-id-6394 ubermenu-submenu-type-auto ubermenu-submenu-type-tabs-group"  ><li id="menu-item-6395" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6395 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/products/cn-series-network-encryptors/"><span class="ubermenu-target-title ubermenu-target-text">CypherNET CN Series Network Encryption Hardware</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6395 ubermenu-submenu-type-tab-content-panel ubermenu-autoclear"  ><li id="menu-item-6383" class="ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-6383 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-1-2" ><a class="ubermenu-target ubermenu-target-with-image ubermenu-item-layout-default ubermenu-item-layout-image_above" href="https://www.senetas.com/products/cn-series-network-encryptors/cn9000-series/"><img width="260" height="26" class="ubermenu-image ubermenu-image-size-full" src="https://www.senetas.com/wp-content/uploads/Senetas-CN9000-hardware-encryption.png" srcset="https://www.senetas.com/wp-content/uploads/Senetas-CN9000-hardware-encryption.png 800w, https://www.senetas.com/wp-content/uploads/Senetas-CN9000-hardware-encryption-768x76.png 768w" sizes="(max-width: 800px) 100vw, 800px" alt="Senetas CN9000 network encryption devices"  /><span class="ubermenu-target-title ubermenu-target-text">CN9000 Series</span><span class="ubermenu-target-divider"> – </span><span class="ubermenu-target-description ubermenu-target-text">Ultra-fast, 100Gbps high-assurance encryption for ‘mega data’ networks and applications.</span></a></li><li id="menu-item-6382" class="ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-6382 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-1-2" ><a class="ubermenu-target ubermenu-target-with-image ubermenu-item-layout-default ubermenu-item-layout-image_above" href="https://www.senetas.com/products/cn-series-network-encryptors/cn6000-series/"><img width="260" height="26" class="ubermenu-image ubermenu-image-size-full" src="https://www.senetas.com/wp-content/uploads/Senetas-CN6000-Series-hardware-encryption.png" srcset="https://www.senetas.com/wp-content/uploads/Senetas-CN6000-Series-hardware-encryption.png 800w, https://www.senetas.com/wp-content/uploads/Senetas-CN6000-Series-hardware-encryption-768x76.png 768w" sizes="(max-width: 800px) 100vw, 800px" alt="Senetas CN6000 Series network encryption devices"  /><span class="ubermenu-target-title ubermenu-target-text">CN6000 Series</span><span class="ubermenu-target-divider"> – </span><span class="ubermenu-target-description ubermenu-target-text">Carrier-grade encryption for high-speed network infrastructure up to 4×10 Gbps.</span></a></li><li id="menu-item-9196" class="ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-9196 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-1-2" ><a class="ubermenu-target ubermenu-target-with-image ubermenu-item-layout-default ubermenu-item-layout-image_above" href="https://www.senetas.com/products/cn-series-network-encryptors/cn7000-series/"><img width="90" height="43" class="ubermenu-image ubermenu-image-size-full" src="https://www.senetas.com/wp-content/uploads/imgi_1_CN7105-Front-1.png" srcset="https://www.senetas.com/wp-content/uploads/imgi_1_CN7105-Front-1.png 1872w, https://www.senetas.com/wp-content/uploads/imgi_1_CN7105-Front-1-768x364.png 768w, https://www.senetas.com/wp-content/uploads/imgi_1_CN7105-Front-1-1536x728.png 1536w" sizes="(max-width: 1872px) 100vw, 1872px" alt=""  /><span class="ubermenu-target-title ubermenu-target-text">CN7000 Series</span><span class="ubermenu-target-divider"> – </span><span class="ubermenu-target-description ubermenu-target-text">Quantum-Resistant Encryption for the Tactical Edge. Rugged in-field encryption you can rely on.</span></a></li><li id="menu-item-6381" class="ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-6381 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-1-2" ><a class="ubermenu-target ubermenu-target-with-image ubermenu-item-layout-default ubermenu-item-layout-image_above" href="https://www.senetas.com/products/cn-series-network-encryptors/cn4000-series/"><img width="200" height="36" class="ubermenu-image ubermenu-image-size-full" src="https://www.senetas.com/wp-content/uploads/Senetas-CN4000-Series-hardware-encryption.png" srcset="https://www.senetas.com/wp-content/uploads/Senetas-CN4000-Series-hardware-encryption.png 800w, https://www.senetas.com/wp-content/uploads/Senetas-CN4000-Series-hardware-encryption-768x139.png 768w" sizes="(max-width: 800px) 100vw, 800px" alt="Senetas CN4000 Series network encryption devices"  /><span class="ubermenu-target-title ubermenu-target-text">CN4000 Series</span><span class="ubermenu-target-divider"> – </span><span class="ubermenu-target-description ubermenu-target-text">Compact, versatile and high-performance encryptors for networks operating at up to 1Gbps.</span></a></li></ul></li><li id="menu-item-6385" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6385 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/products/virtual-network-encryption/"><span class="ubermenu-target-title ubermenu-target-text">CypherNET CV Series Virtual Network Encryption</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6385 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6398" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6398 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">CV Series Virtual Network Encryption</h4>
+		<p>The CV1000 is the first crypto-agile Virtualised Network Function (VNF) designed for large-scale, virtualised WAN/MAN encryption to the network edge.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/solutions/cv-series/">Find out how</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/cv-series-menu.jpg" alt="CV Series">
+	</div>
+</div></div></li></ul></li><li id="menu-item-6396" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6396 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/products/suredrop-encrypted-file-sharing/"><span class="ubermenu-target-title ubermenu-target-text">SureDrop Secure File Sharing</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6396 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6400" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6400 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">SureDrop® Secure Collaboration</h4>
+		<p>An encrypted file-sharing and collaboration platform, SureDrop combines ease of use with enhanced security, end-to-end encryption and 100% data sovereignty control.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/solutions/suredrop/">Find out how</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/suredrop-menu.jpg" alt="SureDrop">
+	</div>
+</div></div></li></ul></li><li id="menu-item-6378" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6378 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/products/cm7/"><span class="ubermenu-target-title ubermenu-target-text">CM7 Network Encryption Manager</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6378 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6402" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6402 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">CM7</h4>
+		<p>Senetas CM7 Network Encryption Manager (CypherManager™) is Senetas’ innovative encryption management platform. It enables the intuitive management of the full range of Senetas CN network encryptors.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/solutions/cm7/">Find out how</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/cm7-menu.jpg" alt="CM7">
+	</div>
+</div></div></li></ul></li></ul></li><!-- end Tabs: [Tabs] 6394 --></ul></li><!-- end Segment: 5 --><!-- begin Segment: Menu ID 6 --><li id="menu-item-130" class="ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-130 ubermenu-item-level-0 ubermenu-column ubermenu-column-auto ubermenu-has-submenu-drop ubermenu-has-submenu-mega" ><span class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" tabindex="0"><span class="ubermenu-target-title ubermenu-target-text">Solutions</span></span><ul  class="ubermenu-submenu ubermenu-submenu-id-130 ubermenu-submenu-type-auto ubermenu-submenu-type-mega ubermenu-submenu-drop ubermenu-submenu-align-full_width"  ><!-- begin Tabs: [Tabs] 6405 --><li id="menu-item-6405" class="ubermenu-item ubermenu-tabs ubermenu-item-6405 ubermenu-item-level-1 ubermenu-column ubermenu-column-full ubermenu-tab-layout-left ubermenu-tabs-show-default ubermenu-tabs-show-current"><ul  class="ubermenu-tabs-group ubermenu-tabs-group--trigger-mouseover ubermenu-column ubermenu-column-1-4 ubermenu-submenu ubermenu-submenu-id-6405 ubermenu-submenu-type-auto ubermenu-submenu-type-tabs-group"  ><li id="menu-item-6406" class="ubermenu-tab ubermenu-item ubermenu-item-type-custom ubermenu-item-object-custom ubermenu-item-has-children ubermenu-item-6406 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only"><span class="ubermenu-target-title ubermenu-target-text">Technology</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6406 ubermenu-submenu-type-tab-content-panel"  ><!-- begin Tabs: [Tabs] 6869 --><li id="menu-item-6869" class="ubermenu-item ubermenu-tabs ubermenu-item-6869 ubermenu-item-level-3 ubermenu-column ubermenu-column-full ubermenu-tab-layout-left ubermenu-tabs-show-default ubermenu-tabs-show-current"><ul  class="ubermenu-tabs-group ubermenu-tabs-group--trigger-mouseover ubermenu-column ubermenu-column-1-2 ubermenu-submenu ubermenu-submenu-id-6869 ubermenu-submenu-type-auto ubermenu-submenu-type-tabs-group"  ><li id="menu-item-6411" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6411 ubermenu-item-auto ubermenu-column ubermenu-column-1-2 ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/solutions/cloud/"><span class="ubermenu-target-title ubermenu-target-text">Cloud</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-1-2 ubermenu-submenu ubermenu-submenu-id-6411 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6872" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6872 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-5 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><img width="470" height="265" class="img-fluid img-center" src="https://www.senetas.com/wp-content/uploads/cloud-menu.jpg" alt="Cloud Cyber Security"></div></li></ul></li><li id="menu-item-6413" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6413 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/solutions/data-centre/"><span class="ubermenu-target-title ubermenu-target-text">Data Centre</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-1-2 ubermenu-submenu ubermenu-submenu-id-6413 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6422" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6422 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-5 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><img width="470" height="265" class="img-fluid img-center" src="https://www.senetas.com/wp-content/uploads/data-centre-menu.jpg" alt="Data Centre CyberSecurity"></div></li></ul></li><li id="menu-item-6408" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6408 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/solutions/big-data-encryption/"><span class="ubermenu-target-title ubermenu-target-text">Big Data Encryption</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-1-2 ubermenu-submenu ubermenu-submenu-id-6408 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6875" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6875 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-5 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><img width="470" height="265" class="img-fluid img-center" src="https://www.senetas.com/wp-content/uploads/big-data-menu.jpg" alt="Big Data"></div></li></ul></li><li id="menu-item-6409" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6409 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/solutions/branch-office/"><span class="ubermenu-target-title ubermenu-target-text">Branch Office</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-1-2 ubermenu-submenu ubermenu-submenu-id-6409 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6876" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6876 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-5 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><img width="470" height="265" class="img-fluid img-center" src="https://www.senetas.com/wp-content/uploads/branch-office-menu.jpg" alt="Branch Office"></div></li></ul></li><li id="menu-item-6410" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6410 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/solutions/cctv-cyber-security/"><span class="ubermenu-target-title ubermenu-target-text">CCTV Cyber Security</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-1-2 ubermenu-submenu ubermenu-submenu-id-6410 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6877" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6877 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-5 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><img width="470" height="265" class="img-fluid img-center" src="https://www.senetas.com/wp-content/uploads/cctv-menu.jpg" alt="CCTV Security"></div></li></ul></li><li id="menu-item-9192" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-9192 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/solutions/satellite-network-encryption/"><span class="ubermenu-target-title ubermenu-target-text">LEO &#038; Satellite Network Encryption</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-1-2 ubermenu-submenu ubermenu-submenu-id-9192 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-9193" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-9193 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-5 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><img width="2000" height="1125" class="img-fluid img-center" src="https://www.senetas.com/wp-content/uploads/Abstract-wave.jpg" alt="Satellite Network Encryption"></div></li></ul></li></ul></li><!-- end Tabs: [Tabs] 6869 --></ul></li><li id="menu-item-6407" class="ubermenu-tab ubermenu-item ubermenu-item-type-custom ubermenu-item-object-custom ubermenu-item-has-children ubermenu-item-6407 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only"><span class="ubermenu-target-title ubermenu-target-text">Industry</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6407 ubermenu-submenu-type-tab-content-panel"  ><!-- begin Tabs: [Tabs] 6879 --><li id="menu-item-6879" class="ubermenu-item ubermenu-tabs ubermenu-item-6879 ubermenu-item-level-3 ubermenu-column ubermenu-column-full ubermenu-tab-layout-left ubermenu-tabs-show-default ubermenu-tabs-show-current"><ul  class="ubermenu-tabs-group ubermenu-tabs-group--trigger-mouseover ubermenu-column ubermenu-column-1-2 ubermenu-submenu ubermenu-submenu-id-6879 ubermenu-submenu-type-auto ubermenu-submenu-type-tabs-group"  ><li id="menu-item-6412" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6412 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/solutions/commercial-cyber-security/"><span class="ubermenu-target-title ubermenu-target-text">Commercial Cyber Security</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-1-2 ubermenu-submenu ubermenu-submenu-id-6412 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6425" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6425 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-5 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><img width="470" height="265" class="img-fluid img-center" src="https://www.senetas.com/wp-content/uploads/commercial-menu.jpg" alt="Commercial Security"></div></li></ul></li><li id="menu-item-6417" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6417 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/solutions/government-defence/"><span class="ubermenu-target-title ubermenu-target-text">Government &#038; Defence</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-1-2 ubermenu-submenu ubermenu-submenu-id-6417 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6880" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6880 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-5 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><img width="470" height="265" class="img-fluid img-center" src="https://www.senetas.com/wp-content/uploads/government-defence-menu.jpg" alt="Government Defence Security"></div></li></ul></li><li id="menu-item-6419" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6419 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/solutions/critical-infrastructure/"><span class="ubermenu-target-title ubermenu-target-text">Critical Infrastructure</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-1-2 ubermenu-submenu ubermenu-submenu-id-6419 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6873" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6873 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-5 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><img width="470" height="265" class="img-fluid img-center" src="https://www.senetas.com/wp-content/uploads/infrastructure-menu.jpg" alt="Infrastructure Security"></div></li></ul></li><li id="menu-item-6415" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6415 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/solutions/financial-services/"><span class="ubermenu-target-title ubermenu-target-text">Financial Services</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-1-2 ubermenu-submenu ubermenu-submenu-id-6415 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6882" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6882 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-5 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><img width="470" height="265" class="img-fluid img-center" src="https://www.senetas.com/wp-content/uploads/finance-menu.jpg" alt="Finance Security"></div></li></ul></li><li id="menu-item-6416" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6416 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/solutions/gaming/"><span class="ubermenu-target-title ubermenu-target-text">Gaming</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-1-2 ubermenu-submenu ubermenu-submenu-id-6416 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6883" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6883 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-5 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><img width="470" height="265" class="img-fluid img-center" src="https://www.senetas.com/wp-content/uploads/gaming-menu.jpg" alt="Gaming Security"></div></li></ul></li><li id="menu-item-6418" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6418 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/solutions/healthcare/"><span class="ubermenu-target-title ubermenu-target-text">Healthcare</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-1-2 ubermenu-submenu ubermenu-submenu-id-6418 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6884" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6884 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-5 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><img width="470" height="265" class="img-fluid img-center" src="https://www.senetas.com/wp-content/uploads/healthcare-menu.jpg" alt="Healthcare Security"></div></li></ul></li></ul></li><!-- end Tabs: [Tabs] 6879 --></ul></li></ul></li><!-- end Tabs: [Tabs] 6405 --></ul></li><!-- end Segment: 6 --><!-- begin Segment: Menu ID 7 --><li id="menu-item-6472" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-custom ubermenu-item-has-children ubermenu-item-6472 ubermenu-item-level-0 ubermenu-column ubermenu-column-auto ubermenu-has-submenu-drop ubermenu-has-submenu-mega" ><span class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" tabindex="0"><span class="ubermenu-target-title ubermenu-target-text">Resources</span></span><ul  class="ubermenu-submenu ubermenu-submenu-id-6472 ubermenu-submenu-type-auto ubermenu-submenu-type-mega ubermenu-submenu-drop ubermenu-submenu-align-full_width"  ><!-- begin Tabs: [Tabs] 6426 --><li id="menu-item-6426" class="ubermenu-item ubermenu-tabs ubermenu-item-6426 ubermenu-item-level-1 ubermenu-column ubermenu-column-full ubermenu-tab-layout-left ubermenu-tabs-show-default ubermenu-tabs-show-current"><ul  class="ubermenu-tabs-group ubermenu-tabs-group--trigger-mouseover ubermenu-column ubermenu-column-1-4 ubermenu-submenu ubermenu-submenu-id-6426 ubermenu-submenu-type-auto ubermenu-submenu-type-tabs-group"  ><li id="menu-item-6442" class="ubermenu-tab ubermenu-item ubermenu-item-type-custom ubermenu-item-object-custom ubermenu-item-has-children ubermenu-item-6442 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/resources"><span class="ubermenu-target-title ubermenu-target-text">Resource Library</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6442 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6443" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6443 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Resources</h4>
+		<p>From infographics and eBooks to brochures and case studies. Find out more about Senetas cybersecurity solutions and how they can help you.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/resources/">Find out more</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/resources-menu.jpg" alt="Resources">
+	</div>
+</div></div></li></ul></li><li id="menu-item-6343" class="ubermenu-tab ubermenu-item ubermenu-item-type-taxonomy ubermenu-item-object-category ubermenu-item-has-children ubermenu-item-6343 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/category/blog/"><span class="ubermenu-target-title ubermenu-target-text">Blog</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6343 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6429" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6429 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Senetas Blog</h4>
+		<p>Keep up-to-date with all the encryption and cybersecurity trends and best practices. Our finger is on the pulse of the industry.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/category/our-blog/">Find out more</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/our-blog-menu.jpg" alt="Senetas Blog">
+	</div>
+</div></div></li></ul></li><li id="menu-item-6344" class="ubermenu-tab ubermenu-item ubermenu-item-type-taxonomy ubermenu-item-object-category ubermenu-item-has-children ubermenu-item-6344 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/category/news-and-events/"><span class="ubermenu-target-title ubermenu-target-text">News and Events</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6344 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6430" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6430 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Cybersecurity News & Events</h4>
+		<p>Discover all the latest cybersecurity industry news and developments, plus what's going on here at Senetas.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/category/encryption-news/">Find out more</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/encryption-news-menu.jpg" alt="Encryption News">
+	</div>
+</div></div></li></ul></li><li id="menu-item-6345" class="ubermenu-tab ubermenu-item ubermenu-item-type-taxonomy ubermenu-item-object-category ubermenu-item-has-children ubermenu-item-6345 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/category/view/"><span class="ubermenu-target-title ubermenu-target-text">Senetas Newsletter</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6345 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6431" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6431 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Senetas View</h4>
+		<p>Browse the archives of Senetas View, our encryption and cybersecurity newsletter. Like what you see? Sign up to get it in your inbox.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/category/senetas-view/">Browse archive</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/senetas-view-menu.jpg" alt="Senetas View">
+	</div>
+</div></div></li></ul></li><li id="menu-item-6427" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6427 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/customer-support-information/"><span class="ubermenu-target-title ubermenu-target-text">Customer Support Information</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6427 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6433" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6433 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Customer Support Information</h4>
+		<p>Find out more about our support and maintenance agreements, both internationally and for the Australia and New Zealand markets.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/customer-support-information/">Find out how</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/customer-support-information-menu.jpg" alt="Customer Support Information">
+	</div>
+</div></div></li></ul></li><li id="menu-item-6428" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6428 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/glossary/"><span class="ubermenu-target-title ubermenu-target-text">Glossary</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6428 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6434" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6434 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Glossary of terms</h4>
+		<p>Encryption terminology can be confusing, but we aim to make it simple. Browse our terms if you aren't sure what something means.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/glossary-of-terms/">Find out more</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/glossary-of-terms-menu.jpg" alt="Glossary of Terms">
+	</div>
+</div></div></li></ul></li></ul></li><!-- end Tabs: [Tabs] 6426 --></ul></li><!-- end Segment: 7 --><!-- begin Segment: Menu ID 8 --><li id="menu-item-132" class="ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-132 ubermenu-item-level-0 ubermenu-column ubermenu-column-auto ubermenu-has-submenu-drop ubermenu-has-submenu-mega" ><span class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" tabindex="0"><span class="ubermenu-target-title ubermenu-target-text">Partners</span></span><ul  class="ubermenu-submenu ubermenu-submenu-id-132 ubermenu-submenu-type-auto ubermenu-submenu-type-mega ubermenu-submenu-drop ubermenu-submenu-align-full_width"  ><!-- begin Tabs: [Tabs] 6444 --><li id="menu-item-6444" class="ubermenu-item ubermenu-tabs ubermenu-item-6444 ubermenu-item-level-1 ubermenu-column ubermenu-column-full ubermenu-tab-layout-left ubermenu-tabs-show-default ubermenu-tabs-show-current"><ul  class="ubermenu-tabs-group ubermenu-tabs-group--trigger-mouseover ubermenu-column ubermenu-column-1-4 ubermenu-submenu ubermenu-submenu-id-6444 ubermenu-submenu-type-auto ubermenu-submenu-type-tabs-group"  ><li id="menu-item-6445" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6445 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/partners/global-distribution/"><span class="ubermenu-target-title ubermenu-target-text">Global Distribution</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6445 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6452" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6452 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Global Distribution</h4>
+		<p>Senetas CN Series hardware encryption, CV Series virtual encryption and SureDrop secure file-sharing solutions are distributed exclusively (outside Australia & New Zealand) to Enterprise, SME and Service Provider customers by Thales.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/partners/global-distribution/">Find out more</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/global-distribution-menu.jpg" alt="Global Distribution">
+	</div>
+</div></div></li></ul></li><li id="menu-item-6448" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6448 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/partners/partners-anz/"><span class="ubermenu-target-title ubermenu-target-text">Partners Australia and New Zealand</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6448 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6453" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6453 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Partners ANZ</h4>
+		<p>Our encryption solutions are distributed throughout Australia and New Zealand by ourselves and our trusted ANZ partner community.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/partners/partners-anz/">Find out more</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/partners-anz-menu.jpg" alt="Partners ANZ">
+	</div>
+</div></div></li></ul></li><li id="menu-item-6449" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6449 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/partners/partners-international/"><span class="ubermenu-target-title ubermenu-target-text">Partners International</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6449 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6454" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6454 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Partners International</h4>
+		<p>We are proud to work with a number of international partners, each bringing unique expertise. Find out more about them here.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/partners/partners-international/">Find out more</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/partners-international-menu.jpg" alt="Partners International">
+	</div>
+</div></div></li></ul></li><li id="menu-item-6446" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6446 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/partners/how-to-become-a-partner/"><span class="ubermenu-target-title ubermenu-target-text">Become a Partner</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6446 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6455" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6455 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">How to become a partner</h4>
+		<p>If you are a service provider, reseller or integrator of converged networks, or if you provide applications for sensitive data, then a partnership with Senetas could help you add value to both your solutions and your clients.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/partners/how-to-become-a-partner/#">Find out how</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/how-to-become-a-partner-menu.jpg" alt="How to Become a Partner">
+	</div>
+</div></div></li></ul></li><li id="menu-item-6450" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6450 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/partners/technology-alliance-partners/"><span class="ubermenu-target-title ubermenu-target-text">Technology Partners</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6450 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6456" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6456 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Technology Partners</h4>
+		<p>Senetas technology partners are a breed apart. They own unique data in motion technologies and are committed to best-in-class data security.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/partners/technology-partners/">Find out more</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/technology-partners-menu.jpg" alt="Technology Partners">
+	</div>
+</div></div></li></ul></li><li id="menu-item-6637" class="ubermenu-tab ubermenu-item ubermenu-item-type-custom ubermenu-item-object-custom ubermenu-item-has-children ubermenu-item-6637 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" target="_blank" href="https://partner.senetas.com/membership-login/"><span class="ubermenu-target-title ubermenu-target-text">Partner Resources</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6637 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6457" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6457 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Partner Resources</h4>
+		<p>Our partner-specific resource library contains a range of technical, marketing, and pre-sales support documentation for partner organisations. Click below to log in or to register for access.</p>
+		<a class="btn btn-teal" href="https://partner.senetas.com/membership-login/">Log in</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/partner-portal-log-in-menu.jpg" alt="Partner Portal Log In">
+	</div>
+</div></div></li></ul></li></ul></li><!-- end Tabs: [Tabs] 6444 --></ul></li><!-- end Segment: 8 --><!-- begin Segment: Menu ID 9 --><li id="menu-item-133" class="ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-133 ubermenu-item-level-0 ubermenu-column ubermenu-column-auto ubermenu-has-submenu-drop ubermenu-has-submenu-mega" ><span class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" tabindex="0"><span class="ubermenu-target-title ubermenu-target-text">Corporate</span></span><ul  class="ubermenu-submenu ubermenu-submenu-id-133 ubermenu-submenu-type-auto ubermenu-submenu-type-mega ubermenu-submenu-drop ubermenu-submenu-align-full_width"  ><!-- begin Tabs: [Tabs] 6465 --><li id="menu-item-6465" class="ubermenu-item ubermenu-tabs ubermenu-item-6465 ubermenu-item-level-1 ubermenu-column ubermenu-column-full ubermenu-tab-layout-left ubermenu-tabs-show-default ubermenu-tabs-show-current"><ul  class="ubermenu-tabs-group ubermenu-tabs-group--trigger-mouseover ubermenu-column ubermenu-column-1-4 ubermenu-submenu ubermenu-submenu-id-6465 ubermenu-submenu-type-auto ubermenu-submenu-type-tabs-group"  ><li id="menu-item-6459" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6459 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/corporate/about-senetas/"><span class="ubermenu-target-title ubermenu-target-text">About Senetas</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6459 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6469" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6469 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">About Senetas</h4>
+		<p>Senetas is a leading developer of cybersecurity solutions; trusted to protect enterprise, government, defence, cloud and service provider data in over 60 countries.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/corporate/about-senetas/">Find out more</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/about-senetas-menu.jpg" alt="About Senetas">
+	</div>
+</div></div></li></ul></li><li id="menu-item-6458" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6458 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/corporate/history-of-innovation/"><span class="ubermenu-target-title ubermenu-target-text">A History of Innovation</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6458 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6470" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6470 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">A History of Innovation</h4>
+		<p>For over 20 years we have been at the forefront of cybersecurity innovation. We remain committed to excellence in R&D, independent certification, and best-practice security of high-speed data networks.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/corporate/a-history-of-innovation/">Our history</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/a-history-of-innovation-menu.jpg" alt="A History of Innovation">
+	</div>
+</div></div></li></ul></li><li id="menu-item-6460" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6460 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/corporate/board-of-directors/"><span class="ubermenu-target-title ubermenu-target-text">Board of Directors</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6460 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-6471" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-6471 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Board of Directors</h4>
+		<p>Our board of directors is comprised of experienced and respected members of the business community. Their focus includes maintaining the company’s integrity, ethics and standards of excellence.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/corporate/board-of-directors/">Find out more</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/board-of-directors-menu.jpg" alt="Board of Directors">
+	</div>
+</div></div></li></ul></li><li id="menu-item-8429" class="ubermenu-tab ubermenu-item ubermenu-item-type-custom ubermenu-item-object-custom ubermenu-item-has-children ubermenu-item-8429 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://investorhub.senetas.com/"><span class="ubermenu-target-title ubermenu-target-text">Investor Hub</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-8429 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-7168" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-7168 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Investor Hub</h4>
+		<p>Visit our interactive investor hub to view and engage with our ASX announcements, webinars and updates, and to interact with the Senetas leadership team.</p>
+		<a class="btn btn-teal" href="https://investorhub.senetas.com/">Let's Go</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/investor-relations-menu.jpg" alt="Investor Relations">
+	</div>
+</div></div></li></ul></li><li id="menu-item-6464" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-6464 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/corporate/corporate-governance/"><span class="ubermenu-target-title ubermenu-target-text">Corporate Governance</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-6464 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-7166" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-7166 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Corporate Governance</h4>
+		<p>Key documents and policies are available here and form part of our corporate governance framework, highlighting the company’s significant commitment to best practice.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/corporate/corporate-governance/">Find out more</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/investor-relations-menu.jpg" alt="Investor Relations">
+	</div>
+</div></div></li></ul></li><li id="menu-item-8815" class="ubermenu-tab ubermenu-item ubermenu-item-type-post_type ubermenu-item-object-page ubermenu-item-has-children ubermenu-item-8815 ubermenu-item-auto ubermenu-column ubermenu-column-full ubermenu-has-submenu-drop" data-ubermenu-trigger="mouseover" ><a class="ubermenu-target ubermenu-item-layout-default ubermenu-item-layout-text_only" href="https://www.senetas.com/corporate/compliance/"><span class="ubermenu-target-title ubermenu-target-text">Compliance</span></a><ul  class="ubermenu-tab-content-panel ubermenu-column ubermenu-column-3-4 ubermenu-submenu ubermenu-submenu-id-8815 ubermenu-submenu-type-tab-content-panel"  ><li id="menu-item-8816" class="ubermenu-item ubermenu-item-type-custom ubermenu-item-object-ubermenu-custom ubermenu-item-8816 ubermenu-item-auto ubermenu-item-header ubermenu-item-level-3 ubermenu-column ubermenu-column-auto" ><div class="ubermenu-content-block ubermenu-custom-content ubermenu-custom-content-padded"><div style="margin-top:20px;margin-bottom:20px;">
+	<div style="width:50%;float:left;">
+		<h4 class="title">Compliance</h4>
+		<p>We are committed to upholding the highest industry standards. This page outlines the certifications and accreditations we have achieved, demonstrating our commitment to quality.</p>
+		<a class="btn btn-teal" href="https://www.senetas.com/corporate/compliance">Find out more</a>
+	</div>
+	<div style="width:50%;float:left;padding-left:30px;">
+		<img width="470" height="265" class="img-fluid img-center" src="/wp-content/uploads/investor-relations-menu.jpg" alt="Investor Relations">
+	</div>
+</div></div></li></ul></li></ul></li><!-- end Tabs: [Tabs] 6465 --></ul></li><!-- end Segment: 9 --></ul></nav>
+<!-- End UberMenu -->
+				</nav>
+		</div>
+	</header>
+		<section id="hero" class="d-flex align-items-center banner-small" style="background-image: url(https://www.senetas.com/wp-content/uploads/post-quantum-encryption-security.jpg)">
+		<div class="container">
+			<div class="content">
+									<h1 class="heading">Post-Quantum Encryption</h1>
+							</div>
+		</div>
+	</section>
+
+        <main>
+          <section class="content-blocks full-width-block d-flex align-items-center bg-white padding-default" >
+	<div class="container">
+							<h2 class="sub-heading"></h2>
+							<div class="row">
+											<div class="col-md">
+							<p><strong>Quantum computing is predicted to become mainstream within the next 5-10 years. The technology will have a transformative effect on the world, with its ability to solve complex problems much quicker than today’s ‘classical’ computers. However, it also poses a cybersecurity threat that must be taken seriously.</strong></p>
+<p>Long-term protection of data is contingent upon the security of the world&#8217;s cryptographic infrastructure. This ecosystem survives because it is based on mathematical complexity. The exponential growth in computational power associated with the quantum computer eliminates this safeguard. With quantum computers likely to become viable before a holistic quantum-resistant infrastructure is in place, there is a corridor of uncertainty within which all network transmitted data is vulnerable.</p>
+<p>Today&#8217;s networks are already vulnerable to a capture now, decrypt later attack, which is why more and more organisations are turning to post-quantum encryption security.</p>
+						</div>
+											<div class="col-md">
+							<p><img fetchpriority="high" decoding="async" class="img-fluid alignright wp-image-7514 size-thumbnail" src="https://www.senetas.com/wp-content/uploads/Cyber_Security_Threats-400x400.jpg" alt="Cyber_Security_Threats" width="400" height="400" srcset="https://www.senetas.com/wp-content/uploads/Cyber_Security_Threats-400x400.jpg 400w, https://www.senetas.com/wp-content/uploads/Cyber_Security_Threats.jpg 576w" sizes="(max-width: 400px) 100vw, 400px" /></p>
+						</div>
+									</div>
+				</div>
+</section>	<section class="content-blocks full-width-block d-flex align-items-center bg-teal padding-none" >
+	<div class="container">
+							<h2 class="sub-heading"></h2>
+							<div class="row">
+											<div class="col-md">
+							<p style="text-align: center;"><strong>For more information regarding the transition to post-quantum cryptography, speak to one of our consultants today.</strong></p>
+<p class="lead" style="text-align: center;"><button class="btn btn-orange hs-cta-trigger-button hs-cta-trigger-button-156888289396" type="button">Get in touch</button></p>
+						</div>
+									</div>
+				</div>
+</section>	<section class="content-blocks full-width-block d-flex align-items-center bg-grey padding-default" >
+	<div class="container">
+							<h2 class="sub-heading">What is Quantum Computing?</h2>
+							<div class="row">
+											<div class="col-md">
+							<p>While classical computers code information into bits, sending electrical or optical pulses representing 1s and 0s (a binary code) as first devised by Alan Turing in the 1930s, quantum computers use quantum bits (known as qubits).</p>
+<p>These qubits, typically subatomic particles such as electrons or photons, can store information as 1s, 0s or anywhere between these values due to a principle called superposition.</p>
+<p>This means that qubits can store more information than bits, and therefore their computational power is exponentially greater.</p>
+<p>This will have a transformative effect on areas including scientific and medical research, economic analysis, AI, Big Data, and many other disciplines which require large volumes of data and complex calculations.</p>
+						</div>
+											<div class="col-md">
+							<p><img decoding="async" class="img-fluid aligncenter wp-image-6523" src="https://www.senetas.com/wp-content/uploads/Qubit.png" alt="qubit quantum bit" width="400" height="344" srcset="https://www.senetas.com/wp-content/uploads/Qubit.png 1300w, https://www.senetas.com/wp-content/uploads/Qubit-768x661.png 768w" sizes="(max-width: 400px) 100vw, 400px" /></p>
+						</div>
+									</div>
+				</div>
+</section>	<section class="content-blocks full-width-block d-flex align-items-center bg-image padding-default" style="background-image: url(https://www.senetas.com/wp-content/uploads/background-2.jpg)">
+	<div class="container">
+							<h2 class="sub-heading">How Will Quantum Computing Effect Today’s Cryptography?</h2>
+							<div class="row">
+											<div class="col-md">
+							<p>Quantum computers will have the ability to do harm. The very same computing power that allows complex problems to be solved can, in turn, be applied to undermine cybersecurity.</p>
+<p>Of particular concern is the threat to public key cryptography, which is based on factorisation for RSA algorithms, or discrete log problems with DSA, Diffie-Hellman, and Elliptic-Curve Cryptography (ECC).</p>
+						</div>
+											<div class="col-md">
+							<p>While these mathematical problems are sufficient today, a quantum computer running quantum algorithms such as Shor’s or Lov Grover’s could break these codes in a matter of hours, rendering them useless.</p>
+<p>To mitigate this risk, organisations must introduce a more quantum resistant stance. This begins with the introduction of post-quantum encryption security.</p>
+						</div>
+									</div>
+				</div>
+</section>	<section class="content-blocks full-width-block d-flex align-items-center bg-white padding-default" >
+	<div class="container">
+							<h2 class="sub-heading">Quantum Resistant Encryption</h2>
+							<div class="row">
+											<div class="col-md">
+							<p id="steps">While the precise date quantum computing will become mainstream is unknown, it’s generally accepted it will be within the next 5-10 years – well inside many organisations’ IT &amp; cybersecurity systems lifecycle. While the precise date quantum computing will become mainstream is unknown, it’s generally accepted it will be within the next 5-10 years – well inside many organisations’ IT &amp; cybersecurity systems lifecycle. Preparing for this shift requires proactive steps.</p>
+<p>Our <a href="https://www.senetas.com/a-5-step-guide-to-quantum-security/" target="_blank" rel="noopener">5-step guide to Quantum Security</a> provides a practical roadmap to help organisations future-proof their systems and mitigate the risks posed by quantum threats.</p>
+<p>Thankfully, quantum-safe cybersecurity technologies that can mitigate the risks of quantum attacks are available today, with further advances due in the near future.</p>
+<p><strong>Organisations looking to secure their data in the post-quantum age can begin their preparation with the following steps.</strong></p>
+<p>&nbsp;</p>
+<h3><strong>1. Practice Crypto-Agility</strong></h3>
+<p>A crypto-agile encryption solution allows you to quickly adapt to cryptographic threats by implementing alternative encryption methods.</p>
+<p>Senetas encryption solutions leverage state-of-the-art encryption key management and are crypto-agile by design. Importantly, the flexible FPGA design means they can be updated in-field without the need to rip and replace.</p>
+<p>Compatible with Quantum Key Distribution (QKD), external sources of entropy such as Quantum Random Number Generation (QRNG) and supporting custom curves and algorithms, Senetas solutions provide long-term data protection in a post-quantum computing world.</p>
+<p>&nbsp;</p>
+<h3><strong>2. Undertake a Post-Quantum Risk Assessment</strong></h3>
+<p>Understand the threats quantum computers will pose to your organization by undertaking a post-quantum risk assessment.</p>
+<p>In an ideal world this would mean auditing your entire network, though time and resource may limit this.</p>
+<p>Start your audit with business-critical infrastructure as a top priority, before working your way out from there. Remember, a zero trust approach to cybersecurity means securing all of your networks edges, from back-up and DR facilities to branch locations and remote workers.</p>
+<p>&nbsp;</p>
+						</div>
+											<div class="col-md">
+							<h3><strong>3. Protect Applications with Quantum Random Number Generation</strong></h3>
+<p>When generating keys, it is crucial that numbers are seeded from a source that is not vulnerable to bias, or easy to predict. This randomness is already key in today’s cryptography, and will become more so in the quantum era, when quantum computers will be able to ascertain patterns in a fraction of the time it takes their classical counterparts.</p>
+<p>Quantum Random Number Generators (QRNGs) provide high entropy and generate a true source of randomness by leveraging principals from quantum physics. Implementing QRNG helps secure vital applications such as cryptographic services, cloud computing and IoT devices.</p>
+<p>&nbsp;</p>
+<h3><strong>4. Secure Data in Motion with Quantum Key Distribution</strong></h3>
+<p>Deploying Quantum Key Distribution (QKD) across mission-critical connected devices ensures forward secrecy and data integrity. QKD uses photons to distribute keys and leverages what’s known as the ‘observer effect’ to verify key authenticity.</p>
+<p>If a cyber criminal attempts to intercept this key, the sender and recipient will be alerted, offering them the chance to generate a new key before any sensitive data is transmitted.</p>
+<p>&nbsp;</p>
+<h3><strong>5. Implement Quantum Resistant Algorithms</strong></h3>
+<p>Quantum Resistant Algorithms (QRAs) are algorithms which themselves are designed to remain secure in a post-quantum world. The first generation of NIST shortlisted PQC algorithms for standardization were announced in July 2022, and released in August 2024:</p>
+<ul>
+<li>FIPS 203: Module-Lattice-Based Key-Encapsulation mechanism Standard</li>
+<li>FIPS 204: Module-Lattice-Based Digital Signature Standard</li>
+<li>FIPS 205: Stateless Hash-Based Digital Signature Standard</li>
+</ul>
+<p>Senetas supports all quantum encryption algorithms selected by NIST and is proud to have been first to market with our high-speed network encryptors offering Quantum Resistant Encryption (QRE). Senetas Chief Executive Officer, Andrew Wilson said. “Our customers, including governments, defense agencies, and businesses, can make a secure transition to a future quantum-safe world. We’ve seen large-scale cyber-attacks from state-based actors. Quantum-enabled cyber-attacks will be even more devastating unless protected by quantum-resistant encryption&#8221;.</p>
+<p class="font-claude-response-body break-words whitespace-normal leading-[1.7]">The shift to quantum-safe security doesn&#8217;t require starting over. Senetas delivers a hybrid approach — combining conventional cryptography with quantum-resistant techniques — that existing customers can deploy on their current platforms today, without waiting for a network-wide overhaul.</p>
+<p class="font-claude-response-body break-words whitespace-normal leading-[1.7]">Quantum-safe encryption across your entire network estate in hours, not years. No cross-vendor negotiation. No multi-year program. Your network protected, overnight.</p>
+<p style="text-align: center;"><a class="btn btn-orange" href="https://www.senetas.com/solutions/cn-series/">Explore the Senetas Encryption Range</a></p>
+						</div>
+									</div>
+				</div>
+</section>	<section class="content-blocks related-block d-flex align-items-center bg-grey padding-default ">
+	<div class="container">
+					<h2 class="section-heading text-center">Quantum Resistant Encryption Resources</h2>
+			<div class="resource-slider grid">
+							<div class="element-item hvr-grow  technical-paper">
+												<a href="https://www.senetas.com/wp-content/uploads/Quantum_Safe_Security_TP-1.pdf" target="_blank">
+															    <figure class="content-overview">
+						 						 	<img width="400" height="400" src="https://www.senetas.com/wp-content/uploads/Senetas_TechnicalPaper-400x400.jpg" class="img-fluid wp-post-image" alt="" decoding="async" />						 				        <figcaption class="d-flex align-items-center">
+				        	<h2>Quantum Computing &#038; Quantum-Safe Security</h2>
+				          <!-- 				            <img width="24" height="24" src="https://www.senetas.com/wp-content/themes/senetas2020/dist/images/download.svg" class="svg"> -->
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-label="Download" role="img" class="svg"><path d="M12 21l-8-9h6V0h4v12h6l-8 9zm9-1v2H3v-2H1v4h22v-4h-2z"/></svg>
+				          				        </figcaption>           
+				    </figure>
+					</a>
+				</div>
+		    				<div class="element-item hvr-grow  infographic">
+												<a href="https://www.senetas.com/wp-content/uploads/Quantum_Infographic-1.pdf" target="_blank">
+															    <figure class="content-overview">
+						 						 	<img width="400" height="400" src="https://www.senetas.com/wp-content/uploads/QuantumSafeSecurity_Infographic_AssetMockup18-400x400.jpg" class="img-fluid wp-post-image" alt="Quantum Safe Security Infographic" decoding="async" loading="lazy" />						 				        <figcaption class="d-flex align-items-center">
+				        	<h2>Quantum-Safe Security</h2>
+				          <!-- 				            <img width="24" height="24" src="https://www.senetas.com/wp-content/themes/senetas2020/dist/images/download.svg" class="svg"> -->
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-label="Download" role="img" class="svg"><path d="M12 21l-8-9h6V0h4v12h6l-8 9zm9-1v2H3v-2H1v4h22v-4h-2z"/></svg>
+				          				        </figcaption>           
+				    </figure>
+					</a>
+				</div>
+		    				<div class="element-item hvr-grow  technical-paper">
+												<a href="https://www.senetas.com/wp-content/uploads/Crypto_Agility_Technical_Paper.pdf" target="_blank">
+															    <figure class="content-overview">
+						 						 	<img width="400" height="400" src="https://www.senetas.com/wp-content/uploads/CryptoAgileTP-400x400.jpg" class="img-fluid wp-post-image" alt="" decoding="async" loading="lazy" />						 				        <figcaption class="d-flex align-items-center">
+				        	<h2>Crypto-Agile Encryption</h2>
+				          <!-- 				            <img width="24" height="24" src="https://www.senetas.com/wp-content/themes/senetas2020/dist/images/download.svg" class="svg"> -->
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-label="Download" role="img" class="svg"><path d="M12 21l-8-9h6V0h4v12h6l-8 9zm9-1v2H3v-2H1v4h22v-4h-2z"/></svg>
+				          				        </figcaption>           
+				    </figure>
+					</a>
+				</div>
+		    				<div class="element-item hvr-grow  ebook">
+												<a href="https://www.senetas.com/wp-content/uploads/QRE-eBook-.pdf" target="_blank">
+															    <figure class="content-overview">
+						 						 	<img width="400" height="400" src="https://www.senetas.com/wp-content/uploads/QRE_AssetMockup-400x400.jpg" class="img-fluid wp-post-image" alt="" decoding="async" loading="lazy" />						 				        <figcaption class="d-flex align-items-center">
+				        	<h2>Quantum Resistant Encryption</h2>
+				          <!-- 				            <img width="24" height="24" src="https://www.senetas.com/wp-content/themes/senetas2020/dist/images/download.svg" class="svg"> -->
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-label="Download" role="img" class="svg"><path d="M12 21l-8-9h6V0h4v12h6l-8 9zm9-1v2H3v-2H1v4h22v-4h-2z"/></svg>
+				          				        </figcaption>           
+				    </figure>
+					</a>
+				</div>
+		    			</div>
+	</div>
+</section>
+        </main>
+    <footer class="content-info">
+  <div class="container">
+	  <div class="row">
+		  <div class="col-lg-6">
+			  <div class="row">
+				  <div class="col-md-12">
+					  				<ul class="social-icons">
+					<li class="youtube">
+						<a href="https://www.youtube.com/@SenetasCorporation" target="_blank" title="youtube">
+							<img width="24" height="24" src="https://www.senetas.com/wp-content/themes/senetas2020/dist/images/youtube.svg" alt="youtube" class="svg">
+						</a>
+					</li>
+					<li class="linkedin">
+						<a href="https://www.linkedin.com/company/senetas/" target="_blank" title="linkedin">
+							<img width="24" height="24" src="https://www.senetas.com/wp-content/themes/senetas2020/dist/images/linkedin.svg" alt="linkedin" class="svg">
+						</a>
+					</li>
+<!-- 					<li class="twitter">
+						<a href="https://twitter.com/Senetas/" target="_blank" title="twitter">
+							<img width="24" height="24" src="https://www.senetas.com/wp-content/themes/senetas2020/dist/images/twitter.svg" alt="twitter" class="svg">
+						</a>
+					</li> -->
+				</ul>				  </div>
+								  
+				  
+				  <div class="col-md-6">
+					 <h4>Contact Us</h4>
+					  <p class="small"><strong>Senetas Corporation Limited</strong><br/>
+						  312 Kings Way<br/>
+						  South Melbourne<br/>
+						  VIC 3205 Australia</p>
+					  <p class="small"><strong>T:</strong> <a href="tel:+61398684555">+61 (0)3 9868 4555</a><br/>
+							<strong>E: </strong> <a href="mailto:info@senetas.com">info@senetas.com</a></p>
+				  </div>
+				  <div class="col-md-6 col-line small">
+					  <p><strong>Asia Pacific</strong><br/>
+						  <strong>T:</strong> <a href="tel:+6586499215">+65 8649 9215</a><br/>
+						  <strong>E: </strong> <a href="mailto:infoasia@senetas.com">infoasia@senetas.com</a></p>
+						<p><strong>Europe, Middle East & Africa</strong><br/>
+							<strong>T:</strong> <a href="tel:+441256345599">+44 (0)1256 345 599</a><br/>
+							<strong>E: </strong> <a href="mailto:infoemea@senetas.com">infoemea@senetas.com</a></p>
+						<p><strong>Australia & New Zealand</strong><br/>
+							<strong>T:</strong> <a href="tel:+61398684555">+61 (0)3 9868 4555</a><br/>
+							<strong>E: </strong> <a href="mailto:info@senetas.com">info@senetas.com</a></p>
+						
+						<p><strong>North, Central & South America</strong><br/>
+							<strong>T:</strong> <a href="tel:+19494360509">+1 949 436 0509</a><br/>
+							<strong>E: </strong> <a href="mailto:infousa@senetas.com">infousa@senetas.com</a></p>
+				  </div>
+			  </div>
+			  
+			  
+		  </div>
+		  <div class="col-lg-6">
+			  <h4 class="text-right">Send us your enquiry</h4>
+<!-- 			  <iframe loading="lazy" src="about:blank" width="100%" height="800" type="text/html" frameborder="0" allowTransparency="true" style="border: 0" data-rocket-lazyload="fitvidscompatible" data-lazy-src="https://go.senetas.com/l/577521/2020-11-17/h2smpq"></iframe><noscript><iframe src="https://go.senetas.com/l/577521/2020-11-17/h2smpq" width="100%" height="800" type="text/html" frameborder="0" allowTransparency="true" style="border: 0"></iframe></noscript> -->
+<script type="rocketlazyloadscript" charset="utf-8" data-rocket-type="text/javascript" data-rocket-src="//js.hsforms.net/forms/embed/v2.js"></script>
+<script type="rocketlazyloadscript">
+hbspt.forms.create({
+region: "na1",
+portalId: "43832661",
+formId: "bb805e5c-aaa5-49e5-aab4-52503d46483a"
+});
+</script>
+		  </div>
+		  		  <div class="col-md-12" style="margin-top: 20px;">
+			  <p class="small">Senetas is an Australian defence technology company with 25+ years of delivering certified network encryption to governments, militaries, intelligence agencies, and critical infrastructure operators across 60+ countries. Certified under Common Criteria, FIPS 140-3, U.S. DoDIN APL, and NATO, Senetas provides quantum-ready encryption built on the latest NIST post-quantum algorithms, with global distribution and lifecycle support delivered through our partnership with Thales.</p>
+			  <p class="small">Copyright &copy; 2026 Senetas Corporation Limited. All rights reserved | <a href="/privacy-policy/">Privacy Policy</a> | <a href="/cookie-policy/">Cookie Policy</a> | <a href="/terms-of-use/">Terms of Use</a> | <a href="/contact-promise/">Contact Promise</a> | <a href="/sitemap_index.xml">Sitemap</a> | <a href="/fraud-protection/">Fraud Protection</a> | <a href="/category/senetas-view/">Subscribe</a>
+		  </div>
+	  </div>
+  </div>
+
+</footer>
+<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/wp-*.php","/wp-admin/*","/wp-content/uploads/*","/wp-content/*","/wp-content/plugins/*","/wp-content/themes/senetas2020/*","/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+	<!-- ShiftNav Main Toggle -->
+		<div id="shiftnav-toggle-main" class="shiftnav-toggle-main-align-center shiftnav-toggle-style-full_bar shiftnav-togglebar-gap-auto shiftnav-toggle-edge-right shiftnav-toggle-icon-x shiftnav-toggle-main-align-center shiftnav-toggle-style-full_bar shiftnav-togglebar-gap-auto shiftnav-toggle-edge-right shiftnav-toggle-icon-x" data-shiftnav-target="shiftnav-main"><div id="shiftnav-toggle-main-button" class="shiftnav-toggle shiftnav-toggle-shiftnav-main shiftnav-toggle-burger" data-shiftnav-target="shiftnav-main"><i class="fa fa-bars"></i></div>	<div class="shiftnav-main-toggle-content shiftnav-toggle-main-block"><a href="https://www.senetas.com/" style="width:150px;display:block;margin-top:5px;"><img width="1920" height="346" src="https://www.senetas.com/wp-content/uploads/Senetas_Logo_RGB_Rev.png" alt="Senetas Logo" style="width:100%; height:auto;"></a></div></div>	
+	<!-- /#shiftnav-toggle-main --> 
+
+
+	<!-- ShiftNav #shiftnav-main -->
+	<div class="shiftnav shiftnav-nojs shiftnav-shiftnav-main shiftnav-right-edge shiftnav-skin-standard-dark shiftnav-transition-standard" id="shiftnav-main" data-shiftnav-id="shiftnav-main">
+		<div class="shiftnav-inner">
+
+		
+		<a href="https://www.senetas.com/" style="padding:22px;display:block"><img width="1920" height="346" src="https://www.senetas.com/wp-content/uploads/Senetas_Logo_RGB_Rev.png" alt="Senetas Logo" style="width:90%; height:auto;"></a><nav class="shiftnav-nav"><ul id="menu-mobile-menu" class="shiftnav-menu shiftnav-targets-default shiftnav-targets-text-default shiftnav-targets-icon-default"><li id="menu-item-6605" class="menu-item menu-item-type-post_type menu-item-object-page current-page-ancestor current-menu-ancestor current-menu-parent current-page-parent current_page_parent current_page_ancestor menu-item-has-children menu-item-6605 shiftnav-sub-accordion shiftnav-depth-0"><span class="shiftnav-target" >Cybersecurity Challenges</span><span class="shiftnav-submenu-activation shiftnav-submenu-activation-open"><i class="fa fa-angle-down"></i></span><span class="shiftnav-submenu-activation shiftnav-submenu-activation-close"><i class="fa fa-angle-up"></i></span>
+<ul class="sub-menu sub-menu-1">
+<li id="menu-item-6610" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6610 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/cybersecurity-challenges/why-is-encryption-important/">Network Data Security</a></li><li id="menu-item-6609" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6609 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/cybersecurity-challenges/why-is-encryption-important/network-independent-encryption/">Network Independent Encryption</a></li><li id="menu-item-6608" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6608 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/cybersecurity-challenges/why-is-encryption-important/high-assurance-encryption/">High-Assurance Encryption</a></li><li id="menu-item-6606" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6606 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/cybersecurity-challenges/why-is-encryption-important/crypto-agility/">Crypto-Agility</a></li><li id="menu-item-6607" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6607 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/cybersecurity-challenges/why-is-encryption-important/encryption-key-management/">Encryption Key Management</a></li><li id="menu-item-7464" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-7464 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/cybersecurity-challenges/why-is-encryption-important/encryption-use-cases/">Encryption Use Cases</a></li><li id="menu-item-7823" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-7823 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/cybersecurity-challenges/secure-file-sharing-and-collaboration/">Secure Filesharing &#038; Storage</a></li><li id="menu-item-6634" class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-6520 current_page_item menu-item-6634 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/cybersecurity-challenges/post-quantum-encryption/">Post-Quantum Encryption</a></li><li class="shiftnav-retract"><a class="shiftnav-target"><i class="fa fa-chevron-left"></i> Back</a></li></ul>
+</li><li id="menu-item-6612" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-6612 shiftnav-sub-accordion shiftnav-depth-0"><span class="shiftnav-target" >Products</span><span class="shiftnav-submenu-activation shiftnav-submenu-activation-open"><i class="fa fa-angle-down"></i></span><span class="shiftnav-submenu-activation shiftnav-submenu-activation-close"><i class="fa fa-angle-up"></i></span>
+<ul class="sub-menu sub-menu-1">
+<li id="menu-item-6614" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6614 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/products/cn-series-network-encryptors/">CN Series Network Encryption</a></li><li id="menu-item-6615" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6615 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/products/virtual-network-encryption/">CV Series &#8211; Virtual Network Encryptor</a></li><li id="menu-item-6616" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6616 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/products/suredrop-encrypted-file-sharing/">SureDrop Secure File Sharing</a></li><li id="menu-item-6613" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6613 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/products/cm7/">CM7 Network Encryption Manager</a></li><li class="shiftnav-retract"><a class="shiftnav-target"><i class="fa fa-chevron-left"></i> Back</a></li></ul>
+</li><li id="menu-item-6618" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-6618 shiftnav-sub-accordion shiftnav-depth-0"><span class="shiftnav-target" >Solutions</span><span class="shiftnav-submenu-activation shiftnav-submenu-activation-open"><i class="fa fa-angle-down"></i></span><span class="shiftnav-submenu-activation shiftnav-submenu-activation-close"><i class="fa fa-angle-up"></i></span>
+<ul class="sub-menu sub-menu-1">
+<li id="menu-item-6619" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-6619 shiftnav-sub-accordion shiftnav-depth-1"><span class="shiftnav-target" >Technology</span><span class="shiftnav-submenu-activation shiftnav-submenu-activation-open"><i class="fa fa-angle-down"></i></span><span class="shiftnav-submenu-activation shiftnav-submenu-activation-close"><i class="fa fa-angle-up"></i></span>
+	<ul class="sub-menu sub-menu-2">
+<li id="menu-item-6625" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6625 shiftnav-depth-2"><a class="shiftnav-target"  href="https://www.senetas.com/solutions/cloud/">Cloud</a></li><li id="menu-item-6627" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6627 shiftnav-depth-2"><a class="shiftnav-target"  href="https://www.senetas.com/solutions/data-centre/">Data Centre</a></li><li id="menu-item-6622" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6622 shiftnav-depth-2"><a class="shiftnav-target"  href="https://www.senetas.com/solutions/big-data-encryption/">Big Data Encryption</a></li><li id="menu-item-6623" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6623 shiftnav-depth-2"><a class="shiftnav-target"  href="https://www.senetas.com/solutions/branch-office/">Branch Office</a></li><li id="menu-item-6624" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6624 shiftnav-depth-2"><a class="shiftnav-target"  href="https://www.senetas.com/solutions/cctv-cyber-security/">CCTV Cyber Security</a></li><li id="menu-item-9194" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9194 shiftnav-depth-2"><a class="shiftnav-target"  href="https://www.senetas.com/solutions/satellite-network-encryption/">LEO &#038; Satellite Network Encryption</a></li><li class="shiftnav-retract"><a class="shiftnav-target"><i class="fa fa-chevron-left"></i> Back</a></li>	</ul>
+</li><li id="menu-item-6620" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-6620 shiftnav-sub-accordion shiftnav-depth-1"><span class="shiftnav-target" >Industry</span><span class="shiftnav-submenu-activation shiftnav-submenu-activation-open"><i class="fa fa-angle-down"></i></span><span class="shiftnav-submenu-activation shiftnav-submenu-activation-close"><i class="fa fa-angle-up"></i></span>
+	<ul class="sub-menu sub-menu-2">
+<li id="menu-item-6626" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6626 shiftnav-depth-2"><a class="shiftnav-target"  href="https://www.senetas.com/solutions/commercial-cyber-security/">Commercial Cyber Security</a></li><li id="menu-item-6631" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6631 shiftnav-depth-2"><a class="shiftnav-target"  href="https://www.senetas.com/solutions/government-defence/">Government &#038; Defence</a></li><li id="menu-item-6629" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6629 shiftnav-depth-2"><a class="shiftnav-target"  href="https://www.senetas.com/solutions/financial-services/">Financial Services</a></li><li id="menu-item-6630" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6630 shiftnav-depth-2"><a class="shiftnav-target"  href="https://www.senetas.com/solutions/gaming/">Gaming</a></li><li id="menu-item-6632" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6632 shiftnav-depth-2"><a class="shiftnav-target"  href="https://www.senetas.com/solutions/healthcare/">Healthcare</a></li><li id="menu-item-6633" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6633 shiftnav-depth-2"><a class="shiftnav-target"  href="https://www.senetas.com/solutions/critical-infrastructure/">Critical Infrastructure</a></li><li class="shiftnav-retract"><a class="shiftnav-target"><i class="fa fa-chevron-left"></i> Back</a></li>	</ul>
+</li><li class="shiftnav-retract"><a class="shiftnav-target"><i class="fa fa-chevron-left"></i> Back</a></li></ul>
+</li><li id="menu-item-6636" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-6636 shiftnav-sub-accordion shiftnav-depth-0"><span class="shiftnav-target" >Resources</span><span class="shiftnav-submenu-activation shiftnav-submenu-activation-open"><i class="fa fa-angle-down"></i></span><span class="shiftnav-submenu-activation shiftnav-submenu-activation-close"><i class="fa fa-angle-up"></i></span>
+<ul class="sub-menu sub-menu-1">
+<li id="menu-item-6638" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6638 shiftnav-depth-1"><a class="shiftnav-target"  href="/resources/">Resource Library</a></li><li id="menu-item-6639" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-6639 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/category/blog/">Blog</a></li><li id="menu-item-6640" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-6640 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/category/news-and-events/">News and Events</a></li><li id="menu-item-6641" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-6641 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/category/view/">View</a></li><li id="menu-item-6643" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6643 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/customer-support-information/">Customer Support Information</a></li><li id="menu-item-6644" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6644 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/glossary/">Glossary</a></li><li class="shiftnav-retract"><a class="shiftnav-target"><i class="fa fa-chevron-left"></i> Back</a></li></ul>
+</li><li id="menu-item-6645" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-6645 shiftnav-sub-accordion shiftnav-depth-0"><span class="shiftnav-target" >Partners</span><span class="shiftnav-submenu-activation shiftnav-submenu-activation-open"><i class="fa fa-angle-down"></i></span><span class="shiftnav-submenu-activation shiftnav-submenu-activation-close"><i class="fa fa-angle-up"></i></span>
+<ul class="sub-menu sub-menu-1">
+<li id="menu-item-6646" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6646 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/partners/global-distribution/">Global Distribution</a></li><li id="menu-item-6649" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6649 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/partners/partners-anz/">Partners Australia and New Zealand</a></li><li id="menu-item-6650" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6650 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/partners/partners-international/">Partners International</a></li><li id="menu-item-6647" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6647 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/partners/how-to-become-a-partner/">How to Become a Partner</a></li><li id="menu-item-6651" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6651 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/partners/technology-alliance-partners/">Technology Partners</a></li><li id="menu-item-6661" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6661 shiftnav-depth-1"><a class="shiftnav-target"  target="_blank" href="https://partner.senetas.com/">Partner Portal Log-in</a></li><li class="shiftnav-retract"><a class="shiftnav-target"><i class="fa fa-chevron-left"></i> Back</a></li></ul>
+</li><li id="menu-item-6652" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-6652 shiftnav-sub-accordion shiftnav-depth-0"><span class="shiftnav-target" >Corporate</span><span class="shiftnav-submenu-activation shiftnav-submenu-activation-open"><i class="fa fa-angle-down"></i></span><span class="shiftnav-submenu-activation shiftnav-submenu-activation-close"><i class="fa fa-angle-up"></i></span>
+<ul class="sub-menu sub-menu-1">
+<li id="menu-item-6656" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6656 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/corporate/about-senetas/">About Senetas</a></li><li id="menu-item-6655" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6655 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/corporate/history-of-innovation/">A History of Innovation</a></li><li id="menu-item-6654" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6654 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/corporate/board-of-directors/">Board of Directors</a></li><li id="menu-item-8428" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-8428 shiftnav-depth-1"><a class="shiftnav-target"  href="https://investorhub.senetas.com/">Investor Hub</a></li><li id="menu-item-6657" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6657 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/corporate/corporate-governance/">Corporate Governance</a></li><li id="menu-item-8817" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8817 shiftnav-depth-1"><a class="shiftnav-target"  href="https://www.senetas.com/corporate/compliance/">Compliance</a></li><li class="shiftnav-retract"><a class="shiftnav-target"><i class="fa fa-chevron-left"></i> Back</a></li></ul>
+</li><li id="menu-item-6662" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6662 shiftnav-depth-0"><a class="shiftnav-target"  href="https://www.senetas.com/contact/">Contact Us</a></li><li id="menu-item-6663" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6663 shiftnav-depth-0"><a class="shiftnav-target"  target="_blank" href="https://support.senetas.com/">GlobalCare Support</a></li><li id="menu-item-7201" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-7201 shiftnav-depth-0"><a class="shiftnav-target"  target="_blank" href="https://partner.senetas.com/">Partner Resources</a></li></ul></nav>
+		<form role="search" method="get" class="search-form" action="https://www.senetas.com/">
+			<label>
+				<span class="screen-reader-text">Search for:</span>
+				<input type="search" class="search-field" placeholder="Search …" value="" name="s">
+			</label>
+			<input type="submit" class="search-submit" value="Search">
+		</form>
+			</div><!-- /.shiftnav-inner -->
+	</div><!-- /.shiftnav #shiftnav-main -->
+
+
+	<script id="ubermenu-js-extra">
+var ubermenu_data = {"remove_conflicts":"on","reposition_on_load":"off","intent_delay":"300","intent_interval":"100","intent_threshold":"7","scrollto_offset":"50","scrollto_duration":"1000","responsive_breakpoint":"959","accessible":"on","mobile_menu_collapse_on_navigate":"on","retractor_display_strategy":"responsive","touch_off_close":"on","submenu_indicator_close_mobile":"on","collapse_after_scroll":"on","v":"3.8.5","configurations":["main"],"ajax_url":"https://www.senetas.com/wp-admin/admin-ajax.php","plugin_url":"https://www.senetas.com/wp-content/plugins/ubermenu/","disable_mobile":"off","prefix_boost":"","use_core_svgs":"off","aria_role_navigation":"off","aria_nav_label":"off","aria_expanded":"off","aria_haspopup":"off","aria_hidden":"off","aria_controls":"","aria_responsive_toggle":"off","icon_tag":"i","esc_close_mobile":"on","keyboard_submenu_trigger":"enter","theme_locations":{"primary_navigation":"Primary Navigation","secondary_navigation":"Secondary Navigation","shiftnav":"ShiftNav [Main]"}};
+//# sourceURL=ubermenu-js-extra
+</script>
+<script type="rocketlazyloadscript" id="ubermenu-js" data-rocket-src="https://www.senetas.com/wp-content/plugins/ubermenu/assets/js/ubermenu.min.js?ver=3.8.5" defer></script>
+<script id="ubermenu-sticky-js-js-extra">
+var ubermenu_sticky_settings = [];
+//# sourceURL=ubermenu-sticky-js-js-extra
+</script>
+<script type="rocketlazyloadscript" id="ubermenu-sticky-js-js" data-rocket-src="https://www.senetas.com/wp-content/plugins/ubermenu-sticky/assets/ubermenu.sticky.min.js?ver=3.1.4" defer></script>
+<script type="rocketlazyloadscript" id="rocket-browser-checker-js-after">
+"use strict";var _createClass=function(){function defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||!1,descriptor.configurable=!0,"value"in descriptor&&(descriptor.writable=!0),Object.defineProperty(target,descriptor.key,descriptor)}}return function(Constructor,protoProps,staticProps){return protoProps&&defineProperties(Constructor.prototype,protoProps),staticProps&&defineProperties(Constructor,staticProps),Constructor}}();function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor))throw new TypeError("Cannot call a class as a function")}var RocketBrowserCompatibilityChecker=function(){function RocketBrowserCompatibilityChecker(options){_classCallCheck(this,RocketBrowserCompatibilityChecker),this.passiveSupported=!1,this._checkPassiveOption(this),this.options=!!this.passiveSupported&&options}return _createClass(RocketBrowserCompatibilityChecker,[{key:"_checkPassiveOption",value:function(self){try{var options={get passive(){return!(self.passiveSupported=!0)}};window.addEventListener("test",null,options),window.removeEventListener("test",null,options)}catch(err){self.passiveSupported=!1}}},{key:"initRequestIdleCallback",value:function(){!1 in window&&(window.requestIdleCallback=function(cb){var start=Date.now();return setTimeout(function(){cb({didTimeout:!1,timeRemaining:function(){return Math.max(0,50-(Date.now()-start))}})},1)}),!1 in window&&(window.cancelIdleCallback=function(id){return clearTimeout(id)})}},{key:"isDataSaverModeOn",value:function(){return"connection"in navigator&&!0===navigator.connection.saveData}},{key:"supportsLinkPrefetch",value:function(){var elem=document.createElement("link");return elem.relList&&elem.relList.supports&&elem.relList.supports("prefetch")&&window.IntersectionObserver&&"isIntersecting"in IntersectionObserverEntry.prototype}},{key:"isSlowConnection",value:function(){return"connection"in navigator&&"effectiveType"in navigator.connection&&("2g"===navigator.connection.effectiveType||"slow-2g"===navigator.connection.effectiveType)}}]),RocketBrowserCompatibilityChecker}();
+//# sourceURL=rocket-browser-checker-js-after
+</script>
+<script id="rocket-preload-links-js-extra">
+var RocketPreloadLinksConfig = {"excludeUris":"/(?:.+/)?feed(?:/(?:.+/?)?)?$|/(?:.+/)?embed/|/(index\\.php/)?(.*)wp\\-json(/.*|$)|/refer/|/go/|/recommend/|/recommends/","usesTrailingSlash":"1","imageExt":"jpg|jpeg|gif|png|tiff|bmp|webp|avif|pdf|doc|docx|xls|xlsx|php","fileExt":"jpg|jpeg|gif|png|tiff|bmp|webp|avif|pdf|doc|docx|xls|xlsx|php|html|htm","siteUrl":"https://www.senetas.com","onHoverDelay":"100","rateThrottle":"3"};
+//# sourceURL=rocket-preload-links-js-extra
+</script>
+<script type="rocketlazyloadscript" id="rocket-preload-links-js-after">
+(function() {
+"use strict";var r="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},e=function(){function i(e,t){for(var n=0;n<t.length;n++){var i=t[n];i.enumerable=i.enumerable||!1,i.configurable=!0,"value"in i&&(i.writable=!0),Object.defineProperty(e,i.key,i)}}return function(e,t,n){return t&&i(e.prototype,t),n&&i(e,n),e}}();function i(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}var t=function(){function n(e,t){i(this,n),this.browser=e,this.config=t,this.options=this.browser.options,this.prefetched=new Set,this.eventTime=null,this.threshold=1111,this.numOnHover=0}return e(n,[{key:"init",value:function(){!this.browser.supportsLinkPrefetch()||this.browser.isDataSaverModeOn()||this.browser.isSlowConnection()||(this.regex={excludeUris:RegExp(this.config.excludeUris,"i"),images:RegExp(".("+this.config.imageExt+")$","i"),fileExt:RegExp(".("+this.config.fileExt+")$","i")},this._initListeners(this))}},{key:"_initListeners",value:function(e){-1<this.config.onHoverDelay&&document.addEventListener("mouseover",e.listener.bind(e),e.listenerOptions),document.addEventListener("mousedown",e.listener.bind(e),e.listenerOptions),document.addEventListener("touchstart",e.listener.bind(e),e.listenerOptions)}},{key:"listener",value:function(e){var t=e.target.closest("a"),n=this._prepareUrl(t);if(null!==n)switch(e.type){case"mousedown":case"touchstart":this._addPrefetchLink(n);break;case"mouseover":this._earlyPrefetch(t,n,"mouseout")}}},{key:"_earlyPrefetch",value:function(t,e,n){var i=this,r=setTimeout(function(){if(r=null,0===i.numOnHover)setTimeout(function(){return i.numOnHover=0},1e3);else if(i.numOnHover>i.config.rateThrottle)return;i.numOnHover++,i._addPrefetchLink(e)},this.config.onHoverDelay);t.addEventListener(n,function e(){t.removeEventListener(n,e,{passive:!0}),null!==r&&(clearTimeout(r),r=null)},{passive:!0})}},{key:"_addPrefetchLink",value:function(i){return this.prefetched.add(i.href),new Promise(function(e,t){var n=document.createElement("link");n.rel="prefetch",n.href=i.href,n.onload=e,n.onerror=t,document.head.appendChild(n)}).catch(function(){})}},{key:"_prepareUrl",value:function(e){if(null===e||"object"!==(void 0===e?"undefined":r(e))||!1 in e||-1===["http:","https:"].indexOf(e.protocol))return null;var t=e.href.substring(0,this.config.siteUrl.length),n=this._getPathname(e.href,t),i={original:e.href,protocol:e.protocol,origin:t,pathname:n,href:t+n};return this._isLinkOk(i)?i:null}},{key:"_getPathname",value:function(e,t){var n=t?e.substring(this.config.siteUrl.length):e;return n.startsWith("/")||(n="/"+n),this._shouldAddTrailingSlash(n)?n+"/":n}},{key:"_shouldAddTrailingSlash",value:function(e){return this.config.usesTrailingSlash&&!e.endsWith("/")&&!this.regex.fileExt.test(e)}},{key:"_isLinkOk",value:function(e){return null!==e&&"object"===(void 0===e?"undefined":r(e))&&(!this.prefetched.has(e.href)&&e.origin===this.config.siteUrl&&-1===e.href.indexOf("?")&&-1===e.href.indexOf("#")&&!this.regex.excludeUris.test(e.href)&&!this.regex.images.test(e.href))}}],[{key:"run",value:function(){"undefined"!=typeof RocketPreloadLinksConfig&&new n(new RocketBrowserCompatibilityChecker({capture:!0,passive:!0}),RocketPreloadLinksConfig).init()}}]),n}();t.run();
+}());
+
+//# sourceURL=rocket-preload-links-js-after
+</script>
+<script type="rocketlazyloadscript" id="jquery-ui-core-js" data-rocket-src="https://www.senetas.com/wp-includes/js/jquery/ui/core.min.js?ver=1.13.3" defer></script>
+<script type="rocketlazyloadscript" id="wp-hooks-js" data-rocket-src="https://www.senetas.com/wp-includes/js/dist/hooks.min.js?ver=7496969728ca0f95732d"></script>
+<script id="popup-maker-site-js-extra">
+var pum_vars = {"version":"1.22.0","pm_dir_url":"https://www.senetas.com/wp-content/plugins/popup-maker/","ajaxurl":"https://www.senetas.com/wp-admin/admin-ajax.php","restapi":"https://www.senetas.com/wp-json/pum/v1","rest_nonce":null,"default_theme":"7297","debug_mode":"","disable_tracking":"","home_url":"/","message_position":"top","core_sub_forms_enabled":"1","popups":[],"cookie_domain":"","paramNames":{"popup_id":"pid","cta":"cta","notrack":"notrack"},"analytics_enabled":"1","analytics_route":"analytics","analytics_api":"https://www.senetas.com/wp-json/pum/v1"};
+var pum_sub_vars = {"ajaxurl":"https://www.senetas.com/wp-admin/admin-ajax.php","message_position":"top"};
+var pum_popups = [];
+//# sourceURL=popup-maker-site-js-extra
+</script>
+<script type="rocketlazyloadscript" data-minify="1" id="popup-maker-site-js" data-rocket-src="https://www.senetas.com/wp-content/cache/min/1/wp-content/uploads/pum/pum-site-scripts.js?ver=1780640649" defer></script>
+<script type="rocketlazyloadscript" id="googlesitekit-events-provider-popup-maker-js" data-rocket-src="https://www.senetas.com/wp-content/plugins/google-site-kit/dist/assets/js/googlesitekit-events-provider-popup-maker-4b3ee78127e8b950c3b3.js" defer></script>
+<script type="rocketlazyloadscript" data-minify="1" id="sage/js-js" data-rocket-src="https://www.senetas.com/wp-content/cache/min/1/wp-content/themes/senetas2020/dist/scripts/main-49df4b927e.js?ver=1780640649" defer></script>
+<script id="shiftnav-js-extra">
+var shiftnav_data = {"shift_body":"off","shift_body_wrapper":"","lock_body":"on","lock_body_x":"off","open_current":"off","collapse_accordions":"on","scroll_panel":"on","breakpoint":"1080","v":"1.6.1.2","touch_off_close":"on","scroll_offset":"100","disable_transforms":"off"};
+//# sourceURL=shiftnav-js-extra
+</script>
+<script type="rocketlazyloadscript" id="shiftnav-js" data-rocket-src="https://www.senetas.com/wp-content/plugins/shiftnav-pro/assets/js/shiftnav.min.js?ver=1.6.1.2" defer></script>
+<script>window.lazyLoadOptions={elements_selector:"iframe[data-lazy-src]",data_src:"lazy-src",data_srcset:"lazy-srcset",data_sizes:"lazy-sizes",class_loading:"lazyloading",class_loaded:"lazyloaded",threshold:300,callback_loaded:function(element){if(element.tagName==="IFRAME"&&element.dataset.rocketLazyload=="fitvidscompatible"){if(element.classList.contains("lazyloaded")){if(typeof window.jQuery!="undefined"){if(jQuery.fn.fitVids){jQuery(element).parent().fitVids()}}}}}};window.addEventListener('LazyLoad::Initialized',function(e){var lazyLoadInstance=e.detail.instance;if(window.MutationObserver){var observer=new MutationObserver(function(mutations){var image_count=0;var iframe_count=0;var rocketlazy_count=0;mutations.forEach(function(mutation){for(var i=0;i<mutation.addedNodes.length;i++){if(typeof mutation.addedNodes[i].getElementsByTagName!=='function'){continue}
+if(typeof mutation.addedNodes[i].getElementsByClassName!=='function'){continue}
+images=mutation.addedNodes[i].getElementsByTagName('img');is_image=mutation.addedNodes[i].tagName=="IMG";iframes=mutation.addedNodes[i].getElementsByTagName('iframe');is_iframe=mutation.addedNodes[i].tagName=="IFRAME";rocket_lazy=mutation.addedNodes[i].getElementsByClassName('rocket-lazyload');image_count+=images.length;iframe_count+=iframes.length;rocketlazy_count+=rocket_lazy.length;if(is_image){image_count+=1}
+if(is_iframe){iframe_count+=1}}});if(image_count>0||iframe_count>0||rocketlazy_count>0){lazyLoadInstance.update()}});var b=document.getElementsByTagName("body")[0];var config={childList:!0,subtree:!0};observer.observe(b,config)}},!1)</script><script data-no-minify="1" async src="https://www.senetas.com/wp-content/plugins/wp-rocket/assets/js/lazyload/17.8.3/lazyload.min.js"></script>  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a07989b469f2c308',t:'MTc4MDc3MTE0Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+<!-- This website is like a Rocket, isn't it? Performance optimized by WP Rocket. Learn more: https://wp-rocket.me -->

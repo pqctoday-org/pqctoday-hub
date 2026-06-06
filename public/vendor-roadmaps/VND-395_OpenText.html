@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        dataLayer.push({
+            'pagePostType' : 'post',
+            'pageCategory' : ["Line of Business","Security","Security","Technologies"],
+            'pageTags'     : ["Application Security Testing","DAST","Post-Quantum Cryptography","quantum computing","SAST"],
+            'pageAuthor'   : "Frans van Buul"        });
+    </script>
+    <meta name="be:wp" content="1.1.18">
+<!-- be_ixf, sdk, gho-->
+<meta name="be:sdk" content="php_sdk_1.5.16" />
+<meta name="be:timer" content="41ms" />
+<meta name="be:orig_url" content="https%3A%2F%2Fblogs.opentext.com%2Fpreparing-for-post-quantum-cryptography-with-opentext-sast-and-dast%2F" />
+<meta name="be:norm_url" content="https%3A%2F%2Fblogs.opentext.com%2Fpreparing-for-post-quantum-cryptography-with-opentext-sast-and-dast%2F" />
+<meta name="be:capsule_url" content="https%3A%2F%2Fixfd1-api.bc0a.com%2Fapi%2Fixf%2F1.0.0%2Fget_capsule%2Ff00000000319963%2F1584964596" />
+<meta name="be:api_dt" content="Zy_2026;Zm_05;Zd_24;Zh_06;Zmh_58;p_epoch:1.77960591361E+12" />
+<meta name="be:mod_dt" content="Zy_2026;Zm_05;Zd_24;Zh_06;Zmh_58;p_epoch:1.77960591361E+12" />
+<meta name="be:diag" content="9S1lCP3yo8E1pgwhdpBnkH84WI3iVsquBTKyuAFz28+Mqni1dKAdU0GCR4nkU6XaBnWQcNKddaW6nvainx2MHk/TvXQQCPwgTZX4JcYbS4HPChr1v3GSuF4wwuFuzcJGjbWqKfCBzeZg1K0lEJRgKmQkT2pg+rF6hDLguTqlnabJz6KDaSF9oDi347Szl7QtslNsxcScVy2Qoy4+lD+IG+Uif4KpbL8kFwi7x/A1EweoekykOLbOx3LkmwbTrCBFaRwbjf42AhD1ZgyEHF8XNpJAEPUu0PHEDpyf99B0klfbEH6qscxbH6whINRa20eB4Ot5XqQs4Zi6XOwpaWch3Koh8AMyhEByvR6RWJGO7jH1o/9NgnCpmGU4/97LVtLDDQSIhxYXlxLtNXl37jx3uvDQxVUElL16dmCjuFJV9kW9FdAFzqa5/Fh7nhTJbPvOt9LuZw+X+Xspu/lagm0cW40od2MnMI6lQ2FV09VF2oZp99T1dyGaHJj4nZPEdcjhtHMtR2v9/WQH3nH746q0Y5c5fLazmmOZPsZWc8y+LIQqigo0Y58Egiu2/2EvMEkH7Vv1Qk2Z9OsNB/dJHdGaXU8AHQghwnOR0c2HsXSyrwuOM2iGj9vUewVvkyTL1zo7ewmewtRiT53+iI0IRmjRNdTnUBSO64VMJTpsTqX9n/0x+pvdyKt/rTqSlmJ2WeOf5l4olTJx3QO02aS86OJkniA54pjneCw1Ir3kCvmie5mUwKtAjbHnRlg8sfLoKJYEy0WIX8c2iKUEZBL072nwGSf7udeVKqdh89+lMUfBGS9ElsX/HS0ClXSV3JRVZtUORx93zoOXzRHR+h/JODnYZJCzdIpG+KBWvNpUJUiW3U2urUjuFkXrU2NN6b2yUsRWQD4nqnQwPg4+p99oQ91kvPy0pNWWHt6gbOO+X8wOwB2tMcop90HEaXJPpft9bnw2Ib99srsentaJEshPpBoUIRxSAth4ECDJfdL/B541bEoZBV5xdmt5fmkDHIscQB9dFX6bHqGBtv+Ij7fqQx1M42bw21rlP1LDOJrSnVzGQxXovYYGaK87kwoqW/mH+q1h0pvIYBdHV3CpUzld6wSimuUNpiHxP6Cp6cwiPp1S2Kn6yplaHOp5RXyXem8ptCAg+66VXtyvwdFoGKYCBDK91AtDOszsTuBv7XXch1dxgLEtaDP6CFtWTR7wS0oW41Iy64NFBocQtj8Bcwr0YvBTZMbzqRnfvKG/GceRJUfwxTJ4hcVljyq2QWB7FgVpi7AvQdkUmo4v/McVmsESeRzIFxeHXpw5KizW3sSHxNPKqXe2/oBS8VzrBzF7rhyrwsf7PfYveuANFSnxa8qqiCjAIN0fZzrOS5y1yqs5dUxZVj1H5eB0ejyQ0Qh7fUItgG5t24ZxGT2VJdnQLamw8/jqSOv27KRquwwU4Na13Bj17tsQYfRDfze+yVPwnsuqm0J6kdviDGwcLldUEioqfhT9H+P0Sb8p/qxtGuv9YKYVmsgNshAZfXotYd+LgS+xErNlIvJKiKux+9cVoD4JVOLQeEBdBZKu9XcWpyt2lNVd4MjI2tpbZvHScPYRNqcAG/vXVXaKyGUV3ZPWH9n7D+drsjQKFRYTxRTbLwUerXe6XHJgVUIO6vAs2hLYDBlBgmgjqW0lfs5lThL8qVKxxrPANwUh03yVmp+pPrXZ73oRDBK1YQptISZkUee79NZfNpZQpYyXGGpXihJi7PK1U2HEpO+TzVYN3ugIwBqHlvGbkSQ6nHFd00l7zdPJYfYd91CAsCqCXT4lyUlhZggAVFlCq1R7caG3xE0u3ToeeWj8RNDwlKJt2bJSaZOgmPgjBB3yxbB4tQJUSI/+ZhtUxwel1phjUQ9D4t00upehGT0FSNliZQFZ+4g9hsk+YGydGDtvo5xyxnDmMwNa/lOBdqYMP7SmI6YHI/W+he6WOBXcUmqEbi+PrckKG932GWdCPJ4ByKts323l9ooeFiWN0d9mByJtlL9B6v2+nzR+z9Kt8QxJNrF2FtBl348GYhXLtZm4FCuUKjyI+ZKqvZEBXKdPZ4YUW2OO/M4cXlYNt2LBKUzInwp9tklTb9HD7wfPrFGRwa1ijRBDR58Hyd+vUSHQAC4hERwU3B8F1CmA1m53HWMQNtQGNJ64Nj0VuA+cPEWaLeK+35MtCpjv4hDwqzjo5ftasWC8N1S77Py2YMp5JQkGzyzx960P3C55+XjqUrOx3agQh0PI5uR0SdqoctL8Aec3xYxDkyoiVTtwPfKhHOlM9kdZ/AK8YDDBw6OFo57hxlF9/NLs44+AoDBK2H0nxjTdIzz0KrwuiEWHebUDasgwsreY2LRyaDvWfQbdyYa+xj28r5HobMMd83S5/qcivtPP9uuaLyZTrztiNrOeXdsTUJ5qVxM1GELb9muP4xQkgmabSJyWohjuDtCrH/lbwwBkiFV4iwi6D8nQKPgQ5eizqJUOu1IzZRU3Wo3fTW9a1Ocj1WpnnkRFqKVX0b7Tq+N6OT9W62WB7iVlMJLSAf9EWUSKCRrGiAR4Plv/geK6/aS4bM0bq8s8BoQ06KbUMiRy0wedv2T4LWKXfl5lsQVsFTOb8V+xvka6laRUR+44CYao+mNork8jbkku6e7QUAV45pvGhiEsXiSOEhR1muRvgOt4EVvJSdVDMu/el2sP" />
+<meta name="be:messages" content="true" />
+<style>
+.be-ix-link-block .be-related-link-container {text-align: center;    align-items: baseline;margin-top: 1rem; padding-bottom: 16px;}
+.be-ix-link-block .be-related-link-container .be-label {margin: 0;color: #101C2F;
+    font-weight: 600;
+    letter-spacing: -.011em;}
+.be-ix-link-block .be-related-link-container .be-list {display: inline-block;list-style: none;margin: 0;padding: 0;}
+.be-ix-link-block .be-related-link-container .be-list .be-list-item {display: inline-block;margin-right: 20px;}
+.be-ix-link-block .be-related-link-container .be-list .be-list-item:last-child {margin-right: 0;}
+.be-ix-link-block .be-related-link-container .be-list .be-list-item .be-related-link {color: #3F4D62;}
+ 
+@media (max-width: 767px) {
+.be-ix-link-block .be-related-link-container .be-label {width: 100%;font-size: 16px;}
+.be-ix-link-block .be-related-link-container .be-list {display: block;width: 100%;}
+.be-ix-link-block .be-related-link-container .be-list .be-list-item {display: block; margin-right: 0; margin-top: 16px;}}
+@media (min-width: 768px) {
+.be-ix-link-block .be-related-link-container {display: flex; justify-content: left;}
+.be-ix-link-block .be-related-link-container .be-label {display: inline-block;margin-right: 20px;font-size: 16px;}
+.be-ix-link-block .be-related-link-container .be-list {width: auto;}}
+</style>
+
+	<!-- This site is optimized with the Yoast SEO Premium plugin v27.5 (Yoast SEO v27.5) - https://yoast.com/product/yoast-seo-premium-wordpress/ -->
+	<meta name="description" content="The quantum threat to modern cryptography is no longer theoretical. Here is how you can prepare your organization." />
+	<link rel="canonical" href="https://blogs.opentext.com/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast/" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="Preparing for post-quantum cryptography with OpenText SAST and DAST " />
+	<meta property="og:description" content="The quantum threat to modern cryptography is no longer theoretical. Here is how you can prepare your organization." />
+	<meta property="og:url" content="https://blogs.opentext.com/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast/" />
+	<meta property="og:site_name" content="OpenText Blogs" />
+	<meta property="article:published_time" content="2025-10-23T18:36:22+00:00" />
+	<meta property="article:modified_time" content="2025-10-23T18:36:25+00:00" />
+	<meta property="og:image" content="https://blogs.opentext.com/wp-content/uploads/2025/10/PCQ_header.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="675" />
+	<meta property="og:image:type" content="image/png" />
+	<meta name="author" content="Frans van Buul" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:creator" content="@OpenText" />
+	<meta name="twitter:site" content="@OpenText" />
+	<meta name="twitter:label1" content="Written by" />
+	<meta name="twitter:data1" content="Frans van Buul" />
+	<meta name="twitter:label2" content="Est. reading time" />
+	<meta name="twitter:data2" content="7 minutes" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https:\/\/schema.org","@graph":[{"@type":"Article","@id":"https:\/\/blogs.opentext.com\/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast\/#article","isPartOf":{"@id":"https:\/\/blogs.opentext.com\/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast\/"},"author":{"name":"Frans van Buul","@id":"https:\/\/blogs.opentext.com\/#\/schema\/person\/a106b69f9d71ac2073e06881dddc53db"},"headline":"Preparing for post-quantum cryptography with OpenText SAST and DAST ","datePublished":"2025-10-23T18:36:22+00:00","dateModified":"2025-10-23T18:36:25+00:00","mainEntityOfPage":{"@id":"https:\/\/blogs.opentext.com\/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast\/"},"wordCount":1546,"publisher":{"@id":"https:\/\/blogs.opentext.com\/#organization"},"image":{"@id":"https:\/\/blogs.opentext.com\/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast\/#primaryimage"},"thumbnailUrl":"https:\/\/blogs.opentext.com\/wp-content\/uploads\/2025\/10\/PCQ_header.png","keywords":["Application Security Testing","DAST","Post-Quantum Cryptography","quantum computing","SAST"],"articleSection":["Line of Business","Security","Security","Technologies"],"inLanguage":"en-US"},{"@type":"WebPage","@id":"https:\/\/blogs.opentext.com\/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast\/","url":"https:\/\/blogs.opentext.com\/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast\/","name":"Preparing for post-quantum cryptography with OpenText SAST and DAST  - OpenText Blogs","isPartOf":{"@id":"https:\/\/blogs.opentext.com\/#website"},"primaryImageOfPage":{"@id":"https:\/\/blogs.opentext.com\/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast\/#primaryimage"},"image":{"@id":"https:\/\/blogs.opentext.com\/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast\/#primaryimage"},"thumbnailUrl":"https:\/\/blogs.opentext.com\/wp-content\/uploads\/2025\/10\/PCQ_header.png","datePublished":"2025-10-23T18:36:22+00:00","dateModified":"2025-10-23T18:36:25+00:00","description":"The quantum threat to modern cryptography is no longer theoretical. Here is how you can prepare your organization.","breadcrumb":{"@id":"https:\/\/blogs.opentext.com\/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast\/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https:\/\/blogs.opentext.com\/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast\/"]}]},{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/blogs.opentext.com\/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast\/#primaryimage","url":"https:\/\/blogs.opentext.com\/wp-content\/uploads\/2025\/10\/PCQ_header.png","contentUrl":"https:\/\/blogs.opentext.com\/wp-content\/uploads\/2025\/10\/PCQ_header.png","width":1200,"height":675,"caption":"This is a stylized image of a key with data representing post-quantum cryptography."},{"@type":"BreadcrumbList","@id":"https:\/\/blogs.opentext.com\/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast\/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https:\/\/blogs.opentext.com\/"},{"@type":"ListItem","position":2,"name":"Preparing for post-quantum cryptography with OpenText SAST and DAST "}]},{"@type":"WebSite","@id":"https:\/\/blogs.opentext.com\/#website","url":"https:\/\/blogs.opentext.com\/","name":"OpenText Blogs","description":"The Information Company","publisher":{"@id":"https:\/\/blogs.opentext.com\/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https:\/\/blogs.opentext.com\/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Organization","@id":"https:\/\/blogs.opentext.com\/#organization","name":"OpenText Blogs","url":"https:\/\/blogs.opentext.com\/","logo":{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/blogs.opentext.com\/#\/schema\/logo\/image\/","url":"https:\/\/blogs.opentext.com\/wp-content\/uploads\/2023\/03\/OpenText-Logo-2017.jpg","contentUrl":"https:\/\/blogs.opentext.com\/wp-content\/uploads\/2023\/03\/OpenText-Logo-2017.jpg","width":913,"height":300,"caption":"OpenText Blogs"},"image":{"@id":"https:\/\/blogs.opentext.com\/#\/schema\/logo\/image\/"},"sameAs":["https:\/\/x.com\/OpenText","https:\/\/www.linkedin.com\/company\/2709\/","https:\/\/www.youtube.com\/user\/opentextcorp"]},{"@type":"Person","@id":"https:\/\/blogs.opentext.com\/#\/schema\/person\/a106b69f9d71ac2073e06881dddc53db","name":"Frans van Buul","image":{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/blogs.opentext.com\/wp-content\/uploads\/2024\/09\/Frans-van-Buul-96x96.jpg","url":"https:\/\/blogs.opentext.com\/wp-content\/uploads\/2024\/09\/Frans-van-Buul-96x96.jpg","contentUrl":"https:\/\/blogs.opentext.com\/wp-content\/uploads\/2024\/09\/Frans-van-Buul-96x96.jpg","caption":"Frans van Buul"},"description":"Based out of the Netherlands, Frans van Buul is senior product manager for Fortify SAST at OpenText. Before transitioning into product management two years ago, Frans held several other positions that provided him with the relevant background. He’s been a security consultant and auditor at PwC, a Java developer and architect at several companies, and a Fortify SAST sales engineer and sales engineering leader.","url":"https:\/\/blogs.opentext.com\/author\/fvbuulopentext-com\/"}]}</script>
+	<!-- / Yoast SEO Premium plugin. -->
+
+
+<title>Preparing for post-quantum cryptography with OpenText SAST and DAST  - OpenText Blogs</title>
+<link rel='dns-prefetch' href='//assets.ot.digital' />
+<link rel="alternate" type="application/rss+xml" title="OpenText Blogs &raquo; Feed" href="https://blogs.opentext.com/feed/" />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://blogs.opentext.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fblogs.opentext.com%2Fpreparing-for-post-quantum-cryptography-with-opentext-sast-and-dast%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://blogs.opentext.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fblogs.opentext.com%2Fpreparing-for-post-quantum-cryptography-with-opentext-sast-and-dast%2F&#038;format=xml" />
+<style id='wp-img-auto-sizes-contain-inline-css'>
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<link rel='stylesheet' id='blueprint-block-styles-css' href='https://blogs.opentext.com/wp-content/plugins/blueprint-wp-blocks-plugin/assets/css/block-styles.css' media='all' />
+<style id='wp-block-paragraph-inline-css'>
+.is-small-text{font-size:.875em}.is-regular-text{font-size:1em}.is-large-text{font-size:2.25em}.is-larger-text{font-size:3em}.has-drop-cap:not(:focus):first-letter{float:left;font-size:8.4em;font-style:normal;font-weight:100;line-height:.68;margin:.05em .1em 0 0;text-transform:uppercase}body.rtl .has-drop-cap:not(:focus):first-letter{float:none;margin-left:.1em}p.has-drop-cap.has-background{overflow:hidden}:root :where(p.has-background){padding:1.25em 2.375em}:where(p.has-text-color:not(.has-link-color)) a{color:inherit}p.has-text-align-left[style*="writing-mode:vertical-lr"],p.has-text-align-right[style*="writing-mode:vertical-rl"]{rotate:180deg}
+/*# sourceURL=https://blogs.opentext.com/wp-includes/blocks/paragraph/style.min.css */
+</style>
+<style id='wp-block-heading-inline-css'>
+h1:where(.wp-block-heading).has-background,h2:where(.wp-block-heading).has-background,h3:where(.wp-block-heading).has-background,h4:where(.wp-block-heading).has-background,h5:where(.wp-block-heading).has-background,h6:where(.wp-block-heading).has-background{padding:1.25em 2.375em}h1.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h1.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h2.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h2.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h3.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h3.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h4.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h4.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h5.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h5.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h6.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h6.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]){rotate:180deg}
+/*# sourceURL=https://blogs.opentext.com/wp-includes/blocks/heading/style.min.css */
+</style>
+<style id='wp-block-list-inline-css'>
+ol,ul{box-sizing:border-box}:root :where(.wp-block-list.has-background){padding:1.25em 2.375em}
+/*# sourceURL=https://blogs.opentext.com/wp-includes/blocks/list/style.min.css */
+</style>
+<style id='wp-block-post-content-inline-css'>
+.wp-block-post-content{display:flow-root}
+/*# sourceURL=https://blogs.opentext.com/wp-includes/blocks/post-content/style.min.css */
+</style>
+<style id='wp-block-group-inline-css'>
+.wp-block-group{box-sizing:border-box}:where(.wp-block-group.wp-block-group-is-layout-constrained){position:relative}
+/*# sourceURL=https://blogs.opentext.com/wp-includes/blocks/group/style.min.css */
+</style>
+<style id='wp-block-library-inline-css'>
+:root{--wp-block-synced-color:#7a00df;--wp-block-synced-color--rgb:122,0,223;--wp-bound-block-color:var(--wp-block-synced-color);--wp-editor-canvas-background:#ddd;--wp-admin-theme-color:#007cba;--wp-admin-theme-color--rgb:0,124,186;--wp-admin-theme-color-darker-10:#006ba1;--wp-admin-theme-color-darker-10--rgb:0,107,160.5;--wp-admin-theme-color-darker-20:#005a87;--wp-admin-theme-color-darker-20--rgb:0,90,135;--wp-admin-border-width-focus:2px}@media (min-resolution:192dpi){:root{--wp-admin-border-width-focus:1.5px}}.wp-element-button{cursor:pointer}:root .has-very-light-gray-background-color{background-color:#eee}:root .has-very-dark-gray-background-color{background-color:#313131}:root .has-very-light-gray-color{color:#eee}:root .has-very-dark-gray-color{color:#313131}:root .has-vivid-green-cyan-to-vivid-cyan-blue-gradient-background{background:linear-gradient(135deg,#00d084,#0693e3)}:root .has-purple-crush-gradient-background{background:linear-gradient(135deg,#34e2e4,#4721fb 50%,#ab1dfe)}:root .has-hazy-dawn-gradient-background{background:linear-gradient(135deg,#faaca8,#dad0ec)}:root .has-subdued-olive-gradient-background{background:linear-gradient(135deg,#fafae1,#67a671)}:root .has-atomic-cream-gradient-background{background:linear-gradient(135deg,#fdd79a,#004a59)}:root .has-nightshade-gradient-background{background:linear-gradient(135deg,#330968,#31cdcf)}:root .has-midnight-gradient-background{background:linear-gradient(135deg,#020381,#2874fc)}:root{--wp--preset--font-size--normal:16px;--wp--preset--font-size--huge:42px}.has-regular-font-size{font-size:1em}.has-larger-font-size{font-size:2.625em}.has-normal-font-size{font-size:var(--wp--preset--font-size--normal)}.has-huge-font-size{font-size:var(--wp--preset--font-size--huge)}.has-text-align-center{text-align:center}.has-text-align-left{text-align:left}.has-text-align-right{text-align:right}.has-fit-text{white-space:nowrap!important}#end-resizable-editor-section{display:none}.aligncenter{clear:both}.items-justified-left{justify-content:flex-start}.items-justified-center{justify-content:center}.items-justified-right{justify-content:flex-end}.items-justified-space-between{justify-content:space-between}.screen-reader-text{border:0;clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;word-wrap:normal!important}.screen-reader-text:focus{background-color:#ddd;clip-path:none;color:#444;display:block;font-size:1em;height:auto;left:5px;line-height:normal;padding:15px 23px 14px;text-decoration:none;top:5px;width:auto;z-index:100000}html :where(.has-border-color){border-style:solid}html :where([style*=border-top-color]){border-top-style:solid}html :where([style*=border-right-color]){border-right-style:solid}html :where([style*=border-bottom-color]){border-bottom-style:solid}html :where([style*=border-left-color]){border-left-style:solid}html :where([style*=border-width]){border-style:solid}html :where([style*=border-top-width]){border-top-style:solid}html :where([style*=border-right-width]){border-right-style:solid}html :where([style*=border-bottom-width]){border-bottom-style:solid}html :where([style*=border-left-width]){border-left-style:solid}html :where(img[class*=wp-image-]){height:auto;max-width:100%}:where(figure){margin:0 0 1em}html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:var(--wp-admin--admin-bar--height,0px)}@media screen and (max-width:600px){html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:0px}}
+/*# sourceURL=/wp-includes/css/dist/block-library/common.min.css */
+</style>
+<style id='core-block-supports-inline-css'>
+.wp-container-core-post-content-is-layout-12dd3699 > :where(:not(.alignleft):not(.alignright):not(.alignfull)){margin-left:0 !important;}.wp-container-1{top:calc(24px + var(--wp-admin--admin-bar--position-offset, 0px));position:sticky;z-index:10;}
+/*# sourceURL=core-block-supports-inline-css */
+</style>
+<style id='wp-block-template-skip-link-inline-css'>
+
+		.skip-link.screen-reader-text {
+			border: 0;
+			clip-path: inset(50%);
+			height: 1px;
+			margin: -1px;
+			overflow: hidden;
+			padding: 0;
+			position: absolute !important;
+			width: 1px;
+			word-wrap: normal !important;
+		}
+
+		.skip-link.screen-reader-text:focus {
+			background-color: #eee;
+			clip-path: none;
+			color: #444;
+			display: block;
+			font-size: 1em;
+			height: auto;
+			left: 5px;
+			line-height: normal;
+			padding: 15px 23px 14px;
+			text-decoration: none;
+			top: 5px;
+			width: auto;
+			z-index: 100000;
+		}
+/*# sourceURL=wp-block-template-skip-link-inline-css */
+</style>
+<link rel='stylesheet' id='cms-navigation-style-base-css' href='https://blogs.opentext.com/wp-content/plugins/wpml-cms-nav/res/css/cms-navigation-base.css' media='screen' />
+<link rel='stylesheet' id='cms-navigation-style-css' href='https://blogs.opentext.com/wp-content/plugins/wpml-cms-nav/res/css/cms-navigation.css' media='screen' />
+<link rel='stylesheet' id='blueprint-fonts-css' href='https://assets.ot.digital/min/m/v1/css/opentext-fonts.min.css' media='all' />
+<link rel='stylesheet' id='blueprint-core-css' href='https://assets.ot.digital/min/m/v1/css/opentext.min.css' media='all' />
+<link rel='stylesheet' id='blueprint-style-css' href='https://blogs.opentext.com/wp-content/themes/blueprint-blog-theme/style.css' media='all' />
+<script id="wpml-cookie-js-extra">
+var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":"/"}};
+var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":"/"}};
+//# sourceURL=wpml-cookie-js-extra
+</script>
+<script src="https://blogs.opentext.com/wp-content/plugins/sitepress-multilingual-cms/res/js/cookies/language-cookie.js" id="wpml-cookie-js" defer data-wp-strategy="defer"></script>
+<script id="ot-gtm-js-before">
+<!-- Google Tag Manager -->
+(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TBD3JCM');
+<!-- End Google Tag Manager -->
+//# sourceURL=ot-gtm-js-before
+</script>
+<script src="https://blogs.opentext.com/wp-content/plugins/stop-user-enumeration/frontend/js/frontend.js" id="stop-user-enumeration-js" defer data-wp-strategy="defer"></script>
+<meta name="generator" content="WPML ver:4.9.3 stt:1,3,28;" />
+      <meta name="onesignal" content="wordpress-plugin"/>
+            <script>
+
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+
+      OneSignalDeferred.push(function(OneSignal) {
+        var oneSignal_options = {};
+        window._oneSignalInitOptions = oneSignal_options;
+
+        oneSignal_options['serviceWorkerParam'] = { scope: '/wp-content/plugins/onesignal-free-web-push-notifications/sdk_files/push/onesignal/' };
+oneSignal_options['serviceWorkerPath'] = 'OneSignalSDKWorker.js';
+
+        OneSignal.Notifications.setDefaultUrl("https://blogs.opentext.com");
+
+        oneSignal_options['wordpress'] = true;
+oneSignal_options['appId'] = '0800d8b8-0888-4aab-ac86-68bf7b3b5c4d';
+oneSignal_options['allowLocalhostAsSecureOrigin'] = true;
+oneSignal_options['welcomeNotification'] = { };
+oneSignal_options['welcomeNotification']['title'] = "";
+oneSignal_options['welcomeNotification']['message'] = "";
+oneSignal_options['path'] = "https://blogs.opentext.com/wp-content/plugins/onesignal-free-web-push-notifications/sdk_files/";
+oneSignal_options['safari_web_id'] = "web.onesignal.auto.5093406a-927f-4c57-a877-608b6718a7cc";
+oneSignal_options['promptOptions'] = { };
+oneSignal_options['promptOptions']['siteName'] = "https://blogs.opentext.com/";
+              OneSignal.init(window._oneSignalInitOptions);
+              OneSignal.Slidedown.promptPush()      });
+
+      function documentInitOneSignal() {
+        var oneSignal_elements = document.getElementsByClassName("OneSignal-prompt");
+
+        var oneSignalLinkClickHandler = function(event) { OneSignal.Notifications.requestPermission(); event.preventDefault(); };        for(var i = 0; i < oneSignal_elements.length; i++)
+          oneSignal_elements[i].addEventListener('click', oneSignalLinkClickHandler, false);
+      }
+
+      if (document.readyState === 'complete') {
+           documentInitOneSignal();
+      }
+      else {
+           window.addEventListener("load", function(event){
+               documentInitOneSignal();
+          });
+      }
+    </script>
+<link rel="icon" href="https://blogs.opentext.com/wp-content/uploads/2024/07/cropped-OT-Icon-Box-150x150.png" sizes="32x32" />
+<link rel="icon" href="https://blogs.opentext.com/wp-content/uploads/2024/07/cropped-OT-Icon-Box-300x300.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://blogs.opentext.com/wp-content/uploads/2024/07/cropped-OT-Icon-Box-300x300.png" />
+<meta name="msapplication-TileImage" content="https://blogs.opentext.com/wp-content/uploads/2024/07/cropped-OT-Icon-Box-300x300.png" />
+</head>
+
+<body class="wp-singular post-template-default single single-post postid-999311290 single-format-standard wp-embed-responsive wp-theme-blueprint-blog-theme">
+<!-- Google Tag Manager (noscript) -->
+		<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TBD3JCM"
+		height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+		<!-- End Google Tag Manager (noscript) -->
+<div class="wp-site-blocks"><header class="wp-block-template-part">
+<nav class="sitenav js-sitenav js-sitenav-hover" aria-label="site">
+    <div class="container">
+        <div class="row pt-2 d-print-none">
+            <div class="col">
+                                    <a href="https://www.opentext.com/" class="text-body">opentext.com</a>
+                            </div>
+            <div class="ml-auto d-flex align-items-center">
+                <div class="sitenav-right ml-1">
+                    <a href="#" class="nav-link text-body" id="footer-locale" data-toggle="modal" data-target="#language-modal">
+                        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2.33341 6.9165C1.9192 6.9165 1.58341 7.25229 1.58341 7.6665C1.58341 8.08072 1.9192 8.4165 2.33341 8.4165V6.9165ZM19.6667 8.4165C20.081 8.4165 20.4167 8.08072 20.4167 7.6665C20.4167 7.25229 20.081 6.9165 19.6667 6.9165V8.4165ZM2.33341 13.5832C1.9192 13.5832 1.58341 13.919 1.58341 14.3332C1.58341 14.7474 1.9192 15.0832 2.33341 15.0832V13.5832ZM19.6667 15.0832C20.081 15.0832 20.4167 14.7474 20.4167 14.3332C20.4167 13.919 20.081 13.5832 19.6667 13.5832V15.0832ZM9.04278 20.0826L9.4589 20.7066L10.7068 19.8744L10.2907 19.2504L9.04278 20.0826ZM6.33342 10.9998H7.08342H6.33342ZM10.2907 2.74929L10.7068 2.12532L9.4589 1.29308L9.04278 1.91705L10.2907 2.74929ZM11.7094 19.2504L11.2933 19.8744L12.5413 20.7066L12.9574 20.0826L11.7094 19.2504ZM15.6668 10.9998H14.9168H15.6668ZM12.9574 1.91705L12.5413 1.29308L11.2933 2.12532L11.7094 2.74929L12.9574 1.91705ZM11.0001 19.5832C6.25964 19.5832 2.41675 15.7403 2.41675 10.9998H0.916748C0.916748 16.5687 5.43121 21.0832 11.0001 21.0832V19.5832ZM19.5834 10.9998C19.5834 15.7403 15.7405 19.5832 11.0001 19.5832V21.0832C16.569 21.0832 21.0834 16.5687 21.0834 10.9998H19.5834ZM11.0001 2.4165C15.7405 2.4165 19.5834 6.25939 19.5834 10.9998H21.0834C21.0834 5.43097 16.569 0.916504 11.0001 0.916504V2.4165ZM11.0001 0.916504C5.43121 0.916504 0.916748 5.43097 0.916748 10.9998H2.41675C2.41675 6.25939 6.25964 2.4165 11.0001 2.4165V0.916504ZM2.33341 8.4165H19.6667V6.9165H2.33341V8.4165ZM2.33341 15.0832H19.6667V13.5832H2.33341V15.0832ZM10.2907 19.2504C8.55668 16.6502 7.08342 13.8152 7.08342 10.9998H5.58342C5.58342 14.2928 7.28739 17.4504 9.04278 20.0826L10.2907 19.2504ZM7.08342 10.9998C7.08342 8.18448 8.55668 5.34947 10.2907 2.74929L9.04278 1.91705C7.28739 4.54923 5.58342 7.7069 5.58342 10.9998H7.08342ZM12.9574 20.0826C14.7128 17.4504 16.4168 14.2928 16.4168 10.9998H14.9168C14.9168 13.8152 13.4435 16.6502 11.7094 19.2504L12.9574 20.0826ZM16.4168 10.9998C16.4168 7.7069 14.7128 4.54923 12.9574 1.91705L11.7094 2.74929C13.4435 5.34947 14.9168 8.18449 14.9168 10.9998H16.4168Z" fill="currentColor"></path>
+                        </svg>
+                        <span class="sr-only">Choose your country. Current selection is the English US website.</span>
+                    </a>
+
+                    <a class="btn btn-primary btn-sm" href="#gate-dc29d806-b6c7-495d-88ef-4b5e4df4e900">Contact</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="navbar navbar-expand-lg navbar-light">
+            <a class="navbar-brand" aria-label="OpenText Blogs logo" href="https://blogs.opentext.com">
+                <svg width="207" height="24" viewBox="0 0 690 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0_1862_509)">
+                        <path d="M161.09 40.2535C161.09 52.5151 154.031 65.8003 135.09 65.8003C121.441 65.7935 109 58.1786 109 40.2535C109 25.3852 118.379 13.9629 136.952 14.9864C156.732 16.0986 161.097 31.4308 161.097 40.2535H161.09ZM125.806 30.919C124.04 33.6347 123.392 36.9032 123.392 40.1648C123.392 47.6842 127.109 54.5007 135.09 54.5007C143.07 54.5007 146.603 48.23 146.603 40.7993C146.603 35.5453 145.3 31.4649 142.613 28.9266C139.639 26.2109 136.297 26.1153 134.257 26.2996C130.172 26.5725 127.757 27.9304 125.806 30.919Z" fill="black" />
+                        <path d="M287.842 20.4644C289.234 18.9769 290.161 17.8646 292.672 16.6569C294.902 15.7289 298.06 14.9852 301.491 14.9852C304.369 14.9852 307.623 15.4492 310.126 16.8411C315.235 19.5364 316.531 23.9034 316.531 31.4228V64.5845H302.323V37.2772C302.323 32.9103 302.227 31.3341 301.675 30.0308C300.563 27.4311 298.053 26.312 295.27 26.312C287.747 26.312 287.747 32.3507 287.747 38.3895V64.5845H273.444V16.1929H287.836V20.4644H287.842Z" fill="black" />
+                        <path d="M266.656 52.0636C265.347 54.827 261.132 65.7991 242.511 65.7991C228.119 65.7991 217.997 56.9901 217.997 41.1052C217.997 29.403 223.754 14.9851 242.886 14.9851C245.764 14.9851 254.12 14.6303 260.34 21.3173C266.656 28.0997 267.025 37.5706 267.209 43.0566H232.573C232.477 49.0954 235.915 55.1341 243.623 55.1341C251.33 55.1341 254.113 50.0234 255.88 46.5912L266.65 52.0704L266.656 52.0636ZM252.449 34.1316C252.169 32.0846 251.801 29.3962 249.754 27.2605C247.988 25.4932 245.3 24.5652 242.79 24.5652C239.353 24.5652 236.938 26.2369 235.547 27.7244C233.596 29.8602 233.132 32.0914 232.668 34.1316H252.449Z" fill="black" />
+                        <path d="M465.491 26.2382H474.966V16.1942H465.587V6H451.379V16.1942H449.128L442.621 26.2382H451.379V49.2604C451.379 53.9072 451.475 57.3394 453.426 60.2188C456.488 64.6745 461.876 64.9543 466.794 64.9543C469.393 64.9543 471.248 64.6745 474.318 64.2105V53.0611L469.209 53.2453C465.403 53.2453 465.403 50.7343 465.491 47.7661V26.2314V26.2382Z" fill="black" />
+                        <path d="M323.653 6H337.86V16.1942H352.627L346.127 26.2382H337.772V47.7729C337.676 50.7479 337.676 53.2521 341.489 53.2521L346.598 53.0679V64.2174C343.535 64.6813 341.673 64.9611 339.075 64.9611C334.15 64.9611 328.768 64.6813 325.706 60.2257C323.755 57.3462 323.66 53.9072 323.66 49.2673V6H323.653Z" fill="black" />
+                        <path d="M488.124 26.2373H486.371V17.674H483.131V16.1933H491.302V17.674H488.124V26.2373ZM501.888 26.2373H500.162L500.224 20.0349L500.313 17.9742L499.828 19.6664L497.768 26.2373H496.193L493.655 18.0015L493.778 20.028L493.84 26.2305H492.148V16.1796H494.535L497.045 24.1084L499.494 16.1796H501.881V26.2305L501.888 26.2373Z" fill="black" />
+                        <path d="M397.386 52.105L394.664 56.3083C392.12 60.0475 387.325 65.7928 373.602 65.7928C359.878 65.7928 349.538 56.9838 349.538 41.0989C349.538 29.3967 355.295 14.9789 374.427 14.9789C377.306 14.9789 385.661 14.624 391.882 21.311C398.198 28.0935 398.566 37.5644 398.75 43.0504H364.114C364.019 49.0891 367.006 55.1278 374.714 55.1278C382.421 55.1278 384.754 50.0171 386.52 46.5849L397.386 52.1119V52.105ZM383.99 34.1322C383.71 32.0852 383.342 29.3967 381.296 27.261C379.529 25.4937 376.842 24.5658 374.332 24.5658C370.894 24.5658 368.479 26.2375 367.088 27.725C365.137 29.8607 364.673 32.092 364.21 34.1322H383.99Z" fill="black" />
+                        <path d="M446.06 64.5922L428.299 39.1204L443.113 16.1937H426.853L419.861 27.0156L412.311 16.1937H396.057L412.038 39.1204L395.579 64.5922H411.84L420.475 51.2183L429.806 64.5922H446.06Z" fill="black" />
+                        <path d="M180.742 20.4644C182.106 18.3832 186.492 14.9852 193.463 14.9852C205.352 14.9852 213.707 23.9989 213.707 40.1567C213.707 50.0984 210.085 65.7923 192.863 65.7923C186.669 65.7923 181.868 62.3465 180.647 60.3131V80.6127H166.343V16.1929H180.735V20.4644H180.742ZM190.4 26.1483C187.802 26.1483 185.107 27.1854 183.068 29.7783C181.022 32.2825 180.094 36.1787 180.094 40.4092C180.094 46.1136 181.765 49.573 183.532 51.5587C185.182 53.4214 187.618 54.4859 189.937 54.4859C196.901 54.4859 199.963 47.1507 199.963 40.0612C199.963 34.0975 198.197 27.7859 192.351 26.4007C191.703 26.2301 191.048 26.1414 190.4 26.1414V26.1483Z" fill="black" />
+                        <g clip-path="url(#clip1_1862_509)">
+                            <path d="M0 12C0 5.37258 5.37258 0 12 0H68C74.6274 0 80 5.37258 80 12V68C80 74.6274 74.6274 80 68 80H12C5.37258 80 0 74.6274 0 68V12Z" fill="url(#paint0_linear_1862_509)" />
+                            <path d="M55.9775 34.493C55.9775 34.0311 56.3571 33.6462 56.8243 33.6462H61.2687C61.5565 33.6462 61.8225 33.505 61.9796 33.2608L65.3605 28.0455C65.7295 27.4811 65.3228 26.7378 64.6496 26.7378H56.895C56.4283 26.7378 56.0487 26.3577 56.0487 25.891V20.5738C56.0487 20.1071 55.6685 19.7164 55.2018 19.7164H47.1106C46.6439 19.7164 46.2637 20.096 46.2637 20.5632V35.3632C43.4153 29.8867 37.693 26.1443 31.0936 26.1443C21.6533 26.1443 14 33.7975 14 43.2379C14 52.6783 21.6533 60.3321 31.0936 60.3321C37.7031 60.3321 43.4328 56.5779 46.277 51.0881C46.3264 53.4975 46.5632 55.3961 47.6696 57.0308C49.7753 60.1022 53.487 60.2922 56.8732 60.2922C58.4468 60.2922 59.6244 60.1457 61.3229 59.8903C61.7407 59.8256 62.0502 59.4672 62.0502 59.0488V52.9873C62.0502 52.5094 61.6542 52.1245 61.171 52.1404L58.5339 52.2381C55.9127 52.2381 55.9781 50.5211 55.9781 48.4664L55.9775 34.493ZM31.0931 50.9113C26.8553 50.9113 23.4202 47.4757 23.4202 43.2379C23.4202 39.0001 26.8558 35.5645 31.0931 35.5645C35.3304 35.5645 38.766 39.0001 38.766 43.2379C38.766 47.4757 35.3304 50.9113 31.0931 50.9113Z" fill="white" />
+                        </g>
+                        <path d="M531.636 63V16.4545H547.909C551.152 16.4545 553.826 17.0152 555.932 18.1364C558.038 19.2424 559.606 20.7348 560.636 22.6136C561.667 24.4773 562.182 26.5455 562.182 28.8182C562.182 30.8182 561.826 32.4697 561.114 33.7727C560.417 35.0758 559.492 36.1061 558.341 36.8636C557.205 37.6212 555.97 38.1818 554.636 38.5455V39C556.061 39.0909 557.492 39.5909 558.932 40.5C560.371 41.4091 561.576 42.7121 562.545 44.4091C563.515 46.1061 564 48.1818 564 50.6364C564 52.9697 563.47 55.0682 562.409 56.9318C561.348 58.7955 559.674 60.2727 557.386 61.3636C555.098 62.4545 552.121 63 548.455 63H531.636ZM537.273 58H548.455C552.136 58 554.75 57.2879 556.295 55.8636C557.856 54.4242 558.636 52.6818 558.636 50.6364C558.636 49.0606 558.235 47.6061 557.432 46.2727C556.629 44.9242 555.485 43.8485 554 43.0455C552.515 42.2273 550.758 41.8182 548.727 41.8182H537.273V58ZM537.273 36.9091H547.727C549.424 36.9091 550.955 36.5758 552.318 35.9091C553.697 35.2424 554.788 34.303 555.591 33.0909C556.409 31.8788 556.818 30.4545 556.818 28.8182C556.818 26.7727 556.106 25.0379 554.682 23.6136C553.258 22.1742 551 21.4545 547.909 21.4545H537.273V36.9091ZM576.938 16.4545V63H571.574V16.4545H576.938ZM599.983 63.7273C596.832 63.7273 594.067 62.9773 591.688 61.4773C589.324 59.9773 587.476 57.8788 586.143 55.1818C584.824 52.4848 584.165 49.3333 584.165 45.7273C584.165 42.0909 584.824 38.9167 586.143 36.2045C587.476 33.4924 589.324 31.3864 591.688 29.8864C594.067 28.3864 596.832 27.6364 599.983 27.6364C603.135 27.6364 605.893 28.3864 608.256 29.8864C610.635 31.3864 612.483 33.4924 613.802 36.2045C615.135 38.9167 615.802 42.0909 615.802 45.7273C615.802 49.3333 615.135 52.4848 613.802 55.1818C612.483 57.8788 610.635 59.9773 608.256 61.4773C605.893 62.9773 603.135 63.7273 599.983 63.7273ZM599.983 58.9091C602.377 58.9091 604.347 58.2955 605.893 57.0682C607.438 55.8409 608.582 54.2273 609.324 52.2273C610.067 50.2273 610.438 48.0606 610.438 45.7273C610.438 43.3939 610.067 41.2197 609.324 39.2045C608.582 37.1894 607.438 35.5606 605.893 34.3182C604.347 33.0758 602.377 32.4545 599.983 32.4545C597.589 32.4545 595.62 33.0758 594.074 34.3182C592.529 35.5606 591.385 37.1894 590.643 39.2045C589.9 41.2197 589.529 43.3939 589.529 45.7273C589.529 48.0606 589.9 50.2273 590.643 52.2273C591.385 54.2273 592.529 55.8409 594.074 57.0682C595.62 58.2955 597.589 58.9091 599.983 58.9091ZM637.12 76.8182C634.529 76.8182 632.302 76.4848 630.438 75.8182C628.575 75.1667 627.022 74.303 625.779 73.2273C624.552 72.1667 623.575 71.0303 622.847 69.8182L627.12 66.8182C627.605 67.4545 628.218 68.1818 628.961 69C629.703 69.8333 630.718 70.553 632.006 71.1591C633.309 71.7803 635.014 72.0909 637.12 72.0909C639.938 72.0909 642.264 71.4091 644.097 70.0455C645.931 68.6818 646.847 66.5455 646.847 63.6364V56.5455H646.393C645.999 57.1818 645.438 57.9697 644.711 58.9091C643.999 59.8333 642.968 60.6591 641.62 61.3864C640.287 62.0985 638.484 62.4545 636.211 62.4545C633.393 62.4545 630.862 61.7879 628.62 60.4545C626.393 59.1212 624.628 57.1818 623.325 54.6364C622.037 52.0909 621.393 49 621.393 45.3636C621.393 41.7879 622.022 38.6742 623.279 36.0227C624.537 33.3561 626.287 31.2955 628.529 29.8409C630.772 28.3712 633.362 27.6364 636.302 27.6364C638.575 27.6364 640.378 28.0152 641.711 28.7727C643.059 29.5152 644.09 30.3636 644.802 31.3182C645.529 32.2576 646.09 33.0303 646.484 33.6364H647.029V28.0909H652.211V64C652.211 67 651.529 69.4394 650.165 71.3182C648.817 73.2121 646.999 74.5985 644.711 75.4773C642.438 76.3712 639.908 76.8182 637.12 76.8182ZM636.938 57.6364C639.09 57.6364 640.908 57.1439 642.393 56.1591C643.878 55.1742 645.006 53.7576 645.779 51.9091C646.552 50.0606 646.938 47.8485 646.938 45.2727C646.938 42.7576 646.559 40.5379 645.802 38.6136C645.044 36.6894 643.923 35.1818 642.438 34.0909C640.953 33 639.12 32.4545 636.938 32.4545C634.665 32.4545 632.772 33.0303 631.256 34.1818C629.756 35.3333 628.628 36.8788 627.87 38.8182C627.128 40.7576 626.756 42.9091 626.756 45.2727C626.756 47.697 627.135 49.8409 627.893 51.7045C628.665 53.553 629.802 55.0076 631.302 56.0682C632.817 57.1136 634.696 57.6364 636.938 57.6364ZM685.796 35.9091L680.978 37.2727C680.675 36.4697 680.228 35.6894 679.637 34.9318C679.062 34.1591 678.274 33.5227 677.274 33.0227C676.274 32.5227 674.993 32.2727 673.433 32.2727C671.296 32.2727 669.516 32.7652 668.092 33.75C666.683 34.7197 665.978 35.9545 665.978 37.4545C665.978 38.7879 666.463 39.8409 667.433 40.6136C668.402 41.3864 669.918 42.0303 671.978 42.5455L677.16 43.8182C680.281 44.5758 682.607 45.7348 684.137 47.2955C685.668 48.8409 686.433 50.8333 686.433 53.2727C686.433 55.2727 685.857 57.0606 684.705 58.6364C683.569 60.2121 681.978 61.4545 679.933 62.3636C677.887 63.2727 675.508 63.7273 672.796 63.7273C669.236 63.7273 666.289 62.9545 663.955 61.4091C661.622 59.8636 660.145 57.6061 659.524 54.6364L664.615 53.3636C665.099 55.2424 666.016 56.6515 667.365 57.5909C668.728 58.5303 670.508 59 672.705 59C675.205 59 677.19 58.4697 678.66 57.4091C680.145 56.3333 680.887 55.0455 680.887 53.5455C680.887 52.3333 680.463 51.3182 679.615 50.5C678.766 49.6667 677.463 49.0455 675.705 48.6364L669.887 47.2727C666.69 46.5152 664.342 45.3409 662.842 43.75C661.357 42.1439 660.615 40.1364 660.615 37.7273C660.615 35.7576 661.168 34.0152 662.274 32.5C663.395 30.9848 664.918 29.7955 666.842 28.9318C668.781 28.0682 670.978 27.6364 673.433 27.6364C676.887 27.6364 679.599 28.3939 681.569 29.9091C683.554 31.4242 684.963 33.4242 685.796 35.9091Z" fill="black" />
+                    </g>
+                    <defs>
+                        <linearGradient id="paint0_linear_1862_509" x1="12" y1="11.7164" x2="67.5" y2="67.2164" gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#1A6AFF" />
+                            <stop offset="1" stop-color="#00008B" />
+                        </linearGradient>
+                        <clipPath id="clip0_1862_509">
+                            <rect width="690" height="80" fill="white" />
+                        </clipPath>
+                        <clipPath id="clip1_1862_509">
+                            <rect width="80" height="80" fill="white" />
+                        </clipPath>
+                    </defs>
+                </svg>
+                <span class="sr-only">OpenText blogs home page</span>
+            </a>
+
+            <a class="sitenav-search sitenav-ui-mobile btn btn-sm" href="/?s">
+                <svg width="20" height="20" viewBox="0 0 24 24" role="img" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+                    <path d="M23.2 23.2L16.8 16.8M10.4 20C5.09812 20 0.800049 15.702 0.800049 10.4C0.800049 5.09812 5.09812 0.800049 10.4 0.800049C15.702 0.800049 20 5.09812 20 10.4C20 15.702 15.702 20 10.4 20Z"></path>
+                </svg>
+                <span class="sr-only">Search OpenText</span>
+            </a>
+
+            <button id="sitenav-toggler" class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#sitenav-collapse" aria-controls="sitenav-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-line"></span>
+                <span class="navbar-toggler-line"></span>
+                <span class="navbar-toggler-line"></span>
+            </button>
+            <div id="sitenav-collapse" class="collapse navbar-collapse navbar-nav-scroll"><ul id="menu-en-top-nav" class="navbar-nav justify-content-end flex-grow-1"><li class="nav-item"><a href="https://blogs.opentext.com/category/industries/" class="nav-link">Industries</a></li>
+<li class="nav-item dropdown"><a href="https://blogs.opentext.com/category/line-of-business/" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="menu-item-dropdown-123312">Line of Business<svg class="ml-1 d-none d-lg-inline" width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L6 6L11 1" stroke="#101C2F" stroke-linecap="square"></path></svg></a>
+<ul aria-labelledby="menu-item-dropdown-123312" class="sitenav-dropdown-menu dropdown-menu collapse">
+	<li class="nav-item"><a href="https://blogs.opentext.com/category/line-of-business/customer-service/" class="dropdown-item">Customer Service</a></li>
+	<li class="nav-item"><a href="https://blogs.opentext.com/category/line-of-business/it/" class="dropdown-item">Information Technology</a></li>
+	<li class="nav-item"><a href="https://blogs.opentext.com/category/line-of-business/" class="dropdown-item">All Lines of Business</a></li>
+</ul>
+</li>
+<li class="nav-item dropdown"><a href="https://blogs.opentext.com/category/technologies/" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="menu-item-dropdown-123348">Technologies<svg class="ml-1 d-none d-lg-inline" width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L6 6L11 1" stroke="#101C2F" stroke-linecap="square"></path></svg></a>
+<ul aria-labelledby="menu-item-dropdown-123348" class="sitenav-dropdown-menu dropdown-menu collapse">
+	<li class="nav-item"><a href="https://blogs.opentext.com/category/technologies/aviator-ai/" class="dropdown-item">Aviator AI</a></li>
+	<li class="nav-item"><a href="https://blogs.opentext.com/category/technologies/analytics/" class="dropdown-item">Analytics</a></li>
+	<li class="nav-item"><a href="https://blogs.opentext.com/category/technologies/devops/" class="dropdown-item">DevOps</a></li>
+	<li class="nav-item"><a href="https://blogs.opentext.com/category/technologies/security/" class="dropdown-item">Security</a></li>
+	<li class="nav-item"><a href="https://blogs.opentext.com/category/technologies/" class="dropdown-item">All Technologies</a></li>
+</ul>
+</li>
+<li class="nav-item"><a href="https://blogs.opentext.com/category/services/" class="nav-link">Services</a></li>
+<li class="nav-item"><a href="https://blogs.opentext.com/category/partners/" class="nav-link">Partners</a></li>
+<li class="nav-item dropdown"><a href="https://blogs.opentext.com/category/news-events/" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="menu-item-dropdown-123320">News &amp; Events<svg class="ml-1 d-none d-lg-inline" width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L6 6L11 1" stroke="#101C2F" stroke-linecap="square"></path></svg></a>
+<ul aria-labelledby="menu-item-dropdown-123320" class="sitenav-dropdown-menu dropdown-menu collapse">
+	<li class="nav-item"><a href="https://blogs.opentext.com/category/news-events/opentext-world/" class="dropdown-item">OpenText World</a></li>
+	<li class="nav-item"><a href="https://blogs.opentext.com/category/news-events/product-updates/" class="dropdown-item">Product Updates</a></li>
+	<li class="nav-item"><a href="https://blogs.opentext.com/category/news-events/" class="dropdown-item">All News &#038; Events</a></li>
+</ul>
+</li>
+<li class="nav-item"><a href="https://blogs.opentext.com/category/ceo-blog/" class="nav-link">Executive Blog</a></li>
+<li class="nav-item"><a href="/?s" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" role="img" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">     <path d="M23.2 23.2L16.8 16.8M10.4 20C5.09812 20 0.800049 15.702 0.800049 10.4C0.800049 5.09812 5.09812 0.800049 10.4 0.800049C15.702 0.800049 20 5.09812 20 10.4C20 15.702 15.702 20 10.4 20Z"></path> </svg></a></li>
+</ul></div>        </div>
+
+    </div>
+</nav>
+
+<div id="language-modal" class="modal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="language-modal-label" aria-modal="true" role="dialog">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-lg-8 offset-lg-2">
+
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+
+                    <div class="modal-content bg-transparent border-0">
+                        <div class="card card-body card-body-lg card-primary-top shadow pt-5 px-4 pb-6 px-md-8 py-md-7 py-lg-8">
+                            <h4 id="language-modal-label" class="modal-title pb-2 pb-md-3 pb-lg-4 pr-2 pr-lg-0">Explore our regional blogs</h4>
+                            <button type="button" class="close modal-close" data-dismiss="modal" aria-label="Close Language Modal">
+                                <span aria-hidden="true">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                        <path d="M2.39999 2.40002L12 12M12 12L21.6 21.6M12 12L2.39999 21.6M12 12L21.6 2.40002" stroke="#3F4D62" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    </svg>
+                                </span>
+                            </button>
+
+                            <div class="modal-body p-0 row row-cols-1 row-cols-md-3 row-gap-responsive">
+                                                                    <div class="col">
+                                                                                    <h3 class="text-sm font-weight-bold mb-1">Americas</h3>
+                                                                                                                            <ul class="list-unstyled list-space mb-0">
+                                                                                                    <li>
+                                                        <a class="text-secondary" href="https://blogs.opentext.com">English</a>
+                                                    </li>
+                                                                                            </ul>
+                                                                            </div>
+                                                                    <div class="col">
+                                                                                    <h3 class="text-sm font-weight-bold mb-1">Europe, Middle East and Africa</h3>
+                                                                                                                            <ul class="list-unstyled list-space mb-0">
+                                                                                                    <li>
+                                                        <a class="text-secondary" href="https://blogs.opentext.com/de/">Deutsch (Deutschland)</a>
+                                                    </li>
+                                                                                            </ul>
+                                                                            </div>
+                                                                    <div class="col">
+                                                                                    <h3 class="text-sm font-weight-bold mb-1">Asia-Pacific</h3>
+                                                                                                                            <ul class="list-unstyled list-space mb-0">
+                                                                                                    <li>
+                                                        <a class="text-secondary" href="https://blogs.opentext.com/ja/">日本語 (日本)</a>
+                                                    </li>
+                                                                                            </ul>
+                                                                            </div>
+                                                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+</header>
+
+
+<main class="wp-block-group pt-5 mt-1 mt-md-3 mt-lg-8 is-layout-flow wp-block-group-is-layout-flow">
+<div class="wp-block-group container is-layout-flow wp-block-group-is-layout-flow">
+<div class="wp-block-group row align-items-start is-layout-flow wp-block-group-is-layout-flow">
+<div class="wp-block-group col-12 col-lg-9 is-layout-flow wp-block-group-is-layout-flow"><article>
+    <section class="section">
+        <header class="section-header section-header-lg">
+                                    <div class="h4 text-primary font-weight-bold mb-0">
+                <a href="https://blogs.opentext.com/category/line-of-business/security-line-of-business/" class="text-primary">Security</a>
+            </div>
+                <h1 class="h1 mb-3">Preparing for post-quantum cryptography with OpenText SAST and DAST </h1>
+        <p class="section-header-subtitle mt-0 mb-3">The quantum threat to modern cryptography is no longer theoretical. Across the industry, teams are preparing. Governments are setting migration timelines; standards bodies have published&#8230;</p>
+        <div class="row row-cols-2 mb-4 align-items-center pt-1">
+            <div class="col d-flex align-items-start">
+    <img class="img-fluid rounded-circle mr-1" style="min-width:48px;min-height:48px;" src="https://blogs.opentext.com/wp-content/uploads/2024/09/Frans-van-Buul-96x96.jpg" alt="Frans van Buul  profile picture" height="48px" width="48px" />
+    <div class="content-box">
+        <a class="font-weight-bold mb-0" href="https://blogs.opentext.com/author/fvbuulopentext-com/">Frans van Buul</a>
+
+        <p class="text-nowrap text-sm">October 23, 2025<span class="px-1">&bull;</span>8 min read</p>
+    </div>
+</div>
+<div class="col col-md-6 col-12 pt-3 pt-md-0 text-md-right justify-content-md-end d-print-none">
+    <a class="position-relative btn btn-secondary btn-sm p-2 mr-1 mb-1" href="https://twitter.com/intent/tweet?text=Check out this post - Preparing for post-quantum cryptography with OpenText SAST and DAST &#038;screen_name=opentext&#038;url=https://blogs.opentext.com/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast/" target="_blank" data-share-link="x">
+    <svg class="position-absolute m-auto" style="bottom:0;left:0;right:0;top:0;" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7.18758 5.08118L11.5272 0H10.4989L6.73076 4.41192L3.72119 0H0.25L4.80107 6.6716L0.25 12H1.27841L5.25763 7.34087L8.43596 12H11.9071L7.18733 5.08118H7.18758ZM5.77903 6.73038L5.31791 6.06604L1.64896 0.779808H3.22855L6.18943 5.04597L6.65055 5.71031L10.4993 11.2557H8.91977L5.77903 6.73064V6.73038Z" fill="currentColor"/>
+    </svg>    <span class="sr-only">Share this post to x.</span>
+</a>
+<a class="position-relative btn btn-secondary btn-sm p-2 mr-1 mb-1" href="http://www.linkedin.com/shareArticle?mini=true&#038;url=https://blogs.opentext.com/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast/&#038;title=Preparing+for+post-quantum+cryptography+with+OpenText+SAST+and+DAST%C2%A0&#038;summary=The+quantum+threat+to+modern+cryptography+is+no+longer+theoretical.+Across+the+industry%2C+teams+are+preparing.+Governments+are+setting+migration+timelines%3B+standards+bodies+have+published...&#038;source=blog.opentext.com" target="_blank">
+    <svg class="position-absolute m-auto" style="bottom:0;left:0;right:0;top:0;" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2.72418 3.74052H0.152138V11.4998H2.72418V3.74052Z" fill="currentColor"/>
+    <path d="M2.89354 1.34025C2.87684 0.579464 2.335 0 1.45512 0C0.575235 0 0 0.579464 0 1.34025C0 2.08529 0.558233 2.68144 1.42173 2.68144H1.43816C2.335 2.68144 2.89354 2.08529 2.89354 1.34025Z" fill="currentColor"/>
+    <path d="M12 7.05087C12 4.66756 10.7311 3.55833 9.03861 3.55833C7.67303 3.55833 7.06163 4.31145 6.72026 4.83977V3.74074H4.14791C4.18181 4.46883 4.14791 11.5 4.14791 11.5H6.72026V7.16659C6.72026 6.93469 6.73695 6.70336 6.80496 6.53733C6.99085 6.07404 7.4141 5.59438 8.12468 5.59438C9.05577 5.59438 9.42796 6.30589 9.42796 7.34859V11.4998H11.9999L12 7.05087Z" fill="currentColor"/>
+    </svg>    <span class="sr-only">Share to linkedin.</span>
+</a>
+<a class="position-relative btn btn-secondary btn-sm p-2 mr-1 mb-1" href="mailto:?subject='Check out this article from OpenText Blogs'&#038;body=Preparing for post-quantum cryptography with OpenText SAST and DAST  - https://blogs.opentext.com/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast/">
+    <svg class="position-absolute m-auto" style="bottom:0;left:0;right:0;top:0;" width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1.40039 3.60001L7.00039 6.80001L12.6004 3.60001M2.20039 1.20001H11.8004C12.2422 1.20001 12.6004 1.55818 12.6004 2.00001V10C12.6004 10.4418 12.2422 10.8 11.8004 10.8H2.20039C1.75856 10.8 1.40039 10.4418 1.40039 10V2.00001C1.40039 1.55818 1.75856 1.20001 2.20039 1.20001Z" stroke="currentColor" stroke-width="1.5"/>
+    </svg>    <span class="sr-only">Mail to </span>
+</a>
+<button class="position-relative btn btn-secondary btn-sm p-2 mr-1 mb-1" onclick="otBlockScript.printPage()">
+    <svg class="position-absolute m-auto" style="bottom:0;left:0;right:0;top:0;" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3.80039 11H2.20039C1.75856 11 1.40039 10.6419 1.40039 10.2V7.00002C1.40039 6.5582 1.75856 6.20002 2.20039 6.20002H11.8004C12.2422 6.20002 12.6004 6.5582 12.6004 7.00002V10.2C12.6004 10.6419 12.2422 11 11.8004 11H10.2004M3.80039 6.20002V2.20002C3.80039 1.7582 4.15856 1.40002 4.60039 1.40002H9.40039C9.84222 1.40002 10.2004 1.7582 10.2004 2.20002V6.20002M3.80039 9.40003H10.2004V12.6H3.80039V9.40003Z" stroke="currentColor" stroke-width="1.5"/>
+    </svg>    <span class="sr-only">Print the page.</span>
+</button>
+<button class="position-relative btn btn-secondary btn-sm p-2 mr-1 mb-1 js-tooltip-share" data-toggle="tooltip" data-placement="top" title="URL Copied">
+    <svg class="position-absolute m-auto" style="bottom:0;left:0;right:0;top:0;" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9.63595 7.8779L12.2717 5.24256C12.5026 5.01184 12.6857 4.73793 12.8106 4.43645C12.9356 4.13497 12.9999 3.81183 13 3.48549C13.0001 3.15915 12.9358 2.83599 12.811 2.53447C12.6861 2.23295 12.5031 1.95896 12.2723 1.72817C12.0416 1.49737 11.7676 1.31427 11.4661 1.18933C11.1646 1.06439 10.8414 1.00006 10.515 1C10.1886 0.999942 9.86537 1.06416 9.5638 1.18899C9.26222 1.31383 8.98819 1.49683 8.75736 1.72754L6.12159 4.36412M4.36325 6.12105L1.72873 8.75638C1.26236 9.22233 1.00023 9.85443 1 10.5136C0.999767 11.1728 1.26145 11.8051 1.72748 12.2714C2.19352 12.7377 2.82572 12.9998 3.48503 13C4.14433 13.0002 4.77672 12.7386 5.24308 12.2726L7.87885 9.63979M9.19738 4.80393L4.80319 9.19615" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>    <span class="sr-only">Copy page link.</span>
+</button></div>        </div>
+    </header>                    <div class="row">
+                <div class="col">
+                    <figure class="mb-8">
+                        <img id="hero" class="img-fluid w-100 rounded" style="aspect-ratio:16/9;object-fit:cover;" src="https://blogs.opentext.com/wp-content/uploads/2025/10/PCQ_header-1024x576.png" alt="This is a stylized image of a key with data representing post-quantum cryptography." height="549" width="976" fetchpriority="high" />
+                                            </figure>
+                </div>
+            </div>
+                <div class="row">
+            <div class="col">
+                <div class="entry-content wp-block-post-content is-content-justification-left is-layout-constrained wp-container-core-post-content-is-layout-12dd3699 wp-block-post-content-is-layout-constrained">
+<p>The quantum threat to modern cryptography is no longer theoretical. Across the industry, teams are preparing. Governments are setting migration timelines; standards bodies have published new algorithms. Platforms are integrating quantum-resistant protocols, and market signals point the same way. It’s not if—it’s when.</p>
+
+
+
+<p>With the October 2025 release of <a href="https://community.opentext.com/cybersec/fortify/w/tips/52074/opentext-application-security-content-fortify-update-25-4">OpenText SAST and DAST 25.4</a>, security teams get critical tools for this transition. SAST identifies cryptographic algorithms in code that are secure against classical attacks but vulnerable to future quantum computers. DAST flags servers that don’t have TLS 1.3 configured with post-quantum-resilient hybrid key-exchange options such as X25519MLKEM768.</p>
+
+
+
+<h3 class="wp-block-heading" id="h-understanding-the-quantum-computing-challenge">Understanding the quantum computing challenge</h3>
+
+
+
+<p>Quantum computers use Qubits—capable of multiple states at once—to explore solution spaces far faster than classical machines. For many problems that’s interesting; for cryptography it’s disruptive.</p>
+
+
+
+<p><a href="https://www.geeksforgeeks.org/dsa/shors-factorization-algorithm/">Shor&#8217;s algorithm</a> (1994) can efficiently factor numbers and solve discrete logarithms—undermining systems such as RSA, DSA, and ECC, and key-exchange protocols like Diffie-Hellman and Elliptic Curve Diffie-Hellman. What might take a classical <a>supercomputer</a> millions of years could be done by a sufficiently powerful quantum computer in hours.</p>
+
+
+
+<h3 class="wp-block-heading" id="h-the-harvest-now-decrypt-later-threat">The &#8220;harvest now, decrypt later&#8221; threat</h3>
+
+
+
+<p>Here&#8217;s what makes this particularly urgent: adversaries don&#8217;t need to wait for quantum computers to become fully operational. They can employ a &#8220;harvest now, decrypt later&#8221; strategy—collecting encrypted communications and data today, storing it, and decrypting it once quantum computers become available.</p>
+
+
+
+<p>For data requiring long-term confidentiality, this threat is immediate. Healthcare records, state secrets, intellectual property, legal contracts, financial transactions—any information that must remain confidential for years or decades is at risk <em>right now</em>, even before quantum computers achieve the necessary scale.</p>
+
+
+<figure class="alignwide my-3 my-md-6 my-lg-8">
+    <img decoding="async" width="1430" height="615" src="https://blogs.opentext.com/wp-content/uploads/2025/10/savenow-encryptlater.png" class="img-fluid w-100 rounded " alt="A table laying out harvest now, encrypt later protocols for post-quantum." loading="lazy" srcset="https://blogs.opentext.com/wp-content/uploads/2025/10/savenow-encryptlater.png 1430w, https://blogs.opentext.com/wp-content/uploads/2025/10/savenow-encryptlater-300x129.png 300w, https://blogs.opentext.com/wp-content/uploads/2025/10/savenow-encryptlater-1024x440.png 1024w, https://blogs.opentext.com/wp-content/uploads/2025/10/savenow-encryptlater-150x65.png 150w, https://blogs.opentext.com/wp-content/uploads/2025/10/savenow-encryptlater-768x330.png 768w, https://blogs.opentext.com/wp-content/uploads/2025/10/savenow-encryptlater-976x420.png 976w, https://blogs.opentext.com/wp-content/uploads/2025/10/savenow-encryptlater-720x310.png 720w, https://blogs.opentext.com/wp-content/uploads/2025/10/savenow-encryptlater-343x148.png 343w" sizes="auto, (max-width: 1430px) 100vw, 1430px" />    </figure>
+
+
+<p>This is why cryptographers and security professionals emphasize that organizations cannot afford to wait. The transition to post-quantum cryptography (PQC) must begin today to protect against threats that are already in motion.</p>
+
+
+
+<h3 class="wp-block-heading" id="h-the-industry-response-rapid-acceleration"><a>The industry response: Rapid acceleration</a></h3>
+
+
+
+<p>The technology industry&#8217;s response to the quantum threat has intensified dramatically over the past year, with standards, platforms, and markets all signaling urgent preparation.</p>
+
+
+
+<h3 class="wp-block-heading" id="h-nist-finalizes-post-quantum-standards">NIST finalizes post-quantum standards</h3>
+
+
+
+<p>In August 2024, the <a href="https://www.nist.gov/">U.S. National Institute of Standards and Technology (NIST)</a> published three finalized post-quantum cryptography standards—a milestone that marked the culmination of an eight-year standardization process that began in 2016:</p>
+
+
+
+<ul class="wp-block-list">
+<li><a href="https://csrc.nist.gov/pubs/fips/203/final"><strong>FIPS 203</strong></a> (ML-KEM): Module-Lattice-Based Key-Encapsulation Mechanism, derived from CRYSTALS-Kyber, for general encryption and key exchange</li>
+
+
+
+<li><a href="https://csrc.nist.gov/pubs/fips/204/final"><strong>FIPS 204</strong></a> (ML-DSA): Module-Lattice-Based Digital Signature Algorithm, derived from CRYSTALS-Dilithium, for digital signatures</li>
+
+
+
+<li><a href="https://csrc.nist.gov/pubs/fips/205/final"><strong>FIPS 205</strong></a> (SLH-DSA): Stateless Hash-Based Digital Signature Algorithm, derived from SPHINCS+, providing an alternative signature approach</li>
+</ul>
+
+
+
+<p>These standards are based on mathematical problems—lattice-based and hash-based cryptography—that are believed to resist attacks from both classical and quantum computers. Their publication triggered implementation efforts across the industry.</p>
+
+
+
+<h3 class="wp-block-heading" id="h-explosive-protocol-adoption">Explosive protocol adoption</h3>
+
+
+
+<p>According to <a href="https://radar.cloudflare.com/embed/PostQuantumXY?dateRange=52w&amp;botClass=LIKELY_HUMAN&amp;widgetState=%7B%22showAnnotations%22%3Afalse%2C%22xy.hiddenSeries%22%3A%5B%5D%2C%22xy.highlightedSeries%22%3Anull%2C%22xy.hoveredSeries%22%3Anull%2C%22xy.previousVisible%22%3Atrue%7D&amp;ref=%2Fadoption-and-usage">Cloudflare&#8217;s network data</a>, post-quantum encrypted HTTPS traffic has grown from 17% on October 1st, 2024, to 47% one year later.</p>
+
+
+
+<p>This growth reflects several factors converging simultaneously:</p>
+
+
+
+<ul class="wp-block-list">
+<li><strong>Browser support</strong>: Google Chrome enabled post-quantum key agreement by default in April 2024 (Chrome 124), followed by Mozilla Firefox and initial testing in Apple Safari, Edge (supported; recent builds default via policy).</li>
+</ul>
+
+
+
+<ul class="wp-block-list">
+<li><strong>Server-side deployment</strong>: Cloudflare offered <a>post-</a>quantum key agreement (beta Oct 2022; GA 2023–2024). Major web servers now support hybrid PQC handshakes (Apache, NGINX).</li>
+
+
+
+<li><strong>Enterprise adoption</strong>: Organizations are integrating PQC into their security architectures ahead of regulatory requirements</li>
+</ul>
+
+
+
+<h3 class="wp-block-heading" id="h-platform-integration">Platform integration</h3>
+
+
+
+<p>Major development platforms are embedding post-quantum capabilities directly into their core libraries. Java 24, released in March 2025, introduced two Java Enhancement Proposals (JEPs) providing native support for NIST&#8217;s post-quantum algorithms:</p>
+
+
+
+<ul class="wp-block-list">
+<li><a href="https://openjdk.org/jeps/496"><strong>JEP 496</strong></a>: Quantum-Resistant Module-Lattice-Based Key Encapsulation Mechanism (ML-KEM)</li>
+
+
+
+<li><a href="https://openjdk.org/jeps/497"><strong>JEP 497</strong></a>: Quantum-Resistant Module-Lattice-Based Digital Signature Algorithm (ML-DSA)</li>
+</ul>
+
+
+
+<p>These additions make quantum-resistant cryptography available to millions of Java developers, eliminating the need for external libraries and helping ensure consistent, well-tested implementations across platforms. Similarly, <a href="https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-10/libraries#post-quantum-cryptography-pqc">.NET 10</a> has added support for these algorithms.</p>
+
+
+
+<h3 class="wp-block-heading" id="h-market-signals">Market Signals</h3>
+
+
+
+<p>Momentum is compounding across the ecosystem—<a>capital,</a> product roadmaps, and policy are lining up behind PQC. Standards are set, platforms are integrating, and mandates are turning plans into timelines.</p>
+
+
+
+<ul class="wp-block-list">
+<li><strong>Equities:</strong> Public quantum companies surged through 2024–2025 <em>(as of Oct 2, 2025)</em> — important examples are <a href="https://www.dwavequantum.com/">D-Wave</a>, <a href="https://www.rigetti.com/">Rigetti Computing</a>, and <a href="https://ionq.com/">IonQ</a>.</li>
+
+
+
+<li><strong>Mandates:</strong> U.S. federal guidance targets <a href="https://www.whitehouse.gov/wp-content/uploads/2022/11/M-23-02-M-Memo-on-Migrating-to-Post-Quantum-Cryptography.pdf">completion by 2035 (NSM-10).</a> NSA’s CNSA 2.0 sets earlier milestones for <a href="https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF">some systems (many by 2030).</a></li>
+</ul>
+
+
+
+<p>The takeaway: Preparation is underway across industries.</p>
+
+
+
+<h3 class="wp-block-heading" id="h-application-portfolio-challenges">Application portfolio challenges</h3>
+
+
+<figure class="alignwide my-3 my-md-6 my-lg-8">
+    <img decoding="async" width="976" height="549" src="https://blogs.opentext.com/wp-content/uploads/2025/10/PCQ_body-976x549.png" class="img-fluid w-100 rounded aspect-ratio-16x9" alt="" loading="lazy" srcset="https://blogs.opentext.com/wp-content/uploads/2025/10/PCQ_body-976x549.png 976w, https://blogs.opentext.com/wp-content/uploads/2025/10/PCQ_body-300x169.png 300w, https://blogs.opentext.com/wp-content/uploads/2025/10/PCQ_body-1024x576.png 1024w, https://blogs.opentext.com/wp-content/uploads/2025/10/PCQ_body-150x84.png 150w, https://blogs.opentext.com/wp-content/uploads/2025/10/PCQ_body-768x432.png 768w, https://blogs.opentext.com/wp-content/uploads/2025/10/PCQ_body-341x192.png 341w, https://blogs.opentext.com/wp-content/uploads/2025/10/PCQ_body-720x405.png 720w, https://blogs.opentext.com/wp-content/uploads/2025/10/PCQ_body-343x193.png 343w, https://blogs.opentext.com/wp-content/uploads/2025/10/PCQ_body.png 1200w" sizes="auto, (max-width: 976px) 100vw, 976px" />    </figure>
+
+
+<p>For organizations planning their post-quantum migration, the core question is: Where are we using quantum-vulnerable cryptography? <a>Modern portfolios span multiple repositories, frameworks, and third-party dependencies.</a> <a>Crypto</a> may be explicit or buried in authentication flows, data-protection layers, and communication protocols.</p>
+
+
+
+<p>Building a complete inventory requires automation—this is where SAST is essential. For web applications, also ensure the TLS 1.3 key exchange is post-quantum protected.</p>
+
+
+
+<h3 class="wp-block-heading" id="h-opentext-sast-and-dast-cryptographic-analysis">OpenText SAST and DAST cryptographic analysis</h3>
+
+
+
+<p>OpenText SAST has provided sophisticated cryptographic vulnerability detection for years. Our rules have long identified weak cryptographic algorithms like DES, MD5, and other deprecated approaches that fail to meet modern security standards. OpenText DAST already provides complex analysis for weak cryptographic configurations such as weak ciphers/protocols, insufficient key sizes, lack of perfect forward secrecy, and the like.</p>
+
+
+
+<p>This foundation in cryptographic analysis gives us a powerful base for addressing the post-quantum challenge.</p>
+
+
+
+<h3 class="wp-block-heading" id="h-new-in-25-4-quantum-vulnerable-cryptography-detection">New in 25.4: quantum-vulnerable cryptography detection</h3>
+
+
+
+<p>With OpenText SAST 25.4, we&#8217;re introducing detection capabilities specifically focused on algorithms that are secure against classical attacks but vulnerable to quantum computers. This is a distinct category from traditional weak cryptography—these algorithms (RSA, DSA) remain strong by current standards but won&#8217;t withstand future quantum attacks.</p>
+
+
+
+<p>We&#8217;ve added a new vulnerability category to OpenText SAST: <strong>&#8220;</strong>Weak Encryption: Non-PQC Resilient Algorithm&#8221;. This category identifies cryptographic algorithms that, while classically secure, lack resistance to quantum computing attacks.</p>
+
+
+
+<p>Our initial release focuses on Java applications, detecting usage of RSA and DSA algorithms. These are among the most widely deployed public-key cryptographic systems, and identifying their usage is a critical first step for any post-quantum migration.</p>
+
+
+
+<p>For OpenText DAST 25.4, we’re introducing detection capabilities to identify server configurations that do not provide hybrid PQC key exchange alternatives for TLS 1.3 connections—specifically, the new category &#8220;Insecure Transport: Missing PQC-Resilient Key Exchange.&#8221; With this category, customers can verify whether a targeted web server is configured to support <strong>a</strong> TLS 1.3 handshake using <strong>X25519MLKEM768</strong> to establish <strong>the</strong> connection with a PQC hybrid approach. This <a>particular hybrid</a> post-quantum key agreement is <strong>reported as</strong> widely implemented; see, e.g., <a href="https://www.f5.com/labs/articles/the-state-of-pqc-on-the-web">this blog by F5 labs</a>.</p>
+
+
+
+<h3 class="wp-block-heading" id="h-balancing-security-and-noise-the-feature-flag-and-informational-approach"><a>Balancing security and noise: The feature flag and informational approach</a></h3>
+
+
+
+<p>We recognize that organizations are at various stages of their post-quantum journey. Some are actively planning migrations and need this detection capability immediately. Others haven&#8217;t yet begun addressing post-quantum security and would consider these findings premature—creating noise rather than actionable intelligence.</p>
+
+
+
+<p>This is why post-quantum cryptography detection in SAST 25.4 is controlled by a feature flag: com.fortify.sca.rules.enablePQCRules. When disabled (the default), SAST continues to report traditional cryptographic vulnerabilities without flagging quantum-vulnerable algorithms. When enabled, SAST identifies RSA and DSA usage, allowing teams to build their cryptographic inventory. This approach reflects our broader commitment to signal-to-noise balance in SAST results.</p>
+
+
+
+<p>For DAST 25.4, we use an alternative approach and treat the detection of <em>Insecure Transport: Missing PQC Resilient Key Exchange</em> as an <em>Informational</em> finding rather than a high-severity vulnerability. This approach allows customers to have the detection included in the Standard Policy while scanning targets to identify potential future risks, without higher severity prioritization that can block a release. When there is evidence that a working exploit is possible, the severity of the category will be increased to reflect the risk.</p>
+
+
+
+<h3 class="wp-block-heading" id="h-our-roadmap"><a>Our roadmap</a></h3>
+
+
+
+<p>The capabilities in SAST 25.4 and DAST 25.4 represent our initial implementation, but our post-quantum cryptography roadmap extends significantly further:</p>
+
+
+
+<p><strong>Additional algorithms</strong>: We&#8217;re expanding coverage beyond RSA and DSA to include other quantum-vulnerable algorithms and key exchange protocols, providing comprehensive visibility into all cryptographic systems that will require migration. For DAST, we will expand coverage to include other ML-KEM permutations as well as other standardized handshake PQC alternatives.</p>
+
+
+
+<p><strong>Key length analysis</strong>: Even quantum-resistant algorithms like AES require careful configuration. While AES-256 is considered quantum-safe, AES-128—though secure against classical attacks—offers reduced security margins in a post-quantum world. Future releases will analyze key lengths and configuration parameters to identify cryptographic implementations that may be inadequate for post-quantum security.</p>
+
+
+
+<p><strong>Multi-language support</strong>: Java is our starting point for SAST, but modern applications span many languages. We&#8217;re planning to extend post-quantum detection across the full range of languages OpenText SAST supports—ensuring comprehensive coverage regardless of your technology stack.</p>
+
+
+
+<h2 class="wp-block-heading" id="h-looking-forward-preparing-for-the-quantum-era"><a>Looking forward: Preparing for the quantum era</a></h2>
+
+
+
+<p>The transition to post-quantum cryptography is happening now. Standards are finalized. Platforms are integrating quantum-resistant algorithms. Protocols are being upgraded across the internet. Markets are signaling urgency. Government mandates are establishing firm timelines.</p>
+
+
+
+<p>OpenText SAST 25.4 and DAST 25.4, released in October 2025, give security teams the visibility they need to begin their post-quantum journey—identifying where quantum-vulnerable cryptography exists across their application portfolios and building the inventory that will guide migration strategies.</p>
+
+
+
+<p>Whether you&#8217;re beginning your post-quantum migration immediately or <a>planning for</a> implementation over the coming years, the detection capability is ready when you need it. We&#8217;re not waiting for the quantum threat to materialize; we&#8217;re ensuring our customers have the tools they need to stay ahead.</p>
+
+
+
+<p>The cryptographic transition of the decade is underway. <a href="https://www.opentext.com/products/application-security">OpenText Application Security</a> is committed to helping you navigate it successfully.</p>
+
+
+
+<p><br><br></p>
+
+
+
+<p><br></p>
+
+
+
+<p><br><br></p>
+</div>            </div>
+        </div>
+        <div class="row row-cols-1">
+            <div class="col mt-8 text-left justify-content-start">
+                <p class="font-weight-bold mb-1">Share this post</p>
+                <a class="position-relative btn btn-secondary btn-sm p-2 mr-1 mb-1" href="https://twitter.com/intent/tweet?text=Check out this post - Preparing for post-quantum cryptography with OpenText SAST and DAST &#038;screen_name=opentext&#038;url=https://blogs.opentext.com/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast/" target="_blank" data-share-link="x">
+    <svg class="position-absolute m-auto" style="bottom:0;left:0;right:0;top:0;" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7.18758 5.08118L11.5272 0H10.4989L6.73076 4.41192L3.72119 0H0.25L4.80107 6.6716L0.25 12H1.27841L5.25763 7.34087L8.43596 12H11.9071L7.18733 5.08118H7.18758ZM5.77903 6.73038L5.31791 6.06604L1.64896 0.779808H3.22855L6.18943 5.04597L6.65055 5.71031L10.4993 11.2557H8.91977L5.77903 6.73064V6.73038Z" fill="currentColor"/>
+    </svg>    <span class="sr-only">Share this post to x.</span>
+</a>
+<a class="position-relative btn btn-secondary btn-sm p-2 mr-1 mb-1" href="http://www.linkedin.com/shareArticle?mini=true&#038;url=https://blogs.opentext.com/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast/&#038;title=Preparing+for+post-quantum+cryptography+with+OpenText+SAST+and+DAST%C2%A0&#038;summary=The+quantum+threat+to+modern+cryptography+is+no+longer+theoretical.+Across+the+industry%2C+teams+are+preparing.+Governments+are+setting+migration+timelines%3B+standards+bodies+have+published...&#038;source=blog.opentext.com" target="_blank">
+    <svg class="position-absolute m-auto" style="bottom:0;left:0;right:0;top:0;" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2.72418 3.74052H0.152138V11.4998H2.72418V3.74052Z" fill="currentColor"/>
+    <path d="M2.89354 1.34025C2.87684 0.579464 2.335 0 1.45512 0C0.575235 0 0 0.579464 0 1.34025C0 2.08529 0.558233 2.68144 1.42173 2.68144H1.43816C2.335 2.68144 2.89354 2.08529 2.89354 1.34025Z" fill="currentColor"/>
+    <path d="M12 7.05087C12 4.66756 10.7311 3.55833 9.03861 3.55833C7.67303 3.55833 7.06163 4.31145 6.72026 4.83977V3.74074H4.14791C4.18181 4.46883 4.14791 11.5 4.14791 11.5H6.72026V7.16659C6.72026 6.93469 6.73695 6.70336 6.80496 6.53733C6.99085 6.07404 7.4141 5.59438 8.12468 5.59438C9.05577 5.59438 9.42796 6.30589 9.42796 7.34859V11.4998H11.9999L12 7.05087Z" fill="currentColor"/>
+    </svg>    <span class="sr-only">Share to linkedin.</span>
+</a>
+<a class="position-relative btn btn-secondary btn-sm p-2 mr-1 mb-1" href="mailto:?subject='Check out this article from OpenText Blogs'&#038;body=Preparing for post-quantum cryptography with OpenText SAST and DAST  - https://blogs.opentext.com/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast/">
+    <svg class="position-absolute m-auto" style="bottom:0;left:0;right:0;top:0;" width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1.40039 3.60001L7.00039 6.80001L12.6004 3.60001M2.20039 1.20001H11.8004C12.2422 1.20001 12.6004 1.55818 12.6004 2.00001V10C12.6004 10.4418 12.2422 10.8 11.8004 10.8H2.20039C1.75856 10.8 1.40039 10.4418 1.40039 10V2.00001C1.40039 1.55818 1.75856 1.20001 2.20039 1.20001Z" stroke="currentColor" stroke-width="1.5"/>
+    </svg>    <span class="sr-only">Mail to </span>
+</a>
+<button class="position-relative btn btn-secondary btn-sm p-2 mr-1 mb-1" onclick="otBlockScript.printPage()">
+    <svg class="position-absolute m-auto" style="bottom:0;left:0;right:0;top:0;" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3.80039 11H2.20039C1.75856 11 1.40039 10.6419 1.40039 10.2V7.00002C1.40039 6.5582 1.75856 6.20002 2.20039 6.20002H11.8004C12.2422 6.20002 12.6004 6.5582 12.6004 7.00002V10.2C12.6004 10.6419 12.2422 11 11.8004 11H10.2004M3.80039 6.20002V2.20002C3.80039 1.7582 4.15856 1.40002 4.60039 1.40002H9.40039C9.84222 1.40002 10.2004 1.7582 10.2004 2.20002V6.20002M3.80039 9.40003H10.2004V12.6H3.80039V9.40003Z" stroke="currentColor" stroke-width="1.5"/>
+    </svg>    <span class="sr-only">Print the page.</span>
+</button>
+<button class="position-relative btn btn-secondary btn-sm p-2 mr-1 mb-1 js-tooltip-share" data-toggle="tooltip" data-placement="top" title="URL Copied">
+    <svg class="position-absolute m-auto" style="bottom:0;left:0;right:0;top:0;" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9.63595 7.8779L12.2717 5.24256C12.5026 5.01184 12.6857 4.73793 12.8106 4.43645C12.9356 4.13497 12.9999 3.81183 13 3.48549C13.0001 3.15915 12.9358 2.83599 12.811 2.53447C12.6861 2.23295 12.5031 1.95896 12.2723 1.72817C12.0416 1.49737 11.7676 1.31427 11.4661 1.18933C11.1646 1.06439 10.8414 1.00006 10.515 1C10.1886 0.999942 9.86537 1.06416 9.5638 1.18899C9.26222 1.31383 8.98819 1.49683 8.75736 1.72754L6.12159 4.36412M4.36325 6.12105L1.72873 8.75638C1.26236 9.22233 1.00023 9.85443 1 10.5136C0.999767 11.1728 1.26145 11.8051 1.72748 12.2714C2.19352 12.7377 2.82572 12.9998 3.48503 13C4.14433 13.0002 4.77672 12.7386 5.24308 12.2726L7.87885 9.63979M9.19738 4.80393L4.80319 9.19615" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>    <span class="sr-only">Copy page link.</span>
+</button>            </div>
+                            <div class="col mt-4 mt-md-6 mt-lg-8 d-flex align-items-start flex-wrap flex-md-nowrap">
+    <img class="img-fluid rounded-circle mr-4" style="min-width:112px;min-height:112px;" src="https://blogs.opentext.com/wp-content/uploads/2024/09/Frans-van-Buul-96x96.jpg" alt="Frans van Buul avatar image" height="112px" width="112px" />
+    <div class="content-box w-auto">
+        <h3 class="h5 mb-1">Frans van Buul</h3>
+        <p class="mb-1">Based out of the Netherlands, Frans van Buul is senior product manager for Fortify SAST at OpenText. Before transitioning into product management two years ago, Frans held several other positions that provided him with the relevant background. He’s been a security consultant and auditor at PwC, a Java developer and architect at several companies, and a Fortify SAST sales engineer and sales engineering leader.</p>        <a class="more more-bold d-print-none" href="https://blogs.opentext.com/author/fvbuulopentext-com/">See all posts</a>
+            </div>
+</div>
+
+                    </div>
+    </section>
+</article></div>
+
+
+
+<div class="wp-block-group position-sticky col-12 col-md-6 col-lg-2 offset-lg-1 mb-lg-4 is-layout-flow wp-block-group-is-layout-flow wp-container-1 is-position-sticky"><aside class="sidebar d-print-none">
+    <div id="related-stories">
+    <p class="font-weight-bold mb-1">Related Stories</p>
+    <ul class="list-links list-space-md text-sm">
+        <li><a class="more" href="https://blogs.opentext.com/whats-new-in-opentext-capture/">What&#8217;s new in OpenText Capture</a></li><li><a class="more" href="https://blogs.opentext.com/scaling-authenticated-dast-with-fortify-aviator/">OpenText™ Fortify™ DAST Aviator™ cuts authenticated DAST onboarding from days to minutes</a></li><li><a class="more" href="https://blogs.opentext.com/personalize-billing-communications-sap/">Personalizing billing and account communications directly from SAP</a></li><li><a class="more" href="https://blogs.opentext.com/the-new-iot-mandate-turn-physical-truth-into-autonomous-decisions/">The new IoT mandate: Turn physical truth into autonomous decisions</a></li><li><a class="more" href="https://blogs.opentext.com/proof-over-promise-hr-transformation-in-practice/">Proof over promise: HR transformation in practice</a></li>    </ul>
+</div>        
+    <div id="follow-us">
+        <p class="font-weight-bold">Follow Us</p>
+        <div class="flex flex-wrap">
+            <a href="https://twitter.com/OpenText" target="_blank" class="position-relative btn btn-secondary btn-sm p-2 mr-1 mb-1"><svg class="position-absolute m-auto" style="bottom:0;left:0;right:0;top:0;" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7.18758 5.08118L11.5272 0H10.4989L6.73076 4.41192L3.72119 0H0.25L4.80107 6.6716L0.25 12H1.27841L5.25763 7.34087L8.43596 12H11.9071L7.18733 5.08118H7.18758ZM5.77903 6.73038L5.31791 6.06604L1.64896 0.779808H3.22855L6.18943 5.04597L6.65055 5.71031L10.4993 11.2557H8.91977L5.77903 6.73064V6.73038Z" fill="currentColor"/>
+        </svg></a><a href="https://www.linkedin.com/company/2709/" target="_blank" class="position-relative btn btn-secondary btn-sm p-2 mr-1 mb-1"><svg class="position-absolute m-auto" style="bottom:0;left:0;right:0;top:0;" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.72418 3.74052H0.152138V11.4998H2.72418V3.74052Z" fill="currentColor"/>
+        <path d="M2.89354 1.34025C2.87684 0.579464 2.335 0 1.45512 0C0.575235 0 0 0.579464 0 1.34025C0 2.08529 0.558233 2.68144 1.42173 2.68144H1.43816C2.335 2.68144 2.89354 2.08529 2.89354 1.34025Z" fill="currentColor"/>
+        <path d="M12 7.05087C12 4.66756 10.7311 3.55833 9.03861 3.55833C7.67303 3.55833 7.06163 4.31145 6.72026 4.83977V3.74074H4.14791C4.18181 4.46883 4.14791 11.5 4.14791 11.5H6.72026V7.16659C6.72026 6.93469 6.73695 6.70336 6.80496 6.53733C6.99085 6.07404 7.4141 5.59438 8.12468 5.59438C9.05577 5.59438 9.42796 6.30589 9.42796 7.34859V11.4998H11.9999L12 7.05087Z" fill="currentColor"/>
+        </svg></a><a href="https://www.youtube.com/user/opentextcorp" target="_blank" class="position-relative btn btn-secondary btn-sm p-2 mr-1 mb-1"><svg class="position-absolute m-auto" style="bottom:0;left:0;right:0;top:0;" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M10.6883 1.76123C11.2046 1.90497 11.6112 2.3285 11.7492 2.86634C12 3.84112 12 5.875 12 5.875C12 5.875 12 7.90881 11.7492 8.88366C11.6112 9.4215 11.2046 9.84503 10.6883 9.98884C9.75252 10.25 6 10.25 6 10.25C6 10.25 2.24748 10.25 1.31168 9.98884C0.795341 9.84503 0.388705 9.4215 0.250705 8.88366C0 7.90881 0 5.875 0 5.875C0 5.875 0 3.84112 0.250705 2.86634C0.388705 2.3285 0.795341 1.90497 1.31168 1.76123C2.24748 1.5 6 1.5 6 1.5C6 1.5 9.75252 1.5 10.6883 1.76123ZM4.87509 4.163V7.96735L7.87509 6.06525L4.87509 4.163Z" fill="currentColor"/>
+        </svg></a><a href="https://blogs.opentext.com/preparing-for-post-quantum-cryptography-with-opentext-sast-and-dast/feed"  class="position-relative btn btn-secondary btn-sm p-2 mr-1 mb-1"><svg class="position-absolute m-auto" style="bottom:0;left:0;right:0;top:0;" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3.84114 9.45425C3.84114 9.81404 3.71522 10.12 3.46338 10.3722C3.21154 10.6244 2.9056 10.7503 2.54557 10.75C2.18583 10.75 1.87989 10.6241 1.62776 10.3722C1.37562 10.1203 1.2497 9.81433 1.25 9.45425C1.25 9.09446 1.37592 8.78848 1.62776 8.5363C1.8796 8.28413 2.18553 8.15819 2.54557 8.15849C2.90531 8.15849 3.21124 8.28443 3.46338 8.5363C3.71552 8.78818 3.84144 9.09416 3.84114 9.45425ZM7.29502 10.284C7.30054 10.3431 7.29314 10.4026 7.27333 10.4585C7.25352 10.5145 7.22177 10.5654 7.18029 10.6078C7.09933 10.7022 6.99363 10.7494 6.8632 10.7494H5.95255C5.84507 10.7507 5.74116 10.7108 5.6621 10.638C5.58303 10.5652 5.53478 10.4649 5.52722 10.3576C5.42873 9.32812 5.01385 8.44791 4.28258 7.71698C3.55132 6.98606 2.67115 6.57116 1.64209 6.47228C1.53486 6.46472 1.43457 6.41646 1.36175 6.33738C1.28893 6.25831 1.24907 6.15439 1.25034 6.04689V5.13633C1.25034 5.00588 1.29753 4.90021 1.39193 4.81931C1.46848 4.74289 1.56538 4.70464 1.6826 4.70456H1.71618C2.43099 4.76184 3.12992 4.94575 3.78036 5.24772C5.08867 5.85917 6.14046 6.91111 6.75183 8.21961C7.05378 8.8701 7.2377 9.5691 7.29502 10.284ZM10.7488 10.2974C10.7577 10.4188 10.7173 10.5245 10.6273 10.6145C10.5465 10.7046 10.443 10.7495 10.3171 10.7494H9.35293C9.24118 10.7515 9.1332 10.709 9.05274 10.6315C9.01268 10.5949 8.98039 10.5507 8.95779 10.5014C8.9352 10.4522 8.92276 10.3988 8.92122 10.3447C8.86727 9.37768 8.64017 8.45902 8.23992 7.5887C7.83966 6.71837 7.31897 5.96278 6.67785 5.32194C6.03709 4.68094 5.28158 4.16033 4.4113 3.76009C3.54382 3.36046 2.60912 3.12705 1.65563 3.07197C1.60145 3.07043 1.54813 3.05798 1.49887 3.03538C1.4496 3.01279 1.40539 2.98049 1.36887 2.94043C1.33089 2.90168 1.30093 2.85582 1.28069 2.80547C1.26045 2.75513 1.25032 2.70129 1.2509 2.64703V1.68207C1.2509 1.55617 1.29585 1.45273 1.38577 1.37176C1.42431 1.33227 1.47053 1.3011 1.52159 1.28017C1.57264 1.25925 1.62744 1.249 1.6826 1.25008H1.70286C2.87116 1.30622 4.0186 1.58082 5.08578 2.05966C6.15728 2.53714 7.1306 3.20984 7.95606 4.04342C8.78944 4.86915 9.46197 5.84272 9.93932 6.91446C10.418 7.98168 10.6926 9.12917 10.7488 10.2975V10.2974Z" fill="currentColor"/>
+        </svg></a>        </div>
+    </div>
+
+    <a href="#gate-dc57ed69-afa4-4cfd-bf9d-bbcddc78faca" class="btn btn-primary btn-sm text-sm px-1 mt-4">Subscribe to communications</a>
+</aside></div>
+</div>
+</div>
+
+
+    <section class="section d-print-none pt-6 pt-md-7 pt-lg-0 mt-lg-4">
+        <div class="container">
+                            <header class="section-header section-header-lg">
+                    <h2 class='section-header-title'>More from the author</h2>
+                </header>
+                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 card-layout">
+                                    <div class="col">
+                        <div class="card">
+    <a href="https://blogs.opentext.com/auto-remediation-the-future-of-appsec/"><img class="aspect-ratio-16x9 img-fluid w-100 rounded mb-2" src="https://blogs.opentext.com/wp-content/uploads/2024/09/opentext-image-blog-auto-remediation-the-future-of-appsec-1200x672-en-FINAL-341x192.jpg" height="192" width="341" alt="Auto-remediation: the future of AppSec?">
+</a>    <div class="content-box">
+        <div class="text-sm text-primary font-weight-bold mb-1"><a href="https://blogs.opentext.com/category/technologies/security/">Security</a></div>        <a href="https://blogs.opentext.com/auto-remediation-the-future-of-appsec/">        <h3 class="h5 mb-2">Auto-remediation: the future of AppSec?</h3>
+        </a>        <p class="card-text mb-2">Understand the limits of auto-remediation in securing applications.</p>        <div class="d-flex align-items-start">
+            <div>
+                
+                <div class="text-sm d-flex flex-wrap">
+                    <p class="mb-0">
+                        September 26, 2024<span class="px-1" role="presentation">&bull;</span>
+                    </p>
+                    <p class="mb-0">9 min read</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>                    </div>
+                            </div>
+        </div>
+    </section>
+</main>
+
+
+<div class="d-print-none wp-block-template-part"><section class="section section-light section-light-bg-white-o" id="subscribe-now">
+    <div class="container">
+
+        <div class="row align-items-center">
+            <div class="col-12 col-lg-4 offset-lg-1">
+                <header class="section-header section-header-lg">
+                    <h2 class="mb-1">Stay in the loop!</h2>                    <p class="text-lg">Get our most popular content delivered monthly to your inbox.</p>                </header>
+            </div>
+            <div class="col-12 col-lg-5 offset-lg-1">
+                <div class="gate-dc57ed69-afa4-4cfd-bf9d-bbcddc78faca"></div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<section class="section section-pad-top">
+    <div class="container">
+        <header class="section-header section-header-sm section-header-side sr-only">
+            <h2 class="section-header-title">How can we help?</h2>
+        </header>
+
+        <ul class="card-layout row row-cols-1 row-cols-lg-3 pt-1">
+                                <li class="col">
+                        <div class="card shadow-sm">
+                            <div class="card-body media align-items-center">
+                                <img decoding="async" class="media-img" src="https://assets.ot.digital/img/opentext-business-chat-bubble-checkmark-ico-48.svg" width="48" height="48" alt="Talk to us icon" target="_self">                                <span class="card-title-sm media-body">
+                                    <a class="stretched-link" href="#gate-dc29d806-b6c7-495d-88ef-4b5e4df4e900" target="_self">Talk to us</a>
+                                </span>
+                            </div>
+                        </div>
+
+                    </li>
+                                <li class="col">
+                        <div class="card shadow-sm">
+                            <div class="card-body media align-items-center">
+                                <img decoding="async" class="media-img" src="https://assets.ot.digital/img/opentext-process-list-bullets-ico-48.svg" width="48" height="48" alt="View all posts icon" target="_self">                                <span class="card-title-sm media-body">
+                                    <a class="stretched-link" href="/archive-filter/" target="_self">View all posts</a>
+                                </span>
+                            </div>
+                        </div>
+
+                    </li>
+                                <li class="col">
+                        <div class="card shadow-sm">
+                            <div class="card-body media align-items-center">
+                                <img loading="lazy" decoding="async" class="media-img" src="https://assets.ot.digital/img/opentext-teamwork-team-chat-ico-48.svg" width="48" height="48" alt="Communities icon" target="_self">                                <span class="card-title-sm media-body">
+                                    <a class="stretched-link" href="https://blogs.opentext.com/communities/" target="_self">Communities</a>
+                                </span>
+                            </div>
+                        </div>
+
+                    </li>
+                    </ul>
+
+    </div>
+</section>
+<section class="ot-brightedge-section">
+    
+<div class="be-ix-link-block container"><div class="be-related-link-container"><div class="be-label">Also of Interest</div><ul class="be-list"><li class="be-list-item"><a class="be-related-link" href="https://blogs.opentext.com/category/line-of-business/supply-chain/">Supply Chain</a></li><li class="be-list-item"><a class="be-related-link" href="https://blogs.opentext.com/category/industries/banking/">Banking Solutions for Customer Engagements</a></li><li class="be-list-item"><a class="be-related-link" href="https://blogs.opentext.com/category/line-of-business/legal-compliance/">Legal &#038; Compliance</a></li></ul> </div></div>
+</section>
+
+<footer class="ot-footer">
+    <div class="container">
+
+        <h2 class="sr-only">OpenText footer</h2>
+
+        
+        <nav class="ot-footer__breadcrumb" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="https://blogs.opentext.com" rel="nofollow">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" role="img" aria-labelledby="footer-home" focusable="false">
+                <title id="footer-home">Home</title>
+                <path fill="currentColor" d="M6.26032 0.0962973C6.11052 -0.0320991 5.88948 -0.0320991 5.73968 0.0962973L0 5.01603V10.8C0 11.4627 0.537258 12 1.2 12H4.4C4.62091 12 4.8 11.8209 4.8 11.6V9.2C4.8 8.53726 5.33726 8 6 8C6.66274 8 7.2 8.53726 7.2 9.2V11.6C7.2 11.8209 7.37909 12 7.6 12H10.8C11.4627 12 12 11.4627 12 10.8V5.01603L6.26032 0.0962973Z"></path>
+                </svg>
+            </a>
+        </li><li class="breadcrumb-item d-md-none js-breadcrumb"><span>&#8230;</span></li><li class="breadcrumb-item"><a href="https://blogs.opentext.com/category/line-of-business/">Line of Business</a></li><li class="breadcrumb-item active" aria-current="page">Preparing for post-quantum cryptography with OpenText SAST and DAST </li></ol>
+    </nav>
+        <div class="ot-footer__company">
+
+            <div class="ot-footer__locale-phone">
+                                    <a class="ot-footer__phone btn btn-sm ml-0" href="tel:1-800-499-6544">
+                        <span class="ot-footer__tel">
+                            <svg class="btn-icon btn-icon-first" width="12" height="12" viewBox="0 0 12 12" fill="none" role="img" aria-hidden="true" focusable="false">
+                                <path fill="currentColor" d="M2 0C0.89543 0 0 0.895431 0 2V3.6C0 8.23919 3.76081 12 8.4 12H10C11.1046 12 12 11.1046 12 10V8.89443C12 8.4399 11.7432 8.02439 11.3367 7.82112L9.40391 6.85474C8.75075 6.52816 7.95976 6.8558 7.72884 7.54858L7.49062 8.26322C7.40011 8.53475 7.12157 8.69639 6.84091 8.64026C5.08422 8.28892 3.71108 6.91578 3.35974 5.15908C3.30361 4.87843 3.46525 4.59989 3.73678 4.50938L4.62368 4.21374C5.21855 4.01545 5.56046 3.3926 5.40838 2.78428L4.93955 0.908957C4.806 0.374757 4.32602 0 3.77538 0H2Z"></path>
+                            </svg>
+                            <span>1-800-499-6544</span>
+                        </span>
+                        <span class="ot-footer__call btn btn-sm">
+                            <svg class="btn-icon btn-icon-first" width="12" height="12" viewBox="0 0 12 12" fill="none" role="img" aria-hidden="true" focusable="false">
+                                <path fill="currentColor" d="M12 0H8.8V0.8L10.6343 0.8L6.51716 4.91716L7.08284 5.48284L11.2 1.36569V3.2H12V0Z"></path>
+                                <path fill="currentColor" d="M2 0C0.89543 0 0 0.895431 0 2V3.6C0 8.23919 3.76081 12 8.4 12H10C11.1046 12 12 11.1046 12 10V8.89443C12 8.4399 11.7432 8.02439 11.3367 7.82112L9.40391 6.85474C8.75075 6.52816 7.95976 6.8558 7.72884 7.54858L7.49062 8.26322C7.40011 8.53475 7.12157 8.69639 6.84091 8.64026C5.08422 8.28892 3.71108 6.91578 3.35974 5.15909C3.30361 4.87843 3.46525 4.59989 3.73678 4.50938L4.62368 4.21374C5.21855 4.01545 5.56046 3.3926 5.40838 2.78428L4.93955 0.908958C4.806 0.374757 4.32602 0 3.77538 0H2Z"></path>
+                            </svg>
+                            <span>Call us now</span>
+                        </span>
+                    </a>
+                            </div>
+
+            <div class="ot-footer__legal-social d-print-none">
+                <div class="ot-footer__legal">
+                                            <ul class="list-unstyled">
+                            <li class="list-inline-item">
+        <a href="https://www.opentext.com/about/privacy" class="text-secondary" target="_blank" rel="noopener">Privacy Policy</a>
+    </li><li class="list-inline-item">
+        <a href="https://www.opentext.com/about/cookie-policy" class="text-secondary" target="_blank" rel="noopener">Cookie Policy</a>
+    </li><li class="list-inline-item">
+        <a href="#" class="text-secondary ot-sdk-show-settings">Cookie Preferences</a>
+    </li>                        </ul>
+                                    </div>
+                                    <ul class="ot-footer__social social list-inline">
+                        <li class="list-inline-item">
+        <a href="https://www.linkedin.com/company/2709/" class="social-icon social-icon-linkedIn" target="_blank">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill="currentColor" d="M12.7242 13.7405H10.1521V21.4998H12.7242V13.7405Z" fill="currentColor" />
+            <path fill="currentColor" d="M12.8935 11.3403C12.8768 10.5795 12.335 10 11.4551 10C10.5752 10 10 10.5795 10 11.3403C10 12.0853 10.5582 12.6814 11.4217 12.6814H11.4382C12.335 12.6814 12.8935 12.0853 12.8935 11.3403Z" fill="currentColor" />
+            <path fill="currentColor" d="M22 17.0509C22 14.6676 20.7311 13.5583 19.0386 13.5583C17.673 13.5583 17.0616 14.3114 16.7203 14.8398V13.7407H14.1479C14.1818 14.4688 14.1479 21.5 14.1479 21.5H16.7203V17.1666C16.7203 16.9347 16.737 16.7034 16.805 16.5373C16.9908 16.074 17.4141 15.5944 18.1247 15.5944C19.0558 15.5944 19.428 16.3059 19.428 17.3486V21.4998H21.9999L22 17.0509Z" fill="currentColor" />
+        </svg>
+        <span class="sr-only">Follow OpenText Blogs on linkedIn</span>
+        </a>
+    </li><li class="list-inline-item">
+        <a href="https://twitter.com/OpenText" class="social-icon social-icon-X" target="_blank">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill="currentColor" d="M17.1876 15.0812L21.5272 10H20.4989L16.7308 14.4119L13.7212 10H10.25L14.8011 16.6716L10.25 22H11.2784L15.2576 17.3409L18.436 22H21.9071L17.1873 15.0812H17.1876ZM15.779 16.7304L15.3179 16.066L11.649 10.7798H13.2285L16.1894 15.046L16.6505 15.7103L20.4993 21.2557H18.9198L15.779 16.7306V16.7304Z" fill="currentColor" />
+        </svg>
+        <span class="sr-only">Follow OpenText Blogs on X</span>
+        </a>
+    </li><li class="list-inline-item">
+        <a href="https://www.youtube.com/user/opentextcorp" class="social-icon social-icon-youtube" target="_blank">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M20.6883 11.7612C21.2046 11.905 21.6112 12.3285 21.7492 12.8663C22 13.8411 22 15.875 22 15.875C22 15.875 22 17.9088 21.7492 18.8837C21.6112 19.4215 21.2046 19.845 20.6883 19.9888C19.7525 20.25 16 20.25 16 20.25C16 20.25 12.2475 20.25 11.3117 19.9888C10.7953 19.845 10.3887 19.4215 10.2507 18.8837C10 17.9088 10 15.875 10 15.875C10 15.875 10 13.8411 10.2507 12.8663C10.3887 12.3285 10.7953 11.905 11.3117 11.7612C12.2475 11.5 16 11.5 16 11.5C16 11.5 19.7525 11.5 20.6883 11.7612ZM14.8751 14.163V17.9674L17.8751 16.0653L14.8751 14.163Z" fill="currentColor" />
+            </svg>
+        <span class="sr-only">Follow OpenText Blogs on youtube</span>
+        </a>
+    </li>                    </ul>
+                            </div>
+
+        </div>
+
+        <div class="ot-footer__copyright-powered">
+            <p class="ot-footer__copyright"><a href="https://www.opentext.com/about/copyright-information" target="_blank">Copyright</a> © 2026 Open Text Corporation. All rights reserved.</p>
+        </div>
+
+    </div>
+</footer>
+</div></div>
+<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/wp-*.php","/wp-admin/*","/wp-content/uploads/*","/wp-content/*","/wp-content/plugins/*","/wp-content/themes/blueprint-blog-theme/*","/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+<script id="wp-block-template-skip-link-js-after">
+	( function() {
+		var skipLinkTarget = document.querySelector( 'main' ),
+			sibling,
+			skipLinkTargetID,
+			skipLink;
+
+		// Early exit if a skip-link target can't be located.
+		if ( ! skipLinkTarget ) {
+			return;
+		}
+
+		/*
+		 * Get the site wrapper.
+		 * The skip-link will be injected in the beginning of it.
+		 */
+		sibling = document.querySelector( '.wp-site-blocks' );
+
+		// Early exit if the root element was not found.
+		if ( ! sibling ) {
+			return;
+		}
+
+		// Get the skip-link target's ID, and generate one if it doesn't exist.
+		skipLinkTargetID = skipLinkTarget.id;
+		if ( ! skipLinkTargetID ) {
+			skipLinkTargetID = 'wp--skip-link--target';
+			skipLinkTarget.id = skipLinkTargetID;
+		}
+
+		// Create the skip link.
+		skipLink = document.createElement( 'a' );
+		skipLink.classList.add( 'skip-link', 'screen-reader-text' );
+		skipLink.id = 'wp-skip-link';
+		skipLink.href = '#' + skipLinkTargetID;
+		skipLink.innerText = 'Skip to content';
+
+		// Inject the skip link.
+		sibling.parentElement.insertBefore( skipLink, sibling );
+	}() );
+	
+//# sourceURL=wp-block-template-skip-link-js-after
+</script>
+<script src="https://blogs.opentext.com/wp-content/plugins/blueprint-wp-blocks-plugin/assets/js/scripts.js" id="blueprint-block-scripts-js"></script>
+<script src="https://blogs.opentext.com/wp-content/themes/blueprint-blog-theme/assets/js/delayed.js" id="blueprint-delayed-js"></script>
+<script src="https://assets.ot.digital/min/m/v1/js/opentext.min.js" id="blueprint-core-js-js"></script>
+<script id="onesignal-js-js-extra">
+var oneSignalData = ["technologies","security","security-line-of-business","line-of-business"];
+//# sourceURL=onesignal-js-js-extra
+</script>
+<script src="https://blogs.opentext.com/wp-content/themes/blueprint-blog-theme/assets/js/onesignal.js" id="onesignal-js-js" async data-wp-strategy="async"></script>
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" id="remote_sdk-js" defer data-wp-strategy="defer"></script>
+        <script type="text/javascript">
+            /* <![CDATA[ */
+           document.querySelectorAll("ul.nav-menu").forEach(
+               ulist => { 
+                    if (ulist.querySelectorAll("li").length == 0) {
+                        ulist.style.display = "none";
+
+                                            } 
+                }
+           );
+            /* ]]> */
+        </script>
+        
+<!-- be_ixf, sdk, is -->
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a07989880eb8a9fc',t:'MTc4MDc3MTEzOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

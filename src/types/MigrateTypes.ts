@@ -206,6 +206,10 @@ export interface VendorRoadmap {
   publishDate: string
   lastVerifiedDate: string
   coverageNotes: string
+  /** Data-lifecycle state from the CSV (active rows are loaded; deprecated carried forward). */
+  roadmapStatus?: 'active' | 'deprecated'
+  /** New/Updated badge vs the previous dated CSV (parity with the product catalog). */
+  status?: 'New' | 'Updated'
 }
 
 export interface VendorRoadmapEnrichment {

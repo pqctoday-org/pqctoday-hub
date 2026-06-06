@@ -13,5 +13,45 @@
     "vendorId": "VND-151",
     "reason": "forbidden",
     "date": "2026-05-07T05:36:25.683Z"
+  },
+  "https://blogs.oracle.com/database/oracle-ai-database-26ai-pqc": {
+    "vendorId": "VND-029",
+    "reason": "forbidden",
+    "date": "2026-06-06T18:37:47.585Z"
+  },
+  "https://www.akamai.com/blog/security/taking-steps-to-prepare-for-quantum-advantage": {
+    "vendorId": "VND-304",
+    "reason": "forbidden",
+    "date": "2026-06-06T18:37:57.291Z"
+  },
+  "https://www.nokia.com/industries/quantum-safe-networks/": {
+    "vendorId": "VND-155",
+    "reason": "forbidden",
+    "date": "2026-06-06T18:38:11.412Z"
+  },
+  "https://www.businesswire.com/news/home/20260324083438/en/HPE-Introduces-Sweeping-Security-Advancements-to-Secure-AI-Adoption-and-Strengthen-Enterprise-Resiliency": {
+    "vendorId": "VND-379",
+    "reason": "forbidden",
+    "date": "2026-06-06T18:38:18.231Z"
+  },
+  "https://www.ericsson.com/en/security/quantum-safe-networks": {
+    "vendorId": "VND-154",
+    "reason": "forbidden",
+    "date": "2026-06-06T18:38:42.225Z"
+  },
+  "https://www.mastercard.com/global/en/news-and-trends/Insights/2025/post-quantum-cryptography-white-paper.html": {
+    "vendorId": "VND-341",
+    "reason": "forbidden",
+    "date": "2026-06-06T18:38:52.065Z"
+  },
+  "https://www.netapp.com/cyber-resilience/post-quantum-cryptography/": {
+    "vendorId": "VND-390",
+    "reason": "forbidden",
+    "date": "2026-06-06T18:38:55.819Z"
+  },
+  "https://nordvpn.com/features/vpn-encryption/post-quantum-vpn/": {
+    "vendorId": "VND-391",
+    "reason": "forbidden",
+    "date": "2026-06-06T18:38:56.765Z"
   }
 }
