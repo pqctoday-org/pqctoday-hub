@@ -2,7 +2,7 @@
   "generated": "2026-06-06T16:50:47.525Z",
   "source": "src/data/timeline_06062026.csv",
   "summary": {
-    "downloaded": 2,
+    "downloaded": 19,
     "skipped": 152,
     "failed": 0,
     "persisted_skip": 5
@@ -624,12 +624,6 @@
       "file": "public/timeline/International_GRI_Quantum_Threat_Timeline_Report_2025.html"
     },
     {
-      "label": "United States:DoD — DoD PQC Migration Memorandum",
-      "url": "https://dodcio.defense.gov/Library/",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
-    },
-    {
       "label": "Global:Quantinuum — Helios Quantum Computer Commercial Launch",
       "url": "https://www.quantinuum.com/press-releases/quantinuum-announces-commercial-launch-of-new-helios-quantum-computer-that-offers-unprecedented-accuracy-to-enable-generative-quantum-ai-genqai",
       "status": "skipped",
@@ -1085,6 +1079,159 @@
       "file": "public/timeline/Ciena_wayback.html",
       "sha256": "4393be59aecbbac1c65e9671fb91bc2e10f9edd58c929cb2b2ba8c57c5ca4597",
       "sizeBytes": 140561
+    },
+    {
+      "label": "United States:NIST — NIST SP 800-227 KEM Recommendations",
+      "url": "https://csrc.nist.gov/pubs/sp/800/227/final",
+      "status": "downloaded",
+      "reason": "completeness-audit add",
+      "file": "public/timeline/United_States_NIST_NIST_SP_800_227_KEM_Recommendations.html",
+      "sha256": "7d46ae24edd0f95bdee6d95597f39ce8322a3a1eb0ed0abd66ce5ba16968dd65",
+      "sizeBytes": 43800
+    },
+    {
+      "label": "United States:DoD — DoD PQC Migration Memorandum",
+      "url": "https://dowcio.war.gov/Portals/0/Documents/Library/PreparingForMigrationPQC.pdf",
+      "status": "downloaded",
+      "reason": "completeness-audit add",
+      "file": "public/timeline/United_States_DoD_DoD_PQC_Migration_Memorandum.pdf",
+      "sha256": "d66aac6da81b539375ef60a4005b1ff52a7eff76843bfbb122c59a77dc150e59",
+      "sizeBytes": 822662
+    },
+    {
+      "label": "United States:NIST — NIST IR 8545 Round 4 Status Report",
+      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2025/NIST.IR.8545.pdf",
+      "status": "downloaded",
+      "reason": "completeness-audit add",
+      "file": "public/timeline/United_States_NIST_NIST_IR_8545_Round_4_Status_Report.pdf",
+      "sha256": "d802f4849a52d18001533cef86e0950f31350643cc06881ee62b2382e1ea0e9d",
+      "sizeBytes": 588999
+    },
+    {
+      "label": "United States:GSA — GSA PQC Buyer Guide v1.0",
+      "url": "https://buy.gsa.gov/api/system/files/documents/final-508c-pqc_buyer-s_guide_2025.pdf",
+      "status": "downloaded",
+      "reason": "completeness-audit add",
+      "file": "public/timeline/United_States_GSA_GSA_PQC_Buyer_Guide_v1_0.pdf",
+      "sha256": "6ec4fdf0f388df2305ecfedd6c8948af6e96aeb81d1d4534e9a107ea269c6df1",
+      "sizeBytes": 5424465
+    },
+    {
+      "label": "United States:NIST — Additional Signatures Round 3 Advances",
+      "url": "https://www.nist.gov/news-events/news/2026/05/nine-candidates-advance-third-round-additional-digital-signatures-pqc",
+      "status": "downloaded",
+      "reason": "completeness-audit add",
+      "file": "public/timeline/United_States_NIST_Additional_Signatures_Round_3_Advances.html",
+      "sha256": "faa2ed8f56a332f0dcf9725941ee3332b9ab99e623fc19d7eaf0514200460ffb",
+      "sizeBytes": 82152
+    },
+    {
+      "label": "European Union:EC — EU Cyber Resilience Act In Force",
+      "url": "https://eur-lex.europa.eu/eli/reg/2024/2847/oj",
+      "status": "downloaded",
+      "reason": "completeness-audit add",
+      "file": "public/timeline/European_Union_EC_EU_Cyber_Resilience_Act_In_Force.html",
+      "sha256": "486d826331aabf4503ecc430982ae45aaafc9d3d19c211818c77a4775ca77a44",
+      "sizeBytes": 973761
+    },
+    {
+      "label": "European Union:ENISA — ENISA PQC Anticipating Threats",
+      "url": "https://www.enisa.europa.eu/news/post-quantum-cryptography-anticipating-threats-and-preparing-the-future",
+      "status": "downloaded",
+      "reason": "completeness-audit add",
+      "file": "public/timeline/European_Union_ENISA_ENISA_PQC_Anticipating_Threats.html",
+      "sha256": "f95bcf08fa9b7449c7b15b7d73b4fb3150459950b7e13c3c390dc912e29b4976",
+      "sizeBytes": 57376
+    },
+    {
+      "label": "Japan:CRYPTREC — CRYPTREC Adds ML-KEM to Ciphers List",
+      "url": "https://www.cryptrec.go.jp/en/method.html",
+      "status": "downloaded",
+      "reason": "completeness-audit add",
+      "file": "public/timeline/Japan_CRYPTREC_CRYPTREC_Adds_ML_KEM_to_Ciphers_List.html",
+      "sha256": "30660b473b880d51bd7627210fd1544345604d10b798add01bdec68746df1c00",
+      "sizeBytes": 32330
+    },
+    {
+      "label": "Saudi Arabia:NCA — Saudi National Cryptographic Standards",
+      "url": "https://nca.gov.sa/en/regulatory-documents/frameworks-and-standard-list/ncs/",
+      "status": "downloaded",
+      "reason": "completeness-audit add",
+      "file": "public/timeline/Saudi_Arabia_NCA_Saudi_National_Cryptographic_Standards.html",
+      "sha256": "8e1cad8fb062e8c28dd0fe94a4b4c063cf89f7f8faf1cf0d59b991a607626373",
+      "sizeBytes": 452247
+    },
+    {
+      "label": "United Arab Emirates:UAE CSC — UAE Crypto Discovery Tool and PQC Index",
+      "url": "https://www.computerweekly.com/news/366643900/UAE-launches-national-cryptography-discovery-platform-to-accelerate-post-quantum-security-transition",
+      "status": "downloaded",
+      "reason": "completeness-audit add",
+      "file": "public/timeline/United_Arab_Emirates_UAE_CSC_UAE_Crypto_Discovery_Tool_and_PQC_Index.html",
+      "sha256": "9786ae58ac72ed2b790a6a0ff9f9fed43a8615ced19750f3877f31c75ce1adea",
+      "sizeBytes": 381684
+    },
+    {
+      "label": "International:IETF — RFC 9881 ML-DSA in X.509",
+      "url": "https://datatracker.ietf.org/doc/rfc9881/",
+      "status": "downloaded",
+      "reason": "completeness-audit add",
+      "file": "public/timeline/International_IETF_RFC_9881_ML_DSA_in_X_509.html",
+      "sha256": "fb6a2da444e84beb3d1d6f449846a6555c6d679ef9c4e82f95482af99d4d0817",
+      "sizeBytes": 266012
+    },
+    {
+      "label": "International:IETF — RFC 9941 SSH PQ-Hybrid Key Exchange",
+      "url": "https://datatracker.ietf.org/doc/rfc9941/",
+      "status": "downloaded",
+      "reason": "completeness-audit add",
+      "file": "public/timeline/International_IETF_RFC_9941_SSH_PQ_Hybrid_Key_Exchange.html",
+      "sha256": "fb50288a73d0b2919f1b33ff7e7cdba567ef8e26b483247e7954daa526b354f8",
+      "sizeBytes": 56951
+    },
+    {
+      "label": "International:IETF — RFC 9370 Multiple Key Exchanges in IKEv2",
+      "url": "https://datatracker.ietf.org/doc/rfc9370/",
+      "status": "downloaded",
+      "reason": "completeness-audit add",
+      "file": "public/timeline/International_IETF_RFC_9370_Multiple_Key_Exchanges_in_IKEv2.html",
+      "sha256": "40b85dea6583c0bd5ed3d04d51138f0e054d3e17051489c881a5706035a26b5c",
+      "sizeBytes": 119451
+    },
+    {
+      "label": "International:IETF — draft-ietf-tls-ecdhe-mlkem Hybrid KEX",
+      "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/",
+      "status": "downloaded",
+      "reason": "completeness-audit add",
+      "file": "public/timeline/International_IETF_draft_ietf_tls_ecdhe_mlkem_Hybrid_KEX.html",
+      "sha256": "be7ccf0175666396d73bed1213f7bee60c4e597900332e732039ce1bd45a0e61",
+      "sizeBytes": 74035
+    },
+    {
+      "label": "International:ISO/IEC — ISO/IEC SC27 PQC Standardization",
+      "url": "https://www.iso.org/committee/45306.html",
+      "status": "downloaded",
+      "reason": "completeness-audit add",
+      "file": "public/timeline/International_ISO_IEC_ISO_IEC_SC27_PQC_Standardization.html",
+      "sha256": "340608ef3aa8d39310c473b2799c4ce1a01bd34e7bb7dcb6ef25eb7dd7cf0e08",
+      "sizeBytes": 137899
+    },
+    {
+      "label": "International:IETF — draft-ietf-lamps-kyber-certificates",
+      "url": "https://datatracker.ietf.org/doc/draft-ietf-lamps-kyber-certificates/",
+      "status": "downloaded",
+      "reason": "completeness-audit add",
+      "file": "public/timeline/International_IETF_draft_ietf_lamps_kyber_certificates.html",
+      "sha256": "1ba8110ddfd2348e6a199282747f86aee59dfc47736cee67b1ae10ece39eca79",
+      "sizeBytes": 204988
+    },
+    {
+      "label": "Germany:BSI — BSI TR-02102-1 2026 Edition",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf",
+      "status": "downloaded",
+      "reason": "completeness add; reused library cache (BSI scraper-blocked)",
+      "file": "public/timeline/Germany_BSI_BSI_TR-02102-1_2026_Edition.pdf",
+      "sha256": "12f04ee22b64f4dd517f72d40924d53e1efd5731099d446bac7ef6cc8d63b6e8",
+      "sizeBytes": 56314
     }
   ]
 }
