@@ -449,13 +449,6 @@
       "file": "public/timeline/United_States_White_House_PQC_Report_to_Congress.pdf"
     },
     {
-      "label": "United States:NSA — CNSA 2.0 Algorithms Revised",
-      "url": "https://pqshield.com/nsa-releases-update-to-cnsa-2-0/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/United_States_NSA_CNSA_2.0_Algorithms_Revised.html"
-    },
-    {
       "label": "United States:CISA — Automated PQC Discovery Strategy",
       "url": "https://www.cisa.gov/sites/default/files/2024-09/Strategy-for-Migrating-to-Automated-PQC-Discovery-and-Inventory-Tools.pdf",
       "status": "skipped",
@@ -524,13 +517,6 @@
       "status": "skipped",
       "reason": "already-exists",
       "file": "public/timeline/United_States_NIST_NCCoE_PQC_Interoperability_Testing.html"
-    },
-    {
-      "label": "United States:NSA — NSS Acquisitions CNSA 2.0 Required",
-      "url": "https://pqshield.com/what-is-cnsa-2-0-the-nsas-post-quantum-roadmap/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/United_States_NSA_NSS_Acquisitions_CNSA_2.0_Required.html"
     },
     {
       "label": "United States:CISA — CISA PQC Product Category List Publication",
@@ -715,13 +701,6 @@
       "status": "skipped",
       "reason": "already-exists",
       "file": "public/timeline/United_Arab_Emirates_UAE_CSC_National_Encryption_Policy_Approved.html"
-    },
-    {
-      "label": "United Arab Emirates:UAE CSC — National PQC Migration Program",
-      "url": "https://www.computerweekly.com/news/366643900/UAE-launches-national-cryptography-discovery-platform-to-accelerate-post-quantum-security-transition",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/United_Arab_Emirates_UAE_CSC_National_PQC_Migration_Program.html"
     },
     {
       "label": "Saudi Arabia:NCA — ECC-2:2024 Cybersecurity Controls",
@@ -916,20 +895,6 @@
       "status": "skipped",
       "reason": "already-exists",
       "file": "public/timeline/Global_3GPP_SA3_3GPP_TR_33.841_PQC_Study.html"
-    },
-    {
-      "label": "South Africa:IR — POPIA Enforcement Begins",
-      "url": "http://web.archive.org/web/20260601235047/https://inforegulator.org.za/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/South_Africa_IR_POPIA_Enforcement_Begins.html"
-    },
-    {
-      "label": "Nigeria:NDPC — Nigeria Data Protection Act 2023 Enacted",
-      "url": "http://web.archive.org/web/20260412130629/https://ndpc.gov.ng/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/Nigeria_NDPC_Nigeria_Data_Protection_Act_2023_Enacted.html"
     },
     {
       "label": "Kenya:ODPC — ODPC Guidance on Data Protection by Design",
@@ -1292,6 +1257,69 @@
       "file": "public/timeline/Global_TCG_TPM_2.0_v1.85_primary.html",
       "sha256": "2df95e03b11a764940f7f9609a9117313fe41f4947576e1249a962b100e32c1c",
       "sizeBytes": 148520
+    },
+    {
+      "label": "United States:NSA — CNSA 2.0 Algorithms Revised",
+      "url": "https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF",
+      "status": "downloaded",
+      "reason": "secondary->primary (resilient)",
+      "file": "public/timeline/United_States_NSA_CNSA_2_0_Algorithms_Revised.pdf",
+      "sha256": "ca447adb27af022f6bcca70873ef3404a7db0758fa0626fe9cd994451d86f5e0",
+      "sizeBytes": 441742
+    },
+    {
+      "label": "United States:NSA — NSS Acquisitions CNSA 2.0 Required",
+      "url": "https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF",
+      "status": "downloaded",
+      "reason": "secondary->primary (resilient)",
+      "file": "public/timeline/United_States_NSA_NSS_Acquisitions_CNSA_2_0_Required.pdf",
+      "sha256": "ca447adb27af022f6bcca70873ef3404a7db0758fa0626fe9cd994451d86f5e0",
+      "sizeBytes": 441742
+    },
+    {
+      "label": "United States:NSA — NSS Quantum Resistant Majority",
+      "url": "https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF",
+      "status": "downloaded",
+      "reason": "secondary->primary (resilient)",
+      "file": "public/timeline/United_States_NSA_NSS_Quantum_Resistant_Majority.pdf",
+      "sha256": "ca447adb27af022f6bcca70873ef3404a7db0758fa0626fe9cd994451d86f5e0",
+      "sizeBytes": 441742
+    },
+    {
+      "label": "United States:NSA — CNSA 1.0 Compliance Deadline for NSS",
+      "url": "https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF",
+      "status": "downloaded",
+      "reason": "secondary->primary (resilient)",
+      "file": "public/timeline/United_States_NSA_CNSA_1_0_Compliance_Deadline_for_NSS.pdf",
+      "sha256": "ca447adb27af022f6bcca70873ef3404a7db0758fa0626fe9cd994451d86f5e0",
+      "sizeBytes": 441742
+    },
+    {
+      "label": "United Arab Emirates:UAE CSC — National PQC Migration Program",
+      "url": "https://www.atrc.gov.ae/news/uae-cybersecurity-council-advances-national-readiness-future-quantum-threats-atrcs-quantumgate",
+      "status": "downloaded",
+      "reason": "secondary->primary (resilient)",
+      "file": "public/timeline/United_Arab_Emirates_UAE_CSC_National_PQC_Migration_Program.html",
+      "sha256": "71d6fe54db39fa8f7b1fbd6f2076ded2a87bc6001626dd0f2f0cb53fc6e53c89",
+      "sizeBytes": 36429
+    },
+    {
+      "label": "South Africa:IR — POPIA Enforcement Begins",
+      "url": "https://www.gov.za/sites/default/files/gcis_document/201409/3706726-11act4of2013popi.pdf",
+      "status": "downloaded",
+      "reason": "secondary->primary (resilient)",
+      "file": "public/timeline/South_Africa_IR_POPIA_Enforcement_Begins.pdf",
+      "sha256": "148e8d014a41926f2c4c596074a1dd5f7b75735fcd3e8b7ae5edfadbb7f5d212",
+      "sizeBytes": 394447
+    },
+    {
+      "label": "Nigeria:NDPC — Nigeria Data Protection Act 2023 Enacted",
+      "url": "https://placng.org/i/wp-content/uploads/2023/06/Nigeria-Data-Protection-Act-2023.pdf",
+      "status": "downloaded",
+      "reason": "homepage->act PDF (placng repository)",
+      "file": "public/timeline/Nigeria_NDPC_NDPA_2023_act.pdf",
+      "sha256": "38e4ac47630589f94ad0a654800dff58a51d87d95456bc01d239e9172e020e92",
+      "sizeBytes": 1518494
     }
   ]
 }
