@@ -1,619 +1,399 @@
 [
- {
-  "id": "5313",
-  "module": "Microsoft SymCrypt Cryptographic Library",
-  "confirmed": [
-   "LMS",
-   "ML-DSA",
-   "ML-KEM",
-   "XMSS"
-  ],
-  "candidates": [
-   "ML-KEM",
-   "ML-DSA",
-   "LMS",
-   "XMSS"
-  ],
-  "verdicts": {
-   "ML-KEM": true,
-   "ML-DSA": true,
-   "LMS": true,
-   "XMSS": true
+  {
+    "id": "5313",
+    "module": "Microsoft SymCrypt Cryptographic Library",
+    "confirmed": ["LMS", "ML-DSA", "ML-KEM", "XMSS"],
+    "candidates": ["ML-KEM", "ML-DSA", "LMS", "XMSS"],
+    "verdicts": {
+      "ML-KEM": true,
+      "ML-DSA": true,
+      "LMS": true,
+      "XMSS": true
+    }
+  },
+  {
+    "id": "5314",
+    "module": "AWS-LC 3 Cryptographic Module (static)",
+    "confirmed": ["ML-KEM"],
+    "candidates": ["ML-KEM"],
+    "verdicts": {
+      "ML-KEM": true
+    }
+  },
+  {
+    "id": "5300",
+    "module": "Luna M7 Cryptographic Module",
+    "confirmed": ["Falcon", "LMS", "ML-DSA", "ML-KEM"],
+    "candidates": ["LMS", "FALCON", "KYBER", "DILITHIUM"],
+    "verdicts": {
+      "LMS": true,
+      "FALCON": true,
+      "KYBER": true,
+      "DILITHIUM": true
+    }
+  },
+  {
+    "id": "5298",
+    "module": "AWS-LC 3 Cryptographic Module (dynamic)",
+    "confirmed": ["ML-KEM"],
+    "candidates": ["ML-KEM"],
+    "verdicts": {
+      "ML-KEM": true
+    }
+  },
+  {
+    "id": "5282",
+    "module": "ASI-HSM AHX5 kNET Cryptographic Module",
+    "confirmed": ["ML-DSA", "ML-KEM"],
+    "candidates": ["ML-KEM", "ML-DSA"],
+    "verdicts": {
+      "ML-KEM": true,
+      "ML-DSA": true
+    }
+  },
+  {
+    "id": "5261",
+    "module": "Linux Kernel FIPS Object Module (KFOM) Cryptographic Module",
+    "confirmed": ["LMS"],
+    "candidates": ["LMS"],
+    "verdicts": {
+      "LMS": true
+    }
+  },
+  {
+    "id": "5251",
+    "module": "archTIS Cryptographic Library",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5247",
+    "module": "Go Cryptographic Module",
+    "confirmed": ["ML-KEM"],
+    "candidates": ["ML-KEM"],
+    "verdicts": {
+      "ML-KEM": true
+    }
+  },
+  {
+    "id": "5220",
+    "module": "LS2 HSM Family",
+    "confirmed": ["ML-DSA", "ML-KEM"],
+    "candidates": ["ML-KEM", "ML-DSA"],
+    "verdicts": {
+      "ML-KEM": true,
+      "ML-DSA": true
+    }
+  },
+  {
+    "id": "5211",
+    "module": "N-able FIPS Cryptographic Module Java 140-3",
+    "confirmed": [],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": false,
+      "HSS": false
+    }
+  },
+  {
+    "id": "5210",
+    "module": "Kaseya FIPS Cryptographic Module for Java",
+    "confirmed": [],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": false,
+      "HSS": false
+    }
+  },
+  {
+    "id": "5209",
+    "module": "Kloudfuse Java Cryptographic Module",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5198",
+    "module": "HP Endpoint Security Controller Cryptographic Library",
+    "confirmed": ["LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": false
+    }
+  },
+  {
+    "id": "5184",
+    "module": "Apple corecrypto Module 18.3 [Apple silicon, User, Software, SL1]",
+    "confirmed": [],
+    "candidates": ["ML-KEM"],
+    "verdicts": {
+      "ML-KEM": false
+    }
+  },
+  {
+    "id": "5148",
+    "module": "HPE Java Cryptographic Module",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5142",
+    "module": "Minimus Cryptographic Module for Java",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5131",
+    "module": "Trend Micro Java Crypto Module",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5129",
+    "module": "InformaCast Advanced and Fusion Server Java Crypto Library",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5130",
+    "module": "Tellabs Panorama PON Manager Cryptographic Module",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5128",
+    "module": "Saviynt Cryptographic Module",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5126",
+    "module": "CLEAR Cryptosystem",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5127",
+    "module": "Radiant Logic Cryptographic Module for Java",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5124",
+    "module": "HPI Crypto Module for Java",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5125",
+    "module": "Proofpoint Cryptographic Module for Java",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5123",
+    "module": "HID Global Cryptographic Module",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5120",
+    "module": "Cohesity Cryptographic Module for Java",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5122",
+    "module": "CyberArk Cryptographic Module for Java",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5121",
+    "module": "CTERA Crypto Module\u2122 (Java)",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5109",
+    "module": "Trusted Platform Module ST33KTPM2X / ST33KTPM2XSPI",
+    "confirmed": [],
+    "candidates": ["LMS"],
+    "verdicts": {
+      "LMS": false
+    }
+  },
+  {
+    "id": "5103",
+    "module": "Trusted Platform Module ST33KTPM2A / ST33KTPM2I",
+    "confirmed": ["LMS"],
+    "candidates": ["LMS"],
+    "verdicts": {
+      "LMS": true
+    }
+  },
+  {
+    "id": "5098",
+    "module": "Nuvoton Cryptographic Library 3.0",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5084",
+    "module": "Cloudera Cryptographic Module for Java",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5083",
+    "module": "CGI Momentum\u2122 Java Cryptographic Module",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5082",
+    "module": "Arctera Cryptographic Module for Java",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5080",
+    "module": "Zscaler Java Crypto Module",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5081",
+    "module": "SL-FJA3 (SafeLogic FIPS Java API)",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5068",
+    "module": "Cloudian-FJA (FIPS Java API)",
+    "confirmed": [],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": false,
+      "HSS": false
+    }
+  },
+  {
+    "id": "5062",
+    "module": "CipherLinq",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5053",
+    "module": "HYCU Cryptographic Library Module",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
+  },
+  {
+    "id": "5038",
+    "module": "SolarWinds Java Cryptographic Library",
+    "confirmed": ["HSS", "LMS"],
+    "candidates": ["LMS", "HSS"],
+    "verdicts": {
+      "LMS": true,
+      "HSS": true
+    }
   }
- },
- {
-  "id": "5314",
-  "module": "AWS-LC 3 Cryptographic Module (static)",
-  "confirmed": [
-   "ML-KEM"
-  ],
-  "candidates": [
-   "ML-KEM"
-  ],
-  "verdicts": {
-   "ML-KEM": true
-  }
- },
- {
-  "id": "5300",
-  "module": "Luna M7 Cryptographic Module",
-  "confirmed": [
-   "Falcon",
-   "LMS",
-   "ML-DSA",
-   "ML-KEM"
-  ],
-  "candidates": [
-   "LMS",
-   "FALCON",
-   "KYBER",
-   "DILITHIUM"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "FALCON": true,
-   "KYBER": true,
-   "DILITHIUM": true
-  }
- },
- {
-  "id": "5298",
-  "module": "AWS-LC 3 Cryptographic Module (dynamic)",
-  "confirmed": [
-   "ML-KEM"
-  ],
-  "candidates": [
-   "ML-KEM"
-  ],
-  "verdicts": {
-   "ML-KEM": true
-  }
- },
- {
-  "id": "5282",
-  "module": "ASI-HSM AHX5 kNET Cryptographic Module",
-  "confirmed": [
-   "ML-DSA",
-   "ML-KEM"
-  ],
-  "candidates": [
-   "ML-KEM",
-   "ML-DSA"
-  ],
-  "verdicts": {
-   "ML-KEM": true,
-   "ML-DSA": true
-  }
- },
- {
-  "id": "5261",
-  "module": "Linux Kernel FIPS Object Module (KFOM) Cryptographic Module",
-  "confirmed": [
-   "LMS"
-  ],
-  "candidates": [
-   "LMS"
-  ],
-  "verdicts": {
-   "LMS": true
-  }
- },
- {
-  "id": "5251",
-  "module": "archTIS Cryptographic Library",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5247",
-  "module": "Go Cryptographic Module",
-  "confirmed": [
-   "ML-KEM"
-  ],
-  "candidates": [
-   "ML-KEM"
-  ],
-  "verdicts": {
-   "ML-KEM": true
-  }
- },
- {
-  "id": "5220",
-  "module": "LS2 HSM Family",
-  "confirmed": [
-   "ML-DSA",
-   "ML-KEM"
-  ],
-  "candidates": [
-   "ML-KEM",
-   "ML-DSA"
-  ],
-  "verdicts": {
-   "ML-KEM": true,
-   "ML-DSA": true
-  }
- },
- {
-  "id": "5211",
-  "module": "N-able FIPS Cryptographic Module Java 140-3",
-  "confirmed": [],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": false,
-   "HSS": false
-  }
- },
- {
-  "id": "5210",
-  "module": "Kaseya FIPS Cryptographic Module for Java",
-  "confirmed": [],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": false,
-   "HSS": false
-  }
- },
- {
-  "id": "5209",
-  "module": "Kloudfuse Java Cryptographic Module",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5198",
-  "module": "HP Endpoint Security Controller Cryptographic Library",
-  "confirmed": [
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": false
-  }
- },
- {
-  "id": "5184",
-  "module": "Apple corecrypto Module 18.3 [Apple silicon, User, Software, SL1]",
-  "confirmed": [],
-  "candidates": [
-   "ML-KEM"
-  ],
-  "verdicts": {
-   "ML-KEM": false
-  }
- },
- {
-  "id": "5148",
-  "module": "HPE Java Cryptographic Module",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5142",
-  "module": "Minimus Cryptographic Module for Java",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5131",
-  "module": "Trend Micro Java Crypto Module",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5129",
-  "module": "InformaCast Advanced and Fusion Server Java Crypto Library",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5130",
-  "module": "Tellabs Panorama PON Manager Cryptographic Module",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5128",
-  "module": "Saviynt Cryptographic Module",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5126",
-  "module": "CLEAR Cryptosystem",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5127",
-  "module": "Radiant Logic Cryptographic Module for Java",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5124",
-  "module": "HPI Crypto Module for Java",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5125",
-  "module": "Proofpoint Cryptographic Module for Java",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5123",
-  "module": "HID Global Cryptographic Module",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5120",
-  "module": "Cohesity Cryptographic Module for Java",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5122",
-  "module": "CyberArk Cryptographic Module for Java",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5121",
-  "module": "CTERA Crypto Module\u2122 (Java)",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5109",
-  "module": "Trusted Platform Module ST33KTPM2X / ST33KTPM2XSPI",
-  "confirmed": [],
-  "candidates": [
-   "LMS"
-  ],
-  "verdicts": {
-   "LMS": false
-  }
- },
- {
-  "id": "5103",
-  "module": "Trusted Platform Module ST33KTPM2A / ST33KTPM2I",
-  "confirmed": [
-   "LMS"
-  ],
-  "candidates": [
-   "LMS"
-  ],
-  "verdicts": {
-   "LMS": true
-  }
- },
- {
-  "id": "5098",
-  "module": "Nuvoton Cryptographic Library 3.0",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5084",
-  "module": "Cloudera Cryptographic Module for Java",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5083",
-  "module": "CGI Momentum\u2122 Java Cryptographic Module",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5082",
-  "module": "Arctera Cryptographic Module for Java",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5080",
-  "module": "Zscaler Java Crypto Module",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5081",
-  "module": "SL-FJA3 (SafeLogic FIPS Java API)",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5068",
-  "module": "Cloudian-FJA (FIPS Java API)",
-  "confirmed": [],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": false,
-   "HSS": false
-  }
- },
- {
-  "id": "5062",
-  "module": "CipherLinq",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5053",
-  "module": "HYCU Cryptographic Library Module",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- },
- {
-  "id": "5038",
-  "module": "SolarWinds Java Cryptographic Library",
-  "confirmed": [
-   "HSS",
-   "LMS"
-  ],
-  "candidates": [
-   "LMS",
-   "HSS"
-  ],
-  "verdicts": {
-   "LMS": true,
-   "HSS": true
-  }
- }
 ]
