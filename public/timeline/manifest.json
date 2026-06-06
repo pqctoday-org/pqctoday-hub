@@ -2,7 +2,7 @@
   "generated": "2026-06-06T16:50:47.525Z",
   "source": "src/data/timeline_06062026.csv",
   "summary": {
-    "downloaded": 19,
+    "downloaded": 23,
     "skipped": 152,
     "failed": 0,
     "persisted_skip": 5
@@ -99,46 +99,11 @@
       "reason": "persisted: forbidden"
     },
     {
-      "label": "Australia:ASD — ISM December 2024 Update",
-      "url": "http://web.archive.org/web/20251219163349/https://www.cyber.gov.au/sites/default/files/2024-12/22.%20ISM%20-%20Guidelines%20for%20Cryptography%20%28December%202024%29.pdf",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/Australia_ASD_ISM_December_2024_Update.pdf"
-    },
-    {
-      "label": "Australia:ASD — ISM June 2025 Cryptography Guidelines Update",
-      "url": "http://web.archive.org/web/20251110192246/https://www.cyber.gov.au/sites/default/files/2025-07/22.%20ISM%20-%20Guidelines%20for%20cryptography%20%28June%202025%29.pdf",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/Australia_ASD_ISM_June_2025_Cryptography_Guidelines_Update.pdf"
-    },
-    {
-      "label": "Australia:ASD — ACSC Annual Cyber Threat Report 2024–25 — PQC as a National Priority",
-      "url": "http://web.archive.org/web/20260315142629/https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/annual-cyber-threat-report-2024-2025",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/Australia_ASD_ACSC_Annual_Cyber_Threat_Report_2024_25_PQC_as_a_National_Priority.html"
-    },
-    {
-      "label": "Australia:ASD — Commonwealth Cyber Security Posture in 2025",
-      "url": "http://web.archive.org/web/20260313045441/https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/the-commonwealth-cyber-security-posture-in-2025",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/Australia_ASD_Commonwealth_Cyber_Security_Posture_in_2025.html"
-    },
-    {
       "label": "International:BIS — Paper 158 Quantum Roadmap",
       "url": "https://www.bis.org/publ/bppdf/bispap158.htm",
       "status": "skipped",
       "reason": "already-exists",
       "file": "public/timeline/International_BIS_Paper_158_Quantum_Roadmap.html"
-    },
-    {
-      "label": "Australia:DISR — National Quantum Strategy",
-      "url": "http://web.archive.org/web/20260605071615/https://www.industry.gov.au/publications/national-quantum-strategy",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/Australia_DISR_National_Quantum_Strategy.html"
     },
     {
       "label": "Canada:ISED — PQC Best Practices Published",
@@ -246,13 +211,6 @@
       "file": "public/timeline/France_ANSSI_Initial_PQC_Position_Paper.html"
     },
     {
-      "label": "France:ANSSI — PQC Position Paper Follow-up",
-      "url": "http://web.archive.org/web/20250911023155/https://cyber.gouv.fr/sites/default/files/document/follow_up_position_paper_on_post_quantum_cryptography.pdf",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/France_ANSSI_PQC_Position_Paper_Follow-up.pdf"
-    },
-    {
       "label": "France:ANSSI/BSI/NLNCSA/SE — Joint QKD Position Paper",
       "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Crypto/Quantum_Positionspapier.pdf?__blob=publicationFile&v=4",
       "status": "skipped",
@@ -286,13 +244,6 @@
       "status": "skipped",
       "reason": "already-exists",
       "file": "public/timeline/International_GSMA_PQ.03_v2.0_Guidelines.pdf"
-    },
-    {
-      "label": "Germany:BSI — EU Joint Statement on PQC",
-      "url": "http://web.archive.org/web/20250528044107/https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Crypto/PQC-joint-statement.pdf",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/Germany_BSI_EU_Joint_Statement_on_PQC.pdf"
     },
     {
       "label": "Germany:BSI — TR-02102-1 PQC Update",
@@ -822,27 +773,6 @@
       "file": "public/timeline/United_States_Google_Google_Cloud_ML-KEM_Default_and_Chrome_MTC_Program.html"
     },
     {
-      "label": "Germany:BSI — Hybrid TLS Required for Classified Communications",
-      "url": "http://web.archive.org/web/20260419082057/https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-2.pdf",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/Germany_BSI_Hybrid_TLS_Required_for_Classified_Communications.pdf"
-    },
-    {
-      "label": "Germany:BSI — Hybrid IPsec and SSH Required",
-      "url": "http://web.archive.org/web/20220818112350/https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-3.pdf",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/Germany_BSI_Hybrid_IPsec_and_SSH_Required.pdf"
-    },
-    {
-      "label": "Germany:BSI — Full PQC Transition — Standalone Algorithms Required",
-      "url": "http://web.archive.org/web/20251211151428/https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/Germany_BSI_Full_PQC_Transition_Standalone_Algorithms_Required.pdf"
-    },
-    {
       "label": "European Union:EC — Cryptographic Inventory Mandate",
       "url": "https://digital-strategy.ec.europa.eu/en/library/recommendation-post-quantum-cryptography",
       "status": "skipped",
@@ -955,13 +885,6 @@
       "file": "public/timeline/Brazil_ITI_ICP-Brasil_Mandates_ML-DSA_and_ML-KEM_Certificate_Standards.html"
     },
     {
-      "label": "International:ITU-T — ITU-T X.1811 Quantum-Safe Security Guidelines for 5G Published",
-      "url": "http://web.archive.org/web/20240916202653/https://www.itu.int/rec/T-REC-X.1811-202104-P",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/International_ITU-T_ITU-T_X.1811_Quantum-Safe_Security_Guidelines_for_5G_Published.html"
-    },
-    {
       "label": "African Union:AUC — Malabo Convention Enters Into Force",
       "url": "http://web.archive.org/web/20260531032620/https://au.int/en/treaties/african-union-convention-cyber-security-and-personal-data-protection",
       "status": "skipped",
@@ -993,13 +916,6 @@
       "status": "skipped",
       "reason": "already-exists",
       "file": "public/timeline/Global_3GPP_SA3_3GPP_TR_33.841_PQC_Study.html"
-    },
-    {
-      "label": "Global:TCG — TPM 2.0 v1.85 PQC Library Specification Draft",
-      "url": "https://www.sdxcentral.com/news/tcg-integrates-post-quantum-algorithms-to-tpm-20-spec-for-enhanced-security/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/Global_TCG_TPM_2.0_v1.85_PQC_Library_Specification_Draft.html"
     },
     {
       "label": "South Africa:IR — POPIA Enforcement Begins",
@@ -1070,15 +986,6 @@
       "file": "public/timeline/Global_3GPP_SA3_3GPP_TR_33.938_PQC_Transition_Study.html",
       "sha256": "02184a625a7b9318e33308182557f82e9aa0b2c873063c48197b49d4e3644db8",
       "sizeBytes": 194770
-    },
-    {
-      "label": "United States:Ciena — 1.6T Quantum-Safe Optical Encryption",
-      "url": "http://web.archive.org/web/20260306115535/https://www.ciena.com/insights/blog/2026/1.6t-quantum-safe-encryption-protecting-critical-data-at-scale",
-      "status": "downloaded",
-      "reason": "wayback snapshot (bot-blocked origin)",
-      "file": "public/timeline/Ciena_wayback.html",
-      "sha256": "4393be59aecbbac1c65e9671fb91bc2e10f9edd58c929cb2b2ba8c57c5ca4597",
-      "sizeBytes": 140561
     },
     {
       "label": "United States:NIST — NIST SP 800-227 KEM Recommendations",
@@ -1232,6 +1139,159 @@
       "file": "public/timeline/Germany_BSI_BSI_TR-02102-1_2026_Edition.pdf",
       "sha256": "12f04ee22b64f4dd517f72d40924d53e1efd5731099d446bac7ef6cc8d63b6e8",
       "sizeBytes": 56314
+    },
+    {
+      "label": "Canada:CCCS — ITSP.40.111 v4 PQC Algorithms Approved",
+      "url": "https://www.cyber.gc.ca/en/guidance/cryptographic-algorithms-non-classified-protected-and-protected-b-information-itsp40111",
+      "status": "downloaded",
+      "reason": "resilient fetch (playwright-stealth)",
+      "file": "public/timeline/Canada_CCCS_ITSP_40_111_v4_PQC_Algorithms_Approved.html",
+      "sha256": "d4809be7b06f3c2219232ae0953d0ed6295f70ee76a8e3721eff88fbf04ec8e9",
+      "sizeBytes": 124854
+    },
+    {
+      "label": "Nigeria:NDPC — NDPA General Application Directive 2025",
+      "url": "https://ndpc.gov.ng/wp-content/uploads/2025/07/NDP-ACT-GAID-2025-MARCH-20TH.pdf",
+      "status": "downloaded",
+      "reason": "resilient fetch (curl_cffi:chrome124)",
+      "file": "public/timeline/Nigeria_NDPC_NDPA_General_Application_Directive_2025.pdf",
+      "sha256": "e4359e90c9a11cd772f9605c797d6f36af000c58a27bfba251fa37a89824cc5a",
+      "sizeBytes": 1830615
+    },
+    {
+      "label": "Spain:CCN — CCN-TEC 009 Post-Quantum Transition",
+      "url": "https://www.ccn.cni.es/gl/docman/documentos-publicos/boletines-pytec/499-ccn-tec-009-recomendaciones-transicion-postcuantica-segura-english/file",
+      "status": "downloaded",
+      "reason": "resilient fetch (curl_cffi:chrome124)",
+      "file": "public/timeline/Spain_CCN_CCN_TEC_009_Post_Quantum_Transition.pdf",
+      "sha256": "49dd74e588ded9b4635386a4aa7faf883028f78e5ff6073c91c65eac165e1354",
+      "sizeBytes": 844313
+    },
+    {
+      "label": "South Korea:MSIT — K-PQC Master Plan to 2035",
+      "url": "https://thequantuminsider.com/2026/05/06/korea-expands-post-quantum-cryptography-pilot/",
+      "status": "downloaded",
+      "reason": "resilient fetch (curl_cffi:chrome124)",
+      "file": "public/timeline/South_Korea_MSIT_K_PQC_Master_Plan_to_2035.html",
+      "sha256": "740613e3ebd09f79364918225c7d6c2b9f7e3b7ac5a8a16221f5d2df5e180c05",
+      "sizeBytes": 268494
+    },
+    {
+      "label": "Australia:ASD — ISM December 2024 Update",
+      "url": "https://www.cyber.gov.au/sites/default/files/2024-12/22.%20ISM%20-%20Guidelines%20for%20Cryptography%20(December%202024).pdf",
+      "status": "downloaded",
+      "reason": "upgraded Wayback->live (resilient fetch)",
+      "file": "public/timeline/Australia_ASD_ISM_December_2024_Update.pdf",
+      "sha256": "d696e70f1ce37fb94f8d4d5302f9485bf85b61160e0c9baa5bcb8ccfe3a032b5",
+      "sizeBytes": 1204322
+    },
+    {
+      "label": "Australia:ASD — ISM June 2025 Cryptography Guidelines Update",
+      "url": "https://www.cyber.gov.au/sites/default/files/2025-07/22.%20ISM%20-%20Guidelines%20for%20cryptography%20(June%202025).pdf",
+      "status": "downloaded",
+      "reason": "upgraded Wayback->live (resilient fetch)",
+      "file": "public/timeline/Australia_ASD_ISM_June_2025_Cryptography_Guidelines_Update.pdf",
+      "sha256": "af723f1310793381270cd029d9e39618b6a29bf7f03c3b2cd93613194fde2f86",
+      "sizeBytes": 1203207
+    },
+    {
+      "label": "Australia:ASD — ACSC Annual Cyber Threat Report 2024–25 — PQC as a National Priority",
+      "url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/annual-cyber-threat-report-2024-2025",
+      "status": "downloaded",
+      "reason": "upgraded Wayback->live (resilient fetch)",
+      "file": "public/timeline/Australia_ASD_ACSC_Annual_Cyber_Threat_Report_2024_25_PQC_as_a_National_Priority.html",
+      "sha256": "b70fdba0f57c4612f12c01abe6129e2c0c044ddcaa26165f47912c5c81dd23c4",
+      "sizeBytes": 480826
+    },
+    {
+      "label": "Australia:ASD — Commonwealth Cyber Security Posture in 2025",
+      "url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/the-commonwealth-cyber-security-posture-in-2025",
+      "status": "downloaded",
+      "reason": "upgraded Wayback->live (resilient fetch)",
+      "file": "public/timeline/Australia_ASD_Commonwealth_Cyber_Security_Posture_in_2025.html",
+      "sha256": "f8fabc1bb621be8f832837ad73bb816ea27a701685d1b4353a7b10d1d24f0a3d",
+      "sizeBytes": 372083
+    },
+    {
+      "label": "Australia:DISR — National Quantum Strategy",
+      "url": "https://www.industry.gov.au/publications/national-quantum-strategy",
+      "status": "downloaded",
+      "reason": "upgraded Wayback->live (resilient fetch)",
+      "file": "public/timeline/Australia_DISR_National_Quantum_Strategy.html",
+      "sha256": "8df4f3d7b9e2a942b1a69666586e932c69ada6d268676298fb18f93dfe78daa1",
+      "sizeBytes": 163585
+    },
+    {
+      "label": "France:ANSSI — PQC Position Paper Follow-up",
+      "url": "https://cyber.gouv.fr/sites/default/files/document/follow_up_position_paper_on_post_quantum_cryptography.pdf",
+      "status": "downloaded",
+      "reason": "upgraded Wayback->live (resilient fetch)",
+      "file": "public/timeline/France_ANSSI_PQC_Position_Paper_Follow_up.pdf",
+      "sha256": "88875a5b307e58b89cb01b3011152321a65d7fd71b0444b3833e29d6ce4a5be9",
+      "sizeBytes": 7663
+    },
+    {
+      "label": "Germany:BSI — EU Joint Statement on PQC",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Crypto/PQC-joint-statement.pdf",
+      "status": "downloaded",
+      "reason": "upgraded Wayback->live (resilient fetch)",
+      "file": "public/timeline/Germany_BSI_EU_Joint_Statement_on_PQC.pdf",
+      "sha256": "d5c6a14dc078135262242197622f30f38a94220eca2fff612d235d63e96c4d94",
+      "sizeBytes": 56211
+    },
+    {
+      "label": "Germany:BSI — Hybrid TLS Required for Classified Communications",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-2.pdf",
+      "status": "downloaded",
+      "reason": "upgraded Wayback->live (resilient fetch)",
+      "file": "public/timeline/Germany_BSI_Hybrid_TLS_Required_for_Classified_Communications.pdf",
+      "sha256": "df9ee1f381571bdc39cbee0ced8d7126396af1f10678cd0d53ff8e6c7c534200",
+      "sizeBytes": 56144
+    },
+    {
+      "label": "Germany:BSI — Hybrid IPsec and SSH Required",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-3.pdf",
+      "status": "downloaded",
+      "reason": "upgraded Wayback->live (resilient fetch)",
+      "file": "public/timeline/Germany_BSI_Hybrid_IPsec_and_SSH_Required.pdf",
+      "sha256": "891acc925767479421fac21e1e57c01925ddfeed5640043c68d70a1d528e558d",
+      "sizeBytes": 56515
+    },
+    {
+      "label": "Germany:BSI — Full PQC Transition — Standalone Algorithms Required",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf",
+      "status": "downloaded",
+      "reason": "upgraded Wayback->live (resilient fetch)",
+      "file": "public/timeline/Germany_BSI_Full_PQC_Transition_Standalone_Algorithms_Required.pdf",
+      "sha256": "5a49eaff12a54aaca1a7c8477276e45d6767efa3bc3bcc75eab751cba022bd16",
+      "sizeBytes": 56037
+    },
+    {
+      "label": "United States:Ciena — 1.6T Quantum-Safe Optical Encryption",
+      "url": "https://www.ciena.com/insights/blog/2026/1.6t-quantum-safe-encryption-protecting-critical-data-at-scale",
+      "status": "downloaded",
+      "reason": "upgraded Wayback->live (resilient fetch)",
+      "file": "public/timeline/United_States_Ciena_1_6T_Quantum_Safe_Optical_Encryption.html",
+      "sha256": "b2852d7ba47362094fad9996b46cd371cb24da995e845931b43f3b3978c799e3",
+      "sizeBytes": 131593
+    },
+    {
+      "label": "International:ITU-T — ITU-T X.1811 Quantum-Safe Security Guidelines for 5G Published",
+      "url": "https://www.itu.int/rec/T-REC-X.1811-202104-P",
+      "status": "downloaded",
+      "reason": "upgraded Wayback->live (resilient fetch)",
+      "file": "public/timeline/International_ITU_T_ITU_T_X_1811_Quantum_Safe_Security_Guidelines_for_5G_Published.html",
+      "sha256": "4c6094431ff0b3d710a20ad4539d9ea98b710b5fccab02374df0ef7d21ea357a",
+      "sizeBytes": 8939
+    },
+    {
+      "label": "Global:TCG — TPM 2.0 v1.85 PQC Library Specification Draft",
+      "url": "https://trustedcomputinggroup.org/resource/tpm-library-specification/",
+      "status": "downloaded",
+      "reason": "upgraded secondary->primary (resilient)",
+      "file": "public/timeline/Global_TCG_TPM_2.0_v1.85_primary.html",
+      "sha256": "2df95e03b11a764940f7f9609a9117313fe41f4947576e1249a962b100e32c1c",
+      "sizeBytes": 148520
     }
   ]
 }
