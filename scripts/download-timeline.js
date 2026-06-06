@@ -100,14 +100,19 @@ function parseCSV(content) {
 
 // ─── Find the latest timeline CSV ─────────────────────────────────────────────
 function findLatestTimelineCSV() {
-  const files = readdirSync(DATA_DIR).filter((f) => /^timeline_\d{8}\.csv$/.test(f))
-  if (files.length === 0) throw new Error('No timeline_MMDDYYYY.csv found in src/data/')
+  // Supports both timeline_MMDDYYYY.csv and same-day revisions timeline_MMDDYYYY_rN.csv.
+  // Sort by date descending, then revision descending — matching the app loader
+  // (src/data/timelineData.ts) and the enricher (find_latest_csv).
+  const files = readdirSync(DATA_DIR).filter((f) => /^timeline_\d{8}(_r\d+)?\.csv$/.test(f))
+  if (files.length === 0) throw new Error('No timeline_MMDDYYYY[_rN].csv found in src/data/')
+  const keyOf = (name) => {
+    const m = name.match(/timeline_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)
+    return [Number(`${m[3]}${m[1]}${m[2]}`), m[4] ? Number(m[4]) : 0]
+  }
   files.sort((a, b) => {
-    const parse = (name) => {
-      const m = name.match(/timeline_(\d{2})(\d{2})(\d{4})\.csv$/)
-      return new Date(`${m[3]}-${m[1]}-${m[2]}`)
-    }
-    return parse(b) - parse(a)
+    const [da, ra] = keyOf(a)
+    const [db, rb] = keyOf(b)
+    return db - da || rb - ra
   })
   return join(DATA_DIR, files[0])
 }
