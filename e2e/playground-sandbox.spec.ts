@@ -92,6 +92,40 @@ test.describe('Playground — Sandbox category', () => {
     await expect(firstTile).toBeVisible({ timeout: 10000 })
   })
 
+  test('when sandbox probe fails, Sandbox category + tiles disappear from the catalog', async ({
+    page,
+  }) => {
+    // Override the beforeEach stub: make /api/status reject so the probe lands
+    // in 'offline' state. Routes registered later take precedence.
+    await page.route(`${SANDBOX_ORIGIN}/api/status`, (route) => route.abort('failed'))
+
+    await page.goto('/playground')
+
+    // Wait for the chip to settle into "Sandbox offline" so we know the probe
+    // ran and state propagated to PlaygroundWorkshop's catalogTools/availableCategories.
+    await page.waitForFunction(
+      () => {
+        return Array.from(document.querySelectorAll('button')).some((b) =>
+          (b as HTMLButtonElement).innerText.includes('Sandbox offline')
+        )
+      },
+      undefined,
+      { timeout: 10000 }
+    )
+
+    // No "Sandbox" category pill (filter dropdown entry) — would render as
+    // "Sandbox <count>" if present. We exclude the chip itself by requiring a digit.
+    const sandboxPillCount = await page.evaluate(() => {
+      const buttons = Array.from(document.querySelectorAll('button')) as HTMLButtonElement[]
+      return buttons.filter((b) => /^Sandbox\s+\d/.test(b.innerText.trim())).length
+    })
+    expect(sandboxPillCount).toBe(0)
+
+    // No sandbox tool tiles in the grid (sbx-* hrefs).
+    const tileCount = await page.locator('a[href^="/playground/sbx-"]').count()
+    expect(tileCount).toBe(0)
+  })
+
   test('clicking a sandbox tile renders the iframe for its scenario', async ({ page }) => {
     await page.goto('/playground')
     await unhideWipTools(page)
