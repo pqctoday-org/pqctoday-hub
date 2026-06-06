@@ -10,6 +10,7 @@ import type {
   GanttCountryData,
 } from '../types/timeline'
 import { complianceFrameworks } from './complianceData'
+import { filterActive } from './loaderUtils'
 
 // Re-export types for backward compatibility
 export type {
@@ -104,13 +105,24 @@ interface RawTimelineRow {
   trusted_source_id_status: string
   data_quality_notes: string
   confidence_score?: string
+  // DS01 status-column schema (see loaderUtils.ts). Lowercase `status`
+  // distinguishes active vs deprecated/obsolete rows — distinct from the
+  // capital-S `Status` ("Completed"/"In Progress"/…) that feeds event.status.
+  status?: string
+  deprecated_at?: string
+  deprecated_reason?: string
+  related_standards?: string
 }
 
 export function parseTimelineCSV(csvContent: string): CountryData[] {
-  const { data: rows } = Papa.parse<RawTimelineRow>(csvContent.trim(), {
+  const { data: allRows } = Papa.parse<RawTimelineRow>(csvContent.trim(), {
     header: true,
     skipEmptyLines: true,
   })
+
+  // DS01: exclude deprecated/obsolete rows from the Gantt. Rows without a
+  // `status` column are treated as active (backwards-compatible).
+  const rows = filterActive(allRows)
 
   const countriesMap = new Map<string, CountryData>()
 
