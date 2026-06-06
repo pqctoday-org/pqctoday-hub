@@ -10,6 +10,7 @@ import {
   ExternalLink,
   Sparkles,
   ArrowRight,
+  Layers,
 } from 'lucide-react'
 import type { LibraryItem } from '../../data/libraryData'
 import { libraryEnrichments } from '../../data/libraryEnrichmentData'
@@ -164,11 +165,11 @@ export const DocumentCard = ({
         <span
           className={clsx(
             'inline-flex self-start items-center px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider',
-            BUCKET_STYLES[item.documentStatusBucket].badge
+            BUCKET_STYLES[item.groupStatusBucket ?? item.documentStatusBucket].badge
           )}
           title={item.documentStatus}
         >
-          {BUCKET_STYLES[item.documentStatusBucket].label}
+          {BUCKET_STYLES[item.groupStatusBucket ?? item.documentStatusBucket].label}
         </span>
         {isEnriched ? (
           <span
@@ -193,6 +194,18 @@ export const DocumentCard = ({
           sourceUrl={item.downloadUrl}
           compact
         />
+        {item.priorRevisions && item.priorRevisions.length > 0 && (
+          <span
+            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium text-muted-foreground bg-muted/40 border border-border"
+            title={`${item.priorRevisions.length} earlier revision${
+              item.priorRevisions.length === 1 ? '' : 's'
+            } — open details to view`}
+          >
+            <Layers size={10} aria-hidden="true" />
+            {item.priorRevisions.length} earlier revision
+            {item.priorRevisions.length === 1 ? '' : 's'}
+          </span>
+        )}
       </div>
 
       {cswp39 && (

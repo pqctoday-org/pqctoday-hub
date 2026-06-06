@@ -2,7 +2,27 @@
 import { MOCK_LIBRARY_CSV_CONTENT } from './mockTimelineData'
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import { loadLatestCSV, splitSemicolon } from './csvUtils'
-import { getDocumentStatusBucket, type DocumentStatusBucket } from '../utils/documentStatusBucket'
+import {
+  getDocumentStatusBucket,
+  getGroupStatusBucket,
+  type DocumentStatusBucket,
+} from '../utils/documentStatusBucket'
+
+/**
+ * A prior (deprecated) revision of a document, attached to its surviving active
+ * record so a single tile can link out to older versions. Distinct from the
+ * trust-engine "revisions" audit trail (`useRevisions` / revisions.jsonl).
+ */
+export interface PriorRevision {
+  referenceId: string
+  documentTitle: string
+  documentStatus: string
+  documentStatusBucket: DocumentStatusBucket
+  downloadUrl: string
+  supersededBy: string
+  deprecatedAt?: string
+  deprecatedReason?: string
+}
 
 export interface LibraryItem {
   referenceId: string
@@ -45,6 +65,13 @@ export interface LibraryItem {
    *  field. Derived in a single pass over `libraryData` at module load and
    *  used as the researcher persona's default "Most cited" sort. */
   citationCount?: number
+  /** Older (deprecated) revisions of this same document, collapsed into this
+   *  surviving tile. Present only when this record superseded ≥1 other. */
+  priorRevisions?: PriorRevision[]
+  /** Most-advanced lifecycle bucket across this record and its priorRevisions.
+   *  Tiles render this (falling back to documentStatusBucket) so a collapsed
+   *  group shows the furthest stage reached. */
+  groupStatusBucket?: DocumentStatusBucket
 }
 
 // C-001: Single source of truth for categories
@@ -177,6 +204,75 @@ interface RawLibraryRow {
   status?: string
   deprecated_at?: string
   deprecated_reason?: string
+  superseded_by?: string
+}
+
+/**
+ * Transform ONLY deprecated/obsolete rows into a `PriorRevision` (returns null
+ * for active rows). Run as a second pass over the latest CSV so deprecated
+ * revisions — dropped from the main grid by `transformLibraryRow` — can be
+ * attached to their surviving record.
+ */
+function transformDeprecatedRow(row: RawLibraryRow): PriorRevision | null {
+  if (row.status !== 'deprecated' && row.status !== 'obsolete') return null
+  if (!(row.superseded_by ?? '').trim()) return null
+  return {
+    referenceId: row.reference_id,
+    documentTitle: row.document_title,
+    documentStatus: row.document_status,
+    documentStatusBucket: getDocumentStatusBucket(row.document_status ?? ''),
+    downloadUrl: row.download_url,
+    supersededBy: (row.superseded_by ?? '').trim(),
+    deprecatedAt: row.deprecated_at || undefined,
+    deprecatedReason: row.deprecated_reason || undefined,
+  }
+}
+
+/** Extract the RFC number (as a string) from a record's id or URL, else null. */
+function rfcNumber(rec: { referenceId: string; downloadUrl: string }): string | null {
+  return (
+    /\bRFC[ -]?(\d{3,5})\b/i.exec(rec.referenceId)?.[1] ??
+    /rfc[-_/ ]?(\d{3,5})/i.exec(rec.downloadUrl)?.[1] ??
+    null
+  )
+}
+
+/**
+ * Attach prior (deprecated) revisions to their surviving active record, keyed by
+ * `supersededBy`, and compute `groupStatusBucket`. Deprecated rows are never
+ * added to the returned array — they only enrich the survivor — so the grid
+ * still renders one tile per logical document. Exported for unit testing.
+ *
+ * A prior is HIDDEN when it resolves to the same RFC number as the survivor
+ * (a pure id-alias such as `IETF RFC 8391` under `RFC 8391`): the tile still
+ * collapses the duplicate, but it is not surfaced as a genuine older revision.
+ */
+export function attachPriorRevisions(items: LibraryItem[], priors: PriorRevision[]): LibraryItem[] {
+  const bySurvivor = new Map<string, PriorRevision[]>()
+  for (const p of priors) {
+    if (!p.supersededBy) continue
+    const arr = bySurvivor.get(p.supersededBy) ?? []
+    arr.push(p)
+    bySurvivor.set(p.supersededBy, arr)
+  }
+  return items.map((item) => {
+    const revs = bySurvivor.get(item.referenceId)
+    if (!revs || revs.length === 0) return item
+    const itemRfc = rfcNumber(item)
+    const sorted = [...revs]
+      // hide same-RFC-number id-aliases (not a genuine older version)
+      .filter((rev) => !(itemRfc && rfcNumber(rev) === itemRfc))
+      .sort((a, b) => (b.deprecatedAt ?? '').localeCompare(a.deprecatedAt ?? ''))
+    if (sorted.length === 0) return item
+    return {
+      ...item,
+      priorRevisions: sorted,
+      groupStatusBucket: getGroupStatusBucket(
+        item.documentStatusBucket,
+        sorted.map((r) => r.documentStatusBucket)
+      ),
+    }
+  })
 }
 
 function transformLibraryRow(row: RawLibraryRow): LibraryItem | null {
@@ -254,8 +350,15 @@ function parseLibraryCSV(csvContent: string): LibraryItem[] {
     /__mock__$/,
     transformLibraryRow
   )
+  const { data: priors } = loadLatestCSV<RawLibraryRow, PriorRevision>(
+    modules,
+    /__mock__$/,
+    transformDeprecatedRow
+  )
 
-  return buildTree(items)
+  // Attach prior revisions to the FLAT list; the dependency tree is built last
+  // (in the export below) so children share the fully-enriched object references.
+  return attachPriorRevisions(items, priors)
 }
 
 function buildTree(items: LibraryItem[]): LibraryItem[] {
@@ -307,8 +410,15 @@ if (import.meta.env.VITE_MOCK_DATA === 'true') {
     true // withPrevious for status badges
   )
 
-  currentItems = buildTree(result.data)
-  previousItems = result.previousData ? buildTree(result.previousData) : []
+  const priorResult = loadLatestCSV<RawLibraryRow, PriorRevision>(
+    modules,
+    /library_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+    transformDeprecatedRow
+  )
+
+  // Keep currentItems FLAT + enriched; buildTree runs last (in the export below).
+  currentItems = attachPriorRevisions(result.data, priorResult.data)
+  previousItems = result.previousData ? result.previousData : []
   parsedMetadata = result.metadata
 }
 
@@ -343,12 +453,17 @@ export function computeCitationCounts(
 
 const citationCounts = computeCitationCounts(currentItems)
 
-// Inject status + citationCount into current items and export
-export const libraryData: LibraryItem[] = currentItems.map((item) => ({
-  ...item,
-  status: statusMap.get(item.referenceId),
-  citationCount: citationCounts.get(item.referenceId) ?? 0,
-}))
+// Inject status + citationCount, THEN build the dependency tree as the final step
+// so `children[]` reference the same fully-enriched objects as the top-level array
+// (priorRevisions/groupStatusBucket/status/citationCount all present). This is what
+// lets findByRef(...) resolve a child and still see priorRevisions in the detail view.
+export const libraryData: LibraryItem[] = buildTree(
+  currentItems.map((item) => ({
+    ...item,
+    status: statusMap.get(item.referenceId),
+    citationCount: citationCounts.get(item.referenceId) ?? 0,
+  }))
+)
 
 export const libraryMetadata = parsedMetadata
 
