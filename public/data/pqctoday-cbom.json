@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:pqctoday-cbom-20260602",
+  "serialNumber": "urn:uuid:pqctoday-cbom-20260604",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-06-02T00:00:00.000Z",
+    "timestamp": "2026-06-04T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -2212,7 +2212,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-DSA-44, ML-DSA-65, ML-DSA-87, ML-KEM-1024, ML-KEM-512, ML-KEM-768, X25519MLKEM768",
+          "parameterSetIdentifier": "ML-DSA-44, ML-DSA-65, ML-DSA-87, ML-KEM-1024, ML-KEM-512, ML-KEM-768, X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024",
           "primitive": "KEM"
         }
       },
@@ -2250,7 +2250,7 @@
         },
         {
           "name": "pqctoday:algorithm_implementations",
-          "value": "ML-DSA-44 (BoringSSL (Google)); ML-DSA-65 (BoringSSL (Google)); ML-DSA-87 (BoringSSL (Google)); ML-KEM-1024 (BoringSSL (Google)); ML-KEM-512 (BoringSSL (Google)); ML-KEM-768 (BoringSSL (Google)); X25519MLKEM768 (BoringSSL (Google Chrome))"
+          "value": "ML-DSA-44 (BoringSSL (Google)); ML-DSA-65 (BoringSSL (Google)); ML-DSA-87 (BoringSSL (Google)); ML-KEM-1024 (BoringSSL (Google)); ML-KEM-512 (BoringSSL (Google)); ML-KEM-768 (BoringSSL (Google)); X25519MLKEM768 (BoringSSL (Google Chrome)); SecP256r1MLKEM768 (BoringSSL (Google Chrome)); SecP384r1MLKEM1024 (BoringSSL (Google Chrome))"
         },
         {
           "name": "pqctoday:confidence_score",
@@ -2730,7 +2730,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "Classic-McEliece-348864, Classic-McEliece-460896, Classic-McEliece-8192128, FN-DSA-1024, FN-DSA-512, FrodoKEM-1344, FrodoKEM-640, FrodoKEM-976, HQC-128, HQC-192, HQC-256, LMS-SHA256 (H20/W8), MAYO-1, MAYO-2, MAYO-3, MAYO-5, ML-DSA-44, ML-DSA-65, ML-DSA-87, ML-KEM-1024, ML-KEM-512, ML-KEM-768, SLH-DSA-SHA2-128f, SLH-DSA-SHA2-128s, SLH-DSA-SHA2-192f, SLH-DSA-SHA2-192s, SLH-DSA-SHA2-256f, SLH-DSA-SHA2-256s, SLH-DSA-SHAKE-128f, SLH-DSA-SHAKE-128s, SLH-DSA-SHAKE-192f, SLH-DSA-SHAKE-192s, SLH-DSA-SHAKE-256f, SLH-DSA-SHAKE-256s, XMSS-SHA2_20",
+          "parameterSetIdentifier": "Classic-McEliece-348864, Classic-McEliece-460896, Classic-McEliece-8192128, FN-DSA-1024, FN-DSA-512, FrodoKEM-1344, FrodoKEM-640, FrodoKEM-976, HQC-128, HQC-192, HQC-256, LMS-SHA256 (H20/W8), MAYO-1, MAYO-2, MAYO-3, MAYO-5, ML-DSA-44, ML-DSA-65, ML-DSA-87, ML-KEM-1024, ML-KEM-512, ML-KEM-768, SLH-DSA-SHA2-128f, SLH-DSA-SHA2-128s, SLH-DSA-SHA2-192f, SLH-DSA-SHA2-192s, SLH-DSA-SHA2-256f, SLH-DSA-SHA2-256s, SLH-DSA-SHAKE-128f, SLH-DSA-SHAKE-128s, SLH-DSA-SHAKE-192f, SLH-DSA-SHAKE-192s, SLH-DSA-SHAKE-256f, SLH-DSA-SHAKE-256s, XMSS-SHA2_20, HAWK-1024, HAWK-512, SMAUG-T-128, SMAUG-T-192, SMAUG-T-256",
           "primitive": "KEM"
         }
       },
@@ -2768,7 +2768,7 @@
         },
         {
           "name": "pqctoday:algorithm_implementations",
-          "value": "Classic-McEliece-348864 (liboqs (Open Quantum Safe)); Classic-McEliece-460896 (liboqs (Open Quantum Safe)); Classic-McEliece-8192128 (liboqs (Open Quantum Safe)); FN-DSA-1024 (liboqs (Open Quantum Safe)); FN-DSA-512 (liboqs (Open Quantum Safe)); FrodoKEM-1344 (liboqs (Open Quantum Safe)); FrodoKEM-640 (liboqs (Open Quantum Safe)); FrodoKEM-976 (liboqs (Open Quantum Safe)); HQC-128 (liboqs (Open Quantum Safe)); HQC-192 (liboqs (Open Quantum Safe)); HQC-256 (liboqs (Open Quantum Safe)); LMS-SHA256 (H20/W8) (liboqs (Open Quantum Safe)); MAYO-1 (liboqs (Open Quantum Safe)); MAYO-2 (liboqs (Open Quantum Safe)); MAYO-3 (liboqs (Open Quantum Safe)); MAYO-5 (liboqs (Open Quantum Safe)); ML-DSA-44 (liboqs (Open Quantum Safe)); ML-DSA-65 (liboqs (Open Quantum Safe)); ML-DSA-87 (liboqs (Open Quantum Safe)); ML-KEM-1024 (liboqs (Open Quantum Safe)); ML-KEM-512 (liboqs (Open Quantum Safe)); ML-KEM-768 (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-128f (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-128s (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-192f (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-192s (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-256f (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-256s (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-128f (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-128s (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-192f (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-192s (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-256f (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-256s (liboqs (Open Quantum Safe)); XMSS-SHA2_20 (liboqs (Open Quantum Safe))"
+          "value": "Classic-McEliece-348864 (liboqs (Open Quantum Safe)); Classic-McEliece-460896 (liboqs (Open Quantum Safe)); Classic-McEliece-8192128 (liboqs (Open Quantum Safe)); FN-DSA-1024 (liboqs (Open Quantum Safe)); FN-DSA-512 (liboqs (Open Quantum Safe)); FrodoKEM-1344 (liboqs (Open Quantum Safe)); FrodoKEM-640 (liboqs (Open Quantum Safe)); FrodoKEM-976 (liboqs (Open Quantum Safe)); HQC-128 (liboqs (Open Quantum Safe)); HQC-192 (liboqs (Open Quantum Safe)); HQC-256 (liboqs (Open Quantum Safe)); LMS-SHA256 (H20/W8) (liboqs (Open Quantum Safe)); MAYO-1 (liboqs (Open Quantum Safe)); MAYO-2 (liboqs (Open Quantum Safe)); MAYO-3 (liboqs (Open Quantum Safe)); MAYO-5 (liboqs (Open Quantum Safe)); ML-DSA-44 (liboqs (Open Quantum Safe)); ML-DSA-65 (liboqs (Open Quantum Safe)); ML-DSA-87 (liboqs (Open Quantum Safe)); ML-KEM-1024 (liboqs (Open Quantum Safe)); ML-KEM-512 (liboqs (Open Quantum Safe)); ML-KEM-768 (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-128f (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-128s (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-192f (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-192s (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-256f (liboqs (Open Quantum Safe)); SLH-DSA-SHA2-256s (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-128f (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-128s (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-192f (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-192s (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-256f (liboqs (Open Quantum Safe)); SLH-DSA-SHAKE-256s (liboqs (Open Quantum Safe)); XMSS-SHA2_20 (liboqs (Open Quantum Safe)); HAWK-1024 (liboqs (Open Quantum Safe)); HAWK-512 (liboqs (Open Quantum Safe)); SMAUG-T-128 (liboqs (partial/experimental)); SMAUG-T-192 (liboqs (partial/experimental)); SMAUG-T-256 (liboqs (partial/experimental))"
         },
         {
           "name": "pqctoday:confidence_score",
@@ -4162,7 +4162,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "Classic-McEliece-348864, Classic-McEliece-460896, Classic-McEliece-8192128, FN-DSA-1024, FN-DSA-512, HQC-128, HQC-192, HQC-256, MAYO-1, MAYO-2, MAYO-3, MAYO-5, ML-DSA-44, ML-DSA-65, ML-DSA-87, ML-KEM-1024, ML-KEM-512, ML-KEM-768, SLH-DSA-SHA2-128f, SLH-DSA-SHA2-128s, SLH-DSA-SHA2-192f, SLH-DSA-SHA2-192s, SLH-DSA-SHA2-256f, SLH-DSA-SHA2-256s, SLH-DSA-SHAKE-128f, SLH-DSA-SHAKE-128s, SLH-DSA-SHAKE-192f, SLH-DSA-SHAKE-192s, SLH-DSA-SHAKE-256f, SLH-DSA-SHAKE-256s",
+          "parameterSetIdentifier": "Classic-McEliece-348864, Classic-McEliece-460896, Classic-McEliece-8192128, FN-DSA-1024, FN-DSA-512, HQC-128, HQC-192, HQC-256, MAYO-1, MAYO-2, MAYO-3, MAYO-5, ML-DSA-44, ML-DSA-65, ML-DSA-87, ML-KEM-1024, ML-KEM-512, ML-KEM-768, SLH-DSA-SHA2-128f, SLH-DSA-SHA2-128s, SLH-DSA-SHA2-192f, SLH-DSA-SHA2-192s, SLH-DSA-SHA2-256f, SLH-DSA-SHA2-256s, SLH-DSA-SHAKE-128f, SLH-DSA-SHAKE-128s, SLH-DSA-SHAKE-192f, SLH-DSA-SHAKE-192s, SLH-DSA-SHAKE-256f, SLH-DSA-SHAKE-256s, FrodoKEM-1344, FrodoKEM-640, FrodoKEM-976",
           "primitive": "Other"
         }
       },
@@ -4200,7 +4200,7 @@
         },
         {
           "name": "pqctoday:algorithm_implementations",
-          "value": "Classic-McEliece-348864 (PQClean); Classic-McEliece-460896 (PQClean); Classic-McEliece-8192128 (PQClean); FN-DSA-1024 (PQClean); FN-DSA-512 (PQClean); HQC-128 (PQClean); HQC-192 (PQClean); HQC-256 (PQClean); MAYO-1 (PQClean); MAYO-2 (PQClean); MAYO-3 (PQClean); MAYO-5 (PQClean); ML-DSA-44 (PQClean); ML-DSA-65 (PQClean); ML-DSA-87 (PQClean); ML-KEM-1024 (PQClean); ML-KEM-512 (PQClean); ML-KEM-768 (PQClean); SLH-DSA-SHA2-128f (PQClean); SLH-DSA-SHA2-128s (PQClean); SLH-DSA-SHA2-192f (PQClean); SLH-DSA-SHA2-192s (PQClean); SLH-DSA-SHA2-256f (PQClean); SLH-DSA-SHA2-256s (PQClean); SLH-DSA-SHAKE-128f (PQClean); SLH-DSA-SHAKE-128s (PQClean); SLH-DSA-SHAKE-192f (PQClean); SLH-DSA-SHAKE-192s (PQClean); SLH-DSA-SHAKE-256f (PQClean); SLH-DSA-SHAKE-256s (PQClean)"
+          "value": "Classic-McEliece-348864 (PQClean); Classic-McEliece-460896 (PQClean); Classic-McEliece-8192128 (PQClean); FN-DSA-1024 (PQClean); FN-DSA-512 (PQClean); HQC-128 (PQClean); HQC-192 (PQClean); HQC-256 (PQClean); MAYO-1 (PQClean); MAYO-2 (PQClean); MAYO-3 (PQClean); MAYO-5 (PQClean); ML-DSA-44 (PQClean); ML-DSA-65 (PQClean); ML-DSA-87 (PQClean); ML-KEM-1024 (PQClean); ML-KEM-512 (PQClean); ML-KEM-768 (PQClean); SLH-DSA-SHA2-128f (PQClean); SLH-DSA-SHA2-128s (PQClean); SLH-DSA-SHA2-192f (PQClean); SLH-DSA-SHA2-192s (PQClean); SLH-DSA-SHA2-256f (PQClean); SLH-DSA-SHA2-256s (PQClean); SLH-DSA-SHAKE-128f (PQClean); SLH-DSA-SHAKE-128s (PQClean); SLH-DSA-SHAKE-192f (PQClean); SLH-DSA-SHAKE-192s (PQClean); SLH-DSA-SHAKE-256f (PQClean); SLH-DSA-SHAKE-256s (PQClean); FrodoKEM-1344 (PQClean); FrodoKEM-640 (PQClean); FrodoKEM-976 (PQClean)"
         },
         {
           "name": "pqctoday:confidence_score",
@@ -4216,7 +4216,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "parameterSetIdentifier": "ML-DSA-44, ML-DSA-65, ML-DSA-87, ML-KEM-1024, ML-KEM-512, ML-KEM-768",
           "primitive": "KEM"
         }
       },
@@ -4250,7 +4250,11 @@
         },
         {
           "name": "pqctoday:algorithm_source",
-          "value": "capability_description"
+          "value": "algo_product_xref"
+        },
+        {
+          "name": "pqctoday:algorithm_implementations",
+          "value": "ML-DSA-44 (PQCL (NIST reference)); ML-DSA-65 (PQCL (NIST reference)); ML-DSA-87 (PQCL (NIST reference)); ML-KEM-1024 (PQCL (NIST reference)); ML-KEM-512 (PQCL (NIST reference)); ML-KEM-768 (PQCL (NIST reference))"
         },
         {
           "name": "pqctoday:confidence_score",
@@ -6209,7 +6213,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
+          "parameterSetIdentifier": "SecP256r1MLKEM768, SecP384r1MLKEM1024, X25519MLKEM768",
           "primitive": "KEM"
         }
       },
@@ -6239,7 +6243,11 @@
         },
         {
           "name": "pqctoday:algorithm_source",
-          "value": "capability_description"
+          "value": "algo_product_xref"
+        },
+        {
+          "name": "pqctoday:algorithm_implementations",
+          "value": "SecP256r1MLKEM768 (Cloudflare PQ TLS); SecP384r1MLKEM1024 (Cloudflare PQ TLS); X25519MLKEM768 (Cloudflare PQ TLS)"
         },
         {
           "name": "pqctoday:confidence_score",
@@ -9765,7 +9773,11 @@
       "version": "Current",
       "purl": "pkg:github/cisco/hash-sigs",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "LMS-SHA256 (H20/W8)",
+          "primitive": "Signature"
+        }
       },
       "description": "Reference C implementation of LMS and HSS stateful hash-based signatures per RFC 8554, by David McGrew (Cisco) — co-author of RFC 8554. Supports all NIST SP 800-208 parameter sets. Full key generation, signing, and verification. Used as integration basis by multiple downstream projects including wolfSSL.",
       "externalReferences": [
@@ -9797,7 +9809,11 @@
         },
         {
           "name": "pqctoday:algorithm_source",
-          "value": "capability_description"
+          "value": "algo_product_xref"
+        },
+        {
+          "name": "pqctoday:algorithm_implementations",
+          "value": "LMS-SHA256 (H20/W8) (hash-sigs (Cisco reference))"
         },
         {
           "name": "pqctoday:confidence_score",
@@ -9812,7 +9828,11 @@
       "version": "Current",
       "purl": "pkg:github/XMSS/xmss-reference",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "XMSS-SHA2_20",
+          "primitive": "Hash"
+        }
       },
       "description": "Official C reference implementation of XMSS and XMSS^MT per RFC 8391, maintained by the original XMSS authors. Covers all RFC 8391 parameter sets with SHA-2 and SHAKE hash functions. Includes key generation, signing, verification, and state persistence. Canonical source used to validate other XMSS implementations.",
       "externalReferences": [
@@ -9844,7 +9864,11 @@
         },
         {
           "name": "pqctoday:algorithm_source",
-          "value": "capability_description"
+          "value": "algo_product_xref"
+        },
+        {
+          "name": "pqctoday:algorithm_implementations",
+          "value": "XMSS-SHA2_20 (XMSS Reference Implementation)"
         },
         {
           "name": "pqctoday:confidence_score",
@@ -38172,6 +38196,438 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "70"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "e1c5b21a9992918e",
+      "name": "Classic McEliece Reference",
+      "version": "Current",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "Classic-McEliece-348864, Classic-McEliece-460896, Classic-McEliece-8192128",
+          "primitive": "KEM"
+        }
+      },
+      "description": "Reference C implementation of Classic McEliece, NIST PQC Round 4 KEM finalist based on binary Goppa codes (1978).",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://classic.mceliece.org/"
+        },
+        {
+          "type": "website",
+          "url": "https://classic.mceliece.org/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "classic-mceliece-reference"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "algo_product_xref"
+        },
+        {
+          "name": "pqctoday:algorithm_implementations",
+          "value": "Classic-McEliece-348864 (Classic McEliece Reference); Classic-McEliece-460896 (Classic McEliece Reference); Classic-McEliece-8192128 (Classic McEliece Reference)"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "ee8fa9e28670fa27",
+      "name": "Falcon Reference Implementation",
+      "version": "Current",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "FN-DSA-1024, FN-DSA-512",
+          "primitive": "Signature"
+        }
+      },
+      "description": "Reference C implementation of Falcon (Fast Fourier lattice-based Compact signatures over NTRU), NIST PQC standard alternative signature.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://falcon-sign.info/"
+        },
+        {
+          "type": "website",
+          "url": "https://falcon-sign.info/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "falcon-reference-implementation"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "algo_product_xref"
+        },
+        {
+          "name": "pqctoday:algorithm_implementations",
+          "value": "FN-DSA-1024 (Falcon Reference Implementation); FN-DSA-512 (Falcon Reference Implementation)"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "214dfa0729df8162",
+      "name": "HAWK Reference Implementation",
+      "version": "Current",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "HAWK-1024, HAWK-512",
+          "primitive": "Signature"
+        }
+      },
+      "description": "Reference C implementation of HAWK, a lattice-based signature scheme over NTRU lattices. NIST PQC Additional Signatures Round 2.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://hawk-sign.info/"
+        },
+        {
+          "type": "website",
+          "url": "https://hawk-sign.info/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "hawk-reference-implementation"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "algo_product_xref"
+        },
+        {
+          "name": "pqctoday:algorithm_implementations",
+          "value": "HAWK-1024 (HAWK Reference Implementation); HAWK-512 (HAWK Reference Implementation)"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "e6c45dd65d51421d",
+      "name": "HQC Reference Implementation",
+      "version": "Current",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "HQC-128, HQC-192, HQC-256",
+          "primitive": "KEM"
+        }
+      },
+      "description": "Reference C implementation of HQC (Hamming Quasi-Cyclic), code-based KEM selected by NIST in March 2025 as a backup KEM alongside ML-KEM.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://pqc-hqc.org/"
+        },
+        {
+          "type": "website",
+          "url": "https://pqc-hqc.org/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "hqc-reference-implementation"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "algo_product_xref"
+        },
+        {
+          "name": "pqctoday:algorithm_implementations",
+          "value": "HQC-128 (HQC Reference Implementation); HQC-192 (HQC Reference Implementation); HQC-256 (HQC Reference Implementation)"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "e9101ab33b98cbc3",
+      "name": "KpqClean (Korean PQC Reference)",
+      "version": "Current",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "AIMer-128f, AIMer-192f, AIMer-256f, HAETAE-2, HAETAE-3, HAETAE-5, NTRU+-1152, NTRU+-1277, NTRU+-768, SMAUG-T-128, SMAUG-T-192, SMAUG-T-256",
+          "primitive": "Other"
+        }
+      },
+      "description": "Clean reference implementations of all KpqC (Korean Post-Quantum Cryptography) competition algorithms, modelled on PQClean.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/kpqc-cryptocraft/KpqClean"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/kpqc-cryptocraft/KpqClean"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "kpqclean-korean-reference"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "algo_product_xref"
+        },
+        {
+          "name": "pqctoday:algorithm_implementations",
+          "value": "AIMer-128f (KpqClean (Korean reference)); AIMer-192f (KpqClean (Korean reference)); AIMer-256f (KpqClean (Korean reference)); HAETAE-2 (KpqClean (Korean reference)); HAETAE-3 (KpqClean (Korean reference)); HAETAE-5 (KpqClean (Korean reference)); NTRU+-1152 (KpqClean (Korean reference)); NTRU+-1277 (KpqClean (Korean reference)); NTRU+-768 (KpqClean (Korean reference)); SMAUG-T-128 (KpqClean (Korean reference)); SMAUG-T-192 (KpqClean (Korean reference)); SMAUG-T-256 (KpqClean (Korean reference))"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "d7cf93f7d7817db8",
+      "name": "Microsoft PQCrypto-LWEKE",
+      "version": "Current",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "FrodoKEM-1344, FrodoKEM-640, FrodoKEM-976",
+          "primitive": "KEM"
+        }
+      },
+      "description": "Microsoft Research reference implementation of FrodoKEM, a conservative lattice-based KEM using standard LWE (not Ring-LWE).",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/microsoft/PQCrypto-LWEKE"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/microsoft/PQCrypto-LWEKE"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "microsoft-pqcrypto-lweke"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "algo_product_xref"
+        },
+        {
+          "name": "pqctoday:algorithm_implementations",
+          "value": "FrodoKEM-1344 (Microsoft PQCrypto-LWEKE); FrodoKEM-640 (Microsoft PQCrypto-LWEKE); FrodoKEM-976 (Microsoft PQCrypto-LWEKE)"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "2f4c9b3a0ab4f2ec",
+      "name": "PQMagic (Shanghai Jiao Tong University)",
+      "version": "Current",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "Aigis-enc-L1, Aigis-enc-L5, Aigis-sig-L1, Aigis-sig-L5",
+          "primitive": "Hash"
+        }
+      },
+      "description": "PQC algorithm library from Shanghai Jiao Tong University implementing NIST PQC and Chinese candidate algorithms.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/pqcrypto-cn/PQMagic"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/pqcrypto-cn/PQMagic"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "pqmagic-shanghai-jiao-tong-university"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "algo_product_xref"
+        },
+        {
+          "name": "pqctoday:algorithm_implementations",
+          "value": "Aigis-enc-L1 (PQMagic (Shanghai Jiao Tong University)); Aigis-enc-L5 (PQMagic (Shanghai Jiao Tong University)); Aigis-sig-L1 (PQMagic (Shanghai Jiao Tong University)); Aigis-sig-L5 (PQMagic (Shanghai Jiao Tong University))"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "c5fbab6f2cf8244b",
+      "name": "SPHINCS+ Reference",
+      "version": "Current",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "SLH-DSA-SHA2-128f, SLH-DSA-SHA2-128s, SLH-DSA-SHA2-192f, SLH-DSA-SHA2-192s, SLH-DSA-SHA2-256f, SLH-DSA-SHA2-256s, SLH-DSA-SHAKE-128f, SLH-DSA-SHAKE-128s, SLH-DSA-SHAKE-192f, SLH-DSA-SHAKE-192s, SLH-DSA-SHAKE-256f, SLH-DSA-SHAKE-256s",
+          "primitive": "Signature"
+        }
+      },
+      "description": "Official reference C implementation of SPHINCS+, the stateless hash-based signature scheme. SPHINCS+ is the basis for the NIST standard SLH-DSA (FIPS 205).",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/sphincs/sphincsplus"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/sphincs/sphincsplus"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "sphincs-reference"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "algo_product_xref"
+        },
+        {
+          "name": "pqctoday:algorithm_implementations",
+          "value": "SLH-DSA-SHA2-128f (SPHINCS+ Reference); SLH-DSA-SHA2-128s (SPHINCS+ Reference); SLH-DSA-SHA2-192f (SPHINCS+ Reference); SLH-DSA-SHA2-192s (SPHINCS+ Reference); SLH-DSA-SHA2-256f (SPHINCS+ Reference); SLH-DSA-SHA2-256s (SPHINCS+ Reference); SLH-DSA-SHAKE-128f (SPHINCS+ Reference); SLH-DSA-SHAKE-128s (SPHINCS+ Reference); SLH-DSA-SHAKE-192f (SPHINCS+ Reference); SLH-DSA-SHAKE-192s (SPHINCS+ Reference); SLH-DSA-SHAKE-256f (SPHINCS+ Reference); SLH-DSA-SHAKE-256s (SPHINCS+ Reference)"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
         }
       ]
     }
