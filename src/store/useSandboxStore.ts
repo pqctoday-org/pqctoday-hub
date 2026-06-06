@@ -55,13 +55,17 @@ export const SANDBOX_CATEGORY = 'Sandbox' as const
 export function filterToolsBySandboxAvailability<T extends { category: string }>(
   tools: readonly T[],
   status: SandboxStatus
-): readonly T[] {
-  return isSandboxAvailable(status) ? tools : tools.filter((t) => t.category !== SANDBOX_CATEGORY)
+): T[] {
+  return isSandboxAvailable(status)
+    ? [...tools]
+    : tools.filter((t) => t.category !== SANDBOX_CATEGORY)
 }
 
 export function availableCategoriesForSandboxStatus<C extends string>(
   categories: readonly C[],
   status: SandboxStatus
-): readonly C[] {
-  return isSandboxAvailable(status) ? categories : categories.filter((c) => c !== SANDBOX_CATEGORY)
+): C[] {
+  return isSandboxAvailable(status)
+    ? [...categories]
+    : categories.filter((c) => c !== SANDBOX_CATEGORY)
 }
