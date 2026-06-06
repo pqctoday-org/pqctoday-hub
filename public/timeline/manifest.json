@@ -2,7 +2,7 @@
   "generated": "2026-06-06T16:50:47.525Z",
   "source": "src/data/timeline_06062026.csv",
   "summary": {
-    "downloaded": 1,
+    "downloaded": 2,
     "skipped": 152,
     "failed": 0,
     "persisted_skip": 5
@@ -933,12 +933,6 @@
       "file": "public/timeline/Germany_Infineon_First_CC_EAL6_PQC_Security_Controller.html"
     },
     {
-      "label": "United States:Ciena — 1.6T Quantum-Safe Optical Encryption",
-      "url": "https://www.ciena.com/insights/blog/2026/1.6t-quantum-safe-encryption-protecting-critical-data-at-scale",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
-    },
-    {
       "label": "Germany:Adva — BSI-Approved 400G PQC Encryptor",
       "url": "https://www.advasecurity.com/en/newsroom/press-releases/20250925-adva-network-security-scores-world-first-with-bsi-approved-400g-encryption-solution",
       "status": "skipped",
@@ -1073,6 +1067,24 @@
       "url": "https://www.bsi.bund.de/",
       "status": "skipped",
       "reason": "root-homepage"
+    },
+    {
+      "label": "Global:3GPP SA3 — 3GPP TR 33.938 PQC Transition Study",
+      "url": "https://www.3gpp.org/DynaReport/33938.htm",
+      "status": "downloaded",
+      "reason": "manual-add: 3GPP SA3 PQC transition study (corrects TR 33.841 mislabel)",
+      "file": "public/timeline/Global_3GPP_SA3_3GPP_TR_33.938_PQC_Transition_Study.html",
+      "sha256": "02184a625a7b9318e33308182557f82e9aa0b2c873063c48197b49d4e3644db8",
+      "sizeBytes": 194770
+    },
+    {
+      "label": "United States:Ciena — 1.6T Quantum-Safe Optical Encryption",
+      "url": "http://web.archive.org/web/20260306115535/https://www.ciena.com/insights/blog/2026/1.6t-quantum-safe-encryption-protecting-critical-data-at-scale",
+      "status": "downloaded",
+      "reason": "wayback snapshot (bot-blocked origin)",
+      "file": "public/timeline/Ciena_wayback.html",
+      "sha256": "4393be59aecbbac1c65e9671fb91bc2e10f9edd58c929cb2b2ba8c57c5ca4597",
+      "sizeBytes": 140561
     }
   ]
 }
