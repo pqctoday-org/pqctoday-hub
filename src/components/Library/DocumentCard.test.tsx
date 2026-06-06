@@ -135,3 +135,49 @@ describe('DocumentCard — CSWP 39 cluster', () => {
     expect(screen.getByTitle(/Governance — 1 requirement;/i)).toBeInTheDocument()
   })
 })
+
+describe('DocumentCard — revision collapse', () => {
+  it('shows no "earlier revisions" indicator for a standalone doc', () => {
+    render(
+      <MemoryRouter>
+        <DocumentCard item={baseItem} onViewDetails={() => {}} />
+      </MemoryRouter>
+    )
+    expect(screen.queryByText(/earlier revision/i)).toBeNull()
+  })
+
+  it('shows the "N earlier revisions" indicator and the group-status badge', () => {
+    const item: LibraryItem = {
+      ...baseItem,
+      documentStatusBucket: 'Draft',
+      groupStatusBucket: 'Published',
+      priorRevisions: [
+        {
+          referenceId: 'OLD-1',
+          documentTitle: 'Old One',
+          documentStatus: 'Internet-Draft',
+          documentStatusBucket: 'Draft',
+          downloadUrl: 'https://example.org/old-1',
+          supersededBy: 'TEST-DOC-001',
+        },
+        {
+          referenceId: 'OLD-2',
+          documentTitle: 'Old Two',
+          documentStatus: 'Expired',
+          documentStatusBucket: 'Expired',
+          downloadUrl: 'https://example.org/old-2',
+          supersededBy: 'TEST-DOC-001',
+        },
+      ],
+    }
+    render(
+      <MemoryRouter>
+        <DocumentCard item={item} onViewDetails={() => {}} />
+      </MemoryRouter>
+    )
+    expect(screen.getByText(/2 earlier revisions/i)).toBeInTheDocument()
+    // group badge reflects the most-advanced bucket (Published), not the survivor's Draft
+    expect(screen.getByText('Published')).toBeInTheDocument()
+    expect(screen.queryByText('Draft')).toBeNull()
+  })
+})
