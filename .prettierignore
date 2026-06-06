@@ -42,3 +42,15 @@ public/compliance-docs/**
 # verified by src/__tests__/corpus-trust-invariants.test.ts.
 public/data/rag-corpus.json
 public/data/embeddings-meta.json
+
+# OSCAL + CBOM trust-engine artefacts — same constraint as rag-corpus above.
+# scripts/generate-oscal.ts + scripts/generate-cbom.ts emit deterministic
+# JSON whose sha256 is recorded in the matching .sig file. Prettier
+# reformatting silently invalidates verification (caught after #300 made
+# the generators deterministic but did not extend this ignore list).
+public/data/pqctoday-oscal.json
+public/data/pqctoday-oscal-full.json
+public/data/pqctoday-oscal-governance.json
+public/data/pqctoday-oscal-assessment-plan.json
+public/data/pqctoday-cbom.json
+public/data/community-signals.json
