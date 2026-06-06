@@ -1,31 +1,31 @@
 ---
 generated: 2026-06-06
 collection: timeline
-documents_processed: 4
+documents_processed: 1
 enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 ---
 
-## Canada:CCCS — ITSP.40.111 v4 PQC Algorithms Approved
+## European Union:ECCG — Agreed Cryptographic Algorithms v2
 
-- **Reference ID**: Canada:CCCS — ITSP.40.111 v4 PQC Algorithms Approved
-- **Title**: ITSP.40.111 v4 PQC Algorithms Approved
-- **Authors**: Canadian Centre for Cyber Security
-- **Publication Date**: 2025-03-01
+- **Reference ID**: European Union:ECCG — Agreed Cryptographic Algorithms v2
+- **Title**: Agreed Cryptographic Algorithms v2
+- **Authors**: European Cybersecurity Certification Group
+- **Publication Date**: 2025-05-01
 - **Last Updated**: Not specified
-- **Document Status**: New
-- **Main Topic**: CCCS ITSP.40.111 v4 approves NIST FIPS 203/204/205 algorithms for protecting Government of Canada information.
-- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
+- **Document Status**: Validated
+- **Main Topic**: Guidelines on agreed cryptographic mechanisms, including PQC, for ICT products submitted to EUCC certification.
+- **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: Canada; Bodies: Canadian Centre for Cyber Security; Government of Canada
+- **Applicable Regions / Bodies**: Regions: European Union; Bodies: European Cybersecurity Certification Group (ECCG), European Union Agency for Cybersecurity (ENISA)
 - **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: None detected
 - **Protocols Covered**: None detected
 - **Infrastructure Layers**: None detected
-- **Standardization Bodies**: NIST
-- **Compliance Frameworks Referenced**: FIPS 203; FIPS 204; FIPS 205
+- **Standardization Bodies**: European Cybersecurity Certification Group (ECCG)
+- **Compliance Frameworks Referenced**: Common Criteria, EUCC scheme, Regulation (EU) 2019/881, Implementing Regulation (EU) 2024/482
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: NIST FIPS 203/204/205 are approved for use; ML-KEM, ML-DSA, and SLH-DSA are the specific algorithms approved; Applicability covers non-classified, Protected A, and Protected B Government of Canada information
+- **Key Takeaways**: Developers and evaluators should use agreed cryptographic mechanisms from ACM v2 for EUCC certification; The document supports the EUCC scheme for ICT product certification; PQC mechanisms have been added to the agreed cryptographic mechanisms in version 2; Evaluators must verify that protection profiles and ICT products rely on agreed mechanisms.
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: No
@@ -40,76 +40,9 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Compliance Officer; Security Architect
+- **Target Audience**: Developer; Security Architect; Compliance Officer
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Compliance; Algorithms; Migration-program
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Lattice; Hash-based
-- **PQC Round**: Standardised
-- **Phase Classification Rationale**: The document represents a Guidance phase event as it issues an approval directive (ITSP.40.111 v4) from the Canadian Centre for Cyber Security, authorizing the use of specific standardized algorithms for government information protection.
-- **Regulatory Mandate Level**: Mandatory
-- **Sector / Industry Applicability**: Government
-- **Migration Urgency & Priority**: Near-Term
-- **Phase Transition Narrative**: Moves from Standardization to Adoption — signals formal authorization for Government of Canada entities to deploy NIST-standardized PQC algorithms.
-- **Historical Significance**: This milestone marks the formal adoption of NIST FIPS 203/204/205 by the Canadian government, establishing a regulatory baseline for PQC usage in protected government information systems.
-- **Implementation Timeline Dates**: None detected
-- **Successor Events & Dependencies**: Requires implementation of ML-KEM, ML-DSA, and SLH-DSA in systems handling non-classified, Protected A, and Protected B information.
-- **Source Document Title**: ITSP.40.111 v4 PQC Algorithms Approved
-- **Source Document Publication Date**: None detected
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Source Document**: Canada_CCCS_ITSP_40_111_v4_PQC_Algorithms_Approved.html (124,854 bytes, 1,615 extracted chars)
-- **Extraction Timestamp**: 2026-06-06T14:37:13
-
----
-
-## Nigeria:NDPC — NDPA General Application Directive 2025
-
-- **Reference ID**: Nigeria:NDPC — NDPA General Application Directive 2025
-- **Title**: NDPA General Application Directive 2025
-- **Authors**: Nigeria Data Protection Commission
-- **Publication Date**: 2025-03-20
-- **Last Updated**: Not specified
-- **Document Status**: New
-- **Main Topic**: Operational directive implementing the Nigeria Data Protection Act 2023, establishing compliance obligations for data controllers and processors regarding privacy and security of processing.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: Nigeria; Bodies: Nigeria Data Protection Commission
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: Nigeria Data Protection Act 2023; Nigeria Data Protection Regulation 2019
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Data controllers must implement technical and organizational measures to mitigate risks associated with data value, volume, variety, velocity, and veracity; The NDPR 2019 is ceased as a legal instrument, replaced by the GAID 2025; Data Protection Officers must undergo credential assessment and submit semi-annual reports; Cross-border data transfers require adherence to specific guidance and adequacy conditions; Organizations must conduct Data Privacy Impact Assessments and maintain records of processing activities.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Compliance Officer; Data Protection Officer; Security Architect
-- **Implementation Prerequisites**: Designation of Data Protection Officer; Filing of Compliance Audit Returns; Data Privacy Impact Assessment; Internal Sensitisation and Training on Privacy
-- **Relevant PQC Today Features**: compliance-strategy; pqc-governance; data-asset-sensitivity
+- **Relevant PQC Today Features**: Compliance; Migrate; Algorithms
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -122,154 +55,20 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Phase Classification Rationale**: The document is a "General Application and Implementation Directive" issued by a regulatory commission to enforce statutory obligations under the Nigeria Data Protection Act 2023.
-- **Regulatory Mandate Level**: Mandatory
-- **Sector / Industry Applicability**: All Sectors
-- **Migration Urgency & Priority**: Near-Term
-- **Phase Transition Narrative**: Moves from general legislative enactment (NDP Act 2023) to specific operational compliance requirements (GAID 2025), replacing previous regulations (NDPR 2019).
-- **Historical Significance**: Represents the formal operationalization of Nigeria's national data protection framework, establishing specific security-of-processing obligations that drive cryptographic controls.
-- **Implementation Timeline Dates**: 2025: GAID issued and NDPR 2019 ceased
-- **Successor Events & Dependencies**: Requires implementation of technical and organizational measures for data security; Depends on the Nigeria Data Protection Act 2023.
-- **Source Document Title**: NIGERIA DATA PROTECTION ACT (NDP ACT) 2023 GENERAL APPLICATION AND IMPLEMENTATION DIRECTIVE (GAID) 2025
-- **Source Document Publication Date**: 2025
-- **Country Migration Dates**: Nigeria: 2025 — GAID issued and NDPR 2019 ceased
-- **Timeline Cross-Reference**: Nigeria 2025: CONSISTENT (NDPA General Application Directive 2025)
-- **Source Document**: Nigeria_NDPC_NDPA_General_Application_Directive_2025.pdf (1,830,615 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-06-06T14:39:20
-
----
-
-## Spain:CCN — CCN-TEC 009 Post-Quantum Transition
-
-- **Reference ID**: Spain:CCN — CCN-TEC 009 Post-Quantum Transition
-- **Title**: CCN-TEC 009 Post-Quantum Transition
-- **Authors**: Centro Criptológico Nacional
-- **Publication Date**: 2022-12-01
-- **Last Updated**: Not specified
-- **Document Status**: New
-- **Main Topic**: Spain's National Cryptologic Centre provides recommendations and a migration plan for transitioning to post-quantum cryptography to protect against future quantum computing threats.
-- **PQC Algorithms Covered**: CRYSTALS-Kyber; CRYSTALS-Dilithium; Falcon; SPHINCS+; BIKE; HQC; Classic McEliece; SIKE
-- **Quantum Threats Addressed**: Shor's Algorithm; Grover's Algorithm; Simon's Algorithm; Store now, decrypt later
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: Spain; Bodies: Centro Criptológico Nacional (CCN)
-- **Leaders Contributions Mentioned**: Peter Shor (published quantum algorithms breaking IFP and DLP); Michele Mosca (Theorem mentioned in index)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: NIST
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: RSA; ElGamal; Elliptic curve-based cryptosystems
-- **Key Takeaways**: Organizations must migrate to quantum-resistant systems to counter the "store now, decrypt later" threat; Hybrid solutions are recommended for the transition; Crypto-agility is essential for future-proofing cryptographic infrastructure; Symmetric key lengths should be doubled to maintain security against Grover's algorithm.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Hybrid solutions; Crypto-agility
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: No
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: Classic McEliece has large public key size
-- **Target Audience**: CISO; Security Architect; Policy Maker
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Timeline; Threats; Migrate; Algorithms; crypto-agility
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Lattice; Code-based; Hash-based; Isogeny
-- **PQC Round**: Round 3
-- **Phase Classification Rationale**: The document is titled "Recommendations for a safe post-quantum transition" and explicitly states it is published to "raise awareness" and provide "recommendations," indicating a guidance phase rather than a mandatory regulation.
+- **Phase Classification Rationale**: The document is a published guideline (Version 2, May 2025) that adds PQC mechanisms to the agreed list for EUCC certification, representing a standardization/guidance phase rather than a specific migration deadline or research phase.
 - **Regulatory Mandate Level**: Recommended
 - **Sector / Industry Applicability**: All Sectors
 - **Migration Urgency & Priority**: Long-Term
-- **Phase Transition Narrative**: Moves from Research/Awareness to Strategic Planning — signals the beginning of national-level guidance for PQC migration in Spain.
-- **Historical Significance**: Represents Spain's primary national PQC guidance document, establishing a framework for organizations to begin preparing for quantum threats.
+- **Phase Transition Narrative**: Moves from classical-only agreed mechanisms to including PQC mechanisms, enabling the certification of ICT products with post-quantum cryptography under the EUCC scheme.
+- **Historical Significance**: This is the first version of the EUCC Agreed Cryptographic Mechanisms guidelines to explicitly include PQC mechanisms, signaling formal recognition of PQC in EU cybersecurity certification.
 - **Implementation Timeline Dates**: None detected
-- **Successor Events & Dependencies**: Depends on NIST standardization process completion; Enables organizations to start migration planning.
-- **Source Document Title**: CCN-TEC 009 Recommendations for a safe post-quantum transition
-- **Source Document Publication Date**: December 2022
+- **Successor Events & Dependencies**: Requires adoption of ACM v2 by developers and evaluators; Enables EUCC certification of products using PQC mechanisms.
+- **Source Document Title**: EUCC GUIDELINES ON CRYPTOGRAPHY: AGREED CRYPTOGRAPHIC MECHANISMS VERSION 2 | MAY 2025
+- **Source Document Publication Date**: May 2025
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
-- **Source Document**: Spain_CCN_CCN_TEC_009_Post_Quantum_Transition.pdf (844,313 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-06-06T14:41:53
-
----
-
-## South Korea:MSIT — K-PQC Master Plan to 2035
-
-- **Reference ID**: South Korea:MSIT — K-PQC Master Plan to 2035
-- **Title**: K-PQC Master Plan to 2035
-- **Authors**: Ministry of Science and ICT
-- **Publication Date**: 2023-07-01
-- **Last Updated**: Not specified
-- **Document Status**: New
-- **Main Topic**: South Korea's Ministry of Science and ICT is expanding its post-quantum cryptography pilot program to telecommunications, finance, transportation, defense, and space sectors as part of a roadmap to achieve full-cycle PQC technology self-reliance by 2030.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: attacks from quantum computers
-- **Migration Timeline Info**: 2030: complete full-cycle PQC technology self-reliance; 2035: migrate national cryptographic systems to PQC (from description)
-- **Applicable Regions / Bodies**: Regions: South Korea; Bodies: Ministry of Science and ICT (MSIT), Korea Institute of Science and Technology Information, Gyeonggi Province, Korea Road Traffic Authority, Ministry of National Defense
-- **Leaders Contributions Mentioned**: Lim Jung-kyu, Director General for Information Security and Network Policy at MSIT, stated that quantum security is an essential core task and outlined the goal of securing PQC conversion reference and achieving self-reliance by 2030
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: PKI (implied by KSign consortium and certificate context); Key Management (implied by "integrated management platform")
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: prime factorization; discrete logarithms
-- **Key Takeaways**: South Korea is expanding PQC pilots to five critical sectors including defense and space; The government aims for full-cycle PQC technology self-reliance by 2030; R&D efforts include lightweight optimization and PQC-QKD integration; Specific companies are selected to pilot-convert cryptographic systems in their respective sectors
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: PQC-QKD integration; pilot conversion procedures
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: No
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Policy Maker; CISO; Security Architect
-- **Implementation Prerequisites**: Cryptographic asset inventory; rapid cryptographic system conversion capability; operational and stability verification
-- **Relevant PQC Today Features**: Timeline; Migration-program; pqc-governance; qkd; vendor-risk
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: identifying vulnerable cryptographic assets within systems
-- **Testing & Validation Methods**: operational and stability verification; conformance verification technology
-- **QKD Protocols & Quantum Networking**: PQC-QKD combination technology
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: ultra-lightweight hardware optimization
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: pilot conversion; developing migration procedures; analyzing technical problems and solutions
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: securing PQC conversion reference; full-cycle PQC technology self-reliance
-- **Math Family**: Lattice; Hash-based
-- **PQC Round**: Not Applicable
-- **Phase Classification Rationale**: The document describes a national master plan and pilot expansion, representing a Guidance phase where the government sets the roadmap and selects pilots for critical sectors rather than issuing a mandatory regulatory directive for all entities immediately.
-- **Regulatory Mandate Level**: Voluntary
-- **Sector / Industry Applicability**: Telecommunications; Finance; Transportation; Defense; Energy; Healthcare; Government; Critical Infrastructure
-- **Migration Urgency & Priority**: Long-Term
-- **Phase Transition Narrative**: Moves from Research/Pilot to broader Sector Deployment — signals formal adoption beginning in critical infrastructure with a goal of self-reliance by 2030.
-- **Historical Significance**: Represents a comprehensive national PQC master plan for South Korea, expanding pilots to include defense and space sectors with a clear 2030 self-reliance target.
-- **Implementation Timeline Dates**: 2030: complete full-cycle PQC technology self-reliance; 2035: migrate national cryptographic systems to PQC
-- **Successor Events & Dependencies**: Requires completion of pilot conversions in five sectors; Enables full-cycle PQC technology self-reliance
-- **Source Document Title**: South Korea Expands Post-Quantum Security Program Across Critical Sectors
-- **Source Document Publication Date**: May 6, 2026
-- **Country Migration Dates**: South Korea: 2030 — complete full-cycle PQC technology self-reliance; South Korea: 2035 — migrate national cryptographic systems to PQC
-- **Timeline Cross-Reference**: South Korea: NEW MILESTONE — 2030: 2030 — complete full-cycle PQC technology self-reliance; South Korea 2035: CONSISTENT (Full PQC Roadmap Complete)
-- **Source Document**: South_Korea_MSIT_K_PQC_Master_Plan_to_2035.html (268,494 bytes, 9,052 extracted chars)
-- **Extraction Timestamp**: 2026-06-06T14:44:30
+- **Source Document**: European_Union_ECCG_Agreed_Cryptographic_Algorithms_v2.pdf (346,171 bytes, 5,203 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T18:52:24
 
 ---
 
@@ -1725,6 +1524,72 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
+## Canada:CCCS — ITSP.40.111 v4 PQC Algorithms Approved
+
+- **Reference ID**: Canada:CCCS — ITSP.40.111 v4 PQC Algorithms Approved
+- **Title**: ITSP.40.111 v4 PQC Algorithms Approved
+- **Authors**: Canadian Centre for Cyber Security
+- **Publication Date**: 2025-03-01
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: CCCS ITSP.40.111 v4 approves NIST FIPS 203/204/205 algorithms for protecting Government of Canada information.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Canada; Bodies: Canadian Centre for Cyber Security; Government of Canada
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: FIPS 203; FIPS 204; FIPS 205
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: NIST FIPS 203/204/205 are approved for use; ML-KEM, ML-DSA, and SLH-DSA are the specific algorithms approved; Applicability covers non-classified, Protected A, and Protected B Government of Canada information
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance; Algorithms; Migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hash-based
+- **PQC Round**: Standardised
+- **Phase Classification Rationale**: The document represents a Guidance phase event as it issues an approval directive (ITSP.40.111 v4) from the Canadian Centre for Cyber Security, authorizing the use of specific standardized algorithms for government information protection.
+- **Regulatory Mandate Level**: Mandatory
+- **Sector / Industry Applicability**: Government
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from Standardization to Adoption — signals formal authorization for Government of Canada entities to deploy NIST-standardized PQC algorithms.
+- **Historical Significance**: This milestone marks the formal adoption of NIST FIPS 203/204/205 by the Canadian government, establishing a regulatory baseline for PQC usage in protected government information systems.
+- **Implementation Timeline Dates**: None detected
+- **Successor Events & Dependencies**: Requires implementation of ML-KEM, ML-DSA, and SLH-DSA in systems handling non-classified, Protected A, and Protected B information.
+- **Source Document Title**: ITSP.40.111 v4 PQC Algorithms Approved
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
 ## Canada:CCCS — Remaining Systems Migration
 
 - **Reference ID**: Canada:CCCS — Remaining Systems Migration
@@ -3107,72 +2972,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Source Document Publication Date**: None detected
 - **Country Migration Dates**: European Union: 2026 — All EU Member States should initiate national PQC transition strategies
 - **Timeline Cross-Reference**: European Union 2026: CONSISTENT (Member State Strategy Initiation)
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## European Union:ECCG — Agreed Cryptographic Algorithms v2
-
-- **Reference ID**: European Union:ECCG — Agreed Cryptographic Algorithms v2
-- **Title**: Agreed Cryptographic Algorithms v2
-- **Authors**: European Cybersecurity Certification Group
-- **Publication Date**: 2025-05-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Team Products Products PQMicroLib-Core PQCryptoLib-Core PQCryptoLib-SDK PQPlatform-CoPro PQPlatform-TrustSys PQPerform-Flare PQPerform-Inferno PQPerform-Flex Certifications Product Security Regulatory Landscape Markets Markets Semiconductors and Manu
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Harvest Now Decrypt Later (HNDL), Post-Quantum
-- **Migration Timeline Info**: Milestones: 0 The Commercial National Security Algorithm Suite 2.0 (CNSA 2.0) (published in 2024) outlines requirements, algorith... | ed for the following product categories to adopt CNSA 2.0 compliant algorithms: 2025 : New software and firmware sign... | cloud servers 2026 : Traditional networking equipment such as VPNs and routers 2027 : New NSS, operating systems 2030... | networking equipment such as VPNs and routers 2027 : New NSS, operating systems 2030 : Legacy systems unable to suppo... | operating systems 2030 : Legacy systems unable to support CNSA 2.0 phased out 2035 : All NSS quantum-resistant Canada... | ASD , organizations should develop a refined plan for transition by the end of 2026, with a view to commencing transi...
-- **Applicable Regions / Bodies**: Regions: United States, European Union, Canada, Australia, Japan, Bodies: NIST, ENISA, NCSC, ACSC/ASD, CRYPTREC
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: pqcrypto, Signal, PQCryptoLib-Core, PQMicroLib-Core
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: Firmware, IoT, Cloud
-- **Standardization Bodies**: NIST, NCSC, ENISA, CRYPTREC
-- **Compliance Frameworks Referenced**: CNSA 2.0
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Governments are setting 2035 as a common target for full PQC transition; Hybrid schemes are recommended to mitigate risks in newer post-quantum mechanisms; Traditional asymmetric cryptography must not be used beyond 2030 in Australia; Organizations should inventory vulnerable systems and prioritize high-risk assets before migrating; Transition plans should be developed by 2026 to avoid rushed implementations
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: PQ/T hybrid schemes; standardized and tested hybrid solutions; phased transition; centrally-managed migration
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker; Developer
-- **Implementation Prerequisites**: Cryptographic inventory of vulnerable systems; prioritization based on sensitive assets; testing and validation in test environments; refined transition plan by end of 2026 (Australia)
-- **Relevant PQC Today Features**: Timeline; Compliance; Migrate; Threats; hybrid-crypto
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: full discovery exercise and inventory of vulnerable systems; understanding of your current estate
-- **Testing & Validation Methods**: testing and validation throughout; pilot in test environments
-- **QKD Protocols & Quantum Networking**: QKD (Quantum Key Distribution) technology
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: phased transition; phased rollout; centrally-managed migration; avoiding the risks of a rushed and fragmented transition; three distinct phases (Discover and plan, Prioritize and pilot, Complete adoption); hybrid solutions; backward compatibility approaches (PQ/T hybrid schemes)
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: governance prerequisites (centrally-managed migration); dedicated crypto team required (understanding of your current estate, prioritizing activities); change management scope (developing, implementing, and refining a robust plan for migration); estimated planning horizon (2028-2035); maturity assessment level (risk-based approach)
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document outlines strategic imperatives, roadmaps, and recommendations from multiple governments rather than enforcing a single immediate mandate, positioning it as guidance for planning and execution.
-- **Regulatory Mandate Level**: Mandatory (legally required, directive/mandate language)
-- **Sector / Industry Applicability**: Government; Defense; Healthcare; Telecommunications; Technology; Critical Infrastructure; Finance; Banking; Energy; Transportation
-- **Migration Urgency & Priority**: Critical Deadline (specific compliance deadline with year)
-- **Phase Transition Narrative**: Moves from theoretical quantum threat awareness to concrete national implementation roadmaps with specific milestones for inventory, pilot, and full adoption phases.
-- **Historical Significance**: Represents a coordinated global shift where major nations have established synchronized 2035 targets for PQC migration, marking the transition from standardization to regulatory enforcement.
-- **Implementation Timeline Dates**: 2025: New software and firmware signatures (US); 2025: Web browsers, servers and cloud servers (US); 2026: Traditional networking equipment such as VPNs and routers (US); 2027: New NSS, operating systems (US); 2030: Legacy systems unable to support CNSA 2.0 phased out (US); 2035: All NSS quantum-resistant (US); April 2026: Develop an initial departmental migration plan (Canada); End of 2031: Completion of PQC migration of high-risk, high-priority systems (Canada); End of 2035: Completion of PQC migration of remaining systems (Canada); 31 Dec 2026: Initial national transition roadmaps and first steps (EU); 31 Dec 2030: High-risk use cases and next steps implemented (EU); 31 Dec 2035: Full transition (EU); 2028: Discover and plan (UK); 2028-31: Prioritize and pilot (UK); 2031-35: Complete adoption (UK); End of 2026: Develop a refined plan for transition (Australia); End of 2028: Commencing transition of critical systems and data (Australia); End of 2030: Traditional asymmetric cryptography must not be used (Australia)
-- **Successor Events & Dependencies**: Requires development of departmental migration plans; Enables phased rollout of PQC in high-risk systems; Contingent on availability of CNSA 2.0 compliant algorithms and hybrid solutions.
-- **Source Document Title**: Agreed Cryptographic Algorithms v2
-- **Source Document Publication Date**: May 2025
-- **Country Migration Dates**: United States: 2025 — New software and firmware signatures; United States: 2025 — Web browsers, servers and cloud servers; United States: 2026 — Traditional networking equipment such as VPNs and routers; United States: 2027 — New NSS, operating systems; United States: 2030 — Legacy systems unable to support CNSA 2.0 phased out; United States: 2035 — All NSS quantum-resistant; Canada: 2026 — Develop an initial departmental migration plan; Canada: 2031 — Completion of PQC migration of high-risk, high-priority systems; Canada: 2035 — Completion of PQC migration of remaining systems; European Union: 2026 — Initial national transition roadmaps and first steps; European Union: 2030 — High-risk use cases and next steps implemented; European Union: 2035 — Full transition; United Kingdom: 2028 — Discover and plan phase; United Kingdom: 2031 — Prioritize and pilot phase end; United Kingdom: 2035 — Complete adoption phase end; Australia: 2026 — Develop a refined plan for transition; Australia: 2028 — Commencing transition of critical systems and data; Australia: 2030 — Traditional asymmetric cryptography must not be used
-- **Timeline Cross-Reference**: United States 2025: CONSISTENT (Software/Firmware Signing Transition); United States 2025: CONSISTENT (Web/Cloud Services Transition); United States 2026: CONSISTENT (Traditional Networking Transition); United States 2027: CONSISTENT (Operating Systems Transition); United States 2030: CONSISTENT (112-bit Security Deprecated | also: CNSA 2.0 Exclusive - Network/Signing); United States 2035: CONSISTENT (Full CNSA 2.0 Transition Complete | also: 112-bit Security Algorithms Fully Disall); Canada 2026: CONSISTENT (Departmental Planning Phase | also: Departmental PQC Migration Plans Due); Canada 2031: CONSISTENT (High Priority Systems Complete); Canada 2035: CONSISTENT (Remaining Systems Migration | also: Full GC Migration Complete); European Union 2026: CONSISTENT (Member State Strategy Initiation); European Union 2030: CONSISTENT (Critical Infrastructure Migration | also: High-Risk Systems Secured); European Union 2035: CONSISTENT (Full EU PQC Transition); United Kingdom 2028: CONSISTENT (Discovery & Planning Phase); United Kingdom 2031: CONSISTENT (Priority Migration Phase | also: NCSC Full Migration Phase); United Kingdom 2035: CONSISTENT (NCSC Full Migration Phase); Australia 2026: CONSISTENT (Migration Planning Phase); Australia 2028: CONSISTENT (Critical Systems Migration Start | also: ASD Full Migration Phase); Australia 2030: CONSISTENT (Traditional Crypto Prohibited)
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
@@ -10767,6 +10566,72 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
+## Nigeria:NDPC — NDPA General Application Directive 2025
+
+- **Reference ID**: Nigeria:NDPC — NDPA General Application Directive 2025
+- **Title**: NDPA General Application Directive 2025
+- **Authors**: Nigeria Data Protection Commission
+- **Publication Date**: 2025-03-20
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: Operational directive implementing the Nigeria Data Protection Act 2023, establishing compliance obligations for data controllers and processors regarding privacy and security of processing.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Nigeria; Bodies: Nigeria Data Protection Commission
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Nigeria Data Protection Act 2023; Nigeria Data Protection Regulation 2019
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Data controllers must implement technical and organizational measures to mitigate risks associated with data value, volume, variety, velocity, and veracity; The NDPR 2019 is ceased as a legal instrument, replaced by the GAID 2025; Data Protection Officers must undergo credential assessment and submit semi-annual reports; Cross-border data transfers require adherence to specific guidance and adequacy conditions; Organizations must conduct Data Privacy Impact Assessments and maintain records of processing activities.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Data Protection Officer; Security Architect
+- **Implementation Prerequisites**: Designation of Data Protection Officer; Filing of Compliance Audit Returns; Data Privacy Impact Assessment; Internal Sensitisation and Training on Privacy
+- **Relevant PQC Today Features**: compliance-strategy; pqc-governance; data-asset-sensitivity
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document is a "General Application and Implementation Directive" issued by a regulatory commission to enforce statutory obligations under the Nigeria Data Protection Act 2023.
+- **Regulatory Mandate Level**: Mandatory
+- **Sector / Industry Applicability**: All Sectors
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from general legislative enactment (NDP Act 2023) to specific operational compliance requirements (GAID 2025), replacing previous regulations (NDPR 2019).
+- **Historical Significance**: Represents the formal operationalization of Nigeria's national data protection framework, establishing specific security-of-processing obligations that drive cryptographic controls.
+- **Implementation Timeline Dates**: 2025: GAID issued and NDPR 2019 ceased
+- **Successor Events & Dependencies**: Requires implementation of technical and organizational measures for data security; Depends on the Nigeria Data Protection Act 2023.
+- **Source Document Title**: NIGERIA DATA PROTECTION ACT (NDP ACT) 2023 GENERAL APPLICATION AND IMPLEMENTATION DIRECTIVE (GAID) 2025
+- **Source Document Publication Date**: 2025
+- **Country Migration Dates**: Nigeria: 2025 — GAID issued and NDPR 2019 ceased
+- **Timeline Cross-Reference**: Nigeria 2025: CONSISTENT (NDPA General Application Directive 2025)
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
 ## Nigeria:NDPC — Nigeria Data Protection Act 2023 Enacted
 
 - **Reference ID**: Nigeria:NDPC — Nigeria Data Protection Act 2023 Enacted
@@ -11691,6 +11556,72 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
+## South Korea:MSIT — K-PQC Master Plan to 2035
+
+- **Reference ID**: South Korea:MSIT — K-PQC Master Plan to 2035
+- **Title**: K-PQC Master Plan to 2035
+- **Authors**: Ministry of Science and ICT
+- **Publication Date**: 2023-07-01
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: South Korea's Ministry of Science and ICT is expanding its post-quantum cryptography pilot program to telecommunications, finance, transportation, defense, and space sectors as part of a roadmap to achieve full-cycle PQC technology self-reliance by 2030.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: attacks from quantum computers
+- **Migration Timeline Info**: 2030: complete full-cycle PQC technology self-reliance; 2035: migrate national cryptographic systems to PQC (from description)
+- **Applicable Regions / Bodies**: Regions: South Korea; Bodies: Ministry of Science and ICT (MSIT), Korea Institute of Science and Technology Information, Gyeonggi Province, Korea Road Traffic Authority, Ministry of National Defense
+- **Leaders Contributions Mentioned**: Lim Jung-kyu, Director General for Information Security and Network Policy at MSIT, stated that quantum security is an essential core task and outlined the goal of securing PQC conversion reference and achieving self-reliance by 2030
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: PKI (implied by KSign consortium and certificate context); Key Management (implied by "integrated management platform")
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: prime factorization; discrete logarithms
+- **Key Takeaways**: South Korea is expanding PQC pilots to five critical sectors including defense and space; The government aims for full-cycle PQC technology self-reliance by 2030; R&D efforts include lightweight optimization and PQC-QKD integration; Specific companies are selected to pilot-convert cryptographic systems in their respective sectors
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: PQC-QKD integration; pilot conversion procedures
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker; CISO; Security Architect
+- **Implementation Prerequisites**: Cryptographic asset inventory; rapid cryptographic system conversion capability; operational and stability verification
+- **Relevant PQC Today Features**: Timeline; Migration-program; pqc-governance; qkd; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: identifying vulnerable cryptographic assets within systems
+- **Testing & Validation Methods**: operational and stability verification; conformance verification technology
+- **QKD Protocols & Quantum Networking**: PQC-QKD combination technology
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: ultra-lightweight hardware optimization
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: pilot conversion; developing migration procedures; analyzing technical problems and solutions
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: securing PQC conversion reference; full-cycle PQC technology self-reliance
+- **Math Family**: Lattice; Hash-based
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document describes a national master plan and pilot expansion, representing a Guidance phase where the government sets the roadmap and selects pilots for critical sectors rather than issuing a mandatory regulatory directive for all entities immediately.
+- **Regulatory Mandate Level**: Voluntary
+- **Sector / Industry Applicability**: Telecommunications; Finance; Transportation; Defense; Energy; Healthcare; Government; Critical Infrastructure
+- **Migration Urgency & Priority**: Long-Term
+- **Phase Transition Narrative**: Moves from Research/Pilot to broader Sector Deployment — signals formal adoption beginning in critical infrastructure with a goal of self-reliance by 2030.
+- **Historical Significance**: Represents a comprehensive national PQC master plan for South Korea, expanding pilots to include defense and space sectors with a clear 2030 self-reliance target.
+- **Implementation Timeline Dates**: 2030: complete full-cycle PQC technology self-reliance; 2035: migrate national cryptographic systems to PQC
+- **Successor Events & Dependencies**: Requires completion of pilot conversions in five sectors; Enables full-cycle PQC technology self-reliance
+- **Source Document Title**: South Korea Expands Post-Quantum Security Program Across Critical Sectors
+- **Source Document Publication Date**: May 6, 2026
+- **Country Migration Dates**: South Korea: 2030 — complete full-cycle PQC technology self-reliance; South Korea: 2035 — migrate national cryptographic systems to PQC
+- **Timeline Cross-Reference**: South Korea: NEW MILESTONE — 2030: 2030 — complete full-cycle PQC technology self-reliance; South Korea 2035: CONSISTENT (Full PQC Roadmap Complete)
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
 ## South Korea:MSIT — Pilot Transition Phase
 
 - **Reference ID**: South Korea:MSIT — Pilot Transition Phase
@@ -11817,6 +11748,72 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Successor Events & Dependencies**: Enables further development and potential standardization of AIMer, NTRU+, HAETAE, and SMAUG-T within Korea's PQC domain.
 - **Source Document Title**: Selected Algorithms from the KpqC Competition Round 2 (January 16, 2025)
 - **Source Document Publication Date**: January 16, 2025
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## Spain:CCN — CCN-TEC 009 Post-Quantum Transition
+
+- **Reference ID**: Spain:CCN — CCN-TEC 009 Post-Quantum Transition
+- **Title**: CCN-TEC 009 Post-Quantum Transition
+- **Authors**: Centro Criptológico Nacional
+- **Publication Date**: 2022-12-01
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: Spain's National Cryptologic Centre provides recommendations and a migration plan for transitioning to post-quantum cryptography to protect against future quantum computing threats.
+- **PQC Algorithms Covered**: CRYSTALS-Kyber; CRYSTALS-Dilithium; Falcon; SPHINCS+; BIKE; HQC; Classic McEliece; SIKE
+- **Quantum Threats Addressed**: Shor's Algorithm; Grover's Algorithm; Simon's Algorithm; Store now, decrypt later
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Spain; Bodies: Centro Criptológico Nacional (CCN)
+- **Leaders Contributions Mentioned**: Peter Shor (published quantum algorithms breaking IFP and DLP); Michele Mosca (Theorem mentioned in index)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; ElGamal; Elliptic curve-based cryptosystems
+- **Key Takeaways**: Organizations must migrate to quantum-resistant systems to counter the "store now, decrypt later" threat; Hybrid solutions are recommended for the transition; Crypto-agility is essential for future-proofing cryptographic infrastructure; Symmetric key lengths should be doubled to maintain security against Grover's algorithm.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid solutions; Crypto-agility
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: Classic McEliece has large public key size
+- **Target Audience**: CISO; Security Architect; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Timeline; Threats; Migrate; Algorithms; crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Code-based; Hash-based; Isogeny
+- **PQC Round**: Round 3
+- **Phase Classification Rationale**: The document is titled "Recommendations for a safe post-quantum transition" and explicitly states it is published to "raise awareness" and provide "recommendations," indicating a guidance phase rather than a mandatory regulation.
+- **Regulatory Mandate Level**: Recommended
+- **Sector / Industry Applicability**: All Sectors
+- **Migration Urgency & Priority**: Long-Term
+- **Phase Transition Narrative**: Moves from Research/Awareness to Strategic Planning — signals the beginning of national-level guidance for PQC migration in Spain.
+- **Historical Significance**: Represents Spain's primary national PQC guidance document, establishing a framework for organizations to begin preparing for quantum threats.
+- **Implementation Timeline Dates**: None detected
+- **Successor Events & Dependencies**: Depends on NIST standardization process completion; Enables organizations to start migration planning.
+- **Source Document Title**: CCN-TEC 009 Recommendations for a safe post-quantum transition
+- **Source Document Publication Date**: December 2022
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
