@@ -67,6 +67,7 @@
     "normalize-vocab:dry": "tsx scripts/ci/normalize-vocab-tags.ts --dry-run",
     "trust-engine:sign": "tsx scripts/attestation/sign-all.ts",
     "trust-engine:verify": "tsx scripts/attestation/verify-all.ts",
+    "verify-attestations": "tsx scripts/ci/verify-attestations.ts",
     "trust-engine:sign-revisions": "tsx scripts/attestation/sign-revisions.ts",
     "trust-engine:verify-revisions": "tsx scripts/attestation/verify-revisions.ts",
     "trust-engine:keygen": "tsx scripts/attestation/generate-attestation-key.ts",

@@ -108,16 +108,17 @@ describe('SandboxScenarioEmbed', () => {
       return el
     })) as HTMLIFrameElement
 
-    act(() => {
+    // The message handler effect registers async after session resolves
+    // (see SandboxScenarioEmbed.tsx:103-138). Dispatching once before the
+    // handler is attached drops the message silently. Retry inside waitFor
+    // until the resize lands — same pattern as the pqc:ready test above.
+    await waitFor(() => {
       window.dispatchEvent(
         new MessageEvent('message', {
           data: { type: 'pqc:resize', height: 950 },
           origin: BASE_ORIGIN,
         })
       )
-    })
-
-    await waitFor(() => {
       expect(iframe.style.height).toBe('950px')
     })
   })
@@ -130,25 +131,25 @@ describe('SandboxScenarioEmbed', () => {
       return el
     })) as HTMLIFrameElement
 
-    act(() => {
+    await waitFor(() => {
       window.dispatchEvent(
         new MessageEvent('message', {
           data: { type: 'pqc:resize', height: 10 },
           origin: BASE_ORIGIN,
         })
       )
+      expect(iframe.style.height).toBe('480px')
     })
-    await waitFor(() => expect(iframe.style.height).toBe('480px'))
 
-    act(() => {
+    await waitFor(() => {
       window.dispatchEvent(
         new MessageEvent('message', {
           data: { type: 'pqc:resize', height: 5000 },
           origin: BASE_ORIGIN,
         })
       )
+      expect(iframe.style.height).toBe('1600px')
     })
-    await waitFor(() => expect(iframe.style.height).toBe('1600px'))
   })
 
   it('shows a configuration hint when VITE_SANDBOX_BASE_URL is empty', async () => {

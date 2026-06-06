@@ -7,6 +7,10 @@ Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
 ## [Unreleased]
 
+### CI
+
+- **Trust-engine attestation verification now actively runs in CI** [view:CI]: The `Verify trust-engine attestations` step in `.github/workflows/ci.yml` (added at audit gap P4) was historically guarded behind `hashFiles('scripts/attestation/verify-all.ts') != ''`. Because `scripts/attestation/*` is in the gitignored `scripts/*` block, the verifier source never landed in the public repo on CI checkouts — so the step silently no-op'd on every push and PR, and the comment literally said _"Pre-existing breakage on main otherwise."_ This PR moves a verify-only subset of the trust-engine into a new tracked file `scripts/ci/verify-attestations.ts` (self-contained, ~220 lines: TRUST_ARTIFACTS list + ML-DSA-65 verify primitive + key resolver + main). Adds `npm run verify-attestations`. The workflow step drops the `hashFiles` guard and the "Pre-existing breakage" comment, and now invokes the public verifier directly. The maintainer's signer (`sign-all.ts` + the rest of `scripts/attestation/*`) stays private, so the key never leaves the maintainer's machine. Net effect: every push and PR now hard-fails CI on any sig drift, missing `.sig`, or `kid-mismatch` — the recurrence-prevention layer that #300's deterministic generators couldn't provide on its own. Together with #300 this closes the trust-engine attestation drift gap end-to-end.
+
 ## [3.18.0] - 2026-06-04
 
 Cuts the accumulated post-3.17.5 work — two `feat:` deliverables (Learn-style Playground view modes + filtering, live sandbox availability probe with contact-for-access popover), the PQC protocol matrix → library coverage closeout, the NICE-view filter behaviour change, four user-facing bug fixes (three Playground module-eval-order crashes + the sandbox-iframe terminal restoration), eight learn-module factual corrections across two audit passes, and a multi-source data refresh (catalog integrity sweep, 06042026 migrate-family CSVs, full compliance scrape, library refs).
