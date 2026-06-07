@@ -1588,6 +1588,27 @@
       "file": "Global_Ethereum_Foundation_Vitalik_Buterin_Publishes_PQ_Defense_Roadmap.html",
       "sha256": "97fdcf7dd5c53b6459e411e9568a53b1c2fb1855fd14a07077c52734440ddffb",
       "sizeBytes": 470932
+    },
+    {
+      "label": "G7:G7 CEG \u2014 G7 Statement on Quantum Computing",
+      "url": "https://home.treasury.gov/system/files/136/G7-CYBER-EXPERT-GROUP-STATEMENT-PLANNING-OPPORTUNITIES-RISKS-QUANTUM-COMPUTING.pdf",
+      "file": "G7_G7_CEG_G7_Statement_on_Quantum_Computing.pdf",
+      "sha256": "f58565d3ec8bd55ea23aa067b2373f783eb3421808d1f8827993857de1b91575",
+      "sizeBytes": 283430
+    },
+    {
+      "label": "Nigeria:NDPC \u2014 Nigeria Data Protection Act 2023 Enacted",
+      "url": "https://www.ndpc.gov.ng/ndp-act-2023/",
+      "file": "Nigeria_NDPC_Nigeria_Data_Protection_Act_2023_Enacted.html",
+      "sha256": "804bc896028a9ddc7db6b9b00cd076cb858dfed584612441c75386610a62da3f",
+      "sizeBytes": 449570
+    },
+    {
+      "label": "South Korea:MSIT \u2014 K-PQC Master Plan to 2035",
+      "url": "https://kpqc.cryptolab.co.kr/",
+      "file": "South_Korea_MSIT_K-PQC_Master_Plan_to_2035.html",
+      "sha256": "f508bc71349a3b9454e2f5c489f51020cde85f3f42f83d663aeb7677164005f1",
+      "sizeBytes": 140553
     }
   ]
 }
