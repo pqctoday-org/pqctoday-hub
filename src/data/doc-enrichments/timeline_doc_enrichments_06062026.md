@@ -1,31 +1,232 @@
 ---
 generated: 2026-06-06
 collection: timeline
-documents_processed: 1
+documents_processed: 34
 enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 ---
 
-## European Union:ECCG — Agreed Cryptographic Algorithms v2
+## Global:Microsoft — Quantum Safe Program Launch
 
-- **Reference ID**: European Union:ECCG — Agreed Cryptographic Algorithms v2
-- **Title**: Agreed Cryptographic Algorithms v2
-- **Authors**: European Cybersecurity Certification Group
-- **Publication Date**: 2025-05-01
+- **Reference ID**: Global:Microsoft — Quantum Safe Program Launch
+- **Title**: Quantum Safe Program Launch
+- **Authors**: Microsoft Corporation
+- **Publication Date**: 2023-01-01
 - **Last Updated**: Not specified
 - **Document Status**: Validated
-- **Main Topic**: Guidelines on agreed cryptographic mechanisms, including PQC, for ICT products submitted to EUCC certification.
+- **Main Topic**: Microsoft announces the launch of its Quantum Safe Program, outlining a phased strategy to transition its services and products to post-quantum cryptography by 2033.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; FrodoKEM
+- **Quantum Threats Addressed**: Harvest Now, Decrypt Later (HNDL); scalable quantum computing breaking public-key cryptography
+- **Migration Timeline Info**: Early adoption of quantum-safe capabilities by 2029; completion of transition of services and products by 2033; alignment with 2035 government deadlines
+- **Applicable Regions / Bodies**: Regions: United States; European Union; Japan; Canada; Australia; United Kingdom; Bodies: NIST; IETF; ISO; DMTF; OCP; ETSI; OMB; CISA; NSA
+- **Leaders Contributions Mentioned**: Mark Russinovich (Chief Technology Officer, Microsoft Azure); Michal Braverman-Blumenstyk (Corporate Vice President, Microsoft Security Division); Charlie Bell (Executive Vice President for Microsoft Security, outlined vision); Amy Hogan Burney (Vice President, Customer Security and Trust)
+- **PQC Products Mentioned**: SymCrypt; SymCrypt-OpenSSL; Adams Bridge Accelerator; Caliptra 2.0; Majorana 1 quantum processor
+- **Protocols Covered**: TLS 1.3; VPN
+- **Infrastructure Layers**: PKI; Key Management; HSM (via Caliptra 2.0/Open Compute Project); Cloud KMS (Microsoft Entra key and secret management)
+- **Standardization Bodies**: NIST; IETF; ISO; DMTF; OCP; ETSI
+- **Compliance Frameworks Referenced**: CNSA 2.0; CNSSP-15
+- **Classical Algorithms Referenced**: AES; RSA; ECDSA
+- **Key Takeaways**: Organizations should begin PQC migration planning immediately to avoid last-minute scrambles; Microsoft aims to complete its internal PQC transition by 2033, two years ahead of most government mandates; Hybrid approaches combining classical and quantum-resistant algorithms are recommended as interim steps; Crypto-agility is essential for modernizing cryptographic standards and preparing for scalable quantum computing.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid approach combining classical and quantum-resistant algorithms; crypto-agility; phased transition strategy
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "TLS 1.3 is being enhanced to support both hybrid and pure post-quantum key exchange methods"
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "TLS 1.3 is being enhanced to support both hybrid and pure post-quantum key exchange methods"
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Developer; Compliance Officer
+- **Implementation Prerequisites**: Cryptographic asset inventory; crypto-agility implementation; SymCrypt library integration; Windows Insiders or Linux environment for preview capabilities
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Migrate; Assess; Algorithms; Leaders; crypto-agility; migration-program; pqc-governance
+- **Implementation Attack Surface**: Harvest Now, Decrypt Later (HNDL) cyberattacks
+- **Cryptographic Discovery & Inventory**: Enterprise-wide inventory to assess and prioritize cryptographic asset risks
+- **Testing & Validation Methods**: Experimental PQC-protected VPN tunnel testing; verified versions of PQC algorithms
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Updating Microsoft first- and third-party services, supply chain, and ecosystem to become quantum safe
+- **Deployment & Migration Complexity**: Multiyear transformation; phased transition strategy (Foundational security components, Core infrastructure services, All services and endpoints); hybrid approach as interim step
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Governance by QSP leadership team; enterprise-wide inventory; coordinated execution required
+- **Math Family**: Lattice; Code-based
+- **PQC Round**: Standardised
+- **Phase Classification Rationale**: The document represents a Strategic Planning and Roadmap phase event, as it outlines Microsoft's comprehensive company-wide effort, timelines, and phased strategy for transitioning to quantum-safe cryptography rather than detailing a specific technical implementation or standard.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Technology; All Sectors
+- **Migration Urgency & Priority**: Long-Term
+- **Phase Transition Narrative**: Moves from Research and Early Experimentation to Strategic Program Execution — signals formal adoption and coordinated execution beginning across Microsoft's ecosystem.
+- **Historical Significance**: Microsoft announces a concrete corporate roadmap to complete PQC transition by 2033, aligning with and exceeding global government timelines, marking a significant step in industry-wide preparedness.
+- **Implementation Timeline Dates**: 2029: early adoption of quantum-safe capabilities; 2033: completion of transition of services and products; 2035: deadline set by most governments
+- **Successor Events & Dependencies**: Requires integration of PQC algorithms into foundational components like SymCrypt; Depends on evolving industry standards and advancements; Enables customers and partners to begin exploration and integration of quantum-safe algorithms.
+- **Source Document Title**: Quantum-safe security: Progress towards next-generation cryptography
+- **Source Document Publication Date**: August 20, 2025
+- **Country Migration Dates**: United States: 2035 — deadline set by most governments; Global: 2033 — Microsoft aims to complete transition of its services and products; Global: 2029 — early adoption of quantum-safe capabilities
+- **Timeline Cross-Reference**: United States 2035: CONSISTENT (112-bit Security Algorithms Fully Disallowed); Global 2033: CONSISTENT (Microsoft Full PQC Transition); Global 2029: CONSISTENT (Early Quantum-Safe Adoption)
+- **Source Document**: Global_Microsoft_Quantum_Safe_Program_Launch.html (287,520 bytes, 14,786 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:38:45
+
+---
+
+## Global:PQShield — UltraPQ-Suite Launched
+
+- **Reference ID**: Global:PQShield — UltraPQ-Suite Launched
+- **Title**: UltraPQ-Suite Launched
+- **Authors**: PQShield Ltd
+- **Publication Date**: 2025-04-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: PQShield launches the UltraPQ-Suite, featuring the PQPlatform-TrustSys Root of Trust solution for ASIC and FPGA hardware compliance with PQC standards.
 - **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: European Union; Bodies: European Cybersecurity Certification Group (ECCG), European Union Agency for Cybersecurity (ENISA)
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
+- **Quantum Threats Addressed**: Attacks from future quantum computers
+- **Migration Timeline Info**: 2035: complete phase-out of RSA
+- **Applicable Regions / Bodies**: Bodies: NIST, NSA
+- **Leaders Contributions Mentioned**: Ali El Kaafarani (founder and CEO of PQShield); Dr Axel Poschmann (VP of Product at PQShield)
+- **PQC Products Mentioned**: PQMicroLib-Core; PQCryptoLib-Core; PQCryptoLib-SDK; PQPlatform-CoPro; PQPlatform-TrustSys; PQPerform-Flare; PQPerform-Inferno; PQPerform-Flex; PQPerform-Lattice; PQCryptoLib-Embedded
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Root of Trust; Key Management; HSM
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: FIPS 140-3; CNSA 2.0; Common Criteria; SESIP; PSA
+- **Classical Algorithms Referenced**: RSA
+- **Key Takeaways**: PQShield launches UltraPQ-Suite with three pillars (ultra fast, ultra secure, ultra small) for specialized PQC implementations; PQPlatform-TrustSys provides a PQC-first Root of Trust for ASIC/FPGA compliance with NSA CNSA 2.0 and NIST standards; RSA must be phased out by 2035 per NIST timelines, requiring immediate migration planning; PQShield holds FIPS 140-3 certification, validating the robustness of its cryptographic modules; The suite addresses implementation challenges in networking, automotive, and critical infrastructure sectors.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Crypto-agility
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer; Compliance Officer
+- **Implementation Prerequisites**: ASIC or FPGA hardware; compliance with NSA CNSA 2.0 and NIST standards
+- **Relevant PQC Today Features**: Compliance; Migrate; Algorithms; hsm-pqc; iot-ot-pqc
+- **Implementation Attack Surface**: Side channel attacks (SCA); fault injection attacks (FIA); timing vulnerabilities; power vulnerabilities
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: FIPS 140-3 certification; Cryptographic Module Verification Program (CMVP)
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Memory-constrained devices; embedded systems; microcontrollers; energy smart meters; industrial controls
+- **Supply Chain & Vendor Risk**: Global supply chain transition; vendor PQC roadmap maturity
+- **Deployment & Migration Complexity**: Minimal integration time and effort; crypto-agility
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document announces the launch of a commercial product suite (UltraPQ-Suite) designed to support the implementation phase of PQC adoption, specifically targeting hardware manufacturers.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Technology; Critical Infrastructure; Telecommunications; Transportation; Energy
+- **Migration Urgency & Priority**: Critical Deadline
+- **Phase Transition Narrative**: Moves from Standardization to Implementation — signals the availability of specialized hardware solutions to meet upcoming regulatory deadlines.
+- **Historical Significance**: Represents a commercial response to the NIST RSA phase-out deadline and CNSA 2.0 requirements, offering a PQC-first Root of Trust for hardware security.
+- **Implementation Timeline Dates**: 2035: complete phase-out of RSA
+- **Successor Events & Dependencies**: Requires adoption of PQC standards by NIST and NSA; Enables ASIC and FPGA manufacturers to achieve compliance with CNSA 2.0.
+- **Source Document Title**: PQShield Launches UltraPQ Post-Quantum Suite
+- **Source Document Publication Date**: 24/04/2025
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: Global_PQShield_UltraPQ-Suite_Launched.html (65,684 bytes, 11,386 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:38:45
+
+---
+
+## Global:PQShield — 100th Research Paper Milestone
+
+- **Reference ID**: Global:PQShield — 100th Research Paper Milestone
+- **Title**: 100th Research Paper Milestone
+- **Authors**: PQShield Ltd
+- **Publication Date**: 2025-10-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: PQShield celebrates its 100th research paper milestone, highlighting contributions to PQC theory, implementation security, and commercial deployment.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA
+- **Quantum Threats Addressed**: Shor's algorithm
+- **Migration Timeline Info**: 2035 migration deadline
+- **Applicable Regions / Bodies**: Bodies: NIST; IETF; NCSC; NEDO; ANSSI; AIST; The Signal Foundation
+- **Leaders Contributions Mentioned**: Dr Thomas Prest (Author); Shuichi Katsumata (WireGuard research); Guilhem Niot (WireGuard research); Thom Wiggers (WireGuard research); Keitaro Hashimoto (WireGuard research); Ben Marshall (Power leakage assessment); Pierre-Yves Strub (Jazzline proofing method); Mélissa Rossi (Mask compression security proof)
+- **PQC Products Mentioned**: PQMicroLib-Core; PQCryptoLib-Core; PQCryptoLib-SDK; PQPlatform-CoPro; PQPlatform-TrustSys; PQPerform-Flare; PQPerform-Inferno; PQPerform-Flex
+- **Protocols Covered**: WireGuard; Signal (SPQR protocol)
+- **Infrastructure Layers**: Key Management; Cloud; Embedded; Silicon
+- **Standardization Bodies**: NIST; IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: PQShield has published 100 research papers bridging PQC theory and commercial deployment; Research focuses on implementation-level countermeasures like masking for ML-DSA; Collaboration with The Signal Foundation resulted in the SPQR protocol for secure messaging; Existing protocols like WireGuard can be upgraded to PQC with minimal performance impact; A 2035 migration deadline drives the need for high-assurance, side-channel-resistant implementations.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Reinforced KEMs for WireGuard; Sparse Post Quantum Ratchet (SPQR)
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: Minimal impact on performance for WireGuard upgrade; Reduced memory footprint for masking
+- **Target Audience**: Security Architect; Developer; Researcher; CISO
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms; Leaders; vpn-ssh-pqc; code-signing; iot-ot-pqc
+- **Implementation Attack Surface**: Side-channel (power leakage); Physical attacks; Masking
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Formal verification (Jazzline correctness proofs); Security analysis
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Embedded and silicon implementations; Lightweight PQC for WireGuard
+- **Supply Chain & Vendor Risk**: Supply chain transformations; Collaboration with academic institutions and government bodies
+- **Deployment & Migration Complexity**: Upgrading existing protocols to PQC; Real-world rollout challenges
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Collaboration with security agencies and governing bodies; Cross-industry collaboration
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Phase Classification Rationale**: The document is a corporate milestone announcement celebrating the 100th research paper, representing a transition from theoretical research to commercial reality rather than a specific regulatory or standardization phase.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Technology; Academic; Government; Defense; Healthcare; Telecommunications; Automotive; Industrial IoT
+- **Migration Urgency & Priority**: Long-Term
+- **Phase Transition Narrative**: Moves from theoretical research foundations to commercial deployment and real-world system securing.
+- **Historical Significance**: Marks PQShield's 100th research paper, demonstrating a unique position as a leading contributor to PQC theoretical foundations and commercial deployment.
+- **Implementation Timeline Dates**: 2035: migration deadline
+- **Successor Events & Dependencies**: Enables high-assurance, side-channel-resistant implementations for embedded and silicon; Threshold cryptography for resilient key management; Next-generation secure messaging.
+- **Source Document Title**: PQShield hits 100 research papers—pushing post-quantum cryptography from theory to reality
+- **Source Document Publication Date**: 24/10/2025
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: Global_PQShield_100th_Research_Paper_Milestone.html (61,549 bytes, 7,616 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:38:46
+
+---
+
+## Global:PQShield — Carahsoft Government Partnership
+
+- **Reference ID**: Global:PQShield — Carahsoft Government Partnership
+- **Title**: Carahsoft Government Partnership
+- **Authors**: PQShield Ltd
+- **Publication Date**: 2025-10-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: PQShield partners with Carahsoft to distribute NIST-aligned post-quantum cryptography solutions to U.S. Government agencies via public sector contracts.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: quantum-enabled threats; large-scale quantum threats
+- **Migration Timeline Info**: 2035: transition to post-quantum cryptography deadline set by national cybersecurity agencies like the NSA
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST, NSA, NASA
+- **Leaders Contributions Mentioned**: Ben Packman, Chief Strategy Officer, PQShield: stated partnership helps Government customers transition to PQC by 2035
+- **PQC Products Mentioned**: PQMicroLib-Core; PQCryptoLib-Core; PQCryptoLib-SDK; PQPlatform-CoPro; PQPlatform-TrustSys; PQPerform-Flare; PQPerform-Inferno; PQPerform-Flex
 - **Protocols Covered**: None detected
 - **Infrastructure Layers**: None detected
-- **Standardization Bodies**: European Cybersecurity Certification Group (ECCG)
-- **Compliance Frameworks Referenced**: Common Criteria, EUCC scheme, Regulation (EU) 2019/881, Implementing Regulation (EU) 2024/482
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: NIST PQC Standards
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Developers and evaluators should use agreed cryptographic mechanisms from ACM v2 for EUCC certification; The document supports the EUCC scheme for ICT product certification; PQC mechanisms have been added to the agreed cryptographic mechanisms in version 2; Evaluators must verify that protection profiles and ICT products rely on agreed mechanisms.
+- **Key Takeaways**: PQShield partners with Carahsoft to expand access to secured quantum services for U.S. Government agencies; NIST-aligned post-quantum cryptography solutions available through major public sector contracts; Supports Federal, State, Local and Education procurement pathways; Helps agencies prepare for the 2035 quantum readiness deadline
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: No
@@ -40,9 +241,411 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer; Security Architect; Compliance Officer
+- **Target Audience**: CISO; Compliance Officer; Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Compliance; Migrate; Algorithms
+- **Relevant PQC Today Features**: Timeline; Compliance; Migrate; pqc-governance; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: quantum-safe, NIST-aligned products are available today; post-quantum cryptography is already making its way through the supply chain
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document announces a commercial partnership to facilitate procurement, representing a market availability and distribution phase rather than a technical standardization or research phase.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Government; Critical Infrastructure; Academic
+- **Migration Urgency & Priority**: Critical Deadline
+- **Phase Transition Narrative**: Moves from product development to government procurement accessibility, enabling agencies to acquire PQC solutions via existing contract vehicles.
+- **Historical Significance**: Represents a strategic collaboration to accelerate PQC adoption in the U.S. public sector ahead of the 2035 deadline.
+- **Implementation Timeline Dates**: 2035: transition to post-quantum cryptography deadline
+- **Successor Events & Dependencies**: Requires NIST standards release; Enables procurement via NASA SEWP V, OMNIA, and The Quilt contracts
+- **Source Document Title**: Global:PQShield — Carahsoft Government Partnership
+- **Source Document Publication Date**: 30/10/2025
+- **Country Migration Dates**: United States: 2035 — transition to post-quantum cryptography deadline set by national cybersecurity agencies like the NSA
+- **Timeline Cross-Reference**: United States 2035: CONSISTENT (Full CNSA 2.0 Transition Complete)
+- **Source Document**: Global_PQShield_Carahsoft_Government_Partnership.html (57,282 bytes, 6,289 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:38:46
+
+---
+
+## United States:SandboxAQ — AQtive Guard FedRAMP Ready
+
+- **Reference ID**: United States:SandboxAQ — AQtive Guard FedRAMP Ready
+- **Title**: AQtive Guard FedRAMP Ready
+- **Authors**: SandboxAQ Inc
+- **Publication Date**: 2025-12-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: SandboxAQ announces that its AQtive Guard product has achieved FedRAMP Ready status to support federal agencies in post-quantum cryptography modernization and AI security.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: post-quantum era; weak encryption
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: FedRAMP
+- **Leaders Contributions Mentioned**: Jack Hidary, CEO of SandboxAQ
+- **PQC Products Mentioned**: AQtive Guard
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: cryptographic discovery and inventory; cryptographic posture management; post-quantum migration planning
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: FedRAMP; SOC 2 Type I; ISO/IEC 27001
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: AQtive Guard is now FedRAMP Ready for federal government use; The product provides visibility and remediation for weak encryption and AI agent risks; SandboxAQ holds SOC 2 Type I and ISO/IEC 27001 certifications; The solution supports automated cryptographic discovery and post-quantum migration planning
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: post-quantum migration planning; updating legacy cryptography
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Compliance Officer; Security Architect
+- **Implementation Prerequisites**: FedRAMP Marketplace listing; SOC 2 Type I report; ISO/IEC 27001 certificate
+- **Relevant PQC Today Features**: Compliance; Migrate; Assess; pqc-risk-management; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: automated cryptographic discovery and inventory; cryptographic posture management
+- **Testing & Validation Methods**: independent third-party assessment
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: post-quantum migration planning; updating legacy cryptography across multi-environment estates
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: FedRAMP Ready status; standardized security controls
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document announces a commercial product readiness milestone (FedRAMP Ready) rather than a specific migration phase directive, but it signals the availability of tools for the assessment and planning phases of PQC adoption.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Government; Defense
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from product development to government-ready deployment, enabling federal agencies to begin assessment and planning for post-quantum migration.
+- **Historical Significance**: Marks the availability of a FedRAMP Ready commercial tool specifically designed for cryptographic inventory and post-quantum migration planning for US federal agencies.
+- **Implementation Timeline Dates**: Dec. 4, 2025: SandboxAQ achieves FedRAMP Ready status
+- **Successor Events & Dependencies**: Enables federal agencies to evaluate AQtive Guard for automated cryptographic discovery and post-quantum migration planning
+- **Source Document Title**: SandboxAQ Achieves FedRAMP® Ready Status, Powering Enterprise Readiness Across the Defense and Public Sector
+- **Source Document Publication Date**: Dec. 4, 2025
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: United_States_SandboxAQ_AQtive_Guard_FedRAMP_Ready.html (22,749 bytes, 4,105 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:38:47
+
+---
+
+## United States:SandboxAQ/MITRE/LF — RWPQC 2025 Conference
+
+- **Reference ID**: United States:SandboxAQ/MITRE/LF — RWPQC 2025 Conference
+- **Title**: RWPQC 2025 Conference
+- **Authors**: SandboxAQ MITRE and Linux Foundation PQCA
+- **Publication Date**: 2025-03-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Announcement of the RWPQC 2025 conference dedicated to post-quantum cryptography, cybersecurity, and quantum innovation.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: quantum threats to modern encryption systems
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST, NSA, CISA
+- **Leaders Contributions Mentioned**: Dr. Marc Manzano (General Manager of the Cybersecurity Group at SandboxAQ); Dr Wen Masters (vice president of cyber technologies at MITRE); Hart Montgomery (The Linux Foundation)
+- **PQC Products Mentioned**: AQtive Guard
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: PKI; Key Management
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: RWPQC 2025 provides a forum for industry, academia, and government to collaborate on PQC migration; Major tech companies (AWS, Google, etc.) are actively integrating PQC into operations; NIST, NSA, and CISA will outline U.S. government implementation strategies; Global perspectives from UK, France, Germany, and South Korea will be shared; The event emphasizes cross-industry collaboration for quantum-safe solutions
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Policy Maker; Researcher
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Leaders; Threats; Migrate; pqc-governance; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: IoT
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document is a press release announcing a conference event, representing an informational/educational phase in the PQC adoption lifecycle rather than a technical standard or mandate.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Government; Finance; Banking; Technology; Academic; Critical Infrastructure
+- **Migration Urgency & Priority**: Exploratory
+- **Phase Transition Narrative**: Moves from Research to Standardization — signals formal adoption beginning through industry collaboration and policy discussion.
+- **Historical Significance**: RWPQC 2025 is the third annual conference bringing together industry leaders, researchers, and policymakers to advance PQC adoption and address quantum threats.
+- **Implementation Timeline Dates**: March 24–25, 2025: RWPQC 2025 conference dates
+- **Successor Events & Dependencies**: None detected
+- **Source Document Title**: RWPQC 2025 Brings Together Industry Leaders to Advance Cybersecurity and Quantum Innovation
+- **Source Document Publication Date**: February 18, 2025
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: United_States_SandboxAQ_MITRE_LF_RWPQC_2025_Conference.html (25,444 bytes, 7,111 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:38:47
+
+---
+
+## Germany:BSI/DLR — QUANTITY Initiative Launched
+
+- **Reference ID**: Germany:BSI/DLR — QUANTITY Initiative Launched
+- **Title**: QUANTITY Initiative Launched
+- **Authors**: BSI with German Aerospace Center
+- **Publication Date**: 2025-03-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Announcement of the QUANTITY cryptanalysis project collaboration between DLR and BSI to assess quantum computer threats to cryptography.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Shor; Grover
+- **Migration Timeline Info**: In 16 years at the latest, cryptographic relevance will be achieved
+- **Applicable Regions / Bodies**: Regions: Germany; Bodies: BSI, DLR
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Quantum cryptanalysis requires combining basic research with practical security assessment; Existing encryption methods must be analyzed for resistance to quantum algorithms like Shor and Grover; Action is needed today as cryptographic relevance may be achieved in 16 years or sooner; Research findings should be incorporated into safety assessments and guidelines at an early stage
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Researcher; Security Architect; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Threats; Assess; Algorithms; pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: proof-of-concept implementation
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document announces a research project (QUANTITY) investigating quantum cryptanalysis and threat scenarios, representing an exploratory research phase rather than a deployment or standardization mandate.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Government; Technology; Academic
+- **Migration Urgency & Priority**: Long-Term
+- **Phase Transition Narrative**: Moves from theoretical quantum computing development to practical cryptanalysis assessment, enabling the incorporation of research findings into future safety assessments and guidelines.
+- **Historical Significance**: Represents a strategic cooperation between a major research institute (DLR) and a national security authority (BSI) to bridge basic research and practical security assessment for PQC.
+- **Implementation Timeline Dates**: 16 years at the latest: cryptographic relevance will be achieved
+- **Successor Events & Dependencies**: Requires development of novel quantum computer-assisted cryptanalysis methods; Enables incorporation of research findings into safety assessments and possible guidelines
+- **Source Document Title**: DLR × BSI: Working together for more security
+- **Source Document Publication Date**: 10. March 2025
+- **Country Migration Dates**: Germany: 16 years at the latest — cryptographic relevance will be achieved
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: Germany_BSI_DLR_QUANTITY_Initiative_Launched.html (228,505 bytes, 4,662 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:38:48
+
+---
+
+## United States:SEALSQ — US Post-Quantum Root of Trust Service Launch
+
+- **Reference ID**: United States:SEALSQ — US Post-Quantum Root of Trust Service Launch
+- **Title**: US Post-Quantum Root of Trust Service Launch
+- **Authors**: SEALSQ Corp
+- **Publication Date**: 2025-11-21
+- **Last Updated**: Not specified
+- **Document Status**: Completed
+- **Main Topic**: SEALSQ Corp launches a US Post-Quantum Root of Trust Service, featuring the QS7001 Secure Element with NIST SP 800-90B validation and an acquisition of Miraex for quantum satellite communications.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: United States; European Union
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: SEALSQ QS7001 Post-Quantum Secure Element
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Root of Trust; Secure Element
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: NIST SP 800-90B; FIPS 140-3; Common Criteria EAL5+
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: SEALSQ QS7001 Secure Element obtained NIST SP 800-90B Entropy Source Validation; The product is designed for regulated procurement in the US and EU for IoT, smart grids, and aerospace; SEALSQ acquired Miraex to integrate photonic integrated circuits for quantum transduction; The initiative aims to deploy radiation-tolerant modules on nanosatellites for a sovereign quantum-secure network
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Compliance Officer
+- **Implementation Prerequisites**: NIST SP 800-90B Entropy Source Validation; FIPS 140-3 certification; Common Criteria EAL5+ certification
+- **Relevant PQC Today Features**: hsm-pqc; entropy-randomness; vendor-risk; iot-ot-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: NIST SP 800-90B Entropy Source Validation
+- **QKD Protocols & Quantum Networking**: Quantum Key Distribution (QKD); Quantum Orbital Space Cloud; microwave-to-optical quantum transduction
+- **QRNG & Entropy Sources**: NIST SP 800-90B Entropy Source Validation; random bit generation hardware
+- **Constrained Device & IoT Suitability**: IoT; smart grids; aerospace electronics; RISC-V microcontroller
+- **Supply Chain & Vendor Risk**: SEALSQ acquired Miraex to complete vertically integrated quantum hardware stack
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document describes the launch of a commercial service and hardware product (QS7001) with specific security validations, representing a deployment/commercialization phase event rather than a policy or research phase.
+- **Regulatory Mandate Level**: Voluntary
+- **Sector / Industry Applicability**: Defense; Telecommunications; Energy; Technology; Critical Infrastructure
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from product development to commercial availability and infrastructure deployment, enabling sovereign quantum-secure communications via satellite and secure elements for regulated sectors.
+- **Historical Significance**: Represents a commercial launch of a post-quantum secure element with NIST entropy validation and a vertical stack acquisition for quantum satellite networking, signaling early market availability of PQC hardware for defense and critical infrastructure.
+- **Implementation Timeline Dates**: None detected
+- **Successor Events & Dependencies**: Requires FIPS 140-3 and Common Criteria EAL5+ certifications; Enables deployment of radiation-tolerant transduction modules on WISeSat.Space nanosatellites
+- **Source Document Title**: United States:SEALSQ — US Post-Quantum Root of Trust Service Launch
+- **Source Document Publication Date**: June 6, 2026
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: United_States_SEALSQ_US_Post-Quantum_Root_of_Trust_Service_Launch.html (1,140,906 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:38:48
+
+---
+
+## Global:Quantinuum — Helios Quantum Computer Commercial Launch
+
+- **Reference ID**: Global:Quantinuum — Helios Quantum Computer Commercial Launch
+- **Title**: Helios Quantum Computer Commercial Launch
+- **Authors**: Quantinuum
+- **Publication Date**: 2025-11-05
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Quantinuum announces the commercial launch of its Helios quantum computer and its Initial Public Offering on Nasdaq.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Singapore; Bodies: National Quantum Office (NQO); National Quantum Computing Hub (NQCH); Securities and Exchange Commission (SEC)
+- **Leaders Contributions Mentioned**: Dr. Rajeeb Hazra, President & CEO of Quantinuum
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Cloud Access; Hardware-as-a-Service
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Quantinuum launched Helios, a general-purpose commercial quantum computer with high fidelity; Helios is available via cloud and on-premise services; Quantinuum partnered with NVIDIA to integrate GB200 with Helios via NVQLink; Quantinuum signed a strategic partnership with Singapore’s National Quantum Office; Quantinuum completed its Initial Public Offering on Nasdaq under ticker QNT
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: 98 Physical qubits at 99.921% 2-qubit gate fidelity; 99.9975% 1-qubit gate fidelity; 94 Logical qubits (error detected); 50 Logical qubits (error detected) in magnetism simulation; 48 Logical qubits (error corrected) with 99.99% state prep and measurement fidelity
+- **Target Audience**: CISO; Developer; Researcher; Policy Maker
+- **Implementation Prerequisites**: NVIDIA GB200; NVIDIA NVQLink; NVIDIA CUDA-Q platform; Quantinuum Guppy language
+- **Relevant PQC Today Features**: quantum-threats; vendor-risk; pqc-business-case
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: Quantum Origin (quantum random number generator)
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: IPO gross proceeds of $1.68 billion; IPO price of $60.00 per share
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document describes a commercial product launch and corporate financial event (IPO) rather than a PQC standardization or migration phase.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Finance; Healthcare; Technology; Energy; Transportation
+- **Migration Urgency & Priority**: Exploratory
+- **Phase Transition Narrative**: Moves from research/development to commercial availability for enterprise applications in finance, life sciences, and materials.
+- **Historical Significance**: Launch of a high-fidelity general-purpose commercial quantum computer and its subsequent public listing, marking a maturation of the quantum computing industry.
+- **Implementation Timeline Dates**: November 5, 2025: Helios commercial launch; June 3, 2026: IPO pricing; June 4, 2026: Trading begins; June 5, 2026: IPO closing
+- **Successor Events & Dependencies**: Requires integration with NVIDIA GB200 and CUDA-Q; Enables GenQAI applications and hybrid quantum-classical computing workflows
+- **Source Document Title**: Quantinuum Announces Commercial Launch of New Helios Quantum Computer that Offers Unprecedented Accuracy to Enable Generative Quantum AI (GenQAI)
+- **Source Document Publication Date**: November 5, 2025
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: Global_Quantinuum_Helios_Quantum_Computer_Commercial_Launch.html (173,191 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:38:49
+
+---
+
+## Global:Ethereum Foundation — Post-Quantum Security Top Priority
+
+- **Reference ID**: Global:Ethereum Foundation — Post-Quantum Security Top Priority
+- **Title**: Post-Quantum Security Top Priority
+- **Authors**: Ethereum Foundation
+- **Publication Date**: 2026-01-24
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: The document is a collection of Ethereum Foundation blog posts covering security initiatives, protocol upgrades, and organizational updates, with no substantive discussion of Post-Quantum Cryptography.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Hester Bruikman (Clear Signing standard launch); Will Corcoran, Kev Wedderburn, Fredrik (Protocol Cluster Updates); Tim Beiko (Soldøgn Interop Recap); Josh Rudolf, Julian Ma, Josh Stark (L1/L2 perspective)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: None detected
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: None detected
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -55,20 +658,758 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Phase Classification Rationale**: The document is a published guideline (Version 2, May 2025) that adds PQC mechanisms to the agreed list for EUCC certification, representing a standardization/guidance phase rather than a specific migration deadline or research phase.
-- **Regulatory Mandate Level**: Recommended
-- **Sector / Industry Applicability**: All Sectors
-- **Migration Urgency & Priority**: Long-Term
-- **Phase Transition Narrative**: Moves from classical-only agreed mechanisms to including PQC mechanisms, enabling the certification of ICT products with post-quantum cryptography under the EUCC scheme.
-- **Historical Significance**: This is the first version of the EUCC Agreed Cryptographic Mechanisms guidelines to explicitly include PQC mechanisms, signaling formal recognition of PQC in EU cybersecurity certification.
+- **Phase Classification Rationale**: The document is a compilation of general Ethereum ecosystem updates and does not contain specific PQC timeline events or phase markers.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Technology
+- **Migration Urgency & Priority**: Exploratory
+- **Phase Transition Narrative**: None detected
+- **Historical Significance**: None detected
 - **Implementation Timeline Dates**: None detected
-- **Successor Events & Dependencies**: Requires adoption of ACM v2 by developers and evaluators; Enables EUCC certification of products using PQC mechanisms.
-- **Source Document Title**: EUCC GUIDELINES ON CRYPTOGRAPHY: AGREED CRYPTOGRAPHIC MECHANISMS VERSION 2 | MAY 2025
-- **Source Document Publication Date**: May 2025
+- **Successor Events & Dependencies**: None detected
+- **Source Document Title**: Global:Ethereum Foundation — Post-Quantum Security Top Priority
+- **Source Document Publication Date**: May 12, 2026
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
-- **Source Document**: European_Union_ECCG_Agreed_Cryptographic_Algorithms_v2.pdf (346,171 bytes, 5,203 extracted chars)
-- **Extraction Timestamp**: 2026-06-06T18:52:24
+- **Source Document**: Global_Ethereum_Foundation_Post-Quantum_Security_Top_Priority.html (771,321 bytes, 7,573 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:38:49
+
+---
+
+## Singapore:Quantinuum/NQO — Helios Quantum Computer Singapore Deployment
+
+- **Reference ID**: Singapore:Quantinuum/NQO — Helios Quantum Computer Singapore Deployment
+- **Title**: Helios Quantum Computer Singapore Deployment
+- **Authors**: Quantinuum and Singapore National Quantum Office
+- **Publication Date**: 2026-01-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Strategic partnership between Singapore’s National Quantum Office and Quantinuum to deploy the Helios quantum computer and establish an R&D center in Singapore.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Singapore; Bodies: National Quantum Office, Agency for Science, Technology and Research, National Quantum Computing Hub
+- **Leaders Contributions Mentioned**: Mr. Ling Keok Tong, Executive Director of the National Quantum Office; Dr. Rajeeb Hazra, President & CEO of Quantinuum; Mrs. Josephine Teo, Minister for Digital Development and Information
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Quantinuum will deploy the Helios quantum computer in Singapore in 2026; Singapore will become the first country outside the US to host the Helios system; An R&D and Operations Centre will be established to co-develop middleware and applications; Initial programs will target computational biology, financial modeling, and advanced materials; The partnership aims to position Singapore as a leading global quantum computing hub
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker; Researcher; CISO
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Leaders; quantum-threats; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: Quantum Origin (QRNG)
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document describes a strategic partnership and hardware deployment announcement, representing an exploratory phase event focused on infrastructure establishment rather than cryptographic standardization or migration mandates.
+- **Regulatory Mandate Level**: Voluntary
+- **Sector / Industry Applicability**: Government; Finance; Healthcare; Technology; Academic
+- **Migration Urgency & Priority**: Exploratory
+- **Phase Transition Narrative**: Moves from Research to Infrastructure Deployment — signals the establishment of physical quantum computing capabilities and R&D centers in Singapore.
+- **Historical Significance**: Marks Singapore as the first country outside the United States to host the Quantinuum Helios quantum computer system.
+- **Implementation Timeline Dates**: 2026: Installation of the Helios system in Singapore expected to be completed; November 5, 2025: Partnership announcement date; June 5, 2026: Quantinuum IPO closing date
+- **Successor Events & Dependencies**: Requires completion of Helios system installation in 2026; Enables direct access to Helios computing capabilities for researchers; Enables co-development of end-to-end middleware and applications
+- **Source Document Title**: Singapore’s National Quantum Office and Quantinuum Forge Strategic Partnership to Accelerate Quantum Computing
+- **Source Document Publication Date**: November 5, 2025
+- **Country Migration Dates**: Singapore: 2026 — Installation of the Helios system in Singapore expected to be completed
+- **Timeline Cross-Reference**: Singapore 2026: CONSISTENT (Helios Quantum Computer Singapore Deployment)
+- **Source Document**: Singapore_Quantinuum_NQO_Helios_Quantum_Computer_Singapore_Deployment.html (176,718 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:38:50
+
+---
+
+## United States:Google — Google Cloud ML-KEM Default and Chrome MTC Program
+
+- **Reference ID**: United States:Google — Google Cloud ML-KEM Default and Chrome MTC Program
+- **Title**: Google Cloud ML-KEM Default and Chrome MTC Program
+- **Authors**: Google LLC
+- **Publication Date**: 2026-02-06
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Google outlines its commitments to post-quantum cryptography migration, including rolling out PQC in Google Cloud and Chrome, while providing five recommendations for policymakers to prepare for the quantum era.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computer (CRQC); store now, decrypt later attacks
+- **Migration Timeline Info**: Google is on track to complete a PQC migration safely within NIST’s current guidelines; Google has been preparing for a post-quantum world since 2016
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST, Google, Alphabet
+- **Leaders Contributions Mentioned**: Kent Walker (President of Global Affairs, Google & Alphabet); Hartmut Neven (Founder and Lead, Google Quantum AI)
+- **PQC Products Mentioned**: Google Cloud; Chrome
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Cloud; PKI (implied by "certificate authorities" and "trust infrastructure")
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; 2048-bit RSA
+- **Key Takeaways**: Organizations should prioritize crypto agility to update algorithms without disrupting services; Policymakers should drive society-wide momentum for PQC in critical infrastructure like energy and healthcare; Governments should promote cloud-first modernization to leverage provider-led PQC transitions; AI systems must be built with PQC as a necessary foundation for security; Stakeholders should lean on experts to avoid strategic surprise regarding CRQC arrival timelines
+- **Security Levels & Parameters**: 2048-bit RSA
+- **Hybrid & Transition Approaches**: Crypto agility; Cloud-first modernization
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker; CISO; Security Architect
+- **Implementation Prerequisites**: Crypto agility; Cloud migration; Workforce development
+- **Relevant PQC Today Features**: Timeline; Threats; Migrate; crypto-agility; pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document represents an Informational phase event as it outlines corporate commitments and policy recommendations rather than a specific technical standard or regulatory mandate.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Government; Finance; Healthcare; Telecommunications; Energy; Technology
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from Research to Action — signals active corporate deployment and policy advocacy for PQC adoption.
+- **Historical Significance**: Represents a major technology provider's public commitment to PQC migration and a call to action for policymakers to accelerate global readiness.
+- **Implementation Timeline Dates**: 2016: Google began preparing for a post-quantum world; 2024: NIST announced the first set of PQC standards
+- **Successor Events & Dependencies**: Requires widespread adoption of NIST standards; Enables cloud-first modernization for PQC transition
+- **Source Document Title**: The quantum era is coming. Are we ready to secure it?
+- **Source Document Publication Date**: Feb 06, 2026
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: United_States_Google_Google_Cloud_ML-KEM_Default_and_Chrome_MTC_Program.html (388,374 bytes, 11,740 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:38:51
+
+---
+
+## United States:Google — Google PQC Migration 2029 Timeline
+
+- **Reference ID**: United States:Google — Google PQC Migration 2029 Timeline
+- **Title**: Google PQC Migration 2029 Timeline
+- **Authors**: Google LLC
+- **Publication Date**: 2026-03-25
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Google announces a 2029 timeline for post-quantum cryptography migration, prioritizing authentication services and integrating ML-DSA into Android 17.
+- **PQC Algorithms Covered**: ML-DSA
+- **Quantum Threats Addressed**: store-now-decrypt-later attacks; Cryptographically Relevant Quantum Computer (CRQC)
+- **Migration Timeline Info**: 2029: PQC migration timeline target
+- **Applicable Regions / Bodies**: United States; National Institute of Standards and Technology (NIST)
+- **Leaders Contributions Mentioned**: Heather Adkins (VP, Security Engineering); Sophie Schmieg (Senior Staff Cryptography Engineer)
+- **PQC Products Mentioned**: Android 17; Google Chrome
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Cloud; authentication services
+- **Standardization Bodies**: National Institute of Standards and Technology (NIST)
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Google sets a 2029 deadline for PQC migration to address quantum threats; Authentication services are prioritized for PQC migration due to digital signature risks; Android 17 integrates ML-DSA for PQC digital signature protection; Store-now-decrypt-later attacks make encryption migration urgent today
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "Android 17 is integrating PQC digital signature protection using ML-DSA"
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Timeline; Threats; Migrate; Algorithms; Leaders
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Phase Classification Rationale**: The document announces a specific corporate migration timeline (2029) and concrete implementation steps (Android 17), representing a transition from planning to active deployment.
+- **Regulatory Mandate Level**: Voluntary
+- **Sector / Industry Applicability**: Technology
+- **Migration Urgency & Priority**: Long-Term (3-5yr, planning horizon)
+- **Phase Transition Narrative**: Moves from general PQC awareness and research to concrete corporate migration planning and initial product integration (Android 17).
+- **Historical Significance**: Represents a major technology leader setting a public, ambitious 2029 deadline for PQC migration, signaling industry urgency and providing a reference timeline for other organizations.
+- **Implementation Timeline Dates**: 2029: PQC migration timeline target
+- **Successor Events & Dependencies**: Requires progress on quantum computing hardware development; Enables broader industry digital transitions
+- **Source Document Title**: Quantum frontiers may be closer than they appear
+- **Source Document Publication Date**: Mar 25, 2026
+- **Country Migration Dates**: United States: 2029 — Google PQC migration timeline target
+- **Timeline Cross-Reference**: United States 2029: CONSISTENT (Google PQC Migration 2029 Timeline)
+- **Source Document**: United_States_Google_Google_PQC_Migration_2029_Timeline.html (381,972 bytes, 7,931 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:38:51
+
+---
+
+## Canada:BTQ Technologies — Bitcoin Quantum Testnet Launch
+
+- **Reference ID**: Canada:BTQ Technologies — Bitcoin Quantum Testnet Launch
+- **Title**: Bitcoin Quantum Testnet Launch
+- **Authors**: BTQ Technologies Corp.
+- **Publication Date**: 2025-01-03
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Announcement of the Bitcoin Quantum Testnet launch by BTQ Technologies.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Canada; United States; Germany
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: OSS; QPoW; QRiNG; QCIM; QSSN
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: BTQ Technologies has launched a Bitcoin Quantum Testnet; The company lists specific quantum-related products including QPoW and QRiNG; The company is listed on stock exchanges in Canada, the US, and Germany; No specific PQC algorithms or standards are detailed in the text
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Investor; Researcher
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: digital-assets; pqc-101
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document announces a "Bitcoin Quantum Testnet Launch," which represents an exploratory or pilot phase event rather than a regulatory mandate or final standard.
+- **Regulatory Mandate Level**: Voluntary
+- **Sector / Industry Applicability**: Technology; Finance
+- **Migration Urgency & Priority**: Exploratory
+- **Phase Transition Narrative**: Moves from conceptual product listing to active testnet deployment, enabling early validation of quantum-resistant Bitcoin mechanisms.
+- **Historical Significance**: Represents a commercial entity launching a testnet for quantum-resistant Bitcoin, signaling industry interest in post-quantum digital asset security.
+- **Implementation Timeline Dates**: None detected
+- **Successor Events & Dependencies**: None detected
+- **Source Document Title**: Canada:BTQ Technologies — Bitcoin Quantum Testnet Launch
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: Canada_BTQ_Technologies_Bitcoin_Quantum_Testnet_Launch.html (114,073 bytes, 447 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:38:52
+
+---
+
+## United States:Algorand Foundation — First Post-Quantum Mainnet Transaction
+
+- **Reference ID**: United States:Algorand Foundation — First Post-Quantum Mainnet Transaction
+- **Title**: First Post-Quantum Mainnet Transaction
+- **Authors**: Algorand Foundation
+- **Publication Date**: 2024-10-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Algorand Foundation announces the execution of the first post-quantum mainnet transaction using NIST-selected Falcon signatures to secure digital assets on its blockchain.
+- **PQC Algorithms Covered**: Falcon
+- **Quantum Threats Addressed**: Shor's Algorithm; integer factorization; discrete log problem
+- **Migration Timeline Info**: 2022: Algorand introduced State Proofs; 2025: First quantum-resistant transaction on mainnet; 2026: Google released research on quantum threats to ECC
+- **Applicable Regions / Bodies**: United States; NIST
+- **Leaders Contributions Mentioned**: Dr. Zhenfei Zhang (submitted Falcon proposal); Craig Gentry (GPV work); Chris Peikert (GPV work); Vinod Vaikuntanathan (GPV work); Silvio Micali (State Proofs paper; VRF introduction)
+- **PQC Products Mentioned**: AlgoKit; Algorand Virtual Machine
+- **Protocols Covered**: Pure Proof-of-Stake; Verifiable Random Function
+- **Infrastructure Layers**: Blockchain; Ledger; Node runners
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: Elliptic-curve cryptography (ECC); SHA-2
+- **Key Takeaways**: Algorand executed the first post-quantum transaction on a public blockchain mainnet using Falcon signatures; Falcon was chosen for its compact key and signature sizes to maintain decentralization and scalability; Existing blockchains must transition to PQC to protect both current transactions and historical ledger integrity; Quantum computers pose a threat to ECC-based blockchain security via Shor's algorithm; Algorand uses Falcon-signed State Proofs to secure its chain history against quantum attacks.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "executing the first quantum‑resistant transaction on mainnet using NIST‑selected Falcon signatures"
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: Falcon has relatively small key and signature sizes compared to hash-based categories; consumes less block space and bandwidth
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: Algorand Virtual Machine support for Falcon verification; resource-constrained device compatibility (smartphones, IoT)
+- **Relevant PQC Today Features**: digital-assets; Algorithms; Threats; Timeline
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Compatible with resource-constrained devices like smartphones and security chips in IoT devices
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Transition requires examining every authorization path for Algorand addresses to prevent quantum exploitation
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Phase Classification Rationale**: The document describes a completed implementation milestone (first mainnet transaction) rather than a regulatory phase, representing a voluntary industry adoption event.
+- **Regulatory Mandate Level**: Voluntary
+- **Sector / Industry Applicability**: Technology; Finance
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from securing historical ledger state (2022) to securing live digital asset transactions (2025), enabling practical quantum-resistant usage on a public blockchain.
+- **Historical Significance**: Marks the world’s first post-quantum transaction on a public blockchain mainnet, demonstrating practical viability of lattice-based signatures in decentralized finance.
+- **Implementation Timeline Dates**: 2022: Algorand introduced State Proofs; 2025: First post-quantum transaction on mainnet; 2026: Google released research on quantum threats
+- **Successor Events & Dependencies**: Requires replacement of ECC-based Verifiable Random Function (VRF) with a post-quantum secure version; depends on NIST standardization of Falcon.
+- **Source Document Title**: United States:Algorand Foundation — First Post-Quantum Mainnet Transaction
+- **Source Document Publication Date**: April 2026
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: United_States_Algorand_Foundation_First_Post-Quantum_Mainnet_Transaction.html (171,610 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:38:52
+
+---
+
+## United States:Bitcoin Core — BIP-360 Pay-to-Merkle-Root Proposal
+
+- **Reference ID**: United States:Bitcoin Core — BIP-360 Pay-to-Merkle-Root Proposal
+- **Title**: BIP-360 Pay-to-Merkle-Root Proposal
+- **Authors**: Bitcoin Core Development
+- **Publication Date**: 2025-03-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Proposal for a new Bitcoin output type called Pay-to-Merkle-Root (P2MR) via soft fork to mitigate long exposure quantum attacks by removing the key path spend from Taproot.
+- **PQC Algorithms Covered**: ML-DSA; FALCON-512
+- **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computers (CRQCs); Shor's algorithm; Long exposure attacks; Short exposure attacks; Quantum key recovery
+- **Migration Timeline Info**: 2030: CNSA 2.0 mandates software and networking equipment upgrades to post-quantum schemes; 2033: Browsers and operating systems fully upgraded; 2035: Elliptic Curve Cryptography disallowed within US federal government
+- **Applicable Regions / Bodies**: United States
+- **Leaders Contributions Mentioned**: Hunter Beast (Author); Ethan Heilman (Author); Isabel Foxen Duke (Author)
+- **PQC Products Mentioned**: Signal
+- **Protocols Covered**: Bitcoin; Taproot; SegWit v3
+- **Infrastructure Layers**: Script trees; Merkle roots; Wallet descriptors; Extended public keys (xpubs)
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: Commercial National Security Algorithm Suite (CNSA) 2.0; NIST IR 8547
+- **Classical Algorithms Referenced**: Elliptic Curve Cryptography (ECC); Schnorr signature; Discrete Logarithm Problem (DLP)
+- **Key Takeaways**: P2MR outputs remove the quantum-vulnerable key path spend to protect against long exposure attacks; Short exposure attacks on mempool transactions may still require future post-quantum signature integration; CNSA 2.0 and NIST mandates drive urgency for quantum-resistant upgrades by 2030-2035; P2MR leverages existing Taproot code to minimize implementation risk while enabling future script-based PQC adoption
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid cryptography (use of ECC and post-quantum algorithms together)
+- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: P2MR witness is always larger than P2TR key path spend; 32-byte root of script tree; Control block size is 1 + 32 \* m bytes where m is script depth
+- **Target Audience**: Developer; Security Architect; Policy Maker; Researcher
+- **Implementation Prerequisites**: Requires BIP 340, BIP 341, BIP 342; Soft fork activation; Support for Tapscript and OP_SUCCESSx opcode update path
+- **Relevant PQC Today Features**: digital-assets; merkle-tree-certs; hybrid-crypto; crypto-agility; quantum-threats
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: soft fork; phased rollout (upgrade well before Q-Day); backward compatibility (reuse taproot code); breaking changes (removes quantum vulnerable key-spend path); effort estimation (debate independently of algorithm commitment)
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: None detected
+- **Phase Classification Rationale**: The document is a Draft Bitcoin Improvement Proposal (BIP) defining a new consensus-layer output type, representing the standardization of a protocol specification for quantum-resistant transaction structures.
+- **Regulatory Mandate Level**: Voluntary
+- **Sector / Industry Applicability**: Finance; Technology
+- **Migration Urgency & Priority**: Exploratory
+- **Phase Transition Narrative**: Transitions from theoretical PQC threat modeling to concrete protocol design; enables future integration of post-quantum signature opcodes via tapscript.
+- **Historical Significance**: Represents a foundational proposal for mitigating long-exposure quantum attacks on Bitcoin's consensus layer without requiring immediate post-quantum signature adoption.
+- **Implementation Timeline Dates**: 2024-12-18: Assigned; 2030: CNSA 2.0 software/networking upgrade mandate; 2033: CNSA 2.0 browser/OS full upgrade; 2035: US federal government ECC disallowance
+- **Successor Events & Dependencies**: BIP 340; BIP 341; BIP 342; future post-quantum signature proposal
+- **Source Document Title**: Pay-to-Merkle-Root (P2MR)
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: United States: 2030 — CNSA 2.0 software and networking equipment upgrade mandate; United States: 2033 — CNSA 2.0 browsers and operating systems fully upgraded; United States: 2035 — Elliptic Curve Cryptography disallowed within US federal government
+- **Timeline Cross-Reference**: United States 2030: CONSISTENT (CNSA 2.0 Exclusive - Network/Signing); United States 2033: CONSISTENT (CNSA 2.0 Exclusive - OS/Web/Cloud); United States 2035: CONSISTENT (112-bit Security Algorithms Fully Disallowed)
+- **Extraction Note**: Base enrichment reused from library record Bitcoin-BIP360-P2QRH; timeline dimensions extracted separately; v3 dims extracted from timeline doc (3.0s)
+- **Source Document**: United_States_Bitcoin_Core_BIP-360_Pay-to-Merkle-Root_Proposal.html (34,987 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:38:53
+
+---
+
+## United States:Ethereum Foundation — Strawmap PQC Roadmap Published
+
+- **Reference ID**: United States:Ethereum Foundation — Strawmap PQC Roadmap Published
+- **Title**: Strawmap PQC Roadmap Published
+- **Authors**: Ethereum Foundation
+- **Publication Date**: 2026-01-15
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: The document is a collection of Ethereum Foundation blog posts covering security initiatives, protocol upgrades, and organizational updates, with no substantive content regarding Post-Quantum Cryptography.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Hester Bruikman (Clear Signing launch); Will Corcoran, Kev Wedderburn, Fredrik (Protocol Cluster Updates); Tim Beiko (Soldøgn Interop Recap); Josh Rudolf, Julian Ma, Josh Stark (L1/L2 perspective)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: None detected
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: None detected
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document is a compilation of general Ethereum ecosystem updates and does not contain any information regarding Post-Quantum Cryptography phases or timelines.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Technology
+- **Migration Urgency & Priority**: Exploratory
+- **Phase Transition Narrative**: None detected
+- **Historical Significance**: None detected
+- **Implementation Timeline Dates**: None detected
+- **Successor Events & Dependencies**: None detected
+- **Source Document Title**: United States:Ethereum Foundation — Strawmap PQC Roadmap Published
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: United_States_Ethereum_Foundation_Strawmap_PQC_Roadmap_Published.html (771,321 bytes, 7,573 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:39:32
+
+---
+
+## France:IDEMIA — First PQC Hardware Accelerator Announced
+
+- **Reference ID**: France:IDEMIA — First PQC Hardware Accelerator Announced
+- **Title**: First PQC Hardware Accelerator Announced
+- **Authors**: IDEMIA Secure Transactions
+- **Publication Date**: 2025-03-18
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: IDEMIA Secure Transactions announces its first hardware accelerator for post-quantum cryptography based on Keccak to support NIST-standardized algorithms.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
+- **Quantum Threats Addressed**: quantum computing risks; next-generation cyberattacks
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Marc BERTIN, Chief Technology Officer at IDEMIA Secure Transactions
+- **PQC Products Mentioned**: IDEMIA Secure Transactions post-quantum accelerator; quantum-safe chips from IDEMIA Secure Transactions
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Hardware Security Module (HSM)
+- **Standardization Bodies**: National Institute of Standards and Technology (NIST)
+- **Compliance Frameworks Referenced**: FIPS 203; FIPS 204; FIPS 205
+- **Classical Algorithms Referenced**: Keccak; SHA-3
+- **Key Takeaways**: IDEMIA Secure Transactions has developed a hardware accelerator based on Keccak to offload intensive PQC tasks from main processors; The accelerator supports NIST-standardized algorithms ML-KEM, ML-DSA, and SLH-DSA; The technology aims to ensure seamless user experience and high performance during the transition to quantum-resistant standards; The accelerator will be embedded in all future quantum-safe chips from IDEMIA Secure Transactions; The solution targets sectors including banking, automotive, IoT, Industry 4.0, and healthcare.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; CISO; Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: hsm-pqc; Algorithms; Leaders; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: IoT connectivity and security; embedded in future quantum-safe chips
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: seamless transition to post-quantum solutions; effortless supporting service providers in their post-quantum migrations
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Hash-based; Lattice
+- **PQC Round**: Standardised
+- **Phase Classification Rationale**: The document announces a commercial hardware product release rather than a regulatory or standardization phase event.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Banking; Healthcare; Technology; Transportation
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from algorithm standardization to hardware implementation — signals commercial availability of PQC acceleration.
+- **Historical Significance**: IDEMIA Secure Transactions announces its first hardware accelerator designed specifically for post-quantum cryptography.
+- **Implementation Timeline Dates**: None detected
+- **Successor Events & Dependencies**: Requires NIST standardized algorithms (ML-KEM, ML-DSA, SLH-DSA); Enables embedding in future quantum-safe chips.
+- **Source Document Title**: IDEMIA Secure Transactions Announces its First Hardware Accelerator Designed for Post-Quantum Cryptography
+- **Source Document Publication Date**: 03.18.25
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: France_IDEMIA_First_PQC_Hardware_Accelerator_Announced.html (95,768 bytes, 9,838 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:39:32
+
+---
+
+## Germany:Infineon — First CC EAL6 PQC Security Controller
+
+- **Reference ID**: Germany:Infineon — First CC EAL6 PQC Security Controller
+- **Title**: First CC EAL6 PQC Security Controller
+- **Authors**: Infineon Technologies AG
+- **Publication Date**: 2025-10-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Announcement of Infineon's first Common Criteria EAL6 certified Post-Quantum Cryptography security controller.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Germany
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Infineon PQC Security Controller
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Security controllers
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Common Criteria EAL6
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Infineon has released the first PQC security controller with CC EAL6 certification; The product is targeted at high-assurance security applications; The certification indicates a high level of functional security assurance; This marks a milestone in hardware-based PQC implementation; No specific algorithms or protocols are detailed in the provided text.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Compliance Officer; Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: hsm-pqc; compliance; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Common Criteria EAL6 certification
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document announces a released hardware product (security controller) with a specific certification (CC EAL6), representing a deployment-ready milestone rather than a research or policy phase.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Technology; Defense; Critical Infrastructure
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from PQC algorithm standardization to certified hardware implementation, enabling secure integration into high-assurance systems.
+- **Historical Significance**: Represents the first commercially available security controller with CC EAL6 certification for PQC, marking a significant step in hardware trust anchors for post-quantum cryptography.
+- **Implementation Timeline Dates**: None detected
+- **Successor Events & Dependencies**: Enables integration of certified PQC hardware into secure systems; Requires software stacks to support the controller's interfaces.
+- **Source Document Title**: Germany:Infineon — First CC EAL6 PQC Security Controller
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: Germany_Infineon_First_CC_EAL6_PQC_Security_Controller.html (1,474,729 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:39:33
+
+---
+
+## Germany:Adva — BSI-Approved 400G PQC Encryptor
+
+- **Reference ID**: Germany:Adva — BSI-Approved 400G PQC Encryptor
+- **Title**: BSI-Approved 400G PQC Encryptor
+- **Authors**: Adva Network Security
+- **Publication Date**: 2025-09-25
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Adva Network Security announces its FSP 3000 S-Flex™ 400G solution is the first to receive BSI approval for VS-NfD and EU/NATO-restricted data using Layer 1 PQC encryption.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Harvest-now, decrypt-later attacks; quantum-enabled threats
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Germany; Bodies: BSI (German Federal Office for Information Security), European Commission, EU, NATO
+- **Leaders Contributions Mentioned**: Josef Sißmeir, GM of Adva Network Security; Michael Roth, GM of Adva Network Security
+- **PQC Products Mentioned**: FSP 3000 S-Flex™; ConnectGuard™
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Layer 1 encryption; optical transport networks
+- **Standardization Bodies**: BSI (German Federal Office for Information Security)
+- **Compliance Frameworks Referenced**: VS-NfD (Verschlusssache – Nur für den Dienstgebrauch); EU/NATO-restricted
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Adva FSP 3000 S-Flex™ is the first 400G Layer 1 encryption solution approved by BSI for VS-NfD and EU/NATO-restricted data; The solution uses ConnectGuard™ technology to provide quantum-safe Layer 1 encryption with PQC; Deployment helps defend against harvest-now, decrypt-later attacks for critical infrastructure and high-security enterprises; The product supports high-capacity transponder/muxponder cards for the Adtran FSP 3000 open optical transport platform
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: 400Gbit/s; Fibre Channel up to 64Gbit/s; Ethernet from 1GbE to 400GbE
+- **Target Audience**: CISO; Security Architect; Operations
+- **Implementation Prerequisites**: Adtran FSP 3000 open optical transport platform
+- **Relevant PQC Today Features**: Threats; Compliance; vendor-risk; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document describes a commercial product launch and certification milestone rather than a regulatory phase or standardization step.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Government; Defense; Critical Infrastructure; Finance; Telecommunications
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from roadmap promises to deployed, certified hardware solutions for high-capacity optical transport.
+- **Historical Significance**: It is the world's first 400Gbit/s Layer 1 encryption solution approved by the BSI for VS-NfD and EU/NATO-restricted data.
+- **Implementation Timeline Dates**: 25 September 2025
+- **Successor Events & Dependencies**: Requires coordination with evolving standards and national strategies for PQC transition.
+- **Source Document Title**: Adva Network Security scores world first with BSI-approved 400G encryption solution
+- **Source Document Publication Date**: 25 September 2025
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: Germany_Adva_BSI-Approved_400G_PQC_Encryptor.html (49,339 bytes, 5,312 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:39:33
+
+---
+
+## United States:OpenSSL — OpenSSL 3.6.1 PQC Release
+
+- **Reference ID**: United States:OpenSSL — OpenSSL 3.6.1 PQC Release
+- **Title**: OpenSSL 3.6.1 PQC Release
+- **Authors**: OpenSSL Software Foundation
+- **Publication Date**: 2026-01-27
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Release announcement for OpenSSL versions 3.6.1, 3.5.5, 3.4.4, 3.3.6, 3.0.19, 1.1.1ze, and 1.0.2zn detailing fixed CVEs and download links.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: OpenSSL
+- **Protocols Covered**: TLS 1.3; PKCS#12; CMS; PKCS#7
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: PBMAC1; OCB; SHA-2 (implied by SHA-512 in context of CMS/PKCS, but text only says "CMS AuthEnvelopedData" and "PKCS#12 MAC"; strictly, only PBMAC1 and OCB are explicitly named as algorithms/functions. "SHA" is not explicitly named, only "CMS" and "PKCS#12". I will list PBMAC1 and OCB).
+- **Key Takeaways**: Update OpenSSL to 3.6.1 or later to fix critical memory safety vulnerabilities; Address CVE-2025-66199 regarding excessive memory allocation in TLS 1.3 CompressedCertificate; Mitigate ASN.1 type confusion risks in PKCS#12 and PKCS#7 parsing; Premium support customers should update 1.1.1 and 1.0.2 branches for specific heap and null pointer fixes.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "TLS 1.3 CompressedCertificate excessive memory allocation"
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Operations
+- **Implementation Prerequisites**: OpenSSL Library 3.6.1; OpenSSL Library 3.5.5; OpenSSL Library 3.4.4; OpenSSL Library 3.3.6; OpenSSL Library 3.0.19; OpenSSL Library 1.1.1ze; OpenSSL Library 1.0.2zn
+- **Relevant PQC Today Features**: OpenSSL Studio; migration-program; vendor-risk
+- **Implementation Attack Surface**: Stack buffer overflow; NULL dereference; Heap out-of-bounds write; Out of bounds write; Type Confusion; Excessive memory allocation
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document is a software release announcement for OpenSSL, not a PQC policy or standardization phase document.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Technology
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: None detected
+- **Historical Significance**: None detected
+- **Implementation Timeline Dates**: Jan 27, 2026
+- **Successor Events & Dependencies**: None detected
+- **Source Document Title**: OpenSSL Release Announcement for 3.6.1, 3.5.5, 3.4.4, 3.3.6, 3.0.19, 1.1.1ze and 1.0.2zn
+- **Source Document Publication Date**: Jan 27, 2026
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: United_States_OpenSSL_OpenSSL_3.6.1_PQC_Release.html (45,404 bytes, 7,399 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:39:34
 
 ---
 
@@ -80,19 +1421,19 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Publication Date**: 2023-06-08
 - **Last Updated**: Not specified
 - **Document Status**: Validated
-- **Main Topic**: The Malabo Convention enters into force, mandating encryption for personal data and highlighting quantum-safe transition as a priority for African Union member states.
+- **Main Topic**: The African Union Convention on Cyber Security and Personal Data Protection (Malabo Convention) has entered into force.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: African Union; Bodies: African Union, AU Cybersecurity Expert Group
-- **Leaders Contributions Mentioned**: None detected
+- **Applicable Regions / Bodies**: Regions: Africa; Bodies: African Union
+- **Leaders Contributions Mentioned**: H.E President William Samoei Ruto (PhD), President of the Republic of Kenya and the African Union Champion on Institutional Reform; H.E Paul Kagame, President of the Republic of Rwanda who led the implementation of the reform process since 2016
 - **PQC Products Mentioned**: None detected
 - **Protocols Covered**: None detected
 - **Infrastructure Layers**: None detected
 - **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: Malabo Convention
+- **Compliance Frameworks Referenced**: None detected
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Member states must adopt technical measures including encryption for personal data processing; Quantum-safe transition is a priority for regional harmonization across AU member states; The convention entered into force on 8 June 2023
+- **Key Takeaways**: The Malabo Convention on Cyber Security and Personal Data Protection has entered into force; The African Union is championing institutional reforms under President William Samoei Ruto; Agenda 2063 serves as the strategic framework for Africa's inclusive and sustainable development; The AU promotes citizen inclusion and increased cooperation among African states
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: Not Applicable
@@ -109,7 +1450,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Policy Maker; Compliance Officer
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Compliance; pqc-governance; migration-program
+- **Relevant PQC Today Features**: compliance-strategy; pqc-governance
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -122,19 +1463,824 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Phase Classification Rationale**: The document describes the entry into force of a convention and a report highlighting priorities, representing a policy-level event rather than a technical specification or implementation guide.
+- **Phase Classification Rationale**: The document announces the entry into force of a treaty, representing a regulatory/legal milestone rather than a technical PQC implementation phase.
 - **Regulatory Mandate Level**: Mandatory
 - **Sector / Industry Applicability**: Government; All Sectors
-- **Migration Urgency & Priority**: Long-Term
-- **Phase Transition Narrative**: Moves from ratification to enforcement, enabling regional harmonization efforts for quantum-safe transition.
-- **Historical Significance**: Marks the legal activation of the Malabo Convention, establishing a regulatory baseline for cybersecurity and data protection in the African Union with explicit mention of quantum-safe priorities.
-- **Implementation Timeline Dates**: 8 June 2023: Malabo Convention enters into force; 2025: AU Cybersecurity Expert Group report highlights quantum-safe transition
-- **Successor Events & Dependencies**: Requires member states to adopt appropriate technical measures including encryption; Enables regional harmonization of quantum-safe transition efforts
-- **Source Document Title**: Malabo Convention Enters Into Force
+- **Migration Urgency & Priority**: Exploratory
+- **Phase Transition Narrative**: Moves from Treaty Adoption to Legal Enforcement — signals formal regulatory binding for cyber security and data protection in Africa.
+- **Historical Significance**: The Malabo Convention entering into force establishes a binding legal framework for cyber security and personal data protection across African Union member states.
+- **Implementation Timeline Dates**: June 27, 2014: Date of Adoption; May 11, 2020: Date of last signature
+- **Successor Events & Dependencies**: None detected
+- **Source Document Title**: African Union Convention on Cyber Security and Personal Data Protection
 - **Source Document Publication Date**: None detected
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Source Document**: African_Union_AUC_Malabo_Convention_Enters_Into_Force.html (149,657 bytes, 7,136 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:39:34
+
+---
+
+## Kenya:ODPC — ODPC Guidance on Data Protection by Design
+
+- **Reference ID**: Kenya:ODPC — ODPC Guidance on Data Protection by Design
+- **Title**: ODPC Guidance on Data Protection by Design
+- **Authors**: Office of the Data Protection Commissioner (Kenya)
+- **Publication Date**: 2022-12-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Guidance notes and regulatory framework for data protection by design issued by the Office of the Data Protection Commissioner in Kenya.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Kenya; Bodies: Office of the Data Protection Commissioner (ODPC)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: None detected
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: compliance-strategy; pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document is a general data protection guidance note from the ODPC, not a PQC-specific timeline or migration plan.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: All Sectors
+- **Migration Urgency & Priority**: Exploratory
+- **Phase Transition Narrative**: None detected
+- **Historical Significance**: None detected
+- **Implementation Timeline Dates**: None detected
+- **Successor Events & Dependencies**: None detected
+- **Source Document Title**: Kenya:ODPC — ODPC Guidance on Data Protection by Design
+- **Source Document Publication Date**: Copyright: 2026 — exact date not stated
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: Kenya_ODPC_ODPC_Guidance_on_Data_Protection_by_Design.html (135,533 bytes, 2,422 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:39:35
+
+---
+
+## Global:OpenSSL — OpenSSL 3.5.0 Native PQC Release
+
+- **Reference ID**: Global:OpenSSL — OpenSSL 3.5.0 Native PQC Release
+- **Title**: OpenSSL 3.5.0 Native PQC Release
+- **Authors**: OpenSSL Project
+- **Publication Date**: 2025-04-29
+- **Last Updated**: Not specified
+- **Document Status**: Completed
+- **Main Topic**: Release notes for OpenSSL 3.5.0 through 3.5.6, detailing security patches, bug fixes, and the introduction of native PQC algorithm support.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: OpenSSL
+- **Protocols Covered**: TLS; QUIC; S/MIME; CMS; X.509; DANE
+- **Infrastructure Layers**: PKI; Key Management
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: FIPS 140-3
+- **Classical Algorithms Referenced**: RSA; AES-256; des-ede3-cbc; DH; X25519; SM2; PBMAC1; OCB
+- **Key Takeaways**: OpenSSL 3.5.0 introduces native support for ML-KEM, ML-DSA, and SLH-DSA algorithms; Default TLS configuration now prefers hybrid PQC KEM groups including X25519MLKEM768; Multiple critical security vulnerabilities in RSA KEM, CMS, and PKCS#12 parsing were fixed in subsequent patch releases; FIPS provider updates include PCT on key import for RSA, EC, and ECX.
+- **Security Levels & Parameters**: ML-KEM-768; X25519MLKEM768
+- **Hybrid & Transition Approaches**: Hybrid PQC KEM groups; X25519MLKEM768
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "The default TLS keyshares have been changed to offer X25519MLKEM768"
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3; X.509; S/MIME
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "The default TLS supported groups list has been changed to include and prefer hybrid PQC KEM groups"; X.509: "Fix x509 application adds trusted use instead of rejected use"; S/MIME: "Default encryption cipher for the req , cms , and smime applications changed"
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Operations
+- **Implementation Prerequisites**: OpenSSL 3.5+
+- **Relevant PQC Today Features**: Algorithms; hybrid-crypto; tls-basics; crypto-agility
+- **Implementation Attack Surface**: Side-channel (timing); Memory safety failures (buffer overflow, use-after-free, NULL dereference)
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: JITTER seed source
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Breaking changes in default cipher and TLS groups; Deprecated BIO*meth_get*\*() functions
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hash-based
+- **PQC Round**: Standardised
+- **Phase Classification Rationale**: The document represents a Released phase event as it details published, stable software releases (OpenSSL 3.5.0-3.5.6) with specific version numbers and release dates.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Technology; All Sectors
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from Research/Standardization to Implementation — signals formal adoption of PQC algorithms in a widely used cryptographic library.
+- **Historical Significance**: OpenSSL 3.5.0 is a significant milestone as it adds native support for NIST-standardized PQC algorithms (ML-KEM, ML-DSA, SLH-DSA) and enables hybrid PQC by default in TLS configurations.
+- **Implementation Timeline Dates**: 8 Apr 2025: OpenSSL 3.5.0 release; 1 Jul 2025: OpenSSL 3.5.1 release; 5 Aug 2025: OpenSSL 3.5.2 release; 16 Sep 2025: OpenSSL 3.5.3 release; 30 Sep 2025: OpenSSL 3.5.4 release; 27 Jan 2026: OpenSSL 3.5.5 release; 7 Apr 2026: OpenSSL 3.5.6 release
+- **Successor Events & Dependencies**: Enables hybrid PQC TLS deployments; Requires migration to OpenSSL 3.5+ for native PQC support.
+- **Source Document Title**: OpenSSL 3.5 Series Release Notes
+- **Source Document Publication Date**: 7 Apr 2026
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: Global_OpenSSL_OpenSSL_3.5.0_Native_PQC_Release.html (45,881 bytes, 7,447 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:39:36
+
+---
+
+## Global:3GPP SA3 — 3GPP TR 33.938 PQC Transition Study
+
+- **Reference ID**: Global:3GPP SA3 — 3GPP TR 33.938 PQC Transition Study
+- **Title**: 3GPP TR 33.938 PQC Transition Study
+- **Authors**: 3GPP Service and System Aspects Working Group 3 (Security)
+- **Publication Date**: 2025-05-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: A 3GPP Technical Report (TR 33.938) serving as a cryptographic inventory study for Release 19 and Release 20, focusing on PQC transition.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Bodies: 3GPP SA3
+- **Leaders Contributions Mentioned**: Stawros Orkopoulos (Rapporteur, Nokia Germany); Zander (Zhongding) Lei (Rapporteur, HuaWei Technologies Co., Ltd); Mirko Cano Soveri (Author); Maurice Pope (Author)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: 3GPP
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: 3GPP SA3 is conducting a cryptographic inventory study for PQC transition; The specification is under change control for Release 19 and Release 20; Rapporteurs from Nokia and Huawei are leading the work item; The document is a technical report rather than a final standard; No specific algorithms or protocols are detailed in this metadata extract
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Researcher; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: 5g-security; migration-program; pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: cryptographic inventory
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document is a Technical Report (TR) under change control for Release 19/20, indicating an active study phase rather than a finalized standard or mandate.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Telecommunications
+- **Migration Urgency & Priority**: Exploratory
+- **Phase Transition Narrative**: Moves from initial creation to active study and change control, enabling future standardization of PQC in 3GPP releases.
+- **Historical Significance**: Represents 3GPP's formal initiation of a cryptographic inventory study for PQC transition in Release 19 and 20.
+- **Implementation Timeline Dates**: 2024-12-19: Specification created for release Rel-20; 2025-06-17: Specification made Under Change Control; 2025-03-25: Version 0.0.0 uploaded; 2025-04-22: Version 0.2.0 uploaded; 2025-06-03: Version 1.0.0 uploaded; 2025-06-20: Version 19.0.0 uploaded; 2025-09-26: Version 19.1.0 uploaded; 2026-01-16: Version 19.2.0 uploaded
+- **Successor Events & Dependencies**: Requires completion of the cryptographic inventory study; Enables future 3GPP specifications for PQC in Release 19 and 20.
+- **Source Document Title**: 3GPP Cryptographic Inventory
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: Global_3GPP_SA3_3GPP_TR_33.938_PQC_Transition_Study.html (194,770 bytes, 2,132 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:39:36
+
+---
+
+## European Union:ENISA — ENISA PQC Anticipating Threats
+
+- **Reference ID**: European Union:ENISA — ENISA PQC Anticipating Threats
+- **Title**: ENISA PQC Anticipating Threats
+- **Authors**: European Union Agency for Cybersecurity
+- **Publication Date**: 2025-01-01
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: ENISA report exploring the necessity of designing new cryptographic protocols and integrating post-quantum systems into existing protocols to anticipate quantum threats.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Quantum computers breaking widely used public-key cryptographic schemes; novel threats to security of equipment and systems
+- **Migration Timeline Info**: Transition expected to take years due to complex processes and financial costs
+- **Applicable Regions / Bodies**: Regions: European Union; Bodies: ENISA, European Commission, Member States
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Develop guidelines for major use cases to assess trade-offs; New protocols or major changes should be PQC aware; Use hybrid systems adding PQC as an extra layer to pre-quantum cryptography; Anticipate transition years in advance due to complexity and cost
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid systems (post-quantum cryptography added as an extra layer to pre-quantum cryptography); Double encryption; Double signatures
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker; CISO; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Threats; Migrate; Assess; pqc-risk-management; pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Satellites (restricted accessibility)
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Complex processes; Financial costs; Restricted accessibility for some systems
+- **Financial & Business Impact**: Financial costs associated with transition
+- **Organizational Readiness**: Need to anticipate rise of quantum technology; Acquire knowledge not limited to external standards
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document is a published ENISA report (Released) that explores the necessity of integration and future-proofing, representing an exploratory/advisory phase rather than a specific implementation mandate.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: All Sectors; Critical Infrastructure
+- **Migration Urgency & Priority**: Long-Term
+- **Phase Transition Narrative**: Moves from awareness of quantum threats to strategic planning for protocol integration and hybrid system adoption.
+- **Historical Significance**: ENISA report highlighting the need for EU strategic digital autonomy and preparation for quantum-safe encryption transition.
+- **Implementation Timeline Dates**: None detected
+- **Successor Events & Dependencies**: Requires selection and standardisation of post-quantum algorithms; Depends on integration with existing systems and protocols
+- **Source Document Title**: Post-Quantum Cryptography: Anticipating Threats and Preparing the Future
+- **Source Document Publication Date**: Oct 19,2022
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: European_Union_ENISA_ENISA_PQC_Anticipating_Threats.html (57,376 bytes, 8,958 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:39:37
+
+---
+
+## International:ISO/IEC — ISO/IEC SC27 PQC Standardization
+
+- **Reference ID**: International:ISO/IEC — ISO/IEC SC27 PQC Standardization
+- **Title**: ISO/IEC SC27 PQC Standardization
+- **Authors**: International Organization for Standardization
+- **Publication Date**: 2023-01-01
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: Overview of the ISO/IEC JTC 1/SC 27 committee structure, scope, working groups, and liaison relationships for information security and cybersecurity standardization.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Germany; ISO/IEC JTC 1/SC 27; DIN
+- **Leaders Contributions Mentioned**: Mr Sobhi Mahmoud (Committee Manager); Mr Dr Andreas Wolf (Chairperson until end 2027); Mr Hakim Mkinsi (ISO Technical Programme Manager); Ms Isabel Veronica Nelson (ISO Editorial Manager)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: ISO/IEC JTC 1/SC 27; ISO; IEC; DIN
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: ISO/IEC JTC 1/SC 27 is the primary body for developing information security and cybersecurity standards; The committee includes a specific Working Group 2 for Cryptography and security mechanisms; The committee maintains active liaisons with numerous international standards bodies and organizations including ITU, IEEE, and ENISA; The secretariat for SC 27 is held by DIN in Germany.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker; Compliance Officer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-governance; compliance-strategy; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document describes the organizational structure and scope of a standardization committee rather than a specific PQC implementation phase or timeline event.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: All Sectors
+- **Migration Urgency & Priority**: Exploratory
+- **Phase Transition Narrative**: None detected
+- **Historical Significance**: None detected
+- **Implementation Timeline Dates**: None detected
+- **Successor Events & Dependencies**: None detected
+- **Source Document Title**: International:ISO/IEC — ISO/IEC SC27 PQC Standardization
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: International_ISO_IEC_ISO_IEC_SC27_PQC_Standardization.html (138,397 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-06-06T22:39:37
+
+---
+
+## Global:Microsoft — Microsoft QSP Roadmap Published
+
+- **Reference ID**: Global:Microsoft — Microsoft QSP Roadmap Published
+- **Title**: Microsoft QSP Roadmap Published
+- **Authors**: Microsoft Corporation
+- **Publication Date**: 2025-08-20
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Microsoft publishes a comprehensive roadmap detailing progress toward next-generation cryptography with a 2033 completion target.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: 2033 completion target
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Microsoft has published a comprehensive PQC roadmap; The roadmap targets completion by 2033; The document details progress toward next-generation cryptography
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Timeline; migration-program; pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document is a published roadmap detailing progress and targets, representing a policy-level strategic planning event.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Technology
+- **Migration Urgency & Priority**: Long-Term
+- **Phase Transition Narrative**: Moves from planning to execution phase with a defined 2033 completion target.
+- **Historical Significance**: Represents a major technology vendor's public commitment to a specific PQC migration timeline.
+- **Implementation Timeline Dates**: 2033: completion target
+- **Successor Events & Dependencies**: None detected
+- **Source Document Title**: Microsoft QSP Roadmap Published
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Extraction Note**: No source text available
+- **Extraction Timestamp**: 2026-06-06T22:39:38
+
+---
+
+## Global:Microsoft — Core Infrastructure Transition
+
+- **Reference ID**: Global:Microsoft — Core Infrastructure Transition
+- **Title**: Core Infrastructure Transition
+- **Authors**: Microsoft Corporation
+- **Publication Date**: 2026-01-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Microsoft's acceleration of the QSP transition for core infrastructure, including signing and network services, with specific integration timelines for Azure and M365.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Core infrastructure transition starting in 2026; Windows Azure M365 integration beginning 2027
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Core infrastructure; signing services; network services
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Microsoft is accelerating its QSP transition for core infrastructure starting in 2026; Windows Azure and M365 integration with PQC is scheduled to begin in 2027; The transition covers both signing services and network services
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; CISO; Operations
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Timeline; Migrate; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Phased rollout; core infrastructure first (2026), cloud integration later (2027)
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document describes active transition milestones for core infrastructure and cloud services, indicating execution of a migration plan rather than planning or research.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Technology
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from planning to active implementation for core infrastructure, enabling subsequent cloud service integration.
+- **Historical Significance**: Represents a major cloud provider defining concrete execution dates for PQC adoption in core services.
+- **Implementation Timeline Dates**: 2026: core infrastructure transition starts; 2027: Windows Azure M365 integration begins
+- **Successor Events & Dependencies**: None detected
+- **Source Document Title**: Core Infrastructure Transition
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Extraction Note**: No source text available
+- **Extraction Timestamp**: 2026-06-06T22:40:31
+
+---
+
+## Global:Microsoft — Early Quantum-Safe Adoption
+
+- **Reference ID**: Global:Microsoft — Early Quantum-Safe Adoption
+- **Title**: Early Quantum-Safe Adoption
+- **Authors**: Microsoft Corporation
+- **Publication Date**: 2025-08-20
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Microsoft's early adoption of quantum-safe capabilities across its products and services.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Microsoft is beginning early adoption of quantum-safe capabilities; Quantum-safe systems are gradually becoming the default; The adoption spans across Microsoft products and services
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: migration-program; pqc-governance; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document describes a corporate policy decision by Microsoft to adopt quantum-safe capabilities, representing a voluntary organizational mandate rather than a regulatory or standardization event.
+- **Regulatory Mandate Level**: Voluntary
+- **Sector / Industry Applicability**: Technology
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from Planning to Early Adoption — signals the beginning of gradual default deployment of quantum-safe systems.
+- **Historical Significance**: Represents a major technology vendor initiating early adoption of quantum-safe capabilities, signaling market readiness and gradual transition to defaults.
+- **Implementation Timeline Dates**: None detected
+- **Successor Events & Dependencies**: None detected
+- **Source Document Title**: Early Quantum-Safe Adoption
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Extraction Note**: No source text available
+- **Extraction Timestamp**: 2026-06-06T22:41:31
+
+---
+
+## Global:Microsoft — Microsoft Full PQC Transition
+
+- **Reference ID**: Global:Microsoft — Microsoft Full PQC Transition
+- **Title**: Microsoft Full PQC Transition
+- **Authors**: Microsoft Corporation
+- **Publication Date**: 2025-08-20
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Microsoft completes full transition to quantum-ready cryptographic standards across all products and services.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Two years ahead of 2035 government deadlines
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Microsoft has completed its full transition to quantum-ready cryptographic standards; The transition was completed two years ahead of 2035 government deadlines; The update applies across all Microsoft products and services
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Timeline; Migrate; pqc-governance; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document describes the completion of a transition relative to a specific "2035 government deadlines," marking the end of a migration phase defined by that deadline.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Technology
+- **Migration Urgency & Priority**: Critical Deadline
+- **Phase Transition Narrative**: Moves from Migration to Completed State — signals the finalization of PQC adoption ahead of regulatory requirements.
+- **Historical Significance**: Represents a major technology vendor completing its PQC transition two years ahead of the 2035 government deadline.
+- **Implementation Timeline Dates**: 2035: government deadlines
+- **Successor Events & Dependencies**: None detected
+- **Source Document Title**: Microsoft Full PQC Transition
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Extraction Note**: No source text available
+- **Extraction Timestamp**: 2026-06-06T22:42:26
+
+---
+
+## Italy:ACN — PQC Guidance Published
+
+- **Reference ID**: Italy:ACN — PQC Guidance Published
+- **Title**: PQC Guidance Published
+- **Authors**: Agenzia per la Cybersicurezza Nazionale
+- **Publication Date**: 2024-07-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: ACN publishes guidance on post-quantum and quantum cryptography preparation for the quantum threat.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: None detected
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-governance; pqc-risk-management; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document is explicitly titled as "guidance" published by ACN regarding preparation for the quantum threat, indicating a strategic advisory phase rather than a technical specification or mandatory regulation.
+- **Regulatory Mandate Level**: Recommended
+- **Sector / Industry Applicability**: All Sectors
+- **Migration Urgency & Priority**: Exploratory
+- **Phase Transition Narrative**: Moves from general awareness to structured preparation — signals the beginning of organizational readiness activities for quantum threats.
+- **Historical Significance**: Represents a national-level guidance publication by ACN to address post-quantum and quantum cryptography preparation.
+- **Implementation Timeline Dates**: None detected
+- **Successor Events & Dependencies**: None detected
+- **Source Document Title**: Crittografia Post-Quantum e Quantistica: Preparazione alla Minaccia Quantistica
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Extraction Note**: No source text available
+- **Extraction Timestamp**: 2026-06-06T22:43:21
+
+---
+
+## Japan:NEC/NICT — QKD High-Speed Data Integration Demo
+
+- **Reference ID**: Japan:NEC/NICT — QKD High-Speed Data Integration Demo
+- **Title**: QKD High-Speed Data Integration Demo
+- **Authors**: NEC with NICT and Toshiba
+- **Publication Date**: 2025-09-16
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: NEC, NICT, and Toshiba unveil an integrated system for QKD and high-speed data transmission in large-capacity optical networks.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: None detected
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Technology; Researcher
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: qkd
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: QKD; high-speed data transmission; large-capacity optical network
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document describes a demonstration of an integrated system, representing a technical validation or pilot phase rather than a regulatory migration mandate.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Technology; Telecommunications
+- **Migration Urgency & Priority**: Exploratory
+- **Phase Transition Narrative**: Moves from Research to Demonstration — signals technical feasibility of integrating QKD with high-speed optical networks.
+- **Historical Significance**: Described as the world's first integrated system for QKD and high-speed data transmission in large-capacity optical networks.
+- **Implementation Timeline Dates**: September 2025
+- **Successor Events & Dependencies**: None detected
+- **Source Document Title**: QKD High-Speed Data Integration Demo
+- **Source Document Publication Date**: September 2025
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Extraction Note**: No source text available
+- **Extraction Timestamp**: 2026-06-06T22:44:15
+
+---
+
+## United States:Microsoft — NIST PQC Algorithms in Windows Platform
+
+- **Reference ID**: United States:Microsoft — NIST PQC Algorithms in Windows Platform
+- **Title**: NIST PQC Algorithms in Windows Platform
+- **Authors**: Microsoft Corporation
+- **Publication Date**: 2025-11-01
+- **Last Updated**: Not specified
+- **Document Status**: Completed
+- **Main Topic**: Microsoft announced general availability of NIST post-quantum cryptography algorithms ML-KEM and ML-DSA in Windows 11 and Windows Server 2025 via November 2025 update enabling enterprise PQC adoption.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: November 2025 update
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Windows 11; Windows Server 2025
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Microsoft has released NIST PQC algorithms in Windows 11 and Server 2025; The update is available via the November 2025 release; This enables enterprise adoption of PQC; ML-KEM and ML-DSA are the supported algorithms
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Operations; CISO
+- **Implementation Prerequisites**: Windows 11; Windows Server 2025; November 2025 update
+- **Relevant PQC Today Features**: Migrate; Algorithms; Timeline
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Phase Classification Rationale**: The document describes the general availability of PQC algorithms in a major OS update, representing the execution of migration into production environments.
+- **Regulatory Mandate Level**: Voluntary
+- **Sector / Industry Applicability**: Technology; All Sectors
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from Standardization to Deployment — signals formal adoption beginning in enterprise OS platforms.
+- **Historical Significance**: First major OS vendor to announce general availability of NIST PQC algorithms in Windows 11 and Server 2025.
+- **Implementation Timeline Dates**: November 2025: update enabling enterprise PQC adoption
+- **Successor Events & Dependencies**: Enables enterprise PQC adoption; Requires Windows 11 or Windows Server 2025
+- **Source Document Title**: NIST PQC Algorithms in Windows Platform
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Extraction Note**: No source text available
+- **Extraction Timestamp**: 2026-06-06T22:45:08
 
 ---
 
@@ -1058,72 +3204,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Source Document Publication Date**: January 30, 2026
 - **Country Migration Dates**: Brazil: 2026 — ITI publishes Instrução Normativa n° 35 incorporating NIST PQC algorithms into ICP-Brasil
 - **Timeline Cross-Reference**: Brazil 2026: CONSISTENT (ICP-Brasil Mandates ML-DSA and ML-KEM Certificate )
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Canada:BTQ Technologies — Bitcoin Quantum Testnet Launch
-
-- **Reference ID**: Canada:BTQ Technologies — Bitcoin Quantum Testnet Launch
-- **Title**: Bitcoin Quantum Testnet Launch
-- **Authors**: BTQ Technologies Corp.
-- **Publication Date**: 2025-01-03
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: BTQ Technologies launches the Bitcoin Quantum testnet, the first quantum-safe fork of Bitcoin replacing ECDSA with NIST ML-DSA signatures.
-- **PQC Algorithms Covered**: ML-DSA
-- **Quantum Threats Addressed**: Harvest Now, Decrypt Later; quantum attack on exposed public keys
-- **Migration Timeline Info**: U.S. federal agencies required to migrate by 2035 under NSM-10; DoD components must migrate by December 31, 2030; industry roadmaps target one million qubits by 2030; Vitalik Buterin recommends network readiness by 2035
-- **Applicable Regions / Bodies**: United States; Department of Defense; NSA; NIST; SEC
-- **Leaders Contributions Mentioned**: Olivier Roussy Newton (CEO and Chairman of BTQ Technologies); Satoshi Nakamoto (mined Bitcoin genesis block); Vitalik Buterin (Ethereum co-founder, stated 20% probability of quantum computers by 2030)
-- **PQC Products Mentioned**: Bitcoin Quantum testnet; explorer.bitcoinquantum.com; pool.bitcoinquantum.com
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: Blockchain; Mining pools; Wallets; Public ledger
-- **Standardization Bodies**: NIST
-- **Compliance Frameworks Referenced**: FIPS 204; NSM-10
-- **Classical Algorithms Referenced**: ECDSA
-- **Key Takeaways**: Bitcoin Quantum testnet provides a permissionless environment to audit ML-DSA implementation before mainnet migration; Approximately 6.26 million BTC in addresses with exposed public keys are vulnerable to future quantum attacks; U.S. government mandates require migration to PQC by 2030 for DoD and 2035 for federal agencies; Quantum computing milestones like Google's Willow chip accelerate the threat timeline; Institutional investors are explicitly disclosing quantum risk in SEC filings
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer; Researcher; Miner; User; CISO; Compliance Officer
-- **Implementation Prerequisites**: Run a node; build tooling; audit cryptography; set up a wallet; transact with others
-- **Relevant PQC Today Features**: digital-assets; Threats; Compliance; Migrate; Algorithms
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: immediate identification and inventory of all cryptographic systems across national security systems, weapons systems, cloud computing, mobile devices, and operational technology
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: phase out legacy cryptography and migrate to NIST-approved post-quantum algorithms by December 31, 2030; expedited migration to quantum-resistant cryptography; seamless integration of future quantum-resistant signature algorithms
-- **Financial & Business Impact**: White House estimates $7.1 billion for government-wide PQC migration between 2025 and 2035; protecting the nearly $2T BTC value at risk; tokenized assets projected to exceed $16 trillion by 2030
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document describes the launch of a "testnet" and "quantum-safe fork," representing a transition from theoretical research to a live, open environment for stress-testing quantum-resistant transactions before mainnet migration.
-- **Regulatory Mandate Level**: Mandatory
-- **Sector / Industry Applicability**: Finance; Technology; Defense; Government
-- **Migration Urgency & Priority**: Critical Deadline
-- **Phase Transition Narrative**: Moves from Research and Standardization to Pilot/Testing — signals the availability of a production-grade testbed for validating quantum-resistant solutions in a live blockchain environment.
-- **Historical Significance**: Marks the first quantum-safe fork of Bitcoin, launching 17 years after the genesis block, demonstrating a production-ready path for the cryptocurrency industry to meet U.S. government security standards.
-- **Implementation Timeline Dates**: January 3, 2009: Bitcoin genesis block mined; December 2024: Google Willow chip demonstration; February 2025: Microsoft Majorana 1 introduction; August 13, 2024: NIST finalized ML-DSA as FIPS 204; November 18, 2025: DoD memorandum issued; December 31, 2030: DoD migration deadline; 2030: Industry roadmap target for one million qubits; 2035: U.S. federal agencies migration deadline under NSM-10
-- **Successor Events & Dependencies**: Enables mainnet migration of Bitcoin to quantum-safe signatures; Requires successful auditing and stress-testing of ML-DSA implementation on the testnet; Contingent upon the arrival of cryptographically relevant quantum computers which accelerates the need for this transition.
-- **Source Document Title**: BTQ Technologies Launches Bitcoin Quantum Testnet, Marking 17 Years Since Bitcoin's Genesis Block with First Quantum-Safe Fork
-- **Source Document Publication Date**: Jan 12, 2026
-- **Country Migration Dates**: United States: 2030 — DoD components must migrate to NIST-approved post-quantum algorithms; United States: 2035 — U.S. federal agencies required to migrate to post-quantum cryptography under NSM-10
-- **Timeline Cross-Reference**: United States 2030: CONSISTENT (112-bit Security Deprecated); United States 2035: CONSISTENT (112-bit Security Algorithms Fully Disallowed)
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
@@ -2207,15 +4287,15 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Key Takeaways**: Governments are setting specific transition deadlines ranging from 2024 to 2035; Most countries are monitoring or adopting NIST standards while some like South Korea and China have domestic algorithm selections; Financial services sectors face specific requirements for quantum risk management and inventory planning; Hybrid mode deployment is recommended by the Netherlands for TLS; Ongoing monitoring is required due to rapidly evolving government guidance.
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: hybrid mode for TLS
-- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Support**: Not Applicable
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: None detected
 - **Performance & Size Considerations**: None detected
@@ -2233,7 +4313,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
-- **PQC Round**: None detected
+- **PQC Round**: Not Applicable
 - **Phase Classification Rationale**: The document explicitly sets a completion deadline of 2027 for key establishment and encryption migration, defining a mandatory endpoint for the transition phase.
 - **Regulatory Mandate Level**: Mandatory
 - **Sector / Industry Applicability**: None detected
@@ -2253,65 +4333,65 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 ## Czech Republic:NUKIB — Key Establishment Migration
 
 - **Reference ID**: Czech Republic:NUKIB — Key Establishment Migration
-- **Title**: Czech Republic:NUKIB — Key Establishment Migration
+- **Title**: Key Establishment Migration
 - **Authors**: National Cyber and Information Security Agency
 - **Publication Date**: 2023-01-01
 - **Last Updated**: Not specified
 - **Document Status**: Validated
-- **Main Topic**: GSM Association Non-Confidential Official Document PQ.03 v1.1 – Post Quantum Cryptography – Government Guidelines Post Quantum Government Initiatives by Country and Region The scope of this document is to provide a summary of countries with active PQ
-- **PQC Algorithms Covered**: ML-KEM, FrodoKEM, Classic McEliece
+- **Main Topic**: Summary of post-quantum cryptography government initiatives, guidelines, and migration timelines by country and region.
+- **PQC Algorithms Covered**: ML-KEM; Classic McEliece; FrodoKEM; AIMer; HAETAE; SMAUG-T; NTRU+
 - **Quantum Threats Addressed**: Post-Quantum
-- **Migration Timeline Info**: Milestones: ing PQC algorithm program. Czech Republic NIST (but not restricted to) NÚKIB-2023 Migrate by 2027 (key establishment,... | Migrate by 2027 (key | Algorithm Suite 2.0 (CNSA 2.0), NSA (US National Security Agency), updated Dec 2024 https://media.defense.gov/2022/Se...
-- **Applicable Regions / Bodies**: Regions: United States, European Union, United Kingdom, Germany, France, Canada, Australia, Japan, South Korea, Singapore, Bodies: NIST, NSA, CISA, ENISA, BSI, ANSSI, NCSC, ACSC/ASD, MAS, CRYPTREC
+- **Migration Timeline Info**: Australia: Complete transition by 2030; Canada: Introduce standards-based PQC from 2025-26; Czech Republic: Migrate by 2027; European Union: Define coordinated roadmap by 2026; France: Transition from 2024; New Zealand: Transition from 2026-27; South Korea: Roadmap completion 2035, Pilot 2025-2028; Spain: Post-2030; United States: Implement 2023-2033
+- **Applicable Regions / Bodies**: Australia; Canada; China; Czech Republic; European Union; France; Germany; Israel; Italy; Japan; Netherlands; New Zealand; Singapore; South Korea; Spain; United Kingdom; United States; GSM Association; ACSC; ASD; CSE; CAICT; NICCS; NÚKIB; ENISA; EC; EP; ANSSI; BSI; IL; ACN; CRYPTREC; TNO; CWI; AIVD; NZISM; MAS; KPQC; MSIT; CCN.ES; NCSC; NSM; CISA; NSA; NIST
 - **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: Signal
 - **Protocols Covered**: TLS
 - **Infrastructure Layers**: Firmware
-- **Standardization Bodies**: NIST, ANSSI, BSI, NCSC, ENISA, CRYPTREC
-- **Compliance Frameworks Referenced**: CNSA 2.0, NSM-8/NSM-10, NZISM
+- **Standardization Bodies**: NIST; GSM Association
+- **Compliance Frameworks Referenced**: CNSA20; NSM-10; ACSC-2023; ACSC-2024; ASD-2024; CAN-01; CAN-02; CAN-03; CAICT-2023; NICCS-2025; NÚKIB-2023; ENISA-2022; EC-2024; EP-2025; ANSSI-2022; ANSSI-2023; BSI-2021; BSI-2023; BSI-2024; IL-2022; IL-2025; IT-2024; JAPAN-2022; NL-2022; AIVD-2023; NL-2024; NZISM-2024; SG-2022; MAS-2024; KPQC-2025; MSIT-2023; MSIT-2025; CCN.ES2022; NCSC-2024a; NCSC-2024b; NCSC-2024c; HR7375; CISA-2021; CISA-2023; CISA-2024; EO-14144
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Governments are setting specific transition deadlines ranging from 2024 to 2035; Most countries are monitoring or adopting NIST standards while some like South Korea and China have domestic algorithm selections; Financial services sectors face specific requirements for quantum risk management and inventory planning; Hybrid mode deployment is recommended by the Netherlands for TLS; Ongoing monitoring is required due to rapidly evolving government guidance.
+- **Key Takeaways**: Governments globally are actively developing PQC roadmaps with varying timelines; The Netherlands recommends hybrid mode for TLS using ML-KEM, Classic McEliece, and FrodoKEM; South Korea has selected specific KPQC algorithms (AIMer, HAETAE, SMAUG-T, NTRU+) for its roadmap; Most nations align with NIST standards, though China and South Korea have specific national programs; Migration deadlines range from 2024 (France) to 2035 (South Korea) depending on the country and sector.
 - **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: hybrid mode for TLS
-- **Pure PQC KEM Support**: None detected
+- **Hybrid & Transition Approaches**: Hybrid mode for TLS (Netherlands); Composite signatures implied by "firmware & software signing" context in Czech Republic; Dual-stack not explicitly named but hybrid KEM is.
+- **Pure PQC KEM Support**: No
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "ML-KEM, Classic McEliece and FrodoKEM recommended in hybrid mode for TLS."
+- **Pure PQC Signature Support**: No
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "ML-KEM, Classic McEliece and FrodoKEM recommended in hybrid mode for TLS."
+- **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Policy Maker, Security Architect, Compliance Officer
-- **Implementation Prerequisites**: cryptographic inventory; initial plan; standards-based PQC adoption; pilot transition plan
-- **Relevant PQC Today Features**: Timeline, Algorithms, Compliance, Migrate, Assess
+- **Target Audience**: Policy Maker; CISO; Security Architect
+- **Implementation Prerequisites**: Cryptographic inventory; Planning; Standards-based PQC adoption
+- **Relevant PQC Today Features**: Timeline; Compliance; Migrate; Algorithms; pqc-governance; migration-program
 - **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: cryptographic discovery, create cryptographic inventory, algorithm enumeration, key material audit, Strategy for Migrating to Automated Post-Quantum Cryptography Discovery and Inventory Tools
+- **Cryptographic Discovery & Inventory**: Cryptographic inventory; Cryptographic discovery
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: firmware & software signing, embedded viability
 - **Supply Chain & Vendor Risk**: Add PQC to contracts, third-party library trust, vendor PQC roadmap maturity
-- **Deployment & Migration Complexity**: migration phase (assess/plan/test/migrate/launch), phased rollout, Complete transition to quantum resistant cryptography by 2030, Migrate by 2027, Transition from 2024, Pilot transition plan 2025-2028, Four phase approach today to post-2030, Implement 2023-2033
+- **Deployment & Migration Complexity**: Phased rollout; Planning; Inventory
 - **Financial & Business Impact**: Actions for financial services, Requirement for financial services firms to manage quantum risk, Financial services firms required to prepare plan
-- **Organizational Readiness**: Start planning, create cryptographic inventory, develop inventory and initial plan, governance prerequisites, dedicated crypto team required, change management scope
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document summarizes government guidelines and roadmaps specifically focused on planning, inventorying, and transitioning to post-quantum cryptography across multiple nations. It details timelines for migration activities such as "Complete transition" and "Start planning," indicating a focus on the execution phase of PQC adoption.
-- **Regulatory Mandate Level**: Mandatory
+- **Organizational Readiness**: Planning; Inventory; Governance
+- **Math Family**: Lattice; Code-based; Symmetric
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document summarizes government guidelines and timelines, representing the Planning and Standardization phase of PQC adoption where policies are defined but full migration is ongoing.
+- **Regulatory Mandate Level**: Recommended
 - **Sector / Industry Applicability**: Government; Finance; Banking; Telecommunications; Critical Infrastructure
-- **Migration Urgency & Priority**: Long-Term (3-5yr)
-- **Phase Transition Narrative**: Transitions from initial awareness and planning phases to active inventorying, standard adoption, and full migration execution by defined deadlines.
-- **Historical Significance**: This document captures a critical snapshot of global government alignment on PQC timelines as of March 2025, marking the shift from theoretical preparation to mandated implementation schedules.
-- **Implementation Timeline Dates**: 2030: Australia complete transition; 2025-26: Canada introduce standards-based PQC; 2027: Czech Republic migrate key establishment and encryption; 2026: EU define coordinated roadmap; 2024: France transition start; 2025-28: South Korea pilot transition plan; 2035: South Korea PQC Roadmap completion; 2026-27: New Zealand transition; 2023-2033: United States implement
-- **Successor Events & Dependencies**: Development of detailed PQC guidance by national agencies; creation of cryptographic inventories; selection of specific PQC algorithms for national use; financial services compliance planning.
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from Research/Standardization to Planning and Initial Implementation — signals formal government adoption and inventory creation.
+- **Historical Significance**: Provides a consolidated view of global government PQC strategies, highlighting the Netherlands' specific hybrid TLS recommendations and South Korea's national algorithm selection.
+- **Implementation Timeline Dates**: 2024: France transition start; 2025-26: Canada introduce standards-based PQC; 2025-2028: South Korea pilot transition; 2026-27: New Zealand transition; 2027: Czech Republic migrate key establishment/encryption; 2030: Australia complete transition; 2030: Spain post-2030 approach; 2033: United States implement end date; 2035: South Korea roadmap completion
+- **Successor Events & Dependencies**: Requires NIST standard finalization; Enables national cryptographic inventories; Depends on standards-based PQC availability.
 - **Source Document Title**: Official Document PQ.03 v1.1 – Post Quantum Cryptography – Government Guidelines
-- **Source Document Publication Date**: Copyright: 2025 — exact date not stated
-- **Country Migration Dates**: Australia: 2030 — Complete transition to quantum resistant cryptography; Canada: 2025 — Introduce standards-based PQC; Canada: 2026 — Introduce standards-based PQC; Czech Republic: 2027 — Migrate key establishment and encryption; European Union: 2026 — Define coordinated PQC roadmap for Member States; France: 2024 — Transition start; South Korea: 2025 — Pilot transition plan start; South Korea: 2028 — Pilot transition plan end; South Korea: 2035 — PQC Roadmap completion; New Zealand: 2026 — Transition start; New Zealand: 2027 — Transition end; United States: 2023 — Implement start; United States: 2033 — Implement end
-- **Timeline Cross-Reference**: Australia 2030: CONSISTENT (ASD Full Migration Phase | also: Traditional Crypto Prohibited); Canada 2025: CONSISTENT (CCCS PQC Migration Roadmap Published | also: SPIN Notice Published); Canada 2026: CONSISTENT (Departmental Planning Phase | also: Departmental PQC Migration Plans Due); Czech Republic 2027: CONSISTENT (Key Establishment Migration | also: Encryption Migration Complete); European Union 2026: CONSISTENT (Member State Strategy Initiation); France 2024: CONSISTENT (Joint QKD Position Paper | also: PQC Market Studies Published); South Korea 2025: CONSISTENT (Pilot Transition Phase); South Korea 2028: CONSISTENT (Pilot Transition Phase); South Korea 2035: CONSISTENT (Full PQC Roadmap Complete); New Zealand 2026: CONSISTENT (Planning Phase); New Zealand: DATE CHANGE — CSV=2026 (Planning Phase), doc=2027 (2027 — Transition end) → REVIEW; United States: DATE CHANGE — CSV=2022 (NSM-10 Published), doc=2023 (2023 — Implement start) → REVIEW; United States 2033: CONSISTENT (Large PKI Systems Migration | also: CNSA 2.0 Exclusive - OS/Web/Cloud)
+- **Source Document Publication Date**: 02 Mar 2025
+- **Country Migration Dates**: Australia: 2030 — Complete transition to quantum resistant cryptography; Canada: 2025 — Introduce standards-based PQC; Canada: 2026 — Introduce standards-based PQC; Czech Republic: 2027 — Migrate key establishment, encryption; European Union: 2026 — Define coordinated PQC roadmap for Member States; France: 2024 — Transition start; New Zealand: 2026 — Transition start; New Zealand: 2027 — Transition start; South Korea: 2025 — Pilot transition plan start; South Korea: 2028 — Pilot transition plan end; South Korea: 2035 — PQC Roadmap completion; Spain: 2030 — Post-2030 approach; United States: 2023 — Implement start; United States: 2033 — Implement end
+- **Timeline Cross-Reference**: Australia 2030: CONSISTENT (ASD Full Migration Phase | also: Traditional Crypto Prohibited); Canada 2025: CONSISTENT (CCCS PQC Migration Roadmap Published | also: SPIN Notice Published); Canada 2026: CONSISTENT (Departmental Planning Phase | also: Departmental PQC Migration Plans Due); Czech Republic 2027: CONSISTENT (Key Establishment Migration | also: Encryption Migration Complete); European Union 2026: CONSISTENT (Member State Strategy Initiation); France 2024: CONSISTENT (Joint QKD Position Paper | also: PQC Market Studies Published); New Zealand 2026: CONSISTENT (Planning Phase); New Zealand: DATE CHANGE — CSV=2026 (Planning Phase), doc=2027 (2027 — Transition start) → REVIEW; South Korea 2025: CONSISTENT (Pilot Transition Phase); South Korea 2028: CONSISTENT (Pilot Transition Phase); South Korea 2035: CONSISTENT (Full PQC Roadmap Complete); Spain 2030: CONSISTENT (PQC Transition Period); United States: DATE CHANGE — CSV=2022 (NSM-10 Published), doc=2023 (2023 — Implement start) → REVIEW; United States 2033: CONSISTENT (Large PKI Systems Migration | also: CNSA 2.0 Exclusive - OS/Web/Cloud)
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
@@ -2976,29 +5056,29 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
-## European Union:ENISA — ENISA PQC Anticipating Threats
+## European Union:ECCG — Agreed Cryptographic Algorithms v2
 
-- **Reference ID**: European Union:ENISA — ENISA PQC Anticipating Threats
-- **Title**: ENISA PQC Anticipating Threats
-- **Authors**: European Union Agency for Cybersecurity
-- **Publication Date**: 2025-01-01
+- **Reference ID**: European Union:ECCG — Agreed Cryptographic Algorithms v2
+- **Title**: Agreed Cryptographic Algorithms v2
+- **Authors**: European Cybersecurity Certification Group
+- **Publication Date**: 2025-05-01
 - **Last Updated**: Not specified
-- **Document Status**: New
-- **Main Topic**: ENISA guidance on anticipating quantum threats and preparing for the integration of post-quantum cryptography into existing protocols and systems.
+- **Document Status**: Validated
+- **Main Topic**: Guidelines on agreed cryptographic mechanisms, including PQC, for ICT products submitted to EUCC certification.
 - **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Quantum computers breaking widely used public-key cryptographic schemes; novel threats to security of equipment and systems; radical changes to existing threat models
-- **Migration Timeline Info**: Transition expected to take years due to complex processes and financial costs
-- **Applicable Regions / Bodies**: Regions: European Union; Bodies: ENISA, European Commission, Member States
+- **Quantum Threats Addressed**: Harvest Now Decrypt Later (HNDL), Post-Quantum
+- **Migration Timeline Info**: Milestones: 0 The Commercial National Security Algorithm Suite 2.0 (CNSA 2.0) (published in 2024) outlines requirements, algorith... | ed for the following product categories to adopt CNSA 2.0 compliant algorithms: 2025 : New software and firmware sign... | cloud servers 2026 : Traditional networking equipment such as VPNs and routers 2027 : New NSS, operating systems 2030... | networking equipment such as VPNs and routers 2027 : New NSS, operating systems 2030 : Legacy systems unable to suppo... | operating systems 2030 : Legacy systems unable to support CNSA 2.0 phased out 2035 : All NSS quantum-resistant Canada... | ASD , organizations should develop a refined plan for transition by the end of 2026, with a view to commencing transi...
+- **Applicable Regions / Bodies**: Regions: European Union; Bodies: European Cybersecurity Certification Group (ECCG), European Union Agency for Cybersecurity (ENISA)
 - **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
+- **PQC Products Mentioned**: pqcrypto, Signal, PQCryptoLib-Core, PQMicroLib-Core
 - **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
+- **Infrastructure Layers**: Firmware, IoT, Cloud
+- **Standardization Bodies**: European Cybersecurity Certification Group (ECCG)
+- **Compliance Frameworks Referenced**: Common Criteria, EUCC scheme, Regulation (EU) 2019/881, Implementing Regulation (EU) 2024/482
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Develop guidelines for major use cases to assess trade-offs; New protocols or major changes should be PQC aware; Use hybrid systems adding PQC as an extra layer to pre-quantum cryptography; Anticipate transition years in advance due to complexity and cost
+- **Key Takeaways**: Developers and evaluators should use agreed cryptographic mechanisms from ACM v2 for EUCC certification; The document supports the EUCC scheme for ICT product certification; PQC mechanisms have been added to the agreed cryptographic mechanisms in version 2; Evaluators must verify that protection profiles and ICT products rely on agreed mechanisms.
 - **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Hybrid systems (post-quantum cryptography added as an extra layer to pre-quantum cryptography); Double encryption; Double signatures
+- **Hybrid & Transition Approaches**: PQ/T hybrid schemes; standardized and tested hybrid solutions; phased transition; centrally-managed migration
 - **Pure PQC KEM Support**: No
 - **Pure PQC KEM Evidence**: None detected
 - **Hybrid PQC KEM Support**: No
@@ -3011,33 +5091,33 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Policy Maker; CISO; Security Architect
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Threats; Migrate; Assess; pqc-risk-management; pqc-governance
+- **Target Audience**: Developer; Security Architect; Compliance Officer
+- **Implementation Prerequisites**: Cryptographic inventory of vulnerable systems; prioritization based on sensitive assets; testing and validation in test environments; refined transition plan by end of 2026 (Australia)
+- **Relevant PQC Today Features**: Compliance; Migrate; Algorithms
 - **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
+- **Cryptographic Discovery & Inventory**: full discovery exercise and inventory of vulnerable systems; understanding of your current estate
+- **Testing & Validation Methods**: testing and validation throughout; pilot in test environments
+- **QKD Protocols & Quantum Networking**: QKD (Quantum Key Distribution) technology
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
 - **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: Complex processes; Financial costs; Restricted accessibility for systems like satellites
-- **Financial & Business Impact**: Financial costs associated with transition
-- **Organizational Readiness**: Need to anticipate rise of quantum technology; Acquire knowledge not limited to external standards
+- **Deployment & Migration Complexity**: phased transition; phased rollout; centrally-managed migration; avoiding the risks of a rushed and fragmented transition; three distinct phases (Discover and plan, Prioritize and pilot, Complete adoption); hybrid solutions; backward compatibility approaches (PQ/T hybrid schemes)
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: governance prerequisites (centrally-managed migration); dedicated crypto team required (understanding of your current estate, prioritizing activities); change management scope (developing, implementing, and refining a robust plan for migration); estimated planning horizon (2028-2035); maturity assessment level (risk-based approach)
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Phase Classification Rationale**: The document is described as "ENISA guidance" and a "report" that explores necessity and provides technical recommendations, fitting the Guidance phase.
+- **Phase Classification Rationale**: The document is a published guideline (Version 2, May 2025) that adds PQC mechanisms to the agreed list for EUCC certification, representing a standardization/guidance phase rather than a specific migration deadline or research phase.
 - **Regulatory Mandate Level**: Recommended
 - **Sector / Industry Applicability**: All Sectors
 - **Migration Urgency & Priority**: Long-Term
-- **Phase Transition Narrative**: Moves from awareness/research to preparation and integration planning; enables future-proofing of protocols.
-- **Historical Significance**: ENISA guidance complementing the 2022 integration study, emphasizing the necessity of designing new protocols and integrating PQC into existing systems.
-- **Implementation Timeline Dates**: None detected
-- **Successor Events & Dependencies**: Requires selection and standardisation of post-quantum algorithms; Depends on integration with existing systems and protocols
-- **Source Document Title**: Post-Quantum Cryptography: Anticipating Threats and Preparing the Future
-- **Source Document Publication Date**: Oct 19,2022
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
+- **Phase Transition Narrative**: Moves from classical-only agreed mechanisms to including PQC mechanisms, enabling the certification of ICT products with post-quantum cryptography under the EUCC scheme.
+- **Historical Significance**: This is the first version of the EUCC Agreed Cryptographic Mechanisms guidelines to explicitly include PQC mechanisms, signaling formal recognition of PQC in EU cybersecurity certification.
+- **Implementation Timeline Dates**: 2025: New software and firmware signatures (US); 2025: Web browsers, servers and cloud servers (US); 2026: Traditional networking equipment such as VPNs and routers (US); 2027: New NSS, operating systems (US); 2030: Legacy systems unable to support CNSA 2.0 phased out (US); 2035: All NSS quantum-resistant (US); April 2026: Develop an initial departmental migration plan (Canada); End of 2031: Completion of PQC migration of high-risk, high-priority systems (Canada); End of 2035: Completion of PQC migration of remaining systems (Canada); 31 Dec 2026: Initial national transition roadmaps and first steps (EU); 31 Dec 2030: High-risk use cases and next steps implemented (EU); 31 Dec 2035: Full transition (EU); 2028: Discover and plan (UK); 2028-31: Prioritize and pilot (UK); 2031-35: Complete adoption (UK); End of 2026: Develop a refined plan for transition (Australia); End of 2028: Commencing transition of critical systems and data (Australia); End of 2030: Traditional asymmetric cryptography must not be used (Australia)
+- **Successor Events & Dependencies**: Requires adoption of ACM v2 by developers and evaluators; Enables EUCC certification of products using PQC mechanisms.
+- **Source Document Title**: EUCC GUIDELINES ON CRYPTOGRAPHY: AGREED CRYPTOGRAPHIC MECHANISMS VERSION 2 | MAY 2025
+- **Source Document Publication Date**: May 2025
+- **Country Migration Dates**: United States: 2025 — New software and firmware signatures; United States: 2025 — Web browsers, servers and cloud servers; United States: 2026 — Traditional networking equipment such as VPNs and routers; United States: 2027 — New NSS, operating systems; United States: 2030 — Legacy systems unable to support CNSA 2.0 phased out; United States: 2035 — All NSS quantum-resistant; Canada: 2026 — Develop an initial departmental migration plan; Canada: 2031 — Completion of PQC migration of high-risk, high-priority systems; Canada: 2035 — Completion of PQC migration of remaining systems; European Union: 2026 — Initial national transition roadmaps and first steps; European Union: 2030 — High-risk use cases and next steps implemented; European Union: 2035 — Full transition; United Kingdom: 2028 — Discover and plan phase; United Kingdom: 2031 — Prioritize and pilot phase end; United Kingdom: 2035 — Complete adoption phase end; Australia: 2026 — Develop a refined plan for transition; Australia: 2028 — Commencing transition of critical systems and data; Australia: 2030 — Traditional asymmetric cryptography must not be used
+- **Timeline Cross-Reference**: United States 2025: CONSISTENT (Software/Firmware Signing Transition); United States 2025: CONSISTENT (Web/Cloud Services Transition); United States 2026: CONSISTENT (Traditional Networking Transition); United States 2027: CONSISTENT (Operating Systems Transition); United States 2030: CONSISTENT (112-bit Security Deprecated | also: CNSA 2.0 Exclusive - Network/Signing); United States 2035: CONSISTENT (Full CNSA 2.0 Transition Complete | also: 112-bit Security Algorithms Fully Disall); Canada 2026: CONSISTENT (Departmental Planning Phase | also: Departmental PQC Migration Plans Due); Canada 2031: CONSISTENT (High Priority Systems Complete); Canada 2035: CONSISTENT (Remaining Systems Migration | also: Full GC Migration Complete); European Union 2026: CONSISTENT (Member State Strategy Initiation); European Union 2030: CONSISTENT (Critical Infrastructure Migration | also: High-Risk Systems Secured); European Union 2035: CONSISTENT (Full EU PQC Transition); United Kingdom 2028: CONSISTENT (Discovery & Planning Phase); United Kingdom 2031: CONSISTENT (Priority Migration Phase | also: NCSC Full Migration Phase); United Kingdom 2035: CONSISTENT (NCSC Full Migration Phase); Australia 2026: CONSISTENT (Migration Planning Phase); Australia 2028: CONSISTENT (Critical Systems Migration Start | also: ASD Full Migration Phase); Australia 2030: CONSISTENT (Traditional Crypto Prohibited)
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
@@ -4296,72 +6376,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
-## France:IDEMIA — First PQC Hardware Accelerator Announced
-
-- **Reference ID**: France:IDEMIA — First PQC Hardware Accelerator Announced
-- **Title**: First PQC Hardware Accelerator Announced
-- **Authors**: IDEMIA Secure Transactions
-- **Publication Date**: 2025-03-18
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: IDEMIA Secure Transactions announces the first hardware accelerator designed for post-quantum cryptography, featuring optimized Keccak implementation to boost performance for NIST-standardized algorithms.
-- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
-- **Quantum Threats Addressed**: quantum computing risks; rising threats posted by quantum computing; next-generation cyberattacks
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: Marc BERTIN, Chief Technology Officer at IDEMIA Secure Transactions
-- **PQC Products Mentioned**: IDEMIA Secure Transactions post-quantum accelerator; quantum-safe chips from IDEMIA Secure Transactions
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: Hardware Security Module (HSM); Hardware Accelerator
-- **Standardization Bodies**: National Institute of Standards and Technology (NIST)
-- **Compliance Frameworks Referenced**: FIPS 203; FIPS 204; FIPS 205
-- **Classical Algorithms Referenced**: Keccak; SHA-3
-- **Key Takeaways**: Hardware acceleration is essential to offload intensive PQC computational tasks from main processors; The new accelerator supports NIST-standardized algorithms ML-KEM, ML-DSA, and SLH-DSA; IDEMIA will embed this technology in all future quantum-safe chips; The solution aims to maintain seamless user experience for payments and connectivity while enhancing security against quantum threats
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: No
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: significantly boosting both speed and efficiency; more rapid execution of the quantum-resistant algorithms
-- **Target Audience**: CISO; Security Architect; Operations
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: hsm-pqc; Algorithms; Leaders; migration-program
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: IoT connectivity and security; embedded in all future quantum-safe chips
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: smooth transition to post-quantum solutions without compromising speed or ease of use; effortless supporting service providers in their post-quantum migrations
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Hash-based; Lattice
-- **PQC Round**: Standardised
-- **Phase Classification Rationale**: The document describes the announcement of a physical hardware accelerator chip/module designed to execute PQC algorithms, representing a hardware implementation phase event.
-- **Regulatory Mandate Level**: Voluntary
-- **Sector / Industry Applicability**: Banking; Healthcare; Technology; Transportation; Critical Infrastructure
-- **Migration Urgency & Priority**: Near-Term
-- **Phase Transition Narrative**: Moves from algorithm standardization to hardware implementation — signals that PQC is ready for integration into secure elements and HSMs for commercial deployment.
-- **Historical Significance**: Announced as the first hardware accelerator specifically designed for post-quantum cryptography, marking a milestone in transitioning PQC from software libraries to optimized silicon.
-- **Implementation Timeline Dates**: 03.18.25
-- **Successor Events & Dependencies**: Requires NIST standardization of ML-KEM, ML-DSA, and SLH-DSA; Enables embedding PQC capabilities in future quantum-safe chips for payments and connectivity.
-- **Source Document Title**: IDEMIA Secure Transactions Announces its First Hardware Accelerator Designed for Post-Quantum Cryptography
-- **Source Document Publication Date**: 03.18.25
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
 ## G7:G7 CEG — G7 Financial Sector Critical Systems PQC Transition
 
 - **Reference ID**: G7:G7 CEG — G7 Financial Sector Critical Systems PQC Transition
@@ -4620,72 +6634,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Successor Events & Dependencies**: None detected
 - **Source Document Title**: None detected
 - **Source Document Publication Date**: None detected
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Germany:Adva — BSI-Approved 400G PQC Encryptor
-
-- **Reference ID**: Germany:Adva — BSI-Approved 400G PQC Encryptor
-- **Title**: BSI-Approved 400G PQC Encryptor
-- **Authors**: Adva Network Security
-- **Publication Date**: 2025-09-25
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Adva Network Security announces the world's first BSI-approved 400Gbps Layer 1 encryption solution using post-quantum cryptography for classified data transport.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Harvest-now, decrypt-later attacks; quantum-enabled threats
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: Germany; Bodies: German Federal Office for Information Security (BSI), European Union, NATO
-- **Leaders Contributions Mentioned**: Josef Sißmeir, GM of Adva Network Security; Michael Roth, GM of Adva Network Security
-- **PQC Products Mentioned**: FSP 3000 S-Flex™; ConnectGuard™
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: Optical transport networks; Layer 1 encryption
-- **Standardization Bodies**: BSI
-- **Compliance Frameworks Referenced**: VS-NfD (Verschlusssache – Nur für den Dienstgebrauch); EU/NATO Restricted
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Adva Network Security achieved the first BSI approval for a 400Gbps Layer 1 PQC encryption solution; The solution protects classified data including VS-NfD and EU/NATO Restricted levels; The technology defends against harvest-now, decrypt-later attacks; Deployment enables quantum-safe protection for critical infrastructure and high-security enterprises
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: No
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: 400Gbit/s; 400GbE; Fibre Channel up to 64Gbit/s; Ethernet from 1GbE to 400GbE
-- **Target Audience**: CISO; Security Architect; Operations; Policy Maker
-- **Implementation Prerequisites**: Adtran FSP 3000 open optical transport platform
-- **Relevant PQC Today Features**: Threats; Compliance; vendor-risk; migration-program
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: path to upgrade in sync with evolving standards and higher data rates in step with national strategies
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Phase Classification Rationale**: The document describes a commercial product deployment (FSP 3000 S-Flex™) providing Layer 1 encryption for optical transport networks, marking a transition from roadmap promises to deployed hardware solutions for network security.
-- **Regulatory Mandate Level**: Voluntary
-- **Sector / Industry Applicability**: Government; Defense; Critical Infrastructure; Finance; Telecommunications
-- **Migration Urgency & Priority**: Near-Term
-- **Phase Transition Narrative**: Moves from policy debate and roadmap promises to actual hardware deployment and certification for high-capacity classified data transport.
-- **Historical Significance**: Represents the world's first BSI-approved 400Gbps Layer 1 encryption solution for VS-NfD and EU/NATO-restricted data, setting a benchmark for emerging security standards.
-- **Implementation Timeline Dates**: 25 September 2025
-- **Successor Events & Dependencies**: Requires coordination with national strategies and evolving standards; Enables upgrade paths for higher data rates in sync with PQC transition mandates.
-- **Source Document Title**: Adva Network Security scores world first with BSI-approved 400G encryption solution
-- **Source Document Publication Date**: 25 September 2025
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
@@ -5162,11 +7110,11 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Publication Date**: 2025-11-10
 - **Last Updated**: Not specified
 - **Document Status**: Validated
-- **Main Topic**: SecurityTech by G+D About us Careers Contact EN | DE SecurityTech by G+D Digital Security Digital Security Connectivity & IoT Connectivity & IoT Asset Tracking IoT Connectivity SIM eSIM iSIM SIM & Device Management Network & Data Security IoT Shop Id
+- **Main Topic**: The document is a 404 error page from the BSI website indicating the requested content was not found.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2022, 2024, 2025, 2026, 2030
-- **Applicable Regions / Bodies**: Regions: European Union, Germany
+- **Applicable Regions / Bodies**: Germany; BSI
 - **Leaders Contributions Mentioned**: Claudia Plattner
 - **PQC Products Mentioned**: None detected
 - **Protocols Covered**: None detected
@@ -5174,20 +7122,20 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Standardization Bodies**: BSI
 - **Compliance Frameworks Referenced**: None detected
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Functional quantum-secure ID card demonstrator unveiled; Collaboration between BSI, Bundesdruckerei, G+D, and Infineon; Event occurred November 10-11, 2025
+- **Key Takeaways**: The document contains no substantive content; it is a standard error page; no PQC information is available for extraction
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: Combines classical and post-quantum cryptography; transition occurs in two stages with the first phase protecting personal data using quantum-resistant digital signature schemes
-- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Support**: Not Applicable
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
+- **Lifecycle State**: Released
 - **Performance & Size Considerations**: Minimizing computational footprint of resource-intensive PQC algorithms; fast software implementation of PQC algorithms
 - **Target Audience**: Security Architect; Researcher; Policy Maker
 - **Implementation Prerequisites**: Specialized chips produced by Infineon with new design supporting side-channel-resistant software; meeting new security requirements while minimizing computational footprint
@@ -5203,9 +7151,9 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document describes the unveiling of a "demonstrator," which indicates a Testing phase where a functional prototype is presented to validate concepts before full-scale deployment.
-- **Regulatory Mandate Level**: Voluntary
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document is a 404 error page with no substantive content regarding PQC phases or timelines.
+- **Regulatory Mandate Level**: Informational
 - **Sector / Industry Applicability**: Government; Technology
 - **Migration Urgency & Priority**: Exploratory
 - **Phase Transition Narrative**: Moves from Research to Testing — signals the creation of a functional prototype for quantum-secure identity management.
@@ -5214,204 +7162,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Successor Events & Dependencies**: Enables the first phase of transition protecting personal data from forgery using quantum-resistant digital signature schemes; requires specialized Infineon chips with new design supporting PQC.
 - **Source Document Title**: Quantum-Secure ID Card Demonstrator
 - **Source Document Publication Date**: November 10-11, 2025
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Germany:BSI/DLR — QUANTITY Initiative Launched
-
-- **Reference ID**: Germany:BSI/DLR — QUANTITY Initiative Launched
-- **Title**: QUANTITY Initiative Launched
-- **Authors**: BSI with German Aerospace Center
-- **Publication Date**: 2025-03-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: PQCryptography.de Home Publications Subscribe Contact EN DE BSI-Compliant Post-Quantum Key Exchange: Implementation Pitfalls Note: This report synthesizes findings from our laboratory's evaluation of post-quantum implementations.
-- **PQC Algorithms Covered**: ML-KEM, CRYSTALS-Kyber, FrodoKEM, Classic McEliece
-- **Quantum Threats Addressed**: Post-Quantum
-- **Migration Timeline Info**: Years mentioned: 2022, 2024, 2025, 2026
-- **Applicable Regions / Bodies**: Regions: United States, Germany, Bodies: NIST, BSI
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: pqcrypto
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: Email
-- **Standardization Bodies**: NIST, BSI
-- **Compliance Frameworks Referenced**: BSI TR-02102
-- **Classical Algorithms Referenced**: X25519; ECDH; RSA; AES-192; AES-256
-- **Key Takeaways**: Implement hybrid modes combining classical and post-quantum algorithms as recommended by BSI; Deploy ML-KEM-768 for general applications and FrodoKEM-976 for high-security scenarios; Budget for 5-10x increases in bandwidth and computational requirements during migration; Ensure constant-time implementation to prevent side-channel leakage in polynomial multiplication and error sampling.
-- **Security Levels & Parameters**: ML-KEM-768; ML-KEM-1024; FrodoKEM-976; FrodoKEM-1344; 120-bit security level; 128-bit security level; AES-192 equivalent; AES-256 equivalent
-- **Hybrid & Transition Approaches**: Hybrid mode with classical mechanisms; Cryptographic agility; Composite certificates (implied by hybrid implementation guidance)
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: ML-KEM-768 public key 1,184 bytes; ML-KEM-768 ciphertext 1,088 bytes; ML-KEM-1024 public key 1,568 bytes; FrodoKEM-976 public key 15,632 bytes; Classic McEliece public key 1,044,992 bytes; ML-KEM ~2x slower than X25519; FrodoKEM up to ~10x slower than ECDH
-- **Target Audience**: Developer; Security Architect; Compliance Officer; Researcher
-- **Implementation Prerequisites**: Cryptographically secure randomness per AIS 20/31 standards; Constant-time implementation; Comprehensive side-channel evaluation; Hardware upgrades for bandwidth and computation
-- **Relevant PQC Today Features**: Compliance; Algorithms; hybrid-crypto; crypto-agility; entropy-randomness
-- **Implementation Attack Surface**: side-channel (timing variations, power analysis, cache timing attacks), randomness generation vulnerabilities, parameter validation failures, malformed input attacks
-- **Cryptographic Discovery & Inventory**: cryptographic agility, algorithm selection, BSI compliance checklist
-- **Testing & Validation Methods**: KAT compliance, comprehensive test vectors, side-channel evaluation, independent assessment by security evaluation laboratories
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: cryptographically secure randomness, substantial entropy, PTRNG or DRNG per AIS 20/31 standards, entropy collection
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: open-source implementations, commercial products, reference implementations, third-party library trust
-- **Deployment & Migration Complexity**: phased approach, hybrid mode implementation, backward compatibility with classical mechanisms, cryptographic agility for algorithm updates, operational continuity
-- **Financial & Business Impact**: €300,000 hardware upgrades, €250,000 software development, €200,000 testing & validation, €150,000 training & expertise, €100,000 compliance & audit, 15-25% increase in cryptographic infrastructure costs, €50 million infrastructure upgrades for Bundeswehr
-- **Organizational Readiness**: training development teams, establishing partnerships with security evaluation laboratories, maintaining alignment with BSI technical guidelines, sustained investment and expertise development
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document is a research report synthesizing findings from laboratory evaluations of post-quantum implementations, identifying vulnerability patterns and proposing solutions rather than mandating immediate deployment.
-- **Regulatory Mandate Level**: Recommended
-- **Sector / Industry Applicability**: Defense; Government; Technology
-- **Migration Urgency & Priority**: Near-Term (1-3yr, active planning required)
-- **Phase Transition Narrative**: Moves from Research to Implementation Guidance — signals the availability of practical solutions and compliance checklists for organizations preparing to deploy BSI-compliant systems.
-- **Historical Significance**: Represents a detailed evaluation of implementation pitfalls for German federal standards, highlighting the gap between theoretical security and real-world deployment risks in lattice-based cryptography.
-- **Implementation Timeline Dates**: March 2025: QUANTITY initiative launched; June 2025: Report published; 2024-2025: Implementation cost data period
-- **Successor Events & Dependencies**: Requires adherence to BSI TR-02102-1 updates; Enables organizations to conduct side-channel evaluations before production deployment.
-- **Source Document Title**: BSI-Compliant Post-Quantum Key Exchange: Implementation Pitfalls
-- **Source Document Publication Date**: June 2025
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Germany:Infineon — First CC EAL6 PQC Security Controller
-
-- **Reference ID**: Germany:Infineon — First CC EAL6 PQC Security Controller
-- **Title**: First CC EAL6 PQC Security Controller
-- **Authors**: Infineon Technologies AG
-- **Publication Date**: 2025-10-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Infineon achieves the world's first Common Criteria EAL6 certification for a post-quantum cryptography algorithm on the TEGRION SLC27 security controller.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: TEGRION SLC27
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: Security controller
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: Common Criteria EAL6
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Infineon has achieved the first CC EAL6 certification for a PQC algorithm on a security controller; The TEGRION SLC27 chip is the specific hardware product certified; This milestone represents a significant step in hardware-level PQC validation; No specific PQC algorithm names are provided in the text; No migration timelines or classical algorithm references are included.
-- **Security Levels & Parameters**: Common Criteria EAL6
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect; Compliance Officer; CISO
-- **Implementation Prerequisites**: TEGRION SLC27 chip; Common Criteria EAL6 certification
-- **Relevant PQC Today Features**: Compliance; vendor-risk; hsm-pqc
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: Common Criteria EAL6 certification
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: IoT devices; ePassports; Secure Elements; 28 nm security controllers
-- **Supply Chain & Vendor Risk**: Infineon
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Phase Classification Rationale**: The document describes a hardware product (TEGRION SLC27 security controller) achieving a high-assurance certification (CC EAL6) for PQC, representing a concrete hardware implementation milestone.
-- **Regulatory Mandate Level**: Informational
-- **Sector / Industry Applicability**: Technology; All Sectors
-- **Migration Urgency & Priority**: Near-Term
-- **Phase Transition Narrative**: Moves from algorithm standardization to certified hardware implementation, enabling secure deployment of PQC in embedded security controllers.
-- **Historical Significance**: This is the world's first Common Criteria EAL6 certification for a post-quantum cryptography algorithm on a security controller, marking a critical validation step for high-assurance PQC hardware.
-- **Implementation Timeline Dates**: None detected
-- **Successor Events & Dependencies**: Enables deployment of certified PQC hardware in security-sensitive applications; Requires integration of TEGRION SLC27 into end-system designs.
-- **Source Document Title**: First CC EAL6 PQC Security Controller
-- **Source Document Publication Date**: None detected
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Global:3GPP SA3 — 3GPP TR 33.938 PQC Transition Study
-
-- **Reference ID**: Global:3GPP SA3 — 3GPP TR 33.938 PQC Transition Study
-- **Title**: 3GPP TR 33.938 PQC Transition Study
-- **Authors**: 3GPP Service and System Aspects Working Group 3 (Security)
-- **Publication Date**: 2025-05-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: 3GPP Technical Report 33.938 provides a cryptographic inventory for 5G/6G and studies the transition to post-quantum cryptography, including hybrid and pure-PQC handshakes.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Bodies: 3GPP SA3
-- **Leaders Contributions Mentioned**: Stawros Orkopoulos (Rapporteur, Nokia Germany); Zander (Zhongding) Lei (Rapporteur, HuaWei Technologies Co., Ltd)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: TLS; IKE
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: 3GPP
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: 3GPP is conducting a cryptographic inventory for 5G and 6G systems; The study covers transition strategies including hybrid and pure-PQC handshakes; Specific applications include SUCI concealment and TLS/IKE tunnels; The document is a Technical Report under change control for Release 19/20
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Hybrid handshakes; Pure-PQC handshakes
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: No
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: TLS-1.3; IKE/IPsec
-- **PQC Heatmap Protocols Evidence**: TLS-1.3: "TLS/IKE tunnels"; IKE/IPsec: "TLS/IKE tunnels"
-- **Lifecycle State**: Draft
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect; Researcher; Policy Maker
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: 5g-security; migration-program; pqc-risk-management
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: Cryptographic inventory
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Phase Classification Rationale**: The document is a Technical Report (TR) titled "Study on 3GPP Cryptographic Inventory" and "PQC Transition Study", indicating a research and analysis phase rather than a final specification.
-- **Regulatory Mandate Level**: Informational
-- **Sector / Industry Applicability**: Telecommunications
-- **Migration Urgency & Priority**: Exploratory
-- **Phase Transition Narrative**: Moves from initial assessment to detailed study — enables future standardization of PQC in 3GPP releases.
-- **Historical Significance**: Represents 3GPP's formal initiation of a cryptographic inventory and PQC transition study for 5G/6G, signaling industry readiness for post-quantum migration in telecom.
-- **Implementation Timeline Dates**: None detected
-- **Successor Events & Dependencies**: Requires completion of cryptographic inventory; Enables definition of PQC algorithms for 3GPP Release 19/20.
-- **Source Document Title**: 3GPP Cryptographic Inventory
-- **Source Document Publication Date**: None detected
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
@@ -5478,72 +7228,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Successor Events & Dependencies**: Publication of S/MIME BR v.1.0.11; experimentation by Certificate Issuers with PQC certificates; potential additional requirements imposed by Root programs
 - **Source Document Title**: Ballot SMC013: Enable PQC Algorithms for S/MIME
 - **Source Document Publication Date**: 2025-08-22
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Global:Ethereum Foundation — Post-Quantum Security Top Priority
-
-- **Reference ID**: Global:Ethereum Foundation — Post-Quantum Security Top Priority
-- **Title**: Post-Quantum Security Top Priority
-- **Authors**: Ethereum Foundation
-- **Publication Date**: 2026-01-24
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Search / News Video Prices Research Consensus 2026 Data & Indices Sponsored Search / en Tech Share Share this article Copy link X icon X (Twitter) LinkedIn Facebook Email Ethereum Foundation makes post quantum security a top priority as new team form
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Post-Quantum
-- **Migration Timeline Info**: Years mentioned: 2026, 2029
-- **Applicable Regions / Bodies**: Regions: United States
-- **Leaders Contributions Mentioned**: Thomas Coratger (leading the new Post Quantum team); Emile (supporting leanVM cryptography); Justin Drake (researcher driving strategy and engineering shift); Antonio Sanso (leading biweekly developer sessions); Franklin Bi (commenting on traditional finance adaptation speed)
-- **PQC Products Mentioned**: Solana, CIRCL
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: Cloud, Email, Blockchain
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Ethereum is shifting from background research to active engineering for post-quantum security; A dedicated team led by Thomas Coratger will drive wallet safety upgrades and test networks; $2M in prizes (Poseidon and Proximity) are launched to harden cryptography; Bi-weekly developer sessions and multi-client consensus test networks are being deployed immediately
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Multi-client post-quantum consensus dev networks; aggregating transaction signatures using leanVM
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer; Security Architect; Researcher
-- **Implementation Prerequisites**: Bi-weekly developer sessions; multi-client post-quantum consensus test networks; account abstraction paths
-- **Relevant PQC Today Features**: Timeline; Threats; Leaders; digital-assets; migration-program
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: multi-client post-quantum consensus dev networks; weekly interoperability calls
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: full-stack software transition; update wallets and move users onto new formats without breaking daily usage; phased rollout implied by "early" preparation and "long-term nature"
-- **Financial & Business Impact**: $2M in bounties ($1M Poseidon Prize, $1M Proximity Prize)
-- **Organizational Readiness**: dedicated Post Quantum team formed; led by Thomas Coratger with support from Emile; shift from background research to active engineering; biweekly developer sessions
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document explicitly states Ethereum is "shifting from background research to active engineering" and forming a dedicated team to drive upgrades, signaling a transition from the research phase to the migration/implementation phase.
-- **Regulatory Mandate Level**: Voluntary
-- **Sector / Industry Applicability**: Technology; Finance
-- **Migration Urgency & Priority**: Near-Term (1-3yr, active planning required)
-- **Phase Transition Narrative**: Moves from background research to active engineering and build phase — signals formal adoption beginning with dedicated teams and test networks.
-- **Historical Significance**: Represents a major shift for the Ethereum Foundation to elevate post-quantum security to a top strategic priority with dedicated funding and engineering resources.
-- **Implementation Timeline Dates**: February 2026: bi-weekly developer sessions start; late March 2026: post-quantum day ahead of EthCC; October 2026: post-quantum event
-- **Successor Events & Dependencies**: Requires coordination via weekly interoperability calls; Enables wallet safety upgrades and multi-client consensus test networks.
-- **Source Document Title**: Post-Quantum Security Top Priority
-- **Source Document Publication Date**: Jan 24, 2026
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
@@ -6012,138 +7696,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
-## Global:Microsoft — Core Infrastructure Transition
-
-- **Reference ID**: Global:Microsoft — Core Infrastructure Transition
-- **Title**: Core Infrastructure Transition
-- **Authors**: Microsoft Corporation
-- **Publication Date**: 2026-01-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Microsoft accelerates QSP transition for core infrastructure including signing services and network services starting in 2026 with Windows Azure M365 integration beginning 2027.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: Starting in 2026 for core infrastructure; Windows Azure M365 integration beginning 2027
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: Signing services; Network services; Windows Azure M365
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Microsoft is accelerating QSP transition for core infrastructure starting in 2026; Signing services and network services are included in the initial transition phase; Windows Azure M365 integration is scheduled to begin in 2027
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect; CISO; Operations
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Timeline; Migrate; code-signing; migration-program
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: phased rollout
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document explicitly states Microsoft is accelerating a "QSP transition" for core infrastructure, indicating an active movement from planning to execution.
-- **Regulatory Mandate Level**: Voluntary
-- **Sector / Industry Applicability**: Technology
-- **Migration Urgency & Priority**: Near-Term
-- **Phase Transition Narrative**: Moves from planning to active implementation of QSP transition in core infrastructure and cloud services.
-- **Historical Significance**: Represents a major technology vendor committing to specific years for PQC integration in critical cloud and signing services.
-- **Implementation Timeline Dates**: 2026: Core infrastructure transition starts; 2027: Windows Azure M365 integration begins
-- **Successor Events & Dependencies**: Windows Azure M365 integration beginning 2027
-- **Source Document Title**: Core Infrastructure Transition
-- **Source Document Publication Date**: None detected
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Global:Microsoft — Early Quantum-Safe Adoption
-
-- **Reference ID**: Global:Microsoft — Early Quantum-Safe Adoption
-- **Title**: Early Quantum-Safe Adoption
-- **Authors**: Microsoft Corporation
-- **Publication Date**: 2025-08-20
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Microsoft begins early adoption of quantum-safe capabilities across products and services with quantum-safe systems gradually becoming default.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Microsoft is initiating early adoption of quantum-safe capabilities; Quantum-safe systems are set to become the default across products and services; The transition involves a gradual shift rather than an immediate switch.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: CISO; Security Architect; Policy Maker
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: migration-program; pqc-business-case; pqc-governance
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document describes a corporate initiative to begin adoption and set quantum-safe systems as default, representing a policy decision to shift organizational security posture.
-- **Regulatory Mandate Level**: Voluntary
-- **Sector / Industry Applicability**: Technology
-- **Migration Urgency & Priority**: Near-Term
-- **Phase Transition Narrative**: Moves from planning to active early adoption — signals the beginning of gradual default integration of quantum-safe systems.
-- **Historical Significance**: Represents a major technology vendor initiating a broad, default-based transition to quantum-safe capabilities across its product ecosystem.
-- **Implementation Timeline Dates**: None detected
-- **Successor Events & Dependencies**: None detected
-- **Source Document Title**: Early Quantum-Safe Adoption
-- **Source Document Publication Date**: None detected
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
 ## Global:Microsoft — Majorana 1 Quantum Chip
 
 - **Reference ID**: Global:Microsoft — Majorana 1 Quantum Chip
@@ -6204,204 +7756,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Successor Events & Dependencies**: Requires building a 4x2 tetron array for entanglement demonstration; Enables the construction of a fault-tolerant prototype (FTP) based on topological qubits.
 - **Source Document Title**: Microsoft unveils Majorana 1, the world’s first quantum processor powered by topological qubits
 - **Source Document Publication Date**: February 19, 2025
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Global:Microsoft — Microsoft Full PQC Transition
-
-- **Reference ID**: Global:Microsoft — Microsoft Full PQC Transition
-- **Title**: Microsoft Full PQC Transition
-- **Authors**: Microsoft Corporation
-- **Publication Date**: 2025-08-20
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Microsoft completes full transition to quantum-ready cryptographic standards across all products and services.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: Two years ahead of 2035 government deadlines
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Microsoft has completed its full transition to quantum-ready standards; The transition occurred two years ahead of 2035 government deadlines; All Microsoft products and services are now covered by these standards
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: CISO; Security Architect; Compliance Officer
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Timeline; Migrate; compliance-strategy; migration-program
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document describes the completion of a transition relative to a specific future deadline (2035), indicating a Deadline phase event where the milestone has been met early.
-- **Regulatory Mandate Level**: Mandatory
-- **Sector / Industry Applicability**: Technology
-- **Migration Urgency & Priority**: Critical Deadline
-- **Phase Transition Narrative**: Moves from planning/implementation to completed adoption, signaling that Microsoft products are fully quantum-ready ahead of regulatory requirements.
-- **Historical Significance**: Represents a major technology vendor completing full PQC transition two years ahead of government mandates.
-- **Implementation Timeline Dates**: 2035: government deadlines
-- **Successor Events & Dependencies**: None detected
-- **Source Document Title**: Microsoft Full PQC Transition
-- **Source Document Publication Date**: None detected
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Global:Microsoft — Microsoft QSP Roadmap Published
-
-- **Reference ID**: Global:Microsoft — Microsoft QSP Roadmap Published
-- **Title**: Microsoft QSP Roadmap Published
-- **Authors**: Microsoft Corporation
-- **Publication Date**: 2025-08-20
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Microsoft publishes a roadmap detailing progress toward next-generation cryptography with a 2033 completion target.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: Completion target: 2033
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Microsoft has published a comprehensive roadmap for next-generation cryptography; The roadmap sets a 2033 target for completion; Progress toward quantum-resistant cryptography is being tracked by Microsoft.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: CISO; Security Architect; Policy Maker
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Timeline; Migrate; pqc-governance
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document represents a Policy phase event as it outlines a published roadmap with a specific completion target for organizational progress.
-- **Regulatory Mandate Level**: Informational
-- **Sector / Industry Applicability**: Technology
-- **Migration Urgency & Priority**: Long-Term
-- **Phase Transition Narrative**: Moves from planning to execution — signals formal adoption beginning with a defined 2033 horizon.
-- **Historical Significance**: Represents a major technology vendor committing to a specific long-term timeline for PQC integration.
-- **Implementation Timeline Dates**: 2033: completion target
-- **Successor Events & Dependencies**: None detected
-- **Source Document Title**: Microsoft QSP Roadmap Published
-- **Source Document Publication Date**: None detected
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Global:Microsoft — Quantum Safe Program Launch
-
-- **Reference ID**: Global:Microsoft — Quantum Safe Program Launch
-- **Title**: Quantum Safe Program Launch
-- **Authors**: Microsoft Corporation
-- **Publication Date**: 2023-01-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Skip to content Skip to main content Microsoft Microsoft Security Microsoft Security Microsoft Security Home Why Microsoft Security Solutions AI-powered cybersecurity Cloud security Data security & governance Identity & network access Privacy & risk
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: Years mentioned: 2025, 2026
-- **Applicable Regions / Bodies**: Regions: United States
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: Azure Key Vault, Windows 11, Microsoft Entra Verified ID, Microsoft Entra ID, Microsoft Entra External ID, Microsoft Defender for Endpoint, Microsoft Intune
-- **Protocols Covered**: TLS 1.3, X.509
-- **Infrastructure Layers**: PKI, IoT, Cloud, Email, OT/ICS/SCADA
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: FIPS 140-3, CNSA 2.0
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Microsoft has formally launched a Quantum Safe Program; The program aims to secure all Microsoft products and services against quantum threats; No specific technical implementation details or algorithms are provided in this announcement.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: CISO; Security Architect; Policy Maker
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: migration-program; pqc-governance; timeline
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document announces the formal launch of a corporate program, representing a policy decision to initiate quantum-safe efforts across the organization.
-- **Regulatory Mandate Level**: Voluntary
-- **Sector / Industry Applicability**: Technology
-- **Migration Urgency & Priority**: Exploratory
-- **Phase Transition Narrative**: Moves from planning to active program launch; enables future integration of PQC into Microsoft products and services.
-- **Historical Significance**: Represents a major technology vendor formally committing to a company-wide quantum-safe initiative.
-- **Implementation Timeline Dates**: None detected
-- **Successor Events & Dependencies**: None detected
-- **Source Document Title**: Quantum Safe Program Launch
-- **Source Document Publication Date**: August 2025
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
@@ -6474,204 +7828,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
-## Global:OpenSSL — OpenSSL 3.5.0 Native PQC Release
-
-- **Reference ID**: Global:OpenSSL — OpenSSL 3.5.0 Native PQC Release
-- **Title**: OpenSSL 3.5.0 Native PQC Release
-- **Authors**: OpenSSL Project
-- **Publication Date**: 2025-04-29
-- **Last Updated**: Not specified
-- **Document Status**: Completed
-- **Main Topic**: OpenSSL 3.5.0 is the first release to include native support for ML-KEM, ML-DSA, SLH-DSA, and X25519MLKEM768 hybrid TLS without requiring the OQS provider.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: OpenSSL
-- **Protocols Covered**: TLS, QUIC, X.509, CMS, S/MIME, DANE, CMP
-- **Infrastructure Layers**: PKI, Key Management
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: FIPS 140-3, FIPS 203, FIPS 204, FIPS 205
-- **Classical Algorithms Referenced**: RSA, EC, ECX, DH, X25519, AES-256-CBC, DES-EDE3-CBC, SM2, PBMAC1, OCB
-- **Key Takeaways**: OpenSSL 3.5.0 enables mainstream PQC adoption by natively supporting ML-KEM, ML-DSA, and SLH-DSA without the OQS provider; Default TLS configurations now prefer hybrid PQC KEM groups including X25519MLKEM768; The release introduces server-side QUIC support and improved TLS key establishment configurability; Security patch releases (3.5.1-3.5.6) address critical vulnerabilities in RSA KEM, CMS parsing, and PKCS#12 handling; FIPS provider updates include PCT on key generation and import for RSA, EC, and ECX.
-- **Security Levels & Parameters**: ML-KEM-768, X25519MLKEM768
-- **Hybrid & Transition Approaches**: Hybrid PQC KEM groups, X25519MLKEM768 hybrid TLS, multiple TLS keyshares
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer, Security Architect, Operations
-- **Implementation Prerequisites**: OpenSSL 3.5.0 or later; Configuration of no-tls-deprecated-ec option; FIPS provider configuration for jitter seed source
-- **Relevant PQC Today Features**: Algorithms, hybrid-crypto, tls-basics, migration-program
-- **Implementation Attack Surface**: Fixed incorrect failure handling in RSA KEM RSASVE encapsulation; Fixed potential use-after-free in DANE client code; Fixed NULL pointer dereference when processing a delta CRL; Fixed possible NULL dereference when processing CMS KeyAgreeRecipientInfo; Fixed possible NULL dereference when processing CMS KeyTransportRecipientInfo; Fixed heap buffer overflow in hexadecimal conversion; Fixed Improper validation of PBMAC1 parameters in PKCS#12 MAC verification; Fixed Stack buffer overflow in CMS AuthEnvelopedData parsing; Fixed NULL dereference in SSL_CIPHER_find() function on unknown cipher ID; Fixed openssl dgst one-shot codepath silently truncates inputs >16 MiB; Fixed TLS 1.3 CompressedCertificate excessive memory allocation; Fixed Heap out-of-bounds write in BIO_f_linebuffer on short writes; Fixed Unauthenticated/unencrypted trailing bytes with low-level OCB function calls; Fixed Out of bounds write in PKCS12_get_friendlyname() UTF-8 conversion; Fixed Missing ASN1_TYPE validation in TS_RESP_verify_response() function; Fixed NULL Pointer Dereference in PKCS12_item_decrypt_d2i_ex() function; Fixed Missing ASN1_TYPE validation in PKCS#12 parsing; Fixed ASN1_TYPE Type Confusion in the PKCS7_digest_from_attributes() function; Fix Out-of-bounds read & write in RFC 3211 KEK Unwrap; Fix Timing side-channel in SM2 algorithm on 64 bit ARM; Fix Out-of-bounds read in HTTP client no_proxy handling
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: Added FIPS 140-3 PCT on DH key generation; The FIPS provider now performs a PCT on key import for RSA, EC and ECX
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: enable-fips-jitter to make the FIPS provider to use the JITTER seed source
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: Default encryption cipher for the req , cms , and smime applications changed from des-ede3-cbc to aes-256-cbc; The default TLS supported groups list has been changed to include and prefer hybrid PQC KEM groups; Some practically unused groups were removed from the default list; The default TLS keyshares have been changed to offer X25519MLKEM768 and and X25519; All BIO*meth_get*\*() functions were deprecated; Reverted the synthesised OPENSSL_VERSION_NUMBER change for the release builds, as it broke some exiting applications that relied on the previous 3.x semantics
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: This document details the release of OpenSSL 3.5.0, a foundational cryptographic library that natively implements NIST-standard PQC algorithms, marking the transition from experimental providers to production-ready library support.
-- **Regulatory Mandate Level**: Informational
-- **Sector / Industry Applicability**: All Sectors
-- **Migration Urgency & Priority**: Near-Term (1-3yr)
-- **Phase Transition Narrative**: Transitions from external provider-based PQC support to native library integration, enabling downstream TLS stacks and applications to adopt hybrid PQC key exchange without additional dependencies.
-- **Historical Significance**: Represents the first major cryptographic toolkit release to ship ML-KEM, ML-DSA, and SLH-DSA natively, removing the barrier of external OQS providers for widespread PQC adoption.
-- **Implementation Timeline Dates**: 29 Apr 2025: OpenSSL 3.5.0 release; 1 Jul 2025: OpenSSL 3.5.1 release; 5 Aug 2025: OpenSSL 3.5.2 release; 16 Sep 2025: OpenSSL 3.5.3 release; 30 Sep 2025: OpenSSL 3.5.4 release; 27 Jan 2026: OpenSSL 3.5.5 release; 7 Apr 2026: OpenSSL 3.5.6 release
-- **Successor Events & Dependencies**: Adoption by downstream libraries; TLS stack updates; Application integration of native PQC algorithms
-- **Source Document Title**: OpenSSL 3.5 Series Release Notes
-- **Source Document Publication Date**: None detected
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Global:PQShield — 100th Research Paper Milestone
-
-- **Reference ID**: Global:PQShield — 100th Research Paper Milestone
-- **Title**: 100th Research Paper Milestone
-- **Authors**: PQShield Ltd
-- **Publication Date**: 2025-10-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Team Products Products PQMicroLib-Core PQCryptoLib-Core PQCryptoLib-SDK PQPlatform-CoPro PQPlatform-TrustSys PQPerform-Flare PQPerform-Inferno PQPerform-Flex Certifications Product Security Regulatory Landscape Markets Markets Semiconductors and Manu
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA
-- **Quantum Threats Addressed**: Quantum Computer, Post-Quantum
-- **Migration Timeline Info**: Milestones: entation challenges the global cryptography community must address ahead of the 2035 migration deadline
-- **Applicable Regions / Bodies**: Regions: United States, France, International, Bodies: NIST, ANSSI, NCSC
-- **Leaders Contributions Mentioned**: Dr Thomas Prest (Author); Shuichi Katsumata; Guilhem Niot; Thom Wiggers; Keitaro Hashimoto; Ben Marshall; Pierre-Yves Strub; Mélissa Rossi
-- **PQC Products Mentioned**: pqcrypto, Signal, WireGuard, PQCryptoLib-Core, PQMicroLib-Core
-- **Protocols Covered**: WireGuard
-- **Infrastructure Layers**: Key Management, IoT, Cloud, VPN
-- **Standardization Bodies**: NIST, IETF, IEEE, ANSSI, NCSC
-- **Compliance Frameworks Referenced**: FIPS 140-3, CNSA 2.0
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: PQShield has published 100 research papers bridging theory and real-world PQC deployment; New masking countermeasures improve ML-DSA resistance to physical attacks; Existing protocols like WireGuard can be upgraded to PQC with minimal performance impact; Collaboration with The Signal Foundation resulted in the SPQR protocol for secure messaging; A global migration deadline of 2035 drives current research and implementation efforts
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Reinforced KEMs; upgrading existing protocols to post-quantum security
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: Minimal impact on performance for upgraded WireGuard protocol; reduced memory footprint of masking technique
-- **Target Audience**: Security Architect; Developer; Researcher; Policy Maker
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; Leaders; Timeline; vpn-ssh-pqc; digital-id
-- **Implementation Attack Surface**: side-channel (power leakage, physical attacks), masking countermeasures for rejection sampling
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: formal verification (Jazzline correctness proofs), security analysis
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: embedded viability, silicon implementations, high-performance applications, minimal performance impact
-- **Supply Chain & Vendor Risk**: supply chain transformations, collaboration with academic institutions and government bodies
-- **Deployment & Migration Complexity**: 2035 migration deadline, upgrading existing protocols with minimal impact, real-world rollout
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: collaboration with security agencies (NIST, IETF, NCSC, NEDO); dedicated team of cryptographers, engineers, and operators; governance via standardization efforts
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document explicitly details the release of research papers, academic awards, and theoretical foundations such as correctness proofs and masking countermeasures, characterizing it as a Research phase event.
-- **Regulatory Mandate Level**: Informational
-- **Sector / Industry Applicability**: Semiconductors and Manufacturing; Identity and Paymentech; Military and Aerospace; Automotive; Industrial IoT; Network & Telecommunications; Enterprise Platforms; Healthcare
-- **Migration Urgency & Priority**: Long-Term (3-5yr, planning horizon)
-- **Phase Transition Narrative**: Moves from theoretical research to practical implementation — signals readiness for commercial deployment and standardization support.
-- **Historical Significance**: Marks PQShield's 100th research paper milestone, demonstrating a unique position as a leading contributor to both PQC theory and real-world commercial deployment since 2018.
-- **Implementation Timeline Dates**: 2035: migration deadline for global cryptography community
-- **Successor Events & Dependencies**: Enables high-assurance side-channel-resistant implementations; supports next-generation secure messaging; facilitates threshold cryptography for resilient key management
-- **Source Document Title**: PQShield hits 100 research papers—pushing post-quantum cryptography from theory to reality
-- **Source Document Publication Date**: 24/10/2025
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Global:PQShield — Carahsoft Government Partnership
-
-- **Reference ID**: Global:PQShield — Carahsoft Government Partnership
-- **Title**: Carahsoft Government Partnership
-- **Authors**: PQShield Ltd
-- **Publication Date**: 2025-10-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Team Products Products PQMicroLib-Core PQCryptoLib-Core PQCryptoLib-SDK PQPlatform-CoPro PQPlatform-TrustSys PQPerform-Flare PQPerform-Inferno PQPerform-Flex Certifications Product Security Regulatory Landscape Markets Markets Semiconductors and Manu
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Post-Quantum
-- **Migration Timeline Info**: Milestones: rahsoft to help Government customers transition to post-quantum cryptography by 2035 to meet the deadline set by nati...
-- **Applicable Regions / Bodies**: Regions: United States, Bodies: NIST, NCSC
-- **Leaders Contributions Mentioned**: Ben Packman, Chief Strategy Officer, PQShield
-- **PQC Products Mentioned**: pqcrypto, PQCryptoLib-Core, PQMicroLib-Core
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: IoT, Cloud
-- **Standardization Bodies**: NIST, NCSC
-- **Compliance Frameworks Referenced**: NIST PQC Standards
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: PQShield partners with Carahsoft to expand access to secured quantum services for U.S. Government agencies; NIST-aligned post-quantum cryptography solutions available through major public sector contracts; Supports Federal, State, Local and Education procurement pathways; Helps agencies prepare for the 2035 quantum readiness deadline
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: transition to quantum-ready security; transition to post-quantum readiness
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: CISO, Compliance Officer, Policy Maker
-- **Implementation Prerequisites**: Access via NASA Solutions for Enterprise-Wide Procurement (SEWP) V; OMNIA Partners E&I Cooperative Services Contract; The Quilt
-- **Relevant PQC Today Features**: Timeline; Compliance; Migrate; Leaders; migration-program
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: procurement risk; third-party library trust
-- **Deployment & Migration Complexity**: transition to post-quantum readiness; navigate the transition
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: governance prerequisites; change management scope
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: This document represents a Guidance phase event as it outlines strategic partnerships and procurement pathways to help agencies navigate the transition to post-quantum readiness rather than mandating specific technical implementations.
-- **Regulatory Mandate Level**: Recommended
-- **Sector / Industry Applicability**: Government; Critical Infrastructure; Academic
-- **Migration Urgency & Priority**: Critical Deadline
-- **Phase Transition Narrative**: Moves from standardization availability to procurement enablement — signals that agencies can now efficiently acquire PQC solutions through established government contracts.
-- **Historical Significance**: Marks a strategic collaboration enabling streamlined access to NIST-aligned PQC solutions for US public sector entities ahead of the 2035 deadline.
-- **Implementation Timeline Dates**: 2035: transition to post-quantum cryptography deadline set by national cybersecurity agencies like the NSA
-- **Successor Events & Dependencies**: Requires adoption of NIST standards; Enables accelerated transition to quantum-ready security for government agencies.
-- **Source Document Title**: Secured Quantum Services for Government
-- **Source Document Publication Date**: 30/10/2025
-- **Country Migration Dates**: United States: 2035 — deadline set by national cybersecurity agencies like the NSA to transition to post-quantum cryptography
-- **Timeline Cross-Reference**: United States 2035: CONSISTENT (Full CNSA 2.0 Transition Complete)
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
 ## Global:PQShield — Post-Quantum VPN Research Initiated
 
 - **Reference ID**: Global:PQShield — Post-Quantum VPN Research Initiated
@@ -6732,138 +7888,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Successor Events & Dependencies**: Requires adoption of PQC standards set by NIST and NSA CNSA 2.0; Enables manufacturers to achieve compliance with cybersecurity regulations for Secure Boot and Secure Update.
 - **Source Document Title**: PQShield Launches UltraPQ Post-Quantum Suite
 - **Source Document Publication Date**: 24/04/2025
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Global:PQShield — UltraPQ-Suite Launched
-
-- **Reference ID**: Global:PQShield — UltraPQ-Suite Launched
-- **Title**: UltraPQ-Suite Launched
-- **Authors**: PQShield Ltd
-- **Publication Date**: 2025-04-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Team Products Products PQMicroLib-Core PQCryptoLib-Core PQCryptoLib-SDK PQPlatform-CoPro PQPlatform-TrustSys PQPerform-Flare PQPerform-Inferno PQPerform-Flex Certifications Product Security Regulatory Landscape Markets Markets Semiconductors and Manu
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Post-Quantum
-- **Migration Timeline Info**: Years mentioned: 2024, 2025, 2026, 2035; Keywords: cnsa 2.0
-- **Applicable Regions / Bodies**: Regions: United States, Bodies: NIST, NCSC
-- **Leaders Contributions Mentioned**: Ali El Kaafarani (Founder and CEO); Dr Axel Poschmann (VP of Product)
-- **PQC Products Mentioned**: pqcrypto, PQCryptoLib-Core, PQMicroLib-Core
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: Secure Boot, Firmware, Key Management, IoT, Cloud
-- **Standardization Bodies**: NIST, NCSC, CMVP (NIST)
-- **Compliance Frameworks Referenced**: FIPS 140-3, Common Criteria, CNSA 2.0
-- **Classical Algorithms Referenced**: RSA
-- **Key Takeaways**: PQShield launches UltraPQ-Suite with specialized PQC implementations for ASIC and FPGA hardware; PQPlatform-TrustSys provides a PQC-first Root of Trust to address PKfail vulnerabilities and ensure compliance; Manufacturers must phase out RSA by 2035 to meet NIST regulatory timelines; The suite addresses three pillars: ultra fast, ultra secure, and ultra small for diverse industry needs; FIPS 140-3 certification validates the robustness of PQShield's cryptographic modules.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Crypto-agility; PQC-first design replacing older architectures
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: Ultra fast, ultra secure, and ultra small pillars address diverse industry needs; smallest implementation of PQC on the market for memory-constrained devices.
-- **Target Audience**: Security Architect; Developer; Compliance Officer; System Integrators; Manufacturer
-- **Implementation Prerequisites**: ASIC or FPGA hardware; compliance with CNSA 2.0 and NIST standards; FIPS 140-3 certified modules
-- **Relevant PQC Today Features**: Compliance; Migrate; Algorithms; Leaders; iot-ot-pqc; hsm-pqc; crypto-agility
-- **Implementation Attack Surface**: side channel attack (SCA) and fault injection attack (FIA) resistance; timing, power, and fault vulnerabilities
-- **Cryptographic Discovery & Inventory**: comprehensive key management by tracking the key’s origin and permission including key revocation
-- **Testing & Validation Methods**: FIPS 140-3 certification through the Cryptographic Module Verification Program (CMVP); silicon test chip
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: Ultra small targets implementations in memory-constrained devices, embedded systems, microcontrollers; PQCryptoLib-Embedded is the smallest implementation of PQC on the market
-- **Supply Chain & Vendor Risk**: global supply chain delivers the transition to new cryptographic standards; hardware holds a critical role in the global technology supply chain
-- **Deployment & Migration Complexity**: minimal integration time and effort; complete phase-out of RSA by 2035; PQC-first design free from the limitations of older architectures
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: compliance with NSA's CNSA 2.0, NIST regulatory requirements, Cloud, Edge, or Government grade standards alignment
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document announces the launch of a commercial product suite (UltraPQ-Suite) and highlights the achievement of FIPS 140-3 certification, indicating a transition from research to market-ready deployment.
-- **Regulatory Mandate Level**: Mandatory
-- **Sector / Industry Applicability**: Semiconductors and Manufacturing; Military and Aerospace; Automotive; Industrial IoT; Network & Telecommunications; Critical Infrastructure; Healthcare; Identity and Paymentech
-- **Migration Urgency & Priority**: Critical Deadline
-- **Phase Transition Narrative**: Moves from standardization and vulnerability identification (PKfail) to commercial implementation, enabling manufacturers to achieve compliance with CNSA 2.0 and NIST standards for ASIC and FPGA hardware.
-- **Historical Significance**: Represents a market-ready solution addressing the PKfail vulnerability in Secure Boot mechanisms while aligning with the 2035 RSA phase-out mandate.
-- **Implementation Timeline Dates**: 2024: PKfail vulnerability highlighted; 2025: Real challenge of implementation begins; 2035: Complete phase-out of RSA by NIST.
-- **Successor Events & Dependencies**: Requires adoption of PQC standards set out in CNSA 2.0 and NIST regulations; Enables compliance for Secure Boot and Secure Update mechanisms.
-- **Source Document Title**: PQShield Launches UltraPQ Post-Quantum Suite
-- **Source Document Publication Date**: 24/04/2025
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Global:Quantinuum — Helios Quantum Computer Commercial Launch
-
-- **Reference ID**: Global:Quantinuum — Helios Quantum Computer Commercial Launch
-- **Title**: Helios Quantum Computer Commercial Launch
-- **Authors**: Quantinuum
-- **Publication Date**: 2025-11-05
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Products & Solutions Quantum Computers Quantinuum Systems Discover the world’s highest performing quantum computers System Model H1 Our first-generation quantum computer with a linear architecture System Model H2 Our second-generation quantum compute
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Quantum Computer
-- **Migration Timeline Info**: Years mentioned: 2024, 2025, 2026, 2029, 2033
-- **Applicable Regions / Bodies**: Regions: United States, Germany, Japan, Singapore, Bodies: NIST
-- **Leaders Contributions Mentioned**: Dr. Rajeeb Hazra (President & CEO of Quantinuum); Nitesh Sharan (Chief Financial Officer)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: Cloud, Email
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Helios offers 98 physical qubits with industry-leading fidelity (99.921% two-qubit, 99.9975% single-qubit); Guppy language enables hybrid quantum-classical programming in Python; Strategic partnerships established with NVIDIA for error correction and Singapore's NQO for local R&D; Early adopters include Amgen, BMW Group, JPMorganChase, and SoftBank Corp.; Quantum Origin QRNG is highlighted to strengthen encryption and protect data.
-- **Security Levels & Parameters**: 98 Physical qubits (PQ); 94 Logical qubits (LQ) error detected; 50 LQ error detected in magnetism simulation; 48 LQ error corrected; 99.921% 2-qubit gate fidelity; 99.9975% 1-qubit gate fidelity; 99.99% state prep and measurement fidelity
-- **Hybrid & Transition Approaches**: Hybrid compute capabilities combining quantum and classical in a single program via Guppy language; Integration of NVIDIA GB200 with Helios via NVIDIA NVQLink for hybrid applications
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: 98 Physical qubits; 94 Logical qubits (error detected); 50 Logical qubits (error detected, magnetism simulation); 48 Logical qubits (error corrected); 99.921% two-qubit gate fidelity; 99.9975% single-qubit gate fidelity
-- **Target Audience**: Developer; CISO; Security Architect; Researcher; Policy Maker
-- **Implementation Prerequisites**: Access to Quantinuum cloud service or on-premise offering; NVIDIA GB200 integration via NVQLink; Python-based Guppy programming language; NVIDIA CUDA-Q platform for error correction
-- **Relevant PQC Today Features**: quantum-threats, hybrid-crypto, entropy-randomness, vendor-risk, pqc-business-case
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: Quantum Origin (advanced quantum random number generator)
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: Quantinuum; Honeywell International, Inc.; NVIDIA; strategic partnership agreement with Singapore’s National Quantum Office (NQO) and National Quantum Computing Hub (NQCH); startup partner program; third party applications on Helios
-- **Deployment & Migration Complexity**: Hardware-as-a-Service provides access on-premise, in the cloud, or both; hybrid compute capabilities — quantum and classical; real-time error correction; roadmap through the end of the decade with Apollo scheduled for launch in 2029; Lumos utility scale system by 2033
-- **Financial & Business Impact**: confidential submission of a draft registration statement on Form S-1 to the U.S. Securities and Exchange Commission (the "SEC"); proposed initial public offering of Quantinuum's common stock; majority owned by Honeywell
-- **Organizational Readiness**: R&D and Operations Centre in Singapore; Q-Net user community for shared learning, support and collaboration; startup partner program to accelerate ecosystem innovation
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document describes the "commercial launch" of Helios with specific customers and a new R&D center, indicating a transition from research to commercial deployment rather than a Proof of Concept (POC) phase.
-- **Regulatory Mandate Level**: Voluntary
-- **Sector / Industry Applicability**: Healthcare; Finance; Banking; Energy; Transportation; Technology; Academic
-- **Migration Urgency & Priority**: Exploratory
-- **Phase Transition Narrative**: Moves from research and development to commercial availability, enabling enterprises to access high-fidelity quantum computing for real-world applications in drug discovery, finance, and materials science.
-- **Historical Significance**: Represents the launch of the world's most accurate general-purpose commercial quantum computer with 98 all-to-all connected qubits, marking a significant step in enterprise quantum adoption.
-- **Implementation Timeline Dates**: November 5, 2025 — Helios commercial launch; April 6, 2026 — Nitesh Sharan effective as CFO; March 11, 2026 — Singapore R&D Centre establishment; December 31, 2025 — Benchmark date for fidelity claims
-- **Successor Events & Dependencies**: Requires deployment of Helios system in Singapore later in 2026; Enables co-development of solutions across pharma, materials science, and finance sectors; Contingent on NVIDIA accelerated computing integration.
-- **Source Document Title**: Quantinuum Announces Commercial Launch of New Helios Quantum Computer that Offers Unprecedented Accuracy to Enable Generative Quantum AI (GenQAI)
-- **Source Document Publication Date**: November 5, 2025
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
@@ -8652,72 +9676,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
-## International:ISO/IEC — ISO/IEC SC27 PQC Standardization
-
-- **Reference ID**: International:ISO/IEC — ISO/IEC SC27 PQC Standardization
-- **Title**: ISO/IEC SC27 PQC Standardization
-- **Authors**: International Organization for Standardization
-- **Publication Date**: 2023-01-01
-- **Last Updated**: Not specified
-- **Document Status**: New
-- **Main Topic**: Overview of ISO/IEC JTC 1/SC 27 WG 2's standardization track for incorporating ML-KEM, ML-DSA, and stateful hash-based signatures.
-- **PQC Algorithms Covered**: ML-KEM; ML-DSA; stateful hash-based signatures
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Germany; ISO/IEC JTC 1/SC 27
-- **Leaders Contributions Mentioned**: Mr Sobhi Mahmoud (Committee Manager); Mr Dr Andreas Wolf (Chairperson); Mr Hakim Mkinsi (ISO Technical Programme Manager); Ms Isabel Veronica Nelson (ISO Editorial Manager)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: ISO/IEC JTC 1/SC 27; DIN
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: ISO/IEC SC 27 WG 2 is actively standardizing ML-KEM and ML-DSA; The process mirrors NIST PQC standardization efforts; Stateful hash-based signatures are included in the standardization track; DIN serves as the secretariat for the committee
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: No
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Policy Maker; Compliance Officer; Security Architect
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; Compliance; pqc-governance; migration-program
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Lattice; Hash-based
-- **PQC Round**: Standardised
-- **Phase Classification Rationale**: The document describes the "international formal-adoption path" and "standardization track" for PQC algorithms within ISO/IEC SC 27.
-- **Regulatory Mandate Level**: Informational
-- **Sector / Industry Applicability**: All Sectors
-- **Migration Urgency & Priority**: Long-Term
-- **Phase Transition Narrative**: Moves from NIST standardization to international ISO/IEC formal adoption, enabling global interoperability.
-- **Historical Significance**: Represents the formal international standardization effort mirroring NIST PQC, ensuring global alignment on ML-KEM and ML-DSA.
-- **Implementation Timeline Dates**: None detected
-- **Successor Events & Dependencies**: Requires finalization of ISO/IEC standards for ML-KEM and ML-DSA; Enables global adoption of these algorithms.
-- **Source Document Title**: ISO/IEC SC27 PQC Standardization
-- **Source Document Publication Date**: None detected
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
 ## International:ITU-T — ITU-T X.1811 Quantum-Safe Security Guidelines for 5G Published
 
 - **Reference ID**: International:ITU-T — ITU-T X.1811 Quantum-Safe Security Guidelines for 5G Published
@@ -9188,7 +10146,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Publication Date**: 2022-01-01
 - **Last Updated**: Not specified
 - **Document Status**: Validated
-- **Main Topic**: Summary of post-quantum cryptography government initiatives, algorithms under consideration, and migration timelines across 30+ countries as of March 2025.
+- **Main Topic**: Publication of organizational cyber readiness guidance for the post-quantum age.
 - **PQC Algorithms Covered**: ML-KEM, Classic McEliece, FrodoKEM, AIMer, HAETAE, SMAUG-T, NTRU+
 - **Quantum Threats Addressed**: Post-Quantum
 - **Migration Timeline Info**: Australia: Complete transition by 2030; Canada: Introduce standards-based PQC from 2025-26; Czech Republic: Migrate by 2027; France: Transition from 2024; New Zealand: Transition from 2026-27; South Korea: Pilot transition plan 2025-2028, completion 2035; Spain: Four phase approach today to post-2030; United States: Implement 2023-2033
@@ -9203,21 +10161,21 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Key Takeaways**: Governments are setting specific transition deadlines ranging from 2024 to 2035; Most countries are monitoring or adopting NIST standards while some like South Korea and China have domestic algorithm selections; Financial services sectors face specific requirements for quantum risk management and inventory planning; Hybrid mode deployment is recommended by the Netherlands for TLS; Ongoing monitoring is required due to rapidly evolving government guidance.
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: hybrid mode for TLS
-- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Support**: Not Applicable
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
+- **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Policy Maker, Security Architect, Compliance Officer
+- **Target Audience**: CISO; Security Architect
 - **Implementation Prerequisites**: cryptographic inventory; initial plan; standards-based PQC adoption; pilot transition plan
-- **Relevant PQC Today Features**: Timeline, Algorithms, Compliance, Migrate, Assess
+- **Relevant PQC Today Features**: pqc-governance; pqc-business-case; migration-program
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: cryptographic discovery, create cryptographic inventory, algorithm enumeration, key material audit, Strategy for Migrating to Automated Post-Quantum Cryptography Discovery and Inventory Tools
 - **Testing & Validation Methods**: None detected
@@ -9229,17 +10187,17 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document is explicitly titled as a "Readiness Guide" and provides organizational guidance, which characterizes it as a Guidance phase event rather than a regulatory mandate or technical standard.
-- **Regulatory Mandate Level**: Informational
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document is titled "PQC Readiness Guide" and described as "guidance," indicating it provides advisory recommendations rather than binding mandates.
+- **Regulatory Mandate Level**: Recommended
 - **Sector / Industry Applicability**: All Sectors
 - **Migration Urgency & Priority**: Exploratory
-- **Phase Transition Narrative**: Transitions from initial awareness to organizational readiness planning; enables subsequent inventory and risk assessment phases.
-- **Historical Significance**: Represents an early 2022 milestone in providing structured guidance for organizations to begin preparing for the post-quantum era.
+- **Phase Transition Narrative**: Moves from general awareness to structured organizational readiness planning.
+- **Historical Significance**: Represents an early publication (2022) of organizational guidance for PQC readiness.
 - **Implementation Timeline Dates**: None detected
 - **Successor Events & Dependencies**: None detected
-- **Source Document Title**: None detected
-- **Source Document Publication Date**: January 2022 — exact date not stated
+- **Source Document Title**: PQC Readiness Guide Published
+- **Source Document Publication Date**: January 2022
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
@@ -9269,15 +10227,15 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Key Takeaways**: Governments are setting specific transition deadlines ranging from 2024 to 2035; Most countries are monitoring or adopting NIST standards while some like South Korea and China have domestic algorithm selections; Financial services sectors face specific requirements for quantum risk management and inventory planning; Hybrid mode deployment is recommended by the Netherlands for TLS; Ongoing monitoring is required due to rapidly evolving government guidance.
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: hybrid mode for TLS
-- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Support**: Not Applicable
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: None detected
 - **Performance & Size Considerations**: None detected
@@ -9295,7 +10253,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
-- **PQC Round**: None detected
+- **PQC Round**: Not Applicable
 - **Phase Classification Rationale**: The document explicitly describes the creation of cryptographic inventories and initial planning, which are foundational activities defining the Discovery phase.
 - **Regulatory Mandate Level**: Informational
 - **Sector / Industry Applicability**: All Sectors
@@ -9305,72 +10263,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Implementation Timeline Dates**: None detected
 - **Successor Events & Dependencies**: Developing initial plans; adding PQC to contracts; creating cryptographic inventory
 - **Source Document Title**: None detected
-- **Source Document Publication Date**: None detected
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Italy:ACN — PQC Guidance Published
-
-- **Reference ID**: Italy:ACN — PQC Guidance Published
-- **Title**: PQC Guidance Published
-- **Authors**: Agenzia per la Cybersicurezza Nazionale
-- **Publication Date**: 2024-07-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Summary of post-quantum cryptography government initiatives, algorithms under consideration, and migration timelines across 30+ countries as of March 2025.
-- **PQC Algorithms Covered**: ML-KEM, Classic McEliece, FrodoKEM, AIMer, HAETAE, SMAUG-T, NTRU+
-- **Quantum Threats Addressed**: Post-Quantum
-- **Migration Timeline Info**: Australia: Complete transition by 2030; Canada: Introduce standards-based PQC from 2025-26; Czech Republic: Migrate by 2027; France: Transition from 2024; New Zealand: Transition from 2026-27; South Korea: Pilot transition plan 2025-2028, completion 2035; Spain: Four phase approach today to post-2030; United States: Implement 2023-2033
-- **Applicable Regions / Bodies**: Australia, Canada, China, Czech Republic, European Union, France, Germany, Israel, Italy, Japan, Netherlands, New Zealand, Singapore, South Korea, Spain, United Kingdom, United States
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: Signal
-- **Protocols Covered**: TLS
-- **Infrastructure Layers**: Firmware
-- **Standardization Bodies**: NIST, CRYPTREC, CAICT, NICCS, NÚKIB, ENISA, European Commission, ANSSI, BSI, NCSC, ACN, MAS, MSIT, CCN.ES, AIVD, TNO, CWI, NZISM
-- **Compliance Frameworks Referenced**: CNSA20, HR7375, EO-14144, NSM-10
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Governments are setting specific transition deadlines ranging from 2024 to 2035; Most countries are monitoring or adopting NIST standards while some like South Korea and China have domestic algorithm selections; Financial services sectors face specific requirements for quantum risk management and inventory planning; Hybrid mode deployment is recommended by the Netherlands for TLS; Ongoing monitoring is required due to rapidly evolving government guidance.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: hybrid mode for TLS
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Policy Maker, Security Architect, Compliance Officer
-- **Implementation Prerequisites**: cryptographic inventory; initial plan; standards-based PQC adoption; pilot transition plan
-- **Relevant PQC Today Features**: Timeline, Algorithms, Compliance, Migrate, Assess
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: cryptographic discovery; create cryptographic inventory; Strategy for Migrating to Automated Post-Quantum Cryptography Discovery and Inventory Tools
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: firmware & software signing, embedded viability
-- **Supply Chain & Vendor Risk**: third-party library trust, procurement risk, vendor PQC roadmap maturity
-- **Deployment & Migration Complexity**: Complete transition to quantum resistant cryptography by 2030; Start planning and inventory; Introduce standards-based PQC from 2025-26; Migrate by 2027; Define a coordinated PQC roadmap for Member States by 2026; Transition from 2024; Start planning; Transition from 2026-27; PQC Roadmap for completion 2035; Pilot transition plan 2025-2028; Four phase approach today to post-2030; Start planning; cryptographic discovery; use only standards in production
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: Start planning; create cryptographic inventory; Add PQC to contracts; Requirement for financial services firms to manage quantum risk, develop inventory and initial plan; Financial services firms required to prepare plan
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document is explicitly titled as "guidance" published by ACN, representing a formal advisory phase event.
-- **Regulatory Mandate Level**: Informational
-- **Sector / Industry Applicability**: All Sectors
-- **Migration Urgency & Priority**: Exploratory
-- **Phase Transition Narrative**: None detected
-- **Historical Significance**: None detected
-- **Implementation Timeline Dates**: None detected
-- **Successor Events & Dependencies**: None detected
-- **Source Document Title**: Crittografia Post-Quantum e Quantistica: Preparazione alla Minaccia Quantistica
 - **Source Document Publication Date**: None detected
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
@@ -9452,11 +10344,11 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Publication Date**: 2022-01-01
 - **Last Updated**: Not specified
 - **Document Status**: Validated
-- **Main Topic**: JAPANESE WHAT'S NEW 2025/7/22 Publication of CRYPTREC Report 2024 2025/5/26 Publication of Advisory Board for Cryptographic Technology FY 2024 Annual Report 2025/4/25 Publication of Guidance for Management of Cryptographic Key - Part 2 Past Updates O
+- **Main Topic**: CRYPTREC updates its Recommended Ciphers List to include ML-KEM for key exchange and publishes the FY 2025 Annual Report.
 - **PQC Algorithms Covered**: ML-KEM
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: Years mentioned: 2024, 2025
-- **Applicable Regions / Bodies**: Regions: Japan, Bodies: CRYPTREC
+- **Applicable Regions / Bodies**: Regions: Japan; Bodies: CRYPTREC, Advisory Board for Cryptographic Technology
 - **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: None detected
 - **Protocols Covered**: None detected
@@ -9464,24 +10356,24 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Standardization Bodies**: CRYPTREC
 - **Compliance Frameworks Referenced**: None detected
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: ML-KEM is now recommended for key exchange by CRYPTREC; External evaluation reports from fiscal year 2025 have been published; CRYPTREC Report 2024 was released in July 2025
+- **Key Takeaways**: CRYPTREC has added ML-KEM to its Recommended Ciphers List for key exchange; The update was published on 2026/3/30; The Advisory Board for Cryptographic Technology published its FY 2025 Annual Report; External evaluation reports from FY 2025 were published
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Support**: No
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Support**: No
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Support**: No
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
+- **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect; Compliance Officer; Policy Maker
+- **Target Audience**: Compliance Officer; Security Architect
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; Compliance; Migrate; Timeline; Assess
+- **Relevant PQC Today Features**: Algorithms; Compliance; Timeline
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -9492,18 +10384,18 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document represents a Guidance phase event as it explicitly states the "Addition of ML-KEM for Key exchange to the Recommended Ciphers List" and publishes technical guidance reports.
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Phase Classification Rationale**: The document announces the addition of ML-KEM to the Recommended Ciphers List, marking a transition from evaluation to formal recommendation.
 - **Regulatory Mandate Level**: Recommended
 - **Sector / Industry Applicability**: All Sectors
-- **Migration Urgency & Priority**: Near-Term (1-3yr, active planning required)
-- **Phase Transition Narrative**: Moves from evaluation to formal recommendation — signals the inclusion of ML-KEM in the official CRYPTREC Recommended Ciphers List.
-- **Historical Significance**: Marks the formal adoption of ML-KEM into Japan's national cryptographic guidelines by CRYPTREC.
-- **Implementation Timeline Dates**: 2026/3/30: Addition of ML-KEM to Recommended Ciphers List; 2025/7/22: Publication of CRYPTREC Report 2024
-- **Successor Events & Dependencies**: Enables adoption of ML-KEM in systems compliant with CRYPTREC guidelines; Requires implementation of external evaluation reports issued in fy2025.
-- **Source Document Title**: PQC Guideline GL-2004-2022
-- **Source Document Publication Date**: 2026/3/30
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from Evaluation to Recommendation — signals formal adoption of ML-KEM in Japanese cryptographic guidelines.
+- **Historical Significance**: CRYPTREC formally includes ML-KEM in its Recommended Ciphers List, aligning Japanese standards with NIST PQC selections.
+- **Implementation Timeline Dates**: 2026/3/30: Addition of ML-KEM to Recommended Ciphers List; 2026/4/13: Publication of FY 2025 Annual Report
+- **Successor Events & Dependencies**: Enables adoption of ML-KEM in systems compliant with CRYPTREC guidelines; Requires implementation of ML-KEM in cryptographic modules.
+- **Source Document Title**: Japan:CRYPTREC — PQC Guideline GL-2004-2022
+- **Source Document Publication Date**: 2026/4/13
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
@@ -9638,72 +10530,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Source Document Publication Date**: 28/11/2025
 - **Country Migration Dates**: Japan: 2035 — government agencies must complete PQC transition; United States: 2035 — aim to complete PQC transition within the decade; European Union: 2035 — aim to complete PQC transition within the decade; United Kingdom: 2035 — aim to complete PQC transition within the decade; Canada: 2035 — aim to complete PQC transition within the decade
 - **Timeline Cross-Reference**: Japan 2035: CONSISTENT (Government PQC Transition Deadline); United States 2035: CONSISTENT (Full CNSA 2.0 Transition Complete); European Union 2035: CONSISTENT (Full EU PQC Transition); United Kingdom 2035: CONSISTENT (NCSC Full Migration Phase); Canada 2035: CONSISTENT (Full GC Migration Complete)
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Japan:NEC/NICT — QKD High-Speed Data Integration Demo
-
-- **Reference ID**: Japan:NEC/NICT — QKD High-Speed Data Integration Demo
-- **Title**: QKD High-Speed Data Integration Demo
-- **Authors**: NEC with NICT and Toshiba
-- **Publication Date**: 2025-09-16
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Japan's coordinated national strategy involving government mandates and dual-track technological leadership in PQC and QKD to defend against quantum-driven threats.
-- **PQC Algorithms Covered**: CRYSTALS-Kyber; Dilithium
-- **Quantum Threats Addressed**: Shor's algorithm; Harvest Now Decrypt Later (described as "harvested now and decrypted later")
-- **Migration Timeline Info**: March 18, 2025: NISC International Cybersecurity Challenge; April 2025: NEC wireless optical communication demo; September 16, 2025: NEC/NICT/Toshiba QKD integration demo; January 2025: NTT Communications PQC rollout
-- **Applicable Regions / Bodies**: Regions: Japan; Bodies: NISC, METI, NICT, Quad, G7, ITU
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: PKI (implied via certificates); Key Management; Optical Network
-- **Standardization Bodies**: NIST; ITU
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: RSA; ECC
-- **Key Takeaways**: Japan is implementing a dual-track strategy combining PQC software and QKD hardware to secure critical infrastructure; Hybrid migration approaches are necessary to maintain compatibility while transitioning from classical encryption; A full cryptographic inventory is required to identify attack surfaces before deploying quantum-ready solutions; International cooperation through the Quad and G7 is essential for global post-quantum encryption alignment
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Hybrid certificates; hybrid protocols; crypto-agility
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Policy Maker; Security Architect; Government Official; Researcher
-- **Implementation Prerequisites**: Cryptographic inventory; Software Bill of Materials; Quantum Technology Innovation Strategy Roadmap alignment
-- **Relevant PQC Today Features**: qkd; hybrid-crypto; crypto-agility; migration-program; pqc-governance
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: QKD, high-speed data transmission, large-capacity optical network
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document describes active deployment and testing phases, noting that "Japan is actively testing and deploying these technologies" and facing the "messy reality of moving from classical encryption to quantum-ready solutions," indicating a transition from planning to execution.
-- **Regulatory Mandate Level**: Mandatory (legally required, directive/mandate language)
-- **Sector / Industry Applicability**: Government; Finance; Banking; Energy; Telecommunications; Critical Infrastructure; Technology
-- **Migration Urgency & Priority**: Near-Term (1-3yr, active planning required)
-- **Phase Transition Narrative**: Moves from theoretical preparation and policy formulation to active real-world testing and hybrid deployment of PQC and QKD systems in critical infrastructure.
-- **Historical Significance**: Represents a coordinated national effort by Japan to integrate QKD and PQC simultaneously, featuring the world's first integrated system for QKD and high-speed data transmission unveiled in September 2025.
-- **Implementation Timeline Dates**: March 18, 2025; April 2025; January 2025; September 16, 2025
-- **Successor Events & Dependencies**: Requires full cryptographic inventory completion; Enables secure data transmission across high-capacity networks via IOWN integration.
-- **Source Document Title**: Japan’s National Cyber Defense Push: Preparing for Quantum-Driven Threats
-- **Source Document Publication Date**: October 6, 2025
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
@@ -9848,7 +10674,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Publication Date**: 2025-03-02
 - **Last Updated**: Not specified
 - **Document Status**: Validated
-- **Main Topic**: Summary of post-quantum cryptography government initiatives, algorithms under consideration, and migration timelines across 30+ countries as of March 2025.
+- **Main Topic**: PQC migration planning following NIST standardization, with CRYPTREC preparing detailed guidelines.
 - **PQC Algorithms Covered**: ML-KEM, Classic McEliece, FrodoKEM, AIMer, HAETAE, SMAUG-T, NTRU+
 - **Quantum Threats Addressed**: Post-Quantum
 - **Migration Timeline Info**: Australia: Complete transition by 2030; Canada: Introduce standards-based PQC from 2025-26; Czech Republic: Migrate by 2027; France: Transition from 2024; New Zealand: Transition from 2026-27; South Korea: Pilot transition plan 2025-2028, completion 2035; Spain: Four phase approach today to post-2030; United States: Implement 2023-2033
@@ -9857,27 +10683,27 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **PQC Products Mentioned**: Signal
 - **Protocols Covered**: TLS
 - **Infrastructure Layers**: Firmware
-- **Standardization Bodies**: NIST, CRYPTREC, CAICT, NICCS, NÚKIB, ENISA, European Commission, ANSSI, BSI, NCSC, ACN, MAS, MSIT, CCN.ES, AIVD, TNO, CWI, NZISM
+- **Standardization Bodies**: NIST; CRYPTREC
 - **Compliance Frameworks Referenced**: CNSA20, HR7375, EO-14144, NSM-10
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Governments are setting specific transition deadlines ranging from 2024 to 2035; Most countries are monitoring or adopting NIST standards while some like South Korea and China have domestic algorithm selections; Financial services sectors face specific requirements for quantum risk management and inventory planning; Hybrid mode deployment is recommended by the Netherlands for TLS; Ongoing monitoring is required due to rapidly evolving government guidance.
+- **Key Takeaways**: NIST standardization has occurred; Focus is on lattice-based and hash-based algorithms; CRYPTREC is preparing detailed guidelines
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: hybrid mode for TLS
-- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Support**: Not Applicable
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
+- **Lifecycle State**: Draft
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Policy Maker, Security Architect, Compliance Officer
+- **Target Audience**: Security Architect; Compliance Officer
 - **Implementation Prerequisites**: cryptographic inventory; initial plan; standards-based PQC adoption; pilot transition plan
-- **Relevant PQC Today Features**: Timeline, Algorithms, Compliance, Migrate, Assess
+- **Relevant PQC Today Features**: Timeline; Algorithms; Compliance
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: cryptographic discovery, create cryptographic inventory, algorithm enumeration, key material audit, Strategy for Migrating to Automated Post-Quantum Cryptography Discovery and Inventory Tools
 - **Testing & Validation Methods**: None detected
@@ -9888,17 +10714,17 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Deployment & Migration Complexity**: migration phase (assess/plan/test/migrate/launch), phased rollout, Four phase approach today to post-2030, Pilot transition plan 2025-2028, Complete transition to quantum resistant cryptography by 2030, PQC Roadmap for completion 2035, Implement 2023-2033
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document describes preparatory activities such as planning and guideline preparation following standardization, which characterizes the initial discovery of migration requirements.
+- **Math Family**: Lattice; Hash-based
+- **PQC Round**: Standardised
+- **Phase Classification Rationale**: The document describes planning activities following standardization, indicating the initial discovery and assessment phase of migration.
 - **Regulatory Mandate Level**: Informational
 - **Sector / Industry Applicability**: All Sectors
 - **Migration Urgency & Priority**: Exploratory
-- **Phase Transition Narrative**: Transitions from algorithm standardization to the preparation of detailed migration guidelines.
-- **Historical Significance**: Marks the shift from NIST standardization to national-level guideline development by bodies like CRYPTREC.
+- **Phase Transition Narrative**: Moves from Standardization to Planning — signals the beginning of organizational preparation for PQC adoption.
+- **Historical Significance**: Represents the post-standardization phase where bodies like CRYPTREC begin formulating specific implementation guidelines.
 - **Implementation Timeline Dates**: None detected
-- **Successor Events & Dependencies**: Publication of detailed guidelines by CRYPTREC; None detected
-- **Source Document Title**: None detected
+- **Successor Events & Dependencies**: Requires CRYPTREC detailed guidelines; Enables structured migration planning.
+- **Source Document Title**: PQC Migration Planning
 - **Source Document Publication Date**: None detected
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
@@ -9966,72 +10792,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Successor Events & Dependencies**: Requires internal capacity building and coordination with technology providers; enables full-scale deployment after successful sandbox testing.
 - **Source Document Title**: Central Bank of Jordan Releases Road Map to Prepare for Quantum Transition
 - **Source Document Publication Date**: January 5, 2026
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Kenya:ODPC — ODPC Guidance on Data Protection by Design
-
-- **Reference ID**: Kenya:ODPC — ODPC Guidance on Data Protection by Design
-- **Title**: ODPC Guidance on Data Protection by Design
-- **Authors**: Office of the Data Protection Commissioner (Kenya)
-- **Publication Date**: 2022-12-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Guidance on Data Protection by Design requiring state-of-the-art cryptography for personal data processing under the Kenya Data Protection Act 2019.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Kenya; Office of the Data Protection Commissioner; Communications Authority of Kenya
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: Kenya Data Protection Act 2019
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: State-of-the-art cryptography is required for personal data processing; M-Pesa and mobile-money rails are identified as high-HNDL-exposure systems; Communications Authority of Kenya coordinates with ODPC on PQC readiness for the telecoms sector
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Compliance Officer; CISO
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Compliance; Threats; pqc-governance
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Phase Classification Rationale**: The document is a Guidance Note published by the Office of the Data Protection Commissioner requiring state-of-the-art cryptography, representing a regulatory directive for data protection compliance.
-- **Regulatory Mandate Level**: Mandatory
-- **Sector / Industry Applicability**: Telecommunications; Finance
-- **Migration Urgency & Priority**: Near-Term
-- **Phase Transition Narrative**: Moves from general data protection principles to specific cryptographic requirements for high-exposure systems like mobile money rails.
-- **Historical Significance**: Represents a national regulatory body in Kenya explicitly linking data protection law to state-of-the-art cryptography and PQC readiness for critical financial infrastructure.
-- **Implementation Timeline Dates**: None detected
-- **Successor Events & Dependencies**: Requires coordination between ODPC and Communications Authority of Kenya for PQC readiness in the telecoms sector.
-- **Source Document Title**: ODPC Guidance on Data Protection by Design
-- **Source Document Publication Date**: 2022
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
@@ -10178,11 +10938,11 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Publication Date**: 2025-10-28
 - **Last Updated**: Not specified
 - **Document Status**: Validated
-- **Main Topic**: The PKI Consortium's Post-Quantum Cryptography Conference 2025 concluded in Kuala Lumpur with an urgent call for global migration to quantum-resistant encryption and the announcement of Malaysia's national PQC roadmap.
+- **Main Topic**: Malaysia Ministry of Digital and NACSA publish National PQC Migration Plan (2025-2030) and launch PQC Sandbox 2025 proof-of-concept program.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: Quantum computers rendering today's encryption obsolete; compromise of financial systems, national defense, healthcare, and transportation within minutes; exposure of vast stores of data and critical infrastructure
-- **Migration Timeline Info**: Conference dates: 28-30 October 2025; Next conference: Germany in 2026; Immediate action required to safeguard digital economy before quantum computers make data unsafe
-- **Applicable Regions / Bodies**: Regions: Malaysia, ASEAN, Southeast Asia, United States (Utah registration); Bodies: PKI Consortium, Ministry of Digital Malaysia, National Cyber Security Agency (NACSA)
+- **Migration Timeline Info**: 2025-2030: National PQC Migration Plan period; 2025: PQC Sandbox proof-of-concept program
+- **Applicable Regions / Bodies**: Regions: Malaysia; Bodies: Ministry of Digital, NACSA, PKI Consortium
 - **Leaders Contributions Mentioned**: Paul van Brouwershaven (Chair of the PKI Consortium and its Post-Quantum Cryptography Working Group); Chris Bailey (Board and Executive Council Chair of the PKI Consortium); Leigh Bailey (Head of Marketing, PKI Consortium)
 - **PQC Products Mentioned**: Signal, WhatsApp
 - **Protocols Covered**: None detected
@@ -10190,24 +10950,24 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Standardization Bodies**: None detected
 - **Compliance Frameworks Referenced**: None detected
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Organizations must begin replacing vulnerable cryptography immediately before quantum computers compromise data; Malaysia has launched a National Post-Quantum Cryptography Readiness Roadmap to lead ASEAN readiness; The PKI Consortium unveiled the Post-Quantum Cryptography Maturity Model (PQCMM) to help assess preparedness and plan migration; Global coordination is required across government, industry, and academia to accelerate the transition to quantum-safe systems
+- **Key Takeaways**: Malaysia has published a National PQC Migration Plan covering 2025-2030; A PQC Sandbox 2025 proof-of-concept program has been launched; Malaysia positions itself as an ASEAN PQC leader through these initiatives
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: Cryptographic agility; Migration planning; System-wide cryptographic migrations
-- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Support**: Not Applicable
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
+- **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: CISO, Security Architect, Policy Maker, Government Leaders, Operations
+- **Target Audience**: Policy Maker; CISO; Security Architect
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Migrate, Assess, Leaders, Threats, Timeline, pki-workshop
+- **Relevant PQC Today Features**: Timeline; migration-program; pqc-governance; pqc-business-case
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Post-Quantum Cryptography Maturity Model (PQCMM) to assess preparedness; inventory of vulnerable cryptography implied by migration planning
 - **Testing & Validation Methods**: None detected
@@ -10219,18 +10979,18 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites via PKI Consortium bylaws and substantial consensus decision-making; dedicated crypto team implied by Post-Quantum Cryptography Working Group; maturity assessment level referenced via PKI Maturity Model Working Group; planning horizon indicated by 2025 Kuala Lumpur conference and 2026 Munich conference timeline
 - **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document describes the publication of a national migration plan and the launch of a proof-of-concept sandbox program by government bodies, which constitutes a policy-level governance event.
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document describes the publication of a National PQC Migration Plan and the launch of a sandbox program, which constitutes a policy and governance phase event rather than a technical specification.
 - **Regulatory Mandate Level**: Informational
 - **Sector / Industry Applicability**: All Sectors
-- **Migration Urgency & Priority**: Long-Term (3-5yr)
-- **Phase Transition Narrative**: Transitions from planning to active implementation via the launch of a PQC Sandbox proof-of-concept program.
-- **Historical Significance**: Positions Malaysia as an ASEAN leader in PQC adoption through the formal publication of a national migration roadmap.
-- **Implementation Timeline Dates**: 2025: PQC Sandbox launch; 2030: End of National PQC Migration Plan period
+- **Migration Urgency & Priority**: Long-Term
+- **Phase Transition Narrative**: Moves from general awareness to formal national planning and proof-of-concept testing, enabling structured migration activities from 2025 to 2030.
+- **Historical Significance**: Positions Malaysia as an ASEAN PQC leader through the publication of a national migration plan and the launch of a dedicated sandbox program.
+- **Implementation Timeline Dates**: 2025: PQC Sandbox proof-of-concept program launch; 2030: End of National PQC Migration Plan period
 - **Successor Events & Dependencies**: Launch of PQC Sandbox 2025 proof-of-concept program; execution of National PQC Migration Plan (2025-2030)
-- **Source Document Title**: None detected
+- **Source Document Title**: National PQC Migration Plan Published
 - **Source Document Publication Date**: None detected
-- **Country Migration Dates**: Malaysia: 2025 — Launch of PQC Sandbox 2025 proof-of-concept program; Malaysia: 2030 — End of National PQC Migration Plan period
+- **Country Migration Dates**: Malaysia: 2025 — PQC Sandbox proof-of-concept program launch; Malaysia: 2030 — End of National PQC Migration Plan period
 - **Timeline Cross-Reference**: Malaysia 2025: CONSISTENT (National PQC Migration Plan Published); Malaysia 2030: CONSISTENT (Malaysia National PQC Migration)
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
@@ -10325,17 +11085,17 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Key Takeaways**: Governments are setting specific transition deadlines ranging from 2024 to 2035; Most countries are monitoring or adopting NIST standards while some like South Korea and China have domestic algorithm selections; Financial services sectors face specific requirements for quantum risk management and inventory planning; Hybrid mode deployment is recommended by the Netherlands for TLS; Ongoing monitoring is required due to rapidly evolving government guidance.
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: hybrid mode for TLS
-- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Support**: Not Applicable
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
+- **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Policy Maker, Security Architect, Compliance Officer
 - **Implementation Prerequisites**: cryptographic inventory; initial plan; standards-based PQC adoption; pilot transition plan
@@ -10351,16 +11111,16 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document represents a Guidance phase event as it is an updated Information Security Manual providing PQC guidance rather than a binding law or regulation. - **Regulatory Mandate Level**: Informational - **Sector / Industry Applicability**: Government - **Migration Urgency & Priority**: None detected - **Phase Transition Narrative**: None detected - **Historical Significance**: None detected - **Implementation Timeline Dates**: None detected - **Successor Events & Dependencies**: None detected - **Source Document Title**: None detected - **Source Document Publication Date**: None detected - **Country Migration Dates**: None detected
-- **Regulatory Mandate Level**: None detected
-- **Sector / Industry Applicability**: None detected
-- **Migration Urgency & Priority**: None detected
-- **Phase Transition Narrative**: None detected
-- **Historical Significance**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document is identified as an updated manual with PQC guidance, indicating a guidance phase event.
+- **Regulatory Mandate Level**: Recommended
+- **Sector / Industry Applicability**: All Sectors
+- **Migration Urgency & Priority**: Exploratory
+- **Phase Transition Narrative**: Provides updated guidance for PQC adoption within New Zealand information security frameworks.
+- **Historical Significance**: Represents an update to the New Zealand Information Security Manual to include post-quantum cryptography guidance.
 - **Implementation Timeline Dates**: None detected
 - **Successor Events & Dependencies**: None detected
-- **Source Document Title**: None detected
+- **Source Document Title**: NZISM v3.8 Updated
 - **Source Document Publication Date**: None detected
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
@@ -10457,15 +11217,15 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Key Takeaways**: Governments are setting specific transition deadlines ranging from 2024 to 2035; Most countries are monitoring or adopting NIST standards while some like South Korea and China have domestic algorithm selections; Financial services sectors face specific requirements for quantum risk management and inventory planning; Hybrid mode deployment is recommended by the Netherlands for TLS; Ongoing monitoring is required due to rapidly evolving government guidance.
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: hybrid mode for TLS
-- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Support**: Not Applicable
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: None detected
 - **Performance & Size Considerations**: None detected
@@ -10483,7 +11243,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
-- **PQC Round**: None detected
+- **PQC Round**: Not Applicable
 - **Phase Classification Rationale**: The document title explicitly identifies the content as the "Planning Phase," which aligns with the Discovery phase where organizations initiate transition strategies. - **Regulatory Mandate Level**: Informational
 - **Regulatory Mandate Level**: Informational
 - **Sector / Industry Applicability**: All Sectors
@@ -10508,10 +11268,10 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Publication Date**: 2024-09-01
 - **Last Updated**: Not specified
 - **Document Status**: Validated
-- **Main Topic**: Summary of post-quantum cryptography government initiatives, algorithms under consideration, and migration timelines across 30+ countries as of March 2025.
+- **Main Topic**: Transition to PQC begins from 2026-27 across government agencies.
 - **PQC Algorithms Covered**: ML-KEM, Classic McEliece, FrodoKEM, AIMer, HAETAE, SMAUG-T, NTRU+
 - **Quantum Threats Addressed**: Post-Quantum
-- **Migration Timeline Info**: Australia: Complete transition by 2030; Canada: Introduce standards-based PQC from 2025-26; Czech Republic: Migrate by 2027; France: Transition from 2024; New Zealand: Transition from 2026-27; South Korea: Pilot transition plan 2025-2028, completion 2035; Spain: Four phase approach today to post-2030; United States: Implement 2023-2033
+- **Migration Timeline Info**: Transition to PQC begins from 2026-27 across government agencies.
 - **Applicable Regions / Bodies**: Australia, Canada, China, Czech Republic, European Union, France, Germany, Israel, Italy, Japan, Netherlands, New Zealand, Singapore, South Korea, Spain, United Kingdom, United States
 - **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: Signal
@@ -10520,24 +11280,24 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Standardization Bodies**: NIST, CRYPTREC, CAICT, NICCS, NÚKIB, ENISA, European Commission, ANSSI, BSI, NCSC, ACN, MAS, MSIT, CCN.ES, AIVD, TNO, CWI, NZISM
 - **Compliance Frameworks Referenced**: CNSA20, HR7375, EO-14144, NSM-10
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Governments are setting specific transition deadlines ranging from 2024 to 2035; Most countries are monitoring or adopting NIST standards while some like South Korea and China have domestic algorithm selections; Financial services sectors face specific requirements for quantum risk management and inventory planning; Hybrid mode deployment is recommended by the Netherlands for TLS; Ongoing monitoring is required due to rapidly evolving government guidance.
+- **Key Takeaways**: Transition to PQC begins from 2026-27; Government agencies are the target scope; No specific algorithms or protocols are defined in this text.
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: hybrid mode for TLS
-- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Support**: Not Applicable
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
+- **Lifecycle State**: Draft
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Policy Maker, Security Architect, Compliance Officer
+- **Target Audience**: Policy Maker; CISO
 - **Implementation Prerequisites**: cryptographic inventory; initial plan; standards-based PQC adoption; pilot transition plan
-- **Relevant PQC Today Features**: Timeline, Algorithms, Compliance, Migrate, Assess
+- **Relevant PQC Today Features**: Timeline; migration-program; pqc-governance
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: cryptographic discovery, create cryptographic inventory, algorithm enumeration, key material audit, Strategy for Migrating to Automated Post-Quantum Cryptography Discovery and Inventory Tools
 - **Testing & Validation Methods**: None detected
@@ -10549,16 +11309,16 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document explicitly states that the transition to PQC begins across government agencies in 2026-27, marking the start of the migration phase.
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document explicitly describes the start of the transition to PQC, which constitutes the migration phase.
 - **Regulatory Mandate Level**: Mandatory
 - **Sector / Industry Applicability**: Government
-- **Migration Urgency & Priority**: Near-Term (1-3yr)
-- **Phase Transition Narrative**: Transitions from planning/preparation to active implementation of PQC across government agencies starting in 2026-27.
-- **Historical Significance**: This milestone marks the official commencement of Post-Quantum Cryptography adoption within government sectors, setting a precedent for broader cryptographic migration.
-- **Implementation Timeline Dates**: 2026; 2027
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from planning/preparation to active transition across government agencies.
+- **Historical Significance**: Marks the beginning of the PQC transition period for government agencies starting in 2026-27.
+- **Implementation Timeline Dates**: 2026-27: Transition to PQC begins across government agencies.
 - **Successor Events & Dependencies**: None detected
-- **Source Document Title**: None detected
+- **Source Document Title**: Transition Phase
 - **Source Document Publication Date**: None detected
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
@@ -10838,32 +11598,32 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Publication Date**: 2024-12-01
 - **Last Updated**: Not specified
 - **Document Status**: Validated
-- **Main Topic**: People Capabilities Insights About Reach Careers Trending Topics LegalTech Client Solutions Our blogs TwoBirds TV Podcasts News & Deals Events Success Stories Alumni Contact Search Subscribe LinkedIn WeChat People Capabilities Insights About Reach Ca
+- **Main Topic**: The document is a 404 error page from the Saudi National Cybersecurity Authority (NCA) website, containing only navigation links and general site verification information.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: Years mentioned: 2024, 2025, 2026; Keywords: mandate
-- **Applicable Regions / Bodies**: Regions: United States, Australia, Bodies: NIST
+- **Applicable Regions / Bodies**: Regions: Saudi Arabia; Bodies: National Cybersecurity Authority, Digital Government Authority
 - **Leaders Contributions Mentioned**: Simon Shooter (Head of Country for Saudi Arabia, Head of TMT for the Middle East); Nikita Manro (Associate in International Commercial Group)
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
+- **Protocols Covered**: HTTPS
 - **Infrastructure Layers**: Email
 - **Standardization Bodies**: None detected
 - **Compliance Frameworks Referenced**: National Cybersecurity Authority Regulations 2024; Essential Cybersecurity Controls 2024 (ECC-2:2024)
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Non-compliance with NCA Standards can result in fines up to SAR 25,000,000 or license revocation; Entities must obtain licenses for cybersecurity activities and devices; Comprehensive records and audit trails are required for NCA inspections; Violators must remedy violations and deposit gains into the state treasury; Decisions can be appealed to the Administrative Court within 60 days.
+- **Key Takeaways**: The document is an error page and contains no technical content; No PQC algorithms or standards are discussed; No migration timelines or mandates are specified; The text only confirms the site belongs to the Saudi government; No actionable security insights are available
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Support**: Not Applicable
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
+- **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Compliance Officer; Security Architect; Policy Maker; Legal Counsel
 - **Implementation Prerequisites**: Obtain NCA license for cybersecurity activities; Maintain comprehensive records with clear audit trails; Familiarize with NCA Standards
@@ -10879,17 +11639,17 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Financial & Business Impact**: fines up to SAR 25,000,000 (approx. 6,660,000 USD); revocation of licences; deposit any gains into the state treasury
 - **Organizational Readiness**: Sufficient awareness of the Standards, and commensurate compliance, is imperative; retain comprehensive records of cybersecurity activities with clear audit trails; familiarise themselves with the Standards
 - **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document describes the "December 2024 National Cybersecurity Authority Regulations" which establish a regulatory framework granting the NCA authority to enforce compliance and impose penalties, marking a shift from guidance to legal enforcement.
-- **Regulatory Mandate Level**: Mandatory (legally required, directive/mandate language)
-- **Sector / Industry Applicability**: Technology; Critical Infrastructure; All Sectors
-- **Migration Urgency & Priority**: Near-Term (1-3yr, active planning required)
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document is a 404 error page with no substantive content regarding PQC phases or timelines.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Government
+- **Migration Urgency & Priority**: Exploratory
 - **Phase Transition Narrative**: Moves from a state where the NCA lacked clear enforcement authority to a formal regulatory regime with defined penalties and inspection procedures.
 - **Historical Significance**: This represents a significant milestone for Saudi Arabia as it grants the National Cybersecurity Authority explicit legal authority to enforce cybersecurity standards and impose substantial fines, addressing a previous gap in enforcement capability.
 - **Implementation Timeline Dates**: December 2024: Regulations published; Four-year period: NCA mandated to submit comprehensive report on implementation
 - **Successor Events & Dependencies**: Requires entities to familiarize themselves with Standards and ensure compliance; Enables NCA inspections and legal proceedings for violations; Contingent upon NCA submitting a comprehensive report after four years.
-- **Source Document Title**: Saudi Arabia: National Cybersecurity Authority Regulations 2024
-- **Source Document Publication Date**: Jan 10 2025
+- **Source Document Title**: Saudi Arabia:NCA — ECC-2:2024 Cybersecurity Controls
+- **Source Document Publication Date**: Copyright: 2026 — exact date not stated
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
@@ -11352,72 +12112,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Successor Events & Dependencies**: Enables next stage of experimentation to extend PQC to critical financial transactions and cross-border payment networks; Requires standardization of application protocols and digital certificates.
 - **Source Document Title**: Banque de France and Monetary Authority of Singapore Conduct Groundbreaking Post-quantum Cryptography Experiment to Enhance Communication Security
 - **Source Document Publication Date**: 05 November 2024
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Singapore:Quantinuum/NQO — Helios Quantum Computer Singapore Deployment
-
-- **Reference ID**: Singapore:Quantinuum/NQO — Helios Quantum Computer Singapore Deployment
-- **Title**: Helios Quantum Computer Singapore Deployment
-- **Authors**: Quantinuum and Singapore National Quantum Office
-- **Publication Date**: 2026-01-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Products & Solutions Quantum Computers Quantinuum Systems Discover the world’s highest performing quantum computers System Model H1 Our first-generation quantum computer with a linear architecture System Model H2 Our second-generation quantum compute
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Quantum Advantage, Quantum Computer
-- **Migration Timeline Info**: Years mentioned: 2022, 2024, 2025, 2026, 2029, 2033
-- **Applicable Regions / Bodies**: Regions: United States, Germany, Japan, Singapore, Bodies: NIST
-- **Leaders Contributions Mentioned**: Mr. Ling Keok Tong (Executive Director of the National Quantum Office); Dr. Rajeeb Hazra (President & CEO of Quantinuum); Mrs. Josephine Teo (Minister for Digital Development and Information, and Minister-in-Charge of Cybersecurity & Smart Nation Group); Nitesh Sharan (Chief Financial Officer)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: Cloud, Email
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Singapore becomes the first country outside the US to host the Quantinuum Helios system; Cloud access to Helios is available immediately for research; An R&D and Operations Centre will be established in one-north technology district; Initial programs target computational biology, financial modeling, advanced materials, and combinatorial optimization
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: 98 qubits
-- **Target Audience**: Researcher; Policy Maker; Developer; Security Architect
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Leaders, quantum-threats, vendor-risk, migration-program, pqc-business-case
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: Quantum Origin (advanced quantum random number generator)
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: Quantinuum majority owned by Honeywell; Honeywell International, Inc. license; third-party library trust via TKET, Guppy, Lambeq, Qermit
-- **Deployment & Migration Complexity**: Helios deployment in 2026; cloud access effective immediately; R&D and Operations Centre establishment; phased collaboration starting with internships and workshops
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: National Quantum Office (NQO) as control tower; National Quantum Computing Hub (NQCH); talent development pipeline; industry programs for pharmaceuticals, materials science, finance
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document describes a strategic partnership and deployment plan rather than a regulatory mandate or technical standard, positioning it as guidance for ecosystem development.
-- **Regulatory Mandate Level**: Voluntary
-- **Sector / Industry Applicability**: Government; Finance; Healthcare; Technology; Academic
-- **Migration Urgency & Priority**: Long-Term
-- **Phase Transition Narrative**: Moves from research collaboration to commercial deployment and infrastructure establishment, enabling direct access to quantum hardware for industry applications.
-- **Historical Significance**: Marks the first deployment of a Quantinuum Helios system outside the United States, establishing Singapore as a leading global hub for quantum computing.
-- **Implementation Timeline Dates**: 2026: Installation of Helios system expected to be completed; April 6, 2026: Nitesh Sharan appointment effective date
-- **Successor Events & Dependencies**: Requires completion of Helios installation in 2026; Enables co-development of end-to-end middleware and applications bridging classical and quantum systems.
-- **Source Document Title**: Singapore’s National Quantum Office and Quantinuum Forge Strategic Partnership to Accelerate Quantum Computing
-- **Source Document Publication Date**: November 5, 2025
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
@@ -13074,138 +13768,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
-## United States:Algorand Foundation — First Post-Quantum Mainnet Transaction
-
-- **Reference ID**: United States:Algorand Foundation — First Post-Quantum Mainnet Transaction
-- **Title**: First Post-Quantum Mainnet Transaction
-- **Authors**: Algorand Foundation
-- **Publication Date**: 2024-10-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Algorand executes the first post-quantum secure mainnet transaction using NIST-selected Falcon signatures to protect digital assets on a live public blockchain.
-- **PQC Algorithms Covered**: Falcon
-- **Quantum Threats Addressed**: Shor's algorithm; integer factorization; discrete log problem; cracking elliptic curve cryptography; derivation of private keys from public key counterparts
-- **Migration Timeline Info**: 2022: Algorand introduced State Proofs using Falcon signatures; November 2025: First post-quantum transaction on mainnet executed; April 2026: Document writing date referencing NIST standardization process started in 2016
-- **Applicable Regions / Bodies**: Bodies: National Institute of Standards and Technology (NIST); Algorand Foundation
-- **Leaders Contributions Mentioned**: Dr. Zhenfei Zhang (submitted Falcon proposal to NIST); Craig Gentry (pioneering GPV work, former Algorand Foundation research fellow); Chris Peikert (Chief Scientific Officer at Algorand Foundation, GPV work); Vinod Vaikuntanathan (MIT professor, GPV work); Silvio Micali (introduced VRF, authored Compact Certificates of Collective Knowledge)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: Algorand Virtual Machine; State Proofs; Merkle tree; Verifiable Random Function (VRF)
-- **Standardization Bodies**: National Institute of Standards and Technology (NIST)
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: Elliptic-curve cryptography (ECC); SHA-2 family; SumHash512 (subset-sum compression function family)
-- **Key Takeaways**: Algorand has secured its entire chain history against quantum threats since 2022 using Falcon-signed State Proofs; The first live post-quantum transaction on a public blockchain mainnet was executed in November 2025; Falcon signatures offer compact efficiency suitable for resource-constrained devices while maintaining NIST-endorsed security; Current elliptic-curve cryptography used in blockchains is vulnerable to Shor's algorithm on future quantum computers; Developers can now experiment with Falcon-based accounts and transactions on Algorand.
-- **Security Levels & Parameters**: NIST-selected Falcon signatures; 256 rounds for State Proofs; SumHash512 hash function
-- **Hybrid & Transition Approaches**: Transition from classical security to post-quantum security ensuring security of entire chain history; Falcon signatures replacing ECC-based signatures in State Proofs
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: Falcon possesses relatively small key and signature sizes compared to hash-based category; Falcon signatures are extremely efficient and fast to verify at protocol and application layers; Less data to store and manage reduces block space and bandwidth consumption
-- **Target Audience**: Developer; Security Architect; Researcher; Policy Maker
-- **Implementation Prerequisites**: Algorand Virtual Machine support for Falcon verification; State Proofs infrastructure; Falcon-based accounts
-- **Relevant PQC Today Features**: digital-assets; stateful-signatures; Algorithms; Leaders; Timeline; Threats
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: Falcon is compatible with resource-constrained devices, like smartphones and security chips in IoT devices, consuming less block space and bandwidth
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: Existing blockchains will need to transition from classical security to post-quantum security; this process must ensure the security of the entire chain's history, even the portion recorded before the upgrade
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: This document represents a Blockchain phase event as it details the execution of the "first quantum‑resistant transaction on mainnet" and the transition from securing historical data to protecting live digital assets.
-- **Regulatory Mandate Level**: Voluntary
-- **Sector / Industry Applicability**: Technology; Finance
-- **Migration Urgency & Priority**: Near-Term (1-3yr, active planning required)
-- **Phase Transition Narrative**: Moves from securing blockchain history via State Proofs to enabling live post-quantum transactions for digital assets on the mainnet.
-- **Historical Significance**: Marks the first time a public blockchain has executed a post-quantum secure transaction on its mainnet, expanding protection beyond historical state proofs to real-time digital asset transfers.
-- **Implementation Timeline Dates**: 2016: NIST standardization process started; 2020: Falcon selected as NIST-endorsed algorithm; 2022: Algorand introduced State Proofs; November 2025: First post-quantum transaction on mainnet; March 2026: Google released research on quantum threats to ECC; April 2026: Document writing date
-- **Successor Events & Dependencies**: Requires replacement of Verifiable Random Function (VRF) with a post-quantum secure version; Enables developers to experiment with Falcon-based accounts and transactions.
-- **Source Document Title**: First Post-Quantum Mainnet Transaction
-- **Source Document Publication Date**: Copyright: 2026 — exact date not stated
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## United States:Bitcoin Core — BIP-360 Pay-to-Merkle-Root Proposal
-
-- **Reference ID**: United States:Bitcoin Core — BIP-360 Pay-to-Merkle-Root Proposal
-- **Title**: BIP-360 Pay-to-Merkle-Root Proposal
-- **Authors**: Bitcoin Core Development
-- **Publication Date**: 2025-03-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: BIP-360 introduces Pay-to-Merkle-Root (P2MR) as a protocol-level foundation to enable future post-quantum signature schemes in Bitcoin by removing key-path spending vulnerabilities.
-- **PQC Algorithms Covered**: ML-DSA; SLH-DSA
-- **Quantum Threats Addressed**: Derivation of private keys from exposed public keys; theft of funds via quantum computing attacks on Taproot and P2PK outputs
-- **Migration Timeline Info**: U.S. National Security Agency CNSA 2.0 framework calls for quantum-safe systems by 2030; NIST plans to phase out elliptic curve cryptography in federal systems in the mid-2030s
-- **Applicable Regions / Bodies**: United States; U.S. National Security Agency; National Institute of Standards and Technology
-- **Leaders Contributions Mentioned**: Hunter Beast (co-author, Bitcoin developer, senior protocol engineer at MARA); Isabel Foxen Duke (co-author, technical communications specialist); Ethan Heilman (cryptographic researcher)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: Tapscript; Pay-to-Merkle-Root (P2MR); Pay-to-Public-Key (P2PK)
-- **Infrastructure Layers**: Bitcoin consensus layer; script tree functionality
-- **Standardization Bodies**: National Institute of Standards and Technology
-- **Compliance Frameworks Referenced**: CNSA 2.0
-- **Classical Algorithms Referenced**: Elliptic curve cryptography
-- **Key Takeaways**: BIP-360 disables key-path spending in Taproot to reduce exposure of public keys; P2MR serves as a foundation for future soft forks introducing post-quantum signatures; Governments and firms are accelerating investment in PQC with 2030 targets; Long-dormant Bitcoin holdings remain vulnerable and require specific proposals
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Foundation for later upgrades via follow-on soft forks; maintaining compatibility with existing Tapscript infrastructure
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer; Security Architect; Policy Maker; Researcher
-- **Implementation Prerequisites**: Follow-on soft forks required to introduce post-quantum signature schemes; adoption of P2MR output type
-- **Relevant PQC Today Features**: digital-assets; merkle-tree-certs; stateful-signatures; migration-program; quantum-threats
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: phased rollout; backward compatibility; soft forks
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document describes BIP-360 as a proposal merged into the official repository to serve as a "foundation for later upgrades" and an "early move toward quantum-hardening Bitcoin at the protocol level," indicating a transition from research to formal standardization preparation.
-- **Regulatory Mandate Level**: Voluntary
-- **Sector / Industry Applicability**: Technology; Finance; All Sectors
-- **Migration Urgency & Priority**: Long-Term
-- **Phase Transition Narrative**: Moves from theoretical vulnerability assessment to protocol-level proposal (BIP) status, enabling future soft forks that will integrate post-quantum signature schemes.
-- **Historical Significance**: Represents a formalized step in Bitcoin's evolution toward quantum resistance by introducing P2MR as a structural prerequisite for integrating algorithms like ML-DSA and SLH-DSA.
-- **Implementation Timeline Dates**: 2030: U.S. National Security Agency CNSA 2.0 framework calls for quantum-safe systems; mid-2030s: NIST plans to phase out elliptic curve cryptography in federal systems
-- **Successor Events & Dependencies**: Requires follow-on soft forks to introduce post-quantum signature schemes; contingent on the adoption of P2MR output type to reduce attack surface.
-- **Source Document Title**: Bitcoin Advances Toward Quantum Resistance with BIP 360 and New P2MR Output
-- **Source Document Publication Date**: February 12, 2026
-- **Country Migration Dates**: United States: 2030 — U.S. National Security Agency CNSA 2.0 framework calls for quantum-safe systems; United States: mid-2030s — NIST plans to phase out elliptic curve cryptography in federal systems
-- **Timeline Cross-Reference**: United States 2030: CONSISTENT (112-bit Security Deprecated)
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
 ## United States:CISA — ACDI Deployment Phase
 
 - **Reference ID**: United States:CISA — ACDI Deployment Phase
@@ -13866,72 +14428,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
-## United States:Ethereum Foundation — Strawmap PQC Roadmap Published
-
-- **Reference ID**: United States:Ethereum Foundation — Strawmap PQC Roadmap Published
-- **Title**: Strawmap PQC Roadmap Published
-- **Authors**: Ethereum Foundation
-- **Publication Date**: 2026-01-15
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: The Ethereum Foundation has released the 'Strawmap' roadmap outlining seven hard forks from 2026 to 2029 including post-quantum cryptography migration targets.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: quantum computing threats
-- **Migration Timeline Info**: Seven planned hard forks between 2026 and 2029 focusing on post-quantum cryptographic algorithms
-- **Applicable Regions / Bodies**: Bodies: Ethereum Foundation
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: Ethereum protocol
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: Ethereum Foundation
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Ethereum plans seven hard forks from 2026 to 2029 to integrate post-quantum cryptography; L1 finality targets reduction to 8 seconds via Minimmit consensus mechanism; Throughput goals include 10,000 TPS on L1 and 10 million TPS on L2 networks; Shielded transfers will be introduced to enable private ETH transactions
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: L1 finality reduced to 8 seconds; L1 targets 10,000 TPS; L2 networks aim for 10 million TPS; Block intervals potentially shortened to 2 seconds
-- **Target Audience**: Developer; Security Architect; Researcher
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Timeline; digital-assets; migration-program; pqc-risk-management
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: seven hard forks from 2026 to 2029; Hegota upgrade path; gradual decrease of slot time
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document outlines a roadmap for the Ethereum protocol including hard forks and post-quantum cryptography integration, representing a Blockchain phase event focused on scalability and security upgrades.
-- **Regulatory Mandate Level**: Informational
-- **Sector / Industry Applicability**: Technology; Finance
-- **Migration Urgency & Priority**: Long-Term
-- **Phase Transition Narrative**: Moves from current protocol state to a roadmap of seven hard forks enabling post-quantum cryptography, private transfers, and improved finality between 2026 and 2029.
-- **Historical Significance**: Represents the Ethereum Foundation's formal publication of a multi-year roadmap integrating post-quantum cryptography into the Ethereum protocol under the Hegota upgrade path.
-- **Implementation Timeline Dates**: 2026: Start of seven hard forks; 2029: End of planned hard forks
-- **Successor Events & Dependencies**: None detected
-- **Source Document Title**: Ethereum Foundation Unveils 'Strawmap' Roadmap for 2026–2029
-- **Source Document Publication Date**: 02/26/2026
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
 ## United States:GSA — GSA PQC Buyer Guide v1.0
 
 - **Reference ID**: United States:GSA — GSA PQC Buyer Guide v1.0
@@ -13994,204 +14490,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Source Document Publication Date**: June 2025
 - **Country Migration Dates**: United States: 2023 — initial CRQC-vulnerable system inventories due; United States: 2024 — NIST PQC standards released; United States: 2024 — White House Report on Post-Quantum Cryptography published; United States: 2025 — NIST IR 8547 initial public draft closed
 - **Timeline Cross-Reference**: United States: DATE CHANGE — CSV=2022 (NSM-10 Published), doc=2023 (2023 — initial CRQC-vulnerable system inventories due) → REVIEW; United States 2024: CONSISTENT (FIPS 203, 204, 205 Published | also: NIST IR 8547 Transition Guidance (Draft)); United States 2024: CONSISTENT (PQC Report to Congress); United States 2025: CONSISTENT (IR 8547 Public Comments Published | also: FIPS 206 (FN-DSA) Draft Submitted)
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## United States:Google — Google Cloud ML-KEM Default and Chrome MTC Program
-
-- **Reference ID**: United States:Google — Google Cloud ML-KEM Default and Chrome MTC Program
-- **Title**: Google Cloud ML-KEM Default and Chrome MTC Program
-- **Authors**: Google LLC
-- **Publication Date**: 2026-02-06
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Skip to main content The Keyword The quantum era is coming.
-- **PQC Algorithms Covered**: ML-KEM
-- **Quantum Threats Addressed**: CRQC (Cryptographically Relevant Quantum Computer), Cryptographically Relevant Quantum, Quantum Computer, Post-Quantum
-- **Migration Timeline Info**: Years mentioned: 2024, 2025, 2026
-- **Applicable Regions / Bodies**: Regions: United States, France, Canada, Australia, India, Bodies: NIST
-- **Leaders Contributions Mentioned**: Kent Walker, President of Global Affairs, Google & Alphabet; Hartmut Neven, Founder and Lead, Google Quantum AI
-- **PQC Products Mentioned**: Chrome Merkle Tree Certificates (MTC); Chrome Quantum-resistant Root Store (CQRS)
-- **Protocols Covered**: HTTPS; X.509
-- **Infrastructure Layers**: Cloud
-- **Standardization Bodies**: NIST
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: RSA; 2048-bit RSA
-- **Key Takeaways**: Google is deploying ML-KEM by default for all Cloud network encryption; Chrome and Cloudflare are launching a program to replace X.509 chains with Merkle proofs; Policymakers should prioritize migrating legacy systems to the cloud to leverage provider PQC capabilities; Organizations must address workforce challenges in critical sectors like energy and healthcare; A unified global approach using NIST standards is recommended to avoid insecure partial solutions
-- **Security Levels & Parameters**: 2048-bit RSA
-- **Hybrid & Transition Approaches**: Crypto agility; replacing X.509 chains with compact Merkle proofs
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Policy Maker; CISO; Security Architect; Developer
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: merkle-tree-certs; crypto-agility; tls-basics; migration-program; threats
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: crypto agility, updating or replacing cryptographic algorithms without disrupting services
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: crypto agility; completing PQC migrations safely within NIST’s current guidelines; rolling out PQC within infrastructure for internal operations and products; facilitating ecosystem shifts; promoting Cloud-first modernization to avoid updating legacy systems and hard-coded cryptography
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: dedicated efforts together with certificate authorities, workforce challenges in vital sectors like energy, telecommunications and healthcare, ongoing dialogue with experts from research institutions
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document explicitly states Google is "on track to complete a PQC migration" and has "begun rolling out PQC within our infrastructure," indicating an active transition from research to operational deployment.
-- **Regulatory Mandate Level**: Recommended
-- **Sector / Industry Applicability**: Energy; Telecommunications; Healthcare; Finance; Technology; Critical Infrastructure
-- **Migration Urgency & Priority**: Near-Term (1-3yr, active planning required)
-- **Phase Transition Narrative**: Moves from research and preparation to active deployment and ecosystem shift, enabling the replacement of X.509 chains with Merkle proofs in Chrome.
-- **Historical Significance**: Represents a major cloud provider defaulting to ML-KEM for network encryption and a browser vendor initiating a program to replace standard certificate chains with post-quantum alternatives.
-- **Implementation Timeline Dates**: Q3 2027: Chrome Quantum-resistant Root Store (CQRS) planned; 2016: Google began preparing for post-quantum world; 2024: NIST announced first set of PQC standards
-- **Successor Events & Dependencies**: Requires widespread adoption of NIST standards; Enables secure HTTPS via Merkle Tree Certificates in Chrome.
-- **Source Document Title**: The quantum era is coming. Are we ready to secure it?
-- **Source Document Publication Date**: Feb 06, 2026
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## United States:Google — Google PQC Migration 2029 Timeline
-
-- **Reference ID**: United States:Google — Google PQC Migration 2029 Timeline
-- **Title**: Google PQC Migration 2029 Timeline
-- **Authors**: Google LLC
-- **Publication Date**: 2026-03-25
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Google sets a 2029 target for complete post-quantum cryptography migration across all products and services.
-- **PQC Algorithms Covered**: ML-KEM; ML-DSA
-- **Quantum Threats Addressed**: store-now-decrypt-later attacks; CRQC
-- **Migration Timeline Info**: 2029: complete post-quantum cryptography migration across all products and services
-- **Applicable Regions / Bodies**: Regions: United States (Google global); Bodies: NIST
-- **Leaders Contributions Mentioned**: Heather Adkins (VP Security Engineering, Google); Sophie Schmieg (Senior Staff Cryptography Engineer, Google)
-- **PQC Products Mentioned**: Android 17; Chrome
-- **Protocols Covered**: TLS (implicit via Chrome and Cloud PQC); digital signatures (ML-DSA)
-- **Infrastructure Layers**: PKI
-- **Standardization Bodies**: NIST
-- **Compliance Frameworks Referenced**: FIPS 204
-- **Classical Algorithms Referenced**: RSA (implicit, being replaced); ECDSA (implicit, being replaced); X.509 certificate chains (being supplemented by MTC)
-- **Key Takeaways**: Google targets 2029 for complete PQC migration across all products; Authentication services and digital signatures are prioritized due to store-now-decrypt-later threats; Android 17 integrates ML-DSA aligned with NIST FIPS 204; Migration builds on existing Chrome PQC support and Cloud ML-KEM deployment
-- **Security Levels & Parameters**: NIST security levels implied via ML-DSA and ML-KEM standard parameter sets
-- **Hybrid & Transition Approaches**: Phased migration building on existing Chrome PQC and Cloud ML-KEM deployments; hybrid classical+PQC period implied through 2029
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect; Developer; CISO
-- **Implementation Prerequisites**: Android 17 integration; Chrome PQC support; Cloud ML-KEM deployment; Merkle Tree Certificates program
-- **Relevant PQC Today Features**: Timeline; Threats; Algorithms; merkle-tree-certs; migration-program
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: 2029 timeline for complete migration; prioritization of authentication services and digital signatures; phased approach building on existing Chrome and Cloud support
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document explicitly states a "2029 target for complete post-quantum cryptography migration," indicating an active transition phase from classical to quantum-resistant cryptography.
-- **Regulatory Mandate Level**: Voluntary
-- **Sector / Industry Applicability**: Technology
-- **Migration Urgency & Priority**: Long-Term (3-5yr, planning horizon)
-- **Phase Transition Narrative**: Moves from initial PQC support in specific products like Chrome to a comprehensive enterprise-wide migration target by 2029.
-- **Historical Significance**: Represents a major technology vendor setting a definitive deadline for full PQC adoption across its entire ecosystem, signaling market readiness.
-- **Implementation Timeline Dates**: 2029: complete post-quantum cryptography migration across all products and services
-- **Successor Events & Dependencies**: Requires Android 17 integration of ML-DSA; Builds on Chrome PQC support and Cloud ML-KEM deployment
-- **Source Document Title**: Google PQC Migration 2029 Timeline
-- **Source Document Publication Date**: None detected
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## United States:Microsoft — NIST PQC Algorithms in Windows Platform
-
-- **Reference ID**: United States:Microsoft — NIST PQC Algorithms in Windows Platform
-- **Title**: NIST PQC Algorithms in Windows Platform
-- **Authors**: Microsoft Corporation
-- **Publication Date**: 2025-11-01
-- **Last Updated**: Not specified
-- **Document Status**: Completed
-- **Main Topic**: Microsoft announced general availability of NIST post-quantum cryptography algorithms ML-KEM and ML-DSA in Windows 11 and Windows Server 2025 via November 2025 update.
-- **PQC Algorithms Covered**: ML-KEM; ML-DSA
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: November 2025: general availability of NIST PQC algorithms in Windows 11 and Windows Server 2025
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: NIST
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Microsoft enables enterprise PQC adoption via Windows 11 and Windows Server 2025; ML-KEM and ML-DSA are available through the November 2025 update; General availability signals readiness for deployment in supported platforms
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect; Developer; Operations
-- **Implementation Prerequisites**: Windows 11; Windows Server 2025; November 2025 update
-- **Relevant PQC Today Features**: Algorithms; Migrate; Timeline; migration-program
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: enterprise PQC adoption; Windows 11 and Windows Server 2025 via November 2025 update
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document describes the general availability of PQC algorithms in a commercial OS, representing a transition from standardization to active deployment and adoption.
-- **Regulatory Mandate Level**: Voluntary
-- **Sector / Industry Applicability**: Technology; All Sectors
-- **Migration Urgency & Priority**: Near-Term
-- **Phase Transition Narrative**: Moves from Standardization to Deployment — signals formal availability for enterprise adoption in Windows environments.
-- **Historical Significance**: Represents a major commercial operating system vendor enabling NIST PQC algorithms by default or via update, facilitating widespread enterprise migration.
-- **Implementation Timeline Dates**: November 2025: general availability of ML-KEM and ML-DSA in Windows 11 and Windows Server 2025
-- **Successor Events & Dependencies**: Enables enterprise PQC adoption on Microsoft platforms; Requires installation of the November 2025 update.
-- **Source Document Title**: None detected
-- **Source Document Publication Date**: None detected
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
@@ -14600,11 +14898,11 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Publication Date**: 2025-08-28
 - **Last Updated**: Not specified
 - **Document Status**: Validated
-- **Main Topic**: Platform Back DigiCert ONE Platform PKI Certificate Lifecycle Management Code & Software Signing IoT & Connected Devices TrustCore SDK Document & eSignature DNS Solutions Public Trust TLS/SSL Certificates Private/Internal PKI DDoS Mitigation Service
+- **Main Topic**: The document is a generic NIST CSRC website error page indicating a missing resource, with no substantive content regarding FIPS 206 or FN-DSA.
 - **PQC Algorithms Covered**: ML-DSA, SLH-DSA, FN-DSA, Falcon, FIPS 206 (FN-DSA)
 - **Quantum Threats Addressed**: Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2025, 2026, 2027
-- **Applicable Regions / Bodies**: Regions: United States, European Union, Canada, Japan, South Korea, Bodies: NIST
+- **Applicable Regions / Bodies**: United States; NIST
 - **Leaders Contributions Mentioned**: Shane Kelly (Author); Jason Sabin (Author of related stories); Jeremy Rowley (Author of related stories)
 - **PQC Products Mentioned**: DigiCert ONE
 - **Protocols Covered**: TLS, HTTPS, S/MIME
@@ -14612,20 +14910,20 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Standardization Bodies**: NIST
 - **Compliance Frameworks Referenced**: eIDAS 2.0
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: FN-DSA is viewed as a special-purpose scheme for root and intermediate certificates due to smaller signature sizes; Organizations should not implement FN-DSA in production until the standard is finalized; Preparation for quantum readiness requires exploring draft algorithms and testing implementations now; Crypto-agility is essential to adapt as standards finalize
+- **Key Takeaways**: The provided text is a 404 error page; No technical PQC information is available; The document does not describe FIPS 206 or FN-DSA; Users are redirected to the main NIST CSRC site; Contact csrc-inquiry@nist.gov for support
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: crypto-agility
-- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Support**: Not Applicable
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
+- **Lifecycle State**: Draft
 - **Performance & Size Considerations**: smaller signature sizes; reduced overall size of certificate chains
 - **Target Audience**: Security Architect; Developer; CISO; Compliance Officer
 - **Implementation Prerequisites**: Wait for final standard before production implementation; Explore draft algorithms via DigiCert Labs
@@ -14641,11 +14939,11 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Preparation needs to start now; exploring draft algorithms; planning for integration
 - **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document describes the submission of a draft standard (FIPS 206) to NIST for approval, marking the transition from research and refinement to formal standardization.
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document is a website error page ("Page Not Found") and contains no substantive content to classify as a specific phase event; the title suggests a draft submission, but the text provides no evidence.
 - **Regulatory Mandate Level**: Informational
 - **Sector / Industry Applicability**: All Sectors
-- **Migration Urgency & Priority**: Near-Term
+- **Migration Urgency & Priority**: Exploratory
 - **Phase Transition Narrative**: Moves from algorithm selection and refinement to draft standardization, enabling public review and eventual final adoption for implementation planning.
 - **Historical Significance**: Represents the formal submission of FN-DSA (FALCON) as a NIST draft standard, completing the trio of post-quantum signature schemes alongside ML-DSA and SLH-DSA.
 - **Implementation Timeline Dates**: August 28, 2025: Draft standard submitted; Q4 2025: Initial Public Draft expected; late September 2025: Potential release at NIST PQC Standardization Conference; late 2026: Final standard expected; early 2027: Final standard expected
@@ -16242,204 +16540,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
-## United States:OpenSSL — OpenSSL 3.6.1 PQC Release
-
-- **Reference ID**: United States:OpenSSL — OpenSSL 3.6.1 PQC Release
-- **Title**: OpenSSL 3.6.1 PQC Release
-- **Authors**: OpenSSL Software Foundation
-- **Publication Date**: 2026-01-27
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: OpenSSL 3.6.1 release introduces native support for FIPS 203 and FIPS 204 post-quantum algorithms.
-- **PQC Algorithms Covered**: ML-KEM; ML-DSA
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: OpenSSL 3.6.1
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: FIPS 203; FIPS 204
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: OpenSSL 3.6.1 enables mainstream PQC adoption; Native support for ML-KEM and ML-DSA is now available; The world's most widely used crypto library now supports post-quantum algorithms
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer; Security Architect
-- **Implementation Prerequisites**: OpenSSL 3.6.1
-- **Relevant PQC Today Features**: Algorithms; OpenSSL; Migrate; Compliance
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: mainstream PQC adoption
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document describes the release of a specific version of a cryptographic library (OpenSSL) with native support for standardized PQC algorithms, marking a transition from research to available implementation tools.
-- **Regulatory Mandate Level**: Informational
-- **Sector / Industry Applicability**: All Sectors
-- **Migration Urgency & Priority**: Near-Term
-- **Phase Transition Narrative**: Moves from Standardization to Implementation — signals that mainstream crypto libraries now support finalized PQC standards, enabling immediate adoption.
-- **Historical Significance**: Represents the integration of FIPS 203 and FIPS 204 into OpenSSL, a critical milestone for widespread PQC deployment in existing software stacks.
-- **Implementation Timeline Dates**: None detected
-- **Successor Events & Dependencies**: Enables ML-KEM and ML-DSA adoption in applications using OpenSSL; Requires FIPS 203 and FIPS 204 finalization.
-- **Source Document Title**: None detected
-- **Source Document Publication Date**: None detected
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## United States:SEALSQ — US Post-Quantum Root of Trust Service Launch
-
-- **Reference ID**: United States:SEALSQ — US Post-Quantum Root of Trust Service Launch
-- **Title**: US Post-Quantum Root of Trust Service Launch
-- **Authors**: SEALSQ Corp
-- **Publication Date**: 2025-11-21
-- **Last Updated**: Not specified
-- **Document Status**: Completed
-- **Main Topic**: Skip to content Search for: GQI News News – Recent News Archive 2025 News Archive 2024 News Archive 2023 News Archive 2022 News Archive, 2021 News Archive, 2020 News Archive, 2019 News Archive, 2018 News Archive, 2015-2017 Analysis Qnalysis Players P
-- **PQC Algorithms Covered**: Falcon
-- **Quantum Threats Addressed**: Quantum Computer, Post-Quantum
-- **Migration Timeline Info**: Years mentioned: 2020, 2021, 2022, 2023, 2024, 2025, 2026
-- **Applicable Regions / Bodies**: Regions: United States, United Kingdom, France, Canada, Australia, South Korea, Singapore, Bodies: NIST
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: Keeper Security
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: TPM, Cloud, Blockchain, Satellite
-- **Standardization Bodies**: NIST
-- **Compliance Frameworks Referenced**: CNSA 2.0
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: SEALSQ has launched a US-based Post-Quantum Root of Trust service; The service targets enterprises and government agencies; The solution aligns with NIST PQC standards; The service integrates with Quantum Shield QS7001 hardware; The framework adheres to NSA CNSA 2.0
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: CISO; Security Architect; Compliance Officer
-- **Implementation Prerequisites**: Quantum Shield QS7001 hardware integration
-- **Relevant PQC Today Features**: hsm-pqc; pki-workshop; compliance-strategy; migration-program; vendor-risk
-- **Implementation Attack Surface**: side-channel attacks
-- **Cryptographic Discovery & Inventory**: Cryptographic Bill of Materials (CBOM); cryptographic risk exposure analysis; cryptographic bill of materials mapping
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: Quantum Key Distribution (QKD)
-- **QRNG & Entropy Sources**: Entropy-as-a-Service
-- **Constrained Device & IoT Suitability**: IoT sectors; consumer electronics integration
-- **Supply Chain & Vendor Risk**: sovereign security stack, vertically integrated quantum empire, third-party library trust
-- **Deployment & Migration Complexity**: staged migration; phased implementation steps; transition roadmap; backward compatibility (without system overhaul); plug-and-play hardware solution
-- **Financial & Business Impact**: reduces total cost of ownership by 60%
-- **Organizational Readiness**: quantum-ready talent pool; workforce development; customized transformation roadmap; organizational readiness assessment
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document describes the launch of a commercial service for Post-Quantum Root of Trust, indicating an active deployment phase where organizations can begin migrating to PQC solutions.
-- **Regulatory Mandate Level**: Voluntary
-- **Sector / Industry Applicability**: Government; Technology
-- **Migration Urgency & Priority**: Near-Term
-- **Phase Transition Narrative**: Moves from standardization alignment to commercial availability, enabling enterprises and government agencies to deploy PQC Root of Trust services.
-- **Historical Significance**: Represents a commercial launch of a US-based PQC service explicitly aligned with NSA CNSA 2.0 and NIST standards for enterprise and government use.
-- **Implementation Timeline Dates**: None detected
-- **Successor Events & Dependencies**: Requires integration with Quantum Shield QS7001 hardware; Enables alignment with NIST PQC standards and NSA CNSA 2.0 framework.
-- **Source Document Title**: US Post-Quantum Root of Trust Service Launch
-- **Source Document Publication Date**: None detected
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## United States:SandboxAQ — AQtive Guard FedRAMP Ready
-
-- **Reference ID**: United States:SandboxAQ — AQtive Guard FedRAMP Ready
-- **Title**: AQtive Guard FedRAMP Ready
-- **Authors**: SandboxAQ Inc
-- **Publication Date**: 2025-12-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Company Solutions Large Quantitative Models AQBioSim AQChemSim AQtive Guard AQMed AQNav Education YouTube Residency Program Scholarship Program Publications Library News YouTube Blogs Press Room Events Webcasts Podcasts Awards Careers Contact Us Conn
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Post-Quantum
-- **Migration Timeline Info**: Years mentioned: 2025, 2026
-- **Applicable Regions / Bodies**: Regions: International
-- **Leaders Contributions Mentioned**: Jack Hidary, CEO of SandboxAQ
-- **PQC Products Mentioned**: Signal
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: ISO/IEC, ISO, IEC
-- **Compliance Frameworks Referenced**: FedRAMP, SOC 2
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Federal agencies can now evaluate AQtive Guard via a standardized FedRAMP Ready path; The platform addresses risks from weak encryption and AI agent proliferation; Organizations need to modernize cryptography and plan for post-quantum adoption to reduce risk.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Compliance Officer; Security Architect; Policy Maker
-- **Implementation Prerequisites**: FedRAMP Ready status; SOC 2 Type I report; ISO/IEC 27001 certificate
-- **Relevant PQC Today Features**: Assess; Migrate; Compliance; pqc-risk-management; migration-program
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: automated cryptographic discovery and inventory; cryptographic posture management; identifying and prioritizing cryptographic risks; updating legacy cryptography across multi-environment estates
-- **Testing & Validation Methods**: independent third-party assessment; FedRAMP Ready status; SOC 2 Type I report; ISO/IEC 27001 certificate
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: third-party assessment, standardized security controls consistent with the FedRAMP framework, independent signal of SandboxAQ's security posture
-- **Deployment & Migration Complexity**: post-quantum migration planning; modernization at scale; planning and coordinating steps toward post-quantum cryptography adoption
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: enterprise-readiness initiative; standardized path to evaluate; aligning to federal requirements; readiness for government use
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document describes a vendor achieving a regulatory readiness status (FedRAMP Ready) that enables federal agencies to evaluate the product, representing a compliance milestone rather than a new mandate.
-- **Regulatory Mandate Level**: Voluntary
-- **Sector / Industry Applicability**: Government; Defense; Critical Infrastructure
-- **Migration Urgency & Priority**: Near-Term
-- **Phase Transition Narrative**: Moves from vendor readiness to government evaluation phase — enables federal agencies to assess AQtive Guard for cryptographic discovery and post-quantum migration planning within a unified framework.
-- **Historical Significance**: Represents a milestone where an AI-driven cybersecurity platform achieves standardized security controls consistent with the FedRAMP framework, facilitating post-quantum migration planning for federal entities.
-- **Implementation Timeline Dates**: None detected
-- **Successor Events & Dependencies**: Enables listing in FedRAMP Marketplace; Requires independent third-party assessment completion.
-- **Source Document Title**: SandboxAQ Achieves FedRAMP® Ready Status, Powering Enterprise Readiness Across the Defense and Public Sector
-- **Source Document Publication Date**: Dec. 4, 2025
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
 ## United States:SandboxAQ — AQtive Guard Pentagon 5-Year Agreement
 
 - **Reference ID**: United States:SandboxAQ — AQtive Guard Pentagon 5-Year Agreement
@@ -16500,72 +16600,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Successor Events & Dependencies**: Enables deployment across other DoD agencies; Requires automated cryptographic discovery inventory completion.
 - **Source Document Title**: AQtive Guard Pentagon 5-Year Agreement
 - **Source Document Publication Date**: None detected
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## United States:SandboxAQ/MITRE/LF — RWPQC 2025 Conference
-
-- **Reference ID**: United States:SandboxAQ/MITRE/LF — RWPQC 2025 Conference
-- **Title**: RWPQC 2025 Conference
-- **Authors**: SandboxAQ MITRE and Linux Foundation PQCA
-- **Publication Date**: 2025-03-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Company Solutions Large Quantitative Models AQBioSim AQChemSim AQtive Guard AQMed AQNav Education YouTube Residency Program Scholarship Program Publications Library News YouTube Blogs Press Room Events Webcasts Podcasts Awards Careers Contact Us Conn
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Post-Quantum
-- **Migration Timeline Info**: Years mentioned: 2025, 2026
-- **Applicable Regions / Bodies**: Regions: United States, Germany, France, South Korea, Bodies: NIST, NSA, CISA
-- **Leaders Contributions Mentioned**: Dr. Marc Manzano (General Manager of the Cybersecurity Group at SandboxAQ); Dr Wen Masters (vice president of cyber technologies at MITRE); Hart Montgomery (The Linux Foundation)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: IoT
-- **Standardization Bodies**: NIST, PQCA
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Cyber resilience in the quantum era requires proactive planning and strategic investment; Cross-industry collaboration is essential for cybersecurity innovation; Organizations must address regulatory and policy implications of PQC adoption; Migration strategies are needed across banking, IoT, and large-scale digital infrastructures.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: transitioning to quantum-safe solutions; PQC migration
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: CISO; Security Architect; Developer; Policy Maker; Researcher; Operations
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Leaders; Migrate; Threats; Compliance; Algorithms
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: PQC migration across key sectors such as banking, IoT, and large-scale digital infrastructures
-- **Supply Chain & Vendor Risk**: Open-source collaboration is at the heart of innovation in cybersecurity; third-party library trust via The Linux Foundation's Post-Quantum Cryptography Alliance producing high-assurance open-source software implementations
-- **Deployment & Migration Complexity**: PQC migration; transitioning to quantum-safe solutions; migration phase across key sectors such as banking, IoT, and large-scale digital infrastructures
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: Cyber resilience in the quantum era requires proactive planning and strategic investment; governance prerequisites via cross-industry collaboration across industry, academia, and government
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document announces a conference dedicated to exchanging insights and collaborating on securing the future of cryptography, providing strategic guidance rather than a formal mandate.
-- **Regulatory Mandate Level**: Informational (educational, advisory only)
-- **Sector / Industry Applicability**: Government; Finance; Banking; Technology; Academic; Critical Infrastructure; Healthcare
-- **Migration Urgency & Priority**: Exploratory (research phase, no specific deadline)
-- **Phase Transition Narrative**: Moves from research and standardization discussions to real-world application planning by bringing together industry leaders, policymakers, and researchers to address critical challenges.
-- **Historical Significance**: Represents the third annual conference dedicated to the intersection of cybersecurity and post-quantum cryptography, highlighting growing global collaboration on PQC adoption.
-- **Implementation Timeline Dates**: March 24–25, 2025: RWPQC 2025 conference dates; February 18, 2025: Press release publication date
-- **Successor Events & Dependencies**: None detected
-- **Source Document Title**: RWPQC 2025 Brings Together Industry Leaders to Advance Cybersecurity and Quantum Innovation
-- **Source Document Publication Date**: February 18, 2025
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
