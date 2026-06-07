@@ -2432,3 +2432,26 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: MEDIUM
 - **Source Document**: VND-140_Forward_Edge-AI_Inc..html (321.2 KB)
 - **Extraction Timestamp**: 2026-06-06T21:54:51
+
+## VND-190 — Zscaler Inc.
+
+- **Vendor ID**: VND-190
+- **Vendor Name**: Zscaler Inc.
+- **Roadmap Title**: Preparing for 'Q Day': A Primer on the Quantum Threat and the Strategic Shift to Post-Quantum Cryptography
+- **Roadmap URL**: https://www.zscaler.com/blogs/product-insights/primer-quantum-threat-strategic-shift-post-quantum-cryptography-pqc
+- **Publish Date**: 2025-10-31
+- **Local File**: public/vendor-roadmaps/VND-190_Zscaler_Inc..html
+- **CSV Coverage Notes**: Zscaler has published a strategic PQC program: a multi-part 'Strategic Shift to Post-Quantum Cryptography' blog series (primer published Oct 31, 2025) plus a 'Quantum-Ready Security Service Edge' innovation launch. It lays out a hybrid ECC+ML-KEM key-exchange strategy, inline PQC TLS decryption/inspection, IPsec tunnels with post-quantum pre-shared keys, crypto-discovery via SI partners (EY, HCLTech), and phased customer migration guidance across the Zero Trust Exchange. | Milestone: Quantum-ready SSE: inline inspection of ML-KEM hybrid PQC TLS traffic and IPsec tunnels with post-quantum pre-s
+- **Roadmap Scope**: Portfolio-wide strategy
+- **PQC Algorithms Announced**: ML-KEM
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: Zero Trust Exchange
+- **Compliance Frameworks**: NIST
+- **Hybrid Mode Support**: Yes; hybrid ECC+ML-KEM key-exchange strategy
+- **Current GA Status**: Planned
+- **Customer Action Required**: Audit Cryptographic Systems; Adopt Post-Quantum Cryptography
+- **Key Commitments & Quotes**: "Zscaler’s phased approach to post-quantum key exchange"; "Enabling quantum key exchange algorithms and decryption of PQC traffic on the Zero Trust Exchange"
+- **Coverage Verification**: PARTIAL; The document confirms the blog series and Zero Trust Exchange focus but does not mention the 'Quantum-Ready SSE' launch, specific SI partners (EY, HCLTech), or IPsec tunnel details found in the CSV notes.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-190_Zscaler_Inc..html (256.2 KB)
+- **Extraction Timestamp**: 2026-06-06T22:27:49
