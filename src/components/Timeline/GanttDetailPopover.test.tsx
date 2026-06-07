@@ -35,6 +35,7 @@ describe('GanttDetailPopover', () => {
         flagCode: 'tc',
         sourceUrl: 'https://example.com/source',
         sourceDate: '2024-01-15',
+        entityType: 'government',
       },
     ],
   }

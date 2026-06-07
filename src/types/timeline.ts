@@ -13,6 +13,12 @@ export type Phase =
 
 export type EventType = 'Phase' | 'Milestone'
 
+// Org classification for the timeline category filter (FR-T-06).
+// 'government' = national/supranational agencies & regulators;
+// 'standards'  = formal SDOs + cross-industry consortia;
+// 'vendor'     = commercial vendors, hardware, blockchain (off by default).
+export type EntityType = 'government' | 'standards' | 'vendor'
+
 export interface TimelineEvent {
   startYear: number
   endYear: number
@@ -33,6 +39,9 @@ export interface TimelineEvent {
   // New fields — populated from CSV columns (FR-T-02)
   trustedSourceId?: string
   localFile?: string
+
+  // Org classification for the category filter (FR-T-06)
+  entityType: EntityType
 
   // Derived fields — populated at load time, not from CSV (FR-T-05)
   complianceRefs?: string[]

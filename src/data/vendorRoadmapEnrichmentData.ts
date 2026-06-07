@@ -35,6 +35,7 @@ function parseEnrichmentFile(raw: string): Map<string, VendorRoadmapEnrichment> 
 
     const F = {
       vendorId: /\*\*Vendor ID\*\*:\s*(.+)$/m,
+      scope: /\*\*Roadmap Scope\*\*:\s*(.+)$/m,
       algorithms: /\*\*PQC Algorithms Announced\*\*:\s*(.+)$/m,
       dates: /\*\*Target Migration Dates\*\*:\s*(.+)$/m,
       products: /\*\*Products \/ Services Covered\*\*:\s*(.+)$/m,
@@ -54,6 +55,7 @@ function parseEnrichmentFile(raw: string): Map<string, VendorRoadmapEnrichment> 
 
     result.set(vendorId, {
       vendorId,
+      roadmapScope: field(F.scope) ?? '',
       pqcAlgorithms: splitSemicolon(field(F.algorithms)),
       targetMigrationDates: field(F.dates) ?? '',
       productsCovered: field(F.products) ?? '',

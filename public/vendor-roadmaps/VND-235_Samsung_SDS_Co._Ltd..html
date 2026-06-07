@@ -1,0 +1,736 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    
+
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta charset="utf-8">
+       <link rel="canonical" href="https://www.samsungsds.com/en/research-blog/post-quantum-crypto-migration.html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+        <meta name="keywords" content="Samsung SDS,Tech Blog,samsung sds">
+    <meta name="description" content="NIST (National Institute of Standards and Technology) is leading a project to migrate to PQC (Post-Quantum Cryptography) in readiness for the potential vulnerabilities of current public key cryptographic algorithms posed by advancements in quantum computing technology. This project aims to support organizations in protecting their critical data and digital systems from future quantum computing attacks. Launched in June 2022, the project began with 13 founding members, including Samsung SDS, and has since grown to include 47 collaborators, encompassing companies and government agencies (NSA and CISA), as of April 2025. The Security Research Team of Samsung SDS Research has been an active participant since its inception in 2022 and continues to play a pivotal role in the projects ongoing efforts.
+
+In this post, we will provide a concise overview of the current trends in PQC migration before delving into a detailed introduction of the project, with a particular focus on Samsung SDSs contributions. For comprehensive project details, you can visit the official NIST website. 
+">
+    <meta property="og:url" content="https://www.samsungsds.com/en/research-blog/post-quantum-crypto-migration.html" />
+    <meta property="og:title" content="In the Era of Quantum Computing,
+SDS is Taking the Following Steps to Enhance Security
+ 
+– Participating in NIST Post-Quantum Cryptography Migration Project | TechBlog | Research | Samsung SDS">
+    <meta property="og:description" content="NIST (National Institute of Standards and Technology) is leading a project to migrate to PQC (Post-Quantum Cryptography) in readiness for the potential vulnerabilities of current public key cryptographic algorithms posed by advancements in quantum computing technology. This project aims to support organizations in protecting their critical data and digital systems from future quantum computing attacks. Launched in June 2022, the project began with 13 founding members, including Samsung SDS, and has since grown to include 47 collaborators, encompassing companies and government agencies (NSA and CISA), as of April 2025. The Security Research Team of Samsung SDS Research has been an active participant since its inception in 2022 and continues to play a pivotal role in the projects ongoing efforts.
+
+In this post, we will provide a concise overview of the current trends in PQC migration before delving into a detailed introduction of the project, with a particular focus on Samsung SDSs contributions. For comprehensive project details, you can visit the official NIST website. 
+">
+    <meta property="og:type" content="article"><!-- // 스토리가 web인 경우 메타값 추가-->
+    <meta property="og:image" content="https://image.samsungsds.com/en/research-blog/__icsFiles/afieldfile/2026/03/26/research-blog-NIST_thumb.png?queryString=20260529094705">
+    
+    
+    <title>In the Era of Quantum Computing,
+SDS is Taking the Following Steps to Enhance Security
+ 
+– Participating in NIST Post-Quantum Cryptography Migration Project | TechBlog | Research | Samsung SDS</title>
+    <link href="https://image.samsungsds.com/resource/en/images/favicon.ico?queryString=20260529094705" rel="shortcut icon">
+    <link rel="apple-touch-icon" href="https://image.samsungsds.com/resource/en/images/app_ico.gif?queryString=20260529094705">
+
+    
+    
+    
+    
+    
+
+<!-- google hreflang -->
+	
+<!-- // google hreflang -->
+  
+  
+        <link rel="stylesheet" type="text/css" href="/resource/kr/css/swiper.min.css?queryString=20260529094705">
+    <link rel="stylesheet" type="text/css" href="/resource/en/css/css.css?queryString=20260529094705">
+    
+
+    <!-- [S]: for Module -->
+    <link rel="stylesheet" type="text/css" href="/module_src/css/lib/libs.css?queryString=20260529094705">
+    <link rel="stylesheet" type="text/css" href="/module_src/css/common_module.css?queryString=20260529094705">
+    <link rel="stylesheet" type="text/css" href="/module_src/css/module.css?queryString=20260529094705">
+    <!-- [E]: for Module -->
+
+
+    <script type="text/javascript" src="/resource/kr/js/purify.min.js?queryString=20260529094705"></script>
+<script type="text/javascript" src="/resource/kr/js/jquery-1.11.3.min.js?queryString=20260529094705"></script>
+
+<script type="text/javascript" src="/resource/kr/js/jquery.cookie.min.js?queryString=20260529094705"></script>
+
+
+
+
+    
+    <script type="text/javascript" src="/resource/kr/js/swiper.min.js?queryString=20260529094705"></script>
+    <script type="text/javascript" src="/resource/kr/js/swiper_min2.js?queryString=20260529094705"></script>
+    <script type="text/javascript" src="/resource/kr/js/video.js?queryString=20260529094705"></script>
+    <script type="text/javascript" src="/resource/kr/js/owl.carousel.min.js?queryString=20260529094705"></script>
+    
+
+
+    <script type="text/javascript" src="/resource/kr/js/popup.js?queryString=20260529094705"></script>
+    <script type="text/javascript" src="/resource/en/js/extension_en.js?queryString=20260529094705"></script>
+    <script type="text/javascript" src="/resource/kr/js/extension2.js?queryString=20260529094705"></script>
+    
+    
+    <!-- script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>-->
+    <script type="text/javascript" src="/resource/en/js/header.js?queryString=20260529094705"></script>
+    
+    <script type="text/javascript" src="/resource/kr/js/blog.js?queryString=20260529094705"></script>
+    
+    
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"> </script>
+    
+
+    <script type="text/javascript" src="/resource/kr/js/sticky-kit.min.js?queryString=20260529094705"></script>
+    <script type="text/javascript" src="/resource/kr/js/ion_common.js?queryString=20260529094705"></script>
+    <script type="text/javascript" src="/resource/kr/js/oauth2.js?queryString=20260529094705"></script> <!--마이트라이얼 오픈시 --><!-- 추가(개발중) -->
+    
+    
+    <script type="text/javascript" src="/resource/en/js/ad_analytics.js?queryString=20260529094705"></script>
+    
+
+    
+    
+
+    
+
+    
+
+    
+
+    
+    
+    
+   
+
+    
+    
+
+    
+<!--// 국영문-->
+
+
+
+
+
+
+
+
+<!--event2020관련 스크립트 -->  
+
+<script>
+    (function (win, doc, tag, url, func) {
+        win[func] = win[func] || function () {
+            (win[func].queue = win[func].queue || []).push(arguments)
+        }, win[func].timestamp = 1 * new Date();
+        var ele = doc.createElement(tag),
+            node = doc.getElementsByTagName(tag)[0]
+        ele.async = 1, ele.src = url;
+        node.parentNode.insertBefore(ele, node);
+    })(window, document, 'script', '/resource/kr/js/trace.js?queryString=20260529094705', 'ianswer');
+
+    ianswer('create'); // create
+    ianswer('set', 'user', 'offering', 'Digital'); // set site identifier
+    ianswer('set', 'user', 'cate_id', 's_gk_119'); // set site identifier
+    ianswer('set', 'user', 'cate_nm', 'Digital'); // set site identifier
+    ianswer('send'); // send
+
+    function getCookie(cookie_name) {
+        var x, y;
+        var val = document.cookie.split(';');
+
+        var z = '';
+        for (var i = 0; i < val.length; i++) {
+            x = val[i].substr(0, val[i].indexOf('='));
+            y = val[i].substr(val[i].indexOf('=') + 1);
+            x = x.replace(/^\s+|\s+$/g, ''); // 앞과 뒤의 공백 제거하기
+            if (x == cookie_name) {
+                //return unescape(y); // unescape로 디코딩 후 값 리턴
+                z = unescape(y);
+                break;
+            }
+        }
+        return z;
+    }
+
+    function getTimestampToDate() {
+        var date = new Date();
+        var chgTimestamp = date.getFullYear().toString() +
+            addZero(date.getMonth() + 1) +
+            addZero(date.getDate().toString()) +
+            addZero(date.getHours().toString()) +
+            addZero(date.getMinutes().toString()) +
+            addZero(date.getSeconds().toString()); +
+            addZero(date.getMilliseconds().toString());
+        return chgTimestamp;
+    }
+
+    function addZero(data) {
+        return (data < 10) ? "0" + data : data;
+    }
+</script>
+
+
+
+<script type="text/javascript" src="/resource/kr/js/sdscommon.js?queryString=20260529094705"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-870362274"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'AW-870362274');
+</script>
+
+    <script type="text/javascript" src="/module_src/js/lib/libs.js?queryString=20260529094705"></script>
+    <script type="text/javascript" src="/module_src/js/common_module.js?queryString=20260529094705"></script>
+
+    <script type="text/javascript" src="/module_src/js/module.js?queryString=20260529094705"></script>
+    
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "item": {
+        "@id": "https://www.samsungsds.com/en/research-blog/index.html",
+        "name": "Research Blog"
+      }
+    }
+  ]
+} 
+</script>
+
+
+
+
+
+  
+
+</head>
+
+<body>
+
+<script type="text/javascript">
+    (function (w, d, a) {
+        w.__beusablerumclient__ = {
+            load: function (src) {
+                var b = d.createElement("script");
+                b.src = src;
+                b.async = true;
+                b.type = "text/javascript";
+                d.getElementsByTagName("head")[0].appendChild(b);
+            }
+        };
+        w.__beusablerumclient__.load(a);
+    })(window, document, '//rum.beusable.net/script/b180319e163316u373/d78a771031');
+</script>
+
+
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NDRKMD" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<noscript><img height="1" width="1" style="display:none;" alt="" src="https://px.ads.linkedin.com/collect/?pid=6966740&fmt=gif" aria-hidden="true" /></noscript>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MQTQVFG" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript> 
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PVPN5KJ" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1599401407477547&ev=PageView&noscript=1"  aria-hidden="true"/></noscript>
+
+
+
+<ul id="skip_navi">
+    <li><a href="#container">skip to contents</a></li>
+</ul>
+
+
+
+        
+        
+        
+        <!-- wrap -->
+        <div id="wrap" class="abt">
+           <input type="hidden" id="corpCountry" value="en" />
+          
+                
+                <input type="hidden" id="typeId" value="techblog" />
+                <input type="hidden" id="artId" value="1290886" />
+                <!-- header -->
+                <header id="header">
+                    <div class="M00_A" data-fn="M00_A" data-current="gen772" data-url="/en/gnb/gnb.json" data-url-feature="/en/gnb/feature/feature.html" data-history="true">
+                    </div>
+                 
+                 
+                </header>
+                <!-- //header -->
+
+                <!-- container -->
+
+<div id="container">
+    <script src="//cdn.jsdelivr.net/npm/theia-sticky-sidebar@1/dist/theia-sticky-sidebar.min.js"
+        type="text/javascript"></script>
+    <div class="MP_customer_detail_new postGroup tech_blog" data-fn="MP_customer_detail_new">
+        <div class="inWrap is_1360">
+            <main class="post">
+                <section class="customer_detail">
+                    <!-- CMS 제목 박스 들어가는 부분 (아이브로우/타이틀) -->
+
+                    <div itemscope itemtype="https://schema.org/TechArticle">
+                        <a class="post_category"
+                                href="/en/research-blog/index.html">Projects</a>
+
+
+                            <h1 class="post_title" itemprop="headline">In the Era of Quantum Computing,
+<br />SDS is Taking the Following Steps to Enhance Security
+<br /> 
+<br />– Participating in NIST Post-Quantum Cryptography Migration Project</h1>
+                            <div class="post_eyebrow">
+                                
+                                <span class="post_date blind" itemprop="datePublished"
+                                    content="2025-06-18">JUN
+                                    18,
+                                    2025</span><span
+                                    class="post_author blind" itemprop="author">Samsung
+                                    SDS</span>
+                            </div>
+                            <div class="blind">
+                                <img itemprop="image" src="https://image.samsungsds.com/en/research-blog/__icsFiles/afieldfile/2026/03/26/research-blog-NIST_thumb.png?queryString=20260529094705" alt="">
+                            </div>
+                    </div>
+                    <article class="contents txt_wrap">
+                        <!-- 퍼블 하드코딩 부분 -->
+                        <style>
+        .post .txt_wrap .im.mw600 img {max-width:600px;}
+    </style>
+    
+    <div class="summary_box">
+        <p>
+            NIST (National Institute of Standards and Technology) is leading a project to migrate to PQC (Post-Quantum Cryptography) in readiness for the potential vulnerabilities of current public key cryptographic algorithms posed by advancements in quantum computing technology. This project aims to support organizations in protecting their critical data and digital systems from future quantum computing attacks. Launched in June 2022, the project began with 13 founding members, including Samsung SDS, and has since grown to include 47 collaborators, encompassing companies and government agencies (NSA and CISA), as of April 2025. The Security Research Team of Samsung SDS Research has been an active participant since its inception in 2022 and continues to play a pivotal role in the project's ongoing efforts. <br><br>
+
+            In this post, we will provide a concise overview of the current trends in PQC migration before delving into a detailed introduction of the project, with a particular focus on Samsung SDS's contributions. For comprehensive project details, you can visit the official NIST website. 
+            
+        </p>
+        <br><br>
+        👉 <a href="https://www.nccoe.nist.gov/crypto-agility-considerations-migrating-post-quantum-cryptographic-algorithms" target="_blank" title="new window" class="t_point"><b>See the Official Project (NIST)</b></a>
+    </div>
+    
+    <hr style="height: 1px; width: 100%; background: #e7e7e7; margin-top: 50px;">
+    
+    <h2 class="h2_tit list_up">Will Security Collapse in 2029?</h2>
+    
+    <p>
+        The emergence of quantum computing has exposed the vulnerabilities of current cryptographic systems, making the migration from current public key cryptography to PQC (Post-Quantum Cryptography) an urgent necessity. Gartner has highlighted the significance of this shift by including PQC migration as one of the top 10 strategic technology trends for 2025. Experts predict that by 2029, advancements in quantum computing will render most existing asymmetric cryptographic methods insecure.<br>
+        * (Reference Link) <a href="https://www.gartner.com/en/articles/top-technology-trends-2025" target="_blank" title="new window" class="t_point"><b>https://www.gartner.com/en/articles/top-technology-trends-2025</b></a>
+    </p>
+    
+    <h2 class="h2_tit list_up">What is PQC and Why is it Important?</h2>
+    
+    <p>
+        PQC encompasses cryptographic algorithms designed to withstand attacks from quantum computers. It introduces a new generation of public key cryptography that ensures secure encryption even in a quantum computing environment. Often referred to as "quantum-resistant" or "quantum-safe" cryptography, PQC involves upgrading the hardware or software of current cryptographic systems to protect data and information from quantum threats. Unlike a complete replacement of existing systems, PQC focuses on enhancing them to address the risks posed by quantum computing.
+    </p>
+    
+    <h2 class="h2_tit list_up">Current Status of the NIST PQC Migration Project</h2>
+    
+    <p>
+        The U.S. government initiated the standardization of Post-Quantum Cryptography (PQC) algorithms in 2017. In August 2024, it officially released three Federal Information Processing Standards (FIPS), comprising one key encapsulation mechanism (ML-KEM) and two digital signature algorithms (ML-DSA, SLH-DSA).<br><br>
+
+        The preparation for the PQC migration in the U.S. began in earnest in 2021. The White House issued a National Security Memorandum (NSM-10) in May 2022, and NIST launched the PQC migration project. In December 2022, the U.S. Congress enacted related legislation (H.R. 7535), and by August 2024, the estimated migration cost was approximately $1 billion.<br><br>
+
+        NIST's PQC migration project, titled "Migration to Post-Quantum Cryptography," began in June 2022. The project aims to provide practical guidelines necessary for the PQC migration.
+    </p>
+    
+    <div class="im sr_only">
+        <img src="https://image.samsungsds.com/en/research-blog/research-blog-NIST_detail_hero_0326.png?queryString=20260529094705" alt="">
+        <div class="blind">NIST PQC Migration Project participation diagram — Samsung SDS was the only Asian company among 13 founding members at the June 2022 launch, and the project has since grown to 47 collaborators (as of April 2025) including IT giants (AWS, Microsoft, IBM), financial institutions (HSBC, JPMorgan), and government agencies (NSA, CISA)</div>
+    </div>
+    
+    <p>
+        Initially, 13 companies, including Samsung SDS, participated in the project, but it now involves a total of 47 companies and institutions. Participants include IT giants such as AWS, Microsoft (MS), and IBM, financial institutions like HSBC and JPMorgan, as well as government agencies such as the National Security Agency (NSA) and the Cybersecurity and Infrastructure Security Agency (CISA).<br><br>
+
+        The project's primary deliverables are published as part of the NIST Special Publication (SP) 1800 series. In March 2023, SP 1800-38A was released, outlining the project's background and objectives. By December 2023, SP 1800-38B, which focuses on identifying quantum-vulnerable cryptographic scenarios, and SP 1800-38C, which documents interoperability and performance test results for PQC-based implementations, were issued.<br><br>
+        
+        On March 11, 2025, NIST announced the selection of HQC (Hamming Quasi-Cyclic) as the fifth PQC algorithm for standardization, marking a pivotal milestone in the quantum-resistant cryptography standardization effort. HQC, the second key encapsulation mechanism (KEM) algorithm chosen, was primarily designed to serve as a robust backup to CRYSTALS-Kyber. This decision underscores significant advancements in the PQC standardization process by reducing dependency on a single algorithm and enhancing cryptographic diversity.
+        
+    </p>
+    
+    <h2 class="h2_tit list_up">Samsung SDS's Activities and Achievements in the NIST PQC Project</h2>
+    
+    <p>
+        <b>2022: Participating in the NCCoE Migration Project</b><br>
+        Samsung SDS became the sole Asian company to join the NIST project as an early member and has since remained actively engaged. In 2022, the company began participating in the NCCoE Migration Project and is now actively engaged in PQC standardization and migration projects.
+        <br><br>
+        <b>2022-2023년: Project Progress and Technological Development</b><br>
+        The aim of NCCoE's PQC Migration Project was to develop strategies for replacing hardware, software, and services with solutions resistant to quantum computer-based attacks. During this initiative, Samsung SDS developed the Crypto Agility Platform, equipping enterprises with the tools needed to migrate to post-quantum cryptography (PQC).
+        <br><br>
+        The aim of NCCoE's PQC Migration Project was to develop strategies for replacing hardware, software, and services with solutions resistant to quantum computer-based attacks. During this initiative, Samsung SDS developed the Crypto Agility Platform, equipping enterprises with the tools needed to migrate to post-quantum cryptography (PQC).
+        <br><br>
+        <b>2025년: Leading Cryptographic Technology in Korea</b><br>
+        In March 2025, Samsung SDS once again demonstrated its excellence in quantum-resistant cryptography. Notably, the hash-based digital signature algorithm AIMer (developed through a collaboration with KAIST) was selected as a standard algorithm at the national quantum-resistant cryptography competition in Korea. This achievement highlights Samsung SDS's proactive role in shaping domestic technology standards. In April, Samsung SDS presented Software-Defined Cryptography: Enabling Crypto Agility in Enterprise IT at the NIST Crypto Agility Workshop. This approach introduced the concept of software-defined cryptography, enabling flexible and efficient migrations and management of cryptographic algorithms. It garnered significant attention from global enterprises as a cost-effective solution for PQC migration.
+    </p>
+    
+    <h2 class="h2_tit list_up">Samsung SDS's Current Status in Securing PQC Technology</h2>
+    
+    <p>
+        Samsung SDS has secured the Crypto Agility Platform for Enterprise to address the key stages of PQC migration: identification, analysis, and migration. From 2023 to 2024, the company has obtained seven related patents, preparing for Crypto Agility implementation.<br><br>
+
+        In terms of external activities, Samsung SDS has been actively engaged both domestically and internationally. Globally, the company has presented its cryptographic migration technologies at events such as the NIST Crypto Agility Workshop, ETSI/IQC Quantum Safe Cryptography Conference 2025, and Real World Crypto 2024. Domestically, Samsung SDS has shared its expertise on PQC migration at conferences like Cyber Summit Korea and KpqC, earning recognition for its technological capabilities.<br><br>
+        
+        Through these comprehensive efforts, Samsung SDS is proactively responding to the new technological paradigm of PQC migration and continues to strengthen its global-level expertise.
+    </p>
+                    </article>
+                </section>
+
+                
+                <ul class="post_tag type_tech">
+                    <!-- 해시태그 CMS로 넣는 부분 -->
+                    <li class="post_tagitem"><a
+                            href="javascript:fnSearchKeyword('SamsungSDSResearch');">#SamsungSDSResearch</a></li>
+<li class="post_tagitem"><a
+                            href="javascript:fnSearchKeyword('PQC');">#PQC</a></li>
+<li class="post_tagitem"><a
+                            href="javascript:fnSearchKeyword('PostQuantum');">#PostQuantum</a></li>
+<li class="post_tagitem"><a
+                            href="javascript:fnSearchKeyword('cryptographic migration');">#cryptographic migration</a></li>
+<li class="post_tagitem"><a
+                            href="javascript:fnSearchKeyword('CryptoAgility');">#CryptoAgility</a></li>
+<li class="post_tagitem"><a
+                            href="javascript:fnSearchKeyword('AIMer');">#AIMer</a></li>
+<li class="post_tagitem"><a
+                            href="javascript:fnSearchKeyword('NISTPQC');">#NISTPQC</a></li>
+                </ul>
+            </main>
+            <aside class="side_bar">
+                <div class="side_container">
+                    <div class="theiaStickySidebar">
+                        <div class="side_inner">
+                            <article class="contents_wrap">
+                                <h2 class="list_title">Contents list</h2>
+                                <div class="index_list">
+                                </div>
+                            </article>
+                            <article class="solution_wrap">
+                                
+                                
+                                
+                                
+                                
+
+                                
+                                    
+                                    
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+    <div class="list_back inWrap is_1360">
+        <a href="javascript:void(0);" onClick="backToList()"
+            class="btn_arrow left bk"><span>Back to list</span></a>
+    </div>
+
+</div><!--//container-->
+<!-- footer -->
+<footer id="footer">
+    <div class="inner"></div>
+</footer>
+<!-- //footer -->
+
+
+
+<!-- md_share_area : 전체 공통으로 한번만 들어가면 됩니다. -->
+
+
+<div class="md_share_area" id="md_share_area">
+    <span class="md_share_dimd"></span>
+    <div class="md_share_box">
+        <strong class="tit">Share</strong>
+        <a href="#" id="share_linkedin" class="li_s"  target="_blank" title="new window" >
+            <i><img src="https://image.samsungsds.com/module_src/images/icon/ico_linkedin.svg?queryString=20260529094705" alt="Share Linkedin"></i>
+            <span>Linkedin</span>
+        </a>
+        <a href="#" id="share_facebook" class="li_s" target="_blank" title="new window">
+            <i><img src="https://image.samsungsds.com/module_src/images/icon/ico_facebook.svg?queryString=20260529094705" alt="Share Facebook"></i>
+            <span>Facebook</span>
+        </a>
+        <a href="#" id="share_twitter" class="li_s" target="_blank" title="new window">
+            <i><img src="https://image.samsungsds.com/module_src/images/icon/ico_twitter.svg?queryString=20260529094705" alt="Share Twitter"></i>
+            <span>Twitter</span>
+        </a>
+        <a href="#" id="share_kakaotalk" class="li_s btn_hidden_p" target="_blank" title="new window" ><!-- PC Hidden : class="btn_hidden_p" -->
+            <i><img src="https://image.samsungsds.com/module_src/images/icon/ico_kakaotalk.svg?queryString=20260529094705" alt="Share KakaoTalk"></i>
+            <span>KakaoTalk</span>
+        </a>
+        <a href="#" class="md_btn_share_close" title="Close Layer popup"><span>Close Share</span></a>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://t1.kakaocdn.net/kakao_js_sdk/v1/kakao.min.js"></script>
+<script type="text/javascript">
+    var shareArtId =$('#artid').val();
+    var shareTypeId = $('#typeId').val();
+    $(function() {
+        var $shareKakaotalk = $('#share_kakaotalk');
+        var $shareFacebook = $('#share_facebook');
+        var $shareTwitter = $('#share_twitter');
+        var $shareLinkedin = $('#share_linkedin');
+        var $shareInstagram = $('#share_instargram');
+        var $shareNaver = $('#share_naver');
+        var $shareLink= $('#share_link');
+        
+        
+
+        $shareKakaotalk.click(function (e) {
+            e.preventDefault();
+            if(!shareArtId){
+                shareArtId = $(this).attr('data-artid')
+            }
+            setShareCnt('kt');
+            var url = $(this).attr('href');;
+            if(!url){
+                url = "https://www.samsungsds.com"+location.pathname;
+            }
+            else
+                url = "https://www.samsungsds.com" + url;
+            
+            
+           
+            var shareArtData = _.find(bThumbList, function(article) { return article.id === shareArtId });
+            // Kakao 공유하기
+            if (!Kakao.isInitialized()) { Kakao.init('cbee93b45350bab6359a13c3ad1be5eb'); } // prd
+            // Kakao.init('1d63207ec669236f269750c2196e86bf'); // stg
+            Kakao.Link.sendDefault({
+                objectType: 'feed',
+                content: {
+                    title: shareArtData.title,
+                    description: '',
+                    imageUrl: shareArtData.thum_img,
+                    link: {
+                        webUrl: url,
+                        mobileWebUrl: url
+                    }
+                },
+                buttons: [
+                    {
+                        title: '자세히 보기',
+                        link: {
+                            mobileWebUrl: url,
+                            webUrl: url
+                        }
+                    }
+                ]
+            });
+        });
+        $shareFacebook.click(function (e) {
+            e.preventDefault();
+            if(!shareArtId){
+                shareArtId = $(this).attr('data-artid')
+            }
+            setShareCnt('fb');
+            var url = $(this).attr('href');;
+            if(!url){
+                url = "https://www.samsungsds.com"+location.pathname;
+            }
+            else
+                url = "https://www.samsungsds.com" + url;
+           
+            window.open("https://www.facebook.com/sharer/sharer.php?u=" + url, "_blank", "width=800, height=600");
+        });
+        $shareTwitter.click(function (e) {
+            e.preventDefault();
+            if(!shareArtId){
+                shareArtId = $(this).attr('data-artid')
+            }
+            setShareCnt('tw');
+            var url = $(this).attr('href');;
+            if(!url){
+                url = "https://www.samsungsds.com"+location.pathname;
+            }
+            else
+                url = "https://www.samsungsds.com" + url;
+            
+            window.open("https://twitter.com/intent/tweet?url=" + url, "_blank", "width=800, height=600");
+        });
+        $shareLinkedin.click(function (e) {
+            e.preventDefault();
+            if(!shareArtId){
+                shareArtId = $(this).attr('data-artid')
+            }
+            setShareCnt('li');
+            var url = $(this).attr('href');;
+            if(!url){
+                url = "https://www.samsungsds.com"+location.pathname;
+            }
+            else
+                url = "https://www.samsungsds.com" + url;
+            
+            window.open("https://www.linkedin.com/shareArticle/?mini=true&url=" + url, "_blank",  "width=800, height=600");
+        });
+        $shareInstagram.click(function (e){
+            e.preventDefault();
+            if(!shareArtId){
+                shareArtId = $(this).attr('data-artid')
+            }
+            setShareCnt('insta');
+            window.open("https://www.instagram.com", "_blank",  "width=800, height=600");
+
+        });
+        $shareNaver.click(function (e){
+            
+            e.preventDefault();
+            if(!shareArtId){
+                shareArtId = $(this).attr('data-artid')
+            }
+            setShareCnt('naver');
+            var url = $(this).attr('href');;
+            if(!url){
+                url = "https://www.samsungsds.com"+location.pathname;
+            }
+            else
+                url = "https://www.samsungsds.com" + url;
+           
+            window.open("https://blog.naver.com/openapi/share?url="+url, "_blank", "width=500, height=600");
+
+        });
+        $shareLink.click(function (e){
+            
+            e.preventDefault();
+            if(!shareArtId){
+                shareArtId = $(this).attr('data-artid')
+            }
+            setShareCnt('url');
+
+            var url = $(this).attr('href');;
+            if(!url){
+                url = "https://www.samsungsds.com"+location.pathname;
+            }
+            else
+                url = "https://www.samsungsds.com" + url;
+           
+            var IE = (window.clipboardData)?true:false;
+            if(IE) {
+                window.clipboardData.setData("Text", url);
+                alert("해당 페이지의 링크 주소입니다. \n \"CTRL + V\" 를 눌러 붙여넣기 하세요");
+            }
+            else {
+                prompt("해당 페이지의 링크 주소입니다. “CTRL + C”를 눌러 복사하세요.", url);
+            }
+
+
+        });
+        var setShareCnt = function (snsTypeId) {
+            $.ajax({
+                type: 'GET',
+                url: '/app/setShareCnt?artId=' + shareArtId + '&typeId=' + shareTypeId + '&snsTypeId=' + snsTypeId,
+                dataType: 'JSON',
+                success: function (data) {
+                    // console.log(data);
+                }
+            });
+        }
+    });
+</script>
+<!-- md_share_area -->
+
+</div>
+<!-- //wrap -->
+<script>
+    var bThumbList = [];
+    var sThumbList = [];
+    var param = '';
+
+    var reqArtId = $("#artId").val();
+    var listurl = '/en/research-blog/index.html';
+
+    var Request = function () {
+        this.getParameter = function (name) {
+            var rtnval = '';
+            var nowAddress = unescape(location.href);
+            var parameters = (nowAddress.slice(nowAddress.indexOf('?') + 1, nowAddress.length)).split('&');
+
+            for (var i = 0; i < parameters.length; i++) {
+                var varName = parameters[i].split('=')[0];
+                if (varName.toUpperCase() == name.toUpperCase()) {
+                    rtnval = parameters[i].split('=')[1];
+                    break;
+                }
+            }
+            if (rtnval !== '') {
+                if ('category' === varName && '' !== rtnval) {
+                    moreCategory = rtnval;
+                }
+                if ('moreCnt' === varName && '' !== rtnval) {
+                    moreCnt = rtnval;
+                }
+                if ('backTypeId' === varName && '' !== rtnval) {
+                    backTypeId = rtnval;
+                }
+            }
+        }
+    }
+
+    var request = new Request();
+
+    function sliceUrl(url) {
+        let urlParam = url.indexOf('?');
+
+        if (urlParam > -1) {
+            url = url.slice(0, urlParam);
+        }
+
+        return url;
+    }
+
+    function backToList() {
+        return window.location = listurl;
+
+        // 2020-09-29 카테고리 > 최신소식 메뉴 이동이 필요하여 아래해당 부분 주석 처리및 소스 수정 
+
+        // if(backTypeId === 'press'){
+        //     url = '/en/news/press/index.html';
+        //     window.location = url + param;
+        // } else if(backTypeId === 'inthenews'){
+        //     url = '/en/news/news/index.html';
+        //     window.location = url + param;
+        // } else if(backTypeId === 'media' || backTypeId == ''){
+        //     url = '/en/news/index.html';
+        //     window.location = url + param;
+        // } else {
+        //     url = '/en/news/index.html';
+        //     window.location = url + '?reqArtId='+reqArtId;
+        // }
+    }
+
+    $(document).ready(function () {
+        //  console.log('onReady')
+        // request.getParameter('moreCnt');
+        // request.getParameter('backTypeId');
+        // request.getParameter('category');
+        param = sessionStorage.getItem("isParam");
+        if (param) {
+            if (!param.includes("&reqArtId"))
+                param = param + '&reqArtId=' + reqArtId;
+            sessionStorage.setItem('isParam', param);
+            sessionStorage.setItem('goBack', 'Y');
+        }
+
+    });
+
+    //   function setSession(param){
+    //     sessionStorage.setItem('isParam', param );
+    //     sessionStorage.setItem('goBack', 'Y' );
+    //   }                                      
+</script>
+</body>
+
+</html>

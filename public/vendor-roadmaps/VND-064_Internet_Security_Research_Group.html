@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>
+A Post-Quantum Future for Let&#39;s Encrypt -  Let&#39;s Encrypt
+</title>
+<meta name="description" content="Let’s Encrypt is committed to a post-quantum-safe Web PKI. The path we’re planning to take is Merkle Tree Certificates (“MTCs”), a new approach that adds post-quantum authentication to the web without sacrificing the speed and reliability that have made TLS universal.
+This post is about these plans and why we believe MTCs are worth pursuing as a key to a post-quantum future.
+An increasingly urgent problem For much of the last several years, the conversation about post-quantum cryptography has been a conversation about encryption. The reasoning was straightforward: an attacker who records encrypted traffic today might be able to decrypt it years from now once quantum computers can break the underlying math. Authentication, the part of TLS that indicates a server is who it says it is, has been a less urgent problem. A quantum computer needs to forge a signature in real time, not retroactively, so threats to authentication hinge on the existence of a cryptographically relevant quantum computer (CRQC).
+" />
+
+<meta property="og:image" content="https://letsencrypt.org/images/LetsEncrypt-SocialShare.png">
+<meta property="og:type" content="website" />
+<meta property="og:title" content="A Post-Quantum Future for Let&#39;s Encrypt" />
+<meta property="og:description" content="Let’s Encrypt is committed to a post-quantum-safe Web PKI. The path we’re planning to take is Merkle Tree Certificates (“MTCs”), a new approach that adds post-quantum authentication to the web without sacrificing the speed and reliability that have made TLS universal.
+This post is about these plans and why we believe MTCs are worth pursuing as a key to a post-quantum future.
+An increasingly urgent problem For much of the last several years, the conversation about post-quantum cryptography has been a conversation about encryption. The reasoning was straightforward: an attacker who records encrypted traffic today might be able to decrypt it years from now once quantum computers can break the underlying math. Authentication, the part of TLS that indicates a server is who it says it is, has been a less urgent problem. A quantum computer needs to forge a signature in real time, not retroactively, so threats to authentication hinge on the existence of a cryptographically relevant quantum computer (CRQC).
+" />
+<meta property="og:url" content="https://letsencrypt.org/2026/06/03/pq-certs.html" />
+<link rel="alternate" type="application/rss+xml" title="Let&#39;s Encrypt" href="/feed.xml">
+
+  
+  
+  
+    
+      
+        <link rel="stylesheet" href="/css/le-2025-theme-input.1a84d21d314a2a165316dbe9006b36a5eefd041136c58c1efbfdd722c77b98c5.css" integrity="sha256-GoTSHTFKKhZTFtvpAGs2pe79BBE2xYwe&#43;/3XIsd7mMU=" crossorigin="anonymous">
+      
+    
+  
+
+
+<link rel="stylesheet" href="/fontawesome-free-6.5.2-web/css/all.min.css" />
+
+
+
+      <script src="/js/le-2025-theme.baca0a37d412391799a4e5f6d58968c12b948b4c91c053a3c025ab758ffb70bc.js" integrity="sha256-usoKN9QSOReZpOX21YlowSuUi0yRwFOjwCWrdY/7cLw=" crossorigin="anonymous"></script>
+      <script src="/js/autoanchor.44783525c73cfeef565e5b8441cd42a848cb630d9f365def73edce4867e6f4c8.js" integrity="sha256-RHg1Jcc8/u9WXluEQc1CqEjLYw2fNl3vc&#43;3OSGfm9Mg=" crossorigin="anonymous"></script>
+
+
+
+
+  
+  
+  
+    
+    <script src="/js/number-animation.137c25102252dc89411a5c2d9eb00a383f12425cb7845c8d8ac4c615c0af1f8e.js" integrity="sha256-E3wlECJS3IlBGlwtnrAKOD8SQly3hFyNisTGFcCvH44=" crossorigin="anonymous"></script>
+  
+
+
+
+</head>
+<body>
+  
+
+
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+
+<header class="relative bg-white shadow-sm">
+  
+    <div class="language-section">
+      <div class="language-bar bg-gray-100 border-b border-gray-200">
+        <div class="container mx-auto px-4">
+          <div class="flex justify-end">
+            <button
+              id="language-toggle"
+              aria-expanded="false"
+              aria-controls="language-section"
+              class="flex items-center space-x-2 py-1 text-xs text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <span class="text-xs">Languages</span>
+              <img src="/images/language-icon128px-black.png" class="w-3 h-3" alt="" aria-hidden="true">
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="language-section"
+           class="hidden h-0 opacity-0 border-b border-gray-200 bg-white"
+           role="region"
+           aria-labelledby="language-toggle">
+        <div class="container mx-auto px-4 py-4">
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1">
+            
+            
+            <a href="/"
+               lang=""
+               hreflang=""
+               aria-current="true"
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md bg-blue-50 text-blue-700">
+              
+                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              
+              <span>English</span>
+            </a>
+            
+            
+            <a href="/ca/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Català</span>
+            </a>
+            
+            
+            <a href="/cs/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Čeština</span>
+            </a>
+            
+            
+            <a href="/da/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Dansk</span>
+            </a>
+            
+            
+            <a href="/de/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Deutsch</span>
+            </a>
+            
+            
+            <a href="/el/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Greek</span>
+            </a>
+            
+            
+            <a href="/es/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Español</span>
+            </a>
+            
+            
+            <a href="/fi/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Suomi</span>
+            </a>
+            
+            
+            <a href="/fr/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Français</span>
+            </a>
+            
+            
+            <a href="/he/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>עברית</span>
+            </a>
+            
+            
+            <a href="/hu/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Magyar</span>
+            </a>
+            
+            
+            <a href="/id/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Bahasa Indonesia</span>
+            </a>
+            
+            
+            <a href="/it/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Italiano</span>
+            </a>
+            
+            
+            <a href="/ja/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>日本語</span>
+            </a>
+            
+            
+            <a href="/ko/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>한국어</span>
+            </a>
+            
+            
+            <a href="/pl/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Polish</span>
+            </a>
+            
+            
+            <a href="/pt-br/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Português do Brasil</span>
+            </a>
+            
+            
+            <a href="/ru/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Русский</span>
+            </a>
+            
+            
+            <a href="/si/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>සිංහල</span>
+            </a>
+            
+            
+            <a href="/sr/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Srpski</span>
+            </a>
+            
+            
+            <a href="/sv/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Svenska</span>
+            </a>
+            
+            
+            <a href="/ta/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>தமிழ்</span>
+            </a>
+            
+            
+            <a href="/th/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Thai</span>
+            </a>
+            
+            
+            <a href="/tr/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Türkçe</span>
+            </a>
+            
+            
+            <a href="/uk/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Українська</span>
+            </a>
+            
+            
+            <a href="/vi/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>Tiếng Việt</span>
+            </a>
+            
+            
+            <a href="/zh-cn/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>简体中文</span>
+            </a>
+            
+            
+            <a href="/zh-tw/"
+               lang=""
+               hreflang=""
+               
+               class="flex items-start lg:items-center space-x-2 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">
+              
+              <span>繁體中文</span>
+            </a>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  
+
+  <div id="main-header" class="container mx-auto px-4 py-3 md:py-4">
+    <a id="skiplink"
+       href="#main-content"
+       class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-white px-4 py-2 rounded-md shadow-md">
+      Skip navigation links
+    </a>
+
+    <div class="flex items-center justify-between">
+      <a class="site-logo shrink-0" href="/">
+        
+        <img src="/images/letsencrypt-logo-horizontal.svg" alt="Let's Encrypt">
+      </a>
+
+      <button
+        id="mobile-menu-toggle"
+        class="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        aria-expanded="false"
+        aria-controls="main-nav"
+        aria-label="Toggle menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+
+      <nav id="main-nav"
+           class="md:flex absolute md:!relative inset-x-0 top-full md:top-auto bg-white md:bg-transparent border-b md:border-b-0 border-gray-200 shadow-lg md:shadow-none md:grow md:ml-8 z-50">
+        <div class="container mx-auto">
+          <div class="md:p-0 flex justify-center">
+            
+  <ul class="site-main-nav flex flex-col md:flex-row md:justify-center md:gap-5 py-2 md:py-0 w-full" role="menubar">
+    <li class="relative " role="none">
+        <a role="menuitem" class="nav-item" href="/docs/">
+          Documentation
+        </a>
+    </li>
+    <li class="relative " role="none">
+        <a role="menuitem" class="nav-item" href="https://community.letsencrypt.org/">
+          Get Help
+        </a>
+    </li>
+    <li class="relative " role="none">
+        <a role="menuitem" class="nav-item" href="/blog/">
+          Blog
+        </a>
+    </li>
+    <li class="relative group" role="none">
+        <div class="dropdown-container">
+          <button
+            class="nav-item flex items-center justify-between w-full md:w-auto space-x-1"
+            aria-expanded="false"
+            aria-controls="dropdown-donate"
+            role="menuitem">
+            <span>Donate</span>
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <ul id="dropdown-donate"
+              class="hidden static md:absolute left-0 w-full md:w-auto py-1 bg-white md:rounded-md md:shadow-lg md:border md:border-gray-200 z-60 mt-1"
+              role="menu">
+            <li class="relative" role="none">
+              <a href="https://www.abetterinternet.org/sponsor/"
+                 class="nav-dropdown-item"
+                 role="menuitem">
+                Become a Sponsor
+              </a>
+            </li>
+            <li class="relative" role="none">
+              <a href="https://www.abetterinternet.org/sponsors/"
+                 class="nav-dropdown-item"
+                 role="menuitem">
+                Current Sponsors &amp; Funders
+              </a>
+            </li>
+            <li class="relative" role="none">
+              <a href="/getinvolved/"
+                 class="nav-dropdown-item"
+                 role="menuitem">
+                Get Involved
+              </a>
+            </li>
+            <li class="relative" role="none">
+              <a href="/donate/"
+                 class="nav-dropdown-item"
+                 role="menuitem">
+                Donate
+              </a>
+            </li>
+          </ul>
+        </div>
+    </li>
+    <li class="relative group" role="none">
+        <div class="dropdown-container">
+          <button
+            class="nav-item flex items-center justify-between w-full md:w-auto space-x-1"
+            aria-expanded="false"
+            aria-controls="dropdown-about"
+            role="menuitem">
+            <span>About Us</span>
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <ul id="dropdown-about"
+              class="hidden static md:absolute left-0 w-full md:w-auto py-1 bg-white md:rounded-md md:shadow-lg md:border md:border-gray-200 z-60 mt-1"
+              role="menu">
+            <li class="relative" role="none">
+              <a href="/about/"
+                 class="nav-dropdown-item"
+                 role="menuitem">
+                Let&#39;s Encrypt
+              </a>
+            </li>
+            <li class="relative" role="none">
+              <a href="/docs/faq/"
+                 class="nav-dropdown-item"
+                 role="menuitem">
+                Frequently Asked Questions (FAQ)
+              </a>
+            </li>
+            <li class="relative" role="none">
+              <a href="/repository/"
+                 class="nav-dropdown-item"
+                 role="menuitem">
+                Policy and Legal Repository
+              </a>
+            </li>
+            <li class="relative" role="none">
+              <a href="https://letsencrypt.status.io/"
+                 class="nav-dropdown-item"
+                 role="menuitem">
+                Service Status
+              </a>
+            </li>
+            <li class="relative" role="none">
+              <a href="/stats/"
+                 class="nav-dropdown-item"
+                 role="menuitem">
+                Statistics
+              </a>
+            </li>
+            <li class="relative" role="none">
+              <a href="/contact/"
+                 class="nav-dropdown-item"
+                 role="menuitem">
+                Contact
+              </a>
+            </li>
+            <li class="relative" role="none">
+              <a href="https://www.abetterinternet.org/careers/"
+                 class="nav-dropdown-item"
+                 role="menuitem">
+                Careers
+              </a>
+            </li>
+            <li class="relative" role="none">
+              <a href="https://www.abetterinternet.org/annual-reports/"
+                 class="nav-dropdown-item"
+                 role="menuitem">
+                Annual reports
+              </a>
+            </li>
+            <li class="relative" role="none">
+              <a href="https://www.abetterinternet.org/about/"
+                 class="nav-dropdown-item"
+                 role="menuitem">
+                Internet Security Research Group (ISRG)
+              </a>
+            </li>
+          </ul>
+        </div>
+    </li>
+    <li class="block md:hidden pt-2.5"><a class="btn btn-yellow btn-sm" href="/donate/">Donate Now</a></li>
+  </ul>
+
+          </div>
+        </div>
+      </nav>
+
+      <a class="btn btn-yellow hidden md:block shrink-0" href="/donate/">Donate Now</a>
+    </div>
+  </div>
+</header>
+
+
+
+<div id="main-content"></div>
+
+  <main>
+    
+  
+  
+  
+
+  
+
+  
+    
+    
+  
+
+  
+    
+  
+
+  
+    
+  
+
+  
+    
+
+
+
+
+
+  
+
+
+
+
+<section class="post-hero  py-8">
+
+    <div class="narrow-container mx-auto">
+    <div class="post-hero__inner border-l border-le-yellow box-border pl-4 flex flex-col gap-2">
+      
+        <div class="post-hero__breadcrumb">
+          <a class="" href="/blog/">Blog</a>
+        </div>
+      
+      <h1 class="post-hero__title mb-0">A Post-Quantum Future for Let&#39;s Encrypt</h1>
+      
+        <div class="post-hero__meta">
+          By Andrew Gabbitas · 
+          
+            
+            
+            <time datetime="2026-06-03T00:00:00&#43;00:00">June 3, 2026</time>
+          
+        </div>
+      
+      
+    </div>
+    </div>
+
+</section>
+  
+
+  
+
+  
+
+  
+    <div class="narrow-container mx-auto py-8 prose-content">
+      <p>Let&rsquo;s Encrypt is committed to a post-quantum-safe Web PKI. The path we&rsquo;re planning to take is Merkle Tree Certificates (&ldquo;MTCs&rdquo;), a new approach that adds post-quantum authentication to the web without sacrificing the speed and reliability that have made TLS universal.</p>
+<p>This post is about these plans and why we believe MTCs are worth pursuing as a key to a post-quantum future.</p>
+<h2 id="an-increasingly-urgent-problem">An increasingly urgent problem</h2>
+<p>For much of the last several years, the conversation about post-quantum cryptography has been a conversation about encryption. The reasoning was straightforward: an attacker who records encrypted traffic today might be able to decrypt it years from now once quantum computers can break the underlying math. Authentication, the part of TLS that indicates a server is who it says it is, has been a less urgent problem. A quantum computer needs to forge a signature in real time, not retroactively, so threats to authentication hinge on the existence of a cryptographically relevant quantum computer (CRQC).</p>
+<p>That comfort has been eroding for a while. In the United States, the NSA&rsquo;s <a href="https://www.nsa.gov/Cybersecurity/Post-Quantum-Cybersecurity-Resources/">CNSA 2.0 suite</a> has directed national security systems toward post-quantum algorithms on a 2030-to-2035 schedule since 2022, and <a href="https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf">NIST&rsquo;s draft transition guidance</a> would deprecate RSA-2048 and P-256 after 2030 and disallow them after 2035. The <a href="https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography">European Union&rsquo;s roadmap</a> targets high-risk systems by the end of 2030 and broad migration by 2035. These mandates don&rsquo;t bind the public Web PKI directly, but they set the end-of-decade timeline that the vendors, libraries, and standards bodies it relies on are already working toward.</p>
+<p>This year, the timeline shortened further. Google <a href="https://blog.google/innovation-and-ai/technology/safety-security/cryptography-migration-timeline/">announced</a> that it would migrate its services by 2029, citing tightening estimates for the potential arrival of a CRQC. <a href="https://blog.cloudflare.com/post-quantum-roadmap/">Cloudflare followed</a> with a parallel commitment. In addition, <a href="https://go.dev/doc/go1.27">Go 1.27</a> adds ML-DSA, a NIST-standardized post-quantum signature scheme, to the standard library, a sign that post-quantum signatures are becoming practical infrastructure.</p>
+<p>Post-quantum authentication is no longer a problem the Web PKI ecosystem should defer. Long-lived keys (root certificate authorities, code-signing keys, identity systems) are particularly valuable targets, and new technology takes years to gain broad adoption, so the work has to start early.</p>
+<h2 id="the-web-pki-s-unique-circumstances">The Web PKI&rsquo;s unique circumstances</h2>
+<p>The Web PKI is one of the trickiest places to deploy post-quantum signatures. The reason is size.</p>
+<p>ML-DSA-44, one of the smaller NIST standardized post-quantum signature schemes, has a signature roughly 2,420 bytes long. The algorithms used in the Web PKI today are much smaller. RSA-2048 signatures are 256 bytes and ECDSA-P256 signatures are 64 bytes. Public keys are bigger as well: 1,312 bytes for ML-DSA-44, 256 bytes for RSA-2048, and 64 bytes for ECDSA-P256. A typical Web PKI handshake today carries five signatures and two public keys. Replacing those with ML-DSA equivalents would push a single TLS handshake well past 10 kilobytes. <a href="https://blog.cloudflare.com/another-look-at-pq-signatures/">Cloudflare&rsquo;s research</a> has shown that, at that scale, a meaningful share of TLS connections fail on real-world networks, and the rest get slower.</p>
+<figure>
+<img src="/images/blog/2026.06.03-pq-certs-handshake-size.svg" alt="Authentication data in a single TLS handshake, by algorithm" width="720" height="315" class="blog-image-constrained">
+</figure>
+<p>Larger handshakes would affect every TLS connection, not just those that would fail. They would mean constrained bandwidth, slower connections, and a worse experience for users, all in exchange for security against a threat that hasn&rsquo;t materialized yet. That&rsquo;s a steep cost to enable by default, and defaults are what actually move security at web scale.</p>
+<h2 id="merkle-tree-certificates">Merkle Tree Certificates</h2>
+<p>A different design called Merkle Tree Certificates (&ldquo;MTCs&rdquo;) has been emerging over the past year, and we believe it is a strong path forward for the post-quantum Web PKI.</p>
+<p>Instead of issuing certificates one at a time and signing each one individually, an MTC certificate authority issues certificates in batches, with a single signature covering the entire batch. Browsers stay up to date on those batch signatures (called &ldquo;landmarks&rdquo;) separately from the TLS handshake.</p>
+<p>In the common case, the entire authentication path in an MTC handshake is one signature, one public key, and one inclusion proof. That&rsquo;s smaller than today&rsquo;s Web PKI handshake, even though MTCs use post-quantum algorithms. The other case is the &ldquo;standalone&rdquo; form. It uses slightly larger handshakes as a fallback when a client&rsquo;s landmark is out of date.</p>
+<figure>
+<img src="/images/blog/2026.06.03-pq-certs-mtc-authentication-overhead.svg" alt="Post-quantum authentication overhead: conventional versus Merkle Tree Certificate" width="720" height="270" class="blog-image-constrained">
+</figure>
+<p>There is more to MTCs than size optimization. Because every certificate is part of a published Merkle tree, transparency becomes a property of issuance itself. Today&rsquo;s Certificate Transparency ecosystem is bolted on after the fact: certificates are issued by CAs, then logged separately, with extra signatures riding along in the TLS handshake to attest to that logging. With MTCs, a certificate cannot exist outside the Merkle tree. Certificate Transparency is built in.</p>
+<p>This is not entirely new ground for us. Let&rsquo;s Encrypt has operated <a href="/docs/ct-logs/">Certificate Transparency logs</a> since 2019. Those logs are append-only Merkle trees, the same core data structure MTCs are built on, and ones we have run in production, at scale, for years.</p>
+<p>Cloudflare and Chrome are already running a <a href="https://blog.cloudflare.com/bootstrap-mtc/">feasibility experiment</a> with MTCs against real internet traffic. The IETF&rsquo;s <a href="https://datatracker.ietf.org/wg/plants/about/">PLANTS working group</a> is working on standardizing the design. Chrome has <a href="https://security.googleblog.com/2026/02/cultivating-robust-and-efficient.html">announced</a> that MTCs are its preferred path for adding post-quantum certificates to the public web.</p>
+<h2 id="our-plans">Our plans</h2>
+<p>We are planning to support Merkle Tree Certificates as the path forward for the post-quantum Web PKI. We are targeting late 2026 for a staging environment that issues MTCs, and 2027 for a production-ready environment.</p>
+<p>This is not a small endeavor. Issuing MTCs at the scale of Let&rsquo;s Encrypt requires meaningful changes throughout our stack: in our issuance infrastructure, in the ACME protocol our subscribers use to obtain certificates, in revocation and operational tooling, and in the transparency-log infrastructure that MTCs subsume. We have been participating in the IETF PLANTS and ACME working groups as the standards take shape.</p>
+<p>Alongside the MTC work, we are tracking the standards for ML-DSA signatures in X.509 (<a href="https://www.rfc-editor.org/rfc/rfc9881">RFC 9881</a>) and TLS (<a href="https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/">draft-ietf-tls-mldsa</a>), and the ecosystem work this depends on, like the addition of ML-DSA to the Go standard library. The Web PKI&rsquo;s transition to post-quantum security needs all of this to land in browsers, libraries, and ACME clients, whether the certificates ultimately delivered are MTCs or ML-DSA signed X.509.</p>
+<h2 id="what-this-means-if-you-use-let-s-encrypt">What this means if you use Let&rsquo;s Encrypt</h2>
+<p>Nothing changes today. Your current Let&rsquo;s Encrypt certificates will continue to be issued and renewed exactly as they always have been. When post-quantum certificates become available from Let&rsquo;s Encrypt, they will arrive the way our service always has: free, automated, and available to anyone with an ACME client.</p>
+<p>The transition will take time. There are standards still being finalized, root programs still defining their requirements, and engineering work that has to land in the broader ecosystem (browsers, libraries, ACME clients) before any of this matters at scale. We will keep the community informed as the work progresses and as the timelines firm up.</p>
+<p>If you maintain an ACME client or run an ACME-driven certificate pipeline, this is a good moment to start tracking the work in the PLANTS working group and the discussions on the <a href="https://groups.google.com/a/chromium.org/g/mtcs">mtcs@chromium.org</a> mailing list. Some of the changes coming will require client-side support, and the ecosystem will benefit from clients that are ready when the issuance side is.</p>
+<h2 id="a-note-on-the-wider-post-quantum-transition">A note on the wider post-quantum transition</h2>
+<p>For the broader internet community: post-quantum encryption is the more urgent problem, because any TLS connection without post-quantum key exchange is potentially harvestable for later decryption. If you operate servers, please ensure they support hybrid post-quantum key exchange (X25519MLKEM768). Major browsers and operating systems already do, and turning it on at the server is one of the highest-leverage things you can do this year.</p>
+<h2 id="in-closing">In closing</h2>
+<p>We have been building infrastructure for the public web <a href="https://www.abetterinternet.org/about/">since 2013</a> on the principle that security should be available to everyone, automatically, at no cost. The quantum transition is a generational change in how that security works under the hood.</p>
+<p>We will have more to say as the work progresses. Until then, our thanks to the cryptographers, browser engineers, IETF working groups, and CAs whose work has gotten us this far.</p>
+
+      
+
+    </div>
+  
+
+  
+    <div class="narrow-container mx-auto">
+      <div class="support-footer">
+        <h3>Support Our Work</h3>
+        <p>ISRG is a 501(c)(3) nonprofit organization that is 100% supported through the generosity of those who share our vision for ubiquitous, open Internet security. If you'd like to support our work, please consider <a href="https://www.abetterinternet.org/getinvolved/">getting involved</a>, <a href="/donate/">donating</a>, or encouraging your company to <a href="https://www.abetterinternet.org/sponsor/">become a sponsor</a>.</p>
+      </div>
+    </div>
+  
+
+
+  </main>
+  
+
+<footer class="bg-white text-gray-800 pt-10 pb-4">
+  <div class="container">
+    <div class="grid md:grid-cols-2 gap-12 lg:gap-24">
+      <div>
+        <img src="/images/ISRG-Logo-Blue.svg"
+             alt="Internet Security Research Group (ISRG)"
+             class="h-12 w-auto mb-6">
+        <p class="mb-6">Let's Encrypt is a free, automated, and open Certificate Authority brought to you by the nonprofit <a href="https://www.abetterinternet.org/">Internet Security Research Group (ISRG)</a>. Read all about our nonprofit work this year in our <a href="https://www.abetterinternet.org/annual-reports/">2025 Annual Report</a>.
+</p>
+        <div class="grid grid-cols-2 gap-6 mt-10">
+          <div>
+            <div class="text-eyebrow text-eyebrow-sm">Legal Address</div>
+          <div itemscope itemtype="http://schema.org/PostalAddress">
+            <span itemprop="streetAddress">548 Market St, PMB 77519</span><br />
+            <span itemprop="addressLocality">San Francisco</span>,
+            <span itemprop="addressRegion">CA</span>
+            <span itemprop="postalCode">94104-5401</span><br />
+            <span itemprop="addressCountry">USA</span>
+          </div>
+          </div>
+          <div>
+
+            <div class="text-eyebrow text-eyebrow-sm">Send all mail or inquiries to:</div>
+            <div itemscope itemtype="http://schema.org/PostalAddress">
+              <span itemprop="streetAddress">PO Box 18666</span><br />
+              <span itemprop="addressLocality">Minneapolis</span>,
+              <span itemprop="addressRegion">MN</span>
+              <span itemprop="postalCode">55418-0666</span><br />
+              <span itemprop="addressCountry">USA</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="pt-0 md:pt-[70px]">
+        <div class="border border-gray-300 rounded-lg pt-3 pb-0 px-2">
+          <h4 class="text-eyebrow mb-5">Subscribe for email updates about Let&#39;s Encrypt and other ISRG projects</h4>
+          <iframe id="newsletter-iframe" src="https://outreach.abetterinternet.org/l/1011011/2025-01-14/31v6r" title="newsletter" class="w-full border-0 overflow-hidden"></iframe>
+<script>
+(function() {
+    window.addEventListener('message', function(e) {
+        if (e.origin !== 'https://outreach.abetterinternet.org') return;
+        if (e.data && typeof e.data === 'object' && e.data.type === 'resize' && e.data.height) {
+            document.getElementById('newsletter-iframe').setAttribute('height', e.data.height + 20);
+        }
+    });
+})();
+</script>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+
+<div class="footer-copyright-bar bg-le-blue text-white py-6">
+  <div class="container">
+    <div class="flex flex-col md:flex-row md:justify-between items-center justify-center">
+      <div class="mb-4 text-center md:text-left md:mb-0">
+        &copy; 2026 <a href="https://www.abetterinternet.org" target="_blank" rel="noopener noreferrer">Internet Security Research Group</a>
+      </div>
+      <ul class="flex flex-wrap gap-4 justify-center md:justify-end">
+        
+        <li>
+          <a href="https://github.com/letsencrypt" target="_blank" rel="noopener noreferrer">
+            <span>GitHub</span>
+          </a>
+        </li>
+        
+
+        
+        <li>
+          <a href="https://www.linkedin.com/company/lets-encrypt/" target="_blank" rel="noopener noreferrer">
+            <span>LinkedIn</span>
+          </a>
+        </li>
+        
+
+        <li>
+          <a href="https://www.abetterinternet.org/terms-of-service" target="_blank" rel="noopener noreferrer">
+            <span>Terms</span>
+          </a>
+        </li>
+        <li>
+          <a href="/privacy/">
+            <span>Privacy Policy</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="https://www.abetterinternet.org/trademarks" target="_blank" rel="noopener noreferrer">
+            <span>Trademark Policy</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+
+<script src="/js/main.a572b61495f9d8fe4e5ec075082ddfe85e5a5ff501c15c499d3f2a4bed71afb6fe89e85f3202aa8fdeebcda97645416bfc75683c2d3471485b5668a6d5f98740.js" integrity="sha512-pXK2FJX52P5OXsB1CC3f6F5aX/UBwVxJnT8qS&#43;1xr7b&#43;iehfMgKqj97rzal2RUFr/HVoPC00cUhbVmim1fmHQA=="></script>
+
+</body>
+</html>
