@@ -279,6 +279,11 @@ scripts/*
 !scripts/snapshot-timeline-via-playwright.ts
 !scripts/audit-timeline-enrichment-freshness.ts
 
+# Vendor-ref integrity audit — CI gate that validates vendor_id assignments in
+# the product catalog against the vendor roadmap CSV. Catches wrong VND-*
+# assignments (deprecated refs, name mismatches). Pure read-only against public data.
+!scripts/audit-vendor-refs.ts
+
 # Private CI workflows (compliance scraper runs locally, not in public CI)
 .github/workflows/update-compliance.yml
 
