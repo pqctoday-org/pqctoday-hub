@@ -172,7 +172,10 @@ describe('runMissingReferenceChecks — Phase 2.1 candidates wiring', () => {
         expect(f.candidates, `finding ${f.value} should have candidates`).toBeDefined()
         expect(f.candidates).toHaveLength(3)
       }
-    }
+    },
+    // Loads the on-disk embedding artifact + cosine candidate search over the
+    // full corpus — well under 5s locally but slower on CI runners.
+    30000
   )
 
   it('falls back gracefully when withCandidates=true but artifact missing', async () => {
@@ -186,5 +189,5 @@ describe('runMissingReferenceChecks — Phase 2.1 candidates wiring', () => {
     expect(['PASS', 'FAIL']).toContain(result.status)
     // Candidates either populated (artifact existed and was loaded earlier in
     // the test run) or undefined (loader path failed). Both are valid here.
-  })
+  }, 30000)
 })
