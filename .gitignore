@@ -55,6 +55,10 @@ build_debug*.log
 
 # Local scratch / enrichment run artifacts
 tmp/
+# Raw patent-search exports (manual downloads that feed the patents refresh)
+SearchResults*.csv
+# Timestamped backup files (e.g. compliance-data.json.bak-1156)
+*.bak-*
 
 # Environment
 .env
