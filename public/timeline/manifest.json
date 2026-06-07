@@ -1577,17 +1577,17 @@
     },
     {
       "label": "Japan:NEDO \u2014 K Program PQC Research",
-      "url": "https://pqshield.com/pqshield-announces-participation-in-nedo-program-to-implement-post-quantum-cryptography-across-japan/",
+      "url": "https://prtimes.jp/main/html/rd/p/000000002.000103613.html",
       "file": "Japan_NEDO_K_Program_PQC_Research.html",
-      "sha256": "e3bcc4d402b64eba3510590c79fc9db2816f111ce92423d939061a0030a4a847",
-      "sizeBytes": 72804
+      "sha256": "d3edfb981dc44652da42ed77ae631ef3b6b446209124ef3240f77065af295051",
+      "sizeBytes": 139807
     },
     {
       "label": "Global:Ethereum Foundation \u2014 Vitalik Buterin Publishes PQ Defense Roadmap",
-      "url": "https://www.coindesk.com/tech/2026/02/26/vitalik-buterin-unveils-ethereum-roadmap-to-counter-quantum-computing-threat/",
+      "url": "https://ethereum.org/roadmap/future-proofing/quantum-resistance/",
       "file": "Global_Ethereum_Foundation_Vitalik_Buterin_Publishes_PQ_Defense_Roadmap.html",
-      "sha256": "97fdcf7dd5c53b6459e411e9568a53b1c2fb1855fd14a07077c52734440ddffb",
-      "sizeBytes": 470932
+      "sha256": "724a6cee514cf238c1fdf201e2c26a17679acccaf20e038e6310ad4c600592e3",
+      "sizeBytes": 422725
     },
     {
       "label": "G7:G7 CEG \u2014 G7 Statement on Quantum Computing",
@@ -1609,6 +1609,167 @@
       "file": "South_Korea_MSIT_K-PQC_Master_Plan_to_2035.html",
       "sha256": "f508bc71349a3b9454e2f5c489f51020cde85f3f42f83d663aeb7677164005f1",
       "sizeBytes": 140553
+    },
+    {
+      "label": "United Arab Emirates:ADGM/TII \u2014 Quantum-Secure Communications Testbed",
+      "url": "https://www.adgm.com/media/announcements/adgm-and-adgm-academy-team-up-with-tii-hub71-and-aspire-to-launch-uaes-first-quantum-secure-communications-testbed",
+      "file": "United_Arab_Emirates_ADGM_TII_Quantum-Secure_Communications_Testbed.html",
+      "sha256": "09d0c80ebe373d37f1206841980a2354f8735d71f3c5e294136adf94884dd0d0",
+      "sizeBytes": 98884
+    },
+    {
+      "label": "Global:PQShield \u2014 Post-Quantum VPN Research Initiated",
+      "url": "https://pqshield.com/2025-a-landmark-year-for-pqc-research-at-pqshield/",
+      "file": "Global_PQShield_Post-Quantum_VPN_Research_Initiated.html",
+      "sha256": "979d3d0d593ee1a63b1dfd548b8f6ea4bcc5a8ca6adba4c7e4a2eb91b4fea670",
+      "sizeBytes": 61041
+    },
+    {
+      "label": "International:Samsung/Thales \u2014 ML-KEM Embedded Secure Element Breakthrough",
+      "url": "https://www.businesswire.com/news/home/20260106145232/en/Thales-Powers-CES-Winning-Post-Quantum-Chip-From-Samsung-Electronics",
+      "file": "International_Samsung_Thales_ML-KEM_Embedded_Secure_Element_Breakthrough.html",
+      "sha256": "2753f94d35a24b037f587b96fb36df6aee8a687149314a0d44eb026b3181ef9a",
+      "sizeBytes": 400066
+    },
+    {
+      "label": "United Arab Emirates:UAE CSC \u2014 UAE Crypto Discovery Tool and PQC Index",
+      "url": "https://www.mediaoffice.abudhabi/en/security/uae-cybersecurity-council-partners-with-quantumgate-to-launch-crypto-discovery-tool/",
+      "file": "United_Arab_Emirates_UAE_CSC_UAE_Crypto_Discovery_Tool_and_PQC_Index.html",
+      "sha256": "f849118d676e6815832e18cc5b43a02ad587778a1f54c5bd66a433788e0cf4b7",
+      "sizeBytes": 40950
+    },
+    {
+      "label": "Spain:CCN \u2014 Four-Phase PQC Approach",
+      "url": "https://www.ccn-cert.cni.es/es/seguridad-al-dia/novedades-ccn-cert/12234-recomendaciones-para-una-transicion-postcuantica-segura-de-ccn-pytec.html",
+      "file": "Spain_CCN_Four-Phase_PQC_Approach.html",
+      "sha256": "7d107ba731b9a91e9697a0f6c44458e8998338098ce36400367c7e2e9ab81d21",
+      "sizeBytes": 249292
+    },
+    {
+      "label": "Spain:CCN \u2014 PQC Transition Period",
+      "url": "https://www.ccn-cert.cni.es/es/seguridad-al-dia/novedades-ccn-cert/12234-recomendaciones-para-una-transicion-postcuantica-segura-de-ccn-pytec.html",
+      "file": "Spain_CCN_PQC_Transition_Period.html",
+      "sha256": "76ab8d5b9fd5522c6628ae2a0f2db2be29645b3a2bfde6de83f852203c75cefd",
+      "sizeBytes": 222240
+    },
+    {
+      "label": "United Arab Emirates:UAE CSC \u2014 National Encryption Policy Approved",
+      "url": "https://www.wam.ae/en/article/15w563h-uae-announces-approval-national-encryption-policy",
+      "file": "United_Arab_Emirates_UAE_CSC_National_Encryption_Policy_Approved.html",
+      "sha256": "812913dff04b539e1708a66d68f6482ad4f230ad384bf2beb44f9f85fec1e8c9",
+      "sizeBytes": 73517
+    },
+    {
+      "label": "India:DST/NQM \u2014 Quantum-Safe Ecosystem Roadmap (May 2026)",
+      "url": "https://dst.gov.in/sites/default/files/Quantum-Safe-Ecosystem-in-India.pdf",
+      "file": "India_DST_NQM_Quantum-Safe_Ecosystem_Roadmap_May2026.pdf",
+      "sha256": "b9d2d53b2c03cfc47f9f4ce5ae0ceaebe1f46f50fccca8fc1cdbc70defd4d9ff",
+      "sizeBytes": 2899651
+    },
+    {
+      "label": "China:ICCS \u2014 NGCC Program Launched",
+      "url": "https://www.niccs.org.cn/symmbzyjy/tzgg/pc/content/1937422988373135360/content_1937422988373135360.html",
+      "file": "China_ICCS_NGCC_Program_Launched.html",
+      "sha256": "2db51841b05fa55193299aefe01be5ecedea123e9bb787076605af472435b28f",
+      "sizeBytes": 13895
+    },
+    {
+      "label": "China:ICCS \u2014 NGCC Program Launched (EN translation)",
+      "url": "https://www.niccs.org.cn/symmbzyjy/tzgg/pc/content/1937422988373135360/content_1937422988373135360.html",
+      "file": "China_ICCS_NGCC_Program_Launched.translation.md",
+      "sha256": "38f5eba8c5c874d7b04e01524f31776f5c3106094c69f7409c16c4aba6cafe4f",
+      "sizeBytes": 1690
+    },
+    {
+      "label": "China:ICCS \u2014 NGCC Algorithm Evaluation",
+      "url": "https://www.niccs.org.cn/symmbzyjy/tzgg/pc/content/1976155884915003392/content_1976155884915003392.html",
+      "file": "China_ICCS_NGCC_Algorithm_Evaluation.html",
+      "sha256": "949af5a9d8067feb86d06bab9ca4722959681fa11b7cea0aa257f6bee091cb80",
+      "sizeBytes": 19660
+    },
+    {
+      "label": "China:ICCS \u2014 NGCC Algorithm Evaluation (EN translation)",
+      "url": "https://www.niccs.org.cn/symmbzyjy/tzgg/pc/content/1976155884915003392/content_1976155884915003392.html",
+      "file": "China_ICCS_NGCC_Algorithm_Evaluation.translation.md",
+      "sha256": "bde836640281e124af5abafdeb64f6c1374f9a39029cd41f217e6ebdbd3831a3",
+      "sizeBytes": 1579
+    },
+    {
+      "label": "China:China Telecom \u2014 Hybrid Quantum-Safe System Launched",
+      "url": "https://www.chinatelecom.com.cn/ct/news/jczt/2025pt/ttyw/161497.html",
+      "file": "China_China_Telecom_Hybrid_Quantum-Safe_System_Launched.html",
+      "sha256": "ff3f1164d0f8ec251f19642c87b91822e5a437b4daeefc6fc8512e214161b4aa",
+      "sizeBytes": 34722
+    },
+    {
+      "label": "China:China Telecom \u2014 Hybrid Quantum-Safe System Launched (EN translation)",
+      "url": "https://www.chinatelecom.com.cn/ct/news/jczt/2025pt/ttyw/161497.html",
+      "file": "China_China_Telecom_Hybrid_Quantum-Safe_System_Launched.translation.md",
+      "sha256": "061751b5ffb70aea30636918c5c2c62aa46a04dff5403a566e023546b16eb52d",
+      "sizeBytes": 1427
+    },
+    {
+      "label": "South Korea:MSIT \u2014 Pilot Transition Phase",
+      "url": "https://seed.kisa.or.kr/kisa/ngc/pqc.do",
+      "file": "South_Korea_MSIT_Pilot_Transition_Phase.html",
+      "sha256": "dd9a3aaafc115993bf550e85a97bcfd892a4df34ef99813f28b09d4299c135d6",
+      "sizeBytes": 86210
+    },
+    {
+      "label": "South Korea:MSIT \u2014 Pilot Transition Phase (EN translation)",
+      "url": "https://seed.kisa.or.kr/kisa/ngc/pqc.do",
+      "file": "South_Korea_MSIT_Pilot_Transition_Phase.translation.md",
+      "sha256": "950e801b6d44c5e7db33bffa1b2442a66d433e9a76cbf5b75f0fe7181b21dc69",
+      "sizeBytes": 1170
+    },
+    {
+      "label": "South Korea:MSIT \u2014 Full PQC Roadmap Complete",
+      "url": "https://seed.kisa.or.kr/kisa/ngc/pqc.do",
+      "file": "South_Korea_MSIT_Full_PQC_Roadmap_Complete.html",
+      "sha256": "dd9a3aaafc115993bf550e85a97bcfd892a4df34ef99813f28b09d4299c135d6",
+      "sizeBytes": 86210
+    },
+    {
+      "label": "South Korea:MSIT \u2014 Full PQC Roadmap Complete (EN translation)",
+      "url": "https://seed.kisa.or.kr/kisa/ngc/pqc.do",
+      "file": "South_Korea_MSIT_Full_PQC_Roadmap_Complete.translation.md",
+      "sha256": "f91fba8e631a7f23b2481175d9e193599af90d67ac1332f4fe549451177e144e",
+      "sizeBytes": 1069
+    },
+    {
+      "label": "Taiwan:MODA \u2014 Five-Year PQC Plan",
+      "url": "https://moda.gov.tw/ADI/news/latest-news/16090",
+      "file": "Taiwan_MODA_Five-Year_PQC_Plan.html",
+      "sha256": "69d8d9208260ac78ed7085a96c8f0f2893ca3bfc0818d07db3679a4178521ceb",
+      "sizeBytes": 77472
+    },
+    {
+      "label": "Taiwan:MODA \u2014 Five-Year PQC Plan (EN translation)",
+      "url": "https://moda.gov.tw/ADI/news/latest-news/16090",
+      "file": "Taiwan_MODA_Five-Year_PQC_Plan.translation.md",
+      "sha256": "c3ad4e51b6e88709b35c048310926b5a5629355d60ee2cfb3929ca77464ee939",
+      "sizeBytes": 1442
+    },
+    {
+      "label": "Taiwan:MODA \u2014 Interim Quantum-Safe Milestone",
+      "url": "https://moda.gov.tw/ADI/news/latest-news/16090",
+      "file": "Taiwan_MODA_Interim_Quantum-Safe_Milestone.html",
+      "sha256": "69d8d9208260ac78ed7085a96c8f0f2893ca3bfc0818d07db3679a4178521ceb",
+      "sizeBytes": 77472
+    },
+    {
+      "label": "Taiwan:MODA \u2014 Interim Quantum-Safe Milestone (EN translation)",
+      "url": "https://moda.gov.tw/ADI/news/latest-news/16090",
+      "file": "Taiwan_MODA_Interim_Quantum-Safe_Milestone.translation.md",
+      "sha256": "58e4228eda8551355e814cf4cc3f37faba1bdb1fa626bd9910f9557424ae1eda",
+      "sizeBytes": 1156
+    },
+    {
+      "label": "Japan:NEDO \u2014 K Program PQC Research (EN translation)",
+      "url": "https://prtimes.jp/main/html/rd/p/000000002.000103613.html",
+      "file": "Japan_NEDO_K_Program_PQC_Research.translation.md",
+      "sha256": "554f772e3e47646b11c61634e1d44bfa0bb15d950f1489abd9973a781a0c0b19",
+      "sizeBytes": 1521
     }
   ]
 }
