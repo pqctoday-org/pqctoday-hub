@@ -254,7 +254,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'DNSSEC Zone Signing',
     emoji: '🌍',
     useCase:
-      'Sign DNS zones with ML-DSA-65 using ldnsutils, comparing classical RSA DNSSEC signatures against post-quantum zone signing for domain integrity.',
+      'Measure the migration cost of switching DNSSEC zone signing from RSA-2048 (~256B signatures) to ML-DSA-65 (~3.3KB signatures): key bytes, signature bytes, sign rate. The PQC arm runs through OpenSSL 3.6 directly because upstream ldns has no ML-DSA support — surfaced as architectural_deviation in the scenario JSON.',
     algorithms: ['ML-DSA-65', 'DNSSEC'],
     difficulty: 'intermediate',
     trackId: 'web',
@@ -408,7 +408,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'Micro-Packet Timing Integrity',
     emoji: '⏱️',
     useCase:
-      'Analyze the devastating consequences of injecting massive Lattice (ML-DSA) signatures into strictly constrained UDP-packet structures (NTS) inside Chronyd.',
+      'Measure the cold-start cost of an ML-DSA-65 NTS-KE certificate chain (~7-8KB) against a classical ECDSA-P256 baseline (~600B) to size NTP infrastructure migration. The cert is real and issued by OpenSSL 3.6; the NTS-KE handshake itself runs classical only because upstream chrony has no OpenSSL TLS backend — surfaced as architectural_deviation in the scenario JSON.',
     algorithms: ['ML-DSA-65'],
     difficulty: 'advanced',
     trackId: 'web',
