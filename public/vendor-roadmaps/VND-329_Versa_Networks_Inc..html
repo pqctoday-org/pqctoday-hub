@@ -1,0 +1,2288 @@
+<!doctype html>
+<html dir="ltr" lang="en-US" prefix="og: https://ogp.me/ns#">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="profile" href="http://gmpg.org/xfn/11">
+  <link rel="pingback" href="https://versa-networks.com/blog/xmlrpc.php">
+
+  <!-- OneTrust - must remain synchronous in <head> -->
+  <!-- <script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" type="text/javascript" charset="UTF-8" data-domain-script="01911443-929d-71d4-a65f-769b574ad839"></script>
+  <script type="text/javascript">function OptanonWrapper() { }</script> -->
+
+  <!-- Start cookieyes banner -->
+  <!-- <script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/54fa80f856b81818c509d89a3f43849f/script.js"></script> -->
+  <!-- End cookieyes banner -->
+
+  <!-- STEP 1: Consent defaults - must be first, before GTM -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+
+    gtag('consent', 'default', {
+      ad_user_data:            'denied',
+      ad_personalization:      'denied',
+      ad_storage:              'denied',
+      analytics_storage:       'denied',
+      functionality_storage:   'denied',
+      personalization_storage: 'denied',
+      security_storage:        'denied',
+      wait_for_update:         2000
+    });
+
+    gtag('set', 'ads_data_redaction', true);
+    gtag('set', 'developer_id.dYWJhMj', true);
+
+    if (localStorage['conversionEmail']) {
+      gtag('set', 'user_data', { email: localStorage['conversionEmail'] });
+    }
+  </script>
+
+  <!-- STEP 2: CookieYes consent update listener -->
+  <script>
+    document.addEventListener('cookieyes_consent_update', function(e) {
+      var accepted = (e.detail && e.detail.accepted) ? e.detail.accepted : [];
+      function consentStatus(cat) {
+        return accepted.indexOf(cat) > -1 ? 'granted' : 'denied';
+      }
+      gtag('consent', 'update', {
+        analytics_storage:       consentStatus('analytics'),
+        ad_storage:              consentStatus('advertisement'),
+        ad_user_data:            consentStatus('advertisement'),
+        ad_personalization:      consentStatus('advertisement'),
+        functionality_storage:   consentStatus('functional'),
+        personalization_storage: consentStatus('functional'),
+        security_storage:        'granted'
+      });
+    });
+  </script>
+
+  <!-- STEP 3: GTM - loads after consent defaults are set -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-NCDRDJW');</script>
+
+  <title>Post-Quantum Cryptography: Future-Proof Enterprise Security</title>
+<link data-rocket-prefetch href="https://www.gstatic.com" rel="dns-prefetch">
+<link data-rocket-prefetch href="https://munchkin.marketo.net" rel="dns-prefetch">
+<link data-rocket-prefetch href="https://www.googletagmanager.com" rel="dns-prefetch">
+<link data-rocket-prefetch href="https://fonts.googleapis.com" rel="dns-prefetch">
+<link data-rocket-prefetch href="https://cdn-cookieyes.com" rel="dns-prefetch">
+<link data-rocket-prefetch href="https://cdn.jsdelivr.net" rel="dns-prefetch">
+<link data-rocket-prefetch href="https://pages.versa-networks.com" rel="dns-prefetch">
+<link data-rocket-prefetch href="https://www.google.com" rel="dns-prefetch">
+<link data-rocket-prefetch href="https://code.jquery.com" rel="dns-prefetch">
+<link data-rocket-preload as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&#038;family=Lato:wght@100;300;400;500;700;900&#038;display=swap" rel="preload">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&#038;family=Lato:wght@100;300;400;500;700;900&#038;display=swap" media="print" onload="this.media=&#039;all&#039;" rel="stylesheet">
+<noscript data-wpr-hosted-gf-parameters=""><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&#038;family=Lato:wght@100;300;400;500;700;900&#038;display=swap"></noscript><link rel="preload" data-rocket-preload as="image" href="https://versa-networks.com/wordpress/wp-content/themes/bootstrap-theme/assets/images/new-homepage/versa-ripple-xl.webp" fetchpriority="high">
+
+		<!-- All in One SEO Pro 4.9.7.2 - aioseo.com -->
+	<meta name="description" content="Discover how Versa is pioneering Post-Quantum Cryptography (PQC) to secure enterprise networks from quantum computing threats. Learn about challenges, solutions, and Versa’s approach to future-proofing security." />
+	<meta name="robots" content="max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+	<meta name="author" content="Dhiraj Sehgal"/>
+	<link rel="canonical" href="https://versa-networks.com/blog/post-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats/" />
+	<meta name="generator" content="All in One SEO Pro (AIOSEO) 4.9.7.2" />
+		<meta property="og:locale" content="en_US" />
+		<meta property="og:site_name" content="The Versa Networks Blog - The Versa Networks Blog" />
+		<meta property="og:type" content="article" />
+		<meta property="og:title" content="Post-Quantum Cryptography: Future-Proof Enterprise Security" />
+		<meta property="og:description" content="Discover how Versa is pioneering Post-Quantum Cryptography (PQC) to secure enterprise networks from quantum computing threats. Learn about challenges, solutions, and Versa’s approach to future-proofing security." />
+		<meta property="og:url" content="https://versa-networks.com/blog/post-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats/" />
+		<meta property="og:image" content="https://versa-networks.com/blog/wp-content/uploads/versa-seo-share-graphic.png" />
+		<meta property="og:image:secure_url" content="https://versa-networks.com/blog/wp-content/uploads/versa-seo-share-graphic.png" />
+		<meta property="og:image:width" content="1920" />
+		<meta property="og:image:height" content="1080" />
+		<meta property="article:published_time" content="2025-03-12T17:20:57+00:00" />
+		<meta property="article:modified_time" content="2025-12-11T10:11:12+00:00" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content="Post-Quantum Cryptography: Future-Proof Enterprise Security" />
+		<meta name="twitter:description" content="Discover how Versa is pioneering Post-Quantum Cryptography (PQC) to secure enterprise networks from quantum computing threats. Learn about challenges, solutions, and Versa’s approach to future-proofing security." />
+		<meta name="twitter:image" content="https://versa-networks.com/blog/wp-content/uploads/versa-seo-share-graphic.png" />
+		<!-- All in One SEO Pro -->
+
+<script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/ebf7bd4570c4e503d83cb33f4b57ff88/script.js"></script><link href='https://fonts.gstatic.com' crossorigin rel='preconnect' />
+<link rel="alternate" type="application/rss+xml" title="The Versa Networks Blog &raquo; Feed" href="https://versa-networks.com/blog/feed/" />
+<link rel="alternate" type="application/rss+xml" title="The Versa Networks Blog &raquo; Comments Feed" href="https://versa-networks.com/blog/comments/feed/" />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://versa-networks.com/blog/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fversa-networks.com%2Fblog%2Fpost-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://versa-networks.com/blog/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fversa-networks.com%2Fblog%2Fpost-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats%2F&#038;format=xml" />
+<style id="wp-img-auto-sizes-contain-inline-css">
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<style id="wp-emoji-styles-inline-css">
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+/*# sourceURL=wp-emoji-styles-inline-css */
+</style>
+<style id="wp-block-library-inline-css">
+:root{--wp-block-synced-color:#7a00df;--wp-block-synced-color--rgb:122,0,223;--wp-bound-block-color:var(--wp-block-synced-color);--wp-editor-canvas-background:#ddd;--wp-admin-theme-color:#007cba;--wp-admin-theme-color--rgb:0,124,186;--wp-admin-theme-color-darker-10:#006ba1;--wp-admin-theme-color-darker-10--rgb:0,107,160.5;--wp-admin-theme-color-darker-20:#005a87;--wp-admin-theme-color-darker-20--rgb:0,90,135;--wp-admin-border-width-focus:2px}@media (min-resolution:192dpi){:root{--wp-admin-border-width-focus:1.5px}}.wp-element-button{cursor:pointer}:root .has-very-light-gray-background-color{background-color:#eee}:root .has-very-dark-gray-background-color{background-color:#313131}:root .has-very-light-gray-color{color:#eee}:root .has-very-dark-gray-color{color:#313131}:root .has-vivid-green-cyan-to-vivid-cyan-blue-gradient-background{background:linear-gradient(135deg,#00d084,#0693e3)}:root .has-purple-crush-gradient-background{background:linear-gradient(135deg,#34e2e4,#4721fb 50%,#ab1dfe)}:root .has-hazy-dawn-gradient-background{background:linear-gradient(135deg,#faaca8,#dad0ec)}:root .has-subdued-olive-gradient-background{background:linear-gradient(135deg,#fafae1,#67a671)}:root .has-atomic-cream-gradient-background{background:linear-gradient(135deg,#fdd79a,#004a59)}:root .has-nightshade-gradient-background{background:linear-gradient(135deg,#330968,#31cdcf)}:root .has-midnight-gradient-background{background:linear-gradient(135deg,#020381,#2874fc)}:root{--wp--preset--font-size--normal:16px;--wp--preset--font-size--huge:42px}.has-regular-font-size{font-size:1em}.has-larger-font-size{font-size:2.625em}.has-normal-font-size{font-size:var(--wp--preset--font-size--normal)}.has-huge-font-size{font-size:var(--wp--preset--font-size--huge)}:root .has-text-align-center{text-align:center}:root .has-text-align-left{text-align:left}:root .has-text-align-right{text-align:right}.has-fit-text{white-space:nowrap!important}#end-resizable-editor-section{display:none}.aligncenter{clear:both}.items-justified-left{justify-content:flex-start}.items-justified-center{justify-content:center}.items-justified-right{justify-content:flex-end}.items-justified-space-between{justify-content:space-between}.screen-reader-text{word-wrap:normal!important;border:0;clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px}.screen-reader-text:focus{background-color:#ddd;clip-path:none;color:#444;display:block;font-size:1em;height:auto;left:5px;line-height:normal;padding:15px 23px 14px;text-decoration:none;top:5px;width:auto;z-index:100000}html :where(.has-border-color){border-style:solid}html :where([style*=border-color]){border-style:solid}html :where([style*=border-top-color]){border-top-style:solid}html :where([style*=border-right-color]){border-right-style:solid}html :where([style*=border-bottom-color]){border-bottom-style:solid}html :where([style*=border-left-color]){border-left-style:solid}html :where([style*=border-width]){border-style:solid}html :where([style*=border-top-width]){border-top-style:solid}html :where([style*=border-right-width]){border-right-style:solid}html :where([style*=border-bottom-width]){border-bottom-style:solid}html :where([style*=border-left-width]){border-left-style:solid}html :where(img[class*=wp-image-]){height:auto;max-width:100%}:where(figure){margin:0 0 1em}html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:var(--wp-admin--admin-bar--height,0px)}@media screen and (max-width:600px){html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:0px}}
+
+/*# sourceURL=/wp-includes/css/dist/block-library/common.min.css */
+</style>
+<style id="classic-theme-styles-inline-css">
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+/*# sourceURL=/wp-includes/css/classic-themes.min.css */
+</style>
+
+
+<link rel='stylesheet' id='versa-style-css' href='https://versa-networks.com/blog/wp-content/themes/versa/style.css?ver=7.0' media='all' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://versa-networks.com/blog/xmlrpc.php?rsd" />
+<meta name="generator" content="WordPress 7.0" />
+<link rel='shortlink' href='https://versa-networks.com/blog/?p=18360' />
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "Organization",
+            "@id": "https://versa-networks.com/#organization",
+            "name": "Versa Networks",
+            "url": "https://versa-networks.com",
+            "description": "Versa Networks is a Secure Access Service Edge (SASE) provider that unifies networking and security in a single, cloud-ready platform. Its flagship VersaONE platform delivers SD-WAN, security, routing, and analytics through one operating system, one console, one policy, and one data lake. Built on a Zero Trust foundation, Versa provides secure access, threat protection, and data protection across headquarters, branches, data centers, clouds, users, and devices. With VersaAI, the company applies adaptive intelligence to identify, predict, and diagnose issues in real time, helping customers run performant, secure networks that are ready for AI-driven business transformation.",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://versa-networks.com/blog/wp-content/uploads/cropped-logo-versa-networks.png"
+            },
+            "sameAs": [
+                "https://www.youtube.com/channel/UCyDTShxgA6IUqanC92bBF0g/videos",
+                "https://www.linkedin.com/company/versa-networks/",
+                "https://twitter.com/versanetworks"
+            ]
+        },
+        {
+            "@type": "WebSite",
+            "@id": "https://versa-networks.com/#website",
+            "url": "https://versa-networks.com",
+            "name": "Versa Networks",
+            "inLanguage": "en-US",
+            "publisher": {
+                "@id": "https://versa-networks.com/#organization"
+            }
+        },
+        {
+            "@type": "Person",
+            "@id": "https://versa-networks.com/blog/author/dhiraj-sehgal/#author",
+            "name": "Dhiraj Sehgal",
+            "url": "https://versa-networks.com/blog/author/dhiraj-sehgal/",
+            "description": "Senior Director, Product Marketing",
+            "image": "https://secure.gravatar.com/avatar/5b6a94b7870a3fc3eb208e930257701d3c24efdd0a1b7184b23e3fc1099bca37?s=96&d=mm&r=g"
+        },
+        {
+            "@type": "ImageObject",
+            "@id": "https://versa-networks.com/blog/post-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats/#primaryimage",
+            "url": "https://versa-networks.com/blog/wp-content/uploads/versa-seo-share-graphic.png",
+            "contentUrl": "https://versa-networks.com/blog/wp-content/uploads/versa-seo-share-graphic.png",
+            "thumbnailUrl": "https://versa-networks.com/blog/wp-content/uploads/versa-seo-share-graphic-200x113.png",
+            "width": 1920,
+            "height": 1080,
+            "inLanguage": "en-US"
+        },
+        {
+            "@type": "BlogPosting",
+            "@id": "https://versa-networks.com/blog/post-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats/#blogposting",
+            "url": "https://versa-networks.com/blog/post-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats/",
+            "headline": "Post-Quantum Cryptography (PQC) and Versa: Future-Proofing Enterprise Security Against Quantum Threats",
+            "name": "Post-Quantum Cryptography (PQC) and Versa: Future-Proofing Enterprise Security Against Quantum Threats",
+            "description": "Discover how Versa is pioneering Post-Quantum Cryptography (PQC) to secure enterprise networks from quantum computing threats. Learn about challenges, solutions, and Versa’s approach to future-proofing security.",
+            "image": {
+                "@id": "https://versa-networks.com/blog/post-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats/#primaryimage"
+            },
+            "author": {
+                "@id": "https://versa-networks.com/blog/author/dhiraj-sehgal/#author"
+            },
+            "publisher": {
+                "@id": "https://versa-networks.com/#organization"
+            },
+            "datePublished": "2025-03-12T17:20:57+00:00",
+            "dateModified": "2025-12-11T10:11:12+00:00",
+            "copyrightYear": "2025",
+            "inLanguage": "en-US",
+            "wordCount": 671,
+            "timeRequired": "PT3M",
+            "articleSection": "Company Updates",
+            "keywords": "Compliance, SASE, SSE, Zero Trust",
+            "mainEntityOfPage": {
+                "@id": "https://versa-networks.com/blog/post-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats/#webpage"
+            },
+            "isPartOf": {
+                "@id": "https://versa-networks.com/#website"
+            }
+        },
+        {
+            "@type": "WebPage",
+            "@id": "https://versa-networks.com/blog/post-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats/#webpage",
+            "url": "https://versa-networks.com/blog/post-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats/",
+            "name": "Post-Quantum Cryptography (PQC) and Versa: Future-Proofing Enterprise Security Against Quantum Threats",
+            "description": "Discover how Versa is pioneering Post-Quantum Cryptography (PQC) to secure enterprise networks from quantum computing threats. Learn about challenges, solutions, and Versa’s approach to future-proofing security.",
+            "inLanguage": "en-US",
+            "isPartOf": {
+                "@id": "https://versa-networks.com/#website"
+            },
+            "publisher": {
+                "@id": "https://versa-networks.com/#organization"
+            },
+            "breadcrumb": {
+                "@id": "https://versa-networks.com/blog/post-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats/#breadcrumb"
+            },
+            "mainEntity": {
+                "@id": "https://versa-networks.com/blog/post-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats/#blogposting"
+            },
+            "primaryImageOfPage": {
+                "@id": "https://versa-networks.com/blog/post-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats/#primaryimage"
+            },
+            "potentialAction": {
+                "@type": "ReadAction",
+                "target": "https://versa-networks.com/blog/post-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats/"
+            }
+        },
+        {
+            "@type": "BreadcrumbList",
+            "@id": "https://versa-networks.com/blog/post-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats/#breadcrumb",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://versa-networks.com/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Blog",
+                    "item": "https://versa-networks.com/blog/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "Post-Quantum Cryptography (PQC) and Versa: Future-Proofing Enterprise Security Against Quantum Threats",
+                    "item": "https://versa-networks.com/blog/post-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats/"
+                }
+            ]
+        }
+    ]
+}
+</script>
+<style>.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style><link rel="icon" href="https://versa-networks.com/blog/wp-content/uploads/cropped-versa-small-logo-32x32.png" sizes="32x32" />
+<link rel="icon" href="https://versa-networks.com/blog/wp-content/uploads/cropped-versa-small-logo-192x192.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://versa-networks.com/blog/wp-content/uploads/cropped-versa-small-logo-180x180.png" />
+<meta name="msapplication-TileImage" content="https://versa-networks.com/blog/wp-content/uploads/cropped-versa-small-logo-270x270.png" />
+<style id="wp-custom-css">
+.page .wp-block-list li h3{
+	font-size:1.1rem;
+	font-weight:bold;
+	line-height: 1.2;
+}
+.page .post-subtitle{
+	font-weight:bold;
+}
+.page .wp-block-list li h4{
+	display:inline;
+	font-size:1rem;
+	font-weight:bold;
+}
+
+.page .key_capabilities{
+	font-size:1.1rem;
+	font-weight:bold;
+	line-height: 1.2;
+}
+.page .ai-driven {
+    display: inline;
+}
+
+#post-18462 .wp-block-heading {
+    color: #747576;
+    font-size: 17px;
+    line-height: 26px;
+    font-weight:  !important;
+}
+
+
+
+
+
+
+#post-18469 .wp-block-list h3{
+	color:#747576;
+	font-size:17px;
+	line-height: 26px;
+	font-weight:700;
+}
+
+
+#post-18554 .wp-block-list h3{
+	color:#747576;
+	font-size:17px;
+	font-weight:700;
+}
+
+#post-18520 .wp-block-list h3{
+	color:#747576;
+	font-size:17px;
+	line-height: 26px;
+	font-weight:700;
+}
+#post-18526 .wp-block-heading  h2{
+/* 	color:#747576;
+	font-size:17px; */
+	line-height: 26px;
+	font-weight:800;
+}\
+
+#post-18498 .wp-block-list li h3{
+	color:#747576;
+	font-size:17px;
+	line-height: 26px;
+	font-weight:800;
+}
+#post-18498 .wp-block-heading {
+   	color:#747576;
+	font-size:17px;
+	line-height: 26px;
+	font-weight:800;
+}
+
+#post-18498 .wp-block-list.circle-check-list h3 {
+   	color:#747576;
+	font-size:17px;
+	line-height: 26px;
+	font-weight:800;
+}
+
+
+#post-18485 .wp-block-heading{
+   	color:#747576;
+	font-size:17px;
+	line-height: 26px;
+	font-weight:800;
+}
+
+#post-18485 .wp-block-list.circle-check-list h3 {
+   	color:#747576;
+	font-size:17px;
+	line-height: 26px;
+	font-weight:800;
+}
+
+#post-18465 .wp-block-heading{
+   	color:#747576;
+	font-size:17px;
+	line-height: 26px;
+	font-weight:800;
+}
+
+
+#post-18465 .wp-block-list.circle-check-list h3 {
+   	color:#747576;
+	font-size:17px;
+	line-height: 26px;
+	font-weight:800;
+}
+
+#post-18462 .wp-block-heading{
+   	color:#747576;
+	font-size:17px;
+	line-height: 26px;
+	font-weight:800;
+}
+
+
+
+
+
+
+
+
+
+
+</style>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" media="all" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+
+  <!-- Site stylesheets -->
+  <link href="/css/styles-homepage.css?1739377800" rel="stylesheet" type="text/css" />
+  <link href="/css/styles-blog.css?1776552254" rel="stylesheet" type="text/css" />
+
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="57x57" href="/images/favicon/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/images/favicon/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/images/favicon/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/favicon/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/images/favicon/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/images/favicon/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/images/favicon/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/images/favicon/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
+
+  <style>
+    .v-nav .title { border-bottom: 1px solid #D9D9D9; padding-bottom: 9px !important; margin-bottom: 24px; white-space: nowrap; font-weight: 700; font-size: 15px; letter-spacing: 1.4px; }
+    .tect-and-telecom { margin-top: 20px; }
+    .versa-blog span { font-size: 2.5rem; }
+  </style>
+
+<style id="rocket-lazyrender-inline-css">[data-wpr-lazyrender] {content-visibility: auto;}</style><meta name="generator" content="WP Rocket 3.21.3" data-wpr-features="wpr_preconnect_external_domains wpr_automatic_lazy_rendering wpr_oci wpr_preload_links wpr_desktop" /></head>
+<body class="" id="0">
+
+    <!-- Google Tag Manager -->
+    <!-- <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NCDRDJW');</script> -->
+
+    <!-- Google Analytics -->
+    <!--
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-56283474-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'UA-56283474-1');
+    </script>
+    -->
+    
+    <!-- Google tag (gtag.js) — consolidated -->
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+        ad_storage: 'denied',
+        analytics_storage: 'denied',
+        functionality_storage: 'denied',
+        personalization_storage: 'denied',
+        security_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        wait_for_update: 500
+    });
+    gtag('set', 'developer_id.dYWJhMj', true);
+    if (localStorage['conversionEmail']) {
+        gtag('set', 'user_data', { email: localStorage['conversionEmail'] });
+    }
+    </script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-3H82QVT8N6"></script>
+    <script>
+    gtag('js', new Date());
+    gtag('config', 'G-3H82QVT8N6');
+    </script>
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NCDRDJW');</script>
+    <!-- End Google Tag Manager -->
+
+    <div  class="container-fluid p-0 m-0">
+        <style>
+        #banner { background: linear-gradient(rgb(0, 174, 239), rgb(74, 120, 187)) left top; }
+        #banner .text { font-family: 'Inter', sans-serif; text-transform: uppercase; font-size: 12px; letter-spacing: 2px; line-height: 1.5; }
+        #banner #cta-link { text-transform: uppercase; font-size: 12px; letter-spacing: 2px; font-weight: 400; }
+        @media (max-width: 992px) { #banner .text { font-size: 11px; letter-spacing: 1.5px; } #banner #cta-link { font-size: 11px; letter-spacing: 1.5px; } }
+        </style>
+
+        <div  id="banner" class="container-fluid">
+            <div  class="text-center p-2 mb-2">
+                <div class="row d-flex justify-content-center align-items-center">
+                    <div class="col-1"></div>
+                    <div class="col-10 d-flex justify-content-center align-items-center">
+                        <p class="m-0 text-white fw-bold text">2026 State of SASE + AI: The Cost of Complexity. <a id="cta-link" class="text-white text-decoration-underline" href="https://versa-networks.com/resources/annual-report/state-of-sase-ai-2026/">Get the report &gt;</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--
+        <div id="nav-promotional-floating" class="promo-display">
+            <div class="btn-group-vertical">
+                <a class="btn px-2" id="trial" role="button" href="https://versa-networks.com/trial/"><img class="icon promo" id="stopwatch" src="/images/widgets/icon-promo-stopwatch-100x100-white.png" alt="Trial icon">Trial</a>
+                <a class="btn px-2" id="roi-calculator" role="button" href="https://versa-networks.com/roi-calculator/"><img class="icon promo" id="calculator" src="/images/widgets/icon-promo-calculator-100x100-white.png" alt="ROI icon">ROI</a>
+                <a class="btn px-2" id="contact-us" role="button" href="https://versa-networks.com/contact/"><img class="icon promo" id="contact" src="/images/widgets/icon-promo-contact-100x100-white.png" alt="Contact icon">Contact</a>
+            </div>
+        </div>
+        -->
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const isBannerHidden = localStorage.getItem('isBannerHidden');
+                if (!isBannerHidden) { document.getElementById('banner').style.display = 'block'; }
+                const hideButton = document.getElementById('hide-button');
+                if (hideButton) {
+                    hideButton.addEventListener('click', function() {
+                        const banner = document.getElementById('banner');
+                        if (banner.style.display === 'none') { banner.style.display = 'block'; localStorage.setItem('isBannerHidden', ''); }
+                        else { banner.style.display = 'none'; localStorage.setItem('isBannerHidden', 'true'); }
+                    });
+                }
+            });
+        </script>
+
+        <!-- UPDATED NAV START-->
+        <div  class="container-fluid py-3">
+        <nav class="v-nav navbar navbar-expand-lg p-0" role="navigation">
+            <div  class="container">
+                <a class="navbar-brand" href="https://versa-networks.com/"><img id="header-logo" class="header-logo" height="40" width="140" src="https://versa-networks.com/wordpress/wp-content/themes/bootstrap-theme/assets/images/new-homepage/versa-new-logo.svg" alt="Versa Networks Logo"></a>
+                <button id="close-btn" class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Navbar toggler">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse">
+                    <div class="d-flex w-100 flex-column" style="gap: 0.5rem;">
+                        <div class="d-flex w-100 justify-content-end">
+                            <ul class="navbar-nav">
+                                <li class="nav-item"><a class="nav-link" href="https://academy.versa-networks.com/">Training</a></li>
+                                <li class="nav-item"><a class="nav-link" href="https://versa-networks.com/customers/support/">Support</a></li>
+                                <li class="nav-item"><a class="nav-link" href="https://versa-networks.com/blog/">Blog</a></li>
+                                <li class="nav-item"><a class="nav-link pe-1" href="https://versa-networks.com/versa-security-and-trust-center/">Security&nbsp;Portal</a></li>
+                            </ul>
+                            <div class="search-container pt-1" style="position:relative;">
+                                <form role="search" method="get" id="searchform" class="searchform" action="https://versa-networks.com/">
+                                    <input class="search expandright" id="searchright" type="search" name="s" autocomplete="on" placeholder="Search">
+                                    <label class="button searchbutton" for="searchright"><span class="mglass">&#9906;</span></label>
+                                    <input type="hidden" name="q" value="">
+                                </form>
+                            </div>
+                        </div>
+                        <ul class="navbar-nav ms-auto align-items-center">
+                            <li id="products-nav-link" class="nav-item dropdown has-megamenu">
+                                <a class="nav-link dropdown-toggle text-uppercase" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside"><span>Products</span></a>
+                                <div class="dropdown-menu megamenu mw-1300" role="menu">
+                                    <div class="row g-3">
+                                        <div class="col"><div class="col-megamenu">
+                                            <span><a class="title text-azure-blue d-block" href="https://versa-networks.com/platform/">VersaONE Platform</a></span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://versa-networks.com/platform/">Architecture</a></li>
+                                                <li><a href="https://versa-networks.com/products/versaai/">Versa AI</a></li>
+                                                <li><a href="https://versa-networks.com/products/versa-sase-fabric/">SASE Fabric</a></li>
+                                                <li><a href="https://versa-networks.com/products/components/">Hardware</a></li>
+                                                <li><a href="https://versa-networks.com/products/versa-sase-client/">SASE Client</a></li>
+                                                <li><a href="https://versa-networks.com/products/deployment/">Deployment Options</a></li>
+                                            </ul>
+                                        </div></div>
+                                        <div class="col"><div class="col-megamenu">
+                                            <span class="title text-rich-black d-block">SASE</span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://versa-networks.com/products/unified-sase/">Unified SASE</a></li>
+                                                <li><a href="https://versa-networks.com/products/vsaf/">Secure Access Fabric</a></li>
+                                                <li><a href="https://versa-networks.com/products/sase-on-sim/">SASE on SIM for Mobile&nbsp;Operators</a></li>
+                                                <li><a href="https://versa-networks.com/products/versa-private-sase/">Private SASE</a></li>
+                                                <li><a href="https://versa-networks.com/products/sovereign-sase/">Sovereign SASE</a></li>
+                                            </ul>
+                                        </div></div>
+                                        <div class="col"><div class="col-megamenu">
+                                            <span><a class="title text-rich-black d-block" href="https://versa-networks.com/products/security-service-edge/">Security Service Edge</a></span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://versa-networks.com/products/ztna/">Zero Trust Network Access&nbsp;(ZTNA)</a></li>
+                                                <li><a href="https://versa-networks.com/products/casb/">Cloud Access Security Broker (CASB)</a></li>
+                                                <li><a href="https://versa-networks.com/products/swg/">Secure Web Gateway (SWG)</a></li>
+                                                <li><a href="https://versa-networks.com/products/data-loss-prevention/">Data Loss Prevention&nbsp;(DLP)</a></li>
+                                                <li><a href="https://versa-networks.com/products/remote-browser-isolation/">Remote Browser Isolation&nbsp;(RBI)</a></li>
+                                                <li class="pe-5"><a href="https://versa-networks.com/products/versa-digital-experience-monitoring-dem/">Digital Experience Monitoring (DEM)</a></li>
+                                                <li class="pe-5"><a href="https://versa-networks.com/products/versa-saas-security-posture-management/">SaaS Security Posture Management (SSPM)</a></li>
+                                                <li><a href="https://versa-networks.com/products/versa-zero-trust-premises/">Zero Trust - Premises</a></li>
+                                            </ul>
+                                        </div></div>
+                                        <div class="col"><div class="col-megamenu">
+                                            <span class="title text-rich-black d-block">Advanced Security</span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://versa-networks.com/products/next-generation-firewall/">Next Generation Firewall&nbsp;(NGFW)</a></li>
+                                                <li><a href="https://versa-networks.com/products/cloud-firewall/">Cloud Firewall</a></li>
+                                                <li><a href="https://versa-networks.com/products/versa-iot/">IoT Security</a></li>
+                                                <li><a href="https://versa-networks.com/products/versa-advanced-threat-protection/">Advanced Threat Protection&nbsp;(ATP)</a></li>
+                                                <li><a href="https://versa-networks.com/products/ueba/">User Entity Behavior Analytics (UEBA)</a></li>
+                                                <li><a href="https://versa-networks.com/products/ips/">Intrusion Protection System&nbsp;(IPS)</a></li>
+                                                <li><a href="https://versa-networks.com/products/zero-trust-everywhere/">Zero Trust Everywhere</a></li>
+                                                <li><a href="https://versa-networks.com/products/genai-firewall/">GenAI Firewall</a></li>
+                                                <li><a href="https://versa-networks.com/products/zero-trust-mcp-server/">Zero Trust MCP Server</a></li>
+                                                <li><a href="https://versa-networks.com/products/inbound-sse/">Inbound SSE</a></li>
+                                            </ul>
+                                        </div></div>
+                                        <div class="col"><div class="col-megamenu">
+                                            <span class="title text-rich-black d-block">Secure Networking</span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://versa-networks.com/products/sd-wan/">Secure SD-WAN</a></li>
+                                                <li><a href="https://versa-networks.com/products/next-generation-firewall/">Next Generation Firewall&nbsp;(NGFW)</a></li>
+                                                <li><a href="https://versa-networks.com/products/versa-sd-lan/">Secure SD-LAN</a></li>
+                                                <li><a href="https://versa-networks.com/products/sd-nic/">Secure SD-NIC</a></li>
+                                                <li><a href="https://versa-networks.com/products/routing/">Routing</a></li>
+                                                <li><a href="https://versa-networks.com/solutions/lean-it/">SD-WAN for Lean IT</a></li>
+                                            </ul>
+                                        </div></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li id="solutions-nav-link" class="nav-item dropdown has-megamenu">
+                                <a class="nav-link dropdown-toggle text-uppercase" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside"><span>Solutions</span></a>
+                                <div class="dropdown-menu megamenu" role="menu">
+                                    <div  class="row">
+                                        <div class="col"><div class="col-megamenu">
+                                            <span class="title text-azure-blue d-block">Solution Central</span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://versa-networks.com/solutions/pervasive-security/">Pervasive Security</a></li>
+                                                <li><a href="https://versa-networks.com/solutions/intelligent-edge/">Intelligent Edge</a></li>
+                                                <li><a href="https://versa-networks.com/solutions/achieve-zero-trust-access-across-the-enterprise/">Enable Zero Trust</a></li>
+                                                <li><a href="https://versa-networks.com/solutions/vpn-replacement/">Replace Your VPN</a></li>
+                                                <li><a href="https://versa-networks.com/solutions/refresh-your-firewall/">Refresh Your Firewalls</a></li>
+                                                <li><a href="https://versa-networks.com/solutions/accelerate-new-site-deployments-with-sd-wan/">Accelerate New Site Deployments</a></li>
+                                                <li><a href="https://versa-networks.com/solutions/modernize-sd-wan-for-unified-security-and-control/">Modernize SD-WAN</a></li>
+                                                <li><a href="https://versa-networks.com/solutions/protect-your-data/">Protect Your Data</a></li>
+                                                <li><a href="https://versa-networks.com/solutions/secure-genai-use/">Secure GenAI Use</a></li>
+                                                <li><a href="https://versa-networks.com/solutions/secure-iot-devices/">Secure Your IoT Devices</a></li>
+                                                <li><a href="https://versa-networks.com/solutions/simplify-ma-with-versa-sd-wan/">Simplify M&amp;As</a></li>
+                                                <li><a href="https://versa-networks.com/solutions/transform-your-lan/">Transform your LAN</a></li>
+                                                <li><a href="https://versa-networks.com/solutions/lower-your-tco/">Lower your TCO</a></li>
+                                            </ul>
+                                        </div></div>
+                                        <div class="col-auto">
+                                            <span><a class="title text-rich-black d-block" href="https://versa-networks.com/solutions/industries/">Industry Solutions</a></span>
+                                            <div class="row">
+                                                <div class="col"><div class="col-megamenu">
+                                                    <p class="subtitle">Tech &amp; Telecom</p>
+                                                    <ul class="list-unstyled">
+                                                        <li><a href="https://versa-networks.com/solutions/industries/satellite-isp/">Satellite ISP</a></li>
+                                                        <li><a href="https://versa-networks.com/solutions/industries/technology/">Technology</a></li>
+                                                    </ul>
+                                                    <p class="subtitle text-nowrap pt-2">Public &amp; Infrastructure</p>
+                                                    <ul class="list-unstyled">
+                                                        <li><a href="https://versa-networks.com/solutions/industries/oil-gas/">Oil &amp; Gas</a></li>
+                                                        <li><a href="https://versa-networks.com/solutions/industries/education/">Education</a></li>
+                                                        <li><a href="https://versa-networks.com/solutions/industries/federal-government/">Federal Government</a></li>
+                                                        <li><a href="https://versa-networks.com/solutions/industries/public-sector/">Public Sector</a></li>
+                                                        <li><a href="https://versa-networks.com/solutions/industries/transportation/">Transportation</a></li>
+                                                    </ul>
+                                                </div></div>
+                                                <div class="col"><div class="col-megamenu">
+                                                    <p class="subtitle">Professional Services</p>
+                                                    <ul class="list-unstyled">
+                                                        <li><a href="https://versa-networks.com/solutions/industries/architecture/">Architecture</a></li>
+                                                        <li><a href="https://versa-networks.com/solutions/industries/engineering-construction/" class="text-nowrap">Engineering &amp; Construction</a></li>
+                                                        <li><a href="https://versa-networks.com/solutions/industries/financial-services/">Financial Services</a></li>
+                                                        <li><a href="https://versa-networks.com/solutions/industries/legal/">Legal</a></li>
+                                                    </ul>
+                                                    <p class="subtitle text-nowrap pt-2">Services</p>
+                                                    <ul class="list-unstyled">
+                                                        <li><a href="https://versa-networks.com/solutions/industries/healthcare/">Healthcare</a></li>
+                                                        <li><a href="https://versa-networks.com/solutions/industries/hospitality">Hospitality</a></li>
+                                                        <li><a href="https://versa-networks.com/solutions/industries/retail/">Retail</a></li>
+                                                        <li><a href="https://versa-networks.com/solutions/industries/manufacturing/">Manufacturing</a></li>
+                                                    </ul>
+                                                </div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li id="customers-nav-link" class="nav-item dropdown has-megamenu">
+                                <a class="nav-link dropdown-toggle text-uppercase" href="https://versa-networks.com/customers/"><span>Customers</span></a>
+                            </li>
+                            <li id="partners-nav-link" class="nav-item dropdown has-megamenu">
+                                <a class="nav-link dropdown-toggle text-uppercase" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside"><span>Partners</span></a>
+                                <div class="dropdown-menu megamenu" role="menu">
+                                    <div class="row">
+                                        <div class="col"><div class="col-megamenu">
+                                            <span class="title text-azure-blue d-block">Partner Central</span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://versa-networks.com/partners/">Partner Overview</a></li>
+                                                <li><a href="https://versa-networks.com/partners/var-partners">VAR Partners</a></li>
+                                                <li><a href="https://versa-networks.com/partners/msp-partners">MSP Partners</a></li>
+                                                <li><a href="https://versa-networks.com/partners/technology-partners">Technology Partners</a></li>
+                                            </ul>
+                                        </div></div>
+                                        <div class="col-auto"><div class="col-megamenu">
+                                            <span class="title text-rich-black d-block">Partner Tools</span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://partners.versa-networks.com/">Partner Portal Login</a></li>
+                                                <li><a href="https://versa-networks.com/partners/find-a-partner/">Find a Partner</a></li>
+                                                <li><a href="https://versa-networks.com/partners/become-a-partner/">Become a Partner</a></li>
+                                            </ul>
+                                        </div></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li id="resources-nav-link" class="nav-item dropdown has-megamenu">
+                                <a class="nav-link dropdown-toggle text-uppercase" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside"><span>Resources</span></a>
+                                <div class="dropdown-menu megamenu" role="menu">
+                                    <div class="row g-3">
+                                        <div class="col"><div class="col-megamenu language-exclusion">
+                                            <h6 class="title text-azure-blue d-block" style="padding-top:3px;padding-bottom:18px;">Why Versa</h6>
+                                            <ul class="list-unstyled">
+                                                <li><a class="text-nowrap" href="https://versa-networks.com/versa-vs-netskope/">Versa vs Netskope</a></li>
+                                                <li><a class="text-nowrap" href="https://versa-networks.com/versa-vs-palo-alto-networks/">Versa vs Palo Alto</a></li>
+                                                <li><a href="https://versa-networks.com/versa-vs-fortinet/">Versa vs Fortinet</a></li>
+                                                <li><a href="https://versa-networks.com/versa-vs-cato/">Versa vs Cato</a></li>
+                                                <li><a href="https://versa-networks.com/versa-vs-zscaler/">Versa vs Zscaler</a></li>
+                                                <li><a href="https://versa-networks.com/versa-vs-cisco/">Versa vs Cisco</a></li>
+                                            </ul>
+                                        </div></div>
+                                        <div class="col"><div class="col-megamenu">
+                                            <span class="title text-azure-blue d-block">Resource Central</span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://versa-networks.com/resources/">What's New</a></li>
+                                                <li><a href="https://versa-networks.com/resources/newsletters/">Newsletters</a></li>
+                                                <li><a href="https://versa-networks.com/resources/reports/">Analyst Reports</a></li>
+                                                <li><a href="https://versa-networks.com/resources/videos/">Videos</a></li>
+                                                <li><a href="https://versa-networks.com/resources/datasheets/">Datasheets</a></li>
+                                                <li><a href="https://versa-networks.com/resources/solution-briefs/">Solution Briefs</a></li>
+                                                <li class="text-nowrap"><a href="https://versa-networks.com/resources/white-papers/">White Papers &amp; E-Books</a></li>
+                                                <li><a href="https://versa-networks.com/resources/product-walkthrough/">Product Walkthroughs</a></li>
+                                            </ul>
+                                        </div></div>
+                                        <div class="col"><div class="col-megamenu">
+                                            <span class="title text-rich-black d-block">Events</span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://versa-networks.com/news/events/">Upcoming Events</a></li>
+                                                <li><a href="https://versa-networks.com/news/events/archive/">Past Events</a></li>
+                                                <li><a href="https://versa-networks.com/resources/webinars/">Webinars</a></li>
+                                                <li><a href="https://versa-networks.com/versatility-2026/">Versatility 2026</a></li>
+                                            </ul>
+                                        </div></div>
+                                        <div class="col"><div class="col-megamenu">
+                                            <span class="title text-rich-black d-block">For Versa Customers</span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://versa-networks.com/customers/support/">Support Options</a></li>
+                                                <li class="text-nowrap"><a href="https://docs.versa-networks.com/">Product Documentation</a></li>
+                                                <li><a href="https://academy.versa-networks.com/">Versa Academy</a></li>
+                                                <li class="text-nowrap"><a href="https://versa-networks.com/customers/implementation-guides/">Implementation Guides</a></li>
+                                            </ul>
+                                        </div></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li id="about-nav-link" class="nav-item dropdown has-megamenu">
+                                <a class="nav-link dropdown-toggle text-uppercase" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside"><span>Company</span></a>
+                                <div class="dropdown-menu megamenu" role="menu" style="width:800px;">
+                                    <div class="row">
+                                        <div class="col"><div class="col-megamenu">
+                                            <span class="title text-azure-blue d-block">Versa Central</span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://versa-networks.com/about/">Company Overview</a></li>
+                                                <li><a href="https://versa-networks.com/about/leadership/">Leadership Team</a></li>
+                                                <li><a href="https://versa-networks.com/about/investors/">Our Investors</a></li>
+                                                <li><a href="https://versa-networks.com/about/awards/">Awards</a></li>
+                                                <li><a href="https://versa-networks.com/contact/">Contact Us</a></li>
+                                            </ul>
+                                        </div></div>
+                                        <div class="col"><div class="col-megamenu">
+                                            <span><a class="title text-rich-black d-block" href="https://versa-networks.com/news/">Versa In The News</a></span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://versa-networks.com/news/">Media Coverage</a></li>
+                                                <li><a href="https://versa-networks.com/news/">Press Releases</a></li>
+                                                <li><a href="https://versa-networks.com/news/2023/coverage/">Archived Media Coverage</a></li>
+                                                <li><a href="https://versa-networks.com/news/2023/">Archived Press Releases</a></li>
+                                            </ul>
+                                        </div></div>
+                                        <div class="col"><div class="col-megamenu">
+                                            <span><a class="title text-rich-black d-block" href="https://versa-networks.com/careers/">Careers At Versa</a></span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://versa-networks.com/careers/cultural-values/">Cultural Values</a></li>
+                                                <li><a href="https://versa-networks.com/careers/life-at-versa/">Life At Versa</a></li>
+                                                <li><a href="https://versa-networks.com/careers/openings/">Current Openings</a></li>
+                                            </ul>
+                                        </div></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li id="sase-nav-link" class="nav-item dropdown has-megamenu">
+                                <a class="nav-link dropdown-toggle text-uppercase" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside"><span>SASE</span></a>
+                                <div class="dropdown-menu megamenu" role="menu">
+                                    <div class="row g-3">
+                                        <div class="col"><div class="col-megamenu">
+                                            <span class="title text-rich-black d-block">SASE Overview</span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://versa-networks.com/sase/">What is Secure Access Service Edge (SASE)?</a></li>
+                                                <li><a href="https://versa-networks.com/sase/architecture/">A Quick Introduction to SASE Architecture</a></li>
+                                                <li><a href="https://versa-networks.com/sase/components/">SASE Components: An Overview</a></li>
+                                                <li><a href="https://versa-networks.com/sase/secure-web-gateway/">What is Secure Web Gateway?</a></li>
+                                                <li><a href="https://versa-networks.com/sase/ztna/">What is ZTNA?</a></li>
+                                                <li><a href="https://versa-networks.com/sase/casb/">What is CASB?</a></li>
+                                            </ul>
+                                        </div></div>
+                                        <div class="col"><div class="col-megamenu">
+                                            <span class="title text-rich-black d-block">Benefits of SASE</span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://versa-networks.com/sase/why-sase/">Why is SASE Necessary?</a></li>
+                                                <li><a href="https://versa-networks.com/sase/how-it-helps/">How Can SASE Help You and Your Organization?</a></li>
+                                                <li><a href="https://versa-networks.com/sase/5g/">Network Transformation with 5G</a></li>
+                                                <li><a href="https://versa-networks.com/sase/benefits/">SASE Benefits</a></li>
+                                                <li><a href="https://versa-networks.com/sase/challenges/">SASE Challenges</a></li>
+                                            </ul>
+                                        </div></div>
+                                        <div class="col"><div class="col-megamenu">
+                                            <span class="title text-rich-black d-block">Adopting SASE</span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://versa-networks.com/sase/adoption/">How to Adopt SASE</a></li>
+                                                <li><a href="https://versa-networks.com/sase/who-should-use-sase/">What Kind of Company Should Use SASE?</a></li>
+                                            </ul>
+                                        </div></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li id="sd-wan-nav-link" class="nav-item dropdown has-megamenu">
+                                <a class="nav-link dropdown-toggle text-uppercase" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside"><span>SD-WAN</span></a>
+                                <div class="dropdown-menu megamenu" role="menu">
+                                    <div class="row g-3">
+                                        <div class="col"><div class="col-megamenu">
+                                            <span class="title text-rich-black d-block">SD-WAN Overview</span>
+                                            <ul class="list-unstyled">
+                                                <li><a href="https://versa-networks.com/sd-wan/">What is SD-WAN?</a></li>
+                                                <li><a href="https://versa-networks.com/sd-wan/technology/">SD-WAN Technology</a></li>
+                                            </ul>
+                                        </div></div>
+                                        <div class="col"><div class="col-megamenu">
+                                            <span class="title text-rich-black d-block">Deploying SD-WAN</span>
+                                            <ul class="list-unstyled">
+                                                <li class="text-nowrap"><a href="https://versa-networks.com/sd-wan/tutorial/">SD-WAN Management</a></li>
+                                                <li><a href="https://versa-networks.com/sd-wan/vendor/">Choosing a Vendor</a></li>
+                                            </ul>
+                                        </div></div>
+                                        <div class="col"><div class="col-megamenu">
+                                            <span class="title text-rich-black d-block">SD-WAN Resources</span>
+                                            <ul class="list-unstyled">
+                                                <li class="text-nowrap"><a href="https://versa-networks.com/sd-wan/hybrid-wan/">What is Hybrid WAN?</a></li>
+                                                <li><a href="https://versa-networks.com/sd-wan/cloud-wan/">What is Cloud WAN?</a></li>
+                                                <li><a href="https://versa-networks.com/sd-wan/ids-ips/">IDS vs IPS</a></li>
+                                            </ul>
+                                        </div></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li id="demo-nav-link" class="nav-item ms-2">
+                                <a class="v-btn-variant v-btn-variant--small border-radius-8" href="https://versa-networks.com/demo/">
+                                    <div class="text-center v-btn-variant-wrapper text-uppercase text-rich-black text-nowrap">Get a demo<span class="chevron-angled-right"></span></div>
+                                    <div class="d-flex flex-column justify-content-between"><div class="flex-1"></div><div class="v-btn-edge"></div></div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Mobile offcanvas -->
+                <div class="offcanvas offcanvas-end d-block d-lg-none" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                    <div class="offcanvas-header">
+                        <button type="button" class="btn-close me-3" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body d-flex flex-column h-100 justify-content-between pb-5">
+                        <div id="carouselExampleIndicators" class="carousel slide">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex d-lg-none mt-5">
+                                        <li><button class="btn btn-secondary dropdown-toggle text-uppercase" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1">Products</button></li>
+                                        <li><button class="btn btn-secondary dropdown-toggle text-uppercase" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2">Solutions</button></li>
+                                        <li><a href="https://versa-networks.com/customers"><button class="btn btn-secondary dropdown-toggle text-uppercase" type="button">Customers</button></a></li>
+                                        <li><button class="btn btn-secondary dropdown-toggle text-uppercase" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4">Partners</button></li>
+                                        <li><button class="btn btn-secondary dropdown-toggle text-uppercase" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="5">Resources</button></li>
+                                        <li><button class="btn btn-secondary dropdown-toggle text-uppercase" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="6">Company</button></li>
+                                        <li><button class="btn btn-secondary dropdown-toggle text-uppercase" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="7">SASE</button></li>
+                                        <li><button class="btn btn-secondary dropdown-toggle text-uppercase" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="8">SD-WAN</button></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="subtitle text-uppercase"><span class="arrow-left-grey-icon"></span>Products</a>
+                                    <div class="navbar-nav me-auto mb-2 mt-5 mb-lg-0 d-flex d-lg-none ps-35">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="9"><span class="text-azure-blue">VersaONE Platform</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="10"><span class="text-rich-black">SASE</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="11"><span class="text-rich-black">Security Service Edge</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="12"><span class="text-rich-black">Advanced Security</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="13"><span class="text-rich-black">Secure Networking</span></button>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="subtitle text-uppercase"><span class="arrow-left-grey-icon"></span>Solutions</a>
+                                    <div class="navbar-nav me-auto mb-2 mt-5 mb-lg-0 d-flex d-lg-none ps-35">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="14"><span class="text-azure-blue">Solution Central</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="15"><span class="text-rich-black">Industry Solutions</span></button>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="subtitle text-uppercase"><span class="arrow-left-grey-icon"></span>Customers</a>
+                                    <div class="navbar-nav me-auto mb-2 mt-5 mb-lg-0 d-flex d-lg-none ps-35">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="16"><span class="text-azure-blue">Customer Central</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="17"><span class="text-rich-black">Case Studies</span></button>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="subtitle text-uppercase"><span class="arrow-left-grey-icon"></span>Partners</a>
+                                    <div class="navbar-nav me-auto mb-2 mt-5 mb-lg-0 d-flex d-lg-none ps-35">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="18"><span class="text-azure-blue">Partner Central</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="20"><span class="text-rich-black">Partner Tools</span></button>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="subtitle text-uppercase"><span class="arrow-left-grey-icon"></span>Resources</a>
+                                    <div class="navbar-nav me-auto mb-2 mt-5 mb-lg-0 d-flex d-lg-none ps-35">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="41"><span class="text-azure-blue">Why Versa</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="21"><span class="text-rich-black">Resource Central</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="22"><span class="text-rich-black">Events</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="23"><span class="text-rich-black">For Versa Customers</span></button>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="subtitle text-uppercase"><span class="arrow-left-grey-icon"></span>Company</a>
+                                    <div class="navbar-nav me-auto mb-2 mt-5 mb-lg-0 d-flex d-lg-none ps-35">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="30"><span class="text-azure-blue">Versa Central</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="31"><span class="text-rich-black">Versa in the News</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="32"><span class="text-rich-black">Careers at Versa</span></button>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="subtitle text-uppercase"><span class="arrow-left-grey-icon"></span>SASE</a>
+                                    <div class="navbar-nav me-auto mb-2 mt-5 mb-lg-0 d-flex d-lg-none ps-35">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="24"><span class="text-azure-blue">SASE Overview</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="25"><span class="text-rich-black">Benefits of SASE</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="26"><span class="text-rich-black">Adopting SASE</span></button>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="subtitle text-uppercase"><span class="arrow-left-grey-icon"></span>SD-WAN</a>
+                                    <div class="navbar-nav me-auto mb-2 mt-5 mb-lg-0 d-flex d-lg-none ps-35">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="27"><span class="text-azure-blue">SD-WAN Overview</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="28"><span class="text-rich-black">Deploying SD-WAN</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="29"><span class="text-rich-black">SD-WAN Resources</span></button>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">VersaONE Platform</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/platform/">VersaONE Platform</a></li>
+                                        <li><a href="https://versa-networks.com/products/">Architecture</a></li>
+                                        <li><a href="https://versa-networks.com/products/versaai/">Versa AI</a></li>
+                                        <li><a href="https://versa-networks.com/products/versa-sase-fabric/">SASE Fabric</a></li>
+                                        <li><a href="https://versa-networks.com/products/components/">Hardware</a></li>
+                                        <li><a href="https://versa-networks.com/products/versa-sase-client/">SASE Client</a></li>
+                                        <li><a href="https://versa-networks.com/products/deployment/">Deployment Options</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">SASE</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/products/unified-sase/">Unified SASE</a></li>
+                                        <li><a href="https://versa-networks.com/products/vsaf/">Secure Access Fabric</a></li>
+                                        <li><a href="https://versa-networks.com/products/sase-on-sim/">SASE on SIM for Mobile Operators</a></li>
+                                        <li><a href="https://versa-networks.com/products/versa-private-sase/">Private SASE</a></li>
+                                        <li><a href="https://versa-networks.com/products/sovereign-sase/">Sovereign SASE</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Security Service Edge</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/products/security-service-edge/">Security Service Edge</a></li>
+                                        <li><a href="https://versa-networks.com/products/ztna/">Zero Trust Network Access (ZTNA)</a></li>
+                                        <li><a href="https://versa-networks.com/products/casb/">Cloud Access Security Broker (CASB)</a></li>
+                                        <li><a href="https://versa-networks.com/products/swg/">Secure Web Gateway (SWG)</a></li>
+                                        <li><a href="https://versa-networks.com/products/data-loss-prevention/">Data Loss Prevention (DLP)</a></li>
+                                        <li><a href="https://versa-networks.com/products/remote-browser-isolation/">Remote Browser Isolation (RBI)</a></li>
+                                        <li class="pe-5"><a href="https://versa-networks.com/products/versa-digital-experience-monitoring-dem/">Digital Experience Monitoring (DEM)</a></li>
+                                        <li class="pe-5"><a href="https://versa-networks.com/products/versa-saas-security-posture-management/">SaaS Security Posture Management (SSPM)</a></li>
+                                        <li><a href="https://versa-networks.com/products/versa-zero-trust-premises/">Zero Trust - Premises</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Advanced Security</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/products/next-generation-firewall/">Next Generation Firewall (NGFW)</a></li>
+                                        <li><a href="https://versa-networks.com/products/cloud-firewall/">Cloud Firewall</a></li>
+                                        <li><a href="https://versa-networks.com/products/versa-iot/">IoT Security</a></li>
+                                        <li><a href="https://versa-networks.com/products/versa-advanced-threat-protection/">Advanced Threat Protection (ATP)</a></li>
+                                        <li><a href="https://versa-networks.com/products/ueba/">User Entity Behavior Analytics (UEBA)</a></li>
+                                        <li><a href="https://versa-networks.com/products/ips/">Intrusion Protection System (IPS)</a></li>
+                                        <li><a href="https://versa-networks.com/products/zero-trust-everywhere/">Zero Trust Everywhere</a></li>
+                                        <li><a href="https://versa-networks.com/products/genai-firewall/">GenAI Firewall</a></li>
+                                        <li><a href="https://versa-networks.com/products/zero-trust-mcp-server/">Zero Trust MCP Server</a></li>
+                                        <li><a href="https://versa-networks.com/products/inbound-sse/">Inbound SSE</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Secure Networking</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/products/sd-wan/">Secure SD-WAN</a></li>
+                                        <li><a href="https://versa-networks.com/products/next-generation-firewall/">Next Generation Firewall (NGFW)</a></li>
+                                        <li><a href="https://versa-networks.com/products/versa-sd-lan/">Secure SD-LAN</a></li>
+                                        <li><a href="https://versa-networks.com/products/sd-nic/">Secure SD-NIC</a></li>
+                                        <li><a href="https://versa-networks.com/products/routing/">Routing</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/lean-it/">SD-WAN for Lean IT</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Solution Central</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/solutions/pervasive-security/">Pervasive Security</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/intelligent-edge/">Intelligent Edge</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/achieve-zero-trust-access-across-the-enterprise/">Enable Zero Trust</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/vpn-replacement/">Replace Your VPN</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/refresh-your-firewall/">Refresh Your Firewalls</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/accelerate-new-site-deployments-with-sd-wan/">Accelerate New Site Deployments</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/modernize-sd-wan-for-unified-security-and-control/">Modernize SD-WAN</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/protect-your-data/">Protect Your Data</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/secure-genai-use/">Secure GenAI Use</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/secure-iot-devices/">Secure Your IoT Devices</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/simplify-ma-with-versa-sd-wan/">Simplify M&amp;As</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/transform-your-lan/">Transform your LAN</a></li>
+            
+                                        <li><a href="https://versa-networks.com/solutions/lower-your-tco/">Lower your TCO</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Industry Solutions</span></a>
+                                    <div class="navbar-nav me-auto mb-2 mt-5 mb-lg-0 d-flex d-lg-none ps-35">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="33"><span class="text-rich-black">Tech &amp; Telecom</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="34"><span class="text-rich-black">Public &amp; Infrastructure</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="35"><span class="text-rich-black">Professional Service</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="36"><span class="text-rich-black">Consumer Service</span></button>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Customer Central</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/customers/">Our Customers</a></li>
+                                        <li><a href="https://versa-networks.com/customers/acclaim/">Customer Acclaim</a></li>
+                                        <li><a href="https://versa-networks.com/customers/videos/">Customer Videos</a></li>
+                                        <li><a href="https://versa-networks.com/customers/support/">Customer Support</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Case Studies</span></a>
+                                    <div class="navbar-nav me-auto mb-2 mt-5 mb-lg-0 d-flex d-lg-none ps-35">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="37"><span class="text-rich-black">Financial Services</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="38"><span class="text-rich-black">Technology &amp; Media</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="39"><span class="text-rich-black">Retail &amp; Healthcare</span></button>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="40"><span class="text-rich-black">Specialized Industries</span></button>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Partner Central</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/partners/">Partner Overview</a></li>
+                                        <li><a href="https://versa-networks.com/partners/var-partners">VAR Partners</a></li>
+                                        <li><a href="https://versa-networks.com/partners/msp-partners">MSP Partners</a></li>
+                                        <li><a href="https://versa-networks.com/partners/technology-partners">Technology Partners</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Our Technology Partners</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/partners/technology-partners/">Technology Partners</a></li>
+                                        <li><a href="https://versa-networks.com/partners/microsoft/">Microsoft</a></li>
+                                        <li><a href="https://versa-networks.com/partners/google/">Google Cloud</a></li>
+                                        <li><a href="https://versa-networks.com/partners/dell-technologies/">Dell Technologies</a></li>
+                                        <li><a href="https://versa-networks.com/partners/aws/">Amazon AWS</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Partner Tools</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://partners.versa-networks.com/">Partner Portal Login</a></li>
+                                        <li><a href="https://versa-networks.com/partners/find-a-partner/">Find a Partner</a></li>
+                                        <li><a href="https://versa-networks.com/partners/become-a-partner/">Become a Partner</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="5" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Resource Central</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/resources/">What's New</a></li>
+                                        <li><a href="https://versa-networks.com/resources/newsletters/">Newsletters</a></li>
+                                        <li><a href="https://versa-networks.com/resources/reports/">Analyst Reports</a></li>
+                                        <li><a href="https://versa-networks.com/resources/videos/">Videos</a></li>
+                                        <li><a href="https://versa-networks.com/resources/datasheets/">Datasheets</a></li>
+                                        <li><a href="https://versa-networks.com/resources/solution-briefs/">Solution Briefs</a></li>
+                                        <li><a href="https://versa-networks.com/resources/white-papers/">White Papers &amp; E-Books</a></li>
+                                        <li><a href="https://versa-networks.com/resources/product-walkthrough/">Product Walkthroughs</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="5" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Events</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/news/events/">Upcoming Events</a></li>
+                                        <li><a href="https://versa-networks.com/news/events/archive/">Past Events</a></li>
+                                        <li><a href="https://versa-networks.com/resources/webinars/">Webinars</a></li>
+                                        <li><a href="https://versa-networks.com/versatility-2026/">Versatility 2026</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="5" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">For Versa Customers</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/customers/support/">Support Options</a></li>
+                                        <li><a href="https://docs.versa-networks.com/">Product Documentation</a></li>
+                                        <li><a href="https://academy.versa-networks.com/">Versa Academy</a></li>
+                                        <li class="text-nowrap"><a href="https://versa-networks.com/customers/implementation-guides/">Implementation Guides</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="7" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">SASE Overview</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/sase/">What is Secure Access Service Edge (SASE)?</a></li>
+                                        <li><a href="https://versa-networks.com/sase/architecture/">A Quick Introduction to SASE Architecture</a></li>
+                                        <li><a href="https://versa-networks.com/sase/components/">SASE Components: An Overview</a></li>
+                                        <li><a href="https://versa-networks.com/sase/secure-web-gateway/">What is Secure Web Gateway?</a></li>
+                                        <li><a href="https://versa-networks.com/sase/ztna/">What is ZTNA?</a></li>
+                                        <li><a href="https://versa-networks.com/sase/casb/">What is CASB?</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="7" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Benefits of SASE</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/sase/why-sase/">Why is SASE Necessary?</a></li>
+                                        <li><a href="https://versa-networks.com/sase/how-it-helps/">How Can SASE Help You and Your Organization?</a></li>
+                                        <li><a href="https://versa-networks.com/sase/5g/">Network Transformation with 5G</a></li>
+                                        <li><a href="https://versa-networks.com/sase/benefits/">SASE Benefits</a></li>
+                                        <li><a href="https://versa-networks.com/sase/challenges/">SASE Challenges</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="7" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Adopting SASE</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/sase/adoption/">How to Adopt SASE</a></li>
+                                        <li><a href="https://versa-networks.com/sase/who-should-use-sase/">What Kind of Company Should Use SASE?</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="8" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">SD-WAN Overview</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/sd-wan/">What is SD-WAN?</a></li>
+                                        <li><a href="https://versa-networks.com/sd-wan/technology/">SD-WAN Technology</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="8" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Deploying SD-WAN</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/sd-wan/tutorial/">SD-WAN Management</a></li>
+                                        <li><a href="https://versa-networks.com/sd-wan/vendor/">Choosing a Vendor</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="8" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">SD-WAN Resources</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/sd-wan/hybrid-wan/">What is Hybrid WAN?</a></li>
+                                        <li><a href="https://versa-networks.com/sd-wan/cloud-wan/">What is Cloud WAN?</a></li>
+                                        <li><a href="https://versa-networks.com/sd-wan/ids-ips/">IDS vs IPS</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="6" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Versa Central</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/about/">Company Overview</a></li>
+                                        <li><a href="https://versa-networks.com/about/leadership/">Leadership Team</a></li>
+                                        <li><a href="https://versa-networks.com/about/investors/">Our Investors</a></li>
+                                        <li><a href="https://versa-networks.com/about/awards/">Awards</a></li>
+                                        <li><a href="https://versa-networks.com/contact/">Contact Us</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="6" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Versa In The News</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/news/">Versa In The News</a></li>
+                                        <li><a href="https://versa-networks.com/news/2025/coverage/">Media Coverage</a></li>
+                                        <li><a href="https://versa-networks.com/news/2025/">Press Releases 2025</a></li>
+                                        <li><a href="https://versa-networks.com/news/2024/">Press Releases 2024</a></li>
+                                        <li><a href="https://versa-networks.com/news/2023/">Press Releases 2023</a></li>
+                                        <li><a href="https://versa-networks.com/news/2022/">Press Releases 2022</a></li>
+                                        <li><a href="https://versa-networks.com/news/2021/">Press Releases 2021</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="6" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Careers at Versa</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/careers/">Careers at Versa</a></li>
+                                        <li><a href="https://versa-networks.com/careers/cultural-values/">Cultural Values</a></li>
+                                        <li><a href="https://versa-networks.com/careers/life-at-versa/">Life At Versa</a></li>
+                                        <li><a href="https://versa-networks.com/careers/openings/">Current Openings</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="15" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Tech &amp; Telecom</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/solutions/industries/satellite-isp/">Satellite ISP</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/industries/technology/">Technology</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="15" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Public &amp; Infrastructure</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/solutions/industries/oil-gas/">Oil &amp; Gas</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/industries/federal-government/">Federal Government</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/industries/healthcare/">Healthcare</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/industries/public-sector/">Public Sector</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/industries/transportation/">Transportation</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="15" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Professional Services</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/solutions/industries/architecture/">Architecture</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/industries/engineering-construction/" class="text-nowrap">Engineering &amp; Construction</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/industries/financial-services/">Financial Services</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/industries/legal/">Legal</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="15" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Consumer Services</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/solutions/industries/education/">Education</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/industries/hospitality">Hospitality</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/industries/retail/">Retail</a></li>
+                                        <li><a href="https://versa-networks.com/solutions/industries/manufacturing/">Manufacturing</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="17" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Financial Services</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/documents/case-studies/financial-services.pdf">Fortune 500 Financial Services Company</a></li>
+                                        <li><a href="https://versa-networks.com/documents/case-studies/global-financial-services-firm.pdf">Global Financial Services Firm</a></li>
+                                        <li><a href="https://versa-networks.com/documents/case-studies/global-credit-card-payments-company.pdf">Global Credit Card Payments Company</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="17" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Technology &amp; Media</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/documents/case-studies/cloud-saas-digital-marketing-firm.pdf">Cloud/SaaS Digital Marketing Firm</a></li>
+                                        <li><a href="https://versa-networks.com/documents/case-studies/global-satellite-provider.pdf">Global Satellite Provider</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="17" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Retail &amp; Healthcare</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/documents/case-studies/global-retailer.pdf">Global Retailer</a></li>
+                                        <li><a href="https://versa-networks.com/documents/case-studies/global-pharmaceutical-company.pdf">Global Pharmaceutical Company</a></li>
+                                        <li><a href="https://versa-networks.com/documents/case-studies/large-food-retailer.pdf">Large Food Retailer</a></li>
+                                        <li><a href="https://versa-networks.com/documents/case-studies/dental-healthcare.pdf">National Dental Practice</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="17" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Specialized Industries</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/documents/case-studies/mclaren-racing-limited.pdf">McLaren Racing Limited</a></li>
+                                        <li><a href="https://versa-networks.com/documents/case-studies/top-energy-firm.pdf">Top Energy Firm</a></li>
+                                    </ul>
+                                </div>
+                                <div class="carousel-item">
+                                    <a href="#" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="5" class="subtitle text-rich-black"><span class="arrow-left-grey-icon"></span><span class="text-rich-black">Why Versa</span></a>
+                                    <ul class="list-unstyled mt-5 ps-35">
+                                        <li><a href="https://versa-networks.com/versa-vs-netskope/">Versa vs Netskope</a></li>
+                                        <li><a href="https://versa-networks.com/versa-vs-palo-alto-networks/">Versa vs Palo Alto</a></li>
+                                        <li><a href="https://versa-networks.com/versa-vs-fortinet/">Versa vs Fortinet</a></li>
+                                        <li><a href="https://versa-networks.com/versa-vs-cato/">Versa vs Cato</a></li>
+                                        <li><a href="https://versa-networks.com/versa-vs-zscaler/">Versa vs Zscaler</a></li>
+                                        <li><a href="https://versa-networks.com/versa-vs-cisco/">Versa vs Cisco</a></li>
+                                    </ul>
+                                </div>
+                            </div><!-- carousel-inner -->
+                        </div><!-- carousel -->
+                        <div class="d-inline-block">
+                            <div class="form-container form-1 mt-4 me-5">
+                                <form role="search" method="get" id="searchform-1" class="searchform position-relative" action="https://versa-networks.com/">
+                                    <input class="search-input-mbl me-3" type="search" value="" name="s" id="s-1" placeholder="Search">
+                                    <span class="mglass">&#9906;</span>
+                                    <input type="hidden" name="q" value="">
+                                </form>
+                            </div>
+                            <a class="v-btn-variant border-radius-8 me-3 mt-4 z-1" href="https://versa-networks.com/demo/">
+                                <div class="w-100 text-center v-btn-variant-wrapper text-nowrap">GET A DEMO<span class="chevron-angled-right"></span></div>
+                                <div class="d-flex flex-column justify-content-between"><div class="flex-1"></div><div class="v-btn-edge"></div></div>
+                            </a>
+                        </div>
+                    </div><!-- offcanvas-body -->
+                </div><!-- offcanvas -->
+            </div><!-- container -->
+        </nav>
+        <script>
+            const myOffcanvas = document.getElementById('offcanvasNavbar');
+            myOffcanvas.addEventListener('hidden.bs.offcanvas', event => {
+                document.querySelectorAll('#carouselExampleIndicators .carousel-item').forEach((el, i) => {
+                    el.classList.toggle('active', i === 0);
+                });
+            });
+        </script>
+        </div><!-- container-fluid py-3 -->
+        <!-- UPDATED NAV END -->
+    </div><!-- container-fluid p-0 m-0 -->
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var baseUrl = 'https://versa-networks.com';
+    function getLangPrefix() {
+      var path = window.location.pathname || '/';
+      if (!path.startsWith('/')) path = '/' + path;
+      var parts = path.split('/').filter(Boolean);
+      var first = parts[0] || '';
+      if (first === 'fr') return '/fr/';
+      if (first === 'es') return '/es/';
+      if (first === 'jp') return '/jp/';
+      if (first === 'de') return '/de/';
+      return '/';
+    }
+    function attachSearchHandler(formId) {
+      var form = document.getElementById(formId);
+      if (!form) return;
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        var sInput = form.elements['s'];
+        if (!sInput) return;
+        var query = sInput.value.trim();
+        if (!query) return;
+        var langPrefix = getLangPrefix();
+        var searchPath = (langPrefix === '/') ? '/search/' : langPrefix + 'search/';
+        window.location.href = baseUrl + searchPath + '?q=' + encodeURIComponent(query);
+      });
+    }
+    attachSearchHandler('searchform');
+    attachSearchHandler('searchform-1');
+  });
+</script>
+        <header  class="mt-2 mt-lg-0 mb-5 py-5 v-blog-hero" role="banner">
+            <div  class="container py-3 versa-blog">
+                <span><a href="https://versa-networks.com/blog/">Versa Blog</a></span>
+            </div>
+        </header>
+    <div  class="page">
+        
+
+
+<style>
+    .single-page-subheading{
+        font-size:20px;
+    }
+    .single-page-header-para{
+       font-size: 1rem;
+       line-height: 20px;
+    }
+    .post-subtitles{
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+</style>
+
+
+
+<div  class="container" role="main">
+
+    <div class="row">
+
+         <div class="col-lg-8 px-4 px-sm-2 pe-sm-5">
+
+
+
+            
+
+
+
+
+                    <div id="post-18360" class="mb-5">
+
+                        <span class="post-category mt-3"><a href="https://versa-networks.com/blog/category/company-updates/" rel="category tag">Company Updates</a></span>
+
+                        <h1 class="post-title">Post-Quantum Cryptography (PQC) and Versa: Future-Proofing Enterprise Security Against Quantum Threats</h1>
+
+                        <div class="d-flex">
+
+                            <a href="https://versa-networks.com/blog/author/dhiraj-sehgal/"><span class="photo small"><img class="photo" src="/images/photos/photo-dhiraj-sehgal.jpg" alt="Dhiraj Sehgal" /></span></a>
+
+                            <div class="mb-3">
+
+                                <span class="single-page-subheading">By <a href="/blog/author/dhiraj-sehgal/" class="hover underhover single-page-subheading">Dhiraj Sehgal</a></span>
+                                </br>
+                                <span class="font-light single-page-header-para pt-1">Senior Director, Product Marketing<br />
+
+                                    March 12, 2025</span>
+
+                            </div>
+
+                        </div>
+
+
+
+
+
+                                <div style="padding-bottom: 12px;">
+
+                                    <div class="linkedin-combo-button">
+
+                                        <div class="linkedin-logo-wrapper">
+
+                                            in
+
+                                        </div>
+
+        
+
+                                        <div class="linkedin-divider"></div>
+
+        
+
+                                        <div class="linkedin-combo-actions">
+
+                                            <span onclick="window.open('https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fversa-networks.com%2Fblog%2Fpost-quantum-cryptography-pqc-and-versa-future-proofing-enterprise-security-against-quantum-threats%2F', '_blank')">Share</span>
+
+                                            <div class="linkedin-divider"></div>
+
+                                            <span onclick="window.open('https://www.linkedin.com/company/versa-networks/', '_blank')">Follow</span>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+
+
+
+
+
+                        
+<p class="wp-block-paragraph">With the rapid evolution of quantum computing, traditional cryptographic methods, including TLS encryption, IPsec tunnels, and key exchange mechanisms, face increasing vulnerabilities. Quantum computers can break widely used encryption algorithms, necessitating the adoption of post-quantum cryptography (PQC) solutions.</p>
+
+
+
+<p class="wp-block-paragraph">Tech giants like Google have already implemented PQC-ready encryption. Google Chrome, for example, has introduced support for X25519Kyber768, a post-quantum cipher designed to counteract quantum attacks. However, this transition poses significant challenges for enterprise security platforms, TLS proxies, and firewall systems that must process these new cryptographic protocols without disrupting business operations.</p>
+
+
+
+<h2 class="wp-block-heading post-subtitle"><strong>Enterprise Challenges in Adopting Post-Quantum Cryptography</strong></h2>
+
+
+
+<p class="wp-block-paragraph">Enterprises face certain hurdles in implementing PQC, including:</p>
+
+
+
+<ol class="wp-block-list">
+
+<li><p><strong>Compatibility issues with existing security infrastructure</strong><br>Many enterprise security solutions, including TLS proxies and firewalls, are built around conventional cryptographic algorithms. The integration of PQC methods such as X25519Kyber768 disrupts traditional decryption, inspection, and security workflows.</p></li>
+
+
+<li><p><strong>Security blind spots in encrypted traffic</strong><br>Organizations rely on security proxies for compliance enforcement, data loss prevention (DLP), and threat detection. If PQC encryption is implemented without decryption capabilities, enterprises could experience security gaps due to the inability to inspect encrypted traffic.</p></li>
+
+
+<li><p><strong>Regulatory and compliance complexities</strong><br>Many industries must adhere to stringent security standards such as FIPS 140-3, NIAP validation, and DoD encryption requirements. Ensuring compliance while integrating PQC algorithms adds another layer of complexity to IT and security teams.</p></li>
+
+
+<li><p><strong>Lack of standardized implementations</strong><br>Although NIST has endorsed Crystals-Kyber as a post-quantum cryptographic standard, full-scale adoption is still in progress. Many security vendors have yet to integrate comprehensive PQC support across encryption layers, creating interoperability challenges.</p></li>
+
+</ol>
+
+
+
+<h2 class="wp-block-heading post-subtitle"><strong>How Enterprises Can Prepare for Post-Quantum Cryptography</strong></h2>
+
+
+
+<p class="wp-block-paragraph">To facilitate the transition to PQC, organizations should consider:</p>
+
+
+
+<ol class="wp-block-list">
+
+<li><p><strong>Gradual adoption of hybrid PQC algorithms</strong><br>A phased approach is crucial for enterprises transitioning to post-quantum security. Implementing hybrid key exchange methods, such as X25519Kyber768, allows organizations to maintain backward compatibility while preparing for full PQC adoption.</p></li>
+
+
+<li><p><strong>Upgrading security infrastructure for quantum-safe encryption</strong><br>Security vendors need to upgrade their cryptographic stacks with quantum-aware TLS libraries, enhanced cryptographic APIs, and operating system updates that support FIPS-compliant PQC functions (e.g., Ubuntu 22.04 LTS).</p></li>
+
+
+<li><p><strong>Ensuring compliance and regulatory alignment</strong><br>To meet FIPS 140-3 and NIAP compliance, enterprises must verify that their PQC implementations align with evolving security regulations. This includes obtaining certifications and ensuring cryptographic agility in security platforms.</p></li>
+
+
+<li><p><strong>Phasing out legacy cryptographic algorithms</strong><br>Organizations must proactively deprecate weak encryption methods and transition to PQC-compliant alternatives, ensuring long-term cryptographic resilience.</p></li>
+
+</ol>
+
+
+
+<h2 class="wp-block-heading post-subtitle"><strong>How Versa Secures PQC Negotiations</strong></h2>
+
+
+
+<p class="wp-block-paragraph">Versa has taken a proactive approach to PQC by integrating X25519Kyber768 into its security solutions, ensuring organizations remain quantum-secure while maintaining operational efficiency.&nbsp;When the Google Chrome browser initiates a request to a web server and attempts to negotiate X25519Kyber768, the Versa platform dynamically adapts to ensure secure and uninterrupted communication.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Scenario 1:</strong> If the server rejects X25519Kyber768, VOS facilitates a re-negotiation, allowing server to select a different cipher while maintaining session security since TLS decryption is not enforced.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Scenario 2:</strong> In case where the server accepts X25519Kyber768 and TLS encryption is not enabled, VOS seamlessly forwards the encrypted session without interference.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Scenario 3:</strong> However, if Versa does not yet support decryption for this hybrid key exchange mechanism, VOS ensures connectivity by negotiating a compatible non-Kyber alternative Cipher, preserving both security and performance.&nbsp;</p>
+
+
+
+<h2 class="wp-block-heading post-subtitle"><strong>Ensuring a Smooth Transition to PQC</strong></h2>
+
+
+
+<p class="wp-block-paragraph">Versa’s quantum-ready security framework enables enterprises to transition to PQC without compromising security or business continuity. The hybrid PQC negotiation model ensures compatibility with existing cryptographic systems while preparing for full-scale post-quantum encryption.</p>
+
+
+
+<h2 class="wp-block-heading post-subtitle"><strong>Key Benefits of Versa’s PQC Strategy</strong></h2>
+
+
+
+<ul class="wp-block-list circle-check-list">
+<li><strong>Future-Proof Security</strong>: Versa aligns with emerging PQC standards to ensure resilience against quantum threats.</li>
+
+
+
+<li><strong>Seamless Enterprise Integration</strong>: Supports hybrid PQC and non-PQC environments to prevent disruptions.</li>
+
+
+
+<li><strong>Regulatory Compliance</strong>: Maintains FIPS 140-3 and NIAP validation for government and enterprise security requirements.</li>
+
+
+
+<li><strong>Operational Continuity</strong>: Ensures a smooth transition to PQC without compromising existing security frameworks.</li>
+</ul>
+
+
+
+<p class="wp-block-paragraph">As quantum computing accelerates, enterprises must future-proof their encryption strategies. Versa’s Universal SASE platform ensures a secure, compliant, and seamless transition to post-quantum cryptography.</p>
+
+
+
+<p class="v-link wp-block-paragraph"><a href="https://versa-networks.com/platform/">Click here</a> to learn how Versa’s PQC-ready solutions can help.</p>
+
+                        
+
+                         
+
+                        <div class="tags mt-2">
+
+                            <span class="regular loose"><span class="tag"><a href="https://versa-networks.com/blog/tag/compliance/" rel="tag">Compliance</a></span><span class="tag"><a href="https://versa-networks.com/blog/tag/sase/" rel="tag">SASE</a></span><span class="tag"><a href="https://versa-networks.com/blog/tag/sse/" rel="tag">SSE</a></span><span class="tag"><a href="https://versa-networks.com/blog/tag/zero-trust/" rel="tag">Zero Trust</a></span></span>
+
+                        </div>
+
+
+
+
+
+
+
+                    </div>
+
+
+
+
+
+                
+
+
+        </div>
+
+
+
+        <div class="col-lg-4">
+
+            <style>
+.recent-light{
+    font-size: 25px;
+}
+.recent-smaller-tight{
+font-size: 1.25rem;
+line-height: 22px;
+font-weight: 500;
+}
+.recent-smaller-tight-para{
+   font-size: 1rem;
+    line-height: 18px;
+}
+.sidebar-topic{
+    font-size: 1.5rem;
+    line-height: 24px;
+}
+.sidebar-topic-tag{
+    font-size: 1.5rem;
+    line-height: 24px;
+}
+
+</style>
+
+<div class="align-items-start subscribe-form-div">
+    <p class="mb-3"><b> Subscribe to the Versa Blog</b></p>
+    <div class="mb-4">
+   <script src="//pages.versa-networks.com/js/forms2/js/forms2.min.js"></script> <form id="mktoForm_1360"></form> <script>MktoForms2.loadForm("//pages.versa-networks.com", "344-OCL-048", 1360);</script>
+   </div>
+</div>
+
+
+<h4 class="light recent-light">Recent Posts</h4>
+
+
+
+
+    <hr class="semitight" />
+
+    <div class="row">
+
+        <div class="col-auto pe-0">
+
+            <a href="/blog/author/rajesh-kari/"><span class="photo smaller"><img class="photo" height="56" width="56" alt="Rajesh Kari" src="/images/photos/photo-rajesh-kari.jpg"></span></a>
+
+        </div>
+
+        <div class="col">
+
+            <h5 class="smaller tight recent-smaller-tight"><a href="https://versa-networks.com/blog/resiliency-is-the-new-sla-why-ai-demands-an-always-on-intelligent-edge/" class="hover">Resiliency Is the New SLA: Why AI Demands an Always-On Intelligent Edge </a></h5>
+
+            <span class="smaller light recent-smaller-tight-para">By <a href="/blog/author/rajesh-kari/">Rajesh Kari</a><br /><span class="no-wrap">June 4, 2026</span></span>
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+    <hr class="semitight" />
+
+    <div class="row">
+
+        <div class="col-auto pe-0">
+
+            <a href="/blog/author/matthew-brooks/"><span class="photo smaller"><img class="photo" height="56" width="56" alt="Matthew Brooks" src="/images/photos/photo-matthew-brooks.jpg"></span></a>
+
+        </div>
+
+        <div class="col">
+
+            <h5 class="smaller tight recent-smaller-tight"><a href="https://versa-networks.com/blog/versa-sase-fabric/" class="hover">Versa SASE Fabric  </a></h5>
+
+            <span class="smaller light recent-smaller-tight-para">By <a href="/blog/author/matthew-brooks/">Matthew Brooks</a><br /><span class="no-wrap">May 26, 2026</span></span>
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+    <hr class="semitight" />
+
+    <div class="row">
+
+        <div class="col-auto pe-0">
+
+            <a href="/blog/author/rajesh-kari/"><span class="photo smaller"><img class="photo" height="56" width="56" alt="Rajesh Kari" src="/images/photos/photo-rajesh-kari.jpg"></span></a>
+
+        </div>
+
+        <div class="col">
+
+            <h5 class="smaller tight recent-smaller-tight"><a href="https://versa-networks.com/blog/reimagining-the-edge-from-network-appliance-to-application-platform/" class="hover">Reimagining the Edge: From Network Appliance to Application Platform</a></h5>
+
+            <span class="smaller light recent-smaller-tight-para">By <a href="/blog/author/rajesh-kari/">Rajesh Kari</a><br /><span class="no-wrap">May 21, 2026</span></span>
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+    <hr class="semitight" />
+
+    <div class="row">
+
+        <div class="col-auto pe-0">
+
+            <a href="/blog/author/rahul-dhiraj/"><span class="photo smaller"><img class="photo" height="56" width="56" alt="Rahul Vaidya and Dhiraj Sehgal" src="/images/photos/photo-rahul-dhiraj.jpg"></span></a>
+
+        </div>
+
+        <div class="col">
+
+            <h5 class="smaller tight recent-smaller-tight"><a href="https://versa-networks.com/blog/introducing-versa-privileged-access-controls-with-client-less-ztna/" class="hover">Introducing Versa Privileged Access Controls with Client-less ZTNA</a></h5>
+
+            <span class="smaller light recent-smaller-tight-para">By <a href="/blog/author/rahul-dhiraj/">Rahul Vaidya and Dhiraj Sehgal</a><br /><span class="no-wrap">May 20, 2026</span></span>
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+    <hr class="semitight" />
+
+    <div class="row">
+
+        <div class="col-auto pe-0">
+
+            <a href="/blog/author/dan-maier/"><span class="photo smaller"><img class="photo" height="56" width="56" alt="Dan Maier" src="/images/photos/photo-dan-maier.jpg"></span></a>
+
+        </div>
+
+        <div class="col">
+
+            <h5 class="smaller tight recent-smaller-tight"><a href="https://versa-networks.com/blog/enterprise-ai-security-priorities/" class="hover">What Enterprises Are Really Saying About AI Security</a></h5>
+
+            <span class="smaller light recent-smaller-tight-para">By <a href="/blog/author/dan-maier/">Dan Maier</a><br /><span class="no-wrap">May 14, 2026</span></span>
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+<br /><br />
+
+
+
+<h4 class="sidebar-topic">Topics</h4>
+
+<hr class="tight" />
+
+<ul class="arrow-blue">
+
+    <li><a href="/blog/">All Posts</a></li>
+
+    <li><a href="/blog/category/industry-insights/">Industry Insights </a></li>
+
+    <li><a href="/blog/category/company-updates/">Company Updates</a></li>
+
+    <li><a href="/blog/category/product-engineering/">Product & Engineering</a></li>
+
+    <li><a href="/blog/category/research-lab/">Research Lab </a></li>
+
+    <li><a href="/blog/category/customers-partners/">Customers & Partners </a></li>
+
+   <!--<li><a href="/blog/category/archive/">Archive</a></li>-->
+
+</ul>
+
+<hr class="semitight-top" />
+
+
+
+<br />
+
+<br />
+
+
+
+
+
+
+
+<h4 class="light sidebar-topic-tag">Top Tags</h4>
+
+<hr class="semitight" />
+
+<div class="tags">
+
+    <!-- Lives in functions.php-->
+
+    <div><a class="tag" href="/blog/tag/ai-security/" >AI Security</a><a class="tag" href="/blog/tag/cloud-security/" >Cloud Security</a><a class="tag" href="/blog/tag/company-news/" >Company News</a><a class="tag" href="/blog/tag/compliance/" >Compliance</a><a class="tag" href="/blog/tag/firewall/" >Firewall</a><a class="tag" href="/blog/tag/iot-ot/" >IoT & OT</a><a class="tag" href="/blog/tag/network-operations/" >Network Operations</a><a class="tag" href="/blog/tag/partners-customers/" >Partners & Customers</a><a class="tag" href="/blog/tag/sase/" >SASE</a><a class="tag" href="/blog/tag/sd-lan/" >SD-LAN</a><a class="tag" href="/blog/tag/sd-wan/" >SD-WAN</a><a class="tag" href="/blog/tag/security/" >Security</a><a class="tag" href="/blog/tag/sse/" >SSE</a><a class="tag" href="/blog/tag/threat-intelligence/" >Threat Intelligence</a><a class="tag" href="/blog/tag/zero-trust/" >Zero Trust</a></div>
+</div>
+
+
+
+
+
+
+
+<div class="card p-0 mt-3 border-radius-15 overflow-hidden">
+
+    <div class="bg-azure-blue">
+
+        <img class="w-50" src="/images/icons/icon-analyst-report-300x300.png" alt="">
+
+        <p class="px-4 py-2 m-0 text-uppercase text-white bg-slate">Gartner Research&nbsp;Report</p>
+
+    </div>
+
+    <div class="card-body p-4">
+
+        <h4>2025 Gartner<sup>®</sup> Magic Quadrant™ for SASE Platforms</h4>
+
+        <p>Versa has for the third consecutive year been recognized in the Gartner Magic Quadrant for SASE Platforms and is one of 11 vendors included in this year's report.</p>
+
+        <a class="stretched-link" href="https://versa-networks.com/resources/reports/2025-gartner-magic-quadrant-for-sase-platforms/" aria-label="Read more about the 2025 Gartner Magic Quadrant for SASE Platforms">&nbsp;</a>
+
+    </div>
+
+</div>
+        </div>
+
+
+
+    </div>
+
+</div>
+
+
+
+
+
+<div data-wpr-lazyrender="1" class="clear"></div>
+
+<style>
+  a.footer-nav-link {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--versa-grey) !important;
+    padding: 0;
+  }
+
+  ol.chevron-list>li, ul.chevron-list>li {
+    line-height: 1.2;
+  }
+
+  .subscribe-form-div .invalid-feedback {
+    display: block;
+  }
+
+  .subscribe-form-div .valid-feedback {
+    display: block;
+  }
+
+  ul.list-unstyled {
+    margin-top: 1rem;
+  }
+
+  .footerspan {
+    font-weight: 600;
+  }
+
+  .blog-span {
+    display: grid;
+    margin-bottom: 20px;
+  }
+</style>
+
+<!-- UPDATED Footer -->
+<footer data-wpr-lazyrender="1">
+
+    <!-- EXTRA SMALL FOOTER -->
+    <div  class="container-flex px-3">
+        <div class="row d-lg-none">
+            <div class="col-12 pt-3">
+                <a href="https://versa-networks.com"><img class="footer-logo" src="https://versa-networks.com/wordpress/wp-content/themes/bootstrap-theme/assets/images/new-homepage/versa-new-logo.svg" alt="Versa Logo"></a>
+            </div>
+            <div class="col-12 px-0 pt-2">
+                <div class="accordion px-0" id="accordionFooter">
+
+                    <div class="accordion-item">
+                        <span class="accordion-header p-0 m-0" id="products-title">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#products-section" aria-expanded="false" aria-controls="products-section">Products</button>
+                        </span>
+                        <div id="products-section" class="accordion-collapse collapse ms-3" aria-labelledby="products-title" data-bs-parent="#accordionFooter">
+                            <div class="accordion-body">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/products/" class="nav-link">Versa SASE</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/products/deployment/" class="nav-link">Deployment Options</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/products/multi-tenancy/" class="nav-link">Multi-tenancy</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/products/automation/" class="nav-link">Automation</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/products/components/" class="nav-link">SASE Components</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <span class="accordion-header p-0 m-0" id="customers-title">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#customers-section" aria-expanded="false" aria-controls="customers-section">Customers</button>
+                        </span>
+                        <div id="customers-section" class="accordion-collapse collapse ms-3" aria-labelledby="customers-title" data-bs-parent="#accordionFooter">
+                            <div class="accordion-body">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/customers/case-studies/" class="nav-link">Case Studies</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/customers/acclaim/" class="nav-link">Acclaim</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/customers/support/" class="nav-link">Support</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <span class="accordion-header p-0 m-0" id="solutions-title">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#solutions-section" aria-expanded="false" aria-controls="solutions-section">Solutions</button>
+                        </span>
+                        <div id="solutions-section" class="accordion-collapse collapse ms-3" aria-labelledby="solutions-title" data-bs-parent="#accordionFooter">
+                            <div class="accordion-body">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/solutions/work-from-home/" class="nav-link">Work-from-Home Solutions</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/solutions/wan-edge/" class="nav-link">WAN Edge Solutions</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/solutions/lean-it/" class="nav-link">Lean IT Solutions</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/solutions/industries/" class="nav-link">Industry Solutions</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <span class="accordion-header p-0 m-0" id="headingFive">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">Partners</button>
+                        </span>
+                        <div id="collapseFive" class="accordion-collapse collapse ms-3" aria-labelledby="headingFive" data-bs-parent="#accordionFooter">
+                            <div class="accordion-body">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/partners/program-summary/" class="nav-link">Program Summary</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/partners/technology-partners/" class="nav-link">Technology Partners</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/partners/titan/" class="nav-link">Titan for Partners</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/partners/find-a-partner/" class="nav-link">Find a Partner</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/partners/become-a-partner/" class="nav-link">Become a Partner</a></li>
+                                    <li class="nav-item mb-2"><a href="https://partners.versa-networks.com/" class="nav-link">Partner Portal</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <span class="accordion-header p-0 m-0" id="headingSix">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">Resources</button>
+                        </span>
+                        <div id="collapseSix" class="accordion-collapse collapse ms-3" aria-labelledby="headingSix" data-bs-parent="#accordionFooter">
+                            <div class="accordion-body">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/resources/reports/" class="nav-link">Analyst Reports</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/resources/webinars/" class="nav-link">Webinars</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/resources/videos/" class="nav-link">Videos</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/resources/datasheets/" class="nav-link">Datasheets</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/resources/solution-briefs/" class="nav-link">Solution Briefs</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/resources/white-papers/" class="nav-link">White Paper &amp; eBooks</a></li>
+                                    <li class="nav-item mb-2"><a href="https://docs.versa-networks.com/" class="nav-link">Product Documentation</a></li>
+                                    <li class="nav-item mb-2"><a href="https://academy.versa-networks.com/" class="nav-link">Versa Academy</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <span class="accordion-header p-0 m-0" id="headingSeven">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">About Us</button>
+                        </span>
+                        <div id="collapseSeven" class="accordion-collapse collapse ms-3" aria-labelledby="headingSeven" data-bs-parent="#accordionFooter">
+                            <div class="accordion-body">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/about/leadership/" class="nav-link">Leadership</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/about/investors/" class="nav-link">Investors</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/about/awards/" class="nav-link">Awards</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/news/" class="nav-link">News &amp; Events</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/careers/" class="nav-link">Careers</a></li>
+                                    <li class="nav-item mb-2"><a href="https://versa-networks.com/contact/" class="nav-link">Contact Us</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row d-lg-none">
+            <div class="col mt-4">
+                <ul class="nav justify-content-center">
+                    <li class="nav-item pe-2"><a href="https://versa-networks.com/products/unified-sase/">What is SASE</a></li>
+                    <li class="nav-item px-3"><a href="https://versa-networks.com/sd-wan/">What is SD-WAN</a></li>
+                    <li class="nav-item px-3"><a href="https://versa-networks.com/blog/">Blog</a></li>
+                    <li class="nav-item px-3"><a href="https://versa-networks.com/contact/">Contact Us</a></li>
+                    <li class="nav-item ps-3"><a href="https://versa-networks.com/sitemap.xml">Sitemap</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- DESKTOP FOOTER -->
+    <div class="container">
+        <div class="row d-none d-lg-flex pt-3 pb-5">
+
+            <div class="col">
+                <span><a class="footerspan mb-3 bold" href="https://versa-networks.com/products/">Products</a></span>
+                <ul class="list-unstyled">
+                    <li><a class="nav-link" href="https://versa-networks.com/platform/">VersaONE Architecture</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/versaai/">Versa AI</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/components/">VersaONE Hardware</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/deployment/">VersaONE Deployment Options</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/unified-sase/">Unified SASE</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/vsaf/">Secure Access Fabric</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/sase-on-sim/">SASE on SIM</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/versa-private-sase/">Private SASE</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/ztna/">Zero Trust Network Access&nbsp;(ZTNA)</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/casb/">Cloud Access Security Broker (CASB)</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/swg/">Secure Web Gateway&nbsp;(SWG)</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/data-loss-prevention/">Data Loss Prevention&nbsp;(DLP)</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/remote-browser-isolation/">Remote Browser Isolation&nbsp;(RBI)</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/versa-digital-experience-monitoring-dem/">Digital Experience Monitoring (DEM)</a></li>
+                </ul>
+            </div>
+
+            <div class="col">
+                <h5 class="mb-3 bold"><br></h5>
+                <ul class="list-unstyled">
+                    <li><a class="nav-link" href="https://versa-networks.com/products/versa-zero-trust-premises/">Zero Trust - Premises</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/next-generation-firewall/">Next Generation Firewall&nbsp;(NGFW)</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/versa-iot/">IoT Security</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/versa-advanced-threat-protection/">Advanced Threat Protection (ATP)</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/ueba/">User and Entity Behavior Analytics (UEBA)</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/genai-firewall/">GenAI Firewall</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/ips/">Intrusion Protection System (IPS)</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/zero-trust-everywhere/">Zero Trust Everywhere</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/versaai/">AI Security</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/sd-wan/">Secure SD-WAN</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/versa-sd-lan/">Secure SD-LAN</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/sd-nic/">Secure SD-NIC</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/products/routing/">Routing</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/solutions/lean-it/">SD-WAN for Lean IT</a></li>
+                </ul>
+            </div>
+
+            <div class="col">
+                <span class="mb-3 bold"><a class="footerspan" href="https://versa-networks.com/solutions/">Solutions</a></span>
+                <ul class="list-unstyled">
+                    <li><a class="nav-link" href="https://versa-networks.com/solutions/work-from-home/">Work-from-Home Solutions</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/solutions/wan-edge/">WAN Edge Solutions</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/solutions/lean-it/">Lean IT Solutions</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/solutions/industries/">Industry Solutions</a></li>
+                </ul>
+                <span class="my-3 bold"><a class="footerspan" href="https://versa-networks.com/partners/">Partners</a></span>
+                <ul class="list-unstyled">
+                    <li><a class="nav-link" href="https://versa-networks.com/partners/">Partner Overview</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/partners/program-summary/">Program Summary</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/partners/technology-partners/">Technology Partner</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/partners/titan/">Titan for Partners</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/partners/find-a-partner/">Find a Partner</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/partners/become-a-partner/">Become a Partner</a></li>
+                    <li><a class="nav-link" href="https://partners.versa-networks.com/">Partner Portal</a></li>
+                </ul>
+            </div>
+
+            <div class="col">
+                <span class="mb-3 bold"><a class="footerspan" href="https://versa-networks.com/resources/">Resources</a></span>
+                <ul class="list-unstyled">
+                    <li><a class="nav-link" href="https://versa-networks.com/resources/reports/">Analyst Reports</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/resources/webinars/">Webinars</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/resources/videos/">Videos</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/resources/datasheets/">Datasheets</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/resources/solution-briefs/">Solution Briefs</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/resources/white-papers/">White Paper &amp; eBooks</a></li>
+                    <li><a class="nav-link" href="https://docs.versa-networks.com/">Product Documentation</a></li>
+                    <li><a class="nav-link" href="https://academy.versa-networks.com/">Versa Academy</a></li>
+                </ul>
+                <span class="my-3 bold"><a class="footerspan" href="https://versa-networks.com/customers/">Customers</a></span>
+                <ul class="list-unstyled">
+                    <li><a class="nav-link" href="https://versa-networks.com/customers/case-studies/">Case Studies</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/customers/acclaim/">Acclaim</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/customers/support/">Support</a></li>
+                </ul>
+            </div>
+
+            <div class="col border-r-light-grey">
+                <span class="mb-3 bold"><a class="footerspan" href="https://versa-networks.com/about/">About Us</a></span>
+                <ul class="list-unstyled">
+                    <li><a class="nav-link" href="https://versa-networks.com/about/leadership/">Leadership</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/about/investors/">Investors</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/about/awards/">Awards</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/news/">News &amp; Events</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/careers/">Careers</a></li>
+                    <li><a class="nav-link" href="https://versa-networks.com/contact/">Contact Us</a></li>
+                </ul>
+                <span class="my-3 bold"><a class="footerspan blog-span" href="https://versa-networks.com/blog/">Blog</a></span>
+                <span class="mb-3 bold"><a class="footerspan blog-span" href="https://versa-networks.com/privacy/">Privacy and Legal</a></span>
+                <span class="my-3 bold"><a class="footerspan blog-span" href="https://versa-networks.com/sitemap.xml">Sitemap</a></span>
+            </div>
+
+            <div class="col-3 ms-3 d-flex flex-column">
+                <a href="https://versa-networks.com"><img class="footer-logo" src="https://versa-networks.com/wordpress/wp-content/themes/bootstrap-theme/assets/images/new-homepage/versa-new-logo.svg" alt="Versa Logo"></a>
+                <p class="mt-4 pt-1"><small>Versa Networks, the leader in SASE, combines extensive security, advanced networking, full-featured SD-WAN, genuine multitenancy, and sophisticated analytics via the cloud, on-premises.</small></p>
+                <div class="mt-3">
+                    <div class="d-flex mb-2 social-icons">
+                        <a href="https://twitter.com/versanetworks" target="_blank" rel="nofollow noopener noreferrer" class="me-3"><img src="https://versa-networks.com/wordpress/wp-content/themes/bootstrap-theme/assets/images/new-homepage/icon-twitter-dark-blue.svg" alt="Twitter" width="30"></a>
+                        <a href="https://www.linkedin.com/company/versa-networks/mycompany/" target="_blank" rel="nofollow noopener noreferrer" class="me-3"><img src="https://versa-networks.com/wordpress/wp-content/themes/bootstrap-theme/assets/images/new-homepage/icon-linked-in-dark-blue.svg" alt="LinkedIn" width="30"></a>
+                        <a href="https://www.youtube.com/channel/UCyDTShxgA6IUqanC92bBF0g/videos" target="_blank" rel="nofollow noopener noreferrer" class="me-3"><img src="https://versa-networks.com/wordpress/wp-content/themes/bootstrap-theme/assets/images/new-homepage/icon-youtube-dark-blue.svg" alt="YouTube" width="30"></a>
+                        <a href="https://www.facebook.com/VersaNetworks" target="_blank" rel="nofollow noopener noreferrer" class="me-3"><img src="https://versa-networks.com/wordpress/wp-content/themes/bootstrap-theme/assets/images/new-homepage/icon-facebook-dark-blue.svg" alt="Facebook" width="30"></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div  class="container text-center" role="contentinfo">
+        <div class="row py-4 mt-4 border-t-light-grey">
+            <div class="col">
+                <p class="d-none d-lg-block"><small>Versa Networks, VOS, and Versa Titan are or may be registered trademarks of Versa Networks, Inc. All other marks and names <br>mentioned herein may be trademarks of their respective&nbsp;companies.</small></p>
+                <p><small>©2026 Versa Networks, Inc.</small></p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+<!-- UPDATED Footer - END -->
+
+
+<!-- TrenDemon -->
+<script type="text/javascript" id="trd-flame-load">
+    TRD_ACC_ID = 2542;
+    (function(w, d) {
+        function go() {
+            var trdti = setInterval(function() {
+                if (document.readyState === "complete") {
+                    var bi = document.createElement("script");
+                    bi.type = "text/javascript";
+                    bi.async = true;
+                    bi.src = "https://assets.trendemon.com/tag/trends.min.js";
+                    bi.id = "trdflame";
+                    var s = document.getElementsByTagName("script")[0];
+                    s.parentNode.insertBefore(bi, s);
+                    clearInterval(trdti);
+                }
+            }, 500);
+        }
+        go();
+    }(window, document));
+</script>
+
+<!-- Pardot -->
+<!--
+<script type="text/javascript">
+    piAId = '634831';
+    piCId = '35077';
+    piHostname = 'pi.pardot.com';
+    (function() {
+        function async_load() {
+            var s = document.createElement('script');
+            s.type = 'text/javascript';
+            s.src = ('https:' == document.location.protocol ? 'https://pi' : 'http://cdn') + '.pardot.com/pd.js';
+            var c = document.getElementsByTagName('script')[0];
+            c.parentNode.insertBefore(s, c);
+        }
+        if (window.attachEvent) {
+            window.attachEvent('onload', async_load);
+        } else {
+            window.addEventListener('load', async_load, false);
+        }
+    })();
+</script>
+->
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap 5.3 bundle (includes Popper — replaces Bootstrap 3.3.6 + separate Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Marketo Munchkin (moved from <head> to avoid render-blocking) -->
+<script type="text/javascript">
+(function() {
+    var didInit = false;
+    function initMunchkin() {
+        if (didInit === false) {
+            didInit = true;
+            Munchkin.init('344-OCL-048');
+        }
+    }
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.async = true;
+    s.src = '//munchkin.marketo.net/munchkin.js';
+    s.onreadystatechange = function() {
+        if (this.readyState === 'complete' || this.readyState === 'loaded') {
+            initMunchkin();
+        }
+    };
+    s.onload = initMunchkin;
+    document.getElementsByTagName('head')[0].appendChild(s);
+})();
+</script>
+
+<!-- Subscribe form handler (depends on jQuery above) -->
+<!--
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+
+    $('#footer_form_submit').on('click', function(e) {
+        e.preventDefault();
+
+        if ($('#subscribe_email').val() !== '') {
+            const formData = {
+                subscribe_email: $('#subscribe_email').val()
+            };
+
+            $.ajax({
+                url: '/blog/wp-json/custom/v1/submit-pardot-form',
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    var $msg = $('#response_blog_site');
+                    $msg.hasClass('invalid-feedback') ? $msg.removeClass('invalid-feedback').addClass('valid-feedback') : $msg.addClass('valid-feedback');
+                    var $input = $('#subscribe_email');
+                    $input.hasClass('is-invalid') ? $input.removeClass('is-invalid').addClass('is-valid') : $input.addClass('is-valid');
+                    $msg.html("Thank you for subscribing! A confirmation email has been sent to your inbox with more details.");
+                },
+                error: function(xhr) {
+                    var $input = $('#subscribe_email');
+                    $('#response_blog_site').html(xhr.responseJSON.message);
+                    $input.hasClass('is-valid') ? $input.removeClass('is-valid').addClass('is-invalid') : $input.addClass('is-invalid');
+                    var $msg = $('#response_blog_site');
+                    $msg.hasClass('valid-feedback') ? $msg.removeClass('valid-feedback').addClass('invalid-feedback') : $msg.addClass('invalid-feedback');
+                }
+            });
+
+        } else {
+            $('#response_blog_site').html("Subscribe email can't be blank");
+            var $input = $('#subscribe_email');
+            $input.hasClass('is-valid') ? $input.removeClass('is-valid').addClass('is-invalid') : $input.addClass('is-invalid');
+            var $msg = $('#response_blog_site');
+            $msg.hasClass('valid-feedback') ? $msg.removeClass('valid-feedback').addClass('invalid-feedback') : $msg.addClass('invalid-feedback');
+        }
+    });
+
+    $('#subscribe_email').keyup(function() {
+        $('#response_blog_site').empty();
+    });
+
+    function toggleSubmitButton() {
+        if ($('#footer_form .has-error').length > 0) {
+            $('#footer_form_submit').prop('disabled', true);
+        } else {
+            $('#footer_form_submit').prop('disabled', false);
+        }
+    }
+
+    $(document).on('change keyup', '#subscribe_email', function() {
+        toggleSubmitButton();
+    });
+
+    toggleSubmitButton();
+});
+</script>
+-->
+
+<!-- ZoomInfo -->
+<noscript>
+    <img src="https://ws.zoominfo.com/pixel/610dc6f7b68c490015711273" width="1" height="1" style="display: none;" />
+</noscript>
+
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl498789'},{'dcenter':'p3'},{'cp_id':'8977113'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>
+<!-- This website is like a Rocket, isn't it? Performance optimized by WP Rocket. Learn more: https://wp-rocket.me -->
