@@ -1,0 +1,4119 @@
+
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+        
+    <meta charset="UTF-8"/>
+    <title>The Cohesity post-quantum cryptography strategy</title>
+    <meta name="keywords" content="Technology,data security"/>
+    <meta name="description" content="With the rapid advancements of quantum computers, security teams have to ask vendors what they are doing to prepare. The risks are real."/>
+    <meta name="template" content="blog-detail"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    
+  <!-- Adding faviocns -->
+    <meta name="content-page-ref" content="SzkH_sjogPR7w0Rhj_dZZGSd-fUZr_XEfHarG-vb02kNnxxAIz6pzVS-VTJe6rkcNQTYHEkVaf-NboGh-a_3udoE3hgdZGJBm-TamEGc6ymb-3wHtIOC7RacdEc-KO9hfUS9PlCwR8h5bfdFCQG4UA"/>
+<script defer="defer" type="text/javascript" src="/.rum/@adobe/helix-rum-js@%5E2/dist/micro.js"></script>
+<link rel="shortcut icon" sizes="57x57" href="/content/dam/cohesity/live/favicons/Favicon-57.svg"/>
+    <link rel="shortcut icon" sizes="60x60" href="/content/dam/cohesity/live/favicons/Favicon-60.svg"/>
+    <link rel="shortcut icon" sizes="72x72" href="/content/dam/cohesity/live/favicons/Favicon-72.svg"/>
+    <link rel="shortcut icon" sizes="76x76" href="/content/dam/cohesity/live/favicons/Favicon-76.svg"/>
+    <link rel="shortcut icon" sizes="114x114" href="/content/dam/cohesity/live/favicons/Favicon-114.svg"/>
+    <link rel="shortcut icon" sizes="120x120" href="/content/dam/cohesity/live/favicons/Favicon-120.svg"/>
+    <link rel="shortcut icon" sizes="144x144" href="/content/dam/cohesity/live/favicons/Favicon-144.svg"/>
+    <link rel="shortcut icon" sizes="152x152" href="/content/dam/cohesity/live/favicons/Favicon-152.svg"/>
+    <link rel="shortcut icon" sizes="180x180" href="/content/dam/cohesity/live/favicons/Favicon-180.svg"/>
+    <link rel="shortcut icon" type="image/png" sizes="192x192" href="/content/dam/cohesity/live/favicons/Favicon-192.svg"/>
+    <link rel="shortcut icon" type="image/png" sizes="32x32" href="/content/dam/cohesity/live/favicons/Favicon-32.svg"/>
+    <link rel="shortcut icon" type="image/png" sizes="96x96" href="/content/dam/cohesity/live/favicons/Favicon-96.svg"/>
+    <link rel="shortcut icon" type="image/png" sizes="16x16" href="/content/dam/cohesity/live/favicons/Favicon-16.svg"/>
+
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Post Quantum Cryptography Strategy | Cohesity"/>
+    
+      <meta property="og:description" content="With the rapid advancements of quantum computers, security teams have to ask vendors what they are doing to prepare. The risks are real."/>
+    
+    
+      
+      
+        <meta property="og:image" content="https://www.cohesity.com/content/dam/cohesity/new_media/2023/10/Blog_building-cybersecurity-awareness_CS-7029_Blog-Hero.png"/>
+      
+    
+    
+       <link rel="alternate" hreflang="en-us" href="https://www.cohesity.com/blogs/the-cohesity-post-quantum-cryptography-strategy/"/>
+    
+       <link rel="alternate" hreflang="x-default" href="https://www.cohesity.com/blogs/the-cohesity-post-quantum-cryptography-strategy/"/>
+    
+    <meta property="og:locale" content="en_US"/>
+    <meta property="og:type" content="article"/>
+    
+    
+    
+    
+    <meta property="og:url" content="https://www.cohesity.com/blogs/the-cohesity-post-quantum-cryptography-strategy/"/>
+    <meta property="og:site_name" content="Cohesity"/>
+    <meta property="article:publisher" content="https://www.facebook.com/cohesity"/>
+    
+    <meta property="article:modified_time" content="2025-07-27T18:10:12+00:00"/>    
+    <meta property="og:image:width" content="800"/>
+    <meta property="og:image:height" content="400"/>
+    <meta property="og:image:type" content="image/png"/>
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content="Post Quantum Cryptography Strategy | Cohesity"/>
+	  <meta name="twitter:description" content="With the rapid advancements of quantum computers, security teams have to ask vendors what they are doing to prepare. The risks are real."/>
+    
+      
+      
+        <meta property="twitter:image" content="https://www.cohesity.com/content/dam/cohesity/new_media/2023/10/Blog_building-cybersecurity-awareness_CS-7029_Blog-Hero.png"/>
+      
+    
+    <meta name="twitter:site" content="@cohesity"/>
+
+  
+  
+    
+
+  
+  
+    
+    
+<link rel="canonical" href="https://www.cohesity.com/blogs/the-cohesity-post-quantum-cryptography-strategy/"/>
+
+
+    
+
+<!-- Prefetch Tag -->
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin/>
+<link rel="dns-prefetch" href="https://fonts.gstatic.com/"/>
+
+<link rel="preconnect" href="https://www.googletagmanager.com/"/>
+<link rel="dns-prefetch" href="//www.googletagmanager.com"/>
+
+<link rel="preconnect" href="https://use.typekit.net/"/>
+<link rel="dns-prefetch" href="//use.typekit.net"/>
+
+<link rel="preconnect" href="https://www.youtube.com/"/>
+<link rel='dns-prefetch' href='//www.youtube.com'/>
+
+<link rel="preconnect" href="https://www.google-analytics.com/"/>
+<link rel="preconnect" href="https://www.googleadservices.com/"/>
+<link rel="preconnect" href="https://js.driftt.com/"/>
+<link rel="preconnect" href="https://www.gstatic.com/"/>
+<link rel="preconnect" href="https://cdn.cookielaw.org/"/>
+<link rel="preconnect" href="https://d10lpsik1i8c69.cloudfront.net"/>
+
+<link rel="preconnect" href="https://fonts.adobe.com/"/>
+<link rel="preconnect" href="https://s.go-mpulse.net/"/>
+<link rel="preconnect" href="https://js-agent.newrelic.com/"/>
+
+<link rel="preconnect" href="//info.cohesity.com/"/>
+<link rel="dns-prefetch" href="//info.cohesity.com"/>
+<link rel="preload" as="script" href="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js"/>
+
+
+<!-- End Prefetch Tag -->
+
+
+    
+    <link rel="stylesheet" href="/etc.clientlibs/cohesity/clientlibs/clientlib-base.lc-eea464de5abdbae31334abc3e09b04c4-lc.min.css" type="text/css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+<script type="text/javascript">
+            (function() {
+                window.ContextHub = window.ContextHub || {};
+
+                /* setting paths */
+                ContextHub.Paths = ContextHub.Paths || {};
+                ContextHub.Paths.CONTEXTHUB_PATH = "/libs/settings/cloudsettings/legacy/contexthub";
+                ContextHub.Paths.RESOURCE_PATH = "\/content\/cohesity\/us\/en\/blogs\/the\u002Dcohesity\u002Dpost\u002Dquantum\u002Dcryptography\u002Dstrategy\/_jcr_content\/contexthub";
+                ContextHub.Paths.SEGMENTATION_PATH = "";
+                ContextHub.Paths.CQ_CONTEXT_PATH = "";
+
+                /* setting initial constants */
+                ContextHub.Constants = ContextHub.Constants || {};
+                ContextHub.Constants.ANONYMOUS_HOME = "/home/users/1/1YXPI552CJwogtYDnwKi";
+                ContextHub.Constants.MODE = "no-ui";
+            }());
+        </script><script src="/etc/cloudsettings.kernel.js/libs/settings/cloudsettings/legacy/contexthub" type="text/javascript"></script>
+
+
+
+
+  <script type="text/javascript">
+  var digitalData = {};
+  digitalData = {
+    page : {
+      pageInfo : {
+        pageName : 'www:blogs:the-cohesity-post-quantum-cryptography-strategy',
+        level1 : 'blogs',
+        level2 : 'the-cohesity-post-quantum-cryptography-strategy',
+        level3 : '',
+        level4 : '',
+        level5 : '',
+        title : 'The Cohesity post-quantum cryptography strategy',
+        type : '',
+        cleanURL : 'https://www.cohesity.com/blogs/the-cohesity-post-quantum-cryptography-strategy/',
+        fullURL : 'https://www.cohesity.com/blogs/the-cohesity-post-quantum-cryptography-strategy/',
+        createdDate : '07-27-2025',
+        updateDate : '07-27-2025',
+        author : 'Sydney Jackson',
+        blogTags : 'Data Security',
+        blogCategory : 'Technology'
+      }
+    },
+    site : {
+      country : 'us',
+      language : 'en',
+      localeCode : 'en-us',
+      server : 'www.cohesity.com',
+      type : 'corporate'
+    }
+  };
+</script>
+
+
+    
+
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NSM8P69');</script>
+<!-- End Google Tag Manager -->
+
+
+
+
+<script>
+;(function (win, doc, style, timeout) {
+  var STYLE_ID = 'at-body-style';
+  var parent = doc.getElementsByTagName('head')[0];
+  if (!parent) return;
+
+  var styleEl = doc.createElement('style');
+  styleEl.id = STYLE_ID;
+  styleEl.innerHTML = style;
+  parent.appendChild(styleEl);
+
+  win.setTimeout(function () {
+    var el = doc.getElementById(STYLE_ID);
+    if (el) {
+      el.parentNode.removeChild(el);
+    }
+  }, timeout);
+}(window, document, "body {opacity: 0 !important}", 3000));
+</script>
+<script>
+  window.targetGlobalSettings = {
+    pageLoadEnabled: true
+    // keep any other settings you need
+  };
+</script>
+<script src="https://www.cohesity.com/content/dam/cohesity/live/scripts/target/at.js"></script>
+    
+    
+    
+
+    
+
+    
+    <script src="/etc.clientlibs/cohesity/clientlibs/clientlib-dependencies.lc-d41d8cd98f00b204e9800998ecf8427e-lc.min.js"></script>
+
+
+    
+    <link rel="stylesheet" href="/etc.clientlibs/cohesity/clientlibs/clientlib-dependencies.lc-d41d8cd98f00b204e9800998ecf8427e-lc.min.css" type="text/css">
+<link rel="stylesheet" href="/etc.clientlibs/cohesity/clientlibs/clientlib-site.lc-c03a4f25fb63b1ced08a596a900fc747-lc.min.css" type="text/css">
+
+
+    
+    
+    <script async src="/etc.clientlibs/core/wcm/components/commons/datalayer/v2/clientlibs/core.wcm.components.commons.datalayer.v2.lc-1e0136bad0acfb78be509234578e44f9-lc.min.js"></script>
+
+
+    
+    <script async src="/etc.clientlibs/core/wcm/components/commons/datalayer/acdl/core.wcm.components.commons.datalayer.acdl.lc-bf921af342fd2c40139671dbf0920a1f-lc.min.js"></script>
+
+
+
+    
+    
+</head>
+<body class="blog-detail page basicpage" id="blog-detail-3c3b3520f5" data-cmp-link-accessibility-enabled data-cmp-link-accessibility-text="opens in a new tab" data-cmp-data-layer-enabled data-cmp-data-layer-name="adobeDataLayer">
+
+    <div class="cmp-loading cmp-loading--hide cmp-loading--hide">
+        <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12.5 24C19.1274 24 24.5 18.6274 24.5 12C24.5 5.37258 19.1274 0 12.5 0C5.87258 0 0.5 5.37258 0.5 12C0.5 18.6274 5.87258 24 12.5 24ZM12.5 22C18.0228 22 22.5 17.5228 22.5 12C22.5 6.47715 18.0228 2 12.5 2C6.97715 2 2.5 6.47715 2.5 12C2.5 17.5228 6.97715 22 12.5 22Z" fill="#E6E6E6"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12.5 24C19.1274 24 24.5 18.6274 24.5 12C24.5 5.37258 19.1274 0 12.5 0C5.87258 0 0.5 5.37258 0.5 12C0.5 18.6274 5.87258 24 12.5 24ZM12.5 22C18.0228 22 22.5 17.5228 22.5 12C22.5 6.47715 18.0228 2 12.5 2C6.97715 2 2.5 6.47715 2.5 12C2.5 17.5228 6.97715 22 12.5 22Z" fill="#E6E6E6"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M23.5391 7.28708C21.7075 3.00245 17.4544 0 12.5 0V2C16.6554 2 20.2188 4.53454 21.7287 8.14202L23.5391 7.28708Z" fill="#114D8D"/>
+        </svg>
+        <div class="cmp-loading-text">Loading</div>
+    </div>
+
+<script>
+  window.adobeDataLayer = window.adobeDataLayer || [];
+  adobeDataLayer.push({
+    page: JSON.parse('{\x22site\x22:{\x22country\x22:\x22us\x22,\x22server\x22:\x22www.cohesity.com\x22,\x22languages\x22:\x22en\x22,\x22localeCode\x22:\x22en\u002Dus\x22,\x22type\x22:\x22corporate\x22},\x22page\x22:{\x22level5\x22:\x22\x22,\x22level4\x22:\x22\x22,\x22updateDate\x22:\x2207\u002D27\u002D2025\x22,\x22fullURL\x22:\x22https:\/\/www.cohesity.com\/blogs\/the\u002Dcohesity\u002Dpost\u002Dquantum\u002Dcryptography\u002Dstrategy\/\x22,\x22author\x22:\x22Sydney Jackson\x22,\x22blogTags\x22:\x22Data Security\x22,\x22title\x22:\x22The Cohesity post\u002Dquantum cryptography strategy\x22,\x22pageName\x22:\x22www:blogs:the\u002Dcohesity\u002Dpost\u002Dquantum\u002Dcryptography\u002Dstrategy\x22,\x22createdDate\x22:\x2207\u002D27\u002D2025\x22,\x22blogCategory\x22:\x22Technology\x22,\x22level1\x22:\x22blogs\x22,\x22level3\x22:\x22\x22,\x22level2\x22:\x22the\u002Dcohesity\u002Dpost\u002Dquantum\u002Dcryptography\u002Dstrategy\x22,\x22cleanURL\x22:\x22https:\/\/www.cohesity.com\/blogs\/the\u002Dcohesity\u002Dpost\u002Dquantum\u002Dcryptography\u002Dstrategy\/\x22}}'),
+    event: 'cmp:show',
+    eventInfo: {
+      path: 'page.blog\u002Ddetail\u002D3c3b3520f5'
+    }
+  });
+</script>
+
+
+  
+
+
+
+
+  <section class="blog-detail-page" data-read-duration="7" data-blog-type="technology">
+    
+        
+            
+                <div class="violatorbar">
+    
+    
+    
+
+
+    
+</div>
+
+            
+            
+            
+            
+            
+            
+             
+            
+            
+        
+            
+            
+                <header class="experiencefragment-header experiencefragment">
+<div id="experiencefragment-cb66137ad5" class="cmp-experiencefragment cmp-experiencefragment--header">
+
+
+    
+    
+    
+    <div id="container-afed5bbd62" class="cmp-container">
+        
+        <div class="navigationtop">
+<div class="xfpage page basicpage">
+
+
+    
+    <div id="container-56bc27e850" class="cmp-container">
+        
+
+
+<div class="aem-Grid aem-Grid--12 aem-Grid--default--12 ">
+    
+    <div class="violatorbar aem-GridColumn aem-GridColumn--default--12">
+    
+    <div class="cmp-violator text-black  " style="background-image: url('/content/dam/cohesity/live/communities/community-background-cropped-lefthand.png');">
+        <div class="section__container">
+            
+        </div>
+    </div>
+    
+
+
+    
+</div>
+
+    
+</div>
+
+    </div>
+
+    
+</div>
+
+
+
+  <header class="navigation-top Redesign">
+    <div class="navigation-container section__container">
+      <div class="logo">
+        <a href="/">
+          <img src="/content/dam/cohesity/live/cohesity-logo-white-green.svg" alt="Logo"/>
+        </a>
+      </div>
+      <div class="logo-inner-page">
+        <a href="/">
+          <img src="/content/dam/cohesity/live/cohesity-logo-black-green.svg" alt="Logo"/>
+        </a>
+      </div>
+      <nav class="nav">
+        <ul>
+          <li class="platform">
+            <a href="https://www.cohesity.com/platform/" target="_self">
+              Platform
+              <div class="limed"></div>
+            </a>
+            <div class="xfpage page basicpage">
+
+
+    
+    <div id="container-2b5b49635b" class="cmp-container">
+        
+
+
+<div class="aem-Grid aem-Grid--12 aem-Grid--default--12 ">
+    
+    <div class="navigationtopinnerfourcolumn aem-GridColumn aem-GridColumn--default--12">
+  <div class="inner-navigation-container redesign">
+    <div class="dropdown-menu">
+      <div class="content-container four-column-content-container">
+        <div class="left-content">
+          <div class="content left-content-top">
+            <div class="column">
+              
+              
+              <a href="https://www.cohesity.com/platform/" target="_self">
+                <div class="heading">Cohesity Data Cloud</div>
+              </a>
+              <p>Protect and secure your data from cyber attacks</p>
+              
+            </div>
+          </div>
+          <div class="content left-content-bottom">
+            <div class="column">
+              <a href="https://www.cohesity.com/buy/essentials/" target="_self">
+                <div class="heading">Cohesity for Midsize Business</div>
+              </a>
+            </div>
+          
+            <div class="column">
+              <a href="https://www.cohesity.com/buy/cohesity-data-cloud-packaging/" target="_self">
+                <div class="heading">Data Cloud packaging</div>
+              </a>
+            </div>
+          
+            <div class="column">
+              <a href="https://www.cohesity.com/platform/certified-platforms/" target="_self">
+                <div class="heading">Certified platforms</div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="right-content">
+          <div class="right-content-top">
+            <div class="content column-1">
+              <p>Data Protection</p>
+              <div class="content-inner">
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/backup-and-recovery/" target="_self">
+                        <div class="heading">Backup &amp; Recovery
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/cloud/" target="_self">
+                        <div class="heading">Cloud Data Protection
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/platform/cloud-rebuild/" target="_self">
+                        <div class="heading">Cloud App Recovery
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/platform/cloud-protection-services/" target="_self">
+                        <div class="heading">SaaS Data Protection
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/nas/" target="_self">
+                        <div class="heading">Unstructured Data Protection
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/cyber-resilience/" target="_self">
+                        <div class="heading">Cyber Resilience
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/data-security/" target="_self">
+                        <div class="heading">Zero Trust Security
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/long-term-retention-and-archival/" target="_self">
+                        <div class="heading">Archive &amp; Long-Term Retention
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/disaster-recovery/" target="_self">
+                        <div class="heading">Disaster Recovery
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+              </div>
+            </div>
+            <div class="content column-3">
+              <p>Data Security</p>
+              <div class="content-inner">
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/active-directory-entra-id/" target="_self">
+                        <div class="heading">Identity Resilience
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/ransomware/" target="_self">
+                        <div class="heading">Ransomware Anomaly Detection
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/platform/threat-protection/" target="_self">
+                        <div class="heading">Threat Protection
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/platform/data-security-posture-management/" target="_self">
+                        <div class="heading">Data Security Posture Management
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/platform/data-classification/" target="_self">
+                        <div class="heading">Data Classification
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/platform/fortknox/" target="_self">
+                        <div class="heading">Cyber Vaulting
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/platform/recoveryagent/" target="_self">
+                        <div class="heading">Cyber Recovery Orchestration
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/forms/white-paper/improve-cyber-resilience-with-a-digital-jump-bag/" target="_self">
+                        <div class="heading">Digital Jump Bag
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/clean-room/" target="_self">
+                        <div class="heading">Clean Room Solution
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+              </div>
+            </div>
+            <div class="content column-3">
+              <p>Data Insights</p>
+              <div class="content-inner">
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/ai-conversational-search/" target="_self">
+                        <div class="heading">AI-Ready Data Platform
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/platform/netbackup-it-analytics/" target="_self">
+                        <div class="heading">Reporting &amp; IT Insights
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/global-search/" target="_self">
+                        <div class="heading">Global Search
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+              </div>
+            </div>
+          </div>
+          <div class="right-content-bottom">
+            <div class="content column-4">
+              <div class="content-inner">
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/why-cohesity/" target="_self">
+                        <div class="heading">Why Cohesity
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/cohesity-vs-rubrik/" target="_self">
+                        <div class="heading">Cohesity vs. Rubrik
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/cohesity-vs-commvault/" target="_self">
+                        <div class="heading">Cohesity vs. Commvault
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+
+
+
+    
+
+</div>
+
+    
+</div>
+
+    </div>
+
+    
+</div>
+
+        </li>
+        
+          <li class="solutions">
+            <a href="https://www.cohesity.com/solutions/" target="_self">
+              Solutions
+              <div class="limed"></div>
+            </a>
+            <div class="xfpage page basicpage">
+
+
+    
+    <div id="container-44b69bd8ad" class="cmp-container">
+        
+
+
+<div class="aem-Grid aem-Grid--12 aem-Grid--default--12 ">
+    
+    <div class="navigationtopinnerfourcolumn aem-GridColumn aem-GridColumn--default--12">
+  <div class="inner-navigation-container redesign">
+    <div class="dropdown-menu">
+      <div class="content-container four-column-content-container">
+        <div class="left-content">
+          <div class="content left-content-top">
+            <div class="column">
+              
+              
+              <a href="https://www.cohesity.com/solutions/" target="_self">
+                <div class="heading">View all solutions</div>
+              </a>
+              
+              
+            </div>
+          
+            <div class="column">
+              
+              <p class="p-lg bold">The 5 Steps to Cyber Resilience</p>
+              <a href="https://www.cohesity.com/forms/ebook/5-steps-to-improve-cyber-resilience/" target="_self">
+                <div class="heading">Learn more</div>
+              </a>
+              
+              
+            </div>
+          </div>
+          
+        </div>
+        <div class="right-content">
+          <div class="right-content-top">
+            <div class="content column-1">
+              <p>Cloud &amp; SaaS</p>
+              <div class="content-inner">
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/microsoft-365/" target="_self">
+                        <div class="heading">M365
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/aws/" target="_self">
+                        <div class="heading">AWS
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/azure/" target="_self">
+                        <div class="heading">Azure
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/google/" target="_self">
+                        <div class="heading">Google Cloud
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/google-workspace/" target="_self">
+                        <div class="heading">Google Workspace 
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/resources/solution-brief/cohesity-alta-saas-protection-slack-data-backup/" target="_self">
+                        <div class="heading">Slack 
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/active-directory-entra-id/" target="_self">
+                        <div class="heading">Active Directory &amp; Entra ID
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+              </div>
+            </div>
+            <div class="content column-3">
+              <p>Enterprise</p>
+              <div class="content-inner">
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/microsoft-hyper-v/" target="_self">
+                        <div class="heading">Hyper-V
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/kubernetes/" target="_self">
+                        <div class="heading">Kubernetes
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/ibm-cloud/" target="_self">
+                        <div class="heading">IBM
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/mongodb/" target="_self">
+                        <div class="heading">MongoDB
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/microsoft-sql-server/" target="_self">
+                        <div class="heading">MS SQL Server
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/nas/" target="_self">
+                        <div class="heading">NAS
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/nosql-and-hadoop/" target="_self">
+                        <div class="heading">NoSQL &amp; Hadoop
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/nutanix-ahv/" target="_self">
+                        <div class="heading">Nutanix
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/oracle/" target="_self">
+                        <div class="heading">Oracle
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/red-hat/" target="_self">
+                        <div class="heading">Red Hat
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/sap-hana/" target="_self">
+                        <div class="heading">SAP HANA
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/vmware/" target="_self">
+                        <div class="heading">VMware
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+              </div>
+            </div>
+            <div class="content column-3">
+              <p>Industries</p>
+              <div class="content-inner">
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/minimum-viable-company/" target="_self">
+                        <div class="heading">Minimum Viable Company
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/finance/" target="_self">
+                        <div class="heading">Financial services
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/healthcare/" target="_self">
+                        <div class="heading">Healthcare and life sciences
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/manufacturing-and-logistics/" target="_self">
+                        <div class="heading">Manufacturing and logistics
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/federal-government/" target="_self">
+                        <div class="heading">Federal government
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/state-and-local-government/" target="_self">
+                        <div class="heading">State, local government, and education
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/retail-and-hospitality/" target="_self">
+                        <div class="heading">Retail and hospitality
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/legal/" target="_self">
+                        <div class="heading">Legal
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/energy-and-utilities/" target="_self">
+                        <div class="heading">Energy and utilities
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/telecom/" target="_self">
+                        <div class="heading">Telecom
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/technology/" target="_self">
+                        <div class="heading">Technology
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/media-and-entertainment/" target="_self">
+                        <div class="heading">Media and entertainment
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+              </div>
+            </div>
+          </div>
+          
+        </div>
+    </div>
+  </div>
+
+
+
+    
+
+</div>
+
+    
+</div>
+
+    </div>
+
+    
+</div>
+
+        </li>
+        
+          <li class="resources">
+            <a href="https://www.cohesity.com/resources/" target="_self">
+              Resources
+              <div class="limed"></div>
+            </a>
+            <div class="xfpage page basicpage">
+
+
+    
+    <div id="container-66c99fec69" class="cmp-container">
+        
+
+
+<div class="aem-Grid aem-Grid--12 aem-Grid--default--12 ">
+    
+    <div class="navigationtop-resource aem-GridColumn aem-GridColumn--default--12">
+
+
+  <div class="inner-navigation-container redesign short-inner-navigation-container">
+    <div class="dropdown-menu">
+      <div class="content-container resource-content-container">
+        <div class="resource-content">
+          <div class="left-content">
+            <div class="content left-content-top">
+              <div class="column">
+                <a href="https://www.cohesity.com/resources/">
+                  <div class="heading">Resources</div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="right-content">
+            <!-- Column 2 -->
+            <div class="content column-1">
+              <div class="column main-menu-mobile">
+                <div class="card-wrap">     
+                  <a href="https://www.cohesity.com/resources/">
+                    <div class="heading">View all</div>
+                  </a>
+                </div>
+              </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/resource-assets/solution-brief/cohesity-corporate-overview.pdf" target="_self">
+                      <div class="heading">Corporate Overview</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/blogs/" target="_self">
+                      <div class="heading">Blogs</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/demos/" target="_self">
+                      <div class="heading">Demos</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/events/" target="_self">
+                      <div class="heading">Events and Webinars</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/customers/" target="_self">
+                      <div class="heading">Customer Stories</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/glossary/" target="_self">
+                      <div class="heading">Glossary</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/marketplace/" target="_self">
+                      <div class="heading">Marketplace</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/podcast/" target="_self">
+                      <div class="heading">Podcast</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+            <!-- Column 3 -->
+            <div class="content column-2">
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/support/" target="_self">
+                      <div class="heading">Support</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column resource-inner-wrap">
+                  <div class="card-wrap">
+                    <a href="https://support.cohesity.com/" target="_self">
+                      <div class="heading">Support login</div>
+                    </a>
+                    <div class="inner-wrap">
+                      <a href="https://www.cohesity.com/resources/how-to-videos/" target="_self">
+                        <div class="heading">How-to videos</div>
+                      </a>
+                    
+                      <a href="https://www.cohesity.com/support/cyber-events-response-team/" target="_self">
+                        <div class="heading">Cyber Event Response Team</div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/professional-services/" target="_self">
+                      <div class="heading">Professional Services</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/community/" target="_self">
+                      <div class="heading">Cohesity Community</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/academy/" target="_self">
+                      <div class="heading">Cohesity Academy</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column resource-inner-wrap">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/trust/" target="_self">
+                      <div class="heading">Trust Center</div>
+                    </a>
+                    <div class="inner-wrap">
+                      <a href="https://www.cohesity.com/trust/redlab/" target="_self">
+                        <div class="heading">Cohesity REDLab</div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>
+
+    
+</div>
+
+    </div>
+
+    
+</div>
+
+        </li>
+        
+          <li class="partners">
+            <a href="https://www.cohesity.com/partners/" target="_self">
+              Partners
+              <div class="limed"></div>
+            </a>
+            <div class="xfpage page basicpage">
+
+
+    
+    <div id="container-7332f7534d" class="cmp-container">
+        
+
+
+<div class="aem-Grid aem-Grid--12 aem-Grid--default--12 ">
+    
+    <div class="navigationtopinnerpage aem-GridColumn aem-GridColumn--default--12">
+  
+    <!-- <div class="navigationtopinnerpage aem-GridColumn aem-GridColumn--default--12"> -->
+      <div class="inner-navigation-container redesign short-inner-navigation-container">
+        <div class="dropdown-menu">
+          <div class="content-container short-content-container partners-overview">
+            <div class="left-content">
+              <div class="content left-content-top">
+                <div class="column">
+                  <a href="https://www.cohesity.com/partners/">
+                    <div class="heading">Partners Overview   </div>
+                  </a>
+                </div>
+                <div class="button button--style-primary-black button--size-small">
+                  <a href="https://my.cohesity.com/s/?target=partner">
+                    Login
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="right-content">
+              <div class="content column-1">
+                
+                  <div class="column ">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/partners/channel-partners/">
+                        <div class="heading">Channel Partners</div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column ">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/partners/global-system-integrators/">
+                        <div class="heading">Global System Integrators</div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column ">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/partners/security-partners/">
+                        <div class="heading">Security Partners</div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column ">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/partners/cloud-alliances/">
+                        <div class="heading">Cloud Alliances</div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column ">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/partners/technology-partners/">
+                        <div class="heading">Technology Partners</div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column ">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/partners/service-providers/">
+                        <div class="heading">Managed Service Providers</div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column ">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/company/data-security-alliance/">
+                        <div class="heading">Data Security Alliance</div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column ">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/partners/cohesity-aces/">
+                        <div class="heading">Join Cohesity Aces</div>
+                      </a>
+                    </div>
+                  </div>
+                
+              </div>
+              <div class="overview-cta-mobile button button--style-primary-black button--size-small">
+                <a href="https://my.cohesity.com/s/?target=partner">
+                  Login
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- </div> -->
+  
+  
+
+
+
+    
+
+</div>
+
+    
+</div>
+
+    </div>
+
+    
+</div>
+
+        </li>
+        
+          <li class="company">
+            <a href="https://www.cohesity.com/company/" target="_self">
+              Company
+              <div class="limed"></div>
+            </a>
+            <div class="xfpage page basicpage">
+
+
+    
+    <div id="container-29b861491a" class="cmp-container">
+        
+
+
+<div class="aem-Grid aem-Grid--12 aem-Grid--default--12 ">
+    
+    <div class="navigationtop-company aem-GridColumn aem-GridColumn--default--12">
+
+    <div class="inner-navigation-container redesign short-inner-navigation-container">
+        <div class="dropdown-menu">
+            <div class="content-container resource-content-container company-content-container">
+                <div class="resource-content">
+                    <div class="left-content">
+                        <div class="content left-content-top">
+                            <div class="column">
+                                <a href="https://www.cohesity.com/company/">
+                                    <div class="heading">About</div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right-content">
+                        <!-- Column 2 -->
+                        <div class="content column-1">
+                            
+                                <div class="column ">
+                                    <div class="card-wrap">
+                                        <a href="https://www.cohesity.com/company/leadership/" target="_self">
+                                            <div class="heading">Leadership</div>
+                                        </a>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="column ">
+                                    <div class="card-wrap">
+                                        <a href="https://www.cohesity.com/resource-assets/legal/code-of-business-conduct-en.pdf" target="_blank">
+                                            <div class="heading">Our values and code</div>
+                                        </a>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="column resource-inner-wrap">
+                                    <div class="card-wrap">
+                                        <a href="https://www.cohesity.com/newsroom/" target="_self">
+                                            <div class="heading">Newsroom</div>
+                                        </a>
+                                        <div class="inner-wrap">
+                                            <a href="https://www.cohesity.com/newsroom/press/" target="_self">
+                                                <div class="heading">Press releases</div>
+                                            </a>
+                                        
+                                            <a href="https://www.cohesity.com/newsroom/news/" target="_self">
+                                                <div class="heading">News coverage</div>
+                                            </a>
+                                        
+                                            <a href="https://www.cohesity.com/newsroom/media-kit/" target="_self">
+                                                <div class="heading">Media resources</div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                                <div class="column ">
+                                    <div class="card-wrap">
+                                        <a href="https://www.cohesity.com/events/" target="_self">
+                                            <div class="heading">Events and Webinars</div>
+                                        </a>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="column ">
+                                    <div class="card-wrap">
+                                        <a href="https://www.cohesity.com/company/awards/" target="_self">
+                                            <div class="heading">Awards</div>
+                                        </a>
+                                        
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        <!-- Column 3 -->
+                        <div class="content column-2">
+                            
+                                <div class="column resource-inner-wrap">
+                                    <div class="card-wrap">
+                                        <a href="https://www.cohesity.com/careers/" target="_self">
+                                            <div class="heading">Careers</div>
+                                        </a>
+                                        <div class="inner-wrap">
+                                            <a href="https://www.cohesity.com/careers/open-positions/" target="_self">
+                                                <div class="heading">Open Positions</div>
+                                            </a>
+                                        
+                                            <a href="https://www.cohesity.com/careers/life-at-cohesity/" target="_self">
+                                                <div class="heading">Culture</div>
+                                            </a>
+                                        
+                                            <a href="https://www.cohesity.com/careers/belonging/" target="_self">
+                                                <div class="heading">Fostering Belonging</div>
+                                            </a>
+                                        
+                                            <a href="https://www.cohesity.com/careers/cohesity-gives-back/" target="_self">
+                                                <div class="heading">Cohesity Gives Back</div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                                <div class="column ">
+                                    <div class="card-wrap">
+                                        <a href="https://www.cohesity.com/company/data-security-alliance/" target="_self">
+                                            <div class="heading">Data Security Alliance</div>
+                                        </a>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="column ">
+                                    <div class="card-wrap">
+                                        <a href="https://www.cohesity.com/company/executive-briefing-center/" target="_self">
+                                            <div class="heading">Executive Briefing Center</div>
+                                        </a>
+                                        
+                                    </div>
+                                </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                    <a href="https://www.cohesity.com/contact/" class="company-contact-cta mobile-link mobile-contact">Contact Us</a>
+                
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+    
+</div>
+
+    </div>
+
+    
+</div>
+
+        </li>
+        </ul>
+      </nav>
+      <div class="actions">
+        <div class="dropdown">
+          
+            <button class="dropdown-button">Login <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1.5L6 6.5L11 1.5" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            </button>
+            
+              <ul class="dropdown-menu">
+                <li class="dropdown-item" role="menuitem">
+                  <a href="https://my.cohesity.com/s/login/?ec=302&startURL=%2Fs%2F" class="login-item-link" aria-label="MyCohesity" target="_blank">
+                      MyCohesity
+                  </a>
+                </li>
+              
+                <li class="dropdown-item" role="menuitem">
+                  <a href="https://my.cohesity.com/s/login/?ec=302&amp;startURL=%2Fs%2F%3Ftarget%3Dhelios" class="login-item-link" aria-label="Helios" target="_blank">
+                      Helios
+                  </a>
+                </li>
+              
+                <li class="dropdown-item" role="menuitem">
+                  <a href="https://alta.us.veritas.com/" class="login-item-link" aria-label="Alta" target="_blank">
+                      Alta
+                  </a>
+                </li>
+              
+                <li class="dropdown-item" role="menuitem">
+                  <a href="https://support.cohesity.com" class="login-item-link" aria-label="Support" target="_blank">
+                      Support
+                  </a>
+                </li>
+              
+                <li class="dropdown-item" role="menuitem">
+                  <a href="https://my.cohesity.com/s/?target=product" class="login-item-link" aria-label="Product Documentation" target="_blank">
+                      Product Documentation
+                  </a>
+                </li>
+              
+                <li class="dropdown-item" role="menuitem">
+                  <a href="https://my.cohesity.com/s/?target=academy" class="login-item-link" aria-label="Academy" target="_blank">
+                      Academy
+                  </a>
+                </li>
+              
+                <li class="dropdown-item" role="menuitem">
+                  <a href="https://community.cohesity.com/" class="login-item-link" aria-label="Cohesity Community" target="_blank">
+                      Cohesity Community
+                  </a>
+                </li>
+              
+                <li class="dropdown-item" role="menuitem">
+                  <a href="https://my.cohesity.com/s/?target=partner" class="login-item-link" aria-label="Partners" target="_blank">
+                      Partners
+                  </a>
+                </li>
+              </ul>
+            
+          
+        </div>
+        <div class="icons">
+          <div class="dropdown">
+            
+              <span class="dropdown-button">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M1 9H17" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M9.00005 1C11.0011 3.19068 12.1383 6.03363 12.2 9C12.1383 11.9664 11.0011 14.8093 9.00005 17C6.99902 14.8093 5.86185 11.9664 5.80005 9C5.86185 6.03363 6.99902 3.19068 9.00005 1V1Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+              </span>
+              
+                <ul class="dropdown-menu">
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://www.cohesity.com" class="language-item-link">
+                        English
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://www.cohesity.com/de-de/" class="language-item-link">
+                        Deutsch (Germany)
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://www.cohesity.com/fr-fr/" class="language-item-link">
+                        Français (France)
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://www.cohesity.com/ja-jp/" class="language-item-link">
+                        日本語 (Japan)
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://www.cohesity.com/pt-br/" class="language-item-link">
+                        Português (Brazil)
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://www.cohesity.com/ko-kr/" class="language-item-link">
+                        한국어 (South Korea)
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://www.cohesity.com/es-es/" class="language-item-link">
+                        Español (Spain)
+                    </a>
+                  </li>
+                </ul>
+              
+            
+          </div>
+          <div class="search">
+            
+              <span id="search-icon-click" data-search-link="/content/cohesity/us/en/search.html" class="search-button">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8.11115 15.2224C12.0385 15.2224 15.2223 12.0387 15.2223 8.11128C15.2223 4.18389 12.0385 1.00012 8.11115 1.00012C4.18377 1.00012 1 4.18389 1 8.11128C1 12.0387 4.18377 15.2224 8.11115 15.2224Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M17 16.9999L13.1333 13.1332" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+              </span>
+            
+          </div>
+        </div>
+        
+        <div class="button button--size-small button--style-primary-green">
+          <a href="https://www.cohesity.com/dm/free-trial/">Free Trial</a>
+        </div>  
+        
+      </div>
+    </div>
+  </header>
+
+  <header class="navigation-top--mobile Redesign">
+    <div class="nav-header">
+      <div class="logo">
+        <a href="/">
+          <img src="/content/dam/cohesity/live/cohesity-logo-white-green.svg" alt="Logo"/>
+        </a>
+      </div>
+      <div class="logo-inner-page">
+        <a href="/">
+          <img src="/content/dam/cohesity/live/cohesity-logo-black-green.svg" alt="Logo"/>
+        </a>
+          
+      </div>
+      <div class="mobile-icon actions">
+        <div class="mobile-icon-left">
+          
+            <div class="dropdown">
+              <span class="login-mobile-icon dropdown-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M7.772 1.163c-1.557 0-2.818 1.227-2.818 2.74 0 1.514 1.261 2.74 2.818 2.74 1.557 0 2.819-1.226 2.819-2.74 0-1.513-1.262-2.74-2.819-2.74zm-4.014 2.74C3.758 1.747 5.555 0 7.772 0c2.217 0 4.014 1.747 4.014 3.903 0 2.156-1.797 3.903-4.014 3.903-2.217 0-4.014-1.747-4.014-3.903zm-2.116 7.658c1.241-1.29 3.26-2.26 6.358-2.26s5.117.97 6.358 2.26C15.584 12.835 16 14.366 16 15.42a.59.59 0 01-.598.581H.598A.59.59 0 010 15.419c0-1.053.416-2.585 1.642-3.858zm-.395 3.276h13.506a4.746 4.746 0 00-1.268-2.481c-.98-1.018-2.661-1.892-5.485-1.892-2.824 0-4.506.874-5.485 1.892a4.747 4.747 0 00-1.268 2.481z" fill="#000000"/>
+                </svg>
+              </span>
+              
+                <ul class="dropdown-menu right-menu">
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://my.cohesity.com/s/login/?ec=302&startURL=%2Fs%2F" class="login-item-link" aria-label="MyCohesity" target="_blank">
+                        MyCohesity
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://my.cohesity.com/s/login/?ec=302&amp;startURL=%2Fs%2F%3Ftarget%3Dhelios" class="login-item-link" aria-label="Helios" target="_blank">
+                        Helios
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://alta.us.veritas.com/" class="login-item-link" aria-label="Alta" target="_blank">
+                        Alta
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://support.cohesity.com" class="login-item-link" aria-label="Support" target="_blank">
+                        Support
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://my.cohesity.com/s/?target=product" class="login-item-link" aria-label="Product Documentation" target="_blank">
+                        Product Documentation
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://my.cohesity.com/s/?target=academy" class="login-item-link" aria-label="Academy" target="_blank">
+                        Academy
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://community.cohesity.com/" class="login-item-link" aria-label="Cohesity Community" target="_blank">
+                        Cohesity Community
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://my.cohesity.com/s/?target=partner" class="login-item-link" aria-label="Partners" target="_blank">
+                        Partners
+                    </a>
+                  </li>
+                </ul>
+              
+            </div>
+          
+          
+            <div class="search">
+              <span class="search-mobile-icon" id="search-icon-click-mobile" data-search-link="/content/cohesity/us/en/search.html search-button">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8.11115 15.2224C12.0385 15.2224 15.2223 12.0387 15.2223 8.11128C15.2223 4.18389 12.0385 1.00012 8.11115 1.00012C4.18377 1.00012 1 4.18389 1 8.11128C1 12.0387 4.18377 15.2224 8.11115 15.2224Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M17 16.9999L13.1333 13.1332" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </div>
+          
+          
+            <div class="dropdown">
+              <span class="language-mobile-icon">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M1 9H17" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M9.00005 1C11.0011 3.19068 12.1383 6.03363 12.2 9C12.1383 11.9664 11.0011 14.8093 9.00005 17C6.99902 14.8093 5.86185 11.9664 5.80005 9C5.86185 6.03363 6.99902 3.19068 9.00005 1V1Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              
+                <ul class="dropdown-menu left-menu">
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://www.cohesity.com" class="language-item-link">
+                        English
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://www.cohesity.com/de-de/" class="language-item-link">
+                        Deutsch (Germany)
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://www.cohesity.com/fr-fr/" class="language-item-link">
+                        Français (France)
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://www.cohesity.com/ja-jp/" class="language-item-link">
+                        日本語 (Japan)
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://www.cohesity.com/pt-br/" class="language-item-link">
+                        Português (Brazil)
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://www.cohesity.com/ko-kr/" class="language-item-link">
+                        한국어 (South Korea)
+                    </a>
+                  </li>
+                
+                  <li class="dropdown-item" role="menuitem">
+                    <a href="https://www.cohesity.com/es-es/" class="language-item-link">
+                        Español (Spain)
+                    </a>
+                  </li>
+                </ul>
+              
+            </div>
+          
+        </div>
+
+        <div id="menu-icon" class="menu-icon active">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 18H20C20.55 18 21 17.55 21 17C21 16.45 20.55 16 20 16H4C3.45 16 3 16.45 3 17C3 17.55 3.45 18 4 18ZM4 13H20C20.55 13 21 12.55 21 12C21 11.45 20.55 11 20 11H4C3.45 11 3 11.45 3 12C3 12.55 3.45 13 4 13ZM3 7C3 7.55 3.45 8 4 8H20C20.55 8 21 7.55 21 7C21 6.45 20.55 6 20 6H4C3.45 6 3 6.45 3 7Z" fill="#000000"/>
+          </svg>
+        </div>
+        <div id="menu-icon--close" class="menu-icon--close">
+          <svg width="25" height="22" viewBox="0 0 25 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3.65918" y="18.7781" width="24" height="2" rx="1" transform="rotate(-45 3.65918 18.7781)" fill="#000000"/>
+            <rect x="5.07324" y="1.80762" width="24" height="2" rx="1" transform="rotate(45 5.07324 1.80762)" fill="#000000"/>
+          </svg>
+        </div>
+      </div>
+      
+    </div>
+    <div class="nav-menu" id="navMenu">
+      <ul class="main-menu">
+        <li class="platform" data-lisubmenuid="platform">
+          <a href="https://www.cohesity.com/platform/">
+            Platform
+          </a>
+          <div class="sub-menu" data-main-menus-id="platform">
+            <div class="sub-header" data-closesubmenuid="platform">
+              Platform
+            </div>
+            <div class="xfpage page basicpage">
+
+
+    
+    <div id="container-2b5b49635b" class="cmp-container">
+        
+
+
+<div class="aem-Grid aem-Grid--12 aem-Grid--default--12 ">
+    
+    <div class="navigationtopinnerfourcolumn aem-GridColumn aem-GridColumn--default--12">
+  <div class="inner-navigation-container redesign">
+    <div class="dropdown-menu">
+      <div class="content-container four-column-content-container">
+        <div class="left-content">
+          <div class="content left-content-top">
+            <div class="column">
+              
+              
+              <a href="https://www.cohesity.com/platform/" target="_self">
+                <div class="heading">Cohesity Data Cloud</div>
+              </a>
+              <p>Protect and secure your data from cyber attacks</p>
+              
+            </div>
+          </div>
+          <div class="content left-content-bottom">
+            <div class="column">
+              <a href="https://www.cohesity.com/buy/essentials/" target="_self">
+                <div class="heading">Cohesity for Midsize Business</div>
+              </a>
+            </div>
+          
+            <div class="column">
+              <a href="https://www.cohesity.com/buy/cohesity-data-cloud-packaging/" target="_self">
+                <div class="heading">Data Cloud packaging</div>
+              </a>
+            </div>
+          
+            <div class="column">
+              <a href="https://www.cohesity.com/platform/certified-platforms/" target="_self">
+                <div class="heading">Certified platforms</div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="right-content">
+          <div class="right-content-top">
+            <div class="content column-1">
+              <p>Data Protection</p>
+              <div class="content-inner">
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/backup-and-recovery/" target="_self">
+                        <div class="heading">Backup &amp; Recovery
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/cloud/" target="_self">
+                        <div class="heading">Cloud Data Protection
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/platform/cloud-rebuild/" target="_self">
+                        <div class="heading">Cloud App Recovery
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/platform/cloud-protection-services/" target="_self">
+                        <div class="heading">SaaS Data Protection
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/nas/" target="_self">
+                        <div class="heading">Unstructured Data Protection
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/cyber-resilience/" target="_self">
+                        <div class="heading">Cyber Resilience
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/data-security/" target="_self">
+                        <div class="heading">Zero Trust Security
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/long-term-retention-and-archival/" target="_self">
+                        <div class="heading">Archive &amp; Long-Term Retention
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/disaster-recovery/" target="_self">
+                        <div class="heading">Disaster Recovery
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+              </div>
+            </div>
+            <div class="content column-3">
+              <p>Data Security</p>
+              <div class="content-inner">
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/active-directory-entra-id/" target="_self">
+                        <div class="heading">Identity Resilience
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/ransomware/" target="_self">
+                        <div class="heading">Ransomware Anomaly Detection
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/platform/threat-protection/" target="_self">
+                        <div class="heading">Threat Protection
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/platform/data-security-posture-management/" target="_self">
+                        <div class="heading">Data Security Posture Management
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/platform/data-classification/" target="_self">
+                        <div class="heading">Data Classification
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/platform/fortknox/" target="_self">
+                        <div class="heading">Cyber Vaulting
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/platform/recoveryagent/" target="_self">
+                        <div class="heading">Cyber Recovery Orchestration
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/forms/white-paper/improve-cyber-resilience-with-a-digital-jump-bag/" target="_self">
+                        <div class="heading">Digital Jump Bag
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/clean-room/" target="_self">
+                        <div class="heading">Clean Room Solution
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+              </div>
+            </div>
+            <div class="content column-3">
+              <p>Data Insights</p>
+              <div class="content-inner">
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/ai-conversational-search/" target="_self">
+                        <div class="heading">AI-Ready Data Platform
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/platform/netbackup-it-analytics/" target="_self">
+                        <div class="heading">Reporting &amp; IT Insights
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/global-search/" target="_self">
+                        <div class="heading">Global Search
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+              </div>
+            </div>
+          </div>
+          <div class="right-content-bottom">
+            <div class="content column-4">
+              <div class="content-inner">
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/why-cohesity/" target="_self">
+                        <div class="heading">Why Cohesity
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/cohesity-vs-rubrik/" target="_self">
+                        <div class="heading">Cohesity vs. Rubrik
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/cohesity-vs-commvault/" target="_self">
+                        <div class="heading">Cohesity vs. Commvault
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+
+
+
+    
+
+</div>
+
+    
+</div>
+
+    </div>
+
+    
+</div>
+
+          </div>
+        </li>
+      
+        <li class="solutions" data-lisubmenuid="solutions">
+          <a href="https://www.cohesity.com/solutions/">
+            Solutions
+          </a>
+          <div class="sub-menu" data-main-menus-id="solutions">
+            <div class="sub-header" data-closesubmenuid="solutions">
+              Solutions
+            </div>
+            <div class="xfpage page basicpage">
+
+
+    
+    <div id="container-44b69bd8ad" class="cmp-container">
+        
+
+
+<div class="aem-Grid aem-Grid--12 aem-Grid--default--12 ">
+    
+    <div class="navigationtopinnerfourcolumn aem-GridColumn aem-GridColumn--default--12">
+  <div class="inner-navigation-container redesign">
+    <div class="dropdown-menu">
+      <div class="content-container four-column-content-container">
+        <div class="left-content">
+          <div class="content left-content-top">
+            <div class="column">
+              
+              
+              <a href="https://www.cohesity.com/solutions/" target="_self">
+                <div class="heading">View all solutions</div>
+              </a>
+              
+              
+            </div>
+          
+            <div class="column">
+              
+              <p class="p-lg bold">The 5 Steps to Cyber Resilience</p>
+              <a href="https://www.cohesity.com/forms/ebook/5-steps-to-improve-cyber-resilience/" target="_self">
+                <div class="heading">Learn more</div>
+              </a>
+              
+              
+            </div>
+          </div>
+          
+        </div>
+        <div class="right-content">
+          <div class="right-content-top">
+            <div class="content column-1">
+              <p>Cloud &amp; SaaS</p>
+              <div class="content-inner">
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/microsoft-365/" target="_self">
+                        <div class="heading">M365
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/aws/" target="_self">
+                        <div class="heading">AWS
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/azure/" target="_self">
+                        <div class="heading">Azure
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/google/" target="_self">
+                        <div class="heading">Google Cloud
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/google-workspace/" target="_self">
+                        <div class="heading">Google Workspace 
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/resources/solution-brief/cohesity-alta-saas-protection-slack-data-backup/" target="_self">
+                        <div class="heading">Slack 
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/active-directory-entra-id/" target="_self">
+                        <div class="heading">Active Directory &amp; Entra ID
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+              </div>
+            </div>
+            <div class="content column-3">
+              <p>Enterprise</p>
+              <div class="content-inner">
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/microsoft-hyper-v/" target="_self">
+                        <div class="heading">Hyper-V
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/kubernetes/" target="_self">
+                        <div class="heading">Kubernetes
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/ibm-cloud/" target="_self">
+                        <div class="heading">IBM
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/mongodb/" target="_self">
+                        <div class="heading">MongoDB
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/microsoft-sql-server/" target="_self">
+                        <div class="heading">MS SQL Server
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/nas/" target="_self">
+                        <div class="heading">NAS
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/nosql-and-hadoop/" target="_self">
+                        <div class="heading">NoSQL &amp; Hadoop
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/nutanix-ahv/" target="_self">
+                        <div class="heading">Nutanix
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/oracle/" target="_self">
+                        <div class="heading">Oracle
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/red-hat/" target="_self">
+                        <div class="heading">Red Hat
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/sap-hana/" target="_self">
+                        <div class="heading">SAP HANA
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/vmware/" target="_self">
+                        <div class="heading">VMware
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+              </div>
+            </div>
+            <div class="content column-3">
+              <p>Industries</p>
+              <div class="content-inner">
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/minimum-viable-company/" target="_self">
+                        <div class="heading">Minimum Viable Company
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/finance/" target="_self">
+                        <div class="heading">Financial services
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/healthcare/" target="_self">
+                        <div class="heading">Healthcare and life sciences
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/manufacturing-and-logistics/" target="_self">
+                        <div class="heading">Manufacturing and logistics
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/federal-government/" target="_self">
+                        <div class="heading">Federal government
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/state-and-local-government/" target="_self">
+                        <div class="heading">State, local government, and education
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/retail-and-hospitality/" target="_self">
+                        <div class="heading">Retail and hospitality
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/legal/" target="_self">
+                        <div class="heading">Legal
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/energy-and-utilities/" target="_self">
+                        <div class="heading">Energy and utilities
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/telecom/" target="_self">
+                        <div class="heading">Telecom
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/technology/" target="_self">
+                        <div class="heading">Technology
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/solutions/media-and-entertainment/" target="_self">
+                        <div class="heading">Media and entertainment
+                          
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                
+              </div>
+            </div>
+          </div>
+          
+        </div>
+    </div>
+  </div>
+
+
+
+    
+
+</div>
+
+    
+</div>
+
+    </div>
+
+    
+</div>
+
+          </div>
+        </li>
+      
+        <li class="resources" data-lisubmenuid="resources">
+          <a href="https://www.cohesity.com/resources/">
+            Resources
+          </a>
+          <div class="sub-menu" data-main-menus-id="resources">
+            <div class="sub-header" data-closesubmenuid="resources">
+              Resources
+            </div>
+            <div class="xfpage page basicpage">
+
+
+    
+    <div id="container-66c99fec69" class="cmp-container">
+        
+
+
+<div class="aem-Grid aem-Grid--12 aem-Grid--default--12 ">
+    
+    <div class="navigationtop-resource aem-GridColumn aem-GridColumn--default--12">
+
+
+  <div class="inner-navigation-container redesign short-inner-navigation-container">
+    <div class="dropdown-menu">
+      <div class="content-container resource-content-container">
+        <div class="resource-content">
+          <div class="left-content">
+            <div class="content left-content-top">
+              <div class="column">
+                <a href="https://www.cohesity.com/resources/">
+                  <div class="heading">Resources</div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="right-content">
+            <!-- Column 2 -->
+            <div class="content column-1">
+              <div class="column main-menu-mobile">
+                <div class="card-wrap">     
+                  <a href="https://www.cohesity.com/resources/">
+                    <div class="heading">View all</div>
+                  </a>
+                </div>
+              </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/resource-assets/solution-brief/cohesity-corporate-overview.pdf" target="_self">
+                      <div class="heading">Corporate Overview</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/blogs/" target="_self">
+                      <div class="heading">Blogs</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/demos/" target="_self">
+                      <div class="heading">Demos</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/events/" target="_self">
+                      <div class="heading">Events and Webinars</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/customers/" target="_self">
+                      <div class="heading">Customer Stories</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/glossary/" target="_self">
+                      <div class="heading">Glossary</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/marketplace/" target="_self">
+                      <div class="heading">Marketplace</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/podcast/" target="_self">
+                      <div class="heading">Podcast</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+            <!-- Column 3 -->
+            <div class="content column-2">
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/support/" target="_self">
+                      <div class="heading">Support</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column resource-inner-wrap">
+                  <div class="card-wrap">
+                    <a href="https://support.cohesity.com/" target="_self">
+                      <div class="heading">Support login</div>
+                    </a>
+                    <div class="inner-wrap">
+                      <a href="https://www.cohesity.com/resources/how-to-videos/" target="_self">
+                        <div class="heading">How-to videos</div>
+                      </a>
+                    
+                      <a href="https://www.cohesity.com/support/cyber-events-response-team/" target="_self">
+                        <div class="heading">Cyber Event Response Team</div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/professional-services/" target="_self">
+                      <div class="heading">Professional Services</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/community/" target="_self">
+                      <div class="heading">Cohesity Community</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column ">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/academy/" target="_self">
+                      <div class="heading">Cohesity Academy</div>
+                    </a>
+                    
+                  </div>
+                </div>
+              
+                <div class="column resource-inner-wrap">
+                  <div class="card-wrap">
+                    <a href="https://www.cohesity.com/trust/" target="_self">
+                      <div class="heading">Trust Center</div>
+                    </a>
+                    <div class="inner-wrap">
+                      <a href="https://www.cohesity.com/trust/redlab/" target="_self">
+                        <div class="heading">Cohesity REDLab</div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>
+
+    
+</div>
+
+    </div>
+
+    
+</div>
+
+          </div>
+        </li>
+      
+        <li class="partners" data-lisubmenuid="partners">
+          <a href="https://www.cohesity.com/partners/">
+            Partners
+          </a>
+          <div class="sub-menu" data-main-menus-id="partners">
+            <div class="sub-header" data-closesubmenuid="partners">
+              Partners
+            </div>
+            <div class="xfpage page basicpage">
+
+
+    
+    <div id="container-7332f7534d" class="cmp-container">
+        
+
+
+<div class="aem-Grid aem-Grid--12 aem-Grid--default--12 ">
+    
+    <div class="navigationtopinnerpage aem-GridColumn aem-GridColumn--default--12">
+  
+    <!-- <div class="navigationtopinnerpage aem-GridColumn aem-GridColumn--default--12"> -->
+      <div class="inner-navigation-container redesign short-inner-navigation-container">
+        <div class="dropdown-menu">
+          <div class="content-container short-content-container partners-overview">
+            <div class="left-content">
+              <div class="content left-content-top">
+                <div class="column">
+                  <a href="https://www.cohesity.com/partners/">
+                    <div class="heading">Partners Overview   </div>
+                  </a>
+                </div>
+                <div class="button button--style-primary-black button--size-small">
+                  <a href="https://my.cohesity.com/s/?target=partner">
+                    Login
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="right-content">
+              <div class="content column-1">
+                
+                  <div class="column ">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/partners/channel-partners/">
+                        <div class="heading">Channel Partners</div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column ">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/partners/global-system-integrators/">
+                        <div class="heading">Global System Integrators</div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column ">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/partners/security-partners/">
+                        <div class="heading">Security Partners</div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column ">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/partners/cloud-alliances/">
+                        <div class="heading">Cloud Alliances</div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column ">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/partners/technology-partners/">
+                        <div class="heading">Technology Partners</div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column ">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/partners/service-providers/">
+                        <div class="heading">Managed Service Providers</div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column ">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/company/data-security-alliance/">
+                        <div class="heading">Data Security Alliance</div>
+                      </a>
+                    </div>
+                  </div>
+                
+                  <div class="column ">
+                    <div class="card-wrap">
+                      <a href="https://www.cohesity.com/partners/cohesity-aces/">
+                        <div class="heading">Join Cohesity Aces</div>
+                      </a>
+                    </div>
+                  </div>
+                
+              </div>
+              <div class="overview-cta-mobile button button--style-primary-black button--size-small">
+                <a href="https://my.cohesity.com/s/?target=partner">
+                  Login
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- </div> -->
+  
+  
+
+
+
+    
+
+</div>
+
+    
+</div>
+
+    </div>
+
+    
+</div>
+
+          </div>
+        </li>
+      
+        <li class="company" data-lisubmenuid="company">
+          <a href="https://www.cohesity.com/company/">
+            Company
+          </a>
+          <div class="sub-menu" data-main-menus-id="company">
+            <div class="sub-header" data-closesubmenuid="company">
+              Company
+            </div>
+            <div class="xfpage page basicpage">
+
+
+    
+    <div id="container-29b861491a" class="cmp-container">
+        
+
+
+<div class="aem-Grid aem-Grid--12 aem-Grid--default--12 ">
+    
+    <div class="navigationtop-company aem-GridColumn aem-GridColumn--default--12">
+
+    <div class="inner-navigation-container redesign short-inner-navigation-container">
+        <div class="dropdown-menu">
+            <div class="content-container resource-content-container company-content-container">
+                <div class="resource-content">
+                    <div class="left-content">
+                        <div class="content left-content-top">
+                            <div class="column">
+                                <a href="https://www.cohesity.com/company/">
+                                    <div class="heading">About</div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right-content">
+                        <!-- Column 2 -->
+                        <div class="content column-1">
+                            
+                                <div class="column ">
+                                    <div class="card-wrap">
+                                        <a href="https://www.cohesity.com/company/leadership/" target="_self">
+                                            <div class="heading">Leadership</div>
+                                        </a>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="column ">
+                                    <div class="card-wrap">
+                                        <a href="https://www.cohesity.com/resource-assets/legal/code-of-business-conduct-en.pdf" target="_blank">
+                                            <div class="heading">Our values and code</div>
+                                        </a>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="column resource-inner-wrap">
+                                    <div class="card-wrap">
+                                        <a href="https://www.cohesity.com/newsroom/" target="_self">
+                                            <div class="heading">Newsroom</div>
+                                        </a>
+                                        <div class="inner-wrap">
+                                            <a href="https://www.cohesity.com/newsroom/press/" target="_self">
+                                                <div class="heading">Press releases</div>
+                                            </a>
+                                        
+                                            <a href="https://www.cohesity.com/newsroom/news/" target="_self">
+                                                <div class="heading">News coverage</div>
+                                            </a>
+                                        
+                                            <a href="https://www.cohesity.com/newsroom/media-kit/" target="_self">
+                                                <div class="heading">Media resources</div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                                <div class="column ">
+                                    <div class="card-wrap">
+                                        <a href="https://www.cohesity.com/events/" target="_self">
+                                            <div class="heading">Events and Webinars</div>
+                                        </a>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="column ">
+                                    <div class="card-wrap">
+                                        <a href="https://www.cohesity.com/company/awards/" target="_self">
+                                            <div class="heading">Awards</div>
+                                        </a>
+                                        
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        <!-- Column 3 -->
+                        <div class="content column-2">
+                            
+                                <div class="column resource-inner-wrap">
+                                    <div class="card-wrap">
+                                        <a href="https://www.cohesity.com/careers/" target="_self">
+                                            <div class="heading">Careers</div>
+                                        </a>
+                                        <div class="inner-wrap">
+                                            <a href="https://www.cohesity.com/careers/open-positions/" target="_self">
+                                                <div class="heading">Open Positions</div>
+                                            </a>
+                                        
+                                            <a href="https://www.cohesity.com/careers/life-at-cohesity/" target="_self">
+                                                <div class="heading">Culture</div>
+                                            </a>
+                                        
+                                            <a href="https://www.cohesity.com/careers/belonging/" target="_self">
+                                                <div class="heading">Fostering Belonging</div>
+                                            </a>
+                                        
+                                            <a href="https://www.cohesity.com/careers/cohesity-gives-back/" target="_self">
+                                                <div class="heading">Cohesity Gives Back</div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                                <div class="column ">
+                                    <div class="card-wrap">
+                                        <a href="https://www.cohesity.com/company/data-security-alliance/" target="_self">
+                                            <div class="heading">Data Security Alliance</div>
+                                        </a>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="column ">
+                                    <div class="card-wrap">
+                                        <a href="https://www.cohesity.com/company/executive-briefing-center/" target="_self">
+                                            <div class="heading">Executive Briefing Center</div>
+                                        </a>
+                                        
+                                    </div>
+                                </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                    <a href="https://www.cohesity.com/contact/" class="company-contact-cta mobile-link mobile-contact">Contact Us</a>
+                
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+    
+</div>
+
+    </div>
+
+    
+</div>
+
+          </div>
+        </li>
+      </ul>
+      
+        <a href="https://www.cohesity.com/dm/free-trial/" class="mobile-link free-trial">Free Trial</a>
+      
+      <!-- Contact Cta -->
+      
+        <a href="https://www.cohesity.com/contact/" class="mobile-link mobile-contact">Contact Us</a>
+      
+    </div>
+  </header>
+
+
+
+    
+
+</div>
+
+        
+    </div>
+
+</div>
+
+    
+</header>
+
+            
+            
+            
+            
+            
+             
+            
+            
+        
+            
+            
+            
+                <div class="heroes">
+<div class="cmp-heroes                 " style="--animationDelay: nulls; --animationDuration: 0.3s;
+                background-image:  url();">
+
+     
+
+     
+
+     
+
+     <div class="cmp-heroes-container section__container fade-in">
+          <div class="cmp-heroes__breadcrumb">
+                
+               
+                    <nav class="cmp-breadcrumb">
+      <ol class="cmp-breadcrumb__list">
+         <li class="cmp-breadcrumb__item">
+            <a class="cmp-breadcrumb__item-link" href="/blogs/">
+               <span>Blogs</span>
+            </a>
+         </li>
+      </ol>
+   </nav>
+
+               
+
+               
+          </div>
+          
+          <!-- <div class="cmp-heroes__date eyebrow d-block"
+               data-sly-test="Thu Dec 12 10:15:08 UTC 2024">December 12 2024</div> -->
+          
+          <!-- <div class="cmp-heroes__date eyebrow d-none"></div> -->
+          
+          
+          
+
+          
+
+          
+    <div class="cmp-heroes-two-column">
+        <div class="cmp-heroes-two-column__content">
+            <div class="cmp-heroes__date eyebrow">
+                    December 12 2024
+            </div>
+            <h1 class="cmp-heroes-two-column__title sm">The Cohesity post-quantum cryptography strategy</h1>
+            <p class="cmp-heroes-two-column__subtitle p-lg">The rapid advancements of quantum computers are causing security teams to ask vendors what they are doing to prepare for the &#34;quantum apocalypse.&#34; 
+
+</p>
+            <div class="cmp-heroes-two-column__actions">
+                
+                
+
+                
+
+                
+
+                
+            
+                
+                <div class="button cmp-heroes-two-column__action-item button--style-primary-green buttoncta2">
+                    <a href="https://www.cohesity.com/dm/free-trial/" target="_blank">Get qualified to start a free trial</a>
+                </div>
+
+                
+
+                
+
+                
+            </div>
+        </div>
+
+        <div class="cmp-heroes-two-column__media">
+            
+<div data-cmp-is="image" data-cmp-src="/blogs/the-cohesity-post-quantum-cryptography-strategy/_jcr_content/root/heroes/heroes-two-column-image.coreimg{.width}.png/1747375978112/blog-building-cybersecurity-awareness-cs-7029-blog-hero.png" data-asset-id="66508bcd-43a1-4736-82d5-f89f38209a2a" data-cmp-filereference="/content/dam/cohesity/new_media/2023/10/Blog_building-cybersecurity-awareness_CS-7029_Blog-Hero.png" id="image-57cd7856f0" data-cmp-data-layer="{&#34;image-57cd7856f0&#34;:{&#34;@type&#34;:&#34;cohesity/components/content/image&#34;,&#34;image&#34;:{&#34;repo:id&#34;:&#34;66508bcd-43a1-4736-82d5-f89f38209a2a&#34;,&#34;repo:modifyDate&#34;:&#34;2025-05-16T06:12:58Z&#34;,&#34;@type&#34;:&#34;image/png&#34;,&#34;repo:path&#34;:&#34;/content/dam/cohesity/new_media/2023/10/Blog_building-cybersecurity-awareness_CS-7029_Blog-Hero.png&#34;,&#34;xdm:tags&#34;:[&#34;properties:orientation/landscape&#34;],&#34;xdm:smartTags&#34;:{&#34;afterglow&#34;:0.815,&#34;vertex&#34;:0.837,&#34;simulation&#34;:0.877,&#34;dot&#34;:0.86,&#34;graphic design&#34;:0.826,&#34;abstract&#34;:0.769,&#34;tint&#34;:0.755,&#34;network&#34;:0.817,&#34;animation&#34;:0.76,&#34;acid&#34;:0.752,&#34;synthetic&#34;:0.765,&#34;rainbow&#34;:0.764,&#34;gleam&#34;:0.789,&#34;linedrawing&#34;:0.783,&#34;blotch&#34;:0.781,&#34;background&#34;:0.767,&#34;fractal&#34;:0.815,&#34;fluid&#34;:0.781,&#34;abstract photography&#34;:0.945,&#34;flow&#34;:0.756}}}}" data-cmp-hook-image="imageV3" class="cmp-image" itemscope itemtype="http://schema.org/ImageObject">
+    
+        <img src="/blogs/the-cohesity-post-quantum-cryptography-strategy/_jcr_content/root/heroes/heroes-two-column-image.coreimg.png/1747375978112/blog-building-cybersecurity-awareness-cs-7029-blog-hero.png" loading="lazy" class="cmp-image__image" itemprop="contentUrl" width="925" height="440" alt/>
+    
+    
+    
+</div>
+
+    
+
+
+            
+            
+        </div>
+    </div>
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+		 
+          
+          
+          
+          
+                
+               
+          
+     </div>
+
+     
+
+     
+
+     
+     
+</div>
+
+
+    
+
+</div>
+
+            
+            
+            
+            
+             
+            
+            
+        
+            
+            
+            
+            
+            
+                <main class="blog-content--wrapper container section__container">
+                    <div class="blog-left-content">
+                        
+                            <div class="blog-text">
+                                
+
+    
+    <div id="container-c4ac341e40" class="cmp-container">
+        
+
+
+<div class="aem-Grid aem-Grid--12 aem-Grid--default--12 ">
+    
+    <div class="text aem-GridColumn aem-GridColumn--default--12">
+<div class="  ">
+   <div data-cmp-data-layer="{&#34;text-87f83f145c&#34;:{&#34;@type&#34;:&#34;cohesity/components/content/text&#34;,&#34;repo:modifyDate&#34;:&#34;2025-07-27T18:10:12Z&#34;,&#34;xdm:text&#34;:&#34;&lt;p>&lt;span style=\&#34;font-weight: 400;\&#34;>With &lt;/span>&lt;a href=\&#34;https://www.nytimes.com/2024/12/09/technology/google-quantum-computing.html?unlocked_article_code=1.gE4.6SS2.Vjs6SJhgvpJi&amp;amp;smid=url-share\&#34;>&lt;span style=\&#34;font-weight: 400;\&#34;>advances in quantum computing in the news&lt;/span>&lt;/a>&lt;span style=\&#34;font-weight: 400;\&#34;> seemingly every day, &lt;/span>I’m frequently asked, “What is Cohesity’s strategy for dealing with quantum computing?” Governments worldwide are actively preparing and breakthroughs seemingly every day, so it’s no wonder this is top of mind for many people.&lt;/p>\n&lt;p>Our strategy has four steps, summed up in four words: monitor, extend, adopt, and wait.&lt;/p>\n&lt;ol>\n&lt;li>&lt;strong>Monitor&lt;/strong> quantum computing advances.&lt;/li>\n&lt;li>&lt;strong>Extend&lt;/strong> existing cryptography lifetime.&lt;/li>\n&lt;li>&lt;strong>Adopt&lt;/strong> post-quantum cryptography.&lt;/li>\n&lt;li>&lt;strong>Wait&lt;/strong> for quantum cryptography.&lt;/li>\n&lt;/ol>\n&lt;p>&lt;span style=\&#34;font-weight: 400;\&#34;>Perhaps the biggest question in quantum computing is, “When will quantum computers be able to break the cryptography we use today?” This event is called the “&lt;/span>&lt;a href=\&#34;https://engineering.fb.com/2024/08/28/security/post-quantum-cryptography-meta/\&#34;>&lt;span style=\&#34;font-weight: 400;\&#34;>quantum apocalypse&lt;/span>&lt;/a>&lt;span style=\&#34;font-weight: 400;\&#34;>”, and it’s difficult to predict. If quantum computers advance at the same rate they have since 2016, we may have roughly 15-20 years. However, any breakthrough could cause this timeline to accelerate massively, putting us closer to 5 years. &lt;/span>&lt;/p>\n&lt;p>&lt;span style=\&#34;font-weight: 400;\&#34;>In either case, it’s very tempting to think of this as a problem for our future selves and move on. This time, however, that’s not a wise approach. Malicious actors, particularly nation-states, are engaged in a concerted effort known as “harvest now, decrypt later” (HNDL), and their time horizon extends for decades. &lt;/span>&lt;/p>\n&lt;p>&lt;span style=\&#34;font-weight: 400;\&#34;>In response to these trends, &lt;/span>&lt;a href=\&#34;https://www.whitehouse.gov/briefing-room/statements-releases/2022/05/04/national-security-memorandum-on-promoting-united-states-leadership-in-quantum-computing-while-mitigating-risks-to-vulnerable-cryptographic-systems/\&#34;>&lt;span style=\&#34;font-weight: 400;\&#34;>National Security Memorandum 10&lt;/span>&lt;/a>&lt;span style=\&#34;font-weight: 400;\&#34;> called for transitioning away from as much quantum-vulnerable cryptography as possible by 2035. NIST has &lt;/span>&lt;a href=\&#34;https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf\&#34;>&lt;span style=\&#34;font-weight: 400;\&#34;>requested comment&lt;/span>&lt;/a>&lt;span style=\&#34;font-weight: 400;\&#34;> on plans to deprecate quantum-vulnerable cryptography after 2030—allowing these algorithms to be used only for decrypting data that was previously encrypted with them—and to disallow it entirely after 2035.&lt;/span>&lt;/p>\n&lt;h2>&lt;strong>To defeat your enemies, first know yourself&lt;/strong>&lt;/h2>\n&lt;p>To defend against attackers, you first need to understand your data. While it may be obvious that national security data is valuable for 20 years, it might be less obvious that social media data and encrypted texts deserve equal security. Still, one need only look at embarrassed politicians whose previous emails or posts have landed them in trouble years or even decades later to understand their value. A little more obvious are financial and health records. Most people live far over 20 years, sometimes over a century. Meanwhile, companies can last for hundreds of years. While much of this data is only valuable for a short period, some of it may become more valuable over time.&lt;/p>\n&lt;p>Thus, any strategy to prepare for the quantum apocalypse must begin by understanding the data you’re protecting and how far into the future that data will have value to an attacker.&lt;/p>\n&lt;h2>&lt;strong>The Cohesity quantum strategy—in detail&lt;/strong>&lt;/h2>\n&lt;p>Once you’ve thought about the data you’re trying to protect and how long it needs to stay secure, you’re ready to understand Cohesity’s strategy in detail.&lt;/p>\n&lt;h3>#1: Monitor quantum computing advances.&lt;/h3>\n&lt;p>Quantum computers rely on qubits rather than traditional memory and processors. Generally, the larger the encryption key, the more qubits are needed to break it. The current state of the art for quantum computers is ~1200 qubits, and while there are plans for computers with orders of magnitude qubits, that will take time.&lt;/p>\n&lt;p>The first question is, “How many qubits does it take to break an encryption key of a given size?” We measure key sizes in the number of bits needed to represent them. Industry-standard RSA and &lt;a href=\&#34;https://ee.stanford.edu/~hellman/publications/24.pdf\&#34; target=\&#34;_blank\&#34; rel=\&#34;noopener\&#34;>Diffie-Hellman&lt;/a> keys are 2048-bit. Cryptographers estimate that roughly 1 million qubits would be needed to break this. The industry is generally migrating to 4096-bit keys, which will take ~1.3 billion qubits.&lt;/p>\n&lt;p>Since 2016, the largest quantum computers have doubled their qubit count about every 14 months, a quantum equivalent to &lt;a href=\&#34;https://www.intel.com/content/www/us/en/newsroom/resources/moores-law.html\&#34; target=\&#34;_blank\&#34; rel=\&#34;noopener\&#34;>Moore’s Law&lt;/a>. However, this trend has recently slowed as companies developing quantum computers shift their focus to reducing the “noise” in today’s qubits that come from qubits unexpectedly flipping from 0 to 1 or vice versa due to cosmic rays, leaking heat, or any number of other quantum effects. Compensating for this noise requires using many qubits for error correction, which is inefficient. If the noise can be reduced, far fewer qubits will be needed to break an encryption key of a given size. Rapid advances in reducing noise could bring the quantum apocalypse closer. Indeed, a quantum computer that needed no error correction would need only one qubit for each bit in the key, so 2048-bit keys could be broken with 2048 qubits, which is only one generational increase in qubits from today’s largest quantum computers. Thus, there is a risk of the quantum apocalypse occurring by 2030, which merits continuous monitoring.&lt;/p>\n&lt;h3>#2: Extend existing cryptography lifetime.&lt;/h3>\n&lt;p>When it comes to quantum computers, not all cryptography is created equal. Therefore, it’s possible to extend the useful life of existing encryption, which is desirable because today’s encryption is widely deployed, standardized, and well-studied. For example, some of the math used in RSA and Diffie-Hellman was studied by ancient Greeks and Chinese.&lt;/p>\n&lt;p>As we’ve noted, quantum computers will break smaller keys before they break larger keys. Thus, Cohesity’s migration to 4096-bit keys is a step to extend the useful lifetime of RSA and Diffie-Hellman.&lt;/p>\n&lt;p>RSA and Diffie-Hellman, which we’ve discussed, are known as “asymmetric algorithms,” meaning they use different keys for encryption and decryption. AES is an example of a symmetric algorithm that uses the same key for encryption and decryption. Because the mathematics of symmetric algorithms differ from those used for asymmetric algorithms, they are less impacted by quantum computing. Quantum computers are potentially devastating against traditional asymmetric cryptography, hence the moniker quantum-vulnerable cryptography. However, against symmetric algorithms, they can only reduce the effective key strength by half. So, a 256-bit key will have a strength equivalent to 128 bits. While that’s a significant attack, a 128-bit effective strength is still enough to protect against attackers.&lt;/p>\n&lt;p>Cohesity uses AES 256 in our products to encrypt data at rest and is a default for data in motion. This offers the best protection available today.&lt;/p>\n&lt;p>It is important to note that because of the differences in how they work, symmetric algorithms can generally use shorter keys but have an equivalent strength of much longer asymmetric keys. NIST, for instance, says that a 128-bit AES key is comparable to a 3072 RSA key, while fully matching AES 256’s strength requires a 15,360-bit RSA key. In practice, due to the complexity of the computations involved, 4096 bits is the largest commonly used RSA key size.&lt;/p>\n&lt;h3>#3: Adopt post-quantum cryptography.&lt;/h3>\n&lt;p>While we can buy time using today’s cryptography, it’s evident that’s not a permanent solution. Thus, several years ago, NIST set out to standardize algorithms that resist quantum computers. The first of these was standardized this summer. While they work in ways analogous to RSA and Diffie-Hellman, the underlying math is based on problems that are hard for quantum computers.&lt;/p>\n&lt;p>Now that these are standardized, they will be implemented in cryptographic libraries and certified via programs like FIPS 140-3. This process will allow Cohesity to move to these new algorithms while maintaining compliance with FIPS.&lt;/p>\n&lt;p>In the world of cryptography, “new” things often get broken by clever PhD candidates in ways that make exciting (at least to cryptographers) dissertations. So, while we want to adopt these algorithms, a hint of caution is advisable for three reasons. First, the math involved is much less well-studied. Indeed, many candidate algorithms failed in NIST’s testing because someone found a way to use a classical computer to break them. Second, we also don’t have quantum computers that can fully test these algorithms. Third, implementing new cryptographic algorithms without introducing vulnerabilities is very hard. It will take time for libraries to implement these algorithms and to be battle hardened.&lt;/p>\n&lt;p>Nonetheless, it’s evident that the industry needs to begin adopting post-quantum cryptography now to limit the damage of Harvest Now Decrypt Later (HNDL) attacks and complete the transition by 2035. Such transitions can often take organizations more than a decade to update entire technology stacks.&lt;/p>\n&lt;h3>#4: Wait for quantum cryptography.&lt;/h3>\n&lt;p>While post-quantum cryptography is certainly a logical next step, the final part of our strategy is to await quantum cryptography. This is cryptographic nirvana because physics says quantum cryptography is fundamentally unbreakable. The &lt;a href=\&#34;https://scienceexchange.caltech.edu/topics/quantum-science-explained/uncertainty-principle\&#34;>Heisenberg Uncertainty Principle&lt;/a> in quantum mechanics says that measuring a thing changes it. This can be exploited such that an attacker who tries to intercept messages protected by quantum cryptography will be unable to read or decrypt the messages. Any attempt to do so will destroy the message and expose the attacker’s presence.&lt;/p>\n&lt;p>Ultimately, we may find that quantum computing brings both the destruction of many current cryptographic systems and their ultimate replacement.&lt;/p>\n&lt;h2>&lt;strong>The quantum apocalypse is coming—the time to prepare is now&lt;/strong>&lt;/h2>\n&lt;p>The quantum apocalypse will change the face of modern cryptography and data security. Attackers are preparing now, in anticipation of being able to use these remarkable capabilities in the future. It is, therefore, critical that organizations deploy their defensive strategies now. Cohesity’s strategy to monitor, extend, adopt, and wait can be a framework for any organization seeking to weather the coming storm.&lt;/p>\n&lt;p>Whether you choose to use our framework or another, you should immediately identify a strategy to prepare for quantum computing. You’ll want to ensure it aligns with your time horizons for keeping data secret from HNDL attacks. Unless you have a good reason to do something different, following NIST’s guidelines of fully supporting post-quantum cryptography by 2030 and completing the transition by 2035 is a reasonable timeline. To support this migration, reach out to your vendors and discuss how their post-quantum strategies align with your needs. The quantum apocalypse is coming, and the time to prepare is now.&lt;/p>\n&#34;}}" id="text-87f83f145c" class="cmp-text">
+      
+      <p><span style="	font-weight: 400;
+">With </span><a href="https://www.nytimes.com/2024/12/09/technology/google-quantum-computing.html?unlocked_article_code&#61;1.gE4.6SS2.Vjs6SJhgvpJi&amp;smid&#61;url-share"><span style="	font-weight: 400;
+">advances in quantum computing in the news</span></a><span style="	font-weight: 400;
+"> seemingly every day, </span>I’m frequently asked, “What is Cohesity’s strategy for dealing with quantum computing?” Governments worldwide are actively preparing and breakthroughs seemingly every day, so it’s no wonder this is top of mind for many people.</p>
+<p>Our strategy has four steps, summed up in four words: monitor, extend, adopt, and wait.</p>
+<ol><li><strong>Monitor</strong> quantum computing advances.</li><li><strong>Extend</strong> existing cryptography lifetime.</li><li><strong>Adopt</strong> post-quantum cryptography.</li><li><strong>Wait</strong> for quantum cryptography.</li></ol>
+<p><span style="	font-weight: 400;
+">Perhaps the biggest question in quantum computing is, “When will quantum computers be able to break the cryptography we use today?” This event is called the “</span><a href="https://engineering.fb.com/2024/08/28/security/post-quantum-cryptography-meta/"><span style="	font-weight: 400;
+">quantum apocalypse</span></a><span style="	font-weight: 400;
+">”, and it’s difficult to predict. If quantum computers advance at the same rate they have since 2016, we may have roughly 15-20 years. However, any breakthrough could cause this timeline to accelerate massively, putting us closer to 5 years. </span></p>
+<p><span style="	font-weight: 400;
+">In either case, it’s very tempting to think of this as a problem for our future selves and move on. This time, however, that’s not a wise approach. Malicious actors, particularly nation-states, are engaged in a concerted effort known as “harvest now, decrypt later” (HNDL), and their time horizon extends for decades. </span></p>
+<p><span style="	font-weight: 400;
+">In response to these trends, </span><a href="https://www.whitehouse.gov/briefing-room/statements-releases/2022/05/04/national-security-memorandum-on-promoting-united-states-leadership-in-quantum-computing-while-mitigating-risks-to-vulnerable-cryptographic-systems/"><span style="	font-weight: 400;
+">National Security Memorandum 10</span></a><span style="	font-weight: 400;
+"> called for transitioning away from as much quantum-vulnerable cryptography as possible by 2035. NIST has </span><a href="https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf"><span style="	font-weight: 400;
+">requested comment</span></a><span style="	font-weight: 400;
+"> on plans to deprecate quantum-vulnerable cryptography after 2030—allowing these algorithms to be used only for decrypting data that was previously encrypted with them—and to disallow it entirely after 2035.</span></p>
+<h2><strong>To defeat your enemies, first know yourself</strong></h2>
+<p>To defend against attackers, you first need to understand your data. While it may be obvious that national security data is valuable for 20 years, it might be less obvious that social media data and encrypted texts deserve equal security. Still, one need only look at embarrassed politicians whose previous emails or posts have landed them in trouble years or even decades later to understand their value. A little more obvious are financial and health records. Most people live far over 20 years, sometimes over a century. Meanwhile, companies can last for hundreds of years. While much of this data is only valuable for a short period, some of it may become more valuable over time.</p>
+<p>Thus, any strategy to prepare for the quantum apocalypse must begin by understanding the data you’re protecting and how far into the future that data will have value to an attacker.</p>
+<h2><strong>The Cohesity quantum strategy—in detail</strong></h2>
+<p>Once you’ve thought about the data you’re trying to protect and how long it needs to stay secure, you’re ready to understand Cohesity’s strategy in detail.</p>
+<h3>#1: Monitor quantum computing advances.</h3>
+<p>Quantum computers rely on qubits rather than traditional memory and processors. Generally, the larger the encryption key, the more qubits are needed to break it. The current state of the art for quantum computers is ~1200 qubits, and while there are plans for computers with orders of magnitude qubits, that will take time.</p>
+<p>The first question is, “How many qubits does it take to break an encryption key of a given size?” We measure key sizes in the number of bits needed to represent them. Industry-standard RSA and <a href="https://ee.stanford.edu/~hellman/publications/24.pdf" target="_blank" rel="noopener noreferrer">Diffie-Hellman</a> keys are 2048-bit. Cryptographers estimate that roughly 1 million qubits would be needed to break this. The industry is generally migrating to 4096-bit keys, which will take ~1.3 billion qubits.</p>
+<p>Since 2016, the largest quantum computers have doubled their qubit count about every 14 months, a quantum equivalent to <a href="https://www.intel.com/content/www/us/en/newsroom/resources/moores-law.html" target="_blank" rel="noopener noreferrer">Moore’s Law</a>. However, this trend has recently slowed as companies developing quantum computers shift their focus to reducing the “noise” in today’s qubits that come from qubits unexpectedly flipping from 0 to 1 or vice versa due to cosmic rays, leaking heat, or any number of other quantum effects. Compensating for this noise requires using many qubits for error correction, which is inefficient. If the noise can be reduced, far fewer qubits will be needed to break an encryption key of a given size. Rapid advances in reducing noise could bring the quantum apocalypse closer. Indeed, a quantum computer that needed no error correction would need only one qubit for each bit in the key, so 2048-bit keys could be broken with 2048 qubits, which is only one generational increase in qubits from today’s largest quantum computers. Thus, there is a risk of the quantum apocalypse occurring by 2030, which merits continuous monitoring.</p>
+<h3>#2: Extend existing cryptography lifetime.</h3>
+<p>When it comes to quantum computers, not all cryptography is created equal. Therefore, it’s possible to extend the useful life of existing encryption, which is desirable because today’s encryption is widely deployed, standardized, and well-studied. For example, some of the math used in RSA and Diffie-Hellman was studied by ancient Greeks and Chinese.</p>
+<p>As we’ve noted, quantum computers will break smaller keys before they break larger keys. Thus, Cohesity’s migration to 4096-bit keys is a step to extend the useful lifetime of RSA and Diffie-Hellman.</p>
+<p>RSA and Diffie-Hellman, which we’ve discussed, are known as “asymmetric algorithms,” meaning they use different keys for encryption and decryption. AES is an example of a symmetric algorithm that uses the same key for encryption and decryption. Because the mathematics of symmetric algorithms differ from those used for asymmetric algorithms, they are less impacted by quantum computing. Quantum computers are potentially devastating against traditional asymmetric cryptography, hence the moniker quantum-vulnerable cryptography. However, against symmetric algorithms, they can only reduce the effective key strength by half. So, a 256-bit key will have a strength equivalent to 128 bits. While that’s a significant attack, a 128-bit effective strength is still enough to protect against attackers.</p>
+<p>Cohesity uses AES 256 in our products to encrypt data at rest and is a default for data in motion. This offers the best protection available today.</p>
+<p>It is important to note that because of the differences in how they work, symmetric algorithms can generally use shorter keys but have an equivalent strength of much longer asymmetric keys. NIST, for instance, says that a 128-bit AES key is comparable to a 3072 RSA key, while fully matching AES 256’s strength requires a 15,360-bit RSA key. In practice, due to the complexity of the computations involved, 4096 bits is the largest commonly used RSA key size.</p>
+<h3>#3: Adopt post-quantum cryptography.</h3>
+<p>While we can buy time using today’s cryptography, it’s evident that’s not a permanent solution. Thus, several years ago, NIST set out to standardize algorithms that resist quantum computers. The first of these was standardized this summer. While they work in ways analogous to RSA and Diffie-Hellman, the underlying math is based on problems that are hard for quantum computers.</p>
+<p>Now that these are standardized, they will be implemented in cryptographic libraries and certified via programs like FIPS 140-3. This process will allow Cohesity to move to these new algorithms while maintaining compliance with FIPS.</p>
+<p>In the world of cryptography, “new” things often get broken by clever PhD candidates in ways that make exciting (at least to cryptographers) dissertations. So, while we want to adopt these algorithms, a hint of caution is advisable for three reasons. First, the math involved is much less well-studied. Indeed, many candidate algorithms failed in NIST’s testing because someone found a way to use a classical computer to break them. Second, we also don’t have quantum computers that can fully test these algorithms. Third, implementing new cryptographic algorithms without introducing vulnerabilities is very hard. It will take time for libraries to implement these algorithms and to be battle hardened.</p>
+<p>Nonetheless, it’s evident that the industry needs to begin adopting post-quantum cryptography now to limit the damage of Harvest Now Decrypt Later (HNDL) attacks and complete the transition by 2035. Such transitions can often take organizations more than a decade to update entire technology stacks.</p>
+<h3>#4: Wait for quantum cryptography.</h3>
+<p>While post-quantum cryptography is certainly a logical next step, the final part of our strategy is to await quantum cryptography. This is cryptographic nirvana because physics says quantum cryptography is fundamentally unbreakable. The <a href="https://scienceexchange.caltech.edu/topics/quantum-science-explained/uncertainty-principle">Heisenberg Uncertainty Principle</a> in quantum mechanics says that measuring a thing changes it. This can be exploited such that an attacker who tries to intercept messages protected by quantum cryptography will be unable to read or decrypt the messages. Any attempt to do so will destroy the message and expose the attacker’s presence.</p>
+<p>Ultimately, we may find that quantum computing brings both the destruction of many current cryptographic systems and their ultimate replacement.</p>
+<h2><strong>The quantum apocalypse is coming—the time to prepare is now</strong></h2>
+<p>The quantum apocalypse will change the face of modern cryptography and data security. Attackers are preparing now, in anticipation of being able to use these remarkable capabilities in the future. It is, therefore, critical that organizations deploy their defensive strategies now. Cohesity’s strategy to monitor, extend, adopt, and wait can be a framework for any organization seeking to weather the coming storm.</p>
+<p>Whether you choose to use our framework or another, you should immediately identify a strategy to prepare for quantum computing. You’ll want to ensure it aligns with your time horizons for keeping data secret from HNDL attacks. Unless you have a good reason to do something different, following NIST’s guidelines of fully supporting post-quantum cryptography by 2030 and completing the transition by 2035 is a reasonable timeline. To support this migration, reach out to your vendors and discuss how their post-quantum strategies align with your needs. The quantum apocalypse is coming, and the time to prepare is now.</p>
+
+   </div>
+   
+</div>
+
+    
+</div>
+
+    
+</div>
+
+    </div>
+
+    
+
+                            </div>
+                        
+
+                    </div>
+                    <div class="blog-right-content">
+                        <p class="blog-right-content__written p-xl bold">
+                            Written By</p>
+                        <div class="blog-right-content__author-container">
+                            
+                            <div class="blog-right-content__author-wrapper" data-author-json="{&#34;name&#34;:&#34;Sydney Jackson&#34;,&#34;title&#34;:&#34;Product Manager, Platform Security&#34;,&#34;description&#34;:&#34;&lt;p>Sydney Jackson has nineteen years of information security experience, including cryptography engineering and delivering secure solutions for some of the world’s most security-sensitive organizations. She holds a degree in Computer Science with a focus on Information Assurance from Georgia Tech.&lt;/p>&#34;,&#34;imageFeatured&#34;:&#34;/content/dam/cohesity/new_media/2024/12/sydney-jackson-headshot-150x150.jpeg&#34;,&#34;relatedBlogs&#34;:[],&#34;socialItems&#34;:[]}">
+                                <div class="blog-right-content__author-img">
+                                    <img src="/content/dam/cohesity/new_media/2024/12/sydney-jackson-headshot-150x150.jpeg" alt="Sydney Jackson"/>
+                                </div>
+                                <div class="blog-right-content__author-content">
+                                    <p class="blog-right-content__author-name p-xs bold">Sydney Jackson
+                                    </p>
+                                    <p class="blog-right-content__author-title p-xs">Product Manager, Platform Security</p>
+                                </div>
+                            </div>
+
+                            <div class="blog-right-content__author-popup-overlay">
+                                <div class="blog-right-content__author-popup">
+                                    <div class="blog-right-content__author-popup-wrap">
+                                        <button class="popup-close-btn">&times;</button>
+                                        <div class="blog-right-content__author-popup-img">
+                                            <img src="" alt=""/>
+                                            <div class="blog-right-content__social-links">
+                                            </div>
+                                        </div>
+                                        <div class="blog-right-content__author-popup-content">
+                                            <div class="blog-right-content__author-popup-info">
+                                                <h3 class="blog-right-content__author-popup-name sm"></h3>
+                                                <p class="blog-right-content__author-popup-title p-sm"></p>
+                                            </div>
+                                            <div class="blog-right-content__author-popup-detail">
+                                                <p class="blog-right-content__author-popup-description p-lg"></p>
+                                                <div class="blog-right-content__author-popup-blog-links">
+                                                    <h5>Recent Blogs</h5>
+                                                    <ul>
+                                                        <li>
+                                                            <a href="/blogs/the-cohesity-post-quantum-cryptography-strategy/">The Cohesity post-quantum cryptography strategy</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="blog-related-list">
+                            <div class="relatedlist">
+    
+    <section class=" ">
+        <div class="related-list-container related-list-container__blog ">
+            <div class="related-list">
+                <div class="related-list__heading">
+                    <h2>You may also like</h2>
+                </div>
+                <div class="related-lists related-lists__blog column blog-grid">
+                    <div class="related-item">
+                        <a href="/blogs/cohesity-gaia-is-available-now/" target="_self" role="button"><span><span>Read now</span></span></a>
+                        <div class="related-item__content">
+                            <div class="related-item__content-with-img">
+                                <div class="related-item__icon-with-text">
+                                    <div class="related-item__icon">
+                                        <img src="/content/dam/cohesity/live/global-icons/blog.svg" alt="blog icon"/>
+                                    </div>
+
+                                    <div class="related-item__text">
+                                        
+                                        <span class="related-item__eyebrow eyebrow">Blog</span>
+                                        
+                                    </div>
+                                </div>
+                                <h5 class="related-item__description">Cohesity Gaia is available now</h5>
+                                <div class="related-item__btn-wrap d-none">
+                                    <a href="/blogs/cohesity-gaia-is-available-now/" target="_self" role="button"><span>Read now</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="related-item">
+                        <a href="/blogs/data-clean-rooms-done-right-in-a-world-of-destructive-cyberattacks/" target="_self" role="button"><span><span>Read now</span></span></a>
+                        <div class="related-item__content">
+                            <div class="related-item__content-with-img">
+                                <div class="related-item__icon-with-text">
+                                    <div class="related-item__icon">
+                                        <img src="/content/dam/cohesity/live/global-icons/blog.svg" alt="blog icon"/>
+                                    </div>
+
+                                    <div class="related-item__text">
+                                        
+                                        <span class="related-item__eyebrow eyebrow">Blog</span>
+                                        
+                                    </div>
+                                </div>
+                                <h5 class="related-item__description">Data clean rooms done right in a world of destructive cyberattacks</h5>
+                                <div class="related-item__btn-wrap d-none">
+                                    <a href="/blogs/data-clean-rooms-done-right-in-a-world-of-destructive-cyberattacks/" target="_self" role="button"><span>Read now</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="related-item">
+                        <a href="/blogs/introducing-cohesitys-new-ransomware-warranty-offer-with-an-industry-best-200-payout/" target="_self" role="button"><span><span>Read now</span></span></a>
+                        <div class="related-item__content">
+                            <div class="related-item__content-with-img">
+                                <div class="related-item__icon-with-text">
+                                    <div class="related-item__icon">
+                                        <img src="/content/dam/cohesity/live/global-icons/blog.svg" alt="blog icon"/>
+                                    </div>
+
+                                    <div class="related-item__text">
+                                        
+                                        <span class="related-item__eyebrow eyebrow">Blog</span>
+                                        
+                                    </div>
+                                </div>
+                                <h5 class="related-item__description">Introducing Cohesity’s new ransomware warranty offer—with an industry-best 200% payout</h5>
+                                <div class="related-item__btn-wrap d-none">
+                                    <a href="/blogs/introducing-cohesitys-new-ransomware-warranty-offer-with-an-industry-best-200-payout/" target="_self" role="button"><span>Read now</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    
+</div>
+
+                        </div>
+                    </div>
+                </main>
+                
+                <div class="blog-content__tag section__container">
+                    <div class="blog-content__tag--wrapper">
+                        <div class="blog-content__tag--label p-sm bold">Explore Related Content:</div>
+
+                        <div class="blog-content__tag--list">
+                            
+
+                            <a data-href="https://www.cohesity.com/blogs/tags/data-security/" class="blog-content__tag--item">data security</a>
+                        </div>
+                    </div>
+                </div>
+            
+            
+             
+            
+            
+        
+            
+            
+            
+            
+            
+            
+             
+                <main class="footer-cta--wrapper container">
+                    
+<div id="experiencefragment-9003d9a034" class="cmp-experiencefragment cmp-experiencefragment--Most-Popular-Blogs">
+
+
+    
+    <div id="container-959a866b4b" class="cmp-container">
+        
+
+
+<div class="aem-Grid aem-Grid--12 aem-Grid--default--12 ">
+    
+    <div class="relatedlist aem-GridColumn aem-GridColumn--default--12">
+    
+    <section class=" ">
+        <div class="related-list-container related-list-container__mostpopulate ">
+            <div class="related-list">
+                <div class="related-list__heading">
+                    <h2>Most popular blogs</h2>
+                </div>
+                <div class="related-lists related-lists__mostpopulate  blog-grid">
+                    <div class="related-item">
+                        <a href="/blogs/ai-is-accelerating-vulnerability-discovery-heres-how-cohesity-is-responding/" target="_self" role="button"><span><span>Read now</span></span></a>
+                        <div class="related-item__content">
+                            <div class="related-item__content-with-img">
+                                <div class="related-item__icon-with-text">
+                                    <div class="related-item__icon">
+                                        <img src="/content/dam/cohesity/live/global-icons/blog.svg" alt="blog icon"/>
+                                    </div>
+
+                                    <div class="related-item__text">
+                                        
+                                        <span class="related-item__eyebrow eyebrow">Blog</span>
+                                        
+                                    </div>
+                                </div>
+                                <h5 class="related-item__description">AI is accelerating vulnerability discovery—here’s how Cohesity is responding</h5>
+                                <div class="related-item__btn-wrap ">
+                                    <a href="/blogs/ai-is-accelerating-vulnerability-discovery-heres-how-cohesity-is-responding/" target="_self" role="button"><span>Read now</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="related-item">
+                        <a href="/blogs/cohesity-and-semperis-team-up-to-accelerate-identity-resilience/" target="_self" role="button"><span><span>Read now</span></span></a>
+                        <div class="related-item__content">
+                            <div class="related-item__content-with-img">
+                                <div class="related-item__icon-with-text">
+                                    <div class="related-item__icon">
+                                        <img src="/content/dam/cohesity/live/global-icons/blog.svg" alt="blog icon"/>
+                                    </div>
+
+                                    <div class="related-item__text">
+                                        
+                                        <span class="related-item__eyebrow eyebrow">Blog</span>
+                                        
+                                    </div>
+                                </div>
+                                <h5 class="related-item__description">Cohesity and Semperis team up to accelerate identity resilience</h5>
+                                <div class="related-item__btn-wrap ">
+                                    <a href="/blogs/cohesity-and-semperis-team-up-to-accelerate-identity-resilience/" target="_self" role="button"><span>Read now</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="related-item">
+                        <a href="/blogs/minimum-viable-company-is-about-trust/" target="_self" role="button"><span><span>Read now</span></span></a>
+                        <div class="related-item__content">
+                            <div class="related-item__content-with-img">
+                                <div class="related-item__icon-with-text">
+                                    <div class="related-item__icon">
+                                        <img src="/content/dam/cohesity/live/global-icons/blog.svg" alt="blog icon"/>
+                                    </div>
+
+                                    <div class="related-item__text">
+                                        
+                                        <span class="related-item__eyebrow eyebrow">Blog</span>
+                                        
+                                    </div>
+                                </div>
+                                <h5 class="related-item__description">Minimum Viable Company is about trust </h5>
+                                <div class="related-item__btn-wrap ">
+                                    <a href="/blogs/minimum-viable-company-is-about-trust/" target="_self" role="button"><span>Read now</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    
+</div>
+
+    
+</div>
+
+    </div>
+
+    
+</div>
+
+    
+
+                </main>
+            
+            
+            
+        
+            
+            
+            
+            
+            
+            
+             
+            
+                <main class="footer-cta--wrapper container">
+                    
+
+
+    
+
+                </main>
+            
+            
+        
+            
+            
+            
+            
+            
+            
+             
+            
+            
+                <div>
+<div id="experiencefragment-a27188b4d8" class="cmp-experiencefragment cmp-experiencefragment--footer">
+
+
+    
+    <div id="container-6962541905" class="cmp-container">
+        
+
+
+<div class="aem-Grid aem-Grid--12 aem-Grid--default--12 ">
+    
+    <div class="navigationbottom aem-GridColumn aem-GridColumn--default--12"><div id="scrollToTop">
+</div>
+<footer class="footer" style="background-color: #000000; opacity: 1;">
+    <div class="footer__container section__container footer--dark" style="max-width: px;">
+        <div class="footer__top-container">
+            <div class="footer__footer-links">
+                <div class="footer__logo" style="margin-right: 48px;">
+                    <div>
+                        <a href="/">
+                            <img src="/content/dam/cohesity/live/cohesity-logo-white-green.svg" alt="Footer Logo"/>
+                        </a>
+                    </div>
+                    
+  <div class="social-links dark medium ">
+    
+      <a href="https://twitter.com/cohesity" target="_blank">
+        <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M11.6585 8.602L18.9451 0.130005H17.2159L10.8864 7.48183L5.82926 0.130005H0L7.64546 11.2447L0 20.13H1.7292L8.40674 12.3649L13.7466 20.13H19.5759L11.6476 8.602H11.6585ZM9.29853 11.3535L8.52637 10.2442L2.37085 1.43506H5.02447L9.99456 8.54762L10.7667 9.65692L17.2268 18.9011H14.5731L9.29853 11.3535Z" fill="white"/>
+        </svg>
+      </a>
+    
+    
+    
+    
+    
+  
+    
+    
+      <a href="https://www.linkedin.com/company/cohesity/" target="_blank">
+        <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5.42837 20.13H0.704983V7.02507H5.42837V20.13ZM2.98337 4.62313C1.53995 4.62313 0.575806 3.66085 0.575806 2.37657C0.575806 1.09228 1.53808 0.130005 3.1425 0.130005C4.58591 0.130005 5.55006 1.09228 5.55006 2.37657C5.55006 3.66085 4.58779 4.62313 2.98337 4.62313ZM22.2776 20.13H17.7058V12.9672C17.7058 10.9865 16.4871 10.5297 16.0303 10.5297C15.5735 10.5297 14.0495 10.8349 14.0495 12.9672C14.0495 13.2724 14.0495 20.13 14.0495 20.13H9.32616V7.02507H14.0495V8.85415C14.658 7.78703 15.8767 7.02507 18.1626 7.02507C20.4485 7.02507 22.2776 8.85415 22.2776 12.9672V20.13Z" fill="white"/>
+        </svg>
+      </a>
+    
+    
+    
+    
+  
+    
+    
+    
+      <a href="https://www.facebook.com/cohesity/" target="_blank">
+        <svg width="12" height="21" viewBox="0 0 12 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3.47037 20.13C3.46688 20.0457 3.46036 19.9614 3.46035 19.8771C3.45982 17.0137 3.45991 14.1503 3.45991 11.2868C3.45991 11.2034 3.45991 11.12 3.45991 11.0121H0.277588V7.45611H3.45991C3.45991 7.35629 3.45962 7.28046 3.45995 7.20463C3.46401 6.27408 3.43968 5.34239 3.4796 4.41326C3.52773 3.29297 3.8719 2.26551 4.69342 1.42884C5.31831 0.792429 6.0981 0.432028 6.97841 0.25108C7.69351 0.104089 8.4172 0.121192 9.13976 0.14793C9.72709 0.169662 10.3133 0.218255 10.9 0.256166C10.9461 0.259144 10.9915 0.271791 11.0468 0.28166V3.45177C10.9767 3.45177 10.9055 3.45091 10.8344 3.45191C10.1113 3.462 9.38719 3.45196 8.66551 3.488C7.81215 3.53062 7.32959 3.98673 7.29428 4.81307C7.25764 5.6706 7.28161 6.53053 7.27976 7.38941C7.27974 7.40101 7.28883 7.41264 7.3029 7.44643H10.9269C10.767 8.64204 10.6106 9.81157 10.4515 11.0019H7.29151C7.28457 11.0782 7.27512 11.1337 7.2751 11.1893C7.2744 14.1243 7.27444 17.0593 7.27494 19.9943C7.27495 20.0395 7.2816 20.0848 7.28515 20.13H3.47037Z" fill="white"/>
+        </svg>
+      </a>
+    
+    
+    
+  
+    
+    
+    
+    
+      <a href="https://www.youtube.com/channel/UCZNz4gmV-JGrEmIimFvp5EA" target="_blank">
+        <svg width="26" height="21" viewBox="0 0 26 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24.5244 2.8625C24.2369 1.7875 23.3894 0.940005 22.3144 0.652505C20.3644 0.130005 12.5469 0.130005 12.5469 0.130005C12.5469 0.130005 4.72937 0.130005 2.77937 0.652505C1.70437 0.940005 0.856875 1.7875 0.569375 2.8625C0.046875 4.8125 0.046875 10.13 0.046875 10.13C0.046875 10.13 0.046875 15.4475 0.569375 17.3975C0.856875 18.4725 1.70437 19.32 2.77937 19.6075C4.72937 20.13 12.5469 20.13 12.5469 20.13C12.5469 20.13 20.3644 20.13 22.3144 19.6075C23.3906 19.32 24.2369 18.4725 24.5244 17.3975C25.0469 15.4475 25.0469 10.13 25.0469 10.13C25.0469 10.13 25.0469 4.8125 24.5244 2.8625ZM10.0469 14.46V5.8L17.5469 10.13L10.0469 14.46Z" fill="white"/>
+        </svg>
+      </a>
+    
+    
+  
+    
+    
+    
+    
+    
+      <a href="https://www.cohesity.com/feed/?rss" target="_blank">
+        <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3.38021 20.1297C5.22116 20.1297 6.71354 18.6373 6.71354 16.7963C6.71354 14.9554 5.22116 13.463 3.38021 13.463C1.53926 13.463 0.046875 14.9554 0.046875 16.7963C0.046875 18.6373 1.53926 20.1297 3.38021 20.1297Z" fill="white"/>
+          <path d="M0.046875 10.1303C2.69904 10.1303 5.24258 11.1839 7.11794 13.0593C8.99331 14.9346 10.0469 17.4782 10.0469 20.1303H13.3802C13.3802 16.5941 11.9754 13.2027 9.47497 10.7022C6.97448 8.20175 3.58309 6.797 0.046875 6.797V10.1303Z" fill="white"/>
+          <path d="M0.046875 3.46334C2.23557 3.46334 4.40284 3.89443 6.42493 4.73201C8.44703 5.56959 10.2843 6.79725 11.832 8.34489C13.3796 9.89253 14.6073 11.7299 15.4449 13.7519C16.2824 15.774 16.7135 17.9413 16.7135 20.13H20.0469C20.0469 14.8257 17.9397 9.7386 14.189 5.98787C10.4383 2.23714 5.3512 0.130005 0.046875 0.130005V3.46334Z" fill="white"/>
+        </svg>
+      </a>
+    
+  </div>
+
+
+
+
+    
+
+
+                        <p class="footer__phone-number">
+                            <a href="#" class="tel-link" data-num="18552143133">
+                                1-855-214-3133
+                            </a>
+                        </p>
+						<div>
+                        <button class="cta-primary button button--style-primary-black-white-background">
+                            <a href="https://www.cohesity.com/contact/?q=2">Contact Us</a>
+                        </button>
+                    </div>
+                </div>
+                <div class="footer__column-section" style="margin-right: 48px;">
+                    <h5>
+                        Company
+                    </h5>
+                    
+                    <ul>
+                        <li><a href="https://www.cohesity.com/company/" target="_self">About</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/company/leadership/" target="_self">Leadership</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/newsroom/" target="_self">Newsroom</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/company/investor-relations/" target="_self">Investor Relations</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/careers/" target="_self">Careers</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/company/awards/" target="_self">Awards</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/customers/" target="_self">Customers</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/company/sustainability/" target="_self">Sustainability at Cohesity </a></li>
+                    </ul>
+                </div>
+                <div class="footer__column-section" style="margin-right: 48px;">
+                    <h5>
+                        How We’re Different
+                    </h5>
+                    <ul>
+                        <li><a href="https://www.cohesity.com/why-cohesity/" target="_self">Why Cohesity</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/partners/technology-partners/" target="_self">Technology Partners</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/company/data-security-alliance/" target="_self">Data Security Alliance</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/academy/" target="_self">Academy and Certifications</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/marketplace/" target="_self">Marketplace</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/trust/" target="_self">Trust Center</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/demos/" target="_self">Demos</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/events/catalyst-on-tour/" target="_self">Catalyst</a></li>
+                    </ul>
+                </div>
+                <div class="footer__column-section">
+                    <h5>
+                        Helpful Links
+                    </h5>
+                    <ul>
+                        <li><a href="https://www.cohesity.com/support/" target="_self">Support</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/blogs/" target="_self">Blogs</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/solutions/backup-and-recovery/" target="_self">Backup and Recovery</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/solutions/ransomware/" target="_self">Ransomware Recovery</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/solutions/" target="_self">All Solutions</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/platform/certified-platforms/" target="_self">Certified Platforms</a></li>
+                    
+                        <li><a href="https://my.cohesity.com/s/?target=partner" target="_blank">Partner Portal</a></li>
+                    
+                        <li><a href="https://my.cohesity.com/s/login/?ec=302&startURL=%2Fs%2F" target="_blank">MyCohesity Login</a></li>
+                    
+                        <li><a href="https://www.cohesity.com/community/" target="_blank">Cohesity Community</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom-container">
+            <p>© 2026 Cohesity, Inc. All Rights Reserved.</p>
+            <div>
+                
+                <a href="https://www.cohesity.com/agreements-docs/cohesity-website-terms-of-use.pdf" target="_blank">Terms of Use</a>
+            
+                
+                <a href="https://www.cohesity.com/agreements/privacy/" target="_self">Privacy Notice</a>
+            
+                
+                <a href="https://www.cohesity.com/agreements/" target="_self">Legal</a>
+            
+                <span id="teconsent"></span>
+                
+            
+                
+                <a href="https://www.cohesity.com/sitemap/" target="_self">Sitemap</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    
+
+</div>
+
+    
+</div>
+
+    </div>
+
+    
+</div>
+
+    
+</div>
+            
+        
+    
+</section>
+<script>
+    document.querySelectorAll("a.blog-content__tag--item").forEach(function (el) {
+        var dataHref = el.getAttribute("data-href");
+        if (dataHref) {
+            el.setAttribute("href", dataHref);
+            el.removeAttribute("data-href");
+        }
+    });
+</script>
+  <div class="video-overlay" id="videoplayer-popup">
+  <div class="v-middle-inner">
+    <div class="v-middle">
+      <div class="video-wrap">
+        <div class="video-container">
+          <iframe class="hidden" id="videoplayer-youtube-popup" aria-hidden="true" aria-level="playing video" title="YouTube video player" src="" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" playsinline="" muted="" autoplay="" allow="autoplay; fullscreen; picture-in-picture">
+          </iframe>
+          <iframe class="hidden" id="videoplayer-dam-popup" aria-hidden="true" aria-level="playing video" title="YouTube video player from dam" src="" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" playsinline="" muted="" autoplay="" allow="autoplay; fullscreen; picture-in-picture">
+          </iframe>
+        </div>
+        <div class="closeVideo" id="close-videoplayer-popup">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15.458" height="15.458" viewBox="0 0 15.458 15.458">
+            <g data-name="Open / White">
+              <path data-name="Line 541" transform="translate(1.5 8.141)" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-width:3px" d="M0 0h12.458"></path>
+              <path data-name="Line 542" transform="rotate(90 3.115 4.615)" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-width:3px" d="M0 0h12.458"></path>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="overlay-search" id="search-overlay-item">
+  <div class="search-overlay">
+    <div class="v-middle-inner">
+      <div class="v-middle">
+        <div class="overlay">
+          <div class="content-wrap fade-Up">
+            <div class="search-box" id="search-box">
+              <div id="SearchInput">
+                <input type="search" id="search-box-input" aria-label="search" class="search-input" placeholder="Search" autofocus/>
+                <button type="button" aria-label="submit" class="search-btn" id="search-box-button"></button>
+              </div>
+            </div>
+            <button class="close" aria-label="close" id="search-overlay-close"><img class="lazyloaded ls-is-cached" src="https://www.cohesity.com/content/dam/cohesity/live/wordpress-images/Icon_ionic_ios_close.svg" alt="Close"/></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+    
+    <script src="/etc.clientlibs/cohesity/clientlibs/clientlib-site.lc-70c6651ae03257898291927959effc48-lc.min.js"></script>
+
+
+    
+
+    
+    <script async src="/etc.clientlibs/core/wcm/components/commons/site/clientlibs/container.lc-0a6aff292f5cc42142779cde92054524-lc.min.js"></script>
+<script async src="/etc.clientlibs/clientlibs/granite/jquery/granite/csrf.lc-652a558c3774088b61b0530c184710d1-lc.min.js"></script>
+<script async src="/etc.clientlibs/cohesity/clientlibs/clientlib-base.lc-4967765add8a922492a7528ec0884938-lc.min.js"></script>
+
+
+
+
+<!-- Share This -->
+
+<div class="sharethis-inline-share-buttons"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    function loadShareThis() {
+      var script = document.createElement('script');
+      script.src = "https://platform-api.sharethis.com/js/sharethis.js#property=6477b6f27cccdc001910bc6a&product=sop";
+      script.async = true;
+      document.body.appendChild(script);
+      interactionEvents.forEach(function (event) {
+        window.removeEventListener(event, loadShareThis);
+      });
+    }
+    var interactionEvents = ["touchstart", "touchmove", "scroll", "mousemove", "mousedown", "wheel", "keyup"];
+    interactionEvents.forEach(function (event) {
+      window.addEventListener(event, loadShareThis, { once: true });
+    });
+  });
+</script>
+
+<script async>
+// document.addEventListener("DOMContentLoaded", function() {
+// 	jQuery("body,html").one("touchstart touchmove scroll mousemove mousedown DOMMouseScroll mousewheel keyup", function(e){	
+// 		$.getScript('//platform-api.sharethis.com/js/sharethis.js#property=6477b6f27cccdc001910bc6a&product=sop');
+// 	});
+// });	
+
+// ShareThis show/hide
+// window.addEventListener('load', function() {
+//     var lastScrollTop = 0;
+//     jQuery(window).scroll(function(event){
+//         var st = jQuery(this).scrollTop();
+//         if (st > lastScrollTop){
+//             // downscroll code
+//             jQuery('.st-sticky-share-buttons').fadeOut(1000);
+//         } else {
+//             // upscroll code
+//             jQuery('.st-sticky-share-buttons').fadeIn(1000);
+//         }
+//         lastScrollTop = st;
+//     });  
+// }); 
+</script>
+<!-- End Share This -->
+
+<!-- Marketo script -->
+<script type="text/javascript" async>
+window.addEventListener('load', function() {
+    var didInit = false;
+    function initMunchkin() {
+      if(didInit === false) {
+        didInit = true;
+        Munchkin.init('103-SPE-204');
+      }
+    }
+    var sMunchkin = document.createElement('script');
+    sMunchkin.type = 'text/javascript';
+    sMunchkin.async = true;
+    sMunchkin.src = 'https://munchkin.marketo.net/munchkin.js';
+    sMunchkin.onreadystatechange = function() {
+      if (this.readyState == 'complete' || this.readyState == 'loaded') {
+        initMunchkin();
+      }
+    };
+    sMunchkin.onload = initMunchkin;
+   
+	var invoke_Munchkintriggered=false; 
+	if (window.screen.width < 500) {
+    	jQuery("body,html").one("touchstart touchmove scroll mousemove mousedown DOMMouseScroll mousewheel keyup", function(e){
+			if(!invoke_Munchkintriggered){
+				invoke_Munchkintriggered=true;
+				document.getElementsByTagName('head')[0].appendChild(sMunchkin);
+			}
+	  	});
+	}
+	else{
+		invoke_Munchkintriggered=true;
+		document.getElementsByTagName('head')[0].appendChild(sMunchkin);
+	}
+});      
+</script>
+<!-- End Marketo script -->
+
+<!-- Bizible -->
+<script async>
+function loadDynamicScript(urlval, additionaparams, callback) {
+  var script = document.createElement('script');
+  script.src = urlval;
+  script.async = true;
+  script.setAttribute('type', 'text/javascript');
+  document.head.appendChild(script);
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  var invoke_Bizibletriggered=false; 
+	if (window.screen.width < 500) {
+    jQuery("body,html").one("touchstart touchmove scroll mousemove mousedown DOMMouseScroll mousewheel keyup", function(e){
+      if(!invoke_Bizibletriggered){
+        invoke_Bizibletriggered=true;
+        loadDynamicScript('https://cdn.bizible.com/scripts/bizible.js','','');
+      }
+	  });
+	}
+	else{
+    invoke_Bizibletriggered=true;
+		loadDynamicScript('https://cdn.bizible.com/scripts/bizible.js','','');
+	}
+});
+</script>
+<!-- End Bizible -->
+
+
+ 
+<!-- HOMEPAGE SCHEMA -->
+
+
+ <!-- HOMEPAGE SCHEMA  END-->
+
+<!-- GLOSSARY SCHEMA -->
+ 
+
+<!-- GLOSSARY SCHEMA  END -->
+
+<!-- SOLUTIONS SCHEMA -->
+
+
+<!-- SOLUTIONS SCHEMA END -->
+
+<script async="async" src="//consent.trustarc.com/notice?domain=cohesity.com&c=teconsent&js=nj&noticeType=bb&text=true&gtm=1&pcookie" crossorigin></script>
+
+<div id="consent_blackbar"></div>
+    
+
+    
+
+    
+    
+
+
+</body>
+</html>

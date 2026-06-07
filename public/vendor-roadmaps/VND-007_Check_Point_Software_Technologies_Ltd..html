@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="profile" href="//gmpg.org/xfn/11" />
+
+    <script type="application/javascript">var ajaxurl = "https://blog.checkpoint.com/wp-admin/admin-ajax.php"</script><meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+	<style>img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }</style>
+	
+	<!-- This site is optimized with the Yoast SEO plugin v26.4 - https://yoast.com/wordpress/plugins/seo/ -->
+	<title>Quantum-Safe Cybersecurity with Check Point</title>
+	<meta name="description" content="Discover Check Point’s quantum-safe solutions, from VPNs to TLS, built on NIST PQC standards to protect against future quantum threats." />
+	<link rel="canonical" href="https://blog.checkpoint.com/innovation/quantum-safe-cyber-security-current-capabilities-and-the-road-ahead/" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="Quantum-Safe Cybersecurity with Check Point" />
+	<meta property="og:description" content="Discover Check Point’s quantum-safe solutions, from VPNs to TLS, built on NIST PQC standards to protect against future quantum threats." />
+	<meta property="og:url" content="https://blog.checkpoint.com/innovation/quantum-safe-cyber-security-current-capabilities-and-the-road-ahead/" />
+	<meta property="og:site_name" content="Check Point Blog" />
+	<meta property="article:publisher" content="https://www.facebook.com/checkpointsoftware" />
+	<meta property="article:published_time" content="2025-09-25T13:00:24+00:00" />
+	<meta property="og:image" content="https://blog.checkpoint.com/wp-content/uploads/2025/09/BLOG-Quantum.jpg" />
+	<meta property="og:image:width" content="800" />
+	<meta property="og:image:height" content="400" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta name="author" content="rohann@checkpoint.com" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:creator" content="@checkpointsw" />
+	<meta name="twitter:site" content="@checkpointsw" />
+	<meta name="twitter:label1" content="Written by" />
+	<meta name="twitter:data1" content="rohann@checkpoint.com" />
+	<meta name="twitter:label2" content="Est. reading time" />
+	<meta name="twitter:data2" content="4 minutes" />
+	<!-- / Yoast SEO plugin. -->
+
+
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
+<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin />
+<link rel="alternate" type="application/rss+xml" title="Check Point Blog &raquo; Feed" href="https://blog.checkpoint.com/feed/" />
+<script type="text/javascript">
+/* <![CDATA[ */
+window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/16.0.1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/16.0.1\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/blog.checkpoint.com\/wp-includes\/js\/wp-emoji-release.min.js?ver=6.8.2"}};
+/*! This file is auto-generated */
+!function(s,n){var o,i,e;function c(e){try{var t={supportTests:e,timestamp:(new Date).valueOf()};sessionStorage.setItem(o,JSON.stringify(t))}catch(e){}}function p(e,t,n){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);var t=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data),a=(e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(n,0,0),new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data));return t.every(function(e,t){return e===a[t]})}function u(e,t){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);for(var n=e.getImageData(16,16,1,1),a=0;a<n.data.length;a++)if(0!==n.data[a])return!1;return!0}function f(e,t,n,a){switch(t){case"flag":return n(e,"\ud83c\udff3\ufe0f\u200d\u26a7\ufe0f","\ud83c\udff3\ufe0f\u200b\u26a7\ufe0f")?!1:!n(e,"\ud83c\udde8\ud83c\uddf6","\ud83c\udde8\u200b\ud83c\uddf6")&&!n(e,"\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f","\ud83c\udff4\u200b\udb40\udc67\u200b\udb40\udc62\u200b\udb40\udc65\u200b\udb40\udc6e\u200b\udb40\udc67\u200b\udb40\udc7f");case"emoji":return!a(e,"\ud83e\udedf")}return!1}function g(e,t,n,a){var r="undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?new OffscreenCanvas(300,150):s.createElement("canvas"),o=r.getContext("2d",{willReadFrequently:!0}),i=(o.textBaseline="top",o.font="600 32px Arial",{});return e.forEach(function(e){i[e]=t(o,e,n,a)}),i}function t(e){var t=s.createElement("script");t.src=e,t.defer=!0,s.head.appendChild(t)}"undefined"!=typeof Promise&&(o="wpEmojiSettingsSupports",i=["flag","emoji"],n.supports={everything:!0,everythingExceptFlag:!0},e=new Promise(function(e){s.addEventListener("DOMContentLoaded",e,{once:!0})}),new Promise(function(t){var n=function(){try{var e=JSON.parse(sessionStorage.getItem(o));if("object"==typeof e&&"number"==typeof e.timestamp&&(new Date).valueOf()<e.timestamp+604800&&"object"==typeof e.supportTests)return e.supportTests}catch(e){}return null}();if(!n){if("undefined"!=typeof Worker&&"undefined"!=typeof OffscreenCanvas&&"undefined"!=typeof URL&&URL.createObjectURL&&"undefined"!=typeof Blob)try{var e="postMessage("+g.toString()+"("+[JSON.stringify(i),f.toString(),p.toString(),u.toString()].join(",")+"));",a=new Blob([e],{type:"text/javascript"}),r=new Worker(URL.createObjectURL(a),{name:"wpTestEmojiSupports"});return void(r.onmessage=function(e){c(n=e.data),r.terminate(),t(n)})}catch(e){}c(n=g(i,f,p,u))}t(n)}).then(function(e){for(var t in e)n.supports[t]=e[t],n.supports.everything=n.supports.everything&&n.supports[t],"flag"!==t&&(n.supports.everythingExceptFlag=n.supports.everythingExceptFlag&&n.supports[t]);n.supports.everythingExceptFlag=n.supports.everythingExceptFlag&&!n.supports.flag,n.DOMReady=!1,n.readyCallback=function(){n.DOMReady=!0}}).then(function(){return e}).then(function(){var e;n.supports.everything||(n.readyCallback(),(e=n.source||{}).concatemoji?t(e.concatemoji):e.wpemoji&&e.twemoji&&(t(e.twemoji),t(e.wpemoji)))}))}((window,document),window._wpemojiSettings);
+/* ]]> */
+</script>
+<style id='wp-emoji-styles-inline-css' type='text/css'>
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+</style>
+<link rel='stylesheet' id='wp-block-library-css' href='https://blog.checkpoint.com/wp-includes/css/dist/block-library/style.min.css?ver=6.8.2' type='text/css' media='all' />
+<style id='classic-theme-styles-inline-css' type='text/css'>
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+</style>
+<style id='global-styles-inline-css' type='text/css'>
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgba(255, 255, 255, 1), 6px 6px rgba(0, 0, 0, 1);--wp--preset--shadow--crisp: 6px 6px 0px rgba(0, 0, 0, 1);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}
+:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}
+:root :where(.wp-block-pullquote){font-size: 1.5em;line-height: 1.6;}
+</style>
+<link rel='stylesheet' id='boostrap-css' href='https://blog.checkpoint.com/wp-content/themes/atoms/css/vendors/boostrap.css?ver=6.8.2' type='text/css' media='all' />
+<link rel='stylesheet' id='owl-carousel-css' href='https://blog.checkpoint.com/wp-content/themes/atoms/css/vendors/owl-carousel.css?ver=6.8.2' type='text/css' media='all' />
+<link rel='stylesheet' id='perfect-scrollbar-css' href='https://blog.checkpoint.com/wp-content/themes/atoms/css/vendors/perfect-scrollbar.css?ver=6.8.2' type='text/css' media='all' />
+<link rel='stylesheet' id='magnific-popup-css' href='https://blog.checkpoint.com/wp-content/themes/atoms/css/vendors/magnific-popup.css?ver=6.8.2' type='text/css' media='all' />
+<link rel='stylesheet' id='fotorama-css' href='https://blog.checkpoint.com/wp-content/themes/atoms/css/vendors/fotorama.css?ver=6.8.2' type='text/css' media='all' />
+<link rel='stylesheet' id='atbs-style-css' href='https://blog.checkpoint.com/wp-content/themes/atoms/css/style.css?ver=6.0.5' type='text/css' media='all' />
+<style id='atbs-style-inline-css' type='text/css'>
+:root {
+                --color-primary: #D61A69;
+                --bg-color-primary: #D61A69;
+            }select:focus {
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' version='1.1' fill='%23D61A69' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M16.594 8.578l1.406 1.406-6 6-6-6 1.406-1.406 4.594 4.594z'/%3E%3C/svg%3E"); }.post--single-cover-gradient .single-header
+            {
+                background-image: -webkit-linear-gradient( bottom , #D61A69 0%, rgba(252, 60, 45, 0.7) 50%, rgba(252, 60, 45, 0) 100%);
+                background-image: linear-gradient(to top, #D61A69 0%, rgba(252, 60, 45, 0.7) 50%, rgba(252, 60, 45, 0) 100%);
+            }::selection {color: #FFF; background: #D61A69;}::-webkit-selection {color: #FFF; background: #D61A69;}
+            .atbs-btn-load-post:focus {
+                box-shadow: 0 0 0 4px rgba(214, 26, 105, .2);
+            }
+            .atbs-theme-switch:hover .atbs-theme-switch__inner {
+                box-shadow: 0 0 0 8px rgba(214, 26, 105, .1);
+            }
+            .atbs-theme-switch:focus .atbs-theme-switch__inner {
+                box-shadow: 0 0 0 8px rgba(214, 26, 105, .15);
+            }
+            .atbs-theme-switch:active .atbs-theme-switch__inner {
+                box-shadow: 0 0 0 8px rgba(214, 26, 105, .2);
+            }a.view-all-btn, .view-all-btn { border-color: rgba(214, 26, 105, 0.6); }atbs-video-box__playlist .is-playing .post__thumb:after { content: 'Now playing'; }
+</style>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&#038;display=swap&#038;ver=1680554497" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&#038;display=swap&#038;ver=1680554497" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&#038;display=swap&#038;ver=1680554497" /></noscript><script type="text/javascript" src="https://blog.checkpoint.com/wp-content/plugins/jquery-updater/js/jquery-3.7.1.min.js?ver=3.7.1" id="jquery-core-js"></script>
+<script type="text/javascript" src="https://blog.checkpoint.com/wp-content/plugins/jquery-updater/js/jquery-migrate-3.5.2.min.js?ver=3.5.2" id="jquery-migrate-js"></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://blog.checkpoint.com/xmlrpc.php?rsd" />
+<link rel='shortlink' href='https://blog.checkpoint.com/?p=248064' />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://blog.checkpoint.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fblog.checkpoint.com%2Finnovation%2Fquantum-safe-cyber-security-current-capabilities-and-the-road-ahead%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://blog.checkpoint.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fblog.checkpoint.com%2Finnovation%2Fquantum-safe-cyber-security-current-capabilities-and-the-road-ahead%2F&#038;format=xml" />
+<meta name="framework" content="Redux 4.1.22" /><!-- Stream WordPress user activity plugin v4.1.1 -->
+
+
+<script type="application/ld+json" class="saswp-schema-markup-output">
+[{"@context":"https:\/\/schema.org\/","@type":"Article","@id":"https:\/\/blog.checkpoint.com\/innovation\/quantum-safe-cyber-security-current-capabilities-and-the-road-ahead\/#Article","url":"https:\/\/blog.checkpoint.com\/innovation\/quantum-safe-cyber-security-current-capabilities-and-the-road-ahead\/","inLanguage":"en-US","mainEntityOfPage":"https:\/\/blog.checkpoint.com\/innovation\/quantum-safe-cyber-security-current-capabilities-and-the-road-ahead\/","headline":"Quantum-Safe Cybersecurity with Check Point","description":"Discover Check Point\u2019s quantum-safe solutions, from VPNs to TLS, built on NIST PQC standards to protect against future quantum threats.","articleBody":"Quantum computing is moving from theory to reality. While largescale quantum computers are not yet available, their future impact on cyber security is clear: algorithms like RSA, \u00a0Diffie\u2013Hellman, and Elliptic Curve Diffie-Hellman which secure VPNs, TLS, and digital identities, will eventually be broken by quantum algorithms.    This creates an immediate risk known as\u00a0\u201charvest now, decrypt later\u201d, in which adversaries can capture encrypted traffic today and decrypt it when quantum resources become available.    To address this, the U.S. National Institute of Standards and Technology (NIST) finalized the first post-quantum cryptography (PQC) standards in 2024:     \tFIPS 203: ML-KEM for key establishment   \tFIPS 204: ML-DSA for digital signatures   \tFIPS 205: SLH-DSA for digital signatures    These standards define the algorithms that will replace RSA and ECC in the coming years. Check Point\u2019s strategy is to integrate these standards into our security architecture in a phased, operationally practical way.  The Need for NIST-Compliant Offerings  Check Point is at the forefront of implementing post-quantum cryptography (PQC) within our solutions. Our advanced approach allows for the support of multiple PQC key exchanges, accommodating larger key sizes essential for quantum-safe communications. The advancements below are available in our newest software release, R82, which is available on both on-premises and cloud-based firewalls.  Site-to-Site VPNs From R82  Check Point delivers\u00a0Post-Quantum Hybrid Key Exchange in the\u00a0R82 release. Quantum-safe key exchange (QSKE) implements\u00a0hybrid IKEv2 key exchange, combining classical Diffie-Hellman with ML-KEM to ensure sessions remain secure even if classical algorithms are compromised in the future.    The design follows IETF guidance:     \tRFC 9370: Multiple Key Exchanges in IKEv2   \tRFC 9242: Intermediate Exchange for Large Key Payloads    QSKE affects\u00a0key establishment only; the data plane (ESP) continues to use standard algorithms, such as AES-GCM, which is considered quantum-safe. R82 is the\u00a0recommended\u00a0release for enabling QSKE on critical VPNs, with configuration available via Smart Console or Management API.    R82 is the\u00a0recommended\u00a0release for enabling QSKE on critical VPNs, with configuration available via Smart Console or Management API. Logging and API integration provide visibility into adoption and performance.  Quantum-Safe TLS and HTTPS Inspection \u2013 from R82.10 (Currently in Early Availability)  As quantum-safe TLS cipher suites appear in browsers and servers, Check Point gateways handle them as follows:     \tWhen HTTPS inspection is disabled: Quantum-safe TLS sessions pass transparently end-to-end.   \tWhen HTTPS inspection is enabled:\u00a0Quantum-safe TLS sessions are inspected if using the X25519MLKEM768 or if they\u2019ve accepted a downgrade to a classic algorithm, otherwise, the\u00a0connection is dropped.    This approach provides visibility without disrupting traffic, enabling organizations to monitor PQC adoption while maintaining business continuity, and is currently available to customers via the Early Availability program ahead of the R82.10 General Availability release, expected in November 2025.  Roadmap: What\u2019s Next  VPN  The Risk: While Check Point already delivers quantum-safe protection for site-to-site VPNs in R82, remote access VPNs remain exposed. These connections, used by employees and partners to access corporate resources from outside the network, still rely on classical key exchanges that quantum computers will eventually be able to break. Our roadmap for VPN includes the following improvements:     \tRemote Access VPN: The objective is to extend quantum-safe key exchange \ufffc(QSKE) protections to clients accessing these VPNs, including those running on Windows, macOS, and Linux platforms.   \tSite-to-Site VPN: Quantum-Safe Pre-Shared Key  While full deployment of the quantum-safe VPN may be a challenge, another slightly weaker but simpler approach also provides a quantum safe solution for VPN: enabling RFC 8784 by incorporating a Post-Quantum Pre-shared Key (PPK) into IKEv2's session \ufffc    Digital Signatures  The Risk: Digital signatures safeguard PKI, certificates, and software updates. Quantum attacks could forge identities or tamper updates, eroding trust across critical systems and supply chains. Our roadmap includes the following improvements:     \tSupport for\u00a0ML-DSA\u00a0and\u00a0SLH-DSA\u00a0will be introduced as PKI tooling and ecosystem support mature, ensuring authentication and integrity remain quantum resilient.       \tSupport for hash-based LMS\/XMSS signatures will be added for software and firmware signing to harden the update pipeline against future quantum attacks.    Quantum Key Distribution (QKD)  The Risk: PQC is algorithmic, its strength depends on the difficulty of mathematical problems. While this provides scalable protection, it still relies on assumptions that future advances might challenge. By contrast, QKD utilizes the laws of physics to generate and exchange truly random keys, guaranteeing that any attempt at interception is immediately detectable. For the most sensitive environments, relying solely on algorithms may not be enough.     \tWhile PQC is the primary, scalable defense, Check Point plans to introduce\u00a0QKD integration for specialized, high-assurance environments. This will allow customers to combine mathematically secure PQC with quantum physics based key delivery for the highest level of assurance.    A Security Upgrade with Quantum-Safe Advancements    Start your quantum-safe journey today by upgrading to\u00a0R82\u00a0to allow Post-Quantum Hybrid Key Exchange on critical VPNs.     \tUsers can also join our Early Availability program for \u00a0R82.10\u00a0to enable HTTPS Inspection for all TLS sessions.","keywords":"","datePublished":"2025-09-25T06:00:24-07:00","dateModified":"2025-09-25T06:00:08-07:00","author":{"@type":"Person","name":"rohann@checkpoint.com","url":"https:\/\/blog.checkpoint.com\/author\/rohanncheckpoint-com\/","sameAs":[],"image":{"@type":"ImageObject","url":"https:\/\/secure.gravatar.com\/avatar\/5a1e7472f7a24b9d044f911c0fa8b7b8b102aa354eac477dfc6764e8025d5744?s=96&d=mm&r=pg","height":96,"width":96}},"editor":{"@type":"Person","name":"rohann@checkpoint.com","url":"https:\/\/blog.checkpoint.com\/author\/rohanncheckpoint-com\/","sameAs":[],"image":{"@type":"ImageObject","url":"https:\/\/secure.gravatar.com\/avatar\/5a1e7472f7a24b9d044f911c0fa8b7b8b102aa354eac477dfc6764e8025d5744?s=96&d=mm&r=pg","height":96,"width":96}},"publisher":{"@type":"Organization","name":"Check Point Software","url":"https:\/\/blog.checkpoint.com","logo":{"@type":"ImageObject","url":"\/\/blog.checkpoint.com\/wp-content\/uploads\/2022\/06\/checkpoint-logo.png","width":226,"height":50}},"image":[{"@type":"ImageObject","@id":"https:\/\/blog.checkpoint.com\/innovation\/quantum-safe-cyber-security-current-capabilities-and-the-road-ahead\/#primaryimage","url":"https:\/\/blog.checkpoint.com\/wp-content\/uploads\/2025\/09\/BLOG-Quantum-1200x900.jpg","width":"1200","height":"900"},{"@type":"ImageObject","url":"https:\/\/blog.checkpoint.com\/wp-content\/uploads\/2025\/09\/BLOG-Quantum-1200x720.jpg","width":"1200","height":"720"},{"@type":"ImageObject","url":"https:\/\/blog.checkpoint.com\/wp-content\/uploads\/2025\/09\/BLOG-Quantum-1200x675.jpg","width":"1200","height":"675"},{"@type":"ImageObject","url":"https:\/\/blog.checkpoint.com\/wp-content\/uploads\/2025\/09\/BLOG-Quantum-600x600.jpg","width":"600","height":"600"}]}]
+</script>
+
+      <meta name="onesignal" content="wordpress-plugin"/>
+            <script>
+
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+
+      OneSignalDeferred.push(function(OneSignal) {
+        var oneSignal_options = {};
+        window._oneSignalInitOptions = oneSignal_options;
+
+        oneSignal_options['serviceWorkerParam'] = { scope: '/' };
+oneSignal_options['serviceWorkerPath'] = 'OneSignalSDKWorker.js.php';
+
+        OneSignal.Notifications.setDefaultUrl("https://blog.checkpoint.com");
+
+        oneSignal_options['wordpress'] = true;
+oneSignal_options['appId'] = '8fda8b9d-6ba7-4357-8125-c6df304f7ef8';
+oneSignal_options['allowLocalhostAsSecureOrigin'] = true;
+oneSignal_options['welcomeNotification'] = { };
+oneSignal_options['welcomeNotification']['title'] = "Check Point Software Blog";
+oneSignal_options['welcomeNotification']['message'] = "Thanks for subscribing!";
+oneSignal_options['welcomeNotification']['url'] = "https://blog.checkpoint.com";
+oneSignal_options['path'] = "https://blog.checkpoint.com/wp-content/plugins/onesignal-free-web-push-notifications/sdk_files/";
+oneSignal_options['safari_web_id'] = "web.onesignal.auto.69735df3-8f8c-40d7-a01f-205a16828de8";
+oneSignal_options['promptOptions'] = { };
+          /* OneSignal: Using custom SDK initialization. */
+                });
+
+      function documentInitOneSignal() {
+        var oneSignal_elements = document.getElementsByClassName("OneSignal-prompt");
+
+        var oneSignalLinkClickHandler = function(event) { OneSignal.Notifications.requestPermission(); event.preventDefault(); };        for(var i = 0; i < oneSignal_elements.length; i++)
+          oneSignal_elements[i].addEventListener('click', oneSignalLinkClickHandler, false);
+      }
+
+      if (document.readyState === 'complete') {
+           documentInitOneSignal();
+      }
+      else {
+           window.addEventListener("load", function(event){
+               documentInitOneSignal();
+          });
+      }
+    </script>
+<link rel="amphtml" href="https://blog.checkpoint.com/innovation/quantum-safe-cyber-security-current-capabilities-and-the-road-ahead/amp/"><link rel="icon" href="https://blog.checkpoint.com/wp-content/uploads/2023/10/cropped-favicon-512x512-1-32x32.png" sizes="32x32" />
+<link rel="icon" href="https://blog.checkpoint.com/wp-content/uploads/2023/10/cropped-favicon-512x512-1-192x192.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://blog.checkpoint.com/wp-content/uploads/2023/10/cropped-favicon-512x512-1-180x180.png" />
+<meta name="msapplication-TileImage" content="https://blog.checkpoint.com/wp-content/uploads/2023/10/cropped-favicon-512x512-1-270x270.png" />
+<style id="atbs_option-dynamic-css" title="dynamic-css" class="redux-options-output">html{font-size:14px;} .atbs-post--grid-g .post-sub .posts-navigation__label, .page-heading__title, .widget__title-text, .comment-reply-title, .comments-title, .comment-reply-title, .category-tile__name, .block-heading .view-all-btn, .block-heading__title, .post-categories__title, .post__title, .entry-title, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .text-font-primary, .social-tile__title, .widget_recent_comments .recentcomments > a, .widget_recent_entries li > a, .modal-title.modal-title, .author-box .author-name a, .comment-author, .widget_calendar caption, .widget_categories li>a, .widget_meta ul, .widget_recent_comments .recentcomments>a, .widget_recent_entries li>a, .widget_pages li>a, .widget_categories li, .widget_loginwithajaxwidget .lwa-info, .widget_calendar caption, .wp-calendar-nav, .rsswidget{font-family:Poppins,Arial, Helvetica, sans-serif;}.page_blog .block-heading .block-heading__title.page-heading__title{font-family:Poppins,Arial, Helvetica, sans-serif;font-weight:normal;font-style:normal;font-size:36px;}</style>        <!-- Schema meta -->
+        <script type="application/ld+json">
+{
+          "@context": "http://schema.org",
+          "@type": "NewsArticle",
+          "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://blog.checkpoint.com/innovation/quantum-safe-cyber-security-current-capabilities-and-the-road-ahead/"
+          },
+          "headline": "Quantum-Safe Cyber Security: Current Capabilities and the Road Ahead",
+                    "image": [
+            "https://blog.checkpoint.com/wp-content/uploads/2025/09/BLOG-Quantum.jpg"
+           ],
+                    "datePublished": "2025-09-25T06:00:24+00:00",
+          "dateModified": "2025-09-25T06:00:08-07:00",
+          "author": {
+            "@type": "Person",
+            "name": "rohann@checkpoint.com"
+          },
+           "publisher": {
+            "@type": "Organization",
+            "name": "Check Point Blog",
+            "logo": {
+              "@type": "ImageObject",
+              "url": ""
+            }
+          },
+          "description": ""
+        }
+        </script>
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-5JCRGP');</script>
+    <!-- End Google Tag Manager -->
+
+    <!-- XXXXXXXX START Included Unified Header/Footer HEAD XXXXXXXX -->
+    <link rel="stylesheet" href="https://sc1.checkpoint.com/sc1/includes/assets/css/cp_nav.css" />
+    <!-- XXXXXXXX END Included Unified Header/Footer HEAD XXXXXXXX -->
+
+
+    <style>
+        body.product_updates-template-default .entry-author {
+            display: none !important;
+        }
+        /* .post__text .time-wrap, .post-main time{display: none !important;} */
+    </style>
+        <meta class="swiftype" name="swiftype-description" data-type="string" content="Discover Check Point’s quantum-safe solutions, from VPNs to TLS, built on NIST PQC standards to protect against future quantum threats.">
+
+</head>
+<body class="wp-singular post-template-default single single-post postid-248064 single-format-standard wp-embed-responsive wp-theme-atoms">
+
+<!-- XXXXXXXX START Included Unified Header/Footer BODY XXXXXXXX -->
+<!-- Google Tag Manager (noscript) --> 
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5JCRGP" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript> 
+<!-- End Google Tag Manager (noscript) -->
+<header id="cp__header" data-swiftype-index="false" class="no-print" role="banner"  >
+    <div class="cp_main_menu">
+        <div id="nav-logo" class="cp_nav_menu__logo">
+            <a href="https://www.checkpoint.com/" id="logo-page-link"><img src="https://sc1.checkpoint.com/sc1/includes/assets/images/checkpoint-logo.svg" alt="Check Point Software Technologies Ltd." width="205" height="44"></a>
+        </div>
+        <nav class="cp_nav_menu primary-nav" id="cp_nav_menu" role="navigation" aria-label="Main Navigation">
+            <ul class="cp_menu_container">
+                <li class="cp_menu__li">
+                    <a class="cp_menu__l1" aria-controls="cp_menu__item__main_0" aria-expanded="false" role="button">Products</a>
+                    <ul class="cp_menu__l2__ul expandable" id="cp_menu__item__main_0">
+                        <li class="cp_menu__l2 cp_menu_columns_50_50 cp_menu_deeper">
+                            <div class="cp_menu__heading cp_menu_link_mobile cp_span_cols"><a href="https://www.checkpoint.com/hybrid-mesh-network-security/">Hybrid Mesh Network Security</a></div>
+                            <div class="cp_menu__submenu cp_menu__l2">
+                                <div class="cp_menu__heading">
+                                    <a href="https://www.checkpoint.com/quantum/" aria-controls="cp_menu__item__main_0_sub_0" aria-expanded="false">Data Center & Branch Firewalls</a>
+                                </div>
+                                <ul class="cp_menu__l3__ul expandable" id="cp_menu__item__main_0_sub_0">
+                                    <li><a href="https://www.checkpoint.com/quantum/next-generation-firewall/">Next-generation Firewalls</a></li>
+                                    <li><a href="https://www.checkpoint.com/ai/cloudprotect/">AI Factory Firewalls</a></li>
+                                    <li><a href="https://www.checkpoint.com/quantum/next-generation-firewall/small-business-firewall/">SMB Firewalls</a></li>
+                                    <li><a href="https://www.checkpoint.com/quantum/next-generation-firewall/industrial-control-systems-appliances/">Industrial Firewalls</a></li>
+                                    <li><a href="https://www.checkpoint.com/quantum/sd-wan/">SD-WAN</a></li>
+                                    <li><a href="https://www.checkpoint.com/quantum/remote-access-vpn/">Remote Access VPN</a></li>
+                                    <li><a href="https://www.checkpoint.com/quantum/maestro-hyperscale-network-security/">Firewall Cluster</a></li>
+                                </ul>
+                            </div>
+                            <div class="cp_menu__submenu cp_menu__l2">
+                                <div class="cp_menu__heading">
+                                    <a href="https://www.checkpoint.com/quantum/unified-management/" aria-controls="cp_menu__item__main_0_sub_1" aria-expanded="false">Security Management</a>
+                                </div>
+                                <ul class="cp_menu__l3__ul expandable" id="cp_menu__item__main_0_sub_1">
+                                    <li><a href="https://www.checkpoint.com/quantum/unified-management/agentic-network-security/">Agentic Network Security Orchestration</a></li>
+                                    <li><a href="https://www.checkpoint.com/quantum/unified-cyber-security-platform/smart-1-appliances/">Security Management Appliances</a></li>
+                                    <li><a href="https://www.checkpoint.com/infinity/playblocks/">Playblocks</a></li>
+                                    <li><a href="https://www.checkpoint.com/ai/copilot/">AI Copilot Assistant</a></li>
+                                </ul>
+                            </div>
+                            <div class="cp_menu__submenu cp_menu__l2">
+                                <div class="cp_menu__heading">
+                                    <a href="https://www.checkpoint.com/cloudguard/" aria-controls="cp_menu__item__main_0_sub_2" aria-expanded="false">Cloud</a>
+                                </div>
+                                <ul class="cp_menu__l3__ul expandable" id="cp_menu__item__main_0_sub_2">
+                                    <li><a href="https://www.checkpoint.com/cloudguard/cloud-network-security/">Cloud Firewalls</a></li>
+                                    <li><a href="https://www.checkpoint.com/cloudguard/microsoft-azure-security/wan/">Cloud Virtual WAN</a></li>
+                                    <li><a href="https://www.checkpoint.com/cloudguard/waf/">Cloud WAF</a></li>
+                                    <li><a href="https://www.checkpoint.com/quantum/ddos-protector/">DDoS Protection</a></li>
+                                </ul>
+                            </div>
+                            <div class="cp_menu__submenu cp_menu__l2">
+                                <div class="cp_menu__heading">
+                                    <a href="https://sase.checkpoint.com/" aria-controls="cp_menu__item__main_0_sub_3" aria-expanded="false">SASE</a>
+                                </div>
+                                <ul class="cp_menu__l3__ul expandable" id="cp_menu__item__main_0_sub_3">
+                                    <li><a href="https://sase.checkpoint.com/private-access">Private Access</a></li>
+                                    <li><a href="https://sase.checkpoint.com/internet-access">Internet Access</a></li>
+                                    <li><a href="https://sase.checkpoint.com/enterprise-browser">Enterprise Browser</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="cp_menu__l2 cp_menu_deeper">
+                            <div class="cp_menu__heading">
+                                <a href="https://www.checkpoint.com/harmony/" aria-controls="cp_menu__item__main_0_sub_5" aria-expanded="false">Workspace</a>
+                            </div>
+                            <ul class="cp_menu__l3__ul expandable" id="cp_menu__item__main_0_sub_5">
+                                <li><a href="https://www.checkpoint.com/harmony/email-security/email-office/">Email &amp; Collaboration</a></li>
+                                <li><a href="https://www.checkpoint.com/harmony/mobile-security/mobile/">Mobile</a></li>
+                                <li><a href="https://www.checkpoint.com/harmony/advanced-endpoint-protection/">Endpoint</a></li>
+                                <li><a href="https://www.checkpoint.com/harmony/browse/">Browse</a></li>
+                                <li><a href="https://www.checkpoint.com/harmony/saas/">SaaS</a></li>
+                            </ul>
+                        </li>
+                        <li class="cp_menu__l2 cp_menu_deeper">
+                            <div class="cp_menu__heading">
+                                <a href="https://www.checkpoint.com/exposure-management/" aria-controls="cp_menu__item__main_0_sub_6" aria-expanded="false">Exposure&nbsp;Management</a>
+                            </div>
+                            <ul class="cp_menu__l3__ul expandable" id="cp_menu__item__main_0_sub_6">
+                                <li><a href="https://www.checkpoint.com/exposure-management/threat-intelligence/">Threat Intelligence</a></li>
+                                <li><a href="https://www.checkpoint.com/exposure-management/vulnerability-prioritization/">Vulnerability Prioritization</a></li>
+                                <li><a href="https://www.checkpoint.com/exposure-management/caasm/">Cyber Asset Attack Surface Management</a></li>
+                                <li><a href="https://www.checkpoint.com/exposure-management/safe-remediation/">Safe Remediation</a></li>
+                                <li><a href="https://www.checkpoint.com/ai/threatcloud/">ThreatCloud AI</a></li>
+                            </ul>
+                        </li>
+                        <li class="cp_menu__l2 cp_menu_deeper">
+                            <div class="cp_menu__heading">
+                                <a href="https://www.checkpoint.com/ai-security/" aria-controls="cp_menu__item__main_0_sub_7" aria-expanded="false">AI Security</a>
+                            </div>
+                            <ul class="cp_menu__l3__ul expandable" id="cp_menu__item__main_0_sub_7">
+                                <li><a href="https://www.checkpoint.com/ai-security/ai-workforce-security/">Workforce AI Security</a></li>
+                                <li><a href="https://www.checkpoint.com/ai-security/ai-red-teaming/">AI Red Teaming</a></li>
+                                <li><a href="https://www.checkpoint.com/ai-security/ai-agent-security/">AI Agent Security</a></li>
+                                <li class="cp_menu__item__all"><a href="https://www.checkpoint.com/products/" class="view-all-products">View Products A-Z</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="cp_menu__li">
+                    <a class="cp_menu__l1" aria-controls="cp_menu__item__main_1" aria-expanded="false" role="button">Solutions</a>
+                    <ul class="cp_menu__l2__ul cp_menu_columns_50_25_25 expandable" id="cp_menu__item__main_1">
+                        <li class="cp_menu__l2 cp_menu_columns_50_50">
+                            <div class="cp_menu__heading cp_span_cols" aria-controls="cp_menu__item__main_1_sub_0" aria-expanded="false" role="button">
+                                <span>Use Cases</span>
+                            </div>
+                            <ul class="cp_menu__l3__ul expandable" id="cp_menu__item__main_1_sub_0">
+                                <li><a href="https://www.checkpoint.com/solutions/ransomware-protection/anti-ransomware/">Anti-Ransomware</a></li>
+                                <li><a href="https://www.checkpoint.com/solutions/cloud-collaboration/">Collaboration Security</a></li>
+                                <li><a href="https://www.checkpoint.com/solutions/compliance-governance/">Compliance</a></li>
+                                <li><a href="https://www.checkpoint.com/solutions/continuous-threat-exposure-management/">Continuous Threat Exposure Management</a></li>
+                                <li><a href="https://www.checkpoint.com/solutions/email-security-solution/">Email Security</a></li>
+                                <li><a href="https://www.checkpoint.com/solutions/hybrid-data-center-security/">Hybrid Cloud</a></li>
+                                <li><a href="https://www.checkpoint.com/solutions/hybrid-mesh-firewall/">Hybrid Mesh Firewall</a></li>
+                                <li><a href="https://www.checkpoint.com/solutions/iot-security/">IoT Security Solutions</a></li>
+                                <li><a href="https://www.checkpoint.com/solutions/sd-wan-security/">SD-WAN</a></li>
+                                <li><a href="https://www.checkpoint.com/solutions/secure-access-service-edge/">Secure Access Service Edge</a></li>
+                                <li><a href="https://www.checkpoint.com/solutions/threat-hunting/">Threat Hunting</a></li>
+                                <li><a href="https://www.checkpoint.com/solutions/threat-prevention/">Threat Prevention</a></li>
+                                <li><a href="https://www.checkpoint.com/solutions/zero-trust-security/">Zero Trust &amp; Least Privilege</a></li>
+                            </ul>
+                        </li>
+                        <li class="cp_menu__l2">
+                            <div class="cp_menu__heading" aria-controls="cp_menu__item__main_1_sub_1" aria-expanded="false" role="button">
+                                <span>Industry</span>
+                            </div>
+                            <ul class="cp_menu__l3__ul expandable" id="cp_menu__item__main_1_sub_1">
+                                <li><a href="https://www.checkpoint.com/industry/education/">Education</a></li>
+                                <li><a href="https://www.checkpoint.com/industry/sports-and-entertainment/">Entertainment & Sports</a></li>
+                                <li><a href="https://www.checkpoint.com/industry/government-federal-security/">Federal Government</a></li>
+                                <li><a href="https://www.checkpoint.com/industry/financial-services/">Financial Services</a></li>
+                                <li><a href="https://www.checkpoint.com/industry/healthcare/">Healthcare</a></li>
+                                <li><a href="https://www.checkpoint.com/industry/manufacturing/">Manufacturing</a></li>
+                                <li><a href="https://www.checkpoint.com/industry/retail/">Retail</a></li>
+                                <li><a href="https://www.checkpoint.com/industry/government-state-local-security/">State and Local Government</a></li>
+                                <li><a href="https://www.checkpoint.com/industry/service-provider/">Telco / Service Provider</a></li>
+                            </ul>
+                        </li>
+                        <li class="cp_menu__l2">
+                            <div class="cp_menu__heading" aria-controls="cp_menu__item__main_1_sub_2" aria-expanded="false" role="button">
+                                <span>Business Size</span>
+                            </div>
+                            <ul class="cp_menu__l3__ul expandable" id="cp_menu__item__main_1_sub_2">
+                                <li><a href="https://www.checkpoint.com/solutions/enterprise-network-security/">Large Enterprise</a></li>
+                                <li><a href="https://www.checkpoint.com/solutions/small-medium-business-security/">Small &amp; Medium Business</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="cp_menu__li">
+                    <a class="cp_menu__l1" aria-controls="cp_menu__item__main_2" aria-expanded="false" role="button">Platform</a>
+                    <ul class="cp_menu__l2__ul cp_menu__ul_compact expandable" id="cp_menu__item__main_2">
+                        <li class="cp_menu__l2">
+                            <ul class="cp_menu__l3__ul">
+                                <li><a href="https://www.checkpoint.com/infinity/">Unified Platform Overview</a></li>
+                                <li><a href="https://www.checkpoint.com/infinity/core-services/">Platform Services</a></li>
+                                <li><a href="https://www.checkpoint.com/infinity/platform-agreement/">Platform License Agreement</a></li>
+                                <li><a href="https://www.checkpoint.com/infinity/portal/">Single Management Portal</a></li>
+                            </ul>
+                        </li>
+                        <li class="cp_menu__l2 cp_menu__item__li_cta">
+                            <img src="https://sc1.checkpoint.com/sc1/includes/assets/images/security-report-2026-nav-promo.png" alt="2026 Cyber Security Report">
+                            <h5>2026 Cyber Security Report</h5>
+                            <a href="https://www.checkpoint.com/security-report/" class="cp__header_cta">Download report</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="cp_menu__li">
+                    <a class="cp_menu__l1" aria-controls="cp_menu__item__main_3" aria-expanded="false" role="button">Services</a>
+                    <ul class="cp_menu__l2__ul cp_menu_columns_80_20 expandable" id="cp_menu__item__main_3">
+                        <li class="cp_menu__l2 cp_menu_multi_column">
+                            <div class="cp_menu__heading show_on_desktop">
+                                <a href="https://www.checkpoint.com/services/">Check Point Services</a>
+                            </div>
+                            <div class="cp_menu__submenu cp_menu__l2">
+                                <div class="cp_menu__heading">
+                                    <a href="https://www.checkpoint.com/services/cpr-act/" aria-controls="cp_menu__item__main_3_sub_0" aria-expanded="false">CPR ACT</a>
+                                </div>
+                                <ul class="cp_menu__l3__ul expandable" id="cp_menu__item__main_3_sub_0">
+                                    <li><a href="https://www.checkpoint.com/services/cpr-act/#intelligence">Intelligence</a></li>
+                                    <li><a href="https://www.checkpoint.com/services/strategy-and-risk/">Readiness</a></li>
+                                    <li><a href="https://www.checkpoint.com/services/incident-response/managed-detection-and-response/">Detection</a></li>
+                                    <li><a href="https://www.checkpoint.com/services/incident-response/">Response</a></li>
+                                </ul>
+                            </div>
+                            <div class="cp_menu__submenu cp_menu__l2">
+                                <div class="cp_menu__heading">
+                                    <a href="https://www.checkpoint.com/services/managed-security/" aria-controls="cp_menu__item__main_3_sub_2" aria-expanded="false">Managed Security</a>
+                                </div>
+                                <ul class="cp_menu__l3__ul expandable" id="cp_menu__item__main_3_sub_2">
+                                    <li><a href="https://www.checkpoint.com/services/managed-security/managed-xdr-with-siemsoar/">SOC-as-a-Service</a></li>
+                                    <li><a href="https://www.checkpoint.com/services/managed-security/managed-firewall/">NOC-as-a-Service</a></li>
+                                    <li><a href="https://www.checkpoint.com/services/managed-security/managed-firewall-as-a-service/">Managed Firewall as a Service</a></li>
+                                    <li><a href="https://www.checkpoint.com/services/managed-security/managed-cspm/">Cloud &amp; IT</a></li>
+                                </ul>
+                            </div>
+                            <div class="cp_menu__submenu cp_menu__l2">
+                                <div class="cp_menu__heading">
+                                    <a href="https://www.checkpoint.com/services/professional-services/" aria-controls="cp_menu__item__main_3_sub_4" aria-expanded="false">Professional Services</a>
+                                </div>
+                                <ul class="cp_menu__l3__ul expandable" id="cp_menu__item__main_3_sub_4">
+                                    <li><a href="https://www.checkpoint.com/professional-services/">Security Deployment and Optimization</a></li>
+                                    <li><a href="https://www.checkpoint.com/support-services/lifecycle-management/">Lifecycle Management Services</a></li>
+                                    <li><a href="https://www.checkpoint.com/professional-services/account-management/">Advanced Technical Account Management</a></li>
+                                </ul>
+                            </div>
+                            <div class="cp_menu__submenu cp_menu__l2">
+                                <div class="cp_menu__heading">
+                                    <a href="https://www.checkpoint.com/services/training/" aria-controls="cp_menu__item__main_3_sub_1" aria-expanded="false">Training Programs</a>
+                                </div>
+                                <ul class="cp_menu__l3__ul expandable" id="cp_menu__item__main_3_sub_1">
+                                    <li><a href="https://igs.checkpoint.com/categories/trainingprograms" target="_blank">Training Courses</a></li>
+                                    <li><a href="https://www.checkpoint.com/services/training/certification-program/">Certification Program</a></li>
+                                    <li><a href="https://www.checkpoint.com/services/training/smartawareness/">Security Awareness</a></li>
+                                    <li><a href="https://www.checkpoint.com/mind/ciso-academy/">CISO Training</a></li>
+                                    <li><a href="https://www.checkpoint.com/services/training/secureacademy/">Secure Academy</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="cp_menu__l2">
+                            <div class="cp_menu__heading">
+                                <a href="https://supportcenter.checkpoint.com/" aria-controls="cp_menu__item__main_3_sub_6" aria-expanded="false">Support Center</a>
+                            </div>
+                            <ul class="cp_menu__l3__ul expandable" id="cp_menu__item__main_3_sub_6">
+                                <li><a href="https://www.checkpoint.com/support-services/support-plans/">Support Plans</a></li>
+                                <li><a href="https://www.checkpoint.com/support-services/support-plans/diamond-services/">Diamond Services</a></li>
+                                <li><a href="https://www.checkpoint.com/support-services/support-plans/advocacy-management-services/">Advocacy Management Services</a></li>
+                                <li><a href="https://www.checkpoint.com/support-services/pro/">Pro Support </a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="cp_menu__li">
+                    <a class="cp_menu__l1" aria-controls="cp_menu__item__main_4" aria-expanded="false" role="button">Resources</a>
+                    <ul class="cp_menu__l2__ul  cp_menu__ul_compact expandable" id="cp_menu__item__main_4">
+                        <li class="cp_menu__l2">
+                            <ul class="cp_menu__l3__ul">
+                                <li><a href="https://www.checkpoint.com/resources">Resource Center</a></li>
+                                <li><a href="https://blog.checkpoint.com/">Blog</a></li>
+                                <li><a href="https://community.checkpoint.com/">CheckMates Community</a></li>
+                                <li><a href="https://research.checkpoint.com/">Check Point Research</a></li>
+                                <li><a href="https://www.checkpoint.com/ciso/">CISO Connections</a></li>
+                                <li><a href="https://www.checkpoint.com/customer-stories/">Customer Stories</a></li>
+                                <li><a href="https://www.checkpoint.com/cyber-hub/">Cyber Hub</a></li>
+                                <li><a href="https://www.checkpoint.com/events/">Events &amp; Webinars</a></li>
+                            </ul>
+                        </li>
+                        <li class="cp_menu__l2 cp_menu__item__li_cta">
+                            <img src="https://sc1.checkpoint.com/sc1/includes/assets/images/security-report-2026-nav-promo.png" alt="2026 Cyber Security Report">
+                            <h5>2026 Cyber Security Report</h5>
+                            <a href="https://www.checkpoint.com/security-report/" class="cp__header_cta">Download report</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="cp_menu__li">
+                    <a class="cp_menu__l1" aria-controls="cp_menu__item__main_5" aria-expanded="false" role="button">Partners</a>
+                    <ul class="cp_menu__l2__ul cp_menu__ul_compact expandable" id="cp_menu__item__main_5">
+                        <li class="cp_menu__l2">
+                            <ul class="cp_menu__l3__ul">
+                                <li><a href="https://www.checkpoint.com/partners/channel/">Partner Program</a></li>
+                                <li><a href="https://partner-signup.checkpoint.com/">Become a Partner</a></li>
+                                <li><a href="https://partnerlocator.checkpoint.com/#/">Find a Partner</a></li>
+                                <li><a href="https://www.checkpoint.com/partners/channel/">Channel Partners</a></li>
+                                <li><a href="https://www.checkpoint.com/technology-partners/">Technology Partners</a></li>
+                                <li><a href="https://www.checkpoint.com/partners/mssp-program/">MSP Partners</a></li>
+                                <li><a href="https://www.checkpoint.com/cloudguard/amazon-aws-security/">AWS Cloud</a></li>
+                                <li><a href="https://www.checkpoint.com/cloudguard/google-cloud-platform-security/">Google Cloud Platform</a></li>
+                                <li><a href="https://www.checkpoint.com/cloudguard/microsoft-azure-security/">Azure Cloud</a></li>
+                                <li><a href="https://usercenter.checkpoint.com/usercenter/index.jsp">Partner Portal</a></li>
+                            </ul>
+                        </li>
+                        <li class="cp_menu__l2 cp_menu__item__li_cta">
+                            <img src="https://sc1.checkpoint.com/sc1/includes/assets/images/partners-cta-2.jpg" alt="Check Point Partner Program">
+                            <h5>Check Point is 100% Channel. Grow Your Business with Us!</h5>
+                            <a href="https://www.checkpoint.com/partners/channel/" class="cp__header_cta">Sign Up Now</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="cp_menu__li">
+                    <a class="cp_menu__l1" aria-controls="cp_menu__item__main_6" aria-expanded="false" role="button">About Us</a>
+                    <ul class="cp_menu__l2__ul cp_menu__ul_compact expandable" id="cp_menu__item__main_6">
+                        <li class="cp_menu__l2">
+                            <ul class="cp_menu__l3__ul">
+                                <li><a href="https://www.checkpoint.com/about-us/">Company</a></li>
+                                <li><a href="https://www.checkpoint.com/about-us/leadership/">Leadership</a></li>
+                                <li><a href="https://www.checkpoint.com/careers/">Careers</a></li>
+                                <li><a href="https://www.checkpoint.com/about-us/investor-relations/">Investor Relations</a></li>
+                                <li><a href="https://www.checkpoint.com/about-us/newsroom/">Newsroom</a></li>
+                            </ul>
+                        </li>
+                        <li class="cp_menu__l2 cp_menu__item__li_cta">
+                            <img src="https://www.checkpoint.com/wp-content/uploads/security-report-2026-nav-promo.png" alt="2026 Cyber Security Report">
+                            <h5>2026 Cyber Security Report</h5>
+                            <a href="https://www.checkpoint.com/security-report/" class="cp__header_cta">Download report</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <nav class="cp_top_nav_menu">
+        <ul class="cp_util_menu__ul">
+            <li class="cp_util_menu__li show_on_desktop"><a href="https://www.checkpoint.com/demos/" id="free-demo" class="cp__header_cta">Get a Demo</a></li>
+            <li class="cp_util_menu__li show_on_desktop"><a href="https://www.checkpoint.com/about-us/contact-us/" id="top-nav-desk-contact-us-link">Contact Sales</a></li>
+            <li class="cp_util_menu__li show_on_desktop"><a href="https://supportcenter.checkpoint.com/" id="top-nav-desk-support-center-link">Support</a></li>
+            <li class="cp_util_menu__li show_on_desktop"><a href="https://usercenter.checkpoint.com/usercenter/index.jsp" id="top-nav-desk-user-center-link">Log In</a></li>
+            <li class="cp_util_menu__li cp_menu__dropdown__li">
+                <a href="#" class="cp_menu__dropdown__button cp_menu__icon cp_menu__icon__search" aria-controls="cp_util_menu__search" role="button" aria-label="Site Search"></a>
+                <div class="cp_menu__dropdown dropdown_search expandable" id="cp_util_menu__search" aria-expanded="false" role="search">
+                    <form id="cp_site_search">
+                        <label for="cp_site_search__input" class="sr-only">Search</label>
+                        <input type="text" id="cp_site_search__input" class="cp_site_search__input form-control" placeholder="Search site...">
+                    </form>
+                </div>
+            </li>
+            <li class="cp_util_menu__li cp_menu__dropdown__li">
+                <a href="#" class="cp_menu__dropdown__button cp_menu__icon cp_menu__icon__lang" aria-controls="cp_util_menu__lang" role="button" aria-label="Language chooser"></a>
+                <ul class="cp_menu__dropdown dropdown_lang expandable" id="cp_util_menu__lang" aria-expanded="false">
+                    <li class="lang-choose">Choose your language...</li>
+                    <li class="lang-item-en"><a lang="en-US" hreflang="en-US" href="https://www.checkpoint.com/" id="header-language-english-link">English (English)</a></li>
+                    <li class="lang-item-es"><a lang="es-419" hreflang="es-419" href="https://www.checkpoint.com/es/" id="header-language-spanish-link">Spanish (Español)</a></li>
+                    <li class="lang-item-fr"><a lang="fr-FR" hreflang="fr-FR" href="https://www.checkpoint.com/fr/" id="header-language-french-link">French (Français)</a></li>
+                    <li class="lang-item-de"><a lang="de-DE" hreflang="de-DE" href="https://www.checkpoint.com/de/" id="header-language-german-link">German (Deutsch)</a></li>
+                    <li class="lang-item-it"><a lang="it-IT" hreflang="it-IT" href="https://www.checkpoint.com/it/" id="header-language-italian-link">Italian (Italiano)</a></li>
+                    <li class="lang-item-pt"><a lang="pt-PT" hreflang="pt-PT" href="https://www.checkpoint.com/pt/" id="header-language-portuguese-link">Portuguese (Português)</a></li>
+                    <li class="lang-item-jp"><a lang="ja" hreflang="ja" href="https://www.checkpoint.com/jp/" id="header-language-japanese-link">Japanese (日本語)</a></li>
+                    <li class="lang-item-cn"><a lang="zh" hreflang="zh" href="https://www.checkpoint.com.cn/" id="header-language-chinese-link">Chinese (中文)</a></li>
+                    <li class="lang-item-kr"><a lang="kr-KR" hreflang="kr-KR" href="https://www.checkpoint.com/kr/" id="header-language-korean-link">Korean (한국어)</a></li>
+                    <li class="lang-item-tw"><a lang="tw-TW" hreflang="tw-TW" href="https://www.checkpoint.com/tw/" id="header-language-taiwan-link">Taiwan (繁體中文)</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <a class="cp_nav-icon" role="button" aria-controls="cp_nav_menu">
+        <span class="sr-only">Toggle Navigation</span>
+        <div class="cp_nav-icon__inside"></div>
+    </a>
+</header><!-- XXXXXXXX END Included Unified Header/Footer BODY XXXXXXXX -->
+
+<div class="site-wrapper header-1 "><div class="container"><div id="breadcrumbs"><span><span><a href="https://blog.checkpoint.com/">Blog Home</a></span> &gt; <span><a href="https://blog.checkpoint.com/innovation/">Innovation</a></span> &gt; <span class="breadcrumb_last" aria-current="page">Quantum-Safe Cyber Security: Current Capabilities and the Road Ahead</span></span>        <div class="blog-search">Filter by: <select  name='cat' id='cat' class='postform'>
+	<option value='-1'>Select category</option>
+	<option class="level-0" value="210">Research&nbsp;&nbsp;(726)</option>
+	<option class="level-0" value="624">Security&nbsp;&nbsp;(1,157)</option>
+	<option class="level-0" value="654">Securing the Cloud&nbsp;&nbsp;(351)</option>
+	<option class="level-0" value="755">Workspace Security&nbsp;&nbsp;(325)</option>
+	<option class="level-0" value="920">Company and Culture&nbsp;&nbsp;(64)</option>
+	<option class="level-0" value="921">Innovation&nbsp;&nbsp;(57)</option>
+	<option class="level-0" value="922">Customer Stories&nbsp;&nbsp;(21)</option>
+	<option class="level-0" value="924">Security Operations&nbsp;&nbsp;(9)</option>
+	<option class="level-0" value="925">Securing the Network&nbsp;&nbsp;(51)</option>
+	<option class="level-0" value="931">Partners&nbsp;&nbsp;(21)</option>
+	<option class="level-0" value="935">Email Security&nbsp;&nbsp;(327)</option>
+	<option class="level-0" value="938">Artificial Intelligence&nbsp;&nbsp;(104)</option>
+	<option class="level-0" value="952">Check Point Services&nbsp;&nbsp;(39)</option>
+	<option class="level-0" value="953">Crypto&nbsp;&nbsp;(20)</option>
+	<option class="level-0" value="956">Healthcare&nbsp;&nbsp;(17)</option>
+	<option class="level-0" value="959">SASE&nbsp;&nbsp;(42)</option>
+	<option class="level-0" value="974">MSSP&nbsp;&nbsp;(9)</option>
+	<option class="level-0" value="975">Executive Insights&nbsp;&nbsp;(268)</option>
+	<option class="level-0" value="1010">Mobile&nbsp;&nbsp;(4)</option>
+	<option class="level-0" value="1012">Avanan&nbsp;&nbsp;(59)</option>
+	<option class="level-0" value="1018">Hybrid Mesh&nbsp;&nbsp;(33)</option>
+	<option class="level-0" value="1021">Services&nbsp;&nbsp;(3)</option>
+	<option class="level-0" value="1022">Portal&nbsp;&nbsp;(3)</option>
+	<option class="level-0" value="1024">Exposure Management&nbsp;&nbsp;(11)</option>
+	<option class="level-0" value="1025">AI Security&nbsp;&nbsp;(11)</option>
+	<option class="level-0" value="1026">USA&nbsp;&nbsp;(14)</option>
+	<option class="level-0" value="1027">APAC&nbsp;&nbsp;(5)</option>
+	<option class="level-0" value="1028">EMEA&nbsp;&nbsp;(7)</option>
+</select>
+            <input type="text" name="searchbutton" placeholder="Search Articles" class=" js-search-toggle"><i class="fa fa-search" aria-hidden="true"></i></div>
+    </div></div>
+    <script type="text/javascript">
+        var dropdown = document.getElementById("cat");
+        function onCatChange() {
+            if ( dropdown.options[dropdown.selectedIndex].value > 0 ) {
+                location.href = "https://blog.checkpoint.com/?cat="+dropdown.options[dropdown.selectedIndex].value;
+            }
+        }
+        dropdown.onchange = onCatChange;
+    </script>
+
+<div id="site-content" class="site-content single-entry  single-entry--has-share-box">
+    <div class="single-entry-container">
+        <div class="single-entry-container__inner single-1 atbs-block-248064 element-scrolling-progress scrolling-progress-post-content" data-url-to-load="" data-postid="248064">
+            <div class="atbs-block atbs-block--fullwidth single-header-wrap">
+                <div class="container">
+                    <div class="single-header__inner">
+                                                    <div class="entry-thumb single-entry-thumb atbs-thumb-object-fit">
+                                <img width="800" height="400" src="https://blog.checkpoint.com/wp-content/uploads/2025/09/BLOG-Quantum.jpg" class="attachment-atbs-m-2_1 size-atbs-m-2_1 wp-post-image" alt="" decoding="async" fetchpriority="high" srcset="https://blog.checkpoint.com/wp-content/uploads/2025/09/BLOG-Quantum.jpg 800w, https://blog.checkpoint.com/wp-content/uploads/2025/09/BLOG-Quantum-300x150.jpg 300w, https://blog.checkpoint.com/wp-content/uploads/2025/09/BLOG-Quantum-768x384.jpg 768w, https://blog.checkpoint.com/wp-content/uploads/2025/09/BLOG-Quantum-400x200.jpg 400w, https://blog.checkpoint.com/wp-content/uploads/2025/09/BLOG-Quantum-600x300.jpg 600w" sizes="(max-width: 800px) 100vw, 800px" />                            </div>
+                                                <header class="single-header--body single-header">
+                            <div class="entry-meta">
+                                <a class="cat-921 entry-cat post__cat post__cat--bg cat-theme-bg" href="https://blog.checkpoint.com/innovation/">Innovation</a><a class="cat-925 entry-cat post__cat post__cat--bg cat-theme-bg" href="https://blog.checkpoint.com/securing-the-network/">Securing the Network</a><span class="time-wrap"><time class="time published" datetime="2025-09-25T06:00:24+00:00" title="September 25, 2025 at 6:00 am">September 25, 2025</time></span>                            </div>
+                            <h1 class="entry-title">Quantum-Safe Cyber Security: Current Capabilities and the Road Ahead</h1>
+                                                        <div class="entry-author entry-author-has-avatar post-author author-circle"><span class="post-author__avatar" href="https://blog.checkpoint.com/author/rohanncheckpoint-com/" ><img alt="author image" src="/wp-content/uploads/2023/02/author-image.png" class="avatar avatar-50 photo author-avatar" style="border-radius: 0;" height="50" width="50" loading="lazy"></span><div class="post-author__text">
+                        <span class="hint-span">By</span><strong class="post-author__name" href="https://blog.checkpoint.com/author/rohanncheckpoint-com/">Julia Rabinovich | System Architect and Chaim Peer | Product Manager</strong></div></div>                        </header>
+                                            </div>
+                </div> <!-- .container -->
+            </div><!-- .single-header-wrap -->
+            <div class="atbs-block atbs-block--fullwidth single-entry-wrap">
+                <div class="container">
+                                            <div class="atbs-main-col-no-sidebar" role="main">
+                            <article class="post--single post-248064 post type-post status-publish format-standard has-post-thumbnail hentry category-innovation category-securing-the-network">
+                                <div class="single-content">
+                                    <div class="single-body entry-content typography-copy">
+                                        <div class="single-row">
+                                            <!-- Share Box -->
+                                                    <div class="single-column-left js-sticky-sidebar">
+            <div class="single-content-share share-box">
+                <span class="atoms-share-lable">Share</span>
+                <div class="social-share">
+                                        <ul class="social-list">
+                        <li class="facebook-share" ><a class="sharing-btn sharing-btn-primary facebook-btn" data-placement="top" title="Share on Facebook" onClick="window.open('//www.facebook.com/sharer.php?u=https%3A%2F%2Fblog.checkpoint.com%2Finnovation%2Fquantum-safe-cyber-security-current-capabilities-and-the-road-ahead%2F','Facebook','width=600,height=300,left='+(screen.availWidth/2-300)+',top='+(screen.availHeight/2-150)+''); return false;" href="//www.facebook.com/sharer.php?u=https%3A%2F%2Fblog.checkpoint.com%2Finnovation%2Fquantum-safe-cyber-security-current-capabilities-and-the-road-ahead%2F"><div class="share-item__icon"><svg fill="currentColor" preserveAspectRatio="xMidYMid meet" height="1.3em" width="1.3em" viewBox="0 0 40 40">
+                              <g>
+                                <path d="m21.7 16.7h5v5h-5v11.6h-5v-11.6h-5v-5h5v-2.1c0-2 0.6-4.5 1.8-5.9 1.3-1.3 2.8-2 4.7-2h3.5v5h-3.5c-0.9 0-1.5 0.6-1.5 1.5v3.5z"></path>
+                              </g>
+                            </svg></div></a></li><li class="twitter-share" ><a class="sharing-btn sharing-btn-primary twitter-btn" data-placement="top" title="Share on Twitter" onClick="window.open('//twitter.com/share?url=https%3A%2F%2Fblog.checkpoint.com%2Finnovation%2Fquantum-safe-cyber-security-current-capabilities-and-the-road-ahead%2F&amp;text=Quantum-Safe%20Cyber%20Security:%20Current%20Capabilities%20and%20the%20Road%20Ahead','Twitter share','width=600,height=300,left='+(screen.availWidth/2-300)+',top='+(screen.availHeight/2-150)+''); return false;" href="//twitter.com/share?url=https%3A%2F%2Fblog.checkpoint.com%2Finnovation%2Fquantum-safe-cyber-security-current-capabilities-and-the-road-ahead%2F&amp;text=Quantum-Safe%20Cyber%20Security:%20Current%20Capabilities%20and%20the%20Road%20Ahead"><div class="share-item__icon"><svg fill="currentColor" preserveAspectRatio="xMidYMid meet" height="1.3em" width="1.3em" viewBox="0 0 40 40">
+                              <g>
+                                <path d="m31.5 11.7c1.3-0.8 2.2-2 2.7-3.4-1.4 0.7-2.7 1.2-4 1.4-1.1-1.2-2.6-1.9-4.4-1.9-1.7 0-3.2 0.6-4.4 1.8-1.2 1.2-1.8 2.7-1.8 4.4 0 0.5 0.1 0.9 0.2 1.3-5.1-0.1-9.4-2.3-12.7-6.4-0.6 1-0.9 2.1-0.9 3.1 0 2.2 1 3.9 2.8 5.2-1.1-0.1-2-0.4-2.8-0.8 0 1.5 0.5 2.8 1.4 4 0.9 1.1 2.1 1.8 3.5 2.1-0.5 0.1-1 0.2-1.6 0.2-0.5 0-0.9 0-1.1-0.1 0.4 1.2 1.1 2.3 2.1 3 1.1 0.8 2.3 1.2 3.6 1.3-2.2 1.7-4.7 2.6-7.6 2.6-0.7 0-1.2 0-1.5-0.1 2.8 1.9 6 2.8 9.5 2.8 3.5 0 6.7-0.9 9.4-2.7 2.8-1.8 4.8-4.1 6.1-6.7 1.3-2.6 1.9-5.3 1.9-8.1v-0.8c1.3-0.9 2.3-2 3.1-3.2-1.1 0.5-2.3 0.8-3.5 1z"></path>
+                              </g>
+                            </svg></div></a></li><li class="linkedin-share" ><a class="sharing-btn linkedin-btn" data-placement="top" title="Share on Linkedin" onClick="window.open('//www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Fblog.checkpoint.com%2Finnovation%2Fquantum-safe-cyber-security-current-capabilities-and-the-road-ahead%2F','Linkedin','width=863,height=500,left='+(screen.availWidth/2-431)+',top='+(screen.availHeight/2-250)+''); return false;" href="//www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Fblog.checkpoint.com%2Finnovation%2Fquantum-safe-cyber-security-current-capabilities-and-the-road-ahead%2F"><div class="share-item__icon"><svg fill="currentColor" preserveAspectRatio="xMidYMid meet" height="1.3em" width="1.3em" viewBox="0 0 40 40">
+                          <g>
+                            <path d="m13.3 31.7h-5v-16.7h5v16.7z m18.4 0h-5v-8.9c0-2.4-0.9-3.5-2.5-3.5-1.3 0-2.1 0.6-2.5 1.9v10.5h-5s0-15 0-16.7h3.9l0.3 3.3h0.1c1-1.6 2.7-2.8 4.9-2.8 1.7 0 3.1 0.5 4.2 1.7 1 1.2 1.6 2.8 1.6 5.1v9.4z m-18.3-20.9c0 1.4-1.1 2.5-2.6 2.5s-2.5-1.1-2.5-2.5 1.1-2.5 2.5-2.5 2.6 1.2 2.6 2.5z"></path>
+                          </g>
+                        </svg></div></a></li><li class="reddit-share" ><a class="sharing-btn reddit-btn" data-placement="top" title="Share on Reddit" onClick="window.open('//www.reddit.com/submit?url=https%3A%2F%2Fblog.checkpoint.com%2Finnovation%2Fquantum-safe-cyber-security-current-capabilities-and-the-road-ahead%2F&amp;title=Quantum-Safe%20Cyber%20Security:%20Current%20Capabilities%20and%20the%20Road%20Ahead','Reddit','width=863,height=500,left='+(screen.availWidth/2-431)+',top='+(screen.availHeight/2-250)+''); return false;" href="//www.reddit.com/submit?url=https%3A%2F%2Fblog.checkpoint.com%2Finnovation%2Fquantum-safe-cyber-security-current-capabilities-and-the-road-ahead%2F"><div class="share-item__icon"><svg fill="currentColor" preserveAspectRatio="xMidYMid meet" height="1.3em" width="1.3em" viewBox="10 10 80 80">
+                          <g>
+                            <path d="M80.6043 45.9872C80.6043 42.252 77.5728 39.2205 73.8376 39.2205C71.997 39.2205 70.373 39.9242 69.1821 41.1152C64.5807 37.813 58.1929 35.6476 51.1555 35.377L54.2411 20.9232L64.2559 23.0345C64.3642 25.5787 66.4754 27.6358 69.0738 27.6358C71.7264 27.6358 73.8917 25.4705 73.8917 22.8179C73.8917 20.1654 71.7264 18 69.0738 18C67.1791 18 65.5551 19.0827 64.7972 20.7067L53.5915 18.3248C53.2667 18.2707 52.9419 18.3248 52.6713 18.4872C52.4006 18.6496 52.2382 18.9203 52.1299 19.2451L48.7195 35.377C41.5197 35.5935 35.0778 37.7047 30.4222 41.1152C29.2313 39.9783 27.5531 39.2205 25.7667 39.2205C22.0315 39.2205 19 42.252 19 45.9872C19 48.748 20.624 51.0758 23.0059 52.1585C22.8976 52.8081 22.8435 53.5118 22.8435 54.2156C22.8435 64.6093 34.9154 73 49.8563 73C64.7972 73 76.8691 64.6093 76.8691 54.2156C76.8691 53.5118 76.815 52.8622 76.7067 52.2126C78.9262 51.1299 80.6043 48.748 80.6043 45.9872ZM34.3199 50.8051C34.3199 48.1526 36.4852 45.9872 39.1378 45.9872C41.7904 45.9872 43.9557 48.1526 43.9557 50.8051C43.9557 53.4577 41.7904 55.623 39.1378 55.623C36.4852 55.623 34.3199 53.4577 34.3199 50.8051ZM61.2244 63.5266C57.9222 66.8287 51.6427 67.0453 49.8022 67.0453C47.9616 67.0453 41.6279 66.7746 38.3799 63.5266C37.8927 63.0394 37.8927 62.2274 38.3799 61.7402C38.8671 61.253 39.6791 61.253 40.1663 61.7402C42.2234 63.7972 46.6624 64.5551 49.8563 64.5551C53.0502 64.5551 57.435 63.7972 59.5463 61.7402C60.0335 61.253 60.8455 61.253 61.3327 61.7402C61.7116 62.2815 61.7116 63.0394 61.2244 63.5266ZM60.3583 55.623C57.7057 55.623 55.5404 53.4577 55.5404 50.8051C55.5404 48.1526 57.7057 45.9872 60.3583 45.9872C63.0108 45.9872 65.1762 48.1526 65.1762 50.8051C65.1762 53.4577 63.0108 55.623 60.3583 55.623Z"/>
+                          </g>
+                        </svg></div></a></li><li class="email-share" ><a class="sharing-btn email-btn" data-placement="top" title="Share with Email" href="/cdn-cgi/l/email-protection#211e5254434b4442551c7054404f55544c0c72404744041311625843445304131172444254534855581b04131162545353444f550413116240514043484d4855484452041311404f45041311554944041311734e4045041311604944404507404c511a434e45581c4955555152041260041367041367434d4e460f424944424a514e484f550f424e4c041367484f4f4e574055484e4f0413675054404f55544c0c524047440c42584344530c52444254534855580c42545353444f550c4240514043484d48554844520c404f450c5549440c534e40450c4049444045041367"><div class="share-item__icon"><svg fill="currentColor" preserveAspectRatio="xMidYMid meet" height="1.3em" width="1.3em" viewBox="-4 -4 40 40">
+                          <g>
+		<path d="M16,16.8l13.8-9.2C29.2,5.5,27.3,4,25,4H7C4.7,4,2.8,5.5,2.2,7.6L16,16.8z"/>
+	</g>
+	<g>
+		<path d="M16.6,18.8C16.4,18.9,16.2,19,16,19s-0.4-0.1-0.6-0.2L2,9.9V23c0,2.8,2.2,5,5,5h18c2.8,0,5-2.2,5-5V9.9L16.6,18.8z"/>
+	</g>
+                        </svg></div></a></li>                    </ul>
+                                    </div>
+            </div>
+        </div>
+                                                    <div class="single-column-right">
+                                                <p>Quantum computing is moving from theory to reality. While largescale quantum computers are not yet available, their future impact on cyber security is clear: algorithms like RSA,  <a href="https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman">Diffie–Hellman</a>, and Elliptic Curve Diffie-Hellman which secure <a href="https://www.checkpoint.com/cyber-hub/network-security/what-is-vpn/">VPNs</a>, TLS, and digital identities, will eventually be broken by quantum algorithms.</p>
+<p>This creates an immediate risk known as <strong>“</strong><a href="https://www.iotworldtoday.com/security/harvest-now-decrypt-later-today-s-threat-from-future-tech"><strong>harvest now, decrypt later</strong></a><strong>”</strong>, in which adversaries can capture encrypted traffic today and decrypt it when quantum resources become available.</p>
+<p>To address this, the U.S. National Institute of Standards and Technology <a href="https://en.wikipedia.org/wiki/Shor%27s_algorithm?">(NIST)</a> finalized the first post-quantum cryptography (PQC) standards in 2024:</p>
+<ul>
+<li><strong>FIPS 203</strong>: ML-KEM for key establishment</li>
+<li><strong>FIPS 204</strong>: ML-DSA for digital signatures</li>
+<li><strong>FIPS 205</strong>: SLH-DSA for digital signatures</li>
+</ul>
+<p>These standards define the algorithms that will replace RSA and ECC in the coming years. Check Point’s strategy is to integrate these standards into our security architecture in a phased, operationally practical way.</p>
+<h5>The Need for NIST-Compliant Offerings</h5>
+<p>Check Point is at the forefront <a href="https://blog.checkpoint.com/security/check-points-quantum-leap-integrating-nist-pqc-standards/">of implementing post-quantum cryptography (PQC)</a> within our solutions. Our advanced approach allows for the support of multiple PQC key exchanges, accommodating larger key sizes essential for quantum-safe communications. The advancements below are available in our newest software release, <a href="https://www.checkpoint.com/quantum/firewall-software/">R82</a>, which is available on both on-premises and cloud-based firewalls.</p>
+<h5>Site-to-Site VPNs From R82</h5>
+<p>Check Point delivers Post-Quantum Hybrid Key Exchange in the <strong>R82 release</strong>. Quantum-safe key exchange (QSKE) implements <strong>hybrid IKEv2 key exchange</strong>, combining classical Diffie-Hellman with ML-KEM to ensure sessions remain secure even if classical algorithms are compromised in the future.</p>
+<p>The design follows IETF guidance:</p>
+<ul>
+<li><strong>RFC 9370</strong>: Multiple Key Exchanges in IKEv2</li>
+<li><strong>RFC 9242</strong>: Intermediate Exchange for Large Key Payloads</li>
+</ul>
+<p>QSKE affects <strong>key establishment only</strong>; the data plane (ESP) continues to use standard algorithms, such as AES-GCM, which is considered quantum-safe. <strong>R82 is the recommended</strong> release for enabling QSKE on critical VPNs, with configuration available via <a href="https://sc1.checkpoint.com/documents/R82/WebAdminGuides/EN/CP_R82_SitetoSiteVPN_AdminGuide/Content/Topics-VPNSG/Quantum-Safe-Key-Exchange.htm">Smart Console or Management API</a>.</p>
+<p><strong>R82 is the recommended</strong> release for enabling QSKE on critical VPNs, with configuration available via <a href="https://sc1.checkpoint.com/documents/R82/WebAdminGuides/EN/CP_R82_SitetoSiteVPN_AdminGuide/Content/Topics-VPNSG/Quantum-Safe-Key-Exchange.htm">Smart Console or Management API</a>. Logging and API integration provide visibility into adoption and performance.</p>
+<h5>Quantum-Safe TLS and HTTPS Inspection – from R82.10 (Currently in Early Availability)</h5>
+<p>As quantum-safe TLS cipher suites appear in browsers and servers, Check Point gateways handle them as follows:</p>
+<ul>
+<li><strong>When HTTPS inspection is disabled</strong>: Quantum-safe TLS sessions pass transparently end-to-end.</li>
+<li><strong>When HTTPS inspection is enabled</strong>: Quantum-safe TLS sessions are inspected if using the X25519MLKEM768 or if they’ve accepted a downgrade to a classic algorithm, otherwise, the connection is dropped.</li>
+</ul>
+<p>This approach provides visibility without disrupting traffic, enabling organizations to monitor PQC adoption while maintaining business continuity, and is currently available to customers via the <a href="https://community.checkpoint.com/t5/Product-Announcements/R82-10-EA-Program-Production/ba-p/252207">Early Availability program</a> ahead of the R82.10 General Availability release, expected in November 2025.</p>
+<h5>Roadmap: What’s Next</h5>
+<h5>VPN</h5>
+<p>The Risk: While Check Point already delivers quantum-safe protection for <strong>site-to-site VPNs</strong> in R82, <a href="https://www.checkpoint.com/quantum/remote-access-vpn/">remote access VPNs</a> remain exposed. These connections, used by employees and partners to access corporate resources from outside the network, still rely on classical key exchanges that quantum computers will eventually be able to break. Our roadmap for VPN includes the following improvements:</p>
+<ul>
+<li><strong>Remote Access VPN</strong>: The objective is to extend <a href="https://sc1.checkpoint.com/documents/R82/WebAdminGuides/EN/CP_R82_SitetoSiteVPN_AdminGuide/Content/Topics-VPNSG/Quantum-Safe-Key-Exchange.htm">quantum-safe key exchange</a> ￼(QSKE) protections to clients accessing these VPNs, including those running on Windows, macOS, and Linux platforms.</li>
+<li><strong>Site-to-Site VPN: Quantum-Safe Pre-Shared Key</strong><br />
+While full deployment of the quantum-safe VPN may be a challenge, another slightly weaker but simpler approach also provides a quantum safe solution for VPN: enabling RFC 8784 by incorporating a Post-Quantum Pre-shared Key (PPK) into IKEv2&#8217;s session ￼</li>
+</ul>
+<h5>Digital Signatures</h5>
+<p>The Risk: Digital signatures safeguard PKI, certificates, and software updates. Quantum attacks could forge identities or tamper updates, eroding trust across critical systems and supply chains. Our roadmap includes the following improvements:</p>
+<ul>
+<li>Support for <strong>ML-DSA</strong> and <strong>SLH-DSA</strong> will be introduced as PKI tooling and ecosystem support mature, ensuring authentication and integrity remain quantum resilient.</li>
+</ul>
+<ul>
+<li>Support for hash-based <strong>LMS/XMSS</strong> signatures will be added for software and firmware signing to harden the update pipeline against future quantum <a href="https://www.checkpoint.com/cyber-hub/cyber-security/what-is-cyber-attack/">attacks</a>.</li>
+</ul>
+<h5>Quantum Key Distribution (QKD)</h5>
+<p>The Risk: PQC is algorithmic, its strength depends on the difficulty of mathematical problems. While this provides scalable protection, it still relies on assumptions that future advances might challenge. By contrast, QKD utilizes the laws of physics to generate and exchange truly random keys, guaranteeing that any attempt at interception is immediately detectable. For the most sensitive environments, relying solely on algorithms may not be enough.</p>
+<ul>
+<li>While PQC is the primary, scalable defense, Check Point plans to introduce QKD integration for specialized, high-assurance environments. This will allow customers to combine mathematically secure PQC with quantum physics based key delivery for the highest level of assurance.</li>
+</ul>
+<p>A Security Upgrade with Quantum-Safe Advancements</p>
+<p>Start your quantum-safe journey today by upgrading to <strong>R82</strong> to allow Post-Quantum Hybrid Key Exchange on critical VPNs.</p>
+<ul>
+<li>Users can also join our Early Availability program for  <a href="https://community.checkpoint.com/t5/Product-Announcements/R82-10-EA-Program-Production/ba-p/252207"><strong>R82.10</strong> </a>to enable HTTPS Inspection for all TLS sessions.</li>
+</ul>
+                                            </div>
+                                        </div>
+                                    </div><!-- .single-body -->
+                                    <!-- Post Pagination -->
+                                                                        <!-- Single Footer -->
+                                    <footer class="single-footer entry-footer">
+    <div class="entry-interaction entry-interaction--horizontal">
+        <div class="entry-interaction__left">
+            <div class="entry-tags">
+                            </div>
+        </div>
+                <div class="entry-interaction__right">
+            <a href="#comments" class="comments-count" data-toggle="tooltip" data-placement="top" title="0 Comments"><i class="mdicon mdicon-comment-o"></i><span>0</span></a>            <a href="#views" class="view-count" data-toggle="tooltip" data-placement="top" title="10673 Views"><i class="mdicon mdicon-visibility"></i><span>10673</span></a>        </div>
+            </div>
+</footer>                                </div><!-- .single-content -->
+                            </article><!-- .post-single -->
+                            <div class="navigation-author__wrap">
+                                                            </div>
+                            <div class="related-posts single-entry-section"><div class="block-heading block-heading--style-1" style="--color-heading: heading-style-1;"><h4 class="block-heading__title">You may also like</h4></div><div class="atoms-listing-list-1-has-sidebar"><div class="posts-list posts-list-2i flexbox-wrap flexbox-wrap-2i flex-space-30"><div class="list-item">            <article class="post post--vertical post--vertical-medium post__thumb-250 disable-thumb-placeholder" data-dark-mode="true">
+                    <div class="post__thumb atbs-thumb-object-fit post-thumb-radius">
+                                                     <a href="https://blog.checkpoint.com/security/world-quantum-day-2026-the-harvest-has-already-begun-are-you-prepared/"><img width="260" height="260" src="https://blog.checkpoint.com/wp-content/uploads/2020/12/quantum-computing-blog.png" class="attachment-atbs-xs-4_3 size-atbs-xs-4_3 wp-post-image" alt="" decoding="async" srcset="https://blog.checkpoint.com/wp-content/uploads/2020/12/quantum-computing-blog.png 260w, https://blog.checkpoint.com/wp-content/uploads/2020/12/quantum-computing-blog-250x250.png 250w, https://blog.checkpoint.com/wp-content/uploads/2020/12/quantum-computing-blog-150x150.png 150w, https://blog.checkpoint.com/wp-content/uploads/2020/12/quantum-computing-blog-120x120.png 120w" sizes="(max-width: 260px) 100vw, 260px" /></a> <!-- close a tag -->                                            </div>
+                <div class="post__text">
+                                                                <div class="post__meta post-time-cat-wrap">
+                            <a class="cat-921 post__cat post__cat--bg cat-theme-bg" href="https://blog.checkpoint.com/innovation/">Innovation</a>                            <span class="time-wrap"><time class="time published" datetime="2026-04-14T06:00:13+00:00" title="April 14, 2026 at 6:00 am">April 14, 2026</time></span>                        </div>
+                                        <h3 class="post__title typescale-2 line-limit-child line-limit-3">
+                        <a href="https://blog.checkpoint.com/security/world-quantum-day-2026-the-harvest-has-already-begun-are-you-prepared/">World Quantum Day 2026: The Harvest Has Already Begun, Are You Prepared?</a>                    </h3>
+                                        <div class="post__excerpt ">
+                        <div class="excerpt">On World Quantum Day, much of the conversation celebrates breakthroughs ...</div>                    </div>
+                                                                            </div>
+                            </article>
+            </div><!-- .list-item --><div class="list-item">            <article class="post post--vertical post--vertical-medium post__thumb-250 disable-thumb-placeholder" data-dark-mode="true">
+                    <div class="post__thumb atbs-thumb-object-fit post-thumb-radius">
+                                                     <a href="https://blog.checkpoint.com/artificial-intelligence/check-point-at-rsac-how-were-helping-our-customers-secure-their-ai-transformation/"><img width="400" height="300" src="https://blog.checkpoint.com/wp-content/uploads/2026/03/check-point-rsa-2026-featured-e1774284211975-400x300.jpg" class="attachment-atbs-xs-4_3 size-atbs-xs-4_3 wp-post-image" alt="" decoding="async" srcset="https://blog.checkpoint.com/wp-content/uploads/2026/03/check-point-rsa-2026-featured-e1774284211975-400x300.jpg 400w, https://blog.checkpoint.com/wp-content/uploads/2026/03/check-point-rsa-2026-featured-e1774284211975-180x135.jpg 180w, https://blog.checkpoint.com/wp-content/uploads/2026/03/check-point-rsa-2026-featured-e1774284211975-600x450.jpg 600w, https://blog.checkpoint.com/wp-content/uploads/2026/03/check-point-rsa-2026-featured-e1774284211975-800x600.jpg 800w" sizes="(max-width: 400px) 100vw, 400px" /></a> <!-- close a tag -->                                            </div>
+                <div class="post__text">
+                                                                <div class="post__meta post-time-cat-wrap">
+                            <a class="cat-1025 post__cat post__cat--bg cat-theme-bg" href="https://blog.checkpoint.com/ai-security/">AI Security</a>                            <span class="time-wrap"><time class="time published" datetime="2026-03-23T05:45:46+00:00" title="March 23, 2026 at 5:45 am">March 23, 2026</time></span>                        </div>
+                                        <h3 class="post__title typescale-2 line-limit-child line-limit-3">
+                        <a href="https://blog.checkpoint.com/artificial-intelligence/check-point-at-rsac-how-were-helping-our-customers-secure-their-ai-transformation/">Check Point at RSAC – How We’re Helping Our Customers Secure their AI Transformation</a>                    </h3>
+                                        <div class="post__excerpt ">
+                        <div class="excerpt">Enterprise organizations are rapidly adopting AI tools to accelerate productivity, ...</div>                    </div>
+                                                                            </div>
+                            </article>
+            </div><!-- .list-item --><div class="list-item">            <article class="post post--vertical post--vertical-medium post__thumb-250 disable-thumb-placeholder" data-dark-mode="true">
+                    <div class="post__thumb atbs-thumb-object-fit post-thumb-radius">
+                                                     <a href="https://blog.checkpoint.com/artificial-intelligence/check-point-accelerates-the-rollout-of-secure-ai-data-centers-with-nvidia-dsx-air/"><img width="400" height="300" src="https://blog.checkpoint.com/wp-content/uploads/2026/03/nvidia-pic-1-e1773692716244-400x300.png" class="attachment-atbs-xs-4_3 size-atbs-xs-4_3 wp-post-image" alt="" decoding="async" loading="lazy" srcset="https://blog.checkpoint.com/wp-content/uploads/2026/03/nvidia-pic-1-e1773692716244-400x300.png 400w, https://blog.checkpoint.com/wp-content/uploads/2026/03/nvidia-pic-1-e1773692716244-180x135.png 180w, https://blog.checkpoint.com/wp-content/uploads/2026/03/nvidia-pic-1-e1773692716244-600x450.png 600w, https://blog.checkpoint.com/wp-content/uploads/2026/03/nvidia-pic-1-e1773692716244-800x600.png 800w" sizes="auto, (max-width: 400px) 100vw, 400px" /></a> <!-- close a tag -->                                            </div>
+                <div class="post__text">
+                                                                <div class="post__meta post-time-cat-wrap">
+                            <a class="cat-938 post__cat post__cat--bg cat-theme-bg" href="https://blog.checkpoint.com/artificial-intelligence/">Artificial Intelligence</a>                            <span class="time-wrap"><time class="time published" datetime="2026-03-16T13:30:14+00:00" title="March 16, 2026 at 1:30 pm">March 16, 2026</time></span>                        </div>
+                                        <h3 class="post__title typescale-2 line-limit-child line-limit-3">
+                        <a href="https://blog.checkpoint.com/artificial-intelligence/check-point-accelerates-the-rollout-of-secure-ai-data-centers-with-nvidia-dsx-air/">Check Point Accelerates the Rollout of Secure AI Data Centers with NVIDIA DSX Air</a>                    </h3>
+                                        <div class="post__excerpt ">
+                        <div class="excerpt">Check Point is proud to integrate with NVIDIA DSX Air’s ...</div>                    </div>
+                                                                            </div>
+                            </article>
+            </div><!-- .list-item --><div class="list-item">            <article class="post post--vertical post--vertical-medium post__thumb-250 disable-thumb-placeholder" data-dark-mode="true">
+                    <div class="post__thumb atbs-thumb-object-fit post-thumb-radius">
+                                                     <a href="https://blog.checkpoint.com/security/unzipping-the-threat-how-to-block-malware-hidden-in-password-protected-zip-files/"><img width="400" height="300" src="https://blog.checkpoint.com/wp-content/uploads/2023/12/featured-image-default-c-400x300.jpg" class="attachment-atbs-xs-4_3 size-atbs-xs-4_3 wp-post-image default-featured-img" alt="" decoding="async" loading="lazy" srcset="https://blog.checkpoint.com/wp-content/uploads/2023/12/featured-image-default-c-400x300.jpg 400w, https://blog.checkpoint.com/wp-content/uploads/2023/12/featured-image-default-c-180x135.jpg 180w, https://blog.checkpoint.com/wp-content/uploads/2023/12/featured-image-default-c-600x450.jpg 600w, https://blog.checkpoint.com/wp-content/uploads/2023/12/featured-image-default-c-800x600.jpg 800w" sizes="auto, (max-width: 400px) 100vw, 400px" /></a> <!-- close a tag -->                                            </div>
+                <div class="post__text">
+                                                                <div class="post__meta post-time-cat-wrap">
+                            <a class="cat-925 post__cat post__cat--bg cat-theme-bg" href="https://blog.checkpoint.com/securing-the-network/">Securing the Network</a>                            <span class="time-wrap"><time class="time published" datetime="2026-02-13T05:00:12+00:00" title="February 13, 2026 at 5:00 am">February 13, 2026</time></span>                        </div>
+                                        <h3 class="post__title typescale-2 line-limit-child line-limit-3">
+                        <a href="https://blog.checkpoint.com/security/unzipping-the-threat-how-to-block-malware-hidden-in-password-protected-zip-files/">Unzipping the Threat: How to Block Malware Hidden in Password-Protected ZIP Files</a>                    </h3>
+                                        <div class="post__excerpt ">
+                        <div class="excerpt">As malware evades detection by hiding inside password-protect zip files, ...</div>                    </div>
+                                                                            </div>
+                            </article>
+            </div><!-- .list-item --></div></div></div>                        </div><!-- .atbs-main-col -->
+                                        </div><!-- .container -->
+            </div><!-- .single-entry-wrap -->
+                    </div><!-- .single-entry-container__inner -->
+    </div><!-- .single-entry-container -->
+</div><!-- .site-content -->
+</div><!-- .site-wrapper -->
+
+
+<div class="atbs-atoms-search-full-style-2" role="dialog" style="outline: 0px;">
+    <button type="button" id="atbs-atoms-search-close" aria-label="Close"><i class="atbs-atoms-icon-close"></i></button>
+    <div class="atbs-atoms-search-full__wrap ajax-search is-in-navbar js-ajax-search is-active">
+        <div class="atbs-atoms-search-full__inner">
+            <div class="atbs-atoms-search-full__form">
+                <div class="container-sm">
+                    <form action="/" id="searchform" class="search-form" method="get">
+                        <div class="form-group">
+                            <input type="search" name="s" class="search-form__input" autocomplete="off" placeholder="Search ...">
+                            <button type="submit" class="btn search-form__submit"><i class="atbs-atoms-icon-right-arrow"></i></button>
+                        </div>
+                    </form>
+                    <div class="data-typing-loader">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38" stroke="#000">
+                            <g fill="none">
+                                <g transform="translate(1 1)" stroke-width="2">
+                                    <circle stroke-opacity=".5" cx="18" cy="18" r="18"></circle>
+                                    <path d="M36 18c0-9.94-8.06-18-18-18">
+                                        <animateTransform attributeName="transform" type="rotate" from="0 18 18" to="360 18 18" dur="1s" repeatCount="indefinite"></animateTransform>
+                                    </path>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+                </div> <!-- .container -->
+            </div>
+            <div class="atbs-atoms-search-full__results search-results">
+
+                <div class="container-sm">
+                    <div class="search-results__inner">
+                        <div class="search-results__content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- .atbs-atoms-search-full__wrap -->
+</div>
+
+
+<!-- XXXXXXXX START Included Unified Header/Footer FOOTER XXXXXXXX -->
+<footer id="cp__footer" class="cp__footer no-print"   data-swiftype-index="false">
+    <div class="cp__footer_top cp__footer_container">
+        <nav class="cp__footer_nav">
+            <ul class="cp__footer_menu">
+                <li class="cp__footer_menu__li">
+                    <div class="cp_menu__heading" aria-expanded="false" role="button">Products</div>
+                    <ul class="cp_footer_menu__l2__ul expandable">
+                        <li class="cp_footer_menu__l2__cat"><a href="//www.checkpoint.com/quantum/">Hybrid Mesh Network Security</a>
+                            <ul>
+                                <li><a href="//www.checkpoint.com/quantum/next-generation-firewall/">Next-generation Firewalls</a></li>
+                                <li><a href="//www.checkpoint.com/quantum/next-generation-firewall/enterprise-security/">Enterprise Firewall</a></li>
+                                <li><a href="//www.checkpoint.com/cloudguard/cloud-network-security/">Cloud Network Security</a></li>
+                                <li><a href="//www.checkpoint.com/cloudguard/waf/">Cloud WAF</a></li>
+                                <li><a href="//www.checkpoint.com/harmony/sase/">SASE</a></li>
+                            </ul>
+                        </li>
+                        <li class="cp_footer_menu__l2__cat">
+                            <a href="//www.checkpoint.com/harmony/">Workspace Security</a>
+                                <ul>
+                                    <li><a href="//www.checkpoint.com/harmony/email-security/">Email Security</a></li>
+                                    <li><a href="//www.checkpoint.com/harmony/advanced-endpoint-protection/">Endpoint Protection Platform</a></li>
+                                </ul>
+                        </li>
+                         <li class="cp_footer_menu__l2__cat"><a href="//www.checkpoint.com/exposure-management/">Exposure Management</a>
+                            <ul>
+                                <li><a href="//www.checkpoint.com/exposure-management/threat-intelligence/">Threat Intelligence</a></li>
+                                <li><a href="//www.checkpoint.com/exposure-management/vulnerability-prioritization/">Vulnerability Prioritization</a></li>
+                                <li><a href="//www.checkpoint.com/exposure-management/safe-remediation/">Safe Remediation</a></li>
+                            </ul>
+                        </li>
+                        <li class="cp_footer_menu__l2__cat"><a href="//www.checkpoint.com/ai-security/">AI Security</a></li>
+                    </ul>
+                </li>
+                <li class="cp__footer_menu__li">
+                    <div class="cp_menu__heading" aria-expanded="false" role="button">Resources</div>
+                    <ul class="cp_footer_menu__l2__ul expandable">
+                        <li><a href="//resources.checkpoint.com/">Resource Center</a></li>
+                        <li><a href="//www.checkpoint.com/cyber-hub/">Cyber Hub</a></li>
+                        <li><a href="//research.checkpoint.com/">Check Point Research</a></li>
+                        <li><a href="//blog.checkpoint.com/">Check Point Blog</a></li>
+                        <li><a href="//community.checkpoint.com/">CheckMates Community</a></li>
+                        <li><a href="//www.checkpoint.com/customer-stories/">Customer Stories</a></li>
+                        <li><a href="//www.checkpoint.com/comparison/">Comparison</a></li>
+                        <li><a href="//www.checkpoint.com/security-report/">Cyber Security Report</a></li>
+                        <li><a href="//www.checkpoint.com/events/">Events & Webinars</a></li>
+                        <li><a href="//threatmap.checkpoint.com/">Threat Map</a></li>
+                    </ul>
+                </li>
+                <li class="cp__footer_menu__li">
+                    <div class="cp_menu__heading" aria-expanded="false" role="button">Services & Support</div>
+                    <ul class="cp_footer_menu__l2__ul expandable">
+                        <li><a href="//www.checkpoint.com/services/infinity-global/">Check Point Services</a></li>
+                        <li><a href="//www.checkpoint.com/services/managed-security/">Managed Security</a></li>
+                        <li><a href="//www.checkpoint.com/services/professional-services/">Professional Services</a></li>
+                        <li><a href="//www.checkpoint.com/services/training/">Training Programs</a></li>
+                        <li><a href="//www.checkpoint.com/services/strategy-and-risk/">Strategy and Risk</a></li>
+                        <li><a href="//www.checkpoint.com/services/incident-response/">Incident Response</a></li>
+                        <li><a href="//supportcenter.checkpoint.com/">Support Center</a></li>
+                        <li><a href="//usercenter.checkpoint.com/usercenter/index.jsp">User Center Sign In</a></li>
+                        <li><a href="//advisories.checkpoint.com/advisories/">Advisories</a></li>
+                    </ul>
+                </li>
+                <li class="cp__footer_menu__li">
+                    <div class="cp_menu__heading" aria-expanded="false" role="button">Company</div>
+                    <ul class="cp_footer_menu__l2__ul expandable">
+                        <li><a href="//www.checkpoint.com/about-us/">About Us</a></li>
+                        <li><a href="//www.checkpoint.com/about-us/leadership/">Leadership</a></li>
+                        <li><a href="//careers.checkpoint.com/">Careers</a></li>
+                        <li><a href="//www.checkpoint.com/about-us/investor-relations/">Investor Relations</a></li>
+                        <li><a href="//www.checkpoint.com/press-releases/">Newsroom</a></li>
+                        <li><a href="//www.checkpoint.com/trust-point/">Trust Center</a></li>
+                        <li><a href="//www.checkpoint.com/about-us/contact-check-point/">Contact Us</a></li>
+                        <li><a href="//www.checkpoint.com/legal/">Legal</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <div class="cp__footer_menu cp__footer_contact" role="contentinfo">
+            <ul class="cp_footer_menu__l2__ul">
+                <li>
+                    <div class="cp_menu__heading cp__icon_phone">Contact Sales</div>
+                    <ul>
+                        <li>
+                            <span class="contact__loc">North America:</span>
+                            <a href="tel:1-866-488-6691">+1-866-488-6691</a>
+                        </li>
+                        <li><span class="contact__loc">International:</span>
+                            <a href="tel:44-125-333-5558">+44-125-333-5558</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <div class="cp_menu__heading cp__icon_phone">Contact Support</div>
+                    <ul>
+                        <li>
+                            <span class="contact__loc">North America:</span>
+                            <a href="tel:1-888-361-5030">+1-888-361-5030</a>
+                        </li>
+                        <li>
+                            <span class="contact__loc">International:</span>
+                            <a href="tel:44-114-478-2845">+44-114-478-2845</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="cp__footer_bottom cp__footer_container">
+        <div class="cp__footer_follow">
+            <div class="cp_menu__heading">Follow Us</div>
+            <div class="cp__footer_follow__icons">
+                <a target="_blank" rel="noopener noreferrer" href="//www.instagram.com/checkpointsoftware/" title="Check Point Software Instagram" class="cp__icon_instagram"></a>
+                <a target="_blank" rel="noopener noreferrer" href="//www.facebook.com/checkpointsoftware" title="Check Point Software Facebook" class="cp__icon_facebook"></a>
+                <a target="_blank" rel="noopener noreferrer" href="//twitter.com/checkpointsw" title="Check Point Software X (Twitter)" class="cp__icon_x"></a>
+                <a target="_blank" rel="noopener noreferrer" href="//www.linkedin.com/company/check-point-software-technologies" title="Check Point Software LinkedIn" class="cp__icon_linkedin"></a>
+                <a target="_blank" rel="noopener noreferrer" href="//www.youtube.com/user/CPGlobal" title="Check Point Software YouTube" class="cp__icon_youtube"></a>
+            </div>
+        </div>
+        <div class="cp__footer_tagline">WE SECURE YOUR AI TRANSFORMATION</div>
+        <div class="cp__footer_legal">
+            <div class="cp__footer_copyright">&copy;1994&ndash;<span id="cp__copyright_yr"></span> Check Point Software Technologies Ltd. All rights reserved.
+            </div>
+            <ul class="cp__footer_legal__ul">
+                <li><a href="//www.checkpoint.com/copyright/">Copyright</a></li>
+                <li><a href="//www.checkpoint.com/privacy/">Privacy Policy</a></li>
+                <li><a id="footer-desk-cookie-settings-link" href="#">Cookie Settings</a></li>
+                <li><a target="_blank" rel="noopener noreferrer" href="//pages.checkpoint.com/subscribe.html">Get the Latest News</a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://sc1.checkpoint.com/sc1/includes/assets/js/cp_nav.js"></script><script src="https://sc1.checkpoint.com/sc1/includes/assets/js/cp_nav.js"></script>
+<!-- XXXXXXXX END Included Unified Header/Footer FOOTER XXXXXXXX -->
+
+
+
+<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"\/*"},{"not":{"href_matches":["\/wp-*.php","\/wp-admin\/*","\/wp-content\/uploads\/*","\/wp-content\/*","\/wp-content\/plugins\/*","\/wp-content\/themes\/atoms\/*","\/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+<script type="text/javascript" src="https://blog.checkpoint.com/wp-includes/js/imagesloaded.min.js?ver=5.0.0" id="imagesloaded-js"></script>
+<script type="text/javascript" src="https://blog.checkpoint.com/wp-includes/js/masonry.min.js?ver=4.2.2" id="masonry-js"></script>
+<script type="text/javascript" src="https://blog.checkpoint.com/wp-includes/js/jquery/jquery.masonry.min.js?ver=3.1.2b" id="jquery-masonry-js"></script>
+<script type="text/javascript" src="https://blog.checkpoint.com/wp-content/themes/atoms/js/vendors/throttle-debounce.min.js?ver=6.8.2" id="throttle-debounce-js"></script>
+<script type="text/javascript" src="https://blog.checkpoint.com/wp-content/themes/atoms/js/vendors/bootstrap.min.js?ver=6.8.2" id="bootstrap-js"></script>
+<script type="text/javascript" src="https://blog.checkpoint.com/wp-content/themes/atoms/js/vendors/fotorama.min.js?ver=6.8.2" id="fotorama-js"></script>
+<script type="text/javascript" src="https://blog.checkpoint.com/wp-content/themes/atoms/js/vendors/owl-carousel.min.js?ver=6.8.2" id="owl-carousel-js"></script>
+<script type="text/javascript" src="https://blog.checkpoint.com/wp-content/themes/atoms/js/vendors/theiaStickySidebar.min.js?ver=6.8.2" id="theiaStickySidebar-js"></script>
+<script type="text/javascript" src="https://blog.checkpoint.com/wp-content/themes/atoms/js/vendors/fitvids.js?ver=6.8.2" id="fitvids-js"></script>
+<script type="text/javascript" id="atbs-scripts-js-extra">
+/* <![CDATA[ */
+var ajax_buff = {"atbs_security":{"atbs_security_code":{"content":"ce26e8adcb"}}};
+var dark_mode_buff = {"dark_mode_enabled":"0","dark_mode_default":"0","dark_mode_cookie_name":"atbs_dark_mode-bec4f8826c757da79c0516a5a5ab2f4e82f777f5"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://blog.checkpoint.com/wp-content/themes/atoms/js/scripts.js?ver=6.8.2" id="atbs-scripts-js"></script>
+<script type="text/javascript" src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js?ver=1.0.0" id="remote_sdk-js" defer="defer" data-wp-strategy="defer"></script>
+</body>
+</html>
