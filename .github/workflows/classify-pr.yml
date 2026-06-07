@@ -60,7 +60,7 @@ jobs:
           npx tsx scripts/ci/classify-pr-cli.ts
 
       - name: Post or update sticky comment
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
           header: trust-engine-change-classifier
           message: ${{ steps.classify.outputs.comment }}
