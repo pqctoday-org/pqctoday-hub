@@ -57,6 +57,12 @@ jobs:
       - name: Audit protocol matrix refs
         run: npm run audit:matrix-refs
 
+      - name: Audit vendor-id referential integrity
+        # Catches wrong VND-* assignments in the product catalog (e.g. a product
+        # pointing to a deprecated vendor, or a VND that resolves to a completely
+        # different company). See scripts/audit-vendor-refs.ts for details.
+        run: npm run audit:vendor-refs
+
       - name: Audit module infographic coverage
         # Verifies every MODULE_CATALOG entry has public/images/infographics/pqcstd_<id>.png.
         # CuriousSummaryBanner has no fallback chain — a missing PNG renders as a broken image.
