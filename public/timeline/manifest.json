@@ -1574,6 +1574,20 @@
       "file": "International_ISO_IEC_ISO_IEC_SC27_PQC_Standardization.html",
       "sha256": "fc76ab5582f3bfec6a8a0f1de7d3381429683659977cc541e0f97b33bda92047",
       "sizeBytes": 138397
+    },
+    {
+      "label": "Japan:NEDO \u2014 K Program PQC Research",
+      "url": "https://pqshield.com/pqshield-announces-participation-in-nedo-program-to-implement-post-quantum-cryptography-across-japan/",
+      "file": "Japan_NEDO_K_Program_PQC_Research.html",
+      "sha256": "e3bcc4d402b64eba3510590c79fc9db2816f111ce92423d939061a0030a4a847",
+      "sizeBytes": 72804
+    },
+    {
+      "label": "Global:Ethereum Foundation \u2014 Vitalik Buterin Publishes PQ Defense Roadmap",
+      "url": "https://www.coindesk.com/tech/2026/02/26/vitalik-buterin-unveils-ethereum-roadmap-to-counter-quantum-computing-threat/",
+      "file": "Global_Ethereum_Foundation_Vitalik_Buterin_Publishes_PQ_Defense_Roadmap.html",
+      "sha256": "97fdcf7dd5c53b6459e411e9568a53b1c2fb1855fd14a07077c52734440ddffb",
+      "sizeBytes": 470932
     }
   ]
 }
