@@ -254,7 +254,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'DNSSEC Zone Signing',
     emoji: '🌍',
     useCase:
-      'Sign DNS zones with ML-DSA-65 using ldnsutils, comparing classical RSA DNSSEC signatures against post-quantum zone signing for domain integrity.',
+      'Measure the migration cost of switching DNSSEC zone signing from RSA-2048 (~256B signatures) to ML-DSA-65 (~3.3KB signatures): key bytes, signature bytes, sign rate. The PQC arm runs through OpenSSL 3.6 directly because upstream ldns has no ML-DSA support — surfaced as architectural_deviation in the scenario JSON.',
     algorithms: ['ML-DSA-65', 'DNSSEC'],
     difficulty: 'intermediate',
     trackId: 'web',
