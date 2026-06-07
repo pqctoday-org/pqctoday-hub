@@ -1,5 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { ExternalLink, Map as MapIcon, Cpu, Calendar, Shield, GitMerge, Quote } from 'lucide-react'
+import {
+  ExternalLink,
+  Map as MapIcon,
+  Cpu,
+  Calendar,
+  Shield,
+  GitMerge,
+  Quote,
+  Layers,
+} from 'lucide-react'
 import type { VendorRoadmap, VendorRoadmapEnrichment } from '../../types/MigrateTypes'
 
 interface VendorRoadmapPanelProps {
@@ -39,16 +48,41 @@ export const VendorRoadmapPanel = ({ roadmap, enrichment }: VendorRoadmapPanelPr
   const hasUrl = roadmap?.roadmapUrl
   const none = 'None detected'
 
+  const scopeLabel = enrichment?.roadmapScope
+  const scopeChip =
+    !scopeLabel || scopeLabel === none
+      ? null
+      : scopeLabel.toLowerCase().startsWith('portfolio')
+        ? { label: 'Portfolio strategy', cls: 'bg-primary/10 text-primary border-primary/30' }
+        : scopeLabel.toLowerCase().startsWith('multi')
+          ? {
+              label: 'Multi-product',
+              cls: 'bg-status-success/10 text-status-success border-status-success/30',
+            }
+          : scopeLabel.toLowerCase().startsWith('single')
+            ? { label: 'Single product', cls: 'bg-muted/50 text-muted-foreground border-border' }
+            : scopeLabel.toLowerCase().startsWith('algorithm')
+              ? { label: 'Standard ref', cls: 'bg-muted/50 text-muted-foreground border-border' }
+              : null
+
   return (
     <div className="space-y-3">
       {/* Header — title + external link */}
       <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 flex-wrap">
           <MapIcon size={13} className="text-primary shrink-0" aria-hidden="true" />
           <span className="text-xs font-medium text-foreground">
             {roadmap?.roadmapTitle || 'Vendor PQC Roadmap'}
           </span>
           {enrichment && <GaStatusChip status={enrichment.currentGaStatus} />}
+          {scopeChip && (
+            <span
+              className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium border ${scopeChip.cls}`}
+            >
+              <Layers size={9} aria-hidden="true" />
+              {scopeChip.label}
+            </span>
+          )}
         </div>
         {hasUrl && (
           <a

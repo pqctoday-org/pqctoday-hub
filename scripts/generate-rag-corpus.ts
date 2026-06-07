@@ -234,6 +234,31 @@ function getLibraryRefIds(): Set<string> {
   return _libraryRefIds
 }
 
+/**
+ * Load all ACTIVE timeline enrichment keys ("{country}:{orgName} — {title}").
+ * Used to keep doc-enrichment chunks in sync with the Gantt: deprecated rows
+ * and stale-key orphan enrichments (present in older dated md files) are
+ * excluded, mirroring the library safeguard in processDocumentEnrichments().
+ */
+let _timelineRefIds: Set<string> | null = null
+function getTimelineRefIds(): Set<string> {
+  if (_timelineRefIds) return _timelineRefIds
+  _timelineRefIds = new Set<string>()
+  const file = findLatestCSV('timeline_')
+  if (file) {
+    const rows = readCSV(file)
+    for (let i = 1; i < rows.length; i++) {
+      if (isInactiveRow(rows, i)) continue
+      const row = rows[i]
+      const country = sanitize(row[0])
+      const orgName = sanitize(row[2])
+      const title = sanitize(row[9])
+      if (country && title) _timelineRefIds.add(`${country}:${orgName} — ${title}`)
+    }
+  }
+  return _timelineRefIds
+}
+
 /** Find a library referenceId mentioned in the given text */
 function findLibraryRef(text: string): string | undefined {
   const refs = getLibraryRefIds()
@@ -3418,6 +3443,7 @@ function processDocumentEnrichments(): RAGChunk[] {
       // Skip enrichment chunks for deprecated/inactive library entries so the
       // corpus stays in sync with what the UI actually surfaces.
       if (collection === 'library' && !getLibraryRefIds().has(refId)) continue
+      if (collection === 'timeline' && !getTimelineRefIds().has(refId)) continue
 
       const title = fields['Title'] || refId
       if (title === '---') continue

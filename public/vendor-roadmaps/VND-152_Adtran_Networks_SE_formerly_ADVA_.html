@@ -1,0 +1,1617 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 9]><html lang="en" class="ie9 no-js"><![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js">
+<!--<![endif]-->
+
+<head>
+    <!-- Google Tag Manager -->
+    <script>
+        (function (arr) {
+            arr.forEach(function (item) {
+                if (item.hasOwnProperty('prepend')) {
+                    return;
+                }
+                Object.defineProperty(item, 'prepend', {
+                    configurable: true,
+                    enumerable: true,
+                    writable: true,
+                    value: function prepend() {
+                        var argArr = Array.prototype.slice.call(arguments),
+                            docFrag = document.createDocumentFragment();
+
+                        argArr.forEach(function (argItem) {
+                            var isNode = argItem instanceof Node;
+                            docFrag.appendChild(isNode ? argItem : document.createTextNode(String(argItem)));
+                        });
+
+                        this.insertBefore(docFrag, this.firstChild);
+                    }
+                });
+            });
+        })([Element.prototype, Document.prototype, DocumentFragment.prototype]);
+
+        (function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-PM2VQQ');</script>
+    <!-- End Google Tag Manager -->
+
+        <title>Quantum-safe communications</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="keywords" content="Adtran, Adva Network Security, ConnectGuard, FSP 3000, FSP 150, PQC, QKD, Quantum Key Distribution, Quantum-Safe Communications, Post-Quantum Cryptography, Multi-Layer Encryption, Secure Optical Transport, Encrypted Ethernet Services, Infrastructure Monitoring, Fiber Monitoring, Encryption Key Management, Crypto-Agile Networks, Secure Network Operations, Long-Lived Data Protection, Critical Infrastructure Security, Quantum-Safe Networking" />
+    <meta name="description" content="Quantum-safe communications protect long-lived data by combining multi-layer encryption with infrastructure monitoring and operational assurance across optical, Ethernet and IP networks." />
+        <meta property="og:image" content="https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/quantum-safe-communications.jpg?rev=de1ee08e07a144bebbe553b2c80196fd&amp;hash=125C89BC78830E6B66831B61AE9B3D79" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Quantum-safe communications" />
+    <meta property="og:url" content="https://www.adtran.com/en/solutions/quantum-safe-communications" />
+        <meta property="og:description" content="Quantum-safe communications protect long-lived data by combining multi-layer encryption with infrastructure monitoring and operational assurance across optical, Ethernet and IP networks." />
+    <meta property="og:site_name" content="adtran" />
+        <link rel="canonical" href="https://www.adtran.com/en/solutions/quantum-safe-communications" />
+        <link rel="alternate" href="https://www.adtran.com/en/solutions/quantum-safe-communications" hreflang="en" />
+        <link rel="alternate" href="https://www.adtran.com/de-de/solutions/quantum-safe-communications" hreflang="de-DE" />
+
+
+    <link rel="preload" href="/Fonts/sourcesanspro/SourceSansPro-Regular.otf.woff" as="font" type="font/woff" crossorigin />
+    <link rel="preload" href="/Fonts/sourcesanspro/SourceSansPro-Bold.otf.woff" as="font" type="font/woff" crossorigin />
+    <link rel="preload" href="/Fonts/sourcesanspro/SourceSansPro-Semibold.otf.woff" as="font" type="font/woff" crossorigin />
+
+            <link rel="Shortcut Icon" href="/images/icons/adtran/favicon.ico" type="image/x-icon" />
+            <link rel="apple-touch-icon" href="/images/icons/adtran/apple-touch-icon-57x57.png">
+            <link rel="apple-touch-icon" sizes="72x72" href="/images/icons/adtran/apple-touch-icon-72x72.png">
+            <link rel="apple-touch-icon" sizes="114x114" href="/images/icons/adtran/apple-touch-icon-114x114.png">
+
+
+    
+    <link rel="stylesheet" href="/styleguide-v1/css/index.css?v=639131561831193896" />
+   
+    <script defer="defer" src="/styleguide-v1/js/main.js?v=639131561875199096"  type="module"></script>
+
+
+</head>
+<body class="theme--adtran">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PM2VQQ"
+                height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    
+    
+    <a class="show-on-focus" href="#main">Skip to main content</a>
+    
+<header class="o-header" data-component="Header">
+    <div class="o-header__top-bar">
+        <div class="u-wrapper">
+                <ul class="o-header__top-nav">
+
+            <li class="o-header__top-nav-item">
+                <a class="o-header__top-nav-link" href="/en/about-us/careers">Careers</a>
+            </li>
+            <li class="o-header__top-nav-item">
+                <a class="o-header__top-nav-link" href="/en/products-and-services/services/training">Training</a>
+            </li>
+            <li class="o-header__top-nav-item">
+                <a class="o-header__top-nav-link" href="https://investors.adtran.com/overview/default.aspx">Investors</a>
+            </li>
+            <li class="o-header__top-nav-item">
+                <a class="o-header__top-nav-link" href="/en/about-us/partners">Partners</a>
+            </li>
+            <li class="o-header__top-nav-item">
+                <a class="o-header__top-nav-link" href="/en/about-us/support">Support</a>
+            </li>
+            <li class="o-header__top-nav-item">
+                <a class="o-header__top-nav-link" href="/en/about-us/contact-us">Contact us</a>
+            </li>
+            <li class="o-header__top-nav-item">
+                <a class="o-header__top-nav-link" href="/en/log-in">Log in</a>
+            </li>
+    </ul>
+
+        </div>
+    </div>
+    <div class="o-header__bar">
+        <div class="u-wrapper">
+            <div class="o-header__align">
+                <div class="o-header__top">
+                        <a class="o-header__logo" href="/en/" aria-label="Go to home page">
+        <svg xmlns="http://www.w3.org/2000/svg" width="101" 
+		height="25" viewBox="0 0 101 25" fill="none"><g fill="#fff" 
+		clip-path="url(#a)"><path d="M39.003 0h.067c.874 0 1.583.696 1.583 1.555l-.015 
+		21.307c0 .877-.724 1.588-1.616 1.588-.892 0-1.616-.711-1.616-1.588v-.653c-1.957 
+		1.774-3.682 2.671-6.264 2.671-2.581 
+		0-4.798-.898-6.515-2.696-1.718-1.798-2.577-4.009-2.577-6.634s.858-4.77 
+		2.577-6.568c1.717-1.797 3.867-2.696 6.448-2.696 2.582 0 4.347.855 6.331 
+		2.65l.015-7.381C37.421.696 38.13 0 39.004 0h-.001ZM26.965 19.977c1.098 1.198 
+		2.54 1.795 4.324 1.795 1.785 0 3.226-.598 4.326-1.795 1.099-1.197 1.65-2.672 
+		1.65-4.426 0-1.753-.55-3.164-1.65-4.362-1.099-1.196-2.54-1.795-4.326-1.795-1.784
+		 0-3.226.599-4.324 1.795-1.1 1.198-1.65 2.652-1.65 4.362s.55 3.23 1.65 
+		4.426ZM52.763 22.243a1.405 1.405 0 0 1-.66 
+		1.895c-1.045.494-2.241.742-3.588.742-1.908 
+		0-3.345-.578-4.31-1.737-.966-1.158-1.448-2.796-1.448-4.912V9.43l.034-2.713.003-5.127c0-.859.708-1.555
+		 1.582-1.555.874 0 1.583.696 1.583 1.555l-.002 5.127h4.528c.762 0 1.38.607 1.38 
+		1.356 0 .75-.618 1.357-1.38 1.357h-4.528v9.032c0 2.337.977 3.506 2.929 3.506.662
+		 0 1.342-.14 2.04-.42a1.45 1.45 0 0 1 1.837.696v-.001ZM54.456 
+		22.862V8.222c0-.83.686-1.505 1.533-1.505.846 0 1.532.673 1.532 
+		1.505v.748c1.004-1.59 2.892-2.715 5.187-2.715.178 0 .357.006.536.017.875.054 
+		1.53.811 1.446 1.669-.081.823-.814 1.43-1.653 1.372a5.48 5.48 0 0 
+		0-.395-.014c-1.437 0-2.5.486-3.43 1.456-.932.97-1.52 2.524-1.52 4.421v7.687c0 
+		.877-.724 1.588-1.616 1.588-.893 0-1.616-.711-1.616-1.588l-.004-.001ZM80.835 
+		6.717c.855 0 1.548.682 1.548 1.521v14.69c0 .84-.694 1.521-1.548 1.521-.856 
+		0-1.549-.681-1.549-1.52v-.752c-1.651 1.7-3.738 2.703-6.364 
+		2.703s-4.731-.904-6.449-2.713c-1.717-1.809-2.576-4.047-2.576-6.717s.853-4.836 
+		2.56-6.567c1.706-1.732 3.86-2.597 6.465-2.597s4.472.908 6.364 
+		2.65v-.698c0-.84.694-1.521 1.549-1.521ZM68.795 19.98c1.089 1.197 2.527 1.796 
+		4.313 1.796 1.786 0 3.234-.599 4.344-1.797 1.11-1.197 1.666-2.674 1.666-4.429 
+		0-1.754-.555-3.166-1.666-4.364-1.11-1.198-2.56-1.797-4.344-1.797-1.785 
+		0-3.223.599-4.313 1.797-1.09 1.198-1.633 2.664-1.633 4.397s.545 3.199 1.633 
+		4.396ZM84.4 22.928V8.238c0-.84.694-1.521 1.549-1.521h.067c.856 0 1.549.682 1.549
+		 1.521v.631c1.363-1.701 3.053-2.617 5.725-2.617 2.02 0 3.715.64 5.085 1.92 1.37 
+		1.28 2.054 3.12 2.054 5.525v9.23c0 .84-.694 1.521-1.549 1.521h-.101c-.856 
+		0-1.549-.682-1.549-1.521v-8.338c0-1.72-.427-3.049-1.279-3.987-.853-.936-1.842-1.405-3.212-1.405-1.46
+		 0-2.655.507-3.587 1.52-.931 1.016-1.52 2.437-1.52 4.025v8.184c0 .84-.694 
+		1.521-1.549 1.521h-.134c-.856 0-1.549-.682-1.549-1.521v.002ZM3.526 18.308c-1.043
+		 0-2.006.738-2.398 1.688L.15 22.161c-.494 1.094.283 2.288 1.601 2.288.767 0 
+		1.453-.42 1.732-1.06l2.34-5.083H3.527v.002ZM22.078 
+		22.166l-9.415-21.14c-.59-1.324-2.503-1.32-3.087.006L4.79 11.892c-.68 1.654.405 
+		2.986 2.22 2.986h.208l3.908-9.122L18.73 23.39c.28.639.966 1.06 1.732 
+		1.06h.01c1.316 0 2.093-1.191 1.604-2.284Z"/><path d="M11.112 18.88c1.286 0 
+		2.329-1.024 2.329-2.287 0-1.264-1.043-2.288-2.329-2.288-1.285 0-2.328 
+		1.024-2.328 2.288 0 1.263 1.043 2.287 2.328 2.287Z"/></g><defs><clipPath 
+		id="a"><path fill="#fff" d="M0 0h100.43v24.88H0z"/></clipPath></defs></svg>
+    </a>
+    <button class="o-header__burger" aria-label="Open mobile menu" aria-expanded="false">
+        <span></span>
+    </button>
+
+                </div>
+                <div class="o-header__search" data-type="search" data-autocomplete-endpoint="/services/searchapi/autocomplete" data-no-results-message="No Results Found." data-results-message="Results Found.">
+
+    <button class="o-header__search-open" aria-label="Open search">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 21">
+    <g stroke="#fff" stroke-width="2" clip-path="url(#a)" fill="none">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m13.5 13.5 6 6" fill="none"></path>
+        <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14Z"></path>
+    </g>
+    <defs>
+        <clipPath id="a">
+            <path fill="#fff" d="M0 0h21v21H0z"></path>
+        </clipPath>
+    </defs>
+</svg>
+    </button>
+
+    <div class="o-header__search-form-container autocomplete-container invisible">
+        <form action="/search" class="o-header__search-form">
+            <label for="37C473F0CE8C429D9C9E8222223B4A66" class="h-sc-only">Search</label>
+                <input class="o-header__search-input autocomplete" id="37C473F0CE8C429D9C9E8222223B4A66" name="search" type="text" placeholder="Search" autocomplete="off" aria-describedby="search-error-header" required />
+            <button class="o-header__submit-search" type="submit" aria-label="Submit Search">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 21">
+    <g stroke="#fff" stroke-width="2" clip-path="url(#a)" fill="none">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m13.5 13.5 6 6" fill="none"></path>
+        <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14Z"></path>
+    </g>
+    <defs>
+        <clipPath id="a">
+            <path fill="#fff" d="M0 0h21v21H0z"></path>
+        </clipPath>
+    </defs>
+</svg>
+            </button>
+            <p id="search-error-header" class="form-error" role="alert" aria-hidden="true">Please enter a search term before pressing submit</p>
+        </form>
+
+        <aside class="results-wrapper" style="display:none;">
+            <section class="autocomplete-results cf hidden" aria-hidden="true">
+                <h3>Suggested searches</h3>
+                <nav aria-label="Suggested searches">
+                    <ul class="results-list"></ul>
+                    <a href="/en/search" class="see-all hidden" aria-hidden="true">
+                        See all
+                        <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 477.175 477.175"><path d="M360.73 229.075l-225.1-225.1c-5.3-5.3-13.8-5.3-19.1 0s-5.3 13.8 0 19.1l215.5 215.5-215.5 215.5c-5.3 5.3-5.3 13.8 0 19.1 2.6 2.6 6.1 4 9.5 4 3.4 0 6.9-1.3 9.5-4l225.1-225.1c5.3-5.2 5.3-13.8.1-19z" /></svg></span>
+                    </a>
+                </nav>
+            </section>
+            <section class="recent-results">
+                <h3>Recent searches</h3>
+                <nav aria-label="Recent searches">
+                    <ul class="results-list">
+                    </ul>
+                </nav>
+            </section>
+        </aside>
+    </div>
+
+    <button class="o-header__close-search" aria-label="Close search">
+        <svg width="64" xmlns="http://www.w3.org/2000/svg" height="64" viewBox="0 0 64 64"><path fill="#1D1D1B" d="M28.94 31.786L.614 60.114c-.787.787-.787 2.062 0 2.85.393.393.91.59 1.424.59.516 0 1.03-.197 1.424-.59L32.003 34.42l28.54 28.54c.395.395.91.59 1.425.59s1.03-.195 1.424-.59c.788-.786.788-2.06 0-2.848L35.065 31.786 63.41 3.438c.787-.787.787-2.062 0-2.85-.787-.785-2.062-.785-2.848 0L32.002 29.15 3.443.59C2.653-.196 1.38-.196.59.59c-.786.787-.786 2.062 0 2.85l28.35 28.346z" /></svg>
+    </button>
+
+</div>
+                <div class="o-header__drop">
+                        <nav aria-label="Main navigation">
+        <ul class="o-header__main-nav">
+                <li class="o-header__main-nav-item o-header__main-nav-item--has-children">
+                  
+                        <a class="o-header__main-nav-link" aria-haspopup="true" aria-expanded="false" href="/en/products-and-services">Products and services
+                       
+                        </a>
+
+                            <button class="o-header__open-second"></button>
+                    
+
+                        <div class="o-header__mega">
+                            <div class="o-header__sub-wrap">
+                                <ul class="o-header__main-nav-second" data-level="2">
+                                    <li class="o-header__main-nav-second-item o-header__main-nav-second-item--return">
+                                        <a href="/en/products-and-services">Products and services</a>
+                                    </li>
+                                        <li class="o-header__main-nav-second-item o-header__main-nav-second-item--has-children">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="true" aria-expanded="false" href="/en/products-and-services/open-optical-networking">Open optical networking
+                                           
+                                            </a>
+
+                                                <button class="o-header__open-third" aria-label="Toggle submenu" aria-expanded="false"></button>
+                                                <ul class="o-header__main-nav-third" data-level="3">                                                    
+                                                    <li class="o-header__main-nav-third-item o-header__main-nav-third-item--return">
+                                                        <a href="/en/products-and-services/open-optical-networking">Open optical networking</a>
+                                                    </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/open-line-systems">Open line systems
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/optical-terminals">Optical terminals
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/pluggable-optics">Pluggable optics
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/management-and-control">Management and control
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/alm-fiber-monitoring">ALM fiber monitoring
+                                                            </a>
+                                                        </li>
+                                                </ul>
+                                        </li>
+                                        <li class="o-header__main-nav-second-item o-header__main-nav-second-item--has-children">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="true" aria-expanded="false" href="/en/products-and-services/access-and-aggregation">Access and aggregation
+                                           
+                                            </a>
+
+                                                <button class="o-header__open-third" aria-label="Toggle submenu" aria-expanded="false"></button>
+                                                <ul class="o-header__main-nav-third" data-level="3">                                                    
+                                                    <li class="o-header__main-nav-third-item o-header__main-nav-third-item--return">
+                                                        <a href="/en/products-and-services/access-and-aggregation">Access and aggregation</a>
+                                                    </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/aggregation-switches-and-routers">Aggregation switches and routers
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/optical-line-terminals">Optical line terminals
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/fiber-extension">Fiber extension
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/network-management-and-automation">Network management and automation
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/cabinets-and-enclosures">Cabinets and enclosures
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/alm-pon-monitoring">ALM PON monitoring
+                                                            </a>
+                                                        </li>
+                                                </ul>
+                                        </li>
+                                        <li class="o-header__main-nav-second-item o-header__main-nav-second-item--has-children">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="true" aria-expanded="false" href="/en/products-and-services/subscriber-solutions">Subscriber solutions
+                                           
+                                            </a>
+
+                                                <button class="o-header__open-third" aria-label="Toggle submenu" aria-expanded="false"></button>
+                                                <ul class="o-header__main-nav-third" data-level="3">                                                    
+                                                    <li class="o-header__main-nav-third-item o-header__main-nav-third-item--return">
+                                                        <a href="/en/products-and-services/subscriber-solutions">Subscriber solutions</a>
+                                                    </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/residential">Residential
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/business"> Business
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/wholesale">  Wholesale
+                                                            </a>
+                                                        </li>
+                                                </ul>
+                                        </li>
+                                        <li class="o-header__main-nav-second-item o-header__main-nav-second-item--has-children">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="true" aria-expanded="false" href="/en/products-and-services/automation-and-insights">Automation and insights
+                                           
+                                            </a>
+
+                                                <button class="o-header__open-third" aria-label="Toggle submenu" aria-expanded="false"></button>
+                                                <ul class="o-header__main-nav-third" data-level="3">                                                    
+                                                    <li class="o-header__main-nav-third-item o-header__main-nav-third-item--return">
+                                                        <a href="/en/products-and-services/automation-and-insights">Automation and insights</a>
+                                                    </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/management-and-orchestration">Management and orchestration
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/network-and-subscriber-insights">Network and subscriber insights
+                                                            </a>
+                                                        </li>
+                                                </ul>
+                                        </li>
+                                        <li class="o-header__main-nav-second-item o-header__main-nav-second-item--has-children">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="true" aria-expanded="false" href="/en/products-and-services/network-infrastructure-assurance">Network infrastructure assurance
+                                           
+                                            </a>
+
+                                                <button class="o-header__open-third" aria-label="Toggle submenu" aria-expanded="false"></button>
+                                                <ul class="o-header__main-nav-third" data-level="3">                                                    
+                                                    <li class="o-header__main-nav-third-item o-header__main-nav-third-item--return">
+                                                        <a href="/en/products-and-services/network-infrastructure-assurance">Network infrastructure assurance</a>
+                                                    </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/alm-fiber-monitoring">ALM fiber monitoring
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/alm-pon-monitoring">ALM PON monitoring
+                                                            </a>
+                                                        </li>
+                                                </ul>
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/products-and-services/timing-and-synchronization">Timing and synchronization
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item o-header__main-nav-second-item--has-children">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="true" aria-expanded="false" href="/en/products-and-services/services">Services
+                                           
+                                            </a>
+
+                                                <button class="o-header__open-third" aria-label="Toggle submenu" aria-expanded="false"></button>
+                                                <ul class="o-header__main-nav-third" data-level="3">                                                    
+                                                    <li class="o-header__main-nav-third-item o-header__main-nav-third-item--return">
+                                                        <a href="/en/products-and-services/services">Services</a>
+                                                    </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/services/global-services">Global services
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/services/consulting-and-education-services">Consulting and education services
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/services/deployment-services">Deployment services
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/services/cloud-and-software-services">Cloud and software services
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/services/support-services">Support services
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/products-and-services/services/training">Training
+                                                            </a>
+                                                        </li>
+                                                </ul>
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/products-and-services/technology">Technology
+                                           
+                                            </a>
+
+                                        </li>
+                                </ul>
+
+                            </div>
+                        </div>
+                </li>
+                <li class="o-header__main-nav-item o-header__main-nav-item--has-children">
+                  
+                        <a class="o-header__main-nav-link" aria-haspopup="true" aria-expanded="false" href="/en/innovation">Innovation
+                       
+                        </a>
+
+                            <button class="o-header__open-second"></button>
+                    
+
+                        <div class="o-header__mega">
+                            <div class="o-header__sub-wrap">
+                                <ul class="o-header__main-nav-second" data-level="2">
+                                    <li class="o-header__main-nav-second-item o-header__main-nav-second-item--return">
+                                        <a href="/en/innovation">Innovation</a>
+                                    </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/innovation/50g-pon">50G PON
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/innovation/ai-driven-operations-and-insights"> AI-driven operations and insights
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/innovation/data-center-interconnect">Data center interconnect
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/innovation/infrastructure-monitoring"> Infrastructure monitoring
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/innovation/ipodwdm">IPoDWDM
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/innovation/pluggable-optics">Pluggable optics
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/innovation/quantum-safe-networking">Quantum-safe networking
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/innovation/virtualization-and-edge-ai">Virtualization and Edge AI
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/innovation/wi-fi-7">Wi-Fi 7
+                                           
+                                            </a>
+
+                                        </li>
+                                </ul>
+
+                            </div>
+                        </div>
+                </li>
+                <li class="o-header__main-nav-item o-header__main-nav-item--has-children">
+                  
+                        <a class="o-header__main-nav-link" aria-haspopup="true" aria-expanded="false" href="/en/solutions">Solutions
+                       
+                        </a>
+
+                            <button class="o-header__open-second"></button>
+                    
+
+                        <div class="o-header__mega">
+                            <div class="o-header__sub-wrap">
+                                <ul class="o-header__main-nav-second" data-level="2">
+                                    <li class="o-header__main-nav-second-item o-header__main-nav-second-item--return">
+                                        <a href="/en/solutions">Solutions</a>
+                                    </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/solutions/ai-driven-network-operations">AI-driven network operations
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/solutions/broadband-access">Broadband access
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/solutions/cloud-interconnect">Cloud interconnect
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/solutions/enterprise-networking">Enterprise networking
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/solutions/infrastructure-monitoring">Infrastructure monitoring
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/solutions/ip-ethernet-services">IP/Ethernet services
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/solutions/optical-networking">Optical networking
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/solutions/quantum-safe-communications">Quantum-safe communications
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/solutions/synchronization-and-timing">Synchronization and timing
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/solutions/managed-wi-fi-and-subscriber-intelligence">Managed Wi-Fi and subscriber intelligence
+                                           
+                                            </a>
+
+                                        </li>
+                                </ul>
+
+                            </div>
+                        </div>
+                </li>
+                <li class="o-header__main-nav-item o-header__main-nav-item--has-children">
+                  
+                        <a class="o-header__main-nav-link" aria-haspopup="true" aria-expanded="false" href="/en/industries">Industries
+                       
+                        </a>
+
+                            <button class="o-header__open-second"></button>
+                    
+
+                        <div class="o-header__mega">
+                            <div class="o-header__sub-wrap">
+                                <ul class="o-header__main-nav-second" data-level="2">
+                                    <li class="o-header__main-nav-second-item o-header__main-nav-second-item--return">
+                                        <a href="/en/industries">Industries</a>
+                                    </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/industries/cable-msos">Cable/MSOs
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/industries/cloud-providers">Cloud providers
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/industries/national-service-providers">National service providers
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/industries/utilities-and-transportation">Utilities and transportation
+                                           
+                                            </a>
+
+                                        </li>
+                                </ul>
+
+                            </div>
+                        </div>
+                </li>
+                <li class="o-header__main-nav-item o-header__main-nav-item--has-children">
+                  
+                        <a class="o-header__main-nav-link" aria-haspopup="true" aria-expanded="false" href="/en/newsroom">Newsroom
+                       
+                        </a>
+
+                            <button class="o-header__open-second"></button>
+                    
+
+                        <div class="o-header__mega">
+                            <div class="o-header__sub-wrap">
+                                <ul class="o-header__main-nav-second" data-level="2">
+                                    <li class="o-header__main-nav-second-item o-header__main-nav-second-item--return">
+                                        <a href="/en/newsroom">Newsroom</a>
+                                    </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" target="_blank" rel="noopener noreferrer" aria-expanded="false" href="https://www.blog.adtran.com">Blog
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/newsroom/press-releases">Press releases
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/newsroom/talking-points">Talking points
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/newsroom/newsletter">Newsletter
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/newsroom/spokespeople">Spokespeople
+                                           
+                                            </a>
+
+                                        </li>
+                                </ul>
+
+                            </div>
+                        </div>
+                </li>
+                <li class="o-header__main-nav-item">
+                  
+                        <a class="o-header__main-nav-link" aria-haspopup="false" aria-expanded="false" href="/en/resources">Resources
+                       
+                        </a>
+
+                    
+
+                </li>
+                <li class="o-header__main-nav-item o-header__main-nav-item--has-children">
+                  
+                        <a class="o-header__main-nav-link" aria-haspopup="true" aria-expanded="false" href="/en/about-us">About us
+                       
+                        </a>
+
+                            <button class="o-header__open-second"></button>
+                    
+
+                        <div class="o-header__mega">
+                            <div class="o-header__sub-wrap">
+                                <ul class="o-header__main-nav-second" data-level="2">
+                                    <li class="o-header__main-nav-second-item o-header__main-nav-second-item--return">
+                                        <a href="/en/about-us">About us</a>
+                                    </li>
+                                        <li class="o-header__main-nav-second-item o-header__main-nav-second-item--has-children">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="true" aria-expanded="false" href="/en/about-us/advanced-technology">Advanced technology
+                                           
+                                            </a>
+
+                                                <button class="o-header__open-third" aria-label="Toggle submenu" aria-expanded="false"></button>
+                                                <ul class="o-header__main-nav-third" data-level="3">                                                    
+                                                    <li class="o-header__main-nav-third-item o-header__main-nav-third-item--return">
+                                                        <a href="/en/about-us/advanced-technology">Advanced technology</a>
+                                                    </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/about-us/advanced-technology/research-areas">Research areas
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/about-us/advanced-technology/projects">Projects
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/about-us/advanced-technology/standards-and-memberships">Standards and memberships
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/about-us/advanced-technology/publications-and-presentations">Publications and presentations
+                                                            </a>
+                                                        </li>
+                                                </ul>
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/about-us/careers">Careers
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/about-us/contact-us">Contact
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/about-us/cybersecurity-framework">Cybersecurity framework
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item o-header__main-nav-second-item--has-children">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="true" aria-expanded="false" href="/en/about-us/esg">Environmental, social and governance (ESG)
+                                           
+                                            </a>
+
+                                                <button class="o-header__open-third" aria-label="Toggle submenu" aria-expanded="false"></button>
+                                                <ul class="o-header__main-nav-third" data-level="3">                                                    
+                                                    <li class="o-header__main-nav-third-item o-header__main-nav-third-item--return">
+                                                        <a href="/en/about-us/esg">Environmental, social and governance (ESG)</a>
+                                                    </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/about-us/esg/environmental">Environmental
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/about-us/esg/social">Social
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/about-us/esg/governance">Governance
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/about-us/esg/reports-and-policies">Reports and policies
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/about-us/esg/certifications-and-charters">Certifications and charters
+                                                            </a>
+                                                        </li>
+                                                </ul>
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/about-us/events">Events
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/about-us/history">History
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item o-header__main-nav-second-item--has-children">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="true" aria-expanded="false" href="/en/about-us/initiatives">Initiatives
+                                           
+                                            </a>
+
+                                                <button class="o-header__open-third" aria-label="Toggle submenu" aria-expanded="false"></button>
+                                                <ul class="o-header__main-nav-third" data-level="3">                                                    
+                                                    <li class="o-header__main-nav-third-item o-header__main-nav-third-item--return">
+                                                        <a href="/en/about-us/initiatives">Initiatives</a>
+                                                    </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/about-us/initiatives/broadband-funding">Broadband funding
+                                                            </a>
+                                                        </li>
+                                                </ul>
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" target="_blank" rel="noopener noreferrer" aria-expanded="false" href="https://investors.adtran.com/overview/default.aspx">Investors
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item o-header__main-nav-second-item--has-children">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="true" aria-expanded="false" href="/en/about-us/legal">Legal
+                                           
+                                            </a>
+
+                                                <button class="o-header__open-third" aria-label="Toggle submenu" aria-expanded="false"></button>
+                                                <ul class="o-header__main-nav-third" data-level="3">                                                    
+                                                    <li class="o-header__main-nav-third-item o-header__main-nav-third-item--return">
+                                                        <a href="/en/about-us/legal">Legal</a>
+                                                    </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/about-us/legal/privacy-policy">Privacy policy
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/about-us/legal/website-terms-of-use">Website terms of use
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/about-us/legal/logos-and-trademarks">Logos and trademarks
+                                                            </a>
+                                                        </li>
+                                                </ul>
+                                        </li>
+                                        <li class="o-header__main-nav-second-item">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="false" aria-expanded="false" href="/en/about-us/partners">Partners
+                                           
+                                            </a>
+
+                                        </li>
+                                        <li class="o-header__main-nav-second-item o-header__main-nav-second-item--has-children">
+                                            <a class="o-header__main-nav-second-link" aria-haspopup="true" aria-expanded="false" href="/en/about-us/support">Support
+                                           
+                                            </a>
+
+                                                <button class="o-header__open-third" aria-label="Toggle submenu" aria-expanded="false"></button>
+                                                <ul class="o-header__main-nav-third" data-level="3">                                                    
+                                                    <li class="o-header__main-nav-third-item o-header__main-nav-third-item--return">
+                                                        <a href="/en/about-us/support">Support</a>
+                                                    </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/about-us/support/support-contact-options">Support contact options
+                                                            </a>
+                                                        </li>
+                                                        <li class="o-header__main-nav-third-item">
+                                                            <a class="o-header__main-nav-third-link" href="/en/about-us/support/product-security">Product security
+                                                            </a>
+                                                        </li>
+                                                </ul>
+                                        </li>
+                                </ul>
+
+                            </div>
+                        </div>
+                </li>
+        </ul>
+    </nav>
+    <nav class="o-header__utility" aria-label="Utility navigation">
+        <ul class="o-header__utility-nav">
+
+                 <li class="o-header__top-nav-item">
+                     <a class="o-header__top-nav-link" href="/en/about-us/careers">Careers</a>
+                 </li>
+                 <li class="o-header__top-nav-item">
+                     <a class="o-header__top-nav-link" href="/en/products-and-services/services/training">Training</a>
+                 </li>
+                 <li class="o-header__top-nav-item">
+                     <a class="o-header__top-nav-link" href="https://investors.adtran.com/overview/default.aspx">Investors</a>
+                 </li>
+                 <li class="o-header__top-nav-item">
+                     <a class="o-header__top-nav-link" href="/en/about-us/partners">Partners</a>
+                 </li>
+                 <li class="o-header__top-nav-item">
+                     <a class="o-header__top-nav-link" href="/en/about-us/support">Support</a>
+                 </li>
+                 <li class="o-header__top-nav-item">
+                     <a class="o-header__top-nav-link" href="/en/about-us/contact-us">Contact us</a>
+                 </li>
+                 <li class="o-header__top-nav-item">
+                     <a class="o-header__top-nav-link" href="/en/log-in">Log in</a>
+                 </li>
+        </ul>
+    </nav>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="u-rainbow" aria-hidden="true"></div>
+
+        <div class="m-breadcrumbs u-text-white">
+        <div class="u-wrapper">
+            <ul class="m-breadcrumbs__list">
+                <li class="m-breadcrumbs__item">
+                    <a href="#" class="m-breadcrumbs__link" aria-label="Click to go to homepage">
+                        <svg width="9" height="10" viewBox="0 0 9 10" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                  d="M4.49944 0L0 4L0 10H3V6.00134H6V10H9V4L4.49944 0Z" fill="white" />
+                        </svg>
+                    </a>
+                </li>
+                    <li class="m-breadcrumbs__item">
+                            <a href="/en/solutions" class="m-breadcrumbs__link">Solutions</a>
+                    </li>
+                    <li class="m-breadcrumbs__item">
+Quantum-safe communications                    </li>
+            </ul>
+
+                <div class="m-breadcrumbs__previous-page">
+                    <a href="/en/solutions">
+                        <span class="icon">
+                            <svg width="7" height="11" viewBox="0 0 7 11" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 10L5 5.5L1 1" stroke="#ffffff" fill="none"
+                                      stroke-width="2" stroke-linecap="round"
+                                      transform="rotate(180 3.5 5.5)"></path>
+                            </svg>
+                        </span>
+                        Solutions
+                    </a>
+                </div>
+        </div>
+    </div>
+
+    <main id="main" role="main">
+        
+    <section class="m-hero u-text-white u-text-white" aria-label="Hero" >
+
+        
+            <video class="m-hero__bg-image" preload="auto" width="1600" height="700"
+                   poster=""
+                   autoplay loop muted playsinline>
+                <source src="https://www.adtran.com/-/media/adtran/solutions/videos/quantum-safe-communications-loop.mp4?rev=218ea7d6-b6ce-4aa8-8654-44eaa1633430" type="video/mp4" />
+                Your browser does not support the video tag.
+            </video>
+        
+        <div class="m-hero__content">
+            <h1 class="m-hero__title">Network security for the quantum era</h1>
+            <p class="m-hero__desc">Protect mission-critical data with advanced encryption and real-time visibility</p>
+
+        </div>
+
+    </section>
+
+
+
+
+    <section class="rich-text-module white-bg">
+        <div class="wrapper-1180">
+            <div class="rich-text ">
+<div class="u-wrapper" style="max-width: 900px; text-align: center;">
+<br />
+<br />
+<h2 style="text-align: left;">Protecting networks from quantum-era threats</h2>
+<br />
+<p style="text-align: left; font-size: 18px;">
+Quantum computing threatens the long-term security of encrypted data, requiring operators to rethink how they protect sensitive information that must remain secure for years or decades.</p>
+<br />
+<p style="text-align: left;">Securing communications in the quantum era demands more than traditional encryption approaches. Networks must protect data in motion against future decryption risks while maintaining confidence that secure services are operating as intended. Adtran addresses this challenge with a defense-in-depth approach that combines multi-layer, post-quantum-ready encryption across optical, Ethernet and IP environments with the capabilities required to operate and validate secure networks at scale.</p>
+<br />
+<p style="text-align: left;">In addition to cryptographic protection, Adtran extends security into the physical and operational layers of the network. Infrastructure monitoring and operational insights help teams assess the integrity of the transport environment supporting encrypted traffic, while assured operation supports security-sensitive and mission-critical use cases. Together, these capabilities enable operators to protect long-lived data, validate secure communications and maintain trusted network operation across service provider, enterprise, government and critical infrastructure environments.</p>
+</div>
+<p style="text-align: left;">&nbsp;</p>
+<p style="text-align: left;">&nbsp;</p>
+<p>&nbsp;</p>            </div>
+        </div>
+    </section>
+
+    <section class="m-card-grid m-card-grid--with-image u-text-black"  id="">
+
+                        <img width="1235" height="881"
+                     alt="background image"
+                     data-srcset="https://www.adtran.com/-/media/adtran/innovation/backgrounds/large-bg-light-v-11.jpg?rev=450bd9840eb4461daa254f644ff7193c&amp;hash=9D7F3D72C49F949E104D3726BDB161F4 500w,
+                    https://www.adtran.com/-/media/adtran/innovation/backgrounds/large-bg-light-v-11.jpg?rev=450bd9840eb4461daa254f644ff7193c&amp;hash=9D7F3D72C49F949E104D3726BDB161F4 640w,
+                    https://www.adtran.com/-/media/adtran/innovation/backgrounds/large-bg-light-v-11.jpg?rev=450bd9840eb4461daa254f644ff7193c&amp;hash=9D7F3D72C49F949E104D3726BDB161F4 1024w"
+                     data-src="https://www.adtran.com/-/media/adtran/innovation/backgrounds/large-bg-light-v-11.jpg?rev=450bd9840eb4461daa254f644ff7193c&amp;hash=9D7F3D72C49F949E104D3726BDB161F4"
+                     class="lazyload m-card-grid__bg-image" />
+        <div class="u-wrapper">
+                <h2 class="m-card-grid__title">Key capabilities for secure communications</h2>
+            <div class="m-card-grid__text">
+                Core capabilities that strengthen data protection and infrastructure assurance across multi‑layer networks.
+            </div>
+
+            <div class="m-card-grid__card-wrap">
+                    <article class="m-icon-card  m-icon-card--no-link u-text-black"  style="background-color: #FFFFFF">
+                            <div class="m-icon-card__img-container">
+<img class="m-icon-card__image lazyload" width="81" height="81" data-srcset="https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/icon-1.svg?rev=2f4ccd958f6648309f8cca9235a69502&hash=26794C8151F475662278FABFA142717C&w=500&usecustomfunctions=1&centercrop=1 500w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/icon-1.svg?rev=2f4ccd958f6648309f8cca9235a69502&hash=26794C8151F475662278FABFA142717C&w=640&usecustomfunctions=1&centercrop=1 640w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/icon-1.svg?rev=2f4ccd958f6648309f8cca9235a69502&hash=26794C8151F475662278FABFA142717C&w=1024&usecustomfunctions=1&centercrop=1 1024w,  " sizes="320w" data-src="/-/media/adtran/solutions/quantum-safe-communications/icon-1.svg?h=720&w=1280&rev=2f4ccd958f6648309f8cca9235a69502&usecustomfunctions=1&centercrop=1&hash=1B2812BB2A465D1325F7F0C6E23D792E " alt="icon" />                            </div>
+                            <h2 class="m-icon-card__title">Quantum‑safe</h2>
+                                <p class="m-icon-card__desc">
+                                    Multi‑layer protection of long-lived data using standards-aligned post-quantum cryptography.
+                                </p>
+                    </article>
+                    <article class="m-icon-card  m-icon-card--no-link u-text-black"  style="background-color: #FFFFFF">
+                            <div class="m-icon-card__img-container">
+<img class="m-icon-card__image lazyload" width="81" height="81" data-srcset="https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/icon-2.svg?rev=f081664c6a5d450b8376dc29db02ffc4&hash=0C1BAF0614FA044329B8721AA50466AD&w=500&usecustomfunctions=1&centercrop=1 500w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/icon-2.svg?rev=f081664c6a5d450b8376dc29db02ffc4&hash=0C1BAF0614FA044329B8721AA50466AD&w=640&usecustomfunctions=1&centercrop=1 640w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/icon-2.svg?rev=f081664c6a5d450b8376dc29db02ffc4&hash=0C1BAF0614FA044329B8721AA50466AD&w=1024&usecustomfunctions=1&centercrop=1 1024w,  " sizes="320w" data-src="/-/media/adtran/solutions/quantum-safe-communications/icon-2.svg?h=720&w=1280&rev=f081664c6a5d450b8376dc29db02ffc4&usecustomfunctions=1&centercrop=1&hash=8B410ACBDD976149AB8C70926FF6A347 " alt="icon" />                            </div>
+                            <h2 class="m-icon-card__title">Infrastructure insight</h2>
+                                <p class="m-icon-card__desc">
+                                    Continuous visibility into the physical transport layer to detect tampering or degradation.
+                                </p>
+                    </article>
+                    <article class="m-icon-card  m-icon-card--no-link u-text-black"  style="background-color: #FFFFFF">
+                            <div class="m-icon-card__img-container">
+<img class="m-icon-card__image lazyload" width="81" height="81" data-srcset="https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/icon-3.svg?rev=dcf5a7ce86ac46aa8905c239dd9927d4&hash=419B3F185F110894A9BF928EDAE297B3&w=500&usecustomfunctions=1&centercrop=1 500w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/icon-3.svg?rev=dcf5a7ce86ac46aa8905c239dd9927d4&hash=419B3F185F110894A9BF928EDAE297B3&w=640&usecustomfunctions=1&centercrop=1 640w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/icon-3.svg?rev=dcf5a7ce86ac46aa8905c239dd9927d4&hash=419B3F185F110894A9BF928EDAE297B3&w=1024&usecustomfunctions=1&centercrop=1 1024w,  " sizes="320w" data-src="/-/media/adtran/solutions/quantum-safe-communications/icon-3.svg?h=720&w=1280&rev=dcf5a7ce86ac46aa8905c239dd9927d4&usecustomfunctions=1&centercrop=1&hash=441286EDEB1726B88FBB37CF3A21FF2C " alt="icon" />                            </div>
+                            <h2 class="m-icon-card__title">Operational assurance</h2>
+                                <p class="m-icon-card__desc">
+                                    Tools that validate physical layer integrity and support secure network operations.
+                                </p>
+                    </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="" class="m-carousel m-carousel--with-image m-carousel--with-image u-text-black js-carousel" style="background-color: #FFFFFF" data-component="js-carousel">
+        
+        <div class="u-wrapper">
+            <h2 class="m-carousel__title">Enabling technologies</h2>
+        </div>
+            <div class="m-carousel__wrapper swiper js-carousel-swiper">
+                <div class="m-carousel__wrapper-inner swiper-wrapper">
+                        <div class="m-carousel__item swiper-slide">
+                                <article class="m-product-card u-text-white" >
+                                                                                <picture class="m-product-card__image">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-dark-detail-v-2.jpg?rev=95b4af931f024393bcd5585c42754e92&amp;hash=A4E6AAE10C0343E0E24EA4B54FDCD62C"
+                                                        media="(max-width: 500px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-dark-detail-v-2.jpg?rev=95b4af931f024393bcd5585c42754e92&amp;hash=A4E6AAE10C0343E0E24EA4B54FDCD62C"
+                                                        media="(max-width: 768px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-dark-detail-v-2.jpg?rev=95b4af931f024393bcd5585c42754e92&amp;hash=A4E6AAE10C0343E0E24EA4B54FDCD62C"
+                                                        media="(max-width: 991px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-dark-detail-v-2.jpg?rev=95b4af931f024393bcd5585c42754e92&amp;hash=A4E6AAE10C0343E0E24EA4B54FDCD62C"
+                                                        media="(max-width: 1440px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-dark-detail-v-2.jpg?rev=95b4af931f024393bcd5585c42754e92&amp;hash=A4E6AAE10C0343E0E24EA4B54FDCD62C"
+                                                        media="(max-width: 1920px)">
+                                                <img src="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-dark-detail-v-2.jpg?rev=95b4af931f024393bcd5585c42754e92&amp;hash=A4E6AAE10C0343E0E24EA4B54FDCD62C" alt=""
+                                                     class="m-product-card__image-media" loading="lazy">
+                                            </picture>
+                                    <div class="m-product-card__content">
+                                        <div class="m-product-card__text">
+                                            <p class="m-product-card__tag">Optical layer</p>
+                                            <h2 class="m-product-card__title">Quantum-safe optical transport</h2>
+                                            <div class="m-product-card__rte">
+                                                <p>Encrypted optical transport platforms that support high-capacity wavelengths and integrate with advanced key exchange systems, enabling secure data movement across long-haul, metro and regional networks with crypto-agile architectures.</p>
+                                            </div>
+<a class="a-button m-product-card__link a-button--inline" href="https://www.advasecurity.com/en/products-and-services/protected-optical-transport">Learn more</a>                                        </div>
+                                        <div class="m-product-card__side-image">
+<img class="responsive-img lazyload" width="666" height="465" data-srcset="https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-1.png?rev=9672e3847dcd42d883c466bba31523e2&hash=411A4762F3678014185A99BCEFC914FB&w=500&usecustomfunctions=1&centercrop=1 500w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-1.png?rev=9672e3847dcd42d883c466bba31523e2&hash=411A4762F3678014185A99BCEFC914FB&w=640&usecustomfunctions=1&centercrop=1 640w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-1.png?rev=9672e3847dcd42d883c466bba31523e2&hash=411A4762F3678014185A99BCEFC914FB&w=1024&usecustomfunctions=1&centercrop=1 1024w,  " sizes="320w" data-src="/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-1.png?h=141&w=600&rev=9672e3847dcd42d883c466bba31523e2&usecustomfunctions=1&centercrop=1&hash=DE9484D4D3CFBA25D2E8D6E72C862293 " alt="Adtran product" />                                        </div>
+
+                                    </div>
+                                </article>
+                        </div>
+                        <div class="m-carousel__item swiper-slide">
+                                <article class="m-product-card u-text-black" >
+                                                                                <picture class="m-product-card__image">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-v-3.jpg?rev=8f333daecd6943808ea0ed06d292fe5e&amp;hash=FE82C0A0D4BA16AAEACD5177AEBFC010"
+                                                        media="(max-width: 500px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-v-3.jpg?rev=8f333daecd6943808ea0ed06d292fe5e&amp;hash=FE82C0A0D4BA16AAEACD5177AEBFC010"
+                                                        media="(max-width: 768px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-v-3.jpg?rev=8f333daecd6943808ea0ed06d292fe5e&amp;hash=FE82C0A0D4BA16AAEACD5177AEBFC010"
+                                                        media="(max-width: 991px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-v-3.jpg?rev=8f333daecd6943808ea0ed06d292fe5e&amp;hash=FE82C0A0D4BA16AAEACD5177AEBFC010"
+                                                        media="(max-width: 1440px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-v-3.jpg?rev=8f333daecd6943808ea0ed06d292fe5e&amp;hash=FE82C0A0D4BA16AAEACD5177AEBFC010"
+                                                        media="(max-width: 1920px)">
+                                                <img src="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-v-3.jpg?rev=8f333daecd6943808ea0ed06d292fe5e&amp;hash=FE82C0A0D4BA16AAEACD5177AEBFC010" alt=""
+                                                     class="m-product-card__image-media" loading="lazy">
+                                            </picture>
+                                    <div class="m-product-card__content">
+                                        <div class="m-product-card__text">
+                                            <p class="m-product-card__tag">Ethernet</p>
+                                            <h2 class="m-product-card__title">Encrypted Ethernet services</h2>
+                                            <div class="m-product-card__rte">
+                                                Carrier-class Ethernet solutions enabling secure point-to-point and multipoint services with hardware-based encryption and flexible deployment across enterprise and service provider networks.
+                                            </div>
+<a class="a-button m-product-card__link a-button--inline" href="https://www.advasecurity.com/en/products-and-services/secure-network-access">View FSP 150 platforms</a>                                        </div>
+                                        <div class="m-product-card__side-image">
+<img class="responsive-img lazyload" width="666" height="465" data-srcset="https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-2.png?rev=eabc3e4e161d406796050d85a6217758&hash=E02AA3B009B588D41A728F09BF26E90A&w=500&usecustomfunctions=1&centercrop=1 500w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-2.png?rev=eabc3e4e161d406796050d85a6217758&hash=E02AA3B009B588D41A728F09BF26E90A&w=640&usecustomfunctions=1&centercrop=1 640w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-2.png?rev=eabc3e4e161d406796050d85a6217758&hash=E02AA3B009B588D41A728F09BF26E90A&w=1024&usecustomfunctions=1&centercrop=1 1024w,  " sizes="320w" data-src="/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-2.png?h=254&w=600&rev=eabc3e4e161d406796050d85a6217758&usecustomfunctions=1&centercrop=1&hash=9578293EE264CD8AA31DD12DF82028C5 " alt="Adtran product" />                                        </div>
+
+                                    </div>
+                                </article>
+                        </div>
+                        <div class="m-carousel__item swiper-slide">
+                                <article class="m-product-card u-text-white" >
+                                                                                <picture class="m-product-card__image">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/backgrounds/large-bg-dark-v-2.jpg?rev=a164e1c1465e4eba8b2c6af291e7ed57&amp;hash=B550218CBB52EE2CA13773E21DA02489"
+                                                        media="(max-width: 500px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/backgrounds/large-bg-dark-v-2.jpg?rev=a164e1c1465e4eba8b2c6af291e7ed57&amp;hash=B550218CBB52EE2CA13773E21DA02489"
+                                                        media="(max-width: 768px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/backgrounds/large-bg-dark-v-2.jpg?rev=a164e1c1465e4eba8b2c6af291e7ed57&amp;hash=B550218CBB52EE2CA13773E21DA02489"
+                                                        media="(max-width: 991px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/backgrounds/large-bg-dark-v-2.jpg?rev=a164e1c1465e4eba8b2c6af291e7ed57&amp;hash=B550218CBB52EE2CA13773E21DA02489"
+                                                        media="(max-width: 1440px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/backgrounds/large-bg-dark-v-2.jpg?rev=a164e1c1465e4eba8b2c6af291e7ed57&amp;hash=B550218CBB52EE2CA13773E21DA02489"
+                                                        media="(max-width: 1920px)">
+                                                <img src="https://www.adtran.com/-/media/adtran/innovation/backgrounds/large-bg-dark-v-2.jpg?rev=a164e1c1465e4eba8b2c6af291e7ed57&amp;hash=B550218CBB52EE2CA13773E21DA02489" alt="background image"
+                                                     class="m-product-card__image-media" loading="lazy">
+                                            </picture>
+                                    <div class="m-product-card__content">
+                                        <div class="m-product-card__text">
+                                            <p class="m-product-card__tag">Security control</p>
+                                            <h2 class="m-product-card__title">Encryption control and automation</h2>
+                                            <div class="m-product-card__rte">
+                                                Centralized control and automation for secure key exchange, policy enforcement and operational management across encrypted transport environments.
+                                            </div>
+<a class="a-button m-product-card__link a-button--inline" href="https://www.advasecurity.com/en/products-and-services/security-director">Explore Security Director</a>                                        </div>
+                                        <div class="m-product-card__side-image">
+<img class="responsive-img lazyload" width="666" height="465" data-srcset="https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-3.png?rev=fdb0b45d110a473a84340ad4e91403bc&hash=578A7AB6B5D4F399870E79CCAFCE1C69&w=500&usecustomfunctions=1&centercrop=1 500w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-3.png?rev=fdb0b45d110a473a84340ad4e91403bc&hash=578A7AB6B5D4F399870E79CCAFCE1C69&w=640&usecustomfunctions=1&centercrop=1 640w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-3.png?rev=fdb0b45d110a473a84340ad4e91403bc&hash=578A7AB6B5D4F399870E79CCAFCE1C69&w=1024&usecustomfunctions=1&centercrop=1 1024w,  " sizes="320w" data-src="/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-3.png?h=426&w=600&rev=fdb0b45d110a473a84340ad4e91403bc&usecustomfunctions=1&centercrop=1&hash=8E56518621982CBB643CD1618C4271B9 " alt="Adtran product" />                                        </div>
+
+                                    </div>
+                                </article>
+                        </div>
+                        <div class="m-carousel__item swiper-slide">
+                                <article class="m-product-card u-text-black" >
+                                                                                <picture class="m-product-card__image">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-v-6.jpg?rev=5a7cf8fbefd2438aa6ef1423b164aac5&amp;hash=A3E79BBB032118C4CDFA53E21E5444C2"
+                                                        media="(max-width: 500px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-v-6.jpg?rev=5a7cf8fbefd2438aa6ef1423b164aac5&amp;hash=A3E79BBB032118C4CDFA53E21E5444C2"
+                                                        media="(max-width: 768px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-v-6.jpg?rev=5a7cf8fbefd2438aa6ef1423b164aac5&amp;hash=A3E79BBB032118C4CDFA53E21E5444C2"
+                                                        media="(max-width: 991px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-v-6.jpg?rev=5a7cf8fbefd2438aa6ef1423b164aac5&amp;hash=A3E79BBB032118C4CDFA53E21E5444C2"
+                                                        media="(max-width: 1440px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-v-6.jpg?rev=5a7cf8fbefd2438aa6ef1423b164aac5&amp;hash=A3E79BBB032118C4CDFA53E21E5444C2"
+                                                        media="(max-width: 1920px)">
+                                                <img src="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-v-6.jpg?rev=5a7cf8fbefd2438aa6ef1423b164aac5&amp;hash=A3E79BBB032118C4CDFA53E21E5444C2" alt=""
+                                                     class="m-product-card__image-media" loading="lazy">
+                                            </picture>
+                                    <div class="m-product-card__content">
+                                        <div class="m-product-card__text">
+                                            <p class="m-product-card__tag">Operations</p>
+                                            <h2 class="m-product-card__title">Infrastructure monitoring</h2>
+                                            <div class="m-product-card__rte">
+                                                Fiber monitoring technologies that detect faults, degradation or abnormal events, providing early warning and assurance for secure communication environments.
+                                            </div>
+<a class="a-button m-product-card__link a-button--inline" href="/en/products-and-services/alm-fiber-monitoring">ALM fiber monitoring</a>                                        </div>
+                                        <div class="m-product-card__side-image">
+<img class="responsive-img lazyload" width="666" height="465" data-srcset="https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-4.png?rev=afad9f146f1a471eafc15c71d8b68751&hash=9622D2DB6DA6B7B17DCA0F2F32C6285F&w=500&usecustomfunctions=1&centercrop=1 500w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-4.png?rev=afad9f146f1a471eafc15c71d8b68751&hash=9622D2DB6DA6B7B17DCA0F2F32C6285F&w=640&usecustomfunctions=1&centercrop=1 640w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-4.png?rev=afad9f146f1a471eafc15c71d8b68751&hash=9622D2DB6DA6B7B17DCA0F2F32C6285F&w=1024&usecustomfunctions=1&centercrop=1 1024w,  " sizes="320w" data-src="/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-4.png?h=418&w=600&rev=afad9f146f1a471eafc15c71d8b68751&usecustomfunctions=1&centercrop=1&hash=F87B613416D875110E9B7C7EFF52555C " alt="Adtran product" />                                        </div>
+
+                                    </div>
+                                </article>
+                        </div>
+                        <div class="m-carousel__item swiper-slide">
+                                <article class="m-product-card u-text-white" >
+                                                                                <picture class="m-product-card__image">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-dark-detail-v-3.jpg?rev=89be9964ae6641bc845541ca36f12d52&amp;hash=D5AF0C705034D67DA733086169ED8BD6"
+                                                        media="(max-width: 500px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-dark-detail-v-3.jpg?rev=89be9964ae6641bc845541ca36f12d52&amp;hash=D5AF0C705034D67DA733086169ED8BD6"
+                                                        media="(max-width: 768px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-dark-detail-v-3.jpg?rev=89be9964ae6641bc845541ca36f12d52&amp;hash=D5AF0C705034D67DA733086169ED8BD6"
+                                                        media="(max-width: 991px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-dark-detail-v-3.jpg?rev=89be9964ae6641bc845541ca36f12d52&amp;hash=D5AF0C705034D67DA733086169ED8BD6"
+                                                        media="(max-width: 1440px)">
+                                                <source srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-dark-detail-v-3.jpg?rev=89be9964ae6641bc845541ca36f12d52&amp;hash=D5AF0C705034D67DA733086169ED8BD6"
+                                                        media="(max-width: 1920px)">
+                                                <img src="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-dark-detail-v-3.jpg?rev=89be9964ae6641bc845541ca36f12d52&amp;hash=D5AF0C705034D67DA733086169ED8BD6" alt=""
+                                                     class="m-product-card__image-media" loading="lazy">
+                                            </picture>
+                                    <div class="m-product-card__content">
+                                        <div class="m-product-card__text">
+                                            <p class="m-product-card__tag">Quantum readiness</p>
+                                            <h2 class="m-product-card__title">Quantum-safe key exchange</h2>
+                                            <div class="m-product-card__rte">
+                                                Support for post-quantum cryptography and interoperability with quantum key distribution approaches, enabling flexible adoption of quantum-safe security models.
+                                            </div>
+<a class="a-button m-product-card__link a-button--inline" href="/en/innovation/quantum-safe-networking">Find out more</a>                                        </div>
+                                        <div class="m-product-card__side-image">
+<img class="responsive-img lazyload" width="666" height="465" data-srcset="https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-5.png?rev=1254bf00467a419cbd4ed93572796f8b&hash=06B3829DA6202EE2965D4DE4F4DD9353&w=500&usecustomfunctions=1&centercrop=1 500w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-5.png?rev=1254bf00467a419cbd4ed93572796f8b&hash=06B3829DA6202EE2965D4DE4F4DD9353&w=640&usecustomfunctions=1&centercrop=1 640w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-5.png?rev=1254bf00467a419cbd4ed93572796f8b&hash=06B3829DA6202EE2965D4DE4F4DD9353&w=1024&usecustomfunctions=1&centercrop=1 1024w,  " sizes="320w" data-src="/-/media/adtran/solutions/quantum-safe-communications/product-tile-large-600px-quantum-safe-carousel-5.png?h=339&w=600&rev=1254bf00467a419cbd4ed93572796f8b&usecustomfunctions=1&centercrop=1&hash=9B92B29950B22C355AB261C2D6069C97 " alt="Adtran product" />                                        </div>
+
+                                    </div>
+                                </article>
+                        </div>
+                </div>
+
+                <div class="m-carousel__navigation js-navigation">
+                    <button class="m-carousel__prev js-carousel-prev" aria-label="Previous slide" type="button">
+                        <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <title>Previous</title>
+                            <path d="M10 18L2 10L10 2" stroke="#404040" stroke-width="2.5" stroke-linecap="round" />
+                        </svg>
+                    </button>
+                    <button class="m-carousel__next js-carousel-next" aria-label="Next slide" type="button">
+                        <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <title>Next</title>
+                            <path d="M2 18L10 10L2 2" stroke="#404040" stroke-width="2.5" stroke-linecap="round" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+    </section>
+    <section id="" class="m-promo  m-promo--with-image u-text-white" >
+                        <img width="1235" height="881"
+                     alt=""
+                     data-srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-dark-v-3.jpg?rev=2b20dde5ac084b6a89cffb1bd99b7c1d&amp;hash=879374A134C032E5B7877664BF446938 500w,
+		                          https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-dark-v-3.jpg?rev=2b20dde5ac084b6a89cffb1bd99b7c1d&amp;hash=879374A134C032E5B7877664BF446938 640w,
+		                          https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-dark-v-3.jpg?rev=2b20dde5ac084b6a89cffb1bd99b7c1d&amp;hash=879374A134C032E5B7877664BF446938 1024w"
+                     data-src="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-dark-v-3.jpg?rev=2b20dde5ac084b6a89cffb1bd99b7c1d&amp;hash=879374A134C032E5B7877664BF446938"
+                     class="lazyload m-promo__bg-image" />
+        <div class="m-promo__content">
+            <div class="m-promo__wrap">
+                <p class="m-promo__tag">Architecture</p>
+                <h2 class="m-promo__title">How quantum-safe networks operate</h2>
+                <div class="m-promo__text">
+                    Quantum safe communications embed encryption across optical, Ethernet and IP layers. Continuous fiber monitoring provides real-time insight to verify integrity and address issues along the transport path, while assured timing supports trusted operations. Together, these protect data, validate infrastructure and enhance operational awareness.
+                </div>
+<a class="a-button a-button--inline m-promo__link" href="/en/innovation/quantum-safe-networking">Learn more</a>            </div>
+                <div class="m-promo__img-wrap">
+                    <img class="lazyload  m-promo__image" width="444" height="640" data-srcset="https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/quantum-safe-large-product-card.png?rev=fe64ab2c11d84c84a0fadd9a8b1f4bf9&hash=961539FDBAC038D1760F5B356F4CF8B1&w=500&usecustomfunctions=1&centercrop=1 500w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/quantum-safe-large-product-card.png?rev=fe64ab2c11d84c84a0fadd9a8b1f4bf9&hash=961539FDBAC038D1760F5B356F4CF8B1&w=640&usecustomfunctions=1&centercrop=1 640w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/quantum-safe-large-product-card.png?rev=fe64ab2c11d84c84a0fadd9a8b1f4bf9&hash=961539FDBAC038D1760F5B356F4CF8B1&w=1024&usecustomfunctions=1&centercrop=1 1024w,  " sizes="320w" data-src="/-/media/adtran/solutions/quantum-safe-communications/quantum-safe-large-product-card.png?h=381&w=600&rev=fe64ab2c11d84c84a0fadd9a8b1f4bf9&usecustomfunctions=1&centercrop=1&hash=016D7969A98F6F6A53220B078BAA6C09 " alt="Adtran product" />
+                </div>
+        </div>
+    </section>
+
+    <section data-component="js-mob-carousel" id="" class="m-mob-carousel m-mob-carousel--with-image u-text-black js-mob-carousel" style="background-color: #fff">
+                
+        <div class="m-mob-carousel__wrapper swiper js-mob-carousel-swiper">
+            <div class="m-mob-carousel__wrapper-inner swiper-wrapper">
+                    <div class="m-mob-carousel__item swiper-slide">
+                            <div class="m-product m-product--inline  u-text-black" >
+                                                                        <img width="666" height="465"
+                                             alt=""
+                                             data-srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-v-14.jpg?rev=77dd8d8ab4904236a8f24a249596c218&amp;hash=B465B4895840547458374E9AC8D3658D 500w,
+                                          https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-v-14.jpg?rev=77dd8d8ab4904236a8f24a249596c218&amp;hash=B465B4895840547458374E9AC8D3658D 640w,
+                                          https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-v-14.jpg?rev=77dd8d8ab4904236a8f24a249596c218&amp;hash=B465B4895840547458374E9AC8D3658D 1024w"
+                                             data-src="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-v-14.jpg?rev=77dd8d8ab4904236a8f24a249596c218&amp;hash=B465B4895840547458374E9AC8D3658D"
+                                             class="lazyload m-product__bg-image" />
+                                                                    <div class="m-product__img-wrap">
+                                        <img class="lazyload  m-product__image" width="600" height="301" data-srcset="https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/quantum-safe-image-text-1.png?rev=d8c531d22d9a4aa8ae672a956f3976c1&hash=4BB0E74DC82F3620BEA00D280464D40C&w=500&usecustomfunctions=1&centercrop=1 500w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/quantum-safe-image-text-1.png?rev=d8c531d22d9a4aa8ae672a956f3976c1&hash=4BB0E74DC82F3620BEA00D280464D40C&w=640&usecustomfunctions=1&centercrop=1 640w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/quantum-safe-image-text-1.png?rev=d8c531d22d9a4aa8ae672a956f3976c1&hash=4BB0E74DC82F3620BEA00D280464D40C&w=1024&usecustomfunctions=1&centercrop=1 1024w,  " sizes="320w" data-src="/-/media/adtran/solutions/quantum-safe-communications/quantum-safe-image-text-1.png?h=301&w=600&rev=d8c531d22d9a4aa8ae672a956f3976c1&usecustomfunctions=1&centercrop=1&hash=116425F47D2E4184E380941AEF380B29 " alt="Adtran product" />
+                                    </div>
+
+                                <div class="m-product__content">
+                                    <h3 class="m-product__title">Operational impact you can measure</h3>
+                                        <div class="m-product__text">
+                                            By unifying multi-layer encryption with real-time awareness of the physical transport environment, operators can detect and validate infrastructure issues faster, reducing effort spent confirming faults and addressing security risks. Physical‑layer insights enable early detection of fiber degradation or tampering before they affect secure communications, helping teams determine whether problems stem from the network, encryption systems or underlying infrastructure. Quantum-safe encryption limits exposure of sensitive or long‑lived data to future decryption threats, improving incident response, simplifying compliance validation and reducing uncertainty when assessing potential threats.
+                                        </div>
+                                    <a class="a-button a-button--inline m-product__link" href="https://www.advasecurity.com/en/resources/resources-gated-page/solution-briefs/connectguard-security-for-optical-networks">Learn more</a>                                </div>
+                            </div>
+                    </div>
+            </div>
+            <div class="m-mob-carousel__navigation js-mob-navigation">
+                <button class="m-mob-carousel__prev js-mob-carousel-prev" aria-label="Previous slide" type="button">
+                    <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <title>Previous</title>
+                        <path d="M10 18L2 10L10 2" stroke="#404040" stroke-width="2.5" stroke-linecap="round" />
+                    </svg>
+                </button>
+                <button class="m-mob-carousel__next js-mob-carousel-next" aria-label="Next slide" type="button">
+                    <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <title>Next</title>
+                        <path d="M2 18L10 10L2 2" stroke="#404040" stroke-width="2.5" stroke-linecap="round" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+<section id="" class="m-quote u-text-black" >
+                        <img width="1235" height="599"
+                     alt="backgroud colour"
+                     data-srcset="https://www.adtran.com/-/media/adtran/innovation/backgrounds/card-3-bg.jpg?rev=abb7e7873c1042428a4524b8004263ea&amp;hash=21375F68A0BBCF3BA98706F537AC6865 500w,
+		                          https://www.adtran.com/-/media/adtran/innovation/backgrounds/card-3-bg.jpg?rev=abb7e7873c1042428a4524b8004263ea&amp;hash=21375F68A0BBCF3BA98706F537AC6865 640w,
+		                          https://www.adtran.com/-/media/adtran/innovation/backgrounds/card-3-bg.jpg?rev=abb7e7873c1042428a4524b8004263ea&amp;hash=21375F68A0BBCF3BA98706F537AC6865 1024w"
+                     data-src="https://www.adtran.com/-/media/adtran/innovation/backgrounds/card-3-bg.jpg?rev=abb7e7873c1042428a4524b8004263ea&amp;hash=21375F68A0BBCF3BA98706F537AC6865"
+                     class="lazyload m-quote__bg-image" />
+        <div class="u-wrapper">
+            <blockquote class="m-quote__block" itemscope itemtype="https://schema.org/Quotation">
+                <div class="m-quote__quote-mark" aria-hidden="true">
+                    <svg width="50" height="31" viewBox="0 0 50 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path opacity="0.4" d="M18.3782 30.24H0.720001L13.6057 0H25.179L18.3782 30.24ZM42.4792 30.24H24.821L37.7067 0H49.28L42.4792 30.24Z" fill="black" />
+                    </svg>
+                </div>
+<img class="lazyload m-quote__image is-desktop" width="120" height="120" data-srcset="https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/quote-headshots-josef-sissmeir.png?rev=6b0a5ff2fe0c420bbf1ed4dc4400141b&hash=312CDD63D2F5C36916FE845249DBAF97&w=500&usecustomfunctions=1&centercrop=1 500w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/quote-headshots-josef-sissmeir.png?rev=6b0a5ff2fe0c420bbf1ed4dc4400141b&hash=312CDD63D2F5C36916FE845249DBAF97&w=640&usecustomfunctions=1&centercrop=1 640w, https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/quote-headshots-josef-sissmeir.png?rev=6b0a5ff2fe0c420bbf1ed4dc4400141b&hash=312CDD63D2F5C36916FE845249DBAF97&w=1024&usecustomfunctions=1&centercrop=1 1024w,  " sizes="320w" data-src="/-/media/adtran/solutions/quantum-safe-communications/quote-headshots-josef-sissmeir.png?h=240&w=240&rev=6b0a5ff2fe0c420bbf1ed4dc4400141b&usecustomfunctions=1&centercrop=1&hash=3D620C5569C760D0AADED53A7C5C22F4 " alt="Josef Sißmeir" />                <div class="m-quote__text" itemprop="author" itemscope itemtype="https://schema.org/Person">
+                    <p class="m-quote__words" itemprop="text">
+                        Effective quantum-safe networking depends on pairing strong encryption with continuous insight into the physical infrastructure. This combination is essential for long-term protection of critical data.
+                    </p>
+                    <div class="m-quote__author">
+                            <img width="48"
+                                 height="48"
+                                 alt="Josef Si&#223;meir"
+                                 data-srcset="https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/quote-headshots-josef-sissmeir.png?rev=6b0a5ff2fe0c420bbf1ed4dc4400141b&amp;hash=312CDD63D2F5C36916FE845249DBAF97 500w,
+	                                          https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/quote-headshots-josef-sissmeir.png?rev=6b0a5ff2fe0c420bbf1ed4dc4400141b&amp;hash=312CDD63D2F5C36916FE845249DBAF97 640w,
+	                                          https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/quote-headshots-josef-sissmeir.png?rev=6b0a5ff2fe0c420bbf1ed4dc4400141b&amp;hash=312CDD63D2F5C36916FE845249DBAF97 1024w"
+                                 data-src="https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/quote-headshots-josef-sissmeir.png?rev=6b0a5ff2fe0c420bbf1ed4dc4400141b&amp;hash=312CDD63D2F5C36916FE845249DBAF97"
+                                 class="lazyload m-quote__image is-mobile" />
+                        <div>
+                            <cite class="m-quote__author-name"
+                                  itemprop="name"> Josef Si&#223;meir</cite>
+                                <p class="m-quote__job-title" itemprop="jobTitle">
+                                    GM of Adva Network Security 
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </blockquote>
+            </div>
+</section>
+
+    <section id="" class="m-full-width m-full-width--with-image u-text-black" style="background-color: #ffff">
+
+                <div class="u-wrapper">
+            <h2 class="m-full-width__title">Multi‑layer quantum‑safe communications architecture</h2>
+            <div class="m-full-width__text">
+                <p>Encryption and infrastructure monitoring working together across optical, Ethernet and IP layers.</p>
+            </div>
+                            <img width="1372" height="772"
+                     alt="Diagram"
+                     data-srcset="https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/diagram-image-12.jpg?rev=27cdc673f70f44e798dadba610f3b187&amp;hash=6FDC9925D84D60EB44972A9ED7766725 500w,
+			                        https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/diagram-image-12.jpg?rev=27cdc673f70f44e798dadba610f3b187&amp;hash=6FDC9925D84D60EB44972A9ED7766725 640w,
+			                        https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/diagram-image-12.jpg?rev=27cdc673f70f44e798dadba610f3b187&amp;hash=6FDC9925D84D60EB44972A9ED7766725 1024w"
+                     data-src="https://www.adtran.com/-/media/adtran/solutions/quantum-safe-communications/diagram-image-12.jpg?rev=27cdc673f70f44e798dadba610f3b187&amp;hash=6FDC9925D84D60EB44972A9ED7766725"
+                     class="lazyload m-full-width__image" />
+                                </div>
+    </section>
+
+    <section class="o-related-resources o-related-resources--with-image u-text-black js-related-resources"
+             data-component="js-related-resources" >
+
+        
+                        <img width="1235" height="881"
+                     alt=""
+                     fetchpriority="high"
+                     data-srcset="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-detail-v-1.jpg?rev=23ee7b6662e2488f968771fc1628fd58&amp;hash=923F97E6542C857E71792C4A6588494D 500w,
+                     https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-detail-v-1.jpg?rev=23ee7b6662e2488f968771fc1628fd58&amp;hash=923F97E6542C857E71792C4A6588494D 640w,
+                     https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-detail-v-1.jpg?rev=23ee7b6662e2488f968771fc1628fd58&amp;hash=923F97E6542C857E71792C4A6588494D 1024w"
+                     data-src="https://www.adtran.com/-/media/adtran/innovation/carousel-backgrounds/large-bg-light-detail-v-1.jpg?rev=23ee7b6662e2488f968771fc1628fd58&amp;hash=923F97E6542C857E71792C4A6588494D"
+                     class="lazyload o-related-resources__bg-image" />
+
+        <div class="u-wrapper">
+            <h2 class="o-related-resources__title">Related resources</h2>
+        </div>
+
+        <div class="o-related-resources__container">
+            <div class="o-related-resources__wrapper swiper js-carousel-swiper">
+                <div class="o-related-resources__wrapper-inner swiper-wrapper">
+
+                        <div class="o-related-resources__item swiper-slide">
+                            <article class="m-card">
+
+                                            <a href="https://www.adtran.com/en/products-and-services/alm-fiber-monitoring" target="" class="m-card__btn">
+                                                <img width="420" height="231"
+                                                     alt="ALM"
+                                                     data-srcset="https://www.adtran.com/-/media/adtran/products/adva-products/network-infrastructure-assurance/alm/alm-64-bottom-strip.png?rev=a261338e12ab4bbd8a602e701e595b4a 500w,
+                                                     https://www.adtran.com/-/media/adtran/products/adva-products/network-infrastructure-assurance/alm/alm-64-bottom-strip.png?rev=a261338e12ab4bbd8a602e701e595b4a 640w,
+                                                     https://www.adtran.com/-/media/adtran/products/adva-products/network-infrastructure-assurance/alm/alm-64-bottom-strip.png?rev=a261338e12ab4bbd8a602e701e595b4a 1024w"
+                                                     data-src="https://www.adtran.com/-/media/adtran/products/adva-products/network-infrastructure-assurance/alm/alm-64-bottom-strip.png?rev=a261338e12ab4bbd8a602e701e595b4a"
+                                                     class="responsive-img lazyload m-card__image" />
+                                            </a>
+                                            <div class="m-card__content">
+                                                <h2 class="m-card__title">
+                                                    <a href="https://www.adtran.com/en/products-and-services/alm-fiber-monitoring" target="" class="m-card__title-button">ALM fiber monitoring</a>
+                                                </h2>
+                                                <div class="m-card__meta">
+                                                    <p class="m-card__tag">
+                                                        Products and services
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                            </article>
+                        </div>
+                        <div class="o-related-resources__item swiper-slide">
+                            <article class="m-card">
+
+                                            <a href="https://www.adtran.com/en/products-and-services/fsp-150-xg-100pro-series" target="" class="m-card__btn">
+                                                <img width="420" height="231"
+                                                     alt="Programmable multi-layer edge"
+                                                     data-srcset="https://www.adtran.com/-/media/adtran/products/adva-products/packet-edge-and-aggregation/programmable-multi-layer-edge/familyshot-xg-100pro-series-min.png?rev=ef28fd5b02ef46ce935da5686db47b99 500w,
+                                                     https://www.adtran.com/-/media/adtran/products/adva-products/packet-edge-and-aggregation/programmable-multi-layer-edge/familyshot-xg-100pro-series-min.png?rev=ef28fd5b02ef46ce935da5686db47b99 640w,
+                                                     https://www.adtran.com/-/media/adtran/products/adva-products/packet-edge-and-aggregation/programmable-multi-layer-edge/familyshot-xg-100pro-series-min.png?rev=ef28fd5b02ef46ce935da5686db47b99 1024w"
+                                                     data-src="https://www.adtran.com/-/media/adtran/products/adva-products/packet-edge-and-aggregation/programmable-multi-layer-edge/familyshot-xg-100pro-series-min.png?rev=ef28fd5b02ef46ce935da5686db47b99"
+                                                     class="responsive-img lazyload m-card__image" />
+                                            </a>
+                                            <div class="m-card__content">
+                                                <h2 class="m-card__title">
+                                                    <a href="https://www.adtran.com/en/products-and-services/fsp-150-xg-100pro-series" target="" class="m-card__title-button">FSP 150-XG100Pro Series</a>
+                                                </h2>
+                                                <div class="m-card__meta">
+                                                    <p class="m-card__tag">
+                                                        Products and services
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                            </article>
+                        </div>
+                        <div class="o-related-resources__item swiper-slide">
+                            <article class="m-card">
+
+                                            <a href="/en/resources/resources-gated-page/solution-briefs/secure-optical-transport" class="m-card__btn">
+                                                <img width="420" height="231"
+                                                     alt="Blur"
+                                                     data-srcset="https://www.adtran.com/-/media/adtran/resources/solution-briefs/images/rc-webinars-2.jpg?rev=ecdd8ec5ada84638b9c668c6f66dfa19 500w,
+                                                     https://www.adtran.com/-/media/adtran/resources/solution-briefs/images/rc-webinars-2.jpg?rev=ecdd8ec5ada84638b9c668c6f66dfa19 640w,
+                                                     https://www.adtran.com/-/media/adtran/resources/solution-briefs/images/rc-webinars-2.jpg?rev=ecdd8ec5ada84638b9c668c6f66dfa19 1024w"
+                                                     data-src="https://www.adtran.com/-/media/adtran/resources/solution-briefs/images/rc-webinars-2.jpg?rev=ecdd8ec5ada84638b9c668c6f66dfa19"
+                                                     class="responsive-img lazyload m-card__image" />
+                                            </a>
+                                            <div class="m-card__content">
+                                                <h2 class="m-card__title">
+                                                    <a href="/en/resources/resources-gated-page/solution-briefs/secure-optical-transport" class="m-card__title-button">Secure optical transport</a>
+                                                </h2>
+                                                <div class="m-card__meta">
+                                                    <p class="m-card__tag">
+                                                            <span class="m-card__icon">
+                                                                <svg width="11" height="13" viewBox="0 0 11 13" xmlns="http://www.w3.org/2000/svg"><g stroke="#00A0C8" fill="none" fill-rule="evenodd" stroke-linecap="round"><path d="M.5 12.5h10M.5 5.5l5 5 5-5M5.5.5v10"></path></g></svg>
+                                                            </span>
+                                                        Solution briefs
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                            </article>
+                        </div>
+                        <div class="o-related-resources__item swiper-slide">
+                            <article class="m-card">
+
+                                            <button class="m-card__btn" popovertarget="card-D0373067D3DD4E41BCF49733790A4453">
+                                                <img width="420" height="231"
+                                                     alt="How is Adva Network Security helping organizations beat the quantum threat?"
+                                                     data-srcset="https://www.adtran.com/-/media/adtran/resources/vimeo/2025/323-adtran-ans-1.jpg?rev=72a2236bfa2947d7b9217494f5e23d99 500w,
+                                                     https://www.adtran.com/-/media/adtran/resources/vimeo/2025/323-adtran-ans-1.jpg?rev=72a2236bfa2947d7b9217494f5e23d99 640w,
+                                                     https://www.adtran.com/-/media/adtran/resources/vimeo/2025/323-adtran-ans-1.jpg?rev=72a2236bfa2947d7b9217494f5e23d99 1024w"
+                                                     data-src="https://www.adtran.com/-/media/adtran/resources/vimeo/2025/323-adtran-ans-1.jpg?rev=72a2236bfa2947d7b9217494f5e23d99"
+                                                     class="responsive-img lazyload m-card__image" />
+                                            </button>
+                                            <div class="m-card__content">
+                                                <h2 class="m-card__title">
+                                                    <button class="m-card__title-button" popovertarget="card-D0373067D3DD4E41BCF49733790A4453">How is Adva Network Security helping organizations beat the quantum threat?</button>
+                                                </h2>
+                                                <div class="m-card__meta">
+                                                    <p class="m-card__tag">Videos</p>
+                                                </div>
+                                            </div>
+                                            <dialog class="a-modal a-modal--video" id="card-D0373067D3DD4E41BCF49733790A4453" popover>
+                                                <button class="a-modal__close" type="button" popovertarget="card-D0373067D3DD4E41BCF49733790A4453" popovertargetaction="hide" aria-label="Close">
+                                                    Close
+                                                    <span class="a-modal__icon">
+                                                        <svg width="64" xmlns="http://www.w3.org/2000/svg" height="64" viewBox="0 0 64 64"><path fill="#1D1D1B" d="M28.94 31.786L.614 60.114c-.787.787-.787 2.062 0 2.85.393.393.91.59 1.424.59.516 0 1.03-.197 1.424-.59L32.003 34.42l28.54 28.54c.395.395.91.59 1.425.59s1.03-.195 1.424-.59c.788-.786.788-2.06 0-2.848L35.065 31.786 63.41 3.438c.787-.787.787-2.062 0-2.85-.787-.785-2.062-.785-2.848 0L32.002 29.15 3.443.59C2.653-.196 1.38-.196.59.59c-.786.787-.786 2.062 0 2.85l28.35 28.346z"></path></svg>
+                                                    </span>
+                                                </button>
+
+                                                    <div class="m-vimeoPlayer">
+                                                        <video class="vimeo-play__video" width="400" controls controlsList="nodownload">
+                                                            <source src="https://player.vimeo.com/progressive_redirect/playback/1134263725/rendition/1080p/file.mp4?loc=external&amp;signature=23a6723b3c3ff354e1b059e92d4a1000d0aac20c6dee300647092d6c5ec771ac" type="video/mp4">
+                                                            <source src="https://player.vimeo.com/progressive_redirect/playback/1134263725/rendition/1080p/file.mp4?loc=external&amp;signature=23a6723b3c3ff354e1b059e92d4a1000d0aac20c6dee300647092d6c5ec771ac" type="video/ogg">
+                                                                <track src="https://www.adtran.com/-/media/adtran/resources/vimeo/closed-captions/2025/ans-tobias.vtt?rev=e2c6fd29682c41a2abfb3d2ebfb1b9fb" label="English" kind="subtitles" srclang="en" default>
+                                                                                                                        Your browser does not support HTML video.
+                                                        </video>
+                                                        <button class="m-vimeoPlayer__play">
+                                                            <svg width="132" height="92" viewBox="0 0 132 92" xmlns="http://www.w3.org/2000/svg"><title>atoms/icon_youtube</title><g fill="none" fill-rule="evenodd"><path d="M130.682 19.847s-1.29-9.014-5.248-12.983c-5.02-5.21-10.646-5.236-13.226-5.54C93.737 0 66.028 0 66.028 0h-.057s-27.707 0-46.18 1.323c-2.58.305-8.204.331-13.225 5.54-3.958 3.97-5.246 12.984-5.246 12.984S0 30.432 0 41.017v9.924c0 10.585 1.32 21.17 1.32 21.17s1.288 9.014 5.246 12.984c5.021 5.21 11.617 5.045 14.555 5.591C31.68 91.689 66 92 66 92s27.737-.041 46.208-1.364c2.58-.305 8.207-.331 13.226-5.541 3.958-3.97 5.248-12.984 5.248-12.984S132 61.526 132 50.941v-9.923c0-10.586-1.318-21.17-1.318-21.17Z" fill-opacity=".78" fill="#000" /><path fill="#FFF" d="m52.373 62.214-.007-36 36 18.063z" /></g></svg>
+                                                        </button>
+                                                    </div>
+                                            </dialog>
+
+                            </article>
+                        </div>
+                        <div class="o-related-resources__item swiper-slide">
+                            <article class="m-card">
+
+                                            <button class="m-card__btn" popovertarget="card-632D77196BC74C78BC0F158A4CBDD3AD">
+                                                <img width="420" height="231"
+                                                     alt="Helping organizations build a quantum-safe future"
+                                                     data-srcset="https://www.adtran.com/-/media/adtran/resources/vimeo/2026/341-adtran-helping-organizations.jpg?rev=d44820530c4748e1b41ef7547c1904ec 500w,
+                                                     https://www.adtran.com/-/media/adtran/resources/vimeo/2026/341-adtran-helping-organizations.jpg?rev=d44820530c4748e1b41ef7547c1904ec 640w,
+                                                     https://www.adtran.com/-/media/adtran/resources/vimeo/2026/341-adtran-helping-organizations.jpg?rev=d44820530c4748e1b41ef7547c1904ec 1024w"
+                                                     data-src="https://www.adtran.com/-/media/adtran/resources/vimeo/2026/341-adtran-helping-organizations.jpg?rev=d44820530c4748e1b41ef7547c1904ec"
+                                                     class="responsive-img lazyload m-card__image" />
+                                            </button>
+                                            <div class="m-card__content">
+                                                <h2 class="m-card__title">
+                                                    <button class="m-card__title-button" popovertarget="card-632D77196BC74C78BC0F158A4CBDD3AD">Helping organizations build a quantum-safe future </button>
+                                                </h2>
+                                                <div class="m-card__meta">
+                                                    <p class="m-card__tag">Videos</p>
+                                                </div>
+                                            </div>
+                                            <dialog class="a-modal a-modal--video" id="card-632D77196BC74C78BC0F158A4CBDD3AD" popover>
+                                                <button class="a-modal__close" type="button" popovertarget="card-632D77196BC74C78BC0F158A4CBDD3AD" popovertargetaction="hide" aria-label="Close">
+                                                    Close
+                                                    <span class="a-modal__icon">
+                                                        <svg width="64" xmlns="http://www.w3.org/2000/svg" height="64" viewBox="0 0 64 64"><path fill="#1D1D1B" d="M28.94 31.786L.614 60.114c-.787.787-.787 2.062 0 2.85.393.393.91.59 1.424.59.516 0 1.03-.197 1.424-.59L32.003 34.42l28.54 28.54c.395.395.91.59 1.425.59s1.03-.195 1.424-.59c.788-.786.788-2.06 0-2.848L35.065 31.786 63.41 3.438c.787-.787.787-2.062 0-2.85-.787-.785-2.062-.785-2.848 0L32.002 29.15 3.443.59C2.653-.196 1.38-.196.59.59c-.786.787-.786 2.062 0 2.85l28.35 28.346z"></path></svg>
+                                                    </span>
+                                                </button>
+
+                                                    <div class="m-vimeoPlayer">
+                                                        <video class="vimeo-play__video" width="400" controls controlsList="nodownload">
+                                                            <source src="https://player.vimeo.com/progressive_redirect/playback/1181474113/rendition/1080p/file.mp4%20%281080p%29.mp4?loc=external&amp;signature=5a8fde044d8ce450c2f54f0c3999c431cd2ad81058df11e0279b4d99ef8428fe" type="video/mp4">
+                                                            <source src="https://player.vimeo.com/progressive_redirect/playback/1181474113/rendition/1080p/file.mp4%20%281080p%29.mp4?loc=external&amp;signature=5a8fde044d8ce450c2f54f0c3999c431cd2ad81058df11e0279b4d99ef8428fe" type="video/ogg">
+                                                                <track src="https://www.adtran.com/-/media/adtran/resources/vimeo/closed-captions/2026/embedded-security-with-kamil-sznejder.vtt?rev=7c87f84eea0541ed81ac1e1d04a8d621" label="English" kind="subtitles" srclang="en" default>
+                                                                                                                        Your browser does not support HTML video.
+                                                        </video>
+                                                        <button class="m-vimeoPlayer__play">
+                                                            <svg width="132" height="92" viewBox="0 0 132 92" xmlns="http://www.w3.org/2000/svg"><title>atoms/icon_youtube</title><g fill="none" fill-rule="evenodd"><path d="M130.682 19.847s-1.29-9.014-5.248-12.983c-5.02-5.21-10.646-5.236-13.226-5.54C93.737 0 66.028 0 66.028 0h-.057s-27.707 0-46.18 1.323c-2.58.305-8.204.331-13.225 5.54-3.958 3.97-5.246 12.984-5.246 12.984S0 30.432 0 41.017v9.924c0 10.585 1.32 21.17 1.32 21.17s1.288 9.014 5.246 12.984c5.021 5.21 11.617 5.045 14.555 5.591C31.68 91.689 66 92 66 92s27.737-.041 46.208-1.364c2.58-.305 8.207-.331 13.226-5.541 3.958-3.97 5.248-12.984 5.248-12.984S132 61.526 132 50.941v-9.923c0-10.586-1.318-21.17-1.318-21.17Z" fill-opacity=".78" fill="#000" /><path fill="#FFF" d="m52.373 62.214-.007-36 36 18.063z" /></g></svg>
+                                                        </button>
+                                                    </div>
+                                            </dialog>
+
+                            </article>
+                        </div>
+
+                </div>
+
+                <div class="o-related-resources__navigation js-navigation">
+                    <button class="o-related-resources__prev js-carousel-prev" type="button">
+                        <span class="sr-only">Previous slide</span>
+                        <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M10 18L2 10L10 2" stroke="#404040" stroke-width="2.5" stroke-linecap="round" />
+                        </svg>
+                    </button>
+                    <button class="o-related-resources__next js-carousel-next" type="button">
+                        <span class="sr-only">Next slide</span>
+                        <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M2 18L10 10L2 2" stroke="#404040" stroke-width="2.5" stroke-linecap="round" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    </main>
+    <footer class="o-footer">
+    <div class="u-wrapper">
+                <ul class="o-footer__social">
+                <li class="o-footer__social-item">                   
+                    <a class="o-footer__social-link" href="https://www.linkedin.com/company/adtran/" target="_blank"><img src="https://www.adtran.com/-/media/adtran/social-icon-new/linked-in.svg?iar=0&amp;rev=5ae5bc7b0d1d4c49a4627a95350b4bbd&amp;hash=B490071D5E04C3CA3D5D2596E562C58F" alt="" /></a>
+                </li>
+                <li class="o-footer__social-item">                   
+                    <a class="o-footer__social-link" href="https://www.facebook.com/adtran.inc/" target="_blank"><img src="https://www.adtran.com/-/media/adtran/social-icon-new/facebook.svg?iar=0&amp;rev=247df535ed434acbbc3370a05112da1c&amp;hash=CA5C7916CF303F9FB803459A84AF44FD" alt="" /></a>
+                </li>
+                <li class="o-footer__social-item">                   
+                    <a class="o-footer__social-link" href="https://twitter.com/Adtran" target="_blank"><img src="https://www.adtran.com/-/media/adtran/social-icon-new/x.svg?iar=0&amp;rev=3bfeb7e9fc5c4aaf99cb562ea9fa2c8e&amp;hash=AE2A61E9D7C64F21C5B7ECACB294C947" alt="" /></a>
+                </li>
+                <li class="o-footer__social-item">                   
+                    <a class="o-footer__social-link" href="https://www.instagram.com/adtraninc/" target="_blank"><img src="https://www.adtran.com/-/media/adtran/social-icon-new/instagram.svg?iar=0&amp;rev=095fe93aa73c4828832ec2a878077089&amp;hash=CA52907AE377FD8F6F302B46B94923DB" alt="" /></a>
+                </li>
+                <li class="o-footer__social-item">                   
+                    <a class="o-footer__social-link" href=" https://www.youtube.com/@adtraninc" target="_blank"><img src="https://www.adtran.com/-/media/adtran/social-icon-new/you-tube.svg?iar=0&amp;rev=1f9019386e5744d396e53e4c339706a8&amp;hash=6F26DA8CF58313A500C2B86937AEA7F8" alt="" /></a>
+                </li>
+                <li class="o-footer__social-item">                   
+                    <a class="o-footer__social-link" href="https://podcasts.apple.com/gb/podcast/the-net-works/id1482774691" target="_blank"><img src="https://www.adtran.com/-/media/adtran/social-icon-new/podcast.svg?iar=0&amp;rev=a8b45c035d1f4cc99805062342aadd07&amp;hash=77B4C151262D4E9912642F8B2FFF91AB" alt="" /></a>
+                </li>
+                <li class="o-footer__social-item">                   
+                    <a class="o-footer__social-link" href="https://www.slideshare.net/adtran" target="_blank"><img src="https://www.adtran.com/-/media/adtran/social-icon-new/slideshare.svg?iar=0&amp;rev=ba769f214e7f45e988c5861edc193503&amp;hash=91BCBFDAAD73DAC4001B9A885DC95284" alt="" /></a>
+                </li>
+                <li class="o-footer__social-item">                   
+                    <a class="o-footer__social-link" href="https://www.blog.adtran.com" target="_blank"><img src="https://www.adtran.com/-/media/adtran/social-icon-new/tech-speaking.svg?iar=0&amp;rev=677e7866789244efa56aceacd544079a&amp;hash=49F5423D82396390A9E2BACB120875D8" alt="" /></a>
+                </li>
+                <li class="o-footer__social-item">                   
+                    <a class="o-footer__social-link" href="https://www.adtran.com/en/press-feed" target="_blank"><img src="https://www.adtran.com/-/media/adtran/social-icon-new/rss.svg?iar=0&amp;rev=15073a569db44b94acba8c2ef4919e48&amp;hash=49C99837C762340FBD89298BCE98AEDD" alt="" /></a>
+                </li>
+        </ul>
+
+                <ul class="o-footer__pages">
+                <li class="o-footer__pages-item">
+                    <a class="o-footer__pages-link" href="/en/products-and-services">Products and services</a>
+                </li>
+                <li class="o-footer__pages-item">
+                    <a class="o-footer__pages-link" href="/en/newsroom">Newsroom</a>
+                </li>
+                <li class="o-footer__pages-item">
+                    <a class="o-footer__pages-link" href="https://investors.adtran.com/overview/default.aspx">Investors</a>
+                </li>
+                <li class="o-footer__pages-item">
+                    <a class="o-footer__pages-link" href="/en/about-us/careers">Careers</a>
+                </li>
+                <li class="o-footer__pages-item">
+                    <a class="o-footer__pages-link" href="/en/about-us/contact-us">Contact</a>
+                </li>
+        </ul>
+
+            <div class="o-footer__credits">
+        <nav>
+<ul class="footer-base-links cf center-text">
+    <li><a href="/sitecore/service/notfound.aspx?item=web%3a%7b69518E03-D7A8-4A00-8720-171B84D23677%7d%40en"></a><a href="/en/sitemap">Sitemap</a></li>
+    <li><a></a><a href="/en/about-us/legal/privacy-policy">Privacy policy</a></li>
+    <li><a></a><a></a><a href="/en/about-us/legal/website-terms-of-use">Terms of use</a></li>
+    <li>&copy; 2026 Adtran</li>
+</ul>
+</nav>
+    </div>
+
+    </div>
+    
+</footer>
+
+
+
+</body>
+</html>
