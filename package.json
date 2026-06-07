@@ -110,7 +110,7 @@
     "@types/file-saver": "^2.0.7",
     "@types/papaparse": "^5.5.2",
     "@xyflow/react": "^12.10.1",
-    "cborg": "^5.1.0",
+    "cborg": "^5.1.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dagre": "^0.8.5",
