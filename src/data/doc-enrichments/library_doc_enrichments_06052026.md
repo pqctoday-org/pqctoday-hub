@@ -36730,7 +36730,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 - **Reference ID**: draft-harrison-sshm-mlkem
 - **Title**: PQ Key Exchange in SSH using ML-KEM
-- **Authors**: 
+- **Authors**:
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
 - **Document Status**: Not specified
@@ -41050,7 +41050,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 - **Reference ID**: draft-josefsson-ssh-sphincs
 - **Title**: SLH-DSA / SPHINCS+ Public Keys for SSH
-- **Authors**: 
+- **Authors**:
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
 - **Document Status**: Not specified
@@ -41212,7 +41212,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 - **Reference ID**: draft-miller-sshm-mldsa65-ed25519-composite-sigs
 - **Title**: Composite ML-DSA-65 + Ed25519 in SSH
-- **Authors**: 
+- **Authors**:
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
 - **Document Status**: Not specified
@@ -42292,7 +42292,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 - **Reference ID**: draft-yusef-tls-pqt-dual-certs
 - **Title**: TLS 1.3 PQ-Traditional Dual Certificate Authentication
-- **Authors**: 
+- **Authors**:
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
 - **Document Status**: Not specified
@@ -43475,4 +43475,3 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
-
