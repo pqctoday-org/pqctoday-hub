@@ -14,7 +14,7 @@ export function SecurityAuditSection() {
         <ShieldCheck className="text-primary" size={24} />
         <div>
           <h2 className="text-xl font-semibold">Security Audit</h2>
-          <p className="text-xs text-muted-foreground">Last audited: March 22, 2026</p>
+          <p className="text-xs text-muted-foreground">Last audited: June 7, 2026</p>
         </div>
       </div>
 
@@ -45,7 +45,7 @@ export function SecurityAuditSection() {
                 <code className="text-xs">innerHTML</code> in production code
               </li>
               <li>
-                All 118 external links protected against tabnabbing (
+                All 266 external links protected against tabnabbing (
                 <code className="text-xs">rel=&quot;noopener noreferrer&quot;</code>)
               </li>
               <li>No hardcoded secrets &mdash; all credentials via environment variables</li>

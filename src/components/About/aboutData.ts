@@ -72,17 +72,17 @@ export const NOT_ITEMS = [
 ]
 
 export const DATA_FOUNDATION = [
-  { dataset: 'Timeline Events', records: 203, sources: '80+ orgs, 50+ countries' },
-  { dataset: 'Library Resources', records: 528, sources: '30+ standards bodies' },
-  { dataset: 'Algorithm Reference', records: 46, sources: 'FIPS 203/204/205/206' },
-  { dataset: 'Compliance Frameworks', records: 112, sources: 'NIST, ACVP, CC, ANSSI' },
-  { dataset: 'Migrate Products', records: 385, sources: '7 infrastructure layers' },
-  { dataset: 'Threat Landscape', records: 79, sources: '8+ industry sectors' },
-  { dataset: 'Industry Leaders', records: 181, sources: 'Public, Private, Academic' },
-  { dataset: 'Quiz Questions', records: 820, sources: 'All PQC topic areas' },
-  { dataset: 'Authoritative Sources', records: 88, sources: 'Gov, Academic, Industry' },
-  { dataset: 'Learning Modules', records: 48, sources: '2,400+ min of content' },
-  { dataset: 'PQC Patents', records: 201, sources: 'USPTO, EPO, WIPO' },
+  { dataset: 'Timeline Events', records: 234, sources: '80+ orgs, 50+ countries' },
+  { dataset: 'Library Resources', records: 741, sources: '30+ standards bodies' },
+  { dataset: 'Algorithm Reference', records: 102, sources: 'FIPS 203/204/205/206' },
+  { dataset: 'Compliance Frameworks', records: 165, sources: 'NIST, ACVP, CC, ANSSI' },
+  { dataset: 'Migrate Products', records: 838, sources: '7 infrastructure layers' },
+  { dataset: 'Threat Landscape', records: 110, sources: '8+ industry sectors' },
+  { dataset: 'Industry Leaders', records: 341, sources: 'Public, Private, Academic' },
+  { dataset: 'Quiz Questions', records: 909, sources: 'All PQC topic areas' },
+  { dataset: 'Authoritative Sources', records: 143, sources: 'Gov, Academic, Industry' },
+  { dataset: 'Learning Modules', records: 55, sources: '2,800+ min of content' },
+  { dataset: 'PQC Patents', records: 928, sources: 'USPTO, EPO, WIPO' },
 ]
 
 export const DISCUSSIONS_BASE = 'https://github.com/pqctoday-org/pqctoday-hub/discussions/'
