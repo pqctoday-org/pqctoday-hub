@@ -7,7 +7,6 @@ source: public/vendor-roadmaps/
 
 # Vendor PQC Roadmap Enrichments
 
-
 ## VND-001 — Amazon Web Services Inc.
 
 - **Vendor ID**: VND-001
@@ -29,7 +28,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-001_Amazon_Web_Services_Inc..html (311.1 KB)
 - **Extraction Timestamp**: 2026-06-06T13:47:32
-
 
 ## VND-002 — Apple Inc.
 
@@ -53,7 +51,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-002_Apple_Inc..html (103.6 KB)
 - **Extraction Timestamp**: 2026-06-06T13:48:09
 
-
 ## VND-005 — BlackBerry Limited
 
 - **Vendor ID**: VND-005
@@ -75,7 +72,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: MEDIUM
 - **Source Document**: VND-005_BlackBerry_Limited.html (205.0 KB)
 - **Extraction Timestamp**: 2026-06-06T14:05:22
-
 
 ## VND-008 — Cisco Systems Inc.
 
@@ -99,7 +95,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-008_Cisco_Systems_Inc..html (82.4 KB)
 - **Extraction Timestamp**: 2026-06-06T14:06:33
 
-
 ## VND-012 — DigiCert Inc.
 
 - **Vendor ID**: VND-012
@@ -111,7 +106,6 @@ source: public/vendor-roadmaps/
 - **CSV Coverage Notes**: DigiCert PQC product page centered on Trust Lifecycle Manager (DigiCert ONE) and crypto-agility: discover, inventory and manage certificates at scale to prepare for ML-KEM/ML-DSA migration. Supporting resources include PQC test servers/playgrounds (DigiCert Labs), a 'PQC for Dummies' ebook and readiness webinars. Page is undated and gives no explicit per-algorithm GA timeline. | Milestone: DigiCert positions Trust Lifecycle Manager (DigiCert ONE) for crypto-agility — continuous certificate discovery/inventory and at-scale management to enable transition to NIST ML-KEM/ML-DSA; provides PQC test
 - **Extraction Error**: Extracted text too short (82 chars)
 - **Extraction Timestamp**: 2026-06-06T14:07:32
-
 
 ## VND-013 — Entrust Corporation
 
@@ -135,7 +129,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-013_Entrust_Corporation.html (195.4 KB)
 - **Extraction Timestamp**: 2026-06-06T14:07:32
 
-
 ## VND-014 — F5 Networks Inc.
 
 - **Vendor ID**: VND-014
@@ -157,7 +150,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: MEDIUM
 - **Source Document**: VND-014_F5_Networks_Inc..html (1133.3 KB)
 - **Extraction Timestamp**: 2026-06-06T14:08:10
-
 
 ## VND-016 — Fortinet Inc.
 
@@ -181,7 +173,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-016_Fortinet_Inc..html (261.1 KB)
 - **Extraction Timestamp**: 2026-06-06T14:09:12
 
-
 ## VND-017 — Futurex Inc.
 
 - **Vendor ID**: VND-017
@@ -203,7 +194,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: LOW
 - **Source Document**: VND-017_Futurex_Inc..html (603.7 KB)
 - **Extraction Timestamp**: 2026-06-06T14:09:49
-
 
 ## VND-018 — Google LLC
 
@@ -227,7 +217,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-018_Google_LLC.html (2124.2 KB)
 - **Extraction Timestamp**: 2026-06-06T14:10:18
 
-
 ## VND-019 — IBM Corporation
 
 - **Vendor ID**: VND-019
@@ -249,7 +238,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-019_IBM_Corporation.html (84.2 KB)
 - **Extraction Timestamp**: 2026-06-06T14:10:59
-
 
 ## VND-021 — Infineon Technologies AG
 
@@ -273,7 +261,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-021_Infineon_Technologies_AG.html (1682.4 KB)
 - **Extraction Timestamp**: 2026-06-06T14:11:44
 
-
 ## VND-024 — Keyfactor Inc.
 
 - **Vendor ID**: VND-024
@@ -295,7 +282,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-024_Keyfactor_Inc..html (177.4 KB)
 - **Extraction Timestamp**: 2026-06-06T14:12:28
-
 
 ## VND-025 — The Legion of the Bouncy Castle Inc.
 
@@ -319,7 +305,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-025_The_Legion_of_the_Bouncy_Castle_Inc..html (268.3 KB)
 - **Extraction Timestamp**: 2026-06-06T14:13:11
 
-
 ## VND-027 — Microsoft Corporation
 
 - **Vendor ID**: VND-027
@@ -341,7 +326,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-027_Microsoft_Corporation.html (313.6 KB)
 - **Extraction Timestamp**: 2026-06-06T14:14:08
-
 
 ## VND-028 — NXP Semiconductors N.V.
 
@@ -365,7 +349,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-028_NXP_Semiconductors_N.V..html (345.8 KB)
 - **Extraction Timestamp**: 2026-06-06T14:15:07
 
-
 ## VND-029 — Oracle Corporation
 
 - **Vendor ID**: VND-029
@@ -377,7 +360,7 @@ source: public/vendor-roadmaps/
 - **CSV Coverage Notes**: Oracle AI Database 26ai now ships ML-KEM (FIPS 203) key exchange and ML-DSA (FIPS 204) certificate/signing support, with hybrid classical+PQC key establishment for TLS 1.3/SSH/IKEv2 (23.26.0 Oct 2025, hybrid in 23.26.1 Jan 2026). Java JDK 26 (Mar 2026) adds ML-DSA JAR signing and Hybrid Public Key Encryption API; OCI and Oracle Key Vault roadmap continue. | Milestone: Oracle AI Database 26ai: ML-KEM key exchange + ML-DSA certificates shipped in release 23.26.0 (Oct 2025); hybrid (classical+PQC) key exchange for TLS 1.3 added in 23.26.1 (Jan 2026); JDK 26 adds ML-DSA JAR signing + HPKE API (Mar
 - **PQC Algorithms Announced**: ML-KEM; ML-DSA
 - **Target Migration Dates**: Public certificate authorities are expected to adopt ML-DSA-based certificates by 2026
-- **Products / Services Covered**: Oracle AI Database 26ai; Oracle Call Interface (OCI) drivers; SQL*Plus; SQL Developer; ODP.NET Unmanaged
+- **Products / Services Covered**: Oracle AI Database 26ai; Oracle Call Interface (OCI) drivers; SQL\*Plus; SQL Developer; ODP.NET Unmanaged
 - **Compliance Frameworks**: NIST
 - **Hybrid Mode Support**: Yes; The document states that during migration, the server can simultaneously accept traditional and quantum-safe TLS 1.3 clients until all clients support ML-KEM.
 - **Current GA Status**: GA
@@ -387,7 +370,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-029_Oracle_Corporation.html (56.2 KB)
 - **Extraction Timestamp**: 2026-06-06T14:15:48
-
 
 ## VND-030 — PQShield Ltd.
 
@@ -411,7 +393,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-030_PQShield_Ltd..html (61.0 KB)
 - **Extraction Timestamp**: 2026-06-06T14:16:46
 
-
 ## VND-031 — Palo Alto Networks Inc.
 
 - **Vendor ID**: VND-031
@@ -433,7 +414,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-031_Palo_Alto_Networks_Inc..html (292.5 KB)
 - **Extraction Timestamp**: 2026-06-06T14:17:25
-
 
 ## VND-032 — Red Hat Inc.
 
@@ -457,7 +437,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-032_Red_Hat_Inc..html (567.7 KB)
 - **Extraction Timestamp**: 2026-06-06T14:18:28
 
-
 ## VND-035 — Samsung Electronics Co. Ltd.
 
 - **Vendor ID**: VND-035
@@ -465,7 +444,7 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: The First Step to a Quantum-Safe Future With Samsung Knox
 - **Roadmap URL**: https://news.samsung.com/global/the-first-step-to-a-quantum-safe-future-with-samsung-knox
 - **Publish Date**: 2025-01-22
-- **Local File**: public/vendor-roadmaps/VND-035_Samsung_Electronics_Co._Ltd..html
+- **Local File**: public/vendor-roadmaps/VND-035_Samsung_Electronics_Co.\_Ltd..html
 - **CSV Coverage Notes**: Samsung Knox Matrix gains Post-Quantum Enhanced Data Protection (EDP) using ML-KEM (FIPS 203, lattice-based), debuting on Galaxy S25 (first device on One UI 7) — industry-first PQC-based cloud/cross-device data protection. Extends quantum-safe protection across the Knox cross-device trust ecosystem. | Milestone: Galaxy S25 (One UI 7) is first to support PQC-based cloud data protection: ML-KEM (FIPS 203) integrated into Knox Matrix via Post-Quantum Enhanced Data Protection (EDP).
 - **PQC Algorithms Announced**: ML-KEM
 - **Target Migration Dates**: None detected
@@ -477,9 +456,8 @@ source: public/vendor-roadmaps/
 - **Key Commitments & Quotes**: "Samsung is introducing Post-Quantum Enhanced Data Protection (EDP) to Samsung Knox Matrix"; "The Galaxy S25 series is the first in the industry to support PQC-based cloud data protection"; "Knox Matrix’s cross-device compatibility will ensure seamless quantum-safe protection"
 - **Coverage Verification**: CONSISTENT. The document confirms ML-KEM integration into Knox Matrix via EDP on Galaxy S25/One UI 7 as an industry-first for cloud data protection.
 - **Extraction Quality**: HIGH
-- **Source Document**: VND-035_Samsung_Electronics_Co._Ltd..html (148.6 KB)
+- **Source Document**: VND-035_Samsung_Electronics_Co.\_Ltd..html (148.6 KB)
 - **Extraction Timestamp**: 2026-06-06T14:18:52
-
 
 ## VND-037 — Securosys SA
 
@@ -503,7 +481,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-037_Securosys_SA.html (274.3 KB)
 - **Extraction Timestamp**: 2026-06-06T14:19:13
 
-
 ## VND-041 — Thales Group
 
 - **Vendor ID**: VND-041
@@ -525,7 +502,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-041_Thales_Group.html (114.5 KB)
 - **Extraction Timestamp**: 2026-06-06T14:20:01
-
 
 ## VND-042 — Utimaco IS GmbH
 
@@ -549,7 +525,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-042_Utimaco_IS_GmbH.html (282.6 KB)
 - **Extraction Timestamp**: 2026-06-06T14:20:45
 
-
 ## VND-045 — wolfSSL Inc.
 
 - **Vendor ID**: VND-045
@@ -571,7 +546,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-045_wolfSSL_Inc..html (66.7 KB)
 - **Extraction Timestamp**: 2026-06-06T14:21:27
-
 
 ## VND-057 — Cloudflare Inc.
 
@@ -595,7 +569,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-057_Cloudflare_Inc..html (302.3 KB)
 - **Extraction Timestamp**: 2026-06-06T14:21:53
 
-
 ## VND-058 — HashiCorp Inc.
 
 - **Vendor ID**: VND-058
@@ -617,7 +590,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-058_HashiCorp_Inc..html (274.8 KB)
 - **Extraction Timestamp**: 2026-06-06T14:22:17
-
 
 ## VND-059 — Venafi Inc.
 
@@ -641,7 +613,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-059_Venafi_Inc..html (47.3 KB)
 - **Extraction Timestamp**: 2026-06-06T14:22:51
 
-
 ## VND-060 — Okta Inc.
 
 - **Vendor ID**: VND-060
@@ -663,7 +634,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: LOW
 - **Source Document**: VND-060_Okta_Inc..html (277.6 KB)
 - **Extraction Timestamp**: 2026-06-06T14:23:14
-
 
 ## VND-112 — Metaco / Ripple
 
@@ -687,7 +657,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-112_Metaco_Ripple.html (138.6 KB)
 - **Extraction Timestamp**: 2026-06-06T14:23:36
 
-
 ## VND-116 — Signal Foundation
 
 - **Vendor ID**: VND-116
@@ -709,7 +678,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-116_Signal_Foundation.html (19.7 KB)
 - **Extraction Timestamp**: 2026-06-06T14:24:01
-
 
 ## VND-127 — Broadcom Inc.
 
@@ -733,7 +701,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-127_Broadcom_Inc..html (96.6 KB)
 - **Extraction Timestamp**: 2026-06-06T14:24:26
 
-
 ## VND-146 — Robust Intelligence (Cisco AI Defense)
 
 - **Vendor ID**: VND-146
@@ -741,7 +708,7 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: Cisco Post-Quantum Cryptography (Trust Center)
 - **Roadmap URL**: https://www.cisco.com/site/us/en/about/trust-center/post-quantum-cryptography.html
 - **Publish Date**: 2026-02-01
-- **Local File**: public/vendor-roadmaps/VND-146_Robust_Intelligence_Cisco_AI_Defense_.html
+- **Local File**: public/vendor-roadmaps/VND-146*Robust_Intelligence_Cisco_AI_Defense*.html
 - **CSV Coverage Notes**: Robust Intelligence is now part of Cisco (AI Defense / Foundation AI); it has no separate PQC roadmap and inherits Cisco's program. Cisco Quantum Resilience Framework (quantum-safe communications + quantum-safe products) targets quantum-safe communications across most core products by Dec 2026; IOS XE 26 full-stack PQC; ML-KEM/ML-DSA/SLH-DSA rollout 2026-2027. | Milestone: Cisco commits to quantum-safe communications across most of its core portfolio by December 2026 under its Quantum Resilience Framework. Network examples: FTD 10.5/ASA 9.25 (ML-KEM VPN) targeted late 2026; FTD/ASA 11.0 add ML
 - **PQC Algorithms Announced**: None detected
 - **Target Migration Dates**: December 2026
@@ -753,9 +720,8 @@ source: public/vendor-roadmaps/
 - **Key Commitments & Quotes**: "Cisco is committed to delivering quantum-safe communications across the majority of Cisco’s core portfolio by December 2026"
 - **Coverage Verification**: PARTIAL — The document confirms the Dec 2026 commitment and framework but lacks specific product versions (FTD/ASA/IOS XE) and algorithm names (ML-KEM/ML-DSA/SLH-DSA) listed in the CSV notes.
 - **Extraction Quality**: LOW
-- **Source Document**: VND-146_Robust_Intelligence_Cisco_AI_Defense_.html (87.6 KB)
+- **Source Document**: VND-146*Robust_Intelligence_Cisco_AI_Defense*.html (87.6 KB)
 - **Extraction Timestamp**: 2026-06-06T14:24:59
-
 
 ## VND-151 — Microchip Technology Inc.
 
@@ -779,7 +745,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-151_Microchip_Technology_Inc..html (693.7 KB)
 - **Extraction Timestamp**: 2026-06-06T14:25:17
 
-
 ## VND-164 — Qualys Inc.
 
 - **Vendor ID**: VND-164
@@ -801,7 +766,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-164_Qualys_Inc..html (56.4 KB)
 - **Extraction Timestamp**: 2026-06-06T14:25:35
-
 
 ## VND-168 — Arqit Quantum Inc.
 
@@ -825,7 +789,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-168_Arqit_Quantum_Inc..html (90.3 KB)
 - **Extraction Timestamp**: 2026-06-06T14:25:54
 
-
 ## VND-171 — DocuSign
 
 - **Vendor ID**: VND-171
@@ -847,7 +810,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: MEDIUM
 - **Source Document**: VND-171_DocuSign.html (483.5 KB)
 - **Extraction Timestamp**: 2026-06-06T14:26:14
-
 
 ## VND-173 — GlobalSign Ltd.
 
@@ -871,7 +833,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-173_GlobalSign_Ltd..html (97.7 KB)
 - **Extraction Timestamp**: 2026-06-06T14:26:39
 
-
 ## VND-178 — Ping Identity Holdings Corp.
 
 - **Vendor ID**: VND-178
@@ -893,7 +854,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-178_Ping_Identity_Holdings_Corp..html (61.4 KB)
 - **Extraction Timestamp**: 2026-06-06T14:27:00
-
 
 ## VND-181 — Sectigo Ltd.
 
@@ -917,7 +877,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-181_Sectigo_Ltd..html (408.1 KB)
 - **Extraction Timestamp**: 2026-06-06T14:27:20
 
-
 ## VND-183 — Splunk Inc. (Cisco)
 
 - **Vendor ID**: VND-183
@@ -925,7 +884,7 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: Quantum-Safe Cryptography & Standards: QSC, PQC, QKD & More
 - **Roadmap URL**: https://www.splunk.com/en_us/blog/learn/quantum-safe-cryptography-standards.html
 - **Publish Date**: 2023-08-23
-- **Local File**: public/vendor-roadmaps/VND-183_Splunk_Inc._Cisco_.html
+- **Local File**: public/vendor-roadmaps/VND-183*Splunk_Inc.\_Cisco*.html
 - **CSV Coverage Notes**: Educational Splunk blog explaining quantum-safe cryptography terminology (QSC, PQC, QKD) and the NIST-selected algorithms CRYSTALS-Kyber, CRYSTALS-Dilithium, FALCON, SPHINCS+. Advises waiting for standardized, tested implementations. Contains NO Splunk-specific product roadmap, GA dates, or concrete migration commitments. As Splunk is now a Cisco company, product PQC direction tracks Cisco's crypto-agility roadmap. Best available official Splunk source on PQC. | Milestone: No Splunk product-level PQC milestone published; article is educational only. Splunk (acquired by Cisco) defers to Cisco's
 - **PQC Algorithms Announced**: CRYSTALS-Kyber; CRYSTALS-Dilithium; FALCON; SPHINCS+; BIKE; HQC; Classic McEliece; SIKE
 - **Target Migration Dates**: None detected
@@ -937,9 +896,8 @@ source: public/vendor-roadmaps/
 - **Key Commitments & Quotes**: "wait until they are. If you do this yourself, you’re likely to make a mistake."
 - **Coverage Verification**: CONSISTENT. The document is an educational blog post explaining QSC/PQC/QKD terminology and NIST algorithms, advising to wait for standards, with no Splunk-specific product roadmap or migration commitments.
 - **Extraction Quality**: HIGH
-- **Source Document**: VND-183_Splunk_Inc._Cisco_.html (29.1 KB)
+- **Source Document**: VND-183*Splunk_Inc.\_Cisco*.html (29.1 KB)
 - **Extraction Timestamp**: 2026-06-06T14:27:46
-
 
 ## VND-056 — SEALSQ Corp.
 
@@ -963,7 +921,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-056_SEALSQ_Corp..html (64.0 KB)
 - **Extraction Timestamp**: 2026-06-06T14:28:07
 
-
 ## VND-225 — Proton AG
 
 - **Vendor ID**: VND-225
@@ -985,7 +942,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-225_Proton_AG.html (310.2 KB)
 - **Extraction Timestamp**: 2026-06-06T14:28:28
-
 
 ## VND-009 — Citrix Systems Inc.
 
@@ -1009,7 +965,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-009_Citrix_Systems_Inc..html (242.7 KB)
 - **Extraction Timestamp**: 2026-06-06T14:28:52
 
-
 ## VND-231 — Wiz Inc.
 
 - **Vendor ID**: VND-231
@@ -1032,7 +987,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-231_Wiz_Inc..html (330.0 KB)
 - **Extraction Timestamp**: 2026-06-06T14:29:20
 
-
 ## VND-304 — Akamai Technologies, Inc.
 
 - **Vendor ID**: VND-304
@@ -1040,7 +994,7 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: Taking Steps to Prepare for Quantum Advantage
 - **Roadmap URL**: https://www.akamai.com/blog/security/taking-steps-to-prepare-for-quantum-advantage
 - **Publish Date**: 2025
-- **Local File**: public/vendor-roadmaps/VND-304_Akamai_Technologies__Inc..html
+- **Local File**: public/vendor-roadmaps/VND-304_Akamai_Technologies\_\_Inc..html
 - **CSV Coverage Notes**: Akamai's phased PQC roadmap for end-to-end quantum-safe support across its platform, covering client-to-Akamai, Akamai-to-origin (G2O), and internal mid-tier connections. Uses TLS 1.3 hybrid X25519MLKEM768 (NIST FIPS 203 ML-KEM) and platform-wide crypto-agility upgrades; aligned with NSA/CISA/NIST quantum-readiness guidance. | Milestone: PQC enabled by default for all Enhanced TLS customers and G2O origin connections in Q1 2026; all Akamai-to-Akamai mid-tier connections quantum-safe by March 2026.
 - **PQC Algorithms Announced**: None detected
 - **Target Migration Dates**: Akamai-to-origin service available in the second half of 2024; Client-to-Akamai service available in early 2025
@@ -1052,9 +1006,8 @@ source: public/vendor-roadmaps/
 - **Key Commitments & Quotes**: "We plan to take a phased approach to support end-to-end post-quantum cryptography on our platform."
 - **Coverage Verification**: PARTIAL; The document confirms the phased approach and timelines for Akamai-to-origin and Client-to-Akamai, but does not mention the specific algorithm (ML-KEM), the Akamai-to-Akamai phase details, or the Q1 2026 default enablement milestones found in the CSV notes.
 - **Extraction Quality**: MEDIUM
-- **Source Document**: VND-304_Akamai_Technologies__Inc..html (180.5 KB)
+- **Source Document**: VND-304_Akamai_Technologies\_\_Inc..html (180.5 KB)
 - **Extraction Timestamp**: 2026-06-06T14:29:40
-
 
 ## VND-089 — BTQ Technologies Corp.
 
@@ -1078,7 +1031,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-089_BTQ_Technologies_Corp..html (172.7 KB)
 - **Extraction Timestamp**: 2026-06-06T14:30:06
 
-
 ## VND-054 — QuSecure Inc.
 
 - **Vendor ID**: VND-054
@@ -1100,7 +1052,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-054_QuSecure_Inc..html (150.2 KB)
 - **Extraction Timestamp**: 2026-06-06T14:30:33
-
 
 ## VND-064 — Internet Security Research Group
 
@@ -1124,7 +1075,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-064_Internet_Security_Research_Group.html (36.5 KB)
 - **Extraction Timestamp**: 2026-06-06T14:30:52
 
-
 ## VND-007 — Check Point Software Technologies Ltd.
 
 - **Vendor ID**: VND-007
@@ -1146,7 +1096,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-007_Check_Point_Software_Technologies_Ltd..html (113.4 KB)
 - **Extraction Timestamp**: 2026-06-06T14:31:18
-
 
 ## VND-015 — Fortanix Inc.
 
@@ -1170,7 +1119,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-015_Fortanix_Inc..html (252.8 KB)
 - **Extraction Timestamp**: 2026-06-06T14:31:45
 
-
 ## VND-022 — Intel Corporation
 
 - **Vendor ID**: VND-022
@@ -1192,7 +1140,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: MEDIUM
 - **Source Document**: VND-022_Intel_Corporation.html (137.7 KB)
 - **Extraction Timestamp**: 2026-06-06T14:32:11
-
 
 ## VND-157 — ID Quantique SA
 
@@ -1216,7 +1163,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-157_ID_Quantique_SA.html (375.0 KB)
 - **Extraction Timestamp**: 2026-06-06T14:32:40
 
-
 ## VND-152 — Adtran Networks SE (formerly ADVA)
 
 - **Vendor ID**: VND-152
@@ -1224,7 +1170,7 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: Quantum-safe security
 - **Roadmap URL**: https://www.adtran.com/en/innovation/quantum-safe-security
 - **Publish Date**: Unknown
-- **Local File**: public/vendor-roadmaps/VND-152_Adtran_Networks_SE_formerly_ADVA_.html
+- **Local File**: public/vendor-roadmaps/VND-152*Adtran_Networks_SE_formerly_ADVA*.html
 - **CSV Coverage Notes**: Adtran (with Adva Network Security) publishes a quantum-safe networking strategy built on a defense-in-depth approach combining post-quantum-ready encryption across optical (Layer 1, FSP 3000 ConnectGuard), Ethernet (Layer 2 MACsec, FSP 150), and IP layers, plus QKD and crypto-agility for software-upgradeable PQC. Concrete milestone: the FSP 150-XG118Pro 10G edge device received German BSI certification and delivers PQC (NIST ML-KEM combined with classical DH) via software update. Supporting strategy blogs ('Striving toward a quantum-safe world', 'Quantum-safe communication deployment strategi
 - **PQC Algorithms Announced**: None detected
 - **Target Migration Dates**: None detected
@@ -1236,9 +1182,8 @@ source: public/vendor-roadmaps/
 - **Key Commitments & Quotes**: "Our solutions with ConnectGuard&trade; technology feature post-quantum algorithms and quantum-based key exchange technologies"; "ConnectGuard&trade; security technology ensures strong and future-proof protection of data in motion"; "Our FSP 3000 and FSP 150 systems are approved for transporting EU/NATO classified data"
 - **Coverage Verification**: MISMATCH — The document does not mention ML-KEM, BSI certification, QKD, or IP layer coverage, contradicting specific claims in the CSV notes.
 - **Extraction Quality**: LOW
-- **Source Document**: VND-152_Adtran_Networks_SE_formerly_ADVA_.html (140.5 KB)
+- **Source Document**: VND-152*Adtran_Networks_SE_formerly_ADVA*.html (140.5 KB)
 - **Extraction Timestamp**: 2026-06-06T14:33:03
-
 
 ## VND-006 — Canonical Ltd.
 
@@ -1262,7 +1207,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-006_Canonical_Ltd..html (37.4 KB)
 - **Extraction Timestamp**: 2026-06-06T14:33:22
 
-
 ## VND-155 — Nokia Corporation
 
 - **Vendor ID**: VND-155
@@ -1284,7 +1228,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: LOW
 - **Source Document**: VND-155_Nokia_Corporation.html (308.5 KB)
 - **Extraction Timestamp**: 2026-06-06T14:33:58
-
 
 ## VND-190 — Zscaler Inc.
 
@@ -1308,7 +1251,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-190_Zscaler_Inc..html (256.2 KB)
 - **Extraction Timestamp**: 2026-06-06T14:34:14
 
-
 ## VND-011 — CryptoNext Security
 
 - **Vendor ID**: VND-011
@@ -1330,7 +1272,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: MEDIUM
 - **Source Document**: VND-011_CryptoNext_Security.html (147.1 KB)
 - **Extraction Timestamp**: 2026-06-06T14:34:39
-
 
 ## VND-230 — Confluent Inc.
 
@@ -1354,7 +1295,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-230_Confluent_Inc..html (211.7 KB)
 - **Extraction Timestamp**: 2026-06-06T14:34:59
 
-
 ## VND-039 — STMicroelectronics N.V.
 
 - **Vendor ID**: VND-039
@@ -1376,7 +1316,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-039_STMicroelectronics_N.V..html (481.3 KB)
 - **Extraction Timestamp**: 2026-06-06T14:35:25
-
 
 ## VND-379 — Hewlett Packard Enterprise
 
@@ -1400,7 +1339,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-379_Hewlett_Packard_Enterprise.html (381.0 KB)
 - **Extraction Timestamp**: 2026-06-06T14:35:50
 
-
 ## VND-312 — Netskope, Inc.
 
 - **Vendor ID**: VND-312
@@ -1423,7 +1361,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-312_Netskope_Inc..html (1516.5 KB)
 - **Extraction Timestamp**: 2026-06-06T14:36:12
 
-
 ## VND-233 — Huawei Technologies Co. Ltd.
 
 - **Vendor ID**: VND-233
@@ -1431,7 +1368,7 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: Post-Quantum Cryptography - Huawei Trust Center
 - **Roadmap URL**: https://www.huawei.com/en/trust-center/post-quantum-cryptography
 - **Publish Date**: Unknown
-- **Local File**: public/vendor-roadmaps/VND-233_Huawei_Technologies_Co._Ltd..html
+- **Local File**: public/vendor-roadmaps/VND-233_Huawei_Technologies_Co.\_Ltd..html
 - **CSV Coverage Notes**: Official Huawei Trust Center page setting out the company's quantum-safe strategy: prioritizing quantum-safe key-agreement to counter store-now-decrypt-later, adopting hybrid schemes (classical Diffie-Hellman + PQC KEM) during transition, tracking NIST standardization, and committing to introduce quantum-safe algorithms into products early. Reviews the six PQC algorithm families and selection criteria (security maturity, complexity, performance). | Milestone: Deploy hybrid (classical + PQC) key-agreement in products in advance of finalized standards; align with NIST PQC standardization outcome
 - **PQC Algorithms Announced**: NTRU; McEliece; Rainbow
 - **Target Migration Dates**: in advance of the 2024 deadline
@@ -1443,9 +1380,8 @@ source: public/vendor-roadmaps/
 - **Key Commitments & Quotes**: "Huawei plans to introduce quantum-safe algorithms into its products at an early date"; "We plan to introduce some of these algorithms into our products in advance of the 2024 deadline"; "A third option is to implement a hybrid scheme that implements both Diffie-Hellman and a candidate quantum-safe key-exchange mechanism."
 - **Coverage Verification**: CONSISTENT, the document explicitly confirms the strategy of prioritizing key-agreement, adopting hybrid schemes, tracking standardization, and introducing algorithms early.
 - **Extraction Quality**: MEDIUM
-- **Source Document**: VND-233_Huawei_Technologies_Co._Ltd..html (111.9 KB)
+- **Source Document**: VND-233_Huawei_Technologies_Co.\_Ltd..html (111.9 KB)
 - **Extraction Timestamp**: 2026-06-06T14:36:27
-
 
 ## VND-235 — Samsung SDS Co. Ltd.
 
@@ -1454,7 +1390,7 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: In the Era of Quantum Computing, SDS is Taking the Following Steps to Enhance Security - Participating in NIST Post-Quantum Cryptography Migration Project
 - **Roadmap URL**: https://www.samsungsds.com/en/research-blog/post-quantum-crypto-migration.html
 - **Publish Date**: Unknown
-- **Local File**: public/vendor-roadmaps/VND-235_Samsung_SDS_Co._Ltd..html
+- **Local File**: public/vendor-roadmaps/VND-235_Samsung_SDS_Co.\_Ltd..html
 - **CSV Coverage Notes**: Official Samsung SDS research blog describing its quantum-safe strategy across three pillars: building the Crypto Agility Platform / S-CAPE for enterprise PQC migration (identification, analysis, migration phases), active participation in NIST NCCoE Migration to PQC project (founding member since June 2022), and advancing domestic KPQC standards (AIMer selected 2025). PQC piloted in Samsung Cloud Platform communications with planned expansion. | Milestone: Provide S-CAPE PQC migration via Samsung Cloud Platform and expand PQC application in SCP communication segments; presented Software-Define
 - **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA; HQC; AIMer
 - **Target Migration Dates**: None detected
@@ -1466,9 +1402,8 @@ source: public/vendor-roadmaps/
 - **Key Commitments & Quotes**: "Samsung SDS developed the Crypto Agility Platform, equipping enterprises with the tools needed to migrate to post-quantum cryptography (PQC)."; "Samsung SDS has secured the Crypto Agility Platform for Enterprise to address the key stages of PQC migration: identification, analysis, and migration."; "Samsung SDS became the sole Asian company to join the NIST project as an early member and has since remained actively engaged."
 - **Coverage Verification**: PARTIAL — The document confirms the Crypto Agility Platform, NIST founding membership, and AIMer selection, but does not mention "S-CAPE" by name, nor does it mention PQC piloting in Samsung Cloud Platform communications.
 - **Extraction Quality**: HIGH
-- **Source Document**: VND-235_Samsung_SDS_Co._Ltd..html (35.3 KB)
+- **Source Document**: VND-235_Samsung_SDS_Co.\_Ltd..html (35.3 KB)
 - **Extraction Timestamp**: 2026-06-06T14:36:47
-
 
 ## VND-239 — Eviden SAS (Atos Group)
 
@@ -1477,7 +1412,7 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: Post-Quantum Cryptography (PQC) | Eviden
 - **Roadmap URL**: https://eviden.com/solutions/cybersecurity/post-quantum-security-pqc/
 - **Publish Date**: Unknown
-- **Local File**: public/vendor-roadmaps/VND-239_Eviden_SAS_Atos_Group_.html
+- **Local File**: public/vendor-roadmaps/VND-239*Eviden_SAS_Atos_Group*.html
 - **CSV Coverage Notes**: Official Eviden PQC page presenting a structured quantum-safe migration framework: a 4-step approach (awareness/education, cryptography inventory, risk assessment, implementation) plus a referenced 6-step PQC migration framework whitepaper. Frames urgency (quantum maturity ~2037; irreducible ~3-year migration timeline per CSA) and supports migration with PQC Explorer tooling, C-QSR Quantum Safe Remediation suite, and quantum-ready products (Trustway HSM/IP Protect, IDnomic PKI, PQC HSMaaS). | Milestone: Drive customer migration via cryptography inventory + risk assessment toward hybrid PQC; qu
 - **PQC Algorithms Announced**: None detected
 - **Target Migration Dates**: 2037 (quantum maturity); 3 years (irreducible migration timeline)
@@ -1489,9 +1424,8 @@ source: public/vendor-roadmaps/
 - **Key Commitments & Quotes**: "Migrating to PQC is not an option, rather a vital requirement to maintain your business continuity and security."
 - **Coverage Verification**: PARTIAL - The document confirms the 4-step framework, 2037 timeline, 3-year migration, PQC Explorer, and specific products, but does not mention the "C-QSR Quantum Safe Remediation suite" or the "6-step PQC migration framework whitepaper" referenced in the notes.
 - **Extraction Quality**: MEDIUM
-- **Source Document**: VND-239_Eviden_SAS_Atos_Group_.html (137.3 KB)
+- **Source Document**: VND-239*Eviden_SAS_Atos_Group*.html (137.3 KB)
 - **Extraction Timestamp**: 2026-06-06T14:37:09
-
 
 ## VND-240 — Orange S.A.
 
@@ -1515,7 +1449,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-240_Orange_S.A..html (26.5 KB)
 - **Extraction Timestamp**: 2026-06-06T14:37:53
 
-
 ## VND-251 — Department of Science and Technology (DST) India
 
 - **Vendor ID**: VND-251
@@ -1538,7 +1471,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-251_Department_of_Science_and_Technology_DST_India.html (53.1 KB)
 - **Extraction Timestamp**: 2026-06-06T14:38:10
 
-
 ## VND-258 — NetSfere (Infinite Convergence Solutions)
 
 - **Vendor ID**: VND-258
@@ -1546,7 +1478,7 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: The NetSfere Edge — Post-Quantum Cryptography
 - **Roadmap URL**: https://netsfere.com/Resources/pqc
 - **Publish Date**: 2025-03-27
-- **Local File**: public/vendor-roadmaps/VND-258_NetSfere_Infinite_Convergence_Solutions_.html
+- **Local File**: public/vendor-roadmaps/VND-258*NetSfere_Infinite_Convergence_Solutions*.html
 - **CSV Coverage Notes**: NetSfere publishes a dedicated PQC strategy page ('The NetSfere Edge') describing its crypto-agile, quantum-proof secure-communication architecture. Built on four pillars (Modular Architecture, NIST Standard Compliance, Automated Updates, Backward Compatibility), using Rust-based ML-KEM 1024 (FIPS 203, evolved from CRYSTALS-Kyber) paired with AES-256. Architecture is designed for seamless transition to future quantum-safe standards. Backed by a March 2025 press release unveiling the enterprise-ready quantum-proof platform; crypto-agile architecture first announced at NetSfere Connections 2024
 - **PQC Algorithms Announced**: ML-KEM; CRYSTALS-Kyber
 - **Target Migration Dates**: None detected
@@ -1558,9 +1490,8 @@ source: public/vendor-roadmaps/
 - **Key Commitments & Quotes**: "NetSfere, a global leader in next-generation secure and compliant messaging and mobility solutions, unveils the industry’s first Quantum-Proof Secure Communication Platform."
 - **Coverage Verification**: PARTIAL; The document confirms the four pillars, Rust-based ML-KEM 1024, AES-256, and crypto-agility, but does not explicitly mention "FIPS 203", the "March 2025 press release", or "NetSfere Connections 2024".
 - **Extraction Quality**: HIGH
-- **Source Document**: VND-258_NetSfere_Infinite_Convergence_Solutions_.html (66.3 KB)
+- **Source Document**: VND-258*NetSfere_Infinite_Convergence_Solutions*.html (66.3 KB)
 - **Extraction Timestamp**: 2026-06-06T14:38:42
-
 
 ## VND-259 — Cellcrypt Limited
 
@@ -1584,7 +1515,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-259_Cellcrypt_Limited.html (43.1 KB)
 - **Extraction Timestamp**: 2026-06-06T14:39:14
 
-
 ## VND-261 — XWiki SAS (CryptPad)
 
 - **Vendor ID**: VND-261
@@ -1592,7 +1522,7 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: Towards More Cryptographic Agility — CryptPad Blueprints (PQC integration)
 - **Roadmap URL**: https://blueprints.cryptpad.org/review/agility/
 - **Publish Date**: 2025-09-05
-- **Local File**: public/vendor-roadmaps/VND-261_XWiki_SAS_CryptPad_.html
+- **Local File**: public/vendor-roadmaps/VND-261*XWiki_SAS_CryptPad*.html
 - **CSV Coverage Notes**: CryptPad (XWiki SAS) documents a PQC integration plan via its blog and Blueprints. After a 6-month internship, the team chose the Crystals suite (ML-KEM and ML-DSA) after benchmarking NIST candidates, implemented a proof-of-concept, and added crypto-agility to allow easy switching of cryptographic libraries. The 'Towards More Cryptographic Agility' blueprint and status posts describe the path toward quantum-resilient cryptography, with acknowledged low-level/UX blockers before production deployment. | Milestone: PQC proof-of-concept (ML-KEM + ML-DSA) and crypto-agility refactor completed; depl
 - **PQC Algorithms Announced**: None detected
 - **Target Migration Dates**: None detected
@@ -1604,9 +1534,8 @@ source: public/vendor-roadmaps/
 - **Key Commitments & Quotes**: "we thus plan the transition towards such a scheme"; "CryptPad should already start today towards more cryptographic agility"; "Having the possibility to more easily change the cryptographic primitives will make the transition smooth"
 - **Coverage Verification**: MISMATCH — The document text does not mention the Crystals suite, ML-KEM, ML-DSA, a 6-month internship, or a completed proof-of-concept, contradicting the specific claims in the CSV notes.
 - **Extraction Quality**: LOW
-- **Source Document**: VND-261_XWiki_SAS_CryptPad_.html (32.4 KB)
+- **Source Document**: VND-261*XWiki_SAS_CryptPad*.html (32.4 KB)
 - **Extraction Timestamp**: 2026-06-06T14:40:06
-
 
 ## VND-114 — 1Password Inc.
 
@@ -1630,7 +1559,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-114_1Password_Inc..html (164.4 KB)
 - **Extraction Timestamp**: 2026-06-06T14:40:35
 
-
 ## VND-367 — Cohesity
 
 - **Vendor ID**: VND-367
@@ -1652,7 +1580,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-367_Cohesity.html (184.3 KB)
 - **Extraction Timestamp**: 2026-06-06T14:41:02
-
 
 ## VND-368 — Commvault
 
@@ -1676,7 +1603,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-368_Commvault.html (106.8 KB)
 - **Extraction Timestamp**: 2026-06-06T14:41:50
 
-
 ## VND-169 — Cryptomathic A/S
 
 - **Vendor ID**: VND-169
@@ -1698,7 +1624,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-169_Cryptomathic_A_S.html (251.3 KB)
 - **Extraction Timestamp**: 2026-06-06T14:42:37
-
 
 ## VND-291 — Cybernetica AS
 
@@ -1722,7 +1647,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-291_Cybernetica_AS.html (78.0 KB)
 - **Extraction Timestamp**: 2026-06-06T14:43:26
 
-
 ## VND-154 — Ericsson AB
 
 - **Vendor ID**: VND-154
@@ -1744,7 +1668,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: MEDIUM
 - **Source Document**: VND-154_Ericsson_AB.html (290.9 KB)
 - **Extraction Timestamp**: 2026-06-06T14:44:08
-
 
 ## VND-300 — EU NIS Cooperation Group
 
@@ -1768,7 +1691,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-300_EU_NIS_Cooperation_Group.html (49.3 KB)
 - **Extraction Timestamp**: 2026-06-06T14:44:59
 
-
 ## VND-220 — European Commission
 
 - **Vendor ID**: VND-220
@@ -1790,7 +1712,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: LOW
 - **Source Document**: VND-220_European_Commission.html (49.3 KB)
 - **Extraction Timestamp**: 2026-06-06T14:45:21
-
 
 ## VND-374 — F5
 
@@ -1814,7 +1735,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-374_F5.html (354.8 KB)
 - **Extraction Timestamp**: 2026-06-06T14:45:44
 
-
 ## VND-140 — Forward Edge-AI Inc.
 
 - **Vendor ID**: VND-140
@@ -1837,7 +1757,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-140_Forward_Edge-AI_Inc..html (87.5 KB)
 - **Extraction Timestamp**: 2026-06-06T14:46:31
 
-
 ## VND-423 — IBM Research (CBOMkit)
 
 - **Vendor ID**: VND-423
@@ -1845,7 +1764,7 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: IBM bringing organizations along the quantum-safe journey (IBM Quantum Safe roadmap)
 - **Roadmap URL**: https://research.ibm.com/blog/quantum-safe-roadmap
 - **Publish Date**: 2023-05-10
-- **Local File**: public/vendor-roadmaps/VND-423_IBM_Research_CBOMkit_.html
+- **Local File**: public/vendor-roadmaps/VND-423*IBM_Research_CBOMkit*.html
 - **CSV Coverage Notes**: IBM Research's official Quantum Safe roadmap presenting a three-phase strategic blueprint: Discover (cryptography inventory / CBOM via Explorer and Advisor), Observe (analyze cryptographic posture and prioritize vulnerabilities), and Transform (remediate with crypto-agility). The roadmap ties phases to external milestones: NIST publishing PQC standards in 2024 and NSA/CNSA requirements for quantum-safe algorithms in national security systems by 2025. CBOMkit (now contributed to the Post-Quantum Cryptography Alliance) supports the Discover phase. This is a genuine strategic timeline document, n
 - **PQC Algorithms Announced**: CRYSTALS-Kyber; CRYSTALS-Dilithium; Falcon
 - **Target Migration Dates**: NIST publishing PQC standards in 2024; NSA requiring quantum-safe algorithms in national security systems by 2025
@@ -1857,9 +1776,8 @@ source: public/vendor-roadmaps/
 - **Key Commitments & Quotes**: "This roadmap serves as a commitment to transparency, predictability, and confidence as we guide industries along their journey to post-quantum cryptography."
 - **Coverage Verification**: PARTIAL; The document confirms the three-phase roadmap, milestones, and tools, but does not mention "CBOMkit" or its contribution to the Post-Quantum Cryptography Alliance.
 - **Extraction Quality**: HIGH
-- **Source Document**: VND-423_IBM_Research_CBOMkit_.html (84.2 KB)
+- **Source Document**: VND-423*IBM_Research_CBOMkit*.html (84.2 KB)
 - **Extraction Timestamp**: 2026-06-06T14:46:57
-
 
 ## VND-269 — Kryptus Soluções em TI Ltda.
 
@@ -1883,7 +1801,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-269_Kryptus_Solu_es_em_TI_Ltda..html (79.8 KB)
 - **Extraction Timestamp**: 2026-06-06T14:47:34
 
-
 ## VND-341 — Mastercard Incorporated
 
 - **Vendor ID**: VND-341
@@ -1905,7 +1822,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: LOW
 - **Source Document**: VND-341_Mastercard_Incorporated.html (146.9 KB)
 - **Extraction Timestamp**: 2026-06-06T14:48:10
-
 
 ## VND-118 — Meta Platforms Inc.
 
@@ -1929,7 +1845,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-118_Meta_Platforms_Inc..html (121.9 KB)
 - **Extraction Timestamp**: 2026-06-06T14:48:33
 
-
 ## VND-119 — Mullvad VPN AB
 
 - **Vendor ID**: VND-119
@@ -1951,7 +1866,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-119_Mullvad_VPN_AB.html (50.7 KB)
 - **Extraction Timestamp**: 2026-06-06T14:49:02
-
 
 ## VND-390 — NetApp
 
@@ -1975,7 +1889,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-390_NetApp.html (307.8 KB)
 - **Extraction Timestamp**: 2026-06-06T14:49:22
 
-
 ## VND-391 — Nord Security
 
 - **Vendor ID**: VND-391
@@ -1998,7 +1911,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-391_Nord_Security.html (309.6 KB)
 - **Extraction Timestamp**: 2026-06-06T14:49:43
 
-
 ## VND-433 — OpenBao (LF Edge)
 
 - **Vendor ID**: VND-433
@@ -2006,7 +1918,7 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: RFC - Post-Quantum Cryptography Migration Roadmap
 - **Roadmap URL**: https://github.com/openbao/openbao/issues/496
 - **Publish Date**: 2024-08-30
-- **Local File**: public/vendor-roadmaps/VND-433_OpenBao_LF_Edge_.html
+- **Local File**: public/vendor-roadmaps/VND-433*OpenBao_LF_Edge*.html
 - **CSV Coverage Notes**: Official OpenBao RFC design document laying out a phased PQC migration plan following NIST's Aug 2024 standards finalization. Catalogs cryptographic uses across impact, migration difficulty, and failure risk; priority areas include TLS listeners, PKI/SSH CAs, Transit keys, auto-unseal, and JWT/OIDC. Addresses harvest-now-decrypt-later risk and emphasizes incremental, independent migration of each subsystem with user-selectable hybrid/pure PQC algorithms in Transit and PKI. | Milestone: RFC-stage roadmap defining blocking requirements (crypto library availability via Go stdlib/CIRCL, X.509/TLS/
 - **PQC Algorithms Announced**: None detected
 - **Target Migration Dates**: None detected
@@ -2018,9 +1930,8 @@ source: public/vendor-roadmaps/
 - **Key Commitments & Quotes**: "OpenBao needs to be hardened against quantum adversaries"; "we should start considering our own quantum roadmap"; "no automatic migration will occur for the user"
 - **Coverage Verification**: CONSISTENT; The document confirms the RFC status, NIST Aug 2024 context, HNDL risk, incremental migration strategy, and specific subsystems (TLS, PKI, Transit, Auto-unseal, JWT/OIDC) mentioned in the notes.
 - **Extraction Quality**: HIGH
-- **Source Document**: VND-433_OpenBao_LF_Edge_.html (338.4 KB)
+- **Source Document**: VND-433*OpenBao_LF_Edge*.html (338.4 KB)
 - **Extraction Timestamp**: 2026-06-06T14:50:00
-
 
 ## VND-395 — OpenText
 
@@ -2044,7 +1955,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-395_OpenText.html (105.1 KB)
 - **Extraction Timestamp**: 2026-06-06T14:50:20
 
-
 ## VND-318 — QANplatform
 
 - **Vendor ID**: VND-318
@@ -2067,7 +1977,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-318_QANplatform.html (455.5 KB)
 - **Extraction Timestamp**: 2026-06-06T14:50:51
 
-
 ## VND-319 — QNu Labs Pvt. Ltd.
 
 - **Vendor ID**: VND-319
@@ -2075,7 +1984,7 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: A Strategic Roadmap for Transitioning to Quantum Cyber Readiness
 - **Roadmap URL**: https://www.qnulabs.com/blog/cert-in-quantum-cyber-readiness-roadmap
 - **Publish Date**: 2026-01-26
-- **Local File**: public/vendor-roadmaps/VND-319_QNu_Labs_Pvt._Ltd..html
+- **Local File**: public/vendor-roadmaps/VND-319_QNu_Labs_Pvt.\_Ltd..html
 - **CSV Coverage Notes**: Published QNu Labs strategic roadmap (aligned with CERT-In) for transitioning to quantum-safe cryptography. Four phases: foundational assessment & CBOM/QBOM inventory; technology readiness with hybrid PQC (Kyber/ML-KEM) and QRNG; phased organizational rollout (0-1y groundwork, 1-3y high-risk upgrades, 3+y enterprise-wide); resilience/crypto-agility with QKD. | Milestone: Phased migration framework: prioritize high-risk systems within 3-6 months, mid-term (1-3y) PQC upgrades for high-risk assets, long-term (3+y) enterprise-wide quantum-safe deployment with crypto-agility and QKD.
 - **PQC Algorithms Announced**: Kyber; ML-KEM
 - **Target Migration Dates**: Immediate (0-1 Years); Mid-Term (1-3 Years); Long-Term (3+ Years); high-risk systems within 3–6 months
@@ -2087,9 +1996,8 @@ source: public/vendor-roadmaps/
 - **Key Commitments & Quotes**: "Hybrid Cryptography: Combining classical algorithms with quantum-resistant ones (like Kyber/ ML-KEM ) ensures backward compatibility"
 - **Coverage Verification**: CONSISTENT; The document explicitly details the four phases, hybrid PQC (Kyber/ML-KEM), QRNG, QKD, and the specific migration timelines (0-1y, 1-3y, 3+y, 3-6 months) aligned with CERT-In as described in the notes.
 - **Extraction Quality**: HIGH
-- **Source Document**: VND-319_QNu_Labs_Pvt._Ltd..html (89.4 KB)
+- **Source Document**: VND-319_QNu_Labs_Pvt.\_Ltd..html (89.4 KB)
 - **Extraction Timestamp**: 2026-06-06T14:51:05
-
 
 ## VND-371 — Red Hat (Dogtag)
 
@@ -2098,7 +2006,7 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: Red Hat's path to post-quantum cryptography
 - **Roadmap URL**: https://www.redhat.com/en/blog/red-hats-path-post-quantum-cryptography
 - **Publish Date**: 2024-07-15
-- **Local File**: public/vendor-roadmaps/VND-371_Red_Hat_Dogtag_.html
+- **Local File**: public/vendor-roadmaps/VND-371*Red_Hat_Dogtag*.html
 - **CSV Coverage Notes**: Red Hat published a strategic three-phase PQC roadmap (Classical -> Post-Quantum Capable -> Post-Quantum Ready) aligning with US/EU/Czech/German/French government timelines and NIST standardization. A follow-up strategy update, 'Building the levee: Why Red Hat's post-quantum strategy is already in production' (2026-05-25, https://www.redhat.com/en/blog/building-levee-why-red-hats-post-quantum-strategy-already-production), details concrete milestones: RHEL 10 first practical PQC steps (May 2025), RHEL 10.1 enabling PQC by default and being the first major distro to sign RPM packages with ML-DSA
 - **PQC Algorithms Announced**: None detected
 - **Target Migration Dates**: None detected
@@ -2110,9 +2018,8 @@ source: public/vendor-roadmaps/
 - **Key Commitments & Quotes**: "Red Hat is committed to providing customers with functional, quantum-resistant security capabilities as the industry evolves, develops and begins integrating these new cryptographic functions."
 - **Coverage Verification**: MISMATCH; The document text does not mention the follow-up strategy update, RHEL 10/10.1 milestones, or ML-DSA signing, which are central to the CSV notes.
 - **Extraction Quality**: LOW
-- **Source Document**: VND-371_Red_Hat_Dogtag_.html (610.2 KB)
+- **Source Document**: VND-371*Red_Hat_Dogtag*.html (610.2 KB)
 - **Extraction Timestamp**: 2026-06-06T14:51:30
-
 
 ## VND-034 — SafeLogic Inc.
 
@@ -2136,7 +2043,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-034_SafeLogic_Inc..html (161.0 KB)
 - **Extraction Timestamp**: 2026-06-06T14:51:48
 
-
 ## VND-351 — SatoshiLabs s.r.o.
 
 - **Vendor ID**: VND-351
@@ -2158,7 +2064,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-351_SatoshiLabs_s.r.o..html (540.7 KB)
 - **Extraction Timestamp**: 2026-06-06T14:52:18
-
 
 ## VND-038 — Senetas Corporation Ltd.
 
@@ -2182,7 +2087,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-038_Senetas_Corporation_Ltd..html (188.5 KB)
 - **Extraction Timestamp**: 2026-06-06T14:52:39
 
-
 ## VND-322 — Society for Worldwide Interbank Financial Telecommunication SC
 
 - **Vendor ID**: VND-322
@@ -2204,7 +2108,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: LOW
 - **Source Document**: VND-322_Society_for_Worldwide_Interbank_Financial_Telecommunication_SC.html (173.2 KB)
 - **Extraction Timestamp**: 2026-06-06T14:53:05
-
 
 ## VND-040 — SUSE LLC
 
@@ -2228,7 +2131,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-040_SUSE_LLC.html (188.6 KB)
 - **Extraction Timestamp**: 2026-06-06T14:53:23
 
-
 ## VND-227 — SUSE LLC (openSUSE)
 
 - **Vendor ID**: VND-227
@@ -2236,7 +2138,7 @@ source: public/vendor-roadmaps/
 - **Roadmap Title**: SUSE state of and strategy for Post Quantum Cryptography at the end of 2025
 - **Roadmap URL**: https://www.suse.com/c/suse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025/
 - **Publish Date**: 2025-12-04
-- **Local File**: public/vendor-roadmaps/VND-227_SUSE_LLC_openSUSE_.html
+- **Local File**: public/vendor-roadmaps/VND-227*SUSE_LLC_openSUSE*.html
 - **CSV Coverage Notes**: SUSE's official PQC strategy blog explicitly covers both SUSE Linux Enterprise and openSUSE: adopt NIST standards and upstream implementations quickly, use hybrid ciphers during transition. openSUSE Tumbleweed/Leap have landed hybrid PQC (ML-KEM-768 + X25519), including the libzupt cryptographic library (announced openSUSE news, 2026-04-28). | Milestone: Hybrid PQC (ML-KEM-768 + X25519) available in openSUSE Tumbleweed and Leap; libzupt PQC library released (April 2026).
 - **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA; LMS; XMSS; Frodo KEM
 - **Target Migration Dates**: None detected
@@ -2248,9 +2150,8 @@ source: public/vendor-roadmaps/
 - **Key Commitments & Quotes**: "SUSE’s strategy on implementing post quantum cryptography (PQC) has been to adopt standards and upstream implementations when they become available"; "SUSE’s strategy going forward is that of a quick adoption of both standards and upstream implementations"; "We will use future product deliveries and also maintenance feature updates to improve SUSE’s PQC coverage"
 - **Coverage Verification**: MISMATCH, the document text does not mention openSUSE Tumbleweed, openSUSE Leap, or the libzupt library, which are central to the CSV Coverage Notes.
 - **Extraction Quality**: HIGH
-- **Source Document**: VND-227_SUSE_LLC_openSUSE_.html (188.6 KB)
+- **Source Document**: VND-227*SUSE_LLC_openSUSE*.html (188.6 KB)
 - **Extraction Timestamp**: 2026-06-06T14:53:52
-
 
 ## VND-327 — Tailscale Inc.
 
@@ -2274,7 +2175,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-327_Tailscale_Inc..html (200.6 KB)
 - **Extraction Timestamp**: 2026-06-06T14:54:21
 
-
 ## VND-273 — Telefonica S.A.
 
 - **Vendor ID**: VND-273
@@ -2296,7 +2196,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: MEDIUM
 - **Source Document**: VND-273_Telefonica_S.A..html (160.8 KB)
 - **Extraction Timestamp**: 2026-06-06T14:54:39
-
 
 ## VND-352 — TOPPAN Digital Inc.
 
@@ -2320,7 +2219,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-352_TOPPAN_Digital_Inc..html (63.7 KB)
 - **Extraction Timestamp**: 2026-06-06T14:54:55
 
-
 ## VND-355 — Trezor Company s.r.o.
 
 - **Vendor ID**: VND-355
@@ -2342,7 +2240,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-355_Trezor_Company_s.r.o..html (538.3 KB)
 - **Extraction Timestamp**: 2026-06-06T14:55:17
-
 
 ## VND-187 — Tuta GmbH
 
@@ -2366,7 +2263,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-187_Tuta_GmbH.html (148.7 KB)
 - **Extraction Timestamp**: 2026-06-06T14:55:35
 
-
 ## VND-409 — Veeam
 
 - **Vendor ID**: VND-409
@@ -2389,7 +2285,6 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-409_Veeam.html (249.1 KB)
 - **Extraction Timestamp**: 2026-06-06T14:55:59
 
-
 ## VND-329 — Versa Networks, Inc.
 
 - **Vendor ID**: VND-329
@@ -2411,4 +2306,3 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-329_Versa_Networks_Inc..html (162.3 KB)
 - **Extraction Timestamp**: 2026-06-06T14:56:25
-

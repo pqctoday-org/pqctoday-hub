@@ -1,49 +1,49 @@
 {
- "description": "Proof URLs not downloadable (paywall/403/404/JS-shell)",
- "generated": "2026-06-06",
- "count": 7,
- "skipped": [
-  {
-   "product_id": "cato-networks-sase",
-   "url": "https://www.catonetworks.com/blog/the-post-quantum-journey-begins/",
-   "ok": false,
-   "reason": "too-small-212b"
-  },
-  {
-   "product_id": "nzism-new-zealand-pqc-guidance",
-   "url": "https://nzism.gcsb.govt.nz/ism-document/pdf/Section/12224",
-   "ok": false,
-   "reason": "too-small-212b"
-  },
-  {
-   "product_id": "rustcrypto-ml-kem-2",
-   "url": "https://crates.io/crates/ml-kem",
-   "ok": false,
-   "reason": "http-404"
-  },
-  {
-   "product_id": "strongswan",
-   "url": "https://downloads.strongswan.org/blog/2026/04/22/strongswan-6.0.6-released.html",
-   "ok": false,
-   "reason": "http-000"
-  },
-  {
-   "product_id": "azure-dedicated-hsm-marvell-liquidsecurity",
-   "url": "https://www.marvell.com/products/security-solutions/liquidsecurity2.html",
-   "ok": false,
-   "reason": "http-403"
-  },
-  {
-   "product_id": "keysight-cyperf",
-   "url": "https://www.keysight.com/blogs/en/tech/nwvs/2025/08/05/post-quantum-handshakes",
-   "ok": false,
-   "reason": "http-403"
-  },
-  {
-   "product_id": "entrust-cryptographic-platform",
-   "url": "https://www.entrust.com/company/newsroom/entrust-nshield-hsms-achieve-validation-from-nist-cryptographic-algorithm-validation-program",
-   "ok": false,
-   "reason": "http-403"
-  }
- ]
+  "description": "Proof URLs not downloadable (paywall/403/404/JS-shell)",
+  "generated": "2026-06-06",
+  "count": 7,
+  "skipped": [
+    {
+      "product_id": "cato-networks-sase",
+      "url": "https://www.catonetworks.com/blog/the-post-quantum-journey-begins/",
+      "ok": false,
+      "reason": "too-small-212b"
+    },
+    {
+      "product_id": "nzism-new-zealand-pqc-guidance",
+      "url": "https://nzism.gcsb.govt.nz/ism-document/pdf/Section/12224",
+      "ok": false,
+      "reason": "too-small-212b"
+    },
+    {
+      "product_id": "rustcrypto-ml-kem-2",
+      "url": "https://crates.io/crates/ml-kem",
+      "ok": false,
+      "reason": "http-404"
+    },
+    {
+      "product_id": "strongswan",
+      "url": "https://downloads.strongswan.org/blog/2026/04/22/strongswan-6.0.6-released.html",
+      "ok": false,
+      "reason": "http-000"
+    },
+    {
+      "product_id": "azure-dedicated-hsm-marvell-liquidsecurity",
+      "url": "https://www.marvell.com/products/security-solutions/liquidsecurity2.html",
+      "ok": false,
+      "reason": "http-403"
+    },
+    {
+      "product_id": "keysight-cyperf",
+      "url": "https://www.keysight.com/blogs/en/tech/nwvs/2025/08/05/post-quantum-handshakes",
+      "ok": false,
+      "reason": "http-403"
+    },
+    {
+      "product_id": "entrust-cryptographic-platform",
+      "url": "https://www.entrust.com/company/newsroom/entrust-nshield-hsms-achieve-validation-from-nist-cryptographic-algorithm-validation-program",
+      "ok": false,
+      "reason": "http-403"
+    }
+  ]
 }
