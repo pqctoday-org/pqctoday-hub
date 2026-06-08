@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file.
 Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
+## [3.19.1] - 2026-06-07
+
+### Changed
+
+- **About — Platform Data counts synced to the 3.19.0 datasets** [view:/about]: The static `DATA_FOUNDATION` snapshot in [aboutData.ts](src/components/About/aboutData.ts) had drifted well behind the live loaders. Refreshed every record count to the current active-record figures the rest of the app actually shows (the same `filterActive`/loader logic the Landing stat bar uses): Timeline Events 203 → **234**, Library Resources 528 → **741**, Algorithm Reference 46 → **102**, Compliance Frameworks 112 → **165**, Migrate Products 385 → **838**, Threat Landscape 79 → **110**, Industry Leaders 181 → **341**, Quiz Questions 820 → **909**, Authoritative Sources 88 → **143**, Learning Modules 48 → **55** (`2,400+` → `2,800+` min of content), PQC Patents 201 → **928**. The "total curated records" badge in [DataFoundationSection.tsx](src/components/About/sections/DataFoundationSection.tsx) goes `2,600+` → `4,500+` (actual sum 4,566). Per-dataset source descriptors and `MISSION_TAGS` left unchanged.
+
 ## [3.19.0] - 2026-06-07
 
 Cuts the accumulated post-3.18.0 work across the four data-driven views. Two `feat:` deliverables (Timeline org-category Government/Standards/Vendors filter; Library multi-revision documents collapsing into a single tile). **Timeline** hardened end-to-end — 100% authoritative-source coverage (234/234, native-language primaries + cached translations), graded 0–100 confidence replacing the binary score, deprecated-row Gantt exclusion + schema cleanup, `PHASE_ORDER` completeness, and a full +17-milestone reference audit. **Library** freshness refresh (100 confirmed updates across 794 active records, 2 new RFCs). **Migrate** vendor_id referential-integrity overhaul (the VND-ID collision that surfaced Trezor's roadmap on A10 Networks — 27 assignments corrected) plus catalog/roadmap/proof refresh. **Patents** advanced to 928 with a verification-column backfill. Threats evidence recovery (112/112 sources), the Playground sandbox-category dropdown gating, and two CI gates landed: a vendor-ref referential-integrity audit and the now-active trust-engine attestation verification.
