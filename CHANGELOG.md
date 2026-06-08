@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file.
 Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
 
+## [3.19.2] - 2026-06-07
+
+### Data
+
+- **Compliance — 12 primary-source documents recovered via the bot-resistant fetcher** [view:/library]: Swept every compliance-framework source URL documented as failing in `compliancemanualdownload.md` (groups 1–4) through the resilient fetcher (`scripts/fetch_resilient.py`: curl_cffi browser-TLS/JA3 impersonation → playwright-stealth) and recovered **12 of the publicly-fetchable failures**. **7 EUR-Lex regulations** (NIS2, DORA, GDPR, eIDAS, EU-CRA, MiCA, EU-REC-2024-1101) were marked `downloadable=yes` but the PDFs were actually absent on disk — curl_cffi cleared EUR-Lex's `HTTP 202` empty-body anti-bot block and the real PDFs are now cached. **4 US eCFR regulations** (HIPAA-45-CFR-164, FERPA-34-CFR-99, COPPA-16-CFR-312, FDA-21CFR11) had 12 KB anti-scraping HTML stubs masquerading as `.pdf`; replaced with real PDFs from the **govinfo.gov** CFR-2024 mirror (eCFR's own renderer still blocks) and the stale stubs deleted. **MAS TRM Guidelines** recovered as the real 57-page PDF (was an HTML maintenance page). New `library_06072026_r2.csv` (keep-2; `06072026` becomes the status-diff baseline) repoints the 4 eCFR rows' `local_file` `.html → .pdf`; the EUR-Lex/MAS rows already pointed at the now-present `.pdf`. The `public/library/` binaries stay local-only (gitignored). Reconciled the rest of the documented failures against the **current** pipeline state: **4 were already resolved via alternate sources** (PCI → `PCI-DSS-QRG`, TSA → `...02F`, HKMA → `...Blueprint-2026`, DFS → `...500-A2`, all valid PDFs on disk); **5 remain genuinely unreachable** behind Akamai/Imperva/DoD bot challenges — UNECE-WP29-R155, CMMC-2.0-MODEL, NZISM-V3-9, KE-DPA, DISA-STIG — confirmed still `403`/SPA-gated even with a cookie-primed Playwright navigation, and correctly tracked in `KNOWN_UNREACHABLE`. **Data bug surfaced (not yet fixed):** `NERC-CIP-REQS.pdf` is 40 KB of HTML mislabeled as a PDF while flagged `downloadable=yes` — NERC publishes only per-standard PDFs, so it needs a sourcing decision.
+
 ## [3.19.1] - 2026-06-07
 
 ### Changed
