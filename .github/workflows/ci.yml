@@ -82,6 +82,14 @@ jobs:
       - name: Audit compliance country tokens
         run: npm run audit:compliance-countries
 
+      - name: Audit data regressions (no silent record/field loss)
+        # Diffs HEAD against the base branch and BLOCKS if compliance-data.json
+        # loses records, or a vendor roadmap entry goes from non-empty PQC
+        # algorithms to empty. Both are silent-data-loss classes that a normal
+        # diff review misses on these large machine-generated files. Intentional
+        # drops are opt-in via scripts/ci/data-regression-allowlist.json.
+        run: npm run audit:data-regressions
+
       - name: Audit semantic tokens (no hardcoded colours)
         run: npm run audit:tokens
 
