@@ -1,126 +1,132 @@
 {
-  "generated": "2026-05-07T13:26:14.611Z",
-  "source": "src/data/migrate_vendor_roadmap_05072026.csv",
-  "summary": {
-    "downloaded": 8,
-    "skipped": 3,
-    "failed": 1,
-    "persisted_skip": 3,
-    "no_url": 12
+ "generated": "2026-06-07T00:57:40.415Z",
+ "source": "src/data/migrate_vendor_roadmap_06062026.csv",
+ "summary": {
+  "downloaded": 9,
+  "skipped": 2,
+  "failed": 1,
+  "persisted_skip": 1,
+  "no_url": 9
+ },
+ "entries": [
+  {
+   "vendorId": "VND-002",
+   "vendorName": "Apple Inc.",
+   "title": "Quantum-secure cryptography in Apple operating systems",
+   "url": "https://support.apple.com/guide/security/quantum-secure-cryptography-apple-devices-secc7c82e533/web",
+   "status": "downloaded",
+   "filename": "VND-002_Apple_Inc..html",
+   "sizeBytes": 293993,
+   "contentType": "text/html;charset=utf-8"
   },
-  "entries": [
-    {
-      "vendorId": "VND-013",
-      "vendorName": "Entrust Corporation",
-      "title": "Entrust Post-Quantum Cryptography Solutions",
-      "url": "https://www.entrust.com/solutions/post-quantum-cryptography",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
-    },
-    {
-      "vendorId": "VND-016",
-      "vendorName": "Fortinet Inc.",
-      "title": "Fortinet Quantum Security Hub (FortiOS 7.6 ML-KEM)",
-      "url": "https://www.fortinet.com/resources/hubs/quantum-security",
-      "status": "downloaded",
-      "filename": "VND-016_Fortinet_Inc..html",
-      "sizeBytes": 327259,
-      "contentType": "text/html;charset=utf-8"
-    },
-    {
-      "vendorId": "VND-029",
-      "vendorName": "Oracle Corporation",
-      "title": "Oracle: Preparing for Post-Quantum Cryptography",
-      "url": "https://blogs.oracle.com/security/post-quantum-cryptography",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
-    },
-    {
-      "vendorId": "VND-058",
-      "vendorName": "HashiCorp Inc.",
-      "title": "HashiCorp Post-Quantum Cryptography Plans",
-      "url": "https://www.hashicorp.com/en/blog/nist-s-post-quantum-cryptography-standards-our-plans",
-      "status": "failed",
-      "reason": "http-429",
-      "persistent": false
-    },
-    {
-      "vendorId": "VND-059",
-      "vendorName": "Venafi Inc.",
-      "title": "Venafi/CyberArk: Experimental PQC Support (TLS + CodeSign Protect v24.3)",
-      "url": "https://docs.venafi.com/Docs/24.3/TopNav/Content/CodeSigning/t-codesigning-pqc.php",
-      "status": "downloaded",
-      "filename": "VND-059_Venafi_Inc..html",
-      "sizeBytes": 48470,
-      "contentType": "text/html; charset=UTF-8"
-    },
-    {
-      "vendorId": "VND-060",
-      "vendorName": "Okta Inc.",
-      "title": "Okta Ventures: PQC as Strategic Focus Area",
-      "url": "https://www.okta.com/blog/customers-and-partners/okta-ventures-request-for-builders-five-key-focus-areas-in-identity-and-security/",
-      "status": "downloaded",
-      "filename": "VND-060_Okta_Inc..html",
-      "sizeBytes": 284263,
-      "contentType": "text/html;charset=utf-8"
-    },
-    {
-      "vendorId": "VND-151",
-      "vendorName": "Microchip Technology Inc.",
-      "title": "Microchip Technology Post-Quantum Cryptography",
-      "url": "https://www.microchip.com/en-us/solutions/technologies/embedded-security/post-quantum-cryptography",
-      "status": "skipped",
-      "reason": "persisted: forbidden"
-    },
-    {
-      "vendorId": "VND-164",
-      "vendorName": "Qualys Inc.",
-      "title": "Qualys CertView: PQC Support Details (v4.7)",
-      "url": "https://docs.qualys.com/en/certview/latest/assets_certificates/pqc_details.htm",
-      "status": "downloaded",
-      "filename": "VND-164_Qualys_Inc..html",
-      "sizeBytes": 57729,
-      "contentType": "text/html; charset=UTF-8"
-    },
-    {
-      "vendorId": "VND-171",
-      "vendorName": "DocuSign",
-      "title": "DocuSign: Post-Quantum Cryptography (DE)",
-      "url": "https://www.docusign.com/de-de/blog/post-quanten-kryptografie",
-      "status": "downloaded",
-      "filename": "VND-171_DocuSign.html",
-      "sizeBytes": 495084,
-      "contentType": "text/html; charset=utf-8"
-    },
-    {
-      "vendorId": "VND-173",
-      "vendorName": "GlobalSign Ltd.",
-      "title": "GlobalSign Post-Quantum Computing",
-      "url": "https://www.globalsign.com/en/post-quantum-computing",
-      "status": "downloaded",
-      "filename": "VND-173_GlobalSign_Ltd..html",
-      "sizeBytes": 100094,
-      "contentType": "text/html; charset=UTF-8"
-    },
-    {
-      "vendorId": "VND-178",
-      "vendorName": "Ping Identity Holdings Corp.",
-      "title": "Ping Identity: Addressing the Quantum Threat in US Federal Government",
-      "url": "https://www.pingidentity.com/en/resources/blog/post/quantum-threat-us-fed-gov.html",
-      "status": "downloaded",
-      "filename": "VND-178_Ping_Identity_Holdings_Corp..html",
-      "sizeBytes": 62908,
-      "contentType": "text/html;charset=utf-8"
-    },
-    {
-      "vendorId": "VND-183",
-      "vendorName": "Splunk Inc. (Cisco)",
-      "title": "Splunk: Quantum-Safe Cryptography and Standards",
-      "url": "https://www.splunk.com/en_us/blog/learn/quantum-safe-cryptography-standards.html",
-      "status": "downloaded",
-      "filename": "VND-183_Splunk_Inc._Cisco_.html",
-      "sizeBytes": 29796,
-      "contentType": "text/html; charset=utf-8"
-    }
-  ]
+  {
+   "vendorId": "VND-016",
+   "vendorName": "Fortinet Inc.",
+   "title": "Fortinet Quantum Security Solutions",
+   "url": "https://www.fortinet.com/solutions/quantum-security",
+   "status": "downloaded",
+   "filename": "VND-016_Fortinet_Inc..html",
+   "sizeBytes": 337351,
+   "contentType": "text/html;charset=utf-8"
+  },
+  {
+   "vendorId": "VND-017",
+   "vendorName": "Futurex Inc.",
+   "title": "Futurex Post-Quantum Hybrid Certificate Authority Solution",
+   "url": "https://www.futurex.com/news/futurex-announces-post-quantum-hybrid-certificate-authority-solution",
+   "status": "downloaded",
+   "filename": "VND-017_Futurex_Inc..html",
+   "sizeBytes": 610821,
+   "contentType": "text/html; charset=UTF-8"
+  },
+  {
+   "vendorId": "VND-028",
+   "vendorName": "NXP Semiconductors N.V.",
+   "title": "NXP Stands at the Forefront of Post-Quantum Cryptography",
+   "url": "https://www.nxp.com/company/about-nxp/smarter-world-blog/BL-NXP-STANDS-POST-QUANTUM-CRYPTOGRAPHY",
+   "status": "downloaded",
+   "filename": "VND-028_NXP_Semiconductors_N.V..html",
+   "sizeBytes": 56304,
+   "contentType": "text/html; charset=utf-8"
+  },
+  {
+   "vendorId": "VND-029",
+   "vendorName": "Oracle Corporation",
+   "title": "Preparing for Post Quantum Cryptography | Oracle Security",
+   "url": "https://blogs.oracle.com/security/post-quantum-cryptography",
+   "status": "skipped",
+   "reason": "persisted: forbidden"
+  },
+  {
+   "vendorId": "VND-032",
+   "vendorName": "Red Hat Inc.",
+   "title": "Building the levee: Red Hat's post-quantum strategy is already in production",
+   "url": "https://www.redhat.com/en/blog/building-levee-why-red-hats-post-quantum-strategy-already-production",
+   "status": "downloaded",
+   "filename": "VND-032_Red_Hat_Inc..html",
+   "sizeBytes": 634920,
+   "contentType": "text/html; charset=UTF-8"
+  },
+  {
+   "vendorId": "VND-041",
+   "vendorName": "Thales Group",
+   "title": "Post-Quantum Crypto Agility | Thales CPL",
+   "url": "https://cpl.thalesgroup.com/encryption/post-quantum-crypto-agility",
+   "status": "downloaded",
+   "filename": "VND-041_Thales_Group.html",
+   "sizeBytes": 371816,
+   "contentType": "text/html; charset=UTF-8"
+  },
+  {
+   "vendorId": "VND-152",
+   "vendorName": "Adtran Networks SE (formerly ADVA)",
+   "title": "Quantum-Safe Communications | Adtran",
+   "url": "https://www.adtran.com/en/solutions/quantum-safe-communications",
+   "status": "downloaded",
+   "filename": "VND-152_Adtran_Networks_SE_formerly_ADVA_.html",
+   "sizeBytes": 142187,
+   "contentType": "text/html; charset=utf-8"
+  },
+  {
+   "vendorId": "VND-240",
+   "vendorName": "Orange S.A.",
+   "title": "Orange Quantum Defender | Orange Business",
+   "url": "https://www.orange-business.com/en/solutions/orange-quantum-defender",
+   "status": "downloaded",
+   "filename": "VND-240_Orange_S.A..html",
+   "sizeBytes": 251834,
+   "contentType": "text/html; charset=UTF-8"
+  },
+  {
+   "vendorId": "VND-263",
+   "vendorName": "Quranium",
+   "title": "Quranium Blockchain Documentation / 2025 Roadmap",
+   "url": "https://docs.quranium.org/",
+   "status": "skipped",
+   "reason": "root-homepage"
+  },
+  {
+   "vendorId": "VND-140",
+   "vendorName": "Forward Edge-AI Inc.",
+   "title": "Forward Edge-AI 12-Month PQC Implementation Playbook",
+   "url": "https://www.forwardedge-ai.com/post/forward-edge-ai-unveils-12-month-post-quantum-cryptography-implementation-playbook",
+   "status": "failed",
+   "reason": "network-error: fetch failed",
+   "persistent": false
+  },
+  {
+   "vendorId": "VND-391",
+   "vendorName": "Nord Security",
+   "title": "NordVPN launches post-quantum encryption across all applications",
+   "url": "https://nordsecurity.com/press-area/nordvpn-launches-post-quantum-encryption-across-all-its-applications",
+   "status": "downloaded",
+   "filename": "VND-391_Nord_Security.html",
+   "sizeBytes": 87530,
+   "contentType": "text/html; charset=utf-8"
+  }
+ ],
+ "recovered_via_fetch_resilient": {
+  "date": "2026-06-06",
+  "count": 1
+ }
 }

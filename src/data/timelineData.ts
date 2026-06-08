@@ -10,6 +10,7 @@ import type {
   GanttCountryData,
 } from '../types/timeline'
 import { complianceFrameworks } from './complianceData'
+import { filterActive } from './loaderUtils'
 
 // Re-export types for backward compatibility
 export type {
@@ -104,13 +105,70 @@ interface RawTimelineRow {
   trusted_source_id_status: string
   data_quality_notes: string
   confidence_score?: string
+  // DS01 status-column schema (see loaderUtils.ts). Lowercase `status`
+  // distinguishes active vs deprecated/obsolete rows — distinct from the
+  // capital-S `Status` ("Completed"/"In Progress"/…) that feeds event.status.
+  status?: string
+  deprecated_at?: string
+  deprecated_reason?: string
+  related_standards?: string
+  entity_type?: string
+}
+
+// ─── Graded confidence score ─────────────────────────────────────────────────
+// Replaces the binary 60/85 confidence_score column with a transparent 0–100
+// score derived from signals already present on each row. Computed at load time
+// (single source of truth, no CSV churn). Rubric weights:
+//   Source-URL quality   30  (authoritative 30 / needs-review 15 / else 0)
+//   Peer review + vetting 25 (peer yes 20 / partial 10 / no 0, + 5 if vetted)
+//   Source recency        20 (≤12 mo 20 / ≤36 mo 10 / older|missing 0)
+//   Cached local evidence 15 (local_file present 15 / else 0)
+//   Date specificity      10 (point event 10 / dated range 5 / else 0)
+const SCORING_NOW = new Date()
+
+export function computeTimelineConfidence(row: RawTimelineRow): number {
+  let score = 0
+
+  // Source-URL quality (30)
+  const q = (row.source_url_quality || '').trim()
+  if (q === 'url_authoritative') score += 30
+  else if (q === 'url_needs_review') score += 15
+
+  // Peer review + vetting body (25)
+  const pr = (row.peer_reviewed || '').trim().toLowerCase()
+  if (pr === 'yes') score += 20
+  else if (pr === 'partial') score += 10
+  if ((row.vetting_body || '').trim()) score += 5
+
+  // Source recency (20) — relative to load time
+  const sd = (row.SourceDate || '').trim()
+  const parsed = /^\d{4}-\d{2}-\d{2}$/.test(sd) ? new Date(sd) : null
+  if (parsed && !Number.isNaN(parsed.getTime())) {
+    const months = (SCORING_NOW.getTime() - parsed.getTime()) / (1000 * 60 * 60 * 24 * 30.44)
+    if (months >= 0 && months <= 12) score += 20
+    else if (months > 12 && months <= 36) score += 10
+  }
+
+  // Cached local evidence (15)
+  if ((row.local_file || '').trim()) score += 15
+
+  // Date specificity (10)
+  const sy = parseInt(row.StartYear, 10)
+  const ey = parseInt(row.EndYear, 10)
+  if (!Number.isNaN(sy) && !Number.isNaN(ey)) score += sy === ey ? 10 : 5
+
+  return Math.min(100, score)
 }
 
 export function parseTimelineCSV(csvContent: string): CountryData[] {
-  const { data: rows } = Papa.parse<RawTimelineRow>(csvContent.trim(), {
+  const { data: allRows } = Papa.parse<RawTimelineRow>(csvContent.trim(), {
     header: true,
     skipEmptyLines: true,
   })
+
+  // DS01: exclude deprecated/obsolete rows from the Gantt. Rows without a
+  // `status` column are treated as active (backwards-compatible).
+  const rows = filterActive(allRows)
 
   const countriesMap = new Map<string, CountryData>()
 
@@ -173,9 +231,10 @@ export function parseTimelineCSV(csvContent: string): CountryData[] {
       sourceUrlQuality: row.source_url_quality || undefined,
       trustedSourceIdStatus: row.trusted_source_id_status || undefined,
       dataQualityNotes: row.data_quality_notes || undefined,
-      confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
+      confidenceScore: computeTimelineConfidence(row),
       trustedSourceId: row.trusted_source_id || undefined,
       localFile: row.local_file || undefined,
+      entityType: (row.entity_type?.trim() as TimelineEvent['entityType']) || 'government',
       complianceRefs: [],
       xwalkEdgeIds: [],
       // Populate denormalized fields

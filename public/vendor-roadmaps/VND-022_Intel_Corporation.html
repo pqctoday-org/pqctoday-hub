@@ -1,0 +1,3452 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!doctype html>
+
+<html class="rwd geo-override no-js vis no-rtl headerfooter-menu3 " lang="en">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<head>
+    <meta charset="UTF-8"/>
+    
+
+
+
+
+
+<title>Post-Quantum Security with Intel® Cryptography</title>
+    
+    
+    
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="//intelcorp.scene7.com/">
+<link rel="dns-prefetch" href="//intelcorp.scene7.com/">
+
+    <link rel="preconnect" href="//cane.intel.com/">
+    <link rel="dns-prefetch" href="//cane.intel.com/">
+
+    <link rel="preconnect" href="//dogo.intel.com/">
+    <link rel="dns-prefetch" href="//dogo.intel.com/">
+
+
+
+
+
+    <link rel="preload" href="/content/dam/www/global/wap/performance-config.js" as="script" type="text/javascript">
+    <script type="text/javascript" src='/content/dam/www/global/wap/performance-config.js'></script>
+    <link rel="preload" href="/content/dam/www/global/wap/at-config.js" as="script" type="text/javascript">
+    <script type="text/javascript" src='/content/dam/www/global/wap/at-config.js'></script>
+    <link rel="preload" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/global/targetDataCookie.min.js" as="script" type="text/javascript">
+    <script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/global/targetDataCookie.min.js"></script>
+
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        
+    
+
+
+
+
+    
+    
+    
+    
+    
+        
+    
+
+
+    
+    
+        
+    
+
+
+    
+    
+        
+    
+
+<script type="text/javascript">
+    var cq_tms = {
+        wa_uetcontentformat: "uetcontentformat:documents",
+        wa_emtcontenttype: "emtcontenttype:designanddevelopmentreference/technicalarticle",
+        wa_emtprogramminglanguage: "emtprogramminglanguage:cc",
+        wa_emttechnology: "emttechnology:inteltechnologies/oneapi,emttechnology:inteltechnologies/intelsecuritytechnologies",
+        wa_rsoftware: "rsoftware:developmenttools2000000144,rsoftware:othersoftwaretools2000000150",
+        wa_curated: "curated:donotuseinexternalfilters/techdecoded",
+        wa_emtsubject: "emtsubject:itinformationtechnology/softwaredevelopment/opensourcesoftware",
+        
+        wa_industry_type: "",
+        wa_subject: "",
+        wa_emt_org: "",
+        wa_emt_intel: "",
+        wa_programidentifier: "ude",
+        wa_location: "us",
+        wa_language: "en",
+        wa_english_title: "Be Ready for Post\u002DQuantum Security with Intel® Cryptography Primitives Library",
+        wa_content_type: "technicalarticle",
+        wa_intel_platform: "",
+        wa_applications: "",
+        wa_local: "en_US",
+        wa_intel_technology: "",
+        wa_system_type: "",
+        wa_product_name: "",
+        wa_audience: "",
+        wa_life_cycle: "",
+        wa_cq_url: "/content/www/us/en/developer/articles/technical/post-quantum-cryptography.html",
+        wa_page_type_micro: "mf-article-long",
+        wa_env: "prd",
+        wa_cq_pub_env: "publish",
+        wa_transl_status: "",
+        wa_product_id: "2000000144,2000000150",
+        wa_software: "rsoftware:developmenttools2000000144,rsoftware:othersoftwaretools2000000150",
+        wa_reference_design: "",
+        wa_codename: "",
+        wa_created_date: "1730263773365",
+        wa_modified_date: "1751390801959",
+        wa_off_time: "1924992000000",
+        wa_ownedby: "",
+        wa_managedby: "",
+        wa_idz_nid : "",
+        wa_event_type: "",
+        wa_idz_custom_tags: "",
+        wa_programming_language: "emtprogramminglanguage:cc",
+        wa_skill_level: "",
+        wa_solution: "",
+        wa_product_formFactor: "",
+        wa_operating_system: "",
+        wa_marketing_products: "",
+        wa_ssg_third_party_prod_sys_sol: "",
+        wa_upeNamespace: "",
+        wa_doc_id:"",
+        wa_doc_version:"",
+        wa_doc_publishdate:"",
+        eloqua_disabled:"false",
+        
+        
+        
+        
+        
+        wa_uam_secondary_id: "",
+
+        
+        
+        wa_secondary_content_type: ""
+        
+        
+    };
+
+    
+    
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/virtual-assistant-services.min.js"></script>
+<script type="text/javascript">
+    var chatContextObj = {};
+    chatContextObj["locale"] = 'en-US';
+    chatContextObj["app"] = 'SATG';
+    chatContextObj["supportProductMap"] = 'NA';
+</script>
+
+<script type="text/javascript">
+    var chatConfigObj = {};
+    var cq_tms = cq_tms || {};
+    chatConfigObj["virtualAssistantName"] = '';
+    chatConfigObj["virtualAssistantUid"] = '';
+    chatConfigObj["virtualAssistantDomain"] = 'https://c0.avaamo.com';
+    if (chatConfigObj["virtualAssistantName"] !== '') {
+        cq_tms.wa_avaamo_project = "Avaamo-" + chatConfigObj.virtualAssistantName.replaceAll("Virtual Assistant", "").trim();
+    }
+</script>
+<script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/purify.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/virtual-assistant.min.js" defer></script>
+
+
+
+
+
+    <script type="text/javascript" src="/content/dam/www/global/wap/main/wap.js" async></script>
+
+
+    
+    
+    
+
+<link rel="preload" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/us/en/Fonts/resources/intelone-display-light.woff2" as="font" type="font/woff2" crossorigin="true">
+<link rel="preload" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/us/en/Fonts/resources/intelone-display-regular.woff2" as="font" type="font/woff2" crossorigin="true">
+<link rel="preload" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/us/en/Fonts/resources/intel-clear-latin.woff2" as="font" type="font/woff2" crossorigin="true">
+
+<link rel="preload" href="/content/dam/logos/intel-header-logo.svg" as="image">
+<link rel="preload" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/intc-core.min.css" as="style">
+<link rel="preload" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/nav.min.css" as="style" type="text/css">
+<link rel="preload" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/secondaryNav.min.css" as="style" type="text/css">
+<link rel="preload" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/intc-core.min.js" as="script">
+<link rel="preload" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/site-global-icons/resources/font/site-global-icons.woff2?14825464" as="font" type="font/woff2" crossorigin="true">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+<!--[if lte IE 9]>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<![endif]-->
+
+
+    <meta name="twitter:card" content="summary_large_image"/>
+
+    <meta name="keywords" content="Cryptography, Post-Quantum, LMS, XMSS, NIST"/>
+
+    <meta name="description" content="Be Ready for Post-Quantum Security with Intel® Cryptography Primitives Library"/>
+
+    <meta name="language" content="en"/>
+
+    <meta name="location" content="us"/>
+
+    <meta name="robots" content="follow,index,noarchive"/>
+
+    <meta name="X-Server" content="INTE-35"/>
+
+    <meta name="twitter:image" content="https://www.intel.com/content/dam/www/central-libraries/us/en/images/2023-09/quantum-information-processing-adobestock-621405076.jpeg"/>
+
+
+    <meta property="og:image" content="https://www.intel.com/content/dam/www/central-libraries/us/en/images/2023-09/quantum-information-processing-adobestock-621405076.jpeg"/>
+
+    <meta property="og:type" content="company"/>
+
+    <meta property="og:site_name" content="Intel"/>
+
+    <meta property="og:title" content="Post-Quantum Security with Intel® Cryptography"/>
+
+    <meta property="fb:admins" content="267985180046218"/>
+
+    <meta property="og:url" content="https://www.intel.com/content/www/us/en/developer/articles/technical/post-quantum-cryptography.html"/>
+
+    <meta property="og:description" content="Be Ready for Post-Quantum Security with Intel® Cryptography Primitives Library"/>
+
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+
+    <meta name="uetcontentformat" content="Content Format|Documents;"/>
+
+    <meta name="emtcontenttype" content="Content Type|Design and Development Reference|Technical Articles;"/>
+
+    <meta name="contentpath" content="/content/www/us/en/developer/articles/technical/post-quantum-cryptography"/>
+
+    <meta name="authoreddate" content=""/>
+
+    <meta name="software" content="Software|Development Tools;Software|Other Software Tools;"/>
+
+    <meta name="localecode" content="en_US"/>
+
+    <meta name="reimaginetoplevelcategory" content="Audience|Developer|Software Developer;"/>
+
+    <meta name="mime" content="text/html"/>
+
+    <meta name="format" content="article-long"/>
+
+    <meta name="localizedtagname" content="Technical Articles"/>
+
+    <meta name="excludefromviews" content="false"/>
+
+    <meta name="taxonomy" content="etm-6b088d69d83243a0aa3b986645a7e74b;etm-d34abb159a7c45a59ab7ff3096addb26;etm-1e9cc44ecd3b41a6a4e28c9d91c0337e;etm-3a0a431df34243f3b1dd60708ca2c06d;etm-99009c1b5d1046e8bd1c5c1330351a1c;etm-e9ad772b023840f09a3bb94d6251ea2c;etm-6c2c7de3885c4e77bf7cd7a6d921ee90;etm-cd219249b9d1498784028350e53dc51c;etm-aa2a8ffb0e5b41fe85bf2f5d50a71cf2;"/>
+
+    <meta name="title" content="Post-Quantum Security with Intel® Cryptography"/>
+
+    <meta name="mintoread" content="0"/>
+
+    <meta name="menu" content="Developer Sub Navigation Breadcrumb"/>
+
+    <meta name="programminglanguage" content="Programming Language|C C++;"/>
+
+    <meta name="emtsubject" content="Subject|Information Technology (IT)|Software Development|Open Source Software;"/>
+
+    <meta name="uettechnology" content="Technology|Intel® Technologies|oneAPI;Technology|Intel® Technologies|Intel® Security Technologies;"/>
+
+    <meta name="reimaginefilters" content="Technology|Intel® Technologies|oneAPI;Technology|Intel® Technologies|Intel® Security Technologies;Subject|Information Technology (IT)|Software Development|Open Source Software;Software|Development Tools;Software|Other Software Tools;Programming Language|C/C++;Curated|DO NOT USE IN EXTERNAL FILTERS|tech-decoded;Content Format|Documents;"/>
+
+    <meta name="generic1" content="true"/>
+
+    <meta name="emtaudience" content="Audience|Developer|Software Developer;"/>
+
+    <meta name="intelkeywords" content="Cryptography, Post-Quantum, LMS, XMSS, NIST"/>
+
+    <meta name="lastModifieddate" content="2025-07-01T17:26:41.959Z"/>
+
+    <meta name="thumbnailurl" content="https://www.intel.com/content/dam/www/central-libraries/us/en/images/2023-09/quantum-information-processing-adobestock-621405076.jpeg"/>
+
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
+
+
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/etc.clientlibs/settings/wcm/designs/intel/default/resources/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/etc.clientlibs/settings/wcm/designs/intel/default/resources/favicon-16x16.png">
+<link rel="shortcut icon" href="/etc.clientlibs/settings/wcm/designs/intel/default/resources/favicon.ico">
+    
+
+
+
+
+
+<link rel="canonical" href="https://www.intel.com/content/www/us/en/developer/articles/technical/post-quantum-cryptography.html"/>
+<link rel="alternate" hreflang="en-us" href="https://www.intel.com/content/www/us/en/developer/articles/technical/post-quantum-cryptography.html"/>
+            <link rel="alternate" hreflang="x-default" href="https://www.intel.com/content/www/us/en/developer/articles/technical/post-quantum-cryptography.html"/>
+                
+    
+
+    
+        
+        
+            
+                
+                
+                    <link rel="preload" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/bootstrap-css.min.css" as="style"><link rel="stylesheet" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/bootstrap-css.min.css" type="text/css"><link rel="preload" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/intc-core.min.css" as="style"><link rel="stylesheet" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/intc-core.min.css" type="text/css"><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/jquery-standalone-3_6_0.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/us/en/clientlibs/jquery-3_6_0.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/us/en/clientlibs/legacy-libs.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/modernizr.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/picturefill-js.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/handlebars.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/html5-js.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/jquery-cookie-2_1_3.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/detectizr.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/jquery.matchHeight.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/bootstrap-js.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/bootstrap-affix.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/moment.locales.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/scrollToPlugin.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/slick-js.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/jquery.scrollTo.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/fastclick.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/jquery.resize.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/jquery.touchswipe.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/overthrow-detect.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/overthrow-polyfill.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/overthrow-init.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/jquery-ezmark.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/owl.carousel.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/polyfills.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/purify.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/intc-core.min.js" defer></script>
+                
+            
+        
+    
+
+</head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    
+
+<body class="page-is-published global-nav">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="skip-to-main-content">
+    <div class="sb-skipLinkWrapper invisible">
+        <a href="#primary-content" class="inline-block bg-greenDarkApron color-textWhite text-bold text-noUnderline sb-skipLink visible">Skip To Main Content</a>
+    </div>
+</div>
+
+<div class="promo-banner-content"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    var isLoggedin = (document.cookie.indexOf('IGHFLoggedIn') != -1);
+    var currentURL = window.location.href;
+    if (currentURL.startsWith("https://isvc--isvcqa24.sandbox.my.site.com")) {
+        isLoggedin = true;
+        if (currentURL.includes("/onlinecasemgmt/warrantyinfo")) {
+            isLoggedin = false;
+        }
+    }
+</script>
+
+
+
+
+
+    
+        <div class="global">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/nav.min.css" type="text/css">
+<link rel="stylesheet" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/secondaryNav.min.css" type="text/css">
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        
+    
+
+
+
+    
+    
+        <div class="global-nav-redesign global component" data-component="global-nav-redesign" data-component-id="1">
+            <header role="banner">
+                <nav class="intel-navbar advanced-search" role="navigation" aria-label="Main Navigation" data-igm="">
+                    <!-- Brand and toggle get grouped for better mobile display -->
+                    <div class="navbar-wraper">
+
+                        <div class="navbar-logo">
+                            <a href="/content/www/us/en/homepage.html" alt="Intel homepage" class="intel-logo-rebrand">
+                                    
+                                <img src="/content/dam/logos/intel-header-logo.svg" height="300" width="118" alt="Intel logo - Return to the home page">
+                            </a>
+                        </div>
+
+                        <div class="navbar-left">
+                            <!-- mobile: menu toggle, sign in -->
+                            <div class="d-block d-sm-none">
+                                <button type="button"
+                                        data-wap="{&quot;linktype&quot;:&quot;level1&quot;}"
+                                        class="mega-hamburger nav-link-icon nav-link-icon-toggle collapsed"
+                                        data-bs-target="#primary-nav" aria-expanded="false" aria-controls="primary-nav"
+                                        data-mega-control="hamburger">
+                                    <span class="visually-hidden">Toggle Navigation</span>
+                                    <span class="fa-intel-menu icon-toggle-off"></span>
+                                    <span class="fa-cancel-thin icon-toggle-on"></span>
+                                </button>
+                            </div>
+
+                            <!-- START DYNAMIC NAVIGATION MENEU -->
+                            <div class="collapse mega-menu-collapse" id="primary-nav">
+                                <div class="mega-menu-wrap">
+                                    <ol class="mega-navbar unique-container-global-nav-items">
+                                        <!-- Start: Primary Nav Items -->
+
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- START MOBLE TOGGLE buttons -->
+                        <div class="navbar-right">
+
+
+                            <!-- START: NON-signed in panel -->
+                            <span id="not-logged-in-scenario" class="d-none">
+
+         <button type="button" title="Sign In"
+                 class="nav-link-icon nav-link-icon-toggle collapsed"
+                 data-wap="{&quot;linktype&quot;:&quot;level1&quot;}"
+                 aria-expanded="false" aria-controls="panel-signin"
+                 onclick="intel.mytools.unifiedLogin();"
+                 data-mega-control="signin">
+            <span class="visually-hidden">Sign In</span>
+            <span class="fa-intel-user-o icon-toggle-off"></span>
+            <span class="fa-intel-user icon-toggle-on"></span>
+        </button>
+</span>
+
+<script>
+    var intel = intel || {};
+    intel.signinsimplifyConfig = {
+        authorizationUrl: '/content/dam/intel/authorization/authorization.html',
+        locale: '',
+        messages: {
+            InvalidCredential: 'The username or password you entered was invalid.',
+            InvalidField: 'The username or password you entered was invalid.',
+            AccountDisabled: 'For security reasons, your account has been disabled. For help, <a href=\"#\" class=\"contactLink new-tab-link\" target=\"_blank\" rel=\"noopener noreferrer\" >contact us<\/a>.',
+            AccountLocked: 'Your account has been locked. For help, please read the <a href=\"#\" class=\"faqsLink new-tab-link\" target=\"_blank\" rel=\"noopener noreferrer\" >Sign In FAQ<\/a>.',
+            UserNotFound: 'The username or password you entered was invalid.',
+            Unknown: 'An unexpected error occurred. Try it again. For help, use the contact or support options below.',
+            PasswordExpired: 'Your password is expired. Please change your password.',
+            LoginAssistLink: 'https://signin.intel.com/ContactUs.aspx',
+            faqsLink: '/content/www/us/en/my-intel/sign-in-help.html'
+        },
+        nameField: 'Username',
+        passField: 'Password',
+        isPopup: true,
+        responseHref: 'https://www.intel.com/content/www/us/en/developer/articles/technical/post-quantum-cryptography.html' + window.location.search + window.location.hash, 
+        sslDomainUrl: 'www.intel.com',
+        loginUrl: 'https://welcome.intel.com/login.aspx?appid=258&qlogin=true',
+        ssoUri: '',
+        logoutUrl: 'https://welcome.intel.com/logout.aspx',
+        logoutHref: 'https://signin.intel.com/Logout?RedirectURL=https://www.intel.com/content/www/us/en/developer/articles/technical/post-quantum-cryptography.html',
+        logoutIGHFHref: 'https://signin.intel.com/Logout?RedirectURL=',
+        loginErrorID: '#login-error',
+        usernameID: '#username',
+        remembermeId: '#cbRememberMe',
+        formID: '#igm-form-signin',
+        unameErrorID: '#uname-error',
+        passID: '#password',
+        passError: '#pwd-error',
+        changePasswordUrl: '/content/www/us/en/my-intel/change-password.html',
+        emailVerificationUrl: '/content/www/us/en/my-intel/email-verification.external.html',
+        aboutToExpireEmailUrl: '/content/www/us/en/my-intel/email-verification.html',
+        renewalUrl: '/content/www/us/en/secure/technology-provider/forms/renew-technology-provider-membership.html',
+        limitedUrl: '/content/www/us/en/resellers/limited-status-secondary.html',
+        isaPRMDashBoardURL: '/content/www/us/en/secure/partner/solutions-alliance/overview.html',
+        itpPRMDashBoardURL: '/content/www/us/en/secure/partner/technology-provider/iot/overview.html',
+        itpisaPRMDashBoardURL: '/content/www/us/en/secure/partner/iot-itp-isa/overview.html',
+        isaRenewalURL: '/content/www/us/en/secure/partner/forms/solutions-alliance-renewal.html',
+        primaryPostLaunchURL: 'https://partner.intel.com/s/post-launch-primary',
+        nonPrimaryPostLaunchURL: 'https://partner.intel.com/s/post-launch-non-primary',
+        idpUrl: 'https://consumer.intel.com/intelcorpb2c.onmicrosoft.com/B2C_1A_UnifiedLogin_SISU_CML_SAML/generic/login?entityId=www.intel.com',
+        headerSignInIdpUrl: 'https://consumer.intel.com/intelcorpb2c.onmicrosoft.com/B2C_1A_UnifiedLogin_SISU_CML_SAML/generic/login?entityId=www.intel.com&ui_locales=en',
+        headerSignOutIdpUrlB2B:'https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=https://www.intel.com/content/www/us/en/developer/articles/technical/post-quantum-cryptography.html' + window.location.search + window.location.hash,
+        headerSignOutIdpIGHFUrlB2B:'https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=',
+        headerSignOutIdpUrlB2C:'https://consumer.intel.com/intelcorpb2c.onmicrosoft.com/B2C_1A_UNIFIEDLOGIN_SISU_STD_OIDC/oauth2/v2.0/logout?id_token_hint=$TOKEN$%26post_logout_redirect_uri=https://www.intel.com/apps/intel/services/unifiedlogout.json',
+        sessionAuthorizeUrlB2C:'https://consumer.intel.com/intelcorpb2c.onmicrosoft.com/B2C_1A_UNIFIEDLOGIN_SISU_STD_OIDC/oauth2/v2.0/authorize?client_id=8b32f2f3-7a32-4902-8821-1df682b7043b%26scope=profile%20offline_access%208b32f2f3-7a32-4902-8821-1df682b7043b%20openid%26response_mode=fragment%26response_type=token%26prompt=none%26redirect_uri=',
+        sessionAuthorizeUrlB2B:'https://login.microsoftonline.com/46c98d88-e344-4ed4-8496-4ed7712e255d/oauth2/v2.0/authorize?client_id=cb0ec60b-608b-4e76-9d69-1e5e0afb3456%26scope=openid%20profile%20offline_access%26response_mode=fragment%26response_type=token%26prompt=none%26redirect_uri=',
+        sessionInitUrl:'https://www.intel.com/content/www/us/en/secure/my-intel/dashboard.html',
+        azureLocaleCode:'en',
+        allowedPathRegx:'^(.*intel.com.*$)|^(/content/.*$)',
+        signOutTokenGenB2C:'https://consumer.intel.com/intelcorpb2c.onmicrosoft.com/B2C_1A_UNIFIEDLOGIN_SISU_STD_OIDC/oauth2/v2.0/authorize?client_id=8b32f2f3-7a32-4902-8821-1df682b7043b%26scope=profile offline_access+8b32f2f3-7a32-4902-8821-1df682b7043b+openid%26response_type=id_token%26prompt=none%26redirect_uri=',
+        validTargetURL:'https://www.intel.com/content/www/us/en/developer/articles/technical/post-quantum-cryptography.html' + window.location.search + window.location.hash
+    };
+
+    function clearB2CIFrame(interval, iFrame) {
+        clearInterval(interval);
+        iFrame.parentNode.removeChild(iFrame);
+    }
+
+    function clearIFrame(interval, iFrame) {
+        clearInterval(interval);
+        iFrame.parentNode.removeChild(iFrame);
+    }
+    function createB2CIFrame(id, src) {
+        var authIFrame = document.createElement("iframe");
+        authIFrame.id = "sso-b2c-" + id;
+        authIFrame.hidden = "hidden";
+        authIFrame.src = src;
+        document.body.appendChild(authIFrame);
+        return authIFrame;
+    }
+    function createIFrame(id, src) {
+        var authIFrame = document.createElement("iframe");
+        authIFrame.id = "sso-" + id;
+        authIFrame.hidden = "hidden";
+        authIFrame.src = src;
+        document.body.appendChild(authIFrame);
+        return authIFrame;
+    }
+
+    function animateHumanoidIcon() {
+    	$("#not-logged-in-scenario").css("cursor", "not-allowed");
+    	$("#not-logged-in-scenario button").css("pointer-events", "none");
+    	$("#not-logged-in-scenario button span.icon-toggle-off").addClass('iia-beat-fade');
+	}
+
+    function resetHumanoidIcon() {
+    	$("#not-logged-in-scenario").css("cursor", "");
+        $("#not-logged-in-scenario button").css("pointer-events", "");
+    	$("#not-logged-in-scenario button span.icon-toggle-off").removeClass('iia-beat-fade');
+	}
+
+    function initiateB2CLogoutToken(type) {
+        return new Promise(function (resolve, reject) {
+            function authIFrameB2CIntervalWrapper(authIFrame) {
+                var authIFrameInterval = setInterval(function () {
+                    var authIFrameWindow = authIFrame.contentWindow;
+                    if (authIFrameWindow) {
+                        try {
+                            var authIFrameURL = authIFrameWindow.location.href;
+
+                            if (authIFrameURL) {
+                                if (authIFrameURL.includes("#id_token=")) {
+                                    clearB2CIFrame(authIFrameInterval, authIFrame);
+                                    return resolve({
+                                        id: authIFrame.id,
+                                        msg: "SUCCESS!" + "--" + authIFrame.id,
+                                        code: "SUCCESS",
+                                        id_token_hint:authIFrameURL.split("#id_token=")[1]
+                                    });
+                                } else if (authIFrameURL.includes("#error=")) {
+                                    clearB2CIFrame(authIFrameInterval, authIFrame);
+                                    return reject({
+                                        id: authIFrame.id,
+                                        msg: "FAILURE!" + "--" + authIFrame.id,
+                                        code: "FAILURE",
+                                    });
+                                } else {
+                                    authIFrameAttempts++;
+                                    if (
+                                        authIFrameAttempts ===
+                                        AUTH_IFRAME_MAX_ATTEMPTS
+                                    ) {
+                                        clearB2CIFrame(authIFrameInterval, authIFrame);
+                                        return reject({
+                                            id: authIFrame.id,
+                                            msg:
+                                                "ERROR - MAX (TIMING)!" +
+                                                "--" +
+                                                authIFrame.id,
+                                            code: "ERROR",
+                                        });
+                                    }
+                                }
+                            } else {
+                                clearB2CIFrame(authIFrameInterval, authIFrame);
+                                return reject({
+                                    id: authIFrame.id,
+                                    msg: "ERROR - URL!" + "--" + authIFrame.id,
+                                    code: "ERROR",
+                                });
+                            }
+                        } catch (err) {
+                            if (authIFrameAttempts === AUTH_IFRAME_MAX_ATTEMPTS) {
+                                clearB2CIFrame(authIFrameInterval, authIFrame);
+                                return reject({
+                                    id: authIFrame.id,
+                                    msg:
+                                        "ERROR - MAX (CORS)!" +
+                                        "--" +
+                                        authIFrame.id,
+                                    code: "ERROR",
+                                });
+                            }
+                            authIFrameAttempts++;
+                        }
+                    } else {
+                        clearB2CIFrame(authIFrameInterval, authIFrame);
+                        return reject({
+                            id: authIFrame.id,
+                            msg: "ERROR - DOM!" + "--" + authIFrame.id,
+                            code: "ERROR",
+                        });
+                    }
+                }, 500);
+            }
+
+            var AUTH_IFRAME_MAX_ATTEMPTS = 80;
+            var authIFrameAttempts = 0;
+
+            var currentOrigin = encodeURIComponent(window.location.origin + ((intel.isIGHFCall === false && !/mark.intel.com/.test(window.location.hostname)) ? "/content/www/us/en/homepage.html" : "/"));
+            var redirectURI = currentOrigin;
+
+            var matchedSite =
+                window.INTELNAV &&
+                window.INTELNAV.CIDAAS &&
+                window.INTELNAV.CIDAAS.customRedirectSites.find((site) =>
+                    site.host.includes(window.location.host)
+                );
+            if (matchedSite) {
+                redirectURI += matchedSite.redirectURI;
+            }
+
+            var authURL = decodeURIComponent(intel.signinsimplifyConfig.signOutTokenGenB2C + redirectURI);
+            var authIFrame = createB2CIFrame(type, authURL);
+            authIFrameB2CIntervalWrapper(authIFrame);
+        });
+    }
+
+    function initiateAuth(type) {
+        return new Promise(function (resolve, reject) {
+            function authIFrameIntervalWrapper(authIFrame) {
+                let authIFrameInterval = setInterval(function () {
+                    let authIFrameWindow = authIFrame.contentWindow;
+                    if (authIFrameWindow) {
+                        try {
+                            let authIFrameURL = authIFrameWindow.location.href;
+                            if (authIFrameURL) {
+                                if (authIFrameURL.includes("#access_token=")) {
+                                    clearIFrame(authIFrameInterval, authIFrame);
+                                    return resolve({
+                                        id: authIFrame.id,
+                                        msg: "SUCCESS!" + "--" + authIFrame.id,
+                                        code: "SUCCESS",
+                                    });
+                                } else if (authIFrameURL.includes("#error=")) {
+                                    clearIFrame(authIFrameInterval, authIFrame);
+                                    return reject({
+                                        id: authIFrame.id,
+                                        msg: "FAILURE!" + "--" + authIFrame.id,
+                                        code: "FAILURE",
+                                    });
+                                } else {
+                                    authIFrameAttempts++;
+                                    if (
+                                        authIFrameAttempts ===
+                                        AUTH_IFRAME_MAX_ATTEMPTS
+                                    ) {
+                                        clearIFrame(authIFrameInterval, authIFrame);
+                                        return reject({
+                                            id: authIFrame.id,
+                                            msg:
+                                                "ERROR - MAX (TIMING)!" +
+                                                "--" +
+                                                authIFrame.id,
+                                            code: "ERROR",
+                                        });
+                                    }
+                                }
+                            } else {
+                                clearIFrame(authIFrameInterval, authIFrame);
+                                return reject({
+                                    id: authIFrame.id,
+                                    msg: "ERROR - URL!" + "--" + authIFrame.id,
+                                    code: "ERROR",
+                                });
+                            }
+                        } catch (err) {
+                            if (authIFrameAttempts === AUTH_IFRAME_MAX_ATTEMPTS) {
+                                clearIFrame(authIFrameInterval, authIFrame);
+                                return reject({
+                                    id: authIFrame.id,
+                                    msg:
+                                        "ERROR - MAX (CORS)!" +
+                                        "--" +
+                                        authIFrame.id,
+                                    code: "ERROR",
+                                });
+                            }
+                            authIFrameAttempts++;
+                        }
+                    } else {
+                        clearIFrame(authIFrameInterval, authIFrame);
+                        return reject({
+                            id: authIFrame.id,
+                            msg: "ERROR - DOM!" + "--" + authIFrame.id,
+                            code: "ERROR",
+                        });
+                    }
+                }, 500);
+            }
+
+            var AUTH_IFRAME_MAX_ATTEMPTS = 40;
+            var authIFrameAttempts = 0;
+
+            var authURL;
+            let tempIsIGHFCall = document.querySelectorAll('#recode50header').length > 0;
+            var currentOrigin =  encodeURIComponent(window.location.origin + ((!tempIsIGHFCall && !/mark.intel.com/.test(window.location.hostname)) ? intel.signinsimplifyConfig.authorizationUrl : "/"));
+            var redirectURI = currentOrigin;
+            var matchedSite =
+                window.INTELNAV &&
+                window.INTELNAV.CIDAAS &&
+                window.INTELNAV.CIDAAS.customRedirectSites.find((site) =>
+                    site.host.includes(window.location.host)
+                );
+            if (matchedSite) {
+                redirectURI += matchedSite.redirectURI;
+            }
+
+            if (type === "b2c") {
+                authURL = decodeURIComponent(
+                    intel.signinsimplifyConfig.sessionAuthorizeUrlB2C + redirectURI
+                );
+            } else {
+                authURL = decodeURIComponent(
+                    intel.signinsimplifyConfig.sessionAuthorizeUrlB2B + redirectURI
+                );
+            }
+
+            let authIFrame = createIFrame(type, authURL);
+            authIFrameIntervalWrapper(authIFrame);
+        });
+    }
+
+    function initiateIntelAuth() {
+        return new Promise(function (resolve, reject) {
+            function authIntelIFrameIntervalWrapper(authIntelIFrame) {
+                let authIntelIFrameInterval = setInterval(function () {
+                    let authIntelIFrameWindow = authIntelIFrame.contentWindow;
+                    if (authIntelIFrameWindow) {
+                        try {
+                            let authIntelIFrameURL = authIntelIFrameWindow.location.href;
+
+                            if (authIntelIFrameURL) {
+                                if (
+                                    authIntelIFrameURL.includes(
+                                        window.location.href
+                                    )
+                                ) {
+                                    clearIFrame(
+                                        authIntelIFrameInterval,
+                                        authIntelIFrame
+                                    );
+                                    return resolve({
+                                        id: authIntelIFrame.id,
+                                        msg: "SUCCESS!" + "--" + authIntelIFrame.id,
+                                        code: "SUCCESS",
+                                    });
+                                } else {
+                                    authIntelIFrameAttempts++;
+                                    if (
+                                        authIntelIFrameAttempts ===
+                                        AUTH_INTEL_IFRAME_MAX_ATTEMPTS
+                                    ) {
+                                        clearIFrame(
+                                            authIntelIFrameInterval,
+                                            authIntelIFrame
+                                        );
+                                        return reject({
+                                            id: authIntelIFrame.id,
+                                            msg:
+                                                "ERROR - MAX (TIMING)!" +
+                                                "--" +
+                                                authIntelIFrame.id,
+                                            code: "ERROR",
+                                        });
+                                    }
+                                }
+                            } else {
+                                clearIFrame(
+                                    authIntelIFrameInterval,
+                                    authIntelIFrame
+                                );
+                                return reject({
+                                    id: authIntelIFrame.id,
+                                    msg: "ERROR - URL!" + "--" + authIntelIFrame.id,
+                                    code: "ERROR",
+                                });
+                            }
+                        } catch (err) {
+                            if (
+                                authIntelIFrameAttempts ===
+                                AUTH_INTEL_IFRAME_MAX_ATTEMPTS
+                            ) {
+                                clearIFrame(
+                                    authIntelIFrameInterval,
+                                    authIntelIFrame
+                                );
+                                return reject({
+                                    id: authIntelIFrame.id,
+                                    msg:
+                                        "ERROR - MAX (CORS)!" +
+                                        "--" +
+                                        authIntelIFrame.id,
+                                    code: "ERROR",
+                                });
+                            }
+                            authIntelIFrameAttempts++;
+                        }
+                    } else {
+                        clearIFrame(authIntelIFrameInterval, authIntelIFrame);
+                        return reject({
+                            id: authIntelIFrame.id,
+                            msg: "ERROR - DOM!" + "--" + authIntelIFrame.id,
+                            code: "ERROR",
+                        });
+                    }
+                }, 500);
+            }
+
+            let AUTH_INTEL_IFRAME_MAX_ATTEMPTS = 80;
+            let authIntelIFrameAttempts = 0;
+
+            let authIntelIFrame = createIFrame(
+                "sso-intel-b2c",
+                intel.signinsimplifyConfig.sessionInitUrl
+            );
+            authIntelIFrameIntervalWrapper(authIntelIFrame);
+        });
+	}
+
+    function getAuthenticationStatus() {
+        return new Promise(function (resolve, reject) {
+            initiateAuth("b2c")
+                .then(function (b2cSuccessRes) {
+                    return resolve(b2cSuccessRes);
+                })
+                .catch(function (b2cFailureRes) {
+                    var isB2BSite =
+                        window.INTELNAV &&
+                        window.INTELNAV.CIDAAS &&
+                        window.INTELNAV.CIDAAS.B2BSites.some((site) =>
+                            site.includes(window.location.host)
+                        );
+                    if (isB2BSite) {
+                        initiateAuth("b2b")
+                            .then(function (b2bSuccessRes) {
+                                return resolve(b2bSuccessRes);
+                            })
+                            .catch(function (b2bFailureRes) {
+                                return reject(b2bFailureRes);
+                            });
+                    } else {
+                        return reject(b2cFailureRes);
+                    }
+                });
+        });
+    }
+
+    function checkAEMSession(){
+        let isSessionExist = false;
+        if(!tempIsIGHF){
+            $.ajax({
+                url: "/libs/apps/intel/myintel/agsroles.json?validateAEMSession=Y",
+                async: false,
+                success: function (data) {
+                    if (data && data["isValidAEMSession"]) {
+                        document.cookie = "IGHFLoggedIn=true;domain=.intel.com;path=/";
+                        isLoggedin = true;
+                        isSessionExist = true;
+                    }
+                }
+            });
+        }
+        return isSessionExist;
+    }
+
+    if (
+        !isLoggedin &&
+        ((document.domain.indexOf("thailand") == -1 &&
+                document.domain.endsWith(".intel.com")) ||
+            document.getElementById("recode50header") != null) &&
+        navigator != null &&
+        navigator.userAgent.indexOf("CloudManagerTest") == -1
+    ) {
+        var tempIsIGHF = document.getElementById("recode50header");
+        if (tempIsIGHF) animateHumanoidIcon();
+        getAuthenticationStatus()
+            .then(function (res) {
+                let isSessionExist = checkAEMSession();
+                if(isSessionExist){
+                    intel.signinHeaderSimplify.initialize();
+                }else {
+                    var currentUrl = window.location.href;
+                    if (currentUrl.indexOf("service-maintenance-notice") === -1) {
+                        if (res.id === "sso-b2c") {
+                            var cookiename = "IGHFtarget";
+                        var samlcookieValue =
+                            cookiename +
+                            "=" +
+                            encodeURIComponent(currentUrl) +
+                            ";secure;path=/;domain=.intel.com";
+                        document.cookie = samlcookieValue;
+                        if (intel.isIGHFCall) {
+                            initiateIntelAuth().then(() => {
+                                isLoggedin = true;
+                                intel.signinHeaderSimplify.initialize();
+                            }).catch(() => {
+                                window.location.href = intel.signinsimplifyConfig.sessionInitUrl;
+                            });
+                        } else {
+                            window.location.href = intel.signinsimplifyConfig.sessionInitUrl;
+                        }
+                    } else {
+                        document.cookie = "IGHFLoggedIn=true;domain=.intel.com;path=/";
+                        if (intel.isIGHFCall) {
+                            isLoggedin = true;
+                            intel.signinHeaderSimplify.initialize();
+                        } else {
+                            window.location.reload();
+                        }
+                    }
+                }
+                }
+            })
+            .catch(()=>{
+				if (tempIsIGHF) resetHumanoidIcon();
+            });
+    }
+
+</script>
+                            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script id="myinteldrpdown-template" type="text/x-handlebars-template">
+    <section class="myintel-tools-content" role="region"
+             aria-label="My Intel">
+        
+        <div class="card-header force-background solid brand-very-dark-gray my-intel-menu">
+            <button type="button" class="icon close float-end" data-igm-search-toggle="" aria-label="Close"
+                    tabindex="0" data-wap="" data-wap_ref="myintel-navmenu-closing">
+                <span></span>
+            </button>
+            <ul class="nav nav-tabs component">
+                
+                    
+                    
+                        
+                    
+                    
+                    
+                    
+                
+                <li role="presentation" class="active" data-step='1'  data-title='My Intel Dashboard and My Tools'  data-intro='<p>Click here to access the My Intel Dashboard from any Intel.com page. From here you can also access your Subscriptions page, as well as your personalized list of tools.</p>'>
+                    <a href="#my-intel" role="tab" tabindex="0">My Intel<span
+                            class="fa fa-user"></span></a>
+                </li>
+            </ul>
+        </div>
+        
+
+        <div class="my-intel-panel-body tab-content">
+            
+            <div role="tabpanel" class="tab-pane fade show active" id="my-intel">
+                <ul class="myintel-links">
+                    {{#each myintelpagelinks}}
+                    <li data-agsrole="{{{agsrole}}}"
+                        data-blacklistedagsrole="{{{blacklistedagsgroupname}}}"
+                        data-isinternal="{{{displayOnlyInternal}}}"
+                        data-isexternal="{{{displayOnlyExternal}}}"
+                        class="{{{class}}}">
+                        <a target="{{{target}}}"
+                           href="{{{href}}}" tabindex="0">{{{label}}}</a>
+                    </li>
+                    {{/each}}
+                </ul>
+                <div class="tools-pane component" data-component="myintel-tools" data-component-id="1">
+                    <h5 class="my-intel-tools">My Tools</h5>
+                    
+                    <ul class="myintel-links">
+                        {{#each mytoollinks}}
+                        <li class="myintellink"
+                            data-isinternal="{{{displayOnlyInternal}}}"
+                            data-isexternal="{{{displayOnlyExternal}}}">
+                            <h3 style="display:none;">{{{agsgroupname}}}</h3>
+                            <h4 style="display:none;">{{{blacklistedagsgroupname}}}</h4>
+                            <a tabindex="0" href="{{{linkurl}}}" target="_blank" rel="noopener noreferrer" title="">{{{linktext}}}</a>
+                            {{#if tooltip}}
+                            <a class="fa fa-help-circled" tabindex="0" data-bs-toggle="tooltip" data-html="true"
+                                  data-title="{{tooltip}}" data-placement="bottom" data-wap_ref="tooltip:{{{linktext}}}"><span class="visually-hidden">{{tooltip}}</span></a>
+                            {{/if}}
+                        </li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+</script>
+
+
+<span id="logged-in-scenario" class="d-none">
+
+<button type="button" title="My Intel"
+        data-wap="{&quot;linktype&quot;:&quot;level1&quot;}"
+        class="nav-link-icon nav-link-icon-toggle collapsed" data-bs-target="#panel-signedin" aria-expanded="false"
+        aria-controls="panel-signedin" data-mega-control="signedin">
+    <span class="visually-hidden">My Intel</span>
+    <span class="fa-intel-user-checked-o icon-toggle-off"></span>
+    <span class="fa-intel-user-checked icon-toggle-on"></span>
+</button>
+
+<div class="mega-panel panel-layout-signed-in collapse" id="panel-signedin">
+    <div class="mega-panel-wrap">
+        <div class="mega-panel-body">
+            <div class="panel-content flex-content-wrap">
+
+                <!-- MyIntel Section -->
+                <!-- -------------------------------------------------------------- -->
+                <div class="panel-item d-none" id="myIntelPageLinks">
+                    <a id="myIntelPageLinksHeader" class="nav-l3 has-border has-link"></a> <!-- {{#if heading.onState}} selected{{/if}} {{#if heading.onStateParent}} selected-parent{{/if}} -->
+                    <div class="panel-item-content">
+                        <ul id="myIntelPageLinksItemList" class="panel-links nav-l4-list list-unstyled">
+
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- My Tools Section -->
+                <!-- -------------------------------------------------------------- -->
+                <div class="panel-item col-span-2" id="myIntelTools">
+                    
+                    <div class="nav-l3">
+                        My Tools
+                    </div>
+
+                    <div class="panel-item-content">
+                        <!--
+                            Note: right now this panel (myTools) has only one column/ul
+                            if more columns are needed, remove below's 'w-auto' class
+                        -->
+                        <ul class="panel-links nav-l4-list list-unstyled w-auto" id="mytools-ul">
+
+                            <!-- this 'li' will be used as the template to populate this section from the js -->
+                            <li class="d-none">
+                                <a class="nav-l4"></a>
+
+                                <button class="btn-tooltip-trigger d-none" data-bs-toggle="tooltip" data-placement="bottom"
+                                        title="">
+                                    <span>?</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="item-actions">
+               <button type="button" class="btn btn-primary"
+                       data-sso-uri=''
+                       data-logout-uri="" data-wap="{&quot;linktype&quot;:&quot;logout&quot;}"
+                       onclick="intel.signinsimplify.signOut()">Sign Out</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</span>
+
+                            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+<button type="button" title="Language Selector"
+        data-wap="{&quot;linktype&quot;:&quot;level1&quot;}"
+        class="nav-link-icon nav-link-icon-toggle collapsed"
+        data-bs-target="#panel-language-selector" aria-label="English"
+        aria-expanded="false" aria-controls="panel-language-selector"
+        data-mega-control="language-selector">
+    <span class="fa-intel-globe-o icon-toggle-off"></span>
+    <span class="fa-intel-globe icon-toggle-on"></span>
+    <span class="nav-link-icon-label">English</span>
+</button>
+
+<div class="mega-panel panel-layout-language collapse" id="panel-language-selector"
+     aria-expanded="false" aria-selected="false">
+    <div class="mega-panel-wrap">
+        <div class="mega-panel-body">
+            <div class="mega-panel-heading">
+                <h2 class="nav-l2">
+                    
+                        
+                            Select Your Language
+                        
+                        
+                    
+                </h2>
+            </div>
+            <div class="panel-content flex-content-wrap">
+                
+                    <div class="panel-item">
+                        <!-- region.countryName is actually region name -->
+                        
+                        <ul class="list-unstyled panel-links nav-l4-list">
+                            
+                                
+                                
+                                
+                                    <li class="lang-option">
+                                
+                                
+                                    
+                                    
+                                        
+                                    
+                                
+                                    <a class="nav-l4" data-locale="id_id" href="https://www.intel.co.id/content/www/id/id/homepage.html">
+                                            Bahasa Indonesia
+                                    </a>
+                                </li>
+                            
+                                
+                                
+                                
+                                    <li class="lang-option">
+                                
+                                
+                                    
+                                    
+                                        
+                                    
+                                
+                                    <a class="nav-l4" data-locale="de_de" href="https://www.intel.de/content/www/de/de/homepage.html">
+                                            Deutsch
+                                    </a>
+                                </li>
+                            
+                                
+                                
+                                    <li class="selected lang-option">
+                                
+                                
+                                
+                                    
+                                    
+                                        
+                                    
+                                
+                                    <a class="nav-l4" data-locale="en_us" href="https://www.intel.com/content/www/us/en/homepage.html">
+                                            English
+                                    </a>
+                                </li>
+                            
+                                
+                                
+                                
+                                    <li class="lang-option">
+                                
+                                
+                                    
+                                    
+                                        
+                                    
+                                
+                                    <a class="nav-l4" data-locale="es_xl" href="https://www.intel.la/content/www/xl/es/homepage.html">
+                                            Español
+                                    </a>
+                                </li>
+                            
+                                
+                                
+                                
+                                    <li class="lang-option">
+                                
+                                
+                                    
+                                    
+                                        
+                                    
+                                
+                                    <a class="nav-l4" data-locale="fr_fr" href="https://www.intel.fr/content/www/fr/fr/homepage.html">
+                                            Français
+                                    </a>
+                                </li>
+                            
+                                
+                                
+                                
+                                    <li class="lang-option">
+                                
+                                
+                                    
+                                    
+                                        
+                                    
+                                
+                                    <a class="nav-l4" data-locale="pt_br" href="https://www.intel.com.br/content/www/br/pt/homepage.html">
+                                            Português
+                                    </a>
+                                </li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="panel-item">
+                        <!-- region.countryName is actually region name -->
+                        
+                        <ul class="list-unstyled panel-links nav-l4-list">
+                            
+                                
+                                
+                                
+                                    <li class="lang-option">
+                                
+                                
+                                    
+                                    
+                                        
+                                    
+                                
+                                    <a class="nav-l4" data-locale="vi_vn" href="https://www.intel.vn/content/www/vn/vi/homepage.html">
+                                            Tiếng Việt
+                                    </a>
+                                </li>
+                            
+                                
+                                
+                                
+                                    <li class="lang-option">
+                                
+                                
+                                    
+                                    
+                                        
+                                    
+                                
+                                    <a class="nav-l4" data-locale="th_th" href="https://www.thailand.intel.com/content/www/th/th/homepage.html">
+                                            ไทย
+                                    </a>
+                                </li>
+                            
+                                
+                                
+                                
+                                    <li class="lang-option">
+                                
+                                
+                                    
+                                    
+                                        
+                                    
+                                
+                                    <a class="nav-l4" data-locale="ko_kr" href="https://www.intel.co.kr/content/www/kr/ko/homepage.html">
+                                            한국어
+                                    </a>
+                                </li>
+                            
+                                
+                                
+                                
+                                    <li class="lang-option">
+                                
+                                
+                                    
+                                    
+                                        
+                                    
+                                
+                                    <a class="nav-l4" data-locale="ja_jp" href="https://www.intel.co.jp/content/www/jp/ja/homepage.html">
+                                            日本語
+                                    </a>
+                                </li>
+                            
+                                
+                                
+                                
+                                    <li class="lang-option">
+                                
+                                
+                                    
+                                    
+                                        
+                                    
+                                
+                                    <a class="nav-l4" data-locale="zh_cn" href="https://www.intel.cn/content/www/cn/zh/homepage.html">
+                                            简体中文
+                                    </a>
+                                </li>
+                            
+                                
+                                
+                                
+                                    <li class="lang-option">
+                                
+                                
+                                    
+                                    
+                                        
+                                    
+                                
+                                    <a class="nav-l4" data-locale="zh_tw" href="https://www.intel.com.tw/content/www/tw/zh/homepage.html">
+                                            繁體中文
+                                    </a>
+                                </li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var newLangSelector = true;
+</script>
+
+                            <!-- END: NON-sign in panel -->
+                            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+        
+    
+
+
+    <button type="button" title="Search intel.com" class="nav-link-icon toggle-search collapsed"
+            data-bs-target="#simplify-search" aria-expanded="false"
+            aria-controls="simplify-search" data-mega-control="global-search">
+        <span class="visually-hidden">Toggle Search</span>
+        <span class="fa-global-search"></span>
+    </button>
+    <div class="mega-panel mega-search-panel collapse" id="simplify-search"
+         document-height="true">
+        <div class="mega-panel-wrap">
+            <div class="mega-panel-body">
+                <div class="panel-content">
+                    <div class="search-component search-component"
+                         data-igm-search-content="">
+                        <form class="mega-search-form search item" data-igm-search-control="" name="hpsform-new" id="hpsform-new" action="/content/www/us/en/search.html" role="search" onsubmit="return inputSearch()">
+                            <button type="submit" class="btn-mega-search icon"
+                                    aria-label="Search" tabindex="-1">
+                                <span class="visually-hidden">Search</span>
+                                <span class="fa-global-search"></span>
+                            </button>
+
+                            
+                                
+                                
+                                    <label for="mobile-search">
+                                        <span class="visually-hidden"><</span>
+                                        <input id="toplevelcategory" name="toplevelcategory" type="hidden" value="none">
+                                        <input id="query" name="query" type="hidden" value="">
+                                        <input data-tabindex="1" class="form-control" data-search-input
+                                               id="mobile-search" name="keyword" type="text"
+                                               data-igm-search-input title="Search" autocomplete="off"
+                                               data-target-result="#igm-search-result" aria-controls="mega-results-overlay" aria-label="Search Intel.com" placeholder="Search Intel.com">
+                                    </label>
+                                
+                            
+                            
+                            <button type="button" id="cls-btn-advanced" class="btn-mega-close fa-cancel-1 hide-flyout" aria-label="Clear Search Term" data-clear-input="clear-input">
+									<span class="visually-hidden">Close Search Panel</span>
+							</button>
+                                <button type="button" id="advanced-btn" class="btn-advance-filter fa-sliders hide-flyout" aria-label="Advanced Search Panel" data-mega-advanced-search="advanced-search">
+                                            <span class="visually-hidden">Advanced Search</span>
+                                </button>
+                            
+                            
+
+                        </form>
+                        <!-- 
+                            'hidden' class is conditionally removed on load @ intel.search-dropdown.js
+                         -->
+                        <div class="results-overlay mega-results-overlay search-quick-links "  aria-live="off"
+                             id="mega-results-overlay" data-component="wa_skip_track">
+                             
+                                 <div class="mega-close-container">
+									<button aria-label="Close search panel" class="btn-icon no-style close-result-toggle flyout-close" data-mega-close="global-search">
+									close
+									</button>
+								</div>
+                            
+                            <!-- Search Result Typeahead -->
+                            <div class="results-typeahead collapse" id="igm-search-result"
+                                 data-igm-search-results="">
+                                <div class="overlay-content">
+                                    <!--<h3>Top Results </h3>-->
+                                    <!-- added content-quick-search class -->
+                                    <div class="content-quick-search">
+                                    </div>
+                                </div>
+                                <div class="search-info">
+                                    <a href="javascript:void();" class="login-toggle" data-activate-mega-control="signin">
+                                        Sign In</a> to access restricted content
+                                </div>
+                            </div>
+                            <!-- Recent Searches: 1) display default search info if no search terms is available  -->
+                            <!-- Recent Searches: 2) display recenter terms when available and hide default search info  -->
+                            <div class="results-recent collapse" data-igm-search-related="">
+                                <div>
+                                    <!-- default search info -->
+                                    <div class="content-search-block content-search-info">
+                                        <h3>Using Intel.com Search</h3>
+                                        <p>You can easily search the entire Intel.com site in several ways.</p>
+                                        <ul>
+                                            <li>
+                                                Brand Name:
+                                                <strong>
+                                                    Core i9
+                                                </strong>
+                                            </li>
+                                            <li>
+                                                Document Number:
+                                                <strong>
+                                                    123456
+                                                </strong>
+                                            </li>
+                                            <li>
+                                                Code Name:
+                                                <strong>
+                                                    Emerald Rapids
+                                                </strong>
+                                            </li>
+                                            <li>
+                                                Special Operators:
+                                                <strong>
+                                                    “Ice Lake”, Ice AND Lake, Ice OR Lake, Ice*
+                                                </strong>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <!-- quick links is always visible on the recents overlay -->
+                                    <div class="content-search-block content-quick-links">
+                                        <h3>Quick Links</h3>
+                                        <p>You can also try the quick links below to see results for most popular searches.</p>
+                                        <ul>
+                                            <li>
+                                                <a class="quick-link" rel="noopener noreferrer" href="https://www.intel.com/content/www/us/en/products/overview.html?wapkw=quicklink:products">
+                                                    Product Information
+                                                </a>
+                                            </li>
+                                            <li><a class="quick-link" rel="noopener noreferrer" href="https://www.intel.com/content/www/us/en/support.html?wapkw=quicklink:support">
+                                                Support
+                                            </a>
+                                            </li>
+                                            <li>
+                                                <a class="quick-link" rel="noopener noreferrer" href="https://downloadcenter.intel.com?wapkw=quicklink:download-center">
+                                                    Drivers & Software
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <!-- recent search terms -->
+                                    <div class="results-overlay results-recent results component content-search-block content-recent" data-component="wa_skip_track"
+                                         data-component-id="1">
+                                        <div class="overlay-content recent-searches-terms">
+                                            <h3>Recent Searches</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="search-info">
+                                    <a href="javascript:void();" class="login-toggle" data-activate-mega-control="signin">
+                                        Sign In</a> to access restricted content
+                                </div>
+                            </div>
+                            
+                                 <div class="results-advanced collapse" data-igm-advanced-search="">
+											<div class="overlay-content">
+												<!-- default search info -->
+												<div class="content-search-block content-search-info component" data-component="wa_skip_track" data-component-id="1">
+													<h3>Advanced Search</h3>
+													<div class="controls-wrapper">
+														<div class="controls">
+															<div class="input-group select-control">
+																<select class="documentation-card-version-select" name="find-results" id="find-results">
+																	<option value="All of these terms" selected="">All of these terms</option>
+																	<option value="Any of these terms">Any of these terms</option>
+																	<option value="Exact term only">Exact term only</option>
+																</select>
+																<label class="select-label" for="find-results">Find results with</label>
+															</div>
+
+															<div class="input-group select-control">
+                                                                <select class="selectAdvanced" name="show-results-from" id="show-results-from">
+                                                                    <option value="allResults" selected="" aria-label="all Results">
+                                                                        All Results
+                                                                    </option>
+                                                                    <option value="Products" aria-label="Products">
+                                                                        Product Information
+                                                                    </option>
+                                                                    <option value="Support">
+                                                                        Support
+                                                                    </option>
+                                                                    <option value="Downloads">
+                                                                        Drivers & Software
+                                                                    </option>
+                                                                    <option value="Developers">
+                                                                        Documentation & Resources
+                                                                    </option>
+                                                                    <!-- <option value="Solutions">Solutions</option>-->
+                                                                    <option value="Partners">
+                                                                        Partners
+                                                                    </option>
+                                                                    <option value="forums">
+                                                                        Communities
+                                                                    </option>
+                                                                    <option value="Corporate">
+                                                                        Corporate
+                                                                    </option>
+                                                                </select>
+																<label class="select-label" for="show-results-from">Show results from</label>
+															</div>
+														</div>
+
+														<div class="controls">
+															<h3 
+                                                            >Only search in</h3>
+															<div class="input-group" aria-label="Only Search In">
+																<label for="search_title">
+																	<input name="search_title" id="search_title" type="checkbox">
+																	Title</label>
+
+																	<label for="search_description">
+																	<input name="search_description" id="search_description" type="checkbox">
+																Description</label>
+
+																	<label for="search_id">
+																	<input name="search_id" id="search_id" type="checkbox">Content ID</label>
+															</div>
+
+															<button role="button" type="button" class="btn btn-primary" id="advanced-search-submit" data-wap data-wap-ref="search-button">
+																Search
+															</button>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="search-info">
+												<a href="javascript:void();" class="login-toggle" data-activate-mega-control="signin">Sign in</a> to access
+												restricted content.
+											</div>
+										</div>
+                                    
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript">
+    var global_config = {
+        "icsUrl": "https://supporttickets.intel.com/services/oauth2/authorize?response_type=token&client_id=3MVG9QDx8IX8nP5Rh0X3B7gohGtUh8sjFQ8Tw_U8sS9_PoVrupDFwZ_nwLcze2n64lGBbGchyUb7_9W8n8pAV&redirect_uri=https%3A%2F%2Fwww.intel.com%2Fcontent%2Fwww%2Fus%2Fen%2Fsecure%2Fmy-intel%2Ftoken.html",
+        "ipsUrl": "https://premiersupport.intel.com/IPS/services/oauth2/authorize?response_type=token&client_id=3MVG9xOCXq4ID1uEa5F2lCYAp6mmKvTMlKbMIrsMKShY2oOqs1ETvPRjwmhoPivHd9_U53EzmiyYxn3nVpA9J&redirect_uri=https%3A%2F%2Fwww.intel.com%2Fcontent%2Fwww%2Fus%2Fen%2Fsecure%2Fmy-intel%2Ftoken.html"
+    };
+
+
+    function inputSearch() {
+    if (globalSearch.advancedSearchFlag == 'true') {
+        var findResults = $("#find-results").val();
+        var showResults = $("#show-results-from").val();
+        var titleIsChecked = $("#search_title").is(":checked");
+        var descriptionIsChecked = $("#search_description").is(":checked");
+        var idIsChecked = $("#search_id").is(":checked");
+        var searchInputValue = $("#mobile-search").val();
+
+        if (findResults != 'All of these terms' || showResults != "allResults" || titleIsChecked || descriptionIsChecked || idIsChecked) {
+            if (searchInputValue) {
+                return advancedSearch();
+            }
+            else {
+                return INTEL_TYPE_AHEAD.onSubmitHps('Search', '/content/www/us/en', 'en_US');
+            }
+        }
+
+        else {
+            return INTEL_TYPE_AHEAD.onSubmitHps('Search', '/content/www/us/en', 'en_US');
+        }
+    }
+    return INTEL_TYPE_AHEAD.onSubmitHps('Search', '/content/www/us/en', 'en_US');
+
+}
+
+
+    var globalSearch = globalSearch || {};
+    globalSearch = {
+        searchProvider: 'coveo',
+        baseSearchQuery: 'localecode:"en_US" NOT generic1:"false" ',
+        langRootPath: '/content/www/us/en',
+        headingTxt: 'Best Match',
+        locale: 'en_US',
+        typeAheadUrl: 'http://search.intel.com/SearchLookup/DataProvider.ashx',
+        bestMatchUrl: 'https://intelcorporationproductione78n25s6.org.coveo.com/rest/search/v2/querySuggest',
+        searchRealm: 'Default',
+        bestMatchQ1: 'NAR',
+        bestMatchQ2: 'en',
+        bestMatchQ11: 'sptitle,description,url,thumbnailurl,reimaginerootlevel',
+        progId: 'ude',
+        useEMTTags: true,
+        defaultPage: 'search.html',
+        ighfToken: 'xx6e698e8b-65ad-446c-9030-666d0ec92d15',
+        searchHub: 'entepriseSearch',
+        newNavRedesign: true,
+        advancedSearchFlag :'true',
+        gtvLabels: {
+            suggested: "",
+            products: "Product Information",
+            support: "Support",
+            developers: "Developers",
+            drivers: "Drivers",
+            forums: "Forums",
+            specifications: "Specifications",
+            download: "",
+            searchesRelatedTo: "",
+            search: "Search Intel.com",
+            inLabel: "in",
+            searchSupport: "Search Intel® Support",
+            intelcom: "",
+            forLabel: "for",
+            allResults: "All Results",
+            show: "Show",
+            results: "Results"
+        },
+        mobileResults: "5",
+        laptopResults: "10",
+        EDCProgramIdentifier: "false"
+    };
+</script>
+                        </div>
+                        <!-- END MOBILE TOGGLE buttons -->
+                    </div>
+                </nav>
+            </header>
+        </div>
+
+        
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        
+    
+    
+    
+    
+
+
+
+
+
+<div id="secondary-nav-1" class="component secondary-nav" data-component="subnavigation-breadcrumb"
+     data-component-id="1">
+    
+</div>
+
+
+    
+    
+        
+        
+            
+            <script type="application/ld+json">
+            
+ </script>
+        
+    
+
+
+
+<script type="text/javascript">
+    intel = intel || {};
+    intel.utils = intel.utils || {};
+    intel.utils.breadcrumbSource = "";
+    intel.utils.isDefaultSecondaryNavNeeded = "false";
+    intel.utils.displayTitle = "Post-Quantum Security with Intel® Cryptography";
+    intel.utils.template = "/apps/intel/commons/templates/mobileFirst/mf-article-long";
+</script>
+
+        
+        <script type="text/javascript">
+            
+            var globalHeader = globalHeader || {};
+            globalHeader = {
+                currentPath: "https://www.intel.com/content/www/us/en/developer/articles/technical/post-quantum-cryptography.html",
+                lanloc: "/us/en",
+                lanLoc: "US/en",
+                helpformurl: "",
+                intelHeaderFooterVersion: "menu3",
+                megaMenuPath: "/content/data/globalelements/US/en/globalnav4",
+                subMenuPath: "/content/data/globalelements/US/en/sub-navigation/idz/developer-sub-navigation-breadcrumb",
+                isCHF:false,
+                secureRedirectURL: "",
+                excludeGlobalNav4: "false",
+                allowSubNavigationBreadcrumb: "true",
+                breadcrumbParentPagePath: "/content/www/us/en/developer/tools/oneapi/tech-articles-how-to/overview",
+                myintelHeaderLinkAgs: "RDC Basic View,RDC Privileged Full,RDC Privileged Entitlement-AZAD,Intel Registration Center Access~RDC Privileged Full,Sales-PRM-External-Customers Employee-User~RDC Basic View,RDC Privileged Full",
+            }
+        </script>
+    
+
+
+<script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/in-viewport.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/nav.min.js" defer></script>
+<script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/secondaryNav.min.js" defer></script>
+</div>
+
+    
+    
+
+
+<section data-scroll-track="false">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 pull-right persistent-cta-integration-globalNav" id="alertMsg">
+                <div id="alertSupport">
+                    <div class="browser_detect" id="browserdetectid" style="display:none;">
+                        <p>The browser version you are using is not recommended for this site.<br/>Please consider upgrading to the latest version of your browser by clicking one of the following links.</p>
+                        <div class="browser_types">
+                            <ul>
+                                
+                                    <li><a href="https://support.apple.com/downloads/safari">Safari</a></li>
+                                
+                                    <li><a href="https://support.google.com/chrome/answer/95346?hl=en">Chrome</a></li>
+                                
+                                    <li><a href="https://www.microsoft.com/en-us/edge">Edge</a></li>
+                                
+                                    <li><a href="https://www.mozilla.org/en-US/firefox/new/">Firefox</a></li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<main id="primary-content">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" integrity="sha384-M5jmNxKC9EVnuqeMwRHvFuYUE8Hhp0TgBruj/GZRkYtiMrCRgH7yvv5KY+Owi7TW" crossorigin="anonymous">
+</script>
+
+<script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/supportLibs/resources/js/SupportPageTool.js" type="text/javascript" defer></script>
+
+
+
+<div class="targetParsys intelparsys">
+</div>
+
+
+    
+        <link rel="stylesheet" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/salesForceArticleLibs.min.css" type="text/css"><link rel="stylesheet" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/articleNewUxLibs.min.css" type="text/css"><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/salesForceArticleLibs.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/waypoints.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/sticky.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/prism.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/articleNewUxLibs.min.js" defer></script>
+        <link rel="stylesheet" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/articleIdzLibs.min.css" type="text/css"><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/showdown.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/externallibs/waypoints.min.js" defer></script><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/articleIdzLibs.min.js" defer></script>
+        <div class="aggregation">
+            <div class="aggregation">
+
+
+
+
+
+    
+</div>
+
+        </div>
+        <main id="primary-content-main">
+            <div class="promotionsBanner marketingbanner">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/upeMarketingBanner.min.css" type="text/css">
+
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+    
+    
+        
+    
+</div>
+
+            <div class="articlehero">
+                <div class="articlehero">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        
+        
+            
+                
+            
+            
+            
+            
+            
+            
+            
+        
+        
+            
+            
+                
+            
+        
+        
+        
+            
+                
+            
+            
+        
+        
+        
+
+        <div class="masthead-component article-marquee-component intel-brand-ux component"
+             data-component="articleHero" id="articleHero-1" data-component-id="1">
+            
+            
+                
+                
+                    
+                        <div id="insetImage"/>
+                    
+                    
+                    <div class="content-marquee-1_0_0 intel-ws solid blade theme-dark-default brand-classic-blue color-block  no-image">
+                        <div class="color-block-lighter">
+                            <div class="container">
+                                
+                                <div class="flex-block color-block-lighter">
+                                    <div class="media-item">
+                                        
+                                    </div>
+                                    <div class="marquee-layout">
+                                        <div class="marquee-content">
+                                            
+                                            <div class="marquee-heading-section">
+                                                <div class="brandingImage">
+                                                    
+                                                </div>
+                                                
+                                                    
+                                                        <h1 class="h2">Be Ready for Post-Quantum Security with Intel® Cryptography Primitives Library</h1>
+                                                    
+                                                    
+                                                
+                                                <div class="description">
+                                                    
+                                                        <p>October 30, 2024</p>
+
+                                                    
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+            
+        </div>
+        </div>
+        <!--Based on if the version is not latest, below alert text is displayed -->
+        
+    
+</div>
+
+            </div>
+            <article class="article article-long component developer-article" data-component-id="1"
+                     data-component="articletemplate">
+                <div class="container takeaway-container">
+                    <div class="component-padding">
+                        <div class="row">
+                            <div class="left-side col-md-4 col-lg-3">
+
+                                <div class="article-actions-mobile d-block d-md-none"></div>
+
+                                <!-- duplicated from articlehero for vertical layout -->
+                                
+                                    
+                                        <div id="inpage-navigation" class="inpage-navigation"></div>
+                                    
+                                    
+                                
+
+                                <p class="author"></p>
+                                <!-- BUILT IN - ARTICLE INTRO COMPONENT -->
+                                <!-- duplicated from right column for mobile layout -->
+                                <div class="article-intro-first mobile row section d-block d-md-none"></div>
+                                <!-- END IN - ARTICLE INTRO COMPONENT -->
+
+                                <!-- BUILT IN - ARTICLE TAKEAWAY COMPONENT -->
+
+                                <div class="articletakeaway parbase">
+                                    <div class="articletakeaway parbase">
+
+
+
+
+
+
+
+
+
+
+    
+        
+    
+    
+
+
+
+    
+</div>
+
+                                </div>
+
+                                <div class="article-intro-second">
+                                    <div class="articleintro1 articleintro">
+                                        <div>
+                                            <!--  BUILT IN - ARTICLE INTRO SECOND COMPONENT -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- only display this for authored pages and not salesforce pages-->
+                                <div class="authorcontainer">
+                                    <div>
+                                        <div class="no-author-img"></div>
+                                        <img class="author-img" src="" alt="author-image">
+                                    </div>
+                                    <div class="authordetails">
+                                        <div class="singleauthordetails">
+                                            <p id="singleauthorname" class="authorname"></p>
+                                            <p id="singleauthorbio" class="authorbio"></p>
+                                        </div>
+                                        <p id="coauthordetails"></p>
+                                        <p id="ldapauthordetails"><span>By</span></p>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="right-side col-md-8 col-lg-9">
+                                <div class="article-content">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <!-- BEGIN NEW BUILD IN - Article Actions - DESKTOP -->
+                                            <div class="article-actions section d-none d-sm-block" role="toolbar">
+                                                <!-- NEW Download PDF link - migrated from .article-intro byline
+                                                    Hide this link if no PDF configured for this article
+                                                -->
+                                                <p class="articleDate"></p>
+
+                                                <button id="linkToPrintArticle"
+                                                        class="article-action linkToPrintArticle fa fa-print"
+                                                        data-bs-toogle="tooltip" data-bs-placement="bottom"
+                                                        title="Print"
+                                                        data-content-element="#primary-content-main"
+                                                        data-print-modal-name="PRINT"
+                                                        data-print-modal-style="height=400,width=800,scrollbars=yes"
+                                                        data-print-modal-title="Be Ready for Post-Quantum Security with Intel® Cryptography Primitives Library"
+                                                        data-include-page-title="true"
+                                                        onclick="printArticle('#linkToPrintArticle');"
+                                                        aria-label="Print Article"></button>
+
+                                                <button id="linkToEmailArticle"
+                                                        class="article-action linkToEmailArticlefa fa-mail-1"
+                                                        data-bs-toogle="tooltip" data-bs-placement="bottom"
+                                                        title="Email"
+                                                        data-modal-title="Be Ready for Post-Quantum Security with Intel® Cryptography Primitives Library"
+                                                        data-modal-subject="Link to the Intel Article"
+                                                        data-modal-body="Intel Article Link"
+                                                        onclick="emailArticle('#linkToEmailArticle');"
+                                                        aria-label="Email Article"></button>
+
+                                                <!--
+                                                    This will be for a future project
+                                                    <button id="linkBookMark" class="article-action fa fa-bookmark-empty" data-tooltip="tooltip" data-placement="top" data-container="body" title="BookMark"></button>
+                                                -->
+                                            </div>
+                                            <div class="article-intro-first section d-none d-sm-block">
+                                                <div class="articleintro">
+                                                    <div class="articleintro">
+
+
+
+
+
+
+
+        
+        
+
+
+
+
+
+
+
+<div class="container article-intro-first-child" id="articleintro" data-component="articleintro" data-component-id="1">
+
+    <div class="component-padding article-intro-padding">
+        <div class="article-intro byline">
+            
+            <div class="intropdf">
+                
+
+            </div>
+            
+            
+            
+
+                
+
+                
+
+                
+                    <span id="authorShortBio" class="articleIntroAuthor"><p><b><a href="https://www.linkedin.com/in/elena-tyuleneva/">Elena Tyuleneva</a></b></p>
+<p>Senior Math Algorithm Software Engineer</p>
+<p><b><a href="https://www.linkedin.com/in/muelleralbrecht/">Robert Mueller-Albrecht</a></b></p>
+<p>Software Product Marketing Engineer</p>
+<p> </p>
+<p>Intel Corporation</p>
+</span>
+                
+
+            
+
+            
+
+            
+        </div>
+    </div>
+</div>
+
+</div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <div class="articlebladepar intelparsys">
+<div class="articleParagraph parbase section">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        
+            <div id="articleparagraph-1" class="component" data-component="articleparagraph"
+                 data-component-id="1">
+                <div >
+                    
+                    
+
+
+
+
+
+
+
+    
+    <div class="container">
+        <div class="component-padding">
+            <div class="row">
+                <div class="col-md-4 takeaway-placeholder">
+                </div>
+                <div class="col-md-8 paragraph-placeholder">
+                    <div class="article-content">
+                        <div class="row">
+                            <div class="col-12 articlepara">
+                                <div class="modal fade modal-image" id="image-expand-modal" tabindex="-1" role="dialog">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close icon" data-bs-dismiss="modal"
+                                                        aria-label="Close">
+                                                    <span></span></button>
+                                            </div>
+                                            <div class="modal-body"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                    
+                                    
+                                        <p><h2>The Importance of Cryptography for All of Us</h2>
+
+<p>Cryptography is crucial in the modern world due to the pervasive use of digital technology in many aspects of daily life, including communication (messengers), finance, and healthcare. It provides the means to secure data and ensure privacy, integrity, and authenticity in an environment where information can be easily intercepted, manipulated, or stolen. It helps to protect personal data and check data authenticity using encryption/decryption, device key authentication, and digital signatures.</p>
+
+<h2>The Challenge of a Post-Quantum Computing World</h2>
+
+<p>Post-quantum cryptography is about creating future-proof security methods that will be reliable and trustworthy even once quantum computers become available. The premise is that even those won&rsquo;t be able to break post-quantum encryption within a reasonable and actionable timeframe.</p>
+
+<p>The security of many encryption, data authentication and integrity methods used today, such as RSA and ECC (Elliptic Curve Cryptography), relies on the difficulty of solving certain mathematical problems, like integer factorization and discrete logarithms, which are computationally infeasible for classical computers to solve within any constrained time interval. This is what makes them practically unbreakable.</p>
+
+<p>This is, however, about to change. Quantum computers will likely solve these problems more efficiently using Shor&#39;s Factoring Algorithm and other derived algorithms. These new algorithms can exponentially speed up the process of identifying the prime numbers used for RSA, ECC, and digital signature encryption. Suddenly, the common encryption methods we rely on for internet communication and sensitive data storage will be obsolete. Our data will no longer be secure.</p>
+
+<h2>Working on a Future-Proof Solution</h2>
+
+<p>Cryptography researchers are working on new types of security to counter the threat that the use of quantum computers and their ability to quickly solve certain types of mathematical problems could pose one day. The objective is clear: to develop new types of encryption and decryption-based security that don&#39;t rely on the math problems quantum computers are good at solving.</p>
+
+<p>These new methods use different kinds of tough problems that even quantum computers would struggle with. Advanced lattice multiplication and hash-based algorithms are common approaches to staying ahead of the evolution of quantum computers.</p>
+
+<p>Post-quantum algorithms are important and will become as important in the same varied set of use cases as traditional cryptography algorithms.</p>
+
+<p>One such use case example that has already entered the real world is Apple*&rsquo;s <a href="https://security.apple.com/blog/imessage-pq3/">PQ3 post-quantum Cryptographic protocol</a>, which is used with their iMessage* mobile messaging service.</p>
+
+<p><a href="https://www.nist.gov">NIST*</a> collaborated with&nbsp; <a href="https://www.idemia.com/">IDEMEA*</a>, a French multinational technology company specializing in identity and authentication-related security services, to identify post-quantum protocols for banking applications and presented their recommendations at the <a href="https://csrc.nist.gov/csrc/media/Events/2022/fourth-pqc-standardization-conference/documents/papers/post-quantum-protocols-for-banking-applications-pqc2022.pdf">4th NIST PQC Standardization Conference</a>. This work, as part of the NIST <a href="https://csrc.nist.gov/projects/post-quantum-cryptography">Post-Quantum Cryptography PQC</a> in conjunction with many other contributions, led to the release of the first 3 NIST-backed <a href="https://www.nist.gov/news-events/news/2024/08/nist-releases-first-3-finalized-post-quantum-encryption-standards">Finalized Post-Quantum Encryption Standards</a>.</p>
+
+<p>Integrating post-quantum methods in the industry early, even before quantum computers become widely available, is necessary to establish forward secrecy. The threat of &ldquo;retrospective decryption&rdquo; refers to the ability to decrypt previously intercepted and recorded encrypted communications at a later point in time. We must assume that data encrypted using traditional methods will be collected and stored in anticipation of new decryption technology becoming available. To minimize that risk, it is good to establish a forward-looking security posture.</p>
+
+<p>Figure 1 illustrates the ideal situation. Cryptography applications should start the transition to Postquantum Cryptography far before the first large quantum computers are built.</p>
+
+<p><img alt="" height="501" src="/content/dam/developer/articles/technical/post-quantum-cryptography/pqc-timeline.png" width="1618"/></p>
+
+<p><strong>Figure 1:</strong> Post Quantum Cryptogrpahy Timeline</p>
+
+<p>Since algorithms beyond the initial 3, selected during NISTs competition, are still under the active research, it is recommended to implement the transition in Hybrid mode. A &ldquo;hybrid&rdquo;&nbsp; is a combination of classical and post-quantum cryptography schemes.</p>
+
+<p>For instance, to create a single Kyber512X key agreement, we can combine two cryptographic components:</p>
+
+<ol>
+	<li>Kyber512, a post-quantum key encapsulation mechanism resistant to cryptanalytic and quantum computer attacks</li>
+	<li>X25519, a classic cryptography key agreement scheme.</li>
+</ol>
+
+<p>The advantage of using a hybrid is that the data remains secure against non-quantum attackers, even if Kyber512 turns out broken.</p>
+
+<p>It is important to note that security is not just about the algorithm but also the implementation: Kyber512 might be perfectly secure, but an implementation might leak via side channels. The downside is that two key exchanges are performed, which takes more CPU cycles and bytes on the wire, but security is the first priority when we talk about Cryptography.</p>
+
+<h2>Overview of the Intel&reg; Cryptography Primitives Library</h2>
+
+<p>The <a href="/content/www/us/en/developer/tools/overview.html">Intel Cryptography Primitives Library</a> is a secure, fast, and lightweight library of cryptography building blocks, highly optimized for various Intel&reg; CPUs (link to documentation).</p>
+
+<p>It is available on <a href="https://github.com/intel/cryptography-primitives">GitHub</a>.</p>
+
+<h3>Support for Many Cryptographic Domains</h3>
+
+<p>The library provides a comprehensive set of routines commonly used for cryptographic operations, including:</p>
+
+<p><img alt="" height="587" src="/content/dam/developer/articles/technical/post-quantum-cryptography/cryptography-domains.png" width="2005"/></p>
+
+<h3>Benefits of Using the Intel Cryptography Primitives Library</h3>
+
+<ul>
+	<li>Security (constant-time execution for secret processing functions)</li>
+	<li>Designed for the small footprint size</li>
+	<li>Optimized for different Intel CPUs and instruction set architectures (including hardware cryptography instructions support):
+	<ul style="list-style-type:circle">
+		<li>Intel&reg; Streaming SIMD Extensions 2 (Intel&reg; SSE2)</li>
+		<li>Intel&reg; SSE3</li>
+		<li>Intel&reg; SSE4.2</li>
+		<li>Intel&reg; Advanced Vector Extensions (Intel&reg; AVX)</li>
+		<li>Intel&reg; Advanced Vector Extensions 2 (Intel&reg; AVX2)</li>
+		<li>Intel&reg; Advanced Vector Extensions 512 (Intel&reg; AVX-512)</li>
+	</ul>
+	</li>
+	<li>Configurable CPU dispatching for the best performance</li>
+	<li>Kernel mode compatibility</li>
+	<li>Thread-safe design</li>
+</ul>
+
+<p>The Intel Cryptography Primitives Library supports building blocks (self-tests, services) for <a href="https://csrc.nist.gov/pubs/fips/140-3/final" style="color:#467886; text-decoration:underline">FIPS 140-3 compliance</a>.</p>
+
+<p>&nbsp;</p>
+
+<h2>Post-quantum Cryptography Algorithms in the Intel&reg; Cryptography Primitives Library</h2>
+
+<p>Currently, the Cryptography Primitives Library supports the verification of digital signatures: the eXtended Merkle Signature Scheme (XMSS) and Leighton-Micali Signature (LMS), which are stateful hash-based signature schemes. Both algorithms are standardized by NIST (<a href="https://csrc.nist.gov/pubs/sp/800/208/final">NIST SP 800-208</a>).</p>
+
+<p class="note"><strong>Note&nbsp;</strong>Unlike conventional digital signature schemes, stateful signature schemes require updating the secret key for every required signature check. For stateful hash-based signature schemes, signing requires keeping the state of the used one-time keys and ensuring they are never reused,</p>
+
+<p>These algorithms are implemented as preview features in the Intel Cryptography Primitives Library. For additional details about preview features in the library, click here.</p>
+
+<h3>Using XMSS and LMS Cryptography</h3>
+
+<p>The Intel Cryptography Primitives Library documentation provides detailed examples for the use of both:</p>
+
+<ol>
+	<li>XMSS Signature Verification Scheme</li>
+	<li>LMS Signature Verification</li>
+</ol>
+
+<p>The library implementations provide special functions like getters and setters that are required to call algorithms.</p>
+
+<h3>Comparing ECDSA and LMS Verification Usage</h3>
+
+<p>Here is an example comparing the use of Intel Cryptography Primitives Library implementations of Elliptic Curve Digital Signature Authority (ECDSA) verification and Leighton-Micali Signature &nbsp;(LMS) verification schemes:</p>
+
+<table border="1" cellpadding="1" cellspacing="1" style="width:1500px">
+	<tbody>
+		<tr>
+			<td>
+			<pre>
+<code class="language-cpp">#include &lt;stdlib&gt;
+#include "ippcp.h"
+
+/* public key */
+const char* pHexGx   = "...";
+const char* pHexGy   = "...";
+/* message */
+Ipp8u pMsgDigest[]   = "...";
+/* signature */
+const char* pHexSigR = "...";
+const char* pHexSigS = "...";
+const unsigned int bitSize = 256;
+
+IppStatus sts = ippStsNoErr;
+IppECResult vfyResult = IppECResult::ippECInvalidSignature;
+
+Ipp8u* buffer = NULL;
+IppsGFpState* gf = NULL;
+IppsGFpECState* ec = NULL;
+IppsGFpECPoint* regPublic = NULL;
+IppsGFpElement* pubGx = NULL;
+IppsGFpElement* pubGy = NULL;
+
+/* Initialize p256r1 elliptic curve */
+int size = 0;
+sts = ippsGFpGetSize(bitSize, &amp;size);
+if (ippStsNoErr != sts) goto CLEAR_MEMORY;
+
+gf  = (IppsGFpState *)(new Ipp8u[size]);
+sts = ippsGFpInitFixed(bitSize, ippsGFpMethod_p256r1(), gf);
+if (ippStsNoErr != sts) goto CLEAR_MEMORY;
+
+sts = ippsGFpECGetSize(gf, &amp;size);
+if (ippStsNoErr != sts) goto CLEAR_MEMORY;
+
+ec  = (IppsGFpECState *)(new Ipp8u[size]);
+sts = ippsGFpECInitStd256r1(gf, ec);
+if (ippStsNoErr != sts) goto CLEAR_MEMORY;
+
+sts = ippsGFpECBindGxyTblStd256r1(ec);
+if (ippStsNoErr != sts) goto CLEAR_MEMORY;
+
+const BigNumber Gx(pHexGx);
+const BigNumber Gy(pHexGy);
+const BigNumber SigR(pHexSigR);
+const BigNumber SigS(pHexSigS);
+
+/* public key Gx|Gy */
+pubGx = newGFpElement(gf, Gx.DwordSize(), Gx.DataRef());
+pubGy = newGFpElement(gf, Gy.DwordSize(), Gy.DataRef());
+
+int buffSize = 0;
+sts = ippsGFpECPointGetSize(ec, &amp;buffSize);
+if (ippStsNoErr != sts) goto CLEAR_MEMORY;
+
+regPublic = (IppsGFpECPoint*)( new Ipp8u [buffSize] );
+sts = ippsGFpECPointInit(pubGx, pubGy, regPublic, ec);
+if (ippStsNoErr != sts) goto CLEAR_MEMORY;
+
+sts = ippsGFpECScratchBufferSize(2, ec, &amp;buffSize);
+if (ippStsNoErr != sts) goto CLEAR_MEMORY;
+
+buffer = (Ipp8u*)( new Ipp8u [buffSize] );
+
+sts = ippsGFpECVerifyDSA(pMsgDigest, regPublic, SigR, SigS, &amp;vfyResult, ec, buffer);
+if (ippStsNoErr != sts) goto CLEAR_MEMORY;
+
+CLEAR_MEMORY:
+    deleteGFpElement(pubGx);
+    deleteGFpElement(pubGy);
+    deleteGFpECPoint(regPublic);
+    deleteGFpEC(ec);
+    deleteGFp(gf);
+    delete [] buffer;
+
+if((IppECResult::ippECValid == vfyResult) &amp;&amp; (ippStsNoErr == sts))
+    std::cout &lt;&lt; "Signature verification is ok";
+else
+    std::cout &lt;&lt; "Signature verification failed";</code></pre>
+			</td>
+			<td>
+			<pre>
+<code class="language-cpp">#include &lt;stdlib&gt;
+#include "ippcp.h"
+
+Ipp32u q = 0x00000009;
+IppsLMOTSAlgo lmotsAlgo = IppsLMOTSAlgo::LMOTS_SHA256_N32_W8; //0x00000004
+IppsLMSAlgo lmsAlgo     = IppsLMSAlgo::LMS_SHA256_M32_H5;     //0x00000005
+Ipp8u pI[]              = { ... };
+Ipp8u pK[]              = { ... };
+Ipp8u pMsg[]            = { ... };
+Ipp32s msgLength        = sizeof(kat_msg);
+Ipp8u pC[]         = { ... };
+Ipp8u pY[]         = { ... };
+Ipp8u pAuthPath[]  = { ... };
+IppStatus sts;
+
+int is_valid = 0;
+
+/* Public key initialization */
+const IppsLMSAlgoType lmsAlgTypePk = { lmotsAlgo, lmsAlgo };
+
+int buffSize;
+sts = ippsLMSBufferGetSize(&amp;buffSize, msgLength, lmsAlgTypePk);
+if(ippStsNoErr != sts) goto CLEAR_MEMORY;
+Ipp8u* pScratchBuffer = new Ipp8u[buffSize];
+
+int ippcpPubKeySize;
+sts = ippsLMSPublicKeyStateGetSize(&amp;ippcpPubKeySize, lmsAlgTypePk);
+if(ippStsNoErr != sts) goto CLEAR_MEMORY;
+IppsLMSPublicKeyState* pPubKey = new Ipp8u[ippcpPubKeySize];
+
+sts = ippsLMSSetPublicKeyState(lmsAlgTypePk, pI, pK, pPubKey);
+if(ippStsNoErr != sts) goto CLEAR_MEMORY;
+
+/* Signature initialization */
+const IppsLMSAlgoType lmsAlgTypeSig = { lmotsAlgo, lmsAlgo };
+int sigBuffSize;
+sts = ippsLMSSignatureStateGetSize(&amp;sigBuffSize, lmsAlgTypeSig);
+if(ippStsNoErr != sts) goto CLEAR_MEMORY;
+IppsLMSSignatureState* pSignature = new Ipp8u[sigBuffSize];
+
+sts = ippsLMSSetSignatureState(lmsAlgTypeSig, q, pC, pY, pAuthPath, pSignature);
+if(ippStsNoErr != sts) goto CLEAR_MEMORY;
+
+/* Verification */
+sts = ippsLMSVerify(pMsg, msgLength, pSignature, &amp;is_valid, pPubKey, pScratchBuffer);
+if(ippStsNoErr != sts) goto CLEAR_MEMORY;
+
+CLEAR_MEMORY:
+    delete[] pScratchBuffer;
+    delete[] pPubKey;
+    delete[] pSignature;
+
+if(is_valid &amp;&amp; (ippStsNoErr == sts))
+    std::cout &lt;&lt; "Signature verification is ok";
+else
+    std::cout &lt;&lt; "Signature verification failed";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</code></pre>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<p><strong>Figure 2:</strong> Comparison of ECDSA and LMS Verification Scheme</p>
+
+<p class="greyHighlight"><strong>Note:</strong><br />
+Check out the <a href="https://github.com/intel/cryptography-primitives/blob/develop/examples/post-quantum/lms_m32_h5_w8_verification.cpp">Detailed LMS Usage Example</a> on the <a href="https://github.com/intel/cryptography-primitives">Intel Cryptography Primitives Library Github</a></p>
+
+<h2>Add Post Quantum Security to Your Application</h2>
+
+<p>The Intel Cryptography Primitives Library provides Post-Quantum Security already today with its support for XMSS (eXtended Merkle Signature Scheme) and LMS Leighton-Micali Signature hash-based cryptography schemes.</p>
+
+<p>We are at the forefront of implementing the latest in post-quantum cryptographic technology and are closely monitoring the evolution of standards at NIST&rsquo;s <a href="https://www.nist.gov/pqcrypto">Post Quantum Cryptography PQC</a>.</p>
+
+<p>Join us in making our sensitive, critical data and future more secure.</p>
+
+<p>Download the Intel Cryptography Primitives Library <a href="/content/www/us/en/developer/tools/oneapi/components.html">standalone</a> or as part of the <a href="/content/www/us/en/developer/tools/oneapi/toolkits.html#base-kit">Intel&reg; oneAPI Base Toolkit</a>.</p>
+
+<p>If you have any questions or requests to extend the list of post-quantum algorithms, please submit the issue on&nbsp;<a href="https://github.com/intel/cryptography-primitives">Github</a>&nbsp;or in the&nbsp;online service center.</p>
+
+<p>We are looking forward to your feedback and suggestions.</p>
+
+<h2>Additional Resources</h2>
+
+<p><strong>Tutorials</strong></p>
+
+<ul>
+	<li><a href="/content/www/us/en/developer/articles/technical/fips-140-security-cryptography-library.html">Exceed FIPS 140 Level Information Security with Intel Cryptography Primitives Library </a></li>
+	<li><a href="https://www.intel.com/content/www/us/en/developer/articles/technical/aes-gcm-acceleration-with-ipp-cryptography.html">AES-GCM Acceleration with Intel&reg; Cryptography Primitives Library</a></li>
+	<li><a href="https://github.com/intel/cryptography-primitives/tree/develop/examples">Cryptography Code Samples</a></li>
+</ul>
+
+<p><strong>NIST Post-Quantum Cryptography Standardization</strong></p>
+
+<ul>
+	<li><a href="https://csrc.nist.gov/projects/post-quantum-cryptography">Post-Quantum Cryptography PQC</a></li>
+	<li><a href="https://www.nist.gov/news-events/news/2024/08/nist-releases-first-3-finalized-post-quantum-encryption-standards">NIST Releases First 3 Finalized Post-Quantum Encryption Standards</a></li>
+</ul>
+
+<p><strong>Post Quantum Encryption with Intel Cryptography Primitives Library</strong></p>
+
+<ul>
+	<li><a href="/content/www/us/en/developer/articles/technical/post-quantum-cryptography.html">Post-quantum Algorithms in Intel&reg; Cryptography Primitives Library</a>
+
+	<ul>
+		<li><a href="/content/www/us/en/docs/crypto-primitives-library/developer-guide-reference/2025-0/xmss-index.html" rel="noopener noreferrer" target="_blank">eXtended Merkle Signature Scheme (XMSS)</a></li>
+		<li>
+		<p>Leighton-Micali Hash-Based Signatures (LMS)</p>
+		</li>
+	</ul>
+	</li>
+</ul>
+
+<p>&nbsp;</p>
+</p>
+                                    
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+
+
+
+                </div>
+            </div>
+        
+    
+</div>
+</div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="article-tags-first section d-none d-sm-block">
+                                    <div class="article-tags-component">
+                                        <div class="articletags parbase">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+                    <div class="d-none">
+                        
+                        <sup>1</sup>
+                    </div>
+                
+
+                <div class="big-parser">
+                    <!-- BEGIN NEW BUILT IN - ARTICLE BLADE PARSYS4 - DRAG COMPONENTS HERE - 2 Column -->
+                    <div class="automatedbladepar4">
+                        <div class="container">
+                            <div class="row">
+                                <div class="left-side col-sm-8 col-md-6">
+                                    <div class="relatedArticles">
+                                        <div class="articlebladepar4 detailText">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        <div id="detailtext-1" class="l3-detail-text-component intel-brand-ux has-rte-buttons" role="region" aria-label="Detail Text 1" data-component="detailtext" data-component-id="1">
+            
+            
+            
+            
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-md-10 col-xl-8 detail-blockquote">
+                            
+                    </div>
+                </div>
+            </div>
+            </div>
+    
+
+</div>
+
+                                    </div>
+                                </div>
+                                <div class="left-side col-sm-8 col-md-6">
+                                    <div class="recentlyViewedPages">
+                                        <div class="articlebladepar5 intelparsys">
+</div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="big-parser">
+                    <div class="articlebladepar1 intelparsys">
+</div>
+
+
+                    
+
+                    
+                    <div class="articlebladepar3 intelparsys">
+</div>
+
+                    <div class="contactUs contact">
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preload" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/contact-us.min.css" as="style">
+<link rel="stylesheet" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/contact-us.min.css" type="text/css"><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/contact-us.min.js" defer></script>
+
+
+</div>
+
+                </div>
+                
+                
+                    
+                        <div id="contextualFooter-PlaceHolder" class="contextualFooter"></div>
+                    
+                
+
+            </article>
+        </main>
+    
+    
+
+
+
+
+
+    <div class="disclaimer parbase">
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        
+        
+        
+            <div class="disclaimer-component intel-ws link-default theme-light-default">
+                <div class="container disclaimer-container ws-comp-standard-padding">
+                    <h4 class="h6">Product and Performance Information</h4>
+                    
+                    
+                    
+                        
+                            <div class="disclaimer"><sup>1</sup><p>Performance varies by use, configuration and other factors. Learn more at&nbsp;<a href="http://www.intel.com/PerformanceIndex" title="Follow link">www.Intel.com/PerformanceIndex</a>.</p>
+</div>
+                        
+                    
+                    
+                    
+                </div>
+            </div>
+        
+    
+
+<div class="translationDisclaimer parbase">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        
+    
+
+
+</div>
+
+</div>
+
+
+
+
+    <div class="helpModule getHelpComponent parbase">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        
+            
+            <div id="getHelpComponent-1" class="component get-help-module" data-component="getHelpComponent"
+                 data-component-id="1">
+                <aside id="gethelp" class="right d-none" role="dialog" data-help-config-url = "/libs/intel/get-help.us_en.default">
+                    <div class="wrapper">
+                        
+                        <div class="navbar-gh" aria-label="Get Help Dialog Header">
+                            <a name="gethelp_button" id="gethelp_button"></a>
+                            
+                            <button class="navbar-toggler btn btn-primary collapsed justify-content-between"
+                                    type="button" data-bs-toggle="collapse" data-target="#gethelp-accordion"
+                                    aria-controls="gethelp-accordion" aria-expanded="false"
+                                    aria-label="Get Help Dialog" data-btn-ref="get-help" data-wap="" data-wap_ref="get-help-collapsed">
+                <span class="navbar-toggler-icon-gethelp  chat-icon icon align-icons fa-user-headset" aria-hidden="true"
+                      title=""></span>
+                                <span id="gethelp-heading" class="navbar-toggler-title" aria-hidden="true">Get Help</span>
+                                
+                                <span class="navbar-toggler-icon-close icon align-icons fa-cancel-thin" aria-hidden="true"
+                                      title="Close Get Help Dialog"></span>
+                            </button>
+                        </div>
+
+                        <ul id="gethelp-accordion" class="accordion panel-group collapse" data-allow-toggle=""
+                            aria-label="Accordion">
+                        </ul>
+
+                    </div>
+
+                </aside>
+            </div>
+            <textarea id="get-help-stylesheet-path" title="" style="display:none;">
+                
+                <link rel="stylesheet" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/get-help.min.css" type="text/css">
+            </textarea>
+            <script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/get-help.min.js" defer></script>
+        
+    
+
+</div>
+
+
+</main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer class="global blade solid brand-lighter-gray theme-light-2 component" data-component-id="1"
+        data-component="footer" role="contentinfo" data-wap_type="wa_skip_track" id="skip-footer">
+    <div class="container">
+        <div class="content-footer">
+            <div class="content">
+                
+                    
+                        
+                            <ul class="footer-links">
+                                
+                                    <li>
+                                        <a href="/content/www/us/en/company-overview/company-overview.html">Company Overview</a>
+                                    </li>
+                                
+                                    <li>
+                                        <a href="/content/www/us/en/support/contact-us.html">Contact Intel</a>
+                                    </li>
+                                
+                                    <li>
+                                        <a href="https://newsroom.intel.com/">Newsroom</a>
+                                    </li>
+                                
+                                    <li>
+                                        <a href="https://www.intc.com/">Investors</a>
+                                    </li>
+                                
+                                    <li>
+                                        <a href="/content/www/us/en/jobs/life-at-intel.html">Careers</a>
+                                    </li>
+                                
+                                    <li>
+                                        <a href="/content/www/us/en/corporate-responsibility/corporate-responsibility.html">Corporate Responsibility</a>
+                                    </li>
+                                
+                                    <li>
+                                        <a href="/content/www/us/en/inclusion/inclusion-at-intel.html">Inclusion</a>
+                                    </li>
+                                
+                                    <li>
+                                        <a href="/content/www/us/en/company-overview/public-policy.html">Public Policy</a>
+                                    </li>
+                                
+                            </ul>
+                        
+                        
+                        
+                    
+                
+                    
+                        
+                        
+                            <ul class="footer-links social">
+                                
+                                    <li>
+                                        <a href="https://www.facebook.com/Intel" target="" aria-label="Intel on Facebook" data-wap="{&quot;linktype&quot;:&quot;footersocial&quot;}">
+                                            <i aria-hidden="true" class="fa-facebook"></i>
+                                        </a>
+                                    </li>
+                                
+                                    <li>
+                                        <a href="https://twitter.com/intel" target="" aria-label="Intel on Twitter" data-wap="{&quot;linktype&quot;:&quot;footersocial&quot;}">
+                                            <i aria-hidden="true" class="fa-twitter"></i>
+                                        </a>
+                                    </li>
+                                
+                                    <li>
+                                        <a href="https://www.linkedin.com/company/intel-corporation" target="" aria-label="Intel on LinkedIn" data-wap="{&quot;linktype&quot;:&quot;footersocial&quot;}">
+                                            <i aria-hidden="true" class="fa-linkedin"></i>
+                                        </a>
+                                    </li>
+                                
+                                    <li>
+                                        <a href="https://www.youtube.com/user/channelintel?sub_confirmation=1" target="" aria-label="Intel on YouTube" data-wap="{&quot;linktype&quot;:&quot;footersocial&quot;}">
+                                            <i aria-hidden="true" class="fa-youtube"></i>
+                                        </a>
+                                    </li>
+                                
+                                    <li>
+                                        <a href="https://www.instagram.com/intel/" target="" aria-label="Intel on Instagram" data-wap="{&quot;linktype&quot;:&quot;footersocial&quot;}">
+                                            <i aria-hidden="true" class="fa-instagram"></i>
+                                        </a>
+                                    </li>
+                                
+                            </ul>
+                        
+                        
+                    
+                
+                    
+                        
+                        
+                        
+                            <ul class="footer-links secondary-links" id="footerSecondaryLinks">
+                                
+                                    <li>
+                                        
+                                            
+                                            
+                                                <small>© Intel Corporation</small>
+                                            
+                                        
+                                    </li>
+                                
+                                    <li>
+                                        
+                                            
+                                                
+                                                    
+                                                    
+                                                        <a href="/content/www/us/en/legal/terms-of-use.html">
+                                                            <small>Terms of Use</small>
+                                                        </a>
+                                                    
+                                                
+                                            
+                                            
+                                        
+                                    </li>
+                                
+                                    <li>
+                                        
+                                            
+                                                
+                                                    
+                                                    
+                                                        <a href="/content/www/us/en/legal/trademarks.html">
+                                                            <small>*Trademarks</small>
+                                                        </a>
+                                                    
+                                                
+                                            
+                                            
+                                        
+                                    </li>
+                                
+                                    <li>
+                                        
+                                            
+                                                
+                                                    
+                                                        <a href="/content/www/us/en/privacy/intel-cookie-notice.html" data-cookie-notice="true">
+                                                                    <small>Cookies</small>
+                                                                    
+                                                                
+                                                        </a>
+                                                    
+                                                    
+                                                
+                                            
+                                            
+                                        
+                                    </li>
+                                
+                                    <li>
+                                        
+                                            
+                                                
+                                                    
+                                                    
+                                                        <a href="/content/www/us/en/privacy/intel-privacy-notice.html">
+                                                            <small>Privacy</small>
+                                                        </a>
+                                                    
+                                                
+                                            
+                                            
+                                        
+                                    </li>
+                                
+                                    <li>
+                                        
+                                            
+                                                
+                                                    
+                                                    
+                                                        <a href="/content/www/us/en/corporate-responsibility/statement-combating-modern-slavery.html">
+                                                            <small>Supply Chain Transparency </small>
+                                                        </a>
+                                                    
+                                                
+                                            
+                                            
+                                        
+                                    </li>
+                                
+                                    <li>
+                                        
+                                            
+                                                
+                                                    
+                                                    
+                                                        <a href="/content/www/us/en/siteindex.html">
+                                                            <small>Site Map</small>
+                                                        </a>
+                                                    
+                                                
+                                            
+                                            
+                                        
+                                    </li>
+                                
+                                    <li>
+                                        
+                                            
+                                                
+                                                    
+                                                    
+                                                        <a href="/content/www/us/en/support/articles/000098122/services.html">
+                                                            <small>Recycling</small>
+                                                        </a>
+                                                    
+                                                
+                                            
+                                            
+                                        
+                                    </li>
+                                
+                                    <li>
+                                        
+                                            
+                                                
+                                                    
+                                                        <a href="/#" data-wap_ref="dns" id="wap_dns">
+                                                                    <small>Your Privacy Choices</small>
+                                                                    
+                                                                        <span style="height:10px;width:28px;display:inline-block;position:relative;"><svg style="position:absolute;width:28px;bottom:-2px;" version="1.1" id="Layer_1" xmlns=http://www.w3.org/2000/svg xmlns:xlink=http://www.w3.org/1999/xlink x="0px" y="0px" viewBox="0 0 30 14" xml:space="preserve"><title>California Consumer Privacy Act (CCPA) Opt-Out Icon</title><style type="text/css">.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}.st1{fill-rule:evenodd;clip-rule:evenodd;fill:#0066FF;}.st2{fill:#FFFFFF;}.st3{fill:#0066FF;}</style><g><g id="final---dec.11-2020_1_"><g id="_x30_208-our-toggle_2_" transform="translate(-1275.000000, -200.000000)"><g id="Final-Copy-2_2_" transform="translate(1275.000000, 200.000000)"><path class="st0" d="M7.4,12.8h6.8l3.1-11.6H7.4C4.2,1.2,1.6,3.8,1.6,7S4.2,12.8,7.4,12.8z"></path></g></g></g><g id="final---dec.11-2020"><g id="_x30_208-our-toggle" transform="translate(-1275.000000, -200.000000)"><g id="Final-Copy-2" transform="translate(1275.000000, 200.000000)"><path class="st1" d="M22.6,0H7.4c-3.9,0-7,3.1-7,7s3.1,7,7,7h15.2c3.9,0,7-3.1,7-7S26.4,0,22.6,0z M1.6,7c0-3.2,2.6-5.8,5.8-5.8 h9.9l-3.1,11.6H7.4C4.2,12.8,1.6,10.2,1.6,7z"></path><path id="x" class="st2" d="M24.6,4c0.2,0.2,0.2,0.6,0,0.8l0,0L22.5,7l2.2,2.2c0.2,0.2,0.2,0.6,0,0.8c-0.2,0.2-0.6,0.2-0.8,0 l0,0l-2.2-2.2L19.5,10c-0.2,0.2-0.6,0.2-0.8,0c-0.2-0.2-0.2-0.6,0-0.8l0,0L20.8,7l-2.2-2.2c-0.2-0.2-0.2-0.6,0-0.8 c0.2-0.2,0.6-0.2,0.8,0l0,0l2.2,2.2L23.8,4C24,3.8,24.4,3.8,24.6,4z"></path><path id="y" class="st3" d="M12.7,4.1c0.2,0.2,0.3,0.6,0.1,0.8l0,0L8.6,9.8C8.5,9.9,8.4,10,8.3,10c-0.2,0.1-0.5,0.1-0.7-0.1l0,0 L5.4,7.7c-0.2-0.2-0.2-0.6,0-0.8c0.2-0.2,0.6-0.2,0.8,0l0,0L8,8.6l3.8-4.5C12,3.9,12.4,3.9,12.7,4.1z"></path></g></g></g></g></svg></span>
+                                                                    
+                                                                
+                                                        </a>
+                                                    
+                                                    
+                                                
+                                            
+                                            
+                                        
+                                    </li>
+                                
+                                    <li>
+                                        
+                                            
+                                                
+                                                    
+                                                        <a href="/content/www/us/en/privacy/privacy-residents-certain-states.html" data-wap_ref="nac" id="wap_nac">
+                                                                    <small>Notice at Collection</small>
+                                                                    
+                                                                
+                                                        </a>
+                                                    
+                                                    
+                                                
+                                            
+                                            
+                                        
+                                    </li>
+                                
+                            </ul>
+                        
+                    
+                
+                
+                    <div class="footer-disclaimer">
+                            <p>Intel technologies may require enabled hardware, software or service activation. // No product or component can be absolutely secure. // Your costs and results may vary. // Performance varies by use, configuration, and other factors. Learn more at <a href="https://edc.intel.com/content/www/us/en/products/performance/benchmarks/overview/"><u>intel.com/performanceindex</u></a>. // See our complete legal <u><a href="https://edc.intel.com/content/www/us/en/products/performance/benchmarks/overview/#GUID-26B0C71C-25E9-477D-9007-52FCA56EE18C">Notices and Disclaimers</a></u>. // Intel is committed to respecting human rights and avoiding causing or contributing to adverse impacts on human rights. See Intel’s <u><a href="/content/www/us/en/policy/policy-human-rights.html">Global Human Rights Principles</a></u>. Intel’s products and software are intended only to be used in applications that do not cause or contribute to adverse impacts on human rights.</p>
+
+                    </div>
+                
+            </div>
+            <div class="logo-container">
+                <a href="/content/www/us/en/homepage.html" class="footer-logo-rebrand" aria-label="Intel Footer Logo" title="Intel Footer Logo">
+                    <img src="/content/dam/logos/intel-footer-logo.svg" height="300" width="118" class="footer-logo-rebrand" alt="Intel Footer Logo" title="Intel Footer Logo">
+                </a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    <textarea id="defers" title="" style="display:none;">
+    <link rel="stylesheet" href="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/commons-page.min.css" type="text/css"><script src="/etc.clientlibs/settings/wcm/designs/ver/260203/intel/clientlibs/pages/commons-page.min.js" defer></script>
+
+
+<script>!function(){var e=setInterval(function(){"undefined"!=typeof $CQ&&($CQ(function(){CQ_Analytics.SegmentMgr.loadSegments("/etc/segmentation"),CQ_Analytics.ClientContextUtils.init("/etc/clientcontext/intel",window.location.pathname.substr(0,window.location.pathname.indexOf(".")))}),clearInterval(e))},100)}();</script>
+
+
+
+
+
+
+
+
+
+
+</textarea>
+
+
+</body>
+
+</html>
+
+
