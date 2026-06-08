@@ -1,0 +1,2115 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Structured data 2022 -->
+        <script type="application/ld+json">
+	{
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "SUSE state of and strategy for Post Quantum Cryptography at the end of 2025",
+    "datePublished": "2025-12-04",
+    "dateModified": "2025-12-04",
+    "author": {
+        "@type": "Person",
+        "name": "Marcus Meissner",
+        "url": "https://www.suse.com/c/author/msmeissn/"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "SUSE",
+        "logo": {
+            "@type": "ImageObject",
+            "name": "Suse Logo",
+            "url": "https://www.suse.com/assets/img/suse-white-logo-green.svg"
+        }
+    },
+    "url": "https://www.suse.com/c/suse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025/"
+}	</script>
+
+    <!-- Legacy structured data from custom field -->
+    
+    <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+<link rel="alternate" hreflang="en" href="https://www.suse.com/c/suse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025/" />
+<link rel="alternate" hreflang="x-default" href="https://www.suse.com/c/suse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025/" />
+
+	<!-- This site is optimized with the Yoast SEO plugin v26.5 - https://yoast.com/wordpress/plugins/seo/ -->
+	<title>SUSE state of and strategy for Post Quantum Cryptography at the end of 2025 | SUSE Communities</title>
+	<meta name="description" content="SUSE&#039;s strategy on implementing post quantum cryptography (PQC) has been to adopt standards and upstream implementations when they become av..." />
+	<link rel="canonical" href="https://www.suse.com/c/suse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025/" />
+	<meta name="twitter:label1" content="Written by" />
+	<meta name="twitter:data1" content="Marcus Meissner" />
+	<meta name="twitter:label2" content="Est. reading time" />
+	<meta name="twitter:data2" content="3 minutes" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://www.suse.com/c/suse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025/#article","isPartOf":{"@id":"https://www.suse.com/c/suse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025/"},"author":{"name":"Marcus Meissner","@id":"https://www.suse.com/c/blog/#/schema/person/3f37a3fbde8d0478d5a48d4f3aa196b5"},"headline":"SUSE state of and strategy for Post Quantum Cryptography at the end of 2025","datePublished":"2025-12-04T09:42:25+00:00","dateModified":"2025-12-04T09:57:17+00:00","mainEntityOfPage":{"@id":"https://www.suse.com/c/suse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025/"},"wordCount":556,"publisher":{"@id":"https://www.suse.com/c/blog/#organization"},"articleSection":["Security","SUSE Linux Enterprise Server"],"inLanguage":"en-US"},{"@type":"WebPage","@id":"https://www.suse.com/c/suse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025/","url":"https://www.suse.com/c/suse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025/","name":"SUSE state of and strategy for Post Quantum Cryptography at the end of 2025 | SUSE Communities","isPartOf":{"@id":"https://www.suse.com/c/blog/#website"},"datePublished":"2025-12-04T09:42:25+00:00","dateModified":"2025-12-04T09:57:17+00:00","description":"SUSE's strategy on implementing post quantum cryptography (PQC) has been to adopt standards and upstream implementations when they become av...","breadcrumb":{"@id":"https://www.suse.com/c/suse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https://www.suse.com/c/suse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025/"]}]},{"@type":"BreadcrumbList","@id":"https://www.suse.com/c/suse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.suse.com/c/blog/"},{"@type":"ListItem","position":2,"name":"SUSE state of and strategy for Post Quantum Cryptography at the end of 2025"}]},{"@type":"WebSite","@id":"https://www.suse.com/c/blog/#website","url":"https://www.suse.com/c/blog/","name":"SUSE Communities","description":"","publisher":{"@id":"https://www.suse.com/c/blog/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://www.suse.com/c/blog/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Organization","@id":"https://www.suse.com/c/blog/#organization","name":"SUSE","url":"https://www.suse.com/c/blog/","logo":{"@type":"ImageObject","inLanguage":"en-US","@id":"https://www.suse.com/c/blog/#/schema/logo/image/","url":"https://www.suse.com/c/wp-content/uploads/2023/08/SUSE_Logo.png","contentUrl":"https://www.suse.com/c/wp-content/uploads/2023/08/SUSE_Logo.png","width":696,"height":696,"caption":"SUSE"},"image":{"@id":"https://www.suse.com/c/blog/#/schema/logo/image/"},"sameAs":["https://www.facebook.com/SUSEWorldwide","https://x.com/suse"]},{"@type":"Person","@id":"https://www.suse.com/c/blog/#/schema/person/3f37a3fbde8d0478d5a48d4f3aa196b5","name":"Marcus Meissner","image":{"@type":"ImageObject","inLanguage":"en-US","@id":"https://www.suse.com/c/blog/#/schema/person/image/","url":"https://www.suse.com/c/wp-content/uploads/2020/08/marcus202006-96x96.jpg","contentUrl":"https://www.suse.com/c/wp-content/uploads/2020/08/marcus202006-96x96.jpg","caption":"Marcus Meissner"},"url":"https://www.suse.com/c/author/msmeissn/"}]}</script>
+	<!-- / Yoast SEO plugin. -->
+
+
+<link rel="alternate" type="application/rss+xml" title="SUSE Communities &raquo; SUSE state of and strategy for Post Quantum Cryptography at the end of 2025 Comments Feed" href="https://www.suse.com/c/suse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025/feed/" />
+<style id='wp-img-auto-sizes-contain-inline-css' type='text/css'>
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<link rel='stylesheet' id='wp-block-library-css' href='https://www.suse.com/c/wp-includes/css/dist/block-library/style.min.css?ver=6.9' type='text/css' media='all' />
+<style id='global-styles-inline-css' type='text/css'>
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgb(252,185,0) 0%,rgb(255,105,0) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgb(255,105,0) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgb(255, 255, 255), 6px 6px rgb(0, 0, 0);--wp--preset--shadow--crisp: 6px 6px 0px rgb(0, 0, 0);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+/*# sourceURL=global-styles-inline-css */
+</style>
+
+<style id='classic-theme-styles-inline-css' type='text/css'>
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+/*# sourceURL=/wp-includes/css/classic-themes.min.css */
+</style>
+<link rel='stylesheet' id='wpml-legacy-dropdown-0-css' href='https://www.suse.com/c/wp-content/plugins/sitepress-multilingual-cms/templates/language-switchers/legacy-dropdown/style.min.css?ver=1' type='text/css' media='all' />
+<link rel='stylesheet' id='wpml-legacy-horizontal-list-0-css' href='https://www.suse.com/c/wp-content/plugins/sitepress-multilingual-cms/templates/language-switchers/legacy-list-horizontal/style.min.css?ver=1' type='text/css' media='all' />
+<link rel='stylesheet' id='ekr-styles-css' href='https://www.suse.com/c/wp-content/themes/suse/style.css?ver=1.0' type='text/css' media='all' />
+<script type="text/javascript" src="https://www.suse.com/c/wp-content/plugins/sitepress-multilingual-cms/templates/language-switchers/legacy-dropdown/script.min.js?ver=1" id="wpml-legacy-dropdown-0-js"></script>
+<meta name="generator" content="WPML ver:4.8.6 stt:60,9,38,1,18,4,3,23,27,28,29,39,41,43,42,46,2,51,54;" />
+<meta charset="utf-8"/>
+<link rel="icon" type="image/png" href="https://www.suse.com/favicon.ico" />
+
+<script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" type="text/javascript" charset="UTF-8" data-domain-script="91a6ec73-a3cb-4b22-bd3f-e5a060e77d29"></script>
+<script type="text/javascript">
+    function OptanonWrapper() {
+        try {
+            if (typeof OptanonActiveGroups !== 'undefined') {
+                let OTGroups = OptanonActiveGroups.split(',');
+                for (const [key, value] of Object.entries(OTGroups)) {
+                    // only active groups are added here. Skip if it's empty
+                    if (value === "") continue;
+
+                    // fix scripts
+                    let scrElements = document.querySelectorAll('script.optanon-category-' + value);
+                    if (scrElements.length > 0) {
+                        scrElements.forEach(scrElement => {
+                            if (scrElement.hasAttribute("type") && "text/plain" === scrElement.getAttribute("type")) {
+                                let scrParent = scrElement.parentNode;
+                                let scrNew = document.createElement(scrElement.tagName)
+                                scrNew.innerHTML = scrElement.innerHTML;
+                                let scrElemAttrs = scrElement.attributes
+                                if (scrElemAttrs.length > 0) {
+                                    for (let i = 0; i < scrElemAttrs.length; i++) {
+                                        scrNew.setAttribute(scrElemAttrs[i].name, scrElemAttrs[i].value);
+                                    }
+                                }
+                                scrNew.setAttribute('type', 'text/javascript');
+                                scrParent.replaceChild(scrNew, scrElement);
+                            }
+                        })
+                    }
+                }
+            }
+        } catch (e) {}
+    }
+
+    addEventListener('load', OptanonWrapper, false);
+</script>
+
+<meta name="google-site-verification" content="Bt96jJk1kma6g1WJK437_-k6QGIbZvo6MRhgwV3UUMI"  />
+<meta name="google-site-verification" content="nWPQ59EF614zzwjOAiG7b1SXCUZKcu7ajpinvshy0xs"  />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+
+<script type="text/javascript" src="https://www.suse.com/assets/js/jquery-2.1.3.min.js?avs=1780480907"   ></script>
+                                                                                                                                                                                                                                                                  <script type="text/javascript" src="https://www.suse.com/assets/js/jquery-ui.min.js?avs=1780480907"   ></script>
+                                                                                                                                                               <script type="text/javascript" src="https://www.suse.com/assets/js/bootstrap.min.js?avs=1780480907"   ></script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <script type="text/javascript" async defer src="https://www.suse.com/uniparts/scripts/W3sic3JjIjoiXC9hc3NldHNcL3VuaXBhcnRzXC9qc1wvb25lX3RydXN0X2d0YWcuanM_YXZzPTE3ODA0ODA5MDciLCJ0eXBlIjoidGV4dFwvamF2YXNjcmlwdCIsImF0dHJpYnV0ZXMiOltdfSx7InNyYyI6IlwvYXNzZXRzXC91bmlwYXJ0c1wvanNcL2hlYWRlci5qcz9hdnM9MTc4MDQ4MDkwNyIsInR5cGUiOiJ0ZXh0XC9qYXZhc2NyaXB0IiwiYXR0cmlidXRlcyI6W119LHsic3JjIjoiXC9hc3NldHNcL2pzXC9tb2JpbGUtbmF2LmpzP2F2cz0xNzgwNDgwOTA3IiwidHlwZSI6InRleHRcL2phdmFzY3JpcHQiLCJhdHRyaWJ1dGVzIjpbXX0seyJzcmMiOiJcL2Fzc2V0c1wvdW5pcGFydHNcL2pzXC9sYW5ndWFnZS5qcz9hdnM9MTc4MDQ4MDkwNyIsInR5cGUiOiJ0ZXh0XC9qYXZhc2NyaXB0IiwiYXR0cmlidXRlcyI6W119LHsic3JjIjoiXC9hc3NldHNcL3VuaXBhcnRzXC9qc1wvY29yZS5taW4uanM_YXZzPTE3ODA0ODA5MDciLCJ0eXBlIjoidGV4dFwvamF2YXNjcmlwdCIsImF0dHJpYnV0ZXMiOltdfSx7InNyYyI6IlwvYXNzZXRzXC9qc1wvYW5hbHl0aWNzLm1pbi5qcz9hdnM9MTc4MDQ4MDkwNyIsInR5cGUiOiJ0ZXh0XC9qYXZhc2NyaXB0IiwiYXR0cmlidXRlcyI6W119LHsic3JjIjoiXC9hc3NldHNcL3VuaXBhcnRzXC9qc1wvb25ldGFnLmpzP2F2cz0xNzgwNDgwOTA3IiwidHlwZSI6InRleHRcL2phdmFzY3JpcHQiLCJhdHRyaWJ1dGVzIjpbXX0seyJzcmMiOiJcL2Fzc2V0c1wvanNcL2pxdWVyeS5jb3VudGRvd24uanM_YXZzPTE3ODA0ODA5MDciLCJ0eXBlIjoidGV4dFwvamF2YXNjcmlwdCIsImF0dHJpYnV0ZXMiOltdfSx7InNyYyI6IlwvYXNzZXRzXC9qc1wvanF1ZXJ5LmNvb2tpZS5qcz9hdnM9MTc4MDQ4MDkwNyIsInR5cGUiOiJ0ZXh0XC9qYXZhc2NyaXB0IiwiYXR0cmlidXRlcyI6W119LHsic3JjIjoiXC9hc3NldHNcL3VuaXBhcnRzXC9qc1wvZGVtYW5kYmFzZS5qcz9hdnM9MTc4MDQ4MDkwNyIsInR5cGUiOiJ0ZXh0XC9qYXZhc2NyaXB0IiwiYXR0cmlidXRlcyI6W119LHsic3JjIjoiXC9hc3NldHNcL3VuaXBhcnRzXC9qc1wvbG9naW4uanM_YXZzPTE3ODA0ODA5MDciLCJ0eXBlIjoidGV4dFwvamF2YXNjcmlwdCIsImF0dHJpYnV0ZXMiOltdfSx7InNyYyI6IlwvYXNzZXRzXC91bmlwYXJ0c1wvanNcL3F1YWx0cmljcy5qcz9hdnM9MTc4MDQ4MDkwNyIsInR5cGUiOiJ0ZXh0XC9qYXZhc2NyaXB0IiwiYXR0cmlidXRlcyI6W119LHsic3JjIjoiXC9hc3NldHNcL3VuaXBhcnRzXC9qc1wvc2VhcmNoLmpzP2F2cz0xNzgwNDgwOTA3IiwidHlwZSI6InRleHRcL2phdmFzY3JpcHQiLCJhdHRyaWJ1dGVzIjpbXX0seyJzcmMiOiJcL2Fzc2V0c1wvanNcL3VzZS1saWdodHNsaWRlci5qcz9hdnM9MTc4MDQ4MDkwNyIsInR5cGUiOiJ0ZXh0XC9qYXZhc2NyaXB0IiwiYXR0cmlidXRlcyI6W119LHsic3JjIjoiXC9hc3NldHNcL2pzXC91c2UtdG9vbHRpcC5qcz9hdnM9MTc4MDQ4MDkwNyIsInR5cGUiOiJ0ZXh0XC9qYXZhc2NyaXB0IiwiYXR0cmlidXRlcyI6W119LHsic3JjIjoiXC9hc3NldHNcL2pzXC9qcXVlcnkuY29ybmVyLmpzP2F2cz0xNzgwNDgwOTA3IiwidHlwZSI6InRleHRcL2phdmFzY3JpcHQiLCJhdHRyaWJ1dGVzIjpbXX0seyJzcmMiOiJcL2Fzc2V0c1wvanNcL2pTY3JvbGxQYW5lLmpzP2F2cz0xNzgwNDgwOTA3IiwidHlwZSI6InRleHRcL2phdmFzY3JpcHQiLCJhdHRyaWJ1dGVzIjpbXX0seyJzcmMiOiJcL2Fzc2V0c1wvanNcL2Zvcm1idWlsZGVyLmpzP2F2cz0xNzgwNDgwOTA3IiwidHlwZSI6InRleHRcL2phdmFzY3JpcHQiLCJhdHRyaWJ1dGVzIjpbXX0seyJzcmMiOiJcL2Fzc2V0c1wvanNcL21hcmtldG8uanM_YXZzPTE3ODA0ODA5MDciLCJ0eXBlIjoidGV4dFwvamF2YXNjcmlwdCIsImF0dHJpYnV0ZXMiOltdfSx7InNyYyI6IlwvYXNzZXRzXC91bmlwYXJ0c1wvanNcL2Jsb2dzLmpzP2F2cz0xNzgwNDgwOTA3IiwidHlwZSI6InRleHRcL2phdmFzY3JpcHQiLCJhdHRyaWJ1dGVzIjpbXX1d/?avs=1780480907"></script>
+
+<link rel="preload" as="style" href="https://www.suse.com/assets/uniparts/css/onetrust.css?avs=1780480907" type="text/css" onload="this.rel='stylesheet'"  />
+                <link rel="preload" as="style" href="https://www.suse.com/assets/css/bootstrap.min.css?avs=1780480907" type="text/css" onload="this.rel='stylesheet'"  />
+                <link rel="preload" as="style" href="https://www.suse.com/assets/css/helpers.css?avs=1780480907" type="text/css" onload="this.rel='stylesheet'"  />
+                <link rel="stylesheet" href="https://www.suse.com/assets/css/header.css?avs=1780480907" media="all" type="text/css"  />
+                <link rel="preload" as="style" href="https://www.suse.com/assets/css/footer.css?avs=1780480907" type="text/css" onload="this.rel='stylesheet'"  />
+                <link rel="preload" as="style" href="https://www.suse.com/assets/css/iefix.css?avs=1780480907" type="text/css" onload="this.rel='stylesheet'"  />
+                <link rel="preload" as="style" href="https://www.suse.com/assets/css/font-awesome.css?avs=1780480907" type="text/css" onload="this.rel='stylesheet'"  />
+                <link rel="preload" as="style" href="https://www.suse.com/assets/css/google-fonts-suse.css?avs=1780480907" type="text/css" onload="this.rel='stylesheet'"  />
+                <link rel="stylesheet" href="https://www.suse.com/assets/css/main-uh.css?avs=1780480907" media="all" type="text/css"  />
+                <link rel="stylesheet" href="https://www.suse.com/assets/css/boxes-styles.css?avs=1780480907" media="all" type="text/css"  />
+                <link rel="preload" as="style" href="https://www.suse.com/assets/css/google-material-suse.css?avs=1780480907" type="text/css" onload="this.rel='stylesheet'"  />
+                <link rel="preload" as="style" href="https://www.suse.com/assets/css/jquery-ui.min.css?avs=1780480907" type="text/css" onload="this.rel='stylesheet'"  />
+                <link rel="preload" as="style" href="https://www.suse.com/assets/css/lightslider.css?avs=1780480907" type="text/css" onload="this.rel='stylesheet'"  />
+    
+<script type="text/javascript" src="https://www.suse.com/uniparts/tracking/gtm/blogs/" async defer></script>
+    
+<script type="text/javascript" async defer src="https://www.suse.com/uniparts/scripts/W3sic3JjIjoiYXNzZXRzXC91bmlwYXJ0c1wvanNcL3F1YWxpZmllZC5qcz9hdnM9MTc4MDQ4MDkwNyIsInR5cGUiOiJ0ZXh0XC9qYXZhc2NyaXB0IiwiYXR0cmlidXRlcyI6W119LHsic3JjIjoiaHR0cHM6XC9cL2pzLnF1YWxpZmllZC5jb21cL3F1YWxpZmllZC5qcz90b2tlbj1TS3FROG5uQUREMjJjQW5jJmF2cz0xNzgwNDgwOTA3IiwidHlwZSI6InRleHRcL2phdmFzY3JpcHQiLCJhdHRyaWJ1dGVzIjpbXX1d/?avs=1780480907"></script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org/",
+    "@type": "Corporation",
+    "name": "SUSE",
+    "url": "https://www.suse.com",
+    "logo": "https://www.suse.com/assets/img/suse-white-logo-green.svg",
+    "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+1-801-921-6777",
+        "contactType": "sales"
+    },
+    "sameAs": [
+        "https://www.facebook.com/SUSEWorldwide/about",
+        "https://www.youtube.com/channel/UCHTfqIzPKz4f_dri36lAQGA",
+        "https://twitter.com/SUSE",
+        "https://www.linkedin.com/company/suse"
+    ],
+    "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "1221 S Valley Grove Way #500",
+        "addressLocality": "Pleasant Grove",
+        "addressRegion": "UT",
+        "postalCode": "84062",
+        "addressCountry": "US"
+    }
+}
+</script>
+
+<!-- SUSE include: END -->
+<meta name="twitter:card" content="summary_large_image"/><meta name="twitter:site" content="@SUSE"/><meta name="twitter:title" content="SUSE state of and strategy for Post Quantum Cryptogr..."/><meta name="twitter:description" content="SUSE’s strategy on implementing post quantum cryptography (PQC) has been to adopt standards and upstream implementations w..."/><meta name="twitter:image" content="https://www.suse.com/assets/img/suse-social-sharing-image.png"/><meta property="og:type" content="article"/><meta property="og:url" content="https://www.suse.com/c/suse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025/"/><meta property="og:title" content="SUSE state of and strategy for Post Quantum Cryptography ..."/><meta property="og:description" content="SUSE’s strategy on implementing post quantum cryptography (PQC..."/><meta property="og:image" content="https://www.suse.com/assets/img/suse-social-sharing-image.png"/>		<style type="text/css" id="wp-custom-css">
+			.alignright { float:right; margin-left: 25px; margin-bottom: 15px; }
+.alignleft { float:left; margin-right: 25px; margin-bottom:15px; }
+.aligncenter { margin:0 auto; }
+.success-stories .success-posts .forthelogo img { max-width:195px; }		</style>
+		
+<link rel='stylesheet' id='shariffcss-css' href='https://www.suse.com/c/wp-content/plugins/shariff/css/shariff.min.css?ver=4.6.15' type='text/css' media='all' />
+</head>
+<body class="wp-singular post-template-default single single-post postid-171683 single-format-standard wp-theme-suse">
+<img src="/assets/img/1px-transparent.gif" style="display:none;width:1px;" width="1" height="1"  class="optanon-category-C0004" data-src="https://secure.adnxs.com/px?id=1634940&t=2" />
+                    <img src="/assets/img/1px-transparent.gif" style="display:none;width:1px;" width="1" height="1"  class="optanon-category-C0004" data-src="https://ib.adnxs.com/seg?add=31890902" />
+    
+<header class="nocontent t-work ">
+    <div class="clear"></div>
+
+    <nav>
+        <div id="utilitynav">
+            <div class="searchbox-container">
+    <div id="searchbox" class="" style="">
+        <form id="searchform" action="https://www.suse.com/search/" style="">
+            <input type="text" class="search-text" name="s" placeholder="Search" style="" />
+            <button type="submit" class="fa fa-search search-submit"></button>
+        </form>
+    </div>
+</div>
+            <div class="container-fluid">
+                <a href="https://www.suse.com" aria-label="SUSE Logo" id="home-logo">
+    <img class="logo nonfed" alt="SUSE Logo" src="https://www.suse.com/assets/img/suse-white-logo-green.svg" style=""/>
+    <img class="logo showfed" alt="SUSE Federal Logo" src="https://www.suse.com/assets/img/fed_logo.png" style="display: none"/>
+</a>
+<a href="" class="fedexit fedexitLink t-work">Exit SUSE Federal<span>&nbsp;&nbsp;&gt;</span></a>
+                <div class="utilitynav-container">
+                                                    <div id="utilitynav-susecon"
+                      class="hidden-xs">
+                                                            <a  href="https://www.suse.com/susecon/"
+                       aria-label="SUSECON 2026"
+                       class="UtilityNav"> </a>
+                </div>
+                                        <div class="hidden-xs utilitynav-vsep"><span></span></div>
+                                                            <div id="utilitynav-customer"
+                      class="hidden-xs">
+                                                                <span class="material-symbols-outlined">pan_tool_alt</span>
+                                        <a  href="https://scc.suse.com/home"
+                       aria-label="Customer Center"
+                       class="UtilityNav">Customer Center</a>
+                </div>
+                                        <div class="hidden-xs utilitynav-vsep"><span></span></div>
+                                                                <div id="utilitynav-login"
+                          class="hidden-xs">
+                                                                            <span class="material-symbols-outlined">person</span>
+                                                <a id="login_trigger"
+                            href="#"
+                           class="UtilityNav">Account</a>
+                    </div>
+                <div style="display: none"><div id="account_data">
+    <div id="account_drop" style="display:none;" class="okta_account_drop">
+        <span>Hello <span class="account-firstname"></span></span>
+        <div class="account-links">
+            <a href="https://www.suse.com/account/update/" class="UtilityNav">Update Your Account</a>
+
+        </div>
+    </div>
+</div>
+
+<div id="login_form">
+    <div id="login_drop" style="display:none;" class="okta_login_drop">
+        <a id="login-link" href="https://www.suse.com/saml2/login/" class="UtilityNav">Login</a>
+        <a href="https://www.suse.com/account/create/" class="UtilityNav">Create Account</a>
+        <a href="https://www.suse.com/account/update/" class="UtilityNav">Update Your Account</a>
+    </div>
+</div></div>
+                                        <div class="hidden-xs utilitynav-vsep"><span></span></div>
+                                                            <div id="utilitynav-language">
+                    <div class="menu-item UtilityNav">
+                                                    <span id="language-name">English</span>
+                                                &nbsp;<i class="fa fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="float" id="footer-language">
+    <div id="lang-dropdown" class="lang-select popup">
+        <div class="col-sm-12 lang-left">
+            <span class="t1-paragraph t1-paragraph--small">Language</span>
+                                                                    <a href="#" data-locale="de" data-country="de-de" class="UtilityNav">
+                        Deutsch
+                    </a>
+                                                                                    <a class="current UtilityNav" href="#" data-locale="en" data-country="en-us" title="">
+                        English
+                    </a>
+                                                                                    <a href="#" data-locale="es" data-country="es-es" class="UtilityNav">
+                        Español
+                    </a>
+                                                                                    <a href="#" data-locale="fr" data-country="fr-fr" class="UtilityNav">
+                        Français
+                    </a>
+                                                                                    <a href="#" data-locale="zh_CN" data-country="zh-cn" class="UtilityNav">
+                        中文(简体)
+                    </a>
+                                                                                    <a href="#" data-locale="ja" data-country="ja-jp" class="UtilityNav">
+                        日本語
+                    </a>
+                                                                                    <a href="#" data-locale="ko_KR" data-country="ko-kr" class="UtilityNav">
+                        한국어
+                    </a>
+                                                                                    <a href="#" data-locale="pt_BR" data-country="pt-br" class="UtilityNav">
+                        Português (Brasil)
+                    </a>
+                                        <script>
+                $(".lang-left a").on("click", function () {
+                    chosenLanguage = $(this).text();
+                    locale = $(this).data("locale");
+                    cookieExpire = 31536000;
+                    setCookie('locale', locale, cookieExpire);
+                    sessionStorage.setItem('header_lang_name', chosenLanguage);
+                    localStorage.setItem('header_lang_name', chosenLanguage);
+                    sessionStorage.removeItem('header_country_name');
+                    return true;
+                });
+
+                $(".lang-select .countries a").on("click", function () {
+                    chosenCountry = $(this).text();
+                    sessionStorage.setItem('header_country_name', chosenCountry);
+                });
+
+                function changeHeaderLanguage(elem) {
+                    language = $(elem).data("country-name");
+                    //console.log(language);
+                    sessionStorage.setItem('header_lang_name', language);
+                    localStorage.setItem('header_lang_name', language);
+                    sessionStorage.removeItem('header_country_name');
+                }
+
+                function changeHeaderCountry(elem) {
+                    country = $(elem).data("country-name");
+                    //console.log(country);
+                    sessionStorage.setItem('header_country_name', country);
+                }
+
+                function setCookie(name, value, days) {
+                    let expires = "";
+                    if (days) {
+                        const date = new Date();
+                        date.setTime(date.getTime() + (days * 1000));
+                        expires = "; expires=" + date.toUTCString();
+                    }
+                    document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/; domain=.suse.com";
+                }
+
+            </script>
+        </div>
+
+                    </div>
+</div>
+                                        <div class="hidden-xs utilitynav-vsep"><span></span></div>
+                                                            <div id="utilitynav-search"
+                      class="hidden-xs">
+                                            <i class="fa fa-search"></i>
+                                                            <a  href="#"
+                       aria-label="Search"
+                       class="menu-item UtilityNav"></a>
+                </div>
+                                        <div class="hidden-xs utilitynav-vsep"><span></span></div>
+                                                            <div id="utilitynav-chat"  class="hidden-xs" style="display:none">
+                    <a href="https://www.suse.com/shop/"
+                       class="UtilityNav chatLink">
+                        <div class="menu-item l-flex l-flex--nowrap">
+                                                                                        <span class="material-symbols-outlined">shopping_cart</span>
+                                                        <span style="padding-left: 6px;">Shop</span>
+                        </div>
+                    </a>
+                </div>
+                <div id="utilitynav-cart">
+                    <input type="hidden" id="cb-session-url" value="">
+                    <input type="hidden" id="csrf-token" value="buXX9CRL9vjKqR73NSIl4RJKHilNeQ6WgkrXnlqp">
+                    <a href="https://www.suse.com/shop/"
+                       class="UtilityNav">
+                        <span class="material-symbols-outlined"><span id="cart-number"></span></span>
+                        View Cart
+                    </a>
+                </div>
+                                    </div>
+            </div>
+        </div>
+    </nav>
+    <nav>
+        <div id="menu">
+    <div class="container-fluid">
+        <a href="https://www.suse.com">
+                        <img class="logo nonfed"
+                 src="https://www.suse.com/assets/img/suse-white-logo-green.svg"
+                 alt="SUSE Logo" />
+        </a>
+        <a href="" class="fedexit fedexitLink t-work logo">Exit SUSE Federal<span>&nbsp;&nbsp;&gt;</span></a>
+        <a href="#" id="toggle" class="navbars" aria-hidden="true"><i class="fa fa-bars fa-2x"></i></a>
+        <div id="nav" role="navigation" aria-hidden="false">
+            <div class="categories menu-items">
+                                    <div class="letstalkmobile">
+                                                    <a href="https://www.suse.com/shop/" class="mobile-talk">Shop</a>
+                                                    <a href="https://www.suse.com/susecon/" class="mobile-talk">SUSECON 25</a>
+                                                    <a href="https://scc.suse.com/home" class="mobile-talk">Customer</a>
+                                            </div>
+                                                                            <div class="sub1 category fedcat showfed">
+                            <a>
+                                Federal Solutions
+                                <i class="fa fa-angle-right fa-2x"></i>
+                            </a>
+                        </div>
+                                            <div class="sub1 category products">
+                            <a>
+                                Products
+                                <i class="fa fa-angle-right fa-2x"></i>
+                            </a>
+                        </div>
+                                            <div class="sub1 category solutions nonfed">
+                            <a>
+                                Solutions
+                                <i class="fa fa-angle-right fa-2x"></i>
+                            </a>
+                        </div>
+                                            <div class="sub1 category support">
+                            <a>
+                                Support
+                                <i class="fa fa-angle-right fa-2x"></i>
+                            </a>
+                        </div>
+                                            <div class="sub1 category partners">
+                            <a>
+                                Partners
+                                <i class="fa fa-angle-right fa-2x"></i>
+                            </a>
+                        </div>
+                                            <div class="sub1 category communities">
+                            <a>
+                                Communities
+                                <i class="fa fa-angle-right fa-2x"></i>
+                            </a>
+                        </div>
+                                            <div class="sub1 category category-about">
+                            <a>
+                                About
+                                <i class="fa fa-angle-right fa-2x"></i>
+                            </a>
+                        </div>
+                                                                                                <div class="category contact">
+                            <a class="c1-btn c1-btn--font-white persimmon--secondary" href="https://www.suse.com/contact/">
+                                Contact Us
+                            </a>
+                        </div>
+                                            <div class="category downloads">
+                            <a class="c-btn--round" href="https://www.suse.com/products/">
+                                Free Downloads
+                            </a>
+                        </div>
+                                                </div>
+        </div>
+    </div>
+    <div class="header-end-line">
+        <div class="header-end-line-persimmon">&nbsp;</div>
+        <div class="header-end-line-green">&nbsp;</div>
+        <div class="header-end-line-waterhole-blue">&nbsp;</div>
+        <div class="header-end-line-mint">&nbsp;</div>
+    </div>
+</div>
+
+<div class="menudropdowns">
+                        <div class="outer federal">
+            <div class="mnavback"><i class="fa fa-angle-left fa-2x"></i> <span class="goback">Back</span></div>
+            <div class="dropdown">
+                <div class="container-fluid l-flex l-flex--align-stretch">
+                    <div class="col-xs-12">
+                                                            </div>
+                                    </div>
+            </div>
+        </div>
+                        <div class="outer product">
+            <div class="mnavback"><i class="fa fa-angle-left fa-2x"></i> <span class="goback">Back</span></div>
+            <div class="dropdown">
+                <div class="container-fluid l-flex l-flex--align-stretch">
+                    <div class="col-xs-12">
+                                                                                                        <div class="col-sm-3">
+                                <div class="innercol">
+                                    <div class="t1-heading-5 dropdown__product-nav-item dropdown__product-nav-item--title u-margin-bottom-small">
+                                                                                <a href="https://www.suse.com/solutions/business-critical-linux/" title="Linux" class="dropdown__product-nav-link">
+                                                                                                                                             <img src="https://www.suse.com/assets/img/icons/Linux-one-color.svg"
+                                                         alt="Icon"
+                                                        >
+                                                                                            Linux
+                                                                                    </a>
+
+                                                                            </div>
+                                    <ul class="dropdown__product-nav">
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__sles">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/server/">
+                                                                                                                <div>
+                                                            <span>SUSE Linux Enterprise Server</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__sles_for_sap">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/sles-for-sap/">
+                                                                                                                <div>
+                                                            <span>SUSE Linux Enterprise Server</span>
+                                                                                                                            <p>
+                                                                    for SAP Applications
+                                                                </p>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__suse_multi-linux_support">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/multi-linux-support/">
+                                                                                                                <div>
+                                                            <span>SUSE  Multi-Linux Support</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__suse_multi-linux_manager">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/multi-linux-manager/">
+                                                                                                                <div>
+                                                            <span>SUSE Multi-Linux Manager</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__suse_linux_micro">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/micro/">
+                                                                                                                <div>
+                                                            <span>SUSE Linux Micro</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </div>
+                                                                                                        <div class="col-sm-3">
+                                <div class="innercol">
+                                    <div class="t1-heading-5 dropdown__product-nav-item dropdown__product-nav-item--title u-margin-bottom-small">
+                                                                                <a href="https://www.suse.com/solutions/enterprise-container-management/" title="Cloud Native" class="dropdown__product-nav-link">
+                                                                                                                                             <img src="https://www.suse.com/assets/img/icons/Cloud-native-one-color.svg"
+                                                         alt="Icon"
+                                                        >
+                                                                                            Cloud Native
+                                                                                    </a>
+
+                                                                            </div>
+                                    <ul class="dropdown__product-nav">
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__rancher">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/rancher/">
+                                                                                                                <div>
+                                                            <span>SUSE Rancher Prime</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__harvester">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/rancher/virtualization/">
+                                                                                                                <div>
+                                                            <span>Virtualization</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__longhorn">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/rancher/storage/">
+                                                                                                                <div>
+                                                            <span>Storage</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__neuvector">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/rancher/security/">
+                                                                                                                <div>
+                                                            <span>Security</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__observability">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/rancher/observability/">
+                                                                                                                <div>
+                                                            <span>Observability</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__application-collection">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/rancher/application-collection/">
+                                                                                                                <div>
+                                                            <span>Application Collection</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__rancher-aws">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/rancher/aws/">
+                                                                                                                <div>
+                                                            <span>SUSE Rancher for AWS</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__rancher-for-sap">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/rancher-for-sap/">
+                                                                                                                <div>
+                                                            <span>SUSE Rancher for SAP&reg; applications</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__rancher">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/cloud/observability/">
+                                                                                                                <div>
+                                                            <span>SUSE Cloud Observability</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </div>
+                                                                                                        <div class="col-sm-3">
+                                <div class="innercol">
+                                    <div class="t1-heading-5 dropdown__product-nav-item dropdown__product-nav-item--title u-margin-bottom-small">
+                                                                                <a href="https://www.suse.com/solutions/edge/" title="Edge" class="dropdown__product-nav-link">
+                                                                                                                                             <img src="https://www.suse.com/assets/img/icons/Edge-one-color.svg"
+                                                         alt="Icon"
+                                                        >
+                                                                                            Edge
+                                                                                    </a>
+
+                                                                            </div>
+                                    <ul class="dropdown__product-nav">
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__suse_edge">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/edge/">
+                                                                                                                <div>
+                                                            <span>SUSE Edge</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__suse_industrial-edge">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/industrial-edge/">
+                                                                                                                <div>
+                                                            <span>SUSE Industrial Edge</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__suse_adaptive_telco_infrastructure_platform">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/edge-for-telco/">
+                                                                                                                <div>
+                                                            <span>SUSE Telco Cloud</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </div>
+                                                                                                        <div class="col-sm-3">
+                                <div class="innercol">
+                                    <div class="t1-heading-5 dropdown__product-nav-item dropdown__product-nav-item--title u-margin-bottom-small">
+                                                                                <a href="https://www.suse.com/solutions/ai/" title="AI" class="dropdown__product-nav-link">
+                                                                                                                                             <img src="https://www.suse.com/assets/img/icons/AI-one-color.svg"
+                                                         alt="Icon"
+                                                        >
+                                                                                            AI
+                                                                                    </a>
+
+                                                                            </div>
+                                    <ul class="dropdown__product-nav">
+                                                                                                                                    <li class="dropdown__products-nav-item dropdown__suse_ai">
+                                                <div class="dropdown__products l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__products-nav-link" href = "https://www.suse.com/products/ai/">
+                                                                                                                <div>
+                                                            <span>SUSE AI</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </div>
+                                                                                            <div class="col-xs-12">
+                            <a href="https://www.suse.com/products/" id="enterprise-linux-cta" class="c1-btn c1-btn--secondary u-margin-auto">
+                                All Products
+                            </a>
+                        </div>
+                                        </div>
+                                    </div>
+            </div>
+        </div>
+                        <div class="outer solutions">
+            <div class="mnavback"><i class="fa fa-angle-left fa-2x"></i> <span class="goback">Back</span></div>
+            <div class="dropdown">
+                <div class="container-fluid l-flex l-flex--align-stretch">
+                    <div class="col-xs-12">
+                                                                                                        <div class="col-sm-4">
+                                <div class="innercol">
+                                    <div class="t1-heading-5 dropdown__product-nav-item dropdown__product-nav-item--title u-margin-bottom-small">
+                                                                                                                                 Use Cases
+                                                                                </div>
+                                    <ul class="dropdown__product-nav">
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__modernize">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/solutions/modernize-virtualization/">
+                                                                                                                    <img src="https://www.suse.com/assets/img/icons/Modernize.svg" alt="Modernize Workloads across Environments"/>
+                                                                                                                <div>
+                                                            <span>Modernize Workloads across Environments</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__optimize_efficiency">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/solutions/optimize-operational-efficiency/">
+                                                                                                                    <img src="https://www.suse.com/assets/img/icons/Optimize.svg" alt="Optimize Operational Efficiency &amp;amp; Cost"/>
+                                                                                                                <div>
+                                                            <span>Optimize Operational Efficiency &amp; Cost</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__manage_secure">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/solutions/manage-secure/">
+                                                                                                                    <img src="https://www.suse.com/assets/img/icons/ManageSecure.svg" alt="Manage &amp;amp; Secure Hybrid Cloud Architecture"/>
+                                                                                                                <div>
+                                                            <span>Manage &amp; Secure Hybrid Cloud Architecture</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__innovate">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/solutions/innovate/">
+                                                                                                                    <img src="https://www.suse.com/assets/img/icons/Innovate.svg" alt="Innovate with Next Gen Technologies"/>
+                                                                                                                <div>
+                                                            <span>Innovate with Next Gen Technologies</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </div>
+                                                                                                        <div class="col-sm-4">
+                                <div class="innercol">
+                                    <div class="t1-heading-5 dropdown__product-nav-item dropdown__product-nav-item--title u-margin-bottom-small">
+                                                                                                                                 Solutions
+                                                                                </div>
+                                    <ul class="dropdown__product-nav">
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__linux">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/solutions/linux/">
+                                                                                                                <div>
+                                                            <span>Linux</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__cloud_native">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/solutions/cloud-native/">
+                                                                                                                <div>
+                                                            <span>Cloud Native</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__edge">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/solutions/edge/">
+                                                                                                                <div>
+                                                            <span>Edge</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__ai">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/solutions/ai/">
+                                                                                                                <div>
+                                                            <span>AI</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__run_sap">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/solutions/run-sap-solutions/">
+                                                                                                                <div>
+                                                            <span>Run SAP</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__digital-sovereignty">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/solutions/digital-sovereignty/">
+                                                                                                                <div>
+                                                            <span>Digital Sovereignty</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__cn">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/solutions/public-cloud/">
+                                                                                                                <div>
+                                                            <span>Public Cloud</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__observability">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/solutions/observability/">
+                                                                                                                <div>
+                                                            <span>Observability</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__security">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/solutions/security/">
+                                                                                                                <div>
+                                                            <span>Security</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </div>
+                                                                                                        <div class="col-sm-4">
+                                <div class="innercol">
+                                    <div class="t1-heading-5 dropdown__product-nav-item dropdown__product-nav-item--title u-margin-bottom-small">
+                                                                                                                                 Industries
+                                                                                </div>
+                                    <ul class="dropdown__product-nav">
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__automotive">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/sector/automotive/">
+                                                                                                                <div>
+                                                            <span>Automotive</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__telco">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/sector/telco/">
+                                                                                                                <div>
+                                                            <span>Telecom</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__financial">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/sector/banking-financial-services/">
+                                                                                                                <div>
+                                                            <span>Banking and Financial Systems</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__healthcare">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/sector/healthcare/">
+                                                                                                                <div>
+                                                            <span>Healthcare</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__manufacturing">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/sector/manufacturing/">
+                                                                                                                <div>
+                                                            <span>Manufacturing</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__retail">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/sector/retail/">
+                                                                                                                <div>
+                                                            <span>Retail</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__tech">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.suse.com/sector/technology/">
+                                                                                                                <div>
+                                                            <span>Technology &amp; Software</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__solutions-nav-item dropdown__federal">
+                                                <div class="dropdown__solutions l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__solutions-nav-link" href = "https://www.ranchergovernment.com/">
+                                                                                                                <div>
+                                                            <span>Federal</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </div>
+                                                            </div>
+                                    </div>
+            </div>
+        </div>
+                        <div class="outer support">
+            <div class="mnavback"><i class="fa fa-angle-left fa-2x"></i> <span class="goback">Back</span></div>
+            <div class="dropdown">
+                <div class="container-fluid l-flex l-flex--align-stretch">
+                    <div class="col-xs-12">
+                                                                                                        <div class="col-sm-4">
+                                <div class="innercol">
+                                    <div class="t1-heading-5 dropdown__product-nav-item dropdown__product-nav-item--title u-margin-bottom-small">
+                                                                                                                                 Support
+                                                                                </div>
+                                    <ul class="dropdown__product-nav">
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__prod_support">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://scc.suse.com/home">
+                                                                                                                <div>
+                                                            <span>Product Support</span>
+                                                                                                                            <p>
+                                                                    SUSE Customer Center
+                                                                </p>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__premium_support">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://www.suse.com/services/premium/">
+                                                                                                                <div>
+                                                            <span>Premium Support Services</span>
+                                                                                                                            <p>
+                                                                    Dedicated support services from a premium team
+                                                                </p>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__sovereign_premium_support">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://www.suse.com/services/sovereign-premium-support/">
+                                                                                                                <div>
+                                                            <span>Sovereign Premium Support</span>
+                                                                                                                            <p>
+                                                                    Trusted, adaptable, highly available, secure and compliant
+                                                                </p>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__long_term_support">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://www.suse.com/products/long-term-service-pack-support/">
+                                                                                                                <div>
+                                                            <span>Long Term Services Support</span>
+                                                                                                                            <p>
+                                                                    Stay on your existing product version
+                                                                </p>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__renew_subscription">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://www.suse.com/renewals/">
+                                                                                                                <div>
+                                                            <span>Renew Your Support Subscription</span>
+                                                                                                                            <p>
+                                                                    Partners with cloud providers
+                                                                </p>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__aws_amazon">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://aws.amazon.com/marketplace/search/results?searchTerms=suse">
+                                                                                                                    <img src="https://www.suse.com/assets/img/icons/320px-Amazon3.svg" alt="AWS"/>
+                                                                                                                <div>
+                                                            <span></span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__microsoft_azure">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://azure.microsoft.com/en-us/solutions/linux-on-azure/suse/">
+                                                                                                                    <img src="https://www.suse.com/assets/img/icons/Microsoft_Azure3.svg" alt="Microsoft Azure"/>
+                                                                                                                <div>
+                                                            <span></span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__google">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://console.cloud.google.com/marketplace/browse?q=SUSE">
+                                                                                                                    <img src="https://www.suse.com/assets/img/icons/lockup_GoogleCloud_FullColor_rgb_139x24px 1.svg" alt="Google"/>
+                                                                                                                <div>
+                                                            <span></span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </div>
+                                                                                                        <div class="col-sm-4">
+                                <div class="innercol">
+                                    <div class="t1-heading-5 dropdown__product-nav-item dropdown__product-nav-item--title u-margin-bottom-small">
+                                                                                                                                 Services
+                                                                                </div>
+                                    <ul class="dropdown__product-nav">
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__global">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://www.suse.com/services/">
+                                                                                                                <div>
+                                                            <span>Global Services</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__consulting">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://www.suse.com/services/consulting/">
+                                                                                                                <div>
+                                                            <span>Consulting Services</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__training">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://www.suse.com/training/">
+                                                                                                                <div>
+                                                            <span>Training &amp; Certification</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__premium_technical">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://www.suse.com/services/premium-technical-advisory/">
+                                                                                                                <div>
+                                                            <span>Premium Technical Advisory Services</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </div>
+                                                                                                        <div class="col-sm-4">
+                                <div class="innercol">
+                                    <div class="t1-heading-5 dropdown__product-nav-item dropdown__product-nav-item--title u-margin-bottom-small">
+                                                                                                                                 Resources
+                                                                                </div>
+                                    <ul class="dropdown__product-nav">
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__user_guide">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://www.suse.com/support/handbook/">
+                                                                                                                <div>
+                                                            <span>SUSE Support User Guide</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__patches">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://download.suse.com/patch/finder/">
+                                                                                                                <div>
+                                                            <span>Patches &amp; Updates</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__documentation">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://documentation.suse.com/">
+                                                                                                                <div>
+                                                            <span>Product Documentation</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__knowledgebase">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://support.scc.suse.com/s/kb/">
+                                                                                                                <div>
+                                                            <span>Knowledgebase</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__lifecycle">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://www.suse.com/lifecycle/">
+                                                                                                                <div>
+                                                            <span>Product Support Life Cycle</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__package_hub">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://packagehub.suse.com/">
+                                                                                                                <div>
+                                                            <span>Package Hub</span>
+                                                                                                                            <p>
+                                                                    Community packages for SUSE Linux Enterprise Server
+                                                                </p>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__drivers">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://drivers.suse.com/">
+                                                                                                                <div>
+                                                            <span>Driver Search</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__forums">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://forums.suse.com/">
+                                                                                                                <div>
+                                                            <span>Support Forums</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__dev_services">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://www.suse.com/services/support-offerings/developer-services/">
+                                                                                                                <div>
+                                                            <span>Developer Services</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__beta">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://www.suse.com/betaprogram/">
+                                                                                                                <div>
+                                                            <span>Beta Program</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__support-nav-item dropdown__security">
+                                                <div class="dropdown__support l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__support-nav-link" href = "https://www.suse.com/support/security/">
+                                                                                                                <div>
+                                                            <span>Security</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </div>
+                                                            </div>
+                                    </div>
+            </div>
+        </div>
+                        <div class="outer partners">
+            <div class="mnavback"><i class="fa fa-angle-left fa-2x"></i> <span class="goback">Back</span></div>
+            <div class="dropdown">
+                <div class="container-fluid l-flex l-flex--align-stretch">
+                    <div class="col-xs-12">
+                                                                                                        <div class="col-sm-12">
+                                <div class="innercol">
+                                    <div class="t1-heading-5 dropdown__product-nav-item dropdown__product-nav-item--title u-margin-bottom-small">
+                                                                                                                                 Partners
+                                                                                </div>
+                                    <ul class="dropdown__product-nav">
+                                                                                                                                    <li class="dropdown__partners-nav-item dropdown__partners">
+                                                <div class="dropdown__partners l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__partners-nav-link" href = "https://www.suse.com/partners/">
+                                                                                                                <div>
+                                                            <span>Partner Program</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__partners-nav-item dropdown__find_partner">
+                                                <div class="dropdown__partners l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__partners-nav-link" href = "https://www.suse.com/partners/find-partner/">
+                                                                                                                <div>
+                                                            <span>Find a Partner</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__partners-nav-item dropdown__become_partner">
+                                                <div class="dropdown__partners l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__partners-nav-link" href = "https://www.suse.com/partners/become-partner/">
+                                                                                                                <div>
+                                                            <span>Become a Partner</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__partners-nav-item dropdown__partner_portal">
+                                                <div class="dropdown__partners l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__partners-nav-link" href = "https://partner.suse.com/">
+                                                                                                                <div>
+                                                            <span>Login to the SUSE Partner Portal</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </div>
+                                                            </div>
+                                    </div>
+            </div>
+        </div>
+                        <div class="outer communities">
+            <div class="mnavback"><i class="fa fa-angle-left fa-2x"></i> <span class="goback">Back</span></div>
+            <div class="dropdown">
+                <div class="container-fluid l-flex l-flex--align-stretch">
+                    <div class="col-xs-12">
+                                                                                                        <div class="col-sm-12">
+                                <div class="innercol">
+                                    <div class="t1-heading-5 dropdown__product-nav-item dropdown__product-nav-item--title u-margin-bottom-small">
+                                                                                                                                 Communities
+                                                                                </div>
+                                    <ul class="dropdown__product-nav">
+                                                                                                                                    <li class="dropdown__communities-nav-item dropdown__blog">
+                                                <div class="dropdown__communities l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__communities-nav-link" href = "https://www.suse.com/c/blog/">
+                                                                                                                <div>
+                                                            <span>Blog</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__communities-nav-item dropdown__forum">
+                                                <div class="dropdown__communities l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__communities-nav-link" href = "https://forums.suse.com/">
+                                                                                                                <div>
+                                                            <span>Forum</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__communities-nav-item dropdown__open_source">
+                                                <div class="dropdown__communities l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__communities-nav-link" href = "http://opensource.suse.com/">
+                                                                                                                <div>
+                                                            <span>Open Source Projects</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__communities-nav-item dropdown__open_suse">
+                                                <div class="dropdown__communities l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__communities-nav-link" href = "https://www.opensuse.org/">
+                                                                                                                <div>
+                                                            <span>openSUSE.org</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </div>
+                                                            </div>
+                                    </div>
+            </div>
+        </div>
+                        <div class="outer about">
+            <div class="mnavback"><i class="fa fa-angle-left fa-2x"></i> <span class="goback">Back</span></div>
+            <div class="dropdown">
+                <div class="container-fluid l-flex l-flex--align-stretch">
+                    <div class="col-xs-12">
+                                                                                                        <div class="col-sm-12">
+                                <div class="innercol">
+                                    <div class="t1-heading-5 dropdown__product-nav-item dropdown__product-nav-item--title u-margin-bottom-small">
+                                                                                                                                 About
+                                                                                </div>
+                                    <ul class="dropdown__product-nav">
+                                                                                                                                    <li class="dropdown__about-nav-item dropdown__about">
+                                                <div class="dropdown__about l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__about-nav-link" href = "https://www.suse.com/company/about/">
+                                                                                                                <div>
+                                                            <span>About</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__about-nav-item dropdown__leadership">
+                                                <div class="dropdown__about l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__about-nav-link" href = "https://www.suse.com/leadership/">
+                                                                                                                <div>
+                                                            <span>Leadership</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__about-nav-item dropdown__careers">
+                                                <div class="dropdown__about l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__about-nav-link" href = "https://www.suse.com/careers/">
+                                                                                                                <div>
+                                                            <span>Careers</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__about-nav-item dropdown__newsroom">
+                                                <div class="dropdown__about l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__about-nav-link" href = "https://www.suse.com/news/">
+                                                                                                                <div>
+                                                            <span>Newsroom</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__about-nav-item dropdown__success">
+                                                <div class="dropdown__about l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__about-nav-link" href = "https://www.suse.com/success/">
+                                                                                                                <div>
+                                                            <span>Success Stories</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__about-nav-item dropdown__ir">
+                                                <div class="dropdown__about l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__about-nav-link" href = "https://ir.suse.com/">
+                                                                                                                <div>
+                                                            <span>Investor Relations</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__about-nav-item dropdown__social_impact">
+                                                <div class="dropdown__about l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__about-nav-link" href = "https://www.suse.com/sustainability/">
+                                                                                                                <div>
+                                                            <span>Sustainability</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__about-nav-item dropdown__brand">
+                                                <div class="dropdown__about l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__about-nav-link" href = "https://brand.suse.com/">
+                                                                                                                <div>
+                                                            <span>SUSE Logo and Brand</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__about-nav-item dropdown__events">
+                                                <div class="dropdown__about l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__about-nav-link" href = "https://www.suse.com/events/">
+                                                                                                                <div>
+                                                            <span>Events</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                                                                                    <li class="dropdown__about-nav-item dropdown__voc">
+                                                <div class="dropdown__about l-flex l-flex--justify-start l-flex--align-start l-flex--nowrap">
+
+                                                    <div class="l-flex--column l-flex--align-start">
+                                                        <a class = "dropdown__about-nav-link" href = "https://www.suse.com/voice-of-customer/">
+                                                                                                                <div>
+                                                            <span>Voice of the Customer</span>
+                                                                                                                    </div>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </div>
+                                                            </div>
+                                    </div>
+            </div>
+        </div>
+    </div>
+
+        
+    </nav>
+
+    
+</header>
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-D64V" height="0" width="0" style="display: none; visibility: hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
+            
+<!-- SUSE include: END -->
+<main role="main" class="">
+    <div class="container-fluid">
+        <div id="content_container"><style type="text/css">
+	/* Move this to global styles and delete this after new templates go live */
+	.top-banner.promo { border-bottom:5px solid #37b062; }
+</style>
+<div class="blog-breadcrumbs">
+	<div itemscope itemtype="http://schema.org/BreadcrumbList">
+		<span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+			<a href="/c/blog/" itemprop="item">
+				<span itemprop="name"><span>&lt;</span> Back to Blog</span>
+			</a>
+			<meta itemprop="position" content="1"/>
+		</span>
+	</div>
+</div>
+<section class="main single-post"><!-- remove single-post after this goes live -->
+						<div class="row blog-header-2020">
+				<div class="col-sm-8">
+					<h1>SUSE state of and strategy for Post Quantum Cryptography at the end of 2025</h1>
+					<p class="byline">
+                        December 4, 2025						<span class="pipe">|</span>
+						By: 
+						<span class="author vcard"><a class="url fn n" href="https://www.suse.com/c/author/msmeissn/" title="View all posts by Marcus Meissner">Marcus Meissner</a></span>
+					</p>
+				</div>
+				<div class="col-sm-4">
+					<div class="shariff shariff-align-flex-start shariff-widget-align-flex-start"><div class="ShariffHeadline">Share</div><ul class="shariff-buttons theme-round orientation-horizontal buttonsize-large"><li class="shariff-button facebook shariff-nocustomcolor" style="background-color:#4273c8;border-radius:1%"><a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.suse.com%2Fc%2Fsuse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025%2F" title="Share on Facebook" aria-label="Share on Facebook" role="button" rel="nofollow" class="shariff-link" style=";border-radius:1%; background-color:#3b5998; color:#fff" target="_blank"><span class="shariff-icon" style=""><svg width="32px" height="20px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 32"><path fill="#3b5998" d="M17.1 0.2v4.7h-2.8q-1.5 0-2.1 0.6t-0.5 1.9v3.4h5.2l-0.7 5.3h-4.5v13.6h-5.5v-13.6h-4.5v-5.3h4.5v-3.9q0-3.3 1.9-5.2t5-1.8q2.6 0 4.1 0.2z"/></svg></span></a></li><li class="shariff-button twitter shariff-nocustomcolor" style="background-color:#595959;border-radius:1%"><a href="https://twitter.com/share?url=https%3A%2F%2Fwww.suse.com%2Fc%2Fsuse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025%2F&text=SUSE%20state%20of%20and%20strategy%20for%20Post%20Quantum%20Cryptography%20at%20the%20end%20of%202025" title="Share on X" aria-label="Share on X" role="button" rel="noopener nofollow" class="shariff-link" style=";border-radius:1%; background-color:#000; color:#fff" target="_blank"><span class="shariff-icon" style=""><svg width="32px" height="20px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#000" d="M14.258 10.152L23.176 0h-2.113l-7.747 8.813L7.133 0H0l9.352 13.328L0 23.973h2.113l8.176-9.309 6.531 9.309h7.133zm-2.895 3.293l-.949-1.328L2.875 1.56h3.246l6.086 8.523.945 1.328 7.91 11.078h-3.246zm0 0"/></svg></span></a></li><li class="shariff-button linkedin shariff-nocustomcolor" style="background-color:#1488bf;border-radius:1%"><a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fwww.suse.com%2Fc%2Fsuse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025%2F" title="Share on LinkedIn" aria-label="Share on LinkedIn" role="button" rel="noopener nofollow" class="shariff-link" style=";border-radius:1%; background-color:#0077b5; color:#fff" target="_blank"><span class="shariff-icon" style=""><svg width="32px" height="20px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 27 32"><path fill="#0077b5" d="M6.2 11.2v17.7h-5.9v-17.7h5.9zM6.6 5.7q0 1.3-0.9 2.2t-2.4 0.9h0q-1.5 0-2.4-0.9t-0.9-2.2 0.9-2.2 2.4-0.9 2.4 0.9 0.9 2.2zM27.4 18.7v10.1h-5.9v-9.5q0-1.9-0.7-2.9t-2.3-1.1q-1.1 0-1.9 0.6t-1.2 1.5q-0.2 0.5-0.2 1.4v9.9h-5.9q0-7.1 0-11.6t0-5.3l0-0.9h5.9v2.6h0q0.4-0.6 0.7-1t1-0.9 1.6-0.8 2-0.3q3 0 4.9 2t1.9 6z"/></svg></span></a></li><li class="shariff-button reddit shariff-nocustomcolor" style="background-color:#ff5700;border-radius:1%"><a href="https://www.reddit.com/submit?url=https%3A%2F%2Fwww.suse.com%2Fc%2Fsuse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025%2F" title="Share on Reddit" aria-label="Share on Reddit" role="button" rel="noopener nofollow" class="shariff-link" style=";border-radius:1%; background-color:#ff4500; color:#fff" target="_blank"><span class="shariff-icon" style=""><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ff4500" d="M440.3 203.5c-15 0-28.2 6.2-37.9 15.9-35.7-24.7-83.8-40.6-137.1-42.3L293 52.3l88.2 19.8c0 21.6 17.6 39.2 39.2 39.2 22 0 39.7-18.1 39.7-39.7s-17.6-39.7-39.7-39.7c-15.4 0-28.7 9.3-35.3 22l-97.4-21.6c-4.9-1.3-9.7 2.2-11 7.1L246.3 177c-52.9 2.2-100.5 18.1-136.3 42.8-9.7-10.1-23.4-16.3-38.4-16.3-55.6 0-73.8 74.6-22.9 100.1-1.8 7.9-2.6 16.3-2.6 24.7 0 83.8 94.4 151.7 210.3 151.7 116.4 0 210.8-67.9 210.8-151.7 0-8.4-.9-17.2-3.1-25.1 49.9-25.6 31.5-99.7-23.8-99.7zM129.4 308.9c0-22 17.6-39.7 39.7-39.7 21.6 0 39.2 17.6 39.2 39.7 0 21.6-17.6 39.2-39.2 39.2-22 .1-39.7-17.6-39.7-39.2zm214.3 93.5c-36.4 36.4-139.1 36.4-175.5 0-4-3.5-4-9.7 0-13.7 3.5-3.5 9.7-3.5 13.2 0 27.8 28.5 120 29 149 0 3.5-3.5 9.7-3.5 13.2 0 4.1 4 4.1 10.2.1 13.7zm-.8-54.2c-21.6 0-39.2-17.6-39.2-39.2 0-22 17.6-39.7 39.2-39.7 22 0 39.7 17.6 39.7 39.7-.1 21.5-17.7 39.2-39.7 39.2z"/></svg></span></a></li></ul></div>				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12"><div class="blog-2020-divider"></div></div>
+			</div>
+			<div class="row">
+				<div class="col-sm-8">
+					<div class="content content-2020"><div class="shariff shariff-align-flex-start shariff-widget-align-flex-start"><div class="ShariffHeadline">Share</div><ul class="shariff-buttons theme-round orientation-horizontal buttonsize-large"><li class="shariff-button facebook shariff-nocustomcolor" style="background-color:#4273c8;border-radius:1%"><a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.suse.com%2Fc%2Fsuse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025%2F" title="Share on Facebook" aria-label="Share on Facebook" role="button" rel="nofollow" class="shariff-link" style=";border-radius:1%; background-color:#3b5998; color:#fff" target="_blank"><span class="shariff-icon" style=""><svg width="32px" height="20px" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 18 32"><path fill="#3b5998" d="M17.1 0.2v4.7h-2.8q-1.5 0-2.1 0.6t-0.5 1.9v3.4h5.2l-0.7 5.3h-4.5v13.6h-5.5v-13.6h-4.5v-5.3h4.5v-3.9q0-3.3 1.9-5.2t5-1.8q2.6 0 4.1 0.2z"></path></svg></span></a></li><li class="shariff-button twitter shariff-nocustomcolor" style="background-color:#595959;border-radius:1%"><a href="https://twitter.com/share?url=https%3A%2F%2Fwww.suse.com%2Fc%2Fsuse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025%2F&amp;text=SUSE%20state%20of%20and%20strategy%20for%20Post%20Quantum%20Cryptography%20at%20the%20end%20of%202025" title="Share on X" aria-label="Share on X" role="button" rel="noopener nofollow" class="shariff-link" style=";border-radius:1%; background-color:#000; color:#fff" target="_blank"><span class="shariff-icon" style=""><svg width="32px" height="20px" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path fill="#000" d="M14.258 10.152L23.176 0h-2.113l-7.747 8.813L7.133 0H0l9.352 13.328L0 23.973h2.113l8.176-9.309 6.531 9.309h7.133zm-2.895 3.293l-.949-1.328L2.875 1.56h3.246l6.086 8.523.945 1.328 7.91 11.078h-3.246zm0 0"></path></svg></span></a></li><li class="shariff-button linkedin shariff-nocustomcolor" style="background-color:#1488bf;border-radius:1%"><a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fwww.suse.com%2Fc%2Fsuse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025%2F" title="Share on LinkedIn" aria-label="Share on LinkedIn" role="button" rel="noopener nofollow" class="shariff-link" style=";border-radius:1%; background-color:#0077b5; color:#fff" target="_blank"><span class="shariff-icon" style=""><svg width="32px" height="20px" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 27 32"><path fill="#0077b5" d="M6.2 11.2v17.7h-5.9v-17.7h5.9zM6.6 5.7q0 1.3-0.9 2.2t-2.4 0.9h0q-1.5 0-2.4-0.9t-0.9-2.2 0.9-2.2 2.4-0.9 2.4 0.9 0.9 2.2zM27.4 18.7v10.1h-5.9v-9.5q0-1.9-0.7-2.9t-2.3-1.1q-1.1 0-1.9 0.6t-1.2 1.5q-0.2 0.5-0.2 1.4v9.9h-5.9q0-7.1 0-11.6t0-5.3l0-0.9h5.9v2.6h0q0.4-0.6 0.7-1t1-0.9 1.6-0.8 2-0.3q3 0 4.9 2t1.9 6z"></path></svg></span></a></li><li class="shariff-button reddit shariff-nocustomcolor" style="background-color:#ff5700;border-radius:1%"><a href="https://www.reddit.com/submit?url=https%3A%2F%2Fwww.suse.com%2Fc%2Fsuse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025%2F" title="Share on Reddit" aria-label="Share on Reddit" role="button" rel="noopener nofollow" class="shariff-link" style=";border-radius:1%; background-color:#ff4500; color:#fff" target="_blank"><span class="shariff-icon" style=""><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 512 512"><path fill="#ff4500" d="M440.3 203.5c-15 0-28.2 6.2-37.9 15.9-35.7-24.7-83.8-40.6-137.1-42.3L293 52.3l88.2 19.8c0 21.6 17.6 39.2 39.2 39.2 22 0 39.7-18.1 39.7-39.7s-17.6-39.7-39.7-39.7c-15.4 0-28.7 9.3-35.3 22l-97.4-21.6c-4.9-1.3-9.7 2.2-11 7.1L246.3 177c-52.9 2.2-100.5 18.1-136.3 42.8-9.7-10.1-23.4-16.3-38.4-16.3-55.6 0-73.8 74.6-22.9 100.1-1.8 7.9-2.6 16.3-2.6 24.7 0 83.8 94.4 151.7 210.3 151.7 116.4 0 210.8-67.9 210.8-151.7 0-8.4-.9-17.2-3.1-25.1 49.9-25.6 31.5-99.7-23.8-99.7zM129.4 308.9c0-22 17.6-39.7 39.7-39.7 21.6 0 39.2 17.6 39.2 39.7 0 21.6-17.6 39.2-39.2 39.2-22 .1-39.7-17.6-39.7-39.2zm214.3 93.5c-36.4 36.4-139.1 36.4-175.5 0-4-3.5-4-9.7 0-13.7 3.5-3.5 9.7-3.5 13.2 0 27.8 28.5 120 29 149 0 3.5-3.5 9.7-3.5 13.2 0 4.1 4 4.1 10.2.1 13.7zm-.8-54.2c-21.6 0-39.2-17.6-39.2-39.2 0-22 17.6-39.7 39.2-39.7 22 0 39.7 17.6 39.7 39.7-.1 21.5-17.7 39.2-39.7 39.2z"></path></svg></span></a></li></ul></div><p>SUSE’s strategy on implementing post quantum cryptography (PQC) has been to adopt standards and upstream implementations when they become available, and deliver support to customers via maintenance or newer product revisions.</p>
+<h2>Standardization status</h2>
+<p>Cryptography and protocols on top of it needs to interoperate world wide between a wide range of third parties. This requires that they are standardized before they can be deployed for large scale production purposes.</p>
+<p>What is the standardization status so far:</p>
+<h3>Low-level ciphers</h3>
+<ul>
+<li>ML-KEM – PQC safe key exchange mechanism using module lattices, standardized in FIPS 203.</li>
+<li>ML-DSA – PQC safe digital signature algorithm using module lattices, standardized in FIPS 204.</li>
+<li>SLH-DSA – PQC safe digital signature algorithm using stateless hashes, standardized in FIPS 205.</li>
+<li>LMS – PQC safe stateful hash defined in FIPS 186.</li>
+<li>XMSS – PQC safe stateful hash defined in FIPS 186.</li>
+</ul>
+<p>The first 3 standards have been published in August 2024 and are available for FIPS 140-3 validation. The stateful hashes have been certified in 2020, use is however not mandatory as the SHA algorithms still are considered post quantum safe with sufficient lengths.</p>
+<p>Other low-level ciphers are in the standardization process, like Frodo KEM.</p>
+<h3>Protocol level ciphers</h3>
+<p>Various protocols need to define how the PQC low-level ciphers are used and integrated. Standardization of those take a while, so various are in a draft state, but likely will be going into standards as they are now.</p>
+<p>During the  transition time there will be hybrid ciphers used to allow use a combination of both proven working ciphers and relatively new PQC ciphers, to be both safe in a  post quantum world and also for potential cryptographic issues in the PQC ciphers.</p>
+<ul>
+<li>X.509: Certificate storage definitions are in a draft state.</li>
+<li>TLS: A hybrid ML-KEM 768 / X25519 key agreement is in standardization and available as draft.</li>
+<li>IKEv2: A similar hybrid ML-KEM 768 / X25519 key agreement is in standardization and available as draft.</li>
+<li>openssh / SSHv2: Also a hybrid ML-KEM 768 / X25519 key agreement is proposed and implemented in openssh 10 and newer.</li>
+</ul>
+<p>There is currently no secure boot draft standard.</p>
+<h2>SUSE Implementation status</h2>
+<p>SUSE has been integrating and updating components as they become available. Notably openssl 3 was using the openquantumsafe library liboqs via a provider in openssl 3 versions before openssl 3.5.</p>
+<p>The TLS libraries like gnutls, mozilla-nss and also the GO runtime focus on implementing the draft TLS cipher x25519mlkem768 which likely will be used in the near future.</p>
+<p>For IKEv2 for IPSEC there is also a proposed a x25519mlkem768 hybrid key exchange as draft standard, available in strongswan 6.0 and newer versions.</p>
+<p>For SSH there is also a x25519mlkem768 hybrid key exchange proposed, available in openssh 10.0 and newer. This openssh version is not yet available in SUSE Linux Enterprise products.</p>
+<table border="1">
+<tr>
+<th>SLES/SL Micro version</th>
+<th>ML-KEM</th>
+<th>ML-DSA</th>
+<th>SLH-DSA</th>
+<th>X.509</th>
+<th>TLS x25519mlkem768</th>
+</tr>
+<tr>
+<td>SLES 15 SP6</td>
+<td>liboqs<br>openssl 3  + oqs provider<br>go1.24 and newer</td>
+<td>liboqs<br>openssl 3  + oqs provider<br>go1.24 and newer</td>
+<td>liboqs<br>openssl 3  + oqs provider<br>go1.24 and newer</td>
+<td>liboqs<br>openssl 3  + oqs provider</td>
+<td>go1.24 and newer<br>mozilla-nss</td>
+</tr>
+<tr>
+<td>SLES 15 SP7</td>
+<td>same</td>
+<td>same</td>
+<td>same</td>
+<td>same</td>
+<td>same</td>
+</tr>
+<tr>
+<td>SL Micro 6.0 and 6.1</td>
+<td>same</td>
+<td>same</td>
+<td>same</td>
+<td>same</td>
+<td>same</td>
+</tr>
+<tr>
+<td>SLES 16.0 and SL Micro 6.2</td>
+<td>openssl<br>libgcrypt<br>leancrypto<br>liboqs<br>gnutls<br>go1.24 and newer<br>mozilla-nss</td>
+<td>openssl<br>leancrypto<br>liboqs<br>gnutls</td>
+<td>openssl<br>leancrypto<br>liboqs</td>
+<td>openssl<br>gnutls</td>
+<td>openssl<br>go 1.24 and newer<br>mozilla-nss<br>gnutls</td>
+</tr>
+</table>
+<h2>SUSE Strategy going forward</h2>
+<p>SUSE’s strategy going forward is that of a quick adoption of both standards and upstream implementations. We will use future product deliveries and also maintenance feature updates to improve SUSE’s PQC coverage.</p>
+<div class="shariff shariff-align-flex-start shariff-widget-align-flex-start"><div class="ShariffHeadline">Share</div><ul class="shariff-buttons theme-round orientation-horizontal buttonsize-large"><li class="shariff-button facebook shariff-nocustomcolor" style="background-color:#4273c8;border-radius:1%"><a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.suse.com%2Fc%2Fsuse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025%2F" title="Share on Facebook" aria-label="Share on Facebook" role="button" rel="nofollow" class="shariff-link" style=";border-radius:1%; background-color:#3b5998; color:#fff" target="_blank"><span class="shariff-icon" style=""><svg width="32px" height="20px" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 18 32"><path fill="#3b5998" d="M17.1 0.2v4.7h-2.8q-1.5 0-2.1 0.6t-0.5 1.9v3.4h5.2l-0.7 5.3h-4.5v13.6h-5.5v-13.6h-4.5v-5.3h4.5v-3.9q0-3.3 1.9-5.2t5-1.8q2.6 0 4.1 0.2z"></path></svg></span></a></li><li class="shariff-button twitter shariff-nocustomcolor" style="background-color:#595959;border-radius:1%"><a href="https://twitter.com/share?url=https%3A%2F%2Fwww.suse.com%2Fc%2Fsuse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025%2F&amp;text=SUSE%20state%20of%20and%20strategy%20for%20Post%20Quantum%20Cryptography%20at%20the%20end%20of%202025" title="Share on X" aria-label="Share on X" role="button" rel="noopener nofollow" class="shariff-link" style=";border-radius:1%; background-color:#000; color:#fff" target="_blank"><span class="shariff-icon" style=""><svg width="32px" height="20px" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path fill="#000" d="M14.258 10.152L23.176 0h-2.113l-7.747 8.813L7.133 0H0l9.352 13.328L0 23.973h2.113l8.176-9.309 6.531 9.309h7.133zm-2.895 3.293l-.949-1.328L2.875 1.56h3.246l6.086 8.523.945 1.328 7.91 11.078h-3.246zm0 0"></path></svg></span></a></li><li class="shariff-button linkedin shariff-nocustomcolor" style="background-color:#1488bf;border-radius:1%"><a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fwww.suse.com%2Fc%2Fsuse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025%2F" title="Share on LinkedIn" aria-label="Share on LinkedIn" role="button" rel="noopener nofollow" class="shariff-link" style=";border-radius:1%; background-color:#0077b5; color:#fff" target="_blank"><span class="shariff-icon" style=""><svg width="32px" height="20px" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 27 32"><path fill="#0077b5" d="M6.2 11.2v17.7h-5.9v-17.7h5.9zM6.6 5.7q0 1.3-0.9 2.2t-2.4 0.9h0q-1.5 0-2.4-0.9t-0.9-2.2 0.9-2.2 2.4-0.9 2.4 0.9 0.9 2.2zM27.4 18.7v10.1h-5.9v-9.5q0-1.9-0.7-2.9t-2.3-1.1q-1.1 0-1.9 0.6t-1.2 1.5q-0.2 0.5-0.2 1.4v9.9h-5.9q0-7.1 0-11.6t0-5.3l0-0.9h5.9v2.6h0q0.4-0.6 0.7-1t1-0.9 1.6-0.8 2-0.3q3 0 4.9 2t1.9 6z"></path></svg></span></a></li><li class="shariff-button reddit shariff-nocustomcolor" style="background-color:#ff5700;border-radius:1%"><a href="https://www.reddit.com/submit?url=https%3A%2F%2Fwww.suse.com%2Fc%2Fsuse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025%2F" title="Share on Reddit" aria-label="Share on Reddit" role="button" rel="noopener nofollow" class="shariff-link" style=";border-radius:1%; background-color:#ff4500; color:#fff" target="_blank"><span class="shariff-icon" style=""><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 512 512"><path fill="#ff4500" d="M440.3 203.5c-15 0-28.2 6.2-37.9 15.9-35.7-24.7-83.8-40.6-137.1-42.3L293 52.3l88.2 19.8c0 21.6 17.6 39.2 39.2 39.2 22 0 39.7-18.1 39.7-39.7s-17.6-39.7-39.7-39.7c-15.4 0-28.7 9.3-35.3 22l-97.4-21.6c-4.9-1.3-9.7 2.2-11 7.1L246.3 177c-52.9 2.2-100.5 18.1-136.3 42.8-9.7-10.1-23.4-16.3-38.4-16.3-55.6 0-73.8 74.6-22.9 100.1-1.8 7.9-2.6 16.3-2.6 24.7 0 83.8 94.4 151.7 210.3 151.7 116.4 0 210.8-67.9 210.8-151.7 0-8.4-.9-17.2-3.1-25.1 49.9-25.6 31.5-99.7-23.8-99.7zM129.4 308.9c0-22 17.6-39.7 39.7-39.7 21.6 0 39.2 17.6 39.2 39.7 0 21.6-17.6 39.2-39.2 39.2-22 .1-39.7-17.6-39.7-39.2zm214.3 93.5c-36.4 36.4-139.1 36.4-175.5 0-4-3.5-4-9.7 0-13.7 3.5-3.5 9.7-3.5 13.2 0 27.8 28.5 120 29 149 0 3.5-3.5 9.7-3.5 13.2 0 4.1 4 4.1 10.2.1 13.7zm-.8-54.2c-21.6 0-39.2-17.6-39.2-39.2 0-22 17.6-39.7 39.2-39.7 22 0 39.7 17.6 39.7 39.7-.1 21.5-17.7 39.2-39.7 39.2z"></path></svg></span></a></li></ul></div><div class="tptn_counter" id="tptn_counter_171683">(Visited 69 times, 1 visits today)</div></div>
+					<div class="share-2020"></div>
+					<!--
+					<div class="meta">
+						<br />
+						Category: <a href="https://www.suse.com/c/category/solutions/security/" rel="category tag">Security</a>, <a href="https://www.suse.com/c/category/products/suse-linux-enterprise-server/" rel="category tag">SUSE Linux Enterprise Server</a> <br />
+						This entry was posted Thursday, 4 December, 2025 at 9:42 am<br />
+						You can follow any responses to this entry via <a href="https://www.suse.com/c/suse-state-of-and-strategy-for-post-quantum-cryptography-at-the-end-of-2025/feed/">RSS</a>.<br />
+					</div>
+					-->
+
+                    <div class="recent-articles">
+            <section class="home-featured2">
+            <h2>Related Articles</h2>
+                            <div class="col-xs-12 col-sm-6 col-md-6 recent-articles-container">
+                    <div class="recent-articles-content ft-card">
+                                                    <div class="image" style="background:transparent url(https://www.suse.com/c/wp-content/uploads/2024/11/SUSE_Linux_pos-green-stacked-888x1200-a96aa74-1-221x300.jpg) center center no-repeat; background-size:cover;"></div>
+                                                <div class="rc-content">
+                            <p class="date">Dec 10th, 2024</p>
+                            <h4><a href="https://www.suse.com/c/suse-linux-enterprise-server-16/" class="blogSecondary">SUSE® Linux Enterprise Server 16: Shaping the Future of Enterprise IT</a></h4>
+                            <p class="byline">
+                                <a href="https://www.suse.com/c/author/sebastian-martinezsuse-com/" title="Posts by Sebastian Martinez" rel="author">Sebastian Martinez</a>                            </p>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                            <div class="col-xs-12 col-sm-6 col-md-6 recent-articles-container">
+                    <div class="recent-articles-content ft-card">
+                                                <div class="rc-content">
+                            <p class="date">Feb 06th, 2026</p>
+                            <h4><a href="https://www.suse.com/c/empowering-the-linux-admin-rapid-rollbacks-now-default-in-sles-16-on-aws/" class="blogSecondary">Empowering the Linux Admin: Rapid Rollbacks now Default in SLES 16 on AWS</a></h4>
+                            <p class="byline">
+                                <a href="https://www.suse.com/c/author/stephenmogg/" title="Posts by Stephen Mogg" rel="author">Stephen Mogg</a>                            </p>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                            <div class="col-xs-12 col-sm-6 col-md-6 recent-articles-container">
+                    <div class="recent-articles-content ft-card">
+                                                <div class="rc-content">
+                            <p class="date">Sep 20th, 2024</p>
+                            <h4><a href="https://www.suse.com/c/suse-has-received-first-fips-140-3-cryptographic-certificates/" class="blogSecondary">SUSE has received first FIPS 140-3 cryptographic certificates</a></h4>
+                            <p class="byline">
+                                <a href="https://www.suse.com/c/author/msmeissn/" title="Posts by Marcus Meissner" rel="author">Marcus Meissner</a>                            </p>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                            <div class="col-xs-12 col-sm-6 col-md-6 recent-articles-container">
+                    <div class="recent-articles-content ft-card">
+                                                    <div class="image" style="background:transparent url(https://www.suse.com/c/wp-content/uploads/2024/11/SUSE_Linux_pos-green-stacked-888x1200-a96aa74-1-221x300.jpg) center center no-repeat; background-size:cover;"></div>
+                                                <div class="rc-content">
+                            <p class="date">Feb 25th, 2026</p>
+                            <h4><a href="https://www.suse.com/c/sles-15-sp6-ltss-2026-support-gap/" class="blogSecondary">The 2026 Support Gap: Why SLES 15 SP6 Long Term Service Pack Support is Your Compliance and Certification Safety Net</a></h4>
+                            <p class="byline">
+                                <a href="https://www.suse.com/c/author/sebastian-martinezsuse-com/" title="Posts by Sebastian Martinez" rel="author">Sebastian Martinez</a>                            </p>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                        <div class="clearfix"></div>
+        </section>
+        
+</div>
+
+                    
+						<!-- if comments are closed display this -->
+			
+
+				</div>
+				
+				
+				<div class="col-sm-4">
+					<div class="author-bio">
+						<div class="row">
+							<div class="col-xs-4 author-avatar">
+								<img alt='Avatar photo' src='https://www.suse.com/c/wp-content/uploads/2020/08/marcus202006-150x150.jpg' srcset='https://www.suse.com/c/wp-content/uploads/2020/08/marcus202006-300x300.jpg 2x' class='avatar avatar-150 photo' height='150' width='150' decoding='async'/><div class="views">1,555 views</div>							</div>
+							<div class="col-xs-8 author-bio-content">
+								<span class="author vcard"><a class="url fn n" href="https://www.suse.com/c/author/msmeissn/" title="View all posts by Marcus Meissner">Marcus Meissner</a></span> 							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				
+			</div>
+			</section>
+</div>
+</div>
+</main>
+
+<!-- about to call wp_footer() -->
+<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/c/*"},{"not":{"href_matches":["/c/wp-*.php","/c/wp-admin/*","/c/wp-content/uploads/*","/c/wp-content/*","/c/wp-content/plugins/*","/c/wp-content/themes/suse/*","/c/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+<!--back to top-->
+<div class="container-fluid" style="height:0;">
+    <div class="row">
+        <div class="col-xs-12">
+            <div id="scrollTop">
+                <span class="fa fa-chevron-circle-up" onclick="backToTop()"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="t-work">
+    <div class="footer-start-line"></div>
+    <div class="container-fluid ">
+        <div class="row">
+            <div class="footer">
+                <div class="l-flex l-flex--justify-start u-margin-bottom-medium">
+                    <img class="logo" alt="SUSE Logo" src="https://www.suse.com/assets/img/suse-white-logo-green.svg" />
+                    <div class="foot-nav">
+        <ul class="l-flex l-flex--justify-start">
+                                            <li >
+                    <a  href="https://www.suse.com/careers/" title="Careers" class=""  rel="nofollow"  >
+                        Careers
+                    </a>
+                </li>
+                                            <li >
+                    <a  href="https://www.suse.com/company/legal/" title="Legal" class=""  >
+                        Legal
+                    </a>
+                </li>
+                                            <li  id="anti-slavery" >
+                    <a  href="https://links.imagerelay.com/cdn/3404/ql/811b4f2364b94ff18eb15e315b3e263d/suse_anti_slavery_statement.pdf" title="Anti-Slavery Statement" class=""  >
+                        Anti-Slavery Statement
+                    </a>
+                </li>
+                                            <li >
+                    <a  href="https://www.suse.com/legal/anti-slavery/" title="Modern Slavery Statement" class=""  >
+                        Modern Slavery Statement
+                    </a>
+                </li>
+                                            <li >
+                    <a  href="https://www.suse.com/company/about/" title="About" class=""  >
+                        About
+                    </a>
+                </li>
+                                            <li >
+                    <a  href="https://www.suse.com/company/subscribe/" title="Communications Preferences" class=""  >
+                        Communications Preferences
+                    </a>
+                </li>
+                                            <li >
+                    <a  href="https://www.suse.com/contact/" title="Contact Us" class=""  >
+                        Contact Us
+                    </a>
+                </li>
+                                            <li >
+                    <a  href="#footer-chat-now" title="Let&#039;s Chat" class="chat"  target="_self" oncontextmenu="return false;" >
+                        Let&#039;s Chat
+                    </a>
+                </li>
+                    </ul>
+    </div>
+
+                    <div class="social">
+    <ul class="l-flex l-flex--justify-start">
+                <li><a href="https://www.youtube.com/channel/UCHTfqIzPKz4f_dri36lAQGA " aria-label="YouTube" rel="nofollow"><img src="https://www.suse.com/assets/img/youtube.png" alt="YouTube" /></a></li>
+                        <li><a href="https://www.facebook.com/SUSEWorldwide" aria-label="Facebook" rel="nofollow"><img src="https://www.suse.com/assets/img/fn-fbook-ico-white.png" alt="Facebook" /></a></li>
+                        <li class="twitter"><a href="https://x.com/SUSE" aria-label="X" rel="nofollow"><img src="https://www.suse.com/assets/img/logo-black.png" width="30" alt="X" /></a></li>
+                        <li><a href="https://www.linkedin.com/company/suse" aria-label="LinkedIn" rel="nofollow"><img src="https://www.suse.com/assets/img/fn-link-ico-white.png" alt="LinkedIn" /></a></li>
+                        <li id="social-cn"><a href="#" class="wechat-logo" id="wechat" aria-label="WeChat" rel="nofollow"><img src="https://www.suse.com/assets/img/icons/WeChat.png" width="39" alt="WeChat"/></a></li>
+                            <li><a href="https://bsky.app/profile/suse.com" aria-label="Bluesky" rel="nofollow"><img src="https://www.suse.com/assets/img/icons/bsky-icon.png" alt="Bluesky" /></a></li>
+            </ul>
+</div>
+        <div class="wechat-qr-modal" id="wechat-qr">
+        <span class="close-qr"></span>
+        <div class="wechat-qr-wrap"><img src="https://www.suse.com/assets/img/icons/qrcode_for_gh_91d12717ed53_430.jpg" alt="WeChat QR"/></div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var path = window.location.pathname.split("/");
+            if(path[1] === 'zh-cn'){
+                $('#social-cn').addClass('show');
+            }
+            else{
+                $('#social-cn').removeClass('show');
+            }
+            $('#wechat').on('click', function(e){
+                    e.preventDefault();
+                    $('#wechat-qr').addClass('open');
+                });
+            $('.close-qr').on('click', function(){
+                $('#wechat-qr').removeClass('open');
+            });
+        });
+    </script>
+    
+                </div>
+                <div class="divider"></div>
+    <div class="copy-left">
+        <div class="phone">
+                
+            <div class="number">
+                Support: <a style="color:inherit;" href=https://www.suse.com/support/handbook/#open>Open a Support Case</a>
+            </div>
+                    </div>
+
+    </div>
+    <div class="copy">
+        <span class="copy__rights">
+        &copy; <script type="text/javascript">var d = new Date(); document.write(d.getFullYear() + " ");</script> &copy;SUSE, All Rights Reserved
+        </span>
+                    <span class="copy__rights">
+                <a href="javascript:Optanon.ToggleInfoDisplay()">Cookie Settings</a>
+            </span>
+                <a href="https://www.suse.com/company/legal/" onclick="ga('send', 'event', 'Footer Nav', 'Privacy and Cookie Policy', 'https://www.suse.com/company/legal/');">Privacy Policy</a> and
+        <a href="https://www.suse.com/company/legal/cookies-policy/" onclick="ga('send', 'event', 'Footer Nav', 'Privacy and Cookie Policy', 'https://www.suse.com/company/legal/cookies-policy/');">Cookie Policy</a>
+    </div>
+    <div class="clear"></div>
+
+            </div>
+        </div>
+    </div>
+</footer>
+<script type="text/javascript" async defer src="https://www.suse.com/uniparts/scripts/W3sic3JjIjoiXC9hc3NldHNcL2pzXC90aXRsZUhlaWdodC5qcz9hdnM9MTc4MDQ4MDkwNyIsInR5cGUiOiJ0ZXh0XC9qYXZhc2NyaXB0IiwiYXR0cmlidXRlcyI6W119XQ--/?avs=1780480907"></script>
+
+<div id="CRAWLER_LAST_MODIFIED" style="display:none !important;"></div>
+<div id='ZN_eam6spwSl7tpOJw'></div>
+                                <!-- Video Player Modal -->
+<div class="modal fade" id="videoModalOne" tabindex="-3" role="dialog" aria-labelledby="videoModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true"><span class="talk-x">X</span></span></button>
+            </div>
+            <div class="modal-body">
+                <iframe width="560" height="315" id="videoPlayerFrame" src="" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+                                <!-- Let's Talk Modal -->
+<div class="modal fade" id="talk-modal" tabindex="-1" role="dialog" aria-labelledby="letsTalkModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true"><span class="talk-x">&times;</span></span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Let's Talk Modal -->
+            
+<!-- SUSE include: END --><script type="text/javascript" id="tptn_tracker-js-extra">
+/* <![CDATA[ */
+var ajax_tptn_tracker = {"ajax_url":"https://www.suse.com/c/","top_ten_id":"171683","top_ten_blog_id":"1","activate_counter":"11","top_ten_debug":"0","tptn_rnd":"578169818"};
+//# sourceURL=tptn_tracker-js-extra
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://www.suse.com/c/wp-content/plugins/top-10/includes/js/top-10-tracker.min.js?ver=4.1.1" id="tptn_tracker-js"></script>
+<script type="text/javascript" src="https://www.suse.com/c/wp-content/themes/suse/js/scripts.js?ver=1.0" id="ekr-scripts-js"></script>
+<!-- end call to wp_footer() -->
+
+
+<script type="text/javascript">
+    $(".breadcrumbs div").append('<span>'+
+        '<a id="company-link" class="highlight">'+
+        ' <span>About</span>'+
+        '</a>'+
+        '</span>'+
+        '<span>'+
+        '<a href="/c/blog/">'+
+        '<span>Blog</span>'+
+        '</a>'+
+        '</span>');
+</script>
+
+
+</body>
+</html>

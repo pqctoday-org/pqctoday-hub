@@ -27,7 +27,7 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           # Full history so later steps that diff against origin/main work.
           # The "Detect WASM backend changes" + "Post CSV diff comment" steps
@@ -56,6 +56,12 @@ jobs:
 
       - name: Audit protocol matrix refs
         run: npm run audit:matrix-refs
+
+      - name: Audit vendor-id referential integrity
+        # Catches wrong VND-* assignments in the product catalog (e.g. a product
+        # pointing to a deprecated vendor, or a VND that resolves to a completely
+        # different company). See scripts/audit-vendor-refs.ts for details.
+        run: npm run audit:vendor-refs
 
       - name: Audit module infographic coverage
         # Verifies every MODULE_CATALOG entry has public/images/infographics/pqcstd_<id>.png.
@@ -235,7 +241,7 @@ jobs:
       pull-requests: read
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           token: ${{ secrets.REVISION_TOKEN || secrets.GITHUB_TOKEN }}
           fetch-depth: 0

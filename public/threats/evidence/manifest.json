@@ -39,13 +39,14 @@
     "threat_id": "AUTO-001",
     "source_url": "https://unece.org/transport/documents/2021/03/standards/un-regulation-no-155-cyber-security-and-cyber-security",
     "main_source": "ISO/SAE 21434 Road Vehicle Cybersecurity",
-    "download_status": "error",
-    "evidence_file": null,
+    "download_status": "ok",
+    "evidence_file": "public/threats/evidence/AUTO-001.html",
     "content_type": "text/html;charset=UTF-8",
-    "size_bytes": 5066,
+    "size_bytes": 32127,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T04:24:24.092Z"
+    "downloaded_at": "2026-06-07",
+    "fetch_tier": "playwright-stealth"
   },
   {
     "threat_id": "AUTO-002",
@@ -63,25 +64,27 @@
     "threat_id": "AUTO-003",
     "source_url": "https://unece.org/transport/documents/2021/03/standards/un-regulation-no-155-cyber-security-and-cyber-security",
     "main_source": "UNECE WP.29 Regulations R155/R156",
-    "download_status": "error",
-    "evidence_file": null,
+    "download_status": "ok",
+    "evidence_file": "public/threats/evidence/AUTO-003.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 5066,
+    "size_bytes": 32127,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T04:24:24.092Z"
+    "downloaded_at": "2026-06-07",
+    "fetch_tier": "playwright-stealth"
   },
   {
     "threat_id": "AUTO-004",
     "source_url": "https://unece.org/transport/documents/2021/03/standards/un-regulation-no-155-cyber-security-and-cyber-security",
     "main_source": "ISO/SAE 21434 Road Vehicle Cybersecurity",
-    "download_status": "error",
-    "evidence_file": null,
+    "download_status": "ok",
+    "evidence_file": "public/threats/evidence/AUTO-004.html",
     "content_type": "text/html;charset=UTF-8",
-    "size_bytes": 5066,
+    "size_bytes": 32127,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T04:24:24.092Z"
+    "downloaded_at": "2026-06-07",
+    "fetch_tier": "playwright-stealth"
   },
   {
     "threat_id": "CLOUD-001",
@@ -134,7 +137,7 @@
   {
     "threat_id": "CROSS-001",
     "source_url": "https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/2025-quantum-safe-readiness",
-    "main_source": "IBM Institute for Business Value — Secure the Post-Quantum Future 2025",
+    "main_source": "IBM Institute for Business Value \u2014 Secure the Post-Quantum Future 2025",
     "download_status": "ok",
     "evidence_file": "public/threats/evidence/CROSS-001.html",
     "content_type": "text/html; charset=utf-8",
@@ -158,7 +161,7 @@
   {
     "threat_id": "CROSS-003",
     "source_url": "https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/2025-quantum-safe-readiness",
-    "main_source": "IBM Institute for Business Value — Secure the Post-Quantum Future 2025",
+    "main_source": "IBM Institute for Business Value \u2014 Secure the Post-Quantum Future 2025",
     "download_status": "ok",
     "evidence_file": "public/threats/evidence/CROSS-003.html",
     "content_type": "text/html; charset=utf-8",
@@ -206,7 +209,7 @@
   {
     "threat_id": "CROSS-007",
     "source_url": "https://digital-strategy.ec.europa.eu/en/news/eu-reinforces-its-cybersecurity-post-quantum-cryptography",
-    "main_source": "European Commission Digital Strategy — PQC Roadmap",
+    "main_source": "European Commission Digital Strategy \u2014 PQC Roadmap",
     "download_status": "ok",
     "evidence_file": "public/threats/evidence/CROSS-007.html",
     "content_type": "text/html; charset=UTF-8",
@@ -374,7 +377,7 @@
   {
     "threat_id": "FIN-005",
     "source_url": "https://www.fsisac.com/newsroom/fs-isac-urges-global-coordination-for-migration-to-post-quantum-cryptography-in-financial-services",
-    "main_source": "FS-ISAC — The Timeline for Post Quantum Cryptographic Migration",
+    "main_source": "FS-ISAC \u2014 The Timeline for Post Quantum Cryptographic Migration",
     "download_status": "ok",
     "evidence_file": "public/threats/evidence/FIN-005.html",
     "content_type": "text/html; charset=UTF-8",
@@ -470,7 +473,7 @@
   {
     "threat_id": "AUS-GOV-001",
     "source_url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/annual-cyber-threat-report-2023-2024",
-    "main_source": "ASD ACSC Annual Cyber Threat Report 2024–25",
+    "main_source": "ASD ACSC Annual Cyber Threat Report 2024\u201325",
     "download_status": "ok",
     "evidence_file": "public/threats/evidence/AUS-GOV-001.html",
     "content_type": null,
@@ -482,7 +485,7 @@
   {
     "threat_id": "AUS-GOV-002",
     "source_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism",
-    "main_source": "ASD Information Security Manual — ISM-1917",
+    "main_source": "ASD Information Security Manual \u2014 ISM-1917",
     "download_status": "ok",
     "evidence_file": "public/threats/evidence/AUS-GOV-002.html",
     "content_type": null,
@@ -770,7 +773,7 @@
   {
     "threat_id": "MEDIA-003",
     "source_url": "https://dvb.org/solutions/security/",
-    "main_source": "DVB Project — Conditional Access System Standards",
+    "main_source": "DVB Project \u2014 Conditional Access System Standards",
     "download_status": "ok",
     "evidence_file": "public/threats/evidence/MEDIA-003.html",
     "content_type": "text/html; charset=UTF-8",
@@ -915,13 +918,14 @@
     "threat_id": "TELCO-001",
     "source_url": "https://www.gsma.com/solutions-and-impact/technologies/security/post-quantum/",
     "main_source": "GSMA Security Guidelines",
-    "download_status": "error",
-    "evidence_file": null,
+    "download_status": "ok",
+    "evidence_file": "public/threats/evidence/TELCO-001.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 5848,
+    "size_bytes": 117467,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T04:24:24.092Z"
+    "downloaded_at": "2026-06-07",
+    "fetch_tier": "curl_cffi:chrome124"
   },
   {
     "threat_id": "TELCO-002",
@@ -951,13 +955,14 @@
     "threat_id": "TELCO-004",
     "source_url": "https://www.gsma.com/solutions-and-impact/technologies/esim/esim-specification/",
     "main_source": "GSMA eSIM Specification (SGP.22)",
-    "download_status": "error",
-    "evidence_file": null,
+    "download_status": "ok",
+    "evidence_file": "public/threats/evidence/TELCO-004.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 5854,
+    "size_bytes": 204216,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T04:24:24.092Z"
+    "downloaded_at": "2026-06-07",
+    "fetch_tier": "curl_cffi:chrome124"
   },
   {
     "threat_id": "TELCO-005",
@@ -1035,13 +1040,14 @@
     "threat_id": "EDU-004",
     "source_url": "https://dodcio.defense.gov/cmmc/About/",
     "main_source": "CMMC 2.0 / NIST SP 800-171",
-    "download_status": "error",
-    "evidence_file": null,
+    "download_status": "ok",
+    "evidence_file": "public/threats/evidence/EDU-004.html",
     "content_type": "text/html",
-    "size_bytes": 0,
+    "size_bytes": 51802,
     "http_status": 200,
-    "error_message": "AbortError: This operation was aborted",
-    "downloaded_at": "2026-05-19T04:24:24.092Z"
+    "error_message": null,
+    "downloaded_at": "2026-06-07",
+    "fetch_tier": "curl_cffi:chrome124"
   },
   {
     "threat_id": "EDU-005",
@@ -1155,13 +1161,14 @@
     "threat_id": "WATER-005",
     "source_url": "https://www.ferc.gov/dam-safety-and-inspections/security-program-hydropower-projects-revision-3",
     "main_source": "FERC Security Program for Hydropower Projects",
-    "download_status": "error",
-    "evidence_file": null,
+    "download_status": "ok",
+    "evidence_file": "public/threats/evidence/WATER-005.html",
     "content_type": "text/html; charset=UTF-8",
-    "size_bytes": 5966,
+    "size_bytes": 273236,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-05-19T04:24:24.092Z"
+    "downloaded_at": "2026-06-07",
+    "fetch_tier": "curl_cffi:chrome124"
   },
   {
     "threat_id": "WATER-003",

@@ -161,5 +161,10 @@
     "reason": "forbidden",
     "note": "Returns HTTP 403 to automated GET. GSMA hardens its CDN against bots.",
     "date": "2026-05-22T20:00:00.000Z"
+  },
+  "https://www.tii.ae/news/tii-researchers-contribute-nist-post-quantum-cryptography-standardization": {
+    "label": "United Arab Emirates:TII — NIST Additional Signatures Round 2 Contributions",
+    "reason": "forbidden",
+    "date": "2026-06-06T16:25:59.943Z"
   }
 }

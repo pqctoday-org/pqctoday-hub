@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8"><script type="text/javascript">(window.NREUM||(NREUM={})).init={ajax:{deny_list:["bam.nr-data.net"]},feature_flags:["soft_nav"]};(window.NREUM||(NREUM={})).loader_config={licenseKey:"NRJS-53bff73ba45a8229b97",applicationID:"698424636",browserID:"718415476"};;/*! For license information please see nr-loader-rum-1.316.0.min.js.LICENSE.txt */
+(()=>{var e,t,r={122:(e,t,r)=>{"use strict";r.d(t,{a:()=>i});var n=r(944);function i(e,t){try{if(!e||"object"!=typeof e)return(0,n.R)(3);if(!t||"object"!=typeof t)return(0,n.R)(4);const r=Object.create(Object.getPrototypeOf(t),Object.getOwnPropertyDescriptors(t)),s=0===Object.keys(r).length?e:r;for(let o in s)if(void 0!==e[o])try{if(null===e[o]){r[o]=null;continue}Array.isArray(e[o])&&Array.isArray(t[o])?r[o]=Array.from(new Set([...e[o],...t[o]])):e[o]instanceof Map||e[o]instanceof Set||e[o]instanceof Date||e[o]instanceof RegExp?r[o]=e[o]:"object"==typeof e[o]&&"object"==typeof t[o]?r[o]=i(e[o],t[o]):r[o]=e[o]}catch(e){r[o]||(0,n.R)(1,e)}return r}catch(e){(0,n.R)(2,e)}}},154:(e,t,r)=>{"use strict";r.d(t,{OF:()=>u,RI:()=>i,WN:()=>l,bv:()=>s,gm:()=>o,m:()=>c,mw:()=>a,sb:()=>d,zk:()=>f});var n=r(863);const i="undefined"!=typeof window&&!!window.document,s="undefined"!=typeof WorkerGlobalScope&&("undefined"!=typeof self&&self instanceof WorkerGlobalScope&&self.navigator instanceof WorkerNavigator||"undefined"!=typeof globalThis&&globalThis instanceof WorkerGlobalScope&&globalThis.navigator instanceof WorkerNavigator),o=i?window:"undefined"!=typeof WorkerGlobalScope&&("undefined"!=typeof self&&self instanceof WorkerGlobalScope&&self||"undefined"!=typeof globalThis&&globalThis instanceof WorkerGlobalScope&&globalThis),a=Boolean("hidden"===o?.document?.visibilityState),c=""+o?.location,u=/iPad|iPhone|iPod/.test(o.navigator?.userAgent),d=u&&"undefined"==typeof SharedWorker,l=((()=>{const e=o.navigator?.userAgent?.match(/Firefox[/\s](\d+\.\d+)/);Array.isArray(e)&&e.length>=2&&e[1]})(),Date.now()-(0,n.t)()),f=()=>{const e=o?.performance?.getEntriesByType?.("navigation")?.[0];if(e&&e.responseStart>0&&e.responseStart<o.performance.now())return e}},234:(e,t,r)=>{"use strict";r.d(t,{W:()=>i});var n=r(687);class i{constructor(e,t){this.agentRef=e,this.ee=e?.ee,this.featureName=t,this.blocked=!1}deregisterDrain(){(0,n.x3)(this.agentRef,this.featureName)}}},241:(e,t,r)=>{"use strict";r.d(t,{W:()=>s});var n=r(154);const i="newrelic";function s(e={}){try{n.gm.dispatchEvent(new CustomEvent(i,{detail:e}))}catch(e){}}},261:(e,t,r)=>{"use strict";r.d(t,{$9:()=>u,BL:()=>a,CH:()=>g,Dl:()=>_,Fw:()=>y,PA:()=>h,Pl:()=>n,Pv:()=>k,Tb:()=>l,U2:()=>s,V1:()=>R,Wb:()=>x,bt:()=>b,cD:()=>v,d3:()=>w,dT:()=>c,eY:()=>p,fF:()=>f,hG:()=>i,k6:()=>o,nb:()=>m,o5:()=>d});const n="api-",i="addPageAction",s="addToTrace",o="addRelease",a="finished",c="interaction",u="log",d="noticeError",l="pauseReplay",f="recordCustomEvent",g="recordReplay",p="register",m="setApplicationVersion",h="setCurrentRouteName",v="setCustomAttribute",b="setErrorHandler",y="setPageViewName",_="setUserId",w="start",x="wrapLogger",R="measure",k="consent"},289:(e,t,r)=>{"use strict";r.d(t,{GG:()=>o,Qr:()=>c,sB:()=>a});var n=r(878),i=r(389);function s(){return"undefined"==typeof document||"complete"===document.readyState}function o(e,t){if(s())return e();const r=(0,i.J)(e),o=setInterval(()=>{s()&&(clearInterval(o),r())},500);(0,n.sp)("load",r,t)}function a(e){if(s())return e();(0,n.DD)("DOMContentLoaded",e)}function c(e){if(s())return e();(0,n.sp)("popstate",e)}},324:(e,t,r)=>{"use strict";r.d(t,{F3:()=>i,Xs:()=>s,xv:()=>n});const n="1.316.0",i="PROD",s="CDN"},362:(e,t,r)=>{"use strict";r.d(t,{d:()=>s});var n=r(566),i=r(741);class s extends i.W{agentIdentifier=(0,n.LA)(16)}},374:(e,t,r)=>{r.nc=(()=>{try{return document?.currentScript?.nonce}catch(e){}return""})()},384:(e,t,r)=>{"use strict";r.d(t,{NT:()=>a,Zm:()=>c,bQ:()=>d,dV:()=>u,pV:()=>l});var n=r(154),i=r(863),s=r(944),o=r(910);const a={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net"};function c(){return n.gm.NREUM||(n.gm.NREUM={}),void 0===n.gm.newrelic&&(n.gm.newrelic=n.gm.NREUM),n.gm.NREUM}function u(){let e=c();return e.o||(e.o={ST:n.gm.setTimeout,SI:n.gm.setImmediate||n.gm.setInterval,CT:n.gm.clearTimeout,XHR:n.gm.XMLHttpRequest,REQ:n.gm.Request,EV:n.gm.Event,PR:n.gm.Promise,MO:n.gm.MutationObserver,FETCH:n.gm.fetch,WS:n.gm.WebSocket},(0,o.i)(...Object.values(e.o))),e}function d(e,t){let r=c();r.initializedAgents??={},t.initializedAt={ms:(0,i.t)(),date:new Date},r.initializedAgents[e]=t,2===Object.keys(r.initializedAgents).length&&(0,s.R)(69)}function l(){return function(){let e=c();const t=e.info||{};e.info={beacon:a.beacon,errorBeacon:a.errorBeacon,...t}}(),function(){let e=c();const t=e.init||{};e.init={...t}}(),u(),function(){let e=c();const t=e.loader_config||{};e.loader_config={...t}}(),c()}},389:(e,t,r)=>{"use strict";function n(e,t=500,r={}){const n=r?.leading||!1;let i;return(...r)=>{n&&void 0===i&&(e.apply(this,r),i=setTimeout(()=>{i=clearTimeout(i)},t)),n||(clearTimeout(i),i=setTimeout(()=>{e.apply(this,r)},t))}}function i(e){let t=!1;return(...r)=>{t||(t=!0,e.apply(this,r))}}r.d(t,{J:()=>i,s:()=>n})},555:(e,t,r)=>{"use strict";r.d(t,{D:()=>a,f:()=>o});var n=r(384),i=r(122);const s={beacon:n.NT.beacon,errorBeacon:n.NT.errorBeacon,licenseKey:void 0,applicationID:void 0,sa:void 0,queueTime:void 0,applicationTime:void 0,ttGuid:void 0,user:void 0,account:void 0,product:void 0,extra:void 0,jsAttributes:{},userAttributes:void 0,atts:void 0,transactionName:void 0,tNamePlain:void 0};function o(e){try{return!!e.licenseKey&&!!e.errorBeacon&&!!e.applicationID}catch(e){return!1}}const a=e=>(0,i.a)(e,s)},566:(e,t,r)=>{"use strict";r.d(t,{LA:()=>a,bz:()=>o});var n=r(154);const i="xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";function s(e,t){return e?15&e[t]:16*Math.random()|0}function o(){const e=n.gm?.crypto||n.gm?.msCrypto;let t,r=0;return e&&e.getRandomValues&&(t=e.getRandomValues(new Uint8Array(30))),i.split("").map(e=>"x"===e?s(t,r++).toString(16):"y"===e?(3&s()|8).toString(16):e).join("")}function a(e){const t=n.gm?.crypto||n.gm?.msCrypto;let r,i=0;t&&t.getRandomValues&&(r=t.getRandomValues(new Uint8Array(e)));const o=[];for(var a=0;a<e;a++)o.push(s(r,i++).toString(16));return o.join("")}},606:(e,t,r)=>{"use strict";r.d(t,{i:()=>s});var n=r(908);s.on=o;var i=s.handlers={};function s(e,t,r,s){o(s||n.d,i,e,t,r)}function o(e,t,r,i,s){s||(s="feature"),e||(e=n.d);var o=t[s]=t[s]||{};(o[r]=o[r]||[]).push([e,i])}},607:(e,t,r)=>{"use strict";r.d(t,{W:()=>n});const n=(0,r(566).bz)()},614:(e,t,r)=>{"use strict";r.d(t,{BB:()=>s,Wt:()=>n,g:()=>c,iL:()=>a,tS:()=>o,wk:()=>i});const n="NRBA_SESSION::",i=144e5,s=18e5,o={STARTED:"session-started",PAUSE:"session-pause",RESET:"session-reset",RESUME:"session-resume",UPDATE:"session-update"},a={SAME_TAB:"same-tab",CROSS_TAB:"cross-tab"},c={OFF:0,FULL:1,ERROR:2}},630:(e,t,r)=>{"use strict";r.d(t,{T:()=>n});const n=r(860).K7.pageViewEvent},646:(e,t,r)=>{"use strict";r.d(t,{y:()=>n});class n{constructor(e){this.contextId=e}}},687:(e,t,r)=>{"use strict";r.d(t,{Ak:()=>a,Ze:()=>u,x3:()=>c});var n=r(241),i=r(606),s=r(860),o=r(646);function a(e,t){if(!e)return;const r={staged:!1,priority:s.P3[t]||0};e.runtime.drainRegistry.get(t)||e.runtime.drainRegistry.set(t,r)}function c(e,t){if(!e)return;const r=e.runtime.drainRegistry;r&&(r.get(t)&&r.delete(t),l(e,t,!1),r.size&&d(e))}function u(e,t="feature",r=!1){if(e){if(!e.runtime.drainRegistry.get(t)||r)return l(e,t);e.runtime.drainRegistry.get(t).staged=!0,d(e)}}function d(e){if(!e)return;const t=Array.from(e.runtime.drainRegistry);t.every(([e,t])=>t.staged)&&(t.sort((e,t)=>e[1].priority-t[1].priority),t.forEach(([t])=>{e.runtime.drainRegistry.delete(t),l(e,t)}))}function l(e,t,r=!0){if(!e)return;const s=e.ee,a=i.i.handlers;if(s&&!s.aborted&&s.backlog&&a){if((0,n.W)({type:"lifecycle",name:"drain",feature:t}),r){const e=s.backlog[t],r=a[t];if(r){for(let t=0;e&&t<e.length;++t)f(e[t],r);Object.entries(r).forEach(([e,t])=>{Object.values(t||{}).forEach(t=>{t[0]?.on&&t[0].context()instanceof o.y&&!t[0].listeners(e).includes(t[1])&&t[0].on(e,t[1])})})}}s.isolatedBacklog||delete a[t],s.backlog[t]=null,s.emit("drain-"+t,[])}}function f(e,t){var r=e[1];Object.values(t[r]||{}).forEach(t=>{var r=e[0];if(t[0]===r){var n=t[1],i=e[3],s=e[2];n.apply(i,s)}})}},699:(e,t,r)=>{"use strict";r.d(t,{It:()=>s,KC:()=>a,No:()=>i,qh:()=>o});var n=r(860);const i=16e3,s=1e6,o="SESSION_ERROR",a={[n.K7.logging]:!0,[n.K7.genericEvents]:!0,[n.K7.jserrors]:!0,[n.K7.ajax]:!0}},738:(e,t,r)=>{"use strict";r.d(t,{U:()=>f,Y:()=>l});var n=r(241),i=r(908),s=r(863),o=r(944),a=r(969),c=r(362),u=r(860),d=r(261);function l(e,t,r,s){const l=s||r;!l||l[e]&&l[e]!==c.d.prototype[e]||(l[e]=function(){(0,i.p)(a.xV,["API/"+e+"/called"],void 0,u.K7.metrics,r.ee),(0,n.W)({drained:!!r.runtime?.activatedFeatures,type:"data",name:"api",feature:d.Pl+e,data:{}});try{return t.apply(this,arguments)}catch(e){(0,o.R)(23,e)}})}function f(e,t,r,n,o){const a=e.info;null===r?delete a.jsAttributes[t]:a.jsAttributes[t]=r,(o||null===r)&&(0,i.p)(d.Pl+n,[(0,s.t)(),t,r],void 0,"session",e.ee)}},741:(e,t,r)=>{"use strict";r.d(t,{W:()=>s});var n=r(944),i=r(261);class s{#e(e,...t){if(this[e]!==s.prototype[e])return this[e](...t);(0,n.R)(35,e)}addPageAction(e,t){return this.#e(i.hG,e,t)}register(e){return this.#e(i.eY,e)}recordCustomEvent(e,t){return this.#e(i.fF,e,t)}setPageViewName(e,t){return this.#e(i.Fw,e,t)}setCustomAttribute(e,t,r){return this.#e(i.cD,e,t,r)}noticeError(e,t){return this.#e(i.o5,e,t)}setUserId(e,t=!1){return this.#e(i.Dl,e,t)}setApplicationVersion(e){return this.#e(i.nb,e)}setErrorHandler(e){return this.#e(i.bt,e)}addRelease(e,t){return this.#e(i.k6,e,t)}log(e,t){return this.#e(i.$9,e,t)}start(){return this.#e(i.d3)}finished(e){return this.#e(i.BL,e)}recordReplay(){return this.#e(i.CH)}pauseReplay(){return this.#e(i.Tb)}addToTrace(e){return this.#e(i.U2,e)}setCurrentRouteName(e){return this.#e(i.PA,e)}interaction(e){return this.#e(i.dT,e)}wrapLogger(e,t,r){return this.#e(i.Wb,e,t,r)}measure(e,t){return this.#e(i.V1,e,t)}consent(e){return this.#e(i.Pv,e)}}},782:(e,t,r)=>{"use strict";r.d(t,{T:()=>n});const n=r(860).K7.pageViewTiming},836:(e,t,r)=>{"use strict";r.d(t,{P:()=>a,ee:()=>c});var n=r(384),i=r(990),s=r(646),o=r(607);const a="nr@context:".concat(o.W),c=function e(t,r){var n={},o={},d={},l=!1;try{l=16===r.length&&u.initializedAgents?.[r]?.runtime.isolatedBacklog}catch(e){}var f={on:p,addEventListener:p,removeEventListener:function(e,t){var r=n[e];if(!r)return;for(var i=0;i<r.length;i++)r[i]===t&&r.splice(i,1)},emit:function(e,r,n,i,s){!1!==s&&(s=!0);if(c.aborted&&!i)return;t&&s&&t.emit(e,r,n);var a=g(n);m(e).forEach(e=>{e.apply(a,r)});var u=v()[o[e]];u&&u.push([f,e,r,a]);return a},get:h,listeners:m,context:g,buffer:function(e,t){const r=v();if(t=t||"feature",f.aborted)return;Object.entries(e||{}).forEach(([e,n])=>{o[n]=t,t in r||(r[t]=[])})},abort:function(){f._aborted=!0,Object.keys(f.backlog).forEach(e=>{delete f.backlog[e]})},isBuffering:function(e){return!!v()[o[e]]},debugId:r,backlog:l?{}:t&&"object"==typeof t.backlog?t.backlog:{},isolatedBacklog:l};return Object.defineProperty(f,"aborted",{get:()=>{let e=f._aborted||!1;return e||(t&&(e=t.aborted),e)}}),f;function g(e){return e&&e instanceof s.y?e:e?(0,i.I)(e,a,()=>new s.y(a)):new s.y(a)}function p(e,t){n[e]=m(e).concat(t)}function m(e){return n[e]||[]}function h(t){return d[t]=d[t]||e(f,t)}function v(){return f.backlog}}(void 0,"globalEE"),u=(0,n.Zm)();u.ee||(u.ee=c)},843:(e,t,r)=>{"use strict";r.d(t,{G:()=>s,u:()=>i});var n=r(878);function i(e,t=!1,r,i){(0,n.DD)("visibilitychange",function(){if(t)return void("hidden"===document.visibilityState&&e());e(document.visibilityState)},r,i)}function s(e,t,r){(0,n.sp)("pagehide",e,t,r)}},860:(e,t,r)=>{"use strict";r.d(t,{$J:()=>d,K7:()=>c,P3:()=>u,XX:()=>i,Yy:()=>a,df:()=>s,qY:()=>n,v4:()=>o});const n="events",i="jserrors",s="browser/blobs",o="rum",a="browser/logs",c={ajax:"ajax",genericEvents:"generic_events",jserrors:i,logging:"logging",metrics:"metrics",pageAction:"page_action",pageViewEvent:"page_view_event",pageViewTiming:"page_view_timing",sessionReplay:"session_replay",sessionTrace:"session_trace",softNav:"soft_navigations"},u={[c.pageViewEvent]:1,[c.pageViewTiming]:2,[c.metrics]:3,[c.jserrors]:4,[c.softNav]:5,[c.ajax]:6,[c.sessionTrace]:7,[c.sessionReplay]:8,[c.logging]:9,[c.genericEvents]:10},d={[c.pageViewEvent]:o,[c.pageViewTiming]:n,[c.ajax]:n,[c.softNav]:n,[c.metrics]:i,[c.jserrors]:i,[c.sessionTrace]:s,[c.sessionReplay]:s,[c.logging]:a,[c.genericEvents]:"ins"}},863:(e,t,r)=>{"use strict";function n(){return Math.floor(performance.now())}r.d(t,{t:()=>n})},878:(e,t,r)=>{"use strict";function n(e,t){return{capture:e,passive:!1,signal:t}}function i(e,t,r=!1,i){window.addEventListener(e,t,n(r,i))}function s(e,t,r=!1,i){document.addEventListener(e,t,n(r,i))}r.d(t,{DD:()=>s,jT:()=>n,sp:()=>i})},908:(e,t,r)=>{"use strict";r.d(t,{d:()=>n,p:()=>i});var n=r(836).ee.get("handle");function i(e,t,r,i,s){s?(s.buffer([e],i),s.emit(e,t,r)):(n.buffer([e],i),n.emit(e,t,r))}},910:(e,t,r)=>{"use strict";r.d(t,{i:()=>s});var n=r(944);const i=new Map;function s(...e){return e.every(e=>{if(i.has(e))return i.get(e);const t="function"==typeof e?e.toString():"",r=t.includes("[native code]"),s=t.includes("nrWrapper");return r||s||(0,n.R)(64,e?.name||t),i.set(e,r),r})}},944:(e,t,r)=>{"use strict";r.d(t,{R:()=>i});var n=r(241);function i(e,t){"function"==typeof console.debug&&(console.debug("New Relic Warning: https://github.com/newrelic/newrelic-browser-agent/blob/main/docs/warning-codes.md#".concat(e),t),(0,n.W)({drained:null,type:"data",name:"warn",feature:"warn",data:{code:e,secondary:t}}))}},969:(e,t,r)=>{"use strict";r.d(t,{TZ:()=>n,XG:()=>a,rs:()=>i,xV:()=>o,z_:()=>s});const n=r(860).K7.metrics,i="sm",s="cm",o="storeSupportabilityMetrics",a="storeEventMetrics"},990:(e,t,r)=>{"use strict";r.d(t,{I:()=>i});var n=Object.prototype.hasOwnProperty;function i(e,t,r){if(n.call(e,t))return e[t];var i=r();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(e,t,{value:i,writable:!0,enumerable:!1}),i}catch(e){}return e[t]=i,i}}},n={};function i(e){var t=n[e];if(void 0!==t)return t.exports;var s=n[e]={exports:{}};return r[e](s,s.exports,i),s.exports}i.m=r,i.d=(e,t)=>{for(var r in t)i.o(t,r)&&!i.o(e,r)&&Object.defineProperty(e,r,{enumerable:!0,get:t[r]})},i.f={},i.e=e=>Promise.all(Object.keys(i.f).reduce((t,r)=>(i.f[r](e,t),t),[])),i.u=e=>"nr-rum-1.316.0.min.js",i.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),e={},t="NRBA-1.316.0.PROD:",i.l=(r,n,s,o)=>{if(e[r])e[r].push(n);else{var a,c;if(void 0!==s)for(var u=document.getElementsByTagName("script"),d=0;d<u.length;d++){var l=u[d];if(l.getAttribute("src")==r||l.getAttribute("data-webpack")==t+s){a=l;break}}if(!a){c=!0;var f={296:"sha512-jIy711COcvYTdufY9XXNNQaPvXp9CzLzgyI7kxmbI9RLMR0SBawMfv3DLsTJ4+RwkGrvP36bKNVeHloWZxeEKQ=="};(a=document.createElement("script")).charset="utf-8",i.nc&&a.setAttribute("nonce",i.nc),a.setAttribute("data-webpack",t+s),a.src=r,0!==a.src.indexOf(window.location.origin+"/")&&(a.crossOrigin="anonymous"),f[o]&&(a.integrity=f[o])}e[r]=[n];var g=(t,n)=>{a.onerror=a.onload=null,clearTimeout(p);var i=e[r];if(delete e[r],a.parentNode&&a.parentNode.removeChild(a),i&&i.forEach(e=>e(n)),t)return t(n)},p=setTimeout(g.bind(null,void 0,{type:"timeout",target:a}),12e4);a.onerror=g.bind(null,a.onerror),a.onload=g.bind(null,a.onload),c&&document.head.appendChild(a)}},i.r=e=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},i.p="https://js-agent.newrelic.com/",(()=>{var e={374:0,840:0};i.f.j=(t,r)=>{var n=i.o(e,t)?e[t]:void 0;if(0!==n)if(n)r.push(n[2]);else{var s=new Promise((r,i)=>n=e[t]=[r,i]);r.push(n[2]=s);var o=i.p+i.u(t),a=new Error;i.l(o,r=>{if(i.o(e,t)&&(0!==(n=e[t])&&(e[t]=void 0),n)){var s=r&&("load"===r.type?"missing":r.type),o=r&&r.target&&r.target.src;a.message="Loading chunk "+t+" failed: ("+s+": "+o+")",a.name="ChunkLoadError",a.type=s,a.request=o,n[1](a)}},"chunk-"+t,t)}};var t=(t,r)=>{var n,s,[o,a,c]=r,u=0;if(o.some(t=>0!==e[t])){for(n in a)i.o(a,n)&&(i.m[n]=a[n]);if(c)c(i)}for(t&&t(r);u<o.length;u++)s=o[u],i.o(e,s)&&e[s]&&e[s][0](),e[s]=0},r=self["webpackChunk:NRBA-1.316.0.PROD"]=self["webpackChunk:NRBA-1.316.0.PROD"]||[];r.forEach(t.bind(null,0)),r.push=t.bind(null,r.push.bind(r))})(),(()=>{"use strict";i(374);var e=i(362),t=i(860);const r=Object.values(t.K7);var n=i(384),s=i(741);var o=i(555);t.K7.genericEvents;const a="experimental.resources",c="register",u=e=>{if(!e||"string"!=typeof e)return!1;try{document.createDocumentFragment().querySelector(e)}catch{return!1}return!0};var d=i(614),l=i(944),f=i(122);const g="[data-nr-mask]",p=e=>(0,f.a)(e,(()=>{const e={feature_flags:[],experimental:{register:!1,resources:!1},mask_selector:"*",block_selector:"[data-nr-block]",mask_input_options:{color:!1,date:!1,"datetime-local":!1,email:!1,month:!1,number:!1,range:!1,search:!1,tel:!1,text:!1,time:!1,url:!1,week:!1,textarea:!1,select:!1,password:!0}};return{ajax:{deny_list:void 0,block_internal:!0,enabled:!0,autoStart:!0},api:{register:{get enabled(){return e.feature_flags.includes(c)||e.experimental.register},set enabled(t){e.experimental.register=t},duplicate_data_to_container:!1}},browser_consent_mode:{enabled:!1},distributed_tracing:{enabled:void 0,exclude_newrelic_header:void 0,cors_use_newrelic_header:void 0,cors_use_tracecontext_headers:void 0,allowed_origins:void 0},get feature_flags(){return e.feature_flags},set feature_flags(t){e.feature_flags=t},generic_events:{enabled:!0,autoStart:!0},harvest:{interval:30},jserrors:{enabled:!0,autoStart:!0},logging:{enabled:!0,autoStart:!0},metrics:{enabled:!0,autoStart:!0},obfuscate:void 0,page_action:{enabled:!0},page_view_event:{enabled:!0,autoStart:!0},page_view_timing:{enabled:!0,autoStart:!0},performance:{capture_marks:!1,capture_measures:!1,capture_detail:!0,resources:{get enabled(){return e.feature_flags.includes(a)||e.experimental.resources},set enabled(t){e.experimental.resources=t},asset_types:[],first_party_domains:[],ignore_newrelic:!0}},privacy:{cookies_enabled:!0},proxy:{assets:void 0,beacon:void 0},session:{expiresMs:d.wk,inactiveMs:d.BB},session_replay:{autoStart:!0,enabled:!1,preload:!1,sampling_rate:10,error_sampling_rate:100,collect_fonts:!1,inline_images:!1,fix_stylesheets:!0,mask_all_inputs:!0,get mask_text_selector(){return e.mask_selector},set mask_text_selector(t){u(t)?e.mask_selector="".concat(t,",").concat(g):""===t||null===t?e.mask_selector=g:(0,l.R)(5,t)},get block_class(){return"nr-block"},get ignore_class(){return"nr-ignore"},get mask_text_class(){return"nr-mask"},get block_selector(){return e.block_selector},set block_selector(t){u(t)?e.block_selector+=",".concat(t):""!==t&&(0,l.R)(6,t)},get mask_input_options(){return e.mask_input_options},set mask_input_options(t){t&&"object"==typeof t?e.mask_input_options={...t,password:!0}:(0,l.R)(7,t)}},session_trace:{enabled:!0,autoStart:!0},soft_navigations:{enabled:!0,autoStart:!0},ssl:void 0,user_actions:{enabled:!0,elementAttributes:["id","className","tagName","type"]}}})());var m=i(154),h=i(324);let v=0;const b={buildEnv:h.F3,distMethod:h.Xs,version:h.xv,originTime:m.WN},y={consented:!1},_={activatedFeatures:void 0,appMetadata:{},configured:!1,get consented(){return this.session?.state?.consent||y.consented},set consented(e){y.consented=e},customTransaction:void 0,denyList:[],disabled:!1,drainRegistry:new Map,harvester:void 0,isolatedBacklog:!1,isRecording:!1,loaderType:void 0,maxBytes:3e4,obfuscator:void 0,onerror:void 0,ptid:void 0,releaseIds:{},session:void 0,timeKeeper:void 0,registeredEntities:[],jsAttributesMetadata:{bytes:0},get harvestCount(){return++v}};var w=i(836),x=i(241);const R={accountID:void 0,trustKey:void 0,agentID:void 0,licenseKey:void 0,applicationID:void 0,xpid:void 0};function k(e,t={},r,a){let{init:c,info:u,loader_config:d,runtime:l={},exposed:g=!0}=t;if(!u){const e=(0,n.pV)();c=e.init,u=e.info,d=e.loader_config}var h;e.init=p(c||{}),e.loader_config=(h=d||{},(0,f.a)(h,R)),u.jsAttributes??={},m.bv&&(u.jsAttributes.isWorker=!0),e.info=(0,o.D)(u);const v=e.init;e.runtime??=(e=>{const t=(0,f.a)(e,_),r=Object.keys(b).reduce((e,t)=>(e[t]={value:b[t],writable:!1,configurable:!0,enumerable:!0},e),{});return Object.defineProperties(t,r)})(l),v.proxy.assets&&(e=>{const t=e.startsWith("http");e+="/",i.p=t?e:"https://"+e})(v.proxy.assets),e.runtime.configured||(Object.defineProperty(e,"beacons",{get:()=>[e.info.beacon,e.info.errorBeacon,e.init.proxy.assets,e.init.proxy.beacon].filter(Boolean)}),Object.defineProperty(e.runtime,"denyList",{get:()=>[...e.init.ajax.deny_list||[],...e.init.ajax.block_internal?e.beacons:[]]}),e.runtime.ptid=e.agentIdentifier,function(e){const t=(0,n.pV)();Object.getOwnPropertyNames(s.W.prototype).forEach(r=>{const n=s.W.prototype[r];if("function"!=typeof n||"constructor"===n)return;let i=t[r];e[r]&&!1!==e.exposed&&"micro-agent"!==e.runtime?.loaderType&&(t[r]=(...t)=>{const n=e[r](...t);return i?i(...t):n})})}(e),e.runtime.loaderType=r,e.ee=w.ee.get(e.agentIdentifier),e.exposed=g,(0,x.W)({drained:!!e.runtime.activatedFeatures,type:"lifecycle",name:"initialize",feature:void 0,data:e.config}),e.runtime.configured=!0)}var A=i(908),T=i(863),S=i(261),E=i(738);var j=i(687),P=i(234),N=i(289);const O=e=>m.RI&&!0===e?.privacy.cookies_enabled;function M(e){return!!(0,n.dV)().o.MO&&O(e)&&!0===e?.session_trace.enabled}var I=i(389),D=i(699);const W=new WeakSet;class B extends P.W{constructor(e,t){super(e,t),this.abortHandler=void 0,this.featAggregate=void 0,this.loadedSuccessfully=void 0,this.onAggregateImported=new Promise(e=>{this.loadedSuccessfully=e}),this.deferred=Promise.resolve(),!1===e.init[this.featureName].autoStart?this.deferred=new Promise((t,r)=>{this.ee.on("manual-start-all",(0,I.J)(()=>{(0,j.Ak)(e,this.featureName),t()}))}):(0,j.Ak)(e,t)}importAggregator(e,t,r={}){if(this.featAggregate)return;const n=async()=>{if(await this.deferred,this.#t(e),!(0,o.f)(e.info))return(0,l.R)(43),e.ee.abort(),void this.loadedSuccessfully(!1);let n;try{if(O(e.init)){const{setupAgentSession:t}=await i.e(296).then(i.bind(i,8));n=t(e)}}catch(e){(0,l.R)(20,e),this.ee.emit("internal-error",[e]),(0,A.p)(D.qh,[e],void 0,this.featureName,this.ee)}try{if(!this.#r(this.featureName,n,e.init))return(0,j.Ze)(this.agentRef,this.featureName),void this.loadedSuccessfully(!1);const{Aggregate:i}=await t();this.featAggregate=new i(e,r),e.runtime.harvester.initializedAggregates.push(this.featAggregate),this.loadedSuccessfully(!0)}catch(e){(0,l.R)(34,e),this.abortHandler?.(),(0,j.Ze)(this.agentRef,this.featureName,!0),this.loadedSuccessfully(!1),this.ee&&this.ee.abort()}};m.RI?(0,N.GG)(()=>n(),!0):n()}#r(e,r,n){if(this.blocked)return!1;switch(e){case t.K7.sessionReplay:return M(n)&&!!r;case t.K7.sessionTrace:return!!r;default:return!0}}#t(e){if(!W.has(e)&&(W.add(e),!(0,o.f)(e.info))){const t=(0,n.pV)();let r={...t.info?.jsAttributes};try{r={...r,...e.info?.jsAttributes}}catch(e){}k(e,{...t,info:{...t.info,jsAttributes:r},runtime:e.runtime},e.runtime.loaderType)}}}var V=i(630);class K extends B{static featureName=V.T;constructor(e){var t;super(e,V.T),this.setupInspectionEvents(),t=e,(0,E.Y)(S.Fw,function(e,r){"string"==typeof e&&("/"!==e.charAt(0)&&(e="/"+e),t.runtime.customTransaction=(r||"http://custom.transaction")+e,(0,A.p)(S.Pl+S.Fw,[(0,T.t)()],void 0,void 0,t.ee))},t),this.importAggregator(e,()=>i.e(296).then(i.bind(i,146)))}setupInspectionEvents(){const e=(e,t)=>{e&&(0,x.W)({timeStamp:e.timeStamp,loaded:"complete"===e.target.readyState,type:"window",name:t,data:e.target.location+""})};(0,N.sB)(t=>{e(t,"DOMContentLoaded")}),(0,N.GG)(t=>{e(t,"load")}),(0,N.Qr)(t=>{e(t,"navigate")}),this.ee.on(d.tS.UPDATE,(e,t)=>{(0,x.W)({type:"lifecycle",name:"session",data:t})})}}class C extends e.d{constructor(e){var t;(super(),m.gm)?(this.features={},(0,n.bQ)(this.agentIdentifier,this),this.desiredFeatures=new Set(e.features||[]),this.desiredFeatures.add(K),k(this,e,e.loaderType||"agent"),t=this,(0,E.Y)(S.cD,function(e,r,n=!1){if("string"==typeof e){if(["string","number","boolean"].includes(typeof r)||null===r)return(0,E.U)(t,e,r,S.cD,n);(0,l.R)(40,typeof r)}else(0,l.R)(39,typeof e)},t),function(e){(0,E.Y)(S.Dl,function(t,r=!1){if("string"!=typeof t&&null!==t)return void(0,l.R)(41,typeof t);const n=e.info.jsAttributes["enduser.id"];r&&null!=n&&n!==t?(0,A.p)(S.Pl+"setUserIdAndResetSession",[t],void 0,"session",e.ee):(0,E.U)(e,"enduser.id",t,S.Dl,!0)},e)}(this),function(e){(0,E.Y)(S.nb,function(t){if("string"==typeof t||null===t)return(0,E.U)(e,"application.version",t,S.nb,!1);(0,l.R)(42,typeof t)},e)}(this),function(e){(0,E.Y)(S.d3,function(){e.ee.emit("manual-start-all")},e)}(this),function(e){(0,E.Y)(S.Pv,function(t=!0){if("boolean"==typeof t){if((0,A.p)(S.Pl+S.Pv,[t],void 0,"session",e.ee),e.runtime.consented=t,t){const t=e.features.page_view_event;t.onAggregateImported.then(e=>{const r=t.featAggregate;e&&!r.sentRum&&r.sendRum()})}}else(0,l.R)(65,typeof t)},e)}(this),this.run()):(0,l.R)(21)}get config(){return{info:this.info,init:this.init,loader_config:this.loader_config,runtime:this.runtime}}get api(){return this}run(){try{const e=function(e){const t={};return r.forEach(r=>{t[r]=!!e[r]?.enabled}),t}(this.init),n=[...this.desiredFeatures];n.sort((e,r)=>t.P3[e.featureName]-t.P3[r.featureName]),n.forEach(r=>{if(!e[r.featureName]&&r.featureName!==t.K7.pageViewEvent)return;const n=function(e){switch(e){case t.K7.ajax:return[t.K7.jserrors];case t.K7.sessionTrace:return[t.K7.ajax,t.K7.pageViewEvent];case t.K7.sessionReplay:return[t.K7.sessionTrace];case t.K7.pageViewTiming:return[t.K7.pageViewEvent];default:return[]}}(r.featureName).filter(e=>!(e in this.features));n.length>0&&(0,l.R)(36,{targetFeature:r.featureName,missingDependencies:n}),this.features[r.featureName]=new r(this)})}catch(e){(0,l.R)(22,e);for(const e in this.features)this.features[e].abortHandler?.();const t=(0,n.Zm)();delete t.initializedAgents[this.agentIdentifier]?.features,delete this.sharedAggregator;return t.ee.get(this.agentIdentifier).abort(),!1}}}var F=i(843),U=i(782);class L extends B{static featureName=U.T;constructor(e){super(e,U.T),m.RI&&((0,F.u)(()=>(0,A.p)("docHidden",[(0,T.t)()],void 0,U.T,this.ee),!0),(0,F.G)(()=>(0,A.p)("winPagehide",[(0,T.t)()],void 0,U.T,this.ee)),this.importAggregator(e,()=>i.e(296).then(i.bind(i,117))))}}var G=i(969);class H extends B{static featureName=G.TZ;constructor(e){super(e,G.TZ),this.importAggregator(e,()=>i.e(296).then(i.bind(i,623)))}}new C({features:[K,L,H],loaderType:"lite"})})()})();</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="//consent.trustarc.com/autoblockasset/core.min.js?domain=commvault.com"></script>
+    <script src="//consent.trustarc.com/autoblockoptout?domain=commvault.com"></script>
+    <script src="https://consent.trustarc.com/notice?domain=commvault.com&c=teconsent&js=nj&noticeType=bb&text=true&gtm=1" crossorigin></script>
+    <script>const cvlt_GTM_id = "GTM-5KRLQJ";const cvlt_dataLayer = {"page":{"pageType":"Post","pageName":"Future-Proofing Your Data: Post-Quantum Cryptography and Beyond\u00a0","categories":"","sub_categories":""}}</script><title>Future-Proofing Your Data: Post-Quantum Cryptography and Beyond  | Commvault</title>
+<meta name='robots' content='max-image-preview:large' />
+<script type="text/javascript">
+// Google TagManager
+const isSafariBrowser = () => navigator.userAgent.indexOf('Safari') > -1 && navigator.userAgent.indexOf('Chrome') <= -1;
+if(isSafariBrowser()) {
+    (function () {
+        window.onpageshow = function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        };
+    })();
+}
+(function (w, d, s, l, i) {
+    w[l] = w[l] || []; w[l].push({
+        'gtm.start':
+            new Date().getTime(), event: 'gtm.js'
+    }); var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+        'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+})(window, document, 'script', 'dataLayer', cvlt_GTM_id);
+</script>
+<!-- Adobe Target start -->
+<script src="https://assets.adobedtm.com/5c7e590149a7/b9a5c7bd0c3e/launch-e806e432f5d0.min.js" async></script>
+<!-- Adobe Target end -->
+<style id='custom-flag-handle-inline-css' type='text/css'>
+.weglot-flags.flag-0.en>a:before,.weglot-flags.flag-0.en>span:before {background-image: url(https://cdn.weglot.com/flags/rectangle_mat/us.svg); }.weglot-flags.flag-0.br>a:before,.weglot-flags.flag-0.br>span:before {background-image: url(https://cdn.weglot.com/flags/rectangle_mat/br.svg); }.weglot-flags.flag-1.en>a:before,.weglot-flags.flag-1.en>span:before {background-image: url(https://cdn.weglot.com/flags/shiny/us.svg); }.weglot-flags.flag-1.br>a:before,.weglot-flags.flag-1.br>span:before {background-image: url(https://cdn.weglot.com/flags/shiny/br.svg); }.weglot-flags.flag-2.en>a:before,.weglot-flags.flag-2.en>span:before {background-image: url(https://cdn.weglot.com/flags/square/us.svg); }.weglot-flags.flag-2.br>a:before,.weglot-flags.flag-2.br>span:before {background-image: url(https://cdn.weglot.com/flags/square/br.svg); }.weglot-flags.flag-3.en>a:before,.weglot-flags.flag-3.en>span:before {background-image: url(https://cdn.weglot.com/flags/circle/us.svg); }.weglot-flags.flag-3.br>a:before,.weglot-flags.flag-3.br>span:before {background-image: url(https://cdn.weglot.com/flags/circle/br.svg); }
+</style>
+<link rel='stylesheet' id='commvault-2025-theme-styles-css' href='https://www.commvault.com/wp-content/themes/commvault-2025/dist/css/commvault.css?ver=a49fb5fca3' type='text/css' media='all' />
+<script type="text/javascript" src="https://www.commvault.com/wp-content/themes/commvault-2025/dist/js/commvault.min.js?ver=93cf6c23df" id="commvault-2025-theme-script-js" defer="defer" data-wp-strategy="defer"></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://www.commvault.com/xmlrpc.php?rsd" />
+
+    <!-- CVLT\SEO -->
+        <link rel="canonical" href="https://www.commvault.com/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond">
+        <meta name="description" content="Like all relationships, our relationship with our customers is built on trust. You trust us with handling and securing the life blood of your company – your data. Behind the scenes, this trust relies heavily on cryptography, the art of scrambling information to keep it safe from malicious actors. But what happens when the tools we use to secure our data become vulnerable?  "/>
+        <meta property="og:locale" content="en_US">
+        <meta property="og:type" content="article">
+        <meta property="og:title" content="Future-Proofing Your Data: Post-Quantum Cryptography and Beyond ">
+        <meta property="og:description" content="Like all relationships, our relationship with our customers is built on trust. You trust us with handling and securing the life blood of your company – your data. Behind the scenes, this trust relies heavily on cryptography, the art of scrambling information to keep it safe from malicious actors. But what happens when the tools we use to secure our data become vulnerable?  ">
+        <meta property="og:url" content="https://www.commvault.com/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond">
+        <meta property="og:site_name" content="Commvault Systems, Inc.">
+        <meta property="og:image" content="https://www.commvault.com/wp-content/uploads/2025/09/PQC-Blog.png?v=1758153394">
+        <meta property="article:publisher" content="https://www.facebook.com/Commvault/">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="@commvault">
+        <meta name="twitter:image" content="https://www.commvault.com/ogimage/twitter/359/">
+        <meta name="robots" content="index, follow">
+    <!-- /CVLT\SEO -->
+<script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "https://www.commvault.com/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond",
+    "url": "https://www.commvault.com/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond",
+    "name": "Future-Proofing Your Data: Post-Quantum Cryptography and Beyond\u00a0",
+    "isPartOf": {
+        "@id": "https://www.commvault.com/#website"
+    },
+    "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "inLanguage": "en-US",
+        "@id": "https://www.commvault.com/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond#primaryimage",
+        "url": "https://www.commvault.com/wp-content/uploads/2025/09/PQC-Blog.png",
+        "contentUrl": "https://www.commvault.com/wp-content/uploads/2025/09/PQC-Blog.png",
+        "width": 1200,
+        "height": 630
+    },
+    "image": {
+        "@type": "ImageObject",
+        "inLanguage": "en-US",
+        "@id": "https://www.commvault.com/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond#primaryimage",
+        "url": "https://www.commvault.com/wp-content/uploads/2025/09/PQC-Blog.png",
+        "contentUrl": "https://www.commvault.com/wp-content/uploads/2025/09/PQC-Blog.png",
+        "width": 1200,
+        "height": 630
+    },
+    "thumbnailUrl": "https://www.commvault.com/wp-content/uploads/2025/09/PQC-Blog.png",
+    "datePublished": "2024-05-02T13:00:00-04:00",
+    "dateModified": "2025-09-17T19:56:34-04:00",
+    "description": "Like all relationships, our relationship with our customers is built on trust. You trust us with handling and securing the life blood of your company \u2013 your data. Behind the scenes, this trust relies heavily on cryptography, the art of scrambling information to keep it safe from malicious actors. But what happens when the tools we use to secure our data become vulnerable?\u00a0\u00a0",
+    "breadcrumb": {
+        "@id": "https://www.commvault.com/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond#breadcrumb"
+    },
+    "inLanguage": "en",
+    "potentialAction": [
+        {
+            "@type": "ReadAction",
+            "target": [
+                "https://www.commvault.com/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond"
+            ]
+        }
+    ]
+}</script><script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": "https://www.commvault.com#website",
+    "url": "https://www.commvault.com",
+    "name": "Commvault",
+    "description": "Cyber Resilience Solutions for Continuous Business. Commvault is an enterprise-grade, cloud-first platform for intelligent data management, providing backup, recovery, and data protection for hybrid and multi-cloud environments",
+    "publisher": {
+        "@id": "https://www.commvault.com/#organization"
+    },
+    "potentialAction": [
+        {
+            "@type": "SearchAction",
+            "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://www.commvault.com?s={search_term_string}"
+            },
+            "query-input": {
+                "@type": "PropertyValueSpecification",
+                "valueRequired": true,
+                "valueName": "search_term_string"
+            }
+        }
+    ],
+    "inLanguage": "en-US"
+}</script><script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://www.commvault.com/#organization",
+    "name": "Commvault",
+    "url": "https://www.commvault.com/",
+    "logo": {
+        "@type": "ImageObject",
+        "inLanguage": "en-US",
+        "@id": "https://www.commvault.com/#/schema/logo/image/",
+        "url": "https://www.commvault.com/wp-content/themes/commvault-2025/assets/images/logo-commvault-horizontal.jpg",
+        "contentUrl": "https://www.commvault.com/wp-content/themes/commvault-2025/assets/images/logo-commvault-horizontal.jpg",
+        "width": 1200,
+        "height": 630,
+        "caption": "Commvault"
+    },
+    "image": {
+        "@id": "https://www.commvault.com/#/schema/logo/image/"
+    },
+    "sameAs": [
+        "https://www.facebook.com/Commvault/",
+        "https://x.com/commvault",
+        "https://www.instagram.com/commvault/",
+        "https://www.linkedin.com/company/commvault",
+        "https://www.youtube.com/user/commvault",
+        "https://en.wikipedia.org/wiki/Commvault"
+    ]
+}</script><script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": "https://www.commvault.com/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond#breadcrumb",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Commvault Home",
+            "item": "https://www.commvault.com/"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Blogs",
+            "item": "https://www.commvault.com//blogs"
+        },
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Future proofing your data post quantum cryptography and beyond"
+        }
+    ]
+}</script><script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Future-Proofing Your Data: Post-Quantum Cryptography and Beyond\u00a0",
+    "datePublished": "2024-05-02T13:00:00-04:00",
+    "dateModified": "2025-09-17T19:56:34-04:00",
+    "image": [
+        "https://www.commvault.com/wp-content/uploads/2025/09/PQC-Blog.png"
+    ],
+    "publisher": {
+        "@type": "Organization",
+        "name": "Commvault",
+        "url": "https://www.commvault.com/",
+        "logo": "https://www.commvault.com/wp-content/themes/commvault-2025/assets/images/logo-commvault-horizontal.jpg"
+    },
+    "author": [
+        {
+            "@type": "Person",
+            "name": "Michael Fasulo",
+            "jobTitle": "Senior Director of Portfolio marketing, Commvault"
+        },
+        {
+            "@type": "Person",
+            "name": "David Cunningham"
+        }
+    ]
+}</script>
+<link rel="alternate" href="https://www.commvault.com/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond" hreflang="en"/>
+<link rel="alternate" href="https://www.commvault.com/br/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond" hreflang="br"/>
+<link rel="alternate" href="https://www.commvault.com/de/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond" hreflang="de"/>
+<link rel="alternate" href="https://www.commvault.com/es/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond" hreflang="es"/>
+<link rel="alternate" href="https://www.commvault.com/fr/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond" hreflang="fr"/>
+<link rel="alternate" href="https://www.commvault.com/it/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond" hreflang="it"/>
+<script type="application/json" id="weglot-data">{"website":"https:\/\/www.commvault.com\/","uid":"1af22b0c35","project_slug":"commvault-do-not-use","language_from":"en","language_from_custom_flag":"us","language_from_custom_name":null,"excluded_paths":[],"excluded_blocks":[],"custom_settings":{"button_style":{"is_dropdown":true,"with_flags":true,"flag_type":"rectangle_mat","with_name":true,"full_name":true,"custom_css":""},"wp_user_version":"4.2.7","translate_email":false,"translate_search":false,"translate_amp":false,"switchers":[{"style":{"with_name":true,"with_flags":true,"full_name":true,"is_dropdown":true,"invert_flags":true,"flag_type":"rectangle_mat","size_scale":1},"opts":{"hide_selected_language":false,"open_hover":false,"close_outside_click":false,"is_responsive":false,"display_device":"mobile","pixel_cutoff":768},"colors":[],"location":[],"name":"site-header__language-switcher"}]},"pending_translation_enabled":false,"curl_ssl_check_enabled":true,"custom_css":null,"languages":[{"language_to":"br","custom_code":null,"custom_name":null,"custom_local_name":"Portugu\u00eas (Brasil)","provider":null,"enabled":true,"automatic_translation_enabled":true,"deleted_at":null,"connect_host_destination":null,"custom_flag":"br"},{"language_to":"de","custom_code":null,"custom_name":null,"custom_local_name":null,"provider":null,"enabled":true,"automatic_translation_enabled":true,"deleted_at":null,"connect_host_destination":null,"custom_flag":null},{"language_to":"es","custom_code":null,"custom_name":null,"custom_local_name":null,"provider":null,"enabled":true,"automatic_translation_enabled":true,"deleted_at":null,"connect_host_destination":null,"custom_flag":null},{"language_to":"fr","custom_code":null,"custom_name":null,"custom_local_name":null,"provider":null,"enabled":true,"automatic_translation_enabled":true,"deleted_at":null,"connect_host_destination":null,"custom_flag":null},{"language_to":"it","custom_code":null,"custom_name":null,"custom_local_name":null,"provider":null,"enabled":true,"automatic_translation_enabled":true,"deleted_at":null,"connect_host_destination":null,"custom_flag":null}],"organization_slug":"commvault-monthly","api_domain":"cdn-api-weglot.com","api_base_url":"https:\/\/cdn-api-weglot.com","product":"1.0","current_language":"en","switcher_links":{"en":"https:\/\/www.commvault.com\/blogs\/future-proofing-your-data-post-quantum-cryptography-and-beyond","br":"https:\/\/www.commvault.com\/br\/blogs\/future-proofing-your-data-post-quantum-cryptography-and-beyond","de":"https:\/\/www.commvault.com\/de\/blogs\/future-proofing-your-data-post-quantum-cryptography-and-beyond","es":"https:\/\/www.commvault.com\/es\/blogs\/future-proofing-your-data-post-quantum-cryptography-and-beyond","fr":"https:\/\/www.commvault.com\/fr\/blogs\/future-proofing-your-data-post-quantum-cryptography-and-beyond","it":"https:\/\/www.commvault.com\/it\/blogs\/future-proofing-your-data-post-quantum-cryptography-and-beyond"},"original_path":"\/blogs\/future-proofing-your-data-post-quantum-cryptography-and-beyond"}</script><link rel="icon" href="https://www.commvault.com/wp-content/uploads/2025/05/favicon-150x150.png" sizes="32x32" />
+<link rel="icon" href="https://www.commvault.com/wp-content/uploads/2025/05/favicon.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://www.commvault.com/wp-content/uploads/2025/05/favicon.png" />
+<meta name="msapplication-TileImage" content="https://www.commvault.com/wp-content/uploads/2025/05/favicon.png" />
+</head>
+
+<body class="wp-singular post-template-default single single-post postid-359 single-format-standard wp-theme-commvault-2025 no-alert bg-white mb-admin-environment--production">
+<div class="site">
+    <a class="site-skip-link btn-primary" href="#site-main">
+        Skip to content    </a>
+
+    <header id="site-header" class="site-header">
+    
+<div
+    hidden
+    id="alert-bar"
+    data-alert-type="global"
+    class="alert-bar alert-bar--bg-gradient"
+>
+    <div class="alert-bar__wrapper">
+
+        <span class="alert-bar__content">
+            Resilience Over Panic: Four Things Every Organization Must Do Now in the Age of Frontier AI        </span>
+
+                    <a href="https://discover.commvault.com/webinar-resilience-over-patching-registration.html" class="alert-bar__cta">
+                Register for the webinar            </a>
+        
+        <button
+            id="alert-bar-button"
+            type="button"
+            class="alert-bar__dismiss btn-primary btn--icon-only"
+        >
+            <svg
+                class="btn__icon"
+                aria-hidden="true"
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <path
+                    d="M1 13L13 1M13.0001 13L1.0001 1"
+                    stroke="currentcolor"
+                    stroke-width="1.5"
+                />
+            </svg>
+            <span class="btn__text">
+                Dismiss Alert            </span>
+        </button>
+
+    </div>
+</div>
+    <div class="site-header__wrapper">
+
+                    <div class="site-header__branding">
+                <a href="https://www.commvault.com/">
+                    <span class="visually-hidden">Commvault</span>
+                    <svg viewBox="0 0 1145.68 223.37" aria-hidden="true" width="160">
+    <path d="M785.87 167.81h-17.73l-34.03-79.4h18.05L777.08 148 802 88.41h18.05l-34.19 79.4Z" fill="currentColor" />
+    <path d="M110.88 6.56 16.89 60.8v104.37l94 54.29 94-54.29V60.8L110.88 6.56Zm77.74 149.23-77.74 44.89-77.7-44.89V70.2l77.7-44.86 77.74 44.89v85.55Z" fill="#844896" />
+    <path d="M105.48 116.14 47.64 82.73v64.68l57.84 33.41v-64.68ZM166.98 151.6l-50.61-29.21v58.42l50.61-29.22ZM166.96 74.39l-56.05-32.33-56.06 32.33 56.06 32.36 56.05-32.36Z" fill="#844896" />
+    <path d="M309.3 153.91c-21.57 0-38.5-17.1-38.5-39.62s16.93-39.62 38.5-39.62c13.81 0 25.55 6.08 31.95 18.31l13.26-11.39c-7.22-11.05-18.51-18.65-31.99-21.63-37.5-8.3-72.91 22.75-68.61 60.91 3.16 28.1 26.45 49.19 55.39 49.19 19.34 0 36.04-8.54 45.46-23.81l-13.35-10.95c-6.36 12.43-18.18 18.63-32.11 18.63ZM405 86.81c-23.49 0-42.66 16.78-42.66 41.38s19.17 41.54 42.66 41.54 42.34-16.93 42.34-41.54S428.33 86.81 405 86.81Zm0 68.54c-13.9 0-26.36-10.7-26.36-27.16s12.46-27.16 26.36-27.16 26.2 10.71 26.2 27.16-12.62 27.16-26.2 27.16ZM556.78 86.33c-13.02 0-23.04 5.52-29.43 14.37a.14.14 0 0 1-.23-.01c-5.14-9.15-14.99-14.35-26.26-14.35s-19.42 4.04-25.16 10.89c-.08.1-.24.04-.24-.09v-8.42c0-.08-.06-.14-.14-.14h-16.33c-.08 0-.14.06-.14.14v78.96c0 .08.06.14.14.14h16.33c.08 0 .14-.06.14-.14v-39.16c0-17.73 8.31-26.84 21.09-26.84 10.22 0 17.89 7.35 17.89 19.01v46.99c0 .08.06.14.14.14h16.33c.08 0 .14-.06.14-.14v-39.16c0-17.73 8.47-26.84 21.41-26.84 10.22 0 17.89 7.35 17.89 19.01v46.99c0 .08.06.14.14.14h16.17c.08 0 .14-.06.14-.14v-50.34c0-18.69-13.58-30.99-30.04-30.99ZM700.89 86.33c-13.02 0-23.04 5.52-29.43 14.37a.14.14 0 0 1-.23-.01c-5.14-9.15-14.99-14.35-26.26-14.35s-19.42 4.04-25.16 10.89c-.08.1-.24.04-.24-.09v-8.42c0-.08-.06-.14-.14-.14H603.1c-.08 0-.14.06-.14.14v78.96c0 .08.06.14.14.14h16.33c.08 0 .14-.06.14-.14v-39.16c0-17.73 8.31-26.84 21.09-26.84 10.22 0 17.89 7.35 17.89 19.01v46.99c0 .08.06.14.14.14h16.33c.08 0 .14-.06.14-.14v-39.16c0-17.73 8.47-26.84 21.41-26.84 10.22 0 17.89 7.35 17.89 19.01v46.99c0 .08.06.14.14.14h16.17c.08 0 .14-.06.14-.14v-50.34c0-18.69-13.58-30.99-30.04-30.99ZM902.76 88.56h-16.33c-.08 0-.14.06-.14.14v8.62c0 .13-.15.19-.24.1-6.86-7.04-16.67-11.1-28.52-11.1-20.77 0-39.3 16.94-39.3 41.86s18.53 41.86 39.3 41.86c11.85 0 21.66-4.06 28.52-11.1a.14.14 0 0 1 .24.1v8.62c0 .08.06.14.14.14h16.33c.08 0 .14-.06.14-.14V88.7c0-.08-.06-.14-.14-.14Zm-42.52 66.78c-14.54 0-25.88-10.38-25.88-27.16s11.34-27.16 25.88-27.16c13.1 0 26.04 10.54 26.04 27.16s-12.94 27.16-26.04 27.16ZM994.31 88.56h-16.33c-.08 0-.14.06-.14.14v36.45c0 19.97-9.27 29.56-23.49 29.56-11.5 0-19.01-8.79-19.01-21.73V88.71c0-.08-.06-.14-.14-.14h-16.33c-.08 0-.14.06-.14.14v47.63c0 19.97 12.62 33.71 31.79 33.71 11.52 0 20.7-4.21 27.08-11.69.08-.1.24-.04.24.09v9.23c0 .08.06.14.14.14h16.33c.08 0 .14-.06.14-.14V88.72c0-.08-.06-.14-.14-.14ZM1047.98 152.06c-3.16 1.4-6.76 2.33-9.43 2.33-6.07 0-10.22-3.84-10.22-9.27V51.53c0-.08-.06-.14-.14-.14h-16.33c-.08 0-.14.06-.14.14v94.25c0 13.43 10.92 24.4 24.35 24.27 6.91-.07 11.13-1.93 15.18-4.1.06-.03.09-.1.07-.16l-3.13-13.63c-.02-.09-.11-.13-.19-.1ZM1103.86 150.23c-.03-.08-.13-.12-.2-.07-4.13 2.66-9.17 4.22-13.27 4.22-7.83 0-13.1-4.79-13.1-14.7v-37.24c0-.08.06-.14.14-.14h26.88c.08 0 .14-.06.14-.14V88.7c0-.08-.06-.14-.14-.14h-26.88c-.08 0-.14-.06-.14-.14V64.1c0-.08-.06-.14-.14-.14h-16.33c-.08 0-.14.06-.14.14v24.32c0 .08-.06.14-.14.14h-16.81c-.08 0-.14.06-.14.14v13.46c0 .08.06.14.14.14h16.81c.08 0 .14.06.14.14v38.36c0 19.65 11.5 29.24 28.6 29.24 6.68 0 12.09-1.58 19.55-6.01.06-.04.09-.11.06-.17l-5.01-13.63ZM1121.95 61.93c0 6.21-4.88 11.09-11.22 11.09s-11.29-4.88-11.29-11.09 5.01-10.96 11.29-10.96 11.22 4.88 11.22 10.96Zm-19.71 0c0 4.88 3.61 8.75 8.55 8.75s8.35-3.88 8.35-8.68-3.54-8.82-8.42-8.82-8.48 3.94-8.48 8.75Zm6.75 5.75h-2.54V56.72c1-.2 2.41-.33 4.21-.33 2.07 0 3.01.33 3.81.8.6.47 1.07 1.34 1.07 2.4 0 1.2-.94 2.14-2.27 2.54v.13c1.07.4 1.67 1.2 2 2.67.33 1.67.53 2.34.8 2.74h-2.74c-.33-.4-.53-1.4-.87-2.67-.2-1.2-.87-1.74-2.27-1.74h-1.2v4.41Zm.07-6.21h1.2c1.4 0 2.54-.47 2.54-1.6 0-1-.74-1.67-2.34-1.67-.67 0-1.14.07-1.4.13v3.14Z" fill="currentColor" />
+</svg>                </a>
+            </div>
+                                                    <button
+                type="button"
+                id="site-nav-toggle"
+                class="site-header__nav-toggle"
+                hidden
+            >
+                <span class="visually-hidden">
+                    Toggle Navigation                </span>
+                <svg class="site-header__hamburger" viewBox="0 0 24 24" width="24" height="24">
+                    <line x1="2" y1="18" x2="22" y2="18"></line>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <line x1="2" y1="6" x2="22" y2="6"></line>
+                </svg>
+            </button>
+                
+                    <div class="site-header__nav">
+                <div class="site-header__nav-primary">
+                    <nav class="js-primary-nav" aria-labelledby="nav-primary-label"><h2 class="visually-hidden" id="nav-primary-label">Primary</h2><ul><li><a href="/platform">Platform</a><button class="js-toggle-menu" aria-expanded="false"><span class="visually-hidden">Platform Menu</span></button><div class="mega-menu" hidden="hidden"><div class="mega-menu__wrapper grid"><div class="mega-menu__header col-12 col-lg-3"><h4>The Commvault Platform</h4><p>Commvault Cloud brings unified resilience at enterprise scale.</p><p class="mega-menu__ctas"><a class="btn-secondary" href="/platform">Learn more</a><a class="btn-secondary" href="/platform/capabilities-a-to-z">See all capabilities</a></p></div><ul class="mega-menu__list col-12 col-lg-9"><li><a href="/solutions/unified-data-protection">Data Protection</a><button class="js-toggle-submenu" aria-expanded="true" hidden="hidden"><span class="visually-hidden">Data Protection Menu</span></button><ul><li><ul class="mt-none mb-lg"><li><a href="/workloads/cloud">Cloud Native</a></li><li><a href="/workloads/saas">Cloud Applications</a></li><li><a href="/solutions/hybrid-and-on-premises">Hybrid &amp; On-Premises</a></li></ul></li></ul><a href="/solutions/cyber-recovery">Cyber Recovery</a><button class="js-toggle-submenu" aria-expanded="true" hidden="hidden"><span class="visually-hidden">Cyber Recovery Menu</span></button><ul><li><ul class="mt-none mb-lg"><li><a href="/solutions/cleanpoint-identification">Cleanpoint Identification</a></li><li><a href="/platform/cleanroom-recovery">Cleanroom Recovery</a></li><li><a href="/solutions/threat-hunting-and-response">Threat Hunting &amp; Response</a></li></ul></li></ul></li><li><a href="/solutions/identity-resilience">Identity Resilience</a><button class="js-toggle-submenu" aria-expanded="true" hidden="hidden"><span class="visually-hidden">Identity Resilience Menu</span></button><ul><li><ul class="mt-none mb-lg"><li><a href="/solutions/identity-recovery">Identity Recovery</a></li><li><a href="/solutions/anomaly-detection">Anomaly Detection</a></li><li><a href="/solutions/identity-rollback">Identity Rollback</a></li></ul></li></ul><a href="/solutions/data-and-ai-security">Data &amp; AI Security</a><button class="js-toggle-submenu" aria-expanded="true" hidden="hidden"><span class="visually-hidden">Data &amp; AI Security Menu</span></button><ul><li><ul class="mt-none mb-lg"><li><a href="/solutions/data-discovery">Data Discovery</a></li><li><a href="/solutions/classification">Classification</a></li><li><a href="/solutions/data-and-ai-access-governance">Data &amp; AI Access Governance</a></li></ul></li></ul></li><li><a href="/solutions/protect-and-leverage-ai">Protect &amp; Leverage AI</a><button class="js-toggle-submenu" aria-expanded="true" hidden="hidden"><span class="visually-hidden">Protect &amp; Leverage AI Menu</span></button><ul><li><ul class="mt-none mb-lg"><li><a href="/solutions/ai-data-resilience">AI Data Resilience</a></li><li><a href="/solutions/agent-library-and-workflows">Agent Library &amp; Workflows</a></li><li><a href="/solutions/data-activate">Data Activate</a></li><li><a href="/platform/metallic-ai">Metallic AI</a></li></ul></li></ul><a href="/solutions/efficiency-and-optimization">Efficiency &amp; Optimization</a><button class="js-toggle-submenu" aria-expanded="true" hidden="hidden"><span class="visually-hidden">Efficiency &amp; Optimization Menu</span></button><ul><li><ul class="mt-none mb-lg"><li><a href="/solutions/storage-efficiency">Storage Efficiency</a></li><li><a href="/solutions/cost-optimization">Cost Optimization</a></li><li><a href="/solutions/operational-simplicity">Operational Simplicity</a></li></ul></li></ul></li></ul></div></div></li><li><a href="/solutions-overview">Solutions</a><button class="js-toggle-menu" aria-expanded="false"><span class="visually-hidden">Solutions Menu</span></button><div class="mega-menu" hidden="hidden"><div class="mega-menu__wrapper grid"><div class="mega-menu__header col-12 col-lg-3"><h4>Commvault Solutions</h4><p>Explore solutions and use cases that unify data security, identity resilience, and cyber recovery across all environments.</p><p class="mega-menu__ctas"><a class="btn-secondary" href="/solutions-overview">See more solutions &amp; use cases</a></p></div><ul class="mega-menu__list col-12 col-lg-9"><li><a href="/solutions-overview#use-cases">Use Cases</a><button class="js-toggle-submenu" aria-expanded="true" hidden="hidden"><span class="visually-hidden">Use Cases Menu</span></button><ul><li><a href="/solutions/continuous-business">Auto-Recovery for Continuous Business</a></li><li><a href="/solutions/identity-governance-and-resilience">Identity Governance &amp; Resilience</a></li><li><a href="/solutions/edge-data-resilience">Edge Data Resilience</a></li><li><a href="/solutions/compliance-and-ediscovery">Compliance &amp; eDiscovery</a></li><li><a href="/solutions/incident-response-and-recovery">Incident Response &amp; Recovery</a></li><li><a href="/solutions/ai-ready-data-protection">AI-Ready Data Protection</a></li></ul></li><li><a href="/solutions-overview#industries">Industries</a><button class="js-toggle-submenu" aria-expanded="true" hidden="hidden"><span class="visually-hidden">Industries Menu</span></button><ul><li><a href="/use-cases/government">Government</a></li><li><a href="/use-cases/healthcare">Healthcare</a></li><li><a href="/use-cases/financial">Financial Services</a></li><li><a href="/use-cases/education">Education</a></li></ul></li><li><a href="/supported-technologies">Environments</a><button class="js-toggle-submenu" aria-expanded="true" hidden="hidden"><span class="visually-hidden">Environments Menu</span></button><ul><li><a href="/workloads/cloud">Cloud Native</a><ul><li><a href="/supported-technologies/amazon/aws">AWS</a></li><li><a href="/supported-technologies/microsoft/azure">Azure</a></li><li><a href="/supported-technologies/google">Google Cloud</a></li><li><a href="/platform/kubernetes-backup">Kubernetes</a></li></ul></li><li><a href="/workloads/saas">SaaS Apps</a><ul><li><a href="/platform/microsoft-365-backup">Microsoft 365</a></li><li><a href="/platform/salesforce-backup">Salesforce</a></li></ul></li><li><a href="/workloads/virtual-and-containers">Hybrid</a><ul><li><a href="/supported-technologies/microsoft/hyper-v">Hyper-v</a></li><li><a href="/supported-technologies/nutanix-hyper-converged-infrastructure/acropolis">Nutanix AHV</a></li><li><a href="/platform/vm-backup">VMware</a></li></ul></li><li><a href="/workloads/directory-services">Directory Services</a><ul><li><a href="/supported-technologies/active-directory">Active Directory</a></li><li><a href="/supported-technologies/entra-id">Entra ID</a></li></ul></li><li><a href="/workloads/high-risk-data">High-Risk Data</a><ul><li><a href="/supported-technologies/government">Government</a></li><li><a href="/supported-technologies/regulated-industries">Regulated Industries</a></li></ul></li></ul></li></ul></div></div></li><li><a href="/resources">Resources</a><button class="js-toggle-menu" aria-expanded="false"><span class="visually-hidden">Resources Menu</span></button><div class="mega-menu" hidden="hidden"><div class="mega-menu__wrapper grid"><div class="mega-menu__header col-12 col-lg-3"><h4>Resources</h4><p>Discover expert insights and tools that help strengthen unified resilience at enterprise scale.</p><p class="mega-menu__ctas"><a class="btn-secondary" href="/resources">Explore the library</a></p></div><ul class="mega-menu__list col-12 col-lg-9"><li><a href="/explore">Learn &amp; Explore</a><button class="js-toggle-submenu" aria-expanded="true" hidden="hidden"><span class="visually-hidden">Learn &amp; Explore Menu</span></button><ul><li><a href="/customers">Case Studies</a></li><li><a href="/blogs">Blog</a></li><li><a href="/webinars-and-events">Webinars &amp; Events</a></li></ul></li><li class="mega-menu__hidden-header"><a class="mega-menu__column-header" href="/podcasts">Podcasts &amp; News</a><button class="js-toggle-submenu" aria-expanded="true" hidden="hidden"><span class="visually-hidden">Podcasts &amp; News Menu</span></button><ul><li><a href="/podcasts">Podcasts</a></li><li><a href="/analyst-reports">White Papers &amp; Analyst Reports</a></li><li><a href="/news">Newsroom</a></li></ul></li><li><a href="/the-collaborative">Technical Resources</a><button class="js-toggle-submenu" aria-expanded="true" hidden="hidden"><span class="visually-hidden">Technical Resources Menu</span></button><ul><li><a href="https://kb.commvault.com/">KnowledgeBase</a></li><li><a href="/supported-technologies">Supported Technologies</a></li><li><a href="https://documentation.commvault.com/">Documentation</a></li></ul></li></ul></div></div></li><li><a href="https://www.readiverse.com" target="_blank">Readiverse</a><button class="js-toggle-menu" aria-expanded="false"><span class="visually-hidden">Readiverse Menu</span></button><div class="mega-menu cxo" hidden="hidden"><div class="mega-menu__wrapper grid"><div class="mega-menu__header col-12 col-lg-4"><h4>The Readiverse</h4><p>Essential intelligence organizations need to get ready and stay ready.</p><p class="mega-menu__ctas"><a class="btn-secondary" href="https://www.readiverse.com" target="_blank">Visit The Readiverse</a></p></div><ul class="mega-menu__list col-12 col-lg-8"><li><a href="https://www.readiverse.com/cxo-exchange" target="_blank">For Leaders</a><ul><li><a href="https://www.readiverse.com/cxo-exchange" target="_blank">CxO Exchange</a></li><li><a href="https://www.readiverse.com/cxo-exchange#bold-takes" target="_blank">Executive Briefings</a></li></ul><a class="pt-lg" href="https://www.readiverse.com/cxo-exchange#events" target="_blank">Readiness in Action</a><ul><li><a href="/minutes-to-meltdown">Minutes to Meltdown</a></li><li><a href="/cyber-resilience-workshop">Cyber Resilience Workshop</a></li><li><a href="/recovery-range">Recovery Range</a></li></ul></li><li><a href="https://www.readiverse.com" target="_blank">Insights &amp; Perspectives</a><ul><li><a href="https://www.readiverse.com/#briefing-room" target="_blank">The Briefing Room</a></li><li><a href="https://www.readiverse.com/readiness-report/building-ai-on-foundational-resilience" target="_blank">The Readiness Report</a></li><li><a href="https://www.readiverse.com/#bold-takes" target="_blank">Peer Perspectives</a></li><li><a href="https://www.readiverse.com/#thought-leadership" target="_blank">Thought Leadership Resources</a></li></ul></li><li><a href="https://www.readiverse.com/academy" target="_blank">Readiverse Academy</a><ul><li><a href="https://readiverse.commvault.com/learn" target="_blank">Free Courses</a></li><li><a href="https://readiverse.commvault.com/learn" target="_blank">Learning Programs</a></li><li><a href="https://www.readiverse.com/academy#certifications" target="_blank">Certifications</a></li><li><a href="https://readiverse.commvault.com/learn" target="_blank">View the Catalog</a></li></ul></li></ul></div></div></li><li><a href="/partners/find">Partners</a><button class="js-toggle-menu" aria-expanded="false"><span class="visually-hidden">Partners Menu</span></button><div class="mega-menu" hidden="hidden"><div class="mega-menu__wrapper grid"><div class="mega-menu__header col-12 col-lg-3"><h4>Our Partners</h4><p> Our partners represent the market leaders in their space and combine with Commvault for deep integration, tailored solutions, and expert support.</p><p class="mega-menu__ctas"><a class="btn-secondary" href="/partners/find">Find a partner</a></p></div><ul class="mega-menu__list col-12 col-lg-9"><li><a href="/why-partner-with-commvault">For Our Partners</a><button class="js-toggle-submenu" aria-expanded="true" hidden="hidden"><span class="visually-hidden">For Our Partners Menu</span></button><ul><li><a href="/why-partner-with-commvault">Why Partner With Commvault</a></li><li><a href="https://partners.commvault.com/PRM_PartnerHome" target="_blank">Partner Portal Login</a></li><li><a href="/become-a-partner">Become a Partner</a></li><li><a href="/partners/managed-service-providers">Become a Managed Service Provider</a></li><li><a href="https://campaignhub.commvault.com/#/page/login" target="_blank">Partner Campaign Hub</a></li></ul></li><li class="mega-menu__list-col--span-2"><a href="/partners">About Our Partners</a><button class="js-toggle-submenu" aria-expanded="true" hidden="hidden"><span class="visually-hidden">About Our Partners Menu</span></button><ul><li><a href="/partners#Cloud">Cloud</a></li><li><a href="/partners/find?type=Reseller">Solution Provider</a></li><li><a href="/partners#Alliance">Alliance</a></li><li><a href="/partners/find?type=Service%20Provider">Managed Service Provider</a></li><li><a href="/partners#Global">Global System Integrator</a></li><li><a href="/partners/find?type=Aggregator">Aggregator</a></li><li><a href="/partners#Security">Security</a></li><li><a href="/partners/find/?type=Distributor">Distributor</a></li><li hidden="hidden"><a href="/partners#Minimum">Minimum Viability</a></li><li hidden="hidden"><a href="/partners#Incident">Incident Response</a></li></ul></li></ul></div></div></li></ul></nav>                </div>
+
+                <div class="site-header__nav-ctas">
+                    <nav aria-labelledby="nav-ctas-label"><h2 class="visually-hidden" id="nav-ctas-label">Actions</h2><ul><li class="site-header__contact-us"><a class="btn-primary btn--compact" href="/contact-us">Contact us</a></li><li class="site-header__demo"><a class="btn-secondary btn--compact" href="/request-demo">Request a demo</a></li></ul></nav>                </div>
+
+                <div class="site-header__nav-secondary">
+                    <nav aria-labelledby="nav-secondary-label"><h2 class="visually-hidden" id="nav-secondary-label">Secondary</h2><ul><li><a href="https://www.readiverse.com/cxo-exchange" target="_blank">CxO</a></li><li><a href="https://ma.commvault.com/Account/Login">Support</a></li><li><a href="/services">Services</a></li><li><a href="https://community.commvault.com/">Community</a></li><li><button class="modal-show" id="site-search-open-modal" type="button" data-modal="site-search">Search</button></li></ul></nav>                    <div class="site-header__language-switcher lang-switch visually-hidden" data-element="Language dropdown">
+    <button
+        type="button"
+        id="site-lang-switch"
+        aria-expanded="false"
+        class="lang-switch__toggle"
+    >
+        <img
+            id="site-lang-switch-flag"
+            alt=""
+            aria-hidden="true"
+            class="btn__icon lang-switch__flag"
+            src="https://www.commvault.com/wp-content/themes/commvault-2025/assets/images/flags/us.svg"
+            width="15"
+            height="10"
+        >
+        <span class="btn__text">
+            <span class="visually-hidden">
+                Language:            </span>
+            <span id="site-lang-switch-current" lang="en">English</span> <!-- fallback -->
+        </span>
+    </button>
+
+    <!-- This will be populated dynamically by JS -->
+    <ul class="lang-switch__menu"></ul>
+</div>
+                 </div>
+            </div>
+                            </div>
+</header>
+
+    <main id="site-main" class="site-main">
+
+    
+<section class="blade">
+    <article id="post-359" class="grid pt-md post-359 post type-post status-publish format-standard has-post-thumbnail hentry category-ai-innovation">
+        <header class="entry-header col-12 col-lg-8 col-start-lg-3">
+                            <div class="entry-categories text-rose font-body-xs mb-md">
+                    AI &amp; Innovation                </div>
+                <h1 class="entry-title font-heading-xl">Future-Proofing Your Data: Post-Quantum Cryptography and Beyond </h1>                <p class="entry-subheader">
+                    Like all relationships, our relationship with our customers is built on trust. You trust us with handling and securing the life blood of your company – your data. Behind the scenes, this trust relies heavily on cryptography, the art of scrambling information to keep it safe from malicious actors. But what happens when the tools we use to secure our data become vulnerable?                  </p>
+                <div class="entry-byline font-body-xs text-grey-800">
+                    
+    <div class="authors">
+        <div class="authors__name-title"><strong>Michael Fasulo</strong>, Senior Director of Portfolio marketing, Commvault</div><div class="authors__name-title"><strong>David Cunningham</strong></div>    </div>
+
+                        
+    <time datetime="2024-05-02" class="entry-date font-body-xs">
+        May 2, 2024    </time>
+
+                    </div>
+                <ul class="social-share list-unset">
+        <li>
+        <a class="btn-text btn--icon-only" href="http://www.facebook.com/share.php?u=https://www.commvault.com/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond" target="_blank" rel="noopener noreferrer">
+            <span class="btn__text">Share Future-Proofing Your Data: Post-Quantum Cryptography and Beyond  to Facebook</span>
+            <svg id="facebook" data-name="Facebook" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M23.5,12C23.5,5.76,18.45.71,12.21.71S.91,5.76.91,12c0,5.64,4.13,10.31,9.53,11.16v-7.89h-2.87v-3.26h2.87v-2.49c0-2.83,1.69-4.39,4.27-4.39,1.24,0,2.53.22,2.53.22v2.78h-1.42c-1.4,0-1.84.87-1.84,1.76v2.12h3.13l-.5,3.26h-2.63v7.89c5.4-.85,9.53-5.52,9.53-11.16Z"/>
+            </svg>
+        </a>
+    </li>
+            <li>
+        <a class="btn-text btn--icon-only" href="https://twitter.com/intent/tweet?text=https://www.commvault.com/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond" target="_blank" rel="noopener noreferrer">
+            <span class="btn__text">Share Future-Proofing Your Data: Post-Quantum Cryptography and Beyond  to X</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 31 30" fill="none">
+                <path d="m.323 1 11.583 15.223L.25 28.6h2.623l10.205-10.836L21.323 28.6h8.927L18.016 12.52 28.865 1h-2.623l-9.398 9.98L9.25 1H.323Zm3.858 1.9h4.1l18.11 23.8h-4.1L4.18 2.9Z" fill="currentColor"/>
+            </svg>
+        </a>
+    </li>
+            <li>
+        <a class="btn-text btn--icon-only" href="https://www.linkedin.com/shareArticle?mini=true&#038;url=https://www.commvault.com/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond&#038;title=Future-Proofing%20Your%20Data:%20Post-Quantum%20Cryptography%20and%20Beyond &#038;source=https://www.commvault.com" target="_blank" rel="noopener noreferrer">
+            <span class="btn__text">Share Future-Proofing Your Data: Post-Quantum Cryptography and Beyond  to LinkedIn</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                <path d="M18.852,2.25H1.446A1.456,1.456,0,0,0,0,3.714V21.088a1.456,1.456,0,0,0,1.446,1.464H18.852a1.46,1.46,0,0,0,1.45-1.464V3.714A1.46,1.46,0,0,0,18.852,2.25ZM6.136,19.651H3.127V9.963H6.14v9.689ZM4.631,8.64A1.745,1.745,0,1,1,6.376,6.895,1.745,1.745,0,0,1,4.631,8.64ZM17.415,19.651H14.406V14.939c0-1.124-.023-2.569-1.563-2.569-1.568,0-1.808,1.224-1.808,2.488v4.794H8.026V9.963h2.887v1.323h.041A3.169,3.169,0,0,1,13.8,9.723c3.045,0,3.612,2.008,3.612,4.618Z" transform="translate(0 -2.25)" fill="currentColor"></path>
+            </svg>
+        </a>
+    </li>
+            <li>
+        <button class="copy-button btn-text btn--icon-only">
+            <span class="btn__text">Copy Future-Proofing Your Data: Post-Quantum Cryptography and Beyond  to clipboard</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                <path d="M12.384,7.03a5.76,5.76,0,0,1,.014,8.137l-.014.014L9.836,17.728A5.763,5.763,0,0,1,1.685,9.578L3.092,8.171a.606.606,0,0,1,1.035.4,6.987,6.987,0,0,0,.367,2,.61.61,0,0,1-.143.63l-.5.5a2.73,2.73,0,1,0,3.836,3.885l2.548-2.548a2.729,2.729,0,0,0,0-3.861,2.84,2.84,0,0,0-.392-.325.608.608,0,0,1-.263-.478,1.51,1.51,0,0,1,.444-1.13l.8-.8a.609.609,0,0,1,.78-.066,5.782,5.782,0,0,1,.778.652Zm5.344-5.344a5.77,5.77,0,0,0-8.151,0L7.029,4.233l-.014.014a5.765,5.765,0,0,0,.792,8.789.609.609,0,0,0,.78-.066l.8-.8a1.51,1.51,0,0,0,.444-1.13.608.608,0,0,0-.263-.478,2.84,2.84,0,0,1-.392-.325,2.729,2.729,0,0,1,0-3.861L11.722,3.83a2.73,2.73,0,1,1,3.836,3.885l-.5.5a.61.61,0,0,0-.143.63,6.987,6.987,0,0,1,.367,2,.606.606,0,0,0,1.035.4l1.407-1.407a5.77,5.77,0,0,0,0-8.151Z" transform="translate(0 0)" fill="currentColor"></path>
+            </svg>
+        </button>
+        <div class="url-for-copy visually-hidden" aria-hidden="true">https://www.commvault.com/blogs/future-proofing-your-data-post-quantum-cryptography-and-beyond</div>
+        <span class="social-share__custom-tooltip font-body-xs" aria-live="polite">URL copied to clipboard</span>
+    </li>
+    </ul>
+                        </header><!-- .entry-header -->
+
+        <hr class="col-12 col-lg-8 col-start-lg-3">
+
+        <div class="entry-content col-12 col-lg-8 col-start-lg-3">
+            
+<p class="">Enter the looming threat of quantum computing. These powerful machines harness the power of quantum mechanics to solve problems more quickly than traditional computers. This includes cracking the key and encryption standards that safeguard our world of data. This is where post-quantum cryptography (PQC) comes in, and why Commvault has chosen to implement it to safeguard your data.  </p>
+
+
+
+<p class=""><strong>Why We Need PQC</strong> </p>
+
+
+
+<p class="">Many of the asymmetric and symmetric cryptography algorithms we use to protect data from prying eyes rely on mathematical problems factoring in large numbers. While these are difficult for classical computers to crack, quantum computers solve these mathematical problems significantly faster, making what was once thought impossible very much possible.   </p>
+
+
+
+<p class="">This could leave any sensitive information that is normally encrypted, such as credentials, emails, financial data, and medical records, exposed. You might think the threat of quantum computing is five to ten years away, but anyone who recently attended the keynote at Ignite/Reinvent/Next would know that quantum computing resources are already available and the technology is rapidly advancing. And now it’s available to anyone, including malicious actors. The question is, how do you shield your organization? </p>
+
+
+
+<p class=""><strong>A Multi-Faceted Approach: Bigger Keys, Better Locks, and PQC</strong> </p>
+
+
+
+<p class="">Although full-fledged PQC algorithms are still on the way to being standardized, there are steps we can take now to bolster our defenses. One approach is to increase cryptography key lengths on symmetric algorithms, so it takes a longer time to crack encryption with brute-force attacks. This is very similar in principle to increasing the number of pins in a tumbler lock. The more pins the lock utilizes, the more difficult and time consuming it is to crack. The larger and more complex the key is, the harder and longer it takes to replicate or guess. </p>
+
+
+
+<p class=""><strong>Secure Post-Quantum Data Encryption</strong> </p>
+
+
+
+<p class="">AES encryption has long been the industry standard algorithm for secure symmetric encryption, and in the near term it will continue to be relatively sufficient in securing against quantum brute-force attacks, <em>as long as high key sizes are utilized</em>. Commvault already has standardized data encryption on AES-256, which is the highest supported key length for AES.  </p>
+
+
+
+<p class="">To put things into perspective, we can look at <a href="https://www.geeksforgeeks.org/introduction-to-grovers-algorithm/">Grover’s algorithm</a> to demonstrate the potential threat of brute-force attacks. Grover’s algorithm is a commonly known algorithm used to solve complicated mathematical problems. It also can be used to speed up password brute-force attacks, especially when executed on quantum computers.  </p>
+
+
+
+<p class="">With Grover’s algorithm, the time to crack AES-256 encryption still would be impractical due to the key size (it effectively halves the key size) and because the current generation of quantum computers is not quite powerful enough. So, AES-256 is still a viable encryption algorithm in the foreseeable future. </p>
+
+
+
+<p class=""><strong>Secure Post-Quantum Communication</strong> </p>
+
+
+
+<p class="">When it comes to the asymmetric encryption algorithms (public-key cryptography) that are used for secure communication and digital signatures, things look bleak. This is one of the cryptographic areas at highest risk of impact by quantum computing since RSA (Rivest-Shamir-Adleman) and ECC (Elliptic Curve Cryptography) algorithms are severely weakened by quantum computers.  </p>
+
+
+
+<p class="">Following public calls to action to develop PQC standards, the National Institute of Standards and Technology (NIST) coordinated the solicitation, evaluation, and selection of candidate algorithms for PQC starting in 2016. As of December 2023, the final post-quantum algorithms have been selected, and NIST has begun drafting the <a href="https://csrc.nist.gov/Projects/post-quantum-cryptography/publications">standard guidance and publications</a> around them. </p>
+
+
+
+<p class="">Commvault has taken the first steps in incorporating some of the upcoming PQC standards to improve secure communication. Two key components needed to be updated to provide quantum protection: </p>
+
+
+
+<ol class="wp-block-list">
+<li class="">        <strong>Key exchange and encapsulation:</strong> Establishes a symmetric encryption key during TLS setup.  </li>
+
+
+
+<li class="">        <strong>Signature generation and verification:</strong> Creates a chain of certificates and authenticates parties involved in the TLS setup, preventing man-in-the-middle attacks.  </li>
+</ol>
+
+
+
+<p class="">The traditional key exchange algorithm, ECDH (Elliptic-curve Diffie-Hellman), is susceptible to attacks with the advent of quantum computers.<strong> CRYSTALS-Kyber</strong>, a NIST-approved post-quantum algorithm, serves as a replacement for ECDH.  </p>
+
+
+
+<p class="">However, a secure TLS connection requires more than just key exchange. Both ECDH and Kyber are vulnerable to man-in-the-middle attacks. This necessitates the use of a certificate chain and signed/verified messages during TLS setup. Conventional cryptography relies on RSA with large private/public key sizes (2048, 3072, etc.) for this purpose. NIST has recommended post-quantum alternatives for RSA, which includes: </p>
+
+
+
+<ul class="wp-block-list">
+<li class="">       CRYSTALS-Dilithium3  </li>
+
+
+
+<li class="">       Falcon  </li>
+
+
+
+<li class="">       Sphincs+  </li>
+</ul>
+
+
+
+<p class=""><strong>Today’s Best Combo</strong> </p>
+
+
+
+<p class="">Customers immediately can begin securing their environment against quantum-based attacks starting in the most recent software release, Commvault Cloud CPR 2024, which leverages <strong>CRYSTALS-Kyber</strong> for key encapsulation, and <strong>CRYSTALS-Dilithium3</strong> or <strong>FALCON</strong> for digital signature schemes, to provide secure communication within the Commvault<sup>®</sup> Cloud platform.  </p>
+
+
+
+<p class="">Once enabled, data communication within Commvault will be resistant to quantum attacks, while your data is encrypted at its source with AES-256 algorithm, keeping your data safe from modern and future quantum threats. Given that the quantum space is under rapid development, along with additional scrutiny of these algorithms, Commvault Cloud has implemented a flexible framework that allows selection of other algorithms and key lengths, for both key exchange/encapsulation and signature generation/verification, providing a futureproof way to remain vigilant in this ever-changing space.  </p>
+
+
+
+<p class=""><strong>The Road Ahead</strong> </p>
+
+
+
+<p class="">As with all security measures, PQC is yet another layer to implement on top of other security controls to keep you cyber resilient. We recommend using Security IQ to gain insights into your own security posture and implement controls to keep your data safe from quantum and other attack vectors. </p>
+
+
+
+<p class="">Similar to how trust is a continuous process, Commvault’s continual investment in cyber resilience and quantum protection will keep your data safe against ever-evolving threats. You can learn more about Security IQ <a href="https://www.commvault.com/platform/security-iq">here</a>.</p>
+        </div><!-- .entry-content -->
+    </article><!-- #post-359 -->
+</section>
+
+    <section class="blade cards-container">
+        <h2 class="font-heading-sm">More related posts</h2>
+        <hr>
+        <div class="grid pb-xl">
+                            
+<div class="card vertical col-12 col-lg-4 aspect__full bg-eggshell">
+    <img class="card__image" src="https://www.commvault.com/wp-content/uploads/2026/06/Thumnail_Blog-Machine-Identities-2026-Linkedin.png" alt="Thumnail_Blog-Machine-Identities-2026-Linkedin" width="1200" height="628" sizes="(min-width: 1440px) 437px, (min-width: 768px) 33vw, 100vw" style="aspect-ratio: 1.7777777777778" srcset="https://www.commvault.com/wp-content/uploads/2026/06/Thumnail_Blog-Machine-Identities-2026-Linkedin.png?width=480&amp;crop=16%3A9&amp;format=auto&amp;quality=85 480w, https://www.commvault.com/wp-content/uploads/2026/06/Thumnail_Blog-Machine-Identities-2026-Linkedin.png?width=640&amp;crop=16%3A9&amp;format=auto&amp;quality=85 640w, https://www.commvault.com/wp-content/uploads/2026/06/Thumnail_Blog-Machine-Identities-2026-Linkedin.png?width=960&amp;crop=16%3A9&amp;format=auto&amp;quality=85 960w, https://www.commvault.com/wp-content/uploads/2026/06/Thumnail_Blog-Machine-Identities-2026-Linkedin.png?width=1280&amp;crop=16%3A9&amp;format=auto&amp;quality=85 1280w, https://www.commvault.com/wp-content/uploads/2026/06/Thumnail_Blog-Machine-Identities-2026-Linkedin.png?width=1600&amp;crop=16%3A9&amp;format=auto&amp;quality=85 1600w, https://www.commvault.com/wp-content/uploads/2026/06/Thumnail_Blog-Machine-Identities-2026-Linkedin.png?width=1920&amp;crop=16%3A9&amp;format=auto&amp;quality=85 1920w, https://www.commvault.com/wp-content/uploads/2026/06/Thumnail_Blog-Machine-Identities-2026-Linkedin.png?width=2240&amp;crop=16%3A9&amp;format=auto&amp;quality=85 2240w, https://www.commvault.com/wp-content/uploads/2026/06/Thumnail_Blog-Machine-Identities-2026-Linkedin.png?width=2560&amp;crop=16%3A9&amp;format=auto&amp;quality=85 2560w">    <div class="card__content px-xl pt-xl pb-md">
+        <div class="card__header mb-md">
+                                        <h2 class="font-heading-xs m-none">Machine Identities and the Governance Gap</h2>
+                                        <div class="mt-sm">
+                    
+    <time datetime="2026-06-03" class="entry-date font-body-xs">
+        June 3, 2026    </time>
+
+                    </div>
+                                </div>
+        <a href="https://www.commvault.com/blogs/machine-identities-and-the-governance-gap" class="btn btn-text btn--icon-after card__button" target="_self">
+            <span class="btn__text">
+        Read more                    <span class="visually-hidden">about Machine Identities and the Governance Gap</span>
+            </span>
+            <svg class="btn__icon" aria-hidden="true" fill="none" viewBox="0 0 15 15">
+            <path stroke="currentColor" stroke-width="2" d="m6.5 1.333 6.5 6.5-6.5 6.5m6.5-6.5H0" />
+        </svg>
+        </a>
+    </div>
+</div>
+                            
+<div class="card vertical col-12 col-lg-4 aspect__full bg-eggshell">
+    <img class="card__image" src="https://www.commvault.com/wp-content/uploads/2026/06/Thumbnail_Blog-Strive-Resops-2026.png" alt="Thumbnail_Blog-Strive-Resops-2026" width="1200" height="628" sizes="(min-width: 1440px) 437px, (min-width: 768px) 33vw, 100vw" style="aspect-ratio: 1.7777777777778" srcset="https://www.commvault.com/wp-content/uploads/2026/06/Thumbnail_Blog-Strive-Resops-2026.png?width=480&amp;crop=16%3A9&amp;format=auto&amp;quality=85 480w, https://www.commvault.com/wp-content/uploads/2026/06/Thumbnail_Blog-Strive-Resops-2026.png?width=640&amp;crop=16%3A9&amp;format=auto&amp;quality=85 640w, https://www.commvault.com/wp-content/uploads/2026/06/Thumbnail_Blog-Strive-Resops-2026.png?width=960&amp;crop=16%3A9&amp;format=auto&amp;quality=85 960w, https://www.commvault.com/wp-content/uploads/2026/06/Thumbnail_Blog-Strive-Resops-2026.png?width=1280&amp;crop=16%3A9&amp;format=auto&amp;quality=85 1280w, https://www.commvault.com/wp-content/uploads/2026/06/Thumbnail_Blog-Strive-Resops-2026.png?width=1600&amp;crop=16%3A9&amp;format=auto&amp;quality=85 1600w, https://www.commvault.com/wp-content/uploads/2026/06/Thumbnail_Blog-Strive-Resops-2026.png?width=1920&amp;crop=16%3A9&amp;format=auto&amp;quality=85 1920w, https://www.commvault.com/wp-content/uploads/2026/06/Thumbnail_Blog-Strive-Resops-2026.png?width=2240&amp;crop=16%3A9&amp;format=auto&amp;quality=85 2240w, https://www.commvault.com/wp-content/uploads/2026/06/Thumbnail_Blog-Strive-Resops-2026.png?width=2560&amp;crop=16%3A9&amp;format=auto&amp;quality=85 2560w">    <div class="card__content px-xl pt-xl pb-md">
+        <div class="card__header mb-md">
+                                        <h2 class="font-heading-xs m-none">ResOps: The Next Era of Recovery Intelligence</h2>
+                                        <div class="mt-sm">
+                    
+    <time datetime="2026-06-02" class="entry-date font-body-xs">
+        June 2, 2026    </time>
+
+                    </div>
+                                </div>
+        <a href="https://www.commvault.com/blogs/resops-the-next-era-of-recovery-intelligence" class="btn btn-text btn--icon-after card__button" target="_self">
+            <span class="btn__text">
+        Read more                    <span class="visually-hidden">about ResOps: The Next Era of Recovery Intelligence</span>
+            </span>
+            <svg class="btn__icon" aria-hidden="true" fill="none" viewBox="0 0 15 15">
+            <path stroke="currentColor" stroke-width="2" d="m6.5 1.333 6.5 6.5-6.5 6.5m6.5-6.5H0" />
+        </svg>
+        </a>
+    </div>
+</div>
+                            
+<div class="card vertical col-12 col-lg-4 aspect__full bg-eggshell">
+    <img class="card__image" src="https://www.commvault.com/wp-content/uploads/2026/05/Thumbnail_Blog-AI-Model-Poisoning-2025-Linkedin-1.png" alt="Thumbnail_Blog-AI-Model-Poisoning-2025-Linkedin 1" width="1200" height="628" sizes="(min-width: 1440px) 437px, (min-width: 768px) 33vw, 100vw" style="aspect-ratio: 1.7777777777778" srcset="https://www.commvault.com/wp-content/uploads/2026/05/Thumbnail_Blog-AI-Model-Poisoning-2025-Linkedin-1.png?width=480&amp;crop=16%3A9&amp;format=auto&amp;quality=85 480w, https://www.commvault.com/wp-content/uploads/2026/05/Thumbnail_Blog-AI-Model-Poisoning-2025-Linkedin-1.png?width=640&amp;crop=16%3A9&amp;format=auto&amp;quality=85 640w, https://www.commvault.com/wp-content/uploads/2026/05/Thumbnail_Blog-AI-Model-Poisoning-2025-Linkedin-1.png?width=960&amp;crop=16%3A9&amp;format=auto&amp;quality=85 960w, https://www.commvault.com/wp-content/uploads/2026/05/Thumbnail_Blog-AI-Model-Poisoning-2025-Linkedin-1.png?width=1280&amp;crop=16%3A9&amp;format=auto&amp;quality=85 1280w, https://www.commvault.com/wp-content/uploads/2026/05/Thumbnail_Blog-AI-Model-Poisoning-2025-Linkedin-1.png?width=1600&amp;crop=16%3A9&amp;format=auto&amp;quality=85 1600w, https://www.commvault.com/wp-content/uploads/2026/05/Thumbnail_Blog-AI-Model-Poisoning-2025-Linkedin-1.png?width=1920&amp;crop=16%3A9&amp;format=auto&amp;quality=85 1920w, https://www.commvault.com/wp-content/uploads/2026/05/Thumbnail_Blog-AI-Model-Poisoning-2025-Linkedin-1.png?width=2240&amp;crop=16%3A9&amp;format=auto&amp;quality=85 2240w, https://www.commvault.com/wp-content/uploads/2026/05/Thumbnail_Blog-AI-Model-Poisoning-2025-Linkedin-1.png?width=2560&amp;crop=16%3A9&amp;format=auto&amp;quality=85 2560w">    <div class="card__content px-xl pt-xl pb-md">
+        <div class="card__header mb-md">
+                                        <h2 class="font-heading-xs m-none">When Prevention Can&#8217;t Keep Up: The New Math of Cyber Recovery</h2>
+                                        <div class="mt-sm">
+                    
+    <time datetime="2026-06-01" class="entry-date font-body-xs">
+        June 1, 2026    </time>
+
+                    </div>
+                                </div>
+        <a href="https://www.commvault.com/blogs/when-prevention-cant-keep-up-the-new-math-of-cyber-recovery" class="btn btn-text btn--icon-after card__button" target="_self">
+            <span class="btn__text">
+        Read more                    <span class="visually-hidden">about When Prevention Can&#8217;t Keep Up: The New Math of Cyber Recovery</span>
+            </span>
+            <svg class="btn__icon" aria-hidden="true" fill="none" viewBox="0 0 15 15">
+            <path stroke="currentColor" stroke-width="2" d="m6.5 1.333 6.5 6.5-6.5 6.5m6.5-6.5H0" />
+        </svg>
+        </a>
+    </div>
+</div>
+                    </div>
+    </section>
+
+
+    </main><!-- #site-main -->
+
+    <footer id="site-footer" class="site-footer t-dark">
+<div class="site-footer__wrapper">
+    <div class="grid">
+        <div class="site-footer__brand col-12 col-md-4">
+            <div class="site-footer__logo">
+                <a href="https://www.commvault.com/">
+                    <span class="visually-hidden">Commvault</span>
+                    <svg viewBox="0 0 1145.68 223.37" aria-hidden="true" width="160">
+                        <path d="M785.87 167.81h-17.73l-34.03-79.4h18.05L777.08 148 802 88.41h18.05l-34.19 79.4Z" fill="currentColor" />
+                        <path d="M110.88 6.56 16.89 60.8v104.37l94 54.29 94-54.29V60.8L110.88 6.56Zm77.74 149.23-77.74 44.89-77.7-44.89V70.2l77.7-44.86 77.74 44.89v85.55Z" fill="#844896" />
+                        <path d="M105.48 116.14 47.64 82.73v64.68l57.84 33.41v-64.68ZM166.98 151.6l-50.61-29.21v58.42l50.61-29.22ZM166.96 74.39l-56.05-32.33-56.06 32.33 56.06 32.36 56.05-32.36Z" fill="#844896" />
+                        <path d="M309.3 153.91c-21.57 0-38.5-17.1-38.5-39.62s16.93-39.62 38.5-39.62c13.81 0 25.55 6.08 31.95 18.31l13.26-11.39c-7.22-11.05-18.51-18.65-31.99-21.63-37.5-8.3-72.91 22.75-68.61 60.91 3.16 28.1 26.45 49.19 55.39 49.19 19.34 0 36.04-8.54 45.46-23.81l-13.35-10.95c-6.36 12.43-18.18 18.63-32.11 18.63ZM405 86.81c-23.49 0-42.66 16.78-42.66 41.38s19.17 41.54 42.66 41.54 42.34-16.93 42.34-41.54S428.33 86.81 405 86.81Zm0 68.54c-13.9 0-26.36-10.7-26.36-27.16s12.46-27.16 26.36-27.16 26.2 10.71 26.2 27.16-12.62 27.16-26.2 27.16ZM556.78 86.33c-13.02 0-23.04 5.52-29.43 14.37a.14.14 0 0 1-.23-.01c-5.14-9.15-14.99-14.35-26.26-14.35s-19.42 4.04-25.16 10.89c-.08.1-.24.04-.24-.09v-8.42c0-.08-.06-.14-.14-.14h-16.33c-.08 0-.14.06-.14.14v78.96c0 .08.06.14.14.14h16.33c.08 0 .14-.06.14-.14v-39.16c0-17.73 8.31-26.84 21.09-26.84 10.22 0 17.89 7.35 17.89 19.01v46.99c0 .08.06.14.14.14h16.33c.08 0 .14-.06.14-.14v-39.16c0-17.73 8.47-26.84 21.41-26.84 10.22 0 17.89 7.35 17.89 19.01v46.99c0 .08.06.14.14.14h16.17c.08 0 .14-.06.14-.14v-50.34c0-18.69-13.58-30.99-30.04-30.99ZM700.89 86.33c-13.02 0-23.04 5.52-29.43 14.37a.14.14 0 0 1-.23-.01c-5.14-9.15-14.99-14.35-26.26-14.35s-19.42 4.04-25.16 10.89c-.08.1-.24.04-.24-.09v-8.42c0-.08-.06-.14-.14-.14H603.1c-.08 0-.14.06-.14.14v78.96c0 .08.06.14.14.14h16.33c.08 0 .14-.06.14-.14v-39.16c0-17.73 8.31-26.84 21.09-26.84 10.22 0 17.89 7.35 17.89 19.01v46.99c0 .08.06.14.14.14h16.33c.08 0 .14-.06.14-.14v-39.16c0-17.73 8.47-26.84 21.41-26.84 10.22 0 17.89 7.35 17.89 19.01v46.99c0 .08.06.14.14.14h16.17c.08 0 .14-.06.14-.14v-50.34c0-18.69-13.58-30.99-30.04-30.99ZM902.76 88.56h-16.33c-.08 0-.14.06-.14.14v8.62c0 .13-.15.19-.24.1-6.86-7.04-16.67-11.1-28.52-11.1-20.77 0-39.3 16.94-39.3 41.86s18.53 41.86 39.3 41.86c11.85 0 21.66-4.06 28.52-11.1a.14.14 0 0 1 .24.1v8.62c0 .08.06.14.14.14h16.33c.08 0 .14-.06.14-.14V88.7c0-.08-.06-.14-.14-.14Zm-42.52 66.78c-14.54 0-25.88-10.38-25.88-27.16s11.34-27.16 25.88-27.16c13.1 0 26.04 10.54 26.04 27.16s-12.94 27.16-26.04 27.16ZM994.31 88.56h-16.33c-.08 0-.14.06-.14.14v36.45c0 19.97-9.27 29.56-23.49 29.56-11.5 0-19.01-8.79-19.01-21.73V88.71c0-.08-.06-.14-.14-.14h-16.33c-.08 0-.14.06-.14.14v47.63c0 19.97 12.62 33.71 31.79 33.71 11.52 0 20.7-4.21 27.08-11.69.08-.1.24-.04.24.09v9.23c0 .08.06.14.14.14h16.33c.08 0 .14-.06.14-.14V88.72c0-.08-.06-.14-.14-.14ZM1047.98 152.06c-3.16 1.4-6.76 2.33-9.43 2.33-6.07 0-10.22-3.84-10.22-9.27V51.53c0-.08-.06-.14-.14-.14h-16.33c-.08 0-.14.06-.14.14v94.25c0 13.43 10.92 24.4 24.35 24.27 6.91-.07 11.13-1.93 15.18-4.1.06-.03.09-.1.07-.16l-3.13-13.63c-.02-.09-.11-.13-.19-.1ZM1103.86 150.23c-.03-.08-.13-.12-.2-.07-4.13 2.66-9.17 4.22-13.27 4.22-7.83 0-13.1-4.79-13.1-14.7v-37.24c0-.08.06-.14.14-.14h26.88c.08 0 .14-.06.14-.14V88.7c0-.08-.06-.14-.14-.14h-26.88c-.08 0-.14-.06-.14-.14V64.1c0-.08-.06-.14-.14-.14h-16.33c-.08 0-.14.06-.14.14v24.32c0 .08-.06.14-.14.14h-16.81c-.08 0-.14.06-.14.14v13.46c0 .08.06.14.14.14h16.81c.08 0 .14.06.14.14v38.36c0 19.65 11.5 29.24 28.6 29.24 6.68 0 12.09-1.58 19.55-6.01.06-.04.09-.11.06-.17l-5.01-13.63ZM1121.95 61.93c0 6.21-4.88 11.09-11.22 11.09s-11.29-4.88-11.29-11.09 5.01-10.96 11.29-10.96 11.22 4.88 11.22 10.96Zm-19.71 0c0 4.88 3.61 8.75 8.55 8.75s8.35-3.88 8.35-8.68-3.54-8.82-8.42-8.82-8.48 3.94-8.48 8.75Zm6.75 5.75h-2.54V56.72c1-.2 2.41-.33 4.21-.33 2.07 0 3.01.33 3.81.8.6.47 1.07 1.34 1.07 2.4 0 1.2-.94 2.14-2.27 2.54v.13c1.07.4 1.67 1.2 2 2.67.33 1.67.53 2.34.8 2.74h-2.74c-.33-.4-.53-1.4-.87-2.67-.2-1.2-.87-1.74-2.27-1.74h-1.2v4.41Zm.07-6.21h1.2c1.4 0 2.54-.47 2.54-1.6 0-1-.74-1.67-2.34-1.67-.67 0-1.14.07-1.4.13v3.14Z" fill="currentColor" />
+                    </svg>
+                </a>
+            </div>
+                        <div class="site-footer__nav-social">
+                <nav aria-labelledby="nav-social-label"><h2 class="visually-hidden" id="nav-social-label">Social</h2><ul><li class="nav-social__facebook"><a href="https://www.facebook.com/Commvault/" target="_blank" rel="nofollow"><span>Facebook</span></a></li><li class="nav-social__instagram"><a href="https://www.instagram.com/commvault/" target="_blank" rel="nofollow"><span>Instagram</span></a></li><li class="nav-social__linkedin"><a href="https://www.linkedin.com/company/commvault" target="_blank" rel="nofollow"><span>LinkedIn</span></a></li><li class="nav-social__twitter"><a href="https://twitter.com/commvault" target="_blank" rel="nofollow"><span>Twitter</span></a></li><li class="nav-social__youtube"><a href="https://www.youtube.com/user/commvault" target="_blank" rel="nofollow"><span>YouTube</span></a></li></ul></nav>            </div>
+            <div class="site-footer__nav-ctas">
+                <a href="/contact-us" class="btn btn-primary btn--icon-after btn--compact" target="_self">
+            <span class="btn__text">
+        Contact Us            </span>
+            <svg class="btn__icon" aria-hidden="true" fill="none" viewBox="0 0 15 15">
+            <path stroke="currentColor" stroke-width="2" d="m6.5 1.333 6.5 6.5-6.5 6.5m6.5-6.5H0" />
+        </svg>
+        </a>
+            </div>
+                    </div>
+                <div class="site-footer__nav-footer col-12 col-md-8 col-xl-7">
+            <nav aria-labelledby="nav-footer-label"><h2 class="visually-hidden" id="nav-footer-label">Footer</h2><ul><li><a href="/about-us">Company</a><ul><li><a href="/about-us">About Us</a></li><li><a href="/about-us/leadership">Leadership</a></li><li><a href="https://ir.commvault.com/">Investor Relations</a></li><li><a href="/newsroom">Newsroom</a></li><li><a href="/careers">Careers</a></li><li><a href="/community-and-belonging">Community & Belonging</a></li></ul></li><li><a href="/questionit">Why Commvault</a><ul><li><a href="/platform">Commvault Cloud Platform</a></li><li><a href="/questionit">Commvault Cloud vs. Competitors</a></li><li><a href="/analysts">Analyst Reports</a></li><li><a href="/customers">Our Customers</a></li><li><a href="/platform/integrations">Integrations</a></li><li><a href="/technology-partners">Strategic Partners</a></li></ul></li><li><a href="/the-collaborative">Get The Latest</a><ul><li><a href="/platform/whats-new">What’s New</a></li><li><a href="/explore">Explore</a></li><li><a href="/blogs">Blogs</a></li><li><a href="/webinars-and-events">Webinars</a></li><li><a href="/shift-roadshow">Latest Roadshows</a></li><li><a href="https://www.readiverse.com/academy" target="_blank">Readiverse Academy</a></li></ul></li></ul></nav>        </div>
+            </div>
+    <div class="grid">
+        <div class="site-footer__nav-legal col-12 col-lg-7">
+            <nav aria-labelledby="nav-legal-label"><h2 class="visually-hidden" id="nav-legal-label">Legal</h2><ul><li>© 2026 Commvault</li><li><a href="/legal">Legal</a></li><li><a href="/privacy-policy">Privacy Policy</a></li><li><a href="/trust-center">Trust Center</a></li><li><div id="teconsent"></div></li></ul></nav>        </div>
+    </div>
+</div>
+</footer>
+
+<div id="consent_blackbar"></div>
+
+
+<dialog id="site-search">
+    <button class="modal-close" aria-label="close">&nbsp;</button>
+    <div class="modal-contents">
+        <form id="cvlt-search" class="grid">
+            <label class="search-box col-12 col-md-9">
+                <p>Search Commvault.com</p>
+                <input placeholder="Search..." type="search" name="term" class="search">
+            </label>
+            <div class="search-filter col-12 col-md-3">
+                <p class="eyebrow">Filter</p>
+                <select id="search-filter">
+                    <option value="all" selected>All Pages</option>
+                    <option value="resources">Resources</option>
+                    <option value="blog">Blogs</option>
+                </select>
+            </div>
+        </form>
+        <div id="search-results" class="search-results-list"></div>
+                <template id="search-row-template">
+            <a class="grid mb-lg bg-eggshell border-grey-400 search-link">
+                <img class="col-12 col-md-3 m-sm search-image" width="240" height="126" alt="">
+                <div class="col-12 col-md-9 p-md search-description">
+                    <div class="font-heading-sm search-title"></div>
+                    <div class="mt-md eyebrow text-grey-600 search-breadcrumbs"></div>
+                </div>
+            </a>
+        </template>
+    </div>
+</dialog>
+
+</div><!-- #page -->
+
+<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"\/*"},{"not":{"href_matches":["\/wp-*.php","\/wp-admin\/*","\/wp-content\/uploads\/*","\/wp-content\/*","\/wp-content\/plugins\/*","\/wp-content\/themes\/commvault-2025\/*","\/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+<style id='wp-block-paragraph-inline-css' type='text/css'>
+.is-small-text{font-size:.875em}.is-regular-text{font-size:1em}.is-large-text{font-size:2.25em}.is-larger-text{font-size:3em}.has-drop-cap:not(:focus):first-letter{float:left;font-size:8.4em;font-style:normal;font-weight:100;line-height:.68;margin:.05em .1em 0 0;text-transform:uppercase}body.rtl .has-drop-cap:not(:focus):first-letter{float:none;margin-left:.1em}p.has-drop-cap.has-background{overflow:hidden}:root :where(p.has-background){padding:1.25em 2.375em}:where(p.has-text-color:not(.has-link-color)) a{color:inherit}p.has-text-align-left[style*="writing-mode:vertical-lr"],p.has-text-align-right[style*="writing-mode:vertical-rl"]{rotate:180deg}
+</style>
+<style id='wp-block-list-inline-css' type='text/css'>
+ol,ul{box-sizing:border-box}:root :where(.wp-block-list.has-background){padding:1.25em 2.375em}
+</style>
+<style id='global-styles-inline-css' type='text/css'>
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgba(255, 255, 255, 1), 6px 6px rgba(0, 0, 0, 1);--wp--preset--shadow--crisp: 6px 6px 0px rgba(0, 0, 0, 1);}:where(body) { margin: 0; }.wp-site-blocks > .alignleft { float: left; margin-right: 2em; }.wp-site-blocks > .alignright { float: right; margin-left: 2em; }.wp-site-blocks > .aligncenter { justify-content: center; margin-left: auto; margin-right: auto; }:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}.is-layout-flow > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}.is-layout-flow > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}.is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}.is-layout-constrained > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}.is-layout-constrained > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}.is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}.is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){margin-left: auto !important;margin-right: auto !important;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}body{padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;}:root :where(.wp-element-button, .wp-block-button__link){background-color: #32373c;border-width: 0;color: #fff;font-family: inherit;font-size: inherit;line-height: inherit;padding: calc(0.667em + 2px) calc(1.333em + 2px);text-decoration: none;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+</style>
+<script type="text/javascript" id="cvlt-form-handler-js-extra">
+/* <![CDATA[ */
+var cvltFormData = {"restUrl":"https:\/\/www.commvault.com\/wp-json\/cvlt\/v1\/form-submit"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://www.commvault.com/wp-content/mu-plugins/commvault-functionality/forms/js/form-handler.js?ver=0fa5138394" id="cvlt-form-handler-js"></script>
+<script type="text/javascript" src="https://www.commvault.com/wp-content/mu-plugins/commvault-functionality/forms/js/form-ui.js?ver=e4575bd78e" id="cvlt-form-ui-js"></script>
+<script type="text/javascript" src="https://www.commvault.com/wp-content/themes/commvault-2025/dist/js/social-share/social-share.min.js?ver=48760bfef4" id="social-share-js-js"></script>
+<!-- BEGIN GOOGLE TAG MANAGER NOSCRIPT-->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-5KRLQJ" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- END GOOGLE TAG MANAGER NOSCRIPT-->
+
+<script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","licenseKey":"NRJS-53bff73ba45a8229b97","applicationID":"698424636","transactionName":"YlRXZksAW0VZBRVQXlsedFFNCFpYFxUIV1ZZVA==","queueTime":0,"applicationTime":548,"atts":"ThNUEAMaSEs=","errorBeacon":"bam.nr-data.net","agent":""}</script></body>
+</html>
+
+<!-- plugin=object-cache-pro client=phpredis metric#hits=1532 metric#misses=8 metric#hit-ratio=99.5 metric#bytes=541578 metric#prefetches=73 metric#store-reads=22 metric#store-writes=3 metric#store-hits=82 metric#store-misses=0 metric#sql-queries=26 metric#ms-total=548.28 metric#ms-cache=26.40 metric#ms-cache-avg=1.1002 metric#ms-cache-ratio=4.8 -->
