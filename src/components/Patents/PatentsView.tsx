@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom'
 import { PageHeader } from '@/components/common/PageHeader'
 import { PreviewBanner } from '@/components/common/PreviewBanner'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Switch } from '@/components/ui/switch'
 import { PatentsTable } from './PatentsTable'
 import type { SortKey, SortDir } from './PatentsTable'
 import { PatentsInsights } from './PatentsInsights'
@@ -62,6 +63,28 @@ function readSavedColumns(): { preset: PresetKey | 'custom'; columns: ColumnId[]
   return { preset: defaultPreset, columns: COLUMN_PRESETS[defaultPreset] }
 }
 
+const PQC_ONLY_LS_KEY = 'pqc-patents-pqc-only'
+
+function readPqcOnly(): boolean {
+  try {
+    const saved = localStorage.getItem(PQC_ONLY_LS_KEY)
+    if (saved === null) return true // default: PQC-only view
+    return saved === 'true'
+  } catch {
+    return true
+  }
+}
+
+// "PQC only" keeps patents that actually involve post-quantum crypto:
+// at least one PQC algorithm, or a pqc_only / hybrid crypto-agility mode.
+function isPqcPatent(p: PatentItem): boolean {
+  return (
+    p.pqcAlgorithms.length > 0 ||
+    p.cryptoAgilityMode === 'pqc_only' ||
+    p.cryptoAgilityMode === 'hybrid'
+  )
+}
+
 const SORT_LS_KEY = 'pqc-patents-sort'
 const VALID_SORT_KEYS: SortKey[] = ['issueDate', 'impactScore', 'title', 'priorityDate']
 const VALID_SORT_DIRS: SortDir[] = ['asc', 'desc']
@@ -89,6 +112,22 @@ export function PatentsView() {
     () => readSavedColumns().preset
   )
   const [visibleColumns, setVisibleColumns] = useState<ColumnId[]>(() => readSavedColumns().columns)
+
+  const [pqcOnly, setPqcOnly] = useState<boolean>(() => readPqcOnly())
+
+  const handlePqcOnlyChange = useCallback((value: boolean) => {
+    setPqcOnly(value)
+    try {
+      localStorage.setItem(PQC_ONLY_LS_KEY, String(value))
+    } catch {
+      // ignore
+    }
+  }, [])
+
+  const displayPatents = useMemo(
+    () => (pqcOnly ? patentsData.filter(isPqcPatent) : patentsData),
+    [pqcOnly]
+  )
 
   const handlePresetChange = useCallback((preset: PresetKey) => {
     const columns = COLUMN_PRESETS[preset]
@@ -173,10 +212,10 @@ export function PatentsView() {
   )
 
   const handleExport = useCallback(() => {
-    logPatentExport(patentsData.length)
-    const csv = generateCsv(patentsData, PATENTS_CSV_COLUMNS)
+    logPatentExport(displayPatents.length)
+    const csv = generateCsv(displayPatents, PATENTS_CSV_COLUMNS)
     downloadCsv(csv, csvFilename('pqc-patents'))
-  }, [])
+  }, [displayPatents])
 
   // Sets URL filter params from Insights chart clicks — user navigates to Explore tab manually
   const handleInsightsFilter = useCallback(
@@ -200,8 +239,8 @@ export function PatentsView() {
   )
 
   const dataSource = patentsMetadata
-    ? `${patentsData.length} patents · enriched ${patentsMetadata.lastUpdate.toLocaleDateString()}`
-    : `${patentsData.length} patents`
+    ? `${displayPatents.length} patents · enriched ${patentsMetadata.lastUpdate.toLocaleDateString()}`
+    : `${displayPatents.length} patents`
 
   return (
     <div className="flex flex-col overflow-hidden h-[calc(100dvh-10rem)]">
@@ -225,22 +264,33 @@ export function PatentsView() {
           onValueChange={handleTabChange}
           className="flex flex-1 flex-col overflow-hidden"
         >
-          <TabsList className="mb-3 shrink-0">
-            <TabsTrigger value="search">Search</TabsTrigger>
-            <TabsTrigger value="explore">Explore</TabsTrigger>
-            <TabsTrigger value="insights">Insights</TabsTrigger>
-          </TabsList>
+          <div className="mb-3 flex shrink-0 flex-wrap items-center justify-between gap-3">
+            <TabsList>
+              <TabsTrigger value="search">Search</TabsTrigger>
+              <TabsTrigger value="explore">Explore</TabsTrigger>
+              <TabsTrigger value="insights">Insights</TabsTrigger>
+            </TabsList>
+            <div className="flex select-none items-center gap-2 text-sm text-muted-foreground">
+              <span className={pqcOnly ? '' : 'font-medium text-foreground'}>PQC + classical</span>
+              <Switch
+                checked={pqcOnly}
+                onCheckedChange={handlePqcOnlyChange}
+                aria-label="Show PQC-only patents"
+              />
+              <span className={pqcOnly ? 'font-medium text-foreground' : ''}>PQC only</span>
+            </div>
+          </div>
 
           <TabsContent value="search" className="flex-1 overflow-hidden mt-0">
             <div className="glass-panel h-full overflow-hidden rounded-lg p-4">
-              <PatentSearchPanel patents={patentsData} onSelectPatent={handleSearchSelect} />
+              <PatentSearchPanel patents={displayPatents} onSelectPatent={handleSearchSelect} />
             </div>
           </TabsContent>
 
           <TabsContent value="explore" className="flex-1 overflow-hidden mt-0">
             <div className="glass-panel h-full overflow-hidden rounded-lg">
               <PatentsTable
-                patents={patentsData}
+                patents={displayPatents}
                 selectedId={selectedPatent}
                 onSelect={handleSelect}
                 sortKey={sortKey}
@@ -255,7 +305,7 @@ export function PatentsView() {
           </TabsContent>
 
           <TabsContent value="insights" className="flex-1 overflow-auto mt-0">
-            <PatentsInsights patents={patentsData} onFilter={handleInsightsFilter} />
+            <PatentsInsights patents={displayPatents} onFilter={handleInsightsFilter} />
           </TabsContent>
         </Tabs>
       </div>
