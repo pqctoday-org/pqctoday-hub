@@ -45,7 +45,7 @@ jobs:
         run: npx tsx scripts/apply-protocol-matrix-updates.ts --apply --allow-dirty || true
 
       - name: Open PR if changed
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: 'chore(matrix): refresh protocol-matrix stages from IETF datatracker'
           title: 'chore(matrix): weekly protocol-matrix stage refresh'
