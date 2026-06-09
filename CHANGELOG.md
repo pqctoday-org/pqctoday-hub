@@ -24,6 +24,18 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [3.19.4] - 2026-06-08
+
+Compliance frameworks now say plainly whether PQC is required or just recommended, and sector names read in plain English.
+
+### Fixed
+
+- **Compliance frameworks no longer over-state legal force** [view:/compliance]: Several frameworks were flagged as hard mandates when they are actually recommendations or expectations. ANSSI is now shown as a recommendation (not a legal mandate), DORA as resilience obligations that imply but don't explicitly require PQC, and eIDAS 2.0 and FedRAMP as expected/indirect rather than in force today. In all, 42 frameworks were re-characterized so you can tell at a glance what is required versus advised.
+
+### Changed
+
+- **Readable industry names in the compliance views** [view:/compliance]: Frameworks that were tagged with raw industry codes (e.g. "54") now show the real sector name — "Government & Defense", "Finance", "Healthcare" — in the framework chips, the detail panel, and the focus view.
+
 ## [3.19.3] - 2026-06-08
 
 A cleaner, more accurate Algorithms page — no duplicate entries, corrected standardization labels, and a live algorithm count.

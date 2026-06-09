@@ -36,7 +36,7 @@ import {
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { isComplianceFrameworkEmphasized } from '@/data/personaConfig'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
-import { NAICS_LABELS } from '@/components/common/SectorFilter'
+import { NAICS_LABELS, industryLabel } from '@/components/common/SectorFilter'
 import { CountryFlag } from '@/components/common/CountryFlag'
 import { ViewToggle, type ViewMode } from '@/components/Library/ViewToggle'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
@@ -126,20 +126,31 @@ function countryChip(country: string): string {
 
 /** Abbreviate industry names for chips */
 function industryChip(industry: string): string {
+  // The `industries` column mixes raw NAICS codes (e.g. "54") and named
+  // sectors (e.g. "Government & Defense"). Resolve codes to a label first,
+  // then apply the short display form.
+  const resolved = industryLabel(industry)
   const map: Record<string, string> = {
     'Finance & Banking': 'Finance',
+    'Finance & Insurance': 'Finance',
     'Government & Defense': 'Gov/Def',
+    'Public Administration': 'Gov/Def',
     Healthcare: 'Health',
+    'Healthcare & Life Sciences': 'Health',
     Telecommunications: 'Telecom',
     Technology: 'Tech',
+    'Information Technology': 'Tech',
+    'Professional & Technical Services': 'Prof Svcs',
     'Energy & Utilities': 'Energy',
+    Transportation: 'Transport',
+    'Retail Trade': 'Retail',
     Automotive: 'Auto',
     Aerospace: 'Aero',
     'Retail & E-Commerce': 'Retail',
     Manufacturing: 'Mfg',
   }
   // eslint-disable-next-line security/detect-object-injection
-  return map[industry] ?? industry
+  return map[resolved] ?? resolved
 }
 
 // ── Sort helpers ─────────────────────────────────────────────────────────
