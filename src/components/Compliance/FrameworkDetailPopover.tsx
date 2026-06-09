@@ -27,6 +27,7 @@ import { hasGraphEdges } from '@/utils/conceptXwalkGraph'
 import { FrameworkConceptGraphModal } from './FrameworkConceptGraphModal'
 import { getComplianceCuriousPreface } from '@/data/complianceCuriousPrefaces'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { industryLabel } from '@/components/common/SectorFilter'
 
 interface FrameworkDetailPopoverProps {
   isOpen: boolean
@@ -241,7 +242,9 @@ export const FrameworkDetailPopover = ({
                     <h4 className="font-semibold uppercase tracking-wider text-muted-foreground mb-1">
                       Industries
                     </h4>
-                    <p className="text-foreground">{framework.industries.join(', ')}</p>
+                    <p className="text-foreground">
+                      {framework.industries.map(industryLabel).join(', ')}
+                    </p>
                   </div>
                 )}
                 {framework.relatedStandards && framework.relatedStandards.length > 0 && (

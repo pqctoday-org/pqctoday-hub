@@ -110,6 +110,21 @@ export function resolveToNaics(value: string): string {
   return value
 }
 
+/**
+ * Resolve an `industries`-column token to a human-readable sector label.
+ * The column mixes two vocabularies — raw NAICS 2-digit codes (e.g. "54")
+ * and already-named sectors (e.g. "Government & Defense"). NAICS codes are
+ * expanded via NAICS_LABELS; named sectors pass through unchanged.
+ */
+export function industryLabel(token: string): string {
+  if (!token) return token
+  if (Object.prototype.hasOwnProperty.call(NAICS_LABELS, token)) {
+    // eslint-disable-next-line security/detect-object-injection
+    return NAICS_LABELS[token]
+  }
+  return token
+}
+
 /** Read sector filter state from URL — returns empty array when unset */
 export function useSectorFilter(): string[] {
   const [searchParams] = useSearchParams()
