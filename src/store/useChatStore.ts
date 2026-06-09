@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
+import { persist, createJSONStorage, type StateStorage } from 'zustand/middleware'
 import type { ChatMessage, ChatProvider, Conversation } from '../types/ChatTypes'
 import type { WebLLMStatus, WebLLMProgress } from '../services/chat/WebLLMService'
 
@@ -56,6 +56,47 @@ interface ChatState {
 
 const MAX_MESSAGES_PER_CONVERSATION = 50
 const MAX_CONVERSATIONS = 10
+
+const API_KEY_SESSION_KEY = 'pqc-chat-apikey'
+
+/**
+ * Storage adapter that keeps the provider `apiKey` in sessionStorage (cleared
+ * when the tab/session ends) while the rest of the chat state stays in
+ * localStorage. Splitting at the storage layer keeps `partialize`/`migrate`
+ * unchanged — they still see `apiKey` as a normal field.
+ */
+const splitApiKeyStorage: StateStorage = {
+  getItem: (name) => {
+    const raw = localStorage.getItem(name)
+    if (raw === null) return null
+    try {
+      const parsed = JSON.parse(raw)
+      if (parsed && parsed.state) {
+        parsed.state.apiKey = sessionStorage.getItem(API_KEY_SESSION_KEY) ?? null
+      }
+      return JSON.stringify(parsed)
+    } catch {
+      return raw
+    }
+  },
+  setItem: (name, value) => {
+    try {
+      const parsed = JSON.parse(value)
+      const apiKey = parsed?.state?.apiKey ?? null
+      if (apiKey) sessionStorage.setItem(API_KEY_SESSION_KEY, apiKey)
+      else sessionStorage.removeItem(API_KEY_SESSION_KEY)
+      // Never write the key to localStorage.
+      if (parsed && parsed.state) parsed.state.apiKey = null
+      localStorage.setItem(name, JSON.stringify(parsed))
+    } catch {
+      localStorage.setItem(name, value)
+    }
+  },
+  removeItem: (name) => {
+    localStorage.removeItem(name)
+    sessionStorage.removeItem(API_KEY_SESSION_KEY)
+  },
+}
 
 function generateConvId(): string {
   return `conv-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
@@ -261,7 +302,8 @@ export const useChatStore = create<ChatState>()(
     {
       name: 'pqc-chat-storage',
       version: 11,
-      storage: createJSONStorage(() => localStorage),
+      // apiKey is split out to sessionStorage; everything else stays in localStorage.
+      storage: createJSONStorage(() => splitApiKeyStorage),
       partialize: (state) => ({
         apiKey: state.apiKey,
         provider: state.provider,
@@ -277,9 +319,12 @@ export const useChatStore = create<ChatState>()(
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
+
+        // ── Base field normalization (version-independent) ──────────────────
         state.apiKey = typeof state.apiKey === 'string' ? state.apiKey : null
         state.model = typeof state.model === 'string' ? state.model : 'gemini-2.5-flash'
 
+        // ── Versioned migrations, applied in ascending order ────────────────
         // v1 → v2: migrate from retired gemini-2.0-flash to gemini-2.5-flash
         if (version < 2 && state.model === 'gemini-2.0-flash') {
           state.model = 'gemini-2.5-flash'
@@ -343,15 +388,23 @@ export const useChatStore = create<ChatState>()(
             typeof state.localContextWindow === 'number' ? state.localContextWindow : 4_096
         }
 
-        // Ensure conversations and activeConversationId exist
-        state.conversations = Array.isArray(state.conversations) ? state.conversations : []
-        state.activeConversationId =
-          typeof state.activeConversationId === 'string' ? state.activeConversationId : null
-
-        // Safety defaults for provider and localModel
-        if (state.provider !== 'gemini' && state.provider !== 'local' && state.provider !== null) {
-          state.provider = null
+        // v6 → v7: clamp stale context windows to safe browser limits
+        if (version < 7) {
+          if (typeof state.localContextWindow === 'number' && state.localContextWindow > 8_192) {
+            state.localContextWindow = 4_096
+          }
         }
+
+        // v8 → v9: every MLC compiled build is capped at 4K context. Earlier
+        // catalog entries falsely advertised 8K/16K — clamp any user setting
+        // above 4096 down to the actual hard cap so initialization doesn't
+        // silently fail or trigger a runtime error.
+        if (version < 9) {
+          if (typeof state.localContextWindow === 'number' && state.localContextWindow > 4_096) {
+            state.localContextWindow = 4_096
+          }
+        }
+
         // v9 → v10: catalog curated down to three picks (Qwen 3 1.7B / Llama 3.2 3B
         // / Qwen 3 8B). Map dropped models to the closest surviving option so
         // existing users keep a sensible selection instead of being reset to default.
@@ -378,6 +431,17 @@ export const useChatStore = create<ChatState>()(
           state.localModel = 'Qwen3-8B-q4f16_1-MLC'
         }
 
+        // ── Final normalization / validation (version-independent) ──────────
+        // Ensure conversations and activeConversationId exist
+        state.conversations = Array.isArray(state.conversations) ? state.conversations : []
+        state.activeConversationId =
+          typeof state.activeConversationId === 'string' ? state.activeConversationId : null
+
+        // Safety default for provider
+        if (state.provider !== 'gemini' && state.provider !== 'local' && state.provider !== null) {
+          state.provider = null
+        }
+
         // Validate localModel against current catalog — reset stale IDs from old versions
         const VALID_LOCAL_MODELS = new Set(['Qwen3-8B-q4f16_1-MLC'])
         state.localModel =
@@ -386,23 +450,6 @@ export const useChatStore = create<ChatState>()(
             : 'Qwen3-8B-q4f16_1-MLC'
         state.localContextWindow =
           typeof state.localContextWindow === 'number' ? state.localContextWindow : 4_096
-
-        // v6 → v7: clamp stale context windows to safe browser limits
-        if (version < 7) {
-          if (typeof state.localContextWindow === 'number' && state.localContextWindow > 8_192) {
-            state.localContextWindow = 4_096
-          }
-        }
-
-        // v8 → v9: every MLC compiled build is capped at 4K context. Earlier
-        // catalog entries falsely advertised 8K/16K — clamp any user setting
-        // above 4096 down to the actual hard cap so initialization doesn't
-        // silently fail or trigger a runtime error.
-        if (version < 9) {
-          if (typeof state.localContextWindow === 'number' && state.localContextWindow > 4_096) {
-            state.localContextWindow = 4_096
-          }
-        }
 
         return state
       },

@@ -3,7 +3,6 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { CategoryScores, AssessmentResult, ScoreBoost } from '../hooks/assessmentTypes'
 import { useHistoryStore } from './useHistoryStore'
-import { pullLegacyAssessmentState, runLegacyAssessmentMigrations } from './assessmentMigration'
 
 export interface AssessmentSnapshot {
   completedAt: string
@@ -105,17 +104,10 @@ export const useAssessmentResultStore = create<AssessmentResultState>()(
       name: 'pqc-assessment-result',
       storage: createJSONStorage(() => localStorage),
       version: 0,
-      migrate: (persistedState: unknown, version: number) => {
-        let state = (persistedState ?? {}) as Record<string, unknown>
-
-        if (version === 0 && Object.keys(state).length === 0) {
-          const legacy = pullLegacyAssessmentState()
-          if (legacy) {
-            state = runLegacyAssessmentMigrations(legacy.state, legacy.version)
-          }
-        }
-        return state
-      },
+      // Legacy `pqc-assessment` import lives in migrateLegacyAssessmentOnce()
+      // (runs at startup); it cannot live here because zustand only calls
+      // migrate when a new-key entry already exists with a mismatched version.
+      migrate: (persistedState: unknown) => (persistedState ?? {}) as Record<string, unknown>,
       partialize: (state) => ({
         hiddenThreats: state.hiddenThreats,
         lastResult: state.lastResult,

@@ -413,4 +413,21 @@ describe('useModuleStore', () => {
     expect(useModuleStore.getState().modules['no-such-module']).toBeUndefined()
     expect(analytics.logModuleComplete).not.toHaveBeenCalled()
   })
+
+  // Contract guard: the beforeunload flush writes getFullProgress() as the
+  // persisted state. Since this store has no `partialize`, getFullProgress()
+  // must contain every persisted data field. If a future field is excluded,
+  // the beforeunload flush would silently reset it on reload.
+  it('getFullProgress() includes every non-function field of the store', () => {
+    const state = useModuleStore.getState() as unknown as Record<string, unknown>
+    const progress = useModuleStore.getState().getFullProgress() as unknown as Record<
+      string,
+      unknown
+    >
+
+    const dataKeys = Object.keys(state).filter((k) => typeof state[k] !== 'function')
+    for (const key of dataKeys) {
+      expect(progress).toHaveProperty(key)
+    }
+  })
 })

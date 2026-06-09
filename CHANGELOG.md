@@ -24,9 +24,18 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [3.19.4] - 2026-06-08
+## [3.19.5] - 2026-06-08
 
-Compliance frameworks now say plainly whether PQC is required or just recommended, and sector names read in plain English.
+Your AI assistant key is now kept only for the current session, the app no longer flashes the wrong color theme while loading, and risk assessments saved in older versions are reliably carried over.
+
+### Fixed
+
+- **No more flash of the wrong color theme on load** [view:/page]: If you use dark mode, the app briefly showed a light flash before settling on your theme. Your saved theme is now applied before the page paints, so it looks right from the first frame.
+- **Risk assessments from older versions are reliably restored** [view:/assess]: After the assessment was split into separate "in-progress" and "results" stores, work saved in an earlier version could fail to carry over. Your previous answers and results now load correctly on first open.
+
+### Security
+
+- **Your AI assistant API key is now kept only for the current browser session** [view:/page]: The key you enter for the PQC Assistant is no longer written to long-term browser storage — it lives only for the current tab/session and is cleared when you close it. You may need to re-enter it in a new session.
 
 ### Fixed
 

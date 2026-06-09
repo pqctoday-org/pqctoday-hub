@@ -37,6 +37,28 @@
     />
     <meta name="twitter:image" content="https://www.pqctoday.com/og-image.png" />
 
+    <!-- Apply persisted theme before first paint to avoid a flash of the wrong
+         theme (FOUC). Mirrors useTheme.ts: hasSetPreference ? theme : 'light'. -->
+    <script>
+      (function () {
+        try {
+          var root = document.documentElement
+          var theme = 'light'
+          var raw = localStorage.getItem('theme-storage-v1')
+          if (raw) {
+            var s = JSON.parse(raw).state || {}
+            if (s.hasSetPreference && (s.theme === 'dark' || s.theme === 'light')) {
+              theme = s.theme
+            }
+          }
+          root.classList.remove('light', 'dark')
+          root.classList.add(theme)
+        } catch (e) {
+          document.documentElement.classList.add('light')
+        }
+      })()
+    </script>
+
     <!-- PWA & Theme -->
     <meta name="theme-color" content="#0EA5C8" />
     <meta name="mobile-web-app-capable" content="yes" />

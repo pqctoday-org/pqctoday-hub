@@ -228,6 +228,11 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    // jsdom only exposes localStorage/sessionStorage for a non-opaque origin.
+    // Without an explicit URL, newer jsdom (28+) throws "localStorage is not
+    // available for opaque origins", breaking every persisted-store test. Pin a
+    // real origin so Web Storage works regardless of the Node/jsdom version.
+    environmentOptions: { jsdom: { url: 'http://localhost/' } },
     setupFiles: './src/test/setup.ts',
     exclude: [...configDefaults.exclude, 'e2e/**', '.claude/**'],
     coverage: {

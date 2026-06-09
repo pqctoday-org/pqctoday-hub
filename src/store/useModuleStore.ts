@@ -737,6 +737,11 @@ if (typeof window !== 'undefined') {
         _activeSession = null
       }
 
+      // Manual flush mirrors the persist middleware's envelope exactly:
+      // { state, version } with state = getFullProgress() (the same data the
+      // store persists, since this store has no `partialize`). getFullProgress()
+      // uses a rest-spread, so any new DATA field is included automatically and
+      // stays in sync; see the contract test in useModuleStore.test.ts.
       const persistData = { state: progress, version: MODULE_STORE_VERSION }
       localStorage.setItem('pki-module-storage', JSON.stringify(persistData))
     } catch (error) {

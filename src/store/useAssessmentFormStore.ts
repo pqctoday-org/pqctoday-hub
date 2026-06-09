@@ -5,7 +5,6 @@ import type { AssessmentInput } from '../hooks/assessmentTypes'
 import { usePersonaStore } from './usePersonaStore'
 import { useHistoryStore } from './useHistoryStore'
 import { computeSmartDefaults } from '../components/Assess/smartDefaults'
-import { pullLegacyAssessmentState, runLegacyAssessmentMigrations } from './assessmentMigration'
 
 export type AssessmentMode = 'quick' | 'comprehensive'
 export type AssessmentStatus = 'not-started' | 'in-progress' | 'complete'
@@ -725,13 +724,11 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
       migrate: (persistedState: unknown, version: number) => {
         let state = (persistedState ?? {}) as Record<string, unknown>
 
-        // V0 Migration: Safely inherit from old pqc-assessment persistence if we have no state
-        if (version === 0 && Object.keys(state).length === 0) {
-          const legacy = pullLegacyAssessmentState()
-          if (legacy) {
-            state = runLegacyAssessmentMigrations(legacy.state, legacy.version)
-          }
-        }
+        // NOTE: the old `pqc-assessment` cross-key import previously lived here
+        // but was dead code — zustand only calls migrate when an entry already
+        // exists under THIS key with a mismatched version, never for users
+        // arriving from the old combined key. It now runs at startup via
+        // migrateLegacyAssessmentOnce().
 
         // V1 Guard: if industry is unset but wizard advanced past step 0,
         // clamp back to step 0 so industry selection is always completed before

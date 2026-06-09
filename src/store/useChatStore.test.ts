@@ -55,6 +55,25 @@ describe('useChatStore', () => {
     })
   })
 
+  describe('apiKey storage separation', () => {
+    it('persists apiKey to sessionStorage, never into the localStorage blob', () => {
+      useChatStore.getState().setApiKey('secret-key-xyz')
+
+      expect(sessionStorage.getItem('pqc-chat-apikey')).toBe('secret-key-xyz')
+
+      const raw = localStorage.getItem('pqc-chat-storage')
+      expect(raw).not.toBeNull()
+      expect(raw).not.toContain('secret-key-xyz')
+      expect(JSON.parse(raw!).state.apiKey).toBeNull()
+    })
+
+    it('removes apiKey from sessionStorage when cleared', () => {
+      useChatStore.getState().setApiKey('secret-key-xyz')
+      useChatStore.getState().setApiKey(null)
+      expect(sessionStorage.getItem('pqc-chat-apikey')).toBeNull()
+    })
+  })
+
   describe('addMessage', () => {
     it('appends message to messages array', () => {
       const msg = createMessage({ content: 'Hello' })
