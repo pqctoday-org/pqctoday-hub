@@ -110,7 +110,10 @@ function buildChunkProv(opts: {
 const DATA_DIR = path.join(process.cwd(), 'src', 'data')
 const SCRIPTS_DIR = path.join(process.cwd(), 'scripts')
 const OUTPUT_DIR = path.join(process.cwd(), 'public', 'data')
-const OUTPUT_FILE = path.join(OUTPUT_DIR, 'rag-corpus.json')
+// RAG_CORPUS_OUT lets the freshness check (scripts/ci/check-index-freshness.ts)
+// regenerate to a temp path and diff against the committed file without
+// clobbering it. Defaults to the canonical public/data/rag-corpus.json.
+const OUTPUT_FILE = process.env.RAG_CORPUS_OUT || path.join(OUTPUT_DIR, 'rag-corpus.json')
 
 // ---------------------------------------------------------------------------
 // Helpers
