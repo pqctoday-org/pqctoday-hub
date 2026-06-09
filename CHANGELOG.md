@@ -36,6 +36,18 @@ Compliance frameworks now say plainly whether PQC is required or just recommende
 
 - **Readable industry names in the compliance views** [view:/compliance]: Frameworks that were tagged with raw industry codes (e.g. "54") now show the real sector name — "Government & Defense", "Finance", "Healthcare" — in the framework chips, the detail panel, and the focus view.
 
+## [3.19.3] - 2026-06-08
+
+A cleaner, more accurate Algorithms page — no duplicate entries, corrected standardization labels, and a live algorithm count.
+
+### Fixed
+
+- **Algorithms page now shows the real count and a working "Top picks" link** [view:/algorithms]: The page advertised a fixed "42 algorithms" even though the catalog had grown well beyond that — it now shows the actual number loaded. The executive "View Top" shortcut was labeled "Top 5" but highlighted only four, and pointed at an algorithm name that no longer exists (so nothing highlighted); it now correctly shows the top four and links to the right entry (FN-DSA-512).
+
+### Data
+
+- **Duplicate algorithm rows removed and standardization labels corrected** [view:/algorithms]: Four algorithms (HQC, Classic McEliece, LMS, XMSS) showed up both as a generic row and as their specific parameter sets (e.g. HQC-128/192/256), double-counting in filters and totals — the redundant generic rows are gone. Several standardization labels were also corrected: FrodoKEM is now shown as a NIST Round 3 alternate (it was never in Round 4), BIKE reflects Round 4 concluding in 2025 with HQC selected, and Classic McEliece 460896 is labeled BSI Level 3 (it was mislabeled Level 1).
+
 ## [3.19.2] - 2026-06-07
 
 Restored 12 compliance regulation documents that previously failed to open in the Library.
