@@ -6,6 +6,7 @@ import type { ComplianceFramework } from '@/data/complianceData'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { isComplianceFrameworkEmphasized } from '@/data/personaConfig'
 import { getComplianceCuriousPreface } from '@/data/complianceCuriousPrefaces'
+import { industryLabel } from '@/components/common/SectorFilter'
 
 interface Props {
   /** Frameworks to surface in the rail. Caller pre-filters as needed. */
@@ -212,7 +213,7 @@ export const FrameworkFocusView: React.FC<Props> = ({
                         key={ind}
                         className="text-[10px] px-2 py-0.5 rounded-full border border-border bg-card text-muted-foreground"
                       >
-                        {ind}
+                        {industryLabel(ind)}
                       </span>
                     ))}
                   </div>
