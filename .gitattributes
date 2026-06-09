@@ -1,0 +1,15 @@
+# Generated RAG search index — rebuilt from source via `npm run refresh-index`
+# (corpus → embeddings → sign), which must run LOCALLY because the embedding
+# model is too slow on CI runners. These large blobs are never hand-merged:
+# the `ours` merge driver auto-resolves any overlap so concurrent data PRs do
+# not hard-conflict on them, and the index is rebuilt in a batch afterward.
+# A scheduled freshness check (.github/workflows/rag-index-freshness.yml) opens
+# an issue if the committed index drifts from source.
+#
+# The `ours` driver is registered per-clone by `npm run prepare`
+# (git config merge.ours.driver true). Without it git falls back to a normal
+# (conflicting) merge — harmless, just reintroduces the manual resolution.
+public/data/rag-corpus.json          merge=ours
+public/data/rag-corpus.json.sig      merge=ours
+public/data/embeddings-meta.json     merge=ours
+public/data/embeddings.bin           merge=ours -diff -text
