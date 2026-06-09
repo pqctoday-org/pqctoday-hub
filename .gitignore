@@ -249,6 +249,10 @@ scripts/*
 !scripts/audit-reference-cache-drift.ts
 !scripts/audit-reference-cache-drift.test.ts
 
+# RAG index freshness report — regenerated each run by the scheduled
+# rag-index-freshness workflow (uploaded as a build artifact, not committed).
+public/data/rag-index-freshness.json
+
 # Matrix prose-doc-ID audit — CI gate that guards `src/data/pqcProtocolMatrix.ts`
 # against doc-ID citations leaking into note / deploymentNote / playground /
 # liveDeployment text fields. Pure read-only against public data.
@@ -266,6 +270,7 @@ scripts/*
 # Parallel-session worktree helper — developer tooling, no crypto or data
 # secrets. Documented in CLAUDE.md ("Parallel sessions: use git worktrees").
 !scripts/new-worktree.sh
+!scripts/refresh-index.sh
 
 # Compliance country-token audit — runs in CI. Validates every country/region
 # token in the latest compliance CSV resolves through COUNTRY_CODE_TO_NAME and
