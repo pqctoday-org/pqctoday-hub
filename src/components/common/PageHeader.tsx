@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useRef, useEffect } from 'react'
+import type { ReactNode } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import { MessageCircle, MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -23,6 +24,12 @@ interface PageHeaderProps {
   description: string
   /** Pre-formatted string, e.g. "timeline_03082026.csv • Updated: 3/8/2026" */
   dataSource?: string
+  /**
+   * Rich replacement for the `dataSource` string in the desktop action row.
+   * When provided it renders instead of `dataSource` (e.g. a small inline
+   * chart). `dataSource` is still used as the mobile-row fallback.
+   */
+  dataSourceNode?: ReactNode
   viewType?: ViewType
   shareTitle?: string
   shareText?: string
@@ -55,6 +62,7 @@ export const PageHeader = ({
   title,
   description,
   dataSource,
+  dataSourceNode,
   viewType,
   shareTitle,
   shareText,
@@ -85,7 +93,14 @@ export const PageHeader = ({
   }, [mobileMenuOpen])
 
   const hasActions =
-    dataSource || viewType || shareTitle || onExport || endorseUrl || flagUrl || pageId
+    dataSource ||
+    dataSourceNode ||
+    viewType ||
+    shareTitle ||
+    onExport ||
+    endorseUrl ||
+    flagUrl ||
+    pageId
 
   const embedState = useEmbedState()
   const showAssistant =
@@ -171,7 +186,7 @@ export const PageHeader = ({
       {/* Tablet + desktop action row — visible at md+ */}
       {hasActions && (
         <div className="hidden md:flex justify-center items-center gap-3 text-[10px] md:text-xs text-muted-foreground font-mono">
-          {dataSource && <p>{dataSource}</p>}
+          {dataSourceNode ?? (dataSource && <p>{dataSource}</p>)}
           {showSources && <SourcesButton viewType={viewType!} />}
           {shareTitle && <ShareButton title={shareTitle} text={shareText} />}
           <GlossaryButton />
