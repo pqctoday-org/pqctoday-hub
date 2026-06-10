@@ -24,6 +24,23 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [3.19.5] - 2026-06-09
+
+The Threats page is fresher and more accurate — corrected post-quantum standards status, more sources you can open, and consistent severity labels.
+
+### Fixed
+
+- **Corrected the status of NIST's fourth signature standard** [view:/threats] [persona:architect]: The cross-industry "NIST standards finalization" threat said FIPS 206 (FN-DSA/Falcon) was published in August 2024 alongside ML-KEM, ML-DSA and SLH-DSA. In fact only those first three were finalized then — FIPS 206 is still in draft, with final publication expected in late 2026 to 2027. The entry now says so, and the HQC backup-algorithm note (now tracked toward FIPS 207) was refreshed to a 2026 draft and 2027 final.
+- **Consistent severity labels across every threat** [view:/threats]: A few threats showed severity in mixed casing ("CRITICAL", "HIGH") or an off-scale "Medium-High" value that could sort or filter oddly. Every threat now uses the standard Critical / High / Medium scale.
+
+### Changed
+
+- **More threats link to a primary source you can actually open** [view:/threats]: Re-verified the source documents behind the threat catalog and re-captured fresh copies. The share of active threats backed by an authoritative primary source rose from roughly a quarter to well over half, and every active threat now has an archived copy of its source on file.
+
+### Data
+
+- **Refreshed quantum-threats dataset (2026-06-09)** [view:/threats]: New self-contained snapshot covering the 110 active industry threats, with refreshed source links, complete industry tags, and updated standards references.
+
 ## [3.19.4] - 2026-06-08
 
 Compliance frameworks now say plainly whether PQC is required or just recommended, and sector names read in plain English.
