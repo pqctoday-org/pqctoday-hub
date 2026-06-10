@@ -18,6 +18,7 @@ interface RawPatentRow {
   assignee: string
   priority_date: string
   issue_date: string
+  filing_date: string
   cpc_codes: string
   one_sentence_summary: string
   primary_inventive_claim: string
@@ -109,6 +110,7 @@ function transformRow(row: RawPatentRow): PatentItem | null {
     assignee: row.assignee?.trim() ?? '',
     priorityDate: row.priority_date?.trim() ?? '',
     issueDate: row.issue_date?.trim() ?? '',
+    filingDate: row.filing_date?.trim() ?? '',
     cpcCodes: row.cpc_codes?.trim() ?? '',
     summary: row.one_sentence_summary?.trim() ?? '',
     primaryInventiveClaim: row.primary_inventive_claim?.trim() ?? '',
@@ -136,6 +138,7 @@ function transformRow(row: RawPatentRow): PatentItem | null {
     claimDependencies: parseJsonField<ClaimDependency[]>(row.claim_dependencies, []),
     nistRoundStatus: parseJsonField<NistStatus[]>(row.nist_round_status, []),
     priorityYear: parseInt(row.priority_date?.slice(0, 4) ?? '0', 10) || 0,
+    filingYear: parseInt(row.filing_date?.slice(0, 4) ?? '0', 10) || 0,
     pqcMigrationScore: parseInt(row.pqc_migration_score ?? '0', 10) || 0,
     pqcMigrationReason: row.pqc_migration_reason?.trim() ?? '',
   }

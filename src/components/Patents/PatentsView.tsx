@@ -16,7 +16,7 @@ import type { CsvColumnConfig } from '@/utils/csvExport'
 import type { PatentItem } from '@/types/PatentTypes'
 import { logPatentExport, logPatentInsightsFilter } from '@/utils/analytics'
 import { PatentSearchPanel } from './PatentSearchPanel'
-import { PatentsYearDonut } from './PatentsYearDonut'
+import { PatentsFilingYearChart } from './PatentsFilingYearChart'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import {
   COLUMN_PRESETS,
@@ -239,17 +239,9 @@ export function PatentsView() {
     [setSearchParams]
   )
 
-  // Mobile fallback string (the donut only renders in the desktop action row).
   const dataSource = patentsMetadata
     ? `${displayPatents.length} patents · enriched ${patentsMetadata.lastUpdate.toLocaleDateString()}`
     : `${displayPatents.length} patents`
-
-  const dataSourceNode = (
-    <span className="flex items-center gap-2">
-      <PatentsYearDonut patents={displayPatents} />
-      {patentsMetadata && <span>· enriched {patentsMetadata.lastUpdate.toLocaleDateString()}</span>}
-    </span>
-  )
 
   return (
     <div className="flex flex-col overflow-hidden h-[calc(100dvh-10rem)]">
@@ -258,9 +250,12 @@ export function PatentsView() {
         title="PQC Patents"
         description="Cryptographic patents relevant to post-quantum migration, enriched with 25 technical dimensions. For research purposes only — not legal or IP advice."
         dataSource={dataSource}
-        dataSourceNode={dataSourceNode}
         onExport={handleExport}
       />
+
+      <div className="px-4 pb-3">
+        <PatentsFilingYearChart patents={displayPatents} />
+      </div>
 
       {selectedPersona === 'curious' && (
         <div className="px-4">
