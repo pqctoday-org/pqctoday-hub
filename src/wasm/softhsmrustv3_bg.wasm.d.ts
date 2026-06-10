@@ -3,6 +3,8 @@
 export const memory: WebAssembly.Memory
 export const _C_AsyncComplete: (a: number, b: number, c: number) => number
 export const _C_AsyncJoin: (a: number, b: number, c: number, d: number, e: number) => number
+export const _C_CancelFunction: (a: number) => number
+export const _C_CloseAllSessions: (a: number) => number
 export const _C_CloseSession: (a: number) => number
 export const _C_CreateObject: (a: number, b: number, c: number, d: number) => number
 export const _C_DecapsulateKey: (
@@ -16,6 +18,7 @@ export const _C_DecapsulateKey: (
   h: number
 ) => number
 export const _C_Decrypt: (a: number, b: number, c: number, d: number, e: number) => number
+export const _C_DecryptFinal: (a: number, b: number, c: number) => number
 export const _C_DecryptInit: (a: number, b: number, c: number) => number
 export const _C_DecryptMessage: (
   a: number,
@@ -45,6 +48,7 @@ export const _C_DecryptMessageNext: (
   g: number,
   h: number
 ) => number
+export const _C_DecryptUpdate: (a: number, b: number, c: number, d: number, e: number) => number
 export const _C_DeriveKey: (
   a: number,
   b: number,
@@ -70,6 +74,7 @@ export const _C_EncapsulateKey: (
   h: number
 ) => number
 export const _C_Encrypt: (a: number, b: number, c: number, d: number, e: number) => number
+export const _C_EncryptFinal: (a: number, b: number, c: number) => number
 export const _C_EncryptInit: (a: number, b: number, c: number) => number
 export const _C_EncryptMessage: (
   a: number,
@@ -99,6 +104,7 @@ export const _C_EncryptMessageNext: (
   g: number,
   h: number
 ) => number
+export const _C_EncryptUpdate: (a: number, b: number, c: number, d: number, e: number) => number
 export const _C_Finalize: (a: number) => number
 export const _C_FindObjects: (a: number, b: number, c: number, d: number) => number
 export const _C_FindObjectsFinal: (a: number) => number
@@ -117,6 +123,8 @@ export const _C_GenerateKeyPair: (
 export const _C_GenerateRandom: (a: number, b: number, c: number) => number
 export const _C_GetAttributeValue: (a: number, b: number, c: number, d: number) => number
 export const _C_GetInfo: (a: number) => number
+export const _C_GetInterface: (a: number, b: number, c: number, d: number) => number
+export const _C_GetInterfaceList: (a: number, b: number) => number
 export const _C_GetMechanismInfo: (a: number, b: number, c: number) => number
 export const _C_GetSessionInfo: (a: number, b: number) => number
 export const _C_GetSlotInfo: (a: number, b: number) => number
@@ -126,20 +134,39 @@ export const _C_InitPIN: (a: number, b: number, c: number) => number
 export const _C_InitToken: (a: number, b: number, c: number, d: number) => number
 export const _C_Initialize: (a: number) => number
 export const _C_Login: (a: number, b: number, c: number, d: number) => number
+export const _C_LoginUser: (
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  e: number,
+  f: number
+) => number
 export const _C_Logout: (a: number) => number
 export const _C_MessageDecryptFinal: (a: number) => number
 export const _C_MessageDecryptInit: (a: number, b: number, c: number) => number
 export const _C_MessageEncryptFinal: (a: number) => number
 export const _C_MessageEncryptInit: (a: number, b: number, c: number) => number
-export const _C_MessageSignFinal: (a: number, b: number, c: number, d: number, e: number) => number
+export const _C_MessageSignFinal: (a: number) => number
 export const _C_MessageSignInit: (a: number, b: number, c: number) => number
 export const _C_MessageVerifyFinal: (a: number) => number
 export const _C_MessageVerifyInit: (a: number, b: number, c: number) => number
 export const _C_OpenSession: (a: number, b: number, c: number, d: number, e: number) => number
+export const _C_SessionCancel: (a: number, b: number) => number
 export const _C_SetAttributeValue: (a: number, b: number, c: number, d: number) => number
 export const _C_Sign: (a: number, b: number, c: number, d: number, e: number) => number
 export const _C_SignInit: (a: number, b: number, c: number) => number
 export const _C_SignMessage: (
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  e: number,
+  f: number,
+  g: number
+) => number
+export const _C_SignMessageBegin: (a: number, b: number, c: number) => number
+export const _C_SignMessageNext: (
   a: number,
   b: number,
   c: number,
@@ -181,6 +208,16 @@ export const _C_VerifyMessage: (
   f: number,
   g: number
 ) => number
+export const _C_VerifyMessageBegin: (a: number, b: number, c: number) => number
+export const _C_VerifyMessageNext: (
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  e: number,
+  f: number,
+  g: number
+) => number
 export const _C_VerifySignature: (a: number, b: number, c: number) => number
 export const _C_VerifySignatureFinal: (a: number) => number
 export const _C_VerifySignatureInit: (
@@ -191,6 +228,7 @@ export const _C_VerifySignatureInit: (
   e: number
 ) => number
 export const _C_VerifySignatureUpdate: (a: number, b: number, c: number) => number
+export const _C_WaitForSlotEvent: (a: number, b: number, c: number) => number
 export const _C_WrapKey: (
   a: number,
   b: number,
@@ -237,22 +275,45 @@ export const softhsmrust_init_token: (
   f: number
 ) => number
 export const softhsmrust_new: () => number
-export const _C_CopyObject: (a: number, b: number, c: number, d: number, e: number) => number
-export const _C_DecryptUpdate: (a: number, b: number, c: number, d: number, e: number) => number
-export const _C_EncryptUpdate: (a: number, b: number, c: number, d: number, e: number) => number
-export const _C_SetOperationState: (a: number, b: number, c: number, d: number, e: number) => number
-export const _C_SetPIN: (a: number, b: number, c: number, d: number, e: number) => number
+export const _C_GetFunctionStatus: (a: number) => number
 export const _C_AsyncGetID: (a: number, b: number, c: number) => number
-export const _C_DecryptFinal: (a: number, b: number, c: number) => number
-export const _C_EncryptFinal: (a: number, b: number, c: number) => number
 export const _C_GetObjectSize: (a: number, b: number, c: number) => number
 export const _C_GetOperationState: (a: number, b: number, c: number) => number
 export const _C_GetSessionValidationFlags: (a: number, b: number, c: number) => number
 export const _C_SeedRandom: (a: number, b: number, c: number) => number
 export const _C_SignFinal: (a: number, b: number, c: number) => number
+export const _C_SignRecoverInit: (a: number, b: number, c: number) => number
 export const _C_SignUpdate: (a: number, b: number, c: number) => number
 export const _C_VerifyFinal: (a: number, b: number, c: number) => number
+export const _C_VerifyRecoverInit: (a: number, b: number, c: number) => number
 export const _C_VerifyUpdate: (a: number, b: number, c: number) => number
+export const _C_CopyObject: (a: number, b: number, c: number, d: number, e: number) => number
+export const _C_DecryptDigestUpdate: (
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  e: number
+) => number
+export const _C_DecryptVerifyUpdate: (
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  e: number
+) => number
+export const _C_DigestEncryptUpdate: (
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  e: number
+) => number
+export const _C_SetOperationState: (a: number, b: number, c: number, d: number, e: number) => number
+export const _C_SetPIN: (a: number, b: number, c: number, d: number, e: number) => number
+export const _C_SignEncryptUpdate: (a: number, b: number, c: number, d: number, e: number) => number
+export const _C_SignRecover: (a: number, b: number, c: number, d: number, e: number) => number
+export const _C_VerifyRecover: (a: number, b: number, c: number, d: number, e: number) => number
 export const wasm_start: () => void
 export const _C_GetMechanismList: (a: number, b: number, c: number) => number
 export const _free: (a: number, b: number) => void

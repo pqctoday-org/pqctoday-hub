@@ -162,13 +162,13 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         // ── Message-based sign/verify (PKCS#11 v3.2) ─────────────────────
         _C_MessageSignInit: rustShim._C_MessageSignInit,
         _C_SignMessage: rustShim._C_SignMessage,
-        _C_SignMessageBegin: () => CKR_NOT_IMPL,
-        _C_SignMessageNext: () => CKR_NOT_IMPL,
+        _C_SignMessageBegin: rustShim._C_SignMessageBegin,
+        _C_SignMessageNext: rustShim._C_SignMessageNext,
         _C_MessageSignFinal: rustShim._C_MessageSignFinal,
         _C_MessageVerifyInit: rustShim._C_MessageVerifyInit,
         _C_VerifyMessage: rustShim._C_VerifyMessage,
-        _C_VerifyMessageBegin: () => CKR_NOT_IMPL,
-        _C_VerifyMessageNext: () => CKR_NOT_IMPL,
+        _C_VerifyMessageBegin: rustShim._C_VerifyMessageBegin,
+        _C_VerifyMessageNext: rustShim._C_VerifyMessageNext,
         _C_MessageVerifyFinal: rustShim._C_MessageVerifyFinal,
 
         // ── Message-based encrypt/decrypt (stubs) ─────────────────────────
@@ -1700,7 +1700,7 @@ export const hsm_sign = (
     )
     return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
   } finally {
-    M._C_MessageSignFinal(hSession, 0, 0, 0, 0) // close multi-message context; ignore RV in cleanup
+    M._C_MessageSignFinal(hSession) // close multi-message context; ignore RV in cleanup
     M._free(mech)
     M._free(msgPtr)
     M._free(sigLenPtr)
@@ -1743,7 +1743,7 @@ export const hsm_signBytesMLDSA = (
     )
     return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
   } finally {
-    M._C_MessageSignFinal(hSession, 0, 0, 0, 0)
+    M._C_MessageSignFinal(hSession)
     M._free(mech)
     M._free(msgPtr)
     M._free(sigLenPtr)
@@ -1781,7 +1781,7 @@ export const hsm_signBytesSLHDSA = (
     )
     return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
   } finally {
-    M._C_MessageSignFinal(hSession, 0, 0, 0, 0)
+    M._C_MessageSignFinal(hSession)
     M._free(mech)
     M._free(msgPtr)
     M._free(sigLenPtr)
@@ -4580,7 +4580,7 @@ export const hsm_slhdsaSign = (
     )
     return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
   } finally {
-    M._C_MessageSignFinal(hSession, 0, 0, 0, 0) // close multi-message context; ignore RV in cleanup
+    M._C_MessageSignFinal(hSession) // close multi-message context; ignore RV in cleanup
     M._free(mech)
     ctxAlloc?.allocPtrs.forEach((p) => M._free(p))
     M._free(msgPtr)

@@ -72,13 +72,7 @@ interface SoftHSMW {
     pSignature: number,
     pulSignatureLen: number
   ): number
-  _C_MessageSignFinal(
-    hSession: number,
-    pParameter: number,
-    ulParameterLen: number,
-    pSignature: number,
-    pulSignatureLen: number
-  ): number
+  _C_MessageSignFinal(hSession: number): number
   _C_MessageVerifyInit(hSession: number, pMechanism: number, hKey: number): number
   _C_VerifyMessage(
     hSession: number,
@@ -105,7 +99,7 @@ var CKA_SENSITIVE = 0x00000103
 var CKA_EXTRACTABLE = 0x00000162
 var CKA_SIGN = 0x00000108
 var CKA_VERIFY = 0x0000010a
-var CKA_PARAMETER_SET = 0x000001d9
+var CKA_PARAMETER_SET = 0x0000061d // PKCS#11 v3.2 / pkcs11t.h (was 0x1d9 — wrong; engine reads 0x61d)
 var CKA_VALUE = 0x00000011
 var CKM_SLH_DSA_KEY_PAIR_GEN = 0x2d
 var CKM_SLH_DSA = 0x2e
@@ -395,7 +389,7 @@ function slhdsaSign(privHandle: number, message: string): Uint8Array {
     )
     return M!.HEAPU8.slice(sigP, sigP + readUlong(sigLenP))
   } finally {
-    M!._C_MessageSignFinal(hSession, 0, 0, 0, 0) // close context
+    M!._C_MessageSignFinal(hSession) // close context
     M!._free(mech)
     M!._free(msgP)
     M!._free(sigLenP)
