@@ -106,10 +106,7 @@ export function PatentsFilingYearChart({ patents }: { patents: PatentItem[] }) {
             }}
             labelStyle={{ color: 'var(--color-foreground)', fontWeight: 600 }}
             labelFormatter={(year) => `Filed ${year}`}
-            formatter={(value: number, name: string) => [
-              `${value}`,
-              name === 'pqc' ? 'PQC' : 'Classical',
-            ]}
+            formatter={(value, name) => [`${value}`, name === 'pqc' ? 'PQC' : 'Classical']}
           />
           {/* Classical on the bottom, PQC stacked on top (rounded cap). */}
           <Bar dataKey="classical" stackId="a" fill="var(--color-muted-foreground)" />
