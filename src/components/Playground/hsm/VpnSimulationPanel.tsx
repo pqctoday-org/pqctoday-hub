@@ -2772,7 +2772,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           })
           if (tokenPresent === 1) {
             for (const id of ids) {
-              // CK_TOKEN_INFO is 600 bytes (PKCS#11 v3.2 §3.2). Fields we care about:
+              // Packed wasm32 CK_TOKEN_INFO is 160 bytes. Fields we care about:
               //   label[32] @ offset 0, manufacturerID[32] @ 32, model[16] @ 64, serialNumber[16] @ 80
               const tiPtr = M._malloc(600)
               M.HEAPU8.fill(0, tiPtr, tiPtr + 600)
@@ -3911,7 +3911,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                             0
                           )
                           if (totalSize > mtu && allowFragmentation && canFragment(step.label)) {
-                            const numFragments = Math.ceil(totalSize / mtu)
+                            // Each fragment repeats the 28 B IKE header + 8 B SKF header
+                            // plus IV/ICV/padding, so the usable payload per fragment is
+                            // smaller than the MTU (RFC 7383 §2.5).
+                            const FRAG_OVERHEAD = 64
+                            const fragPayload = Math.max(1, mtu - FRAG_OVERHEAD)
+                            const numFragments = Math.ceil(totalSize / fragPayload)
                             return Array.from({ length: numFragments }).map((_, fIdx) => (
                               <PayloadCard
                                 key={`${step.label}-frag-${fIdx}`}
@@ -3919,8 +3924,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                                   name: 'Encrypted Fragment',
                                   abbreviation: `SKF (${fIdx + 1}/${numFragments})`,
                                   sizeBytes:
-                                    fIdx === numFragments - 1 ? totalSize % mtu || mtu : mtu,
-                                  description: `Encrypted Fragment Payload (RFC 7383) portion.`,
+                                    fIdx === numFragments - 1
+                                      ? (totalSize % fragPayload || fragPayload) + FRAG_OVERHEAD
+                                      : mtu,
+                                  description: `Encrypted Fragment Payload (RFC 7383); each fragment repeats the IKE + SKF headers.`,
                                 }}
                                 index={fIdx}
                                 highlighted={idx === currentStep}
@@ -4023,7 +4030,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                             0
                           )
                           if (totalSize > mtu && allowFragmentation && canFragment(step.label)) {
-                            const numFragments = Math.ceil(totalSize / mtu)
+                            // Each fragment repeats the 28 B IKE header + 8 B SKF header
+                            // plus IV/ICV/padding, so the usable payload per fragment is
+                            // smaller than the MTU (RFC 7383 §2.5).
+                            const FRAG_OVERHEAD = 64
+                            const fragPayload = Math.max(1, mtu - FRAG_OVERHEAD)
+                            const numFragments = Math.ceil(totalSize / fragPayload)
                             return Array.from({ length: numFragments }).map((_, fIdx) => (
                               <PayloadCard
                                 key={`${step.label}-frag-${fIdx}`}
@@ -4031,8 +4043,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                                   name: 'Encrypted Fragment',
                                   abbreviation: `SKF (${fIdx + 1}/${numFragments})`,
                                   sizeBytes:
-                                    fIdx === numFragments - 1 ? totalSize % mtu || mtu : mtu,
-                                  description: `Encrypted Fragment Payload (RFC 7383) portion.`,
+                                    fIdx === numFragments - 1
+                                      ? (totalSize % fragPayload || fragPayload) + FRAG_OVERHEAD
+                                      : mtu,
+                                  description: `Encrypted Fragment Payload (RFC 7383); each fragment repeats the IKE + SKF headers.`,
                                 }}
                                 index={fIdx}
                                 highlighted={idx === currentStep}
@@ -4335,7 +4349,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       // Use pre-provisioned certs generated before daemon start (C8 flow).
                       // ipsec.secrets: PSK only — charon's pkcs11 plugin discovers the private
                       // key via PKCS#11 RPC (C_FindObjects matching the cert's public key modulus).
-                      // No RSA key file needed in ipsec.secrets when leftauth2=pubkey via pkcs11.
+                      // No RSA key file needed in ipsec.secrets when leftauth=pubkey via pkcs11.
                       const initSecrets = `: PSK "${clientPsk}"\n`
                       const respSecrets = `: PSK "${serverPsk}"\n`
                       strongSwanEngine.dispatchLog({
@@ -4748,7 +4762,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     onClick={() => setAuthMode('dual')}
                     className={`px-3 py-1 rounded text-xs font-medium border transition-colors ${authMode === 'dual' ? 'bg-primary/20 border-primary/50 text-primary' : 'bg-muted/50 border-border text-muted-foreground hover:bg-muted'}`}
                   >
-                    PSK + Certificate (RFC 4739)
+                    Certificate (pubkey)
                   </Button>
                 </div>
                 {authMode === 'dual' && (
@@ -4763,10 +4777,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                             </span>{' '}
                             Generate Certs will produce a real ML-DSA-{clientSize}–signed X.509 via
                             softhsmv3 (visible in Inspect + HSM Key panels + PKCS#11 log). The IKE
-                            daemon itself will <strong>not</strong> run on ML-DSA certs — the
-                            strongSwan WASM build does not yet include ML-DSA core support
-                            (draft-ietf-ipsecme-ikev2-mldsa). Switch both selectors to RSA to start
-                            the daemon.
+                            daemon can attempt an ML-DSA handshake (experimental — charon looks up
+                            the private key via CKA_ID and signs IKE_AUTH with C_Sign); if it fails
+                            to establish, switch both selectors to RSA.
                           </>
                         ) : (
                           <>
@@ -4781,8 +4794,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       </span>
                     </div>
                     <p className="text-[10px] text-muted-foreground">
-                      Dual auth per RFC 4739 — PSK + certificate. In production, use CA-signed
-                      certificates from a trusted PKI.
+                      Certificate (pubkey) auth — the PSK is not used in this mode. True RFC 4739
+                      multiple-auth (PSK and certificate in one exchange) is not executed by this
+                      build. In production, use CA-signed certificates from a trusted PKI.
                     </p>
                   </div>
                 )}
@@ -4819,8 +4833,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     </p>
                     <p>
                       <span className="font-medium">PQC-wrapped PSK (hybrid)</span> — the PSK is
-                      encapsulated under a post-quantum KEM (e.g. ML-KEM-768, BIKE, HQC) over a
-                      standard IP network. Combines quantum-resistant confidentiality with scalable
+                      encapsulated under a post-quantum KEM (e.g. ML-KEM-768, HQC) over a standard
+                      IP network. Combines quantum-resistant confidentiality with scalable
                       deployment. Governed by ETSI GS QKD 014 and NIST SP 800-227.
                     </p>
                     <p className="text-muted-foreground/70">
@@ -4911,7 +4925,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                           <div className="text-[10px] text-status-warning font-medium leading-tight">
                             ML-DSA requires an IANA AUTH assignment not yet standardized. This
                             simulation relies on preliminary draft constructs matching{' '}
-                            <em>draft-ietf-ipsecme-ikev2-auth-pqc</em>.
+                            <em>draft-sfluhrer-ipsecme-ikev2-mldsa</em>.
                           </div>
                         </div>
                       )}
@@ -4924,7 +4938,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   <div className="text-xs font-mono mb-2 flex items-center justify-between text-foreground">
                     <span className="font-semibold">Client Identity Parameter Mapping</span>
                     <span className="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded">
-                      {authMode === 'psk' ? 'leftauth=psk' : 'leftauth=psk + leftauth2=pubkey'}
+                      {authMode === 'psk' ? 'leftauth=psk' : 'leftauth=pubkey'}
                     </span>
                   </div>
                   <pre className="text-xs text-foreground font-mono">
@@ -5016,7 +5030,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                           <div className="text-[10px] text-status-warning font-medium leading-tight">
                             ML-DSA requires an IANA AUTH assignment not yet standardized. This
                             simulation relies on preliminary draft constructs matching{' '}
-                            <em>draft-ietf-ipsecme-ikev2-auth-pqc</em>.
+                            <em>draft-sfluhrer-ipsecme-ikev2-mldsa</em>.
                           </div>
                         </div>
                       )}
@@ -5029,7 +5043,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   <div className="text-xs font-mono mb-2 flex items-center justify-between text-foreground">
                     <span className="font-semibold">Server Identity Parameter Mapping</span>
                     <span className="text-[10px] bg-secondary/20 text-secondary px-2 py-0.5 rounded">
-                      {authMode === 'psk' ? 'rightauth=psk' : 'rightauth=psk + rightauth2=pubkey'}
+                      {authMode === 'psk' ? 'rightauth=psk' : 'rightauth=pubkey'}
                     </span>
                   </div>
                   <pre className="text-xs text-foreground font-mono">
@@ -5105,7 +5119,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             target="_blank"
             rel="noopener noreferrer"
           >
-            draft-ietf-ipsecme-ikev2-mldsa →
+            draft-sfluhrer-ipsecme-ikev2-mldsa →
           </Link>
           <Link
             to="/library?ref=FIPS%20203"
