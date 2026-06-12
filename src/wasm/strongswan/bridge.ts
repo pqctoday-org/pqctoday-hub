@@ -364,6 +364,16 @@ export class StrongSwanEngine {
           const bytes = new Uint8Array(targetSab)
           const pkt = new Uint8Array(data)
 
+          // 24 B header (6 × i32) precedes the payload in the SAB. Anything
+          // larger would silently truncate — drop loudly instead.
+          if (pkt.length + 24 > targetSab.byteLength) {
+            this.dispatchLog({
+              level: 'error',
+              text: `[ROUTE] packet ${pkt.length}B exceeds SAB capacity (${targetSab.byteLength - 24}B) — dropping`,
+            })
+            break
+          }
+
           i32[1] = pkt.length
           i32[2] = srcIp
           i32[3] = srcPort
