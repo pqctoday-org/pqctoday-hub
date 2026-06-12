@@ -25,7 +25,7 @@ interface AxisRow {
   blocked: boolean
 }
 
-const REGIONS: WorkshopRegion[] = ['US', 'CA', 'AU']
+const BASE_REGIONS: WorkshopRegion[] = ['US', 'CA', 'AU']
 
 export const WorkshopPrereqList: React.FC<WorkshopPrereqListProps> = ({
   pickedRegion,
@@ -33,6 +33,16 @@ export const WorkshopPrereqList: React.FC<WorkshopPrereqListProps> = ({
   flowMatch,
   onPickAnotherFlow,
 }) => {
+  // Regions with authored flow coverage, plus whatever region the persona /
+  // flow context produced (e.g. EU persona → 'EU') so the active selection is
+  // always visible and re-selectable instead of silently invisible.
+  const regions: WorkshopRegion[] = [...BASE_REGIONS]
+  if (pickedRegion && !regions.includes(pickedRegion)) regions.push(pickedRegion)
+  if (flowMatch?.regions && flowMatch.regions !== '*') {
+    for (const r of flowMatch.regions) {
+      if (!regions.includes(r)) regions.push(r)
+    }
+  }
   const role = usePersonaStore((s) => s.selectedPersona)
   const proficiency = usePersonaStore((s) => s.experienceLevel)
   const industry = usePersonaStore((s) => s.selectedIndustry)
@@ -85,8 +95,8 @@ export const WorkshopPrereqList: React.FC<WorkshopPrereqListProps> = ({
       </ul>
 
       {/* Region picker — always shown so the user can choose without switching persona */}
-      <div className="flex gap-2 pt-1">
-        {REGIONS.map((r) => (
+      <div className="flex flex-wrap gap-2 pt-1">
+        {regions.map((r) => (
           <Button
             key={r}
             variant={pickedRegion === r ? 'gradient' : 'outline'}

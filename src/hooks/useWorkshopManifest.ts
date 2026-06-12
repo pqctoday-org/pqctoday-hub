@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   loadManifest,
   loadFlow,
@@ -30,6 +30,8 @@ interface UseWorkshopManifestResult {
   compatibleEntries: WorkshopFlowManifestEntry[]
   /** Hydrated full flow JSON for the active entry. Null while loading. */
   activeFlow: WorkshopFlow | null
+  /** Force-refetch the manifest (bypasses the session cache). */
+  retry: () => void
 }
 
 /**
@@ -51,11 +53,14 @@ export function useWorkshopManifest(region: WorkshopRegion | null): UseWorkshopM
   const proficiency = usePersonaStore((s) => s.experienceLevel) as ExperienceLevel | null
   const industry = usePersonaStore((s) => s.selectedIndustry)
   const flowOverrideId = useWorkshopStore((s) => s.flowOverrideId)
+  const mode = useWorkshopStore((s) => s.mode)
+  const currentFlowId = useWorkshopStore((s) => s.currentFlowId)
 
-  // Load the manifest once on mount.
+  // Load the manifest on mount; `retryToken` re-runs with a forced refetch.
+  const [retryToken, setRetryToken] = useState(0)
   useEffect(() => {
     let cancelled = false
-    loadManifest()
+    loadManifest(retryToken > 0)
       .then((m) => {
         if (cancelled) return
         setManifest(m)
@@ -71,6 +76,10 @@ export function useWorkshopManifest(region: WorkshopRegion | null): UseWorkshopM
     return () => {
       cancelled = true
     }
+  }, [retryToken])
+  const retry = useCallback(() => {
+    setIsLoading(true)
+    setRetryToken((t) => t + 1)
   }, [])
 
   // Compute matched + active entries.
@@ -87,7 +96,15 @@ export function useWorkshopManifest(region: WorkshopRegion | null): UseWorkshopM
   const overrideEntry: WorkshopFlowManifestEntry | null =
     manifest && flowOverrideId ? findEntry(manifest, flowOverrideId) : null
 
-  const activeEntry = overrideEntry ?? matchedEntry
+  // While a workshop is running / paused / recording, pin the active entry to
+  // the flow that was actually started. `flowOverrideId` is session-scoped
+  // (not persisted), so after a reload the persona-matched flow could differ
+  // from the running one — without this pin the player would silently swap
+  // workshops and restart at step 1 with foreign completedStepIds.
+  const runningEntry: WorkshopFlowManifestEntry | null =
+    manifest && mode !== 'idle' && currentFlowId ? findEntry(manifest, currentFlowId) : null
+
+  const activeEntry = runningEntry ?? overrideEntry ?? matchedEntry
 
   // Every flow whose `match` accepts the active persona context (loose match —
   // null persona facets are treated as wildcards). Most-specific first.
@@ -117,5 +134,14 @@ export function useWorkshopManifest(region: WorkshopRegion | null): UseWorkshopM
     }
   }, [activeFile])
 
-  return { manifest, isLoading, error, activeEntry, matchedEntry, compatibleEntries, activeFlow }
+  return {
+    manifest,
+    isLoading,
+    error,
+    activeEntry,
+    matchedEntry,
+    compatibleEntries,
+    activeFlow,
+    retry,
+  }
 }

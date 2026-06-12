@@ -1,15 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
-// Pure-function tests for the workshop registry helpers. The build-time
-// WORKSHOP_FLOWS array is now empty (Increment G migrated all flows to JSON
-// under public/workshop/), so these tests use a synthetic flow fixture.
+// Pure-function tests for the workshop registry helpers. Flows live in JSON
+// under public/workshop/ (see services/workshopFlowLoader), so these tests
+// use a synthetic flow fixture.
 import { describe, it, expect } from 'vitest'
-import {
-  WORKSHOP_FLOWS,
-  resolveWorkshopFlow,
-  flattenFlow,
-  getNextStep,
-  getPrevStep,
-} from './workshopRegistry'
+import { flattenFlow, getNextStep, getPrevStep } from './workshopRegistry'
 import type { WorkshopFlow, WorkshopStep } from '@/types/Workshop'
 
 function step(id: string, title: string = id): WorkshopStep {
@@ -61,20 +55,6 @@ const FIXTURE: WorkshopFlow = {
 }
 
 describe('workshopRegistry', () => {
-  it('WORKSHOP_FLOWS is empty (flows now live in public/workshop/*.json)', () => {
-    expect(WORKSHOP_FLOWS).toEqual([])
-  })
-
-  it('resolveWorkshopFlow returns null when no build-time flows are registered', () => {
-    const flow = resolveWorkshopFlow({
-      role: 'executive',
-      proficiency: 'basics',
-      industry: 'Finance & Banking',
-      region: 'US',
-    })
-    expect(flow).toBeNull()
-  })
-
   it('flattenFlow inserts the region chapter before the action chapter', () => {
     const steps = flattenFlow(FIXTURE, 'AU')
     const ids = steps.map((s) => s.id)
@@ -107,6 +87,38 @@ describe('workshopRegistry', () => {
       expect(steps.length).toBeGreaterThan(0)
       expect(steps.every((s) => s.title.length > 0)).toBe(true)
     }
+  })
+
+  it('flattenFlow applies step-level when: filters against the persona context', () => {
+    const gated: WorkshopFlow = {
+      ...FIXTURE,
+      common: [
+        {
+          id: 'foundations',
+          title: 'Foundations',
+          estMinutes: 1,
+          steps: [
+            step('p-landing'),
+            { ...step('fin-only'), when: { industries: ['Finance & Banking'] } },
+            { ...step('us-only'), when: { regions: ['US'] } },
+          ],
+        },
+        FIXTURE.common[1],
+      ],
+    }
+    // Industry mismatch drops the gated step; region gate follows the region arg.
+    const auHealth = flattenFlow(gated, 'AU', 'Healthcare', 'executive', 'basics').map((s) => s.id)
+    expect(auHealth).not.toContain('fin-only')
+    expect(auHealth).not.toContain('us-only')
+    // Matching context keeps both.
+    const usFin = flattenFlow(gated, 'US', 'Finance & Banking', 'executive', 'basics').map(
+      (s) => s.id
+    )
+    expect(usFin).toContain('fin-only')
+    expect(usFin).toContain('us-only')
+    // Omitted facets (no industry passed) are treated as wildcard.
+    const noIndustry = flattenFlow(gated, 'US').map((s) => s.id)
+    expect(noIndustry).toContain('fin-only')
   })
 
   it('navigation helpers walk forward and back through the flat list', () => {

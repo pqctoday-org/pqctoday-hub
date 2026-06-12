@@ -17,8 +17,13 @@ interface CaptionBarProps {
 export const CaptionBar: React.FC<CaptionBarProps> = ({ text, visible }) => {
   const ttsEnabled = useWorkshopStore((s) => s.ttsEnabled)
   return (
+    // Polite live region (not aria-hidden): captions are the workshop's
+    // narration, so screen readers must hear them — TTS is opt-in and off by
+    // default. Polite + atomic announces each caption swap without interrupting.
     <div
-      aria-hidden="true"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
       className="pointer-events-none fixed inset-x-0 bottom-0 z-[80] flex justify-center pb-12"
       data-workshop-overlay="caption"
     >
