@@ -62,6 +62,7 @@ export const VpnScorecard: React.FC<VpnScorecardProps> = ({
     let intermediateSeen = false
     let authSeen = false
     let oversizedSeen = false
+    let skfSeen = false
     for (const p of packets) {
       if (p.header) {
         if (p.header.exchangeType !== EXCHANGE_TYPE.INFORMATIONAL) {
@@ -69,6 +70,9 @@ export const VpnScorecard: React.FC<VpnScorecardProps> = ({
         }
         if (p.header.exchangeType === EXCHANGE_TYPE.IKE_INTERMEDIATE) intermediateSeen = true
         if (p.header.exchangeType === EXCHANGE_TYPE.IKE_AUTH) authSeen = true
+        // Next Payload 53 = Encrypted and Authenticated Fragment (SKF,
+        // RFC 7383) — a real fragment on the wire.
+        if (p.header.nextPayload === 53) skfSeen = true
       }
       if (p.bytes.length > mtu) oversizedSeen = true
     }
@@ -78,6 +82,7 @@ export const VpnScorecard: React.FC<VpnScorecardProps> = ({
       intermediateSeen,
       authSeen,
       oversizedSeen,
+      skfSeen,
     }
   }, [packets, mtu])
 
@@ -88,7 +93,9 @@ export const VpnScorecard: React.FC<VpnScorecardProps> = ({
 
   const pqKeOn = keMode !== 'classical'
   const pqAuthOn = authAlg.toLowerCase().includes('ml-dsa')
-  const rfc7383On = fragmentationEnabled && stats.oversizedSeen
+  // Real SKF fragments observed on the wire; the oversized fallback covers
+  // builds where charon sends whole messages regardless of MTU.
+  const rfc7383On = stats.skfSeen || (fragmentationEnabled && stats.oversizedSeen)
   const rfc9242On = stats.intermediateSeen
   const rfc9370On = keMode === 'hybrid'
 
