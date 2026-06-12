@@ -1131,17 +1131,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       } else if (text.includes('ike_sa') && text.includes('established between')) {
         setCurrentStep(stepsLengthRef.current - 1)
         setCharonFailed(false)
-        // WASM binary is compiled childless — inject synthetic CREATE_CHILD_SA steps for educational display
-        setTimeout(() => {
-          strongSwanEngine.dispatchLog({
-            level: 'info',
-            text: '[SIM] CREATE_CHILD_SA Request  → ESP tunnel 192.168.0.1/32 ↔ 192.168.0.2/32',
-          })
-          strongSwanEngine.dispatchLog({
-            level: 'info',
-            text: '[SIM] CREATE_CHILD_SA Response → Child SA established (AES-256-GCM-16)',
-          })
-        }, 200)
+        // The CHILD_SA is now negotiated for real (stub kernel allocates SPIs;
+        // charon logs "CHILD_SA wasm-child{1} established with SPIs …"), so no
+        // synthetic CREATE_CHILD_SA narration is injected anymore.
       } else if (
         text.includes('establishing ike_sa failed') ||
         text.includes('fatal error') ||
@@ -2391,25 +2383,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               level: rv === 0 ? 'info' : 'error',
               text: `[RPC] C_DecapsulateKey(93) hSess=${hSess93} hKey=${hKey93} ctLen=${ctLen93} → rv=0x${rv.toString(16)} secKey=${p[0]}`,
             })
-            // Hybrid mode: ML-KEM finished in IKE_SA_INIT. Inject synthetic IKE_INTERMEDIATE
-            // steps for educational display — the ikev2-additional-ke plugin (RFC 9370) is not
-            // compiled into the WASM binary, so ECDH is simulated here in the bridge layer.
-            if (rv === 0 && selectedModeRef.current === 'hybrid') {
-              setTimeout(() => {
-                strongSwanEngine.dispatchLog({
-                  level: 'info',
-                  text: '[SIM] IKE_INTERMEDIATE Request  → ECDH P-256 ephemeral key exchange (simulated)',
-                })
-                strongSwanEngine.dispatchLog({
-                  level: 'info',
-                  text: '[SIM] IKE_INTERMEDIATE Response → ECDH P-256 shared secret derived (simulated)',
-                })
-                strongSwanEngine.dispatchLog({
-                  level: 'info',
-                  text: '[SIM] Hybrid SKEYSEED rekeyed after IKE_INTERMEDIATE: prf(SK_d, ECDH-P256 secret | Ni | Nr) per RFC 9370 §2.2.2',
-                })
-              }, 100)
-            }
+            // Hybrid mode: ML-KEM runs in IKE_SA_INIT; the ECP-256 Additional
+            // KE round is a REAL IKE_INTERMEDIATE exchange now (RFC 9370
+            // ke1_ecp256 in the wasm build) — charon logs the round itself,
+            // so no synthetic narration is injected.
             break
           }
 
@@ -3342,26 +3319,34 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             <code>x509 -text</code> cert inspector.
           </div>
           <div>
-            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-warning/15 text-status-warning border border-status-warning/30 mr-1">
-              SIMULATED
+            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-success/15 text-status-success border border-status-success/30 mr-1">
+              REAL
             </span>
-            IKE wire protocol: IKE_SA_INIT / IKE_INTERMEDIATE / IKE_AUTH packets are not serialized
-            or exchanged. The message diagram and payload sizes come from
-            <code className="text-[10px] mx-0.5">ikev2Constants.ts</code>.
+            IKE wire protocol: charon serializes real IKE_SA_INIT / IKE_INTERMEDIATE / IKE_AUTH
+            messages and exchanges them between the two workers over a SharedArrayBuffer wire —
+            inspect the bytes in Live Wire Capture. (The step diagram&apos;s payload sizes are a
+            teaching model from <code className="text-[10px] mx-0.5">ikev2Constants.ts</code>.)
+          </div>
+          <div>
+            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-success/15 text-status-success border border-status-success/30 mr-1">
+              REAL
+            </span>
+            RFC 7383 fragmentation: both peers negotiate FRAGMENTATION_SUPPORTED; over-size messages
+            (e.g. ML-DSA IKE_AUTH) are split into real SKF fragments sized by
+            <code className="text-[10px] mx-0.5">fragment_size</code> and reassembled by the peer.
+          </div>
+          <div>
+            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-success/15 text-status-success border border-status-success/30 mr-1">
+              REAL
+            </span>
+            CHILD_SA: negotiated in IKE_AUTH with real ESP key derivation (SPIs come from a stub
+            kernel). No ESP data plane yet — no user traffic actually crosses the tunnel.
           </div>
           <div>
             <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-warning/15 text-status-warning border border-status-warning/30 mr-1">
               SIMULATED
             </span>
-            Step auto-advance: driven by log-string heuristics, not by charon bus events. No real
-            state machine runs.
-          </div>
-          <div>
-            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-warning/15 text-status-warning border border-status-warning/30 mr-1">
-              SIMULATED
-            </span>
-            Fragmentation: the MTU check is UI-side. Charon&apos;s RFC 7383 fragment assembly never
-            runs.
+            Step auto-advance: driven by log-string heuristics, not by charon bus events.
           </div>
           <div>
             {authMode === 'dual' ? (
@@ -3378,13 +3363,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               : 'IKE_AUTH cert auth: PSK mode only; switch to "PSK + Certificate" to run real ML-DSA signing.'}
           </div>
           <div className="md:col-span-2 mt-1 pt-1 border-t border-border text-[11px]">
-            <strong className="text-foreground">Roadmap:</strong> full IKE handshake (Phase 3b–3e)
-            is planned — spec at{' '}
-            <code className="text-[10px]">
-              pqctoday-hsm/docs/wasm-charon-phase-3b-plus-roadmap.md
-            </code>
-            . For full-fidelity IKE today, use the &ldquo;Launch full-fidelity sandbox&rdquo; button
-            in the Raw Config tab (runs real strongSwan 6.0.5 in Docker).
+            <strong className="text-foreground">Roadmap:</strong> remaining work is the ESP data
+            plane (userspace libipsec port) so payload traffic actually crosses the CHILD_SA. For a
+            kernel-backed deployment today, use the &ldquo;Launch full-fidelity sandbox&rdquo;
+            button in the Raw Config tab (runs real strongSwan 6.0.5 in Docker).
           </div>
         </div>
       </div>
@@ -3568,8 +3550,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   ML-KEM proposal strings (e.g. <code>aes256-mlkem768-sha384!</code>) parse
                   successfully against charon&apos;s proposal engine in the WASM binary (ML-KEM
                   transform IDs 35/36/37 per draft-ietf-ipsecme-ikev2-mlkem are recognized) — use
-                  the &ldquo;Validate WASM charon&rdquo; panel below to confirm. The full IKE
-                  handshake still runs as a simulation until Phase 3b+ of the WASM shims lands.
+                  the &ldquo;Validate WASM charon&rdquo; panel below to confirm. The daemon
+                  negotiates the proposal for real; note the running config comes from the WASM
+                  backend&apos;s proposal mode, so edits to this text are display-only.
                 </p>
               )}
             </div>
@@ -4320,10 +4303,11 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       if (!moduleRef.current) moduleRef.current = rawM
                     }
 
-                    // hybrid uses proposalMode=1 (ML-KEM only) — proposalMode=2 generates ECDH proposals
-                    // requiring IKE_INTERMEDIATE (RFC 9370), which is not compiled into the WASM binary.
+                    // proposalMode: 0 = classical (modp3072), 1 = pure-pqc (mlkem768),
+                    // 2 = hybrid (mlkem768 + ke1_ecp256 — real RFC 9370 Additional KE
+                    // over an IKE_INTERMEDIATE round, supported by the wasm build).
                     const proposalMode =
-                      selectedMode === 'pure-pqc' || selectedMode === 'hybrid' ? 1 : 0
+                      selectedMode === 'hybrid' ? 2 : selectedMode === 'pure-pqc' ? 1 : 0
 
                     // Diagnostic: log which branch is taken + state at click time.
                     // Branch selection is fragile — easy to land on PSK fallback by
@@ -4394,7 +4378,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         { initPsk: clientPsk, respPsk: serverPsk },
                         rpcMode,
                         proposalMode,
-                        { authMode, keyIds }
+                        { authMode, keyIds, fragmentation: allowFragmentation, childSa: true }
                       )
                     } else {
                       strongSwanEngine.init(
@@ -4403,7 +4387,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         { initPsk: clientPsk, respPsk: serverPsk },
                         rpcMode,
                         proposalMode,
-                        { authMode }
+                        { authMode, fragmentation: allowFragmentation, childSa: true }
                       )
                     }
                     setCurrentStep(1)

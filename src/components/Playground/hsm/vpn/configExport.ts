@@ -77,12 +77,14 @@ ${
 
 ## Simulator caveats
 
-- The hybrid Additional-KE round (IKE_INTERMEDIATE) is simulation-only in
-  the current WASM charon build; ML-KEM in the primary KE slot runs for
-  real. strongSwan 6.0+ supports both natively — RFC 9370 multiple key
-  exchanges, the \`mlkem512/768/1024\` proposal keywords, and \`ke1_\`–\`ke7_\`
-  additional-KE prefixes — no patches required. The ML-KEM IKEv2 Key
-  Exchange Method IDs (35/36/37) are IANA-assigned.
+- The WASM simulator runs the full IKEv2 handshake for real: ML-KEM in the
+  primary KE slot, ECP-256 as Additional KE 1 over a real IKE_INTERMEDIATE
+  round (RFC 9242/9370), RFC 7383 fragmentation, and CHILD_SA negotiation
+  (stub-kernel SPIs; no ESP data plane). strongSwan 6.0+ supports all of
+  this natively — RFC 9370 multiple key exchanges, the \`mlkem512/768/1024\`
+  proposal keywords, and \`ke1_\`–\`ke7_\` additional-KE prefixes — no patches
+  required. The ML-KEM IKEv2 Key Exchange Method IDs (35/36/37) are
+  IANA-assigned.
 - ML-DSA certificate OIDs follow RFC 9881 (ML-DSA in X.509) — verify your
   peer strongSwan understands these OIDs before deploying. ML-DSA as an
   IKEv2 AUTH method (draft-sfluhrer-ipsecme-ikev2-mldsa) has no IANA
