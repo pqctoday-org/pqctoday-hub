@@ -1,16 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect } from 'react'
-import {
-  Settings,
-  FileText,
-  Check,
-  Shield,
-  Key,
-  Import,
-  Copy,
-  Eye,
-  AlertTriangle,
-} from 'lucide-react'
+import { Settings, FileText, Check, Shield, Key, Import, Copy, Eye } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useTLSStore } from '@/store/tls-learning.store'
 import { FileSelectionModal } from './components/FileSelectionModal'
@@ -38,30 +28,27 @@ const CIPHER_SUITES = [
   'TLS_AES_128_CCM_8_SHA256',
 ]
 
-// Key Exchange Groups organized by type
+// Key Exchange Groups organized by type.
+// Values are the canonical OpenSSL TLS group names (what SSL_CTX_set1_groups_list
+// accepts) — the hyphenated FIPS 203 form is display-only via GROUP_LABELS.
 const CLASSICAL_GROUPS = ['X25519', 'P-256', 'P-384', 'P-521']
-const PQC_GROUPS = ['ML-KEM-512', 'ML-KEM-768', 'ML-KEM-1024']
-const HYBRID_GROUPS = ['X25519MLKEM768', 'SecP256r1MLKEM768', 'X448MLKEM1024', 'SecP384r1MLKEM1024']
+const PQC_GROUPS = ['MLKEM512', 'MLKEM768', 'MLKEM1024']
+const HYBRID_GROUPS = ['X25519MLKEM768', 'SecP256r1MLKEM768', 'SecP384r1MLKEM1024']
 
+// Display labels for groups whose OpenSSL TLS name differs from the FIPS name
+const GROUP_LABELS: Record<string, string> = {
+  MLKEM512: 'ML-KEM-512',
+  MLKEM768: 'ML-KEM-768',
+  MLKEM1024: 'ML-KEM-1024',
+}
+
+// SLH-DSA (FIPS 205) is intentionally absent: OpenSSL 3.6 registers no SLH-DSA
+// TLS signature schemes, so it cannot be negotiated in this simulation.
 const SIG_ALGS = [
-  // PQC - ML-DSA (Dilithium)
+  // PQC - ML-DSA (FIPS 204)
   'mldsa44',
   'mldsa65',
   'mldsa87',
-  // PQC - SLH-DSA SHA-2 variants (FIPS 205)
-  'slhdsa-sha2-128s',
-  'slhdsa-sha2-128f',
-  'slhdsa-sha2-192s',
-  'slhdsa-sha2-192f',
-  'slhdsa-sha2-256s',
-  'slhdsa-sha2-256f',
-  // PQC - SLH-DSA SHAKE variants (FIPS 205)
-  'slhdsa-shake-128s',
-  'slhdsa-shake-128f',
-  'slhdsa-shake-192s',
-  'slhdsa-shake-192f',
-  'slhdsa-shake-256s',
-  'slhdsa-shake-256f',
   // Classical
   'ecdsa_secp256r1_sha256',
   'rsa_pss_rsae_sha256',
@@ -85,84 +72,43 @@ const CERTS = [
   { id: 'custom', label: 'Custom from OpenSSL Studio' },
 ]
 
-// NIST security level labels — source: FIPS 203, 204, 205
+// NIST security level labels — source: FIPS 203, 204
 const NIST_LEVEL: Record<string, string> = {
-  'ML-KEM-512': 'NIST L1',
-  'ML-KEM-768': 'NIST L3',
-  'ML-KEM-1024': 'NIST L5',
+  MLKEM512: 'NIST L1',
+  MLKEM768: 'NIST L3',
+  MLKEM1024: 'NIST L5',
   X25519MLKEM768: 'L3 hybrid',
   SecP256r1MLKEM768: 'L3 hybrid',
-  X448MLKEM1024: 'L5 hybrid',
   SecP384r1MLKEM1024: 'L5 hybrid',
   mldsa44: 'NIST L2',
   mldsa65: 'NIST L3',
   mldsa87: 'NIST L5',
-  'slhdsa-sha2-128s': 'NIST L1',
-  'slhdsa-sha2-128f': 'NIST L1',
-  'slhdsa-sha2-192s': 'NIST L3',
-  'slhdsa-sha2-192f': 'NIST L3',
-  'slhdsa-sha2-256s': 'NIST L5',
-  'slhdsa-sha2-256f': 'NIST L5',
-  'slhdsa-shake-128s': 'NIST L1',
-  'slhdsa-shake-128f': 'NIST L1',
-  'slhdsa-shake-192s': 'NIST L3',
-  'slhdsa-shake-192f': 'NIST L3',
-  'slhdsa-shake-256s': 'NIST L5',
-  'slhdsa-shake-256f': 'NIST L5',
 }
 
-// Key share sizes (bytes) sent in ClientHello — source: FIPS 203, draft-connolly-tls-mlkem-key-agreement-05
+// Key share sizes (bytes) sent in ClientHello — source: FIPS 203, draft-ietf-tls-ecdhe-mlkem
 const GROUP_SIZE: Record<string, string> = {
   X25519: 'key share: 32 B',
   'P-256': 'key share: 65 B',
   'P-384': 'key share: 97 B',
   'P-521': 'key share: 133 B',
-  'ML-KEM-512': 'pk: 800 B · ct: 768 B',
-  'ML-KEM-768': 'pk: 1,184 B · ct: 1,088 B',
-  'ML-KEM-1024': 'pk: 1,568 B · ct: 1,568 B',
-  X25519MLKEM768: '~1,216 B combined (X25519 32 + ML-KEM-768 1,184)',
-  SecP256r1MLKEM768: '~1,249 B combined (P-256 65 + ML-KEM-768 1,184)',
-  X448MLKEM1024: '~1,624 B combined (X448 56 + ML-KEM-1024 1,568)',
-  SecP384r1MLKEM1024: '~1,665 B combined (P-384 97 + ML-KEM-1024 1,568)',
+  MLKEM512: 'pk: 800 B · ct: 768 B',
+  MLKEM768: 'pk: 1,184 B · ct: 1,088 B',
+  MLKEM1024: 'pk: 1,568 B · ct: 1,568 B',
+  X25519MLKEM768: '1,216 B combined (ML-KEM-768 1,184 + X25519 32)',
+  SecP256r1MLKEM768: '1,249 B combined (P-256 65 + ML-KEM-768 1,184)',
+  SecP384r1MLKEM1024: '1,665 B combined (P-384 97 + ML-KEM-1024 1,568)',
 }
 
-// Signature and public key sizes — source: FIPS 204, FIPS 205 (Table 2)
+// Signature and public key sizes — source: FIPS 204 (final) Table 2
 const SIG_SIZE: Record<string, { sig: string; pub: string }> = {
   mldsa44: { sig: '2,420 B', pub: '1,312 B' },
-  mldsa65: { sig: '3,293 B', pub: '1,952 B' },
-  mldsa87: { sig: '4,595 B', pub: '2,592 B' },
-  'slhdsa-sha2-128s': { sig: '7,856 B', pub: '32 B' },
-  'slhdsa-sha2-128f': { sig: '17,088 B', pub: '32 B' },
-  'slhdsa-sha2-192s': { sig: '16,224 B', pub: '48 B' },
-  'slhdsa-sha2-192f': { sig: '35,664 B', pub: '48 B' },
-  'slhdsa-sha2-256s': { sig: '29,792 B', pub: '64 B' },
-  'slhdsa-sha2-256f': { sig: '49,856 B', pub: '64 B' },
-  'slhdsa-shake-128s': { sig: '7,856 B', pub: '32 B' },
-  'slhdsa-shake-128f': { sig: '17,088 B', pub: '32 B' },
-  'slhdsa-shake-192s': { sig: '16,224 B', pub: '48 B' },
-  'slhdsa-shake-192f': { sig: '35,664 B', pub: '48 B' },
-  'slhdsa-shake-256s': { sig: '29,792 B', pub: '64 B' },
-  'slhdsa-shake-256f': { sig: '49,856 B', pub: '64 B' },
+  mldsa65: { sig: '3,309 B', pub: '1,952 B' },
+  mldsa87: { sig: '4,627 B', pub: '2,592 B' },
   ecdsa_secp256r1_sha256: { sig: '~72 B', pub: '64 B' },
   rsa_pss_rsae_sha256: { sig: '256 B', pub: '256 B' },
   rsa_pss_pss_sha256: { sig: '256 B', pub: '256 B' },
   ed25519: { sig: '64 B', pub: '32 B' },
 }
-
-const SLH_DSA_ALGS = [
-  'slhdsa-sha2-128s',
-  'slhdsa-sha2-128f',
-  'slhdsa-sha2-192s',
-  'slhdsa-sha2-192f',
-  'slhdsa-sha2-256s',
-  'slhdsa-sha2-256f',
-  'slhdsa-shake-128s',
-  'slhdsa-shake-128f',
-  'slhdsa-shake-192s',
-  'slhdsa-shake-192f',
-  'slhdsa-shake-256s',
-  'slhdsa-shake-256f',
-]
 
 export const TLSClientPanel: React.FC = () => {
   const {
@@ -680,7 +626,7 @@ export const TLSClientPanel: React.FC = () => {
                           : 'bg-muted border-border text-muted-foreground hover:border-border/80'
                       )}
                     >
-                      {group}
+                      {GROUP_LABELS[group] ?? group}
                       <span className="text-[9px] font-sans font-normal opacity-60">
                         ({NIST_LEVEL[group]})
                       </span>
@@ -744,7 +690,7 @@ export const TLSClientPanel: React.FC = () => {
                               clientConfig.groups.includes(group) && 'text-primary font-bold'
                             )}
                           >
-                            {group}
+                            {GROUP_LABELS[group] ?? group}
                           </td>
                           <td className="p-1.5 text-right font-mono text-muted-foreground">
                             {GROUP_SIZE[group] ?? '—'}
@@ -782,9 +728,6 @@ export const TLSClientPanel: React.FC = () => {
                         : 'bg-muted border-border text-muted-foreground hover:border-border/80'
                     )}
                   >
-                    {SLH_DSA_ALGS.includes(alg) && (
-                      <AlertTriangle size={10} className="text-warning shrink-0" />
-                    )}
                     {alg}
                     {NIST_LEVEL[alg] && (
                       <span className="text-[9px] font-sans font-normal opacity-60">
@@ -794,20 +737,14 @@ export const TLSClientPanel: React.FC = () => {
                   </Button>
                 ))}
               </div>
-              {clientConfig.signatureAlgorithms.some((a) => SLH_DSA_ALGS.includes(a)) && (
-                <div className="flex items-start gap-2 p-2 rounded-lg bg-warning/10 border border-warning/30 text-xs mb-2">
-                  <AlertTriangle size={12} className="text-warning shrink-0 mt-0.5" />
-                  <span>
-                    <strong className="text-warning">SLH-DSA is experimental in TLS.</strong>{' '}
-                    Signatures are 7–50 KB — far larger than ML-DSA. No IETF draft standardizes
-                    SLH-DSA for TLS 1.3. Selecting it may cause oversized handshakes or negotiation
-                    failures.
-                  </span>
-                </div>
-              )}
+              <p className="text-[10px] text-muted-foreground mb-2">
+                SLH-DSA (FIPS 205) is not listed: OpenSSL registers no SLH-DSA TLS signature
+                schemes, so it cannot be negotiated here. No IETF draft standardizes SLH-DSA for TLS
+                1.3 (signatures are 7–50 KB).
+              </p>
               <details className="text-xs">
                 <summary className="cursor-pointer text-muted-foreground hover:text-foreground list-none select-none py-0.5">
-                  ▸ Signature size reference (FIPS 204/205)
+                  ▸ Signature size reference (FIPS 204)
                 </summary>
                 <div className="mt-1 rounded-lg border border-border overflow-hidden">
                   <table className="w-full text-[10px]">

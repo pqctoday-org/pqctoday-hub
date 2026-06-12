@@ -232,13 +232,13 @@ export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
       classical: 'ECDSA P-256 sig: ~72 B, pub key: 64 B',
     },
     'ML-DSA-65': {
-      sigSize: '3,293 B',
+      sigSize: '3,309 B',
       pubKeySize: '1,952 B',
       level: 'NIST L3',
       classical: 'ECDSA P-384 sig: ~96 B, pub key: 96 B',
     },
     'ML-DSA-87': {
-      sigSize: '4,595 B',
+      sigSize: '4,627 B',
       pubKeySize: '2,592 B',
       level: 'NIST L5',
       classical: 'ECDSA P-521 sig: ~139 B, pub key: 132 B',
