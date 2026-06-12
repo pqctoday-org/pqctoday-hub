@@ -18,7 +18,11 @@ export function useWorkshopFixtures(flow: WorkshopFlow | null): WorkshopFixtures
   useEffect(() => {
     if (!url) return
     let cancelled = false
-    fetch(url)
+    // Root-relative fetch: fixturesUrl is declared relative to public/, so a
+    // bare `fetch(url)` from a nested route (/learn/*) would resolve against
+    // that route and 404 — same bug class as the manifest fetch in
+    // workshopFlowLoader. Always anchor to the site root.
+    fetch(`/${url.replace(/^\//, '')}`)
       .then((r) => (r.ok ? r.json() : {}))
       .then((data) => {
         if (cancelled) return
@@ -29,7 +33,7 @@ export function useWorkshopFixtures(flow: WorkshopFlow | null): WorkshopFixtures
         }
         setRemote(clean)
       })
-      .catch(() => undefined)
+      .catch((e) => console.warn('[workshop] fixtures load failed:', url, e))
     return () => {
       cancelled = true
     }
