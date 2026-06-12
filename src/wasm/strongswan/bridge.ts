@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useVpnPacketStore } from '@/store/useVpnPacketStore'
 
 export interface StrongSwanLog {
   level: 'info' | 'error'
@@ -376,6 +377,15 @@ export class StrongSwanEngine {
             level: 'info',
             text: `[ROUTE] pkt #${this.packetCount} → ${target} (${destIpStr}) len=${pkt.length}`,
           })
+          // Feed the live packet capture (Wire visualization / Packet Inspector).
+          // srcIp is LE u32 like destIp: byte 0 (LSB) is the first octet.
+          useVpnPacketStore.getState().addPacket({
+            srcIp: `${srcIp & 0xff}.${(srcIp >>> 8) & 0xff}.${(srcIp >>> 16) & 0xff}.${(srcIp >>> 24) & 0xff}`,
+            destIp: destIpStr,
+            srcPort,
+            destPort: payload.destPort || 500,
+            bytes: pkt.slice(),
+          })
           break
         }
       }
@@ -423,6 +433,7 @@ export class StrongSwanEngine {
     this._readyCount = 0
     this._keysReadyCount = 0
     this.packetCount = 0
+    useVpnPacketStore.getState().clear()
 
     const initPsk = pskOpts?.initPsk ?? 'pqc-wasm-demo-key-2026'
     const respPsk = pskOpts?.respPsk ?? 'pqc-wasm-demo-key-2026'
