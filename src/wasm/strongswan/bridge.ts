@@ -60,6 +60,8 @@ export class StrongSwanEngine {
   private _epoch = 0 // Guards against late messages from terminated workers
   private _phase: 'full' | 'spawn-only' = 'full'
   private _authMode: 'psk' | 'dual' = 'psk'
+  private _fragmentation = true
+  private _childSa = false
   private _keysReadyResolve: (() => void) | null = null
   private _keySpec: { algType: number; slot0Size: number; slot1Size: number } = {
     algType: 1,
@@ -414,6 +416,8 @@ export class StrongSwanEngine {
         auth: authMode,
         localKeyId,
         remoteKeyId,
+        fragmentation: this._fragmentation,
+        childSa: this._childSa,
       },
     })
     return worker
@@ -433,12 +437,18 @@ export class StrongSwanEngine {
       phase?: 'full' | 'spawn-only'
       authMode?: 'psk' | 'dual'
       keyIds?: { initKeyId: string; respKeyId: string }
+      /** RFC 7383 negotiation (wasm_backend.c WASM_FRAGMENTATION). Default true. */
+      fragmentation?: boolean
+      /** Negotiate a real CHILD_SA via the stub kernel (WASM_CHILDSA=1). */
+      childSa?: boolean
     }
   ): Promise<void> {
     if (this.initWorker) return Promise.resolve()
 
     this._epoch++
     this._phase = options?.phase ?? 'full'
+    this._fragmentation = options?.fragmentation ?? true
+    this._childSa = options?.childSa ?? false
     this.setState('LOADING')
     this._readyCount = 0
     this._keysReadyCount = 0

@@ -408,6 +408,28 @@ export function VpnLearnSection() {
                   Charon library code: proposal parser (ML-KEM transforms — IANA KE Methods
                   35/36/37) and certificate loader.
                 </li>
+                <li>
+                  The hybrid IKE_INTERMEDIATE round: ECP-256 runs as Additional Key Exchange 1 (RFC
+                  9242/9370, proposal{' '}
+                  <span className="font-mono text-foreground">mlkem768-ke1_ecp256</span>) in a real
+                  exchange
+                  {hybridIntermediate
+                    ? ` (modeled at ${hybridIntermediate.initiator.payloads
+                        .reduce((a, p) => a + p.sizeBytes, 0)
+                        .toLocaleString()} B per message in the diagram)`
+                    : ''}
+                  .
+                </li>
+                <li>
+                  IKE wire packets: charon serializes real IKEv2 messages and exchanges them between
+                  the two workers over a SharedArrayBuffer wire — inspect them in Live Wire Capture.
+                  RFC 7383 fragmentation is negotiated and over-size messages are split into real
+                  SKF fragments and reassembled by the peer.
+                </li>
+                <li>
+                  CHILD_SA negotiation with real ESP key derivation (SPIs allocated by a stub
+                  kernel).
+                </li>
               </ul>
             </div>
             <div className="rounded-lg border border-status-warning/30 bg-status-warning/5 p-3 space-y-1.5">
@@ -416,25 +438,13 @@ export function VpnLearnSection() {
               </p>
               <ul className="list-disc pl-4 space-y-1">
                 <li>
-                  The hybrid IKE_INTERMEDIATE round (ECP-256 as Additional Key Exchange 1, RFC
-                  9242/9370): the additional-KE exchange logic is not in this WASM build, so that
-                  round appears as narrated <span className="font-mono text-foreground">[SIM]</span>{' '}
-                  log entries
-                  {hybridIntermediate
-                    ? ` (${hybridIntermediate.initiator.payloads
-                        .reduce((a, p) => a + p.sizeBytes, 0)
-                        .toLocaleString()} B per message in the diagram)`
-                    : ''}
-                  .
+                  The step diagram&apos;s payload sizes are a teaching model from{' '}
+                  <span className="font-mono text-foreground">ikev2Constants.ts</span> — compare
+                  with the true byte counts in Live Wire Capture.
                 </li>
                 <li>
-                  IKE wire packets: messages are not serialized or exchanged over a network — the
-                  diagram and payload sizes come from{' '}
-                  <span className="font-mono text-foreground">ikev2Constants.ts</span>.
-                </li>
-                <li>
-                  Fragmentation/MTU: the over-MTU check is UI-side; charon&apos;s RFC 7383 fragment
-                  assembly never runs.
+                  No ESP data plane: the CHILD_SA is negotiated but no user traffic crosses the
+                  tunnel (userspace libipsec port is the remaining roadmap item).
                 </li>
               </ul>
             </div>
