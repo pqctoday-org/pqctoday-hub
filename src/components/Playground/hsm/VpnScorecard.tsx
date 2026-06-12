@@ -55,14 +55,18 @@ export const VpnScorecard: React.FC<VpnScorecardProps> = ({
 
   const stats = useMemo(() => {
     const totalBytes = packets.reduce((sum, p) => sum + p.bytes.length, 0)
-    // Round trips ~= count of distinct message-id pairs initiator↔responder
-    const exchangeTypes = new Set<number>()
+    // One round trip per distinct (exchangeType, messageId) request/response
+    // pair. Handles multiple IKE_INTERMEDIATE rounds (RFC 9370 allows up to
+    // 7, each with its own Message ID) and excludes INFORMATIONAL traffic.
+    const handshakeMsgIds = new Set<string>()
     let intermediateSeen = false
     let authSeen = false
     let oversizedSeen = false
     for (const p of packets) {
       if (p.header) {
-        exchangeTypes.add(p.header.exchangeType)
+        if (p.header.exchangeType !== EXCHANGE_TYPE.INFORMATIONAL) {
+          handshakeMsgIds.add(`${p.header.exchangeType}:${p.header.messageId}`)
+        }
         if (p.header.exchangeType === EXCHANGE_TYPE.IKE_INTERMEDIATE) intermediateSeen = true
         if (p.header.exchangeType === EXCHANGE_TYPE.IKE_AUTH) authSeen = true
       }
@@ -70,7 +74,7 @@ export const VpnScorecard: React.FC<VpnScorecardProps> = ({
     }
     return {
       totalBytes,
-      roundTrips: exchangeTypes.size, // one round trip per exchange type
+      roundTrips: handshakeMsgIds.size,
       intermediateSeen,
       authSeen,
       oversizedSeen,
