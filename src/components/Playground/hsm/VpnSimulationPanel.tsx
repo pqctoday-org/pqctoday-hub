@@ -2600,8 +2600,6 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     return { total: sum(() => true), initiator: sum((d) => d === 'right') }
   }, [steps])
 
-  const tunnelUp = steps.length > 0 && currentStep === steps.length - 1 && !hasCrashed
-
   // RFC 7383 §2.5.1: only messages carrying an Encrypted (SK) payload can be
   // fragmented. IKE_SA_INIT precedes key establishment, so it can never use
   // SKF — an oversized SA_INIT must survive IP-layer fragmentation or fail.
@@ -2625,6 +2623,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     }
     return false
   }, [currentStep, mtu, allowFragmentation, exchange, steps, charonFailed])
+
+  const tunnelUp = steps.length > 0 && currentStep === steps.length - 1 && !hasCrashed
 
   const handleReset = useCallback(() => {
     setCurrentStep(0)
