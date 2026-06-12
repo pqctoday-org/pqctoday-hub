@@ -36,24 +36,24 @@ export const VPNSSHExercises: React.FC<VPNSSHExercisesProps> = ({
   const scenarios: Scenario[] = [
     {
       id: 'ikev2-classical',
-      title: '1. Classical IKEv2 Handshake (ECP-256)',
+      title: '1. Classical IKEv2 Handshake (MODP-3072)',
       description:
-        'Step through a standard IKEv2 handshake using ECDH Group 19 (secp256r1). Observe the IKE_SA_INIT and IKE_AUTH phases, payload structure, and the compact message sizes with classical DH.',
+        'Step through a standard IKEv2 handshake using DH Group 15 (MODP-3072). Observe the IKE_SA_INIT and IKE_AUTH phases, payload structure, and the compact message sizes with classical DH.',
       badge: 'Classical',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        "The total handshake is approximately 1,400 bytes across 2 round trips. The KE payload carries a 64-byte ECP-256 public key. This baseline is quantum-vulnerable to Shor's algorithm.",
+        "The total handshake is approximately 1,784 bytes across 2 round trips. The KE payload carries a 256-byte MODP-3072 public value. This baseline is quantum-vulnerable to Shor's algorithm.",
       config: { step: 0, ikev2Mode: 'classical' },
     },
     {
       id: 'ikev2-hybrid',
-      title: '2. Hybrid IKEv2 with ML-KEM (AKE)',
+      title: '2. Hybrid IKEv2 with ML-KEM + Additional KE',
       description:
-        'Run a hybrid IKEv2 handshake per draft-ietf-ipsecme-ikev2-mlkem. Notice the Additional Key Exchange (AKE) payload in IKE_INTERMEDIATE that carries the ML-KEM-768 encapsulation key.',
+        'Run a hybrid IKEv2 handshake per draft-ietf-ipsecme-ikev2-mlkem. ML-KEM-768 runs in the primary KE slot of IKE_SA_INIT; classical ECP-256 follows as Additional Key Exchange 1 in IKE_INTERMEDIATE (RFC 9370).',
       badge: 'Hybrid',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'The handshake grows to approximately 3,768 bytes and adds a third round trip for IKE_INTERMEDIATE. The ML-KEM encapsulation key (1,184 B) and ciphertext (1,088 B) dominate the size increase.',
+        'The handshake grows to approximately 3,784 bytes and adds a third round trip for IKE_INTERMEDIATE. The ML-KEM encapsulation key (1,184 B) and ciphertext (1,088 B) in IKE_SA_INIT dominate the size increase.',
       config: { step: 0, ikev2Mode: 'hybrid' },
     },
     {

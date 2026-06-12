@@ -23,7 +23,7 @@ interface VpnScorecardProps {
 // Matches the classical-mode totalBytes model in
 // @/components/PKILearning/modules/VPNSSHModule/data/ikev2Constants so the
 // "vs classical" framing is consistent with the rest of the workshop.
-const CLASSICAL_BASELINE_BYTES = 1400
+const CLASSICAL_BASELINE_BYTES = 1784
 const CLASSICAL_BASELINE_ROUND_TRIPS = 2
 
 const Indicator: React.FC<{ on: boolean; label: string; subtitle?: string }> = ({

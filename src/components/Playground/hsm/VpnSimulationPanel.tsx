@@ -37,7 +37,9 @@ import {
 import {
   IKE_V2_MODES,
   IKE_V2_EXCHANGES,
+  IKE_AUTH_SK_BYTES,
   type IKEv2Mode,
+  type IKEv2Message,
   type IKEv2Payload,
 } from '@/components/PKILearning/modules/VPNSSHModule/data/ikev2Constants'
 import {
@@ -527,11 +529,13 @@ const PayloadCard: React.FC<{
 // ── C6: IKE phase annotation for charon.log entries ───────────────────────────
 type IkePhase = 'SETUP' | 'IKE_SA_INIT' | 'IKE_INTERMEDIATE' | 'IKE_AUTH'
 
-function getIkePhase(text: string, mode: IKEv2Mode): IkePhase | null {
+function getIkePhase(text: string): IkePhase | null {
   if (/C_Initialize|C_OpenSession|C_Login|C_GetSlotList|C_GetSlotInfo/.test(text)) return 'SETUP'
   if (/C_GenerateKeyPair|C_GenerateKey/.test(text)) return 'IKE_SA_INIT'
-  if (/EncapsulateKey|DecapsulateKey/.test(text))
-    return mode === 'hybrid' ? 'IKE_INTERMEDIATE' : 'IKE_SA_INIT'
+  // ML-KEM runs in the primary KE slot of IKE_SA_INIT in both hybrid and
+  // pure-pqc modes; the hybrid Additional KE (ECDH) round is the [SIM]-tagged
+  // IKE_INTERMEDIATE narration, not a C_* call.
+  if (/EncapsulateKey|DecapsulateKey/.test(text)) return 'IKE_SA_INIT'
   if (/C_Sign|C_Verify|C_Find|CERT/.test(text)) return 'IKE_AUTH'
   return null
 }
@@ -1027,10 +1031,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       // strongSwan 6.x proposal grammar (RFC 9370 multiple-key-exchange):
       //   pure-pqc:  aes256-sha384-mlkem768           — IKE_SA_INIT only
       //   classical: aes256-sha256-modp3072            — IKE_SA_INIT only
-      //   hybrid:    aes256-sha384-mlkem768-ke1_ecp256 — ML-KEM in IKE_SA_INIT,
-      //              then real IKE_INTERMEDIATE round with ECP-256 (RFC 9242).
-      // The `ke1_*` token names a secondary KE; charon uses IKE_INTERMEDIATE
-      // (built into core 6.0+) and the openssl plugin's ECDH for the second round.
+      //   hybrid:    aes256-sha384-mlkem768-ke1_ecp256 — ML-KEM in IKE_SA_INIT
+      //              (real C_Encapsulate/DecapsulateKey on the HSM), then an
+      //              IKE_INTERMEDIATE round with ECP-256 as Additional KE 1
+      //              (RFC 9242/9370). The additional-KE exchange logic is not
+      //              in this WASM build, so that round is narrated as [SIM]
+      //              log entries rather than executed by charon.
       let modeIke = 'aes256-sha384-mlkem768!'
       if (mode === 'classical') modeIke = 'aes256-sha256-modp3072!'
       if (mode === 'hybrid') modeIke = 'aes256-sha384-mlkem768-ke1_ecp256!'
@@ -2395,7 +2401,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 })
                 strongSwanEngine.dispatchLog({
                   level: 'info',
-                  text: '[SIM] Hybrid SKEYSEED rekeyed after IKE_INTERMEDIATE: prf(SK_d, ML-KEM-768 secret | Ni | Nr) per RFC 9370 §2.2.2',
+                  text: '[SIM] Hybrid SKEYSEED rekeyed after IKE_INTERMEDIATE: prf(SK_d, ECDH-P256 secret | Ni | Nr) per RFC 9370 §2.2.2',
                 })
               }, 100)
             }
@@ -2509,8 +2515,33 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   const exchange = IKE_V2_EXCHANGES[selectedMode]
   const modeConfig = IKE_V2_MODES.find((m) => m.id === selectedMode)
 
+  // Displayed auth algorithm per side. PSK carries no CERT payload; cert
+  // ("dual") mode is dominated by the certificate + AUTH signature bytes.
+  const initiatorAuthAlg =
+    authMode === 'psk' ? 'PSK' : clientAlg === 'RSA' ? clientClassAlg : `ML-DSA-${clientSize}`
+  const responderAuthAlg =
+    authMode === 'psk' ? 'PSK' : serverAlg === 'RSA' ? serverClassAlg : `ML-DSA-${serverSize}`
+
   const steps = useMemo(() => {
     if (!exchange) return []
+    // Re-size the IKE_AUTH SK payload for cert-based auth (IKE_AUTH_SK_BYTES);
+    // the static exchange data models the PSK baseline.
+    const sizeAuth = (msg: IKEv2Message, alg: string): IKEv2Message => {
+      const sk = IKE_AUTH_SK_BYTES[alg]
+      if (alg === 'PSK' || !sk) return msg
+      return {
+        ...msg,
+        payloads: msg.payloads.map((p) =>
+          p.abbreviation === 'SK'
+            ? {
+                ...p,
+                sizeBytes: sk,
+                description: `ID, CERT (${alg}), AUTH, SA, TSi, TSr (encrypted)`,
+              }
+            : p
+        ),
+      }
+    }
     const result = [
       {
         label: 'IKE_SA_INIT Request',
@@ -2543,16 +2574,26 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       {
         label: 'IKE_AUTH Request',
         direction: 'right' as const,
-        message: exchange.ikeAuth.initiator,
+        message: sizeAuth(exchange.ikeAuth.initiator, initiatorAuthAlg),
       },
       {
         label: 'IKE_AUTH Response',
         direction: 'left' as const,
-        message: exchange.ikeAuth.responder,
+        message: sizeAuth(exchange.ikeAuth.responder, responderAuthAlg),
       }
     )
     return result
-  }, [exchange])
+  }, [exchange, initiatorAuthAlg, responderAuthAlg])
+
+  // Wire totals for the stats tiles — derived from the rendered steps so
+  // cert-auth IKE_AUTH sizing is reflected (exchange.totalBytes is PSK-baseline).
+  const wireTotals = useMemo(() => {
+    const sum = (filter: (d: 'right' | 'left') => boolean) =>
+      steps
+        .filter((s) => filter(s.direction))
+        .reduce((a, s) => a + s.message.payloads.reduce((x, p) => x + p.sizeBytes, 0), 0)
+    return { total: sum(() => true), initiator: sum((d) => d === 'right') }
+  }, [steps])
 
   // RFC 7383 §2.5.1: only messages carrying an Encrypted (SK) payload can be
   // fragmented. IKE_SA_INIT precedes key establishment, so it can never use
@@ -3461,9 +3502,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 </label>
               </div>
               <p className="text-[10px] text-muted-foreground mt-1">
-                PQC key exchange payloads are 10–16× larger than classical DH (ML-KEM-768
-                encapsulation key: 1,184 B vs. ECP-256: 64 B), often exceeding UDP MTU. RFC 7383
-                splits oversized IKE messages into fragments reassembled before processing.
+                PQC key exchange payloads are 5–18× larger than classical DH (ML-KEM-768
+                encapsulation key: 1,184 B vs. MODP-3072: 256 B or ECP-256: 64 B), often exceeding
+                UDP MTU. RFC 7383 splits oversized SK-carrying IKE messages into fragments
+                reassembled before processing — IKE_SA_INIT itself can never be fragmented.
               </p>
             </div>
           </div>
@@ -4415,7 +4457,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             <div className="text-muted-foreground/50 italic">Awaiting daemon initialization...</div>
           ) : (
             ssLogs.map((log, i) => {
-              const phase = getIkePhase(log.text, selectedMode)
+              const phase = getIkePhase(log.text)
               return (
                 <div
                   key={i}
@@ -4463,15 +4505,13 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             </span>
           </div>
           <div className="p-3 rounded-xl bg-card border border-border flex flex-col justify-center items-center">
-            <span className="text-xl font-bold">{exchange.totalBytes.toLocaleString()}</span>
+            <span className="text-xl font-bold">{wireTotals.total.toLocaleString()}</span>
             <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-1">
               Total Bytes
             </span>
           </div>
           <div className="p-3 rounded-xl bg-card border border-border flex flex-col justify-center items-center">
-            <span className="text-xl font-bold">
-              {exchange.totalInitiatorBytes.toLocaleString()}
-            </span>
+            <span className="text-xl font-bold">{wireTotals.initiator.toLocaleString()}</span>
             <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-1">
               Initiator Bytes
             </span>
@@ -4502,7 +4542,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           </div>
           <div className="p-3 rounded-xl bg-card border border-border flex flex-col justify-center items-start overflow-hidden">
             <span className="text-[11px] font-bold font-mono truncate w-full">
-              {selectedMode === 'pure-pqc' ? 'ML-DSA-65 (pending)' : 'RSA-3072'}
+              {initiatorAuthAlg === responderAuthAlg
+                ? initiatorAuthAlg
+                : `${initiatorAuthAlg} / ${responderAuthAlg}`}
             </span>
             <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-1">
               Auth Algorithm
@@ -4606,7 +4648,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             <pre className="text-[11px] font-mono bg-muted/40 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap break-all leading-relaxed">
               {selectedMode === 'pure-pqc'
                 ? `SKEYSEED = prf(Ni ‖ Nr, ss_kem)\n         = PRF-HMAC-SHA-256(Ni ‖ Nr,\n             0x${kemSecrets.responder?.hex ?? '…'})`
-                : `SKEYSEED  = prf(Ni ‖ Nr, g^ir)\n                              ↑ ECDH secret (IKE_SA_INIT)\nSKEYSEED' = prf(SK_d, ss_kem ‖ Ni ‖ Nr)\n                      ↑ ML-KEM-768 secret (after IKE_INTERMEDIATE)\n            ss_kem = 0x${kemSecrets.responder?.hex ?? '…'}`}
+                : `SKEYSEED  = prf(Ni ‖ Nr, ss_kem)\n                              ↑ ML-KEM-768 secret (IKE_SA_INIT)\nSKEYSEED' = prf(SK_d, g^ir ‖ Ni ‖ Nr)\n                      ↑ ECDH ECP-256 secret (after IKE_INTERMEDIATE)\n            ss_kem = 0x${kemSecrets.responder?.hex ?? '…'}`}
             </pre>
             <div className="text-[11px] text-muted-foreground space-y-1">
               {selectedMode === 'pure-pqc' ? (
