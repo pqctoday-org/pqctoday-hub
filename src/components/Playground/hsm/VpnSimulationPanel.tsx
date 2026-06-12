@@ -4782,13 +4782,13 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         {clientAlg === 'ML-DSA' || serverAlg === 'ML-DSA' ? (
                           <>
                             <span className="font-semibold text-status-warning">
-                              ML-DSA cert generation is real, daemon handshake is not.
+                              ML-DSA cert generation and the IKE handshake are both real.
                             </span>{' '}
-                            Generate Certs will produce a real ML-DSA-{clientSize}–signed X.509 via
-                            softhsmv3 (visible in Inspect + HSM Key panels + PKCS#11 log). The IKE
-                            daemon can attempt an ML-DSA handshake (experimental — charon looks up
-                            the private key via CKA_ID and signs IKE_AUTH with C_Sign); if it fails
-                            to establish, switch both selectors to RSA.
+                            Generate Certs produces a real ML-DSA-{clientSize}–signed X.509 in the
+                            worker softhsmv3 (visible in Inspect + HSM Key panels + PKCS#11 log),
+                            and the daemon runs the ML-DSA handshake end-to-end: charon looks up the
+                            private key via CKA_ID and signs IKE_AUTH with C_Sign (CKM_ML_DSA) in
+                            its in-process softhsmv3.
                           </>
                         ) : (
                           <>
