@@ -17,6 +17,9 @@ import {
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { VpnWireVisualization } from './VpnWireVisualization'
+import { VpnPacketInspector } from './VpnPacketInspector'
+import { VpnScorecard } from './VpnScorecard'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { HsmKeyInspector } from '../../shared/HsmKeyInspector'
 import { Pkcs11LogPanel } from '../../shared/Pkcs11LogPanel'
@@ -2595,6 +2598,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     return { total: sum(() => true), initiator: sum((d) => d === 'right') }
   }, [steps])
 
+  const tunnelUp = steps.length > 0 && currentStep === steps.length - 1 && !hasCrashed
+
   // RFC 7383 §2.5.1: only messages carrying an Encrypted (SK) payload can be
   // fragmented. IKE_SA_INIT precedes key establishment, so it can never use
   // SKF — an oversized SA_INIT must survive IP-layer fragmentation or fail.
@@ -4479,6 +4484,31 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             })
           )}
         </div>
+      </div>
+
+      <div className="pt-4 border-t border-border space-y-3">
+        <h4 className="text-sm font-bold flex items-center gap-2 mb-3">
+          <ArrowRight size={16} /> Live Wire Capture
+        </h4>
+        <p className="text-[10px] text-muted-foreground -mt-2">
+          Real IKE messages routed between the two charon WASM workers. Click a packet to inspect
+          its ISAKMP header and hex dump.
+        </p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+          <VpnWireVisualization
+            tunnelEstablished={tunnelUp}
+            mtu={mtu}
+            fragmentationEnabled={allowFragmentation}
+          />
+          <VpnPacketInspector />
+        </div>
+        <VpnScorecard
+          tunnelEstablished={tunnelUp}
+          keMode={selectedMode}
+          authAlg={initiatorAuthAlg}
+          fragmentationEnabled={allowFragmentation}
+          mtu={mtu}
+        />
       </div>
 
       <div className="pt-4 border-t border-border">

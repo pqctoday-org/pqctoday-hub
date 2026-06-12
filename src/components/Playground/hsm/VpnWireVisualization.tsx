@@ -39,6 +39,11 @@ const classifyPacket = (
 ): BubbleStatus => {
   const exchangeType = packet.header?.exchangeType ?? 0
   const oversized = packet.bytes.length > mtu
+  if (oversized && exchangeType === EXCHANGE_TYPE.IKE_SA_INIT) {
+    // RFC 7383 cannot fragment IKE_SA_INIT (no SK payload yet) — an
+    // over-MTU SA_INIT survives only via IP-layer fragmentation.
+    return { color: 'fill-warning', status: 'fragmented', label: 'IP-FRAG' }
+  }
   if (oversized && !fragmentationEnabled) {
     return { color: 'fill-destructive', status: 'dropped', label: 'DROPPED' }
   }
