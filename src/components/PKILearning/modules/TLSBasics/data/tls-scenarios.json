@@ -82,7 +82,7 @@
       "quantum_safe": true,
       "config": {
         "sigAlg": "mldsa65",
-        "kexGroup": "ML-KEM-1024",
+        "kexGroup": "MLKEM1024",
         "cipherSuite": "TLS_AES_256_GCM_SHA384"
       },
       "considerations": [
@@ -90,7 +90,7 @@
         "Handshake ~10-12 KB — check MTU and connection latency budget",
         "Pure PQC (no classical fallback) — ensure all endpoints support FIPS 203/204",
         "Not yet widely deployed in production; suitable for high-security pilot deployments",
-        "Use in CNSA 2.0 compliant systems per NSA guidance"
+        "Stepping stone toward CNSA 2.0 — full CNSA 2.0 compliance requires ML-DSA-87 for signatures (with ML-KEM-1024)"
       ]
     }
   ],

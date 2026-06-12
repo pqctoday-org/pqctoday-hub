@@ -93,8 +93,8 @@ describe('tls-learning.store migration v1 -> v2', () => {
     })
   })
 
-  it('preserves a customized groups array across migration', () => {
-    const customized = ['ML-KEM-1024'] // user explicitly chose pure PQC L5
+  it('preserves a customized groups selection across migration (canonicalized in v3)', () => {
+    const customized = ['ML-KEM-1024'] // user explicitly chose pure PQC L5 (legacy spelling)
     const v1State = {
       state: {
         clientConfig: {
@@ -127,8 +127,77 @@ describe('tls-learning.store migration v1 -> v2', () => {
 
     return useTLSStore.persist.rehydrate()?.then(() => {
       const { clientConfig, serverConfig } = useTLSStore.getState()
-      expect(clientConfig.groups).toEqual(customized)
-      expect(serverConfig.groups).toEqual(customized)
+      // Selection intent (pure ML-KEM-1024) survives, spelled the way OpenSSL accepts
+      expect(clientConfig.groups).toEqual(['MLKEM1024'])
+      expect(serverConfig.groups).toEqual(['MLKEM1024'])
+    })
+  })
+})
+
+describe('tls-learning.store migration v2 -> v3', () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
+  const makeV2State = (groups: string[]) => ({
+    state: {
+      clientConfig: {
+        cipherSuites: ['TLS_AES_256_GCM_SHA384'],
+        groups,
+        signatureAlgorithms: ['mldsa65'],
+        certificates: {},
+        rawConfig: '# v2',
+        mode: 'ui',
+        verifyClient: false,
+        clientAuthEnabled: true,
+      },
+      serverConfig: {
+        cipherSuites: ['TLS_AES_256_GCM_SHA384'],
+        groups,
+        signatureAlgorithms: ['mldsa65'],
+        certificates: {},
+        rawConfig: '# v2',
+        mode: 'ui',
+        verifyClient: false,
+        clientAuthEnabled: true,
+      },
+      runHistory: [],
+      clientMessage: '',
+      serverMessage: '',
+    },
+    version: 2,
+  })
+
+  it('renames hyphenated ML-KEM groups to OpenSSL TLS names and drops X448MLKEM1024', () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(makeV2State(['ML-KEM-768', 'X448MLKEM1024', 'X25519']))
+    )
+
+    return useTLSStore.persist.rehydrate()?.then(() => {
+      const { clientConfig, serverConfig } = useTLSStore.getState()
+      expect(clientConfig.groups).toEqual(['MLKEM768', 'X25519'])
+      expect(serverConfig.groups).toEqual(['MLKEM768', 'X25519'])
+    })
+  })
+
+  it('falls back to default groups when the migration would empty the list', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(makeV2State(['X448MLKEM1024'])))
+
+    return useTLSStore.persist.rehydrate()?.then(() => {
+      const { clientConfig } = useTLSStore.getState()
+      expect(clientConfig.groups[0]).toBe('X25519MLKEM768')
+      expect(clientConfig.groups.length).toBeGreaterThan(0)
+    })
+  })
+
+  it('leaves already-canonical group names untouched', () => {
+    const canonical = ['X25519MLKEM768', 'MLKEM512', 'P-256']
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(makeV2State(canonical)))
+
+    return useTLSStore.persist.rehydrate()?.then(() => {
+      const { clientConfig } = useTLSStore.getState()
+      expect(clientConfig.groups).toEqual(canonical)
     })
   })
 })
