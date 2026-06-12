@@ -20,6 +20,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { VpnWireVisualization } from './VpnWireVisualization'
 import { VpnPacketInspector } from './VpnPacketInspector'
 import { VpnScorecard } from './VpnScorecard'
+import { VpnLearnSection } from './VpnLearnSection'
+import { VpnComparisonPanel } from './VpnComparisonPanel'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { HsmKeyInspector } from '../../shared/HsmKeyInspector'
 import { Pkcs11LogPanel } from '../../shared/Pkcs11LogPanel'
@@ -3301,6 +3303,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     <div className="space-y-6">
       <ChromiumGateBanner feature="PQC VPN simulation" />
 
+      {/* Learn section — mirrors SshSimulationPanel's SshLearnSection placement */}
+      <VpnLearnSection />
+
       {/* Scope-transparency banner — what is real vs. simulated in this panel */}
       <div className="p-3 border border-border rounded-lg bg-muted/20 text-xs">
         <div className="font-bold text-foreground mb-2 flex items-center gap-2">
@@ -3457,6 +3462,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     variant="ghost"
                     key={mode.id}
                     onClick={() => handleModeChange(mode.id)}
+                    aria-pressed={selectedMode === mode.id}
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
                       selectedMode === mode.id
                         ? 'bg-primary/20 border-primary/50 text-primary'
@@ -4116,6 +4122,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             onClick={handleReset}
             className="p-2 border border-border rounded hover:bg-muted"
             title="Restart Simulation"
+            aria-label="Restart Simulation"
           >
             <RotateCcw size={16} />
           </Button>
@@ -4753,6 +4760,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   <Button
                     variant="ghost"
                     onClick={() => setAuthMode('psk')}
+                    aria-pressed={authMode === 'psk'}
                     className={`px-3 py-1 rounded text-xs font-medium border transition-colors ${authMode === 'psk' ? 'bg-primary/20 border-primary/50 text-primary' : 'bg-muted/50 border-border text-muted-foreground hover:bg-muted'}`}
                   >
                     PSK Only
@@ -4760,6 +4768,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   <Button
                     variant="ghost"
                     onClick={() => setAuthMode('dual')}
+                    aria-pressed={authMode === 'dual'}
                     className={`px-3 py-1 rounded text-xs font-medium border transition-colors ${authMode === 'dual' ? 'bg-primary/20 border-primary/50 text-primary' : 'bg-muted/50 border-border text-muted-foreground hover:bg-muted'}`}
                   >
                     Certificate (pubkey)
@@ -5075,6 +5084,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           </div>
         </div>
       </div>
+
+      {/* Comparison panel — mirrors SshSimulationPanel's SshComparisonPanel placement */}
+      <VpnComparisonPanel selectedMode={selectedMode} />
 
       <div className="pt-4 border-t border-border">
         <h4 className="text-sm font-bold flex items-center gap-2 mb-3">
