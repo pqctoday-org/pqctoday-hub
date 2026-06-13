@@ -404,13 +404,11 @@ system_default = system_default_sect
             if (!cfg || typeof cfg !== 'object') return
             const config = cfg as { groups?: unknown }
             if (!Array.isArray(config.groups)) return
-            config.groups = config.groups
+            const groups = config.groups
               .filter((g): g is string => typeof g === 'string' && g !== 'X448MLKEM1024')
               .map((g) => V3_GROUP_RENAMES[g] ?? g)
             // Never leave an empty group list behind (e.g. X448-only selection)
-            if (config.groups.length === 0) {
-              config.groups = [...DEFAULT_CONFIG.groups]
-            }
+            config.groups = groups.length === 0 ? [...DEFAULT_CONFIG.groups] : groups
           }
           canonicalizeGroups(state.clientConfig)
           canonicalizeGroups(state.serverConfig)
