@@ -33,6 +33,8 @@ interface WorkshopStepCardProps {
   isCompleted: boolean
   onBack: (() => void) | null
   onNext: (() => void) | null
+  /** Rendered in place of Next on the last step — completes + exits the workshop. */
+  onFinish?: (() => void) | null
   onSkip: () => void
   onMarkComplete: () => void
 }
@@ -45,6 +47,7 @@ export const WorkshopStepCard: React.FC<WorkshopStepCardProps> = ({
   isCompleted,
   onBack,
   onNext,
+  onFinish,
   onSkip,
   onMarkComplete,
 }) => {
@@ -394,16 +397,23 @@ export const WorkshopStepCard: React.FC<WorkshopStepCardProps> = ({
             </Button>
           )}
 
-          <Button
-            variant="gradient"
-            size="sm"
-            onClick={onNext ?? undefined}
-            disabled={!onNext}
-            aria-label="Next step"
-          >
-            Next
-            <ArrowRight size={16} className="ml-1" />
-          </Button>
+          {onFinish ? (
+            <Button variant="gradient" size="sm" onClick={onFinish} aria-label="Finish workshop">
+              <Check size={16} className="mr-1" />
+              Finish
+            </Button>
+          ) : (
+            <Button
+              variant="gradient"
+              size="sm"
+              onClick={onNext ?? undefined}
+              disabled={!onNext}
+              aria-label="Next step"
+            >
+              Next
+              <ArrowRight size={16} className="ml-1" />
+            </Button>
+          )}
         </div>
       </div>
     </div>

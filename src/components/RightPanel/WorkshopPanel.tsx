@@ -18,7 +18,13 @@ import {
 import { Button } from '@/components/ui/button'
 import { useWorkshopStore } from '@/store/useWorkshopStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
-import { flattenFlow, getNextStep, getPrevStep, findStepIndex } from '@/data/workshopRegistry'
+import {
+  flattenFlow,
+  getNextStep,
+  getPrevStep,
+  findStepIndex,
+  stepMatchesContext,
+} from '@/data/workshopRegistry'
 import type { WorkshopChapter, WorkshopFlow, WorkshopRegion, WorkshopStep } from '@/types/Workshop'
 import { WorkshopPrereqList } from './WorkshopPrereqList'
 import { labelForRegion } from '@/utils/workshopRegion'
@@ -142,8 +148,16 @@ export const WorkshopPanel: React.FC = () => {
   }, [personaRegion])
 
   // Manifest hook resolves the matched flow + honors the user's flowOverrideId.
-  const { manifest, activeEntry, matchedEntry, compatibleEntries, activeFlow, isLoading } =
-    useWorkshopManifest(pickedRegion)
+  const {
+    manifest,
+    activeEntry,
+    matchedEntry,
+    compatibleEntries,
+    activeFlow,
+    isLoading,
+    error: manifestError,
+    retry: retryManifest,
+  } = useWorkshopManifest(pickedRegion)
 
   const flowOverrideId = useWorkshopStore((s) => s.flowOverrideId)
   const setFlowOverrideId = useWorkshopStore((s) => s.setFlowOverrideId)
@@ -187,6 +201,16 @@ export const WorkshopPanel: React.FC = () => {
         </div>
         <p className="text-xs text-muted-foreground">{headerSubtitle}</p>
       </header>
+
+      {manifestError && !manifest && (
+        <section className="rounded-lg border border-status-warning/40 bg-card p-3 space-y-2">
+          <p className="text-sm text-foreground">Couldn&apos;t load the workshop catalogue.</p>
+          <p className="text-xs text-muted-foreground break-all">{manifestError.message}</p>
+          <Button variant="outline" size="sm" onClick={retryManifest}>
+            Retry
+          </Button>
+        </section>
+      )}
 
       {/* Per-flow inner tab bar — one tab per compatible flow, generic last. */}
       {compatibleEntries.length > 1 && (
@@ -328,7 +352,13 @@ export const WorkshopPanel: React.FC = () => {
           disabled={!activeFlow || !prereqsReady}
           onClick={() => {
             if (!activeFlow || !pickedRegion) return
-            const steps = flattenFlow(activeFlow, pickedRegion)
+            const steps = flattenFlow(
+              activeFlow,
+              pickedRegion,
+              personaIndustry ?? undefined,
+              personaRole ?? undefined,
+              personaProf ?? undefined
+            )
             if (steps.length === 0) return
             primeTtsIfEnabled(ttsEnabled)
             start(activeFlow.id, steps[0].id, pickedRegion)
@@ -493,7 +523,13 @@ export const WorkshopPanel: React.FC = () => {
           disabled={!activeFlow || !prereqsReady}
           onClick={() => {
             if (!activeFlow || !pickedRegion) return
-            const steps = flattenFlow(activeFlow, pickedRegion)
+            const steps = flattenFlow(
+              activeFlow,
+              pickedRegion,
+              personaIndustry ?? undefined,
+              personaRole ?? undefined,
+              personaProf ?? undefined
+            )
             if (steps.length === 0) return
             primeTtsIfEnabled(ttsEnabled)
             startVideo(activeFlow.id, steps[0].id, pickedRegion)
@@ -553,19 +589,37 @@ interface FlowAgendaProps {
 
 const FlowAgenda: React.FC<FlowAgendaProps> = ({ flow, region }) => {
   const regionChapter = flow.regions?.[region]
+  const role = usePersonaStore((s) => s.selectedPersona)
+  const proficiency = usePersonaStore((s) => s.experienceLevel)
+  const industry = usePersonaStore((s) => s.selectedIndustry)
+
+  // Apply the same step-level `when:` filtering as flattenFlow so the agenda
+  // previews exactly the steps a started workshop will contain.
+  const scope = (chapter: WorkshopChapter): WorkshopChapter => ({
+    ...chapter,
+    steps: chapter.steps.filter((s) =>
+      stepMatchesContext(
+        s,
+        region,
+        industry ?? undefined,
+        role ?? undefined,
+        proficiency ?? undefined
+      )
+    ),
+  })
 
   // Ordered chapter list, inserting the region chapter just before the 'action'
   // chapter (matches flattenFlow's order).
   const orderedChapters: { chapter: WorkshopChapter; regionLabel?: string }[] = []
-  orderedChapters.push({ chapter: flow.intro })
-  orderedChapters.push({ chapter: flow.prerequisites })
+  orderedChapters.push({ chapter: scope(flow.intro) })
+  orderedChapters.push({ chapter: scope(flow.prerequisites) })
   for (const c of flow.common) {
     if (c.id === 'action' && regionChapter) {
-      orderedChapters.push({ chapter: regionChapter, regionLabel: labelForRegion(region) })
+      orderedChapters.push({ chapter: scope(regionChapter), regionLabel: labelForRegion(region) })
     }
-    orderedChapters.push({ chapter: c })
+    orderedChapters.push({ chapter: scope(c) })
   }
-  orderedChapters.push({ chapter: flow.close })
+  orderedChapters.push({ chapter: scope(flow.close) })
 
   const scopedMinutes = orderedChapters.reduce((s, { chapter }) => s + (chapter.estMinutes ?? 0), 0)
 
@@ -679,10 +733,19 @@ const RunningView: React.FC<RunningViewProps> = ({
   onResume,
 }) => {
   const navigate = useNavigate()
+  const role = usePersonaStore((s) => s.selectedPersona)
+  const proficiency = usePersonaStore((s) => s.experienceLevel)
+  const industry = usePersonaStore((s) => s.selectedIndustry)
   const steps: WorkshopStep[] = useMemo(() => {
     if (!flow || !selectedRegion) return []
-    return flattenFlow(flow, selectedRegion)
-  }, [flow, selectedRegion])
+    return flattenFlow(
+      flow,
+      selectedRegion,
+      industry ?? undefined,
+      role ?? undefined,
+      proficiency ?? undefined
+    )
+  }, [flow, selectedRegion, industry, role, proficiency])
 
   const idx = currentStepId ? findStepIndex(steps, currentStepId) : -1
   const step: WorkshopStep | null = idx >= 0 ? steps[idx] : (steps[0] ?? null)
@@ -717,6 +780,14 @@ const RunningView: React.FC<RunningViewProps> = ({
     onAdvance(next.id)
     // Skip = navigate but do not mark complete
     navigate(buildStepUrl(next))
+  }
+  // Last step: Finish marks the step done and exits without the confirm
+  // dialog (there is nothing left to lose — progress is saved).
+  const handleFinish = (): void => {
+    if (!step) return
+    onMarkComplete(step.id)
+    window.dispatchEvent(new CustomEvent('workshop-finished'))
+    onExit()
   }
 
   return (
@@ -766,6 +837,7 @@ const RunningView: React.FC<RunningViewProps> = ({
         isCompleted={completedStepIds.includes(step.id)}
         onBack={prev ? handleBack : null}
         onNext={next ? handleNext : null}
+        onFinish={next ? null : handleFinish}
         onSkip={handleSkip}
         onMarkComplete={() => onMarkComplete(step.id)}
       />

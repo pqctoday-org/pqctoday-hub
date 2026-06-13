@@ -8,7 +8,9 @@ import {
 import { useWorkshopOverlayStore } from '@/store/useWorkshopOverlayStore'
 import { flattenFlow, findStepIndex, getNextStep, getPrevStep } from '@/data/workshopRegistry'
 import { useWorkshopManifest } from '@/hooks/useWorkshopManifest'
-import type { WorkshopStep, WorkshopFixtures } from '@/types/Workshop'
+import { useWorkshopFixtures } from '@/hooks/useWorkshopFixtures'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import type { WorkshopStep } from '@/types/Workshop'
 import { VideoControlBar } from './VideoControlBar'
 
 /**
@@ -32,19 +34,29 @@ export const VideoOverlay: React.FC = () => {
   const setCaption = useWorkshopOverlayStore((s) => s.setCaption)
   const clearOverlays = useWorkshopOverlayStore((s) => s.clearOverlays)
 
-  // Hydrate the active flow from the JSON manifest (not the build-time
-  // WORKSHOP_FLOWS array). The hook also reads any flowOverrideId so a
-  // user-picked flow from Browse-all is honored here too.
+  // Hydrate the active flow from the JSON manifest. While a workshop is
+  // active the hook pins the flow to the store's currentFlowId, so the step
+  // list always belongs to the workshop that was started (not whatever the
+  // persona context happens to match after a reload).
   const { activeFlow: flow } = useWorkshopManifest(selectedRegion)
+  const role = usePersonaStore((s) => s.selectedPersona)
+  const proficiency = usePersonaStore((s) => s.experienceLevel)
+  const industry = usePersonaStore((s) => s.selectedIndustry)
   const steps = useMemo<WorkshopStep[]>(() => {
     if (!flow || !selectedRegion) return []
-    return flattenFlow(flow, selectedRegion)
-  }, [flow, selectedRegion])
+    return flattenFlow(
+      flow,
+      selectedRegion,
+      industry ?? undefined,
+      role ?? undefined,
+      proficiency ?? undefined
+    )
+  }, [flow, selectedRegion, industry, role, proficiency])
 
   const stepIdx = currentStepId ? findStepIndex(steps, currentStepId) : -1
   const step: WorkshopStep | null = stepIdx >= 0 ? steps[stepIdx] : null
 
-  const [fixtures, setFixtures] = useState<WorkshopFixtures>({})
+  const fixtures = useWorkshopFixtures(flow)
   const [paused, setPaused] = useState(false)
   const startTimeRef = useRef<number>(0)
   const pausedAtRef = useRef<number | null>(null)
@@ -53,37 +65,6 @@ export const VideoOverlay: React.FC = () => {
   const stepIdRef = useRef<string | null>(null)
   const restartTokenRef = useRef<number>(0)
   const [restartToken, setRestartToken] = useState(0)
-
-  // Load fixtures from public/<flow.fixturesUrl> at video start.
-  useEffect(() => {
-    if (mode !== 'video') return
-    if (!flow) return
-    const inline = flow.fixtures
-    if (inline) {
-      setFixtures(inline)
-      return
-    }
-    const url = flow.fixturesUrl
-    if (!url) return
-    let cancelled = false
-    fetch(url)
-      .then((r) => (r.ok ? r.json() : {}))
-      .then((data) => {
-        if (cancelled) return
-        const clean: WorkshopFixtures = {}
-        for (const [k, v] of Object.entries(data ?? {})) {
-          if (k.startsWith('$') || k.startsWith('_')) continue
-          if (v && typeof v === 'object') clean[k] = v as Record<string, never>
-        }
-        setFixtures(clean)
-      })
-      .catch(() => {
-        // Keep fixtures empty — fill cues silently no-op.
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [mode, flow])
 
   // Initialise step on entry (or on restart): navigate, set initial caption,
   // dispatch event, reset clock and cue cursor.
@@ -233,7 +214,9 @@ export const VideoOverlay: React.FC = () => {
     setStep(prevStep.id)
   }
   const handleNext = (): void => advanceToNext()
-  const handleSkip = (): void => advanceToNext()
+  // Skip advances WITHOUT marking the step complete — mirrors the Workshop
+  // Mode panel's Skip semantics (Next = done, Skip = move on without credit).
+  const handleSkip = (): void => advanceToNext(false)
   const handleRestart = (): void => setRestartToken((t) => t + 1)
   const handleExit = (): void => exit()
 
@@ -253,12 +236,14 @@ export const VideoOverlay: React.FC = () => {
     />
   )
 
-  function advanceToNext(): void {
+  function advanceToNext(markComplete = true): void {
     if (!step) return
-    markStepComplete(step.id)
-    window.dispatchEvent(
-      new CustomEvent('workshop-step-completed', { detail: { stepId: step.id } })
-    )
+    if (markComplete) {
+      markStepComplete(step.id)
+      window.dispatchEvent(
+        new CustomEvent('workshop-step-completed', { detail: { stepId: step.id } })
+      )
+    }
     const next = getNextStep(steps, step.id)
     if (!next) {
       window.dispatchEvent(new CustomEvent('workshop-finished'))
