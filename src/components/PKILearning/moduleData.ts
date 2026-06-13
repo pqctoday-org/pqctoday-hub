@@ -613,6 +613,36 @@ export const MODULE_CATALOG: Record<string, CatalogModule> = validateCatalog({
     difficulty: 'intermediate',
     frameworkPhase: 'p6',
   },
+  'soc-implementation-pqc': {
+    id: 'soc-implementation-pqc',
+    lm_id: 'LM-057',
+    title: 'SOC Implementation for PQC',
+    description:
+      'Operationalize PQC defense in the SOC: five detection use cases (hybrid downgrade, crypto drift, certificate-lifecycle anomalies, signature integrity, HNDL indicators), the posture registry they depend on, detection-engineering and CTI skills, and a phased SOC implementation plan with four quantum playbooks.',
+    duration: '60 min',
+    difficulty: 'advanced',
+    frameworkPhase: 'p6',
+  },
+  'pqc-grc': {
+    id: 'pqc-grc',
+    lm_id: 'LM-058',
+    title: 'PQC GRC',
+    description:
+      'Wire post-quantum risk into governance, risk, and compliance: cascade Key Risk Indicators from board to operational level, triage a deferral exception register into SOC suppression, and hand off cleanly between GRC and the SOC.',
+    duration: '30 min',
+    difficulty: 'intermediate',
+    frameworkPhase: 'foundations',
+  },
+  'skills-team-structure': {
+    id: 'skills-team-structure',
+    lm_id: 'LM-059',
+    title: 'Skills & Team Structure',
+    description:
+      'Size and staff the PQC migration program: convert your cryptographic estate into an FTE estimate with the 1-FTE-per-500-instances heuristic, build a federated Crypto Champion roster, and track each champion’s readiness commitments.',
+    duration: '30 min',
+    difficulty: 'intermediate',
+    frameworkPhase: 'foundations',
+  },
   quiz: {
     id: 'quiz',
     title: 'PQC Quiz',
@@ -682,6 +712,9 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'secure-boot-pqc': 5,
   'os-pqc': 5,
   'pki-enrollment-protocols': 6,
+  'soc-implementation-pqc': 5,
+  'pqc-grc': 2,
+  'skills-team-structure': 2,
   quiz: 1, // Special: no LEARN_SECTIONS or WORKSHOP_STEPS — quiz engine tracks its own progress
   assess: 1, // Special: assessment wizard — only in step counts for overall progress tracking
 }
@@ -788,6 +821,9 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = validat
       MODULE_CATALOG['vendor-risk'],
       MODULE_CATALOG['migration-program'],
       MODULE_CATALOG['pqc-team'],
+      MODULE_CATALOG['skills-team-structure'],
+      MODULE_CATALOG['pqc-grc'],
+      MODULE_CATALOG['soc-implementation-pqc'],
     ],
   },
   {
@@ -1011,6 +1047,19 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
   'pqc-team': [
     { id: 'roles', label: 'Core Roles & the Crypto Champion Network' },
     { id: 'build-borrow-buy', label: 'Build-Borrow-Buy & Team Sizing' },
+  ],
+  'soc-implementation-pqc': [
+    { id: 'why-it-matters', label: 'Five PQC Detection Use Cases & the Posture Registry' },
+    { id: 'what-to-learn', label: 'Detection, CTI & Incident-Response Skills' },
+    { id: 'how-to-act', label: 'Phased SOC Implementation & Quantum Playbooks' },
+  ],
+  'pqc-grc': [
+    { id: 'kri-cascade', label: 'KRI Cascade: Board, CISO & Operational Thresholds' },
+    { id: 'exception-triage', label: 'Exception Register Triage & GRC-SOC Handoff' },
+  ],
+  'skills-team-structure': [
+    { id: 'team-sizing', label: 'Team Sizing: 1-FTE-per-500-Instances Heuristic' },
+    { id: 'crypto-champions', label: 'Crypto Champion Roster & Readiness Commitments' },
   ],
   'vendor-risk': [
     { id: 'readiness', label: 'Vendor PQC Readiness Assessment' },
@@ -1571,6 +1620,21 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'ssh-keys', label: 'SSH Host Key Migrator' },
     { id: 'package-signing', label: 'Package Signing Migrator' },
     { id: 'fips-compat', label: 'FIPS Compatibility Checker' },
+  ],
+  'soc-implementation-pqc': [
+    { id: 'why-it-matters', label: 'Why It Matters' },
+    { id: 'what-to-learn', label: 'What to Learn' },
+    { id: 'how-to-act', label: 'How to Act' },
+    { id: 'detection-planner', label: 'Detection Planner' },
+    { id: 'self-assessment', label: 'SOC Readiness' },
+  ],
+  'pqc-grc': [
+    { id: 'kri-cascade', label: 'KRI Cascade' },
+    { id: 'exception-triage', label: 'Exception Register' },
+  ],
+  'skills-team-structure': [
+    { id: 'team-sizing', label: 'Team Sizing Calculator' },
+    { id: 'crypto-champions', label: 'Crypto Champion Roster' },
   ],
 }
 

@@ -278,6 +278,21 @@ const OSPQCModule = lazyWithRetry(() =>
     default: module.OSPQCModule,
   }))
 )
+const SocImplementationPqcModule = lazyWithRetry(() =>
+  import('./modules/SocImplementationPqc').then((module) => ({
+    default: module.SocImplementationPqcModule,
+  }))
+)
+const PqcGrcModule = lazyWithRetry(() =>
+  import('./modules/PqcGrc').then((module) => ({
+    default: module.PqcGrcModule,
+  }))
+)
+const SkillsTeamStructureModule = lazyWithRetry(() =>
+  import('./modules/SkillsTeamStructurePqc').then((module) => ({
+    default: module.SkillsTeamStructureModule,
+  }))
+)
 
 export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
@@ -458,6 +473,9 @@ export const PKILearningView: React.FC = () => {
                 <Route path="iam-pqc" element={<IAMPQCModule />} />
                 <Route path="secure-boot-pqc" element={<SecureBootPQCModule />} />
                 <Route path="os-pqc" element={<OSPQCModule />} />
+                <Route path="soc-implementation-pqc" element={<SocImplementationPqcModule />} />
+                <Route path="pqc-grc" element={<PqcGrcModule />} />
+                <Route path="skills-team-structure" element={<SkillsTeamStructureModule />} />
                 <Route path="common-ground" element={<CommonGroundPath />} />
               </Routes>
             </Suspense>
