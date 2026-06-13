@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 import { ClipboardCheck, FileBarChart, LayoutDashboard, ShieldCheck } from 'lucide-react'
 
-export type WorkflowPhase = 'assess' | 'report' | 'business' | 'compliance'
+export type BreadcrumbStepId = 'assess' | 'report' | 'business' | 'compliance'
 
 interface Step {
-  id: WorkflowPhase
+  id: BreadcrumbStepId
   label: string
   path: string
   icon: typeof ClipboardCheck
@@ -24,7 +24,7 @@ const STEPS: readonly Step[] = [
  * Highlights the current phase and exposes each step as a navigation link so
  * users can orient themselves inside the four-step readiness workflow.
  */
-export function WorkflowBreadcrumb({ current }: { current: WorkflowPhase }) {
+export function WorkflowBreadcrumb({ current }: { current: BreadcrumbStepId }) {
   return (
     <nav
       aria-label="PQC readiness workflow"

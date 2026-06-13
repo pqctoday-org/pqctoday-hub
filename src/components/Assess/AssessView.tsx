@@ -9,11 +9,15 @@ import {
   Zap,
   ClipboardList,
   FileBarChart,
+  X,
 } from 'lucide-react'
 import { AssessWizard } from './AssessWizard'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import type { AssessmentMode } from '../../store/useAssessmentStore'
 import { metadata } from '../../data/industryAssessConfig'
+import { usePhaseFilter } from '../../hooks/usePhaseFilter'
+import { FRAMEWORK_PHASES } from '../../data/frameworkPhases'
+import { ASSESS_STEP_MAPPINGS } from '../../data/assessStepToCswp39'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { PERSONA_NAV_PATHS, PERSONA_RECOMMENDED_MODE } from '../../data/personaConfig'
 import { useSeedAssessFromPersona } from '../../hooks/assessment/useSeedAssessFromPersona'
@@ -37,6 +41,14 @@ const STEP_LABELS = [
   'Infra',
   'Timeline',
 ]
+
+// The wizard step keys (ASSESS_STEP_MAPPINGS) are declared in the same order as
+// STEP_LABELS above, so we can pair each key with its human label by position.
+// Used only by the (additive) phase overlay to name the Assess steps a given
+// `?phase=` exercises; it does not touch wizard behaviour.
+const ASSESS_STEP_LABELS: { key: string; label: string }[] = Object.keys(ASSESS_STEP_MAPPINGS).map(
+  (key, i) => ({ key, label: STEP_LABELS[i] ?? key })
+)
 
 const ModeSelector: React.FC<{
   onSelect: (mode: AssessmentMode) => void
@@ -109,6 +121,32 @@ export const AssessView: React.FC = () => {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const recommendedMode = selectedPersona ? PERSONA_RECOMMENDED_MODE[selectedPersona] : null
   const [showResumeBanner, setShowResumeBanner] = useState(false)
+
+  // Migration-Program phase overlay (additive). When `?phase=` is absent/invalid
+  // `activePhase` is null and `matches()` is always true, so the page renders
+  // exactly as before. When a phase is active we show a compact orienting
+  // banner; the wizard itself is never altered.
+  const { activePhase, matches } = usePhaseFilter()
+  const phase = activePhase ? FRAMEWORK_PHASES[activePhase] : null
+  const phaseSteps = activePhase
+    ? ASSESS_STEP_LABELS.filter(({ key }) =>
+        // eslint-disable-next-line security/detect-object-injection
+        matches(ASSESS_STEP_MAPPINGS[key].frameworkPhase)
+      )
+    : []
+
+  // Clear only the `phase` param, preserving every other query param (mode,
+  // reset, prefs, deep-link cues) so existing deep-links keep working.
+  const clearPhase = () => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('phase')
+        return next
+      },
+      { replace: true }
+    )
+  }
 
   // URL param `?reset=1` clears any prior assessment state. The workshop uses
   // this so the p-assess walkthrough always starts on a clean wizard regardless
@@ -206,6 +244,49 @@ export const AssessView: React.FC = () => {
         shareTitle="PQC Risk Assessment — Post-Quantum Cryptography Migration Tool"
         shareText="Get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
       />
+
+      {/* Phase overlay banner: only when `?phase=` resolves to a real phase.
+          Orients the user to the active Migration-Program phase and names the
+          Assess steps that phase exercises. Purely additive — non-destructive
+          and the wizard below is unchanged. */}
+      {phase && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6"
+          data-testid="assess-phase-banner"
+        >
+          <div className="glass-panel p-4 border-l-4 border-l-primary">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  {phase.number !== null ? `Phase ${phase.number} — ` : ''}
+                  {phase.name}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">{phase.tagline}</p>
+                {phaseSteps.length > 0 && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Assess steps for this phase:{' '}
+                    <span className="text-foreground/80 font-medium">
+                      {phaseSteps.map((s) => s.label).join(' · ')}
+                    </span>
+                  </p>
+                )}
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearPhase}
+                className="gap-1.5 text-xs text-muted-foreground hover:text-foreground shrink-0"
+                data-testid="assess-clear-phase"
+              >
+                <X size={12} />
+                Clear phase
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Banner: assessment already complete, link to report */}
       {assessmentStatus === 'complete' && (

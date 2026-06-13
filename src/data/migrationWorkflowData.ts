@@ -1,7 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { MigrationStep, MigrationReference, SoftwareCategoryGap } from '../types/MigrateTypes'
+import type { PhaseId } from './frameworkPhases'
 import { softwareData } from './migrateData'
 import Papa from 'papaparse'
+
+/**
+ * Migration step tagged with its Applied Quantum framework phase(s).
+ *
+ * Wave-1 phase overlay: each CSWP.39-style migration step is mapped onto the
+ * canonical AQ phase model (`frameworkPhases.ts`). A step uses `PhaseId[]` only
+ * when it genuinely spans more than one phase (e.g. Assess → Discovery/Inventory
+ * (p1) and Risk Scoring (p3); Test → execution (p5) and infra/perf (p6)).
+ */
+export interface PhaseTaggedMigrationStep extends MigrationStep {
+  frameworkPhase: PhaseId | PhaseId[]
+}
 
 // Import priority matrix CSV
 const priorityMatrixModules = import.meta.glob('./pqc_software_category_priority_matrix.csv', {
@@ -66,9 +79,10 @@ export const MIGRATION_REFERENCES: MigrationReference[] = [
 
 // ─── 7 Migration Steps ──────────────────────────────────────────────────────
 
-export const MIGRATION_STEPS: MigrationStep[] = [
+export const MIGRATION_STEPS: PhaseTaggedMigrationStep[] = [
   {
     id: 'assess',
+    frameworkPhase: ['p1', 'p3'],
     stepNumber: 1,
     title: 'Assessment & Inventory',
     shortTitle: 'Assess',
@@ -112,6 +126,7 @@ export const MIGRATION_STEPS: MigrationStep[] = [
   },
   {
     id: 'plan',
+    frameworkPhase: 'p4',
     stepNumber: 2,
     title: 'Risk Prioritization & Planning',
     shortTitle: 'Plan',
@@ -155,6 +170,7 @@ export const MIGRATION_STEPS: MigrationStep[] = [
   },
   {
     id: 'preparation',
+    frameworkPhase: 'p5',
     stepNumber: 3,
     title: 'Preparation & Tooling',
     shortTitle: 'Prepare',
@@ -200,6 +216,7 @@ export const MIGRATION_STEPS: MigrationStep[] = [
   },
   {
     id: 'test',
+    frameworkPhase: ['p5', 'p6'],
     stepNumber: 4,
     title: 'Testing & Validation',
     shortTitle: 'Test',
@@ -243,6 +260,7 @@ export const MIGRATION_STEPS: MigrationStep[] = [
   },
   {
     id: 'migrate',
+    frameworkPhase: 'p5',
     stepNumber: 5,
     title: 'Hybrid Migration & Rollout',
     shortTitle: 'Migrate',
@@ -288,6 +306,7 @@ export const MIGRATION_STEPS: MigrationStep[] = [
   },
   {
     id: 'launch',
+    frameworkPhase: 'p5',
     stepNumber: 6,
     title: 'Production Deployment',
     shortTitle: 'Launch',
@@ -333,6 +352,7 @@ export const MIGRATION_STEPS: MigrationStep[] = [
   },
   {
     id: 'rampup',
+    frameworkPhase: 'p7',
     stepNumber: 7,
     title: 'Monitoring & Optimization',
     shortTitle: 'Ramp Up',

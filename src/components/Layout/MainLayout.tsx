@@ -34,6 +34,7 @@ import { PhaseCompletionToast } from '../ui/PhaseCompletionToast'
 
 import { GuidedTour } from '../common/GuidedTour'
 import { Breadcrumb } from '../common/Breadcrumb'
+import { PhaseRail } from '../shared/PhaseRail'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
 import { WorkflowBanner } from '../common/WorkflowBanner'
@@ -525,9 +526,14 @@ export const MainLayout = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
+              className="lg:flex lg:items-start lg:gap-6"
             >
-              <Breadcrumb />
-              <Outlet />
+              {/* Persistent Migration-Program phase rail (spec §4) — left sidebar on lg+ */}
+              <PhaseRail />
+              <div className="min-w-0 lg:flex-1">
+                <Breadcrumb />
+                <Outlet />
+              </div>
             </motion.div>
           </React.Suspense>
         </main>

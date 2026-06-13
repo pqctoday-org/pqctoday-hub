@@ -188,11 +188,13 @@ export const CSWP39_ZONE_ORDER: ZoneId[] = [
   'migration',
 ]
 
+/** CSWP.39 5-step model ids (Govern → Inventory → Identify-Gaps → Prioritise →
+ *  Implement). Canonical home for the step union; imported by the phase overlay
+ *  (`frameworkPhases.ts`). */
+export type Cswp39StepId = 'govern' | 'inventory' | 'identify-gaps' | 'prioritise' | 'implement'
+
 /** Map a CSWP 39 pillar to its corresponding step id in the 5-step model. */
-export const PILLAR_TO_STEP: Record<
-  PillarId,
-  'govern' | 'inventory' | 'identify-gaps' | 'prioritise' | 'implement'
-> = {
+export const PILLAR_TO_STEP: Record<PillarId, Cswp39StepId> = {
   governance: 'govern',
   inventory: 'inventory',
   observability: 'identify-gaps',
