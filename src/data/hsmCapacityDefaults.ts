@@ -105,7 +105,7 @@ export const USE_CASES: UseCase[] = [
         'BSI TR-03116-4 (code signing for software distribution)',
       ],
       pqcImpact:
-        'RSA-2048 → ML-DSA-65. HSM throughput impact at typical CI/CD volumes is negligible. The main concern is signature size growth (ML-DSA-65: 3,293 bytes vs. RSA-2048: 256 bytes), which affects artifact registries and distribution pipelines rather than HSM capacity.',
+        'RSA-2048 → ML-DSA-65. HSM throughput impact at typical CI/CD volumes is negligible. The main concern is signature size growth (ML-DSA-65: 3,309 bytes vs. RSA-2048: 256 bytes), which affects artifact registries and distribution pipelines rather than HSM capacity.',
     },
   },
   {
@@ -288,7 +288,7 @@ export const USE_CASES: UseCase[] = [
         'draft-ietf-dnsop-dnssec-pqc',
       ],
       pqcImpact:
-        'ECDSA P-256 ZSK/KSK signing → ML-DSA-65. At 1,000 TPS (large), classical HSM re-signing throughput drops to 500 ops/s — requiring 2+ HSMs. More critically, ML-DSA-65 signatures are 3,293 bytes vs. 64 bytes for ECDSA P-256, forcing TCP fallback for virtually all signed DNS responses (UDP limit: 512 bytes), significantly impacting DNS infrastructure design and resolver latency.',
+        'ECDSA P-256 ZSK/KSK signing → ML-DSA-65. At 1,000 TPS (large), classical HSM re-signing throughput drops to 500 ops/s — requiring 2+ HSMs. More critically, ML-DSA-65 signatures are 3,309 bytes vs. 64 bytes for ECDSA P-256, forcing TCP fallback for virtually all signed DNS responses (UDP limit: 512 bytes), significantly impacting DNS infrastructure design and resolver latency.',
     },
   },
 ]

@@ -340,7 +340,7 @@ system_default = system_default_sect
     }),
     {
       name: 'tls-learning-storage',
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => localStorage),
       // Only persist configuration and history, not ephemeral simulation state
       partialize: (state) => ({
@@ -387,6 +387,31 @@ system_default = system_default_sect
           if (isLegacyDefault(state.serverConfig)) {
             ;(state.serverConfig as { groups?: string[] }).groups = [...DEFAULT_CONFIG.groups]
           }
+        }
+
+        // v2 -> v3: canonicalize group names to what OpenSSL's
+        // SSL_CTX_set1_groups_list actually accepts. The hyphenated FIPS names
+        // ('ML-KEM-768') and X448MLKEM1024 (an EVP KEM but not a TLS group)
+        // silently failed the whole Groups list, so there is no working
+        // customization to preserve — rewrite unconditionally.
+        if (version < 3) {
+          const V3_GROUP_RENAMES: Record<string, string> = {
+            'ML-KEM-512': 'MLKEM512',
+            'ML-KEM-768': 'MLKEM768',
+            'ML-KEM-1024': 'MLKEM1024',
+          }
+          const canonicalizeGroups = (cfg: unknown) => {
+            if (!cfg || typeof cfg !== 'object') return
+            const config = cfg as { groups?: unknown }
+            if (!Array.isArray(config.groups)) return
+            const groups = config.groups
+              .filter((g): g is string => typeof g === 'string' && g !== 'X448MLKEM1024')
+              .map((g) => V3_GROUP_RENAMES[g] ?? g)
+            // Never leave an empty group list behind (e.g. X448-only selection)
+            config.groups = groups.length === 0 ? [...DEFAULT_CONFIG.groups] : groups
+          }
+          canonicalizeGroups(state.clientConfig)
+          canonicalizeGroups(state.serverConfig)
         }
 
         // Revive Date objects in runHistory (JSON serializes Date as ISO string)

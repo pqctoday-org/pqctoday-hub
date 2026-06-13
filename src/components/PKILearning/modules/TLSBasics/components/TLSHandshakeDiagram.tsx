@@ -4,31 +4,32 @@ import { Lock, Unlock } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useTLSStore } from '@/store/tls-learning.store'
 
-// Key-share sizes (encap key / ciphertext in bytes) per group
+// Key-share sizes (client share / server share in bytes) per group.
+// Keys match the canonical group names stored in tls-learning.store.
+// Hybrids carry both components: e.g. X25519MLKEM768 = ML-KEM-768 ek 1,184 + X25519 32.
+// Source: FIPS 203, RFC 7748, draft-ietf-tls-ecdhe-mlkem.
 const GROUP_KEY_SHARE: Record<string, { ek: number; ct: number }> = {
-  X25519MLKEM768: { ek: 1184, ct: 1088 },
-  X448MLKEM1024: { ek: 1600, ct: 1568 },
+  X25519MLKEM768: { ek: 1216, ct: 1120 },
   SecP256r1MLKEM768: { ek: 1249, ct: 1153 },
-  SecP384r1MLKEM1024: { ek: 1665, ct: 1633 },
+  SecP384r1MLKEM1024: { ek: 1665, ct: 1665 },
   MLKEM512: { ek: 800, ct: 768 },
   MLKEM768: { ek: 1184, ct: 1088 },
   MLKEM1024: { ek: 1568, ct: 1568 },
   X25519: { ek: 32, ct: 32 },
-  P256: { ek: 65, ct: 65 },
-  P384: { ek: 97, ct: 97 },
+  'P-256': { ek: 65, ct: 65 },
+  'P-384': { ek: 97, ct: 97 },
+  'P-521': { ek: 133, ct: 133 },
 }
 
-// Signature sizes by cert selection
+// Signature sizes keyed by sigalg id (FIPS 204 final, Table 2)
 const SIG_BYTES: Record<string, string> = {
   mldsa44: '2,420 B',
-  mldsa65: '3,293 B',
-  mldsa87: '4,595 B',
-  rsa2048: '256 B',
-  rsa4096: '512 B',
-  ecdsa256: '72 B (DER)',
-  'slhdsa-sha2-128s': '7,856 B',
-  'slhdsa-sha2-192s': '16,224 B',
-  'slhdsa-sha2-256s': '29,792 B',
+  mldsa65: '3,309 B',
+  mldsa87: '4,627 B',
+  ecdsa_secp256r1_sha256: '~72 B (DER)',
+  rsa_pss_rsae_sha256: '256 B (RSA-2048)',
+  rsa_pss_pss_sha256: '256 B (RSA-2048)',
+  ed25519: '64 B',
 }
 
 const MESSAGES = [
@@ -74,7 +75,7 @@ const MESSAGES = [
   },
   {
     label: '{CertificateVerify}',
-    sublabel: 'Signature proof (ML-DSA / SLH-DSA / ECDSA)',
+    sublabel: 'Signature proof (ML-DSA / ECDSA / RSA-PSS / Ed25519)',
     rfcRef: 'RFC 8446 §4.4.3',
     direction: 'left' as const,
     encrypted: true,
@@ -139,7 +140,7 @@ export const TLSHandshakeDiagram: React.FC<TLSHandshakeDiagramProps> = ({ mTLSEn
     if (msg.label === 'ClientHello') {
       return {
         ...msg,
-        sublabel: `+ key_share (${selectedGroup}, encap key ${ks.ek} B), supported_groups`,
+        sublabel: `+ key_share (${selectedGroup}, client share ${ks.ek} B), supported_groups`,
       }
     }
     if (msg.label === 'ServerHello' && msg.direction === 'left') {
@@ -151,7 +152,10 @@ export const TLSHandshakeDiagram: React.FC<TLSHandshakeDiagramProps> = ({ mTLSEn
     if (msg.label === '{CertificateVerify}' && msg.direction === 'left' && sigSize) {
       return {
         ...msg,
-        sublabel: `Signature proof — ${sigAlg.toUpperCase()} (${sigSize})`,
+        // sigAlg is the first sigalg the server config OFFERS; the negotiated
+        // CertificateVerify algorithm is ultimately determined by the server's
+        // certificate key — see the live simulation results for the real value.
+        sublabel: `Signature proof — first offered sigalg ${sigAlg} (${sigSize})`,
       }
     }
     return msg
@@ -225,12 +229,13 @@ export const TLSHandshakeDiagram: React.FC<TLSHandshakeDiagramProps> = ({ mTLSEn
 
         {/* PQC note — dynamic based on current group selection */}
         <p className="mt-4 text-[10px] text-muted-foreground/70 text-center">
-          Current group: <span className="font-mono">{selectedGroup}</span> — encap key {ks.ek} B,
-          ciphertext {ks.ct} B (classical X25519 uses 32 B each).
+          Current group: <span className="font-mono">{selectedGroup}</span> — client key share{' '}
+          {ks.ek} B, server response {ks.ct} B (classical X25519 uses 32 B each; hybrid sizes
+          include both components).
           {sigSize && (
             <>
               {' '}
-              CertificateVerify: {sigAlg.toUpperCase()} signature {sigSize}.
+              CertificateVerify with <span className="font-mono">{sigAlg}</span>: {sigSize}.
             </>
           )}
         </p>
