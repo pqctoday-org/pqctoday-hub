@@ -87,6 +87,7 @@
     "apply:compliance-gaps": "tsx scripts/apply-compliance-gaps.ts"
   },
   "overrides": {
+    "esbuild": "^0.28.1",
     "serialize-javascript": ">=7.0.3",
     "uuid": "^14.0.0"
   },
