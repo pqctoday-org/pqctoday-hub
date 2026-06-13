@@ -47,6 +47,7 @@ import { IndustryStack } from './IndustryStack'
 
 import { ThreatDetailDialog } from './ThreatDetailDialog'
 import { MobileThreatsList } from './MobileThreatsList'
+import { ThreatEconomicsHeader } from './ThreatEconomicsHeader'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 
 // Threat Detail Dialog Component - Moved outside to ./ThreatDetailDialog.tsx
@@ -427,6 +428,9 @@ export const ThreatsDashboard: React.FC = () => {
         flagLabel="Threats Page"
         flagResourceType="Threats"
       />
+
+      {/* Threat Economics — HNDL vs HNFL framing + Mosca mini-calc (additive) */}
+      <ThreatEconomicsHeader />
 
       {/* Persona summary card */}
       {personaSummary && (

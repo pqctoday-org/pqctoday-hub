@@ -12,6 +12,8 @@ import {
   X,
 } from 'lucide-react'
 import { AssessWizard } from './AssessWizard'
+import { MaturitySelfRating } from './MaturitySelfRating'
+import { useMaturityStore } from '../../hooks/assessment/useMaturityStore'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import type { AssessmentMode } from '../../store/useAssessmentStore'
 import { metadata } from '../../data/industryAssessConfig'
@@ -120,6 +122,10 @@ export const AssessView: React.FC = () => {
   } = useAssessmentStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const recommendedMode = selectedPersona ? PERSONA_RECOMMENDED_MODE[selectedPersona] : null
+  // Maturity L0–4 self-rating (Foundations gap-closer). Persisted separately so
+  // it's fully additive; the Report's QRA reads it back via the same store.
+  const maturityRatings = useMaturityStore((s) => s.ratings)
+  const setMaturityRatings = useMaturityStore((s) => s.setRatings)
   const [showResumeBanner, setShowResumeBanner] = useState(false)
 
   // Migration-Program phase overlay (additive). When `?phase=` is absent/invalid
@@ -325,6 +331,19 @@ export const AssessView: React.FC = () => {
               </div>
             </div>
           </div>
+        </motion.div>
+      )}
+
+      {/* Maturity self-rating (Foundations gap-closer). Shown once the
+          assessment is complete; feeds the QRA on the Report page. Additive —
+          collecting a rating changes nothing in the existing flow. */}
+      {assessmentStatus === 'complete' && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6"
+        >
+          <MaturitySelfRating ratings={maturityRatings} onChange={setMaturityRatings} />
         </motion.div>
       )}
 

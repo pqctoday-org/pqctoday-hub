@@ -26,6 +26,7 @@ import {
   Scale,
   Code2,
   Cloud,
+  ClipboardList,
 } from 'lucide-react'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import type { ZoneId } from '@/data/cswp39ZoneData'
@@ -488,6 +489,80 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39SubSection: 'Vulnerability discovery on the crypto attack surface',
     frameworkPhase: 'p1',
   },
+
+  // ── Program Establishment (Applied Quantum Phase 0 / Foundations) ───────────
+  {
+    id: 'program-charter',
+    name: 'Program Charter',
+    description:
+      'Phase 0 mandate artifact — sponsor sign-off, Steering Committee, QRPM appointment, governance cadence, and the multi-year budget commitment',
+    category: 'Governance & Policy',
+    icon: ScrollText,
+    keywords: [
+      'charter',
+      'mandate',
+      'sponsor',
+      'steerco',
+      'steering committee',
+      'qrpm',
+      'governance',
+      'budget',
+      'cadence',
+    ],
+    cswp39Zone: 'governance',
+    cswp39ZoneSubElement: 'Crypto Policies',
+    cswp39SectionRef: '§5',
+    cswp39SubSection: 'Strategic plan — governance',
+    frameworkPhase: 'p0',
+  },
+  {
+    id: 'initial-scoping',
+    name: 'Initial Scoping Assessment',
+    description:
+      'Phase 0 first-cut scope — top-20 in-scope systems, an estate-size estimate, and the top-10 vendor dependencies; seedable from your /migrate selection',
+    category: 'Risk & Strategy',
+    icon: ClipboardList,
+    keywords: [
+      'scoping',
+      'scope',
+      'estate',
+      'systems',
+      'vendors',
+      'dependencies',
+      'inventory',
+      'top-20',
+    ],
+    cswp39Zone: 'governance',
+    cswp39ZoneSubElement: 'Business Requirements',
+    cswp39SectionRef: '§5',
+    cswp39SubSection: 'Strategic plan — scope',
+    frameworkPhase: 'p0',
+  },
+  {
+    id: 'skills-team-plan',
+    name: 'Skills & Team Plan',
+    description:
+      'Foundations staffing plan — core roles + FTE from the framework role model, the 1-FTE-per-500-instances sizing heuristic, and build / borrow / buy per role',
+    category: 'Governance & Policy',
+    icon: Users,
+    keywords: [
+      'skills',
+      'team',
+      'staffing',
+      'fte',
+      'roles',
+      'build',
+      'borrow',
+      'buy',
+      'hiring',
+      'sizing',
+    ],
+    cswp39Zone: 'risk-management',
+    cswp39ZoneSubElement: 'KPI Dashboards',
+    cswp39SectionRef: '§6.5',
+    cswp39SubSection: 'Maturity assessment',
+    frameworkPhase: 'foundations',
+  },
 ]
 
 export const BUSINESS_CATEGORIES = [
@@ -537,6 +612,9 @@ export const ARTIFACT_TYPE_TO_TOOL_ID: Partial<Record<ExecutiveDocumentType, str
   'mti-negotiator': 'mti-negotiator',
   'crypto-api-refactor': 'crypto-api-refactor-audit',
   'cloud-responsibility-matrix': 'cloud-responsibility-matrix',
+  'program-charter': 'program-charter',
+  'initial-scoping': 'initial-scoping',
+  'skills-team-plan': 'skills-team-plan',
 }
 
 /** Look up the CSWP.39 §-reference (and optional sub-section label) for an
