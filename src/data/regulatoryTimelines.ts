@@ -13,6 +13,8 @@
  *   - BSI TR-02102: Cryptographic Mechanisms: Recommendations and Key Lengths (2024)
  */
 
+import type { PhaseId } from './frameworkPhases'
+
 // ── CNSA 2.0 (NSA) — National Security Systems ────────────────────────────
 
 /** CNSA 2.0 milestone years for NSS migration */
@@ -127,26 +129,63 @@ export function formatMonthYear(isoDate: string): string {
 
 // ── Helper: timeline events for module reuse ─────────────────────────────
 
-export const PQC_TIMELINE_EVENTS = [
+export const PQC_TIMELINE_EVENTS: ReadonlyArray<{
+  year: string
+  event: string
+  frameworkPhase: PhaseId
+}> = [
   {
     year: NIST_DEPRECATION.fipsFinalized.slice(0, 4),
     event: 'FIPS 203, 204, 205 published — PQC standards are official',
+    frameworkPhase: 'foundations',
   },
   {
     year: String(CNSA_2_0.softwarePreferred),
     event: 'CNSA 2.0: new software/firmware should prefer PQC algorithms',
+    frameworkPhase: 'p4',
   },
   {
     year: String(CNSA_2_0.networkingRequired),
     event: 'CNSA 2.0: new networking equipment must support PQC',
+    frameworkPhase: 'p4',
   },
   {
     year: String(NIST_DEPRECATION.deprecateClassical),
     event: 'NIST target: deprecate RSA-2048 and 112-bit ECC',
+    frameworkPhase: 'p4',
   },
-  { year: String(CNSA_2_0.networkingExclusive), event: 'CNSA 2.0: legacy networking replaced' },
+  {
+    year: String(CNSA_2_0.networkingExclusive),
+    event: 'CNSA 2.0: legacy networking replaced',
+    frameworkPhase: 'p4',
+  },
   {
     year: String(NIST_DEPRECATION.disallowClassical),
     event: 'NIST target: disallow all classical public-key crypto',
+    frameworkPhase: 'p4',
   },
-] as const
+]
+
+// ── Framework-phase tags (Wave-1) ─────────────────────────────────────────
+//
+// AQ Phase overlay tag for each exported regulatory/standards constant in this
+// file. Per the Wave-0 contract (`./frameworkPhases.ts`): roadmap/deadline
+// timelines map to Phase 4 (Roadmap & Governance, `p4`); regulatory/standards
+// *mapping* references (the FIPS standard catalog, the CRQC threat horizon)
+// are cross-cutting Foundations inputs (`foundations`).
+
+/** Phase tag for each exported regulatory constant block above. */
+export const REGULATORY_PHASE = {
+  /** CNSA 2.0 milestone years → roadmap deadlines. */
+  CNSA_2_0: 'p4',
+  /** NIST IR 8547 deprecation/disallowance targets → roadmap deadlines. */
+  NIST_DEPRECATION: 'p4',
+  /** FIPS standard catalog → standards reference mapping. */
+  FIPS_STANDARDS: 'foundations',
+  /** ANSSI migration-plan target & hybrid policy → roadmap deadlines. */
+  ANSSI_TIMELINE: 'p4',
+  /** BSI quantum-safe-by-default target → roadmap deadline. */
+  BSI_TIMELINE: 'p4',
+  /** CRQC threat-horizon estimates → cross-cutting Foundations input. */
+  CRQC_ESTIMATES: 'foundations',
+} as const satisfies Record<string, PhaseId>

@@ -8,8 +8,9 @@ import {
   BookOpen,
   Download,
   Filter,
+  X,
 } from 'lucide-react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import JSZip from 'jszip'
 import { PageHeader } from '@/components/common/PageHeader'
 import { PreviewBanner } from '@/components/common/PreviewBanner'
@@ -29,7 +30,10 @@ import {
   legacyToZoneId,
   type ZoneId,
 } from '@/data/cswp39ZoneData'
+import { usePhaseFilter } from '@/hooks/usePhaseFilter'
+import { FRAMEWORK_PHASES } from '@/data/frameworkPhases'
 import { useBusinessMetrics } from './hooks/useBusinessMetrics'
+import { BUSINESS_TOOLS } from './businessToolsRegistry'
 import { TYPE_LABELS } from './ArtifactCard'
 import { CommandCenterStrategicPlan } from './sections/CommandCenterStrategicPlan'
 import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
@@ -117,6 +121,92 @@ const TYPE_FILTER_ITEMS = [
   ...Object.entries(TYPE_LABELS).map(([id, label]) => ({ id, label })),
 ]
 
+/**
+ * Phase-filtered tools view — rendered only when `?phase=<id>` is active.
+ * Narrows the 26 BUSINESS_TOOLS to the few tagged for the active phase and
+ * fronts them with a compact "Phase N — <name>" header (from FRAMEWORK_PHASES)
+ * plus a "clear phase" affordance. When no phase is active this component is not
+ * mounted at all, so the default Command Center renders unchanged.
+ */
+function PhaseToolsView({ onClearPhase }: { onClearPhase: () => void }) {
+  const { matches, activePhase } = usePhaseFilter()
+  // activePhase is non-null here by construction (caller gates the mount), but
+  // guard anyway so the lookup is type-safe. `activePhase` is a validated
+  // PhaseId from usePhaseFilter, so the keyed access is safe.
+  // eslint-disable-next-line security/detect-object-injection
+  const phase = activePhase ? FRAMEWORK_PHASES[activePhase] : null
+
+  const phaseTools = useMemo(
+    () => BUSINESS_TOOLS.filter((tool) => matches(tool.frameworkPhase)),
+    [matches]
+  )
+
+  if (!phase) return null
+
+  const phaseLabel = phase.number !== null ? `Phase ${phase.number} — ${phase.name}` : phase.name
+
+  return (
+    <div className="space-y-4">
+      <div className="glass-panel p-4 flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="text-[10px] font-semibold text-primary uppercase tracking-widest mb-1">
+            Phase view
+          </div>
+          <h2 className="text-lg font-semibold text-foreground">{phaseLabel}</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">{phase.tagline}</p>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onClearPhase}
+          className="shrink-0 h-7 px-2 text-xs gap-1 text-muted-foreground hover:text-foreground"
+          aria-label="Clear phase filter"
+        >
+          <X size={14} />
+          Clear phase
+        </Button>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-muted-foreground">
+          {phaseTools.length} tool{phaseTools.length !== 1 ? 's' : ''} for this phase
+        </span>
+      </div>
+
+      {phaseTools.length === 0 ? (
+        <div className="glass-panel p-6 text-sm text-muted-foreground text-center">
+          No business tools are tagged for this phase yet.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {phaseTools.map((tool) => {
+            const Icon = tool.icon
+            return (
+              <Link
+                key={tool.id}
+                to={`/business/tools/${tool.id}`}
+                className="glass-panel p-4 h-auto text-left hover:border-primary/40 transition-colors cursor-pointer group items-start justify-start flex"
+              >
+                <div className="flex items-start gap-3 w-full">
+                  <Icon className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-foreground group-hover:text-primary transition-colors">
+                      {tool.name}
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                      {tool.description}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function BusinessCenterView() {
   useSeedFrameworksFromCountry()
   const metrics = useBusinessMetrics()
@@ -144,7 +234,25 @@ export function BusinessCenterView() {
   const [openZone, setOpenZone] = useState<ZoneId | null>(() =>
     density === 'basic' ? BASIC_DENSITY_DEFAULT_ZONE : zoneEmphasis.defaultActiveZone
   )
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  // ?phase=<id> overlay — when active, the page swaps its zone body for a
+  // compact phase header + the BUSINESS_TOOLS narrowed to that phase. When
+  // null, the page behaves exactly as before (no visual change).
+  const { activePhase } = usePhaseFilter()
+
+  // Clear the phase filter without disturbing any other query params (e.g.
+  // ?zone=) so deep-links stay intact.
+  const handleClearPhase = useCallback(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('phase')
+        return next
+      },
+      { replace: true }
+    )
+  }, [setSearchParams])
 
   // ?zone=<id> deep-link (used by the Workshop Video Mode and external links).
   // Only valid CSWP-39 zone ids are honoured; anything else is ignored.
@@ -360,113 +468,71 @@ export function BusinessCenterView() {
         <PreviewBanner pageContext="GRC, Architect, Developer, Ops, Researcher" />
       )}
 
-      {/* Filter + Export bar — gated to advanced density. Basic/intermediate
+      {/* ?phase=<id> overlay — when a phase is active, replace the zone body
+           with a compact phase header + the tools narrowed to that phase. When
+           null, the original Command Center body renders unchanged. */}
+      {activePhase ? (
+        <PhaseToolsView onClearPhase={handleClearPhase} />
+      ) : (
+        <>
+          {/* Filter + Export bar — gated to advanced density. Basic/intermediate
            learners don't need a portfolio toolbar at the top; cross-zone
            filtering belongs on the artifact library page. */}
-      {!metrics.isFullyEmpty && allArtifacts.length > 0 && showTopToolbar(density) && (
-        <div className="flex flex-wrap items-center gap-3 mb-6">
-          <Filter size={14} className="text-muted-foreground shrink-0" />
-          <FilterDropdown
-            items={TYPE_FILTER_ITEMS}
-            selectedId={typeFilter}
-            onSelect={setTypeFilter}
-            label="Filter by type"
-            noContainer
-          />
-          <span className="text-xs text-muted-foreground">
-            {filteredArtifacts.length} artifact{filteredArtifacts.length !== 1 ? 's' : ''}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            className="ml-auto gap-1.5"
-            onClick={handleExportZip}
-            disabled={filteredArtifacts.length === 0}
-          >
-            <Download size={14} />
-            Export ZIP
-          </Button>
-        </div>
-      )}
+          {!metrics.isFullyEmpty && allArtifacts.length > 0 && showTopToolbar(density) && (
+            <div className="flex flex-wrap items-center gap-3 mb-6">
+              <Filter size={14} className="text-muted-foreground shrink-0" />
+              <FilterDropdown
+                items={TYPE_FILTER_ITEMS}
+                selectedId={typeFilter}
+                onSelect={setTypeFilter}
+                label="Filter by type"
+                noContainer
+              />
+              <span className="text-xs text-muted-foreground">
+                {filteredArtifacts.length} artifact{filteredArtifacts.length !== 1 ? 's' : ''}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                className="ml-auto gap-1.5"
+                onClick={handleExportZip}
+                disabled={filteredArtifacts.length === 0}
+              >
+                <Download size={14} />
+                Export ZIP
+              </Button>
+            </div>
+          )}
 
-      {/* Page-level empty state — bypassed when a workshop is active so the
+          {/* Page-level empty state — bypassed when a workshop is active so the
            cue tour can target zone panels + artifact placeholders even when
            the user hasn't yet completed an assessment. */}
-      {metrics.isFullyEmpty && !workshopActive ? (
-        <WelcomeState />
-      ) : (
-        <div className="space-y-6">
-          {/* HERO: personalised next steps — first content slot. Cap by density
+          {metrics.isFullyEmpty && !workshopActive ? (
+            <WelcomeState />
+          ) : (
+            <div className="space-y-6">
+              {/* HERO: personalised next steps — first content slot. Cap by density
                (basic=3, intermediate=4, advanced=5). */}
-          <ActionItemsSection metrics={metrics} cap={actionItemCap(density)} />
+              <ActionItemsSection metrics={metrics} cap={actionItemCap(density)} />
 
-          {/* What applies to your profile — drives prioritization across the strategic plan */}
-          <ApplicabilityPanel variant="summary-card" />
+              {/* What applies to your profile — drives prioritization across the strategic plan */}
+              <ApplicabilityPanel variant="summary-card" />
 
-          {/* §3-§6 document-section nav — advanced density only. Auditors and
+              {/* §3-§6 document-section nav — advanced density only. Auditors and
                researchers want it; basic learners get the Fig 3 zone view alone. */}
-          {showSectionsNav(density) && <CSWP39SectionsNav onZoneSelect={handleZoneSelect} />}
+              {showSectionsNav(density) && <CSWP39SectionsNav onZoneSelect={handleZoneSelect} />}
 
-          {/* CSWP.39 Fig 3 — Crypto Agility Strategic Plan (primary nav) */}
-          <CommandCenterStrategicPlan
-            metrics={metrics}
-            activeZone={effectiveOpenZone}
-            onZoneSelect={handleZoneSelect}
-          />
+              {/* CSWP.39 Fig 3 — Crypto Agility Strategic Plan (primary nav) */}
+              <CommandCenterStrategicPlan
+                metrics={metrics}
+                activeZone={effectiveOpenZone}
+                onZoneSelect={handleZoneSelect}
+              />
 
-          {/* Per-zone artifact panels — left sidebar nav (desktop) + scrollable tab bar (mobile) */}
-          <div>
-            {/* Mobile: horizontal scrollable zone tab bar */}
-            <div className="flex md:hidden gap-1 overflow-x-auto pb-2 -mx-4 px-4 mb-3">
-              {CSWP39_ZONE_ORDER.map((zone) => {
-                // eslint-disable-next-line security/detect-object-injection
-                const detail = CSWP39_ZONE_DETAILS[zone]
-                // eslint-disable-next-line security/detect-object-injection
-                const style = CSWP39_ZONE_STYLES[zone]
-                const isActive = zone === effectiveOpenZone
-                return (
-                  <Button
-                    key={zone}
-                    variant="ghost"
-                    onClick={() => handleZoneSelect(zone)}
-                    className={`shrink-0 h-7 px-2.5 text-[10px] font-semibold rounded-md border transition-colors ${
-                      isActive
-                        ? `${style.activeBg} ${style.text} ${style.border}`
-                        : 'border-border text-muted-foreground'
-                    }`}
-                  >
-                    {detail.title}
-                  </Button>
-                )
-              })}
-            </div>
-
-            {/* Desktop: two-column layout — sticky left nav + zone panels */}
-            <div className="flex items-start gap-5">
-              {/* Left sidebar — desktop only, intermediate+ density. At basic
-                   density the Fig 3 diagram is the single source of zone nav. */}
-              {density !== 'basic' && (
-                <aside className="hidden md:flex flex-col gap-1 w-72 shrink-0 sticky top-6 self-start">
-                  <div className="flex items-center justify-between px-3 mb-1">
-                    <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
-                      Zones
-                    </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleFocusToggle}
-                      aria-pressed={focusMode}
-                      aria-label={
-                        focusMode
-                          ? 'Show all zones in the right pane'
-                          : 'Focus on the active zone only'
-                      }
-                      className="h-6 px-2 text-[10px] font-medium gap-1 text-muted-foreground hover:text-foreground"
-                    >
-                      {focusMode ? 'Show all' : 'Focus'}
-                    </Button>
-                  </div>
+              {/* Per-zone artifact panels — left sidebar nav (desktop) + scrollable tab bar (mobile) */}
+              <div>
+                {/* Mobile: horizontal scrollable zone tab bar */}
+                <div className="flex md:hidden gap-1 overflow-x-auto pb-2 -mx-4 px-4 mb-3">
                   {CSWP39_ZONE_ORDER.map((zone) => {
                     // eslint-disable-next-line security/detect-object-injection
                     const detail = CSWP39_ZONE_DETAILS[zone]
@@ -478,82 +544,134 @@ export function BusinessCenterView() {
                         key={zone}
                         variant="ghost"
                         onClick={() => handleZoneSelect(zone)}
-                        className={`w-full h-auto justify-start p-0 rounded-lg border transition-colors ${
+                        className={`shrink-0 h-7 px-2.5 text-[10px] font-semibold rounded-md border transition-colors ${
                           isActive
-                            ? `${style.bg} ${style.border}`
-                            : 'border-transparent hover:bg-muted/40'
+                            ? `${style.activeBg} ${style.text} ${style.border}`
+                            : 'border-border text-muted-foreground'
                         }`}
                       >
-                        <div className="flex items-start gap-2.5 px-3 py-2.5 w-full text-left">
-                          <div
-                            className={`w-0.5 min-h-full self-stretch rounded-full mt-0.5 shrink-0 ${
-                              isActive ? style.activeBg : 'bg-border'
-                            }`}
-                            aria-hidden
-                          />
-                          <div className="min-w-0">
-                            <div
-                              className={`text-xs font-semibold mb-0.5 ${isActive ? style.text : 'text-foreground'}`}
-                            >
-                              {detail.title}
-                            </div>
-                            <p className="text-[11px] text-muted-foreground line-clamp-3 leading-relaxed">
-                              {detail.what}
-                            </p>
-                          </div>
-                        </div>
+                        {detail.title}
                       </Button>
                     )
                   })}
-                </aside>
-              )}
+                </div>
 
-              {/* Zone panels — focusMode hides closed zones so the active
+                {/* Desktop: two-column layout — sticky left nav + zone panels */}
+                <div className="flex items-start gap-5">
+                  {/* Left sidebar — desktop only, intermediate+ density. At basic
+                   density the Fig 3 diagram is the single source of zone nav. */}
+                  {density !== 'basic' && (
+                    <aside className="hidden md:flex flex-col gap-1 w-72 shrink-0 sticky top-6 self-start">
+                      <div className="flex items-center justify-between px-3 mb-1">
+                        <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
+                          Zones
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleFocusToggle}
+                          aria-pressed={focusMode}
+                          aria-label={
+                            focusMode
+                              ? 'Show all zones in the right pane'
+                              : 'Focus on the active zone only'
+                          }
+                          className="h-6 px-2 text-[10px] font-medium gap-1 text-muted-foreground hover:text-foreground"
+                        >
+                          {focusMode ? 'Show all' : 'Focus'}
+                        </Button>
+                      </div>
+                      {CSWP39_ZONE_ORDER.map((zone) => {
+                        // eslint-disable-next-line security/detect-object-injection
+                        const detail = CSWP39_ZONE_DETAILS[zone]
+                        // eslint-disable-next-line security/detect-object-injection
+                        const style = CSWP39_ZONE_STYLES[zone]
+                        const isActive = zone === effectiveOpenZone
+                        return (
+                          <Button
+                            key={zone}
+                            variant="ghost"
+                            onClick={() => handleZoneSelect(zone)}
+                            className={`w-full h-auto justify-start p-0 rounded-lg border transition-colors ${
+                              isActive
+                                ? `${style.bg} ${style.border}`
+                                : 'border-transparent hover:bg-muted/40'
+                            }`}
+                          >
+                            <div className="flex items-start gap-2.5 px-3 py-2.5 w-full text-left">
+                              <div
+                                className={`w-0.5 min-h-full self-stretch rounded-full mt-0.5 shrink-0 ${
+                                  isActive ? style.activeBg : 'bg-border'
+                                }`}
+                                aria-hidden
+                              />
+                              <div className="min-w-0">
+                                <div
+                                  className={`text-xs font-semibold mb-0.5 ${isActive ? style.text : 'text-foreground'}`}
+                                >
+                                  {detail.title}
+                                </div>
+                                <p className="text-[11px] text-muted-foreground line-clamp-3 leading-relaxed">
+                                  {detail.what}
+                                </p>
+                              </div>
+                            </div>
+                          </Button>
+                        )
+                      })}
+                    </aside>
+                  )}
+
+                  {/* Zone panels — focusMode hides closed zones so the active
                    one gets the full vertical space (P14-P1-03). */}
-              <div className="flex-1 min-w-0 space-y-3">
-                {CSWP39_ZONE_ORDER.filter((zone) => !focusMode || zone === effectiveOpenZone).map(
-                  (zone) => (
-                    <CSWP39ZonePanel
-                      key={zone}
-                      zone={zone}
-                      metrics={metrics}
-                      open={zone === effectiveOpenZone}
-                      onToggle={() => handleZoneToggle(zone)}
-                      featuredArtifacts={allFeaturedArtifacts}
-                      density={density}
-                      {...zoneCallbacks}
-                    />
-                  )
-                )}
-                <PillarDisclaimer className="px-1 pt-2" />
+                  <div className="flex-1 min-w-0 space-y-3">
+                    {CSWP39_ZONE_ORDER.filter(
+                      (zone) => !focusMode || zone === effectiveOpenZone
+                    ).map((zone) => (
+                      <CSWP39ZonePanel
+                        key={zone}
+                        zone={zone}
+                        metrics={metrics}
+                        open={zone === effectiveOpenZone}
+                        onToggle={() => handleZoneToggle(zone)}
+                        featuredArtifacts={allFeaturedArtifacts}
+                        density={density}
+                        {...zoneCallbacks}
+                      />
+                    ))}
+                    <PillarDisclaimer className="px-1 pt-2" />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* Bottom cross-cut: learning bar */}
-          <CompactLearningBar modules={metrics.execModuleProgress} />
+              {/* Bottom cross-cut: learning bar */}
+              <CompactLearningBar modules={metrics.execModuleProgress} />
 
-          {/* Hidden-by-lens transparency footer (P14-P1-04) — names the zones
+              {/* Hidden-by-lens transparency footer (P14-P1-04) — names the zones
                this persona emphasizes so the user knows other lenses exist.
                Renders only when a persona is selected. Acts as a soft invite
                to switch role via the chip in the page header. */}
-          {selectedPersona && Object.keys(zoneEmphasis.featuredArtifacts).length > 0 && (
-            <div className="px-1 text-xs text-muted-foreground leading-relaxed border-t border-border/40 pt-3">
-              <span className="font-medium text-foreground">Your {selectedPersona} lens</span>{' '}
-              emphasizes the <span className="text-primary">{zoneEmphasis.defaultActiveZone}</span>{' '}
-              zone and a curated artifact set ({Object.keys(zoneEmphasis.featuredArtifacts).length}{' '}
-              of {CSWP39_ZONE_ORDER.length} zones featured). Switch persona via the chip in the page
-              header to see other lenses — every zone and artifact stays reachable.
-            </div>
-          )}
+              {selectedPersona && Object.keys(zoneEmphasis.featuredArtifacts).length > 0 && (
+                <div className="px-1 text-xs text-muted-foreground leading-relaxed border-t border-border/40 pt-3">
+                  <span className="font-medium text-foreground">Your {selectedPersona} lens</span>{' '}
+                  emphasizes the{' '}
+                  <span className="text-primary">{zoneEmphasis.defaultActiveZone}</span> zone and a
+                  curated artifact set ({Object.keys(zoneEmphasis.featuredArtifacts).length} of{' '}
+                  {CSWP39_ZONE_ORDER.length} zones featured). Switch persona via the chip in the
+                  page header to see other lenses — every zone and artifact stays reachable.
+                </div>
+              )}
 
-          {/* Glossary surface — primary NIST CSWP 39 definition + alternative
+              {/* Glossary surface — primary NIST CSWP 39 definition + alternative
                framework definitions from Appendix B (FS-ISAC, ATIS, ETSI,
                CARAF, 2016 NIST workshop). Low-prominence accordion at the
                bottom of the dashboard so it doesn't compete with the
                strategic plan but is discoverable. (Audit T2.) */}
-          <CryptoAgilityDefinitions />
-        </div>
+              <CryptoAgilityDefinitions />
+            </div>
+          )}
+        </>
       )}
 
       {/* Artifact Drawer — handles view, edit, and create modes for every artifact
