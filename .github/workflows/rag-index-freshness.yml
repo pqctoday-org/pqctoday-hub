@@ -1,0 +1,110 @@
+name: RAG Index Freshness
+
+# The RAG search index (public/data/rag-corpus.json + embeddings.bin) is rebuilt
+# locally via `npm run refresh-index` — embeddings are too slow to generate on CI
+# runners. Data PRs intentionally don't regenerate it (`.gitattributes merge=ours`
+# prevents conflicts), so the committed index can lag source data until a refresh.
+#
+# This job regenerates ONLY the corpus (pure JS, fast — no embedding model) and
+# compares its chunk-id set to the committed corpus, plus checks embeddings⇄corpus
+# consistency. It never blocks a PR: it runs on a schedule and opens a tracking
+# issue when the index is stale. Resolve by running `npm run refresh-index`
+# locally and committing the result.
+
+on:
+  schedule:
+    - cron: '30 9 * * 1' # Mondays 09:30 UTC (after the other weekly drift audits)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check index freshness
+        id: check
+        run: npx tsx scripts/ci/check-index-freshness.ts || true
+
+      - name: Upload freshness report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: rag-index-freshness-report
+          path: public/data/rag-index-freshness.json
+          retention-days: 90
+
+      - name: Open tracking issue when stale
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs')
+            let report
+            try {
+              report = JSON.parse(fs.readFileSync('public/data/rag-index-freshness.json', 'utf-8'))
+            } catch {
+              core.warning('No freshness report produced; skipping.')
+              return
+            }
+            if (!report.stale) {
+              core.info(`RAG index fresh — ${report.corpusChunks} chunks.`)
+              return
+            }
+            const body = [
+              '## RAG index is stale',
+              '',
+              'The committed search index has drifted from source data. Rebuild it locally:',
+              '',
+              '```bash',
+              'npm run refresh-index',
+              "git add public/data/{rag-corpus.json,rag-corpus.json.sig,embeddings.bin,embeddings-meta.json}",
+              "git commit -m 'chore(data): refresh RAG index'",
+              '```',
+              '',
+              `- Source records missing from committed corpus: **${report.addedToSource}**`,
+              `- Committed chunks no longer in source: **${report.removedFromSource}**`,
+              '',
+              '### Findings',
+              ...report.findings.map((f) => `- ${f}`),
+              '',
+              'See the `rag-index-freshness-report` artifact for the full JSON.',
+            ].join('\n')
+            // Reuse a single open issue rather than spamming weekly.
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'rag-index:stale',
+            })
+            if (existing.data.length) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.data[0].number,
+                body,
+              })
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'RAG index refresh due',
+                body,
+                labels: ['rag-index:stale'],
+              })
+            }

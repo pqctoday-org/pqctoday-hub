@@ -1,0 +1,3422 @@
+<!doctype html><html lang="en"><head>
+    <meta charset="utf-8">
+    <title>What is Post-Quantum Cryptography? | PQC Compliance | SafeLogic</title>
+    <link rel="shortcut icon" href="https://www.safelogic.com/hubfs/Favicon.png">
+    <meta name="description" content="Learn about the threat quantum computers pose to traditional PKI, and how SafeLogic is a leader in efforts to migrate to post-quantum cryptography.">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="/hs/hsstatic/jquery-libs/static-1.1/jquery/jquery-1.7.1.js"></script>
+<script>hsjQuery = window['jQuery'];</script>
+    <meta property="og:description" content="Learn about the threat quantum computers pose to traditional PKI, and how SafeLogic is a leader in efforts to migrate to post-quantum cryptography.">
+    <meta property="og:title" content="What is Post-Quantum Cryptography? | PQC Compliance | SafeLogic">
+    <meta name="twitter:description" content="Learn about the threat quantum computers pose to traditional PKI, and how SafeLogic is a leader in efforts to migrate to post-quantum cryptography.">
+    <meta name="twitter:title" content="What is Post-Quantum Cryptography? | PQC Compliance | SafeLogic">
+
+    
+
+    
+    <style>
+a.cta_button{-moz-box-sizing:content-box !important;-webkit-box-sizing:content-box !important;box-sizing:content-box !important;vertical-align:middle}.hs-breadcrumb-menu{list-style-type:none;margin:0px 0px 0px 0px;padding:0px 0px 0px 0px}.hs-breadcrumb-menu-item{float:left;padding:10px 0px 10px 10px}.hs-breadcrumb-menu-divider:before{content:'›';padding-left:10px}.hs-featured-image-link{border:0}.hs-featured-image{float:right;margin:0 0 20px 20px;max-width:50%}@media (max-width: 568px){.hs-featured-image{float:none;margin:0;width:100%;max-width:100%}}.hs-screen-reader-text{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px}
+</style>
+
+<link rel="stylesheet" href="https://www.safelogic.com/hubfs/hub_generated/template_assets/1/51425468995/1779840261622/template_mojoflex-styles.css">
+
+<style>
+  
+  
+  
+	.search-button, .search-button:visited, .search-link, .search-link:visited {
+		color: #FFFFFF;
+	}
+	.search-button:hover, .search-link:hover {
+		color: #FFFFFF;
+	}
+  .sticky-header .search-link, .sticky-header .search-link:visited {
+		color: #FFFFFF;
+	}
+	.sticky-header .search-link:hover {
+		color: #FFFFFF;
+	}
+  .header-flex {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  @media(min-width: 1200px) {
+    .header-flex {
+      padding-top: 50px;
+      padding-bottom: 20px;
+    }
+  }
+  
+  
+  
+  .alert-bar {
+    
+      background-color: rgba(254, 107, 0, 1.0);
+    
+  }
+  
+  
+  
+  .header-utility {
+    
+      background-color: rgba(235, 66, 24, 1.0);
+    
+  }
+  
+  .utility-nav a,
+  .utility-nav a:visited {
+    color: rgba(255, 255, 255, 1.0);
+  }
+  
+  .utility-nav a:hover,
+  .utility-nav a:focus {
+    color: rgba(255, 255, 255, 1.0);
+    
+      text-decoration: none;
+    
+  }
+  
+  
+  .utility-nav.off-canvas ul {
+    border-top: 1px solid rgba(255, 255, 255, 0.55);
+  }
+
+  .utility-nav.off-canvas a,
+  .utility-nav.off-canvas a:visited {
+    color: rgba(255, 255, 255, 1.0);
+  }
+  
+  
+  
+  
+  .off-canvas-inner .mobile-cta-wrap.header-cta {
+    margin: 0 0 20px;
+  }
+  @media(min-width: 768px) {
+    .off-canvas-inner .mobile-cta-wrap.header-cta {
+      display: none;
+    }
+  }
+  
+  
+  
+  
+  .header {
+    position: fixed;
+  }
+  
+  
+    .header.sticky-header {
+      background: rgba(26, 26, 26, 1.0);
+      box-shadow: 0 4px 4px -2px rgba(0, 0, 0, 0.1);
+      height: auto;
+    }
+
+    .header.sticky-header .header-flex {
+      padding: 10px 0;
+    }
+
+    /****** Anchor styling ******/
+    a[data-hs-anchor="true"] {
+      display: block; 
+      position: relative; 
+      top:-125px; 
+      visibility:hidden;
+    }
+  
+  
+  @media(min-width: 992px) {
+    .header {
+      position: absolute;
+    }
+    
+    
+    .header {
+      position: fixed;
+    }
+    
+  }
+  
+  
+  
+  
+  
+  
+  
+  .header-logo {
+    max-width: 350px;
+  }
+  
+  .header.sticky-header .header-logo.switch {
+    max-width: 250px;
+  }
+
+  @media(min-width: 768px) {
+    .header-logo {
+      max-width: 450px;
+    }
+    
+    .header.sticky-header .header-logo.switch {
+      max-width: 250px;
+    }
+  }
+  
+    
+  
+  .navbar-collapse {
+    background: rgba(34, 34, 34, 0.97);
+  }
+  
+  .navbar-toggle .icon-bar {
+    background: rgba(255, 255, 255, 1.0);
+  }
+  
+  .header.sticky-header .navbar-toggle .icon-bar {
+    background: rgba(255, 255, 255, 1.0);
+  }
+  
+  .navbar-toggle:hover .icon-bar {
+    background: rgba(254, 107, 0, 1.0);
+  }
+
+  .navbar-close:hover .icon-bar,
+  .mega-close:hover .icon-bar {
+    background: rgba(254, 107, 0, 1.0);
+  }
+    
+  .nav ul li a,
+  .nav ul li a:visited,
+  .nav ul li a:focus,
+  .nav .hs-menu-wrapper.hs-menu-flow-horizontal > ul li a {
+    color: rgba(255, 255, 255, 1.0);
+    font-weight: 400;
+  }
+
+  .nav ul li a:hover,
+  .nav .hs-menu-wrapper.hs-menu-flow-horizontal > ul li a:hover {
+    color: rgba(254, 107, 0, 1.0);
+  }
+  
+  
+  .nav li.arrow ul li a,
+  .nav li.arrow ul li a:visited,
+  .nav .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > a,
+  .nav .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > a:visited {
+    color: rgba(255, 255, 255, 1.0);
+    font-weight: 400;
+  }
+
+  .nav li.arrow ul li a:hover,
+  .nav .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > a:hover {
+    color: rgba(254, 107, 0, 1.0);
+    text-decoration: underline;
+  }
+  
+  .nav li.arrow ul ul li a,
+  .nav li.arrow ul ul li a:visited,
+  .nav .hs-menu-wrapper.hs-menu-flow-horizontal > ul ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > a,
+  .nav .hs-menu-wrapper.hs-menu-flow-horizontal > ul ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > a:visited {
+    font-weight: 400;
+  }
+  
+  
+  
+  
+  .nav.standard {
+    display: none;
+  }
+
+  @media(min-width: 1200px) {
+    .nav.standard {
+      display: flex;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar-toggle {
+      display: none !important;
+    }
+
+    .nav.standard ul,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul {
+      list-style: none outside none;
+      margin: 0 0 0px 0;
+      padding: 0;
+      display: block;
+    }
+
+    .nav.standard ul li,
+    .nav.standard ul li:visited,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-menu-depth-1 {
+      background: transparent;
+      display: inline-block;
+      padding: 0;
+      float: none;
+      position: relative;
+      margin: 0 0 0 10px;
+    }
+
+    .nav.standard ul li a,
+    .nav.standard ul li a:visited,
+    .nav.standard ul li a:focus,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li a {
+      background: transparent;
+      color: rgba(255, 255, 255, 1.0);
+      display: block;
+      font-size: 16px;
+      font-weight: 900;
+      line-height: 1.3;
+      max-width: none;
+      overflow: visible;
+      padding: 5px 12px 5px 0px;
+      position: relative;
+      margin: 0;
+      outline: none;
+    }
+
+    .nav.standard ul li a:hover,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li a:hover,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.active > a {
+      background: transparent;
+      color: rgba(254, 107, 0, 1.0);
+      text-decoration: none;
+    }
+
+    .nav.standard li.arrow > a:after,
+    .nav.standard li.arrow > a:visited:after {
+      content: "\f0d7";
+      display: inline-block;
+      position: relative;
+      font-family: 'Font Awesome 5 Free';
+      font-weight: 900;
+      right: auto;
+      top: auto;
+      margin: 0 0 0 10px;
+      font-size: 15px;
+      line-height: 1;
+      transition: all 0.1s linear 0s;
+    }
+
+    
+
+    .nav.standard ul ul,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper {
+      max-height: none;
+      overflow: visible;
+      transition: all 0.15s ease 0s;
+      list-style-type: none;
+      margin: 0;
+      padding: 15px 0;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      position: absolute;
+      left: 0;
+      top: calc(100% + 10px);
+      width: 250px;
+    }
+
+    .nav.standard ul li:last-child ul,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children:last-child ul.hs-menu-children-wrapper {
+      left: auto;
+      right: 0;
+    }
+
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children:last-child > ul.hs-menu-children-wrapper:before {
+      left: auto;
+      right: 20px;
+    }
+
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children > ul.hs-menu-children-wrapper:before {
+      content: '';
+      display: block;
+      height: 8px;
+      width: 8px;
+      transform: rotate(45deg);
+      position: absolute;
+      top: -3px;
+      left: 20px;
+      transition: all 0.15s ease 0s;
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .nav.standard li.arrow.drop ul,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children.drop ul.hs-menu-children-wrapper {
+      max-height: none;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    .nav.standard li.arrow.drop > ul:before,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children.drop > ul.hs-menu-children-wrapper:before {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .nav.standard li.arrow ul li {
+      display: block;
+      margin: 0;
+      padding: 0;
+      text-transform: none;
+    }
+
+    .nav.standard li.arrow ul li a,
+    .nav.standard li.arrow ul li a:visited,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > a,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > a:visited {
+      display: block;
+      padding: 5px 15px 5px 15px;
+      text-transform: none;
+      font-size: 17px;
+      font-weight: 400;
+      margin: 3px 0;
+      max-width: none;
+      width: auto;
+    }
+
+    
+
+    .nav.standard ul ul ul,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper ul {
+      padding: 0;
+      position: relative;
+      top: auto;
+      left: auto;
+    }
+
+    .nav.standard ul ul ul:before,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper ul:before {
+      display: none;
+    }
+
+    .nav.standard li.arrow ul ul li,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper li.hs-item-has-children ul.hs-menu-children-wrapper {
+      text-transform: none;
+      position: relative;
+      top: auto;
+      left: auto;
+    }
+
+    .nav.standard li.arrow ul ul li a,
+    .nav.standard li.arrow ul ul li a:visited,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > ul > li > a,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > ul > li > a:visited {
+      display: block;
+      font-size: 16px;
+      font-weight: 400;
+      padding: 5px 10px 5px 25px;
+      margin: 5px 0;
+      text-transform: none;
+      font-style: italic;
+    }
+
+    .nav li.arrow ul ul li a:hover,
+    .nav li.arrow ul ul li a:focus,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > ul > li.active > a {
+      background: transparent;
+    }
+
+    
+
+    .nav.standard li.arrow ul li a,
+    .nav.standard li.arrow ul li a:visited,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > a,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > a:visited {
+      color: rgba(255, 255, 255, 1.0);
+      font-weight: 400;
+    }
+
+    .nav.standard li.arrow ul li a:hover,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > a:hover,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper > li.active > a {
+      color: rgba(254, 107, 0, 1.0);
+    }
+
+    .nav.standard li.arrow ul ul li a,
+    .nav.standard li.arrow ul ul li a:visited,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > a,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > a:visited {
+      font-weight: 400;
+    }
+
+    .nav.standard ul ul,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper {
+      background: rgba(68, 68, 68, 1.0);
+      border-radius: 3px;
+    }
+
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children > ul.hs-menu-children-wrapper:before {
+      background: rgba(68, 68, 68, 1.0);
+    }
+
+    .sticky-header .nav.standard ul li a,
+    .sticky-header .nav.standard ul li a:visited,
+    .sticky-header .nav.standard ul li a:focus,
+    .sticky-header .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li a {
+      color: rgba(255, 255, 255, 1.0);
+    }
+
+    .sticky-header .nav.standard ul li a:hover,
+    .sticky-header .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li a:hover,
+    .sticky-header .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.active > a {
+      color: rgba(254, 107, 0, 1.0);
+    }
+
+    
+    .sticky-header .nav.standard li.arrow ul li a,
+    .sticky-header .nav.standard li.arrow ul li a:visited,
+    .sticky-header .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > a,
+    .sticky-header .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > a:visited {
+      color: rgba(255, 255, 255, 1.0);
+    }
+
+    .sticky-header .nav.standard li.arrow ul li a:hover,
+    .sticky-header .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper > li > a:hover,
+    .sticky-header .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children ul.hs-menu-children-wrapper > li.active > a {
+      color: rgba(254, 107, 0, 1.0);
+    }
+  }
+  
+  
+    
+  
+  .social.header-soc a,
+  .social.header-soc a:visited {
+    color: rgba(255, 255, 255, 1.0);
+  }
+  
+  .social.header-soc a:hover,
+  .social.header-soc a:focus {
+    color: rgba(255, 255, 255, 1.0);
+  }
+  
+  .social-icons.header-soc a span,
+  .social-icons.header-soc a:visited span {
+    fill: rgba(255, 255, 255, 1.0);
+  }
+  
+  .social-icons.header-soc a:hover span,
+  .social-icons.header-soc a:focus span {
+    fill: rgba(255, 255, 255, 1.0);
+  }
+  
+  
+  
+  .mega-menu-wrapper {
+    background: rgba(34, 34, 34, 1);
+    position: fixed;
+    right: -100vw;
+    top: 0;
+    height: 0;
+    opacity: 0;
+    overflow-y: scroll;
+    padding: 90px 25px 85px;
+    transition: all 0.25s ease 0s;
+    width: 100%;
+    z-index: 700;
+  }
+
+  .mega-menu-wrapper.active {
+    height: 100%;
+    opacity: 1;
+    right: 0;
+    transition: all 0.25s ease 0s;
+  }
+  
+  .mega-menu-wrapper .mega-close .icon-bar {
+    width: 20px;
+  }
+  
+  .mega-menu-wrapper .mega-close .icon-bar.first {
+    top: 6px;
+    width: 10px;
+  }
+  
+  .mega-menu-wrapper .mega-close .icon-bar.last {
+    top: -6px;
+    width: 10px;
+  }
+  
+  .mega-menu-wrapper .mega-close:hover {
+    transform: none;
+  }
+    
+  .mega-menu-nav-flex .nav-col p {
+    margin: 0 0 10px;
+  }
+  
+  .mega-menu-nav-flex .nav-col ul {
+    list-style-type: none;
+    padding: 0 0 0 5px;
+  }
+  .mega-menu-nav-flex .nav-col ul ul {
+    list-style-type: none;
+    padding: 0 0 0 10px;
+  }
+
+  .mega-menu-nav p.menu-header,
+  .mega-menu-nav-flex .nav-col a,
+  .mega-menu-nav-flex .nav-col a:visited {
+    color: rgba(255, 255, 255, 1.0);
+  }
+
+  .mega-menu-nav-flex .nav-col a:hover,
+  .mega-menu-nav-flex .nav-col a:focus {
+    color: rgba(254, 107, 0, 1.0);
+    text-decoration: none;
+  }
+
+  .mega-menu-nav-flex .nav-col ul li a,
+  .mega-menu-nav-flex .nav-col ul li a:visited,
+  .mega-menu-nav-flex .nav-col ul ul li a,
+  .mega-menu-nav-flex .nav-col ul ul li a:visited{
+    color: rgba(255, 255, 255, 1.0);
+  }
+
+  .mega-menu-nav-flex .nav-col ul li a:hover,
+  .mega-menu-nav-flex .nav-col ul li a:focus,
+  .mega-menu-nav-flex .nav-col ul ul li a:hover,
+  .mega-menu-nav-flex .nav-col ul ul li a:focus{
+    color: rgba(254, 107, 0, 1.0);
+  }
+  
+  @media(min-width: 768px) {
+    .mega-menu-wrapper {
+      right: -500px;
+      width: 500px;
+    }
+    .mega-menu-wrapper.active {
+      right: 0;
+    }
+  }
+  
+  @media(max-width: 1199px) {
+    .mega-menu-wrapper.mobile-white h1,
+    .mega-menu-wrapper.mobile-white h2,
+    .mega-menu-wrapper.mobile-white h3,
+    .mega-menu-wrapper.mobile-white h4,
+    .mega-menu-wrapper.mobile-white h5,
+    .mega-menu-wrapper.mobile-white h6,
+    .mega-menu-wrapper.mobile-white p,
+    .mega-menu-wrapper.mobile-white p.menu-header,
+    .mega-menu-wrapper.mobile-white a,
+    .mega-menu-wrapper.mobile-white a:visited {
+      color: #fff;
+    }
+  }
+  
+  @media(min-width: 1200px) {
+    
+    .standard li.mega-menu.drop ul,
+    .standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.mega-menu.drop ul.hs-menu-children-wrapper {
+      max-height: 0;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      right: 0;
+    }
+    
+    .nav.standard li.mega-active ul,
+    .nav.standard .hs-menu-wrapper.hs-menu-flow-horizontal > ul li.hs-item-has-children.mega-active ul.hs-menu-children-wrapper {
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+    .standard .mega-menu-wrapper .mega-close {
+      display: none;
+    }
+    .standard .mega-menu-wrapper {
+      background: rgba(204, 204, 204, 1.0);
+      display: block;
+      height: 0;
+      opacity: 0;
+      padding: 0 30px;
+      position: relative;
+      overflow-y: visible;
+      right: 0;
+      transition: all .15s ease 0s;
+      visibility: hidden;
+      width: 100vw;
+      max-width: 1920px;
+      margin: 0 auto;
+    }
+    .standard .mega-menu-wrapper.active {
+      height: auto;
+      opacity: 1;
+      padding: 30px 50px;
+      transition: all .15s ease 0s;
+      visibility: visible;
+    }
+
+    .standard .mega-menu-flex.two-col {
+      display: flex;
+      flex-flow: row nowrap;
+    }
+    .standard .mega-menu-flex.two-col .mega-menu-nav {
+      flex-basis: 70%;
+      flex-grow: 4;
+    }
+    .standard .mega-menu-flex.two-col .mega-menu-extra-content {
+      flex-basis: 30%;
+      flex-grow: 1;
+      padding: 0 10px;
+    }
+    .standard .mega-menu-nav-flex {
+      display: flex;
+      flex-flow: row nowrap;
+    }
+    .standard .mega-menu-nav-flex .nav-col {
+      flex-basis: 20%;
+      flex-grow: 1;
+      padding: 0;
+    }
+    
+    .standard .mega-menu-nav-flex .nav-col p {
+      margin: 0 0 20px;
+    }
+
+    .standard .mega-menu-nav-flex .nav-col ul {
+      padding: 0;
+    }
+    
+    .standard .mega-menu-nav-flex .nav-col a,
+    .standard .mega-menu-nav-flex .nav-col a:visited {
+      color: rgba(68, 68, 68, 1.0);
+      font-size: 20px;
+      font-weight: 700;
+    }
+    
+    .standard .mega-menu-nav-flex .nav-col a:hover,
+    .standard .mega-menu-nav-flex .nav-col a:focus {
+      color: rgba(254, 107, 0, 1.0);
+    }
+    
+    .standard .mega-menu-nav-flex .nav-col ul li a,
+    .standard .mega-menu-nav-flex .nav-col ul li a:visited {
+      color: rgba(0, 0, 0, 1.0);
+      font-size: 16px;
+      font-weight: 700;
+    }
+    
+    .standard .mega-menu-nav-flex .nav-col ul li a:hover,
+    .standard .mega-menu-nav-flex .nav-col ul li a:focus {
+      color: rgba(254, 107, 0, 1.0);
+    }
+    
+    .standard .mega-menu-nav-flex .nav-col ul ul li a,
+    .standard .mega-menu-nav-flex .nav-col ul ul li a:visited {
+      color: rgba(0, 0, 0, 1.0);
+      font-size: 14px;
+      font-weight: 400;
+    }
+    
+    .standard .mega-menu-nav-flex .nav-col ul ul li a:hover,
+    .standard .mega-menu-nav-flex .nav-col ul ul li a:focus {
+      color: rgba(254, 107, 0, 1.0);
+    }
+  }
+  
+  @media(min-width: 1600px) {
+    .standard .mega-menu-wrapper.active {
+      padding: 30px 110px;
+    }
+  }
+  
+</style>
+
+
+<style>
+  .int-banner.dnd_area-module-1 {
+    min-height: 300px;
+    padding: 100px 0 0 0;
+  }
+  
+  @media(min-width: 992px) {
+    .int-banner.dnd_area-module-1 {
+      min-height: 400px;
+      padding: 120px 0 0 0;
+    }
+  }
+</style>
+
+
+<style>
+  
+  
+  
+  
+  .std-padding.widget_1714693143855 {
+     
+    
+      background-color: rgba(255, 255, 255, 1);
+    
+    
+  }
+  
+  .page-content.widget_1714693143855 {
+    text-align: left;
+  }
+  
+  
+  
+  @media(min-width: 992px) {
+    .page-content.widget_1714693143855 {
+      text-align: left;
+    }
+  }
+</style>
+
+
+<style>
+  .std-padding.widget_1748493813491 {
+     
+    
+      background-color: rgba(255, 255, 255, 1);
+    
+    
+  }
+  
+  .page-content.widget_1748493813491 {
+    text-align: left;
+  }
+  
+  
+  
+  @media(min-width: 992px) {
+    .page-content.widget_1748493813491 {
+      text-align: left;
+    }
+  }
+</style>
+
+
+<style>
+  .std-padding.widget_1748494425631 {
+     
+    
+      background-color: rgba(255, 255, 255, 1);
+    
+    
+  }
+  
+  .page-content.widget_1748494425631 {
+    text-align: left;
+  }
+  
+  
+  
+  @media(min-width: 992px) {
+    .page-content.widget_1748494425631 {
+      text-align: left;
+    }
+  }
+</style>
+
+
+<style>
+  
+  
+  
+  
+  .std-padding.module_1747770112976 {
+     
+    
+      background-color: rgba(238, 238, 238, 1);
+    
+    
+  }
+  
+  .page-content.module_1747770112976 {
+    text-align: left;
+  }
+  
+  
+  
+  @media(min-width: 992px) {
+    .page-content.module_1747770112976 {
+      text-align: left;
+    }
+  }
+</style>
+
+
+<style>
+  
+  
+  
+  
+  .std-padding.widget_1714693408366 {
+     
+    
+      background-color: rgba(255, 255, 255, 1);
+    
+    
+  }
+  
+  .page-content.widget_1714693408366 {
+    text-align: left;
+  }
+  
+  
+  
+  @media(min-width: 992px) {
+    .page-content.widget_1714693408366 {
+      text-align: left;
+    }
+  }
+</style>
+
+
+<style>
+  
+  
+  
+  
+  .std-padding.module_1747771427197 {
+     
+    
+      background-color: rgba(255, 255, 255, 1);
+    
+    
+  }
+  
+  .page-content.module_1747771427197 {
+    text-align: left;
+  }
+  
+  
+  
+  @media(min-width: 992px) {
+    .page-content.module_1747771427197 {
+      text-align: left;
+    }
+  }
+</style>
+
+
+<style>
+  
+  
+  
+  
+  .std-padding.module_1747772137170 {
+     
+    
+      background-color: rgba(238, 238, 238, 1);
+    
+    
+  }
+  
+  .page-content.module_1747772137170 {
+    text-align: left;
+  }
+  
+  
+  
+  @media(min-width: 992px) {
+    .page-content.module_1747772137170 {
+      text-align: left;
+    }
+  }
+</style>
+
+
+<style>
+  
+  
+  
+  
+  .std-padding.module_1747771136951 {
+     
+    
+      background-color: rgba(255, 255, 255, 1);
+    
+    
+  }
+  
+  .page-content.module_1747771136951 {
+    text-align: left;
+  }
+  
+  
+  
+  @media(min-width: 992px) {
+    .page-content.module_1747771136951 {
+      text-align: left;
+    }
+  }
+</style>
+
+
+<style>
+  .interior-cta.widget_1763508937657 {
+     
+    
+      background-color: rgba(255, 255, 255, 1);
+    
+  }
+  
+  .std-padding.widget_1763508937657 {
+    
+      background-color: rgba(255, 255, 255, 1);
+    
+    
+  }
+  
+  
+</style>
+
+
+<style>
+  
+  
+  
+  
+  .std-padding.widget_1748496487556 {
+     
+    
+      background-color: rgba(238, 238, 238, 1);
+    
+    
+  }
+  
+  .page-content.widget_1748496487556 {
+    text-align: left;
+  }
+  
+  
+  
+  @media(min-width: 992px) {
+    .page-content.widget_1748496487556 {
+      text-align: left;
+    }
+  }
+</style>
+
+
+<style>
+  .std-padding.widget_1747791547481 {
+     
+    
+      background-color: rgba(255, 255, 255, 1);
+    
+    
+  }
+  
+  .page-content.widget_1747791547481 {
+    text-align: left;
+  }
+  
+  
+  
+  @media(min-width: 992px) {
+    .page-content.widget_1747791547481 {
+      text-align: left;
+    }
+  }
+</style>
+
+
+<style>
+  .interior-cta.module_17477876031663 {
+    
+      background-image: url(https://www.safelogic.com/hubfs/secure-your-tls-connections-against-quantum-threats.jpg);
+     
+    
+      background-color: rgba(255, 255, 255, 1);
+    
+  }
+  
+  .std-padding.module_17477876031663 {
+    
+      background-color: rgba(255, 255, 255, 1);
+    
+    
+      padding: 55px 0 60px;
+    
+  }
+  
+  
+    @media(min-width: 768px) {
+      .std-padding.module_17477876031663 {
+        padding: 80px 0 80px;
+      }
+    }
+
+    @media(min-width: 1200px) {
+      .std-padding.module_17477876031663 {
+        padding: 55px 0 60px;
+      }
+    }
+  
+</style>
+
+
+<style>
+  .std-padding.widget_1747788958426 {
+     
+    
+      background-color: rgba(255, 255, 255, 1);
+    
+    
+  }
+  
+  .page-content.widget_1747788958426 {
+    text-align: left;
+  }
+  
+  
+  
+  @media(min-width: 992px) {
+    .page-content.widget_1747788958426 {
+      text-align: left;
+    }
+  }
+</style>
+
+
+<style>
+  .interior-cta.module_1747788801439 {
+    
+      background-image: url(https://www.safelogic.com/hubfs/post-quantum-cryptography.jpg);
+     
+    
+      background-color: rgba(255, 255, 255, 1);
+    
+  }
+  
+  .std-padding.module_1747788801439 {
+    
+      background-color: rgba(255, 255, 255, 1);
+    
+    
+      padding: 55px 0 60px;
+    
+  }
+  
+  
+    @media(min-width: 768px) {
+      .std-padding.module_1747788801439 {
+        padding: 80px 0 80px;
+      }
+    }
+
+    @media(min-width: 1200px) {
+      .std-padding.module_1747788801439 {
+        padding: 55px 0 60px;
+      }
+    }
+  
+</style>
+
+
+<style>
+  
+  
+  
+  
+  .std-padding.widget_1714694227809 {
+     
+    
+      background-color: rgba(238, 238, 238, 1);
+    
+    
+  }
+  
+  .page-content.widget_1714694227809 {
+    text-align: left;
+  }
+  
+  
+  
+  @media(min-width: 992px) {
+    .page-content.widget_1714694227809 {
+      text-align: left;
+    }
+  }
+</style>
+
+
+<style>
+  
+  
+  
+  
+  .std-padding.widget_1714693724479 {
+     
+    
+      background-color: rgba(255, 255, 255, 1);
+    
+    
+  }
+  
+  .page-content.widget_1714693724479 {
+    text-align: left;
+  }
+  
+  
+  
+  @media(min-width: 992px) {
+    .page-content.widget_1714693724479 {
+      text-align: left;
+    }
+  }
+</style>
+
+
+<style>
+  .std-padding.module_16903915404395 {
+     
+    
+      background-color: rgba(238, 238, 238, 1);
+    
+    
+  }
+  
+  
+  
+  .form-wrapper.add-padding {
+    padding: 25px;
+  }
+  
+  .form-wrapper.module_16903915404395 {
+    background-color: rgba(255, 255, 255, .0);
+    border-radius: 0px;
+  }
+  
+  @media(min-width: 1200px) {
+    .form-wrapper.add-padding {
+      padding: 40px 50px;
+    }
+  }
+</style>
+
+
+<style>
+  .std-padding.widget_1747790203601 {
+     
+    
+      background-color: rgba(255, 255, 255, 1);
+    
+    
+  }
+  
+  .page-content.widget_1747790203601 {
+    text-align: left;
+  }
+  
+  
+  
+  @media(min-width: 992px) {
+    .page-content.widget_1747790203601 {
+      text-align: left;
+    }
+  }
+</style>
+
+<style>
+  @font-face {
+    font-family: "Roboto";
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+    src: url("/_hcms/googlefonts/Roboto/900.woff2") format("woff2"), url("/_hcms/googlefonts/Roboto/900.woff") format("woff");
+  }
+  @font-face {
+    font-family: "Roboto";
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    src: url("/_hcms/googlefonts/Roboto/regular.woff2") format("woff2"), url("/_hcms/googlefonts/Roboto/regular.woff") format("woff");
+  }
+  @font-face {
+    font-family: "Roboto";
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+    src: url("/_hcms/googlefonts/Roboto/700.woff2") format("woff2"), url("/_hcms/googlefonts/Roboto/700.woff") format("woff");
+  }
+  @font-face {
+    font-family: "Lato";
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    src: url("/_hcms/googlefonts/Lato/regular.woff2") format("woff2"), url("/_hcms/googlefonts/Lato/regular.woff") format("woff");
+  }
+  @font-face {
+    font-family: "Lato";
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+    src: url("/_hcms/googlefonts/Lato/700.woff2") format("woff2"), url("/_hcms/googlefonts/Lato/700.woff") format("woff");
+  }
+</style>
+
+    
+
+    
+    <link rel="canonical" href="https://www.safelogic.com/technology/post-quantum-cryptography">
+
+<meta name="google-site-verification" content="tONdwUkL8vxJH_p45zsDLxYyXZ95IbS2ZMcgUdK5nXY">
+
+<!-- Google Tag Manager (TS) -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-57TPLFN');</script>
+<!-- End Google Tag Manager -->
+
+
+<meta property="og:url" content="https://www.safelogic.com/technology/post-quantum-cryptography">
+<meta name="twitter:card" content="summary">
+<meta http-equiv="content-language" content="en">
+
+
+
+
+
+
+    
+      <link rel="preconnect" href="https://googleapis.com">
+      <script rel="preload" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+    
+    
+      <script type="text/javascript" src="https://kit.fontawesome.com/70fc96b646.js" crossorigin="anonymous"></script>
+      
+      
+    
+  <meta name="generator" content="HubSpot"></head>
+  <body>
+    <div class="body-wrapper   hs-content-id-190382211623 hs-site-page page ">
+      
+        <div data-global-resource-path="MojoFlex - SafeLogic - Child Theme/templates/partials/mojoflex-header.html"><header class="header">
+  <div id="hs_cos_wrapper_mojoflex-header" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><a href="#mainContent" class="skip-nav" aria-label="This is here to skip the navigation and take you right to the beginning of the content area"></a>
+<div class="header standard ">
+  
+    <div class="alert-bar hide white">
+      <a href="#" class="alert-bar-close" aria-label="An X to close out or hide the Alert Bar"><span class="close-bar first"></span><span class="close-bar second"></span></a>
+      <div class="page-content max">
+        <p><span>Important News:</span>SafeLogic Announces General Availability of CryptoComply BoringCrypto! 
+          
+            
+            
+            <a href="https://www.safelogic.com/blog/safelogic-announces-general-availability-of-cryptocomply-boringcrypto-v1.1?hsLang=en" target="_blank">
+              Read the announcement.
+            </a>
+          
+        </p>
+      </div>
+    </div>
+  
+  
+  <div class="page-content max">
+    <div class="header-flex">
+      <div class="header-logo ">
+        
+          
+          
+          <a aria-label="SafeLogic Logo Cryptography Simplified" class="logo" href="https://www.safelogic.com?hsLang=en">
+            <img class="reg-logo" src="https://www.safelogic.com/hubfs/SL%20Cr%20Simp%20H%20White%20Text%20300.png" alt="SafeLogic Logo Cryptography Simplified" loading="lazy">
+            
+          </a>
+        
+      </div>
+      <div class="header-nav">
+        
+          <div class="nav standard">
+            <span id="hs_cos_wrapper_mojoflex-header_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_menu" style="" data-hs-cos-general-type="widget" data-hs-cos-type="menu"><div id="hs_menu_wrapper_mojoflex-header_" class="hs-menu-wrapper active-branch flyouts hs-menu-flow-horizontal" role="navigation" data-sitemap-name="default" data-menu-id="97522540044" aria-label="Navigation Menu">
+ <ul role="menu">
+  <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none"><a href="javascript:;" aria-haspopup="true" aria-expanded="false" role="menuitem">Products</a>
+   <ul role="menu" class="hs-menu-children-wrapper">
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/products-old" role="menuitem">See our Products and Services</a></li>
+    <li class="hs-menu-item hs-menu-depth-2 hs-item-has-children" role="none"><a href="https://www.safelogic.com/products/fips-140-validated-cryptographic-software" role="menuitem">FIPS 140 Validation-as-a-Service</a>
+     <ul role="menu" class="hs-menu-children-wrapper">
+      <li class="hs-menu-item hs-menu-depth-3" role="none"><a href="https://www.safelogic.com/products/cryptocomply-cryptography-software" role="menuitem">CryptoComply cryptography software</a></li>
+      <li class="hs-menu-item hs-menu-depth-3" role="none"><a href="https://www.safelogic.com/products/rapidcert" role="menuitem">RapidCert expedited FIPS certification</a></li>
+      <li class="hs-menu-item hs-menu-depth-3" role="none"><a href="https://www.safelogic.com/products/maintaincert" role="menuitem">MaintainCert software and certificate support</a></li>
+     </ul></li>
+    <li class="hs-menu-item hs-menu-depth-2 hs-item-has-children" role="none"><a href="https://www.safelogic.com/products/post-quantum-cryptography-software" role="menuitem">Post-Quantum Cryptography (PQC)</a>
+     <ul role="menu" class="hs-menu-children-wrapper">
+      <li class="hs-menu-item hs-menu-depth-3" role="none"><a href="https://www.safelogic.com/products/cryptocomply-pq-tls" role="menuitem">CryptoComply PQ TLS</a></li>
+     </ul></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="javascript:;" role="menuitem">Extended Support</a></li>
+   </ul></li>
+  <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none"><a href="https://www.safelogic.com/solutions" aria-haspopup="true" aria-expanded="false" role="menuitem">Solutions</a>
+   <ul role="menu" class="hs-menu-children-wrapper">
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/fips-140-2" role="menuitem">FIPS 140-2</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/fips-140-3" role="menuitem">FIPS 140-3</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/compliance/fips-140-for-cmmc" role="menuitem">FIPS 140 for CMMC 2.0</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/compliance/fips-140-for-common-criteria" role="menuitem">FIPS 140 for Common Criteria</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/compliance/fips-140-for-dodin-apl" role="menuitem">FIPS 140 for DoDIN APL</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/compliance/fips-140-for-fedramp" role="menuitem">FIPS 140 for FedRAMP</a></li>
+   </ul></li>
+  <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none"><a href="javascript:;" aria-haspopup="true" aria-expanded="false" role="menuitem">Company</a>
+   <ul role="menu" class="hs-menu-children-wrapper">
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/company" role="menuitem">About Us</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/company#leaders" role="menuitem">Leadership</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/our-customers" role="menuitem">Our Customers</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/company/our-partners" role="menuitem">Our Partners</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/company#careers" role="menuitem">Careers</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/contact" role="menuitem">Contact Us</a></li>
+   </ul></li>
+  <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none"><a href="https://www.safelogic.com/resources" aria-haspopup="true" aria-expanded="false" role="menuitem">Resources</a>
+   <ul role="menu" class="hs-menu-children-wrapper">
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/resources" role="menuitem">See Our Resources</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/blog" role="menuitem">Insights - The SafeLogic Blog</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/news" role="menuitem">News</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/resources/checklists" role="menuitem">Checklists</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/resources/ebooks" role="menuitem">eBooks</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/events" role="menuitem">Events</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/resources/videos" role="menuitem">Videos</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/resources/webinars" role="menuitem">Webinars</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/resources/whitepapers" role="menuitem">Whitepapers</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://support.safelogic.com/hc/en-us" role="menuitem">Support Portal</a></li>
+   </ul></li>
+ </ul>
+</div></span>
+          </div>
+        
+        
+          <a aria-label="Toggle Search Modal Window" class="search-link hidden-xs hidden-sm" href="#" id="searchBtn">
+            <i class="fa fa-search" aria-hidden="true"></i>
+          </a>
+        
+        <div class="mobile-hide header-cta">
+          <span id="hs_cos_wrapper_mojoflex-header_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_cta" style="" data-hs-cos-general-type="widget" data-hs-cos-type="cta"><div class="hs-cta-embed hs-cta-simple-placeholder hs-cta-embed-182409977859" style="max-width:100%; max-height:100%; width:210px;height:42.390625px" data-hubspot-wrapper-cta-id="182409977859">
+  <a href="/hs/cta/wi/redirect?encryptedPayload=AVxigLJVuve51tf67kLFxfYogisdIfcVb99PtUiQUZQh7do5auTmGF9VC%2BmaVh3wlYT0Oiu1Nhy5ghMudBPPPuP1wNQ3ekgfrcaAObcj9cFoSOg7dKHR5Gb3Sl6pkXwpR%2Bjpmp8khrJIhCPXvxL%2F76u%2BstncM5CiU4JDhm%2F8qqJJwQigbNzDMrTxLFY%2FloKo9oe7Pag%3D&amp;webInteractiveContentId=182409977859&amp;portalId=1641418&amp;hsLang=en" target="_blank" rel="noopener" crossorigin="anonymous">
+    <img alt="Request Consultation" loading="lazy" src="https://no-cache.hubspot.com/cta/default/1641418/interactive-182409977859.png" style="height: 100%; width: 100%; object-fit: fill" onerror="this.style.display='none'">
+  </a>
+</div>
+</span>
+        </div>
+        <div class="lang-switch-wrapper"></div>
+        <nav role="navigation" aria-label="Off canvas navigation button" itemscope itemtype="http://schema.org/SiteNavigationElement">
+          <button aria-label="Toggle the off canvas Navigation" type="button" class="navbar-toggle default">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar first"></span>
+            <span class="icon-bar second"></span>
+            
+            <span class="icon-bar last"></span>
+          </button>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <section aria-label="Off Canvas Navigation" class="navbar-collapse ">
+    <button type="button" class="navbar-close" aria-label="Close Menu Button">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar first"></span>
+      <span class="icon-bar last"></span>
+    </button>
+    <div class="off-canvas-inner">
+      
+      
+      
+        <div class="mobile-cta-wrap header-cta">
+          <span id="hs_cos_wrapper_mojoflex-header_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_cta" style="" data-hs-cos-general-type="widget" data-hs-cos-type="cta"><div class="hs-cta-embed hs-cta-simple-placeholder hs-cta-embed-182409977859" style="max-width:100%; max-height:100%; width:210px;height:42.390625px" data-hubspot-wrapper-cta-id="182409977859">
+  <a href="/hs/cta/wi/redirect?encryptedPayload=AVxigLJVuve51tf67kLFxfYogisdIfcVb99PtUiQUZQh7do5auTmGF9VC%2BmaVh3wlYT0Oiu1Nhy5ghMudBPPPuP1wNQ3ekgfrcaAObcj9cFoSOg7dKHR5Gb3Sl6pkXwpR%2Bjpmp8khrJIhCPXvxL%2F76u%2BstncM5CiU4JDhm%2F8qqJJwQigbNzDMrTxLFY%2FloKo9oe7Pag%3D&amp;webInteractiveContentId=182409977859&amp;portalId=1641418&amp;hsLang=en" target="_blank" rel="noopener" crossorigin="anonymous">
+    <img alt="Request Consultation" loading="lazy" src="https://no-cache.hubspot.com/cta/default/1641418/interactive-182409977859.png" style="height: 100%; width: 100%; object-fit: fill" onerror="this.style.display='none'">
+  </a>
+</div>
+</span>
+        </div>
+      
+      <div class="nav">
+        <span id="hs_cos_wrapper_mojoflex-header_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_menu" style="" data-hs-cos-general-type="widget" data-hs-cos-type="menu"><div id="hs_menu_wrapper_mojoflex-header_" class="hs-menu-wrapper active-branch flyouts hs-menu-flow-horizontal" role="navigation" data-sitemap-name="default" data-menu-id="97522540044" aria-label="Navigation Menu">
+ <ul role="menu">
+  <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none"><a href="javascript:;" aria-haspopup="true" aria-expanded="false" role="menuitem">Products</a>
+   <ul role="menu" class="hs-menu-children-wrapper">
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/products-old" role="menuitem">See our Products and Services</a></li>
+    <li class="hs-menu-item hs-menu-depth-2 hs-item-has-children" role="none"><a href="https://www.safelogic.com/products/fips-140-validated-cryptographic-software" role="menuitem">FIPS 140 Validation-as-a-Service</a>
+     <ul role="menu" class="hs-menu-children-wrapper">
+      <li class="hs-menu-item hs-menu-depth-3" role="none"><a href="https://www.safelogic.com/products/cryptocomply-cryptography-software" role="menuitem">CryptoComply cryptography software</a></li>
+      <li class="hs-menu-item hs-menu-depth-3" role="none"><a href="https://www.safelogic.com/products/rapidcert" role="menuitem">RapidCert expedited FIPS certification</a></li>
+      <li class="hs-menu-item hs-menu-depth-3" role="none"><a href="https://www.safelogic.com/products/maintaincert" role="menuitem">MaintainCert software and certificate support</a></li>
+     </ul></li>
+    <li class="hs-menu-item hs-menu-depth-2 hs-item-has-children" role="none"><a href="https://www.safelogic.com/products/post-quantum-cryptography-software" role="menuitem">Post-Quantum Cryptography (PQC)</a>
+     <ul role="menu" class="hs-menu-children-wrapper">
+      <li class="hs-menu-item hs-menu-depth-3" role="none"><a href="https://www.safelogic.com/products/cryptocomply-pq-tls" role="menuitem">CryptoComply PQ TLS</a></li>
+     </ul></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="javascript:;" role="menuitem">Extended Support</a></li>
+   </ul></li>
+  <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none"><a href="https://www.safelogic.com/solutions" aria-haspopup="true" aria-expanded="false" role="menuitem">Solutions</a>
+   <ul role="menu" class="hs-menu-children-wrapper">
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/fips-140-2" role="menuitem">FIPS 140-2</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/fips-140-3" role="menuitem">FIPS 140-3</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/compliance/fips-140-for-cmmc" role="menuitem">FIPS 140 for CMMC 2.0</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/compliance/fips-140-for-common-criteria" role="menuitem">FIPS 140 for Common Criteria</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/compliance/fips-140-for-dodin-apl" role="menuitem">FIPS 140 for DoDIN APL</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/compliance/fips-140-for-fedramp" role="menuitem">FIPS 140 for FedRAMP</a></li>
+   </ul></li>
+  <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none"><a href="javascript:;" aria-haspopup="true" aria-expanded="false" role="menuitem">Company</a>
+   <ul role="menu" class="hs-menu-children-wrapper">
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/company" role="menuitem">About Us</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/company#leaders" role="menuitem">Leadership</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/our-customers" role="menuitem">Our Customers</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/company/our-partners" role="menuitem">Our Partners</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/company#careers" role="menuitem">Careers</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/contact" role="menuitem">Contact Us</a></li>
+   </ul></li>
+  <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none"><a href="https://www.safelogic.com/resources" aria-haspopup="true" aria-expanded="false" role="menuitem">Resources</a>
+   <ul role="menu" class="hs-menu-children-wrapper">
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/resources" role="menuitem">See Our Resources</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/blog" role="menuitem">Insights - The SafeLogic Blog</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/news" role="menuitem">News</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/resources/checklists" role="menuitem">Checklists</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/resources/ebooks" role="menuitem">eBooks</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/events" role="menuitem">Events</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/resources/videos" role="menuitem">Videos</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/resources/webinars" role="menuitem">Webinars</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/resources/whitepapers" role="menuitem">Whitepapers</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://support.safelogic.com/hc/en-us" role="menuitem">Support Portal</a></li>
+   </ul></li>
+ </ul>
+</div></span>
+      </div>
+      
+      
+        <div class="search-wrapper visible-xs">
+          <form action="/hs-search-results">
+            <label class="sr-only" for="searchBox">Search Box</label>
+            <input type="text" class="search-box" id="mobileSearchBox" name="term" autocomplete="off" aria-label="Search" placeholder="Search">
+            <input type="hidden" name="type" value="SITE_PAGE">
+            
+              <input type="hidden" name="type" value="BLOG_POST">
+              <input type="hidden" name="type" value="LISTING_PAGE">
+            
+            <input type="hidden" name="type" value="KNOWLEDGE_ARTICLE">
+            
+            
+            <button type="submit" aria-label="Search" class="search-button"><i class="fas fa-search"></i></button>
+          </form>
+        </div>
+      
+    </div>
+  </section>
+  
+    <div aria-label="Search Modal" class="modal" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="Site Search">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content trans">
+          <div class="modal-header">
+            <span class="close">×</span>
+            <div class="clear"></div>
+          </div>
+          <div class="modal-body">
+            <div class="large-search">
+              <p class="search-title">Search</p>
+              <form action="/hs-search-results">
+                <label class="sr-only">Search</label>
+                <input type="text" class="search-box" id="searchBox" name="term" autocomplete="off" aria-label="Search" placeholder="What are you looking for?">
+                <input type="hidden" name="type" value="SITE_PAGE">
+                
+                  <input type="hidden" name="type" value="BLOG_POST">
+                  <input type="hidden" name="type" value="LISTING_PAGE">
+                
+                <input type="hidden" name="type" value="KNOWLEDGE_ARTICLE">
+                
+                
+                <button type="submit" aria-label="Search" class="search-button"><i class="fas fa-search"></i></button>
+              </form>
+              <div class="clear"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Get the modal
+      var modal = document.getElementById("searchModal");
+      // Get the button that opens the modal
+      var btn = document.getElementById("searchBtn");
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
+      // When the user clicks the button, open the modal 
+      btn.onclick = function() {
+        modal.style.display = "block";
+      }
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+        modal.style.display = "none";
+      }
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      }
+    </script>
+  
+  
+  
+    
+    <section class="mega-menu-wrapper products mobile-white">
+      <style>
+        .mega-menu-nav p.menu-header {
+          color: #3b2149;
+          font-size: 20px;
+          font-weight: 400;
+        }
+        
+        @media(min-width: 1200px) {
+          .mega-menu-wrapper.custom-space.active {
+            padding: 30px 50px;
+          } 
+        }
+        @media(min-width: 1600px) {
+          .mega-menu-wrapper.custom-space.active {
+            padding: 30px 110px;
+          } 
+        }
+        
+      </style>
+      <button type="button" class="mega-close" aria-label="Close Mega Menu Button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar first"></span>
+        <span class="icon-bar middle"></span>
+        <span class="icon-bar last"></span>
+      </button>
+      <div class="mega-menu-flex ">
+        <div class="mega-menu-nav">
+          
+          <div class="mega-menu-nav-flex">
+            <div class="nav-col">
+              <p style="font-size: 20px;"><a href="https://www.safelogic.com/products/cryptocomply-cryptography-software?hsLang=en" rel="noopener"><span style="font-size: 18px;"><span style="font-size: 20px;"><strong><em>CryptoComply </em>Cryptography Software</strong></span></span></a></p>
+              <span id="hs_cos_wrapper_mojoflex-header_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_simple_menu" style="" data-hs-cos-general-type="widget" data-hs-cos-type="simple_menu"><div id="hs_menu_wrapper_mojoflex-header_" class="hs-menu-wrapper active-branch flyouts hs-menu-flow-horizontal" role="navigation" data-sitemap-name="" data-menu-id="" aria-label="Navigation Menu">
+ <ul role="menu">
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/products/cryptocomply-cryptography-software/boringcrypto" role="menuitem" target="_self">BoringCrypto</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/products/cryptocomply-cryptography-software/core" role="menuitem" target="_self">Core</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/products/cryptocomply-cryptography-software/go" role="menuitem" target="_self">Go</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/products/cryptocomply-cryptography-software/java" role="menuitem" target="_self">Java</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/products/cryptocomply-cryptography-software/mobile" role="menuitem" target="_self">Mobile</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/products/cryptocomply-cryptography-software/net" role="menuitem" target="_self">.NET</a></li>
+ </ul>
+</div></span>
+            </div>
+            <div class="nav-col">
+              <p style="font-size: 20px;"><strong>Key Capabilities</strong></p>
+              <span id="hs_cos_wrapper_mojoflex-header_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_simple_menu" style="" data-hs-cos-general-type="widget" data-hs-cos-type="simple_menu"><div id="hs_menu_wrapper_mojoflex-header_" class="hs-menu-wrapper active-branch flyouts hs-menu-flow-horizontal" role="navigation" data-sitemap-name="" data-menu-id="" aria-label="Navigation Menu">
+ <ul role="menu">
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/products/rapidcert" role="menuitem" target="_self">RapidCert expedited FIPS certification</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/products/maintaincert" role="menuitem" target="_self">MaintainCert cert/software support</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/products/post-quantum-cryptography-software" role="menuitem" target="_self">Post-Quantum Cryptography (PQC)</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/products/crypto-agility" role="menuitem" target="_self">Crypto-Agility</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/products/cryptocomply-cryptography-software/customer-portal" role="menuitem" target="_self">Customer Portal</a></li>
+ </ul>
+</div></span>
+            </div>
+            
+              <div class="nav-col">
+              <p style="font-size: 20px;"><strong><a href="https://www.safelogic.com/products-and-services/cryptocomply-entropy-provider?hsLang=en" rel="noopener">Entropy</a></strong></p>
+                <span id="hs_cos_wrapper_mojoflex-header_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_simple_menu" style="" data-hs-cos-general-type="widget" data-hs-cos-type="simple_menu"><div id="hs_menu_wrapper_mojoflex-header_" class="hs-menu-wrapper active-branch flyouts hs-menu-flow-horizontal" role="navigation" data-sitemap-name="" data-menu-id="" aria-label="Navigation Menu">
+ <ul role="menu">
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/products/cryptocomply-entropy-provider" role="menuitem" target="_self">CryptoComply Entropy Provider</a></li>
+ </ul>
+</div></span>
+              </div>
+            
+            
+              <div class="nav-col">
+              <p style="font-size: 20px;"><a href="https://www.safelogic.com/openssl-extended-support?hsLang=en" rel="noopener"><strong>Extended Support</strong></a></p>
+                <span id="hs_cos_wrapper_mojoflex-header_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_simple_menu" style="" data-hs-cos-general-type="widget" data-hs-cos-type="simple_menu"><div id="hs_menu_wrapper_mojoflex-header_" class="hs-menu-wrapper active-branch flyouts hs-menu-flow-horizontal" role="navigation" data-sitemap-name="" data-menu-id="" aria-label="Navigation Menu">
+ <ul role="menu">
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/openssl-extended-support" role="menuitem" target="_self">OpenSSL 1.0.2 Premium Extended Support</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/openssl-extended-support" role="menuitem" target="_self">OpenSSL 1.1.1 Premium Extended Support</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/openssl-extended-support" role="menuitem" target="_self">OpenSSL 3.0 Premium Extended Support</a></li>
+ </ul>
+</div></span>
+              </div>
+            
+            
+          </div>
+        </div>
+        
+      </div>
+    </section>
+    <script>
+      $('.mega-menu-wrapper .mega-close').click( function() {
+        $('.mega-menu-wrapper').removeClass('active');
+        $( 'header .nav .hs-menu-wrapper > ul > li.mega-active' ).removeClass( 'mega-active' );
+      });
+      $( "header .nav .hs-menu-wrapper > ul > li:nth-child(1)" ).addClass( "mega-menu mega-menu-products" );
+      $( "header .nav .hs-menu-wrapper > ul > li:nth-child(1) > a").on('click', function (event) {
+        var megaEl = $( this ).parent(),
+            megaClass = megaEl.hasClass( 'mega-active' );
+      
+        event.preventDefault();
+        event.stopPropagation();
+        
+        if(megaClass) {
+          megaEl.removeClass('mega-active');
+          $('.mega-menu-wrapper.products').removeClass('active');
+        } else {
+          $('.mega-menu-wrapper.active').removeClass('active');
+          $('header .nav .hs-menu-wrapper > ul > li.mega-active').removeClass('mega-active');
+          $( 'header .nav .hs-menu-wrapper > ul > li.drop' ).removeClass( 'drop' );
+          megaEl.addClass('mega-active');
+          $('.mega-menu-wrapper.products').addClass('active');
+        }
+        //$('.mega-menu-wrapper.products').addClass('active');
+      })
+    </script>
+    
+    <section class="mega-menu-wrapper solutions mobile-white">
+      <style>
+        .mega-menu-nav p.menu-header {
+          color: #3b2149;
+          font-size: 18px;
+          font-weight: ;
+        }
+        
+        @media(min-width: 1200px) {
+          .mega-menu-wrapper.custom-space.active {
+            padding: 30px 50px;
+          } 
+        }
+        @media(min-width: 1600px) {
+          .mega-menu-wrapper.custom-space.active {
+            padding: 30px 110px;
+          } 
+        }
+        
+      </style>
+      <button type="button" class="mega-close" aria-label="Close Mega Menu Button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar first"></span>
+        <span class="icon-bar middle"></span>
+        <span class="icon-bar last"></span>
+      </button>
+      <div class="mega-menu-flex ">
+        <div class="mega-menu-nav">
+          
+          <div class="mega-menu-nav-flex">
+            <div class="nav-col">
+              <p><span style="font-size: 20px;"><a href="https://www.safelogic.com/fips-140?hsLang=en" rel="noopener"><strong>FIPS 140</strong></a></span><a href="https://www.safelogic.com/fips-140?hsLang=en" rel="noopener"></a></p>
+              <span id="hs_cos_wrapper_mojoflex-header_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_simple_menu" style="" data-hs-cos-general-type="widget" data-hs-cos-type="simple_menu"><div id="hs_menu_wrapper_mojoflex-header_" class="hs-menu-wrapper active-branch flyouts hs-menu-flow-horizontal" role="navigation" data-sitemap-name="" data-menu-id="" aria-label="Navigation Menu">
+ <ul role="menu">
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/fips-140-2" role="menuitem" target="_self">FIPS 140-2</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/fips-140-3" role="menuitem" target="_self">FIPS 140-3</a></li>
+ </ul>
+</div></span>
+            </div>
+            <div class="nav-col">
+              <p style="font-size: 20px;"><a href="https://www.safelogic.com/compliance?hsLang=en" rel="noopener"><strong>Cryptography Compliance</strong></a></p>
+              <span id="hs_cos_wrapper_mojoflex-header_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_simple_menu" style="" data-hs-cos-general-type="widget" data-hs-cos-type="simple_menu"><div id="hs_menu_wrapper_mojoflex-header_" class="hs-menu-wrapper active-branch flyouts hs-menu-flow-horizontal" role="navigation" data-sitemap-name="" data-menu-id="" aria-label="Navigation Menu">
+ <ul role="menu">
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/compliance/fips-140-for-cmmc" role="menuitem" target="_self">CMMC 2.0</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/compliance/cnsa-2" role="menuitem" target="_self">CNSA 2.0</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/compliance/fips-140-for-common-criteria" role="menuitem" target="_self">Common Criteria</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/compliance/cryptography-maturity-action-plan-cmap" role="menuitem" target="_self">Cryptography Maturity Action Plan (CMAP)</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/compliance/fips-140-for-fedramp" role="menuitem" target="_self">FedRAMP</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/compliance/fips-140-for-govramp" role="menuitem" target="_self">GovRAMP</a></li>
+ </ul>
+</div></span>
+            </div>
+            
+              <div class="nav-col">
+              <p style="font-size: 20px;"><a href="https://www.safelogic.com/technology/post-quantum-cryptography" rel="noopener"><strong>Post-Quantum Cryptography</strong></a></p>
+                <span id="hs_cos_wrapper_mojoflex-header_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_simple_menu" style="" data-hs-cos-general-type="widget" data-hs-cos-type="simple_menu"><div id="hs_menu_wrapper_mojoflex-header_" class="hs-menu-wrapper active-branch flyouts hs-menu-flow-horizontal" role="navigation" data-sitemap-name="" data-menu-id="" aria-label="Navigation Menu">
+ <ul role="menu">
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/compliance/pqc-standards" role="menuitem" target="_self">PQC Standards</a></li>
+ </ul>
+</div></span>
+              </div>
+            
+            
+              <div class="nav-col">
+              <p style="font-size: 20px;"><a href="https://www.safelogic.com/industries?hsLang=en" rel="noopener"><strong>Industries</strong></a></p>
+                <span id="hs_cos_wrapper_mojoflex-header_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_simple_menu" style="" data-hs-cos-general-type="widget" data-hs-cos-type="simple_menu"><div id="hs_menu_wrapper_mojoflex-header_" class="hs-menu-wrapper active-branch flyouts hs-menu-flow-horizontal" role="navigation" data-sitemap-name="" data-menu-id="" aria-label="Navigation Menu">
+ <ul role="menu">
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/industries/communications" role="menuitem" target="_self">Communications</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/cybersecurity" role="menuitem" target="_self">Cybersecurity</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/industries/financial-services" role="menuitem" target="_self">Financial Services</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/industries/healthcare" role="menuitem" target="_self">Healthcare</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/industries/public-sector" role="menuitem" target="_self">Public Sector</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/technology" role="menuitem" target="_self">Technology</a></li>
+ </ul>
+</div></span>
+              </div>
+            
+            
+              <div class="nav-col">
+              <p style="font-size: 20px;"><a href="https://www.safelogic.com/use-cases?hsLang=en" rel="noopener"><strong>Use Cases</strong></a></p>
+                <span id="hs_cos_wrapper_mojoflex-header_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_simple_menu" style="" data-hs-cos-general-type="widget" data-hs-cos-type="simple_menu"><div id="hs_menu_wrapper_mojoflex-header_" class="hs-menu-wrapper active-branch flyouts hs-menu-flow-horizontal" role="navigation" data-sitemap-name="" data-menu-id="" aria-label="Navigation Menu">
+ <ul role="menu">
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/use-cases/apache" role="menuitem" target="_self">Apache</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/use-cases/nginx" role="menuitem" target="_self">NGINX</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/use-cases/nodejs" role="menuitem" target="_self">Node.js</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/use-cases/rust" role="menuitem" target="_self">Rust</a></li>
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/use-cases/wireguard-go" role="menuitem" target="_self">Wireguard-go</a></li>
+ </ul>
+</div></span>
+              </div>
+            
+          </div>
+        </div>
+        
+      </div>
+    </section>
+    <script>
+      $('.mega-menu-wrapper .mega-close').click( function() {
+        $('.mega-menu-wrapper').removeClass('active');
+        $( 'header .nav .hs-menu-wrapper > ul > li.mega-active' ).removeClass( 'mega-active' );
+      });
+      $( "header .nav .hs-menu-wrapper > ul > li:nth-child(2)" ).addClass( "mega-menu mega-menu-solutions" );
+      $( "header .nav .hs-menu-wrapper > ul > li:nth-child(2) > a").on('click', function (event) {
+        var megaEl = $( this ).parent(),
+            megaClass = megaEl.hasClass( 'mega-active' );
+      
+        event.preventDefault();
+        event.stopPropagation();
+        
+        if(megaClass) {
+          megaEl.removeClass('mega-active');
+          $('.mega-menu-wrapper.solutions').removeClass('active');
+        } else {
+          $('.mega-menu-wrapper.active').removeClass('active');
+          $('header .nav .hs-menu-wrapper > ul > li.mega-active').removeClass('mega-active');
+          $( 'header .nav .hs-menu-wrapper > ul > li.drop' ).removeClass( 'drop' );
+          megaEl.addClass('mega-active');
+          $('.mega-menu-wrapper.solutions').addClass('active');
+        }
+        //$('.mega-menu-wrapper.solutions').addClass('active');
+      })
+    </script>
+    
+  
+</div>
+
+</div>
+  
+  <div class="container-fluid header-extra">
+<div class="row-fluid-wrapper">
+<div class="row-fluid">
+<div class="span12 widget-span widget-type-cell " style="" data-widget-type="cell" data-x="0" data-w="12">
+
+</div><!--end widget-span -->
+</div>
+</div>
+</div>
+</header></div>
+      
+
+      
+  <main id="mainContent" class="body-container-wrapper ha-waypoint">
+    <div class="container-fluid">
+<div class="row-fluid-wrapper">
+<div class="row-fluid">
+<div class="span12 widget-span widget-type-cell " style="" data-widget-type="cell" data-x="0" data-w="12">
+
+<div class="row-fluid-wrapper row-depth-1 row-number-1 dnd-section">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-cell dnd-column" style="" data-widget-type="cell" data-x="0" data-w="12">
+
+<div class="row-fluid-wrapper row-depth-1 row-number-2 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_dnd_area-module-1" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="int-banner dnd_area-module-1  white" style="background-image: url(https://www.safelogic.com/hubfs/Depositphotos_10052436_XL-1.jpg); background-color: rgba(0, 0, 0, 1);">
+  <div class="content-shader" style="background-color: rgba(0, 0, 0, .50);"></div>
+  
+  <div class="page-content small flexed left-side">
+    <div class="column-content page-title ">
+      <div class="animation-only">
+        <div id="hs_cos_wrapper_dnd_area-module-1_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"><p style="font-size: 48px;">&nbsp;</p>
+<p>&nbsp;</p>
+<h1 style="font-size: 48px;"><span style="color: #fe6b00;"><strong>What is Post-Quantum Cryptography?</strong></span></h1>
+<h2>&nbsp;</h2>
+<h2><span style="color: #000000;"><span style="color: #ffffff;"><span style="caret-color: #ffffff;"><strong>Learn why PQC matters, how it works, and how to prepare for the quantum threat.</strong></span></span></span></h2>
+<p><a class="btn-primary" href="/resources/ebooks/pqc-migration-where-are-we-now?hsLang=en" rel="noopener"><span style="color: #000000;"><span style="color: #ffffff;"><span style="caret-color: #ffffff;"><strong>Get Free PQC Migration Guide</strong></span></span></span></a></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-3 dnd-section">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-cell dnd-column" style="" data-widget-type="cell" data-x="0" data-w="12">
+
+<div class="row-fluid-wrapper row-depth-1 row-number-4 dnd-row">
+<div class="row-fluid ">
+<div class="span6 widget-span widget-type-cell dnd-column" style="" data-widget-type="cell" data-x="0" data-w="6">
+
+<div class="row-fluid-wrapper row-depth-1 row-number-5 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1714693143855" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding widget_1714693143855  no-padding">
+  
+  
+  <div class="page-content widget_1714693143855 medium">
+    
+      <div class="top-title">
+        <div id="hs_cos_wrapper_widget_1714693143855_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="top_content"><br><br>
+<h2 style="text-align: center;"><strong>Why Post-Quantum Cryptography Is Needed </strong></h2>
+<p>The promise of quantum computing is immense, but so is the threat it poses to modern encryption. As progress accelerates, the cryptographic systems we rely on to secure everything from national security data to everyday online transactions are becoming increasingly vulnerable.</p>
+<p>Post-quantum cryptography (PQC) is the urgent response: a new generation of algorithms designed to withstand attacks from both classical and quantum computers.</p></div>
+      </div>
+    
+    <div class="two-flex default top-align ">
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_widget_1714693143855_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"><h3>Can Quantum Computers Break Encryption?</h3>
+<p>Yes—and that’s exactly why post-quantum cryptography matters.</p>
+<p>Most of today’s cryptographic infrastructure relies on the mathematical difficulty of certain problems that classical computers struggle to solve. Quantum computing changes the rules.</p>
+<h3>Classical Encryption at Risk</h3>
+<p>Algorithms like RSA (used for digital signatures, certificates, and key exchange), Elliptic Curve Cryptography (ECC), and Diffie-Hellman depend on the computational hardness of factoring large integers or solving discrete logarithms. These problems are considered infeasible for classical computers to solve in a reasonable time.</p>
+<p>But with quantum computing, that’s no longer true.</p></div>
+          
+        </div>
+      </div>
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_widget_1714693143855_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_2"><img src="https://www.safelogic.com/hs-fs/hubfs/PQC%20Lock.png?width=600&amp;height=400&amp;name=PQC%20Lock.png" width="600" height="400" loading="lazy" alt="PQC Lock" style="height: auto; max-width: 100%; width: 600px; margin: 30px auto 0px; display: block;" srcset="https://www.safelogic.com/hs-fs/hubfs/PQC%20Lock.png?width=300&amp;height=200&amp;name=PQC%20Lock.png 300w, https://www.safelogic.com/hs-fs/hubfs/PQC%20Lock.png?width=600&amp;height=400&amp;name=PQC%20Lock.png 600w, https://www.safelogic.com/hs-fs/hubfs/PQC%20Lock.png?width=900&amp;height=600&amp;name=PQC%20Lock.png 900w, https://www.safelogic.com/hs-fs/hubfs/PQC%20Lock.png?width=1200&amp;height=800&amp;name=PQC%20Lock.png 1200w, https://www.safelogic.com/hs-fs/hubfs/PQC%20Lock.png?width=1500&amp;height=1000&amp;name=PQC%20Lock.png 1500w, https://www.safelogic.com/hs-fs/hubfs/PQC%20Lock.png?width=1800&amp;height=1200&amp;name=PQC%20Lock.png 1800w" sizes="(max-width: 600px) 100vw, 600px"></div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-6 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1748493813491" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding widget_1748493813491  no-padding  ">
+  
+  
+  <div class="page-content widget_1748493813491 medium flexed left-side">
+    <div class="column-content ">
+      <div class="animation-only">
+        <div id="hs_cos_wrapper_widget_1748493813491_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-7 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1748494425631" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding widget_1748494425631  bottom-padding  ">
+  
+  
+  <div class="page-content widget_1748494425631 medium flexed left-side">
+    <div class="column-content ">
+      <div class="animation-only">
+        <div id="hs_cos_wrapper_widget_1748494425631_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"><h3>The Shor’s Algorithm Breakthrough</h3>
+<p>In 1994, mathematician Peter Shor developed a quantum algorithm that could efficiently factor large integers and compute discrete logarithms, both core assumptions underlying RSA and ECC security.</p>
+<p>On a sufficiently powerful quantum computer, Shor’s Algorithm could break RSA-2048 in hours or even minutes, rendering the most widely used public key cryptography obsolete.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+</div><!--end widget-span -->
+<div class="span6 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="6" data-w="6">
+<div id="hs_cos_wrapper_module_1747770112976" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding module_1747770112976  small-padding">
+  
+  
+  <div class="page-content module_1747770112976 medium">
+    
+    <div class="two-flex default top-align ">
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_module_1747770112976_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"><p><img src="https://www.safelogic.com/hs-fs/hubfs/harvest-now-decrypt-later-attacks.jpg?width=667&amp;height=400&amp;name=harvest-now-decrypt-later-attacks.jpg" width="667" height="400" loading="lazy" alt="harvest-now-decrypt-later-attacks" style="height: auto; max-width: 100%; width: 667px; margin: 30px auto 0px; display: block;" srcset="https://www.safelogic.com/hs-fs/hubfs/harvest-now-decrypt-later-attacks.jpg?width=334&amp;height=200&amp;name=harvest-now-decrypt-later-attacks.jpg 334w, https://www.safelogic.com/hs-fs/hubfs/harvest-now-decrypt-later-attacks.jpg?width=667&amp;height=400&amp;name=harvest-now-decrypt-later-attacks.jpg 667w, https://www.safelogic.com/hs-fs/hubfs/harvest-now-decrypt-later-attacks.jpg?width=1001&amp;height=600&amp;name=harvest-now-decrypt-later-attacks.jpg 1001w, https://www.safelogic.com/hs-fs/hubfs/harvest-now-decrypt-later-attacks.jpg?width=1334&amp;height=800&amp;name=harvest-now-decrypt-later-attacks.jpg 1334w, https://www.safelogic.com/hs-fs/hubfs/harvest-now-decrypt-later-attacks.jpg?width=1668&amp;height=1000&amp;name=harvest-now-decrypt-later-attacks.jpg 1668w, https://www.safelogic.com/hs-fs/hubfs/harvest-now-decrypt-later-attacks.jpg?width=2001&amp;height=1200&amp;name=harvest-now-decrypt-later-attacks.jpg 2001w" sizes="(max-width: 667px) 100vw, 667px"></p></div>
+          
+        </div>
+      </div>
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_module_1747770112976_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_2"><h3 style="text-align: center;">Harvest Now, Decrypt Later Attacks</h3>
+<p>Even though large-scale quantum computers capable of running Shor’s Algorithm aren’t widely available yet, adversaries aren’t waiting. They’re already engaging in what’s known as Harvest Now, Decrypt Later (HNDL) attacks.</p>
+<p>Sensitive data is being collected and stored now, while encrypted with today’s classical algorithms. Once quantum computers are viable, attackers can decrypt this archived data using quantum techniques.</p>
+<p>If the data you protect today has value 10+ years into the future—intellectual property, state secrets, health records, financial data—it is already at risk.</p></div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-8 dnd-row">
+<div class="row-fluid ">
+<div class="span6 widget-span widget-type-cell dnd-column" style="" data-widget-type="cell" data-x="0" data-w="6">
+
+<div class="row-fluid-wrapper row-depth-1 row-number-9 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1714693408366" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding widget_1714693408366  small-padding">
+  
+  
+  <div class="page-content widget_1714693408366 medium">
+    
+      <div class="top-title">
+        <div id="hs_cos_wrapper_widget_1714693408366_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="top_content"><h2 style="text-align: center;"><strong>How Does Post-Quantum Cryptography Work?</strong></h2>
+<p style="text-align: left;">Post-quantum cryptography (PQC) is designed to secure our digital infrastructure against the capabilities of future quantum computers, without abandoning what already works today.</p></div>
+      </div>
+    
+    <div class="two-flex default top-align ">
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_widget_1714693408366_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"><h3>Resistant by Design</h3>
+<p>PQC algorithms are built on mathematical problems that remain hard even for quantum computers. These include:</p>
+<ul>
+<li>Lattice-based cryptography</li>
+<li>Hash-based signatures</li>
+<li>Code-based encryption</li>
+<li>Multivariate polynomial equations</li>
+</ul>
+<p>Unlike RSA or ECC, which rely on number theory that Shor’s Algorithm can exploit, these alternative structures are believed to be quantum resistant.</p></div>
+          
+        </div>
+      </div>
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_widget_1714693408366_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_2"><h3><img src="https://www.safelogic.com/hs-fs/hubfs/how-post-quantum-cryptography-works.jpg?width=650&amp;height=400&amp;name=how-post-quantum-cryptography-works.jpg" width="650" height="400" loading="lazy" alt="how-post-quantum-cryptography-works" style="height: auto; max-width: 100%; width: 650px; margin: 30px auto 0px; display: block;" srcset="https://www.safelogic.com/hs-fs/hubfs/how-post-quantum-cryptography-works.jpg?width=325&amp;height=200&amp;name=how-post-quantum-cryptography-works.jpg 325w, https://www.safelogic.com/hs-fs/hubfs/how-post-quantum-cryptography-works.jpg?width=650&amp;height=400&amp;name=how-post-quantum-cryptography-works.jpg 650w, https://www.safelogic.com/hs-fs/hubfs/how-post-quantum-cryptography-works.jpg?width=975&amp;height=600&amp;name=how-post-quantum-cryptography-works.jpg 975w, https://www.safelogic.com/hs-fs/hubfs/how-post-quantum-cryptography-works.jpg?width=1300&amp;height=800&amp;name=how-post-quantum-cryptography-works.jpg 1300w, https://www.safelogic.com/hs-fs/hubfs/how-post-quantum-cryptography-works.jpg?width=1625&amp;height=1000&amp;name=how-post-quantum-cryptography-works.jpg 1625w, https://www.safelogic.com/hs-fs/hubfs/how-post-quantum-cryptography-works.jpg?width=1950&amp;height=1200&amp;name=how-post-quantum-cryptography-works.jpg 1950w" sizes="(max-width: 650px) 100vw, 650px"></h3>
+<p>&nbsp;</p></div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-10 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1747771427197" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding module_1747771427197  bottom-padding">
+  
+  
+  <div class="page-content module_1747771427197 medium">
+    
+    <div class="two-flex default top-align ">
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_module_1747771427197_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"><p><img src="https://www.safelogic.com/hs-fs/hubfs/what-is-pqc.jpg?width=601&amp;height=400&amp;name=what-is-pqc.jpg" width="601" height="400" loading="lazy" alt="what-is-pqc" style="height: auto; max-width: 100%; width: 601px; margin: 30px auto 0px; display: block;" srcset="https://www.safelogic.com/hs-fs/hubfs/what-is-pqc.jpg?width=301&amp;height=200&amp;name=what-is-pqc.jpg 301w, https://www.safelogic.com/hs-fs/hubfs/what-is-pqc.jpg?width=601&amp;height=400&amp;name=what-is-pqc.jpg 601w, https://www.safelogic.com/hs-fs/hubfs/what-is-pqc.jpg?width=902&amp;height=600&amp;name=what-is-pqc.jpg 902w, https://www.safelogic.com/hs-fs/hubfs/what-is-pqc.jpg?width=1202&amp;height=800&amp;name=what-is-pqc.jpg 1202w, https://www.safelogic.com/hs-fs/hubfs/what-is-pqc.jpg?width=1503&amp;height=1000&amp;name=what-is-pqc.jpg 1503w, https://www.safelogic.com/hs-fs/hubfs/what-is-pqc.jpg?width=1803&amp;height=1200&amp;name=what-is-pqc.jpg 1803w" sizes="(max-width: 601px) 100vw, 601px"></p></div>
+          
+        </div>
+      </div>
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_module_1747771427197_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_2"><h3>Asymmetric Encryption: A Core Focus</h3>
+<p>Most PQC work focuses on replacing asymmetric encryption, which is where public key infrastructure (PKI) lives. This includes:</p>
+<ul>
+<li>Key Encapsulation Mechanisms (KEMs) - used for exchanging secure session keys (e.g., Kyber)</li>
+<li>Digital Signature Algorithms (DSAs) - used to verify authenticity and integrity (e.g. Dilithium, SPHINCS+)</li>
+</ul>
+<h3>Designed for Compatibility</h3>
+<p>One of PQC’s greatest strengths is its ability to interoperate with existing systems and protocols. PQC algorithms can be integrated into standard protocols like TLS, SSH, and VPNs, often using hybrid modes that combine classical and quantum-safe encryption for added protection and compliance.</p>
+<p>This compatibility enables organizations to transition to post-quantum security incrementally, without the need to rip and replace existing infrastructure.</p>
+<p>Additionally, PQC algorithms run on today’s computers. They don’t require a quantum computer to run.</p></div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+</div><!--end widget-span -->
+<div class="span6 widget-span widget-type-cell dnd-column" style="" data-widget-type="cell" data-x="6" data-w="6">
+
+<div class="row-fluid-wrapper row-depth-1 row-number-11 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1747772137170" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding module_1747772137170  reg-padding">
+  
+  
+  <div class="page-content module_1747772137170 medium">
+    
+      <div class="top-title">
+        <div id="hs_cos_wrapper_module_1747772137170_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="top_content"><h2 style="text-align: center;"><strong>The Purpose and Goals of PQC </strong></h2></div>
+      </div>
+    
+    <div class="two-flex split-55 top-align ">
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_module_1747772137170_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"><p>The goal of post-quantum cryptography isn’t just to stay ahead of the quantum threat, it’s to protect the integrity of our digital world for decades to come.</p>
+<h3>Replace Vulnerable Algorithms Before It’s Too Late</h3>
+<p>Quantum computing poses a direct threat to RSA, ECC, and other widely used cryptographic standards.</p>
+<p>Once quantum computers reach sufficient power, these algorithms will be easily broken. Post-quantum cryptography provides a proactive path to replace them before that tipping point arrives.</p>
+<h3>Preserve Confidentiality and Trust</h3>
+<p>Encryption is the foundation of trust in digital systems. From online banking to national defense, data must remain secure in transit and at rest.</p>
+<p><strong>PQC ensures that the confidentiality and authenticity of data are preserved, even in a post-quantum future. </strong></p>
+<h3>Protect Long-Lived and High-Value Data</h3>
+<p>Not all data loses value over time. Trade secrets, medical records, legal agreements, and government files often have lifespans of 10, 20, or even 50+ years.</p>
+<p>PQC is designed to protect this long-term sensitive data against “harvest now, decrypt later” attacks, where adversaries steal encrypted data now and wait to break it once quantum computers become capable.</p></div>
+          
+        </div>
+      </div>
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_module_1747772137170_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_2"><img src="https://www.safelogic.com/hs-fs/hubfs/what-is-the-purpose-of-post-quantum-cryptography.jpg?width=600&amp;height=600&amp;name=what-is-the-purpose-of-post-quantum-cryptography.jpg" width="600" height="600" loading="lazy" alt="what-is-the-purpose-of-post-quantum-cryptography" style="height: auto; max-width: 100%; width: 600px; margin: 30px auto 0px; display: block;" srcset="https://www.safelogic.com/hs-fs/hubfs/what-is-the-purpose-of-post-quantum-cryptography.jpg?width=300&amp;height=300&amp;name=what-is-the-purpose-of-post-quantum-cryptography.jpg 300w, https://www.safelogic.com/hs-fs/hubfs/what-is-the-purpose-of-post-quantum-cryptography.jpg?width=600&amp;height=600&amp;name=what-is-the-purpose-of-post-quantum-cryptography.jpg 600w, https://www.safelogic.com/hs-fs/hubfs/what-is-the-purpose-of-post-quantum-cryptography.jpg?width=900&amp;height=900&amp;name=what-is-the-purpose-of-post-quantum-cryptography.jpg 900w, https://www.safelogic.com/hs-fs/hubfs/what-is-the-purpose-of-post-quantum-cryptography.jpg?width=1200&amp;height=1200&amp;name=what-is-the-purpose-of-post-quantum-cryptography.jpg 1200w, https://www.safelogic.com/hs-fs/hubfs/what-is-the-purpose-of-post-quantum-cryptography.jpg?width=1500&amp;height=1500&amp;name=what-is-the-purpose-of-post-quantum-cryptography.jpg 1500w, https://www.safelogic.com/hs-fs/hubfs/what-is-the-purpose-of-post-quantum-cryptography.jpg?width=1800&amp;height=1800&amp;name=what-is-the-purpose-of-post-quantum-cryptography.jpg 1800w" sizes="(max-width: 600px) 100vw, 600px">
+<blockquote style="background: #636569;"><strong><em>“Experts predict quantum computers could render current encryption obsolete by 2029. The time to act is now.”&nbsp;</em></strong> <br>– Gartner, Preparing for the Quantum World with Crypto-Agility</blockquote></div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-12 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1747771136951" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding module_1747771136951  reg-padding">
+  
+  
+  <div class="page-content module_1747771136951 medium">
+    
+      <div class="top-title">
+        <div id="hs_cos_wrapper_module_1747771136951_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="top_content"><h2 style="text-align: center;"><strong>NIST’s Post-Quantum Cryptography Standardization Efforts </strong></h2>
+<p>The U.S. National Institute of Standards and Technology (NIST) has led a multi-year, global initiative to identify cryptographic algorithms that can withstand attacks from future quantum computers. This effort culminated on August 13, 2024, when&nbsp;NIST published the first three finalized post-quantum cryptography (PQC) standards.</p></div>
+      </div>
+    
+    <div class="two-flex split-55 top-align ">
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_module_1747771136951_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"><h3>Finalized PQC Algorithms</h3>
+<p>These algorithms are designed to replace classical asymmetric methods like RSA and ECC, which are vulnerable to quantum attacks:</p>
+<h4><strong>ML-KEM (FIPS 203)</strong></h4>
+<p>Module-Lattice Key Encapsulation Mechanism enables parties to establish shared secrets—such as symmetric encryption keys—over insecure networks in the presence of both quantum and classical computers. Designed for use in TLS/SSL, VPNs, encrypted messaging apps, and government or military communications.</p>
+<h4><strong>ML-DSA (FIPS 204)</strong></h4>
+<p>Module-Lattice Digital Signature Algorithm provides quantum-resistant digital signatures for verifying identity, integrity, or authenticity. It offers fast signature generation and verification with reasonable key and signature sizes for a PQC algorithm. Common use cases include secure software updates, certificate signing, email and document signing, and tamper-proof digital communication.</p>
+<h4><strong>SLH-DSA (FIPS 205)</strong></h4>
+<p>Stateless Hash-Based Digital Signature Algorithm is a quantum-resistant signature scheme built on proven, secure hashing algorithms that are immune to quantum attacks. Its stateless design simplifies implementation. SLH-DSA features relatively small public keys (though larger signatures), making it preferable for certain use cases compared to ML-DSA.</p></div>
+          
+        </div>
+      </div>
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_module_1747771136951_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_2"><p><img src="https://www.safelogic.com/hs-fs/hubfs/NIST%20PQC%20Standards%20News.png?width=1582&amp;height=1132&amp;name=NIST%20PQC%20Standards%20News.png" width="1582" height="1132" loading="lazy" alt="NIST PQC Standards News" style="height: auto; max-width: 100%; width: 1582px;" srcset="https://www.safelogic.com/hs-fs/hubfs/NIST%20PQC%20Standards%20News.png?width=791&amp;height=566&amp;name=NIST%20PQC%20Standards%20News.png 791w, https://www.safelogic.com/hs-fs/hubfs/NIST%20PQC%20Standards%20News.png?width=1582&amp;height=1132&amp;name=NIST%20PQC%20Standards%20News.png 1582w, https://www.safelogic.com/hs-fs/hubfs/NIST%20PQC%20Standards%20News.png?width=2373&amp;height=1698&amp;name=NIST%20PQC%20Standards%20News.png 2373w, https://www.safelogic.com/hs-fs/hubfs/NIST%20PQC%20Standards%20News.png?width=3164&amp;height=2264&amp;name=NIST%20PQC%20Standards%20News.png 3164w, https://www.safelogic.com/hs-fs/hubfs/NIST%20PQC%20Standards%20News.png?width=3955&amp;height=2830&amp;name=NIST%20PQC%20Standards%20News.png 3955w, https://www.safelogic.com/hs-fs/hubfs/NIST%20PQC%20Standards%20News.png?width=4746&amp;height=3396&amp;name=NIST%20PQC%20Standards%20News.png 4746w" sizes="(max-width: 1582px) 100vw, 1582px"></p>
+<p>&nbsp;</p></div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-13 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1763508937657" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding widget_1763508937657  reg-padding">
+  <div class="page-content medium">
+    <div class="interior-cta widget_1763508937657 flexed left-side  ">
+      
+      
+      <div class="column-content ">
+        <div class="animation-only">
+          <div id="hs_cos_wrapper_widget_1763508937657_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-14 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1748496487556" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding widget_1748496487556  reg-padding">
+  
+  
+  <div class="page-content widget_1748496487556 medium">
+    
+    <div class="two-flex split-35 top-align ">
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_widget_1748496487556_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"><p><img src="https://www.safelogic.com/hs-fs/hubfs/FIPS-140-3-Validated-Badge%20426x500.png?width=317&amp;height=372&amp;name=FIPS-140-3-Validated-Badge%20426x500.png" width="317" height="372" loading="lazy" alt="FIPS-140-3-Validated-Badge 426x500" style="height: auto; max-width: 100%; width: 317px; margin-left: auto; margin-right: auto; display: block;" srcset="https://www.safelogic.com/hs-fs/hubfs/FIPS-140-3-Validated-Badge%20426x500.png?width=159&amp;height=186&amp;name=FIPS-140-3-Validated-Badge%20426x500.png 159w, https://www.safelogic.com/hs-fs/hubfs/FIPS-140-3-Validated-Badge%20426x500.png?width=317&amp;height=372&amp;name=FIPS-140-3-Validated-Badge%20426x500.png 317w, https://www.safelogic.com/hs-fs/hubfs/FIPS-140-3-Validated-Badge%20426x500.png?width=476&amp;height=558&amp;name=FIPS-140-3-Validated-Badge%20426x500.png 476w, https://www.safelogic.com/hs-fs/hubfs/FIPS-140-3-Validated-Badge%20426x500.png?width=634&amp;height=744&amp;name=FIPS-140-3-Validated-Badge%20426x500.png 634w, https://www.safelogic.com/hs-fs/hubfs/FIPS-140-3-Validated-Badge%20426x500.png?width=793&amp;height=930&amp;name=FIPS-140-3-Validated-Badge%20426x500.png 793w, https://www.safelogic.com/hs-fs/hubfs/FIPS-140-3-Validated-Badge%20426x500.png?width=951&amp;height=1116&amp;name=FIPS-140-3-Validated-Badge%20426x500.png 951w" sizes="(max-width: 317px) 100vw, 317px"></p>
+<p>&nbsp;</p></div>
+          
+        </div>
+      </div>
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_widget_1748496487556_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_2"><h2 style="text-align: center;">Enabling FIPS 140-3 Compatibility</h2>
+<p>NIST’s Cryptographic Module Validation Program (CMVP) is now incorporating these new PQC algorithms into the FIPS 140-3 validation process to support federal compliance.</p>
+<p>This means organizations can begin integrating quantum-safe algorithms into compliant cryptographic modules, a critical step for those working in government, defense, or other regulated sectors.</p>
+<p><strong><a href="/blog/implementing-pqc-in-fips-140-3?hsLang=en" rel="noopener">Learn more about implementing PQC in FIPS 140.3 modules in our blog post here.</a></strong></p></div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-15 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1747791547481" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding widget_1747791547481  reg-padding  ">
+  
+  
+  <div class="page-content widget_1747791547481 small flexed left-side">
+    <div class="column-content ">
+      <div class="animation-only">
+        <div id="hs_cos_wrapper_widget_1747791547481_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"><h2 style="text-align: center;"><strong>Key Challenges in Implementing Post-Quantum Cryptography</strong></h2>
+<p style="text-align: center;">Migrating to post-quantum cryptography is a necessary step, but it’s not a simple one. Organizations face a number of technical, operational, and organizational hurdles along the way.</p>
+<h3>🔑&nbsp;Cryptographic Asset Discovery</h3>
+<p>Before replacing vulnerable algorithms, you need to know where they live. Most organizations struggle to map where and how cryptography is used across systems, applications, and third-party services. Without a complete cryptographic inventory, prioritizing PQC migration is guesswork.</p>
+<h3>&nbsp;🛡️&nbsp;Compatibility with Existing Infrastructure</h3>
+<p>PQC algorithms are not always plug-and-play. Legacy hardware, outdated libraries, and vendor-specific constraints can limit where and how new cryptography can be introduced. Ensuring interoperability with protocols like TLS, SSH, and VPNs, while maintaining uptime and performance, is a major challenge.</p>
+<h3>🔄&nbsp;Hybrid and Transition Modes</h3>
+<p>Since not all systems will be PQC-ready at the same time, organizations should adopt hybrid cryptographic models that combine classical and quantum-safe algorithms. This adds complexity but is essential for phased migration and FIPS 140-3 compliance.</p>
+<h3>⏩&nbsp;Performance Considerations</h3>
+<p>PQC algorithms often require larger key sizes and greater computational resources, which can impact performance, especially in constrained environments like mobile or embedded systems. On the other hand, performance testing has shown some of the new PQC algorithms are faster than some classical algorithms. Understanding performance implications and balancing security with speed and efficiency remains a key consideration.</p>
+<h3>🔒&nbsp;Talent and Implementation Complexity</h3>
+<p>Quantum-safe cryptography requires specialized knowledge and careful implementation. Few teams have in-house experts to properly deploy and test new algorithms, and mistakes can introduce vulnerabilities. Secure implementation demands both deep cryptographic understanding and rigorous engineering discipline.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-16 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_17477876031663" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding module_17477876031663  white">
+  <div class="page-content max">
+    <div class="interior-cta module_17477876031663 flexed left-side  ">
+      <div class="content-shader" style="background-color: rgba(0, 0, 0, .55);"></div>
+      
+      <div class="column-content w-45">
+        <div class="animation-only">
+          <div id="hs_cos_wrapper_module_17477876031663_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"><h2>Is Your Organization Ready for PQC?</h2>
+<p><br>Successfully transitioning to post-quantum cryptography starts with understanding your cryptographic landscape, challenges, and priorities. But where do you begin?</p>
+<p><a href="/resources/ebooks/pqc-migration-where-are-we-now?hsLang=en" class="btn-primary" rel="noopener">Download Free PQC Migration Guide</a></p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-17 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1747788958426" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding widget_1747788958426  small-padding  ">
+  
+  
+  <div class="page-content widget_1747788958426 medium flexed left-side">
+    <div class="column-content ">
+      <div class="animation-only">
+        <div id="hs_cos_wrapper_widget_1747788958426_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"><h2 style="text-align: center;">Preparing for PQC Migration</h2>
+<p><img src="https://www.safelogic.com/hs-fs/hubfs/preparing-for-pqc-migration.jpg?width=600&amp;height=600&amp;name=preparing-for-pqc-migration.jpg" width="600" height="600" loading="lazy" alt="preparing-for-pqc-migration" style="height: auto; max-width: 100%; width: 600px; margin: 30px 0px 30px 40px; float: right;" srcset="https://www.safelogic.com/hs-fs/hubfs/preparing-for-pqc-migration.jpg?width=300&amp;height=300&amp;name=preparing-for-pqc-migration.jpg 300w, https://www.safelogic.com/hs-fs/hubfs/preparing-for-pqc-migration.jpg?width=600&amp;height=600&amp;name=preparing-for-pqc-migration.jpg 600w, https://www.safelogic.com/hs-fs/hubfs/preparing-for-pqc-migration.jpg?width=900&amp;height=900&amp;name=preparing-for-pqc-migration.jpg 900w, https://www.safelogic.com/hs-fs/hubfs/preparing-for-pqc-migration.jpg?width=1200&amp;height=1200&amp;name=preparing-for-pqc-migration.jpg 1200w, https://www.safelogic.com/hs-fs/hubfs/preparing-for-pqc-migration.jpg?width=1500&amp;height=1500&amp;name=preparing-for-pqc-migration.jpg 1500w, https://www.safelogic.com/hs-fs/hubfs/preparing-for-pqc-migration.jpg?width=1800&amp;height=1800&amp;name=preparing-for-pqc-migration.jpg 1800w" sizes="(max-width: 600px) 100vw, 600px">Post-quantum cryptography migration is more than a technical upgrade; it’s a strategic transformation. Organizations that prepare early can reduce risk, maintain compliance, and avoid costly last-minute changes.</p>
+<h3>Assess Your Cryptographic Systems</h3>
+<p>Begin with a thorough audit of how and where cryptography is used across your organization. This includes:</p>
+<ul>
+<li>Protocols (e.g., TLS, VPN, SSH)</li>
+<li>Software libraries</li>
+<li>Hardware modules</li>
+<li>Third-party integrations and dependencies</li>
+</ul>
+<p>You can’t protect what you can’t see. Cryptographic asset discovery is step one.</p>
+<h3>Build a Migration Plan</h3>
+<p>Once you know what’s in place, define a roadmap based on risk, sensitivity, and feasibility.</p>
+<h4><strong>Key steps include:</strong></h4>
+<ul>
+<li><strong>Inventory:</strong> Catalog all cryptographic assets</li>
+<li><strong>Prioritization:</strong> Focus on systems with long-term data or regulatory exposure</li>
+<li><strong>Ecosystem Readiness:</strong> Ensure your vendors and partners are preparing for PQC, too</li>
+</ul>
+<p>This phased approach helps avoid disruption while aligning teams around clear priorities.</p>
+<h3>Embrace Crypto-Agility and Hybrid Models</h3>
+<p>A successful migration depends on crypto-agility, the ability to switch algorithms without overhauling applications or infrastructure. SafeLogic’s architecture enables this by allowing organizations to update cryptographic algorithms on the fly.</p>
+<p>Hybrid modules also play a critical role, combining classical and quantum-safe encryption to:</p>
+<ul>
+<li>Maintain backward compatibility</li>
+<li>Ensure compliance during the transition</li>
+<li>Strengthen defenses with layered protection</li>
+</ul>
+<h3>Align with FIPS 140-3</h3>
+<p>Organizations operating in regulated industries or government supply chains should ensure that new cryptographic implementations are FIPS 140-3 compatible.</p>
+<p>With NIST’s PQC algorithms now eligible for FIPS validation, it’s essential to work with vendors like SafeLogic that provide commercial grade, validated cryptographic modules.</p>
+<p>&nbsp;</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-18 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1747788801439" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding module_1747788801439  white">
+  <div class="page-content medium">
+    <div class="interior-cta module_1747788801439 flexed left-side  ">
+      <div class="content-shader" style="background-color: rgba(0, 0, 0, .55);"></div>
+      
+      <div class="column-content w-45">
+        <div class="animation-only">
+          <div id="hs_cos_wrapper_module_1747788801439_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"><h2>An Agile Roadmap to Post-Quantum Readiness</h2>
+<p><br>Preparing for PQC is a journey, not a one-time fix. SafeLogic’s PQC Migration Roadmap gives you the actionable strategy to start strong and stay agile as standards evolve.</p>
+<p><a href="/resources/infographics/pqc-migration-roadmap?hsLang=en" class="btn-primary" rel="noopener">Download the Roadmap</a></p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-19 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1714694227809" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding widget_1714694227809  reg-padding">
+  
+  
+  <div class="page-content widget_1714694227809 medium">
+    
+      <div class="top-title">
+        <div id="hs_cos_wrapper_widget_1714694227809_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="top_content"><h2 style="text-align: center;"><strong>Post-Quantum Cryptography Support in <em>CryptoComply </em>v3.5</strong></h2>
+<p style="text-align: left;"><a href="/products-and-services/cryptocomply-cryptography-software?hsLang=en" rel="noopener"><strong><em>CryptoComply</em> v3.5</strong></a> is the latest evolution of our flagship cryptographic software—engineered for post-quantum readiness, real-world deployment, and future compliance. It enables organizations to prepare for PQC migration without rewriting your stack.</p>
+<p style="text-align: left;">With drop-in compatibility for OpenSSL 3.5, <strong><a href="/products-and-services/cryptocomply-cryptography-software?hsLang=en" rel="noopener"><em>CryptoComply</em> v3.5</a></strong>&nbsp;delivers exceptional performance improvements, full support for NIST-standardized PQC algorithms, hybrid cryptography for FIPS environments, and modern transport layer support via QUIC.</p></div>
+      </div>
+    
+    <div class="two-flex split-35 top-align ">
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_widget_1714694227809_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"><a href="https://www.safelogic.com/products-and-services/cryptocomply-pq-tls?hsLang=en" rel="noopener"><img src="https://www.safelogic.com/hs-fs/hubfs/cryptocomply.png?width=400&amp;height=400&amp;name=cryptocomply.png" width="400" height="400" loading="lazy" alt="cryptocomply" style="height: auto; max-width: 100%; width: 400px; margin: 30px 0px 0px;" srcset="https://www.safelogic.com/hs-fs/hubfs/cryptocomply.png?width=200&amp;height=200&amp;name=cryptocomply.png 200w, https://www.safelogic.com/hs-fs/hubfs/cryptocomply.png?width=400&amp;height=400&amp;name=cryptocomply.png 400w, https://www.safelogic.com/hs-fs/hubfs/cryptocomply.png?width=600&amp;height=600&amp;name=cryptocomply.png 600w, https://www.safelogic.com/hs-fs/hubfs/cryptocomply.png?width=800&amp;height=800&amp;name=cryptocomply.png 800w, https://www.safelogic.com/hs-fs/hubfs/cryptocomply.png?width=1000&amp;height=1000&amp;name=cryptocomply.png 1000w, https://www.safelogic.com/hs-fs/hubfs/cryptocomply.png?width=1200&amp;height=1200&amp;name=cryptocomply.png 1200w" sizes="(max-width: 400px) 100vw, 400px"></a>
+<p>&nbsp;</p></div>
+          
+        </div>
+      </div>
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_widget_1714694227809_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_2"><h3><strong>What's new in v3.5:</strong></h3>
+<h4><strong>Post Quantum Cryptography Support</strong></h4>
+<p>Includes all three NIST-standard algorithms:&nbsp;</p>
+<ul>
+<li>ML-KEM (FIPS 203) - Key encapsulation</li>
+<li>ML-DSA (FIPS 204) - Lattice-based digital signatures</li>
+<li>SLH-DSA (FIPS 205) - Hash-based signatures with side-channel resistance</li>
+</ul>
+<h4><strong>Hybrid PQC + FIPS Mode</strong></h4>
+<p>Combine ML-KEM with SafeLogic's validated FIPS 140-3 algorithms for quantum-resistant encryption today while staying fully compliant.</p>
+<h4><strong>OpenSSL 3.5 Performance Boost</strong></h4>
+<p>Binary-compatible with OpenSSL 3.5, delivering up to 88% faster performance for certain cryptographic operations.&nbsp;</p>
+<h4><strong>QUIC Protocol Support</strong></h4>
+<p>Full server-side support for QUIC—ideal for mobile apps, IoT, and modern web services using TLS 1.3.</p>
+<h4><strong>Optional ESV-Certified Entropy Source&nbsp;</strong></h4>
+<p>Future-proof your compliance with SafeLogic's standalone entropy provider, designed to meet NIAP and upcoming 2026 NIST FIPS 140-3 requirements.</p>
+<p><em>CryptoComply&nbsp;</em>v3.5 runs on desktops, servers, mobile devices, embedded systems, containers, and cloud environments, with support for Windows, Linux, macOS, Android, iOS, and more.</p>
+<a class="btn-primary" href="/products-and-services/cryptocomply-cryptography-software?hsLang=en" rel="noopener">Explore&nbsp;<em>CryptoComply v3.5</em></a></div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-20 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1714693724479" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding widget_1714693724479  reg-padding">
+  
+  
+  <div class="page-content widget_1714693724479 medium">
+    
+      <div class="top-title">
+        <div id="hs_cos_wrapper_widget_1714693724479_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="top_content"><h2 style="text-align: center;"><strong><span style="color: #444444;"><span data-contrast="none" xml:lang="EN-US" lang="EN-US">SafeLogic’s Leadership in PQC Migration</span>&nbsp;</span></strong></h2>
+<span></span>
+<p style="text-align: center;">SafeLogic isn’t just adapting to the post-quantum era. We’re leading the way.</p></div>
+      </div>
+    
+    <div class="two-flex default top-align ">
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_widget_1714693724479_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"><h3>National Collaboration at the Forefront</h3>
+<p>We’re an active participant in the NIST National Cybersecurity Center of Excellence (NCCoE) PQC Migration Project, working alongside industry leaders like:</p>
+<ul>
+<li>Microsoft</li>
+<li>Cisco</li>
+<li>Google</li>
+<li>IBM</li>
+</ul>
+<p>Together, we’re developing real-world strategies and reference architectures to help organizations transition to quantum-resistant encryption.</p>
+<h3>Driving Strategy at the Highest Levels</h3>
+<p>SafeLogic CEO Evgeny Gervis leads the Risk Management and Prioritization Workstream for the NCCoE project and has contributed to federal efforts shaping the nation’s quantum migration roadmap—including participation in a White House conference with the Federal CIO and CISO.</p>
+<p>By actively shaping the standards, tools, and timelines for PQC readiness, SafeLogic ensures our customers are aligned with the most up-to-date guidance and best practices.</p></div>
+          
+        </div>
+      </div>
+      <div class="column-content">
+        <div class="animation-only">
+          
+          <div id="hs_cos_wrapper_widget_1714693724479_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_2"><img src="https://www.safelogic.com/hs-fs/hubfs/Slide7.png?width=600&amp;height=337&amp;name=Slide7.png" width="600" height="337" loading="lazy" alt="Quantum Readiness" style="height: auto; max-width: 100%; width: 600px; margin: 30px 0px 0px;" srcset="https://www.safelogic.com/hs-fs/hubfs/Slide7.png?width=300&amp;height=169&amp;name=Slide7.png 300w, https://www.safelogic.com/hs-fs/hubfs/Slide7.png?width=600&amp;height=337&amp;name=Slide7.png 600w, https://www.safelogic.com/hs-fs/hubfs/Slide7.png?width=900&amp;height=506&amp;name=Slide7.png 900w, https://www.safelogic.com/hs-fs/hubfs/Slide7.png?width=1200&amp;height=674&amp;name=Slide7.png 1200w, https://www.safelogic.com/hs-fs/hubfs/Slide7.png?width=1500&amp;height=843&amp;name=Slide7.png 1500w, https://www.safelogic.com/hs-fs/hubfs/Slide7.png?width=1800&amp;height=1011&amp;name=Slide7.png 1800w" sizes="(max-width: 600px) 100vw, 600px">
+<p>&nbsp;</p></div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-21 dnd-section">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-cell dnd-column" style="" data-widget-type="cell" data-x="0" data-w="12">
+
+<div class="row-fluid-wrapper row-depth-1 row-number-22 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_16903915404395" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding module_16903915404395  reg-padding">
+  
+  
+  <div class="page-content medium flexed center">
+    <div class="column-content ">
+      <div class="animation-only">
+        <div id="hs_cos_wrapper_module_16903915404395_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"><h2 style="text-align: center;"><strong>Ready to Take the First Step Toward Quantum Resistance?</strong></h2>
+<div style="text-align: center;">The quantum threat is real and getting ahead starts now. If you’re exploring the landscape or actively planning your migration, SafeLogic is here to help.&nbsp;Let’s future-proof your cryptography together.</div>
+<div style="text-align: center;">&nbsp;</div>
+<h4 style="text-align: center;"><strong>Call us at <a href="tel:844-436-2797" rel="noopener">844-436-2797</a> or complete the form below to talk to a cryptography expert.</strong></h4></div>
+        <div class="form-wrapper module_16903915404395 add-padding">
+          <span id="hs_cos_wrapper_module_16903915404395_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_form" style="" data-hs-cos-general-type="widget" data-hs-cos-type="form">
+<div id="hs_form_target_module_16903915404395"></div>
+
+
+
+
+
+
+
+
+</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-23 dnd-section">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-cell dnd-column" style="" data-widget-type="cell" data-x="0" data-w="12">
+
+<div class="row-fluid-wrapper row-depth-1 row-number-24 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1747790203601" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="std-padding widget_1747790203601   reg-padding  ">
+  
+  
+  <div class="page-content widget_1747790203601 medium flexed left-side">
+    <div class="column-content ">
+      <div class="animation-only">
+        <div id="hs_cos_wrapper_widget_1747790203601_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="column_1"><h2 style="text-align: center;"><a href="/blog/tag/post-quantum-cryptography-pqc?hsLang=en" rel="noopener">Supporting PQC Articles&nbsp;</a></h2>
+<p>&nbsp;</p></div>
+        
+        
+        
+        
+          
+        
+        
+        
+        
+          
+        
+        <div class="blog-flex three">
+          
+            <div class="blog-item">
+              <div class="blog-image">
+                
+                <a href="https://www.safelogic.com/blog/operationalizing-pqc-and-crypto-agility-for-federal-agencies?hsLang=en" aria-label="Blog Detail for How Federal Agencies Can Operationalize PQC and Crypto-Agility">
+                  
+                  <img src="https://www.safelogic.com/hs-fs/hubfs/How-Federal-Agencies-Can-Operationalize-PQC-and-Crypto-Agility.png?height=630&amp;name=How-Federal-Agencies-Can-Operationalize-PQC-and-Crypto-Agility.png" alt="How Federal Agencies Can Operationalize PQC &amp; Crypto-Agility" loading="lazy}">
+                </a>
+                
+              </div>
+              <div class="blog-list-content">
+                <h2><a class="dark-link" href="https://www.safelogic.com/blog/operationalizing-pqc-and-crypto-agility-for-federal-agencies?hsLang=en">How Federal Agencies Can Operationalize PQC and Crypto-Agility</a></h2>
+                
+                  <p>
+                    May 28, 2026
+                    <span class="blog-bullet">•</span>
+                    
+                      <a class="author-link" href="https://www.safelogic.com/blog/author/safelogic?hsLang=en">SafeLogic</a>
+                    
+                  </p>
+                
+              </div>
+              
+              
+            </div>
+          
+            <div class="blog-item">
+              <div class="blog-image">
+                
+                <a href="https://www.safelogic.com/blog/enterprise-cryptography-programs-for-the-pqc-era?hsLang=en" aria-label="Blog Detail for The Rise of the Enterprise Cryptography Program">
+                  
+                  <img src="https://www.safelogic.com/hs-fs/hubfs/The-Rise-of-the-Enterprise-Cryptography-Program-1.png?height=630&amp;name=The-Rise-of-the-Enterprise-Cryptography-Program-1.png" alt="" loading="lazy}">
+                </a>
+                
+              </div>
+              <div class="blog-list-content">
+                <h2><a class="dark-link" href="https://www.safelogic.com/blog/enterprise-cryptography-programs-for-the-pqc-era?hsLang=en">The Rise of the Enterprise Cryptography Program</a></h2>
+                
+                  <p>
+                    May 28, 2026
+                    <span class="blog-bullet">•</span>
+                    
+                      <a class="author-link" href="https://www.safelogic.com/blog/author/scott-raspa?hsLang=en">Scott Raspa</a>
+                    
+                  </p>
+                
+              </div>
+              
+              
+            </div>
+          
+            <div class="blog-item">
+              <div class="blog-image">
+                
+                <a href="https://www.safelogic.com/blog/cryptocomply-140-3-fips-provider-with-pqc-enters-cmvp-queue?hsLang=en" aria-label="Blog Detail for CryptoComply&nbsp;140-3 FIPS Provider with PQC Submitted to CMVP">
+                  
+                  <img src="https://www.safelogic.com/hs-fs/hubfs/CryptoComply-140-3-FIPS-Provider-with-PQC-Submitted-to-CMVP.png?height=630&amp;name=CryptoComply-140-3-FIPS-Provider-with-PQC-Submitted-to-CMVP.png" alt="" loading="lazy}">
+                </a>
+                
+              </div>
+              <div class="blog-list-content">
+                <h2><a class="dark-link" href="https://www.safelogic.com/blog/cryptocomply-140-3-fips-provider-with-pqc-enters-cmvp-queue?hsLang=en">CryptoComply&nbsp;140-3 FIPS Provider with PQC Submitted to CMVP</a></h2>
+                
+                  <p>
+                    May 28, 2026
+                    <span class="blog-bullet">•</span>
+                    
+                      <a class="author-link" href="https://www.safelogic.com/blog/author/aryeh-archer?hsLang=en">Aryeh Archer</a>
+                    
+                  </p>
+                
+              </div>
+              
+              
+            </div>
+          
+            <div class="blog-item">
+              <div class="blog-image">
+                
+                <a href="https://www.safelogic.com/blog/pqc-vendor-questionnaire-what-companies-should-ask?hsLang=en" aria-label="Blog Detail for What Should Companies Ask Vendors About PQC Readiness?">
+                  
+                  <img src="https://www.safelogic.com/hs-fs/hubfs/What-Should-Companies-Ask-Vendors-About-PQC-Readiness-1.png?height=630&amp;name=What-Should-Companies-Ask-Vendors-About-PQC-Readiness-1.png" alt="what should companies ask vendors about PQC readiness" loading="lazy}">
+                </a>
+                
+              </div>
+              <div class="blog-list-content">
+                <h2><a class="dark-link" href="https://www.safelogic.com/blog/pqc-vendor-questionnaire-what-companies-should-ask?hsLang=en">What Should Companies Ask Vendors About PQC Readiness?</a></h2>
+                
+                  <p>
+                    May 20, 2026
+                    <span class="blog-bullet">•</span>
+                    
+                      <a class="author-link" href="https://www.safelogic.com/blog/author/scott-raspa?hsLang=en">Scott Raspa</a>
+                    
+                  </p>
+                
+              </div>
+              
+              
+            </div>
+          
+            <div class="blog-item">
+              <div class="blog-image">
+                
+                <a href="https://www.safelogic.com/blog/introducing-the-cryptography-maturity-action-plan-cmap?hsLang=en" aria-label="Blog Detail for Introducing the Cryptography Maturity Action Plan (CMAP)">
+                  
+                  <img src="https://www.safelogic.com/hs-fs/hubfs/introducing-the-cryptography-maturity-action-plan-CMAP.png?height=630&amp;name=introducing-the-cryptography-maturity-action-plan-CMAP.png" alt="" loading="lazy}">
+                </a>
+                
+              </div>
+              <div class="blog-list-content">
+                <h2><a class="dark-link" href="https://www.safelogic.com/blog/introducing-the-cryptography-maturity-action-plan-cmap?hsLang=en">Introducing the Cryptography Maturity Action Plan (CMAP)</a></h2>
+                
+                  <p>
+                    April 28, 2026
+                    <span class="blog-bullet">•</span>
+                    
+                      <a class="author-link" href="https://www.safelogic.com/blog/author/brendan-sheairs?hsLang=en">Brendan Sheairs</a>
+                    
+                  </p>
+                
+              </div>
+              
+              
+            </div>
+          
+            <div class="blog-item">
+              <div class="blog-image">
+                
+                <a href="https://www.safelogic.com/blog/safelogic-advances-fips-140-3-pqc-readiness-with-new-cavp-validation?hsLang=en" aria-label="Blog Detail for SafeLogic Achieves NIST CAVP Validation for FIPS 140-3 with PQC">
+                  
+                  <img src="https://www.safelogic.com/hs-fs/hubfs/SafeLogic-Achieves-NIST-CAVP-Validation-for-FIPS-140-3-with-PQC.png?height=630&amp;name=SafeLogic-Achieves-NIST-CAVP-Validation-for-FIPS-140-3-with-PQC.png" alt="" loading="lazy}">
+                </a>
+                
+              </div>
+              <div class="blog-list-content">
+                <h2><a class="dark-link" href="https://www.safelogic.com/blog/safelogic-advances-fips-140-3-pqc-readiness-with-new-cavp-validation?hsLang=en">SafeLogic Achieves NIST CAVP Validation for FIPS 140-3 with PQC</a></h2>
+                
+                  <p>
+                    April 14, 2026
+                    <span class="blog-bullet">•</span>
+                    
+                      <a class="author-link" href="https://www.safelogic.com/blog/author/aryeh-archer?hsLang=en">Aryeh Archer</a>
+                    
+                  </p>
+                
+              </div>
+              
+              
+            </div>
+          
+            <div class="blog-item">
+              <div class="blog-image">
+                
+                <a href="https://www.safelogic.com/blog/rsa-conference-takeaways-ai-pqc-and-secure-software-trends?hsLang=en" aria-label="Blog Detail for Key Takeaways from RSA Conference: AI, PQC, &amp; the Future of Secure Software">
+                  
+                  <img src="https://www.safelogic.com/hs-fs/hubfs/Key-Takeaways-from-RSA-Conference-AI-PQC-and-the-Future-of-Secure-Software.png?height=630&amp;name=Key-Takeaways-from-RSA-Conference-AI-PQC-and-the-Future-of-Secure-Software.png" alt="" loading="lazy}">
+                </a>
+                
+              </div>
+              <div class="blog-list-content">
+                <h2><a class="dark-link" href="https://www.safelogic.com/blog/rsa-conference-takeaways-ai-pqc-and-secure-software-trends?hsLang=en">Key Takeaways from RSA Conference: AI, PQC, &amp; the Future of Secure Software</a></h2>
+                
+                  <p>
+                    April 3, 2026
+                    <span class="blog-bullet">•</span>
+                    
+                      <a class="author-link" href="https://www.safelogic.com/blog/author/alex-zaslavsky?hsLang=en">Alex Zaslavsky</a>
+                    
+                  </p>
+                
+              </div>
+              
+              
+            </div>
+          
+            <div class="blog-item">
+              <div class="blog-image">
+                
+                <a href="https://www.safelogic.com/blog/safelogic-wins-2026-cybersecurity-excellence-gold-award?hsLang=en" aria-label="Blog Detail for SafeLogic Wins Gold in the Post-Quantum Cryptography Category of the 2026 Cybersecurity Excellence Awards">
+                  
+                  <img src="https://www.safelogic.com/hs-fs/hubfs/safelogic-wins-gold-in-the-post-quantum-cryptography-category-of-the-2026-cybersecurity-excellence-awards-1.png?height=630&amp;name=safelogic-wins-gold-in-the-post-quantum-cryptography-category-of-the-2026-cybersecurity-excellence-awards-1.png" alt="" loading="lazy}">
+                </a>
+                
+              </div>
+              <div class="blog-list-content">
+                <h2><a class="dark-link" href="https://www.safelogic.com/blog/safelogic-wins-2026-cybersecurity-excellence-gold-award?hsLang=en">SafeLogic Wins Gold in the Post-Quantum Cryptography Category of the 2026 Cybersecurity Excellence Awards</a></h2>
+                
+                  <p>
+                    March 24, 2026
+                    <span class="blog-bullet">•</span>
+                    
+                      <a class="author-link" href="https://www.safelogic.com/blog/author/scott-raspa?hsLang=en">Scott Raspa</a>
+                    
+                  </p>
+                
+              </div>
+              
+              
+            </div>
+          
+            <div class="blog-item">
+              <div class="blog-image">
+                
+                <a href="https://www.safelogic.com/blog/trump-cyber-strategy-will-accelerate-pqc-adoption?hsLang=en" aria-label="Blog Detail for From Strategy to Procurement: Trump’s&nbsp;Cyber&nbsp;Strategy Will Accelerate PQC Adoption">
+                  
+                  <img src="https://www.safelogic.com/hs-fs/hubfs/_Trumps-Cyber-Strategy-Will-Accelerate-PQC-Adoption.png?height=630&amp;name=_Trumps-Cyber-Strategy-Will-Accelerate-PQC-Adoption.png" alt="" loading="lazy}">
+                </a>
+                
+              </div>
+              <div class="blog-list-content">
+                <h2><a class="dark-link" href="https://www.safelogic.com/blog/trump-cyber-strategy-will-accelerate-pqc-adoption?hsLang=en">From Strategy to Procurement: Trump’s&nbsp;Cyber&nbsp;Strategy Will Accelerate PQC Adoption</a></h2>
+                
+                  <p>
+                    March 11, 2026
+                    <span class="blog-bullet">•</span>
+                    
+                      <a class="author-link" href="https://www.safelogic.com/blog/author/charles-goldberg?hsLang=en">Charles Goldberg</a>
+                    
+                  </p>
+                
+              </div>
+              
+              
+            </div>
+          
+            <div class="blog-item">
+              <div class="blog-image">
+                
+                <a href="https://www.safelogic.com/blog/harvest-now-decrypt-later-quantum-threat?hsLang=en" aria-label="Blog Detail for " harvest now, decrypt later" quantum threat for regulated industries">
+                  
+                  <img src="https://www.safelogic.com/hs-fs/hubfs/Harvest%20Now%20Decrypt%20Later%20Quantum%20Threat%20for%20Regulated%20Industries.png?height=630&amp;name=Harvest%20Now%20Decrypt%20Later%20Quantum%20Threat%20for%20Regulated%20Industries.png" alt="" loading="lazy}">
+                </a>
+                
+              </div>
+              <div class="blog-list-content">
+                <h2><a class="dark-link" href="https://www.safelogic.com/blog/harvest-now-decrypt-later-quantum-threat?hsLang=en">"Harvest Now, Decrypt Later" Quantum Threat for Regulated Industries</a></h2>
+                
+                  <p>
+                    March 5, 2026
+                    <span class="blog-bullet">•</span>
+                    
+                      <a class="author-link" href="https://www.safelogic.com/blog/author/scott-raspa?hsLang=en">Scott Raspa</a>
+                    
+                  </p>
+                
+              </div>
+              
+              
+            </div>
+          
+            <div class="blog-item">
+              <div class="blog-image">
+                
+                <a href="https://www.safelogic.com/blog/preparing-for-omb-pqc-reporting-webinar-recap-safelogic?hsLang=en" aria-label="Blog Detail for Preparing for OMB PQC Reporting Webinar Recap">
+                  
+                  <img src="https://www.safelogic.com/hs-fs/hubfs/Preparing%20for%20OMB%20PQC%20Reporting%20Webinar%20Recap%20(1200%20x%20628%20px).png?height=630&amp;name=Preparing%20for%20OMB%20PQC%20Reporting%20Webinar%20Recap%20(1200%20x%20628%20px).png" alt="" loading="lazy}">
+                </a>
+                
+              </div>
+              <div class="blog-list-content">
+                <h2><a class="dark-link" href="https://www.safelogic.com/blog/preparing-for-omb-pqc-reporting-webinar-recap-safelogic?hsLang=en">Preparing for OMB PQC Reporting Webinar Recap</a></h2>
+                
+                  <p>
+                    March 3, 2026
+                    <span class="blog-bullet">•</span>
+                    
+                      <a class="author-link" href="https://www.safelogic.com/blog/author/scott-raspa?hsLang=en">Scott Raspa</a>
+                    
+                  </p>
+                
+              </div>
+              
+              
+            </div>
+          
+            <div class="blog-item">
+              <div class="blog-image">
+                
+                <a href="https://www.safelogic.com/blog/automated-discovery-and-remediation-of-quantum-computer-vulnerable-tls-libraries?hsLang=en" aria-label="Blog Detail for Automated Discovery &amp; Remediation of Quantum Computer Vulnerable TLS Libraries">
+                  
+                  <img src="https://www.safelogic.com/hs-fs/hubfs/Automated-Discovery-and-Remediation-of-Quantum-Computer-Vulnerable-TLS-Libraries%20(1200%20x%20628%20px).png?height=630&amp;name=Automated-Discovery-and-Remediation-of-Quantum-Computer-Vulnerable-TLS-Libraries%20(1200%20x%20628%20px).png" alt="" loading="lazy}">
+                </a>
+                
+              </div>
+              <div class="blog-list-content">
+                <h2><a class="dark-link" href="https://www.safelogic.com/blog/automated-discovery-and-remediation-of-quantum-computer-vulnerable-tls-libraries?hsLang=en">Automated Discovery &amp; Remediation of Quantum Computer Vulnerable TLS Libraries</a></h2>
+                
+                  <p>
+                    February 25, 2026
+                    <span class="blog-bullet">•</span>
+                    
+                      <a class="author-link" href="https://www.safelogic.com/blog/author/alex-zaslavsky?hsLang=en">Alex Zaslavsky</a>
+                    
+                  </p>
+                
+              </div>
+              
+              
+            </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+</div><!--end widget-span -->
+</div>
+</div>
+</div>
+  </main>
+
+
+      
+        <div data-global-resource-path="MojoFlex - SafeLogic - Child Theme/templates/partials/mojoflex-footer.html"><footer class="footer-wrap" role="contentinfo" itemscope itemtype="http://schema.org/WPFooter">
+  <div class="container-fluid footer-extra">
+<div class="row-fluid-wrapper">
+<div class="row-fluid">
+<div class="span12 widget-span widget-type-cell " style="" data-widget-type="cell" data-x="0" data-w="12">
+
+<div class="row-fluid-wrapper row-depth-1 row-number-1 dnd-section">
+<div class="row-fluid ">
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+</div><!--end widget-span -->
+</div>
+</div>
+</div>
+  <div id="hs_cos_wrapper_mojoflex-footer" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="footer">
+  
+    <div class="footer-top option-two">
+      <div class="page-content max">
+        <div class="footer-two-flex">
+          <div class="footer-nav five">
+            <span id="hs_cos_wrapper_mojoflex-footer_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_menu" style="" data-hs-cos-general-type="widget" data-hs-cos-type="menu"><div id="hs_menu_wrapper_mojoflex-footer_" class="hs-menu-wrapper active-branch flyouts hs-menu-flow-horizontal" role="navigation" data-sitemap-name="default" data-menu-id="97534318653" aria-label="Navigation Menu">
+ <ul role="menu">
+  <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none"><a href="https://www.safelogic.com/products-old" aria-haspopup="true" aria-expanded="false" role="menuitem">Products</a>
+   <ul role="menu" class="hs-menu-children-wrapper">
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/products/cryptocomply-cryptography-software" role="menuitem">CryptoComply FIPS 140-Validated Cryptography Software</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/products/rapidcert" role="menuitem">RapidCert</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/products/maintaincert" role="menuitem">MaintainCert</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/products/cryptocomply-cryptography-software/customer-portal" role="menuitem">Customer Portal</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/products/post-quantum-cryptography-software" role="menuitem">Post-Quantum Cryptography</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/products/cryptocomply-entropy-provider" role="menuitem">Entropy Source Software</a></li>
+   </ul></li>
+  <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none"><a href="https://www.safelogic.com/compliance" aria-haspopup="true" aria-expanded="false" role="menuitem">Compliance</a>
+   <ul role="menu" class="hs-menu-children-wrapper">
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/fips-140-2" role="menuitem">FIPS 140-2</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/fips-140-3" role="menuitem">FIPS 140-3</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/compliance/fips-140-for-cmmc" role="menuitem">CMMC 2.0</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/compliance/cnsa-2" role="menuitem">CNSA 2.0</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/compliance/fips-140-for-common-criteria" role="menuitem">Common Criteria</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/compliance/fips-140-for-fedramp" role="menuitem">FedRAMP</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/compliance/pqc-standards" role="menuitem">PQC Standards</a></li>
+   </ul></li>
+  <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none"><a href="javascript:;" aria-haspopup="true" aria-expanded="false" role="menuitem">Industries</a>
+   <ul role="menu" class="hs-menu-children-wrapper">
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/industries/communications" role="menuitem">Communications</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/cybersecurity" role="menuitem">Cybersecurity</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/industries/financial-services" role="menuitem">Financial Services</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/industries/healthcare" role="menuitem">Healthcare</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/industries/public-sector" role="menuitem">Public Sector</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/technology" role="menuitem">Technology</a></li>
+   </ul></li>
+  <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none"><a href="https://www.safelogic.com/resources" aria-haspopup="true" aria-expanded="false" role="menuitem">Resources</a>
+   <ul role="menu" class="hs-menu-children-wrapper">
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/blog" role="menuitem">Blog</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/news" role="menuitem">News</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/resources/whitepapers" role="menuitem">Whitepapers</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/resources/ebooks" role="menuitem">eBooks</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/resources/videos" role="menuitem">Videos</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/resources/webinars" role="menuitem">Webinars</a></li>
+   </ul></li>
+  <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none"><a href="https://www.safelogic.com/company" aria-haspopup="true" aria-expanded="false" role="menuitem">Company</a>
+   <ul role="menu" class="hs-menu-children-wrapper">
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/company" role="menuitem">About Us</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/company#leaders" role="menuitem">Leadership</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/our-customers" role="menuitem">Our Customers</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/company/our-partners" role="menuitem">Our Partners</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/company#careers" role="menuitem">Careers</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://support.safelogic.com/hc/en-us" role="menuitem" target="_blank" rel="noopener">Support Portal</a></li>
+    <li class="hs-menu-item hs-menu-depth-2" role="none"><a href="https://www.safelogic.com/contact" role="menuitem">Contact</a></li>
+   </ul></li>
+ </ul>
+</div></span>
+          </div>
+          <div class="footer-info">
+            <div class="footer-logo">
+              
+                
+                
+                <a href="" class="footer-logo-link" rel="nofollow">
+                  
+                    <img src="https://www.safelogic.com/hubfs/SL%20Cr%20Simp%20H%20White%20Text%20300.png" alt="SafeLogic logo" loading="lazy">
+                  
+                </a>
+              
+            </div>
+            <div class="footer-content">
+              <div id="hs_cos_wrapper_mojoflex-footer_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_inline_rich_text" style="" data-hs-cos-general-type="widget" data-hs-cos-type="inline_rich_text" data-hs-cos-field="footer_two_options.information"><p><span style="color: #ffffff;"><strong>SafeLogic, Inc.</strong><br>8300 Boone Blvd., Suite 500<br>Vienna, VA 22182<br>www.safelogic.com<br>844 436-2797<br>info@safelogic.com</span><span style="color: #ffffff;"></span><span style="color: #ffffff;"></span></p></div>
+            </div>
+            
+            
+              <div class="footer-soc social">
+                <ul>
+                  
+                    <li><a class="reverse" href="https://www.facebook.com/people/SafeLogic/61586587036635/" aria-label="Link to facebook" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+                  
+                  
+                  
+                    <li><a class="reverse" href="https://x.com/safelogic" aria-label="Link to Twitter" target="_blank"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a></li>
+                  
+                  
+                    <li><a class="reverse" href="https://www.linkedin.com/company/safelogic" aria-label="Link to LinkedIn" target="_blank"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a></li>
+                  
+                  
+                  
+                    <li><a class="reverse" href="https://www.youtube.com/@SafeLogicInc" aria-label="Link to Youtube" target="_blank"><i class="fab fa-youtube" aria-hidden="true"></i></a></li>
+                  
+                  
+                </ul>
+              </div>
+            
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="page-content max">
+        <div class="copyright">
+          <p>© 2026 
+            
+            
+            <a href="https://www.safelogic.com?hsLang=en" class="dark-link" rel="nofollow">SafeLogic</a> 
+            All Rights Reserved.
+            
+              <span class="copy-pipe">|</span>
+              
+                <a class="dark-link" href="tel:844436">844 436-2797</a>
+              
+            
+          </p>
+          <div class="simple-footer-nav">
+            <span id="hs_cos_wrapper_mojoflex-footer_" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_simple_menu" style="" data-hs-cos-general-type="widget" data-hs-cos-type="simple_menu"><div id="hs_menu_wrapper_mojoflex-footer_" class="hs-menu-wrapper active-branch flyouts hs-menu-flow-horizontal" role="navigation" data-sitemap-name="" data-menu-id="" aria-label="Navigation Menu">
+ <ul role="menu">
+  <li class="hs-menu-item hs-menu-depth-1" role="none"><a href="https://www.safelogic.com/privacy-policy" role="menuitem" target="_self">Privacy Policy</a></li>
+ </ul>
+</div></span>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  
+</div>
+
+
+<style>
+  .footer {
+    background-color: rgba(68, 68, 68, 1.0);
+  }
+  .footer-soc.social-icons a span,
+  .footer-soc.social-icons a:visited span {
+    background: rgba(246, 141, 45, 0.0);
+    fill: rgba(255, 255, 255, 1.0);
+  }
+  .footer-soc.social-icons a:hover span,
+  .footer-soc.social-icons a:focus span {
+    background: rgba(88, 26, 109, 0.0);
+    fill: rgba(254, 107, 0, 1.0);
+  }
+  .footer-soc.social a,
+  .footer-soc.social a:visited {
+    background: rgba(246, 141, 45, 0.0);
+    color: rgba(255, 255, 255, 1.0);
+  }
+  .footer-soc.social a:hover,
+  .footer-soc.social a:focus {
+    background: rgba(88, 26, 109, 0.0);
+    color: rgba(254, 107, 0, 1.0);
+  }
+  .footer-nav li a,
+  .footer-nav li a:visited {
+    color: rgba(254, 107, 0, 1.0);
+  }
+  .footer-nav li a:hover,
+  .footer-nav li a:focus {
+    color: rgba(235, 66, 24, 1.0);
+  }
+  .footer-nav li li a,
+  .footer-nav li li a:visited {
+    color: rgba(255, 255, 255, 1.0);
+  }
+  .footer-nav li li a:hover,
+  .footer-nav li li a:focus {
+    color: rgba(254, 107, 0, 1.0);
+  }
+  .footer-content p, 
+  .footer-content,
+  address {
+    color: rgba(68, 68, 68, 1.0);
+  }
+  .footer-bottom {
+    background-color: rgba(231, 231, 231, 1.0);
+  }
+  .copyright {
+    color: rgba(68, 68, 68, 1.0);
+  }
+  .copyright a,
+  .copyright a:visited {
+    color: rgba(68, 68, 68, 1.0);
+  }
+  .copyright a:hover,
+  .copyright a:focus {
+    color: rgba(254, 107, 0, 1.0);
+  }
+  
+</style></div>
+</footer></div>
+      
+    </div>
+    
+    
+    
+    
+<!-- HubSpot performance collection script -->
+<script defer src="/hs/hsstatic/content-cwv-embed/static-1.1293/embed.js"></script>
+<script src="https://www.safelogic.com/hubfs/hub_generated/template_assets/1/42766845245/1779840260547/template_waypoints-jquery-min-mf.min.js"></script>
+<script src="https://www.safelogic.com/hubfs/hub_generated/template_assets/1/42766476332/1779840260838/template_aos-min-mf.min.js"></script>
+<script src="https://www.safelogic.com/hubfs/hub_generated/template_assets/1/52982050222/1779840261410/template_mojoflex-scripts.min.js"></script>
+<script>
+var hsVars = hsVars || {}; hsVars['language'] = 'en';
+</script>
+
+<script src="/hs/hsstatic/cos-i18n/static-1.53/bundles/project.js"></script>
+<script src="/hs/hsstatic/keyboard-accessible-menu-flyouts/static-1.17/bundles/project.js"></script>
+<!-- Start of Web Interactives Embed Code -->
+<script defer src="https://js.hubspot.com/web-interactives-embed.js" type="text/javascript" id="hubspot-web-interactives-loader" data-loader="hs-previewer" data-hsjs-portal="1641418" data-hsjs-env="prod" data-hsjs-hublet="na1"></script>
+<!-- End of Web Interactives Embed Code -->
+
+    <!--[if lte IE 8]>
+    <script charset="utf-8" src="https://js.hsforms.net/forms/v2-legacy.js"></script>
+    <![endif]-->
+
+<script data-hs-allowed="true" src="/_hcms/forms/v2.js"></script>
+
+    <script data-hs-allowed="true">
+        var options = {
+            portalId: '1641418',
+            formId: 'c8b32ea9-ed98-4679-8656-12d3482c7d97',
+            formInstanceId: '5351',
+            
+            pageId: '190382211623',
+            
+            region: 'na1',
+            
+            
+            
+            
+            pageName: "What is Post-Quantum Cryptography? | PQC Compliance | SafeLogic",
+            
+            
+            
+            inlineMessage: "<p>Thanks for submitting your information. &nbsp;One of our people will be in touch with you shortly!<\/p>",
+            
+            
+            rawInlineMessage: "<p>Thanks for submitting your information. &nbsp;One of our people will be in touch with you shortly!<\/p>",
+            
+            
+            hsFormKey: "6f39bd2240d476aacd060142c18113d0",
+            
+            
+            css: '',
+            target: '#hs_form_target_module_16903915404395',
+            
+            
+            
+            
+            
+            
+            
+            contentType: "standard-page",
+            
+            
+            
+            formsBaseUrl: '/_hcms/forms/',
+            
+            
+            
+            formData: {
+                cssClass: 'hs-form stacked hs-custom-form'
+            }
+        };
+
+        options.getExtraMetaDataBeforeSubmit = function() {
+            var metadata = {};
+            
+
+            if (hbspt.targetedContentMetadata) {
+                var count = hbspt.targetedContentMetadata.length;
+                var targetedContentData = [];
+                for (var i = 0; i < count; i++) {
+                    var tc = hbspt.targetedContentMetadata[i];
+                     if ( tc.length !== 3) {
+                        continue;
+                     }
+                     targetedContentData.push({
+                        definitionId: tc[0],
+                        criterionId: tc[1],
+                        smartTypeId: tc[2]
+                     });
+                }
+                metadata["targetedContentMetadata"] = JSON.stringify(targetedContentData);
+            }
+
+            return metadata;
+        };
+
+        hbspt.forms.create(options);
+    </script>
+
+
+<!-- Start of HubSpot Analytics Code -->
+<script type="text/javascript">
+var _hsq = _hsq || [];
+_hsq.push(["setContentType", "standard-page"]);
+_hsq.push(["setCanonicalUrl", "https:\/\/www.safelogic.com\/technology\/post-quantum-cryptography"]);
+_hsq.push(["setPageId", "190382211623"]);
+_hsq.push(["setContentMetadata", {
+    "contentPageId": 190382211623,
+    "legacyPageId": "190382211623",
+    "contentFolderId": null,
+    "contentGroupId": null,
+    "abTestId": null,
+    "languageVariantId": 190382211623,
+    "languageCode": "en",
+    
+    
+}]);
+</script>
+
+<script type="text/javascript" id="hs-script-loader" async defer src="/hs/scriptloader/1641418.js"></script>
+<!-- End of HubSpot Analytics Code -->
+
+
+<script type="text/javascript">
+var hsVars = {
+    render_id: "11ca2801-67f0-4efe-8b21-f9222b0cdb5e",
+    ticks: 1780687275032,
+    page_id: 190382211623,
+    
+    content_group_id: 0,
+    portal_id: 1641418,
+    app_hs_base_url: "https://app.hubspot.com",
+    cp_hs_base_url: "https://cp.hubspot.com",
+    language: "en",
+    analytics_page_type: "standard-page",
+    scp_content_type: "",
+    
+    analytics_page_id: "190382211623",
+    category_id: 1,
+    folder_id: 0,
+    is_hubspot_user: false
+}
+</script>
+
+
+<script defer src="/hs/hsstatic/HubspotToolsMenu/static-1.640/js/index.js"></script>
+
+<script charset="utf-8" type="text/javascript" src="https://api-gateway.scriptintel.io/service/visitorintel/visitorTag/285893/script.js?apiKey=Mjg1ODkzY2NhMjllYzUtZjg5OS00MjM2LWE5MjktYjYzOWMzYjRiOWFm"></script>
+
+<!-- Google Tag Manager (noscript) (TS) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-57TPLFN" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<style>
+  .widget_1616440131702 h1,
+  .widget_1616440131702 p {
+  	text-shadow: 1px 1px #000;
+  }
+  .widget_1616440131702 .hs-cta-wrapper {
+  	text-shadow: none;
+  }
+  .int-banner h1 span {
+    text-shadow: 1px 1px #000;
+  }
+  blockquote .btn-secondary:hover,
+  blockquote .btn-secondary:focus {
+    background-color: #fff;
+    color: #FE6B00;
+  }
+  .btn-primary.special-button:hover,
+  .btn-primary.special-button:focus {
+    background-color: #1a1a1a;
+  }
+  .header-nav .search-link,
+  .header-nav .search-link:visited {
+    color: #fff;
+  }
+  .header-nav .search-link:hover {
+    color: #FE6B00;
+  }
+  /* Custom Input */
+  .white form ul.inputs-list.multi-container li.hs-form-checkbox {
+    margin: 16px 0;
+  }
+  .white form ul.inputs-list.multi-container li.hs-form-checkbox label {
+    position: relative;
+  }
+  .white form ul.inputs-list.multi-container li.hs-form-checkbox label span {
+    display: inline-block;
+    margin-left: 30px; /* Width of the new radio select and any additional spacing on the left */
+    margin-right: 16px; /* Additional spacing on the right */
+  }
+  /* Hide the original checkbox */
+  .white form ul.inputs-list.multi-container li.hs-form-checkbox label input {
+    height: 24px;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    width: 24px;
+  }
+  /* Add new checkbox */
+  .white form ul.inputs-list.multi-container li.hs-form-checkbox label span::before {
+    border: 2px solid;
+    content: "";
+    height: 20px;
+    left: 0;
+    position: absolute;
+    top: 4px;
+    width: 20px;
+    border-radius: 4px;
+  }
+  /* Style new checked item */
+  .white form ul.inputs-list.multi-container li.hs-form-checkbox label input:checked + span::before {
+    background: #FE6B00;
+  }
+  .white form ul.inputs-list.multi-container li.hs-form-checkbox label span::after {
+    content: "";
+    border: 2px solid;
+    border-left: 0;
+    border-top: 0;
+    height: 12px;
+    left: 7px;
+    opacity: 0;
+    position: absolute;
+    top: 6px;
+    transform: rotate(45deg);
+    transition: opacity 0.2s ease-in-out;
+    width: 6px;
+  }
+  /* Show when checked */
+  .white form ul.inputs-list.multi-container li.hs-form-checkbox label input:checked + span::after {
+    opacity: 1;
+  }
+  /* Style when focused */
+  .white form ul.inputs-list.multi-container li.hs-form-checkbox label input:focus + span::after {
+    outline: 3px solid transparent; /* For Windows high contrast mode. */
+  }
+  .white textarea::placeholder {
+    color: white;
+  }
+  .white .hs-button, .white .hs-button:visited {
+    background-color: rgba(254,107,0,1);
+    border: 1px solid rgba(254,107,0,1);
+    color: #fff;
+  }
+  .white .hs-button:hover, .white .hs-button:focus {
+    background-color: rgba(238,238,238,1);
+    border: 1px solid rgba(238,238,238,1);
+    color: rgba(26,26,26,1);
+  }
+  .simple-footer-nav ul {
+    margin: 0 0 2px;
+  }
+  .footer-nav li li {
+    margin: 0 0 10px 0;
+    padding: 0;
+    line-height: 1.2;
+  }
+  .page-content.max, .header-container-wrapper, .body-container-wrapper, .footer-container-wrapper {
+    max-width: 2560px;
+  }
+  a.team-link:hover img,
+  a.team-link:focus img{
+    opacity: 0.8;
+  }
+  .grecaptcha-badge {
+    margin: 0 auto;
+  }
+  .accordion-content-inner {
+    font-weight: 400;
+  }
+  @media(min-width: 768px) {
+  	.widget_1616440131702 h1,
+    .widget_1616440131702 p {
+      text-shadow: none;
+    }
+  }
+  @media(min-width: 992px) {
+    .simple-footer-nav li {
+      margin: 0 0 0 3px;
+    }
+  }
+  @media(min-width: 1200px) {
+    .team-flex.three .team-link, .team-flex.three .team-link:visited, .team-flex.three .team-item {
+      max-width: 500px;
+    }
+  }
+  @media(min-width: 1600px) {
+    .team-flex {
+      max-width: 1920px;
+      margin: 0 auto !important;
+    }
+  }
+</style>
+<style>
+  .figure {
+     opacity: 1;
+    transition: 0.3s;
+  }
+  .figure:hover {
+     opacity: 0.7;
+  }
+  .show-desktop {
+    display: none;
+  }
+  .show-mobile {
+    display: block;
+  }
+  @media (min-width:400px){
+    .show-desktop {
+      display: block;
+    }
+    .show-mobile {
+      display: none;
+    }
+  }
+</style>
+
+  
+</body></html>

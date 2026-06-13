@@ -23,6 +23,7 @@ import {
   useTrustTierFilter,
   matchesTrustTierFilter,
 } from '../common/TrustTierFilter'
+import { CategoryFilter, useCategoryFilter, matchesCategoryFilter } from './CategoryFilter'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { TIMELINE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
@@ -187,6 +188,7 @@ export const TimelineView = () => {
         next.delete('country')
         next.delete('q')
         next.delete('tier')
+        next.delete('cat')
         return next
       },
       { replace: true }
@@ -229,27 +231,32 @@ export const TimelineView = () => {
   }, [searchParams, selectedPersona, storeSelectedRegion])
 
   const tierFilter = useTrustTierFilter()
+  const categoryFilter = useCategoryFilter()
+  const categoryKey = categoryFilter.join('|')
 
-  // Always call hooks first (React rules)
+  // Always call hooks first (React rules). Filter events at the leaf level by
+  // org category (always — default hides vendor) and trust tier (when active).
   const ganttData = useMemo(() => {
     if (!timelineData || timelineData.length === 0) return []
-    if (tierFilter.length === 0) return transformToGanttData(timelineData)
-    // Filter events at the leaf level: each TimelineEvent is scored by its title.
     const filteredCountries = timelineData
       .map((country) => ({
         ...country,
         bodies: country.bodies
           .map((body) => ({
             ...body,
-            events: body.events.filter((event) =>
-              matchesTrustTierFilter(tierFilter, 'timeline', event.title)
+            events: body.events.filter(
+              (event) =>
+                matchesCategoryFilter(categoryFilter, event.entityType) &&
+                (tierFilter.length === 0 ||
+                  matchesTrustTierFilter(tierFilter, 'timeline', event.title))
             ),
           }))
           .filter((body) => body.events.length > 0),
       }))
       .filter((country) => country.bodies.length > 0)
     return transformToGanttData(filteredCountries)
-  }, [tierFilter])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tierFilter, categoryKey])
 
   // Phase 3 — semantic supplement. Timeline chunks are titled like
   // "South Korea — KpqC Competition Results"; semantic hits return
@@ -377,6 +384,12 @@ export const TimelineView = () => {
   const ganttDataEmpty = ganttData.length === 0
 
   const activeFilterLabels: string[] = []
+  const isDefaultCategory =
+    categoryFilter.length === 2 &&
+    categoryFilter.includes('government') &&
+    categoryFilter.includes('standards')
+  if (!isDefaultCategory)
+    activeFilterLabels.push(`Categories: ${categoryFilter.join(', ') || 'none'}`)
   if (tierFilter.length > 0) activeFilterLabels.push(`Trust tier: ${tierFilter.join(', ')}`)
   if (regionFilter !== 'All')
     activeFilterLabels.push(`Region: ${REGION_LABELS[regionFilter] ?? regionFilter}`)
@@ -442,7 +455,14 @@ export const TimelineView = () => {
         onSelectRegion={handleRegionChange}
       />
 
-      <div className="mt-2 md:mt-12">
+      {/* Org-category filter (FR-T-06) — default shows Government + Standards;
+          Vendors & Ecosystem is opt-in. */}
+      <div className="mt-4 flex items-center gap-2" data-testid="timeline-category-filter">
+        <span className="text-xs text-muted-foreground hidden sm:inline">Show:</span>
+        <CategoryFilter className="mb-0" />
+      </div>
+
+      <div className="mt-2 md:mt-8">
         {/* Desktop View: Left-rail country TOC + Full Gantt Chart */}
         <div className="hidden md:flex md:gap-6" data-testid="desktop-view-container">
           <aside className="md:w-56 lg:w-64 md:shrink-0 md:sticky md:top-20 md:self-start md:max-h-[calc(100vh-6rem)] md:overflow-y-auto">

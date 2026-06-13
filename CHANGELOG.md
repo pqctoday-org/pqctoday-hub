@@ -2,308 +2,250 @@
 
 <!-- markdownlint-disable MD024 MD052 MD060 -->
 
-All notable changes to this project will be documented in this file.
-Format: `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`. Latest release first.
+All notable changes to this project are documented here, newest release first.
 
-## [Unreleased]
+**Format:** `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD`, then an optional one-sentence
+plain-language summary of the release, then `###` sections (`Added`, `Changed`,
+`Fixed`, `Data`, `Security`).
+
+**Writing style — write every entry for a reader, not a reviewer.** The
+`/changelog` page shows these entries to real users, so write them that way the
+first time (don't ship dev-speak and reformat later):
+
+- **Lead with the outcome.** Start each entry with what changed for the user —
+  what they can now do, see, or trust — not the mechanism. Bold the entry with a
+  plain-language title: `- **What changed, in plain words** [view:/page]: …`.
+- **Keep the `[view:/page]` and `[persona:role]` tags** — they drive the page's
+  filters and "For me" view. Tag every entry with the surface(s) it affects.
+- **Put the human-readable detail in the sentence; leave deep internals out.**
+  Filenames, function names, commit hashes, byte offsets, and spec section
+  numbers belong in the PR/commit, not here. Keep concrete specifics a user
+  cares about (page names, feature names, what was broken, counts).
+- **One entry = one user-visible change.** If it has no user-visible effect,
+  it probably doesn't need a changelog entry.
+
+## [3.19.5] - 2026-06-09
+
+The Threats page is fresher and more accurate — corrected post-quantum standards status, more sources you can open, and consistent severity labels.
+
+### Fixed
+
+- **Corrected the status of NIST's fourth signature standard** [view:/threats] [persona:architect]: The cross-industry "NIST standards finalization" threat said FIPS 206 (FN-DSA/Falcon) was published in August 2024 alongside ML-KEM, ML-DSA and SLH-DSA. In fact only those first three were finalized then — FIPS 206 is still in draft, with final publication expected in late 2026 to 2027. The entry now says so, and the HQC backup-algorithm note (now tracked toward FIPS 207) was refreshed to a 2026 draft and 2027 final.
+- **Consistent severity labels across every threat** [view:/threats]: A few threats showed severity in mixed casing ("CRITICAL", "HIGH") or an off-scale "Medium-High" value that could sort or filter oddly. Every threat now uses the standard Critical / High / Medium scale.
 
 ### Changed
 
-- **Playground — Sandbox category hidden from the Filters dropdown when offline** [view:/playground]: Follow-up to the 3.18.0 live sandbox availability probe. The probe was already filtering `Sandbox`-category tools out of the tile grid when `isSandboxAvailable(status) === false`, but `DesktopPlaygroundFilterPopover` still listed `Sandbox` as a selectable Category option (sourced from the static `CATEGORIES` array in `workshopRegistry`). Picking it produced an empty grid with no explanation. Now: the popover accepts an optional `availableCategories` prop and `PlaygroundWorkshop` threads through the same status-filtered list (`availableCategoriesForSandboxStatus(CATEGORIES, sandboxStatus)`), so the dropdown only offers categories that actually have visible tools. Refactor extracted two pure helpers + a `SANDBOX_CATEGORY` constant from `useSandboxStore` and replaced the inline ternary in `PlaygroundWorkshop.catalogTools` with a call to `filterToolsBySandboxAvailability`. Mobile drawer covered by the same change — it renders the same `filterPanelContent` JSX instance. Invariant tests in `useSandboxStore.test.ts` drive the real `WORKSHOP_TOOLS` + `CATEGORIES` across all four `SandboxStatus` values (`idle | checking | offline | online`) and pin the contract: every non-`online` status produces zero `Sandbox`-category tools + a category list one entry shorter, while `online` returns both inputs unchanged.
+- **More threats link to a primary source you can actually open** [view:/threats]: Re-verified the source documents behind the threat catalog and re-captured fresh copies. The share of active threats backed by an authoritative primary source rose from roughly a quarter to well over half, and every active threat now has an archived copy of its source on file.
+
+### Data
+
+- **Refreshed quantum-threats dataset (2026-06-09)** [view:/threats]: New self-contained snapshot covering the 110 active industry threats, with refreshed source links, complete industry tags, and updated standards references.
+
+## [3.19.4] - 2026-06-08
+
+Compliance frameworks now say plainly whether PQC is required or just recommended, and sector names read in plain English.
+
+### Fixed
+
+- **Compliance frameworks no longer over-state legal force** [view:/compliance]: Several frameworks were flagged as hard mandates when they are actually recommendations or expectations. ANSSI is now shown as a recommendation (not a legal mandate), DORA as resilience obligations that imply but don't explicitly require PQC, and eIDAS 2.0 and FedRAMP as expected/indirect rather than in force today. In all, 42 frameworks were re-characterized so you can tell at a glance what is required versus advised.
+
+### Changed
+
+- **Readable industry names in the compliance views** [view:/compliance]: Frameworks that were tagged with raw industry codes (e.g. "54") now show the real sector name — "Government & Defense", "Finance", "Healthcare" — in the framework chips, the detail panel, and the focus view.
+
+## [3.19.3] - 2026-06-08
+
+A cleaner, more accurate Algorithms page — no duplicate entries, corrected standardization labels, and a live algorithm count.
+
+### Fixed
+
+- **Algorithms page now shows the real count and a working "Top picks" link** [view:/algorithms]: The page advertised a fixed "42 algorithms" even though the catalog had grown well beyond that — it now shows the actual number loaded. The executive "View Top" shortcut was labeled "Top 5" but highlighted only four, and pointed at an algorithm name that no longer exists (so nothing highlighted); it now correctly shows the top four and links to the right entry (FN-DSA-512).
+
+### Data
+
+- **Duplicate algorithm rows removed and standardization labels corrected** [view:/algorithms]: Four algorithms (HQC, Classic McEliece, LMS, XMSS) showed up both as a generic row and as their specific parameter sets (e.g. HQC-128/192/256), double-counting in filters and totals — the redundant generic rows are gone. Several standardization labels were also corrected: FrodoKEM is now shown as a NIST Round 3 alternate (it was never in Round 4), BIKE reflects Round 4 concluding in 2025 with HQC selected, and Classic McEliece 460896 is labeled BSI Level 3 (it was mislabeled Level 1).
+
+## [3.19.2] - 2026-06-07
+
+Restored 12 compliance regulation documents that previously failed to open in the Library.
+
+### Data
+
+- **12 compliance documents restored in the Library** [view:/library]: Regulation documents that wouldn't open before now load correctly as their real PDFs — 7 EU laws (NIS2, DORA, GDPR, eIDAS, the EU Cyber Resilience Act, MiCA, and the 2024 PQC recommendation), 4 US rules (HIPAA, FERPA, COPPA, FDA 21 CFR Part 11), and Singapore's MAS Technology Risk Management guidelines. Five further sources (UNECE R155, CMMC 2.0, NZISM, Kenya DPA, DISA STIG) are still blocked by anti-bot protection and are tracked as known-unreachable.
+
+## [3.19.1] - 2026-06-07
+
+Corrected the dataset counts shown on the About page.
+
+### Changed
+
+- **About page data counts corrected** [view:/about]: The "Platform Data" figures on the About page had drifted behind the live app. They now match what's actually shipping — including Library Resources (741), Algorithm Reference (102), Compliance Frameworks (165), Migrate Products (838), Industry Leaders (341), and PQC Patents (928) — and the total curated-records badge now reads 4,500+.
+
+## [3.19.0] - 2026-06-07
+
+A broad update across Timeline, Library, Migrate, Patents, and Threats — new filters, tidier Library tiles, fully sourced timeline events, and corrected vendor data.
+
+### Added
+
+- **Timeline — filter by organization type** [view:/timeline]: A new Government / Standards / Vendors filter on the migration timeline. Government bodies and standards groups show by default; commercial vendors and quantum-hardware/blockchain entries are one click away in the dropdown. Filtered views are shareable by URL.
+- **Library — multiple versions of a document collapse into one tile** [view:/library]: Older drafts and superseded editions of the same document now appear as a single, up-to-date tile (with a "Previous revisions" list in the detail view) instead of three or four near-duplicate tiles.
+
+### Data
+
+- **Timeline — every event now backed by an authoritative source** [view:/timeline]: All 234 timeline events now link to an official primary source, with English translations cached alongside non-English government documents (China, South Korea, Taiwan, Japan, Spain). The old yes/no confidence score is replaced by a graded 0–100 confidence rating, and India's quantum-roadmap entries now point at the May 2026 DST report.
+- **Timeline — Gantt ordering and sources cleaned up** [view:/timeline]: Deadline milestones now sort into the correct lane instead of jumping to the front, and a full audit confirmed every active milestone resolves to a real source document on file.
+- **Library — freshness sweep: 100 confirmed updates across 794 documents** [view:/library]: A web sweep against the original issuers refreshed 72 documents to their latest version, retired 21 superseded ones (e.g. TLS 1.2 → 1.3), and added 2 new RFCs. Notable bumps include BSI TR-02102-1 (2026 edition), NIST SP 800-63-4, and PKCS#11 v3.2.
+- **Migrate — corrected vendor roadmaps and a bigger product catalog** [view:/migrate]: Fixed a vendor-ID mix-up that showed the wrong company's roadmap on a product (e.g. Trezor's roadmap appearing under A10 Networks) — 27 assignments corrected. The catalog grew to 838 products and vendor roadmaps to 115, with cleaner cert links in the expanded rows.
+- **Threats — 7 blocked evidence sources recovered** [view:/threats]: Seven industry-threat sources that previously failed to download (UN R155, GSMA PQC/eSIM, DoD CMMC, FERC) are now archived, so the threats evidence set is complete at 112 of 112.
+- **Patents — corpus grown to 928 with verified data** [view:/patents]: Added 24 newly granted PQC patents and backfilled verification across all 928 records, so every patent now carries a relevance rating and verified dates with no incomplete rows.
+
+### Changed
+
+- **Timeline — retired events no longer clutter the Gantt** [view:/timeline]: Deprecated timeline rows are now excluded from the chart and the New/Updated indicator, and confidence is shown as a transparent 0–100 grade computed from source quality, peer review, recency, and date precision.
+- **Playground — Sandbox category hidden when the sandbox is offline** [view:/playground]: Picking the "Sandbox" filter when no sandbox backend is running used to produce an empty grid with no explanation. The filter now only offers categories that actually have available tools.
 
 ### CI
 
-- **Trust-engine attestation verification now actively runs in CI** [view:CI]: The `Verify trust-engine attestations` step in `.github/workflows/ci.yml` (added at audit gap P4) was historically guarded behind `hashFiles('scripts/attestation/verify-all.ts') != ''`. Because `scripts/attestation/*` is in the gitignored `scripts/*` block, the verifier source never landed in the public repo on CI checkouts — so the step silently no-op'd on every push and PR, and the comment literally said _"Pre-existing breakage on main otherwise."_ This PR moves a verify-only subset of the trust-engine into a new tracked file `scripts/ci/verify-attestations.ts` (self-contained, ~220 lines: TRUST_ARTIFACTS list + ML-DSA-65 verify primitive + key resolver + main). Adds `npm run verify-attestations`. The workflow step drops the `hashFiles` guard and the "Pre-existing breakage" comment, and now invokes the public verifier directly. The maintainer's signer (`sign-all.ts` + the rest of `scripts/attestation/*`) stays private, so the key never leaves the maintainer's machine. Net effect: every push and PR now hard-fails CI on any sig drift, missing `.sig`, or `kid-mismatch` — the recurrence-prevention layer that #300's deterministic generators couldn't provide on its own. Together with #300 this closes the trust-engine attestation drift gap end-to-end.
+- **Guardrail against wrong vendor-roadmap links** [view:CI]: A new build check catches the exact bug that put Trezor's roadmap on A10 Networks, failing the build if a product points at a retired or mismatched vendor.
+- **Trust-engine signature verification now actually runs in CI** [view:CI]: The attestation-verification step had been silently skipped on every build; it now genuinely runs, so any tampering or signature drift in the published trust artifacts fails the build.
 
 ## [3.18.0] - 2026-06-04
 
-Cuts the accumulated post-3.17.5 work — two `feat:` deliverables (Learn-style Playground view modes + filtering, live sandbox availability probe with contact-for-access popover), the PQC protocol matrix → library coverage closeout, the NICE-view filter behaviour change, four user-facing bug fixes (three Playground module-eval-order crashes + the sandbox-iframe terminal restoration), eight learn-module factual corrections across two audit passes, and a multi-source data refresh (catalog integrity sweep, 06042026 migrate-family CSVs, full compliance scrape, library refs).
+Playground gets Learn-style views and filtering plus a live sandbox-availability check, with eight learn-module fact corrections and a multi-source data refresh.
 
 ### Added
 
-- **Playground — Learn-style view toggle + taxonomy filtering** [view:/playground]: `PlaygroundWorkshop.tsx` gains the same multi-view + filter UX already shipped on `/learn`. Five view modes via the new `PlaygroundViewToggle` (Path, Stack, Cards, Table, NICE — Path is hidden when no persona is active). Desktop filter popover (`DesktopPlaygroundFilterPopover.tsx`) + mobile drawer (`MobilePlaygroundFilterDrawer.tsx`) drive a shared taxonomy filter (`ToolTaxonomyFilter.tsx`, `toolFilters.ts`) so tools can be sliced by category, persona, and NICE work role. New view components under `src/components/Playground/views/`: `ToolStack`, `ToolTable`, `ToolCard`, `PlaygroundPersonaPathView`, `PlaygroundNiceView`. Tool ↔ NICE mapping in `src/data/toolNiceMapping.ts`; sandbox-scenario ↔ NICE mapping in `src/data/sandboxNiceMapping.ts`. `PlaygroundWorkshop` refactored end-to-end (~782 lines reworked) to render through the view registry. Branch-hygiene fix folded in: `.claude` + `tasks` worktree-glue symlinks accidentally tracked on the feature branch were removed before merge — committing those symlinks into the main worktree creates self-referencing loops that crash Vite's file watcher with `ELOOP`; `scripts/new-worktree.sh` continues to create them per-worktree but they are no longer in the tree.
-- **New library reference — _Exploiting ML-DSA bugs_ (Bernstein, 2026-06-01)** [view:/library]: Cryptanalysis paper by Daniel J. Bernstein (UIC + Academia Sinica) reproducing two distinct ML-DSA software vulnerability patterns — the Dilithium 1.0 implementation flaw + the PlayStation 3 ECDSA-style randomness-reuse pattern — each forging signatures in ~1 second on a laptop core, with open-source attack demos that recover equivalent secret keys from a public key + a few signatures. Quantitatively estimates breakable-key rates over time for ML-DSA solo vs. Ed25519+ML-DSA hybrid signing. Added to `library_06022026_r1.csv` (same-day revision per `CSVmaintenance.md §3.4`) as `Bernstein-MLDSA-Bugs-2026` with `peer_reviewed=no` (preprint), `confidence_score=75`, `trusted_source_id=djb-cr-yp-to` (new entry pending registration). MLX `qwen3.6:27b` enrichment (31/39 dimensions filled) appended to `library_doc_enrichments_06022026.md` — extracted specific affected libraries (libcrux, NSS, OpenSSL, GnuTLS, Firefox, OpenSSH), quantified CVE rates, target audience, and module mapping (`pqc-risk-management; hybrid-crypto; code-signing; vendor-risk; pqc-business-case`). Row finalized from enrichment output (per the enrichment-first workflow rule). PDF archived at `public/library/Bernstein-MLDSA-Bugs-2026.pdf` (533 KB, cr.yp.to canonical, permanent ID `ddd73b60…`).
+- **Playground — Learn-style views and filtering** [view:/playground]: The Playground now has the same view modes and filtering as the Learn page — browse tools as a path, stack, cards, or table, and filter by category, persona, and NICE work role.
+- **New library reference — _Exploiting ML-DSA bugs_ (Bernstein, 2026)** [view:/library]: A cryptanalysis paper by Daniel J. Bernstein reproducing two real ML-DSA implementation flaws that forge signatures in about a second on a laptop, with notes on which libraries were affected.
 
 ### Changed
 
-- **Playground — live sandbox availability probe + click-for-access popover** [view:/playground]: The old `SandboxAccessBanner` told users that Sandbox scenarios "require container access" and asked them to email `<pqctoday@gmail.com>` to be provisioned — a dead-end UX whether the sandbox was actually running or not. Replaced with a live probe + on-demand access CTA: new `useSandboxStore` (Zustand, no persistence) auto-fires `fetch(${VITE_SANDBOX_BASE_URL ?? 'http://localhost:4000'}/api/status)` with a 3 s `AbortController` timeout on first mount and exposes `status: 'idle' | 'checking' | 'online' | 'offline'`. New header chip `SandboxStatusToggle` renders the status with a colored dot + Container/Loader/Refresh icon. Click behaviour: while **online**, re-probes (acts as refresh); while **offline**, opens a small popover anchored under the chip with the "Container access required — `<pqctoday@gmail.com>`" CTA plus a Retry-probe affordance so users know they can have the sandbox provisioned on demand. Popover dismisses on outside-click + Escape and auto-closes on transition to online. Chip is mounted in both the desktop header row and the mobile filter drawer. `PlaygroundWorkshop` filters the `Sandbox` category out of `WORKSHOP_TOOLS` entirely when `isSandboxAvailable(status) === false`, so cards and table rows for those scenarios only appear when there's a backend to actually serve them. KAT-style unit test in `useSandboxStore.test.ts` drives both the 200 OK → `'online'` and rejected-fetch → `'offline'` paths and pins `isSandboxAvailable` to `'online'` only.
-- **Learn → NICE view: hide non-relevant competency areas + modules when a role is picked** [view:/learn]: Previously, picking a NICE Work Role (e.g. "Security Architect") greyed-out non-core Competency Areas to `opacity-40` and dimmed individual modules to `opacity-60`, leaving all 37+ modules on screen at lower contrast — visually busy. Now: non-core CAs are hidden entirely, and within each remaining CA the module list is filtered to those whose `workRoles` array includes the picked role. `All Roles` (the default) is unchanged and still shows the full catalog. The `isSecondaryCA` opacity-60 (for modules appearing in a "borrowed" CA where their primary CA is elsewhere) is preserved — that's a different visual signal independent of role filtering. The "Core for {role}" badge + the role-summary "X/Y relevant modules completed" line continue to provide context. Cleanup is opacity removal + early-return: ~16 lines in [NiceView.tsx](src/components/PKILearning/NiceView.tsx).
+- **Playground — live sandbox availability with click-for-access** [view:/playground]: A status chip in the header now shows whether the interactive sandbox is online. When it's offline, clicking it opens a short "request access" prompt instead of the old dead-end banner, and sandbox-only scenarios are hidden until a backend is actually available.
+- **Learn — NICE role view hides irrelevant modules** [view:/learn]: Picking a NICE work role now hides non-relevant competency areas and modules entirely, instead of just dimming them, so the catalog isn't a wall of greyed-out cards.
 
 ### Fixed
 
-- **Trust-engine attestation: OSCAL + CBOM generators made deterministic, sig drift killed at the root** [view:/migrate][view:/compliance]: `scripts/generate-oscal.ts` and `scripts/generate-cbom.ts` were injecting `new Date().toISOString()` into 6 metadata fields (`metadata.timestamp`, `metadata['last-modified']`, three `start` date fields, the `serialNumber` UUID). Every `npm run build` produced byte-different JSON without any actual data change, instantly invalidating every prior signature. CI didn't catch it — the `Verify trust-engine attestations` step at `.github/workflows/ci.yml:82` was guarded behind `hashFiles('scripts/attestation/verify-all.ts') != ''` and the verifier source lives under `scripts/*` (gitignored), so it silently no-op'd on main. Net effect: origin/main had OSCAL/CBOM `.sig` files stuck at `file_sha256: 2481d850…` across `8dc3d78e`, `0ee983b3`, and `6ebe54b3` while the actual `.json` content shifted at every release. Fix: both generators now derive a single `dataVersion` ISO timestamp from the latest input CSV filename (e.g. `compliance_06042026.csv → 2026-06-04T00:00:00.000Z`) and use it everywhere a wall-clock value used to go. Determinism proof: ran the regenerators twice from a clean checkout → byte-identical output, identical `shasum -a 256` across runs. Re-signed all 8 trust artifacts with the production maintainer key (kid `11b723084d047b4c`); `npm run trust-engine:verify` now reports 8/8 verified. No process change — same `sign-all.ts`, same key, same on-disk key store at `~/.pqctoday-attestation/maintainer-private.key`. Future `npm run build` runs without underlying CSV changes will produce the same JSON content + the same signatures stay valid. First fix (commit `e020b193`) moved `CATEGORY_ITEMS` out of module-top-level, but two more sites of the same pattern were still crashing in production. (a) [sandboxNiceMapping.ts](src/data/sandboxNiceMapping.ts) declared `SANDBOX_NICE_MAP = SANDBOX_SCENARIOS.map(...)` at module top-level; `SANDBOX_SCENARIOS` is imported from `sandboxScenarios.ts` and lands in a separate Vite chunk, so it was `undefined` when `sandboxNiceMapping.ts`'s top-level code ran. Refactored to a lazy-initialized singleton (`buildMaps()`) — the `.map()` only runs the first time `getSandboxNiceMapping()` is called, by which point all chunks are guaranteed loaded. (b) [PlaygroundNiceView.tsx:82](src/components/Playground/views/PlaygroundNiceView.tsx#L82) had `const VALID_ROLE_IDS = new Set(Object.keys(NICE_WORK_ROLES))` at module top-level; same pattern, `Object.keys(undefined)` throws "Cannot convert undefined or null to object". Moved into the component body as a `useMemo`. (c) Defense-in-depth: moved the `CATEGORIES` declaration in [workshopRegistry.tsx](src/components/Playground/workshopRegistry.tsx) from line 893 to line 30 (right after imports) so the binding is set early in module evaluation even under circular-dep edge cases. Verified locally against the production preview build — `/playground` loads clean.
-
-- **Playground crash on load — `CATEGORIES.map` TypeError in production** [view:/playground]: `DesktopPlaygroundFilterPopover.tsx` declared `CATEGORY_ITEMS` at module top-level using `CATEGORIES.map(...)`. Vite's production chunk-splitter placed `workshopRegistry` (where `CATEGORIES` lives) in a separate bundle; `CATEGORIES` was `undefined` at module-evaluation time, causing "Cannot read properties of undefined (reading 'map')" on every `/playground` visit. Fix: moved `CATEGORY_ITEMS` into the component body as a `useMemo` so it evaluates at render time, after all chunks are loaded.
-
-- **Playground sandbox iframe — interactive terminal restored (5 atomic fixes)** [view:/playground]: The xterm.js panel in iframe-embedded sandbox scenarios (Quantum-Resistant VPN, TLS 1.3, SSH, all PQC tracks) showed a blinking cursor and run-output banners but accepted no keystrokes — the live PTY WebSocket connection to `pyterm.py` was dead because nginx silently 404'd `/ttyd/token` and `/ttyd/ws`. Five compounding issues fixed in [pqctoday-sandbox PR #7](https://github.com/pqctoday-org/pqctoday-sandbox/pull/7): (1) `docker/nginx.default.conf` `location /ttyd/` used `proxy_pass http://$ttyd_up:7681/ttyd/;` — nginx forbids a URI suffix when the upstream URL contains a variable, drops the directive silently, request falls through to the default 404 handler with NO error log entry; dropped the URI suffix so the original request URI is forwarded verbatim. (2) `XTermPanel.tsx` calls `term.focus()` after writing the run-output banner so keystrokes route to the xterm textarea instead of the Run button. (3) `pyterm.py` per-connection `asyncio.Lock` covers every write path via a `safe_write()` helper — PTY-forward, timeout-ping, pong reply, and the cross-connection `/inject` broadcast no longer race on the same `StreamWriter`. (4) Per-tab tmux session — replaced `tmux attach -t main` (shared across every browser tab) with `tmux new-session -A -s "main-${cid}"` plus `kill-session` on disconnect, so two tabs can run independent scenarios without input collision. (5) Client-side keepalive + silence watchdog — sends an empty `'0'` input frame every 25s and force-closes the ws after 60s of no inbound traffic so the existing reconnect loop fires; browsers handle ws ping/pong opaquely, so a half-open TCP connection (RST never arrived) previously looked healthy until the user typed. Also landed: [pqctoday-sandbox PR #9](https://github.com/pqctoday-org/pqctoday-sandbox/pull/9) switching the CI workflow from per-branch GHA cache to cross-branch registry cache (GHA cache is scoped per branch — a PR's cache writes are invisible to main's CI reads, so PR #6 took 92 min then re-built the same image cold on main; expected post-cache-warm CI: ~5 min for source-unchanged PRs).
-
-- **Learn-module factual inaccuracies — second-pass audit, four more defects in workshop sub-files** [view:/learn]:
-  - **APISecurityJWT KAT panel cited RFC 9500 instead of RFC 9964** [view:/learn/api-security-jwt]: `PQCJWTSigning.tsx` lines 27 and 612 had `standard: 'RFC 9500 + FIPS 204'` and `authorityNote="RFC 9500 · FIPS 203 · FIPS 204"`. RFC 9500 is "Standard Public Key Cryptography Test Keys" (Dec 2023, unrelated to JOSE). The same file's prose (lines 239, 359, 382, 393, 604) correctly cites **RFC 9964** ("ML-DSA for JOSE and COSE"). KAT spec metadata now matches.
-  - **HybridCrypto KAT panel cited RFC 9843 — wrong RFC entirely** [view:/learn/hybrid-crypto]: `HybridKeyGeneration.tsx` lines 25, 40, 468 had `RFC 9843 + FIPS 203/204`. RFC 9843 is "BGP-LS Extensions for IS-IS Flexible Algorithm Advertisement" — no PQC relationship. The KAT tests drive the FIPS primitives directly, so citations now drop the bogus RFC and reference FIPS 203 / FIPS 204 / RFC 8032 only.
-  - **KmsPqc envelope-encryption demo dated PKCS#11 v3.2 to 2023** [view:/learn/kms-pqc]: `EnvelopeEncryptionDemo.tsx:1133` said "(OASIS 2023)" — v3.1 is the 2023 release; v3.2 is the June 2024 OASIS Standard that introduced `C_EncapsulateKey` / `C_DecapsulateKey`.
-  - **QuantumThreats Introduction component still on the pre-revision qubit count** [view:/learn/quantum-threats]: `QuantumThreatsIntroduction.tsx:139` carried the old "~2,330 logical qubits" figure for P-256. The `content.ts` prose and `data/quantumConstants.ts` were updated to ≤1,200 (Google Quantum AI, March 2026) but this Introduction panel was missed. Now consistent across the whole module.
-
-  Same audit explicitly retracted four false-positive candidates (CNSA 2.0 "Sep 2022" is correct — the original NSA advisory; ECDSA-P256 DER signatures are ~70–72 bytes; NetworkSecurityPQC "108%" and VPNSSHModule "22× Rosenpass" claims are unsourced but not provably wrong). No changes for retracted items.
-
-- **Learn-module factual inaccuracies — first-pass audit, four confirmed defects** [view:/learn]:
-  - **Quantum Threats — P-256 logical-qubit prose contradicted the module's own data table** [view:/learn/quantum-threats]: `content.ts` keyConcepts said "P-256 requires approximately 2,330 logical qubits" while `data/quantumConstants.ts` was already revised to ≤1,200 logical qubits per the Google Quantum AI March 2026 result (with explicit attribution). Prose now matches the constants and cites the same revision.
-  - **Hybrid Crypto — RFC 9935 date drifted from the canonical protocol matrix** [view:/learn/hybrid-crypto]: `constants.ts` educationalNote said "RFC 9935 (October 2025)"; `pqcProtocolMatrix.ts` (source of truth) carries `stageNote: 'RFC 9935 published 2026-03'`. Corrected to March 2026.
-  - **Database Encryption PQC — Grover/AES-256 framing oversold the headroom** [view:/learn/database-encryption-pqc]: keyConcepts said post-Grover AES-256 is "still above the 112-bit security minimum", which understates the constraint. Rewritten to make explicit that 128-bit post-Grover security equals the NIST PQC Level 1 floor (no margin above) and that AES-192/AES-128 fall below it.
-  - **HSM PQC — PKCS#11 v3.2 status + mechanism names** [view:/learn/hsm-pqc]: relatedStandards labeled v3.2 as "OASIS PQC draft"; it is an OASIS Standard (June 2024) that adds the ML-KEM / ML-DSA / SLH-DSA mechanisms. keyConcepts mechanism list also had markdown-italic corruption (`CKM*ML_KEM*_, CKM*ML_DSA*_`) — replaced with the canonical PKCS#11 v3.2 mechanism names (`CKM_ML_KEM_KEY_PAIR_GEN`, `CKM_ML_KEM`, `CKM_ML_DSA_KEY_PAIR_GEN`, `CKM_ML_DSA`, `CKM_HASH_ML_DSA`, plus `CKK_ML_KEM` / `CKK_ML_DSA`).
-
-  Audit also flagged ~6 candidates that did **not** survive verification and were retracted (EO 14306 = June 2025 is correct; NIST SP 800-227 = Sep 2025 plausible; RFC 9810 does obsolete RFC 4210 per IETF; FDA Section 524B is a real FD&C Act provision added by the FY2023 PATCH Act). No changes made for retracted findings.
+- **Trust-engine exports are now reproducible** [view:/migrate][view:/compliance]: The OSCAL and CBOM compliance exports were being stamped with the current time on every build, which invalidated their signatures even when nothing changed. They're now generated deterministically and re-signed, so signatures stay valid until the underlying data actually changes.
+- **Playground no longer crashes on load** [view:/playground]: Fixed three separate cases where the Playground page could crash to an error screen on first visit due to module load-ordering issues.
+- **Playground sandbox terminal accepts input again** [view:/playground]: The interactive terminal in embedded sandbox scenarios (VPN, TLS 1.3, SSH) showed a cursor but ignored keystrokes; the live connection behind it is fixed, and separate browser tabs no longer collide.
+- **Learn modules — eight factual corrections** [view:/learn]: Two review passes corrected wrong references and stale figures across the learning content, including:
+  - JWT and Hybrid Crypto modules cited unrelated RFCs in their test panels — now corrected to the right specs.
+  - The KMS module mis-dated PKCS#11 v3.2 (it's a June 2024 standard).
+  - The Quantum Threats module updated its P-256 qubit estimate to the March 2026 Google figure (≤1,200 logical qubits) everywhere.
+- **Module "Complete" button now sticks** [view:/learn]: Marking the final step of a module complete now correctly flips the module to "completed" — a single fix that repaired the same behavior across 20 modules.
 
 ### Data
 
-- **PQC Protocol Matrix → Library coverage gap closed** [view:/algorithms][view:/library]: Freshness audit against IETF datatracker on 2026-06-04 found `audit:matrix-refs` and stage-drift checks both clean, but the library cross-reference reported 15 RFC/draft slugs cited in [pqcProtocolMatrix.ts](src/data/pqcProtocolMatrix.ts) that did not resolve to any library row. Root cause split two ways: (a) 10 phantom gaps from a slug-format mismatch — the library CSV inconsistently uses both `RFC-9909` (hyphen) and `RFC 9941` (space) reference IDs, while the matrix's xref normalizer in `scripts/enrich-protocol-matrix.py` only tried one form. Fix: normalizer now tries both forms and aliases `RFC-7030` → `IETF-RFC-7030-EST` (the canonical library slug for that record). (b) 5 truly-missing library entries — 4 IETF drafts were never downloaded or enriched, 1 had the doc but no row. Fix: downloaded the 4 missing drafts to `public/library/` from datatracker, updated `public/library/manifest.json`, ran caffeinated `qwen3.6:27b` enrichment (4 docs, 19–23/39 dimensions each, ~10 min total wall-clock), carried 800 prior enrichments forward into `library_doc_enrichments_06042026.md` per the self-containment rule, then built 5 new rows in `library_06042026.csv` (849 → 854 rows) via PapaParse `unparse()` per the CSV-write-method rule. New entries: `draft-harrison-sshm-mlkem` (SSH pure ML-KEM), `draft-josefsson-ssh-sphincs` (SSH SLH-DSA public keys + signatures), `draft-miller-sshm-mldsa65-ed25519-composite-sigs` (SSH composite ML-DSA-65 + Ed25519), `draft-yusef-tls-pqt-dual-certs` (TLS 1.3 PQ + traditional dual-certificate authentication), `draft-reddy-cose-jose-pqc-hybrid-hpke` (PQC + hybrid KEMs for HPKE in JOSE / COSE). Post-fix, every `refs[].id` in the matrix resolves to an active library record (0 xref issues, down from 15). User impact: matrix → library drill-down is now honest across all 20 matrix rows (SSH, TLS 1.3, X.509, S/MIME, COSE, JOSE, EST-CMP, FIDO-2, UEFI, IKE-IPsec, etc.); the 5 new drafts also surface in `/library` search, RAG / Ask answers, and module cross-references (`vpn-ssh-pqc`, `tls-basics`, `api-security-jwt`, `hybrid-crypto`).
-
-- **Migrate catalog freshness sweep — algo-xref restore, purl FK backfill, compliance scrape + cert rematch** [view:/migrate][view:/algorithms]: Proactive health check on the migrate data family surfaced 5 actionable gaps (audit by `pqc-data-maintainer`); resolved end-to-end. (1) `algo_product_xref_06022026.csv` had silently dropped 10 real implementation rows during the 06-02 regen (PQClean × FrodoKEM-640/976/1344, liboqs × HAWK-512/1024, liboqs × SMAUG-T-128/192/256, BoringSSL × SecP256r1MLKEM768 + SecP384r1MLKEM1024) — DS-series violation, no `deprecated_at` marker; restored in `algo_product_xref_06042026.csv` (300 → 310 rows). (2) Realigned 11 orphan FK rows to canonical catalog IDs: `xmss-reference-implementation` → `xmss-reference`, `hash-sigs-cisco-reference` → `hash-sigs`, `pqcl-nist-reference` → `crystals-reference-implementations`, `cloudflare-pq-tls` → `cloudflare-edge-network`. (3) Added 8 reference-implementation entries to `pqc_product_catalog_06042026.csv` to back the remaining orphan FKs (`classic-mceliece-reference`, `falcon-reference-implementation`, `hawk-reference-implementation`, `hqc-reference-implementation`, `kpqclean-korean-reference`, `microsoft-pqcrypto-lweke`, `pqmagic-shanghai-jiao-tong-university`, `sphincs-reference`) — 855 → 863 active rows; algo-xref orphans now **0** (was 12). (4) `migrate_purl_xref_06042026.csv` — populated 749/825 `product_id` FKs from the catalog (was 0/825); unmatched 76 are commercial products without PURL package URLs. (5) Full compliance scrape (NIST + ACVP + CC + ANSSI + ENISA) — `public/data/compliance-data.json` 2379 → 2426 records (+47 net; 976 added / 929 removed reflecting upstream NIST/CC re-keying churn). 29 PQC-relevant new certifications surfaced including **Caliptra ML-KEM-1024 + ML-DSA-87** entering NIST CMVP (silicon root-of-trust milestone), **IBM 4770-001 CCA HSM** with ML-DSA + ML-KEM, **Red Hat Enterprise Linux 9 NSS** with ML-DSA + ML-KEM, **wolfCrypt Post Quantum** with ML-DSA + ML-KEM + SLH-DSA, **UniSentry SecIC-HSM PQC** and **PQSecure-Agility** both covering all four NIST PQC families (LMS + ML-DSA + ML-KEM + SLH-DSA), and **Trusty TEE** with ML-DSA + ML-KEM + SLH-DSA. (6) Re-ran `match_certifications.py` against the fresh compliance data → `migrate_certification_xref_06042026.csv` 1028 → 1164 rows (+136 cert links; HPE Aruba ArubaOS-CX and the newly-added Microsoft PQCrypto-LWEKE entry both gained their first cert matches). (7) `migrate_saas_xref_06042026.csv` — verified all 11 SaaS URLs, bumped `last_verified_date` for 9; left `Certicom Code Signing` (404) and `Metaco Harmonize` (connection refused post-Ripple-acquisition) at the older date as a signal for future cleanup. Validation: `tsc --noEmit` clean, `audit:matrix-refs` PASS, `data-integrity` validator surfaces no new findings against the changed files (pre-existing 137 `CM-AT-migrate` debt unchanged). Older versions archived per the 2-version rule.
-
-- **Product CSV integrity sweep — vendor backfill, missing products, false algorithm claims, status enum** [view:/migrate][view:/algorithms]: Multi-source audit on `pqc_product_catalog_05312026.csv`, `vendors_05092026.csv`, `algo_product_xref_05072026.csv`, and `migrate_certification_xref_05162026.csv` found 74 catalog products referencing vendor IDs that no longer existed, 10 with blank `vendor_id`, 21 stale cert xref orphans (matcher bug — `deprecated_at` set but `status` left as `'active'`), 8 false algorithm xref claims (liboqs HAWK-512/1024 + SMAUG-T-128/192/256; PQClean FrodoKEM-640/976/1344) + 2 false BoringSSL hybrids (SecP256r1MLKEM768/SecP384r1MLKEM1024), 12 missing OpenSSL SLH-DSA rows, and 3 high-importance products absent from the catalog (libgcrypt — ships ML-KEM/ML-DSA/SNTRUP761/Classic McEliece today; libsodium — explicit no-PQC reference point; HPE Aruba ArubaOS-CX — IEEE 802.1AR roadmap). Resolved end-to-end: `vendors_06022026.csv` (+76 rows — 68 referenced-but-missing IDs from VND-357 → VND-425 + 8 freshly minted VND-426 → VND-433 for products with blank `vendor_id`); `pqc_product_catalog_06022026.csv` (+3 new products, new `pqc_status_canonical` enum column populated for all 779 active rows — available=460, none=189, partial=66, roadmap=34, unknown=30; refreshed `pqc_capability_description` for 6 products to match xref evidence — wolfSSL, SymCrypt, Bouncy Castle, Mozilla NSS, oqs-provider, liboqs); `algo_product_xref_06022026.csv` (−10 false rows, +12 OpenSSL SLH-DSA rows); `migrate_certification_xref_06022026.csv` (regenerated with matcher status-flag bug fixed, 207 deprecated rows correctly status-flagged). After the sweep: 0 unresolved `vendor_id`, 0 blank `vendor_id`, 0 active cert xref orphans, 0 algo xref orphans, self-containment preserved (no silent deletions). RAG corpus + embeddings regenerated. 5 older CSV versions archived per the 2-version maintenance rule (`pqc_product_catalog_05302026/05232026_r3`, `algo_product_xref_05062026`, `migrate_certification_xref_05102026_r1`, `vendors_05082026`).
-
-- **G7 Central-Bank Quantum Technologies report — canonical BdF press-release URL + re-enriched** [view:/library]: `library_06022026.csv` carries forward the previous library set (DS05p2 — 798 prior enrichments preserved); `library_05312026.csv` archived per the 2-version rule. The `G7-CB-QT-Financial-2026` entry now uses the Banque de France publications landing → press-release URL (`url_homepage → url_authoritative`) instead of the watermarked draft URL; `local_file` refreshed to the 485 KB public final PDF (no `BDF-INTERNE` watermark); direct PDF URL captured in `misc_info`; confidence bumped 70 → 80. Re-enriched via MLX `qwen3.6:27b` on the clean source (20/39 dimensions populated). Full enrichment record at `src/data/doc-enrichments/library_doc_enrichments_06022026.md`.
-- **2-version-rule cleanup** [view:/library]: `library_06012026.csv` archived to `src/data/archive/` to make room for the new `_r1` revision.
-
----
+- **Protocol Matrix → Library links all resolve** [view:/algorithms][view:/library]: Every RFC and draft referenced in the PQC Protocol Support matrix now links to a real Library entry (15 broken references fixed, including 5 newly added IETF drafts for SSH, TLS, and JOSE/COSE).
+- **Migrate — catalog and certification refresh** [view:/migrate][view:/algorithms]: A health sweep restored 10 dropped algorithm-implementation rows, reconnected orphaned product links, and refreshed the certification data — surfacing 29 new PQC certifications including Caliptra, IBM, Red Hat NSS, and wolfCrypt.
+- **Migrate — product catalog integrity sweep** [view:/migrate][view:/algorithms]: Fixed 74 products pointing at missing vendors, removed 10 incorrect algorithm-support claims, added 3 important missing products (libgcrypt, libsodium, HPE ArubaOS-CX), and introduced a clear PQC-status column for every product.
+- **Library — corrected G7 central-bank quantum report source** [view:/library]: The G7 central-bank quantum-readiness paper now uses the official Banque de France press release and the clean public PDF instead of a watermarked draft.
 
 ## [3.17.5] - 2026-06-02
 
-Two-day remediation pass against the 2026-06-01 bug triage (10 user-reported issues across the Learn catalog, KMS workshop, and hybrid-crypto workshop), plus three Rust-engine PKCS#11 v3.2 compliance fixes that surfaced during in-browser smoke testing. Shipped across 10 hub PRs + 3 pqctoday-hsm PRs; both `public/wasm/openssl.wasm` (C++ engine) and `public/wasm/softhsmrustv3_bg.wasm` (Rust engine) rebuilt against spec-compliant softhsmv3 sources.
+Fixed 10 reported issues across the Learn catalog and crypto workshops, plus several in-browser HSM engine corrections.
 
 ### Fixed
 
-- **PKCS#11 v3.2 §4.11 strict compliance on the C++ engine — CKA_CHECK_VALUE populated on every secret-key creation path** [view:/learn/kms-pqc][view:/learn/email-signing][view:/playground]: `openssl.wasm` rebuilt against `libsofthsmv3-static.a` from [pqctoday-hsm PR #61](https://github.com/pqctoday-org/pqctoday-hsm/pull/61). `C_UnwrapKey` and four `C_DeriveKey` paths (HKDF, PBKD2, SP800-108 counter, SP800-108 feedback) now populate `CKA_CHECK_VALUE` consistently with `C_GenerateKey`, fixing the `CKR_ATTRIBUTE_TYPE_INVALID (0x12)` failure in the ML-KEM-768 / AES-KW envelope-encryption workshop. KCV algorithm follows §6.8.2 / §6.58.2 / §6.59.2: SHA-1 for generic-secret / CHACHA20 / SALSA20; `AES-ECB(0)[0:3]` per §4.10.2 for cipher-bearing keys (no PKCS#11 v3.x version permits SHA-256 for KCV; verified against v3.0, v3.1, v3.2 cs01 spec text). Verified end-to-end with a 13-assertion compliance test using OpenSSL as an independent oracle.
-- **PKCS#11 v3.2 §4.10.2 / §4.11 compliance on the Rust engine — KCV populated on derive + unwrap + RSA public-key transport** [view:/learn/kms-pqc][view:/playground]: `softhsmrustv3_bg.wasm` rebuilt against [pqctoday-hsm PR #62](https://github.com/pqctoday-org/pqctoday-hsm/pull/62). PR #61's KCV fix only covered the C++ engine; the Rust engine had the same gap on `C_UnwrapKey`, `C_UnwrapKeyAuthenticated`, and both `C_DeriveKey` paths. The KMS PQC workshop defaults to the Rust engine so #10 stayed broken in production until this rebuild landed. Additionally, RSA `C_GenerateKeyPair` now stores the public key in packed `[n_len:4LE][n_bytes][e_bytes]` format under `CKA_VALUE` (alongside the spec-mandated `CKA_MODULUS` + `CKA_PUBLIC_EXPONENT`) — fixes `CKR_ARGUMENTS_BAD (0x07)` on `C_WrapKey(RSA-OAEP)` which the engine's parser expects.
-- **Rust engine — XMSS Stateful Sign+Verify ACVP test** [view:/playground]: Two bugs combined. (1) The hub's legacy `src/wasm/softhsm.ts` defined `CKM_XMSS = 0x00004035`; the correct value per PKCS#11 v3.2 §1225 / pkcs11t.h is `0x00004036`. Modular re-export at `src/wasm/softhsm/constants.ts:168` already had the right value, but `HsmAcvpTesting` imported from the legacy file. Wrong constant → Rust's `mech == CKM_XMSS` check failed → fall-through → `CKR_ARGUMENTS_BAD (0x07)`. (2) Rust's `C_GenerateKeyPair(CKM_XMSS_KEY_PAIR_GEN)` stored the raw `param_code` (0 when no `CK_XMSS_PARAMS` struct) in `CKA_XMSS_PARAM_SET` instead of the effective `xmss_param`; later `xmss_sign` read 0, hit the catch-all `_ => Err(CKR_FUNCTION_FAILED)` arm, and every sign failed. Both fixed via PR #283 (hub) + [pqctoday-hsm PR #63](https://github.com/pqctoday-org/pqctoday-hsm/pull/63).
-- **Rust engine — ECDSA P-521 Functional Sign+Verify ACVP test** [view:/playground]: Two bugs combined. (1) `get_sig_len(CKM_ECDSA_SHA512, _)` returned a hardcoded 64-byte length regardless of curve; P-521 needs 132 bytes (66 r + 66 s). Size-discovery returned 64, caller allocated 64, actual sign needed 132 → `CKR_BUFFER_TOO_SMALL (0x150)`. Consolidated all ECDSA arms into a curve-aware lookup (132 for P-521, 96 for P-384, 64 for P-256/k256). (2) `get_ec_point_sec1` only stripped DER short-form length (`0x04 <len ≤ 127> <data>`); P-521's 133-byte SEC1 point requires long-form (`0x04 0x81 0x85 <data>`). Strip helper returned the full DER-wrapped buffer to `VerifyingKey::from_sec1_bytes` → wrong public key → verify always failed on its own signature. Added long-form handling alongside short-form. Both fixes in PR #283 + pqctoday-hsm PR #63.
-- **Hybrid-crypto workshop — Pure ML-KEM-512/768/1024 cert generation produced 0-byte cert ("No such file or directory")** [view:/learn/hybrid-crypto]: OpenSSL `req -x509 -force_pubkey` doesn't reliably encode ML-KEM as a SubjectPublicKeyInfo in our 5.4 MB bundle (ML-KEM is exposed as a TLS named group, not as an X.509 SPKI encoder). Rerouted through `pkcs11-provider`'s X.509 cert-issuance path via `CMSSigningService.genKey + mkCert` with `useHsm=true` — the SPKI encoder used here is pkcs11-provider's own (proven by `MLKEMEncryptDemo`'s KEM-only flow). Includes the missing CA self-signed cert mint step (worker requires `/ssl/<issuerKeyId>.crt` to exist before any CA-issued mkCert call). Produces a real RFC 9935 cert PEM with the ML-KEM-768 SPKI signed by a transient ML-DSA-65 issuer; ML-KEM private keys never enter the WASM VFS. PRs #281 (initial) + #284 (CA self-sign step).
-- **Network Security PQC workshop step 6 crash** [view:/learn/network-security-pqc]: `PARTS` array had 6 entries but `WORKSHOP_STEPS` had only 5, so the `WorkshopStepper` read `.label` on `undefined` when the user clicked into step 6, triggering the `ErrorBoundary`. Added the missing `network-telemetry-analyzer` entry to both `WORKSHOP_STEPS` and `MODULE_STEP_COUNTS`.
-- **Module status never flipped to `'completed'` after the user clicks "Complete Module ✓"** [view:/learn]: PQC Candidates and Crypto Agility were the symptom; 20 modules across the Learn catalog share the same broken pattern. Centralized the fix in `useModuleStore.markStepComplete` so it auto-sets `status: 'completed'` when every step in `WORKSHOP_STEPS[moduleId]` has been marked. One store-level change, 20 modules fixed.
-- **PKCS#11 mechanism inspector showed raw hex for 5 mechanism codes** [view:/playground]: Added missing entries to `CKM_TABLE` for `CKM_EC_MONTGOMERY_KEY_PAIR_GEN` (0x1056), `CKM_EDDSA_PH` (0x80001057), `CKM_AES_KEY_WRAP_KWP` (0x210a), `CKM_KMAC_128` (0x80000100), `CKM_KMAC_256` (0x80000101). Verified against `pqctoday-hsm/src/wasm/softhsm.ts` exported `CKM_*` constants.
-- **TS6133 build failure on `tsc -b` in PR-281's `pqcVariant` parameter** [build]: `tsc -b` (production build mode) is stricter than `tsc --noEmit` (local typecheck) about unused parameters. Renamed unused param to `_pqcVariant` to satisfy the stricter check. Unblocked the Pages deploy.
-
-### Changed
-
-- **Library persona banner — richer info, accessible status region** [view:/library]: When a non-researcher persona is active, the matched-count line is always rendered with the persona name surface (e.g. "Showing 4 documents matched to your developer role"). When `status='New'` items are hidden by the persona narrow, an additional warning span ("1 newly added document hidden by your developer role") appends alongside the matched-count line — both visible together, not exclusive. Container styling switches to a warning border/background when `newHiddenCount > 0`. Restructured to put each piece in its own sibling `<span>` so accessibility tests can read each independently.
+- **KMS workshop — ML-KEM envelope encryption works again** [view:/learn/kms-pqc][view:/playground]: The ML-KEM-768 / AES key-wrap envelope-encryption demo failed with an attribute error on both in-browser crypto engines; the engines were rebuilt so the workshop completes end-to-end.
+- **Playground — XMSS and ECDSA P-521 self-tests pass** [view:/playground]: Stateful XMSS signing and ECDSA P-521 sign/verify in the algorithm test panel were failing on the in-browser engine; both are fixed.
+- **Hybrid Crypto workshop — pure ML-KEM certificate generation fixed** [view:/learn/hybrid-crypto]: Generating a certificate for a pure ML-KEM key produced an empty file; it now creates a real certificate (signed by a temporary ML-DSA issuer), with private keys never leaving the browser sandbox.
+- **Network Security workshop — step 6 no longer crashes** [view:/learn/network-security-pqc]: Clicking into the sixth step crashed the workshop because a step was missing from its list; the step is restored.
+- **"Complete Module" now works across 20 modules** [view:/learn]: Modules weren't flipping to "completed" after the final step was marked — a single fix repaired the behavior for all affected modules.
+- **Playground — mechanism inspector shows readable names** [view:/playground]: Five PKCS#11 mechanisms that displayed as raw hex codes now show their proper names.
 
 ### Added
 
-- **Two new library references** [view:/library]:
-  - **Quantum-Resilient Organizational Identity: Governance, Business Wallets, and PQC Corridors** (Couzens / Stöcker / Vasiliu-Feltes, 2026-05-31). Preprint distributed via LinkedIn; introduces the "PQC Corridor" governance + technical migration domain and treats business wallets, qVDRs, and vLEIs as cross-jurisdiction identity interfaces for B2B / B2G / G2G / M2M / agent-to-agent ecosystems.
-  - **Crypto News, June 2026** (Cloud Security Alliance, compiled by Dr. Dhananjoy Dey). CSA Quantum-Safe Security Working Group monthly newsletter covering cryptographic maturity, DST Task Force quantum-safe thinking, and PQC migration progress.
+- **Two new library references** [view:/library]: A preprint on quantum-resilient organizational identity (PQC "corridors", business wallets, vLEIs) and the Cloud Security Alliance's June 2026 Crypto News newsletter.
 
 ### Data
 
-- **OSCAL + CBOM exports regenerated** [view:/compliance][view:/migrate]: Stale May 2026 outputs refreshed to pick up new Tectia SSH (SSH.COM) Quantum-Safe Edition entry and recent migrate-catalog adds. Pure regeneration — no schema or content rule changes.
-
-### Build
-
-- **PWA precache size cap bumped 32 MB → 48 MB** [build]: `vite.config.ts` `maximumFileSizeToCacheInBytes` — the rebuilt `openssl.wasm` chunk crosses 33 MB after the softhsmv3 + pkcs11-provider archives statically link. Below the new cap, the SW now precaches the bundle (matches the `feedback-sw-wasm-cache.md` memory rule: precache only, no runtime CacheFirst).
-
-### Related PRs
-
-- **Hub-side (pqctoday-hub):**
-  - [#275](https://github.com/pqctoday-org/pqctoday-hub/pull/275) — Track A (network-security step 6, module auto-complete, PKCS#11 mech table) + NIST IR 8320E ref + 2 new library refs
-  - [#278](https://github.com/pqctoday-org/pqctoday-hub/pull/278) — Track A (initial bundle for network-security + module complete + mech table)
-  - [#279](https://github.com/pqctoday-org/pqctoday-hub/pull/279) — TS6133 build fix + persona banner restructure
-  - [#280](https://github.com/pqctoday-org/pqctoday-hub/pull/280) — openssl.wasm rebuild (C++ engine KCV)
-  - [#281](https://github.com/pqctoday-org/pqctoday-hub/pull/281) — Pure-KEM-via-HSM cert (initial)
-  - [#282](https://github.com/pqctoday-org/pqctoday-hub/pull/282) — softhsmrustv3 rebuild (Rust engine KCV + RSA-OAEP CKA_VALUE)
-  - [#283](https://github.com/pqctoday-org/pqctoday-hub/pull/283) — CKM_XMSS constant + Rust engine XMSS/P-521 WASM rebuild
-  - [#284](https://github.com/pqctoday-org/pqctoday-hub/pull/284) — Pure-KEM CA self-sign step (completes #281)
-- **HSM-side (pqctoday-hsm):**
-  - [#61](https://github.com/pqctoday-org/pqctoday-hsm/pull/61) — PKCS#11 v3.2 §4.11 KCV — C++ engine
-  - [#62](https://github.com/pqctoday-org/pqctoday-hsm/pull/62) — Rust engine KCV-on-derive/unwrap + RSA CKA_VALUE
-  - [#63](https://github.com/pqctoday-org/pqctoday-hsm/pull/63) — Rust engine XMSS param-set + ECDSA P-521 sig length + EC point long-form DER
-
----
+- **Compliance exports refreshed** [view:/compliance][view:/migrate]: The OSCAL and CBOM exports were regenerated to include the new Tectia SSH Quantum-Safe Edition entry and recent catalog additions.
 
 ## [3.17.2] - 2026-05-30
 
-Learning persona paths and stack registry audit — all six personas now include recently-added modules; stack descriptions are accurate.
-
-### Updated
-
-- **Learning persona paths extended to cover all active modules** [view:/learn]: Six personas updated to include modules that had been added to the library but were missing from recommended paths. MLS Group Messaging added to developer (Protocols phase), architect (Network & Key Infrastructure phase), and researcher (Protocols phase) paths. Stateful Signatures added to developer (Algorithms phase) and ops (HSM & Key Infrastructure phase) paths. PQC Candidates added to curious (Phase 1) and digital-id added to curious (Phase 4). Healthcare PQC and EMV Payment PQC added to executive path.
-- **Estimated path durations updated** [view:/learn]: Executive 725 → 865 min (+healthcare-pqc 60 min, +emv-payment-pqc 80 min); Developer 1430 → 1510 min (+mls-group-messaging 40 min, +stateful-signatures 40 min); Architect 1560 → 1600 min (+mls-group-messaging 40 min); Researcher 2600 → 2640 min (+mls-group-messaging 40 min); Ops 1450 → 1490 min (+stateful-signatures 40 min); Curious 680 → 815 min (+pqc-candidates 55 min, +digital-id 80 min).
-- **Learning stack descriptions refreshed** [view:/learn]: Protocols track now lists MLS group messaging and PKI enrollment (EST & CMP). Software Infrastructure now correctly names SLH-DSA and stateful hash sigs. Executive track now lists crypto posture management.
-- **Track quiz categories updated** [view:/learn]: MLS Group Messaging added to Protocols track quiz category set.
-- **Module topic summaries added for 3 modules** [view:/learn]: `pqc-candidates` (NIST FIPS 203–206, HQC, 4 candidate families, worldwide processes), `pki-enrollment-protocols` (EST RFC 7030, CMP RFC 9810, CRMF, 6-step OpenSSL 3.6 workshop), and `mls-group-messaging` (RFC 9420 TreeKEM, HPKE, PQC ciphersuites, HSM PKCS#11 v3.2 provider architecture).
-
----
-
-## [3.17.1] - 2026-05-31
-
-Migrate catalog bug fix and 5 re-activated product entries.
-
-### Fixed
-
-- **81 deprecated products no longer visible in Migrate catalog** [view:/migrate]: `migrateData.ts` was missing a `status` filter — all deprecated rows from the May 2026 catalog refactor were loaded and rendered. They shared an empty `product_id`, causing all to map to the same React key (`''`) and appear as apparent duplicates (e.g. 5× AnyDesk 8.x). Active product count: 771 (was 852).
-- **Corpus generator skips enrichments for deprecated library entries** [view:/playground]: `processDocumentEnrichments()` now guards against emitting RAG chunks for deprecated library entries, removing 48 stale enrichment chunks and restoring the C3 trust-tier invariant.
-
-### Data
-
-- **5 deprecated product catalog entries re-activated** [view:/migrate]: Tectia SSH (SSH.COM), IVPN, libcrux (Cryspen), Trail of Bits ml-dsa, and InfoSec Global AgileSec restored after finding valid public proof URLs, downloading source pages, and running MLX enrichment (Qwen3.6-27B-4bit). Each entry has a `product_id`, `proof_url`, and `validation_result`. PQC support: IVPN and Trail of Bits ml-dsa VALIDATED; libcrux VALIDATED (formally verified ML-KEM + ML-DSA); Tectia SSH and InfoSec Global AgileSec PARTIALLY_VALIDATED.
-
----
-
-## [3.17.0] - 2026-05-30
-
-Persona intelligence across all 7 surfaces, NICE Framework workforce view, TLS downgrade protection workshop, and a sandbox routing fix.
-
-### Added
-
-- **NICE Framework view in Learning Workshops** [persona:executive][persona:architect][persona:developer][view:/learn]: Organises all 55 modules by NIST SP 800-181 Rev 1 Competency Areas; filter by Work Role to highlight relevant modules and track CA progress. Active persona pre-selects the natural role. Deep-link via `?view=nice&role=<id>`.
-- **TLS Downgrade Attack tab in TLS 1.3 Basics workshop** [view:/learn]: Three-mode interactive walkthrough — normal hybrid connection, MITM stripping ML-KEM (downgrade), and mitigated with PQ Lock + PQC Continuity. TLS 1.3 Basics and Merkle Tree Certs modules each gain new Key Concepts on downgrade mechanics and detection.
-- **Persona-aware default filters across all 7 surfaces** [persona:executive][persona:developer][persona:architect][persona:ops][persona:curious][view:/library][view:/compliance][view:/migrate][view:/assess][view:/playground][view:/threats][view:/timeline]: Migrate, Assess, Playground, Threats, Timeline, Library, and Compliance narrow to role-relevant content on first load. One-click `?prefs=off` shows everything.
-- **NIST Round 2 Additional Signatures in Playground** [view:/playground][view:/algorithms]: MAYO, CROSS, OV/UOV, SNOVA, FN-DSA-padded (constant-time Falcon), and FrodoKEM-SHAKE now interactive in the key generator and sign/verify panel. "Try" deep-links added to the corresponding algorithm cards.
-- **Assess report progressive loading** [view:/assess]: Async 16-stage pipeline with animated progress log — no more blank page during the 800–1500 ms computation window on slow devices.
-- **Board Pack ZIP export on Report** [persona:executive][view:/report]: Downloads a package with executive summary, key findings, recommended actions, compliance-deadlines CSV, and machine-readable profile JSON.
-- **Compliance "For You" views for Developer, Ops, and Curious** [persona:developer][persona:ops][persona:curious][view:/compliance]: All six personas now have dedicated For You content. Developer: algorithm coverage strip + CI gate YAML scaffold + standards→implementation table. Ops: Rotation Clock by deadline phase + toolchain jumps. Curious: plain-English "what is compliance" orientation with friendly framework cards.
-- **Compliance persona-overwhelm remediation** [view:/compliance]: Steady-state row count above the tab bar cut from 11 to 5; industry/region hint becomes a one-click navigation CTA; deadline timeline gated by persona; sub-facet pre-selection routes Finance to FIPS tab, Automotive to CC tab on navigation.
-- **Library persona-overwhelm remediation** [view:/library]: Multi-category default filter by persona; curated picks panels (Executive "Boardroom set" 8 docs, Ops "Cert-relevant set" 7 docs, Curious "Start here" 3 docs); persona-aware default sort; Cert-relevant chip; Lifecycle filter pills; Curious sees only picks + "Browse all" CTA.
-- **Business Center zone focus mode** [view:/business]: Toggle collapses all zones except the active one for full-vertical focus; fires Zone Focus On/Off telemetry.
-- **CuriousGuide floating tour on Landing** [persona:curious][view:/]: Four-step onboarding walkthrough for first-time curious visitors, with CTAs into /learn, /threats, /timeline, and /explore.
-- **Persona suggestion card on Report** [view:/report]: Non-blocking banner surfaces when the inferred persona from the assessment differs from the currently selected one; accepting updates the persona store.
-- **Persona-specific hero taglines on Landing** [view:/]: Role-specific urgency copy under the hero body — board deadlines for executives, JOSE/library status for developers, hybrid certs for architects, FIPS/RFC status for researchers, cert rotation for ops, plain-language intro for curious.
-- **"For me" persona filter on /changelog** [view:/changelog]: Filters entries by role using explicit `[persona:X]` tags or keyword matching, reducing the full log to the persona-relevant subset.
-- **Five new Red Hat products in Migrate** [view:/migrate]: RHEL 10.2, RHEL 9.8, Red Hat Certificate System 11.0, Trusted Artifact Signer, and Ansible Automation Platform — all with PQC readiness status from the May 2026 GA announcements.
-- **Circle's Post-Quantum Security Roadmap (2026) in Library** [view:/library]: Seven quantum attack vectors on the blockchain stack (EVM forgery, HNDL, consensus disruption, P2P session, RPC); wired to 11 learn modules.
-- **Steven Vaile added to Community** [view:/leaders]: Founder of Quantum Security Defence and Applied Quantum (UK); contributor to the Labour-Tech "Defend or Depend" defence policy report.
-- **External URL support in community leader profiles** [view:/leaders]: `keyResourceUrl` entries starting with `http` now open as external links instead of routing to the internal library search.
-- **All 55 learn modules now have infographics** [view:/learn]: Four previously missing `pqcstd_` visuals added (slh-dsa, pki-enrollment-protocols, mls-group-messaging, pqc-candidates); MLSGroupMessaging gains its missing Visual tab.
-- **Four new library references for TLS downgrade coverage** [view:/library]: `draft-sheffer-tls-pqc-continuity`, Westerbaan's PQCrypto 2025 slides, Root Causes Podcast ep. 614, and `draft-reddy-lamps-x509-pq-commit`.
-- **Three new finance-sector library references** [view:/library]: G7 Central Banks quantum readiness paper (May 2026), Citi GPS quantum threat report (Jan 2026), and a peer-reviewed hybrid cryptography paper (Franklin Open / Elsevier).
-- **Labour-Tech "Defend or Depend" — two new library documents** [view:/library]: UK policy report on defence sovereignty through quantum commercialisation; proposes a UK Quantum Cybersecurity Vendor Directory and mandatory quantum cyber resilience plans from FY26/27.
-- **"A Portrait of Quantum Technologies in Finance" — two new library documents** [view:/library]: 30-chapter TQFB practitioner compendium; Chapter 24 covers NIST FIPS 203/204/205 and a 3–5+ year PQC migration roadmap for financial institutions.
-
-### Fixed
-
-- **Sandbox embed routing** [view:/playground]: Corrected URL path from `/scenario/` to `/scenarios/` — fixes blank iframe and broken "Open externally" link when accessed from pqctoday.com.
-- **Deprecated rows leaking into Library and Migrate views** [view:/library][view:/migrate]: Deprecated CSV rows now filtered from all UI surfaces; RAG corpus generator runs `filterActive()` across all 13 data processors before indexing.
-- **Library persona-narrowing disabled during search** [view:/library]: Persona-preferred category filter now correctly suspends when a search query is active.
-- **Stale library entries** [view:/library]: Stub descriptions replaced with real content for 6 entries; stale dependency refs updated to canonical active IDs.
-
-### Data
-
-- **Product catalog enrichment** [view:/migrate]: 716 entries processed; 30 new products added; 720 of 751 active rows (95.9%) now have a verified proof URL.
-- **CSV housekeeping**: 10 stale versioned CSV files archived; self-containment rules enforced — no record exists only in an archived version.
-
----
-
-## [3.16.0] - 2026-05-19
-
-Algorithms, Compliance, and Learn pages received deep UX improvements. New: NICE Framework workforce gap report, PKI Enrollment Protocols with real in-browser CMP, and SSH PQ tracking in the Protocol Matrix. Critical: AES-GCM authentication was silently broken in the browser WASM engine and is now fixed.
-
-### Added
-
-- **NICE workforce gap report** [persona:executive][persona:architect][view:/assess]: Assessment now maps your profile to NIST IR 8355 competency areas and outputs a ranked list of work roles to hire or upskill, an ordered learning sequence, and a downloadable JSON report.
-- **Common Ground learning track** [persona:executive][view:/learn]: A no-code, no-jargon pathway for executives, procurement, and legal — five curated modules drawn from NIST IR 8355 §4 with audience labels and time estimates. Appears as an entry-point callout on the Learn dashboard for executive and curious-explorer personas.
-- **PKI Enrollment Protocols module** [persona:developer][persona:architect][view:/learn]: Real RFC 4210 CMP and RFC 7030 EST in the browser — actual libcrypto, no mocked server, no pre-canned certs. Six workshop steps: KeyGen, CMP IR exchange, EST simpleenroll, ML-KEM proof-of-possession (RFC 9810 encrCert), hybrid ECDSA + ML-DSA cert comparison, and cert verification.
-- **SSH PQ row in Protocol Matrix** [view:/algorithms]: Tracks four active IETF SSHM drafts — ML-KEM KEX, ML-DSA host keys, SLH-DSA, and composite ML-DSA+Ed25519 — with OpenSSH and Cisco deployment notes and known gaps.
-- **SLH-DSA in API Security JWT module** [persona:developer][view:/learn]: SLH-DSA-SHA2-128s/192s/256s signing added to the JWS adapter (both noble and softhsmv3 backends). Cross-backend verification enforced: a token signed by one backend must verify under the other.
-- **LAMPS composite cert, sign, and verify** [persona:developer][view:/learn]: Three draft-19 composite OIDs (MLDSA44+RSA2048-PSS, MLDSA65+ECDSA-P256, MLDSA87+ECDSA-P384) now produce real composite X.509 certs and `mldsaSig ‖ classicalSig` CMS signatures via pkcs11-provider in the S/MIME workshop.
-- **Protocol Matrix: 20 rows + live deployments** [view:/algorithms]: 10 new protocol rows (COSE, JOSE, EST/CMP, 5G SUCI, DTLS 1.2/1.3, FIDO, FIDO 2, MACsec, UEFI Secure Boot). 24 verified production deployments across 13 rows (Cloudflare, Google Chrome, AWS, Apple iMessage, Signal, F5, Palo Alto). Every empty row explains why there is no deployment yet.
+Every learning persona path now includes the recently added modules.
 
 ### Changed
 
-- **Algorithms page redesign** [view:/algorithms]: Live WASM benchmark on every Transition row; protocol heatmap shows ⚠ transport blocker names on hover; Detailed tab replaced sub-tabs with 6 collapsible sections (deep-link via `?section=kat`); persona-aware entry strip on first visit; TLS 1.3 and SSH marked ⭐ recommended; mobile shows a 3-step wizard instead of a raw algorithm card list.
-- **Compliance page improvements** [view:/compliance]: CSWP.39 promoted from a hidden dropdown to a permanent desktop tab with a context banner on cross-walk jumps; mobile card list uses a virtual scroller instead of 50-item pagination; secondary filters auto-reveal when active via URL params; framework cards show inline CSWP.39 requirements with expandable maturity level rows.
-- **Learn page accessibility and UX** [view:/learn]: All animations respect `prefers-reduced-motion`; module cards show track badge, Resume button, and dual learn/workshop progress bars; new Most-progress-first sort option; progress sidebar shows nudge copy that evolves as you advance through sections, plus a next-section arrow pill.
-- **Responsive tab bar on all 54 learn modules** [view:/learn]: First 3 tabs show inline on mobile; the rest collapse into a ··· overflow popover with all tabs visible at the `sm:` breakpoint. Replaces all native `<select>` tab switchers and plain div-based tab rows.
-- **S/MIME workshop demos default to HSM mode** [view:/learn]: Sign/verify, encrypt/decrypt, and dual-sign demos now start with the HSM toggle on after all three direct PKCS#11 keygen paths (ML-DSA, EC P-256, ML-KEM) were validated against softhsmv3.
-- **Migrate cross-layer search** [view:/migrate]: Searching without selecting a specific infrastructure layer now renders a flat product list across all layers instead of showing empty state.
-- **Protocol Matrix reference chips open Library pane** [view:/algorithms]: Clicking an RFC or draft chip now opens the Library detail popover (status, dependencies, trust tier, source URL) instead of jumping directly to the raw PDF or datatracker page.
-- **CSWP.39 agility view consolidated** [view:/compliance]: The orphan `/agility` route was a hidden duplicate of the Compliance → CSWP 39 tab. KPI bar (coverage %, mean confidence, source records) merged into the Compliance tab; the duplicate route removed and all persona nav links updated.
-- **Command Center regulations filtered by country** [view:/business]: Governance and Risk Management zones now apply your country + industry applicability lens — Australian finance profiles see ASD ISM, not NIS2 (EU) and ANSSI (France).
-- **Timeline document cards fully clickable** [view:/timeline]: Clicking anywhere on a document tile opens the detail popover; previously only the small "Details" button at the bottom worked.
-- **Library CSWP 39 requirements collapsed by default**: The 100+ requirement rows now start collapsed so title, trust tier, dependencies, and source info are immediately visible on popover open.
-- **TLS simulator HSM toggle removed**: Replaced the non-functional HSM ON/OFF toggle with an honest capabilities banner listing what the simulator covers (ML-DSA keys, hybrid KEM, classical and PQC certs) and what it does not (composite certs, HSM-backed signing).
-- **TPM Playground V1.85 RC4 wire format** [view:/playground]: All command definitions re-verified against the RC4 PDF; 7 wrong section references corrected; 2 hallucinated field names replaced with spec names; `TPM2_VerifyDigestSignature` added as a new command.
-- **Command Center CSWP 39 audit** [view:/business]: 18 audit findings closed — source-of-truth fixes (Fig.3 zone model, maturity CSV drift), PDF encoding sanitiser (em-dash, smart quotes, Mermaid blocks), landscape orientation for wide tables, 4 new architect-persona tools (Hybrid Algorithm Transition Planner, MTI Negotiator, Crypto API Refactor Audit, Cloud Responsibility Matrix), and CSWP 39 §-citations in all 11 tool exports.
+- **Learning paths now include all current modules** [view:/learn]: Six persona paths were updated to add modules that existed in the catalog but were missing from the recommended sequences (MLS Group Messaging, Stateful Signatures, Healthcare PQC, EMV Payment PQC, and more), with refreshed time estimates and track descriptions.
+
+## [3.17.1] - 2026-05-31
+
+Fixed duplicate-looking products in the Migrate catalog and re-activated five products.
 
 ### Fixed
 
-- **ML-DSA HSM CMS sign/verify** [view:/learn]: Missing `OSSL_PKEY_PARAM_MANDATORY_DIGEST` in the pkcs11-provider ML-DSA keymgmt caused `CMS_add1_signer` to fail with "unsupported signature algorithm". Fixed to match the Ed25519 handler pattern.
-- **ML-KEM HSM encrypt/decrypt** [view:/learn]: Workshop failed at cert minting because pkcs11-provider could not load a public key from a KEM-only PKCS#11 key object. Fixed by routing public key extraction through the `;type=public` RFC 7512 URI flag with `-pubin`.
-- **EC P-256 and ML-KEM keygen via PKCS#11** [view:/learn]: DualSignDemo and MLKEMEncryptDemo were writing keys to the WASM memory filesystem instead of the softhsmv3 token. Fixed with direct `C_GenerateKeyPair` calls for both key types.
-- **HSM toggle greyed in Email Signing playground**: The `providerReady` prop was not passed to the demo components, so the toggle was permanently disabled. Collapsed 3 broken accordion panels into a single Live HSM Demos step under `LiveHSMProvider`.
-- **softhsmv3 configuration path** [view:/learn]: `C_Initialize` was reading the compiled-in default config path (`/etc/softhsmv3.conf`) instead of the env-var path because Emscripten caches environment strings at module instantiation time. Fixed by writing the config to both paths.
-- **Protocol Matrix stage accuracy** [view:/algorithms]: 5 cells advanced to RFC Editor Queue; 3 wrong workshop tool links corrected (SSH and VPN pointed at the wrong learn module); 3 broken `localFile:` cached-doc paths fixed.
-- **Playground deep-links from Protocol Matrix** [view:/algorithms]: Clicking email-signing or api-security-jwt tools dropped users on the empty playground grid — both tool IDs were unregistered. Full workshop wrappers and registry entries added for both.
-- **Compliance regional display bugs** [view:/compliance]: Three rows with `UNKNOWN:Country` tokens now use ISO codes and map correctly to regional blocs; six missing ISO codes added to the name map; a new CI gate rejects unknown tokens before the build.
-- **Command Center wrong-country regulations** [view:/business]: Australian finance profiles were seeing NIS2, ANSSI, and CNSA 2.0 instead of ASD ISM. Fixed by applying the applicability engine at render time and correcting a label/ID join bug that silently excluded assessment-selected frameworks.
-- **TPM AttestationPanel key handle collision** [view:/playground]: The compliance test suite overwrote the cached softhsmv3 handle for the persistent attestation key, causing Quote/Certify to sign with the test key instead of the AK. Fixed with per-key handle storage keyed by both paramSet and slot.
-- **Deprecated rows in RAG search results**: 207 deprecated rows across 5 CSV sources were leaking into corpus search results. Corpus generator now calls `filterActive()` across all 13 data processors.
-- **E2E test suite**: 7 pre-existing failures fixed — WhatsNew modal intercepting clicks, ML-KEM HSM mode success text pattern, MLS module URL pattern, and stale TLS simulator HSM toggle assertions.
-
-### Security
-
-- **AES-GCM authentication bug in browser WASM** [view:/learn]: Critical: softhsmrustv3 silently dropped the AAD parameter on all AES-GCM encrypt and decrypt operations — the authentication tag was computed over empty AAD, making all in-browser "authenticated" encryption unauthenticated. The bug existed in 7 code paths. Fixed; NIST SP 800-38D test vector pinned as a regression guard. Only the WASM build was affected; native softhsm code paths (Docker, etc.) were correct throughout.
+- **Migrate — no more duplicate-looking products** [view:/migrate]: Deprecated products from the May catalog refactor were still showing and appeared as duplicates (e.g. five copies of AnyDesk). They're now correctly hidden, giving an accurate active-product count.
 
 ### Data
 
-- **Threats accuracy audit**: 21 factual corrections across five passes — RFC citation errors, non-existent standard revisions, unverifiable specific claims softened or removed.
-- **Threats evidence archive**: 113 source documents archived to `public/threats/evidence/` with SHA-256 provenance manifest, mirroring the library and timeline evidence pattern.
-- **Product catalog proof audit**: 720 of 751 active rows (95.9%) now have a verified, product-naming, algorithm-citing proof URL. 31 structural gaps documented with reasons.
-- **Catalog enrichment**: 716 entries processed via qwen3.6:27b; 30 new products added in this batch.
-- **Library URL corrections**: 13 dead or incorrect download URLs replaced with verified authoritative direct links.
-- **NIST IR 8477 record corrected**: Library record had completely fabricated metadata — title, date, description, dependencies, and algorithm family were all wrong (confused with NIST CSWP 39). Corrected from the actual PDF; SP 800-175B added as a new companion entry.
-- **Threats enrichment expanded**: 91 → 194 entries, covering all 112 threat IDs. 91 records have full PDF/HTML extraction; 103 have CSV-metadata enrichment for sources without downloadable files.
-- **RAG corpus**: Regenerated at 10,005 chunks incorporating all May 2026 enrichment outputs.
-- **CSV housekeeping**: 15 intermediate compliance and library revisions archived to `src/data/archive/`; 2 canonical files remain per the keep-2-versions policy.
+- **Five products re-activated in Migrate** [view:/migrate]: Tectia SSH, IVPN, libcrux, Trail of Bits ml-dsa, and InfoSec Global AgileSec are back after their PQC support was re-verified against public sources.
+
+## [3.17.0] - 2026-05-30
+
+Role-aware ("persona") personalization across all seven main pages, a NICE Framework workforce view, a TLS downgrade-attack workshop, and many new references.
+
+### Added
+
+- **NICE Framework view in the learning workshops** [persona:executive][persona:architect][persona:developer][view:/learn]: Organizes all 55 modules by NIST workforce competency areas; pick a work role to highlight the relevant modules and track your progress through them.
+- **TLS downgrade-attack walkthrough** [view:/learn]: A new interactive tab in the TLS 1.3 module shows a normal hybrid connection, an attacker stripping post-quantum protection, and how the mitigations defend against it.
+- **Role-aware default filters across all seven main pages** [persona:executive][persona:developer][persona:architect][persona:ops][persona:curious][view:/library][view:/compliance][view:/migrate][view:/assess][view:/playground][view:/threats][view:/timeline]: Migrate, Assess, Playground, Threats, Timeline, Library, and Compliance now open already focused on content relevant to your role; one click shows everything.
+- **More NIST Round 2 signature algorithms in the Playground** [view:/playground][view:/algorithms]: MAYO, CROSS, OV/UOV, SNOVA, FN-DSA, and FrodoKEM are now interactive in the key generator and sign/verify panels.
+- **Executive Board Pack export** [persona:executive][view:/report]: The assessment report can now download a board-ready package (executive summary, key findings, recommended actions, compliance-deadline CSV, and a machine-readable profile).
+- **Compliance "For You" views for every role** [persona:developer][persona:ops][persona:curious][view:/compliance]: All six roles now have tailored compliance content — from a developer's CI-gate scaffold to a plain-English orientation for newcomers.
+- **Less overwhelming Compliance and Library pages** [view:/compliance][view:/library]: Both pages now show a focused starting set per role (with curated "start here" picks) instead of the full firehose of rows.
+- **"For me" filter on the changelog** [persona:curious][view:/changelog]: Filter changelog entries down to the ones relevant to your role.
+- **New products, references, and a community profile**: Five Red Hat products added to Migrate; Circle's post-quantum security roadmap and several finance-sector papers added to the Library; Steven Vaile added to the community leaders.
+
+### Fixed
+
+- **Various page fixes** [view:/playground][view:/library][view:/migrate]: Corrected the embedded sandbox URL (was showing a blank frame), stopped deprecated rows from leaking into the Library and Migrate views, and refreshed several stale library entries with real content.
+
+### Data
+
+- **Product catalog enrichment** [view:/migrate]: 716 products processed and 30 new ones added; 95.9% of active products now have a verified proof-of-PQC link.
+
+## [3.16.0] - 2026-05-19
+
+Deep UX improvements to the Algorithms, Compliance, and Learn pages, a NICE workforce gap report, real in-browser PKI enrollment — and a critical browser-crypto security fix.
+
+### Added
+
+- **NICE workforce gap report in Assess** [persona:executive][persona:architect][view:/assess]: The assessment now maps your profile to NIST competency areas and produces a ranked list of roles to hire or upskill, a suggested learning order, and a downloadable report.
+- **PKI Enrollment Protocols module** [persona:developer][persona:architect][view:/learn]: Run real certificate-enrollment protocols (CMP and EST) in the browser with actual cryptography — key generation, enrollment, ML-KEM proof-of-possession, and a hybrid certificate comparison.
+- **Composite certificates in the S/MIME workshop** [persona:developer][view:/learn]: The workshop can now produce real composite (PQC + classical) certificates and signatures using three standardized algorithm combinations.
+- **Bigger Protocol Support matrix** [view:/algorithms]: Expanded to 20 protocols (adding COSE, JOSE, EST/CMP, 5G, DTLS, FIDO, MACsec, UEFI Secure Boot) with 24 verified real-world deployments, and every empty cell now explains why there's no deployment yet.
+
+### Changed
+
+- **Algorithms page redesign** [view:/algorithms]: Live in-browser benchmarks on every transition row, a protocol heatmap that names transport blockers on hover, collapsible deep-dive sections, and a 3-step wizard on mobile instead of a long card list.
+- **Compliance and Learn page improvements** [view:/compliance][view:/learn]: Compliance promotes the NIST CSWP.39 cross-walk to a permanent tab and adds smoother mobile scrolling; Learn respects reduced-motion settings and shows clearer progress with resume buttons and a responsive tab bar across all 54 modules.
+
+### Fixed
+
+- **In-browser HSM workshops fixed** [view:/learn]: Several S/MIME and KMS workshop steps that failed when signing or generating keys in the simulated HSM now work, including ML-DSA signing, ML-KEM encryption, and key generation.
+- **Compliance and Command Center show the right country's rules** [view:/compliance][view:/business]: Fixed cases where, for example, an Australian finance profile saw EU and French regulations instead of the Australian ones; a new build check rejects unknown country codes.
+
+### Security
+
+- **Critical — browser AES-GCM authentication fixed** [view:/learn]: The in-browser crypto engine was silently ignoring the "additional authenticated data" on AES-GCM, so encryption that looked authenticated wasn't. Fixed across all affected code paths and locked down with an official test vector. Only the in-browser engine was affected.
+
+### Data
+
+- **Accuracy and evidence sweeps**: 21 factual corrections across the Threats content; 113 threat-evidence documents archived with provenance; a Library record with entirely wrong metadata (NIST IR 8477) corrected from the source PDF; threat enrichment expanded to cover all 112 threat IDs.
 
 ## [3.15.0] - 2026-05-12
 
-### Added — HSM Capacity Calculator: per-region distribution + RSA-baseline explainer
+A richer HSM Capacity Calculator and an overnight content-enrichment refresh.
 
-The HSM Capacity Calculator (Step 5 of the HSM-PQC learning module, also linked from the Playground tool catalog) gains three new components and the underlying primitives that drive them.
+### Added
 
-- **`PerLocationCard` + `ScenarioLocationBlock`** ([HsmCapacityCalculator.tsx](src/components/Playground/hsm/HsmCapacityCalculator.tsx)) — every active-active fleet of size ≥ 2 now renders one card per location showing the workload share assigned to that site, the HSM count at the chosen redundancy level, and the algorithm-mix breakdown. Region labels come from a new geographic preset list so the first eight locations sketch a plausible global deployment (Frankfurt, Virginia, Singapore, Dublin, Oregon, Tokyo, São Paulo, Sydney). Load is still split evenly across `numLocations`; the labels are cosmetic and editable per scenario.
-- **`TpsToHsmExplainer`** — new collapsible card that shows the math behind "how many HSMs do I need for X TPS?" in three steps: target TPS × algo-cost ratio = RSA-2048-equivalent TPS → divide by HSM RSA-2048 ops/sec capacity → apply redundancy factor → ceiling to the next whole HSM. Surfaces vendor benchmark sources for the chosen profile (Thales Luna 7 / Entrust nShield 5c / Utimaco SecurityServer).
-- **`BASE_UNIT_ALGO` + `algoCostRatio()`** ([hsmCapacityDefaults.ts](src/data/hsmCapacityDefaults.ts)) — RSA-2048 is now the canonical capacity unit. `algoCostRatio(profile, algo)` returns how many RSA-2048-equivalent ops one op of `algo` costs on a given HSM, so explanations can compare apples-to-apples instead of carrying separate ops/sec rates per algorithm.
-- **`REGION_PRESETS`** ([hsmCapacityDefaults.ts](src/data/hsmCapacityDefaults.ts)) — 12 geographic region labels for the per-location distribution panel.
-- **`HsmCapacityCalculator.test.ts`** — rewrote test fixtures to cover the new per-location render path, `TpsToHsmExplainer` math (target TPS × cost ratio × redundancy), and the algorithm-mix breakdown per location. Net diff is large because the old fixtures asserted on the pre-card flat HSM-count row; the new fixtures assert on per-card output.
+- **HSM Capacity Calculator — per-region view and a "how many HSMs?" explainer** [view:/playground]: For multi-site fleets, the calculator now shows one card per location (with example global regions) and a step-by-step explainer of how a target transaction rate translates into a number of HSMs, citing the vendor benchmarks behind the math.
 
-### Added — Embed routePresets test coverage (already committed as `86622c8b`)
+### Data
 
-- **21 unit tests** for `routePresets.ts` — the core embed authorization gate that had zero coverage after the v2.4 contract sync. Locks down the current preset set (asserts `explore` / `openssl` are gone, `patents` is present, `leaders` carries the Community label) plus the full surface of `resolveRoutes`, `matchesAllowedRoute`, `getFirstAllowedRoute`, and `getActivePresets`.
-
-### Fixed — Embed `useHostCheck` JSDoc (already committed as `acbbeda2`)
-
-- JSDoc claimed the parent must respond within 2 seconds, but `HOST_CHECK_TIMEOUT_MS` is `8000`. Comment now matches the constant; no functional change.
-
-### Data — overnight enrichment chain (2026-05-12 → 2026-05-13, ~31h wall-clock)
-
-Full sequence: Stage 1 (IR 8477 xwalk) → Stage 2 (library `--update`) → Stage 3 (timeline → threats; catalog deliberately dropped). All Ollama runs used `qwen3.6:27b` exclusively (NFR-05 discipline).
-
-#### Xwalk
-
-- **`src/data/concept_xwalks_05112026_r4.csv`** — new production xwalk (957 rows = 948 prior + 97 newly merged − 83 dedupe-removed − 5 `not_related` removed). Canonical `from_concept_id` / `to_concept_id` columns populated for all rows.
-- **`src/data/concept_xwalk_candidates_05112026.csv`** — Stage 1 wrote 528 candidate edges + 489 sentinel rows (`review_status='no_extractions'`). The new `validate-evidence-substring.ts` gate **auto-rejected 55 rows** as `rejected_evidence_drift` after their `evidence` string failed a substring check against the cached source PDF/HTML — most were `Japan_CRYPTREC_Report_2024.pdf` template paraphrases (`"Section X.Y.Z explicitly lists Y as a major ... scheme"`) that v3.14.7 doctrine forbids in the trust-engine audit trail. The CM-EVIDENCE-SUBSTRING gate was queued in v3.14.7 changelog ("Future hardening") and shipped here as a runnable validator.
-- **109 new `to_concept` standards** now reachable from the graph (`draft-ietf-lamps-pq-composite-kem-12`, `RFC 6712`, `NIST SP 800-152`, `ISO/IEC 19790:2012`, `Microsoft-QSP-Roadmap-2025`, etc.) — Concept Graph tiles that previously dead-ended on a single node now branch.
-- 359 high-confidence Stage 1 candidates auto-promoted via `auto-cm-evidence-substring+high-confidence` (high confidence + substring-verified evidence); remaining 1053 candidate rows held for human SME review.
-
-#### Library / Timeline / Threats
-
-- **`src/data/doc-enrichments/library_doc_enrichments_05122026.md`** — 725 docs, `--update` mode with `--embedding-prefilter nomic-embed-text`. v3-dimension fill rate climbs from 39.8% (prior 05102026) to **42.6%** (+2.8pp); average section length up 6%. Biggest jump: Deployment & Migration Complexity (+11.3pp). Three weak dimensions remain: QKD Protocols (10.5%), Financial & Business Impact (16.5%), QRNG (26.3%).
-- **`src/data/doc-enrichments/timeline_doc_enrichments_05132026.md`** — 235 timeline events re-enriched with the same pre-filter + qwen3.6:27b pipeline.
-- **`src/data/doc-enrichments/threats_doc_enrichments_05132026.md`** — 88 threats (1 quality-gate skip out of 89 eligible). Faster than library at ~39s/doc thanks to smaller threat rows.
-- **Catalog dropped** from Stage 3 — the 04162026 catalog enrichment is fresh (~26 days) and the marginal cost (~7.5h) versus marginal value (v3-dim refresh only) was a poor trade. Catalog can be refreshed later via a targeted one-shot run.
-
-#### Dedup pass on enrichment files
-
-- `catalog_doc_enrichments_04152026.md` — 11 duplicate `Extraction Note` field lines removed (legacy `"No source text available"` lines stacked under newer v3-extraction lines).
-- `catalog_doc_enrichments_04162026.md` — 750 duplicate value tokens removed (one Kiteworks `Applicable Regions / Bodies` field had a country list looped 7+ times; reduced ~25 KB to ~9 KB).
-- `timeline_doc_enrichments_05062026.md` — 1 duplicate `## REF_ID` section collapsed (G7 ×2).
-- `timeline_doc_enrichments_05092026.md` — 6 duplicate sections collapsed (Singapore, Hong Kong, Germany, Brazil, G7, Malaysia each appeared twice). Dedup logic keeps the LAST occurrence (matches `--update` semantics) and tokenizes values on `;` (with space) only to avoid breaking `(Acme, USA), Bob` patterns.
-
-#### Corpus + signing
-
-- **`public/data/rag-corpus.json`** — regenerated to include all 1,048 new enrichment sections.
-- **`public/data/embeddings.bin`** + **`embeddings-meta.json`** — embedding index rebuilt for the new corpus chunks.
-- All 8 trust artefacts re-signed with the ML-DSA-65 maintainer key (`rag-corpus`, `OSCAL` ×3, `CBOM`, `community-signals`, `revisions.jsonl`, plus the OSCAL assessment-plan). Pre-push hook now verifies clean.
-- **`reports/trust-tier-snapshot.json`** — re-measured against the new corpus.
+- **Overnight content-enrichment refresh** [view:/library][view:/timeline][view:/threats]: A roughly 31-hour enrichment run refreshed the concept cross-walk (957 connections, with a new evidence-verification gate that auto-rejects unsupported claims), and re-enriched 725 library documents, 235 timeline events, and 88 threat records. The in-app search corpus was rebuilt and re-signed to match.
 
 ## [3.14.8] - 2026-05-11
 

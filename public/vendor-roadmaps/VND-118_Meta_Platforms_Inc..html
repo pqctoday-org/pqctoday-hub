@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-title" content="Engineering at Meta - Engineering at Meta Blog">
+	<meta property="fb:app_id" content="1425766027653270" />
+	<link rel="profile" href="http://gmpg.org/xfn/11">
+	<link rel="pingback" href="https://engineering.fb.com/xmlrpc.php">
+	<meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+		<script async src="https://engineering.fb.com/wp-content/themes/code-fb-com/dist/js/optimize.min.js"></script>
+	
+	<!-- This site is optimized with the Yoast SEO Premium plugin v19.3 (Yoast SEO v27.3) - https://yoast.com/product/yoast-seo-premium-wordpress/ -->
+	<title>Post-Quantum Cryptography Migration at Meta: Framework, Lessons, and Takeaways - Engineering at Meta</title>
+	<link rel="canonical" href="https://engineering.fb.com/2026/04/16/security/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways/" />
+	<meta name="twitter:label1" content="Written by" />
+	<meta name="twitter:data1" content="Rafael Misoczki, Isaac Elbaz, Forrest Mertens" />
+	<meta name="twitter:label2" content="Est. reading time" />
+	<meta name="twitter:data2" content="14 minutes" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https:\/\/schema.org","@graph":[{"@type":"Article","@id":"https:\/\/engineering.fb.com\/2026\/04\/16\/security\/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways\/#article","isPartOf":{"@id":"https:\/\/engineering.fb.com\/2026\/04\/16\/security\/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways\/"},"author":[{"@id":"https:\/\/engineering.fb.com\/#\/schema\/person\/image\/436678e2b18c0878bb0e79f7875da527"},{"@id":"https:\/\/engineering.fb.com\/#\/schema\/person\/image\/279fcffa35d91b453426c6030a4d48d8"},{"@id":"https:\/\/engineering.fb.com\/#\/schema\/person\/image\/a45ac57540d8253e02ef59c86f5c77fc"}],"headline":"Post-Quantum Cryptography Migration at Meta: Framework, Lessons, and Takeaways","datePublished":"2026-04-16T14:59:44+00:00","dateModified":"2026-04-21T16:05:30+00:00","mainEntityOfPage":{"@id":"https:\/\/engineering.fb.com\/2026\/04\/16\/security\/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways\/"},"wordCount":2895,"publisher":{"@id":"https:\/\/engineering.fb.com\/#organization"},"image":{"@id":"https:\/\/engineering.fb.com\/2026\/04\/16\/security\/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways\/#primaryimage"},"thumbnailUrl":"https:\/\/engineering.fb.com\/wp-content\/uploads\/2026\/04\/PQC-Readiness-Hero-option2.png","articleSection":["Security &amp; Privacy"],"inLanguage":"en-US"},{"@type":"WebPage","@id":"https:\/\/engineering.fb.com\/2026\/04\/16\/security\/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways\/","url":"https:\/\/engineering.fb.com\/2026\/04\/16\/security\/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways\/","name":"Post-Quantum Cryptography Migration at Meta: Framework, Lessons, and Takeaways - Engineering at Meta","isPartOf":{"@id":"https:\/\/engineering.fb.com\/#website"},"primaryImageOfPage":{"@id":"https:\/\/engineering.fb.com\/2026\/04\/16\/security\/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways\/#primaryimage"},"image":{"@id":"https:\/\/engineering.fb.com\/2026\/04\/16\/security\/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways\/#primaryimage"},"thumbnailUrl":"https:\/\/engineering.fb.com\/wp-content\/uploads\/2026\/04\/PQC-Readiness-Hero-option2.png","datePublished":"2026-04-16T14:59:44+00:00","dateModified":"2026-04-21T16:05:30+00:00","breadcrumb":{"@id":"https:\/\/engineering.fb.com\/2026\/04\/16\/security\/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways\/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https:\/\/engineering.fb.com\/2026\/04\/16\/security\/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways\/"]}]},{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/engineering.fb.com\/2026\/04\/16\/security\/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways\/#primaryimage","url":"https:\/\/engineering.fb.com\/wp-content\/uploads\/2026\/04\/PQC-Readiness-Hero-option2.png","contentUrl":"https:\/\/engineering.fb.com\/wp-content\/uploads\/2026\/04\/PQC-Readiness-Hero-option2.png","width":1376,"height":768},{"@type":"BreadcrumbList","@id":"https:\/\/engineering.fb.com\/2026\/04\/16\/security\/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways\/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https:\/\/engineering.fb.com\/"},{"@type":"ListItem","position":2,"name":"Post-Quantum Cryptography Migration at Meta: Framework, Lessons, and Takeaways"}]},{"@type":"WebSite","@id":"https:\/\/engineering.fb.com\/#website","url":"https:\/\/engineering.fb.com\/","name":"Engineering at Meta","description":"Engineering at Meta Blog","publisher":{"@id":"https:\/\/engineering.fb.com\/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https:\/\/engineering.fb.com\/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Organization","@id":"https:\/\/engineering.fb.com\/#organization","name":"Meta","url":"https:\/\/engineering.fb.com\/","logo":{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/engineering.fb.com\/#\/schema\/logo\/image\/","url":"https:\/\/engineering.fb.com\/wp-content\/uploads\/2023\/08\/Meta_lockup_positive-primary_RGB.jpg","contentUrl":"https:\/\/engineering.fb.com\/wp-content\/uploads\/2023\/08\/Meta_lockup_positive-primary_RGB.jpg","width":29011,"height":12501,"caption":"Meta"},"image":{"@id":"https:\/\/engineering.fb.com\/#\/schema\/logo\/image\/"},"sameAs":["https:\/\/www.facebook.com\/Engineering\/","https:\/\/x.com\/fb_engineering"]},[],{"@type":"Person","@id":"https:\/\/engineering.fb.com\/#\/schema\/person\/image\/436678e2b18c0878bb0e79f7875da527","name":"Rafael Misoczki","image":{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/secure.gravatar.com\/avatar\/?s=96&d=mm&r=g23494c9101089ad44ae88ce9d2f56aac","url":"https:\/\/secure.gravatar.com\/avatar\/?s=96&d=mm&r=g","contentUrl":"https:\/\/secure.gravatar.com\/avatar\/?s=96&d=mm&r=g","caption":"Rafael Misoczki"},"url":"https:\/\/engineering.fb.com\/author\/rafael-misoczki\/"},{"@type":"Person","@id":"https:\/\/engineering.fb.com\/#\/schema\/person\/image\/279fcffa35d91b453426c6030a4d48d8","name":"Isaac Elbaz","image":{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/secure.gravatar.com\/avatar\/?s=96&d=mm&r=g23494c9101089ad44ae88ce9d2f56aac","url":"https:\/\/secure.gravatar.com\/avatar\/?s=96&d=mm&r=g","contentUrl":"https:\/\/secure.gravatar.com\/avatar\/?s=96&d=mm&r=g","caption":"Isaac Elbaz"},"url":"https:\/\/engineering.fb.com\/author\/isaac-elbaz\/"},{"@type":"Person","@id":"https:\/\/engineering.fb.com\/#\/schema\/person\/image\/a45ac57540d8253e02ef59c86f5c77fc","name":"Forrest Mertens","image":{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/secure.gravatar.com\/avatar\/?s=96&d=mm&r=g23494c9101089ad44ae88ce9d2f56aac","url":"https:\/\/secure.gravatar.com\/avatar\/?s=96&d=mm&r=g","contentUrl":"https:\/\/secure.gravatar.com\/avatar\/?s=96&d=mm&r=g","caption":"Forrest Mertens"},"url":"https:\/\/engineering.fb.com\/author\/forrest-mertens\/"}]}</script>
+	<!-- / Yoast SEO Premium plugin. -->
+
+
+<link rel='dns-prefetch' href='//secure.gravatar.com' />
+<link rel='dns-prefetch' href='//v0.wordpress.com' />
+<link rel="alternate" type="application/rss+xml" title="Engineering at Meta &raquo; Feed" href="https://engineering.fb.com/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Engineering at Meta &raquo; Comments Feed" href="https://engineering.fb.com/comments/feed/" />
+	<script async src="https://www.googleoptimize.com/optimize.js?id=OPT-TPNDQC5" onerror="dataLayer.hide.end && dataLayer.hide.end()"></script>
+	<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://engineering.fb.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fengineering.fb.com%2F2026%2F04%2F16%2Fsecurity%2Fpost-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://engineering.fb.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fengineering.fb.com%2F2026%2F04%2F16%2Fsecurity%2Fpost-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways%2F&#038;format=xml" />
+<style id="wp-img-auto-sizes-contain-inline-css">
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<style id="wp-emoji-styles-inline-css">
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+/*# sourceURL=wp-emoji-styles-inline-css */
+</style>
+<style id="wp-block-library-inline-css">
+:root{--wp-block-synced-color:#7a00df;--wp-block-synced-color--rgb:122,0,223;--wp-bound-block-color:var(--wp-block-synced-color);--wp-editor-canvas-background:#ddd;--wp-admin-theme-color:#007cba;--wp-admin-theme-color--rgb:0,124,186;--wp-admin-theme-color-darker-10:#006ba1;--wp-admin-theme-color-darker-10--rgb:0,107,160.5;--wp-admin-theme-color-darker-20:#005a87;--wp-admin-theme-color-darker-20--rgb:0,90,135;--wp-admin-border-width-focus:2px}@media (min-resolution:192dpi){:root{--wp-admin-border-width-focus:1.5px}}.wp-element-button{cursor:pointer}:root .has-very-light-gray-background-color{background-color:#eee}:root .has-very-dark-gray-background-color{background-color:#313131}:root .has-very-light-gray-color{color:#eee}:root .has-very-dark-gray-color{color:#313131}:root .has-vivid-green-cyan-to-vivid-cyan-blue-gradient-background{background:linear-gradient(135deg,#00d084,#0693e3)}:root .has-purple-crush-gradient-background{background:linear-gradient(135deg,#34e2e4,#4721fb 50%,#ab1dfe)}:root .has-hazy-dawn-gradient-background{background:linear-gradient(135deg,#faaca8,#dad0ec)}:root .has-subdued-olive-gradient-background{background:linear-gradient(135deg,#fafae1,#67a671)}:root .has-atomic-cream-gradient-background{background:linear-gradient(135deg,#fdd79a,#004a59)}:root .has-nightshade-gradient-background{background:linear-gradient(135deg,#330968,#31cdcf)}:root .has-midnight-gradient-background{background:linear-gradient(135deg,#020381,#2874fc)}:root{--wp--preset--font-size--normal:16px;--wp--preset--font-size--huge:42px}.has-regular-font-size{font-size:1em}.has-larger-font-size{font-size:2.625em}.has-normal-font-size{font-size:var(--wp--preset--font-size--normal)}.has-huge-font-size{font-size:var(--wp--preset--font-size--huge)}:root .has-text-align-center{text-align:center}:root .has-text-align-left{text-align:left}:root .has-text-align-right{text-align:right}.has-fit-text{white-space:nowrap!important}#end-resizable-editor-section{display:none}.aligncenter{clear:both}.items-justified-left{justify-content:flex-start}.items-justified-center{justify-content:center}.items-justified-right{justify-content:flex-end}.items-justified-space-between{justify-content:space-between}.screen-reader-text{word-wrap:normal!important;border:0;clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px}.screen-reader-text:focus{background-color:#ddd;clip-path:none;color:#444;display:block;font-size:1em;height:auto;left:5px;line-height:normal;padding:15px 23px 14px;text-decoration:none;top:5px;width:auto;z-index:100000}html :where(.has-border-color){border-style:solid}html :where([style*=border-color]){border-style:solid}html :where([style*=border-top-color]){border-top-style:solid}html :where([style*=border-right-color]){border-right-style:solid}html :where([style*=border-bottom-color]){border-bottom-style:solid}html :where([style*=border-left-color]){border-left-style:solid}html :where([style*=border-width]){border-style:solid}html :where([style*=border-top-width]){border-top-style:solid}html :where([style*=border-right-width]){border-right-style:solid}html :where([style*=border-bottom-width]){border-bottom-style:solid}html :where([style*=border-left-width]){border-left-style:solid}html :where(img[class*=wp-image-]){height:auto;max-width:100%}:where(figure){margin:0 0 1em}html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:var(--wp-admin--admin-bar--height,0px)}@media screen and (max-width:600px){html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:0px}}
+
+/*# sourceURL=/wp-includes/css/dist/block-library/common.min.css */
+</style>
+<style id="classic-theme-styles-inline-css">
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+/*# sourceURL=/wp-includes/css/classic-themes.min.css */
+</style>
+
+<style id="global-styles-inline-css">
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgb(252,185,0) 0%,rgb(255,105,0) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgb(255,105,0) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgb(255, 255, 255), 6px 6px rgb(0, 0, 0);--wp--preset--shadow--crisp: 6px 6px 0px rgb(0, 0, 0);}:where(body) { margin: 0; }:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}body{padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;}:root :where(.wp-element-button, .wp-block-button__link){background-color: #32373c;border-width: 0;color: #fff;font-family: inherit;font-size: inherit;font-style: inherit;font-weight: inherit;letter-spacing: inherit;line-height: inherit;padding-top: calc(0.667em + 2px);padding-right: calc(1.333em + 2px);padding-bottom: calc(0.667em + 2px);padding-left: calc(1.333em + 2px);text-decoration: none;text-transform: inherit;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+/*# sourceURL=global-styles-inline-css */
+</style>
+
+<link rel='stylesheet' id='all-css-12' href='https://engineering.fb.com/_static/??-eJyNjUsOwjAMRC9EaiqVthvEUVAah9SQn+pEFbcnKSCB2LCzn2bewBqFCj5pnyDabMgzFGQwLpVz5UicoJIXaBTzDj6KadZOM6iAWlymgt2zU3KgZrIotkTjyP90XRbv3atOUaqbaA/NAC5gtkXKs1w0SsT7dpI3fyvO5BVMuewDB0XSChtM4K+nyk7u2A7jvh+7vmsfjOZjig==' type='text/css' media='all' />
+<script id="gdprconsent-js" src="https://engineering.fb.com/wp-content/plugins/wp-gdpr-consent/dist/gdprconsent.js?ver=2.0.0"></script>
+<script id="gdprconsent-js-after">
+if (window.gdprSafeTrack) {
+  						window.gdprSafeTrack('https://www.googletagmanager.com/gtag/js?id=391063774');
+						window.gdprSafeTrack(function() {
+							var google_analytics_g4  = decodeURIComponent( '391063774' );
+							window.dataLayer = window.dataLayer || [];
+							function gtag(){dataLayer.push(arguments);}
+							gtag('js', new Date());
+							gtag('config', google_analytics_g4);
+						});
+					}
+if (window.gdprSafeTrack) {
+						window.gdprSafeTrack(function() {
+							var google_tag_manager  = decodeURIComponent( 'GTM-KZRLGZ8' );
+							(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+							new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+							j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+							'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+							})(window,document,'script','dataLayer',google_tag_manager);
+						});
+					}
+if (window.gdprSafeTrack) {
+						window.gdprSafeTrack(function() {
+							var facebook_pixel  = decodeURIComponent( '660742068067366' );
+							!function(f,b,e,v,n,t,s)
+							{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+							n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+							if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+							n.queue=[];t=b.createElement(e);t.async=!0;
+							t.src=v;s=b.getElementsByTagName(e)[0];
+							s.parentNode.insertBefore(t,s)}(window, document,'script',
+							'https://connect.facebook.net/en_US/fbevents.js');
+							fbq('init', facebook_pixel);
+							fbq('track', 'PageView');
+						});
+					}
+//# sourceURL=gdprconsent-js-after
+</script>
+<script type="text/javascript" src="https://engineering.fb.com/_static/??-eJzTLy/QzcxLzilNSS3WzwKiwtLUokoopZebmaeXVayjj0+Rbm5melFiSSpUsX2uraG5uaWxgYGhmUEWAK98Iho=" ></script><script type="text/javascript" src="https://engineering.fb.com/wp-content/themes/understrap/js/popper.min.js?m=1779219185g" ></script><link rel="https://api.w.org/" href="https://engineering.fb.com/wp-json/" /><link rel="alternate" title="JSON" type="application/json" href="https://engineering.fb.com/wp-json/wp/v2/posts/23883" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://engineering.fb.com/xmlrpc.php?rsd" />
+<meta name="generator" content="WordPress 7.0" />
+<link rel='shortlink' href='https://wp.me/pa0Lhq-6dd' />
+<link rel="preload" href="https://engineering.fb.com/wp-content/themes/code-fb-com/fonts/FacebookReader-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous"><link rel="preload" href="https://engineering.fb.com/wp-content/themes/code-fb-com/fonts/FacebookReader-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous"><link rel="preload" href="https://engineering.fb.com/wp-content/themes/code-fb-com/fonts/Optimistic_Display_W_Md.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Post-Quantum Cryptography Migration at Meta: Framework, Lessons, and Takeaways" />
+<meta property="og:url" content="https://engineering.fb.com/2026/04/16/security/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways/" />
+<meta property="og:description" content="We’re sharing lessons learned from Meta’s post-quantum cryptography (PQC) migration to help other organizations strengthen their resilience as industry transitions to post-quantum cryptography stan…" />
+<meta property="article:published_time" content="2026-04-16T14:59:44+00:00" />
+<meta property="article:modified_time" content="2026-04-21T16:05:30+00:00" />
+<meta property="og:site_name" content="Engineering at Meta" />
+<meta property="og:image" content="https://engineering.fb.com/wp-content/uploads/2026/04/PQC-Readiness-Hero-option2.png" />
+<meta property="og:image:width" content="1376" />
+<meta property="og:image:height" content="768" />
+<meta property="og:image:alt" content="" />
+<meta property="og:locale" content="en_US" />
+<meta name="twitter:text:title" content="Post-Quantum Cryptography Migration at Meta: Framework, Lessons, and Takeaways" />
+<meta name="twitter:image" content="https://engineering.fb.com/wp-content/uploads/2026/04/PQC-Readiness-Hero-option2.png?w=640" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<!-- End Jetpack Open Graph Tags -->
+<style id="wp-custom-css">
+.table-of-contents {
+  position: sticky;
+  top: 20px;
+  background: #fff;
+  padding: 1em;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  max-width: 250px;
+}
+</style>
+
+	<link rel="shortcut icon" href="https://engineering.fb.com/wp-content/themes/code-fb-com/favicon.ico" />
+</head>
+
+<body class="wp-singular post-template-default single single-post postid-23883 single-format-standard wp-theme-understrap wp-child-theme-code-fb-com group-blog">
+
+<div class="hfeed site" id="page">
+
+<!-- ******************* The Navbar Area ******************* -->
+<div class="wrapper-fluid wrapper-navbar" id="wrapper-navbar">
+	<a class="skip-link screen-reader-text sr-only" href="#content">
+	Skip to content	</a>
+
+	<nav class="navbar navbar-expand-std">
+
+			<div class="nav-container">
+	
+
+				<!-- Your site title as branding in the menu -->
+
+	<div class="nav-top-row">
+	
+		<h1 class="navbar-brand mb-0">
+			<a rel="home" href="https://engineering.fb.com/" title="Engineering at Meta">
+				<img class="navbar-brand-logo" src="https://engineering.fb.com/wp-content/themes/code-fb-com/img/logo-meta.svg" class="navbar-brand-logo" alt="Engineering at Meta" width="215" height="40" loading="lazy">
+			</a>
+		</h1>
+
+	<!-- end custom logo -->
+				<label for="search" class="screen-reader-text">Search this site</label>
+				<input type="text" id="search" name="search" class="form-control-lg navbar-search" autocomplete="off">
+
+				<button class="navbar-toggler navbar-searchbar-toggler"
+						type="button"
+						data-toggle="collapse"
+						data-target="#searchbarDropdown"
+						aria-controls="searchbarDropdown"
+						aria-expanded="false"
+						aria-label="Toggle navigation">
+					<img src="https://engineering.fb.com/wp-content/themes/code-fb-com/img/icon-search.svg"  class="navbar-mobile-search-icon" loading="lazy" width="24" height="25" />
+				</button>
+
+				<!-- desktop language menu (mobile language menu is implemented via jQuery)-->
+				<div class="notranslate nice-select navbar-language form-control">
+				</div>
+
+				<button class="navbar-toggler collapsed navbar-menu-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+
+			</div>
+
+			<div class="navbar-border"></div>
+
+			<!-- The WordPress Menu goes here -->
+	<div id="navbarNavDropdown" class="collapse navbar-collapse"><ul id="main-menu" class="navbar-nav"><li id="menu-item-60" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children nav-item menu-item-60 dropdown"><a title="Open Source" href="#" data-toggle="dropdown" class="nav-link dropdown-toggle">Open Source <span class="caret"></span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 129 129" enable-background="new 0 0 129 129" width="12px" height="15px">
+							<polyline points="40 50 80 90 120 50" stroke="#adb1b8" stroke-width="10" stroke-linecap="butt" fill="none" stroke-linejoin="miter"/>
+						  </svg></a>
+<ul class=" dropdown-menu" role="menu">
+	<li id="menu-item-12330" class="menu-item menu-item-type-taxonomy menu-item-object-category nav-item menu-item-12330"><a title="Open Source" href="https://engineering.fb.com/category/open-source/" class="nav-link">Open Source</a></li>
+	<li id="menu-item-12331" class="menu-item menu-item-type-custom menu-item-object-custom nav-item menu-item-12331"><a title="Meta Open Source" href="https://opensource.fb.com" class="nav-link">Meta Open Source</a></li>
+</ul>
+</li>
+<li id="menu-item-2686" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children nav-item menu-item-2686 dropdown"><a title="Platforms" href="#" data-toggle="dropdown" class="nav-link dropdown-toggle">Platforms <span class="caret"></span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 129 129" enable-background="new 0 0 129 129" width="12px" height="15px">
+							<polyline points="40 50 80 90 120 50" stroke="#adb1b8" stroke-width="10" stroke-linecap="butt" fill="none" stroke-linejoin="miter"/>
+						  </svg></a>
+<ul class=" dropdown-menu" role="menu">
+	<li id="menu-item-65" class="menu-item menu-item-type-taxonomy menu-item-object-category nav-item menu-item-65"><a title="Android" href="https://engineering.fb.com/category/android/" class="nav-link">Android</a></li>
+	<li id="menu-item-66" class="menu-item menu-item-type-taxonomy menu-item-object-category nav-item menu-item-66"><a title="iOS" href="https://engineering.fb.com/category/ios/" class="nav-link">iOS</a></li>
+	<li id="menu-item-67" class="menu-item menu-item-type-taxonomy menu-item-object-category nav-item menu-item-67"><a title="Web" href="https://engineering.fb.com/category/web/" class="nav-link">Web</a></li>
+</ul>
+</li>
+<li id="menu-item-2682" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children nav-item menu-item-2682 dropdown"><a title="Infrastructure Systems" href="#" data-toggle="dropdown" class="nav-link dropdown-toggle">Infrastructure Systems <span class="caret"></span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 129 129" enable-background="new 0 0 129 129" width="12px" height="15px">
+							<polyline points="40 50 80 90 120 50" stroke="#adb1b8" stroke-width="10" stroke-linecap="butt" fill="none" stroke-linejoin="miter"/>
+						  </svg></a>
+<ul class=" dropdown-menu" role="menu">
+	<li id="menu-item-218" class="menu-item menu-item-type-taxonomy menu-item-object-category nav-item menu-item-218"><a title="Core Infra" href="https://engineering.fb.com/category/core-infra/" class="nav-link">Core Infra</a></li>
+	<li id="menu-item-219" class="menu-item menu-item-type-taxonomy menu-item-object-category nav-item menu-item-219"><a title="Data Infrastructure" href="https://engineering.fb.com/category/data-infrastructure/" class="nav-link">Data Infrastructure</a></li>
+	<li id="menu-item-220" class="menu-item menu-item-type-taxonomy menu-item-object-category nav-item menu-item-220"><a title="DevInfra" href="https://engineering.fb.com/category/developer-tools/" class="nav-link">DevInfra</a></li>
+	<li id="menu-item-226" class="menu-item menu-item-type-taxonomy menu-item-object-category nav-item menu-item-226"><a title="Production Engineering" href="https://engineering.fb.com/category/production-engineering/" class="nav-link">Production Engineering</a></li>
+	<li id="menu-item-227" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent nav-item menu-item-227"><a title="Security &amp; Privacy" href="https://engineering.fb.com/category/security/" class="nav-link">Security &amp; Privacy</a></li>
+	<li id="menu-item-18607" class="menu-item menu-item-type-custom menu-item-object-custom nav-item menu-item-18607"><a title="Research Publications" href="https://research.facebook.com/publications/research-areas/systems-infrastructure/" class="nav-link">Research Publications</a></li>
+</ul>
+</li>
+<li id="menu-item-2683" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children nav-item menu-item-2683 dropdown"><a title="Physical Infrastructure" href="#" data-toggle="dropdown" class="nav-link dropdown-toggle">Physical Infrastructure <span class="caret"></span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 129 129" enable-background="new 0 0 129 129" width="12px" height="15px">
+							<polyline points="40 50 80 90 120 50" stroke="#adb1b8" stroke-width="10" stroke-linecap="butt" fill="none" stroke-linejoin="miter"/>
+						  </svg></a>
+<ul class=" dropdown-menu" role="menu">
+	<li id="menu-item-215" class="menu-item menu-item-type-taxonomy menu-item-object-category nav-item menu-item-215"><a title="Connectivity" href="https://engineering.fb.com/category/connectivity/" class="nav-link">Connectivity</a></li>
+	<li id="menu-item-216" class="menu-item menu-item-type-taxonomy menu-item-object-category nav-item menu-item-216"><a title="Data Center Engineering" href="https://engineering.fb.com/category/data-center-engineering/" class="nav-link">Data Center Engineering</a></li>
+	<li id="menu-item-217" class="menu-item menu-item-type-taxonomy menu-item-object-category nav-item menu-item-217"><a title="Networking &amp; Traffic" href="https://engineering.fb.com/category/networking-traffic/" class="nav-link">Networking &amp; Traffic</a></li>
+	<li id="menu-item-18608" class="menu-item menu-item-type-custom menu-item-object-custom nav-item menu-item-18608"><a title="Research Publications" href="https://research.facebook.com/publications/research-areas/networking-connectivity/" class="nav-link">Research Publications</a></li>
+</ul>
+</li>
+<li id="menu-item-2684" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children nav-item menu-item-2684 dropdown"><a title="Video Engineering &amp; AR/VR" href="#" data-toggle="dropdown" class="nav-link dropdown-toggle">Video Engineering &amp; AR/VR <span class="caret"></span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 129 129" enable-background="new 0 0 129 129" width="12px" height="15px">
+							<polyline points="40 50 80 90 120 50" stroke="#adb1b8" stroke-width="10" stroke-linecap="butt" fill="none" stroke-linejoin="miter"/>
+						  </svg></a>
+<ul class=" dropdown-menu" role="menu">
+	<li id="menu-item-225" class="menu-item menu-item-type-taxonomy menu-item-object-category nav-item menu-item-225"><a title="Video Engineering" href="https://engineering.fb.com/category/video-engineering/" class="nav-link">Video Engineering</a></li>
+	<li id="menu-item-223" class="menu-item menu-item-type-taxonomy menu-item-object-category nav-item menu-item-223"><a title="Virtual Reality" href="https://engineering.fb.com/category/virtual-reality/" class="nav-link">Virtual Reality</a></li>
+	<li id="menu-item-13388" class="menu-item menu-item-type-custom menu-item-object-custom nav-item menu-item-13388"><a title="Research Publications" href="https://research.facebook.com/publications/research-areas/augmented-reality-virtual-reality/" class="nav-link">Research Publications</a></li>
+</ul>
+</li>
+<li id="menu-item-2685" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children nav-item menu-item-2685 dropdown"><a title="Artificial Intelligence" href="#" data-toggle="dropdown" class="nav-link dropdown-toggle">Artificial Intelligence <span class="caret"></span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 129 129" enable-background="new 0 0 129 129" width="12px" height="15px">
+							<polyline points="40 50 80 90 120 50" stroke="#adb1b8" stroke-width="10" stroke-linecap="butt" fill="none" stroke-linejoin="miter"/>
+						  </svg></a>
+<ul class=" dropdown-menu" role="menu">
+	<li id="menu-item-222" class="menu-item menu-item-type-taxonomy menu-item-object-category nav-item menu-item-222"><a title="ML Applications" href="https://engineering.fb.com/category/ml-applications/" class="nav-link">ML Applications</a></li>
+	<li id="menu-item-221" class="menu-item menu-item-type-taxonomy menu-item-object-category nav-item menu-item-221"><a title="AI Research" href="https://engineering.fb.com/category/ai-research/" class="nav-link">AI Research</a></li>
+	<li id="menu-item-13387" class="menu-item menu-item-type-custom menu-item-object-custom nav-item menu-item-13387"><a title="Research Publications" href="https://ai.facebook.com/results/?content_types%5B0%5D=publication" class="nav-link">Research Publications</a></li>
+</ul>
+</li>
+<li id="menu-item-228" class="menu-item menu-item-type-custom menu-item-object-custom nav-item menu-item-228"><a title="Watch Videos" href="/videos" class="nav-link">Watch Videos</a></li>
+</ul></div>		</div><!-- .container -->
+	
+		<div class="search-container collapse" id="searchbarDropdown">
+			<div class="searchbar-search">
+				<div class="searchbar-container">
+
+					<div class="navbar-mobile-search-margin"></div>
+					<input type="text" name="search" placeholder="Search" class="form-control-lg navbar-mobile-search" autofocus autocomplete="off">
+					<button class="searchbar-clear">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</nav><!-- .site-navigation -->
+
+</div><!-- .wrapper-navbar end -->
+
+<div class="wrapper" id="single-wrapper">
+
+	<div class="single-container row" id="content" tabindex="-1">
+
+		<!-- Do the left sidebar check. -->
+		
+
+
+<div class="content-area" id="primary">
+		<main class="site-main" id="main">
+
+			
+				
+<article class="post-23883 post type-post status-publish format-standard has-post-thumbnail hentry category-security fb_content_type-article" id="post-23883">
+
+	<header class="entry-header">
+		<div class="entry-meta">
+			POSTED ON <span class="posted-on entry-date"><time class="published updated" datetime="2026-04-16">APRIL 16, 2026</time></span> TO <span class="cat-links"><a href="https://engineering.fb.com/category/security/" rel="category tag">Security &amp; Privacy</a></span>
+			<h1 class="entry-title"><div>Post-Quantum Cryptography Migration at Meta: Framework, Lessons, and Takeaways</div></h1>		</div><!-- .entry-meta -->
+
+	</header><!-- .entry-header -->
+
+			<figure id="post-feat-image-container">
+				<img width="1376" height="768" src="https://engineering.fb.com/wp-content/uploads/2026/04/PQC-Readiness-Hero-option2.png" class="wp-post-image" alt="" />						</figure>
+		
+	<div class="entry-authors-social">
+					<div class="entry-authors">
+				By <a href="https://engineering.fb.com/author/rafael-misoczki/" title="Posts by Rafael Misoczki" class="author url fn" rel="author">Rafael Misoczki</a>, <a href="https://engineering.fb.com/author/isaac-elbaz/" title="Posts by Isaac Elbaz" class="author url fn" rel="author">Isaac Elbaz</a>, <a href="https://engineering.fb.com/author/forrest-mertens/" title="Posts by Forrest Mertens" class="author url fn" rel="author">Forrest Mertens</a>			</div>
+			</div>
+
+	
+	<div class="entry-content">
+
+		<ul>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">We’re sharing lessons learned from Meta’s post-quantum cryptography (PQC) migration to help other organizations strengthen their resilience as industry transitions to post-quantum cryptography standards.</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">We’re proposing the idea of PQC Migration Levels to help teams within organizations manage the complexity of PQC migration for their various use cases.</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">By outlining Meta’s approach to this work — from risk assessment and inventory through deployment and guardrails — we hope to contribute practical guidance that helps accelerate the broader community’s efforts to move toward a post-quantum future.</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Our goal is to help others navigate this transition effectively, efficiently, and economically so they can prepare for a future where today’s public‑key encryption methods may no longer be sufficient.</span></li>
+</ul>
+<hr />
+<p><span style="font-weight: 400;">Research indicates that quantum computers </span><a href="https://ieeexplore.ieee.org/document/365700" target="_blank" rel="noopener"><span style="font-weight: 400;">will eventually break</span></a><span style="font-weight: 400;"> conventional public-key cryptography, creating security risk for many digital systems across industry. Although </span><a href="https://globalriskinstitute.org/publication/2022-quantum-threat-timeline-report/" target="_blank" rel="noopener"><span style="font-weight: 400;">experts estimate</span></a><span style="font-weight: 400;"> this could happen within 10–15 years, sophisticated </span><a href="https://www.technologyreview.com/2021/11/03/1039171/hackers-quantum-computers-us-homeland-security-cryptography?ref=engineeringatmeta" target="_blank" rel="noopener"><span style="font-weight: 400;">adversaries could collect encrypted data today</span></a><span style="font-weight: 400;">, anticipating a future where quantum computers can decrypt it — a strategy known as “store now, decrypt later” (SNDL). This means sensitive information could be eventually at risk even if quantum computers are still years away.</span></p>
+<p><span style="font-weight: 400;">Recognizing this threat, organizations like the </span><a href="https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf" target="_blank" rel="noopener"><span style="font-weight: 400;">US National Institute of Standards and Technology</span></a><span style="font-weight: 400;"> (NIST) and the </span><a href="https://www.ncsc.gov.uk/news/pqc-migration-roadmap-unveiled" target="_blank" rel="noopener"><span style="font-weight: 400;">UK’s National Cyber Security Centre</span></a><span style="font-weight: 400;"> (NCSC) have published migration guidance that discusses target timeframes (including 2030) for prioritizing post-quantum protections in critical systems. This guidance recognizes that complexity and missing or incomplete technical capabilities are important factors impacting PQC migration plans.</span></p>
+<p><span style="font-weight: 400;">For example, the first industry-wide PQC standards, such as ML-KEM (Kyber) and ML-DSA (Dilithium), have now been published by NIST, with additional algorithms like HQC on the way. Notably, </span><a href="https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption" target="_blank" rel="noopener"><span style="font-weight: 400;">Meta cryptographers are co-authors of HQC</span></a><span style="font-weight: 400;">, one of the newly selected PQC algorithms, reflecting our commitment to advancing global cryptographic security. These standards provide organizations with robust options for defending against SNDL attacks, and Meta seeks to share relevant progress and insights to help the broader community navigate the transition to a PQC-secure future.</span></p>
+<p><span style="font-weight: 400;">At Meta we have taken a proactive approach to ensure that we are prepared to meet the threat challenges posed by quantum computers and SNDL. With billions of people around the globe relying on our platforms and applications every day, we continue to maintain strong security and data protection standards. As part of this, we have already begun </span><a href="https://engineering.fb.com/2024/05/22/security/post-quantum-readiness-tls-pqr-meta/#:~:text=To%20address%20this%20issue%2C%20the,wise)%20than%20its%20classical%20counterparts" target="_blank" rel="noopener"><span style="font-weight: 400;">deploying and rolling out post-quantum encryption across our internal infrastructure</span></a><span style="font-weight: 400;"> over a multi-year process to ensure that we uphold our security and privacy commitments now and into the future.</span></p>
+<h2><span style="font-weight: 400;">Meta’s PQC Migration Goals</span></h2>
+<p><span style="font-weight: 400;">We’ve adopted a robust and comprehensive PQC migration strategy that aspires to the following principles to ensure a seamless transition: </span></p>
+<ol>
+<li style="font-weight: 400;" aria-level="1"><b>Effectiveness</b><span style="font-weight: 400;">: Withstanding quantum adversaries and protecting against potential threats.</span></li>
+<li style="font-weight: 400;" aria-level="1"><b>Timeliness</b><span style="font-weight: 400;">: Timely deploying of protection mechanisms aligned with evolving standards.</span></li>
+<li style="font-weight: 400;" aria-level="1"><b>Performance</b><span style="font-weight: 400;">: Minimizing overhead and ensuring that the new cryptographic solutions do not compromise system performance or user experience.</span></li>
+<li style="font-weight: 400;" aria-level="1"><b>Cost Efficiency</b><span style="font-weight: 400;">: Avoiding unnecessary expenditure by adopting a strategic approach that balances investment with risk mitigation.</span></li>
+</ol>
+<h2><span style="font-weight: 400;">PQC Maturity Levels – How Every Organization Can Assess Post-Quantum Readiness</span></h2>
+<p><span style="font-weight: 400;">PQC migration is a gradual, complex, multi-year process. It can be helpful to think about PQC migration in terms of what we call PQC Migration Levels.</span><span style="font-weight: 400;"> The levels are laddered in terms of how rapidly they allow an organization to respond to a quantum threat.</span> <span style="font-weight: 400;">The shorter the </span><b>time to react to a relevant quantum event</b><span style="font-weight: 400;"> the better. A relevant quantum event can be related to advancements in quantum computing development, standards publications, or the establishment of new industry practices. </span></p>
+<p><b>PQ-Enabled</b><span style="font-weight: 400;">,</span> <span style="font-weight: 400;">the level at which full quantum protection is effectively achieved, is the platinum standard that organizations should aim for each one of its applications and use cases. However, any organization looking to increase its resilience to quantum threats can take steps on its way to PQ-Enabled. Even starting the migration process by setting the level of minimally acceptable success at </span><b>PQ-Ready</b><span style="font-weight: 400;"> may have benefits. At this level companies that may not have budgeted for near-term enablement can feel motivated (and rewarded) for building the necessary building blocks to complete risk mitigation in the future.</span></p>
+<p><img decoding="async" class="alignnone size-full wp-image-23888" src="https://engineering.fb.com/wp-content/uploads/2026/04/PQC-Readiness-Levels-Blues.png" alt="" width="1408" height="768" srcset="https://engineering.fb.com/wp-content/uploads/2026/04/PQC-Readiness-Levels-Blues.png 1408w, https://engineering.fb.com/wp-content/uploads/2026/04/PQC-Readiness-Levels-Blues.png?resize=916,500 916w, https://engineering.fb.com/wp-content/uploads/2026/04/PQC-Readiness-Levels-Blues.png?resize=768,419 768w, https://engineering.fb.com/wp-content/uploads/2026/04/PQC-Readiness-Levels-Blues.png?resize=1024,559 1024w, https://engineering.fb.com/wp-content/uploads/2026/04/PQC-Readiness-Levels-Blues.png?resize=96,52 96w, https://engineering.fb.com/wp-content/uploads/2026/04/PQC-Readiness-Levels-Blues.png?resize=192,105 192w" sizes="(max-width: 992px) 100vw, 62vw" /></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><b>PQ-Enabled</b><span style="font-weight: 400;">: The ultimate goal for every use case. Organizations succeed by implementing and deploying a post-quantum secure solution. At Meta, for example, </span><a href="https://engineering.fb.com/2024/05/22/security/post-quantum-readiness-tls-pqr-meta/" target="_blank" rel="noopener"><i><span style="font-weight: 400;">we have begun deploying PQ protections across significant portions of our internal traffic</span></i></a><i><span style="font-weight: 400;">.</span></i></li>
+<li style="font-weight: 400;" aria-level="1"><b>PQ-Hardened</b><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">Organizations succeed by implementing all post-quantum protections currently available in the literature, but due to the absence of PQ primitives in the literature, the team (and the industry in general) is not capable of fully mitigating the quantum threat. For instance, efficient post-quantum Oblivious Pseudorandom Functions (OPRFs) are not yet available and therefore use cases relying on this type of primitive could only achieve PQ Hardened level. </span></li>
+<li style="font-weight: 400;" aria-level="1"><b>PQ-Ready</b><span style="font-weight: 400;">: Organizations start to succeed by implementing a post-quantum secure solution suitable to the use case. However, due to costs, prioritization, or other factors, its enablement is not currently feasible. This is not an desirable end goal given the fact it is not yet protecting the use case against quantum attacks, but it does reduce the time to react when compared to lower levels. </span></li>
+<li style="font-weight: 400;" aria-level="1"><b>PQ-Aware</b><span style="font-weight: 400;">: The organization has been made aware that quantum computers threaten their use case and have already completed an initial assessment of what it takes to eventually reach PQ readiness. However, the team has not started to design the PQ protections yet.</span></li>
+<li style="font-weight: 400;" aria-level="1"><b>PQ-Unaware</b><span style="font-weight: 400;">: The organization is not aware of the upcoming quantum threat, placing them at the most undesirable position in the PQC Maturity Level ladder.</span></li>
+</ul>
+<h2><span style="font-weight: 400;">An Overview of Meta’s PQC Strategy </span></h2>
+<p><span style="font-weight: 400;">The proposed strategy is defined as a sequence of steps. Some of them may overlap in time with others but the goal here is to give an indication about the different workstreams organizations may have to embark on as part of their PQC readiness. </span></p>
+<ol>
+<li style="font-weight: 400;" aria-level="1"><strong><a href="#prioritization">Prioritization Definition</a></strong><span style="font-weight: 400;"> to establish a qualitative criteria to differentiate types of applications at high, moderate, and low priority among the types of use case impacted by possible quantum attacks. This approach helps prioritize which use cases should be migrated first.</span></li>
+<li style="font-weight: 400;" aria-level="1"><strong><a href="#inventory">Build a Cryptographic Inventory</a></strong><span style="font-weight: 400;"> to have a full picture on the cryptography usage across the organization and identify applications at risk.</span></li>
+<li style="font-weight: 400;" aria-level="1"><strong><a href="#dependencies">Address External Dependencies</a></strong><span style="font-weight: 400;"> for the migration of the selected applications to PQC (e.g., publication of PQC standards, PQC-HSMs, PQC mature implementations).</span></li>
+<li style="font-weight: 400;" aria-level="1"><strong><a href="#components">Implement PQC Components</a></strong><span style="font-weight: 400;"> to be eventually integrated into use cases. </span></li>
+<li style="font-weight: 400;" aria-level="1"><strong><a href="#guardrails">Implement PQC Guardrails</a></strong><span style="font-weight: 400;"> by changing crypto standards, disallowing the creation of new keys and usage of affected APIs.</span></li>
+<li style="font-weight: 400;" aria-level="1"><a href="#PQC components"><span style="font-weight: 400;"><strong>Integrate PQC Components</strong></span></a><span style="font-weight: 400;"> to protect the use cases against the quantum threat. </span></li>
+</ol>
+<h2 id="prioritization"><span style="font-weight: 400;">A. Prioritization</span></h2>
+<p><span style="font-weight: 400;">We have created a criteria that allows us to classify any application into different prioritization levels. To this end, we analyze various aspects that influence such a prioritization.</span></p>
+<h3><span style="font-weight: 400; color: #4f1db5;">High-Priority </span><span style="font-weight: 400;">Applications</span></h3>
+<p><span style="font-weight: 400;">Susceptible to attacks that can be initiated now without the existence of a quantum computer (offline attacks) and efficiently completed later (SNDL attack by means of Shor’s algorithm). Any application using quantum vulnerable public-key encryption and key exchange primitives falls into this category. Among high-risk applications, we differentiate the ones that have no external dependencies (can be migrated right away), from the ones that have external dependencies and thus may need to wait until these dependencies are resolved. </span></p>
+<h3><span style="font-weight: 400; color: #a078fc;">Medium-Priority</span> <span style="font-weight: 400;">Applications</span></h3>
+<p><span style="font-weight: 400;">Susceptible to attacks that can only be initiated with a quantum computer in the future when a sufficiently powerful quantum computer is available (online attacks) and which will be efficiently performed (Shor’s algorithm). </span></p>
+<p><span style="font-weight: 400;">We differentiate these two categories based on their capability of upgrading their security mechanism: Medium-high risks are hard to patch (e.g., applications that have public keys baked into hardware) and medium-low risks are those that are possible to patch (e.g., software upgrades). The patching capability is particularly relevant for applications with long lifespans (i.e., time for development + time deployed in the field). Any application using quantum vulnerable digital signatures falls into this category. </span></p>
+<h3><span style="font-weight: 400;"><span style="color: #65adff;">Low-Priority</span> Applications </span></h3>
+<p><span style="font-weight: 400;">Susceptible to inefficient quantum attacks only (Grover’s attack). As presented in many academic publications (e.g., </span><a href="https://www.sciencedirect.com/science/article/pii/S0167739X24004308"><span style="font-weight: 400;">Gheorghiu and Mosca, 2025</span></a><span style="font-weight: 400;">), the enormous resource requirements to run such an attack (which even raises doubts about whether such an attack will ever be feasible) make them the lowest risk. Any application using symmetric cryptography with inadequate parameters falls into this category. </span></p>
+<p><span style="font-weight: 400;">The table below summarizes the proposed criteria.</span></p>
+<figure id="attachment_23896" aria-describedby="caption-attachment-23896" style="width: 1376px" class="wp-caption alignnone"><img decoding="async" class="size-full wp-image-23896" src="https://engineering.fb.com/wp-content/uploads/2026/04/PQC-Priority-Chart-3.png" alt="" width="1376" height="768" srcset="https://engineering.fb.com/wp-content/uploads/2026/04/PQC-Priority-Chart-3.png 1376w, https://engineering.fb.com/wp-content/uploads/2026/04/PQC-Priority-Chart-3.png?resize=916,511 916w, https://engineering.fb.com/wp-content/uploads/2026/04/PQC-Priority-Chart-3.png?resize=768,429 768w, https://engineering.fb.com/wp-content/uploads/2026/04/PQC-Priority-Chart-3.png?resize=1024,572 1024w, https://engineering.fb.com/wp-content/uploads/2026/04/PQC-Priority-Chart-3.png?resize=96,54 96w, https://engineering.fb.com/wp-content/uploads/2026/04/PQC-Priority-Chart-3.png?resize=192,107 192w" sizes="(max-width: 992px) 100vw, 62vw" /><figcaption id="caption-attachment-23896" class="wp-caption-text">Proposed post-quantum prioritization.</figcaption></figure>
+<h2 id="inventory"><span style="font-weight: 400;">B. Build a Cryptographic Inventory</span></h2>
+<p><span style="font-weight: 400;">Cryptography algorithms’ strength decays with time, as depicted in the chart below. Since the inception of cryptography, we have seen multiple ciphers and algorithms rise and fall with regards to security and adoption rate. The continuous need to replace cryptographic algorithms requires at the very minimum an understanding of where cryptography is being used. The problem is cryptography is ubiquitous, and finding all instances of a cryptographic primitive in a large infrastructure and codebase is inherently challenging.  </span></p>
+<figure id="attachment_23890" aria-describedby="caption-attachment-23890" style="width: 1589px" class="wp-caption alignnone"><img loading="lazy" decoding="async" class="size-full wp-image-23890" src="https://engineering.fb.com/wp-content/uploads/2026/04/Meta-PQC-Readiness.png" alt="" width="1589" height="889" srcset="https://engineering.fb.com/wp-content/uploads/2026/04/Meta-PQC-Readiness.png 1589w, https://engineering.fb.com/wp-content/uploads/2026/04/Meta-PQC-Readiness.png?resize=916,512 916w, https://engineering.fb.com/wp-content/uploads/2026/04/Meta-PQC-Readiness.png?resize=768,430 768w, https://engineering.fb.com/wp-content/uploads/2026/04/Meta-PQC-Readiness.png?resize=1024,573 1024w, https://engineering.fb.com/wp-content/uploads/2026/04/Meta-PQC-Readiness.png?resize=1536,859 1536w, https://engineering.fb.com/wp-content/uploads/2026/04/Meta-PQC-Readiness.png?resize=96,54 96w, https://engineering.fb.com/wp-content/uploads/2026/04/Meta-PQC-Readiness.png?resize=192,107 192w" sizes="auto, (max-width: 992px) 100vw, 62vw" /><figcaption id="caption-attachment-23890" class="wp-caption-text">Adapted from “<a href="https://www.securetechalliance.org/wp-content/uploads/LaMacchia-Utimaco-20201209.pdf" target="_blank" rel="noopener">Getting Ready for the Post-Quantum Transition</a>.” Brian LaMacchia. Microsoft Research. December 9, 2020.</figcaption></figure>
+<p><span style="font-weight: 400;">The process of mapping all the usages of cryptography within an organization is called Crypto Inventorying. For a company-wide PQC migration strategy, it represents a critical prerequisite for the completion of the work. This can be built applying two complementary strategies. </span></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><b>Automated Discovery</b><span style="font-weight: 400;">: We leverage monitoring tools, such as our </span><a href="https://engineering.fb.com/2024/11/12/security/how-meta-built-large-scale-cryptographic-monitoring/"><span style="font-weight: 400;">Crypto Visibility</span></a><span style="font-weight: 400;"> service, to autonomously map cryptographic primitives used in production. This provides high-fidelity data on active usage within our primary libraries.</span></li>
+<li style="font-weight: 400;" aria-level="1"><b>Reporting</b><span style="font-weight: 400;">: Because monitoring cannot capture every edge case or shadow dependency, we supplement automation with developer reporting. This process captures cryptographic intent for new architectures and uncovers legacy usage in systems outside standard monitoring paths.</span></li>
+</ul>
+<h2 id="dependencies"><span style="font-weight: 400;">C. Address External Dependencies</span></h2>
+<p><span style="font-weight: 400;">Besides the organization’s commitment, the PQC migration is a process that requires certain external prerequisites to be met. Next, we describe what needs to be unblocked so that a company-wide PQC migration is feasible. We also identify the main unblocking actors – the organization itself is always highly encouraged to engage in these processes.  </span></p>
+<figure class="wp-block-table">
+<table border="1" cellpadding="10">
+<thead>
+<tr>
+<th style="background-color: lightgrey;">Dependency</th>
+<th style="background-color: lightgrey;">Main Unblocking Actor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Community-vetted PQC standards</td>
+<td>Standardization Bodies (NIST, IETF, ISO, etc)</td>
+</tr>
+<tr>
+<td>PQC Support in Hardware</td>
+<td>HSM, CPU, and other Hardware Vendors</td>
+</tr>
+<tr>
+<td>Production-level PQC implementations</td>
+<td>Crypto Engineering Community</td>
+</tr>
+</tbody>
+</table><figcaption class="wp-element-caption"><em>External Dependencies for PQC Migration.</em></figcaption></figure>
+<h3><span style="font-weight: 400;">Community-Vetted PQC Standards</span></h3>
+<p><span style="font-weight: 400;">The cryptography community has been actively participating in the PQC standardization processes. As a result, NIST has recently published the first PQC standards: </span><a href="https://csrc.nist.gov/pubs/fips/203/final" target="_blank" rel="noopener"><span style="font-weight: 400;">FIPS 203</span></a><span style="font-weight: 400;">, </span><a href="https://csrc.nist.gov/pubs/fips/204/final" target="_blank" rel="noopener"><span style="font-weight: 400;">FIPS 204</span></a><span style="font-weight: 400;">, and </span><a href="https://csrc.nist.gov/pubs/fips/205/final" target="_blank" rel="noopener"><span style="font-weight: 400;">FIPS 205</span></a><span style="font-weight: 400;">, and announced a second list of algorithms to be standardized. Meta has been actively contributing, co-authoring some of the standardized algorithms (e.g., </span><a href="https://pqc-hqc.org/" target="_blank" rel="noopener"><span style="font-weight: 400;">HQC</span></a><span style="font-weight: 400;">), and a few other candidates (e.g., </span><a href="https://bikesuite.org/" target="_blank" rel="noopener"><span style="font-weight: 400;">BIKE</span></a><span style="font-weight: 400;"> and </span><a href="https://classic.mceliece.org/" target="_blank" rel="noopener"><span style="font-weight: 400;">Classical McEliece</span></a><span style="font-weight: 400;">). </span></p>
+<p><span style="font-weight: 400;">In addition, IETF has also published </span><a href="https://datatracker.ietf.org/doc/html/rfc8554" target="_blank" rel="noopener"><span style="font-weight: 400;">two</span></a> <a href="https://datatracker.ietf.org/doc/html/rfc8391" target="_blank" rel="noopener"><span style="font-weight: 400;">RFCs</span></a><span style="font-weight: 400;"> specifying PQC schemes, and </span><a href="https://www.iso.org/standard/80492.html" target="_blank" rel="noopener"><span style="font-weight: 400;">ISO another PQC standard</span></a><span style="font-weight: 400;">. Many other standards are still needed, in particular those targeting higher-layer protocols. There are some preliminary drafts being written such as </span><a href="https://datatracker.ietf.org/doc/draft-celi-wiggers-tls-authkem/" target="_blank" rel="noopener"><span style="font-weight: 400;">IETF Draft #1</span></a><span style="font-weight: 400;"> and </span><a href="https://datatracker.ietf.org/doc/draft-ietf-tls-hybrid-design/" target="_blank" rel="noopener"><span style="font-weight: 400;">IETF Draft #2</span></a><span style="font-weight: 400;">. They address specific components of the TLS mechanism (e.g., the key encapsulation step). A considerable amount of work is still needed to finalize the drafts and cover other portions of the TLS stack, such as PQC X.509 certificates and PQC PKI in general. Most Meta products rely on TLS so lifting this roadblock is of utmost importance to effectively protect our systems.  </span></p>
+<h3><span style="font-weight: 400;">PQC Support in Hardware</span></h3>
+<p><span style="font-weight: 400;">In some instances, organizations may have dependencies on external hardware vendors because some applications rely on hardware support (e.g. HSM and CPU). In cases like this it’s important that organizations align with their vendors as they plan for PQC migration. Meta, for example, is working closely with its hardware vendors on community-vetted, standardized PQC strategies.</span></p>
+<h3><span style="font-weight: 400;">Production-Level PQC Implementations</span></h3>
+<p><span style="font-weight: 400;">Most cryptography-related vulnerabilities are not due to any flaws in the algorithms, but instead in their implementations, which may contain bugs or subtle side-channel vulnerabilities. Getting all these things right isn’t trivial. The good news is that the cryptography community has already been working on this front for quite some time. </span></p>
+<p><span style="font-weight: 400;">Since 2019, the </span><a href="https://openquantumsafe.org/" target="_blank" rel="noopener"><span style="font-weight: 400;">Open Quantum Safe</span></a><span style="font-weight: 400;"> consortium, part of the </span><a href="https://pqca.org/?__hstc=160532258.a9b644d8947f4caed3ca4cb579a9285b.1775837034495.1775837034495.1775837034495.1&amp;__hssc=160532258.1.1775837034495&amp;__hsfp=ff276d7e7d7111aa38c8693166d87b32" target="_blank" rel="noopener"><span style="font-weight: 400;">Linux Foundation Post-Quantum Cryptography Alliance</span></a><span style="font-weight: 400;">, has been developing </span><a href="https://github.com/open-quantum-safe/liboqs" target="_blank" rel="noopener"><span style="font-weight: 400;">LibOQS</span></a><span style="font-weight: 400;">, a PQC cryptography library. LibOQS is starting to be integrated by industry organizations. </span><a href="https://pqca.org/members/" target="_blank" rel="noopener"><span style="font-weight: 400;">Meta supports</span></a><span style="font-weight: 400;"> and is actively working with LibOQS leads, including </span><a href="https://github.com/open-quantum-safe/liboqs/issues/1548"><span style="font-weight: 400;">fixing bugs</span></a><span style="font-weight: 400;"> in the library and continuously providing feedback. We’re committed to continuing fostering these strategic collaborations. </span></p>
+<h2 id="components"><span style="font-weight: 400;">D- Design PQC-Secure Components</span></h2>
+<h3><span style="font-weight: 400;">Algorithms Selection</span></h3>
+<p><span style="font-weight: 400;">Post-quantum cryptography is a comparatively new field, and therefore organizations should not deviate from what reputable public standardization bodies are recommending. As mentioned above, the </span><a href="https://csrc.nist.gov/Projects/post-quantum-cryptography/post-quantum-cryptography-standardization" target="_blank" rel="noopener"><span style="font-weight: 400;">NIST PQC Standardization competition</span></a><span style="font-weight: 400;"> has recently published the first PQC standards. For building the underlying PQC secure building blocks, we encourage organizations to consider adopting the NIST PQC selected algorithms, namely:</span></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Key exchange / Key encapsulation: </span><b>ML-KEM</b><span style="font-weight: 400;"> (</span><a href="https://csrc.nist.gov/pubs/fips/203/ipd" target="_blank" rel="noopener"><span style="font-weight: 400;">NIST FIPS 203</span></a><span style="font-weight: 400;">)</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Digital Signatures: </span><b>ML-DSA</b><span style="font-weight: 400;"> (</span><a href="https://csrc.nist.gov/pubs/fips/204/ipd" target="_blank" rel="noopener"><span style="font-weight: 400;">NIST FIPS 204</span></a><span style="font-weight: 400;">)</span></li>
+</ul>
+<p><span style="font-weight: 400;">In addition to the algorithms listed above, NIST also selected two additional signature algorithms: SPHINCS+ and Falcon. Compared to Dilithium, the former has considerably larger signature sizes while the latter requires float pointing arithmetic. These drawbacks make their adoption considerably harder than the (already somewhat challenging) deployment of ML-DSA. </span></p>
+<p><span style="font-weight: 400;">In terms of security strength, both ML-KEM and ML-DSA are defined with different parameter sets, each parameterization offering a different performance x security profile. For ML-KEM, in general we suggest teams to consider adopting ML-KEM768 achieving NIST Security Level 3, although exceptions can be granted for ML-KEM512 achieving NIST Security Level 1 (as endorsed by </span><a href="https://csrc.nist.gov/csrc/media/Projects/post-quantum-cryptography/documents/faq/Kyber-512-FAQ.pdf" target="_blank" rel="noopener"><span style="font-weight: 400;">NIST PQC FAQ</span></a><span style="font-weight: 400;">) in case ML-KEM768 performance is prohibitive for a particular use case. The same applies for ML-DSA, preference for ML-DSA65 but exceptions could be allowed for ML-DSA44 considering performance constraints. </span></p>
+<p><span style="font-weight: 400;">HQC has been recently selected by NIST for standardization. It is developed based on different math than ML-KEM, which is important if weaknesses are discovered in ML-KEM or its modular lattices approach, ensuring that an alternative method for PQC protection can still be deployed to protect organizations from SNDL attacks. NIST is currently drafting the HQC standard.</span></p>
+<h2 id="guardrails"><span style="font-weight: 400;">E &#8211; Implement PQC Guardrails</span></h2>
+<p><span style="font-weight: 400;">Besides migrating existing applications, we should also prevent applications from being designed with quantum vulnerable cryptographic algorithms in mind. This can be done by adding friction to any new use case trying to use quantum vulnerable algorithms. </span></p>
+<ol>
+<li style="font-weight: 400;" aria-level="1"><b>Update internal cryptography guidelines</b><span style="font-weight: 400;"> documents to warn teams about the risks of adopting quantum vulnerable public-key cryptography, and the need to eventually migrate to PQC.  </span></li>
+<li style="font-weight: 400;" aria-level="1"><b>Discourage the creation of new quantum vulnerable keys</b><span style="font-weight: 400;">. If the organization controls the tools to generate keys, those tools should warn teams when they request the creation of new quantum vulnerable keys. This wouldn’t fully prevent teams from generating such keys using other interfaces but would likely require them to engage with the internal crypto team.  </span></li>
+<li style="font-weight: 400;" aria-level="1"><b>Discourage the usage of affected APIs</b><span style="font-weight: 400;">. If the organization benefits from a centrally managed source code repository with tightly controlled building system (e.g., </span><a href="https://buck.build/"><span style="font-weight: 400;">Buck system</span></a><span style="font-weight: 400;">), it can create rules that prevent the usage of potentially affected APIs (e.g., RSA or ECDH APIs), and thus warn teams during code review if they try to use them. </span></li>
+</ol>
+<h2 id="PQC components"><span style="font-weight: 400;">F- Integrate PQC Components </span></h2>
+<p><span style="font-weight: 400;">The deployment of PQC-based solutions generally follows one of two paths: </span><b>replacement </b><span style="font-weight: 400;">(swapping classical for PQC) or </span><b>hybrid </b><span style="font-weight: 400;">(combining both).</span></p>
+<p><span style="font-weight: 400;">While replacement reduces bandwidth and complexity, it relies entirely on newer PQC standards that are still maturing. The recent cryptanalysis (and invalidation) of algorithms like SIKE (final-round candidate running in the NIST PQC standardization process) underscores the importance of relying on thoroughly time-vetted, standardized algorithms during this period of transition to maintain robust security.</span></p>
+<p><span style="font-weight: 400;">To mitigate this, we prioritize the hybrid approach by layering a PQC primitive on top of an established classical one, designed so that the combined system should remain at least as secure as the current standard. An adversary would need to break both layers to compromise the system, providing a critical safety net.</span></p>
+<h2><span style="font-weight: 400;">Final Remarks </span></h2>
+<p><span style="font-weight: 400;">Sharing our strategy and learnings doesn’t mean the process is complete. Hardening Meta’s systems — and any other organization&#8217;s systems — to post‑quantum cryptography takes years of phased work across protocols, products, and infrastructure as standards and implementations and threats mature. We’ll continue to expand coverage, extend protections, and share progress, and we’ll keep raising the bar to ensure we’re following the rigorous security practices consistent with evolving industry standards.</span></p>
+<p><b><i>The information in this article is shared for informational purposes only and does not constitute professional, technical, or legal advice, nor does it constitute a guarantee of any particular security outcome. Organizations should conduct their own assessments and consult qualified professionals before making cryptographic implementation decisions.</i></b></p>
+<h2><span style="font-weight: 400;">Acknowledgements</span></h2>
+<p><i><span style="font-weight: 400;">This work reflects a broad, cross-company effort. We’re grateful to colleagues across Meta who are helping shape our post-quantum cryptography migration strategy and turn it into practice—through system design, implementation, deployment planning, measurement, and ongoing operations. In particular, we’d like to acknowledge the invaluable contributions and collaboration from teams across: </span></i><b><i>Transport Security </i></b><i>(</i><i>Sheran Lin</i><i> , </i><i>Jolene Tan</i><i> , </i><i>Kyle Nekritz</i><i>, </i><i>Ameya Shendarkar</i><i>)</i><i></i><b><i>, WhatsApp </i></b><i>(</i><i>Sebastian Messmer,</i> <i>Maayan Sagir Hever,</i> <i>Julian Maingot,</i> <i>Alex Kube,</i> <i>Ronak Patel</i><i>),</i><i></i><b><i> Facebook/Messenger </i></b><i>(</i><i>Emma Connor,</i> <i>Jasmine Henry</i><i>),</i><i></i><b><i> Infrastructure </i></b><i>(</i><i>Dong Wu,</i> <i>Grace Wu, (Seattle)</i> <i>Weiyuan Li,</i> <i>Yue Li</i><i>, </i><i>Shay Gueron Grunbaum</i><i>, </i><i>Xiaoyi Fei</i><i>)</i><i><span style="font-weight: 400;">, </span></i><b><i>Reality Labs </i></b><i>(</i><i>Marcus Hodges</i><i>)</i><i><span style="font-weight: 400;">, </span></i><b><i>Hardware </i></b><i>(</i><i>Hendrik Volkmer,</i> <i>Vijay Sai Krishnamoorthy</i><i>)</i><i> and the </i><b><i>Payments team </i></b><i>(</i><i>Hootan Shadmehr</i><i>, </i><i>Hema Pamarty,</i> <i>Ryan DeSouza</i><i>)</i><b><i>. </i></b><i><span style="font-weight: 400;">We also thank Chris Wiltz and the many additional engineers, researchers, program managers, and reviewers — across Security, Product, and Policy — whose feedback improved both the technical clarity and the practical guidance in this post.</span></i></p>
+<div class="sharedaddy sd-sharing-enabled"><div class="robots-nocontent sd-block sd-social sd-social-icon-text sd-sharing"><h3 class="sd-title">Share this:</h3><div class="sd-content"><ul><li class="share-facebook"><a rel="nofollow noopener noreferrer"
+				data-shared="sharing-facebook-23883"
+				class="share-facebook sd-button share-icon"
+				href="https://engineering.fb.com/2026/04/16/security/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways/?share=facebook"
+				target="_blank"
+				aria-labelledby="sharing-facebook-23883"
+				>
+				<span id="sharing-facebook-23883" hidden>Share on Facebook (Opens in new window)</span>
+				<span>Facebook</span>
+			</a></li><li class="share-threads"><a rel="nofollow noopener noreferrer"
+				data-shared="sharing-threads-23883"
+				class="share-threads sd-button share-icon"
+				href="https://engineering.fb.com/2026/04/16/security/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways/?share=threads"
+				target="_blank"
+				aria-labelledby="sharing-threads-23883"
+				>
+				<span id="sharing-threads-23883" hidden>Share on Threads (Opens in new window)</span>
+				<span>Threads</span>
+			</a></li><li class="share-jetpack-whatsapp"><a rel="nofollow noopener noreferrer"
+				data-shared="sharing-whatsapp-23883"
+				class="share-jetpack-whatsapp sd-button share-icon"
+				href="https://engineering.fb.com/2026/04/16/security/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways/?share=jetpack-whatsapp"
+				target="_blank"
+				aria-labelledby="sharing-whatsapp-23883"
+				>
+				<span id="sharing-whatsapp-23883" hidden>Share on WhatsApp (Opens in new window)</span>
+				<span>WhatsApp</span>
+			</a></li><li class="share-linkedin"><a rel="nofollow noopener noreferrer"
+				data-shared="sharing-linkedin-23883"
+				class="share-linkedin sd-button share-icon"
+				href="https://engineering.fb.com/2026/04/16/security/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways/?share=linkedin"
+				target="_blank"
+				aria-labelledby="sharing-linkedin-23883"
+				>
+				<span id="sharing-linkedin-23883" hidden>Share on LinkedIn (Opens in new window)</span>
+				<span>LinkedIn</span>
+			</a></li><li class="share-reddit"><a rel="nofollow noopener noreferrer"
+				data-shared="sharing-reddit-23883"
+				class="share-reddit sd-button share-icon"
+				href="https://engineering.fb.com/2026/04/16/security/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways/?share=reddit"
+				target="_blank"
+				aria-labelledby="sharing-reddit-23883"
+				>
+				<span id="sharing-reddit-23883" hidden>Share on Reddit (Opens in new window)</span>
+				<span>Reddit</span>
+			</a></li><li class="share-x"><a rel="nofollow noopener noreferrer"
+				data-shared="sharing-x-23883"
+				class="share-x sd-button share-icon"
+				href="https://engineering.fb.com/2026/04/16/security/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways/?share=x"
+				target="_blank"
+				aria-labelledby="sharing-x-23883"
+				>
+				<span id="sharing-x-23883" hidden>Share on X (Opens in new window)</span>
+				<span>X</span>
+			</a></li><li class="share-bluesky"><a rel="nofollow noopener noreferrer"
+				data-shared="sharing-bluesky-23883"
+				class="share-bluesky sd-button share-icon"
+				href="https://engineering.fb.com/2026/04/16/security/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways/?share=bluesky"
+				target="_blank"
+				aria-labelledby="sharing-bluesky-23883"
+				>
+				<span id="sharing-bluesky-23883" hidden>Share on Bluesky (Opens in new window)</span>
+				<span>Bluesky</span>
+			</a></li><li class="share-mastodon"><a rel="nofollow noopener noreferrer"
+				data-shared="sharing-mastodon-23883"
+				class="share-mastodon sd-button share-icon"
+				href="https://engineering.fb.com/2026/04/16/security/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways/?share=mastodon"
+				target="_blank"
+				aria-labelledby="sharing-mastodon-23883"
+				>
+				<span id="sharing-mastodon-23883" hidden>Share on Mastodon (Opens in new window)</span>
+				<span>Mastodon</span>
+			</a></li><li class="share-custom share-custom-hackernews"><a rel="nofollow noopener noreferrer"
+				data-shared="sharing-custom-23883"
+				class="share-custom share-custom-hackernews sd-button share-icon"
+				href="https://engineering.fb.com/2026/04/16/security/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways/?share=custom-1699562127"
+				target="_blank"
+				aria-labelledby="sharing-custom-23883"
+				>
+				<span id="sharing-custom-23883" hidden>Share on Hacker News (Opens in new window)</span>
+				<span style="background-image:url(&quot;https://news.ycombinator.com/y18.svg&quot;);">Hacker News</span>
+			</a></li><li class="share-email"><a rel="nofollow noopener noreferrer"
+				data-shared="sharing-email-23883"
+				class="share-email sd-button share-icon"
+				href="mailto:?subject=%5BShared%20Post%5D%20Post-Quantum%20Cryptography%20Migration%20at%20Meta%3A%20Framework%2C%20Lessons%2C%20and%20Takeaways&#038;body=https%3A%2F%2Fengineering.fb.com%2F2026%2F04%2F16%2Fsecurity%2Fpost-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways%2F&#038;share=email"
+				target="_blank"
+				aria-labelledby="sharing-email-23883"
+				data-email-share-error-title="Do you have email set up?" data-email-share-error-text="If you&#039;re having problems sharing via email, you might not have email set up for your browser. You may need to create a new email yourself." data-email-share-nonce="607e4cb6dc" data-email-share-track-url="https://engineering.fb.com/2026/04/16/security/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways/?share=email">
+				<span id="sharing-email-23883" hidden>Email a link to a friend (Opens in new window)</span>
+				<span>Email</span>
+			</a></li><li class="share-end"></li></ul></div></div></div>
+		
+	</div><!-- .entry-content -->
+
+
+</article><!-- #post-## -->
+
+<footer class="entry-footer">
+
+	
+</footer><!-- .entry-footer -->
+
+<div class="fb-like"
+	 data-href="https://engineering.fb.com/2026/04/16/security/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways/"
+	 data-width=""
+	 data-layout="standard"
+	 data-action="like"
+	 data-size="small"
+	 data-share="true">
+</div>
+
+
+<div class="related-articles">
+	<div class="related-articles__header">
+		<h3 class="related-articles__header__headline">Read More in Security &amp; Privacy</h3>
+		<a
+			aria-label="View all articles in this Security &amp; Privacy"
+			class="related-articles__header__link"
+			href="https://engineering.fb.com/category/security/"
+		>
+			View All		</a>
+	</div>
+
+	<div class="article-grids related-articles__grid">
+		<div class="row">
+							<div class="article-grid col-12 col-md-4">
+					
+<article class="post post-23883 type-post status-publish format-standard has-post-thumbnail hentry category-security fb_content_type-article" id="post-23959">
+	<img width="580" height="326" src="https://engineering.fb.com/wp-content/uploads/2023/12/Messenger-E2EE-end-to-end-security.png?w=580&amp;h=326&amp;crop=1" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" />
+<header class="entry-header">
+		<div class="entry-header__top">
+			<span class="posted-on">
+				<time class="entry-date published" datetime="2026-05-11T09:00:55-07:00">
+					MAY 11, 2026				</time>
+			</span>
+		</div>
+
+		<div class="entry-title">
+			<div>
+				<a href="https://engineering.fb.com/2026/05/11/security/labyrinth-1-1-end-to-end-encrypted-e2ee-backups-more-reliable/" rel="bookmark" aria-label="Read More about Labyrinth 1.1: Making End-to-End Encrypted Backups Even More Reliable ">
+					Labyrinth 1.1: Making End-to-End Encrypted Backups Even More Reliable 				</a>
+			</div>
+		</div>
+
+	</header><!-- .entry-header -->
+
+</article><!-- #post-## -->
+				</div><!-- /.article-grid -->
+							<div class="article-grid col-12 col-md-4">
+					
+<article class="post post-23883 type-post status-publish format-standard has-post-thumbnail hentry category-security fb_content_type-article" id="post-23929">
+	<img width="580" height="326" src="https://engineering.fb.com/wp-content/uploads/2026/05/Meta-Strengthening-E2EE-backups-Hero-1-1.png?w=580&amp;h=326&amp;crop=1" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" />
+<header class="entry-header">
+		<div class="entry-header__top">
+			<span class="posted-on">
+				<time class="entry-date published" datetime="2026-05-01T09:00:58-07:00">
+					MAY 1, 2026				</time>
+			</span>
+		</div>
+
+		<div class="entry-title">
+			<div>
+				<a href="https://engineering.fb.com/2026/05/01/security/meta-strengthening-end-to-end-encrypted-backups/" rel="bookmark" aria-label="Read More about How Meta Is Strengthening End-to-End Encrypted Backups">
+					How Meta Is Strengthening End-to-End Encrypted Backups				</a>
+			</div>
+		</div>
+
+	</header><!-- .entry-header -->
+
+</article><!-- #post-## -->
+				</div><!-- /.article-grid -->
+							<div class="article-grid col-12 col-md-4">
+					
+<article class="post post-23883 type-post status-publish format-standard has-post-thumbnail hentry category-security fb_content_type-article" id="post-23871">
+	<img width="580" height="326" src="https://engineering.fb.com/wp-content/uploads/2026/04/Meta-Tech-Podcast-episode-84-Configuration-Safety-at-Scale.webp?w=580&amp;h=326&amp;crop=1" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" />
+<header class="entry-header">
+		<div class="entry-header__top">
+			<span class="posted-on">
+				<time class="entry-date published" datetime="2026-04-08T11:25:26-07:00">
+					APR 8, 2026				</time>
+			</span>
+		</div>
+
+		<div class="entry-title">
+			<div>
+				<a href="https://engineering.fb.com/2026/04/08/security/trust-but-canary-configuration-safety-at-scale-meta-tech-podcast/" rel="bookmark" aria-label="Read More about Trust But Canary: Configuration Safety at Scale">
+					Trust But Canary: Configuration Safety at Scale				</a>
+			</div>
+		</div>
+
+	</header><!-- .entry-header -->
+
+</article><!-- #post-## -->
+				</div><!-- /.article-grid -->
+							<div class="article-grid col-12 col-md-4">
+					
+<article class="post post-23883 type-post status-publish format-standard has-post-thumbnail hentry category-security fb_content_type-article" id="post-23722">
+	<img width="580" height="326" src="https://engineering.fb.com/wp-content/uploads/2026/03/Meta-Tech-Podcast-episode-83-secure-by-default.webp?w=580&amp;h=326&amp;crop=1" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" title="Meta Tech Podcast - episode 83 - secure by default" />
+<header class="entry-header">
+		<div class="entry-header__top">
+			<span class="posted-on">
+				<time class="entry-date published" datetime="2026-03-13T09:00:26-07:00">
+					MAR 13, 2026				</time>
+			</span>
+		</div>
+
+		<div class="entry-title">
+			<div>
+				<a href="https://engineering.fb.com/2026/03/13/android/ai-codemods-secure-by-default-android-apps-meta-tech-podcast/" rel="bookmark" aria-label="Read More about Patch Me If You Can: AI Codemods for Secure-by-Default Android Apps">
+					Patch Me If You Can: AI Codemods for Secure-by-Default Android Apps				</a>
+			</div>
+		</div>
+
+	</header><!-- .entry-header -->
+
+</article><!-- #post-## -->
+				</div><!-- /.article-grid -->
+							<div class="article-grid col-12 col-md-4">
+					
+<article class="post post-23883 type-post status-publish format-standard has-post-thumbnail hentry category-security fb_content_type-article" id="post-23690">
+	<img width="580" height="326" src="https://engineering.fb.com/wp-content/uploads/2026/03/Advanced-Browsing-Protection-Messenger.png?w=580&amp;h=326&amp;crop=1" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" />
+<header class="entry-header">
+		<div class="entry-header__top">
+			<span class="posted-on">
+				<time class="entry-date published" datetime="2026-03-09T09:00:36-07:00">
+					MAR 9, 2026				</time>
+			</span>
+		</div>
+
+		<div class="entry-title">
+			<div>
+				<a href="https://engineering.fb.com/2026/03/09/security/how-advanced-browsing-protection-works-in-messenger/" rel="bookmark" aria-label="Read More about How Advanced Browsing Protection Works in Messenger">
+					How Advanced Browsing Protection Works in Messenger				</a>
+			</div>
+		</div>
+
+	</header><!-- .entry-header -->
+
+</article><!-- #post-## -->
+				</div><!-- /.article-grid -->
+							<div class="article-grid col-12 col-md-4">
+					
+<article class="post post-23883 type-post status-publish format-standard has-post-thumbnail hentry category-security fb_content_type-article" id="post-23599">
+	<img width="580" height="326" src="https://engineering.fb.com/wp-content/uploads/2026/02/Cross-device-passkeys-Meta-Quest-copy.png?w=580&amp;h=326&amp;crop=1" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" />
+<header class="entry-header">
+		<div class="entry-header__top">
+			<span class="posted-on">
+				<time class="entry-date published" datetime="2026-02-04T14:00:07-08:00">
+					FEB 4, 2026				</time>
+			</span>
+		</div>
+
+		<div class="entry-title">
+			<div>
+				<a href="https://engineering.fb.com/2026/02/04/security/cross-device-passkey-authentication-for-xr-devices-meta-quest/" rel="bookmark" aria-label="Read More about No Display? No Problem: Cross-Device Passkey Authentication for XR Devices">
+					No Display? No Problem: Cross-Device Passkey Authentication for XR Devices				</a>
+			</div>
+		</div>
+
+	</header><!-- .entry-header -->
+
+</article><!-- #post-## -->
+				</div><!-- /.article-grid -->
+					</div><!-- /.row -->
+	</div><!--/.article-grids -->
+
+</div><!-- /.related-articles -->
+
+					
+	 <!-- include the carousel nav here. -->
+
+		
+				
+			
+		</main><!-- #main -->
+
+	</div><!-- #primary -->
+
+		<!-- Do the right sidebar check. -->
+	
+
+
+  
+<div class="col-md-4 widget-area" id="right-sidebar" role="complementary">
+	<aside id="fb_related_post_widget-4" class="widget widget_fb_related_post_widget"><h3 class="widget-title">Related Posts</h3><hr>
+            <div class="aside-related-projects"><div class="article-grid-redesign">
+              <article class="post-21662 post type-post status-publish has-post-thumbnail hentry" id="post-21662">
+								<a href="https://engineering.fb.com/2024/08/28/security/post-quantum-cryptography-meta/" rel="bookmark" aria-label="Read More about Meta is getting ready for post-quantum cryptography">
+									<img width="580" height="326" src="https://engineering.fb.com/wp-content/uploads/2024/08/Meta-Tech-Podcast-Post-quantum-readiness.webp?w=580&#038;h=326&#038;crop=1" class="wp-post-image" alt="" srcset="https://engineering.fb.com/wp-content/uploads/2024/08/Meta-Tech-Podcast-Post-quantum-readiness.webp?w=580&#038;h=326&#038;crop=1 580w, https://engineering.fb.com/wp-content/uploads/2024/08/Meta-Tech-Podcast-Post-quantum-readiness.webp?w=580&#038;h=326&#038;crop=1 326w" sizes="(max-width: 580px) 100vw, 580px" loading="lazy">
+									<header class="entry-header">
+										<span class="posted-on"><time class="entry-date published" datetime="Aug 28, 2024">Aug 28, 2024</time></span>
+										<h4 class="entry-title">Meta is getting ready for post-quantum cryptography</h4>
+									</header><!-- .entry-header -->
+								</a>
+              </article><!-- #post-## -->
+              </div><div class="article-grid-redesign">
+              <article class="post-21222 post type-post status-publish has-post-thumbnail hentry" id="post-21222">
+								<a href="https://engineering.fb.com/2024/05/22/security/post-quantum-readiness-tls-pqr-meta/" rel="bookmark" aria-label="Read More about Post-quantum readiness for TLS at Meta">
+									<img width="580" height="326" src="https://engineering.fb.com/wp-content/uploads/2024/05/Eng-Blog-Self-Serve-Hero-Images-PRIVACY-103-Orange.jpg?w=580&#038;h=326&#038;crop=1" class="wp-post-image" alt="" srcset="https://engineering.fb.com/wp-content/uploads/2024/05/Eng-Blog-Self-Serve-Hero-Images-PRIVACY-103-Orange.jpg?w=580&#038;h=326&#038;crop=1 580w, https://engineering.fb.com/wp-content/uploads/2024/05/Eng-Blog-Self-Serve-Hero-Images-PRIVACY-103-Orange.jpg?w=580&#038;h=326&#038;crop=1 326w" sizes="(max-width: 580px) 100vw, 580px" loading="lazy">
+									<header class="entry-header">
+										<span class="posted-on"><time class="entry-date published" datetime="May 22, 2024">May 22, 2024</time></span>
+										<h4 class="entry-title">Post-quantum readiness for TLS at Meta</h4>
+									</header><!-- .entry-header -->
+								</a>
+              </article><!-- #post-## -->
+              </div><div class="article-grid-redesign">
+              <article class="post-21935 post type-post status-publish has-post-thumbnail hentry" id="post-21935">
+								<a href="https://engineering.fb.com/2024/11/12/security/how-meta-built-large-scale-cryptographic-monitoring/" rel="bookmark" aria-label="Read More about How Meta built large-scale cryptographic monitoring">
+									<img width="580" height="326" src="https://engineering.fb.com/wp-content/uploads/2024/11/Eng-Blog-Self-Serve-Hero-Images-PRIVACY-103-Teale-x2_small.png?w=580&#038;h=326&#038;crop=1" class="wp-post-image" alt="" srcset="https://engineering.fb.com/wp-content/uploads/2024/11/Eng-Blog-Self-Serve-Hero-Images-PRIVACY-103-Teale-x2_small.png?w=580&#038;h=326&#038;crop=1 580w, https://engineering.fb.com/wp-content/uploads/2024/11/Eng-Blog-Self-Serve-Hero-Images-PRIVACY-103-Teale-x2_small.png?w=580&#038;h=326&#038;crop=1 326w" sizes="(max-width: 580px) 100vw, 580px" loading="lazy">
+									<header class="entry-header">
+										<span class="posted-on"><time class="entry-date published" datetime="Nov 12, 2024">Nov 12, 2024</time></span>
+										<h4 class="entry-title">How Meta built large-scale cryptographic monitoring</h4>
+									</header><!-- .entry-header -->
+								</a>
+              </article><!-- #post-## -->
+              </div></div></aside><aside id="wpb_widget-3" class="widget widget_wpb_widget"><h3 class="widget-title">Related Positions</h3><hr><ul class="available-positions-list"><li class="available-positions-item">
+                          <a href=https://www.metacareers.com/jobs/1187958502273564/>
+                      		<div class="job-description">
+                      			Software Engineer (Technical Leadership)
+                      		</div>
+                      		<div class="job-location">
+                      			SUNNYVALE, US
+                      		</div>
+                          </a>
+                      	</li><li class="available-positions-item">
+                          <a href=https://www.metacareers.com/jobs/1187958502273564/>
+                      		<div class="job-description">
+                      			Software Engineer (Technical Leadership)
+                      		</div>
+                      		<div class="job-location">
+                      			BELLEVUE, US
+                      		</div>
+                          </a>
+                      	</li><li class="available-positions-item">
+                          <a href=https://www.metacareers.com/jobs/1187958502273564/>
+                      		<div class="job-description">
+                      			Software Engineer (Technical Leadership)
+                      		</div>
+                      		<div class="job-location">
+                      			MENLO PARK, US
+                      		</div>
+                          </a>
+                      	</li><li class="available-positions-item">
+                          <a href=https://www.metacareers.com/jobs/1187958502273564/>
+                      		<div class="job-description">
+                      			Software Engineer (Technical Leadership)
+                      		</div>
+                      		<div class="job-location">
+                      			SEATTLE, US
+                      		</div>
+                          </a>
+                      	</li><li class="available-positions-item">
+                          <a href=https://www.metacareers.com/jobs/1187958502273564/>
+                      		<div class="job-description">
+                      			Software Engineer (Technical Leadership)
+                      		</div>
+                      		<div class="job-location">
+                      			WASHINGTON, US
+                      		</div>
+                          </a>
+                      	</li>		</ul>
+		<a href="https://www.metacareers.com">
+			<div class="btn available-positions-btn">
+				See All Jobs			</div>
+		</a>
+		</aside>
+</div><!-- #secondary -->
+
+
+
+	<!-- <php get_template_part('content-single-side-bar'); ?> -->
+
+	<!-- Do the right sidebar check. -->
+	
+</div><!-- Container end -->
+
+</div><!-- Wrapper end -->
+
+</div>
+
+	<!-- ******************* The Footer Full-width Widget Area ******************* -->
+
+	<div class="wrapper wrapper-community-outer">
+		<div class="wrapper-community">
+
+			<div class="community" tabindex="-1">
+
+				<div class="row">
+					<!-- community section is generated through WordPress widget -->
+					<div id="wpb_widget-2" class="footer-widget widget_wpb_widget widget-count-3 col-md-4"><h3 class="widget-title">Available Positions</h3><hr><ul class="available-positions-list"><li class="available-positions-item">
+                          <a href=https://www.metacareers.com/jobs/1187958502273564/>
+                      		<div class="job-description">
+                      			Software Engineer (Technical Leadership)
+                      		</div>
+                      		<div class="job-location">
+                      			SUNNYVALE, US
+                      		</div>
+                          </a>
+                      	</li><li class="available-positions-item">
+                          <a href=https://www.metacareers.com/jobs/1187958502273564/>
+                      		<div class="job-description">
+                      			Software Engineer (Technical Leadership)
+                      		</div>
+                      		<div class="job-location">
+                      			BELLEVUE, US
+                      		</div>
+                          </a>
+                      	</li><li class="available-positions-item">
+                          <a href=https://www.metacareers.com/jobs/1187958502273564/>
+                      		<div class="job-description">
+                      			Software Engineer (Technical Leadership)
+                      		</div>
+                      		<div class="job-location">
+                      			MENLO PARK, US
+                      		</div>
+                          </a>
+                      	</li><li class="available-positions-item">
+                          <a href=https://www.metacareers.com/jobs/1187958502273564/>
+                      		<div class="job-description">
+                      			Software Engineer (Technical Leadership)
+                      		</div>
+                      		<div class="job-location">
+                      			SEATTLE, US
+                      		</div>
+                          </a>
+                      	</li><li class="available-positions-item">
+                          <a href=https://www.metacareers.com/jobs/1187958502273564/>
+                      		<div class="job-description">
+                      			Software Engineer (Technical Leadership)
+                      		</div>
+                      		<div class="job-location">
+                      			WASHINGTON, US
+                      		</div>
+                          </a>
+                      	</li>		</ul>
+		<a href="https://www.metacareers.com">
+			<div class="btn available-positions-btn">
+				See All Jobs			</div>
+		</a>
+		</div><!-- .footer-widget --><div id="custom_html-2" class="widget_text footer-widget widget_custom_html widget-count-3 col-md-4"><h3 class="widget-title">Technology at Meta</h3><div class="textwidget custom-html-widget"><ul class="stay-connected-lists">
+	<li class="stay-connected-item">
+<img class="footer-fb-engineering stay-connected-item-left" src="/wp-content/themes/code-fb-com/img/meta_logo.png"  alt="footer-fb-engineering" loading="lazy" width="70" height="70">
+		<div class="stay-connected-item-right">
+			<div class="stay-connected-label">
+				Engineering at Meta - X
+			</div>
+			<a onclick='return twitterFollow("Meta_Engineers")'>
+			<button class="btn stay-connected-btn">
+				Follow
+				</button>
+			</a>
+		</div>
+	</li>
+	<li class="stay-connected-item">
+<img class="footer-fb-engineering stay-connected-item-left" src="/wp-content/themes/code-fb-com/img/meta_logo.png"  alt="footer-AI" loading="lazy" width="70" height="70">
+		<div class="stay-connected-item-right">
+			<div class="stay-connected-label">
+				AI at Meta
+			</div>
+			<a href="https://ai.meta.com/blog/">
+			<button class="btn stay-connected-btn">
+				Read
+			</button>
+			</a>
+		</div>
+	</li>
+<li class="stay-connected-item">
+<img class="footer-fb-engineering stay-connected-item-left" src="/wp-content/themes/code-fb-com/img/meta_logo.png"  alt="footer-developers" loading="lazy" width="70" height="70">
+		<div class="stay-connected-item-right">
+			<div class="stay-connected-label">
+				Meta Quest Blog
+			</div>
+			<a href="https://www.meta.com/blog/quest/">
+			<button class="btn stay-connected-btn">
+				Read
+			</button>
+			</a>
+		</div>
+	</li>
+
+	<li class="stay-connected-item">
+<img class="footer-fb-engineering stay-connected-item-left" src="/wp-content/themes/code-fb-com/img/meta_logo.png"  alt="footer-developers" loading="lazy" width="70" height="70">
+		<div class="stay-connected-item-right">
+			<div class="stay-connected-label">
+				Meta for Developers
+			</div>
+			<a href="https://developers.facebook.com/">
+			<button class="btn stay-connected-btn">
+				Read
+			</button>
+			</a>
+		</div>
+	</li>
+	<li class="stay-connected-item">
+<img class="footer-fb-engineering stay-connected-item-left" src="/wp-content/themes/code-fb-com/img/meta_logo.png"  alt="footer-bug-bounty" loading="lazy" width="70" height="70">
+		<div class="stay-connected-item-right">
+			<div class="stay-connected-label">
+				Meta Bug Bounty
+			</div>
+			<a href="https://bugbounty.meta.com/">
+			<button class="btn stay-connected-btn">
+				Learn more
+			</button>
+			</a>
+		</div>
+	</li>
+
+	<li class="stay-connected-item">
+		<img class="stay-connected-item-left" src="/wp-content/themes/code-fb-com/img/rss.png" alt="footer-rss" loading="lazy" width="70" height="70">
+		<div class="stay-connected-item-right">
+			<div class="stay-connected-label">
+				RSS
+			</div>
+			<a href="https://code.facebook.com/posts/rss/">
+			<button class="btn stay-connected-btn">
+				Subscribe
+			</button>
+			</a>
+		</div>
+	</li>
+</ul>
+</div></div><!-- .footer-widget --><div id="custom_html-3" class="widget_text footer-widget widget_custom_html widget-count-3 col-md-4"><h3 class="widget-title">Open Source</h3><div class="textwidget custom-html-widget"><p class="opensource-desc">
+	Meta believes in building community through open source technology. Explore our latest projects in Artificial Intelligence, Data Infrastructure, Development Tools, Front End, Languages, Platforms, Security, Virtual Reality, and more.
+</p>
+<ul class="opensource-cats">
+	<li class="opensource-cat">
+		<img src="/wp-content/themes/code-fb-com/img/android.png" alt="android" loading="lazy" width="50" height="59">
+		<div class="opensource-cap">
+			ANDROID
+		</div>
+	</li>
+	<li class="opensource-cat">
+		<img src="/wp-content/themes/code-fb-com/img/ios.png" alt="ios" loading="lazy" width="48" height="58">
+		<div class="opensource-cap">
+			iOS
+		</div>
+	</li>
+	<li class="opensource-cat">
+		<img src="/wp-content/themes/code-fb-com/img/web.png" alt="web" loading="lazy" width="55" height="49">
+		<div class="opensource-cap">		
+			WEB
+		</div>
+	</li>
+	<li class="opensource-cat">
+		<img src="/wp-content/themes/code-fb-com/img/backend.png" alt="backend" loading="lazy" width="56" height="51">
+		<div class="opensource-cap">
+			BACKEND
+		</div>
+	</li>
+	<li class="opensource-cat">
+		<img src="/wp-content/themes/code-fb-com/img/hardware.png" alt="hardware" loading="lazy" width="55" height="44">
+		<div class="opensource-cap">
+			HARDWARE
+		</div>
+	</li>
+</ul>
+
+<button class="btn opensource-btn" onclick="window.location.href='https://opensource.fb.com/'">
+	Learn More
+</button>
+
+</div></div><!-- .footer-widget -->
+				</div>
+
+			</div>
+			</div>
+
+	</div><!-- #wrapper-footer-full -->
+
+
+<div class="wrapper-footer" id="wrapper-footer">
+	<div class="inner-container">
+		<div class="footer">
+			<div class="row">
+				<div class="col-md-12">
+					<footer class="meta-footer" id="meta-footer">
+						<div class="site-info row justify-content-between">
+							<div class="col-md-5 meta-logo-container">
+								<a href="https://about.facebook.com/">
+									<img src="https://engineering.fb.com/wp-content/themes/code-fb-com/img/meta_logo_full.svg" width="89" height="18" alt="Meta" />
+								</a>
+								<div id="text-2" class="widget widget_text">			<div class="textwidget"><p>Engineering at Meta is a technical news resource for engineers interested in how we solve large-scale technical challenges at Meta.</p>
+</div>
+		</div>							</div>
+							<div class="col-md-6 footer-meta-links-container">
+														<ul class="meta-footer-links">
+									<li class="footer-link"><a href="https://engineering.fb.com">Home</a></li><li class="footer-link"><a href="https://about.meta.com/">Company Info</a></li><li class="footer-link"><a href="https://www.metacareers.com/?ref=engineering.fb.com">Careers</a></li>								</ul>
+							</div>
+						</div>
+					</footer>
+				</div>
+			</div>
+		</div>
+	</div>
+
+		<div class="footer">
+			<div class="row">
+
+				<div class="col-md-12">
+
+					<footer class="site-footer" id="colophon">
+						<div class="inner-container">
+							<div class="site-info row justify-content-between">
+
+								<div class="col-md-4 copyright-container">
+									<div class="copyright"> © 2026 Meta</div>
+								</div>
+
+								<!-- static footer -->
+								<div class="col-md-7 footer-links-container">
+									<ul class="footer-links">
+										<li class="footer-link"><a href="https://www.facebook.com/policies">Terms</a></li><li class="footer-link"><a href="https://www.facebook.com/privacy/policy">Privacy</a></li><li class="footer-link"><a href="/privacy">Cookies</a></li><li class="footer-link"><a href="https://www.facebook.com/help">Help</a></li>									</ul>
+								</div>
+							</div>
+						</div><!-- .site-info -->
+
+					</footer><!-- #colophon -->
+
+				</div><!--col end -->
+
+			</div><!-- row end -->
+
+	</div><!-- //.inner-container -->
+</div><!-- wrapper end -->
+
+</div><!-- #page we need this extra closing tag here -->
+
+<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/wp-*.php","/wp-admin/*","/wp-content/uploads/*","/wp-content/*","/wp-content/plugins/*","/wp-content/themes/code-fb-com/*","/wp-content/themes/understrap/*","/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+  <div class="gdprconsent-container" id="GDPRConsentBar">
+    <div class="gdprconsent-wrapper">
+      <div class="gdprconsent-content">
+        <p>To help personalize content, tailor and measure ads and provide a safer experience, we use cookies. By clicking or navigating the site, you agree to allow our collection of information on and off Facebook through cookies. Learn more, including about available controls: <a href="/privacy">Cookie Policy</a></p>
+                <div class="gdprconsent-button">
+          <button type="button" data-gdpr-accept>Accept</button>
+        </div>
+              </div>
+    </div>
+  </div>
+  	
+	<!-- Twitter universal website tag code -->
+	<script>
+		if (window.gdprSafeTrack) {
+			window.gdprSafeTrack(function() {
+				!function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
+				},s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='//static.ads-twitter.com/uwt.js',
+				a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
+				// Insert Twitter Pixel ID and Standard Event data below
+				twq('init','o31u0');
+				twq('track','PageView');
+			});
+		}
+	</script>
+	<!-- End Twitter universal website tag code -->
+
+	
+	<script type="text/javascript">
+		window.WPCOM_sharing_counts = {"https://engineering.fb.com/2026/04/16/security/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways/":23883};
+	</script>
+				
+					<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KZRLGZ8" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+		
+					<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=660742068067366&ev=PageView&noscript=1"/></noscript>
+		<script id="child-understrap-scripts-js-extra">
+var loadmore_params = {"restfulURL":"https://engineering.fb.com/wp-json/fb/v1/loadmore","searchText":"","posts":"{\"page\":0,\"year\":2026,\"monthnum\":4,\"day\":16,\"name\":\"post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways\",\"category_name\":\"security\",\"error\":\"\",\"m\":\"\",\"p\":0,\"post_parent\":\"\",\"subpost\":\"\",\"subpost_id\":\"\",\"attachment\":\"\",\"attachment_id\":0,\"pagename\":\"\",\"page_id\":0,\"second\":\"\",\"minute\":\"\",\"hour\":\"\",\"w\":0,\"tag\":\"\",\"cat\":\"\",\"tag_id\":\"\",\"author\":\"\",\"author_name\":\"\",\"feed\":\"\",\"tb\":\"\",\"paged\":0,\"meta_key\":\"\",\"meta_value\":\"\",\"preview\":\"\",\"s\":\"\",\"sentence\":\"\",\"title\":\"\",\"fields\":\"all\",\"menu_order\":\"\",\"embed\":\"\",\"category__in\":[],\"category__not_in\":[],\"category__and\":[],\"post__in\":[],\"post__not_in\":[],\"post_name__in\":[],\"tag__in\":[],\"tag__not_in\":[],\"tag__and\":[],\"tag_slug__in\":[],\"tag_slug__and\":[],\"post_parent__in\":[],\"post_parent__not_in\":[],\"author__in\":[],\"author__not_in\":[],\"search_columns\":[],\"ignore_sticky_posts\":false,\"suppress_filters\":false,\"cache_results\":true,\"update_post_term_cache\":true,\"update_menu_item_cache\":false,\"lazy_load_term_meta\":true,\"update_post_meta_cache\":true,\"post_type\":\"\",\"posts_per_page\":12,\"nopaging\":false,\"comments_per_page\":\"50\",\"no_found_rows\":false,\"order\":\"DESC\"}","current_page":"1","max_page":"0","post_type":"post"};
+var search_params = {"ajaxurl":"https://engineering.fb.com/wp-admin/admin-ajax.php","posts":"{\"page\":0,\"year\":2026,\"monthnum\":4,\"day\":16,\"name\":\"post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways\",\"category_name\":\"security\",\"error\":\"\",\"m\":\"\",\"p\":0,\"post_parent\":\"\",\"subpost\":\"\",\"subpost_id\":\"\",\"attachment\":\"\",\"attachment_id\":0,\"pagename\":\"\",\"page_id\":0,\"second\":\"\",\"minute\":\"\",\"hour\":\"\",\"w\":0,\"tag\":\"\",\"cat\":\"\",\"tag_id\":\"\",\"author\":\"\",\"author_name\":\"\",\"feed\":\"\",\"tb\":\"\",\"paged\":0,\"meta_key\":\"\",\"meta_value\":\"\",\"preview\":\"\",\"s\":\"\",\"sentence\":\"\",\"title\":\"\",\"fields\":\"all\",\"menu_order\":\"\",\"embed\":\"\",\"category__in\":[],\"category__not_in\":[],\"category__and\":[],\"post__in\":[],\"post__not_in\":[],\"post_name__in\":[],\"tag__in\":[],\"tag__not_in\":[],\"tag__and\":[],\"tag_slug__in\":[],\"tag_slug__and\":[],\"post_parent__in\":[],\"post_parent__not_in\":[],\"author__in\":[],\"author__not_in\":[],\"search_columns\":[],\"ignore_sticky_posts\":false,\"suppress_filters\":false,\"cache_results\":true,\"update_post_term_cache\":true,\"update_menu_item_cache\":false,\"lazy_load_term_meta\":true,\"update_post_meta_cache\":true,\"post_type\":\"\",\"posts_per_page\":12,\"nopaging\":false,\"comments_per_page\":\"50\",\"no_found_rows\":false,\"order\":\"DESC\"}","current_page":"1","max_page":"0","article_filter":"693688d2ea"};
+var more_articles = {"next_article":{"label":"Next","permalink":"https://engineering.fb.com/2026/04/16/developer-tools/capacity-efficiency-at-meta-how-unified-ai-agents-optimize-performance-at-hyperscale/","title":"Capacity Efficiency at Meta: How Unified AI Agents Optimize Performance at Hyperscale","thumbnail":["https://engineering.fb.com/wp-content/uploads/2026/04/capacity_efficiency_hero_white_option_5_1775676974.png?w=580&h=326&crop=1","580","326",true]},"prev_article":{"label":"Prev","permalink":"https://engineering.fb.com/2026/04/09/developer-tools/escaping-the-fork-how-meta-modernized-webrtc-across-50-use-cases/","title":"Escaping the Fork: How Meta Modernized WebRTC Across 50+ Use Cases","thumbnail":["https://engineering.fb.com/wp-content/uploads/2026/04/Escaping-the-Fork-Hero-2.png?w=580&h=326&crop=1","580","326",true]}};
+//# sourceURL=child-understrap-scripts-js-extra
+</script>
+<script type="text/javascript" src="https://engineering.fb.com/_static/??/wp-content/themes/code-fb-com/dist/js/child-theme.min.js,/wp-content/themes/code-fb-com/js/prism.js?m=1779906941j" ></script><script id="sharing-js-js-extra">
+var sharing_js_options = {"lang":"en","counts":"1","is_stats_active":""};
+//# sourceURL=sharing-js-js-extra
+</script>
+<script id="sharing-js-js" src="https://engineering.fb.com/wp-content/mu-plugins/jetpack-15.7/_inc/build/sharedaddy/sharing.min.js?ver=15.7"></script>
+<script id="sharing-js-js-after">
+var windowOpen;
+			( function () {
+				function matches( el, sel ) {
+					return !! (
+						el.matches && el.matches( sel ) ||
+						el.msMatchesSelector && el.msMatchesSelector( sel )
+					);
+				}
+
+				document.body.addEventListener( 'click', function ( event ) {
+					if ( ! event.target ) {
+						return;
+					}
+
+					var el;
+					if ( matches( event.target, 'a.share-facebook' ) ) {
+						el = event.target;
+					} else if ( event.target.parentNode && matches( event.target.parentNode, 'a.share-facebook' ) ) {
+						el = event.target.parentNode;
+					}
+
+					if ( el ) {
+						event.preventDefault();
+
+						// If there's another sharing window open, close it.
+						if ( typeof windowOpen !== 'undefined' ) {
+							windowOpen.close();
+						}
+						windowOpen = window.open( el.getAttribute( 'href' ), 'wpcomfacebook', 'menubar=1,resizable=1,width=600,height=400' );
+						return false;
+					}
+				} );
+			} )();
+var windowOpen;
+			( function () {
+				function matches( el, sel ) {
+					return !! (
+						el.matches && el.matches( sel ) ||
+						el.msMatchesSelector && el.msMatchesSelector( sel )
+					);
+				}
+
+				document.body.addEventListener( 'click', function ( event ) {
+					if ( ! event.target ) {
+						return;
+					}
+
+					var el;
+					if ( matches( event.target, 'a.share-threads' ) ) {
+						el = event.target;
+					} else if ( event.target.parentNode && matches( event.target.parentNode, 'a.share-threads' ) ) {
+						el = event.target.parentNode;
+					}
+
+					if ( el ) {
+						event.preventDefault();
+
+						// If there's another sharing window open, close it.
+						if ( typeof windowOpen !== 'undefined' ) {
+							windowOpen.close();
+						}
+						windowOpen = window.open( el.getAttribute( 'href' ), 'wpcomthreads', 'menubar=1,resizable=1,width=600,height=400' );
+						return false;
+					}
+				} );
+			} )();
+var windowOpen;
+			( function () {
+				function matches( el, sel ) {
+					return !! (
+						el.matches && el.matches( sel ) ||
+						el.msMatchesSelector && el.msMatchesSelector( sel )
+					);
+				}
+
+				document.body.addEventListener( 'click', function ( event ) {
+					if ( ! event.target ) {
+						return;
+					}
+
+					var el;
+					if ( matches( event.target, 'a.share-linkedin' ) ) {
+						el = event.target;
+					} else if ( event.target.parentNode && matches( event.target.parentNode, 'a.share-linkedin' ) ) {
+						el = event.target.parentNode;
+					}
+
+					if ( el ) {
+						event.preventDefault();
+
+						// If there's another sharing window open, close it.
+						if ( typeof windowOpen !== 'undefined' ) {
+							windowOpen.close();
+						}
+						windowOpen = window.open( el.getAttribute( 'href' ), 'wpcomlinkedin', 'menubar=1,resizable=1,width=580,height=450' );
+						return false;
+					}
+				} );
+			} )();
+var windowOpen;
+			( function () {
+				function matches( el, sel ) {
+					return !! (
+						el.matches && el.matches( sel ) ||
+						el.msMatchesSelector && el.msMatchesSelector( sel )
+					);
+				}
+
+				document.body.addEventListener( 'click', function ( event ) {
+					if ( ! event.target ) {
+						return;
+					}
+
+					var el;
+					if ( matches( event.target, 'a.share-x' ) ) {
+						el = event.target;
+					} else if ( event.target.parentNode && matches( event.target.parentNode, 'a.share-x' ) ) {
+						el = event.target.parentNode;
+					}
+
+					if ( el ) {
+						event.preventDefault();
+
+						// If there's another sharing window open, close it.
+						if ( typeof windowOpen !== 'undefined' ) {
+							windowOpen.close();
+						}
+						windowOpen = window.open( el.getAttribute( 'href' ), 'wpcomx', 'menubar=1,resizable=1,width=600,height=350' );
+						return false;
+					}
+				} );
+			} )();
+var windowOpen;
+			( function () {
+				function matches( el, sel ) {
+					return !! (
+						el.matches && el.matches( sel ) ||
+						el.msMatchesSelector && el.msMatchesSelector( sel )
+					);
+				}
+
+				document.body.addEventListener( 'click', function ( event ) {
+					if ( ! event.target ) {
+						return;
+					}
+
+					var el;
+					if ( matches( event.target, 'a.share-bluesky' ) ) {
+						el = event.target;
+					} else if ( event.target.parentNode && matches( event.target.parentNode, 'a.share-bluesky' ) ) {
+						el = event.target.parentNode;
+					}
+
+					if ( el ) {
+						event.preventDefault();
+
+						// If there's another sharing window open, close it.
+						if ( typeof windowOpen !== 'undefined' ) {
+							windowOpen.close();
+						}
+						windowOpen = window.open( el.getAttribute( 'href' ), 'wpcombluesky', 'menubar=1,resizable=1,width=600,height=400' );
+						return false;
+					}
+				} );
+			} )();
+var windowOpen;
+			( function () {
+				function matches( el, sel ) {
+					return !! (
+						el.matches && el.matches( sel ) ||
+						el.msMatchesSelector && el.msMatchesSelector( sel )
+					);
+				}
+
+				document.body.addEventListener( 'click', function ( event ) {
+					if ( ! event.target ) {
+						return;
+					}
+
+					var el;
+					if ( matches( event.target, 'a.share-mastodon' ) ) {
+						el = event.target;
+					} else if ( event.target.parentNode && matches( event.target.parentNode, 'a.share-mastodon' ) ) {
+						el = event.target.parentNode;
+					}
+
+					if ( el ) {
+						event.preventDefault();
+
+						// If there's another sharing window open, close it.
+						if ( typeof windowOpen !== 'undefined' ) {
+							windowOpen.close();
+						}
+						windowOpen = window.open( el.getAttribute( 'href' ), 'wpcommastodon', 'menubar=1,resizable=1,width=460,height=400' );
+						return false;
+					}
+				} );
+			} )();
+//# sourceURL=sharing-js-js-after
+</script>
+<script id="video-analytics-js-after">
+if (window.gdprSafeTrack) {
+					window.gdprSafeTrack(function() {
+						let youtube = document.querySelectorAll('[src*="youtube-nocookie"]');
+						for (let i = 0; i < youtube.length; i++) {
+							youtube[i].src = youtube[i].src.replace('youtube-nocookie.com', 'youtube.com');
+						}
+						let vimeo = document.querySelectorAll('[src*="vimeo"]');
+						for (let i = 0; i < vimeo.length; i++) {
+							vimeo[i].src = vimeo[i].src.replace('&dnt=true', '');
+						}
+					});
+				}
+//# sourceURL=video-analytics-js-after
+</script>
+<script id="wp-emoji-settings" type="application/json">
+{"baseUrl":"https://s.w.org/images/core/emoji/17.0.2/72x72/","ext":".png","svgUrl":"https://s.w.org/images/core/emoji/17.0.2/svg/","svgExt":".svg","source":{"concatemoji":"https://engineering.fb.com/wp-includes/js/wp-emoji-release.min.js?ver=7.0"}}
+</script>
+<script type="module">
+/*! This file is auto-generated */
+const a=JSON.parse(document.getElementById("wp-emoji-settings").textContent),o=(window._wpemojiSettings=a,"wpEmojiSettingsSupports"),s=["flag","emoji"];function i(e){try{var t={supportTests:e,timestamp:(new Date).valueOf()};sessionStorage.setItem(o,JSON.stringify(t))}catch(e){}}function c(e,t,n){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);t=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(n,0,0);const a=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);return t.every((e,t)=>e===a[t])}function p(e,t){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);var n=e.getImageData(16,16,1,1);for(let e=0;e<n.data.length;e++)if(0!==n.data[e])return!1;return!0}function u(e,t,n,a){switch(t){case"flag":return n(e,"\ud83c\udff3\ufe0f\u200d\u26a7\ufe0f","\ud83c\udff3\ufe0f\u200b\u26a7\ufe0f")?!1:!n(e,"\ud83c\udde8\ud83c\uddf6","\ud83c\udde8\u200b\ud83c\uddf6")&&!n(e,"\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f","\ud83c\udff4\u200b\udb40\udc67\u200b\udb40\udc62\u200b\udb40\udc65\u200b\udb40\udc6e\u200b\udb40\udc67\u200b\udb40\udc7f");case"emoji":return!a(e,"\ud83e\u1fac8")}return!1}function f(e,t,n,a){let r;const o=(r="undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?new OffscreenCanvas(300,150):document.createElement("canvas")).getContext("2d",{willReadFrequently:!0}),s=(o.textBaseline="top",o.font="600 32px Arial",{});return e.forEach(e=>{s[e]=t(o,e,n,a)}),s}function r(e){var t=document.createElement("script");t.src=e,t.defer=!0,document.head.appendChild(t)}a.supports={everything:!0,everythingExceptFlag:!0},new Promise(t=>{let n=function(){try{var e=JSON.parse(sessionStorage.getItem(o));if("object"==typeof e&&"number"==typeof e.timestamp&&(new Date).valueOf()<e.timestamp+604800&&"object"==typeof e.supportTests)return e.supportTests}catch(e){}return null}();if(!n){if("undefined"!=typeof Worker&&"undefined"!=typeof OffscreenCanvas&&"undefined"!=typeof URL&&URL.createObjectURL&&"undefined"!=typeof Blob)try{var e="postMessage("+f.toString()+"("+[JSON.stringify(s),u.toString(),c.toString(),p.toString()].join(",")+"));",a=new Blob([e],{type:"text/javascript"});const r=new Worker(URL.createObjectURL(a),{name:"wpTestEmojiSupports"});return void(r.onmessage=e=>{i(n=e.data),r.terminate(),t(n)})}catch(e){}i(n=f(s,u,c,p))}t(n)}).then(e=>{for(const n in e)a.supports[n]=e[n],a.supports.everything=a.supports.everything&&a.supports[n],"flag"!==n&&(a.supports.everythingExceptFlag=a.supports.everythingExceptFlag&&a.supports[n]);var t;a.supports.everythingExceptFlag=a.supports.everythingExceptFlag&&!a.supports.flag,a.supports.everything||((t=a.source||{}).concatemoji?r(t.concatemoji):t.wpemoji&&t.twemoji&&(r(t.twemoji),r(t.wpemoji)))});
+//# sourceURL=https://engineering.fb.com/wp-includes/js/wp-emoji-loader.min.js
+</script>
+
+</body>
+
+</html>

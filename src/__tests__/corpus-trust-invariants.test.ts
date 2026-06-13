@@ -116,6 +116,10 @@ const TIER_NOT_APPLICABLE: ReadonlySet<string> = new Set([
   'regulatory-timeline',
   'standard-algo-xref',
   'counter-claims',
+  // 2026-06-07: SoftHSM v3 developer-guide chunks (softhsmv3-devguide-*) — a
+  // documentation source like `openssl-guide` / `user-manual`, not a single
+  // scoreable resource; trust flows through the docs it references.
+  'softhsmv3',
 ])
 
 /**

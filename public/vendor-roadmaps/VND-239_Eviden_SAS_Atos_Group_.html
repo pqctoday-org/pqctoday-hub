@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-US">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+	<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="https://eviden.com/wp-content/themes/evidian/assets/build/images/favicons/favicon-196x196.png">
+	<link rel="icon" type="image/vnd.microsoft.icon" href="https://eviden.com/wp-content/themes/evidian/assets/build/images/favicons/favicon.ico">
+	<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="https://eviden.com/wp-content/themes/evidian/assets/build/images/favicons/favicon.ico">
+	<meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+<script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/2d0901c42659828da43e78c2/script.js"></script>
+	<title>Post-Quantum Cryptography (PQC) | Eviden</title>
+	<meta name="description" content="Start your migration to Post-Quantum Security (PQC) with Quantum-safe solutions. We support for crypto-inventory, risk assesment, and transformation plan." />
+	<link rel="canonical" href="https://eviden.com/solutions/cybersecurity/post-quantum-security-pqc/" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="Post-Quantum Cryptography (PQC) | Eviden" />
+	<meta property="og:description" content="Start your migration to Post-Quantum Security (PQC) with Quantum-safe solutions. We support for crypto-inventory, risk assesment, and transformation plan." />
+	<meta property="og:url" content="https://eviden.com/solutions/cybersecurity/post-quantum-security-pqc/" />
+	<meta property="og:site_name" content="Eviden" />
+	<meta property="article:modified_time" content="2026-04-27T09:06:41+00:00" />
+	<meta property="og:image" content="https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-featured-2.jpg" />
+	<meta property="og:image:width" content="200" />
+	<meta property="og:image:height" content="200" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://eviden.com/solutions/cybersecurity/post-quantum-security-pqc/","url":"https://eviden.com/solutions/cybersecurity/post-quantum-security-pqc/","name":"Post-Quantum Cryptography (PQC) | Eviden","isPartOf":{"@id":"https://eviden.com/#website"},"primaryImageOfPage":{"@id":"https://eviden.com/solutions/cybersecurity/post-quantum-security-pqc/#primaryimage"},"image":{"@id":"https://eviden.com/solutions/cybersecurity/post-quantum-security-pqc/#primaryimage"},"thumbnailUrl":"https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-featured-2.jpg","datePublished":"2024-03-14T05:02:25+00:00","dateModified":"2026-04-27T09:06:41+00:00","description":"Start your migration to Post-Quantum Security (PQC) with Quantum-safe solutions. We support for crypto-inventory, risk assesment, and transformation plan.","breadcrumb":{"@id":"https://eviden.com/solutions/cybersecurity/post-quantum-security-pqc/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https://eviden.com/solutions/cybersecurity/post-quantum-security-pqc/"]}]},{"@type":"ImageObject","inLanguage":"en-US","@id":"https://eviden.com/solutions/cybersecurity/post-quantum-security-pqc/#primaryimage","url":"https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-featured-2.jpg","contentUrl":"https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-featured-2.jpg","width":200,"height":200},{"@type":"BreadcrumbList","@id":"https://eviden.com/solutions/cybersecurity/post-quantum-security-pqc/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://eviden.com/"},{"@type":"ListItem","position":2,"name":"Cybersecurity","item":"https://eviden.com/solutions/cybersecurity/"},{"@type":"ListItem","position":3,"name":"Post-Quantum Security &#8211; PQC"}]},{"@type":"WebSite","@id":"https://eviden.com/#website","url":"https://eviden.com/","name":"Eviden","description":"Expanding Possibilities of Data &amp; Technology","publisher":{"@id":"https://eviden.com/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://eviden.com/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Organization","@id":"https://eviden.com/#organization","name":"Eviden","url":"https://eviden.com/","logo":{"@type":"ImageObject","inLanguage":"en-US","@id":"https://eviden.com/#/schema/logo/image/","url":"https://eviden.com/wp-content/uploads/2023/11/logo_eviden_orange-256w.png","contentUrl":"https://eviden.com/wp-content/uploads/2023/11/logo_eviden_orange-256w.png","width":265,"height":53,"caption":"Eviden"},"image":{"@id":"https://eviden.com/#/schema/logo/image/"}}]}</script>
+
+
+<style id='filebird-block-filebird-gallery-style-inline-css'>
+ul.filebird-block-filebird-gallery{margin:auto!important;padding:0!important;width:100%}ul.filebird-block-filebird-gallery.layout-grid{display:grid;grid-gap:20px;align-items:stretch;grid-template-columns:repeat(var(--columns),1fr);justify-items:stretch}ul.filebird-block-filebird-gallery.layout-grid li img{border:1px solid #ccc;box-shadow:2px 2px 6px 0 rgba(0,0,0,.3);height:100%;max-width:100%;-o-object-fit:cover;object-fit:cover;width:100%}ul.filebird-block-filebird-gallery.layout-masonry{-moz-column-count:var(--columns);-moz-column-gap:var(--space);column-gap:var(--space);-moz-column-width:var(--min-width);columns:var(--min-width) var(--columns);display:block;overflow:auto}ul.filebird-block-filebird-gallery.layout-masonry li{margin-bottom:var(--space)}ul.filebird-block-filebird-gallery li{list-style:none}ul.filebird-block-filebird-gallery li figure{height:100%;margin:0;padding:0;position:relative;width:100%}ul.filebird-block-filebird-gallery li figure figcaption{background:linear-gradient(0deg,rgba(0,0,0,.7),rgba(0,0,0,.3) 70%,transparent);bottom:0;box-sizing:border-box;color:#fff;font-size:.8em;margin:0;max-height:100%;overflow:auto;padding:3em .77em .7em;position:absolute;text-align:center;width:100%;z-index:2}ul.filebird-block-filebird-gallery li figure figcaption a{color:inherit}.fb-block-hover-animation-zoomIn figure{overflow:hidden}.fb-block-hover-animation-zoomIn figure img{transform:scale(1);transition:.3s ease-in-out}.fb-block-hover-animation-zoomIn figure:hover img{transform:scale(1.3)}.fb-block-hover-animation-shine figure{overflow:hidden;position:relative}.fb-block-hover-animation-shine figure:before{background:linear-gradient(90deg,hsla(0,0%,100%,0) 0,hsla(0,0%,100%,.3));content:"";display:block;height:100%;left:-75%;position:absolute;top:0;transform:skewX(-25deg);width:50%;z-index:2}.fb-block-hover-animation-shine figure:hover:before{animation:shine .75s}@keyframes shine{to{left:125%}}.fb-block-hover-animation-opacity figure{overflow:hidden}.fb-block-hover-animation-opacity figure img{opacity:1;transition:.3s ease-in-out}.fb-block-hover-animation-opacity figure:hover img{opacity:.5}.fb-block-hover-animation-grayscale figure img{filter:grayscale(100%);transition:.3s ease-in-out}.fb-block-hover-animation-grayscale figure:hover img{filter:grayscale(0)}
+
+</style>
+<link rel='preload' as='font' type='font/woff2' crossorigin  id='preload-custom-font-css' href='https://eviden.com/wp-content/themes/evidian/assets/build/fonts/Montserrat-VariableFont_wght.woff2' media='all' />
+<link rel='preload' as='style' onload='this.onload=null;this.rel="stylesheet"' id='main-v2-css' href='https://eviden.com/wp-content/themes/evidian/assets/build/css/mainV2.css?ver=1749047604' media='all' />
+<link rel='stylesheet' id='components-css' href='https://eviden.com/wp-content/themes/evidian/assets/build/css/components.css?ver=1749047604' media='all' />
+<link rel='stylesheet' id='js_composer_front-css' href='https://eviden.com/wp-content/plugins/js_composer/assets/css/js_composer.min.css?ver=8.7.2' media='all' />
+<script id="wpml-cookie-js-extra">
+var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":"\/"}};
+var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":"\/"}};
+</script>
+<script src="https://eviden.com/wp-content/plugins/sitepress-multilingual-cms/res/js/cookies/language-cookie.js?ver=486900" id="wpml-cookie-js" defer data-wp-strategy="defer"></script>
+<script src="https://eviden.com/wp-includes/js/jquery/jquery.min.js?ver=3.7.1" id="jquery-core-js"></script>
+<script></script>		<!-- Custom Logo: hide header text -->
+		<style id="custom-logo-css">
+			.site-title, .site-description {
+				position: absolute;
+				clip: rect(1px, 1px, 1px, 1px);
+			}
+		</style>
+				<style id="wp-custom-css">
+			@media (max-width: 320px) {
+  .mega-menu .submenu {
+    display: block;
+    width: 100%;
+    position: static;
+  }
+}
+
+@media (max-width: 320px) {
+  .search-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.mega-menu .level-3.sub-menu-wrapper .menu-list {
+		align-content: flex-start;
+		background: #ececed;
+		border-radius: 15px;
+		column-gap: 25px;
+		display: flex;
+		flex-direction: column !important;
+		height: 10px;
+		flex-wrap: wrap;
+		min-height: 100%;
+		padding: 20px;
+		row-gap: 20px;
+	}
+
+.text-wrapper{color: #fff !important;}
+
+.banner-wrapper .banner-slider .swiper-wrapper .swiper-slide .swiper-slide-inner .container .background-banner-image {
+    background-size: contain;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    right: 0px;
+    background-position: right 0;
+}
+
+.background-banner-image:after {
+    background: linear-gradient(to right, rgba(0, 45, 60, 1) 50%, rgba(0, 45, 60, .1) 80%);
+    content: '';
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.banner-wrapper .banner-slider{
+    background: #002D3C;
+	color: #ffffff;
+}
+
+
+@media screen and (max-width: 1350px) {
+    .banner-wrapper .banner-slider .swiper-wrapper .swiper-slide .swiper-slide-inner .container .background-banner-image {
+        background-size: cover;
+    }
+}
+
+
+@media screen and (max-width: 768px) {
+    
+	.banner-wrapper .banner-slider .swiper-wrapper .swiper-slide .swiper-slide-inner {
+		padding-bottom: 0 !important;
+	}
+
+	.banner-wrapper .banner-slider .swiper-wrapper .swiper-slide .swiper-slide-inner .container {
+		display: flex;
+		flex-wrap: wrap-reverse;
+	}
+
+	.banner-wrapper .banner-slider .swiper-wrapper .swiper-slide .swiper-slide-inner .container .background-banner-image {
+    position: relative;
+    background-position: center 0;
+		background-size: cover;
+		min-height: 300px;
+		height: auto;
+	}
+
+	.background-banner-image:after {
+		background: linear-gradient(to bottom, rgba(0, 45, 60, 1) 10%, rgba(0, 45, 60, 0) 30%);
+	}
+
+}
+
+@media screen and (max-width: 768px) {
+
+	.banner-wrapper .banner-slider .swiper-wrapper .swiper-slide .swiper-slide-inner .container .background-banner-image {
+
+		display: none;
+
+	}
+
+}
+
+.banner-wrapper .banner-slider .swiper-wrapper .swiper-slide.dark-theme .swiper-slide-inner .container .text-wrapper .btn-common:not(.popup-youtube, .banner-popup-youtube, .btn-download):after {
+    filter: invert(0);
+}
+ 		</style>
+		<style type="text/css" data-type="vc_shortcodes-custom-css">.vc_custom_1710423596602{background-color: #ffffff !important;}.vc_custom_1752151867165{background-color: #002D3C !important;}.vc_custom_1709727799916{background-color: #ececed !important;}.vc_custom_1710423660352{background-color: #ececed !important;}.vc_custom_1738140700439{background-color: #002d3c !important;}.vc_custom_1709733655452{margin-bottom: 15px !important;}.vc_custom_1710391982084{margin-top: 10px !important;}.vc_custom_1710144805689{padding-top: 20px !important;padding-right: 20px !important;padding-bottom: 20px !important;padding-left: 20px !important;background-color: #002d3c !important;border-radius: 20px !important;}.vc_custom_1710144882025{padding-top: 20px !important;padding-right: 20px !important;padding-bottom: 20px !important;padding-left: 20px !important;background-color: #ff6d43 !important;border-radius: 20px !important;}.vc_custom_1710144891129{padding-top: 20px !important;padding-right: 20px !important;padding-bottom: 20px !important;padding-left: 20px !important;background-color: #002d3c !important;border-radius: 20px !important;}.vc_custom_1710144898531{padding-top: 20px !important;padding-right: 20px !important;padding-bottom: 20px !important;padding-left: 20px !important;background-color: #ff6d43 !important;border-radius: 20px !important;}</style><noscript><style> .wpb_animate_when_almost_visible { opacity: 1; }</style></noscript><!-- Matomo Tag Manager -->
+<script>
+var _mtm = window._mtm = window._mtm || [];
+_mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
+var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+g.async=true; g.src='https://cdn.matomo.cloud/eviden.matomo.cloud/container_cjIM9ebW.js'; s.parentNode.insertBefore(g,s);
+</script>
+<!-- End Matomo Tag Manager -->
+
+<script>
+    const archivedOption = document.querySelector('option[value="archived"]');
+    if (archivedOption) {
+      archivedOption.style.display = 'none'; // or archivedOption.remove();
+    }
+  </script>
+	<script>
+		const globals = {
+			wp_url: 'https://eviden.com',
+			wp_admin_url: 'https://eviden.com/wp-admin/admin-ajax.php',
+			wp_theme_url: 'https://eviden.com/wp-content/themes/evidian',
+		}
+	</script>
+</head>
+
+<body class="solutions-template-default single single-solutions postid-23144 wp-custom-logo wp-embed-responsive  wpb-js-composer js-comp-ver-8.7.2 vc_responsive">
+	<header id="site-header" role="navigation" class="nav-shadow">
+		
+<nav class="main-hdr">
+	<div class="container">
+
+		<div class="hamburger-menu-backdrop"></div>
+		<div class="hdr-box">
+			<a id="skip-main" class="skip-main" href="#site-content" aria-label="it will take you to main content of page">Skip to main content</a>
+			<a href="https://eviden.com/" class="custom-logo-link" rel="home"><img title="Eviden" width="265" height="53" src="https://eviden.com/wp-content/uploads/2023/11/logo_eviden_orange-256w.png" class="custom-logo" alt="Eviden" decoding="async" srcset="https://eviden.com/wp-content/uploads/2023/11/logo_eviden_orange-256w.png 265w, https://eviden.com/wp-content/uploads/2023/11/logo_eviden_orange-256w-32x6.png 32w" sizes="(max-width: 265px) 100vw, 265px" /></a>			<div class="mobile-trigger-menu">
+				<ul>
+											<li>
+							<button class="search-trigger trigger-open icon icon-search"><span class="sr-only">Open/Close search</span></button>
+							<button class="search-trigger trigger-close icon icon-close"><span class="sr-only">Open/Close search</span></button>
+						</li>
+										<li>
+						<button class="mobile-menu-trigger icon icon-menu"><span class="sr-only">Open/Close mobile menu</span></button>
+					</li>
+				</ul>
+			</div>
+
+			<div class="navbar-container">
+									<div class="primary-eyebrow-menu">
+						<div class="menu">
+															<!-- Search form -->
+								<div class="search-form-wrapper">
+									<div class="search-container">
+										<div class="container">
+											<form method="GET" action="https://eviden.com">
+												<div class="input-wrapper">
+													<!-- <span class="icon icon-close"><span class="sr-only">Open/Close search</span></span> -->
+													<input placeholder="Enter your keyword" value="" class="top_search_box" name='s' autocomplete="off">
+													<div class="search-tooltip-text" aria-hidden="true">Enter your keyword</div>
+												</div>
+											</form>
+										</div>
+									</div>
+									<button class="search-trigger trigger-open mobile-hide icon icon-search"><span class="sr-only">Open/Close search</span></button>
+									<button class="search-trigger trigger-close mobile-hide icon icon-close"><span class="sr-only">Open/Close search</span></button>
+								</div>
+							
+							<!-- Additional menu items -->
+																	<a href="https://eviden.com/contact-us/" >
+											<img width="38" height="28" src="https://eviden.com/wp-content/uploads/2023/05/icon-message2.png" class="attachment-full size-full" alt="Message - Eviden" decoding="async" srcset="https://eviden.com/wp-content/uploads/2023/05/icon-message2.png 38w, https://eviden.com/wp-content/uploads/2023/05/icon-message2-32x24.png 32w" sizes="(max-width: 38px) 100vw, 38px" />										</a>
+							
+							<!-- Language switcher -->
+															<div class="language-switcher-container simple_lang_menu">
+									<button class="dropdown-trigger" aria-expanded="false">
+																					<img src="https://eviden.com/wp-content/themes/evidian/assets/build/images/globe.png" alt="Global | EN" title="Global | EN" decoding="async" loading="lazy" width="18px" height="18px">
+																				<span>Global | EN</span>
+									</button>
+																			<ul class="dropdown">
+																							<li>
+													<a href="https://eviden.com/solutions/cybersecurity/post-quantum-security-pqc/">
+																													<div class="icon-wrapper">
+																<img src="https://eviden.com/wp-content/themes/evidian/assets/build/images/globe.png" alt="Global | EN" title="Global | EN" decoding="async" loading="lazy">
+															</div>
+																												<span>Global | EN</span>
+													</a>
+												</li>
+																							<li>
+													<a href="https://eviden.com/fr-fr/solutions/cybersecurite/cryptographie-post-quantique-pqc/">
+																													<div class="icon-wrapper">
+																<img src="https://eviden.com/wp-content/uploads/flags/fr.png" alt="France | FR" title="France | FR" decoding="async" loading="lazy">
+															</div>
+																												<span>France | FR</span>
+													</a>
+												</li>
+																							<li>
+													<a href="https://eviden.com/de-de/">
+																													<div class="icon-wrapper">
+																<img src="https://eviden.com/wp-content/uploads/flags/German-de.png" alt="Germany | DE" title="Germany | DE" decoding="async" loading="lazy">
+															</div>
+																												<span>Germany | DE</span>
+													</a>
+												</li>
+																							<li>
+													<a href="https://eviden.com/es-es/">
+																													<div class="icon-wrapper">
+																<img src="https://eviden.com/wp-content/uploads/flags/spain-es.svg" alt="Spain | ES" title="Spain | ES" decoding="async" loading="lazy">
+															</div>
+																												<span>Spain | ES</span>
+													</a>
+												</li>
+																							<li>
+													<a href="https://eviden.com/at-de/">
+																													<div class="icon-wrapper">
+																<img src="https://eviden.com/wp-content/uploads/flags/austria-flag.png" alt="Austria | DE" title="Austria | DE" decoding="async" loading="lazy">
+															</div>
+																												<span>Austria | DE</span>
+													</a>
+												</li>
+																							<li>
+													<a href="https://eviden.com/pl-pl/">
+																													<div class="icon-wrapper">
+																<img src="https://eviden.com/wp-content/uploads/flags/pl.svg" alt="Poland | PL" title="Poland | PL" decoding="async" loading="lazy">
+															</div>
+																												<span>Poland | PL</span>
+													</a>
+												</li>
+																							<li>
+													<a href="https://eviden.com/ch-en/">
+																													<div class="icon-wrapper">
+																<img src="https://eviden.com/wp-content/uploads/flags/swiss-flag-small.png" alt="Switzerland | EN" title="Switzerland | EN" decoding="async" loading="lazy">
+															</div>
+																												<span>Switzerland | EN</span>
+													</a>
+												</li>
+																							<li>
+													<a href="https://eviden.com/in-en/">
+																													<div class="icon-wrapper">
+																<img src="https://eviden.com/wp-content/uploads/flags/india.svg" alt="India | EN" title="India | EN" decoding="async" loading="lazy">
+															</div>
+																												<span>India | EN</span>
+													</a>
+												</li>
+																							<li>
+													<a href="https://eviden.com/cs/">
+																													<div class="icon-wrapper">
+																<img src="https://eviden.com/wp-content/plugins/sitepress-multilingual-cms/res/flags/cs.svg" alt="Czech | CS" title="Czech | CS" decoding="async" loading="lazy">
+															</div>
+																												<span>Czech | CS</span>
+													</a>
+												</li>
+																					</ul>
+																	</div>
+													</div>
+					</div>
+				
+				<ul class="navbar-nav mb-2 mb-lg-0"><li class='nav-item  menu-item menu-item-type-post_type menu-item-object-page current-menu-ancestor current_page_ancestor menu-item-has-children'><button class='open-desktop-submenu' aria-label='Open mega menu' aria-expanded='false'>
+								<i class='icon icon-chevron-right'></i>
+							</button>
+				<button class='open-submenu' aria-label='Open submenu' aria-expanded='false'>
+					<i class='icon icon-chevron-right'></i>
+				</button>
+		
+				<div class='sub-menu-wrapper level-2 mega-menu'>
+					<div class='mega-menu-inner'>
+			<div class='card'>
+    <div class='content'>
+        <p class='title'>Solutions &#038; Products</p>
+
+                    <p class='description'>By bringing AI in vision analytics, mission-critical systems, and sovereign cybersecurity products, we empower public and private organizations to make smarter actions that protect lives, safeguard critical assets, and ensure operational continuity. </p>
+            </div>
+    <a href='https://eviden.com/solutions-products/' title='Solutions &#038; Products' ' class='btn btn-learn-more'>Learn more</a>
+</div>
+				<div class='sub-nav-head'>
+					<button class='btn'><i class='icon icon-arrow-back'></i> Back</button>
+					<div class='menu-head'>Solutions &#038; Products</div>
+				</div>
+		<ul class='menu-list'><li class='nav-item  menu-item menu-item-type-post_type menu-item-object-solutions current-solutions-ancestor current-menu-ancestor current-menu-parent menu-item-has-children'><button class='open-desktop-submenu' aria-label='Open mega menu' aria-expanded='false'>
+								<i class='icon icon-chevron-right'></i>
+							</button><a href='https://eviden.com/solutions/cybersecurity/' title='Cybersecurity' class='nav-link' >Cybersecurity</a>
+				<button class='open-submenu' aria-label='Open submenu' aria-expanded='false'>
+					<i class='icon icon-chevron-right'></i>
+				</button>
+		<div class='sub-menu-wrapper level-3'>
+				<div class='sub-nav-head'>
+					<button class='btn'><i class='icon icon-arrow-back'></i> Back</button>
+					<div class='menu-head'>Cybersecurity</div>
+				</div>
+		<ul class='menu-list'><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/solutions/cybersecurity/data-encryption/' title='Data Encryption' class='nav-link' >Data Protection</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/solutions/cybersecurity/digital-identity/' title='Digital Identity' class='nav-link' >Digital Identity</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/solutions/cybersecurity/digital-sovereignty/' title='Digital Sovereignty' class='nav-link' >Digital Sovereignty</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/solutions/cybersecurity/identity-and-access-management/' title='Identity and Access Management' class='nav-link' >Identity and Access Management</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom current-menu-item'><a href='https://eviden.com/solutions/cybersecurity/post-quantum-security-pqc/' title='Post-Quantum Security &#8211; PQC' class='nav-link' >Post-Quantum Security - PQC</a></li></ul></div></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children'><button class='open-desktop-submenu' aria-label='Open mega menu' aria-expanded='false'>
+								<i class='icon icon-chevron-right'></i>
+							</button><a href='https://eviden.com/solutions/mission-critical-systems/' title='Mission-Critical Systems' class='nav-link' >Mission-Critical Systems</a>
+				<button class='open-submenu' aria-label='Open submenu' aria-expanded='false'>
+					<i class='icon icon-chevron-right'></i>
+				</button>
+		<div class='sub-menu-wrapper level-3'>
+				<div class='sub-nav-head'>
+					<button class='btn'><i class='icon icon-arrow-back'></i> Back</button>
+					<div class='menu-head'>Mission-Critical Systems</div>
+				</div>
+		<ul class='menu-list'><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/solutions/mission-critical-systems/ben-marine-navigation-instruments/' title='BEN Marine Navigation Instruments' class='nav-link' >BEN Marine Navigation Instruments</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/solutions/mission-critical-systems/collaborative-combat/' title='Collaborative Combat' class='nav-link' >Collaborative Combat</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/solutions/mission-critical-systems/critical-communications/' title='Critical Communications' class='nav-link' >Critical Communications</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/industries/public-sector-and-defense/digital-defense/' title='Defense' class='nav-link' >Defense</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/solutions/mission-critical-systems/defense-electronics/' title='Defense Electronics' class='nav-link' >Defense Electronics</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/solutions/digital-security/emergency-management/' title='Emergency Management' class='nav-link' >Emergency Management</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/industries/public-sector-and-defense/homeland-security/' title='Homeland Security' class='nav-link' >Homeland Security</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/solutions/mission-critical-systems/investigation-management/' title='Investigation Management' class='nav-link' >Investigation Management</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/solutions/digital-security/critical-communications/critical-communications-offshore-wind/' title='Offshore Wind' class='nav-link' >Offshore Wind</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/solutions/digital-security/critical-communications/transportation/' title='Rail' class='nav-link' >Rail</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/solutions/mission-critical-systems/satellite-payload-monitoring/' title='Satellite Monitoring' class='nav-link' >Satellite Monitoring</a></li></ul></div></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/solutions/vision-ai/' title='Artificial Intelligence' class='nav-link' >Vision AI</a></li></ul></div></div><a href='https://eviden.com/solutions-products/' title='Solutions &#038; Products' class='nav-link' >Solutions &#038; Products</a></li><li class='nav-item  menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children'><button class='open-desktop-submenu' aria-label='Open mega menu' aria-expanded='false'>
+								<i class='icon icon-chevron-right'></i>
+							</button>
+				<button class='open-submenu' aria-label='Open submenu' aria-expanded='false'>
+					<i class='icon icon-chevron-right'></i>
+				</button>
+		
+				<div class='sub-menu-wrapper level-2 mega-menu'>
+					<div class='mega-menu-inner'>
+			<div class='card'>
+    <div class='content'>
+        <p class='title'>News &#038; Insights</p>
+
+                    <p class='description'>Get the latest inside information about what we are doing at Eviden.</p>
+            </div>
+    <a href='https://eviden.com/insights/' title='News &#038; Insights' ' class='btn btn-learn-more'>Learn more</a>
+</div>
+				<div class='sub-nav-head'>
+					<button class='btn'><i class='icon icon-arrow-back'></i> Back</button>
+					<div class='menu-head'>News &#038; Insights</div>
+				</div>
+		<ul class='menu-list'><li class='nav-item  menu-item menu-item-type-post_type menu-item-object-page'><a href='https://eviden.com/insights/news/' title='News' class='nav-link' >News</a></li><li class='nav-item  menu-item menu-item-type-post_type menu-item-object-page'><a href='https://eviden.com/insights/press-releases/' title='Press Releases' class='nav-link' >Press Releases</a></li><li class='nav-item  menu-item menu-item-type-post_type menu-item-object-page'><a href='https://eviden.com/insights/events/' title='Events' class='nav-link' >Events</a></li><li class='nav-item  menu-item menu-item-type-post_type menu-item-object-page'><a href='https://eviden.com/insights/client-stories/' title='Client Stories' class='nav-link' >Client Stories</a></li><li class='nav-item  menu-item menu-item-type-post_type menu-item-object-page'><a href='https://eviden.com/insights/blogs/' title='Blogs' class='nav-link' >Blogs</a></li><li class='nav-item  menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children'><button class='open-desktop-submenu' aria-label='Open mega menu' aria-expanded='false'>
+								<i class='icon icon-chevron-right'></i>
+							</button><a href='https://eviden.com/publications/' title='Publications' class='nav-link' >Publications</a>
+				<button class='open-submenu' aria-label='Open submenu' aria-expanded='false'>
+					<i class='icon icon-chevron-right'></i>
+				</button>
+		<div class='sub-menu-wrapper level-3'>
+				<div class='sub-nav-head'>
+					<button class='btn'><i class='icon icon-arrow-back'></i> Back</button>
+					<div class='menu-head'>Publications</div>
+				</div>
+		<ul class='menu-list'><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/publications/digital-security-magazine/' title='Security Magazines' class='nav-link' >Security Magazines</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://eviden.com/publications/whitepapers/' title='Whitepapers' class='nav-link' >Whitepapers</a></li></ul></div></li><li class='nav-item  menu-item menu-item-type-post_type menu-item-object-page'><a href='https://eviden.com/insights/awards/' title='Awards &#038; Certifications' class='nav-link' >Awards &#038; Certifications</a></li></ul></div></div><a href='https://eviden.com/insights/' title='News &#038; Insights' class='nav-link' >News &#038; Insights</a></li><li class='nav-item  menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children'><button class='open-desktop-submenu' aria-label='Open mega menu' aria-expanded='false'>
+								<i class='icon icon-chevron-right'></i>
+							</button>
+				<button class='open-submenu' aria-label='Open submenu' aria-expanded='false'>
+					<i class='icon icon-chevron-right'></i>
+				</button>
+		
+				<div class='sub-menu-wrapper level-2 mega-menu'>
+					<div class='mega-menu-inner'>
+			<div class='card'>
+    <div class='content'>
+        <p class='title'>About Us</p>
+
+                    <p class='description'>A subsidiary of the Atos Group, Eviden is a trusted technology provider securing what matters most people, data, critical infrastructure across the digital and physical world.</p>
+            </div>
+    <a href='https://eviden.com/about-us/' title='About Us' ' class='btn btn-learn-more'>Learn more</a>
+</div>
+				<div class='sub-nav-head'>
+					<button class='btn'><i class='icon icon-arrow-back'></i> Back</button>
+					<div class='menu-head'>About Us</div>
+				</div>
+		<ul class='menu-list'><li class='nav-item  menu-item menu-item-type-post_type menu-item-object-page'><a href='https://eviden.com/about-us/analyst-and-advisor-relations/' title='Analysts and Advisors' class='nav-link' >Analysts and Advisors</a></li><li class='nav-item  menu-item menu-item-type-post_type menu-item-object-page'><a href='https://eviden.com/about-us/leadership/' title='Leadership' class='nav-link' >Leadership</a></li><li class='nav-item  menu-item menu-item-type-post_type menu-item-object-page'><a href='https://eviden.com/about-us/locations/' title='Locations' class='nav-link' >Locations</a></li><li class='nav-item  menu-item menu-item-type-post_type menu-item-object-page'><a href='https://eviden.com/about-us/partner-ecosystem/' title='Partner Ecosystem' class='nav-link' >Partner Ecosystem</a></li></ul></div></div><a href='https://eviden.com/about-us/' title='About Us' class='nav-link' >About Us</a></li><li class='nav-item  menu-item menu-item-type-post_type menu-item-object-page'><a href='https://eviden.com/careers/' title='Careers' class='nav-link' >Careers</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children'><button class='open-desktop-submenu' aria-label='Open mega menu' aria-expanded='false'>
+								<i class='icon icon-chevron-right'></i>
+							</button>
+				<button class='open-submenu' aria-label='Open submenu' aria-expanded='false'>
+					<i class='icon icon-chevron-right'></i>
+				</button>
+		
+				<div class='sub-menu-wrapper level-2 mega-menu'>
+					<div class='mega-menu-inner'>
+			
+				<div class='sub-nav-head'>
+					<button class='btn'><i class='icon icon-arrow-back'></i> Back</button>
+					<div class='menu-head'>Atos Group</div>
+				</div>
+		<ul class='menu-list'><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://atosgroup.com/' title='Atos Group' class='nav-link' >Atos Group</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children'><button class='open-desktop-submenu' aria-label='Open mega menu' aria-expanded='false'>
+								<i class='icon icon-chevron-right'></i>
+							</button><a href='https://atos.net/en/' title='Atos homepage' class='nav-link' target="_blank">Atos</a>
+				<button class='open-submenu' aria-label='Open submenu' aria-expanded='false'>
+					<i class='icon icon-chevron-right'></i>
+				</button>
+		<div class='sub-menu-wrapper level-3'>
+				<div class='sub-nav-head'>
+					<button class='btn'><i class='icon icon-arrow-back'></i> Back</button>
+					<div class='menu-head'>Atos homepage</div>
+				</div>
+		<ul class='menu-list'><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://atos.net/en/services/cloud-and-infrastructure' title='Cloud and Modern Infrastructure' class='nav-link' target="_blank">Cloud and Modern Infrastructure</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://atos.net/en/services/consulting-and-advisory' title='Consulting and Advisory' class='nav-link' target="_blank">Consulting and Advisory</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://atos.net/en/services/cybersecurity' title='Cybersecurity Services' class='nav-link' target="_blank">Cybersecurity Services</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://atos.net/en/services/data-and-ai' title='Data and AI' class='nav-link' target="_blank">Data and AI</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://atos.net/en/services/digital-applications' title='Digital Applications' class='nav-link' target="_blank">Digital Applications</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://atos.net/en/services/digital-workplace' title='Digital Workplace' class='nav-link' target="_blank">Digital Workplace</a></li><li class='nav-item  menu-item menu-item-type-custom menu-item-object-custom'><a href='https://atos.net/en/services/smart-platforms' title='Smart Platforms' class='nav-link' target="_blank">Smart Platforms</a></li></ul></div></li></ul></div></div><a href='#' title='Atos Group' class='nav-link' >Atos Group</a></li></ul>			</div>
+		</div>
+	</div>
+</nav>	</header>
+	<div class="header-overlay"></div>
+	<main id="site-content" role="main">
+					<nav class="breadcrumb " aria-label="breadcrumb">
+				<ul class="breadcrumb_wrap"><li class="breadcrumb_first" ><a href="https://eviden.com/">Home</a></li>  <li><a href="https://eviden.com/solutions/cybersecurity/">Cybersecurity</a></li>  <li title="Post-Quantum Security &#8211; PQC"  class="breadcrumb_last" aria-current="page">Post-Quantum Security &#8211; PQC</li></ul>			</nav>
+		<article id="post-23144" class="post-23144 solutions type-solutions status-publish has-post-thumbnail hentry">
+	<div class="entry-content">
+		<div class="wpb-content-wrapper"><div data-vc-full-width="true" data-vc-full-width-temp="true" data-vc-full-width-init="false" data-vc-stretch-content="true" class="vc_row wpb_row vc_row-fluid vc_row-no-padding" data-no-vertical-spacing='true'><div class="wpb_column vc_column_container vc_col-sm-12"><div class="vc_column-inner"><div class="wpb_wrapper">            <link rel="preload" href="https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-Post-quantum-security-banner.jpg" as="image" fetchpriority="high" imagesrcset="https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-mobile.jpg 768w, https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-Post-quantum-security-banner.jpg 1400w" imagesizes="(max-width: 3500px) 100vw, 1400px" />
+    
+    <div class="col-12 banner-sm-size">
+        <div class="banner-wrapper">
+                        <div class="swiper banner-slider" id="banner-animation" data-videoload-timeout="4000" data-speed="2500 " data-animation-type="">
+                <style>
+                    .slide_style_0 {
+                    background: url(https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-Post-quantum-security-banner.jpg) no-repeat center;
+                }@media(max-width: 768px) {
+                    .slide_style_0 {
+                        background: url(https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-mobile.jpg) no-repeat center;
+                    }
+                }                </style>
+
+                <div class="swiper-wrapper">
+                                            <div class="swiper-slide dark-theme" data-banner-bg-animation="" data-banner-content-animation="" title="Post-Quantum Security - PQC">
+                            <div class="swiper-slide-inner">
+                                <div class="container">
+                                    <div   class="background-banner-image  slide_style_0">
+                                    </div>
+                                                                        <div class="text-wrapper ">
+                                                                                    <h1 class="banner-title">
+                                                Post-Quantum Security - PQC                                            </h1>
+                                                                                                                            <p class="color_black">
+                                                Embracing post-quantum cryptography for a quantum-proof security                                            </p>
+                                                                                                                        
+                                                                                                                    </div>
+                                </div>
+                                                                                                                                </div>
+                        </div>
+                                    </div>
+                            </div>
+        </div>
+    </div>
+</div></div></div></div><div class="vc_row-full-width vc_clearfix"></div><div data-vc-full-width="true" data-vc-full-width-temp="true" data-vc-full-width-init="false" data-vc-stretch-content="true" class="vc_row wpb_row vc_row-fluid vc_row-no-padding" data-no-vertical-spacing='true'><div class="wpb_column vc_column_container vc_col-sm-12"><div class="vc_column-inner"><div class="wpb_wrapper">    <div class="col-12">
+        <div id="secondary-menu-wrapper" data-sticky="true" data-cards-desktop="5" class="orange">
+            <nav class="secondary-menu">
+                <div class="swiper">
+                    <button class="mobile-menu-trigger"></button>
+                    <div class="swiper-wrapper">
+                                                    <div class="swiper-slide" data-index-id="0">
+                                <!-- Check if empty or hash is passed. If yes generate dynamic hash  -->
+                                <a   href="#Overview">
+                                    Overview                                </a>
+                            </div>
+                                                    <div class="swiper-slide" data-index-id="1">
+                                <!-- Check if empty or hash is passed. If yes generate dynamic hash  -->
+                                <a   href="#PQC-Challenge">
+                                    The PQC Challenge                                </a>
+                            </div>
+                                                    <div class="swiper-slide" data-index-id="2">
+                                <!-- Check if empty or hash is passed. If yes generate dynamic hash  -->
+                                <a   href="#Journey-PQC">
+                                    The journey to PQC                                </a>
+                            </div>
+                                                    <div class="swiper-slide" data-index-id="3">
+                                <!-- Check if empty or hash is passed. If yes generate dynamic hash  -->
+                                <a   href="#Resources">
+                                    Resources                                </a>
+                            </div>
+                                            </div>
+                    <div class="swiper-navigation">
+                        <button class="swiper-button-prev" aria-label="Previous"></button>
+                        <button class="swiper-button-next" aria-label="Next"></button>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div></div></div></div><div class="vc_row-full-width vc_clearfix"></div><div id="Overview" class="vc_row wpb_row vc_row-fluid vc_custom_1710423596602 vc_row-has-fill"><div class="container"><div class="wpb_column vc_column_container vc_col-sm-12"><div class="vc_column-inner"><div class="wpb_wrapper"><div class="intro-section">
+	<div class="wpb_row vc_row-fluid">
+		<div class="wpb_column vc_column_container vc_col-sm-6">
+			<div class="vc_column-inner">
+				<div class="wpb_wrapper">
+					<div class="intro-text-wrap">
+													<h2 class="vc_custom_heading">
+								What is post-quantum cryptography (PQC)?							</h2>
+																			<h3>
+								The next game-changer for cybersecurity							</h3>
+												<div class="wpb_text_column wpb_content_element ">
+							<div class="wpb_wrapper">
+								<p>
+									<strong>Post-quantum cryptography (PQC)</strong> consists in all <strong>cryptographic</strong> methods that withstand a <strong>quantum computer</strong>.<br />
+Nearby on the computing horizon quantum computers will be capable of factorizing large prime number products and solving the discrete logarithm problem.</p>
+<p>As cryptography relies on algorithms, quantum will disrupt <strong>key encryption</strong> and <strong>cybersecurity</strong> as we currently know it.								</p>
+							</div>
+						</div>
+											</div>
+				</div>
+			</div>
+		</div>
+		<div class="wpb_column vc_column_container vc_col-sm-6">
+			<div class="vc_column-inner">
+				<div class="wpb_wrapper">
+					<div class="wpb_single_image wpb_content_element vc_align_left">
+						<div class="wpb_wrapper inline-video-wrapper">
+							<div class="vc_single_image-wrapper  vc_box_border_grey intro_img_box video-img-wrapper">
+								<img fetchpriority="high" decoding="async" width="1053" height="519" src="https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-video.jpg" class="vc_img-placeholder radius vc_single_image-img"role="presentation" title="What is post-quantum cryptography (PQC)?" srcset="https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-video.jpg 1053w, https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-video-768x379.jpg 768w, https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-video-32x16.jpg 32w" sizes="(max-width: 1053px) 100vw, 1053px" />									<a href="javascript:void(0);" class="watch_video" role="button" aria-label="Play video">
+										<span class="icon icon-play-circle"></span>
+										<span>
+											Watch video										</span>
+									</a>
+															</div>
+
+															<div class="video-section" style="display: none;">
+									<div class="videoWrapper">
+										<iframe src="https://www.youtube-nocookie.com/embed/5cSNk7q-12o" frameborder="0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen=""></iframe>
+									</div>
+								</div>
+													</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div></div></div></div></div><div class="vc_row wpb_row vc_row-fluid vc_custom_1752151867165 vc_row-has-fill vc_row-o-content-middle vc_row-flex"><div class="container"><div class="wpb_column vc_column_container vc_col-sm-8"><div class="vc_column-inner"><div class="wpb_wrapper">
+	<div class="wpb_text_column wpb_content_element  dark-theme">
+		<div class="wpb_wrapper">
+			<p><strong>PQC Explorer</strong> enables interactive exploration of Post-Quantum Cryptography (PQC) algorithms<br />
+through two modules:</p>
+<ul>
+<li><strong>PKI Dashboard</strong> for generating and managing certificates</li>
+<li><strong>CMS Dashboard</strong>for encryption and digital signing</li>
+</ul>
+
+		</div>
+	</div>
+</div></div></div><div class="wpb_column vc_column_container vc_col-sm-4"><div class="vc_column-inner"><div class="wpb_wrapper"><div class="vc_empty_space"   style="height: 32px"><span class="vc_empty_space_inner"></span></div>    
+    <div class="vc_btn3-container vc_btn3-left">
+        <a  class="global-btn white-filled-hover-orange-filled icon-arrow icon icon-position-right" href="https://pqc-explorer.eviden.com/" aria-label="Learn more" target="_blank">
+            Test our new PQC Explorer tool        </a>
+    </div>
+</div></div></div></div></div><div class="vc_row wpb_row vc_row-fluid vc_custom_1709727799916 vc_row-has-fill"><div class="container"><div class="wpb_column vc_column_container vc_col-sm-12"><div class="vc_column-inner"><div class="wpb_wrapper"><div class="service-card-intro-content">
+            <h2>
+            Risks quantum poses to your security        </h2>
+    
+            <p class="tagline">
+            What if everything you thought was secure was not anymore?        </p>
+    
+            <div class="short_desc">
+            
+<p data-momentum-id="e4c044ab">By disrupting cryptography, quantum computers jeopardizes the security of all assets and activities as we currently do them. Indeed all data protection, email exchange, payment, communication and much more are secured with algorithms. And these will soon be broken by quantum computing. Hence nothing will be secure anymore&#8230; if secured with classical, ie. non PQC-ready, algorithms.</p>
+<p data-momentum-id="e724bf14"><span data-momentum-id="c8debeec"><strong data-momentum-id="d7424048">Migrating to PQC is not an option, rather a vital requirement</strong></span> to maintain your business continuity and security.</p>
+</div>
+    
+</div>
+
+<div class="vc_row wpb_row vc_row-fluid vc_row-o-equal-height vc_row-flex service-card-wrapper">
+    
+        <div class="wpb_column vc_column_container vc_col-sm-4 service-card card white-card">
+            <div class="vc_column-inner">
+                <div class="wpb_wrapper">
+                    <div class="c-element_wrap vc_row vc_row-flex">
+                        <div class="c-element_image">
+                            <img decoding="async" width="458" height="285" src="https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-exposure.jpg" class="attachment-full size-full"role="presentation" title="Exposure to &quot;Harvest now, decrypt later&quot; attacks" srcset="https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-exposure.jpg 458w, https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-exposure-32x20.jpg 32w" sizes="(max-width: 458px) 100vw, 458px" />                        </div>
+                        <div class="c-element__content">
+                                                            <h3 class="c-element__title">
+                                    Exposure to "Harvest now, decrypt later" attacks                                </h3>
+                                                                                        <p class="description">
+                                    Unfriendly governments already start to harvest your data now, hoping that in the massive amount of data they capture at least one is critical and/or sensitive to your business and provides a competitive advantage.                                </p>
+                                                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="wpb_column vc_column_container vc_col-sm-4 service-card card white-card">
+            <div class="vc_column-inner">
+                <div class="wpb_wrapper">
+                    <div class="c-element_wrap vc_row vc_row-flex">
+                        <div class="c-element_image">
+                            <img decoding="async" width="458" height="285" src="https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-apocalypse.jpg" class="attachment-full size-full"role="presentation" title="2037: the security apocalypse?" srcset="https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-apocalypse.jpg 458w, https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-apocalypse-32x20.jpg 32w" sizes="(max-width: 458px) 100vw, 458px" />                        </div>
+                        <div class="c-element__content">
+                                                            <h3 class="c-element__title">
+                                    2037: the security apocalypse?                                </h3>
+                                                                                        <p class="description">
+                                    Quantum computers are expected to reach maturity by 2037.*
+By then they will be able to break all KEM currently in use (e.g. RSA, TLS, SSL...) meaning that no payment or data exchange, or else, will be secure anymore.
+
+* Source: 2022-quantum-threat-timeline-report-dec poll with several CISOs.                                </p>
+                                                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="wpb_column vc_column_container vc_col-sm-4 service-card card white-card">
+            <div class="vc_column-inner">
+                <div class="wpb_wrapper">
+                    <div class="c-element_wrap vc_row vc_row-flex">
+                        <div class="c-element_image">
+                            <img loading="lazy" decoding="async" width="458" height="285" src="https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-chance.jpg" class="attachment-full size-full"role="presentation" title="Now is your chance: get Quantum-proof before Quantum hits" srcset="https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-chance.jpg 458w, https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-chance-32x20.jpg 32w" sizes="(max-width: 458px) 100vw, 458px" />                        </div>
+                        <div class="c-element__content">
+                                                            <h3 class="c-element__title">
+                                    Now is your chance: get Quantum-proof before Quantum hits                                </h3>
+                                                                                        <p class="description">
+                                    According to the CSA, a medium-size business asset's migration to PQC would need an inreducible 3-years time. Before that you must have already run your cryptographic inventory and risk assessment to prioritize assets to be migrated first and fast.                                </p>
+                                                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div></div></div></div></div></div><div id="PQC-Challenge" class="vc_row wpb_row vc_row-fluid"><div class="container"><div class="wpb_column vc_column_container vc_col-sm-12"><div class="vc_column-inner"><div class="wpb_wrapper"><div class="vc_row wpb_row vc_inner vc_row-fluid"><div class="wpb_column vc_column_container vc_col-sm-12"><div class="vc_column-inner"><div class="wpb_wrapper">
+	<div class="wpb_text_column wpb_content_element">
+		<div class="wpb_wrapper">
+			<h2>PQC migration: you have no choice but to climb that mountain</h2>
+<div class="short_desc">
+<h3 data-momentum-id="1b0ffb8f">A triptyc of challenges</h3>
+<p data-momentum-id="0f93f677">Even though successfully migrating to PQC will not be a sinecure, organizations who may rest on their laurels, considering there is way enough time to migrate, greatly risk facing the security apocalypse induced by Quantum.</p>
+</div>
+
+		</div>
+	</div>
+    <section class="our-values-section">
+                <div class="grid-container" data-item-count="3">
+                            <div class="grid-item">
+                                            <div class="img-wrapper image-icon">
+                            <img decoding="async" src="https://eviden.com/wp-content/uploads/2024/03/Availability.svg" class="attachment-full size-full"role="presentation" title="The clock is ticking, don’t miss the boat" />                        </div>
+                    
+
+                    <div class="grid-item-content">
+                        
+                                                    <div class="title">The clock is ticking, don’t miss the boat</div>
+                        
+                                                    <p class="description">
+                                Worry now AND act now! As you must first and foremost run an exhaustive cryptography inventory (architecture, assets and keys) and perform a risk assessment to prioritize the assets to migrate to PQC, you will reach the irreducible 3-years migration timeline before you even realize.                            </p>
+                                                                    </div>
+                </div>
+                            <div class="grid-item">
+                                            <div class="img-wrapper image-icon">
+                            <img decoding="async" src="https://eviden.com/wp-content/uploads/2024/03/Business-and-Transformation-Services.svg" class="attachment-full size-full"role="presentation" title="Gigantic transformation" />                        </div>
+                    
+
+                    <div class="grid-item-content">
+                        
+                                                    <div class="title">Gigantic transformation</div>
+                        
+                                                    <p class="description">
+                                It is not just about switching cryptography algorithms, rather mainly about identifying which KEM you used, for what assets, and why. In parallel prioritization of assets to be migrating relies on whether their data shelf time overlapps the quantum-computing maturity time horizon.                            </p>
+                                                                    </div>
+                </div>
+                            <div class="grid-item">
+                                            <div class="img-wrapper image-icon">
+                            <img decoding="async" src="https://eviden.com/wp-content/uploads/2024/03/Skills.svg" class="attachment-full size-full"role="presentation" title="Skills gap" />                        </div>
+                    
+
+                    <div class="grid-item-content">
+                        
+                                                    <div class="title">Skills gap</div>
+                        
+                                                    <p class="description">
+                                While the cybersecurity industry is already short of 3.4million people, the cryptography skills gap is abyssal. Successfully migrating to PQC will require you to get support from the rare cryptographs worldwide. Furthermore to get your Board’s investment approval, raising awareness on PQC is essential.                            </p>
+                                                                    </div>
+                </div>
+                    </div>
+    </section>
+</div></div></div></div></div></div></div></div></div><div id="Journey-PQC" class="vc_row wpb_row vc_row-fluid vc_custom_1710423660352 vc_row-has-fill"><div class="container"><div class="wpb_column vc_column_container vc_col-sm-12"><div class="vc_column-inner vc_custom_1709733655452"><div class="wpb_wrapper">
+	<div class="wpb_text_column wpb_content_element">
+		<div class="wpb_wrapper">
+			<h2>Embark on the PQC migration journey</h2>
+<h3>PQC is to cybersecurity what the advent of the Internet was to IT</h3>
+<p>On your marks, set, go for the marathon to quantum-proof security!<br />
+Remember those who thought &#8220;there&#8217;s time before it hits us&#8221; while the Internet bubble was growing?</p>
+<p>In the end when they decided to get in the race, all the others had already reached the finish line.</p>
+<p>The advent of PQC will be no different. Make sure not to miss the boat!</p>
+<p><a class="btn btn-learn-more" href="https://page.eviden.com/pqc-migration-guide" target="_blank" rel="noopener">Get the PQC migration guide</a></p>
+
+		</div>
+	</div>
+<div class="vc_empty_space"   style="height: 20px"><span class="vc_empty_space_inner"></span></div><div class="vc_row wpb_row vc_inner vc_row-fluid vc_custom_1710391982084 vc_column-gap-25 vc_row-o-equal-height vc_row-o-content-top vc_row-flex"><div class="wpb_column vc_column_container vc_col-sm-3 vc_col-has-fill"><div class="vc_column-inner vc_custom_1710144805689"><div class="wpb_wrapper"><div class="vc_empty_space"   style="height: 20px"><span class="vc_empty_space_inner"></span></div>
+	<div class="wpb_text_column wpb_content_element  dark-theme">
+		<div class="wpb_wrapper">
+			<h3>Awareness and education</h3>
+<p>Protecting yourself from quantum computers is a real challenge, and one that requires some serious math skills. Therefore stakeholders must understand the basics of PQC to ensure a successful migration.</p>
+
+		</div>
+	</div>
+</div></div></div><div class="wpb_column vc_column_container vc_col-sm-3 vc_col-has-fill"><div class="vc_column-inner vc_custom_1710144882025"><div class="wpb_wrapper"><div class="vc_empty_space"   style="height: 20px"><span class="vc_empty_space_inner"></span></div>
+	<div class="wpb_text_column wpb_content_element">
+		<div class="wpb_wrapper">
+			<h3>Cryptography inventory</h3>
+<p>Exhaustively identify all the Key Encryption Methods (KEM) used for each of your assets (application, file, network…), their data shelf time and sensitivity level.</p>
+
+		</div>
+	</div>
+</div></div></div><div class="wpb_column vc_column_container vc_col-sm-3 vc_col-has-fill"><div class="vc_column-inner vc_custom_1710144891129"><div class="wpb_wrapper"><div class="vc_empty_space"   style="height: 20px"><span class="vc_empty_space_inner"></span></div>
+	<div class="wpb_text_column wpb_content_element  dark-theme">
+		<div class="wpb_wrapper">
+			<h3 data-momentum-id="7c048c96">Risk assessment</h3>
+<p data-momentum-id="b5d6bb50">Assess the level of risk and exposure of leaving an asset with non-PQC KEM, hence exposing it to quantum brute-force attack and decryption.</p>
+
+		</div>
+	</div>
+</div></div></div><div class="wpb_column vc_column_container vc_col-sm-3 vc_col-has-fill"><div class="vc_column-inner vc_custom_1710144898531"><div class="wpb_wrapper"><div class="vc_empty_space"   style="height: 20px"><span class="vc_empty_space_inner"></span></div>
+	<div class="wpb_text_column wpb_content_element">
+		<div class="wpb_wrapper">
+			<h3>Implementation</h3>
+<p>Start migrating the prioritized assets to PQC algorithms, and permanently deleting all the former instance.</p>
+
+		</div>
+	</div>
+</div></div></div></div></div></div></div></div></div><div class="vc_row wpb_row vc_row-fluid"><div class="container"><div class="wpb_column vc_column_container vc_col-sm-12"><div class="vc_column-inner"><div class="wpb_wrapper"><div class="service-card-intro-content">
+            <h2>
+            Quantum-ready cybersecurity products        </h2>
+    
+    
+            <div class="short_desc">
+            Our full range of quantum-ready cybersecurity products enable you to manage your data protection and your trusted digital identities:        </div>
+    
+</div>
+
+<div class="vc_row wpb_row vc_row-fluid vc_row-o-equal-height vc_row-flex service-card-wrapper">
+    
+        <div class="wpb_column vc_column_container vc_col-sm-4 service-card card grey-card">
+            <div class="vc_column-inner">
+                <div class="wpb_wrapper">
+                    <div class="c-element_wrap vc_row vc_row-flex">
+                        <div class="c-element_image">
+                            <img loading="lazy" decoding="async" width="400" height="350" src="https://eviden.com/wp-content/uploads/2023/07/trustway-dataprotect-mobile-banner.jpg" class="attachment-full size-full"role="presentation" title="Data Encryption" srcset="https://eviden.com/wp-content/uploads/2023/07/trustway-dataprotect-mobile-banner.jpg 400w, https://eviden.com/wp-content/uploads/2023/07/trustway-dataprotect-mobile-banner-32x28.jpg 32w" sizes="(max-width: 400px) 100vw, 400px" />                        </div>
+                        <div class="c-element__content">
+                                                            <h3 class="c-element__title">
+                                    Data Encryption                                </h3>
+                                                                                        <p class="description">
+                                    Protect and encrypt your most sensitive data, at rest and in motion. For cloud, virtual and on-premises infrastructures, and any level of encryption.                                </p>
+                                                                                            <div class="cta-wrapper">
+                                        <a class="btn btn-learn-more" href="https://eviden.com/solutions/cybersecurity/data-encryption/"   aria-label="Learn more - Data Encryption">Learn more</a>
+                                    </div>
+                                                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="wpb_column vc_column_container vc_col-sm-4 service-card card grey-card">
+            <div class="vc_column-inner">
+                <div class="wpb_wrapper">
+                    <div class="c-element_wrap vc_row vc_row-flex">
+                        <div class="c-element_image">
+                            <img loading="lazy" decoding="async" width="363" height="217" src="https://eviden.com/wp-content/uploads/2023/04/digitalIdentity-1.jpg" class="attachment-full size-full"role="presentation" title="Digital Identity" srcset="https://eviden.com/wp-content/uploads/2023/04/digitalIdentity-1.jpg 363w, https://eviden.com/wp-content/uploads/2023/04/digitalIdentity-1-300x179.jpg 300w, https://eviden.com/wp-content/uploads/2023/04/digitalIdentity-1-32x19.jpg 32w" sizes="(max-width: 363px) 100vw, 363px" />                        </div>
+                        <div class="c-element__content">
+                                                            <h3 class="c-element__title">
+                                    Digital Identity                                </h3>
+                                                                                        <p class="description">
+                                    Eviden Digital ID accompanies customers in the PQC transition. Our product portfolio is evolving to support PQC at every step of the value chain. Discover our end-to-end approach from generation to usage of digital identities.                                </p>
+                                                                                            <div class="cta-wrapper">
+                                        <a class="btn btn-learn-more" href="https://www.cryptovision.com/fr/post-quantum-cryptography/"  target="_blank" aria-label="Learn more - Digital Identity">Learn more</a>
+                                    </div>
+                                                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="wpb_column vc_column_container vc_col-sm-4 service-card card grey-card">
+            <div class="vc_column-inner">
+                <div class="wpb_wrapper">
+                    <div class="c-element_wrap vc_row vc_row-flex">
+                        <div class="c-element_image">
+                            <img loading="lazy" decoding="async" width="519" height="332" src="https://eviden.com/wp-content/uploads/2023/10/Identity-Access-Management.jpg" class="attachment-full size-full"role="presentation" title="Identity &amp; Access Management" srcset="https://eviden.com/wp-content/uploads/2023/10/Identity-Access-Management.jpg 519w, https://eviden.com/wp-content/uploads/2023/10/Identity-Access-Management-32x20.jpg 32w" sizes="(max-width: 519px) 100vw, 519px" />                        </div>
+                        <div class="c-element__content">
+                                                            <h3 class="c-element__title">
+                                    Identity & Access Management                                </h3>
+                                                                                        <p class="description">
+                                    Only give the right people access to the right information at the right time. See who has access, why they have it and how they use it.                                </p>
+                                                                                            <div class="cta-wrapper">
+                                        <a class="btn btn-learn-more" href="https://eviden.com/solutions/cybersecurity/identity-and-access-management/"   aria-label="Learn more - Identity & Access Management">Learn more</a>
+                                    </div>
+                                                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div></div></div></div></div></div><div id="Resources" class="vc_row wpb_row vc_row-fluid"><div class="container"><div class="wpb_column vc_column_container vc_col-sm-12"><div class="vc_column-inner"><div class="wpb_wrapper"><div class="vc_row wpb_row vc_inner vc_row-fluid"><div class="wpb_column vc_column_container vc_col-sm-12"><div class="vc_column-inner"><div class="wpb_wrapper">    <div class="service-card-wrapper relevant-resources-wrapper">
+        <style>
+            .relevant-resources-wrapper .service-card .c-element_wrap .c-element_image {
+                --aspect-ratio:
+                    1.62            }
+        </style>
+
+        <h2>Related resources</h2>        <div class="swiper slider-cards">
+            <div class="swiper-wrapper">
+                                    <div class="swiper-slide">
+                        <div class="service-card card grey-card">
+                            <div class="c-element_wrap">
+                                <div class="c-element_image">
+                                    <img loading="lazy" decoding="async" width="605" height="280" src="https://eviden.com/wp-content/uploads/2023/07/pqc-migration-guide-the-essentials.jpg" class="attachment-single-post-thumbnail size-single-post-thumbnail"role="presentation" title="PQC Migration guide – the essentials" srcset="https://eviden.com/wp-content/uploads/2023/07/pqc-migration-guide-the-essentials.jpg 605w, https://eviden.com/wp-content/uploads/2023/07/pqc-migration-guide-the-essentials-32x15.jpg 32w" sizes="(max-width: 605px) 100vw, 605px" />                                        <span class="tags">
+                                            White Paper                                        </span>
+                                                                    </div>
+                                <div class="c-element__content">
+                                    
+                                                                            <h3 class="c-element__title">
+                                            PQC Migration guide – the essentials                                        </h3>
+                                    
+                                    
+                                                                            <div class="cta-wrapper">
+                                            <a  href="https://page.eviden.com/pqc-migration-guide" class="btn btn-learn-more"
+                                                target="_blank" aria-label="Read more - PQC Migration guide – the essentials">Read more</a>
+                                        </div>
+                                                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                                    <div class="swiper-slide">
+                        <div class="service-card card grey-card">
+                            <div class="c-element_wrap">
+                                <div class="c-element_image">
+                                    <img loading="lazy" decoding="async" width="605" height="280" src="https://eviden.com/wp-content/uploads/2023/07/trustway-r-n-d-and-post-quantum-cryptography.jpg" class="attachment-single-post-thumbnail size-single-post-thumbnail"role="presentation" title="Trustway R&amp;D and post-quantum cryptography" srcset="https://eviden.com/wp-content/uploads/2023/07/trustway-r-n-d-and-post-quantum-cryptography.jpg 605w, https://eviden.com/wp-content/uploads/2023/07/trustway-r-n-d-and-post-quantum-cryptography-32x15.jpg 32w" sizes="(max-width: 605px) 100vw, 605px" />                                        <span class="tags">
+                                            White paper                                        </span>
+                                                                    </div>
+                                <div class="c-element__content">
+                                    
+                                                                            <h3 class="c-element__title">
+                                            Trustway R&D and post-quantum cryptography                                        </h3>
+                                    
+                                    
+                                                                            <div class="cta-wrapper">
+                                            <a  href="https://eviden.com/wp-content/uploads/2023/07/eviden-trustway-paper-post-quantum-cryptography.pdf" class="btn btn-learn-more"
+                                                target="_blank" aria-label="Read more - Trustway R&D and post-quantum cryptography">Read more</a>
+                                        </div>
+                                                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                                    <div class="swiper-slide">
+                        <div class="service-card card grey-card">
+                            <div class="c-element_wrap">
+                                <div class="c-element_image">
+                                    <img loading="lazy" decoding="async" width="384" height="238" src="https://eviden.com/wp-content/uploads/2024/03/Shape_BLUE_CLOSE_UP_1.jpg" class="attachment-single-post-thumbnail size-single-post-thumbnail"role="presentation" title="An Introduction to PostQuantum Cryptography" srcset="https://eviden.com/wp-content/uploads/2024/03/Shape_BLUE_CLOSE_UP_1.jpg 384w, https://eviden.com/wp-content/uploads/2024/03/Shape_BLUE_CLOSE_UP_1-32x20.jpg 32w" sizes="(max-width: 384px) 100vw, 384px" />                                        <span class="tags">
+                                            White paper                                        </span>
+                                                                    </div>
+                                <div class="c-element__content">
+                                    
+                                                                            <h3 class="c-element__title">
+                                            An Introduction to PostQuantum Cryptography                                        </h3>
+                                    
+                                    
+                                                                            <div class="cta-wrapper">
+                                            <a  href="https://eviden.com/wp-content/uploads/2025/02/Eviden-cybersecurity-Introduction-to-Post-Quantum-Whitepaper-EN.pdf" class="btn btn-learn-more"
+                                                target="_blank" aria-label="Read more - An Introduction to PostQuantum Cryptography">Read more</a>
+                                        </div>
+                                                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                                    <div class="swiper-slide">
+                        <div class="service-card card grey-card">
+                            <div class="c-element_wrap">
+                                <div class="c-element_image">
+                                    <img loading="lazy" decoding="async" width="384" height="237" src="https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-6-steps-migration-PQC.jpg" class="attachment-single-post-thumbnail size-single-post-thumbnail"role="presentation" title="6-steps PQC-migration framework" srcset="https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-6-steps-migration-PQC.jpg 384w, https://eviden.com/wp-content/uploads/2024/02/Eviden-cybersecurity-Post-quantum-security-6-steps-migration-PQC-32x20.jpg 32w" sizes="(max-width: 384px) 100vw, 384px" />                                        <span class="tags">
+                                            REX                                        </span>
+                                                                    </div>
+                                <div class="c-element__content">
+                                    
+                                                                            <h3 class="c-element__title">
+                                            6-steps PQC-migration framework                                        </h3>
+                                    
+                                    
+                                                                            <div class="cta-wrapper">
+                                            <a  href="https://page.eviden.com/6-steps-pqc-migration-framework" class="btn btn-learn-more"
+                                                target="_blank" aria-label="Read more - 6-steps PQC-migration framework">Read more</a>
+                                        </div>
+                                                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                            </div>
+
+
+            <div class="cta-wrapper grid-cta-wrapper">
+                
+
+                <div class="swiper-navigation">
+                    <button class="swiper-button-prev" aria-label="Previous slide"></button>
+                    <button class="swiper-button-next" aria-label="Next slide"></button>
+                </div>
+            </div>
+        </div>
+    </div></div></div></div></div><div class="vc_row wpb_row vc_inner vc_row-fluid"><div class="wpb_column vc_column_container vc_col-sm-12"><div class="vc_column-inner"><div class="wpb_wrapper">    <div class="service-card-wrapper relevant-resources-wrapper">
+        <style>
+            .relevant-resources-wrapper .service-card .c-element_wrap .c-element_image {
+                --aspect-ratio:
+                    1.62            }
+        </style>
+
+        <h2>Videos</h2>        <div class="swiper slider-cards">
+            <div class="swiper-wrapper">
+                                    <div class="swiper-slide">
+                        <div class="service-card card grey-card">
+                            <div class="c-element_wrap">
+                                <div class="c-element_image">
+                                    <img loading="lazy" decoding="async" width="393" height="352" src="https://eviden.com/wp-content/uploads/2025/05/Eviden-Webinar-Trustway-and-Cosmian-Data-Encryption-mobile.jpg" class="attachment-single-post-thumbnail size-single-post-thumbnail"role="presentation" title="Sovereign security at scale: Certified encryption &amp; crypto-agile Key Management" srcset="https://eviden.com/wp-content/uploads/2025/05/Eviden-Webinar-Trustway-and-Cosmian-Data-Encryption-mobile.jpg 393w, https://eviden.com/wp-content/uploads/2025/05/Eviden-Webinar-Trustway-and-Cosmian-Data-Encryption-mobile-32x29.jpg 32w" sizes="(max-width: 393px) 100vw, 393px" />                                        <span class="tags">
+                                            Webinar                                        </span>
+                                                                    </div>
+                                <div class="c-element__content">
+                                    
+                                                                            <h3 class="c-element__title">
+                                            Sovereign security at scale: Certified encryption & crypto-agile Key Management                                        </h3>
+                                    
+                                                                            <p class="description">
+                                            Get an exclusive look at a next-generation encryption solution, born from the strategic partnership between Eviden and Cosmian.                                        </p>
+                                    
+                                                                            <div class="cta-wrapper">
+                                            <a  href="https://eviden.com/insights/events/webinar-sovereign-security-at-scale-certified-encryption-crypto-agile-key-management/" class="btn btn-learn-more"
+                                                 aria-label="Watch the replay - Sovereign security at scale: Certified encryption & crypto-agile Key Management">Watch the replay</a>
+                                        </div>
+                                                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                                    <div class="swiper-slide">
+                        <div class="service-card card grey-card">
+                            <div class="c-element_wrap">
+                                <div class="c-element_image">
+                                    <img loading="lazy" decoding="async" width="384" height="237" src="https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-PQC-Vasco-Gomes-video4.jpg" class="attachment-single-post-thumbnail size-single-post-thumbnail"role="presentation" title="Is your business ready for the quantum threat?" srcset="https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-PQC-Vasco-Gomes-video4.jpg 384w, https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-PQC-Vasco-Gomes-video4-32x20.jpg 32w" sizes="(max-width: 384px) 100vw, 384px" />                                        <span class="tags">
+                                            Video                                        </span>
+                                                                    </div>
+                                <div class="c-element__content">
+                                    
+                                                                            <h3 class="c-element__title">
+                                            Is your business ready for the quantum threat?                                        </h3>
+                                    
+                                                                            <p class="description">
+                                            Why does the arrival of quantum computers threaten asymmetric encryption?                                        </p>
+                                    
+                                                                            <div class="cta-wrapper">
+                                            <a  href="https://www.youtube.com/watch?v=wELrIuKmunI" class="btn btn-learn-more"
+                                                target="_blank" aria-label="Watch the video - Is your business ready for the quantum threat?">Watch the video</a>
+                                        </div>
+                                                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                                    <div class="swiper-slide">
+                        <div class="service-card card grey-card">
+                            <div class="c-element_wrap">
+                                <div class="c-element_image">
+                                    <img loading="lazy" decoding="async" width="384" height="237" src="https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-PQC-Vasco-Gomes-video3.jpg" class="attachment-single-post-thumbnail size-single-post-thumbnail"role="presentation" title="The road for quantum-safe cryptography" srcset="https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-PQC-Vasco-Gomes-video3.jpg 384w, https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-PQC-Vasco-Gomes-video3-32x20.jpg 32w" sizes="(max-width: 384px) 100vw, 384px" />                                        <span class="tags">
+                                            Video                                        </span>
+                                                                    </div>
+                                <div class="c-element__content">
+                                    
+                                                                            <h3 class="c-element__title">
+                                            The road for quantum-safe cryptography                                        </h3>
+                                    
+                                                                            <p class="description">
+                                            The different steps that await you on your PQC journey                                        </p>
+                                    
+                                                                            <div class="cta-wrapper">
+                                            <a  href="https://www.youtube.com/watch?v=OjNm73GaqU4" class="btn btn-learn-more"
+                                                target="_blank" aria-label="Watch the video - The road for quantum-safe cryptography">Watch the video</a>
+                                        </div>
+                                                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                                    <div class="swiper-slide">
+                        <div class="service-card card grey-card">
+                            <div class="c-element_wrap">
+                                <div class="c-element_image">
+                                    <img loading="lazy" decoding="async" width="384" height="237" src="https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-PQC-Vasco-Gomes-video2.jpg" class="attachment-single-post-thumbnail size-single-post-thumbnail"role="presentation" title="PQC migration is a teamwork" srcset="https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-PQC-Vasco-Gomes-video2.jpg 384w, https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-PQC-Vasco-Gomes-video2-32x20.jpg 32w" sizes="(max-width: 384px) 100vw, 384px" />                                        <span class="tags">
+                                            Video                                        </span>
+                                                                    </div>
+                                <div class="c-element__content">
+                                    
+                                                                            <h3 class="c-element__title">
+                                            PQC migration is a teamwork                                        </h3>
+                                    
+                                                                            <p class="description">
+                                            Building a secure digital PQC future requires a united front!                                        </p>
+                                    
+                                                                            <div class="cta-wrapper">
+                                            <a  href="https://www.youtube.com/watch?v=_VnWEUw-kvw" class="btn btn-learn-more"
+                                                target="_blank" aria-label="Watch the video - PQC migration is a teamwork">Watch the video</a>
+                                        </div>
+                                                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                                    <div class="swiper-slide">
+                        <div class="service-card card grey-card">
+                            <div class="c-element_wrap">
+                                <div class="c-element_image">
+                                    <img loading="lazy" decoding="async" width="384" height="237" src="https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-PQC-Vasco-Gomes-video1.jpg" class="attachment-single-post-thumbnail size-single-post-thumbnail"role="presentation" title="Make crypto-agility your raison d&#039;être" srcset="https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-PQC-Vasco-Gomes-video1.jpg 384w, https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-PQC-Vasco-Gomes-video1-32x20.jpg 32w" sizes="(max-width: 384px) 100vw, 384px" />                                        <span class="tags">
+                                            Video                                        </span>
+                                                                    </div>
+                                <div class="c-element__content">
+                                    
+                                                                            <h3 class="c-element__title">
+                                            Make crypto-agility your raison d'être                                        </h3>
+                                    
+                                                                            <p class="description">
+                                            PQC migration is here but it's not a one-time deal!                                        </p>
+                                    
+                                                                            <div class="cta-wrapper">
+                                            <a  href="https://www.youtube.com/watch?v=ykRKc7KydUY" class="btn btn-learn-more"
+                                                target="_blank" aria-label="Watch the video - Make crypto-agility your raison d'être">Watch the video</a>
+                                        </div>
+                                                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                            </div>
+
+
+            <div class="cta-wrapper grid-cta-wrapper">
+                
+
+                <div class="swiper-navigation">
+                    <button class="swiper-button-prev" aria-label="Previous slide"></button>
+                    <button class="swiper-button-next" aria-label="Next slide"></button>
+                </div>
+            </div>
+        </div>
+    </div></div></div></div></div><div class="vc_row wpb_row vc_inner vc_row-fluid"><div class="wpb_column vc_column_container vc_col-sm-12"><div class="vc_column-inner"><div class="wpb_wrapper">    <div class="service-card-wrapper relevant-resources-wrapper">
+        <style>
+            .relevant-resources-wrapper .service-card .c-element_wrap .c-element_image {
+                --aspect-ratio:
+                    1.62            }
+        </style>
+
+        <h2>Press release</h2>        <div class="swiper slider-cards">
+            <div class="swiper-wrapper">
+                                    <div class="swiper-slide">
+                        <div class="service-card card grey-card">
+                            <div class="c-element_wrap">
+                                <div class="c-element_image">
+                                    <img loading="lazy" decoding="async" width="384" height="237" src="https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-Trustway-PQC-HSMaaS-PR.jpg" class="attachment-single-post-thumbnail size-single-post-thumbnail"role="presentation" title="Eviden launches PQC HSMaaS, a EU sovereign, Post-Quantum Cryptography Hardware Security Module as a Service" srcset="https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-Trustway-PQC-HSMaaS-PR.jpg 384w, https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-Trustway-PQC-HSMaaS-PR-32x20.jpg 32w" sizes="(max-width: 384px) 100vw, 384px" />                                        <span class="tags">
+                                            Press release                                        </span>
+                                                                    </div>
+                                <div class="c-element__content">
+                                                                            <p class="c-element__subtitle date">
+                                            October 8, 2024                                        </p>
+                                    
+                                                                            <h3 class="c-element__title">
+                                            Eviden launches PQC HSMaaS, a EU sovereign, Post-Quantum Cryptography Hardware Security Module as a Service                                        </h3>
+                                    
+                                    
+                                                                            <div class="cta-wrapper">
+                                            <a  href="https://eviden.com/insights/press-releases/eviden-launches-pqc-hsmaas-a-eu-sovereign-post-quantum-cryptography-hardware-security-module-as-a-service/" class="btn btn-learn-more"
+                                                 aria-label="Read more - Eviden launches PQC HSMaaS, a EU sovereign, Post-Quantum Cryptography Hardware Security Module as a Service">Read more</a>
+                                        </div>
+                                                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                                    <div class="swiper-slide">
+                        <div class="service-card card grey-card">
+                            <div class="c-element_wrap">
+                                <div class="c-element_image">
+                                    <img loading="lazy" decoding="async" width="384" height="237" src="https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-Trustway-IP-Protect-PR.jpg" class="attachment-single-post-thumbnail size-single-post-thumbnail"role="presentation" title="Eviden supports post-quantum algorithms with its network security solution ‘Trustway IP Protect’" srcset="https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-Trustway-IP-Protect-PR.jpg 384w, https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-Trustway-IP-Protect-PR-32x20.jpg 32w" sizes="(max-width: 384px) 100vw, 384px" />                                        <span class="tags">
+                                            Press release                                        </span>
+                                                                    </div>
+                                <div class="c-element__content">
+                                                                            <p class="c-element__subtitle date">
+                                            October 11, 2023                                        </p>
+                                    
+                                                                            <h3 class="c-element__title">
+                                            Eviden supports post-quantum algorithms with its network security solution ‘Trustway IP Protect’                                        </h3>
+                                    
+                                    
+                                                                            <div class="cta-wrapper">
+                                            <a  href="https://eviden.com/insights/press-releases/eviden-supports-post-quantum-algorithms-with-its-network-security-solution-trustway-ip-protect/" class="btn btn-learn-more"
+                                                 aria-label="Read more - Eviden supports post-quantum algorithms with its network security solution ‘Trustway IP Protect’">Read more</a>
+                                        </div>
+                                                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                                    <div class="swiper-slide">
+                        <div class="service-card card grey-card">
+                            <div class="c-element_wrap">
+                                <div class="c-element_image">
+                                    <img loading="lazy" decoding="async" width="384" height="237" src="https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-Trustway-Proteccio-HSM-PR.jpg" class="attachment-single-post-thumbnail size-single-post-thumbnail"role="presentation" title="Eviden supports post-quantum algorithms with its Trustway Proteccio HSM" srcset="https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-Trustway-Proteccio-HSM-PR.jpg 384w, https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-Trustway-Proteccio-HSM-PR-32x20.jpg 32w" sizes="(max-width: 384px) 100vw, 384px" />                                        <span class="tags">
+                                            Press release                                        </span>
+                                                                    </div>
+                                <div class="c-element__content">
+                                                                            <p class="c-element__subtitle date">
+                                            April 5, 2023                                        </p>
+                                    
+                                                                            <h3 class="c-element__title">
+                                            Eviden supports post-quantum algorithms with its Trustway Proteccio HSM                                        </h3>
+                                    
+                                    
+                                                                            <div class="cta-wrapper">
+                                            <a  href="https://eviden.com/insights/press-releases/eviden-supports-post-quantum-algorithms-with-its-trustway-proteccio-hsm/" class="btn btn-learn-more"
+                                                 aria-label="Read more - Eviden supports post-quantum algorithms with its Trustway Proteccio HSM">Read more</a>
+                                        </div>
+                                                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                                    <div class="swiper-slide">
+                        <div class="service-card card grey-card">
+                            <div class="c-element_wrap">
+                                <div class="c-element_image">
+                                    <img loading="lazy" decoding="async" width="384" height="237" src="https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-PQC-Digital-Identity-PR.jpg" class="attachment-single-post-thumbnail size-single-post-thumbnail"role="presentation" title="Eviden to launch first ‘post-quantum ready’ solutions for Digital Identity" srcset="https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-PQC-Digital-Identity-PR.jpg 384w, https://eviden.com/wp-content/uploads/2024/03/Eviden-cybersecurity-PQC-Digital-Identity-PR-32x20.jpg 32w" sizes="(max-width: 384px) 100vw, 384px" />                                        <span class="tags">
+                                            Press release                                        </span>
+                                                                    </div>
+                                <div class="c-element__content">
+                                                                            <p class="c-element__subtitle date">
+                                            April 5, 2023                                        </p>
+                                    
+                                                                            <h3 class="c-element__title">
+                                            Eviden to launch first ‘post-quantum ready’ solutions for Digital Identity                                        </h3>
+                                    
+                                    
+                                                                            <div class="cta-wrapper">
+                                            <a  href="https://eviden.com/insights/press-releases/eviden-to-launch-first-post-quantum-ready-solutions-for-digital-identity/" class="btn btn-learn-more"
+                                                 aria-label="Read more - Eviden to launch first ‘post-quantum ready’ solutions for Digital Identity">Read more</a>
+                                        </div>
+                                                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                            </div>
+
+
+            <div class="cta-wrapper grid-cta-wrapper">
+                
+
+                <div class="swiper-navigation">
+                    <button class="swiper-button-prev" aria-label="Previous slide"></button>
+                    <button class="swiper-button-next" aria-label="Next slide"></button>
+                </div>
+            </div>
+        </div>
+    </div></div></div></div></div></div></div></div></div></div><div id="partner" class="vc_row wpb_row vc_row-fluid dark-theme vc_custom_1738140700439 vc_row-has-fill"><div class="container"><div class="wpb_column vc_column_container vc_col-sm-3"><div class="vc_column-inner"><div class="wpb_wrapper">
+<div class="social-media-container  ">
+    <h2>Follow us!</h2>    <div class="footer-social-menu-container">
+        <div class='social_box'><ul>            <li class="nav-item">
+                <a class="icon icon-linkedin" href="https://www.linkedin.com/company/eviden/"
+                    target="_blank" rel="nofollow" aria-label="linkedin">
+                </a>
+            </li>
+        </ul></div>    </div>
+</div></div></div></div><div class="wpb_column vc_column_container vc_col-sm-9"><div class="vc_column-inner"><div class="wpb_wrapper">
+	<div class="wpb_text_column wpb_content_element  dark-theme">
+		<div class="wpb_wrapper">
+			<div class="form_title" data-momentum-id="42a525e7">
+<h2 style="text-align: left;" data-momentum-id="faf37758">Book a 1-hour consultation</h2>
+</div>
+<div class="form_title" data-momentum-id="b0aa5a5e">
+<p style="text-align: left;" data-momentum-id="d2e97378">Get started on your PQC migration journey with our experts: identifying what stage you are at, getting a clearer view of the stakeholders to onboard first, and the key milestone to kick-off the project right.</p>
+</div>
+
+		</div>
+	</div>
+
+    <div class="vc_btn3-container popup-trigger-btn vc_btn3-left">
+        <a class="btn btn-common btn-border" href="#popup-form-f22ea8a74734ad74628a73ed93b6ff61" role="button" aria-label="Learn more">Contact Us</a>
+    </div>
+            <div class="get-in-touch-popup mfp-hide" id="popup-form-f22ea8a74734ad74628a73ed93b6ff61">
+            <div class="inner-wrapper">
+                
+<h3 style="text-align: left;">Get in Touch!</h3>
+<p><script src="//page.eviden.com/js/forms2/js/forms2.min.js"></script>
+<script src="//page.eviden.com/rs/247-MBJ-716/images/translations.js"></script>
+
+<style>
+    .setToInvisible {
+        display: none !important;
+    }
+    .setToVisible {
+        display: block;
+    }
+    .mktoErrorRealign {
+        left: 2%;
+        right: unset !important;
+    }
+    #mktoFormThankYouMessage {
+        text-align: center;
+        /*font-family:'Raleway', sans-serif; */
+        font-size: 15px;
+        padding: 5px;
+        font-weight: bold;
+    }
+    #mktoFormThankYouMessage a  , .dark-theme:has(.mktoForm) #mktoFormThankYouMessage a {
+        color: #ff6d43 !important;
+        text-decoration: underline;
+    }
+   .dark-theme:has(.mktoForm) #mktoFormThankYouMessage {
+    color: #ffffff !important;
+}
+
+    @media only screen and (max-width: 1400px)  {
+        .mktoErrorRealign {
+            left: 4%;
+            right: unset !important;
+        }
+    }
+    @media only screen and (max-width: 768px)  {
+        .mktoErrorRealign {
+            left: 10%;
+            right: unset !important;
+        }
+    }
+
+
+</style>
+
+<!--Please insert into <form> below
+    id="mktoForm_xxxx"              - where xxxx is the marketo form ID. (not always 4 digits) (1047 = atos primary form, sandbox version) 
+    form-type="TypeOfForm"          - where TypeOfForm is one of: Thank You; Thank You Simple; Asset Download; Page Redirect.
+    data-content="NameOfAsset"      - where NameOfAsset is a user-friendly title of the asset to download.
+    data-destination="UrlOfAsset"   - where UrlOfAsset is the full URL of the asset to download or page redirect. (e.g. https://clever-touch.com/)
+    class="mktoForm"                - this does not need editing. 
+-->
+
+</form><form id="mktoForm_5920"
+      form-type="Thank You"
+      data-content=""
+      data-destination=""
+      class="mktoForm marketo">
+</form>
+
+<script>
+    //in order to access your desired Marketo form change these 2 variables to the 2 provided by the embed code in the line beginning MktoForms2.loadForm
+    const baseURL = "//page.eviden.com";
+    const munchkinID = "247-MBJ-716"
+
+    //takes the id from mktoForm element and converts to just the id number, for use in MktoForms2.loadForm
+    const mktoForm_xxxx_ID = document.getElementsByClassName("mktoForm")[0].getAttribute("id")
+    const extractDigits = /\d+/;
+    const FormID = parseInt(mktoForm_xxxx_ID.match(extractDigits), 10);
+    var language;
+    var privacyType = "none"
+    var browserLangFormatted;
+    switch (navigator.language) {
+        case "en": case "en-GB":
+            browserLangFormatted = "English GB";
+            break;
+        case "en-US":
+            browserLangFormatted = "English US";
+            break;
+        case "es": case "es-ES":
+            browserLangFormatted = "European Spanish";
+            break;
+        case catchFrenchLanguageCodes(navigator.language): 
+            browserLangFormatted = "French";
+            break;
+        case catchLatAmSpanishLanguageCodes(navigator.language):
+            browserLangFormatted = "Latin American Spanish";
+            break;
+        case catchGermanLanguageCodes(navigator.language):
+            browserLangFormatted = "German";
+            break;
+        case "it": case "it-CH":
+            browserLangFormatted = "Italian";
+            break;
+        case "nl": case "nl-BE":
+            browserLangFormatted = "Dutch";
+            break;
+        case "pt-BR": 
+            browserLangFormatted = "Brazilian Portuguese"
+            break;
+        default:
+            browserLangFormatted = "English US";
+            break;
+    }
+
+    // * @copyright © 2021 Sanford Whiteman
+    // @license Hippocratic 2.1
+    (function(){
+
+        var userConfig = {
+            apiKeys : {
+                recaptcha : "6LfRM6keAAAAACnaog4Sl9nzvzHupd74YADwTAvp"
+            },
+            fields : {
+                recaptchaFinger : "reCAPTCHALastUserFingerprint"
+            },
+            actions : {
+                formSubmit : "form"
+            },
+            debug : {
+                testBadFinger : false
+            }
+        };
+
+        /* --- NO NEED TO TOUCH BELOW THIS LINE --- */
+
+        MktoForms2.whenReady(function(mktoForm) {
+
+            var formEl = mktoForm.getFormElem()[0],
+                submitButtonEl = formEl.querySelector("button[type='submit']");
+
+            /* pending reCAPTCHA widget ready */
+            submitButtonEl.disabled = true;
+
+            /* pending reCAPTCHA verify */
+            mktoForm.submittable(false);
+            mktoForm.locked = false;
+
+            mktoForm.onValidate(function(native) {
+                if (!native) return;
+
+                grecaptcha.ready(function() {
+                    grecaptcha.execute(userConfig.apiKeys.recaptcha, {
+                        action: userConfig.actions.formSubmit
+                    })
+                        .then(function(recaptchaFinger) {
+                            var mktoFields = {};
+                            if (mktoForm.locked == false) {
+                                mktoForm.locked = true;
+                                if(!userConfig.debug.testBadFinger) {
+                                    mktoFields[userConfig.fields.recaptchaFinger] = recaptchaFinger;
+                                } else {
+                                    mktoFields[userConfig.fields.recaptchaFinger] = "known bad fingerprint " + Math.random();
+                                }
+                                mktoForm.addHiddenFields(mktoFields);
+                                mktoForm.submittable(true);
+                                mktoForm.submit();
+                            } else {
+                            }
+                        });
+                });
+            });
+        });
+
+        var recaptchaListeners = {
+            ready : function() {
+                MktoForms2.whenReady(function(mktoForm){
+                    var formEl = mktoForm.getFormElem()[0],
+                        submitButtonEl = formEl.querySelector("button[type='submit']");
+
+                    submitButtonEl.disabled = false;
+                });
+            }
+        };
+        Object.keys(recaptchaListeners).forEach(function globalize(fnName){
+            window["grecaptchaListeners_" + fnName] = recaptchaListeners[fnName];
+        });
+
+        /* inject the reCAPTCHA library */
+        recaptchaLib = document.createElement("script");
+        recaptchaLib.src = "https://www.google.com/recaptcha/api.js?render=" + userConfig.apiKeys.recaptcha + "&onload=grecaptchaListeners_ready";
+        document.head.appendChild(recaptchaLib);
+
+    })();
+
+    MktoForms2.loadForm(baseURL, munchkinID, FormID, function(form) {
+
+// this will be replaced by a string fetched from translations.js
+var thankYouMessage = "Thank you for your interest in";
+var thankYouMessageSimple = "Thank you";
+var downloadLinkText = "You can download the report here.";
+var contactMessage = "If requested, a member of our team will be in touch with you shortly."
+
+
+//find out which type of form this is
+var formType = document.getElementsByClassName("mktoForm")[0].getAttribute("form-type");
+var form_destination = document.getElementsByClassName("mktoForm")[0].getAttribute("data-destination");
+var form_content_name = document.getElementsByClassName("mktoForm")[0].getAttribute("data-content");
+
+// Function added by Atos. Last Form Referrer and Last Source Page
+    MktoForms2.whenReady(function (form) {
+        form.addHiddenFields({lastFormReferrer : document.location.href});
+		var previousPageURL = (document.referrer != "") ? document.referrer :  document.location.href;
+		form.addHiddenFields({lastSourcePage : previousPageURL});
+});
+// End of Atos added actions
+
+form.onSuccess(function(values, followUpUrl) {
+	
+	if(window._paq != undefined) {
+		window._paq.push(['trackEvent', 'Marketo Form 5920 - '+window.location.href, 'Thank You - ', '{campaign}']);
+	}
+	
+	//linkedin tracker
+	if(window.lintrk != undefined) {
+		window.lintrk('track', { conversion_id: 12792946 });
+	}
+	
+    // Page Redirect - immediately goes to destination page in same tab
+    if (formType == "Page Redirect") {
+		if(form_destination.indexOf(".pdf")>-1){
+			Matomo.getAsyncTracker().trackLink( form_destination, 'download' );
+		}
+        window.open(form_destination, "_parent");
+        return false;
+    }
+    // Asset Download - shows TY message with link to asset. 
+    else if (formType == "Asset Download") {
+        if (form_content_name !== "") {
+            jQuery("#mktoFormThankYouMessageText").html(thankYouMessage + " " + form_content_name + ".");
+        } else {
+            jQuery("#mktoFormThankYouMessageText").html(thankYouMessage);
+        }
+        jQuery("#mktoFormThankYouMessageLink").attr("href", form_destination);
+        jQuery("#mktoFormThankYouMessageLink").html(downloadLinkText)
+        jQuery("#mktoFormThankYouMessageLink").addClass("setToVisible").removeClass("setToInvisible");
+        showThankYouMessage();
+        return false;
+    } else if (formType == "Thank You Simple") {
+        jQuery("#mktoFormThankYouMessageText").html(thankYouMessageSimple);
+        showThankYouMessage();
+        return false;   
+    } else if (formType == "Marketo Redirect") {
+        jQuery("#mktoFormThankYouMessageText").html(thankYouMessageSimple);
+        showThankYouMessage();
+        // No return false to allow for Marketo follow up action to run
+    }
+    // Thank You, or any kind of form not listed - shows TY message saying we'll get back to you
+    else {
+        jQuery("#mktoFormThankYouMessageText").html(thankYouMessage);
+        jQuery("#mktoFormContactMessage").html(contactMessage);
+        jQuery("#mktoFormContactMessage").addClass("setToVisible").removeClass("setToInvisible");
+        showThankYouMessage();
+        return false;
+    };
+
+});
+
+        function translateFormLabels() {
+            if (document.getElementById("preferredLanguage")) {
+                //use the form's language field, if it's empty, use the browser's default language
+                if (form.vals().preferredLanguage.length > 0) {
+                    language = form.vals().preferredLanguage;
+                } else {
+                    language = browserLangFormatted
+                }
+
+                const translationsObj = getTranslations(language);
+                const formFieldLabels = Object.keys(form.vals());
+                const keysForThisLanguage = Object.keys(languageTranslations[language]);
+
+                for (var i=0; i<formFieldLabels.length ; i++) {
+                    if (formContains(formFieldLabels[i], keysForThisLanguage)) {
+                        var objOfThisField = translationsObj[formFieldLabels[i]];
+                        //change this label text to translated version
+                        jQuery("#Lbl" + formFieldLabels[i]).html(objOfThisField.label);
+
+                        if (objOfThisField.type == "select") {
+                            var optionsForThisSelect = objOfThisField.options
+
+                            //alphabestises the dropdown options for the field, based on the translated display text - ONLY sorts, not displays
+                            if (formFieldLabels[i] == "customerIndustry") {                                
+                                sortIndustryField(optionsForThisSelect);
+                            }
+
+                            var valuesForThisSelect = optionsForThisSelect.map(a => a.value);
+                            var textsForThisSelect = optionsForThisSelect.map(a => a.text);
+                            var formOptionsForThisField = jQuery("#" + formFieldLabels[i] + " option");
+                            var thisFormField = jQuery("#" + formFieldLabels[i])
+
+                            //if this dropdown option is in translations.js, translate the text that is displayed.
+                            for (var j = 0; j < formOptionsForThisField.length; j++) {
+                                var indexOfOption = valuesForThisSelect.indexOf(formOptionsForThisField[j].value);
+                                if (indexOfOption > -1) {
+                                    formOptionsForThisField[j].innerHTML = textsForThisSelect[indexOfOption];
+                                }
+                            }
+
+                            //DISPLAYS the alphabetised options for the dropdown
+                            if (formFieldLabels[i] == "customerIndustry") {
+                                overwriteIndustryField(thisFormField, valuesForThisSelect, textsForThisSelect)
+                            }
+
+                            //remove all salutation options, then replace with the values for this language
+                            if (formFieldLabels[i] == "Salutation") {
+                                currentSalutationSelected = form.vals().Salutation
+                                jQuery("#Salutation").html("")
+                                for (var j = 0; j < valuesForThisSelect.length; j++) {
+                                    jQuery("#Salutation").append(jQuery('<option></option>', {
+                                        value: valuesForThisSelect[j],
+                                        text : textsForThisSelect[j]
+                                    }));
+                                }
+                                //if the selected salutation is still an option, keep it selected.
+                                if (valuesForThisSelect.includes(currentSalutationSelected)) {
+                                    form.vals({ "Salutation" : currentSalutationSelected})
+                                }
+                            }
+
+                        } else if (objOfThisField.type == "radio") {
+                            var optionsForThisSelect = objOfThisField.options
+                            var valuesForThisSelect = optionsForThisSelect.map(a => a.value);
+                            var textsForThisSelect = optionsForThisSelect.map(a => a.text);
+                            var radioOptionsValueForThisField = jQuery("input[name='Opt_in__c']");
+                            var radioOptionsLabelForThisField = jQuery("input[name='Opt_in__c']").next();
+                            for (var j = 0; j < radioOptionsLabelForThisField.length; j++) {
+                                var indexOfOption = valuesForThisSelect.indexOf(radioOptionsValueForThisField[j].value);
+                                if (indexOfOption > -1) {
+                                    radioOptionsLabelForThisField[j].innerHTML = textsForThisSelect[indexOfOption];
+                                    jQuery(radioOptionsLabelForThisField[j]).removeClass("setToInvisible");
+                                }
+                            }
+                        }
+                    };
+                }
+
+                //choose correct privacy policy
+                var nationalPrivLawURL = "none"; 
+                var nationalPrivLawRegex = new RegExp;
+                switch (form.vals().Country) {
+                    case "United Kingdom": case "Isle of Man": case "Gibraltar" : 
+                        privacyType = "DPA";
+                        nationalPrivLawURL = "https://www.legislation.gov.uk/ukpga/2018/12/contents/enacted";
+                        nationalPrivLawRegex = /DPA|APD/g;
+                        break;
+                    case "United States" : 
+                        if (form.vals().State == "California") {
+                            privacyType = "CCPA";
+                            nationalPrivLawURL = "https://oag.ca.gov/privacy/ccpa";
+                            nationalPrivLawRegex = /CCPA/g;
+                            nationalPrivLawURL2 = "https://thecpra.org/"
+                            nationalPrivLawRegex2 = /CPRA/g;
+                        } else {
+                            privacyType = "none";
+                            nationalPrivLawURL = "none"
+                        }
+                        break;
+                    case "Canada" : 
+                        privacyType = "CASL";
+                        nationalPrivLawURL = "https://laws-lois.justice.gc.ca/eng/acts/E-1.6/index.html";
+                        nationalPrivLawRegex = /CASL/g;
+                        break;
+                    case "Brazil" : 
+                        privacyType = "LGDP";
+                        nationalPrivLawURL = "https://lgpd-brazil.info/";
+                        nationalPrivLawRegex = /LGPD/g;
+                        break;
+                    case "South Africa" : 
+                        privacyType = "POPIA";
+                        nationalPrivLawURL = "https://popia.co.za/";
+                        nationalPrivLawRegex = /POPIA/g;
+                        break;
+                    case "Mexico" : 
+                        privacyType = "LFPDPPP";
+                        nationalPrivLawURL = "https://privacyinternational.org/state-privacy/1006/state-privacy-mexico#dataprotection"
+                        nationalPrivLawRegex = /LFPDPPP/g;
+                        break;
+                    case gdprCountries(form.vals().Country) : 
+                        privacyType = "GDPR";
+                        nationalPrivLawURL = "https://gdpr.eu/";
+                        nationalPrivLawRegex = /GDPR|RGPD|DSGVO|AVG/g
+                        break;
+                    default:
+                        privacyType = "none";
+                        nationalPrivLawURL = "none";
+                        break;
+                };
+
+                //translate opt-in text
+                //if exactly 2 .mktoHtmlText elements on form, & not updated to use new classes, use the old assignment method
+                if (jQuery(".mktoHtmlText").length == 2 && jQuery(".opt-in-text").length == 0) {
+                    var formOptInText = jQuery(".mktoHtmlText").eq(0);
+                    var formPrivacyText = jQuery(".mktoHtmlText").eq(1);
+                } // else use new classes 
+                else {
+                    var formOptInText = jQuery(".opt-in-text")
+                    var formPrivacyText = jQuery(".privacy-text")
+                }
+                var optInTextObj = translationsObj["OptInText"];
+                var optInTypes = optInTextObj.map(a => a.value);
+                //only California is different Opt-In to GDPR/Default
+                if (privacyType == "CCPA") {
+                    formOptInText.html(optInTextObj[optInTypes.indexOf(privacyType)].text); 
+                } else {
+                    formOptInText.html(optInTextObj[0].text); 
+                }
+
+                //translate Privacy Policy text
+                var privacyTextObj = translationsObj["PrivacyText"];
+                var privacyTypes = privacyTextObj.map(a => a.value);
+                var indexOfPrivacyType = privacyTypes.indexOf(privacyType);
+                formPrivacyText.html(privacyTextObj[indexOfPrivacyType].text); 
+
+                //add in privacy policy links to translated text, for atos and for national law (e.g. GDPR)
+                if (formPrivacyText.html()) {
+                    var atosPrivLinkRegex = /(Privacy Policy|Politique de confidentialité|Informativa sulla privacy|Datenschutzrichtlinie|Política de privacidad|Privacybeleid|Política de Privacidade)/g
+                    var atosPrivPolicyURL = 'https://atos.net/en/privacy'
+                        if (language == "French") {
+                            //only French link is non-EN
+                            atosPrivPolicyURL = 'https://atos.net/fr/vie-privee'
+                        }
+                    
+                    //add atos privacy link
+                    addInLink(formPrivacyText, atosPrivLinkRegex, atosPrivPolicyURL);
+                    if (privacyType != "none" ) {
+                        //add GDPR etc. link
+                        addInLink(formPrivacyText, nationalPrivLawRegex, nationalPrivLawURL);
+                        if (privacyType == "CCPA") {
+                            //California has two links
+                            addInLink(formPrivacyText, nationalPrivLawRegex2, nationalPrivLawURL2);
+                        }
+                    }
+                }
+
+                //translate Submit Button
+                var submitButtonObj = translationsObj["Submit"];
+                jQuery(".mktoButton[type='submit']").html(submitButtonObj.text);
+                
+                //translate Thank You texts
+                if (form_content_name != "" && formType == "Asset Download") {
+                    thankYouMessage = translationsObj["ThankYouDataContent"]
+                } else if (formType == "Thank You Simple") {
+                    thankYouMessageSimple = translationsObj["ThankYouSimple"]
+                } else {
+                    thankYouMessage = translationsObj["ThankYouEmptyDataContent"]
+                }
+                downloadLinkText = translationsObj["DownloadLinkText"]
+                contactMessage = translationsObj["ContactTYText"]
+                
+            } 
+            // If prefered language field not present on form
+            else {
+                language = browserLangFormatted;
+                const translationsObj = getTranslations(language);
+                //translate Thank You texts
+                if (form_content_name != "" && formType == "Asset Download") {
+                    thankYouMessage = translationsObj["ThankYouDataContent"]
+                } else if (formType == "Thank You Simple") {
+                    thankYouMessageSimple = translationsObj["ThankYouSimple"]
+                } else {
+                    thankYouMessage = translationsObj["ThankYouEmptyDataContent"]
+                }
+                downloadLinkText = translationsObj["DownloadLinkText"]
+                contactMessage = translationsObj["ContactTYText"]
+            };
+
+        };
+
+        const sortIndustryField = function(options) {
+            options.sort(function(a,b) {
+                //make sure the 'please select' option is first
+                if (a.value == b.value) return 0
+                if (a.value == "") return -1;
+                if (b.value == "") return 1;
+                //and sort the rest alphabetically
+                return a.text.localeCompare(b.text)
+                //if (a.text > b.text) return 1;
+                //if (a.text < b.text) return -1;
+                //return 0 
+            })
+        }
+
+
+        const overwriteIndustryField = function(field, values, texts) {
+            var selectedVal = (field.val())
+            field.html("");
+            for (var j = 0; j < values.length; j++) {
+                field.append(jQuery('<option></option>', {
+                    value: values[j],
+                    text : texts[j]
+                }));
+            }
+            //keep previously selected value as selected
+            field.val(selectedVal);
+        } 
+
+        //add in privacy links to translated text
+        const addInLink = function(privacyText, unlinkedTextRegex, privURL) {
+            var stringToLink = privacyText.html().match(unlinkedTextRegex)
+            var linkedText = "<a href="+ privURL + " target='blank'>" + stringToLink + "</a>";
+            var replacement = privacyText.html().replace(unlinkedTextRegex, linkedText);
+            privacyText.html(replacement) 
+        }
+        
+        const formContains = (label, keysForThisLanguage) => {
+            if (keysForThisLanguage.includes(label)) {
+                return true
+            } else {
+                return false
+            }
+        }
+
+        const getTranslations = (language) => {
+            if(Object.keys(languageTranslations).includes(language)) {
+                return languageTranslations[language];
+            } else { return [] }
+        }
+
+        translateFormLabels();
+
+        //when a field changes, check if any progressive fields have appeared and need translation
+        jQuery(".mktoForm").on("change", ".mktoField", () => {
+            translateFormLabels();
+        }); 
+
+        //check for a Marketo validation error message appearing, grab its text and change it to translated version
+        jQuery(document).delegate('.mktoForm', 'focus', function() {
+            if (document.getElementById("preferredLanguage")) {
+                if ( jQuery('.mktoErrorMsg')['0'] ) {
+                    originalErrorMessage = jQuery('.mktoErrorMsg')[0];
+                    errorMessageID = jQuery(originalErrorMessage).attr('id')
+                    fieldID = errorMessageID.replace('ValidMsg', '')
+                    const translationsObj = getTranslations(language);
+                    var objOfThisField = translationsObj[fieldID];
+                    jQuery('.mktoError').addClass("mktoErrorRealign")
+                    jQuery('.mktoErrorMsg')['0'].innerHTML = objOfThisField.requiredError;
+                };
+            };
+        });
+	});
+
+    //check for Countries in GDPR during privacy policy selection
+    const gdprCountriesArr = listOfEuropeanCountries
+    const gdprCountries = (country) => {
+        if (gdprCountriesArr.includes(country)) {
+            return country;
+        } else return false;
+    }
+
+    function showThankYouMessage() {
+        MktoForms2.whenReady(function (form) {
+            form.getFormElem().hide();
+            jQuery("#mktoFormThankYouMessage").addClass("setToVisible").removeClass("setToInvisible");
+            //scroll to Thank you Message
+	        jQuery("html, body").animate({ 'scrollTop': jQuery('#mktoFormThankYouMessage').offset().top - 200 }, 600);
+        });
+    }
+    
+</script>
+
+<div id="mktoFormThankYouMessage" class="setToInvisible" mktoname="Form Thank you message">
+    <div><span id="mktoFormThankYouMessageText">Thank you for your interest.</span>
+        <!-- <a> below only displays if form-type is Asset Download-->
+        </a><a class="setToInvisible" id="mktoFormThankYouMessageLink" target="_blank" href="">You can download the report here.</a>
+    </div>
+    <!-- span below only displays if form-type is Contact Us-->
+    <span id="mktoFormContactMessage" class="setToInvisible">If requested, a member of our team will be in touch with you shortly</span>
+</div>            </p></div>
+        </div>
+    </div></div></div></div></div>
+</div>	</div><!-- .entry-content -->
+</article><!-- #post-## --></main><!-- #site-content -->
+<footer class="footer">
+
+	<div class="menu-wrapper">
+		<nav class="footer-main-menu-wrapper container">
+			<ul><li class=' menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children column'><ul><li class=''><a href='https://eviden.com/' title='Home' class=' menu-item menu-item-type-post_type menu-item-object-page menu-item-home' >Home</a></li><li class=''><a href='https://eviden.com/careers/' title='Careers' class=' menu-item menu-item-type-post_type menu-item-object-page' >Careers</a></li><li class=''><a href='https://eviden.com/contact-us/' title='Contact Us' class=' menu-item menu-item-type-post_type menu-item-object-page' >Contact Us</a></li><li class=''><a href='https://atosgroup.com/' title='Atos Group' class=' menu-item menu-item-type-custom menu-item-object-custom' >Atos Group</a></li></ul></li><li class='column'><a href='#' title='Products & Solutions' class=' menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children' >Products & Solutions</a><ul><li class=''><a href='https://eviden.com/solutions/cybersecurity/' title='Cybersecurity' class=' menu-item menu-item-type-post_type menu-item-object-solutions current-solutions-ancestor' >Cybersecurity</a></li><li class=''><a href='https://eviden.com/solutions/mission-critical-systems/' title='Mission-Critical Systems' class=' menu-item menu-item-type-post_type menu-item-object-solutions' >Mission-Critical Systems</a></li><li class=''><a href='https://eviden.com/solutions/vision-ai/' title='Vision AI' class=' menu-item menu-item-type-custom menu-item-object-custom' >Vision AI</a></li></ul></li><li class='column'><a href='https://eviden.com/insights/' title='News &#038; Insights' class=' menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children' >News &#038; Insights</a><ul><li class=''><a href='https://eviden.com/insights/news/' title='News' class=' menu-item menu-item-type-post_type menu-item-object-page' >News</a></li><li class=''><a href='https://eviden.com/insights/press-releases/' title='Press Releases' class=' menu-item menu-item-type-post_type menu-item-object-page' >Press Releases</a></li><li class=''><a href='https://eviden.com/insights/events/' title='Events & Webinars' class=' menu-item menu-item-type-post_type menu-item-object-page' >Events & Webinars</a></li><li class=''><a href='https://eviden.com/insights/client-stories/' title='Client Stories' class=' menu-item menu-item-type-post_type menu-item-object-page' >Client Stories</a></li><li class=''><a href='https://eviden.com/insights/blogs/' title='Blogs' class=' menu-item menu-item-type-post_type menu-item-object-page' >Blogs</a></li><li class=''><a href='https://eviden.com/publications/' title='Publications' class=' menu-item menu-item-type-post_type menu-item-object-page' >Publications</a></li><li class=''><a href='https://eviden.com/insights/awards/' title='Awards &#038; Certifications' class=' menu-item menu-item-type-post_type menu-item-object-page' >Awards &#038; Certifications</a></li></ul></li><li class='column'><a href='https://eviden.com/about-us/' title='About Us' class=' menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children' >About Us</a><ul><li class=''><a href='https://eviden.com/about-us/analyst-and-advisor-relations/' title='Analysts and Advisors' class=' menu-item menu-item-type-post_type menu-item-object-page' >Analysts and Advisors</a></li><li class=''><a href='https://eviden.com/about-us/leadership/' title='Leadership' class=' menu-item menu-item-type-post_type menu-item-object-page' >Leadership</a></li><li class=''><a href='https://eviden.com/about-us/locations/' title='Locations' class=' menu-item menu-item-type-post_type menu-item-object-page' >Locations</a></li><li class=''><a href='https://eviden.com/about-us/partner-ecosystem/' title='Partner Ecosystem' class=' menu-item menu-item-type-post_type menu-item-object-page' >Partner Ecosystem</a></li></ul></li></ul>		</nav>
+
+		<div class="footer-secondary-menu-wrapper container">
+			<div id="nav_menu-11" class="widget widget_nav_menu"><h3 class="widget-title">Follow Us</h3><div class="footer-social-menu-container"><ul id="menu-social-menu" class="menu"><li class='nav-item'>
+			<a
+				href='https://www.linkedin.com/company/eviden'
+				target='_blank'
+				rel='nofollow'
+				aria-label='Linkedin'
+				class='icon-linkedin menu-item menu-item-type-custom menu-item-object-custom icon-linkedin'
+			></a></li><li class='nav-item'>
+			<a
+				href='https://twitter.com/EvidenLive'
+				target='_blank'
+				rel='nofollow'
+				aria-label='Twitter'
+				class='icon-twitter menu-item menu-item-type-custom menu-item-object-custom icon-twitter'
+			></a></li><li class='nav-item'>
+			<a
+				href='https://www.instagram.com/evidenlive'
+				target='_blank'
+				rel='nofollow'
+				aria-label='Instagram'
+				class='icon-instagram menu-item menu-item-type-custom menu-item-object-custom icon-instagram'
+			></a></li><li class='nav-item'>
+			<a
+				href='https://www.youtube.com/@EvidenLive'
+				target='_blank'
+				rel='nofollow'
+				aria-label='YouTube'
+				class='icon-youtube menu-item menu-item-type-custom menu-item-object-custom icon-youtube'
+			></a></li></ul></div></div><div id="nav_menu-12" class="widget widget_nav_menu"><div class="menu-regional-footer-on-socialrow-container"><ul id="menu-regional-footer-on-socialrow" class="menu"><li id="menu-item-922" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-922"><a href="https://eviden.com/terms-and-conditions/">Terms and Conditions</a></li>
+<li id="menu-item-923" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-923"><a href="https://eviden.com/privacy-policy/">Privacy Policy</a></li>
+<li id="menu-item-772029" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-772029"><a href="https://atos.integrityline.app/?lang=en">Integrity Line</a></li>
+<li id="menu-item-814061" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-814061"><a href="https://eviden.com/accessibility/">Accessibility Statement</a></li>
+</ul></div></div>		</div>
+	</div>
+
+	<div class="copyright-wrapper">
+		<div id="custom_html-3" class="widget_text widget widget_custom_html"><div class="textwidget custom-html-widget"><div class="container">
+	<div class="footer-copyright-container"><p>Eviden is part of Atos Group. ©Eviden SAS 2025. All rights reserved.</p>
+	</div>
+</div></div></div>	</div>
+
+
+	
+		<style>
+			.messageBoxBgImg {
+				background-image: url(https://eviden.com/wp-content/uploads/2023/05/icon-message2.png)
+			}
+
+			.messageBoxBgImg:hover {
+				background-image: url(https://eviden.com/wp-content/uploads/2023/05/icon-message2-hover.png)
+			}
+		</style>
+	</footer>
+<script src="https://eviden.com/wp-content/themes/evidian/assets/build/js/main.js?ver=1749047604" id="main-js"></script>
+<script src="https://eviden.com/wp-content/plugins/js_composer/assets/js/dist/js_composer_front.min.js?ver=8.7.2" id="wpb_composer_front_js-js"></script>
+        <script type="text/javascript">
+            /* <![CDATA[ */
+           document.querySelectorAll("ul.nav-menu").forEach(
+               ulist => { 
+                    if (ulist.querySelectorAll("li").length == 0) {
+                        ulist.style.display = "none";
+
+                                            } 
+                }
+           );
+            /* ]]> */
+        </script>
+        <script>function hidePaginationNumbers() {
+    jQuery('div.page-list a.page-numbers').each(function() {
+        var pageNumber = parseInt(jQuery(this).text(), 10);
+        if (pageNumber >= 10) {
+            jQuery(this).hide();
+        }
+    });
+
+    var currentPageNumber = parseInt(jQuery('div.page-list span.page-numbers.current').text(), 10);
+    if (currentPageNumber >= 10) {
+        jQuery('a.next').addClass('inactive');
+        jQuery('span.page-numbers.dots').hide();
+    }
+}
+
+function wpReadMoreTagActivate() {
+    var $showMore = jQuery('span[id*="more-"]');
+    $showMore.html("<a href='javascript:void(0);'>Read more</a>");
+    
+    var $showMoreNext = $showMore.parent('p').nextAll();
+	$showMoreNext.hide();
+    
+    // Without 'Read less'
+    $showMore.on('click', function() {
+    	$showMoreNext.show();
+    	$showMore.remove();
+    });
+    
+    /* * /
+    // With 'Read less'
+    $showMore.parent('p').parent().append( $showMore.wrap( "<p></p>" ) );
+	jQuery('span[id*="more-"]').on('click', function() {
+    	if ($showMoreNext.is(':visible')) {
+    		$showMoreNext.hide();
+    		jQuery('a',this).text('Read more');
+    	  } else {
+    		$showMoreNext.show();
+    		jQuery('a',this).text('Read less');
+    	  }
+    });
+    /* */
+}
+
+jQuery(document).ready(function() {
+    // Run once on document ready
+    hidePaginationNumbers();
+
+    // Assume there's an AJAX event or some other event that triggers the pagination change
+    jQuery(document).ajaxComplete(function() {
+        hidePaginationNumbers();
+    });
+    
+    wpReadMoreTagActivate();
+});</script></body>
+
+</html>

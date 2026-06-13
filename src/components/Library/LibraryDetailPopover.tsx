@@ -15,6 +15,7 @@ import { maturityByRefId } from '../../data/maturityGovernanceData'
 import { CSWP39_TIERS } from '../Compliance/cswp39Data'
 import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_STYLES, PILLAR_TO_ZONE } from '../../data/cswp39ZoneData'
 import { DocumentAnalysis } from './DocumentAnalysis'
+import { BUCKET_STYLES } from '../../utils/documentStatusBucket'
 import { PillarDisclaimer } from '../BusinessCenter/widgets/PillarDisclaimer'
 import { leadersData } from '../../data/leadersData'
 import clsx from 'clsx'
@@ -413,6 +414,58 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                     enrichment={libraryEnrichments[item.referenceId]}
                     relatedLeaders={relatedLeaders}
                   />
+                )}
+
+                {/* Previous revisions — older editions collapsed into this tile */}
+                {item.priorRevisions && item.priorRevisions.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                      Previous revisions ({item.priorRevisions.length})
+                    </h4>
+                    <ul className="space-y-2">
+                      {item.priorRevisions.map((rev) => (
+                        <li
+                          key={rev.referenceId}
+                          className="glass-panel p-2.5 flex items-start justify-between gap-2"
+                        >
+                          <div className="min-w-0">
+                            <p
+                              className="text-sm text-foreground truncate"
+                              title={rev.documentTitle}
+                            >
+                              {rev.documentTitle}
+                            </p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span
+                                className={clsx(
+                                  'inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider',
+                                  BUCKET_STYLES[rev.documentStatusBucket].badge
+                                )}
+                                title={rev.documentStatus}
+                              >
+                                {BUCKET_STYLES[rev.documentStatusBucket].label}
+                              </span>
+                              <span className="text-[11px] text-muted-foreground truncate">
+                                {rev.referenceId}
+                              </span>
+                            </div>
+                          </div>
+                          {rev.downloadUrl && (
+                            <a
+                              href={rev.downloadUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="shrink-0 inline-flex items-center gap-1 text-xs text-secondary hover:text-primary"
+                              title={`Open source for ${rev.referenceId}`}
+                            >
+                              <ExternalLink size={14} />
+                              Source
+                            </a>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
               </div>
 

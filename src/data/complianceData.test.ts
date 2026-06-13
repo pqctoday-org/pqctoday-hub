@@ -27,4 +27,20 @@ describe('complianceData', () => {
       expect(uniqueIds.size).toBe(validIds.length)
     }
   })
+
+  const byId = (id: string) => complianceFrameworks.find((f) => f.id === id)
+
+  it('treats an in-force phased range as active, not a distant deadline', () => {
+    // CNSA 2.0 "2025-2033" / ANSSI "2025-2030" straddle the current year and are in
+    // force now — the parser must not bucket them by the far endpoint (mid/long).
+    expect(byId('CNSA-2')?.deadlinePhase).toBe('active')
+    expect(byId('ANSSI')?.deadlinePhase).toBe('active')
+  })
+
+  it('classifies anticipated/advisory frameworks correctly', () => {
+    // OSFI B-13 signals forthcoming (not current) PQC requirements.
+    expect(byId('OSFI-B13-PQC')?.pqcRequirement).toBe('expected')
+    // CISA's PQC Initiative is advisory guidance, not a partial mandate.
+    expect(byId('cisa-pqc-initiative')?.pqcRequirement).toBe('guidance')
+  })
 })
