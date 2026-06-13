@@ -178,6 +178,16 @@ export declare const CKM_SHA384: number
 export declare const CKM_SHA384_HMAC: number
 export declare const CKM_SHA512: number
 export declare const CKM_SHA512_HMAC: number
+/** SHA-512/224 truncated digest family (FIPS 180-4 §5.3.6) */
+export declare const CKM_SHA512_224: number
+export declare const CKM_SHA512_224_HMAC: number
+export declare const CKM_SHA512_224_HMAC_GENERAL: number
+export declare const CKM_SHA512_224_KEY_DERIVATION: number
+/** SHA-512/256 truncated digest family (FIPS 180-4 §5.3.6) */
+export declare const CKM_SHA512_256: number
+export declare const CKM_SHA512_256_HMAC: number
+export declare const CKM_SHA512_256_HMAC_GENERAL: number
+export declare const CKM_SHA512_256_KEY_DERIVATION: number
 export declare const CKM_SHA3_256: number
 export declare const CKM_SHA3_256_HMAC: number
 export declare const CKM_SHA3_384: number
@@ -248,10 +258,6 @@ export declare const CKM_HASH_SLH_DSA_SHA3_384: number
 export declare const CKM_HASH_SLH_DSA_SHA3_512: number
 export declare const CKM_HASH_SLH_DSA_SHAKE128: number
 export declare const CKM_HASH_SLH_DSA_SHAKE256: number
-/** SHA3-256 digest (FIPS 202) */
-export declare const CKM_SHA3_256: number
-/** HMAC-SHA3-256 (FIPS 202) */
-export declare const CKM_SHA3_256_HMAC: number
 /** KMAC-128 — keyed MAC using KECCAK-128 XOF (FIPS 202 / SP 800-185) */
 export declare const CKM_KMAC_128: number
 /** KMAC-256 — keyed MAC using KECCAK-256 XOF (FIPS 202 / SP 800-185) */
