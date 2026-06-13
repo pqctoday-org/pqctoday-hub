@@ -60,6 +60,7 @@ const PHASE_ORDER = [
   'POC',
   'Migration',
   'Standardization',
+  'Deadline',
 ]
 
 export const SimpleGanttChart = ({

@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer" />
+    <link type="image/png" rel="icon" href="/_styles/main-favicon.png" />
+    <link rel="stylesheet" type="text/css" href="/_styles/main.css">
+    <!-- HTML Meta Tags -->
+    
+    <title>Towards More Cryptographic Agility - CryptPad Blueprints</title>
+
+    <meta name="description" content="Cryptography Research &amp; Development for CryptPad">
+    <meta property="og:url" content="https://blueprints.cryptpad.org/review/agility/">
+
+    <!-- Facebook Meta Tags -->
+    <meta property="og:url" content="https://blueprints.cryptpad.org/review/agility/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Towards More Cryptographic Agility">
+    <meta property="og:description" content="Cryptography Research &amp; Development for CryptPad">
+    
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="https://blueprints.cryptpad.org">
+    <meta property="twitter:url" content="https://blueprints.cryptpad.org/review/agility/">
+    <meta name="twitter:title" content="Towards More Cryptographic Agility">
+    <meta name="twitter:description" content="Cryptography Research &amp; Development for CryptPad">
+    
+
+    <meta name="robots" content="index, archive" />
+    <meta name="canonical" href="https://blueprints.cryptpad.org/review/agility/" />
+
+    
+    
+</head>
+
+
+
+
+  
+
+
+
+
+<body>
+
+  <div id="BG-grid-1"></div>
+  <div id="BG-grid-2"></div>
+
+  <div class="container">
+    <nav id="site-contents">
+      
+      <a id="nav-title" href="/">CryptPad Blueprints</a>
+      <ol>
+        
+        
+    
+    
+
+    <li class="nav  with-children">
+    
+        <details >
+            <summary><a href="/document/">Document</a></summary>
+                <ol>
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/threatmodel/">Threat Model</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/whitepaper/">Whitepaper</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  with-children">
+    
+        <details >
+            <summary><a href="/document/recommendations/">Security Recommendations</a></summary>
+                <ol>
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/recommendations/asynchronous_cryptography_functions/">Asynchronous Cryptography Functions</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/recommendations/contact_verification/">Contact Verification</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/recommendations/deduplicate_code/">Deduplicate Code</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/recommendations/encourage_non-default_instance_salt/">Encourage non-default instance salt</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/recommendations/enforce_self-destructing_links/">Enforce Self-Destructing Links</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/recommendations/fix_bit_overlap_in_viewcryptor2/">Fix Bit Overlap in ViewCryptor2</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/recommendations/limit_login_block_size/">Limit Login Block Size</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/recommendations/more_entropy_for_login_keys/">More Entropy for Login Keys</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/recommendations/name_of_team_roles/">Name of Team Roles</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/recommendations/prevent_replay_of_old_patches/">Prevent replay of old patches</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/recommendations/reduce_trust_on_server/">Reduce Trust on Server</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/recommendations/team_key_revocation/">Team Key Revocation</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/recommendations/thumbnails_of_destroyed_documents/">Thumbnails of Destroyed Documents</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/recommendations/traitor_tracing/">Traitor Tracing</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/recommendations/transition_to_new_encryption_schemes/">Transition to New Encryption Schemes</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/recommendations/update_tweetnacl/">Update TweetNaCl</a>
+    
+
+                
+                </ol>
+        </details>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  with-children">
+    
+        <details >
+            <summary><a href="/document/user-stories/">User Stories</a></summary>
+                <ol>
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/access-history-2/">Access History 2</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/access-history/">Access History</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/access-lists-without-access/">“Access lists” without “access”</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/account-impersonation/">Account impersonation</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/account-verification/">Account verification</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/admin-onboarding/">Admin onboarding</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/bulk-settings-updates/">Bulk settings updates</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/bulk-team-onboarding/">Bulk team onboarding</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/ciphersuites/">ciphersuites</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/cli-api/">CLI API</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/contributor-attribution/">Contributor attribution</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/delegated-upload-quotas/">Delegated upload quotas</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/document-format-upgrade/">Document format upgrade</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/efficient-smartphone-login/">Efficient smartphone login</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/feature-telemetry/">Feature telemetry</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/honeypot-operator/">Honeypot operator</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/instance-telemetry/">Instance telemetry</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/legal-operation/">Legal operation</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/limited-account-creation/">Limited account creation</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/loading-docs-on-mobile/">Loading docs on mobile</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/malicious-javascript/">Malicious JavaScript</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/malicious-js-dns-variant/">Malicious JS - DNS variant</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/ownership-2/">Ownership 2</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/ownership/">Ownership</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/police-informant/">Police informant</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/terrorist-cells/">Terrorist cells</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/document/user-stories/uncertain-folder-membership/">Uncertain folder membership</a>
+    
+
+                
+                </ol>
+        </details>
+    
+
+                
+                </ol>
+        </details>
+    
+
+        
+        
+    
+    
+
+    <li class="nav ancestor with-children">
+    
+        <details open>
+            <summary><a href="/review/">Review</a></summary>
+                <ol>
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/review/libraries/">Comparison of Cryptography Libraries for CryptPad</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav current without-children">
+    
+        <a href="/review/agility/">Towards More Cryptographic Agility</a>
+    
+
+                
+                </ol>
+        </details>
+    
+
+        
+        
+    
+    
+
+    <li class="nav  with-children">
+    
+        <details >
+            <summary><a href="/prototypes/">Prototypes</a></summary>
+                <ol>
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/prototypes/crdt/">Offline-First Editing with CRDTs</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/prototypes/secretsharing/">Social Secret Sharing</a>
+    
+
+                
+                
+    
+    
+
+    <li class="nav  without-children">
+    
+        <a href="/prototypes/revocation/">Revocation</a>
+    
+
+                
+                </ol>
+        </details>
+    
+
+        
+      </ol>
+      <ol>
+        <li><a href="/about/">About</a></li>
+      </ol>
+      
+    </nav>
+
+    <div class="page-content">
+      
+        <main class="single-page">
+          
+          
+            
+
+  
+  
+
+  
+  <nav aria-label="Breadcrumb" class="breadcrumb">
+    <ol>
+      
+      <li><a href=/review/>Review</a></li>
+      
+    </ol>
+  </nav>
+  
+
+
+          
+          
+          
+          <h1>Towards More Cryptographic Agility</h1>
+          
+          <section class="metadata">
+            
+    <p class="author">By: Theo von Arx</p>
+
+
+
+    <p title="Date published">12-10-2023</p>
+
+
+
+<div class="meta-buttons">
+    
+    
+        <p><a class="btn" href="/_assets/review/agility/main.pdf">📄&nbsp;PDF&nbsp;(157 KB)</a></p>
+    
+    
+</div>
+
+
+<details>
+    <summary><h3>Page Contents</h3></summary>
+    <ul class="toc__list" role="list" aria-labelledby="app-panel-toc">
+    
+    <li style="--level: 1" class="toc__item">
+        <a href="#abstract" class="toc__link">
+        Abstract
+        </a>
+    </li>
+    
+    <li style="--level: 1" class="toc__item">
+        <a href="#introduction" class="toc__link">
+        Introduction
+        </a>
+    </li>
+    
+    <li style="--level: 1" class="toc__item">
+        <a href="#inventory-of-cryptographic-primitives" class="toc__link">
+        Inventory of cryptographic primitives
+        </a>
+    </li>
+    
+    <li style="--level: 1" class="toc__item">
+        <a href="#criteria-for-updating-cryptography-primitives" class="toc__link">
+        Criteria for updating cryptography primitives
+        </a>
+    </li>
+    
+    <li style="--level: 1" class="toc__item">
+        <a href="#strategies" class="toc__link">
+        Strategies
+        </a>
+    </li>
+    
+    <li style="--level: 2" class="toc__item">
+        <a href="#login-block" class="toc__link">
+        Login Block
+        </a>
+    </li>
+    
+    <li style="--level: 3" class="toc__item">
+        <a href="#change-of-the-kdf" class="toc__link">
+        Change of the KDF
+        </a>
+    </li>
+    
+    <li style="--level: 3" class="toc__item">
+        <a href="#change-of-the-symmetric-encryption-algorithm" class="toc__link">
+        Change of the symmetric encryption algorithm
+        </a>
+    </li>
+    
+    <li style="--level: 2" class="toc__item">
+        <a href="#documents" class="toc__link">
+        Documents
+        </a>
+    </li>
+    
+    <li style="--level: 3" class="toc__item">
+        <a href="#re-encrypt-under-same-seed" class="toc__link">
+        Re-encrypt under same seed
+        </a>
+    </li>
+    
+    <li style="--level: 3" class="toc__item">
+        <a href="#re-encrypt-under-new-seed" class="toc__link">
+        Re-encrypt under new seed
+        </a>
+    </li>
+    
+    <li style="--level: 3" class="toc__item">
+        <a href="#about-the-seed-length" class="toc__link">
+        About the seed length
+        </a>
+    </li>
+    
+    <li style="--level: 2" class="toc__item">
+        <a href="#messaging" class="toc__link">
+        Messaging
+        </a>
+    </li>
+    
+    <li style="--level: 2" class="toc__item">
+        <a href="#teams" class="toc__link">
+        Teams
+        </a>
+    </li>
+    
+    </ul>
+</details>
+
+
+
+          </section>
+          
+          
+          <h2 id="abstract" tabindex="-1">Abstract</h2>
+<p>CryptPad currently uses hard coded algorithms for encrypting documents and messages.
+Changing such an algorithm requires the introduction of a new ciphertext type and poses a major effort on the development side.</p>
+<p>While the currently used algorithms are still considered to be secure, the wide-spoken threat of quantum cryptography potentially endangers the security of CryptPad.
+As the first standard for post-quantum public key encryption scheme has been
+announced by <abbr title="National Institute of Standards and
+Technology">NIST</abbr>, we thus plan the transition towards such a scheme.
+With this aim in mind, we present the different cryptographic primitives used in
+CryptPad and explore their safety against a quantum adversary.
+In such a process, it is key to plan it with cryptographic agility in mind.
+We henceforth outline the path towards more easily swappable cryptographic
+algorithms in CryptPad.</p>
+<h2 id="introduction" tabindex="-1">Introduction</h2>
+<p>The current architecture of CryptPad uses hard-coded cryptographic
+primitives such as X25519-XSalsa20-Poly1305 or SHA-512 implemented in
+the Tweet-NaCl library for JavaScript.<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup><sup>,</sup><sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>
+While all the used primitives are still considered to be secure and
+there are no known vulnerabilities, this might change in the future.</p>
+<p>This &quot;fear&quot; has become more accentuated with the increasing efforts on quantum
+computing over the last decades.
+Quantum computers will be able to solve problems that are hard for today's
+computers.
+These problems include the integer factorization problem, the discrete logarithm
+problem, and the elliptic-curve discrete logarithm.
+As a consequence, the currently used primitives for asymmetric encryption and
+signatures would be broken and would not provide much security anymore.
+This danger will not only arise with the arrival of large-scale quantum
+computers, but already well before: companies and governments could already
+collect encrypted data now and decrypt it later.</p>
+<p>Since 2016, the American <abbr title="National Institute of Standards and
+Technology">NIST</abbr> is working on standardizing Post-Quantum Cryptography.
+Draft standards are currently expected to be available by 2024.
+NIST recommends organization and companies not to wait for the standard to be
+done, but rather already start preparing the transition of the used primitives.</p>
+<p>Consequently, CryptPad should already start today towards more cryptographic
+agility.
+We want to be flexible in the choice of algorithms, key sizes and other
+parameters.
+Having the possibility to more easily change the cryptographic primitives will
+make the transition smooth, and ensures the security of CryptPad in the long
+term.</p>
+<h2 id="inventory-of-cryptographic-primitives" tabindex="-1">Inventory of cryptographic primitives</h2>
+<p><a href="#overview-algorithms">Table 1</a> gives an overview over the used primitives.
+It further indicates whether the algorithms are secure against quantum
+computers.
+This is not the case for both, the asymmetric encryption and signatures
+algorithms in use.
+The reason is that the security of these is based on the elliptic discrete
+logarithm problem.</p>
+<table id="overview-algorithms">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Primitive</th>
+<th style="text-align:left">Algorithm</th>
+<th style="text-align:left">Usage</th>
+<th style="text-align:left">Quantum Resilient<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Symmetric encryption</td>
+<td style="text-align:left">XSalsa20-Poly1305</td>
+<td style="text-align:left">Login Block, Documents</td>
+<td style="text-align:left">Yes</td>
+</tr>
+<tr>
+<td style="text-align:left">Asymmetric encryption</td>
+<td style="text-align:left">X25519-XSalsa20-Poly1305</td>
+<td style="text-align:left">Messaging, symmetric key distribution</td>
+<td style="text-align:left">No</td>
+</tr>
+<tr>
+<td style="text-align:left">Asymmetric signatures</td>
+<td style="text-align:left">Ed25519</td>
+<td style="text-align:left">Proving write rights to documents and mailboxes, answering polls, access lists</td>
+<td style="text-align:left">No</td>
+</tr>
+<tr>
+<td style="text-align:left">Hashing</td>
+<td style="text-align:left">SHA-512</td>
+<td style="text-align:left">Key derivations</td>
+<td style="text-align:left">Yes</td>
+</tr>
+<tr>
+<td style="text-align:left">Key-derivation function</td>
+<td style="text-align:left">Scrypt</td>
+<td style="text-align:left">Derive login keys</td>
+<td style="text-align:left">Yes</td>
+</tr>
+</tbody>
+</table>
+  <caption>Table 1: Overview over the used primitives in CryptPad.</caption>
+</table>
+<p>The most sensitive data in CryptPad is in the symmetrically encrypted
+login block as it contains all the keys for the user's drive, i.e.,
+document keys, private signing and encryption keys, as well as team
+keys. The next-most sensitive data is then encrypted in the documents.
+While these are also symmetrically encrypted and thus secured in the
+long-term view, the problem is the key transport distribution using
+asymmetric encryption. A quantum attacker intercepting (or having
+recorded) and breaking asymmetrically encrypted messages can therefore
+also get access to documents.</p>
+<p>Vulnerable signatures on the other hand are less severe as a quantum
+attacker breaking them long after it has actively modified poses only a
+small threat (namely to blame the author(s) on having written harmful
+content). However, once there exist real-world quantum computers, the
+signature algorithm needs to be exchanged against one that is quantum
+secure.</p>
+<h2 id="criteria-for-updating-cryptography-primitives" tabindex="-1">Criteria for updating cryptography primitives</h2>
+<p>We propose to replace the currently used cryptography primitives (i.e.,
+XSalsa20-Poly1305, Ed25519 provided by Tweet-NaCl) when one or several
+of the following criteria are met:</p>
+<ol>
+<li>
+<p>There is a severe security vulnerability that cannot be fixed.</p>
+</li>
+<li>
+<p>The <span acronym-label="NIST"
+acronym-form="singular+short">NIST</span> standardizes a
+post-quantum cryptography schemes, <em>and</em> this scheme has a stable
+and audited JavaScript implementation (or binding).</p>
+</li>
+<li>
+<p>Cryptography operations are a restricting bottleneck for
+performance, <em>and</em> there are other, significantly faster libraries
+that provide at least the same security level.</p>
+</li>
+</ol>
+<h2 id="strategies" tabindex="-1">Strategies</h2>
+<h3 id="login-block" tabindex="-1">Login Block</h3>
+<p>While protecting the most sensitive data, the encryption mechanism of
+the login block is also comparably easier changeable than others. The
+only requirement for cryptographic agility in the login block is that
+the username and password are enough to decrypt the login block.</p>
+<p>There are two algorithms involved in the login procedure: a
+KDF and
+symmetrical encryption. We therefore propose how to achieve more
+cryptographic agility for both of them.</p>
+<p>Since there is no central entity knowing all the usernames and
+passwords, the KDF cannot be replaced from one day
+to another. Depending on the awareness of the users transition for all
+accounts will take months up to years. In case of a detected
+vulnerability, it is therefore key to efficiently reach all users via
+the internal platform, but also over email (e.g., for the emails
+associated to premium accounts), social media, and the blog. If a
+discovered vulnerability is so severe that passwords could be cracked,
+then users should be forced to set a new password upon login.</p>
+<h4 id="change-of-the-kdf" tabindex="-1">Change of the KDF</h4>
+<p>Since the server does not have any information about the user, there is no easy
+way to know in advance which KDF should be used. Hence, the best way is to
+proceed by trial and error: check if the usage of KDF <em>A</em> leads to a decryptable
+login block. If not, proceed with KDF <em>B</em>, then KDF <em>C</em>, etc.</p>
+<p>Unfortunately, since KDFs are required to be slow, this will take quite some
+time. After a successful login, the login block has to be automatically
+re-encrypted using the latest KDF.</p>
+<h4 id="change-of-the-symmetric-encryption-algorithm" tabindex="-1">Change of the symmetric encryption algorithm</h4>
+<p>By putting the used algorithm into the plaintext metadata associated to a login
+block, we know which algorithm to use. Similar to the above, a legacy algorithm
+should be updated to the latest one after a successful login.</p>
+<h3 id="documents" tabindex="-1">Documents</h3>
+<h4 id="re-encrypt-under-same-seed" tabindex="-1">Re-encrypt under same seed</h4>
+<p>One difficulty of changing the algorithms involved in documents is that
+we want the URL still to be valid so that users do not have to
+redistribute the access link. The strategy is therefore to derive new
+keys for a new algorithm from the same seed.</p>
+<p>To achieve this, we specify the algorithm along with the parameters and
+the public verification key in the (unencrypted) metadata as well as in
+every sent patch. Only document owners are allowed to change the
+algorithm to avoid malicious user specifying broken algorithms. Also,
+there should be consensus on what is the best (latest) algorithm to use
+to avoid clients fighting about that. Currently, this can easily been
+done since the client code is shipped by the server and can be updated
+almost simultaneously.</p>
+<p>It is up to debate whether the chanID
+should also be changed after algorithm change.</p>
+<figure id="fig:key_derivation">
+<pre class="mermaid">
+%%{ init: { 'flowchart': { 'curve': 'stepAfter' } } }%%
+graph TD
+	editKeyStr
+	pwd
+	PK
+	SK
+	viewKeyStr
+	chanID
+	K
+	H1["H( · )"]
+	KGen["KGen( · )"]
+	H2["H( · )"]
+
+	editKeyStr --> H1
+	pwd --> H1
+	pwd --> H2
+	H1 -- "0..31" --> KGen
+	H1 -- "32..63" --> viewKeyStr
+	H1 -- "32..63" --> H2
+	H2 -- "0..15" --> chanID
+	H2 -- "16..47" --> K
+	KGen --> PK
+	KGen --> SK
+
+	classDef variable fill:none,stroke-width:0px
+	class editKeyStr variable
+	class pwd variable
+	class PK variable
+	class SK variable
+	class viewKeyStr variable
+	class chanID variable
+	class K variable
+</pre>
+<figcaption>Figure 1: Key derivation for editable documents</figcaption>
+</figure>
+<h4 id="re-encrypt-under-new-seed" tabindex="-1">Re-encrypt under new seed</h4>
+<p>There might be the case of a severe vulnerability in SHA-512 that violates the
+one-way property. Attackers could consequently deduce the editKeyStr as well as
+the password from the viewKeyStr or even from the encrypted block if there is a
+second vulnerability in the encryption scheme (cf. <a
+href="#fig:key_derivation" data-reference-type="ref"
+data-reference="fig:key_derivation">Figure 1</a>). In this case, document owner should
+re-encrypt the document under a new algorithm using a new, randomly generated
+seed. Since this involves broken links, old links should inform users that the
+content was changed and that they need to request the new access link.</p>
+<h4 id="about-the-seed-length" tabindex="-1">About the seed length</h4>
+<p>When planning to re-use the seed for different encryption schemes, it
+should be long enough to provide good entropy for future usages. While
+we currently use 144 Bits (≈ 24 chars), 256 bits are considered to be
+safe beyond 2030.<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup> To keep the URLs short, we can add
+additional characters to the alphabet such as emojis (up to 1874
+characters).</p>
+<h3 id="messaging" tabindex="-1">Messaging</h3>
+<p>The problem in messaging differs from the one of documents in that there
+is no seed to derive keys from. However, all users can pin algorithms
+and public encryption and verification on their profile page. A sender
+then automatically looks up these values and encrypts the message with
+the user’s preferred parameters.</p>
+<p>An unavoidable problem is that user’s that did not log in for a long
+time cannot update their keys and algorithms. The only way to counteract
+leaking sensitive data over such insecure channels is to completely stop
+using these algorithms and thus stop messaging these users.</p>
+<p>Another problem that already exists in the current version of CryptPad,
+but that is further accentuated: the profile pages are not
+cryptographically secured and could be spoofed.<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup> A mechanism such as
+Signal’s safety numbers can help to prevent against this.</p>
+<h3 id="teams" tabindex="-1">Teams</h3>
+<p>In contrast to documents, teams have a clear set of users that should be
+directly informed about changes of cryptographic algorithms. We can take
+advantage out of this and let team administrators change the encryption
+algorithm and distribute the new keys to all other members according to
+their role.</p>
+<script type="module">
+  import mermaid from '/node_modules/mermaid/dist/mermaid.esm.mjs';
+  mermaid.initialize({
+    startOnLoad: true,
+  });
+</script>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>Bernstein, Daniel J., Bernard van Gastel, Wesley Janssen, Tanja Lange,
+Peter Schwabe, and Sjaak Smetsers. 2014.
+“<span class="nocase">TweetNaCl: A Crypto Library in 100 Tweets</span>.”
+In <em>Progress in Cryptology - LATINCRYPT</em>, edited by Diego F. Aranha and
+Alfred Menezes, 64–83. Cham: Springer International Publishing. <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p>Chestnykhm, Dmitry, Devi Mandiri, and AndSDev. 2016-. “TweetNaCl.js.”
+<a href="https://github.com/dchest/tweetnacl-js">https://github.com/dchest/tweetnacl-js</a>. <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p>Fernández-Caramès, Tiago M., and Paula Fraga-Lamas. 2020. “Towards
+Post-Quantum Blockchain: A Review on Blockchain Cryptography Resistant
+to Quantum Computing Attacks.” <em>IEEE Access</em> 8: 21091–116.
+<a href="https://doi.org/10.1109/ACCESS.2020.2968985">https://doi.org/10.1109/ACCESS.2020.2968985</a>. <a href="#fnref3" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn4" class="footnote-item"><p>Giry, Damien. 2020. “Cryptographic Key Length Recommendation.”
+<a href="https://www.keylength.com/en/compare/">https://www.keylength.com/en/compare/</a>. <a href="#fnref4" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn5" class="footnote-item"><p>Note that this requires an active server-side attacker. <a href="#fnref5" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+
+          
+        </main>
+      
+
+      
+  <aside id="sidebar">
+    
+    <p class="author">By: Theo von Arx</p>
+
+
+
+    <p title="Date published">12-10-2023</p>
+
+
+
+<div class="meta-buttons">
+    
+    
+        <p><a class="btn" href="/_assets/review/agility/main.pdf">📄&nbsp;PDF&nbsp;(157 KB)</a></p>
+    
+    
+</div>
+
+
+<details>
+    <summary><h3>Page Contents</h3></summary>
+    <ul class="toc__list" role="list" aria-labelledby="app-panel-toc">
+    
+    <li style="--level: 1" class="toc__item">
+        <a href="#abstract" class="toc__link">
+        Abstract
+        </a>
+    </li>
+    
+    <li style="--level: 1" class="toc__item">
+        <a href="#introduction" class="toc__link">
+        Introduction
+        </a>
+    </li>
+    
+    <li style="--level: 1" class="toc__item">
+        <a href="#inventory-of-cryptographic-primitives" class="toc__link">
+        Inventory of cryptographic primitives
+        </a>
+    </li>
+    
+    <li style="--level: 1" class="toc__item">
+        <a href="#criteria-for-updating-cryptography-primitives" class="toc__link">
+        Criteria for updating cryptography primitives
+        </a>
+    </li>
+    
+    <li style="--level: 1" class="toc__item">
+        <a href="#strategies" class="toc__link">
+        Strategies
+        </a>
+    </li>
+    
+    <li style="--level: 2" class="toc__item">
+        <a href="#login-block" class="toc__link">
+        Login Block
+        </a>
+    </li>
+    
+    <li style="--level: 3" class="toc__item">
+        <a href="#change-of-the-kdf" class="toc__link">
+        Change of the KDF
+        </a>
+    </li>
+    
+    <li style="--level: 3" class="toc__item">
+        <a href="#change-of-the-symmetric-encryption-algorithm" class="toc__link">
+        Change of the symmetric encryption algorithm
+        </a>
+    </li>
+    
+    <li style="--level: 2" class="toc__item">
+        <a href="#documents" class="toc__link">
+        Documents
+        </a>
+    </li>
+    
+    <li style="--level: 3" class="toc__item">
+        <a href="#re-encrypt-under-same-seed" class="toc__link">
+        Re-encrypt under same seed
+        </a>
+    </li>
+    
+    <li style="--level: 3" class="toc__item">
+        <a href="#re-encrypt-under-new-seed" class="toc__link">
+        Re-encrypt under new seed
+        </a>
+    </li>
+    
+    <li style="--level: 3" class="toc__item">
+        <a href="#about-the-seed-length" class="toc__link">
+        About the seed length
+        </a>
+    </li>
+    
+    <li style="--level: 2" class="toc__item">
+        <a href="#messaging" class="toc__link">
+        Messaging
+        </a>
+    </li>
+    
+    <li style="--level: 2" class="toc__item">
+        <a href="#teams" class="toc__link">
+        Teams
+        </a>
+    </li>
+    
+    </ul>
+</details>
+
+
+
+  </aside>
+
+
+
+    </div>
+    
+    
+  </div>
+
+</body>
+</html>

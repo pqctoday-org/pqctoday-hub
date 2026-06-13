@@ -41,11 +41,13 @@ const { data: allXrefs, metadata } = loadLatestCSV<RawXrefRow, CertificationXref
   })
 )
 
-/** All certification cross-references. */
-export const certificationXrefs: CertificationXref[] = allXrefs
+const activeXrefs = allXrefs.filter((x) => x.status === 'Active')
 
-/** Lookup map: software_name → CertificationXref[] */
-export const certsByProduct: Map<string, CertificationXref[]> = allXrefs.reduce((map, xref) => {
+/** All certification cross-references (active only). */
+export const certificationXrefs: CertificationXref[] = activeXrefs
+
+/** Lookup map: software_name → CertificationXref[] (active only) */
+export const certsByProduct: Map<string, CertificationXref[]> = activeXrefs.reduce((map, xref) => {
   const existing = map.get(xref.softwareName) || []
   existing.push(xref)
   map.set(xref.softwareName, existing)

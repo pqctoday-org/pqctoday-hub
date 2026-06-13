@@ -254,6 +254,11 @@ export default defineConfig({
     exclude: ['@oqs/liboqs-js', '@pqctoday/softhsm-wasm', '@peculiar/x509'],
   },
   build: {
+    // Explicit target: esbuild >= 0.27.5 treats safari14 as lacking (buggy) destructuring
+    // support and errors out, and vite-plugin-top-level-await falls back to an old Vite
+    // default target list that includes safari14 when build.target is unset.
+    // Same list, with the Safari floor raised to 14.1 (first version with correct destructuring).
+    target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14.1'],
     rollupOptions: {
       external: [
         '@capacitor/haptics',

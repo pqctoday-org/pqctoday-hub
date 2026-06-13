@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html  lang="en-US">
+<head id="Head"><meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+<meta name="REVISIT-AFTER" content="1 DAYS" />
+<meta name="RATING" content="GENERAL" />
+<meta name="RESOURCE-TYPE" content="DOCUMENT" />
+<meta content="text/javascript" http-equiv="Content-Script-Type" />
+<meta content="text/css" http-equiv="Content-Style-Type" />
+<title>
+	CIO - About CMMC
+</title><meta id="MetaRobots" name="robots" content="INDEX, FOLLOW" /><link href="/Resources/Shared/stylesheets/dnndefault/7.0.0/default.css?cdv=3879" type="text/css" rel="stylesheet"/><link href="/Desktopmodules/SharedLibrary/Plugins/Bootstrap/css/bootstrap.min.css?cdv=3879" type="text/css" rel="stylesheet"/><link href="/Portals/_default/Skins/DOD2/skin.css?cdv=3879" type="text/css" rel="stylesheet"/><link href="/Portals/_default/Containers/DarkKnight/container.css?cdv=3879" type="text/css" rel="stylesheet"/><link href="/Portals/_default/Containers/DOD2/container.css?cdv=3879" type="text/css" rel="stylesheet"/><link href="/Portals/0/portal.css?cdv=3879" type="text/css" rel="stylesheet"/><link href="/Desktopmodules/SharedLibrary/Plugins/SocialIcons/css/fa-social-icons.css?cdv=3879" type="text/css" rel="stylesheet"/><link href="/Desktopmodules/SharedLibrary/Plugins/Skin/SkipNav/css/skipnav.css?cdv=3879" type="text/css" rel="stylesheet"/><link href="/DesktopModules/SharedLibrary/ValidatedPlugins/aos/aos.css?cdv=3879" type="text/css" rel="stylesheet"/><link href="/Desktopmodules/SharedLibrary/ValidatedPlugins/font-awesome6/css/all.min.css?cdv=3879" type="text/css" rel="stylesheet"/><link href="/Desktopmodules/SharedLibrary/ValidatedPlugins/font-awesome6/css/v4-shims.min.css?cdv=3879" type="text/css" rel="stylesheet"/><script src="/Resources/libraries/jQuery/03_07_01/jquery.js?cdv=3879" type="text/javascript"></script><script src="/Resources/libraries/jQuery-Migrate/03_04_01/jquery-migrate.js?cdv=3879" type="text/javascript"></script><script src="/Resources/libraries/jQuery-UI/01_13_03/jquery-ui.min.js?cdv=3879" type="text/javascript"></script><script src="/Resources/libraries/HoverIntent/01_10_01/jquery.hoverIntent.min.js?cdv=3879" type="text/javascript"></script><link id="RobotoSlab" rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto+Slab" /><link rel='icon' href='/Portals/0/DoD-FavIcon-simple.ico?ver=ItQoEOqef-B7S6JnStgMRA%3d%3d' type='image/x-icon' /><meta name='host' content='DWIA Public Web' /><meta name='contact' content='dma.WebSD@mail.mil' /><link rel="stylesheet" type="text/css" href="/DesktopModules/SharedLibrary/Controls/Banner/CSS/usa-banner.css" /><script  src="/Desktopmodules/SharedLibrary/Plugins/GoogleAnalytics/Universal-Federated-Analytics-8.7.js?agency=DOD&subagency=NDU&sitetopic=dma.web&dclink=true"  id="_fed_an_ua_tag" ></script><style type="text/css">/*Start Dynamic Skin Css*/
+.skin-header-background { background-image: url('/Portals/_default/Skins/DOD2/resources/img/header-back.png') !important; }
+.skin-footer-background { background-image: url('/Portals/_default/Skins/DOD2/resources/img/footer-back.png') !important; }
+</style><link rel="stylesheet" href="/DesktopModules/LiveHTML/Resources/Tabs/Style.css" type="text/css" media="all" /><meta name="viewport" content="width=device-width,initial-scale=1" /></head>
+<body id="Body">
+
+    <form method="post" action="/cmmc/About/" id="Form" enctype="multipart/form-data">
+<div class="aspNetHidden">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="cDKdlf+G3q6NRhfq69CZhfrHYiV/F4orQjPMOP3wz//vCnAG2vdhsh5KJa53hAPyx6dktnKJL3oUaTLK5MQAoOnIMLDmKbSWrev0Ea9zeTMa7DOhw6JbPfr82H9ugNrqyCy7TA9OQy7VIeZ7i1S7JraVCaI3pgxGWiCRBe82/IlsA0WFchxJyGjHvYwC1kygfOXvrRYBqsvYAXlFS2p7DGoWiAW8WTMAskIVBL4oleoNEjFSNRRFZZPkF8Bl2S50c2nm6Yr8QO88CKgIXiOv8sKPnzLJwrP0t21V4t7pr84ED63KZLZ9iqXjAvxq/Mp2wAv24KdvavEIh+CDYRxeFUPcF3tAbMLKxInEmJHBALe/Vu1vgiBa7qm3g73fvJi3CN78dn58uJXqd7WElYBoYgbZu15VBMifQkLn2Vt8XupFcevszAwmWko5pTLaf/srZ2ClO+MJArZUIUVGIfw1rd5Hd6nvbDJcfuDQPgcjZbk9f9541+suBZ64oReLi/+Pczq9XSpJGlTgQpqwYl6wltUXZvWFtnYAtCXeKLsqbe5cOBWpShDGXHVFc15/apR6yA1zzxXZ9+V6MYdfkAa4PRcQVCpCUyFy3SqP4phHosB7a/JVbGnNBi+sUXu7Tn5g1CWnpavLDrH6oG07dKr8aw5+jK3+zPsFIXlcF1CHZuJtGjP1TtI6OBqCVgJ5/nDOCtCSpM2K5zdr8RQKjDTCcPMfXlebjcp+uXtvC1dHx+f9KCYhNK7qaa9oNcCk7yBTNKvDTBHygV5b4OCs1hFK8VDbbdE4EfVbFKJWv61vWlNDPj8vGx9bsh6djQxH8hKY/vKOPoi6+u/kgGMBz6r1aoIRXGNq2uMlR6mTiZxPib86Sv9pNz+7fYRxGGaYhZteqJwVklZx7ML+lirXOzZZDHvGSPaBIH0iJm7v7lI5ziTIIn7WO2KgjZei/+Y3v+sjBqYafiH3Wv0/aHCQdyBzD4SC7THjb1vMC9ikKot1oZCG/hGFPlJQpHqkZzxz8UMshhIVjvlj4GVVaUT523PqrN+JcCP2khMRO1+mN2GLIpIOYf8it4vvgto93nGlPeghxfDxmM6GLgnqwsYsuGatZuVi+yjChyqYjxKBHjCsmCIpVzC4EjPapqInSF7JWEId85tDWI9UpmYdNzypUSEHJ1bI8oEHJvSsYkX7OiyHizSNG9M9gEeYC5pilUzYgD7Oa9gwyA2kqpD6M3TK7IJuTefml2A87O0yjHhdHdViB9Cb7tZ4UEnQMIdDYoXv2tVawFEASciGEPTDFVfHM7qsg6Xx7cZhfXXH4A5nxfP8z4mh3ttHxVtiW5euSSC2dxzbkBFEYsm+IlIQ/D692J2GuwDTHM6PvN//68H7aHu2ps/uFa9VnofUZY6hL9TtUnPlO5uEmj1B8X6Qiz1SMjr87hDrwPyXWbG5xuAULC12DqDZ9D9HKGEJivyTotK5t/InMYZtnAkDp4hcd0ueXXR5x6FHAPeqicKXvJqIMOwC8NyJftWq4eR+HdEyWo/MxSGictrZDjLUT5Vc1ajiA52n4czzW5eIpwkzlgL2TQx1MxvJl8DlpRK6riz37GxxPAHc8RlGZjQ/KOor+sYV0XSx9fERGSaJnzuXFuCysK8e4FZC2GgipvTkwp0dnwTtcoMBilgaqd3STR/tjQk+Velnt2O6VTQgXFcUzoGSIJrxlkyFajm5LMkfxElFAjWuqXKEyImeZ8eaZ86ob6hfEHOk/BsvB7jYdFRo8kH82zow/osGTh5yc8aiJT0zK6x1o3EEWnLdRXQJQBWszfdL7n2bcxO7YtUjvl0XVqe1Ppg8i3lafhj27NxbAJxkIV4=" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['Form'];
+if (!theForm) {
+    theForm = document.Form;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=pynGkmcFUV1pswBILeESv_91IpEyaU3xMdWwhFdAnPR3nB6bR1eh97lRPJI1&amp;t=638901627720898773" type="text/javascript"></script>
+
+
+<script src="/ScriptResource.axd?d=NJmAwtEo3Ip9scJEP8y_hpb54pqFC3jsQli8UE1yQCrVaLglUP5MbKgfIIjJv3wicfaooq36BSZ3CCyUXy-aMXZh2qNoBNx8nSOAICspgcRvADtMfFRYSznRHmPbBLvsFBwY1g2&amp;t=32e5dfca" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=dwY9oWetJoJlayDaFM32DTUrSd0WVSCD1Vt0pkCmaa-1r6m262SS9JLB28eMHNQoRArrTNWfoUBVeEJO6mWX-8fIiN5ijp9LzQj4Lydm79KmmGQx0T726_G7n1MNkhnzZ43o7mbbm398fopY0&amp;t=32e5dfca" type="text/javascript"></script>
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="CA0B0334" />
+	<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="8awWvATX8DImfonGhVZOXbRMjun/SBNCcyBmfe/NBHBQd3LrtKFvoO3QXTvaEELSpxXJbCuuBUaM4GiJFSfyMJhMDHwkERlsMtVQynG4M2GwOZaH" />
+</div><script src="/js/dnn.modalpopup.js?cdv=3879" type="text/javascript"></script><script src="/Portals/_default/Skins/DOD2/resources/js/skin.js?cdv=3879" type="text/javascript"></script><script src="/js/dnncore.js?cdv=3879" type="text/javascript"></script><script src="/Desktopmodules/SharedLibrary/Plugins/Mobile-Detect/mobile-detect.min.js?cdv=3879" type="text/javascript"></script><script src="/DesktopModules/SharedLibrary/ValidatedPlugins/aos/aos.js?cdv=3879" type="text/javascript"></script><script src="/portals/_default/Skins/DOD2/resources/js/menu-width-detection.js?cdv=3879" type="text/javascript"></script><script src="/Desktopmodules/SharedLibrary/Plugins/Skin/js/common.js?cdv=3879" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ScriptManager', 'Form', [], [], [], 3600, '');
+//]]>
+</script>
+
+        
+        
+        
+
+
+<!--CDF(Javascript|/Portals/_default/Skins/DOD2/resources/js/skin.js?cdv=3879|DnnBodyProvider|100)-->
+
+
+<script type="text/javascript">
+$('#personaBar-iframe').load(function() {$('#personaBar-iframe').contents().find("head").append($("<style type='text/css'>.personabar .personabarLogo {}</style>")); });
+</script>
+<div id="dnn_ctl09_header_banner_container" class="header_banner_container">
+    <span class="header_banner_inner">
+        <div class="header_banner_flag">
+            An official website of the United States government 
+        <div class="header_banner_accordion" tabindex="0" role="button" aria-expanded="false"><u>Here's how you know 
+        <span class="expand-more-container"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path class="expand-more" d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
+            </svg></span></u></div>
+        </div>
+        <div class="header_banner_panel" style="">
+            <div class="header_banner_panel_item">
+                <span class="header_banner_dotgov"></span>
+                <div id="dnn_ctl09_bannerContentLeft" class="header_banner_content"><p class="banner-contentLeft-text"><strong> Official websites use .gov </strong></p>A <strong>.gov</strong> website belongs to an official government organization in the United States.</div>
+            </div>
+            <div class="header_banner_panel_item https">
+                <span class="header_banner_https"></span>
+                <div id="dnn_ctl09_bannerContentRight" class="header_banner_content"><p class="banner-contentRight-text"><strong>Secure .gov websites use HTTPS</strong></p><div> A <strong>lock (<span class='header_banner_icon_lock'><svg xmlns = 'http://www.w3.org/2000/svg' width='52' height='64' viewBox='0 0 52 64'><title>lock </title><path class='icon_lock' fill-rule='evenodd' d='M26 0c10.493 0 19 8.507 19 19v9h3a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V32a4 4 0 0 1 4-4h3v-9C7 8.507 15.507 0 26 0zm0 8c-5.979 0-10.843 4.77-10.996 10.712L15 19v9h22v-9c0-6.075-4.925-11-11-11z' /> </svg></span>)</strong> or <strong> https://</strong> means you’ve safely connected to the .gov website. Share sensitive information only on official, secure websites.</div></div>
+            </div>
+
+        </div>
+    </span>
+</div><style> .header_banner_container{ background-color: #15263b; color: #FFF; } .icon_lock { fill: #FFF;} .header_banner_container .header_banner_content .banner-contentLeft-text, .header_banner_container .header_banner_content .banner-contentRight-text { color: #FFF;} </style>
+<script type="text/javascript">
+
+jQuery(document).ready(function() {
+initializeSkin();
+});
+
+</script>
+
+<script type="text/javascript">
+var skinvars = {"SiteName":"Chief Information Officer","SiteShortName":"Chief Information Officer","SiteSubTitle":"U.S. Department of War","aid":"osd_cio_nii","IsSecureConnection":true,"IsBackEnd":false,"DisableShrink":false,"IsAuthenticated":false,"SearchDomain":"search.usa.gov","SiteUrl":"https://dodcio.defense.gov/","LastLogin":null,"IsLastLoginFail":false,"IncludePiwik":false,"PiwikSiteID":-1,"SocialLinks":{"Facebook":{"Url":"https://www.facebook.com/DepartmentofWar/","Window":"_blank","Relationship":"noopener"},"Twitter":{"Url":"https://x.com/dow_cio","Window":"_blank","Relationship":"noopener"},"YouTube":{"Url":"https://www.youtube.com/@DeptofWar","Window":"_blank","Relationship":"noopener"},"Flickr":{"Url":"","Window":"","Relationship":""},"Pintrest":{"Url":"","Window":"","Relationship":""},"Instagram":{"Url":"","Window":"","Relationship":""},"Blog":{"Url":"","Window":"","Relationship":""},"RSS":{"Url":"https://dodcio.defense.gov/DesktopModules/ArticleCS/RSS.ashx?ContentType=1\u0026Site=655\u0026isdashboardselected=0\u0026max=10","Window":"_blank","Relationship":"noopener"},"Podcast":{"Url":"","Window":"","Relationship":""},"Email":{"Url":"https://dowcio.war.gov/Contact/","Window":"","Relationship":""},"LinkedIn":{"Url":"https://www.linkedin.com/company/dow-cio","Window":"_blank","Relationship":"noopener"},"Snapchat":{"Url":"","Window":"","Relationship":""}},"SiteLinks":null,"LogoffTimeout":10500000,"SiteAltLogoText":"United States of America Department of War"};
+</script>
+<script type="application/ld+json">{"@context":"http://schema.org","@type":"Organization","logo":"https://dowcio.war.gov/Portals/0/DoD-Icon-simple.png?ver=twX85R9vCzEldBV9NkynlA%3d%3d","name":"Chief Information Officer","url":"https://dodcio.defense.gov/","sameAs":["https://www.facebook.com/DepartmentofWar/","https://x.com/dow_cio","https://www.youtube.com/@DeptofWar"]}</script>
+
+
+
+<div class="wrapper container nopad">
+    
+
+<div id="skip-link-holder"><a id="skip-link" href="#skip-target">Skip to main content (Press Enter).</a></div>
+<header id="main-header" role="banner">
+    <div class="skin-header skin-header-background">
+        <div class="skin-header-left">
+            <button type="button" class="navbar-toggle pull-left skin-nav-toggle no-skin-override" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="fa fa-bars no-skin-override"></span>
+            </button>
+            <div class="skin-logo">
+                <a href="https://dodcio.defense.gov/" rel="" target="">
+                    <img src="/Portals/0/DoD-Icon-simple.png?ver=twX85R9vCzEldBV9NkynlA%3d%3d" alt="Home Logo: United States of America Department of War" title="United States of America Department of War" class="img-responsive" /></a>
+            </div>
+            <div class="skin-title">
+                <div class="hidden-xs">
+                    
+                    <span class="title-text withsub">Chief Information Officer</span>
+                    <span class="subtitle-text">U.S. Department of War</span>
+                    
+                </div>
+                <div class="visible-xs title-text">
+                    Chief Information Officer
+                </div>
+            </div>
+        </div>
+        <div class="skin-header-right">
+            <div class="skin-search">
+                <div class="mobile-search visible-xs pull-right" hidden>
+                    <a class="mobile-search-link" href="#" title="Search"><span class="search-icon fa closed fa-lg"></span>
+                        <span class="sr-only">Search</span>
+                    </a>
+                    <div class="mobile-search-popup">
+                        <label for="mobileSearch" class="visuallyhidden">Search Chief Information Officer: </label>
+                        <input type="text" name="mobileSearch" class="skin-search-input no-skin-override usagov-search-autocomplete" maxlength="255" aria-label="Search Chief Information Officer" />
+                        <a class="skin-search-go" href="#" title="Search"><span class="fa fa-search fa-inverse fa-lg"></span>
+                            <span class="sr-only">Search</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="desktop-search hidden-xs">
+                    <label for="desktopSearch" class="visuallyhidden">Search Chief Information Officer: </label>
+                    <input type="text" name="desktopSearch" class="skin-search-input no-skin-override usagov-search-autocomplete" maxlength="255" aria-label="Search Chief Information Officer" />
+                    <a class="skin-search-go" href="#" title="Search"><span class="fa fa-search fa-lg"></span>
+                        <span class="sr-only">Search</span>
+                    </a>
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+    <div class="navbar-collapse nav-main-collapse collapse otnav nopad">
+        <div class="container nopad menu new-menu" data-autoexpand="false">
+            <nav class="nav-main">
+<ul class="nav nav-main" id="main-nav">
+	
+    <li class=" top-level ">
+    
+        <a href="https://dodcio.defense.gov/" >Home
+		</a>
+    
+    </li>
+
+    <li class="dropdown  top-level ">
+    
+        <a href="https://dodcio.defense.gov/About-DoW-CIO/" aria-expanded="false">About DoW CIO<span class="fa fa-sm fa-angle-down"></span>
+		</a>
+    
+        <ul class="dropdown-menu">
+        
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/About-DoW-CIO/Awards/"  style="display:flex;align-items:center" >Awards
+            </a>
+        
+    </li>
+
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/About-DoW-CIO/Bios/"  style="display:flex;align-items:center" >Bios
+            </a>
+        
+    </li>
+
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/About-DoW-CIO/History/"  style="display:flex;align-items:center" >History
+            </a>
+        
+    </li>
+
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/In-the-News/"  style="display:flex;align-items:center" >In the News
+            </a>
+        
+    </li>
+
+    <li class=" dm dropdown ">
+        
+			<a  href="javascript:void(0)" aria-expanded="false" style="display:flex;align-items:center">Organization<span class="fa fa-sm fa-angle-right" style="margin-left:20px"></span>
+		    </a>
+        
+        <ul  class="dropdown-menu">
+        
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/About-DoW-CIO/Organization/DCIO-C3/"  style="display:flex;align-items:center" >DCIO C3
+            </a>
+        
+    </li>
+
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/About-DoD-CIO/Organization/DCIO-CS/"  style="display:flex;align-items:center" >DCIO CS
+            </a>
+        
+    </li>
+
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/About-DoD-CIO/Organization/DCIO-IE/"  style="display:flex;align-items:center" >DCIO IE
+            </a>
+        
+    </li>
+
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/About-DoD-CIO/Organization/DCIO-R-A/"  style="display:flex;align-items:center" >DCIO RA
+            </a>
+        
+    </li>
+
+        </ul>
+    
+    </li>
+
+        </ul>
+    
+    </li>
+
+    <li class=" top-level ">
+    
+        <a href="https://dodcio.defense.gov/Library/" >Library
+		</a>
+    
+    </li>
+
+    <li class="dropdown  top-level ">
+    
+        <a href="https://dodcio.defense.gov/Cyber-Workforce/" aria-expanded="false">Cyber Workforce<span class="fa fa-sm fa-angle-down"></span>
+		</a>
+    
+        <ul class="dropdown-menu">
+        
+    <li class=" dm dropdown ">
+        
+			<a href="https://dodcio.defense.gov/Cyber-Workforce/DoDCW/"  style="display:flex;align-items:center" aria-expanded="false">Cyber Workforce Development<span class="fa fa-sm fa-angle-right" style="margin-left:20px"></span>
+            </a>
+        
+        <ul  class="dropdown-menu">
+        
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/Cyber-Workforce/DCWF/"  style="display:flex;align-items:center" >Framework
+            </a>
+        
+    </li>
+
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/Cyber-Workforce/CWM/"  style="display:flex;align-items:center" >Management
+            </a>
+        
+    </li>
+
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/Cyber-Workforce/Cyber-Workforce-Development/CAEO/"  style="display:flex;align-items:center" >CAEO
+            </a>
+        
+    </li>
+
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/Cyber-Workforce/Cyber-Workforce-Development/Cyber-Apprenticeship-Program/"  style="display:flex;align-items:center" >Cyber Apprenticeship Program
+            </a>
+        
+    </li>
+
+    <li class=" dm dropdown ">
+        
+			<a href="https://dodcio.defense.gov/Cyber-Workforce/Cyber-Workforce-Development/Rotational-Programs/"  style="display:flex;align-items:center" aria-expanded="false">Rotational Programs<span class="fa fa-sm fa-angle-right" style="margin-left:20px"></span>
+            </a>
+        
+        <ul  class="dropdown-menu">
+        
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/Cyber-Workforce/Cyber-Workforce-Development/Rotational-Programs/CITEP/"  style="display:flex;align-items:center" >CITEP
+            </a>
+        
+    </li>
+
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/Cyber-Workforce/Cyber-Workforce-Development/Rotational-Programs/FRCWP/"  style="display:flex;align-items:center" >FRCWP
+            </a>
+        
+    </li>
+
+        </ul>
+    
+    </li>
+
+        </ul>
+    
+    </li>
+
+    <li class=" dm dropdown ">
+        
+			<a href="https://dowcio.war.gov/Cyber-Workforce/CWS/"  style="display:flex;align-items:center" aria-expanded="false">Workforce Integration<span class="fa fa-sm fa-angle-right" style="margin-left:20px"></span>
+            </a>
+        
+        <ul  class="dropdown-menu">
+        
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/Cyber-Workforce/CWS/"  style="display:flex;align-items:center" >Strategy
+            </a>
+        
+    </li>
+
+    <li class=" dm  ">
+        
+			<a href="https://www.cloud.mil/Academic-Programs/DoW-Cyber-Service-Academy/" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center" >DoW Cyber Service Academy
+            </a>
+        
+    </li>
+
+        </ul>
+    
+    </li>
+
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/Cyber-Workforce/CES/"  style="display:flex;align-items:center" >Cyber Excepted Service (CES)
+            </a>
+        
+    </li>
+
+    <li class=" dm  ">
+        
+			<a href="https://dowcio.war.gov/Library/"  style="display:flex;align-items:center" >Resources
+            </a>
+        
+    </li>
+
+        </ul>
+    
+    </li>
+
+    <li class="dropdown  top-level ">
+    
+        <a href="https://dodcio.defense.gov/CMMC/" aria-expanded="false">CMMC<span class="fa fa-sm fa-angle-down"></span>
+		</a>
+    
+        <ul class="dropdown-menu">
+        
+    <li class="active dm  ">
+        
+			<a href="https://dodcio.defense.gov/CMMC/About/"  style="display:flex;align-items:center" >About
+            </a>
+        
+    </li>
+
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/CMMC/Resources-Documentation/"  style="display:flex;align-items:center" >Resources-Documentation
+            </a>
+        
+    </li>
+
+    <li class=" dm  ">
+        
+			<a href="https://dowcio.war.gov/Portals/0/Documents/CMMC/CMMC-FAQsv5.pdf" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center" >FAQs
+            </a>
+        
+    </li>
+
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/CMMC/Contact/"  style="display:flex;align-items:center" >Contact
+            </a>
+        
+    </li>
+
+        </ul>
+    
+    </li>
+
+    <li class="dropdown  top-level ">
+    
+        <a href="https://dodcio.defense.gov/Contact/" aria-expanded="false">Contact us<span class="fa fa-sm fa-angle-down"></span>
+		</a>
+    
+        <ul class="dropdown-menu">
+        
+    <li class=" dm  ">
+        
+			<a href="https://dodcio.defense.gov/Contact-us/Speaking-Engagements/"  style="display:flex;align-items:center" >Speaking Engagements
+            </a>
+        
+    </li>
+
+        </ul>
+    
+    </li>
+
+</ul>
+</nav>
+
+
+
+
+        </div>
+    </div>
+</header>
+<p id="skip-target-holder"><a id="skip-target" name="skip-target" class="skip" tabindex="-1"></a></p>
+
+    <div id="content" role="main">
+        <div class="banner">
+            <div class="container nopad">
+                <div id="dnn_CarouselPane" class="DNNEmptyPane"></div>
+            </div>
+            <div class="container nopad banner-row">
+                <div id="dnn_BannerLeft" class="nopad col-md-9 DNNEmptyPane"></div>
+                <div id="dnn_BannerRight" class="nopad col-md-3 banner-right DNNEmptyPane"></div>
+            </div>
+        </div>
+        <div class="container skin-addpad skin-first-row">
+            <div class="row">
+                <div id="dnn_EvenTopLeft" class="col-md-4 DNNEmptyPane"></div>
+                <div id="dnn_EvenTopMiddle" class="col-md-4 DNNEmptyPane"></div>
+                <div id="dnn_EvenTopRight" class="col-md-4 DNNEmptyPane"></div>
+            </div>
+            <div class="row">
+                <div id="dnn_ContentPane" class="col-md-12"><div class="DnnModule DnnModule-LiveHTML DnnModule-140527"><a name="140527"></a>
+<div class="dnnPEMContNotitle"><div id="dnn_ctr140527_ContentPane" class="dnnPEMContNotitleBody"><!-- Start_Module_140527 --><div id="dnn_ctr140527_ModuleContent" class="DNNModuleContent ModLiveHTMLC">
+	<div id="LiveHTMLWrapper140527" class="livehtml"><table data-a11y-ignore="tableDataShouldHaveTh" style="Width: 100%; background-color: Yellow; border-radius: 10px;">
+ <tbody>
+  <tr>
+   <td style="padding-top: 10px; padding-left: 20px; padding-right: 20px; padding-bottom: 0px;">
+   <p style="color: rgb(179, 0, 0); text-align: center; font-size: 12pt"><strong>Phased Implementation of CMMC Requirements Has Begun!</strong><br />
+   CMMC Phase 1 Implementation (Nov 10, 2025 - Nov 9, 2026) to focus primarily on CMMC Level 1 and Level 2 self-assessments<br />
+   <strong>**Reminder to submit AFFIRMATIONS with your CMMC assessments in SPRS**</strong></p>
+   </td>
+  </tr>
+ </tbody>
+</table></div>
+</div><!-- End_Module_140527 --></div></div></div><div class="DnnModule DnnModule-LiveHTML DnnModule-136408"><a name="136408"></a>
+<div class="c_DNN6 c_DNN6_Header">
+    <h1 class="Title Blue"><div class="dnnIcon"></div><span id="dnn_ctr136408_dnnTITLE_titleLabel" class="Head">About CMMC</span>
+
+
+<img src="/Portals/_default/Containers/DarkKnight/Images/Title-BG-Blue.png" class="TitleBar" alt="" /></h1>
+    <div id="dnn_ctr136408_ContentPane"><!-- Start_Module_136408 --><div id="dnn_ctr136408_ModuleContent" class="DNNModuleContent ModLiveHTMLC">
+	<div id="LiveHTMLWrapper136408" class="livehtml"></div>
+</div><!-- End_Module_136408 --></div>
+    <div class="dnnActionButtons">
+        
+		
+    </div>
+</div></div><div class="DnnModule DnnModule-LiveHTML DnnModule-136409"><a name="136409"></a><div id="dnn_ctr136409_ContentPane"><!-- Start_Module_136409 --><div id="dnn_ctr136409_ModuleContent" class="DNNModuleContent ModLiveHTMLC">
+	<div id="LiveHTMLWrapper136409" class="livehtml"><p>Cybersecurity is a top priority for the Department of War (DoW or Department). The defense industrial base (DIB) faces increasingly frequent and complex cyber-attacks. To strengthen DIB cybersecurity and better protect DoW information, the Department developed the <a href="https://www.federalregister.gov/documents/2024/10/15/2024-22905/cybersecurity-maturity-model-certification-cmmc-program" target="_blank">Cybersecurity Maturity Model Certification (CMMC) Program</a>. CMMC assesses defense contractor compliance with existing information safeguarding requirements for federal contract information (FCI) and controlled unclassified information (CUI).</p>
+
+<p>&nbsp;</p>
+</div>
+</div><!-- End_Module_136409 --></div>
+</div><div class="DnnModule DnnModule-LiveHTML DnnModule-136444"><a name="136444"></a>
+<div class="base-container blue-header">
+    <h2 id="dnn_ctr136444_titleControl" class="title">
+        <span id="dnn_ctr136444_dnnTitle_titleLabel" class="Head">Overview of the CMMC Program</span>
+
+
+
+    </h2>
+    <div id="dnn_ctr136444_ContentPane"><!-- Start_Module_136444 --><div id="dnn_ctr136444_ModuleContent" class="DNNModuleContent ModLiveHTMLC">
+	<div id="LiveHTMLWrapper136444" class="livehtml"><p><a href="https://d34w7g4gy10iej.cloudfront.net/graphics/2512/39613.png" target="_blank"><img alt="Level 3 = model 134 requirements; assessment DIBCAC certification assessment every 3 years and annual affirmation; Level 2 = model 110 requirements aligned with NIST SP 800-171 R2; assessment C3PAO certification assessment every 3 years, or self assessment every 3 years for select programs and annual affirmation; Level 1 = model 15 requirements aligned with FAR 52.204-21; assessment annual self assessment and annual affirmation; opens larger image of the CMMC Model" src="https://d34w7g4gy10iej.cloudfront.net/graphics/2512/39613.png" style="float: right; padding-left: 10px; height: 340px; width: 500px;" title="Level 3 = model 134 requirements; assessment DIBCAC certification assessment every 3 years and annual affirmation; Level 2 = model 110 requirements aligned with NIST SP 800-171 R2; assessment C3PAO certification assessment every 3 years, or self assessment every 3 years for select programs and annual affirmation; Level 1 = model 15 requirements aligned with FAR 52.204-21; assessment annual self assessment and annual affirmation; opens larger image of the CMMC Model" /></a></p>
+
+<p>The CMMC Program aligns with the Department&rsquo;s existing information safeguarding requirements for the DIB. The program provides the DoW with increased assurance that prospective contractors and subcontractors have implemented contractually required cybersecurity standards for nonfederal information systems that will process, store, or transmit FCI or CUI during contract performance.</p>
+
+<p>Key features of the CMMC Program:</p>
+
+<ul>
+ <li><strong>Tiered Model</strong>: CMMC assesses compliance with cybersecurity standards at progressively advanced levels, depending on the type and sensitivity of the FCI or CUI. The program also outlines protection requirements for information flowed down to subcontractors.</li>
+ <li><strong>Assessment Requirement</strong>: CMMC assessments allow the Department to verify DIB implementation of foundational cybersecurity standards.</li>
+ <li><strong>Implementation through Contracts</strong>: DoW contractors and subcontractors entrusted with FCI or CUI must achieve a specific CMMC level as a condition of contract award.</li>
+</ul>
+</div>
+</div><!-- End_Module_136444 --></div>
+</div>
+</div><div class="DnnModule DnnModule-LiveHTML DnnModule-136445"><a name="136445"></a>
+<div class="base-container blue-header">
+    <h2 id="dnn_ctr136445_titleControl" class="title">
+        <span id="dnn_ctr136445_dnnTitle_titleLabel" class="Head">Protected Information</span>
+
+
+
+    </h2>
+    <div id="dnn_ctr136445_ContentPane"><!-- Start_Module_136445 --><div id="dnn_ctr136445_ModuleContent" class="DNNModuleContent ModLiveHTMLC">
+	<div id="LiveHTMLWrapper136445" class="livehtml"><p>The CMMC model is designed to enforce the protection of FCI and CUI.</p>
+
+<ul>
+ <li><strong>Federal Contract Information (FCI)</strong>: As defined in section 4.1901 of the Federal Acquisition Regulation (FAR), FCI is &ldquo;information, not intended for public release, that is provided by or generated for the Government under a contract to develop or deliver a product or service to the Government, excluding information provided by the Government to the public (such as that on public websites) or simple transactional information, such as that necessary to process payments.&rdquo;</li>
+ <li><strong>Controlled Unclassified Information (CUI)</strong>: As outlined in Title 32 CFR 2002.4(h), CUI is &ldquo;information the Government creates or possesses, or that an entity creates or possesses for or on behalf of the Government, that a law, regulation, or Government-wide policy requires or permits an agency to handle using safeguarding or dissemination controls.&rdquo; For more information regarding specific CUI categories and subcategories, see the DoW CUI Registry website.</li>
+</ul>
+</div>
+</div><!-- End_Module_136445 --></div>
+</div>
+</div><div class="DnnModule DnnModule-LiveHTML DnnModule-136446"><a name="136446"></a>
+<div class="base-container blue-header">
+    <h2 id="dnn_ctr136446_titleControl" class="title">
+        <span id="dnn_ctr136446_dnnTitle_titleLabel" class="Head">Overview of Assessments</span>
+
+
+
+    </h2>
+    <div id="dnn_ctr136446_ContentPane"><!-- Start_Module_136446 --><div id="dnn_ctr136446_ModuleContent" class="DNNModuleContent ModLiveHTMLC">
+	<div id="LiveHTMLWrapper136446" class="livehtml"><p>The CMMC Program provides assessments at three levels, each incorporating security requirements from existing regulations and guidelines.</p>
+
+<h4>Level 1: Basic Safeguarding of FCI</h4>
+
+<ul>
+ <li><strong>Requirements</strong>: Annual self-assessment and annual affirmation of compliance with the 15 security requirements in FAR clause 52.204-21.</li>
+</ul>
+
+<h4>Level 2: Broad Protection of CUI</h4>
+
+<ul>
+ <li><strong>Requirements</strong>:
+
+ <ol>
+  <li>Either a self-assessment or an independent assessment by an authorized CMMC Third-Party Assessment Organization (C3PAO) every three years, as specified in the solicitation.
+  <ul>
+   <li>Decided by the type of information processed, transmitted, or stored on the contractor or subcontractor information systems.</li>
+  </ul>
+  </li>
+  <li>Annual affirmation, verify compliance with the 110 security requirements in NIST SP 800-171 Revision 2.</li>
+ </ol>
+ </li>
+</ul>
+
+<h4>Level 3: Higher-Level Protection of CUI Against Advanced Persistent Threats</h4>
+
+<ul>
+ <li><strong>Requirements</strong>:
+
+ <ol>
+  <li>Achieve CMMC Status of Final Level 2.</li>
+  <li>Undergo an assessment every three years by the Defense Contract Management Agency&rsquo;s (DCMA) Defense Industrial Base Cybersecurity Assessment Center (DIBCAC).</li>
+  <li>Provide an annual affirmation verifying compliance with the 24 identified requirements from NIST SP 800-172.</li>
+ </ol>
+ </li>
+</ul>
+
+<p>&nbsp;</p>
+
+<table align="center" border="1" cellpadding="3" cellspacing="1" style="border-color: white">
+ <thead>
+  <tr align="center" bgcolor="#4472C4" style="color:white;">
+   <th scope="col" style="text-align: center;" width="8%">CMMC Status</th>
+   <th scope="col" style="text-align: center;" width="20%">Source &amp; Number of Security Reqts.</th>
+   <th scope="col" style="text-align: center;" width="24%">Assessment Reqts.</th>
+   <th scope="col" style="text-align: center;" width="24%">Plan of Action &amp; Milestones (POA&amp;M) Reqts.</th>
+   <th scope="col" style="text-align: center;" width="24%">Affirmation Reqts.</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr bgcolor="#CFD5EA">
+   <td align="center" bgcolor="#4472C4" style="color:white;"><strong>Level 1<br />
+   (Self)</strong></td>
+   <td>
+   <ul>
+    <li>15 required by FAR clause 52.204-21</li>
+   </ul>
+   </td>
+   <td>
+   <ul>
+    <li>Conducted by Organization Seeking Assessment (OSA) annually</li>
+    <li>Results entered into the Supplier Performance Risk System (SPRS)</li>
+   </ul>
+   </td>
+   <td>
+   <ul>
+    <li>Not permitted</li>
+   </ul>
+   </td>
+   <td>
+   <ul>
+    <li>After each assessment</li>
+    <li>Entered into SPRS</li>
+   </ul>
+   </td>
+  </tr>
+  <tr bgcolor="#E9EBF5">
+   <td align="center" bgcolor="#4472C4" style="color:white;"><strong>Level 2<br />
+   (Self)</strong></td>
+   <td>
+   <ul>
+    <li>110 NIST SP 800-171 R2 required by DFARS clause 252.204-7012</li>
+   </ul>
+   </td>
+   <td>
+   <ul>
+    <li>Conducted by OSA every 3 years</li>
+    <li>Results entered into SPRS</li>
+    <li>CMMC Status will be valid for three years from the CMMC Status Date as defined in &sect; 170.4</li>
+   </ul>
+   </td>
+   <td>
+   <ul>
+    <li>Permitted as defined in 32 CFR &sect; 170.21(a)(2) and must be closed out within 180 days</li>
+    <li>Final CMMC Status will be valid for three years from the Conditional CMMC Status Date</li>
+   </ul>
+   </td>
+   <td>
+   <ul>
+    <li>After each assessment and annually thereafter</li>
+    <li>Assessment will lapse upon failure to annually affirm</li>
+    <li>Entered into SPRS</li>
+   </ul>
+   </td>
+  </tr>
+  <tr bgcolor="#CFD5EA">
+   <td align="center" bgcolor="#4472C4" style="color:white;"><strong>Level 2<br />
+   (C3PAO)</strong></td>
+   <td>
+   <ul>
+    <li>110 NIST SP 800-171 R2 required by DFAR&nbsp;clause 252.204-7012</li>
+   </ul>
+   </td>
+   <td>
+   <ul>
+    <li>Conducted by C3PAO every 3 years</li>
+    <li>Results entered into CMMC Enterprise Mission Assurance Support Service (eMASS)</li>
+    <li>CMMC Status will be valid for three years from the CMMC Status Date as defined in 32 CFR &sect; 170.4</li>
+   </ul>
+   </td>
+   <td>
+   <ul>
+    <li>Permitted as defined in 32 CFR &sect; 170.21(a)(2) and must be closed out within 180 days</li>
+    <li>Final CMMC Status will be valid for three years from the Conditional CMMC Status Date</li>
+   </ul>
+   </td>
+   <td>
+   <ul>
+    <li>After each assessment and annually thereafter</li>
+    <li>Assessment will lapse upon failure to annually affirm</li>
+    <li>Entered into SPRS</li>
+   </ul>
+   </td>
+  </tr>
+  <tr bgcolor="#E9EBF5">
+   <td align="center" bgcolor="#4472C4" style="color:white;"><strong>Level 3<br />
+   (DIBCAC)</strong></td>
+   <td>
+   <ul>
+    <li>110 NIST SP 800-171 R2 required by DFARS clause 252.204-7012</li>
+    <li>24 selected from NIST SP 800-172 Feb2021, as detailed in table 1 to 32 CFR&nbsp;&sect; 170.14(c)(4)</li>
+   </ul>
+   </td>
+   <td>
+   <ul>
+    <li>Pre-requisite CMMC Status of Level 2 (C3PAO) for the same CMMC Assessment Scope, for each Level 3 certification assessment</li>
+    <li>Conducted by DIBCAC every 3 years</li>
+    <li>Results entered into CMMC eMASS</li>
+    <li>CMMC Status will be valid for three years from the CMMC Status Date as defined in 32 CFR &sect; 170.4</li>
+   </ul>
+   </td>
+   <td>
+   <ul>
+    <li>Permitted as defined in 32 CFR &sect; 170.21(a)(3) and must be closed out within 180 days</li>
+    <li>Final CMMC Status will be valid for three years from the Conditional CMMC Status Date</li>
+   </ul>
+   </td>
+   <td>
+   <ul>
+    <li>After each assessment and annually thereafter</li>
+    <li>Assessment will lapse upon failure to annually affirm</li>
+    <li>Level 2 (C3PAO) affirmation must also continue to be completed annually</li>
+    <li>Entered into SPRS</li>
+   </ul>
+   </td>
+  </tr>
+ </tbody>
+</table>
+
+<p>&nbsp;</p>
+</div>
+</div><!-- End_Module_136446 --></div>
+</div>
+</div><div class="DnnModule DnnModule-LiveHTML DnnModule-136411"><a name="136411"></a>
+<div class="base-container blue-header">
+    <h2 id="dnn_ctr136411_titleControl" class="title">
+        <span id="dnn_ctr136411_dnnTitle_titleLabel" class="Head">CMMC Post-Assessment Remediation: Plans of Actions and Milestones</span>
+
+
+
+    </h2>
+    <div id="dnn_ctr136411_ContentPane"><!-- Start_Module_136411 --><div id="dnn_ctr136411_ModuleContent" class="DNNModuleContent ModLiveHTMLC">
+	<div id="LiveHTMLWrapper136411" class="livehtml"><p>The CMMC Program allows limited use of Plans of Action and Milestones (POA&amp;Ms).</p>
+
+<ul>
+ <li><strong>Level 1</strong>: POA&amp;Ms are not permitted.</li>
+ <li><strong>Level 2 and Level 3</strong>: Refer to &sect;170.21 of the 32 CFR CMMC Program final rule for POA&amp;M requirements, including critical requirements that cannot be included in a POA&amp;M.</li>
+</ul>
+
+<p>A POA&M closeout assessment is a CMMC assessment that evaluates only the NOT MET requirements identified in the initial assessment. The closing of a POA&M must be confirmed by a POA&M closeout assessment within 180 days of the Conditional CMMC Status Date. If the POA&M is not successfully closed out within this timeframe, the Conditional CMMC Status for the information system will expire.</p>
+
+<ul>
+ <li><strong>Level 2 Self-Assessment</strong>: The POA&M closeout self-assessment shall be performed by the OSA in the same manner as the initial self-assessment.</li>
+ <li><strong>Level 2 Certification Assessment</strong>: The POA&M closeout certification assessment must be performed by an authorized or accredited C3PAO.</li>
+ <li><strong>Level 3 Certification Assessment</strong>: The POA&M closeout certification assessment will be performed by DCMA DIBCAC.</li>
+</ul>
+</div>
+</div><!-- End_Module_136411 --></div>
+</div>
+</div><div class="DnnModule DnnModule-LiveHTML DnnModule-136413"><a name="136413"></a>
+<div class="base-container blue-header">
+    <h2 id="dnn_ctr136413_titleControl" class="title">
+        <span id="dnn_ctr136413_dnnTitle_titleLabel" class="Head">CMMC Implementation</span>
+
+
+
+    </h2>
+    <div id="dnn_ctr136413_ContentPane"><!-- Start_Module_136413 --><div id="dnn_ctr136413_ModuleContent" class="DNNModuleContent ModLiveHTMLC">
+	<div id="LiveHTMLWrapper136413" class="livehtml"><p>The first phase of CMMC implementation began on <u><strong>November 10, 2025</strong></u>. CMMC assessment requirements will be implemented using a four-phase plan over three years. The phases add CMMC Level requirements incrementally, starting with self-assessments in Phase 1, and ending with full implementation of program requirements in Phase 4. This phased approach allows time to train assessors and for companies to understand and implement CMMC assessment requirements.</p>
+
+<center><img alt="Graphic shows the four phases of CMMC implementation. PHASE 1 - Initial Implementation - Begins 10 Nov 2025 Where applicable, solicitations will require Level 1 or 2 self-assessment. PHASE 2 Begins 10 Nov 2026 Where applicable, solicitations will require Level 2 Certification
+DoW may opt to delay the Level 2 certification requirement in a contract to an option period. PHASE 3 Begins 10 Nov 2027 Where applicable solicitations will require Level 3 Certification DoW may opt to delay the Level 3 certification requirement in a contract to an option period. PHASE 4 - Full Implementation - Begins 10 Nov 2027 Where applicable solicitations will require Level 3 Certification. DoW may opt to delay the Level 3 certification requirement in a contract to an option period" src="https://d34w7g4gy10iej.cloudfront.net/graphics/2512/39615.png" style="width: 700px;" title="CMMC Implementation Diagram" /></center>
+
+<p>&nbsp;</p>
+
+<center>
+<table style="background-color: #214366; border-radius: 10px;">
+ <tbody>
+  <tr>
+   <td style="padding-left: 10px; padding-right: 10px; padding-top:15px;" valign="middle">
+   <p style="color: white; text-align: center; font-size: 11pt"><strong>DoW may implement CMMC Level 2 (C3PAO) requirements in some Phase 1 procurements or Level 3 requirements in some Phase 2 procurements, which may limit competitors or drive cost </strong></p>
+   </td>
+  </tr>
+ </tbody>
+</table>
+</center>
+
+<p>&nbsp;</p>
+</div>
+</div><!-- End_Module_136413 --></div>
+</div>
+</div></div>
+            </div>
+
+            <div class="row">
+                <div id="dnn_ContentPaneLeft" class="col-md-8 DNNEmptyPane"></div>
+                <div id="dnn_RightPane" class="col-md-4 DNNEmptyPane"></div>
+            </div>
+            <div class="row">
+                <div id="dnn_LeftPane" class="col-md-4 DNNEmptyPane"></div>
+                <div id="dnn_ContentPaneRight" class="col-md-8 DNNEmptyPane"></div>
+            </div>
+            <div class="row">
+                <div id="dnn_EvenLeft" class="col-md-4 DNNEmptyPane"></div>
+                <div id="dnn_EvenMiddle" class="col-md-4 DNNEmptyPane"></div>
+                <div id="dnn_EvenRight" class="col-md-4 DNNEmptyPane"></div>
+            </div>
+            <div class="row">
+                <div id="dnn_BottomPane" class="col-md-12 DNNEmptyPane"></div>
+            </div>
+        </div>
+    </div>
+    <footer role="contentinfo" class="footer-default">
+        <div class="skin-footer-background">
+            <div class="container">
+                <div class="row">
+                    <div id="dnn_FooterLinks" class="col-md-6 col-footerlinks">
+                        
+
+
+                    <div class="DnnModule DnnModule-LiveHTML DnnModule-94274"><a name="94274"></a>
+<div class="empty-container-no-pad">
+    <div id="dnn_ctr94274_ContentPane"><!-- Start_Module_94274 --><div id="dnn_ctr94274_ModuleContent" class="DNNModuleContent ModLiveHTMLC">
+	<div id="LiveHTMLWrapper94274" class="livehtml"><div class="footlinks" style="font-size: 10px;">
+<ul class="fleft box">
+ <li><strong><a href="/About-DoW-CIO/">About DoW CIO</a></strong></li>
+ <li><strong><a href="/Contact/">Contact Us</a></strong></li>
+ <li><strong><a href="https://www.war.gov" target="_blank">War.gov</a></strong></li>
+ <li><strong><a href="https://www.dodciviliancareers.com/DOD-Careers/" target="_blank">DoW Careers</a></strong></li>
+ <li><strong><a href="/ELD/">External Links Disclaimer</a></strong></li>
+ <li><strong><a href="https://open.defense.gov/Transparency/FOIA.aspx" target="_blank">FOIA</a></strong></li>
+ <li><strong><a href="https://dod.defense.gov/Resources/DoD-Information-Quality-Guidelines" target="_blank">Information Quality</a></strong></li>
+</ul>
+
+<ul class="fleft box">
+ <li><strong><a href="https://prhome.war.gov/NoFear/" target="_blank">No FEAR Act</a></strong></li>
+ <li><strong><a href="https://open.defense.gov" target="_blank">Open Government</a></strong></li>
+ <li><strong><a href="http://www.esd.whs.mil/DD/plainlanguage" target="_blank">Plain Writing</a></strong></li>
+ <li><strong><a href="/PIA/">Privacy Impact Assessments</a></strong></li>
+ <li><strong><a href="/Privacy-Policy/">Privacy Policy</a></strong></li>
+ <li><strong><a href="https://dpcld.defense.gov/Privacy.aspx" target="_blank">Privacy Program</a></strong></li>
+</ul>
+
+<ul class="fleft box">
+ <li><strong><a href="/PublicUseNotice/">Public Use Notice</a></strong></li>
+ <li><strong><a href="/508/">Section 508</a></strong></li>
+ <li><strong><a href="/DevSiteMap/">Site Map</a></strong></li>
+ <li><strong><a href="/Social-Media/">Social Media</a></strong></li>
+ <li><strong><a href="/Portals/0/Documents/Library/FulcrumAdvStrat.pdf" target="_blank">Strategic Plan</a></strong></li>
+ <li><strong><a href="https://www.usa.gov/" target="_blank">USA.gov</a></strong></li>
+ <li><strong><a href="/DoD-Web-Policy/">Web Policy</a></strong></li>
+</ul>
+</div>
+</div>
+</div><!-- End_Module_94274 --></div>
+    <div class="clearfix"></div>
+</div>
+</div></div>
+                    <div class="col-md-6 col-sociallinks">
+                        <div id="dnn_SocialLinks_stayconnected" class="skin-social">
+    <h3>Stay Connected</h3>
+</div>
+
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="dnn_FooterContentLeftPane" class="col-md-8 DNNEmptyPane"></div>
+                    <div id="dnn_FooterRightPane" class="col-md-4 DNNEmptyPane"></div>
+                </div>
+                <div class="row">
+                    <div id="dnn_FooterRowLeft" class="col-md-4 DNNEmptyPane"></div>
+                    <div id="dnn_FooterRowMiddle" class="col-md-4 DNNEmptyPane"></div>
+                    <div id="dnn_FooterRowRight" class="col-md-4 DNNEmptyPane"></div>
+                </div>
+                <div class="row">
+                    <div id="dnn_FooterPane" class="col-md-12 DNNEmptyPane"></div>
+                </div>
+            </div>
+            
+
+<div class="skin-footer-banner">
+      <a id="dnn_FooterBanner_hlDmaLink" class="no-skin-override" rel="noreferrer noopener" href="https://www.web.mil/" target="_blank">Hosted by WEB.mil</a>
+      <a id="dnn_FooterBanner_hlVcl" rel="noreferrer noopener" href="https://www.veteranscrisisline.net/get-help-now/military-crisis-line/" target="_blank"><img id="dnn_FooterBanner_imgVclImage" class="vcl" src="/DesktopModules/SharedLibrary/Images/VCL%20988_Hoz_CMYK.jpg" alt="Veterans Crisis Line number. Dial 988 then Press 1" /></a>
+</div>
+
+        </div>
+    </footer>
+</div>
+
+        <input name="ScrollTop" type="hidden" id="ScrollTop" />
+        <input name="__dnnVariable" type="hidden" id="__dnnVariable" autocomplete="off" />
+        <script src="/DesktopModules/SharedLibrary/Controls/Banner/JS/GovBanner.js?cdv=3879" type="text/javascript"></script><script src="/Desktopmodules/SharedLibrary/Plugins/Bootstrap/js/bootstrap.min.js?cdv=3879" type="text/javascript"></script><script src="/DesktopModules/SharedLibrary/ValidatedPlugins/dompurify//purify.min.js?cdv=3879" type="text/javascript"></script>
+    
+
+<script type="text/javascript">
+//<![CDATA[
+toggleClick = function(ModuleId) {var wrapper=jQuery('#LiveHTMLWrapper' + ModuleId);if (wrapper.find('#ReviewComment').is(":hidden")) {wrapper.find('#ReviewComment').slideDown('slow');wrapper.find('#toggle').addClass('close');}else {wrapper.find('#ReviewComment').slideUp('slow');wrapper.find('#toggle').removeClass('close');}};//]]>
+</script>
+</form>
+    <!--CDF(Javascript|/js/dnncore.js?cdv=3879|DnnBodyProvider|100)--><!--CDF(Javascript|/js/dnn.modalpopup.js?cdv=3879|DnnBodyProvider|50)--><!--CDF(Css|/Resources/Shared/stylesheets/dnndefault/7.0.0/default.css?cdv=3879|DnnPageHeaderProvider|5)--><!--CDF(Css|/Portals/_default/Skins/DOD2/skin.css?cdv=3879|DnnPageHeaderProvider|15)--><!--CDF(Css|/Portals/_default/Containers/DarkKnight/container.css?cdv=3879|DnnPageHeaderProvider|25)--><!--CDF(Css|/Portals/_default/Containers/DarkKnight/container.css?cdv=3879|DnnPageHeaderProvider|25)--><!--CDF(Css|/Portals/_default/Containers/DOD2/container.css?cdv=3879|DnnPageHeaderProvider|25)--><!--CDF(Css|/Portals/_default/Containers/DOD2/container.css?cdv=3879|DnnPageHeaderProvider|25)--><!--CDF(Css|/Portals/_default/Containers/DOD2/container.css?cdv=3879|DnnPageHeaderProvider|25)--><!--CDF(Css|/Portals/_default/Containers/DOD2/container.css?cdv=3879|DnnPageHeaderProvider|25)--><!--CDF(Css|/Portals/_default/Containers/DOD2/container.css?cdv=3879|DnnPageHeaderProvider|25)--><!--CDF(Css|/Portals/_default/Containers/DOD2/container.css?cdv=3879|DnnPageHeaderProvider|25)--><!--CDF(Css|/Portals/0/portal.css?cdv=3879|DnnPageHeaderProvider|35)--><!--CDF(Javascript|/Desktopmodules/SharedLibrary/Plugins/Skin/js/common.js?cdv=3879|DnnBodyProvider|101)--><!--CDF(Javascript|/Desktopmodules/SharedLibrary/Plugins/Mobile-Detect/mobile-detect.min.js?cdv=3879|DnnBodyProvider|100)--><!--CDF(Css|/Desktopmodules/SharedLibrary/Plugins/SocialIcons/css/fa-social-icons.css?cdv=3879|DnnPageHeaderProvider|100)--><!--CDF(Css|/Desktopmodules/SharedLibrary/Plugins/Skin/SkipNav/css/skipnav.css?cdv=3879|DnnPageHeaderProvider|100)--><!--CDF(Css|/DesktopModules/SharedLibrary/ValidatedPlugins/aos/aos.css?cdv=3879|DnnPageHeaderProvider|100)--><!--CDF(Javascript|/DesktopModules/SharedLibrary/ValidatedPlugins/aos/aos.js?cdv=3879|DnnBodyProvider|100)--><!--CDF(Javascript|/portals/_default/Skins/DOD2/resources/js/menu-width-detection.js?cdv=3879|DnnBodyProvider|100)--><!--CDF(Javascript|/DesktopModules/SharedLibrary/Controls/Banner/JS/GovBanner.js?cdv=3879|DnnFormBottomProvider|1)--><!--CDF(Javascript|/Desktopmodules/SharedLibrary/Plugins/Bootstrap/js/bootstrap.min.js?cdv=3879|DnnFormBottomProvider|100)--><!--CDF(Css|/Desktopmodules/SharedLibrary/Plugins/Bootstrap/css/bootstrap.min.css?cdv=3879|DnnPageHeaderProvider|14)--><!--CDF(Css|/Desktopmodules/SharedLibrary/ValidatedPlugins/font-awesome6/css/all.min.css?cdv=3879|DnnPageHeaderProvider|100)--><!--CDF(Css|/Desktopmodules/SharedLibrary/ValidatedPlugins/font-awesome6/css/v4-shims.min.css?cdv=3879|DnnPageHeaderProvider|100)--><!--CDF(Javascript|/DesktopModules/SharedLibrary/ValidatedPlugins/dompurify//purify.min.js?cdv=3879|DnnFormBottomProvider|100)--><!--CDF(Javascript|/Resources/libraries/jQuery/03_07_01/jquery.js?cdv=3879|DnnPageHeaderProvider|5)--><!--CDF(Javascript|/Resources/libraries/HoverIntent/01_10_01/jquery.hoverIntent.min.js?cdv=3879|DnnPageHeaderProvider|55)--><!--CDF(Javascript|/Resources/libraries/jQuery-Migrate/03_04_01/jquery-migrate.js?cdv=3879|DnnPageHeaderProvider|6)--><!--CDF(Javascript|/Resources/libraries/jQuery-UI/01_13_03/jquery-ui.min.js?cdv=3879|DnnPageHeaderProvider|10)-->
+    
+</body>
+</html>

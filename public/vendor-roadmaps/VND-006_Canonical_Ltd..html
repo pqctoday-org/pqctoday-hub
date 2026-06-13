@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Post Quantum Support in the upcoming 26.04 LTS - Foundations - Ubuntu Community Hub</title>
+    <meta name="description" content="Background
+In 1994, Shor’s algorithm showed that widely deployed public-key systems RSA, DSA, and elliptic-curve cryptography would be vulnerable once sufficiently powerful quantum hardware becomes available. This realiz&amp;hellip;">
+    <meta name="generator" content="Discourse 3.5.3 - https://github.com/discourse/discourse version 99ca8f2a8b13fad8c6e19c7d8b81f4108a4875b0">
+<link rel="icon" type="image/png" href="https://ubuntucommunity.s3.dualstack.us-east-2.amazonaws.com/optimized/3X/b/e/be7e4cc6ef7ce95e285337634be009b70561d719_2_32x32.png">
+<link rel="apple-touch-icon" type="image/png" href="https://ubuntucommunity.s3.dualstack.us-east-2.amazonaws.com/optimized/3X/f/3/f38b9c7e7decc51bc26320541c441bfa28f99298_2_180x180.png">
+<meta name="theme-color" media="all" content="#fff">
+
+<meta name="color-scheme" content="light">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, viewport-fit=cover">
+<link rel="canonical" href="https://discourse.ubuntu.com/t/post-quantum-support-in-the-upcoming-26-04-lts/76840" />
+
+<link rel="search" type="application/opensearchdescription+xml" href="https://discourse.ubuntu.com/opensearch.xml" title="Ubuntu Community Hub Search">
+
+    <link href="/stylesheets/color_definitions_light-default_-1_2_f0819572e6ddc9b82db4e7fc5acdd1ccccbc6335.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" class="light-scheme"/>
+
+<link href="/stylesheets/common_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="common"  />
+
+  <link href="/stylesheets/desktop_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="desktop"  />
+
+
+
+    <link href="/stylesheets/automation_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="automation"  />
+    <link href="/stylesheets/chat_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="chat"  />
+    <link href="/stylesheets/checklist_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="checklist"  />
+    <link href="/stylesheets/discourse-calendar_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="discourse-calendar"  />
+    <link href="/stylesheets/discourse-data-explorer_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="discourse-data-explorer"  />
+    <link href="/stylesheets/discourse-details_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="discourse-details"  />
+    <link href="/stylesheets/discourse-gamification_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="discourse-gamification"  />
+    <link href="/stylesheets/discourse-lazy-videos_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="discourse-lazy-videos"  />
+    <link href="/stylesheets/discourse-local-dates_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="discourse-local-dates"  />
+    <link href="/stylesheets/discourse-narrative-bot_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="discourse-narrative-bot"  />
+    <link href="/stylesheets/discourse-presence_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="discourse-presence"  />
+    <link href="/stylesheets/discourse-reactions_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="discourse-reactions"  />
+    <link href="/stylesheets/discourse-signatures_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="discourse-signatures"  />
+    <link href="/stylesheets/discourse-solved_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="discourse-solved"  />
+    <link href="/stylesheets/discourse-templates_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="discourse-templates"  />
+    <link href="/stylesheets/discourse-topic-voting_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="discourse-topic-voting"  />
+    <link href="/stylesheets/footnote_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="footnote"  />
+    <link href="/stylesheets/markdown-note_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="markdown-note"  />
+    <link href="/stylesheets/poll_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="poll"  />
+    <link href="/stylesheets/spoiler-alert_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="spoiler-alert"  />
+    <link href="/stylesheets/chat_desktop_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="chat_desktop"  />
+    <link href="/stylesheets/discourse-calendar_desktop_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="discourse-calendar_desktop"  />
+    <link href="/stylesheets/discourse-gamification_desktop_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="discourse-gamification_desktop"  />
+    <link href="/stylesheets/discourse-reactions_desktop_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="discourse-reactions_desktop"  />
+    <link href="/stylesheets/discourse-topic-voting_desktop_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="discourse-topic-voting_desktop"  />
+    <link href="/stylesheets/poll_desktop_b534e5ab74996fb7e75bf1e43b7b80a13c3dc307.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="poll_desktop"  />
+
+  <link href="/stylesheets/common_theme_88_2b37ab699297cb1a574e4684e381db22baeae107.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="88" data-theme-name="customize new topic button text"/>
+<link href="/stylesheets/common_theme_51_b4452dc326271439e35db9f1f18adb5085a3e8bf.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="51" data-theme-name="discotoc"/>
+<link href="/stylesheets/common_theme_50_79c330ef201df52435ccaf5f230b7b51420cb3b2.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="50" data-theme-name="discourse cookie policy"/>
+<link href="/stylesheets/common_theme_10_14ddc7a6aed2c63c3cd8df861fdd8574a3881d60.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="10" data-theme-name="ubuntu discourse"/>
+<link href="/stylesheets/common_theme_2_f40564cb9bc1ca40df4e97f125ee06f6a70adad8.css?__ws=discourse.ubuntu.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="2" data-theme-name="default"/>
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu:100,300,400" rel="stylesheet"> 
+
+<style>
+body {
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 400;
+}
+
+h1 {
+    font-weight: 100;
+}
+</style>
+
+<meta name="google-site-verification" content="grFP-bTinUn8jXfEmhZCV8ccDV1IJG2wexOuguu7z_M">
+
+<script defer="" src="/theme-javascripts/4bf1a0e9c4527bd52420a24d67cb47339e82399e.js?__ws=discourse.ubuntu.com" data-theme-id="2" nonce="tbRDLA48j2dWnr5g5ZcRw4Uur"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet">
+    
+        <link rel="alternate nofollow" type="application/rss+xml" title="RSS feed of &#39;Post Quantum Support in the upcoming 26.04 LTS&#39;" href="https://discourse.ubuntu.com/t/post-quantum-support-in-the-upcoming-26-04-lts/76840.rss" />
+    <meta property="og:site_name" content="Ubuntu Community Hub" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="og:image" content="https://ubuntucommunity.s3.dualstack.us-east-2.amazonaws.com/original/3X/9/0/905b15b7d477513b2af0668c333736b100eef109.svg" />
+<meta property="og:url" content="https://discourse.ubuntu.com/t/post-quantum-support-in-the-upcoming-26-04-lts/76840" />
+<meta name="twitter:url" content="https://discourse.ubuntu.com/t/post-quantum-support-in-the-upcoming-26-04-lts/76840" />
+<meta property="og:title" content="Post Quantum Support in the upcoming 26.04 LTS" />
+<meta name="twitter:title" content="Post Quantum Support in the upcoming 26.04 LTS" />
+<meta property="og:description" content="Background In 1994, Shor’s algorithm showed that widely deployed public-key systems RSA, DSA, and elliptic-curve cryptography would be vulnerable once sufficiently powerful quantum hardware becomes available. This realization triggered decades of research into alternative mathematical foundations for public-key cryptography.  In 2016, NIST launched a public, multi-round standardization effort to evaluate and select quantum-resistant algorithms. After years of cryptanalysis and community review, ..." />
+<meta name="twitter:description" content="Background In 1994, Shor’s algorithm showed that widely deployed public-key systems RSA, DSA, and elliptic-curve cryptography would be vulnerable once sufficiently powerful quantum hardware becomes available. This realization triggered decades of research into alternative mathematical foundations for public-key cryptography.  In 2016, NIST launched a public, multi-round standardization effort to evaluate and select quantum-resistant algorithms. After years of cryptanalysis and community review, ..." />
+<meta property="og:article:section" content="Project Discussion" />
+<meta property="og:article:section:color" content="E95420" />
+<meta property="og:article:section" content="Foundations" />
+<meta property="og:article:section:color" content="BF1E2E" />
+<meta property="og:article:tag" content="foundations" />
+<meta property="og:article:tag" content="blog" />
+<meta name="twitter:label1" value="Reading time" />
+<meta name="twitter:data1" value="2 mins 🕑" />
+<meta name="twitter:label2" value="Likes" />
+<meta name="twitter:data2" value="9 ❤" />
+<meta property="article:published_time" content="2026-02-12T12:36:31+00:00" />
+<meta property="og:ignore_canonical" content="true" />
+
+
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"QAPage","name":"Post Quantum Support in the upcoming 26.04 LTS","mainEntity":{"@type":"Question","name":"Post Quantum Support in the upcoming 26.04 LTS","text":"<a name=\"p-198827-background-1\" class=\"anchor\" href=\"#p-198827-background-1\"><\/a>Background\n\nIn 1994, Shor’s algorithm showed that widely deployed public-key systems RSA, DSA, and elliptic-curve cryptography would be vulnerable once sufficiently powerful quantum hardware becomes available. This realization triggered decades of research into alternative mathematical foundations fo&hellip;","upvoteCount":5,"answerCount":0,"datePublished":"2026-02-12T12:36:31.286Z","author":{"@type":"Person","name":"ravi-sharma","url":"https://discourse.ubuntu.com/u/ravi-sharma"}}}</script>
+  </head>
+  <body class="crawler ">
+    
+    <header>
+  <a href="/">Ubuntu Community Hub</a>
+</header>
+
+    <div id="main-outlet" class="wrap" role="main">
+        <div id="topic-title">
+    <h1>
+      <a href="/t/post-quantum-support-in-the-upcoming-26-04-lts/76840">Post Quantum Support in the upcoming 26.04 LTS</a>
+    </h1>
+
+      <div class="topic-category" itemscope itemtype="http://schema.org/BreadcrumbList">
+          <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+            <a href="/c/project/307" class="badge-wrapper bullet" itemprop="item">
+              <span class='badge-category-bg' style='background-color: #E95420'></span>
+              <span class='badge-category clear-badge'>
+                <span class='category-name' itemprop='name'>Project Discussion</span>
+              </span>
+            </a>
+            <meta itemprop="position" content="1" />
+          </span>
+          <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+            <a href="/c/project/foundations/25" class="badge-wrapper bullet" itemprop="item">
+              <span class='badge-category-bg' style='background-color: #BF1E2E'></span>
+              <span class='badge-category clear-badge'>
+                <span class='category-name' itemprop='name'>Foundations</span>
+              </span>
+            </a>
+            <meta itemprop="position" content="2" />
+          </span>
+      </div>
+
+      <div class="topic-category">
+        <div class='discourse-tags list-tags'>
+            <a href='https://discourse.ubuntu.com/tag/foundations' class='discourse-tag' rel="tag">foundations</a>, 
+            <a href='https://discourse.ubuntu.com/tag/blog' class='discourse-tag' rel="tag">blog</a>
+        </div>
+      </div>
+  </div>
+
+  
+
+    <div itemscope itemtype='http://schema.org/DiscussionForumPosting'>
+      <meta itemprop='headline' content='Post Quantum Support in the upcoming 26.04 LTS'>
+      <link itemprop='url' href='https://discourse.ubuntu.com/t/post-quantum-support-in-the-upcoming-26-04-lts/76840'>
+      <meta itemprop='datePublished' content='2026-02-12T12:36:31Z'>
+        <meta itemprop='articleSection' content='Foundations'>
+      <meta itemprop='keywords' content='foundations, blog'>
+      <div itemprop='publisher' itemscope itemtype="http://schema.org/Organization">
+        <meta itemprop='name' content='Canonical Inc.'>
+          <div itemprop='logo' itemscope itemtype="http://schema.org/ImageObject">
+            <meta itemprop='url' content='https://ubuntucommunity.s3.dualstack.us-east-2.amazonaws.com/original/3X/d/1/d1318a905da7b730a81d0b3f393762cb7d478e38.svg'>
+          </div>
+      </div>
+
+
+          <div id='post_1'  class='topic-body crawler-post'>
+            <div class='crawler-post-meta'>
+              <span class="creator" itemprop="author" itemscope itemtype="http://schema.org/Person">
+                <a itemprop="url" rel='nofollow' href='https://discourse.ubuntu.com/u/ravi-sharma'><span itemprop='name'>ravi-sharma</span></a>
+                
+              </span>
+
+                <link itemprop="mainEntityOfPage" href="https://discourse.ubuntu.com/t/post-quantum-support-in-the-upcoming-26-04-lts/76840">
+
+
+              <span class="crawler-post-infos">
+                  <time  datetime='2026-02-12T12:36:31Z' class='post-time'>
+                    February 12, 2026, 12:36pm
+                  </time>
+                  <meta itemprop='dateModified' content='2026-02-13T09:08:02Z'>
+              <span itemprop='position'>1</span>
+              </span>
+            </div>
+            <div class='post' itemprop='text'>
+              <h2><a name="p-198827-background-1" class="anchor" href="#p-198827-background-1"></a>Background</h2>
+<p>In 1994, Shor’s algorithm showed that widely deployed public-key systems RSA, DSA, and elliptic-curve cryptography would be vulnerable once sufficiently powerful quantum hardware becomes available. This realization triggered decades of research into alternative mathematical foundations for public-key cryptography.</p>
+<p>In 2016, NIST launched a public, multi-round standardization effort to evaluate and select quantum-resistant algorithms. After years of cryptanalysis and community review, NIST published its first PQC (Post-quantum cryptography) standards in 2024, centered on module-lattice constructions for key encapsulation and digital signatures, with a hash-based signature scheme as a backup.</p>
+<div class="md-table">
+<table>
+<thead>
+<tr>
+<th>Cryptographic Function</th>
+<th>NIST Standard Name</th>
+<th>Common Name</th>
+<th>FIPS Publication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Key Encapsulation Mechanism (KEM)</td>
+<td>ML-KEM (Module-Lattice KEM)</td>
+<td>CRYSTALS-Kyber</td>
+<td>FIPS 203</td>
+</tr>
+<tr>
+<td>Digital Signatures</td>
+<td>ML-DSA (Module-Lattice Digital Signature Algorithm)</td>
+<td>CRYSTALS-Dilithium</td>
+<td>FIPS 204</td>
+</tr>
+<tr>
+<td>Digital Signatures (hash-based, backup)</td>
+<td>SLH-DSA (Stateless Hash-Based Digital Signature Algorithm)</td>
+<td>SPHINCS+</td>
+<td>FIPS 205</td>
+</tr>
+</tbody>
+</table>
+</div><p>NIST continues to evaluate and standardize additional algorithms from different families such as code-based and hash-based cryptography to improve long-term resilience and cryptographic diversity.</p>
+<p>With industry adoption accelerating, regulatory guidance emerging, and real-world deployments underway, PQC has moved from theory to practice.</p>
+<h2><a name="p-198827-ubuntu-2510-features-2" class="anchor" href="#p-198827-ubuntu-2510-features-2"></a>Ubuntu 25.10 features</h2>
+<h3><a name="p-198827-openssl-3" class="anchor" href="#p-198827-openssl-3"></a>OpenSSL</h3>
+<p>A prime example of real world deployment is the <a href="https://discourse.ubuntu.com/t/openssl-3-5-0-release-for-questing-quokka"><strong>OpenSSL 3.5 release</strong></a>. It includes support for ML-KEM, ML-DSA, and SLH-DSA.</p>
+<p>Cloudflare research offers a useful service where you can quickly see if your client/browser supports <strong>ML-KEM</strong> for key exchange. Simply <a href="https://pq.cloudflareresearch.com/" rel="noopener nofollow ugc">visit the URL</a> in your browser to see the result.</p>
+<p>You can also test this from an Ubuntu system using <em>curl</em>.</p>
+<pre><code class="lang-auto">$ curl -v https://pq.cloudflareresearch.com 2&gt;&amp;1 &gt;/dev/null|grep 'SSL connection using'
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384 / X25519MLKEM768 / id-ecPublicKey
+</code></pre>
+<p>curl is using OpenSSL/3.5.3 as a cryptography backend. You can use <code>curl --version</code> to test this on your system.</p>
+<p>However, if you run the same command on <strong>Ubuntu 24.04 (Noble)</strong>, you’ll notice it uses only <strong>X25519</strong> (Elliptic-Curve Diffie-Hellman) for key exchange:</p>
+<pre><code class="lang-auto">$ curl -v https://pq.cloudflareresearch.com 2&gt;&amp;1 &gt;/dev/null|grep 'SSL connection using'
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384 / X25519 / id-ecPublicKey
+</code></pre>
+<p>Let’s see what this means for a <strong>server running Ubuntu 25.10</strong>, using <strong>nginx</strong> as an example.</p>
+<ol>
+<li>
+<p>Install Nginx:</p>
+<p><code>$ sudo apt install nginx</code></p>
+</li>
+<li>
+<p>Enable HTTPS:</p>
+<p>The default site runs over HTTP. To enable HTTPS, install the <em>ssl-cert</em> package for self-signed certificates:</p>
+<p><code>$ sudo apt install ssl-cert</code></p>
+</li>
+<li>
+<p>Configure Nginx:</p>
+<p>Uncomment the following lines in your site configuration (example: <code>/etc/nginx/sites-available/default</code>):</p>
+<pre><code class="lang-auto">listen 443 ssl default_server;
+listen [::]:443 ssl default_server;
+include snippets/snakeoil.conf
+</code></pre>
+<p>Your sites configuration should look something like this:</p>
+<pre><code class="lang-auto">server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        # SSL configuration
+        #
+        listen 443 ssl default_server;
+        listen [::]:443 ssl default_server;
+        #
+        # Note: You should disable gzip for SSL traffic.
+        # See: https://bugs.debian.org/773332
+        #
+        # Read up on ssl_ciphers to ensure a secure configuration.
+        # See: https://bugs.debian.org/765782
+        #
+        # Self signed certs generated by the ssl-cert package
+        # Don't use them in a production server!
+        #
+        include snippets/snakeoil.conf;
+ …
+</code></pre>
+</li>
+<li>
+<p>Reload Nginx:</p>
+<p><code>$ sudo systemctl reload nginx</code></p>
+</li>
+<li>
+<p>Now, test your local site over HTTPS:</p>
+<pre><code class="lang-auto">$ curl -v https://localhost 2&gt;&amp;1 &gt;/dev/null|grep 'SSL connection using'
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384 / X25519MLKEM768 / RSASSA-PSS
+</code></pre>
+</li>
+</ol>
+<p>You’ll see it is using <strong>X25519MLKEM768</strong> for key exchange. This means that if you host your web servers on Ubuntu 25.10 or the upcoming <strong>26.04 LTS</strong>, they will use a post-quantum secure key exchange method by default.</p>
+<p><em>Note: This is only a demonstration. Do not use these steps in production. For production use, refer to the official <a href="https://nginx.org/en/docs/http/configuring_https_servers.html" rel="noopener nofollow ugc">Nginx documentation</a>.</em></p>
+<h3><a name="p-198827-openssh-4" class="anchor" href="#p-198827-openssh-4"></a>OpenSSH</h3>
+<p>On Ubuntu 25.10, if you SSH to a server running <strong>OpenSSH 10.0(+)</strong>, it will use post-quantum key exchange by default. In the following example, I connect to sshd on the same host:</p>
+<pre><code class="lang-auto">$ ssh -v -o PreferredAuthentications=none user@localhost 2&gt;&amp;1 | grep 'kex: algorithm:'
+debug1: kex: algorithm: mlkem768x25519-sha256
+</code></pre>
+<p>I used <em>PreferredAuthentications=none</em> to avoid authenticating and just see the default key exchange algorithm. The algorithm used <strong>mlkem768x25519-sha256</strong>, is the same as in the OpenSSL demo.</p>
+<p>If you SSH to 24.04 (Noble), the default algorithm is sntrup761x25519-sha512. mlkem768x25519-sha256 is the new preferred default. I’ll see if I can <a href="https://bugs.launchpad.net/ubuntu/+source/openssh/+bug/2120496" rel="noopener nofollow ugc">backport</a> the new algorithm to Noble after 26.04 is released.</p>
+<h3><a name="p-198827-others-libraries-5" class="anchor" href="#p-198827-others-libraries-5"></a>Others Libraries</h3>
+<p>Additionally, <a href="https://launchpad.net/ubuntu/+source/libgcrypt20" rel="noopener nofollow ugc">Libgcrypt</a> (since 1.11.0) and <a href="https://launchpad.net/ubuntu/+source/wolfssl" rel="noopener nofollow ugc">wolfssl</a> (since 2.7.2), and <a href="https://launchpad.net/ubuntu/+source/rust-rustls" rel="noopener nofollow ugc">rustls</a> (since 23.23) also have support for ML-KEM and ML-DSA. All of these are included in Ubuntu 25.10. Please let me know if I have missed any.</p>
+<h2><a name="p-198827-a-note-on-hybrid-encryption-6" class="anchor" href="#p-198827-a-note-on-hybrid-encryption-6"></a>A note on Hybrid encryption</h2>
+<p>You may have noticed X25519MLKEM768 as the name for key exchange in TLS. This means an attacker must break both the classical X25519 exchange and the post-quantum MLKEM768 exchange to compromise the session.</p>
+<p>Daniel J. Bernstein’s <a href="https://cr.yp.to/papers/qrcsp-20231124.pdf" rel="noopener nofollow ugc">analysis</a> of cryptographic selection processes explains why this matters. Looking at real-world outcomes, he found that a large fraction of post-quantum schemes, including many that survived multiple NIST rounds, were later broken or weakened below their claimed security level. Post-quantum schemes are young, cryptanalysis is active, and progress often comes in sudden jumps.</p>
+<p>A hybrid approach remains secure as long as at least one component holds. This is not a lack of confidence in post-quantum cryptography, but rather an acknowledgment of measured historical failure rates and implementation risks. For this reason, <strong>Ubuntu has chosen to retain hybrid key exchange as the default</strong>. For those who require a PQ-only configuration, a system-wide profile option will be available, more on this in an upcoming blog post.</p>
+<h2><a name="p-198827-looking-ahead-7" class="anchor" href="#p-198827-looking-ahead-7"></a>Looking Ahead</h2>
+<p>Next in the NIST pipeline, Lattice based <a href="https://falcon-sign.info/" rel="noopener nofollow ugc">Falcon</a> for Signatures is expected to be included in the standard (FIPS-206). Meanwhile, code-based <a href="https://pqc-hqc.org/" rel="noopener nofollow ugc">HQC</a> is a contender for a backup algorithm for KEM, it does not have a FIPS number yet.</p>
+<p>As standards mature, Firmware vendors will increasingly offer the ability to add PQC algorithms. My guess is <strong>Hybrid Secure Boot</strong> (classical + PQ Signatures) could realistically appear around the 28.04 LTS timeframe.</p>
+<p>Please experiment with these algorithms, report any bugs, and share your feedback. Your input is greatly appreciated.</p>
+            </div>
+
+            <div itemprop="interactionStatistic" itemscope itemtype="http://schema.org/InteractionCounter">
+              <meta itemprop="interactionType" content="http://schema.org/LikeAction"/>
+              <meta itemprop="userInteractionCount" content="5" />
+              <span class='post-likes'>5 Likes</span>
+            </div>
+
+                <div class='crawler-linkback-list' itemscope itemtype='http://schema.org/ItemList'>
+                      <div itemprop='itemListElement' itemscope itemtype='http://schema.org/ListItem'>
+                        <a itemprop='url' href="https://discourse.ubuntu.com/t/foundations-team-updates-2026-02-12/76836/9">Foundations Team Updates - 2026-02-12</a>
+                        <meta itemprop='position' content='11'>
+                      </div>
+                      <div itemprop='itemListElement' itemscope itemtype='http://schema.org/ListItem'>
+                        <a itemprop='url' href="https://discourse.ubuntu.com/t/from-lts-to-lts-two-years-of-foundations-work-on-ubuntu/81259">From LTS to LTS: two years of Foundations work on Ubuntu</a>
+                        <meta itemprop='position' content='12'>
+                      </div>
+                      <div itemprop='itemListElement' itemscope itemtype='http://schema.org/ListItem'>
+                        <a itemprop='url' href="https://discourse.ubuntu.com/t/ubuntu-weekly-newsletter-issue-931/76675">Ubuntu Weekly Newsletter Issue 931</a>
+                        <meta itemprop='position' content='13'>
+                      </div>
+                </div>
+          </div>
+          <div id='post_2' itemprop='comment' itemscope itemtype='http://schema.org/Comment' class='topic-body crawler-post'>
+            <div class='crawler-post-meta'>
+              <span class="creator" itemprop="author" itemscope itemtype="http://schema.org/Person">
+                <a itemprop="url" rel='nofollow' href='https://discourse.ubuntu.com/u/sdeziel1'><span itemprop='name'>sdeziel1</span></a>
+                
+              </span>
+
+
+
+              <span class="crawler-post-infos">
+                  <time itemprop='datePublished' datetime='2026-02-12T14:24:24Z' class='post-time'>
+                    February 12, 2026,  2:24pm
+                  </time>
+                  <meta itemprop='dateModified' content='2026-02-12T14:24:24Z'>
+              <span itemprop='position'>2</span>
+              </span>
+            </div>
+            <div class='post' itemprop='text'>
+              <aside class="quote group-Canonical" data-username="ravi-sharma" data-post="1" data-topic="76840">
+<div class="title">
+<div class="quote-controls"></div>
+<img alt="" width="24" height="24" src="https://discourse.ubuntu.com/letter_avatar/ravi-sharma/48/5_341fea102a12413267ee9cca6a635b61.png" class="avatar"> ravi-sharma:</div>
+<blockquote>
+<p>Please experiment with these algorithms, report any bugs, and share your feedback. Your input is greatly appreciated.</p>
+</blockquote>
+</aside>
+<p>In terms of experience an feedback, the LXD team has witnessed that when Go introduced Kyber in 1.23 and MLKEM in 1.24, it turned up some <a href="https://github.com/canonical/lxd/issues/14839">broken middle boxes</a> due to larger <code>ClientHello</code> as explained in <a href="https://tldr.fail/">https://tldr.fail/</a>.</p>
+<p>Ultimately, we took the decision to turn off those new curves when making TLS connections to image servers. The ration being that existing image servers don’t yet support those curves anyway so there is no security benefit to using those. This however might change if <a href="https://cloud-images.ubuntu.com/">https://cloud-images.ubuntu.com/</a> or <a href="https://images.lxd.canonical.com">https://images.lxd.canonical.com</a> are upgraded to 25.10+ so we’re keeping an eye on the situation.</p>
+            </div>
+
+            <div itemprop="interactionStatistic" itemscope itemtype="http://schema.org/InteractionCounter">
+              <meta itemprop="interactionType" content="http://schema.org/LikeAction"/>
+              <meta itemprop="userInteractionCount" content="1" />
+              <span class='post-likes'>1 Like</span>
+            </div>
+
+          </div>
+          <div id='post_3' itemprop='comment' itemscope itemtype='http://schema.org/Comment' class='topic-body crawler-post'>
+            <div class='crawler-post-meta'>
+              <span class="creator" itemprop="author" itemscope itemtype="http://schema.org/Person">
+                <a itemprop="url" rel='nofollow' href='https://discourse.ubuntu.com/u/ravi-sharma'><span itemprop='name'>ravi-sharma</span></a>
+                
+              </span>
+
+
+
+              <span class="crawler-post-infos">
+                  <time itemprop='datePublished' datetime='2026-02-12T14:43:12Z' class='post-time'>
+                    February 12, 2026,  2:43pm
+                  </time>
+                  <meta itemprop='dateModified' content='2026-02-12T14:43:12Z'>
+              <span itemprop='position'>3</span>
+              </span>
+            </div>
+            <div class='post' itemprop='text'>
+              <p>Thank you for sharing. I expect we’ll encounter more issues like this as the infrastructure transitions.</p>
+            </div>
+
+            <div itemprop="interactionStatistic" itemscope itemtype="http://schema.org/InteractionCounter">
+              <meta itemprop="interactionType" content="http://schema.org/LikeAction"/>
+              <meta itemprop="userInteractionCount" content="1" />
+              <span class='post-likes'>1 Like</span>
+            </div>
+
+          </div>
+          <div id='post_4' itemprop='comment' itemscope itemtype='http://schema.org/Comment' class='topic-body crawler-post'>
+            <div class='crawler-post-meta'>
+              <span class="creator" itemprop="author" itemscope itemtype="http://schema.org/Person">
+                <a itemprop="url" rel='nofollow' href='https://discourse.ubuntu.com/u/legoktm'><span itemprop='name'>legoktm</span></a>
+                
+              </span>
+
+
+
+              <span class="crawler-post-infos">
+                  <time itemprop='datePublished' datetime='2026-02-27T15:03:32Z' class='post-time'>
+                    February 27, 2026,  3:03pm
+                  </time>
+                  <meta itemprop='dateModified' content='2026-02-27T15:03:32Z'>
+              <span itemprop='position'>4</span>
+              </span>
+            </div>
+            <div class='post' itemprop='text'>
+              <p>This is very exciting, thank you for working on it.</p>
+<aside class="quote group-Canonical" data-username="ravi-sharma" data-post="1" data-topic="76840">
+<div class="title">
+<div class="quote-controls"></div>
+<img alt="" width="24" height="24" src="https://discourse.ubuntu.com/letter_avatar/ravi-sharma/48/5_341fea102a12413267ee9cca6a635b61.png" class="avatar"> ravi-sharma:</div>
+<blockquote>
+<p>I’ll see if I can <a href="https://bugs.launchpad.net/ubuntu/+source/openssh/+bug/2120496" rel="noopener nofollow ugc">backport</a> the new algorithm to Noble after 26.04 is released.</p>
+</blockquote>
+</aside>
+<p>Are there any plans to also backport the new PQ OpenSSL algorithms to Noble?</p>
+            </div>
+
+            <div itemprop="interactionStatistic" itemscope itemtype="http://schema.org/InteractionCounter">
+              <meta itemprop="interactionType" content="http://schema.org/LikeAction"/>
+              <meta itemprop="userInteractionCount" content="0" />
+              <span class='post-likes'></span>
+            </div>
+
+          </div>
+          <div id='post_5' itemprop='comment' itemscope itemtype='http://schema.org/Comment' class='topic-body crawler-post'>
+            <div class='crawler-post-meta'>
+              <span class="creator" itemprop="author" itemscope itemtype="http://schema.org/Person">
+                <a itemprop="url" rel='nofollow' href='https://discourse.ubuntu.com/u/ravi-sharma'><span itemprop='name'>ravi-sharma</span></a>
+                
+              </span>
+
+
+
+              <span class="crawler-post-infos">
+                  <time itemprop='datePublished' datetime='2026-02-28T11:24:28Z' class='post-time'>
+                    February 28, 2026, 11:24am
+                  </time>
+                  <meta itemprop='dateModified' content='2026-02-28T11:24:28Z'>
+              <span itemprop='position'>5</span>
+              </span>
+            </div>
+            <div class='post' itemprop='text'>
+              <p>Hello legoktm, welcome to the community!</p>
+<p>Thank you for the feedback.</p>
+<p>Currently, there are no plans to backport PQ algorithms to Noble, upgrade to Ubuntu 26.04 is recommended.</p>
+            </div>
+
+            <div itemprop="interactionStatistic" itemscope itemtype="http://schema.org/InteractionCounter">
+              <meta itemprop="interactionType" content="http://schema.org/LikeAction"/>
+              <meta itemprop="userInteractionCount" content="0" />
+              <span class='post-likes'></span>
+            </div>
+
+          </div>
+          <div id='post_6' itemprop='comment' itemscope itemtype='http://schema.org/Comment' class='topic-body crawler-post'>
+            <div class='crawler-post-meta'>
+              <span class="creator" itemprop="author" itemscope itemtype="http://schema.org/Person">
+                <a itemprop="url" rel='nofollow' href='https://discourse.ubuntu.com/u/ravi-sharma'><span itemprop='name'>ravi-sharma</span></a>
+                
+              </span>
+
+
+
+              <span class="crawler-post-infos">
+                  <time itemprop='datePublished' datetime='2026-04-07T10:42:08Z' class='post-time'>
+                    April 7, 2026, 10:42am
+                  </time>
+                  <meta itemprop='dateModified' content='2026-04-14T08:47:12Z'>
+              <span itemprop='position'>6</span>
+              </span>
+            </div>
+            <div class='post' itemprop='text'>
+              <p>Things are moving faster than I expected! With the Ubuntu 26.04 release just around the corner, I thought I’d share a few exciting updates.</p>
+<ul>
+<li>Post-Quantum Cryptography (PQC) secure boot based on SLH-DSA is already here. See <a href="https://opensource.googleblog.com/2026/03/opentitan-shipping-in-production.html" rel="noopener nofollow ugc">Google’s OpenTitan is now shipping in production</a> inside Chromebooks.</li>
+<li>To address the massive increase in public key and signature sizes caused by new post-quantum cryptographic algorithms, Google is developing Merkle Tree Certificates in collaboration with the IETF’s new PLANTS working group. Check out <a href="https://security.googleblog.com/2026/02/cultivating-robust-and-efficient.html" rel="noopener nofollow ugc">Google’s official rollout timeline</a> to learn more.</li>
+</ul>
+            </div>
+
+            <div itemprop="interactionStatistic" itemscope itemtype="http://schema.org/InteractionCounter">
+              <meta itemprop="interactionType" content="http://schema.org/LikeAction"/>
+              <meta itemprop="userInteractionCount" content="2" />
+              <span class='post-likes'>2 Likes</span>
+            </div>
+
+          </div>
+    </div>
+
+
+    
+
+
+
+
+    </div>
+    <footer class="container wrap">
+  <nav class='crawler-nav'>
+    <ul>
+      <li itemscope itemtype='http://schema.org/SiteNavigationElement'>
+        <span itemprop='name'>
+          <a href='/' itemprop="url">Home </a>
+        </span>
+      </li>
+      <li itemscope itemtype='http://schema.org/SiteNavigationElement'>
+        <span itemprop='name'>
+          <a href='/categories' itemprop="url">Categories </a>
+        </span>
+      </li>
+      <li itemscope itemtype='http://schema.org/SiteNavigationElement'>
+        <span itemprop='name'>
+          <a href='/guidelines' itemprop="url">Guidelines </a>
+        </span>
+      </li>
+        <li itemscope itemtype='http://schema.org/SiteNavigationElement'>
+          <span itemprop='name'>
+            <a href='https://www.ubuntu.com/legal' itemprop="url">Terms of Service </a>
+          </span>
+        </li>
+        <li itemscope itemtype='http://schema.org/SiteNavigationElement'>
+          <span itemprop='name'>
+            <a href='https://www.ubuntu.com/legal/terms-and-policies/privacy-policy' itemprop="url">Privacy Policy </a>
+          </span>
+        </li>
+    </ul>
+  </nav>
+  <p class='powered-by-link'>Powered by <a href="https://www.discourse.org">Discourse</a>, best viewed with JavaScript enabled</p>
+</footer>
+
+    <footer class="d-footer">
+    <div class="wrap">
+        <div class="contents">
+            <p>© 2026 Canonical Ltd.</p>
+            <div class="d-footer__links">
+                <a href="https://ubuntu.com/legal">Legal information</a>
+                <a href="https://ubuntu.com/legal/data-privacy" target="_blank">Privacy policy</a>
+                <a href="#" class="js-revoke-cookie-manager">Manage your tracker settings</a>
+            </div>
+        </div>
+    </div>
+</footer>
+    
+  </body>
+  
+</html>
