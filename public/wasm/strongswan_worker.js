@@ -623,6 +623,11 @@ self.onmessage = (e) => {
   // letting credential_manager.c hit get_private_by_keyid fast path.
   const localKeyId = payload.localKeyId || ''
   const remoteKeyId = payload.remoteKeyId || ''
+  // RFC 7383 negotiation (default on in wasm_backend.c; 'no' opts out) and
+  // Tier-A CHILD_SA via the stub kernel (WASM_CHILDSA=1 flips
+  // CHILDLESS_FORCE → CHILDLESS_NEVER in wasm_setup_config).
+  const fragEnv = payload.fragmentation === false ? 'no' : 'yes'
+  const childSaEnv = payload.childSa ? '1' : '0'
   netInboxSab = payload.netSab || payload.netInboxSab
   if (netInboxSab) {
     netInboxI32 = new Int32Array(netInboxSab, 0, 4)
@@ -707,6 +712,8 @@ self.onmessage = (e) => {
           if (typeof ENV !== 'undefined') {
             if (initPsk) ENV['WASM_PSK'] = initPsk
             ENV['WASM_ROLE'] = workerRole
+            ENV['WASM_FRAGMENTATION'] = fragEnv
+            ENV['WASM_CHILDSA'] = childSaEnv
             if (localKeyId) ENV['WASM_LOCAL_KEYID'] = localKeyId
             if (remoteKeyId) ENV['WASM_REMOTE_KEYID'] = remoteKeyId
             self.postMessage({
@@ -738,6 +745,8 @@ self.onmessage = (e) => {
               envObj['STRONGSWAN_CONF_DATA'] = confData
               envObj['WASM_PSK'] = initPsk || ''
               envObj['WASM_ROLE'] = workerRole
+              envObj['WASM_FRAGMENTATION'] = fragEnv
+              envObj['WASM_CHILDSA'] = childSaEnv
               if (localKeyId) envObj['WASM_LOCAL_KEYID'] = localKeyId
               if (remoteKeyId) envObj['WASM_REMOTE_KEYID'] = remoteKeyId
               self.postMessage({

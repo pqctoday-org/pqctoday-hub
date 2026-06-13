@@ -17,6 +17,11 @@ import {
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { VpnWireVisualization } from './VpnWireVisualization'
+import { VpnPacketInspector } from './VpnPacketInspector'
+import { VpnScorecard } from './VpnScorecard'
+import { VpnLearnSection } from './VpnLearnSection'
+import { VpnComparisonPanel } from './VpnComparisonPanel'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { HsmKeyInspector } from '../../shared/HsmKeyInspector'
 import { Pkcs11LogPanel } from '../../shared/Pkcs11LogPanel'
@@ -37,7 +42,9 @@ import {
 import {
   IKE_V2_MODES,
   IKE_V2_EXCHANGES,
+  IKE_AUTH_SK_BYTES,
   type IKEv2Mode,
+  type IKEv2Message,
   type IKEv2Payload,
 } from '@/components/PKILearning/modules/VPNSSHModule/data/ikev2Constants'
 import {
@@ -527,11 +534,13 @@ const PayloadCard: React.FC<{
 // ── C6: IKE phase annotation for charon.log entries ───────────────────────────
 type IkePhase = 'SETUP' | 'IKE_SA_INIT' | 'IKE_INTERMEDIATE' | 'IKE_AUTH'
 
-function getIkePhase(text: string, mode: IKEv2Mode): IkePhase | null {
+function getIkePhase(text: string): IkePhase | null {
   if (/C_Initialize|C_OpenSession|C_Login|C_GetSlotList|C_GetSlotInfo/.test(text)) return 'SETUP'
   if (/C_GenerateKeyPair|C_GenerateKey/.test(text)) return 'IKE_SA_INIT'
-  if (/EncapsulateKey|DecapsulateKey/.test(text))
-    return mode === 'hybrid' ? 'IKE_INTERMEDIATE' : 'IKE_SA_INIT'
+  // ML-KEM runs in the primary KE slot of IKE_SA_INIT in both hybrid and
+  // pure-pqc modes; the hybrid Additional KE (ECDH) round is the [SIM]-tagged
+  // IKE_INTERMEDIATE narration, not a C_* call.
+  if (/EncapsulateKey|DecapsulateKey/.test(text)) return 'IKE_SA_INIT'
   if (/C_Sign|C_Verify|C_Find|CERT/.test(text)) return 'IKE_AUTH'
   return null
 }
@@ -1027,10 +1036,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       // strongSwan 6.x proposal grammar (RFC 9370 multiple-key-exchange):
       //   pure-pqc:  aes256-sha384-mlkem768           — IKE_SA_INIT only
       //   classical: aes256-sha256-modp3072            — IKE_SA_INIT only
-      //   hybrid:    aes256-sha384-mlkem768-ke1_ecp256 — ML-KEM in IKE_SA_INIT,
-      //              then real IKE_INTERMEDIATE round with ECP-256 (RFC 9242).
-      // The `ke1_*` token names a secondary KE; charon uses IKE_INTERMEDIATE
-      // (built into core 6.0+) and the openssl plugin's ECDH for the second round.
+      //   hybrid:    aes256-sha384-mlkem768-ke1_ecp256 — ML-KEM in IKE_SA_INIT
+      //              (real C_Encapsulate/DecapsulateKey on the HSM), then an
+      //              IKE_INTERMEDIATE round with ECP-256 as Additional KE 1
+      //              (RFC 9242/9370). The additional-KE exchange logic is not
+      //              in this WASM build, so that round is narrated as [SIM]
+      //              log entries rather than executed by charon.
       let modeIke = 'aes256-sha384-mlkem768!'
       if (mode === 'classical') modeIke = 'aes256-sha256-modp3072!'
       if (mode === 'hybrid') modeIke = 'aes256-sha384-mlkem768-ke1_ecp256!'
@@ -1120,17 +1131,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       } else if (text.includes('ike_sa') && text.includes('established between')) {
         setCurrentStep(stepsLengthRef.current - 1)
         setCharonFailed(false)
-        // WASM binary is compiled childless — inject synthetic CREATE_CHILD_SA steps for educational display
-        setTimeout(() => {
-          strongSwanEngine.dispatchLog({
-            level: 'info',
-            text: '[SIM] CREATE_CHILD_SA Request  → ESP tunnel 192.168.0.1/32 ↔ 192.168.0.2/32',
-          })
-          strongSwanEngine.dispatchLog({
-            level: 'info',
-            text: '[SIM] CREATE_CHILD_SA Response → Child SA established (AES-256-GCM-16)',
-          })
-        }, 200)
+        // The CHILD_SA is now negotiated for real (stub kernel allocates SPIs;
+        // charon logs "CHILD_SA wasm-child{1} established with SPIs …"), so no
+        // synthetic CREATE_CHILD_SA narration is injected anymore.
       } else if (
         text.includes('establishing ike_sa failed') ||
         text.includes('fatal error') ||
@@ -1151,20 +1154,21 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       0x00000041: 'CKM_SHA384_RSA_PKCS',
       0x00000042: 'CKM_SHA512_RSA_PKCS',
       0x00000220: 'CKM_SHA_1',
+      0x00000221: 'CKM_SHA_1_HMAC',
       0x00000250: 'CKM_SHA256',
+      0x00000251: 'CKM_SHA256_HMAC',
+      0x00000256: 'CKM_SHA224_HMAC',
       0x00000260: 'CKM_SHA384',
+      0x00000261: 'CKM_SHA384_HMAC',
       0x00000270: 'CKM_SHA512',
-      0x000002f0: 'CKM_HMAC_SHA1',
-      0x000002f1: 'CKM_HMAC_SHA224',
-      0x000002f2: 'CKM_HMAC_SHA256',
-      0x000002f3: 'CKM_HMAC_SHA384',
-      0x000002f4: 'CKM_HMAC_SHA512',
-      0x00000300: 'CKM_GENERIC_SECRET_KEY_GEN',
+      0x00000271: 'CKM_SHA512_HMAC',
+      0x00000350: 'CKM_GENERIC_SECRET_KEY_GEN',
       0x00001080: 'CKM_AES_KEY_GEN',
       0x00001082: 'CKM_AES_CBC',
-      0x00001087: 'CKM_AES_CTR',
-      0x00001088: 'CKM_AES_GCM',
-      // Verified against pqctoday-hsm/strongswan-pkcs11/pkcs11.h:
+      0x00001086: 'CKM_AES_CTR',
+      0x00001087: 'CKM_AES_GCM',
+      0x00001088: 'CKM_AES_CCM',
+      // Verified against pqctoday-hsm/src/lib/pkcs11/pkcs11t.h (PKCS#11 v3.2):
       0x0000000f: 'CKM_ML_KEM_KEY_PAIR_GEN',
       0x00000017: 'CKM_ML_KEM',
       0x0000001c: 'CKM_ML_DSA_KEY_PAIR_GEN',
@@ -1247,7 +1251,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       const wasmCtx: 'worker-init' | 'worker-resp' =
         role === 'initiator' ? 'worker-init' : 'worker-resp'
       const ts = new Date().toISOString()
-      // CKM_ML_KEM_KEY_PAIR_GEN = 0x0F, CKM_ML_KEM = 0x17 (softhsmv3 vendor).
+      // CKM_ML_KEM_KEY_PAIR_GEN = 0x0F, CKM_ML_KEM = 0x17 (PKCS#11 v3.2 standard).
       // Trace-captured handles live in the worker's softhsmv3 instance, NOT in
       // the panel's rawM. Tag with wasmContext so HsmKeyInspector routes attribute
       // reads through strongSwanEngine.pkcs11(role, 'getKeyAttributes', …) instead
@@ -2379,25 +2383,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               level: rv === 0 ? 'info' : 'error',
               text: `[RPC] C_DecapsulateKey(93) hSess=${hSess93} hKey=${hKey93} ctLen=${ctLen93} → rv=0x${rv.toString(16)} secKey=${p[0]}`,
             })
-            // Hybrid mode: ML-KEM finished in IKE_SA_INIT. Inject synthetic IKE_INTERMEDIATE
-            // steps for educational display — the ikev2-additional-ke plugin (RFC 9370) is not
-            // compiled into the WASM binary, so ECDH is simulated here in the bridge layer.
-            if (rv === 0 && selectedModeRef.current === 'hybrid') {
-              setTimeout(() => {
-                strongSwanEngine.dispatchLog({
-                  level: 'info',
-                  text: '[SIM] IKE_INTERMEDIATE Request  → ECDH P-256 ephemeral key exchange (simulated)',
-                })
-                strongSwanEngine.dispatchLog({
-                  level: 'info',
-                  text: '[SIM] IKE_INTERMEDIATE Response → ECDH P-256 shared secret derived (simulated)',
-                })
-                strongSwanEngine.dispatchLog({
-                  level: 'info',
-                  text: '[SIM] Hybrid SKEYSEED input: ML-KEM-768 secret ⊕ ECDH-P256 secret (combined)',
-                })
-              }, 100)
-            }
+            // Hybrid mode: ML-KEM runs in IKE_SA_INIT; the ECP-256 Additional
+            // KE round is a REAL IKE_INTERMEDIATE exchange now (RFC 9370
+            // ke1_ecp256 in the wasm build) — charon logs the round itself,
+            // so no synthetic narration is injected.
             break
           }
 
@@ -2508,8 +2497,33 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   const exchange = IKE_V2_EXCHANGES[selectedMode]
   const modeConfig = IKE_V2_MODES.find((m) => m.id === selectedMode)
 
+  // Displayed auth algorithm per side. PSK carries no CERT payload; cert
+  // ("dual") mode is dominated by the certificate + AUTH signature bytes.
+  const initiatorAuthAlg =
+    authMode === 'psk' ? 'PSK' : clientAlg === 'RSA' ? clientClassAlg : `ML-DSA-${clientSize}`
+  const responderAuthAlg =
+    authMode === 'psk' ? 'PSK' : serverAlg === 'RSA' ? serverClassAlg : `ML-DSA-${serverSize}`
+
   const steps = useMemo(() => {
     if (!exchange) return []
+    // Re-size the IKE_AUTH SK payload for cert-based auth (IKE_AUTH_SK_BYTES);
+    // the static exchange data models the PSK baseline.
+    const sizeAuth = (msg: IKEv2Message, alg: string): IKEv2Message => {
+      const sk = IKE_AUTH_SK_BYTES[alg]
+      if (alg === 'PSK' || !sk) return msg
+      return {
+        ...msg,
+        payloads: msg.payloads.map((p) =>
+          p.abbreviation === 'SK'
+            ? {
+                ...p,
+                sizeBytes: sk,
+                description: `ID, CERT (${alg}), AUTH, SA, TSi, TSr (encrypted)`,
+              }
+            : p
+        ),
+      }
+    }
     const result = [
       {
         label: 'IKE_SA_INIT Request',
@@ -2542,16 +2556,31 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       {
         label: 'IKE_AUTH Request',
         direction: 'right' as const,
-        message: exchange.ikeAuth.initiator,
+        message: sizeAuth(exchange.ikeAuth.initiator, initiatorAuthAlg),
       },
       {
         label: 'IKE_AUTH Response',
         direction: 'left' as const,
-        message: exchange.ikeAuth.responder,
+        message: sizeAuth(exchange.ikeAuth.responder, responderAuthAlg),
       }
     )
     return result
-  }, [exchange])
+  }, [exchange, initiatorAuthAlg, responderAuthAlg])
+
+  // Wire totals for the stats tiles — derived from the rendered steps so
+  // cert-auth IKE_AUTH sizing is reflected (exchange.totalBytes is PSK-baseline).
+  const wireTotals = useMemo(() => {
+    const sum = (filter: (d: 'right' | 'left') => boolean) =>
+      steps
+        .filter((s) => filter(s.direction))
+        .reduce((a, s) => a + s.message.payloads.reduce((x, p) => x + p.sizeBytes, 0), 0)
+    return { total: sum(() => true), initiator: sum((d) => d === 'right') }
+  }, [steps])
+
+  // RFC 7383 §2.5.1: only messages carrying an Encrypted (SK) payload can be
+  // fragmented. IKE_SA_INIT precedes key establishment, so it can never use
+  // SKF — an oversized SA_INIT must survive IP-layer fragmentation or fail.
+  const canFragment = (label: string) => !label.startsWith('IKE_SA_INIT')
 
   // Keep a ref to steps.length that is always current without adding steps to the
   // useEffect dependency array (which would re-subscribe log/state listeners on every mode change).
@@ -2571,6 +2600,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     }
     return false
   }, [currentStep, mtu, allowFragmentation, exchange, steps, charonFailed])
+
+  const tunnelUp = steps.length > 0 && currentStep === steps.length - 1 && !hasCrashed
 
   const handleReset = useCallback(() => {
     setCurrentStep(0)
@@ -2720,7 +2751,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           })
           if (tokenPresent === 1) {
             for (const id of ids) {
-              // CK_TOKEN_INFO is 600 bytes (PKCS#11 v3.2 §3.2). Fields we care about:
+              // Packed wasm32 CK_TOKEN_INFO is 160 bytes. Fields we care about:
               //   label[32] @ offset 0, manufacturerID[32] @ 32, model[16] @ 64, serialNumber[16] @ 80
               const tiPtr = M._malloc(600)
               M.HEAPU8.fill(0, tiPtr, tiPtr + 600)
@@ -3249,6 +3280,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     <div className="space-y-6">
       <ChromiumGateBanner feature="PQC VPN simulation" />
 
+      {/* Learn section — mirrors SshSimulationPanel's SshLearnSection placement */}
+      <VpnLearnSection />
+
       {/* Scope-transparency banner — what is real vs. simulated in this panel */}
       <div className="p-3 border border-border rounded-lg bg-muted/20 text-xs">
         <div className="font-bold text-foreground mb-2 flex items-center gap-2">
@@ -3285,26 +3319,34 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             <code>x509 -text</code> cert inspector.
           </div>
           <div>
-            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-warning/15 text-status-warning border border-status-warning/30 mr-1">
-              SIMULATED
+            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-success/15 text-status-success border border-status-success/30 mr-1">
+              REAL
             </span>
-            IKE wire protocol: IKE_SA_INIT / IKE_INTERMEDIATE / IKE_AUTH packets are not serialized
-            or exchanged. The message diagram and payload sizes come from
-            <code className="text-[10px] mx-0.5">ikev2Constants.ts</code>.
+            IKE wire protocol: charon serializes real IKE_SA_INIT / IKE_INTERMEDIATE / IKE_AUTH
+            messages and exchanges them between the two workers over a SharedArrayBuffer wire —
+            inspect the bytes in Live Wire Capture. (The step diagram&apos;s payload sizes are a
+            teaching model from <code className="text-[10px] mx-0.5">ikev2Constants.ts</code>.)
+          </div>
+          <div>
+            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-success/15 text-status-success border border-status-success/30 mr-1">
+              REAL
+            </span>
+            RFC 7383 fragmentation: both peers negotiate FRAGMENTATION_SUPPORTED; over-size messages
+            (e.g. ML-DSA IKE_AUTH) are split into real SKF fragments sized by
+            <code className="text-[10px] mx-0.5">fragment_size</code> and reassembled by the peer.
+          </div>
+          <div>
+            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-success/15 text-status-success border border-status-success/30 mr-1">
+              REAL
+            </span>
+            CHILD_SA: negotiated in IKE_AUTH with real ESP key derivation (SPIs come from a stub
+            kernel). No ESP data plane yet — no user traffic actually crosses the tunnel.
           </div>
           <div>
             <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-warning/15 text-status-warning border border-status-warning/30 mr-1">
               SIMULATED
             </span>
-            Step auto-advance: driven by log-string heuristics, not by charon bus events. No real
-            state machine runs.
-          </div>
-          <div>
-            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-warning/15 text-status-warning border border-status-warning/30 mr-1">
-              SIMULATED
-            </span>
-            Fragmentation: the MTU check is UI-side. Charon&apos;s RFC 7383 fragment assembly never
-            runs.
+            Step auto-advance: driven by log-string heuristics, not by charon bus events.
           </div>
           <div>
             {authMode === 'dual' ? (
@@ -3321,13 +3363,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               : 'IKE_AUTH cert auth: PSK mode only; switch to "PSK + Certificate" to run real ML-DSA signing.'}
           </div>
           <div className="md:col-span-2 mt-1 pt-1 border-t border-border text-[11px]">
-            <strong className="text-foreground">Roadmap:</strong> full IKE handshake (Phase 3b–3e)
-            is planned — spec at{' '}
-            <code className="text-[10px]">
-              pqctoday-hsm/docs/wasm-charon-phase-3b-plus-roadmap.md
-            </code>
-            . For full-fidelity IKE today, use the &ldquo;Launch full-fidelity sandbox&rdquo; button
-            in the Raw Config tab (runs real strongSwan 6.0.5 in Docker).
+            <strong className="text-foreground">Roadmap:</strong> remaining work is the ESP data
+            plane (userspace libipsec port) so payload traffic actually crosses the CHILD_SA. For a
+            kernel-backed deployment today, use the &ldquo;Launch full-fidelity sandbox&rdquo;
+            button in the Raw Config tab (runs real strongSwan 6.0.5 in Docker).
           </div>
         </div>
       </div>
@@ -3405,6 +3444,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     variant="ghost"
                     key={mode.id}
                     onClick={() => handleModeChange(mode.id)}
+                    aria-pressed={selectedMode === mode.id}
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
                       selectedMode === mode.id
                         ? 'bg-primary/20 border-primary/50 text-primary'
@@ -3455,9 +3495,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 </label>
               </div>
               <p className="text-[10px] text-muted-foreground mt-1">
-                PQC key exchange payloads are 10–16× larger than classical DH (ML-KEM-768
-                encapsulation key: 1,184 B vs. ECP-256: 64 B), often exceeding UDP MTU. RFC 7383
-                splits oversized IKE messages into fragments reassembled before processing.
+                PQC key exchange payloads are 5–18× larger than classical DH (ML-KEM-768
+                encapsulation key: 1,184 B vs. MODP-3072: 256 B or ECP-256: 64 B), often exceeding
+                UDP MTU. RFC 7383 splits oversized SK-carrying IKE messages into fragments
+                reassembled before processing — IKE_SA_INIT itself can never be fragmented.
               </p>
             </div>
           </div>
@@ -3509,8 +3550,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   ML-KEM proposal strings (e.g. <code>aes256-mlkem768-sha384!</code>) parse
                   successfully against charon&apos;s proposal engine in the WASM binary (ML-KEM
                   transform IDs 35/36/37 per draft-ietf-ipsecme-ikev2-mlkem are recognized) — use
-                  the &ldquo;Validate WASM charon&rdquo; panel below to confirm. The full IKE
-                  handshake still runs as a simulation until Phase 3b+ of the WASM shims lands.
+                  the &ldquo;Validate WASM charon&rdquo; panel below to confirm. The daemon
+                  negotiates the proposal for real; note the running config comes from the WASM
+                  backend&apos;s proposal mode, so edits to this text are display-only.
                 </p>
               )}
             </div>
@@ -3847,7 +3889,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                           allowFragmentation &&
                           step.message.payloads.reduce((a, p) => a + p.sizeBytes, 0) > mtu && (
                             <span className="px-1.5 py-0.5 bg-status-warning/20 text-status-warning text-[9px] rounded uppercase font-bold border border-status-warning/30">
-                              Fragmented
+                              {canFragment(step.label) ? 'Fragmented' : 'Over MTU'}
                             </span>
                           )}
                       </div>
@@ -3857,8 +3899,13 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                             (a, p) => a + p.sizeBytes,
                             0
                           )
-                          if (totalSize > mtu && allowFragmentation) {
-                            const numFragments = Math.ceil(totalSize / mtu)
+                          if (totalSize > mtu && allowFragmentation && canFragment(step.label)) {
+                            // Each fragment repeats the 28 B IKE header + 8 B SKF header
+                            // plus IV/ICV/padding, so the usable payload per fragment is
+                            // smaller than the MTU (RFC 7383 §2.5).
+                            const FRAG_OVERHEAD = 64
+                            const fragPayload = Math.max(1, mtu - FRAG_OVERHEAD)
+                            const numFragments = Math.ceil(totalSize / fragPayload)
                             return Array.from({ length: numFragments }).map((_, fIdx) => (
                               <PayloadCard
                                 key={`${step.label}-frag-${fIdx}`}
@@ -3866,15 +3913,17 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                                   name: 'Encrypted Fragment',
                                   abbreviation: `SKF (${fIdx + 1}/${numFragments})`,
                                   sizeBytes:
-                                    fIdx === numFragments - 1 ? totalSize % mtu || mtu : mtu,
-                                  description: `Encrypted Fragment Payload (RFC 7383) portion.`,
+                                    fIdx === numFragments - 1
+                                      ? (totalSize % fragPayload || fragPayload) + FRAG_OVERHEAD
+                                      : mtu,
+                                  description: `Encrypted Fragment Payload (RFC 7383); each fragment repeats the IKE + SKF headers.`,
                                 }}
                                 index={fIdx}
                                 highlighted={idx === currentStep}
                               />
                             ))
                           }
-                          return step.message.payloads.map((payload, pIdx) => (
+                          const cards = step.message.payloads.map((payload, pIdx) => (
                             <PayloadCard
                               key={`${step.label}-${pIdx}`}
                               payload={payload}
@@ -3883,6 +3932,22 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                               isFragmented={hasCrashed && idx === currentStep}
                             />
                           ))
+                          if (totalSize > mtu && !canFragment(step.label)) {
+                            return (
+                              <React.Fragment key={`${step.label}-no-frag`}>
+                                {cards}
+                                <div className="p-2 rounded border border-status-warning/40 bg-status-warning/10 text-[10px] text-status-warning leading-relaxed">
+                                  {totalSize.toLocaleString()} B exceeds the {mtu} B MTU, but RFC
+                                  7383 cannot help here: SKF fragmentation only applies to messages
+                                  carrying an SK payload, and IKE_SA_INIT runs before any keys
+                                  exist. Real deployments must survive IP-layer fragmentation (often
+                                  dropped by middleboxes) or the handshake fails — the core
+                                  ML-KEM-in-SA_INIT deployment problem.
+                                </div>
+                              </React.Fragment>
+                            )
+                          }
+                          return cards
                         })()}
                       </div>
                     </div>
@@ -3910,6 +3975,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
 
                   {idx === currentStep &&
                     allowFragmentation &&
+                    canFragment(step.label) &&
                     step.message.payloads.reduce((a, p) => a + p.sizeBytes, 0) > mtu && (
                       <div className="flex gap-1 animate-pulse">
                         <span className="w-1.5 h-1.5 bg-warning rounded-full"></span>
@@ -3942,7 +4008,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                           allowFragmentation &&
                           step.message.payloads.reduce((a, p) => a + p.sizeBytes, 0) > mtu && (
                             <span className="px-1.5 py-0.5 bg-status-warning/20 text-status-warning text-[9px] rounded uppercase font-bold border border-status-warning/30">
-                              Assembled
+                              {canFragment(step.label) ? 'Assembled' : 'Over MTU'}
                             </span>
                           )}
                       </div>
@@ -3952,8 +4018,13 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                             (a, p) => a + p.sizeBytes,
                             0
                           )
-                          if (totalSize > mtu && allowFragmentation) {
-                            const numFragments = Math.ceil(totalSize / mtu)
+                          if (totalSize > mtu && allowFragmentation && canFragment(step.label)) {
+                            // Each fragment repeats the 28 B IKE header + 8 B SKF header
+                            // plus IV/ICV/padding, so the usable payload per fragment is
+                            // smaller than the MTU (RFC 7383 §2.5).
+                            const FRAG_OVERHEAD = 64
+                            const fragPayload = Math.max(1, mtu - FRAG_OVERHEAD)
+                            const numFragments = Math.ceil(totalSize / fragPayload)
                             return Array.from({ length: numFragments }).map((_, fIdx) => (
                               <PayloadCard
                                 key={`${step.label}-frag-${fIdx}`}
@@ -3961,15 +4032,17 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                                   name: 'Encrypted Fragment',
                                   abbreviation: `SKF (${fIdx + 1}/${numFragments})`,
                                   sizeBytes:
-                                    fIdx === numFragments - 1 ? totalSize % mtu || mtu : mtu,
-                                  description: `Encrypted Fragment Payload (RFC 7383) portion.`,
+                                    fIdx === numFragments - 1
+                                      ? (totalSize % fragPayload || fragPayload) + FRAG_OVERHEAD
+                                      : mtu,
+                                  description: `Encrypted Fragment Payload (RFC 7383); each fragment repeats the IKE + SKF headers.`,
                                 }}
                                 index={fIdx}
                                 highlighted={idx === currentStep}
                               />
                             ))
                           }
-                          return step.message.payloads.map((payload, pIdx) => (
+                          const cards = step.message.payloads.map((payload, pIdx) => (
                             <PayloadCard
                               key={`${step.label}-${pIdx}`}
                               payload={payload}
@@ -3978,6 +4051,22 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                               isFragmented={hasCrashed && idx === currentStep}
                             />
                           ))
+                          if (totalSize > mtu && !canFragment(step.label)) {
+                            return (
+                              <React.Fragment key={`${step.label}-no-frag`}>
+                                {cards}
+                                <div className="p-2 rounded border border-status-warning/40 bg-status-warning/10 text-[10px] text-status-warning leading-relaxed">
+                                  {totalSize.toLocaleString()} B exceeds the {mtu} B MTU, but RFC
+                                  7383 cannot help here: SKF fragmentation only applies to messages
+                                  carrying an SK payload, and IKE_SA_INIT runs before any keys
+                                  exist. Real deployments must survive IP-layer fragmentation (often
+                                  dropped by middleboxes) or the handshake fails — the core
+                                  ML-KEM-in-SA_INIT deployment problem.
+                                </div>
+                              </React.Fragment>
+                            )
+                          }
+                          return cards
                         })()}
                       </div>
                     </div>
@@ -4016,6 +4105,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             onClick={handleReset}
             className="p-2 border border-border rounded hover:bg-muted"
             title="Restart Simulation"
+            aria-label="Restart Simulation"
           >
             <RotateCcw size={16} />
           </Button>
@@ -4213,10 +4303,11 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       if (!moduleRef.current) moduleRef.current = rawM
                     }
 
-                    // hybrid uses proposalMode=1 (ML-KEM only) — proposalMode=2 generates ECDH proposals
-                    // requiring IKE_INTERMEDIATE (RFC 9370), which is not compiled into the WASM binary.
+                    // proposalMode: 0 = classical (modp3072), 1 = pure-pqc (mlkem768),
+                    // 2 = hybrid (mlkem768 + ke1_ecp256 — real RFC 9370 Additional KE
+                    // over an IKE_INTERMEDIATE round, supported by the wasm build).
                     const proposalMode =
-                      selectedMode === 'pure-pqc' || selectedMode === 'hybrid' ? 1 : 0
+                      selectedMode === 'hybrid' ? 2 : selectedMode === 'pure-pqc' ? 1 : 0
 
                     // Diagnostic: log which branch is taken + state at click time.
                     // Branch selection is fragile — easy to land on PSK fallback by
@@ -4249,7 +4340,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       // Use pre-provisioned certs generated before daemon start (C8 flow).
                       // ipsec.secrets: PSK only — charon's pkcs11 plugin discovers the private
                       // key via PKCS#11 RPC (C_FindObjects matching the cert's public key modulus).
-                      // No RSA key file needed in ipsec.secrets when leftauth2=pubkey via pkcs11.
+                      // No RSA key file needed in ipsec.secrets when leftauth=pubkey via pkcs11.
                       const initSecrets = `: PSK "${clientPsk}"\n`
                       const respSecrets = `: PSK "${serverPsk}"\n`
                       strongSwanEngine.dispatchLog({
@@ -4287,7 +4378,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         { initPsk: clientPsk, respPsk: serverPsk },
                         rpcMode,
                         proposalMode,
-                        { authMode, keyIds }
+                        { authMode, keyIds, fragmentation: allowFragmentation, childSa: true }
                       )
                     } else {
                       strongSwanEngine.init(
@@ -4296,7 +4387,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         { initPsk: clientPsk, respPsk: serverPsk },
                         rpcMode,
                         proposalMode,
-                        { authMode }
+                        { authMode, fragmentation: allowFragmentation, childSa: true }
                       )
                     }
                     setCurrentStep(1)
@@ -4376,7 +4467,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             <div className="text-muted-foreground/50 italic">Awaiting daemon initialization...</div>
           ) : (
             ssLogs.map((log, i) => {
-              const phase = getIkePhase(log.text, selectedMode)
+              const phase = getIkePhase(log.text)
               return (
                 <div
                   key={i}
@@ -4398,6 +4489,31 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             })
           )}
         </div>
+      </div>
+
+      <div className="pt-4 border-t border-border space-y-3">
+        <h4 className="text-sm font-bold flex items-center gap-2 mb-3">
+          <ArrowRight size={16} /> Live Wire Capture
+        </h4>
+        <p className="text-[10px] text-muted-foreground -mt-2">
+          Real IKE messages routed between the two charon WASM workers. Click a packet to inspect
+          its ISAKMP header and hex dump.
+        </p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+          <VpnWireVisualization
+            tunnelEstablished={tunnelUp}
+            mtu={mtu}
+            fragmentationEnabled={allowFragmentation}
+          />
+          <VpnPacketInspector />
+        </div>
+        <VpnScorecard
+          tunnelEstablished={tunnelUp}
+          keMode={selectedMode}
+          authAlg={initiatorAuthAlg}
+          fragmentationEnabled={allowFragmentation}
+          mtu={mtu}
+        />
       </div>
 
       <div className="pt-4 border-t border-border">
@@ -4424,15 +4540,13 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             </span>
           </div>
           <div className="p-3 rounded-xl bg-card border border-border flex flex-col justify-center items-center">
-            <span className="text-xl font-bold">{exchange.totalBytes.toLocaleString()}</span>
+            <span className="text-xl font-bold">{wireTotals.total.toLocaleString()}</span>
             <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-1">
               Total Bytes
             </span>
           </div>
           <div className="p-3 rounded-xl bg-card border border-border flex flex-col justify-center items-center">
-            <span className="text-xl font-bold">
-              {exchange.totalInitiatorBytes.toLocaleString()}
-            </span>
+            <span className="text-xl font-bold">{wireTotals.initiator.toLocaleString()}</span>
             <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-1">
               Initiator Bytes
             </span>
@@ -4463,7 +4577,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           </div>
           <div className="p-3 rounded-xl bg-card border border-border flex flex-col justify-center items-start overflow-hidden">
             <span className="text-[11px] font-bold font-mono truncate w-full">
-              {selectedMode === 'pure-pqc' ? 'ML-DSA-65 (pending)' : 'RSA-3072'}
+              {initiatorAuthAlg === responderAuthAlg
+                ? initiatorAuthAlg
+                : `${initiatorAuthAlg} / ${responderAuthAlg}`}
             </span>
             <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-1">
               Auth Algorithm
@@ -4567,7 +4683,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             <pre className="text-[11px] font-mono bg-muted/40 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap break-all leading-relaxed">
               {selectedMode === 'pure-pqc'
                 ? `SKEYSEED = prf(Ni ‖ Nr, ss_kem)\n         = PRF-HMAC-SHA-256(Ni ‖ Nr,\n             0x${kemSecrets.responder?.hex ?? '…'})`
-                : `SKEYSEED = prf(Ni ‖ Nr, ss_ecdh ‖ ss_kem)\n                         ↑ ECDH      ↑ ML-KEM-768\n             0x<ecdh-secret> ‖ 0x${kemSecrets.responder?.hex ?? '…'}`}
+                : `SKEYSEED  = prf(Ni ‖ Nr, ss_kem)\n                              ↑ ML-KEM-768 secret (IKE_SA_INIT)\nSKEYSEED' = prf(SK_d, g^ir ‖ Ni ‖ Nr)\n                      ↑ ECDH ECP-256 secret (after IKE_INTERMEDIATE)\n            ss_kem = 0x${kemSecrets.responder?.hex ?? '…'}`}
             </pre>
             <div className="text-[11px] text-muted-foreground space-y-1">
               {selectedMode === 'pure-pqc' ? (
@@ -4583,12 +4699,14 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               ) : (
                 <>
                   <p>
-                    The combined PRF input forces an attacker to break{' '}
+                    After each IKE_INTERMEDIATE, SKEYSEED is re-derived keyed by the previous SK_d —
+                    chaining the secrets so an attacker must break{' '}
                     <span className="font-semibold text-foreground">both</span> the classical ECDH
-                    and ML-KEM-768 shared secrets to recover SKEYSEED. Either alone is insufficient.
+                    and ML-KEM-768 exchanges to recover the final keys. Either alone is
+                    insufficient.
                   </p>
                   <p className="text-muted-foreground/70">
-                    Spec: draft-ietf-ipsecme-ikev2-mlkem §5 · RFC 9370 §2.1 · RFC 7296 §2.14
+                    Spec: draft-ietf-ipsecme-ikev2-mlkem §5 · RFC 9370 §2.2.2 · RFC 7296 §2.14
                   </p>
                 </>
               )}
@@ -4626,6 +4744,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   <Button
                     variant="ghost"
                     onClick={() => setAuthMode('psk')}
+                    aria-pressed={authMode === 'psk'}
                     className={`px-3 py-1 rounded text-xs font-medium border transition-colors ${authMode === 'psk' ? 'bg-primary/20 border-primary/50 text-primary' : 'bg-muted/50 border-border text-muted-foreground hover:bg-muted'}`}
                   >
                     PSK Only
@@ -4633,9 +4752,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   <Button
                     variant="ghost"
                     onClick={() => setAuthMode('dual')}
+                    aria-pressed={authMode === 'dual'}
                     className={`px-3 py-1 rounded text-xs font-medium border transition-colors ${authMode === 'dual' ? 'bg-primary/20 border-primary/50 text-primary' : 'bg-muted/50 border-border text-muted-foreground hover:bg-muted'}`}
                   >
-                    PSK + Certificate (RFC 4739)
+                    Certificate (pubkey)
                   </Button>
                 </div>
                 {authMode === 'dual' && (
@@ -4646,14 +4766,13 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         {clientAlg === 'ML-DSA' || serverAlg === 'ML-DSA' ? (
                           <>
                             <span className="font-semibold text-status-warning">
-                              ML-DSA cert generation is real, daemon handshake is not.
+                              ML-DSA cert generation and the IKE handshake are both real.
                             </span>{' '}
-                            Generate Certs will produce a real ML-DSA-{clientSize}–signed X.509 via
-                            softhsmv3 (visible in Inspect + HSM Key panels + PKCS#11 log). The IKE
-                            daemon itself will <strong>not</strong> run on ML-DSA certs — the
-                            strongSwan WASM build does not yet include ML-DSA core support
-                            (draft-ietf-ipsecme-ikev2-mldsa). Switch both selectors to RSA to start
-                            the daemon.
+                            Generate Certs produces a real ML-DSA-{clientSize}–signed X.509 in the
+                            worker softhsmv3 (visible in Inspect + HSM Key panels + PKCS#11 log),
+                            and the daemon runs the ML-DSA handshake end-to-end: charon looks up the
+                            private key via CKA_ID and signs IKE_AUTH with C_Sign (CKM_ML_DSA) in
+                            its in-process softhsmv3.
                           </>
                         ) : (
                           <>
@@ -4668,8 +4787,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       </span>
                     </div>
                     <p className="text-[10px] text-muted-foreground">
-                      Dual auth per RFC 4739 — PSK + certificate. In production, use CA-signed
-                      certificates from a trusted PKI.
+                      Certificate (pubkey) auth — the PSK is not used in this mode. True RFC 4739
+                      multiple-auth (PSK and certificate in one exchange) is not executed by this
+                      build. In production, use CA-signed certificates from a trusted PKI.
                     </p>
                   </div>
                 )}
@@ -4706,14 +4826,14 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     </p>
                     <p>
                       <span className="font-medium">PQC-wrapped PSK (hybrid)</span> — the PSK is
-                      encapsulated under a post-quantum KEM (e.g. ML-KEM-768, BIKE, HQC) over a
-                      standard IP network. Combines quantum-resistant confidentiality with scalable
-                      deployment. Governed by ETSI GS QKD 014 and NIST SP 800-232.
+                      encapsulated under a post-quantum KEM (e.g. ML-KEM-768, HQC) over a standard
+                      IP network. Combines quantum-resistant confidentiality with scalable
+                      deployment. Governed by ETSI GS QKD 014 and NIST SP 800-227.
                     </p>
                     <p className="text-muted-foreground/70">
-                      NIST SP 800-232 and ETSI GS QKD 014 cover these distribution models. In this
-                      simulation the PSK is entered manually — in production, inject it from your
-                      QKD appliance or PQC-wrapped key transport.
+                      NIST SP 800-227 (KEM recommendations) and ETSI GS QKD 014 cover these
+                      distribution models. In this simulation the PSK is entered manually — in
+                      production, inject it from your QKD appliance or PQC-wrapped key transport.
                     </p>
                   </div>
                 )}
@@ -4798,7 +4918,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                           <div className="text-[10px] text-status-warning font-medium leading-tight">
                             ML-DSA requires an IANA AUTH assignment not yet standardized. This
                             simulation relies on preliminary draft constructs matching{' '}
-                            <em>draft-ietf-ipsecme-ikev2-auth-pqc</em>.
+                            <em>draft-sfluhrer-ipsecme-ikev2-mldsa</em>.
                           </div>
                         </div>
                       )}
@@ -4811,7 +4931,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   <div className="text-xs font-mono mb-2 flex items-center justify-between text-foreground">
                     <span className="font-semibold">Client Identity Parameter Mapping</span>
                     <span className="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded">
-                      {authMode === 'psk' ? 'leftauth=psk' : 'leftauth=psk + leftauth2=pubkey'}
+                      {authMode === 'psk' ? 'leftauth=psk' : 'leftauth=pubkey'}
                     </span>
                   </div>
                   <pre className="text-xs text-foreground font-mono">
@@ -4903,7 +5023,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                           <div className="text-[10px] text-status-warning font-medium leading-tight">
                             ML-DSA requires an IANA AUTH assignment not yet standardized. This
                             simulation relies on preliminary draft constructs matching{' '}
-                            <em>draft-ietf-ipsecme-ikev2-auth-pqc</em>.
+                            <em>draft-sfluhrer-ipsecme-ikev2-mldsa</em>.
                           </div>
                         </div>
                       )}
@@ -4916,7 +5036,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   <div className="text-xs font-mono mb-2 flex items-center justify-between text-foreground">
                     <span className="font-semibold">Server Identity Parameter Mapping</span>
                     <span className="text-[10px] bg-secondary/20 text-secondary px-2 py-0.5 rounded">
-                      {authMode === 'psk' ? 'rightauth=psk' : 'rightauth=psk + rightauth2=pubkey'}
+                      {authMode === 'psk' ? 'rightauth=psk' : 'rightauth=pubkey'}
                     </span>
                   </div>
                   <pre className="text-xs text-foreground font-mono">
@@ -4948,6 +5068,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           </div>
         </div>
       </div>
+
+      {/* Comparison panel — mirrors SshSimulationPanel's SshComparisonPanel placement */}
+      <VpnComparisonPanel selectedMode={selectedMode} />
 
       <div className="pt-4 border-t border-border">
         <h4 className="text-sm font-bold flex items-center gap-2 mb-3">
@@ -4992,7 +5115,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             target="_blank"
             rel="noopener noreferrer"
           >
-            draft-ietf-ipsecme-ikev2-mldsa →
+            draft-sfluhrer-ipsecme-ikev2-mldsa →
           </Link>
           <Link
             to="/library?ref=FIPS%20203"

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useVpnPacketStore } from '@/store/useVpnPacketStore'
 
 export interface StrongSwanLog {
   level: 'info' | 'error'
@@ -59,6 +60,8 @@ export class StrongSwanEngine {
   private _epoch = 0 // Guards against late messages from terminated workers
   private _phase: 'full' | 'spawn-only' = 'full'
   private _authMode: 'psk' | 'dual' = 'psk'
+  private _fragmentation = true
+  private _childSa = false
   private _keysReadyResolve: (() => void) | null = null
   private _keySpec: { algType: number; slot0Size: number; slot1Size: number } = {
     algType: 1,
@@ -363,6 +366,16 @@ export class StrongSwanEngine {
           const bytes = new Uint8Array(targetSab)
           const pkt = new Uint8Array(data)
 
+          // 24 B header (6 × i32) precedes the payload in the SAB. Anything
+          // larger would silently truncate — drop loudly instead.
+          if (pkt.length + 24 > targetSab.byteLength) {
+            this.dispatchLog({
+              level: 'error',
+              text: `[ROUTE] packet ${pkt.length}B exceeds SAB capacity (${targetSab.byteLength - 24}B) — dropping`,
+            })
+            break
+          }
+
           i32[1] = pkt.length
           i32[2] = srcIp
           i32[3] = srcPort
@@ -375,6 +388,15 @@ export class StrongSwanEngine {
           this.dispatchLog({
             level: 'info',
             text: `[ROUTE] pkt #${this.packetCount} → ${target} (${destIpStr}) len=${pkt.length}`,
+          })
+          // Feed the live packet capture (Wire visualization / Packet Inspector).
+          // srcIp is LE u32 like destIp: byte 0 (LSB) is the first octet.
+          useVpnPacketStore.getState().addPacket({
+            srcIp: `${srcIp & 0xff}.${(srcIp >>> 8) & 0xff}.${(srcIp >>> 16) & 0xff}.${(srcIp >>> 24) & 0xff}`,
+            destIp: destIpStr,
+            srcPort,
+            destPort: payload.destPort || 500,
+            bytes: pkt.slice(),
           })
           break
         }
@@ -394,6 +416,8 @@ export class StrongSwanEngine {
         auth: authMode,
         localKeyId,
         remoteKeyId,
+        fragmentation: this._fragmentation,
+        childSa: this._childSa,
       },
     })
     return worker
@@ -413,16 +437,23 @@ export class StrongSwanEngine {
       phase?: 'full' | 'spawn-only'
       authMode?: 'psk' | 'dual'
       keyIds?: { initKeyId: string; respKeyId: string }
+      /** RFC 7383 negotiation (wasm_backend.c WASM_FRAGMENTATION). Default true. */
+      fragmentation?: boolean
+      /** Negotiate a real CHILD_SA via the stub kernel (WASM_CHILDSA=1). */
+      childSa?: boolean
     }
   ): Promise<void> {
     if (this.initWorker) return Promise.resolve()
 
     this._epoch++
     this._phase = options?.phase ?? 'full'
+    this._fragmentation = options?.fragmentation ?? true
+    this._childSa = options?.childSa ?? false
     this.setState('LOADING')
     this._readyCount = 0
     this._keysReadyCount = 0
     this.packetCount = 0
+    useVpnPacketStore.getState().clear()
 
     const initPsk = pskOpts?.initPsk ?? 'pqc-wasm-demo-key-2026'
     const respPsk = pskOpts?.respPsk ?? 'pqc-wasm-demo-key-2026'
