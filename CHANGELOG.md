@@ -24,6 +24,24 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [Unreleased]
+
+The PQC VPN simulator now runs the post-quantum IKEv2 handshake for real — hybrid key exchange, message fragmentation, and tunnel (CHILD_SA) negotiation all execute in the browser instead of being narrated — and every byte is inspectable in a new live packet capture.
+
+### Added
+
+- **Watch real VPN packets on the wire** [view:/playground/vpn-sim] [persona:developer] [persona:researcher]: a new Live Wire Capture section shows every IKEv2 message the two in-browser strongSwan daemons exchange — a sequence diagram, a click-to-inspect packet list with parsed ISAKMP headers and hex dumps, and a post-handshake scorecard (bytes on wire, round trips, which PQC RFCs were actually used).
+- **Hybrid mode runs a real second key exchange** [view:/playground/vpn-sim] [persona:architect] [persona:developer]: ML-KEM-768 runs in IKE_SA_INIT and classical ECDH now follows in a genuine IKE_INTERMEDIATE round (RFC 9370 multiple key exchanges) — previously this round was simulated log lines.
+- **Real IKEv2 message fragmentation** [view:/playground/vpn-sim] [persona:ops]: oversized post-quantum messages (an ML-DSA-signed IKE_AUTH is ~9 KB) now split into real RFC 7383 fragments and reassemble on the peer — you can watch the fragment train in the packet capture.
+- **The tunnel itself is now negotiated** [view:/playground/vpn-sim] [persona:architect]: the handshake completes with a real CHILD_SA — ESP keys derived and SPIs assigned — instead of a simulated "tunnel established" message. (Sending traffic through the tunnel is the one remaining roadmap item.)
+- **Learn section and mode comparison for the VPN workshop** [view:/playground/vpn-sim] [persona:curious] [persona:developer]: collapsible explainers covering the IKEv2 exchange flow, why classical/hybrid/pure-PQC differ for Harvest-Now-Decrypt-Later, how SKEYSEED chaining works, and why IKE_SA_INIT can never be fragmented — plus a side-by-side comparison of all three modes with handshake sizes per authentication method.
+
+### Fixed
+
+- **VPN workshop facts corrected across the board** [view:/playground/vpn-sim] [persona:researcher]: wrong NIST citation (SP 800-232 → SP 800-227), an impossible "fragmented IKE_SA_INIT" animation (now a lesson on why it can't fragment), the hybrid SKEYSEED formula (RFC 9370 chains secrets, never XORs them), several PKCS#11 mechanism labels, and byte totals that didn't match the running configuration.
+- **ML-DSA certificate authentication was always working — now the workshop says so** [view:/playground/vpn-sim] [persona:developer]: stale warnings claimed the daemon couldn't handshake with ML-DSA certs; the end-to-end test suite was silently pointing at a removed route. The tests now cover all three modes with ML-DSA auth, and the copy reflects reality.
+- **Honest handshake sizing** [view:/playground/vpn-sim] [persona:architect]: the stats tiles now grow IKE_AUTH by the selected authentication method (PSK ~0.5 KB up to ML-DSA-87 ~12 KB) instead of showing a fixed number that hid the dominant post-quantum cost.
+
 ## [3.19.5] - 2026-06-09
 
 The Threats page is fresher and more accurate — corrected post-quantum standards status, more sources you can open, and consistent severity labels.

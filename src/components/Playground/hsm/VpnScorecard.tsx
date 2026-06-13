@@ -19,10 +19,11 @@ interface VpnScorecardProps {
   mtu: number
 }
 
-// Reference baselines for classical IKEv2 (single-roundtrip ECDH + RSA).
-// Captures upstream strongSwan tcpdumps at default MTU 1500. These are
-// approximations — good enough for "vs classical" framing in the UI.
-const CLASSICAL_BASELINE_BYTES = 720
+// Reference baselines for classical IKEv2 (two-roundtrip ECDH + auth).
+// Matches the classical-mode totalBytes model in
+// @/components/PKILearning/modules/VPNSSHModule/data/ikev2Constants so the
+// "vs classical" framing is consistent with the rest of the workshop.
+const CLASSICAL_BASELINE_BYTES = 1784
 const CLASSICAL_BASELINE_ROUND_TRIPS = 2
 
 const Indicator: React.FC<{ on: boolean; label: string; subtitle?: string }> = ({
@@ -32,7 +33,7 @@ const Indicator: React.FC<{ on: boolean; label: string; subtitle?: string }> = (
 }) => (
   <div className="flex items-center gap-2">
     {on ? (
-      <Check className="h-4 w-4 text-success" aria-hidden="true" />
+      <Check className="h-4 w-4 text-status-success" aria-hidden="true" />
     ) : (
       <X className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
     )}
@@ -54,25 +55,34 @@ export const VpnScorecard: React.FC<VpnScorecardProps> = ({
 
   const stats = useMemo(() => {
     const totalBytes = packets.reduce((sum, p) => sum + p.bytes.length, 0)
-    // Round trips ~= count of distinct message-id pairs initiator↔responder
-    const exchangeTypes = new Set<number>()
+    // One round trip per distinct (exchangeType, messageId) request/response
+    // pair. Handles multiple IKE_INTERMEDIATE rounds (RFC 9370 allows up to
+    // 7, each with its own Message ID) and excludes INFORMATIONAL traffic.
+    const handshakeMsgIds = new Set<string>()
     let intermediateSeen = false
     let authSeen = false
     let oversizedSeen = false
+    let skfSeen = false
     for (const p of packets) {
       if (p.header) {
-        exchangeTypes.add(p.header.exchangeType)
+        if (p.header.exchangeType !== EXCHANGE_TYPE.INFORMATIONAL) {
+          handshakeMsgIds.add(`${p.header.exchangeType}:${p.header.messageId}`)
+        }
         if (p.header.exchangeType === EXCHANGE_TYPE.IKE_INTERMEDIATE) intermediateSeen = true
         if (p.header.exchangeType === EXCHANGE_TYPE.IKE_AUTH) authSeen = true
+        // Next Payload 53 = Encrypted and Authenticated Fragment (SKF,
+        // RFC 7383) — a real fragment on the wire.
+        if (p.header.nextPayload === 53) skfSeen = true
       }
       if (p.bytes.length > mtu) oversizedSeen = true
     }
     return {
       totalBytes,
-      roundTrips: exchangeTypes.size, // one round trip per exchange type
+      roundTrips: handshakeMsgIds.size,
       intermediateSeen,
       authSeen,
       oversizedSeen,
+      skfSeen,
     }
   }, [packets, mtu])
 
@@ -83,7 +93,9 @@ export const VpnScorecard: React.FC<VpnScorecardProps> = ({
 
   const pqKeOn = keMode !== 'classical'
   const pqAuthOn = authAlg.toLowerCase().includes('ml-dsa')
-  const rfc7383On = fragmentationEnabled && stats.oversizedSeen
+  // Real SKF fragments observed on the wire; the oversized fallback covers
+  // builds where charon sends whole messages regardless of MTU.
+  const rfc7383On = stats.skfSeen || (fragmentationEnabled && stats.oversizedSeen)
   const rfc9242On = stats.intermediateSeen
   const rfc9370On = keMode === 'hybrid'
 
@@ -95,7 +107,7 @@ export const VpnScorecard: React.FC<VpnScorecardProps> = ({
     >
       <div className="flex items-center gap-2">
         <span
-          className="inline-block h-2.5 w-2.5 rounded-full bg-success shadow-glow-sm"
+          className="inline-block h-2.5 w-2.5 rounded-full bg-status-success shadow-glow-sm"
           aria-hidden="true"
         />
         <h3 className="text-lg font-semibold text-gradient">Tunnel Established</h3>
@@ -107,7 +119,9 @@ export const VpnScorecard: React.FC<VpnScorecardProps> = ({
           <span className="font-mono text-base text-foreground">
             {stats.totalBytes.toLocaleString()}
           </span>
-          <span className={`text-[10px] ${overheadPct >= 0 ? 'text-warning' : 'text-success'}`}>
+          <span
+            className={`text-[10px] ${overheadPct >= 0 ? 'text-status-warning' : 'text-status-success'}`}
+          >
             vs ~{CLASSICAL_BASELINE_BYTES.toLocaleString()} classical ({overheadPct >= 0 ? '+' : ''}
             {overheadPct}%)
           </span>
@@ -131,11 +145,7 @@ export const VpnScorecard: React.FC<VpnScorecardProps> = ({
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <Indicator on={pqKeOn} label="PQC key exchange" subtitle={pqKeOn ? 'ML-KEM-768' : ''} />
-        <Indicator
-          on={pqAuthOn}
-          label="PQC authentication"
-          subtitle={pqAuthOn ? authAlg.toUpperCase() : authAlg.toUpperCase()}
-        />
+        <Indicator on={pqAuthOn} label="PQC authentication" subtitle={authAlg.toUpperCase()} />
         <Indicator on={rfc9370On} label="RFC 9370 (Multiple KE)" />
         <Indicator on={rfc9242On} label="RFC 9242 (IKE_INTERMEDIATE)" />
         <Indicator on={rfc7383On} label="RFC 7383 (IKEv2 Fragmentation)" />

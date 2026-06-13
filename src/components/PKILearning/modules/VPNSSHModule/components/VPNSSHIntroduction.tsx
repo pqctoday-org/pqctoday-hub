@@ -288,7 +288,7 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
               </thead>
               <tbody>
                 {[
-                  { name: 'IKEv2', classical: 1400, hybrid: 3768 },
+                  { name: 'IKEv2', classical: 1784, hybrid: 3784 },
                   { name: 'SSH', classical: 984, hybrid: 3296 },
                   { name: 'WireGuard', classical: 304, hybrid: 6800 },
                   { name: 'TLS 1.3', classical: 1200, hybrid: 3500 },

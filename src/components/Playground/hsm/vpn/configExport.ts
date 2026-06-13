@@ -77,13 +77,18 @@ ${
 
 ## Simulator caveats
 
-- Hybrid IKE_INTERMEDIATE and the ML-KEM transforms are simulation-only in
-  the current WASM charon build. A real-deployment strongSwan needs the
-  \`ipsecme-ikev2-mlkem\` + \`ipsecme-ikev2-pqc-ake\` patches and IANA-assigned
-  transform IDs for full interop.
-- ML-DSA certificate OIDs follow
-  \`draft-ietf-lamps-dilithium-certificates\` — verify your peer strongSwan
-  understands these OIDs before deploying.
+- The WASM simulator runs the full IKEv2 handshake for real: ML-KEM in the
+  primary KE slot, ECP-256 as Additional KE 1 over a real IKE_INTERMEDIATE
+  round (RFC 9242/9370), RFC 7383 fragmentation, and CHILD_SA negotiation
+  (stub-kernel SPIs; no ESP data plane). strongSwan 6.0+ supports all of
+  this natively — RFC 9370 multiple key exchanges, the \`mlkem512/768/1024\`
+  proposal keywords, and \`ke1_\`–\`ke7_\` additional-KE prefixes — no patches
+  required. The ML-KEM IKEv2 Key Exchange Method IDs (35/36/37) are
+  IANA-assigned.
+- ML-DSA certificate OIDs follow RFC 9881 (ML-DSA in X.509) — verify your
+  peer strongSwan understands these OIDs before deploying. ML-DSA as an
+  IKEv2 AUTH method (draft-sfluhrer-ipsecme-ikev2-mldsa) has no IANA
+  assignment yet.
 
 Generated ${new Date().toISOString()}.
 `
@@ -105,11 +110,16 @@ export async function exportVpnConfigBundle(cfg: VpnConfigExport): Promise<void>
   }
 
   if (cfg.authMode === 'dual') {
+    // Each side needs BOTH certs: its own (leftcert=) and the peer's
+    // (rightcert= / trust anchor for the self-signed peer cert) — mirrors
+    // the worker provisioning flow in VpnSimulationPanel.
     if (cfg.initiatorCertPem) {
       zip.file('initiator/certs/initiator.crt', cfg.initiatorCertPem)
+      zip.file('responder/certs/initiator.crt', cfg.initiatorCertPem)
     }
     if (cfg.responderCertPem) {
       zip.file('responder/certs/responder.crt', cfg.responderCertPem)
+      zip.file('initiator/certs/responder.crt', cfg.responderCertPem)
     }
   }
 

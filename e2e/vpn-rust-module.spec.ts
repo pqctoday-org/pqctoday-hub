@@ -5,8 +5,10 @@
 
 import { test, expect } from '@playwright/test'
 
-const BASE = '/playground/hsm'
-const VPN_TAB = 'tab=vpn_sim'
+// The VPN simulator lives at the `vpn-sim` workshop route (see
+// workshopRegistry.tsx). The old /playground/hsm?tab=vpn_sim route no longer
+// hosts a VPN tab.
+const BASE = '/playground/vpn-sim'
 const TIMEOUT = 90_000
 const CERTGEN_TIMEOUT = 60_000
 
@@ -39,7 +41,7 @@ async function runVpnScenario(
   // StrictMode's double-invoke flips off before the timer fires, so the daemon
   // never auto-starts under Playwright. Drive Start Daemon explicitly instead
   // (same pattern the dual-auth tests already use for the same reason).
-  const url = `${BASE}?${VPN_TAB}&vpnMode=${mode}&vpnAuth=${auth}&vpnRpc=1`
+  const url = `${BASE}?vpnMode=${mode}&vpnAuth=${auth}&vpnRpc=1`
   await page.goto(url, { waitUntil: 'networkidle', timeout: 30_000 })
 
   const startBtn = page.locator('[data-testid="vpn-start-daemon"]')
@@ -141,7 +143,7 @@ for (const { mode, expectEcdh, expectMlKem } of PSK_SCENARIOS) {
     test.setTimeout(240_000)
     await suppressWhatsNew(page)
 
-    await page.goto(`${BASE}?${VPN_TAB}&vpnMode=${mode}&vpnAuth=dual&vpnRpc=1`, {
+    await page.goto(`${BASE}?vpnMode=${mode}&vpnAuth=dual&vpnRpc=1`, {
       waitUntil: 'networkidle',
       timeout: 30_000,
     })
