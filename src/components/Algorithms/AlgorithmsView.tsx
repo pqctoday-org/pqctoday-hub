@@ -30,6 +30,9 @@ import { generateCsv, downloadCsv, csvFilename } from '../../utils/csvExport'
 import { ALGORITHM_CSV_COLUMNS } from '../../utils/csvExportConfigs'
 import { AlgorithmInfoModal } from './AlgorithmInfoModal'
 import { AlgorithmEntryStrip } from './AlgorithmEntryStrip'
+import { Cnsa20Panel } from './Cnsa20Panel'
+import { passesCnsa20Filter } from './cnsa20'
+import { ShieldCheck } from 'lucide-react'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { Button } from '../ui/button'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
@@ -106,6 +109,7 @@ export function AlgorithmsView() {
       'compare',
       'section',
       'subtab',
+      'cnsa',
     ]
     return watched.some((key) => searchParams.has(key))
   }, [searchParams])
@@ -225,6 +229,11 @@ export function AlgorithmsView() {
   )
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '')
 
+  // CNSA 2.0 lens — additive. When off (default) the page behaves exactly as
+  // before; when on, a lens panel renders and the detailed/transition lists
+  // narrow to the CNSA 2.0 suite. Synced to the URL via ?cnsa=1.
+  const [cnsaLens, setCnsaLens] = useState(() => searchParams.get('cnsa') === '1')
+
   // --- Comparison state (synced to URL) ---
   const [compareKeys, setCompareKeys] = useState<string[]>(() => {
     const raw = searchParams.get('compare')
@@ -291,6 +300,14 @@ export function AlgorithmsView() {
     },
     [setSearchParams]
   )
+
+  const handleToggleCnsaLens = useCallback(() => {
+    setCnsaLens((prev) => {
+      const next = !prev
+      updateSearchParams({ cnsa: next ? '1' : null })
+      return next
+    })
+  }, [updateSearchParams])
 
   const handleCryptoFamilyChange = useCallback(
     (id: string) => {
@@ -475,6 +492,7 @@ export function AlgorithmsView() {
   // --- Filtered data (Detailed Comparison) ---
   const filteredAlgorithms = useMemo(() => {
     return algorithmData.filter((algo) => {
+      if (cnsaLens && !passesCnsa20Filter(algo)) return false
       if (filterCryptoFamily !== 'All' && algo.cryptoFamily !== filterCryptoFamily) return false
       if (filterFunction !== 'All') {
         const group = getFunctionGroup(algo)
@@ -507,11 +525,13 @@ export function AlgorithmsView() {
     matchesStatusFilter,
     searchQuery,
     semanticAlgoNameSet,
+    cnsaLens,
   ])
 
   // --- Filtered data (Transition Guide) ---
   const filteredTransitions = useMemo(() => {
     return transitionData.filter((t) => {
+      if (cnsaLens && !passesCnsa20Filter({ name: t.pqc, family: '' })) return false
       if (filterFunction !== 'All') {
         const group = getTransitionFunctionGroup(t.function)
         if (group !== filterFunction) return false
@@ -544,6 +564,7 @@ export function AlgorithmsView() {
     matchesStatusFilter,
     searchQuery,
     semanticAlgoNameSet,
+    cnsaLens,
   ])
 
   // --- Available security levels ---
@@ -694,6 +715,28 @@ export function AlgorithmsView() {
             persona={selectedPersona}
             onQuickView={handleQuickView}
           />
+
+          {/* CNSA 2.0 lens toggle (gap-closer #1). Additive: off by default. */}
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <Button
+              variant={cnsaLens ? 'gradient' : 'outline'}
+              size="sm"
+              onClick={handleToggleCnsaLens}
+              aria-pressed={cnsaLens}
+              className="gap-1.5"
+              title="Filter to the NSA CNSA 2.0 suite — ML-KEM-1024 / ML-DSA-87 required; SLH-DSA excluded"
+            >
+              <ShieldCheck size={14} aria-hidden="true" />
+              CNSA 2.0 lens
+            </Button>
+            {cnsaLens && (
+              <span className="text-xs text-muted-foreground">
+                Showing only the CNSA 2.0 suite for U.S. National Security Systems.
+              </span>
+            )}
+          </div>
+
+          {cnsaLens && <Cnsa20Panel />}
 
           {/* Cross-link to PQC Candidates module when filtering by Candidate status */}
           {filterStatus === 'Candidate' && (

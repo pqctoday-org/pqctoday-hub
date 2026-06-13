@@ -30,9 +30,36 @@ import { ReviewedBadge } from '../ui/ReviewedBadge'
 import { TrustScoreBadge } from '../ui/TrustScoreBadge'
 import { RevisionDrilldownPanel } from '../ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
+import { jurisdictionStanceForRegion, type JurisdictionStance } from './cnsa20'
 
 type SortColumn = 'function' | 'classical' | 'pqc' | 'deprecation' | 'region' | 'status'
 type SortDirection = 'asc' | 'desc' | null
+
+/** Short label for a jurisdiction's hybrid/composite stance chip. */
+function jurisdictionStanceLabel(stance: JurisdictionStance): string {
+  switch (stance) {
+    case 'require':
+      return 'Hybrid required'
+    case 'prefer-pure':
+      return 'Prefers pure'
+    case 'interim':
+      return 'Hybrid (interim)'
+    case 'permit':
+      return 'Hybrid permitted'
+  }
+}
+
+/** Tailwind classes for a jurisdiction stance chip. */
+function jurisdictionStanceChip(stance: JurisdictionStance): string {
+  switch (stance) {
+    case 'require':
+      return 'bg-status-warning/10 text-status-warning border-status-warning/30'
+    case 'prefer-pure':
+      return 'bg-status-success/10 text-status-success border-status-success/30'
+    default:
+      return 'bg-status-info/10 text-status-info border-status-info/30'
+  }
+}
 
 interface AlgorithmComparisonProps {
   highlightAlgorithms?: Set<string>
@@ -610,6 +637,28 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                               {algo.region}
                             </span>
                           )}
+                          {/* Jurisdictional mandate status — surfaced on hybrid/composite
+                              rows, derived from the row's own Region field (no invented facts). */}
+                          {(algo.function === 'Hybrid KEM' ||
+                            algo.function === 'Hybrid KEM (HPKE)' ||
+                            algo.function === 'Hybrid KEM with Access Control' ||
+                            algo.function === 'Composite KEM' ||
+                            algo.function === 'Composite Signature') &&
+                            (() => {
+                              const j = jurisdictionStanceForRegion(algo.region)
+                              if (!j) return null
+                              return (
+                                <span
+                                  className={clsx(
+                                    'mt-1 block w-fit text-[10px] px-1.5 py-0.5 rounded border font-medium',
+                                    jurisdictionStanceChip(j.stance)
+                                  )}
+                                  title={j.note}
+                                >
+                                  {jurisdictionStanceLabel(j.stance)}
+                                </span>
+                              )
+                            })()}
                         </td>
                         <td className="px-4 py-3" style={{ width: `${columnWidths.status}px` }}>
                           {algo.status &&

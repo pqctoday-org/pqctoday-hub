@@ -30,8 +30,10 @@ import {
   RefreshCw,
   Clock,
   X,
+  Gauge,
 } from 'lucide-react'
 import { LAYERS } from './InfrastructureStack'
+import { getPerfGuidance, sizeClassLabel } from './migrationGuidance'
 import { certsByProduct } from '../../data/certificationXrefData'
 import { cpeByProduct } from '../../data/cpeXrefData'
 import { purlByProduct } from '../../data/purlXrefData'
@@ -634,6 +636,32 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                               </span>
                             </div>
                           </div>
+
+                          {/* Performance & key-size guidance (framework §6.1/6.3) —
+                              derived from the product's declared PQC algorithms. */}
+                          {(() => {
+                            const perf = getPerfGuidance(item)
+                            if (perf.sizeClass === 'unknown' && !perf.perfTested) return null
+                            return (
+                              <div className="mt-4">
+                                <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                                  <Gauge size={14} /> Performance &amp; Key Size
+                                </h4>
+                                <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                                    {sizeClassLabel(perf.sizeClass)} footprint
+                                    {perf.drivingAlgorithm ? ` · ${perf.drivingAlgorithm}` : ''}
+                                  </span>
+                                  {perf.perfTested && (
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-status-success/10 text-status-success border border-status-success/20">
+                                      <ShieldCheck size={11} /> Perf-tested
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-xs text-muted-foreground">{perf.note}</p>
+                              </div>
+                            )
+                          })()}
                         </div>
                         <div className="space-y-4">
                           <div>

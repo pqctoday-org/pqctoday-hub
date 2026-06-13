@@ -26,6 +26,10 @@ import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { threatEnrichmentData } from '@/data/threatEnrichmentData'
 import FocusLock from 'react-focus-lock'
 import { Button } from '@/components/ui/button'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { Radar, Siren } from 'lucide-react'
+import { ThreatClassBadge, ShorTierBadge } from './ThreatClassBadges'
+import { getSocUseCases, getIrPlaybook, getShorTier, SHOR_TIER_DEFS } from './threatClassification'
 
 interface ThreatDetailDialogProps {
   threat: ThreatItem
@@ -114,18 +118,92 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-1">
                   Criticality
                 </h3>
-                <span
-                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    threat.criticality.toLowerCase() === 'critical'
-                      ? 'bg-status-error text-status-error border border-status-error'
-                      : threat.criticality.toLowerCase() === 'high'
+                <div className="flex flex-wrap items-center gap-2">
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      threat.criticality.toLowerCase() === 'critical'
                         ? 'bg-status-error text-status-error border border-status-error'
-                        : 'bg-status-warning text-status-warning border border-status-warning'
-                  }`}
-                >
-                  {threat.criticality}
-                </span>
+                        : threat.criticality.toLowerCase() === 'high'
+                          ? 'bg-status-error text-status-error border border-status-error'
+                          : 'bg-status-warning text-status-warning border border-status-warning'
+                    }`}
+                  >
+                    {threat.criticality}
+                  </span>
+                  {/* Derived dimensions — Threats #2 (class) / #4 (Shor tier) */}
+                  <ThreatClassBadge threat={threat} />
+                  <ShorTierBadge threat={threat} />
+                </div>
+                {/* Shor-resource tier explanation — Threats #4 */}
+                <p className="text-xs text-muted-foreground mt-2">
+                  {SHOR_TIER_DEFS[getShorTier(threat)].blurb}
+                </p>
               </div>
+            </div>
+
+            {/* Detection / SOC + Incident-Response — Threats #3 / #6 */}
+            <div className="pt-4 border-t border-border mt-4">
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
+                <Radar size={14} className="text-primary" /> Detection &amp; Response
+              </h3>
+              <Tabs defaultValue="detection">
+                <TabsList>
+                  <TabsTrigger value="detection" className="gap-1.5">
+                    <Radar size={13} aria-hidden="true" /> Detection / SOC
+                  </TabsTrigger>
+                  <TabsTrigger value="response" className="gap-1.5">
+                    <Siren size={13} aria-hidden="true" /> Incident Response
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="detection">
+                  <p className="text-xs text-muted-foreground mb-3">
+                    SOC detection use cases mapped to this threat (Applied Quantum SOC chapter,
+                    UC1–UC5).
+                  </p>
+                  <ul className="space-y-2.5">
+                    {getSocUseCases(threat).map((uc) => (
+                      <li
+                        key={uc.id}
+                        className="bg-muted/30 rounded-lg border border-border/50 p-3"
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
+                            {uc.id}
+                          </span>
+                          <span className="text-xs font-semibold text-foreground">{uc.title}</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">{uc.detection}</p>
+                        <p className="text-[11px] text-muted-foreground/70 mt-1">
+                          <span className="uppercase tracking-wide">Signal:</span> {uc.signal}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </TabsContent>
+
+                <TabsContent value="response">
+                  {(() => {
+                    const pb = getIrPlaybook(threat)
+                    return (
+                      <div className="bg-muted/30 rounded-lg border border-border/50 p-3">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Siren size={14} className="text-status-error shrink-0" />
+                          <span className="text-sm font-semibold text-foreground">{pb.title}</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mb-3">{pb.summary}</p>
+                        <Link
+                          to={pb.href}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 transition-colors"
+                        >
+                          Open IR Playbook
+                          <ArrowRight size={12} />
+                        </Link>
+                      </div>
+                    )
+                  })()}
+                </TabsContent>
+              </Tabs>
             </div>
 
             {/* Threat Enrichment Analysis */}

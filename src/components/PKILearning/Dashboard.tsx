@@ -55,6 +55,7 @@ import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useAssessmentResultStore } from '../../store/useAssessmentResultStore'
 import { inferRecommendedModules } from '../../utils/inferRecommendedModules'
 import { AssessmentRecommendationsBanner } from './AssessmentRecommendationsBanner'
+import { WhereToStartTree } from './WhereToStartTree'
 import { ContentUpdatesFeed } from '@/components/ui/ContentUpdatesFeed'
 
 // ---------------------------------------------------------------------------
@@ -1072,6 +1073,9 @@ const ModuleTracksGrid = ({
           <span>{totalModuleCount - touchedCount} not started</span>
         </p>
       )}
+
+      {/* "Where do I start?" router + framework crosswalk (App. B / App. G) */}
+      {!isEmbedded && <WhereToStartTree />}
 
       {/* Mobile Search & Filter Drawer */}
       <div className="flex md:hidden items-center gap-2">

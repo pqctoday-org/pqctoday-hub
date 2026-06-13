@@ -15,9 +15,14 @@ import { CryptoAgilityProcessDiagram } from '@/components/PKILearning/modules/Cr
 import { CSWP39_STEPS, CSWP39_TIERS, CSWP39_CROSS_WALK, CSWP39_SOURCE_METADATA } from './cswp39Data'
 import { CSWP39StepCard } from './CSWP39StepCard'
 import { FrameworkCrosswalkView } from './FrameworkCrosswalkView'
+import { RegulatorySatisfiesView } from './RegulatorySatisfiesView'
+import { HybridJurisdictionMatrix } from './HybridJurisdictionMatrix'
+import { RegulatoryHorizonLayer } from './RegulatoryHorizonLayer'
+import { EvidenceReadinessDossier } from './EvidenceReadinessDossier'
 import { MaturityEvidenceGrid } from './MaturityEvidenceGrid'
 import { PillarDisclaimer } from '@/components/BusinessCenter/widgets/PillarDisclaimer'
 import { maturityRequirements } from '@/data/maturityGovernanceData'
+import { complianceFrameworks } from '@/data/complianceData'
 
 interface CSWP39ExplorerProps {
   onNavigateToFramework: (
@@ -316,6 +321,18 @@ export const CSWP39Explorer: React.FC<CSWP39ExplorerProps> = ({
 
       {/* ── App. G — Crosswalk to other frameworks (per Migration Program phase) ── */}
       <FrameworkCrosswalkView />
+
+      {/* ── #2 Framework output that satisfies each obligation ── */}
+      <RegulatorySatisfiesView />
+
+      {/* ── #3 Hybrid-position / jurisdiction matrix (App. D) ── */}
+      <HybridJurisdictionMatrix />
+
+      {/* ── #4 Deadline-buffer / Regulatory Horizon layer (live mandate dates) ── */}
+      <RegulatoryHorizonLayer frameworks={complianceFrameworks} />
+
+      {/* ── #5 Audit / evidence-readiness dossiers ── */}
+      <EvidenceReadinessDossier />
 
       {/* ── Authoritative Evidence ── */}
       <section className="glass-panel p-5 border border-border rounded-lg">
