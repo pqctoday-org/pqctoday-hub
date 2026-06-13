@@ -438,8 +438,9 @@ export const TLSBasicsModule: React.FC = () => {
                 </li>
                 <li>
                   <span className="text-status-success font-semibold">✓ Hybrid KEM</span> —
-                  X25519MLKEM768, SecP256r1MLKEM768, X448MLKEM1024, SecP384r1MLKEM1024 (TLS 1.3 key
-                  share, IETF draft-connolly-tls-mlkem)
+                  X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024 (TLS 1.3 key share, IETF
+                  draft-ietf-tls-ecdhe-mlkem); pure ML-KEM-512/768/1024 groups
+                  (draft-connolly-tls-mlkem)
                 </li>
                 <li>
                   <span className="text-status-success font-semibold">✓ Classical certs</span> —

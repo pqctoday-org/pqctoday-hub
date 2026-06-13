@@ -232,6 +232,17 @@ void apply_config(SSL_CTX *ctx, const char *path, const char *side) {
   if (groups && strlen(groups) > 0) {
     if (SSL_CTX_set1_groups_list(ctx, groups) == 1) {
       log_event(side, "config_groups", groups);
+    } else {
+      // One unknown name fails the WHOLE list (no '?' prefixes used here),
+      // leaving OpenSSL's DEFAULT groups (X25519MLKEM768 first) in effect.
+      char err[512];
+      /* ASCII only: log_event replaces non-ASCII bytes with '?' */
+      snprintf(err, sizeof(err),
+               "Failed to set Groups '%s' - one or more names are not valid "
+               "TLS groups in this OpenSSL build. OpenSSL DEFAULT groups "
+               "(X25519MLKEM768 first) will be used instead.",
+               groups);
+      log_event(side, "error", err);
     }
   }
 
@@ -240,6 +251,14 @@ void apply_config(SSL_CTX *ctx, const char *path, const char *side) {
   if (sigalgs && strlen(sigalgs) > 0) {
     if (SSL_CTX_set1_sigalgs_list(ctx, sigalgs) == 1) {
       log_event(side, "config_sigalgs", sigalgs);
+    } else {
+      char err[512];
+      snprintf(err, sizeof(err),
+               "Failed to set SignatureAlgorithms '%s' - one or more names "
+               "are not valid TLS signature schemes in this OpenSSL build. "
+               "OpenSSL default sigalgs will be used instead.",
+               sigalgs);
+      log_event(side, "error", err);
     }
   }
 
@@ -357,7 +376,33 @@ size_t trace_callback(const char *buffer, size_t count, int category, int cmd,
   return count;
 }
 
-// MSG CALLBACK — detects individual handshake messages including HRR
+// RFC 8446 §4.1.3: a HelloRetryRequest is a ServerHello whose random equals
+// SHA-256("HelloRetryRequest"). Matching it is the definitive HRR test.
+static const unsigned char HRR_RANDOM[32] = {
+    0xCF, 0x21, 0xAD, 0x74, 0xE5, 0x9A, 0x61, 0x11, 0xBE, 0x1D, 0x8C,
+    0x02, 0x1E, 0x65, 0xB8, 0x91, 0xC2, 0xA2, 0x11, 0x16, 0x7A, 0xBB,
+    0x8C, 0x5E, 0x07, 0x9E, 0x09, 0xE2, 0xC8, 0xA8, 0x33, 0x9C};
+
+static const char *handshake_msg_name(unsigned char t) {
+  switch (t) {
+  case 1:  return "ClientHello";
+  case 2:  return "ServerHello";
+  case 4:  return "NewSessionTicket";
+  case 5:  return "EndOfEarlyData";
+  case 8:  return "EncryptedExtensions";
+  case 11: return "Certificate";
+  case 13: return "CertificateRequest";
+  case 15: return "CertificateVerify";
+  case 20: return "Finished";
+  case 24: return "KeyUpdate";
+  default: return NULL;
+  }
+}
+
+// MSG CALLBACK — logs individual handshake messages and detects HRR.
+// Must be attached with SSL_set_msg_callback on each SSL object:
+// SSL_CTX_set_msg_callback only affects SSL objects created afterwards
+// (SSL_new copies ctx->msg_callback at creation time).
 void msg_callback(int write_p, int version, int content_type,
                   const void *buf, size_t len, SSL *ssl, void *arg) {
   // Only process handshake messages (content_type 22)
@@ -371,32 +416,49 @@ void msg_callback(int write_p, int version, int content_type,
       side = "system";
   }
 
+  // buf is the full handshake message incl. its 4-byte header (type + len24)
   unsigned char msg_type = ((const unsigned char *)buf)[0];
+  const char *name = handshake_msg_name(msg_type);
+  if (!name)
+    return;
 
-  // Track ClientHello sends from the client side
-  // msg_type 1 = ClientHello, write_p = 1 means sending
-  if (msg_type == 1 && write_p && strcmp(side, "client") == 0) {
-    client_hello_count++;
-    if (client_hello_count == 1) {
-      log_event("client", "handshake_msg", "ClientHello sent (initial)");
-    } else if (client_hello_count == 2) {
+  if (write_p) {
+    // Sender-side logging. ClientHello gets HRR-aware wording.
+    if (msg_type == 1 && strcmp(side, "client") == 0) {
+      client_hello_count++;
+      if (client_hello_count == 1) {
+        char m[128];
+        snprintf(m, sizeof(m), "ClientHello sent (initial, %zu B)", len);
+        log_event("client", "handshake_msg", m);
+      } else {
+        char m[160];
+        snprintf(m, sizeof(m),
+                 "ClientHello sent (retry %d with updated key_share, %zu B)",
+                 client_hello_count - 1, len);
+        log_event("client", "handshake_msg", m);
+      }
+    } else {
+      char m[160];
+      snprintf(m, sizeof(m), "%s sent (%zu B)", name, len);
+      log_event(side, "handshake_msg", m);
+    }
+  } else if (msg_type == 2 && strcmp(side, "client") == 0) {
+    // Receiver side: only ServerHello is logged (to keep the trace compact),
+    // because the client must distinguish a real ServerHello from an HRR.
+    // ServerHello body: 4 B handshake header + 2 B legacy_version, then random.
+    if (len >= 38 &&
+        memcmp((const unsigned char *)buf + 6, HRR_RANDOM, 32) == 0) {
       hrr_detected = 1;
       log_event("client", "hello_retry",
-                "HelloRetryRequest: Server requested different key exchange "
-                "group. Client sending second ClientHello with updated "
-                "key_share. Handshake is now 2-RTT instead of 1-RTT.");
-    }
-  }
-
-  // Detect ServerHello (msg_type 2) received by client
-  // In TLS 1.3, HelloRetryRequest is a ServerHello with a special random
-  // OpenSSL state machine handles this internally; we detect it via the
-  // client_hello_count (if a second ClientHello follows, HRR happened)
-  if (msg_type == 2 && !write_p && strcmp(side, "client") == 0) {
-    if (client_hello_count == 1 && !hrr_detected) {
-      // First ServerHello — could be HRR or real ServerHello
-      // We'll know after the next message (if client sends another CH)
-      log_event("client", "handshake_msg", "ServerHello received");
+                "HelloRetryRequest received: the server-random matches the "
+                "RFC 8446 §4.1.3 HRR constant. The server wants a different "
+                "key exchange group than the ClientHello's key_share offered. "
+                "Client will resend ClientHello with an updated key_share — "
+                "the handshake is now 2-RTT instead of 1-RTT.");
+    } else {
+      char m[128];
+      snprintf(m, sizeof(m), "ServerHello received (%zu B)", len);
+      log_event("client", "handshake_msg", m);
     }
   }
 
@@ -607,9 +669,12 @@ char *execute_tls_simulation(const char *client_conf_path,
   SSL_set_info_callback(c_ssl, info_callback);
   SSL_set_info_callback(s_ssl, info_callback);
 
-  // Setup Message Callback for HRR detection
-  SSL_CTX_set_msg_callback(c_ctx, msg_callback);
-  SSL_CTX_set_msg_callback(s_ctx, msg_callback);
+  // Setup Message Callback for handshake message logging + HRR detection.
+  // Must be set on the SSL objects directly: SSL_new copies ctx->msg_callback
+  // at creation time, so SSL_CTX_set_msg_callback after SSL_new is a no-op
+  // for c_ssl/s_ssl (this exact bug previously left HRR detection dead).
+  SSL_set_msg_callback(c_ssl, msg_callback);
+  SSL_set_msg_callback(s_ssl, msg_callback);
 
   // Setup Keylogging
   SSL_CTX_set_keylog_callback(c_ctx, keylog_callback);
@@ -797,7 +862,15 @@ char *execute_tls_simulation(const char *client_conf_path,
                (pkey_type && strcmp(pkey_type, "ED448") == 0)) {
         snprintf(scheme, sizeof(scheme), "ed448");
       }
-      // RSA-PSS (TLS 1.3 always uses PSS for RSA)
+      // TLS 1.3 always signs RSA with PSS; the rsae/pss split reflects the
+      // CERTIFICATE key type: plain RSA key → rsa_pss_rsae_*,
+      // RSA-PSS-restricted key → rsa_pss_pss_*.
+      else if (pkey_type && strcmp(pkey_type, "RSA-PSS") == 0) {
+        if (hash_sfx)
+          snprintf(scheme, sizeof(scheme), "rsa_pss_pss_%s", hash_sfx);
+        else
+          snprintf(scheme, sizeof(scheme), "rsa_pss_pss_nid%d", hash_nid);
+      }
       else if (type_nid == EVP_PKEY_RSA_PSS ||
                (pkey_type && strcmp(pkey_type, "RSA") == 0)) {
         if (hash_sfx)

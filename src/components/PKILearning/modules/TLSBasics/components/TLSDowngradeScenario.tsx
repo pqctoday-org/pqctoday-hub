@@ -32,7 +32,7 @@ const SCENARIO_STEPS: Record<ScenarioMode, Step[]> = {
       actor: 'system',
       label: 'Key derivation',
       detail:
-        'Both sides derive the same shared secret: KDF(X25519_ss ∥ ML-KEM_ss). Session is quantum-safe — breaking X25519 alone is insufficient.',
+        'Both sides derive the same shared secret: KDF(ML-KEM_ss ∥ X25519_ss) — concatenated in that order per draft-ietf-tls-ecdhe-mlkem. Session is quantum-safe — breaking X25519 alone is insufficient.',
     },
     {
       actor: 'client',
@@ -44,22 +44,29 @@ const SCENARIO_STEPS: Record<ScenarioMode, Step[]> = {
   attack: [
     {
       actor: 'client',
-      label: 'ClientHello (original)',
+      label: 'ClientHello (hybrid)',
       detail:
-        'Client sends key_share with X25519 + ML-KEM-768. Client supports PQC and intends a hybrid connection.',
+        'Client sends a key_share with X25519MLKEM768. Client supports PQC and intends a hybrid connection.',
     },
     {
       actor: 'attacker',
-      label: 'MITM intercept & strip',
+      label: 'PQC handshake blocked',
       detail:
-        'Attacker-in-the-middle intercepts the ClientHello and removes the ML-KEM-768 key_share entry before forwarding. The server only sees X25519.',
+        'Attacker drops or resets every connection offering a PQC key_share. Note: silently rewriting the ClientHello in flight would NOT work — the server signs the transcript as it received it (CertificateVerify, RFC 8446 §4.4.3), so the client, hashing its original ClientHello, would detect the mismatch and abort. The attacker can only make the PQC attempt fail.',
+      isCompromised: true,
+    },
+    {
+      actor: 'client',
+      label: 'Compatibility fallback retry',
+      detail:
+        'After the failure, the client retries in "maximum compatibility" mode: a fresh ClientHello with no ML-KEM key_share — classical X25519 only. This retry is the client\'s own genuine message, so the new handshake is fully self-consistent. TLS has nothing left to detect.',
       isCompromised: true,
     },
     {
       actor: 'server',
-      label: 'ServerHello (degraded)',
+      label: 'ServerHello (classical)',
       detail:
-        'Server sees only X25519 offered — it has no ML-KEM entry to select. Falls back to classical ECDH X25519 per TLS 1.3 negotiation rules.',
+        "Server sees only X25519 offered and selects it. From the server's view this is a normal classical client — it cannot know a PQC attempt was sabotaged moments earlier.",
       isCompromised: true,
     },
     {
@@ -80,36 +87,29 @@ const SCENARIO_STEPS: Record<ScenarioMode, Step[]> = {
   defended: [
     {
       actor: 'client',
-      label: 'ClientHello',
+      label: 'ClientHello (hybrid)',
       detail:
-        'Client has PQ Lock cached from a prior session: server previously signalled PQC support. ClientHello includes X25519 + ML-KEM-768 as before.',
+        'Client has PQ Lock cached from a prior session: server previously signalled PQC support. ClientHello includes the X25519MLKEM768 key_share as before.',
     },
     {
       actor: 'attacker',
-      label: 'MITM attempts strip',
+      label: 'PQC handshake blocked',
       detail:
-        'Attacker intercepts and removes ML-KEM-768 from key_share, forwarding only X25519 to the server. Same attack as before.',
-      isCompromised: true,
-    },
-    {
-      actor: 'server',
-      label: 'ServerHello (degraded)',
-      detail:
-        'Server falls back to X25519, unaware of the strip. Responds with a classical ServerHello.',
+        'Attacker drops the PQC connection attempt to push the client into classical fallback. Same induced-failure attack as before.',
       isCompromised: true,
     },
     {
       actor: 'client',
-      label: 'PQ Lock check',
+      label: 'PQ Lock check before fallback',
       detail:
-        'Client notices the server negotiated only X25519 but has PQ Lock cached for this server. The cached signal says: "this server supports PQC." A classical-only ServerHello is inconsistent.',
+        'The client is about to retry without ML-KEM, but PQ Lock is cached for this server. The cached signal says: "this server supports PQC." Downgrading the retry to classical-only would be inconsistent with that promise.',
       isBlocked: true,
     },
     {
       actor: 'system',
-      label: 'Connection aborted',
+      label: 'Fallback refused',
       detail:
-        'Client aborts with a TLS alert. The downgrade attack is detected and blocked. The attacker cannot force a classical session without triggering the cache check. PQC Continuity (draft-sheffer-tls-pqc-continuity) extends this: the server pre-declares a downgrade limit (e.g. 1 year), cached by the client, closing the first-visit gap.',
+        'Client refuses the classical retry and surfaces a connection error instead of a silently-downgraded session. The attacker can deny service but cannot force a quantum-vulnerable session. PQC Continuity (draft-sheffer-tls-pqc-continuity) extends this: the server pre-declares a downgrade limit (e.g. 1 year), cached by the client, closing the first-visit gap that PQ Lock alone cannot address.',
       isBlocked: true,
     },
   ],
@@ -171,10 +171,12 @@ export function TLSDowngradeScenario() {
               Quantum Downgrade Attack Scenario
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
-              An active MITM adversary intercepts the TLS ClientHello and removes the ML-KEM
-              key_share entry, forcing both endpoints to negotiate a classical-only session — even
-              when both support PQC. This is distinct from passive HNDL harvesting: the attack
-              actively prevents PQC from being used.
+              An active adversary blocks every TLS connection that offers a PQC key_share, pushing
+              the client into its classical "maximum compatibility" fallback retry — so both
+              endpoints end up on a classical-only session even though both support PQC. TLS 1.3
+              transcript integrity prevents in-flight tampering with the ClientHello, but it cannot
+              stop the client from downgrading itself on retry. This is distinct from passive HNDL
+              harvesting: the attack actively prevents PQC from being used.
             </p>
             <p className="text-xs text-muted-foreground mt-2 italic">
               Analysis by Bas Westerbaan (Cloudflare Research) · PQCrypto 2025 · Root Causes Podcast
@@ -232,15 +234,15 @@ export function TLSDowngradeScenario() {
           <div className="flex items-center gap-2 mb-1">
             <AlertTriangle className="w-4 h-4 text-status-error" />
             <span className="text-sm font-semibold text-status-error">
-              Downgrade attack — ML-KEM stripped from ClientHello
+              Downgrade attack — induced fallback to a classical ClientHello
             </span>
           </div>
           <p className="text-xs text-muted-foreground">
             The attacker exploits <span className="font-semibold">maximum compatibility mode</span>:
-            the server is configured to serve the best option offered by the client. By removing
-            ML-KEM from the offer, the attacker forces the server to fall back to X25519 — and the
-            server has no way to know the strip occurred. The resulting session is
-            quantum-vulnerable.
+            when a handshake fails, the client retries with a more conservative ClientHello that
+            omits the ML-KEM key_share. The attacker only has to make PQC attempts fail (drop,
+            reset, timeout) — the client downgrades itself, and the resulting classical retry is
+            self-consistent, so neither endpoint can detect it. The session is quantum-vulnerable.
           </p>
         </div>
       )}

@@ -469,7 +469,10 @@ export const TLSConfigGenerator: React.FC = () => {
             <code className="font-mono bg-muted px-1 rounded">ssl_ciphersuites</code> /
             <code className="font-mono bg-muted px-1 rounded">-ciphersuites</code>. CCM-8 truncates
             the authentication tag to 8 bytes; only use in constrained IoT contexts where bandwidth
-            outweighs the reduced forgery resistance.
+            outweighs the reduced forgery resistance. Note: OpenSSL additionally rejects CCM-8 at
+            its default security level (the 64-bit tag falls below the level-1 minimum), so
+            negotiating it also requires{' '}
+            <code className="font-mono bg-muted px-1 rounded">@SECLEVEL=0</code>.
           </p>
         </div>
       </details>
