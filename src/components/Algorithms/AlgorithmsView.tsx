@@ -579,7 +579,7 @@ export function AlgorithmsView() {
         }
         viewType="Algorithms"
         shareTitle="PQC Algorithm Comparison — ML-KEM, ML-DSA, SLH-DSA & More"
-        shareText="Compare 42 post-quantum cryptographic algorithms side-by-side — security levels, key sizes, and performance."
+        shareText={`Compare ${algorithmData.length || 'dozens of'} cryptographic algorithms side-by-side — security levels, key sizes, and performance.`}
         onExport={handleExportCsv}
       />
 
@@ -598,7 +598,7 @@ export function AlgorithmsView() {
                 setSearchParams(
                   (prev) => {
                     const next = new URLSearchParams(prev)
-                    next.set('highlight', 'ML-KEM-768,ML-DSA-65,SLH-DSA-SHA2-128s,Falcon-512')
+                    next.set('highlight', 'ML-KEM-768,ML-DSA-65,SLH-DSA-SHA2-128s,FN-DSA-512')
                     next.set('tab', 'detailed')
                     return next
                   },
@@ -606,7 +606,7 @@ export function AlgorithmsView() {
                 )
               }
             >
-              View Top 5 →
+              View Top 4 →
             </Button>
           )}
         </div>
@@ -622,7 +622,7 @@ export function AlgorithmsView() {
       {isCuriousPreview && (
         <div className="mt-6 rounded-lg border border-primary/30 bg-primary/5 p-6 md:p-8">
           <h2 className="text-xl md:text-2xl font-bold text-gradient mb-3">
-            42 algorithms — three you actually need to know
+            {algorithmData.length || 'Dozens of'} algorithms — three you actually need to know
           </h2>
           <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
             NIST selected three post-quantum algorithms in 2024 (FIPS 203 / 204 / 205): one for key

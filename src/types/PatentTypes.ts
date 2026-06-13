@@ -57,6 +57,7 @@ export interface PatentItem {
   assignee: string
   priorityDate: string
   issueDate: string
+  filingDate: string
   cpcCodes: string
   summary: string
   primaryInventiveClaim: string
@@ -90,4 +91,5 @@ export interface PatentItem {
   impactScore: number
   impactLevel: ImpactLevel
   priorityYear: number
+  filingYear: number
 }

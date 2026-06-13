@@ -44,6 +44,7 @@ function buildPhase(opts: BuildPhaseOptions): TimelinePhase {
         localFile: opts.localFile,
         confidenceScore: opts.confidenceScore,
         trustedSourceIdStatus: opts.trustedSourceIdStatus,
+        entityType: 'government',
       },
     ],
   }

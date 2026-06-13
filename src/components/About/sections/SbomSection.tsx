@@ -70,7 +70,7 @@ export function SbomSection() {
                     <span className="text-muted-foreground">Tailwind CSS</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
-                      <span className="text-xs text-muted-foreground/60">v4.2.4</span>
+                      <span className="text-xs text-muted-foreground/60">v4.3.0</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
@@ -84,7 +84,7 @@ export function SbomSection() {
                     <span className="text-muted-foreground">tailwind-merge</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
-                      <span className="text-xs text-muted-foreground/60">v3.5.0</span>
+                      <span className="text-xs text-muted-foreground/60">v3.6.0</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
@@ -194,7 +194,7 @@ export function SbomSection() {
                     <span className="text-muted-foreground">recharts</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
-                      <span className="text-xs text-muted-foreground/60">v3.7.0</span>
+                      <span className="text-xs text-muted-foreground/60">v3.8.1</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
@@ -262,14 +262,14 @@ export function SbomSection() {
                     <span className="text-muted-foreground">@noble/hashes</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
-                      <span className="text-xs text-muted-foreground/60">v2.0.1</span>
+                      <span className="text-xs text-muted-foreground/60">v2.2.0</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <span className="text-muted-foreground">@noble/curves</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
-                      <span className="text-xs text-muted-foreground/60">v2.0.1</span>
+                      <span className="text-xs text-muted-foreground/60">v2.2.0</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
@@ -292,21 +292,21 @@ export function SbomSection() {
                     <span className="text-muted-foreground">@scure/bip32</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
-                      <span className="text-xs text-muted-foreground/60">v2.0.1</span>
+                      <span className="text-xs text-muted-foreground/60">v2.2.0</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <span className="text-muted-foreground">@scure/bip39</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
-                      <span className="text-xs text-muted-foreground/60">v2.0.1</span>
+                      <span className="text-xs text-muted-foreground/60">v2.2.0</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <span className="text-muted-foreground">@scure/base</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
-                      <span className="text-xs text-muted-foreground/60">v2.0.0</span>
+                      <span className="text-xs text-muted-foreground/60">v2.2.0</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
@@ -327,14 +327,14 @@ export function SbomSection() {
                     <span className="text-muted-foreground">@peculiar/asn1-schema</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
-                      <span className="text-xs text-muted-foreground/60">v2.6.0</span>
+                      <span className="text-xs text-muted-foreground/60">v2.7.0</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <span className="text-muted-foreground">@peculiar/asn1-x509</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
-                      <span className="text-xs text-muted-foreground/60">v2.6.1</span>
+                      <span className="text-xs text-muted-foreground/60">v2.7.0</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
@@ -459,7 +459,7 @@ export function SbomSection() {
                     <span className="text-muted-foreground">Vite</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
-                      <span className="text-xs text-muted-foreground/60">v7.3.1</span>
+                      <span className="text-xs text-muted-foreground/60">v7.3.2</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
@@ -513,14 +513,14 @@ export function SbomSection() {
                     <span className="text-muted-foreground">Vitest</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
-                      <span className="text-xs text-muted-foreground/60">v4.1.2</span>
+                      <span className="text-xs text-muted-foreground/60">v4.1.7</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <span className="text-muted-foreground">Playwright</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">Apache-2.0</span>
-                      <span className="text-xs text-muted-foreground/60">v1.59.1</span>
+                      <span className="text-xs text-muted-foreground/60">v1.60.0</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">

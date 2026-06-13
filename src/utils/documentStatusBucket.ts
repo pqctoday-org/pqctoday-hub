@@ -46,6 +46,31 @@ export function getDocumentStatusBucket(raw: string): DocumentStatusBucket {
   return 'Published'
 }
 
+/** Rank of each bucket by lifecycle advancement (higher = more advanced). */
+const BUCKET_RANK: Record<DocumentStatusBucket, number> = {
+  Published: 5,
+  Proposed: 4,
+  Draft: 3,
+  Expired: 1,
+  Superseded: 0,
+}
+
+/**
+ * Compute the most-advanced bucket across a revision group: the surviving
+ * record's own bucket plus its prior (deprecated) revisions' buckets. Used so a
+ * collapsed multi-revision tile shows the furthest lifecycle stage reached
+ * (e.g. an AUTH48 revision) even when the canonical survivor row is less advanced.
+ */
+export function getGroupStatusBucket(
+  primary: DocumentStatusBucket,
+  priorBuckets: DocumentStatusBucket[]
+): DocumentStatusBucket {
+  return [primary, ...priorBuckets].reduce(
+    (best, cur) => (BUCKET_RANK[cur] > BUCKET_RANK[best] ? cur : best),
+    primary
+  )
+}
+
 export const BUCKET_STYLES: Record<
   DocumentStatusBucket,
   { badge: string; label: string; dot: string }

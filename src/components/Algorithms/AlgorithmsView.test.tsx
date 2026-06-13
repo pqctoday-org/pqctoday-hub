@@ -216,7 +216,7 @@ describe('AlgorithmsView', () => {
       )
       // Teaser card heading is unique to the curious-preview branch.
       expect(
-        await screen.findByText(/42 algorithms — three you actually need to know/)
+        await screen.findByText(/algorithms — three you actually need to know/)
       ).toBeInTheDocument()
       // Tabs and comparison-table mocks must NOT render in preview mode.
       expect(screen.queryByText('Transition Guide')).not.toBeInTheDocument()
@@ -238,7 +238,7 @@ describe('AlgorithmsView', () => {
       // After unlock the teaser disappears and the tabs return.
       await waitFor(() => {
         expect(
-          screen.queryByText(/42 algorithms — three you actually need to know/)
+          screen.queryByText(/algorithms — three you actually need to know/)
         ).not.toBeInTheDocument()
       })
       expect(await screen.findByText('Transition Guide')).toBeInTheDocument()
@@ -253,7 +253,7 @@ describe('AlgorithmsView', () => {
       )
       await screen.findByText('Transition Guide')
       expect(
-        screen.queryByText(/42 algorithms — three you actually need to know/)
+        screen.queryByText(/algorithms — three you actually need to know/)
       ).not.toBeInTheDocument()
     })
   })

@@ -1,1734 +1,784 @@
 
 
- <!doctype html><!--[if lt IE 7]>      <html lang="en" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="en" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="en" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="en" class="no-js"><!--<![endif]--><head> <meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>IETF - 404 - Not Found</title><meta name="description" content="Read more about the Internet Engineering Task Force (IETF), the premier standards development organization (SDO) for the Internet."/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="twitter:card" content="summary"/><meta name="twitter:title" content=""/><meta name="twitter:description" content="Read more about the Internet Engineering Task Force (IETF), the premier standards development organization (SDO) for the Internet."><meta name="twitter:image" content="/media/images/ietf-logo-500-square-250x250.original.jpg"><meta property="fb:app_id" content=""/><meta property="og:type" content="website"/><meta property="og:url" content=""/><meta property="og:title" content=""/><meta property="og:image" content="/media/images/ietf-logo-500-square-250x250.original.jpg"/><meta property="og:description" content="Read more about the Internet Engineering Task Force (IETF), the premier standards development organization (SDO) for the Internet."/><meta property="og:site_name" content="IETF"/> <link href="https://static.ietf.org/fonts/inter/import.css" rel="stylesheet"/> <script defer="defer" src="/static/dist/main.e2d621c55276.js"></script><link href="/static/dist/main.0eac74df034a.css" rel="stylesheet"></head><body class="template-404">  
 
-<header class="header">
-    <a href="#content" class="visually-hidden visually-hidden-focusable">Skip to main content</a>
-    <nav
-        class="navbar navbar-expand-lg"
-        aria-label="Main"
-    >
-        <div class="container position-relative">
-            <button
-                class="navbar-toggler navbar-toggler-light"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-            >
-                <span class="navbar-toggler-icon text-dark"></span>
-            </button>
-            <!-- Mobile search -->
-            <button
-                class="btn btn-link nav-link text-dark ms-3 me-auto d-lg-none"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarSearch"
-                aria-controls="navbarSearch"
-                aria-expanded="false"
-                aria-label="Toggle search bar"
-            >
-                <i class="bi bi-search"></i>
-                Search
-            </button>
 
-            <div class="navbar-brand header__logo-container">
-                <a class="text-light" href="/">
-                    <img
-                        class="header__logo"
-                        src="https://static.ietf.org/logos/ietf.svg"
-                        alt="IETF logo"
-                    />
-                </a>
-            </div>
-            <div
-                class="collapse navbar-collapse flex-wrap-reverse"
-                id="navbarSupportedContent"
-            >
-                
+ipsecme                                                            J. Hu
+Internet-Draft                                                     Nokia
+Intended status: Standards Track                              Y. Morioka
+Expires: 31 August 2026                                 NTT DOCOMO, INC.
+                                                                 G. Wang
+                                                                  Huawei
+                                                        27 February 2026
 
-<ul class="navbar-nav col-12 col-xl-auto justify-content-xl-center flex-grow">
-    
-    <li class="nav-item dropdown position-static">
-        <button
-            class="
-                nav-link btn megamenu__toggle
-                text-dark fw-semibold text-uppercase
-                dropdown-toggle pe-1
-            "
-            
-                id="megamenu-toggle-1"
-                role="button"
-                data-bs-toggle="dropdown"
-                data-bs-auto-close="outside"
-                aria-expanded="false"
-            
-        >
-            About
-        </button>
 
-        
-        <div
-            class="dropdown-menu megamenu__menu w-100 px-2"
-            aria-labelledby="megamenu-toggle-"
-        >
-            <div class="container py-3">
-                <div class="row gx-5">
-                    <div class="col-lg-4 d-none d-lg-block">
-                        <div class="">
-                            <p></p>
+    Post-Quantum Traditional (PQ/T) Hybrid PKI Authentication in the
+                Internet Key Exchange Version 2 (IKEv2)
+                  draft-hu-ipsecme-pqt-hybrid-auth-04
 
-                            
-                            
-                            <img src="/media/images/ietf-logo.width-600.jpg" class="w-100 object-fit-cover" />
-                            
-                        </div>
-                    </div>
-                    <div class="col-lg-8">
-                        <h5 class="border-bottom mb-1 pb-1">
-                            
-                            <a class="dropdown-item" href="/about/">
-                                About
-                                <i class="bi bi-chevron-right"></i>
-                            </a>
-                            
-                        </h5>
+Abstract
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/about/introduction/">
-                                    Introduction to the IETF
-                                </a>
-                            </li>
-                            
-                        </ul>
+   One IPsec area that would be impacted by Cryptographically Relevant
+   Quantum Computer (CRQC) is IKEv2 authentication based on traditional
+   asymmetric cryptographic algorithms: e.g RSA, ECDSA, which are widely
+   deployed authentication options of IKEv2.  There are new Post-Quantum
+   Cryptographic (PQC) algorithms for digital signature like NIST
+   [ML-DSA], However, it takes time for new cryptographic algorithms to
+   mature, There is security risk to use only the new algorithm before
+   it is field proven.  This document describes a hybrid PKI
+   authentication scheme for IKEv2 that incorporates both traditional
+   and PQC digital signature algorithms, so that authentication is
+   secure as long as one algorithm in the hybrid scheme is secure.
 
-                        
-                        <h6 class="mt-3 mb-1 pb-1 border-bottom">Introduction to the IETF</h6>
+About This Document
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/about/introduction/">
-                                    Introduction to the IETF
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://www.ietf.org/about/introduction/#participants">
-                                    Participants
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://www.ietf.org/about/introduction/#mission">
-                                    Mission
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://www.ietf.org/about/introduction/#principles">
-                                    Principles
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://www.ietf.org/about/introduction/#work">
-                                    The work
-                                </a>
-                            </li>
-                            
-                        </ul>
-                        
-                        <h6 class="mt-3 mb-1 pb-1 border-bottom">Structure of the IETF</h6>
+   This note is to be removed before publishing as an RFC.
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/about/groups/iesg/">
-                                    Internet Engineering Steering Group
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/about/groups/iab/">
-                                    Internet Architecture Board
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/about/groups/irtf/">
-                                    Internet Research Task Force
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/about/liaisons/">
-                                    Liaison relationships
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/about/groups/nomcom/">
-                                    Nominating Committee
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/about/groups/trust/">
-                                    IETF Trust
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/about/groups/rfc-editor/">
-                                    RFC Editor
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/about/groups/ise/">
-                                    Independent Submissions Editor
-                                </a>
-                            </li>
-                            
-                        </ul>
-                        
-                        <h6 class="mt-3 mb-1 pb-1 border-bottom">Legal requests</h6>
+   The latest revision of this draft can be found at
+   https://example.com/LATEST.  Status information for this document may
+   be found at https://datatracker.ietf.org/doc/draft-hu-ipsecme-pqt-
+   hybrid-auth/.
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/administration/legal-request-procedures/">
-                                    Legal request procedures
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/administration/legal-requests/">
-                                    Legal requests
-                                </a>
-                            </li>
-                            
-                        </ul>
-                        
-                        <h6 class="mt-3 mb-1 pb-1 border-bottom">Administration</h6>
+   Discussion of this document takes place on the WG Working Group
+   mailing list (mailto:ipsec@ietf.org), which is archived at
+   https://mailarchive.ietf.org/arch/browse/ipsec/.  Subscribe at
+   https://www.ietf.org/mailman/listinfo/ipsec/.
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/administration/overview/">
-                                    IETF Administration LLC
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/administration/announcements/">
-                                    Administrative announcements
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/administration/reports/">
-                                    Administrative reports
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/administration/llc-board/">
-                                    IETF Administration LLC Board
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/administration/llc-staff/">
-                                    IETF Administration LLC Staff
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/administration/financial-statements/">
-                                    Financial statements
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/administration/rfps-and-contracts/">
-                                    RFPs and contracts
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/administration/policies-procedures/">
-                                    Administrative policies and procedures
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/transparency/">
-                                    IETF LLC transparency report
-                                </a>
-                            </li>
-                            
-                        </ul>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-    </li>
-    
-    <li class="nav-item dropdown position-static">
-        <button
-            class="
-                nav-link btn megamenu__toggle
-                text-dark fw-semibold text-uppercase
-                dropdown-toggle pe-1
-            "
-            
-                id="megamenu-toggle-2"
-                role="button"
-                data-bs-toggle="dropdown"
-                data-bs-auto-close="outside"
-                aria-expanded="false"
-            
-        >
-            Technologies
-        </button>
+   Source for this draft and an issue tracker can be found at
+   https://github.com/USER/REPO.
 
-        
-        <div
-            class="dropdown-menu megamenu__menu w-100 px-2"
-            aria-labelledby="megamenu-toggle-"
-        >
-            <div class="container py-3">
-                <div class="row gx-5">
-                    <div class="col-lg-4 d-none d-lg-block">
-                        <div class="">
-                            <p>The IETF works on a broad range of networking technologies that provide the foundation for the Internet&#x27;s growth and evolution.</p>
+Status of This Memo
 
-                            
-                            
-                            <img src="/media/images/things.width-600.jpg" class="w-100 object-fit-cover" />
-                            
-                        </div>
-                    </div>
-                    <div class="col-lg-8">
-                        <h5 class="border-bottom mb-1 pb-1">
-                            
-                            <a class="dropdown-item" href="/technologies/">
-                                Technologies
-                                <i class="bi bi-chevron-right"></i>
-                            </a>
-                            
-                        </h5>
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/technologies/netmgmt/">
-                                    Automated network management
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/technologies/iot/">
-                                    The Internet of Things
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/technologies/transport/">
-                                    New transport technology
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/technologies/security/">
-                                    Security &amp; privacy
-                                </a>
-                            </li>
-                            
-                        </ul>
 
-                        
-                        <h6 class="mt-3 mb-1 pb-1 border-bottom">IETF technologies in action</h6>
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/technologies/dns/">
-                                    Domain Name System
-                                </a>
-                            </li>
-                            
-                        </ul>
-                        
-                        <h6 class="mt-3 mb-1 pb-1 border-bottom">IETF technology groups</h6>
+Hu, et al.               Expires 31 August 2026                 [Page 1]
+
+Internet-Draft               IKEv2 PQTH Auth               February 2026
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/technologies/areas/">
-                                    IETF Areas
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/technologies/keywords/">
-                                    Working Group keywords
-                                </a>
-                            </li>
-                            
-                        </ul>
-                        
-                        <h6 class="mt-3 mb-1 pb-1 border-bottom">Recent posts about IETF technologies</h6>
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/blog/agentic-ai-standards/">
-                                    Agentic AI communications: Identifying the standards we need
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/blog/ai-pref-update/">
-                                    Enabling Publishers to Express Preferences for AI Crawlers: An Update on the AIPREF Working Group
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/blog/sidrops-and-avoidable-route-hijacks/">
-                                    Preventing Internet Route Hijack with SIDRops Technology
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/blog/rcs-adopts-mls/">
-                                    End-to-end encryption based on the IETF-developed Messaging Layer Security set be used on 100s of millions of mobile devices
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/blog/green-wg/">
-                                    The new GREEN working group gets ready for an energy efficient Internet
-                                </a>
-                            </li>
-                            
-                        </ul>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-    </li>
-    
-    <li class="nav-item dropdown position-static">
-        <button
-            class="
-                nav-link btn megamenu__toggle
-                text-dark fw-semibold text-uppercase
-                dropdown-toggle pe-1
-            "
-            
-                id="megamenu-toggle-5"
-                role="button"
-                data-bs-toggle="dropdown"
-                data-bs-auto-close="outside"
-                aria-expanded="false"
-            
-        >
-            Meetings
-        </button>
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
 
-        
-        <div
-            class="dropdown-menu megamenu__menu w-100 px-2"
-            aria-labelledby="megamenu-toggle-"
-        >
-            <div class="container py-3">
-                <div class="row gx-5">
-                    <div class="col-lg-4 d-none d-lg-block">
-                        <div class="">
-                            <p>While most IETF work takes place online, meetings and other events such as Hackathons provide in-person opportunities to advance work within the IETF.</p>
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
 
-                            
-                            
-                            <img src="/media/images/_MG_4832.width-600.jpg" class="w-100 object-fit-cover" />
-                            
-                        </div>
-                    </div>
-                    <div class="col-lg-8">
-                        <h5 class="border-bottom mb-1 pb-1">
-                            
-                            <a class="dropdown-item" href="/meeting/">
-                                Meetings
-                                <i class="bi bi-chevron-right"></i>
-                            </a>
-                            
-                        </h5>
+   This Internet-Draft will expire on 31 August 2026.
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/126/">
-                                    IETF 126 Vienna
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/127/">
-                                    IETF 127 San Francisco
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/upcoming/">
-                                    Upcoming meetings
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/past/">
-                                    Past meetings
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/interim/">
-                                    Interim meetings
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/hackathons/">
-                                    IETF Hackathons
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/code-sprint/">
-                                    Code Sprint
-                                </a>
-                            </li>
-                            
-                        </ul>
+Copyright Notice
 
-                        
-                        <h6 class="mt-3 mb-1 pb-1 border-bottom">Participation information</h6>
+   Copyright (c) 2026 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/preparation/">
-                                    Preparing for an IETF Meeting
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/guide-ietf-meetings/">
-                                    Guide to IETF Meetings
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/terms-and-conditions/">
-                                    IETF meeting terms and conditions
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/new-participants/">
-                                    New Participants
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/participate/guides/">
-                                    IETF Guides program
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/technology/">
-                                    Meeting network and technology
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/technology/meetecho-guide-participant/">
-                                    Meetecho guide for participants
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/visas/">
-                                    Visas and Letters of Invitation
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/registration-fee-waivers/">
-                                    Meeting Registration Fee Waivers
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/childcare/">
-                                    Onsite Childcare
-                                </a>
-                            </li>
-                            
-                        </ul>
-                        
-                        <h6 class="mt-3 mb-1 pb-1 border-bottom">Organizing meetings</h6>
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/planning/">
-                                    Meeting planning
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/support-us/sponsorship/">
-                                    Meeting sponsorship
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/side-meetings/">
-                                    Side meetings and private meetings
-                                </a>
-                            </li>
-                            
-                        </ul>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-    </li>
-    
-    <li class="nav-item dropdown position-static">
-        <button
-            class="
-                nav-link btn megamenu__toggle
-                text-dark fw-semibold text-uppercase
-                dropdown-toggle pe-1
-            "
-            
-                id="megamenu-toggle-4"
-                role="button"
-                data-bs-toggle="dropdown"
-                data-bs-auto-close="outside"
-                aria-expanded="false"
-            
-        >
-            Process
-        </button>
+Table of Contents
 
-        
-        <div
-            class="dropdown-menu megamenu__menu w-100 px-2"
-            aria-labelledby="megamenu-toggle-"
-        >
-            <div class="container py-3">
-                <div class="row gx-5">
-                    <div class="col-lg-4 d-none d-lg-block">
-                        <div class="">
-                            <p>The IETF is the premier Internet standards organization. It follows open and well-documented processes for setting these standards. Once published, those standards are made freely available.</p>
+   1.  Change log  . . . . . . . . . . . . . . . . . . . . . . . . .   3
+     1.1.  changes in -04  . . . . . . . . . . . . . . . . . . . . .   3
+     1.2.  changes in -03  . . . . . . . . . . . . . . . . . . . . .   3
+     1.3.  Changes in -02  . . . . . . . . . . . . . . . . . . . . .   3
+     1.4.  Changes in -01  . . . . . . . . . . . . . . . . . . . . .   4
+   2.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   4
+   3.  Conventions and Definitions . . . . . . . . . . . . . . . . .   5
+   4.  IKEv2 Key Exchange  . . . . . . . . . . . . . . . . . . . . .   5
+   5.  Exchanges . . . . . . . . . . . . . . . . . . . . . . . . . .   5
+     5.1.  Announcement  . . . . . . . . . . . . . . . . . . . . . .   6
+       5.1.1.  Sending Announcement  . . . . . . . . . . . . . . . .   8
+       5.1.2.  Receiving Announcement  . . . . . . . . . . . . . . .   9
+     5.2.  AUTH & CERT payload . . . . . . . . . . . . . . . . . . .   9
+       5.2.1.  Type-1  . . . . . . . . . . . . . . . . . . . . . . .  10
+       5.2.2.  Type-2  . . . . . . . . . . . . . . . . . . . . . . .  11
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  11
+   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  12
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  12
+     8.2.  Informative References  . . . . . . . . . . . . . . . . .  13
 
-                            
-                        </div>
-                    </div>
-                    <div class="col-lg-8">
-                        <h5 class="border-bottom mb-1 pb-1">
-                            
-                            <a class="dropdown-item" href="/process/">
-                                Process
-                                <i class="bi bi-chevron-right"></i>
-                            </a>
-                            
-                        </h5>
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/process/process/">
-                                    Internet standards process
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/process/wgs/">
-                                    Guide to IETF Working Groups
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/process/bofs/">
-                                    Birds of a Feather (BOF)
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/process/iana/">
-                                    Protocol registries (IANA)
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/process/ipr/">
-                                    Intellectual property rights (IPR)
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/process/directorates/">
-                                    Directorates and teams
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/process/informal/">
-                                    Informal guide to IETF process documents
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/process/new-work/">
-                                    Bringing new work to the IETF
-                                </a>
-                            </li>
-                            
-                        </ul>
 
-                        
-                        <h6 class="mt-3 mb-1 pb-1 border-bottom">RFCs</h6>
+Hu, et al.               Expires 31 August 2026                 [Page 2]
+
+Internet-Draft               IKEv2 PQTH Auth               February 2026
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/process/rfcs/">
-                                    About RFCs
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/about/groups/rfc-editor/">
-                                    RFC Editor
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://www.ietf.org/process/rfcs/#availability-and-use">
-                                    Availability and use
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://www.ietf.org/process/rfcs/#formats">
-                                    Publication formats
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://www.ietf.org/process/rfcs/#statuses">
-                                    Statuses
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://www.ietf.org/process/rfcs/#streams">
-                                    Publication streams
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://www.ietf.org/process/rfcs/#errata">
-                                    Corrections and errata
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/process/rfcs/vulnerabilities/">
-                                    Reporting protocol vulnerabilities to the IETF
-                                </a>
-                            </li>
-                            
-                        </ul>
-                        
-                        <h6 class="mt-3 mb-1 pb-1 border-bottom">Standards process details</h6>
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/process/process/informational-vs-experimental/">
-                                    Choosing between Informational and Experimental Status
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/process/process/role-iesg-standards-process/">
-                                    The role of the IESG in the Standards process
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://datatracker.ietf.org/group/iesg/appeals/">
-                                    Appeals to the IESG
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/process/process/iesg-ballots/">
-                                    IESG ballot procedures
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/process/informal/">
-                                    Informal guide to IETF process documents
-                                </a>
-                            </li>
-                            
-                        </ul>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-    </li>
-    
-    <li class="nav-item dropdown position-static">
-        <button
-            class="
-                nav-link btn megamenu__toggle
-                text-dark fw-semibold text-uppercase
-                dropdown-toggle pe-1
-            "
-            
-                id="megamenu-toggle-3"
-                role="button"
-                data-bs-toggle="dropdown"
-                data-bs-auto-close="outside"
-                aria-expanded="false"
-            
-        >
-            Participate
-        </button>
+   Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .  14
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  14
 
-        
-        <div
-            class="dropdown-menu megamenu__menu w-100 px-2"
-            aria-labelledby="megamenu-toggle-"
-        >
-            <div class="container py-3">
-                <div class="row gx-5">
-                    <div class="col-lg-4 d-none d-lg-block">
-                        <div class="">
-                            <p>The global IETF community works together in many different ways to produce high quality, relevant technical documents that influence the way people design, use, and manage the Internet.</p>
+1.  Change log
 
-                            
-                        </div>
-                    </div>
-                    <div class="col-lg-8">
-                        <h5 class="border-bottom mb-1 pb-1">
-                            
-                            <a class="dropdown-item" href="/participate/">
-                                Participate
-                                <i class="bi bi-chevron-right"></i>
-                            </a>
-                            
-                        </h5>
+1.1.  changes in -04
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/participate/get-started/">
-                                    Getting started in the IETF
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/participate/ids/">
-                                    Internet-Drafts
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/participate/ietf-systers/">
-                                    IETF Systers
-                                </a>
-                            </li>
-                            
-                        </ul>
+   *  align to draft-ietf-lamps-pq-composite-sigs-14
 
-                        
-                        <h6 class="mt-3 mb-1 pb-1 border-bottom">Tools and services</h6>
+   *  add text to clarify two setup types
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://datatracker.ietf.org">
-                                    Datatracker
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/participate/lists/">
-                                    Mailing lists
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/participate/tools/">
-                                    Tools and services
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/about/open-records/">
-                                    Open records
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://chairs.ietf.org">
-                                    Chairs resources
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://authors.ietf.org">
-                                    I-D authors resources
-                                </a>
-                            </li>
-                            
-                        </ul>
-                        
-                        <h6 class="mt-3 mb-1 pb-1 border-bottom">Participation guides</h6>
+   *  add text to describe the example exchange in section 5
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/meeting/guide-ietf-meetings/">
-                                    Guide to IETF Meetings
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/process/wgs/">
-                                    Guide to IETF Working Groups
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/participate/roles/">
-                                    Roles in the IETF
-                                </a>
-                            </li>
-                            
-                        </ul>
-                        
-                        <h6 class="mt-3 mb-1 pb-1 border-bottom">Key policies</h6>
+   *  clarify using of pre-hash alg
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/about/note-well/">
-                                    Note Well - A reminder of IETF policies
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://datatracker.ietf.org/doc/statement-iesg-ietf-anti-harassment-policy-20131103/">
-                                    Anti-harassment policy
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://www.rfc-editor.org/info/bcp9">
-                                    Internet Standards process (BCP 9)
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://www.rfc-editor.org/info/bcp25">
-                                    Working Group processes (BCP 25)
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://www.rfc-editor.org/rfc/rfc7154.html">
-                                    Guidelines for conduct (BCP 54)
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://www.rfc-editor.org/rfc/rfc5378.html">
-                                    Copyright (BCP 78)
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="https://www.rfc-editor.org/rfc/rfc8179.html">
-                                    Patents, Participation (BCP 79)
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/privacy-statement/">
-                                    IETF/IRTF/IAB Privacy Statement
-                                </a>
-                            </li>
-                            
-                        </ul>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-    </li>
-    
-    <li class="nav-item dropdown position-static">
-        <button
-            class="
-                nav-link btn megamenu__toggle
-                text-dark fw-semibold text-uppercase
-                dropdown-toggle pe-1
-            "
-            
-                id="megamenu-toggle-6"
-                role="button"
-                data-bs-toggle="dropdown"
-                data-bs-auto-close="outside"
-                aria-expanded="false"
-            
-        >
-            Support us
-        </button>
+   *  clarify sign operation in type-2
 
-        
-        <div
-            class="dropdown-menu megamenu__menu w-100 px-2"
-            aria-labelledby="megamenu-toggle-"
-        >
-            <div class="container py-3">
-                <div class="row gx-5">
-                    <div class="col-lg-4 d-none d-lg-block">
-                        <div class="">
-                            <p>By supporting the IETF today, you are ensuring a free and open Internet exists tomorrow.</p>
+   *  ietf-lamps-cert-binding-for-multi-auth is now RFC9763
 
-                            
-                            
-                            <img src="/media/images/IMG_15.width-600.jpg" class="w-100 object-fit-cover" />
-                            
-                        </div>
-                    </div>
-                    <div class="col-lg-8">
-                        <h5 class="border-bottom mb-1 pb-1">
-                            
-                            <a class="dropdown-item" href="/support-us/">
-                                Support us
-                                <i class="bi bi-chevron-right"></i>
-                            </a>
-                            
-                        </h5>
+   *  ietf-lamps-dilithium-certificates is now RFC9881
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/support-us/why-support/">
-                                    Why we need your support
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/support-us/donors/">
-                                    IETF financial supporters
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/support-us/donate-ietf/">
-                                    Donate to the IETF
-                                </a>
-                            </li>
-                            
-                        </ul>
+   *  editorial changes
 
-                        
-                        <h6 class="mt-3 mb-1 pb-1 border-bottom">Ways to give</h6>
+1.2.  changes in -03
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/support-us/endowment/">
-                                    IETF Endowment
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/support-us/sponsorship/">
-                                    Meeting sponsorship
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/support-us/donate/">
-                                    Other ways to give
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/support-us/technical-foundations/">
-                                    Technical foundations for business
-                                </a>
-                            </li>
-                            
-                        </ul>
-                        
-                        <h6 class="mt-3 mb-1 pb-1 border-bottom">Supporting values</h6>
+   *  version bump to keep doc alive
 
-                        <ul class="megamenu__linklist">
-                            
-                            <li>
-                                <a class="dropdown-item" href="/runningcode/">
-                                    Running Code
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/sustainability/">
-                                    Sustainability
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/diversity/">
-                                    Diversity and Inclusion
-                                </a>
-                            </li>
-                            
-                            <li>
-                                <a class="dropdown-item" href="/open-internet/">
-                                    Open Internet
-                                </a>
-                            </li>
-                            
-                        </ul>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-    </li>
-    
-</ul>
+1.3.  Changes in -02
+
+   *  clarify the approach in the document is general
+
+   *  dropping support for PreHash ML-DSA, change example to Pure
+      Signature ML-DSA
+
+   *  adding more details in signing process to align with ietf-lamps-
+      pq-composite-sigs-04
+
+   *  add text in Security Considerations to emphasize prohibit of key
+      reuse
+
+   *  clarify the both C and S bit MAY be 1 at the same time
+
+   *  clarify the receiver behavior when the announcement contains no
+      algid
+
+   *  typo fixes
 
 
 
 
-                <ul class="navbar-nav col-xl-auto">
-                    
 
-                    <li
-                        class="
-                            nav-item
-                            
-                        "
-                    >
-                        <a
-                            class="
-                                nav-link btn text-dark
-                                
-                            "
-                            href="/blog/"
-                        >News &amp; blog</a>
-
-                        
-
-                    </li>
-                    
-                    <li class="nav-item d-none d-lg-inline-block">
-                        <a
-                            href="/search"
-                            class="btn text-dark nav-link"
-                            role="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#navbarSearch"
-                            aria-controls="navbarSearch"
-                            aria-expanded="false"
-                            aria-label="Toggle search bar"
-                        >
-                            <i class="bi bi-search"></i>
-                            Search
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <div class="collapse" id="navbarSearch">
-        <div class="container">
-            <div class="row justify-content-center">
-                <form
-                    class="input-group mt-3 mb-3 col-md-8 col-lg-6"
-                    action="/search/"
-                    method="get"
-                    name="search"
-                >
-                    <input
-                        id="search"
-                        type="search"
-                        class="form-control"
-                        placeholder="Search"
-                        aria-label="Search"
-                        name="query"
-                        required
-                    />
-                    <button type="submit" class="btn btn-primary" aria-label="Submit website search">Go</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</header>
- 
-
-    <main id="content">
-        <div class="bg-white border-bottom">
-            <div class="container pb-1">
-
-                <nav aria-label="breadcrumbs">
-                    <ol class="breadcrumb bg-transparent pt-3 mb-0">
-                        <li class="breadcrumb-item h5">
-                            <a class="text-dark" href="/" aria-label="Home">
-                                <i class="bi bi-house-door-fill"></i>
-                            </a>
-                        </li>
-                    </ol>
-                </nav>
+Hu, et al.               Expires 31 August 2026                 [Page 3]
+
+Internet-Draft               IKEv2 PQTH Auth               February 2026
 
 
-                <div class="u-max-text-width">
-                    <h1>HTTP Status Code: 404 Page Not Found</h1>
+1.4.  Changes in -01
 
-                    <p>Did you know that the IETF is where the <a href="https://www.rfc-editor.org/rfc/rfc9110.html">404 error code</a> is defined?</p>
+   *  Only use SUPPORTED_AUTH_METHODS for algorithm combination
+      announcement, no longer use SIGNATURE_HASH_ALGORITHMS
 
-                    <p>There was no Web page at the URL provided. Please use the standard site navigation above or the search bar below to find what you’re looking for.</p>
-                </div>
+   *  add flag field in the announcement
 
-                <div class="row mb-4 mt-4">
-                    <div class="col-md-8 col-lg-6">
-                        <form class="input-group" action="/search/" method="GET" name="search">
-                            <input id="search-box2" class="form-control" type="text" placeholder="Search"  aria-label="Search website" name="query" />
-                            <button class="btn btn-primary" type="submit" aria-label="Submit website search">Go</button>
-                        </form>
-                    </div>
-                </div>
+   *  clarify two types of PKI setup
 
-            </div>
-        </div>
+   *  add some clarifications on how AUTH payload is computed
 
-        <div class="container py-3 py-lg-3">
-            <div class="u-max-text-width">
-                <h2>Report problems</h2>
-                <p>If you followed a link on the www.ietf.org site, it must be broken. Please <a href="mailto:support@ietf.org">email us</a> to report it and we’ll fix it.</p>
-                <p>If you followed a link from another site, it may be outdated or misspelled. <a href="mailto:support@ietf.org">Email us</a> a link to where you came from and we can try to contact the other site to fix the problem.</p>
-                <p>If you typed the address, please check that you typed it correctly (or use the search bar to find the page you were seeking).</p>
-                <h2>IETF-related information about HTTP 404 Codes</h2>
-                <ul>
-                    <li><a href="https://www.rfc-editor.org/rfc/rfc9110.html">RFC9110/STD97 published in 2022 defines the 404 error code</a></li>
-                    <li><a href="https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml#http-status-codes-1">IANA Registry of HTTP Status Codes</a></li>
-                </ul>
-            </div>
-        </div>
+2.  Introduction
 
-    </main>
+   A Cryptographically Relevant Quantum Computer (CRQC) could break
+   traditional asymmetric cryptographic algorithms: e.g RSA, ECDSA,
+   which are widely deployed authentication options of IKEv2.  New Post-
+   Quantum Cryptographic (PQC) algorithms for digital signature were
+   recently published like NIST [ML-DSA], However, by considering
+   potential flaws in the new algorithm's specifications and
+   implementations, it will take time for these new PQC algorithms to be
+   field proven.  So it is risky to only use PQC algorithms before they
+   are mature.  There is more detailed discussion on motivation of a
+   hybrid approach for authentication in Section 1.2 of
+   [I-D.ietf-pquip-hybrid-signature-spectrums].
 
- <footer class="bg-dark text-light py-1">
-    <div class="container my-5">
-        <div class="row">
-            
-                <section class="col-lg">
-                    <div class="border-bottom u-border-lg-bottom-0 border-light border-opacity-50">
-                        <h4 class="my-0 py-4 fs-6" role="button" aria-expanded="false">
-                            About
-                            <i class="bi bi-chevron-down"></i>
-                        </h4>
-                        <ul class="list-unstyled opacity-75 d-grid gap-2">
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/about/introduction/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Introduction to the IETF
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/about/groups/iesg/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Internet Engineering Steering Group
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/administration/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Administration
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/policies/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Privacy and policies
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/contact/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Contact us
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="https://status.ietf.org"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            System status
-                                        </a>
-                                    </li>
-                                
-                            
-                        </ul>
-                    </div>
-                </section>
-            
-                <section class="col-lg">
-                    <div class="border-bottom u-border-lg-bottom-0 border-light border-opacity-50">
-                        <h4 class="my-0 py-4 fs-6" role="button" aria-expanded="false">
-                            Technologies
-                            <i class="bi bi-chevron-down"></i>
-                        </h4>
-                        <ul class="list-unstyled opacity-75 d-grid gap-2">
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/technologies/netmgmt/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Automated network management
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/technologies/iot/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            The Internet of Things
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/technologies/transport/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            New transport technology
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/technologies/security/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Security &amp; privacy
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/technologies/areas/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            IETF Areas
-                                        </a>
-                                    </li>
-                                
-                            
-                        </ul>
-                    </div>
-                </section>
-            
-                <section class="col-lg">
-                    <div class="border-bottom u-border-lg-bottom-0 border-light border-opacity-50">
-                        <h4 class="my-0 py-4 fs-6" role="button" aria-expanded="false">
-                            Meetings
-                            <i class="bi bi-chevron-down"></i>
-                        </h4>
-                        <ul class="list-unstyled opacity-75 d-grid gap-2">
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/meeting/upcoming/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Upcoming meetings
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/meeting/past/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Past meetings
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/meeting/hackathons/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            IETF Hackathons
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/meeting/preparation/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Preparing for an IETF Meeting
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/meeting/guide-ietf-meetings/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Guide to IETF Meetings
-                                        </a>
-                                    </li>
-                                
-                            
-                        </ul>
-                    </div>
-                </section>
-            
-                <section class="col-lg">
-                    <div class="border-bottom u-border-lg-bottom-0 border-light border-opacity-50">
-                        <h4 class="my-0 py-4 fs-6" role="button" aria-expanded="false">
-                            Process
-                            <i class="bi bi-chevron-down"></i>
-                        </h4>
-                        <ul class="list-unstyled opacity-75 d-grid gap-2">
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/process/process/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Internet standards process
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/process/rfcs/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            About RFCs
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/process/new-work/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Bringing new work to the IETF
-                                        </a>
-                                    </li>
-                                
-                            
-                        </ul>
-                    </div>
-                </section>
-            
-                <section class="col-lg">
-                    <div class="border-bottom u-border-lg-bottom-0 border-light border-opacity-50">
-                        <h4 class="my-0 py-4 fs-6" role="button" aria-expanded="false">
-                            Participate
-                            <i class="bi bi-chevron-down"></i>
-                        </h4>
-                        <ul class="list-unstyled opacity-75 d-grid gap-2">
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/participate/get-started/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Getting started in the IETF
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/meeting/guide-ietf-meetings/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Guide to IETF Meetings
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/process/wgs/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Guide to IETF Working Groups
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/participate/lists/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Mailing lists
-                                        </a>
-                                    </li>
-                                
-                            
-                        </ul>
-                    </div>
-                </section>
-            
-                <section class="col-lg">
-                    <div class="border-bottom u-border-lg-bottom-0 border-light border-opacity-50">
-                        <h4 class="my-0 py-4 fs-6" role="button" aria-expanded="false">
-                            Support us
-                            <i class="bi bi-chevron-down"></i>
-                        </h4>
-                        <ul class="list-unstyled opacity-75 d-grid gap-2">
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/support-us/why-support/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Why we need your support
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/support-us/sponsorship/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Meeting sponsorship
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/support-us/donate/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            Other ways to give
-                                        </a>
-                                    </li>
-                                
-                            
-                                
-                                    <li class="nav-item">
-                                        <a
-                                            href="/support-us/donors/"
-                                            class="link-underline-opacity-0 link-light fw-semibold lh-base"
-                                        >
-                                            IETF financial supporters
-                                        </a>
-                                    </li>
-                                
-                            
-                        </ul>
-                    </div>
-                </section>
-            
-        </div>
-    </div>
-    <div class="container my-5">
-        <div class="d-lg-flex justify-content-between align-items-start lh-1">
-            <div class="d-flex fs-4 my-5 my-lg-0 ms-n2 my-5 me-3">
-                
-                    <a class="d-block text-light px-2" href="https://www.linkedin.com/company/internet-engineering-task-force/" rel="me" title="LinkedIn">
-                        <i class="bi bi-linkedin"></i>
-                    </a>
-                
-                    <a class="d-block text-light px-2" href="https://www.facebook.com/ietf" rel="me" title="Facebook">
-                        <i class="bi bi-facebook"></i>
-                    </a>
-                
-                    <a class="d-block text-light px-2" href="https://bsky.app/profile/ietf.org" rel="me" title="Bluesky">
-                        <i class="bi bi-bluesky"></i>
-                    </a>
-                
-                    <a class="d-block text-light px-2" href="https://www.youtube.com/ietf" rel="me" title="YouTube">
-                        <i class="bi bi-youtube"></i>
-                    </a>
-                
-                    <a class="d-block text-light px-2" href="https://github.com/ietf/" rel="me" title="GitHub">
-                        <i class="bi bi-github"></i>
-                    </a>
-                
-            </div>
-            <ul class="
-                row gx-0 column-gap-5 row-gap-3 justify-content-lg-end
-                my-5 my-lg-0
-                nav opacity-75
-            ">
-                
-                    <li class="nav-item col-auto py-0">
-                        <a href="/administration/overview/" class="nav-link text-light fs-10 p-0">
-                            IETF LLC
-                        </a>
-                    </li>
-                
-                    <li class="nav-item col-auto py-0">
-                        <a href="https://www.rfc-editor.org" class="nav-link text-light fs-10 p-0">
-                            RFC Editor
-                        </a>
-                    </li>
-                
-                    <li class="nav-item col-auto py-0">
-                        <a href="https://www.iana.org" class="nav-link text-light fs-10 p-0">
-                            IANA
-                        </a>
-                    </li>
-                
-                    <li class="nav-item col-auto py-0">
-                        <a href="https://www.iab.org" class="nav-link text-light fs-10 p-0">
-                            IAB
-                        </a>
-                    </li>
-                
-                    <li class="nav-item col-auto py-0">
-                        <a href="https://www.irtf.org" class="nav-link text-light fs-10 p-0">
-                            IRTF
-                        </a>
-                    </li>
-                
-                    <li class="nav-item col-auto py-0">
-                        <a href="https://trustee.ietf.org" class="nav-link text-light fs-10 p-0">
-                            IETF Trust
-                        </a>
-                    </li>
-                
-            </ul>
-        </div>
-    </div>
-</footer>
+   This document describes a post-quantum traditional (PQ/T) hybrid
+   digital signature authentication scheme for IKEv2 that incorporates
+   both traditional and PQC digital signature algorithms, so that
+   authentication is secure as long as one algorithm in the hybrid
+   scheme is secure.
 
-<script>
-[... document.querySelectorAll("footer section")].forEach((section) => {
-    const heading = section.querySelector("h4");
-    heading.addEventListener("click", () => {
-        const expanded = section.classList.toggle("expanded");
-        heading.setAttribute("aria-expanded", expanded);
-    });
-});
-</script>
-<script>window.staticRoot = "/static/dist/";</script> 
-<script>
-  var _paq = window._paq || [];
-  
-  _paq.push(['disableCookies']);
-  _paq.push(['trackPageView']);
-  _paq.push(['enableLinkTracking']);
-  (function() {
-    var u="//analytics.ietf.org/";
-    _paq.push(['setTrackerUrl', u+'matomo.php']);
-    _paq.push(['setSiteId', 1]);
-    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-  })();
-</script>
-<noscript><p><img src="//analytics.ietf.org/matomo.php?idsite=1" style="border:0;" alt="" /></p></noscript>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9f8a60425c5c8bf0',t:'MTc3ODI2MzM1Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body></html>
+   Each IPsec peer announces the support of hybrid authentication via
+   SUPPORTED_AUTH_METHODS notification as defined in [RFC9593],
+   generates and verifies AUTH payload using composite signature using
+   the procedures defined in [I-D.ietf-lamps-pq-composite-sigs].
+
+   The approach specified in this document is a general framework for
+   all PQC and traditional algorithms.  The combinations of ML-DSA
+   variants and traditional algorithms given in this document are
+   instantiations of the general framework.
+
+   There are two types of PQ/T hybrid PKI setup:
+
+   1.  Type-1: A single certificate that has a composite key as defined
+       in [I-D.ietf-lamps-pq-composite-sigs], which contains two
+       component keys: one traditional key + one PQC key.
+
+
+
+
+
+Hu, et al.               Expires 31 August 2026                 [Page 4]
+
+Internet-Draft               IKEv2 PQTH Auth               February 2026
+
+
+   2.  Type-2: Two certificates, one certificate with traditional
+       algorithm key and one certificate with PQC algorithm key as
+       described in [RFC9763], Each certificate MAY contain
+       RelatedCertificate extension to associate with the other
+       certificate.
+
+   A given deployment could use either type to provide PQ/T hybrid PKI.
+   This document supports both types.
+
+3.  Conventions and Definitions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+   Cryptographically Relevant Quantum Computer (CRQC): A quantum
+   computer that is capable of breaking real world cryptographic
+   systems.
+
+   Post-Quantum Cryptographic (PQC) algorithms: Asymmetric Cryptographic
+   algorithms are thought to be secure against CRQC.
+
+   Traditional Cryptographic algorithms: Existing asymmetric
+   Cryptographic algorithms could be broken by CRQC, like RSA, ECDSA
+   ..etc.
+
+4.  IKEv2 Key Exchange
+
+   There is no changes introduced in this document to the IKEv2 key
+   exchange process, although it MUST be also resilient to CRQC when
+   using along with the PQ/T hybrid authentication, for example key
+   exchange using the PPK as defined in [RFC8784], or hybrid key
+   exchanges that includes PQC algorithm like [ML-KEM] via multiple key
+   exchange process as defined in [I-D.ietf-ipsecme-ikev2-mlkem].
+
+5.  Exchanges
+
+   The hybrid authentication exchanges is illustrated in an example
+   depicted in Figure 1, using PPK as defined in [RFC8784] during key
+   exchange.  However, other PQC key exchanges could also be used since
+   how key exchange is done is independent from authentication.
+
+
+
+
+
+
+
+
+Hu, et al.               Expires 31 August 2026                 [Page 5]
+
+Internet-Draft               IKEv2 PQTH Auth               February 2026
+
+
+   Initiator                         Responder
+   -------------------------------------------------------------------
+   HDR, SAi1, KEi, Ni,
+             N(USE_PPK) -->
+                     <--  HDR, SAr1, KEr, Nr, [CERTREQ,] N(USE_PPK),
+                                         N(SUPPORTED_AUTH_METHODS)
+
+   HDR, SK {IDi, CERT+, [CERTREQ,]
+           [IDr,] AUTH, SAi2,
+           TSi, TSr, N(PPK_IDENTITY, PPK_ID),
+           N(SUPPORTED_AUTH_METHODS)} -->
+                               <--  HDR, SK {IDr, CERT+, [CERTREQ,]
+                                         AUTH, [N(PPK_IDENTITY)]}
+
+    Figure 1: Hybrid Authentication Exchanges with RFC8784 Key Exchange
+
+   1.  Responder announces the hybrid authentication support via
+       SUPPORTED_AUTH_METHODS notification in IKE_SA_INIT response
+       message.  The notification includes the combinations of PQC,
+       traditional, hash algorithm and type of hybrid PKI setup that
+       responder supports.
+
+   2.  Initiator chooses a combination from responder's
+       SUPPORTED_AUTH_METHODS, uses the combination to generate the AUTH
+       payload, along with corresponding signing certificate(s) in CERT
+       payload(s), and includes its support of hybrid combinations in
+       SUPPORTED_AUTH_METHODS notification of IKE_AUTH request message.
+
+   3.  Responder chooses a combination from initiator's
+       SUPPORTED_AUTH_METHODS, uses the combination to generate the AUTH
+       payload, and includes corresponding signing certificate(s) in
+       CERT payload(s) of IKE_AUTH response message.
+
+5.1.  Announcement
+
+   Announcement of support hybrid authentication is through
+   SUPPORTED_AUTH_METHODS notification as defined in [RFC9593], which
+   includes a list of acceptable authentication methods announcements.
+   This document defines a hybrid authentication announcement with
+   following format:
+
+
+
+
+
+
+
+
+
+
+
+Hu, et al.               Expires 31 August 2026                 [Page 6]
+
+Internet-Draft               IKEv2 PQTH Auth               February 2026
+
+
+                        1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |  Length (>=2) |  Auth Method  |   Cert Link 1 | Alg 1 flag    |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   | Alg 1 Len     |                                               |
+   +-+-+-+-+-+-+-+-+                                               |
+   ~                      AlgorithmIdentifier 1                    ~
+   |                                                               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   | Cert Link 2   | Alg 2 flag    |  Alg 2 Len    |               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+               +
+   |                                                               |
+   ~                      AlgorithmIdentifier 2                    ~
+   |                                                               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                                                               |
+   ~                      ...                                      ~
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   | Cert Link 3   | Alg 3 flag    |  Alg 3 Len    |               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+               +
+   |                                                               |
+   ~                      AlgorithmIdentifier N                    ~
+   |                                                               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+                Figure 2: Hybrid Authentication Announcement
+
+   The announcement includes a list of N algorithms could be used for
+   hybrid signature
+
+   *  Auth Method: A new value to be allocated by IANA
+
+   *  Cert Link N: Links corresponding signature algorithm N with a
+      particular CA, as defined in Section 3.2.2 of [RFC9593]
+
+   *  Alg N Flag:
+
+      -  C: set to 1 if the algorithm could be used in type-1 setup
+
+      -  S: set to 1 if the algorithm could be used in type-2 setup
+
+      -  Both C and S MAY be set to 1 but MUST NOT set to zero at the
+         same time
+
+      -  RESERVED: set to 0
+
+
+
+
+
+Hu, et al.               Expires 31 August 2026                 [Page 7]
+
+Internet-Draft               IKEv2 PQTH Auth               February 2026
+
+
+        0 1 2 3 4 5 6 7
+       +-+-+-+-+-+-+-+-+
+       |C|S| RESERVED  |
+       +-+-+-+-+-+-+-+-+
+
+                          Figure 3: Algorithm Flag
+
+   *  AlgorithmIdentifier N: The variable-length ASN.1 object that is
+      encoded using Distinguished Encoding Rules (DER) [X.690] and
+      identifies the algorithm of a composite signature as defined in
+      Section 7 of [I-D.ietf-lamps-pq-composite-sigs].
+
+5.1.1.  Sending Announcement
+
+   As defined in [RFC9593], the responder includes
+   SUPPORTED_AUTH_METHODS in IKE_SA_INIT response (and potentially also
+   in IKE_INTERMEDIATE response), while the initiator includes the
+   notification in IKE_AUTH request.
+
+   The sender includes a hybrid authentication announcement in
+   SUPPORTED_AUTH_METHODS, which contains 0 or N composite signature
+   AlgorithmIdentifiers sender accepts.  Each AlgorithmIdentifier
+   identifies a combination of algorithms as specified in Section 6 of
+   [I-D.ietf-lamps-pq-composite-sigs]:
+
+   *  a traditional PKI algorithm (e.g. id-RSASA-PSS)
+
+   *  a PQC algorithm (e.g. id-ML-DSA-44)
+
+   *  a pre-hash algorithm (e.g. id-sha256)
+
+   In case of type-2 setup, even though the certificate is not a
+   composite key certificate, system still uses a composite signature
+   algorithm that corresponds to the combination of two certificates PKI
+   algorithms and hash algorithm(s).
+
+   C and S bits in flag field are set according to whether sender
+   accepts the algorithm combination in type-1/type-2 setup.
+
+   Announcement without any AlgorithmIdentifiers signals that there is
+   no particular restrictions on algorithm.
+
+
+
+
+
+
+
+
+
+
+Hu, et al.               Expires 31 August 2026                 [Page 8]
+
+Internet-Draft               IKEv2 PQTH Auth               February 2026
+
+
+5.1.2.  Receiving Announcement
+
+   If hybrid authentication announcement is received, and the receiver
+   chooses to authenticate itself using hybrid authentication, then
+   based on its local policy and certificates, one AlgorithmIdentifier
+   (which identifies a combination of algorithms) in the hybrid
+   authentication announcement and a PKI setup (type-1 or type-2) is
+   chosen to create its AUTH and CERT payload(s).
+
+   If there is no AlgorithmIdentifier in the announcement, the receiver
+   MAY choose AlgorithmIdentifier just according to its local policy and
+   certificates.
+
+5.2.  AUTH & CERT payload
+
+   The IKEv2 AUTH payload has following format as defined in Section 3.8
+   of [RFC7296]:
+
+                           1                   2                   3
+       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     | Next Payload  |C|  RESERVED   |         Payload Length        |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     | Auth Method   |                RESERVED                       |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                                                               |
+     ~                      Authentication Data                      ~
+     |                                                               |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+                           Figure 4: AUTH payload
+
+   For hybrid authentication, the AUTH Method has value defined in
+   Section 5.1
+
+   The Authentication Data field follows format defined in Section 3 of
+   [RFC7427]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Hu, et al.               Expires 31 August 2026                 [Page 9]
+
+Internet-Draft               IKEv2 PQTH Auth               February 2026
+
+
+                          1                   2                   3
+      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     | ASN.1 Length  | AlgorithmIdentifier ASN.1 object              |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                                                               |
+     ~        AlgorithmIdentifier ASN.1 object continuing            ~
+     |                                                               |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                                                               |
+     ~                         Signature Value                       ~
+     |                                                               |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+            Figure 5: Authentication Data in hybrid AUTH payload
+
+   Based on selected AlgorithmIdentifier and setup type, the Signature
+   Value is created via procedure defined in Section 5.2.1,
+   Section 5.2.2.
+
+5.2.1.  Type-1
+
+   Assume selected AlgorithmIdentifier is A.
+
+   1.  There is no change on data to be signed, e.g.
+       InitiatorSignedOctets/ResponderSignedOctets as defined in
+       Section 2.15 of [RFC7296]
+
+   2.  Follow Sign operation identified by A, e.g. Section 3.2 of
+       [I-D.ietf-lamps-pq-composite-sigs].  The ctx input is the string
+       of "IKEv2-PQT-Hybrid-Auth".  This step outputs the composite
+       signature, a CompositeSignatureValue.
+
+   3.  CompositeSignatureValue is serialized per Section 4.3 of
+       [I-D.ietf-lamps-pq-composite-sigs], and the output is used as
+       Signature Value in the Authentication Data field.
+
+   Note: [I-D.ietf-lamps-pq-composite-sigs] uses a pre-hash algorithm
+   with [ML-DSA] pure mode (Algorithm 2), not the HashML-DSA as defined
+   in [ML-DSA], see Section 2.1 of [I-D.ietf-lamps-pq-composite-sigs]
+   for the rationale.
+
+   Following is an initiator example:
+
+   1.  A is id-MLDSA44-RSA2048-PSS-SHA256, which uses PQC ML-DSA-44 and
+       traditional RSASSA-PSS with pre-hash function SHA256
+
+
+
+
+
+Hu, et al.               Expires 31 August 2026                [Page 10]
+
+Internet-Draft               IKEv2 PQTH Auth               February 2026
+
+
+   2.  Follow Section 3.2 of [I-D.ietf-lamps-pq-composite-sigs] with
+       following inputs:
+
+       *  sk is the private key of the signing composite key certificate
+
+       *  M is InitiatorSignedOctets
+
+       *  ctx is "IKEv2-PQT-Hybrid-Auth"
+
+   The signing composite certificate MUST be the first CERT payload.
+
+5.2.2.  Type-2
+
+   1.  Combine PQC key and traditional key into composite key using
+       SerializePrivateKey operation as defined in Section 4.2 of
+       [I-D.ietf-lamps-pq-composite-sigs].
+
+   2.  Follow Sign operation as Section 5.2.1
+
+   Note: Section 6 of [RFC9881] defines 3 options for ML-DSA private key
+   storage, this document requires options that include seed since Sign
+   operation of [I-D.ietf-lamps-pq-composite-sigs] only supports seed.
+
+   With example in Section 5.2.1:
+
+   *  sk is the combined private key, e.g. output of SerializePrivateKey
+
+   *  M is InitiatorSignedOctets
+
+   *  ctx is "IKEv2-PQT-Hybrid-Auth"
+
+   The signing PQC certificate MUST be the first CERT payload in the
+   IKEv2 message, while traditional certificate MUST be the second CERT
+   payload.
+
+5.2.2.1.  RelatedCertificate
+
+   In type-2 setup, the signing certificate MAY contain
+   RelatedCertificate extension, then the receiver SHOULD verify the
+   extension according to Section 4.2 of [RFC9763].  Failed verification
+   SHOULD fail authentication.
+
+6.  Security Considerations
+
+   The security of general PQ/T hybrid authentication is discussed in
+   [I-D.ietf-pquip-hybrid-signature-spectrums].
+
+
+
+
+
+Hu, et al.               Expires 31 August 2026                [Page 11]
+
+Internet-Draft               IKEv2 PQTH Auth               February 2026
+
+
+   This document uses mechanisms defined in
+   [I-D.ietf-lamps-pq-composite-sigs], [RFC7427] and [RFC9593], so the
+   security discussion in the corresponding RFCs also apply.
+
+   One important security consideration mentioned in
+   [I-D.ietf-lamps-pq-composite-sigs] worth repeating here is that
+   component key used in either Section 5.2.1 or Section 5.2.2 MUST NOT
+   be reused in any other cases including single-algorithm case.
+
+7.  IANA Considerations
+
+   This document requests a value in "IKEv2 Authentication Method"
+   subregistry under IANA "Internet Key Exchange Version 2 (IKEv2)
+   Parameters" registry
+
+8.  References
+
+8.1.  Normative References
+
+   [I-D.ietf-lamps-pq-composite-sigs]
+              Ounsworth, M., Gray, J., Pala, M., Klaußner, J., and S.
+              Fluhrer, "Composite ML-DSA for use in X.509 Public Key
+              Infrastructure", Work in Progress, Internet-Draft, draft-
+              ietf-lamps-pq-composite-sigs-15, 24 February 2026,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-lamps-
+              pq-composite-sigs-15>.
+
+   [I-D.ietf-pquip-hybrid-signature-spectrums]
+              Bindel, N., Hale, B., Connolly, D., and F. D, "Hybrid
+              signature spectrums", Work in Progress, Internet-Draft,
+              draft-ietf-pquip-hybrid-signature-spectrums-07, 20 June
+              2025, <https://datatracker.ietf.org/doc/html/draft-ietf-
+              pquip-hybrid-signature-spectrums-07>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC7296]  Kaufman, C., Hoffman, P., Nir, Y., Eronen, P., and T.
+              Kivinen, "Internet Key Exchange Protocol Version 2
+              (IKEv2)", STD 79, RFC 7296, DOI 10.17487/RFC7296, October
+              2014, <https://www.rfc-editor.org/rfc/rfc7296>.
+
+   [RFC7427]  Kivinen, T. and J. Snyder, "Signature Authentication in
+              the Internet Key Exchange Version 2 (IKEv2)", RFC 7427,
+              DOI 10.17487/RFC7427, January 2015,
+              <https://www.rfc-editor.org/rfc/rfc7427>.
+
+
+
+Hu, et al.               Expires 31 August 2026                [Page 12]
+
+Internet-Draft               IKEv2 PQTH Auth               February 2026
+
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+   [RFC9593]  Smyslov, V., "Announcing Supported Authentication Methods
+              in the Internet Key Exchange Protocol Version 2 (IKEv2)",
+              RFC 9593, DOI 10.17487/RFC9593, July 2024,
+              <https://www.rfc-editor.org/rfc/rfc9593>.
+
+   [RFC9763]  Becker, A., Guthrie, R., and M. Jenkins, "Related
+              Certificates for Use in Multiple Authentications within a
+              Protocol", RFC 9763, DOI 10.17487/RFC9763, June 2025,
+              <https://www.rfc-editor.org/rfc/rfc9763>.
+
+   [RFC9881]  Massimo, J., Kampanakis, P., Turner, S., and B. E.
+              Westerbaan, "Internet X.509 Public Key Infrastructure --
+              Algorithm Identifiers for the Module-Lattice-Based Digital
+              Signature Algorithm (ML-DSA)", RFC 9881,
+              DOI 10.17487/RFC9881, October 2025,
+              <https://www.rfc-editor.org/rfc/rfc9881>.
+
+   [X.690]    "Information Technology - ASN.1 encoding rules:
+              Specification of Basic Encoding Rules (BER), Canonical
+              Encoding Rules (CER) and Distinguished Encoding Rules
+              (DER)", ISO/IEC 8825-1:2021 (E), ITU-T Recommendation
+              X.690, February 2021.
+
+8.2.  Informative References
+
+   [I-D.ietf-ipsecme-ikev2-mlkem]
+              Kampanakis, P., "Post-quantum Key Exchange with ML-KEM in
+              the Internet Key Exchange Protocol Version 2 (IKEv2)",
+              Work in Progress, Internet-Draft, draft-ietf-ipsecme-
+              ikev2-mlkem-04, 26 February 2026,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-ipsecme-
+              ikev2-mlkem-04>.
+
+   [ML-DSA]   "Module-Lattice-Based Digital Signature Standard", NIST 
+              FIPS-204, August 2023,
+              <https://csrc.nist.gov/pubs/fips/204/final>.
+
+   [ML-KEM]   "Module-Lattice-Based Key-Encapsulation Mechanism
+              Standard", NIST FIPS-203, August 2023,
+              <https://csrc.nist.gov/pubs/fips/203/final>.
+
+
+
+
+
+
+
+Hu, et al.               Expires 31 August 2026                [Page 13]
+
+Internet-Draft               IKEv2 PQTH Auth               February 2026
+
+
+   [RFC8784]  Fluhrer, S., Kampanakis, P., McGrew, D., and V. Smyslov,
+              "Mixing Preshared Keys in the Internet Key Exchange
+              Protocol Version 2 (IKEv2) for Post-quantum Security",
+              RFC 8784, DOI 10.17487/RFC8784, June 2020,
+              <https://www.rfc-editor.org/rfc/rfc8784>.
+
+   [RFC9370]  Tjhai, CJ., Tomlinson, M., Bartlett, G., Fluhrer, S., Van
+              Geest, D., Garcia-Morchon, O., and V. Smyslov, "Multiple
+              Key Exchanges in the Internet Key Exchange Protocol
+              Version 2 (IKEv2)", RFC 9370, DOI 10.17487/RFC9370, May
+              2023, <https://www.rfc-editor.org/rfc/rfc9370>.
+
+Acknowledgments
+
+   TODO acknowledge.
+
+Authors' Addresses
+
+   Jun Hu
+   Nokia
+   United States of America
+   Email: jun.hu@nokia.com
+
+
+   Yasufumi Morioka
+   NTT DOCOMO, INC.
+   Japan
+   Email: yasufumi.morioka.dt@nttdocomo.com
+
+
+   Guilin Wang
+   Huawei
+   Singapore
+   Email: Wang.Guilin@huawei.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Hu, et al.               Expires 31 August 2026                [Page 14]
