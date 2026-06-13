@@ -143,6 +143,9 @@ test_parse_2.mjs
 test_personas.mjs
 test_load.mjs
 pqctoday_nextsteps_*.md
+fix_*.py
+check-bc-prod.mjs
+reports/trust-tier-snapshot.json
 scripts/fix_*.mjs
 scripts/fix_*.cjs
 scripts/recover_data*.mjs
@@ -190,6 +193,7 @@ docs/requirements/
 # IKEv2 / VPN development notes
 ikev2*.md
 vpn_*.md
+vpnsimulation*.md
 QandA_pqctoday.md
 QandA_app-pages.md
 QandA_learn-modules.md
