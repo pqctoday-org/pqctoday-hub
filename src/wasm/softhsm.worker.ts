@@ -94,8 +94,8 @@ interface SoftHSMW {
 
 // ── PKCS#11 v3.2 constants ────────────────────────────────────────────────────
 
-var CKO_PUBLIC_KEY = 3
-var CKO_PRIVATE_KEY = 4
+var CKO_PUBLIC_KEY = 2
+var CKO_PRIVATE_KEY = 3
 var CKK_SLH_DSA = 0x4b
 var CKA_CLASS = 0x00000000
 var CKA_KEY_TYPE = 0x00000100
@@ -105,7 +105,7 @@ var CKA_SENSITIVE = 0x00000103
 var CKA_EXTRACTABLE = 0x00000162
 var CKA_SIGN = 0x00000108
 var CKA_VERIFY = 0x0000010a
-var CKA_PARAMETER_SET = 0x000001d9
+var CKA_PARAMETER_SET = 0x0000061d
 var CKA_VALUE = 0x00000011
 var CKM_SLH_DSA_KEY_PAIR_GEN = 0x2d
 var CKM_SLH_DSA = 0x2e
