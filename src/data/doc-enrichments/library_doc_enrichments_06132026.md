@@ -1,62 +1,117 @@
 ---
 generated: 2026-06-13
 collection: library
-documents_processed: 1
+documents_processed: 2
 enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 ---
 
-## AQ-PQC-Migration-Framework-v2.1-2026
+## NIST-CSF-2.0
 
-- **Reference ID**: AQ-PQC-Migration-Framework-v2.1-2026
-- **Title**: The Applied Quantum PQC Migration Framework (v2.1)
-- **Authors**: Marin Ivezic; Applied Quantum
-- **Publication Date**: 2025-06-01
-- **Last Updated**: 2026-06-01
-- **Document Status**: Published
-- **Main Topic**: A comprehensive, phase-by-phase enterprise methodology for migrating to post-quantum cryptography, covering discovery, deployment, governance, and operational security.
-- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA; HQC; XMSS; LMS
-- **Quantum Threats Addressed**: Harvest Now Decrypt Later (HNDL); Too Late to Fix Later (TNFL); CRQC timelines
-- **Migration Timeline Info**: NIST IR 8547 deprecation and disallowance timelines; 2026–2030 regulatory deadline convergence; HNDL and TNFL threat horizons
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: Marin Ivezic: CEO, Applied Quantum; Author of the framework
+- **Reference ID**: NIST-CSF-2.0
+- **Title**: NIST Cybersecurity Framework (CSF) 2.0
+- **Authors**: NIST
+- **Publication Date**: 2024-02-26
+- **Last Updated**: 2024-02-26
+- **Document Status**: Final
+- **Main Topic**: The NIST Cybersecurity Framework (CSF) 2.0 provides a taxonomy of high-level cybersecurity outcomes and guidance for managing cybersecurity risks across organizations.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: National Institute of Standards and Technology
+- **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: SSH; TLS; PKI (X.509 implied via Merkle Tree Certificates and signature tracks)
-- **Infrastructure Layers**: PKI; SOC (Security Operations Center); GRC (Governance, Risk, and Compliance); CBOM (Cryptographic Bill of Materials); Confidential Computing; Cloud shared responsibility; SaaS
-- **Standardization Bodies**: NIST; NSA; ETSI; GSMA; MITRE; AIVD; CWI; TNO; PKI Consortium
-- **Compliance Frameworks Referenced**: NIST FIPS 203/204/205; NIST IR 8547; NIST SP 1800-38; NIST SP 800-227; NIST SP 800-208; NIST CSWP 39; NSA CNSA 2.0; FIPS 140-3; GSMA PQ.01–PQ.03; ETSI TR 103 619 / TR 104 016
-- **Classical Algorithms Referenced**: RSA; ECC
-- **Key Takeaways**: Adopt a two-track migration model separating key exchange (HNDL) and signature/PKI (TNFL) as parallel tracks; Treat FIPS 140-3 validation gaps as hard deployment constraints requiring environment classification; Implement integrated operational security architecture including SOC detection use cases and GRC KRI frameworks; Use a risk-driven discovery approach with a Minimum Viable CBOM to scope migration efforts; Prioritize vendor governance as the primary external constraint on migration timelines
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: National Institute of Standards and Technology
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The CSF 2.0 introduces the GOVERN function to integrate cybersecurity into enterprise risk management; The framework is sector-, country-, and technology-neutral to allow flexible adoption; Organizations should use CSF Profiles to compare current and target cybersecurity postures; The CSF links to online resources for specific implementation guidance rather than prescribing controls directly.
 - **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Two-track migration model; Hybrid/composite signatures; Multinational hybrid navigation framework; Crypto-agility; Merkle Tree Certificates for public Web PKI
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Compliance Officer; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-governance; compliance-strategy; pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: NIST-CSF-2.0.pdf (1,518,858 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-06-13T17:30:38
+
+---
+
+## NL-PQC-Migration-Handbook-2024
+
+- **Reference ID**: NL-PQC-Migration-Handbook-2024
+- **Title**: The PQC Migration Handbook (2nd Edition)
+- **Authors**: AIVD; CWI; TNO
+- **Publication Date**: 2023-04-04
+- **Last Updated**: 2024-12-01
+- **Document Status**: Published (2nd Edition)
+- **Main Topic**: Guidelines for migrating to post-quantum cryptography, covering diagnosis, planning, and execution phases for organizations.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Quantum computers compromising cryptographic systems; Harvest Now Decrypt Later (implied by "data that should remain confidential for the next decades")
+- **Migration Timeline Info**: Migration process could take well over five years; NIST published first PQC standards in August 2024
+- **Applicable Regions / Bodies**: Regions: The Netherlands, United States, Germany, France, United Kingdom, European Union; Bodies: AIVD, CWI, TNO, NIST, NSA (implied by CNSA), ISO/IEC, European Commission, NCSC-NL, DICTU, MinBZK, MinOCW, MinIenW, MinVWS
+- **Leaders Contributions Mentioned**: Alessandro Amadori, Thomas Attema, Maxime Bombar, João Diogo Duarte, Vincent Dunning, Simona Etinski, Daniël van Gent, Matthieu Lequesne, Ward van der Schoot, Marc Stevens (Authors); Ronald Cramer, Maran van Heesch (Initiation and scoping); Melissa Azouaoui, Itan Barmes, Nitesh Bharosa, Joppe W. Bos, Christine Cloostermans, Oscar Covers, Gareth T. Davies, Sander Dorigo, Barış Ege, Marie Beth van Egmond, Dimitri van Esch, Erik Holkers, Andreas Hülsing, Marijn Janssen, Frederik Kerling, Silke Knossen, Dion Koeze, Ini Kong, Maaike van Leuken, Anne Nijsten, Durga Lakshmi Ramachandran, Harld Röling, Simona Samardjiska, Tobias Schaap, Colin Schappin, Pieter Schneider, Peter Schwabe, Robert Seepers, Thom Sijpesteijn, André Smulders, Thijs Timmerman, Daan van der Valk, Marc van Vliet, Manon de Vries, Anita Wehmann, Bas Westerbaan, Daniël Worm (Revising and extending); Shane Gibbons, Loulou Hanna, Larissa Kalle, Oscar Koeroo, Daan Planqué, Eamonn W. Postlethwaite, Sterre Romkema, Germain van der Velden (First edition contributions)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS, Messaging Applications
+- **Infrastructure Layers**: PKI (implied by cryptographic asset discovery and policies), Key Management (implied by cryptographic agility and asset management)
+- **Standardization Bodies**: NIST, ISO/IEC
+- **Compliance Frameworks Referenced**: ISO/IEC 27000-Series, Network and Information Systems (NIS) Directive, General Data Protection Regulation (GDPR), Federal Information Security Modernization Act (FISMA), Commercial National Security Algorithm Suite (CNSA)
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Organizations should perform cryptographic asset discovery to create an inventory of all cryptography used; Conduct quantum risk assessments and integrate them into existing risk management procedures; Establish cryptographic agility to quickly modify or replace deployed cryptographic primitives; Form a dedicated team to oversee the migration and ensure business processes facilitate a smooth transition; Begin with "no-regret" moves to enhance cyber resilience regardless of the quantum threat
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Cryptographic agility; Hybrid deployments (implied by "different choices can be made regarding how PQC is implemented")
 - **Pure PQC KEM Support**: No
 - **Pure PQC KEM Evidence**: None detected
 - **Hybrid PQC KEM Support**: No
 - **Hybrid PQC KEM Evidence**: None detected
 - **Pure PQC Signature Support**: No
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Yes
-- **Hybrid PQC Signature Evidence**: "explicit position on hybrid/composite signatures" (v2.1 changes)
-- **PQC Heatmap Protocols Covered**: SSH; TLS-1.2; TLS-1.3; X.509
-- **PQC Heatmap Protocols Evidence**: SSH: "SSH/TLS details" (v1.1 changes); TLS-1.2; TLS-1.3: "SSH/TLS details" (v1.1 changes); X.509: "PKI architecture fork with definitive position on Merkle Tree Certificates" (v2.0 changes)
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "Post-Quantum TLS at Google and Cloudflare" (§5.4.2)
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: CISOs; Security Architects; Cryptographic Engineers; Program Managers; Risk and Compliance Officers; Vendor/Procurement Teams
-- **Implementation Prerequisites**: Familiarity with quantum threat fundamentals; FIPS 140-3 validation status; Cryptographic inventory; CBOM architecture
-- **Relevant PQC Today Features**: migration-program; pqc-governance; crypto-agility; vendor-risk; pqc-business-case; merkle-tree-certs; hybrid-crypto
+- **Target Audience**: CISO, Security Architect, Compliance Officer, Operations
+- **Implementation Prerequisites**: Cryptographic asset discovery; Quantum risk assessment; Dedicated migration team; Cryptographic agility integration
+- **Relevant PQC Today Features**: Migrate; Assess; Threats; Compliance; crypto-agility; pqc-risk-management; migration-program; pqc-governance
 - **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: Minimum Viable CBOM model; Risk-driven discovery scoping; Cryptographic inventory methodologies
+- **Cryptographic Discovery & Inventory**: Cryptographic asset discovery; Cryptographic inventory; Cryptographic Bill of Materials
 - **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
+- **QKD Protocols & Quantum Networking**: Quantum Key Distribution (QKD)
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: Vendor governance as primary external constraint; Dependency chains; Procurement model language references; M&A due diligence
-- **Deployment & Migration Complexity**: 8-phase lifecycle (0-7); Two-track migration model; Phased rollout; Backward compatibility considerations; Rollback procedures implied via incident response playbooks
-- **Financial & Business Impact**: Reference program economics; Cost estimation methodology; Budget structure development
-- **Organizational Readiness**: Governance structure; Board oversight; Three lines of defense; Team sizing; Build/borrow/buy framework; Crypto champion program; Skills matrix
-- **Math Family**: Lattice; Hash-based
-- **PQC Round**: Standardised
-- **Source Document**: AQ-PQC-Migration-Framework-v2.1-2026.pdf (1,483,960 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-06-13T14:03:00
+- **Supply Chain & Vendor Risk**: Switching to new vendors that support appropriate PQC solutions
+- **Deployment & Migration Complexity**: Migration takes well over five years; Three-step approach: Diagnosis, Planning, Execution; Urgent adopters vs Regular adopters
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: PQC Maturity Assessment; Dedicated team required; Business process planning
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: Dutch-PQC-Migration-Handbook-2024.pdf (2,344,352 bytes, 12,314 extracted chars)
+- **Extraction Timestamp**: 2026-06-13T17:30:39
 
 ---
 
@@ -1028,6 +1083,60 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Organizational Readiness**: Phase 0 initial scoping assessment, governance structure, organizational culture for long-horizon programs, crypto champion designation per platform/application team, Quantum Readiness Assessment (QRA), maturity assessment, regulatory body identification, compliance framework intersection (PCI DSS, DORA, CMMC)
 - **Math Family**: None detected
 - **PQC Round**: None detected
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## AQ-PQC-Migration-Framework-v2.1-2026
+
+- **Reference ID**: AQ-PQC-Migration-Framework-v2.1-2026
+- **Title**: The Applied Quantum PQC Migration Framework (v2.1)
+- **Authors**: Marin Ivezic; Applied Quantum
+- **Publication Date**: 2025-06-01
+- **Last Updated**: 2026-06-01
+- **Document Status**: Published
+- **Main Topic**: A comprehensive, phase-by-phase enterprise methodology for migrating to post-quantum cryptography, covering discovery, deployment, governance, and operational security.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA; HQC; XMSS; LMS
+- **Quantum Threats Addressed**: Harvest Now Decrypt Later (HNDL); Too Late to Fix Later (TNFL); CRQC timelines
+- **Migration Timeline Info**: NIST IR 8547 deprecation and disallowance timelines; 2026–2030 regulatory deadline convergence; HNDL and TNFL threat horizons
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Marin Ivezic: CEO, Applied Quantum; Author of the framework
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: SSH; TLS; PKI (X.509 implied via Merkle Tree Certificates and signature tracks)
+- **Infrastructure Layers**: PKI; SOC (Security Operations Center); GRC (Governance, Risk, and Compliance); CBOM (Cryptographic Bill of Materials); Confidential Computing; Cloud shared responsibility; SaaS
+- **Standardization Bodies**: NIST; NSA; ETSI; GSMA; MITRE; AIVD; CWI; TNO; PKI Consortium
+- **Compliance Frameworks Referenced**: NIST FIPS 203/204/205; NIST IR 8547; NIST SP 1800-38; NIST SP 800-227; NIST SP 800-208; NIST CSWP 39; NSA CNSA 2.0; FIPS 140-3; GSMA PQ.01–PQ.03; ETSI TR 103 619 / TR 104 016
+- **Classical Algorithms Referenced**: RSA; ECC
+- **Key Takeaways**: Adopt a two-track migration model separating key exchange (HNDL) and signature/PKI (TNFL) as parallel tracks; Treat FIPS 140-3 validation gaps as hard deployment constraints requiring environment classification; Implement integrated operational security architecture including SOC detection use cases and GRC KRI frameworks; Use a risk-driven discovery approach with a Minimum Viable CBOM to scope migration efforts; Prioritize vendor governance as the primary external constraint on migration timelines
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Two-track migration model; Hybrid/composite signatures; Multinational hybrid navigation framework; Crypto-agility; Merkle Tree Certificates for public Web PKI
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "explicit position on hybrid/composite signatures" (v2.1 changes)
+- **PQC Heatmap Protocols Covered**: SSH; TLS-1.2; TLS-1.3; X.509
+- **PQC Heatmap Protocols Evidence**: SSH: "SSH/TLS details" (v1.1 changes); TLS-1.2; TLS-1.3: "SSH/TLS details" (v1.1 changes); X.509: "PKI architecture fork with definitive position on Merkle Tree Certificates" (v2.0 changes)
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISOs; Security Architects; Cryptographic Engineers; Program Managers; Risk and Compliance Officers; Vendor/Procurement Teams
+- **Implementation Prerequisites**: Familiarity with quantum threat fundamentals; FIPS 140-3 validation status; Cryptographic inventory; CBOM architecture
+- **Relevant PQC Today Features**: migration-program; pqc-governance; crypto-agility; vendor-risk; pqc-business-case; merkle-tree-certs; hybrid-crypto
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: Minimum Viable CBOM model; Risk-driven discovery scoping; Cryptographic inventory methodologies
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Vendor governance as primary external constraint; Dependency chains; Procurement model language references; M&A due diligence
+- **Deployment & Migration Complexity**: 8-phase lifecycle (0-7); Two-track migration model; Phased rollout; Backward compatibility considerations; Rollback procedures implied via incident response playbooks
+- **Financial & Business Impact**: Reference program economics; Cost estimation methodology; Budget structure development
+- **Organizational Readiness**: Governance structure; Board oversight; Three lines of defense; Team sizing; Build/borrow/buy framework; Crypto champion program; Skills matrix
+- **Math Family**: Lattice; Hash-based
+- **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
