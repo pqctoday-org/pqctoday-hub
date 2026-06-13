@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { CryptoAgilityProcessDiagram } from '@/components/PKILearning/modules/CryptoMgmtModernization/visuals/CryptoAgilityProcessDiagram'
 import { CSWP39_STEPS, CSWP39_TIERS, CSWP39_CROSS_WALK, CSWP39_SOURCE_METADATA } from './cswp39Data'
 import { CSWP39StepCard } from './CSWP39StepCard'
+import { FrameworkCrosswalkView } from './FrameworkCrosswalkView'
 import { MaturityEvidenceGrid } from './MaturityEvidenceGrid'
 import { PillarDisclaimer } from '@/components/BusinessCenter/widgets/PillarDisclaimer'
 import { maturityRequirements } from '@/data/maturityGovernanceData'
@@ -312,6 +313,9 @@ export const CSWP39Explorer: React.FC<CSWP39ExplorerProps> = ({
           </table>
         </div>
       </section>
+
+      {/* ── App. G — Crosswalk to other frameworks (per Migration Program phase) ── */}
+      <FrameworkCrosswalkView />
 
       {/* ── Authoritative Evidence ── */}
       <section className="glass-panel p-5 border border-border rounded-lg">

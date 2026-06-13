@@ -61,6 +61,9 @@ export type ExecutiveDocumentType =
   | 'mti-negotiator'
   | 'crypto-api-refactor'
   | 'cloud-responsibility-matrix'
+  | 'program-charter'
+  | 'initial-scoping'
+  | 'skills-team-plan'
 
 export interface ExecutiveDocumentRevision {
   /** Unix ms when this revision was recorded. */

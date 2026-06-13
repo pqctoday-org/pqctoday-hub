@@ -35,6 +35,9 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'mti-negotiator': 'MTI Recommendation',
   'crypto-api-refactor': 'Crypto API Refactor Audit',
   'cloud-responsibility-matrix': 'Cloud Responsibility Matrix',
+  'program-charter': 'Program Charter',
+  'initial-scoping': 'Initial Scoping Assessment',
+  'skills-team-plan': 'Skills & Team Plan',
 }
 
 const PILLAR_COLORS: Record<string, string> = {

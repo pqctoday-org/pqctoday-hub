@@ -150,6 +150,17 @@ export const BUSINESS_TOOL_COMPONENTS: Record<string, LazyComp> = {
       (m) => ({ default: m.CloudResponsibilityMatrix })
     )
   ),
+  'program-charter': lazyWithRetry(() =>
+    import('./tools/ProgramCharter').then((m) => ({ default: m.ProgramCharter }))
+  ),
+  'initial-scoping': lazyWithRetry(() =>
+    import('./tools/InitialScopingAssessment').then((m) => ({
+      default: m.InitialScopingAssessment,
+    }))
+  ),
+  'skills-team-plan': lazyWithRetry(() =>
+    import('./tools/SkillsTeamPlan').then((m) => ({ default: m.SkillsTeamPlan }))
+  ),
 }
 
 /** Look up the lazy-loaded builder component for a given artifact type. */

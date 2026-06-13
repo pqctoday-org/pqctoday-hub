@@ -80,6 +80,7 @@ import { SIGNING_ALGORITHMS } from '../../hooks/assessmentData'
 import { encodeShareToken } from '@/utils/reportShareToken'
 import { FilteredChip } from './FilteredChip'
 import { NiceGapReportSection } from './NiceGapReportSection'
+import { QRASection } from './sections/QRASection'
 
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
@@ -950,6 +951,17 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           )}
                       </CollapsibleSection>
                     )}
+
+                    {/* Quantum Readiness Assessment (QRA) — the framework's
+                        communicate artifact (spec §6.1; Report #1). Phase 3.
+                        Additive: only renders when an assessment exists (input
+                        present) and respects the `?phase=` overlay. */}
+                    {matches('p3') &&
+                      getInput() &&
+                      (() => {
+                        const qraInput = getInput()
+                        return qraInput ? <QRASection input={qraInput} result={result} /> : null
+                      })()}
 
                     {/* Key Findings */}
                     {phaseVisible('keyFindings') &&

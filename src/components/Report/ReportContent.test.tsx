@@ -228,20 +228,23 @@ describe('ReportContent', () => {
 
     it('shows framework names', () => {
       renderReport()
-      // FIPS 140-3 may also appear in the applicability panel for Technology/US,
-      // so allow ≥1 occurrence; PCI DSS is unique to the curated list.
+      // FIPS 140-3 may also appear in the applicability panel for Technology/US
+      // and in the QRA compliance-mapping table, so allow ≥1 occurrence; PCI DSS
+      // appears in both the Compliance Impact section and the QRA table.
       expect(screen.getAllByText('FIPS 140-3').length).toBeGreaterThanOrEqual(1)
-      expect(screen.getByText('PCI DSS')).toBeInTheDocument()
+      expect(screen.getAllByText('PCI DSS').length).toBeGreaterThanOrEqual(1)
     })
 
     it('shows PQC Required badge for required frameworks', () => {
       renderReport()
-      expect(screen.getByText('PQC Required')).toBeInTheDocument()
+      // Rendered in both the Compliance Impact section and the QRA compliance map.
+      expect(screen.getAllByText('PQC Required').length).toBeGreaterThanOrEqual(1)
     })
 
     it('shows No PQC mandate badge for non-required frameworks', () => {
       renderReport()
-      expect(screen.getByText('No PQC mandate yet')).toBeInTheDocument()
+      // Rendered in both the Compliance Impact section and the QRA compliance map.
+      expect(screen.getAllByText('No PQC mandate yet').length).toBeGreaterThanOrEqual(1)
     })
 
     it('shows deadline information', () => {

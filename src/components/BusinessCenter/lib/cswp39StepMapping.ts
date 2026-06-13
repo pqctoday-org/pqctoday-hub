@@ -30,10 +30,20 @@ export const STEP_ARTIFACT_TYPES: Record<CSWP39StepId, ExecutiveDocumentType[]> 
     'contract-clause',
     'mti-negotiator',
     'cloud-responsibility-matrix',
+    // Phase-0 program-establishment artifacts (charter & initial scope).
+    'program-charter',
+    'initial-scoping',
   ],
   inventory: ['supply-chain-matrix', 'crypto-cbom', 'crypto-vulnerability-watch'],
   'identify-gaps': ['risk-register', 'vendor-scorecard'],
-  prioritise: ['kpi-dashboard', 'kpi-tracker', 'compliance-timeline', 'crqc-scenario'],
+  prioritise: [
+    'kpi-dashboard',
+    'kpi-tracker',
+    'compliance-timeline',
+    'crqc-scenario',
+    // Foundations staffing artifact lives alongside the KPI/maturity surfaces.
+    'skills-team-plan',
+  ],
   implement: [
     'risk-treatment-plan',
     'migration-roadmap',
@@ -75,6 +85,10 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'mti-negotiator': 'governance',
   'crypto-api-refactor': 'architecture',
   'cloud-responsibility-matrix': 'governance',
+  // Phase-0 / Foundations program-establishment artifacts.
+  'program-charter': 'governance',
+  'initial-scoping': 'governance',
+  'skills-team-plan': 'governance',
 }
 
 export function getPillarForType(type: ExecutiveDocumentType): PillarKey {

@@ -14,6 +14,7 @@ import { LeftNavTOC } from '@/components/common/LeftNavTOC'
 import { GanttLegend } from './GanttLegend'
 import { MobileTimelineList } from './MobileTimelineList'
 import { CoverageByRegion } from './CoverageByRegion'
+import { MoscaInequalityWidget } from './MoscaInequalityWidget'
 import { CountryFlag } from '../common/CountryFlag'
 import { PageHeader } from '../common/PageHeader'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
@@ -448,6 +449,11 @@ export const TimelineView = () => {
           <span>{TIMELINE_PERSONA_HINTS[selectedPersona]}</span>
         </div>
       )}
+
+      {/* Mosca's-Inequality widget — keyed off CRQC_ESTIMATES (additive) */}
+      <div className="mt-4">
+        <MoscaInequalityWidget />
+      </div>
 
       <CoverageByRegion
         data={ganttData}
