@@ -60,8 +60,12 @@ export const VideoControlBar: React.FC<VideoControlBarProps> = ({
   }, [])
 
   return (
+    // `inert` (not just aria-hidden) while faded out — otherwise the buttons
+    // stay keyboard-focusable inside an aria-hidden subtree, which is a WCAG
+    // failure and lets Tab reach invisible controls.
     <div
       aria-hidden={!visible}
+      inert={!visible}
       className={`fixed inset-x-0 bottom-0 z-[85] flex justify-center pb-4 transition-opacity duration-300 ${
         visible ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}

@@ -3,7 +3,7 @@
   "title": "PQC for the Curious — Visual Tour",
   "match": {
     "roles": ["curious"],
-    "proficiencies": ["curious"],
+    "proficiencies": "*",
     "industries": "*",
     "regions": "*"
   },
