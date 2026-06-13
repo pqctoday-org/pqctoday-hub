@@ -154,6 +154,90 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         </div>
       </section>
 
+      {/* Section 2b: Algorithm-Specific Vulnerability Weighting */}
+      <section className="glass-panel p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-status-error/10">
+            <AlertTriangle size={24} className="text-status-error" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">
+            Weight by Quantum Vulnerability, Not Classical Strength
+          </h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            A common scoring mistake is to rank likelihood by an algorithm&apos;s <em>classical</em>{' '}
+            strength. Against a <InlineTooltip term="CRQC">CRQC</InlineTooltip> that ranking
+            inverts. Under <strong>Shor&apos;s algorithm</strong>, what matters is the public-key
+            size and math family relative to the quantum resources needed to break it &mdash; not
+            how many years a classical attacker would need.
+          </p>
+          <div className="bg-status-error/5 rounded-lg p-4 border border-status-error/20">
+            <p className="text-sm text-foreground/90">
+              <strong>ECC-256 is as urgent as RSA-2048.</strong> Classically, a 256-bit elliptic
+              curve looks far stronger than a 2048-bit RSA modulus. But Shor solves the
+              elliptic-curve discrete-log problem with <em>fewer</em> logical qubits than it needs
+              to factor RSA-2048 &mdash; so a CRQC reaches ECC-256 at least as early. Both belong in
+              the same top-urgency band.
+            </p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-border text-left">
+                  <th className="py-2 pr-3 font-semibold text-muted-foreground">Algorithm</th>
+                  <th className="py-2 px-3 font-semibold text-muted-foreground">
+                    Looks-strong (classical)
+                  </th>
+                  <th className="py-2 pl-3 font-semibold text-status-error">
+                    Quantum-vulnerability weight
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  {
+                    algo: 'RSA-2048',
+                    classical: 'Standard baseline',
+                    quantum: 'Critical — Shor-breakable; HNDL clock running',
+                  },
+                  {
+                    algo: 'ECC-256 (P-256)',
+                    classical: 'Appears far stronger than RSA-2048',
+                    quantum: 'Critical — broken with fewer qubits than RSA-2048',
+                  },
+                  {
+                    algo: 'RSA-4096 / ECC-384',
+                    classical: 'Stronger still',
+                    quantum: 'Critical — bigger keys buy little against Shor',
+                  },
+                  {
+                    algo: 'AES-256 (symmetric)',
+                    classical: 'Strong',
+                    quantum: 'Low — only Grover (halved strength → 128-bit); no Shor break',
+                  },
+                ].map((row) => (
+                  <tr key={row.algo} className="border-b border-border/50 align-top">
+                    <td className="py-2 pr-3 font-medium text-foreground whitespace-nowrap">
+                      {row.algo}
+                    </td>
+                    <td className="py-2 px-3 text-muted-foreground">{row.classical}</td>
+                    <td className="py-2 pl-3 text-foreground/80">{row.quantum}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Scoring rule: weight likelihood by <strong>Shor-breakability and key size</strong>, not
+            classical key-strength. Asymmetric public-key algorithms (RSA, ECC, DH) share the same
+            critical band; symmetric ciphers and hashes are only weakened (Grover), so doubling key
+            length restores their margin. Source: Applied Quantum PQC Migration Framework §3 (Risk
+            Scoring).
+          </p>
+        </div>
+      </section>
+
       {/* Section 3: The Risk Management Process */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">

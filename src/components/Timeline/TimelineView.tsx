@@ -15,6 +15,10 @@ import { GanttLegend } from './GanttLegend'
 import { MobileTimelineList } from './MobileTimelineList'
 import { CoverageByRegion } from './CoverageByRegion'
 import { MoscaInequalityWidget } from './MoscaInequalityWidget'
+import { RoadmapOverlay } from './RoadmapOverlay'
+import { SqueezeRibbon } from './SqueezeRibbon'
+import { MilestoneGateColumn } from './MilestoneGateColumn'
+import { TimelinePlanningNotes } from './TimelinePlanningNotes'
 import { CountryFlag } from '../common/CountryFlag'
 import { PageHeader } from '../common/PageHeader'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
@@ -450,9 +454,19 @@ export const TimelineView = () => {
         </div>
       )}
 
-      {/* Mosca's-Inequality widget — keyed off CRQC_ESTIMATES (additive) */}
+      {/* Phase-4 framework overlays — all collapsed by default, additive: the
+          Gantt behaves exactly as before unless a panel is expanded. */}
       <div className="mt-4">
+        {/* Mosca's-Inequality widget — keyed off CRQC_ESTIMATES (Timeline #4) */}
         <MoscaInequalityWidget />
+        {/* "Build Your Roadmap" 5-year org template (Timeline #1) */}
+        <RoadmapOverlay />
+        {/* 2026–2030 Squeeze ribbon + CA/B Forum track (Timeline #2) */}
+        <SqueezeRibbon />
+        {/* Milestone-gate column G0–G7 from FRAMEWORK_PHASES (Timeline #3) */}
+        <MilestoneGateColumn />
+        {/* Planning context: satisfies-it map, CNSA-by-class, infra-refresh (Timeline #5–7) */}
+        <TimelinePlanningNotes />
       </div>
 
       <CoverageByRegion

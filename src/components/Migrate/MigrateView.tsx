@@ -28,6 +28,7 @@ import {
   BookmarkCheck,
   HelpCircle,
   Map as MapIcon,
+  FileJson,
 } from 'lucide-react'
 
 import debounce from 'lodash/debounce'
@@ -56,6 +57,7 @@ import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { CatalogSizeBanner } from './CatalogSizeBanner'
 import { MigrateContextStrip } from './MigrateContextStrip'
 import { ProductExtractionModal } from './ProductExtractionModal'
+import { downloadCbom } from './cbomExport'
 import { getProductExtraction } from '../../data/productExtractionData'
 import { catalogEnrichments } from '../../data/catalogEnrichmentData'
 import { roadmapByVendorId } from '../../data/vendorRoadmapData'
@@ -1018,6 +1020,16 @@ export const MigrateView: React.FC = () => {
     downloadCsv(csv, csvFilename('pqc-migrate-catalog'))
   }, [allFilteredProducts])
 
+  // CycloneDX CBOM export — emits the currently-filtered product set as a
+  // machine-verifiable Cryptographic Bill of Materials (reuses CPE/PURL/FIPS
+  // xrefs already held on each product). Falls back to the full catalog when
+  // no filter is active.
+  const handleExportCbom = useCallback(() => {
+    const items = allFilteredProducts.length > 0 ? allFilteredProducts : softwareData
+    const result = downloadCbom(items)
+    logMigrateAction('Export CBOM', `${result.componentCount} products`)
+  }, [allFilteredProducts])
+
   const handleViewSoftware = useCallback(
     (step: MigrationStep) => {
       setStepFilter({
@@ -1613,6 +1625,18 @@ export const MigrateView: React.FC = () => {
             </div>
           )
         })()}
+
+        {/* CBOM export — CycloneDX Cryptographic Bill of Materials for the
+            current product selection. Reuses CPE/PURL/FIPS xrefs. */}
+        <Button
+          variant="outline"
+          onClick={handleExportCbom}
+          className="mt-2 sm:mt-0 sm:ml-auto inline-flex items-center gap-1.5 text-xs h-auto px-3 py-1.5"
+          aria-label="Export CycloneDX CBOM for the current product selection"
+        >
+          <FileJson size={13} aria-hidden="true" />
+          Export CBOM (CycloneDX)
+        </Button>
 
         {/* Compare Onboarding Tooltip banner */}
         {!hasDismissedCompareOnboarding && (

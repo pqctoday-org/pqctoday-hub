@@ -531,6 +531,93 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
         <ReadingCompleteButton />
       </CollapsibleSection>
 
+      {/* Section 7: Capacity Planning & Verification (Applied Quantum §6/§7) */}
+      <CollapsibleSection
+        icon={<Cpu size={24} className="text-primary" />}
+        title="Capacity Planning & Handshake Verification"
+        sectionId="capacity-verification"
+      >
+        <p>
+          PQC is not free at scale. Larger keys and signatures, plus heavier key generation, change
+          the load profile of every endpoint that terminates a handshake. Before a wave cutover,
+          size the infrastructure: model the <strong>per-handshake cost increase</strong> against
+          peak connections-per-second, not just average load.
+        </p>
+
+        <div className="overflow-x-auto mt-2">
+          <table className="w-full text-xs border-collapse">
+            <thead>
+              <tr className="border-b border-border text-left">
+                <th className="py-2 pr-3 font-semibold text-muted-foreground">
+                  Capacity dimension
+                </th>
+                <th className="py-2 px-3 font-semibold text-muted-foreground">
+                  Classical baseline
+                </th>
+                <th className="py-2 pl-3 font-semibold text-primary">PQC / hybrid impact</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                {
+                  dim: 'TLS handshake bytes on the wire',
+                  base: '~0.3–1 KB ClientHello',
+                  pqc: '~1.1 KB+ hybrid — can force a second TCP round-trip',
+                },
+                {
+                  dim: 'Certificate / chain size',
+                  base: 'ECC chain ~1–2 KB',
+                  pqc: 'ML-DSA chain ~10–17 KB — buffer & MTU pressure',
+                },
+                {
+                  dim: 'CPU per handshake (sign / keygen)',
+                  base: 'ECDSA P-256 reference',
+                  pqc: 'ML-DSA verify is fast; keygen/sign heavier — size CPS headroom',
+                },
+                {
+                  dim: 'Session memory / state',
+                  base: 'Small per-session keys',
+                  pqc: 'Larger KEM secrets & buffers — multiply by concurrent sessions',
+                },
+                {
+                  dim: 'HSM throughput',
+                  base: 'Classical op/s rating',
+                  pqc: 'Confirm vendor PQC op/s — often lower; can become the bottleneck',
+                },
+              ].map((row) => (
+                <tr key={row.dim} className="border-b border-border/50 align-top">
+                  <td className="py-2 pr-3 font-medium text-foreground">{row.dim}</td>
+                  <td className="py-2 px-3 text-muted-foreground">{row.base}</td>
+                  <td className="py-2 pl-3 text-foreground/80">{row.pqc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="p-4 rounded-lg bg-status-success/10 border border-status-success/30 mt-3">
+          <p className="font-semibold text-status-success text-sm mb-1 flex items-center gap-2">
+            <CheckCircle size={16} />A successful PQC handshake states a fact
+          </p>
+          <p className="text-xs">
+            A completed hybrid or pure-PQC handshake is positive proof: both endpoints negotiated,
+            exchanged, and verified post-quantum material end to end. It is the cheapest, most
+            trustworthy verification signal you have — far stronger than a config flag or an
+            inventory record. Instrument your edge to{' '}
+            <strong>count negotiated PQC handshakes</strong> as a live migration KPI: the curve
+            climbing toward 100% is your real cutover evidence, and a stalled curve surfaces silent
+            interop failures the inventory can&apos;t see.
+          </p>
+        </div>
+
+        <p className="text-xs text-muted-foreground mt-2">
+          Sources: Applied Quantum PQC Migration Framework §6 (Infrastructure &amp; Performance) and
+          §7 (Validation).
+        </p>
+
+        <ReadingCompleteButton />
+      </CollapsibleSection>
+
       {/* CTA */}
       <div className="glass-panel p-6 flex flex-col sm:flex-row items-center gap-4">
         <div className="flex-1">

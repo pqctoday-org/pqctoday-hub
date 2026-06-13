@@ -353,6 +353,16 @@ export const MODULE_CATALOG: Record<string, CatalogModule> = validateCatalog({
     difficulty: 'beginner',
     frameworkPhase: 'p0',
   },
+  'pqc-team': {
+    id: 'pqc-team',
+    lm_id: 'LM-056',
+    title: 'Building Your PQC Team',
+    description:
+      'Staff the migration: core roles, a federated Crypto Champion network, Build-Borrow-Buy decisions, and a 1-per-500 team-sizing calculator.',
+    duration: '20 min',
+    difficulty: 'beginner',
+    frameworkPhase: 'foundations',
+  },
   'vendor-risk': {
     id: 'vendor-risk',
     lm_id: 'LM-038',
@@ -645,6 +655,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'pqc-risk-management': 4,
   'pqc-business-case': 4,
   'pqc-governance': 4,
+  'pqc-team': 1,
   'vendor-risk': 4,
   'migration-program': 4,
   'compliance-strategy': 4,
@@ -776,6 +787,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = validat
       MODULE_CATALOG['crypto-mgmt-modernization'],
       MODULE_CATALOG['vendor-risk'],
       MODULE_CATALOG['migration-program'],
+      MODULE_CATALOG['pqc-team'],
     ],
   },
   {
@@ -995,6 +1007,10 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'model', label: 'Why Governance, RACI & Policy Hierarchy' },
     { id: 'policy', label: 'Governance Models, Escalation & KPIs' },
     { id: 'kpi', label: 'Resources & Workshop' },
+  ],
+  'pqc-team': [
+    { id: 'roles', label: 'Core Roles & the Crypto Champion Network' },
+    { id: 'build-borrow-buy', label: 'Build-Borrow-Buy & Team Sizing' },
   ],
   'vendor-risk': [
     { id: 'readiness', label: 'Vendor PQC Readiness Assessment' },
@@ -1379,6 +1395,7 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'kpi-dashboard', label: 'KPI Dashboard' },
     { id: 'escalation-framework', label: 'Escalation Framework' },
   ],
+  'pqc-team': [{ id: 'team-sizing', label: 'Team Sizing Calculator' }],
   'vendor-risk': [
     { id: 'infrastructure-selector', label: 'Infrastructure Selector' },
     { id: 'vendor-scorecard', label: 'Vendor Scorecard' },

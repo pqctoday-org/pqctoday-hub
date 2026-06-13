@@ -10,6 +10,8 @@ import {
   Filter,
   Briefcase,
   BookmarkCheck,
+  ShieldHalf,
+  FileSignature,
 } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { threatsData, threatsMetadata } from '../../data/threatsData'
@@ -48,6 +50,8 @@ import { IndustryStack } from './IndustryStack'
 import { ThreatDetailDialog } from './ThreatDetailDialog'
 import { MobileThreatsList } from './MobileThreatsList'
 import { ThreatEconomicsHeader } from './ThreatEconomicsHeader'
+import { CrqcCapabilityStrip } from './CrqcCapabilityStrip'
+import { THREAT_CLASS_DEFS, threatMatchesClass, type ThreatClass } from './threatClassification'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 
 // Threat Detail Dialog Component - Moved outside to ./ThreatDetailDialog.tsx
@@ -80,6 +84,9 @@ export const ThreatsDashboard: React.FC = () => {
   const [selectedCriticality, setSelectedCriticality] = useState<string>(
     () => searchParams.get('criticality') ?? 'All'
   )
+  const [selectedClass, setSelectedClass] = useState<string>(
+    () => searchParams.get('class') ?? 'All'
+  )
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
   const [sortField, setSortField] = useState<SortField>(
     () => (searchParams.get('sort') as SortField | null) ?? 'industry'
@@ -108,6 +115,7 @@ export const ThreatsDashboard: React.FC = () => {
     const indParam = searchParams.get('industry')
     const idParam = searchParams.get('id')
     const nextCrit = searchParams.get('criticality') ?? 'All'
+    const nextClass = searchParams.get('class') ?? 'All'
     const nextQ = searchParams.get('q') ?? ''
     const nextSort = (searchParams.get('sort') as SortField | null) ?? 'industry'
     const nextDir = (searchParams.get('dir') as SortDirection | null) ?? 'asc'
@@ -129,6 +137,7 @@ export const ThreatsDashboard: React.FC = () => {
       if (found) setSelectedThreat(found)
     }
     setSelectedCriticality((prev) => (prev !== nextCrit ? nextCrit : prev))
+    setSelectedClass((prev) => (prev !== nextClass ? nextClass : prev))
     setSearchQuery((prev) => (prev !== nextQ ? nextQ : prev))
     setSortField((prev) => (prev !== nextSort ? nextSort : prev))
     setSortDirection((prev) => (prev !== nextDir ? nextDir : prev))
@@ -141,6 +150,7 @@ export const ThreatsDashboard: React.FC = () => {
     (overrides: {
       industry?: string[]
       criticality?: string
+      threatClass?: string
       q?: string
       sort?: SortField
       dir?: SortDirection
@@ -152,6 +162,7 @@ export const ThreatsDashboard: React.FC = () => {
           const next = new URLSearchParams(prev)
           const inds = overrides.industry ?? selectedIndustries
           const crit = overrides.criticality ?? selectedCriticality
+          const cls = overrides.threatClass ?? selectedClass
           const q = overrides.q ?? searchQuery
           const sort = overrides.sort ?? sortField
           const dir = overrides.dir ?? sortDirection
@@ -162,6 +173,8 @@ export const ThreatsDashboard: React.FC = () => {
           else next.delete('industry')
           if (crit !== 'All') next.set('criticality', crit)
           else next.delete('criticality')
+          if (cls !== 'All') next.set('class', cls)
+          else next.delete('class')
           if (q) next.set('q', q)
           else next.delete('q')
           if (sort !== 'industry') next.set('sort', sort)
@@ -180,6 +193,7 @@ export const ThreatsDashboard: React.FC = () => {
     [
       selectedIndustries,
       selectedCriticality,
+      selectedClass,
       searchQuery,
       sortField,
       sortDirection,
@@ -220,6 +234,23 @@ export const ThreatsDashboard: React.FC = () => {
       },
       { id: 'Medium', label: 'Medium', icon: <Info size={16} className="text-primary" /> },
       { id: 'Low', label: 'Low', icon: <CheckCircle size={16} className="text-status-success" /> },
+    ]
+  }, [])
+
+  // Threat-class items (HNDL decrypt-later vs HNFL/TNFL forge-later) — Threats #2
+  const threatClassItems = useMemo(() => {
+    return [
+      { id: 'All', label: 'All Classes', icon: null },
+      {
+        id: 'hndl',
+        label: THREAT_CLASS_DEFS.hndl.label,
+        icon: <ShieldHalf size={16} className="text-secondary" />,
+      },
+      {
+        id: 'hnfl',
+        label: THREAT_CLASS_DEFS.hnfl.label,
+        icon: <FileSignature size={16} className="text-status-warning" />,
+      },
     ]
   }, [])
 
@@ -279,6 +310,11 @@ export const ThreatsDashboard: React.FC = () => {
     // Filter by Criticality
     if (selectedCriticality !== 'All') {
       data = data.filter((item) => item.criticality === selectedCriticality)
+    }
+
+    // Filter by Threat Class (HNDL / HNFL-TNFL) — derived dimension, Threats #2
+    if (selectedClass !== 'All') {
+      data = data.filter((item) => threatMatchesClass(item, selectedClass as ThreatClass))
     }
 
     // Filter by Search Query — lexical floor + semantic supplement
@@ -350,6 +386,7 @@ export const ThreatsDashboard: React.FC = () => {
   }, [
     selectedIndustries,
     selectedCriticality,
+    selectedClass,
     searchQuery,
     semanticIdSet,
     sortField,
@@ -431,6 +468,9 @@ export const ThreatsDashboard: React.FC = () => {
 
       {/* Threat Economics — HNDL vs HNFL framing + Mosca mini-calc (additive) */}
       <ThreatEconomicsHeader />
+
+      {/* Consolidated CRQC capability / Z-estimate strip (additive) — Threats #5 */}
+      <CrqcCapabilityStrip />
 
       {/* Persona summary card */}
       {personaSummary && (
@@ -526,6 +566,22 @@ export const ThreatsDashboard: React.FC = () => {
                 }}
                 defaultLabel="Criticality"
                 defaultIcon={<AlertCircle size={14} className="text-primary" />}
+                opaque
+                className="mb-0 w-full"
+                noContainer
+              />
+            </div>
+            <div className="flex-1 w-full md:min-w-[120px]">
+              <FilterDropdown
+                items={threatClassItems}
+                selectedId={selectedClass}
+                onSelect={(id) => {
+                  setSelectedClass(id)
+                  syncFiltersToUrl({ threatClass: id })
+                  logEvent('Threats', 'Filter Class', id)
+                }}
+                defaultLabel="Threat Class"
+                defaultIcon={<ShieldHalf size={14} className="text-primary" />}
                 opaque
                 className="mb-0 w-full"
                 noContainer

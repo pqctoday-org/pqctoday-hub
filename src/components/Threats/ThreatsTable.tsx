@@ -10,6 +10,7 @@ import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import clsx from 'clsx'
 import { getIndustryIcon } from './threatsHelper'
+import { ThreatClassBadge, ShorTierBadge } from './ThreatClassBadges'
 import { EmptyState } from '../ui/empty-state'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { Button } from '@/components/ui/button'
@@ -182,6 +183,11 @@ export const ThreatsTable = ({
                             >
                               {item.criticality}
                             </span>
+                            {/* Derived dimensions: threat class + Shor tier — Threats #2/#4 */}
+                            <div className="hidden md:flex flex-wrap gap-1 mt-1.5">
+                              <ThreatClassBadge threat={item} />
+                              <ShorTierBadge threat={item} />
+                            </div>
                           </td>
                           <td className="p-4 text-xs font-mono overflow-hidden">
                             <div className="flex flex-wrap gap-1">

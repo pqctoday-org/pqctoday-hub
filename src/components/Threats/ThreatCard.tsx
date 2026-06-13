@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { getIndustryIcon } from './threatsHelper'
+import { ThreatClassBadge, ShorTierBadge } from './ThreatClassBadges'
 import type { ThreatItem } from '../../data/threatsData'
 import { StatusBadge } from '../common/StatusBadge'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
@@ -104,6 +105,12 @@ export const ThreatCard = ({ item, index = 0, onClick, dimmed = false }: ThreatC
             onOpenDrilldown={() => setDrilldownOpen(true)}
           />
         </span>
+      </div>
+
+      {/* Derived dimensions: threat class + Shor tier — Threats #2/#4 */}
+      <div className="flex flex-wrap gap-1 mb-2">
+        <ThreatClassBadge threat={item} />
+        <ShorTierBadge threat={item} />
       </div>
 
       <p className="text-xs text-muted-foreground mb-4 line-clamp-3 leading-relaxed min-h-[4.5em]">

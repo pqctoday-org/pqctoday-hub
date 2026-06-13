@@ -138,6 +138,11 @@ const PQCGovernanceModule = lazyWithRetry(() =>
     default: module.PQCGovernanceModule,
   }))
 )
+const PQCTeamModule = lazyWithRetry(() =>
+  import('./modules/PQCTeam').then((module) => ({
+    default: module.PQCTeamModule,
+  }))
+)
 const VendorRiskModule = lazyWithRetry(() =>
   import('./modules/VendorRisk').then((module) => ({
     default: module.VendorRiskModule,
@@ -425,6 +430,7 @@ export const PKILearningView: React.FC = () => {
                 <Route path="pqc-risk-management" element={<PQCRiskManagementModule />} />
                 <Route path="pqc-business-case" element={<PQCBusinessCaseModule />} />
                 <Route path="pqc-governance" element={<PQCGovernanceModule />} />
+                <Route path="pqc-team" element={<PQCTeamModule />} />
                 <Route path="vendor-risk" element={<VendorRiskModule />} />
                 <Route path="migration-program" element={<MigrationProgramModule />} />
                 <Route path="compliance-strategy" element={<ComplianceStrategyModule />} />

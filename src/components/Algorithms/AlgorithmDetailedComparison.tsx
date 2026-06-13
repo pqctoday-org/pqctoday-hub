@@ -37,6 +37,7 @@ import { KATView } from './KATView'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { getAlgorithmDefaults } from '@/data/personaConfig'
+import { classifyCnsa20, cnsa20ChipClasses } from './cnsa20'
 
 type SortField = 'name' | 'type' | 'keygen' | 'sign' | 'verify' | 'ram' | 'optimization'
 type SortDir = 'asc' | 'desc'
@@ -319,6 +320,34 @@ function DraftBadge({ algo }: { algo: AlgorithmDetail }) {
   )
 }
 
+/**
+ * CNSA 2.0 chip — shown only for algorithms with a meaningful CNSA 2.0 stance
+ * (required selections, the firmware-only stateful-hash approval, and the
+ * explicitly-excluded SLH-DSA). Below-floor / not-in-suite rows show nothing
+ * so the badge stays signal-dense and the table is unchanged for them.
+ */
+function Cnsa20Badge({ algo }: { algo: AlgorithmDetail }) {
+  const verdict = classifyCnsa20(algo)
+  if (
+    verdict.status !== 'required' &&
+    verdict.status !== 'approved-limited' &&
+    verdict.status !== 'excluded'
+  ) {
+    return null
+  }
+  return (
+    <span
+      className={clsx(
+        'inline-flex items-center text-[10px] px-1.5 py-0.5 rounded border font-medium',
+        cnsa20ChipClasses(verdict.status)
+      )}
+      title={verdict.rationale}
+    >
+      {verdict.label}
+    </span>
+  )
+}
+
 function ResearchNeededBadge({ algo }: { algo: AlgorithmDetail }) {
   if (!algo.hasResearchGap) return null
   return (
@@ -519,6 +548,7 @@ const PerformanceView = ({
                             onOpenDrilldown={() => setDrilldownAlgo(algo.name)}
                           />
                           <DraftBadge algo={algo} />
+                          <Cnsa20Badge algo={algo} />
                           <ResearchNeededBadge algo={algo} />
                         </div>
                         {algo.securityLevel && (
@@ -646,6 +676,7 @@ const PerformanceView = ({
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="font-semibold text-foreground">{algo.name}</span>
                   <DraftBadge algo={algo} />
+                  <Cnsa20Badge algo={algo} />
                   <ResearchNeededBadge algo={algo} />
                   <span className="text-xs text-muted-foreground">{algo.family}</span>
                 </div>
