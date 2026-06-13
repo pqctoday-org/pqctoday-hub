@@ -35,6 +35,7 @@ import { PhaseCompletionToast } from '../ui/PhaseCompletionToast'
 import { GuidedTour } from '../common/GuidedTour'
 import { Breadcrumb } from '../common/Breadcrumb'
 import { PhaseRail } from '../shared/PhaseRail'
+import { PhaseContextBanner } from '../shared/PhaseContextBanner'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
 import { WorkflowBanner } from '../common/WorkflowBanner'
@@ -532,6 +533,9 @@ export const MainLayout = () => {
               <PhaseRail />
               <div className="min-w-0 lg:flex-1">
                 <Breadcrumb />
+                {/* Phase context from the rail (?phase=) — on pages without their
+                    own phase UI; the banner self-skips Assess/Report/Command Center. */}
+                <PhaseContextBanner />
                 <Outlet />
               </div>
             </motion.div>

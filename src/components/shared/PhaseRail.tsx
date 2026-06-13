@@ -18,7 +18,7 @@
  * `personaToRoles` × `ROLE_CROSSWALK` — so it cannot drift from the model.
  */
 import { useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import clsx from 'clsx'
 import { Check, Circle, CircleDot, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { Button } from '../ui/button'
@@ -35,11 +35,13 @@ import { useMigrationWorkflowStore, type PhaseStatus } from '../../store/useMigr
 import { usePersonaStore } from '../../store/usePersonaStore'
 
 /**
- * The phase's primary surface route (spec §4.1):
- *   diagnose?.route ?? produce?.[0]?.route ?? surfaces[0]
+ * The phase's primary surface route — the page a rail click lands on. Prefer the
+ * phase's *resource/produce* surface (where its tools live) so e.g. P0 → Command
+ * Center and P1 → Migrate, not the cross-phase Assess intake; fall back to the
+ * diagnose surface (Assess) then the first listed surface.
  */
 function primaryRoute(phase: FrameworkPhase): Route {
-  return phase.diagnose?.route ?? phase.produce?.[0]?.route ?? phase.surfaces[0]
+  return phase.produce?.[0]?.route ?? phase.diagnose?.route ?? phase.surfaces[0]
 }
 
 /** Compute the set of phases the current persona owns (via role crosswalk). */
@@ -82,10 +84,12 @@ interface NodeProps {
   status: PhaseStatus
   owned: boolean
   collapsed: boolean
+  /** 'here' = the phase you navigated to (?phase=); 'on-page' = a phase this route serves. */
+  locationState?: 'here' | 'on-page'
   onNavigate: (phase: FrameworkPhase) => void
 }
 
-function PhaseNode({ phase, status, owned, collapsed, onNavigate }: NodeProps) {
+function PhaseNode({ phase, status, owned, collapsed, locationState, onNavigate }: NodeProps) {
   const Icon = STATUS_ICON[status]
   const numberGlyph = phase.number === null ? 'F' : String(phase.number)
   const label = phase.number === null ? phase.name : `${phase.number} · ${phase.name}`
@@ -99,7 +103,9 @@ function PhaseNode({ phase, status, owned, collapsed, onNavigate }: NodeProps) {
       variant="ghost"
       size="sm"
       onClick={() => onNavigate(phase)}
-      aria-current={status === 'active' ? 'step' : undefined}
+      aria-current={
+        locationState === 'here' ? 'location' : status === 'active' ? 'step' : undefined
+      }
       aria-label={`Phase ${label} — ${phase.tagline} ${stateWord}${
         owned ? ` — your view (${roleLabels})` : ''
       }. Go to phase`}
@@ -118,7 +124,9 @@ function PhaseNode({ phase, status, owned, collapsed, onNavigate }: NodeProps) {
           : status === 'done'
             ? 'border-border bg-muted/40 hover:bg-muted/60'
             : 'border-border bg-transparent hover:bg-muted/40',
-        owned && 'ring-1 ring-primary/30'
+        owned && 'ring-1 ring-primary/30',
+        locationState === 'here' && 'ring-2 ring-primary',
+        locationState === 'on-page' && 'border-l-2 border-l-primary/60'
       )}
     >
       {collapsed ? (
@@ -126,6 +134,12 @@ function PhaseNode({ phase, status, owned, collapsed, onNavigate }: NodeProps) {
           <Icon size={12} aria-hidden="true" className={statusColor(status)} />
           <span className="mt-0.5 text-[10px] font-semibold text-foreground">{numberGlyph}</span>
           {owned && <span className="mt-0.5 h-1 w-1 rounded-full bg-primary" aria-hidden="true" />}
+          {locationState === 'here' && (
+            <span
+              className="mt-0.5 h-1.5 w-1.5 rounded-full bg-primary ring-1 ring-primary/40"
+              aria-hidden="true"
+            />
+          )}
         </span>
       ) : (
         <>
@@ -142,6 +156,11 @@ function PhaseNode({ phase, status, owned, collapsed, onNavigate }: NodeProps) {
             <span className="block truncate text-[10px] text-muted-foreground">
               {phase.tagline}
             </span>
+            {locationState === 'here' && (
+              <span className="mt-0.5 block text-[9px] font-semibold uppercase tracking-wide text-primary">
+                ◂ you are here
+              </span>
+            )}
           </span>
           {owned && (
             <span
@@ -204,11 +223,27 @@ function Connector({ collapsed }: { collapsed: boolean }) {
 
 export function PhaseRail() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const { pathname } = useLocation()
   const phaseStatus = useMigrationWorkflowStore((s) => s.phaseStatus)
   const collapsed = useMigrationWorkflowStore((s) => s.railCollapsed)
   const toggleCollapsed = useMigrationWorkflowStore((s) => s.toggleRailCollapsed)
   const ownedPhases = useOwnedPhases()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+
+  // Reverse highlight (hub → rail): the phase you navigated to (?phase=) is
+  // "here"; absent that, any phase whose surfaces include the current route is
+  // "on-page", so direct navigation still reflects where you are.
+  const phaseParam = searchParams.get('phase')
+  const activePhase: PhaseId | null =
+    phaseParam && PHASE_ORDER.includes(phaseParam as PhaseId) ? (phaseParam as PhaseId) : null
+  const phasesForRoute = useMemo(
+    () =>
+      new Set(
+        PHASE_ORDER.filter((p) => (FRAMEWORK_PHASES[p].surfaces as string[]).includes(pathname))
+      ),
+    [pathname]
+  )
 
   const handleNavigate = (phase: FrameworkPhase) => {
     navigate(`${primaryRoute(phase)}?phase=${phase.id}`)
@@ -227,6 +262,13 @@ export function PhaseRail() {
         status={phaseStatus[id]}
         owned={ownedPhases.has(id)}
         collapsed={collapsed}
+        locationState={
+          activePhase === id
+            ? 'here'
+            : !activePhase && phasesForRoute.has(id)
+              ? 'on-page'
+              : undefined
+        }
         onNavigate={handleNavigate}
       />
     ) : null
