@@ -39,6 +39,7 @@ import { SqueezeRibbon } from './SqueezeRibbon'
 import { MilestoneGateColumn } from './MilestoneGateColumn'
 import { RoadmapOverlay } from './RoadmapOverlay'
 import { TimelinePlanningNotes } from './TimelinePlanningNotes'
+import { ArchitecturePanel } from './ArchitecturePanel'
 
 // --- setup dials (skeleton; full jurisdiction/clock rules come later) ---
 const SIZES = [
@@ -377,6 +378,11 @@ export function SimulationView() {
           Z = the sooner of the CRQC estimate ({SIM_CRQC_YEAR}) and the {country} deadline. Bigger
           organisations migrate slower (larger Y); mandate countries pull the deadline in.
         </p>
+      </div>
+
+      {/* Your architecture for this org size — systems + protocols + readiness */}
+      <div className="mb-6">
+        <ArchitecturePanel size={size} />
       </div>
 
       {/* Deadline + gate context (repurposed from the Timeline) — collapsed by default */}

@@ -38,6 +38,13 @@ describe('SimulationView (skeleton)', () => {
     expect(screen.getAllByText('AI team').length).toBeGreaterThan(0)
   })
 
+  it('renders the architecture panel for the chosen org size', () => {
+    renderPage()
+    // default size = mid
+    expect(screen.getByText(/Your architecture \(mid\)/)).toBeInTheDocument()
+    expect(screen.getByText(/migratable now/)).toBeInTheDocument()
+  })
+
   it('renders the Mosca clock with a verdict', () => {
     renderPage()
     expect(screen.getByText(/Mosca clock/)).toBeInTheDocument()
