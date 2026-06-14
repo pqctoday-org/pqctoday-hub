@@ -1136,17 +1136,36 @@ export function SimulationView() {
             <div className="mt-auto grid gap-2.5 md:grid-cols-3">
               <ResCol
                 title="Learn"
-                items={resLinks('learn', sel, sector, seat).map((it) => ({
-                  ...it,
-                  done: moduleDone(it.id),
-                }))}
+                items={resLinks('learn', sel, sector, seat).map((it) => {
+                  const step: TreeStep = {
+                    kind: 'learn',
+                    label: it.label,
+                    to: it.to,
+                    moduleId: it.id,
+                  }
+                  return {
+                    ...it,
+                    done: moduleDone(it.id),
+                    onOpen: canEmbedStep(step) ? () => openStep(step) : undefined,
+                  }
+                })}
               />
               <ResCol
                 title="Activities"
-                items={resLinks('activities', sel, sector, seat).map((it) => ({
-                  ...it,
-                  done: artifactDone(TOOL_TO_ARTIFACT[it.id]),
-                }))}
+                items={resLinks('activities', sel, sector, seat).map((it) => {
+                  const artifactType = TOOL_TO_ARTIFACT[it.id]
+                  const step: TreeStep = {
+                    kind: 'activity',
+                    label: it.label,
+                    to: it.to,
+                    artifactType,
+                  }
+                  return {
+                    ...it,
+                    done: artifactDone(artifactType),
+                    onOpen: artifactType && canEmbedStep(step) ? () => openStep(step) : undefined,
+                  }
+                })}
               />
               <ResCol
                 title="Reference"
@@ -1328,6 +1347,8 @@ interface ResItem {
   to: string
   done?: boolean
   onClick?: () => void
+  /** when set, the item opens IN the sim (embed) instead of navigating away */
+  onOpen?: () => void
 }
 function resLinks(
   leg: 'learn' | 'activities' | 'reference',
@@ -1379,33 +1400,54 @@ function ResCol({ title, items }: { title: string; items: ResItem[] }) {
         </span>
       </Eyebrow>
       <div className="flex flex-col gap-1.5">
-        {items.map((r) => (
-          <Link
-            key={r.id + r.to}
-            to={r.to}
-            onClick={() => {
-              markSimResume()
-              r.onClick?.()
-            }}
-            className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
-              r.done ? 'border-success/40 bg-success/5' : 'border-border bg-muted hover:bg-muted/70'
-            }`}
-          >
-            <span
-              className={`grid h-4 w-4 shrink-0 place-items-center rounded-full text-[9px] font-bold ${
-                r.done
-                  ? 'bg-success text-success-foreground'
-                  : 'border border-border text-transparent'
-              }`}
+        {items.map((r) => {
+          const inner = (
+            <>
+              <span
+                className={`grid h-4 w-4 shrink-0 place-items-center rounded-full text-[9px] font-bold ${
+                  r.done
+                    ? 'bg-success text-success-foreground'
+                    : 'border border-border text-transparent'
+                }`}
+              >
+                ✓
+              </span>
+              <span className="min-w-0 flex-1 text-left">
+                <span className="block text-[11.5px] font-semibold text-foreground">{r.label}</span>
+                <span className="block font-mono text-[9px] text-muted-foreground">
+                  {r.onOpen ? 'opens in simulation' : r.to}
+                </span>
+              </span>
+            </>
+          )
+          const cls = `flex w-full items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
+            r.done ? 'border-success/40 bg-success/5' : 'border-border bg-muted hover:bg-muted/70'
+          }`
+          // embed in-sim (keeps the sim header) when onOpen is set; else navigate
+          return r.onOpen ? (
+            <Button
+              key={r.id + r.to}
+              type="button"
+              variant="ghost"
+              onClick={r.onOpen}
+              className={`h-auto justify-start whitespace-normal ${cls}`}
             >
-              ✓
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-[11.5px] font-semibold text-foreground">{r.label}</span>
-              <span className="block font-mono text-[9px] text-muted-foreground">{r.to}</span>
-            </span>
-          </Link>
-        ))}
+              {inner}
+            </Button>
+          ) : (
+            <Link
+              key={r.id + r.to}
+              to={r.to}
+              onClick={() => {
+                markSimResume()
+                r.onClick?.()
+              }}
+              className={cls}
+            >
+              {inner}
+            </Link>
+          )
+        })}
       </div>
     </div>
   )

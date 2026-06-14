@@ -46,6 +46,19 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.getByRole('button', { name: /Back to board/i })).toBeInTheDocument()
   })
 
+  it('opening a Learn/Activity resource from the list keeps the sim header (embeds, no navigation)', () => {
+    renderPage()
+    // the "Open a resource" lists now embed in-sim: such items say "opens in simulation"
+    const embeddable = screen.getAllByText('opens in simulation')
+    expect(embeddable.length).toBeGreaterThan(0)
+    const btn = embeddable[0].closest('button')
+    expect(btn).not.toBeNull()
+    fireEvent.click(btn!)
+    // if it had navigated, SimulationView would unmount and the header would vanish
+    expect(screen.getByText('PQC Today Sim')).toBeInTheDocument()
+    expect(screen.getByText(/Simulation mode/i)).toBeInTheDocument()
+  })
+
   it('a wrong move surfaces a framework Common Failure', () => {
     renderPage()
     const correctBtn = screen.getByRole('button', { name: /Learn: PQC Business Case/ })
