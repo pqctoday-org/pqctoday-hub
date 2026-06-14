@@ -33,6 +33,10 @@ import {
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+import { SqueezeRibbon } from './SqueezeRibbon'
+import { MilestoneGateColumn } from './MilestoneGateColumn'
+import { RoadmapOverlay } from './RoadmapOverlay'
+import { TimelinePlanningNotes } from './TimelinePlanningNotes'
 
 // --- setup dials (skeleton; full jurisdiction/clock rules come later) ---
 const SIZES = [
@@ -336,6 +340,12 @@ export function SimulationView() {
         </p>
       </div>
 
+      {/* Deadline + gate context (repurposed from the Timeline) — collapsed by default */}
+      <div className="mb-6 space-y-3">
+        <SqueezeRibbon />
+        <MilestoneGateColumn />
+      </div>
+
       {/* Phase journey + resource panel */}
       <div className="lg:flex lg:items-start lg:gap-6">
         {/* Phase nav (in-page; replaces the old global rail) */}
@@ -492,6 +502,14 @@ export function SimulationView() {
             <ResourceList title="Activities" items={activities} />
             <ResourceList title="Reference" items={reference} />
           </div>
+
+          {/* Phase-4 planning aids (repurposed from the Timeline) */}
+          {activePhase === 'p4' && (
+            <div className="mt-4 space-y-3">
+              <RoadmapOverlay />
+              <TimelinePlanningNotes />
+            </div>
+          )}
         </section>
       </div>
     </div>
