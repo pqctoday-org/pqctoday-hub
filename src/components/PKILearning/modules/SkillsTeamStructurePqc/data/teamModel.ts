@@ -116,6 +116,17 @@ export const ROLE_DETAIL: Record<FrameworkRoleId, RoleDetail> = {
     source: 'Internal PMO or shared resource',
     dedicatedOverhead: true,
   },
+  'exec-sponsor': {
+    skills: [
+      'Executive leadership',
+      'Budget authority',
+      'Board-level communication',
+      'Cross-BU mandate',
+      'Risk-appetite ownership',
+    ],
+    source: 'Existing C-suite sponsor (CISO/CIO/CTO); not a dedicated hire',
+    dedicatedOverhead: false,
+  },
 }
 
 /**

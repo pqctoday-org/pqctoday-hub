@@ -104,7 +104,7 @@ function tracksForAction(action: RecommendedAction): TrackId[] {
  * result has neither actions nor effort to split.
  */
 export function buildTwoTrackPlan(
-  input: AssessmentInput,
+  _input: AssessmentInput,
   result: Pick<
     AssessmentResult,
     'recommendedActions' | 'migrationEffort' | 'hndlRiskWindow' | 'hnflRiskWindow'

@@ -33,6 +33,11 @@ const AlgorithmsView = lazyWithRetry(() =>
     default: module.AlgorithmsView,
   }))
 )
+const SimulationView = lazyWithRetry(() =>
+  import('./components/Simulation/SimulationView').then((module) => ({
+    default: module.SimulationView,
+  }))
+)
 const PlaygroundShell = lazyWithRetry(() =>
   import('./components/Playground/PlaygroundShell').then((module) => ({
     default: module.PlaygroundShell,
@@ -339,6 +344,14 @@ function App() {
         <Route path="tools" element={<BusinessToolsGrid />} />
         <Route path="tools/:toolId" element={<BusinessToolRoute />} />
       </Route>
+      <Route
+        path="simulation"
+        element={
+          <ErrorBoundary>
+            <SimulationView />
+          </ErrorBoundary>
+        }
+      />
       <Route
         path="faq"
         element={

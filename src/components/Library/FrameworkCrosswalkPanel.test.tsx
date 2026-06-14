@@ -14,7 +14,7 @@ function makeItem(overrides: Partial<LibraryItem> = {}): LibraryItem {
     initialPublicationDate: '2025-06-01',
     lastUpdateDate: '2026-06-01',
     documentStatus: 'Published',
-    documentStatusBucket: 'current',
+    documentStatusBucket: 'Published',
     shortDescription: '',
     documentType: 'Research/Report',
     applicableIndustries: [],
