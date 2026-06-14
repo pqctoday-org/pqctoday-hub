@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { SimulationView } from './SimulationView'
-import { useModuleStore } from '@/store/useModuleStore'
+import { useSimulationStore } from '@/store/useSimulationStore'
 
 const renderPage = () =>
   render(
@@ -12,126 +12,46 @@ const renderPage = () =>
     </MemoryRouter>
   )
 
-beforeEach(() => {
-  // start each test with no saved artifacts
-  useModuleStore.setState((s) => ({ artifacts: { ...s.artifacts, executiveDocuments: [] } }))
-})
+beforeEach(() => useSimulationStore.getState().reset())
 
-describe('SimulationView (skeleton)', () => {
-  it('renders the page, setup dials and the phase journey', () => {
+describe('SimulationView (Mission Control)', () => {
+  it('renders the console shell, setup dials and KPI ribbon', () => {
     renderPage()
-    expect(screen.getByRole('heading', { name: 'Simulation', level: 1 })).toBeInTheDocument()
-    expect(screen.getByText('Organisation size')).toBeInTheDocument()
-    expect(screen.getByText('Country')).toBeInTheDocument()
-    expect(screen.getByText('Sector')).toBeInTheDocument()
-    expect(screen.getByRole('navigation', { name: /migration phases/i })).toBeInTheDocument()
+    expect(screen.getByText('Migration Simulation')).toBeInTheDocument()
+    expect(screen.getByText('Mission Control')).toBeInTheDocument()
+    expect(screen.getByText('ORG ⟳')).toBeInTheDocument()
+    expect(screen.getByText('SEAT ⟳')).toBeInTheDocument()
+    expect(screen.getByText(/Mosca/)).toBeInTheDocument()
+    expect(screen.getByText('Phases cleared')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /End Quarter/ })).toBeInTheDocument()
   })
 
-  it('shows a clear per-phase mission with what to do and what it produces', () => {
+  it('clicking a phase in the journey switches the active phase ops', () => {
     renderPage()
-    // default phase p0
-    expect(screen.getByText('🎯 Your mission')).toBeInTheDocument()
-    expect(
-      screen.getByText(/turn the quantum threat into a funded, governed program/i)
-    ).toBeInTheDocument()
-    expect(screen.getByText('Do this')).toBeInTheDocument()
-    // mission is level-aware: at Level 0 the next target is Level 1
-    expect(screen.getByText(/Level 1 \(Aware\)/)).toBeInTheDocument()
-    // switching phase changes the mission
-    fireEvent.click(screen.getByRole('button', { name: /Discovery/i }))
-    expect(screen.getByText(/can't migrate what you can't see/i)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /Pilots/i })) // P5
+    expect(screen.getByText(/PHASE 5/)).toBeInTheDocument()
   })
 
-  it('the next-step mission advances as the player earns levels', () => {
+  it('a decision move reveals a context-aware verdict', () => {
     renderPage()
-    // p0 at Level 0 → next is Level 1
-    expect(screen.getByText(/Level 1 \(Aware\)/)).toBeInTheDocument()
-    // earn Level 1 → next becomes Level 2
-    fireEvent.click(screen.getByRole('checkbox', { name: /Level 1 — Aware/i }))
-    expect(screen.getByText(/Level 2 \(Initiated\)/)).toBeInTheDocument()
+    expect(screen.getByText('Next move — choose your play')).toBeInTheDocument()
+    // default phase p3 — pick the sound play
+    fireEvent.click(screen.getByRole('button', { name: /Score Tier-1/i }))
+    expect(screen.getByText('✓ Sound move')).toBeInTheDocument()
   })
 
-  it('shows the per-phase team with You / AI-team split that follows the seat', () => {
+  it('the P5 "go pure" play is a compliance FAIL under the DE hybrid mandate', () => {
     renderPage()
-    expect(screen.getByText('Your seat (Solo mode)')).toBeInTheDocument()
-    // Default phase p0, default seat Executive → QRPM is owned ("You").
-    expect(screen.getByText('Team — who runs this phase')).toBeInTheDocument()
-    expect(screen.getAllByText('You').length).toBeGreaterThan(0)
-    // Switch seat to Architect → on P0 the exec roles become "AI team".
-    fireEvent.click(screen.getByRole('button', { name: /Architect/i }))
-    expect(screen.getAllByText('AI team').length).toBeGreaterThan(0)
+    fireEvent.click(screen.getByRole('button', { name: /Pilots/i })) // go to P5
+    fireEvent.click(screen.getByRole('button', { name: /Cut straight to PURE/i }))
+    expect(screen.getByText('✕ This leads to failure')).toBeInTheDocument()
+    expect(screen.getByText(/Compliance FAIL/)).toBeInTheDocument()
   })
 
-  it('renders the architecture panel for the chosen org size', () => {
+  it('End Quarter advances the turn and opens the Quarter Report', () => {
     renderPage()
-    // default size = mid
-    expect(screen.getByText(/Your architecture \(mid\)/)).toBeInTheDocument()
-    expect(screen.getByText(/migratable now/)).toBeInTheDocument()
-  })
-
-  it('renders the jurisdiction panel for the chosen country', () => {
-    renderPage()
-    // default country = DE (BSI) → hybrid required
-    expect(screen.getByText(/Jurisdiction — BSI/)).toBeInTheDocument()
-    expect(screen.getByText(/Migrate as: hybrid/)).toBeInTheDocument()
-  })
-
-  it('renders the Mosca clock with a verdict', () => {
-    renderPage()
-    expect(screen.getByText(/Mosca clock/)).toBeInTheDocument()
-    expect(screen.getByText(/At risk|On track/)).toBeInTheDocument()
-  })
-
-  it('shows the active phase panel with the three resource legs', () => {
-    renderPage()
-    expect(screen.getByRole('heading', { name: /^Learn/ })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: /^Activities/ })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: /^Reference/ })).toBeInTheDocument()
-  })
-
-  it('switching to Phase 1 surfaces its content-verified discovery modules', () => {
-    renderPage()
-    // P1 used to look empty by tag; the map makes Crypto Management Modernization appear here.
-    fireEvent.click(screen.getByRole('button', { name: /Discovery/i }))
-    expect(
-      screen.getByRole('link', { name: /Cryptographic Management Modernization/i })
-    ).toBeInTheDocument()
-  })
-
-  it('earns levels cumulatively: L2 is locked until L1, then clears the phase', () => {
-    renderPage()
-    // Default phase p0: ladder + goal visible, nothing cleared yet.
-    expect(screen.getByText('Maturity — earn each level')).toBeInTheDocument()
-    expect(screen.getByText(/Phases cleared:/)).toHaveTextContent('Phases cleared: 0/8')
-
-    // Level 2 is locked until Level 1 is earned.
-    const l2 = screen.getByRole('checkbox', { name: /Level 2 — Initiated/i })
-    expect(l2).toBeDisabled()
-
-    // Earn Level 1, then Level 2 → phase clears.
-    fireEvent.click(screen.getByRole('checkbox', { name: /Level 1 — Aware/i }))
-    expect(screen.getByRole('checkbox', { name: /Level 2 — Initiated/i })).toBeEnabled()
-    fireEvent.click(screen.getByRole('checkbox', { name: /Level 2 — Initiated/i }))
-
-    expect(screen.getByText(/Phase cleared \(Level 2\+\)/)).toBeInTheDocument()
-    expect(screen.getByText(/Phases cleared:/)).toHaveTextContent('Phases cleared: 1/8')
-  })
-
-  it('auto-detects a real CBOM artifact and clears Phase 2 without manual ticks', () => {
-    // Player built a real CycloneDX CBOM in the Command Center.
-    useModuleStore.getState().addExecutiveDocument({
-      id: 'doc-cbom-1',
-      moduleId: 'business',
-      type: 'crypto-cbom',
-      title: 'My CBOM',
-      data: '# cbom',
-      createdAt: 1,
-    })
-    renderPage()
-    fireEvent.click(screen.getByRole('button', { name: /CBOM/i }))
-    // Levels prove themselves (L2 evidence implies L1) — auto-detected, no clicks.
-    expect(screen.getAllByText('✓ auto-detected').length).toBeGreaterThanOrEqual(1)
-    expect(screen.getByText(/Phase cleared \(Level 2\+\)/)).toBeInTheDocument()
-    expect(screen.getByRole('checkbox', { name: /Level 2 — Initiated/i })).toBeDisabled()
+    fireEvent.click(screen.getByRole('button', { name: /End Quarter/ }))
+    expect(screen.getByText('Quarter Report')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Continue/ })).toBeInTheDocument()
   })
 })
