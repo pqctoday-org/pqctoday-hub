@@ -227,6 +227,38 @@ export interface ReadinessSummary {
   readinessPct: number
 }
 
+/** A Mermaid flowchart source for an architecture: nodes coloured by product
+ *  PQC status, edges marked/dashed by migration state. */
+export function mermaidFromArchitecture(arch: Architecture): string {
+  const lines: string[] = ['flowchart TB']
+  for (const n of arch.nodes) {
+    const label = n.label.replace(/"/g, "'")
+    if (n.layer === 'Actor') lines.push(`  ${n.id}(["${label}"])`)
+    else lines.push(`  ${n.id}["${label}"]:::${n.pqcStatus}`)
+  }
+  for (const e of arch.edges) {
+    const st = edgeState(arch, e)
+    const mark =
+      st === 'migratable'
+        ? '✓'
+        : st === 'blocked'
+          ? '⚡'
+          : st === 'vendor'
+            ? '⏳'
+            : st === 'monitor'
+              ? '⚠'
+              : ''
+    const arrow = st === 'monitor' ? '-.->' : '-->'
+    const proto = e.protocol.replace(/"/g, "'")
+    lines.push(`  ${e.from} ${arrow}|"${proto}${mark ? ' ' + mark : ''}"| ${e.to}`)
+  }
+  lines.push('  classDef available fill:#d1fae5,stroke:#059669,color:#065f46')
+  lines.push('  classDef partial fill:#fef3c7,stroke:#d97706,color:#92400e')
+  lines.push('  classDef roadmap fill:#e0f2fe,stroke:#0284c7,color:#075985')
+  lines.push('  classDef none fill:#fee2e2,stroke:#dc2626,color:#991b1b')
+  return lines.join('\n')
+}
+
 export function computeReadiness(arch: Architecture): ReadinessSummary {
   const vuln = arch.edges.filter((e) => e.vulnerable)
   let migratable = 0

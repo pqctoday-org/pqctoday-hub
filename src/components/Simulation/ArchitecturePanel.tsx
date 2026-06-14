@@ -11,12 +11,14 @@ import { Button } from '@/components/ui/button'
 import {
   ARCHITECTURES,
   edgeState,
+  mermaidFromArchitecture,
   type EdgeState,
   type ProtocolEdge,
   type PqcStatus,
 } from '@/data/simArchitecture'
 import { checkChoice } from '@/data/jurisdiction'
 import type { SimSize } from '@/data/moscaClock'
+import { MermaidDiagram } from './MermaidDiagram'
 
 const STATUS_CHIP: Record<PqcStatus, string> = {
   available: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
@@ -38,6 +40,7 @@ export function ArchitecturePanel({ size, country }: { size: SimSize; country: s
   const byId = new Map(arch.nodes.map((n) => [n.id, n]))
   const [choice, setChoice] = useState<'hybrid' | 'pure'>('hybrid')
   const [migrated, setMigrated] = useState<Set<string>>(new Set())
+  const [view, setView] = useState<'list' | 'diagram'>('list')
 
   const verdict = checkChoice(country, choice)
   const canMigrate = verdict.level !== 'fail'
@@ -79,113 +82,147 @@ export function ArchitecturePanel({ size, country }: { size: SimSize; country: s
         />
       </div>
 
-      {/* Strategy + jurisdiction compliance */}
-      <div className="mb-3 flex flex-wrap items-center gap-2">
-        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Strategy
-        </span>
-        {(['hybrid', 'pure'] as const).map((c) => (
+      {/* View toggle: interactive list vs Mermaid diagram */}
+      <div className="mb-3 flex gap-1.5">
+        {(['list', 'diagram'] as const).map((v) => (
           <Button
-            key={c}
+            key={v}
             type="button"
             variant="ghost"
-            onClick={() => setChoice(c)}
+            onClick={() => setView(v)}
             className={`h-auto rounded-md border px-3 py-1 text-xs transition-colors ${
-              choice === c
+              view === v
                 ? 'border-primary bg-primary/10 font-medium text-primary'
                 : 'border-border text-muted-foreground hover:bg-muted'
             }`}
           >
-            {c}
+            {v === 'list' ? 'List' : 'Diagram'}
           </Button>
         ))}
-        <span className={`text-xs ${verdictCls}`}>{verdict.reason}</span>
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={migrateAll}
-          disabled={!canMigrate || done === migratable.length}
-          className="h-auto rounded-md border border-border px-3 py-1 text-xs text-foreground hover:bg-muted"
-        >
-          Migrate all eligible
-        </Button>
       </div>
 
-      <div className="mb-3">
-        <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Systems
+      {view === 'diagram' ? (
+        <div>
+          <MermaidDiagram source={mermaidFromArchitecture(arch)} id={size} />
+          <p className="mt-2 text-xs text-muted-foreground">
+            Green nodes = PQC available · red = no PQC yet · dashed edges ⚠ = irreducible
+            (monitor-only). Switch to List to migrate links.
+          </p>
         </div>
-        <div className="flex flex-wrap gap-1.5">
-          {arch.nodes
-            .filter((n) => n.layer !== 'Actor')
-            .map((n) => (
-              <span
-                key={n.id}
-                className={`rounded px-2 py-0.5 text-xs ${STATUS_CHIP[n.pqcStatus]}`}
-                title={`${n.layer} · PQC ${n.pqcStatus}`}
+      ) : (
+        <>
+          {/* Strategy + jurisdiction compliance */}
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Strategy
+            </span>
+            {(['hybrid', 'pure'] as const).map((c) => (
+              <Button
+                key={c}
+                type="button"
+                variant="ghost"
+                onClick={() => setChoice(c)}
+                className={`h-auto rounded-md border px-3 py-1 text-xs transition-colors ${
+                  choice === c
+                    ? 'border-primary bg-primary/10 font-medium text-primary'
+                    : 'border-border text-muted-foreground hover:bg-muted'
+                }`}
               >
-                {n.label}
-              </span>
+                {c}
+              </Button>
             ))}
-        </div>
-      </div>
+            <span className={`text-xs ${verdictCls}`}>{verdict.reason}</span>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={migrateAll}
+              disabled={!canMigrate || done === migratable.length}
+              className="h-auto rounded-md border border-border px-3 py-1 text-xs text-foreground hover:bg-muted"
+            >
+              Migrate all eligible
+            </Button>
+          </div>
 
-      <div>
-        <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Protocols
-        </div>
-        <ul className="space-y-1">
-          {arch.edges.map((e) => {
-            const st = edgeState(arch, e)
-            const isMigrated = migrated.has(edgeKey(e))
-            const label = (
-              <span className="min-w-0 truncate text-foreground">
-                {byId.get(e.from)?.label}{' '}
-                <span className="text-muted-foreground">—{e.protocol}→</span>{' '}
-                {byId.get(e.to)?.label}
-              </span>
-            )
-            if (st === 'migratable') {
-              return (
-                <li key={edgeKey(e)} className="flex items-center justify-between gap-2 text-xs">
-                  {label}
-                  {isMigrated ? (
-                    <span className="shrink-0 rounded bg-emerald-500/15 px-1.5 py-0.5 font-semibold text-emerald-600 dark:text-emerald-400">
-                      ✓ {choice}
-                    </span>
-                  ) : (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() => migrate(e)}
-                      disabled={!canMigrate}
-                      className="h-auto shrink-0 rounded border border-primary/40 px-2 py-0.5 text-xs font-medium text-primary hover:bg-primary/10"
-                    >
-                      Migrate
-                    </Button>
-                  )}
-                </li>
-              )
-            }
-            const badge = NON_MIGRATABLE_BADGE[st]
-            return (
-              <li key={edgeKey(e)} className="flex items-center justify-between gap-2 text-xs">
-                {label}
-                {badge && (
-                  <span className={`shrink-0 rounded px-1.5 py-0.5 font-semibold ${badge.cls}`}>
-                    {badge.label}
+          <div className="mb-3">
+            <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Systems
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {arch.nodes
+                .filter((n) => n.layer !== 'Actor')
+                .map((n) => (
+                  <span
+                    key={n.id}
+                    className={`rounded px-2 py-0.5 text-xs ${STATUS_CHIP[n.pqcStatus]}`}
+                    title={`${n.layer} · PQC ${n.pqcStatus}`}
+                  >
+                    {n.label}
                   </span>
-                )}
-              </li>
-            )
-          })}
-        </ul>
-      </div>
+                ))}
+            </div>
+          </div>
 
-      <p className="mt-2 text-xs text-muted-foreground">
-        Migrate the eligible links (hybrid or pure, per your jurisdiction). Blocked links wait on a
-        product/vendor PQC release; monitor-only links are irreducible (defense-in-depth).
-      </p>
+          <div>
+            <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Protocols
+            </div>
+            <ul className="space-y-1">
+              {arch.edges.map((e) => {
+                const st = edgeState(arch, e)
+                const isMigrated = migrated.has(edgeKey(e))
+                const label = (
+                  <span className="min-w-0 truncate text-foreground">
+                    {byId.get(e.from)?.label}{' '}
+                    <span className="text-muted-foreground">—{e.protocol}→</span>{' '}
+                    {byId.get(e.to)?.label}
+                  </span>
+                )
+                if (st === 'migratable') {
+                  return (
+                    <li
+                      key={edgeKey(e)}
+                      className="flex items-center justify-between gap-2 text-xs"
+                    >
+                      {label}
+                      {isMigrated ? (
+                        <span className="shrink-0 rounded bg-emerald-500/15 px-1.5 py-0.5 font-semibold text-emerald-600 dark:text-emerald-400">
+                          ✓ {choice}
+                        </span>
+                      ) : (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => migrate(e)}
+                          disabled={!canMigrate}
+                          className="h-auto shrink-0 rounded border border-primary/40 px-2 py-0.5 text-xs font-medium text-primary hover:bg-primary/10"
+                        >
+                          Migrate
+                        </Button>
+                      )}
+                    </li>
+                  )
+                }
+                const badge = NON_MIGRATABLE_BADGE[st]
+                return (
+                  <li key={edgeKey(e)} className="flex items-center justify-between gap-2 text-xs">
+                    {label}
+                    {badge && (
+                      <span className={`shrink-0 rounded px-1.5 py-0.5 font-semibold ${badge.cls}`}>
+                        {badge.label}
+                      </span>
+                    )}
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+
+          <p className="mt-2 text-xs text-muted-foreground">
+            Migrate the eligible links (hybrid or pure, per your jurisdiction). Blocked links wait
+            on a product/vendor PQC release; monitor-only links are irreducible (defense-in-depth).
+          </p>
+        </>
+      )}
     </div>
   )
 }

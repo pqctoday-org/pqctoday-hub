@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { ARCHITECTURES, computeReadiness, edgeState } from './simArchitecture'
+import {
+  ARCHITECTURES,
+  computeReadiness,
+  edgeState,
+  mermaidFromArchitecture,
+} from './simArchitecture'
 
 describe('simArchitecture', () => {
   it('every size has a mix of PQC and non-PQC products (never trivially 100%)', () => {
@@ -29,6 +34,17 @@ describe('simArchitecture', () => {
       residual: 0,
       readinessPct: 50,
     })
+  })
+
+  it('generates Mermaid source with a flowchart, nodes, edges and classes', () => {
+    const src = mermaidFromArchitecture(ARCHITECTURES.small)
+    expect(src.startsWith('flowchart TB')).toBe(true)
+    expect(src).toMatch(/cdn\["Caddy Web\/LB"\]:::available/)
+    expect(src).toMatch(/db\["MongoDB"\]:::none/)
+    expect(src).toContain('classDef none')
+    // monitor-only edges are dashed; others solid
+    const mid = mermaidFromArchitecture(ARCHITECTURES.mid)
+    expect(mid).toMatch(/app1 -\.->\|"Kerberos ⚠"\| ad/)
   })
 
   it('classifies edges: product-blocked, vendor, monitor-only, migratable', () => {
