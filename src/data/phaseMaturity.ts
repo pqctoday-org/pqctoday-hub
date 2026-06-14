@@ -39,7 +39,14 @@ export const LEVEL_EVIDENCE: Partial<
   Record<PhaseId, Partial<Record<MaturityLevelId, ExecutiveDocumentType[]>>>
 > = {
   p0: { 2: ['program-charter'] }, // Charter approved → Level 2
+  p1: { 2: ['management-tools-audit'] }, // Discovery/tooling audit → Level 2
   p2: { 2: ['crypto-cbom'] }, // CycloneDX CBOM operational → Level 2
+  p3: { 2: ['risk-register'] }, // Scored, prioritised backlog → Level 2
+  p4: { 2: ['migration-roadmap'] }, // Multi-year roadmap → Level 2
+  p5: { 2: ['deployment-playbook'] }, // Pilot/wave playbook → Level 2
+  p7: { 2: ['vendor-scorecard'] }, // Vendors engaged + scored → Level 2
+  // p6 (Infrastructure) stays manual — no Command-Center infra artifact yet
+  // (the infra-modernization planner is a separate backlog item).
 }
 
 export const PHASE_MATURITY: Partial<Record<PhaseId, MaturityLevel[]>> = {
