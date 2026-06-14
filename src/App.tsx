@@ -345,14 +345,6 @@ function App() {
         <Route path="tools/:toolId" element={<BusinessToolRoute />} />
       </Route>
       <Route
-        path="simulation"
-        element={
-          <ErrorBoundary>
-            <SimulationView />
-          </ErrorBoundary>
-        }
-      />
-      <Route
         path="faq"
         element={
           <ErrorBoundary>
@@ -445,6 +437,16 @@ function App() {
             {commonRoutes}
             <Route path="*" element={<Navigate to={`/embed${window.location.search}`} replace />} />
           </Route>
+
+          {/* Full-viewport console — rendered OUTSIDE MainLayout (no nav shell). */}
+          <Route
+            path="/simulation"
+            element={
+              <ErrorBoundary>
+                <SimulationView />
+              </ErrorBoundary>
+            }
+          />
 
           <Route element={<MainLayout />}>
             <Route
