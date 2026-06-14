@@ -342,6 +342,9 @@ export function SimulationView() {
     reset,
     visitedRefs,
     markRefVisited,
+    auto,
+    autoCompleteSteps,
+    clearAuto,
   } = useSimulationStore()
   const [report, setReport] = useState<QuarterReportData | null>(null)
 
@@ -369,12 +372,15 @@ export function SimulationView() {
   const moduleDone = (id?: string) => !!id && moduleProgress[id]?.status === 'completed'
   const artifactDone = (t?: ExecutiveDocumentType) => !!t && docTypes.has(t)
   const refDone = (id?: string) => !!id && visitedRefs.includes(id)
-  const stepDone = (s: TreeStep) =>
-    s.kind === 'learn'
+  const autoKey = (phase: string, to: string) => `${phase}::${to}`
+  // a step is done if the player did it for real OR it was delegated to the AI team
+  const stepDone = (s: TreeStep, phase: string) =>
+    auto.includes(autoKey(phase, s.to)) ||
+    (s.kind === 'learn'
       ? moduleDone(s.moduleId)
       : s.kind === 'activity'
         ? artifactDone(s.artifactType)
-        : refDone(s.refId)
+        : refDone(s.refId))
   const evidenceLevel = (p: string): number => {
     const ev = LEVEL_EVIDENCE[p as PhaseId]
     if (!ev) return 0
@@ -386,7 +392,7 @@ export function SimulationView() {
   // the maturity level EARNED by completing this phase's framework activity tree
   const treeLevel = (p: string): number => {
     const t = SIM_TREES[p as PhaseId]
-    return t ? achievedTreeLevel(t, stepDone) : 0
+    return t ? achievedTreeLevel(t, (s) => stepDone(s, p)) : 0
   }
   // STRICT GATING: a phase with an activity tree can only reach level N by passing
   // the gate of every level below it (completing those levels' activities). No
@@ -441,7 +447,7 @@ export function SimulationView() {
   // ---- budget: starts at €0, earned by executing P0 activities + P0 maturity ----
   const p0Tree = SIM_TREES.p0
   const p0Steps = p0Tree ? flattenTree(p0Tree) : []
-  const p0Done = p0Steps.filter(stepDone).length
+  const p0Done = p0Steps.filter((s) => stepDone(s, 'p0')).length
   const p0Level = levelOf('p0')
   const p0Frac = p0Steps.length ? 0.5 * (p0Done / p0Steps.length) + 0.5 * (p0Level / 4) : 0
   const budgetTarget = programBudgetTarget(sector, sizeKey)
@@ -460,15 +466,30 @@ export function SimulationView() {
   const phaseRoles = Object.values(ROLE_CROSSWALK).filter((r) => r.phases.includes(sel))
   const phaseOwned = phaseRoles.some((r) => r.persona === seat)
   const mission = SIM_MISSIONS[sel]
+  // role delegation: a phase that is NOT the player's role can be auto-completed by
+  // the AI team (or the player can still choose to do it). Reversible (clearAuto).
+  const phaseAutoKeys = (SIM_TREES[sel] ? flattenTree(SIM_TREES[sel]!) : []).map((s) =>
+    autoKey(sel, s.to)
+  )
+  const phaseAutoActive = phaseAutoKeys.some((k) => auto.includes(k))
+  const delegateToAI = () => {
+    if (
+      typeof window === 'undefined' ||
+      window.confirm(
+        `${phase.name} is run by your AI team, not your ${seatOpt.label} role. Complete its tasks automatically? Press Cancel to do them yourself.`
+      )
+    )
+      autoCompleteSteps(phaseAutoKeys)
+  }
   // Framework activity tree for this phase, banded by maturity level. Steps unlock
   // sequentially (level → activity → step); a step is workable only once every
   // prior step is complete. Completing a level's activities EARNS that level.
   const phaseTree = SIM_TREES[sel]
   const flatSteps = phaseTree ? flattenTree(phaseTree) : []
   const stepsTotal = flatSteps.length
-  const stepsDone = flatSteps.filter(stepDone).length
+  const stepsDone = flatSteps.filter((s) => stepDone(s, sel)).length
   // index of the first not-yet-done step; everything after it is locked. -1 ⇒ all done.
-  const firstOpenIdx = flatSteps.findIndex((s) => !stepDone(s))
+  const firstOpenIdx = flatSteps.findIndex((s) => !stepDone(s, sel))
   // The tree DRIVES the next move. Build step→(level,activity) metadata in the same
   // flattened unlock order as flatSteps, then the next move is simply the first
   // unlocked, not-yet-done leaf. firstOpenIdx === -1 ⇒ every level earned.
@@ -874,6 +895,42 @@ export function SimulationView() {
             </b>
           </p>
 
+          {/* role delegation — phases outside the player's role: auto-complete or do it */}
+          {!phaseOwned && (phaseAutoActive || stepsDone < stepsTotal) && (
+            <div className="mb-3 flex items-center gap-2 rounded-lg border border-secondary/40 bg-secondary/5 px-3 py-2">
+              <span className="min-w-0 flex-1 text-[11px] leading-tight text-muted-foreground">
+                {phaseAutoActive ? (
+                  <>
+                    <b className="text-foreground">{phase.name}</b> is being run by your AI team.
+                  </>
+                ) : (
+                  <>
+                    Not your role — your AI team can run{' '}
+                    <b className="text-foreground">{phase.name}</b>, or you can do it yourself.
+                  </>
+                )}
+              </span>
+              {phaseAutoActive ? (
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={() => clearAuto(sel)}
+                  className="h-auto shrink-0 rounded-md border border-border px-2.5 py-1 text-[10.5px] font-bold text-foreground hover:bg-muted"
+                >
+                  ↺ I’ll do it
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={delegateToAI}
+                  className="h-auto shrink-0 rounded-md bg-secondary px-2.5 py-1 text-[10.5px] font-bold text-secondary-foreground"
+                >
+                  Auto-complete ▸
+                </Button>
+              )}
+            </div>
+          )}
+
           <DecisionSection
             phaseId={sel}
             ctx={moveCtx}
@@ -904,7 +961,7 @@ export function SimulationView() {
                 {phaseTree.levels.map((band) => {
                   const total = band.activities.reduce((n, a) => n + a.steps.length, 0)
                   const done = band.activities.reduce(
-                    (n, a) => n + a.steps.filter(stepDone).length,
+                    (n, a) => n + a.steps.filter((s) => stepDone(s, sel)).length,
                     0
                   )
                   const earned = level >= band.level

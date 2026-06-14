@@ -29,6 +29,8 @@ export interface SimulationState {
   events: SimEvent[]
   /** Reference resources the player has opened (playbook completion). */
   visitedRefs: string[]
+  /** Tree step keys (`${phase}::${to}`) delegated to / auto-done by the AI team. */
+  auto: string[]
 
   setSize: (v: string) => void
   setCountry: (v: string) => void
@@ -47,6 +49,10 @@ export interface SimulationState {
     q: number
     newEvents: SimEvent[]
   }) => void
+  /** Delegate (auto-complete) tree steps to the AI team by key. */
+  autoCompleteSteps: (keys: string[]) => void
+  /** Cancel auto-completion for a phase (remove its `${phase}::` keys). */
+  clearAuto: (phase: string) => void
   reset: () => void
 }
 
@@ -78,6 +84,7 @@ const SEED = {
     { sev: 'info', t: 'Q2 2026', txt: 'OpenSSL 3.6 ships ML-DSA hardware acceleration' },
   ] as SimEvent[],
   visitedRefs: [] as string[],
+  auto: [] as string[],
 }
 
 export const useSimulationStore = create<SimulationState>()(
@@ -103,12 +110,16 @@ export const useSimulationStore = create<SimulationState>()(
           q,
           events: [...newEvents, ...s.events].slice(0, 30),
         })),
+      autoCompleteSteps: (keys) =>
+        set((s) => ({ auto: Array.from(new Set([...s.auto, ...keys])) })),
+      clearAuto: (phase) =>
+        set((s) => ({ auto: s.auto.filter((k) => !k.startsWith(`${phase}::`)) })),
       reset: () => set({ ...SEED }),
     }),
     {
       name: 'pqc-simulation',
       storage: createJSONStorage(() => localStorage),
-      version: 3,
+      version: 4,
       partialize: (s) => ({
         size: s.size,
         country: s.country,
@@ -121,6 +132,7 @@ export const useSimulationStore = create<SimulationState>()(
         crqcShift: s.crqcShift,
         events: s.events,
         visitedRefs: s.visitedRefs,
+        auto: s.auto,
       }),
       migrate: (persisted: unknown) => {
         // Defensive: ensure every field exists with a safe default. v3 introduced
@@ -139,6 +151,7 @@ export const useSimulationStore = create<SimulationState>()(
           crqcShift: SEED.crqcShift,
           events: [...SEED.events],
           visitedRefs: Array.isArray(s.visitedRefs) ? (s.visitedRefs as string[]) : [],
+          auto: Array.isArray(s.auto) ? (s.auto as string[]) : [],
         }
       },
       onRehydrateStorage: () => (_state, error) => {
