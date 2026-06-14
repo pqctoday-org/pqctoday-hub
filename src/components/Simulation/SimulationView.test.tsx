@@ -24,6 +24,8 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.getByText(/Mosca/)).toBeInTheDocument()
     expect(screen.getByText('Phases cleared')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /End Quarter/ })).toBeInTheDocument()
+    // exit affordance back to the hub
+    expect(screen.getByRole('link', { name: /Exit to hub/i })).toHaveAttribute('href', '/')
   })
 
   it('clicking a phase in the journey switches the active phase ops', () => {
