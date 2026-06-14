@@ -39,6 +39,12 @@ describe('useSimulationStore', () => {
     expect(s().events[0].txt).toBe('e0')
   })
 
+  it('markRefVisited records a reference once (idempotent)', () => {
+    s().markRefVisited('timeline')
+    s().markRefVisited('timeline')
+    expect(s().visitedRefs).toEqual(['timeline'])
+  })
+
   it('reset restores the seed', () => {
     s().setSel('p7')
     s().reset()
