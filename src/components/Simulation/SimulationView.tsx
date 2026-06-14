@@ -289,13 +289,13 @@ function Dial({
       type="button"
       onClick={onClick}
       title="click to change"
-      className="h-auto items-start justify-start whitespace-normal flex flex-col gap-px rounded-lg border border-border bg-muted px-3 py-1.5 text-left hover:bg-muted/70"
+      className="h-auto items-start justify-start whitespace-normal flex flex-col gap-px rounded-lg border border-background/20 bg-background/10 px-3 py-1.5 text-left hover:bg-background/20"
     >
-      <span className="font-mono text-[8px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+      <span className="font-mono text-[8px] font-bold uppercase tracking-[0.14em] text-background/50">
         {label} ⟳
       </span>
-      <span className="text-[12.5px] font-bold text-foreground">{value}</span>
-      <span className="text-[9.5px] text-muted-foreground">{hint}</span>
+      <span className="text-[12.5px] font-bold text-background">{value}</span>
+      <span className="text-[9.5px] text-background/50">{hint}</span>
     </Button>
   )
 }
@@ -620,14 +620,14 @@ export function SimulationView() {
   return (
     <div className="fixed inset-0 flex flex-col bg-background text-foreground">
       {/* header — command bar */}
-      <header className="flex shrink-0 flex-wrap items-center gap-3 border-b border-border bg-card px-4 py-2 text-foreground">
+      <header className="flex shrink-0 flex-wrap items-center gap-3 bg-foreground px-4 py-2 text-background">
         <div className="flex shrink-0 items-center gap-2">
           <div className="h-6 w-6 rounded-md bg-gradient-to-br from-primary to-secondary" />
           <div>
             <div className="whitespace-nowrap text-[13.5px] font-extrabold">
               Migration Simulation
             </div>
-            <div className="font-mono text-[8px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+            <div className="font-mono text-[8px] font-bold uppercase tracking-[0.14em] text-background/50">
               Mission Control
             </div>
           </div>
@@ -662,7 +662,7 @@ export function SimulationView() {
           <Link
             to="/"
             aria-label="Exit to hub"
-            className="flex h-auto items-center rounded-md border border-border px-2.5 py-1.5 font-mono text-[10px] font-bold text-muted-foreground hover:bg-muted"
+            className="flex h-auto items-center rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-[10px] font-bold text-background/70 hover:bg-background/10"
           >
             ← HUB
           </Link>
@@ -670,11 +670,11 @@ export function SimulationView() {
             type="button"
             variant="ghost"
             onClick={resetAll}
-            className="h-auto rounded-md border border-border px-2.5 py-1.5 font-mono text-[10px] font-bold text-muted-foreground hover:bg-muted"
+            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-[10px] font-bold text-background/70 hover:bg-background/10"
           >
             RESET
           </Button>
-          <span className="font-mono text-[11px] font-bold text-muted-foreground">
+          <span className="font-mono text-[11px] font-bold text-background/70">
             TURN · Q{q} {year}
           </span>
           <Button
@@ -688,7 +688,7 @@ export function SimulationView() {
       </header>
 
       {/* ticker (top — live event feed) */}
-      <div className="flex h-[30px] shrink-0 items-center gap-5 overflow-hidden border-b border-border bg-muted/40 px-4 text-foreground">
+      <div className="flex h-[30px] shrink-0 items-center gap-5 overflow-hidden bg-foreground px-4 text-background/85">
         <span className="shrink-0 font-mono text-[9px] font-extrabold uppercase tracking-[0.16em] text-primary">
           ● LIVE FEED
         </span>
@@ -696,7 +696,7 @@ export function SimulationView() {
           {tickerItems.map((e, i) => (
             <span key={i} className="flex shrink-0 items-center gap-1.5 text-[11px]">
               <span className={`h-1.5 w-1.5 rounded-full ${SEVERITY_DOT[e.sev]}`} />
-              <span className="font-mono text-[9px] text-muted-foreground">{e.t}</span>
+              <span className="font-mono text-[9px] text-background/45">{e.t}</span>
               <span className="whitespace-nowrap">{e.txt}</span>
             </span>
           ))}
