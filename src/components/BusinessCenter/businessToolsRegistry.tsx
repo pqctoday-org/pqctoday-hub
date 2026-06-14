@@ -434,7 +434,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Crypto Architecture',
     cswp39SectionRef: '§5.4',
     cswp39SubSection: 'Cryptographic architecture',
-    frameworkPhase: 'p0',
+    frameworkPhase: 'p1',
   },
 
   // ── Management Tools (CSWP.39 Fig 3 — discovery / assessment / config / enforcement) ──
