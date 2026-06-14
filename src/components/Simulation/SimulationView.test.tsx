@@ -40,9 +40,9 @@ describe('SimulationView (Mission Control)', () => {
     // default phase p0, fresh state → first unlocked step is 0.1 Learn: PQC Business Case
     fireEvent.click(screen.getByRole('button', { name: /Learn: PQC Business Case/ }))
     expect(screen.getByText(/Right call/)).toBeInTheDocument()
-    // CTA opens the module IN the sim (embedded), not via navigation
+    // CTA opens the module IN the sim (embedded), under a persistent "Simulation mode" bar
     fireEvent.click(screen.getByRole('button', { name: /open here/i }))
-    expect(screen.getByText(/Learn · in simulation/)).toBeInTheDocument()
+    expect(screen.getByText(/Simulation mode/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Back to board/i })).toBeInTheDocument()
   })
 
