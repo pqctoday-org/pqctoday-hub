@@ -688,15 +688,15 @@ export function SimulationView() {
       </header>
 
       {/* ticker (top — live event feed) — grey strip, distinct from the dark header */}
-      <div className="flex h-[30px] shrink-0 items-center gap-5 overflow-hidden border-b border-border bg-muted px-4 text-foreground">
-        <span className="shrink-0 font-mono text-[9px] font-extrabold uppercase tracking-[0.16em] text-primary">
+      <div className="flex h-[40px] shrink-0 items-center gap-5 overflow-hidden border-b border-border bg-muted px-4 text-foreground">
+        <span className="shrink-0 font-mono text-[11px] font-extrabold uppercase tracking-[0.16em] text-primary">
           ● LIVE FEED
         </span>
         <div className="flex gap-6 overflow-hidden">
           {tickerItems.map((e, i) => (
-            <span key={i} className="flex shrink-0 items-center gap-1.5 text-[11px]">
-              <span className={`h-1.5 w-1.5 rounded-full ${SEVERITY_DOT[e.sev]}`} />
-              <span className="font-mono text-[9px] text-muted-foreground">{e.t}</span>
+            <span key={i} className="flex shrink-0 items-center gap-2 text-[13px]">
+              <span className={`h-2 w-2 rounded-full ${SEVERITY_DOT[e.sev]}`} />
+              <span className="font-mono text-[11px] text-muted-foreground">{e.t}</span>
               <span className="whitespace-nowrap">{e.txt}</span>
             </span>
           ))}
