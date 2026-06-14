@@ -239,6 +239,9 @@ scripts/*
 # emitting public output: nothing private to protect.
 !scripts/generate-oscal.ts
 !scripts/generate-cbom.ts
+# Simulation activity-tree generator — emits the committed dated trees in
+# src/simulation/trees from the public framework + hub registries.
+!scripts/gen-sim-trees.mjs
 
 # Workshop flow static audit — runs in CI, must be tracked. Reads
 # public/workshop/*.json + src/. The companion timing fixer

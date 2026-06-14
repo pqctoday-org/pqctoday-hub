@@ -40,7 +40,16 @@ import {
 } from '@/components/BusinessCenter/businessToolsRegistry'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
-import { SIM_PLAYBOOK, type PlaybookStep, type StepKind } from '@/data/simPlaybook'
+import {
+  SIM_TREES,
+  flattenTree,
+  achievedTreeLevel,
+  type TreeStep,
+  type TreeActivity,
+  type LevelBand,
+  type Pitfall,
+  type StepKind,
+} from '@/simulation'
 import { SIM_MOVES, type MoveCtx, type MoveKind } from '@/data/simMoves'
 import { SIM_EVENT_POOL, fillEvent, type EventSeverity, type SimEvent } from '@/data/simEvents'
 import { ARCHITECTURES } from '@/data/simArchitecture'
@@ -96,6 +105,8 @@ const KIND_CHIP: Record<StepKind, string> = {
   reference: 'bg-secondary/15 text-secondary',
   activity: 'bg-warning/15 text-warning',
 }
+// phases that act on the estate / infrastructure → the architecture view is shown
+const ARCH_PHASES = new Set<PhaseId>(['p1', 'p5', 'p6'])
 // reverse of ARTIFACT_TYPE_TO_TOOL_ID: business tool id → the artifact type it emits
 const TOOL_TO_ARTIFACT: Record<string, ExecutiveDocumentType> = Object.fromEntries(
   (Object.entries(ARTIFACT_TYPE_TO_TOOL_ID) as [ExecutiveDocumentType, string][]).map(
@@ -313,7 +324,7 @@ export function SimulationView() {
   const moduleDone = (id?: string) => !!id && moduleProgress[id]?.status === 'completed'
   const artifactDone = (t?: ExecutiveDocumentType) => !!t && docTypes.has(t)
   const refDone = (id?: string) => !!id && visitedRefs.includes(id)
-  const stepDone = (s: PlaybookStep) =>
+  const stepDone = (s: TreeStep) =>
     s.kind === 'learn'
       ? moduleDone(s.moduleId)
       : s.kind === 'activity'
@@ -327,7 +338,12 @@ export function SimulationView() {
       if (types.some((t) => docTypes.has(t))) lvl = Math.max(lvl, Number(lvlStr))
     return lvl
   }
-  const levelOf = (p: string) => Math.max(checks[p] ?? 0, evidenceLevel(p))
+  // the maturity level EARNED by completing this phase's framework activity tree
+  const treeLevel = (p: string): number => {
+    const t = SIM_TREES[p as PhaseId]
+    return t ? achievedTreeLevel(t, stepDone) : 0
+  }
+  const levelOf = (p: string) => Math.max(checks[p] ?? 0, evidenceLevel(p), treeLevel(p))
 
   // setup-dial-derived facts
   const sizeOpt = SIZES.find((s) => s.id === size) ?? SIZES[1]
@@ -375,8 +391,36 @@ export function SimulationView() {
   const phaseOwned = phaseRoles.some((r) => r.persona === seat)
   const ladder = PHASE_MATURITY[sel]
   const mission = SIM_MISSIONS[sel]
-  const playbook = SIM_PLAYBOOK[sel] ?? []
-  const playbookDone = playbook.filter(stepDone).length
+  // Framework activity tree for this phase, banded by maturity level. Steps unlock
+  // sequentially (level → activity → step); a step is workable only once every
+  // prior step is complete. Completing a level's activities EARNS that level.
+  const phaseTree = SIM_TREES[sel]
+  const flatSteps = phaseTree ? flattenTree(phaseTree) : []
+  const stepsTotal = flatSteps.length
+  const stepsDone = flatSteps.filter(stepDone).length
+  // index of the first not-yet-done step; everything after it is locked. -1 ⇒ all done.
+  const firstOpenIdx = flatSteps.findIndex((s) => !stepDone(s))
+  // The tree DRIVES the next move. Build step→(level,activity) metadata in the same
+  // flattened unlock order as flatSteps, then the next move is simply the first
+  // unlocked, not-yet-done leaf. firstOpenIdx === -1 ⇒ every level earned.
+  const stepMeta = (phaseTree?.levels ?? []).flatMap((band) =>
+    band.activities.flatMap((act) => act.steps.map((step) => ({ band, act, step })))
+  )
+  const nextMove = firstOpenIdx < 0 ? null : (stepMeta[firstOpenIdx] ?? null)
+
+  // right column is phase-relevant: the artifacts THIS phase produces (deduped by
+  // type, carrying the framework label) and which of them the player has generated.
+  const phaseArtifacts = Array.from(
+    new Map(
+      (phaseTree?.levels ?? [])
+        .flatMap((b) => b.activities.flatMap((a) => a.steps))
+        .filter((s) => s.kind === 'activity' && s.artifactType)
+        .map((s) => [s.artifactType!, s.label] as const)
+    ),
+    ([type, label]) => ({ type, label })
+  )
+  const phaseArtifactTypes = new Set(phaseArtifacts.map((a) => a.type))
+  const phaseDocs = (docs ?? []).filter((d) => phaseArtifactTypes.has(d.type))
   const moveCtx: MoveCtx = {
     country: {
       id: country,
@@ -596,68 +640,109 @@ export function SimulationView() {
 
       {/* body */}
       <div className="grid min-h-0 flex-1 gap-3.5 p-4 lg:grid-cols-[300px_1fr_332px]">
-        {/* left — phase journey */}
-        <div className="flex min-h-0 flex-col overflow-auto rounded-xl border border-border bg-card p-3">
-          <div className="mb-2 flex items-center justify-between">
-            <Eyebrow>Phase journey</Eyebrow>
-            <span className="rounded-full bg-muted px-2 py-0.5 font-mono text-[10px] font-bold text-muted-foreground">
-              0 → 7
-            </span>
-          </div>
-          <div className="flex flex-col gap-0.5">
-            {LIFECYCLE.map((p) => {
-              const fp = FRAMEWORK_PHASES[p]
-              const lv = levelOf(p)
-              const isCleared = lv >= PHASE_WIN_LEVEL
-              const current = p === sel
-              const owner = Object.values(ROLE_CROSSWALK).some(
-                (r) => r.phases.includes(p) && r.persona === seat
-              )
-              return (
-                <Button
-                  variant="ghost"
-                  key={p}
-                  type="button"
-                  onClick={() => setSel(p)}
-                  className={`h-auto justify-start whitespace-normal flex w-full items-center gap-2.5 rounded-lg border px-2.5 py-2 text-left ${
-                    current ? 'border-primary bg-primary/10' : 'border-transparent hover:bg-muted'
-                  }`}
-                >
-                  <span
-                    className={`grid h-[22px] w-[22px] shrink-0 place-items-center rounded-md text-[11px] font-extrabold ${
-                      isCleared
-                        ? 'bg-success text-success-foreground'
-                        : current
+        {/* left — team (who runs this phase) above the phase journey */}
+        <div className="flex min-h-0 flex-col gap-3.5 overflow-auto">
+          <div className="rounded-xl border border-border bg-card p-4">
+            <Eyebrow className="mb-2.5 block">Team — who runs this phase</Eyebrow>
+            <div className="flex flex-col gap-2">
+              {phaseRoles.length === 0 && (
+                <p className="text-sm text-muted-foreground">No role mapped (overlay gap).</p>
+              )}
+              {phaseRoles.map((r) => {
+                const you = r.persona === seat
+                return (
+                  <div key={r.id} className="flex items-center gap-2.5">
+                    <span
+                      className={`grid h-[25px] w-[25px] shrink-0 place-items-center rounded-md text-[11px] font-extrabold ${
+                        you
                           ? 'bg-primary text-primary-foreground'
                           : 'bg-muted text-muted-foreground'
-                    }`}
-                  >
-                    {fp.number}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate text-[12px] font-bold text-foreground">{fp.name}</div>
-                    <div className="flex gap-1.5 font-mono text-[9px] text-muted-foreground">
-                      <span>
-                        {isCleared ? 'cleared' : current ? 'active' : 'locked'} ·{' '}
-                        {MATURITY_LEVEL_NAMES[lv]}
-                      </span>
-                      {owner && <span className="font-bold text-primary">· you</span>}
+                      }`}
+                    >
+                      {r.label[0]}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[11.5px] font-bold text-foreground">{r.label}</div>
+                      <div className="font-mono text-[9px] text-muted-foreground">
+                        {r.typicalFte} FTE
+                      </div>
                     </div>
+                    <span
+                      className={`rounded-full px-2 py-0.5 font-mono text-[10px] font-bold ${
+                        you ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'
+                      }`}
+                    >
+                      {you ? 'YOU' : 'AI'}
+                    </span>
                   </div>
-                  <Ring level={lv} />
-                </Button>
-              )
-            })}
+                )
+              })}
+            </div>
           </div>
-          <div className="mt-2 rounded-lg border border-dashed border-border bg-muted/40 px-2.5 py-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[11.5px] font-bold text-foreground">Foundations</span>
-              <span className="font-mono text-[9px] text-muted-foreground">
-                L{levelOf('foundations')}
+          <div className="flex min-h-0 flex-col overflow-auto rounded-xl border border-border bg-card p-3">
+            <div className="mb-2 flex items-center justify-between">
+              <Eyebrow>Phase journey</Eyebrow>
+              <span className="rounded-full bg-muted px-2 py-0.5 font-mono text-[10px] font-bold text-muted-foreground">
+                0 → 7
               </span>
             </div>
-            <div className="mt-0.5 font-mono text-[9px] text-muted-foreground">
-              spanning · agility · KPIs · skills
+            <div className="flex flex-col gap-0.5">
+              {LIFECYCLE.map((p) => {
+                const fp = FRAMEWORK_PHASES[p]
+                const lv = levelOf(p)
+                const isCleared = lv >= PHASE_WIN_LEVEL
+                const current = p === sel
+                const owner = Object.values(ROLE_CROSSWALK).some(
+                  (r) => r.phases.includes(p) && r.persona === seat
+                )
+                return (
+                  <Button
+                    variant="ghost"
+                    key={p}
+                    type="button"
+                    onClick={() => setSel(p)}
+                    className={`h-auto justify-start whitespace-normal flex w-full items-center gap-2.5 rounded-lg border px-2.5 py-2 text-left ${
+                      current ? 'border-primary bg-primary/10' : 'border-transparent hover:bg-muted'
+                    }`}
+                  >
+                    <span
+                      className={`grid h-[22px] w-[22px] shrink-0 place-items-center rounded-md text-[11px] font-extrabold ${
+                        isCleared
+                          ? 'bg-success text-success-foreground'
+                          : current
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted text-muted-foreground'
+                      }`}
+                    >
+                      {fp.number}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-[12px] font-bold text-foreground">
+                        {fp.name}
+                      </div>
+                      <div className="flex gap-1.5 font-mono text-[9px] text-muted-foreground">
+                        <span>
+                          {isCleared ? 'cleared' : current ? 'active' : 'locked'} ·{' '}
+                          {MATURITY_LEVEL_NAMES[lv]}
+                        </span>
+                        {owner && <span className="font-bold text-primary">· you</span>}
+                      </div>
+                    </div>
+                    <Ring level={lv} />
+                  </Button>
+                )
+              })}
+            </div>
+            <div className="mt-2 rounded-lg border border-dashed border-border bg-muted/40 px-2.5 py-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[11.5px] font-bold text-foreground">Foundations</span>
+                <span className="font-mono text-[9px] text-muted-foreground">
+                  L{levelOf('foundations')}
+                </span>
+              </div>
+              <div className="mt-0.5 font-mono text-[9px] text-muted-foreground">
+                spanning · agility · KPIs · skills
+              </div>
             </div>
           </div>
         </div>
@@ -688,68 +773,17 @@ export function SimulationView() {
             </b>
           </p>
 
-          <DecisionSection phaseId={sel} ctx={moveCtx} />
-
-          {/* Playbook — the multi-step play; completion read from real hub state */}
-          {playbook.length > 0 && (
-            <div className="mb-4">
-              <div className="mb-2 flex items-center justify-between">
-                <Eyebrow>Run the play — work each step</Eyebrow>
-                <span
-                  className={`text-[11px] font-bold ${playbookDone === playbook.length ? 'text-success' : 'text-muted-foreground'}`}
-                >
-                  {playbookDone}/{playbook.length} done
-                </span>
-              </div>
-              <ol className="flex flex-col gap-1.5">
-                {playbook.map((step, i) => {
-                  const done = stepDone(step)
-                  return (
-                    <li key={`${step.kind}-${step.to}-${i}`}>
-                      <Link
-                        to={step.to}
-                        onClick={
-                          step.kind === 'reference' && step.refId
-                            ? () => markRefVisited(step.refId!)
-                            : undefined
-                        }
-                        className={`flex items-center gap-2.5 rounded-lg border px-3 py-2 ${
-                          done
-                            ? 'border-success/40 bg-success/5'
-                            : 'border-border bg-muted hover:bg-muted/70'
-                        }`}
-                      >
-                        <span
-                          className={`grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-bold ${
-                            done
-                              ? 'bg-success text-success-foreground'
-                              : 'bg-card text-muted-foreground'
-                          }`}
-                        >
-                          {done ? '✓' : i + 1}
-                        </span>
-                        <span
-                          className={`rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${KIND_CHIP[step.kind]}`}
-                        >
-                          {step.kind}
-                        </span>
-                        <span className="min-w-0 flex-1 truncate text-[12px] font-medium text-foreground">
-                          {step.label}
-                        </span>
-                        <span className="shrink-0 font-mono text-[9px] text-muted-foreground">
-                          {done ? 'done' : 'open →'}
-                        </span>
-                      </Link>
-                    </li>
-                  )
-                })}
-              </ol>
-              <p className="mt-1.5 font-mono text-[9px] text-muted-foreground">
-                Learn = module completed · Activity = artifact generated · Reference = opened.
-                Tracked from your real hub progress.
-              </p>
-            </div>
-          )}
+          <DecisionSection
+            phaseId={sel}
+            ctx={moveCtx}
+            nextMove={nextMove}
+            level={level}
+            stepsDone={stepsDone}
+            stepsTotal={stepsTotal}
+            gate={phaseTree?.gate}
+            pitfalls={phaseTree?.pitfalls ?? []}
+            onVisitRef={markRefVisited}
+          />
 
           {/* maturity ladder */}
           {ladder && (
@@ -835,88 +869,66 @@ export function SimulationView() {
           </div>
         </div>
 
-        {/* right — intel */}
+        {/* right — phase-relevant intel: artifacts produced this phase + the
+            views that matter to it (architecture only for estate/infra phases) */}
         <div className="flex min-h-0 flex-col gap-3.5 overflow-auto">
-          <div className="rounded-xl border border-border bg-card p-4">
-            <Eyebrow className="mb-2.5 block">Team — who runs this phase</Eyebrow>
-            <div className="flex flex-col gap-2">
-              {phaseRoles.length === 0 && (
-                <p className="text-sm text-muted-foreground">No role mapped (overlay gap).</p>
-              )}
-              {phaseRoles.map((r) => {
-                const you = r.persona === seat
-                return (
-                  <div key={r.id} className="flex items-center gap-2.5">
-                    <span
-                      className={`grid h-[25px] w-[25px] shrink-0 place-items-center rounded-md text-[11px] font-extrabold ${
-                        you
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted text-muted-foreground'
-                      }`}
-                    >
-                      {r.label[0]}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-[11.5px] font-bold text-foreground">{r.label}</div>
-                      <div className="font-mono text-[9px] text-muted-foreground">
-                        {r.typicalFte} FTE
-                      </div>
-                    </div>
-                    <span
-                      className={`rounded-full px-2 py-0.5 font-mono text-[10px] font-bold ${
-                        you ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'
-                      }`}
-                    >
-                      {you ? 'YOU' : 'AI'}
-                    </span>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Artifacts — what your activities have generated */}
+          {/* Artifacts this phase produces — completed vs still to generate */}
           <div className="rounded-xl border border-border bg-card p-4">
             <Eyebrow className="mb-2.5 block">
-              Artifacts <span className="text-muted-foreground/60">· {docs?.length ?? 0}</span>
+              {phase.name} artifacts{' '}
+              <span className="text-muted-foreground/60">
+                · {phaseDocs.length}/{phaseArtifactTypes.size}
+              </span>
             </Eyebrow>
-            {!docs || docs.length === 0 ? (
+            {phaseArtifactTypes.size === 0 ? (
               <p className="text-[11px] text-muted-foreground">
-                No artifacts yet — run an{' '}
-                <span className="font-medium text-foreground">Activity</span> step to generate one.
+                This phase produces no Command-Center artifact — progress comes from Learn modules
+                and reference look-ups.
               </p>
             ) : (
               <div className="flex flex-col gap-1.5">
-                {docs
-                  .slice()
-                  .reverse()
-                  .slice(0, 8)
-                  .map((d) => (
+                {phaseArtifacts.map((a) => {
+                  const made = phaseDocs.find((d) => d.type === a.type)
+                  return (
                     <div
-                      key={d.id}
-                      className="flex items-center gap-2 rounded-lg border border-success/40 bg-success/5 px-2.5 py-1.5"
+                      key={a.type}
+                      className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
+                        made
+                          ? 'border-success/40 bg-success/5'
+                          : 'border-dashed border-border bg-muted/40'
+                      }`}
                     >
-                      <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-success text-[9px] font-bold text-success-foreground">
-                        ✓
+                      <span
+                        className={`grid h-4 w-4 shrink-0 place-items-center rounded-full text-[9px] font-bold ${
+                          made
+                            ? 'bg-success text-success-foreground'
+                            : 'bg-card text-muted-foreground'
+                        }`}
+                      >
+                        {made ? '✓' : '○'}
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-[11.5px] font-semibold text-foreground">
-                          {d.title}
+                          {made ? made.title : a.label}
                         </span>
                         <span className="block font-mono text-[9px] text-muted-foreground">
-                          {d.type}
+                          {made ? a.type : 'not generated yet'}
                         </span>
                       </span>
                     </div>
-                  ))}
+                  )
+                })}
               </div>
             )}
           </div>
 
-          <ArchitecturePanel
-            size={size as 'small' | 'mid' | 'large' | 'global'}
-            country={country}
-          />
+          {/* Architecture view — only for phases that act on the estate/infra */}
+          {ARCH_PHASES.has(sel) && (
+            <ArchitecturePanel
+              size={size as 'small' | 'mid' | 'large' | 'global'}
+              country={country}
+            />
+          )}
         </div>
       </div>
 
@@ -1025,48 +1037,119 @@ function ResCol({ title, items }: { title: string; items: ResItem[] }) {
 }
 
 // ---- decision section ----------------------------------------------------
-function DecisionSection({ phaseId, ctx }: { phaseId: PhaseId; ctx: MoveCtx }) {
-  const moves = SIM_MOVES[phaseId] ?? []
+interface DecisionCard {
+  correct: boolean
+  label: string
+  /** revealed-on-pick context: activity (correct) or failure rationale (wrong). */
+  detail: string
+  kind?: StepKind
+}
+function DecisionSection({
+  phaseId,
+  ctx,
+  nextMove,
+  level,
+  stepsDone,
+  stepsTotal,
+  gate,
+  pitfalls,
+  onVisitRef,
+}: {
+  phaseId: PhaseId
+  ctx: MoveCtx
+  nextMove: { band: LevelBand; act: TreeActivity; step: TreeStep } | null
+  level: number
+  stepsDone: number
+  stepsTotal: number
+  gate?: { id: string; criterion: string }
+  pitfalls: Pitfall[]
+  onVisitRef: (id: string) => void
+}) {
   const [chosen, setChosen] = useState<number | null>(null)
-  // reset choice when the phase changes
-  const [lastPhase, setLastPhase] = useState(phaseId)
-  if (lastPhase !== phaseId) {
-    setLastPhase(phaseId)
+  // reset the choice whenever the move changes (new phase or a step completed)
+  const moveKey = `${phaseId}:${stepsDone}`
+  const [lastKey, setLastKey] = useState(moveKey)
+  if (lastKey !== moveKey) {
+    setLastKey(moveKey)
     setChosen(null)
   }
-  if (!moves.length) return null
-  const res = chosen != null ? moves[chosen].evaluate(ctx) : null
+
+  // wrong-move pool: context-aware traps (SIM_MOVES) + framework Common Failures.
+  const ctxTraps = (SIM_MOVES[phaseId] ?? [])
+    .map((m) => ({ m, res: m.evaluate(ctx) }))
+    .filter((x) => x.res.kind !== 'sound')
+    .map((x) => ({ title: x.m.label, why: x.res.outcome }))
+  const pool = [...ctxTraps, ...pitfalls]
+
+  // Phase fully cleared — nothing left to do.
+  if (!nextMove) {
+    return (
+      <div className="mb-4 rounded-lg border border-success bg-success/10 p-3">
+        <div className="font-mono text-[9.5px] font-extrabold text-success">✓ PHASE CLEARED</div>
+        <div className="mt-0.5 text-[12.5px] font-bold text-foreground">
+          Every maturity level earned{gate ? ` — Gate ${gate.id} certified` : ''}.
+        </div>
+      </div>
+    )
+  }
+
+  // Build the choice: the correct tree step + two wrong moves, ordered by the
+  // step count so the right answer isn't always in the same slot.
+  const wrong = pickWrong(pool, stepsDone, 2)
+  const correctCard: DecisionCard = {
+    correct: true,
+    label: nextMove.step.label,
+    detail: `${nextMove.act.id} · ${nextMove.act.title}`,
+    kind: nextMove.step.kind,
+  }
+  const wrongCards: DecisionCard[] = wrong.map((w) => ({
+    correct: false,
+    label: w.title,
+    detail: w.why,
+  }))
+  const insertAt = wrongCards.length ? stepsDone % (wrongCards.length + 1) : 0
+  const cards: DecisionCard[] = [
+    ...wrongCards.slice(0, insertAt),
+    correctCard,
+    ...wrongCards.slice(insertAt),
+  ]
+
+  const chosenCard = chosen != null ? cards[chosen] : null
+  const step = nextMove.step
 
   return (
     <div className="mb-4">
       <div className="mb-2 flex items-center justify-between">
-        <Eyebrow>Next move — choose your play</Eyebrow>
-        {chosen != null && (
-          <Button
-            variant="ghost"
-            type="button"
-            onClick={() => setChosen(null)}
-            className="h-auto p-0 hover:bg-transparent font-mono text-[9.5px] font-bold text-primary"
-          >
-            ↺ reconsider
-          </Button>
-        )}
+        <Eyebrow>Next move — pick the right play</Eyebrow>
+        <span className="font-mono text-[9.5px] font-bold text-muted-foreground">
+          {stepsDone}/{stepsTotal} · at L{level}
+        </span>
       </div>
-      <div className="grid gap-2 sm:grid-cols-2">
-        {moves.map((m, i) => {
+      {/* the target: what this move advances (which level + framework activity) */}
+      <div className="mb-2 flex items-center gap-2 rounded-md bg-muted px-2.5 py-1.5">
+        <span className="grid h-5 min-w-[26px] place-items-center rounded bg-primary px-1 font-mono text-[9px] font-extrabold text-primary-foreground">
+          L{nextMove.band.level}
+        </span>
+        <span className="min-w-0 flex-1 truncate text-[10.5px] text-muted-foreground">
+          Toward {MATURITY_LEVEL_NAMES[nextMove.band.level]} · {nextMove.act.id}{' '}
+          {nextMove.act.title}
+        </span>
+      </div>
+      <div className="grid gap-2 sm:grid-cols-3">
+        {cards.map((c, i) => {
           const picked = chosen === i
-          const tone = picked && res ? MOVE_TONE[res.kind] : null
+          const tone = picked ? (c.correct ? MOVE_TONE.sound : MOVE_TONE.trap) : null
           return (
             <Button
               variant="ghost"
-              key={m.label}
+              key={`${c.label}-${i}`}
               type="button"
               onClick={() => setChosen(i)}
-              className={`flex h-auto w-full flex-col items-start justify-start whitespace-normal rounded-lg border p-3 text-left transition-opacity ${
+              className={`flex h-auto w-full flex-col items-start justify-start whitespace-normal rounded-lg border p-2.5 text-left transition-opacity ${
                 tone ? `${tone.border} bg-card` : 'border-border bg-muted'
-              } ${chosen != null && !picked ? 'opacity-55' : 'opacity-100'}`}
+              } ${chosen != null && !picked ? 'opacity-50' : 'opacity-100'}`}
             >
-              <div className="mb-1 flex items-center gap-2">
+              <div className="flex items-center gap-2">
                 <span
                   className={`grid h-[18px] w-[18px] shrink-0 place-items-center rounded-md font-mono text-[9px] font-extrabold ${
                     picked && tone
@@ -1076,31 +1159,63 @@ function DecisionSection({ phaseId, ctx }: { phaseId: PhaseId; ctx: MoveCtx }) {
                 >
                   {String.fromCharCode(65 + i)}
                 </span>
-                <span className="text-[12px] font-bold leading-tight text-foreground">
-                  {m.label}
+                <span className="text-[11.5px] font-bold leading-tight text-foreground">
+                  {c.label}
                 </span>
               </div>
-              {!picked && (
-                <div className="pl-[25px] text-[10.5px] leading-snug text-muted-foreground">
-                  {m.desc}
-                </div>
-              )}
-              {picked && res && tone && (
-                <div className="pl-[25px]">
-                  <div className={`mb-0.5 font-mono text-[9.5px] font-extrabold ${tone.text}`}>
-                    {tone.label}
-                  </div>
-                  <div className="text-[11px] leading-snug text-muted-foreground">
-                    {res.outcome}
-                  </div>
-                </div>
-              )}
             </Button>
           )
         })}
       </div>
+      {/* outcome of the pick */}
+      {chosenCard && chosenCard.correct && (
+        <div className="mt-2 rounded-lg border border-success bg-success/10 p-3">
+          <div className="mb-1 font-mono text-[9.5px] font-extrabold text-success">
+            ✓ Right call — {chosenCard.detail}
+          </div>
+          <Link
+            to={step.to}
+            onClick={
+              step.kind === 'reference' && step.refId ? () => onVisitRef(step.refId!) : undefined
+            }
+            className="flex items-center gap-2.5 rounded-md border border-success/40 bg-card px-3 py-2 hover:bg-muted/60"
+          >
+            <span
+              className={`rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${KIND_CHIP[step.kind]}`}
+            >
+              {step.kind}
+            </span>
+            <span className="min-w-0 flex-1 truncate text-[12px] font-semibold text-foreground">
+              {step.label}
+            </span>
+            <span className="shrink-0 font-mono text-[9px] text-primary">open →</span>
+          </Link>
+        </div>
+      )}
+      {chosenCard && !chosenCard.correct && (
+        <div className="mt-2 rounded-lg border border-destructive bg-destructive/5 p-3">
+          <div className="mb-0.5 font-mono text-[9.5px] font-extrabold text-destructive">
+            ✕ Common failure
+          </div>
+          <div className="text-[11px] leading-snug text-muted-foreground">{chosenCard.detail}</div>
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => setChosen(null)}
+            className="mt-1 h-auto p-0 font-mono text-[9.5px] font-bold text-primary hover:bg-transparent"
+          >
+            ↺ try again
+          </Button>
+        </div>
+      )}
     </div>
   )
+}
+
+/** deterministic pick of k wrong moves, varied by the step seed. */
+function pickWrong(pool: Pitfall[], seed: number, k: number): Pitfall[] {
+  if (pool.length <= k) return pool
+  return Array.from({ length: k }, (_, j) => pool[(seed + j) % pool.length])
 }
 
 // ---- quarter report ------------------------------------------------------
