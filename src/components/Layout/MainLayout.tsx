@@ -25,6 +25,7 @@ import {
   Search,
   ScrollText,
   UserCog,
+  Gamepad2,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewModal } from '../ui/WhatsNewModal'
@@ -34,7 +35,6 @@ import { PhaseCompletionToast } from '../ui/PhaseCompletionToast'
 
 import { GuidedTour } from '../common/GuidedTour'
 import { Breadcrumb } from '../common/Breadcrumb'
-import { PhaseRail } from '../shared/PhaseRail'
 import { PhaseContextBanner } from '../shared/PhaseContextBanner'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
@@ -146,6 +146,15 @@ export const MainLayout = () => {
       hiddenOnMobile: !(selectedPersona === 'executive' || selectedPersona === 'architect'),
       mobileMore: selectedPersona !== 'executive' && selectedPersona !== 'architect',
       moreOrder: 5,
+    },
+    {
+      path: '/simulation',
+      label: 'Simulation',
+      icon: Gamepad2,
+      section: 'assess',
+      hiddenOnMobile: true,
+      mobileMore: true,
+      moreOrder: 6,
     },
     {
       path: '/playground',
@@ -529,12 +538,10 @@ export const MainLayout = () => {
               transition={{ duration: 0.3 }}
               className="lg:flex lg:items-start lg:gap-6"
             >
-              {/* Persistent Migration-Program phase rail (spec §4) — left sidebar on lg+ */}
-              <PhaseRail />
               <div className="min-w-0 lg:flex-1">
                 <Breadcrumb />
-                {/* Phase context from the rail (?phase=) — on pages without their
-                    own phase UI; the banner self-skips Assess/Report/Command Center. */}
+                {/* "You're viewing Phase X" banner — shows when a ?phase= param is
+                    present (e.g. a deep link); self-skips Assess/Report/Command Center. */}
                 <PhaseContextBanner />
                 <Outlet />
               </div>
