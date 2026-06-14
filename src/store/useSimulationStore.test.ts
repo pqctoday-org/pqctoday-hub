@@ -50,4 +50,18 @@ describe('useSimulationStore', () => {
     s().reset()
     expect(s().sel).toBe('p0')
   })
+
+  it('auto-completion delegates steps and can be cancelled per phase', () => {
+    s().autoCompleteSteps(['p4::/learn/migration-program', 'p4::/business/tools/roadmap-builder'])
+    s().autoCompleteSteps(['p5::/learn/hybrid-crypto'])
+    expect(s().auto).toContain('p4::/learn/migration-program')
+    expect(s().auto).toContain('p5::/learn/hybrid-crypto')
+    // idempotent
+    s().autoCompleteSteps(['p4::/learn/migration-program'])
+    expect(s().auto.filter((k) => k === 'p4::/learn/migration-program')).toHaveLength(1)
+    // cancel only p4 — p5 delegation survives
+    s().clearAuto('p4')
+    expect(s().auto.some((k) => k.startsWith('p4::'))).toBe(false)
+    expect(s().auto).toContain('p5::/learn/hybrid-crypto')
+  })
 })
