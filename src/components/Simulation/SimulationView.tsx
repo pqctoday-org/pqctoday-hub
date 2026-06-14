@@ -687,8 +687,8 @@ export function SimulationView() {
         </div>
       </header>
 
-      {/* ticker (top — live event feed) */}
-      <div className="flex h-[30px] shrink-0 items-center gap-5 overflow-hidden bg-foreground px-4 text-background/85">
+      {/* ticker (top — live event feed) — grey strip, distinct from the dark header */}
+      <div className="flex h-[30px] shrink-0 items-center gap-5 overflow-hidden border-b border-border bg-muted px-4 text-foreground">
         <span className="shrink-0 font-mono text-[9px] font-extrabold uppercase tracking-[0.16em] text-primary">
           ● LIVE FEED
         </span>
@@ -696,7 +696,7 @@ export function SimulationView() {
           {tickerItems.map((e, i) => (
             <span key={i} className="flex shrink-0 items-center gap-1.5 text-[11px]">
               <span className={`h-1.5 w-1.5 rounded-full ${SEVERITY_DOT[e.sev]}`} />
-              <span className="font-mono text-[9px] text-background/45">{e.t}</span>
+              <span className="font-mono text-[9px] text-muted-foreground">{e.t}</span>
               <span className="whitespace-nowrap">{e.txt}</span>
             </span>
           ))}
