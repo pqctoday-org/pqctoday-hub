@@ -494,6 +494,13 @@ export function SimulationView() {
           />
         </div>
         <div className="ml-auto flex shrink-0 items-center gap-2.5">
+          <Link
+            to="/"
+            aria-label="Exit to hub"
+            className="flex h-auto items-center rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-[10px] font-bold text-background/70 hover:bg-background/10"
+          >
+            ← HUB
+          </Link>
           <Button
             type="button"
             variant="ghost"
