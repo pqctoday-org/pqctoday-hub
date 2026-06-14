@@ -10,8 +10,11 @@
  * useSimulationStore. Design: reports/framework-gap/SIMULATION-DESIGN.md +
  * the Mission Control handoff.
  */
-import { useMemo, useState, type ReactNode } from 'react'
+import { useMemo, useState, Suspense, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { ArtifactDrawer, type DrawerMode } from '@/components/BusinessCenter/ArtifactDrawer'
+import { SIM_LEARN_MODULES, isEmbeddableModule } from '@/components/PKILearning/simEmbedModules'
+import { EmbeddedLearnProvider } from '@/components/PKILearning/embeddedLearnContext'
 import { Button } from '@/components/ui/button'
 import { FRAMEWORK_PHASES, PHASE_ORDER, type PhaseId } from '@/data/frameworkPhases'
 import { MATURITY_LEVEL_NAMES, PHASE_WIN_LEVEL, LEVEL_EVIDENCE } from '@/data/phaseMaturity'
@@ -347,6 +350,24 @@ export function SimulationView() {
     clearAuto,
   } = useSimulationStore()
   const [report, setReport] = useState<QuarterReportData | null>(null)
+  // in-sim embedding: a Learn module (panel under the sim header) or an activity
+  // editor (ArtifactDrawer modal). Keeps the player inside /simulation.
+  const [learnEmbed, setLearnEmbed] = useState<{ moduleId: string; title: string } | null>(null)
+  const [drawerCreateType, setDrawerCreateType] = useState<ExecutiveDocumentType | null>(null)
+  const [drawerMode, setDrawerMode] = useState<DrawerMode>('create')
+
+  const LearnComp = learnEmbed ? SIM_LEARN_MODULES[learnEmbed.moduleId] : null
+  const canEmbedStep = (s: TreeStep) =>
+    (s.kind === 'learn' && !!s.moduleId && isEmbeddableModule(s.moduleId)) ||
+    (s.kind === 'activity' && !!s.artifactType)
+  const openStep = (s: TreeStep) => {
+    if (s.kind === 'learn' && s.moduleId && isEmbeddableModule(s.moduleId))
+      setLearnEmbed({ moduleId: s.moduleId, title: s.label })
+    else if (s.kind === 'activity' && s.artifactType) {
+      setDrawerMode('create')
+      setDrawerCreateType(s.artifactType)
+    }
+  }
 
   // real hub completion state: generated artifacts + Learn-module progress
   const docs = useModuleStore((s) => s.artifacts.executiveDocuments)
@@ -625,11 +646,9 @@ export function SimulationView() {
         <div className="flex shrink-0 items-center gap-2">
           <div className="h-6 w-6 rounded-md bg-gradient-to-br from-primary to-secondary" />
           <div>
-            <div className="whitespace-nowrap text-[13.5px] font-extrabold">
-              Migration Simulation
-            </div>
+            <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>
             <div className="font-mono text-[8px] font-bold uppercase tracking-[0.14em] text-background/50">
-              Mission Control
+              PQC Migration Simulation
             </div>
           </div>
         </div>
@@ -764,430 +783,493 @@ export function SimulationView() {
         />
       </div>
 
-      {/* body */}
-      <div className="grid min-h-0 flex-1 gap-3.5 p-4 lg:grid-cols-[300px_1fr_332px]">
-        {/* left — team (who runs this phase) above the phase journey */}
-        <div className="flex min-h-0 flex-col gap-3.5 overflow-auto">
-          <div className="rounded-xl border border-border bg-card p-4">
-            <Eyebrow className="mb-2.5 block">Team — who runs this phase</Eyebrow>
-            <div className="flex flex-col gap-2">
-              {phaseRoles.length === 0 && (
-                <p className="text-sm text-muted-foreground">No role mapped (overlay gap).</p>
-              )}
-              {phaseRoles.map((r) => {
-                const you = r.persona === seat
-                return (
-                  <div key={r.id} className="flex items-center gap-2.5">
-                    <span
-                      className={`grid h-[25px] w-[25px] shrink-0 place-items-center rounded-md text-[11px] font-extrabold ${
-                        you
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted text-muted-foreground'
-                      }`}
-                    >
-                      {r.label[0]}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-[11.5px] font-bold text-foreground">{r.label}</div>
-                      <div className="font-mono text-[9px] text-muted-foreground">
-                        {r.typicalFte} FTE
-                      </div>
-                    </div>
-                    <span
-                      className={`rounded-full px-2 py-0.5 font-mono text-[10px] font-bold ${
-                        you ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'
-                      }`}
-                    >
-                      {you ? 'YOU' : 'AI'}
-                    </span>
-                  </div>
-                )
-              })}
-            </div>
+      {/* body — swaps to the embedded Learn module when one is open (sim header stays) */}
+      {learnEmbed && LearnComp ? (
+        <div className="flex min-h-0 flex-1 flex-col">
+          <div className="flex items-center gap-2 border-b border-border bg-card px-4 py-2">
+            <span className="shrink-0 rounded bg-primary/15 px-2 py-0.5 font-mono text-[9px] font-bold uppercase text-primary">
+              Learn · in simulation
+            </span>
+            <span className="min-w-0 flex-1 truncate text-[12.5px] font-bold text-foreground">
+              {learnEmbed.title}
+            </span>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setLearnEmbed(null)}
+              className="h-auto shrink-0 rounded-md border border-border px-2.5 py-1 text-[11px] font-bold text-foreground hover:bg-muted"
+            >
+              ✕ Back to board
+            </Button>
           </div>
-          <div className="flex min-h-0 flex-col overflow-auto rounded-xl border border-border bg-card p-3">
-            <div className="mb-2 flex items-center justify-between">
-              <Eyebrow>Phase journey</Eyebrow>
-              <span className="rounded-full bg-muted px-2 py-0.5 font-mono text-[10px] font-bold text-muted-foreground">
-                0 → 7
-              </span>
-            </div>
-            <div className="flex flex-col gap-0.5">
-              {LIFECYCLE.map((p) => {
-                const fp = FRAMEWORK_PHASES[p]
-                const lv = levelOf(p)
-                const isCleared = lv >= PHASE_WIN_LEVEL
-                const current = p === sel
-                const owner = Object.values(ROLE_CROSSWALK).some(
-                  (r) => r.phases.includes(p) && r.persona === seat
-                )
-                return (
-                  <Button
-                    variant="ghost"
-                    key={p}
-                    type="button"
-                    onClick={() => setSel(p)}
-                    className={`h-auto justify-start whitespace-normal flex w-full items-center gap-2.5 rounded-lg border px-2.5 py-2 text-left ${
-                      current ? 'border-primary bg-primary/10' : 'border-transparent hover:bg-muted'
-                    }`}
-                  >
-                    <span
-                      className={`grid h-[22px] w-[22px] shrink-0 place-items-center rounded-md text-[11px] font-extrabold ${
-                        isCleared
-                          ? 'bg-success text-success-foreground'
-                          : current
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted text-muted-foreground'
-                      }`}
-                    >
-                      {fp.number}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-[12px] font-bold text-foreground">
-                        {fp.name}
-                      </div>
-                      <div className="flex gap-1.5 font-mono text-[9px] text-muted-foreground">
-                        <span>
-                          {isCleared ? 'cleared' : current ? 'active' : 'locked'} ·{' '}
-                          {MATURITY_LEVEL_NAMES[lv]}
-                        </span>
-                        {owner && <span className="font-bold text-primary">· you</span>}
-                      </div>
-                    </div>
-                    <Ring level={lv} />
-                  </Button>
-                )
-              })}
-            </div>
-            <div className="mt-2 rounded-lg border border-dashed border-border bg-muted/40 px-2.5 py-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[11.5px] font-bold text-foreground">Foundations</span>
-                <span className="font-mono text-[9px] text-muted-foreground">
-                  L{levelOf('foundations')}
-                </span>
-              </div>
-              <div className="mt-0.5 font-mono text-[9px] text-muted-foreground">
-                spanning · agility · KPIs · skills
-              </div>
-            </div>
+          {/* Contain the module: block its cross-module /learn anchor links so a
+              stray "see also" link can't navigate the player out of the sim.
+              (Quiz CTA is hidden via EmbeddedLearnProvider; next-module is page
+              chrome that isn't rendered here.) */}
+          <div
+            className="min-h-0 flex-1 overflow-auto"
+            onClickCapture={(e) => {
+              const a = (e.target as HTMLElement).closest?.('a[href^="/learn"]')
+              if (a) e.preventDefault()
+            }}
+          >
+            <EmbeddedLearnProvider>
+              <Suspense
+                fallback={
+                  <div className="p-8 text-center text-sm text-muted-foreground">
+                    Loading module…
+                  </div>
+                }
+              >
+                <LearnComp />
+              </Suspense>
+            </EmbeddedLearnProvider>
           </div>
         </div>
-
-        {/* center — active phase ops */}
-        <div className="flex min-h-0 flex-col overflow-auto rounded-xl border border-border bg-card p-5">
-          <div className="mb-1 flex flex-wrap items-center gap-2.5">
-            <span
-              className={`rounded-full px-2 py-0.5 font-mono text-[10px] font-bold ${
-                phaseCleared ? 'bg-success/15 text-success' : 'bg-primary/15 text-primary'
-              }`}
-            >
-              {phaseCleared ? 'CLEARED' : 'ACTIVE'} · PHASE {phase.number}
-            </span>
-            <span className="text-xl font-extrabold text-foreground">{phase.name}</span>
-            {phase.gate && (
-              <span className="ml-auto font-mono text-[10.5px] text-muted-foreground">
-                {phase.gate.id} · {phase.gate.criterion}
-              </span>
-            )}
-          </div>
-          <p className="mb-4 mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
-            {mission?.mission}{' '}
-            <b className="text-foreground">
-              {phaseOwned
-                ? 'You own this phase.'
-                : `Run by your AI team${phaseRoles[0] ? ` (${phaseRoles[0].label})` : ''}.`}
-            </b>
-          </p>
-
-          {/* role delegation — phases outside the player's role: auto-complete or do it */}
-          {!phaseOwned && (phaseAutoActive || stepsDone < stepsTotal) && (
-            <div className="mb-3 flex items-center gap-2 rounded-lg border border-secondary/40 bg-secondary/5 px-3 py-2">
-              <span className="min-w-0 flex-1 text-[11px] leading-tight text-muted-foreground">
-                {phaseAutoActive ? (
-                  <>
-                    <b className="text-foreground">{phase.name}</b> is being run by your AI team.
-                  </>
-                ) : (
-                  <>
-                    Not your role — your AI team can run{' '}
-                    <b className="text-foreground">{phase.name}</b>, or you can do it yourself.
-                  </>
+      ) : (
+        <div className="grid min-h-0 flex-1 gap-3.5 p-4 lg:grid-cols-[300px_1fr_332px]">
+          {/* left — team (who runs this phase) above the phase journey */}
+          <div className="flex min-h-0 flex-col gap-3.5 overflow-auto">
+            <div className="rounded-xl border border-border bg-card p-4">
+              <Eyebrow className="mb-2.5 block">Team — who runs this phase</Eyebrow>
+              <div className="flex flex-col gap-2">
+                {phaseRoles.length === 0 && (
+                  <p className="text-sm text-muted-foreground">No role mapped (overlay gap).</p>
                 )}
-              </span>
-              {phaseAutoActive ? (
-                <Button
-                  variant="ghost"
-                  type="button"
-                  onClick={() => clearAuto(sel)}
-                  className="h-auto shrink-0 rounded-md border border-border px-2.5 py-1 text-[10.5px] font-bold text-foreground hover:bg-muted"
-                >
-                  ↺ I’ll do it
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  onClick={delegateToAI}
-                  className="h-auto shrink-0 rounded-md bg-secondary px-2.5 py-1 text-[10.5px] font-bold text-secondary-foreground"
-                >
-                  Auto-complete ▸
-                </Button>
-              )}
-            </div>
-          )}
-
-          <DecisionSection
-            phaseId={sel}
-            ctx={moveCtx}
-            nextMove={nextMove}
-            level={level}
-            stepsDone={stepsDone}
-            stepsTotal={stepsTotal}
-            gate={phaseTree?.gate}
-            pitfalls={phaseTree?.pitfalls ?? []}
-            onVisitRef={markRefVisited}
-          />
-
-          {/* maturity gates — read-only; each level is earned only by passing its
-              gate (completing that level's activities from real hub state) */}
-          {phaseTree && (
-            <>
-              <div className="mb-2 flex items-center justify-between">
-                <Eyebrow>Maturity gates — pass each to advance</Eyebrow>
-                <span
-                  className={`text-[11px] font-bold ${phaseCleared ? 'text-success' : 'text-muted-foreground'}`}
-                >
-                  {phaseCleared
-                    ? '✓ phase cleared'
-                    : `at L${level} · ${MATURITY_LEVEL_NAMES[level]}`}
-                </span>
-              </div>
-              <div className="mb-4 flex flex-col gap-1.5">
-                {phaseTree.levels.map((band) => {
-                  const total = band.activities.reduce((n, a) => n + a.steps.length, 0)
-                  const done = band.activities.reduce(
-                    (n, a) => n + a.steps.filter((s) => stepDone(s, sel)).length,
-                    0
-                  )
-                  const earned = level >= band.level
-                  const current = band.level === level + 1 // the gate in progress
-                  const locked = band.level > level + 1
-                  const goal = band.level === PHASE_WIN_LEVEL
+                {phaseRoles.map((r) => {
+                  const you = r.persona === seat
                   return (
-                    <div
-                      key={band.level}
-                      className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${
-                        goal ? 'border-warning' : earned ? 'border-success' : 'border-border'
-                      } ${earned ? 'bg-success/10' : 'bg-muted'} ${locked ? 'opacity-50' : ''}`}
-                    >
+                    <div key={r.id} className="flex items-center gap-2.5">
                       <span
-                        className={`grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md font-mono text-[10px] font-extrabold ${
-                          earned
-                            ? 'bg-success text-success-foreground'
-                            : 'bg-card text-muted-foreground'
+                        className={`grid h-[25px] w-[25px] shrink-0 place-items-center rounded-md text-[11px] font-extrabold ${
+                          you
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted text-muted-foreground'
                         }`}
                       >
-                        {earned ? '✓' : locked ? '🔒' : band.level}
+                        {r.label[0]}
                       </span>
-                      <span className="w-[88px] shrink-0 text-[11.5px] font-bold text-foreground">
-                        L{band.level} · {MATURITY_LEVEL_NAMES[band.level]}
-                      </span>
-                      <span className="flex-1 text-[10.5px] leading-tight text-muted-foreground">
-                        {band.indicator}
-                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-[11.5px] font-bold text-foreground">{r.label}</div>
+                        <div className="font-mono text-[9px] text-muted-foreground">
+                          {r.typicalFte} FTE
+                        </div>
+                      </div>
                       <span
-                        className={`shrink-0 font-mono text-[9px] font-bold ${
-                          earned
-                            ? 'text-success'
-                            : current
-                              ? 'text-primary'
-                              : 'text-muted-foreground'
+                        className={`rounded-full px-2 py-0.5 font-mono text-[10px] font-bold ${
+                          you ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'
                         }`}
                       >
-                        {earned ? 'passed ✓' : `${done}/${total} checks`}
+                        {you ? 'YOU' : 'AI'}
                       </span>
-                      {goal && (
-                        <span className="shrink-0 rounded-full bg-warning/15 px-2 py-0.5 font-mono text-[10px] font-bold text-warning">
-                          GOAL
-                        </span>
-                      )}
                     </div>
                   )
                 })}
               </div>
-            </>
-          )}
-
-          {/* resources */}
-          <Eyebrow className="mb-2">Open a resource — every activity is a real hub tool</Eyebrow>
-          <div className="mt-auto grid gap-2.5 md:grid-cols-3">
-            <ResCol
-              title="Learn"
-              items={resLinks('learn', sel, sector, seat).map((it) => ({
-                ...it,
-                done: moduleDone(it.id),
-              }))}
-            />
-            <ResCol
-              title="Activities"
-              items={resLinks('activities', sel, sector, seat).map((it) => ({
-                ...it,
-                done: artifactDone(TOOL_TO_ARTIFACT[it.id]),
-              }))}
-            />
-            <ResCol
-              title="Reference"
-              items={resLinks('reference', sel, sector, seat).map((it) => ({
-                ...it,
-                done: refDone(it.id),
-                onClick: () => markRefVisited(it.id),
-              }))}
-            />
-          </div>
-        </div>
-
-        {/* right — phase-relevant intel: artifacts produced this phase + the
-            views that matter to it (architecture only for estate/infra phases) */}
-        <div className="flex min-h-0 flex-col gap-3.5 overflow-auto">
-          {/* Critical assets — discovered in P0; value + date-driven quantum exposure */}
-          <div className="rounded-xl border border-border bg-card p-4">
-            <Eyebrow className="mb-2 block">
-              Critical assets <span className="text-muted-foreground/60">· €{totalValueM}M</span>
-            </Eyebrow>
-            {!assetsDiscovered && (
-              <p className="mb-2 rounded-md border border-dashed border-warning/50 bg-warning/5 px-2 py-1 text-[10px] text-warning">
-                Estimated — run P0 “Assess Data &amp; Asset Sensitivity” to discover &amp; confirm.
-              </p>
-            )}
-            <div className="flex flex-col gap-1.5">
-              {assets.map((a) => {
-                const hot = a.exposurePct >= 0.6 // medium+ exposure
-                return (
-                  <div
-                    key={a.id}
-                    className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
-                      hot ? 'border-destructive/40 bg-destructive/5' : 'border-border bg-muted/40'
-                    }`}
-                  >
-                    <span
-                      className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${TIER_CHIP[a.tier]}`}
-                    >
-                      {a.tier}
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[11.5px] font-semibold text-foreground">
-                        {a.label}
-                      </span>
-                      <span className="block font-mono text-[9px] text-muted-foreground">
-                        {a.exposure} · €{a.valueM}M · {Math.round(a.exposurePct * 100)}% exposed
-                      </span>
-                    </span>
-                    <span
-                      className={`shrink-0 font-mono text-[10px] font-bold ${hot ? 'text-destructive' : 'text-muted-foreground'}`}
-                    >
-                      €{a.exposedM}M
-                    </span>
-                  </div>
-                )
-              })}
             </div>
-            <div className="mt-2 flex items-center justify-between font-mono text-[10px]">
-              <span className="text-muted-foreground">Quantum-exposed value</span>
-              <span className="font-bold text-destructive">€{exposedValueM}M</span>
-            </div>
-          </div>
-
-          {/* Cyber insurance — policy limit vs the quantum-exposed value */}
-          <div className="rounded-xl border border-border bg-card p-4">
-            <Eyebrow className="mb-2 block">Cyber insurance</Eyebrow>
-            <div className="flex items-baseline justify-between">
-              <span className="text-[19px] font-extrabold text-foreground">
-                €{insurancePolicyM}M
-              </span>
-              <span className="font-mono text-[9px] text-muted-foreground">
-                covers critical + high
-              </span>
-            </div>
-            <div className="mt-0.5 flex items-center justify-between font-mono text-[10px]">
-              <span className="text-muted-foreground">Annual premium · 0.15%</span>
-              <span className="font-bold text-foreground">
-                {premiumM >= 1 ? `€${premiumM}M` : `€${Math.round(premiumM * 1000)}k`}/yr
-              </span>
-            </div>
-            <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
-              <div
-                className={uninsuredM > 0 ? 'h-full bg-warning' : 'h-full bg-success'}
-                style={{
-                  width: `${exposedValueM > 0 ? Math.min(100, (Math.min(insurancePolicyM, exposedValueM) / exposedValueM) * 100) : 100}%`,
-                }}
-              />
-            </div>
-            <div className="mt-1.5 flex items-center justify-between font-mono text-[10px]">
-              <span className="text-muted-foreground">Uninsured quantum exposure</span>
-              <span className={`font-bold ${uninsuredM > 0 ? 'text-destructive' : 'text-success'}`}>
-                €{uninsuredM}M
-              </span>
-            </div>
-          </div>
-
-          {/* Artifacts this phase produces — completed vs still to generate */}
-          <div className="rounded-xl border border-border bg-card p-4">
-            <Eyebrow className="mb-2.5 block">
-              {phase.name} artifacts{' '}
-              <span className="text-muted-foreground/60">
-                · {phaseDocs.length}/{phaseArtifactTypes.size}
-              </span>
-            </Eyebrow>
-            {phaseArtifactTypes.size === 0 ? (
-              <p className="text-[11px] text-muted-foreground">
-                This phase produces no Command-Center artifact — progress comes from Learn modules
-                and reference look-ups.
-              </p>
-            ) : (
-              <div className="flex flex-col gap-1.5">
-                {phaseArtifacts.map((a) => {
-                  const made = phaseDocs.find((d) => d.type === a.type)
+            <div className="flex min-h-0 flex-col overflow-auto rounded-xl border border-border bg-card p-3">
+              <div className="mb-2 flex items-center justify-between">
+                <Eyebrow>Phase journey</Eyebrow>
+                <span className="rounded-full bg-muted px-2 py-0.5 font-mono text-[10px] font-bold text-muted-foreground">
+                  0 → 7
+                </span>
+              </div>
+              <div className="flex flex-col gap-0.5">
+                {LIFECYCLE.map((p) => {
+                  const fp = FRAMEWORK_PHASES[p]
+                  const lv = levelOf(p)
+                  const isCleared = lv >= PHASE_WIN_LEVEL
+                  const current = p === sel
+                  const owner = Object.values(ROLE_CROSSWALK).some(
+                    (r) => r.phases.includes(p) && r.persona === seat
+                  )
                   return (
-                    <div
-                      key={a.type}
-                      className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
-                        made
-                          ? 'border-success/40 bg-success/5'
-                          : 'border-dashed border-border bg-muted/40'
+                    <Button
+                      variant="ghost"
+                      key={p}
+                      type="button"
+                      onClick={() => setSel(p)}
+                      className={`h-auto justify-start whitespace-normal flex w-full items-center gap-2.5 rounded-lg border px-2.5 py-2 text-left ${
+                        current
+                          ? 'border-primary bg-primary/10'
+                          : 'border-transparent hover:bg-muted'
                       }`}
                     >
                       <span
-                        className={`grid h-4 w-4 shrink-0 place-items-center rounded-full text-[9px] font-bold ${
-                          made
+                        className={`grid h-[22px] w-[22px] shrink-0 place-items-center rounded-md text-[11px] font-extrabold ${
+                          isCleared
                             ? 'bg-success text-success-foreground'
-                            : 'bg-card text-muted-foreground'
+                            : current
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-muted text-muted-foreground'
                         }`}
                       >
-                        {made ? '✓' : '○'}
+                        {fp.number}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-[12px] font-bold text-foreground">
+                          {fp.name}
+                        </div>
+                        <div className="flex gap-1.5 font-mono text-[9px] text-muted-foreground">
+                          <span>
+                            {isCleared ? 'cleared' : current ? 'active' : 'locked'} ·{' '}
+                            {MATURITY_LEVEL_NAMES[lv]}
+                          </span>
+                          {owner && <span className="font-bold text-primary">· you</span>}
+                        </div>
+                      </div>
+                      <Ring level={lv} />
+                    </Button>
+                  )
+                })}
+              </div>
+              <div className="mt-2 rounded-lg border border-dashed border-border bg-muted/40 px-2.5 py-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11.5px] font-bold text-foreground">Foundations</span>
+                  <span className="font-mono text-[9px] text-muted-foreground">
+                    L{levelOf('foundations')}
+                  </span>
+                </div>
+                <div className="mt-0.5 font-mono text-[9px] text-muted-foreground">
+                  spanning · agility · KPIs · skills
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* center — active phase ops */}
+          <div className="flex min-h-0 flex-col overflow-auto rounded-xl border border-border bg-card p-5">
+            <div className="mb-1 flex flex-wrap items-center gap-2.5">
+              <span
+                className={`rounded-full px-2 py-0.5 font-mono text-[10px] font-bold ${
+                  phaseCleared ? 'bg-success/15 text-success' : 'bg-primary/15 text-primary'
+                }`}
+              >
+                {phaseCleared ? 'CLEARED' : 'ACTIVE'} · PHASE {phase.number}
+              </span>
+              <span className="text-xl font-extrabold text-foreground">{phase.name}</span>
+              {phase.gate && (
+                <span className="ml-auto font-mono text-[10.5px] text-muted-foreground">
+                  {phase.gate.id} · {phase.gate.criterion}
+                </span>
+              )}
+            </div>
+            <p className="mb-4 mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+              {mission?.mission}{' '}
+              <b className="text-foreground">
+                {phaseOwned
+                  ? 'You own this phase.'
+                  : `Run by your AI team${phaseRoles[0] ? ` (${phaseRoles[0].label})` : ''}.`}
+              </b>
+            </p>
+
+            {/* role delegation — phases outside the player's role: auto-complete or do it */}
+            {!phaseOwned && (phaseAutoActive || stepsDone < stepsTotal) && (
+              <div className="mb-3 flex items-center gap-2 rounded-lg border border-secondary/40 bg-secondary/5 px-3 py-2">
+                <span className="min-w-0 flex-1 text-[11px] leading-tight text-muted-foreground">
+                  {phaseAutoActive ? (
+                    <>
+                      <b className="text-foreground">{phase.name}</b> is being run by your AI team.
+                    </>
+                  ) : (
+                    <>
+                      Not your role — your AI team can run{' '}
+                      <b className="text-foreground">{phase.name}</b>, or you can do it yourself.
+                    </>
+                  )}
+                </span>
+                {phaseAutoActive ? (
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    onClick={() => clearAuto(sel)}
+                    className="h-auto shrink-0 rounded-md border border-border px-2.5 py-1 text-[10.5px] font-bold text-foreground hover:bg-muted"
+                  >
+                    ↺ I’ll do it
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    onClick={delegateToAI}
+                    className="h-auto shrink-0 rounded-md bg-secondary px-2.5 py-1 text-[10.5px] font-bold text-secondary-foreground"
+                  >
+                    Auto-complete ▸
+                  </Button>
+                )}
+              </div>
+            )}
+
+            <DecisionSection
+              phaseId={sel}
+              ctx={moveCtx}
+              nextMove={nextMove}
+              level={level}
+              stepsDone={stepsDone}
+              stepsTotal={stepsTotal}
+              gate={phaseTree?.gate}
+              pitfalls={phaseTree?.pitfalls ?? []}
+              onVisitRef={markRefVisited}
+              canEmbed={canEmbedStep}
+              onOpenStep={openStep}
+            />
+
+            {/* maturity gates — read-only; each level is earned only by passing its
+              gate (completing that level's activities from real hub state) */}
+            {phaseTree && (
+              <>
+                <div className="mb-2 flex items-center justify-between">
+                  <Eyebrow>Maturity gates — pass each to advance</Eyebrow>
+                  <span
+                    className={`text-[11px] font-bold ${phaseCleared ? 'text-success' : 'text-muted-foreground'}`}
+                  >
+                    {phaseCleared
+                      ? '✓ phase cleared'
+                      : `at L${level} · ${MATURITY_LEVEL_NAMES[level]}`}
+                  </span>
+                </div>
+                <div className="mb-4 flex flex-col gap-1.5">
+                  {phaseTree.levels.map((band) => {
+                    const total = band.activities.reduce((n, a) => n + a.steps.length, 0)
+                    const done = band.activities.reduce(
+                      (n, a) => n + a.steps.filter((s) => stepDone(s, sel)).length,
+                      0
+                    )
+                    const earned = level >= band.level
+                    const current = band.level === level + 1 // the gate in progress
+                    const locked = band.level > level + 1
+                    const goal = band.level === PHASE_WIN_LEVEL
+                    return (
+                      <div
+                        key={band.level}
+                        className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${
+                          goal ? 'border-warning' : earned ? 'border-success' : 'border-border'
+                        } ${earned ? 'bg-success/10' : 'bg-muted'} ${locked ? 'opacity-50' : ''}`}
+                      >
+                        <span
+                          className={`grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md font-mono text-[10px] font-extrabold ${
+                            earned
+                              ? 'bg-success text-success-foreground'
+                              : 'bg-card text-muted-foreground'
+                          }`}
+                        >
+                          {earned ? '✓' : locked ? '🔒' : band.level}
+                        </span>
+                        <span className="w-[88px] shrink-0 text-[11.5px] font-bold text-foreground">
+                          L{band.level} · {MATURITY_LEVEL_NAMES[band.level]}
+                        </span>
+                        <span className="flex-1 text-[10.5px] leading-tight text-muted-foreground">
+                          {band.indicator}
+                        </span>
+                        <span
+                          className={`shrink-0 font-mono text-[9px] font-bold ${
+                            earned
+                              ? 'text-success'
+                              : current
+                                ? 'text-primary'
+                                : 'text-muted-foreground'
+                          }`}
+                        >
+                          {earned ? 'passed ✓' : `${done}/${total} checks`}
+                        </span>
+                        {goal && (
+                          <span className="shrink-0 rounded-full bg-warning/15 px-2 py-0.5 font-mono text-[10px] font-bold text-warning">
+                            GOAL
+                          </span>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </>
+            )}
+
+            {/* resources */}
+            <Eyebrow className="mb-2">Open a resource — every activity is a real hub tool</Eyebrow>
+            <div className="mt-auto grid gap-2.5 md:grid-cols-3">
+              <ResCol
+                title="Learn"
+                items={resLinks('learn', sel, sector, seat).map((it) => ({
+                  ...it,
+                  done: moduleDone(it.id),
+                }))}
+              />
+              <ResCol
+                title="Activities"
+                items={resLinks('activities', sel, sector, seat).map((it) => ({
+                  ...it,
+                  done: artifactDone(TOOL_TO_ARTIFACT[it.id]),
+                }))}
+              />
+              <ResCol
+                title="Reference"
+                items={resLinks('reference', sel, sector, seat).map((it) => ({
+                  ...it,
+                  done: refDone(it.id),
+                  onClick: () => markRefVisited(it.id),
+                }))}
+              />
+            </div>
+          </div>
+
+          {/* right — phase-relevant intel: artifacts produced this phase + the
+            views that matter to it (architecture only for estate/infra phases) */}
+          <div className="flex min-h-0 flex-col gap-3.5 overflow-auto">
+            {/* Critical assets — discovered in P0; value + date-driven quantum exposure */}
+            <div className="rounded-xl border border-border bg-card p-4">
+              <Eyebrow className="mb-2 block">
+                Critical assets <span className="text-muted-foreground/60">· €{totalValueM}M</span>
+              </Eyebrow>
+              {!assetsDiscovered && (
+                <p className="mb-2 rounded-md border border-dashed border-warning/50 bg-warning/5 px-2 py-1 text-[10px] text-warning">
+                  Estimated — run P0 “Assess Data &amp; Asset Sensitivity” to discover &amp;
+                  confirm.
+                </p>
+              )}
+              <div className="flex flex-col gap-1.5">
+                {assets.map((a) => {
+                  const hot = a.exposurePct >= 0.6 // medium+ exposure
+                  return (
+                    <div
+                      key={a.id}
+                      className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
+                        hot ? 'border-destructive/40 bg-destructive/5' : 'border-border bg-muted/40'
+                      }`}
+                    >
+                      <span
+                        className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${TIER_CHIP[a.tier]}`}
+                      >
+                        {a.tier}
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-[11.5px] font-semibold text-foreground">
-                          {made ? made.title : a.label}
+                          {a.label}
                         </span>
                         <span className="block font-mono text-[9px] text-muted-foreground">
-                          {made ? a.type : 'not generated yet'}
+                          {a.exposure} · €{a.valueM}M · {Math.round(a.exposurePct * 100)}% exposed
                         </span>
+                      </span>
+                      <span
+                        className={`shrink-0 font-mono text-[10px] font-bold ${hot ? 'text-destructive' : 'text-muted-foreground'}`}
+                      >
+                        €{a.exposedM}M
                       </span>
                     </div>
                   )
                 })}
               </div>
+              <div className="mt-2 flex items-center justify-between font-mono text-[10px]">
+                <span className="text-muted-foreground">Quantum-exposed value</span>
+                <span className="font-bold text-destructive">€{exposedValueM}M</span>
+              </div>
+            </div>
+
+            {/* Cyber insurance — policy limit vs the quantum-exposed value */}
+            <div className="rounded-xl border border-border bg-card p-4">
+              <Eyebrow className="mb-2 block">Cyber insurance</Eyebrow>
+              <div className="flex items-baseline justify-between">
+                <span className="text-[19px] font-extrabold text-foreground">
+                  €{insurancePolicyM}M
+                </span>
+                <span className="font-mono text-[9px] text-muted-foreground">
+                  covers critical + high
+                </span>
+              </div>
+              <div className="mt-0.5 flex items-center justify-between font-mono text-[10px]">
+                <span className="text-muted-foreground">Annual premium · 0.15%</span>
+                <span className="font-bold text-foreground">
+                  {premiumM >= 1 ? `€${premiumM}M` : `€${Math.round(premiumM * 1000)}k`}/yr
+                </span>
+              </div>
+              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className={uninsuredM > 0 ? 'h-full bg-warning' : 'h-full bg-success'}
+                  style={{
+                    width: `${exposedValueM > 0 ? Math.min(100, (Math.min(insurancePolicyM, exposedValueM) / exposedValueM) * 100) : 100}%`,
+                  }}
+                />
+              </div>
+              <div className="mt-1.5 flex items-center justify-between font-mono text-[10px]">
+                <span className="text-muted-foreground">Uninsured quantum exposure</span>
+                <span
+                  className={`font-bold ${uninsuredM > 0 ? 'text-destructive' : 'text-success'}`}
+                >
+                  €{uninsuredM}M
+                </span>
+              </div>
+            </div>
+
+            {/* Artifacts this phase produces — completed vs still to generate */}
+            <div className="rounded-xl border border-border bg-card p-4">
+              <Eyebrow className="mb-2.5 block">
+                {phase.name} artifacts{' '}
+                <span className="text-muted-foreground/60">
+                  · {phaseDocs.length}/{phaseArtifactTypes.size}
+                </span>
+              </Eyebrow>
+              {phaseArtifactTypes.size === 0 ? (
+                <p className="text-[11px] text-muted-foreground">
+                  This phase produces no Command-Center artifact — progress comes from Learn modules
+                  and reference look-ups.
+                </p>
+              ) : (
+                <div className="flex flex-col gap-1.5">
+                  {phaseArtifacts.map((a) => {
+                    const made = phaseDocs.find((d) => d.type === a.type)
+                    return (
+                      <div
+                        key={a.type}
+                        className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
+                          made
+                            ? 'border-success/40 bg-success/5'
+                            : 'border-dashed border-border bg-muted/40'
+                        }`}
+                      >
+                        <span
+                          className={`grid h-4 w-4 shrink-0 place-items-center rounded-full text-[9px] font-bold ${
+                            made
+                              ? 'bg-success text-success-foreground'
+                              : 'bg-card text-muted-foreground'
+                          }`}
+                        >
+                          {made ? '✓' : '○'}
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-[11.5px] font-semibold text-foreground">
+                            {made ? made.title : a.label}
+                          </span>
+                          <span className="block font-mono text-[9px] text-muted-foreground">
+                            {made ? a.type : 'not generated yet'}
+                          </span>
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Architecture view — only for phases that act on the estate/infra */}
+            {ARCH_PHASES.has(sel) && (
+              <ArchitecturePanel
+                size={size as 'small' | 'mid' | 'large' | 'global'}
+                country={country}
+              />
             )}
           </div>
-
-          {/* Architecture view — only for phases that act on the estate/infra */}
-          {ARCH_PHASES.has(sel) && (
-            <ArchitecturePanel
-              size={size as 'small' | 'mid' | 'large' | 'global'}
-              country={country}
-            />
-          )}
         </div>
-      </div>
+      )}
+
+      {/* activity editor — the Command Center tool, embedded as a modal over the sim */}
+      {drawerCreateType && (
+        <ArtifactDrawer
+          document={null}
+          createType={drawerCreateType}
+          mode={drawerMode}
+          onClose={() => setDrawerCreateType(null)}
+          onModeChange={setDrawerMode}
+          onCreated={() => setDrawerCreateType(null)}
+        />
+      )}
 
       {report && <QuarterReport report={report} onClose={() => setReport(null)} />}
     </div>
@@ -1308,6 +1390,8 @@ function DecisionSection({
   gate,
   pitfalls,
   onVisitRef,
+  canEmbed,
+  onOpenStep,
 }: {
   phaseId: PhaseId
   ctx: MoveCtx
@@ -1318,6 +1402,8 @@ function DecisionSection({
   gate?: { id: string; criterion: string }
   pitfalls: Pitfall[]
   onVisitRef: (id: string) => void
+  canEmbed: (s: TreeStep) => boolean
+  onOpenStep: (s: TreeStep) => void
 }) {
   const [chosen, setChosen] = useState<number | null>(null)
   // reset the choice whenever the move changes (new phase or a step completed)
@@ -1427,23 +1513,42 @@ function DecisionSection({
           <div className="mb-1 font-mono text-[9.5px] font-extrabold text-success">
             ✓ Right call — {chosenCard.detail}
           </div>
-          <Link
-            to={step.to}
-            onClick={
-              step.kind === 'reference' && step.refId ? () => onVisitRef(step.refId!) : undefined
-            }
-            className="flex items-center gap-2.5 rounded-md border border-success/40 bg-card px-3 py-2 hover:bg-muted/60"
-          >
-            <span
-              className={`rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${KIND_CHIP[step.kind]}`}
+          {canEmbed(step) ? (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => onOpenStep(step)}
+              className="flex h-auto w-full items-center gap-2.5 rounded-md border border-success/40 bg-card px-3 py-2 hover:bg-muted/60"
             >
-              {step.kind}
-            </span>
-            <span className="min-w-0 flex-1 truncate text-[12px] font-semibold text-foreground">
-              {step.label}
-            </span>
-            <span className="shrink-0 font-mono text-[9px] text-primary">open →</span>
-          </Link>
+              <span
+                className={`rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${KIND_CHIP[step.kind]}`}
+              >
+                {step.kind}
+              </span>
+              <span className="min-w-0 flex-1 truncate text-left text-[12px] font-semibold text-foreground">
+                {step.label}
+              </span>
+              <span className="shrink-0 font-mono text-[9px] text-primary">open here →</span>
+            </Button>
+          ) : (
+            <Link
+              to={step.to}
+              onClick={
+                step.kind === 'reference' && step.refId ? () => onVisitRef(step.refId!) : undefined
+              }
+              className="flex items-center gap-2.5 rounded-md border border-success/40 bg-card px-3 py-2 hover:bg-muted/60"
+            >
+              <span
+                className={`rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${KIND_CHIP[step.kind]}`}
+              >
+                {step.kind}
+              </span>
+              <span className="min-w-0 flex-1 truncate text-[12px] font-semibold text-foreground">
+                {step.label}
+              </span>
+              <span className="shrink-0 font-mono text-[9px] text-primary">open →</span>
+            </Link>
+          )}
         </div>
       )}
       {chosenCard && !chosenCard.correct && (

@@ -17,8 +17,8 @@ beforeEach(() => useSimulationStore.getState().reset())
 describe('SimulationView (Mission Control)', () => {
   it('renders the console shell, setup dials and KPI ribbon', () => {
     renderPage()
-    expect(screen.getByText('Migration Simulation')).toBeInTheDocument()
-    expect(screen.getByText('Mission Control')).toBeInTheDocument()
+    expect(screen.getByText('PQC Today Sim')).toBeInTheDocument()
+    expect(screen.getByText('PQC Migration Simulation')).toBeInTheDocument()
     expect(screen.getByText('ORG ⟳')).toBeInTheDocument()
     expect(screen.getByText('SEAT ⟳')).toBeInTheDocument()
     expect(screen.getByText(/Mosca/)).toBeInTheDocument()
@@ -34,16 +34,16 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.getByText(/PHASE 5/)).toBeInTheDocument()
   })
 
-  it('the tree drives the next move; the right call links to the resource', () => {
+  it('the tree drives the next move; the right call opens the module embedded in the sim', () => {
     renderPage()
     expect(screen.getByText('Next move — pick the right play')).toBeInTheDocument()
     // default phase p0, fresh state → first unlocked step is 0.1 Learn: PQC Business Case
     fireEvent.click(screen.getByRole('button', { name: /Learn: PQC Business Case/ }))
     expect(screen.getByText(/Right call/)).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /open →/i })).toHaveAttribute(
-      'href',
-      '/learn/pqc-business-case'
-    )
+    // CTA opens the module IN the sim (embedded), not via navigation
+    fireEvent.click(screen.getByRole('button', { name: /open here/i }))
+    expect(screen.getByText(/Learn · in simulation/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Back to board/i })).toBeInTheDocument()
   })
 
   it('a wrong move surfaces a framework Common Failure', () => {

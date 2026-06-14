@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { useEmbeddedLearn } from '../../../embeddedLearnContext'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -28,6 +29,7 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
   onSetWorkshopConfig,
 }) => {
   const navigate = useNavigate()
+  const embeddedLearn = useEmbeddedLearn()
 
   const scenarios: Scenario[] = [
     {
@@ -124,28 +126,29 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
         ))}
       </div>
 
-      {/* Quiz Link */}
-      <div className="glass-panel p-6 border-primary/20">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <BookOpen size={24} className="text-primary shrink-0" />
-            <div>
-              <h3 className="font-bold text-foreground">Test Your Knowledge</h3>
-              <p className="text-sm text-muted-foreground">
-                Take the PQC quiz to check your understanding of data classification, compliance
-                frameworks, and risk management methodologies.
-              </p>
+      {!embeddedLearn && (
+        <div className="glass-panel p-6 border-primary/20">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <BookOpen size={24} className="text-primary shrink-0" />
+              <div>
+                <h3 className="font-bold text-foreground">Test Your Knowledge</h3>
+                <p className="text-sm text-muted-foreground">
+                  Take the PQC quiz to check your understanding of data classification, compliance
+                  frameworks, and risk management methodologies.
+                </p>
+              </div>
             </div>
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/learn/quiz')}
+              className="btn btn-secondary flex items-center gap-2 px-4 py-2 shrink-0"
+            >
+              Take Quiz <ArrowRight size={14} />
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/learn/quiz')}
-            className="btn btn-secondary flex items-center gap-2 px-4 py-2 shrink-0"
-          >
-            Take Quiz <ArrowRight size={14} />
-          </Button>
         </div>
-      </div>
+      )}
     </div>
   )
 }
