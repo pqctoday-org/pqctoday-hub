@@ -13,7 +13,7 @@ import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { FRAMEWORK_PHASES, PHASE_ORDER, type PhaseId } from '@/data/frameworkPhases'
 import { resourcesForPhase, REFERENCE_PHASES } from '@/data/phaseResourceMap'
-import { PHASE_OBJECTIVES } from '@/data/phaseObjectives'
+import { SIM_MISSIONS } from '@/data/simMissions'
 import {
   PHASE_MATURITY,
   MATURITY_LEVEL_NAMES,
@@ -196,11 +196,12 @@ export function SimulationView() {
 
   // Roles that run the active phase — "You" if owned by your seat, else AI team.
   const phaseRoles = Object.values(ROLE_CROSSWALK).filter((r) => r.phases.includes(activePhase))
-  const objective = PHASE_OBJECTIVES[activePhase]
-  // The mission adapts to the player's maturity: the next level's indicator is
-  // the concrete goal right now.
-  const nextLevel = currentLevel < 4 ? ((currentLevel + 1) as MaturityLevelId) : null
-  const nextStep = nextLevel != null ? ladder?.find((l) => l.level === nextLevel) : undefined
+  const objective = SIM_MISSIONS[activePhase]
+  // The mission adapts to the player's maturity: the next level's goal (from the
+  // maintainable sim_missions CSV) is the concrete target right now.
+  const nextLevel = currentLevel < 4 ? currentLevel + 1 : null
+  const currentLevelInfo = objective?.levels[currentLevel]
+  const nextStep = nextLevel != null ? objective?.levels[nextLevel] : undefined
 
   // Mosca clock — size sets migration time Y, country sets the deadline Z.
   const currentYear = new Date().getFullYear()
@@ -497,14 +498,14 @@ export function SimulationView() {
                   {nextStep ? (
                     <>
                       <span className="font-semibold text-foreground">
-                        You’re at Level {currentLevel} ({MATURITY_LEVEL_NAMES[currentLevel]}).
+                        You’re at Level {currentLevel} ({currentLevelInfo?.name}).
                         {currentLevel >= PHASE_WIN_LEVEL ? ' Phase cleared ✓.' : ''} Next →{' '}
                         <span className="text-primary">
-                          Level {nextStep.level} ({MATURITY_LEVEL_NAMES[nextStep.level]})
+                          Level {nextStep.level} ({nextStep.name})
                         </span>
                         :
                       </span>{' '}
-                      <span className="text-muted-foreground">{nextStep.indicator}</span>
+                      <span className="text-muted-foreground">{nextStep.goal}</span>
                       <div className="mt-1 text-muted-foreground">
                         Use the <span className="font-medium text-foreground">Activities</span>{' '}
                         below to get there, then confirm it in{' '}
