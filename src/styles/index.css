@@ -160,6 +160,23 @@
     animation: workshop-progress 1.4s ease-in-out infinite;
   }
 
+  /* Simulation live-feed marquee — scrolls the duplicated track left so every
+     message can be read; the second copy makes the loop seamless. */
+  @keyframes sim-ticker {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  .animate-sim-ticker {
+    animation: sim-ticker 45s linear infinite;
+  }
+  .animate-sim-ticker:hover {
+    animation-play-state: paused;
+  }
+
   /* Respect user's reduced-motion preference for CSS animations/transitions */
   @media (prefers-reduced-motion: reduce) {
     *,

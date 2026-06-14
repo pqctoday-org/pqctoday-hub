@@ -453,11 +453,12 @@ export function SimulationView() {
   const budgetTarget = programBudgetTarget(sector, sizeKey)
   const budgetSecured = Math.round(budgetTarget * p0Frac * 10) / 10
 
-  // live feed: this quarter's scripted records (Q1 2026 → Q4 2040) + dynamic events
+  // live feed: this quarter's scripted records (Q1 2026 → Q4 2040) + dynamic events.
+  // All messages are shown; the ticker marquee scrolls so every one can be read.
   const tickerItems = [
     ...feedFor(year, q).map((r) => ({ sev: r.sev, t: `Q${q} ${year}`, txt: r.txt })),
     ...events,
-  ].slice(0, 12)
+  ]
 
   // active phase
   const phase = FRAMEWORK_PHASES[sel]
@@ -692,14 +693,17 @@ export function SimulationView() {
         <span className="shrink-0 font-mono text-[11px] font-extrabold uppercase tracking-[0.16em] text-primary">
           ● LIVE FEED
         </span>
-        <div className="flex gap-6 overflow-hidden">
-          {tickerItems.map((e, i) => (
-            <span key={i} className="flex shrink-0 items-center gap-2 text-[13px]">
-              <span className={`h-2 w-2 rounded-full ${SEVERITY_DOT[e.sev]}`} />
-              <span className="font-mono text-[11px] text-muted-foreground">{e.t}</span>
-              <span className="whitespace-nowrap">{e.txt}</span>
-            </span>
-          ))}
+        <div className="relative flex-1 overflow-hidden">
+          {/* duplicated track → seamless left-scrolling marquee (pauses on hover) */}
+          <div className="flex w-max animate-sim-ticker gap-6">
+            {[...tickerItems, ...tickerItems].map((e, i) => (
+              <span key={i} className="flex shrink-0 items-center gap-2 text-[13px]">
+                <span className={`h-2 w-2 rounded-full ${SEVERITY_DOT[e.sev]}`} />
+                <span className="font-mono text-[11px] text-muted-foreground">{e.t}</span>
+                <span className="whitespace-nowrap">{e.txt}</span>
+              </span>
+            ))}
+          </div>
         </div>
       </div>
 
