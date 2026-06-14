@@ -28,6 +28,7 @@ import { JURISDICTION_RULES } from '@/data/jurisdiction'
 import { ROLE_CROSSWALK, personaToRoles } from '@/data/roleCrosswalk'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import { resourcesForPhase, REFERENCE_PHASES } from '@/data/phaseResourceMap'
+import { relevantToScenario } from '@/data/simRelevance'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import {
   BUSINESS_TOOLS,
@@ -960,18 +961,21 @@ export function SimulationView() {
           <div className="mt-auto grid gap-2.5 md:grid-cols-3">
             <ResCol
               title="Learn"
-              items={resLinks('learn', sel).map((it) => ({ ...it, done: moduleDone(it.id) }))}
+              items={resLinks('learn', sel, sector, seat).map((it) => ({
+                ...it,
+                done: moduleDone(it.id),
+              }))}
             />
             <ResCol
               title="Activities"
-              items={resLinks('activities', sel).map((it) => ({
+              items={resLinks('activities', sel, sector, seat).map((it) => ({
                 ...it,
                 done: artifactDone(TOOL_TO_ARTIFACT[it.id]),
               }))}
             />
             <ResCol
               title="Reference"
-              items={resLinks('reference', sel).map((it) => ({
+              items={resLinks('reference', sel, sector, seat).map((it) => ({
                 ...it,
                 done: refDone(it.id),
                 onClick: () => markRefVisited(it.id),
@@ -1146,29 +1150,42 @@ interface ResItem {
   done?: boolean
   onClick?: () => void
 }
-function resLinks(leg: 'learn' | 'activities' | 'reference', phase: PhaseId): ResItem[] {
+function resLinks(
+  leg: 'learn' | 'activities' | 'reference',
+  phase: PhaseId,
+  sector: string,
+  seat: string
+): ResItem[] {
+  // hide industry verticals / persona modules that don't match the scenario
+  const relevant = (id: string) => relevantToScenario(id, sector, seat)
   if (leg === 'learn')
-    return resourcesForPhase('learn', phase).map((id) => ({
-      id,
-      label: MODULE_CATALOG[id]?.title ?? id,
-      to: `/learn/${id}`,
-    }))
+    return resourcesForPhase('learn', phase)
+      .filter(relevant)
+      .map((id) => ({
+        id,
+        label: MODULE_CATALOG[id]?.title ?? id,
+        to: `/learn/${id}`,
+      }))
   if (leg === 'reference')
     return resourcesForPhase('reference', phase).map((id) => ({
       id,
       label: REF_LABELS[id] ?? id,
       to: REFERENCE_PHASES[id]?.deepUrl ?? '/',
     }))
-  const biz = resourcesForPhase('business', phase, 'practice').map((id) => ({
-    id,
-    label: BIZ_NAME.get(id) ?? id,
-    to: `/business/tools/${id}`,
-  }))
-  const pg = resourcesForPhase('playground', phase, 'practice').map((id) => ({
-    id,
-    label: PG_NAME.get(id) ?? id,
-    to: `/playground/tools/${id}`,
-  }))
+  const biz = resourcesForPhase('business', phase, 'practice')
+    .filter(relevant)
+    .map((id) => ({
+      id,
+      label: BIZ_NAME.get(id) ?? id,
+      to: `/business/tools/${id}`,
+    }))
+  const pg = resourcesForPhase('playground', phase, 'practice')
+    .filter(relevant)
+    .map((id) => ({
+      id,
+      label: PG_NAME.get(id) ?? id,
+      to: `/playground/tools/${id}`,
+    }))
   return [...biz, ...pg]
 }
 
