@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { FRAMEWORK_PHASES, PHASE_ORDER, type PhaseId } from '@/data/frameworkPhases'
 import { resourcesForPhase, REFERENCE_PHASES } from '@/data/phaseResourceMap'
+import { PHASE_OBJECTIVES } from '@/data/phaseObjectives'
 import {
   PHASE_MATURITY,
   MATURITY_LEVEL_NAMES,
@@ -195,6 +196,7 @@ export function SimulationView() {
 
   // Roles that run the active phase — "You" if owned by your seat, else AI team.
   const phaseRoles = Object.values(ROLE_CROSSWALK).filter((r) => r.phases.includes(activePhase))
+  const objective = PHASE_OBJECTIVES[activePhase]
 
   // Mosca clock — size sets migration time Y, country sets the deadline Z.
   const currentYear = new Date().getFullYear()
@@ -457,6 +459,43 @@ export function SimulationView() {
               </p>
             )}
           </div>
+
+          {/* Your mission — the plain-language "what do I do here" for this phase */}
+          {objective && (
+            <div className="mb-4 rounded-lg border border-primary/40 bg-primary/5 p-4">
+              <h3 className="text-sm font-semibold text-primary">🎯 Your mission</h3>
+              <p className="mt-1 text-sm font-medium text-foreground">{objective.mission}</p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <div>
+                  <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Do this
+                  </div>
+                  <ul className="list-disc space-y-0.5 pl-4 text-xs text-muted-foreground">
+                    {objective.todo.map((t) => (
+                      <li key={t}>{t}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Produces
+                  </div>
+                  <ul className="list-disc space-y-0.5 pl-4 text-xs text-muted-foreground">
+                    {objective.produces.map((p) => (
+                      <li key={p}>{p}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              <p className="mt-3 text-xs text-muted-foreground">
+                <span className="font-semibold text-foreground">Clear the phase:</span>{' '}
+                {objective.winHint} Use the{' '}
+                <span className="font-medium text-foreground">Activities</span> below to do the
+                work, then confirm the levels in{' '}
+                <span className="font-medium text-foreground">Maturity</span>.
+              </p>
+            </div>
+          )}
 
           {/* Maturity ladder — each level is EARNED by confirming the framework's
               acceptance criterion (its Level 0–4 indicator), once you've done the

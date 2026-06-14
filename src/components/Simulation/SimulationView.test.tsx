@@ -27,6 +27,20 @@ describe('SimulationView (skeleton)', () => {
     expect(screen.getByRole('navigation', { name: /migration phases/i })).toBeInTheDocument()
   })
 
+  it('shows a clear per-phase mission with what to do and what it produces', () => {
+    renderPage()
+    // default phase p0
+    expect(screen.getByText('🎯 Your mission')).toBeInTheDocument()
+    expect(
+      screen.getByText(/turn the quantum threat into a funded, governed program/i)
+    ).toBeInTheDocument()
+    expect(screen.getByText('Do this')).toBeInTheDocument()
+    expect(screen.getByText(/Clear the phase:/)).toBeInTheDocument()
+    // switching phase changes the mission
+    fireEvent.click(screen.getByRole('button', { name: /Discovery/i }))
+    expect(screen.getByText(/can't migrate what you can't see/i)).toBeInTheDocument()
+  })
+
   it('shows the per-phase team with You / AI-team split that follows the seat', () => {
     renderPage()
     expect(screen.getByText('Your seat (Solo mode)')).toBeInTheDocument()
