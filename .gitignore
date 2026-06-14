@@ -242,6 +242,8 @@ scripts/*
 # Simulation activity-tree generator — emits the committed dated trees in
 # src/simulation/trees from the public framework + hub registries.
 !scripts/gen-sim-trees.mjs
+# Simulation live-feed generator — emits the committed dated sim_feed_*.csv.
+!scripts/gen-sim-feed.mjs
 
 # Workshop flow static audit — runs in CI, must be tracked. Reads
 # public/workshop/*.json + src/. The companion timing fixer

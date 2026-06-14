@@ -52,6 +52,7 @@ import {
 } from '@/simulation'
 import { SIM_MOVES, type MoveCtx, type MoveKind } from '@/data/simMoves'
 import { SIM_EVENT_POOL, fillEvent, type EventSeverity, type SimEvent } from '@/data/simEvents'
+import { feedFor } from '@/data/simFeed'
 import { ARCHITECTURES } from '@/data/simArchitecture'
 import {
   computeThreatLevels,
@@ -433,6 +434,12 @@ export function SimulationView() {
   const budgetTarget = programBudgetTarget(sector, sizeKey)
   const budgetSecured = Math.round(budgetTarget * p0Frac * 10) / 10
 
+  // live feed: this quarter's scripted records (Q1 2026 → Q4 2040) + dynamic events
+  const tickerItems = [
+    ...feedFor(year, q).map((r) => ({ sev: r.sev, t: `Q${q} ${year}`, txt: r.txt })),
+    ...events,
+  ].slice(0, 12)
+
   // active phase
   const phase = FRAMEWORK_PHASES[sel]
   const level = levelOf(sel)
@@ -653,7 +660,7 @@ export function SimulationView() {
           ● LIVE FEED
         </span>
         <div className="flex gap-6 overflow-hidden">
-          {events.slice(0, 8).map((e, i) => (
+          {tickerItems.map((e, i) => (
             <span key={i} className="flex shrink-0 items-center gap-1.5 text-[11px]">
               <span className={`h-1.5 w-1.5 rounded-full ${SEVERITY_DOT[e.sev]}`} />
               <span className="font-mono text-[9px] text-background/45">{e.t}</span>
