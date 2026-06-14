@@ -12,7 +12,7 @@
  */
 import { useMemo, useState, useEffect, Suspense, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { ArtifactDrawer, type DrawerMode } from '@/components/BusinessCenter/ArtifactDrawer'
+import { BUSINESS_TOOL_COMPONENTS } from '@/components/BusinessCenter/businessToolComponents'
 import { SIM_LEARN_MODULES, isEmbeddableModule } from '@/components/PKILearning/simEmbedModules'
 import { EmbeddedLearnProvider } from '@/components/PKILearning/embeddedLearnContext'
 import { Button } from '@/components/ui/button'
@@ -371,20 +371,37 @@ export function SimulationView() {
   // in-sim embedding: a Learn module (panel under the sim header) or an activity
   // editor (ArtifactDrawer modal). Keeps the player inside /simulation.
   const [learnEmbed, setLearnEmbed] = useState<{ moduleId: string; title: string } | null>(null)
-  const [drawerCreateType, setDrawerCreateType] = useState<ExecutiveDocumentType | null>(null)
-  const [drawerMode, setDrawerMode] = useState<DrawerMode>('create')
+  const [activityEmbed, setActivityEmbed] = useState<{
+    artifactType: ExecutiveDocumentType
+    title: string
+  } | null>(null)
 
   const LearnComp = learnEmbed ? SIM_LEARN_MODULES[learnEmbed.moduleId] : null
-  const canEmbedStep = (s: TreeStep) =>
-    (s.kind === 'learn' && !!s.moduleId && isEmbeddableModule(s.moduleId)) ||
-    (s.kind === 'activity' && !!s.artifactType)
-  const openStep = (s: TreeStep) => {
-    if (s.kind === 'learn' && s.moduleId && isEmbeddableModule(s.moduleId))
-      setLearnEmbed({ moduleId: s.moduleId, title: s.label })
-    else if (s.kind === 'activity' && s.artifactType) {
-      setDrawerMode('create')
-      setDrawerCreateType(s.artifactType)
+  const activityToolId = activityEmbed
+    ? ARTIFACT_TYPE_TO_TOOL_ID[activityEmbed.artifactType]
+    : undefined
+  // eslint-disable-next-line security/detect-object-injection
+  const ActivityComp = activityToolId ? BUSINESS_TOOL_COMPONENTS[activityToolId] : null
+  const canEmbedStep = (s: TreeStep) => {
+    if (s.kind === 'learn') return !!s.moduleId && isEmbeddableModule(s.moduleId)
+    if (s.kind === 'activity' && s.artifactType) {
+      const toolId = ARTIFACT_TYPE_TO_TOOL_ID[s.artifactType]
+      return !!toolId && !!BUSINESS_TOOL_COMPONENTS[toolId]
     }
+    return false
+  }
+  const openStep = (s: TreeStep) => {
+    if (s.kind === 'learn' && s.moduleId && isEmbeddableModule(s.moduleId)) {
+      setActivityEmbed(null)
+      setLearnEmbed({ moduleId: s.moduleId, title: s.label })
+    } else if (s.kind === 'activity' && s.artifactType) {
+      setLearnEmbed(null)
+      setActivityEmbed({ artifactType: s.artifactType, title: s.label })
+    }
+  }
+  const closeEmbed = () => {
+    setLearnEmbed(null)
+    setActivityEmbed(null)
   }
 
   // real hub completion state: generated artifacts + Learn-module progress
@@ -801,29 +818,32 @@ export function SimulationView() {
         />
       </div>
 
-      {/* body — swaps to the embedded Learn module when one is open (sim header stays) */}
-      {learnEmbed && LearnComp ? (
+      {/* body — swaps to the embedded Learn module / activity tool when one is open.
+          The sim header above stays, AND a persistent "Simulation mode" bar sits on
+          top of the panel, so the player always knows they haven't left the sim. */}
+      {learnEmbed || activityEmbed ? (
         <div className="flex min-h-0 flex-1 flex-col">
-          <div className="flex items-center gap-2 border-b border-border bg-card px-4 py-2">
-            <span className="shrink-0 rounded bg-primary/15 px-2 py-0.5 font-mono text-[9px] font-bold uppercase text-primary">
-              Learn · in simulation
+          <div className="flex shrink-0 items-center gap-2 border-b-2 border-primary bg-primary/10 px-4 py-2">
+            <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-[9px] font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
+              ● Simulation mode
+            </span>
+            <span className="shrink-0 font-mono text-[9px] font-bold uppercase text-primary">
+              {learnEmbed ? 'Learn' : 'Activity'} · Phase {phase.number}
             </span>
             <span className="min-w-0 flex-1 truncate text-[12.5px] font-bold text-foreground">
-              {learnEmbed.title}
+              {learnEmbed ? learnEmbed.title : activityEmbed?.title}
             </span>
             <Button
               type="button"
               variant="ghost"
-              onClick={() => setLearnEmbed(null)}
-              className="h-auto shrink-0 rounded-md border border-border px-2.5 py-1 text-[11px] font-bold text-foreground hover:bg-muted"
+              onClick={closeEmbed}
+              className="h-auto shrink-0 rounded-md bg-foreground px-3 py-1 text-[11px] font-bold text-background hover:opacity-90"
             >
               ✕ Back to board
             </Button>
           </div>
-          {/* Contain the module: block its cross-module /learn anchor links so a
-              stray "see also" link can't navigate the player out of the sim.
-              (Quiz CTA is hidden via EmbeddedLearnProvider; next-module is page
-              chrome that isn't rendered here.) */}
+          {/* Contain the module: block cross-module /learn anchor links so a stray
+              "see also" link can't navigate the player out of the sim. */}
           <div
             className="min-h-0 flex-1 overflow-auto"
             onClickCapture={(e) => {
@@ -831,17 +851,27 @@ export function SimulationView() {
               if (a) e.preventDefault()
             }}
           >
-            <EmbeddedLearnProvider>
+            {learnEmbed && LearnComp ? (
+              <EmbeddedLearnProvider>
+                <Suspense
+                  fallback={
+                    <div className="p-8 text-center text-sm text-muted-foreground">
+                      Loading module…
+                    </div>
+                  }
+                >
+                  <LearnComp />
+                </Suspense>
+              </EmbeddedLearnProvider>
+            ) : ActivityComp ? (
               <Suspense
                 fallback={
-                  <div className="p-8 text-center text-sm text-muted-foreground">
-                    Loading module…
-                  </div>
+                  <div className="p-8 text-center text-sm text-muted-foreground">Loading…</div>
                 }
               >
-                <LearnComp />
+                <ActivityComp />
               </Suspense>
-            </EmbeddedLearnProvider>
+            ) : null}
           </div>
         </div>
       ) : (
@@ -1275,18 +1305,6 @@ export function SimulationView() {
             )}
           </div>
         </div>
-      )}
-
-      {/* activity editor — the Command Center tool, embedded as a modal over the sim */}
-      {drawerCreateType && (
-        <ArtifactDrawer
-          document={null}
-          createType={drawerCreateType}
-          mode={drawerMode}
-          onClose={() => setDrawerCreateType(null)}
-          onModeChange={setDrawerMode}
-          onCreated={() => setDrawerCreateType(null)}
-        />
       )}
 
       {report && <QuarterReport report={report} onClose={() => setReport(null)} />}
