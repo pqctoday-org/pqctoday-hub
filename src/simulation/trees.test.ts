@@ -82,6 +82,32 @@ describe('SIM_TREES — coverage & shape', () => {
     }
   })
 
+  it('STRICT GATING (all phases 0–7): a band is earned only when every lower band is complete', () => {
+    for (const phase of PHASES) {
+      const tree = SIM_TREES[phase]!
+      const bands = tree.levels
+      const stepsOfBands = (n: number) =>
+        new Set(bands.slice(0, n).flatMap((b) => b.activities.flatMap((a) => a.steps)))
+      for (let j = 0; j < bands.length; j++) {
+        // completing bands 0..j fully earns exactly band j's level
+        const done = stepsOfBands(j + 1)
+        expect(
+          achievedTreeLevel(tree, (s) => done.has(s)),
+          `${phase}: completing through band ${j} should earn L${bands[j].level}`
+        ).toBe(bands[j].level)
+        // re-opening ANY single step in the lowest band fails the gate → level 0,
+        // even if every higher band is complete (no skipping the gate)
+        const firstStep = bands[0].activities[0].steps[0]
+        const allButFirst = new Set(stepsOfBands(bands.length))
+        allButFirst.delete(firstStep)
+        expect(
+          achievedTreeLevel(tree, (s) => allButFirst.has(s)),
+          `${phase}: an open L${bands[0].level} step must block all higher levels`
+        ).toBe(0)
+      }
+    }
+  })
+
   it('achievedTreeLevel climbs as steps complete (none → all)', () => {
     for (const phase of PHASES) {
       const tree = SIM_TREES[phase]!

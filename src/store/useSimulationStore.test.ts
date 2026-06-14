@@ -9,8 +9,8 @@ beforeEach(() => s().reset())
 describe('useSimulationStore', () => {
   it('seeds a coherent starting scenario', () => {
     expect(s().country).toBe('DE')
-    expect(s().sel).toBe('p3')
-    expect(s().checks.p0).toBe(3)
+    expect(s().sel).toBe('p0')
+    expect(s().checks.p0).toBe(0) // levels are earned via gating, nothing pre-set
   })
 
   it('setLevel ticks up and un-ticks when clicking the current level', () => {
@@ -48,6 +48,6 @@ describe('useSimulationStore', () => {
   it('reset restores the seed', () => {
     s().setSel('p7')
     s().reset()
-    expect(s().sel).toBe('p3')
+    expect(s().sel).toBe('p0')
   })
 })

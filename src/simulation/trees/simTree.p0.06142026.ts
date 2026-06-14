@@ -43,6 +43,32 @@ const TREE: PhaseTree = {
             },
           ],
         },
+        {
+          id: '0.2',
+          title: 'Assess Data & Asset Sensitivity',
+          do: 'Discover the critical assets, classify their sensitivity and confidentiality horizon — the exposure that justifies the budget the board will commit.',
+          output: 'Initial scoping & asset-sensitivity assessment',
+          steps: [
+            {
+              kind: 'learn',
+              label: 'Learn: Data & Asset Sensitivity',
+              to: '/learn/data-asset-sensitivity',
+              moduleId: 'data-asset-sensitivity',
+            },
+            {
+              kind: 'reference',
+              label: 'Run the assessment engine',
+              to: '/assess',
+              refId: 'assess-engine',
+            },
+            {
+              kind: 'activity',
+              label: 'Produce the scoping & asset assessment',
+              to: '/business/tools/initial-scoping',
+              artifactType: 'initial-scoping',
+            },
+          ],
+        },
       ],
     },
     {
@@ -50,30 +76,50 @@ const TREE: PhaseTree = {
       indicator: 'Charter approved; QRPM appointed; Year 1 budget secured',
       activities: [
         {
-          id: '0.2',
-          title: 'Build the Budget Structure & Cost Estimates',
-          do: 'Structure multi-year phased funding aligned to refresh cycles and estimate migration costs across all categories.',
-          output: 'Multi-year budget & cost estimate',
+          id: '0.3',
+          title: 'Identify Applicable Standards, Certifications & Compliance',
+          do: 'Map the regulations, standards and certifications that bind this org (and their deadlines) into a compliance & regulatory strategy.',
+          output: 'Compliance & regulatory strategy',
           steps: [
             {
-              kind: 'activity',
-              label: 'Build the board pitch (budget ask)',
-              to: '/business/tools/board-pitch',
-              artifactType: 'board-deck',
+              kind: 'learn',
+              label: 'Learn: Compliance & Regulatory Strategy',
+              to: '/learn/compliance-strategy',
+              moduleId: 'compliance-strategy',
+            },
+            {
+              kind: 'reference',
+              label: 'Map applicable regs & certifications',
+              to: '/compliance',
+              refId: 'compliance',
+            },
+          ],
+        },
+        {
+          id: '0.4',
+          title: 'Assess the Quantum Risk',
+          do: 'Score the quantum risk to the discovered assets (HNDL + TNFL) to size and prioritise the program.',
+          output: 'Quantum risk assessment',
+          steps: [
+            {
+              kind: 'learn',
+              label: 'Learn: PQC Risk Management',
+              to: '/learn/pqc-risk-management',
+              moduleId: 'pqc-risk-management',
             },
             {
               kind: 'activity',
-              label: 'Ground the ask in a CRQC scenario',
+              label: 'Run a CRQC scenario',
               to: '/business/tools/crqc-scenario',
               artifactType: 'crqc-scenario',
             },
           ],
         },
         {
-          id: '0.3',
-          title: 'Establish Governance Structure',
-          do: 'Define roles (Sponsor, SteerCo, QRPM, workstream leads), decision cadence, and policy.',
-          output: 'Governance structure & policy',
+          id: '0.5',
+          title: 'Establish Governance & Draft the Charter',
+          do: 'Define roles (Sponsor, SteerCo, QRPM), the RACI, and the one-page program charter.',
+          output: 'Governance structure & approved charter',
           steps: [
             {
               kind: 'learn',
@@ -89,20 +135,6 @@ const TREE: PhaseTree = {
             },
             {
               kind: 'activity',
-              label: 'Draft the cryptography policy',
-              to: '/business/tools/policy-generator',
-              artifactType: 'policy-draft',
-            },
-          ],
-        },
-        {
-          id: '0.4',
-          title: 'Draft the Program Charter',
-          do: 'Create the one-page charter: purpose, scope, success criteria, cadence, escalation.',
-          output: 'Approved program charter',
-          steps: [
-            {
-              kind: 'activity',
               label: 'Produce the Program Charter',
               to: '/business/tools/program-charter',
               artifactType: 'program-charter',
@@ -116,16 +148,22 @@ const TREE: PhaseTree = {
       indicator: 'Multi-year budget committed; SteerCo operational; scoping assessment complete',
       activities: [
         {
-          id: '0.5',
-          title: 'Conduct Initial Scoping Assessment',
-          do: 'Run a 2–4 week assessment of the top 20 systems, estate size, and critical vendor dependencies.',
-          output: 'Initial scoping assessment',
+          id: '0.6',
+          title: 'Secure the Board Mandate & Multi-Year Budget',
+          do: 'Pitch the board with the exposure-justified ask and secure multi-year funding and cryptography policy.',
+          output: 'Signed mandate & multi-year budget',
           steps: [
             {
               kind: 'activity',
-              label: 'Run the Initial Scoping Assessment',
-              to: '/business/tools/initial-scoping',
-              artifactType: 'initial-scoping',
+              label: 'Pitch the board for budget',
+              to: '/business/tools/board-pitch',
+              artifactType: 'board-deck',
+            },
+            {
+              kind: 'activity',
+              label: 'Draft the cryptography policy',
+              to: '/business/tools/policy-generator',
+              artifactType: 'policy-draft',
             },
           ],
         },
