@@ -29,8 +29,12 @@ describe('phaseResourceMap — registry parity (no orphans, no stale keys)', () 
     expect(sorted(Object.keys(BUSINESS_PHASES))).toEqual(sorted(BUSINESS_TOOLS.map((t) => t.id)))
   })
 
-  it('PLAYGROUND_PHASES keys exactly match WORKSHOP_TOOLS ids', () => {
-    expect(sorted(Object.keys(PLAYGROUND_PHASES))).toEqual(sorted(WORKSHOP_TOOLS.map((t) => t.id)))
+  it('PLAYGROUND_PHASES keys match non-sandbox WORKSHOP_TOOLS ids', () => {
+    // sbx-* sandbox labs are gated (not available to all users) and are
+    // deliberately excluded from the phase overlay — the playbook never maps to them.
+    const nonSbx = WORKSHOP_TOOLS.map((t) => t.id).filter((id) => !id.startsWith('sbx-'))
+    expect(sorted(Object.keys(PLAYGROUND_PHASES))).toEqual(sorted(nonSbx))
+    expect(Object.keys(PLAYGROUND_PHASES).some((id) => id.startsWith('sbx-'))).toBe(false)
   })
 })
 

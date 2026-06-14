@@ -112,7 +112,7 @@ export const MODULE_CATALOG: Record<string, CatalogModule> = validateCatalog({
       'Build a modern cryptographic posture management program across certificates, libraries, software, and keys — iterative and ROI-positive even if quantum never arrives.',
     duration: '55 min',
     difficulty: 'intermediate',
-    frameworkPhase: 'foundations',
+    frameworkPhase: 'p1',
   },
   'tls-basics': {
     id: 'tls-basics',
