@@ -21,6 +21,8 @@ import {
   type MaturityLevelId,
 } from '@/data/phaseMaturity'
 import { useModuleStore } from '@/store/useModuleStore'
+import { ROLE_CROSSWALK, personaToRoles } from '@/data/roleCrosswalk'
+import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import {
   computeSimMosca,
   horizonYearFor,
@@ -70,6 +72,11 @@ const REF_LABELS: Record<string, string> = {
   'assess-engine': 'Assessment Engine',
   report: 'Executive Report',
 }
+
+// Personas that own at least one framework role — the playable Solo seats.
+const SEATS = (Object.keys(personaToRoles) as PersonaId[]).filter(
+  (p) => personaToRoles[p].length > 0
+)
 
 interface ResLink {
   label: string
@@ -127,6 +134,7 @@ export function SimulationView() {
   const [size, setSize] = useState<(typeof SIZES)[number]['id']>('mid')
   const [country, setCountry] = useState<(typeof COUNTRIES)[number]['id']>('DE')
   const [sector, setSector] = useState<string>(DEFAULT_SECTOR)
+  const [seat, setSeat] = useState<PersonaId>('executive')
   const [activePhase, setActivePhase] = useState<PhaseId>(PHASE_ORDER[0])
   // Real Command-Center artifacts the player has saved — some levels auto-tick
   // when the matching artifact exists (earned for real, not self-attested).
@@ -182,6 +190,9 @@ export function SimulationView() {
   const activities = useMemo(() => activityLinks(activePhase), [activePhase])
   const reference = useMemo(() => referenceLinks(activePhase), [activePhase])
   const heading = phase.number === null ? 'Foundations' : `Phase ${phase.number}`
+
+  // Roles that run the active phase — "You" if owned by your seat, else AI team.
+  const phaseRoles = Object.values(ROLE_CROSSWALK).filter((r) => r.phases.includes(activePhase))
 
   // Mosca clock — size sets migration time Y, country sets the deadline Z.
   const currentYear = new Date().getFullYear()
@@ -304,6 +315,34 @@ export function SimulationView() {
             {SECTORS.find((s) => s.id === sector)?.hint} · sets X = {shelfLifeFor(sector)}y
           </p>
         </div>
+      </div>
+
+      {/* Your seat (Solo mode) — you play one persona; the rest are an AI team */}
+      <div className="mb-6 rounded-lg border border-border bg-card/40 p-3">
+        <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Your seat (Solo mode)
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {SEATS.map((p) => (
+            <Button
+              key={p}
+              type="button"
+              variant="ghost"
+              onClick={() => setSeat(p)}
+              className={`h-auto rounded-md border px-3 py-1.5 text-sm transition-colors ${
+                seat === p
+                  ? 'border-primary bg-primary/10 font-medium text-primary'
+                  : 'border-border text-muted-foreground hover:bg-muted'
+              }`}
+            >
+              {PERSONAS[p].label}
+            </Button>
+          ))}
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          You play <span className="font-medium text-foreground">{PERSONAS[seat].label}</span>; the
+          other roles are an AI team you brief.
+        </p>
       </div>
 
       {/* Mosca clock — driven by the size + country dials */}
@@ -496,6 +535,43 @@ export function SimulationView() {
               </p>
             </div>
           )}
+
+          {/* Team — who runs this phase (roles from the framework crosswalk) */}
+          <div className="mb-4 rounded-lg border border-border bg-card/40 p-4">
+            <h3 className="mb-2 text-sm font-semibold text-foreground">
+              Team — who runs this phase
+            </h3>
+            {phaseRoles.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No role is mapped to this phase yet — a gap in the framework overlay.
+              </p>
+            ) : (
+              <ul className="space-y-1">
+                {phaseRoles.map((r) => {
+                  const owned = r.persona === seat
+                  return (
+                    <li key={r.id} className="flex items-center justify-between gap-2 text-sm">
+                      <span className="text-foreground">
+                        {r.label}{' '}
+                        <span className="text-muted-foreground">· {r.typicalFte} FTE</span>
+                      </span>
+                      <span
+                        className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold ${
+                          owned ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
+                        }`}
+                      >
+                        {owned ? 'You' : 'AI team'}
+                      </span>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+            <p className="mt-2 text-xs text-muted-foreground">
+              Solo mode: <span className="font-medium text-foreground">{PERSONAS[seat].label}</span>{' '}
+              is you; the rest are AI teammates you brief.
+            </p>
+          </div>
 
           <div className="grid gap-4 md:grid-cols-3">
             <ResourceList title="Learn" items={learn} />
