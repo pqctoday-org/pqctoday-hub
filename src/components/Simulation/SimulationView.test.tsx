@@ -50,6 +50,15 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.getByText(/Compliance FAIL/)).toBeInTheDocument()
   })
 
+  it('shows the per-phase playbook (steps) and the artifacts panel', () => {
+    renderPage()
+    // default phase p3
+    expect(screen.getByText('Run the play — work each step')).toBeInTheDocument()
+    expect(screen.getByText(/Learn: PQC Risk Management/)).toBeInTheDocument()
+    expect(screen.getByText(/Produce a Risk Register/)).toBeInTheDocument()
+    expect(screen.getByText(/Artifacts/)).toBeInTheDocument()
+  })
+
   it('End Quarter advances the turn and opens the Quarter Report', () => {
     renderPage()
     fireEvent.click(screen.getByRole('button', { name: /End Quarter/ }))

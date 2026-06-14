@@ -34,8 +34,13 @@ import { ROLE_CROSSWALK, personaToRoles } from '@/data/roleCrosswalk'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import { resourcesForPhase, REFERENCE_PHASES } from '@/data/phaseResourceMap'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
-import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
+import {
+  BUSINESS_TOOLS,
+  ARTIFACT_TYPE_TO_TOOL_ID,
+} from '@/components/BusinessCenter/businessToolsRegistry'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+import type { ExecutiveDocumentType } from '@/services/storage/types'
+import { SIM_PLAYBOOK, type PlaybookStep, type StepKind } from '@/data/simPlaybook'
 import { SIM_MOVES, type MoveCtx, type MoveKind } from '@/data/simMoves'
 import { SIM_EVENT_POOL, fillEvent, type EventSeverity, type SimEvent } from '@/data/simEvents'
 import { ARCHITECTURES } from '@/data/simArchitecture'
@@ -85,6 +90,18 @@ const MOVE_TONE: Record<MoveKind, { border: string; text: string; label: string 
   },
   warn: { border: 'border-warning', text: 'text-warning', label: '⚠ Risky — proceed with care' },
 }
+
+const KIND_CHIP: Record<StepKind, string> = {
+  learn: 'bg-primary/15 text-primary',
+  reference: 'bg-secondary/15 text-secondary',
+  activity: 'bg-warning/15 text-warning',
+}
+// reverse of ARTIFACT_TYPE_TO_TOOL_ID: business tool id → the artifact type it emits
+const TOOL_TO_ARTIFACT: Record<string, ExecutiveDocumentType> = Object.fromEntries(
+  (Object.entries(ARTIFACT_TYPE_TO_TOOL_ID) as [ExecutiveDocumentType, string][]).map(
+    ([type, tool]) => [tool, type]
+  )
+)
 
 const LIFECYCLE = PHASE_ORDER.filter((p) => p !== 'foundations')
 const BIZ_NAME = new Map(BUSINESS_TOOLS.map((t) => [t.id, t.name]))
@@ -284,12 +301,24 @@ export function SimulationView() {
     setLevel,
     applyQuarter,
     reset,
+    visitedRefs,
+    markRefVisited,
   } = useSimulationStore()
   const [report, setReport] = useState<QuarterReportData | null>(null)
 
-  // evidence auto-tick merged with manual ticking
+  // real hub completion state: generated artifacts + Learn-module progress
   const docs = useModuleStore((s) => s.artifacts.executiveDocuments)
+  const moduleProgress = useModuleStore((s) => s.modules)
   const docTypes = useMemo(() => new Set((docs ?? []).map((d) => d.type)), [docs])
+  const moduleDone = (id?: string) => !!id && moduleProgress[id]?.status === 'completed'
+  const artifactDone = (t?: ExecutiveDocumentType) => !!t && docTypes.has(t)
+  const refDone = (id?: string) => !!id && visitedRefs.includes(id)
+  const stepDone = (s: PlaybookStep) =>
+    s.kind === 'learn'
+      ? moduleDone(s.moduleId)
+      : s.kind === 'activity'
+        ? artifactDone(s.artifactType)
+        : refDone(s.refId)
   const evidenceLevel = (p: string): number => {
     const ev = LEVEL_EVIDENCE[p as PhaseId]
     if (!ev) return 0
@@ -346,6 +375,8 @@ export function SimulationView() {
   const phaseOwned = phaseRoles.some((r) => r.persona === seat)
   const ladder = PHASE_MATURITY[sel]
   const mission = SIM_MISSIONS[sel]
+  const playbook = SIM_PLAYBOOK[sel] ?? []
+  const playbookDone = playbook.filter(stepDone).length
   const moveCtx: MoveCtx = {
     country: {
       id: country,
@@ -659,6 +690,67 @@ export function SimulationView() {
 
           <DecisionSection phaseId={sel} ctx={moveCtx} />
 
+          {/* Playbook — the multi-step play; completion read from real hub state */}
+          {playbook.length > 0 && (
+            <div className="mb-4">
+              <div className="mb-2 flex items-center justify-between">
+                <Eyebrow>Run the play — work each step</Eyebrow>
+                <span
+                  className={`text-[11px] font-bold ${playbookDone === playbook.length ? 'text-success' : 'text-muted-foreground'}`}
+                >
+                  {playbookDone}/{playbook.length} done
+                </span>
+              </div>
+              <ol className="flex flex-col gap-1.5">
+                {playbook.map((step, i) => {
+                  const done = stepDone(step)
+                  return (
+                    <li key={`${step.kind}-${step.to}-${i}`}>
+                      <Link
+                        to={step.to}
+                        onClick={
+                          step.kind === 'reference' && step.refId
+                            ? () => markRefVisited(step.refId!)
+                            : undefined
+                        }
+                        className={`flex items-center gap-2.5 rounded-lg border px-3 py-2 ${
+                          done
+                            ? 'border-success/40 bg-success/5'
+                            : 'border-border bg-muted hover:bg-muted/70'
+                        }`}
+                      >
+                        <span
+                          className={`grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-bold ${
+                            done
+                              ? 'bg-success text-success-foreground'
+                              : 'bg-card text-muted-foreground'
+                          }`}
+                        >
+                          {done ? '✓' : i + 1}
+                        </span>
+                        <span
+                          className={`rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${KIND_CHIP[step.kind]}`}
+                        >
+                          {step.kind}
+                        </span>
+                        <span className="min-w-0 flex-1 truncate text-[12px] font-medium text-foreground">
+                          {step.label}
+                        </span>
+                        <span className="shrink-0 font-mono text-[9px] text-muted-foreground">
+                          {done ? 'done' : 'open →'}
+                        </span>
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ol>
+              <p className="mt-1.5 font-mono text-[9px] text-muted-foreground">
+                Learn = module completed · Activity = artifact generated · Reference = opened.
+                Tracked from your real hub progress.
+              </p>
+            </div>
+          )}
+
           {/* maturity ladder */}
           {ladder && (
             <>
@@ -721,9 +813,25 @@ export function SimulationView() {
           {/* resources */}
           <Eyebrow className="mb-2">Open a resource — every activity is a real hub tool</Eyebrow>
           <div className="mt-auto grid gap-2.5 md:grid-cols-3">
-            <ResCol title="Learn" items={resLinks('learn', sel)} />
-            <ResCol title="Activities" items={resLinks('activities', sel)} />
-            <ResCol title="Reference" items={resLinks('reference', sel)} />
+            <ResCol
+              title="Learn"
+              items={resLinks('learn', sel).map((it) => ({ ...it, done: moduleDone(it.id) }))}
+            />
+            <ResCol
+              title="Activities"
+              items={resLinks('activities', sel).map((it) => ({
+                ...it,
+                done: artifactDone(TOOL_TO_ARTIFACT[it.id]),
+              }))}
+            />
+            <ResCol
+              title="Reference"
+              items={resLinks('reference', sel).map((it) => ({
+                ...it,
+                done: refDone(it.id),
+                onClick: () => markRefVisited(it.id),
+              }))}
+            />
           </div>
         </div>
 
@@ -767,6 +875,44 @@ export function SimulationView() {
             </div>
           </div>
 
+          {/* Artifacts — what your activities have generated */}
+          <div className="rounded-xl border border-border bg-card p-4">
+            <Eyebrow className="mb-2.5 block">
+              Artifacts <span className="text-muted-foreground/60">· {docs?.length ?? 0}</span>
+            </Eyebrow>
+            {!docs || docs.length === 0 ? (
+              <p className="text-[11px] text-muted-foreground">
+                No artifacts yet — run an{' '}
+                <span className="font-medium text-foreground">Activity</span> step to generate one.
+              </p>
+            ) : (
+              <div className="flex flex-col gap-1.5">
+                {docs
+                  .slice()
+                  .reverse()
+                  .slice(0, 8)
+                  .map((d) => (
+                    <div
+                      key={d.id}
+                      className="flex items-center gap-2 rounded-lg border border-success/40 bg-success/5 px-2.5 py-1.5"
+                    >
+                      <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-success text-[9px] font-bold text-success-foreground">
+                        ✓
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-[11.5px] font-semibold text-foreground">
+                          {d.title}
+                        </span>
+                        <span className="block font-mono text-[9px] text-muted-foreground">
+                          {d.type}
+                        </span>
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
+
           <ArchitecturePanel
             size={size as 'small' | 'mid' | 'large' | 'global'}
             country={country}
@@ -806,25 +952,32 @@ function computeReadiness(size: string, p5: number) {
 
 // ---- resources -----------------------------------------------------------
 interface ResItem {
+  id: string
   label: string
   to: string
+  done?: boolean
+  onClick?: () => void
 }
 function resLinks(leg: 'learn' | 'activities' | 'reference', phase: PhaseId): ResItem[] {
   if (leg === 'learn')
     return resourcesForPhase('learn', phase).map((id) => ({
+      id,
       label: MODULE_CATALOG[id]?.title ?? id,
       to: `/learn/${id}`,
     }))
   if (leg === 'reference')
     return resourcesForPhase('reference', phase).map((id) => ({
+      id,
       label: REF_LABELS[id] ?? id,
       to: REFERENCE_PHASES[id]?.deepUrl ?? '/',
     }))
   const biz = resourcesForPhase('business', phase, 'practice').map((id) => ({
+    id,
     label: BIZ_NAME.get(id) ?? id,
     to: `/business/tools/${id}`,
   }))
   const pg = resourcesForPhase('playground', phase, 'practice').map((id) => ({
+    id,
     label: PG_NAME.get(id) ?? id,
     to: `/playground/tools/${id}`,
   }))
@@ -832,20 +985,38 @@ function resLinks(leg: 'learn' | 'activities' | 'reference', phase: PhaseId): Re
 }
 
 function ResCol({ title, items }: { title: string; items: ResItem[] }) {
+  const doneCount = items.filter((i) => i.done).length
   return (
     <div className="rounded-xl border border-border bg-card p-3">
       <Eyebrow className="mb-2 block">
-        {title} <span className="text-muted-foreground/60">· {items.length}</span>
+        {title}{' '}
+        <span className="text-muted-foreground/60">
+          · {doneCount > 0 ? `${doneCount}/${items.length}` : items.length}
+        </span>
       </Eyebrow>
       <div className="flex flex-col gap-1.5">
         {items.map((r) => (
           <Link
-            key={r.to + r.label}
+            key={r.id + r.to}
             to={r.to}
-            className="flex flex-col gap-px rounded-lg border border-border bg-muted px-2.5 py-1.5 hover:bg-muted/70"
+            onClick={r.onClick}
+            className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
+              r.done ? 'border-success/40 bg-success/5' : 'border-border bg-muted hover:bg-muted/70'
+            }`}
           >
-            <span className="text-[11.5px] font-semibold text-foreground">{r.label}</span>
-            <span className="font-mono text-[9px] text-muted-foreground">{r.to}</span>
+            <span
+              className={`grid h-4 w-4 shrink-0 place-items-center rounded-full text-[9px] font-bold ${
+                r.done
+                  ? 'bg-success text-success-foreground'
+                  : 'border border-border text-transparent'
+              }`}
+            >
+              ✓
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[11.5px] font-semibold text-foreground">{r.label}</span>
+              <span className="block font-mono text-[9px] text-muted-foreground">{r.to}</span>
+            </span>
           </Link>
         ))}
       </div>

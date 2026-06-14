@@ -27,12 +27,16 @@ export interface SimulationState {
   crqcShift: number
   /** Event feed, newest first, capped at 30. */
   events: SimEvent[]
+  /** Reference resources the player has opened (playbook completion). */
+  visitedRefs: string[]
 
   setSize: (v: string) => void
   setCountry: (v: string) => void
   setSector: (v: string) => void
   setSeat: (v: string) => void
   setSel: (v: PhaseId) => void
+  /** Record that a reference resource was opened. */
+  markRefVisited: (id: string) => void
   /** Cumulative manual tick: clicking the current level un-ticks to level-1. */
   setLevel: (phase: string, level: number) => void
   /** Commit an End-Quarter result (AI-advanced checks, shock, new turn, events). */
@@ -72,6 +76,7 @@ const SEED = {
     },
     { sev: 'info', t: 'Q2 2026', txt: 'OpenSSL 3.6 ships ML-DSA hardware acceleration' },
   ] as SimEvent[],
+  visitedRefs: [] as string[],
 }
 
 export const useSimulationStore = create<SimulationState>()(
@@ -83,6 +88,8 @@ export const useSimulationStore = create<SimulationState>()(
       setSector: (sector) => set({ sector }),
       setSeat: (seat) => set({ seat }),
       setSel: (sel) => set({ sel }),
+      markRefVisited: (id) =>
+        set((s) => (s.visitedRefs.includes(id) ? s : { visitedRefs: [...s.visitedRefs, id] })),
       setLevel: (phase, level) =>
         set((s) => ({
           checks: { ...s.checks, [phase]: s.checks[phase] === level ? level - 1 : level },
@@ -100,7 +107,7 @@ export const useSimulationStore = create<SimulationState>()(
     {
       name: 'pqc-simulation',
       storage: createJSONStorage(() => localStorage),
-      version: 1,
+      version: 2,
       partialize: (s) => ({
         size: s.size,
         country: s.country,
@@ -112,6 +119,7 @@ export const useSimulationStore = create<SimulationState>()(
         q: s.q,
         crqcShift: s.crqcShift,
         events: s.events,
+        visitedRefs: s.visitedRefs,
       }),
       migrate: (persisted: unknown) => {
         // Defensive: ensure every field exists with a safe default.
@@ -130,6 +138,7 @@ export const useSimulationStore = create<SimulationState>()(
           q: (s.q as number) ?? SEED.q,
           crqcShift: (s.crqcShift as number) ?? SEED.crqcShift,
           events: Array.isArray(s.events) ? (s.events as SimEvent[]) : [...SEED.events],
+          visitedRefs: Array.isArray(s.visitedRefs) ? (s.visitedRefs as string[]) : [],
         }
       },
       onRehydrateStorage: () => (_state, error) => {
