@@ -197,6 +197,10 @@ export function SimulationView() {
   // Roles that run the active phase — "You" if owned by your seat, else AI team.
   const phaseRoles = Object.values(ROLE_CROSSWALK).filter((r) => r.phases.includes(activePhase))
   const objective = PHASE_OBJECTIVES[activePhase]
+  // The mission adapts to the player's maturity: the next level's indicator is
+  // the concrete goal right now.
+  const nextLevel = currentLevel < 4 ? ((currentLevel + 1) as MaturityLevelId) : null
+  const nextStep = nextLevel != null ? ladder?.find((l) => l.level === nextLevel) : undefined
 
   // Mosca clock — size sets migration time Y, country sets the deadline Z.
   const currentYear = new Date().getFullYear()
@@ -487,13 +491,33 @@ export function SimulationView() {
                   </ul>
                 </div>
               </div>
-              <p className="mt-3 text-xs text-muted-foreground">
-                <span className="font-semibold text-foreground">Clear the phase:</span>{' '}
-                {objective.winHint} Use the{' '}
-                <span className="font-medium text-foreground">Activities</span> below to do the
-                work, then confirm the levels in{' '}
-                <span className="font-medium text-foreground">Maturity</span>.
-              </p>
+              {/* Level-aware next step — what to do depends on your maturity */}
+              {ladder && (
+                <div className="mt-3 rounded-md border border-primary/30 bg-background/40 p-2 text-xs">
+                  {nextStep ? (
+                    <>
+                      <span className="font-semibold text-foreground">
+                        You’re at Level {currentLevel} ({MATURITY_LEVEL_NAMES[currentLevel]}).
+                        {currentLevel >= PHASE_WIN_LEVEL ? ' Phase cleared ✓.' : ''} Next →{' '}
+                        <span className="text-primary">
+                          Level {nextStep.level} ({MATURITY_LEVEL_NAMES[nextStep.level]})
+                        </span>
+                        :
+                      </span>{' '}
+                      <span className="text-muted-foreground">{nextStep.indicator}</span>
+                      <div className="mt-1 text-muted-foreground">
+                        Use the <span className="font-medium text-foreground">Activities</span>{' '}
+                        below to get there, then confirm it in{' '}
+                        <span className="font-medium text-foreground">Maturity</span>.
+                      </div>
+                    </>
+                  ) : (
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                      ✓ Fully optimized (Level 4) — nothing more to do in this phase.
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
           )}
 

@@ -35,10 +35,20 @@ describe('SimulationView (skeleton)', () => {
       screen.getByText(/turn the quantum threat into a funded, governed program/i)
     ).toBeInTheDocument()
     expect(screen.getByText('Do this')).toBeInTheDocument()
-    expect(screen.getByText(/Clear the phase:/)).toBeInTheDocument()
+    // mission is level-aware: at Level 0 the next target is Level 1
+    expect(screen.getByText(/Level 1 \(Aware\)/)).toBeInTheDocument()
     // switching phase changes the mission
     fireEvent.click(screen.getByRole('button', { name: /Discovery/i }))
     expect(screen.getByText(/can't migrate what you can't see/i)).toBeInTheDocument()
+  })
+
+  it('the next-step mission advances as the player earns levels', () => {
+    renderPage()
+    // p0 at Level 0 → next is Level 1
+    expect(screen.getByText(/Level 1 \(Aware\)/)).toBeInTheDocument()
+    // earn Level 1 → next becomes Level 2
+    fireEvent.click(screen.getByRole('checkbox', { name: /Level 1 — Aware/i }))
+    expect(screen.getByText(/Level 2 \(Initiated\)/)).toBeInTheDocument()
   })
 
   it('shows the per-phase team with You / AI-team split that follows the seat', () => {
