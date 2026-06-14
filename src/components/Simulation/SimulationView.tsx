@@ -14,12 +14,7 @@ import { useMemo, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { FRAMEWORK_PHASES, PHASE_ORDER, type PhaseId } from '@/data/frameworkPhases'
-import {
-  PHASE_MATURITY,
-  MATURITY_LEVEL_NAMES,
-  PHASE_WIN_LEVEL,
-  LEVEL_EVIDENCE,
-} from '@/data/phaseMaturity'
+import { MATURITY_LEVEL_NAMES, PHASE_WIN_LEVEL, LEVEL_EVIDENCE } from '@/data/phaseMaturity'
 import { SIM_MISSIONS } from '@/data/simMissions'
 import {
   computeSimMosca,
@@ -327,7 +322,6 @@ export function SimulationView() {
     setSector,
     setSeat,
     setSel,
-    setLevel,
     applyQuarter,
     reset,
     visitedRefs,
@@ -446,7 +440,6 @@ export function SimulationView() {
   const phaseCleared = level >= PHASE_WIN_LEVEL
   const phaseRoles = Object.values(ROLE_CROSSWALK).filter((r) => r.phases.includes(sel))
   const phaseOwned = phaseRoles.some((r) => r.persona === seat)
-  const ladder = PHASE_MATURITY[sel]
   const mission = SIM_MISSIONS[sel]
   // Framework activity tree for this phase, banded by maturity level. Steps unlock
   // sequentially (level → activity → step); a step is workable only once every
@@ -874,11 +867,12 @@ export function SimulationView() {
             onVisitRef={markRefVisited}
           />
 
-          {/* maturity ladder */}
-          {ladder && (
+          {/* maturity gates — read-only; each level is earned only by passing its
+              gate (completing that level's activities from real hub state) */}
+          {phaseTree && (
             <>
               <div className="mb-2 flex items-center justify-between">
-                <Eyebrow>Maturity ladder — reach L{PHASE_WIN_LEVEL}</Eyebrow>
+                <Eyebrow>Maturity gates — pass each to advance</Eyebrow>
                 <span
                   className={`text-[11px] font-bold ${phaseCleared ? 'text-success' : 'text-muted-foreground'}`}
                 >
@@ -888,47 +882,57 @@ export function SimulationView() {
                 </span>
               </div>
               <div className="mb-4 flex flex-col gap-1.5">
-                {ladder
-                  .filter((l) => l.level > 0)
-                  .map((l) => {
-                    const met = l.level <= level
-                    const goal = l.level === PHASE_WIN_LEVEL
-                    const locked = l.level > level + 1
-                    return (
-                      <Button
-                        variant="ghost"
-                        key={l.level}
-                        type="button"
-                        disabled={locked}
-                        onClick={() => !locked && setLevel(sel, l.level)}
-                        className={`h-auto justify-start whitespace-normal flex items-center gap-3 rounded-lg border px-3 py-2 text-left ${
-                          goal ? 'border-warning' : met ? 'border-success' : 'border-border'
-                        } ${met ? 'bg-success/10' : 'bg-muted'} ${locked ? 'cursor-not-allowed opacity-50' : 'hover:brightness-105'}`}
+                {phaseTree.levels.map((band) => {
+                  const total = band.activities.reduce((n, a) => n + a.steps.length, 0)
+                  const done = band.activities.reduce(
+                    (n, a) => n + a.steps.filter(stepDone).length,
+                    0
+                  )
+                  const earned = level >= band.level
+                  const current = band.level === level + 1 // the gate in progress
+                  const locked = band.level > level + 1
+                  const goal = band.level === PHASE_WIN_LEVEL
+                  return (
+                    <div
+                      key={band.level}
+                      className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${
+                        goal ? 'border-warning' : earned ? 'border-success' : 'border-border'
+                      } ${earned ? 'bg-success/10' : 'bg-muted'} ${locked ? 'opacity-50' : ''}`}
+                    >
+                      <span
+                        className={`grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md font-mono text-[10px] font-extrabold ${
+                          earned
+                            ? 'bg-success text-success-foreground'
+                            : 'bg-card text-muted-foreground'
+                        }`}
                       >
-                        <span
-                          className={`grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md font-mono text-[10px] font-extrabold ${
-                            met
-                              ? 'bg-success text-success-foreground'
-                              : 'bg-card text-muted-foreground'
-                          }`}
-                        >
-                          {met ? '✓' : l.level}
+                        {earned ? '✓' : locked ? '🔒' : band.level}
+                      </span>
+                      <span className="w-[88px] shrink-0 text-[11.5px] font-bold text-foreground">
+                        L{band.level} · {MATURITY_LEVEL_NAMES[band.level]}
+                      </span>
+                      <span className="flex-1 text-[10.5px] leading-tight text-muted-foreground">
+                        {band.indicator}
+                      </span>
+                      <span
+                        className={`shrink-0 font-mono text-[9px] font-bold ${
+                          earned
+                            ? 'text-success'
+                            : current
+                              ? 'text-primary'
+                              : 'text-muted-foreground'
+                        }`}
+                      >
+                        {earned ? 'passed ✓' : `${done}/${total} checks`}
+                      </span>
+                      {goal && (
+                        <span className="shrink-0 rounded-full bg-warning/15 px-2 py-0.5 font-mono text-[10px] font-bold text-warning">
+                          GOAL
                         </span>
-                        <span className="w-[88px] shrink-0 text-[11.5px] font-bold text-foreground">
-                          L{l.level} · {MATURITY_LEVEL_NAMES[l.level]}
-                        </span>
-                        <span className="flex-1 text-[10.5px] leading-tight text-muted-foreground">
-                          {l.indicator}
-                        </span>
-                        {goal && (
-                          <span className="rounded-full bg-warning/15 px-2 py-0.5 font-mono text-[10px] font-bold text-warning">
-                            GOAL
-                          </span>
-                        )}
-                        {locked && <span className="text-[9px] text-muted-foreground">🔒</span>}
-                      </Button>
-                    )
-                  })}
+                      )}
+                    </div>
+                  )
+                })}
               </div>
             </>
           )}
