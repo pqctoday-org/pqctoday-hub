@@ -27,6 +27,17 @@ describe('SimulationView (skeleton)', () => {
     expect(screen.getByRole('navigation', { name: /migration phases/i })).toBeInTheDocument()
   })
 
+  it('shows the per-phase team with You / AI-team split that follows the seat', () => {
+    renderPage()
+    expect(screen.getByText('Your seat (Solo mode)')).toBeInTheDocument()
+    // Default phase p0, default seat Executive → QRPM is owned ("You").
+    expect(screen.getByText('Team — who runs this phase')).toBeInTheDocument()
+    expect(screen.getAllByText('You').length).toBeGreaterThan(0)
+    // Switch seat to Architect → on P0 the exec roles become "AI team".
+    fireEvent.click(screen.getByRole('button', { name: /Architect/i }))
+    expect(screen.getAllByText('AI team').length).toBeGreaterThan(0)
+  })
+
   it('renders the Mosca clock with a verdict', () => {
     renderPage()
     expect(screen.getByText(/Mosca clock/)).toBeInTheDocument()
