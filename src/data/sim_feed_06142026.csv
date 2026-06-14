@@ -1,0 +1,77 @@
+year,q,sev,txt
+2026,1,info,NIST FIPS 203/204/205 adoption accelerating across vendors
+2026,1,info,Discovery and inventory work continues across the estate
+2026,2,warning,Harvest-now-decrypt-later capture campaigns reported against classical TLS
+2026,2,warning,Long-shelf-life data keeps accruing harvest-now exposure
+2026,3,info,Pilots and hybrid rollouts expand to more Tier-1 systems
+2026,4,info,PQC readiness questionnaires becoming standard in enterprise procurement
+2026,4,success,Another wave of systems migrated to hybrid PQC
+2027,1,warning,Regulators publish quantum-readiness expectations; clock is ticking
+2027,1,info,Discovery and inventory work continues across the estate
+2027,2,warning,Long-shelf-life data keeps accruing harvest-now exposure
+2027,3,info,Hybrid ML-KEM deployments reach mainstream browser and VPN support
+2027,3,info,Pilots and hybrid rollouts expand to more Tier-1 systems
+2027,4,success,Another wave of systems migrated to hybrid PQC
+2028,1,warning,Q-Day forecasts converge on ~2029 — boards demand migration status
+2028,1,info,Discovery and inventory work continues across the estate
+2028,2,warning,Long-shelf-life data keeps accruing harvest-now exposure
+2028,3,danger,Late-stage cryptanalysis breakthroughs narrow the safety margin
+2028,3,info,Pilots and hybrid rollouts expand to more Tier-1 systems
+2028,4,success,Another wave of systems migrated to hybrid PQC
+2029,1,danger,Q-DAY: first CRQC demonstrated — the most sensitive assets are now breakable
+2029,1,danger,Active exploitation pressure on un-migrated critical assets
+2029,2,danger,Classical RSA/ECC key exchange must be considered compromised for long-lived secrets
+2029,2,warning,Compliance auditors flag remaining classical cryptography
+2029,3,warning,Vendor delays threaten the migration critical path
+2029,4,success,Critical systems cut over to PQC ahead of the wave
+2030,1,danger,CNSA 2.0 / BSI deadlines in force — non-PQC systems out of compliance
+2030,1,danger,Active exploitation pressure on un-migrated critical assets
+2030,2,warning,Compliance auditors flag remaining classical cryptography
+2030,3,warning,Vendor delays threaten the migration critical path
+2030,4,success,Critical systems cut over to PQC ahead of the wave
+2031,1,warning,Quantum attack tooling commoditising; high-sensitivity assets broadly exposed
+2031,1,warning,Quantum capacity widens; more asset tiers become exposed
+2031,2,danger,Forged-signature incidents reported in the wild
+2031,3,success,Wave migration clears another tranche of Tier-2 systems
+2031,4,info,Crypto-agility drills validate algorithm-swap readiness
+2032,1,warning,Insurers reprice or exclude non-PQC cryptographic risk
+2032,1,warning,Quantum capacity widens; more asset tiers become exposed
+2032,2,danger,Forged-signature incidents reported in the wild
+2032,3,success,Wave migration clears another tranche of Tier-2 systems
+2032,4,info,Crypto-agility drills validate algorithm-swap readiness
+2033,1,warning,Medium-sensitivity assets now within reach of available quantum capacity
+2033,1,warning,Quantum capacity widens; more asset tiers become exposed
+2033,2,danger,Forged-signature incidents reported in the wild
+2033,3,success,Wave migration clears another tranche of Tier-2 systems
+2033,4,info,Crypto-agility drills validate algorithm-swap readiness
+2034,1,warning,Quantum capacity widens; more asset tiers become exposed
+2034,2,danger,Forged-signature incidents reported in the wild
+2034,3,success,Wave migration clears another tranche of Tier-2 systems
+2034,4,info,Crypto-agility drills validate algorithm-swap readiness
+2035,1,danger,CRQC broadly available — EVERY sensitivity tier is at risk
+2035,1,info,Post-quantum operations are business-as-usual
+2035,2,success,Hybrid deployments transitioning to PQC-only
+2035,3,warning,Long-tail legacy systems remain the residual risk
+2035,4,info,Continuous monitoring sustains the quantum-safe posture
+2036,1,info,Post-quantum operations are business-as-usual
+2036,2,success,Hybrid deployments transitioning to PQC-only
+2036,3,warning,Long-tail legacy systems remain the residual risk
+2036,4,info,Continuous monitoring sustains the quantum-safe posture
+2037,1,info,Post-quantum baseline assumed; residual classical crypto is legacy debt
+2037,1,info,Post-quantum operations are business-as-usual
+2037,2,success,Hybrid deployments transitioning to PQC-only
+2037,3,warning,Long-tail legacy systems remain the residual risk
+2037,4,info,Continuous monitoring sustains the quantum-safe posture
+2038,1,info,Post-quantum operations are business-as-usual
+2038,2,success,Hybrid deployments transitioning to PQC-only
+2038,3,warning,Long-tail legacy systems remain the residual risk
+2038,4,info,Continuous monitoring sustains the quantum-safe posture
+2039,1,info,Post-quantum operations are business-as-usual
+2039,2,success,Hybrid deployments transitioning to PQC-only
+2039,3,warning,Long-tail legacy systems remain the residual risk
+2039,4,info,Continuous monitoring sustains the quantum-safe posture
+2040,1,info,Post-quantum operations are business-as-usual
+2040,2,success,Hybrid deployments transitioning to PQC-only
+2040,3,warning,Long-tail legacy systems remain the residual risk
+2040,4,info,Simulation horizon reached — your program’s posture is locked in
+2040,4,info,Continuous monitoring sustains the quantum-safe posture
