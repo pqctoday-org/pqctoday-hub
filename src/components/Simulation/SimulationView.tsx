@@ -114,6 +114,21 @@ const KIND_CHIP: Record<StepKind, string> = {
 }
 // phases that act on the estate / infrastructure → the architecture view is shown
 const ARCH_PHASES = new Set<PhaseId>(['p1', 'p5', 'p6'])
+// the Learn modules + artifact types the simulation tracks (from every tree) —
+// RESET clears only these, not the player's unrelated hub progress.
+const SIM_TRACKED = (() => {
+  const modules = new Set<string>()
+  const artifacts = new Set<string>()
+  for (const tree of Object.values(SIM_TREES)) {
+    for (const band of tree?.levels ?? [])
+      for (const act of band.activities)
+        for (const s of act.steps) {
+          if (s.moduleId) modules.add(s.moduleId)
+          if (s.artifactType) artifacts.add(s.artifactType)
+        }
+  }
+  return { modules, artifacts }
+})()
 const TIER_CHIP: Record<SensitivityTier, string> = {
   critical: 'bg-destructive/15 text-destructive',
   high: 'bg-warning/15 text-warning',
@@ -332,18 +347,21 @@ export function SimulationView() {
   // real hub completion state: generated artifacts + Learn-module progress
   const docs = useModuleStore((s) => s.artifacts.executiveDocuments)
   const moduleProgress = useModuleStore((s) => s.modules)
-  const resetModuleProgress = useModuleStore((s) => s.resetProgress)
-  // RESET clears BOTH the sim turn-state AND the real hub progress the gating reads
-  // from (completed Learn modules + generated artifacts), so the game truly restarts.
+  const resetModuleProgress = useModuleStore((s) => s.resetModuleProgress)
+  const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
+  // RESET clears the sim turn-state plus ONLY the sim-tracked hub progress the
+  // gating reads from (the Learn modules + artifacts referenced by the trees) —
+  // the player's other hub progress is left untouched.
   const resetAll = () => {
     if (
       typeof window !== 'undefined' &&
       !window.confirm(
-        'Reset the simulation? This also clears your Learn-module and activity (artifact) progress.'
+        "Reset the simulation? This clears the simulation's Learn-module and activity progress."
       )
     )
       return
-    resetModuleProgress()
+    for (const id of SIM_TRACKED.modules) resetModuleProgress(id)
+    for (const d of docs ?? []) if (SIM_TRACKED.artifacts.has(d.type)) deleteExecutiveDocument(d.id)
     reset()
   }
   const docTypes = useMemo(() => new Set((docs ?? []).map((d) => d.type)), [docs])
