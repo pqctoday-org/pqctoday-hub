@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { useEmbeddedLearn } from '../../../embeddedLearnContext'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { CertRotationChecklist } from './CertRotationChecklist'
@@ -25,6 +26,7 @@ export const PKIExercises: React.FC<PKIExercisesProps> = ({
   onSetWorkshopStep,
 }) => {
   const navigate = useNavigate()
+  const embeddedLearn = useEmbeddedLearn()
 
   const scenarios: Scenario[] = [
     {
@@ -145,28 +147,29 @@ export const PKIExercises: React.FC<PKIExercisesProps> = ({
       {/* Certificate Rotation Checklist */}
       <CertRotationChecklist />
 
-      {/* Quiz Link */}
-      <div className="glass-panel p-6 border-primary/20">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <BookOpen size={24} className="text-primary" />
-            <div>
-              <h3 className="font-bold text-foreground">Test Your Knowledge</h3>
-              <p className="text-sm text-muted-foreground">
-                Take the PQC quiz to test what you&apos;ve learned about PKI and post-quantum
-                cryptography.
-              </p>
+      {!embeddedLearn && (
+        <div className="glass-panel p-6 border-primary/20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <BookOpen size={24} className="text-primary" />
+              <div>
+                <h3 className="font-bold text-foreground">Test Your Knowledge</h3>
+                <p className="text-sm text-muted-foreground">
+                  Take the PQC quiz to test what you&apos;ve learned about PKI and post-quantum
+                  cryptography.
+                </p>
+              </div>
             </div>
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/learn/quiz')}
+              className="btn btn-secondary flex items-center gap-2 px-4 py-2"
+            >
+              Take Quiz <ArrowRight size={14} />
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/learn/quiz')}
-            className="btn btn-secondary flex items-center gap-2 px-4 py-2"
-          >
-            Take Quiz <ArrowRight size={14} />
-          </Button>
         </div>
-      </div>
+      )}
     </div>
   )
 }
