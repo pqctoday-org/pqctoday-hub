@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { PHASE_MATURITY, MATURITY_LEVEL_NAMES, PHASE_WIN_LEVEL } from './phaseMaturity'
+import {
+  PHASE_MATURITY,
+  MATURITY_LEVEL_NAMES,
+  PHASE_WIN_LEVEL,
+  LEVEL_EVIDENCE,
+} from './phaseMaturity'
 
 describe('phaseMaturity', () => {
   it('every defined phase has exactly levels 0–4 with non-empty indicators', () => {
@@ -35,5 +40,20 @@ describe('phaseMaturity', () => {
     expect(MATURITY_LEVEL_NAMES).toHaveLength(5)
     expect(PHASE_WIN_LEVEL).toBeGreaterThanOrEqual(0)
     expect(PHASE_WIN_LEVEL).toBeLessThanOrEqual(4)
+  })
+
+  it('every gated phase except p6 has artifact evidence at the win level', () => {
+    for (const phase of Object.keys(PHASE_MATURITY)) {
+      if (phase === 'p6') {
+        // Infrastructure has no Command-Center artifact yet → manual only.
+        expect(LEVEL_EVIDENCE[phase as keyof typeof LEVEL_EVIDENCE]).toBeUndefined()
+        continue
+      }
+      const ev = LEVEL_EVIDENCE[phase as keyof typeof LEVEL_EVIDENCE]
+      expect(
+        ev?.[PHASE_WIN_LEVEL]?.length,
+        `${phase}: missing L${PHASE_WIN_LEVEL} evidence`
+      ).toBeGreaterThan(0)
+    }
   })
 })
