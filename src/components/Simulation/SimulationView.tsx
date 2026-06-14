@@ -383,7 +383,7 @@ export function SimulationView() {
 
       {/* Your architecture for this org size — systems + protocols + readiness */}
       <div className="mb-6 grid gap-4 lg:grid-cols-2">
-        <ArchitecturePanel size={size} />
+        <ArchitecturePanel size={size} country={country} />
         <JurisdictionPanel country={country} size={size} />
       </div>
 
