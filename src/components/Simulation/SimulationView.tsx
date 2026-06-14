@@ -10,7 +10,7 @@
  * useSimulationStore. Design: reports/framework-gap/SIMULATION-DESIGN.md +
  * the Mission Control handoff.
  */
-import { useMemo, useState, Suspense, type ReactNode } from 'react'
+import { useMemo, useState, useEffect, Suspense, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { ArtifactDrawer, type DrawerMode } from '@/components/BusinessCenter/ArtifactDrawer'
 import { SIM_LEARN_MODULES, isEmbeddableModule } from '@/components/PKILearning/simEmbedModules'
@@ -165,6 +165,16 @@ const REF_LABELS: Record<string, string> = {
 
 const cycle = <T extends { id: string }>(arr: readonly T[], cur: string) =>
   arr[(arr.findIndex((a) => a.id === cur) + 1) % arr.length].id
+
+// Flag an outbound navigation to a hub resource so MainLayout shows the
+// "Resume Simulation" bar (the PWA-safe return path). Cleared on sim mount.
+const markSimResume = () => {
+  try {
+    sessionStorage.setItem('sim:resume', '1')
+  } catch {
+    /* ignore */
+  }
+}
 
 const eyebrow = 'font-mono text-[9.5px] font-bold uppercase tracking-[0.14em] text-muted-foreground'
 
@@ -350,6 +360,14 @@ export function SimulationView() {
     clearAuto,
   } = useSimulationStore()
   const [report, setReport] = useState<QuarterReportData | null>(null)
+  // back in the sim → clear the "Resume Simulation" flag the hub banner reads
+  useEffect(() => {
+    try {
+      sessionStorage.removeItem('sim:resume')
+    } catch {
+      /* ignore */
+    }
+  }, [])
   // in-sim embedding: a Learn module (panel under the sim header) or an activity
   // editor (ArtifactDrawer modal). Keeps the player inside /simulation.
   const [learnEmbed, setLearnEmbed] = useState<{ moduleId: string; title: string } | null>(null)
@@ -1347,7 +1365,10 @@ function ResCol({ title, items }: { title: string; items: ResItem[] }) {
           <Link
             key={r.id + r.to}
             to={r.to}
-            onClick={r.onClick}
+            onClick={() => {
+              markSimResume()
+              r.onClick?.()
+            }}
             className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
               r.done ? 'border-success/40 bg-success/5' : 'border-border bg-muted hover:bg-muted/70'
             }`}
@@ -1533,9 +1554,10 @@ function DecisionSection({
           ) : (
             <Link
               to={step.to}
-              onClick={
-                step.kind === 'reference' && step.refId ? () => onVisitRef(step.refId!) : undefined
-              }
+              onClick={() => {
+                markSimResume()
+                if (step.kind === 'reference' && step.refId) onVisitRef(step.refId)
+              }}
               className="flex items-center gap-2.5 rounded-md border border-success/40 bg-card px-3 py-2 hover:bg-muted/60"
             >
               <span

@@ -36,6 +36,7 @@ import { PhaseCompletionToast } from '../ui/PhaseCompletionToast'
 import { GuidedTour } from '../common/GuidedTour'
 import { Breadcrumb } from '../common/Breadcrumb'
 import { PhaseContextBanner } from '../shared/PhaseContextBanner'
+import { ResumeSimBar } from '../shared/ResumeSimBar'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
 import { WorkflowBanner } from '../common/WorkflowBanner'
@@ -500,6 +501,9 @@ export const MainLayout = () => {
       <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
         {/* Main Content Area */}
         <main id="main-content" className="container py-4 px-4 md:py-8 md:px-8" role="main">
+          {/* Return-to-simulation banner (shown when arriving from the sim) */}
+          <ResumeSimBar />
+
           {/* Offline mode info banner */}
           <AirplaneModeBanner />
 
