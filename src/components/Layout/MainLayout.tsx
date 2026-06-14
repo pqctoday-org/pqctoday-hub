@@ -101,6 +101,7 @@ export const MainLayout = () => {
 
   const navItems = [
     { path: '/', label: 'Home', icon: Home, end: true },
+    { path: '/simulation', label: 'Simulation', icon: Gamepad2, section: 'start' },
     // — Explore entry point (curious persona only) —
     { path: '/explore', label: 'Explore', icon: Compass, section: 'start', curiousOnly: true },
     // — Start the Journey —
@@ -146,15 +147,6 @@ export const MainLayout = () => {
       hiddenOnMobile: !(selectedPersona === 'executive' || selectedPersona === 'architect'),
       mobileMore: selectedPersona !== 'executive' && selectedPersona !== 'architect',
       moreOrder: 5,
-    },
-    {
-      path: '/simulation',
-      label: 'Simulation',
-      icon: Gamepad2,
-      section: 'assess',
-      hiddenOnMobile: true,
-      mobileMore: true,
-      moreOrder: 6,
     },
     {
       path: '/playground',
