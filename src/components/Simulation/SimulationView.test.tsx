@@ -45,6 +45,13 @@ describe('SimulationView (skeleton)', () => {
     expect(screen.getByText(/migratable now/)).toBeInTheDocument()
   })
 
+  it('renders the jurisdiction panel for the chosen country', () => {
+    renderPage()
+    // default country = DE (BSI) → hybrid required
+    expect(screen.getByText(/Jurisdiction — BSI/)).toBeInTheDocument()
+    expect(screen.getByText(/Migrate as: hybrid/)).toBeInTheDocument()
+  })
+
   it('renders the Mosca clock with a verdict', () => {
     renderPage()
     expect(screen.getByText(/Mosca clock/)).toBeInTheDocument()

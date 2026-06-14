@@ -40,6 +40,7 @@ import { MilestoneGateColumn } from './MilestoneGateColumn'
 import { RoadmapOverlay } from './RoadmapOverlay'
 import { TimelinePlanningNotes } from './TimelinePlanningNotes'
 import { ArchitecturePanel } from './ArchitecturePanel'
+import { JurisdictionPanel } from './JurisdictionPanel'
 
 // --- setup dials (skeleton; full jurisdiction/clock rules come later) ---
 const SIZES = [
@@ -381,8 +382,9 @@ export function SimulationView() {
       </div>
 
       {/* Your architecture for this org size — systems + protocols + readiness */}
-      <div className="mb-6">
+      <div className="mb-6 grid gap-4 lg:grid-cols-2">
         <ArchitecturePanel size={size} />
+        <JurisdictionPanel country={country} size={size} />
       </div>
 
       {/* Deadline + gate context (repurposed from the Timeline) — collapsed by default */}
