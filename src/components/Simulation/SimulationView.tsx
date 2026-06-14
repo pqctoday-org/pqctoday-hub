@@ -53,6 +53,17 @@ import {
 import { SIM_MOVES, type MoveCtx, type MoveKind } from '@/data/simMoves'
 import { SIM_EVENT_POOL, fillEvent, type EventSeverity, type SimEvent } from '@/data/simEvents'
 import { ARCHITECTURES } from '@/data/simArchitecture'
+import {
+  computeThreatLevels,
+  portfolioFor,
+  portfolioValue,
+  programBudgetTarget,
+  exposeAssets,
+  insuranceCoverage,
+  insurancePremium,
+  type OrgSize,
+  type SensitivityTier,
+} from '@/data/simAssets'
 import { ArchitecturePanel } from './ArchitecturePanel'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -107,6 +118,12 @@ const KIND_CHIP: Record<StepKind, string> = {
 }
 // phases that act on the estate / infrastructure → the architecture view is shown
 const ARCH_PHASES = new Set<PhaseId>(['p1', 'p5', 'p6'])
+const TIER_CHIP: Record<SensitivityTier, string> = {
+  critical: 'bg-destructive/15 text-destructive',
+  high: 'bg-warning/15 text-warning',
+  medium: 'bg-primary/15 text-primary',
+  low: 'bg-muted text-muted-foreground',
+}
 // reverse of ARTIFACT_TYPE_TO_TOOL_ID: business tool id → the artifact type it emits
 const TOOL_TO_ARTIFACT: Record<string, ExecutiveDocumentType> = Object.fromEntries(
   (Object.entries(ARTIFACT_TYPE_TO_TOOL_ID) as [ExecutiveDocumentType, string][]).map(
@@ -320,6 +337,20 @@ export function SimulationView() {
   // real hub completion state: generated artifacts + Learn-module progress
   const docs = useModuleStore((s) => s.artifacts.executiveDocuments)
   const moduleProgress = useModuleStore((s) => s.modules)
+  const resetModuleProgress = useModuleStore((s) => s.resetProgress)
+  // RESET clears BOTH the sim turn-state AND the real hub progress the gating reads
+  // from (completed Learn modules + generated artifacts), so the game truly restarts.
+  const resetAll = () => {
+    if (
+      typeof window !== 'undefined' &&
+      !window.confirm(
+        'Reset the simulation? This also clears your Learn-module and activity (artifact) progress.'
+      )
+    )
+      return
+    resetModuleProgress()
+    reset()
+  }
   const docTypes = useMemo(() => new Set((docs ?? []).map((d) => d.type)), [docs])
   const moduleDone = (id?: string) => !!id && moduleProgress[id]?.status === 'completed'
   const artifactDone = (t?: ExecutiveDocumentType) => !!t && docTypes.has(t)
@@ -343,7 +374,11 @@ export function SimulationView() {
     const t = SIM_TREES[p as PhaseId]
     return t ? achievedTreeLevel(t, stepDone) : 0
   }
-  const levelOf = (p: string) => Math.max(checks[p] ?? 0, evidenceLevel(p), treeLevel(p))
+  // STRICT GATING: a phase with an activity tree can only reach level N by passing
+  // the gate of every level below it (completing those levels' activities). No
+  // manual/seed bypass. Phases with no tree (foundations) fall back to evidence.
+  const levelOf = (p: string) =>
+    SIM_TREES[p as PhaseId] ? treeLevel(p) : Math.max(checks[p] ?? 0, evidenceLevel(p))
 
   // setup-dial-derived facts
   const sizeOpt = SIZES.find((s) => s.id === size) ?? SIZES[1]
@@ -369,19 +404,34 @@ export function SimulationView() {
   // KPIs
   const readiness = computeReadiness(size, levelOf('p5'))
   const cleared = LIFECYCLE.filter((p) => levelOf(p) >= PHASE_WIN_LEVEL).length
-  const budgetTotal = 12.4
-  const budgetSpent = Math.min(
-    budgetTotal,
-    +(Object.values(checks).reduce((a, b) => a + b, 0) * 0.55 + 1).toFixed(1)
-  )
-  const threat: [string, string] =
-    clock.over > 9
-      ? ['Severe', 'text-destructive']
-      : clock.over > 4
-        ? ['Elevated', 'text-warning']
-        : clock.over > 0
-          ? ['Watch', 'text-warning']
-          : ['Stable', 'text-success']
+
+  // ---- date-driven quantum threat (HNDL + TNFL), evolving 2026 → 2029 → 2035 ----
+  const sizeKey = size as OrgSize
+  const threat = computeThreatLevels({
+    currentYear,
+    shelfLifeYears: shelfLifeFor(sector),
+    crqcShift,
+  })
+
+  // ---- enterprise assets + insurance (grounded in the assess-engine catalogue) ----
+  const assetsDiscovered = docTypes.has('initial-scoping') // P0 0.2 reveals them
+  const totalValueM = portfolioValue(sector, sizeKey)
+  // quantum-exposed value = HNDL%·Σ(HNDL assets) + TNFL%·Σ(TNFL assets), date-driven
+  const exposure = exposeAssets(portfolioFor(sector, sizeKey), threat.hndl.score, threat.tnfl.score)
+  const assets = exposure.rows
+  const exposedValueM = exposure.totalM
+  const insurancePolicyM = insuranceCoverage(sizeKey, exposure.rows)
+  const premiumM = insurancePremium(insurancePolicyM)
+  const uninsuredM = Math.max(0, Math.round((exposedValueM - insurancePolicyM) * 10) / 10)
+
+  // ---- budget: starts at €0, earned by executing P0 activities + P0 maturity ----
+  const p0Tree = SIM_TREES.p0
+  const p0Steps = p0Tree ? flattenTree(p0Tree) : []
+  const p0Done = p0Steps.filter(stepDone).length
+  const p0Level = levelOf('p0')
+  const p0Frac = p0Steps.length ? 0.5 * (p0Done / p0Steps.length) + 0.5 * (p0Level / 4) : 0
+  const budgetTarget = programBudgetTarget(sector, sizeKey)
+  const budgetSecured = Math.round(budgetTarget * p0Frac * 10) / 10
 
   // active phase
   const phase = FRAMEWORK_PHASES[sel]
@@ -579,7 +629,7 @@ export function SimulationView() {
           <Button
             type="button"
             variant="ghost"
-            onClick={reset}
+            onClick={resetAll}
             className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-[10px] font-bold text-background/70 hover:bg-background/10"
           >
             RESET
@@ -596,6 +646,22 @@ export function SimulationView() {
           </Button>
         </div>
       </header>
+
+      {/* ticker (top — live event feed) */}
+      <div className="flex h-[30px] shrink-0 items-center gap-5 overflow-hidden bg-foreground px-4 text-background/85">
+        <span className="shrink-0 font-mono text-[9px] font-extrabold uppercase tracking-[0.16em] text-primary">
+          ● LIVE FEED
+        </span>
+        <div className="flex gap-6 overflow-hidden">
+          {events.slice(0, 8).map((e, i) => (
+            <span key={i} className="flex shrink-0 items-center gap-1.5 text-[11px]">
+              <span className={`h-1.5 w-1.5 rounded-full ${SEVERITY_DOT[e.sev]}`} />
+              <span className="font-mono text-[9px] text-background/45">{e.t}</span>
+              <span className="whitespace-nowrap">{e.txt}</span>
+            </span>
+          ))}
+        </div>
+      </div>
 
       {/* KPI ribbon */}
       <div className="flex shrink-0 flex-wrap items-stretch gap-3 border-b border-border bg-card px-4 py-3">
@@ -634,8 +700,24 @@ export function SimulationView() {
           sub={`${readiness.migrated}/${readiness.vulnerable} vulnerable edges`}
           tone="text-primary"
         />
-        <Stat label="Threat level" value={threat[0]} sub="HNDL capture active" tone={threat[1]} />
-        <Stat label="Budget" value={`€${budgetSpent}M`} sub={`of €${budgetTotal}M committed`} />
+        <Stat
+          label="HNDL risk"
+          value={threat.hndl.label}
+          sub={threat.hndl.note}
+          tone={threat.hndl.tone}
+        />
+        <Stat
+          label="TNFL risk"
+          value={threat.tnfl.label}
+          sub={threat.tnfl.note}
+          tone={threat.tnfl.tone}
+        />
+        <Stat
+          label="Budget secured"
+          value={`€${budgetSecured}M`}
+          sub={`of €${budgetTarget}M — P0 L${p0Level}`}
+          tone={budgetSecured > 0 ? 'text-success' : 'text-muted-foreground'}
+        />
       </div>
 
       {/* body */}
@@ -872,6 +954,87 @@ export function SimulationView() {
         {/* right — phase-relevant intel: artifacts produced this phase + the
             views that matter to it (architecture only for estate/infra phases) */}
         <div className="flex min-h-0 flex-col gap-3.5 overflow-auto">
+          {/* Critical assets — discovered in P0; value + date-driven quantum exposure */}
+          <div className="rounded-xl border border-border bg-card p-4">
+            <Eyebrow className="mb-2 block">
+              Critical assets <span className="text-muted-foreground/60">· €{totalValueM}M</span>
+            </Eyebrow>
+            {!assetsDiscovered && (
+              <p className="mb-2 rounded-md border border-dashed border-warning/50 bg-warning/5 px-2 py-1 text-[10px] text-warning">
+                Estimated — run P0 “Assess Data &amp; Asset Sensitivity” to discover &amp; confirm.
+              </p>
+            )}
+            <div className="flex flex-col gap-1.5">
+              {assets.map((a) => {
+                const hot = a.exposurePct >= 0.6 // medium+ exposure
+                return (
+                  <div
+                    key={a.id}
+                    className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
+                      hot ? 'border-destructive/40 bg-destructive/5' : 'border-border bg-muted/40'
+                    }`}
+                  >
+                    <span
+                      className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${TIER_CHIP[a.tier]}`}
+                    >
+                      {a.tier}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[11.5px] font-semibold text-foreground">
+                        {a.label}
+                      </span>
+                      <span className="block font-mono text-[9px] text-muted-foreground">
+                        {a.exposure} · €{a.valueM}M · {Math.round(a.exposurePct * 100)}% exposed
+                      </span>
+                    </span>
+                    <span
+                      className={`shrink-0 font-mono text-[10px] font-bold ${hot ? 'text-destructive' : 'text-muted-foreground'}`}
+                    >
+                      €{a.exposedM}M
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+            <div className="mt-2 flex items-center justify-between font-mono text-[10px]">
+              <span className="text-muted-foreground">Quantum-exposed value</span>
+              <span className="font-bold text-destructive">€{exposedValueM}M</span>
+            </div>
+          </div>
+
+          {/* Cyber insurance — policy limit vs the quantum-exposed value */}
+          <div className="rounded-xl border border-border bg-card p-4">
+            <Eyebrow className="mb-2 block">Cyber insurance</Eyebrow>
+            <div className="flex items-baseline justify-between">
+              <span className="text-[19px] font-extrabold text-foreground">
+                €{insurancePolicyM}M
+              </span>
+              <span className="font-mono text-[9px] text-muted-foreground">
+                covers critical + high
+              </span>
+            </div>
+            <div className="mt-0.5 flex items-center justify-between font-mono text-[10px]">
+              <span className="text-muted-foreground">Annual premium · 0.15%</span>
+              <span className="font-bold text-foreground">
+                {premiumM >= 1 ? `€${premiumM}M` : `€${Math.round(premiumM * 1000)}k`}/yr
+              </span>
+            </div>
+            <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
+              <div
+                className={uninsuredM > 0 ? 'h-full bg-warning' : 'h-full bg-success'}
+                style={{
+                  width: `${exposedValueM > 0 ? Math.min(100, (Math.min(insurancePolicyM, exposedValueM) / exposedValueM) * 100) : 100}%`,
+                }}
+              />
+            </div>
+            <div className="mt-1.5 flex items-center justify-between font-mono text-[10px]">
+              <span className="text-muted-foreground">Uninsured quantum exposure</span>
+              <span className={`font-bold ${uninsuredM > 0 ? 'text-destructive' : 'text-success'}`}>
+                €{uninsuredM}M
+              </span>
+            </div>
+          </div>
+
           {/* Artifacts this phase produces — completed vs still to generate */}
           <div className="rounded-xl border border-border bg-card p-4">
             <Eyebrow className="mb-2.5 block">
@@ -929,22 +1092,6 @@ export function SimulationView() {
               country={country}
             />
           )}
-        </div>
-      </div>
-
-      {/* ticker */}
-      <div className="flex h-[30px] shrink-0 items-center gap-5 overflow-hidden bg-foreground px-4 text-background/85">
-        <span className="shrink-0 font-mono text-[9px] font-extrabold uppercase tracking-[0.16em] text-primary">
-          ● LIVE FEED
-        </span>
-        <div className="flex gap-6 overflow-hidden">
-          {events.slice(0, 8).map((e, i) => (
-            <span key={i} className="flex shrink-0 items-center gap-1.5 text-[11px]">
-              <span className={`h-1.5 w-1.5 rounded-full ${SEVERITY_DOT[e.sev]}`} />
-              <span className="font-mono text-[9px] text-background/45">{e.t}</span>
-              <span className="whitespace-nowrap">{e.txt}</span>
-            </span>
-          ))}
         </div>
       </div>
 

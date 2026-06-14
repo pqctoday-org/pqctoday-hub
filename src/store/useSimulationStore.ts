@@ -55,13 +55,14 @@ const SEED = {
   country: 'DE',
   sector: 'healthcare',
   seat: 'executive',
-  sel: 'p3' as PhaseId,
-  checks: { p0: 3, p1: 2, p2: 2, p3: 1, p4: 0, p5: 0, p6: 0, p7: 1, foundations: 1 } as Record<
+  sel: 'p0' as PhaseId,
+  // Levels are EARNED by passing each phase's maturity gates — nothing pre-set.
+  checks: { p0: 0, p1: 0, p2: 0, p3: 0, p4: 0, p5: 0, p6: 0, p7: 0, foundations: 0 } as Record<
     string,
     number
   >,
   year: 2026,
-  q: 3,
+  q: 1,
   crqcShift: 0,
   events: [
     {
@@ -107,7 +108,7 @@ export const useSimulationStore = create<SimulationState>()(
     {
       name: 'pqc-simulation',
       storage: createJSONStorage(() => localStorage),
-      version: 2,
+      version: 3,
       partialize: (s) => ({
         size: s.size,
         country: s.country,
@@ -122,22 +123,21 @@ export const useSimulationStore = create<SimulationState>()(
         visitedRefs: s.visitedRefs,
       }),
       migrate: (persisted: unknown) => {
-        // Defensive: ensure every field exists with a safe default.
+        // Defensive: ensure every field exists with a safe default. v3 introduced
+        // strict maturity gating, so legacy pre-leveled progress (checks / turn) is
+        // RESET to a clean gated start; the org setup + visited refs are preserved.
         const s = (persisted ?? {}) as Record<string, unknown>
         return {
           size: (s.size as string) ?? SEED.size,
           country: (s.country as string) ?? SEED.country,
           sector: (s.sector as string) ?? SEED.sector,
           seat: (s.seat as string) ?? SEED.seat,
-          sel: (s.sel as PhaseId) ?? SEED.sel,
-          checks:
-            s.checks && typeof s.checks === 'object'
-              ? (s.checks as Record<string, number>)
-              : { ...SEED.checks },
-          year: (s.year as number) ?? SEED.year,
-          q: (s.q as number) ?? SEED.q,
-          crqcShift: (s.crqcShift as number) ?? SEED.crqcShift,
-          events: Array.isArray(s.events) ? (s.events as SimEvent[]) : [...SEED.events],
+          sel: SEED.sel,
+          checks: { ...SEED.checks },
+          year: SEED.year,
+          q: SEED.q,
+          crqcShift: SEED.crqcShift,
+          events: [...SEED.events],
           visitedRefs: Array.isArray(s.visitedRefs) ? (s.visitedRefs as string[]) : [],
         }
       },

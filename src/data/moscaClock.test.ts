@@ -35,7 +35,7 @@ describe('moscaClock', () => {
   })
 
   it('uses the sooner of the CRQC estimate and the country deadline as Z', () => {
-    expect(horizonYearFor('DE')).toBe(2030) // mandate pulls it in
+    expect(horizonYearFor('DE')).toBe(Math.min(SIM_CRQC_YEAR, 2030)) // sooner of CRQC / BSI mandate
     expect(horizonYearFor('UK')).toBe(Math.min(SIM_CRQC_YEAR, 2035))
     expect(horizonYearFor('XX')).toBe(SIM_CRQC_YEAR) // unknown → CRQC baseline
   })
