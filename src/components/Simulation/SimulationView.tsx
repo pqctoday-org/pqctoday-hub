@@ -24,8 +24,10 @@ import { useModuleStore } from '@/store/useModuleStore'
 import {
   computeSimMosca,
   horizonYearFor,
+  shelfLifeFor,
   SIZE_MIGRATION_YEARS,
-  DEFAULT_SHELF_LIFE_YEARS,
+  SECTORS,
+  DEFAULT_SECTOR,
   SIM_CRQC_YEAR,
 } from '@/data/moscaClock'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
@@ -120,6 +122,7 @@ function ResourceList({ title, items }: { title: string; items: ResLink[] }) {
 export function SimulationView() {
   const [size, setSize] = useState<(typeof SIZES)[number]['id']>('mid')
   const [country, setCountry] = useState<(typeof COUNTRIES)[number]['id']>('DE')
+  const [sector, setSector] = useState<string>(DEFAULT_SECTOR)
   const [activePhase, setActivePhase] = useState<PhaseId>(PHASE_ORDER[0])
   // Real Command-Center artifacts the player has saved — some levels auto-tick
   // when the matching artifact exists (earned for real, not self-attested).
@@ -180,7 +183,7 @@ export function SimulationView() {
   const currentYear = new Date().getFullYear()
   const clock = computeSimMosca({
     migrationYears: SIZE_MIGRATION_YEARS[size],
-    shelfLifeYears: DEFAULT_SHELF_LIFE_YEARS,
+    shelfLifeYears: shelfLifeFor(sector),
     horizonYear: horizonYearFor(country),
     currentYear,
   })
@@ -218,7 +221,7 @@ export function SimulationView() {
       </header>
 
       {/* Setup dials */}
-      <div className="mb-6 grid gap-4 sm:grid-cols-2">
+      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-lg border border-border bg-card/40 p-3">
           <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Organisation size
@@ -269,6 +272,32 @@ export function SimulationView() {
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
             {COUNTRIES.find((c) => c.id === country)?.hint}
+          </p>
+        </div>
+        <div className="rounded-lg border border-border bg-card/40 p-3">
+          <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Sector
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {SECTORS.map((s) => (
+              <Button
+                key={s.id}
+                type="button"
+                variant="ghost"
+                onClick={() => setSector(s.id)}
+                title={`${s.hint} · data shelf-life ${s.shelfLifeYears}y`}
+                className={`h-auto rounded-md border px-3 py-1.5 text-sm transition-colors ${
+                  sector === s.id
+                    ? 'border-primary bg-primary/10 font-medium text-primary'
+                    : 'border-border text-muted-foreground hover:bg-muted'
+                }`}
+              >
+                {s.label}
+              </Button>
+            ))}
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">
+            {SECTORS.find((s) => s.id === sector)?.hint} · sets X = {shelfLifeFor(sector)}y
           </p>
         </div>
       </div>

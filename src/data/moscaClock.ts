@@ -17,8 +17,44 @@ export type SimSize = 'small' | 'mid' | 'large' | 'global'
 /** CRQC horizon year Z baseline (moderate research consensus). */
 export const SIM_CRQC_YEAR = CRQC_ESTIMATES.moderate
 
-/** Default data shelf-life X (years) — a sector dial will set this later. */
+/** Default data shelf-life X (years) when no sector is chosen. */
 export const DEFAULT_SHELF_LIFE_YEARS = 5
+
+export interface SimSector {
+  id: string
+  label: string
+  /** X — how long this sector's data must stay confidential (years). */
+  shelfLifeYears: number
+  hint: string
+}
+
+/** Sectors set X — the data shelf-life that drives Harvest-Now-Decrypt-Later risk. */
+export const SECTORS: SimSector[] = [
+  { id: 'general', label: 'General', shelfLifeYears: 5, hint: 'mixed business data' },
+  { id: 'retail', label: 'Retail', shelfLifeYears: 3, hint: 'shorter-lived commercial data' },
+  { id: 'telecom', label: 'Telecom', shelfLifeYears: 7, hint: 'subscriber + signalling data' },
+  {
+    id: 'financial',
+    label: 'Financial',
+    shelfLifeYears: 10,
+    hint: 'transactions + records retention',
+  },
+  { id: 'energy', label: 'Energy/OT', shelfLifeYears: 10, hint: 'grid + long-lived OT' },
+  {
+    id: 'healthcare',
+    label: 'Healthcare',
+    shelfLifeYears: 15,
+    hint: 'patient records — long retention',
+  },
+  { id: 'government', label: 'Government', shelfLifeYears: 20, hint: 'classified / long-secret' },
+]
+
+export const DEFAULT_SECTOR = 'general'
+
+/** Data shelf-life X for a sector id (falls back to the default). */
+export function shelfLifeFor(sectorId: string): number {
+  return SECTORS.find((s) => s.id === sectorId)?.shelfLifeYears ?? DEFAULT_SHELF_LIFE_YEARS
+}
 
 /** Representative migration time Y (years) by organisation size. */
 export const SIZE_MIGRATION_YEARS: Record<SimSize, number> = {

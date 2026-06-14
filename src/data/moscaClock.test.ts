@@ -1,6 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { computeSimMosca, horizonYearFor, SIM_CRQC_YEAR, SIZE_MIGRATION_YEARS } from './moscaClock'
+import {
+  computeSimMosca,
+  horizonYearFor,
+  shelfLifeFor,
+  SIM_CRQC_YEAR,
+  SIZE_MIGRATION_YEARS,
+  DEFAULT_SHELF_LIFE_YEARS,
+} from './moscaClock'
 
 describe('moscaClock', () => {
   it('flags at-risk when X + Y exceeds the window', () => {
@@ -35,5 +42,12 @@ describe('moscaClock', () => {
 
   it('bigger organisations migrate slower (larger Y)', () => {
     expect(SIZE_MIGRATION_YEARS.global).toBeGreaterThan(SIZE_MIGRATION_YEARS.small)
+  })
+
+  it('sector sets the data shelf-life X (longest for government, shortest for retail)', () => {
+    expect(shelfLifeFor('government')).toBe(20)
+    expect(shelfLifeFor('retail')).toBe(3)
+    expect(shelfLifeFor('unknown-sector')).toBe(DEFAULT_SHELF_LIFE_YEARS)
+    expect(shelfLifeFor('government')).toBeGreaterThan(shelfLifeFor('retail'))
   })
 })
