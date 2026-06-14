@@ -21,6 +21,13 @@ import {
   type MaturityLevelId,
 } from '@/data/phaseMaturity'
 import { useModuleStore } from '@/store/useModuleStore'
+import {
+  computeSimMosca,
+  horizonYearFor,
+  SIZE_MIGRATION_YEARS,
+  DEFAULT_SHELF_LIFE_YEARS,
+  SIM_CRQC_YEAR,
+} from '@/data/moscaClock'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
@@ -169,6 +176,15 @@ export function SimulationView() {
   const reference = useMemo(() => referenceLinks(activePhase), [activePhase])
   const heading = phase.number === null ? 'Foundations' : `Phase ${phase.number}`
 
+  // Mosca clock — size sets migration time Y, country sets the deadline Z.
+  const currentYear = new Date().getFullYear()
+  const clock = computeSimMosca({
+    migrationYears: SIZE_MIGRATION_YEARS[size],
+    shelfLifeYears: DEFAULT_SHELF_LIFE_YEARS,
+    horizonYear: horizonYearFor(country),
+    currentYear,
+  })
+
   // resource count per phase — shows the corrected coverage in the nav
   const countFor = (p: PhaseId) =>
     resourcesForPhase('learn', p).length +
@@ -255,6 +271,40 @@ export function SimulationView() {
             {COUNTRIES.find((c) => c.id === country)?.hint}
           </p>
         </div>
+      </div>
+
+      {/* Mosca clock — driven by the size + country dials */}
+      <div
+        className={`mb-6 rounded-lg border p-4 ${
+          clock.atRisk ? 'border-red-500/40 bg-red-500/5' : 'border-emerald-500/40 bg-emerald-500/5'
+        }`}
+      >
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-sm font-semibold text-foreground">Mosca clock — X + Y vs Z</h2>
+          <span
+            className={`rounded px-2 py-0.5 text-xs font-semibold ${
+              clock.atRisk
+                ? 'bg-red-500/15 text-red-600 dark:text-red-400'
+                : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+            }`}
+          >
+            {clock.atRisk
+              ? `⚠ At risk — over the line by ${clock.over}y`
+              : `✓ On track — ${-clock.over}y of slack`}
+          </span>
+        </div>
+        <p className="mt-2 text-sm text-muted-foreground">
+          <span className="font-semibold text-foreground">X</span> data shelf-life {clock.x}y +{' '}
+          <span className="font-semibold text-foreground">Y</span> migration {clock.y}y ={' '}
+          <span className="font-semibold text-foreground">{clock.x + clock.y}y</span> to be safe —
+          but you must finish by{' '}
+          <span className="font-semibold text-foreground">{clock.horizonYear}</span>, only{' '}
+          <span className="font-semibold text-foreground">{clock.yearsToHorizon}y</span> away.
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Z = the sooner of the CRQC estimate ({SIM_CRQC_YEAR}) and the {country} deadline. Bigger
+          organisations migrate slower (larger Y); mandate countries pull the deadline in.
+        </p>
       </div>
 
       {/* Phase journey + resource panel */}

@@ -26,6 +26,12 @@ describe('SimulationView (skeleton)', () => {
     expect(screen.getByRole('navigation', { name: /migration phases/i })).toBeInTheDocument()
   })
 
+  it('renders the Mosca clock with a verdict', () => {
+    renderPage()
+    expect(screen.getByText(/Mosca clock/)).toBeInTheDocument()
+    expect(screen.getByText(/At risk|On track/)).toBeInTheDocument()
+  })
+
   it('shows the active phase panel with the three resource legs', () => {
     renderPage()
     expect(screen.getByRole('heading', { name: /^Learn/ })).toBeInTheDocument()
