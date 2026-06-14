@@ -23,6 +23,7 @@ describe('SimulationView (skeleton)', () => {
     expect(screen.getByRole('heading', { name: 'Simulation', level: 1 })).toBeInTheDocument()
     expect(screen.getByText('Organisation size')).toBeInTheDocument()
     expect(screen.getByText('Country')).toBeInTheDocument()
+    expect(screen.getByText('Sector')).toBeInTheDocument()
     expect(screen.getByRole('navigation', { name: /migration phases/i })).toBeInTheDocument()
   })
 
