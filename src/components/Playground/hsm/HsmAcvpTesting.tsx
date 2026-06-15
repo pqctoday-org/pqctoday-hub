@@ -2237,7 +2237,14 @@ export const HsmAcvpTesting = () => {
               true // derive
             )
             const fixedInput = new TextEncoder().encode('ACVP-KDF-CONTEXT')
-            const derivedKeyBytes = hsm_kbkdf(M, hSession, hBaseKey, CKM_SHA256, fixedInput, 32)
+            const derivedKeyBytes = hsm_kbkdf(
+              M,
+              hSession,
+              hBaseKey,
+              CKM_SHA256_HMAC,
+              fixedInput,
+              32
+            )
 
             const pass = derivedKeyBytes.length === 32
             const derivedHex = Array.from(derivedKeyBytes)
@@ -2331,7 +2338,7 @@ export const HsmAcvpTesting = () => {
               M,
               hSession,
               hBaseKey,
-              CKM_SHA256,
+              CKM_SHA256_HMAC,
               fixedInput,
               ivBytes,
               32

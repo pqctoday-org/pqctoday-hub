@@ -3047,14 +3047,16 @@ export const hsm_hkdf = (
  * NIST SP 800-108 Counter KDF via C_DeriveKey(CKM_SP800_108_COUNTER_KDF) (PKCS#11 v3.2 §2.44).
  *
  * Builds a minimal CK_SP800_108_KDF_PARAMS with:
- *   - prfType: hash mechanism (CKM_SHA256 | CKM_SHA384 | CKM_SHA512) or CKM_AES_CMAC.
- *     NOTE: SoftHSM3 ckmToDigestName() maps hash IDs only — do NOT pass CKM_SHA256_HMAC etc.
+ *   - prfType: a KEYED PRF mechanism — CKM_SHA256_HMAC | CKM_SHA384_HMAC |
+ *     CKM_SHA512_HMAC | CKM_AES_CMAC. Per PKCS#11 v3.2 §6.42 Table 196 the PRF
+ *     must be an HMAC/CMAC mechanism, NOT a bare digest (CKM_SHA256). A v3.2-
+ *     compliant engine rejects a bare digest with CKR_MECHANISM_PARAM_INVALID.
  *   - Data params: [ITERATION_VARIABLE(32-bit counter)] + optional [BYTE_ARRAY(fixedInput)]
  *
  * @param M             SoftHSM WASM module
  * @param hSession      Session handle
  * @param baseKeyHandle Key handle for the base key (Ki)
- * @param prfType       PRF hash mechanism (CKM_SHA256, CKM_SHA384, CKM_SHA512, or CKM_AES_CMAC)
+ * @param prfType       Keyed PRF mechanism (CKM_SHA256_HMAC, CKM_SHA384_HMAC, CKM_SHA512_HMAC, or CKM_AES_CMAC)
  * @param fixedInput    Optional label/context bytes concatenated as fixed input
  * @param keyLen        Output key length in bytes (must match CKA_VALUE_LEN in template)
  * @returns             Derived key bytes as Uint8Array
@@ -3135,8 +3137,9 @@ export const hsm_kbkdf = (
 
 /**
  * NIST SP 800-108 Feedback KDF via C_DeriveKey(CKM_SP800_108_FEEDBACK_KDF) (PKCS#11 v3.2 §2.44.2).
- * prfType: hash mechanism — CKM_SHA256 | CKM_SHA384 | CKM_SHA512 | CKM_AES_CMAC.
- * NOTE: SoftHSM3 ckmToDigestName() maps hash IDs only — do NOT pass CKM_SHA256_HMAC etc.
+ * prfType: a KEYED PRF mechanism — CKM_SHA256_HMAC | CKM_SHA384_HMAC | CKM_SHA512_HMAC | CKM_AES_CMAC.
+ * Per v3.2 §6.42 Table 196 the PRF must be HMAC/CMAC, NOT a bare digest; a compliant engine
+ * rejects a bare digest (CKM_SHA256) with CKR_MECHANISM_PARAM_INVALID.
  * fixedInput: optional label/context bytes (CK_SP800_108_BYTE_ARRAY data params).
  * iv: optional feedback seed/IV (maps to CK_SP800_108_FEEDBACK_KDF_PARAMS.pIV).
  * keyLen: derived key length in bytes (default 32).
