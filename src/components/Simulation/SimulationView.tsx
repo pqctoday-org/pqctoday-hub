@@ -682,27 +682,43 @@ export function SimulationView() {
       })
     }
 
-    // AI team advances phases the seat does NOT own
-    const newChecks = { ...checks }
+    // AI team advances phases the seat does NOT own — by completing the next
+    // unlocked tree step (the SAME state the player earns via `auto`), never a
+    // separate `checks` counter. This keeps the Quarter Report and the board on
+    // one source of truth (WS-01): a "gate cleared" claim can no longer disagree
+    // with the displayed tree level. `checks` now only matters for `foundations`.
+    const newAutoKeys: string[] = []
     const aiProgress: string[] = []
+    const willBeDone = (s: TreeStep, p: string) =>
+      stepDone(s, p) || newAutoKeys.includes(autoKey(p, s.to))
+    const treeLevelWith = (p: string): number => {
+      const t = SIM_TREES[p as PhaseId]
+      return t ? achievedTreeLevel(t, (s) => willBeDone(s, p)) : 0
+    }
+    const levelOfWith = (p: string): number =>
+      SIM_TREES[p as PhaseId] ? treeLevelWith(p) : Math.max(checks[p] ?? 0, evidenceLevel(p))
     for (const p of LIFECYCLE) {
+      const tree = SIM_TREES[p as PhaseId]
+      if (!tree) continue
       const owns = Object.values(ROLE_CROSSWALK).some(
         (r) => r.phases.includes(p) && r.persona === seat
       )
-      const lv = newChecks[p] ?? 0
-      if (!owns && lv < 4 && chance(0.35)) {
-        newChecks[p] = lv + 1
-        const role = Object.values(ROLE_CROSSWALK).find((r) => r.phases.includes(p))
-        aiProgress.push(
-          `${role ? role.label : 'AI team'} advanced ${FRAMEWORK_PHASES[p].name} → L${lv + 1}`
-        )
-        if (lv + 1 === PHASE_WIN_LEVEL)
-          newEvents.push({
-            sev: 'success',
-            t: label,
-            txt: `${FRAMEWORK_PHASES[p].name} reached Level ${PHASE_WIN_LEVEL} — gate ${FRAMEWORK_PHASES[p].gate?.id ?? ''} cleared`,
-          })
-      }
+      if (owns || levelOf(p) >= PHASE_WIN_LEVEL || !chance(0.35)) continue
+      const next = flattenTree(tree).find((s) => !willBeDone(s, p))
+      if (!next) continue
+      const before = treeLevelWith(p)
+      newAutoKeys.push(autoKey(p, next.to))
+      const after = treeLevelWith(p)
+      const role = Object.values(ROLE_CROSSWALK).find((r) => r.phases.includes(p))
+      aiProgress.push(
+        `${role ? role.label : 'AI team'} completed ${FRAMEWORK_PHASES[p].name} · ${next.label}`
+      )
+      if (before < PHASE_WIN_LEVEL && after >= PHASE_WIN_LEVEL)
+        newEvents.push({
+          sev: 'success',
+          t: label,
+          txt: `${FRAMEWORK_PHASES[p].name} reached Level ${PHASE_WIN_LEVEL} — gate ${FRAMEWORK_PHASES[p].gate?.id ?? ''} cleared`,
+        })
     }
     if (!newEvents.length)
       newEvents.push({ sev: 'info', t: label, txt: 'Quiet quarter — no incidents reported.' })
@@ -716,14 +732,12 @@ export function SimulationView() {
       ),
       currentYear: ny + (nq - 1) * 0.25,
     })
-    const beforeCleared = LIFECYCLE.filter(
-      (p) => Math.max(checks[p] ?? 0, evidenceLevel(p)) >= PHASE_WIN_LEVEL
-    ).length
-    const afterCleared = LIFECYCLE.filter(
-      (p) => Math.max(newChecks[p] ?? 0, evidenceLevel(p)) >= PHASE_WIN_LEVEL
-    ).length
+    // Cleared counts come from the SAME tree-gated truth the board displays.
+    const beforeCleared = LIFECYCLE.filter((p) => levelOf(p) >= PHASE_WIN_LEVEL).length
+    const afterCleared = LIFECYCLE.filter((p) => levelOfWith(p) >= PHASE_WIN_LEVEL).length
 
-    applyQuarter({ checks: newChecks, crqcShift: newCrqc, year: ny, q: nq, newEvents })
+    if (newAutoKeys.length) autoCompleteSteps(newAutoKeys)
+    applyQuarter({ checks, crqcShift: newCrqc, year: ny, q: nq, newEvents })
     setReport({
       from: `Q${q} ${year}`,
       to: label,
@@ -737,9 +751,9 @@ export function SimulationView() {
       recommend:
         afterCleared < 2
           ? "Push Phase 0–2 to Level 2 — you can't plan what you haven't inventoried."
-          : (newChecks.p3 ?? 0) < 2
+          : levelOfWith('p3') < PHASE_WIN_LEVEL
             ? 'Approve the QRA (Phase 3) — it sequences every migration wave that follows.'
-            : (newChecks.p5 ?? 0) < 2
+            : levelOfWith('p5') < PHASE_WIN_LEVEL
               ? 'Stand up 2 production pilots in Phase 5 before the audit window closes.'
               : 'Maintain momentum — drive Tier-2 waves and lock vendor commitments (Phase 7).',
     })
