@@ -8,8 +8,7 @@
 import type { EventSeverity } from '@/data/simEvents'
 import type { MoveKind } from '@/data/simMoves'
 import type { StepKind } from '@/simulation'
-import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
-import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+import { BUSINESS_TOOLS, WORKSHOP_TOOLS } from './resourceContract'
 
 /** Flag an outbound navigation so MainLayout shows the "Resume Simulation" bar. */
 export const markSimResume = () => {
