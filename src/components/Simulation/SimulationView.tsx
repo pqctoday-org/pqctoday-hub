@@ -12,9 +12,13 @@
  */
 import { useMemo, useState, useEffect, useRef, Suspense } from 'react'
 import { Link } from 'react-router-dom'
-import { BUSINESS_TOOL_COMPONENTS } from '@/components/BusinessCenter/businessToolComponents'
-import { SIM_LEARN_MODULES, isEmbeddableModule } from '@/components/PKILearning/simEmbedModules'
-import { EmbeddedLearnProvider } from '@/components/PKILearning/embeddedLearnContext'
+import {
+  BUSINESS_TOOL_COMPONENTS,
+  SIM_LEARN_MODULES,
+  isEmbeddableModule,
+  EmbeddedLearnProvider,
+  ARTIFACT_TYPE_TO_TOOL_ID,
+} from './resourceContract'
 import { Button } from '@/components/ui/button'
 import { FRAMEWORK_PHASES, PHASE_ORDER, type PhaseId } from '@/data/frameworkPhases'
 import { MATURITY_LEVEL_NAMES, PHASE_WIN_LEVEL, LEVEL_EVIDENCE } from '@/data/phaseMaturity'
@@ -30,7 +34,6 @@ import {
 import { JURISDICTION_RULES } from '@/data/jurisdiction'
 import { ROLE_CROSSWALK, personaToRoles } from '@/data/roleCrosswalk'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
-import { ARTIFACT_TYPE_TO_TOOL_ID } from '@/components/BusinessCenter/businessToolsRegistry'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import { SIM_TREES, flattenTree, achievedTreeLevel, type TreeStep } from '@/simulation'
 import { computeReadiness } from '@/simulation/readiness'
