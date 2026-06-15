@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import type { Cswp39StepId } from '@/data/cswp39ZoneData'
+
 export interface AssessmentInput {
   industry: string
   currentCrypto: string[]
@@ -71,6 +73,8 @@ export interface RecommendedAction {
   category: 'immediate' | 'short-term' | 'long-term'
   relatedModule: string
   effort?: 'low' | 'medium' | 'high'
+  /** CSWP.39 step this action belongs to (Govern→Inventory→Identify-gaps→Prioritise→Implement). */
+  cswp39Step?: Cswp39StepId
   /**
    * Assess-wizard answers that triggered this action, encoded as `field:value`
    * pairs (e.g. `['dataRetention:25-plus', 'currentCrypto:RSA-2048']`). The

@@ -42,6 +42,7 @@ import {
   generateQuickSummary,
   generateNarrative,
   generateKeyFindings,
+  classifyCswp39Step,
 } from './generators'
 import { reframeActionsForPersona, generatePersonaNarrative } from './personas'
 
@@ -351,7 +352,10 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     riskLevel,
     algorithmMigrations,
     complianceImpacts,
-    recommendedActions,
+    recommendedActions: recommendedActions.map((a) => ({
+      ...a,
+      cswp39Step: classifyCswp39Step(a),
+    })),
     narrative,
     generatedAt: new Date().toISOString(),
     categoryScores,
@@ -590,7 +594,10 @@ export async function computeAssessmentAsync(
     riskLevel,
     algorithmMigrations,
     complianceImpacts,
-    recommendedActions,
+    recommendedActions: recommendedActions.map((a) => ({
+      ...a,
+      cswp39Step: classifyCswp39Step(a),
+    })),
     narrative,
     generatedAt: new Date().toISOString(),
     categoryScores,
