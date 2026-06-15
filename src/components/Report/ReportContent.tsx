@@ -74,7 +74,7 @@ import type {
   CategoryScores,
   CategoryDrivers,
   HNDLRiskWindow,
-  HNFLRiskWindow,
+  TNFLRiskWindow,
 } from '../../hooks/assessmentTypes'
 import { SIGNING_ALGORITHMS } from '../../hooks/assessmentData'
 import { encodeShareToken } from '@/utils/reportShareToken'
@@ -458,7 +458,7 @@ interface AssessReportProps {
 /** Report-specific HNDL/HNFL wrapper that injects SectionInfoTip */
 const ReportHNDLHNFLSection = (props: {
   hndl?: HNDLRiskWindow
-  hnfl?: HNFLRiskWindow
+  hnfl?: TNFLRiskWindow
   defaultOpen?: boolean
   headerExtra?: React.ReactNode
 }) => <SharedHNDLHNFLSection {...props} infoTip={<SectionInfoTip sectionId="hndlHnfl" />} />
@@ -1041,12 +1041,12 @@ export const ReportContent: React.FC<AssessReportProps> = ({
 
                     {/* Consolidated HNDL / HNFL Risk Windows */}
                     {phaseVisible('hndlHnfl') &&
-                      (result.hndlRiskWindow || result.hnflRiskWindow) &&
+                      (result.hndlRiskWindow || result.tnflRiskWindow) &&
                       cfg('hndlHnfl').state !== 'hidden' && (
                         <div id="report-section-hndlHnfl">
                           <ReportHNDLHNFLSection
                             hndl={result.hndlRiskWindow}
-                            hnfl={result.hnflRiskWindow}
+                            hnfl={result.tnflRiskWindow}
                             defaultOpen={cfg('hndlHnfl').state === 'open'}
                             headerExtra={
                               <AskAssistantButton
@@ -1080,7 +1080,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       )}
 
                     {/* HNFL warning for quick assessments with signing algorithms */}
-                    {!result.categoryScores && !result.hnflRiskWindow && hasSigningAlgos && (
+                    {!result.categoryScores && !result.tnflRiskWindow && hasSigningAlgos && (
                       <div className="glass-panel p-4 border-l-4 border-l-destructive flex items-start gap-3">
                         <AlertTriangle size={18} className="text-destructive shrink-0 mt-0.5" />
                         <div>

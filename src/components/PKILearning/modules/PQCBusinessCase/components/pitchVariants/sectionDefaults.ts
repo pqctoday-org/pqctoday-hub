@@ -64,7 +64,7 @@ export function buildRiskOverviewDefault(data: Data): string {
 export function buildQuantumUrgencyDefault(data: Data): string {
   const parts: string[] = []
   const hndl = data.hndlRiskWindow
-  const hnfl = data.hnflRiskWindow
+  const hnfl = data.tnflRiskWindow
 
   if (hndl) {
     const est = hndl.isEstimated ? ' (estimated - retention unknown)' : ''
@@ -84,8 +84,8 @@ export function buildQuantumUrgencyDefault(data: Data): string {
       parts.push(
         `HNFL (harvest-now-forge-later): signing credentials remain trusted for ${hnfl.credentialLifetimeYears} years - ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} past the quantum threat line. Forgery liability grows with every unrotated certificate${est}.`
       )
-      if (hnfl.hnflRelevantUseCases.length > 0) {
-        parts.push(`High-relevance use cases: ${hnfl.hnflRelevantUseCases.join(', ')}.`)
+      if (hnfl.tnflRelevantUseCases.length > 0) {
+        parts.push(`High-relevance use cases: ${hnfl.tnflRelevantUseCases.join(', ')}.`)
       }
     } else if (hnfl.hasSigningAlgorithms) {
       parts.push(

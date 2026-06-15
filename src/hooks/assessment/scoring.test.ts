@@ -58,7 +58,7 @@ describe('computeCompositeScoreWithBoosts', () => {
       migrationStatus: 'not-started',
     }
     const res = computeCompositeScoreWithBoosts(BASE_CATEGORIES, input)
-    expect(res.boosts.some((b) => b.id === 'hnfl-urgency')).toBe(true)
+    expect(res.boosts.some((b) => b.id === 'tnfl-urgency')).toBe(true)
   })
 
   it('fires CNSA regulatory boost for Gov/Defense + CNSA 2.0 + not started', () => {

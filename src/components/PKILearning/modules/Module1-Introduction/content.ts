@@ -51,7 +51,7 @@ export const content: ModuleContent = {
       "Quantum computers use qubits instead of classical bits. Shor's Algorithm can solve the mathematical problems underlying RSA and ECC exponentially faster than any classical computer.",
     hndlExplain:
       'Harvest Now, Decrypt Later (HNDL): Adversaries record encrypted traffic today, planning to decrypt it once quantum computers become available.',
-    hnflExplain:
+    tnflExplain:
       'Harvest Now, Forge Later (HNFL): Quantum computers could forge digital signatures, allowing attackers to impersonate trusted parties or tamper with signed firmware/documents.',
     latticeFamilyDesc:
       'Based on the mathematical hardness of lattice problems. Most NIST-selected algorithms use this approach.',

@@ -208,7 +208,7 @@ export function computeOrganizationalReadiness(input: AssessmentInput): number {
 /** Description of a situational boost that fired during scoring. Returned
  *  alongside the score so the Report can surface WHY the composite was raised. */
 export interface SituationalBoost {
-  id: 'hndl-urgency' | 'hnfl-urgency' | 'cnsa-regulatory' | 'migration-inertia'
+  id: 'hndl-urgency' | 'tnfl-urgency' | 'cnsa-regulatory' | 'migration-inertia'
   label: string
   delta: number
 }
@@ -270,7 +270,7 @@ export function computeCompositeScoreWithBoosts(
   ) {
     boostFactor += 0.06
     boosts.push({
-      id: 'hnfl-urgency',
+      id: 'tnfl-urgency',
       label: 'Signing algorithms + >10y credential lifetime + not started (HNFL urgency)',
       delta: 0.06,
     })

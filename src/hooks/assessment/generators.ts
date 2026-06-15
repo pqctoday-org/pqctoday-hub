@@ -5,7 +5,7 @@ import type {
   ComplianceImpact,
   CategoryDrivers,
   HNDLRiskWindow,
-  HNFLRiskWindow,
+  TNFLRiskWindow,
   MigrationEffortItem,
   RecommendedAction,
   AlgorithmMigration,
@@ -13,7 +13,7 @@ import type {
 
 import { getMaxSensitivity, getMaxRetentionYears, getIndustryRetentionDefault } from './scoring'
 
-import { computeHNFLRiskWindow, getEffectiveThreatYear } from './riskWindows'
+import { computeTNFLRiskWindow, getEffectiveThreatYear } from './riskWindows'
 
 export function buildAlgorithmHighlightUrl(algorithms: string[]): string {
   if (algorithms.length === 0) return '/algorithms'
@@ -296,9 +296,9 @@ export function generateExtendedActions(
     })
   }
 
-  const hnfl = computeHNFLRiskWindow(input)
+  const hnfl = computeTNFLRiskWindow(input)
   if ((input.currentCrypto ?? []).some((a) => SIGNING_ALGORITHMS.has(a)) && hnfl?.isAtRisk) {
-    if (hnfl.hnflRelevantUseCases.some((uc) => uc.includes('PKI') || uc.includes('code signing'))) {
+    if (hnfl.tnflRelevantUseCases.some((uc) => uc.includes('PKI') || uc.includes('code signing'))) {
       actions.push({
         priority: priority++,
         action:
@@ -500,7 +500,7 @@ export function generateExecutiveSummary(
   vulnerableCount: number,
   migrationEffort: MigrationEffortItem[],
   hndl: HNDLRiskWindow | undefined,
-  hnfl: HNFLRiskWindow | undefined,
+  hnfl: TNFLRiskWindow | undefined,
   pqcFrameworkCount: number
 ): string {
   const parts: string[] = []
@@ -670,7 +670,7 @@ export function generateKeyFindings(
   algorithmMigrations: AlgorithmMigration[],
   complianceImpacts: ComplianceImpact[],
   hndlRiskWindow?: HNDLRiskWindow,
-  hnflRiskWindow?: HNFLRiskWindow
+  tnflRiskWindow?: TNFLRiskWindow
 ): string[] {
   const findings: string[] = []
   const p = input.persona
@@ -716,9 +716,9 @@ export function generateKeyFindings(
   }
 
   // 3. HNFL risk
-  if (hnflRiskWindow?.isAtRisk && hnflRiskWindow.hasSigningAlgorithms) {
+  if (tnflRiskWindow?.isAtRisk && tnflRiskWindow.hasSigningAlgorithms) {
     findings.push(
-      `Harvest-Now-Forge-Later risk: signing credentials may remain trusted past the quantum threat year, exposing ${hnflRiskWindow.hnflRelevantUseCases.length} use case${hnflRiskWindow.hnflRelevantUseCases.length !== 1 ? 's' : ''} to forgery attacks.`
+      `Harvest-Now-Forge-Later risk: signing credentials may remain trusted past the quantum threat year, exposing ${tnflRiskWindow.tnflRelevantUseCases.length} use case${tnflRiskWindow.tnflRelevantUseCases.length !== 1 ? 's' : ''} to forgery attacks.`
     )
   }
 

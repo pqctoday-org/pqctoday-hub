@@ -97,7 +97,7 @@ export interface HNDLRiskWindow {
   isEstimated?: boolean
 }
 
-export interface HNFLRiskWindow {
+export interface TNFLRiskWindow {
   credentialLifetimeYears: number
   estimatedQuantumThreatYear: number
   currentYear: number
@@ -105,8 +105,8 @@ export interface HNFLRiskWindow {
   isAtRisk: boolean
   riskWindowYears: number
   hasSigningAlgorithms: boolean
-  /** Use cases with hnflRelevance >= 7 */
-  hnflRelevantUseCases: string[]
+  /** Use cases with tnflRelevance >= 7 */
+  tnflRelevantUseCases: string[]
   /** true when credential lifetime is a conservative default (user selected "I don't know") */
   isEstimated?: boolean
 }
@@ -170,7 +170,7 @@ export interface AssessmentProfile {
 /** A situational boost condition that raised the composite score above the
  *  pure category-weighted base. Mirrors `SituationalBoost` in scoring.ts. */
 export interface ScoreBoost {
-  id: 'hndl-urgency' | 'hnfl-urgency' | 'cnsa-regulatory' | 'migration-inertia'
+  id: 'hndl-urgency' | 'tnfl-urgency' | 'cnsa-regulatory' | 'migration-inertia'
   label: string
   /** Multiplicative delta this boost contributed (e.g. 0.08 = +8%). */
   delta: number
@@ -187,7 +187,7 @@ export interface AssessmentResult {
   categoryScores?: CategoryScores
   categoryDrivers?: CategoryDrivers
   hndlRiskWindow?: HNDLRiskWindow
-  hnflRiskWindow?: HNFLRiskWindow
+  tnflRiskWindow?: TNFLRiskWindow
   migrationEffort?: MigrationEffortItem[]
   executiveSummary?: string
   /** Persona-tailored narrative (falls back to executiveSummary when no persona). */

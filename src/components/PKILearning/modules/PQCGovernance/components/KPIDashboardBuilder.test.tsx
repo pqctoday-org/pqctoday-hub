@@ -34,7 +34,7 @@ const mockData: ExecutiveModuleData = {
   preBoostScore: null,
   boosts: [],
   hndlRiskWindow: null,
-  hnflRiskWindow: null,
+  tnflRiskWindow: null,
   categoryScores: null,
   categoryDrivers: null,
   migrationEffort: [],

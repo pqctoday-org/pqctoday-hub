@@ -18,7 +18,7 @@ import type {
   CategoryScores,
   CategoryDrivers,
   HNDLRiskWindow,
-  HNFLRiskWindow,
+  TNFLRiskWindow,
   MigrationEffortItem,
   RecommendedAction,
   AssessmentResult,
@@ -33,7 +33,7 @@ import {
   computeOrganizationalReadiness,
   getMaxSensitivity,
 } from './scoring'
-import { computeHNDLRiskWindow, computeHNFLRiskWindow, computeMigrationEffort } from './riskWindows'
+import { computeHNDLRiskWindow, computeTNFLRiskWindow, computeMigrationEffort } from './riskWindows'
 import {
   generateCategoryDrivers,
   generateExtendedActions,
@@ -129,7 +129,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
   let categoryScores: CategoryScores | undefined
   let categoryDrivers: CategoryDrivers | undefined
   let hndlRiskWindow: HNDLRiskWindow | undefined
-  let hnflRiskWindow: HNFLRiskWindow | undefined
+  let tnflRiskWindow: TNFLRiskWindow | undefined
   let migrationEffort: MigrationEffortItem[] | undefined
   let recommendedActions: RecommendedAction[]
   let executiveSummary: string | undefined
@@ -154,7 +154,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     preBoostScore = compositeResult.preBoostScore
     boosts = compositeResult.boosts
     hndlRiskWindow = computeHNDLRiskWindow(input)
-    hnflRiskWindow = computeHNFLRiskWindow(input)
+    tnflRiskWindow = computeTNFLRiskWindow(input)
     migrationEffort = computeMigrationEffort(input)
     categoryDrivers = generateCategoryDrivers(input, vulnerableCount, pqcCompliance.length)
     recommendedActions = generateExtendedActions(
@@ -307,7 +307,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
       vulnerableCount,
       migrationEffort!,
       hndlRiskWindow,
-      hnflRiskWindow,
+      tnflRiskWindow,
       pqcCompliance.length
     )
   } else {
@@ -329,7 +329,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     migrationEffort,
     categoryScores,
     hndlRiskWindow,
-    hnflRiskWindow,
+    tnflRiskWindow,
     pqcCompliance.length
   )
 
@@ -340,7 +340,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     algorithmMigrations,
     complianceImpacts,
     hndlRiskWindow,
-    hnflRiskWindow
+    tnflRiskWindow
   )
 
   return {
@@ -354,7 +354,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     categoryScores,
     categoryDrivers,
     hndlRiskWindow,
-    hnflRiskWindow,
+    tnflRiskWindow,
     migrationEffort,
     executiveSummary,
     personaNarrative,
@@ -485,7 +485,7 @@ export async function computeAssessmentAsync(
   let categoryScores: CategoryScores | undefined
   let categoryDrivers: CategoryDrivers | undefined
   let hndlRiskWindow: HNDLRiskWindow | undefined
-  let hnflRiskWindow: HNFLRiskWindow | undefined
+  let tnflRiskWindow: TNFLRiskWindow | undefined
   let migrationEffort: MigrationEffortItem[] | undefined
   let recommendedActions: RecommendedAction[]
   let preBoostScore: number | undefined
@@ -516,7 +516,7 @@ export async function computeAssessmentAsync(
     preBoostScore = compositeResult.preBoostScore
     boosts = compositeResult.boosts
     hndlRiskWindow = await stage('Computing HNDL risk window', () => computeHNDLRiskWindow(input))
-    hnflRiskWindow = await stage('Computing HNFL risk window', () => computeHNFLRiskWindow(input))
+    tnflRiskWindow = await stage('Computing HNFL risk window', () => computeTNFLRiskWindow(input))
     migrationEffort = await stage('Estimating migration effort', () =>
       computeMigrationEffort(input)
     )
@@ -551,7 +551,7 @@ export async function computeAssessmentAsync(
       vulnerableCount,
       migrationEffort!,
       hndlRiskWindow,
-      hnflRiskWindow,
+      tnflRiskWindow,
       pqcCompliance.length
     )
   )
@@ -565,7 +565,7 @@ export async function computeAssessmentAsync(
       migrationEffort,
       categoryScores,
       hndlRiskWindow,
-      hnflRiskWindow,
+      tnflRiskWindow,
       pqcCompliance.length
     )
   )
@@ -576,7 +576,7 @@ export async function computeAssessmentAsync(
       algorithmMigrations,
       complianceImpacts,
       hndlRiskWindow,
-      hnflRiskWindow
+      tnflRiskWindow
     )
   )
 
@@ -591,7 +591,7 @@ export async function computeAssessmentAsync(
     categoryScores,
     categoryDrivers,
     hndlRiskWindow,
-    hnflRiskWindow,
+    tnflRiskWindow,
     migrationEffort,
     executiveSummary,
     personaNarrative,
