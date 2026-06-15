@@ -4,7 +4,7 @@
  *
  * Surfaces the *existing* HNDL / HNFL window math (`riskWindows.ts`) as a NAMED,
  * structured "Mosca's Inequality" result on the Assess output. This module is a
- * pure read over `computeHNDLRiskWindow` / `computeHNFLRiskWindow` +
+ * pure read over `computeHNDLRiskWindow` / `computeTNFLRiskWindow` +
  * `getEffectiveThreatYear` — it introduces no new scoring, only a labelled
  * framing of numbers the engine already computes.
  *
@@ -17,7 +17,7 @@
  */
 
 import type { AssessmentInput } from '../assessmentTypes'
-import { computeHNDLRiskWindow, computeHNFLRiskWindow, getEffectiveThreatYear } from './riskWindows'
+import { computeHNDLRiskWindow, computeTNFLRiskWindow, getEffectiveThreatYear } from './riskWindows'
 
 /** Which secrecy horizon drives X (shelf-life) for a given Mosca evaluation. */
 export type MoscaTrack = 'hndl' | 'hnfl'
@@ -149,7 +149,7 @@ export function computeMoscaResult(input: AssessmentInput): MoscaResult | undefi
   const currentYear = new Date().getFullYear()
 
   const hndlWindow = computeHNDLRiskWindow(input)
-  const hnflWindow = computeHNFLRiskWindow(input)
+  const tnflWindow = computeTNFLRiskWindow(input)
 
   const hndl = hndlWindow
     ? evaluate(
@@ -164,16 +164,16 @@ export function computeMoscaResult(input: AssessmentInput): MoscaResult | undefi
       )
     : undefined
 
-  const hnfl = hnflWindow
+  const hnfl = tnflWindow
     ? evaluate(
         'hnfl',
         'Harvest-Now-Forge-Later',
         'credential lifetime',
-        hnflWindow.credentialLifetimeYears,
+        tnflWindow.credentialLifetimeYears,
         y,
         z,
         currentYear,
-        !!hnflWindow.isEstimated
+        !!tnflWindow.isEstimated
       )
     : undefined
 
@@ -183,9 +183,9 @@ export function computeMoscaResult(input: AssessmentInput): MoscaResult | undefi
   // present (a forge risk needs something to forge) — mirror that gate here so
   // the overall verdict can't be urgent on a credential lifetime that has no
   // signing exposure behind it.
-  const hnflUrgent = !!hnfl?.inequalityHolds && !!hnflWindow?.hasSigningAlgorithms
+  const tnflUrgent = !!hnfl?.inequalityHolds && !!tnflWindow?.hasSigningAlgorithms
   const hndlUrgent = !!hndl?.inequalityHolds
-  const urgent = hndlUrgent || hnflUrgent
+  const urgent = hndlUrgent || tnflUrgent
   const verdict: MoscaVerdict = urgent ? 'urgent' : 'regular'
 
   const summary = urgent

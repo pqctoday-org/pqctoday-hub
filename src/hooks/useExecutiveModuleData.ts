@@ -14,7 +14,7 @@ import { pqcReadinessTier } from '@/data/kpiCatalog'
 import type {
   AssessmentResult,
   HNDLRiskWindow,
-  HNFLRiskWindow,
+  TNFLRiskWindow,
   MigrationEffortItem,
   AlgorithmMigration,
   CategoryScores,
@@ -60,7 +60,7 @@ export interface ExecutiveModuleData {
   preBoostScore: number | null
   boosts: ScoreBoost[]
   hndlRiskWindow: HNDLRiskWindow | null
-  hnflRiskWindow: HNFLRiskWindow | null
+  tnflRiskWindow: TNFLRiskWindow | null
   categoryScores: CategoryScores | null
   categoryDrivers: CategoryDrivers | null
   migrationEffort: MigrationEffortItem[]
@@ -249,7 +249,7 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
       preBoostScore: lastResult?.preBoostScore ?? null,
       boosts: lastResult?.boosts ?? [],
       hndlRiskWindow: lastResult?.hndlRiskWindow ?? null,
-      hnflRiskWindow: lastResult?.hnflRiskWindow ?? null,
+      tnflRiskWindow: lastResult?.tnflRiskWindow ?? null,
       categoryScores: lastResult?.categoryScores ?? null,
       categoryDrivers: lastResult?.categoryDrivers ?? null,
       migrationEffort: lastResult?.migrationEffort ?? [],

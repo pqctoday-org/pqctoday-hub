@@ -68,7 +68,7 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
   const topActions = result.recommendedActions?.slice(0, 3) ?? []
   const mandatedFrameworks = result.complianceImpacts?.filter((c) => c.requiresPQC === true) ?? []
   const hndlAtRisk = result.hndlRiskWindow?.isAtRisk
-  const hnflAtRisk = result.hnflRiskWindow?.isAtRisk
+  const tnflAtRisk = result.tnflRiskWindow?.isAtRisk
   const formattedDate = new Date(generatedAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -233,7 +233,7 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
         )}
 
         {/* HNDL / HNFL */}
-        {(hndlAtRisk || hnflAtRisk) && (
+        {(hndlAtRisk || tnflAtRisk) && (
           <div
             style={{
               padding: '8pt 12pt',
@@ -251,7 +251,7 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
                 attacks.{' '}
               </span>
             )}
-            {hnflAtRisk && (
+            {tnflAtRisk && (
               <span>
                 Signing credentials that expire past the quantum threat window are at risk.
               </span>

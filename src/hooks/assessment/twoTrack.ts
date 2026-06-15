@@ -26,7 +26,7 @@ import type {
   MigrationEffortItem,
   RecommendedAction,
   HNDLRiskWindow,
-  HNFLRiskWindow,
+  TNFLRiskWindow,
 } from '../assessmentTypes'
 
 export type TrackId = 'A' | 'B'
@@ -48,7 +48,7 @@ export interface MigrationTrack {
   actions: RecommendedAction[]
   /** The relevant risk window for this track, when available. */
   hndlWindow?: HNDLRiskWindow
-  hnflWindow?: HNFLRiskWindow
+  tnflWindow?: TNFLRiskWindow
   /** true when this track has at-risk exposure (drives "lead with this track"). */
   isAtRisk: boolean
 }
@@ -107,7 +107,7 @@ export function buildTwoTrackPlan(
   _input: AssessmentInput,
   result: Pick<
     AssessmentResult,
-    'recommendedActions' | 'migrationEffort' | 'hndlRiskWindow' | 'hnflRiskWindow'
+    'recommendedActions' | 'migrationEffort' | 'hndlRiskWindow' | 'tnflRiskWindow'
   >
 ): TwoTrackPlan | undefined {
   const actions = result.recommendedActions ?? []
@@ -126,7 +126,7 @@ export function buildTwoTrackPlan(
   }
 
   const hndlAtRisk = !!result.hndlRiskWindow?.isAtRisk
-  const hnflAtRisk = !!result.hnflRiskWindow?.isAtRisk
+  const tnflAtRisk = !!result.tnflRiskWindow?.isAtRisk
 
   const trackA: MigrationTrack = {
     id: 'A',
@@ -150,8 +150,8 @@ export function buildTwoTrackPlan(
     startWith: 'Code- and firmware-signing pipelines, then root/intermediate CA re-issuance.',
     effort: effortB,
     actions: actionsB,
-    hnflWindow: result.hnflRiskWindow,
-    isAtRisk: hnflAtRisk && (result.hnflRiskWindow?.hasSigningAlgorithms ?? false),
+    tnflWindow: result.tnflRiskWindow,
+    isAtRisk: tnflAtRisk && (result.tnflRiskWindow?.hasSigningAlgorithms ?? false),
   }
 
   // Lead with the at-risk track on the shorter horizon. Confidentiality loss is
