@@ -11,7 +11,10 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import type { PhaseId } from '@/data/frameworkPhases'
 import type { SimEvent } from '@/data/simEvents'
 import type { SimulationData } from '@/services/storage/snapshotTypes'
+import type { DifficultyId } from '@/data/simBalance'
 import { newSeed } from '@/simulation/rng'
+
+const DIFFICULTIES: DifficultyId[] = ['easy', 'realistic', 'hard']
 
 export interface SimulationState {
   size: string
@@ -35,6 +38,8 @@ export interface SimulationState {
   auto: string[]
   /** Deterministic run seed — same seed + same turn reproduces a quarter. */
   seed: number
+  /** Difficulty preset selecting the active SIM_BALANCE (WS-14). */
+  difficulty: DifficultyId
 
   setSize: (v: string) => void
   setCountry: (v: string) => void
@@ -57,6 +62,15 @@ export interface SimulationState {
   autoCompleteSteps: (keys: string[]) => void
   /** Cancel auto-completion for a phase (remove its `${phase}::` keys). */
   clearAuto: (phase: string) => void
+  /** Select a difficulty preset (WS-14). */
+  setDifficulty: (d: DifficultyId) => void
+  /** Apply a curated scenario: set the org dials + difficulty together (WS-14). */
+  applyScenario: (s: {
+    sector: string
+    size: string
+    country: string
+    difficulty: DifficultyId
+  }) => void
   reset: () => void
   /** Serialize the current run to a portable JSON save string (WS-08). */
   exportSave: () => string
@@ -98,12 +112,16 @@ const SEED = {
   visitedRefs: [] as string[],
   auto: [] as string[],
   seed: 0, // replaced with a fresh seed on create / reset / migrate
+  difficulty: 'realistic' as DifficultyId,
 }
 
-const STORE_VERSION = 5
+const STORE_VERSION = 6
 const SAVE_KIND = 'pqc-simulation-save'
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
+
+const asDifficulty = (v: unknown): DifficultyId =>
+  DIFFICULTIES.includes(v as DifficultyId) ? (v as DifficultyId) : SEED.difficulty
 
 /**
  * Build a full persisted state from a save blob (WS-08 import). Unlike migrate(),
@@ -125,6 +143,7 @@ const saveSlice = (s: SimulationState): SimulationData => ({
   visitedRefs: s.visitedRefs,
   auto: s.auto,
   seed: s.seed,
+  difficulty: s.difficulty,
 })
 
 function fromSave(s: Record<string, unknown>) {
@@ -144,6 +163,7 @@ function fromSave(s: Record<string, unknown>) {
     visitedRefs: Array.isArray(s.visitedRefs) ? (s.visitedRefs as string[]) : [],
     auto: Array.isArray(s.auto) ? (s.auto as string[]) : [],
     seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
+    difficulty: asDifficulty(s.difficulty),
   }
 }
 
@@ -175,6 +195,9 @@ export const useSimulationStore = create<SimulationState>()(
         set((s) => ({ auto: Array.from(new Set([...s.auto, ...keys])) })),
       clearAuto: (phase) =>
         set((s) => ({ auto: s.auto.filter((k) => !k.startsWith(`${phase}::`)) })),
+      setDifficulty: (difficulty) => set({ difficulty }),
+      applyScenario: ({ sector, size, country, difficulty }) =>
+        set({ sector, size, country, difficulty }),
       reset: () => set({ ...SEED, seed: newSeed() }),
       exportSave: () =>
         JSON.stringify(
@@ -221,6 +244,7 @@ export const useSimulationStore = create<SimulationState>()(
           visitedRefs: Array.isArray(s.visitedRefs) ? (s.visitedRefs as string[]) : [],
           auto: Array.isArray(s.auto) ? (s.auto as string[]) : [],
           seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
+          difficulty: asDifficulty(s.difficulty),
         }
       },
       onRehydrateStorage: () => (_state, error) => {

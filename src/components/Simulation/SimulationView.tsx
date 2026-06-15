@@ -39,7 +39,7 @@ import type { ExecutiveDocumentType } from '@/services/storage/types'
 import { SIM_TREES, flattenTree, achievedTreeLevel, type TreeStep } from '@/simulation'
 import { computeReadiness } from '@/simulation/readiness'
 import { runQuarter } from '@/simulation/quarterEngine'
-import { SIM_BALANCE } from '@/data/simBalance'
+import { getBalance, SIM_SCENARIOS, type DifficultyId } from '@/data/simBalance'
 import { Eyebrow, Ring, Radial, Dial, Stat } from './atoms'
 import { SEVERITY_DOT } from './simChrome'
 import {
@@ -105,6 +105,9 @@ const COUNTRIES = (['US', 'DE', 'FR', 'UK', 'AU'] as const).map((id) => ({
 const SEATS: { id: PersonaId; label: string }[] = (Object.keys(personaToRoles) as PersonaId[])
   .filter((p) => personaToRoles[p].length > 0)
   .map((id) => ({ id, label: id === 'ops' ? 'Operations' : PERSONAS[id].label.split(' ')[0] }))
+
+// difficulty cycle order for the MODE dial (WS-14)
+const DIFF_ORDER: DifficultyId[] = ['easy', 'realistic', 'hard']
 
 // phases that act on the estate / infrastructure → the architecture view is shown
 const ARCH_PHASES = new Set<PhaseId>(['p1', 'p5', 'p6'])
@@ -174,7 +177,12 @@ export function SimulationView() {
     clearAuto,
     exportSave,
     importSave,
+    difficulty,
+    setDifficulty,
+    applyScenario,
   } = useSimulationStore()
+  // WS-14: the active difficulty balance the engine + scoring read (config swap).
+  const balance = getBalance(difficulty)
   const [report, setReport] = useState<QuarterReportData | null>(null)
   // back in the sim → clear the "Resume Simulation" flag the hub banner reads
   useEffect(() => {
@@ -391,8 +399,8 @@ export function SimulationView() {
   const p0Done = p0Steps.filter((s) => stepDone(s, 'p0')).length
   const p0Level = levelOf('p0')
   const p0Frac = p0Steps.length
-    ? SIM_BALANCE.budget.doneWeight * (p0Done / p0Steps.length) +
-      SIM_BALANCE.budget.levelWeight * (p0Level / MAX_LEVEL)
+    ? balance.budget.doneWeight * (p0Done / p0Steps.length) +
+      balance.budget.levelWeight * (p0Level / MAX_LEVEL)
     : 0
   const budgetTarget = programBudgetTarget(sector, sizeKey)
   const budgetSecured = Math.round(budgetTarget * p0Frac * 10) / 10
@@ -493,6 +501,7 @@ export function SimulationView() {
       simShelfLifeYears,
       clockYearsToHorizon: clock.yearsToHorizon,
       checks,
+      balance,
       levelOf,
       evidenceLevel,
       stepDone,
@@ -540,6 +549,26 @@ export function SimulationView() {
             hint="rest = AI team"
             onClick={() => setSeat(cycle(SEATS, seat))}
           />
+          <Dial
+            label="MODE"
+            value={difficulty[0].toUpperCase() + difficulty.slice(1)}
+            hint="difficulty"
+            onClick={() =>
+              setDifficulty(DIFF_ORDER[(DIFF_ORDER.indexOf(difficulty) + 1) % DIFF_ORDER.length])
+            }
+          />
+          {SIM_SCENARIOS.map((sc) => (
+            <Button
+              key={sc.id}
+              type="button"
+              variant="ghost"
+              onClick={() => applyScenario(sc)}
+              title={sc.description}
+              className="h-auto shrink-0 rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-[9px] font-bold text-background/60 hover:bg-background/10"
+            >
+              ★ {sc.label}
+            </Button>
+          ))}
         </div>
         <div className="ml-auto flex shrink-0 items-center gap-2.5">
           <Link

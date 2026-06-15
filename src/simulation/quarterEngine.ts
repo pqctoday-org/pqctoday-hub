@@ -12,7 +12,7 @@
  */
 import { quarterRng, chanceWith, sampleWith } from './rng'
 import { SIM_TREES, flattenTree, achievedTreeLevel, type TreeStep } from '@/simulation'
-import { SIM_BALANCE } from '@/data/simBalance'
+import { type SimBalance } from '@/data/simBalance'
 import { SIM_EVENT_POOL, fillEvent, type EventSeverity, type SimEvent } from '@/data/simEvents'
 import { PHASE_ORDER, FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
 import { PHASE_WIN_LEVEL } from '@/data/phaseMaturity'
@@ -37,6 +37,8 @@ export interface QuarterEngineInput {
   /** the current clock's yearsToHorizon, for the report's "from" value */
   clockYearsToHorizon: number
   checks: Record<string, number>
+  /** active difficulty balance (WS-14) — the engine never branches on preset */
+  balance: SimBalance
   /** gating reads from the view (store-derived, kept out of the pure engine) */
   levelOf: (p: string) => number
   evidenceLevel: (p: string) => number
@@ -71,6 +73,7 @@ export function runQuarter(input: QuarterEngineInput): QuarterEngineResult {
     simShelfLifeYears,
     clockYearsToHorizon,
     checks,
+    balance,
     levelOf,
     evidenceLevel,
     stepDone,
@@ -84,7 +87,7 @@ export function runQuarter(input: QuarterEngineInput): QuarterEngineResult {
     fillEvent(sampleWith(rng, SIM_EVENT_POOL[sev]), sectorLabel, country)
   const newEvents: SimEvent[] = []
 
-  const ev = SIM_BALANCE.events
+  const ev = balance.events
   const hasClassical = levelOf('p1') < PHASE_WIN_LEVEL || levelOf('p5') < PHASE_WIN_LEVEL
   if (hasClassical && chanceWith(rng, ev.dangerWhenClassical))
     newEvents.push({ sev: 'danger', t: label, txt: pick('danger') })
@@ -96,7 +99,7 @@ export function runQuarter(input: QuarterEngineInput): QuarterEngineResult {
   }
 
   let newCrqc = crqcShift
-  if (chanceWith(rng, SIM_BALANCE.crqc.pullForwardPerQuarter)) {
+  if (chanceWith(rng, balance.crqc.pullForwardPerQuarter)) {
     newCrqc += 1
     newEvents.push({
       sev: 'danger',
@@ -124,7 +127,7 @@ export function runQuarter(input: QuarterEngineInput): QuarterEngineResult {
     const owns = Object.values(ROLE_CROSSWALK).some(
       (r) => r.phases.includes(p) && r.persona === seat
     )
-    if (owns || levelOf(p) >= PHASE_WIN_LEVEL || !chanceWith(rng, SIM_BALANCE.ai.advanceChance))
+    if (owns || levelOf(p) >= PHASE_WIN_LEVEL || !chanceWith(rng, balance.ai.advanceChance))
       continue
     const next = flattenTree(tree).find((s) => !willBeDone(s, p))
     if (!next) continue
