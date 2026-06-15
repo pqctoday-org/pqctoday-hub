@@ -50,46 +50,64 @@ const URGENCY_CONFIG: Record<Urgency, { label: string; color: string; bg: string
   },
 }
 
+/** Mosca urgency band from a migration deadline year. */
+function urgencyFor(deadline: number): Urgency {
+  const rem = deadline - CURRENT_YEAR
+  if (rem < 0) return 'overdue'
+  if (rem <= 2) return 'critical'
+  if (rem <= 5) return 'urgent'
+  return 'planning'
+}
+
+/**
+ * Plain-language deadline message. `atRiskPhrase` is model-specific — what is
+ * already exposed once the deadline has passed (data secrecy vs. credentials).
+ */
+function urgencyMessage(deadline: number, atRiskPhrase: string): string {
+  const rem = deadline - CURRENT_YEAR
+  if (rem < 0) {
+    const abs = Math.abs(rem)
+    return `Migration should have started ${abs} year${abs === 1 ? '' : 's'} ago. ${atRiskPhrase}`
+  }
+  if (rem <= 2)
+    return `Only ${rem} year${rem === 1 ? '' : 's'} remaining. Migration must begin immediately.`
+  if (rem <= 5) return `${rem} years remaining. Migration planning should be underway.`
+  return `${rem} years remaining. Begin cryptographic inventory and planning.`
+}
+
 export const ThreatEconomicsHeader: React.FC = () => {
   const [expanded, setExpanded] = useState(false)
 
-  // Mosca mini-calc inputs (same model as HNDLTimeline).
-  const [dataLifetime, setDataLifetime] = useState(10)
-  const [migrationTime, setMigrationTime] = useState(5)
-  const [crqcYear, setCrqcYear] = useState(2035)
+  // Mosca mini-calc inputs. Each threat model has its OWN X (the clock that
+  // applies): HNDL = data secrecy lifetime, HNFL = credential validity period.
+  // Migration time (Y) and CRQC year (Z) are shared across both models.
+  const [dataLifetime, setDataLifetime] = useState(10) // HNDL X
+  const [credentialValidity, setCredentialValidity] = useState(10) // HNFL X
+  const [migrationTime, setMigrationTime] = useState(5) // Y
+  const [crqcYear, setCrqcYear] = useState(2035) // Z
 
-  const migrationDeadline = useMemo(
-    () => crqcYear - dataLifetime - migrationTime,
-    [crqcYear, dataLifetime, migrationTime]
+  // One deadline per model: Z − X − Y. They differ only by which X applies.
+  const rows = useMemo(
+    () => [
+      {
+        key: 'hndl',
+        label: 'HNDL',
+        x: dataLifetime,
+        xLabel: 'data lifetime',
+        deadline: crqcYear - dataLifetime - migrationTime,
+        atRiskPhrase: 'Data intercepted today is already at risk.',
+      },
+      {
+        key: 'hnfl',
+        label: 'HNFL',
+        x: credentialValidity,
+        xLabel: 'credential validity',
+        deadline: crqcYear - credentialValidity - migrationTime,
+        atRiskPhrase: 'Credentials signed today can be forged retroactively.',
+      },
+    ],
+    [dataLifetime, credentialValidity, migrationTime, crqcYear]
   )
-  const yearsRemaining = useMemo(() => migrationDeadline - CURRENT_YEAR, [migrationDeadline])
-
-  const urgencyLevel = useMemo<Urgency>(() => {
-    if (yearsRemaining < 0) return 'overdue'
-    if (yearsRemaining <= 2) return 'critical'
-    if (yearsRemaining <= 5) return 'urgent'
-    return 'planning'
-  }, [yearsRemaining])
-
-  // eslint-disable-next-line security/detect-object-injection
-  const urgency = URGENCY_CONFIG[urgencyLevel]
-
-  const urgencyMessage = useMemo(() => {
-    switch (urgencyLevel) {
-      case 'overdue':
-        return `Migration should have started ${Math.abs(yearsRemaining)} year${
-          Math.abs(yearsRemaining) === 1 ? '' : 's'
-        } ago. Data intercepted today is already at risk.`
-      case 'critical':
-        return `Only ${yearsRemaining} year${
-          yearsRemaining === 1 ? '' : 's'
-        } remaining. Migration must begin immediately.`
-      case 'urgent':
-        return `${yearsRemaining} years remaining. Migration planning should be underway.`
-      default:
-        return `${yearsRemaining} years remaining. Begin cryptographic inventory and planning.`
-    }
-  }, [urgencyLevel, yearsRemaining])
 
   return (
     <section
@@ -154,16 +172,16 @@ export const ThreatEconomicsHeader: React.FC = () => {
         </div>
       </div>
 
-      {/* Mosca mini-calc — collapsible */}
+      {/* Mosca mini-calc — collapsible. Two clocks (one per model) sharing Y + Z. */}
       {expanded && (
         <div id="threat-economics-body" className="mt-4 space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div>
               <label
                 htmlFor="te-data-lifetime"
                 className="block text-xs font-medium text-foreground mb-1"
               >
-                Data lifetime (X)
+                Data lifetime (X) <span className="text-muted-foreground">· HNDL</span>
               </label>
               <div className="flex items-center gap-2">
                 <input
@@ -177,6 +195,28 @@ export const ThreatEconomicsHeader: React.FC = () => {
                 />
                 <span className="text-sm font-bold text-primary w-12 text-right">
                   {dataLifetime}y
+                </span>
+              </div>
+            </div>
+            <div>
+              <label
+                htmlFor="te-credential-validity"
+                className="block text-xs font-medium text-foreground mb-1"
+              >
+                Credential validity (X) <span className="text-muted-foreground">· HNFL</span>
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  id="te-credential-validity"
+                  type="range"
+                  min={1}
+                  max={75}
+                  value={credentialValidity}
+                  onChange={(e) => setCredentialValidity(Number(e.target.value))}
+                  className="flex-1 accent-primary"
+                />
+                <span className="text-sm font-bold text-primary w-12 text-right">
+                  {credentialValidity}y
                 </span>
               </div>
             </div>
@@ -224,32 +264,38 @@ export const ThreatEconomicsHeader: React.FC = () => {
             </div>
           </div>
 
-          <div className={`rounded-lg border p-3 ${urgency.bg}`}>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <Clock size={13} className={urgency.color} aria-hidden="true" />
-                  <span
-                    className={`text-[10px] px-1.5 py-0.5 rounded border font-bold ${urgency.bg} ${urgency.color}`}
-                  >
-                    {urgency.label}
-                  </span>
-                  <span className="text-xs text-muted-foreground">Migration deadline</span>
+          {/* One deadline row per threat model */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            {rows.map((row) => {
+              const urgency = URGENCY_CONFIG[urgencyFor(row.deadline)]
+              return (
+                <div key={row.key} className={`rounded-lg border p-3 ${urgency.bg}`}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Clock size={13} className={urgency.color} aria-hidden="true" />
+                    <span
+                      className={`text-[10px] px-1.5 py-0.5 rounded border font-bold ${urgency.bg} ${urgency.color}`}
+                    >
+                      {urgency.label}
+                    </span>
+                    <span className="text-xs font-bold text-foreground">{row.label}</span>
+                    <span className="text-xs text-muted-foreground">migration deadline</span>
+                  </div>
+                  <div className={`text-2xl font-bold ${urgency.color}`}>{row.deadline}</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {urgencyMessage(row.deadline, row.atRiskPhrase)}
+                  </p>
+                  <div className="mt-2 border-t border-border/60 pt-2">
+                    <div className="font-mono text-xs text-foreground">
+                      {crqcYear} &minus; {row.x} &minus; {migrationTime} = {row.deadline}
+                    </div>
+                    <div className="text-[10px] text-muted-foreground mt-0.5">
+                      Z &minus; X &minus; Y = deadline ({row.xLabel}). If X + Y &gt; (Z &minus;
+                      today), you are already exposed.
+                    </div>
+                  </div>
                 </div>
-                <div className={`text-2xl font-bold ${urgency.color}`}>{migrationDeadline}</div>
-                <p className="text-xs text-muted-foreground mt-1">{urgencyMessage}</p>
-              </div>
-              <div className="text-right">
-                <div className="text-[10px] text-muted-foreground">Mosca&apos;s Inequality</div>
-                <div className="font-mono text-xs text-foreground">
-                  {crqcYear} &minus; {dataLifetime} &minus; {migrationTime} = {migrationDeadline}
-                </div>
-                <div className="text-[10px] text-muted-foreground mt-0.5">
-                  Z &minus; X &minus; Y = deadline. If X + Y &gt; (Z &minus; today), you are already
-                  exposed.
-                </div>
-              </div>
-            </div>
+              )
+            })}
           </div>
         </div>
       )}
