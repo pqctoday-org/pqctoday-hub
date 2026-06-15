@@ -42,7 +42,7 @@ import { runQuarter } from '@/simulation/quarterEngine'
 import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
 import { getBalance, SIM_SCENARIOS, type DifficultyId } from '@/data/simBalance'
 import { Eyebrow, Ring, Radial, Dial, Stat } from './atoms'
-import { SEVERITY_DOT } from './simChrome'
+import { SEVERITY_META } from './simChrome'
 import {
   ResCol,
   resLinks,
@@ -670,20 +670,42 @@ export function SimulationView() {
       </header>
 
       {/* ticker (top — live event feed) — grey strip, distinct from the dark header */}
-      <div className="flex h-[40px] shrink-0 items-center gap-5 overflow-hidden border-b border-border bg-muted px-4 text-foreground">
+      <div
+        className="flex h-[40px] shrink-0 items-center gap-5 overflow-hidden border-b border-border bg-muted px-4 text-foreground"
+        role="log"
+        aria-live="polite"
+        aria-label="Live event feed"
+      >
         <span className="shrink-0 font-mono text-[11px] font-extrabold uppercase tracking-[0.16em] text-primary">
           ● LIVE FEED
         </span>
         <div className="relative flex-1 overflow-hidden">
           {/* duplicated track → seamless left-scrolling marquee (pauses on hover) */}
           <div className="flex w-max animate-sim-ticker gap-6">
-            {[...tickerItems, ...tickerItems].map((e, i) => (
-              <span key={i} className="flex shrink-0 items-center gap-2 text-[13px]">
-                <span className={`h-2 w-2 rounded-full ${SEVERITY_DOT[e.sev]}`} />
-                <span className="font-mono text-[11px] text-muted-foreground">{e.t}</span>
-                <span className="whitespace-nowrap">{e.txt}</span>
-              </span>
-            ))}
+            {[...tickerItems, ...tickerItems].map((e, i) => {
+              const sev = SEVERITY_META[e.sev]
+              // the marquee duplicates the track for a seamless scroll; the second
+              // copy is hidden from the accessibility tree so SR reads each once.
+              const isDuplicate = i >= tickerItems.length
+              return (
+                <span
+                  key={i}
+                  aria-hidden={isDuplicate || undefined}
+                  className="flex shrink-0 items-center gap-2 text-[13px]"
+                >
+                  {/* icon + sr-only label = non-colour severity signal (AA) */}
+                  <span
+                    className={`grid h-3.5 w-3.5 place-items-center rounded-full text-[8px] font-bold text-background ${sev.dot}`}
+                    aria-hidden="true"
+                  >
+                    {sev.icon}
+                  </span>
+                  <span className="sr-only">{sev.label}:</span>
+                  <span className="font-mono text-[11px] text-muted-foreground">{e.t}</span>
+                  <span className="whitespace-nowrap">{e.txt}</span>
+                </span>
+              )
+            })}
           </div>
         </div>
       </div>

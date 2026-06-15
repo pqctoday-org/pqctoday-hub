@@ -21,7 +21,7 @@ import { canResolveDeepLink } from '@/simulation/deepLinks'
 import { logSimTrapPick } from '@/utils/analytics'
 import { Eyebrow } from './atoms'
 import {
-  SEVERITY_DOT,
+  SEVERITY_META,
   MOVE_TONE,
   KIND_CHIP,
   REF_LABELS,
@@ -478,14 +478,24 @@ export function QuarterReport({
 
           <div className="mb-4">
             <Eyebrow className="mb-1.5 block">This quarter</Eyebrow>
-            {report.events.map((e, i) => (
-              <div key={i} className="mb-1.5 flex items-start gap-2.5">
-                <span
-                  className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${SEVERITY_DOT[e.sev]}`}
-                />
-                <span className="text-[12px] leading-snug text-muted-foreground">{e.txt}</span>
-              </div>
-            ))}
+            {report.events.map((e, i) => {
+              const sev = SEVERITY_META[e.sev]
+              return (
+                <div key={i} className="mb-1.5 flex items-start gap-2.5">
+                  {/* icon + sr-only label = non-colour severity signal (AA) */}
+                  <span
+                    className={`mt-0.5 grid h-3.5 w-3.5 shrink-0 place-items-center rounded-full text-[8px] font-bold text-background ${sev.dot}`}
+                    aria-hidden="true"
+                  >
+                    {sev.icon}
+                  </span>
+                  <span className="text-[12px] leading-snug text-muted-foreground">
+                    <span className="sr-only">{sev.label}: </span>
+                    {e.txt}
+                  </span>
+                </div>
+              )
+            })}
           </div>
 
           <div className="mb-4 rounded-xl border border-primary bg-primary/10 p-3">

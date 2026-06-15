@@ -112,4 +112,13 @@ describe('SimulationView (Mission Control)', () => {
       expect(checks[p] ?? 0).toBe(0)
     }
   })
+
+  // WS-13 — accessibility: the live feed is a polite log and severity carries a
+  // non-colour (text) signal, not colour alone.
+  it('exposes the live feed as a polite log with non-colour severity cues', () => {
+    renderPage()
+    const feed = screen.getByRole('log', { name: /live event feed/i })
+    expect(feed).toHaveAttribute('aria-live', 'polite')
+    expect(within(feed).getAllByText(/^(Danger|Warning|Success|Info):$/).length).toBeGreaterThan(0)
+  })
 })
