@@ -32,11 +32,11 @@ export interface SimBalance {
     advanceChance: number
   }
   /**
-   * Readiness fraction by P5 maturity level (WS-04 replaces this coarse step
-   * model with per-edge migration state, but the shape stays config-driven).
+   * P0 budget blend (WS-04): budget fraction = doneWeight·(P0 steps done / total)
+   * + levelWeight·(P0 level / max). Default is activity-driven (doneWeight 1,
+   * levelWeight 0) so every secured euro traces to a specific completed activity;
+   * presets (WS-14) may dial in a level bonus.
    */
-  readiness: { l3: number; l2: number; l1: number; l0: number }
-  /** P0 budget blend: budget fraction = doneWeight·(steps done) + levelWeight·(P0 level / max). */
   budget: { doneWeight: number; levelWeight: number }
 }
 
@@ -53,6 +53,5 @@ export const SIM_BALANCE: SimBalance = {
   ai: {
     advanceChance: 0.35,
   },
-  readiness: { l3: 1, l2: 0.6, l1: 0.25, l0: 0.05 },
-  budget: { doneWeight: 0.5, levelWeight: 0.5 },
+  budget: { doneWeight: 1, levelWeight: 0 },
 }

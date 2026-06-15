@@ -50,6 +50,7 @@ import {
   type StepKind,
 } from '@/simulation'
 import { quarterRng, chanceWith, sampleWith } from '@/simulation/rng'
+import { computeReadiness } from '@/simulation/readiness'
 import { SIM_BALANCE } from '@/data/simBalance'
 import { SIM_MOVES, type MoveCtx, type MoveKind } from '@/data/simMoves'
 import { SIM_EVENT_POOL, fillEvent, type EventSeverity, type SimEvent } from '@/data/simEvents'
@@ -67,7 +68,6 @@ import {
   projectReadiness,
   type AssessRec,
 } from '@/simulation/assessBridge'
-import { ARCHITECTURES } from '@/data/simArchitecture'
 import {
   computeThreatLevels,
   portfolioFor,
@@ -550,7 +550,11 @@ export function SimulationView() {
   const safeYears = clock.x + clock.y
 
   // KPIs
-  const readiness = computeReadiness(size, levelOf('p5'))
+  // WS-04: readiness is driven by the fraction of P5 activities completed (per-edge,
+  // continuous + attributable), not the coarse P5 maturity level.
+  const p5Flat = SIM_TREES.p5 ? flattenTree(SIM_TREES.p5) : []
+  const p5Frac = p5Flat.length ? p5Flat.filter((s) => stepDone(s, 'p5')).length / p5Flat.length : 0
+  const readiness = computeReadiness(size, p5Frac)
   const cleared = LIFECYCLE.filter((p) => levelOf(p) >= PHASE_WIN_LEVEL).length
 
   // ---- date-driven quantum threat (HNDL + TNFL), evolving 2026 → 2029 → 2035 ----
@@ -1673,16 +1677,6 @@ export function SimulationView() {
       {report && <QuarterReport report={report} onClose={() => setReport(null)} />}
     </div>
   )
-}
-
-// ---- readiness (p5-driven) ----------------------------------------------
-function computeReadiness(size: string, p5: number) {
-  const edges = (ARCHITECTURES[size as keyof typeof ARCHITECTURES] ?? ARCHITECTURES.mid).edges
-  const vulnerable = edges.filter((e) => e.vulnerable && e.pqcPath !== 'none').length
-  const r = SIM_BALANCE.readiness
-  const frac = p5 >= 3 ? r.l3 : p5 >= 2 ? r.l2 : p5 >= 1 ? r.l1 : r.l0
-  const migrated = Math.round(vulnerable * frac)
-  return { pct: Math.round((migrated / Math.max(1, vulnerable)) * 100), migrated, vulnerable }
 }
 
 // ---- resources -----------------------------------------------------------
