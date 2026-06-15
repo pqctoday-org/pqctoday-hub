@@ -66,13 +66,6 @@ export interface SimulationState {
   clearAuto: (phase: string) => void
   /** Select a difficulty preset (WS-14). */
   setDifficulty: (d: DifficultyId) => void
-  /** Apply a curated scenario: set the org dials + difficulty together (WS-14). */
-  applyScenario: (s: {
-    sector: string
-    size: string
-    country: string
-    difficulty: DifficultyId
-  }) => void
   /** Mark the first-run guided tour as seen (WS-12). */
   markTourSeen: () => void
   reset: () => void
@@ -201,8 +194,6 @@ export const useSimulationStore = create<SimulationState>()(
       clearAuto: (phase) =>
         set((s) => ({ auto: s.auto.filter((k) => !k.startsWith(`${phase}::`)) })),
       setDifficulty: (difficulty) => set({ difficulty }),
-      applyScenario: ({ sector, size, country, difficulty }) =>
-        set({ sector, size, country, difficulty }),
       markTourSeen: () => set({ tourSeen: true }),
       // RESET clears the run but NOT the onboarding flag (don't re-show the tour).
       reset: () => set((s) => ({ ...SEED, seed: newSeed(), tourSeen: s.tourSeen })),

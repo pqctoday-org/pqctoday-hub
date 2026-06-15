@@ -1,12 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import {
-  SIM_BALANCE,
-  SIM_PRESETS,
-  getBalance,
-  SIM_SCENARIOS,
-  type DifficultyId,
-} from './simBalance'
+import { SIM_BALANCE, SIM_PRESETS, getBalance, type DifficultyId } from './simBalance'
 
 describe('SIM_BALANCE', () => {
   it('matches the documented baseline (snapshot of tunable balance)', () => {
@@ -74,15 +68,5 @@ describe('difficulty presets + scenarios (WS-14)', () => {
     expect(getBalance('hard')).toBe(SIM_PRESETS.hard)
     expect(getBalance('nope' as DifficultyId)).toBe(SIM_PRESETS.realistic)
     expect(SIM_BALANCE).toBe(SIM_PRESETS.realistic)
-  })
-
-  it('scenarios reference valid difficulties and set all dials', () => {
-    expect(SIM_SCENARIOS.length).toBeGreaterThanOrEqual(2)
-    for (const sc of SIM_SCENARIOS) {
-      expect(IDS).toContain(sc.difficulty)
-      expect(sc.sector).toBeTruthy()
-      expect(sc.size).toBeTruthy()
-      expect(sc.country).toBeTruthy()
-    }
   })
 })

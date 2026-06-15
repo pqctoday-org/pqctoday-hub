@@ -73,38 +73,3 @@ export const SIM_BALANCE: SimBalance = SIM_PRESETS.realistic
 
 /** Resolve the active balance for a difficulty (falls back to Realistic). */
 export const getBalance = (id: DifficultyId): SimBalance => SIM_PRESETS[id] ?? SIM_PRESETS.realistic
-
-/**
- * Curated scenarios (WS-14) — set the org dials AND the difficulty together so a
- * player can start from a realistic posture in one click. Config only.
- */
-export interface SimScenario {
-  id: string
-  label: string
-  description: string
-  sector: string
-  size: string
-  country: string
-  difficulty: DifficultyId
-}
-
-export const SIM_SCENARIOS: SimScenario[] = [
-  {
-    id: 'regulated-finance',
-    label: 'Regulated finance',
-    description: 'Global bank under CNSA-2.0 pressure — long-lived records, hard deadlines.',
-    sector: 'financial',
-    size: 'global',
-    country: 'US',
-    difficulty: 'hard',
-  },
-  {
-    id: 'healthcare',
-    label: 'Healthcare provider',
-    description: 'Large hospital network — decades-long patient-data secrecy under BSI guidance.',
-    sector: 'healthcare',
-    size: 'large',
-    country: 'DE',
-    difficulty: 'realistic',
-  },
-]
