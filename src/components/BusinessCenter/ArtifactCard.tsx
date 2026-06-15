@@ -38,6 +38,7 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'program-charter': 'Program Charter',
   'initial-scoping': 'Initial Scoping Assessment',
   'skills-team-plan': 'Skills & Team Plan',
+  'sim-roadmap': 'Simulation Roadmap',
 }
 
 const PILLAR_COLORS: Record<string, string> = {

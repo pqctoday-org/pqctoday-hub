@@ -39,6 +39,7 @@ import type { ExecutiveDocumentType } from '@/services/storage/types'
 import { SIM_TREES, flattenTree, achievedTreeLevel, type TreeStep } from '@/simulation'
 import { computeReadiness } from '@/simulation/readiness'
 import { runQuarter } from '@/simulation/quarterEngine'
+import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
 import { getBalance, SIM_SCENARIOS, type DifficultyId } from '@/data/simBalance'
 import { Eyebrow, Ring, Radial, Dial, Stat } from './atoms'
 import { SEVERITY_DOT } from './simChrome'
@@ -108,6 +109,10 @@ const SEATS: { id: PersonaId; label: string }[] = (Object.keys(personaToRoles) a
 
 // difficulty cycle order for the MODE dial (WS-14)
 const DIFF_ORDER: DifficultyId[] = ['easy', 'realistic', 'hard']
+
+// Event-time clock at module scope so it stays out of the component render body
+// (the React Compiler purity rule forbids impure calls like Date.now() there).
+const nowMs = () => Date.now()
 
 // phases that act on the estate / infrastructure → the architecture view is shown
 const ARCH_PHASES = new Set<PhaseId>(['p1', 'p5', 'p6'])
@@ -232,7 +237,7 @@ export function SimulationView() {
   const assessSnap = useAssessSnapshot()
   const importAssessReport = () => {
     if (!assessSnap) return
-    addExecutiveDocument(buildAssessReportDoc(assessSnap.result, Date.now()))
+    addExecutiveDocument(buildAssessReportDoc(assessSnap.result, nowMs()))
     // Auto-fill the sim's setup dials from the assessed org (still editable).
     const prof = simProfileFromAssess(assessSnap.result)
     if (prof.sector) setSector(prof.sector)
@@ -511,6 +516,36 @@ export function SimulationView() {
     setReport(qReport)
   }
 
+  // WS-15 — opt-in: commit this run as a draft roadmap into the Command Center.
+  // Inverse of the read-only Assess→Sim bridge; never touches the assessment.
+  const commitPlan = () => {
+    const phases = LIFECYCLE.map((p) => ({
+      id: p,
+      name: FRAMEWORK_PHASES[p].name,
+      level: levelOf(p),
+      cleared: levelOf(p) >= PHASE_WIN_LEVEL,
+    }))
+    addExecutiveDocument(
+      buildSimRoadmapDoc(
+        {
+          sector,
+          size,
+          country,
+          difficulty,
+          phases,
+          clearedCount: cleared,
+          totalPhases: LIFECYCLE.length,
+          readinessPct: readiness.pct,
+          yearsToHorizon: clock.yearsToHorizon,
+          over: clock.over,
+        },
+        nowMs()
+      )
+    )
+    if (typeof window !== 'undefined')
+      window.alert('Draft roadmap committed to the Command Center.')
+  }
+
   return (
     <div className="fixed inset-0 flex flex-col bg-background text-foreground">
       {/* header — command bar */}
@@ -578,6 +613,15 @@ export function SimulationView() {
           >
             ← HUB
           </Link>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={commitPlan}
+            title="Save this run as a draft roadmap in the Command Center"
+            className="h-auto rounded-md border border-primary/40 bg-primary/10 px-2.5 py-1.5 font-mono text-[10px] font-bold text-background hover:bg-primary/20"
+          >
+            ▸ COMMIT PLAN
+          </Button>
           <Button
             type="button"
             variant="ghost"

@@ -55,12 +55,17 @@ const ALL_ARTIFACT_TYPES: ExecutiveDocumentType[] = [
   'program-charter',
   'initial-scoping',
   'skills-team-plan',
+  'sim-roadmap',
 ]
 
 /** Artifact types that intentionally have NO builder component. Each entry
  *  must include a justification — usually because the type is a placeholder
  *  for a future tool, or has been deprecated. */
-const NO_BUILDER_ALLOWLIST: ReadonlySet<ExecutiveDocumentType> = new Set<ExecutiveDocumentType>()
+const NO_BUILDER_ALLOWLIST: ReadonlySet<ExecutiveDocumentType> = new Set<ExecutiveDocumentType>([
+  // sim-roadmap is produced by the Simulation (WS-15), not authored via a
+  // Command-Center builder tool — it has a label + pillar but no tool component.
+  'sim-roadmap',
+])
 
 describe('Command Center registry — drift guard', () => {
   it('every ExecutiveDocumentType has a TYPE_LABELS entry', () => {
