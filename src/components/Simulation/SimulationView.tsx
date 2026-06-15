@@ -52,7 +52,13 @@ import {
 import { SIM_MOVES, type MoveCtx, type MoveKind } from '@/data/simMoves'
 import { SIM_EVENT_POOL, fillEvent, type EventSeverity, type SimEvent } from '@/data/simEvents'
 import { feedFor } from '@/data/simFeed'
-import { getAssessSnapshot, buildAssessReportDoc } from '@/simulation/assessBridge'
+import {
+  useAssessSnapshot,
+  buildAssessReportDoc,
+  moscaInputsFromAssess,
+  recommendationByModule,
+  type AssessRec,
+} from '@/simulation/assessBridge'
 import { ARCHITECTURES } from '@/data/simArchitecture'
 import {
   computeThreatLevels,
@@ -166,6 +172,12 @@ const REF_LABELS: Record<string, string> = {
 
 const cycle = <T extends { id: string }>(arr: readonly T[], cur: string) =>
   arr[(arr.findIndex((a) => a.id === cur) + 1) % arr.length].id
+
+// Event-time dice for the End-Quarter simulation. Kept at module scope so the
+// randomness lives outside any component/hook body — the only legitimate place
+// for it under the React Compiler's purity rule.
+const chance = (p: number) => Math.random() < p
+const sample = <T,>(arr: readonly T[]): T => arr[Math.floor(Math.random() * arr.length)]
 
 // Flag an outbound navigation to a hub resource so MainLayout shows the
 // "Resume Simulation" bar (the PWA-safe return path). Cleared on sim mount.
@@ -413,10 +425,16 @@ export function SimulationView() {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   // read-only Assess → Sim bridge: offer to import a completed assessment as the
   // Phase-0 scoping artifact (data only; the sim's gate still decides it counts).
-  const assessSnap = getAssessSnapshot()
+  const assessSnap = useAssessSnapshot()
   const importAssessReport = () => {
     if (assessSnap) addExecutiveDocument(buildAssessReportDoc(assessSnap.result, Date.now()))
   }
+  // Assess-derived clock inputs (X shelf-life, Y migration years) when available
+  const assessMosca = assessSnap ? moscaInputsFromAssess(assessSnap.result) : null
+  // Assess recommendations keyed by learn-module id → badge matching next-move steps
+  const assessRecByModule: Map<string, AssessRec> = assessSnap
+    ? recommendationByModule(assessSnap.result)
+    : new Map()
   // RESET clears the sim turn-state plus ONLY the sim-tracked hub progress the
   // gating reads from (the Learn modules + artifacts referenced by the trees) —
   // the player's other hub progress is left untouched.
@@ -477,9 +495,15 @@ export function SimulationView() {
     COUNTRY_DEADLINE_YEAR[country] ?? SIM_CRQC_YEAR
   )
   const currentYear = year + (q - 1) * 0.25
+  // Mosca X/Y from the assessment when present, else the sim's sector/size tables
+  const simShelfLifeYears = assessMosca?.shelfLifeYears ?? shelfLifeFor(sector)
+  const simMigrationYears =
+    assessMosca?.migrationYears ??
+    SIZE_MIGRATION_YEARS[size as keyof typeof SIZE_MIGRATION_YEARS] ??
+    3
   const clock = computeSimMosca({
-    migrationYears: SIZE_MIGRATION_YEARS[size as keyof typeof SIZE_MIGRATION_YEARS] ?? 3,
-    shelfLifeYears: shelfLifeFor(sector),
+    migrationYears: simMigrationYears,
+    shelfLifeYears: simShelfLifeYears,
     horizonYear,
     currentYear,
   })
@@ -493,7 +517,7 @@ export function SimulationView() {
   const sizeKey = size as OrgSize
   const threat = computeThreatLevels({
     currentYear,
-    shelfLifeYears: shelfLifeFor(sector),
+    shelfLifeYears: simShelfLifeYears,
     crqcShift,
   })
 
@@ -562,6 +586,11 @@ export function SimulationView() {
     band.activities.flatMap((act) => act.steps.map((step) => ({ band, act, step })))
   )
   const nextMove = firstOpenIdx < 0 ? null : (stepMeta[firstOpenIdx] ?? null)
+  // Assess recommendation matching the current next-move's learn module (badge only)
+  const nextMoveRec =
+    nextMove?.step.kind === 'learn' && nextMove.step.moduleId
+      ? assessRecByModule.get(nextMove.step.moduleId)
+      : undefined
 
   // right column is phase-relevant: the artifacts THIS phase produces (deduped by
   // type, carrying the framework label) and which of them the player has generated.
@@ -593,24 +622,20 @@ export function SimulationView() {
     const [ny, nq] = q === 4 ? [year + 1, 1] : [year, q + 1]
     const label = `Q${nq} ${ny}`
     const pick = (sev: EventSeverity) =>
-      fillEvent(
-        SIM_EVENT_POOL[sev][Math.floor(Math.random() * SIM_EVENT_POOL[sev].length)],
-        sectorOpt.label,
-        country
-      )
+      fillEvent(sample(SIM_EVENT_POOL[sev]), sectorOpt.label, country)
     const newEvents: SimEvent[] = []
 
     const hasClassical = levelOf('p1') < PHASE_WIN_LEVEL || levelOf('p5') < PHASE_WIN_LEVEL
-    if (hasClassical && Math.random() < 0.6)
+    if (hasClassical && chance(0.6))
       newEvents.push({ sev: 'danger', t: label, txt: pick('danger') })
-    if (Math.random() < 0.55) newEvents.push({ sev: 'warning', t: label, txt: pick('warning') })
-    if (Math.random() < 0.5) {
-      const sev: EventSeverity = Math.random() < 0.5 ? 'success' : 'info'
+    if (chance(0.55)) newEvents.push({ sev: 'warning', t: label, txt: pick('warning') })
+    if (chance(0.5)) {
+      const sev: EventSeverity = chance(0.5) ? 'success' : 'info'
       newEvents.push({ sev, t: label, txt: pick(sev) })
     }
 
     let newCrqc = crqcShift
-    if (Math.random() < 0.22) {
+    if (chance(0.22)) {
       newCrqc += 1
       newEvents.push({
         sev: 'danger',
@@ -627,7 +652,7 @@ export function SimulationView() {
         (r) => r.phases.includes(p) && r.persona === seat
       )
       const lv = newChecks[p] ?? 0
-      if (!owns && lv < 4 && Math.random() < 0.35) {
+      if (!owns && lv < 4 && chance(0.35)) {
         newChecks[p] = lv + 1
         const role = Object.values(ROLE_CROSSWALK).find((r) => r.phases.includes(p))
         aiProgress.push(
@@ -645,8 +670,8 @@ export function SimulationView() {
       newEvents.push({ sev: 'info', t: label, txt: 'Quiet quarter — no incidents reported.' })
 
     const afterClock = computeSimMosca({
-      migrationYears: SIZE_MIGRATION_YEARS[size as keyof typeof SIZE_MIGRATION_YEARS] ?? 3,
-      shelfLifeYears: shelfLifeFor(sector),
+      migrationYears: simMigrationYears,
+      shelfLifeYears: simShelfLifeYears,
       horizonYear: Math.min(
         SIM_CRQC_YEAR - newCrqc,
         COUNTRY_DEADLINE_YEAR[country] ?? SIM_CRQC_YEAR
@@ -1067,6 +1092,7 @@ export function SimulationView() {
               onVisitRef={markRefVisited}
               canEmbed={canEmbedStep}
               onOpenStep={openStep}
+              assessRec={nextMoveRec}
             />
 
             {/* maturity gates — read-only; each level is earned only by passing its
@@ -1493,6 +1519,7 @@ function DecisionSection({
   onVisitRef,
   canEmbed,
   onOpenStep,
+  assessRec,
 }: {
   phaseId: PhaseId
   ctx: MoveCtx
@@ -1505,6 +1532,7 @@ function DecisionSection({
   onVisitRef: (id: string) => void
   canEmbed: (s: TreeStep) => boolean
   onOpenStep: (s: TreeStep) => void
+  assessRec?: AssessRec
 }) {
   const [chosen, setChosen] = useState<number | null>(null)
   // reset the choice whenever the move changes (new phase or a step completed)
@@ -1575,6 +1603,14 @@ function DecisionSection({
           Toward {MATURITY_LEVEL_NAMES[nextMove.band.level]} · {nextMove.act.id}{' '}
           {nextMove.act.title}
         </span>
+        {assessRec && (
+          <span
+            className="shrink-0 rounded-full bg-secondary/15 px-2 py-0.5 font-mono text-[9px] font-bold text-secondary"
+            title="Flagged by your assessment"
+          >
+            ★ Assess · {assessRec.category}
+          </span>
+        )}
       </div>
       <div className="grid gap-2 sm:grid-cols-3">
         {cards.map((c, i) => {
