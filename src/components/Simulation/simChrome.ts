@@ -26,6 +26,17 @@ export const SEVERITY_DOT: Record<EventSeverity, string> = {
   info: 'bg-primary',
 }
 
+/**
+ * Severity cue with a NON-COLOUR signal (WS-13 / AA): each event carries an icon
+ * glyph + a screen-reader label, so severity never depends on colour alone.
+ */
+export const SEVERITY_META: Record<EventSeverity, { dot: string; icon: string; label: string }> = {
+  danger: { dot: 'bg-destructive', icon: '✕', label: 'Danger' },
+  warning: { dot: 'bg-warning', icon: '⚠', label: 'Warning' },
+  success: { dot: 'bg-success', icon: '✓', label: 'Success' },
+  info: { dot: 'bg-primary', icon: 'ℹ', label: 'Info' },
+}
+
 export const MOVE_TONE: Record<MoveKind, { border: string; text: string; label: string }> = {
   sound: { border: 'border-success', text: 'text-success', label: '✓ Sound move' },
   trap: {
