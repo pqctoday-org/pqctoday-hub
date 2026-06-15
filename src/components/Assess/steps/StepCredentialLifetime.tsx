@@ -129,7 +129,7 @@ const StepCredentialLifetime = () => {
 
       <p className="text-xs text-muted-foreground">
         Root CA certificates issued today with a 20-year validity period must be trusted past the
-        estimated quantum threat horizon of 2035.
+        estimated quantum threat horizon (first CRQC ~2029).
       </p>
     </div>
   )

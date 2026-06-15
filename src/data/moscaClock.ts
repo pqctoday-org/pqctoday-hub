@@ -10,14 +10,15 @@
  * When X + Y exceeds the years left until Z, data harvested today won't be safe
  * in time: act now. Pure + deterministic — the page passes the current year in.
  */
+import { QC_FIRST_YEAR } from './quantumTimeline'
+
 export type SimSize = 'small' | 'mid' | 'large' | 'global'
 
 /**
- * CRQC horizon year Z baseline = the simulation's Q-Day: the first CRQC that can
- * break the most sensitive assets. Kept in lockstep with `QC_FIRST_YEAR` in
- * `simAssets.ts` (the date-driven HNDL/TNFL model assumes the same 2029 Q-Day).
+ * CRQC horizon year Z baseline = the simulation's Q-Day (first CRQC). Single
+ * source in `quantumTimeline.ts`, shared with simAssets and the Assess risk windows.
  */
-export const SIM_CRQC_YEAR = 2029
+export const SIM_CRQC_YEAR = QC_FIRST_YEAR
 
 /** Default data shelf-life X (years) when no sector is chosen. */
 export const DEFAULT_SHELF_LIFE_YEARS = 5
