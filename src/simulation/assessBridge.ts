@@ -163,6 +163,29 @@ export function kpisFromAssess(r: AssessmentResult): CategoryScores | null {
   return r.categoryScores ?? null
 }
 
+// ---- T3.1: sim-local readiness trend (assessed baseline → in-game progress) ----
+export interface ReadinessTrend {
+  /** Assessed organisational readiness at import time (0–100). */
+  baseline: number
+  /** Sim-local projection given framework maturity earned so far (0–100). */
+  projected: number
+  /** projected − baseline (the movement the player has driven in-game). */
+  delta: number
+}
+
+/**
+ * Project a sim-local readiness trend: start at the assessed organisational
+ * readiness and rise toward 100 as framework maturity is earned in-game
+ * (progressFrac 0..1). Purely sim-local and read-only — NEVER written back to
+ * the assessment or its history; it only shows movement against the baseline.
+ */
+export function projectReadiness(baselineReadiness: number, progressFrac: number): ReadinessTrend {
+  const b = Math.round(Math.max(0, Math.min(100, baselineReadiness)))
+  const p = Math.max(0, Math.min(1, progressFrac))
+  const projected = Math.round(b + (100 - b) * p)
+  return { baseline: b, projected, delta: projected - b }
+}
+
 // ---- T2.5: algorithm migration backlog + two-track plan for P3/P5 ----
 /** The classical→PQC algorithm backlog from the assessment (empty if none). */
 export function algorithmBacklogFromAssess(r: AssessmentResult): AlgorithmMigration[] {

@@ -8,6 +8,7 @@ import {
   kpisFromAssess,
   algorithmBacklogFromAssess,
   twoTrackFromAssess,
+  projectReadiness,
 } from './assessBridge'
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
 
@@ -107,5 +108,17 @@ describe('assessBridge', () => {
     expect(plan?.trackA.id).toBe('A')
     expect(plan?.trackB.id).toBe('B')
     expect(twoTrackFromAssess({} as unknown as AssessmentResult)).toBeUndefined()
+  })
+
+  it('projects a sim-local readiness trend from the assessed baseline', () => {
+    // no progress → projection equals the baseline
+    expect(projectReadiness(40, 0)).toEqual({ baseline: 40, projected: 40, delta: 0 })
+    // full maturity → projection reaches 100
+    expect(projectReadiness(40, 1)).toEqual({ baseline: 40, projected: 100, delta: 60 })
+    // half progress → halfway from baseline to 100
+    expect(projectReadiness(40, 0.5)).toEqual({ baseline: 40, projected: 70, delta: 30 })
+    // inputs are clamped to sane ranges
+    expect(projectReadiness(120, 2).projected).toBe(100)
+    expect(projectReadiness(-10, -1)).toEqual({ baseline: 0, projected: 0, delta: 0 })
   })
 })
