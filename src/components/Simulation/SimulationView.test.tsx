@@ -86,4 +86,30 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.getByText('Quarter Report')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Continue/ })).toBeInTheDocument()
   })
+
+  // WS-01 — one tree-gated source of truth: the Quarter Report's cleared count
+  // can never disagree with the board, and the AI advances the tree (via `auto`),
+  // never the legacy `checks` counter.
+  it('the Quarter Report never contradicts the board; AI advances the tree, not checks', () => {
+    renderPage()
+    for (let i = 0; i < 12; i++) {
+      fireEvent.click(screen.getByRole('button', { name: /End Quarter/ }))
+      const dialog = screen.getByRole('dialog')
+      // both board and report render "Phases cleared" as "n/8"; while the report
+      // is open they must show the SAME number.
+      const reportVal = within(dialog).getByText(/^\d+\/8$/).textContent
+      const boardVals = screen
+        .getAllByText(/^\d+\/8$/)
+        .filter((el) => !dialog.contains(el))
+        .map((el) => el.textContent)
+      expect(boardVals).toContain(reportVal)
+      fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    }
+    // Option A: AI completes real tree steps, so `checks` stays 0 for every
+    // tree-backed phase (it now only matters for the treeless `foundations`).
+    const { checks } = useSimulationStore.getState()
+    for (const p of ['p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7']) {
+      expect(checks[p] ?? 0).toBe(0)
+    }
+  })
 })
