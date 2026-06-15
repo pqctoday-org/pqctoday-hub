@@ -10,6 +10,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { PhaseId } from '@/data/frameworkPhases'
 import type { SimEvent } from '@/data/simEvents'
+import type { SimulationData } from '@/services/storage/snapshotTypes'
 import { newSeed } from '@/simulation/rng'
 
 export interface SimulationState {
@@ -61,6 +62,10 @@ export interface SimulationState {
   exportSave: () => string
   /** Restore a run from a JSON save string; returns false on malformed input. */
   importSave: (json: string) => boolean
+  /** Structured run slice for the app-wide snapshot (Drive/backup capture). */
+  getSaveData: () => SimulationData
+  /** Restore the run from snapshot data (defensive — fills missing fields). */
+  loadSnapshot: (data: unknown) => void
 }
 
 const SEED = {
@@ -105,6 +110,23 @@ const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'obj
  * this PRESERVES the saved run (checks/turn/events/auto) — it restores progress,
  * it doesn't reset it — filling any missing field with a safe default.
  */
+/** The persisted run slice (shared by partialize, export, and snapshot capture). */
+const saveSlice = (s: SimulationState): SimulationData => ({
+  size: s.size,
+  country: s.country,
+  sector: s.sector,
+  seat: s.seat,
+  sel: s.sel,
+  checks: s.checks,
+  year: s.year,
+  q: s.q,
+  crqcShift: s.crqcShift,
+  events: s.events,
+  visitedRefs: s.visitedRefs,
+  auto: s.auto,
+  seed: s.seed,
+})
+
 function fromSave(s: Record<string, unknown>) {
   return {
     size: typeof s.size === 'string' ? s.size : SEED.size,
@@ -154,33 +176,12 @@ export const useSimulationStore = create<SimulationState>()(
       clearAuto: (phase) =>
         set((s) => ({ auto: s.auto.filter((k) => !k.startsWith(`${phase}::`)) })),
       reset: () => set({ ...SEED, seed: newSeed() }),
-      exportSave: () => {
-        const s = get()
-        return JSON.stringify(
-          {
-            app: 'pqc-today',
-            kind: SAVE_KIND,
-            version: STORE_VERSION,
-            state: {
-              size: s.size,
-              country: s.country,
-              sector: s.sector,
-              seat: s.seat,
-              sel: s.sel,
-              checks: s.checks,
-              year: s.year,
-              q: s.q,
-              crqcShift: s.crqcShift,
-              events: s.events,
-              visitedRefs: s.visitedRefs,
-              auto: s.auto,
-              seed: s.seed,
-            },
-          },
+      exportSave: () =>
+        JSON.stringify(
+          { app: 'pqc-today', kind: SAVE_KIND, version: STORE_VERSION, state: saveSlice(get()) },
           null,
           2
-        )
-      },
+        ),
       importSave: (json) => {
         try {
           const parsed = JSON.parse(json) as unknown
@@ -192,26 +193,15 @@ export const useSimulationStore = create<SimulationState>()(
           return false
         }
       },
+      // Structured capture/restore for the app-wide snapshot (Drive/backup, WS-08).
+      getSaveData: () => saveSlice(get()),
+      loadSnapshot: (data) => set(fromSave(isRecord(data) ? data : {})),
     }),
     {
       name: 'pqc-simulation',
       storage: createJSONStorage(() => localStorage),
       version: STORE_VERSION,
-      partialize: (s) => ({
-        size: s.size,
-        country: s.country,
-        sector: s.sector,
-        seat: s.seat,
-        sel: s.sel,
-        checks: s.checks,
-        year: s.year,
-        q: s.q,
-        crqcShift: s.crqcShift,
-        events: s.events,
-        visitedRefs: s.visitedRefs,
-        auto: s.auto,
-        seed: s.seed,
-      }),
+      partialize: (s) => saveSlice(s),
       migrate: (persisted: unknown) => {
         // Defensive: ensure every field exists with a safe default. v3 introduced
         // strict maturity gating, so legacy pre-leveled progress (checks / turn) is

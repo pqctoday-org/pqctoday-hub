@@ -9,6 +9,7 @@ import { useTLSStore } from '@/store/tls-learning.store'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { useChatStore } from '@/store/useChatStore'
+import { useSimulationStore } from '@/store/useSimulationStore'
 import {
   SNAPSHOT_FORMAT,
   SNAPSHOT_VERSION,
@@ -22,6 +23,7 @@ import {
   type OpenSSLData,
   type MigrateData,
   type ChatData,
+  type SimulationData,
 } from './snapshotTypes'
 
 declare const __APP_VERSION__: string
@@ -170,6 +172,10 @@ function getChatData(): ChatData {
   }
 }
 
+function getSimulationData(): SimulationData {
+  return useSimulationStore.getState().getSaveData()
+}
+
 // ── Validation helpers ───────────────────────────────────────────────────────
 
 interface ValidationResult {
@@ -238,6 +244,7 @@ export class UnifiedStorageService {
         opensslStudio: getOpenSSLData(),
         migrate: getMigrateData(),
         chat: getChatData(),
+        simulation: getSimulationData(),
       },
     }
   }
@@ -460,6 +467,11 @@ export class UnifiedStorageService {
         messages: activeConv?.messages ?? [],
       })
     }
+
+    // 10. Migration Simulation run (defensive restore fills any missing field)
+    if (stores.simulation) {
+      useSimulationStore.getState().loadSnapshot(stores.simulation)
+    }
   }
 
   /**
@@ -485,6 +497,7 @@ export class UnifiedStorageService {
       'opensslStudio',
       'migrate',
       'chat',
+      'simulation',
     ]
     for (const key of storeKeys) {
       if (!(key in stores)) {

@@ -17,7 +17,7 @@ import type { MigrateViewMode } from '@/store/useMigrateSelectionStore'
 export const SNAPSHOT_FORMAT = 'pqc-today-snapshot' as const
 
 /** Current snapshot schema version. Bump when the envelope or store key structure changes. */
-export const SNAPSHOT_VERSION = 1
+export const SNAPSHOT_VERSION = 2
 
 /**
  * Persisted slice of useModuleStore (same as LearningProgress).
@@ -144,6 +144,23 @@ export interface ChatData {
   localContextWindow: number
 }
 
+/** Persisted Migration-Simulation run (mirrors useSimulationStore's partialize). */
+export interface SimulationData {
+  size: string
+  country: string
+  sector: string
+  seat: string
+  sel: string
+  checks: Record<string, number>
+  year: number
+  q: number
+  crqcShift: number
+  events: unknown[]
+  visitedRefs: string[]
+  auto: string[]
+  seed: number
+}
+
 /**
  * Unified snapshot envelope containing all persisted store data.
  */
@@ -164,5 +181,7 @@ export interface AppSnapshot {
     opensslStudio: OpenSSLData
     migrate: MigrateData
     chat?: ChatData
+    /** Migration-Simulation run (added v2 — optional for back-compat). */
+    simulation?: SimulationData
   }
 }
