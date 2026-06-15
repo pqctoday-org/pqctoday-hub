@@ -57,6 +57,10 @@ export interface SimulationState {
   /** Cancel auto-completion for a phase (remove its `${phase}::` keys). */
   clearAuto: (phase: string) => void
   reset: () => void
+  /** Serialize the current run to a portable JSON save string (WS-08). */
+  exportSave: () => string
+  /** Restore a run from a JSON save string; returns false on malformed input. */
+  importSave: (json: string) => boolean
 }
 
 const SEED = {
@@ -91,9 +95,39 @@ const SEED = {
   seed: 0, // replaced with a fresh seed on create / reset / migrate
 }
 
+const STORE_VERSION = 5
+const SAVE_KIND = 'pqc-simulation-save'
+
+const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
+
+/**
+ * Build a full persisted state from a save blob (WS-08 import). Unlike migrate(),
+ * this PRESERVES the saved run (checks/turn/events/auto) — it restores progress,
+ * it doesn't reset it — filling any missing field with a safe default.
+ */
+function fromSave(s: Record<string, unknown>) {
+  return {
+    size: typeof s.size === 'string' ? s.size : SEED.size,
+    country: typeof s.country === 'string' ? s.country : SEED.country,
+    sector: typeof s.sector === 'string' ? s.sector : SEED.sector,
+    seat: typeof s.seat === 'string' ? s.seat : SEED.seat,
+    sel: (typeof s.sel === 'string' ? s.sel : SEED.sel) as PhaseId,
+    checks: isRecord(s.checks)
+      ? { ...SEED.checks, ...(s.checks as Record<string, number>) }
+      : { ...SEED.checks },
+    year: typeof s.year === 'number' ? s.year : SEED.year,
+    q: typeof s.q === 'number' ? s.q : SEED.q,
+    crqcShift: typeof s.crqcShift === 'number' ? s.crqcShift : SEED.crqcShift,
+    events: Array.isArray(s.events) ? (s.events as SimEvent[]) : [...SEED.events],
+    visitedRefs: Array.isArray(s.visitedRefs) ? (s.visitedRefs as string[]) : [],
+    auto: Array.isArray(s.auto) ? (s.auto as string[]) : [],
+    seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
+  }
+}
+
 export const useSimulationStore = create<SimulationState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...SEED,
       seed: newSeed(),
       setSize: (size) => set({ size }),
@@ -120,11 +154,49 @@ export const useSimulationStore = create<SimulationState>()(
       clearAuto: (phase) =>
         set((s) => ({ auto: s.auto.filter((k) => !k.startsWith(`${phase}::`)) })),
       reset: () => set({ ...SEED, seed: newSeed() }),
+      exportSave: () => {
+        const s = get()
+        return JSON.stringify(
+          {
+            app: 'pqc-today',
+            kind: SAVE_KIND,
+            version: STORE_VERSION,
+            state: {
+              size: s.size,
+              country: s.country,
+              sector: s.sector,
+              seat: s.seat,
+              sel: s.sel,
+              checks: s.checks,
+              year: s.year,
+              q: s.q,
+              crqcShift: s.crqcShift,
+              events: s.events,
+              visitedRefs: s.visitedRefs,
+              auto: s.auto,
+              seed: s.seed,
+            },
+          },
+          null,
+          2
+        )
+      },
+      importSave: (json) => {
+        try {
+          const parsed = JSON.parse(json) as unknown
+          if (!isRecord(parsed) || parsed.kind !== SAVE_KIND || !isRecord(parsed.state))
+            return false
+          set(fromSave(parsed.state))
+          return true
+        } catch {
+          return false
+        }
+      },
     }),
     {
       name: 'pqc-simulation',
       storage: createJSONStorage(() => localStorage),
-      version: 5,
+      version: STORE_VERSION,
       partialize: (s) => ({
         size: s.size,
         country: s.country,

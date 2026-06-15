@@ -64,4 +64,41 @@ describe('useSimulationStore', () => {
     expect(s().auto.some((k) => k.startsWith('p4::'))).toBe(false)
     expect(s().auto).toContain('p5::/learn/hybrid-crypto')
   })
+
+  // WS-08 — durable save: export → wipe → import restores the run.
+  it('export → import round-trips the full run', () => {
+    s().setSector('financial')
+    s().setSize('global')
+    s().autoCompleteSteps(['p1::/learn/data-asset-sensitivity'])
+    s().applyQuarter({
+      checks: { ...s().checks, p0: 2 },
+      crqcShift: 1,
+      year: 2028,
+      q: 3,
+      newEvents: [],
+    })
+    const saved = s().exportSave()
+
+    s().reset() // simulate a cache-clear / fresh state
+    expect(s().sector).not.toBe('financial')
+
+    expect(s().importSave(saved)).toBe(true)
+    expect(s().sector).toBe('financial')
+    expect(s().size).toBe('global')
+    expect(s().year).toBe(2028)
+    expect(s().q).toBe(3)
+    expect(s().crqcShift).toBe(1)
+    expect(s().checks.p0).toBe(2)
+    expect(s().auto).toContain('p1::/learn/data-asset-sensitivity')
+  })
+
+  it('importSave rejects malformed / foreign input without throwing', () => {
+    expect(s().importSave('not json')).toBe(false)
+    expect(s().importSave('{}')).toBe(false)
+    expect(s().importSave(JSON.stringify({ kind: 'something-else', state: {} }))).toBe(false)
+    // a wrong-kind payload must not mutate state
+    const before = s().sector
+    s().importSave('{"kind":"x"}')
+    expect(s().sector).toBe(before)
+  })
 })

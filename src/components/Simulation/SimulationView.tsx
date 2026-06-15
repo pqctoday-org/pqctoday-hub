@@ -10,7 +10,7 @@
  * useSimulationStore. Design: reports/framework-gap/SIMULATION-DESIGN.md +
  * the Mission Control handoff.
  */
-import { useMemo, useState, useEffect, Suspense } from 'react'
+import { useMemo, useState, useEffect, useRef, Suspense } from 'react'
 import { Link } from 'react-router-dom'
 import { BUSINESS_TOOL_COMPONENTS } from '@/components/BusinessCenter/businessToolComponents'
 import { SIM_LEARN_MODULES, isEmbeddableModule } from '@/components/PKILearning/simEmbedModules'
@@ -168,6 +168,8 @@ export function SimulationView() {
     auto,
     autoCompleteSteps,
     clearAuto,
+    exportSave,
+    importSave,
   } = useSimulationStore()
   const [report, setReport] = useState<QuarterReportData | null>(null)
   // back in the sim → clear the "Resume Simulation" flag the hub banner reads
@@ -269,6 +271,28 @@ export function SimulationView() {
     for (const id of SIM_TRACKED.modules) resetModuleProgress(id)
     for (const d of docs ?? []) if (SIM_TRACKED.artifacts.has(d.type)) deleteExecutiveDocument(d.id)
     reset()
+  }
+  // WS-08 — durable save: download the run as JSON / restore it from a file, so a
+  // run survives a cache-clear or moves between browsers without an account.
+  const importFileRef = useRef<HTMLInputElement>(null)
+  const exportRun = () => {
+    const blob = new Blob([exportSave()], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `pqc-simulation-${year}-Q${q}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+  const onImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = '' // allow re-importing the same file
+    if (!file) return
+    file.text().then((txt) => {
+      const ok = importSave(txt)
+      if (typeof window !== 'undefined')
+        window.alert(ok ? 'Simulation save imported.' : 'That file is not a valid simulation save.')
+    })
   }
   const docTypes = useMemo(() => new Set((docs ?? []).map((d) => d.type)), [docs])
   const moduleDone = (id?: string) => !!id && moduleProgress[id]?.status === 'completed'
@@ -529,6 +553,32 @@ export function SimulationView() {
           >
             ← HUB
           </Link>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={exportRun}
+            title="Download this run as a JSON save"
+            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-[10px] font-bold text-background/70 hover:bg-background/10"
+          >
+            EXPORT
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => importFileRef.current?.click()}
+            title="Restore a run from a JSON save"
+            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-[10px] font-bold text-background/70 hover:bg-background/10"
+          >
+            IMPORT
+          </Button>
+          <input
+            ref={importFileRef}
+            type="file"
+            accept="application/json,.json"
+            onChange={onImportFile}
+            className="hidden"
+            aria-hidden="true"
+          />
           <Button
             type="button"
             variant="ghost"
