@@ -21,7 +21,12 @@ export function Ring({ level, sz = 30 }: { level: number; sz?: number }) {
   const C = 2 * Math.PI * r
   const col = level >= PHASE_WIN_LEVEL ? 'hsl(var(--success))' : 'hsl(var(--primary))'
   return (
-    <div className="relative shrink-0" style={{ width: sz, height: sz }}>
+    <div
+      className="relative shrink-0"
+      style={{ width: sz, height: sz }}
+      role="img"
+      aria-label={`Maturity level ${level} of 4${level >= PHASE_WIN_LEVEL ? ' — cleared' : ''}`}
+    >
       <svg width={sz} height={sz} style={{ transform: 'rotate(-90deg)' }}>
         <circle
           cx={sz / 2}
@@ -65,7 +70,12 @@ export function Radial({
   const C = 2 * Math.PI * r
   const frac = Math.max(0, Math.min(1, yearsToHorizon / safeYears))
   return (
-    <div className="relative shrink-0" style={{ width: sz, height: sz }}>
+    <div
+      className="relative shrink-0"
+      style={{ width: sz, height: sz }}
+      role="img"
+      aria-label={`${yearsToHorizon} years to Q-Day`}
+    >
       <svg width={sz} height={sz} style={{ transform: 'rotate(-90deg)' }}>
         <circle
           cx={sz / 2}
@@ -134,6 +144,7 @@ export function Dial({
       type="button"
       onClick={onClick}
       title="click to change"
+      aria-label={`${label}: ${value}. Activate to change.`}
       className="h-auto items-start justify-start whitespace-normal flex flex-col gap-px rounded-lg border border-background/20 bg-background/10 px-3 py-1.5 text-left hover:bg-background/20"
     >
       <span className="font-mono text-[8px] font-bold uppercase tracking-[0.14em] text-background/50">

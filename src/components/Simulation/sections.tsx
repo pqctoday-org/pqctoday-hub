@@ -286,6 +286,7 @@ export function DecisionSection({
               variant="ghost"
               key={`${c.label}-${i}`}
               type="button"
+              aria-label={`Option ${String.fromCharCode(65 + i)}: ${c.label}`}
               onClick={() => {
                 setChosen(i)
                 // WS-16: record which Common Failure the player fell for.

@@ -128,6 +128,18 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.queryByRole('dialog', { name: /simulation guide/i })).not.toBeInTheDocument()
   })
 
+  // WS-13 (Phase A) — accessible names on the SVG gauges, the dials, and the
+  // decision options, so a screen reader doesn't hit unlabeled controls.
+  it('gives the gauges, dials and decision options accessible names', () => {
+    renderPage()
+    // the Mosca gauge is a labelled image, not a bare SVG
+    expect(screen.getByRole('img', { name: /years to Q-Day/i })).toBeInTheDocument()
+    // a setup dial announces its value + that it is actionable
+    expect(screen.getByRole('button', { name: /seat:.*activate to change/i })).toBeInTheDocument()
+    // the first decision option is named
+    expect(screen.getByRole('button', { name: /^Option A:/ })).toBeInTheDocument()
+  })
+
   // WS-13 — accessibility: the live feed is a polite log and severity carries a
   // non-colour (text) signal, not colour alone.
   it('exposes the live feed as a polite log with non-colour severity cues', () => {
