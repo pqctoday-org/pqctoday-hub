@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { serializeAssessReport, buildAssessReportDoc } from './assessBridge'
+import { serializeAssessReport, buildAssessReportDoc, simProfileFromAssess } from './assessBridge'
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
 
 const result = {
@@ -41,5 +41,25 @@ describe('assessBridge', () => {
     expect(doc.title).toContain('Healthcare')
     expect(doc.moduleId).toBeTruthy()
     expect(doc.data.length).toBeGreaterThan(0)
+  })
+
+  it('maps the assessment profile onto the sim sector/size/country dials', () => {
+    const r = {
+      assessmentProfile: {
+        industry: 'Finance & Banking',
+        systemScale: '51-200',
+        country: 'Germany',
+      },
+    } as unknown as AssessmentResult
+    expect(simProfileFromAssess(r)).toEqual({ sector: 'financial', size: 'large', country: 'DE' })
+  })
+
+  it('omits dials the sim does not model and returns {} with no profile', () => {
+    const r = {
+      assessmentProfile: { industry: 'Mining', systemScale: '11-50', country: 'Brazil' },
+    } as unknown as AssessmentResult
+    // industry/country unmodelled → dropped; size still maps
+    expect(simProfileFromAssess(r)).toEqual({ size: 'mid' })
+    expect(simProfileFromAssess({} as unknown as AssessmentResult)).toEqual({})
   })
 })

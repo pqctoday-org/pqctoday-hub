@@ -57,6 +57,7 @@ import {
   buildAssessReportDoc,
   moscaInputsFromAssess,
   recommendationByModule,
+  simProfileFromAssess,
   type AssessRec,
 } from '@/simulation/assessBridge'
 import { ARCHITECTURES } from '@/data/simArchitecture'
@@ -427,7 +428,13 @@ export function SimulationView() {
   // Phase-0 scoping artifact (data only; the sim's gate still decides it counts).
   const assessSnap = useAssessSnapshot()
   const importAssessReport = () => {
-    if (assessSnap) addExecutiveDocument(buildAssessReportDoc(assessSnap.result, Date.now()))
+    if (!assessSnap) return
+    addExecutiveDocument(buildAssessReportDoc(assessSnap.result, Date.now()))
+    // Auto-fill the sim's setup dials from the assessed org (still editable).
+    const prof = simProfileFromAssess(assessSnap.result)
+    if (prof.sector) setSector(prof.sector)
+    if (prof.size) setSize(prof.size)
+    if (prof.country) setCountry(prof.country)
   }
   // Assess-derived clock inputs (X shelf-life, Y migration years) when available
   const assessMosca = assessSnap ? moscaInputsFromAssess(assessSnap.result) : null
@@ -1311,13 +1318,19 @@ export function SimulationView() {
               {assessSnap &&
                 phaseArtifactTypes.has('initial-scoping') &&
                 !docTypes.has('initial-scoping') && (
-                  <Button
-                    type="button"
-                    onClick={importAssessReport}
-                    className="mb-2 h-auto w-full rounded-md bg-secondary px-2.5 py-1.5 text-[11px] font-bold text-secondary-foreground"
-                  >
-                    ▸ Import assessment as scoping artifact
-                  </Button>
+                  <div className="mb-2">
+                    <Button
+                      type="button"
+                      onClick={importAssessReport}
+                      className="h-auto w-full rounded-md bg-secondary px-2.5 py-1.5 text-[11px] font-bold text-secondary-foreground"
+                    >
+                      ▸ Import assessment as scoping artifact
+                    </Button>
+                    <p className="mt-1 px-0.5 text-[9.5px] leading-snug text-muted-foreground">
+                      Also sets the org dials (industry · size · country) from your assessment — you
+                      can still change them.
+                    </p>
+                  </div>
                 )}
               {phaseArtifactTypes.size === 0 ? (
                 <p className="text-[11px] text-muted-foreground">
