@@ -10,6 +10,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { PhaseId } from '@/data/frameworkPhases'
 import type { SimEvent } from '@/data/simEvents'
+import { newSeed } from '@/simulation/rng'
 
 export interface SimulationState {
   size: string
@@ -31,6 +32,8 @@ export interface SimulationState {
   visitedRefs: string[]
   /** Tree step keys (`${phase}::${to}`) delegated to / auto-done by the AI team. */
   auto: string[]
+  /** Deterministic run seed — same seed + same turn reproduces a quarter. */
+  seed: number
 
   setSize: (v: string) => void
   setCountry: (v: string) => void
@@ -85,12 +88,14 @@ const SEED = {
   ] as SimEvent[],
   visitedRefs: [] as string[],
   auto: [] as string[],
+  seed: 0, // replaced with a fresh seed on create / reset / migrate
 }
 
 export const useSimulationStore = create<SimulationState>()(
   persist(
     (set) => ({
       ...SEED,
+      seed: newSeed(),
       setSize: (size) => set({ size }),
       setCountry: (country) => set({ country }),
       setSector: (sector) => set({ sector }),
@@ -114,12 +119,12 @@ export const useSimulationStore = create<SimulationState>()(
         set((s) => ({ auto: Array.from(new Set([...s.auto, ...keys])) })),
       clearAuto: (phase) =>
         set((s) => ({ auto: s.auto.filter((k) => !k.startsWith(`${phase}::`)) })),
-      reset: () => set({ ...SEED }),
+      reset: () => set({ ...SEED, seed: newSeed() }),
     }),
     {
       name: 'pqc-simulation',
       storage: createJSONStorage(() => localStorage),
-      version: 4,
+      version: 5,
       partialize: (s) => ({
         size: s.size,
         country: s.country,
@@ -133,6 +138,7 @@ export const useSimulationStore = create<SimulationState>()(
         events: s.events,
         visitedRefs: s.visitedRefs,
         auto: s.auto,
+        seed: s.seed,
       }),
       migrate: (persisted: unknown) => {
         // Defensive: ensure every field exists with a safe default. v3 introduced
@@ -152,6 +158,7 @@ export const useSimulationStore = create<SimulationState>()(
           events: [...SEED.events],
           visitedRefs: Array.isArray(s.visitedRefs) ? (s.visitedRefs as string[]) : [],
           auto: Array.isArray(s.auto) ? (s.auto as string[]) : [],
+          seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
         }
       },
       onRehydrateStorage: () => (_state, error) => {

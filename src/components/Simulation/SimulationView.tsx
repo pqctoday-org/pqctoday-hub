@@ -49,6 +49,7 @@ import {
   type Pitfall,
   type StepKind,
 } from '@/simulation'
+import { quarterRng, chanceWith, sampleWith } from '@/simulation/rng'
 import { SIM_MOVES, type MoveCtx, type MoveKind } from '@/data/simMoves'
 import { SIM_EVENT_POOL, fillEvent, type EventSeverity, type SimEvent } from '@/data/simEvents'
 import { feedFor } from '@/data/simFeed'
@@ -179,11 +180,10 @@ const REF_LABELS: Record<string, string> = {
 const cycle = <T extends { id: string }>(arr: readonly T[], cur: string) =>
   arr[(arr.findIndex((a) => a.id === cur) + 1) % arr.length].id
 
-// Event-time dice for the End-Quarter simulation. Kept at module scope so the
-// randomness lives outside any component/hook body — the only legitimate place
-// for it under the React Compiler's purity rule.
-const chance = (p: number) => Math.random() < p
-const sample = <T,>(arr: readonly T[]): T => arr[Math.floor(Math.random() * arr.length)]
+// Event-time dice for the End-Quarter simulation are seeded (WS-02): the engine
+// derives a per-quarter RNG from the run seed via `quarterRng` and uses
+// `chanceWith` / `sampleWith` from `@/simulation/rng`, so a seed + turn
+// reproduces a quarter and no Math.random() sits on the runtime path.
 
 // Flag an outbound navigation to a hub resource so MainLayout shows the
 // "Resume Simulation" bar (the PWA-safe return path). Cleared on sim mount.
@@ -365,6 +365,7 @@ export function SimulationView() {
     q,
     crqcShift,
     events,
+    seed,
     setSize,
     setCountry,
     setSector,
@@ -659,21 +660,23 @@ export function SimulationView() {
   const endQuarter = () => {
     const [ny, nq] = q === 4 ? [year + 1, 1] : [year, q + 1]
     const label = `Q${nq} ${ny}`
+    // Seeded per-quarter RNG (WS-02): seed + current turn → reproducible quarter.
+    const rng = quarterRng(seed, year, q)
     const pick = (sev: EventSeverity) =>
-      fillEvent(sample(SIM_EVENT_POOL[sev]), sectorOpt.label, country)
+      fillEvent(sampleWith(rng, SIM_EVENT_POOL[sev]), sectorOpt.label, country)
     const newEvents: SimEvent[] = []
 
     const hasClassical = levelOf('p1') < PHASE_WIN_LEVEL || levelOf('p5') < PHASE_WIN_LEVEL
-    if (hasClassical && chance(0.6))
+    if (hasClassical && chanceWith(rng, 0.6))
       newEvents.push({ sev: 'danger', t: label, txt: pick('danger') })
-    if (chance(0.55)) newEvents.push({ sev: 'warning', t: label, txt: pick('warning') })
-    if (chance(0.5)) {
-      const sev: EventSeverity = chance(0.5) ? 'success' : 'info'
+    if (chanceWith(rng, 0.55)) newEvents.push({ sev: 'warning', t: label, txt: pick('warning') })
+    if (chanceWith(rng, 0.5)) {
+      const sev: EventSeverity = chanceWith(rng, 0.5) ? 'success' : 'info'
       newEvents.push({ sev, t: label, txt: pick(sev) })
     }
 
     let newCrqc = crqcShift
-    if (chance(0.22)) {
+    if (chanceWith(rng, 0.22)) {
       newCrqc += 1
       newEvents.push({
         sev: 'danger',
@@ -703,7 +706,7 @@ export function SimulationView() {
       const owns = Object.values(ROLE_CROSSWALK).some(
         (r) => r.phases.includes(p) && r.persona === seat
       )
-      if (owns || levelOf(p) >= PHASE_WIN_LEVEL || !chance(0.35)) continue
+      if (owns || levelOf(p) >= PHASE_WIN_LEVEL || !chanceWith(rng, 0.35)) continue
       const next = flattenTree(tree).find((s) => !willBeDone(s, p))
       if (!next) continue
       const before = treeLevelWith(p)
