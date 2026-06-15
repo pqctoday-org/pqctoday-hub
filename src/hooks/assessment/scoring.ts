@@ -27,7 +27,45 @@ import {
 
 const ALL_RETENTION_CONFIGS = [...industryRetentionConfigs, ...universalRetentionConfigs]
 
-import type { AssessmentInput, ComplianceImpact, CategoryScores } from '../assessmentTypes'
+import type {
+  AssessmentInput,
+  ComplianceImpact,
+  CategoryScores,
+  FrameworkRisk,
+  HNDLRiskWindow,
+  TNFLRiskWindow,
+} from '../assessmentTypes'
+
+const clamp100 = (n: number) => Math.max(0, Math.min(100, Math.round(n)))
+
+/**
+ * Derived Applied Quantum P3 risk lens over the existing category scores +
+ * risk windows (added alongside, not replacing the category scoring):
+ *  - hndl: confidentiality exposure (harvest-now), raised when the HNDL window is live
+ *  - tnfl: integrity/forge exposure, scaled by signing presence + the TNFL window
+ *  - regulatory: reuses regulatoryPressure
+ *  - feasibility: ease of migration (higher = easier) = readiness blended with low complexity
+ */
+export function computeFrameworkRisk(
+  categoryScores: CategoryScores,
+  hndlWindow?: HNDLRiskWindow,
+  tnflWindow?: TNFLRiskWindow
+): FrameworkRisk {
+  const { quantumExposure, migrationComplexity, regulatoryPressure, organizationalReadiness } =
+    categoryScores
+  const hndl = clamp100(quantumExposure * (hndlWindow?.isAtRisk ? 1.0 : 0.75))
+  const tnfl = clamp100(
+    quantumExposure *
+      (tnflWindow?.isAtRisk ? 1.0 : 0.5) *
+      (tnflWindow?.hasSigningAlgorithms ? 1.0 : 0.6)
+  )
+  return {
+    hndl,
+    tnfl,
+    regulatory: clamp100(regulatoryPressure),
+    feasibility: clamp100((organizationalReadiness + (100 - migrationComplexity)) / 2),
+  }
+}
 
 export function computeQuantumExposure(input: AssessmentInput, vulnerableCount: number): number {
   if (input.currentCryptoUnknown) {

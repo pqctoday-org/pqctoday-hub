@@ -87,6 +87,19 @@ export interface CategoryScores {
   organizationalReadiness: number
 }
 
+/**
+ * The Applied Quantum framework's P3 risk lens (a derived view over the same
+ * inputs, shown alongside the category scores — not a separate scoring engine).
+ * hndl/tnfl/regulatory are exposure (higher = more risk); feasibility is ease of
+ * migration (higher = easier to execute).
+ */
+export interface FrameworkRisk {
+  hndl: number
+  tnfl: number
+  regulatory: number
+  feasibility: number
+}
+
 export interface HNDLRiskWindow {
   dataRetentionYears: number
   estimatedQuantumThreatYear: number
@@ -185,6 +198,8 @@ export interface AssessmentResult {
   narrative: string
   generatedAt: string
   categoryScores?: CategoryScores
+  /** Framework P3 risk lens (HNDL/TNFL/Regulatory/Feasibility), derived alongside categoryScores. */
+  frameworkRisk?: FrameworkRisk
   categoryDrivers?: CategoryDrivers
   hndlRiskWindow?: HNDLRiskWindow
   tnflRiskWindow?: TNFLRiskWindow

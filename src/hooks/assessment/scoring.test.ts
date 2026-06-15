@@ -1,7 +1,41 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { computeCompositeScoreWithBoosts, computeQuantumExposure } from './scoring'
+import {
+  computeCompositeScoreWithBoosts,
+  computeQuantumExposure,
+  computeFrameworkRisk,
+} from './scoring'
 import type { AssessmentInput, CategoryScores } from '../assessmentTypes'
+
+describe('computeFrameworkRisk — derived AQ P3 lens', () => {
+  const cat: CategoryScores = {
+    quantumExposure: 80,
+    migrationComplexity: 60,
+    regulatoryPressure: 70,
+    organizationalReadiness: 40,
+  }
+  it('regulatory mirrors regulatoryPressure; feasibility blends readiness + low complexity', () => {
+    const fr = computeFrameworkRisk(cat)
+    expect(fr.regulatory).toBe(70)
+    expect(fr.feasibility).toBe(40) // (40 + (100-60)) / 2
+  })
+  it('HNDL is higher when the HNDL window is at risk', () => {
+    const live = computeFrameworkRisk(cat, { isAtRisk: true } as never)
+    const dormant = computeFrameworkRisk(cat, { isAtRisk: false } as never)
+    expect(live.hndl).toBeGreaterThan(dormant.hndl)
+  })
+  it('TNFL is higher with signing algorithms + a live window', () => {
+    const signing = computeFrameworkRisk(cat, undefined, {
+      isAtRisk: true,
+      hasSigningAlgorithms: true,
+    } as never)
+    const none = computeFrameworkRisk(cat, undefined, {
+      isAtRisk: false,
+      hasSigningAlgorithms: false,
+    } as never)
+    expect(signing.tnfl).toBeGreaterThan(none.tnfl)
+  })
+})
 
 /**
  * Regression tests for the scoring engine paths added / modified during the
