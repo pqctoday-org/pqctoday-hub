@@ -52,6 +52,7 @@ import {
 import { SIM_MOVES, type MoveCtx, type MoveKind } from '@/data/simMoves'
 import { SIM_EVENT_POOL, fillEvent, type EventSeverity, type SimEvent } from '@/data/simEvents'
 import { feedFor } from '@/data/simFeed'
+import { getAssessSnapshot, buildAssessReportDoc } from '@/simulation/assessBridge'
 import { ARCHITECTURES } from '@/data/simArchitecture'
 import {
   computeThreatLevels,
@@ -409,6 +410,13 @@ export function SimulationView() {
   const moduleProgress = useModuleStore((s) => s.modules)
   const resetModuleProgress = useModuleStore((s) => s.resetModuleProgress)
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
+  const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
+  // read-only Assess → Sim bridge: offer to import a completed assessment as the
+  // Phase-0 scoping artifact (data only; the sim's gate still decides it counts).
+  const assessSnap = getAssessSnapshot()
+  const importAssessReport = () => {
+    if (assessSnap) addExecutiveDocument(buildAssessReportDoc(assessSnap.result, Date.now()))
+  }
   // RESET clears the sim turn-state plus ONLY the sim-tracked hub progress the
   // gating reads from (the Learn modules + artifacts referenced by the trees) —
   // the player's other hub progress is left untouched.
@@ -1273,6 +1281,18 @@ export function SimulationView() {
                   · {phaseDocs.length}/{phaseArtifactTypes.size}
                 </span>
               </Eyebrow>
+              {/* import a completed assessment as the P0 scoping artifact (Assess→Sim, data only) */}
+              {assessSnap &&
+                phaseArtifactTypes.has('initial-scoping') &&
+                !docTypes.has('initial-scoping') && (
+                  <Button
+                    type="button"
+                    onClick={importAssessReport}
+                    className="mb-2 h-auto w-full rounded-md bg-secondary px-2.5 py-1.5 text-[11px] font-bold text-secondary-foreground"
+                  >
+                    ▸ Import assessment as scoping artifact
+                  </Button>
+                )}
               {phaseArtifactTypes.size === 0 ? (
                 <p className="text-[11px] text-muted-foreground">
                   This phase produces no Command-Center artifact — progress comes from Learn modules
