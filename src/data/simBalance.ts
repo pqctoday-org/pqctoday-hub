@@ -40,18 +40,71 @@ export interface SimBalance {
   budget: { doneWeight: number; levelWeight: number }
 }
 
-export const SIM_BALANCE: SimBalance = {
-  events: {
-    dangerWhenClassical: 0.6,
-    warning: 0.55,
-    goodNews: 0.5,
-    successVsInfo: 0.5,
+/** Difficulty presets (WS-14) — each is a complete SimBalance variant. Pure
+ *  config swap: the engine reads the active balance, it never branches on preset. */
+export type DifficultyId = 'easy' | 'realistic' | 'hard'
+
+export const SIM_PRESETS: Record<DifficultyId, SimBalance> = {
+  // Forgiving: fewer shocks, slower Q-Day creep, faster AI help.
+  easy: {
+    events: { dangerWhenClassical: 0.4, warning: 0.4, goodNews: 0.65, successVsInfo: 0.65 },
+    crqc: { pullForwardPerQuarter: 0.1 },
+    ai: { advanceChance: 0.55 },
+    budget: { doneWeight: 1, levelWeight: 0 },
   },
-  crqc: {
-    pullForwardPerQuarter: 0.22,
+  // The grounded baseline (the original WS-03 values).
+  realistic: {
+    events: { dangerWhenClassical: 0.6, warning: 0.55, goodNews: 0.5, successVsInfo: 0.5 },
+    crqc: { pullForwardPerQuarter: 0.22 },
+    ai: { advanceChance: 0.35 },
+    budget: { doneWeight: 1, levelWeight: 0 },
   },
-  ai: {
-    advanceChance: 0.35,
+  // Punishing: more shocks, faster Q-Day creep, sparse AI help.
+  hard: {
+    events: { dangerWhenClassical: 0.75, warning: 0.65, goodNews: 0.4, successVsInfo: 0.4 },
+    crqc: { pullForwardPerQuarter: 0.35 },
+    ai: { advanceChance: 0.2 },
+    budget: { doneWeight: 1, levelWeight: 0 },
   },
-  budget: { doneWeight: 1, levelWeight: 0 },
 }
+
+/** Default balance (Realistic) — kept as a named export for back-compat. */
+export const SIM_BALANCE: SimBalance = SIM_PRESETS.realistic
+
+/** Resolve the active balance for a difficulty (falls back to Realistic). */
+export const getBalance = (id: DifficultyId): SimBalance => SIM_PRESETS[id] ?? SIM_PRESETS.realistic
+
+/**
+ * Curated scenarios (WS-14) — set the org dials AND the difficulty together so a
+ * player can start from a realistic posture in one click. Config only.
+ */
+export interface SimScenario {
+  id: string
+  label: string
+  description: string
+  sector: string
+  size: string
+  country: string
+  difficulty: DifficultyId
+}
+
+export const SIM_SCENARIOS: SimScenario[] = [
+  {
+    id: 'regulated-finance',
+    label: 'Regulated finance',
+    description: 'Global bank under CNSA-2.0 pressure — long-lived records, hard deadlines.',
+    sector: 'financial',
+    size: 'global',
+    country: 'US',
+    difficulty: 'hard',
+  },
+  {
+    id: 'healthcare',
+    label: 'Healthcare provider',
+    description: 'Large hospital network — decades-long patient-data secrecy under BSI guidance.',
+    sector: 'healthcare',
+    size: 'large',
+    country: 'DE',
+    difficulty: 'realistic',
+  },
+]

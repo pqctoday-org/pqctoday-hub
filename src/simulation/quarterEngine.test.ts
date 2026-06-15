@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { runQuarter, type QuarterEngineInput } from './quarterEngine'
+import { SIM_PRESETS } from '@/data/simBalance'
 
 // A baseline input: nothing earned yet (levelOf 0), so the AI is eligible to
 // advance every phase and beforeCleared is 0. seat '' owns no phase.
@@ -16,6 +17,7 @@ const baseInput = (over: Partial<QuarterEngineInput> = {}): QuarterEngineInput =
   simShelfLifeYears: 10,
   clockYearsToHorizon: 5,
   checks: { p0: 0, p1: 0, p2: 0, p3: 0, p4: 0, p5: 0, p6: 0, p7: 0, foundations: 0 },
+  balance: SIM_PRESETS.realistic,
   levelOf: () => 0,
   evidenceLevel: () => 0,
   stepDone: () => false,
@@ -59,5 +61,17 @@ describe('runQuarter (pure quarter engine, WS-05)', () => {
     const r = runQuarter(baseInput({ levelOf: () => 4 }))
     expect(r.newAutoKeys).toEqual([])
     expect(r.report.clearedFrom).toBe(8) // all 8 lifecycle phases counted cleared
+  })
+
+  // WS-14 — difficulty is a pure config swap: the balance changes outcomes.
+  it('difficulty balance changes outcomes deterministically (config swap)', () => {
+    const easy = runQuarter(baseInput({ balance: SIM_PRESETS.easy }))
+    const hard = runQuarter(baseInput({ balance: SIM_PRESETS.hard }))
+    expect(JSON.stringify(easy.report)).not.toEqual(JSON.stringify(hard.report))
+    // a balance with no AI help → the AI completes nothing, regardless of seed
+    const noAi = runQuarter(
+      baseInput({ balance: { ...SIM_PRESETS.realistic, ai: { advanceChance: 0 } } })
+    )
+    expect(noAi.newAutoKeys).toEqual([])
   })
 })

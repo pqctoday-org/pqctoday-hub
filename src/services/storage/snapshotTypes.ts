@@ -159,6 +159,7 @@ export interface SimulationData {
   visitedRefs: string[]
   auto: string[]
   seed: number
+  difficulty: string
 }
 
 /**
