@@ -33,8 +33,8 @@ import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import { ARTIFACT_TYPE_TO_TOOL_ID } from '@/components/BusinessCenter/businessToolsRegistry'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import { SIM_TREES, flattenTree, achievedTreeLevel, type TreeStep } from '@/simulation'
-import { quarterRng, chanceWith, sampleWith } from '@/simulation/rng'
 import { computeReadiness } from '@/simulation/readiness'
+import { runQuarter } from '@/simulation/quarterEngine'
 import { SIM_BALANCE } from '@/data/simBalance'
 import { Eyebrow, Ring, Radial, Dial, Stat } from './atoms'
 import { SEVERITY_DOT } from './simChrome'
@@ -46,7 +46,6 @@ import {
   type QuarterReportData,
 } from './sections'
 import { type MoveCtx } from '@/data/simMoves'
-import { SIM_EVENT_POOL, fillEvent, type EventSeverity, type SimEvent } from '@/data/simEvents'
 import { feedFor } from '@/data/simFeed'
 import {
   useAssessSnapshot,
@@ -455,112 +454,32 @@ export function SimulationView() {
   }
 
   // ---- End Quarter loop ----
+  // The quarter math is a pure, seeded function (runQuarter); the view just feeds
+  // it the gating reads and applies the result to the store.
   const endQuarter = () => {
-    const [ny, nq] = q === 4 ? [year + 1, 1] : [year, q + 1]
-    const label = `Q${nq} ${ny}`
-    // Seeded per-quarter RNG (WS-02): seed + current turn → reproducible quarter.
-    const rng = quarterRng(seed, year, q)
-    const pick = (sev: EventSeverity) =>
-      fillEvent(sampleWith(rng, SIM_EVENT_POOL[sev]), sectorOpt.label, country)
-    const newEvents: SimEvent[] = []
-
-    const ev = SIM_BALANCE.events
-    const hasClassical = levelOf('p1') < PHASE_WIN_LEVEL || levelOf('p5') < PHASE_WIN_LEVEL
-    if (hasClassical && chanceWith(rng, ev.dangerWhenClassical))
-      newEvents.push({ sev: 'danger', t: label, txt: pick('danger') })
-    if (chanceWith(rng, ev.warning))
-      newEvents.push({ sev: 'warning', t: label, txt: pick('warning') })
-    if (chanceWith(rng, ev.goodNews)) {
-      const sev: EventSeverity = chanceWith(rng, ev.successVsInfo) ? 'success' : 'info'
-      newEvents.push({ sev, t: label, txt: pick(sev) })
-    }
-
-    let newCrqc = crqcShift
-    if (chanceWith(rng, SIM_BALANCE.crqc.pullForwardPerQuarter)) {
-      newCrqc += 1
-      newEvents.push({
-        sev: 'danger',
-        t: label,
-        txt: 'Research breakthrough — CRQC estimate pulled forward one year. Q-Day is closer.',
-      })
-    }
-
-    // AI team advances phases the seat does NOT own — by completing the next
-    // unlocked tree step (the SAME state the player earns via `auto`), never a
-    // separate `checks` counter. This keeps the Quarter Report and the board on
-    // one source of truth (WS-01): a "gate cleared" claim can no longer disagree
-    // with the displayed tree level. `checks` now only matters for `foundations`.
-    const newAutoKeys: string[] = []
-    const aiProgress: string[] = []
-    const willBeDone = (s: TreeStep, p: string) =>
-      stepDone(s, p) || newAutoKeys.includes(autoKey(p, s.to))
-    const treeLevelWith = (p: string): number => {
-      const t = SIM_TREES[p as PhaseId]
-      return t ? achievedTreeLevel(t, (s) => willBeDone(s, p)) : 0
-    }
-    const levelOfWith = (p: string): number =>
-      SIM_TREES[p as PhaseId] ? treeLevelWith(p) : Math.max(checks[p] ?? 0, evidenceLevel(p))
-    for (const p of LIFECYCLE) {
-      const tree = SIM_TREES[p as PhaseId]
-      if (!tree) continue
-      const owns = Object.values(ROLE_CROSSWALK).some(
-        (r) => r.phases.includes(p) && r.persona === seat
-      )
-      if (owns || levelOf(p) >= PHASE_WIN_LEVEL || !chanceWith(rng, SIM_BALANCE.ai.advanceChance))
-        continue
-      const next = flattenTree(tree).find((s) => !willBeDone(s, p))
-      if (!next) continue
-      const before = treeLevelWith(p)
-      newAutoKeys.push(autoKey(p, next.to))
-      const after = treeLevelWith(p)
-      const role = Object.values(ROLE_CROSSWALK).find((r) => r.phases.includes(p))
-      aiProgress.push(
-        `${role ? role.label : 'AI team'} completed ${FRAMEWORK_PHASES[p].name} · ${next.label}`
-      )
-      if (before < PHASE_WIN_LEVEL && after >= PHASE_WIN_LEVEL)
-        newEvents.push({
-          sev: 'success',
-          t: label,
-          txt: `${FRAMEWORK_PHASES[p].name} reached Level ${PHASE_WIN_LEVEL} — gate ${FRAMEWORK_PHASES[p].gate?.id ?? ''} cleared`,
-        })
-    }
-    if (!newEvents.length)
-      newEvents.push({ sev: 'info', t: label, txt: 'Quiet quarter — no incidents reported.' })
-
-    const afterClock = computeSimMosca({
-      migrationYears: simMigrationYears,
-      shelfLifeYears: simShelfLifeYears,
-      horizonYear: Math.min(
-        SIM_CRQC_YEAR - newCrqc,
-        COUNTRY_DEADLINE_YEAR[country] ?? SIM_CRQC_YEAR
-      ),
-      currentYear: ny + (nq - 1) * 0.25,
+    const {
+      newAutoKeys,
+      quarter,
+      report: qReport,
+    } = runQuarter({
+      year,
+      q,
+      seed,
+      crqcShift,
+      seat,
+      country,
+      sectorLabel: sectorOpt.label,
+      simMigrationYears,
+      simShelfLifeYears,
+      clockYearsToHorizon: clock.yearsToHorizon,
+      checks,
+      levelOf,
+      evidenceLevel,
+      stepDone,
     })
-    // Cleared counts come from the SAME tree-gated truth the board displays.
-    const beforeCleared = LIFECYCLE.filter((p) => levelOf(p) >= PHASE_WIN_LEVEL).length
-    const afterCleared = LIFECYCLE.filter((p) => levelOfWith(p) >= PHASE_WIN_LEVEL).length
-
     if (newAutoKeys.length) autoCompleteSteps(newAutoKeys)
-    applyQuarter({ checks, crqcShift: newCrqc, year: ny, q: nq, newEvents })
-    setReport({
-      from: `Q${q} ${year}`,
-      to: label,
-      clockFrom: clock.yearsToHorizon,
-      clockTo: afterClock.yearsToHorizon,
-      over: afterClock.over,
-      clearedFrom: beforeCleared,
-      clearedTo: afterCleared,
-      events: newEvents,
-      aiProgress,
-      recommend:
-        afterCleared < 2
-          ? "Push Phase 0–2 to Level 2 — you can't plan what you haven't inventoried."
-          : levelOfWith('p3') < PHASE_WIN_LEVEL
-            ? 'Approve the QRA (Phase 3) — it sequences every migration wave that follows.'
-            : levelOfWith('p5') < PHASE_WIN_LEVEL
-              ? 'Stand up 2 production pilots in Phase 5 before the audit window closes.'
-              : 'Maintain momentum — drive Tier-2 waves and lock vendor commitments (Phase 7).',
-    })
+    applyQuarter(quarter)
+    setReport(qReport)
   }
 
   return (
