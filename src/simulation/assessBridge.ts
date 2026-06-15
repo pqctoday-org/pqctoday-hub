@@ -9,7 +9,15 @@
  */
 import { useMemo } from 'react'
 import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
-import type { AssessmentResult, RecommendedAction } from '@/hooks/assessmentTypes'
+import type {
+  AssessmentResult,
+  AssessmentInput,
+  RecommendedAction,
+  ComplianceImpact,
+  CategoryScores,
+  AlgorithmMigration,
+} from '@/hooks/assessmentTypes'
+import { buildTwoTrackPlan, type TwoTrackPlan } from '@/hooks/assessment/twoTrack'
 import type { Cswp39StepId } from '@/data/cswp39ZoneData'
 import type { ExecutiveDocument } from '@/services/storage/types'
 
@@ -137,6 +145,38 @@ export function moscaInputsFromAssess(r: AssessmentResult): MoscaInputs | null {
     // migrationComplexity 0–100 → ~2–6 years
     migrationYears: mc != null ? Math.round(2 + (mc / 100) * 4) : 3,
   }
+}
+
+// ---- T2.3: applicable compliance for the P0 view ----
+/** The compliance frameworks the assessment found applicable (empty if none). */
+export function complianceFromAssess(r: AssessmentResult): ComplianceImpact[] {
+  return r.complianceImpacts ?? []
+}
+
+// ---- T2.4: category scores as informational sim KPIs (no level granting) ----
+/**
+ * The assessment's four category scores, surfaced read-only in the sim as
+ * context KPIs. These NEVER grant or change maturity — the sim's lifecycle is
+ * earned in-game. Returns null when the assessment carries no category scores.
+ */
+export function kpisFromAssess(r: AssessmentResult): CategoryScores | null {
+  return r.categoryScores ?? null
+}
+
+// ---- T2.5: algorithm migration backlog + two-track plan for P3/P5 ----
+/** The classical→PQC algorithm backlog from the assessment (empty if none). */
+export function algorithmBacklogFromAssess(r: AssessmentResult): AlgorithmMigration[] {
+  return r.algorithmMigrations ?? []
+}
+
+/**
+ * The Track-A (confidentiality/KEM) / Track-B (integrity/signatures) split for
+ * the sim's P3/P5 views. buildTwoTrackPlan only reads result fields (its input
+ * arg is unused), so a minimal input is sufficient. Returns undefined when the
+ * assessment has neither actions nor effort to split.
+ */
+export function twoTrackFromAssess(r: AssessmentResult): TwoTrackPlan | undefined {
+  return buildTwoTrackPlan({} as AssessmentInput, r)
 }
 
 const STEP_LABEL: Record<string, string> = {

@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { serializeAssessReport, buildAssessReportDoc, simProfileFromAssess } from './assessBridge'
+import {
+  serializeAssessReport,
+  buildAssessReportDoc,
+  simProfileFromAssess,
+  complianceFromAssess,
+  kpisFromAssess,
+  algorithmBacklogFromAssess,
+  twoTrackFromAssess,
+} from './assessBridge'
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
 
 const result = {
@@ -61,5 +69,43 @@ describe('assessBridge', () => {
     // industry/country unmodelled → dropped; size still maps
     expect(simProfileFromAssess(r)).toEqual({ size: 'mid' })
     expect(simProfileFromAssess({} as unknown as AssessmentResult)).toEqual({})
+  })
+
+  it('surfaces compliance, KPIs and the algorithm backlog (read-only)', () => {
+    expect(complianceFromAssess(result).map((c) => c.framework)).toEqual(['GDPR'])
+    expect(complianceFromAssess({} as unknown as AssessmentResult)).toEqual([])
+
+    const withScores = {
+      categoryScores: {
+        quantumExposure: 80,
+        migrationComplexity: 60,
+        regulatoryPressure: 70,
+        organizationalReadiness: 40,
+      },
+    } as unknown as AssessmentResult
+    expect(kpisFromAssess(withScores)?.quantumExposure).toBe(80)
+    expect(kpisFromAssess({} as unknown as AssessmentResult)).toBeNull()
+
+    const withAlgos = {
+      algorithmMigrations: [
+        {
+          classical: 'RSA-2048',
+          quantumVulnerable: true,
+          replacement: 'ML-KEM-768',
+          urgency: 'immediate',
+          notes: '',
+        },
+      ],
+    } as unknown as AssessmentResult
+    expect(algorithmBacklogFromAssess(withAlgos)).toHaveLength(1)
+    expect(algorithmBacklogFromAssess({} as unknown as AssessmentResult)).toEqual([])
+  })
+
+  it('builds a two-track plan from recommended actions', () => {
+    const plan = twoTrackFromAssess(result)
+    expect(plan).toBeDefined()
+    expect(plan?.trackA.id).toBe('A')
+    expect(plan?.trackB.id).toBe('B')
+    expect(twoTrackFromAssess({} as unknown as AssessmentResult)).toBeUndefined()
   })
 })

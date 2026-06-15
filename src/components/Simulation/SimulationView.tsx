@@ -58,6 +58,10 @@ import {
   moscaInputsFromAssess,
   recommendationByModule,
   simProfileFromAssess,
+  complianceFromAssess,
+  kpisFromAssess,
+  algorithmBacklogFromAssess,
+  twoTrackFromAssess,
   type AssessRec,
 } from '@/simulation/assessBridge'
 import { ARCHITECTURES } from '@/data/simArchitecture'
@@ -442,6 +446,22 @@ export function SimulationView() {
   const assessRecByModule: Map<string, AssessRec> = assessSnap
     ? recommendationByModule(assessSnap.result)
     : new Map()
+  // Assess-derived intel surfaced read-only in the phase views (no level granting):
+  // applicable compliance (P0), category-score KPIs (any phase), and the
+  // algorithm backlog + two-track split (P3/P5).
+  const assessCompliance = useMemo(
+    () => (assessSnap ? complianceFromAssess(assessSnap.result) : []),
+    [assessSnap]
+  )
+  const assessKpis = assessSnap ? kpisFromAssess(assessSnap.result) : null
+  const assessBacklog = useMemo(
+    () => (assessSnap ? algorithmBacklogFromAssess(assessSnap.result) : []),
+    [assessSnap]
+  )
+  const assessTwoTrack = useMemo(
+    () => (assessSnap ? twoTrackFromAssess(assessSnap.result) : undefined),
+    [assessSnap]
+  )
   // RESET clears the sim turn-state plus ONLY the sim-tracked hub progress the
   // gating reads from (the Learn modules + artifacts referenced by the trees) —
   // the player's other hub progress is left untouched.
@@ -1222,6 +1242,50 @@ export function SimulationView() {
           {/* right — phase-relevant intel: artifacts produced this phase + the
             views that matter to it (architecture only for estate/infra phases) */}
           <div className="flex min-h-0 flex-col gap-3.5 overflow-auto">
+            {/* Assessment KPIs — read-only category scores (informational; never
+                grant maturity, which is earned in-game) */}
+            {assessKpis && (
+              <div className="rounded-xl border border-secondary/30 bg-secondary/5 p-4">
+                <Eyebrow className="mb-2 block">
+                  Assessment KPIs <span className="text-muted-foreground/60">· informational</span>
+                </Eyebrow>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {(
+                    [
+                      ['Quantum exposure', assessKpis.quantumExposure, true],
+                      ['Migration complexity', assessKpis.migrationComplexity, true],
+                      ['Regulatory pressure', assessKpis.regulatoryPressure, true],
+                      ['Org readiness', assessKpis.organizationalReadiness, false],
+                    ] as const
+                  ).map(([label, val, higherIsWorse]) => {
+                    const tone =
+                      val >= 67
+                        ? higherIsWorse
+                          ? 'text-destructive'
+                          : 'text-success'
+                        : val >= 34
+                          ? 'text-warning'
+                          : higherIsWorse
+                            ? 'text-success'
+                            : 'text-destructive'
+                    return (
+                      <div
+                        key={label}
+                        className="flex items-baseline justify-between rounded-lg border border-border bg-card px-2 py-1.5"
+                      >
+                        <span className="text-[9.5px] leading-tight text-muted-foreground">
+                          {label}
+                        </span>
+                        <span className={`font-mono text-[13px] font-extrabold ${tone}`}>
+                          {Math.round(val)}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Critical assets — discovered in P0; value + date-driven quantum exposure */}
             <div className="rounded-xl border border-border bg-card p-4">
               <Eyebrow className="mb-2 block">
@@ -1270,6 +1334,44 @@ export function SimulationView() {
                 <span className="font-bold text-destructive">€{exposedValueM}M</span>
               </div>
             </div>
+
+            {/* Applicable compliance — from the assessment; scoping context for P0 */}
+            {sel === 'p0' && assessCompliance.length > 0 && (
+              <div className="rounded-xl border border-border bg-card p-4">
+                <Eyebrow className="mb-2 block">
+                  Applicable compliance{' '}
+                  <span className="text-muted-foreground/60">· from assessment</span>
+                </Eyebrow>
+                <div className="flex flex-col gap-1.5">
+                  {assessCompliance.map((c) => (
+                    <div
+                      key={c.framework}
+                      className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
+                    >
+                      <span
+                        className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${
+                          c.requiresPQC
+                            ? 'bg-destructive/15 text-destructive'
+                            : c.requiresPQC === false
+                              ? 'bg-muted text-muted-foreground'
+                              : 'bg-warning/15 text-warning'
+                        }`}
+                      >
+                        {c.requiresPQC ? 'PQC' : c.requiresPQC === false ? 'n/a' : '?'}
+                      </span>
+                      <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold text-foreground">
+                        {c.framework}
+                      </span>
+                      {c.deadline && (
+                        <span className="shrink-0 font-mono text-[9px] text-muted-foreground">
+                          {c.deadline}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Cyber insurance — policy limit vs the quantum-exposed value */}
             <div className="rounded-xl border border-border bg-card p-4">
@@ -1380,6 +1482,80 @@ export function SimulationView() {
                 size={size as 'small' | 'mid' | 'large' | 'global'}
                 country={country}
               />
+            )}
+
+            {/* PQC migration backlog + two-track split — from the assessment, for
+                the remediation phases (P3 plan, P5 execute) */}
+            {(sel === 'p3' || sel === 'p5') && (assessBacklog.length > 0 || assessTwoTrack) && (
+              <div className="rounded-xl border border-border bg-card p-4">
+                <Eyebrow className="mb-2 block">
+                  PQC migration backlog{' '}
+                  <span className="text-muted-foreground/60">· from assessment</span>
+                </Eyebrow>
+                {assessTwoTrack && (
+                  <div className="mb-2.5 flex flex-col gap-1.5">
+                    {(['A', 'B'] as const).map((t) => {
+                      const track = t === 'A' ? assessTwoTrack.trackA : assessTwoTrack.trackB
+                      const lead = assessTwoTrack.leadTrack === t
+                      return (
+                        <div
+                          key={t}
+                          className={`rounded-lg border px-2.5 py-1.5 ${
+                            track.isAtRisk
+                              ? 'border-destructive/40 bg-destructive/5'
+                              : 'border-border bg-muted/40'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="shrink-0 rounded bg-primary px-1 font-mono text-[8px] font-extrabold text-primary-foreground">
+                              {track.label.split('—')[0].trim()}
+                            </span>
+                            {lead && (
+                              <span className="shrink-0 rounded-full bg-secondary/20 px-1.5 py-0.5 font-mono text-[8px] font-bold text-secondary">
+                                lead
+                              </span>
+                            )}
+                            <span className="min-w-0 flex-1 truncate text-[10.5px] font-semibold text-foreground">
+                              {track.focus}
+                            </span>
+                          </div>
+                          <p className="mt-0.5 text-[9.5px] leading-snug text-muted-foreground">
+                            {track.effort.length} algo
+                            {track.effort.length !== 1 ? 's' : ''} · {track.actions.length} action
+                            {track.actions.length !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+                {assessBacklog.length > 0 && (
+                  <div className="flex flex-col gap-1.5">
+                    {assessBacklog.map((m) => (
+                      <div
+                        key={m.classical}
+                        className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
+                      >
+                        <span
+                          className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${
+                            m.urgency === 'immediate'
+                              ? 'bg-destructive/15 text-destructive'
+                              : m.urgency === 'near-term'
+                                ? 'bg-warning/15 text-warning'
+                                : 'bg-muted text-muted-foreground'
+                          }`}
+                        >
+                          {m.urgency}
+                        </span>
+                        <span className="min-w-0 flex-1 truncate font-mono text-[10px] text-foreground">
+                          {m.classical} <span className="text-muted-foreground">→</span>{' '}
+                          {m.replacement}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
