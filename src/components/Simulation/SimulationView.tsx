@@ -62,6 +62,7 @@ import {
   kpisFromAssess,
   algorithmBacklogFromAssess,
   twoTrackFromAssess,
+  projectReadiness,
   type AssessRec,
 } from '@/simulation/assessBridge'
 import { ARCHITECTURES } from '@/data/simArchitecture'
@@ -508,6 +509,15 @@ export function SimulationView() {
   // manual/seed bypass. Phases with no tree (foundations) fall back to evidence.
   const levelOf = (p: string) =>
     SIM_TREES[p as PhaseId] ? treeLevel(p) : Math.max(checks[p] ?? 0, evidenceLevel(p))
+
+  // T3.1 — sim-local readiness trend: the assessed org-readiness baseline vs the
+  // projection earned by clearing framework maturity in-game. Sim-local only.
+  const MAX_LEVEL = MATURITY_LEVEL_NAMES.length - 1 // levels run 0..4
+  const maturityFrac =
+    LIFECYCLE.reduce((s, p) => s + Math.min(MAX_LEVEL, levelOf(p)), 0) /
+    (MAX_LEVEL * LIFECYCLE.length)
+  const readinessTrend =
+    assessKpis != null ? projectReadiness(assessKpis.organizationalReadiness, maturityFrac) : null
 
   // setup-dial-derived facts
   const sizeOpt = SIZES.find((s) => s.id === size) ?? SIZES[1]
@@ -1283,6 +1293,54 @@ export function SimulationView() {
                     )
                   })}
                 </div>
+              </div>
+            )}
+
+            {/* Readiness trend — assessed baseline vs in-sim maturity (sim-local) */}
+            {readinessTrend && (
+              <div className="rounded-xl border border-border bg-card p-4">
+                <Eyebrow className="mb-2 block">
+                  Readiness trend{' '}
+                  <span className="text-muted-foreground/60">· assessed → in-sim</span>
+                </Eyebrow>
+                <div className="flex items-baseline justify-between font-mono">
+                  <span className="text-[11px] text-muted-foreground">
+                    Assessed{' '}
+                    <span className="text-[15px] font-extrabold text-foreground">
+                      {readinessTrend.baseline}
+                    </span>
+                  </span>
+                  <span className="text-muted-foreground/50">→</span>
+                  <span className="text-[11px] text-muted-foreground">
+                    In-sim{' '}
+                    <span className="text-[15px] font-extrabold text-success">
+                      {readinessTrend.projected}
+                    </span>
+                  </span>
+                  <span
+                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
+                      readinessTrend.delta > 0
+                        ? 'bg-success/15 text-success'
+                        : 'bg-muted text-muted-foreground'
+                    }`}
+                  >
+                    {readinessTrend.delta > 0 ? `▲ +${readinessTrend.delta}` : '—'}
+                  </span>
+                </div>
+                <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full bg-success"
+                    style={{ width: `${readinessTrend.projected}%` }}
+                  />
+                  <div
+                    className="-mt-2 h-2 border-r-2 border-foreground/40"
+                    style={{ width: `${readinessTrend.baseline}%` }}
+                  />
+                </div>
+                <p className="mt-1.5 text-[9.5px] leading-snug text-muted-foreground">
+                  Projection rises as you clear framework maturity in-game — sim-local, never
+                  written back to your assessment.
+                </p>
               </div>
             )}
 
