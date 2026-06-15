@@ -60,6 +60,63 @@ export function recommendationByModule(r: AssessmentResult): Map<string, AssessR
   return m
 }
 
+// ---- T2.1/T2.2: org profile (sim sector / size / country) from the assessment ----
+// Maps the Assess vocabularies onto the sim's own dial ids. Anything the sim
+// doesn't model (e.g. an industry/country outside its tables) is simply left
+// unmapped so the sim keeps its current dial.
+const INDUSTRY_TO_SECTOR = new Map<string, string>([
+  ['Finance & Banking', 'financial'],
+  ['Government & Defense', 'government'],
+  ['Healthcare', 'healthcare'],
+  ['Telecommunications', 'telecom'],
+  ['Technology', 'general'],
+  ['Energy & Utilities', 'energy'],
+  ['Automotive', 'general'],
+  ['Aerospace', 'government'],
+  ['Retail & E-Commerce', 'retail'],
+  ['Education', 'general'],
+  ['Manufacturing', 'energy'],
+  ['Other', 'general'],
+])
+const SCALE_TO_SIZE = new Map<string, string>([
+  ['1-10', 'small'],
+  ['11-50', 'mid'],
+  ['51-200', 'large'],
+  ['200-plus', 'global'],
+])
+const COUNTRY_NAME_TO_CODE = new Map<string, string>([
+  ['United States', 'US'],
+  ['Germany', 'DE'],
+  ['France', 'FR'],
+  ['United Kingdom', 'UK'],
+  ['Australia', 'AU'],
+])
+
+export interface SimProfileFromAssess {
+  sector?: string
+  size?: string
+  country?: string
+}
+
+/**
+ * Map a completed assessment onto the sim's setup dials (sector / size /
+ * country) so an imported assessment starts the sim on the real org. Only fields
+ * the sim actually models are returned; the caller leaves the rest untouched and
+ * the player can still change any dial afterward (auto-fill, not a lock).
+ */
+export function simProfileFromAssess(r: AssessmentResult): SimProfileFromAssess {
+  const p = r.assessmentProfile
+  const out: SimProfileFromAssess = {}
+  if (!p) return out
+  const sector = p.industry ? INDUSTRY_TO_SECTOR.get(p.industry) : undefined
+  if (sector) out.sector = sector
+  const size = p.systemScale ? SCALE_TO_SIZE.get(p.systemScale) : undefined
+  if (size) out.size = size
+  const country = p.country ? COUNTRY_NAME_TO_CODE.get(p.country) : undefined
+  if (country) out.country = country
+  return out
+}
+
 export interface MoscaInputs {
   shelfLifeYears: number
   migrationYears: number
