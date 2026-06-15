@@ -762,14 +762,20 @@ export const hsm_initialize = (M: SoftHSMModule, testSeed?: Uint8Array): void =>
     M.setValue(initArgsPtr + 20, acvpPtr, 'i32')
 
     try {
-      checkRV(M._C_Initialize(initArgsPtr), 'C_Initialize(ACVP_MODE)')
+      const rv = M._C_Initialize(initArgsPtr)
+      // 0x191 = CKR_CRYPTOKI_ALREADY_INITIALIZED — idempotent (see else branch).
+      if (rv !== 0x191) checkRV(rv, 'C_Initialize(ACVP_MODE)')
     } finally {
       M._free(initArgsPtr)
       M._free(acvpPtr)
       M._free(seedPtr)
     }
   } else {
-    checkRV(M._C_Initialize(0), 'C_Initialize')
+    const rv = M._C_Initialize(0)
+    // CKR_CRYPTOKI_ALREADY_INITIALIZED (0x191): the token is already up (e.g. a
+    // prior test sharing this cached module instance initialised it). That is
+    // the desired end state, so treat it as success — idempotent initialize.
+    if (rv !== 0x191) checkRV(rv, 'C_Initialize')
   }
 }
 
