@@ -8,6 +8,7 @@ import { SIM_TREES, flattenTree, achievedTreeLevel } from './index'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { ARTIFACT_TYPE_TO_TOOL_ID } from '@/components/BusinessCenter/businessToolsRegistry'
 import { PHASE_MATURITY } from '@/data/phaseMaturity'
+import { FRAMEWORK_VERSION } from '@/data/frameworkPhases'
 import { resolveDeepLink } from './deepLinks'
 import { REFERENCE_PHASES } from '@/data/phaseResourceMap'
 import { resLinks } from '@/components/Simulation/sections'
@@ -43,6 +44,18 @@ describe('SIM_TREES — coverage & shape', () => {
           }
         }
       }
+    }
+  })
+
+  it('WS-11: every tree is pinned to the current framework version', () => {
+    for (const phase of PHASES) {
+      const tree = SIM_TREES[phase]!
+      expect(
+        tree.source.includes(FRAMEWORK_VERSION),
+        `${phase}: tree source "${tree.source}" is not pinned to framework ${FRAMEWORK_VERSION} — ` +
+          `the framework version moved ahead of the snapshots. Regenerate the sim trees ` +
+          `(node scripts/gen-sim-trees.mjs) so each PhaseTree.source carries ${FRAMEWORK_VERSION}.`
+      ).toBe(true)
     }
   })
 
