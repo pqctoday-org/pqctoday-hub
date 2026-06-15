@@ -9,7 +9,7 @@
  * type and the `buildQRA` builder are the things other pages import.
  *
  * The five framework QRA sections (p.76) map to these fields:
- *   1. Executive summary + aggregate maturity score → `execSummary` + `maturity`
+ *   1. Executive summary                           → `execSummary`
  *   2. Estate heatmap by tier/domain               → `heatmap`
  *   3. Prioritised backlog with owner assignment   → `backlog`
  *   4. Gap analysis vs. regulatory                 → `regulatoryGaps`
@@ -17,8 +17,8 @@
  *
  * Pure assembly: reuses `AssessmentResult` (riskScore, categoryScores,
  * recommendedActions, complianceImpacts, migrationEffort), the urgency-tier
- * mapping, the Mosca result, the two-track plan, the maturity aggregate, and
- * the `ROLE_CROSSWALK` for owner assignment. No new scoring, no React.
+ * mapping, the Mosca result, the two-track plan, and the `ROLE_CROSSWALK` for
+ * owner assignment. No new scoring, no React.
  */
 
 import type {
@@ -30,7 +30,6 @@ import type {
 import { getUrgencyTier, type UrgencyTier } from './urgencyTiers'
 import { computeMoscaResult, type MoscaResult } from './mosca'
 import { buildTwoTrackPlan, type TwoTrackPlan } from './twoTrack'
-import { aggregateMaturity, type MaturityAssessment, type MaturityDomainRating } from './maturity'
 import { ROLE_CROSSWALK, type FrameworkRoleId } from '../../data/roleCrosswalk'
 import { FRAMEWORK_PHASES, type PhaseId } from '../../data/frameworkPhases'
 
@@ -98,13 +97,9 @@ export interface QuantumReadinessAssessment {
     riskScore: number
     riskLevel: AssessmentResult['riskLevel']
     tier: UrgencyTier
-    /** Aggregate maturity 0–100, or null when not self-rated. */
-    maturityScore: number | null
     industry: string
     country?: string
   }
-  /** Section 1b — full maturity self-rating aggregate, when provided. */
-  maturity?: MaturityAssessment
   /** Section 2 — estate heatmap by readiness domain. */
   heatmap: QRAHeatmapCell[]
   /** Section 3 — prioritised backlog with owner assignment. */
@@ -117,12 +112,6 @@ export interface QuantumReadinessAssessment {
   mosca?: MoscaResult
   /** Two-Track sequenced plan (gap-closer #4). */
   twoTrack?: TwoTrackPlan
-}
-
-/** Optional extras the caller supplies (maturity self-rating from the UI). */
-export interface BuildQRAOptions {
-  /** Per-domain maturity self-rating from `MaturitySelfRating`. */
-  maturityRatings?: MaturityDomainRating[]
 }
 
 function severityBand(severity: number): QRAHeatmapCell['band'] {
@@ -242,23 +231,19 @@ function buildComplianceMapping(impacts: ComplianceImpact[]): QRAComplianceRow[]
 function buildExecSummaryText(
   input: AssessmentInput,
   result: AssessmentResult,
-  tier: UrgencyTier,
-  maturityScore: number | null
+  tier: UrgencyTier
 ): string {
   const where = input.country && input.country !== 'Global' ? ` in ${input.country}` : ''
-  const maturityClause =
-    maturityScore !== null ? ` Current quantum-readiness maturity is ${maturityScore}/100.` : ''
   return (
     `This ${input.industry} organization${where} scores ${result.riskScore}/100 ` +
     `(${result.riskLevel} risk), placing it in ${tier.label}. ` +
-    `Recommended posture: start ${tier.startWindow.toLowerCase()} and deploy ${tier.deployWindow.toLowerCase()}.` +
-    maturityClause
+    `Recommended posture: start ${tier.startWindow.toLowerCase()} and deploy ${tier.deployWindow.toLowerCase()}.`
   )
 }
 
 /**
- * Build the structured QRA from an assessment input + result (+ optional
- * maturity self-rating). The single stable entry point others import.
+ * Build the structured QRA from an assessment input + result. The single stable
+ * entry point others import.
  *
  * Designed to degrade gracefully: quick-mode results (no categoryScores /
  * migrationEffort) still yield a valid QRA — the heatmap and two-track sections
@@ -266,16 +251,9 @@ function buildExecSummaryText(
  */
 export function buildQRA(
   input: AssessmentInput,
-  result: AssessmentResult,
-  options: BuildQRAOptions = {}
+  result: AssessmentResult
 ): QuantumReadinessAssessment {
   const tier = getUrgencyTier(result.riskScore)
-
-  const maturity =
-    options.maturityRatings && options.maturityRatings.some((r) => r.level !== null)
-      ? aggregateMaturity(options.maturityRatings)
-      : undefined
-  const maturityScore = maturity ? maturity.score : null
 
   const mosca = computeMoscaResult(input)
   const twoTrack = buildTwoTrackPlan(input, result)
@@ -283,15 +261,13 @@ export function buildQRA(
   return {
     generatedAt: new Date().toISOString(),
     execSummary: {
-      text: buildExecSummaryText(input, result, tier, maturityScore),
+      text: buildExecSummaryText(input, result, tier),
       riskScore: result.riskScore,
       riskLevel: result.riskLevel,
       tier,
-      maturityScore,
       industry: input.industry,
       country: input.country,
     },
-    maturity,
     heatmap: buildHeatmap(result),
     backlog: buildBacklog(result),
     regulatoryGaps: buildRegulatoryGaps(result.complianceImpacts),

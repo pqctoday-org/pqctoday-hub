@@ -74,7 +74,7 @@ const renderQRA = (overrides?: Partial<AssessmentResult>) =>
 describe('QRASection', () => {
   it('renders the five framework section headings', () => {
     renderQRA()
-    expect(screen.getByText(/Executive Summary & Aggregate Maturity/i)).toBeInTheDocument()
+    expect(screen.getByText(/Executive Summary/i)).toBeInTheDocument()
     expect(screen.getByText('Estate Heatmap')).toBeInTheDocument()
     expect(screen.getByText('Prioritised Backlog')).toBeInTheDocument()
     expect(screen.getByText('Gap Analysis vs. Regulatory')).toBeInTheDocument()

@@ -3,9 +3,9 @@
  * Stable public surface of the Assess engine's framework-gap closers.
  *
  * Other pages (notably the Report "communicate" surface) import the QRA type +
- * builder and the supporting Mosca / Urgency-Tier / Two-Track / Maturity
- * builders from here, so the engine's internal file layout can change without
- * breaking consumers.
+ * builder and the supporting Mosca / Urgency-Tier / Two-Track builders from
+ * here, so the engine's internal file layout can change without breaking
+ * consumers.
  *
  * All exports are additive — importing them has no effect on existing Assess
  * behaviour; they only assemble structured views over the engine's existing
@@ -20,7 +20,6 @@ export type {
   QRABacklogItem,
   QRARegulatoryGap,
   QRAComplianceRow,
-  BuildQRAOptions,
 } from './qra'
 
 // Mosca's Inequality (X + Y > Z).
@@ -34,22 +33,3 @@ export type { UrgencyTier, UrgencyTierId } from './urgencyTiers'
 // Two-Track (A: KEM/HNDL · B: signatures/PKI/HNFL) sequencing.
 export { buildTwoTrackPlan } from './twoTrack'
 export type { TwoTrackPlan, MigrationTrack, TrackId } from './twoTrack'
-
-// Maturity self-rating L0–L4.
-export {
-  aggregateMaturity,
-  emptyMaturityRatings,
-  MATURITY_DOMAINS,
-  MATURITY_DOMAIN_ORDER,
-} from './maturity'
-export type {
-  MaturityAssessment,
-  MaturityDomain,
-  MaturityDomainId,
-  MaturityDomainRating,
-  MaturityLevel,
-} from './maturity'
-
-// Persisted maturity self-rating store (Assess collects it; Report reads it
-// back to feed buildQRA({ maturityRatings })).
-export { useMaturityStore } from './useMaturityStore'
