@@ -31,6 +31,7 @@ import {
   computeRegulatoryPressure,
   computeCompositeScoreWithBoosts,
   computeOrganizationalReadiness,
+  computeFrameworkRisk,
   getMaxSensitivity,
 } from './scoring'
 import { computeHNDLRiskWindow, computeTNFLRiskWindow, computeMigrationEffort } from './riskWindows'
@@ -127,6 +128,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
   )
   let riskScore: number
   let categoryScores: CategoryScores | undefined
+  let frameworkRisk: AssessmentResult['frameworkRisk']
   let categoryDrivers: CategoryDrivers | undefined
   let hndlRiskWindow: HNDLRiskWindow | undefined
   let tnflRiskWindow: TNFLRiskWindow | undefined
@@ -155,6 +157,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     boosts = compositeResult.boosts
     hndlRiskWindow = computeHNDLRiskWindow(input)
     tnflRiskWindow = computeTNFLRiskWindow(input)
+    frameworkRisk = computeFrameworkRisk(categoryScores, hndlRiskWindow, tnflRiskWindow)
     migrationEffort = computeMigrationEffort(input)
     categoryDrivers = generateCategoryDrivers(input, vulnerableCount, pqcCompliance.length)
     recommendedActions = generateExtendedActions(
@@ -352,6 +355,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     narrative,
     generatedAt: new Date().toISOString(),
     categoryScores,
+    frameworkRisk,
     categoryDrivers,
     hndlRiskWindow,
     tnflRiskWindow,
@@ -483,6 +487,7 @@ export async function computeAssessmentAsync(
 
   let riskScore: number
   let categoryScores: CategoryScores | undefined
+  let frameworkRisk: AssessmentResult['frameworkRisk']
   let categoryDrivers: CategoryDrivers | undefined
   let hndlRiskWindow: HNDLRiskWindow | undefined
   let tnflRiskWindow: TNFLRiskWindow | undefined
@@ -589,6 +594,7 @@ export async function computeAssessmentAsync(
     narrative,
     generatedAt: new Date().toISOString(),
     categoryScores,
+    frameworkRisk,
     categoryDrivers,
     hndlRiskWindow,
     tnflRiskWindow,

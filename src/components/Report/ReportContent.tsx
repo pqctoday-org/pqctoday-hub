@@ -1009,6 +1009,50 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         </div>
                       )}
 
+                    {/* Framework Risk Lens (Applied Quantum P3) — derived alongside the categories */}
+                    {phaseVisible('riskBreakdown') &&
+                      result.frameworkRisk &&
+                      cfg('riskBreakdown').state !== 'hidden' && (
+                        <CollapsibleSection
+                          title="Framework Risk Lens (Applied Quantum)"
+                          icon={<ShieldAlert className="text-primary" size={20} />}
+                          defaultOpen={false}
+                        >
+                          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                            {(
+                              [
+                                ['HNDL', result.frameworkRisk.hndl, 'Harvest-now confidentiality'],
+                                ['TNFL', result.frameworkRisk.tnfl, 'Forge-later integrity'],
+                                [
+                                  'Regulatory',
+                                  result.frameworkRisk.regulatory,
+                                  'Compliance / deadline pressure',
+                                ],
+                                [
+                                  'Feasibility',
+                                  result.frameworkRisk.feasibility,
+                                  'Ease of migration (higher = easier)',
+                                ],
+                              ] as const
+                            ).map(([label, val, note]) => (
+                              <div
+                                key={label}
+                                className="rounded-lg border border-border bg-card p-3"
+                              >
+                                <div className="text-2xl font-extrabold text-foreground">{val}</div>
+                                <div className="text-sm font-semibold text-foreground">{label}</div>
+                                <div className="text-xs text-muted-foreground">{note}</div>
+                              </div>
+                            ))}
+                          </div>
+                          <p className="mt-2 text-xs text-muted-foreground">
+                            The framework&apos;s P3 risk dimensions, derived alongside the category
+                            scores. HNDL / TNFL / Regulatory are exposure (higher = more risk);
+                            Feasibility is ease of migration (higher = easier).
+                          </p>
+                        </CollapsibleSection>
+                      )}
+
                     {/* Executive Summary */}
                     {phaseVisible('executiveSummary') &&
                       result.executiveSummary &&
