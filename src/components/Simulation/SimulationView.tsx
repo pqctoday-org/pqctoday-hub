@@ -429,6 +429,7 @@ export function SimulationView() {
   const resetModuleProgress = useModuleStore((s) => s.resetModuleProgress)
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
+  const updateModuleProgress = useModuleStore((s) => s.updateModuleProgress)
   // read-only Assess → Sim bridge: offer to import a completed assessment as the
   // Phase-0 scoping artifact (data only; the sim's gate still decides it counts).
   const assessSnap = useAssessSnapshot()
@@ -903,6 +904,32 @@ export function SimulationView() {
             <span className="min-w-0 flex-1 truncate text-[12.5px] font-bold text-foreground">
               {learnEmbed ? learnEmbed.title : activityEmbed?.title}
             </span>
+            {/* Completion toggle — guarantees a "mark complete" path for every
+                embedded Learn module (some have no in-module Complete button when
+                the workshop/exercises chrome is hidden in the sim). Toggleable. */}
+            {learnEmbed &&
+              (() => {
+                const done = moduleDone(learnEmbed.moduleId)
+                return (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() =>
+                      updateModuleProgress(learnEmbed.moduleId, {
+                        status: done ? 'in-progress' : 'completed',
+                      })
+                    }
+                    aria-pressed={done}
+                    className={`h-auto shrink-0 rounded-md px-3 py-1 text-[11px] font-bold ${
+                      done
+                        ? 'bg-success text-success-foreground hover:opacity-90'
+                        : 'border border-success/50 bg-success/10 text-success hover:bg-success/20'
+                    }`}
+                  >
+                    {done ? '✓ Completed' : 'Mark complete'}
+                  </Button>
+                )
+              })()}
             <Button
               type="button"
               variant="ghost"
