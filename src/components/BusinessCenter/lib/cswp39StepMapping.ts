@@ -89,6 +89,8 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'program-charter': 'governance',
   'initial-scoping': 'governance',
   'skills-team-plan': 'governance',
+  // Simulation-produced roadmap (WS-15) — same pillar as a migration roadmap.
+  'sim-roadmap': 'architecture',
 }
 
 export function getPillarForType(type: ExecutiveDocumentType): PillarKey {
@@ -123,7 +125,11 @@ export function getArtifactsForStep(
 /** Orphan artifact types whose zone cannot be derived from the tool registry
  *  (because the type has no corresponding tool yet). Keep this small and
  *  explicit — every entry should have a follow-up to wire a real builder. */
-const ORPHAN_TYPE_ZONE: Partial<Record<ExecutiveDocumentType, ZoneId>> = {}
+const ORPHAN_TYPE_ZONE: Partial<Record<ExecutiveDocumentType, ZoneId>> = {
+  // sim-roadmap (WS-15) has no builder tool, so it isn't in ARTIFACT_TYPE_TO_TOOL_ID;
+  // bucket it in the migration zone like a hand-built migration roadmap.
+  'sim-roadmap': 'migration',
+}
 
 /** Single source of truth for artifact-type → CSWP.39 Fig 3 zone, derived from
  *  the tool registry plus the orphan override map. Computed at module load. */

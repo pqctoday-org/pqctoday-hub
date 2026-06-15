@@ -64,6 +64,7 @@ export type ExecutiveDocumentType =
   | 'program-charter'
   | 'initial-scoping'
   | 'skills-team-plan'
+  | 'sim-roadmap'
 
 export interface ExecutiveDocumentRevision {
   /** Unix ms when this revision was recorded. */

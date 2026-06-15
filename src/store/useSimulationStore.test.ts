@@ -92,6 +92,23 @@ describe('useSimulationStore', () => {
     expect(s().auto).toContain('p1::/learn/data-asset-sensitivity')
   })
 
+  // WS-14 — difficulty + scenario presets.
+  it('setDifficulty + applyScenario set state and round-trip through a save', () => {
+    s().setDifficulty('hard')
+    expect(s().difficulty).toBe('hard')
+    s().applyScenario({ sector: 'financial', size: 'global', country: 'US', difficulty: 'easy' })
+    expect(s().sector).toBe('financial')
+    expect(s().size).toBe('global')
+    expect(s().country).toBe('US')
+    expect(s().difficulty).toBe('easy')
+    const saved = s().exportSave()
+    s().reset()
+    expect(s().difficulty).toBe('realistic')
+    s().importSave(saved)
+    expect(s().difficulty).toBe('easy')
+    expect(s().sector).toBe('financial')
+  })
+
   it('importSave rejects malformed / foreign input without throwing', () => {
     expect(s().importSave('not json')).toBe(false)
     expect(s().importSave('{}')).toBe(false)
