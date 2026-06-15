@@ -19,6 +19,7 @@ import {
   EmbeddedLearnProvider,
   ARTIFACT_TYPE_TO_TOOL_ID,
 } from './resourceContract'
+import { canEmbedStep } from './embedContract'
 import { Button } from '@/components/ui/button'
 import { FRAMEWORK_PHASES, PHASE_ORDER, type PhaseId } from '@/data/frameworkPhases'
 import { MATURITY_LEVEL_NAMES, PHASE_WIN_LEVEL, LEVEL_EVIDENCE } from '@/data/phaseMaturity'
@@ -197,14 +198,6 @@ export function SimulationView() {
     : undefined
   // eslint-disable-next-line security/detect-object-injection
   const ActivityComp = activityToolId ? BUSINESS_TOOL_COMPONENTS[activityToolId] : null
-  const canEmbedStep = (s: TreeStep) => {
-    if (s.kind === 'learn') return !!s.moduleId && isEmbeddableModule(s.moduleId)
-    if (s.kind === 'activity' && s.artifactType) {
-      const toolId = ARTIFACT_TYPE_TO_TOOL_ID[s.artifactType]
-      return !!toolId && !!BUSINESS_TOOL_COMPONENTS[toolId]
-    }
-    return false
-  }
   const openStep = (s: TreeStep) => {
     if (s.kind === 'learn' && s.moduleId && isEmbeddableModule(s.moduleId)) {
       setActivityEmbed(null)
