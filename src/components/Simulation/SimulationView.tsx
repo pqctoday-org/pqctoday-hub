@@ -50,6 +50,7 @@ import {
   type StepKind,
 } from '@/simulation'
 import { quarterRng, chanceWith, sampleWith } from '@/simulation/rng'
+import { SIM_BALANCE } from '@/data/simBalance'
 import { SIM_MOVES, type MoveCtx, type MoveKind } from '@/data/simMoves'
 import { SIM_EVENT_POOL, fillEvent, type EventSeverity, type SimEvent } from '@/data/simEvents'
 import { feedFor } from '@/data/simFeed'
@@ -576,7 +577,10 @@ export function SimulationView() {
   const p0Steps = p0Tree ? flattenTree(p0Tree) : []
   const p0Done = p0Steps.filter((s) => stepDone(s, 'p0')).length
   const p0Level = levelOf('p0')
-  const p0Frac = p0Steps.length ? 0.5 * (p0Done / p0Steps.length) + 0.5 * (p0Level / 4) : 0
+  const p0Frac = p0Steps.length
+    ? SIM_BALANCE.budget.doneWeight * (p0Done / p0Steps.length) +
+      SIM_BALANCE.budget.levelWeight * (p0Level / MAX_LEVEL)
+    : 0
   const budgetTarget = programBudgetTarget(sector, sizeKey)
   const budgetSecured = Math.round(budgetTarget * p0Frac * 10) / 10
 
@@ -666,17 +670,19 @@ export function SimulationView() {
       fillEvent(sampleWith(rng, SIM_EVENT_POOL[sev]), sectorOpt.label, country)
     const newEvents: SimEvent[] = []
 
+    const ev = SIM_BALANCE.events
     const hasClassical = levelOf('p1') < PHASE_WIN_LEVEL || levelOf('p5') < PHASE_WIN_LEVEL
-    if (hasClassical && chanceWith(rng, 0.6))
+    if (hasClassical && chanceWith(rng, ev.dangerWhenClassical))
       newEvents.push({ sev: 'danger', t: label, txt: pick('danger') })
-    if (chanceWith(rng, 0.55)) newEvents.push({ sev: 'warning', t: label, txt: pick('warning') })
-    if (chanceWith(rng, 0.5)) {
-      const sev: EventSeverity = chanceWith(rng, 0.5) ? 'success' : 'info'
+    if (chanceWith(rng, ev.warning))
+      newEvents.push({ sev: 'warning', t: label, txt: pick('warning') })
+    if (chanceWith(rng, ev.goodNews)) {
+      const sev: EventSeverity = chanceWith(rng, ev.successVsInfo) ? 'success' : 'info'
       newEvents.push({ sev, t: label, txt: pick(sev) })
     }
 
     let newCrqc = crqcShift
-    if (chanceWith(rng, 0.22)) {
+    if (chanceWith(rng, SIM_BALANCE.crqc.pullForwardPerQuarter)) {
       newCrqc += 1
       newEvents.push({
         sev: 'danger',
@@ -706,7 +712,8 @@ export function SimulationView() {
       const owns = Object.values(ROLE_CROSSWALK).some(
         (r) => r.phases.includes(p) && r.persona === seat
       )
-      if (owns || levelOf(p) >= PHASE_WIN_LEVEL || !chanceWith(rng, 0.35)) continue
+      if (owns || levelOf(p) >= PHASE_WIN_LEVEL || !chanceWith(rng, SIM_BALANCE.ai.advanceChance))
+        continue
       const next = flattenTree(tree).find((s) => !willBeDone(s, p))
       if (!next) continue
       const before = treeLevelWith(p)
@@ -1672,7 +1679,8 @@ export function SimulationView() {
 function computeReadiness(size: string, p5: number) {
   const edges = (ARCHITECTURES[size as keyof typeof ARCHITECTURES] ?? ARCHITECTURES.mid).edges
   const vulnerable = edges.filter((e) => e.vulnerable && e.pqcPath !== 'none').length
-  const frac = p5 >= 3 ? 1 : p5 >= 2 ? 0.6 : p5 >= 1 ? 0.25 : 0.05
+  const r = SIM_BALANCE.readiness
+  const frac = p5 >= 3 ? r.l3 : p5 >= 2 ? r.l2 : p5 >= 1 ? r.l1 : r.l0
   const migrated = Math.round(vulnerable * frac)
   return { pct: Math.round((migrated / Math.max(1, vulnerable)) * 100), migrated, vulnerable }
 }
