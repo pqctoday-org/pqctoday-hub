@@ -7,7 +7,7 @@
  * consumes the structured `QuantumReadinessAssessment` that the Assess engine
  * exports (`buildQRA` from `@/hooks/assessment`) and lays it out as the
  * framework's five sections:
- *   1. Executive summary + aggregate maturity score
+ *   1. Executive summary
  *   2. Estate heatmap (by readiness domain)
  *   3. Prioritised backlog (owner-assignable)
  *   4. Gap analysis vs. regulatory
@@ -26,11 +26,9 @@ import {
   ClipboardList,
   CheckCircle2,
   AlertTriangle,
-  Gauge,
 } from 'lucide-react'
 import { CollapsibleSection } from '../ReportContent'
 import { buildQRA } from '@/hooks/assessment'
-import { useMaturityStore } from '@/hooks/assessment/useMaturityStore'
 import { ROLE_CROSSWALK, type FrameworkRoleId } from '@/data/roleCrosswalk'
 
 /** Display order for owner-assignment options, derived from the crosswalk. */
@@ -84,30 +82,6 @@ function ExecSummary({ qra }: { qra: ReturnType<typeof buildQRA> }) {
           <span className="text-xs text-muted-foreground">
             Start: {execSummary.tier.startWindow}
           </span>
-        </div>
-        <div className="flex flex-col justify-center rounded-lg border border-border bg-muted/30 px-4 py-3 min-w-[9rem]">
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
-            Maturity
-          </span>
-          {execSummary.maturityScore !== null ? (
-            <>
-              <span className="text-2xl font-bold text-foreground inline-flex items-center gap-1">
-                <Gauge size={18} className="text-primary" aria-hidden="true" />
-                {execSummary.maturityScore}
-                <span className="text-sm text-muted-foreground font-normal">/100</span>
-              </span>
-              {qra.maturity && (
-                <span className="text-xs text-muted-foreground capitalize">
-                  {qra.maturity.band} ({qra.maturity.ratedCount}/5 rated)
-                </span>
-              )}
-            </>
-          ) : (
-            <span className="text-xs text-muted-foreground">
-              Not self-rated.{' '}
-              <span className="text-foreground">Add a maturity rating in Assess.</span>
-            </span>
-          )}
         </div>
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed">{execSummary.text}</p>
@@ -329,12 +303,7 @@ export function QRASection({
   result: AssessmentResult
   defaultOpen?: boolean
 }) {
-  const maturityRatings = useMaturityStore((s) => s.ratings)
-
-  const qra = useMemo(
-    () => buildQRA(input, result, { maturityRatings }),
-    [input, result, maturityRatings]
-  )
+  const qra = useMemo(() => buildQRA(input, result), [input, result])
 
   return (
     <div className="space-y-3" data-testid="qra-section">
@@ -352,7 +321,7 @@ export function QRASection({
               className="text-sm font-semibold text-foreground mb-2 inline-flex items-center gap-2"
             >
               <ClipboardList size={16} className="text-primary" aria-hidden="true" />
-              Executive Summary &amp; Aggregate Maturity
+              Executive Summary
             </h3>
             <ExecSummary qra={qra} />
           </section>

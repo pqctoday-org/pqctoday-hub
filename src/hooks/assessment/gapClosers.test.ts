@@ -4,12 +4,6 @@ import { computeAssessment } from './orchestrator'
 import { computeMoscaResult, estimateMigrationYears } from './mosca'
 import { getUrgencyTier, URGENCY_TIER_ORDER, URGENCY_TIERS } from './urgencyTiers'
 import { buildTwoTrackPlan } from './twoTrack'
-import {
-  aggregateMaturity,
-  emptyMaturityRatings,
-  MATURITY_DOMAIN_ORDER,
-  type MaturityDomainRating,
-} from './maturity'
 import { buildQRA } from './qra'
 import type { AssessmentInput } from '../assessmentTypes'
 
@@ -144,37 +138,6 @@ describe('Two-Track sequencing (gap-closer #4)', () => {
   })
 })
 
-describe('Maturity L0–4 self-rating (gap-closer #3 input)', () => {
-  it('empty ratings aggregate to score 0 and incomplete', () => {
-    const agg = aggregateMaturity(emptyMaturityRatings())
-    expect(agg.score).toBe(0)
-    expect(agg.ratedCount).toBe(0)
-    expect(agg.isComplete).toBe(false)
-  })
-
-  it('aggregates rated domains onto a 0–100 score', () => {
-    const ratings: MaturityDomainRating[] = MATURITY_DOMAIN_ORDER.map((domain) => ({
-      domain,
-      level: 4,
-    }))
-    const agg = aggregateMaturity(ratings)
-    expect(agg.score).toBe(100)
-    expect(agg.averageLevel).toBe(4)
-    expect(agg.band).toBe('optimised')
-    expect(agg.isComplete).toBe(true)
-  })
-
-  it('averages only rated domains for partial input', () => {
-    const ratings: MaturityDomainRating[] = emptyMaturityRatings()
-    ratings[0].level = 2
-    ratings[1].level = 4
-    const agg = aggregateMaturity(ratings)
-    expect(agg.averageLevel).toBe(3) // (2+4)/2
-    expect(agg.score).toBe(75) // 3/4 * 100
-    expect(agg.ratedCount).toBe(2)
-  })
-})
-
 describe('QRA builder (gap-closer #3)', () => {
   it('assembles all five sections from a comprehensive result', () => {
     const result = computeAssessment(URGENT_INPUT)
@@ -194,22 +157,6 @@ describe('QRA builder (gap-closer #3)', () => {
     // bundled gap-closers
     expect(qra.mosca).toBeDefined()
     expect(qra.twoTrack).toBeDefined()
-  })
-
-  it('threads the maturity self-rating into the exec summary', () => {
-    const result = computeAssessment(URGENT_INPUT)
-    const ratings = MATURITY_DOMAIN_ORDER.map((domain) => ({ domain, level: 2 as const }))
-    const qra = buildQRA(URGENT_INPUT, result, { maturityRatings: ratings })
-    expect(qra.maturity).toBeDefined()
-    expect(qra.execSummary.maturityScore).toBe(50) // L2 across all = 50/100
-    expect(qra.execSummary.text).toContain('50/100')
-  })
-
-  it('omits maturity block when no ratings supplied', () => {
-    const result = computeAssessment(URGENT_INPUT)
-    const qra = buildQRA(URGENT_INPUT, result)
-    expect(qra.maturity).toBeUndefined()
-    expect(qra.execSummary.maturityScore).toBeNull()
   })
 
   it('degrades gracefully on quick-mode results (empty heatmap, no throw)', () => {
