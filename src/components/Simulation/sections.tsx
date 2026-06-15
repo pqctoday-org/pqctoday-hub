@@ -18,6 +18,7 @@ import { MODULE_CATALOG } from './resourceContract'
 import type { TreeStep, TreeActivity, LevelBand, Pitfall, StepKind } from '@/simulation'
 import type { AssessRec } from '@/simulation/assessBridge'
 import { canResolveDeepLink } from '@/simulation/deepLinks'
+import { logSimTrapPick } from '@/utils/analytics'
 import { Eyebrow } from './atoms'
 import {
   SEVERITY_DOT,
@@ -285,7 +286,11 @@ export function DecisionSection({
               variant="ghost"
               key={`${c.label}-${i}`}
               type="button"
-              onClick={() => setChosen(i)}
+              onClick={() => {
+                setChosen(i)
+                // WS-16: record which Common Failure the player fell for.
+                if (!c.correct) logSimTrapPick(phaseId, c.label)
+              }}
               className={`flex h-auto w-full flex-col items-start justify-start whitespace-normal rounded-lg border p-2.5 text-left transition-opacity ${
                 tone ? `${tone.border} bg-card` : 'border-border bg-muted'
               } ${chosen != null && !picked ? 'opacity-50' : 'opacity-100'}`}

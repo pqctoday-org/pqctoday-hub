@@ -430,3 +430,12 @@ export const logEndorsementGiven = (
 export const logQuizAnswer = (questionId: string, correct: boolean) => {
   logEvent('Quiz', correct ? 'Correct' : 'Incorrect', personaLabel(questionId))
 }
+
+/**
+ * Simulation trap/warn pick (WS-16) — which Common-Failure a player fell for,
+ * keyed by phase + the move's label. Where the hub's education is weakest shows
+ * up as the most-frequent labels in the GA4 "Simulation / Trap Pick" report.
+ */
+export const logSimTrapPick = (phase: string, moveLabel: string) => {
+  logEvent('Simulation', 'Trap Pick', personaLabel(`${phase}:${moveLabel}`))
+}
