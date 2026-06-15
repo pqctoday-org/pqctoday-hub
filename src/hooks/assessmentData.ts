@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { AssessmentInput } from './assessmentTypes'
+import { QC_FIRST_YEAR } from '../data/quantumTimeline'
 
 export const ALGORITHM_DB: Record<
   string,
@@ -422,7 +423,8 @@ export const COUNTRY_REGULATORY_URGENCY: Record<string, number> = {
   Poland: 5, // NIS2 transposition, early adoption
   Taiwan: 5, // NICS PQC study, semiconductor supply chain focus
 }
-export const ESTIMATED_QUANTUM_THREAT_YEAR = 2035
+// Aligned to the Applied Quantum framework Q-Day (first CRQC). Single source: quantumTimeline.
+export const ESTIMATED_QUANTUM_THREAT_YEAR = QC_FIRST_YEAR
 /**
  * Country-specific regulatory planning horizons (earliest hard deadline year).
  * Sources same as COUNTRY_REGULATORY_URGENCY above.

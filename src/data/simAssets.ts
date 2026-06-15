@@ -15,13 +15,13 @@
  * accelerating-CRQC event (crqcShift, years) pulls both dates earlier.
  */
 
+import { QC_FIRST_YEAR, QC_BROAD_YEAR } from './quantumTimeline'
+
 export type OrgSize = 'small' | 'mid' | 'large' | 'global'
 export type SensitivityTier = 'critical' | 'high' | 'medium' | 'low'
 
-/** First CRQC: most-sensitive assets become breakable. */
-export const QC_FIRST_YEAR = 2029
-/** CRQC broadly available: all sensitivity tiers at risk. */
-export const QC_BROAD_YEAR = 2035
+// Q-Day horizon — single source in quantumTimeline (shared with moscaClock + Assess).
+export { QC_FIRST_YEAR, QC_BROAD_YEAR }
 
 /** The year each sensitivity tier comes under quantum risk (interpolated 2029→2035). */
 export const TIER_AT_RISK_YEAR: Record<SensitivityTier, number> = {
