@@ -40,6 +40,8 @@ export interface SimulationState {
   seed: number
   /** Difficulty preset selecting the active SIM_BALANCE (WS-14). */
   difficulty: DifficultyId
+  /** Whether the first-run guided tour has been seen/dismissed (WS-12). */
+  tourSeen: boolean
 
   setSize: (v: string) => void
   setCountry: (v: string) => void
@@ -71,6 +73,8 @@ export interface SimulationState {
     country: string
     difficulty: DifficultyId
   }) => void
+  /** Mark the first-run guided tour as seen (WS-12). */
+  markTourSeen: () => void
   reset: () => void
   /** Serialize the current run to a portable JSON save string (WS-08). */
   exportSave: () => string
@@ -115,7 +119,7 @@ const SEED = {
   difficulty: 'realistic' as DifficultyId,
 }
 
-const STORE_VERSION = 6
+const STORE_VERSION = 7
 const SAVE_KIND = 'pqc-simulation-save'
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
@@ -172,6 +176,7 @@ export const useSimulationStore = create<SimulationState>()(
     (set, get) => ({
       ...SEED,
       seed: newSeed(),
+      tourSeen: false,
       setSize: (size) => set({ size }),
       setCountry: (country) => set({ country }),
       setSector: (sector) => set({ sector }),
@@ -198,7 +203,9 @@ export const useSimulationStore = create<SimulationState>()(
       setDifficulty: (difficulty) => set({ difficulty }),
       applyScenario: ({ sector, size, country, difficulty }) =>
         set({ sector, size, country, difficulty }),
-      reset: () => set({ ...SEED, seed: newSeed() }),
+      markTourSeen: () => set({ tourSeen: true }),
+      // RESET clears the run but NOT the onboarding flag (don't re-show the tour).
+      reset: () => set((s) => ({ ...SEED, seed: newSeed(), tourSeen: s.tourSeen })),
       exportSave: () =>
         JSON.stringify(
           { app: 'pqc-today', kind: SAVE_KIND, version: STORE_VERSION, state: saveSlice(get()) },
@@ -224,7 +231,9 @@ export const useSimulationStore = create<SimulationState>()(
       name: 'pqc-simulation',
       storage: createJSONStorage(() => localStorage),
       version: STORE_VERSION,
-      partialize: (s) => saveSlice(s),
+      // tourSeen persists alongside the run slice but is NOT part of saveSlice,
+      // so it never travels in a run export / app snapshot.
+      partialize: (s) => ({ ...saveSlice(s), tourSeen: s.tourSeen }),
       migrate: (persisted: unknown) => {
         // Defensive: ensure every field exists with a safe default. v3 introduced
         // strict maturity gating, so legacy pre-leveled progress (checks / turn) is
@@ -245,6 +254,7 @@ export const useSimulationStore = create<SimulationState>()(
           auto: Array.isArray(s.auto) ? (s.auto as string[]) : [],
           seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
           difficulty: asDifficulty(s.difficulty),
+          tourSeen: typeof s.tourSeen === 'boolean' ? s.tourSeen : false,
         }
       },
       onRehydrateStorage: () => (_state, error) => {

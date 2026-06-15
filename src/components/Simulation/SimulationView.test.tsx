@@ -12,7 +12,11 @@ const renderPage = () =>
     </MemoryRouter>
   )
 
-beforeEach(() => useSimulationStore.getState().reset())
+beforeEach(() => {
+  useSimulationStore.getState().reset()
+  // suppress the first-run tour (WS-12) for the gameplay tests
+  useSimulationStore.setState({ tourSeen: true })
+})
 
 describe('SimulationView (Mission Control)', () => {
   it('renders the console shell, setup dials and KPI ribbon', () => {
@@ -111,6 +115,17 @@ describe('SimulationView (Mission Control)', () => {
     for (const p of ['p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7']) {
       expect(checks[p] ?? 0).toBe(0)
     }
+  })
+
+  // WS-12 — the first-run guide shows on a fresh visit, is skippable, and is
+  // remembered (does not reappear once dismissed).
+  it('shows a skippable first-run guide that is remembered after dismissal', () => {
+    useSimulationStore.setState({ tourSeen: false })
+    renderPage()
+    expect(screen.getByRole('dialog', { name: /simulation guide/i })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /^Skip$/ }))
+    expect(useSimulationStore.getState().tourSeen).toBe(true)
+    expect(screen.queryByRole('dialog', { name: /simulation guide/i })).not.toBeInTheDocument()
   })
 
   // WS-13 — accessibility: the live feed is a polite log and severity carries a

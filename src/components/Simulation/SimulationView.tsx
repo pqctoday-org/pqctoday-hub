@@ -42,6 +42,7 @@ import { runQuarter } from '@/simulation/quarterEngine'
 import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
 import { getBalance, SIM_SCENARIOS, type DifficultyId } from '@/data/simBalance'
 import { Eyebrow, Ring, Radial, Dial, Stat } from './atoms'
+import { SimTour } from './SimTour'
 import { SEVERITY_META } from './simChrome'
 import {
   ResCol,
@@ -185,6 +186,8 @@ export function SimulationView() {
     difficulty,
     setDifficulty,
     applyScenario,
+    tourSeen,
+    markTourSeen,
   } = useSimulationStore()
   // WS-14: the active difficulty balance the engine + scoring read (config swap).
   const balance = getBalance(difficulty)
@@ -1525,6 +1528,8 @@ export function SimulationView() {
       )}
 
       {report && <QuarterReport report={report} onClose={() => setReport(null)} />}
+      {/* WS-12: skippable first-run guide, shown until dismissed/finished */}
+      {!tourSeen && <SimTour onClose={markTourSeen} />}
     </div>
   )
 }

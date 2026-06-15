@@ -109,6 +109,15 @@ describe('useSimulationStore', () => {
     expect(s().sector).toBe('financial')
   })
 
+  // WS-12 — the onboarding flag is remembered and survives a run reset.
+  it('markTourSeen persists and reset does not re-show the tour', () => {
+    useSimulationStore.setState({ tourSeen: false })
+    s().markTourSeen()
+    expect(s().tourSeen).toBe(true)
+    s().reset()
+    expect(s().tourSeen).toBe(true) // reset clears the run, not the onboarding flag
+  })
+
   it('importSave rejects malformed / foreign input without throwing', () => {
     expect(s().importSave('not json')).toBe(false)
     expect(s().importSave('{}')).toBe(false)
