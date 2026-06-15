@@ -17,6 +17,7 @@ import { resourcesForPhase, REFERENCE_PHASES } from '@/data/phaseResourceMap'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import type { TreeStep, TreeActivity, LevelBand, Pitfall, StepKind } from '@/simulation'
 import type { AssessRec } from '@/simulation/assessBridge'
+import { canResolveDeepLink } from '@/simulation/deepLinks'
 import { Eyebrow } from './atoms'
 import {
   SEVERITY_DOT,
@@ -73,7 +74,8 @@ export function resLinks(
     .map((id) => ({
       id,
       label: PG_NAME.get(id) ?? id,
-      to: `/playground/tools/${id}`,
+      // playground tools route is /playground/:toolId (no "tools" segment)
+      to: `/playground/${id}`,
     }))
   return [...biz, ...pg]
 }
@@ -90,6 +92,9 @@ export function ResCol({ title, items }: { title: string; items: ResItem[] }) {
       </Eyebrow>
       <div className="flex flex-col gap-1.5">
         {items.map((r) => {
+          // WS-06: a navigation target that no longer resolves degrades to a
+          // disabled "resource moved" row instead of dead-ending the player.
+          const resolvable = !!r.onOpen || canResolveDeepLink(r.to)
           const inner = (
             <>
               <span
@@ -104,7 +109,11 @@ export function ResCol({ title, items }: { title: string; items: ResItem[] }) {
               <span className="min-w-0 flex-1 text-left">
                 <span className="block text-[11.5px] font-semibold text-foreground">{r.label}</span>
                 <span className="block font-mono text-[9px] text-muted-foreground">
-                  {r.onOpen ? 'opens in simulation' : r.to}
+                  {r.onOpen
+                    ? 'opens in simulation'
+                    : resolvable
+                      ? r.to
+                      : 'resource moved — unavailable'}
                 </span>
               </span>
             </>
@@ -112,6 +121,17 @@ export function ResCol({ title, items }: { title: string; items: ResItem[] }) {
           const cls = `flex w-full items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
             r.done ? 'border-success/40 bg-success/5' : 'border-border bg-muted hover:bg-muted/70'
           }`
+          if (!resolvable)
+            return (
+              <div
+                key={r.id + r.to}
+                aria-disabled="true"
+                title="This resource has moved — it'll return when the link is updated."
+                className={`${cls} cursor-not-allowed border-warning/40 bg-warning/5 opacity-60`}
+              >
+                {inner}
+              </div>
+            )
           // embed in-sim (keeps the sim header) when onOpen is set; else navigate
           return r.onOpen ? (
             <Button
@@ -311,7 +331,7 @@ export function DecisionSection({
               </span>
               <span className="shrink-0 font-mono text-[9px] text-primary">open here →</span>
             </Button>
-          ) : (
+          ) : canResolveDeepLink(step.to) ? (
             <Link
               to={step.to}
               onClick={() => {
@@ -330,6 +350,17 @@ export function DecisionSection({
               </span>
               <span className="shrink-0 font-mono text-[9px] text-primary">open →</span>
             </Link>
+          ) : (
+            // WS-06: target no longer resolves — show a notice, never a dead link.
+            <div
+              className="flex items-center gap-2.5 rounded-md border border-warning/40 bg-warning/5 px-3 py-2"
+              title="This resource has moved — it'll return when the link is updated."
+            >
+              <span className="min-w-0 flex-1 truncate text-[12px] font-semibold text-foreground">
+                {step.label}
+              </span>
+              <span className="shrink-0 font-mono text-[9px] text-warning">resource moved</span>
+            </div>
           )}
         </div>
       )}
