@@ -8,6 +8,9 @@ import { SIM_TREES, flattenTree, achievedTreeLevel } from './index'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { ARTIFACT_TYPE_TO_TOOL_ID } from '@/components/BusinessCenter/businessToolsRegistry'
 import { PHASE_MATURITY } from '@/data/phaseMaturity'
+import { resolveDeepLink } from './deepLinks'
+import { REFERENCE_PHASES } from '@/data/phaseResourceMap'
+import { resLinks } from '@/components/Simulation/sections'
 
 const PHASES = ['p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7'] as const
 
@@ -37,6 +40,42 @@ describe('SIM_TREES — coverage & shape', () => {
             } else {
               expect(s.refId, `${phase}/${act.id}: reference missing refId`).toBeTruthy()
             }
+          }
+        }
+      }
+    }
+  })
+
+  it('WS-06: every tree leaf deep-link resolves to a real route + valid params', () => {
+    for (const phase of PHASES) {
+      for (const s of flattenTree(SIM_TREES[phase]!)) {
+        const res = resolveDeepLink(s.to)
+        expect(res.ok, `${phase}: ${s.to} — ${res.reason ?? ''}`).toBe(true)
+      }
+    }
+  })
+
+  it('WS-06: every REFERENCE_PHASES deepUrl resolves (params + path)', () => {
+    for (const [id, ref] of Object.entries(REFERENCE_PHASES)) {
+      const res = resolveDeepLink(ref.deepUrl)
+      expect(res.ok, `ref ${id}: ${ref.deepUrl} — ${res.reason ?? ''}`).toBe(true)
+    }
+  })
+
+  it('WS-06: every resLinks-generated target resolves (catches link-template drift)', () => {
+    // Run across phases + legs and a spread of scenarios so all generated links
+    // (learn / business / playground / reference) get validated.
+    const scenarios: [string, string][] = [
+      ['healthcare', 'executive'],
+      ['financial', 'architect'],
+      ['telecom', 'ops'],
+    ]
+    for (const phase of PHASES) {
+      for (const leg of ['learn', 'activities', 'reference'] as const) {
+        for (const [sector, seat] of scenarios) {
+          for (const item of resLinks(leg, phase, sector, seat)) {
+            const res = resolveDeepLink(item.to)
+            expect(res.ok, `${phase}/${leg}: ${item.to} — ${res.reason ?? ''}`).toBe(true)
           }
         }
       }
