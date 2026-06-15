@@ -40,7 +40,7 @@ import { SIM_TREES, flattenTree, achievedTreeLevel, type TreeStep } from '@/simu
 import { computeReadiness } from '@/simulation/readiness'
 import { runQuarter } from '@/simulation/quarterEngine'
 import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
-import { getBalance, SIM_SCENARIOS, type DifficultyId } from '@/data/simBalance'
+import { getBalance, type DifficultyId } from '@/data/simBalance'
 import { Eyebrow, Ring, Radial, Dial, Stat } from './atoms'
 import { SimTour } from './SimTour'
 import { SEVERITY_META } from './simChrome'
@@ -185,7 +185,6 @@ export function SimulationView() {
     importSave,
     difficulty,
     setDifficulty,
-    applyScenario,
     tourSeen,
     markTourSeen,
   } = useSimulationStore()
@@ -595,18 +594,6 @@ export function SimulationView() {
               setDifficulty(DIFF_ORDER[(DIFF_ORDER.indexOf(difficulty) + 1) % DIFF_ORDER.length])
             }
           />
-          {SIM_SCENARIOS.map((sc) => (
-            <Button
-              key={sc.id}
-              type="button"
-              variant="ghost"
-              onClick={() => applyScenario(sc)}
-              title={sc.description}
-              className="h-auto shrink-0 rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-[9px] font-bold text-background/60 hover:bg-background/10"
-            >
-              ★ {sc.label}
-            </Button>
-          ))}
         </div>
         <div className="ml-auto flex shrink-0 items-center gap-2.5">
           <Link
