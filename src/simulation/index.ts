@@ -19,7 +19,8 @@ const modules = import.meta.glob<{ default: PhaseTree }>('./trees/simTree.*.ts',
 })
 
 // filename → ./trees/simTree.<phase>.<MMDDYYYY>.ts ; latest date per phase wins.
-const FILE_RE = /simTree\.(p[0-7])\.(\d{2})(\d{2})(\d{4})\.ts$/
+// `foundations` is the spanning cross-cutting band (no phase number).
+const FILE_RE = /simTree\.(p[0-7]|foundations)\.(\d{2})(\d{2})(\d{4})\.ts$/
 const sortKey = (mm: string, dd: string, yyyy: string) => `${yyyy}${mm}${dd}`
 
 const latest: Partial<Record<PhaseId, { key: string; tree: PhaseTree }>> = {}

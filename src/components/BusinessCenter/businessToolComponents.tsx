@@ -161,6 +161,22 @@ export const BUSINESS_TOOL_COMPONENTS: Record<string, LazyComp> = {
   'skills-team-plan': lazyWithRetry(() =>
     import('./tools/SkillsTeamPlan').then((m) => ({ default: m.SkillsTeamPlan }))
   ),
+  'infra-modernization-planner': lazyWithRetry(() =>
+    import('./tools/InfraModernizationPlanner').then((m) => ({
+      default: m.InfraModernizationPlanner,
+    }))
+  ),
+  'refresh-cycle-alignment': lazyWithRetry(() =>
+    import('./tools/RefreshCycleAlignment').then((m) => ({ default: m.RefreshCycleAlignment }))
+  ),
+  'accelerated-execution-profile': lazyWithRetry(() =>
+    import('./tools/AcceleratedExecutionProfile').then((m) => ({
+      default: m.AcceleratedExecutionProfile,
+    }))
+  ),
+  'data-at-rest-strategy': lazyWithRetry(() =>
+    import('./tools/DataAtRestStrategy').then((m) => ({ default: m.DataAtRestStrategy }))
+  ),
 }
 
 /** Look up the lazy-loaded builder component for a given artifact type. */

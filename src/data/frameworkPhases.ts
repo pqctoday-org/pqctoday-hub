@@ -360,7 +360,7 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     produce: [
       { route: '/business', ref: 'kpi-dashboard', status: 'live' },
       { route: '/business', ref: 'kpi-tracker', status: 'live' },
-      { route: '/business', ref: 'skills-team-plan', status: 'gap' },
+      { route: '/business', ref: 'skills-team-plan', status: 'live' },
       { route: '/learn', ref: 'crypto-agility', status: 'live' },
       { route: '/compliance', ref: 'reg-mapping', status: 'live' },
     ],

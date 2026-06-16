@@ -27,5 +27,6 @@
       "@pqctoday/softhsm-wasm": ["./src/vendor/softhsm-wasm/index.d.ts"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/simulation/trees/archive"]
 }

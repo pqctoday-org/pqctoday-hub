@@ -38,6 +38,19 @@ const TIER_BASE_VALUE: Record<SensitivityTier, number> = {
   medium: 8,
   low: 3,
 }
+/**
+ * The assess-engine sensitivity score each tier corresponds to — the documented
+ * link to `pqcassessment_*.csv` (its `sensitivity` rows). The single-source-of-
+ * truth guard in `simAssets.test.ts` asserts every sensitivity score the CSV
+ * defines maps onto one of these four tiers, so the hand-curated SECTOR_SEEDS
+ * can't silently drift away from the assess-engine catalogue.
+ */
+export const TIER_SENSITIVITY_SCORE: Record<SensitivityTier, number> = {
+  critical: 25,
+  high: 15,
+  medium: 5,
+  low: 0,
+}
 const SIZE_MULT: Record<OrgSize, number> = { small: 0.25, mid: 1, large: 4, global: 12 }
 
 export interface CriticalAsset {
@@ -59,7 +72,7 @@ const UNIVERSAL: AssetSeed[] = [
 
 // Per-sector assets, taken verbatim from the assess-engine sensitivity catalogue
 // (sensitivity 25→critical, 15→high, 5→medium, 0→low).
-const SECTOR_SEEDS: Record<string, AssetSeed[]> = {
+export const SECTOR_SEEDS: Record<string, AssetSeed[]> = {
   general: [
     {
       id: 'crypto-keys',

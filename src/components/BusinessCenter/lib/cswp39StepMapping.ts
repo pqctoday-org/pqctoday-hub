@@ -43,6 +43,8 @@ export const STEP_ARTIFACT_TYPES: Record<CSWP39StepId, ExecutiveDocumentType[]> 
     'crqc-scenario',
     // Foundations staffing artifact lives alongside the KPI/maturity surfaces.
     'skills-team-plan',
+    'refresh-cycle-alignment',
+    'accelerated-execution-profile',
   ],
   implement: [
     'risk-treatment-plan',
@@ -50,6 +52,8 @@ export const STEP_ARTIFACT_TYPES: Record<CSWP39StepId, ExecutiveDocumentType[]> 
     'deployment-playbook',
     'hybrid-transition',
     'crypto-api-refactor',
+    'infra-modernization-plan',
+    'data-at-rest-strategy',
   ],
 }
 
@@ -89,6 +93,10 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'program-charter': 'governance',
   'initial-scoping': 'governance',
   'skills-team-plan': 'governance',
+  'infra-modernization-plan': 'architecture',
+  'refresh-cycle-alignment': 'architecture',
+  'accelerated-execution-profile': 'governance',
+  'data-at-rest-strategy': 'architecture',
   // Simulation-produced roadmap (WS-15) — same pillar as a migration roadmap.
   'sim-roadmap': 'architecture',
 }

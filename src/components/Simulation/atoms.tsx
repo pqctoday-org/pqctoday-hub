@@ -156,6 +156,41 @@ export function Dial({
   )
 }
 
+/**
+ * Read-only counterpart to {@link Dial} for org facts that now come from the
+ * user's assessment (single source of truth) — no click-to-cycle, no ⟳ glyph.
+ * Renders as a static value tile with a "from your assessment" hint; `note`
+ * surfaces extra context (e.g. the mapped industry, or a modelled-archetype note).
+ */
+export function ReadonlyDial({
+  label,
+  value,
+  hint,
+  note,
+  title,
+}: {
+  label: string
+  value: string
+  hint: string
+  note?: string
+  title?: string
+}) {
+  return (
+    <div
+      title={title}
+      aria-label={`${label}: ${value}. ${hint}.`}
+      className="flex flex-col gap-px rounded-lg border border-background/20 bg-background/5 px-3 py-1.5 text-left"
+    >
+      <span className="font-mono text-[8px] font-bold uppercase tracking-[0.14em] text-background/50">
+        {label}
+      </span>
+      <span className="text-[12.5px] font-bold text-background">{value}</span>
+      <span className="text-[9.5px] text-background/50">{hint}</span>
+      {note && <span className="text-[8.5px] italic text-background/40">{note}</span>}
+    </div>
+  )
+}
+
 export function Stat({
   label,
   value,

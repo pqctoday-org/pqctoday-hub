@@ -13,8 +13,12 @@ import {
   INSURANCE_POLICY,
   QC_FIRST_YEAR,
   QC_BROAD_YEAR,
+  SECTOR_SEEDS,
+  TIER_SENSITIVITY_SCORE,
   type OrgSize,
 } from './simAssets'
+import { SECTORS } from './moscaClock'
+import { industrySensitivityConfigs } from './industryAssessConfig'
 
 const SIZES: OrgSize[] = ['small', 'mid', 'large', 'global']
 
@@ -110,5 +114,46 @@ describe('simAssets — exposure & insurance', () => {
     // PKI keys (TNFL, €30M × 20% = €6M) + genomic (HNDL, €30M × 100% = €30M) = €36M
     expect(criticalExposedValue(ex.rows)).toBeCloseTo(36, 5)
     expect(insuranceCoverage('mid', ex.rows)).toBeGreaterThanOrEqual(criticalExposedValue(ex.rows))
+  })
+})
+
+// #6 — the assess-engine CSV (pqcassessment_*.csv) is the documented source of
+// truth for sensitivity; SECTOR_SEEDS is a hand-curated, sector-keyed view of it.
+// These guards catch the two real drifts (a sim sector with no seeds → silent
+// 'general' fallback; the CSV introducing a sensitivity level the sim's tiers
+// don't model) WITHOUT pinning the tuned gameplay values.
+describe('simAssets — single source of truth (assess CSV consistency guard)', () => {
+  it('every sim sector has its own seeded portfolio (no silent general fallback)', () => {
+    for (const s of SECTORS) {
+      expect(
+        SECTOR_SEEDS[s.id],
+        `sector "${s.id}" has no asset seeds → falls back to general`
+      ).toBeDefined()
+      expect(SECTOR_SEEDS[s.id].length, `sector "${s.id}" has empty seeds`).toBeGreaterThan(0)
+    }
+  })
+
+  it("the sim's sensitivity tiers cover every sensitivity score the assess CSV defines", () => {
+    expect(industrySensitivityConfigs.length, 'CSV sensitivity catalogue is empty').toBeGreaterThan(
+      0
+    )
+    const simScores = new Set(Object.values(TIER_SENSITIVITY_SCORE)) // {25,15,5,0}
+    for (const score of new Set(industrySensitivityConfigs.map((c) => c.sensitivityScore))) {
+      expect(
+        simScores.has(score),
+        `CSV sensitivity score ${score} maps to no sim tier — update TIER_SENSITIVITY_SCORE / SECTOR_SEEDS`
+      ).toBe(true)
+    }
+  })
+
+  it('every tier used by SECTOR_SEEDS is a known sim sensitivity tier', () => {
+    const usedTiers = new Set(
+      Object.values(SECTOR_SEEDS)
+        .flat()
+        .map((a) => a.tier)
+    )
+    for (const tier of usedTiers) {
+      expect(TIER_SENSITIVITY_SCORE[tier], `tier "${tier}" is not a known sim tier`).toBeDefined()
+    }
   })
 })

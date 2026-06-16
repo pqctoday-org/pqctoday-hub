@@ -58,6 +58,20 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
         "Fails. Quantum risk stays invisible to the board, so it loses the next budget cycle to louder priorities. The framework's Level 4 requires quantum risk reported to the board alongside other strategic risks."
       ),
     },
+    {
+      label: 'Delegate the whole program to your vendors',
+      desc: 'Let suppliers drive the migration on their roadmaps.',
+      evaluate: trap(
+        'Fails. Common failure: the vendor-delegation trap. You can delegate implementation, never the risk — vendors migrate on their timeline, leaving you accountable to the board with no control over yours.'
+      ),
+    },
+    {
+      label: 'Stand up a SteerCo without the business units',
+      desc: 'Keep governance inside security to move faster.',
+      evaluate: trap(
+        'Fails. Common failure: business units absent from the SteerCo. Workstream leads hit constant political resistance and the program stalls on cross-functional decisions.'
+      ),
+    },
   ],
   p1: [
     {
@@ -95,6 +109,13 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       desc: 'Faster to produce, everyone can edit it.',
       evaluate: trap(
         "Fails. Not machine-verifiable: it can't be queried, diffed, or fed to compliance automation. Gate G2 stays blocked and you're stuck at Level 1."
+      ),
+    },
+    {
+      label: 'Give the whole team read access to the CBOM',
+      desc: 'Publish it to the wiki so everyone can self-serve.',
+      evaluate: trap(
+        'Fails. The CBOM is a map of exactly which systems use breakable crypto — an HNDL shopping list for an attacker. It needs Restricted classification, RBAC, query logging and SOC exfiltration monitoring, not open access.'
       ),
     },
   ],
@@ -137,6 +158,20 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       desc: 'Keep the horizon short and flexible.',
       evaluate: trap(
         "Fails. Migration is inherently multi-year — a single-year horizon can't sequence dependencies (you must do PKI before the apps that depend on it). Caps you at Level 1."
+      ),
+    },
+    {
+      label: 'Defer vendor engagement to Year 2',
+      desc: 'Finish your own inventory before talking to vendors.',
+      evaluate: trap(
+        'Fails. Vendor lead time (6–18 months) is the longest pole on the critical path. Engaging in Year 2 makes the whole timeline vendor-constrained — start the top-10 in Q1 Year 1.'
+      ),
+    },
+    {
+      label: 'Build a single-track roadmap with no contingencies',
+      desc: 'Assume every pilot and vendor lands on schedule.',
+      evaluate: trap(
+        'Fails. With no acceleration/deceleration triggers, one slipped vendor or failed pilot derails the plan. The framework requires contingency triggers and a pre-drafted accelerated profile.'
       ),
     },
   ],
@@ -183,6 +218,20 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
               outcome: `OK as interim. ${ctx.country.id}'s end-state is pure PQC, so hybrid needs a documented sunset plan or it becomes permanent tech debt.`,
             },
     },
+    {
+      label: 'Deploy to a FIPS-required system before a validated module exists',
+      desc: 'Push PQC into the regulated estate now.',
+      evaluate: trap(
+        'Fails. As of June 2026 there is no FIPS 140-3-validated PQC module. In a FIPS-required environment that is non-compliant — gate PQC there behind CAVP/validation, and deploy first where validation is not mandated.'
+      ),
+    },
+    {
+      label: 'Skip the library-readiness check',
+      desc: 'Assume the runtime already supports the algorithms.',
+      evaluate: trap(
+        'Fails. A lagging library/runtime (pre-OpenSSL 3.5, old Bouncy Castle, libsodium/MbedTLS gaps) silently blocks the deployment you designed. Verify library versions as a hard pilot prerequisite.'
+      ),
+    },
   ],
   p6: [
     {
@@ -199,6 +248,20 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
         'Fails. Common failure: ignored infrastructure limits. Larger PQC keys and handshakes break old middleboxes and overflow HSM capacity — discovered in production, not planning. Test before you migrate the apps on top.'
       ),
     },
+    {
+      label: 'Skip capacity planning for high-volume TLS termination',
+      desc: 'Roll PQC to the CDN/load-balancer edge without modelling load.',
+      evaluate: trap(
+        'Fails. Common failure: neglected capacity planning. PQC bandwidth/CPU growth at aggregate edge scale swamps unmodelled capacity, and the outage surfaces under peak load. Model CDN/LB capacity before broad rollout.'
+      ),
+    },
+    {
+      label: 'Plan the X.509-vs-MTC fork per deployment',
+      desc: 'Route public web PKI to Merkle Tree Certs, internal PKI to X.509+PQC.',
+      evaluate: sound(
+        'Sound. The framework splits PKI: public-facing web PKI heads toward Merkle Tree Certificates + ACME automation, while internal/private PKI moves to X.509+PQC now. Deciding the fork per deployment avoids a dead-end PKI investment.'
+      ),
+    },
   ],
   p7: [
     {
@@ -213,6 +276,36 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       desc: 'Wait for their roadmaps to land.',
       evaluate: trap(
         "Fails. Common failure: 'the vendors will sort it out.' Blocked dependencies with no dated commitment stall your waves indefinitely. Engage, score criticality, and write PQC into contracts."
+      ),
+    },
+    {
+      label: 'Accept a verbal "we’re working on PQC" from a key vendor',
+      desc: 'Take the roadmap assurance and move on.',
+      evaluate: trap(
+        'Fails. Common failure: verbal commitments evaporate when vendor priorities shift. Require dated GA commitments and contractual remedies in writing, or the dependency is unmanaged.'
+      ),
+    },
+  ],
+  foundations: [
+    {
+      label: 'Run the maturity self-assessment & set board KPIs',
+      desc: 'Seven-domain score (overall = weakest) + a board KPI baseline.',
+      evaluate: sound(
+        'Sound. The seven-domain self-assessment (overall = your weakest domain) plus a board KPI baseline make progress measurable and sustainable — the foundation every phase reports against.'
+      ),
+    },
+    {
+      label: 'Declare victory when Tier-1 migration milestones are hit',
+      desc: 'Close the program on milestone completion.',
+      evaluate: trap(
+        "Fails. Common failure: 'declared done.' Without verification evidence (observed negotiation, negative testing, the dossier) the migration is a belief, not a fact — and an auditor will ask for proof, not milestones."
+      ),
+    },
+    {
+      label: 'Disband the program team once Tier-1 is migrated',
+      desc: 'Free up the people; the hard part is over.',
+      evaluate: trap(
+        'Fails. Common failure: orphaned capabilities. CBOM, discovery and vendor governance decay within quarters without funded BAU owners — closure is a handover, not an end-of-funding.'
       ),
     },
   ],

@@ -123,6 +123,10 @@ export const BUSINESS_PHASES: Record<string, PhaseResource> = {
   'program-charter': { phasesServed: ['p0'], legs: ['practice', 'output'] },
   'initial-scoping': { phasesServed: ['p0'], legs: ['practice', 'output'] },
   'skills-team-plan': { phasesServed: ['foundations'], legs: ['practice', 'output'] },
+  'infra-modernization-planner': { phasesServed: ['p6'], legs: ['practice', 'output'] },
+  'refresh-cycle-alignment': { phasesServed: ['p4'], legs: ['practice', 'output'] },
+  'accelerated-execution-profile': { phasesServed: ['p4'], legs: ['practice', 'output'] },
+  'data-at-rest-strategy': { phasesServed: ['p5'], legs: ['practice', 'output'] },
 }
 
 export const PLAYGROUND_PHASES: Record<string, PhaseResource> = {

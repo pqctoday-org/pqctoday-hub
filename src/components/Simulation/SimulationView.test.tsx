@@ -4,6 +4,8 @@ import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { SimulationView } from './SimulationView'
 import { useSimulationStore } from '@/store/useSimulationStore'
+import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
+import type { AssessmentResult } from '@/hooks/assessmentTypes'
 
 const renderPage = () =>
   render(
@@ -12,8 +14,56 @@ const renderPage = () =>
     </MemoryRouter>
   )
 
+// A minimal but valid completed assessment — the sim now requires one (single
+// source of truth: sector/size/jurisdiction derive from the assessment), so the
+// console only renders when an assessment exists. The profile fields drive the
+// read-only org dials (Healthcare → financial/healthcare sector, 51-200 → large,
+// Germany → DE hybrid-required archetype).
+const minimalAssessment = (): AssessmentResult => ({
+  riskScore: 50,
+  riskLevel: 'medium',
+  algorithmMigrations: [],
+  complianceImpacts: [],
+  recommendedActions: [],
+  narrative: 'Test assessment.',
+  generatedAt: new Date().toISOString(),
+  assessmentProfile: {
+    industry: 'Healthcare',
+    country: 'Germany',
+    algorithmsSelected: [],
+    algorithmUnknown: false,
+    sensitivityLevels: [],
+    sensitivityUnknown: false,
+    complianceFrameworks: [],
+    complianceUnknown: false,
+    migrationStatus: 'not-started',
+    migrationUnknown: false,
+    mode: 'quick',
+    useCasesUnknown: false,
+    retentionUnknown: false,
+    credentialLifetimeUnknown: false,
+    infrastructureUnknown: false,
+    agilityUnknown: false,
+    vendorUnknown: false,
+    systemScale: '51-200',
+    scaleUnknown: false,
+    timelineUnknown: false,
+  },
+})
+
+const seedAssessment = () => {
+  const result = minimalAssessment()
+  useAssessmentResultStore.getState().setResult(result)
+  useAssessmentResultStore.getState().markComplete(result)
+}
+
 beforeEach(() => {
   useSimulationStore.getState().reset()
+  useAssessmentResultStore.getState().reset()
+  // The sim's require-assessment gate: seed a completed assessment so the full
+  // console renders (gameplay tests assume it). Tests that need the gate reset it.
+  useAssessmentResultStore.setState({ lastResult: null, completedAt: null })
+  seedAssessment()
   // suppress the first-run tour (WS-12) for the gameplay tests
   useSimulationStore.setState({ tourSeen: true })
 })
@@ -23,13 +73,36 @@ describe('SimulationView (Mission Control)', () => {
     renderPage()
     expect(screen.getByText('PQC Today Sim')).toBeInTheDocument()
     expect(screen.getByText('PQC Migration Simulation')).toBeInTheDocument()
-    expect(screen.getByText('ORG ⟳')).toBeInTheDocument()
+    // ORG is now read-only (sourced from the assessment) — label has no ⟳ glyph,
+    // and the dial is not a button.
+    const org = screen.getByText('ORG')
+    expect(org).toBeInTheDocument()
+    expect(org.textContent).not.toContain('⟳')
+    expect(org.closest('button')).toBeNull()
+    // SEAT stays switchable — it keeps the ⟳ glyph on a button.
     expect(screen.getByText('SEAT ⟳')).toBeInTheDocument()
     expect(screen.getByText(/Mosca/)).toBeInTheDocument()
     expect(screen.getByText('Phases cleared')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /End Quarter/ })).toBeInTheDocument()
     // exit affordance back to the hub
     expect(screen.getByRole('link', { name: /Exit to hub/i })).toHaveAttribute('href', '/')
+  })
+
+  // The sim runs on the user's assessed org (single source of truth): with no
+  // completed assessment it shows a gate, not the playable console.
+  it('renders the require-assessment gate when no assessment exists', () => {
+    useAssessmentResultStore.setState({ lastResult: null, completedAt: null })
+    renderPage()
+    // the gate prompt + a link to start the assessment
+    expect(screen.getByText(/Run your PQC assessment to start the simulation/i)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Start the assessment/i })).toHaveAttribute(
+      'href',
+      '/assess'
+    )
+    expect(screen.getByRole('link', { name: /View report/i })).toHaveAttribute('href', '/report')
+    // the console is NOT rendered
+    expect(screen.queryByText('Phases cleared')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /End Quarter/ })).not.toBeInTheDocument()
   })
 
   it('clicking a phase in the journey switches the active phase ops', () => {

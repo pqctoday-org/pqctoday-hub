@@ -30,6 +30,7 @@ import { WorkflowBreadcrumb } from '../shared/WorkflowBreadcrumb'
 import { logReportViewed, logReportShareLinkOpened, logReportCta } from '@/utils/analytics'
 import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
 import { PersonaSuggestionCard } from '@/components/Assess/PersonaSuggestionCard'
+import { MaturitySummaryCard } from '@/components/Assess/MaturitySummaryCard'
 import { getBeltTierLabel } from '@/data/personaConfig'
 import { useAwarenessScore } from '@/hooks/useAwarenessScore'
 import { decodeShareToken } from '@/utils/reportShareToken'
@@ -479,6 +480,8 @@ export const ReportView: React.FC = () => {
       />
 
       <MaturityTierChip />
+
+      <MaturitySummaryCard />
 
       <PersonaSuggestionCard />
 

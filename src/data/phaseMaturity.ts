@@ -18,13 +18,16 @@ export interface MaturityLevel {
   indicator: string
 }
 
-/** The framework's Phase-0 ladder names, reused as generic stage labels. */
+/** The framework's named maturity ladder for the per-phase 0–4 levels. Names
+ *  align with the framework's 0–5 model (level 5 'Optimized' is the overall-
+ *  program ceiling, tracked separately in maturityModel.ts; per-phase ladders
+ *  top out at level 4 'Advanced'). */
 export const MATURITY_LEVEL_NAMES = [
   'Unaware',
   'Aware',
   'Initiated',
-  'Established',
-  'Optimized',
+  'Progressing',
+  'Advanced',
 ] as const
 
 /** The per-phase win bar — the framework's "Success (L2)" gate. */
@@ -42,11 +45,10 @@ export const LEVEL_EVIDENCE: Partial<
   p1: { 2: ['management-tools-audit'] }, // Discovery/tooling audit → Level 2
   p2: { 2: ['crypto-cbom'] }, // CycloneDX CBOM operational → Level 2
   p3: { 2: ['risk-register'] }, // Scored, prioritised backlog → Level 2
-  p4: { 2: ['migration-roadmap'] }, // Multi-year roadmap → Level 2
+  p4: { 2: ['migration-roadmap'], 4: ['accelerated-execution-profile'] }, // roadmap → L2; accelerated profile → L4
   p5: { 2: ['deployment-playbook'] }, // Pilot/wave playbook → Level 2
   p7: { 2: ['vendor-scorecard'] }, // Vendors engaged + scored → Level 2
-  // p6 (Infrastructure) stays manual — no Command-Center infra artifact yet
-  // (the infra-modernization planner is a separate backlog item).
+  p6: { 2: ['infra-modernization-plan'] }, // Infrastructure modernization plan → Level 2
 }
 
 export const PHASE_MATURITY: Partial<Record<PhaseId, MaturityLevel[]>> = {
