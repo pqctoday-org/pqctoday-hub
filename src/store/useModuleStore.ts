@@ -72,6 +72,21 @@ const INITIAL_STATE: LearningProgress = {
   quizMastery: { correctQuestionIds: [] },
 }
 
+/**
+ * Major number of the persisted data-version string ("14.0.0" → 14) — the input
+ * the migrate ladder expects. The data-version major tracks MODULE_STORE_VERSION
+ * (each migrate step sets `state.version = '<N>.0.0'`). Absent/unparseable → 0,
+ * so a very old or unversioned file runs the full ladder.
+ */
+function parseDataVersion(v: unknown): number {
+  if (typeof v === 'number') return v
+  if (typeof v === 'string') {
+    const major = parseInt(v.split('.')[0], 10)
+    return Number.isNaN(major) ? 0 : major
+  }
+  return 0
+}
+
 export const useModuleStore = create<ModuleState>()(
   persist(
     (set, get) => ({
@@ -400,14 +415,28 @@ export const useModuleStore = create<ModuleState>()(
       },
 
       loadProgress: (progress) =>
-        set((state) => ({
-          ...state,
-          ...progress,
-          // Preserve sessionTracking from live state if imported file predates v3
-          sessionTracking: progress.sessionTracking ?? state.sessionTracking,
-          // Preserve quizMastery from live state if imported file predates v4
-          quizMastery: progress.quizMastery ?? state.quizMastery,
-        })),
+        set((state) => {
+          // Route the imported file through the SAME migrate ladder that runs on
+          // localStorage rehydrate (reused via persist.getOptions().migrate — one
+          // source of truth, no duplicated logic). Without this, an old backup
+          // imported as-is keeps stale/partial shapes — e.g. a pre-v6 file still
+          // carrying the retired `key-management` id would never be split into
+          // kms-pqc / hsm-pqc, silently losing that progress. Deep-copy first:
+          // the migrate ladder mutates its argument.
+          const fromVersion = parseDataVersion(progress.version)
+          const migrate = useModuleStore.persist.getOptions().migrate
+          const migrated = (
+            migrate ? migrate(JSON.parse(JSON.stringify(progress)), fromVersion) : progress
+          ) as LearningProgress
+          return {
+            ...state,
+            ...migrated,
+            // Preserve original import semantics: prefer the file's value, else
+            // keep live — session streak (v3+) and cumulative quiz mastery (v4+).
+            sessionTracking: progress.sessionTracking ?? state.sessionTracking,
+            quizMastery: progress.quizMastery ?? state.quizMastery,
+          }
+        }),
 
       resetProgress: () => set(INITIAL_STATE),
 
