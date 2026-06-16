@@ -4,7 +4,7 @@
  * Each KPI belongs to exactly one pillar; audience is a suggested stakeholder.
  */
 
-import type { PillarId } from './maturityModel'
+import type { PillarId } from './cpmMaturityModel'
 
 export type KpiAudience = 'board' | 'cio' | 'ciso' | 'architect' | 'ops'
 
