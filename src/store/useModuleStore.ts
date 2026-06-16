@@ -30,7 +30,6 @@ interface ModuleState extends LearningProgress {
   toggleLearnSection: (moduleId: string, sectionId: string) => void
   markLearnSectionRead: (moduleId: string, sectionId: string) => void
   markAllLearnSectionsComplete: (moduleId: string) => void
-  saveProgress: () => void
   loadProgress: (progress: LearningProgress) => void
   resetProgress: () => void
   resetModuleProgress: (moduleId: string) => void
@@ -404,18 +403,6 @@ export const useModuleStore = create<ModuleState>()(
           }
         }),
 
-      saveProgress: () => {
-        const progress = get().getFullProgress()
-        const dataStr = JSON.stringify(progress, null, 2)
-        const dataBlob = new Blob([dataStr], { type: 'application/json' })
-        const url = URL.createObjectURL(dataBlob)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = `pki-learning-progress-${new Date().toISOString().split('T')[0]}.json`
-        link.click()
-        URL.revokeObjectURL(url)
-      },
-
       loadProgress: (progress) =>
         set((state) => {
           // Route the imported file through the SAME migrate ladder that runs on
@@ -464,8 +451,6 @@ export const useModuleStore = create<ModuleState>()(
 
       getFullProgress: () => {
         const {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          saveProgress: _saveProgress,
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           loadProgress: _loadProgress,
           // eslint-disable-next-line @typescript-eslint/no-unused-vars

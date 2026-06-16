@@ -10,27 +10,9 @@ vi.mock('../utils/analytics', () => ({
 }))
 
 describe('useModuleStore', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
-  let mockLink: any
-
   beforeEach(() => {
     vi.clearAllMocks()
     useModuleStore.getState().resetProgress()
-
-    // Mock URL and createElement for saveProgress
-    mockLink = {
-      href: '',
-      download: '',
-      click: vi.fn(),
-    }
-
-    global.URL.createObjectURL = vi.fn().mockReturnValue('blob:test')
-    global.URL.revokeObjectURL = vi.fn()
-    vi.spyOn(document, 'createElement').mockImplementation((tagName: string) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
-      if (tagName === 'a') return mockLink as any
-      return document.createElement(tagName)
-    })
   })
 
   it('initializes with default state', () => {
@@ -144,17 +126,8 @@ describe('useModuleStore', () => {
   it('gets full progress without functions', () => {
     const progress = useModuleStore.getState().getFullProgress()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- checking function exclusion
-    expect((progress as any).saveProgress).toBeUndefined()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- checking function exclusion
     expect((progress as any).loadProgress).toBeUndefined()
     expect(progress.version).toBe('1.0.0')
-  })
-
-  it('saves progress to file', () => {
-    useModuleStore.getState().saveProgress()
-    expect(global.URL.createObjectURL).toHaveBeenCalled()
-    expect(mockLink.click).toHaveBeenCalled()
-    expect(global.URL.revokeObjectURL).toHaveBeenCalledWith('blob:test')
   })
 
   it('migrates from version 0 to current (7), initializing all fields', () => {
