@@ -1335,7 +1335,7 @@ export const HsmAcvpTesting = () => {
             const msgBytes = hexToBytes(edTv.msg)
             const sigBytes = hexToBytes(edTv.signature)
 
-            // Import NIST public key — verify only
+            // Import the RFC 8032 §7.1 public key — verify only
             const pubHandle = hsm_importEdDSAPublicKey(M, hSession, pkBytes, 'Ed25519')
             regKey({
               handle: pubHandle,
@@ -1352,7 +1352,7 @@ export const HsmAcvpTesting = () => {
             newResults.push({
               id: id16,
               algorithm: `EdDSA Ed25519 (${eName})`,
-              testCase: 'SigVer KAT',
+              testCase: 'SigVer KAT (RFC 8032 §7.1)',
               referenceUrl: REF.eddsa,
               status: isValid ? 'pass' : 'fail',
               details: isValid
