@@ -59,6 +59,13 @@ export interface ModuleManifest {
 
   playgroundTool?: string
   taxonomy?: { algorithms?: string[]; standards?: string[] }
+
+  /**
+   * Per-module learn-content version (B2). Bump when this module's content
+   * materially changes so the "What's New" surface can show "<module> updated".
+   * Absent ⇒ treated as 1. Independent of the persist/migrate store versions.
+   */
+  contentVersion?: number
 }
 
 /** The default tab set used by a standard module when `tabs` is omitted. */
