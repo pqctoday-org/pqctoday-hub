@@ -115,7 +115,7 @@ import {
   hsm_statefulSignBytes,
   hsm_statefulVerifyBytes,
   CKM_XMSS,
-  CKM_LMS,
+  CKM_HSS,
   hsm_generateXMSSKeyPair,
   hsm_generateLMSKeyPair,
 } from '../../../wasm/softhsm'
@@ -2467,42 +2467,45 @@ export const HsmAcvpTesting = () => {
           }
         }
 
-        // ── 31. LMS Stateful Sign+Verify ────────────────────────
-        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_LMS)) {
-          addLog(`[${eName}] [SKIP] LMS: mechanism not supported`)
+        // ── 31. HSS/LMS Stateful Sign+Verify (PKCS#11 v3.2 §6.14, SP 800-208) ──
+        // Spec CKM_HSS (0x4033) / CKM_HSS_KEY_PAIR_GEN (0x4032) — was previously
+        // gated on a vendor CKM_LMS=0x80000002 the engines never advertise, so the
+        // row was silently skipped. NULL keygen params → single-level LMS default.
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_HSS)) {
+          addLog(`[${eName}] [SKIP] HSS/LMS: mechanism not supported`)
         } else {
-          const id31 = `lms-sig-${eName}`
-          addLog(`[${eName}] Testing LMS Stateful Sign+Verify...`)
+          const id31 = `hss-sig-${eName}`
+          addLog(`[${eName}] Testing HSS/LMS Stateful Sign+Verify...`)
           try {
-            const lmsPair = hsm_generateLMSKeyPair(M, hSession, 0x05, 0x01, false)
-            const msgBytes = new TextEncoder().encode('ACVP LMS Test')
-            const sig = hsm_statefulSignBytes(M, hSession, CKM_LMS, lmsPair.privHandle, msgBytes)
+            const lmsPair = hsm_generateLMSKeyPair(M, hSession, false)
+            const msgBytes = new TextEncoder().encode('ACVP HSS/LMS Test')
+            const sig = hsm_statefulSignBytes(M, hSession, CKM_HSS, lmsPair.privHandle, msgBytes)
             const valid =
-              hsm_statefulVerifyBytes(M, hSession, CKM_LMS, lmsPair.pubHandle, msgBytes, sig) === 0
+              hsm_statefulVerifyBytes(M, hSession, CKM_HSS, lmsPair.pubHandle, msgBytes, sig) === 0
             if (valid) {
               newResults.push({
                 id: id31,
-                algorithm: `LMS (${eName})`,
+                algorithm: `HSS/LMS (${eName})`,
                 testCase: 'Stateful Sign+Verify',
                 referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/208/final',
                 status: 'pass',
                 details: `sig[${sig.length}B] validated successfully ✓`,
               })
-              addLog(`[${eName}] [id:${id31}] LMS: PASS`)
+              addLog(`[${eName}] [id:${id31}] HSS/LMS: PASS`)
             } else {
-              throw new Error('LMS signature verification failed')
+              throw new Error('HSS/LMS signature verification failed')
             }
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
             newResults.push({
-              id: `lms-err-${eName}`,
-              algorithm: `LMS (${eName})`,
+              id: `hss-err-${eName}`,
+              algorithm: `HSS/LMS (${eName})`,
               testCase: 'Stateful Sign+Verify',
               referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/208/final',
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] [id:${id31}] LMS: ${errMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id31}] HSS/LMS: ${errMessage}`)
           }
         }
 

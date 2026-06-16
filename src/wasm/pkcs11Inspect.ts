@@ -294,11 +294,14 @@ const CKM_TABLE: Record<number, ConstEntry> = {
     description: 'XMSS key pair generation (SP 800-208)',
   },
   0x00004035: { name: 'CKM_XMSS', description: 'XMSS stateful signature (SP 800-208)' },
-  0x80000001: {
-    name: 'CKM_LMS_KEY_PAIR_GEN',
-    description: 'LMS key pair generation (SP 800-208) [VENDOR]',
+  0x00004032: {
+    name: 'CKM_HSS_KEY_PAIR_GEN',
+    description: 'HSS/LMS key pair generation (PKCS#11 v3.2 §6.14, SP 800-208)',
   },
-  0x80000002: { name: 'CKM_LMS', description: 'LMS stateful signature (SP 800-208) [VENDOR]' },
+  0x00004033: {
+    name: 'CKM_HSS',
+    description: 'HSS/LMS stateful signature (PKCS#11 v3.2 §6.14, SP 800-208)',
+  },
 }
 
 // CKO_ object classes

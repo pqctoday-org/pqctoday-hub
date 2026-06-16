@@ -2121,8 +2121,15 @@ export const CKM_XMSS_KEY_PAIR_GEN = 0x00004034
 // C_Sign fell through to the non-stateful path → CKR_ARGUMENTS_BAD (0x07)
 // because stateful private keys don't expose CKA_VALUE.
 export const CKM_XMSS = 0x00004036
-export const CKM_LMS_KEY_PAIR_GEN = 0x80000001
-export const CKM_LMS = 0x80000002
+// PKCS#11 v3.2 §6.14 — HSS (the LMS hierarchy). These are the SPEC codepoints;
+// the engines advertise/consume CKM_HSS, not a vendor CKM_LMS. (Older vendor
+// values 0x80000001/2 were non-spec and the test guarded on them was dormant.)
+export const CKM_HSS_KEY_PAIR_GEN = 0x00004032
+export const CKM_HSS = 0x00004033
+// Deprecated aliases — CKM_LMS was a vendor misnomer (LMS is HSS's underlying OTS).
+// They now point at the spec CKM_HSS codepoints so existing consumers stay correct.
+export const CKM_LMS_KEY_PAIR_GEN = CKM_HSS_KEY_PAIR_GEN
+export const CKM_LMS = CKM_HSS
 export const CKA_HSS_LMS_TYPE = 0x00000618
 export const CKA_HSS_LMOTS_TYPE = 0x00000619
 
@@ -6105,18 +6112,17 @@ export const hsm_generateXMSSKeyPair = (
 export const hsm_generateLMSKeyPair = (
   M: SoftHSMModule,
   hSession: number,
-  lmsType: number,
-  lmotsType: number,
   extractable = false
 ): { pubHandle: number; privHandle: number } => {
-  const mech = buildMech(M, CKM_LMS_KEY_PAIR_GEN)
+  // CKM_HSS_KEY_PAIR_GEN with NULL params — both engines default to a single-level
+  // LMS hierarchy. CKA_HSS_LMS_TYPE/LMOTS_TYPE are mechanism-contributed OUTPUT
+  // attributes (not keygen inputs), so they are NOT placed in the template.
+  const mech = buildMech(M, CKM_HSS_KEY_PAIR_GEN)
   const pubAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_HSS },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_VERIFY, boolVal: true },
-    { type: CKA_HSS_LMS_TYPE, ulongVal: lmsType },
-    { type: CKA_HSS_LMOTS_TYPE, ulongVal: lmotsType },
   ]
   const prvAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
@@ -6126,8 +6132,6 @@ export const hsm_generateLMSKeyPair = (
     { type: CKA_SENSITIVE, boolVal: !extractable },
     { type: CKA_EXTRACTABLE, boolVal: extractable },
     { type: CKA_SIGN, boolVal: true },
-    { type: CKA_HSS_LMS_TYPE, ulongVal: lmsType },
-    { type: CKA_HSS_LMOTS_TYPE, ulongVal: lmotsType },
   ]
   const pubTpl = buildTemplate(M, pubAttrs)
   const prvTpl = buildTemplate(M, prvAttrs)
@@ -6146,7 +6150,7 @@ export const hsm_generateLMSKeyPair = (
         pubHPtr,
         prvHPtr
       ),
-      'C_GenerateKeyPair(LMS)'
+      'C_GenerateKeyPair(HSS)'
     )
     return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
   } finally {
