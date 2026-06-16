@@ -69,6 +69,21 @@ global.ResizeObserver = class ResizeObserver {
   disconnect() {}
 }
 
+// Polyfill IntersectionObserver — not available in jsdom but used by
+// LearnStepper / InPageToc (active-section scroll-spy) and rendered by several
+// learn-module Introductions.
+global.IntersectionObserver = class IntersectionObserver {
+  readonly root = null
+  readonly rootMargin = ''
+  readonly thresholds = []
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+  takeRecords() {
+    return []
+  }
+} as unknown as typeof IntersectionObserver
+
 // Mock @tanstack/react-virtual — jsdom has no layout engine so virtualizers
 // render zero items. The mock renders all items so table tests can query rows.
 vi.mock('@tanstack/react-virtual', () => ({
