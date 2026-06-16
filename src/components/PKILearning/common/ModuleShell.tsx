@@ -36,6 +36,21 @@ export interface WorkshopPart {
   icon: LucideIcon
 }
 
+/** Handlers the shell exposes to function slots so Learn/Exercises content can
+ *  drive navigation owned by the shell's progress hook (the per-module
+ *  onNavigateToWorkshop / onSetWorkshopConfig callbacks). */
+export interface ModuleSlotApi {
+  /** complete the current tab and jump to the Workshop tab */
+  goToWorkshop: () => void
+  /** complete the current tab and jump to a named tab */
+  goToTab: (tab: string) => void
+  /** open the Workshop at a specific step (remounts the step body) */
+  openWorkshopStep: (index: number) => void
+}
+
+/** A tab body: a static node, or a function given the nav API. */
+export type ModuleSlot = ReactNode | ((api: ModuleSlotApi) => ReactNode)
+
 export interface ModuleShellProps {
   manifest: ModuleManifest
   /** header title; defaults to manifest.title */
@@ -43,9 +58,9 @@ export interface ModuleShellProps {
   /** header description; defaults to manifest.description (often overridden) */
   description?: ReactNode
   /** Learn tab body (wrapped in GlossaryAutoWrap by the shell) */
-  learn?: ReactNode
+  learn?: ModuleSlot
   /** Exercises tab body */
-  exercises?: ReactNode
+  exercises?: ModuleSlot
   /** workshop stepper parts (omit for modules with no workshop) */
   workshopParts?: WorkshopPart[]
   /** renders the active workshop step body, keyed by configKey for remounts */
@@ -183,8 +198,11 @@ export const ModuleShell = ({
   const {
     activeTab,
     handleTabChange,
+    navigateToTab,
     currentPart,
+    setCurrentPart,
     configKey,
+    bumpConfig,
     handlePartChange,
     handleReset,
     completeStep,
@@ -196,6 +214,17 @@ export const ModuleShell = ({
     dotSteps: manifest.workshopSteps,
     resetLabel: `Restart ${manifest.title}?`,
   })
+
+  const slotApi: ModuleSlotApi = {
+    goToWorkshop: () => navigateToTab('workshop'),
+    goToTab: navigateToTab,
+    openWorkshopStep: (index) => {
+      setCurrentPart(index)
+      bumpConfig()
+    },
+  }
+  const resolve = (slot: ModuleSlot | undefined): ReactNode =>
+    typeof slot === 'function' ? slot(slotApi) : slot
 
   const headerDescription = description ?? manifest.description
 
@@ -227,7 +256,7 @@ export const ModuleShell = ({
 
         {present.has('learn') && (
           <TabsContent value="learn">
-            <GlossaryAutoWrap>{learn}</GlossaryAutoWrap>
+            <GlossaryAutoWrap>{resolve(learn)}</GlossaryAutoWrap>
           </TabsContent>
         )}
         {present.has('visual') && (
@@ -249,7 +278,9 @@ export const ModuleShell = ({
             />
           </TabsContent>
         )}
-        {present.has('exercises') && <TabsContent value="exercises">{exercises}</TabsContent>}
+        {present.has('exercises') && (
+          <TabsContent value="exercises">{resolve(exercises)}</TabsContent>
+        )}
         {present.has('references') && (
           <TabsContent value="references">
             <ModuleReferencesTab moduleId={manifest.id} />
