@@ -40,8 +40,9 @@ export interface WorkshopPart {
  *  drive navigation owned by the shell's progress hook (the per-module
  *  onNavigateToWorkshop / onSetWorkshopConfig callbacks). */
 export interface ModuleSlotApi {
-  /** complete the current tab and jump to the Workshop tab */
-  goToWorkshop: () => void
+  /** complete the current tab and jump to the Workshop tab, optionally landing
+   *  on a specific step (the per-module onNavigateToWorkshop(step?) callback) */
+  goToWorkshop: (step?: number) => void
   /** complete the current tab and jump to a named tab */
   goToTab: (tab: string) => void
   /** open the Workshop at a specific step (remounts the step body), optionally
@@ -228,7 +229,11 @@ export const ModuleShell = ({
     undefined
   )
   const slotApi: ModuleSlotApi = {
-    goToWorkshop: () => navigateToTab('workshop'),
+    goToWorkshop: (step) => {
+      navigateToTab('workshop')
+      // honor an optional target step; `typeof` guards against a stray event arg
+      if (typeof step === 'number') setCurrentPart(step)
+    },
     goToTab: navigateToTab,
     openWorkshopStep: (step, config) => {
       setCurrentPart(step)

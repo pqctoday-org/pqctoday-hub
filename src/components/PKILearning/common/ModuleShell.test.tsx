@@ -94,13 +94,30 @@ describe('ModuleShell', () => {
     renderShell(
       <ModuleShell
         manifest={base}
-        learn={(api) => <Button onClick={api.goToWorkshop}>GO WORKSHOP</Button>}
+        learn={(api) => <Button onClick={() => api.goToWorkshop()}>GO WORKSHOP</Button>}
         workshopParts={parts}
         renderWorkshopStep={(i) => <div>STEP BODY {i}</div>}
       />
     )
     fireEvent.click(screen.getByRole('button', { name: 'GO WORKSHOP' }))
     expect(screen.getByText('STEP BODY 0')).toBeInTheDocument()
+  })
+
+  it('goToWorkshop(step) jumps to a specific workshop step', () => {
+    const parts = [
+      { id: 's1', title: 'Step 1: One', description: 'd', icon: FlaskConical },
+      { id: 's2', title: 'Step 2: Two', description: 'd', icon: FlaskConical },
+    ]
+    renderShell(
+      <ModuleShell
+        manifest={base}
+        learn={(api) => <Button onClick={() => api.goToWorkshop(1)}>GO STEP 2</Button>}
+        workshopParts={parts}
+        renderWorkshopStep={(i) => <div>AT STEP {i}</div>}
+      />
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'GO STEP 2' }))
+    expect(screen.getByText('AT STEP 1')).toBeInTheDocument()
   })
 
   it('Reset clears the exercise prefill (config), matching the originals', () => {
