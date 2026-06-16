@@ -1,26 +1,18 @@
 {
   "algorithm": "ECDSA",
   "mode": "sigVer",
-  "source": "Generated via Node.js crypto (OpenSSL backend), ECDSA P-384 with SHA-384",
+  "source": "RFC 6979 Appendix A.2.6 (ECDSA P-384, SHA-384, message \"sample\"); verified with the node crypto (OpenSSL) oracle",
   "testGroups": [
     {
       "curve": "P-384",
       "hashAlg": "SHA-384",
       "tests": [
         {
-          "qx": "e011c26a6a08b208387b97a312899aa4bc6ad61b1af179d6e17a935e6fdacc053a72541cc309785a05982831d542a9da",
-          "qy": "fc4de8939c6160a29d67e7120d2e717d56a457b57b8cadcd0991fa734f2fb3fca0b57f0a4a97010be9d255c44c80b511",
-          "msg": "ECDSA P-384 ACVP SigVer test",
-          "r": "b28a9281097447b19163648a2844ec1397088ad04ed8133fb21cf8bc585273a0e5771988c62f61a835914ee2946a075f",
-          "s": "0622a09df789c77be6090f3d821241296cf52ae52740bc772dcad3d60506660930075070924bdfb08fa202d1a5c1bd86",
-          "testPassed": true
-        },
-        {
-          "qx": "5f2a0d9f09f8b758351cd700a52bd501f56e54177b241e70d4c06d442c5da9002d94b918a0cd4c31026f154342d56e10",
-          "qy": "80105621f1b2f67d4ba1acdaaf80cee9b90542ee44d8fb8f09325bf1e85952e554d97fb9b701f1e20f59348b6f2c2779",
-          "msg": "454344534120502d3338342041435650206578747261207465737420766563746f7220666f722073696756657220646966666572656e74696174696f6e",
-          "r": "ea2fdf034de2654ee4823324243f65928778b1aa23b53d81b4c3da951309512c4e0cbf59f61a4dbd25aa2f19b0e96b18",
-          "s": "3ba8f29f87071aa7499ce71661fec2b63e382566ad8ca1a028ba6b7cf5071af1ba3f8e06ccb4f34fef865d825952e33c",
+          "qx": "ec3a4e415b4e19a4568618029f427fa5da9a8bc4ae92e02e06aae5286b300c64def8f0ea9055866064a254515480bc13",
+          "qy": "8015d9b72d7d57244ea8ef9ac0c621896708a59367f9dfb9f54ca84b3f1c9db1288b231c3ae0d4fe7344fd2533264720",
+          "msg": "sample",
+          "r": "94edbb92a5ecb8aad4736e56c691916b3f88140666ce9fa73d64c4ea95ad133c81a648152e44acf96e36dd1e80fabe46",
+          "s": "99ef4aeb15f178cea1fe40db2603138f130e740a19624526203b6351d0a3a94fa329c145786e679e7b82c71a38628ac8",
           "testPassed": true
         }
       ]
