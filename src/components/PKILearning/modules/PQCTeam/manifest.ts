@@ -17,6 +17,12 @@ const manifest: ModuleManifest = {
     { id: 'build-borrow-buy', label: 'Build-Borrow-Buy & Team Sizing' },
   ],
   workshopSteps: [{ id: 'team-sizing', label: 'Team Sizing Calculator' }],
+  // reduced 3-tab set (no Visual/References/Tools) — matches the original render
+  tabs: [
+    { value: 'learn', label: 'Learn' },
+    { value: 'workshop', label: 'Workshop' },
+    { value: 'exercises', label: 'Exercises' },
+  ],
   load: () => import('./index').then((m) => ({ default: m.PQCTeamModule })),
 }
 
