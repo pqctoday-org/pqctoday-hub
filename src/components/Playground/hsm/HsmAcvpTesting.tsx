@@ -1147,7 +1147,7 @@ export const HsmAcvpTesting = () => {
             await pushResult({
               id: id12,
               algorithm: `AES-CTR-256 (${eName})`,
-              testCase: 'Decrypt KAT',
+              testCase: 'Decrypt KAT (NIST SP 800-38A F.5.6)',
               referenceUrl: REF.aesctr,
               status: matches ? 'pass' : 'fail',
               details: matches
