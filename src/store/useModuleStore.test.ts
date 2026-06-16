@@ -94,12 +94,41 @@ describe('useModuleStore', () => {
     expect(analytics.logArtifactGenerated).toHaveBeenCalledWith('learning', 'csr')
   })
 
-  it('loads progress', () => {
+  it('loads progress AND migrates it through the version ladder (no stale shapes)', () => {
+    // A v2 backup must be UPGRADED to the current data version on import — not
+    // imported as-is (the old data-loss behaviour, where an old backup kept
+    // partial/stale shapes because loadProgress bypassed the migrate ladder).
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
     const customProgress = { version: '2.0.0', preferences: { theme: 'light' } } as any
     useModuleStore.getState().loadProgress(customProgress)
-    expect(useModuleStore.getState().version).toBe('2.0.0')
-    expect(useModuleStore.getState().preferences.theme).toBe('light')
+    expect(useModuleStore.getState().version).toBe('14.0.0') // migrated to current
+    expect(useModuleStore.getState().preferences.theme).toBe('light') // value preserved
+  })
+
+  it('runs the v5→v6 key-management split when importing an old backup', () => {
+    // The concrete data-loss case: a pre-v6 backup still carrying the retired
+    // `key-management` id. Import must split it into kms-pqc / hsm-pqc (via the
+    // migrate ladder) instead of stranding that progress under a dead id.
+    const oldBackup = {
+      version: '5.0.0',
+      modules: {
+        'key-management': {
+          status: 'completed',
+          lastVisited: 1,
+          timeSpent: 42,
+          completedSteps: ['intro'],
+          quizScores: { q1: 80 },
+        },
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial backup mock
+    } as any
+    useModuleStore.getState().loadProgress(oldBackup)
+    const mods = useModuleStore.getState().modules
+    expect(mods['key-management']).toBeUndefined()
+    expect(mods['kms-pqc']).toBeDefined()
+    expect(mods['kms-pqc'].timeSpent).toBe(42)
+    expect(mods['hsm-pqc']).toBeDefined()
+    expect(useModuleStore.getState().version).toBe('14.0.0')
   })
 
   it('resets a specific module', () => {
