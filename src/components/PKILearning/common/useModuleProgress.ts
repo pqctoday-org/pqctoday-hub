@@ -73,14 +73,20 @@ export function useModuleProgress(moduleId: string, opts: UseModuleProgressOptio
   /** Bump the remount key for workshop tools (used by "open at step" CTAs). */
   const bumpConfig = useCallback(() => setConfigKey((p) => p + 1), [])
 
-  const handleReset = useCallback(() => {
-    if (confirm(opts.resetLabel ?? 'Restart this module?')) {
-      setCurrentPart(0)
-      setConfigKey((p) => p + 1)
-      startTimeRef.current = Date.now()
-      updateModuleProgress(moduleId, { status: 'in-progress', completedSteps: [], timeSpent: 0 })
-    }
-  }, [moduleId, opts.resetLabel, updateModuleProgress])
+  const handleReset = useCallback(
+    (onConfirmed?: () => void) => {
+      if (confirm(opts.resetLabel ?? 'Restart this module?')) {
+        setCurrentPart(0)
+        setConfigKey((p) => p + 1)
+        startTimeRef.current = Date.now()
+        updateModuleProgress(moduleId, { status: 'in-progress', completedSteps: [], timeSpent: 0 })
+        // runs ONLY on a confirmed reset — lets the shell clear its pre-fill
+        // config and a module clear FC-held cross-tab state (its onReset slot).
+        onConfirmed?.()
+      }
+    },
+    [moduleId, opts.resetLabel, updateModuleProgress]
+  )
 
   /** Mark a specific step complete (e.g. the final "Complete Module" button). */
   const completeStep = useCallback(
