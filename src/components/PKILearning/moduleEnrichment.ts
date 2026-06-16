@@ -14,44 +14,16 @@
 // undefined / [] and the UI degrades to the same affordances as before.
 
 import type { PersonaId } from '@/data/learningPersonas'
+import { MANIFESTS } from './manifest/registry'
+import { buildPlaygroundTools, buildTaxonomy } from './manifest/derive'
 
 /**
  * Learn-module → Playground-tool mapping. The string value is a Playground
  * tool `id` (validated against workshopRegistry at runtime is overkill —
  * mismatches degrade to a dead link, not a crash).
  */
-export const MODULE_PLAYGROUND_TOOL: Readonly<Record<string, string>> = {
-  // Protocol simulators
-  'tls-basics': 'tls-simulator',
-  'vpn-ssh-pqc': 'vpn-sim',
-
-  // PKI workbench
-  'pki-workshop': 'pki-workshop',
-  'pki-enrollment-protocols': 'pki-enrollment',
-  'hybrid-crypto': 'hybrid-certs',
-  'merkle-tree-certs': 'merkle-proof',
-
-  // Identity & messaging
-  'email-signing': 'email-signing',
-  'mls-group-messaging': 'mls-group-messaging',
-  'digital-id': 'digital-id',
-  'api-security-jwt': 'api-security-jwt',
-
-  // Code/firmware signing
-  'code-signing': 'firmware-signing',
-  'stateful-signatures': 'lms-hss',
-  'slh-dsa': 'slh-dsa',
-
-  // Randomness
-  'entropy-randomness': 'entropy-test',
-
-  // Industry workshops
-  '5g-security': 'suci-flow',
-  'digital-assets': 'bitcoin-flow',
-
-  // KEM playgrounds
-  'kms-pqc': 'envelope-encrypt',
-}
+export const MODULE_PLAYGROUND_TOOL: Readonly<Record<string, string>> =
+  buildPlaygroundTools(MANIFESTS)
 
 /** Returns the matching Playground tool id, or undefined when no curated mapping exists. */
 export function getPlaygroundToolForModule(moduleId: string): string | undefined {
@@ -126,38 +98,9 @@ interface ModuleTaxonomyEntry {
  * Curated taxonomy for the researcher 2nd-axis filter. PARTIAL on purpose:
  * only modules with unambiguous algorithm / standard coverage are tagged.
  */
-export const MODULE_TAXONOMY: Readonly<Record<string, ModuleTaxonomyEntry>> = {
-  'pqc-101': { algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA'] },
-  'pqc-candidates': { algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'Falcon', 'HQC'] },
-  'hybrid-crypto': { algorithms: ['ML-KEM', 'X25519', 'ECDH'], standards: ['RFC 9180'] },
-  'tls-basics': {
-    algorithms: ['ML-KEM', 'X25519', 'ECDSA', 'ML-DSA'],
-    standards: ['RFC 9180', 'X.509'],
-  },
-  'vpn-ssh-pqc': { algorithms: ['ML-KEM', 'ECDH'], standards: ['RFC 9442'] },
-  'pki-workshop': {
-    algorithms: ['ML-DSA', 'ECDSA', 'RSA'],
-    standards: ['X.509', 'FIPS 204'],
-  },
-  'hybrid-certs': {
-    algorithms: ['ML-DSA', 'ECDSA'],
-    standards: ['X.509', 'RFC 9794'],
-  },
-  'email-signing': { algorithms: ['ML-DSA'], standards: ['JOSE', 'X.509'] },
-  'api-security-jwt': { algorithms: ['ML-DSA', 'SLH-DSA'], standards: ['JOSE', 'RFC 9421'] },
-  'slh-dsa': { algorithms: ['SLH-DSA'], standards: ['FIPS 205'] },
-  'stateful-signatures': { algorithms: ['LMS/XMSS'], standards: ['NIST SP 800-208'] },
-  'code-signing': {
-    algorithms: ['ML-DSA', 'LMS/XMSS'],
-    standards: ['FIPS 204', 'NIST SP 800-208'],
-  },
-  'hsm-pqc': { algorithms: ['ML-KEM', 'ML-DSA'], standards: ['PKCS#11'] },
-  'kms-pqc': { algorithms: ['ML-KEM'], standards: ['FIPS 203'] },
-  'merkle-tree-certs': { algorithms: ['LMS/XMSS'], standards: ['NIST SP 800-208'] },
-  '5g-security': { algorithms: ['ML-KEM', 'ML-DSA'], standards: ['X.509'] },
-  'digital-id': { algorithms: ['ML-DSA'], standards: ['X.509'] },
-  'mls-group-messaging': { algorithms: ['ML-KEM', 'ML-DSA'], standards: ['JOSE'] },
-}
+export const MODULE_TAXONOMY: Readonly<Record<string, ModuleTaxonomyEntry>> = buildTaxonomy(
+  MANIFESTS
+) as Readonly<Record<string, ModuleTaxonomyEntry>>
 
 export function getModuleAlgorithms(moduleId: string): readonly AlgorithmTaxon[] {
   // eslint-disable-next-line security/detect-object-injection
