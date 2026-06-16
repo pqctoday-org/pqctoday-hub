@@ -59,6 +59,7 @@ import {
   hsm_unwrapKeyMech,
   hsm_pbkdf2,
   hsm_hkdf,
+  hsm_importGenericSecret,
   hsm_generateECKeyPair,
   hsm_ecdhDerive,
   hsm_extractECPoint,
@@ -93,6 +94,7 @@ import {
   CKM_ECDSA_SHA512,
   CKM_EDDSA,
   CKM_PKCS5_PBKD2,
+  CKP_PKCS5_PBKD2_HMAC_SHA256,
   CKM_HKDF_DERIVE,
   CKA_CLASS,
   CKA_KEY_TYPE,
@@ -1376,40 +1378,56 @@ export const HsmAcvpTesting = () => {
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_PKCS5_PBKD2)) {
           addLog(`[${eName}] [SKIP] PBKDF2: mechanism not supported`)
         } else {
-          const id17 = `pbkdf2-func-${eName}`
-          addLog(`[${eName}] Testing PBKDF2 Functional Derivation (PKCS#5 v2.1)...`)
+          const id17 = `pbkdf2-kat-${eName}`
+          addLog(`[${eName}] Testing PBKDF2-HMAC-SHA256 KAT (RFC 6070-style, c=4096)...`)
           try {
-            const password = new TextEncoder().encode('ACVP-PBKDF2-test-password')
-            const salt = new TextEncoder().encode('ACVP-salt-value')
+            // PBKDF2-HMAC-SHA256, P="password" S="salt" c=4096 dkLen=32. Expected DK
+            // independently computed with node crypto, cross-validated: the same
+            // oracle reproduces RFC 6070's SHA-1 vectors exactly. (RFC 6070 itself is
+            // SHA-1-only; the Rust engine implements SHA-256/384/512, so a true RFC
+            // vector is not cross-engine — SHA-256 with an oracle value is.)
+            const password = new TextEncoder().encode('password')
+            const salt = new TextEncoder().encode('salt')
             const iterations = 4096
             const keyLen = 32
-            addLog(`[${eName}]   iterations: ${iterations}, keyLen: ${keyLen}, PRF: HMAC-SHA512`)
+            const expectedDk = hexToBytes(
+              'c5e478d59288c841aa530db6845c4c8d962893a001ce4e11a4963873aa98134a'
+            )
 
-            const derived1 = hsm_pbkdf2(M, hSession, password, salt, iterations, keyLen)
-            const derived2 = hsm_pbkdf2(M, hSession, password, salt, iterations, keyLen)
+            const derived = hsm_pbkdf2(
+              M,
+              hSession,
+              password,
+              salt,
+              iterations,
+              keyLen,
+              CKP_PKCS5_PBKD2_HMAC_SHA256
+            )
             const matches =
-              derived1.length === derived2.length &&
+              derived.length === expectedDk.length &&
               // eslint-disable-next-line security/detect-object-injection
-              derived1.every((b: number, i: number) => b === derived2[i])
+              derived.every((b: number, i: number) => b === expectedDk[i])
 
-            const dkHex = toHex(derived1)
+            const dkHex = toHex(derived)
             newResults.push({
               id: id17,
-              algorithm: `PBKDF2-HMAC-SHA512 (${eName})`,
-              testCase: 'Functional Derivation',
+              algorithm: `PBKDF2-HMAC-SHA256 (${eName})`,
+              testCase: 'KAT (c=4096)',
               referenceUrl: REF.pbkdf2,
-              status: matches && derived1.length === keyLen ? 'pass' : 'fail',
+              status: matches ? 'pass' : 'fail',
               details: matches
-                ? `DK[${derived1.length}B]: ${dkHex}`
-                : 'Determinism failure: run1 ≠ run2',
+                ? `DK[${derived.length}B] matches vector ✓: ${dkHex}`
+                : `DK mismatch: got ${toHex(derived, 12)}… expected ${toHex(expectedDk, 12)}…`,
             })
-            addLog(`[${eName}] [id:${id17}] PBKDF2: ${matches ? 'PASS' : 'FAIL'} | DK: ${dkHex}`)
+            addLog(
+              `[${eName}] [id:${id17}] PBKDF2 KAT: ${matches ? 'PASS' : 'FAIL'} | DK: ${dkHex}`
+            )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
             newResults.push({
-              id: `pbkdf2-func-err-${eName}`,
-              algorithm: `PBKDF2-HMAC-SHA512 (${eName})`,
-              testCase: 'Functional Derivation',
+              id: `pbkdf2-kat-err-${eName}`,
+              algorithm: `PBKDF2-HMAC-SHA256 (${eName})`,
+              testCase: 'KAT (c=4096)',
               referenceUrl: REF.pbkdf2,
               status: 'fail',
               details: errMessage,
@@ -1422,78 +1440,51 @@ export const HsmAcvpTesting = () => {
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_HKDF_DERIVE)) {
           addLog(`[${eName}] [SKIP] HKDF: mechanism not supported`)
         } else {
-          const id18 = `hkdf-func-${eName}`
-          addLog(`[${eName}] Testing HKDF Functional Derivation (RFC 5869)...`)
+          const id18 = `hkdf-kat-${eName}`
+          addLog(`[${eName}] Testing HKDF-SHA256 KAT (RFC 5869 Appendix A.1)...`)
           try {
-            const ikmHandle = hsm_generateAESKey(
-              M,
-              hSession,
-              256,
-              false,
-              false,
-              false,
-              false,
-              true,
-              false
-            )
+            // RFC 5869 Appendix A.1 (Test Case 1), Hash = SHA-256.
+            const ikm = hexToBytes('0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b') // 22 × 0x0b
+            const salt = hexToBytes('000102030405060708090a0b0c') // 13 B
+            const info = hexToBytes('f0f1f2f3f4f5f6f7f8f9') // 10 B
+            const expectedOkm = hexToBytes(
+              '3cb25f25faacd57a90434f64d0362f2a2d2d0a90cf1a5a4c5db02d56ecc4c5bf34007208d5b887185865'
+            ) // 42 B
+            const keyLen = 42
+
+            const ikmHandle = hsm_importGenericSecret(M, hSession, ikm)
             regKey({
               handle: ikmHandle,
-              family: 'aes',
+              family: 'kdf',
               role: 'secret',
-              label: `ACVP HKDF IKM (${eName})`,
+              label: `ACVP HKDF IKM RFC 5869 (${eName})`,
               engine: engineId,
             })
 
-            const salt = new TextEncoder().encode('ACVP-HKDF-salt')
-            const info = new TextEncoder().encode('ACVP-HKDF-info')
-            const keyLen = 32
-            addLog(`[${eName}]   PRF: SHA-256, salt: 14B, info: 14B, keyLen: ${keyLen}`)
-
-            const derived1 = hsm_hkdf(
-              M,
-              hSession,
-              ikmHandle,
-              CKM_SHA256,
-              true,
-              true,
-              salt,
-              info,
-              keyLen
-            )
-            const derived2 = hsm_hkdf(
-              M,
-              hSession,
-              ikmHandle,
-              CKM_SHA256,
-              true,
-              true,
-              salt,
-              info,
-              keyLen
-            )
+            const okm = hsm_hkdf(M, hSession, ikmHandle, CKM_SHA256, true, true, salt, info, keyLen)
             const matches =
-              derived1.length === derived2.length &&
+              okm.length === expectedOkm.length &&
               // eslint-disable-next-line security/detect-object-injection
-              derived1.every((b: number, i: number) => b === derived2[i])
+              okm.every((b: number, i: number) => b === expectedOkm[i])
 
-            const dkHex = toHex(derived1)
+            const dkHex = toHex(okm)
             newResults.push({
               id: id18,
               algorithm: `HKDF-SHA256 (${eName})`,
-              testCase: 'Functional Derivation',
+              testCase: 'KAT (RFC 5869 A.1)',
               referenceUrl: REF.hkdf,
-              status: matches && derived1.length === keyLen ? 'pass' : 'fail',
+              status: matches ? 'pass' : 'fail',
               details: matches
-                ? `OKM[${derived1.length}B]: ${dkHex}`
-                : 'Determinism failure: run1 ≠ run2',
+                ? `OKM[${okm.length}B] matches RFC 5869 A.1 ✓: ${dkHex}`
+                : `OKM mismatch: got ${toHex(okm, 12)}… expected ${toHex(expectedOkm, 12)}…`,
             })
-            addLog(`[${eName}] [id:${id18}] HKDF: ${matches ? 'PASS' : 'FAIL'} | OKM: ${dkHex}`)
+            addLog(`[${eName}] [id:${id18}] HKDF KAT: ${matches ? 'PASS' : 'FAIL'} | OKM: ${dkHex}`)
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
             newResults.push({
-              id: `hkdf-func-err-${eName}`,
+              id: `hkdf-kat-err-${eName}`,
               algorithm: `HKDF-SHA256 (${eName})`,
-              testCase: 'Functional Derivation',
+              testCase: 'KAT (RFC 5869 A.1)',
               referenceUrl: REF.hkdf,
               status: 'fail',
               details: errMessage,
