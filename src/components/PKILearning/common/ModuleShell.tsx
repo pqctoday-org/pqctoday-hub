@@ -95,6 +95,12 @@ export interface ModuleShellProps {
     config: Record<string, unknown> | undefined,
     goToStep: (step: number) => void
   ) => ReactNode
+  /** Called when the workshop Reset is CONFIRMED (after the shell clears its
+   *  pre-fill config). For modules that hold cross-TAB state in their own FC
+   *  (above the shell, so it survives tab switches) which the original Reset
+   *  cleared — e.g. an assessed risk register or selected jurisdictions. Does
+   *  NOT fire if the user cancels the confirm. Omit it and nothing extra clears. */
+  onReset?: () => void
   /** custom modules (Quiz) render their own body — no tabs */
   children?: ReactNode
 }
@@ -226,6 +232,7 @@ export const ModuleShell = ({
   workshop,
   workshopParts,
   renderWorkshopStep,
+  onReset,
   children,
 }: ModuleShellProps) => {
   const parts = workshopParts ?? []
@@ -323,10 +330,12 @@ export const ModuleShell = ({
               currentPart={currentPart}
               configKey={configKey}
               onPartChange={handlePartChange}
-              onReset={() => {
-                setWorkshopConfig(undefined)
-                handleReset()
-              }}
+              onReset={() =>
+                handleReset(() => {
+                  setWorkshopConfig(undefined)
+                  onReset?.()
+                })
+              }
               onComplete={(stepId) => completeStep(stepId)}
               renderStep={(index, key, goToStep) =>
                 renderWorkshopStep(index, key, workshopConfig, goToStep)

@@ -148,6 +148,69 @@ describe('ModuleShell', () => {
     expect(screen.getByText('VAL:default')).toBeInTheDocument()
     confirmSpy.mockRestore()
   })
+
+  const onResetTree = (onReset: () => void) => {
+    const parts = [{ id: 's1', title: 'Step 1: One', description: 'd', icon: FlaskConical }]
+    return (
+      <ModuleShell
+        manifest={base}
+        learn={(api) => <Button onClick={() => api.goToWorkshop()}>GO WORKSHOP</Button>}
+        onReset={onReset}
+        workshopParts={parts}
+        renderWorkshopStep={(i) => <div>AT STEP {i}</div>}
+      />
+    )
+  }
+
+  it('fires onReset (to clear FC-held cross-tab state) once on a CONFIRMED reset', () => {
+    const ok = vi.spyOn(window, 'confirm').mockReturnValue(true)
+    const onReset = vi.fn()
+    renderShell(onResetTree(onReset))
+    fireEvent.click(screen.getByRole('button', { name: 'GO WORKSHOP' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Reset' }))
+    expect(onReset).toHaveBeenCalledTimes(1)
+    ok.mockRestore()
+  })
+
+  it('does NOT fire onReset when the reset confirm is cancelled', () => {
+    const cancel = vi.spyOn(window, 'confirm').mockReturnValue(false)
+    const onReset = vi.fn()
+    renderShell(onResetTree(onReset))
+    fireEvent.click(screen.getByRole('button', { name: 'GO WORKSHOP' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Reset' }))
+    expect(onReset).not.toHaveBeenCalled()
+    cancel.mockRestore()
+  })
+
+  it('does NOT clear the exercise prefill when the reset confirm is cancelled', () => {
+    const cancel = vi.spyOn(window, 'confirm').mockReturnValue(false)
+    const parts = [{ id: 's1', title: 'Step 1: One', description: 'd', icon: FlaskConical }]
+    renderShell(
+      <ModuleShell
+        manifest={base}
+        learn={(api) => (
+          <Button
+            onClick={() => {
+              api.goToWorkshop()
+              api.openWorkshopStep(0, { sample: 'PREFILL' })
+            }}
+          >
+            PREFILL
+          </Button>
+        )}
+        workshopParts={parts}
+        renderWorkshopStep={(_i, _k, config) => (
+          <div>VAL:{String((config as { sample?: string } | undefined)?.sample ?? 'default')}</div>
+        )}
+      />
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'PREFILL' }))
+    expect(screen.getByText('VAL:PREFILL')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Reset' }))
+    // confirm cancelled -> prefill survives (reset is a no-op)
+    expect(screen.getByText('VAL:PREFILL')).toBeInTheDocument()
+    cancel.mockRestore()
+  })
 })
 
 describe('useModuleProgress', () => {
