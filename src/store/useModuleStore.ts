@@ -11,6 +11,7 @@ import {
   logArtifactGenerated,
 } from '../utils/analytics'
 import { LEARN_SECTIONS, WORKSHOP_STEPS } from '../components/PKILearning/moduleData'
+import { applyModuleRenames } from '../components/PKILearning/manifest/contentVersion'
 
 const MODULE_STORE_VERSION = 14
 const KPI_HISTORY_CAP = 30
@@ -733,6 +734,14 @@ export const useModuleStore = create<ModuleState>()(
           }
           state.version = '14.0.0'
           state.timestamp = Date.now()
+        }
+
+        // B2: apply the DECLARATIVE id rename-map (generalises the one-off
+        // key-management split above) so a renamed module's progress carries
+        // over. Idempotent + runs after all version steps — a future rename is
+        // a one-line MODULE_ID_RENAMES entry + a version bump, not a new step.
+        if (state.modules) {
+          state.modules = applyModuleRenames(state.modules)
         }
 
         return state
