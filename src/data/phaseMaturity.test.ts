@@ -42,13 +42,8 @@ describe('phaseMaturity', () => {
     expect(PHASE_WIN_LEVEL).toBeLessThanOrEqual(4)
   })
 
-  it('every gated phase except p6 has artifact evidence at the win level', () => {
+  it('every gated phase has artifact evidence at the win level', () => {
     for (const phase of Object.keys(PHASE_MATURITY)) {
-      if (phase === 'p6') {
-        // Infrastructure has no Command-Center artifact yet → manual only.
-        expect(LEVEL_EVIDENCE[phase as keyof typeof LEVEL_EVIDENCE]).toBeUndefined()
-        continue
-      }
       const ev = LEVEL_EVIDENCE[phase as keyof typeof LEVEL_EVIDENCE]
       expect(
         ev?.[PHASE_WIN_LEVEL]?.length,

@@ -347,6 +347,22 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     tnflRiskWindow
   )
 
+  // Even the legacy / minimal path (Curious mode or partial input) emits COARSE
+  // category scores + HNDL/TNFL windows + framework-risk lens, so a short
+  // assessment still populates the Simulation & Report (KPIs, Mosca Y, the P3
+  // risk lens). The headline riskScore stays the legacy additive score above.
+  if (!categoryScores) {
+    categoryScores = {
+      quantumExposure: computeQuantumExposure(input, vulnerableCount),
+      migrationComplexity: computeMigrationComplexity(input),
+      regulatoryPressure: computeRegulatoryPressure(input, complianceImpacts),
+      organizationalReadiness: computeOrganizationalReadiness(input),
+    }
+    hndlRiskWindow = computeHNDLRiskWindow(input)
+    tnflRiskWindow = computeTNFLRiskWindow(input)
+    frameworkRisk = computeFrameworkRisk(categoryScores, hndlRiskWindow, tnflRiskWindow)
+  }
+
   return {
     riskScore,
     riskLevel,
@@ -588,6 +604,22 @@ export async function computeAssessmentAsync(
       tnflRiskWindow
     )
   )
+
+  // Even the legacy / minimal path (Curious mode or partial input) emits COARSE
+  // category scores + HNDL/TNFL windows + framework-risk lens, so a short
+  // assessment still populates the Simulation & Report (KPIs, Mosca Y, the P3
+  // risk lens). The headline riskScore stays the legacy additive score above.
+  if (!categoryScores) {
+    categoryScores = {
+      quantumExposure: computeQuantumExposure(input, vulnerableCount),
+      migrationComplexity: computeMigrationComplexity(input),
+      regulatoryPressure: computeRegulatoryPressure(input, complianceImpacts),
+      organizationalReadiness: computeOrganizationalReadiness(input),
+    }
+    hndlRiskWindow = computeHNDLRiskWindow(input)
+    tnflRiskWindow = computeTNFLRiskWindow(input)
+    frameworkRisk = computeFrameworkRisk(categoryScores, hndlRiskWindow, tnflRiskWindow)
+  }
 
   return {
     riskScore,

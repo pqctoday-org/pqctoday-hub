@@ -27,6 +27,10 @@ import {
   Code2,
   Cloud,
   ClipboardList,
+  Server,
+  CalendarClock,
+  Zap,
+  Database,
 } from 'lucide-react'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import type { ZoneId } from '@/data/cswp39ZoneData'
@@ -563,6 +567,94 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39SubSection: 'Maturity assessment',
     frameworkPhase: 'foundations',
   },
+  {
+    id: 'infra-modernization-planner',
+    name: 'Infrastructure Modernization Planner',
+    description:
+      'Phase 6 deliverable — consolidates the PKI modernization plan, HSM/KMS upgrade schedule, network/middlebox compatibility report, and PQC capacity plan into one infrastructure-readiness artifact',
+    category: 'Migration Planning',
+    icon: Server,
+    keywords: [
+      'infrastructure',
+      'pki',
+      'hsm',
+      'kms',
+      'middlebox',
+      'capacity',
+      'performance',
+      'modernization',
+      'mtc',
+    ],
+    cswp39Zone: 'mitigation',
+    cswp39SectionRef: '§6',
+    cswp39SubSection: 'Infrastructure modernization',
+    frameworkPhase: 'p6',
+  },
+  {
+    id: 'refresh-cycle-alignment',
+    name: 'Refresh-Cycle Alignment',
+    description:
+      'Phase 4 Activity 4.3 — maps PQC migration tasks onto already-funded infrastructure refresh programs (data center, SD-WAN, cloud, PKI, HSM, vendor renewals) so PQC work rides existing budgets',
+    category: 'Migration Planning',
+    icon: CalendarClock,
+    keywords: [
+      'refresh',
+      'cycle',
+      'roadmap',
+      'budget',
+      'cost avoidance',
+      'hardware',
+      'renewal',
+      'alignment',
+    ],
+    cswp39Zone: 'migration',
+    cswp39SectionRef: '§4',
+    cswp39SubSection: 'Roadmap — refresh-cycle alignment',
+    frameworkPhase: 'p4',
+  },
+  {
+    id: 'accelerated-execution-profile',
+    name: 'Accelerated Execution Profile',
+    description:
+      'Phase 4 Activity 4.7 — a pre-drafted contingency package (trigger conditions, compressed sequence, pre-approved risk acceptances, emergency resource request, activation authority) activated if the quantum timeline accelerates',
+    category: 'Governance & Policy',
+    icon: Zap,
+    keywords: [
+      'accelerated',
+      'contingency',
+      'trigger',
+      'emergency',
+      'tabletop',
+      'compressed',
+      'profile',
+    ],
+    cswp39Zone: 'migration',
+    cswp39SectionRef: '§4',
+    cswp39SubSection: 'Roadmap — contingency',
+    frameworkPhase: 'p4',
+  },
+  {
+    id: 'data-at-rest-strategy',
+    name: 'Data-at-Rest Strategy',
+    description:
+      'Phase 5 Activity 5.6 — per-store data-at-rest decision (re-encrypt under PQC keys, PQC key-wrap, crypto-shred, delete, or accept & monitor), recorded back into the CBOM',
+    category: 'Migration Planning',
+    icon: Database,
+    keywords: [
+      'data at rest',
+      'encryption',
+      'key wrap',
+      'crypto-shred',
+      'aes-256',
+      'database',
+      'backups',
+      'strategy',
+    ],
+    cswp39Zone: 'mitigation',
+    cswp39SectionRef: '§5',
+    cswp39SubSection: 'Data-at-rest strategy',
+    frameworkPhase: 'p5',
+  },
 ]
 
 export const BUSINESS_CATEGORIES = [
@@ -615,6 +707,10 @@ export const ARTIFACT_TYPE_TO_TOOL_ID: Partial<Record<ExecutiveDocumentType, str
   'program-charter': 'program-charter',
   'initial-scoping': 'initial-scoping',
   'skills-team-plan': 'skills-team-plan',
+  'infra-modernization-plan': 'infra-modernization-planner',
+  'refresh-cycle-alignment': 'refresh-cycle-alignment',
+  'accelerated-execution-profile': 'accelerated-execution-profile',
+  'data-at-rest-strategy': 'data-at-rest-strategy',
 }
 
 /** Look up the CSWP.39 §-reference (and optional sub-section label) for an

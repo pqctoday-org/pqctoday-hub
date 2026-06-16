@@ -14,14 +14,19 @@ import { REFERENCE_PHASES } from '@/data/phaseResourceMap'
 import { resLinks } from '@/components/Simulation/sections'
 
 const PHASES = ['p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7'] as const
+// Foundations is the spanning band — a real, playable tree (so it gets the
+// resource-validity, framework-version and deep-link guards via ALL_TREE_PHASES)
+// but is exempt from the numbered-gate / activity-id-prefix / strict-gating
+// invariants below (by design it has gate 'GF' and 'F.x' activity ids).
+const ALL_TREE_PHASES = [...PHASES, 'foundations'] as const
 
 describe('SIM_TREES — coverage & shape', () => {
-  it('loads a dated tree for all eight lifecycle phases', () => {
-    expect(Object.keys(SIM_TREES).sort()).toEqual([...PHASES])
+  it('loads a dated tree for all eight phases + Foundations', () => {
+    expect(Object.keys(SIM_TREES).sort()).toEqual([...ALL_TREE_PHASES].sort())
   })
 
   it('every leaf points at a real hub resource', () => {
-    for (const phase of PHASES) {
+    for (const phase of ALL_TREE_PHASES) {
       const tree = SIM_TREES[phase]!
       for (const band of tree.levels) {
         for (const act of band.activities) {
@@ -48,7 +53,7 @@ describe('SIM_TREES — coverage & shape', () => {
   })
 
   it('WS-11: every tree is pinned to the current framework version', () => {
-    for (const phase of PHASES) {
+    for (const phase of ALL_TREE_PHASES) {
       const tree = SIM_TREES[phase]!
       expect(
         tree.source.includes(FRAMEWORK_VERSION),
@@ -60,7 +65,7 @@ describe('SIM_TREES — coverage & shape', () => {
   })
 
   it('WS-06: every tree leaf deep-link resolves to a real route + valid params', () => {
-    for (const phase of PHASES) {
+    for (const phase of ALL_TREE_PHASES) {
       for (const s of flattenTree(SIM_TREES[phase]!)) {
         const res = resolveDeepLink(s.to)
         expect(res.ok, `${phase}: ${s.to} — ${res.reason ?? ''}`).toBe(true)

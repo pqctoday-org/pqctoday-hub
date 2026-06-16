@@ -4,6 +4,16 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import type { CategoryScores, AssessmentResult, ScoreBoost } from '../hooks/assessmentTypes'
 import { useHistoryStore } from './useHistoryStore'
 import { pullLegacyAssessmentState, runLegacyAssessmentMigrations } from './assessmentMigration'
+import { overallMaturity, type MaturityScores } from '@/data/maturityModel'
+
+/** The user's seven-domain maturity self-assessment, persisted so the Report,
+ *  Command Center and Simulation all read one "today maturity" signal. */
+export interface StoredMaturity {
+  scores: MaturityScores
+  /** Overall = weakest domain (0–5). */
+  overall: number
+  updatedAt: string
+}
 
 export interface AssessmentSnapshot {
   completedAt: string
@@ -26,6 +36,7 @@ export interface AssessmentResultState {
   lastModifiedAt: string | null
   previousRiskScore: number | null
   assessmentHistory: AssessmentSnapshot[]
+  maturity: StoredMaturity | null
 
   // Actions
   hideThreat: (threatId: string) => void
@@ -33,6 +44,7 @@ export interface AssessmentResultState {
   restoreAllThreats: () => void
   markComplete: (result: AssessmentResult | null) => void
   setResult: (result: AssessmentResult) => void
+  setMaturity: (scores: MaturityScores) => void
   pushSnapshot: (snapshot: AssessmentSnapshot) => void
   reset: () => void
 }
@@ -44,6 +56,7 @@ const INITIAL_STATE = {
   lastModifiedAt: null as string | null,
   previousRiskScore: null as number | null,
   assessmentHistory: [] as AssessmentSnapshot[],
+  maturity: null as StoredMaturity | null,
 }
 
 export const useAssessmentResultStore = create<AssessmentResultState>()(
@@ -87,6 +100,15 @@ export const useAssessmentResultStore = create<AssessmentResultState>()(
 
       setResult: (result) => set({ lastResult: result }),
 
+      setMaturity: (scores) =>
+        set({
+          maturity: {
+            scores,
+            overall: overallMaturity(scores),
+            updatedAt: new Date().toISOString(),
+          },
+        }),
+
       pushSnapshot: (snapshot) =>
         set((state) => {
           const existing = Array.isArray(state.assessmentHistory) ? state.assessmentHistory : []
@@ -98,6 +120,7 @@ export const useAssessmentResultStore = create<AssessmentResultState>()(
         set((state) => ({
           ...INITIAL_STATE,
           assessmentHistory: state.assessmentHistory,
+          maturity: state.maturity,
           previousRiskScore: state.lastResult?.riskScore ?? state.previousRiskScore,
         })),
     }),
@@ -123,6 +146,7 @@ export const useAssessmentResultStore = create<AssessmentResultState>()(
         lastModifiedAt: state.lastModifiedAt,
         previousRiskScore: state.previousRiskScore,
         assessmentHistory: state.assessmentHistory,
+        maturity: state.maturity,
       }),
       onRehydrateStorage: () => (_state, error) => {
         if (error) console.error('Assessment result store rehydration failed:', error)

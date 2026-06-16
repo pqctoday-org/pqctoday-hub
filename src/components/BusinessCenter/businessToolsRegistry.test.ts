@@ -55,6 +55,10 @@ const ALL_ARTIFACT_TYPES: ExecutiveDocumentType[] = [
   'program-charter',
   'initial-scoping',
   'skills-team-plan',
+  'infra-modernization-plan',
+  'refresh-cycle-alignment',
+  'accelerated-execution-profile',
+  'data-at-rest-strategy',
   'sim-roadmap',
 ]
 

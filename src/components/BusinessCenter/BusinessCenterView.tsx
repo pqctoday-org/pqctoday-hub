@@ -15,6 +15,7 @@ import JSZip from 'jszip'
 import { PageHeader } from '@/components/common/PageHeader'
 import { PreviewBanner } from '@/components/common/PreviewBanner'
 import { WorkflowBreadcrumb } from '@/components/shared/WorkflowBreadcrumb'
+import { MaturitySummaryCard } from '@/components/Assess/MaturitySummaryCard'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { logEvent, personaLabel } from '@/utils/analytics'
@@ -445,6 +446,8 @@ export function BusinessCenterView() {
         shareTitle="PQC Command Center — Quantum Readiness Workspace"
         shareText="Your PQC readiness command center — risk, compliance, governance, and actionable next steps."
       />
+
+      <MaturitySummaryCard />
 
       {/* LearningFrame — names what kind of artifact this page is. The
            Command Center is a worked example of a PQC program (NIST CSWP.39

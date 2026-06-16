@@ -41,7 +41,7 @@ import { computeReadiness } from '@/simulation/readiness'
 import { runQuarter } from '@/simulation/quarterEngine'
 import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
 import { getBalance, type DifficultyId } from '@/data/simBalance'
-import { Eyebrow, Ring, Radial, Dial, Stat } from './atoms'
+import { Eyebrow, Ring, Radial, Dial, ReadonlyDial, Stat } from './atoms'
 import { SimTour } from './SimTour'
 import { SEVERITY_META } from './simChrome'
 import {
@@ -59,11 +59,15 @@ import {
   moscaInputsFromAssess,
   recommendationByModule,
   simProfileFromAssess,
+  simJurisdictionFromAssess,
   complianceFromAssess,
   kpisFromAssess,
+  frameworkRiskFromAssess,
   algorithmBacklogFromAssess,
   twoTrackFromAssess,
   projectReadiness,
+  useAssessMaturity,
+  phaseBaselineFromAssess,
   type AssessRec,
 } from '@/simulation/assessBridge'
 import {
@@ -80,6 +84,8 @@ import {
 import { ArchitecturePanel } from './ArchitecturePanel'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { useModuleStore } from '@/store/useModuleStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import pqctodayLogo from '@/assets/pqctoday-logo.png'
 
 // ---- option lists (from real hub data) ----------------------------------
 const SIZE_HINTS: Record<string, string> = {
@@ -93,23 +99,17 @@ const SIZES = (['small', 'mid', 'large', 'global'] as const).map((id) => ({
   label: id[0].toUpperCase() + id.slice(1),
   hint: SIZE_HINTS[id],
 }))
-const COUNTRY_HINTS: Record<string, string> = {
-  US: 'CNSA 2.0 — pure end-state',
-  DE: 'BSI — hybrid required',
-  FR: 'ANSSI — hybrid required',
-  UK: 'NCSC — prefer pure',
-  AU: 'ASD — pure end-state',
-}
-const COUNTRIES = (['US', 'DE', 'FR', 'UK', 'AU'] as const).map((id) => ({
-  id,
-  hint: COUNTRY_HINTS[id],
-}))
 const SEATS: { id: PersonaId; label: string }[] = (Object.keys(personaToRoles) as PersonaId[])
   .filter((p) => personaToRoles[p].length > 0)
   .map((id) => ({ id, label: id === 'ops' ? 'Operations' : PERSONAS[id].label.split(' ')[0] }))
 
 // difficulty cycle order for the MODE dial (WS-14)
 const DIFF_ORDER: DifficultyId[] = ['easy', 'realistic', 'hard']
+
+// The store's seed SEAT (useSimulationStore SEED.seat). SEAT defaults from the
+// user's persona only while it is still this seed value — once the player has
+// switched SEAT themselves, the persona default no longer overrides it.
+const SEAT_SEED_DEFAULT = 'executive'
 
 // Event-time clock at module scope so it stays out of the component render body
 // (the React Compiler purity rule forbids impure calls like Date.now() there).
@@ -237,6 +237,51 @@ export function SimulationView() {
   // read-only Assess → Sim bridge: offer to import a completed assessment as the
   // Phase-0 scoping artifact (data only; the sim's gate still decides it counts).
   const assessSnap = useAssessSnapshot()
+  // The org profile is now SOURCED FROM THE ASSESSMENT (single source of truth):
+  // ORG / JURISDICTION / SECTOR dials are read-only and derive from here. SEAT
+  // defaults from the persona; MODE (difficulty) stays freely editable.
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  // Self-assessed seven-domain maturity (from /assess) — surfaced as a READ-ONLY
+  // baseline. It never grants sim levels; the sim's strict gating is unchanged.
+  const assessMaturity = useAssessMaturity()
+  const phaseBaseline = useMemo(() => phaseBaselineFromAssess(assessMaturity), [assessMaturity])
+  const assessFrameworkRisk = useMemo(
+    () => (assessSnap ? frameworkRiskFromAssess(assessSnap.result) : null),
+    [assessSnap]
+  )
+  // Org profile derived from the assessment (sector/size + jurisdiction archetype).
+  const assessProfile = useMemo(
+    () => (assessSnap ? simProfileFromAssess(assessSnap.result) : null),
+    [assessSnap]
+  )
+  // Jurisdiction: the real country name to DISPLAY + the archetype code the
+  // mechanics use, and whether the country is a 1:1 modelled jurisdiction.
+  const assessJurisdiction = useMemo(
+    () => (assessSnap ? simJurisdictionFromAssess(assessSnap.result) : null),
+    [assessSnap]
+  )
+  // SYNC the read-only dials FROM the assessment (single source of truth). Only
+  // writes when the derived value differs from the store (no render loop). SEAT
+  // takes the persona default ONLY while SEAT is still the seed value — a later
+  // user SEAT switch is never overwritten.
+  useEffect(() => {
+    if (!assessProfile) return
+    if (assessProfile.sector && assessProfile.sector !== sector) setSector(assessProfile.sector)
+    if (assessProfile.size && assessProfile.size !== size) setSize(assessProfile.size)
+    if (assessProfile.country && assessProfile.country !== country)
+      setCountry(assessProfile.country)
+  }, [assessProfile, sector, size, country, setSector, setSize, setCountry])
+  useEffect(() => {
+    // Seed SEAT from the persona only if it's a valid seat AND the player hasn't
+    // changed SEAT yet (still the seed default). Don't fight a later user switch.
+    if (
+      selectedPersona &&
+      seat === SEAT_SEED_DEFAULT &&
+      selectedPersona !== SEAT_SEED_DEFAULT &&
+      SEATS.some((s) => s.id === selectedPersona)
+    )
+      setSeat(selectedPersona)
+  }, [selectedPersona, seat, setSeat])
   const importAssessReport = () => {
     if (!assessSnap) return
     addExecutiveDocument(buildAssessReportDoc(assessSnap.result, nowMs()))
@@ -349,7 +394,6 @@ export function SimulationView() {
   // setup-dial-derived facts
   const sizeOpt = SIZES.find((s) => s.id === size) ?? SIZES[1]
   const sectorOpt = SECTORS.find((s) => s.id === sector) ?? SECTORS[0]
-  const countryOpt = COUNTRIES.find((c) => c.id === country) ?? COUNTRIES[1]
   const jur = JURISDICTION_RULES[country]
   const seatOpt = SEATS.find((s) => s.id === seat) ?? SEATS[0]
 
@@ -548,12 +592,77 @@ export function SimulationView() {
       window.alert('Draft roadmap committed to the Command Center.')
   }
 
+  // REQUIRE-ASSESSMENT GATE — the simulation runs on the user's assessed
+  // organization (single source of truth). With no completed assessment there is
+  // nothing to scope the run from, so we show a prompt instead of the console.
+  // The page identity (header + Exit to hub) stays; the dials/board/KPIs do not.
+  if (!assessSnap) {
+    return (
+      <div className="fixed inset-0 flex flex-col bg-background text-foreground">
+        <header className="flex shrink-0 flex-wrap items-center gap-3 bg-foreground px-4 py-2 text-background">
+          <div className="flex shrink-0 items-center gap-2">
+            <img
+              src={pqctodayLogo}
+              alt="PQC Today"
+              className="h-15 w-15 shrink-0 rounded-md object-contain"
+            />
+            <div>
+              <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>
+              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.14em] text-background/50">
+                PQC Migration Simulation
+              </div>
+            </div>
+          </div>
+          <Link
+            to="/"
+            aria-label="Exit to hub"
+            className="ml-auto flex h-auto items-center rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-[10px] font-bold text-background/70 hover:bg-background/10"
+          >
+            ← HUB
+          </Link>
+        </header>
+        <div className="flex min-h-0 flex-1 items-center justify-center p-6">
+          <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
+            <span className="font-mono text-[9.5px] font-bold uppercase tracking-[0.14em] text-primary">
+              Simulation locked
+            </span>
+            <h1 className="mt-2 text-xl font-extrabold text-foreground">
+              Run your PQC assessment to start the simulation
+            </h1>
+            <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
+              The simulation runs on your assessed organization — your sector, size and jurisdiction
+              come from your assessment.
+            </p>
+            <div className="mt-6 flex flex-col items-stretch gap-2.5 sm:flex-row sm:justify-center">
+              <Link
+                to="/assess"
+                className="rounded-lg bg-gradient-to-r from-primary to-secondary px-5 py-2.5 text-[13px] font-extrabold text-background hover:opacity-90"
+              >
+                Start the assessment
+              </Link>
+              <Link
+                to="/report"
+                className="rounded-lg border border-border px-5 py-2.5 text-[13px] font-bold text-foreground hover:bg-muted"
+              >
+                View report
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="fixed inset-0 flex flex-col bg-background text-foreground">
       {/* header — command bar */}
       <header className="flex shrink-0 flex-wrap items-center gap-3 bg-foreground px-4 py-2 text-background">
         <div className="flex shrink-0 items-center gap-2">
-          <div className="h-6 w-6 rounded-md bg-gradient-to-br from-primary to-secondary" />
+          <img
+            src={pqctodayLogo}
+            alt="PQC Today"
+            className="h-15 w-15 shrink-0 rounded-md object-contain"
+          />
           <div>
             <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>
             <div className="font-mono text-[8px] font-bold uppercase tracking-[0.14em] text-background/50">
@@ -561,24 +670,34 @@ export function SimulationView() {
             </div>
           </div>
         </div>
-        <div className="flex flex-wrap gap-1.5">
-          <Dial
-            label="ORG"
-            value={sizeOpt.label}
-            hint={sizeOpt.hint}
-            onClick={() => setSize(cycle(SIZES, size))}
-          />
-          <Dial
+        {/* ORG / JURISDICTION / SECTOR are READ-ONLY — sourced from the user's
+            assessment (single source of truth). SEAT + MODE stay switchable. */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          <ReadonlyDial label="ORG" value={sizeOpt.label} hint="from your assessment" />
+          <ReadonlyDial
             label="JURISDICTION"
-            value={country}
-            hint={countryOpt.hint}
-            onClick={() => setCountry(cycle(COUNTRIES, country))}
+            value={assessJurisdiction?.displayName ?? country}
+            hint="from your assessment"
+            note={
+              assessJurisdiction && !assessJurisdiction.exact
+                ? `(rules modeled on ${assessJurisdiction.countryCode})`
+                : undefined
+            }
+            title={
+              assessJurisdiction && !assessJurisdiction.exact
+                ? `${assessJurisdiction.displayName} isn't modelled 1:1 — sim rules use the ${assessJurisdiction.countryCode} archetype`
+                : undefined
+            }
           />
-          <Dial
+          <ReadonlyDial
             label="SECTOR"
             value={sectorOpt.label}
-            hint={`shelf-life ${sectorOpt.shelfLifeYears}y`}
-            onClick={() => setSector(cycle(SECTORS, sector))}
+            hint="from your assessment"
+            title={
+              assessSnap?.result.assessmentProfile?.industry
+                ? `mapped from your assessment industry: ${assessSnap.result.assessmentProfile.industry}`
+                : undefined
+            }
           />
           <Dial
             label="SEAT"
@@ -594,6 +713,12 @@ export function SimulationView() {
               setDifficulty(DIFF_ORDER[(DIFF_ORDER.indexOf(difficulty) + 1) % DIFF_ORDER.length])
             }
           />
+          <Link
+            to="/assess"
+            className="self-center rounded-md px-1.5 font-mono text-[9px] font-bold text-background/60 underline-offset-2 hover:text-background hover:underline"
+          >
+            change in /assess →
+          </Link>
         </div>
         <div className="ml-auto flex shrink-0 items-center gap-2.5">
           <Link
@@ -936,17 +1061,26 @@ export function SimulationView() {
                   )
                 })}
               </div>
-              <div className="mt-2 rounded-lg border border-dashed border-border bg-muted/40 px-2.5 py-2">
-                <div className="flex items-center justify-between">
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={() => setSel('foundations')}
+                className={`mt-2 h-auto w-full flex-col items-stretch gap-0 whitespace-normal rounded-lg border border-dashed px-2.5 py-2 text-left ${
+                  sel === 'foundations'
+                    ? 'border-primary bg-primary/10'
+                    : 'border-border bg-muted/40 hover:bg-muted'
+                }`}
+              >
+                <div className="flex w-full items-center justify-between">
                   <span className="text-[11.5px] font-bold text-foreground">Foundations</span>
                   <span className="font-mono text-[9px] text-muted-foreground">
-                    L{levelOf('foundations')}
+                    {sel === 'foundations' ? 'active' : 'spanning'} · L{levelOf('foundations')}
                   </span>
                 </div>
                 <div className="mt-0.5 font-mono text-[9px] text-muted-foreground">
-                  spanning · agility · KPIs · skills
+                  agility · KPIs · skills · verification
                 </div>
-              </div>
+              </Button>
             </div>
           </div>
 
@@ -1041,6 +1175,13 @@ export function SimulationView() {
                       : `at L${level} · ${MATURITY_LEVEL_NAMES[level]}`}
                   </span>
                 </div>
+                {assessMaturity && (
+                  <p className="mb-2 text-[10px] text-muted-foreground">
+                    Self-assessed (from /assess): program L{assessMaturity.overall}
+                    {phaseBaseline[sel] != null ? ` · this phase ~L${phaseBaseline[sel]}` : ''} —
+                    baseline only; levels are earned in-sim
+                  </p>
+                )}
                 <div className="mb-4 flex flex-col gap-1.5">
                   {phaseTree.levels.map((band) => {
                     const total = band.activities.reduce((n, a) => n + a.steps.length, 0)
@@ -1439,6 +1580,51 @@ export function SimulationView() {
 
             {/* PQC migration backlog + two-track split — from the assessment, for
                 the remediation phases (P3 plan, P5 execute) */}
+            {sel === 'p3' && assessFrameworkRisk && (
+              <div className="rounded-xl border border-border bg-card p-4">
+                <Eyebrow className="mb-2 block">
+                  Quantum risk — four scoring dimensions{' '}
+                  <span className="text-muted-foreground/60">· from assessment</span>
+                </Eyebrow>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {(
+                    [
+                      ['HNDL exposure', assessFrameworkRisk.hndl],
+                      ['TNFL (signatures)', assessFrameworkRisk.tnfl],
+                      ['Regulatory', assessFrameworkRisk.regulatory],
+                      ['Feasibility', assessFrameworkRisk.feasibility],
+                    ] as const
+                  ).map(([dimLabel, val]) => (
+                    <div
+                      key={dimLabel}
+                      className="rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-semibold text-foreground">
+                          {dimLabel}
+                        </span>
+                        <span className="font-mono text-[10px] text-muted-foreground">
+                          {val}/100
+                        </span>
+                      </div>
+                      <div className="mt-1 h-1 rounded-full bg-muted">
+                        <div
+                          className={`h-1 rounded-full ${
+                            val >= 70 ? 'bg-destructive' : val >= 40 ? 'bg-warning' : 'bg-success'
+                          }`}
+                          style={{ width: `${Math.max(0, Math.min(100, val))}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-2 text-[9.5px] leading-snug text-muted-foreground">
+                  These are the framework's Phase-3 scoring dimensions for your org — they drive the
+                  QRA you produce here.
+                </p>
+              </div>
+            )}
+
             {(sel === 'p3' || sel === 'p5') && (assessBacklog.length > 0 || assessTwoTrack) && (
               <div className="rounded-xl border border-border bg-card p-4">
                 <Eyebrow className="mb-2 block">

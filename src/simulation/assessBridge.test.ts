@@ -4,6 +4,7 @@ import {
   serializeAssessReport,
   buildAssessReportDoc,
   simProfileFromAssess,
+  simJurisdictionFromAssess,
   complianceFromAssess,
   kpisFromAssess,
   algorithmBacklogFromAssess,
@@ -63,13 +64,64 @@ describe('assessBridge', () => {
     expect(simProfileFromAssess(r)).toEqual({ sector: 'financial', size: 'large', country: 'DE' })
   })
 
-  it('omits dials the sim does not model and returns {} with no profile', () => {
+  it('omits unmodelled sector/size but always resolves a country archetype', () => {
     const r = {
       assessmentProfile: { industry: 'Mining', systemScale: '11-50', country: 'Brazil' },
     } as unknown as AssessmentResult
-    // industry/country unmodelled → dropped; size still maps
-    expect(simProfileFromAssess(r)).toEqual({ size: 'mid' })
+    // industry unmodelled → dropped; size still maps; country falls back to the
+    // default archetype (US) so the sim always has a jurisdiction rule-set.
+    expect(simProfileFromAssess(r)).toEqual({ size: 'mid', country: 'US' })
     expect(simProfileFromAssess({} as unknown as AssessmentResult)).toEqual({})
+  })
+
+  it('resolves jurisdiction: exact 1:1 archetypes vs region-based fallback', () => {
+    // 1:1 modelled jurisdictions keep their code and are marked exact
+    expect(
+      simJurisdictionFromAssess({
+        assessmentProfile: { country: 'Germany' },
+      } as unknown as AssessmentResult)
+    ).toEqual({
+      countryCode: 'DE',
+      displayName: 'Germany',
+      exact: true,
+    })
+    // an EU/EEA member that isn't 1:1 → DE archetype, real name preserved, not exact
+    expect(
+      simJurisdictionFromAssess({
+        assessmentProfile: { country: 'Italy' },
+      } as unknown as AssessmentResult)
+    ).toEqual({
+      countryCode: 'DE',
+      displayName: 'Italy',
+      exact: false,
+    })
+    // New Zealand → AU archetype (Oceania)
+    expect(
+      simJurisdictionFromAssess({
+        assessmentProfile: { country: 'New Zealand' },
+      } as unknown as AssessmentResult)
+    ).toEqual({
+      countryCode: 'AU',
+      displayName: 'New Zealand',
+      exact: false,
+    })
+    // anything else (e.g. Brazil, Canada) → the default US archetype
+    expect(
+      simJurisdictionFromAssess({
+        assessmentProfile: { country: 'Brazil' },
+      } as unknown as AssessmentResult)?.countryCode
+    ).toBe('US')
+    expect(
+      simJurisdictionFromAssess({
+        assessmentProfile: { country: 'Canada' },
+      } as unknown as AssessmentResult)
+    ).toEqual({
+      countryCode: 'US',
+      displayName: 'Canada',
+      exact: false,
+    })
+    // no country → null
+    expect(simJurisdictionFromAssess({} as unknown as AssessmentResult)).toBeNull()
   })
 
   it('surfaces compliance, KPIs and the algorithm backlog (read-only)', () => {

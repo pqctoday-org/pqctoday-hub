@@ -38,6 +38,12 @@ const REF_URL = {
   'algorithms-catalog': '/algorithms',
   timeline: '/timeline',
   report: '/report',
+  // Hands-on Playground workshops (practice leaves) — real /playground/:toolId pages.
+  'pg-tls-simulator': '/playground/tls-simulator',
+  'pg-envelope-encrypt': '/playground/envelope-encrypt',
+  'pg-merkle-proof': '/playground/merkle-proof',
+  'pg-hsm-capacity': '/playground/hsm-capacity',
+  'pg-cert-capacity': '/playground/cert-capacity',
 }
 const ART_TOOL = {
   'roi-model': 'roi-calculator',
@@ -64,6 +70,14 @@ const ART_TOOL = {
   'contract-clause': 'contract-clause',
   'supply-chain-matrix': 'supply-chain-matrix',
   'cloud-responsibility-matrix': 'cloud-responsibility-matrix',
+  'kpi-dashboard': 'kpi-dashboard',
+  'infra-modernization-plan': 'infra-modernization-planner',
+  'refresh-cycle-alignment': 'refresh-cycle-alignment',
+  'accelerated-execution-profile': 'accelerated-execution-profile',
+  'data-at-rest-strategy': 'data-at-rest-strategy',
+  'kpi-tracker': 'kpi-tracker',
+  'skills-team-plan': 'skills-team-plan',
+  'audit-checklist': 'audit-checklist',
 }
 const L = (moduleId, label) => ({ kind: 'learn', label, to: `/learn/${moduleId}`, moduleId })
 const A = (artifactType, label) => {
@@ -127,6 +141,12 @@ const INDICATORS = {
     3: 'PQC in standard procurement language; contracts include dated commitments and remedies; bridging patterns deployed for blocked systems; vendor scorecard reported to SteerCo',
     4: 'All strategic vendors PQC-committed with verified delivery; open-source dependency tracking operational; vendor governance is permanent BAU function',
   },
+  foundations: {
+    1: 'Cross-cutting capabilities recognized; ad hoc maturity awareness; no KPIs',
+    2: 'Maturity self-assessment run; KPI baseline set; crypto-agility plan and skills plan drafted',
+    3: 'KPIs reported to the board; regulatory/standards alignment maintained; crypto-agility OKRs tracked; evidence dossier kept',
+    4: 'Foundations run as BAU; migration verification & program-closure standard applied; algorithm changes are routine',
+  },
 }
 
 const GATES = {
@@ -138,6 +158,7 @@ const GATES = {
   p5: { id: 'G5', criterion: 'Pilots validated; wave migration underway' },
   p6: { id: 'G6', criterion: 'Infrastructure PQC-ready; performance validated' },
   p7: { id: 'G7', criterion: 'Continuous vendor governance operating' },
+  foundations: { id: 'GF', criterion: 'Foundations sustained as BAU' },
 }
 
 // ---- the framework activities, level-tagged, mapped to real hub leaves ------
@@ -153,6 +174,7 @@ const FRAMEWORK = {
       output: 'Executive business case',
       steps: [
         L('pqc-business-case', 'Learn: PQC Business Case'),
+        L('exec-quantum-impact', 'Learn: Executive Quantum Impact'),
         R('threats', 'Check the CRQC threat horizon'),
         A('roi-model', 'Model the migration ROI'),
       ],
@@ -211,6 +233,7 @@ const FRAMEWORK = {
       output: 'Signed mandate & multi-year budget',
       steps: [
         A('board-deck', 'Pitch the board for budget'),
+        A('kpi-dashboard', 'Set the board KPI pack (Coverage/Trust/Inventory/Vendors/Agility)'),
         A('policy-draft', 'Draft the cryptography policy'),
       ],
     },
@@ -233,7 +256,13 @@ const FRAMEWORK = {
       title: 'Establish Three Parallel Inventory Tracks',
       do: 'Stand up Track A (crypto usage), Track B (data classification), Track C (systems/assets).',
       output: null,
-      steps: [L('crypto-mgmt-modernization', 'Learn: Cryptographic Management Modernization')],
+      steps: [
+        L('crypto-mgmt-modernization', 'Learn: Cryptographic Management Modernization'),
+        L(
+          'data-asset-sensitivity',
+          'Learn: Track B — data classification & confidentiality horizons'
+        ),
+      ],
     },
     {
       id: '1.2',
@@ -271,7 +300,10 @@ const FRAMEWORK = {
       title: 'Establish Continuous Discovery',
       do: 'Wire discovery into CI/CD and passive monitoring with quarterly rescans and tiered alerting.',
       output: 'Continuous discovery operating model',
-      steps: [A('crypto-vulnerability-watch', 'Set up the Crypto-Vulnerability Watch')],
+      steps: [
+        A('crypto-vulnerability-watch', 'Set up the Crypto-Vulnerability Watch'),
+        L('pqc-testing-validation', 'Learn: continuous discovery & validation'),
+      ],
     },
   ],
   p2: [
@@ -300,7 +332,10 @@ const FRAMEWORK = {
       title: 'Integrate CBOM into Operational Processes',
       do: 'Embed CBOM governance into CI/CD, change management, vendor onboarding and audit.',
       output: null,
-      steps: [R('migrate', 'Wire CBOM into the Migrate pipeline')],
+      steps: [
+        R('migrate', 'Wire CBOM into the Migrate pipeline'),
+        A('crypto-vulnerability-watch', 'Wire CBOM freshness into CI/CD drift checks'),
+      ],
     },
     {
       id: '2.4–2.5',
@@ -308,7 +343,13 @@ const FRAMEWORK = {
       title: 'CBOM Freshness Governance & Securing Program Artifacts',
       do: 'Enforce refresh triggers and protect the CBOM with classification and access control.',
       output: 'CBOM governance & protection policy',
-      steps: [R('compliance', 'Set CBOM freshness against compliance gates')],
+      steps: [
+        L(
+          'soc-implementation-pqc',
+          'Learn: protect the CBOM (it is an HNDL shopping list) — SOC monitoring'
+        ),
+        R('migrate', 'Set CBOM freshness triggers in the Migrate pipeline'),
+      ],
     },
   ],
   p3: [
@@ -320,6 +361,8 @@ const FRAMEWORK = {
       output: 'Risk scoring model',
       steps: [
         L('pqc-risk-management', 'Learn: PQC Risk Management'),
+        L('data-asset-sensitivity', 'Learn: data sensitivity & legal/data-retention horizon'),
+        R('threats', 'Reference: why 256-bit ECC ≈ RSA-2048 under quantum'),
         R('algorithms-protocol-matrix', 'Reference: PQC Protocol Matrix'),
       ],
     },
@@ -338,6 +381,7 @@ const FRAMEWORK = {
       do: 'Sequence with the two-track model (key exchange / signatures) by exposure and lead time.',
       output: 'Migration sequencing recommendation',
       steps: [
+        L('migration-program', 'Learn: the two-track migration sequencing model'),
         R('algorithms-transition', 'Reference: the algorithm transition map'),
         A('risk-treatment-plan', 'Draft a Risk Treatment Plan'),
       ],
@@ -348,7 +392,10 @@ const FRAMEWORK = {
       title: 'Produce the Quantum Readiness Assessment (QRA)',
       do: 'Consolidate scoring into a defensible QRA: heatmap, backlog, gap analysis, compliance mapping.',
       output: 'Quantum Readiness Assessment (QRA)',
-      steps: [R('report', 'Assemble the QRA on the Report page')],
+      steps: [
+        R('compliance', 'Map the QRA to NIST / CNSA 2.0 / ETSI / sector rules'),
+        R('report', 'Assemble the QRA on the Report page'),
+      ],
     },
   ],
   p4: [
@@ -369,6 +416,7 @@ const FRAMEWORK = {
       steps: [
         R('timeline', 'Reference: the 2026–2030 deadline squeeze'),
         A('migration-roadmap', 'Build a multi-year Roadmap'),
+        A('stakeholder-comms', 'Plan the roadmap stakeholder communications'),
       ],
     },
     {
@@ -377,7 +425,7 @@ const FRAMEWORK = {
       title: 'Align to Infrastructure Refresh Cycles',
       do: 'Map PQC tasks onto already-funded refresh programs to embed cost avoidance.',
       output: 'Refresh-cycle alignment table',
-      steps: [A('compliance-timeline', 'Build the compliance timeline')],
+      steps: [A('refresh-cycle-alignment', 'Map PQC tasks onto funded refresh cycles')],
     },
     {
       id: '4.4',
@@ -385,7 +433,10 @@ const FRAMEWORK = {
       title: 'Establish PMO Structure for Scale',
       do: 'Define WBS, dependency map, critical path, resource leveling and risk register.',
       output: 'PMO operating model',
-      steps: [A('stakeholder-comms', 'Draft stakeholder communications')],
+      steps: [
+        A('raci-matrix', 'Define the 8 workstreams & RACI'),
+        A('kpi-dashboard', 'Baseline the program KPI pack'),
+      ],
     },
     {
       id: '4.5–4.6',
@@ -401,7 +452,7 @@ const FRAMEWORK = {
       title: 'Pre-Draft the Accelerated Execution Profile',
       do: 'Pre-approve a contingency package with triggers, compressed sequence and activation authority.',
       output: 'Accelerated Execution Profile',
-      steps: [R('compliance', 'Tie acceleration triggers to compliance deadlines')],
+      steps: [A('accelerated-execution-profile', 'Pre-draft the accelerated execution profile')],
     },
   ],
   p5: [
@@ -424,6 +475,8 @@ const FRAMEWORK = {
       output: null,
       steps: [
         R('algorithms-protocol-matrix', 'Reference: which protocols have a PQC path'),
+        L('vpn-ssh-pqc', 'Learn: VPN/IPsec & SSH PQC patterns'),
+        L('code-signing', 'Learn: code & firmware signing (Track B — integrity)'),
         A('hybrid-transition', 'Plan the hybrid transition'),
       ],
     },
@@ -433,7 +486,10 @@ const FRAMEWORK = {
       title: 'Execute Pilots with Measurement',
       do: 'Run pilots against SLOs (latency, CPU, throughput), test rollback and validate compatibility.',
       output: 'Pilot results reports',
-      steps: [A('deployment-playbook', 'Draft a Deployment Playbook')],
+      steps: [
+        R('pg-tls-simulator', 'Practice: measure the TLS 1.3 hybrid handshake'),
+        A('deployment-playbook', 'Draft a Deployment Playbook'),
+      ],
     },
     {
       id: '5.4',
@@ -450,8 +506,10 @@ const FRAMEWORK = {
       do: 'Deploy tokenization, segmentation and AES-256 defaults; decide a per-store data-at-rest strategy.',
       output: 'Defense-in-depth & data-at-rest plan',
       steps: [
-        L('tls-basics', 'Learn: TLS & Transport Security'),
-        R('library', 'Reference: data-at-rest patterns'),
+        L('confidential-computing', 'Learn: Confidential Computing & defense-in-depth'),
+        L('database-encryption-pqc', 'Learn: data-at-rest strategy & DB encryption'),
+        R('pg-envelope-encrypt', 'Practice: PQC key-wrapping (envelope encryption)'),
+        A('data-at-rest-strategy', 'Decide the per-store data-at-rest strategy'),
       ],
     },
     {
@@ -470,7 +528,12 @@ const FRAMEWORK = {
       title: 'PKI Modernization',
       do: 'Shorten certificate lifetimes, deploy dual-stack CA, and test chains across middleboxes.',
       output: 'PKI modernization plan',
-      steps: [L('pki-workshop', 'Learn: PKI Workshop')],
+      steps: [
+        L('pki-workshop', 'Learn: PKI Workshop'),
+        L('merkle-tree-certs', 'Learn: Merkle Tree Certificates (the web-PKI path)'),
+        R('pg-merkle-proof', 'Practice: Merkle Tree Certificates workshop'),
+        A('infra-modernization-plan', 'Draft the infrastructure modernization plan'),
+      ],
     },
     {
       id: '6.2',
@@ -478,7 +541,11 @@ const FRAMEWORK = {
       title: 'HSM and KMS Modernization',
       do: 'Inventory HSMs by PQC capability, upgrade firmware and configure cloud KMS for PQC.',
       output: 'HSM/KMS upgrade schedule',
-      steps: [L('hsm-pqc', 'Learn: HSM & PQC Operations'), L('kms-pqc', 'Learn: KMS & PQC')],
+      steps: [
+        L('hsm-pqc', 'Learn: HSM & PQC Operations'),
+        L('kms-pqc', 'Learn: KMS & PQC'),
+        R('pg-hsm-capacity', 'Practice: HSM capacity calculator'),
+      ],
     },
     {
       id: '6.3',
@@ -489,6 +556,7 @@ const FRAMEWORK = {
       steps: [
         L('network-security-pqc', 'Learn: Network Security & PQC'),
         R('algorithms-protocol-matrix', 'Reference: protocol PQC support'),
+        R('pg-cert-capacity', 'Practice: certificate chain / handshake size'),
       ],
     },
     {
@@ -531,6 +599,7 @@ const FRAMEWORK = {
       output: 'Vendor questionnaire responses',
       steps: [
         R('compliance-cert-check', 'Reference: vendor FIPS/CC cert status'),
+        R('algorithms-protocol-matrix', 'Reference: which vendor protocols have a PQC path'),
         A('vendor-scorecard', 'Score vendors (Vendor Scorecard)'),
       ],
     },
@@ -548,7 +617,10 @@ const FRAMEWORK = {
       title: 'Manage Blockers, Ongoing Governance & Uncompellable Counterparties',
       do: 'Deploy bridging patterns, run a recurring scorecard cadence and coordinate ecosystem partners.',
       output: 'Vendor governance cadence',
-      steps: [R('compliance', 'Govern vendors against the compliance map')],
+      steps: [
+        A('kpi-dashboard', 'Run the vendor-KPI / SteerCo governance cadence'),
+        A('deployment-playbook', 'Deploy bridging patterns for blocked vendors'),
+      ],
     },
     {
       id: '7.7',
@@ -557,6 +629,63 @@ const FRAMEWORK = {
       do: 'Define the provider/customer migration boundary and govern SaaS by sensitivity.',
       output: 'Cloud responsibility & SaaS governance',
       steps: [A('cloud-responsibility-matrix', 'Map the cloud responsibility split')],
+    },
+  ],
+  foundations: [
+    {
+      id: 'F.1',
+      level: 1,
+      title: 'Establish GRC & Assess Program Maturity',
+      do: 'Stand up the risk-appetite statement and KRI cascade, then run the seven-domain maturity self-assessment (overall = weakest domain).',
+      output: 'GRC structure & maturity baseline',
+      steps: [
+        L('pqc-grc', 'Learn: PQC GRC (risk appetite & KRIs)'),
+        R('assess-engine', 'Run the seven-domain maturity self-assessment'),
+      ],
+    },
+    {
+      id: 'F.2',
+      level: 2,
+      title: 'Baseline Metrics & the Evidence Dossier',
+      do: 'Set the board KPI pack (Coverage/Trust/Inventory/Vendors/Agility) and the operational KPIs, and start the audit/litigation evidence dossier.',
+      output: 'KPI baseline & evidence dossier',
+      steps: [
+        A('kpi-dashboard', 'Baseline the board KPI pack'),
+        A('kpi-tracker', 'Track operational KPIs & the evidence dossier'),
+      ],
+    },
+    {
+      id: 'F.3',
+      level: 2,
+      title: 'Build Crypto-Agility & the Team',
+      do: 'Adopt crypto-agility as the end-state architecture and staff the program with the framework core roles (≈1 FTE per 500 CBOM instances).',
+      output: 'Crypto-agility roadmap & skills plan',
+      steps: [
+        L('crypto-agility', 'Learn: Crypto-Agility as end-state'),
+        A('skills-team-plan', 'Plan skills & team'),
+      ],
+    },
+    {
+      id: 'F.4',
+      level: 3,
+      title: 'Maintain Regulatory & Standards Alignment',
+      do: 'Keep the phase-to-regulation map current across the 2026–2035 deadline squeeze and the standards bodies that bind you.',
+      output: 'Regulatory & standards alignment map',
+      steps: [
+        L('standards-bodies', 'Learn: Standards, Certification & Compliance Bodies'),
+        R('compliance', 'Maintain the regulatory & standards alignment map'),
+      ],
+    },
+    {
+      id: 'F.5',
+      level: 4,
+      title: 'Migration Verification & Program Closure',
+      do: 'Apply the 5-point verification evidence standard, decommission classical material, and hand the capability to funded BAU owners.',
+      output: 'Verification record & BAU handover',
+      steps: [
+        A('audit-checklist', 'Run the verification & audit-readiness checklist'),
+        R('report', 'Assemble the evidence dossier & closure record'),
+      ],
     },
   ],
 }
@@ -608,7 +737,11 @@ const PITFALLS = {
     },
     {
       title: 'Treat discovery as one-time',
-      why: 'Discovery is a permanent capability; disbanding the team staling the CBOM within six months.',
+      why: 'Discovery is a permanent capability; disbanding the team stales the CBOM within six months.',
+    },
+    {
+      title: 'Ignore the immediate classical-crypto findings',
+      why: 'Discovery surfaces weak/expired classical crypto with near-term value; ignoring it wastes the inventory and leaves the Level-2 "classical vulnerabilities being remediated" bar unmet.',
     },
   ],
   p2: [
@@ -642,6 +775,10 @@ const PITFALLS = {
       title: 'Migrate RSA before ECC for "strength"',
       why: '256-bit ECC is at least as exposed to quantum attack as RSA-2048; ordering by classical strength misreads the threat.',
     },
+    {
+      title: 'Skip the legal / data-retention review',
+      why: 'Long-retention data (GDPR, contractual, >10–15y) changes the HNDL exposure window; without legal counsel the QRA under-scores the very data that needs protecting first.',
+    },
   ],
   p4: [
     {
@@ -659,6 +796,10 @@ const PITFALLS = {
     {
       title: 'Stand up governance without teeth',
       why: 'A SteerCo with no binding decision or funding authority cannot govern the migration.',
+    },
+    {
+      title: 'Treat the roadmap as a project plan, not a program',
+      why: 'A project plan ends at a milestone; PQC migration must transition to ongoing posture management by Year 4–5 — disbanding at "done" orphans the capability.',
     },
   ],
   p5: [
@@ -682,6 +823,10 @@ const PITFALLS = {
       title: 'Treat hybrid as the end state',
       why: 'Deploying hybrid without planning the PQC-only transition forces a second migration later.',
     },
+    {
+      title: 'Ignore library version as a hard constraint',
+      why: 'PQC needs current libraries (OpenSSL 3.5+, BoringSSL, AWS-LC, Bouncy Castle); a lagging library/runtime silently blocks the deployment you designed.',
+    },
   ],
   p6: [
     {
@@ -699,6 +844,10 @@ const PITFALLS = {
     {
       title: 'Do all PKI modernization in one event',
       why: 'Changing root, intermediate and end-entity at once risks widespread outages.',
+    },
+    {
+      title: 'Neglect capacity planning for high-volume TLS termination',
+      why: 'At CDN edge and load-balancer aggregate scale, PQC handshake/bandwidth growth swamps capacity you never modelled — the outage shows up under peak load.',
     },
   ],
   p7: [
@@ -721,6 +870,24 @@ const PITFALLS = {
     {
       title: 'Ignore open-source crypto dependencies',
       why: 'OpenSSL/Bouncy Castle and language libraries need the same tracking as commercial vendors.',
+    },
+    {
+      title: 'Delegate the risk, not just the implementation',
+      why: 'The vendor owns the product, but you still own the risk to your data, operations and compliance — "the vendor will sort it out" leaves you accountable with no control.',
+    },
+  ],
+  foundations: [
+    {
+      title: 'Declare the migration "done" on milestones',
+      why: 'Closing on milestone completion instead of verified posture — without verification evidence (observed negotiation, negative testing, dossier) the migration is a belief, not a fact.',
+    },
+    {
+      title: 'Orphan the capabilities at closure',
+      why: 'Treating closure as end-of-funding rather than handover — CBOM, discovery and vendor governance decay within quarters without funded BAU owners.',
+    },
+    {
+      title: 'Skip the seven-domain maturity self-assessment',
+      why: 'Without the weakest-link view you over-report progress and miss the gating domain that actually constrains readiness.',
     },
   ],
 }
