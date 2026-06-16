@@ -11,6 +11,11 @@ import { loadedTransitionMetadata } from '../data/algorithmsData'
 import { sourcesMetadata } from '../data/authoritativeSourcesData'
 import { xrefMetadata } from '../data/certificationXrefData'
 import { quizMetadata } from '../data/quizDataLoader'
+import {
+  getModuleVersionFingerprint,
+  diffModuleVersions,
+  type ModuleChanges,
+} from '../components/PKILearning/manifest/contentVersion'
 
 // Injected by Vite at build time from package.json version
 declare const __APP_VERSION__: string
@@ -71,6 +76,9 @@ interface VersionState {
   lastSeenDataFingerprint: DataFingerprint
   isFirstVisit: boolean
 
+  // Learn-module content fingerprint (v4, B2) — id → contentVersion last seen
+  lastSeenModuleFingerprint: Record<string, number>
+
   // Existing methods
   hasSeenCurrentVersion: () => boolean
   markVersionSeen: () => void
@@ -79,6 +87,8 @@ interface VersionState {
   // New methods (v2)
   hasUnseenChanges: () => boolean
   getChangedSources: () => DataSourceId[]
+  /** Learn modules added/retired/updated/renamed since last seen (B2). */
+  getModuleChanges: () => ModuleChanges
   markDataSeen: () => void
   markAllSeen: () => void
 
@@ -94,6 +104,7 @@ interface PersistedVersionState {
   lastSeenVersion: string | null
   lastSeenDataFingerprint: DataFingerprint
   isFirstVisit: boolean
+  lastSeenModuleFingerprint: Record<string, number>
 }
 
 // ── Store ───────────────────────────────────────────────────────────────────
@@ -105,6 +116,9 @@ export const useVersionStore = create<VersionState>()(
       lastSeenVersion: null,
       lastSeenDataFingerprint: { ...EMPTY_FINGERPRINT },
       isFirstVisit: true,
+      // Seed to the CURRENT module set so a brand-new user starts "caught up"
+      // (no spurious "every module is new"); only later changes surface.
+      lastSeenModuleFingerprint: getModuleVersionFingerprint(),
 
       hasSeenCurrentVersion: () => {
         const { currentVersion, lastSeenVersion } = get()
@@ -116,7 +130,19 @@ export const useVersionStore = create<VersionState>()(
         const { lastSeenVersion } = get()
         // 99.0.0 is the E2E sentinel — suppress everything
         if (lastSeenVersion === '99.0.0') return false
-        return get().getChangedSources().length > 0
+        if (get().getChangedSources().length > 0) return true
+        const m = get().getModuleChanges()
+        return m.added.length + m.retired.length + m.updated.length + m.renamed.length > 0
+      },
+
+      getModuleChanges: () => {
+        const lastSeen = get().lastSeenModuleFingerprint
+        // Defensive: if not yet seeded (init/migrate seed it to current), report
+        // nothing rather than flagging every module as "new".
+        if (!lastSeen || Object.keys(lastSeen).length === 0) {
+          return { added: [], retired: [], updated: [], renamed: [] }
+        }
+        return diffModuleVersions(lastSeen)
       },
 
       getChangedSources: () => {
@@ -139,7 +165,11 @@ export const useVersionStore = create<VersionState>()(
 
       markDataSeen: () => {
         const current = getCurrentDataFingerprint()
-        set({ lastSeenDataFingerprint: current, isFirstVisit: false })
+        set({
+          lastSeenDataFingerprint: current,
+          lastSeenModuleFingerprint: getModuleVersionFingerprint(),
+          isFirstVisit: false,
+        })
       },
 
       markAllSeen: () => {
@@ -148,6 +178,7 @@ export const useVersionStore = create<VersionState>()(
         set({
           lastSeenVersion: currentVersion,
           lastSeenDataFingerprint: current,
+          lastSeenModuleFingerprint: getModuleVersionFingerprint(),
           isFirstVisit: false,
         })
       },
@@ -160,18 +191,20 @@ export const useVersionStore = create<VersionState>()(
         set({
           lastSeenVersion: null,
           lastSeenDataFingerprint: { ...EMPTY_FINGERPRINT },
+          lastSeenModuleFingerprint: {},
           isFirstVisit: true,
         })
       },
     }),
     {
       name: 'pqc-version-storage',
-      version: 3,
+      version: 4,
       storage: createJSONStorage(() => localStorage),
       partialize: (state): PersistedVersionState => ({
         lastSeenVersion: state.lastSeenVersion,
         lastSeenDataFingerprint: state.lastSeenDataFingerprint,
         isFirstVisit: state.isFirstVisit,
+        lastSeenModuleFingerprint: state.lastSeenModuleFingerprint,
       }),
       migrate: (persistedState: unknown, version: number) => {
         const state =
@@ -212,6 +245,14 @@ export const useVersionStore = create<VersionState>()(
 
         if (typeof state.isFirstVisit !== 'boolean') {
           state.isFirstVisit = state.lastSeenVersion === null
+        }
+
+        // v3 → v4 (B2): add the learn-module fingerprint. Seed it to the CURRENT
+        // module set so existing users are "caught up" — no spurious "every
+        // module is new" on the upgrade; only later changes surface.
+        const mfp = state.lastSeenModuleFingerprint
+        if (typeof mfp !== 'object' || mfp === null) {
+          state.lastSeenModuleFingerprint = getModuleVersionFingerprint()
         }
 
         return state as unknown as PersistedVersionState

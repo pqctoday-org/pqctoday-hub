@@ -19,6 +19,8 @@ import {
   Database,
   Shield,
   Info,
+  GraduationCap,
+  Archive,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { useVersionStore, getCurrentVersion } from '../../store/useVersionStore'
@@ -26,6 +28,7 @@ import { usePersonaStore } from '../../store/usePersonaStore'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
 import { PERSONAS, type PersonaId } from '../../data/learningPersonas'
+import { MODULE_CATALOG } from '../PKILearning/moduleData'
 import { Button } from './button'
 import { StatusBadge } from '../common/StatusBadge'
 import {
@@ -72,6 +75,13 @@ const SECTION_COLORS: Record<SectionType, string> = {
 
 const MAX_VISIBLE_ITEMS = 10
 
+/** Display title for a module id; falls back to the id for retired modules that
+ *  are no longer in the catalog. */
+function moduleTitle(id: string): string {
+  // eslint-disable-next-line security/detect-object-injection -- id is a module id from our own diff
+  return MODULE_CATALOG[id]?.title ?? id
+}
+
 // ── Changelog helpers ───────────────────────────────────────────────────────
 
 function getUnseenChangelogSections(
@@ -117,7 +127,7 @@ function getUnseenChangelogSections(
 // ── Component ───────────────────────────────────────────────────────────────
 
 export const WhatsNewModal = () => {
-  const { getChangedSources, lastSeenVersion, markAllSeen } = useVersionStore()
+  const { getChangedSources, getModuleChanges, lastSeenVersion, markAllSeen } = useVersionStore()
   const { selectedPersona, selectedIndustries } = usePersonaStore()
   const navigate = useNavigate()
   const version = getCurrentVersion()
@@ -171,7 +181,16 @@ export const WhatsNewModal = () => {
     return getDataSourceSummaries(changedSources)
   }, [getChangedSources])
 
-  const hasContent = dataSummaries.length > 0 || changelogSections.length > 0
+  // Learn-module catalog changes (B2) — added / updated / retired since last seen.
+  const moduleChanges = useMemo(() => getModuleChanges(), [getModuleChanges])
+  const moduleChangeCount =
+    moduleChanges.added.length +
+    moduleChanges.updated.length +
+    moduleChanges.retired.length +
+    moduleChanges.renamed.length
+
+  const hasContent =
+    dataSummaries.length > 0 || changelogSections.length > 0 || moduleChangeCount > 0
 
   // ── Visibility logic ────────────────────────────────────────────────────
 
@@ -562,6 +581,99 @@ export const WhatsNewModal = () => {
                   )
                 })}
 
+                {/* Learn module changes (B2) — added / updated / retired */}
+                {moduleChangeCount > 0 && (
+                  <div>
+                    <Button
+                      variant="ghost"
+                      onClick={() => toggleSection('learn-modules')}
+                      className="flex items-center gap-2 w-full text-left py-1.5 group"
+                    >
+                      <GraduationCap size={14} className="text-primary shrink-0" />
+                      <span className="text-sm font-semibold text-foreground flex-1">
+                        Learn Modules
+                      </span>
+                      <span className="text-xs text-muted-foreground tabular-nums space-x-1">
+                        {moduleChanges.added.length > 0 && (
+                          <span className="text-success">{moduleChanges.added.length} new</span>
+                        )}
+                        {moduleChanges.updated.length > 0 && (
+                          <span className="text-primary">
+                            {moduleChanges.updated.length} updated
+                          </span>
+                        )}
+                        {moduleChanges.retired.length > 0 && (
+                          <span className="text-warning">
+                            {moduleChanges.retired.length} retired
+                          </span>
+                        )}
+                      </span>
+                      {expandedSections['learn-modules'] ? (
+                        <ChevronUp size={14} className="text-muted-foreground" />
+                      ) : (
+                        <ChevronDown size={14} className="text-muted-foreground" />
+                      )}
+                    </Button>
+
+                    {expandedSections['learn-modules'] && (
+                      <div className="mt-1 space-y-2 pl-1">
+                        <ModuleChangeGroup
+                          label="New"
+                          colorClass="text-success"
+                          icon={Plus}
+                          ids={moduleChanges.added}
+                          onNavigate={handleItemClick}
+                        />
+                        <ModuleChangeGroup
+                          label="Updated"
+                          colorClass="text-primary"
+                          icon={Sparkles}
+                          ids={moduleChanges.updated}
+                          onNavigate={handleItemClick}
+                        />
+                        {moduleChanges.renamed.length > 0 && (
+                          <div>
+                            <div className="flex items-center gap-1.5 mb-1">
+                              <ArrowRightLeft size={12} className="text-muted-foreground" />
+                              <span className="text-xs font-medium text-muted-foreground">
+                                Renamed
+                              </span>
+                            </div>
+                            <ul className="space-y-0.5 pl-4">
+                              {moduleChanges.renamed.map((r) => (
+                                <li key={r.to} className="text-xs text-muted-foreground py-0.5">
+                                  <span className="text-foreground">{moduleTitle(r.to)}</span>
+                                  <span className="ml-1 opacity-70">
+                                    — id changed from {r.from}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {moduleChanges.retired.length > 0 && (
+                          <div>
+                            <div className="flex items-center gap-1.5 mb-1">
+                              <Archive size={12} className="text-warning" />
+                              <span className="text-xs font-medium text-warning">Retired</span>
+                            </div>
+                            <ul className="space-y-0.5 pl-4">
+                              {moduleChanges.retired.map((id) => (
+                                <li key={id} className="text-xs text-muted-foreground py-0.5">
+                                  <span className="text-foreground">{moduleTitle(id)}</span>
+                                  <span className="ml-1 opacity-70">
+                                    — retired. Your progress is kept.
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* No persona hint */}
                 {!selectedPersona && (
                   <p className="text-xs text-muted-foreground italic pt-2">
@@ -675,6 +787,46 @@ function DataChangeRow({
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+  )
+}
+
+// ── Subcomponent: a group of changed learn modules (New / Updated) ──────────
+
+function ModuleChangeGroup({
+  label,
+  colorClass,
+  icon: Icon,
+  ids,
+  onNavigate,
+}: {
+  label: string
+  colorClass: string
+  icon: typeof Plus
+  ids: string[]
+  onNavigate: (deepLink: string) => void
+}) {
+  if (ids.length === 0) return null
+  return (
+    <div>
+      <div className="flex items-center gap-1.5 mb-1">
+        <Icon size={12} className={colorClass} />
+        <span className={clsx('text-xs font-medium', colorClass)}>{label}</span>
+      </div>
+      <ul className="space-y-0.5 pl-4">
+        {ids.map((id) => (
+          <li key={id}>
+            <Button
+              variant="ghost"
+              onClick={() => onNavigate(`/learn/${id}`)}
+              className="inline-flex items-center gap-1 text-xs text-foreground hover:text-primary transition-colors py-0.5"
+            >
+              {moduleTitle(id)}
+              <ExternalLink size={10} className="opacity-50" />
+            </Button>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
