@@ -27,6 +27,14 @@ const manifest: ModuleManifest = {
     { id: 'cert-viewer', label: 'Inspect Issued Certificate' },
   ],
   playgroundTool: 'pki-enrollment',
+  // reduced 5-tab set (no Exercises) — matches the original render
+  tabs: [
+    { value: 'learn', label: 'Learn' },
+    { value: 'visual', label: 'Visual' },
+    { value: 'workshop', label: 'Workshop' },
+    { value: 'references', label: 'References' },
+    { value: 'tools', label: 'Tools & Products' },
+  ],
   load: () => import('./index').then((m) => ({ default: m.PKIEnrollmentProtocolsModule })),
 }
 
