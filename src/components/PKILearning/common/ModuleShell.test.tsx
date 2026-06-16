@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, renderHook, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import '@testing-library/jest-dom'
@@ -101,6 +101,35 @@ describe('ModuleShell', () => {
     )
     fireEvent.click(screen.getByRole('button', { name: 'GO WORKSHOP' }))
     expect(screen.getByText('STEP BODY 0')).toBeInTheDocument()
+  })
+
+  it('Reset clears the exercise prefill (config), matching the originals', () => {
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
+    const parts = [{ id: 's1', title: 'Step 1: One', description: 'd', icon: FlaskConical }]
+    renderShell(
+      <ModuleShell
+        manifest={base}
+        learn={(api) => (
+          <Button
+            onClick={() => {
+              api.goToWorkshop()
+              api.openWorkshopStep(0, { sample: 'PREFILL' })
+            }}
+          >
+            PREFILL
+          </Button>
+        )}
+        workshopParts={parts}
+        renderWorkshopStep={(_i, _k, config) => (
+          <div>VAL:{String((config as { sample?: string } | undefined)?.sample ?? 'default')}</div>
+        )}
+      />
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'PREFILL' }))
+    expect(screen.getByText('VAL:PREFILL')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Reset' }))
+    expect(screen.getByText('VAL:default')).toBeInTheDocument()
+    confirmSpy.mockRestore()
   })
 })
 

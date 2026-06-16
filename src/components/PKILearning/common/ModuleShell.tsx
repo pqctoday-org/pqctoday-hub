@@ -15,7 +15,7 @@
  * Header text is a slot (`title`/`description`) defaulting to the manifest —
  * because a module's in-page header often differs from its catalog description.
  */
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import { Trash2 } from 'lucide-react'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
@@ -44,8 +44,10 @@ export interface ModuleSlotApi {
   goToWorkshop: () => void
   /** complete the current tab and jump to a named tab */
   goToTab: (tab: string) => void
-  /** open the Workshop at a specific step (remounts the step body) */
-  openWorkshopStep: (index: number) => void
+  /** open the Workshop at a specific step (remounts the step body), optionally
+   *  with a config object passed through to renderWorkshopStep — used to pre-fill
+   *  the step from an exercise (the per-module onSetWorkshopConfig). */
+  openWorkshopStep: (step: number, config?: Record<string, unknown>) => void
 }
 
 /** A tab body: a static node, or a function given the nav API. */
@@ -63,8 +65,13 @@ export interface ModuleShellProps {
   exercises?: ModuleSlot
   /** workshop stepper parts (omit for modules with no workshop) */
   workshopParts?: WorkshopPart[]
-  /** renders the active workshop step body, keyed by configKey for remounts */
-  renderWorkshopStep?: (index: number, configKey: number) => ReactNode
+  /** renders the active workshop step body, keyed by configKey for remounts;
+   *  `config` carries the optional pre-fill from openWorkshopStep */
+  renderWorkshopStep?: (
+    index: number,
+    configKey: number,
+    config?: Record<string, unknown>
+  ) => ReactNode
   /** custom modules (Quiz) render their own body — no tabs */
   children?: ReactNode
 }
@@ -215,11 +222,17 @@ export const ModuleShell = ({
     resetLabel: `Restart ${manifest.title}?`,
   })
 
+  // last config passed from an exercise (openWorkshopStep) — threaded to
+  // renderWorkshopStep so a step can pre-fill itself (the old onSetWorkshopConfig)
+  const [workshopConfig, setWorkshopConfig] = useState<Record<string, unknown> | undefined>(
+    undefined
+  )
   const slotApi: ModuleSlotApi = {
     goToWorkshop: () => navigateToTab('workshop'),
     goToTab: navigateToTab,
-    openWorkshopStep: (index) => {
-      setCurrentPart(index)
+    openWorkshopStep: (step, config) => {
+      setCurrentPart(step)
+      setWorkshopConfig(config)
       bumpConfig()
     },
   }
@@ -272,9 +285,12 @@ export const ModuleShell = ({
               currentPart={currentPart}
               configKey={configKey}
               onPartChange={handlePartChange}
-              onReset={handleReset}
+              onReset={() => {
+                setWorkshopConfig(undefined)
+                handleReset()
+              }}
               onComplete={(stepId) => completeStep(stepId)}
-              renderStep={renderWorkshopStep}
+              renderStep={(index, key) => renderWorkshopStep(index, key, workshopConfig)}
             />
           </TabsContent>
         )}
