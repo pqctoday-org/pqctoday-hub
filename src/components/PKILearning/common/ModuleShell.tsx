@@ -34,6 +34,9 @@ export interface WorkshopPart {
   title: string
   description: string
   icon: LucideIcon
+  /** optional CSWP.39 process badge rendered in the step header (default: none,
+   *  so existing modules are unaffected) */
+  cswp39Step?: string
 }
 
 /** Handlers the shell exposes to function slots so Learn/Exercises content can
@@ -62,16 +65,35 @@ export interface ModuleShellProps {
   description?: ReactNode
   /** Learn tab body (wrapped in GlossaryAutoWrap by the shell) */
   learn?: ModuleSlot
+  /** Learn tab body rendered WITHOUT the shell's GlossaryAutoWrap — for modules
+   *  whose Learn tab owns its own layout (e.g. an InPageToc two-column shell) and
+   *  must glossary-wrap only part of it. Takes precedence over `learn`. */
+  learnRaw?: ModuleSlot
+  /** Visual tab body; defaults to the data-driven <ModuleVisualTab>. Override for
+   *  modules that prepend a bespoke diagram before the standard visual. */
+  visual?: ModuleSlot
   /** Exercises tab body */
   exercises?: ModuleSlot
+  /**
+   * Custom Workshop tab body — escape hatch for modules whose workshop is NOT a
+   * stepper (e.g. DigitalAssets' chain-selector grid). When provided it renders
+   * verbatim in the Workshop tab INSTEAD of the WorkshopStepper, so a
+   * non-stepper workshop adopts the shared chrome without changing its render.
+   * Mutually exclusive with workshopParts/renderWorkshopStep.
+   */
+  workshop?: ModuleSlot
   /** workshop stepper parts (omit for modules with no workshop) */
   workshopParts?: WorkshopPart[]
   /** renders the active workshop step body, keyed by configKey for remounts;
-   *  `config` carries the optional pre-fill from openWorkshopStep */
+   *  `config` carries the optional pre-fill from openWorkshopStep; `goToStep`
+   *  lets a step body advance the stepper (an in-step "Continue" button that
+   *  marks the current step complete and moves forward — same semantics as the
+   *  stepper's Next button). Existing modules ignore the extra arg. */
   renderWorkshopStep?: (
     index: number,
     configKey: number,
-    config?: Record<string, unknown>
+    config: Record<string, unknown> | undefined,
+    goToStep: (step: number) => void
   ) => ReactNode
   /** custom modules (Quiz) render their own body — no tabs */
   children?: ReactNode
@@ -85,7 +107,7 @@ interface WorkshopStepperProps {
   onPartChange: (index: number) => void
   onReset: () => void
   onComplete: (stepId: string) => void
-  renderStep: (index: number, configKey: number) => ReactNode
+  renderStep: (index: number, configKey: number, goToStep: (step: number) => void) => ReactNode
 }
 
 function WorkshopStepper({
@@ -152,10 +174,11 @@ function WorkshopStepper({
           stepDescription={parts[currentPart].description}
           stepIndex={currentPart}
           totalSteps={parts.length}
+          cswp39Step={parts[currentPart].cswp39Step}
           steps={parts.map((p) => ({ id: p.id, label: p.title }))}
           onStepClick={onPartChange}
         />
-        {renderStep(currentPart, configKey)}
+        {renderStep(currentPart, configKey, onPartChange)}
       </div>
 
       <div className="flex flex-col sm:flex-row justify-between gap-3">
@@ -197,7 +220,10 @@ export const ModuleShell = ({
   title,
   description,
   learn,
+  learnRaw,
+  visual,
   exercises,
+  workshop,
   workshopParts,
   renderWorkshopStep,
   children,
@@ -274,15 +300,22 @@ export const ModuleShell = ({
 
         {present.has('learn') && (
           <TabsContent value="learn">
-            <GlossaryAutoWrap>{resolve(learn)}</GlossaryAutoWrap>
+            {learnRaw !== undefined ? (
+              resolve(learnRaw)
+            ) : (
+              <GlossaryAutoWrap>{resolve(learn)}</GlossaryAutoWrap>
+            )}
           </TabsContent>
         )}
         {present.has('visual') && (
           <TabsContent value="visual">
-            <ModuleVisualTab moduleId={manifest.id} />
+            {visual !== undefined ? resolve(visual) : <ModuleVisualTab moduleId={manifest.id} />}
           </TabsContent>
         )}
-        {present.has('workshop') && parts.length > 0 && renderWorkshopStep && (
+        {present.has('workshop') && workshop && (
+          <TabsContent value="workshop">{resolve(workshop)}</TabsContent>
+        )}
+        {present.has('workshop') && !workshop && parts.length > 0 && renderWorkshopStep && (
           <TabsContent value="workshop">
             <WorkshopStepper
               moduleId={manifest.id}
@@ -295,7 +328,9 @@ export const ModuleShell = ({
                 handleReset()
               }}
               onComplete={(stepId) => completeStep(stepId)}
-              renderStep={(index, key) => renderWorkshopStep(index, key, workshopConfig)}
+              renderStep={(index, key, goToStep) =>
+                renderWorkshopStep(index, key, workshopConfig, goToStep)
+              }
             />
           </TabsContent>
         )}
