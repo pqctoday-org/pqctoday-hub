@@ -114,11 +114,17 @@ describe('SimulationView (Mission Control)', () => {
   it('the tree drives the next move; the right call opens the module embedded in the sim', () => {
     renderPage()
     expect(screen.getByText('Next move — pick the right play')).toBeInTheDocument()
-    // default phase p0, fresh state → first unlocked step is 0.1 Learn: PQC Business Case
-    fireEvent.click(screen.getByRole('button', { name: /Learn: PQC Business Case/ }))
-    expect(screen.getByText(/Right call/)).toBeInTheDocument()
-    // CTA opens the module IN the sim (embedded), under a persistent "Simulation mode" bar
-    fireEvent.click(screen.getByRole('button', { name: /open here/i }))
+    // default phase p0, fresh state → first unlocked step is 0.1 Learn: PQC Business Case.
+    // Target the DecisionSection's choice card (aria-label "Option <X>: <label>") —
+    // the active-band ladder now ALSO offers the same step (any-order completion),
+    // so the plain label is no longer unique.
+    fireEvent.click(screen.getByRole('button', { name: /Option [A-C]: Learn: PQC Business Case/ }))
+    const rightCall = screen.getByText(/Right call/)
+    // CTA opens the module IN the sim (embedded), under a persistent "Simulation
+    // mode" bar. Scope to the "Right call" box (the parent of the label div) — the
+    // active-band ladder also has "open here" controls now, so the label is shared.
+    const rightCallBox = rightCall.parentElement as HTMLElement
+    fireEvent.click(within(rightCallBox).getByRole('button', { name: /open here/i }))
     expect(screen.getByText(/Simulation mode/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Back to board/i })).toBeInTheDocument()
   })
@@ -138,7 +144,11 @@ describe('SimulationView (Mission Control)', () => {
 
   it('a wrong move surfaces a framework Common Failure', () => {
     renderPage()
-    const correctBtn = screen.getByRole('button', { name: /Learn: PQC Business Case/ })
+    // the DecisionSection choice cards are the "Option <X>: ..." buttons; the
+    // correct one is the next-move step, the others are framework Common Failures.
+    const correctBtn = screen.getByRole('button', {
+      name: /Option [A-C]: Learn: PQC Business Case/,
+    })
     const grid = correctBtn.parentElement as HTMLElement
     const wrong = within(grid)
       .getAllByRole('button')

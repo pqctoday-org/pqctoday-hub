@@ -186,9 +186,9 @@ export function overallMaturity(scores: MaturityScores): number {
 }
 
 /**
- * Which sim lifecycle phase(s) each maturity domain primarily informs. Used to
- * project the self-assessed baseline onto the sim's phase ladder. Read-only: it
- * surfaces "where you self-assess today", it never grants earned sim levels.
+ * Which sim lifecycle phase(s) each maturity domain is EARNED from. A domain's
+ * earned level is the weakest (min) of its mapped phases' earned sim levels, so
+ * a domain only advances once every phase that feeds it advances in the sim.
  */
 export const DOMAIN_TO_PHASES: Record<DomainId, PhaseId[]> = {
   inventory: ['p1', 'p2'],
@@ -200,25 +200,33 @@ export const DOMAIN_TO_PHASES: Record<DomainId, PhaseId[]> = {
   risk: ['p3'],
 }
 
+export interface DerivedMaturity {
+  scores: Record<DomainId, number>
+  overall: number
+  /** domain ids pinned at the overall (weakest) score — the gating ones. */
+  gating: DomainId[]
+}
+
 /**
- * Project the seven-domain self-assessment onto a per-phase baseline in the sim's
- * 0–4 ladder range. A phase fed by several domains takes the WEAKEST of them
- * (same weakest-link rule); level 5 clamps to 4 (the per-phase ladder tops at 4).
- * This is a "self-assessed today" marker only — it does NOT grant sim maturity
- * (the sim's strict gating, earned in-game, is unchanged).
+ * Derive program maturity from a completed assessment (→ Level 1 Aware) plus the
+ * simulation phase levels the player has EARNED (→ Levels 2–5). Overall = weakest
+ * domain. This replaces the old manual self-assessment — maturity now tracks sim
+ * progress and updates live.
  */
-export function phaseBaselineFromMaturity(
-  scores: MaturityScores
-): Partial<Record<PhaseId, number>> {
-  const byPhase: Partial<Record<PhaseId, number[]>> = {}
+export function deriveMaturity(
+  assessed: boolean,
+  earnedLevelOfPhase: (p: PhaseId) => number
+): DerivedMaturity {
+  const awareBase = assessed ? 1 : 0
+  const scores = {} as Record<DomainId, number>
   for (const d of MATURITY_DOMAINS) {
-    for (const phase of DOMAIN_TO_PHASES[d.id]) {
-      ;(byPhase[phase] ??= []).push(scores[d.id])
-    }
+    const phases = DOMAIN_TO_PHASES[d.id]
+    const earned = phases.length ? Math.min(...phases.map((p) => earnedLevelOfPhase(p))) : 0
+    scores[d.id] = Math.max(awareBase, earned)
   }
-  const out: Partial<Record<PhaseId, number>> = {}
-  for (const phase of Object.keys(byPhase) as PhaseId[]) {
-    out[phase] = Math.min(4, Math.min(...byPhase[phase]!))
-  }
-  return out
+  const minScore = Math.min(...MATURITY_DOMAINS.map((d) => scores[d.id]))
+  const allAdvanced = MATURITY_DOMAINS.every((d) => scores[d.id] >= 4)
+  const overall = allAdvanced ? 5 : minScore
+  const gating = MATURITY_DOMAINS.filter((d) => scores[d.id] === minScore).map((d) => d.id)
+  return { scores, overall, gating }
 }

@@ -19,7 +19,8 @@ import {
   EmbeddedLearnProvider,
   ARTIFACT_TYPE_TO_TOOL_ID,
 } from './resourceContract'
-import { canEmbedStep } from './embedContract'
+import { canEmbedStep, isAssessStep } from './embedContract'
+import { AssessWizard } from '@/components/Assess/AssessWizard'
 import { Button } from '@/components/ui/button'
 import { FRAMEWORK_PHASES, PHASE_ORDER, type PhaseId } from '@/data/frameworkPhases'
 import { MATURITY_LEVEL_NAMES, PHASE_WIN_LEVEL, LEVEL_EVIDENCE } from '@/data/phaseMaturity'
@@ -43,7 +44,8 @@ import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
 import { getBalance, type DifficultyId } from '@/data/simBalance'
 import { Eyebrow, Ring, Radial, Dial, ReadonlyDial, Stat } from './atoms'
 import { SimTour } from './SimTour'
-import { SEVERITY_META } from './simChrome'
+import { SEVERITY_META, KIND_CHIP, markSimResume } from './simChrome'
+import { canResolveDeepLink } from '@/simulation/deepLinks'
 import {
   ResCol,
   resLinks,
@@ -66,10 +68,9 @@ import {
   algorithmBacklogFromAssess,
   twoTrackFromAssess,
   projectReadiness,
-  useAssessMaturity,
-  phaseBaselineFromAssess,
   type AssessRec,
 } from '@/simulation/assessBridge'
+import { deriveMaturity, MATURITY_LEVELS, MATURITY_DOMAINS } from '@/data/maturityModel'
 import {
   computeThreatLevels,
   portfolioFor,
@@ -199,13 +200,16 @@ export function SimulationView() {
       /* ignore */
     }
   }, [])
-  // in-sim embedding: a Learn module (panel under the sim header) or an activity
-  // editor (ArtifactDrawer modal). Keeps the player inside /simulation.
+  // in-sim embedding: a Learn module (panel under the sim header), an activity
+  // editor (Business-Center tool), or the assessment wizard. Keeps the player
+  // inside /simulation. The assess embed re-runs / refines the assessment past
+  // the initial gate; on completion it closes back to the board (no /report nav).
   const [learnEmbed, setLearnEmbed] = useState<{ moduleId: string; title: string } | null>(null)
   const [activityEmbed, setActivityEmbed] = useState<{
     artifactType: ExecutiveDocumentType
     title: string
   } | null>(null)
+  const [assessEmbed, setAssessEmbed] = useState<{ title: string } | null>(null)
 
   const LearnComp = learnEmbed ? SIM_LEARN_MODULES[learnEmbed.moduleId] : null
   const activityToolId = activityEmbed
@@ -216,15 +220,25 @@ export function SimulationView() {
   const openStep = (s: TreeStep) => {
     if (s.kind === 'learn' && s.moduleId && isEmbeddableModule(s.moduleId)) {
       setActivityEmbed(null)
+      setAssessEmbed(null)
       setLearnEmbed({ moduleId: s.moduleId, title: s.label })
     } else if (s.kind === 'activity' && s.artifactType) {
       setLearnEmbed(null)
+      setAssessEmbed(null)
       setActivityEmbed({ artifactType: s.artifactType, title: s.label })
+    } else if (isAssessStep(s)) {
+      setLearnEmbed(null)
+      setActivityEmbed(null)
+      setAssessEmbed({ title: s.label })
+      // opening the wizard in-sim is the equivalent of "visiting" the assess ref
+      // (the navigate flow marks-on-click), so the step counts as done.
+      if (s.refId) markRefVisited(s.refId)
     }
   }
   const closeEmbed = () => {
     setLearnEmbed(null)
     setActivityEmbed(null)
+    setAssessEmbed(null)
   }
 
   // real hub completion state: generated artifacts + Learn-module progress
@@ -241,10 +255,6 @@ export function SimulationView() {
   // ORG / JURISDICTION / SECTOR dials are read-only and derive from here. SEAT
   // defaults from the persona; MODE (difficulty) stays freely editable.
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  // Self-assessed seven-domain maturity (from /assess) — surfaced as a READ-ONLY
-  // baseline. It never grants sim levels; the sim's strict gating is unchanged.
-  const assessMaturity = useAssessMaturity()
-  const phaseBaseline = useMemo(() => phaseBaselineFromAssess(assessMaturity), [assessMaturity])
   const assessFrameworkRisk = useMemo(
     () => (assessSnap ? frameworkRiskFromAssess(assessSnap.result) : null),
     [assessSnap]
@@ -382,6 +392,13 @@ export function SimulationView() {
   const levelOf = (p: string) =>
     SIM_TREES[p as PhaseId] ? treeLevel(p) : Math.max(checks[p] ?? 0, evidenceLevel(p))
 
+  // DERIVED program maturity (0–5) — read-only. A completed assessment makes the
+  // program "Aware" (Level 1); Levels 2–5 are EARNED from the sim, each domain
+  // taking the weakest of its mapped phases' earned levels. Overall = the weakest
+  // domain. Recomputes from the same gating reads `levelOf` uses (checks, docTypes,
+  // visitedRefs, auto), so it rises live as phases are completed.
+  const maturity = deriveMaturity(!!assessSnap, (p) => levelOf(p))
+
   // T3.1 — sim-local readiness trend: the assessed org-readiness baseline vs the
   // projection earned by clearing framework maturity in-game. Sim-local only.
   const MAX_LEVEL = MATURITY_LEVEL_NAMES.length - 1 // levels run 0..4
@@ -485,18 +502,23 @@ export function SimulationView() {
     )
       autoCompleteSteps(phaseAutoKeys)
   }
-  // Framework activity tree for this phase, banded by maturity level. Steps unlock
-  // sequentially (level → activity → step); a step is workable only once every
-  // prior step is complete. Completing a level's activities EARNS that level.
+  // Framework activity tree for this phase, banded by maturity level. LEVELS
+  // unlock sequentially — a level is EARNED only when all its steps are done, and
+  // lower levels are required first (achievedTreeLevel). But WITHIN the active
+  // level (the in-progress band) the player may open/complete every incomplete
+  // step in ANY ORDER — see the maturity-gates ladder, which expands the active
+  // band into individually-openable controls. Higher bands stay locked.
   const phaseTree = SIM_TREES[sel]
   const flatSteps = phaseTree ? flattenTree(phaseTree) : []
   const stepsTotal = flatSteps.length
   const stepsDone = flatSteps.filter((s) => stepDone(s, sel)).length
-  // index of the first not-yet-done step; everything after it is locked. -1 ⇒ all done.
+  // index of the first not-yet-done step. -1 ⇒ all done. This drives only the
+  // DecisionSection's "recommended" next move — it is NOT the only way to act:
+  // the active band's steps are all openable (any order) in the ladder below.
   const firstOpenIdx = flatSteps.findIndex((s) => !stepDone(s, sel))
-  // The tree DRIVES the next move. Build step→(level,activity) metadata in the same
-  // flattened unlock order as flatSteps, then the next move is simply the first
-  // unlocked, not-yet-done leaf. firstOpenIdx === -1 ⇒ every level earned.
+  // The tree DRIVES the recommended move. Build step→(level,activity) metadata in
+  // the same flattened order as flatSteps; the recommendation is simply the first
+  // not-yet-done leaf. firstOpenIdx === -1 ⇒ every level earned.
   const stepMeta = (phaseTree?.levels ?? []).flatMap((band) =>
     band.activities.flatMap((act) => act.steps.map((step) => ({ band, act, step })))
   )
@@ -885,17 +907,17 @@ export function SimulationView() {
       {/* body — swaps to the embedded Learn module / activity tool when one is open.
           The sim header above stays, AND a persistent "Simulation mode" bar sits on
           top of the panel, so the player always knows they haven't left the sim. */}
-      {learnEmbed || activityEmbed ? (
+      {learnEmbed || activityEmbed || assessEmbed ? (
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex shrink-0 items-center gap-2 border-b-2 border-primary bg-primary/10 px-4 py-2">
             <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-[9px] font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
               ● Simulation mode
             </span>
             <span className="shrink-0 font-mono text-[9px] font-bold uppercase text-primary">
-              {learnEmbed ? 'Learn' : 'Activity'} · Phase {phase.number}
+              {learnEmbed ? 'Learn' : activityEmbed ? 'Activity' : 'Assess'} · Phase {phase.number}
             </span>
             <span className="min-w-0 flex-1 truncate text-[12.5px] font-bold text-foreground">
-              {learnEmbed ? learnEmbed.title : activityEmbed?.title}
+              {learnEmbed ? learnEmbed.title : (activityEmbed?.title ?? assessEmbed?.title)}
             </span>
             {/* Completion toggle — guarantees a "mark complete" path for every
                 embedded Learn module (some have no in-module Complete button when
@@ -941,7 +963,14 @@ export function SimulationView() {
               if (a) e.preventDefault()
             }}
           >
-            {learnEmbed && LearnComp ? (
+            {assessEmbed ? (
+              // Re-run / refine the assessment in-sim. onComplete closes back to
+              // the board (NOT /report); the wizard writes to the assessment store,
+              // so assessSnap + the read-only org dials / derived maturity update.
+              <div className="mx-auto max-w-3xl p-4 md:p-6">
+                <AssessWizard onComplete={closeEmbed} />
+              </div>
+            ) : learnEmbed && LearnComp ? (
               <EmbeddedLearnProvider>
                 <Suspense
                   fallback={
@@ -1175,13 +1204,30 @@ export function SimulationView() {
                       : `at L${level} · ${MATURITY_LEVEL_NAMES[level]}`}
                   </span>
                 </div>
-                {assessMaturity && (
-                  <p className="mb-2 text-[10px] text-muted-foreground">
-                    Self-assessed (from /assess): program L{assessMaturity.overall}
-                    {phaseBaseline[sel] != null ? ` · this phase ~L${phaseBaseline[sel]}` : ''} —
-                    baseline only; levels are earned in-sim
-                  </p>
-                )}
+                {/* DERIVED program maturity — read-only, rises as phases are
+                    completed. Aware (L1) from your assessment; L2–5 earned in-sim;
+                    overall = your weakest area. */}
+                <p className="mb-2 text-[10px] text-muted-foreground">
+                  <span className="font-bold text-foreground">
+                    Program maturity: L{maturity.overall} · {MATURITY_LEVELS[maturity.overall].name}
+                  </span>
+                  {maturity.overall < 5 && maturity.gating.length > 0 && (
+                    <>
+                      {' '}
+                      — weakest:{' '}
+                      {maturity.gating
+                        .map((id) => MATURITY_DOMAINS.find((d) => d.id === id)?.name ?? id)
+                        .join(' · ')}
+                    </>
+                  )}{' '}
+                  <span className="italic">(rises as you complete phases)</span>
+                </p>
+                {/* ANY-ORDER WITHIN THE ACTIVE LEVEL: the in-progress band (level+1)
+                    expands its steps as individually-openable controls — the player
+                    can open/complete ALL of them in ANY ORDER, not forced through a
+                    single sequential step. Already-earned bands show ✓; higher
+                    bands stay locked (🔒) until the lower levels are earned, so the
+                    level gating is preserved (achievedTreeLevel is unchanged). */}
                 <div className="mb-4 flex flex-col gap-1.5">
                   {phaseTree.levels.map((band) => {
                     const total = band.activities.reduce((n, a) => n + a.steps.length, 0)
@@ -1190,46 +1236,154 @@ export function SimulationView() {
                       0
                     )
                     const earned = level >= band.level
-                    const current = band.level === level + 1 // the gate in progress
+                    const current = band.level === level + 1 // the gate in progress (active band)
                     const locked = band.level > level + 1
                     const goal = band.level === PHASE_WIN_LEVEL
+                    // the active band's leaf steps — openable in any order
+                    const bandSteps = current ? band.activities.flatMap((a) => a.steps) : []
                     return (
-                      <div
-                        key={band.level}
-                        className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${
-                          goal ? 'border-warning' : earned ? 'border-success' : 'border-border'
-                        } ${earned ? 'bg-success/10' : 'bg-muted'} ${locked ? 'opacity-50' : ''}`}
-                      >
-                        <span
-                          className={`grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md font-mono text-[10px] font-extrabold ${
-                            earned
-                              ? 'bg-success text-success-foreground'
-                              : 'bg-card text-muted-foreground'
-                          }`}
+                      <div key={band.level}>
+                        <div
+                          className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${
+                            goal ? 'border-warning' : earned ? 'border-success' : 'border-border'
+                          } ${earned ? 'bg-success/10' : 'bg-muted'} ${locked ? 'opacity-50' : ''}`}
                         >
-                          {earned ? '✓' : locked ? '🔒' : band.level}
-                        </span>
-                        <span className="w-[88px] shrink-0 text-[11.5px] font-bold text-foreground">
-                          L{band.level} · {MATURITY_LEVEL_NAMES[band.level]}
-                        </span>
-                        <span className="flex-1 text-[10.5px] leading-tight text-muted-foreground">
-                          {band.indicator}
-                        </span>
-                        <span
-                          className={`shrink-0 font-mono text-[9px] font-bold ${
-                            earned
-                              ? 'text-success'
-                              : current
-                                ? 'text-primary'
-                                : 'text-muted-foreground'
-                          }`}
-                        >
-                          {earned ? 'passed ✓' : `${done}/${total} checks`}
-                        </span>
-                        {goal && (
-                          <span className="shrink-0 rounded-full bg-warning/15 px-2 py-0.5 font-mono text-[10px] font-bold text-warning">
-                            GOAL
+                          <span
+                            className={`grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md font-mono text-[10px] font-extrabold ${
+                              earned
+                                ? 'bg-success text-success-foreground'
+                                : 'bg-card text-muted-foreground'
+                            }`}
+                          >
+                            {earned ? '✓' : locked ? '🔒' : band.level}
                           </span>
+                          <span className="w-[88px] shrink-0 text-[11.5px] font-bold text-foreground">
+                            L{band.level} · {MATURITY_LEVEL_NAMES[band.level]}
+                          </span>
+                          <span className="flex-1 text-[10.5px] leading-tight text-muted-foreground">
+                            {band.indicator}
+                          </span>
+                          <span
+                            className={`shrink-0 font-mono text-[9px] font-bold ${
+                              earned
+                                ? 'text-success'
+                                : current
+                                  ? 'text-primary'
+                                  : 'text-muted-foreground'
+                            }`}
+                          >
+                            {earned ? 'passed ✓' : `${done}/${total} checks`}
+                          </span>
+                          {goal && (
+                            <span className="shrink-0 rounded-full bg-warning/15 px-2 py-0.5 font-mono text-[10px] font-bold text-warning">
+                              GOAL
+                            </span>
+                          )}
+                        </div>
+                        {/* active band → open any of its steps, in any order */}
+                        {current && bandSteps.length > 0 && (
+                          <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-primary/30 pl-3">
+                            <span className="font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-primary">
+                              Do these in any order to pass L{band.level}
+                            </span>
+                            {bandSteps.map((step, i) => {
+                              const sDone = stepDone(step, sel)
+                              const embeddable = canEmbedStep(step)
+                              const navigable = canResolveDeepLink(step.to)
+                              const chip = (
+                                <span
+                                  className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${KIND_CHIP[step.kind]}`}
+                                >
+                                  {step.kind}
+                                </span>
+                              )
+                              const cls = `flex w-full items-center gap-2 rounded-md border px-2.5 py-1.5 ${
+                                sDone
+                                  ? 'border-success/40 bg-success/5'
+                                  : 'border-border bg-card hover:bg-muted/60'
+                              }`
+                              // completed → static ✓ row
+                              if (sDone)
+                                return (
+                                  <div key={`${step.to}-${i}`} className={cls}>
+                                    <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-success text-[9px] font-bold text-success-foreground">
+                                      ✓
+                                    </span>
+                                    {chip}
+                                    <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                      {step.label}
+                                    </span>
+                                    <span className="shrink-0 font-mono text-[9px] text-success">
+                                      done
+                                    </span>
+                                  </div>
+                                )
+                              // open IN the sim (embed) when possible
+                              if (embeddable)
+                                return (
+                                  <Button
+                                    key={`${step.to}-${i}`}
+                                    type="button"
+                                    variant="ghost"
+                                    onClick={() => openStep(step)}
+                                    className={`h-auto justify-start whitespace-normal ${cls}`}
+                                  >
+                                    <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
+                                      ✓
+                                    </span>
+                                    {chip}
+                                    <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                      {step.label}
+                                    </span>
+                                    <span className="shrink-0 font-mono text-[9px] text-primary">
+                                      open here →
+                                    </span>
+                                  </Button>
+                                )
+                              // else navigate to the real hub resource (reference)
+                              if (navigable)
+                                return (
+                                  <Link
+                                    key={`${step.to}-${i}`}
+                                    to={step.to}
+                                    onClick={() => {
+                                      markSimResume()
+                                      if (step.kind === 'reference' && step.refId)
+                                        markRefVisited(step.refId)
+                                    }}
+                                    className={cls}
+                                  >
+                                    <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
+                                      ✓
+                                    </span>
+                                    {chip}
+                                    <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                      {step.label}
+                                    </span>
+                                    <span className="shrink-0 font-mono text-[9px] text-primary">
+                                      open →
+                                    </span>
+                                  </Link>
+                                )
+                              // WS-06: target no longer resolves — never a dead link
+                              return (
+                                <div
+                                  key={`${step.to}-${i}`}
+                                  aria-disabled="true"
+                                  title="This resource has moved — it'll return when the link is updated."
+                                  className={`flex w-full items-center gap-2 rounded-md border border-warning/40 bg-warning/5 px-2.5 py-1.5 opacity-60`}
+                                >
+                                  {chip}
+                                  <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                    {step.label}
+                                  </span>
+                                  <span className="shrink-0 font-mono text-[9px] text-warning">
+                                    resource moved
+                                  </span>
+                                </div>
+                              )
+                            })}
+                          </div>
                         )}
                       </div>
                     )
@@ -1276,11 +1430,22 @@ export function SimulationView() {
               />
               <ResCol
                 title="Reference"
-                items={resLinks('reference', sel, sector, seat).map((it) => ({
-                  ...it,
-                  done: refDone(it.id),
-                  onClick: () => markRefVisited(it.id),
-                }))}
+                items={resLinks('reference', sel, sector, seat).map((it) => {
+                  const step: TreeStep = {
+                    kind: 'reference',
+                    label: it.label,
+                    to: it.to,
+                    refId: it.id,
+                  }
+                  // the assess-engine ref opens the wizard IN the sim (embed);
+                  // every other reference navigates to its deep link as before.
+                  return {
+                    ...it,
+                    done: refDone(it.id),
+                    onClick: () => markRefVisited(it.id),
+                    onOpen: canEmbedStep(step) ? () => openStep(step) : undefined,
+                  }
+                })}
               />
             </div>
           </div>
