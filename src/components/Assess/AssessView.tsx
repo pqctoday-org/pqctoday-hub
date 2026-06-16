@@ -12,7 +12,6 @@ import {
   X,
 } from 'lucide-react'
 import { AssessWizard } from './AssessWizard'
-import { MaturitySelfAssessment } from './MaturitySelfAssessment'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import type { AssessmentMode } from '../../store/useAssessmentStore'
 import { metadata } from '../../data/industryAssessConfig'
@@ -419,16 +418,6 @@ export const AssessView: React.FC = () => {
           <AssessWizard onComplete={handleComplete} mode={effectiveAssessmentMode} />
         </>
       )}
-
-      {/* Program Maturity self-assessment — a standalone diagnostic (the
-          framework's overall 0–5 model across seven domains) offered below the
-          wizard. Independent of the wizard's own scoring; pure client-side. */}
-      <section
-        className="mt-10 pt-8 border-t border-border"
-        aria-label="PQC Program Maturity self-assessment"
-      >
-        <MaturitySelfAssessment />
-      </section>
     </div>
   )
 }

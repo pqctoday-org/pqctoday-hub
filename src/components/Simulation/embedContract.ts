@@ -8,6 +8,9 @@
  *  - learn: `moduleId` is a registered, embeddable Learn module (SIM_LEARN_MODULES).
  *  - activity: `artifactType` maps to a Business-Center tool that has a mounted
  *    component (BUSINESS_TOOL_COMPONENTS).
+ *  - reference → the assessment engine: the `assess-engine` reference step opens
+ *    the AssessWizard embedded in the sim (re-run / refine the assessment without
+ *    leaving the board). Recognized by `isAssessStep`.
  *
  * Behavioural side of the contract (enforced by the embed shell, not this guard):
  *  - renders headless — chrome (tabs/quiz/nav) is trimmed by EmbeddedLearnProvider;
@@ -24,6 +27,16 @@ import {
 } from './resourceContract'
 import type { TreeStep } from '@/simulation'
 
+/**
+ * True for the `assess-engine` reference step — the assessment opens EMBEDDED in
+ * the sim (AssessWizard under the "Simulation mode" bar) instead of navigating to
+ * the full /assess page. This is for re-running / refining the assessment from
+ * inside the sim once you're past the initial assessment gate.
+ */
+export function isAssessStep(s: TreeStep): boolean {
+  return s.kind === 'reference' && s.refId === 'assess-engine'
+}
+
 /** True when this step can be rendered embedded in the sim (vs. navigated to). */
 export function canEmbedStep(s: TreeStep): boolean {
   if (s.kind === 'learn') return !!s.moduleId && isEmbeddableModule(s.moduleId)
@@ -32,5 +45,6 @@ export function canEmbedStep(s: TreeStep): boolean {
     // eslint-disable-next-line security/detect-object-injection
     return !!toolId && !!BUSINESS_TOOL_COMPONENTS[toolId]
   }
+  if (isAssessStep(s)) return true
   return false
 }

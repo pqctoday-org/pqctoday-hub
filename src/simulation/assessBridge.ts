@@ -21,9 +21,6 @@ import type {
 import { buildTwoTrackPlan, type TwoTrackPlan } from '@/hooks/assessment/twoTrack'
 import type { Cswp39StepId } from '@/data/cswp39ZoneData'
 import type { ExecutiveDocument } from '@/services/storage/types'
-import type { PhaseId } from '@/data/frameworkPhases'
-import { phaseBaselineFromMaturity } from '@/data/maturityModel'
-import type { StoredMaturity } from '@/store/useAssessmentResultStore'
 
 export interface AssessSnapshot {
   result: AssessmentResult
@@ -47,27 +44,6 @@ export function useAssessSnapshot(): AssessSnapshot | null {
     () => (lastResult ? { result: lastResult, completedAt } : null),
     [lastResult, completedAt]
   )
-}
-
-/**
- * The user's seven-domain maturity self-assessment (from /assess), reactive.
- * Independent of a completed wizard result — a player can self-assess maturity
- * without finishing the questionnaire.
- */
-export function useAssessMaturity(): StoredMaturity | null {
-  return useAssessmentResultStore((s) => s.maturity)
-}
-
-/**
- * Project the self-assessed maturity onto the sim's per-phase ladder (0–4).
- * READ-ONLY baseline ("where you self-assess today") — it is NEVER applied to
- * the sim's earned levels; the sim's strict gating is unchanged. Empty if the
- * player hasn't self-assessed.
- */
-export function phaseBaselineFromAssess(
-  m: StoredMaturity | null
-): Partial<Record<PhaseId, number>> {
-  return m ? phaseBaselineFromMaturity(m.scores) : {}
 }
 
 export interface AssessRec {

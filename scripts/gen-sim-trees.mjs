@@ -636,11 +636,11 @@ const FRAMEWORK = {
       id: 'F.1',
       level: 1,
       title: 'Establish GRC & Assess Program Maturity',
-      do: 'Stand up the risk-appetite statement and KRI cascade, then run the seven-domain maturity self-assessment (overall = weakest domain).',
+      do: 'Stand up the risk-appetite statement and KRI cascade; run (or refine) your PQC assessment — program maturity is derived from your progress, overall = weakest domain.',
       output: 'GRC structure & maturity baseline',
       steps: [
         L('pqc-grc', 'Learn: PQC GRC (risk appetite & KRIs)'),
-        R('assess-engine', 'Run the seven-domain maturity self-assessment'),
+        R('assess-engine', 'Run / refine your PQC assessment'),
       ],
     },
     {
@@ -886,7 +886,7 @@ const PITFALLS = {
       why: 'Treating closure as end-of-funding rather than handover — CBOM, discovery and vendor governance decay within quarters without funded BAU owners.',
     },
     {
-      title: 'Skip the seven-domain maturity self-assessment',
+      title: 'Skip the maturity baseline (run no assessment)',
       why: 'Without the weakest-link view you over-report progress and miss the gating domain that actually constrains readiness.',
     },
   ],
