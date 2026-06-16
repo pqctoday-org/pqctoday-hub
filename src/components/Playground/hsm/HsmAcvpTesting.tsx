@@ -506,7 +506,7 @@ export const HsmAcvpTesting = () => {
             newResults.push({
               id: id4,
               algorithm: `ECDSA P-256 (${eName})`,
-              testCase: 'SigVer KAT',
+              testCase: 'SigVer KAT (RFC 6979 §A.2.5)',
               referenceUrl: REF.ecdsa,
               status: isValid ? 'pass' : 'fail',
               details: isValid
@@ -1298,7 +1298,7 @@ export const HsmAcvpTesting = () => {
             newResults.push({
               id: id15,
               algorithm: `ECDSA P-384 (${eName})`,
-              testCase: 'SigVer KAT',
+              testCase: 'SigVer KAT (RFC 6979 §A.2.6)',
               referenceUrl: REF.ecdsa,
               status: isValid ? 'pass' : 'fail',
               details: isValid
