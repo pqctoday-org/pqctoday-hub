@@ -4632,6 +4632,40 @@ export const hsm_slhdsaVerify = (
   }
 }
 
+/**
+ * SLH-DSA verify with a RAW message (Uint8Array) instead of a UTF-8 string —
+ * required for NIST ACVP KAT vectors whose message is arbitrary binary. Mirrors
+ * hsm_slhdsaVerify exactly; pure SLH-DSA (CKM_SLH_DSA) with optional FIPS 205
+ * §9.2 context string.
+ */
+export const hsm_slhdsaVerifyBytes = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number,
+  messageBytes: Uint8Array,
+  sigBytes: Uint8Array,
+  opts?: SLHDSASignOptions
+): boolean => {
+  const mechType = opts?.preHash ? (SLH_DSA_PREHASH_MECH[opts.preHash] ?? CKM_SLH_DSA) : CKM_SLH_DSA
+  const needsCtxParam = mechType === CKM_SLH_DSA && opts?.context && opts.context.length > 0
+  const ctxAlloc = needsCtxParam ? buildSlhDsaSignContext(M, opts!) : null
+  const mech = buildMech(M, mechType, ctxAlloc?.paramPtr ?? 0, ctxAlloc?.paramLen ?? 0)
+  const msgPtr = writeBytes(M, messageBytes)
+  const sigPtr = writeBytes(M, sigBytes)
+  checkRV(M._C_MessageVerifyInit(hSession, mech, pubHandle), 'C_MessageVerifyInit(SLH-DSA)')
+  try {
+    const rv =
+      M._C_VerifyMessage(hSession, 0, 0, msgPtr, messageBytes.length, sigPtr, sigBytes.length) >>> 0
+    return rv === 0
+  } finally {
+    M._C_MessageVerifyFinal(hSession)
+    M._free(mech)
+    ctxAlloc?.allocPtrs.forEach((p) => M._free(p))
+    M._free(msgPtr)
+    M._free(sigPtr)
+  }
+}
+
 // ── Key attribute inspection ──────────────────────────────────────────────────
 
 /** Safe single-attribute boolean read — returns null if attribute doesn't exist on this key type. */

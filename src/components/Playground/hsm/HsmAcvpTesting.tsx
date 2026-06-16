@@ -16,6 +16,7 @@ import hmac512TestVectors from '../../../data/acvp/hmac_sha512_test.json'
 import ecdsaP384TestVectors from '../../../data/acvp/ecdsa_p384_test.json'
 import aesKwTestVectors from '../../../data/acvp/aeskw_test.json'
 import eddsaTestVectors from '../../../data/acvp/eddsa_test.json'
+import slhdsaCtxTestVectors from '../../../data/acvp/slhdsa_ctx_test.json'
 import { hexToBytes } from '../../../utils/dataInputUtils'
 import {
   hsm_initialize,
@@ -46,6 +47,8 @@ import {
   hsm_generateSLHDSAKeyPair,
   hsm_slhdsaSign,
   hsm_slhdsaVerify,
+  hsm_importSLHDSAPublicKey,
+  hsm_slhdsaVerifyBytes,
   hsm_digest,
   hsm_getMechanismList,
   hsm_aesCtrDecrypt,
@@ -886,6 +889,66 @@ export const HsmAcvpTesting = () => {
             addLog(
               `[DISCREPANCY] [${eName}] [id:${id9}] ${slhParam.name} Functional: ${errMessage}`
             )
+          }
+        }
+
+        // ── 9b. SLH-DSA SigVer KAT (FIPS 205) — NIST ACVP vector ────────
+        // True known-answer test: import the NIST public key and verify the
+        // embedded signature over the binary message+context, asserting the
+        // result matches the vector's testPassed. (The functional test above
+        // only proves self-consistency; this proves FIPS-205 conformance.)
+        {
+          const tv = slhdsaCtxTestVectors.sigVer
+          const id9b = `slhdsa-sigver-kat-${eName}`
+          addLog(
+            `[${eName}] Testing ${tv.parameterSet} SigVer KAT (FIPS 205, NIST ACVP tcId=${tv.tcId})...`
+          )
+          addLog(
+            `  ACVP PK: ${tv.pk.slice(0, 32)}… | ctx[${tv.context.length / 2}B] | Sig[${tv.signature.length / 2}B]`
+          )
+          try {
+            const pkBytes = hexToBytes(tv.pk)
+            const msgBytes = hexToBytes(tv.message)
+            const ctxBytes = hexToBytes(tv.context)
+            const sigBytes = hexToBytes(tv.signature)
+
+            const pubHandle = hsm_importSLHDSAPublicKey(M, hSession, CKP_SLH_DSA_SHA2_128F, pkBytes)
+            regKey({
+              handle: pubHandle,
+              family: 'slh-dsa',
+              role: 'public',
+              label: `ACVP ${tv.parameterSet} KAT Public (${eName})`,
+              engine: engineId,
+            })
+
+            const isValid = hsm_slhdsaVerifyBytes(M, hSession, pubHandle, msgBytes, sigBytes, {
+              context: ctxBytes,
+            })
+            const pass = isValid === tv.testPassed
+            newResults.push({
+              id: id9b,
+              algorithm: `${tv.parameterSet} (${eName})`,
+              testCase: 'SigVer KAT (NIST ACVP)',
+              referenceUrl: REF.slhdsa,
+              status: pass ? 'pass' : 'fail',
+              details: pass
+                ? `NIST vector: verify=${isValid} matches testPassed=${tv.testPassed} ✓`
+                : `verify=${isValid}, expected testPassed=${tv.testPassed}`,
+            })
+            addLog(
+              `[${eName}] [id:${id9b}] ${tv.parameterSet} SigVer KAT: ${pass ? 'PASS' : 'FAIL'} | verify=${isValid}`
+            )
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `slhdsa-sigver-kat-err-${eName}`,
+              algorithm: `${tv.parameterSet} (${eName})`,
+              testCase: 'SigVer KAT (NIST ACVP)',
+              referenceUrl: REF.slhdsa,
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id9b}] SLH-DSA SigVer KAT: ${errMessage}`)
           }
         }
 
