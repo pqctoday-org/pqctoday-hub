@@ -52,6 +52,10 @@ export interface ModuleSlotApi {
    *  with a config object passed through to renderWorkshopStep — used to pre-fill
    *  the step from an exercise (the per-module onSetWorkshopConfig). */
   openWorkshopStep: (step: number, config?: Record<string, unknown>) => void
+  /** run the same confirmed-reset the stepper's Reset button does (clears
+   *  pre-fill config + fires onReset). For NON-stepper `workshop` slots that
+   *  render their own Reset button (the stepper chrome is bypassed). */
+  resetWorkshop: () => void
 }
 
 /** A tab body: a static node, or a function given the nav API. */
@@ -261,6 +265,14 @@ export const ModuleShell = ({
   const [workshopConfig, setWorkshopConfig] = useState<Record<string, unknown> | undefined>(
     undefined
   )
+  // The confirmed-reset handler, shared by the stepper's Reset button and the
+  // slot API: clears the exercise pre-fill config and fires the module's
+  // onReset, but only when the user confirms (handleReset owns the confirm()).
+  const resetWorkshop = () =>
+    handleReset(() => {
+      setWorkshopConfig(undefined)
+      onReset?.()
+    })
   const slotApi: ModuleSlotApi = {
     goToWorkshop: (step) => {
       navigateToTab('workshop')
@@ -273,6 +285,7 @@ export const ModuleShell = ({
       setWorkshopConfig(config)
       bumpConfig()
     },
+    resetWorkshop,
   }
   const resolve = (slot: ModuleSlot | undefined): ReactNode =>
     typeof slot === 'function' ? slot(slotApi) : slot
@@ -330,12 +343,7 @@ export const ModuleShell = ({
               currentPart={currentPart}
               configKey={configKey}
               onPartChange={handlePartChange}
-              onReset={() =>
-                handleReset(() => {
-                  setWorkshopConfig(undefined)
-                  onReset?.()
-                })
-              }
+              onReset={resetWorkshop}
               onComplete={(stepId) => completeStep(stepId)}
               renderStep={(index, key, goToStep) =>
                 renderWorkshopStep(index, key, workshopConfig, goToStep)
