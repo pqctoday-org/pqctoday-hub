@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect } from 'vitest'
-import { render, screen, renderHook, act } from '@testing-library/react'
+import { describe, it, expect, beforeEach } from 'vitest'
+import { render, screen, fireEvent, renderHook, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import '@testing-library/jest-dom'
 import { FlaskConical } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { EmbedProvider } from '../../../embed/EmbedProvider'
 import { ModuleShell } from './ModuleShell'
 import { useModuleProgress } from './useModuleProgress'
@@ -23,6 +24,10 @@ const base: ModuleManifest = {
   duration: '10 min',
   frameworkPhase: 'p0',
 }
+
+// useSyncDeepLink reads/writes window.location (shared across tests in jsdom),
+// so reset to a clean URL before each test to keep them isolated.
+beforeEach(() => window.history.replaceState(null, '', '/'))
 
 describe('ModuleShell', () => {
   it('renders the header, the Learn slot, and standard tabs', () => {
@@ -82,6 +87,20 @@ describe('ModuleShell', () => {
       />
     )
     expect(screen.getByRole('button', { name: 'Workshop' })).toBeInTheDocument()
+  })
+
+  it('passes a nav api to function slots (goToWorkshop switches tab)', () => {
+    const parts = [{ id: 's1', title: 'Step 1: One', description: 'd', icon: FlaskConical }]
+    renderShell(
+      <ModuleShell
+        manifest={base}
+        learn={(api) => <Button onClick={api.goToWorkshop}>GO WORKSHOP</Button>}
+        workshopParts={parts}
+        renderWorkshopStep={(i) => <div>STEP BODY {i}</div>}
+      />
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'GO WORKSHOP' }))
+    expect(screen.getByText('STEP BODY 0')).toBeInTheDocument()
   })
 })
 
