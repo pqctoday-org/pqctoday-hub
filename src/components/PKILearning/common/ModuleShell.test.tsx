@@ -182,6 +182,23 @@ describe('ModuleShell', () => {
     cancel.mockRestore()
   })
 
+  it('exposes resetWorkshop to a non-stepper workshop slot (fires onReset on confirm)', () => {
+    const ok = vi.spyOn(window, 'confirm').mockReturnValue(true)
+    const onReset = vi.fn()
+    renderShell(
+      <ModuleShell
+        manifest={base}
+        learn={<div>L</div>}
+        onReset={onReset}
+        workshop={(api) => <Button onClick={api.resetWorkshop}>RESET WORKSHOP</Button>}
+      />
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Workshop' }))
+    fireEvent.click(screen.getByRole('button', { name: 'RESET WORKSHOP' }))
+    expect(onReset).toHaveBeenCalledTimes(1)
+    ok.mockRestore()
+  })
+
   it('does NOT clear the exercise prefill when the reset confirm is cancelled', () => {
     const cancel = vi.spyOn(window, 'confirm').mockReturnValue(false)
     const parts = [{ id: 's1', title: 'Step 1: One', description: 'd', icon: FlaskConical }]

@@ -22,6 +22,14 @@ const manifest: ModuleManifest = {
   ],
   playgroundTool: 'mls-group-messaging',
   taxonomy: { algorithms: ['ML-KEM', 'ML-DSA'], standards: ['JOSE'] },
+  // reduced 5-tab set (no Exercises) — matches the original render
+  tabs: [
+    { value: 'learn', label: 'Learn' },
+    { value: 'visual', label: 'Visual' },
+    { value: 'workshop', label: 'Workshop' },
+    { value: 'references', label: 'References' },
+    { value: 'tools', label: 'Tools & Products' },
+  ],
   load: () => import('./index').then((m) => ({ default: m.MLSGroupMessagingModule })),
 }
 
