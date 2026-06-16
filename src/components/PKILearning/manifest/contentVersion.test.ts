@@ -11,6 +11,8 @@ import {
   MODULE_ID_RENAMES,
   applyModuleRenames,
   findOrphanedModuleIds,
+  getModuleVersionFingerprint,
+  diffModuleVersions,
 } from './contentVersion'
 import { MANIFESTS } from './registry'
 import type { LearningProgress } from '@/services/storage/types'
@@ -69,5 +71,34 @@ describe('B2 content versioning', () => {
     expect(orphans).toContain('a-removed-module')
     expect(orphans).not.toContain('hsm-pqc')
     expect(orphans).not.toContain('quiz')
+  })
+})
+
+describe('B2 module-change diff ("What\'s New")', () => {
+  it('getModuleVersionFingerprint covers every manifest, defaulting to version 1', () => {
+    const fp = getModuleVersionFingerprint()
+    expect(Object.keys(fp).length).toBe(MANIFESTS.length)
+    expect(fp['hsm-pqc']).toBe(1) // no explicit contentVersion → default 1
+  })
+
+  it('detects added modules', () => {
+    expect(diffModuleVersions({ a: 1 }, { a: 1, b: 1 }).added).toEqual(['b'])
+  })
+
+  it('detects retired modules (progress kept, surfaced as retired)', () => {
+    expect(diffModuleVersions({ a: 1, b: 1 }, { a: 1 }).retired).toEqual(['b'])
+  })
+
+  it('detects updated modules (content version bumped)', () => {
+    expect(diffModuleVersions({ a: 1 }, { a: 2 }).updated).toEqual(['a'])
+  })
+
+  it('reports no changes when fingerprints match', () => {
+    expect(diffModuleVersions({ a: 1, b: 2 }, { a: 1, b: 2 })).toEqual({
+      added: [],
+      retired: [],
+      updated: [],
+      renamed: [],
+    })
   })
 })

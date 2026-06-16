@@ -85,3 +85,62 @@ export function findOrphanedModuleIds(persistedIds: Iterable<string>): string[] 
   const renamedAway = new Set(Object.keys(MODULE_ID_RENAMES))
   return [...persistedIds].filter((id) => !MODULE_IDS.has(id) && !renamedAway.has(id))
 }
+
+/** Per-module content version when a manifest omits one (B2 decision D2). */
+export const DEFAULT_CONTENT_VERSION = 1
+
+/** The current id → content-version map (the manifests are the single source). */
+export function getModuleVersionFingerprint(): Record<string, number> {
+  const fp: Record<string, number> = {}
+  for (const m of MANIFESTS) {
+    fp[m.id] = m.contentVersion ?? DEFAULT_CONTENT_VERSION
+  }
+  return fp
+}
+
+export interface ModuleChanges {
+  /** brand-new module ids (added to the catalog) */
+  added: string[]
+  /** removed module ids — progress is KEPT and shown with a "retired" note (D1) */
+  retired: string[]
+  /** ids whose content version was bumped since last seen */
+  updated: string[]
+  /** declarative renames whose new id is now live */
+  renamed: { from: string; to: string }[]
+}
+
+/**
+ * Diff a previously-seen fingerprint against the current one — rename-aware, so a
+ * declarative rename surfaces as "renamed" rather than a spurious retired+added
+ * pair. Powers the "What's New" learn-module section.
+ */
+export function diffModuleVersions(
+  lastSeen: Record<string, number>,
+  current: Record<string, number> = getModuleVersionFingerprint()
+): ModuleChanges {
+  const renamedTo = new Set(Object.values(MODULE_ID_RENAMES))
+  const lastIds = Object.keys(lastSeen)
+  const curIds = Object.keys(current)
+  const has = (obj: Record<string, number>, id: string) =>
+    Object.prototype.hasOwnProperty.call(obj, id)
+  const ver = (obj: Record<string, number>, id: string) =>
+    // eslint-disable-next-line security/detect-object-injection -- id is a known module id
+    obj[id]
+
+  return {
+    added: curIds.filter((id) => !has(lastSeen, id) && !renamedTo.has(id)),
+    retired: lastIds.filter(
+      (id) => !has(current, id) && !Object.prototype.hasOwnProperty.call(MODULE_ID_RENAMES, id)
+    ),
+    updated: curIds.filter((id) => has(lastSeen, id) && ver(current, id) !== ver(lastSeen, id)),
+    renamed: lastIds
+      .filter(
+        (id) =>
+          Object.prototype.hasOwnProperty.call(MODULE_ID_RENAMES, id) &&
+          // eslint-disable-next-line security/detect-object-injection -- id is a known module id
+          has(current, MODULE_ID_RENAMES[id])
+      )
+      // eslint-disable-next-line security/detect-object-injection -- id is a known module id
+      .map((id) => ({ from: id, to: MODULE_ID_RENAMES[id] })),
+  }
+}
