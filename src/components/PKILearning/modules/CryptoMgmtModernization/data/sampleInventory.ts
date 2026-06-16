@@ -4,7 +4,7 @@
  * Mix of the four asset classes (certs, libraries, software, keys).
  */
 
-import type { AssetClass } from './maturityModel'
+import type { AssetClass } from './cpmMaturityModel'
 
 export type LoopStage = 'discover' | 'classify' | 'score' | 'remediate' | 'attest' | 'reassess'
 

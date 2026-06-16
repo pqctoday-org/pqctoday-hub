@@ -4,7 +4,7 @@ import { ChevronDown, ChevronUp, ExternalLink, X } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
 import type { MaturityRequirement, PillarId, MaturityLevel } from '@/types/MaturityTypes'
-import { MATURITY_LEVEL_LABELS } from '@/components/PKILearning/modules/CryptoMgmtModernization/data/maturityModel'
+import { MATURITY_LEVEL_LABELS } from '@/components/PKILearning/modules/CryptoMgmtModernization/data/cpmMaturityModel'
 
 // ── Constants ────────────────────────────────────────────────────────────
 
