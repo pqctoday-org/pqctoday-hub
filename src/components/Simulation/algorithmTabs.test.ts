@@ -2,6 +2,7 @@
 import { describe, it, expect } from 'vitest'
 import { SIM_ALGORITHM_TABS } from './algorithmTabs'
 import { ALGORITHM_TAB_REF_IDS } from './embedContract'
+import { REF_LABELS } from './simChrome'
 
 describe('SIM_ALGORITHM_TABS', () => {
   it('stays in sync with the contract refId set (every embeddable tab is registered)', () => {
@@ -17,6 +18,15 @@ describe('SIM_ALGORITHM_TABS', () => {
         expect(spec.completion.moduleId, `${refId} moduleId`).toBeTruthy()
         expect(spec.completion.title, `${refId} title`).toBeTruthy()
       }
+    }
+  })
+
+  it('every algorithm tab has a rail label (so it never shows a raw id)', () => {
+    // The resource rail falls back to the raw refId when REF_LABELS has no entry;
+    // an embeddable tab without a label would render "algorithms-detailed" to the
+    // player. Tie the registry to its rail label so a new tab can't ship label-less.
+    for (const refId of ALGORITHM_TAB_REF_IDS) {
+      expect(REF_LABELS[refId], `${refId} rail label`).toBeTruthy()
     }
   })
 })

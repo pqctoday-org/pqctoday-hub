@@ -190,6 +190,14 @@ export const REFERENCE_PHASES: Record<string, ReferenceResource> = {
     legs: ['reference'],
     deepUrl: '/algorithms?tab=transition',
   },
+  'algorithms-detailed': {
+    // Surfaced in the P3 resource rail at parity with the Transition tab so the
+    // detailed candidate comparison (the analysis that informs the architecture
+    // decision) is reachable immediately, not only deep in a later activity.
+    phasesServed: ['p3'],
+    legs: ['reference'],
+    deepUrl: '/algorithms?tab=detailed',
+  },
   timeline: { phasesServed: ['p3', 'p4'], legs: ['reference'], deepUrl: '/timeline' },
   compliance: {
     phasesServed: ['p3', 'p4', 'p7'],

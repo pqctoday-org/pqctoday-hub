@@ -14,6 +14,7 @@ import {
   BUSINESS_PHASES,
   PLAYGROUND_PHASES,
   REFERENCE_PHASES,
+  resourcesForPhase,
   type PhaseResource,
 } from './phaseResourceMap'
 
@@ -79,5 +80,21 @@ describe('phaseResourceMap — value integrity', () => {
     for (const [id, r] of allEntries) {
       expect(r.legs.length, `${id}: no legs`).toBeGreaterThan(0)
     }
+  })
+})
+
+describe('phaseResourceMap — algorithm-tab rail parity (C5-full)', () => {
+  // The Detailed comparison tab must be reachable in the P3 resource rail at
+  // parity with the Transition tab — otherwise the analysis that should inform
+  // the architecture decision is buried in a later journey activity (the gap the
+  // 2026-06-17 app verification caught).
+  it('surfaces both Transition and Detailed as P3 reference resources', () => {
+    const p3refs = resourcesForPhase('reference', 'p3')
+    expect(p3refs).toContain('algorithms-transition')
+    expect(p3refs).toContain('algorithms-detailed')
+  })
+
+  it('the Detailed tab deep-links to the detailed Algorithms tab', () => {
+    expect(REFERENCE_PHASES['algorithms-detailed']?.deepUrl).toBe('/algorithms?tab=detailed')
   })
 })

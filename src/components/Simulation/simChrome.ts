@@ -62,6 +62,7 @@ export const REF_LABELS: Record<string, string> = {
   'algorithms-catalog': 'Algorithm Catalog',
   'algorithms-protocol-matrix': 'PQC Protocol Matrix',
   'algorithms-transition': 'Classical → PQC Transition',
+  'algorithms-detailed': 'Detailed Algorithm Comparison',
   timeline: 'Migration Timeline',
   compliance: 'Compliance Center',
   'compliance-cert-check': 'FIPS / CC Cert Check',
