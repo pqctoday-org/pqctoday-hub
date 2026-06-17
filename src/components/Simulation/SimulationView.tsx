@@ -24,19 +24,15 @@ import {
   canEmbedStep,
   isAssessStep,
   isTimelineStep,
-  isProtocolMatrixStep,
-  isTransitionStep,
-  isDetailedStep,
+  isAlgorithmTabStep,
   isStepComplete,
   type StepCompletionContext,
 } from './embedContract'
+import { SIM_ALGORITHM_TABS } from './algorithmTabs'
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
 import { parseTimelineScope } from '@/data/timelineScope'
 import { isPqcCapable } from './catalogCompletion'
 import { softwareData } from '@/data/migrateData'
-import { ProtocolMatrixEmbed } from '@/components/shared/widgets/ProtocolMatrixEmbed'
-import { AlgorithmTransitionEmbed } from '@/components/shared/widgets/AlgorithmTransitionEmbed'
-import { AlgorithmDetailedEmbed } from '@/components/shared/widgets/AlgorithmDetailedEmbed'
 import { MigrateEmbed } from '@/components/shared/widgets/MigrateEmbed'
 import { AssessWizard } from '@/components/Assess/AssessWizard'
 import { Button } from '@/components/ui/button'
@@ -239,11 +235,11 @@ export function SimulationView() {
     layer?: string
     catalogId?: string
   } | null>(null)
-  const [protocolEmbed, setProtocolEmbed] = useState<{ title: string } | null>(null)
-  const [transitionEmbed, setTransitionEmbed] = useState<{ title: string; refId: string } | null>(
-    null
-  )
-  const [detailedEmbed, setDetailedEmbed] = useState<{ title: string; refId: string } | null>(null)
+  // C5-full: one embed state for ALL Algorithms tabs, driven by SIM_ALGORITHM_TABS.
+  const [algorithmTabEmbed, setAlgorithmTabEmbed] = useState<{
+    refId: string
+    title: string
+  } | null>(null)
 
   const LearnComp = learnEmbed ? SIM_LEARN_MODULES[learnEmbed.moduleId] : null
   const activityToolId = activityEmbed
@@ -263,9 +259,7 @@ export function SimulationView() {
     setWorkshopEmbed(null)
     setTimelineEmbed(null)
     setCatalogEmbed(null)
-    setProtocolEmbed(null)
-    setTransitionEmbed(null)
-    setDetailedEmbed(null)
+    setAlgorithmTabEmbed(null)
   }
   const openStep = (s: TreeStep) => {
     if (s.kind === 'learn' && s.moduleId && isEmbeddableModule(s.moduleId)) {
@@ -287,21 +281,13 @@ export function SimulationView() {
       clearAllEmbeds()
       setTimelineEmbed({ title: s.label, to: s.to })
       if (s.refId) markRefVisited(s.refId)
-    } else if (isProtocolMatrixStep(s)) {
+    } else if (isAlgorithmTabStep(s) && s.refId) {
       clearAllEmbeds()
-      setProtocolEmbed({ title: s.label })
-      // reviewed-on-open: the Protocol Support tab counts as done once opened in-sim
-      // (C5-a — a "reviewed" reference mark, not an emitted artifact).
-      if (s.refId) markRefVisited(s.refId)
-    } else if (isTransitionStep(s)) {
-      clearAllEmbeds()
-      // NOT marked done on open — the Transition tab is a "choice that counts":
-      // it completes only when the player confirms their replacements (below).
-      setTransitionEmbed({ title: s.label, refId: s.refId ?? 'algorithms-transition' })
-    } else if (isDetailedStep(s)) {
-      clearAllEmbeds()
-      // Same as Transition — completes only on confirm (records crypto-architecture).
-      setDetailedEmbed({ title: s.label, refId: s.refId ?? 'algorithms-detailed' })
+      setAlgorithmTabEmbed({ refId: s.refId, title: s.label })
+      // 'review' tabs (Protocol Support) complete on open; 'choice that counts'
+      // tabs (Transition / Detailed) complete only on confirm (handled below).
+
+      if (SIM_ALGORITHM_TABS[s.refId]?.completion === 'review') markRefVisited(s.refId)
     } else if (isAssessStep(s)) {
       clearAllEmbeds()
       setAssessEmbed({ title: s.label })
@@ -319,37 +305,26 @@ export function SimulationView() {
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   const updateModuleProgress = useModuleStore((s) => s.updateModuleProgress)
-  // C5-full: confirming the Transition tab's PQC replacements is "a choice that
-  // counts" — it records a CBOM tagged with sim provenance (distinct moduleId, so a
-  // standalone CBOM never pre-completes this) and marks the task done via the
-  // sim-scoped visited-ref set.
-  const handleConfirmTransition = (selected: string[]) => {
-    if (!transitionEmbed) return
-    markRefVisited(transitionEmbed.refId)
+  // C5-full: confirming a "choice that counts" Algorithms tab (Transition /
+  // Detailed) records its artifact tagged with DISTINCT sim provenance (the spec's
+  // moduleId, so a standalone doc never pre-completes this) and marks the task done
+  // via the sim-scoped visited-ref. Registry-driven — one handler for every tab.
+  const handleConfirmAlgorithmTab = (selected: string[]) => {
+    if (!algorithmTabEmbed) return
+    const { refId } = algorithmTabEmbed
+    // eslint-disable-next-line security/detect-object-injection
+    const spec = SIM_ALGORITHM_TABS[refId]
+    if (!spec || spec.completion === 'review') return
+    markRefVisited(refId)
     addExecutiveDocument({
-      id: `sim-transition-cbom-${nowMs()}`,
-      moduleId: 'sim-algorithms-transition',
-      type: 'crypto-cbom',
-      title: 'PQC replacement plan (from the simulation)',
-      data: JSON.stringify({ source: 'sim-transition', replacements: selected }),
+      id: `${spec.completion.moduleId}-${nowMs()}`,
+      moduleId: spec.completion.moduleId,
+      type: spec.completion.artifactType,
+      title: spec.completion.title,
+      data: JSON.stringify({ source: spec.completion.moduleId, selected }),
       createdAt: nowMs(),
     })
-    setTransitionEmbed(null)
-  }
-  // C5-full Phase 5: confirming the Detailed tab records a crypto-architecture doc
-  // (distinct sim provenance) + marks the task done via the sim-scoped visited-ref.
-  const handleConfirmDetailed = (selected: string[]) => {
-    if (!detailedEmbed) return
-    markRefVisited(detailedEmbed.refId)
-    addExecutiveDocument({
-      id: `sim-detailed-arch-${nowMs()}`,
-      moduleId: 'sim-algorithms-detailed',
-      type: 'crypto-architecture',
-      title: 'PQC algorithm architecture (from the simulation)',
-      data: JSON.stringify({ source: 'sim-detailed', selected }),
-      createdAt: nowMs(),
-    })
-    setDetailedEmbed(null)
+    setAlgorithmTabEmbed(null)
   }
   // C7 (Decision 4): game-scoped picks, NOT the global My Products store — so a
   // product bookmarked on the standalone /migrate page never pre-completes a
@@ -1058,9 +1033,7 @@ export function SimulationView() {
       workshopEmbed ||
       timelineEmbed ||
       catalogEmbed ||
-      protocolEmbed ||
-      transitionEmbed ||
-      detailedEmbed ? (
+      algorithmTabEmbed ? (
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex shrink-0 items-center gap-2 border-b-2 border-primary bg-primary/10 px-4 py-2">
             <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-[9px] font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
@@ -1077,11 +1050,9 @@ export function SimulationView() {
                       ? 'Timeline'
                       : catalogEmbed
                         ? 'Catalog'
-                        : protocolEmbed
-                          ? 'Protocols'
-                          : transitionEmbed || detailedEmbed
-                            ? 'Algorithms'
-                            : 'Assess'}{' '}
+                        : algorithmTabEmbed
+                          ? (SIM_ALGORITHM_TABS[algorithmTabEmbed.refId]?.label ?? 'Algorithms')
+                          : 'Assess'}{' '}
               · Phase {phase.number}
             </span>
             <span className="min-w-0 flex-1 truncate text-[12.5px] font-bold text-foreground">
@@ -1091,9 +1062,7 @@ export function SimulationView() {
                   workshopEmbed?.title ??
                   timelineEmbed?.title ??
                   catalogEmbed?.title ??
-                  protocolEmbed?.title ??
-                  transitionEmbed?.title ??
-                  detailedEmbed?.title ??
+                  algorithmTabEmbed?.title ??
                   assessEmbed?.title)}
             </span>
             {/* Completion toggle — guarantees a "mark complete" path for every
@@ -1196,24 +1165,22 @@ export function SimulationView() {
               // C7: Migrate product catalog in an isolated MemoryRouter (prevents
               // the catalog's setSearchParams calls from corrupting /simulation URL).
               <MigrateEmbed catalogLayer={catalogEmbed.layer} />
-            ) : protocolEmbed ? (
-              // C5 slice: the Algorithms "Protocol Support" tab, in an isolated
-              // MemoryRouter (its searchParams read + internal links stay contained).
-              <ProtocolMatrixEmbed />
-            ) : transitionEmbed ? (
-              // C5-full: the Algorithms "Transition Guide" tab. Confirming the PQC
-              // replacements records a sim-provenance CBOM + marks the task done.
-              <AlgorithmTransitionEmbed
-                onConfirm={handleConfirmTransition}
-                confirmed={refDone(transitionEmbed.refId)}
-              />
-            ) : detailedEmbed ? (
-              // C5-full: the Algorithms "Detailed Comparison" tab. Confirming records
-              // a sim-provenance crypto-architecture doc + marks the task done.
-              <AlgorithmDetailedEmbed
-                onConfirm={handleConfirmDetailed}
-                confirmed={refDone(detailedEmbed.refId)}
-              />
+            ) : algorithmTabEmbed ? (
+              // C5-full: every Algorithms tab via SIM_ALGORITHM_TABS. Review tabs
+              // (Protocol Support) mount with no confirm; "choice that counts" tabs
+              // (Transition / Detailed) get the confirm → artifact handler.
+              (() => {
+                const spec = SIM_ALGORITHM_TABS[algorithmTabEmbed.refId]
+                if (!spec) return null
+                const Embed = spec.Component
+                const isChoice = spec.completion !== 'review'
+                return (
+                  <Embed
+                    onConfirm={isChoice ? handleConfirmAlgorithmTab : undefined}
+                    confirmed={isChoice ? refDone(algorithmTabEmbed.refId) : undefined}
+                  />
+                )
+              })()
             ) : null}
           </div>
         </div>

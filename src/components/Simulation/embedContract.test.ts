@@ -8,9 +8,7 @@ import {
   canEmbedStep,
   isAssessStep,
   isTimelineStep,
-  isProtocolMatrixStep,
-  isTransitionStep,
-  isDetailedStep,
+  isAlgorithmTabStep,
   isStepComplete,
   type StepCompletionContext,
 } from './embedContract'
@@ -66,27 +64,17 @@ describe('embed contract (WS-09)', () => {
     expect(isTimelineStep(step({ kind: 'learn', moduleId: 'timeline' }))).toBe(false)
   })
 
-  it('recognizes the protocol-matrix reference step (C5 slice)', () => {
+  it('recognizes all three Algorithms-tab reference steps (C5 — SIM_ALGORITHM_TABS)', () => {
     expect(
-      isProtocolMatrixStep(step({ kind: 'reference', refId: 'algorithms-protocol-matrix' }))
+      isAlgorithmTabStep(step({ kind: 'reference', refId: 'algorithms-protocol-matrix' }))
     ).toBe(true)
-    expect(isProtocolMatrixStep(step({ kind: 'reference', refId: 'algorithms-transition' }))).toBe(
-      false
+    expect(isAlgorithmTabStep(step({ kind: 'reference', refId: 'algorithms-transition' }))).toBe(
+      true
     )
-    expect(isProtocolMatrixStep(step({ kind: 'reference', refId: 'timeline' }))).toBe(false)
-  })
-
-  it('recognizes the transition reference step (C5-full)', () => {
-    expect(isTransitionStep(step({ kind: 'reference', refId: 'algorithms-transition' }))).toBe(true)
-    expect(isTransitionStep(step({ kind: 'reference', refId: 'algorithms-protocol-matrix' }))).toBe(
-      false
-    )
-    expect(isTransitionStep(step({ kind: 'reference', refId: 'timeline' }))).toBe(false)
-  })
-
-  it('recognizes the detailed reference step (C5-full)', () => {
-    expect(isDetailedStep(step({ kind: 'reference', refId: 'algorithms-detailed' }))).toBe(true)
-    expect(isDetailedStep(step({ kind: 'reference', refId: 'algorithms-transition' }))).toBe(false)
+    expect(isAlgorithmTabStep(step({ kind: 'reference', refId: 'algorithms-detailed' }))).toBe(true)
+    // not an algorithm tab: the catalog-root ref + unrelated refs
+    expect(isAlgorithmTabStep(step({ kind: 'reference', refId: 'algorithms-catalog' }))).toBe(false)
+    expect(isAlgorithmTabStep(step({ kind: 'reference', refId: 'timeline' }))).toBe(false)
   })
 
   // Every step the sim WOULD embed must have its component present — the contract.
@@ -116,15 +104,9 @@ describe('embed contract (WS-09)', () => {
           // C6: the Gantt embeds via TimelineEmbed — no registry key to assert,
           // but isTimelineStep must return true so the branch is exercised.
           expect(isTimelineStep(s), `${phase}: timeline step is recognised`).toBe(true)
-        } else if (isProtocolMatrixStep(s)) {
-          // C5 slice: the Protocol Support tab embeds via ProtocolMatrixEmbed.
-          expect(isProtocolMatrixStep(s), `${phase}: protocol-matrix step is recognised`).toBe(true)
-        } else if (isTransitionStep(s)) {
-          // C5-full: the Transition Guide tab embeds via AlgorithmTransitionEmbed.
-          expect(isTransitionStep(s), `${phase}: transition step is recognised`).toBe(true)
-        } else if (isDetailedStep(s)) {
-          // C5-full: the Detailed Comparison tab embeds via AlgorithmDetailedEmbed.
-          expect(isDetailedStep(s), `${phase}: detailed step is recognised`).toBe(true)
+        } else if (isAlgorithmTabStep(s)) {
+          // C5: all Algorithms tabs embed via SIM_ALGORITHM_TABS.
+          expect(isAlgorithmTabStep(s), `${phase}: algorithm-tab step is recognised`).toBe(true)
         } else {
           // the only other embeddable reference is the assess-engine wizard
           expect(isAssessStep(s), `${phase}: embeddable ref ${s.refId} is the assess wizard`).toBe(
