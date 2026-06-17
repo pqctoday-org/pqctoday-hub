@@ -262,6 +262,12 @@ public/data/rag-index-freshness.json
 # liveDeployment text fields. Pure read-only against public data.
 !scripts/audit-matrix-refs.ts
 
+# Sandbox scenario sync generator — CI gate (sync:sandbox:check) that keeps
+# src/data/sandboxScenarios.ts regenerated from the public sandbox source repo
+# (pqctoday-sandbox/ui/src/data/scenarios.ts). Pure read-only against public
+# data; must be tracked so CI and other devs can run `npm run sync:sandbox`.
+!scripts/sync-sandbox-scenarios.ts
+
 # Module infographic coverage audit — CI gate that fails the build if any
 # MODULE_CATALOG entry lacks public/images/infographics/pqcstd_<id>.png.
 # CuriousSummaryBanner has no fallback chain; missing PNG = broken image.

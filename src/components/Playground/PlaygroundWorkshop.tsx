@@ -18,6 +18,7 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { EmptyState } from '../ui/empty-state'
 import { WORKSHOP_TOOLS, CATEGORIES, type WorkshopTool } from './workshopRegistry'
+import { SANDBOX_SCENARIOS } from '@/data/sandboxScenarios'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { logEvent, personaLabel } from '@/utils/analytics'
@@ -481,7 +482,7 @@ export const PlaygroundWorkshop = () => {
         icon={FlaskConical}
         pageId="playground"
         title="Crypto Lab"
-        description="Hands-on cryptographic tools — interactive playground, PKCS#11 HSM, and 25 specialized crypto demos."
+        description={`Hands-on cryptographic tools — interactive playground, PKCS#11 HSM, and ${SANDBOX_SCENARIOS.length} specialized crypto demos.`}
         shareTitle="PQC Crypto Lab — Interactive Cryptography in Your Browser"
         shareText="Run real post-quantum cryptographic operations in your browser — key generation, PKCS#11 HSM, ML-KEM, ML-DSA and more via WASM."
       />

@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { ExternalLink, ServerCrash, Container } from 'lucide-react'
+import { Link, useParams } from 'react-router-dom'
+import { ExternalLink, ServerCrash, Container, Network } from 'lucide-react'
 import { buttonVariants } from '../ui/button-variants'
 import { Skeleton } from '../ui/skeleton'
 import { EmptyState } from '../ui/empty-state'
 import { SANDBOX_SCENARIOS, SANDBOX_TRACKS } from '@/data/sandboxScenarios'
+import { getSandboxProtocolRef, protocolMatrixHref } from '@/data/sandboxProtocolMapping'
 import { resolveSandboxSession } from '@/services/sandboxOrchestrator'
 import type { SandboxSession } from '@/services/sandboxOrchestrator'
 
@@ -49,6 +50,10 @@ export function SandboxScenarioEmbed() {
     : toolId
   const scenario = useMemo(() => SANDBOX_SCENARIOS.find((s) => s.id === scenarioId), [scenarioId])
   const track = useMemo(() => SANDBOX_TRACKS.find((t) => t.id === scenario?.trackId), [scenario])
+  const protocolRef = useMemo(
+    () => (scenarioId ? getSandboxProtocolRef(scenarioId) : undefined),
+    [scenarioId]
+  )
 
   const staticBaseUrl = useSandboxStaticBaseUrl()
   const orchestratorConfigured = useOrchestratorConfigured()
@@ -213,6 +218,18 @@ export function SandboxScenarioEmbed() {
                   </span>
                 ))}
               </div>
+            )}
+            {protocolRef && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                Related:{' '}
+                <Link
+                  to={protocolMatrixHref(protocolRef)}
+                  className="inline-flex items-center gap-1 text-primary underline-offset-2 hover:underline"
+                >
+                  <Network className="h-3.5 w-3.5" />
+                  {protocolRef.label} in the PQC Protocol Matrix
+                </Link>
+              </p>
             )}
           </div>
           <a
