@@ -100,6 +100,8 @@ import { ArchitecturePanel } from './ArchitecturePanel'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { useAwarenessScore } from '@/hooks/useAwarenessScore'
+import { ModuleCompletionCard } from '@/components/PKILearning/ModuleCompletionCard'
 import pqctodayLogo from '@/assets/pqctoday-logo.png'
 
 // ---- option lists (from real hub data) ----------------------------------
@@ -169,6 +171,42 @@ const cycle = <T extends { id: string }>(arr: readonly T[], cur: string) =>
 // derives a per-quarter RNG from the run seed via `quarterRng` and uses
 // `chanceWith` / `sampleWith` from `@/simulation/rng`, so a seed + turn
 // reproduces a quarter and no Math.random() sits on the runtime path.
+
+/**
+ * W2a — fires the reward ceremony for a module completed INSIDE the sim. The
+ * standalone ModuleCompletionWatcher is gated `!isEmbed`, so in-sim learners
+ * otherwise get no belt/score beat. Keyed by moduleId (so it resets per module)
+ * and fires once on the live status→completed transition (a module already
+ * complete on mount never auto-fires). No "next module" CTA — that would
+ * navigate out of the sim; the player stays on the board.
+ */
+function SimModuleCompletionWatcher({ moduleId, title }: { moduleId: string; title: string }) {
+  const status = useModuleStore((s) => s.modules[moduleId]?.status)
+  const award = useAwarenessScore()
+  const wasCompleted = useRef(status === 'completed')
+  const [open, setOpen] = useState(false)
+  useEffect(() => {
+    const justCompleted = !wasCompleted.current && status === 'completed'
+    wasCompleted.current = status === 'completed'
+    if (!justCompleted) return
+    const id = setTimeout(() => setOpen(true), 0)
+    return () => clearTimeout(id)
+  }, [status])
+  if (!open) return null
+  return (
+    <ModuleCompletionCard
+      variant="module"
+      title={title}
+      belt={{ name: award.belt.name, color: award.belt.color, textColor: award.belt.textColor }}
+      score={award.score}
+      nextBelt={award.nextBelt ? { name: award.nextBelt.name } : null}
+      pointsToNextBelt={award.pointsToNextBelt}
+      progress={null}
+      nextLabel={null}
+      onClose={() => setOpen(false)}
+    />
+  )
+}
 
 // ---- main ----------------------------------------------------------------
 export function SimulationView() {
@@ -1126,6 +1164,15 @@ export function SimulationView() {
               </div>
             ) : learnEmbed && LearnComp ? (
               <EmbeddedLearnProvider>
+                {/* W2a: the completion ceremony fires INSIDE the sim too — the
+                    standalone ModuleCompletionWatcher is gated !isEmbed, leaving
+                    in-sim learners with no belt/score beat. This sim-scoped watcher
+                    shows the reward card on the live status→completed transition. */}
+                <SimModuleCompletionWatcher
+                  key={learnEmbed.moduleId}
+                  moduleId={learnEmbed.moduleId}
+                  title={learnEmbed.title}
+                />
                 <Suspense
                   fallback={
                     <div className="p-8 text-center text-sm text-muted-foreground">
