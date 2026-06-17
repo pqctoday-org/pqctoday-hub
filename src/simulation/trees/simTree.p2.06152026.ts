@@ -71,10 +71,9 @@ const TREE: PhaseTree = {
           do: 'Embed CBOM governance into CI/CD, change management, vendor onboarding and audit.',
           steps: [
             {
-              kind: 'reference',
+              kind: 'catalog',
               label: 'Wire CBOM into the Migrate pipeline',
               to: '/migrate',
-              refId: 'migrate',
             },
             {
               kind: 'activity',
@@ -97,10 +96,9 @@ const TREE: PhaseTree = {
               moduleId: 'soc-implementation-pqc',
             },
             {
-              kind: 'reference',
+              kind: 'catalog',
               label: 'Set CBOM freshness triggers in the Migrate pipeline',
               to: '/migrate',
-              refId: 'migrate',
             },
           ],
         },

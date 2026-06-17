@@ -8,9 +8,13 @@
  *  - learn: `moduleId` is a registered, embeddable Learn module (SIM_LEARN_MODULES).
  *  - activity: `artifactType` maps to a Business-Center tool that has a mounted
  *    component (BUSINESS_TOOL_COMPONENTS).
+ *  - workshop: `workshopId` maps to a Playground tool (WORKSHOP_TOOL_COMPONENTS).
+ *  - catalog: the Migrate product catalog embedded via a MemoryRouter (C7).
  *  - reference → the assessment engine: the `assess-engine` reference step opens
  *    the AssessWizard embedded in the sim (re-run / refine the assessment without
  *    leaving the board). Recognized by `isAssessStep`.
+ *  - reference → the timeline: the `timeline` reference step opens the interactive
+ *    Gantt chart scoped to the player's assessed country (C6). `isTimelineStep`.
  *
  * Behavioural side of the contract (enforced by the embed shell, not this guard):
  *  - renders headless — chrome (tabs/quiz/nav) is trimmed by EmbeddedLearnProvider;
@@ -77,6 +81,7 @@ export function canEmbedStep(s: TreeStep): boolean {
   }
 
   if (s.kind === 'workshop' && s.workshopId) return !!WORKSHOP_TOOL_COMPONENTS[s.workshopId]
+  if (s.kind === 'catalog') return true
   if (isAssessStep(s)) return true
   if (isTimelineStep(s)) return true
   return false
@@ -96,6 +101,8 @@ export interface StepCompletionContext {
   isRefVisited: (refId: string) => boolean
   /** workshop: this workshop/tool id has been visited/completed. */
   isWorkshopComplete: (workshopId: string) => boolean
+  /** catalog: the player has added ≥1 product to "My Products" (via the Migrate catalog). */
+  hasCatalogPicks: () => boolean
 }
 
 /**
@@ -116,6 +123,8 @@ export function isStepComplete(s: TreeStep, ctx: StepCompletionContext): boolean
       return !!s.refId && ctx.isRefVisited(s.refId)
     case 'workshop':
       return !!s.workshopId && ctx.isWorkshopComplete(s.workshopId)
+    case 'catalog':
+      return ctx.hasCatalogPicks()
     default:
       return false
   }
