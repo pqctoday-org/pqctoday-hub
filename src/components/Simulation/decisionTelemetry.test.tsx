@@ -69,4 +69,18 @@ describe('decision telemetry (WS-16)', () => {
     expect(vi.mocked(logSimTrapPick).mock.calls[0][0]).toBe('p0')
     expect(vi.mocked(logSimTrapPick).mock.calls[0][1]).toBeTruthy()
   })
+
+  it('W3: a wrong pick reveals the sound move + a scenario-specific consequence', () => {
+    renderDecision()
+    const wrong = screen
+      .getAllByRole('button')
+      .find((b) => /^[A-C]/.test(b.textContent ?? '') && !/CORRECT-MOVE/.test(b.textContent ?? ''))
+    fireEvent.click(wrong!)
+    // #14 — the correct answer is revealed (not just "try again")
+    expect(screen.getByText('SOUND MOVE')).toBeInTheDocument()
+    expect(screen.getAllByText('CORRECT-MOVE').length).toBeGreaterThan(1) // card + reveal
+    // #13 — consequence grounded in the live Mosca state (ctx.over = 2) + sector
+    expect(screen.getByText(/already 2y over the Mosca line/i)).toBeInTheDocument()
+    expect(screen.getByText(/healthcare data exposed past Q-Day/i)).toBeInTheDocument()
+  })
 })
