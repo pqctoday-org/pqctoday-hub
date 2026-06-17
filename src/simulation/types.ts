@@ -78,8 +78,9 @@ export interface Pitfall {
 /** A whole phase: its gate, its dated provenance, level bands, and pitfalls. */
 export interface PhaseTree {
   phase: PhaseId
-  /** Framework gate (G0–G7) + the criterion it certifies. */
-  gate: { id: string; criterion: string }
+  /** Framework gate (G0–G6) + the criterion it certifies. Absent for CONTINUOUS
+   *  phases (p7 Vendor & Supply Chain) which have no one-time gate. */
+  gate?: { id: string; criterion: string }
   /** MMDDYYYY snapshot date this tree was generated. */
   generated: string
   /** Framework source/version this snapshot was derived from. */

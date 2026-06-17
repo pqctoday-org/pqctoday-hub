@@ -510,6 +510,14 @@ export function SimulationView() {
   }
   const docTypes = useMemo(() => new Set((docs ?? []).map((d) => d.type)), [docs])
   const moduleDone = (id?: string) => !!id && moduleProgress[id]?.status === 'completed'
+  // W7 (decision Q4 = shared, by design): activity completion is keyed by artifact
+  // TYPE, not by which step produced it. So a doc of type T (e.g. a crypto-cbom)
+  // satisfies EVERY step that produces T — confirming the P3 Transition tab (which
+  // records a crypto-cbom) also completes the P2 CBOM-builder activity, and the P3
+  // Detailed tab (crypto-architecture) completes the P1 architecture activity. This
+  // is intentional: a CBOM / architecture is ONE real deliverable — producing it
+  // once legitimately satisfies the framework's "you have a CBOM" gate wherever it
+  // recurs, rather than forcing the player to rebuild the same artifact per phase.
   const artifactDone = (t?: ExecutiveDocumentType) => !!t && docTypes.has(t)
   const refDone = (id?: string) => !!id && visitedRefs.includes(id)
   const autoKey = (phase: string, to: string) => `${phase}::${to}`
