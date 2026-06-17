@@ -82,7 +82,7 @@ export const PersonaPathView = ({
     : summary.phases.length - 1
 
   return (
-    <section aria-label="Your curated learning path" className="space-y-3">
+    <section aria-label="Your curated learning journey" className="space-y-3">
       {showBreadcrumb && summary.phases.length > 1 && (
         <nav
           aria-label="Path phases"

@@ -58,9 +58,11 @@ describe('Dashboard — persona-path integration', () => {
     // Path view exposes the "Browse all" disclosure; stack-mode pages don't.
     expect(screen.getByText(/Browse all \d+ modules \(\d+ tracks\)/i)).toBeInTheDocument()
     // PersonaPathView mounts the curated section.
-    expect(screen.getByRole('region', { name: /Your curated learning path/i })).toBeInTheDocument()
-    // The 'Path' chip in the view toggle is the active radio.
-    expect(screen.getByRole('radio', { name: /^Path/i })).toHaveAttribute('aria-checked', 'true')
+    expect(
+      screen.getByRole('region', { name: /Your curated learning journey/i })
+    ).toBeInTheDocument()
+    // The 'Journey' chip in the view toggle (value 'path') is the active radio.
+    expect(screen.getByRole('radio', { name: /^Journey/i })).toHaveAttribute('aria-checked', 'true')
   })
 
   it('P0-1 regression: curious starts pre-filtered to its own path (NOT "All")', () => {
@@ -81,7 +83,7 @@ describe('Dashboard — persona-path integration', () => {
     renderDashboard()
 
     expect(
-      screen.queryByRole('region', { name: /Your curated learning path/i })
+      screen.queryByRole('region', { name: /Your curated learning journey/i })
     ).not.toBeInTheDocument()
     expect(screen.queryByText(/Browse all \d+ modules/i)).not.toBeInTheDocument()
     expect(screen.getByRole('radio', { name: /^Stack/i })).toHaveAttribute('aria-checked', 'true')
@@ -98,7 +100,7 @@ describe('Dashboard — persona-path integration', () => {
     // useLearnStore.showEverything flag is set so a returning curious user
     // keeps the catalog they opted into.
     expect(
-      screen.queryByRole('region', { name: /Your curated learning path/i })
+      screen.queryByRole('region', { name: /Your curated learning journey/i })
     ).not.toBeInTheDocument()
     expect(useLearnStore.getState().showEverything).toBe(true)
     expect(usePersonaStore.getState().selectedPersona).toBeNull()

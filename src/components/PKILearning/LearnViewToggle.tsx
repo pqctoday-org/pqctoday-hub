@@ -12,8 +12,12 @@ interface LearnViewToggleProps {
   pathAvailable?: boolean
 }
 
+// NOTE: the 'path' view mode shows the learner's persona-curated journey. Its
+// label is "Journey" (not "Path") to avoid colliding with the Track filter,
+// whose options are also called "Paths" ("All Paths"). The internal value stays
+// 'path' so persisted view-mode preferences keep working.
 const OPTIONS: { value: LearnViewMode; label: string; icon: typeof Layers }[] = [
-  { value: 'path', label: 'Path', icon: Route },
+  { value: 'path', label: 'Journey', icon: Route },
   { value: 'stack', label: 'Stack', icon: Layers },
   { value: 'cards', label: 'Cards', icon: LayoutGrid },
   { value: 'table', label: 'Table', icon: Table },
