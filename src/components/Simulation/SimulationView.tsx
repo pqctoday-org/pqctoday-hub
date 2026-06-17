@@ -102,6 +102,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useAwarenessScore } from '@/hooks/useAwarenessScore'
 import { ModuleCompletionCard } from '@/components/PKILearning/ModuleCompletionCard'
+import { SimRunComplete } from './SimRunComplete'
 import pqctodayLogo from '@/assets/pqctoday-logo.png'
 
 // ---- option lists (from real hub data) ----------------------------------
@@ -243,6 +244,8 @@ export function SimulationView() {
     setDifficulty,
     tourSeen,
     markTourSeen,
+    runCompleteSeen,
+    markRunComplete,
   } = useSimulationStore()
   // WS-14: the active difficulty balance the engine + scoring read (config swap).
   const balance = getBalance(difficulty)
@@ -593,6 +596,19 @@ export function SimulationView() {
   const p5Frac = p5Flat.length ? p5Flat.filter((s) => stepDone(s, 'p5')).length / p5Flat.length : 0
   const readiness = computeReadiness(size, p5Frac)
   const cleared = LIFECYCLE.filter((p) => levelOf(p) >= PHASE_WIN_LEVEL).length
+
+  // W2b: run-end ceremony — fire once when every lifecycle phase is cleared. The
+  // store flag (run-slice, cleared by RESET) keeps it from re-firing on reload and
+  // lets a fresh run celebrate again. Deferred out of render via setTimeout(0).
+  const [runCompleteOpen, setRunCompleteOpen] = useState(false)
+  useEffect(() => {
+    if (cleared < LIFECYCLE.length || runCompleteSeen) return
+    const id = setTimeout(() => {
+      setRunCompleteOpen(true)
+      markRunComplete()
+    }, 0)
+    return () => clearTimeout(id)
+  }, [cleared, runCompleteSeen, markRunComplete])
 
   // ---- date-driven quantum threat (HNDL + TNFL), evolving 2026 → 2029 → 2035 ----
   const sizeKey = size as OrgSize
@@ -2136,6 +2152,17 @@ export function SimulationView() {
       {report && <QuarterReport report={report} onClose={() => setReport(null)} />}
       {/* WS-12: skippable first-run guide, shown until dismissed/finished */}
       {!tourSeen && <SimTour onClose={markTourSeen} />}
+      {/* W2b: run-end ceremony — the summative "did you beat Q-Day?" moment */}
+      {runCompleteOpen && (
+        <SimRunComplete
+          over={clock.over}
+          horizonYear={clock.horizonYear}
+          readinessPct={readiness.pct}
+          clearedCount={cleared}
+          totalPhases={LIFECYCLE.length}
+          onClose={() => setRunCompleteOpen(false)}
+        />
+      )}
     </div>
   )
 }
