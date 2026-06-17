@@ -83,7 +83,13 @@ function isPersonaRelevant(item: SoftwareItem, preferredLayers: string[]): boole
   return itemLayers.some((l) => preferredLayers.includes(l))
 }
 
-export const MigrateView: React.FC = () => {
+interface MigrateViewProps {
+  /** When true, renders headless inside the simulation (PageHeader hidden, URL
+   *  state is local to the MemoryRouter the sim wraps this in). */
+  simEmbed?: boolean
+}
+
+export const MigrateView: React.FC<MigrateViewProps> = ({ simEmbed = false }) => {
   const isEmbedded = useIsEmbedded()
   useWorkflowPhaseTracker('migrate')
   const addHistoryEvent = useHistoryStore((s) => s.addEvent)
@@ -1051,21 +1057,23 @@ export const MigrateView: React.FC = () => {
 
   return (
     <div className={`space-y-8 ${compareKeys.length > 0 ? 'pb-20' : ''}`}>
-      <PageHeader
-        icon={ArrowRightLeft}
-        pageId="migrate"
-        title="PQC Migration Guide"
-        description="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance."
-        dataSource={
-          softwareMetadata
-            ? `${softwareMetadata.filename} • Updated: ${softwareMetadata.lastUpdate.toLocaleDateString()}`
-            : undefined
-        }
-        viewType="Migrate"
-        shareTitle="PQC Migration Guide — 7-Phase Framework for Post-Quantum Readiness"
-        shareText="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance. Explore software readiness and migration steps."
-        onExport={handleExportCsv}
-      />
+      {!simEmbed && (
+        <PageHeader
+          icon={ArrowRightLeft}
+          pageId="migrate"
+          title="PQC Migration Guide"
+          description="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance."
+          dataSource={
+            softwareMetadata
+              ? `${softwareMetadata.filename} • Updated: ${softwareMetadata.lastUpdate.toLocaleDateString()}`
+              : undefined
+          }
+          viewType="Migrate"
+          shareTitle="PQC Migration Guide — 7-Phase Framework for Post-Quantum Readiness"
+          shareText="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance. Explore software readiness and migration steps."
+          onExport={handleExportCsv}
+        />
+      )}
 
       {persona === 'curious' && (
         <PreviewBanner pageContext="Developer, Architect, Ops, Researcher" />

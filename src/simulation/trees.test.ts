@@ -53,6 +53,12 @@ describe('SIM_TREES — coverage & shape', () => {
                 s.to.startsWith('/playground/'),
                 `${phase}/${act.id}: workshop link ${s.to} is not a /playground/ page`
               ).toBe(true)
+            } else if (s.kind === 'catalog') {
+              // C7: catalog steps embed the Migrate view — just need a valid /migrate link.
+              expect(
+                s.to === '/migrate',
+                `${phase}/${act.id}: catalog step to must be '/migrate', got '${s.to}'`
+              ).toBe(true)
             } else {
               expect(s.refId, `${phase}/${act.id}: reference missing refId`).toBeTruthy()
             }

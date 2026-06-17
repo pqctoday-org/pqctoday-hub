@@ -71,10 +71,9 @@ const TREE: PhaseTree = {
           output: 'Layered discovery deployment',
           steps: [
             {
-              kind: 'reference',
+              kind: 'catalog',
               label: 'Browse the Migrate discovery catalog',
               to: '/migrate',
-              refId: 'migrate',
             },
             {
               kind: 'activity',

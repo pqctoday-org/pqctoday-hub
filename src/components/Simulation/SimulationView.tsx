@@ -29,6 +29,8 @@ import {
 } from './embedContract'
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
 import { parseTimelineScope } from '@/data/timelineScope'
+import { MigrateEmbed } from '@/components/shared/widgets/MigrateEmbed'
+import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { AssessWizard } from '@/components/Assess/AssessWizard'
 import { Button } from '@/components/ui/button'
 import { FRAMEWORK_PHASES, PHASE_ORDER, type PhaseId } from '@/data/frameworkPhases'
@@ -225,6 +227,7 @@ export function SimulationView() {
     null
   )
   const [timelineEmbed, setTimelineEmbed] = useState<{ title: string; to: string } | null>(null)
+  const [catalogEmbed, setCatalogEmbed] = useState<{ title: string; layer?: string } | null>(null)
 
   const LearnComp = learnEmbed ? SIM_LEARN_MODULES[learnEmbed.moduleId] : null
   const activityToolId = activityEmbed
@@ -240,27 +243,38 @@ export function SimulationView() {
       setAssessEmbed(null)
       setWorkshopEmbed(null)
       setTimelineEmbed(null)
+      setCatalogEmbed(null)
       setLearnEmbed({ moduleId: s.moduleId, title: s.label })
     } else if (s.kind === 'activity' && s.artifactType) {
       setLearnEmbed(null)
       setAssessEmbed(null)
       setWorkshopEmbed(null)
       setTimelineEmbed(null)
+      setCatalogEmbed(null)
       setActivityEmbed({ artifactType: s.artifactType, title: s.label })
     } else if (s.kind === 'workshop' && s.workshopId && WORKSHOP_TOOL_COMPONENTS[s.workshopId]) {
       setLearnEmbed(null)
       setActivityEmbed(null)
       setAssessEmbed(null)
       setTimelineEmbed(null)
+      setCatalogEmbed(null)
       setWorkshopEmbed({ workshopId: s.workshopId, title: s.label })
       // opening a workshop in-sim counts as completing the practice leaf (the
       // standalone /playground page has no separate completion signal).
       markWorkshopVisited(s.workshopId)
+    } else if (s.kind === 'catalog') {
+      setLearnEmbed(null)
+      setActivityEmbed(null)
+      setAssessEmbed(null)
+      setWorkshopEmbed(null)
+      setTimelineEmbed(null)
+      setCatalogEmbed({ title: s.label, layer: s.catalogLayer })
     } else if (isTimelineStep(s)) {
       setLearnEmbed(null)
       setActivityEmbed(null)
       setWorkshopEmbed(null)
       setAssessEmbed(null)
+      setCatalogEmbed(null)
       setTimelineEmbed({ title: s.label, to: s.to })
       if (s.refId) markRefVisited(s.refId)
     } else if (isAssessStep(s)) {
@@ -268,6 +282,7 @@ export function SimulationView() {
       setActivityEmbed(null)
       setWorkshopEmbed(null)
       setTimelineEmbed(null)
+      setCatalogEmbed(null)
       setAssessEmbed({ title: s.label })
       // opening the wizard in-sim is the equivalent of "visiting" the assess ref
       // (the navigate flow marks-on-click), so the step counts as done.
@@ -280,6 +295,7 @@ export function SimulationView() {
     setAssessEmbed(null)
     setWorkshopEmbed(null)
     setTimelineEmbed(null)
+    setCatalogEmbed(null)
   }
 
   // real hub completion state: generated artifacts + Learn-module progress
@@ -289,6 +305,10 @@ export function SimulationView() {
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   const updateModuleProgress = useModuleStore((s) => s.updateModuleProgress)
+  // C7: read "my products" from the global migrate selection store so catalog
+  // steps complete when the player has at least one saved product (even from the
+  // standalone /migrate page — the two share the same store).
+  const migrateMyProducts = useMigrateSelectionStore((s) => s.myProducts)
   // read-only Assess → Sim bridge: offer to import a completed assessment as the
   // Phase-0 scoping artifact (data only; the sim's gate still decides it counts).
   const assessSnap = useAssessSnapshot()
@@ -416,6 +436,10 @@ export function SimulationView() {
     // C2: a workshop practice leaf is done once opened in-sim (the standalone
     // /playground tool has no separate completion event).
     isWorkshopComplete: (id: string) => visitedWorkshops.includes(id),
+    // C7: the catalog step is done once the player has added ≥1 product to
+    // "My Products" (written to useMigrateSelectionStore, which is global and
+    // persisted — it also reflects the standalone /migrate page's saved picks).
+    hasCatalogPicks: () => migrateMyProducts.length > 0,
   }
   const stepDone = (s: TreeStep, phase: string) =>
     auto.includes(autoKey(phase, s.to)) || isStepComplete(s, stepCompletionCtx)
@@ -963,7 +987,12 @@ export function SimulationView() {
       {/* body — swaps to the embedded Learn module / activity tool when one is open.
           The sim header above stays, AND a persistent "Simulation mode" bar sits on
           top of the panel, so the player always knows they haven't left the sim. */}
-      {learnEmbed || activityEmbed || assessEmbed || workshopEmbed || timelineEmbed ? (
+      {learnEmbed ||
+      activityEmbed ||
+      assessEmbed ||
+      workshopEmbed ||
+      timelineEmbed ||
+      catalogEmbed ? (
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex shrink-0 items-center gap-2 border-b-2 border-primary bg-primary/10 px-4 py-2">
             <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-[9px] font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
@@ -978,7 +1007,9 @@ export function SimulationView() {
                     ? 'Workshop'
                     : timelineEmbed
                       ? 'Timeline'
-                      : 'Assess'}{' '}
+                      : catalogEmbed
+                        ? 'Catalog'
+                        : 'Assess'}{' '}
               · Phase {phase.number}
             </span>
             <span className="min-w-0 flex-1 truncate text-[12.5px] font-bold text-foreground">
@@ -987,6 +1018,7 @@ export function SimulationView() {
                 : (activityEmbed?.title ??
                   workshopEmbed?.title ??
                   timelineEmbed?.title ??
+                  catalogEmbed?.title ??
                   assessEmbed?.title)}
             </span>
             {/* Completion toggle — guarantees a "mark complete" path for every
@@ -1081,6 +1113,10 @@ export function SimulationView() {
                     parseTimelineScope(timelineEmbed.to).country ?? assessJurisdiction?.displayName,
                 }}
               />
+            ) : catalogEmbed ? (
+              // C7: Migrate product catalog in an isolated MemoryRouter (prevents
+              // the catalog's setSearchParams calls from corrupting /simulation URL).
+              <MigrateEmbed catalogLayer={catalogEmbed.layer} />
             ) : null}
           </div>
         </div>

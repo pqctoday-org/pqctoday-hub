@@ -29,10 +29,9 @@ const TREE: PhaseTree = {
               moduleId: 'hybrid-crypto',
             },
             {
-              kind: 'reference',
+              kind: 'catalog',
               label: 'Pick pilots from the Migrate catalog',
               to: '/migrate',
-              refId: 'migrate',
             },
           ],
         },

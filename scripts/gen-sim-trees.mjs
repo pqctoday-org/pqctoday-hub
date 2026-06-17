@@ -101,6 +101,15 @@ const W = (workshopId, label) => {
   if (!WORKSHOP_TOOLS.has(workshopId)) throw new Error(`unknown workshop ${workshopId}`)
   return { kind: 'workshop', label, to: `/playground/${workshopId}`, workshopId }
 }
+// C() — a product-catalog step that EMBEDS the Migrate catalog in the sim (C7).
+// `layer` is the initial layer scope (e.g. 'layer-1'); omit for unscoped.
+// Completion: the player has ≥1 product saved to "My Products".
+const C = (label, layer) => ({
+  kind: 'catalog',
+  label,
+  to: '/migrate',
+  ...(layer ? { catalogLayer: layer } : {}),
+})
 
 // ---- per-phase Maturity Indicators (verbatim, Applied Quantum v2.1) ---------
 const INDICATORS = {
@@ -282,7 +291,7 @@ const FRAMEWORK = {
       do: 'Deploy discovery across network, code, config, runtime, and manual layers.',
       output: 'Layered discovery deployment',
       steps: [
-        R('migrate', 'Browse the Migrate discovery catalog'),
+        C('Browse the Migrate discovery catalog'),
         A('management-tools-audit', 'Run the Management-Tools Audit'),
       ],
     },
@@ -344,7 +353,7 @@ const FRAMEWORK = {
       do: 'Embed CBOM governance into CI/CD, change management, vendor onboarding and audit.',
       output: null,
       steps: [
-        R('migrate', 'Wire CBOM into the Migrate pipeline'),
+        C('Wire CBOM into the Migrate pipeline'),
         A('crypto-vulnerability-watch', 'Wire CBOM freshness into CI/CD drift checks'),
       ],
     },
@@ -359,7 +368,7 @@ const FRAMEWORK = {
           'soc-implementation-pqc',
           'Learn: protect the CBOM (it is an HNDL shopping list) — SOC monitoring'
         ),
-        R('migrate', 'Set CBOM freshness triggers in the Migrate pipeline'),
+        C('Set CBOM freshness triggers in the Migrate pipeline'),
       ],
     },
   ],
@@ -475,7 +484,7 @@ const FRAMEWORK = {
       output: null,
       steps: [
         L('hybrid-crypto', 'Learn: Hybrid Cryptography'),
-        R('migrate', 'Pick pilots from the Migrate catalog'),
+        C('Pick pilots from the Migrate catalog'),
       ],
     },
     {

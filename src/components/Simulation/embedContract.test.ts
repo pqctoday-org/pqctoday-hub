@@ -74,6 +74,9 @@ describe('embed contract (WS-09)', () => {
             WORKSHOP_TOOL_COMPONENTS[s.workshopId],
             `${phase}: workshop ${s.workshopId}`
           ).toBeTruthy()
+        } else if (s.kind === 'catalog') {
+          // C7: the Migrate catalog embeds via MigrateEmbed + MemoryRouter.
+          expect(canEmbedStep(s), `${phase}: catalog step is embeddable`).toBe(true)
         } else if (isTimelineStep(s)) {
           // C6: the Gantt embeds via TimelineEmbed — no registry key to assert,
           // but isTimelineStep must return true so the branch is exercised.
@@ -138,12 +141,14 @@ describe('standard completion convention (C0)', () => {
     hasArtifact: () => true,
     isRefVisited: () => true,
     isWorkshopComplete: () => true,
+    hasCatalogPicks: () => true,
   }
   const incomplete: StepCompletionContext = {
     isModuleComplete: () => false,
     hasArtifact: () => false,
     isRefVisited: () => false,
     isWorkshopComplete: () => false,
+    hasCatalogPicks: () => false,
   }
 
   // A representative step for EVERY StepKind — typed as a Record<StepKind, …> so
@@ -157,7 +162,11 @@ describe('standard completion convention (C0)', () => {
     activity: step({ kind: 'activity', artifactType: anArtifactType }),
     reference: step({ kind: 'reference', refId: 'assess-engine' }),
     workshop: step({ kind: 'workshop', workshopId: aWorkshopId }),
+    catalog: step({ kind: 'catalog', to: '/migrate' }),
   }
+  // catalog: isStepComplete delegates to hasCatalogPicks() — override needed
+  const completedWithPicks: StepCompletionContext = { ...completed, hasCatalogPicks: () => true }
+  const incompleteWithPicks: StepCompletionContext = { ...incomplete, hasCatalogPicks: () => false }
 
   // Every embeddable kind must declare a completion branch in isStepComplete:
   // it reports complete under a "completed" context and not under an empty one.
@@ -165,8 +174,11 @@ describe('standard completion convention (C0)', () => {
   // fails the "completed" assertion here — the contract guard.
   it('every step kind reports completion correctly (no kind falls through)', () => {
     for (const [kind, s] of Object.entries(KIND_FIXTURES) as [StepKind, TreeStep][]) {
-      expect(isStepComplete(s, completed), `${kind} should be complete`).toBe(true)
-      expect(isStepComplete(s, incomplete), `${kind} should be incomplete`).toBe(false)
+      // catalog uses hasCatalogPicks() — use the overridden contexts for it
+      const doneCtx = kind === 'catalog' ? completedWithPicks : completed
+      const notDoneCtx = kind === 'catalog' ? incompleteWithPicks : incomplete
+      expect(isStepComplete(s, doneCtx), `${kind} should be complete`).toBe(true)
+      expect(isStepComplete(s, notDoneCtx), `${kind} should be incomplete`).toBe(false)
     }
   })
 })
