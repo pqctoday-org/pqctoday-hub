@@ -302,7 +302,25 @@ export const ModuleShell = ({
   const header = (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
-        <h1 className="text-3xl font-bold text-gradient">{title ?? manifest.title}</h1>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <h1 className="text-3xl font-bold text-gradient">{title ?? manifest.title}</h1>
+          {/* A4 — depth signal on the in-module header (consistent with the cards +
+              Journey, which read the same manifest.difficulty). */}
+          {manifest.difficulty ? (
+            <span
+              className={
+                'rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ' +
+                (manifest.difficulty === 'beginner'
+                  ? 'bg-status-success/15 text-status-success'
+                  : manifest.difficulty === 'intermediate'
+                    ? 'bg-status-warning/15 text-status-warning'
+                    : 'bg-status-error/15 text-status-error')
+              }
+            >
+              {manifest.difficulty}
+            </span>
+          ) : null}
+        </div>
         {headerDescription ? (
           <p className="text-muted-foreground mt-2">{headerDescription}</p>
         ) : null}
