@@ -106,6 +106,27 @@ describe('Dashboard — persona-path integration', () => {
     expect(usePersonaStore.getState().selectedPersona).toBeNull()
   })
 
+  it('A3 cold-start: null persona gets the OPEN "where to start" hero up top', () => {
+    seedPersona(null)
+    renderDashboard()
+
+    // The hero uses the cold-start summary copy (not the plain "Where do I start?")
+    // and its <details> is open by default so the router shows immediately.
+    const heroSummary = screen.getByText(/New here\? Start with the right module/i)
+    expect(heroSummary).toBeInTheDocument()
+    expect(heroSummary.closest('details')).toHaveAttribute('open')
+  })
+
+  it('A3 cold-start: a persona gets only the collapsed bottom disclosure (no hero)', () => {
+    seedPersona('developer')
+    renderDashboard()
+
+    // No cold-start hero copy for a persona...
+    expect(screen.queryByText(/New here\? Start with the right module/i)).not.toBeInTheDocument()
+    // ...and the standard "Where do I start?" disclosure is present but collapsed.
+    expect(screen.getByText(/Where do I start\?/i).closest('details')).not.toHaveAttribute('open')
+  })
+
   it('P1-2 regression: persona-active path renders the "Curated order" badge instead of silently disabling sort', () => {
     seedPersona('developer')
     renderDashboard()
