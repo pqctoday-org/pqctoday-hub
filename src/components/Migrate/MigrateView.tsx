@@ -96,7 +96,27 @@ export const MigrateView: React.FC<MigrateViewProps> = ({ simEmbed = false }) =>
   const persona = usePersonaStore((s) => s.selectedPersona)
   const preferredLayers = persona ? (PERSONA_MIGRATE_LAYERS[persona] ?? []) : [] // eslint-disable-line security/detect-object-injection
   const personaDefaults = usePersonaDefaults()
-  const [searchParams, setSearchParams] = useSearchParams()
+  // When embedded in the simulation, the catalog must NOT read/write the page
+  // URL (it would corrupt /simulation's route) — and it can't nest its own
+  // <Router> (the app already has one). So its filter URL state is backed by
+  // local component state instead, kept fully API-compatible with useSearchParams.
+  const [realSearchParams, realSetSearchParams] = useSearchParams()
+  const [embedSearchParams, setEmbedSearchParamsState] = useState(() => new URLSearchParams())
+  const searchParams = simEmbed ? embedSearchParams : realSearchParams
+  const setSearchParams: typeof realSetSearchParams = simEmbed
+    ? (nextInit) =>
+        setEmbedSearchParamsState((prev) => {
+          const next = new URLSearchParams(
+            typeof nextInit === 'function'
+              ? (nextInit(prev) as URLSearchParams)
+              : (nextInit as URLSearchParams)
+          )
+          // Keep the SAME object when content is unchanged — otherwise a fresh
+          // URLSearchParams identity on every set would re-fire the effects keyed
+          // on `searchParams` forever (matches real setSearchParams' no-op).
+          return next.toString() === prev.toString() ? prev : next
+        })
+    : realSetSearchParams
   const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
   const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
   const [detailProduct, setDetailProduct] = useState<SoftwareItem | null>(null)
