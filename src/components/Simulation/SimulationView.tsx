@@ -1050,13 +1050,17 @@ export function SimulationView() {
               ✕ Back to board
             </Button>
           </div>
-          {/* Contain the module: block cross-module /learn anchor links so a stray
-              "see also" link can't navigate the player out of the sim. */}
+          {/* Contain the embed: block ANY in-app anchor navigation so a stray link
+              inside an embedded resource can't yank the player out of the sim —
+              a learn "see also", a catalog layer/product link, a protocol-matrix
+              "→ Migrate" link, etc. External links (http/https/mailto) and pure
+              hash anchors still work; in-embed filtering uses buttons, not links. */}
           <div
             className="min-h-0 flex-1 overflow-auto"
             onClickCapture={(e) => {
-              const a = (e.target as HTMLElement).closest?.('a[href^="/learn"]')
-              if (a) e.preventDefault()
+              const a = (e.target as HTMLElement).closest?.('a[href]')
+              const href = a?.getAttribute('href')
+              if (href && href.startsWith('/')) e.preventDefault()
             }}
           >
             {assessEmbed ? (
