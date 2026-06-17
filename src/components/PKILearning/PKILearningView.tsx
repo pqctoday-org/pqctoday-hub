@@ -12,6 +12,7 @@ import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
 import { ModuleProgressSidebar } from './ModuleProgressSidebar'
 import { ModuleProgressHeader } from './ModuleProgressHeader'
+import { ModuleCompletionWatcher } from './ModuleCompletionWatcher'
 import { NextModuleCTA } from './NextModuleCTA'
 import { CuriousModuleView } from './common/CuriousModuleView'
 import { MODULE_CATALOG, LM_ID_MAP } from './moduleData'
@@ -144,6 +145,13 @@ export const PKILearningView: React.FC = () => {
             <div className="lg:hidden sticky top-[60px] z-30 -mx-4 px-4 bg-background/80 backdrop-blur-md pb-2 pt-2 mb-4 border-b border-border/50">
               <ModuleProgressHeader moduleId={moduleId} />
             </div>
+          )}
+
+          {/* A4 — the completion-card moment (fires once when this module hits
+              'completed'; not in the embedded sim). Keyed so each module watches
+              only itself. */}
+          {showSidebar && !isEmbed && (
+            <ModuleCompletionWatcher key={moduleId} moduleId={moduleId} />
           )}
 
           {isCuriousMode && showSidebar ? (
