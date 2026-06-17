@@ -24,3 +24,5 @@ export { EmbeddedLearnProvider } from '@/components/PKILearning/embeddedLearnCon
 
 // ── Playground ───────────────────────────────────────────────────────────────
 export { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+// id → mounted component, for embedding workshop/playground tools in the sim (C2).
+export { TOOL_COMPONENTS as WORKSHOP_TOOL_COMPONENTS } from '@/components/Playground/workshopRegistry'

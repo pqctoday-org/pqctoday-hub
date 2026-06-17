@@ -18,7 +18,7 @@ import type { PhaseId } from '@/data/frameworkPhases'
 import type { MaturityLevelId } from '@/data/phaseMaturity'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 
-export type StepKind = 'learn' | 'reference' | 'activity'
+export type StepKind = 'learn' | 'reference' | 'activity' | 'workshop'
 
 /** A concrete, real-hub-backed leaf step. Completion is read from hub state. */
 export interface TreeStep {
@@ -32,6 +32,9 @@ export interface TreeStep {
   artifactType?: ExecutiveDocumentType
   /** reference: stable id → completion via the visited-refs set. */
   refId?: string
+  /** workshop: playground/workshop tool id (WORKSHOP_TOOL_COMPONENTS) → completion
+   *  via the visited-workshops set. */
+  workshopId?: string
 }
 
 /** A framework Activity (e.g. "1.2 Deploy Cryptographic Discovery") + its leaves. */

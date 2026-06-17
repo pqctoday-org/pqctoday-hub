@@ -23,6 +23,7 @@
 import {
   ARTIFACT_TYPE_TO_TOOL_ID,
   BUSINESS_TOOL_COMPONENTS,
+  WORKSHOP_TOOL_COMPONENTS,
   isEmbeddableModule,
 } from './resourceContract'
 import type { TreeStep } from '@/simulation'
@@ -65,6 +66,8 @@ export function canEmbedStep(s: TreeStep): boolean {
     // eslint-disable-next-line security/detect-object-injection
     return !!toolId && !!BUSINESS_TOOL_COMPONENTS[toolId]
   }
+
+  if (s.kind === 'workshop' && s.workshopId) return !!WORKSHOP_TOOL_COMPONENTS[s.workshopId]
   if (isAssessStep(s)) return true
   return false
 }
@@ -81,6 +84,8 @@ export interface StepCompletionContext {
   hasArtifact: (type: NonNullable<TreeStep['artifactType']>) => boolean
   /** reference: this ref id has been visited. */
   isRefVisited: (refId: string) => boolean
+  /** workshop: this workshop/tool id has been visited/completed. */
+  isWorkshopComplete: (workshopId: string) => boolean
 }
 
 /**
@@ -99,6 +104,8 @@ export function isStepComplete(s: TreeStep, ctx: StepCompletionContext): boolean
       return !!s.artifactType && ctx.hasArtifact(s.artifactType)
     case 'reference':
       return !!s.refId && ctx.isRefVisited(s.refId)
+    case 'workshop':
+      return !!s.workshopId && ctx.isWorkshopComplete(s.workshopId)
     default:
       return false
   }

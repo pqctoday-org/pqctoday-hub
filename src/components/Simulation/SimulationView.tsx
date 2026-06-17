@@ -377,6 +377,9 @@ export function SimulationView() {
     isModuleComplete: moduleDone,
     hasArtifact: artifactDone,
     isRefVisited: refDone,
+    // C2: workshop completion lands with the embed mount arm (visited-workshops
+    // set); until a tree has workshop steps there is nothing to mark.
+    isWorkshopComplete: () => false,
   }
   const stepDone = (s: TreeStep, phase: string) =>
     auto.includes(autoKey(phase, s.to)) || isStepComplete(s, stepCompletionCtx)
