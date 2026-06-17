@@ -18,7 +18,7 @@ import type { PhaseId } from '@/data/frameworkPhases'
 import type { MaturityLevelId } from '@/data/phaseMaturity'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 
-export type StepKind = 'learn' | 'reference' | 'activity' | 'workshop' | 'catalog'
+export type StepKind = 'learn' | 'reference' | 'activity' | 'workshop' | 'catalog' | 'scenario'
 
 /** A concrete, real-hub-backed leaf step. Completion is read from hub state. */
 export interface TreeStep {
@@ -41,6 +41,9 @@ export interface TreeStep {
   /** catalog: stable id of this catalog task (C7) — completion is per-task: the
    *  step is done when the player picks a PQC-capable product while it is open. */
   catalogId?: string
+  /** scenario: sandbox scenario id (C3 — embed a live sandbox lab in the sim).
+   *  Completion via the visited-scenarios set, set when the lab reports done. */
+  scenarioId?: string
 }
 
 /** A framework Activity (e.g. "1.2 Deploy Cryptographic Discovery") + its leaves. */

@@ -36,6 +36,8 @@ export interface SimulationState {
   visitedRefs: string[]
   /** Hands-on workshops the player has opened in-sim (playbook completion). */
   visitedWorkshops: string[]
+  /** Sandbox labs the player has completed in-sim (C3). */
+  visitedScenarios: string[]
   /** Product ids the player has selected in the in-sim Migrate catalog (C7).
    *  GAME-SCOPED — kept separate from the standalone catalog's global My Products. */
   picks: string[]
@@ -60,6 +62,8 @@ export interface SimulationState {
   markRefVisited: (id: string) => void
   /** Record that a hands-on workshop was opened in-sim. */
   markWorkshopVisited: (id: string) => void
+  /** Record that a sandbox lab was completed in-sim (C3). */
+  markScenarioVisited: (id: string) => void
   /** Toggle a product in the game-scoped Migrate catalog selection (C7). */
   togglePick: (productId: string) => void
   /** Mark a catalog step done (C7) — the player picked a PQC product while it was open. */
@@ -122,6 +126,7 @@ const SEED = {
   ] as SimEvent[],
   visitedRefs: [] as string[],
   visitedWorkshops: [] as string[],
+  visitedScenarios: [] as string[],
   picks: [] as string[],
   catalogCompleted: [] as string[],
   auto: [] as string[],
@@ -129,7 +134,7 @@ const SEED = {
   difficulty: 'realistic' as DifficultyId,
 }
 
-const STORE_VERSION = 10
+const STORE_VERSION = 11
 const SAVE_KIND = 'pqc-simulation-save'
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
@@ -156,6 +161,7 @@ const saveSlice = (s: SimulationState): SimulationData => ({
   events: s.events,
   visitedRefs: s.visitedRefs,
   visitedWorkshops: s.visitedWorkshops,
+  visitedScenarios: s.visitedScenarios,
   picks: s.picks,
   catalogCompleted: s.catalogCompleted,
   auto: s.auto,
@@ -179,6 +185,7 @@ function fromSave(s: Record<string, unknown>) {
     events: Array.isArray(s.events) ? (s.events as SimEvent[]) : [...SEED.events],
     visitedRefs: Array.isArray(s.visitedRefs) ? (s.visitedRefs as string[]) : [],
     visitedWorkshops: Array.isArray(s.visitedWorkshops) ? (s.visitedWorkshops as string[]) : [],
+    visitedScenarios: Array.isArray(s.visitedScenarios) ? (s.visitedScenarios as string[]) : [],
     picks: Array.isArray(s.picks) ? (s.picks as string[]) : [],
     catalogCompleted: Array.isArray(s.catalogCompleted) ? (s.catalogCompleted as string[]) : [],
     auto: Array.isArray(s.auto) ? (s.auto as string[]) : [],
@@ -203,6 +210,10 @@ export const useSimulationStore = create<SimulationState>()(
       markWorkshopVisited: (id) =>
         set((s) =>
           s.visitedWorkshops.includes(id) ? s : { visitedWorkshops: [...s.visitedWorkshops, id] }
+        ),
+      markScenarioVisited: (id) =>
+        set((s) =>
+          s.visitedScenarios.includes(id) ? s : { visitedScenarios: [...s.visitedScenarios, id] }
         ),
       togglePick: (productId) =>
         set((s) => ({
@@ -283,6 +294,9 @@ export const useSimulationStore = create<SimulationState>()(
           visitedRefs: Array.isArray(s.visitedRefs) ? (s.visitedRefs as string[]) : [],
           visitedWorkshops: Array.isArray(s.visitedWorkshops)
             ? (s.visitedWorkshops as string[])
+            : [],
+          visitedScenarios: Array.isArray(s.visitedScenarios)
+            ? (s.visitedScenarios as string[])
             : [],
           picks: Array.isArray(s.picks) ? (s.picks as string[]) : [],
           catalogCompleted: Array.isArray(s.catalogCompleted)

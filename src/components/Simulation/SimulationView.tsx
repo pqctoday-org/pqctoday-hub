@@ -195,6 +195,7 @@ export function SimulationView() {
     markRefVisited,
     visitedWorkshops,
     markWorkshopVisited,
+    visitedScenarios,
     auto,
     autoCompleteSteps,
     clearAuto,
@@ -480,6 +481,9 @@ export function SimulationView() {
     // C7 (Decision 3): a catalog task is done once the player earned it by picking
     // a PQC-capable product while it was open (tracked in `catalogCompleted`).
     isCatalogStepDone: (catalogId: string) => catalogCompleted.includes(catalogId),
+    // C3: a sandbox lab step is done once it's been completed in-sim (the lab
+    // reports done via the postMessage handshake, or the manual Mark-complete).
+    isScenarioComplete: (id: string) => visitedScenarios.includes(id),
   }
   const stepDone = (s: TreeStep, phase: string) =>
     auto.includes(autoKey(phase, s.to)) || isStepComplete(s, stepCompletionCtx)
