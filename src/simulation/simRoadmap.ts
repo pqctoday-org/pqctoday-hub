@@ -50,6 +50,9 @@ export function buildSimRoadmapDoc(r: SimRoadmapInput, now: number): ExecutiveDo
     type: 'sim-roadmap',
     title: `Simulation Roadmap — ${r.sector} (${r.clearedCount}/${r.totalPhases})`,
     data: serializeSimRoadmap(r),
+    // Preserve the STRUCTURED run so the Migrate RoadmapBuilder can read it back
+    // and seed an editable draft (C1) — `data` alone is markdown and lossy.
+    inputs: r,
     createdAt: now,
   }
 }

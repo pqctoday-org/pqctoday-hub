@@ -28,6 +28,9 @@ describe('buildSimRoadmapDoc (WS-15)', () => {
     expect(doc.title).toContain('financial')
     expect(doc.moduleId).toBeTruthy()
     expect(doc.createdAt).toBe(1000)
+    // C1: the structured run is preserved so the Migrate RoadmapBuilder can read
+    // it back and seed an editable draft (not just the markdown body).
+    expect(doc.inputs).toEqual(input)
   })
 
   it('serializes the run into a readable roadmap body', () => {
