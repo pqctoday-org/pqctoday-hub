@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { SimulationView } from './SimulationView'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
+import { SIM_TREES, flattenTree } from '@/simulation'
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
 
 const renderPage = () =>
@@ -103,6 +104,17 @@ describe('SimulationView (Mission Control)', () => {
     // the console is NOT rendered
     expect(screen.queryByText('Phases cleared')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /End Quarter/ })).not.toBeInTheDocument()
+  })
+
+  // W2c — honest delegation: a phase auto-completed by the AI team must be flagged
+  // so the maturity credit doesn't masquerade as the player's own understanding.
+  it('flags an AI-delegated phase "RUN BY AI · UNVERIFIED" with a study nudge', () => {
+    const p0Steps = flattenTree(SIM_TREES.p0!)
+    // architect owns p2/p3/p5, not p0 → p0 is delegatable; seed it as delegated.
+    useSimulationStore.setState({ sel: 'p0', seat: 'architect', auto: [`p0::${p0Steps[0].to}`] })
+    renderPage()
+    expect(screen.getByText(/RUN BY AI · UNVERIFIED/i)).toBeInTheDocument()
+    expect(screen.getByText(/Run by your AI team — study to verify/i)).toBeInTheDocument()
   })
 
   it('clicking a phase in the journey switches the active phase ops', () => {
