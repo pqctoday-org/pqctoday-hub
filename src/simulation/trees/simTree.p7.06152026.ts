@@ -6,10 +6,6 @@ import type { PhaseTree } from '../types'
 
 const TREE: PhaseTree = {
   phase: 'p7',
-  gate: {
-    id: 'G7',
-    criterion: 'Continuous vendor governance operating',
-  },
   generated: '06152026',
   source: 'Applied Quantum PQC Migration Framework v2.1 (Marin Ivezić)',
   levels: [

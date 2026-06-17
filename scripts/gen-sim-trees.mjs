@@ -173,7 +173,10 @@ const GATES = {
   p4: { id: 'G4', criterion: 'Multi-year roadmap & PMO established' },
   p5: { id: 'G5', criterion: 'Pilots validated; wave migration underway' },
   p6: { id: 'G6', criterion: 'Infrastructure PQC-ready; performance validated' },
-  p7: { id: 'G7', criterion: 'Continuous vendor governance operating' },
+  // p7 (Vendor & Supply Chain) is a CONTINUOUS phase in the framework
+  // (frameworkPhases.ts: cadence 'continuous', no gate) — it has no one-time gate.
+  // The earlier invented 'G7' contradicted the framework (audit fidelity gap, Q3);
+  // p7 clears via its maturity level, not a gate certificate.
   foundations: { id: 'GF', criterion: 'Foundations sustained as BAU' },
 }
 
@@ -459,7 +462,7 @@ const FRAMEWORK = {
       id: '4.5–4.6',
       level: 3,
       title: 'Manage the Roadmap as a Living Instrument & Define Milestone Gates',
-      do: 'Run quarterly reviews with leading indicators and formal G0–G7 gate criteria.',
+      do: 'Run quarterly reviews with leading indicators and formal G0–G6 gate criteria.',
       output: 'Quarterly review process & gate criteria',
       steps: [R('report', 'Track gates on the Report page')],
     },

@@ -124,8 +124,14 @@ describe('SIM_TREES — coverage & shape', () => {
   it('level bands are ascending, non-empty, and gate/provenance are present', () => {
     for (const phase of PHASES) {
       const tree = SIM_TREES[phase]!
-      expect(tree.gate.id, `${phase}: gate id`).toMatch(/^G[0-7]$/)
-      expect(tree.gate.criterion, `${phase}: gate criterion`).toBeTruthy()
+      // p7 (Vendor & Supply Chain) is CONTINUOUS in the framework (no one-time
+      // gate); every other lifecycle phase has a numbered gate G0–G6.
+      if (tree.gate) {
+        expect(tree.gate.id, `${phase}: gate id`).toMatch(/^G[0-6]$/)
+        expect(tree.gate.criterion, `${phase}: gate criterion`).toBeTruthy()
+      } else {
+        expect(phase, `${phase}: only the continuous p7 may be gateless`).toBe('p7')
+      }
       expect(tree.generated, `${phase}: generated date`).toMatch(/^\d{8}$/)
       expect(tree.source, `${phase}: source`).toBeTruthy()
       expect(tree.levels.length, `${phase}: no level bands`).toBeGreaterThan(0)

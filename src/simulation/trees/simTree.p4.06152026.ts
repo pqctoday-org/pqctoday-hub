@@ -108,7 +108,7 @@ const TREE: PhaseTree = {
         {
           id: '4.5–4.6',
           title: 'Manage the Roadmap as a Living Instrument & Define Milestone Gates',
-          do: 'Run quarterly reviews with leading indicators and formal G0–G7 gate criteria.',
+          do: 'Run quarterly reviews with leading indicators and formal G0–G6 gate criteria.',
           output: 'Quarterly review process & gate criteria',
           steps: [
             {
