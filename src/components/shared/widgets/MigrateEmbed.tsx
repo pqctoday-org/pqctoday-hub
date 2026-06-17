@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * MigrateEmbed (C7) — renders the Migrate product catalog inside the simulation
- * without corrupting the `/simulation` route's URL state.
+ * MigrateEmbed (C7) — renders the Migrate product catalog inside the simulation.
  *
- * The core problem: MigrateView is URL-driven — it reads filters from
- * `useSearchParams` and writes back via `setSearchParams`. Inside `/simulation`
- * those writes would corrupt the sim's own URL. The fix: wrap in a `MemoryRouter`
- * scoped to `/migrate`, giving MigrateView its own isolated URL context. All
- * filter interactions stay inside the memory router; nothing escapes to the parent.
+ * MigrateView is URL-driven (it reads filters from `useSearchParams` and writes
+ * them back), which inside `/simulation` would corrupt the sim's own route. It
+ * CANNOT be wrapped in its own <Router> to isolate that — the app already has a
+ * Router and React Router forbids nesting one inside another ("You cannot render
+ * a <Router> inside another <Router>"). Instead, MigrateView's `simEmbed` prop
+ * makes it back its filter URL state with LOCAL state (see MigrateView), so it
+ * never touches the page URL and needs no router of its own.
  *
- * `simEmbed={true}` suppresses the PageHeader so the sim's "● Simulation mode"
- * bar stays at the top and the player sees the catalog directly.
+ * `simEmbed` also suppresses the PageHeader so the sim's "● Simulation mode" bar
+ * stays at the top.
  */
-import { MemoryRouter } from 'react-router-dom'
 import { MigrateView } from '@/components/Migrate/MigrateView'
 
 interface MigrateEmbedProps {
@@ -24,9 +24,5 @@ interface MigrateEmbedProps {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function MigrateEmbed({ catalogLayer: _catalogLayer }: MigrateEmbedProps) {
-  return (
-    <MemoryRouter initialEntries={['/migrate']}>
-      <MigrateView simEmbed />
-    </MemoryRouter>
-  )
+  return <MigrateView simEmbed />
 }
