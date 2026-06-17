@@ -28,6 +28,7 @@ const manifest: ModuleManifest = {
     { id: 'posture-kpi', label: 'Posture KPI Dashboard Designer' },
   ],
   embeddable: true,
+  practiceInSim: true,
   load: () => import('./index').then((m) => ({ default: m.CryptoMgmtModernizationModule })),
 }
 

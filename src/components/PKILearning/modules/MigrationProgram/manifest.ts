@@ -23,6 +23,7 @@ const manifest: ModuleManifest = {
     { id: 'deployment-playbook', label: 'Deployment Playbook' },
   ],
   embeddable: true,
+  practiceInSim: true,
   load: () => import('./index').then((m) => ({ default: m.MigrationProgramModule })),
 }
 

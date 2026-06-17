@@ -66,6 +66,13 @@ export interface ModuleManifest {
    * Absent ⇒ treated as 1. Independent of the persist/migrate store versions.
    */
   contentVersion?: number
+
+  /**
+   * Program/governance modules that map onto the CSWP.39 simulation (C1). When
+   * true, ModuleShell shows a "Practice in the Simulation" CTA on the standalone
+   * Learn page (hidden when the module is itself embedded inside the sim).
+   */
+  practiceInSim?: boolean
 }
 
 /** The default tab set used by a standard module when `tabs` is omitted. */
