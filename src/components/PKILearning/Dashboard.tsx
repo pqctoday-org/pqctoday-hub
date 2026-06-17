@@ -583,6 +583,15 @@ export const Dashboard: React.FC = () => {
         />
       )}
 
+      {/* A3 cold-start hero — a first-time learner (no persona chosen) lands here
+          with no curated journey. Surface the "Where do I start?" router OPEN and
+          prominent at the top so they immediately get a route, instead of having to
+          scroll to the collapsed disclosure at the bottom of the page. Personas keep
+          that bottom disclosure (they already have their Journey). */}
+      {!isEmbedded && (selectedPersona === null || selectedPersona === undefined) && (
+        <WhereToStartTree defaultOpen />
+      )}
+
       {/* Common Ground callout — shown only when path view ISN'T already surfacing these
           modules. For executive/curious in default (non-showEverything) mode, PersonaPathView
           renders the same five modules with a "Common Ground" badge, so the standalone
@@ -1074,8 +1083,10 @@ const ModuleTracksGrid = ({
         </p>
       )}
 
-      {/* "Where do I start?" router + framework crosswalk (App. B / App. G) */}
-      {!isEmbedded && <WhereToStartTree />}
+      {/* "Where do I start?" router + framework crosswalk (App. B / App. G).
+          Null-persona users get this OPEN as a hero at the top instead (A3
+          cold-start), so here it's only the collapsed disclosure for personas. */}
+      {!isEmbedded && selectedPersona != null && <WhereToStartTree />}
 
       {/* Mobile Search & Filter Drawer */}
       <div className="flex md:hidden items-center gap-2">

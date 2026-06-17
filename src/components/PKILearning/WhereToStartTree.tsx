@@ -99,17 +99,36 @@ const CROSSWALK_FRAMEWORKS: { key: keyof PhaseCrosswalk; label: string }[] = [
   { key: 'dutchHandbook', label: 'Dutch PQC Handbook' },
 ]
 
-export const WhereToStartTree: React.FC = () => {
+interface WhereToStartTreeProps {
+  /**
+   * Render open by default and with a stronger "start here" emphasis. Used for
+   * the cold-start hero on `/learn` when no persona is selected, so a first-time
+   * learner sees the router immediately instead of a collapsed disclosure below
+   * the fold. Still fully collapsible (onToggle keeps the state in sync).
+   */
+  defaultOpen?: boolean
+}
+
+export const WhereToStartTree: React.FC<WhereToStartTreeProps> = ({ defaultOpen = false }) => {
   const navigate = useNavigate()
   const [selected, setSelected] = useState<StartBranch | null>(null)
+  const [open, setOpen] = useState(defaultOpen)
 
   const crosswalkPhase = selected ? FRAMEWORK_PHASES[selected.phase] : null
 
   return (
-    <details className="glass-panel border border-primary/20 rounded-xl group">
+    <details
+      open={open}
+      onToggle={(e) => setOpen((e.currentTarget as HTMLDetailsElement).open)}
+      className={`glass-panel rounded-xl group ${
+        defaultOpen ? 'border-2 border-primary/40 shadow-sm' : 'border border-primary/20'
+      }`}
+    >
       <summary className="flex items-center gap-2 cursor-pointer list-none p-4 select-none">
         <Compass size={16} className="text-primary shrink-0" />
-        <span className="text-sm font-semibold text-foreground">Where do I start?</span>
+        <span className="text-sm font-semibold text-foreground">
+          {defaultOpen ? 'New here? Start with the right module' : 'Where do I start?'}
+        </span>
         <span className="text-xs text-muted-foreground hidden sm:inline">
           — find the right first module for where you are
         </span>
