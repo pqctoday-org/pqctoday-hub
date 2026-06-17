@@ -30,6 +30,8 @@ import {
 } from './embedContract'
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
 import { parseTimelineScope } from '@/data/timelineScope'
+import { catalogDone } from './catalogCompletion'
+import { softwareData } from '@/data/migrateData'
 import { ProtocolMatrixEmbed } from '@/components/shared/widgets/ProtocolMatrixEmbed'
 import { MigrateEmbed } from '@/components/shared/widgets/MigrateEmbed'
 import { AssessWizard } from '@/components/Assess/AssessWizard'
@@ -425,10 +427,11 @@ export function SimulationView() {
     // C2: a workshop practice leaf is done once opened in-sim (the standalone
     // /playground tool has no separate completion event).
     isWorkshopComplete: (id: string) => visitedWorkshops.includes(id),
-    // C7 (Decision 4): the catalog step reads the GAME-SCOPED sim picks. (Decision
-    // 3 — one PQC-capable pick per required category — is the follow-up that makes
-    // each catalog step independently earned; for now any in-sim pick completes.)
-    hasCatalogPicks: () => simPicks.length > 0,
+    // C7 (Decision 3+4): a catalog step is done when the game-scoped picks include
+    // at least one PQC-CAPABLE product (not any/classical product). Per-step
+    // independence via the phase's required categories is a product-curation
+    // follow-up — see catalogCompletion.ts.
+    hasCatalogPicks: () => catalogDone(simPicks, softwareData),
   }
   const stepDone = (s: TreeStep, phase: string) =>
     auto.includes(autoKey(phase, s.to)) || isStepComplete(s, stepCompletionCtx)
