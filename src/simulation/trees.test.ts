@@ -7,6 +7,7 @@ import { describe, it, expect } from 'vitest'
 import { SIM_TREES, flattenTree, achievedTreeLevel } from './index'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { ARTIFACT_TYPE_TO_TOOL_ID } from '@/components/BusinessCenter/businessToolsRegistry'
+import { WORKSHOP_TOOL_COMPONENTS } from '@/components/Simulation/resourceContract'
 import { PHASE_MATURITY } from '@/data/phaseMaturity'
 import { FRAMEWORK_VERSION } from '@/data/frameworkPhases'
 import { resolveDeepLink } from './deepLinks'
@@ -43,6 +44,15 @@ describe('SIM_TREES — coverage & shape', () => {
                 ARTIFACT_TYPE_TO_TOOL_ID[s.artifactType!],
                 `${phase}/${act.id}: artifact ${s.artifactType} maps to no tool`
               ).toBeTruthy()
+            } else if (s.kind === 'workshop') {
+              expect(
+                WORKSHOP_TOOL_COMPONENTS[s.workshopId!],
+                `${phase}/${act.id}: workshop ${s.workshopId} maps to no Playground tool`
+              ).toBeTruthy()
+              expect(
+                s.to.startsWith('/playground/'),
+                `${phase}/${act.id}: workshop link ${s.to} is not a /playground/ page`
+              ).toBe(true)
             } else {
               expect(s.refId, `${phase}/${act.id}: reference missing refId`).toBeTruthy()
             }

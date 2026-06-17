@@ -38,13 +38,17 @@ const REF_URL = {
   'algorithms-catalog': '/algorithms',
   timeline: '/timeline',
   report: '/report',
-  // Hands-on Playground workshops (practice leaves) — real /playground/:toolId pages.
-  'pg-tls-simulator': '/playground/tls-simulator',
-  'pg-envelope-encrypt': '/playground/envelope-encrypt',
-  'pg-merkle-proof': '/playground/merkle-proof',
-  'pg-hsm-capacity': '/playground/hsm-capacity',
-  'pg-cert-capacity': '/playground/cert-capacity',
 }
+// Hands-on Playground workshops (practice leaves). These EMBED in the sim (C2):
+// the id is the Playground tool id (WORKSHOP_TOOL_COMPONENTS key); the `to` is the
+// standalone /playground/:toolId page used as the non-embedded fallback.
+const WORKSHOP_TOOLS = new Set([
+  'tls-simulator',
+  'envelope-encrypt',
+  'merkle-proof',
+  'hsm-capacity',
+  'cert-capacity',
+])
 const ART_TOOL = {
   'roi-model': 'roi-calculator',
   'board-deck': 'board-pitch',
@@ -89,6 +93,13 @@ const R = (refId, label) => {
   const to = REF_URL[refId]
   if (!to) throw new Error(`no url for ref ${refId}`)
   return { kind: 'reference', label, to, refId }
+}
+// W() — a hands-on workshop practice leaf that EMBEDS in the sim (C2). The
+// embed contract (embedContract.test.ts) asserts every workshopId resolves to a
+// mounted Playground component, so a typo here fails the build.
+const W = (workshopId, label) => {
+  if (!WORKSHOP_TOOLS.has(workshopId)) throw new Error(`unknown workshop ${workshopId}`)
+  return { kind: 'workshop', label, to: `/playground/${workshopId}`, workshopId }
 }
 
 // ---- per-phase Maturity Indicators (verbatim, Applied Quantum v2.1) ---------
@@ -487,7 +498,7 @@ const FRAMEWORK = {
       do: 'Run pilots against SLOs (latency, CPU, throughput), test rollback and validate compatibility.',
       output: 'Pilot results reports',
       steps: [
-        R('pg-tls-simulator', 'Practice: measure the TLS 1.3 hybrid handshake'),
+        W('tls-simulator', 'Practice: measure the TLS 1.3 hybrid handshake'),
         A('deployment-playbook', 'Draft a Deployment Playbook'),
       ],
     },
@@ -508,7 +519,7 @@ const FRAMEWORK = {
       steps: [
         L('confidential-computing', 'Learn: Confidential Computing & defense-in-depth'),
         L('database-encryption-pqc', 'Learn: data-at-rest strategy & DB encryption'),
-        R('pg-envelope-encrypt', 'Practice: PQC key-wrapping (envelope encryption)'),
+        W('envelope-encrypt', 'Practice: PQC key-wrapping (envelope encryption)'),
         A('data-at-rest-strategy', 'Decide the per-store data-at-rest strategy'),
       ],
     },
@@ -531,7 +542,7 @@ const FRAMEWORK = {
       steps: [
         L('pki-workshop', 'Learn: PKI Workshop'),
         L('merkle-tree-certs', 'Learn: Merkle Tree Certificates (the web-PKI path)'),
-        R('pg-merkle-proof', 'Practice: Merkle Tree Certificates workshop'),
+        W('merkle-proof', 'Practice: Merkle Tree Certificates workshop'),
         A('infra-modernization-plan', 'Draft the infrastructure modernization plan'),
       ],
     },
@@ -544,7 +555,7 @@ const FRAMEWORK = {
       steps: [
         L('hsm-pqc', 'Learn: HSM & PQC Operations'),
         L('kms-pqc', 'Learn: KMS & PQC'),
-        R('pg-hsm-capacity', 'Practice: HSM capacity calculator'),
+        W('hsm-capacity', 'Practice: HSM capacity calculator'),
       ],
     },
     {
@@ -556,7 +567,7 @@ const FRAMEWORK = {
       steps: [
         L('network-security-pqc', 'Learn: Network Security & PQC'),
         R('algorithms-protocol-matrix', 'Reference: protocol PQC support'),
-        R('pg-cert-capacity', 'Practice: certificate chain / handshake size'),
+        W('cert-capacity', 'Practice: certificate chain / handshake size'),
       ],
     },
     {

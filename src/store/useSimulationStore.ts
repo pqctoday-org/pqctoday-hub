@@ -34,6 +34,8 @@ export interface SimulationState {
   events: SimEvent[]
   /** Reference resources the player has opened (playbook completion). */
   visitedRefs: string[]
+  /** Hands-on workshops the player has opened in-sim (playbook completion). */
+  visitedWorkshops: string[]
   /** Tree step keys (`${phase}::${to}`) delegated to / auto-done by the AI team. */
   auto: string[]
   /** Deterministic run seed — same seed + same turn reproduces a quarter. */
@@ -50,6 +52,8 @@ export interface SimulationState {
   setSel: (v: PhaseId) => void
   /** Record that a reference resource was opened. */
   markRefVisited: (id: string) => void
+  /** Record that a hands-on workshop was opened in-sim. */
+  markWorkshopVisited: (id: string) => void
   /** Cumulative manual tick: clicking the current level un-ticks to level-1. */
   setLevel: (phase: string, level: number) => void
   /** Commit an End-Quarter result (AI-advanced checks, shock, new turn, events). */
@@ -107,12 +111,13 @@ const SEED = {
     { sev: 'info', t: 'Q2 2026', txt: 'OpenSSL 3.6 ships ML-DSA hardware acceleration' },
   ] as SimEvent[],
   visitedRefs: [] as string[],
+  visitedWorkshops: [] as string[],
   auto: [] as string[],
   seed: 0, // replaced with a fresh seed on create / reset / migrate
   difficulty: 'realistic' as DifficultyId,
 }
 
-const STORE_VERSION = 7
+const STORE_VERSION = 8
 const SAVE_KIND = 'pqc-simulation-save'
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
@@ -138,6 +143,7 @@ const saveSlice = (s: SimulationState): SimulationData => ({
   crqcShift: s.crqcShift,
   events: s.events,
   visitedRefs: s.visitedRefs,
+  visitedWorkshops: s.visitedWorkshops,
   auto: s.auto,
   seed: s.seed,
   difficulty: s.difficulty,
@@ -158,6 +164,7 @@ function fromSave(s: Record<string, unknown>) {
     crqcShift: typeof s.crqcShift === 'number' ? s.crqcShift : SEED.crqcShift,
     events: Array.isArray(s.events) ? (s.events as SimEvent[]) : [...SEED.events],
     visitedRefs: Array.isArray(s.visitedRefs) ? (s.visitedRefs as string[]) : [],
+    visitedWorkshops: Array.isArray(s.visitedWorkshops) ? (s.visitedWorkshops as string[]) : [],
     auto: Array.isArray(s.auto) ? (s.auto as string[]) : [],
     seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
     difficulty: asDifficulty(s.difficulty),
@@ -177,6 +184,10 @@ export const useSimulationStore = create<SimulationState>()(
       setSel: (sel) => set({ sel }),
       markRefVisited: (id) =>
         set((s) => (s.visitedRefs.includes(id) ? s : { visitedRefs: [...s.visitedRefs, id] })),
+      markWorkshopVisited: (id) =>
+        set((s) =>
+          s.visitedWorkshops.includes(id) ? s : { visitedWorkshops: [...s.visitedWorkshops, id] }
+        ),
       setLevel: (phase, level) =>
         set((s) => ({
           checks: { ...s.checks, [phase]: s.checks[phase] === level ? level - 1 : level },
@@ -242,6 +253,9 @@ export const useSimulationStore = create<SimulationState>()(
           crqcShift: SEED.crqcShift,
           events: [...SEED.events],
           visitedRefs: Array.isArray(s.visitedRefs) ? (s.visitedRefs as string[]) : [],
+          visitedWorkshops: Array.isArray(s.visitedWorkshops)
+            ? (s.visitedWorkshops as string[])
+            : [],
           auto: Array.isArray(s.auto) ? (s.auto as string[]) : [],
           seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
           difficulty: asDifficulty(s.difficulty),

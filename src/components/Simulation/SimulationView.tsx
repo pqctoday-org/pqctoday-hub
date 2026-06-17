@@ -14,6 +14,7 @@ import { useMemo, useState, useEffect, useRef, Suspense } from 'react'
 import { Link } from 'react-router-dom'
 import {
   BUSINESS_TOOL_COMPONENTS,
+  WORKSHOP_TOOL_COMPONENTS,
   SIM_LEARN_MODULES,
   isEmbeddableModule,
   EmbeddedLearnProvider,
@@ -184,6 +185,8 @@ export function SimulationView() {
     reset,
     visitedRefs,
     markRefVisited,
+    visitedWorkshops,
+    markWorkshopVisited,
     auto,
     autoCompleteSteps,
     clearAuto,
@@ -215,6 +218,9 @@ export function SimulationView() {
     title: string
   } | null>(null)
   const [assessEmbed, setAssessEmbed] = useState<{ title: string } | null>(null)
+  const [workshopEmbed, setWorkshopEmbed] = useState<{ workshopId: string; title: string } | null>(
+    null
+  )
 
   const LearnComp = learnEmbed ? SIM_LEARN_MODULES[learnEmbed.moduleId] : null
   const activityToolId = activityEmbed
@@ -222,18 +228,31 @@ export function SimulationView() {
     : undefined
   // eslint-disable-next-line security/detect-object-injection
   const ActivityComp = activityToolId ? BUSINESS_TOOL_COMPONENTS[activityToolId] : null
+
+  const WorkshopComp = workshopEmbed ? WORKSHOP_TOOL_COMPONENTS[workshopEmbed.workshopId] : null
   const openStep = (s: TreeStep) => {
     if (s.kind === 'learn' && s.moduleId && isEmbeddableModule(s.moduleId)) {
       setActivityEmbed(null)
       setAssessEmbed(null)
+      setWorkshopEmbed(null)
       setLearnEmbed({ moduleId: s.moduleId, title: s.label })
     } else if (s.kind === 'activity' && s.artifactType) {
       setLearnEmbed(null)
       setAssessEmbed(null)
+      setWorkshopEmbed(null)
       setActivityEmbed({ artifactType: s.artifactType, title: s.label })
+    } else if (s.kind === 'workshop' && s.workshopId && WORKSHOP_TOOL_COMPONENTS[s.workshopId]) {
+      setLearnEmbed(null)
+      setActivityEmbed(null)
+      setAssessEmbed(null)
+      setWorkshopEmbed({ workshopId: s.workshopId, title: s.label })
+      // opening a workshop in-sim counts as completing the practice leaf (the
+      // standalone /playground page has no separate completion signal).
+      markWorkshopVisited(s.workshopId)
     } else if (isAssessStep(s)) {
       setLearnEmbed(null)
       setActivityEmbed(null)
+      setWorkshopEmbed(null)
       setAssessEmbed({ title: s.label })
       // opening the wizard in-sim is the equivalent of "visiting" the assess ref
       // (the navigate flow marks-on-click), so the step counts as done.
@@ -244,6 +263,7 @@ export function SimulationView() {
     setLearnEmbed(null)
     setActivityEmbed(null)
     setAssessEmbed(null)
+    setWorkshopEmbed(null)
   }
 
   // real hub completion state: generated artifacts + Learn-module progress
@@ -377,9 +397,9 @@ export function SimulationView() {
     isModuleComplete: moduleDone,
     hasArtifact: artifactDone,
     isRefVisited: refDone,
-    // C2: workshop completion lands with the embed mount arm (visited-workshops
-    // set); until a tree has workshop steps there is nothing to mark.
-    isWorkshopComplete: () => false,
+    // C2: a workshop practice leaf is done once opened in-sim (the standalone
+    // /playground tool has no separate completion event).
+    isWorkshopComplete: (id: string) => visitedWorkshops.includes(id),
   }
   const stepDone = (s: TreeStep, phase: string) =>
     auto.includes(autoKey(phase, s.to)) || isStepComplete(s, stepCompletionCtx)
@@ -927,17 +947,26 @@ export function SimulationView() {
       {/* body — swaps to the embedded Learn module / activity tool when one is open.
           The sim header above stays, AND a persistent "Simulation mode" bar sits on
           top of the panel, so the player always knows they haven't left the sim. */}
-      {learnEmbed || activityEmbed || assessEmbed ? (
+      {learnEmbed || activityEmbed || assessEmbed || workshopEmbed ? (
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex shrink-0 items-center gap-2 border-b-2 border-primary bg-primary/10 px-4 py-2">
             <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-[9px] font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
               ● Simulation mode
             </span>
             <span className="shrink-0 font-mono text-[9px] font-bold uppercase text-primary">
-              {learnEmbed ? 'Learn' : activityEmbed ? 'Activity' : 'Assess'} · Phase {phase.number}
+              {learnEmbed
+                ? 'Learn'
+                : activityEmbed
+                  ? 'Activity'
+                  : workshopEmbed
+                    ? 'Workshop'
+                    : 'Assess'}{' '}
+              · Phase {phase.number}
             </span>
             <span className="min-w-0 flex-1 truncate text-[12.5px] font-bold text-foreground">
-              {learnEmbed ? learnEmbed.title : (activityEmbed?.title ?? assessEmbed?.title)}
+              {learnEmbed
+                ? learnEmbed.title
+                : (activityEmbed?.title ?? workshopEmbed?.title ?? assessEmbed?.title)}
             </span>
             {/* Completion toggle — guarantees a "mark complete" path for every
                 embedded Learn module (some have no in-module Complete button when
@@ -1009,6 +1038,16 @@ export function SimulationView() {
                 }
               >
                 <ActivityComp />
+              </Suspense>
+            ) : WorkshopComp ? (
+              <Suspense
+                fallback={
+                  <div className="p-8 text-center text-sm text-muted-foreground">
+                    Loading workshop…
+                  </div>
+                }
+              >
+                <WorkshopComp />
               </Suspense>
             ) : null}
           </div>

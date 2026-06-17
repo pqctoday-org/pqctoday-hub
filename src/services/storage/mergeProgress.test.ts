@@ -80,8 +80,8 @@ describe('mergeModuleProgress — lossless two-device merge', () => {
   it('unions quiz mastery and artifacts by id', () => {
     const local = base({
       quizMastery: { correctQuestionIds: ['x', 'y'] },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- minimal artifact mocks
       artifacts: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- minimal artifact mocks
         keys: [{ id: 'k1' } as any],
         certificates: [],
         csrs: [],
@@ -90,8 +90,8 @@ describe('mergeModuleProgress — lossless two-device merge', () => {
     })
     const remote = base({
       quizMastery: { correctQuestionIds: ['y', 'z'] },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- minimal artifact mocks
       artifacts: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- minimal artifact mocks
         keys: [{ id: 'k2' } as any],
         certificates: [],
         csrs: [],
