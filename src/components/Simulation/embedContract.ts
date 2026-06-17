@@ -28,6 +28,26 @@ import {
 import type { TreeStep } from '@/simulation'
 
 /**
+ * ── RECIPE: add an embeddable resource KIND (C0) ────────────────────────────
+ * Every embeddable kind needs these SIX elements wired together. Adding a kind
+ * means touching exactly these, each guarded by `embedContract.test.ts`:
+ *
+ *   1. A `StepKind` literal in `src/simulation/types.ts` + the step's id field
+ *      (e.g. `moduleId` / `artifactType` / `refId`).
+ *   2. An id → component registry re-exported via `resourceContract.ts`
+ *      (e.g. SIM_LEARN_MODULES, BUSINESS_TOOL_COMPONENTS).
+ *   3. A `canEmbedStep` branch here that returns true iff (2) resolves.
+ *   4. An embed-pane mount arm in `SimulationView` that renders the component.
+ *   5. A completion branch in `isStepComplete` (the standard completion
+ *      convention — one predicate for all kinds).
+ *   6. Generator support in `scripts/gen-sim-trees.mjs` (helper + URL/registry
+ *      maps) so authored trees can reference the kind.
+ *
+ * `embedContract.test.ts` enforces (3) + (5) for every kind and asserts every
+ * tree step the sim offers to embed resolves to a real component.
+ */
+
+/**
  * True for the `assess-engine` reference step — the assessment opens EMBEDDED in
  * the sim (AssessWizard under the "Simulation mode" bar) instead of navigating to
  * the full /assess page. This is for re-running / refining the assessment from
@@ -47,4 +67,39 @@ export function canEmbedStep(s: TreeStep): boolean {
   }
   if (isAssessStep(s)) return true
   return false
+}
+
+/**
+ * The state a completion check needs, injected by the caller — the sim reads it
+ * from its stores; tests pass mocks. Keeps `isStepComplete` a pure, testable
+ * function of (step, context) rather than reaching into stores itself.
+ */
+export interface StepCompletionContext {
+  /** learn: the module's progress status is 'completed'. */
+  isModuleComplete: (moduleId: string) => boolean
+  /** activity: an artifact of this type exists in the doc store. */
+  hasArtifact: (type: NonNullable<TreeStep['artifactType']>) => boolean
+  /** reference: this ref id has been visited. */
+  isRefVisited: (refId: string) => boolean
+}
+
+/**
+ * STANDARD COMPLETION CONVENTION (C0): one predicate that answers "is this
+ * embedded resource complete?" for EVERY embeddable step kind. A new embeddable
+ * kind declares its completion HERE (one place), and `embedContract.test.ts`
+ * verifies every kind resolves both a component (`canEmbedStep`) AND a completion
+ * branch here. The sim layers game logic (AI-team delegation) on top of this
+ * resource-level signal — that overlay is not part of the contract.
+ */
+export function isStepComplete(s: TreeStep, ctx: StepCompletionContext): boolean {
+  switch (s.kind) {
+    case 'learn':
+      return !!s.moduleId && ctx.isModuleComplete(s.moduleId)
+    case 'activity':
+      return !!s.artifactType && ctx.hasArtifact(s.artifactType)
+    case 'reference':
+      return !!s.refId && ctx.isRefVisited(s.refId)
+    default:
+      return false
+  }
 }
