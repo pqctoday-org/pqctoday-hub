@@ -85,9 +85,15 @@ const TREE: PhaseTree = {
             },
             {
               kind: 'reference',
-              label: 'Reference: the algorithm transition map',
+              label: 'Confirm your classical → PQC replacement mapping',
               to: '/algorithms?tab=transition',
               refId: 'algorithms-transition',
+            },
+            {
+              kind: 'reference',
+              label: 'Compare PQC candidates in detail and confirm your architecture',
+              to: '/algorithms?tab=detailed',
+              refId: 'algorithms-detailed',
             },
             {
               kind: 'activity',
