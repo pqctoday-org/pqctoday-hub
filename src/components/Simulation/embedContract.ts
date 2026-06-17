@@ -30,6 +30,7 @@ import {
   WORKSHOP_TOOL_COMPONENTS,
   isEmbeddableModule,
 } from './resourceContract'
+import { SANDBOX_SCENARIOS } from '@/data/sandboxScenarios'
 import type { TreeStep } from '@/simulation'
 
 /**
@@ -90,6 +91,21 @@ export function isAlgorithmTabStep(s: TreeStep): boolean {
   return s.kind === 'reference' && !!s.refId && ALGORITHM_TAB_REF_IDS.has(s.refId)
 }
 
+/**
+ * Valid sandbox scenario ids (C3). Read-only projection of the scenario catalog
+ * (itself generated from the sandbox repo via `npm run sync:sandbox`). A scenario
+ * STEP is embeddable when its id resolves here — but whether the lab can actually
+ * run is a RUNTIME health question (`useSandboxStore`), gated at the call site so
+ * the static public build hides offline labs (C3-a). The contract only answers
+ * "is this a real scenario", not "is the backend up right now".
+ */
+const SANDBOX_SCENARIO_IDS = new Set(SANDBOX_SCENARIOS.map((s) => s.id))
+
+/** True for a `scenario` step whose sandbox scenario id resolves (C3). */
+export function isScenarioStep(s: TreeStep): boolean {
+  return s.kind === 'scenario' && !!s.scenarioId && SANDBOX_SCENARIO_IDS.has(s.scenarioId)
+}
+
 /** True when this step can be rendered embedded in the sim (vs. navigated to). */
 export function canEmbedStep(s: TreeStep): boolean {
   if (s.kind === 'learn') return !!s.moduleId && isEmbeddableModule(s.moduleId)
@@ -104,6 +120,7 @@ export function canEmbedStep(s: TreeStep): boolean {
   if (isAssessStep(s)) return true
   if (isTimelineStep(s)) return true
   if (isAlgorithmTabStep(s)) return true
+  if (isScenarioStep(s)) return true
   return false
 }
 
@@ -123,6 +140,8 @@ export interface StepCompletionContext {
   isWorkshopComplete: (workshopId: string) => boolean
   /** catalog: this catalog task was earned (a PQC-capable pick made while it was open). */
   isCatalogStepDone: (catalogId: string) => boolean
+  /** scenario: this sandbox lab reported done (or was marked complete in-sim). */
+  isScenarioComplete: (scenarioId: string) => boolean
 }
 
 /**
@@ -145,6 +164,8 @@ export function isStepComplete(s: TreeStep, ctx: StepCompletionContext): boolean
       return !!s.workshopId && ctx.isWorkshopComplete(s.workshopId)
     case 'catalog':
       return !!s.catalogId && ctx.isCatalogStepDone(s.catalogId)
+    case 'scenario':
+      return !!s.scenarioId && ctx.isScenarioComplete(s.scenarioId)
     default:
       return false
   }

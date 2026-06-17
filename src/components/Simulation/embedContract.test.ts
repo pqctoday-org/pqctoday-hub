@@ -9,6 +9,7 @@ import {
   isAssessStep,
   isTimelineStep,
   isAlgorithmTabStep,
+  isScenarioStep,
   isStepComplete,
   type StepCompletionContext,
 } from './embedContract'
@@ -18,7 +19,10 @@ import {
   ARTIFACT_TYPE_TO_TOOL_ID,
   WORKSHOP_TOOL_COMPONENTS,
 } from './resourceContract'
+import { SANDBOX_SCENARIOS } from '@/data/sandboxScenarios'
 import { SIM_TREES, flattenTree, type TreeStep, type StepKind } from '@/simulation'
+
+const A_SCENARIO_ID = SANDBOX_SCENARIOS[0]?.id ?? 'tls'
 import type { PhaseId } from '@/data/frameworkPhases'
 
 const PHASES: PhaseId[] = ['p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7']
@@ -75,6 +79,18 @@ describe('embed contract (WS-09)', () => {
     // not an algorithm tab: the catalog-root ref + unrelated refs
     expect(isAlgorithmTabStep(step({ kind: 'reference', refId: 'algorithms-catalog' }))).toBe(false)
     expect(isAlgorithmTabStep(step({ kind: 'reference', refId: 'timeline' }))).toBe(false)
+  })
+
+  it('recognizes a sandbox scenario step only when its id resolves (C3)', () => {
+    expect(isScenarioStep(step({ kind: 'scenario', scenarioId: A_SCENARIO_ID }))).toBe(true)
+    expect(canEmbedStep(step({ kind: 'scenario', scenarioId: A_SCENARIO_ID }))).toBe(true)
+    // an unknown scenario id does not resolve (so the sim won't offer a dead lab)
+    expect(isScenarioStep(step({ kind: 'scenario', scenarioId: 'not-a-real-scenario' }))).toBe(
+      false
+    )
+    expect(canEmbedStep(step({ kind: 'scenario', scenarioId: 'not-a-real-scenario' }))).toBe(false)
+    // a scenario step with no id is not embeddable
+    expect(isScenarioStep(step({ kind: 'scenario' }))).toBe(false)
   })
 
   // Every step the sim WOULD embed must have its component present — the contract.
@@ -168,6 +184,7 @@ describe('standard completion convention (C0)', () => {
     isRefVisited: () => true,
     isWorkshopComplete: () => true,
     isCatalogStepDone: () => true,
+    isScenarioComplete: () => true,
   }
   const incomplete: StepCompletionContext = {
     isModuleComplete: () => false,
@@ -175,6 +192,7 @@ describe('standard completion convention (C0)', () => {
     isRefVisited: () => false,
     isWorkshopComplete: () => false,
     isCatalogStepDone: () => false,
+    isScenarioComplete: () => false,
   }
 
   // A representative step for EVERY StepKind — typed as a Record<StepKind, …> so
@@ -189,6 +207,7 @@ describe('standard completion convention (C0)', () => {
     reference: step({ kind: 'reference', refId: 'assess-engine' }),
     workshop: step({ kind: 'workshop', workshopId: aWorkshopId }),
     catalog: step({ kind: 'catalog', to: '/migrate', catalogId: 'discovery' }),
+    scenario: step({ kind: 'scenario', scenarioId: A_SCENARIO_ID }),
   }
   // catalog: isStepComplete delegates to isCatalogStepDone(id) — override needed
   const completedWithPicks: StepCompletionContext = { ...completed, isCatalogStepDone: () => true }
