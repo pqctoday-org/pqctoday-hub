@@ -32,7 +32,6 @@ import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
 import { parseTimelineScope } from '@/data/timelineScope'
 import { ProtocolMatrixEmbed } from '@/components/shared/widgets/ProtocolMatrixEmbed'
 import { MigrateEmbed } from '@/components/shared/widgets/MigrateEmbed'
-import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { AssessWizard } from '@/components/Assess/AssessWizard'
 import { Button } from '@/components/ui/button'
 import { FRAMEWORK_PHASES, PHASE_ORDER, type PhaseId } from '@/data/frameworkPhases'
@@ -295,10 +294,10 @@ export function SimulationView() {
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   const updateModuleProgress = useModuleStore((s) => s.updateModuleProgress)
-  // C7: read "my products" from the global migrate selection store so catalog
-  // steps complete when the player has at least one saved product (even from the
-  // standalone /migrate page — the two share the same store).
-  const migrateMyProducts = useMigrateSelectionStore((s) => s.myProducts)
+  // C7 (Decision 4): catalog completion reads the GAME-SCOPED sim picks, NOT the
+  // global My Products store — so a product bookmarked on the standalone /migrate
+  // page never pre-completes a catalog step, and in-sim picks never leak out.
+  const simPicks = useSimulationStore((s) => s.picks)
   // read-only Assess → Sim bridge: offer to import a completed assessment as the
   // Phase-0 scoping artifact (data only; the sim's gate still decides it counts).
   const assessSnap = useAssessSnapshot()
@@ -426,10 +425,10 @@ export function SimulationView() {
     // C2: a workshop practice leaf is done once opened in-sim (the standalone
     // /playground tool has no separate completion event).
     isWorkshopComplete: (id: string) => visitedWorkshops.includes(id),
-    // C7: the catalog step is done once the player has added ≥1 product to
-    // "My Products" (written to useMigrateSelectionStore, which is global and
-    // persisted — it also reflects the standalone /migrate page's saved picks).
-    hasCatalogPicks: () => migrateMyProducts.length > 0,
+    // C7 (Decision 4): the catalog step reads the GAME-SCOPED sim picks. (Decision
+    // 3 — one PQC-capable pick per required category — is the follow-up that makes
+    // each catalog step independently earned; for now any in-sim pick completes.)
+    hasCatalogPicks: () => simPicks.length > 0,
   }
   const stepDone = (s: TreeStep, phase: string) =>
     auto.includes(autoKey(phase, s.to)) || isStepComplete(s, stepCompletionCtx)
