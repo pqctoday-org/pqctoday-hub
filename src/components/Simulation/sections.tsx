@@ -376,6 +376,25 @@ export function DecisionSection({
             ✕ Common failure
           </div>
           <div className="text-[11px] leading-snug text-muted-foreground">{chosenCard.detail}</div>
+          {/* W3 #13: ground the consequence in THIS run's live Mosca state when the
+              player is already over the line — felt, not a flashcard. */}
+          {ctx.over > 0 && (
+            <div className="mt-1 text-[10.5px] font-semibold leading-snug text-destructive">
+              In your scenario: you&apos;re already {ctx.over}y over the Mosca line — a misstep here
+              keeps {ctx.sector.label.toLowerCase()} data exposed past Q-Day.
+            </div>
+          )}
+          {/* W3 #14: reveal the sound move + the principle it advances, so a wrong
+              pick teaches WHY mine ≠ the right one — not just trial-and-error. */}
+          <div className="mt-2 rounded-md border border-success/30 bg-success/5 px-2.5 py-1.5">
+            <span className="font-mono text-[9px] font-bold text-success">SOUND MOVE</span>
+            <div className="text-[11px] font-semibold leading-snug text-foreground">
+              {correctCard.label}
+            </div>
+            <div className="text-[9.5px] leading-snug text-muted-foreground">
+              {correctCard.detail}
+            </div>
+          </div>
           <Button
             variant="ghost"
             type="button"
