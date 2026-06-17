@@ -19,7 +19,12 @@ import {
   EmbeddedLearnProvider,
   ARTIFACT_TYPE_TO_TOOL_ID,
 } from './resourceContract'
-import { canEmbedStep, isAssessStep } from './embedContract'
+import {
+  canEmbedStep,
+  isAssessStep,
+  isStepComplete,
+  type StepCompletionContext,
+} from './embedContract'
 import { AssessWizard } from '@/components/Assess/AssessWizard'
 import { Button } from '@/components/ui/button'
 import { FRAMEWORK_PHASES, PHASE_ORDER, type PhaseId } from '@/data/frameworkPhases'
@@ -365,14 +370,16 @@ export function SimulationView() {
   const artifactDone = (t?: ExecutiveDocumentType) => !!t && docTypes.has(t)
   const refDone = (id?: string) => !!id && visitedRefs.includes(id)
   const autoKey = (phase: string, to: string) => `${phase}::${to}`
-  // a step is done if the player did it for real OR it was delegated to the AI team
+  // C0: resource-level completion lives in the embed contract's standard
+  // convention (isStepComplete); the sim overlays its own rule on top — a step is
+  // done if the player did it for real OR it was delegated to the AI team.
+  const stepCompletionCtx: StepCompletionContext = {
+    isModuleComplete: moduleDone,
+    hasArtifact: artifactDone,
+    isRefVisited: refDone,
+  }
   const stepDone = (s: TreeStep, phase: string) =>
-    auto.includes(autoKey(phase, s.to)) ||
-    (s.kind === 'learn'
-      ? moduleDone(s.moduleId)
-      : s.kind === 'activity'
-        ? artifactDone(s.artifactType)
-        : refDone(s.refId))
+    auto.includes(autoKey(phase, s.to)) || isStepComplete(s, stepCompletionCtx)
   const evidenceLevel = (p: string): number => {
     const ev = LEVEL_EVIDENCE[p as PhaseId]
     if (!ev) return 0

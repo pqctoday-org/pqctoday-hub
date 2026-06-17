@@ -4,13 +4,18 @@
  * mounted component, so a tool can't ship embed-broken.
  */
 import { describe, it, expect } from 'vitest'
-import { canEmbedStep, isAssessStep } from './embedContract'
+import {
+  canEmbedStep,
+  isAssessStep,
+  isStepComplete,
+  type StepCompletionContext,
+} from './embedContract'
 import {
   SIM_LEARN_MODULES,
   BUSINESS_TOOL_COMPONENTS,
   ARTIFACT_TYPE_TO_TOOL_ID,
 } from './resourceContract'
-import { SIM_TREES, flattenTree, type TreeStep } from '@/simulation'
+import { SIM_TREES, flattenTree, type TreeStep, type StepKind } from '@/simulation'
 import type { PhaseId } from '@/data/frameworkPhases'
 
 const PHASES: PhaseId[] = ['p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7']
@@ -80,6 +85,41 @@ describe('embed contract (WS-09)', () => {
   it('every registered embeddable Learn module has a component', () => {
     for (const [id, comp] of Object.entries(SIM_LEARN_MODULES)) {
       expect(comp, `${id} component`).toBeTruthy()
+    }
+  })
+})
+
+describe('standard completion convention (C0)', () => {
+  const completed: StepCompletionContext = {
+    isModuleComplete: () => true,
+    hasArtifact: () => true,
+    isRefVisited: () => true,
+  }
+  const incomplete: StepCompletionContext = {
+    isModuleComplete: () => false,
+    hasArtifact: () => false,
+    isRefVisited: () => false,
+  }
+
+  // A representative step for EVERY StepKind — typed as a Record<StepKind, …> so
+  // adding a kind is a compile error here until a fixture is provided.
+  const anArtifactType = Object.keys(ARTIFACT_TYPE_TO_TOOL_ID)[0] as NonNullable<
+    TreeStep['artifactType']
+  >
+  const KIND_FIXTURES: Record<StepKind, TreeStep> = {
+    learn: step({ kind: 'learn', moduleId: 'hsm-pqc' }),
+    activity: step({ kind: 'activity', artifactType: anArtifactType }),
+    reference: step({ kind: 'reference', refId: 'assess-engine' }),
+  }
+
+  // Every embeddable kind must declare a completion branch in isStepComplete:
+  // it reports complete under a "completed" context and not under an empty one.
+  // A new StepKind without a branch falls through to the default `false` and
+  // fails the "completed" assertion here — the contract guard.
+  it('every step kind reports completion correctly (no kind falls through)', () => {
+    for (const [kind, s] of Object.entries(KIND_FIXTURES) as [StepKind, TreeStep][]) {
+      expect(isStepComplete(s, completed), `${kind} should be complete`).toBe(true)
+      expect(isStepComplete(s, incomplete), `${kind} should be incomplete`).toBe(false)
     }
   })
 })
