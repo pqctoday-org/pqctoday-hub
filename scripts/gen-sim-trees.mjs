@@ -434,7 +434,7 @@ const FRAMEWORK = {
       do: 'Define a phased 5-year plan with annual milestones and a critical path.',
       output: 'Multi-year roadmap',
       steps: [
-        R('timeline', 'Reference: the 2026–2030 deadline squeeze'),
+        R('timeline', 'See your country on the global PQC roadmap (2026–2030 deadline squeeze)'),
         A('migration-roadmap', 'Build a multi-year Roadmap'),
         A('stakeholder-comms', 'Plan the roadmap stakeholder communications'),
       ],
