@@ -30,7 +30,7 @@ import {
 } from './embedContract'
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
 import { parseTimelineScope } from '@/data/timelineScope'
-import { catalogDone } from './catalogCompletion'
+import { isPqcCapable } from './catalogCompletion'
 import { softwareData } from '@/data/migrateData'
 import { ProtocolMatrixEmbed } from '@/components/shared/widgets/ProtocolMatrixEmbed'
 import { MigrateEmbed } from '@/components/shared/widgets/MigrateEmbed'
@@ -230,7 +230,11 @@ export function SimulationView() {
     null
   )
   const [timelineEmbed, setTimelineEmbed] = useState<{ title: string; to: string } | null>(null)
-  const [catalogEmbed, setCatalogEmbed] = useState<{ title: string; layer?: string } | null>(null)
+  const [catalogEmbed, setCatalogEmbed] = useState<{
+    title: string
+    layer?: string
+    catalogId?: string
+  } | null>(null)
   const [protocolEmbed, setProtocolEmbed] = useState<{ title: string } | null>(null)
 
   const LearnComp = learnEmbed ? SIM_LEARN_MODULES[learnEmbed.moduleId] : null
@@ -268,7 +272,7 @@ export function SimulationView() {
       markWorkshopVisited(s.workshopId)
     } else if (s.kind === 'catalog') {
       clearAllEmbeds()
-      setCatalogEmbed({ title: s.label, layer: s.catalogLayer })
+      setCatalogEmbed({ title: s.label, layer: s.catalogLayer, catalogId: s.catalogId })
     } else if (isTimelineStep(s)) {
       clearAllEmbeds()
       setTimelineEmbed({ title: s.label, to: s.to })
@@ -296,10 +300,30 @@ export function SimulationView() {
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   const updateModuleProgress = useModuleStore((s) => s.updateModuleProgress)
-  // C7 (Decision 4): catalog completion reads the GAME-SCOPED sim picks, NOT the
-  // global My Products store — so a product bookmarked on the standalone /migrate
-  // page never pre-completes a catalog step, and in-sim picks never leak out.
+  // C7 (Decision 4): game-scoped picks, NOT the global My Products store — so a
+  // product bookmarked on the standalone /migrate page never pre-completes a
+  // catalog step, and in-sim picks never leak out.
   const simPicks = useSimulationStore((s) => s.picks)
+  // C7 (Decision 3): each catalog task is earned independently — it's marked done
+  // when the player picks a PQC-capable product WHILE that task's catalog is open.
+  const catalogCompleted = useSimulationStore((s) => s.catalogCompleted)
+  const markCatalogStepDone = useSimulationStore((s) => s.markCatalogStepDone)
+  // C7: earn the OPEN catalog task when the player adds a PQC-capable product to
+  // the picks. Only the task whose catalog is currently open is credited, so the
+  // four catalog tasks complete independently (not all-at-once).
+  const prevPicksRef = useRef<string[]>(simPicks)
+  useEffect(() => {
+    const added = simPicks.filter((id) => !prevPicksRef.current.includes(id))
+    prevPicksRef.current = simPicks
+    const catalogId = catalogEmbed?.catalogId
+    if (!catalogId || added.length === 0) return
+    const byId = new Map(softwareData.map((sw) => [sw.productId, sw]))
+    const gotPqc = added.some((id) => {
+      const item = byId.get(id)
+      return !!item && isPqcCapable(item)
+    })
+    if (gotPqc) markCatalogStepDone(catalogId)
+  }, [simPicks, catalogEmbed, markCatalogStepDone])
   // read-only Assess → Sim bridge: offer to import a completed assessment as the
   // Phase-0 scoping artifact (data only; the sim's gate still decides it counts).
   const assessSnap = useAssessSnapshot()
@@ -427,11 +451,9 @@ export function SimulationView() {
     // C2: a workshop practice leaf is done once opened in-sim (the standalone
     // /playground tool has no separate completion event).
     isWorkshopComplete: (id: string) => visitedWorkshops.includes(id),
-    // C7 (Decision 3+4): a catalog step is done when the game-scoped picks include
-    // at least one PQC-CAPABLE product (not any/classical product). Per-step
-    // independence via the phase's required categories is a product-curation
-    // follow-up — see catalogCompletion.ts.
-    hasCatalogPicks: () => catalogDone(simPicks, softwareData),
+    // C7 (Decision 3): a catalog task is done once the player earned it by picking
+    // a PQC-capable product while it was open (tracked in `catalogCompleted`).
+    isCatalogStepDone: (catalogId: string) => catalogCompleted.includes(catalogId),
   }
   const stepDone = (s: TreeStep, phase: string) =>
     auto.includes(autoKey(phase, s.to)) || isStepComplete(s, stepCompletionCtx)

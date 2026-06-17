@@ -102,14 +102,9 @@ const W = (workshopId, label) => {
   return { kind: 'workshop', label, to: `/playground/${workshopId}`, workshopId }
 }
 // C() — a product-catalog step that EMBEDS the Migrate catalog in the sim (C7).
-// `layer` is the initial layer scope (e.g. 'layer-1'); omit for unscoped.
-// Completion: the player has ≥1 product saved to "My Products".
-const C = (label, layer) => ({
-  kind: 'catalog',
-  label,
-  to: '/migrate',
-  ...(layer ? { catalogLayer: layer } : {}),
-})
+// `catalogId` is the stable per-task id; completion is INDEPENDENT per task: the
+// step is earned when the player picks a PQC-capable product while it is open.
+const C = (label, catalogId) => ({ kind: 'catalog', label, to: '/migrate', catalogId })
 
 // ---- per-phase Maturity Indicators (verbatim, Applied Quantum v2.1) ---------
 const INDICATORS = {
@@ -291,7 +286,7 @@ const FRAMEWORK = {
       do: 'Deploy discovery across network, code, config, runtime, and manual layers.',
       output: 'Layered discovery deployment',
       steps: [
-        C('Browse the Migrate discovery catalog'),
+        C('Browse the Migrate discovery catalog', 'discovery'),
         A('management-tools-audit', 'Run the Management-Tools Audit'),
       ],
     },
@@ -353,7 +348,7 @@ const FRAMEWORK = {
       do: 'Embed CBOM governance into CI/CD, change management, vendor onboarding and audit.',
       output: null,
       steps: [
-        C('Wire CBOM into the Migrate pipeline'),
+        C('Wire CBOM into the Migrate pipeline', 'cbom-pipeline'),
         A('crypto-vulnerability-watch', 'Wire CBOM freshness into CI/CD drift checks'),
       ],
     },
@@ -368,7 +363,7 @@ const FRAMEWORK = {
           'soc-implementation-pqc',
           'Learn: protect the CBOM (it is an HNDL shopping list) — SOC monitoring'
         ),
-        C('Set CBOM freshness triggers in the Migrate pipeline'),
+        C('Set CBOM freshness triggers in the Migrate pipeline', 'cbom-freshness'),
       ],
     },
   ],
@@ -484,7 +479,7 @@ const FRAMEWORK = {
       output: null,
       steps: [
         L('hybrid-crypto', 'Learn: Hybrid Cryptography'),
-        C('Pick pilots from the Migrate catalog'),
+        C('Pick pilots from the Migrate catalog', 'pilots'),
       ],
     },
     {

@@ -53,12 +53,21 @@ describe('useSimulationStore', () => {
     expect(s().picks).toEqual(['prod-b'])
   })
 
-  it('reset restores the seed (and clears game-scoped picks)', () => {
+  it('markCatalogStepDone records a catalog task once (idempotent)', () => {
+    s().markCatalogStepDone('discovery')
+    s().markCatalogStepDone('discovery')
+    s().markCatalogStepDone('pilots')
+    expect(s().catalogCompleted.sort()).toEqual(['discovery', 'pilots'])
+  })
+
+  it('reset restores the seed (and clears game-scoped picks + catalog completion)', () => {
     s().setSel('p7')
     s().togglePick('prod-a')
+    s().markCatalogStepDone('discovery')
     s().reset()
     expect(s().sel).toBe('p0')
     expect(s().picks).toEqual([])
+    expect(s().catalogCompleted).toEqual([])
   })
 
   it('auto-completion delegates steps and can be cancelled per phase', () => {

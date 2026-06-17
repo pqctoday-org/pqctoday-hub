@@ -112,8 +112,8 @@ export interface StepCompletionContext {
   isRefVisited: (refId: string) => boolean
   /** workshop: this workshop/tool id has been visited/completed. */
   isWorkshopComplete: (workshopId: string) => boolean
-  /** catalog: the player has added ≥1 product to "My Products" (via the Migrate catalog). */
-  hasCatalogPicks: () => boolean
+  /** catalog: this catalog task was earned (a PQC-capable pick made while it was open). */
+  isCatalogStepDone: (catalogId: string) => boolean
 }
 
 /**
@@ -135,7 +135,7 @@ export function isStepComplete(s: TreeStep, ctx: StepCompletionContext): boolean
     case 'workshop':
       return !!s.workshopId && ctx.isWorkshopComplete(s.workshopId)
     case 'catalog':
-      return ctx.hasCatalogPicks()
+      return !!s.catalogId && ctx.isCatalogStepDone(s.catalogId)
     default:
       return false
   }

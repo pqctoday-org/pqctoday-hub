@@ -32,6 +32,7 @@ const TREE: PhaseTree = {
               kind: 'catalog',
               label: 'Pick pilots from the Migrate catalog',
               to: '/migrate',
+              catalogId: 'pilots',
             },
           ],
         },

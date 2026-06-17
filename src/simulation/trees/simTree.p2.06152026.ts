@@ -74,6 +74,7 @@ const TREE: PhaseTree = {
               kind: 'catalog',
               label: 'Wire CBOM into the Migrate pipeline',
               to: '/migrate',
+              catalogId: 'cbom-pipeline',
             },
             {
               kind: 'activity',
@@ -99,6 +100,7 @@ const TREE: PhaseTree = {
               kind: 'catalog',
               label: 'Set CBOM freshness triggers in the Migrate pipeline',
               to: '/migrate',
+              catalogId: 'cbom-freshness',
             },
           ],
         },

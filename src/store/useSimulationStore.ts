@@ -39,6 +39,9 @@ export interface SimulationState {
   /** Product ids the player has selected in the in-sim Migrate catalog (C7).
    *  GAME-SCOPED — kept separate from the standalone catalog's global My Products. */
   picks: string[]
+  /** Catalog step ids (C7) earned by picking a PQC-capable product while THAT
+   *  step's catalog was open — so each catalog task is independently completed. */
+  catalogCompleted: string[]
   /** Tree step keys (`${phase}::${to}`) delegated to / auto-done by the AI team. */
   auto: string[]
   /** Deterministic run seed — same seed + same turn reproduces a quarter. */
@@ -59,6 +62,8 @@ export interface SimulationState {
   markWorkshopVisited: (id: string) => void
   /** Toggle a product in the game-scoped Migrate catalog selection (C7). */
   togglePick: (productId: string) => void
+  /** Mark a catalog step done (C7) — the player picked a PQC product while it was open. */
+  markCatalogStepDone: (catalogId: string) => void
   /** Cumulative manual tick: clicking the current level un-ticks to level-1. */
   setLevel: (phase: string, level: number) => void
   /** Commit an End-Quarter result (AI-advanced checks, shock, new turn, events). */
@@ -118,12 +123,13 @@ const SEED = {
   visitedRefs: [] as string[],
   visitedWorkshops: [] as string[],
   picks: [] as string[],
+  catalogCompleted: [] as string[],
   auto: [] as string[],
   seed: 0, // replaced with a fresh seed on create / reset / migrate
   difficulty: 'realistic' as DifficultyId,
 }
 
-const STORE_VERSION = 9
+const STORE_VERSION = 10
 const SAVE_KIND = 'pqc-simulation-save'
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
@@ -151,6 +157,7 @@ const saveSlice = (s: SimulationState): SimulationData => ({
   visitedRefs: s.visitedRefs,
   visitedWorkshops: s.visitedWorkshops,
   picks: s.picks,
+  catalogCompleted: s.catalogCompleted,
   auto: s.auto,
   seed: s.seed,
   difficulty: s.difficulty,
@@ -173,6 +180,7 @@ function fromSave(s: Record<string, unknown>) {
     visitedRefs: Array.isArray(s.visitedRefs) ? (s.visitedRefs as string[]) : [],
     visitedWorkshops: Array.isArray(s.visitedWorkshops) ? (s.visitedWorkshops as string[]) : [],
     picks: Array.isArray(s.picks) ? (s.picks as string[]) : [],
+    catalogCompleted: Array.isArray(s.catalogCompleted) ? (s.catalogCompleted as string[]) : [],
     auto: Array.isArray(s.auto) ? (s.auto as string[]) : [],
     seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
     difficulty: asDifficulty(s.difficulty),
@@ -202,6 +210,12 @@ export const useSimulationStore = create<SimulationState>()(
             ? s.picks.filter((p) => p !== productId)
             : [...s.picks, productId],
         })),
+      markCatalogStepDone: (catalogId) =>
+        set((s) =>
+          s.catalogCompleted.includes(catalogId)
+            ? s
+            : { catalogCompleted: [...s.catalogCompleted, catalogId] }
+        ),
       setLevel: (phase, level) =>
         set((s) => ({
           checks: { ...s.checks, [phase]: s.checks[phase] === level ? level - 1 : level },
@@ -271,6 +285,9 @@ export const useSimulationStore = create<SimulationState>()(
             ? (s.visitedWorkshops as string[])
             : [],
           picks: Array.isArray(s.picks) ? (s.picks as string[]) : [],
+          catalogCompleted: Array.isArray(s.catalogCompleted)
+            ? (s.catalogCompleted as string[])
+            : [],
           auto: Array.isArray(s.auto) ? (s.auto as string[]) : [],
           seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
           difficulty: asDifficulty(s.difficulty),

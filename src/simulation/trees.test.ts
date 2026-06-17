@@ -54,11 +54,16 @@ describe('SIM_TREES — coverage & shape', () => {
                 `${phase}/${act.id}: workshop link ${s.to} is not a /playground/ page`
               ).toBe(true)
             } else if (s.kind === 'catalog') {
-              // C7: catalog steps embed the Migrate view — just need a valid /migrate link.
+              // C7: catalog steps embed the Migrate view (valid /migrate link) and
+              // carry a stable catalogId so completion is earned per-task.
               expect(
                 s.to === '/migrate',
                 `${phase}/${act.id}: catalog step to must be '/migrate', got '${s.to}'`
               ).toBe(true)
+              expect(
+                s.catalogId,
+                `${phase}/${act.id}: catalog step missing a catalogId (needed for per-task completion)`
+              ).toBeTruthy()
             } else {
               expect(s.refId, `${phase}/${act.id}: reference missing refId`).toBeTruthy()
             }
