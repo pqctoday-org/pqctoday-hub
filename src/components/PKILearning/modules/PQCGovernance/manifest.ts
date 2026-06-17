@@ -24,6 +24,7 @@ const manifest: ModuleManifest = {
     { id: 'escalation-framework', label: 'Escalation Framework' },
   ],
   embeddable: true,
+  practiceInSim: true,
   load: () => import('./index').then((m) => ({ default: m.PQCGovernanceModule })),
 }
 

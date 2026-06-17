@@ -6,6 +6,7 @@ import '@testing-library/jest-dom'
 import { FlaskConical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { EmbedProvider } from '../../../embed/EmbedProvider'
+import { EmbeddedLearnProvider } from '../embeddedLearnContext'
 import { ModuleShell } from './ModuleShell'
 import { useModuleProgress } from './useModuleProgress'
 import type { ModuleManifest } from '../manifest/types'
@@ -227,6 +228,34 @@ describe('ModuleShell', () => {
     // confirm cancelled -> prefill survives (reset is a no-op)
     expect(screen.getByText('VAL:PREFILL')).toBeInTheDocument()
     cancel.mockRestore()
+  })
+
+  it('shows a "Practice in the Simulation" CTA for practiceInSim modules', () => {
+    renderShell(<ModuleShell manifest={{ ...base, practiceInSim: true }} learn={<div>L</div>} />)
+    const cta = screen.getByRole('link', { name: /Practice in the Simulation/i })
+    expect(cta).toHaveAttribute('href', '/simulation')
+  })
+
+  it('does NOT show the sim CTA for modules without practiceInSim', () => {
+    renderShell(<ModuleShell manifest={base} learn={<div>L</div>} />)
+    expect(
+      screen.queryByRole('link', { name: /Practice in the Simulation/i })
+    ).not.toBeInTheDocument()
+  })
+
+  it('hides the sim CTA when the module is embedded in the sim (no loop-back)', () => {
+    render(
+      <EmbedProvider>
+        <MemoryRouter>
+          <EmbeddedLearnProvider>
+            <ModuleShell manifest={{ ...base, practiceInSim: true }} learn={<div>L</div>} />
+          </EmbeddedLearnProvider>
+        </MemoryRouter>
+      </EmbedProvider>
+    )
+    expect(
+      screen.queryByRole('link', { name: /Practice in the Simulation/i })
+    ).not.toBeInTheDocument()
   })
 })
 

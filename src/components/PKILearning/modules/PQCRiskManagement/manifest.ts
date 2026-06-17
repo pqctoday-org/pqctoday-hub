@@ -24,6 +24,7 @@ const manifest: ModuleManifest = {
     { id: 'compliance-gap-analysis', label: 'Compliance Gap Analysis' },
   ],
   embeddable: true,
+  practiceInSim: true,
   load: () => import('./index').then((m) => ({ default: m.PQCRiskManagementModule })),
 }
 

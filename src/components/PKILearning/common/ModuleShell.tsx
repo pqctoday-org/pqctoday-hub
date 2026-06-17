@@ -16,11 +16,13 @@
  * because a module's in-page header often differs from its catalog description.
  */
 import { useState, type ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 import type { LucideIcon } from 'lucide-react'
-import { Trash2 } from 'lucide-react'
+import { Trash2, Gamepad2 } from 'lucide-react'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { ModuleTabBar } from './ModuleTabBar'
+import { useEmbeddedLearn } from '../embeddedLearnContext'
 import { ModuleVisualTab } from './ModuleVisualTab'
 import { ModuleReferencesTab } from './ModuleReferencesTab'
 import { ModuleMigrateTab } from './ModuleMigrateTab'
@@ -291,6 +293,11 @@ export const ModuleShell = ({
     typeof slot === 'function' ? slot(slotApi) : slot
 
   const headerDescription = description ?? manifest.description
+  // C1: a "Practice in the Simulation" CTA for program/governance modules — only
+  // on the standalone Learn page, never when this module is itself embedded in
+  // the sim (where the CTA would be a confusing loop back to where you are).
+  const embedded = useEmbeddedLearn()
+  const showSimCta = !!manifest.practiceInSim && !embedded
 
   const header = (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -300,6 +307,15 @@ export const ModuleShell = ({
           <p className="text-muted-foreground mt-2">{headerDescription}</p>
         ) : null}
       </div>
+      {showSimCta ? (
+        <Link
+          to="/simulation"
+          className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/20"
+        >
+          <Gamepad2 size={16} />
+          Practice in the Simulation
+        </Link>
+      ) : null}
     </div>
   )
 

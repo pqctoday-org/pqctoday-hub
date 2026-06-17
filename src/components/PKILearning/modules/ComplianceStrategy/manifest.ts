@@ -24,6 +24,7 @@ const manifest: ModuleManifest = {
     { id: 'regulatory-gap-assessment', label: 'Regulatory Gap Assessment' },
   ],
   embeddable: true,
+  practiceInSim: true,
   load: () => import('./index').then((m) => ({ default: m.ComplianceStrategyModule })),
 }
 
