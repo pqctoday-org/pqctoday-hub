@@ -7,6 +7,7 @@ import { describe, it, expect } from 'vitest'
 import {
   canEmbedStep,
   isAssessStep,
+  isTimelineStep,
   isStepComplete,
   type StepCompletionContext,
 } from './embedContract'
@@ -28,7 +29,8 @@ describe('embed contract (WS-09)', () => {
     const learnId = Object.keys(SIM_LEARN_MODULES)[0]
     expect(canEmbedStep(step({ kind: 'learn', moduleId: learnId }))).toBe(true)
     expect(canEmbedStep(step({ kind: 'learn', moduleId: 'not-a-real-module' }))).toBe(false)
-    expect(canEmbedStep(step({ kind: 'reference', refId: 'timeline' }))).toBe(false)
+    // timeline: the real Gantt embeds under the Simulation-mode bar (C6)
+    expect(canEmbedStep(step({ kind: 'reference', refId: 'timeline' }))).toBe(true)
     expect(canEmbedStep(step({ kind: 'activity' }))).toBe(false) // no artifactType
     // workshop: embeddable iff the tool id resolves to a registered component
     expect(
@@ -44,6 +46,12 @@ describe('embed contract (WS-09)', () => {
     expect(isAssessStep(step({ kind: 'reference', refId: 'timeline' }))).toBe(false)
     // only a reference: a learn/activity step is never an assess step
     expect(isAssessStep(step({ kind: 'learn', moduleId: 'assess-engine' }))).toBe(false)
+  })
+
+  it('recognizes the timeline reference step (C6)', () => {
+    expect(isTimelineStep(step({ kind: 'reference', refId: 'timeline' }))).toBe(true)
+    expect(isTimelineStep(step({ kind: 'reference', refId: 'assess-engine' }))).toBe(false)
+    expect(isTimelineStep(step({ kind: 'learn', moduleId: 'timeline' }))).toBe(false)
   })
 
   // Every step the sim WOULD embed must have its component present — the contract.
@@ -66,8 +74,12 @@ describe('embed contract (WS-09)', () => {
             WORKSHOP_TOOL_COMPONENTS[s.workshopId],
             `${phase}: workshop ${s.workshopId}`
           ).toBeTruthy()
+        } else if (isTimelineStep(s)) {
+          // C6: the Gantt embeds via TimelineEmbed — no registry key to assert,
+          // but isTimelineStep must return true so the branch is exercised.
+          expect(isTimelineStep(s), `${phase}: timeline step is recognised`).toBe(true)
         } else {
-          // the only embeddable reference is the assess-engine wizard
+          // the only other embeddable reference is the assess-engine wizard
           expect(isAssessStep(s), `${phase}: embeddable ref ${s.refId} is the assess wizard`).toBe(
             true
           )

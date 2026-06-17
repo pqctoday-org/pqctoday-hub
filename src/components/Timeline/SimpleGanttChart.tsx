@@ -45,6 +45,10 @@ interface SimpleGanttChartProps {
   onToggleMyCountry?: (name: string) => void
   showOnlyMyCountries?: boolean
   onSetShowOnlyMyCountries?: (val: boolean) => void
+  /** When true, renders headless inside the simulation (Controls toolbar hidden). */
+  embedded?: boolean
+  /** Label shown in the scope chip when `embedded` (e.g. "Germany"). */
+  scopeLabel?: string
 }
 
 const START_YEAR = 2024
@@ -77,6 +81,8 @@ export const SimpleGanttChart = ({
   onToggleMyCountry,
   showOnlyMyCountries = false,
   onSetShowOnlyMyCountries,
+  embedded = false,
+  scopeLabel,
 }: SimpleGanttChartProps) => {
   const [localSearchText, setLocalSearchText] = useState(searchText)
   const filterText = onSearchChange ? searchText : localSearchText
@@ -411,178 +417,195 @@ export const SimpleGanttChart = ({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Controls */}
-      <div className="bg-card border border-border rounded-lg shadow-lg p-2 mb-2 flex flex-col md:flex-row items-center gap-4 relative z-40">
-        <div className="flex items-center gap-2 w-full md:w-auto text-xs">
-          <div className="flex-1 min-w-[120px]">
-            <FilterDropdown
-              items={regionItems}
-              selectedId={regionFilter}
-              onSelect={onRegionSelect}
-              defaultLabel="Region"
-              opaque
-              className="mb-0 w-full"
-              noContainer
-            />
-          </div>
-        </div>
-        <div className="flex items-center gap-1 w-full md:w-auto text-xs">
-          <div className="flex-1 min-w-[150px]">
-            <FilterDropdown
-              items={countryItems}
-              selectedId={selectedCountry}
-              onSelect={onCountrySelect}
-              defaultLabel="Country"
-              opaque
-              className="mb-0 w-full"
-              noContainer
-            />
-          </div>
-          {myCountries.length > 0 && onSetShowOnlyMyCountries && (
-            <Button
-              variant="ghost"
-              onClick={() => onSetShowOnlyMyCountries(!showOnlyMyCountries)}
-              className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
-                showOnlyMyCountries
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
-              }`}
-              aria-pressed={showOnlyMyCountries}
-            >
-              <BookmarkCheck size={12} />
-              My ({myCountries.length})
-            </Button>
-          )}
-          {selectedCountry !== 'All' && (
-            <Button
-              variant="ghost"
-              type="button"
-              aria-label="Copy country timeline link"
-              onClick={() => {
-                navigator.clipboard.writeText(
-                  `${window.location.origin}/timeline?country=${encodeURIComponent(selectedCountry)}`
-                )
-                toast.success('Link copied!')
-                setCountryCopied(true)
-                setTimeout(() => setCountryCopied(false), 2000)
-              }}
-              className="p-2 text-muted-foreground hover:text-foreground rounded-md transition-colors flex-shrink-0"
-            >
-              {countryCopied ? <Check size={16} className="text-accent" /> : <Link2 size={16} />}
-            </Button>
-          )}
-        </div>
-        <div className="flex items-center gap-2 w-full md:w-auto text-xs">
-          <div className="flex-1 min-w-[120px]">
-            <FilterDropdown
-              items={phaseTypeItems}
-              selectedId={selectedPhaseType}
-              onSelect={(id) => {
-                setSelectedPhaseType(id)
-                logEvent('Timeline', 'Filter Phase Type', id)
-              }}
-              defaultLabel="All Phases"
-              defaultIcon={<Layers size={16} className="text-primary" />}
-              opaque
-              className="mb-0 w-full"
-              noContainer
-            />
-          </div>
-        </div>
-        <div className="flex items-center gap-2 w-full md:w-auto text-xs">
-          <div className="flex-1 min-w-[120px]">
-            <FilterDropdown
-              items={eventTypeItems}
-              selectedId={selectedEventType}
-              onSelect={(id) => {
-                setSelectedEventType(id)
-                logEvent('Timeline', 'Filter Event Type', id)
-              }}
-              defaultLabel="All Types"
-              defaultIcon={<Filter size={16} className="text-primary" />}
-              opaque
-              className="mb-0 w-full"
-              noContainer
-            />
-          </div>
-        </div>
-        <span className="hidden md:inline text-muted-foreground px-2">Search:</span>
-        <div className="relative flex-1 min-w-0 md:min-w-[200px] w-full">
-          <Search
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-          />
-          <input
-            type="text"
-            placeholder="Filter by country..."
-            value={filterText}
-            onChange={handleFilterTextChange}
-            onBlur={handleFilterBlur}
-            className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
-          />
-        </div>
-        <Button
-          variant="ghost"
-          onClick={() => {
-            const next = selectedPhaseType === 'Deadline' ? 'All' : 'Deadline'
-            setSelectedPhaseType(next)
-            logEvent('Timeline', 'Quick Filter Deadlines', next)
-          }}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm transition-colors whitespace-nowrap ${
-            selectedPhaseType === 'Deadline'
-              ? 'bg-destructive/20 border-destructive/50 text-destructive hover:bg-destructive/30'
-              : 'bg-muted/30 hover:bg-muted/50 border-border text-foreground'
-          }`}
-          aria-label="Show deadlines only"
-        >
-          <Flag size={16} />
-          <span className="hidden md:inline">Deadlines</span>
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={handleExportCSV}
-          disabled={processedData.length === 0}
-          className="flex items-center justify-center px-2.5 py-2 rounded-lg bg-muted/30 hover:bg-muted/50 border border-border text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          aria-label="Export filtered timeline as CSV"
-        >
-          <Download size={16} />
-        </Button>
-      </div>
-
-      {/* Active filter chips + result count */}
-      {hasActiveFilters && (
-        <div className="flex flex-wrap items-center gap-2 px-1">
-          {regionFilter !== 'All' && (
-            <FilterChip label={regionFilter} onClear={() => onRegionSelect('All')} />
-          )}
-          {selectedCountry !== 'All' && (
-            <FilterChip label={selectedCountry} onClear={() => onCountrySelect('All')} />
-          )}
-          {selectedPhaseType !== 'All' && (
-            <FilterChip label={selectedPhaseType} onClear={() => setSelectedPhaseType('All')} />
-          )}
-          {selectedEventType !== 'All' && (
-            <FilterChip
-              label={selectedEventType === 'Phase' ? 'Phases only' : 'Milestones only'}
-              onClear={() => setSelectedEventType('All')}
-            />
-          )}
-          {filterText && (
-            <FilterChip
-              label={`"${filterText}"`}
-              onClear={() => {
-                if (onSearchChange) onSearchChange('')
-                else setLocalSearchText('')
-              }}
-            />
-          )}
-          <span className="text-xs text-muted-foreground">
-            {totalPhaseCount} {totalPhaseCount === 1 ? 'result' : 'results'}
-            {processedData.length !== data.length
-              ? ` · ${processedData.length} of ${data.length} countries`
-              : ''}
+      {/* Embedded scope label (replaces the Controls toolbar when inside the sim) */}
+      {embedded && scopeLabel && (
+        <div className="flex items-center gap-2 px-1 text-xs text-muted-foreground">
+          <span className="rounded bg-primary/10 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wide text-primary">
+            Timeline
           </span>
+          <span>{scopeLabel}</span>
         </div>
+      )}
+      {/* Controls — hidden in embedded/sim mode */}
+      {!embedded && (
+        <>
+          <div className="bg-card border border-border rounded-lg shadow-lg p-2 mb-2 flex flex-col md:flex-row items-center gap-4 relative z-40">
+            <div className="flex items-center gap-2 w-full md:w-auto text-xs">
+              <div className="flex-1 min-w-[120px]">
+                <FilterDropdown
+                  items={regionItems}
+                  selectedId={regionFilter}
+                  onSelect={onRegionSelect}
+                  defaultLabel="Region"
+                  opaque
+                  className="mb-0 w-full"
+                  noContainer
+                />
+              </div>
+            </div>
+            <div className="flex items-center gap-1 w-full md:w-auto text-xs">
+              <div className="flex-1 min-w-[150px]">
+                <FilterDropdown
+                  items={countryItems}
+                  selectedId={selectedCountry}
+                  onSelect={onCountrySelect}
+                  defaultLabel="Country"
+                  opaque
+                  className="mb-0 w-full"
+                  noContainer
+                />
+              </div>
+              {myCountries.length > 0 && onSetShowOnlyMyCountries && (
+                <Button
+                  variant="ghost"
+                  onClick={() => onSetShowOnlyMyCountries(!showOnlyMyCountries)}
+                  className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
+                    showOnlyMyCountries
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+                  }`}
+                  aria-pressed={showOnlyMyCountries}
+                >
+                  <BookmarkCheck size={12} />
+                  My ({myCountries.length})
+                </Button>
+              )}
+              {selectedCountry !== 'All' && (
+                <Button
+                  variant="ghost"
+                  type="button"
+                  aria-label="Copy country timeline link"
+                  onClick={() => {
+                    navigator.clipboard.writeText(
+                      `${window.location.origin}/timeline?country=${encodeURIComponent(selectedCountry)}`
+                    )
+                    toast.success('Link copied!')
+                    setCountryCopied(true)
+                    setTimeout(() => setCountryCopied(false), 2000)
+                  }}
+                  className="p-2 text-muted-foreground hover:text-foreground rounded-md transition-colors flex-shrink-0"
+                >
+                  {countryCopied ? (
+                    <Check size={16} className="text-accent" />
+                  ) : (
+                    <Link2 size={16} />
+                  )}
+                </Button>
+              )}
+            </div>
+            <div className="flex items-center gap-2 w-full md:w-auto text-xs">
+              <div className="flex-1 min-w-[120px]">
+                <FilterDropdown
+                  items={phaseTypeItems}
+                  selectedId={selectedPhaseType}
+                  onSelect={(id) => {
+                    setSelectedPhaseType(id)
+                    logEvent('Timeline', 'Filter Phase Type', id)
+                  }}
+                  defaultLabel="All Phases"
+                  defaultIcon={<Layers size={16} className="text-primary" />}
+                  opaque
+                  className="mb-0 w-full"
+                  noContainer
+                />
+              </div>
+            </div>
+            <div className="flex items-center gap-2 w-full md:w-auto text-xs">
+              <div className="flex-1 min-w-[120px]">
+                <FilterDropdown
+                  items={eventTypeItems}
+                  selectedId={selectedEventType}
+                  onSelect={(id) => {
+                    setSelectedEventType(id)
+                    logEvent('Timeline', 'Filter Event Type', id)
+                  }}
+                  defaultLabel="All Types"
+                  defaultIcon={<Filter size={16} className="text-primary" />}
+                  opaque
+                  className="mb-0 w-full"
+                  noContainer
+                />
+              </div>
+            </div>
+            <span className="hidden md:inline text-muted-foreground px-2">Search:</span>
+            <div className="relative flex-1 min-w-0 md:min-w-[200px] w-full">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              />
+              <input
+                type="text"
+                placeholder="Filter by country..."
+                value={filterText}
+                onChange={handleFilterTextChange}
+                onBlur={handleFilterBlur}
+                className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
+              />
+            </div>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                const next = selectedPhaseType === 'Deadline' ? 'All' : 'Deadline'
+                setSelectedPhaseType(next)
+                logEvent('Timeline', 'Quick Filter Deadlines', next)
+              }}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm transition-colors whitespace-nowrap ${
+                selectedPhaseType === 'Deadline'
+                  ? 'bg-destructive/20 border-destructive/50 text-destructive hover:bg-destructive/30'
+                  : 'bg-muted/30 hover:bg-muted/50 border-border text-foreground'
+              }`}
+              aria-label="Show deadlines only"
+            >
+              <Flag size={16} />
+              <span className="hidden md:inline">Deadlines</span>
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={handleExportCSV}
+              disabled={processedData.length === 0}
+              className="flex items-center justify-center px-2.5 py-2 rounded-lg bg-muted/30 hover:bg-muted/50 border border-border text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Export filtered timeline as CSV"
+            >
+              <Download size={16} />
+            </Button>
+          </div>
+
+          {/* Active filter chips + result count */}
+          {hasActiveFilters && (
+            <div className="flex flex-wrap items-center gap-2 px-1">
+              {regionFilter !== 'All' && (
+                <FilterChip label={regionFilter} onClear={() => onRegionSelect('All')} />
+              )}
+              {selectedCountry !== 'All' && (
+                <FilterChip label={selectedCountry} onClear={() => onCountrySelect('All')} />
+              )}
+              {selectedPhaseType !== 'All' && (
+                <FilterChip label={selectedPhaseType} onClear={() => setSelectedPhaseType('All')} />
+              )}
+              {selectedEventType !== 'All' && (
+                <FilterChip
+                  label={selectedEventType === 'Phase' ? 'Phases only' : 'Milestones only'}
+                  onClear={() => setSelectedEventType('All')}
+                />
+              )}
+              {filterText && (
+                <FilterChip
+                  label={`"${filterText}"`}
+                  onClear={() => {
+                    if (onSearchChange) onSearchChange('')
+                    else setLocalSearchText('')
+                  }}
+                />
+              )}
+              <span className="text-xs text-muted-foreground">
+                {totalPhaseCount} {totalPhaseCount === 1 ? 'result' : 'results'}
+                {processedData.length !== data.length
+                  ? ` · ${processedData.length} of ${data.length} countries`
+                  : ''}
+              </span>
+            </div>
+          )}
+        </>
       )}
 
       {/* Empty state */}

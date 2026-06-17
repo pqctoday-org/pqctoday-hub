@@ -58,6 +58,15 @@ export function isAssessStep(s: TreeStep): boolean {
   return s.kind === 'reference' && s.refId === 'assess-engine'
 }
 
+/**
+ * True for a `timeline` reference step — the interactive Gantt opens EMBEDDED
+ * (pre-scoped to the player's jurisdiction / a `?country=` or `?region=` param)
+ * instead of navigating out to the full /timeline page.
+ */
+export function isTimelineStep(s: TreeStep): boolean {
+  return s.kind === 'reference' && s.refId === 'timeline'
+}
+
 /** True when this step can be rendered embedded in the sim (vs. navigated to). */
 export function canEmbedStep(s: TreeStep): boolean {
   if (s.kind === 'learn') return !!s.moduleId && isEmbeddableModule(s.moduleId)
@@ -69,6 +78,7 @@ export function canEmbedStep(s: TreeStep): boolean {
 
   if (s.kind === 'workshop' && s.workshopId) return !!WORKSHOP_TOOL_COMPONENTS[s.workshopId]
   if (isAssessStep(s)) return true
+  if (isTimelineStep(s)) return true
   return false
 }
 

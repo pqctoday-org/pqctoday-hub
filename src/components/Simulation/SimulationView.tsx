@@ -23,9 +23,12 @@ import {
 import {
   canEmbedStep,
   isAssessStep,
+  isTimelineStep,
   isStepComplete,
   type StepCompletionContext,
 } from './embedContract'
+import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
+import { parseTimelineScope } from '@/data/timelineScope'
 import { AssessWizard } from '@/components/Assess/AssessWizard'
 import { Button } from '@/components/ui/button'
 import { FRAMEWORK_PHASES, PHASE_ORDER, type PhaseId } from '@/data/frameworkPhases'
@@ -221,6 +224,7 @@ export function SimulationView() {
   const [workshopEmbed, setWorkshopEmbed] = useState<{ workshopId: string; title: string } | null>(
     null
   )
+  const [timelineEmbed, setTimelineEmbed] = useState<{ title: string; to: string } | null>(null)
 
   const LearnComp = learnEmbed ? SIM_LEARN_MODULES[learnEmbed.moduleId] : null
   const activityToolId = activityEmbed
@@ -235,24 +239,35 @@ export function SimulationView() {
       setActivityEmbed(null)
       setAssessEmbed(null)
       setWorkshopEmbed(null)
+      setTimelineEmbed(null)
       setLearnEmbed({ moduleId: s.moduleId, title: s.label })
     } else if (s.kind === 'activity' && s.artifactType) {
       setLearnEmbed(null)
       setAssessEmbed(null)
       setWorkshopEmbed(null)
+      setTimelineEmbed(null)
       setActivityEmbed({ artifactType: s.artifactType, title: s.label })
     } else if (s.kind === 'workshop' && s.workshopId && WORKSHOP_TOOL_COMPONENTS[s.workshopId]) {
       setLearnEmbed(null)
       setActivityEmbed(null)
       setAssessEmbed(null)
+      setTimelineEmbed(null)
       setWorkshopEmbed({ workshopId: s.workshopId, title: s.label })
       // opening a workshop in-sim counts as completing the practice leaf (the
       // standalone /playground page has no separate completion signal).
       markWorkshopVisited(s.workshopId)
+    } else if (isTimelineStep(s)) {
+      setLearnEmbed(null)
+      setActivityEmbed(null)
+      setWorkshopEmbed(null)
+      setAssessEmbed(null)
+      setTimelineEmbed({ title: s.label, to: s.to })
+      if (s.refId) markRefVisited(s.refId)
     } else if (isAssessStep(s)) {
       setLearnEmbed(null)
       setActivityEmbed(null)
       setWorkshopEmbed(null)
+      setTimelineEmbed(null)
       setAssessEmbed({ title: s.label })
       // opening the wizard in-sim is the equivalent of "visiting" the assess ref
       // (the navigate flow marks-on-click), so the step counts as done.
@@ -264,6 +279,7 @@ export function SimulationView() {
     setActivityEmbed(null)
     setAssessEmbed(null)
     setWorkshopEmbed(null)
+    setTimelineEmbed(null)
   }
 
   // real hub completion state: generated artifacts + Learn-module progress
@@ -947,7 +963,7 @@ export function SimulationView() {
       {/* body — swaps to the embedded Learn module / activity tool when one is open.
           The sim header above stays, AND a persistent "Simulation mode" bar sits on
           top of the panel, so the player always knows they haven't left the sim. */}
-      {learnEmbed || activityEmbed || assessEmbed || workshopEmbed ? (
+      {learnEmbed || activityEmbed || assessEmbed || workshopEmbed || timelineEmbed ? (
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex shrink-0 items-center gap-2 border-b-2 border-primary bg-primary/10 px-4 py-2">
             <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-[9px] font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
@@ -960,13 +976,18 @@ export function SimulationView() {
                   ? 'Activity'
                   : workshopEmbed
                     ? 'Workshop'
-                    : 'Assess'}{' '}
+                    : timelineEmbed
+                      ? 'Timeline'
+                      : 'Assess'}{' '}
               · Phase {phase.number}
             </span>
             <span className="min-w-0 flex-1 truncate text-[12.5px] font-bold text-foreground">
               {learnEmbed
                 ? learnEmbed.title
-                : (activityEmbed?.title ?? workshopEmbed?.title ?? assessEmbed?.title)}
+                : (activityEmbed?.title ??
+                  workshopEmbed?.title ??
+                  timelineEmbed?.title ??
+                  assessEmbed?.title)}
             </span>
             {/* Completion toggle — guarantees a "mark complete" path for every
                 embedded Learn module (some have no in-module Complete button when
@@ -1049,6 +1070,17 @@ export function SimulationView() {
               >
                 <WorkshopComp />
               </Suspense>
+            ) : timelineEmbed ? (
+              // C6: Gantt chart embedded in the sim, scoped to the player's assessed
+              // country (or the step's ?country= / ?region= param if present).
+              <TimelineEmbed
+                scope={{
+                  ...parseTimelineScope(timelineEmbed.to),
+                  // fall back to assessed jurisdiction when the step carries no scope
+                  country:
+                    parseTimelineScope(timelineEmbed.to).country ?? assessJurisdiction?.displayName,
+                }}
+              />
             ) : null}
           </div>
         </div>
