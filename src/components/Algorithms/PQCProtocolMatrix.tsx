@@ -552,7 +552,13 @@ export function PQCProtocolMatrix() {
   const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>('all')
   const [sortKey, setSortKey] = useState<SortKey>('matrix')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
-  const [selectedProtocol, setSelectedProtocol] = useState<ProtocolMatrixRow | null>(null)
+  // ?protocol=<id> preselects that row's detail modal (powers the
+  // "Related: Protocol Matrix" breadcrumb from sandbox scenarios). Resolved
+  // once via a lazy initializer so it needs no setState-in-effect.
+  const [selectedProtocol, setSelectedProtocol] = useState<ProtocolMatrixRow | null>(() => {
+    const p = searchParams.get('protocol')
+    return p ? (PROTOCOL_MATRIX.find((r) => r.id === p) ?? null) : null
+  })
   const firstRecommendedRef = useRef<HTMLTableRowElement | null>(null)
   const isHeatmap = viewMode === 'heatmap'
 

@@ -33,7 +33,14 @@ export const useSandboxStore = create<SandboxState>((set, get) => ({
     const ctrl = new AbortController()
     const timer = setTimeout(() => ctrl.abort(), PROBE_TIMEOUT_MS)
     try {
-      await fetch(`${baseUrl}${HEALTH_PATH}`, { mode: 'cors', signal: ctrl.signal })
+      const res = await fetch(`${baseUrl}${HEALTH_PATH}`, { mode: 'cors', signal: ctrl.signal })
+      // A resolved fetch is not enough — the backend returns 503 when the
+      // pqc-network upstream is down. Treat any non-2xx as offline so the
+      // catalog doesn't surface sandbox tools that can't actually run.
+      if (!res.ok) {
+        set({ status: 'offline', error: `status ${res.status}`, lastChecked: Date.now() })
+        return 'offline'
+      }
       set({ status: 'online', error: null, lastChecked: Date.now() })
       return 'online'
     } catch (e) {

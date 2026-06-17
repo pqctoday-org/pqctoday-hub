@@ -319,8 +319,8 @@ export const useKeyGeneration = ({
         const idBase = Math.random().toString(36).substring(2, 9)
 
         const algorithmLabel = algorithm === 'ML-KEM' ? `ML-KEM-${keySize}` : `ML-DSA-${keySize}`
-        const publicKeyType = algorithm === 'ML-KEM' ? 'Kyber' : 'Dilithium'
-        const privateKeyType = algorithm === 'ML-KEM' ? 'Kyber' : 'Dilithium'
+        const publicKeyType = algorithm === 'ML-KEM' ? 'ML-KEM' : 'ML-DSA'
+        const privateKeyType = algorithm === 'ML-KEM' ? 'ML-KEM' : 'ML-DSA'
 
         const newKeys: Key[] = [
           {

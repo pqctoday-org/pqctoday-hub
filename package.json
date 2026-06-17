@@ -67,6 +67,8 @@
     "generate-oscal:dry": "tsx scripts/generate-oscal.ts --dry-run",
     "generate-embeddings": "tsx scripts/build-embedding-index.ts",
     "generate-embeddings:dry": "tsx scripts/build-embedding-index.ts --dry-run",
+    "sync:sandbox": "tsx scripts/sync-sandbox-scenarios.ts",
+    "sync:sandbox:check": "tsx scripts/sync-sandbox-scenarios.ts --check",
     "normalize-vocab": "tsx scripts/ci/normalize-vocab-tags.ts",
     "normalize-vocab:dry": "tsx scripts/ci/normalize-vocab-tags.ts --dry-run",
     "trust-engine:sign": "tsx scripts/attestation/sign-all.ts",
