@@ -10,6 +10,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { TimelinePlanner, ExportableArtifact } from '../../../common/executive'
 import type { ExternalDeadline, Milestone } from '../../../common/executive'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import type { SimRoadmapInput } from '@/simulation/simRoadmap'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 
 interface MitigationGatewayRow {
@@ -64,6 +65,7 @@ function extractYear(raw: string): number | null {
 export const RoadmapBuilder: React.FC = () => {
   const { countryDeadlines, algorithmMigrations } = useExecutiveModuleData()
   const { addExecutiveDocument } = useModuleStore()
+  const executiveDocuments = useModuleStore((s) => s.artifacts.executiveDocuments)
   const transitions = useAlgorithmTransitionsForAssessment()
   const myTimelineCountries = useBookmarkStore((s) => s.myTimelineCountries)
   const myProductIdsBookmarked = useMigrateSelectionStore((s) => s.myProducts)
@@ -123,11 +125,36 @@ export const RoadmapBuilder: React.FC = () => {
     })
   }, [transitions, algorithmMigrations])
 
-  const seedMilestones = assessmentMilestones.length > 0 ? assessmentMilestones : DEFAULT_MILESTONES
+  // C1 read-back: seed from the latest committed Simulation roadmap (its
+  // UNCLEARED phases), which closes the sim→migrate loop. Higher priority than
+  // the assessment-derived seed; both are editable drafts.
+  const simRoadmapMilestones = useMemo<Milestone[]>(() => {
+    const latest = (executiveDocuments ?? [])
+      .filter((d) => d.type === 'sim-roadmap' && d.inputs)
+      .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0))[0]
+    const input = latest?.inputs as SimRoadmapInput | undefined
+    const uncleared = input?.phases?.filter((p) => !p.cleared) ?? []
+    if (uncleared.length === 0) return []
+    const horizon = Math.max(1, input?.yearsToHorizon || uncleared.length)
+    const thisYear = new Date().getFullYear()
+    return uncleared.map((p, i) => ({
+      id: `sim-ms-${p.id}`,
+      label: `Clear ${p.name}`,
+      year: thisYear + Math.max(1, Math.ceil(((i + 1) / uncleared.length) * horizon)),
+      category: 'Migration',
+    }))
+  }, [executiveDocuments])
+
+  const seedSource: 'sim' | 'assessment' | null =
+    simRoadmapMilestones.length > 0 ? 'sim' : assessmentMilestones.length > 0 ? 'assessment' : null
+  const seedMilestones =
+    seedSource === 'sim'
+      ? simRoadmapMilestones
+      : seedSource === 'assessment'
+        ? assessmentMilestones
+        : DEFAULT_MILESTONES
   const [currentMilestones, setCurrentMilestones] = React.useState<Milestone[]>(seedMilestones)
-  const [seededFromAssessment, setSeededFromAssessment] = React.useState(
-    assessmentMilestones.length > 0
-  )
+  const [seededFrom, setSeededFrom] = React.useState<'sim' | 'assessment' | null>(seedSource)
   // Pre-select deadlines from countries the user bookmarked on /timeline.
   // Match by `country.countryName` since that's the field stored in
   // `myTimelineCountries`.
@@ -230,12 +257,21 @@ export const RoadmapBuilder: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {seededFromAssessment && (
+      {seededFrom === 'sim' && (
+        <PreFilledBanner
+          summary={`${simRoadmapMilestones.length} milestone${simRoadmapMilestones.length !== 1 ? 's' : ''} seeded from your latest Simulation run — refine the draft here.`}
+          onClear={() => {
+            setCurrentMilestones(DEFAULT_MILESTONES)
+            setSeededFrom(null)
+          }}
+        />
+      )}
+      {seededFrom === 'assessment' && (
         <PreFilledBanner
           summary={`${assessmentMilestones.length} milestone${assessmentMilestones.length !== 1 ? 's' : ''} from your reported algorithms, anchored on NIST deprecation dates.`}
           onClear={() => {
             setCurrentMilestones(DEFAULT_MILESTONES)
-            setSeededFromAssessment(false)
+            setSeededFrom(null)
           }}
         />
       )}
