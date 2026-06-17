@@ -127,6 +127,39 @@ describe('Dashboard — persona-path integration', () => {
     expect(screen.getByText(/Where do I start\?/i).closest('details')).not.toHaveAttribute('open')
   })
 
+  it('A3: NICE is a separate lens button (not a peer radio), and opens the grouped view', async () => {
+    const user = userEvent.setup()
+    seedPersona('developer')
+    renderDashboard()
+
+    // NICE is no longer a co-equal radio in the "View mode" group...
+    expect(screen.queryByRole('radio', { name: /NICE/i })).not.toBeInTheDocument()
+    // ...it's its own toggle button.
+    const niceLens = screen.getByRole('button', { name: /NICE roles/i })
+    expect(niceLens).toBeInTheDocument()
+
+    // Clicking it switches into the grouped competency-area view (NiceView).
+    await user.click(niceLens)
+    expect(screen.getByText(/pick a NICE Work Role/i)).toBeInTheDocument()
+  })
+
+  it('A3: the ?view=nice deep-link opens the grouped view with the lens pressed', () => {
+    seedPersona('developer')
+    render(
+      <EmbedProvider>
+        <MemoryRouter initialEntries={['/learn?view=nice']}>
+          <Dashboard />
+        </MemoryRouter>
+      </EmbedProvider>
+    )
+
+    expect(screen.getByRole('button', { name: /NICE roles/i })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
+    expect(screen.getByText(/pick a NICE Work Role/i)).toBeInTheDocument()
+  })
+
   it('P1-2 regression: persona-active path renders the "Curated order" badge instead of silently disabling sort', () => {
     seedPersona('developer')
     renderDashboard()
