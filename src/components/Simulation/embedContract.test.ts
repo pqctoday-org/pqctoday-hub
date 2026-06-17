@@ -9,6 +9,7 @@ import {
   isAssessStep,
   isTimelineStep,
   isProtocolMatrixStep,
+  isTransitionStep,
   isStepComplete,
   type StepCompletionContext,
 } from './embedContract'
@@ -36,8 +37,10 @@ describe('embed contract (WS-09)', () => {
     expect(canEmbedStep(step({ kind: 'reference', refId: 'algorithms-protocol-matrix' }))).toBe(
       true
     )
-    // but the other algorithm refs are still navigate-away (no embed yet)
-    expect(canEmbedStep(step({ kind: 'reference', refId: 'algorithms-transition' }))).toBe(false)
+    // transition: the Algorithms "Transition Guide" tab embeds (C5-full)
+    expect(canEmbedStep(step({ kind: 'reference', refId: 'algorithms-transition' }))).toBe(true)
+    // the remaining algorithm ref (catalog root) is still navigate-away
+    expect(canEmbedStep(step({ kind: 'reference', refId: 'algorithms-catalog' }))).toBe(false)
     expect(canEmbedStep(step({ kind: 'activity' }))).toBe(false) // no artifactType
     // workshop: embeddable iff the tool id resolves to a registered component
     expect(
@@ -71,6 +74,14 @@ describe('embed contract (WS-09)', () => {
     expect(isProtocolMatrixStep(step({ kind: 'reference', refId: 'timeline' }))).toBe(false)
   })
 
+  it('recognizes the transition reference step (C5-full)', () => {
+    expect(isTransitionStep(step({ kind: 'reference', refId: 'algorithms-transition' }))).toBe(true)
+    expect(isTransitionStep(step({ kind: 'reference', refId: 'algorithms-protocol-matrix' }))).toBe(
+      false
+    )
+    expect(isTransitionStep(step({ kind: 'reference', refId: 'timeline' }))).toBe(false)
+  })
+
   // Every step the sim WOULD embed must have its component present — the contract.
   // The assess-engine reference embeds the AssessWizard (always mounted under the
   // Router), so it is a real embeddable target, not a dead end.
@@ -101,6 +112,9 @@ describe('embed contract (WS-09)', () => {
         } else if (isProtocolMatrixStep(s)) {
           // C5 slice: the Protocol Support tab embeds via ProtocolMatrixEmbed.
           expect(isProtocolMatrixStep(s), `${phase}: protocol-matrix step is recognised`).toBe(true)
+        } else if (isTransitionStep(s)) {
+          // C5-full: the Transition Guide tab embeds via AlgorithmTransitionEmbed.
+          expect(isTransitionStep(s), `${phase}: transition step is recognised`).toBe(true)
         } else {
           // the only other embeddable reference is the assess-engine wizard
           expect(isAssessStep(s), `${phase}: embeddable ref ${s.refId} is the assess wizard`).toBe(

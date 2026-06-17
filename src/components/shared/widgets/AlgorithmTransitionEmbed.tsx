@@ -15,14 +15,24 @@
  * into the sim's activity/maturity path.
  */
 import { useMemo } from 'react'
+import { Check } from 'lucide-react'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { getAlgorithmDefaults } from '@/data/personaConfig'
 import { useAlgorithmExplorer, MAX_COMPARE } from '@/components/Algorithms/useAlgorithmExplorer'
 import { AlgorithmComparison } from '@/components/Algorithms/AlgorithmComparison'
 import { AlgorithmCompareBar } from '@/components/Algorithms/AlgorithmCompareBar'
 import { AlgorithmComparisonPanel } from '@/components/Algorithms/AlgorithmComparisonPanel'
+import { Button } from '@/components/ui/button'
 
-export function AlgorithmTransitionEmbed() {
+interface AlgorithmTransitionEmbedProps {
+  /** Confirm the reviewed PQC replacements (the selected algorithm names) — the
+   *  sim records a CBOM + marks the task done. Provided when mounted in the sim. */
+  onConfirm?: (selected: string[]) => void
+  /** True once this task has already been confirmed (shows a done state). */
+  confirmed?: boolean
+}
+
+export function AlgorithmTransitionEmbed({ onConfirm, confirmed }: AlgorithmTransitionEmbedProps) {
   const persona = usePersonaStore((s) => s.selectedPersona)
   const personaDefaults = useMemo(() => getAlgorithmDefaults(persona), [persona])
   const x = useAlgorithmExplorer(personaDefaults, {
@@ -32,6 +42,23 @@ export function AlgorithmTransitionEmbed() {
 
   return (
     <div className="min-h-0 flex-1 overflow-auto p-4">
+      {onConfirm && (
+        <div className="mb-3 flex flex-col gap-2 rounded-lg border border-primary/30 bg-primary/5 p-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-muted-foreground">
+            Review the PQC replacements for your classical algorithms, select the ones you&rsquo;ll
+            adopt, then confirm to record your replacement plan (a CBOM) for this phase.
+          </p>
+          <Button
+            type="button"
+            variant={confirmed ? 'outline' : 'gradient'}
+            onClick={() => onConfirm(x.compareKeys)}
+            className="flex shrink-0 items-center gap-1.5"
+          >
+            <Check size={15} />
+            {confirmed ? 'Replacements confirmed' : 'Confirm my PQC replacements'}
+          </Button>
+        </div>
+      )}
       <AlgorithmComparison
         highlightAlgorithms={undefined}
         filteredData={x.filteredTransitions}
