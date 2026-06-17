@@ -28,6 +28,7 @@ import { TimelineEmbed } from './TimelineEmbed'
 import { ProtocolMatrixEmbed } from './ProtocolMatrixEmbed'
 import { MigrateEmbed } from './MigrateEmbed'
 import { AlgorithmTransitionEmbed } from './AlgorithmTransitionEmbed'
+import { AlgorithmDetailedEmbed } from './AlgorithmDetailedEmbed'
 
 /**
  * CRITICAL: render inside an OUTER router. In the real app every embed mounts
@@ -70,6 +71,11 @@ describe('embed widgets — render smoke tests (inside an outer router)', () => 
     // Sources its state from useAlgorithmExplorer in urlSync:false mode — no own
     // <Router>, so it must NOT crash inside the outer router.
     const { container } = renderEmbedded(<AlgorithmTransitionEmbed />)
+    expect(container.firstChild).toBeTruthy()
+  })
+
+  it('C5-full: AlgorithmDetailedEmbed mounts headless (urlSync:false, no nested router)', () => {
+    const { container } = renderEmbedded(<AlgorithmDetailedEmbed />)
     expect(container.firstChild).toBeTruthy()
   })
 })

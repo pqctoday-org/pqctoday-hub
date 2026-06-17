@@ -10,6 +10,7 @@ import {
   isTimelineStep,
   isProtocolMatrixStep,
   isTransitionStep,
+  isDetailedStep,
   isStepComplete,
   type StepCompletionContext,
 } from './embedContract'
@@ -37,8 +38,9 @@ describe('embed contract (WS-09)', () => {
     expect(canEmbedStep(step({ kind: 'reference', refId: 'algorithms-protocol-matrix' }))).toBe(
       true
     )
-    // transition: the Algorithms "Transition Guide" tab embeds (C5-full)
+    // transition + detailed: both Algorithms comparison tabs embed (C5-full)
     expect(canEmbedStep(step({ kind: 'reference', refId: 'algorithms-transition' }))).toBe(true)
+    expect(canEmbedStep(step({ kind: 'reference', refId: 'algorithms-detailed' }))).toBe(true)
     // the remaining algorithm ref (catalog root) is still navigate-away
     expect(canEmbedStep(step({ kind: 'reference', refId: 'algorithms-catalog' }))).toBe(false)
     expect(canEmbedStep(step({ kind: 'activity' }))).toBe(false) // no artifactType
@@ -82,6 +84,11 @@ describe('embed contract (WS-09)', () => {
     expect(isTransitionStep(step({ kind: 'reference', refId: 'timeline' }))).toBe(false)
   })
 
+  it('recognizes the detailed reference step (C5-full)', () => {
+    expect(isDetailedStep(step({ kind: 'reference', refId: 'algorithms-detailed' }))).toBe(true)
+    expect(isDetailedStep(step({ kind: 'reference', refId: 'algorithms-transition' }))).toBe(false)
+  })
+
   // Every step the sim WOULD embed must have its component present — the contract.
   // The assess-engine reference embeds the AssessWizard (always mounted under the
   // Router), so it is a real embeddable target, not a dead end.
@@ -115,6 +122,9 @@ describe('embed contract (WS-09)', () => {
         } else if (isTransitionStep(s)) {
           // C5-full: the Transition Guide tab embeds via AlgorithmTransitionEmbed.
           expect(isTransitionStep(s), `${phase}: transition step is recognised`).toBe(true)
+        } else if (isDetailedStep(s)) {
+          // C5-full: the Detailed Comparison tab embeds via AlgorithmDetailedEmbed.
+          expect(isDetailedStep(s), `${phase}: detailed step is recognised`).toBe(true)
         } else {
           // the only other embeddable reference is the assess-engine wizard
           expect(isAssessStep(s), `${phase}: embeddable ref ${s.refId} is the assess wizard`).toBe(

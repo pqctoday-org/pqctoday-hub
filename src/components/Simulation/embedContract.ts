@@ -92,6 +92,15 @@ export function isTransitionStep(s: TreeStep): boolean {
   return s.kind === 'reference' && s.refId === 'algorithms-transition'
 }
 
+/**
+ * True for an `algorithms-detailed` reference step — the Algorithms "Detailed
+ * Comparison" tab opens EMBEDDED (C5-full). Like the Transition tab it's a choice
+ * that counts: confirming records a crypto-architecture doc + marks the task done.
+ */
+export function isDetailedStep(s: TreeStep): boolean {
+  return s.kind === 'reference' && s.refId === 'algorithms-detailed'
+}
+
 /** True when this step can be rendered embedded in the sim (vs. navigated to). */
 export function canEmbedStep(s: TreeStep): boolean {
   if (s.kind === 'learn') return !!s.moduleId && isEmbeddableModule(s.moduleId)
@@ -107,6 +116,7 @@ export function canEmbedStep(s: TreeStep): boolean {
   if (isTimelineStep(s)) return true
   if (isProtocolMatrixStep(s)) return true
   if (isTransitionStep(s)) return true
+  if (isDetailedStep(s)) return true
   return false
 }
 

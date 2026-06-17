@@ -35,6 +35,7 @@ const REF_URL = {
   'compliance-cert-check': '/compliance?cert=',
   'algorithms-protocol-matrix': '/algorithms?tab=support',
   'algorithms-transition': '/algorithms?tab=transition',
+  'algorithms-detailed': '/algorithms?tab=detailed',
   'algorithms-catalog': '/algorithms',
   timeline: '/timeline',
   report: '/report',
@@ -397,7 +398,8 @@ const FRAMEWORK = {
       output: 'Migration sequencing recommendation',
       steps: [
         L('migration-program', 'Learn: the two-track migration sequencing model'),
-        R('algorithms-transition', 'Reference: the algorithm transition map'),
+        R('algorithms-transition', 'Confirm your classical → PQC replacement mapping'),
+        R('algorithms-detailed', 'Compare PQC candidates in detail and confirm your architecture'),
         A('risk-treatment-plan', 'Draft a Risk Treatment Plan'),
       ],
     },
