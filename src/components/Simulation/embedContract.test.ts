@@ -8,6 +8,7 @@ import {
   canEmbedStep,
   isAssessStep,
   isTimelineStep,
+  isProtocolMatrixStep,
   isStepComplete,
   type StepCompletionContext,
 } from './embedContract'
@@ -31,6 +32,12 @@ describe('embed contract (WS-09)', () => {
     expect(canEmbedStep(step({ kind: 'learn', moduleId: 'not-a-real-module' }))).toBe(false)
     // timeline: the real Gantt embeds under the Simulation-mode bar (C6)
     expect(canEmbedStep(step({ kind: 'reference', refId: 'timeline' }))).toBe(true)
+    // protocol-matrix: the Algorithms Protocol Support tab embeds (C5 slice)
+    expect(canEmbedStep(step({ kind: 'reference', refId: 'algorithms-protocol-matrix' }))).toBe(
+      true
+    )
+    // but the other algorithm refs are still navigate-away (no embed yet)
+    expect(canEmbedStep(step({ kind: 'reference', refId: 'algorithms-transition' }))).toBe(false)
     expect(canEmbedStep(step({ kind: 'activity' }))).toBe(false) // no artifactType
     // workshop: embeddable iff the tool id resolves to a registered component
     expect(
@@ -52,6 +59,16 @@ describe('embed contract (WS-09)', () => {
     expect(isTimelineStep(step({ kind: 'reference', refId: 'timeline' }))).toBe(true)
     expect(isTimelineStep(step({ kind: 'reference', refId: 'assess-engine' }))).toBe(false)
     expect(isTimelineStep(step({ kind: 'learn', moduleId: 'timeline' }))).toBe(false)
+  })
+
+  it('recognizes the protocol-matrix reference step (C5 slice)', () => {
+    expect(
+      isProtocolMatrixStep(step({ kind: 'reference', refId: 'algorithms-protocol-matrix' }))
+    ).toBe(true)
+    expect(isProtocolMatrixStep(step({ kind: 'reference', refId: 'algorithms-transition' }))).toBe(
+      false
+    )
+    expect(isProtocolMatrixStep(step({ kind: 'reference', refId: 'timeline' }))).toBe(false)
   })
 
   // Every step the sim WOULD embed must have its component present — the contract.
@@ -81,6 +98,9 @@ describe('embed contract (WS-09)', () => {
           // C6: the Gantt embeds via TimelineEmbed — no registry key to assert,
           // but isTimelineStep must return true so the branch is exercised.
           expect(isTimelineStep(s), `${phase}: timeline step is recognised`).toBe(true)
+        } else if (isProtocolMatrixStep(s)) {
+          // C5 slice: the Protocol Support tab embeds via ProtocolMatrixEmbed.
+          expect(isProtocolMatrixStep(s), `${phase}: protocol-matrix step is recognised`).toBe(true)
         } else {
           // the only other embeddable reference is the assess-engine wizard
           expect(isAssessStep(s), `${phase}: embeddable ref ${s.refId} is the assess wizard`).toBe(

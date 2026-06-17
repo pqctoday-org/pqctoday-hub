@@ -24,11 +24,13 @@ import {
   canEmbedStep,
   isAssessStep,
   isTimelineStep,
+  isProtocolMatrixStep,
   isStepComplete,
   type StepCompletionContext,
 } from './embedContract'
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
 import { parseTimelineScope } from '@/data/timelineScope'
+import { ProtocolMatrixEmbed } from '@/components/shared/widgets/ProtocolMatrixEmbed'
 import { MigrateEmbed } from '@/components/shared/widgets/MigrateEmbed'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { AssessWizard } from '@/components/Assess/AssessWizard'
@@ -228,6 +230,7 @@ export function SimulationView() {
   )
   const [timelineEmbed, setTimelineEmbed] = useState<{ title: string; to: string } | null>(null)
   const [catalogEmbed, setCatalogEmbed] = useState<{ title: string; layer?: string } | null>(null)
+  const [protocolEmbed, setProtocolEmbed] = useState<{ title: string } | null>(null)
 
   const LearnComp = learnEmbed ? SIM_LEARN_MODULES[learnEmbed.moduleId] : null
   const activityToolId = activityEmbed
@@ -237,66 +240,53 @@ export function SimulationView() {
   const ActivityComp = activityToolId ? BUSINESS_TOOL_COMPONENTS[activityToolId] : null
 
   const WorkshopComp = workshopEmbed ? WORKSHOP_TOOL_COMPONENTS[workshopEmbed.workshopId] : null
-  const openStep = (s: TreeStep) => {
-    if (s.kind === 'learn' && s.moduleId && isEmbeddableModule(s.moduleId)) {
-      setActivityEmbed(null)
-      setAssessEmbed(null)
-      setWorkshopEmbed(null)
-      setTimelineEmbed(null)
-      setCatalogEmbed(null)
-      setLearnEmbed({ moduleId: s.moduleId, title: s.label })
-    } else if (s.kind === 'activity' && s.artifactType) {
-      setLearnEmbed(null)
-      setAssessEmbed(null)
-      setWorkshopEmbed(null)
-      setTimelineEmbed(null)
-      setCatalogEmbed(null)
-      setActivityEmbed({ artifactType: s.artifactType, title: s.label })
-    } else if (s.kind === 'workshop' && s.workshopId && WORKSHOP_TOOL_COMPONENTS[s.workshopId]) {
-      setLearnEmbed(null)
-      setActivityEmbed(null)
-      setAssessEmbed(null)
-      setTimelineEmbed(null)
-      setCatalogEmbed(null)
-      setWorkshopEmbed({ workshopId: s.workshopId, title: s.label })
-      // opening a workshop in-sim counts as completing the practice leaf (the
-      // standalone /playground page has no separate completion signal).
-      markWorkshopVisited(s.workshopId)
-    } else if (s.kind === 'catalog') {
-      setLearnEmbed(null)
-      setActivityEmbed(null)
-      setAssessEmbed(null)
-      setWorkshopEmbed(null)
-      setTimelineEmbed(null)
-      setCatalogEmbed({ title: s.label, layer: s.catalogLayer })
-    } else if (isTimelineStep(s)) {
-      setLearnEmbed(null)
-      setActivityEmbed(null)
-      setWorkshopEmbed(null)
-      setAssessEmbed(null)
-      setCatalogEmbed(null)
-      setTimelineEmbed({ title: s.label, to: s.to })
-      if (s.refId) markRefVisited(s.refId)
-    } else if (isAssessStep(s)) {
-      setLearnEmbed(null)
-      setActivityEmbed(null)
-      setWorkshopEmbed(null)
-      setTimelineEmbed(null)
-      setCatalogEmbed(null)
-      setAssessEmbed({ title: s.label })
-      // opening the wizard in-sim is the equivalent of "visiting" the assess ref
-      // (the navigate flow marks-on-click), so the step counts as done.
-      if (s.refId) markRefVisited(s.refId)
-    }
-  }
-  const closeEmbed = () => {
+  // Only one embed can be open at a time — clear them all, then the caller sets
+  // its own. Keeps openStep's branches from each having to null every sibling
+  // (which silently breaks when a new embed kind is added).
+  const clearAllEmbeds = () => {
     setLearnEmbed(null)
     setActivityEmbed(null)
     setAssessEmbed(null)
     setWorkshopEmbed(null)
     setTimelineEmbed(null)
     setCatalogEmbed(null)
+    setProtocolEmbed(null)
   }
+  const openStep = (s: TreeStep) => {
+    if (s.kind === 'learn' && s.moduleId && isEmbeddableModule(s.moduleId)) {
+      clearAllEmbeds()
+      setLearnEmbed({ moduleId: s.moduleId, title: s.label })
+    } else if (s.kind === 'activity' && s.artifactType) {
+      clearAllEmbeds()
+      setActivityEmbed({ artifactType: s.artifactType, title: s.label })
+    } else if (s.kind === 'workshop' && s.workshopId && WORKSHOP_TOOL_COMPONENTS[s.workshopId]) {
+      clearAllEmbeds()
+      setWorkshopEmbed({ workshopId: s.workshopId, title: s.label })
+      // opening a workshop in-sim counts as completing the practice leaf (the
+      // standalone /playground page has no separate completion signal).
+      markWorkshopVisited(s.workshopId)
+    } else if (s.kind === 'catalog') {
+      clearAllEmbeds()
+      setCatalogEmbed({ title: s.label, layer: s.catalogLayer })
+    } else if (isTimelineStep(s)) {
+      clearAllEmbeds()
+      setTimelineEmbed({ title: s.label, to: s.to })
+      if (s.refId) markRefVisited(s.refId)
+    } else if (isProtocolMatrixStep(s)) {
+      clearAllEmbeds()
+      setProtocolEmbed({ title: s.label })
+      // reviewed-on-open: the Protocol Support tab counts as done once opened in-sim
+      // (C5-a — a "reviewed" reference mark, not an emitted artifact).
+      if (s.refId) markRefVisited(s.refId)
+    } else if (isAssessStep(s)) {
+      clearAllEmbeds()
+      setAssessEmbed({ title: s.label })
+      // opening the wizard in-sim is the equivalent of "visiting" the assess ref
+      // (the navigate flow marks-on-click), so the step counts as done.
+      if (s.refId) markRefVisited(s.refId)
+    }
+  }
+  const closeEmbed = clearAllEmbeds
 
   // real hub completion state: generated artifacts + Learn-module progress
   const docs = useModuleStore((s) => s.artifacts.executiveDocuments)
@@ -992,7 +982,8 @@ export function SimulationView() {
       assessEmbed ||
       workshopEmbed ||
       timelineEmbed ||
-      catalogEmbed ? (
+      catalogEmbed ||
+      protocolEmbed ? (
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex shrink-0 items-center gap-2 border-b-2 border-primary bg-primary/10 px-4 py-2">
             <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-[9px] font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
@@ -1009,7 +1000,9 @@ export function SimulationView() {
                       ? 'Timeline'
                       : catalogEmbed
                         ? 'Catalog'
-                        : 'Assess'}{' '}
+                        : protocolEmbed
+                          ? 'Protocols'
+                          : 'Assess'}{' '}
               · Phase {phase.number}
             </span>
             <span className="min-w-0 flex-1 truncate text-[12.5px] font-bold text-foreground">
@@ -1019,6 +1012,7 @@ export function SimulationView() {
                   workshopEmbed?.title ??
                   timelineEmbed?.title ??
                   catalogEmbed?.title ??
+                  protocolEmbed?.title ??
                   assessEmbed?.title)}
             </span>
             {/* Completion toggle — guarantees a "mark complete" path for every
@@ -1117,6 +1111,10 @@ export function SimulationView() {
               // C7: Migrate product catalog in an isolated MemoryRouter (prevents
               // the catalog's setSearchParams calls from corrupting /simulation URL).
               <MigrateEmbed catalogLayer={catalogEmbed.layer} />
+            ) : protocolEmbed ? (
+              // C5 slice: the Algorithms "Protocol Support" tab, in an isolated
+              // MemoryRouter (its searchParams read + internal links stay contained).
+              <ProtocolMatrixEmbed />
             ) : null}
           </div>
         </div>
