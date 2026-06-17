@@ -20,20 +20,24 @@ export const TOUR_STEPS: TourStep[] = [
     body: 'Run a post-quantum migration program: race the Mosca clock and climb each of the 8 framework phases up the maturity ladder.',
   },
   {
-    title: 'Set up your organisation',
-    body: 'The dials along the top pick your industry, size, country, your seat (role), and the difficulty mode. Scenario chips set them all at once.',
+    title: 'Your org comes from your assessment',
+    body: 'Industry, size and country are read-only — they’re set by your PQC assessment (change them in /assess). You can switch your seat (role) and the difficulty MODE: Easy, Realistic, or Hard — start on Realistic for your first run.',
   },
   {
     title: 'Race the Mosca clock',
-    body: 'X + Y > Z. The KPI ribbon shows years to Q-Day. If your data shelf-life plus migration time exceeds the time left, you are already exposed.',
+    body: 'X + Y > Z. The KPI ribbon shows years to Q-Day. If your data shelf-life (X) plus migration time (Y) exceeds the time left (Z), you’re already exposed.',
+  },
+  {
+    title: 'Climb the maturity ladder',
+    body: 'Each phase has maturity levels 0–4. A level unlocks only once every step below it is done — higher bands stay 🔒 locked. Within the active band you can do the steps in any order.',
   },
   {
     title: 'Pick the right next move',
-    body: 'Each phase offers a choice: the correct framework activity vs. tempting traps. Right picks earn maturity; wrong ones reveal a Common Failure.',
+    body: 'Each step offers a choice: the correct framework activity vs. tempting traps. Right picks earn maturity; a wrong pick reveals the Common Failure AND the sound move, so you learn the difference.',
   },
   {
-    title: 'End the quarter',
-    body: 'Advance time with End Quarter. Your AI team makes progress on phases you don’t own, and world events can pull Q-Day closer.',
+    title: 'End the quarter — and delegate with care',
+    body: 'Advance time with End Quarter; world events can pull Q-Day closer. Phases outside your seat can be run by your AI team (Auto-complete) — fast, but the phase is flagged “unverified” and you’ll be nudged to study what you skipped.',
   },
 ]
 

@@ -132,18 +132,21 @@ export function Dial({
   value,
   hint,
   onClick,
+  title = 'click to change',
 }: {
   label: string
   value: string
   hint: string
   onClick: () => void
+  /** Tooltip — defaults to "click to change"; override to explain what the dial does. */
+  title?: string
 }) {
   return (
     <Button
       variant="ghost"
       type="button"
       onClick={onClick}
-      title="click to change"
+      title={title}
       aria-label={`${label}: ${value}. Activate to change.`}
       className="h-auto items-start justify-start whitespace-normal flex flex-col gap-px rounded-lg border border-background/20 bg-background/10 px-3 py-1.5 text-left hover:bg-background/20"
     >

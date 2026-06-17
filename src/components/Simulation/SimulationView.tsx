@@ -11,6 +11,7 @@
  * the Mission Control handoff.
  */
 import { useMemo, useState, useEffect, useRef, Suspense } from 'react'
+import { useReducedMotion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
   BUSINESS_TOOL_COMPONENTS,
@@ -247,6 +248,9 @@ export function SimulationView() {
     runCompleteSeen,
     markRunComplete,
   } = useSimulationStore()
+  // W6 (a11y): reduced-motion users get a static, scrollable feed instead of the
+  // marquee (which the global motion reset snaps + strands mid-message).
+  const reduceMotion = useReducedMotion()
   // WS-14: the active difficulty balance the engine + scoring read (config swap).
   const balance = getBalance(difficulty)
   const [report, setReport] = useState<QuarterReportData | null>(null)
@@ -911,7 +915,8 @@ export function SimulationView() {
           <Dial
             label="MODE"
             value={difficulty[0].toUpperCase() + difficulty.slice(1)}
-            hint="difficulty"
+            hint="clock + budget"
+            title="Difficulty — Easy / Realistic / Hard tune the Mosca clock pressure and your budget. Realistic is recommended for a first run."
             onClick={() =>
               setDifficulty(DIFF_ORDER[(DIFF_ORDER.indexOf(difficulty) + 1) % DIFF_ORDER.length])
             }
@@ -997,14 +1002,16 @@ export function SimulationView() {
         <span className="shrink-0 font-mono text-[11px] font-extrabold uppercase tracking-[0.16em] text-primary">
           ● LIVE FEED
         </span>
-        <div className="relative flex-1 overflow-hidden">
-          {/* duplicated track → seamless left-scrolling marquee (pauses on hover) */}
-          <div className="flex w-max animate-sim-ticker gap-6">
-            {[...tickerItems, ...tickerItems].map((e, i) => {
+        <div className={`relative flex-1 ${reduceMotion ? 'overflow-x-auto' : 'overflow-hidden'}`}>
+          {/* Normal: duplicated track → seamless left-scrolling marquee (pauses on
+              hover). Reduced-motion (W6): a single static, horizontally-scrollable
+              row of every item — no animation, nothing stranded off-screen. */}
+          <div className={`flex gap-6 ${reduceMotion ? '' : 'w-max animate-sim-ticker'}`}>
+            {(reduceMotion ? tickerItems : [...tickerItems, ...tickerItems]).map((e, i) => {
               const sev = SEVERITY_META[e.sev]
               // the marquee duplicates the track for a seamless scroll; the second
               // copy is hidden from the accessibility tree so SR reads each once.
-              const isDuplicate = i >= tickerItems.length
+              const isDuplicate = !reduceMotion && i >= tickerItems.length
               return (
                 <span
                   key={i}
