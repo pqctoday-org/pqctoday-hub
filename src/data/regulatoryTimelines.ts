@@ -121,6 +121,14 @@ export const BSI_TIMELINE = {
 
 // ── Common CRQC (Cryptographically Relevant Quantum Computer) Estimates ───
 
+/**
+ * Public research RANGE for CRQC arrival, cited by the Assess risk windows.
+ * NOTE: the Simulation's Mosca clock uses a deliberately MORE aggressive
+ * first-CRQC anchor — `QC_FIRST_YEAR = 2029` in quantumTimeline.ts — which sits
+ * at/below `lowerBound` on purpose (urgency for the most sensitive assets).
+ * `QC_BROAD_YEAR` (2035) == `moderate` here. quantumTimeline.test.ts locks that
+ * relationship so the two blocks stay consistent.
+ */
 export const CRQC_ESTIMATES = {
   /** Conservative lower bound for CRQC arrival (research consensus) */
   lowerBound: 2030,
