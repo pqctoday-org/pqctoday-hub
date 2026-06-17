@@ -14,6 +14,7 @@ import {
   SIM_LEARN_MODULES,
   BUSINESS_TOOL_COMPONENTS,
   ARTIFACT_TYPE_TO_TOOL_ID,
+  WORKSHOP_TOOL_COMPONENTS,
 } from './resourceContract'
 import { SIM_TREES, flattenTree, type TreeStep, type StepKind } from '@/simulation'
 import type { PhaseId } from '@/data/frameworkPhases'
@@ -29,6 +30,11 @@ describe('embed contract (WS-09)', () => {
     expect(canEmbedStep(step({ kind: 'learn', moduleId: 'not-a-real-module' }))).toBe(false)
     expect(canEmbedStep(step({ kind: 'reference', refId: 'timeline' }))).toBe(false)
     expect(canEmbedStep(step({ kind: 'activity' }))).toBe(false) // no artifactType
+    // workshop: embeddable iff the tool id resolves to a registered component
+    expect(
+      canEmbedStep(step({ kind: 'workshop', workshopId: Object.keys(WORKSHOP_TOOL_COMPONENTS)[0] }))
+    ).toBe(true)
+    expect(canEmbedStep(step({ kind: 'workshop', workshopId: 'not-a-tool' }))).toBe(false)
     // the assess-engine reference opens the AssessWizard embedded in the sim
     expect(canEmbedStep(step({ kind: 'reference', refId: 'assess-engine' }))).toBe(true)
   })
@@ -94,11 +100,13 @@ describe('standard completion convention (C0)', () => {
     isModuleComplete: () => true,
     hasArtifact: () => true,
     isRefVisited: () => true,
+    isWorkshopComplete: () => true,
   }
   const incomplete: StepCompletionContext = {
     isModuleComplete: () => false,
     hasArtifact: () => false,
     isRefVisited: () => false,
+    isWorkshopComplete: () => false,
   }
 
   // A representative step for EVERY StepKind — typed as a Record<StepKind, …> so
@@ -106,10 +114,12 @@ describe('standard completion convention (C0)', () => {
   const anArtifactType = Object.keys(ARTIFACT_TYPE_TO_TOOL_ID)[0] as NonNullable<
     TreeStep['artifactType']
   >
+  const aWorkshopId = Object.keys(WORKSHOP_TOOL_COMPONENTS)[0]
   const KIND_FIXTURES: Record<StepKind, TreeStep> = {
     learn: step({ kind: 'learn', moduleId: 'hsm-pqc' }),
     activity: step({ kind: 'activity', artifactType: anArtifactType }),
     reference: step({ kind: 'reference', refId: 'assess-engine' }),
+    workshop: step({ kind: 'workshop', workshopId: aWorkshopId }),
   }
 
   // Every embeddable kind must declare a completion branch in isStepComplete:
