@@ -71,6 +71,16 @@ export function isTimelineStep(s: TreeStep): boolean {
   return s.kind === 'reference' && s.refId === 'timeline'
 }
 
+/**
+ * True for an `algorithms-protocol-matrix` reference step — the Algorithms page's
+ * Protocol Support tab (PQCProtocolMatrix) opens EMBEDDED in the sim (C5 vertical
+ * slice). Completion is the standard visited-ref mark. The two comparison tabs are
+ * not yet embeddable (they need AlgorithmsView's shared state lifted into a hook).
+ */
+export function isProtocolMatrixStep(s: TreeStep): boolean {
+  return s.kind === 'reference' && s.refId === 'algorithms-protocol-matrix'
+}
+
 /** True when this step can be rendered embedded in the sim (vs. navigated to). */
 export function canEmbedStep(s: TreeStep): boolean {
   if (s.kind === 'learn') return !!s.moduleId && isEmbeddableModule(s.moduleId)
@@ -84,6 +94,7 @@ export function canEmbedStep(s: TreeStep): boolean {
   if (s.kind === 'catalog') return true
   if (isAssessStep(s)) return true
   if (isTimelineStep(s)) return true
+  if (isProtocolMatrixStep(s)) return true
   return false
 }
 
