@@ -6,6 +6,7 @@ test-results.json
 test-results-clean.json
 public/embed/sdk.js
 public/wasm/openssl.js
+public/wasm/softhsm.js
 public/wasm/openssh-server.js
 public/wasm/openssh-client.js
 public/wasm/strongswan.js
@@ -17,6 +18,7 @@ src/wasm/softhsmrustv3_bg.js
 src/wasm/softhsmrustv3.d.ts
 src/vendor/softhsm-wasm/wasm/softhsmrustv3_bg.js
 src/vendor/softhsm-wasm/wasm/softhsmrustv3.js
+src/vendor/softhsm-wasm/wasm/softhsm.js
 public/wasm/rust/softhsmrustv3.js
 openssl-3.6.0-build
 public/wasm-new
