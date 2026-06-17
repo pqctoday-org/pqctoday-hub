@@ -684,16 +684,19 @@ export function SimulationView() {
   // DecisionSection's "recommended" next move — it is NOT the only way to act:
   // the active band's steps are all openable (any order) in the ladder below.
   const firstOpenIdx = flatSteps.findIndex((s) => !stepDone(s, sel))
-  // C1 #3 — phase debrief: once a phase is cleared, recommend the learn modules
-  // the player advanced past WITHOUT actually completing (skipped, or delegated
-  // to the AI team). Deep, embeddable study to backfill what the run skimmed.
-  const recommendedStudy = phaseCleared
-    ? flatSteps.filter((s, i, arr) => {
-        if (s.kind !== 'learn' || !s.moduleId || !isEmbeddableModule(s.moduleId)) return false
-        if (moduleDone(s.moduleId)) return false // player already completed it
-        return arr.findIndex((o) => o.moduleId === s.moduleId) === i // dedupe by module
-      })
-    : []
+  // C1 #3 + W2c — phase debrief: recommend the learn modules the player advanced
+  // past WITHOUT actually completing. Fires when the phase is cleared OR when it
+  // was delegated to the AI team (phaseAutoActive) — so delegating a phase never
+  // silently buries the study you skipped (audit gap #6: delegation must stay
+  // honest about unverified understanding).
+  const recommendedStudy =
+    phaseCleared || phaseAutoActive
+      ? flatSteps.filter((s, i, arr) => {
+          if (s.kind !== 'learn' || !s.moduleId || !isEmbeddableModule(s.moduleId)) return false
+          if (moduleDone(s.moduleId)) return false // player already completed it
+          return arr.findIndex((o) => o.moduleId === s.moduleId) === i // dedupe by module
+        })
+      : []
   // The tree DRIVES the recommended move. Build step→(level,activity) metadata in
   // the same flattened order as flatSteps; the recommendation is simply the first
   // not-yet-done leaf. firstOpenIdx === -1 ⇒ every level earned.
@@ -1381,6 +1384,16 @@ export function SimulationView() {
               >
                 {phaseCleared ? 'CLEARED' : 'ACTIVE'} · PHASE {phase.number}
               </span>
+              {phaseAutoActive && (
+                // W2c: be honest that an AI-delegated phase wasn't learned by the
+                // player — the maturity credit is real, the understanding isn't.
+                <span
+                  className="rounded-full bg-warning/15 px-2 py-0.5 font-mono text-[10px] font-bold text-warning"
+                  title="This phase was run by your AI team — its tasks are auto-completed, so your own understanding is unverified. See the recommended study below."
+                >
+                  RUN BY AI · UNVERIFIED
+                </span>
+              )}
               <span className="text-xl font-extrabold text-foreground">{phase.name}</span>
               {phase.gate && (
                 <span className="ml-auto font-mono text-[10.5px] text-muted-foreground">
@@ -1448,15 +1461,28 @@ export function SimulationView() {
               assessRec={nextMoveRec}
             />
 
-            {/* C1 #3 — phase debrief: study what the run skipped. Opens each
-                module embedded in the sim (no navigate-away). */}
-            {phaseCleared && recommendedStudy.length > 0 && (
-              <div className="mb-4 rounded-lg border border-success/30 bg-success/5 p-3">
-                <Eyebrow className="text-success">✓ Phase cleared — recommended study</Eyebrow>
+            {/* C1 #3 + W2c — phase debrief: study what the run skipped. Opens each
+                module embedded in the sim (no navigate-away). Shows for a cleared
+                phase OR a delegated one, with honest framing for the AI-run case. */}
+            {(phaseCleared || phaseAutoActive) && recommendedStudy.length > 0 && (
+              <div
+                className={`mb-4 rounded-lg border p-3 ${
+                  phaseAutoActive
+                    ? 'border-warning/30 bg-warning/5'
+                    : 'border-success/30 bg-success/5'
+                }`}
+              >
+                {phaseAutoActive ? (
+                  <Eyebrow className="text-warning">
+                    ⚠ Run by your AI team — study to verify
+                  </Eyebrow>
+                ) : (
+                  <Eyebrow className="text-success">✓ Phase cleared — recommended study</Eyebrow>
+                )}
                 <p className="mt-1 mb-2 text-[11px] text-muted-foreground">
-                  You advanced past {recommendedStudy.length} module
-                  {recommendedStudy.length !== 1 ? 's' : ''} without completing them. Study to
-                  deepen your understanding:
+                  {phaseAutoActive
+                    ? `Your AI team cleared this phase. You haven't completed ${recommendedStudy.length} of its module${recommendedStudy.length !== 1 ? 's' : ''} — study to actually understand what was done:`
+                    : `You advanced past ${recommendedStudy.length} module${recommendedStudy.length !== 1 ? 's' : ''} without completing them. Study to deepen your understanding:`}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {recommendedStudy.map((s) => (
