@@ -37,10 +37,10 @@ const TREE: PhaseTree = {
               moduleId: 'merkle-tree-certs',
             },
             {
-              kind: 'reference',
+              kind: 'workshop',
               label: 'Practice: Merkle Tree Certificates workshop',
               to: '/playground/merkle-proof',
-              refId: 'pg-merkle-proof',
+              workshopId: 'merkle-proof',
             },
             {
               kind: 'activity',
@@ -69,10 +69,10 @@ const TREE: PhaseTree = {
               moduleId: 'kms-pqc',
             },
             {
-              kind: 'reference',
+              kind: 'workshop',
               label: 'Practice: HSM capacity calculator',
               to: '/playground/hsm-capacity',
-              refId: 'pg-hsm-capacity',
+              workshopId: 'hsm-capacity',
             },
           ],
         },
@@ -95,10 +95,10 @@ const TREE: PhaseTree = {
               refId: 'algorithms-protocol-matrix',
             },
             {
-              kind: 'reference',
+              kind: 'workshop',
               label: 'Practice: certificate chain / handshake size',
               to: '/playground/cert-capacity',
-              refId: 'pg-cert-capacity',
+              workshopId: 'cert-capacity',
             },
           ],
         },

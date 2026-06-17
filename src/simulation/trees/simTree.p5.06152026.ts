@@ -81,10 +81,10 @@ const TREE: PhaseTree = {
           output: 'Pilot results reports',
           steps: [
             {
-              kind: 'reference',
+              kind: 'workshop',
               label: 'Practice: measure the TLS 1.3 hybrid handshake',
               to: '/playground/tls-simulator',
-              refId: 'pg-tls-simulator',
+              workshopId: 'tls-simulator',
             },
             {
               kind: 'activity',
@@ -134,10 +134,10 @@ const TREE: PhaseTree = {
               moduleId: 'database-encryption-pqc',
             },
             {
-              kind: 'reference',
+              kind: 'workshop',
               label: 'Practice: PQC key-wrapping (envelope encryption)',
               to: '/playground/envelope-encrypt',
-              refId: 'pg-envelope-encrypt',
+              workshopId: 'envelope-encrypt',
             },
             {
               kind: 'activity',

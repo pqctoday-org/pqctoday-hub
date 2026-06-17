@@ -61,6 +61,11 @@ describe('embed contract (WS-09)', () => {
             toolId ? BUSINESS_TOOL_COMPONENTS[toolId] : undefined,
             `${phase}: activity ${s.artifactType}`
           ).toBeTruthy()
+        } else if (s.kind === 'workshop' && s.workshopId) {
+          expect(
+            WORKSHOP_TOOL_COMPONENTS[s.workshopId],
+            `${phase}: workshop ${s.workshopId}`
+          ).toBeTruthy()
         } else {
           // the only embeddable reference is the assess-engine wizard
           expect(isAssessStep(s), `${phase}: embeddable ref ${s.refId} is the assess wizard`).toBe(
@@ -85,6 +90,26 @@ describe('embed contract (WS-09)', () => {
           ).toBeDefined()
         }
       }
+    }
+  })
+
+  // C2 — the authored trees actually contain hands-on workshop steps (the 5
+  // "Practice:" leaves), and every one embeds. Guards against a regression that
+  // reverts them to plain `reference` steps (which would navigate out of the sim).
+  it('C2: authored trees contain embeddable workshop steps', () => {
+    const workshops: TreeStep[] = []
+    for (const phase of Object.keys(SIM_TREES) as PhaseId[]) {
+      for (const s of flattenTree(SIM_TREES[phase]!)) {
+        if (s.kind === 'workshop') workshops.push(s)
+      }
+    }
+    expect(workshops.length).toBeGreaterThanOrEqual(5)
+    for (const s of workshops) {
+      expect(canEmbedStep(s), `workshop ${s.workshopId} embeds`).toBe(true)
+      expect(
+        WORKSHOP_TOOL_COMPONENTS[s.workshopId!],
+        `workshop ${s.workshopId} component`
+      ).toBeTruthy()
     }
   })
 

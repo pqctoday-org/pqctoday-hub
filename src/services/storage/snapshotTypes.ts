@@ -157,6 +157,7 @@ export interface SimulationData {
   crqcShift: number
   events: unknown[]
   visitedRefs: string[]
+  visitedWorkshops: string[]
   auto: string[]
   seed: number
   difficulty: string
