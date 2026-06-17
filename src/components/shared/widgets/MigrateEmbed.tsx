@@ -14,6 +14,7 @@
  * stays at the top.
  */
 import { MigrateView } from '@/components/Migrate/MigrateView'
+import { useSimulationStore } from '@/store/useSimulationStore'
 
 interface MigrateEmbedProps {
   /** Layer to pre-scope the catalog to (e.g. 'layer-1'). Reserved for a follow-up
@@ -24,5 +25,9 @@ interface MigrateEmbedProps {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function MigrateEmbed({ catalogLayer: _catalogLayer }: MigrateEmbedProps) {
-  return <MigrateView simEmbed />
+  // GAME-SCOPED selection (C7 Decision 4): the embedded catalog reads/writes the
+  // sim store's `picks`, never the standalone page's global My Products.
+  const picks = useSimulationStore((s) => s.picks)
+  const togglePick = useSimulationStore((s) => s.togglePick)
+  return <MigrateView simEmbed selected={picks} onToggle={togglePick} />
 }

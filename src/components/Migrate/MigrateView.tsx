@@ -87,9 +87,18 @@ interface MigrateViewProps {
   /** When true, renders headless inside the simulation (PageHeader hidden, URL
    *  state is local to the MemoryRouter the sim wraps this in). */
   simEmbed?: boolean
+  /** C7 game-scoped selection: when provided (sim embed), product picks read/write
+   *  THIS instead of the global useMigrateSelectionStore.myProducts, so in-sim picks
+   *  never touch the standalone catalog's "My Products" (and vice-versa). */
+  selected?: string[]
+  onToggle?: (productId: string) => void
 }
 
-export const MigrateView: React.FC<MigrateViewProps> = ({ simEmbed = false }) => {
+export const MigrateView: React.FC<MigrateViewProps> = ({
+  simEmbed = false,
+  selected,
+  onToggle,
+}) => {
   const isEmbedded = useIsEmbedded()
   useWorkflowPhaseTracker('migrate')
   const addHistoryEvent = useHistoryStore((s) => s.addEvent)
@@ -152,8 +161,8 @@ export const MigrateView: React.FC<MigrateViewProps> = ({ simEmbed = false }) =>
     activeSubCategory,
     setActiveLayer,
     setActiveSubCategory,
-    myProducts,
-    toggleMyProduct,
+    myProducts: storeMyProducts,
+    toggleMyProduct: storeToggleMyProduct,
     showOnlyMyProducts,
     setShowOnlyMyProducts,
     viewMode,
@@ -161,6 +170,12 @@ export const MigrateView: React.FC<MigrateViewProps> = ({ simEmbed = false }) =>
     workflowCollapsed,
     setWorkflowCollapsed,
   } = useMigrateSelectionStore()
+
+  // C7 game-scoped selection: inside the sim the picks come from props (the sim
+  // store), otherwise from the global My Products store. One pair of accessors so
+  // every picker/membership/badge below is source-agnostic.
+  const myProducts = selected ?? storeMyProducts
+  const toggleMyProduct = onToggle ?? storeToggleMyProduct
 
   // Shared expanded-row state — survives layer/filter switches; init from ?product= deep link
   const [tableExpandedIds, setTableExpandedIds] = useState<Set<string>>(() => {
@@ -490,9 +505,12 @@ export const MigrateView: React.FC<MigrateViewProps> = ({ simEmbed = false }) =>
   const myProductsSet = useMemo(() => new Set(myProducts), [myProducts])
   const isStackAllView = isStackMode && activeInfrastructureLayer === 'All'
 
-  // Fire a history event when the product selection changes meaningfully (debounced)
+  // Fire a history event when the product selection changes meaningfully (debounced).
+  // Suppressed in the sim embed — game-scoped picks shouldn't write to the global
+  // learning history.
   const prevProductCountRef = useRef(myProducts.length)
   useEffect(() => {
+    if (simEmbed) return
     const count = myProducts.length
     if (count === prevProductCountRef.current) return
     prevProductCountRef.current = count
@@ -507,7 +525,7 @@ export const MigrateView: React.FC<MigrateViewProps> = ({ simEmbed = false }) =>
       })
     }, 1500)
     return () => clearTimeout(timer)
-  }, [myProducts.length, addHistoryEvent])
+  }, [myProducts.length, addHistoryEvent, simEmbed])
 
   // Debounced search
   // eslint-disable-next-line react-hooks/exhaustive-deps

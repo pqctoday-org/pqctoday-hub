@@ -158,6 +158,7 @@ export interface SimulationData {
   events: unknown[]
   visitedRefs: string[]
   visitedWorkshops: string[]
+  picks: string[]
   auto: string[]
   seed: number
   difficulty: string

@@ -45,10 +45,20 @@ describe('useSimulationStore', () => {
     expect(s().visitedRefs).toEqual(['timeline'])
   })
 
-  it('reset restores the seed', () => {
+  it('togglePick adds and removes a game-scoped product pick', () => {
+    s().togglePick('prod-a')
+    s().togglePick('prod-b')
+    expect(s().picks.sort()).toEqual(['prod-a', 'prod-b'])
+    s().togglePick('prod-a') // toggle off
+    expect(s().picks).toEqual(['prod-b'])
+  })
+
+  it('reset restores the seed (and clears game-scoped picks)', () => {
     s().setSel('p7')
+    s().togglePick('prod-a')
     s().reset()
     expect(s().sel).toBe('p0')
+    expect(s().picks).toEqual([])
   })
 
   it('auto-completion delegates steps and can be cancelled per phase', () => {
