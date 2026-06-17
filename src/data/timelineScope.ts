@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * Timeline scope helper (C6) — pure predicate that filters `CountryData[]` to a
- * sim-supplied scope. Shared between `TimelineView` (behaviour-preserving refactor
- * of the inline `ganttData` memo) and `TimelineEmbed` (the sim mount arm).
+ * Timeline scope helpers (C6) — pure functions that filter `CountryData[]` to a
+ * scope. THE single source of truth for "what rows does scope X select?", used by
+ * BOTH surfaces:
+ *  - `TimelineView.ganttData` calls `applyTimelineScope(data, { categories })` then
+ *    `applyTierFilter(..., tierFilter)` (its category-first/tier-second split is
+ *    behaviour-equivalent to the old single combined predicate).
+ *  - `TimelineEmbed` calls the same two functions with the sim-supplied scope.
  *
- * `TimelineView` continues to work exactly as before: it passes its resolved
- * `categoryFilter` / `tierFilter` / country / region values to `applyTimelineScope`
- * instead of inlining the predicate. Pinned by the existing `TimelineView.test.ts`.
+ * Pure: no stores, no URL reads. `parseTimelineScope` turns a tree-step `to`
+ * query into a scope. (Direct unit coverage in `timelineScope.test.ts`.)
  */
 import type { CountryData } from '@/types/timeline'
 import type { EntityType } from '@/types/timeline'
@@ -15,6 +18,8 @@ import { matchesTrustTierFilter } from '@/components/common/TrustTierFilter'
 import { CATEGORY_DEFAULT } from '@/components/Timeline/CategoryFilter'
 import { REGION_COUNTRIES_MAP } from '@/data/personaConfig'
 
+const VALID_CATEGORIES: ReadonlySet<EntityType> = new Set(['government', 'standards', 'vendor'])
+
 export interface TimelineScope {
   /** Show only this country. Takes precedence over `region`. */
   country?: string
@@ -22,6 +27,8 @@ export interface TimelineScope {
   region?: string
   /** Entity-type filter — defaults to CATEGORY_DEFAULT when omitted. */
   categories?: EntityType[]
+  /** Trust-tier filter (e.g. ['Authoritative']) — empty/omitted = no tier filter. */
+  tiers?: string[]
 }
 
 /**
@@ -80,9 +87,13 @@ export function applyTierFilter(countries: CountryData[], tiers: string[]): Coun
 }
 
 /**
- * Parse the `scope` from a tree-step's `to` query string.
- * Supports `?country=Germany`, `?region=Europe`.
- * An empty scope means "default" — caller supplies a fallback (e.g. assessed jurisdiction).
+ * Parse the `scope` from a tree-step's `to` query string. Mirrors the params the
+ * deep-link guard allows on `/timeline` so a scoped step is honoured in the embed,
+ * not silently ignored: `?country=`, `?region=`, `?cat=` (repeatable), `?tier=`
+ * (repeatable). `?q=` (free-text search) is intentionally NOT parsed — it only
+ * applies to the standalone /timeline page (the navigate-away fallback), not the
+ * embedded, toolbar-less Gantt. An empty scope means "default" — the caller
+ * supplies a fallback (e.g. the assessed jurisdiction).
  */
 export function parseTimelineScope(to: string): TimelineScope {
   const qIdx = to.indexOf('?')
@@ -93,5 +104,11 @@ export function parseTimelineScope(to: string): TimelineScope {
   const region = params.get('region')
   if (country) scope.country = country
   else if (region) scope.region = region
+  const cats = params
+    .getAll('cat')
+    .filter((c): c is EntityType => VALID_CATEGORIES.has(c as EntityType))
+  if (cats.length > 0) scope.categories = cats
+  const tiers = params.getAll('tier')
+  if (tiers.length > 0) scope.tiers = tiers
   return scope
 }

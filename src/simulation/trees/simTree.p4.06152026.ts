@@ -46,7 +46,7 @@ const TREE: PhaseTree = {
           steps: [
             {
               kind: 'reference',
-              label: 'Reference: the 2026–2030 deadline squeeze',
+              label: 'See your country on the global PQC roadmap (2026–2030 deadline squeeze)',
               to: '/timeline',
               refId: 'timeline',
             },

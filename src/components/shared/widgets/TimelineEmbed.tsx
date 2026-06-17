@@ -8,11 +8,11 @@
  *
  * Used by SimulationView when a `reference` step with refId:'timeline' is
  * opened via `openStep()`. The scope is derived from the player's assessed
- * country (or the step's `?country=` / `?region=` query).
+ * country (or the step's `?country=` / `?region=` / `?cat=` / `?tier=` query).
  */
 import { useMemo } from 'react'
 import { timelineData, transformToGanttData } from '@/data/timelineData'
-import { applyTimelineScope, type TimelineScope } from '@/data/timelineScope'
+import { applyTimelineScope, applyTierFilter, type TimelineScope } from '@/data/timelineScope'
 import { SimpleGanttChart } from '@/components/Timeline/SimpleGanttChart'
 
 interface TimelineEmbedProps {
@@ -36,7 +36,9 @@ const EMPTY_COUNTRY_ITEMS: { id: string; label: string; icon: null }[] = [
 export function TimelineEmbed({ scope }: TimelineEmbedProps) {
   const ganttData = useMemo(() => {
     if (!timelineData || timelineData.length === 0) return []
-    return transformToGanttData(applyTimelineScope(timelineData, scope))
+    const scoped = applyTimelineScope(timelineData, scope)
+    const tiered = applyTierFilter(scoped, scope.tiers ?? [])
+    return transformToGanttData(tiered)
   }, [scope])
 
   return (
