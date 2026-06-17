@@ -54,8 +54,32 @@ function getBaselineName(compareType: 'KEM' | 'Signature' | null): string | null
  * embedded host can drive the same behaviour. Page chrome (persona reads, hints,
  * the info modal) stays in the consuming component.
  */
-export function useAlgorithmExplorer(personaDefaults: ReturnType<typeof getAlgorithmDefaults>) {
-  const [searchParams, setSearchParams] = useSearchParams()
+export function useAlgorithmExplorer(
+  personaDefaults: ReturnType<typeof getAlgorithmDefaults>,
+  opts: { urlSync?: boolean; initialParams?: string } = {}
+) {
+  const { urlSync = true, initialParams = '' } = opts
+  // Standalone /algorithms page: urlSync=true → drive the real page URL exactly
+  // as before. Embedded in the sim: urlSync=false → filter/compare state lives in
+  // LOCAL params so it never corrupts /simulation's URL and needs no nested
+  // <Router> (which React forbids). `useSearchParams` is always called (hook
+  // rules); its result is simply ignored when embedded.
+  const [realParams, realSetParams] = useSearchParams()
+  const [localParams, setLocalParams] = useState(() => new URLSearchParams(initialParams))
+  const searchParams = urlSync ? realParams : localParams
+  const setSearchParams: typeof realSetParams = urlSync
+    ? realSetParams
+    : (nextInit) =>
+        setLocalParams((prev) => {
+          const next = new URLSearchParams(
+            typeof nextInit === 'function'
+              ? (nextInit(prev) as URLSearchParams)
+              : (nextInit as URLSearchParams)
+          )
+          // Keep the same object when unchanged so the searchParams-keyed effects
+          // don't re-fire forever (matches real setSearchParams' no-op).
+          return next.toString() === prev.toString() ? prev : next
+        })
   const comparisonPanelRef = useRef<HTMLDivElement>(null)
 
   // --- Active tab ---
