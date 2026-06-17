@@ -74,6 +74,7 @@ const TREE: PhaseTree = {
               kind: 'catalog',
               label: 'Browse the Migrate discovery catalog',
               to: '/migrate',
+              catalogId: 'discovery',
             },
             {
               kind: 'activity',

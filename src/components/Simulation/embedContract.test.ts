@@ -161,14 +161,14 @@ describe('standard completion convention (C0)', () => {
     hasArtifact: () => true,
     isRefVisited: () => true,
     isWorkshopComplete: () => true,
-    hasCatalogPicks: () => true,
+    isCatalogStepDone: () => true,
   }
   const incomplete: StepCompletionContext = {
     isModuleComplete: () => false,
     hasArtifact: () => false,
     isRefVisited: () => false,
     isWorkshopComplete: () => false,
-    hasCatalogPicks: () => false,
+    isCatalogStepDone: () => false,
   }
 
   // A representative step for EVERY StepKind — typed as a Record<StepKind, …> so
@@ -182,11 +182,14 @@ describe('standard completion convention (C0)', () => {
     activity: step({ kind: 'activity', artifactType: anArtifactType }),
     reference: step({ kind: 'reference', refId: 'assess-engine' }),
     workshop: step({ kind: 'workshop', workshopId: aWorkshopId }),
-    catalog: step({ kind: 'catalog', to: '/migrate' }),
+    catalog: step({ kind: 'catalog', to: '/migrate', catalogId: 'discovery' }),
   }
-  // catalog: isStepComplete delegates to hasCatalogPicks() — override needed
-  const completedWithPicks: StepCompletionContext = { ...completed, hasCatalogPicks: () => true }
-  const incompleteWithPicks: StepCompletionContext = { ...incomplete, hasCatalogPicks: () => false }
+  // catalog: isStepComplete delegates to isCatalogStepDone(id) — override needed
+  const completedWithPicks: StepCompletionContext = { ...completed, isCatalogStepDone: () => true }
+  const incompleteWithPicks: StepCompletionContext = {
+    ...incomplete,
+    isCatalogStepDone: () => false,
+  }
 
   // Every embeddable kind must declare a completion branch in isStepComplete:
   // it reports complete under a "completed" context and not under an empty one.
@@ -194,7 +197,7 @@ describe('standard completion convention (C0)', () => {
   // fails the "completed" assertion here — the contract guard.
   it('every step kind reports completion correctly (no kind falls through)', () => {
     for (const [kind, s] of Object.entries(KIND_FIXTURES) as [StepKind, TreeStep][]) {
-      // catalog uses hasCatalogPicks() — use the overridden contexts for it
+      // catalog uses isCatalogStepDone(id) — use the overridden contexts for it
       const doneCtx = kind === 'catalog' ? completedWithPicks : completed
       const notDoneCtx = kind === 'catalog' ? incompleteWithPicks : incomplete
       expect(isStepComplete(s, doneCtx), `${kind} should be complete`).toBe(true)

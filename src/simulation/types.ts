@@ -36,8 +36,11 @@ export interface TreeStep {
    *  via the visited-workshops set. */
   workshopId?: string
   /** catalog: the product-catalog layer scope (C7 — embed the Migrate catalog in
-   *  the sim). Completion: ≥1 product added to "My Products" from the catalog. */
+   *  the sim). Reserved for an optional focus filter. */
   catalogLayer?: string
+  /** catalog: stable id of this catalog task (C7) — completion is per-task: the
+   *  step is done when the player picks a PQC-capable product while it is open. */
+  catalogId?: string
 }
 
 /** A framework Activity (e.g. "1.2 Deploy Cryptographic Discovery") + its leaves. */
