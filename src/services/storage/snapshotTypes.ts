@@ -159,6 +159,7 @@ export interface SimulationData {
   visitedRefs: string[]
   visitedWorkshops: string[]
   visitedScenarios: string[]
+  runCompleteSeen: boolean
   picks: string[]
   catalogCompleted: string[]
   auto: string[]
