@@ -28,13 +28,13 @@ export const JURISDICTION_RULES: Record<string, JurisdictionRule> = {
     authority: 'BSI',
     hybrid: 'required',
     endState: 'hybrid',
-    note: 'Hybrid (classical + PQC) is required; hybrid is also the accepted end state.',
+    note: 'Hybrid (classical + PQC) is required through the transition; BSI accepts hybrid as a long-term posture, not only an interim step.',
   },
   FR: {
     authority: 'ANSSI',
     hybrid: 'required',
     endState: 'hybrid',
-    note: 'Hybrid is required through the transition; hybrid is the accepted end state.',
+    note: 'Hybrid is required through the transition; ANSSI accepts hybrid as a long-term posture, not only an interim step.',
   },
   UK: {
     authority: 'NCSC',
@@ -46,7 +46,7 @@ export const JURISDICTION_RULES: Record<string, JurisdictionRule> = {
     authority: 'ASD',
     hybrid: 'discouraged',
     endState: 'pure',
-    note: 'ASD discourages hybrid; move straight to pure PQC.',
+    note: 'ASD does not mandate hybrid and permits adopting final PQC standards directly; it emphasises hybrid less than BSI/ANSSI. (Stance modelled as "lean pure" — recommends a pure end state.)',
   },
 }
 

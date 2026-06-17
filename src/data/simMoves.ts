@@ -222,7 +222,7 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       label: 'Deploy to a FIPS-required system before a validated module exists',
       desc: 'Push PQC into the regulated estate now.',
       evaluate: trap(
-        'Fails. As of June 2026 there is no FIPS 140-3-validated PQC module. In a FIPS-required environment that is non-compliant — gate PQC there behind CAVP/validation, and deploy first where validation is not mandated.'
+        'Fails (as of June 2026 — re-check the live CMVP list, since validated ML-KEM/ML-DSA modules are expected imminently). Until a FIPS 140-3-validated PQC module exists, a FIPS-required environment is non-compliant — gate PQC there behind CAVP/validation, and deploy first where validation is not mandated.'
       ),
     },
     {
