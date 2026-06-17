@@ -523,6 +523,16 @@ export function SimulationView() {
   // DecisionSection's "recommended" next move — it is NOT the only way to act:
   // the active band's steps are all openable (any order) in the ladder below.
   const firstOpenIdx = flatSteps.findIndex((s) => !stepDone(s, sel))
+  // C1 #3 — phase debrief: once a phase is cleared, recommend the learn modules
+  // the player advanced past WITHOUT actually completing (skipped, or delegated
+  // to the AI team). Deep, embeddable study to backfill what the run skimmed.
+  const recommendedStudy = phaseCleared
+    ? flatSteps.filter((s, i, arr) => {
+        if (s.kind !== 'learn' || !s.moduleId || !isEmbeddableModule(s.moduleId)) return false
+        if (moduleDone(s.moduleId)) return false // player already completed it
+        return arr.findIndex((o) => o.moduleId === s.moduleId) === i // dedupe by module
+      })
+    : []
   // The tree DRIVES the recommended move. Build step→(level,activity) metadata in
   // the same flattened order as flatSteps; the recommendation is simply the first
   // not-yet-done leaf. firstOpenIdx === -1 ⇒ every level earned.
@@ -1196,6 +1206,32 @@ export function SimulationView() {
               onOpenStep={openStep}
               assessRec={nextMoveRec}
             />
+
+            {/* C1 #3 — phase debrief: study what the run skipped. Opens each
+                module embedded in the sim (no navigate-away). */}
+            {phaseCleared && recommendedStudy.length > 0 && (
+              <div className="mb-4 rounded-lg border border-success/30 bg-success/5 p-3">
+                <Eyebrow className="text-success">✓ Phase cleared — recommended study</Eyebrow>
+                <p className="mt-1 mb-2 text-[11px] text-muted-foreground">
+                  You advanced past {recommendedStudy.length} module
+                  {recommendedStudy.length !== 1 ? 's' : ''} without completing them. Study to
+                  deepen your understanding:
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {recommendedStudy.map((s) => (
+                    <Button
+                      key={s.moduleId}
+                      type="button"
+                      variant="ghost"
+                      onClick={() => openStep(s)}
+                      className="h-auto rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary hover:bg-primary/20"
+                    >
+                      {s.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* maturity gates — read-only; each level is earned only by passing its
               gate (completing that level's activities from real hub state) */}
