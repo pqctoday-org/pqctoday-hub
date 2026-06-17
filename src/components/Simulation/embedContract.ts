@@ -72,33 +72,22 @@ export function isTimelineStep(s: TreeStep): boolean {
 }
 
 /**
- * True for an `algorithms-protocol-matrix` reference step — the Algorithms page's
- * Protocol Support tab (PQCProtocolMatrix) opens EMBEDDED in the sim (C5 vertical
- * slice). Completion is the standard visited-ref mark. The two comparison tabs are
- * not yet embeddable (they need AlgorithmsView's shared state lifted into a hook).
+ * The Algorithms-page tabs that embed in the sim (C5-full). Pure string set so
+ * canEmbedStep stays free of component imports; the component + completion model
+ * for each lives in `SIM_ALGORITHM_TABS` (algorithmTabs.tsx), which is kept in
+ * sync by `algorithmTabs.test.ts`. Protocol Support is a reviewed-mark; the
+ * Transition + Detailed comparison tabs are "choices that count" (confirm records
+ * an artifact). All complete via the standard visited-ref convention.
  */
-export function isProtocolMatrixStep(s: TreeStep): boolean {
-  return s.kind === 'reference' && s.refId === 'algorithms-protocol-matrix'
-}
+export const ALGORITHM_TAB_REF_IDS = new Set([
+  'algorithms-protocol-matrix',
+  'algorithms-transition',
+  'algorithms-detailed',
+])
 
-/**
- * True for an `algorithms-transition` reference step — the Algorithms "Transition
- * Guide" tab opens EMBEDDED (C5-full). Unlike the reviewed-mark Protocol Support
- * tab, this is a "choice that counts": the player confirms their PQC replacements,
- * which records a CBOM and marks the task done (completion via the visited-ref set,
- * set on confirm — so a standalone CBOM never pre-completes it).
- */
-export function isTransitionStep(s: TreeStep): boolean {
-  return s.kind === 'reference' && s.refId === 'algorithms-transition'
-}
-
-/**
- * True for an `algorithms-detailed` reference step — the Algorithms "Detailed
- * Comparison" tab opens EMBEDDED (C5-full). Like the Transition tab it's a choice
- * that counts: confirming records a crypto-architecture doc + marks the task done.
- */
-export function isDetailedStep(s: TreeStep): boolean {
-  return s.kind === 'reference' && s.refId === 'algorithms-detailed'
+/** True for an embeddable Algorithms-tab reference step (any of the three). */
+export function isAlgorithmTabStep(s: TreeStep): boolean {
+  return s.kind === 'reference' && !!s.refId && ALGORITHM_TAB_REF_IDS.has(s.refId)
 }
 
 /** True when this step can be rendered embedded in the sim (vs. navigated to). */
@@ -114,9 +103,7 @@ export function canEmbedStep(s: TreeStep): boolean {
   if (s.kind === 'catalog') return true
   if (isAssessStep(s)) return true
   if (isTimelineStep(s)) return true
-  if (isProtocolMatrixStep(s)) return true
-  if (isTransitionStep(s)) return true
-  if (isDetailedStep(s)) return true
+  if (isAlgorithmTabStep(s)) return true
   return false
 }
 
