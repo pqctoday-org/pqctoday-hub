@@ -25,6 +25,7 @@ import {
   isAssessStep,
   isTimelineStep,
   isProtocolMatrixStep,
+  isTransitionStep,
   isStepComplete,
   type StepCompletionContext,
 } from './embedContract'
@@ -33,6 +34,7 @@ import { parseTimelineScope } from '@/data/timelineScope'
 import { isPqcCapable } from './catalogCompletion'
 import { softwareData } from '@/data/migrateData'
 import { ProtocolMatrixEmbed } from '@/components/shared/widgets/ProtocolMatrixEmbed'
+import { AlgorithmTransitionEmbed } from '@/components/shared/widgets/AlgorithmTransitionEmbed'
 import { MigrateEmbed } from '@/components/shared/widgets/MigrateEmbed'
 import { AssessWizard } from '@/components/Assess/AssessWizard'
 import { Button } from '@/components/ui/button'
@@ -236,6 +238,9 @@ export function SimulationView() {
     catalogId?: string
   } | null>(null)
   const [protocolEmbed, setProtocolEmbed] = useState<{ title: string } | null>(null)
+  const [transitionEmbed, setTransitionEmbed] = useState<{ title: string; refId: string } | null>(
+    null
+  )
 
   const LearnComp = learnEmbed ? SIM_LEARN_MODULES[learnEmbed.moduleId] : null
   const activityToolId = activityEmbed
@@ -256,6 +261,7 @@ export function SimulationView() {
     setTimelineEmbed(null)
     setCatalogEmbed(null)
     setProtocolEmbed(null)
+    setTransitionEmbed(null)
   }
   const openStep = (s: TreeStep) => {
     if (s.kind === 'learn' && s.moduleId && isEmbeddableModule(s.moduleId)) {
@@ -283,6 +289,11 @@ export function SimulationView() {
       // reviewed-on-open: the Protocol Support tab counts as done once opened in-sim
       // (C5-a — a "reviewed" reference mark, not an emitted artifact).
       if (s.refId) markRefVisited(s.refId)
+    } else if (isTransitionStep(s)) {
+      clearAllEmbeds()
+      // NOT marked done on open — the Transition tab is a "choice that counts":
+      // it completes only when the player confirms their replacements (below).
+      setTransitionEmbed({ title: s.label, refId: s.refId ?? 'algorithms-transition' })
     } else if (isAssessStep(s)) {
       clearAllEmbeds()
       setAssessEmbed({ title: s.label })
@@ -300,6 +311,23 @@ export function SimulationView() {
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   const updateModuleProgress = useModuleStore((s) => s.updateModuleProgress)
+  // C5-full: confirming the Transition tab's PQC replacements is "a choice that
+  // counts" — it records a CBOM tagged with sim provenance (distinct moduleId, so a
+  // standalone CBOM never pre-completes this) and marks the task done via the
+  // sim-scoped visited-ref set.
+  const handleConfirmTransition = (selected: string[]) => {
+    if (!transitionEmbed) return
+    markRefVisited(transitionEmbed.refId)
+    addExecutiveDocument({
+      id: `sim-transition-cbom-${nowMs()}`,
+      moduleId: 'sim-algorithms-transition',
+      type: 'crypto-cbom',
+      title: 'PQC replacement plan (from the simulation)',
+      data: JSON.stringify({ source: 'sim-transition', replacements: selected }),
+      createdAt: nowMs(),
+    })
+    setTransitionEmbed(null)
+  }
   // C7 (Decision 4): game-scoped picks, NOT the global My Products store — so a
   // product bookmarked on the standalone /migrate page never pre-completes a
   // catalog step, and in-sim picks never leak out.
@@ -1007,7 +1035,8 @@ export function SimulationView() {
       workshopEmbed ||
       timelineEmbed ||
       catalogEmbed ||
-      protocolEmbed ? (
+      protocolEmbed ||
+      transitionEmbed ? (
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex shrink-0 items-center gap-2 border-b-2 border-primary bg-primary/10 px-4 py-2">
             <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-[9px] font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
@@ -1026,7 +1055,9 @@ export function SimulationView() {
                         ? 'Catalog'
                         : protocolEmbed
                           ? 'Protocols'
-                          : 'Assess'}{' '}
+                          : transitionEmbed
+                            ? 'Algorithms'
+                            : 'Assess'}{' '}
               · Phase {phase.number}
             </span>
             <span className="min-w-0 flex-1 truncate text-[12.5px] font-bold text-foreground">
@@ -1037,6 +1068,7 @@ export function SimulationView() {
                   timelineEmbed?.title ??
                   catalogEmbed?.title ??
                   protocolEmbed?.title ??
+                  transitionEmbed?.title ??
                   assessEmbed?.title)}
             </span>
             {/* Completion toggle — guarantees a "mark complete" path for every
@@ -1143,6 +1175,13 @@ export function SimulationView() {
               // C5 slice: the Algorithms "Protocol Support" tab, in an isolated
               // MemoryRouter (its searchParams read + internal links stay contained).
               <ProtocolMatrixEmbed />
+            ) : transitionEmbed ? (
+              // C5-full: the Algorithms "Transition Guide" tab. Confirming the PQC
+              // replacements records a sim-provenance CBOM + marks the task done.
+              <AlgorithmTransitionEmbed
+                onConfirm={handleConfirmTransition}
+                confirmed={refDone(transitionEmbed.refId)}
+              />
             ) : null}
           </div>
         </div>

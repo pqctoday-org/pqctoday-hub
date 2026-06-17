@@ -81,6 +81,17 @@ export function isProtocolMatrixStep(s: TreeStep): boolean {
   return s.kind === 'reference' && s.refId === 'algorithms-protocol-matrix'
 }
 
+/**
+ * True for an `algorithms-transition` reference step — the Algorithms "Transition
+ * Guide" tab opens EMBEDDED (C5-full). Unlike the reviewed-mark Protocol Support
+ * tab, this is a "choice that counts": the player confirms their PQC replacements,
+ * which records a CBOM and marks the task done (completion via the visited-ref set,
+ * set on confirm — so a standalone CBOM never pre-completes it).
+ */
+export function isTransitionStep(s: TreeStep): boolean {
+  return s.kind === 'reference' && s.refId === 'algorithms-transition'
+}
+
 /** True when this step can be rendered embedded in the sim (vs. navigated to). */
 export function canEmbedStep(s: TreeStep): boolean {
   if (s.kind === 'learn') return !!s.moduleId && isEmbeddableModule(s.moduleId)
@@ -95,6 +106,7 @@ export function canEmbedStep(s: TreeStep): boolean {
   if (isAssessStep(s)) return true
   if (isTimelineStep(s)) return true
   if (isProtocolMatrixStep(s)) return true
+  if (isTransitionStep(s)) return true
   return false
 }
 
