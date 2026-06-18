@@ -1213,101 +1213,113 @@ export function SimulationView() {
               if (href && href.startsWith('/')) e.preventDefault()
             }}
           >
-            {assessEmbed ? (
-              // Re-run / refine the assessment in-sim. onComplete closes back to
-              // the board (NOT /report); the wizard writes to the assessment store,
-              // so assessSnap + the read-only org dials / derived maturity update.
-              <div className="mx-auto max-w-3xl p-4 md:p-6">
-                <AssessWizard onComplete={closeEmbed} />
-              </div>
-            ) : learnEmbed && LearnComp ? (
-              <EmbeddedLearnProvider>
-                {/* W2a: the completion ceremony fires INSIDE the sim too — the
+            {/* Inner content frame. Two jobs:
+                1) AUTO HEIGHT — frees embedded tools that use `h-full` (the workshop
+                   StepWizard, HSM panels) from clamping to the fixed pane height; when
+                   clamped, their taller content overflowed and rendered ON TOP of the
+                   following sections. With an auto-height containing block, `h-full`
+                   resolves to auto and content flows normally (matches standalone,
+                   which scrolls at body level).
+                2) GUTTERS — max-width + px so embeds don't run edge-to-edge on wide
+                   screens (they have no page container in the sim). */}
+            <div className="mx-auto w-full max-w-[1800px] px-4 md:px-6 lg:px-8">
+              {assessEmbed ? (
+                // Re-run / refine the assessment in-sim. onComplete closes back to
+                // the board (NOT /report); the wizard writes to the assessment store,
+                // so assessSnap + the read-only org dials / derived maturity update.
+                <div className="mx-auto max-w-3xl p-4 md:p-6">
+                  <AssessWizard onComplete={closeEmbed} />
+                </div>
+              ) : learnEmbed && LearnComp ? (
+                <EmbeddedLearnProvider>
+                  {/* W2a: the completion ceremony fires INSIDE the sim too — the
                     standalone ModuleCompletionWatcher is gated !isEmbed, leaving
                     in-sim learners with no belt/score beat. This sim-scoped watcher
                     shows the reward card on the live status→completed transition. */}
-                <SimModuleCompletionWatcher
-                  key={learnEmbed.moduleId}
-                  moduleId={learnEmbed.moduleId}
-                  title={learnEmbed.title}
-                />
-                <Suspense
-                  fallback={
-                    <div className="p-8 text-center text-sm text-muted-foreground">
-                      Loading module…
-                    </div>
-                  }
-                >
-                  <LearnComp />
-                </Suspense>
-              </EmbeddedLearnProvider>
-            ) : ActivityComp ? (
-              <Suspense
-                fallback={
-                  <div className="p-8 text-center text-sm text-muted-foreground">Loading…</div>
-                }
-              >
-                <ActivityComp />
-              </Suspense>
-            ) : WorkshopComp ? (
-              // Workshop/playground tools need the SAME provider stack the standalone
-              // /playground page wraps them in (HSM + Settings + KeyStore + Operations)
-              // — otherwise HSM-backed tools (the VPN/SSH/HSM sims) crash with
-              // "useHsmContext must be used within HsmProvider". PlaygroundProvider is a
-              // pure context wrapper (HSM init is lazy), so it's cheap for non-HSM tools.
-              <PlaygroundProvider>
-                <Suspense
-                  fallback={
-                    <div className="p-8 text-center text-sm text-muted-foreground">
-                      Loading workshop…
-                    </div>
-                  }
-                >
-                  <WorkshopComp />
-                </Suspense>
-              </PlaygroundProvider>
-            ) : timelineEmbed ? (
-              // C6: Gantt chart embedded in the sim, scoped to the player's assessed
-              // country (or the step's ?country= / ?region= param if present).
-              <TimelineEmbed
-                scope={{
-                  ...parseTimelineScope(timelineEmbed.to),
-                  // fall back to assessed jurisdiction when the step carries no scope
-                  country:
-                    parseTimelineScope(timelineEmbed.to).country ?? assessJurisdiction?.displayName,
-                }}
-              />
-            ) : catalogEmbed ? (
-              // C7: Migrate product catalog in an isolated MemoryRouter (prevents
-              // the catalog's setSearchParams calls from corrupting /simulation URL).
-              <MigrateEmbed catalogLayer={catalogEmbed.layer} />
-            ) : algorithmTabEmbed ? (
-              // C5-full: every Algorithms tab via SIM_ALGORITHM_TABS. Review tabs
-              // (Protocol Support) mount with no confirm; "choice that counts" tabs
-              // (Transition / Detailed) get the confirm → artifact handler.
-              (() => {
-                const spec = SIM_ALGORITHM_TABS[algorithmTabEmbed.refId]
-                if (!spec) return null
-                const Embed = spec.Component
-                const isChoice = spec.completion !== 'review'
-                return (
-                  <Embed
-                    onConfirm={isChoice ? handleConfirmAlgorithmTab : undefined}
-                    confirmed={isChoice ? refDone(algorithmTabEmbed.refId) : undefined}
+                  <SimModuleCompletionWatcher
+                    key={learnEmbed.moduleId}
+                    moduleId={learnEmbed.moduleId}
+                    title={learnEmbed.title}
                   />
-                )
-              })()
-            ) : ReferenceComp ? (
-              // Full-page reference (Migrate, …) embedded under the header instead
-              // of navigating the player out to its own route.
-              <Suspense
-                fallback={
-                  <div className="p-8 text-center text-sm text-muted-foreground">Loading…</div>
-                }
-              >
-                <ReferenceComp />
-              </Suspense>
-            ) : null}
+                  <Suspense
+                    fallback={
+                      <div className="p-8 text-center text-sm text-muted-foreground">
+                        Loading module…
+                      </div>
+                    }
+                  >
+                    <LearnComp />
+                  </Suspense>
+                </EmbeddedLearnProvider>
+              ) : ActivityComp ? (
+                <Suspense
+                  fallback={
+                    <div className="p-8 text-center text-sm text-muted-foreground">Loading…</div>
+                  }
+                >
+                  <ActivityComp />
+                </Suspense>
+              ) : WorkshopComp ? (
+                // Workshop/playground tools need the SAME provider stack the standalone
+                // /playground page wraps them in (HSM + Settings + KeyStore + Operations)
+                // — otherwise HSM-backed tools (the VPN/SSH/HSM sims) crash with
+                // "useHsmContext must be used within HsmProvider". PlaygroundProvider is a
+                // pure context wrapper (HSM init is lazy), so it's cheap for non-HSM tools.
+                <PlaygroundProvider>
+                  <Suspense
+                    fallback={
+                      <div className="p-8 text-center text-sm text-muted-foreground">
+                        Loading workshop…
+                      </div>
+                    }
+                  >
+                    <WorkshopComp />
+                  </Suspense>
+                </PlaygroundProvider>
+              ) : timelineEmbed ? (
+                // C6: Gantt chart embedded in the sim, scoped to the player's assessed
+                // country (or the step's ?country= / ?region= param if present).
+                <TimelineEmbed
+                  scope={{
+                    ...parseTimelineScope(timelineEmbed.to),
+                    // fall back to assessed jurisdiction when the step carries no scope
+                    country:
+                      parseTimelineScope(timelineEmbed.to).country ??
+                      assessJurisdiction?.displayName,
+                  }}
+                />
+              ) : catalogEmbed ? (
+                // C7: Migrate product catalog in an isolated MemoryRouter (prevents
+                // the catalog's setSearchParams calls from corrupting /simulation URL).
+                <MigrateEmbed catalogLayer={catalogEmbed.layer} />
+              ) : algorithmTabEmbed ? (
+                // C5-full: every Algorithms tab via SIM_ALGORITHM_TABS. Review tabs
+                // (Protocol Support) mount with no confirm; "choice that counts" tabs
+                // (Transition / Detailed) get the confirm → artifact handler.
+                (() => {
+                  const spec = SIM_ALGORITHM_TABS[algorithmTabEmbed.refId]
+                  if (!spec) return null
+                  const Embed = spec.Component
+                  const isChoice = spec.completion !== 'review'
+                  return (
+                    <Embed
+                      onConfirm={isChoice ? handleConfirmAlgorithmTab : undefined}
+                      confirmed={isChoice ? refDone(algorithmTabEmbed.refId) : undefined}
+                    />
+                  )
+                })()
+              ) : ReferenceComp ? (
+                // Full-page reference (Migrate, …) embedded under the header instead
+                // of navigating the player out to its own route.
+                <Suspense
+                  fallback={
+                    <div className="p-8 text-center text-sm text-muted-foreground">Loading…</div>
+                  }
+                >
+                  <ReferenceComp />
+                </Suspense>
+              ) : null}
+            </div>
           </div>
         </div>
       ) : (
