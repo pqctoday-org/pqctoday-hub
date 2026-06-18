@@ -1220,12 +1220,16 @@ export const LibraryView: React.FC<LibraryViewProps> = ({ simEmbed = false }) =>
                     <SectorFilter className="w-full" />
                   </div>
 
-                  <div className="flex-1 min-w-[160px]">
-                    <span className="text-xs font-medium text-muted-foreground mb-1 block">
-                      Trust tier
-                    </span>
-                    <TrustTierFilter className="w-full" />
-                  </div>
+                  {/* Tier filter writes ?tier= to the page URL — hidden in the sim
+                      embed (would corrupt /simulation's route). */}
+                  {!simEmbed && (
+                    <div className="flex-1 min-w-[160px]">
+                      <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                        Trust tier
+                      </span>
+                      <TrustTierFilter className="w-full" />
+                    </div>
+                  )}
                 </div>
               )}
 

@@ -17,6 +17,8 @@
 import type { FC } from 'react'
 import { MigrateEmbed } from '@/components/shared/widgets/MigrateEmbed'
 import { LibraryEmbed } from '@/components/shared/widgets/LibraryEmbed'
+import { ComplianceEmbed } from '@/components/shared/widgets/ComplianceEmbed'
+import { ThreatsEmbed } from '@/components/shared/widgets/ThreatsEmbed'
 
 export interface ReferenceEmbedSpec {
   /** Header chip label shown under the Simulation-mode bar. */
@@ -27,4 +29,9 @@ export interface ReferenceEmbedSpec {
 export const SIM_REFERENCE_EMBEDS: Record<string, ReferenceEmbedSpec> = {
   migrate: { label: 'Migrate', Component: MigrateEmbed },
   library: { label: 'Library', Component: LibraryEmbed },
+  compliance: { label: 'Compliance', Component: ComplianceEmbed },
+  // compliance-cert-check deep-links a specific cert (?cert=) on the standalone page;
+  // embedded it shows the same Compliance view (the cert param is dropped in-sim).
+  'compliance-cert-check': { label: 'Compliance', Component: ComplianceEmbed },
+  threats: { label: 'Threats', Component: ThreatsEmbed },
 }

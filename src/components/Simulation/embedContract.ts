@@ -113,7 +113,13 @@ export function isScenarioStep(s: TreeStep): boolean {
  * SIM_REFERENCE_EMBEDS (referenceEmbeds.tsx), kept in sync by referenceEmbeds.test.
  * Completion is the standard visited-ref mark (reviewed-on-open).
  */
-export const REFERENCE_EMBED_IDS = new Set(['migrate', 'library'])
+export const REFERENCE_EMBED_IDS = new Set([
+  'migrate',
+  'library',
+  'compliance',
+  'compliance-cert-check',
+  'threats',
+])
 
 /** True for a reference step that has a full-page embed widget. */
 export function isReferenceEmbedStep(s: TreeStep): boolean {

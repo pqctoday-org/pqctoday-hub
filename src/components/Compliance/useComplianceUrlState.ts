@@ -48,8 +48,25 @@ function parseTabFromHash(hash: string): MobileSection | null {
 
 // ── Hook ────────────────────────────────────────────────────────────────
 
-export function useComplianceUrlState() {
-  const [searchParams, setSearchParams] = useSearchParams()
+export function useComplianceUrlState(simEmbed = false) {
+  // When embedded in the sim, the compliance view must NOT read/write the page URL
+  // (it would corrupt /simulation's route) and can't nest its own <Router>. So the
+  // whole filter/tab URL state is backed by local state here, kept API-compatible
+  // with useSearchParams. (Same pattern as MigrateView / LibraryView.)
+  const [realSearchParams, realSetSearchParams] = useSearchParams()
+  const [embedSearchParams, setEmbedSearchParamsState] = useState(() => new URLSearchParams())
+  const searchParams = simEmbed ? embedSearchParams : realSearchParams
+  const setSearchParams: typeof realSetSearchParams = simEmbed
+    ? (nextInit) =>
+        setEmbedSearchParamsState((prev) => {
+          const next = new URLSearchParams(
+            typeof nextInit === 'function'
+              ? (nextInit(prev) as URLSearchParams)
+              : (nextInit as URLSearchParams)
+          )
+          return next.toString() === prev.toString() ? prev : next
+        })
+    : realSetSearchParams
   const { selectedIndustries, selectedRegion, selectedPersona } = usePersonaStore()
 
   const certParam = searchParams.get('cert') ?? undefined

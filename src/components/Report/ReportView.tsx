@@ -98,7 +98,10 @@ function MaturityTierChip() {
   )
 }
 
-export const ReportView: React.FC = () => {
+export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false }) => {
+  // simEmbed: rendered headless inside the simulation — the page chrome
+  // (breadcrumb + PageHeader) is hidden so the sim's own header stays on top.
+  // ReportView only reads searchParams (no writes), so no URL isolation is needed.
   const { assessmentStatus, getInput, setResult, lastResult } = useAssessmentStore()
   useWorkflowPhaseTracker('assess')
   const input = getInput()
@@ -468,15 +471,17 @@ export const ReportView: React.FC = () => {
 
   return (
     <div className="animate-fade-in">
-      <WorkflowBreadcrumb current="report" />
-      <PageHeader
-        icon={FileBarChart}
-        pageId="report"
-        title="PQC Assessment Report"
-        description="Your personalized post-quantum cryptography risk report with scores, priorities, and recommendations."
-        shareTitle="PQC Assessment Report — Post-Quantum Cryptography Risk Analysis"
-        shareText="View your personalized PQC risk score, migration priorities, and actionable recommendations."
-      />
+      {!simEmbed && <WorkflowBreadcrumb current="report" />}
+      {!simEmbed && (
+        <PageHeader
+          icon={FileBarChart}
+          pageId="report"
+          title="PQC Assessment Report"
+          description="Your personalized post-quantum cryptography risk report with scores, priorities, and recommendations."
+          shareTitle="PQC Assessment Report — Post-Quantum Cryptography Risk Analysis"
+          shareText="View your personalized PQC risk score, migration priorities, and actionable recommendations."
+        />
+      )}
 
       <MaturityTierChip />
 
