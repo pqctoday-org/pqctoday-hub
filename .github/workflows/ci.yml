@@ -57,6 +57,16 @@ jobs:
       - name: Audit protocol matrix refs
         run: npm run audit:matrix-refs
 
+      - name: Check sandbox scenarios are in sync with the sandbox source
+        # src/data/sandboxScenarios.ts is generated from
+        # pqctoday-sandbox/ui/src/data/scenarios.ts by scripts/sync-sandbox-scenarios.ts.
+        # Fails if someone edited the generated file by hand or forgot to re-run
+        # `npm run sync:sandbox` after the sandbox source changed (the 2026-06-17
+        # drift that shipped vaporware/stale scenarios to the hub).
+        # The script itself no-ops (exit 0) when the sibling sandbox checkout is
+        # absent, so this only fails on genuine drift.
+        run: npm run sync:sandbox:check
+
       - name: Audit vendor-id referential integrity
         # Catches wrong VND-* assignments in the product catalog (e.g. a product
         # pointing to a deprecated vendor, or a VND that resolves to a completely

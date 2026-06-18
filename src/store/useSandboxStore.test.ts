@@ -35,6 +35,14 @@ describe('useSandboxStore', () => {
     expect(useSandboxStore.getState().lastChecked).not.toBeNull()
   })
 
+  it('marks status offline when /api/status responds non-2xx (upstream down)', async () => {
+    global.fetch = vi.fn().mockResolvedValue(new Response(null, { status: 503 }))
+    const result = await useSandboxStore.getState().probe()
+    expect(result).toBe('offline')
+    expect(useSandboxStore.getState().status).toBe('offline')
+    expect(useSandboxStore.getState().error).toMatch(/503/)
+  })
+
   it('marks status offline when fetch rejects', async () => {
     global.fetch = vi.fn().mockRejectedValue(new Error('ECONNREFUSED'))
     const result = await useSandboxStore.getState().probe()

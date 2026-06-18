@@ -68,6 +68,7 @@ The PQC VPN simulator now runs the post-quantum IKEv2 handshake for real — hyb
 - **A readable event feed with reduced motion** [view:/simulation] [persona:curious]: with "reduce motion" on, the simulation's live event feed is now a static, scrollable list so every message is readable — previously the scrolling ticker snapped and stranded most messages off-screen.
 - **Trustworthy timeline and national-guidance facts in the simulation** [view:/simulation] [persona:executive] [persona:researcher]: the Q-Day year the Mosca clock races is now consistent with the rest of the app's quantum-timeline estimates, and the national PQC stances read accurately — Australia/ASD is no longer overstated as "discouraging hybrid," and Germany/France hybrid is framed as a long-term posture through the transition.
 - **The Vendor & Supply Chain phase is correctly continuous** [view:/simulation] [persona:executive]: the final phase no longer shows a one-time "gate certified" — it's an ongoing discipline in the framework, so the simulation now treats it as continuous rather than a box you tick once.
+- **The Playground sandbox lists only scenarios that actually run** [view:/playground] [persona:developer] [persona:architect]: the interactive sandbox's scenario list is now generated from the sandbox's own source of truth and kept in lockstep with it, so stale and placeholder scenarios no longer show up — what you can pick is exactly what executes (30 scenarios across 7 tracks), each mapped to the PQC protocols it exercises.
 
 ### Data
 

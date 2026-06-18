@@ -101,7 +101,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     algorithms: ['LMS', 'HSS', 'XMSS'],
     icon: FileSignature,
     moduleLink: '/learn/stateful-signatures',
-    keywords: ['lms', 'hss', 'xmss', 'stateful', 'hash-based', 'fips 208'],
+    keywords: ['lms', 'hss', 'xmss', 'stateful', 'hash-based', 'sp 800-208'],
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     hasOutput: true,
@@ -909,10 +909,26 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
 export const SANDBOX_TOOL_PREFIX = 'sbx-'
 
 const SANDBOX_ICONS: Record<SandboxTrackId, React.ElementType> = {
+  'protocol-simulation': Radio,
   infrastructure: Container,
+  'supply-chain': Network,
+  quantum: Radio,
+  'secrets-kms': Container,
   web: Globe,
   applications: Network,
-  quantum: Radio,
+}
+
+// Per-track persona fit so the sandbox is discoverable under every persona
+// (a flat ['developer','architect','ops'] previously hid all sandbox scenarios
+// from researcher / executive / curious). Every track lists ≥1 of those three.
+const SANDBOX_TRACK_PERSONAS: Record<SandboxTrackId, PersonaId[]> = {
+  'protocol-simulation': ['developer', 'architect', 'researcher'],
+  infrastructure: ['architect', 'ops', 'developer'],
+  'supply-chain': ['architect', 'ops', 'executive'],
+  quantum: ['researcher', 'architect', 'curious'],
+  'secrets-kms': ['ops', 'architect', 'developer'],
+  web: ['developer', 'architect', 'ops'],
+  applications: ['developer', 'architect', 'researcher'],
 }
 
 const SANDBOX_TOOLS: WorkshopTool[] = SANDBOX_SCENARIOS.map((s, idx) => ({
@@ -929,7 +945,7 @@ const SANDBOX_TOOLS: WorkshopTool[] = SANDBOX_SCENARIOS.map((s, idx) => ({
     new Set([s.id, s.tool.name, s.trackId, ...s.algorithms].map((k) => k.toLowerCase()))
   ),
   difficulty: s.difficulty,
-  recommendedPersonas: ['developer', 'architect', 'ops'],
+  recommendedPersonas: SANDBOX_TRACK_PERSONAS[s.trackId],
   wip: true,
   opensourceTool: { name: s.tool.name, url: s.tool.url },
 }))
