@@ -104,8 +104,9 @@ export const ROLE_CROSSWALK: Record<FrameworkRoleId, RoleMapping> = {
     typicalFte: '0.5–1.0',
     persona: 'architect',
     niceRoles: ['security-architect'],
-    phases: ['p2', 'p3', 'p5'],
-    // p2 inventory · p3 identify-gaps+prioritise · p5 implement
+    phases: ['p1', 'p2', 'p3', 'p5'],
+    // p1 discovery & inventory · p2 CBOM · p3 identify-gaps+prioritise · p5 implement
+    // (p1 was the lone phase with no role — the "overlay gap" the sim's team panel showed)
     cswp39Steps: ['inventory', 'identify-gaps', 'prioritise', 'implement'],
   },
   'security-eng': {
