@@ -23,6 +23,7 @@ const manifest: ModuleManifest = {
   ],
   playgroundTool: 'email-signing',
   taxonomy: { algorithms: ['ML-DSA'], standards: ['JOSE', 'X.509'] },
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.EmailSigningModule })),
 }
 

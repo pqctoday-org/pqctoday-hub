@@ -28,6 +28,7 @@ const manifest: ModuleManifest = {
   ],
   playgroundTool: 'digital-id',
   taxonomy: { algorithms: ['ML-DSA'], standards: ['X.509'] },
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.DigitalIDModule })),
 }
 

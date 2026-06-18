@@ -29,6 +29,7 @@ const manifest: ModuleManifest = {
     { id: 'vendor-readiness', label: 'Vendor Readiness Scorer' },
     { id: 'zero-trust-identity', label: 'Zero Trust Identity Architect' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.IAMPQCModule })),
 }
 

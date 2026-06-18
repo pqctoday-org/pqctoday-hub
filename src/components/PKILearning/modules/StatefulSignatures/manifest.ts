@@ -25,6 +25,7 @@ const manifest: ModuleManifest = {
   ],
   playgroundTool: 'lms-hss',
   taxonomy: { algorithms: ['LMS/XMSS'], standards: ['NIST SP 800-208'] },
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.StatefulSignaturesModule })),
 }
 

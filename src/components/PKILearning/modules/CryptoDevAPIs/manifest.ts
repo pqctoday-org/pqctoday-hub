@@ -34,6 +34,7 @@ const manifest: ModuleManifest = {
     { id: 'crypto-agility-patterns', label: 'Crypto Agility Patterns' },
     { id: 'migration-decision-lab', label: 'Migration Decision Lab' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.CryptoDevAPIsModule })),
 }
 

@@ -26,10 +26,12 @@ import {
   isAssessStep,
   isTimelineStep,
   isAlgorithmTabStep,
+  isReferenceEmbedStep,
   isStepComplete,
   type StepCompletionContext,
 } from './embedContract'
 import { SIM_ALGORITHM_TABS } from './algorithmTabs'
+import { SIM_REFERENCE_EMBEDS } from './referenceEmbeds'
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
 import { parseTimelineScope } from '@/data/timelineScope'
 import { isPqcCapable } from './catalogCompletion'
@@ -287,8 +289,18 @@ export function SimulationView() {
     refId: string
     title: string
   } | null>(null)
+  // Full-page reference resources (Migrate, …) embedded under the sim header
+  // instead of navigating away, driven by SIM_REFERENCE_EMBEDS.
+  const [referenceEmbed, setReferenceEmbed] = useState<{
+    refId: string
+    title: string
+  } | null>(null)
 
   const LearnComp = learnEmbed ? SIM_LEARN_MODULES[learnEmbed.moduleId] : null
+  // eslint-disable-next-line security/detect-object-injection
+  const ReferenceComp = referenceEmbed
+    ? SIM_REFERENCE_EMBEDS[referenceEmbed.refId]?.Component
+    : null
   const activityToolId = activityEmbed
     ? ARTIFACT_TYPE_TO_TOOL_ID[activityEmbed.artifactType]
     : undefined
@@ -307,6 +319,7 @@ export function SimulationView() {
     setTimelineEmbed(null)
     setCatalogEmbed(null)
     setAlgorithmTabEmbed(null)
+    setReferenceEmbed(null)
   }
   const openStep = (s: TreeStep) => {
     if (s.kind === 'learn' && s.moduleId && isEmbeddableModule(s.moduleId)) {
@@ -341,6 +354,11 @@ export function SimulationView() {
       // opening the wizard in-sim is the equivalent of "visiting" the assess ref
       // (the navigate flow marks-on-click), so the step counts as done.
       if (s.refId) markRefVisited(s.refId)
+    } else if (isReferenceEmbedStep(s) && s.refId) {
+      // Full-page reference (Migrate, …) embedded under the header. Reviewed-on-open.
+      clearAllEmbeds()
+      setReferenceEmbed({ refId: s.refId, title: s.label })
+      markRefVisited(s.refId)
     }
   }
   const closeEmbed = clearAllEmbeds
@@ -1110,7 +1128,8 @@ export function SimulationView() {
       workshopEmbed ||
       timelineEmbed ||
       catalogEmbed ||
-      algorithmTabEmbed ? (
+      algorithmTabEmbed ||
+      referenceEmbed ? (
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex shrink-0 items-center gap-2 border-b-2 border-primary bg-primary/10 px-4 py-2">
             <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-[9px] font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
@@ -1129,7 +1148,10 @@ export function SimulationView() {
                         ? 'Catalog'
                         : algorithmTabEmbed
                           ? (SIM_ALGORITHM_TABS[algorithmTabEmbed.refId]?.label ?? 'Algorithms')
-                          : 'Assess'}{' '}
+                          : referenceEmbed
+                            ? // eslint-disable-next-line security/detect-object-injection
+                              (SIM_REFERENCE_EMBEDS[referenceEmbed.refId]?.label ?? 'Reference')
+                            : 'Assess'}{' '}
               · Phase {phase.number}
             </span>
             <span className="min-w-0 flex-1 truncate text-[12.5px] font-bold text-foreground">
@@ -1140,6 +1162,7 @@ export function SimulationView() {
                   timelineEmbed?.title ??
                   catalogEmbed?.title ??
                   algorithmTabEmbed?.title ??
+                  referenceEmbed?.title ??
                   assessEmbed?.title)}
             </span>
             {/* Completion toggle — guarantees a "mark complete" path for every
@@ -1274,6 +1297,16 @@ export function SimulationView() {
                   />
                 )
               })()
+            ) : ReferenceComp ? (
+              // Full-page reference (Migrate, …) embedded under the header instead
+              // of navigating the player out to its own route.
+              <Suspense
+                fallback={
+                  <div className="p-8 text-center text-sm text-muted-foreground">Loading…</div>
+                }
+              >
+                <ReferenceComp />
+              </Suspense>
             ) : null}
           </div>
         </div>

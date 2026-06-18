@@ -28,6 +28,7 @@ const manifest: ModuleManifest = {
     { id: 'custody-architecture', label: 'Custody Architecture' },
   ],
   playgroundTool: 'bitcoin-flow',
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.DigitalAssetsModule })),
 }
 

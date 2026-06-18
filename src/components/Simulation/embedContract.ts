@@ -106,6 +106,20 @@ export function isScenarioStep(s: TreeStep): boolean {
   return s.kind === 'scenario' && !!s.scenarioId && SANDBOX_SCENARIO_IDS.has(s.scenarioId)
 }
 
+/**
+ * Full-page REFERENCE resources that embed in the sim under the header instead of
+ * navigating away (Migrate, and later Library/Compliance/Threats/Report). Pure id
+ * set so canEmbedStep stays component-free; the embed widget for each lives in
+ * SIM_REFERENCE_EMBEDS (referenceEmbeds.tsx), kept in sync by referenceEmbeds.test.
+ * Completion is the standard visited-ref mark (reviewed-on-open).
+ */
+export const REFERENCE_EMBED_IDS = new Set(['migrate'])
+
+/** True for a reference step that has a full-page embed widget. */
+export function isReferenceEmbedStep(s: TreeStep): boolean {
+  return s.kind === 'reference' && !!s.refId && REFERENCE_EMBED_IDS.has(s.refId)
+}
+
 /** True when this step can be rendered embedded in the sim (vs. navigated to). */
 export function canEmbedStep(s: TreeStep): boolean {
   if (s.kind === 'learn') return !!s.moduleId && isEmbeddableModule(s.moduleId)
@@ -121,6 +135,7 @@ export function canEmbedStep(s: TreeStep): boolean {
   if (isTimelineStep(s)) return true
   if (isAlgorithmTabStep(s)) return true
   if (isScenarioStep(s)) return true
+  if (isReferenceEmbedStep(s)) return true
   return false
 }
 

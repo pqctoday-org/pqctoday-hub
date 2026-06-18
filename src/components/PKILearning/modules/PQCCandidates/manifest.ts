@@ -28,6 +28,7 @@ const manifest: ModuleManifest = {
     { id: 'worldwide-map', label: 'Worldwide Standardisation Map' },
   ],
   taxonomy: { algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'Falcon', 'HQC'] },
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.PQCCandidatesModule })),
 }
 

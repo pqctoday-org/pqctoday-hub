@@ -26,6 +26,7 @@ const manifest: ModuleManifest = {
     { id: 'signature-demo', label: 'Signature Demo' },
   ],
   taxonomy: { algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA'] },
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.Module1 })),
 }
 

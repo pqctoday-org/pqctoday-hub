@@ -29,6 +29,7 @@ const manifest: ModuleManifest = {
     { id: 'export-control-classifier', label: 'Export Control Classifier' },
     { id: 'mission-crypto-lifecycle', label: 'Mission Lifecycle Planner' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.AerospacePQCModule })),
 }
 

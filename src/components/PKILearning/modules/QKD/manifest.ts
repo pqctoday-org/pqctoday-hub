@@ -25,6 +25,7 @@ const manifest: ModuleManifest = {
     { id: 'protocol-integration', label: 'Protocol Integration' },
     { id: 'hsm-derivation', label: 'HSM Key Derivation' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.QKDModule })),
 }
 

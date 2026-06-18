@@ -30,6 +30,7 @@ const manifest: ModuleManifest = {
     { id: 'pos-crypto-analyzer', label: 'POS Crypto Analyzer' },
     { id: 'migration-risk-matrix', label: 'Migration Risk Matrix' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.EMVPaymentPQCModule })),
 }
 

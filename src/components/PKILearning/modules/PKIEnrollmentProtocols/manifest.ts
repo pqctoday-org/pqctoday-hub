@@ -35,6 +35,7 @@ const manifest: ModuleManifest = {
     { value: 'references', label: 'References' },
     { value: 'tools', label: 'Tools & Products' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.PKIEnrollmentProtocolsModule })),
 }
 

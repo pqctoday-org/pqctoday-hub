@@ -10,6 +10,7 @@ const manifest: ModuleManifest = {
   frameworkPhase: 'foundations',
   custom: true,
   stepCountOverride: 1,
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.QuizModule })),
 }
 
