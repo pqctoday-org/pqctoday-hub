@@ -521,7 +521,10 @@ function MobileViewToggle({
 
 // ── Main view ──────────────────────────────────────────────────────────
 
-export const ComplianceView = () => {
+export const ComplianceView = ({ simEmbed = false }: { simEmbed?: boolean }) => {
+  // simEmbed: rendered headless inside the simulation — PageHeader + the URL-writing
+  // tier filters are hidden, and the URL-synced filter/tab state (useComplianceUrlState)
+  // is backed by local state so it never corrupts /simulation's route.
   useWorkflowPhaseTracker('comply')
   const [selectedFramework, setSelectedFramework] = useState<ComplianceFramework | null>(null)
   // Trust-tier filter (URL ?tier=) — feeds both the Landscape memos via
@@ -693,7 +696,7 @@ export const ComplianceView = () => {
     handleRecSortColChange,
     handleRecSortDirChange,
     handleRecPageChange,
-  } = useComplianceUrlState()
+  } = useComplianceUrlState(simEmbed)
 
   // CSWP.39 jump-back marker + query (ephemeral UI state, not URL-bound).
   const [cswp39JumpActive, setCswp39JumpActive] = useState(false)
@@ -841,29 +844,32 @@ export const ComplianceView = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <PageHeader
-        icon={ShieldCheck}
-        pageId="compliance"
-        title="Standardization, Compliance and Certification"
-        description="Explore the three pillars of PQC compliance: standardization bodies that define the algorithms, certification bodies that validate implementations, and compliance frameworks that mandate adoption."
-        dataSource={
-          complianceMetadata
-            ? `${complianceMetadata.filename} • Updated: ${complianceMetadata.lastUpdate.toLocaleDateString()}`
-            : undefined
-        }
-        viewType="Compliance"
-        suppressSources
-        shareTitle="PQC Compliance Tracker — Standards, Certifications, Frameworks"
-        shareText="Explore PQC compliance: standardization bodies, certification programs (FIPS 140-3, ACVP, Common Criteria), and regulatory frameworks."
-        onExport={handleExportCsv}
-      />
+      {!simEmbed && (
+        <PageHeader
+          icon={ShieldCheck}
+          pageId="compliance"
+          title="Standardization, Compliance and Certification"
+          description="Explore the three pillars of PQC compliance: standardization bodies that define the algorithms, certification bodies that validate implementations, and compliance frameworks that mandate adoption."
+          dataSource={
+            complianceMetadata
+              ? `${complianceMetadata.filename} • Updated: ${complianceMetadata.lastUpdate.toLocaleDateString()}`
+              : undefined
+          }
+          viewType="Compliance"
+          suppressSources
+          shareTitle="PQC Compliance Tracker — Standards, Certifications, Frameworks"
+          shareText="Explore PQC compliance: standardization bodies, certification programs (FIPS 140-3, ACVP, Common Criteria), and regulatory frameworks."
+          onExport={handleExportCsv}
+        />
+      )}
 
       {selectedPersona === 'curious' && <PreviewBanner pageContext="GRC, Executive, Architect" />}
 
       <AboutThisPageStrip
         headerSlot={
           <span className="md:hidden" data-testid="about-strip-trust-tier-slot">
-            <TrustTierFilter />
+            {/* tier filter writes ?tier= — hidden in the sim embed (URL-safe) */}
+            {!simEmbed && <TrustTierFilter />}
           </span>
         }
       />
@@ -1158,9 +1164,11 @@ export const ComplianceView = () => {
                 tabs={overflowTabs}
               />
             )}
-            <div className="ml-auto pr-2">
-              <TrustTierFilter />
-            </div>
+            {!simEmbed && (
+              <div className="ml-auto pr-2">
+                <TrustTierFilter />
+              </div>
+            )}
           </TabsList>
 
           {/* ── Tab: For You — applies user profile across all content ── */}

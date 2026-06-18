@@ -56,8 +56,25 @@ import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 
 // Threat Detail Dialog Component - Moved outside to ./ThreatDetailDialog.tsx
 
-export const ThreatsDashboard: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams()
+export const ThreatsDashboard: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false }) => {
+  // When embedded in the sim, the dashboard must NOT read/write the page URL (it
+  // would corrupt /simulation's route) and can't nest its own <Router>. So its
+  // filter URL state is backed by local state, kept API-compatible with
+  // useSearchParams. (Same pattern as MigrateView / LibraryView.)
+  const [realSearchParams, realSetSearchParams] = useSearchParams()
+  const [embedSearchParams, setEmbedSearchParamsState] = useState(() => new URLSearchParams())
+  const searchParams = simEmbed ? embedSearchParams : realSearchParams
+  const setSearchParams: typeof realSetSearchParams = simEmbed
+    ? (nextInit) =>
+        setEmbedSearchParamsState((prev) => {
+          const next = new URLSearchParams(
+            typeof nextInit === 'function'
+              ? (nextInit(prev) as URLSearchParams)
+              : (nextInit as URLSearchParams)
+          )
+          return next.toString() === prev.toString() ? prev : next
+        })
+    : realSetSearchParams
   const { selectedIndustries: storeIndustries, selectedPersona } = usePersonaStore()
 
   const initialIndustries = useMemo(() => {
@@ -433,38 +450,40 @@ export const ThreatsDashboard: React.FC = () => {
 
   return (
     <div>
-      <PageHeader
-        icon={AlertTriangle}
-        pageId="threats"
-        title="Quantum Threats"
-        description="Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements."
-        dataSource={`${threatsMetadata?.filename ?? 'quantum_threats_hsm_industries.csv'} • Updated: ${threatsMetadata?.lastUpdate?.toLocaleDateString() ?? 'Unknown'}`}
-        viewType="Threats"
-        shareTitle="Quantum Threats Dashboard — Industry Risk Analysis"
-        shareText="Detailed analysis of quantum threats across industries — criticality ratings, at-risk cryptography, and PQC replacements."
-        endorseUrl={buildEndorsementUrl({
-          category: 'threat-endorsement',
-          title: 'Endorse: Quantum Threats Dashboard',
-          resourceType: 'Threats Page',
-          resourceId: 'Quantum Threats Dashboard',
-          resourceDetails:
-            '**Page:** Quantum Threats — Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements.',
-          pageUrl: '/threats',
-        })}
-        endorseLabel="Threats Page"
-        endorseResourceType="Threats"
-        flagUrl={buildFlagUrl({
-          category: 'threat-endorsement',
-          title: 'Flag: Quantum Threats Dashboard',
-          resourceType: 'Threats Page',
-          resourceId: 'Quantum Threats Dashboard',
-          resourceDetails:
-            '**Page:** Quantum Threats — Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements.',
-          pageUrl: '/threats',
-        })}
-        flagLabel="Threats Page"
-        flagResourceType="Threats"
-      />
+      {!simEmbed && (
+        <PageHeader
+          icon={AlertTriangle}
+          pageId="threats"
+          title="Quantum Threats"
+          description="Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements."
+          dataSource={`${threatsMetadata?.filename ?? 'quantum_threats_hsm_industries.csv'} • Updated: ${threatsMetadata?.lastUpdate?.toLocaleDateString() ?? 'Unknown'}`}
+          viewType="Threats"
+          shareTitle="Quantum Threats Dashboard — Industry Risk Analysis"
+          shareText="Detailed analysis of quantum threats across industries — criticality ratings, at-risk cryptography, and PQC replacements."
+          endorseUrl={buildEndorsementUrl({
+            category: 'threat-endorsement',
+            title: 'Endorse: Quantum Threats Dashboard',
+            resourceType: 'Threats Page',
+            resourceId: 'Quantum Threats Dashboard',
+            resourceDetails:
+              '**Page:** Quantum Threats — Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements.',
+            pageUrl: '/threats',
+          })}
+          endorseLabel="Threats Page"
+          endorseResourceType="Threats"
+          flagUrl={buildFlagUrl({
+            category: 'threat-endorsement',
+            title: 'Flag: Quantum Threats Dashboard',
+            resourceType: 'Threats Page',
+            resourceId: 'Quantum Threats Dashboard',
+            resourceDetails:
+              '**Page:** Quantum Threats — Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements.',
+            pageUrl: '/threats',
+          })}
+          flagLabel="Threats Page"
+          flagResourceType="Threats"
+        />
+      )}
 
       {/* Threat Economics — HNDL vs HNFL framing + Mosca mini-calc (additive) */}
       <ThreatEconomicsHeader />
@@ -587,9 +606,13 @@ export const ThreatsDashboard: React.FC = () => {
                 noContainer
               />
             </div>
-            <div className="flex-1 w-full md:min-w-[120px]">
-              <TrustTierFilter className="mb-0 w-full" />
-            </div>
+            {/* Tier filter writes ?tier= to the page URL — hidden in the sim embed
+                (would corrupt /simulation; its read-side useTrustTierFilter is inert). */}
+            {!simEmbed && (
+              <div className="flex-1 w-full md:min-w-[120px]">
+                <TrustTierFilter className="mb-0 w-full" />
+              </div>
+            )}
           </div>
 
           <span className="hidden md:inline text-muted-foreground px-2">Search:</span>
