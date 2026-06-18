@@ -15,6 +15,7 @@ import type { CountryData } from '@/types/timeline'
 import type { EntityType } from '@/types/timeline'
 import { matchesCategoryFilter } from '@/components/Timeline/CategoryFilter'
 import { matchesTrustTierFilter } from '@/components/common/TrustTierFilter'
+import type { TrustTier } from '@/data/trustScore'
 import { CATEGORY_DEFAULT } from '@/components/Timeline/CategoryFilter'
 import { REGION_COUNTRIES_MAP } from '@/data/personaConfig'
 
@@ -79,7 +80,12 @@ export function applyTierFilter(countries: CountryData[], tiers: string[]): Coun
       bodies: c.bodies
         .map((body) => ({
           ...body,
-          events: body.events.filter((ev) => matchesTrustTierFilter(tiers, 'timeline', ev.title)),
+          events: body.events.filter((ev) =>
+            // `tiers` originates from an untrusted URL query (TimelineScope.tiers: string[]);
+            // matchesTrustTierFilter only ever `.includes()`-checks, so any non-tier string
+            // simply never matches — the assertion is behaviour-preserving.
+            matchesTrustTierFilter(tiers as TrustTier[], 'timeline', ev.title)
+          ),
         }))
         .filter((body) => body.events.length > 0),
     }))
