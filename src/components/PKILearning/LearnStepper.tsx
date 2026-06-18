@@ -72,8 +72,13 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
     <div className="w-full">
       {/* Sticky table-of-contents — numbered circles with connecting line */}
       <div className="sticky top-16 z-10 mb-8 -mx-4 px-4 py-3 bg-background/80 backdrop-blur-sm border-b border-border">
-        <div className="flex justify-between relative">
-          <div className="absolute top-4 left-0 w-full h-0.5 bg-border -z-10" />
+        {/* Centered, content-width track so the circles sit together (with the
+            connector between them) regardless of section count — instead of
+            justify-between flinging 2–3 circles to the container edges, which
+            looked broken in the full-width simulation embed. Scrolls on narrow
+            screens for many-section modules. */}
+        <div className="relative mx-auto flex w-fit max-w-full items-start justify-center gap-x-6 overflow-x-auto sm:gap-x-12">
+          <div className="absolute top-4 left-10 right-10 h-0.5 bg-border -z-10" />
           {steps.map((step) => {
             const done = checks[step.id]
             return (
@@ -82,7 +87,7 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
                 key={step.id}
                 type="button"
                 onClick={() => scrollToSection(step.id)}
-                className="flex flex-col items-center gap-2 group text-muted-foreground hover:text-primary"
+                className="flex w-20 shrink-0 flex-col items-center gap-2 group text-muted-foreground hover:text-primary"
                 aria-label={`Jump to section: ${step.label}`}
               >
                 <div
@@ -94,7 +99,7 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
                 >
                   {done ? '✓' : steps.findIndex((s) => s.id === step.id) + 1}
                 </div>
-                <span className="text-[10px] sm:text-xs font-medium max-w-[80px] text-center leading-tight">
+                <span className="w-16 whitespace-normal break-words text-center text-[10px] font-medium leading-tight sm:text-xs">
                   {step.label}
                 </span>
               </Button>
