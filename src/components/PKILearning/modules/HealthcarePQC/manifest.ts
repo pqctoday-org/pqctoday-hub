@@ -26,6 +26,7 @@ const manifest: ModuleManifest = {
     { id: 'device-safety-simulator', label: 'Device Safety Simulator' },
     { id: 'hospital-migration-planner', label: 'Hospital Migration Planner' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.HealthcarePQCModule })),
 }
 

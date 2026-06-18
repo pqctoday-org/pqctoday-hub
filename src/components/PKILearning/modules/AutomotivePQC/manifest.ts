@@ -31,6 +31,7 @@ const manifest: ModuleManifest = {
     { id: 'car-key-protocol-explorer', label: 'Car Key Protocol Explorer' },
     { id: 'lifecycle-migration-roadmap', label: 'Lifecycle Migration Roadmap' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.AutomotivePQCModule })),
 }
 

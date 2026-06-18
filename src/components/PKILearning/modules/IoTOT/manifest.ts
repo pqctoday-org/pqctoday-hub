@@ -26,6 +26,7 @@ const manifest: ModuleManifest = {
     { id: 'cert-chain-bloat', label: 'Chain Bloat Analysis' },
     { id: 'scada-assessment', label: 'SCADA Planner' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.IoTOTModule })),
 }
 

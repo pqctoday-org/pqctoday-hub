@@ -27,6 +27,7 @@ const manifest: ModuleManifest = {
     { id: 'cert-rotation', label: 'Certificate Rotation Planner' },
     { id: 'vendor-readiness', label: 'Vendor Readiness Matrix' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.WebGatewayPQCModule })),
 }
 

@@ -27,6 +27,7 @@ const manifest: ModuleManifest = {
     { id: 'source-combining', label: 'Combining Sources' },
   ],
   playgroundTool: 'entropy-test',
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.EntropyModule })),
 }
 

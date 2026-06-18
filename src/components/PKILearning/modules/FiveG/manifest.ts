@@ -24,6 +24,7 @@ const manifest: ModuleManifest = {
   ],
   playgroundTool: 'suci-flow',
   taxonomy: { algorithms: ['ML-KEM', 'ML-DSA'], standards: ['X.509'] },
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.FiveGModule })),
 }
 

@@ -24,6 +24,7 @@ const manifest: ModuleManifest = {
     { id: 'hndl-timeline', label: 'HNDL Timeline' },
     { id: 'hnfl-timeline', label: 'HNFL Risk Calculator' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.QuantumThreatsModule })),
 }
 

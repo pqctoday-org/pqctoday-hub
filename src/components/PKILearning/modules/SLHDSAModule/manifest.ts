@@ -26,6 +26,7 @@ const manifest: ModuleManifest = {
   ],
   playgroundTool: 'slh-dsa',
   taxonomy: { algorithms: ['SLH-DSA'], standards: ['FIPS 205'] },
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.SLHDSAModule })),
 }
 

@@ -28,6 +28,7 @@ const manifest: ModuleManifest = {
     { id: 'agent-to-agent-protocol', label: 'Agent-to-Agent Protocol' },
     { id: 'scale-encryption-planner', label: 'Scale Encryption Planner' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.AISecurityPQCModule })),
 }
 

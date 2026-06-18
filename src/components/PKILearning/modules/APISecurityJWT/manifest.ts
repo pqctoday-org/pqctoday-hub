@@ -28,6 +28,7 @@ const manifest: ModuleManifest = {
   ],
   playgroundTool: 'api-security-jwt',
   taxonomy: { algorithms: ['ML-DSA', 'SLH-DSA'], standards: ['JOSE', 'RFC 9421'] },
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.APISecurityJWTModule })),
 }
 

@@ -26,6 +26,7 @@ const manifest: ModuleManifest = {
     { id: 'package-signing', label: 'Package Signing Migrator' },
     { id: 'fips-compat', label: 'FIPS Compatibility Checker' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.OSPQCModule })),
 }
 

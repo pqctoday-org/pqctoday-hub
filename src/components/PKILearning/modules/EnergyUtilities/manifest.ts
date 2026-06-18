@@ -27,6 +27,7 @@ const manifest: ModuleManifest = {
     { id: 'safety-risk-scorer', label: 'Risk Scorer' },
     { id: 'grid-migration-roadmap', label: 'Grid Roadmap' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.EnergyUtilitiesModule })),
 }
 

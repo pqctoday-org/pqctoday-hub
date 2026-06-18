@@ -28,6 +28,7 @@ const manifest: ModuleManifest = {
     { id: 'vendor-matrix', label: 'Firmware Vendor Matrix' },
     { id: 'attestation-designer', label: 'Attestation Flow Designer' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.SecureBootPQCModule })),
 }
 

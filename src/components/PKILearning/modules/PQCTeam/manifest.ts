@@ -23,6 +23,7 @@ const manifest: ModuleManifest = {
     { value: 'workshop', label: 'Workshop' },
     { value: 'exercises', label: 'Exercises' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.PQCTeamModule })),
 }
 

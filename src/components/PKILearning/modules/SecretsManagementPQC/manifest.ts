@@ -26,6 +26,7 @@ const manifest: ModuleManifest = {
     { id: 'cloud-secrets-comparator', label: 'Cloud Provider Comparator' },
     { id: 'pipeline-integration-lab', label: 'Pipeline Integration Lab' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.SecretsManagementPQCModule })),
 }
 

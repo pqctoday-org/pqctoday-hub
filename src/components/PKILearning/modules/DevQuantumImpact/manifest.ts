@@ -23,6 +23,7 @@ const manifest: ModuleManifest = {
     { id: 'how-to-act', label: 'How to Act' },
     { id: 'self-assessment', label: 'Skill Self-Assessment' },
   ],
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.DevQuantumImpactModule })),
 }
 
