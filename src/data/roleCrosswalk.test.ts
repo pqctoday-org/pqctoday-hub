@@ -60,6 +60,16 @@ describe('ROLE_CROSSWALK', () => {
     }
   })
 
+  it('every lifecycle phase is owned by at least one role (no overlay gap)', () => {
+    // p1 (Discovery & Inventory) was the lone uncovered phase — the sim's
+    // "TEAM — who runs this phase" panel showed "No role mapped (overlay gap)"
+    // and the phase could never be owned by a seat. Guard so it can't recur.
+    const covered = new Set(ALL_ROLE_IDS.flatMap((id) => ROLE_CROSSWALK[id].phases))
+    for (const phase of PHASE_ORDER) {
+      expect(covered.has(phase), `${phase}: no role maps to it (overlay gap)`).toBe(true)
+    }
+  })
+
   it('every role.persona is a real PersonaId', () => {
     for (const id of ALL_ROLE_IDS) {
       expect(PERSONA_SET.has(ROLE_CROSSWALK[id].persona)).toBe(true)
