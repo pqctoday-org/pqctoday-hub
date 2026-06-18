@@ -35,6 +35,7 @@ import { parseTimelineScope } from '@/data/timelineScope'
 import { isPqcCapable } from './catalogCompletion'
 import { softwareData } from '@/data/migrateData'
 import { MigrateEmbed } from '@/components/shared/widgets/MigrateEmbed'
+import { PlaygroundProvider } from '@/components/Playground/PlaygroundProvider'
 import { AssessWizard } from '@/components/Assess/AssessWizard'
 import { Button } from '@/components/ui/button'
 import { FRAMEWORK_PHASES, PHASE_ORDER, type PhaseId } from '@/data/frameworkPhases'
@@ -1226,15 +1227,22 @@ export function SimulationView() {
                 <ActivityComp />
               </Suspense>
             ) : WorkshopComp ? (
-              <Suspense
-                fallback={
-                  <div className="p-8 text-center text-sm text-muted-foreground">
-                    Loading workshop…
-                  </div>
-                }
-              >
-                <WorkshopComp />
-              </Suspense>
+              // Workshop/playground tools need the SAME provider stack the standalone
+              // /playground page wraps them in (HSM + Settings + KeyStore + Operations)
+              // — otherwise HSM-backed tools (the VPN/SSH/HSM sims) crash with
+              // "useHsmContext must be used within HsmProvider". PlaygroundProvider is a
+              // pure context wrapper (HSM init is lazy), so it's cheap for non-HSM tools.
+              <PlaygroundProvider>
+                <Suspense
+                  fallback={
+                    <div className="p-8 text-center text-sm text-muted-foreground">
+                      Loading workshop…
+                    </div>
+                  }
+                >
+                  <WorkshopComp />
+                </Suspense>
+              </PlaygroundProvider>
             ) : timelineEmbed ? (
               // C6: Gantt chart embedded in the sim, scoped to the player's assessed
               // country (or the step's ?country= / ?region= param if present).
