@@ -1739,17 +1739,25 @@ export function SimulationView() {
               <ResCol
                 title="Activities"
                 items={resLinks('activities', sel, sector, seat).map((it) => {
+                  // Business tools embed via the ACTIVITY arm (they emit an artifact).
+                  // Playground/workshop tools (RNG, TLS sim, VPN sim, envelope-encrypt
+                  // …) live in WORKSHOP_TOOL_COMPONENTS — the same registry the journey
+                  // workshops embed through — so route them via the WORKSHOP arm too,
+                  // keeping them UNDER the "● Simulation mode" header instead of
+                  // navigating out to /playground (where the player leaves the sim).
+                  // eslint-disable-next-line security/detect-object-injection
+                  const isWorkshopTool = !!WORKSHOP_TOOL_COMPONENTS[it.id]
+                  // eslint-disable-next-line security/detect-object-injection
                   const artifactType = TOOL_TO_ARTIFACT[it.id]
-                  const step: TreeStep = {
-                    kind: 'activity',
-                    label: it.label,
-                    to: it.to,
-                    artifactType,
-                  }
+                  const step: TreeStep = isWorkshopTool
+                    ? { kind: 'workshop', label: it.label, to: it.to, workshopId: it.id }
+                    : { kind: 'activity', label: it.label, to: it.to, artifactType }
                   return {
                     ...it,
-                    done: artifactDone(artifactType),
-                    onOpen: artifactType && canEmbedStep(step) ? () => openStep(step) : undefined,
+                    done: isWorkshopTool
+                      ? visitedWorkshops.includes(it.id)
+                      : artifactDone(artifactType),
+                    onOpen: canEmbedStep(step) ? () => openStep(step) : undefined,
                   }
                 })}
               />
