@@ -16,6 +16,7 @@
  */
 import type { FC } from 'react'
 import { MigrateEmbed } from '@/components/shared/widgets/MigrateEmbed'
+import { LibraryEmbed } from '@/components/shared/widgets/LibraryEmbed'
 
 export interface ReferenceEmbedSpec {
   /** Header chip label shown under the Simulation-mode bar. */
@@ -25,4 +26,5 @@ export interface ReferenceEmbedSpec {
 
 export const SIM_REFERENCE_EMBEDS: Record<string, ReferenceEmbedSpec> = {
   migrate: { label: 'Migrate', Component: MigrateEmbed },
+  library: { label: 'Library', Component: LibraryEmbed },
 }
