@@ -11,7 +11,6 @@
  * the Mission Control handoff.
  */
 import { useMemo, useState, useEffect, useRef, Suspense } from 'react'
-import { useReducedMotion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
   BUSINESS_TOOL_COMPONENTS,
@@ -62,7 +61,7 @@ import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
 import { getBalance, type DifficultyId } from '@/data/simBalance'
 import { Eyebrow, Ring, Radial, Dial, ReadonlyDial, Stat } from './atoms'
 import { SimTour } from './SimTour'
-import { SEVERITY_META, KIND_CHIP, markSimResume } from './simChrome'
+import { KIND_CHIP, markSimResume } from './simChrome'
 import { canResolveDeepLink } from '@/simulation/deepLinks'
 import {
   ResCol,
@@ -72,7 +71,6 @@ import {
   type QuarterReportData,
 } from './sections'
 import { type MoveCtx } from '@/data/simMoves'
-import { feedFor } from '@/data/simFeed'
 import {
   useAssessSnapshot,
   buildAssessReportDoc,
@@ -225,7 +223,6 @@ export function SimulationView() {
     year,
     q,
     crqcShift,
-    events,
     seed,
     setSize,
     setCountry,
@@ -251,9 +248,6 @@ export function SimulationView() {
     runCompleteSeen,
     markRunComplete,
   } = useSimulationStore()
-  // W6 (a11y): reduced-motion users get a static, scrollable feed instead of the
-  // marquee (which the global motion reset snaps + strands mid-message).
-  const reduceMotion = useReducedMotion()
   // WS-14: the active difficulty balance the engine + scoring read (config swap).
   const balance = getBalance(difficulty)
   const [report, setReport] = useState<QuarterReportData | null>(null)
@@ -672,13 +666,6 @@ export function SimulationView() {
   const budgetTarget = programBudgetTarget(sector, sizeKey)
   const budgetSecured = Math.round(budgetTarget * p0Frac * 10) / 10
 
-  // live feed: this quarter's scripted records (Q1 2026 → Q4 2040) + dynamic events.
-  // All messages are shown; the ticker marquee scrolls so every one can be read.
-  const tickerItems = [
-    ...feedFor(year, q).map((r) => ({ sev: r.sev, t: `Q${q} ${year}`, txt: r.txt })),
-    ...events,
-  ]
-
   // active phase
   const phase = FRAMEWORK_PHASES[sel]
   const level = levelOf(sel)
@@ -1019,48 +1006,13 @@ export function SimulationView() {
         </div>
       </header>
 
-      {/* ticker (top — live event feed) — grey strip, distinct from the dark header */}
-      <div
-        className="flex h-[40px] shrink-0 items-center gap-5 overflow-hidden border-b border-border bg-muted px-4 text-foreground"
-        role="log"
-        aria-live="polite"
-        aria-label="Live event feed"
-      >
-        <span className="shrink-0 font-mono text-[11px] font-extrabold uppercase tracking-[0.16em] text-primary">
-          ● LIVE FEED
-        </span>
-        <div className={`relative flex-1 ${reduceMotion ? 'overflow-x-auto' : 'overflow-hidden'}`}>
-          {/* Normal: duplicated track → seamless left-scrolling marquee (pauses on
-              hover). Reduced-motion (W6): a single static, horizontally-scrollable
-              row of every item — no animation, nothing stranded off-screen. */}
-          <div className={`flex gap-6 ${reduceMotion ? '' : 'w-max animate-sim-ticker'}`}>
-            {(reduceMotion ? tickerItems : [...tickerItems, ...tickerItems]).map((e, i) => {
-              const sev = SEVERITY_META[e.sev]
-              // the marquee duplicates the track for a seamless scroll; the second
-              // copy is hidden from the accessibility tree so SR reads each once.
-              const isDuplicate = !reduceMotion && i >= tickerItems.length
-              return (
-                <span
-                  key={i}
-                  aria-hidden={isDuplicate || undefined}
-                  className="flex shrink-0 items-center gap-2 text-[13px]"
-                >
-                  {/* icon + sr-only label = non-colour severity signal (AA) */}
-                  <span
-                    className={`grid h-3.5 w-3.5 place-items-center rounded-full text-[8px] font-bold text-background ${sev.dot}`}
-                    aria-hidden="true"
-                  >
-                    {sev.icon}
-                  </span>
-                  <span className="sr-only">{sev.label}:</span>
-                  <span className="font-mono text-[11px] text-muted-foreground">{e.t}</span>
-                  <span className="whitespace-nowrap">{e.txt}</span>
-                </span>
-              )
-            })}
-          </div>
-        </div>
-      </div>
+      {/* Live-feed ticker dropped for now: it was a hand-maintained CSV
+          (simFeed.ts) + a static event pool that duplicated, and could drift
+          from, the hub's authoritative timeline/regulatory data instead of
+          deriving from it. The data files (simFeed.ts, simEvents.ts, the CSV,
+          quarterEngine's event draw) are left in place so it can be re-enabled
+          and wired to the hub timeline (QC_FIRST_YEAR / regulatoryTimelines / …)
+          when we invest in doing it properly. */}
 
       {/* KPI ribbon */}
       <div className="flex shrink-0 flex-wrap items-stretch gap-3 border-b border-border bg-card px-4 py-3">
