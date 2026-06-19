@@ -21,8 +21,10 @@
 export interface AlgoCapacityProfile {
   /** Human-readable algorithm name */
   name: string
-  /** NIST security level (1 = AES-128 equivalent) */
-  securityLevel: 1 | 3 | 5
+  /** NIST security category (1 = AES-128 … 5 = AES-256). 0 = below category 1 (~112-bit classical, e.g. RSA-2048). */
+  securityLevel: 0 | 1 | 2 | 3 | 5
+  /** Approximate classical security in bits, for pre-quantum baselines (RSA/ECC). */
+  approxClassicalBits?: number
   /** Public key size in bytes */
   publicKeyBytes: number
   /** Private key size in bytes */
@@ -44,7 +46,8 @@ export interface AlgoCapacityProfile {
 export const CERT_CAPACITY_DEFAULTS: AlgoCapacityProfile[] = [
   {
     name: 'RSA-2048',
-    securityLevel: 1,
+    securityLevel: 0,
+    approxClassicalBits: 112,
     publicKeyBytes: 256,
     privateKeyBytes: 1192,
     signatureBytes: 256,
@@ -57,6 +60,7 @@ export const CERT_CAPACITY_DEFAULTS: AlgoCapacityProfile[] = [
   {
     name: 'ECDSA P-256',
     securityLevel: 1,
+    approxClassicalBits: 128,
     publicKeyBytes: 64,
     privateKeyBytes: 32,
     signatureBytes: 72,
@@ -68,7 +72,7 @@ export const CERT_CAPACITY_DEFAULTS: AlgoCapacityProfile[] = [
   },
   {
     name: 'ML-DSA-44',
-    securityLevel: 1,
+    securityLevel: 2,
     publicKeyBytes: 1312,
     privateKeyBytes: 2560,
     signatureBytes: 2420,

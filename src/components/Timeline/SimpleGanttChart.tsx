@@ -49,6 +49,8 @@ interface SimpleGanttChartProps {
   embedded?: boolean
   /** Label shown in the scope chip when `embedded` (e.g. "Germany"). */
   scopeLabel?: string
+  /** Year treated as "now" for current-year + elapsed-milestone state. Defaults to the real current year. */
+  asOfYear?: number
 }
 
 const START_YEAR = 2024
@@ -83,7 +85,9 @@ export const SimpleGanttChart = ({
   onSetShowOnlyMyCountries,
   embedded = false,
   scopeLabel,
+  asOfYear,
 }: SimpleGanttChartProps) => {
+  const currentYear = asOfYear ?? new Date().getFullYear()
   const [localSearchText, setLocalSearchText] = useState(searchText)
   const filterText = onSearchChange ? searchText : localSearchText
 
@@ -345,6 +349,8 @@ export const SimpleGanttChart = ({
       glow: 'hsl(var(--ring))',
     }
     const isMilestone = phaseData.type === 'Milestone'
+    const milestoneElapsed = isMilestone && phaseData.startYear < currentYear
+    const milestoneActive = isMilestone && phaseData.startYear === currentYear
 
     for (let year = START_YEAR; year <= END_YEAR; year++) {
       const isInPhase = year >= startYear && year <= endYear
@@ -354,7 +360,7 @@ export const SimpleGanttChart = ({
         cells.push(
           <td
             key={year}
-            className="p-0 h-10 overflow-visible relative"
+            className={`p-0 h-10 overflow-visible relative ${year === currentYear ? 'border-l-2 border-primary/50' : ''}`}
             style={{
               borderRight: isLast ? '1px solid var(--color-border)' : 'none',
               backgroundColor: isMilestone ? 'transparent' : colors.start,
@@ -375,10 +381,19 @@ export const SimpleGanttChart = ({
               tabIndex={isFirst ? 0 : -1}
             >
               {isMilestone && isFirst ? (
-                <div className="relative flex items-center justify-center">
+                <div
+                  className="relative flex items-center justify-center"
+                  title={
+                    milestoneElapsed
+                      ? `In effect since ${phaseData.startYear}`
+                      : milestoneActive
+                        ? 'In effect this year'
+                        : `Upcoming (${phaseData.startYear})`
+                  }
+                >
                   <Flag
                     data-testid="milestone-flag"
-                    className="w-4 h-4"
+                    className={`w-4 h-4 ${milestoneElapsed ? 'opacity-60' : ''}`}
                     style={{ color: colors.start, fill: colors.start }}
                   />
                   <span
@@ -386,6 +401,11 @@ export const SimpleGanttChart = ({
                     style={{ color: colors.start }}
                   >
                     {phaseData.phase}
+                    {(milestoneElapsed || milestoneActive) && (
+                      <span className="ml-1 font-normal text-[9px] uppercase tracking-wide text-primary">
+                        {milestoneActive ? 'now' : 'in effect'}
+                      </span>
+                    )}
                   </span>
                   {phaseData.status && (
                     <div className="absolute -top-3 -right-3 z-20 scale-75 origin-bottom-left">
@@ -409,7 +429,12 @@ export const SimpleGanttChart = ({
           </td>
         )
       } else {
-        cells.push(<td key={year} className="p-0 h-10 border-r border-border"></td>)
+        cells.push(
+          <td
+            key={year}
+            className={`p-0 h-10 border-r border-border ${year === currentYear ? 'border-l-2 border-primary/50' : ''}`}
+          ></td>
+        )
       }
     }
     return cells
@@ -689,9 +714,14 @@ export const SimpleGanttChart = ({
                   className="p-2 text-center min-w-[80px] bg-background/80 border-b border-r border-border"
                 >
                   <span
-                    className={`font-mono text-sm ${year === new Date().getFullYear() ? 'text-foreground font-bold' : 'text-muted-foreground'}`}
+                    className={`font-mono text-sm ${year === currentYear ? 'text-foreground font-bold' : 'text-muted-foreground'}`}
                   >
                     {year === 2024 ? '<2024' : year}
+                    {year === currentYear && (
+                      <span className="ml-1 text-[8px] uppercase tracking-wide text-primary align-top">
+                        now
+                      </span>
+                    )}
                   </span>
                 </th>
               ))}
