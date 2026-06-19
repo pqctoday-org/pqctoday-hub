@@ -6,6 +6,7 @@
  * Picking a trap explains WHY it fails. Verdicts are context-aware.
  */
 import type { PhaseId } from './frameworkPhases'
+import type { Freshness } from './contentFreshness'
 
 export interface MoveCtx {
   /** Country/jurisdiction with hybrid mandate + end state. */
@@ -26,6 +27,12 @@ export interface SimMove {
   label: string
   desc: string
   evaluate: (ctx: MoveCtx) => MoveVerdict
+  /**
+   * Structured freshness for a move whose verdict cites a time-sensitive fact
+   * (e.g. "as of June 2026 — re-check the live CMVP list"). Aggregated into the
+   * content-freshness manifest so the date can't silently go stale in prose.
+   */
+  freshness?: Freshness
 }
 
 const sound =
@@ -224,6 +231,10 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       evaluate: trap(
         'Fails (as of June 2026 — re-check the live CMVP list, since validated ML-KEM/ML-DSA modules are expected imminently). Until a FIPS 140-3-validated PQC module exists, a FIPS-required environment is non-compliant — gate PQC there behind CAVP/validation, and deploy first where validation is not mandated.'
       ),
+      freshness: {
+        asOf: '2026-06-18',
+        recheck: 'https://csrc.nist.gov/projects/cryptographic-module-validation-program',
+      },
     },
     {
       label: 'Skip the library-readiness check',

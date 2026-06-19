@@ -48,6 +48,8 @@
     "audit:compliance:dry": "tsx scripts/audit-compliance-coverage.ts --dry-run --skip-external",
     "audit:timeline-evidence": "tsx scripts/audit-timeline-evidence.ts",
     "audit:enrichment-freshness": "tsx scripts/audit-timeline-enrichment-freshness.ts",
+    "audit:content-freshness": "tsx scripts/audit-content-freshness.ts",
+    "audit:content-freshness:write": "tsx scripts/audit-content-freshness.ts --write",
     "download:timeline-evidence": "tsx scripts/download-timeline-evidence.ts",
     "download:timeline-evidence:fetch": "tsx scripts/download-timeline-evidence.ts --fetch-missing",
     "enrich:protocol-matrix": "python3 scripts/enrich-protocol-matrix.py",
