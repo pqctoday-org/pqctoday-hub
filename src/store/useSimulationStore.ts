@@ -83,6 +83,10 @@ export interface SimulationState {
     q: number
     newEvents: SimEvent[]
   }) => void
+  /** Sticky time penalty (I1): a wrong in-sim decision costs the player N quarters
+   *  of rework — advancing their OWN clock toward the FIXED Q-Day, which shrinks the
+   *  Mosca runway. Deterministic (no RNG); Q-Day (crqcShift) is untouched. */
+  applyDecisionSetback: (quarters: number, txt: string) => void
   /** Delegate (auto-complete) tree steps to the AI team by key. */
   autoCompleteSteps: (keys: string[]) => void
   /** Cancel auto-completion for a phase (remove its `${phase}::` keys). */
@@ -249,6 +253,17 @@ export const useSimulationStore = create<SimulationState>()(
           q,
           events: [...newEvents, ...s.events].slice(0, 30),
         })),
+      applyDecisionSetback: (quarters, txt) =>
+        set((s) => {
+          let year = s.year
+          let q = s.q + quarters
+          while (q > 4) {
+            q -= 4
+            year += 1
+          }
+          const event: SimEvent = { sev: 'danger', t: `Q${s.q} ${s.year}`, txt }
+          return { year, q, events: [event, ...s.events].slice(0, 30) }
+        }),
       autoCompleteSteps: (keys) =>
         set((s) => ({ auto: Array.from(new Set([...s.auto, ...keys])) })),
       clearAuto: (phase) =>

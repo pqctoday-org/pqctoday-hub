@@ -241,6 +241,7 @@ export function SimulationView() {
     setSeat,
     setSel,
     applyQuarter,
+    applyDecisionSetback,
     reset,
     visitedRefs,
     markRefVisited,
@@ -1507,6 +1508,14 @@ export function SimulationView() {
               canEmbed={canEmbedStep}
               onOpenStep={openStep}
               assessRec={nextMoveRec}
+              onWrongPick={
+                // I1 pilot: a wrong pick on Inventory (p1) or Pilots (p5) costs the
+                // player 2 quarters of rework — their clock slips toward the fixed Q-Day.
+                sel === 'p1' || sel === 'p5'
+                  ? (label) =>
+                      applyDecisionSetback(2, `Lost 2 quarters to rework — wrong call: ${label}`)
+                  : undefined
+              }
             />
 
             {/* C1 #3 + W2c — phase debrief: study what the run skipped. Opens each

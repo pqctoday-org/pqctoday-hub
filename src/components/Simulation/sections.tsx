@@ -185,6 +185,7 @@ export function DecisionSection({
   canEmbed,
   onOpenStep,
   assessRec,
+  onWrongPick,
 }: {
   phaseId: PhaseId
   ctx: MoveCtx
@@ -198,6 +199,8 @@ export function DecisionSection({
   canEmbed: (s: TreeStep) => boolean
   onOpenStep: (s: TreeStep) => void
   assessRec?: AssessRec
+  /** I1: called with the wrong move's label when the player picks a trap (pilot phases only). */
+  onWrongPick?: (label: string) => void
 }) {
   const [chosen, setChosen] = useState<number | null>(null)
   // reset the choice whenever the move changes (new phase or a step completed)
@@ -290,7 +293,11 @@ export function DecisionSection({
               onClick={() => {
                 setChosen(i)
                 // WS-16: record which Common Failure the player fell for.
-                if (!c.correct) logSimTrapPick(phaseId, c.label)
+                if (!c.correct) {
+                  logSimTrapPick(phaseId, c.label)
+                  // I1: a wrong pick costs the player time (pilot phases wire this).
+                  onWrongPick?.(c.label)
+                }
               }}
               className={`flex h-auto w-full flex-col items-start justify-start whitespace-normal rounded-lg border p-2.5 text-left transition-opacity ${
                 tone ? `${tone.border} bg-card` : 'border-border bg-muted'
