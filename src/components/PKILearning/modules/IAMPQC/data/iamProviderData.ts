@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { getCatalogStatus, type CatalogAvailability } from '@/data/catalogStatus'
 
 export type PQCStatus = 'ga' | 'preview' | 'roadmap' | 'planned' | 'none'
 
@@ -7,13 +8,36 @@ export interface IAMVendorStatus {
   vendor: string
   product: string
   category: string
-  pqcStatus: PQCStatus
+  /**
+   * Reference to the product's `software_name` in the central catalog
+   * (`pqc_product_catalog_*.csv`). The headline `pqcStatus` is DERIVED from the
+   * catalog via `getVendorPqcStatus` — never stored here, so the module cannot
+   * drift from the single source of truth. The IAM-specific teaching detail
+   * (tokenSigning / mfaPqc / apiSecurity / certifications / notes) stays
+   * module-authored — the catalog does not track it.
+   */
+  catalogName: string
   tokenSigning: string
   mfaPqc: string
   apiSecurity: string
   roadmapYear: number | null
   certifications: string[]
   notes: string
+}
+
+// ── Catalog-derived headline status ───────────────────────────────────────────
+const AVAIL_TO_PQC: Record<CatalogAvailability, PQCStatus> = {
+  available: 'ga',
+  partial: 'preview',
+  roadmap: 'roadmap',
+  none: 'none',
+  unverified: 'roadmap',
+}
+
+/** Headline PQC status for an IAM vendor, derived live from the central catalog. */
+export function getVendorPqcStatus(v: IAMVendorStatus): PQCStatus {
+  const status = getCatalogStatus(v.catalogName)
+  return status ? AVAIL_TO_PQC[status.availability] : 'roadmap'
 }
 
 export const PQC_STATUS_LABELS: Record<PQCStatus, { label: string; className: string }> = {
@@ -45,7 +69,7 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     vendor: 'Okta',
     product: 'Okta Identity Engine',
     category: 'Cloud IAM',
-    pqcStatus: 'preview',
+    catalogName: 'Okta Workforce Identity',
     tokenSigning:
       'ML-DSA token signing pilot launched 2025; opt-in preview for JWT and SAML assertions',
     mfaPqc: 'FIDO2/WebAuthn attestation PQC roadmap 2026; TOTP/HOTP (HMAC) already quantum-safe',
@@ -60,7 +84,7 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     vendor: 'Microsoft',
     product: 'Microsoft Entra ID',
     category: 'Cloud IAM / Directory',
-    pqcStatus: 'preview',
+    catalogName: 'Microsoft Entra ID',
     tokenSigning:
       'Entra ID PQC hybrid token signing in preview 2025; ML-DSA-65 for ID tokens and access tokens',
     mfaPqc:
@@ -83,7 +107,7 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     vendor: 'Ping Identity',
     product: 'PingFederate / PingOne',
     category: 'Enterprise IAM / Federation',
-    pqcStatus: 'roadmap',
+    catalogName: 'Ping Identity PingFederate',
     tokenSigning:
       'PingOne Advanced Services PQC JWT signing on roadmap for 2026; PingFederate 12.x evaluation underway',
     mfaPqc:
@@ -100,7 +124,7 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     vendor: 'Ping Identity (ForgeRock)',
     product: 'ForgeRock Access Management (AM)',
     category: 'Enterprise IAM',
-    pqcStatus: 'roadmap',
+    catalogName: 'ForgeRock Access Management (AM)',
     tokenSigning:
       'AM 7.x PQC integration via OpenSSL 3.x Java provider; ML-DSA for OAuth2/OIDC tokens under evaluation',
     mfaPqc: 'ForgeRock MFA — TOTP quantum-safe; push notification channel PQC TLS planned',
@@ -116,7 +140,7 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     vendor: 'SailPoint',
     product: 'SailPoint Identity Security Cloud',
     category: 'Identity Governance',
-    pqcStatus: 'planned',
+    catalogName: 'SailPoint Identity Security Cloud',
     tokenSigning:
       'IGA workflow tokens — PQC awareness roadmap in 2026; token signing via cloud IdP delegation',
     mfaPqc:
@@ -132,7 +156,7 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     vendor: 'CyberArk',
     product: 'CyberArk PAM / Vault',
     category: 'Privileged Access Management',
-    pqcStatus: 'preview',
+    catalogName: 'CyberArk Conjur',
     tokenSigning:
       'PAM session recording tokens — ML-DSA signing for tamper evidence in 2025 preview',
     mfaPqc:
@@ -149,7 +173,7 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     vendor: 'HashiCorp (IBM)',
     product: 'HashiCorp Vault (Identity)',
     category: 'Secrets Management / IAM',
-    pqcStatus: 'preview',
+    catalogName: 'HashiCorp Vault',
     tokenSigning:
       'Vault ML-DSA token signing for Vault-issued tokens (planned); Transit Secrets Engine PQC signing (roadmap)',
     mfaPqc: 'Vault MFA (TOTP/TOTP-backed) — TOTP quantum-safe; OIDC provider PQC planned 2026',
@@ -165,7 +189,7 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     vendor: 'Red Hat / Community',
     product: 'Keycloak',
     category: 'Open-Source IAM',
-    pqcStatus: 'preview',
+    catalogName: 'Keycloak',
     tokenSigning:
       'Keycloak 25.x+ ML-DSA JWT signing via OpenSSL 3.x oqsprovider (experimental, community work); OIDC and SAML assertion PQC',
     mfaPqc:
