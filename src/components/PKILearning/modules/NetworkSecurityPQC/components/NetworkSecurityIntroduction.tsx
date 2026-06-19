@@ -21,6 +21,7 @@ import { NGFW_VENDORS, INSPECTION_CHALLENGES, IDS_RULE_CATEGORIES } from '../dat
 import {
   VENDOR_MIGRATION_DATA,
   PQC_STATUS_LABELS,
+  getVendorPqcStatus,
   type PQCStatusKey,
 } from '../data/networkProviderData'
 import { Button } from '@/components/ui/button'
@@ -169,7 +170,7 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
                 </thead>
                 <tbody>
                   {VENDOR_MIGRATION_DATA.slice(0, 4).map((v) => {
-                    const status = PQC_STATUS_LABELS[v.pqcStatus as PQCStatusKey]
+                    const status = PQC_STATUS_LABELS[getVendorPqcStatus(v)]
                     const kemStatus = PQC_STATUS_LABELS[v.mlKemStatus as PQCStatusKey]
                     return (
                       <tr key={v.id} className="border-b border-border/50">
