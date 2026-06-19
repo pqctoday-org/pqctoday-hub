@@ -109,6 +109,7 @@ import {
   type SensitivityTier,
 } from '@/data/simAssets'
 import { ArchitecturePanel } from './ArchitecturePanel'
+import { TrapInsightsPanel } from './TrapInsightsPanel'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -1470,6 +1471,9 @@ export function SimulationView() {
 
           {/* center — active phase ops */}
           <div className="flex min-h-0 flex-col overflow-auto rounded-xl border border-border bg-card p-5">
+            {/* PR-5: misconception telemetry — which Common Failures you fall for most,
+                linked to the lesson that fixes each. Collapsed by default. */}
+            <TrapInsightsPanel />
             <div className="mb-1 flex flex-wrap items-center gap-2.5">
               <span
                 className={`rounded-full px-2 py-0.5 font-mono text-sim-micro font-bold ${

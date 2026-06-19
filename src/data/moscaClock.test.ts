@@ -7,6 +7,8 @@ import {
   SIM_CRQC_YEAR,
   SIZE_MIGRATION_YEARS,
   DEFAULT_SHELF_LIFE_YEARS,
+  COUNTRY_DEADLINE_YEAR,
+  COUNTRY_DEADLINE_PROVENANCE,
 } from './moscaClock'
 
 describe('moscaClock', () => {
@@ -49,5 +51,19 @@ describe('moscaClock', () => {
     expect(shelfLifeFor('retail')).toBe(3)
     expect(shelfLifeFor('unknown-sector')).toBe(DEFAULT_SHELF_LIFE_YEARS)
     expect(shelfLifeFor('government')).toBeGreaterThan(shelfLifeFor('retail'))
+  })
+
+  // PR-5 — ten jurisdictions, every deadline a planning-provenance horizon.
+  it('covers ten jurisdictions with planning-provenance deadlines', () => {
+    for (const c of ['US', 'DE', 'FR', 'UK', 'AU', 'EU', 'CA', 'JP', 'KR', 'SG'] as const) {
+      expect(COUNTRY_DEADLINE_YEAR[c], `${c} deadline`).toBeGreaterThanOrEqual(2029)
+      expect(COUNTRY_DEADLINE_PROVENANCE[c], `${c} provenance`).toBe('planning')
+    }
+  })
+
+  it('new jurisdictions resolve Z to the Q-Day anchor (deadline ≥ Q-Day, so Q-Day binds)', () => {
+    for (const c of ['EU', 'CA', 'JP', 'KR', 'SG'] as const) {
+      expect(horizonYearFor(c), `${c} horizon`).toBe(SIM_CRQC_YEAR)
+    }
   })
 })

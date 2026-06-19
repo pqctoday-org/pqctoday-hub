@@ -19,6 +19,7 @@ import type { TreeStep, TreeActivity, LevelBand, Pitfall, StepKind } from '@/sim
 import type { AssessRec } from '@/simulation/assessBridge'
 import { canResolveDeepLink } from '@/simulation/deepLinks'
 import { logSimTrapPick } from '@/utils/analytics'
+import { recordTrapPick } from './simTrapTally'
 import { Eyebrow } from './atoms'
 import {
   SEVERITY_META,
@@ -289,8 +290,12 @@ export function DecisionSection({
               aria-label={`Option ${String.fromCharCode(65 + i)}: ${c.label}`}
               onClick={() => {
                 setChosen(i)
-                // WS-16: record which Common Failure the player fell for.
-                if (!c.correct) logSimTrapPick(phaseId, c.label)
+                // WS-16 / PR-5: record which Common Failure the player fell for —
+                // GA4 (aggregate) + a local tally that drives the Trap Insights board.
+                if (!c.correct) {
+                  logSimTrapPick(phaseId, c.label)
+                  recordTrapPick(phaseId, c.label)
+                }
               }}
               className={`flex h-auto w-full flex-col items-start justify-start whitespace-normal rounded-lg border p-2.5 text-left transition-opacity ${
                 tone ? `${tone.border} bg-card` : 'border-border bg-muted'
