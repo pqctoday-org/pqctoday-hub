@@ -179,7 +179,12 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     2026-06-19: bumped 6 → 7 — run-2 audit deprecated OpenSSL 3.6.1 row
   //     (CVE bugfix; no PQC content; PQC landed in 3.5). corpus lags until
   //     refresh-index.
-  timeline: 7,
+  //     2026-06-19: bumped 7 → 10 — run-4 audit deprecated CZ Key Establishment
+  //     Migration, CZ Encryption Migration Complete (both unsourced inferences from
+  //     NUKIB doc which has no migration dates), and HK HKMA Fintech Adoption Report
+  //     (URL points to PQC-free speech; source confusion). corpus lags until
+  //     refresh-index.
+  timeline: 10,
   algorithms: 0,
   //     2026-05-31: bumped 113 → 118 — 5 new catalog enrichments (Tectia SSH, IVPN, libcrux, Trail of Bits ml-dsa, InfoSec Global AgileSec)
   'document-enrichment': 118,

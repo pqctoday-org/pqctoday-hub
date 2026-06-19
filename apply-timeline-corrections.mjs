@@ -141,6 +141,67 @@ const SIM_DEADLINE = [
 //     roadmap were published 2026-01-12 (US Treasury sb0355). Corrected.
 // NZ: Planning Phase row pointed at the v3.9 release URL but SourceDate 2024-09-01
 //     matches v3.8 (released 2024-09-05). Correct URL to the v3.8 release page.
+// ── run-4 corrections (web-verified 2026-06-19) ──────────────────────────────
+// CZ Key/Encryption milestones: NUKIB "Minimum Requirements for Cryptographic
+//   Algorithms" is an algorithm-approval list with NO migration dates; the
+//   2024-2027 / 2027 windows are unsupported inferences.
+// HK Fintech Adoption: URL resolves to a Jul-2025 HKMA speech with no PQC
+//   content; description mixes up a Jan-2025 stock-take with the speech source.
+// IL Strategy: document is real but contains no PQC or quantum content;
+//   description's "quantum threat mitigation provisions" is fabricated.
+// NZ Transition Phase: v3.9 URL is correct (only v3.9 has PQC section 2.4);
+//   SourceDate 2024-09-01 must update to 2025-05-09 (v3.9 release date).
+// CZ Recommendations: SourceDate 2023-01-01 is placeholder; v3.0 published
+//   2023-07-01 (first version with substantive PQC content).
+const R4_DEPRECATE = [
+  [
+    'Czech Republic',
+    'Key Establishment Migration',
+    'Unsupported: NUKIB "Minimum Requirements for Cryptographic Algorithms" is an algorithm-approval list with no migration dates or 2024-2027 window; milestone is an unsourced inference (audit 2026-06-19).',
+  ],
+  [
+    'Czech Republic',
+    'Encryption Migration Complete',
+    'Unsupported: NUKIB document sets no 2027 encryption-migration deadline; milestone is an unsourced inference from CNSA 2.0/EU timelines, not Czech national policy (audit 2026-06-19).',
+  ],
+  [
+    'Hong Kong',
+    'HKMA Fintech Adoption Report: PQC Commitment',
+    'Inaccurate: URL resolves to a Jul-2025 HKMA speech (Carmen Chu, FiNETech6) with no PQC content; description conflates a separate Jan-2025 institution stock-take. No verified PQC commitment in this source (audit 2026-06-19).',
+  ],
+]
+const R4_FIX = [
+  [
+    'Czech Republic',
+    'Cryptographic Recommendations',
+    {
+      SourceDate: '2023-07-01',
+      data_quality_notes:
+        'SourceDate corrected to 2023-07-01 (NUKIB v3.0 publication date — first version with substantive PQC algorithm approvals). Current live document is v4.0 (Feb 2025); v3.0 introduced ML-KEM / hybrid schemes. URL points to the live PDF which updates in place.',
+    },
+  ],
+  [
+    'Israel',
+    'National Cybersecurity Strategy 2025-2028',
+    {
+      Description:
+        'INCD publishes the Israel National Cyber Security Strategy 2025 (implementation horizon through 2028), covering critical infrastructure, AI, and the Cyber Dome concept. The strategy document does not explicitly address post-quantum cryptography; PQC guidance comes from companion INCD/Digital Agency directives.',
+      confidence_score: '60',
+      data_quality_notes:
+        'Title corrected to reflect official cover ("2025" not "2025-2028" as a date range). PQC is absent from this strategy; prior description claiming "quantum threat mitigation provisions" was inaccurate (audit 2026-06-19).',
+    },
+  ],
+  [
+    'New Zealand',
+    'Transition Phase',
+    {
+      SourceDate: '2025-05-09',
+      data_quality_notes:
+        'SourceDate corrected to 2025-05-09 (NZISM v3.9 release, the version that introduced Section 2.4 PQC preparation guidance). v3.8 (Sep 2024) has no PQC content. The 2026-2030 transition window is an editorial inference from v3.9 para 2.4.10 ("possibly in the next 2-3 years"); NZISM does not label a discrete "Transition Phase" with those years explicitly (audit 2026-06-19).',
+    },
+  ],
+]
+
 const R3_FIX = [
   [
     'Germany',
@@ -227,6 +288,30 @@ for (const [c, t, changes] of FIX) {
   fix++
 }
 
+// ── run-4 corrections ─────────────────────────────────────────────────────────
+let r4dep = 0,
+  r4fix = 0
+for (const [c, t, reason] of R4_DEPRECATE) {
+  const r = find(c, t)
+  if (!r) {
+    misses.push(`R4DEP ${c}/${t}`)
+    continue
+  }
+  r.status = 'deprecated'
+  r.deprecated_at = TODAY
+  r.deprecated_reason = reason
+  r4dep++
+}
+for (const [c, t, changes] of R4_FIX) {
+  const r = find(c, t)
+  if (!r) {
+    misses.push(`R4FIX ${c}/${t}`)
+    continue
+  }
+  Object.assign(r, changes)
+  r4fix++
+}
+
 // ── run-3 corrections ─────────────────────────────────────────────────────────
 let r3fix = 0
 for (const [c, t, changes] of R3_FIX) {
@@ -300,8 +385,8 @@ const columns = [...meta.fields, 'is_sim_deadline']
 writeFileSync(OUT, Papa.unparse(data, { columns }) + '\n')
 console.log(
   `wrote ${OUT}: ${data.length} rows, ` +
-    `${dep + r2dep} deprecated (+${r2dep} run-2), ` +
-    `${fix + r2fix + r3fix} field-fixed (+${r2fix} run-2, +${r3fix} run-3), ` +
+    `${dep + r2dep + r4dep} deprecated (+${r2dep} run-2, +${r4dep} run-4), ` +
+    `${fix + r2fix + r3fix + r4fix} field-fixed (+${r2fix} run-2, +${r3fix} run-3, +${r4fix} run-4), ` +
     `${r2reinstate} reinstated, ` +
     `${tag} sim-deadline-tagged`
 )
