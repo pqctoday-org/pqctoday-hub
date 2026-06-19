@@ -158,6 +158,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
   },
   {
     moduleId: 'migration-program',
+    nfExtra: ['NF-COM-011'],
     competencyAreas: ['CA-GOVCOMP', 'CA-RISK', 'CA-SYSARCH'],
     tier: 'awareness',
     workRoles: ['is-security-manager', 'risk-manager', 'security-architect'],
@@ -176,6 +177,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
   },
   {
     moduleId: 'vpn-ssh-pqc',
+    nfExtra: ['NF-COM-009'],
     competencyAreas: ['CA-NETDEF', 'CA-CRYPTO'],
     tier: 'practitioner',
     workRoles: ['network-security-specialist', 'system-administrator', 'security-architect'],
@@ -183,6 +185,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
   },
   {
     moduleId: 'web-gateway-pqc',
+    nfExtra: ['NF-COM-004'],
     competencyAreas: ['CA-NETDEF', 'CA-CRYPTO'],
     tier: 'practitioner',
     workRoles: ['system-administrator', 'network-security-specialist'],
@@ -306,6 +309,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
   // -----------------------------------------------------------------------
   {
     moduleId: 'api-security-jwt',
+    nfExtra: ['NF-COM-004'],
     competencyAreas: ['CA-IDENT', 'CA-CRYPTO'],
     tier: 'practitioner',
     workRoles: ['security-developer', 'iam-specialist'],
@@ -313,6 +317,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
   },
   {
     moduleId: 'iam-pqc',
+    nfExtra: ['NF-COM-004'],
     competencyAreas: ['CA-IDENT', 'CA-CRYPTO'],
     tier: 'practitioner',
     workRoles: ['iam-specialist', 'security-architect'],
@@ -320,6 +325,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
   },
   {
     moduleId: 'digital-id',
+    nfExtra: ['NF-COM-004'],
     competencyAreas: ['CA-IDENT', 'CA-CRYPTO'],
     tier: 'practitioner',
     workRoles: ['iam-specialist', 'security-architect'],
@@ -358,6 +364,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
   // -----------------------------------------------------------------------
   {
     moduleId: 'database-encryption-pqc',
+    nfExtra: ['NF-COM-004'],
     competencyAreas: ['CA-DATASEC', 'CA-CRYPTO'],
     tier: 'practitioner',
     workRoles: ['security-developer', 'system-administrator'],
@@ -436,6 +443,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
   },
   {
     moduleId: 'aerospace-pqc',
+    nfExtra: ['NF-COM-010'],
     competencyAreas: ['CA-RISK', 'CA-SYSARCH'],
     tier: 'awareness',
     workRoles: ['risk-manager', 'security-architect'],
@@ -443,6 +451,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
   },
   {
     moduleId: 'healthcare-pqc',
+    nfExtra: ['NF-COM-010'],
     competencyAreas: ['CA-RISK', 'CA-GOVCOMP', 'CA-DATASEC'],
     tier: 'awareness',
     workRoles: ['risk-manager', 'is-security-manager'],
@@ -465,6 +474,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
   },
   {
     moduleId: '5g-security',
+    nfExtra: ['NF-COM-010'],
     competencyAreas: ['CA-NETDEF', 'CA-CRYPTO'],
     tier: 'practitioner',
     workRoles: ['network-security-specialist', 'security-architect'],
@@ -479,6 +489,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
   },
   {
     moduleId: 'automotive-pqc',
+    nfExtra: ['NF-COM-010'],
     competencyAreas: ['CA-SYSARCH', 'CA-NETDEF'],
     tier: 'practitioner',
     workRoles: ['security-architect', 'network-security-specialist'],
