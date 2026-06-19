@@ -99,7 +99,7 @@ export function ResCol({ title, items }: { title: string; items: ResItem[] }) {
           const inner = (
             <>
               <span
-                className={`grid h-4 w-4 shrink-0 place-items-center rounded-full text-[9px] font-bold ${
+                className={`grid h-4 w-4 shrink-0 place-items-center rounded-full text-sim-micro font-bold ${
                   r.done
                     ? 'bg-success text-success-foreground'
                     : 'border border-border text-transparent'
@@ -109,7 +109,7 @@ export function ResCol({ title, items }: { title: string; items: ResItem[] }) {
               </span>
               <span className="min-w-0 flex-1 text-left">
                 <span className="block text-[11.5px] font-semibold text-foreground">{r.label}</span>
-                <span className="block font-mono text-[9px] text-muted-foreground">
+                <span className="block font-mono text-sim-micro text-muted-foreground">
                   {r.onOpen
                     ? 'opens in simulation'
                     : resolvable
@@ -219,7 +219,7 @@ export function DecisionSection({
   if (!nextMove) {
     return (
       <div className="mb-4 rounded-lg border border-success bg-success/10 p-3">
-        <div className="font-mono text-[9.5px] font-extrabold text-success">✓ PHASE CLEARED</div>
+        <div className="font-mono text-sim-micro font-extrabold text-success">✓ PHASE CLEARED</div>
         <div className="mt-0.5 text-[12.5px] font-bold text-foreground">
           Every maturity level earned{gate ? ` — Gate ${gate.id} certified` : ''}.
         </div>
@@ -255,13 +255,13 @@ export function DecisionSection({
     <div className="mb-4">
       <div className="mb-2 flex items-center justify-between">
         <Eyebrow>Next move — pick the right play</Eyebrow>
-        <span className="font-mono text-[9.5px] font-bold text-muted-foreground">
+        <span className="font-mono text-sim-micro font-bold text-muted-foreground">
           {stepsDone}/{stepsTotal} · at L{level}
         </span>
       </div>
       {/* the target: what this move advances (which level + framework activity) */}
       <div className="mb-2 flex items-center gap-2 rounded-md bg-muted px-2.5 py-1.5">
-        <span className="grid h-5 min-w-[26px] place-items-center rounded bg-primary px-1 font-mono text-[9px] font-extrabold text-primary-foreground">
+        <span className="grid h-5 min-w-[26px] place-items-center rounded bg-primary px-1 font-mono text-sim-chip font-extrabold text-primary-foreground">
           L{nextMove.band.level}
         </span>
         <span className="min-w-0 flex-1 truncate text-[10.5px] text-muted-foreground">
@@ -270,7 +270,7 @@ export function DecisionSection({
         </span>
         {assessRec && (
           <span
-            className="shrink-0 rounded-full bg-secondary/15 px-2 py-0.5 font-mono text-[9px] font-bold text-secondary"
+            className="shrink-0 rounded-full bg-secondary/15 px-2 py-0.5 font-mono text-sim-chip font-bold text-secondary"
             title="Flagged by your assessment"
           >
             ★ Assess · {assessRec.category}
@@ -298,7 +298,7 @@ export function DecisionSection({
             >
               <div className="flex items-center gap-2">
                 <span
-                  className={`grid h-[18px] w-[18px] shrink-0 place-items-center rounded-md font-mono text-[9px] font-extrabold ${
+                  className={`grid h-[18px] w-[18px] shrink-0 place-items-center rounded-md font-mono text-sim-micro font-extrabold ${
                     picked && tone
                       ? 'bg-foreground text-background'
                       : 'bg-card text-muted-foreground'
@@ -317,7 +317,7 @@ export function DecisionSection({
       {/* outcome of the pick */}
       {chosenCard && chosenCard.correct && (
         <div className="mt-2 rounded-lg border border-success bg-success/10 p-3">
-          <div className="mb-1 font-mono text-[9.5px] font-extrabold text-success">
+          <div className="mb-1 font-mono text-sim-micro font-extrabold text-success">
             ✓ Right call — {chosenCard.detail}
           </div>
           {canEmbed(step) ? (
@@ -328,14 +328,14 @@ export function DecisionSection({
               className="flex h-auto w-full items-center gap-2.5 rounded-md border border-success/40 bg-card px-3 py-2 hover:bg-muted/60"
             >
               <span
-                className={`rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${KIND_CHIP[step.kind]}`}
+                className={`rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${KIND_CHIP[step.kind]}`}
               >
                 {step.kind}
               </span>
               <span className="min-w-0 flex-1 truncate text-left text-[12px] font-semibold text-foreground">
                 {step.label}
               </span>
-              <span className="shrink-0 font-mono text-[9px] text-primary">open here →</span>
+              <span className="shrink-0 font-mono text-sim-micro text-primary">open here →</span>
             </Button>
           ) : canResolveDeepLink(step.to) ? (
             <Link
@@ -347,14 +347,14 @@ export function DecisionSection({
               className="flex items-center gap-2.5 rounded-md border border-success/40 bg-card px-3 py-2 hover:bg-muted/60"
             >
               <span
-                className={`rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${KIND_CHIP[step.kind]}`}
+                className={`rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${KIND_CHIP[step.kind]}`}
               >
                 {step.kind}
               </span>
               <span className="min-w-0 flex-1 truncate text-[12px] font-semibold text-foreground">
                 {step.label}
               </span>
-              <span className="shrink-0 font-mono text-[9px] text-primary">open →</span>
+              <span className="shrink-0 font-mono text-sim-micro text-primary">open →</span>
             </Link>
           ) : (
             // WS-06: target no longer resolves — show a notice, never a dead link.
@@ -365,14 +365,14 @@ export function DecisionSection({
               <span className="min-w-0 flex-1 truncate text-[12px] font-semibold text-foreground">
                 {step.label}
               </span>
-              <span className="shrink-0 font-mono text-[9px] text-warning">resource moved</span>
+              <span className="shrink-0 font-mono text-sim-micro text-warning">resource moved</span>
             </div>
           )}
         </div>
       )}
       {chosenCard && !chosenCard.correct && (
         <div className="mt-2 rounded-lg border border-destructive bg-destructive/5 p-3">
-          <div className="mb-0.5 font-mono text-[9.5px] font-extrabold text-destructive">
+          <div className="mb-0.5 font-mono text-sim-micro font-extrabold text-destructive">
             ✕ Common failure
           </div>
           <div className="text-[11px] leading-snug text-muted-foreground">{chosenCard.detail}</div>
@@ -387,11 +387,11 @@ export function DecisionSection({
           {/* W3 #14: reveal the sound move + the principle it advances, so a wrong
               pick teaches WHY mine ≠ the right one — not just trial-and-error. */}
           <div className="mt-2 rounded-md border border-success/30 bg-success/5 px-2.5 py-1.5">
-            <span className="font-mono text-[9px] font-bold text-success">SOUND MOVE</span>
+            <span className="font-mono text-sim-micro font-bold text-success">SOUND MOVE</span>
             <div className="text-[11px] font-semibold leading-snug text-foreground">
               {correctCard.label}
             </div>
-            <div className="text-[9.5px] leading-snug text-muted-foreground">
+            <div className="text-sim-micro leading-snug text-muted-foreground">
               {correctCard.detail}
             </div>
           </div>
@@ -399,7 +399,7 @@ export function DecisionSection({
             variant="ghost"
             type="button"
             onClick={() => setChosen(null)}
-            className="mt-1 h-auto p-0 font-mono text-[9.5px] font-bold text-primary hover:bg-transparent"
+            className="mt-1 h-auto p-0 font-mono text-sim-micro font-bold text-primary hover:bg-transparent"
           >
             ↺ try again
           </Button>
@@ -453,7 +453,7 @@ export function QuarterReport({
         className="relative z-10 max-h-[88vh] w-[560px] max-w-[92vw] overflow-auto rounded-2xl border border-border bg-card"
       >
         <div className="rounded-t-2xl bg-foreground px-5 py-4 text-background">
-          <div className="font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-background/55">
+          <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.16em] text-background/55">
             Quarter Report
           </div>
           <div className="mt-0.5 text-[19px] font-extrabold">
@@ -507,7 +507,7 @@ export function QuarterReport({
                 <div key={i} className="mb-1.5 flex items-start gap-2.5">
                   {/* icon + sr-only label = non-colour severity signal (AA) */}
                   <span
-                    className={`mt-0.5 grid h-3.5 w-3.5 shrink-0 place-items-center rounded-full text-[8px] font-bold text-background ${sev.dot}`}
+                    className={`mt-0.5 grid h-3.5 w-3.5 shrink-0 place-items-center rounded-full text-sim-micro font-bold text-background ${sev.dot}`}
                     aria-hidden="true"
                   >
                     {sev.icon}

@@ -258,6 +258,8 @@ export function SimulationView() {
     setDifficulty,
     tourSeen,
     markTourSeen,
+    guided,
+    setGuided,
     runCompleteSeen,
     markRunComplete,
   } = useSimulationStore()
@@ -639,6 +641,9 @@ export function SimulationView() {
   // store flag (run-slice, cleared by RESET) keeps it from re-firing on reload and
   // lets a fresh run celebrate again. Deferred out of render via setTimeout(0).
   const [runCompleteOpen, setRunCompleteOpen] = useState(false)
+  // Re-openable guide: shows on first run (!tourSeen) or when the player turns on
+  // Guided mode (the novice walkthrough), independent of the one-time tourSeen flag.
+  const [tourOpen, setTourOpen] = useState(false)
   useEffect(() => {
     if (cleared < LIFECYCLE.length || runCompleteSeen) return
     const id = setTimeout(() => {
@@ -842,7 +847,7 @@ export function SimulationView() {
             />
             <div>
               <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>
-              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.14em] text-background/50">
+              <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
                 PQC Migration Simulation
               </div>
               <a
@@ -850,7 +855,7 @@ export function SimulationView() {
                 target="_blank"
                 rel="noopener noreferrer"
                 title={`${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE})`}
-                className="font-mono text-[8px] font-semibold tracking-[0.08em] text-background/40 underline decoration-dotted underline-offset-2 hover:text-background/70"
+                className="font-mono text-sim-micro font-semibold tracking-[0.08em] text-background/40 underline decoration-dotted underline-offset-2 hover:text-background/70"
               >
                 Built on the {FRAMEWORK_NAME} {FRAMEWORK_VERSION} ↗
               </a>
@@ -859,14 +864,14 @@ export function SimulationView() {
           <Link
             to="/"
             aria-label="Exit to hub"
-            className="ml-auto flex h-auto items-center rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-[10px] font-bold text-background/70 hover:bg-background/10"
+            className="ml-auto flex h-auto items-center rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
           >
             ← HUB
           </Link>
         </header>
         <div className="flex min-h-0 flex-1 items-center justify-center p-6">
           <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
-            <span className="font-mono text-[9.5px] font-bold uppercase tracking-[0.14em] text-primary">
+            <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-primary">
               Simulation locked
             </span>
             <h1 className="mt-2 text-xl font-extrabold text-foreground">
@@ -908,7 +913,7 @@ export function SimulationView() {
           />
           <div>
             <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>
-            <div className="font-mono text-[8px] font-bold uppercase tracking-[0.14em] text-background/50">
+            <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
               PQC Migration Simulation
             </div>
             <a
@@ -916,7 +921,7 @@ export function SimulationView() {
               target="_blank"
               rel="noopener noreferrer"
               title={`${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE})`}
-              className="font-mono text-[8px] font-semibold tracking-[0.08em] text-background/40 underline decoration-dotted underline-offset-2 hover:text-background/70"
+              className="font-mono text-sim-micro font-semibold tracking-[0.08em] text-background/40 underline decoration-dotted underline-offset-2 hover:text-background/70"
             >
               Built on the {FRAMEWORK_NAME} {FRAMEWORK_VERSION} ↗
             </a>
@@ -972,9 +977,20 @@ export function SimulationView() {
               setDifficulty(DIFF_ORDER[(DIFF_ORDER.indexOf(difficulty) + 1) % DIFF_ORDER.length])
             }
           />
+          <Dial
+            label="GUIDED"
+            value={guided ? 'On' : 'Off'}
+            hint="plain-language help"
+            title="Guided mode — defines unfamiliar terms (Mosca's inequality, HNDL, hybrid vs pure), slows the tour, and captions the dials in plain language. Independent of difficulty."
+            onClick={() => {
+              const next = !guided
+              setGuided(next)
+              if (next) setTourOpen(true) // novice turning guidance on → show the walkthrough
+            }}
+          />
           <Link
             to="/assess"
-            className="self-center rounded-md px-1.5 font-mono text-[9px] font-bold text-background/60 underline-offset-2 hover:text-background hover:underline"
+            className="self-center rounded-md px-1.5 font-mono text-sim-micro font-bold text-background/60 underline-offset-2 hover:text-background hover:underline"
           >
             change in /assess →
           </Link>
@@ -983,7 +999,7 @@ export function SimulationView() {
           <Link
             to="/"
             aria-label="Exit to hub"
-            className="flex h-auto items-center rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-[10px] font-bold text-background/70 hover:bg-background/10"
+            className="flex h-auto items-center rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
           >
             ← HUB
           </Link>
@@ -992,7 +1008,7 @@ export function SimulationView() {
             variant="ghost"
             onClick={commitPlan}
             title="Save this run as a draft roadmap in the Command Center"
-            className="h-auto rounded-md border border-primary/40 bg-primary/10 px-2.5 py-1.5 font-mono text-[10px] font-bold text-background hover:bg-primary/20"
+            className="h-auto rounded-md border border-primary/40 bg-primary/10 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-primary/20"
           >
             ▸ COMMIT PLAN
           </Button>
@@ -1001,7 +1017,7 @@ export function SimulationView() {
             variant="ghost"
             onClick={exportRun}
             title="Download this run as a JSON save"
-            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-[10px] font-bold text-background/70 hover:bg-background/10"
+            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
           >
             EXPORT
           </Button>
@@ -1010,7 +1026,7 @@ export function SimulationView() {
             variant="ghost"
             onClick={() => importFileRef.current?.click()}
             title="Restore a run from a JSON save"
-            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-[10px] font-bold text-background/70 hover:bg-background/10"
+            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
           >
             IMPORT
           </Button>
@@ -1026,7 +1042,7 @@ export function SimulationView() {
             type="button"
             variant="ghost"
             onClick={resetAll}
-            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-[10px] font-bold text-background/70 hover:bg-background/10"
+            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
           >
             RESET
           </Button>
@@ -1071,15 +1087,26 @@ export function SimulationView() {
             </div>
             <div className="mt-1.5">
               {clock.atRisk ? (
-                <span className="rounded-full bg-destructive/15 px-2 py-0.5 font-mono text-[10px] font-bold text-destructive">
+                <span className="rounded-full bg-destructive/15 px-2 py-0.5 font-mono text-sim-chip font-bold text-destructive">
                   ⚠ OVER BY {clock.over}Y
                 </span>
               ) : (
-                <span className="rounded-full bg-success/15 px-2 py-0.5 font-mono text-[10px] font-bold text-success">
+                <span className="rounded-full bg-success/15 px-2 py-0.5 font-mono text-sim-chip font-bold text-success">
                   ✓ ON TRACK
                 </span>
               )}
             </div>
+            {guided && (
+              <div
+                className="mt-1.5 max-w-[230px] text-[11px] leading-snug text-muted-foreground"
+                data-testid="mosca-guided-caption"
+              >
+                <span className="font-bold text-foreground">X</span> = how long this data must stay
+                secret · <span className="font-bold text-foreground">Y</span> = how long migration
+                takes · <span className="font-bold text-foreground">Z</span> = your deadline (Q-Day,
+                or your country&rsquo;s, whichever is sooner).
+              </div>
+            )}
           </div>
         </div>
         <Stat
@@ -1127,10 +1154,10 @@ export function SimulationView() {
       referenceEmbed ? (
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex shrink-0 items-center gap-2 border-b-2 border-primary bg-primary/10 px-4 py-2">
-            <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-[9px] font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
+            <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-sim-chip font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
               ● Simulation mode
             </span>
-            <span className="shrink-0 font-mono text-[9px] font-bold uppercase text-primary">
+            <span className="shrink-0 font-mono text-sim-micro font-bold uppercase text-primary">
               {learnEmbed
                 ? 'Learn'
                 : activityEmbed
@@ -1346,12 +1373,12 @@ export function SimulationView() {
                       </span>
                       <div className="min-w-0 flex-1">
                         <div className="text-[11.5px] font-bold text-foreground">{r.label}</div>
-                        <div className="font-mono text-[9px] text-muted-foreground">
+                        <div className="font-mono text-sim-micro text-muted-foreground">
                           {r.typicalFte} FTE
                         </div>
                       </div>
                       <span
-                        className={`rounded-full px-2 py-0.5 font-mono text-[10px] font-bold ${
+                        className={`rounded-full px-2 py-0.5 font-mono text-sim-micro font-bold ${
                           you ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'
                         }`}
                       >
@@ -1365,7 +1392,7 @@ export function SimulationView() {
             <div className="flex min-h-0 flex-col overflow-auto rounded-xl border border-border bg-card p-3">
               <div className="mb-2 flex items-center justify-between">
                 <Eyebrow>Phase journey</Eyebrow>
-                <span className="rounded-full bg-muted px-2 py-0.5 font-mono text-[10px] font-bold text-muted-foreground">
+                <span className="rounded-full bg-muted px-2 py-0.5 font-mono text-sim-chip font-bold text-muted-foreground">
                   0 → 7 → ◆
                 </span>
               </div>
@@ -1405,7 +1432,7 @@ export function SimulationView() {
                         <div className="truncate text-[12px] font-bold text-foreground">
                           {fp.name}
                         </div>
-                        <div className="flex gap-1.5 font-mono text-[9px] text-muted-foreground">
+                        <div className="flex gap-1.5 font-mono text-sim-micro text-muted-foreground">
                           <span>
                             {isCleared ? 'cleared' : current ? 'active' : 'locked'} ·{' '}
                             {MATURITY_LEVEL_NAMES[lv]}
@@ -1430,11 +1457,11 @@ export function SimulationView() {
               >
                 <div className="flex w-full items-center justify-between">
                   <span className="text-[11.5px] font-bold text-foreground">Foundations</span>
-                  <span className="font-mono text-[9px] text-muted-foreground">
+                  <span className="font-mono text-sim-micro text-muted-foreground">
                     {sel === 'foundations' ? 'active' : 'spanning'} · L{levelOf('foundations')}
                   </span>
                 </div>
-                <div className="mt-0.5 font-mono text-[9px] text-muted-foreground">
+                <div className="mt-0.5 font-mono text-sim-micro text-muted-foreground">
                   agility · KPIs · skills · verification
                 </div>
               </Button>
@@ -1445,7 +1472,7 @@ export function SimulationView() {
           <div className="flex min-h-0 flex-col overflow-auto rounded-xl border border-border bg-card p-5">
             <div className="mb-1 flex flex-wrap items-center gap-2.5">
               <span
-                className={`rounded-full px-2 py-0.5 font-mono text-[10px] font-bold ${
+                className={`rounded-full px-2 py-0.5 font-mono text-sim-micro font-bold ${
                   phaseCleared ? 'bg-success/15 text-success' : 'bg-primary/15 text-primary'
                 }`}
               >
@@ -1460,7 +1487,7 @@ export function SimulationView() {
                 // W2c: be honest that an AI-delegated phase wasn't learned by the
                 // player — the maturity credit is real, the understanding isn't.
                 <span
-                  className="rounded-full bg-warning/15 px-2 py-0.5 font-mono text-[10px] font-bold text-warning"
+                  className="rounded-full bg-warning/15 px-2 py-0.5 font-mono text-sim-chip font-bold text-warning"
                   title="This phase was run by your AI team — its tasks are auto-completed, so your own understanding is unverified. See the recommended study below."
                 >
                   RUN BY AI · UNVERIFIED
@@ -1589,7 +1616,7 @@ export function SimulationView() {
                 {/* DERIVED program maturity — read-only, rises as phases are
                     completed. Aware (L1) from your assessment; L2–5 earned in-sim;
                     overall = your weakest area. */}
-                <p className="mb-2 text-[10px] text-muted-foreground">
+                <p className="mb-2 text-sim-micro text-muted-foreground">
                   <span className="font-bold text-foreground">
                     Program maturity: L{maturity.overall} · {MATURITY_LEVELS[maturity.overall].name}
                   </span>
@@ -1631,7 +1658,7 @@ export function SimulationView() {
                           } ${earned ? 'bg-success/10' : 'bg-muted'} ${locked ? 'opacity-50' : ''}`}
                         >
                           <span
-                            className={`grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md font-mono text-[10px] font-extrabold ${
+                            className={`grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md font-mono text-sim-micro font-extrabold ${
                               earned
                                 ? 'bg-success text-success-foreground'
                                 : 'bg-card text-muted-foreground'
@@ -1646,7 +1673,7 @@ export function SimulationView() {
                             {band.indicator}
                           </span>
                           <span
-                            className={`shrink-0 font-mono text-[9px] font-bold ${
+                            className={`shrink-0 font-mono text-sim-micro font-bold ${
                               earned
                                 ? 'text-success'
                                 : current
@@ -1657,7 +1684,7 @@ export function SimulationView() {
                             {earned ? 'passed ✓' : `${done}/${total} checks`}
                           </span>
                           {goal && (
-                            <span className="shrink-0 rounded-full bg-warning/15 px-2 py-0.5 font-mono text-[10px] font-bold text-warning">
+                            <span className="shrink-0 rounded-full bg-warning/15 px-2 py-0.5 font-mono text-sim-chip font-bold text-warning">
                               GOAL
                             </span>
                           )}
@@ -1665,7 +1692,7 @@ export function SimulationView() {
                         {/* active band → open any of its steps, in any order */}
                         {current && bandSteps.length > 0 && (
                           <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-primary/30 pl-3">
-                            <span className="font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-primary">
+                            <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.12em] text-primary">
                               Do these in any order to pass L{band.level}
                             </span>
                             {bandSteps.map((step, i) => {
@@ -1674,7 +1701,7 @@ export function SimulationView() {
                               const navigable = canResolveDeepLink(step.to)
                               const chip = (
                                 <span
-                                  className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${KIND_CHIP[step.kind]}`}
+                                  className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${KIND_CHIP[step.kind]}`}
                                 >
                                   {step.kind}
                                 </span>
@@ -1688,14 +1715,14 @@ export function SimulationView() {
                               if (sDone)
                                 return (
                                   <div key={`${step.to}-${i}`} className={cls}>
-                                    <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-success text-[9px] font-bold text-success-foreground">
+                                    <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-success text-sim-chip font-bold text-success-foreground">
                                       ✓
                                     </span>
                                     {chip}
                                     <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
                                       {step.label}
                                     </span>
-                                    <span className="shrink-0 font-mono text-[9px] text-success">
+                                    <span className="shrink-0 font-mono text-sim-micro text-success">
                                       done
                                     </span>
                                   </div>
@@ -1717,7 +1744,7 @@ export function SimulationView() {
                                     <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
                                       {step.label}
                                     </span>
-                                    <span className="shrink-0 font-mono text-[9px] text-primary">
+                                    <span className="shrink-0 font-mono text-sim-micro text-primary">
                                       open here →
                                     </span>
                                   </Button>
@@ -1742,7 +1769,7 @@ export function SimulationView() {
                                     <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
                                       {step.label}
                                     </span>
-                                    <span className="shrink-0 font-mono text-[9px] text-primary">
+                                    <span className="shrink-0 font-mono text-sim-micro text-primary">
                                       open →
                                     </span>
                                   </Link>
@@ -1759,7 +1786,7 @@ export function SimulationView() {
                                   <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
                                     {step.label}
                                   </span>
-                                  <span className="shrink-0 font-mono text-[9px] text-warning">
+                                  <span className="shrink-0 font-mono text-sim-micro text-warning">
                                     resource moved
                                   </span>
                                 </div>
@@ -1874,7 +1901,7 @@ export function SimulationView() {
                         key={label}
                         className="flex items-baseline justify-between rounded-lg border border-border bg-card px-2 py-1.5"
                       >
-                        <span className="text-[9.5px] leading-tight text-muted-foreground">
+                        <span className="text-sim-micro leading-tight text-muted-foreground">
                           {label}
                         </span>
                         <span className={`font-mono text-[13px] font-extrabold ${tone}`}>
@@ -1909,7 +1936,7 @@ export function SimulationView() {
                     </span>
                   </span>
                   <span
-                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
+                    className={`rounded-full px-1.5 py-0.5 text-sim-micro font-bold ${
                       readinessTrend.delta > 0
                         ? 'bg-success/15 text-success'
                         : 'bg-muted text-muted-foreground'
@@ -1928,7 +1955,7 @@ export function SimulationView() {
                     style={{ width: `${readinessTrend.baseline}%` }}
                   />
                 </div>
-                <p className="mt-1.5 text-[9.5px] leading-snug text-muted-foreground">
+                <p className="mt-1.5 text-sim-micro leading-snug text-muted-foreground">
                   Projection rises as you clear framework maturity in-game — sim-local, never
                   written back to your assessment.
                 </p>
@@ -1941,7 +1968,7 @@ export function SimulationView() {
                 Critical assets <span className="text-muted-foreground/60">· €{totalValueM}M</span>
               </Eyebrow>
               {!assetsDiscovered && (
-                <p className="mb-2 rounded-md border border-dashed border-warning/50 bg-warning/5 px-2 py-1 text-[10px] text-warning">
+                <p className="mb-2 rounded-md border border-dashed border-warning/50 bg-warning/5 px-2 py-1 text-sim-chip text-warning">
                   Estimated — run P0 “Assess Data &amp; Asset Sensitivity” to discover &amp;
                   confirm.
                 </p>
@@ -1957,7 +1984,7 @@ export function SimulationView() {
                       }`}
                     >
                       <span
-                        className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${TIER_CHIP[a.tier]}`}
+                        className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${TIER_CHIP[a.tier]}`}
                       >
                         {a.tier}
                       </span>
@@ -1965,12 +1992,12 @@ export function SimulationView() {
                         <span className="block truncate text-[11.5px] font-semibold text-foreground">
                           {a.label}
                         </span>
-                        <span className="block font-mono text-[9px] text-muted-foreground">
+                        <span className="block font-mono text-sim-micro text-muted-foreground">
                           {a.exposure} · €{a.valueM}M · {Math.round(a.exposurePct * 100)}% exposed
                         </span>
                       </span>
                       <span
-                        className={`shrink-0 font-mono text-[10px] font-bold ${hot ? 'text-destructive' : 'text-muted-foreground'}`}
+                        className={`shrink-0 font-mono text-sim-micro font-bold ${hot ? 'text-destructive' : 'text-muted-foreground'}`}
                       >
                         €{a.exposedM}M
                       </span>
@@ -1978,7 +2005,7 @@ export function SimulationView() {
                   )
                 })}
               </div>
-              <div className="mt-2 flex items-center justify-between font-mono text-[10px]">
+              <div className="mt-2 flex items-center justify-between font-mono text-sim-micro">
                 <span className="text-muted-foreground">Quantum-exposed value</span>
                 <span className="font-bold text-destructive">€{exposedValueM}M</span>
               </div>
@@ -1998,7 +2025,7 @@ export function SimulationView() {
                       className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
                     >
                       <span
-                        className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${
+                        className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${
                           c.requiresPQC
                             ? 'bg-destructive/15 text-destructive'
                             : c.requiresPQC === false
@@ -2012,7 +2039,7 @@ export function SimulationView() {
                         {c.framework}
                       </span>
                       {c.deadline && (
-                        <span className="shrink-0 font-mono text-[9px] text-muted-foreground">
+                        <span className="shrink-0 font-mono text-sim-micro text-muted-foreground">
                           {c.deadline}
                         </span>
                       )}
@@ -2029,11 +2056,11 @@ export function SimulationView() {
                 <span className="text-[19px] font-extrabold text-foreground">
                   €{insurancePolicyM}M
                 </span>
-                <span className="font-mono text-[9px] text-muted-foreground">
+                <span className="font-mono text-sim-micro text-muted-foreground">
                   covers critical + high
                 </span>
               </div>
-              <div className="mt-0.5 flex items-center justify-between font-mono text-[10px]">
+              <div className="mt-0.5 flex items-center justify-between font-mono text-sim-micro">
                 <span className="text-muted-foreground">Annual premium · 0.15%</span>
                 <span className="font-bold text-foreground">
                   {premiumM >= 1 ? `€${premiumM}M` : `€${Math.round(premiumM * 1000)}k`}/yr
@@ -2047,7 +2074,7 @@ export function SimulationView() {
                   }}
                 />
               </div>
-              <div className="mt-1.5 flex items-center justify-between font-mono text-[10px]">
+              <div className="mt-1.5 flex items-center justify-between font-mono text-sim-micro">
                 <span className="text-muted-foreground">Uninsured quantum exposure</span>
                 <span
                   className={`font-bold ${uninsuredM > 0 ? 'text-destructive' : 'text-success'}`}
@@ -2077,7 +2104,7 @@ export function SimulationView() {
                     >
                       ▸ Import assessment as scoping artifact
                     </Button>
-                    <p className="mt-1 px-0.5 text-[9.5px] leading-snug text-muted-foreground">
+                    <p className="mt-1 px-0.5 text-sim-micro leading-snug text-muted-foreground">
                       Also sets the org dials (industry · size · country) from your assessment — you
                       can still change them.
                     </p>
@@ -2102,7 +2129,7 @@ export function SimulationView() {
                         }`}
                       >
                         <span
-                          className={`grid h-4 w-4 shrink-0 place-items-center rounded-full text-[9px] font-bold ${
+                          className={`grid h-4 w-4 shrink-0 place-items-center rounded-full text-sim-micro font-bold ${
                             made
                               ? 'bg-success text-success-foreground'
                               : 'bg-card text-muted-foreground'
@@ -2114,7 +2141,7 @@ export function SimulationView() {
                           <span className="block truncate text-[11.5px] font-semibold text-foreground">
                             {made ? made.title : a.label}
                           </span>
-                          <span className="block font-mono text-[9px] text-muted-foreground">
+                          <span className="block font-mono text-sim-micro text-muted-foreground">
                             {made ? a.type : 'not generated yet'}
                           </span>
                         </span>
@@ -2155,10 +2182,10 @@ export function SimulationView() {
                       className="rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-semibold text-foreground">
+                        <span className="text-sim-micro font-semibold text-foreground">
                           {dimLabel}
                         </span>
-                        <span className="font-mono text-[10px] text-muted-foreground">
+                        <span className="font-mono text-sim-micro text-muted-foreground">
                           {val}/100
                         </span>
                       </div>
@@ -2173,7 +2200,7 @@ export function SimulationView() {
                     </div>
                   ))}
                 </div>
-                <p className="mt-2 text-[9.5px] leading-snug text-muted-foreground">
+                <p className="mt-2 text-sim-micro leading-snug text-muted-foreground">
                   These are the framework's Phase-3 scoring dimensions for your org — they drive the
                   QRA you produce here.
                 </p>
@@ -2201,11 +2228,11 @@ export function SimulationView() {
                           }`}
                         >
                           <div className="flex items-center gap-2">
-                            <span className="shrink-0 rounded bg-primary px-1 font-mono text-[8px] font-extrabold text-primary-foreground">
+                            <span className="shrink-0 rounded bg-primary px-1 font-mono text-sim-chip font-extrabold text-primary-foreground">
                               {track.label.split('—')[0].trim()}
                             </span>
                             {lead && (
-                              <span className="shrink-0 rounded-full bg-secondary/20 px-1.5 py-0.5 font-mono text-[8px] font-bold text-secondary">
+                              <span className="shrink-0 rounded-full bg-secondary/20 px-1.5 py-0.5 font-mono text-sim-chip font-bold text-secondary">
                                 lead
                               </span>
                             )}
@@ -2213,7 +2240,7 @@ export function SimulationView() {
                               {track.focus}
                             </span>
                           </div>
-                          <p className="mt-0.5 text-[9.5px] leading-snug text-muted-foreground">
+                          <p className="mt-0.5 text-sim-micro leading-snug text-muted-foreground">
                             {track.effort.length} algo
                             {track.effort.length !== 1 ? 's' : ''} · {track.actions.length} action
                             {track.actions.length !== 1 ? 's' : ''}
@@ -2231,7 +2258,7 @@ export function SimulationView() {
                         className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
                       >
                         <span
-                          className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase ${
+                          className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${
                             m.urgency === 'immediate'
                               ? 'bg-destructive/15 text-destructive'
                               : m.urgency === 'near-term'
@@ -2241,7 +2268,7 @@ export function SimulationView() {
                         >
                           {m.urgency}
                         </span>
-                        <span className="min-w-0 flex-1 truncate font-mono text-[10px] text-foreground">
+                        <span className="min-w-0 flex-1 truncate font-mono text-sim-micro text-foreground">
                           {m.classical} <span className="text-muted-foreground">→</span>{' '}
                           {m.replacement}
                         </span>
@@ -2257,7 +2284,16 @@ export function SimulationView() {
 
       {report && <QuarterReport report={report} onClose={() => setReport(null)} />}
       {/* WS-12: skippable first-run guide, shown until dismissed/finished */}
-      {!tourSeen && <SimTour onClose={markTourSeen} />}
+      {(!tourSeen || tourOpen) && (
+        <SimTour
+          guided={guided}
+          onEnableGuided={() => setGuided(true)}
+          onClose={() => {
+            markTourSeen()
+            setTourOpen(false)
+          }}
+        />
+      )}
       {/* W2b: run-end ceremony — the summative "did you beat Q-Day?" moment */}
       {runCompleteOpen && (
         <SimRunComplete

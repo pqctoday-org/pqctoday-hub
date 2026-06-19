@@ -1,6 +1,13 @@
 @import 'tailwindcss';
 
 @theme {
+  /* Simulation type floor (PR-4): legibility tokens so the console can't drop
+     below the a11y floor. `text-sim-micro` (11px) is the body/label floor;
+     `text-sim-chip` (10px) is the dense-chip floor. Replace raw text-[8–10px]
+     utilities under src/components/Simulation/ with these. */
+  --text-sim-micro: 11px;
+  --text-sim-chip: 10px;
+
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));

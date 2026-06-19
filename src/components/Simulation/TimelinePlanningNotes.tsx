@@ -34,7 +34,7 @@ const SatisfiesRow: React.FC<{ entry: SatisfiesItEntry }> = ({ entry }) => (
     <td className="px-3 py-2 text-foreground whitespace-nowrap font-medium">{entry.regulation}</td>
     <td className="px-3 py-2 text-muted-foreground">{entry.satisfiedBy}</td>
     <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">
-      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded border border-primary/30 bg-primary/5 text-primary">
+      <span className="text-sim-chip font-medium px-1.5 py-0.5 rounded border border-primary/30 bg-primary/5 text-primary">
         {phaseLabel(entry.phase)}
       </span>
     </td>
@@ -59,7 +59,7 @@ export const TimelinePlanningNotes: React.FC = () => {
               className="text-base font-bold text-foreground flex items-center gap-2 flex-wrap"
             >
               Planning Context
-              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded border border-primary/30 bg-primary/10 text-primary uppercase tracking-wide">
+              <span className="text-sim-chip font-medium px-1.5 py-0.5 rounded border border-primary/30 bg-primary/10 text-primary uppercase tracking-wide">
                 Phase 4 · Foundations
               </span>
             </h2>
@@ -109,7 +109,7 @@ export const TimelinePlanningNotes: React.FC = () => {
                 </tbody>
               </table>
             </div>
-            <p className="text-[10px] text-muted-foreground mt-1">
+            <p className="text-sim-micro text-muted-foreground mt-1">
               Source: Reg &amp; Standards Alignment Map (p.156–157).
             </p>
           </div>
@@ -135,7 +135,7 @@ export const TimelinePlanningNotes: React.FC = () => {
                 </li>
               ))}
             </ul>
-            <p className="text-[10px] text-muted-foreground mt-1">
+            <p className="text-sim-micro text-muted-foreground mt-1">
               Reconciled to framework Mapping-table wording (p.156): networking by 2030;
               web/cloud/OS by 2033; all NSS by 2035.
             </p>
