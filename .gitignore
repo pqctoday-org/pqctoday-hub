@@ -242,6 +242,9 @@ scripts/*
 # Simulation activity-tree generator — emits the committed dated trees in
 # src/simulation/trees from the public framework + hub registries.
 !scripts/gen-sim-trees.mjs
+# Timeline single-source codegen — derives sim/page facts from the timeline CSV.
+# Tracked: runs in prebuild and the CI freshness gate.
+!scripts/gen-timeline-facts.mjs
 # Simulation live-feed generator — emits the committed dated sim_feed_*.csv.
 !scripts/gen-sim-feed.mjs
 

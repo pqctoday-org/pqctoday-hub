@@ -11,6 +11,7 @@
  * in time: act now. Pure + deterministic — the page passes the current year in.
  */
 import { QC_FIRST_YEAR } from './quantumTimeline'
+import { TIMELINE_COUNTRY_DEADLINE_YEAR } from './timelineFacts.generated'
 
 export type SimSize = 'small' | 'mid' | 'large' | 'global'
 
@@ -110,42 +111,23 @@ export const SIZE_MIGRATION_YEARS: Record<SimSize, number> = {
   global: 6,
 }
 
-/** Illustrative government PQC deadline by country (planning horizon). */
-export const COUNTRY_DEADLINE_YEAR: Record<string, number> = {
-  US: 2030, // CNSA 2.0
-  DE: 2030, // BSI
-  FR: 2030, // ANSSI
-  UK: 2035, // NCSC (later roadmap)
-  AU: 2030, // ASD
-  // EU + CA confirmed against the hub timeline (timeline_*.csv): EC "Full EU PQC
-  // Transition" 2035 and CCCS ITSM.40.001 "Full GC Migration" 2035.
-  EU: 2035, // EC roadmap: high-risk by 2030, full transition by 2035 (timeline-confirmed)
-  CA: 2035, // CCCS ITSM.40.001: high-priority by 2031, full GC migration by 2035 (timeline-confirmed)
-  // JP/KR/SG are planning estimates beyond the timeline's authoritative dates:
-  JP: 2035, // CRYPTREC roadmap pending (~2027); timeline shows critical systems ~2030, no full date — 2035 inferred
-  KR: 2035, // KISA / NIS national PQC master plan (not in hub timeline — planning estimate)
-  SG: 2035, // CSA (illustrative — no fixed national deadline; not in hub timeline)
-}
+/**
+ * Government PQC deadline by country — DERIVED from the timeline reference CSV
+ * (the row a human tagged `is_sim_deadline=true`), the single source of truth.
+ * To change a value, edit the CSV and re-run `npm run gen:timeline-facts` (runs
+ * automatically in prebuild). Countries with no tagged deadline are absent, so
+ * `horizonYearFor` falls back to the Q-Day anchor for them.
+ */
+export const COUNTRY_DEADLINE_YEAR: Record<string, number> = TIMELINE_COUNTRY_DEADLINE_YEAR
 
 /**
- * Provenance for each country deadline — a single source of truth the UI reads,
- * rather than the view inferring it. Every government deadline is a planning
- * horizon, not a published standard, so all entries are `'planning'`. Kept as a
- * sibling map (not a field on COUNTRY_DEADLINE_YEAR) so `computeSimMosca` inputs
- * stay numeric and pure. PR-5 extends both maps in lock-step.
+ * Provenance flag the badge layer reads — every government deadline is surfaced
+ * in the sim as a planning horizon. Derived from the deadline keys so the two
+ * never drift.
  */
-export const COUNTRY_DEADLINE_PROVENANCE: Record<string, Provenance> = {
-  US: 'planning',
-  DE: 'planning',
-  FR: 'planning',
-  UK: 'planning',
-  AU: 'planning',
-  EU: 'planning',
-  CA: 'planning',
-  JP: 'planning',
-  KR: 'planning',
-  SG: 'planning',
-}
+export const COUNTRY_DEADLINE_PROVENANCE: Record<string, Provenance> = Object.fromEntries(
+  Object.keys(COUNTRY_DEADLINE_YEAR).map((c) => [c, 'planning' as Provenance])
+)
 
 /** The binding horizon Z: the sooner of the CRQC estimate and the country deadline. */
 export function horizonYearFor(country: string): number {

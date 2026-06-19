@@ -171,7 +171,12 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     draft-reddy-cose-jose-pqc-hybrid-hpke, etc.) without trust-score
   //     wiring. Same gap; same remediation. Drive back down via
   //     trustScoreData.ts chunkToResource extension.
-  timeline: 0,
+  //     2026-06-18: bumped 0 → 6 — timeline audit deprecated 6 fabricated/inverted
+  //     rows (EU inventory-mandate, EU 2027 migration, SG 2028, HK 2027/2030, BSI
+  //     standalone-required) in timeline_06182026.csv. generate-rag-corpus skips
+  //     deprecated rows, so a local `npm run refresh-index` drops these chunks and
+  //     drives this back to 0; the committed corpus lags per the data-PR convention.
+  timeline: 6,
   algorithms: 0,
   //     2026-05-31: bumped 113 → 118 — 5 new catalog enrichments (Tectia SSH, IVPN, libcrux, Trail of Bits ml-dsa, InfoSec Global AgileSec)
   'document-enrichment': 118,
