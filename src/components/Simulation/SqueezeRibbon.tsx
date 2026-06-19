@@ -60,7 +60,7 @@ export const SqueezeRibbon: React.FC = () => {
               className="text-base font-bold text-foreground flex items-center gap-2 flex-wrap"
             >
               The 2026–2030 Squeeze
-              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded border border-warning/30 bg-warning/10 text-warning uppercase tracking-wide">
+              <span className="text-sim-chip font-medium px-1.5 py-0.5 rounded border border-warning/30 bg-warning/10 text-warning uppercase tracking-wide">
                 Phase 4 · Converging deadlines
               </span>
             </h2>
@@ -99,7 +99,7 @@ export const SqueezeRibbon: React.FC = () => {
                 <li key={step.date} className="flex items-center gap-2">
                   <span className="flex flex-col items-center">
                     <span className="text-sm font-bold text-warning">{step.maxDays}d</span>
-                    <span className="text-[10px] text-muted-foreground">
+                    <span className="text-sim-micro text-muted-foreground">
                       {formatDate(step.date)}
                     </span>
                   </span>
@@ -124,7 +124,7 @@ export const SqueezeRibbon: React.FC = () => {
                   {formatDate(ev.date)}
                 </span>
                 <span
-                  className={`text-[9px] font-medium px-1.5 py-0.5 rounded border shrink-0 ${TRACK_COLORS[ev.track]}`}
+                  className={`text-sim-micro font-medium px-1.5 py-0.5 rounded border shrink-0 ${TRACK_COLORS[ev.track]}`}
                 >
                   {TRACK_LABELS[ev.track]}
                 </span>
@@ -135,7 +135,7 @@ export const SqueezeRibbon: React.FC = () => {
               </li>
             ))}
           </ol>
-          <p className="text-[10px] text-muted-foreground">
+          <p className="text-sim-micro text-muted-foreground">
             Source: Applied Quantum Reg &amp; Standards Alignment Map / &ldquo;2026–2030
             Squeeze&rdquo; (p.157).
           </p>

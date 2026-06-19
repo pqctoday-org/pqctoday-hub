@@ -40,7 +40,7 @@ export const MilestoneGateColumn: React.FC = () => {
               className="text-base font-bold text-foreground flex items-center gap-2 flex-wrap"
             >
               Milestone Gates (G0–G7)
-              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded border border-primary/30 bg-primary/10 text-primary uppercase tracking-wide">
+              <span className="text-sim-chip font-medium px-1.5 py-0.5 rounded border border-primary/30 bg-primary/10 text-primary uppercase tracking-wide">
                 Phase 4 · Governance
               </span>
             </h2>
@@ -102,7 +102,7 @@ export const MilestoneGateColumn: React.FC = () => {
               </tbody>
             </table>
           </div>
-          <p className="text-[10px] text-muted-foreground mt-3">
+          <p className="text-sim-micro text-muted-foreground mt-3">
             Source: Applied Quantum Phase 4 Activity 4.6 (p.88). Gates are informational labels in
             v1 — phase context, not enforced sign-off.
           </p>
