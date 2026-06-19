@@ -217,7 +217,7 @@ const fetchCommonCriteriaData = async (): Promise<ComplianceRecord[]> => {
               link: finalLink, // Will be empty string if no PDF found
               type: 'Common Criteria',
               status: 'Active',
-              pqcCoverage: isPQC ? 'Potentially PQC' : false,
+              pqcCoverage: isPQC ? 'Potentially PQC' : 'Not Yet Analyzed',
               productName: row.Name || 'Unknown Product',
               productCategory: row.Category || 'Uncategorized',
               vendor: row.Manufacturer || 'Unknown Vendor',
