@@ -132,6 +132,35 @@ const SIM_DEADLINE = [
 // ── run-2 audit corrections (matched by FlagCode + Title; the auditor's line
 // numbers drifted, so we match on content). ───────────────────────────────────
 // Reinstate (un-deprecate) + apply changes — used for Japan's 2035 NCO deadline.
+// ── run-3 corrections (web-verified 2026-06-19) ──────────────────────────────
+// DE: SourceDate was 2025-01-31 (Version 2025-01 era). TR-02102-1 Version 2026-01
+//     (dated 2026-01-23) is the edition that explicitly set the 2030 critical-app
+//     deadline; also clarify description — the milestone means PQC transition must
+//     be COMPLETE by 2030, not that hybrid mode is "no longer required" after that.
+// G7: Critical Systems row had SourceDate 2026-01-15 — the G7 CEG statement and
+//     roadmap were published 2026-01-12 (US Treasury sb0355). Corrected.
+// NZ: Planning Phase row pointed at the v3.9 release URL but SourceDate 2024-09-01
+//     matches v3.8 (released 2024-09-05). Correct URL to the v3.8 release page.
+const R3_FIX = [
+  [
+    'Germany',
+    'Critical Applications PQC — Hybrid No Longer Required',
+    {
+      SourceDate: '2026-01-23',
+      SourceUrl:
+        'https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.html',
+      Description:
+        'BSI TR-02102-1 Version 2026-01 (23 Jan 2026) requires that applications with very high protection requirements complete their PQC transition by end-2030. This is the point at which quantum-safe mechanisms must be in place — classical-only key agreement is permitted only through end-2031 for all systems (TR-02102-2/3). Use of hybrid PQC is still encouraged but standalone PQC becomes the recommended baseline.',
+    },
+  ],
+  ['G7', 'G7 Financial Sector Critical Systems PQC Transition', { SourceDate: '2026-01-12' }],
+  [
+    'New Zealand',
+    'Planning Phase',
+    { SourceUrl: 'https://www.ncsc.govt.nz/news/nzism-v3-8-release/' },
+  ],
+]
+
 const R2_REINSTATE = [
   // JP was deprecated in the source CSV; NCO Nov-2025 interim report confirms 2035 target.
   [
@@ -198,6 +227,18 @@ for (const [c, t, changes] of FIX) {
   fix++
 }
 
+// ── run-3 corrections ─────────────────────────────────────────────────────────
+let r3fix = 0
+for (const [c, t, changes] of R3_FIX) {
+  const r = find(c, t)
+  if (!r) {
+    misses.push(`R3FIX ${c}/${t}`)
+    continue
+  }
+  Object.assign(r, changes)
+  r3fix++
+}
+
 // ── run-2 corrections (must run before SIM_DEADLINE tagging — R2_REINSTATE
 // un-deprecates JP so the tagger can find it) ────────────────────────────────
 let r2dep = 0,
@@ -260,7 +301,7 @@ writeFileSync(OUT, Papa.unparse(data, { columns }) + '\n')
 console.log(
   `wrote ${OUT}: ${data.length} rows, ` +
     `${dep + r2dep} deprecated (+${r2dep} run-2), ` +
-    `${fix + r2fix} field-fixed (+${r2fix} run-2), ` +
+    `${fix + r2fix + r3fix} field-fixed (+${r2fix} run-2, +${r3fix} run-3), ` +
     `${r2reinstate} reinstated, ` +
     `${tag} sim-deadline-tagged`
 )
