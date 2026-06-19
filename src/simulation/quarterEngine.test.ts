@@ -60,7 +60,9 @@ describe('runQuarter (pure quarter engine, WS-05)', () => {
   it('a fully-cleared estate (levelOf >= win) lets the AI do nothing', () => {
     const r = runQuarter(baseInput({ levelOf: () => 4 }))
     expect(r.newAutoKeys).toEqual([])
-    expect(r.report.clearedFrom).toBe(8) // all 8 lifecycle phases counted cleared
+    // all 9 played lifecycle phases (P0–P7 + verify-close) counted cleared
+    expect(r.report.clearedFrom).toBe(9)
+    expect(r.report.totalPhases).toBe(9)
   })
 
   // WS-14 — difficulty is a pure config swap: the balance changes outcomes.

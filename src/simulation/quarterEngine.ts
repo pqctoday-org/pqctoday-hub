@@ -14,15 +14,17 @@ import { quarterRng, chanceWith, sampleWith } from './rng'
 import { SIM_TREES, flattenTree, achievedTreeLevel, type TreeStep } from '@/simulation'
 import { type SimBalance } from '@/data/simBalance'
 import { SIM_EVENT_POOL, fillEvent, type EventSeverity, type SimEvent } from '@/data/simEvents'
-import { PHASE_ORDER, FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
+import { LIFECYCLE_PHASES, FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
 import { PHASE_WIN_LEVEL } from '@/data/phaseMaturity'
 import { ROLE_CROSSWALK } from '@/data/roleCrosswalk'
 import { computeSimMosca, COUNTRY_DEADLINE_YEAR, SIM_CRQC_YEAR } from '@/data/moscaClock'
 import type { QuarterReportData } from '@/components/Simulation/sections'
 
-// Played migration phases. Excludes the spanning Foundations band and the
-// terminal Verification & Closure band — neither is a quarter-by-quarter phase.
-const LIFECYCLE = PHASE_ORDER.filter((p) => p !== 'foundations' && p !== 'verify-close')
+// Played migration phases — shared SoT with SimulationView (LIFECYCLE_PHASES).
+// Includes the terminal Verification & Closure phase: the AI team can advance it
+// like any other (flagged "understanding unverified"), and the cleared-count
+// withholds the run-complete ceremony until it reaches its win level.
+const LIFECYCLE = LIFECYCLE_PHASES
 const autoKey = (phase: string, to: string) => `${phase}::${to}`
 
 export interface QuarterEngineInput {
@@ -171,6 +173,7 @@ export function runQuarter(input: QuarterEngineInput): QuarterEngineResult {
       over: afterClock.over,
       clearedFrom: beforeCleared,
       clearedTo: afterCleared,
+      totalPhases: LIFECYCLE.length,
       events: newEvents,
       aiProgress,
       recommend:

@@ -306,6 +306,25 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       ),
     },
     {
+      label: 'Skip the maturity baseline; report progress phase-by-phase',
+      desc: 'Track phase completion instead of the weakest-domain maturity score.',
+      evaluate: trap(
+        'Fails. Common failure: no maturity baseline. Without the seven-domain weakest-link view you over-report progress and miss the gating domain that actually constrains readiness.'
+      ),
+    },
+  ],
+  // Terminal Verification & Closure phase — the lesson "migrated is a belief
+  // until there's an evidence dossier" now lands inside the phase that teaches it
+  // (migrated here from foundations). Wrong picks still fire logSimTrapPick.
+  'verify-close': [
+    {
+      label: 'Prove each migration against the evidence standard & log decommissioning',
+      desc: 'Assemble the dossier (observed PQC negotiation, negative testing, attestation) and record SP 800-88 decommissioning.',
+      evaluate: sound(
+        'Sound. "Done" now means proven: the 5-point evidence dossier plus a logged classical-key decommissioning turn a declared migration into a verifiable, audit-ready one — and close the harvest-now-decrypt-later exposure.'
+      ),
+    },
+    {
       label: 'Declare victory when Tier-1 migration milestones are hit',
       desc: 'Close the program on milestone completion.',
       evaluate: trap(

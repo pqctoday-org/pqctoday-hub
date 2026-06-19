@@ -49,6 +49,10 @@ export const LEVEL_EVIDENCE: Partial<
   p5: { 2: ['deployment-playbook'] }, // Pilot/wave playbook → Level 2
   p7: { 2: ['vendor-scorecard'] }, // Vendors engaged + scored → Level 2
   p6: { 2: ['infra-modernization-plan'] }, // Infrastructure modernization plan → Level 2
+  // verify-close is tree-backed (clears via achievedTreeLevel), so this entry is
+  // not on the runtime gating path — it documents the genuine win-level artifact
+  // (the migration-verification evidence dossier) and keeps the maturity invariant.
+  'verify-close': { 2: ['migration-verification'] },
 }
 
 export const PHASE_MATURITY: Partial<Record<PhaseId, MaturityLevel[]>> = {
@@ -214,6 +218,36 @@ export const PHASE_MATURITY: Partial<Record<PhaseId, MaturityLevel[]>> = {
       level: 4,
       indicator:
         'All strategic vendors PQC-committed with verified delivery; bridging patterns eliminated as vendor support matures; open-source dependency tracking operational; vendor governance is permanent BAU function',
+    },
+  ],
+  // Terminal Verification & Closure phase — indicators mirror the generator's
+  // INDICATORS['verify-close'] (gen-sim-trees.mjs) so the ladder and the played
+  // tree stay in lock-step.
+  'verify-close': [
+    {
+      level: 0,
+      indicator:
+        'Migration "done" is declared on milestones; no verification evidence or closure record',
+    },
+    {
+      level: 1,
+      indicator:
+        'Closure discussed on milestones; no evidence standard applied; "done" is declared, not proven',
+    },
+    {
+      level: 2,
+      indicator:
+        'Migration verified against the 5-point evidence standard; classical key material decommissioning logged (SP 800-88); program closure record produced',
+    },
+    {
+      level: 3,
+      indicator:
+        'Independent verification of Tier-1 systems; crypto-agility/rollback drill evidenced; executive-sponsor sign-off; BAU handover funded',
+    },
+    {
+      level: 4,
+      indicator:
+        'Verification & closure run as BAU; evidence dossier continuously maintained; decommissioning and attestations folded into posture monitoring',
     },
   ],
 }
