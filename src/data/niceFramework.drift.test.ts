@@ -8,6 +8,7 @@ import {
   CA_TO_NFCOM,
   NICE_COMPETENCY_AREAS,
 } from './niceFramework'
+import { NICE_MODULE_MAP } from './niceModuleMapping'
 
 /**
  * Drift-guard: every official NICE code used in our data layer must exist in the
@@ -94,6 +95,18 @@ describe('NICE Framework drift-guard (v2.2.0)', () => {
         expect(
           officialTks.has(tks.id),
           `TKS ${tks.id} (${ca.id}) is not a real NICE v2.2.0 statement ID`
+        ).toBe(true)
+      }
+    }
+  })
+
+  it('every module nfExtra tag is a real official v2.2.0 competency-area code', () => {
+    const officialCAs = officialIdsOfType('competency_area')
+    for (const ref of NICE_MODULE_MAP) {
+      for (const nf of ref.nfExtra ?? []) {
+        expect(
+          officialCAs.has(nf),
+          `module "${ref.moduleId}" nfExtra ${nf} is not a real NICE v2.2.0 competency area`
         ).toBe(true)
       }
     }

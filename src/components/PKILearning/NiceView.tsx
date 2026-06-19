@@ -17,7 +17,7 @@ import type {
   NiceWorkRoleId,
   NiceProficiencyTier,
 } from '@/data/niceFramework'
-import { getModulesForCompetencyArea } from '@/data/niceModuleMapping'
+import { getModulesForCompetencyArea, getModuleOfficialAreas } from '@/data/niceModuleMapping'
 import { MODULE_CATALOG } from './moduleData'
 
 // Canonical CA display order — foundational → technical → governance
@@ -357,6 +357,7 @@ export function NiceView({ navigate, activePersonaId }: NiceViewProps) {
                         // primary CA is elsewhere) so the duplicate listing
                         // reads as secondary. Applies regardless of role.
                         const isSecondaryCA = ref.competencyAreas[0] !== caId
+                        const officialAreas = getModuleOfficialAreas(ref)
 
                         return (
                           <Button
@@ -364,6 +365,11 @@ export function NiceView({ navigate, activePersonaId }: NiceViewProps) {
                             variant="ghost"
                             size="sm"
                             onClick={() => navigate(ref.moduleId)}
+                            title={
+                              officialAreas.length > 0
+                                ? `Official NICE v2.2.0 areas: ${officialAreas.map((a) => a.title).join(', ')}`
+                                : undefined
+                            }
                             className={clsx(
                               'flex items-center gap-1.5 text-xs px-2.5 py-1.5 h-auto rounded-lg border transition-all',
                               status === 'completed'
