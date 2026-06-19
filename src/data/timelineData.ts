@@ -113,6 +113,9 @@ interface RawTimelineRow {
   deprecated_reason?: string
   related_standards?: string
   entity_type?: string
+  // Tags the ONE row per country that is its canonical PQC migration deadline for
+  // the sim. Consumed by scripts/gen-timeline-facts.mjs (the single-source codegen).
+  is_sim_deadline?: string
 }
 
 // ─── Graded confidence score ─────────────────────────────────────────────────
