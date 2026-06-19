@@ -67,18 +67,27 @@ export const KPITrackerTemplate: React.FC = () => {
     setUserScores(scores)
   }, [])
 
+  // Mirror the scorecard's weight edits so the exported/saved artifact reflects
+  // the user's weights, not just the per-persona defaults (saved == on-screen).
+  const [userWeights, setUserWeights] = useState<Record<string, number>>({})
+  const handleWeightSnapshot = useCallback((weights: Record<string, number>) => {
+    setUserWeights(weights)
+  }, [])
+
   const exportMarkdown = useMemo(() => {
     const scores = userScores
     let md = `# PQC Migration KPI Tracker — ${activePersona}\n\n`
     md += `Generated: ${new Date().toLocaleDateString()}\n\n`
 
+    const ew = (d: (typeof dimensions)[number]) =>
+      d.id in userWeights ? (userWeights[d.id] ?? 0) : d.weight
     let totalWeight = 0
     let weightedSum = 0
     for (const d of dimensions) {
       if (d.disabled) continue
       const score = scores[d.id] ?? d.autoScore ?? 0
-      weightedSum += score * d.weight
-      totalWeight += d.weight
+      weightedSum += score * ew(d)
+      totalWeight += ew(d)
     }
     const overall = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
 
@@ -89,11 +98,11 @@ export const KPITrackerTemplate: React.FC = () => {
     md += '|-----|-------|--------|--------|-------------|\n'
     for (const d of dimensions) {
       if (d.disabled) {
-        md += `| ${d.label} | _locked — ${d.disabledReason ?? 'no data'}_ | ${Math.round(d.weight * 100)}% | ${d.target ?? '—'} | ${d.description} |\n`
+        md += `| ${d.label} | _locked — ${d.disabledReason ?? 'no data'}_ | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${d.description} |\n`
         continue
       }
       const score = scores[d.id] ?? d.autoScore ?? 0
-      md += `| ${d.label} | ${score}/100 | ${Math.round(d.weight * 100)}% | ${d.target ?? '—'} | ${d.description} |\n`
+      md += `| ${d.label} | ${score}/100 | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${d.description} |\n`
     }
     md += '\n## Data Sources\n\n'
     md += `- Vendor / FIPS / threat / compliance KPIs auto-scored from your catalog, threats data, and assessment selections.\n`
@@ -105,7 +114,7 @@ export const KPITrackerTemplate: React.FC = () => {
       '*Aligned to NIST CSWP 39 §5.4 (Measuring Migration Progress) and §6.5 (Governance, Risk, and Compliance). https://doi.org/10.6028/NIST.CSWP.39*\n'
 
     return md
-  }, [dimensions, activePersona, riskHistory, userScores])
+  }, [dimensions, activePersona, riskHistory, userScores, userWeights])
 
   const handleExport = useCallback(() => {
     addExecutiveDocument({
@@ -174,6 +183,7 @@ export const KPITrackerTemplate: React.FC = () => {
         dimensions={dimensions}
         colorScale="readiness"
         onScoreChange={handleScoreSnapshot}
+        onWeightChange={handleWeightSnapshot}
         allowWeightEditing={true}
         showExport={false}
         exportFilename={`pqc-kpi-tracker-${activePersona}`}
