@@ -174,7 +174,12 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   timeline: 0,
   algorithms: 0,
   //     2026-05-31: bumped 113 → 118 — 5 new catalog enrichments (Tectia SSH, IVPN, libcrux, Trail of Bits ml-dsa, InfoSec Global AgileSec)
-  'document-enrichment': 118,
+  //     2026-06-19: bumped 118 → 119 — pre-existing drift (the committed corpus
+  //     was already at 119; the pin lagged). One more sector-threat enrichment
+  //     chunk (AERO) lacks trust-score wiring. Same gap; same remediation
+  //     (extend chunkToResource routing in trustScoreData.ts). Unrelated to the
+  //     gov-strategy→timeline move; surfaced when the corpus was refreshed.
+  'document-enrichment': 119,
 }
 
 /**
