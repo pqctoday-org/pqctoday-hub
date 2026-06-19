@@ -68,7 +68,7 @@ import { computeReadiness } from '@/simulation/readiness'
 import { runQuarter } from '@/simulation/quarterEngine'
 import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
 import { getBalance, type DifficultyId } from '@/data/simBalance'
-import { Eyebrow, Ring, Radial, Dial, ReadonlyDial, Stat } from './atoms'
+import { Eyebrow, Ring, Radial, Dial, ReadonlyDial, Stat, PlanningBadge } from './atoms'
 import { SimTour } from './SimTour'
 import { KIND_CHIP, markSimResume } from './simChrome'
 import { canResolveDeepLink } from '@/simulation/deepLinks'
@@ -942,7 +942,13 @@ export function SimulationView() {
           <ReadonlyDial
             label="SECTOR"
             value={sectorOpt.label}
-            hint="from your assessment"
+            hint={`shelf-life X ≈ ${sectorOpt.shelfLifeYears}y`}
+            badge={
+              <PlanningBadge
+                label="est."
+                tip={`Shelf-life X (${sectorOpt.shelfLifeYears}y for ${sectorOpt.label}) is an illustrative planning anchor for how long this sector's data must stay secret — not a published figure. Re-check the live source.`}
+              />
+            }
             title={
               assessSnap?.result.assessmentProfile?.industry
                 ? `mapped from your assessment industry: ${assessSnap.result.assessmentProfile.industry}`
@@ -1052,8 +1058,14 @@ export function SimulationView() {
             <div className="mt-1 whitespace-nowrap font-mono text-[11px] font-bold text-foreground">
               X {clock.x}y + Y {clock.y}y = <b>{safeYears}y</b>
             </div>
-            <div className="mt-0.5 whitespace-nowrap font-mono text-[11px] text-muted-foreground">
-              {clock.yearsToHorizon}y to Q-Day {clock.horizonYear}
+            <div className="mt-0.5 flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
+              <span className="whitespace-nowrap">
+                {clock.yearsToHorizon}y to Q-Day {clock.horizonYear}
+              </span>
+              <PlanningBadge
+                label="planning"
+                tip="Q-Day (pinned to 2029, at or below the public 2030–2040 CRQC range) and government PQC deadlines are illustrative planning anchors — not published standards. Re-check the live source."
+              />
             </div>
             <div className="mt-1.5">
               {clock.atRisk ? (

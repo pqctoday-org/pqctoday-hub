@@ -15,6 +15,14 @@ import { QC_FIRST_YEAR } from './quantumTimeline'
 export type SimSize = 'small' | 'mid' | 'large' | 'global'
 
 /**
+ * Provenance of a figure shown in the sim. `'standard'` = a published, citable
+ * fact (FIPS param, RFC). `'planning'` = an illustrative planning anchor (a
+ * shelf-life, a government deadline, the Q-Day year) that a learner must NOT
+ * quote as a published standard. Drives the PlanningBadge affordance in the UI.
+ */
+export type Provenance = 'standard' | 'planning'
+
+/**
  * CRQC horizon year Z baseline = the simulation's Q-Day (first CRQC). Single
  * source in `quantumTimeline.ts`, shared with simAssets and the Assess risk windows.
  */
@@ -29,27 +37,62 @@ export interface SimSector {
   /** X — how long this sector's data must stay confidential (years). */
   shelfLifeYears: number
   hint: string
+  /** Always `'planning'` — these shelf-lives are illustrative planning anchors. */
+  provenance: Provenance
 }
 
-/** Sectors set X — the data shelf-life that drives Harvest-Now-Decrypt-Later risk. */
+/** Sectors set X — the data shelf-life that drives Harvest-Now-Decrypt-Later risk.
+ *  Every shelf-life is an illustrative planning anchor (`provenance: 'planning'`). */
 export const SECTORS: SimSector[] = [
-  { id: 'general', label: 'General', shelfLifeYears: 5, hint: 'mixed business data' },
-  { id: 'retail', label: 'Retail', shelfLifeYears: 3, hint: 'shorter-lived commercial data' },
-  { id: 'telecom', label: 'Telecom', shelfLifeYears: 7, hint: 'subscriber + signalling data' },
+  {
+    id: 'general',
+    label: 'General',
+    shelfLifeYears: 5,
+    hint: 'mixed business data',
+    provenance: 'planning',
+  },
+  {
+    id: 'retail',
+    label: 'Retail',
+    shelfLifeYears: 3,
+    hint: 'shorter-lived commercial data',
+    provenance: 'planning',
+  },
+  {
+    id: 'telecom',
+    label: 'Telecom',
+    shelfLifeYears: 7,
+    hint: 'subscriber + signalling data',
+    provenance: 'planning',
+  },
   {
     id: 'financial',
     label: 'Financial',
     shelfLifeYears: 10,
     hint: 'transactions + records retention',
+    provenance: 'planning',
   },
-  { id: 'energy', label: 'Energy/OT', shelfLifeYears: 10, hint: 'grid + long-lived OT' },
+  {
+    id: 'energy',
+    label: 'Energy/OT',
+    shelfLifeYears: 10,
+    hint: 'grid + long-lived OT',
+    provenance: 'planning',
+  },
   {
     id: 'healthcare',
     label: 'Healthcare',
     shelfLifeYears: 15,
     hint: 'patient records — long retention',
+    provenance: 'planning',
   },
-  { id: 'government', label: 'Government', shelfLifeYears: 20, hint: 'classified / long-secret' },
+  {
+    id: 'government',
+    label: 'Government',
+    shelfLifeYears: 20,
+    hint: 'classified / long-secret',
+    provenance: 'planning',
+  },
 ]
 
 export const DEFAULT_SECTOR = 'general'
@@ -74,6 +117,21 @@ export const COUNTRY_DEADLINE_YEAR: Record<string, number> = {
   FR: 2030, // ANSSI
   UK: 2035, // NCSC (later roadmap)
   AU: 2030, // ASD
+}
+
+/**
+ * Provenance for each country deadline — a single source of truth the UI reads,
+ * rather than the view inferring it. Every government deadline is a planning
+ * horizon, not a published standard, so all entries are `'planning'`. Kept as a
+ * sibling map (not a field on COUNTRY_DEADLINE_YEAR) so `computeSimMosca` inputs
+ * stay numeric and pure. PR-5 extends both maps in lock-step.
+ */
+export const COUNTRY_DEADLINE_PROVENANCE: Record<string, Provenance> = {
+  US: 'planning',
+  DE: 'planning',
+  FR: 'planning',
+  UK: 'planning',
+  AU: 'planning',
 }
 
 /** The binding horizon Z: the sooner of the CRQC estimate and the country deadline. */
