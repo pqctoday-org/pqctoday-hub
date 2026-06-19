@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import {
   ShieldAlert,
   X,
@@ -30,6 +30,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Radar, Siren } from 'lucide-react'
 import { ThreatClassBadge, ShorTierBadge } from './ThreatClassBadges'
 import { getSocUseCases, getIrPlaybook, getShorTier, SHOR_TIER_DEFS } from './threatClassification'
+import { getAttackProfile, type AlgorithmAttackProfile } from '@/data/implementationAttackProfiles'
 
 interface ThreatDetailDialogProps {
   threat: ThreatItem
@@ -37,6 +38,21 @@ interface ThreatDetailDialogProps {
 }
 
 export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, onClose }) => {
+  // Implementation-attack surface of the recommended PQC replacement(s) — cross-linked
+  // from the single-source attack-profile data (no duplication of the Algorithms tab).
+  const replacementAttackProfiles = useMemo<AlgorithmAttackProfile[]>(() => {
+    const seen = new Set<string>()
+    const out: AlgorithmAttackProfile[] = []
+    for (const token of threat.pqcReplacement.split(/[,+/]|\band\b/i)) {
+      const profile = getAttackProfile(token)
+      if (profile && !seen.has(profile.algorithm)) {
+        seen.add(profile.algorithm)
+        out.push(profile)
+      }
+    }
+    return out
+  }, [threat.pqcReplacement])
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -112,6 +128,42 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                 </p>
               </div>
             </div>
+
+            {replacementAttackProfiles.length > 0 && (
+              <div className="bg-status-warning/10 p-4 rounded-lg border border-status-warning/20">
+                <h3 className="text-sm font-semibold text-status-warning mb-2 flex items-center gap-2">
+                  <ShieldAlert size={14} /> Implementation pitfalls of the PQC replacement
+                </h3>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Migrating the algorithm isn&apos;t enough — these PQC algorithms have documented
+                  implementation-level attack surfaces (side-channel, fault injection, RNG). Harden
+                  against them during rollout.
+                </p>
+                <div className="space-y-1.5">
+                  {replacementAttackProfiles.map((p) => {
+                    const evidence = p.attacks.filter((a) => a.status === 'yes').length
+                    return (
+                      <div
+                        key={p.algorithm}
+                        className="flex items-center justify-between gap-2 text-xs"
+                      >
+                        <span className="font-medium text-foreground">{p.algorithm}</span>
+                        <span className="text-muted-foreground">
+                          {evidence} attack {evidence === 1 ? 'category' : 'categories'} with
+                          evidence
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+                <Link
+                  to="/algorithms?subtab=attacks"
+                  className="mt-3 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                >
+                  Full attack profiles &amp; countermeasures <ArrowRight size={12} />
+                </Link>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 gap-4">
               <div>
