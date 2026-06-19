@@ -117,6 +117,14 @@ export const COUNTRY_DEADLINE_YEAR: Record<string, number> = {
   FR: 2030, // ANSSI
   UK: 2035, // NCSC (later roadmap)
   AU: 2030, // ASD
+  // EU + CA confirmed against the hub timeline (timeline_*.csv): EC "Full EU PQC
+  // Transition" 2035 and CCCS ITSM.40.001 "Full GC Migration" 2035.
+  EU: 2035, // EC roadmap: high-risk by 2030, full transition by 2035 (timeline-confirmed)
+  CA: 2035, // CCCS ITSM.40.001: high-priority by 2031, full GC migration by 2035 (timeline-confirmed)
+  // JP/KR/SG are planning estimates beyond the timeline's authoritative dates:
+  JP: 2035, // CRYPTREC roadmap pending (~2027); timeline shows critical systems ~2030, no full date — 2035 inferred
+  KR: 2035, // KISA / NIS national PQC master plan (not in hub timeline — planning estimate)
+  SG: 2035, // CSA (illustrative — no fixed national deadline; not in hub timeline)
 }
 
 /**
@@ -132,6 +140,11 @@ export const COUNTRY_DEADLINE_PROVENANCE: Record<string, Provenance> = {
   FR: 'planning',
   UK: 'planning',
   AU: 'planning',
+  EU: 'planning',
+  CA: 'planning',
+  JP: 'planning',
+  KR: 'planning',
+  SG: 'planning',
 }
 
 /** The binding horizon Z: the sooner of the CRQC estimate and the country deadline. */
