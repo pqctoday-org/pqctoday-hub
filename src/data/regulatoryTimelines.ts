@@ -6,6 +6,10 @@
  * instead of hardcoding year values. When a regulatory body updates a deadline,
  * update it here — all consumers update automatically.
  *
+ * Per-country sim deadlines derive from the timeline CSV (src/data/timeline_*.csv)
+ * via REGULATORY_DEADLINE_YEAR (re-exported from timelineFacts.generated.ts).
+ * Edit the CSV → rebuild → all consumers pick up the new year automatically.
+ *
  * Sources:
  *   - CNSA 2.0: NSA Cybersecurity Advisory (September 2022, updated March 2024)
  *   - NIST IR 8547: Transition to Post-Quantum Cryptography Standards (November 2024)
@@ -14,6 +18,20 @@
  */
 
 import type { PhaseId } from './frameworkPhases'
+import { TIMELINE_COUNTRY_DEADLINE_YEAR } from './timelineFacts.generated'
+
+/**
+ * Per-country sim deadline year, derived from the timeline CSV
+ * (is_sim_deadline-tagged rows). Edit src/data/timeline_*.csv and rebuild
+ * — this map and all its consumers update automatically.
+ * Untagged countries are absent; callers should fall back to QC_FIRST_YEAR.
+ */
+export const REGULATORY_DEADLINE_YEAR: Record<string, number> = TIMELINE_COUNTRY_DEADLINE_YEAR
+
+// CSV-sourced deadline aliases — single-country lookups with a safety fallback
+// so regulatoryTimelines.ts stays usable even before the first codegen run.
+const US_DEADLINE = TIMELINE_COUNTRY_DEADLINE_YEAR['US'] ?? 2030
+const DE_DEADLINE = TIMELINE_COUNTRY_DEADLINE_YEAR['DE'] ?? 2030
 
 // ── CNSA 2.0 (NSA) — National Security Systems ────────────────────────────
 
@@ -23,8 +41,8 @@ export const CNSA_2_0 = {
   softwarePreferred: 2025,
   /** New networking equipment must support CNSA 2.0 */
   networkingRequired: 2027,
-  /** All deployed NSS software must use CNSA 2.0 signatures */
-  softwareExclusive: 2030,
+  /** All deployed NSS software must use CNSA 2.0 signatures (= US sim deadline, from CSV) */
+  softwareExclusive: US_DEADLINE,
   /** Legacy networking equipment must be replaced with CNSA 2.0 */
   networkingExclusive: 2033,
   /** All remaining NSS systems — web, cloud, servers */
@@ -115,8 +133,8 @@ export const ANSSI_TIMELINE = {
 export const BSI_TIMELINE = {
   /** BSI recommends hybrid PQC+classical for transition period */
   hybridRecommended: true,
-  /** Target for quantum-safe by default */
-  quantumSafeDefault: 2030,
+  /** Target for quantum-safe by default (= DE sim deadline, from CSV) */
+  quantumSafeDefault: DE_DEADLINE,
 } as const
 
 // ── Common CRQC (Cryptographically Relevant Quantum Computer) Estimates ───
