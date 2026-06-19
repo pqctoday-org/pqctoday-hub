@@ -147,34 +147,37 @@ describe('buildCloudResponsibilityMatrix - cell content assertions', () => {
 })
 
 describe('buildCloudResponsibilityMatrix - PQC availability lookup', () => {
-  it('AWS for TLS asset class returns "roadmap" (TLS preview)', () => {
+  // Availability is now DERIVED from the product catalog (single source of
+  // truth), so these expectations track the catalog: AWS KMS/CloudHSM + gateway
+  // products are 'available'; Oracle Key Vault is 'roadmap'.
+  it('AWS for TLS asset class returns "available" (catalog: AWS gateway/ALB available)', () => {
     const rec = buildCloudResponsibilityMatrix({
       ...baseInputs,
       cloudProviders: ['AWS'],
       assetClasses: ['TLS termination'],
       serviceModelMix: ['IaaS'],
     })
-    expect(rec.matrix[0].pqcAvailability).toBe('roadmap')
+    expect(rec.matrix[0].pqcAvailability).toBe('available')
   })
 
-  it('AWS for KMS asset class returns "partial" (KMS rolling out)', () => {
+  it('AWS for KMS asset class returns "available" (catalog: AWS KMS available)', () => {
     const rec = buildCloudResponsibilityMatrix({
       ...baseInputs,
       cloudProviders: ['AWS'],
       assetClasses: ['KMS-backed keys'],
       serviceModelMix: ['IaaS'],
     })
-    expect(rec.matrix[0].pqcAvailability).toBe('partial')
+    expect(rec.matrix[0].pqcAvailability).toBe('available')
   })
 
-  it('Multi-provider takes the worst-case availability (AWS + Oracle => no-public-plan)', () => {
+  it('Multi-provider takes the worst-case availability (AWS available + Oracle roadmap => roadmap)', () => {
     const rec = buildCloudResponsibilityMatrix({
       ...baseInputs,
       cloudProviders: ['AWS', 'Oracle'],
       assetClasses: ['KMS-backed keys'],
       serviceModelMix: ['IaaS'],
     })
-    expect(rec.matrix[0].pqcAvailability).toBe('no-public-plan')
+    expect(rec.matrix[0].pqcAvailability).toBe('roadmap')
   })
 })
 

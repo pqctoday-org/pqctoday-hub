@@ -19,6 +19,7 @@ interface RawSoftwareItem {
   infrastructure_layer: string
   cisa_category?: string
   pqc_support: string
+  pqc_status_canonical?: string
   pqc_capability_description: string
   license_type: string
   license: string
@@ -135,6 +136,7 @@ const {
       cisaCategory:
         row.cisa_category || deriveCisaCategory(row.category_name, row.infrastructure_layer),
       pqcSupport: row.pqc_support,
+      pqcStatusCanonical: row.pqc_status_canonical || '',
       pqcCapabilityDescription: row.pqc_capability_description,
       licenseType: row.license_type,
       license: row.license,
