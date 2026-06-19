@@ -177,6 +177,9 @@ export const BUSINESS_TOOL_COMPONENTS: Record<string, LazyComp> = {
   'data-at-rest-strategy': lazyWithRetry(() =>
     import('./tools/DataAtRestStrategy').then((m) => ({ default: m.DataAtRestStrategy }))
   ),
+  'migration-verification': lazyWithRetry(() =>
+    import('./tools/MigrationVerification').then((m) => ({ default: m.MigrationVerification }))
+  ),
 }
 
 /** Look up the lazy-loaded builder component for a given artifact type. */

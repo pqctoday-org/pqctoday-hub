@@ -68,6 +68,7 @@ export type ExecutiveDocumentType =
   | 'refresh-cycle-alignment'
   | 'accelerated-execution-profile'
   | 'data-at-rest-strategy'
+  | 'migration-verification'
   | 'sim-roadmap'
 
 export interface ExecutiveDocumentRevision {

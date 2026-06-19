@@ -28,7 +28,8 @@ export function PhaseContextBanner() {
   if (!phaseId || SELF_HANDLED_ROUTES.includes(pathname)) return null
 
   const phase = FRAMEWORK_PHASES[phaseId]
-  const heading = phase.number === null ? 'Foundations' : `Phase ${phase.number}`
+  // null-number bands (Foundations, Verification & Closure) show their name.
+  const heading = phase.number === null ? phase.name : `Phase ${phase.number}`
 
   const clear = () => {
     const next = new URLSearchParams(searchParams)

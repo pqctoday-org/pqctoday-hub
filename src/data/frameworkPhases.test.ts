@@ -5,7 +5,18 @@ import type { PhaseId } from './frameworkPhases'
 import { CSWP39_ZONE_ORDER } from './cswp39ZoneData'
 import type { ZoneId } from './cswp39ZoneData'
 
-const ALL_PHASE_IDS: PhaseId[] = ['p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'foundations']
+const ALL_PHASE_IDS: PhaseId[] = [
+  'p0',
+  'p1',
+  'p2',
+  'p3',
+  'p4',
+  'p5',
+  'p6',
+  'p7',
+  'verify-close',
+  'foundations',
+]
 
 const ZONE_SET: Set<ZoneId> = new Set(CSWP39_ZONE_ORDER)
 

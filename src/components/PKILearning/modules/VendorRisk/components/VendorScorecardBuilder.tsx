@@ -8,6 +8,7 @@ import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { softwareData } from '@/data/migrateData'
+import { isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import {
   Info,
@@ -37,22 +38,14 @@ const DIMENSIONS: Dimension[] = [
     label: 'PQC Algorithm Support',
     description: 'Vendor supports NIST-approved PQC algorithms',
     weight: 0.25,
-    autoDetect: (item) => {
-      const s = (item.pqcSupport || '').toLowerCase()
-      return s.startsWith('yes') || s.startsWith('partial') || s.startsWith('limited')
-    },
+    autoDetect: (item) => isPqcReady(item.pqcSupport),
   },
   {
     id: 'fips-validation',
     label: 'FIPS 140-3 Validation',
     description: 'Cryptographic modules have current FIPS validation',
     weight: 0.2,
-    autoDetect: (item) => {
-      const s = (item.fipsValidated || '').toLowerCase()
-      return (
-        s.startsWith('yes') || s === 'validated' || (s.includes('fips 140') && !s.startsWith('no'))
-      )
-    },
+    autoDetect: (item) => isFips1403Validated(item.fipsValidated),
   },
   {
     id: 'pqc-roadmap',

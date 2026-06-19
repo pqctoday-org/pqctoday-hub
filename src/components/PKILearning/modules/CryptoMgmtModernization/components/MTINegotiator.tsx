@@ -65,17 +65,20 @@ function isEmbeddedAudience(audience: string, hardware: string[]): boolean {
 function recommendSig(inputs: MTIInputs): { mti: string; alternates: string[]; rationale: string } {
   const { audience, signatureSizePreference, interopProfile, complianceDeadline } = inputs
 
-  // US federal + ≤ 2030 deadline -> ML-DSA-65 (CNSA 2.0)
+  // US federal + ≤ 2030 deadline -> ML-DSA-87 (CNSA 2.0, Cat 5)
   if (audience === 'us-federal' && isImmediateDeadline(complianceDeadline)) {
-    const alts = ['SLH-DSA-SHA2-128s (defence-in-depth)']
+    const alts = [
+      'ML-DSA-65 (FIPS 204, Cat 3 — non-NSS / NIST-track federal alternate)',
+      'SLH-DSA-SHA2-128s (defence-in-depth)',
+    ]
     if (interopProfile.includes('non-pqc-peers')) {
-      alts.unshift('RSA-PSS-3072 + ML-DSA-65 (LAMPS composite, transition period)')
+      alts.unshift('RSA-PSS-3072 + ML-DSA-87 (LAMPS composite, transition period)')
     }
     return {
-      mti: 'ML-DSA-65 (FIPS 204, NIST Cat 3)',
+      mti: 'ML-DSA-87 (FIPS 204, NIST Cat 5)',
       alternates: alts,
       rationale:
-        'CNSA 2.0 names ML-DSA-65 as the primary signature for US federal use; SLH-DSA-SHA2-128s is the conservative hash-based alternate.',
+        'CNSA 2.0 mandates ML-DSA-87 for US National Security Systems; ML-DSA-65 (Cat 3) is the alternate for non-NSS / NIST-track federal use.',
     }
   }
 
@@ -136,13 +139,13 @@ function recommendKem(inputs: MTIInputs): { mti: string; alternates: string[]; r
     }
   }
 
-  // US federal + ≤ 2030 deadline -> ML-KEM-768
+  // US federal + ≤ 2030 deadline -> ML-KEM-1024 (CNSA 2.0, Cat 5)
   if (audience === 'us-federal' && isImmediateDeadline(complianceDeadline)) {
     return {
-      mti: 'ML-KEM-768 (FIPS 203, NIST Cat 3)',
-      alternates: ['ML-KEM-1024 (Cat 5 step-up)'],
+      mti: 'ML-KEM-1024 (FIPS 203, NIST Cat 5)',
+      alternates: ['ML-KEM-768 (FIPS 203, Cat 3 — non-NSS / NIST-track federal alternate)'],
       rationale:
-        'CNSA 2.0 names ML-KEM-768 as the primary KEM for US federal use; ML-KEM-1024 covers Cat 5 trust boundaries.',
+        'CNSA 2.0 mandates ML-KEM-1024 for US National Security Systems; ML-KEM-768 (Cat 3) is the alternate for non-NSS / NIST-track federal use.',
     }
   }
 
@@ -216,12 +219,39 @@ function recommendHash(inputs: MTIInputs): {
   }
 }
 
+// How the chosen MTI is actually carried differs by protocol — the `protocol`
+// input drives this note (it used to be collected but never affect the output).
+const PROTOCOL_MTI_NOTES: Record<string, string> = {
+  'TLS 1.3':
+    'TLS 1.3: negotiate the hybrid KEM via the IANA-registered X25519MLKEM768 named group (0x11EC) in supported_groups; PQC signatures via signature_algorithms once cert chains support them.',
+  'TLS 1.2':
+    'TLS 1.2 has no standardized PQC key-exchange path - upgrade to TLS 1.3 before adding a PQC KEM.',
+  IKEv2:
+    'IKEv2: carry ML-KEM via RFC 9370 (Multiple Key Exchanges) as an additional key-exchange transform alongside the classical DH group.',
+  'IPsec ESP':
+    'IPsec ESP protects data with symmetric crypto (AES-256 is quantum-resistant) - the PQC change lives in the IKEv2 key exchange that derives ESP keys, not ESP itself.',
+  SSH: 'SSH: use a hybrid KEX such as sntrup761x25519-sha512 today, moving to mlkem768x25519 as it standardises.',
+  'S/MIME':
+    'S/MIME: signing uses the signature MTI; for encrypted mail carry the KEM via KEMRecipientInfo (RFC 9629).',
+  CMS: 'CMS: use KEMRecipientInfo (RFC 9629) for KEM-based content encryption; signatures via the signature MTI.',
+  'JOSE/COSE':
+    'JOSE/COSE: ML-DSA / SLH-DSA algorithm registrations are still in progress - pin the MTI in your application profile until registered.',
+  'custom-binary':
+    'Custom protocol: you own negotiation - pin the MTI explicitly, version your cipher list, and integrity-protect negotiation to prevent downgrade.',
+  'custom-text':
+    'Custom protocol: you own negotiation - pin the MTI explicitly, version your cipher list, and integrity-protect negotiation to prevent downgrade.',
+}
+
 function computeWatchOuts(
   inputs: MTIInputs,
   sig: { mti: string; alternates: string[] },
   kem: { mti: string }
 ): string[] {
   const out: string[] = []
+
+  // Protocol-specific carriage note — the `protocol` input shapes HOW the MTI is negotiated.
+  const protocolNote = PROTOCOL_MTI_NOTES[inputs.protocol]
+  if (protocolNote) out.push(protocolNote)
 
   // Interop break risk
   if (inputs.interopProfile.includes('pure-pqc-peers') && /X25519MLKEM768|MLKEM768/.test(kem.mti)) {

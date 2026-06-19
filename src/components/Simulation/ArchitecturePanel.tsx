@@ -21,16 +21,16 @@ import type { SimSize } from '@/data/moscaClock'
 import { MermaidDiagram } from './MermaidDiagram'
 
 const STATUS_CHIP: Record<PqcStatus, string> = {
-  available: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
-  partial: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
-  roadmap: 'bg-sky-500/15 text-sky-600 dark:text-sky-400',
-  none: 'bg-red-500/15 text-red-600 dark:text-red-400',
+  available: 'bg-status-success/15 text-status-success',
+  partial: 'bg-status-warning/15 text-status-warning',
+  roadmap: 'bg-status-info/15 text-status-info',
+  none: 'bg-status-error/15 text-status-error',
 }
 
 const NON_MIGRATABLE_BADGE: Partial<Record<EdgeState, { label: string; cls: string }>> = {
-  blocked: { label: '⚡ blocked (product)', cls: 'bg-red-500/15 text-red-600 dark:text-red-400' },
-  vendor: { label: '⏳ vendor path', cls: 'bg-amber-500/15 text-amber-600 dark:text-amber-400' },
-  monitor: { label: '⚠ monitor-only', cls: 'bg-amber-500/15 text-amber-600 dark:text-amber-400' },
+  blocked: { label: '⚡ blocked (product)', cls: 'bg-status-error/15 text-status-error' },
+  vendor: { label: '⏳ vendor path', cls: 'bg-status-warning/15 text-status-warning' },
+  monitor: { label: '⚠ monitor-only', cls: 'bg-status-warning/15 text-status-warning' },
 }
 
 const edgeKey = (e: ProtocolEdge) => `${e.from}-${e.to}-${e.protocol}`
@@ -61,10 +61,10 @@ export function ArchitecturePanel({ size, country }: { size: SimSize; country: s
 
   const verdictCls =
     verdict.level === 'fail'
-      ? 'text-red-600 dark:text-red-400'
+      ? 'text-status-error'
       : verdict.level === 'warn'
-        ? 'text-amber-600 dark:text-amber-400'
-        : 'text-emerald-600 dark:text-emerald-400'
+        ? 'text-status-warning'
+        : 'text-status-success'
 
   return (
     <div className="rounded-lg border border-border bg-card/40 p-4">
@@ -77,7 +77,7 @@ export function ArchitecturePanel({ size, country }: { size: SimSize; country: s
 
       <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-muted">
         <div
-          className="h-full bg-emerald-500 transition-all"
+          className="h-full bg-status-success transition-all"
           style={{ width: `${readinessPct}%` }}
         />
       </div>
@@ -185,7 +185,7 @@ export function ArchitecturePanel({ size, country }: { size: SimSize; country: s
                     >
                       {label}
                       {isMigrated ? (
-                        <span className="shrink-0 rounded bg-emerald-500/15 px-1.5 py-0.5 font-semibold text-emerald-600 dark:text-emerald-400">
+                        <span className="shrink-0 rounded bg-status-success/15 px-1.5 py-0.5 font-semibold text-status-success">
                           ✓ {choice}
                         </span>
                       ) : (

@@ -8,8 +8,11 @@ export type WorkflowPhase = 'assess' | 'comply' | 'migrate' | 'timeline'
 /** Status of a single phase in the 0–7 + Foundations journey. */
 export type PhaseStatus = 'todo' | 'active' | 'done'
 
-/** Build the initial phaseStatus map: all 'todo' except the first phase ('p0') 'active'. */
-const buildInitialPhaseStatus = (): Record<PhaseId, PhaseStatus> =>
+/** Build the initial phaseStatus map: all 'todo' except the first phase ('p0') 'active'.
+ *  Exported so a drift-guard test asserts it covers the full PHASE_ORDER — a new
+ *  phase id must land here (and in the v3 migrate backfill) or the rail reads an
+ *  undefined status. */
+export const buildInitialPhaseStatus = (): Record<PhaseId, PhaseStatus> =>
   PHASE_ORDER.reduce(
     (acc, id) => {
       acc[id] = id === 'p0' ? 'active' : 'todo'
@@ -166,7 +169,7 @@ export const useMigrationWorkflowStore = create<MigrationWorkflowState>()(
     }),
     {
       name: 'pqc-migration-workflow',
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => localStorage),
       migrate: (persistedState, version) => {
         const state = persistedState as Record<string, unknown>
@@ -192,6 +195,15 @@ export const useMigrationWorkflowStore = create<MigrationWorkflowState>()(
             PHASE_ORDER.includes(state.currentPhaseId as PhaseId)
               ? state.currentPhaseId
               : 'p0'
+        }
+        if (version < 3) {
+          // Backfill phase ids added since the snapshot (e.g. 'verify-close') so
+          // phaseStatus always covers the full PHASE_ORDER — otherwise a new rail
+          // node reads an undefined status and crashes.
+          const persistedStatus = state.phaseStatus as
+            | Partial<Record<PhaseId, PhaseStatus>>
+            | undefined
+          state.phaseStatus = { ...buildInitialPhaseStatus(), ...(persistedStatus ?? {}) }
         }
         return state as unknown as MigrationWorkflowState
       },

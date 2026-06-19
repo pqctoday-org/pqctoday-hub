@@ -69,6 +69,7 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'audit-checklist': 'compliance',
   'compliance-checklist': 'compliance',
   'compliance-timeline': 'compliance',
+  'migration-verification': 'compliance',
   'raci-matrix': 'governance',
   'policy-draft': 'governance',
   'kpi-dashboard': 'governance',

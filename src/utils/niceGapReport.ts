@@ -38,6 +38,7 @@ export interface NiceCompetencyGap {
 
 export interface NiceWorkRoleRecommendation {
   workRoleId: NiceWorkRoleId
+  /** Official NICE Framework v2.2.0 work-role ID, e.g. 'DD-WRL-001'. */
   niceCode: string
   title: string
   description: string
@@ -440,7 +441,7 @@ export function generateNiceGapReport(
   // Build export-safe copy (same shape, just plain object)
   report.exportData = {
     generatedAt: report.generatedAt,
-    niceFrameworkVersion: 'SP 800-181 Rev 1 (2020)',
+    niceFrameworkVersion: 'NICE Framework Components v2.2.0 (2025)',
     platform: 'pqctoday.org',
     assessmentProfile: {
       industry: input.industry,

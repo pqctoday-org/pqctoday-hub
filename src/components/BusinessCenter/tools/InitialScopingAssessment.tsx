@@ -19,6 +19,7 @@ import { ExportableArtifact } from '@/components/PKILearning/common/executive/Ex
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import { INSTANCES_PER_PRODUCT_ESTIMATE } from '@/data/roleCrosswalk'
 
 const MAX_SYSTEMS = 20
 const MAX_VENDORS = 10
@@ -174,10 +175,10 @@ export const InitialScopingAssessment: React.FC = () => {
   }, [myProducts])
 
   // Rough estate-size seed: when the user has a /migrate selection we estimate
-  // ~12 cryptographic instances per selected product as a starting order of
-  // magnitude; otherwise leave blank for the user to enter.
+  // ~INSTANCES_PER_PRODUCT_ESTIMATE cryptographic instances per selected product
+  // as a starting order of magnitude; otherwise leave blank for the user to enter.
   const seedInstances = useMemo(
-    () => (myProducts.length > 0 ? String(myProducts.length * 12) : ''),
+    () => (myProducts.length > 0 ? String(myProducts.length * INSTANCES_PER_PRODUCT_ESTIMATE) : ''),
     [myProducts.length]
   )
 
@@ -241,6 +242,18 @@ export const InitialScopingAssessment: React.FC = () => {
         <p className="text-xs text-muted-foreground mb-1.5">
           Rough count of cryptographic instances (keys, certificates, library call-sites, protocol
           endpoints). Drives FTE sizing in the Skills &amp; Team plan.
+          {myProducts.length > 0 && (
+            <>
+              {' '}
+              Seeded as{' '}
+              <span className="font-medium text-foreground">
+                {myProducts.length} product{myProducts.length === 1 ? '' : 's'} ×{' '}
+                {INSTANCES_PER_PRODUCT_ESTIMATE}
+              </span>{' '}
+              — a rough order-of-magnitude estimate, not a measurement; refine with your real
+              inventory.
+            </>
+          )}
         </p>
         <Input
           id="scoping-estate-instances"

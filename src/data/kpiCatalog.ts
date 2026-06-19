@@ -110,6 +110,29 @@ export function pqcReadinessTier(pqcSupport: string | undefined | null): number 
   return 0.3
 }
 
+/**
+ * Single source of truth for the binary "is this product PQC-ready?" used across
+ * the vendor scorecard, supply-chain matrix and executive metrics — derived from
+ * the tier so the three can't disagree. "Ready" = deployed/full or hybrid
+ * (tier ≥ 0.7); planned, pilot and narrative-only values do NOT count (they used
+ * to, which over-stated readiness).
+ */
+export function isPqcReady(pqcSupport: string | undefined | null): boolean {
+  return pqcReadinessTier(pqcSupport) >= 0.7
+}
+
+/**
+ * FIPS 140-**3** validation specifically. A bare "FIPS 140-2" string must NOT
+ * qualify (it previously did, via a loose `includes('fips 140')` check).
+ */
+export function isFips1403Validated(fipsValidated: string | undefined | null): boolean {
+  const s = (fipsValidated || '').toLowerCase().trim()
+  if (!s || s.startsWith('no')) return false
+  if (s.includes('140-3')) return true // explicit 140-3 wins, even if 140-2 is also mentioned
+  if (s.includes('140-2')) return false // 140-2 alone is NOT 140-3
+  return s.startsWith('yes') || s === 'validated'
+}
+
 // ── Shared auto-score helpers ────────────────────────────────────────────
 function clamp(v: number, lo = 0, hi = 100): number {
   return Math.max(lo, Math.min(hi, v))

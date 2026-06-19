@@ -135,7 +135,7 @@ export const CommonGroundPath: React.FC = () => {
       {/* NICE framing callout */}
       <div className="glass-panel p-4 border-l-2 border-primary space-y-1">
         <p className="text-sm font-medium text-foreground">
-          Aligned to NICE Framework (NIST IR 8355)
+          Aligned to the NICE Framework (NIST SP 800-181 Rev 1 · Components v2.2.0)
         </p>
         <p className="text-xs text-muted-foreground">
           The NICE Workforce Framework defines "Common Ground" competency areas — knowledge every

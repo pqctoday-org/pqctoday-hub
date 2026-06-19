@@ -73,7 +73,7 @@ const STATUS_ICON: Record<PhaseStatus, typeof Check> = {
 
 function statusColor(status: PhaseStatus): string {
   return status === 'done'
-    ? 'text-emerald-500'
+    ? 'text-status-success'
     : status === 'active'
       ? 'text-primary'
       : 'text-muted-foreground'
@@ -91,7 +91,8 @@ interface NodeProps {
 
 function PhaseNode({ phase, status, owned, collapsed, locationState, onNavigate }: NodeProps) {
   const Icon = STATUS_ICON[status]
-  const numberGlyph = phase.number === null ? 'F' : String(phase.number)
+  const numberGlyph =
+    phase.number === null ? (phase.id === 'verify-close' ? 'VC' : 'F') : String(phase.number)
   const label = phase.number === null ? phase.name : `${phase.number} · ${phase.name}`
   const roles = owned ? owningRoles(phase.id) : []
   const roleLabels = roles.map((r) => ROLE_CROSSWALK[r].label).join(', ')
@@ -259,7 +260,7 @@ export function PhaseRail() {
     has(id) ? (
       <PhaseNode
         phase={FRAMEWORK_PHASES[id]}
-        status={phaseStatus[id]}
+        status={phaseStatus[id] ?? 'todo'}
         owned={ownedPhases.has(id)}
         collapsed={collapsed}
         locationState={
@@ -347,6 +348,12 @@ export function PhaseRail() {
         {has('p7') && (
           <Group label="continuous" collapsed={collapsed}>
             {node('p7')}
+          </Group>
+        )}
+
+        {has('verify-close') && (
+          <Group label="closure" collapsed={collapsed}>
+            {node('verify-close')}
           </Group>
         )}
 

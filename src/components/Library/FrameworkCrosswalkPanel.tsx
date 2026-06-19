@@ -149,7 +149,11 @@ export function FrameworkCrosswalkPanel({ item }: FrameworkCrosswalkPanelProps) 
                 <li key={phase.id} className="rounded-md border border-border bg-card/40 p-2.5">
                   <div className="flex items-center gap-2 mb-1.5">
                     <span className="shrink-0 inline-flex items-center justify-center min-w-[2.25rem] px-1.5 py-0.5 rounded text-[10px] font-bold border bg-primary/10 text-primary border-primary/20">
-                      {phase.number === null ? 'Found.' : `P${phase.number}`}
+                      {phase.number === null
+                        ? phase.id === 'verify-close'
+                          ? 'V&C'
+                          : 'Found.'
+                        : `P${phase.number}`}
                     </span>
                     <span className="text-xs font-semibold text-foreground">{phase.name}</span>
                   </div>

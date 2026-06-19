@@ -29,11 +29,19 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 // Data helpers
 // ---------------------------------------------------------------------------
 
-function getDeadlineYear(deadline: string): number | null {
+/**
+ * The *binding* compliance year for a (possibly phased) deadline string.
+ * For phased mandates the obligation is the final full-compliance year, so we
+ * take the LATEST year, not the earliest phase-in date. (Previously Math.min,
+ * which read "2025-2030 (phased)" as 2025 and "2030 (deprecate), 2035 (disallow)"
+ * as 2030 — flagging deadlines years earlier than the real obligation.)
+ * A "Ongoing …" deadline has no single binding year.
+ */
+export function getDeadlineYear(deadline: string): number | null {
   if (/^ongoing/i.test(deadline.trim())) return null
   const matches = deadline.match(/\b(2\d{3})\b/g)
   if (!matches) return null
-  return Math.min(...matches.map(Number))
+  return Math.max(...matches.map(Number))
 }
 
 /** Group a single body's events into TimelinePhase[] (same logic as transformToGanttData in timelineData.ts) */
@@ -117,7 +125,7 @@ interface GapItem {
   detail?: FrameworkDetail | TimelineDetail
 }
 
-function computeGapAnalysis(
+export function computeGapAnalysis(
   frameworkDeadlines: ExternalDeadline[],
   milestones: UserMilestone[]
 ): GapItem[] {
@@ -128,20 +136,29 @@ function computeGapAnalysis(
   return frameworkDeadlines.map((d) => {
     const yearsRemaining = d.year - now
     const milestonesBeforeDeadline = milestones.filter((m) => m.year <= d.year)
-    const hasCertificationMilestone = milestonesBeforeDeadline.some(
+    // A *planned* certification milestone signals intent; only a *completed* one
+    // (explicitly marked done) means the obligation is actually met. Inferring
+    // "met" from the planned category alone let a missed deadline show as done.
+    const hasPlannedCertification = milestonesBeforeDeadline.some(
       (m) => m.category === 'Certification' || m.category === 'Renewal'
+    )
+    const hasCompletedCertification = milestonesBeforeDeadline.some(
+      (m) => (m.category === 'Certification' || m.category === 'Renewal') && m.completed === true
     )
 
     let status: 'completed' | 'on-track' | 'at-risk'
     let gap: string
 
-    if (d.year <= now && hasCertificationMilestone) {
+    if (hasCompletedCertification) {
       status = 'completed'
-      gap = 'Deadline met'
+      gap = d.year <= now ? 'Deadline met' : 'Requirement met ahead of deadline'
     } else if (d.year <= now) {
       status = 'at-risk'
-      gap = `Deadline passed ${now - d.year} year${now - d.year !== 1 ? 's' : ''} ago`
-    } else if (latestMilestoneYear >= d.year || hasCertificationMilestone) {
+      const ago = `${now - d.year} year${now - d.year !== 1 ? 's' : ''} ago`
+      gap = hasPlannedCertification
+        ? `Deadline passed ${ago}; certification milestone planned but not marked complete`
+        : `Deadline passed ${ago}`
+    } else if (latestMilestoneYear >= d.year || hasPlannedCertification) {
       status = 'on-track'
       gap = `${yearsRemaining} year${yearsRemaining !== 1 ? 's' : ''} remaining, plan extends to deadline`
     } else if (yearsRemaining <= 2 && milestones.length === 0) {
@@ -489,6 +506,10 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
     setMilestones((prev) => prev.filter((m) => m.id !== id))
   }, [])
 
+  const toggleMilestoneDone = useCallback((id: string) => {
+    setMilestones((prev) => prev.map((m) => (m.id === id ? { ...m, completed: !m.completed } : m)))
+  }, [])
+
   // Export markdown
   const exportMarkdown = useMemo(() => {
     let md = '# Compliance Timeline\n\n'
@@ -507,10 +528,10 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
 
     if (milestones.length > 0) {
       md += '\n## Migration Milestones\n\n'
-      md += '| Year | Milestone | Category |\n'
-      md += '|------|-----------|----------|\n'
+      md += '| Year | Milestone | Category | Done |\n'
+      md += '|------|-----------|----------|------|\n'
       for (const m of milestones) {
-        md += `| ${m.year} | ${m.label} | ${m.category || ''} |\n`
+        md += `| ${m.year} | ${m.label} | ${m.category || ''} | ${m.completed ? 'Yes' : 'No'} |\n`
       }
     }
 
@@ -642,23 +663,49 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
           {milestones.map((m) => (
             <div key={m.id} className="flex items-center justify-between px-4 py-2 glass-panel">
               <div className="flex items-center gap-3">
+                {m.completed && <CheckCircle2 size={14} className="text-status-success shrink-0" />}
                 <span className="text-sm font-mono text-primary">{m.year}</span>
-                <span className="text-sm text-foreground">{m.label}</span>
+                <span
+                  className={`text-sm ${m.completed ? 'text-status-success' : 'text-foreground'}`}
+                >
+                  {m.label}
+                </span>
                 {m.category && (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
                     {m.category}
                   </span>
                 )}
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => removeMilestone(m.id)}
-                aria-label={`Remove ${m.label}`}
-                className="text-muted-foreground hover:text-status-error"
-              >
-                <X size={14} />
-              </Button>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => toggleMilestoneDone(m.id)}
+                  aria-pressed={!!m.completed}
+                  title={
+                    m.completed
+                      ? 'Completed — counts toward a met deadline'
+                      : 'Mark complete (only a completed Certification/Renewal milestone meets a deadline)'
+                  }
+                  className={
+                    m.completed
+                      ? 'text-status-success'
+                      : 'text-muted-foreground hover:text-status-success'
+                  }
+                >
+                  <CheckCircle2 size={14} />
+                  <span className="ml-1 text-xs">{m.completed ? 'Done' : 'Mark done'}</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeMilestone(m.id)}
+                  aria-label={`Remove ${m.label}`}
+                  className="text-muted-foreground hover:text-status-error"
+                >
+                  <X size={14} />
+                </Button>
+              </div>
             </div>
           ))}
         </div>

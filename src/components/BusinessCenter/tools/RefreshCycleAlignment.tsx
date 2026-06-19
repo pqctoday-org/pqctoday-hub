@@ -8,17 +8,20 @@
  * than requesting net-new spend — the "cost avoidance" play from Applied Quantum
  * Phase 4 Activity 4.3.
  *
- * For each seeded refresh program the user records the next scheduled refresh year
- * and the concrete PQC task to embed into that refresh. Emits a downloadable
- * markdown artifact and saves it to the Command Center, like the other tools.
+ * The core of the tool is the ALIGNMENT check: a refresh program only avoids
+ * net-new spend if its next refresh lands *within* the planning horizon. A
+ * program that refreshes after the horizon is MISALIGNED — you can't ride that
+ * budget and must either accelerate the refresh or plan separate spend. The tool
+ * flags those so the alignment is actionable, not just a list.
  */
 import React, { useMemo, useState } from 'react'
 import { CalendarClock } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
 
-/** Fixed labels for the org's typically already-funded refresh programs. */
+/** Default already-funded refresh programs the user can edit, add to, or remove. */
 const SEED_PROGRAM_NAMES = [
   'Data center hardware',
   'SD-WAN / network',
@@ -30,6 +33,7 @@ const SEED_PROGRAM_NAMES = [
 ] as const
 
 interface RefreshRow {
+  id: string
   programName: string
   nextRefreshYear: string
   pqcTaskToEmbed: string
@@ -40,23 +44,61 @@ interface RefreshState {
   rows: RefreshRow[]
 }
 
-function buildMarkdown(s: RefreshState): string {
+const newId = (): string => `rc-${Math.random().toString(36).slice(2, 9)}`
+
+export type RefreshAlignment = 'aligned' | 'misaligned' | 'unknown'
+
+/**
+ * Does this program's next refresh land within the planning horizon? `aligned`
+ * = refreshes on/before the horizon end (can ride the budget); `misaligned` =
+ * after the horizon (can't); `unknown` = no parseable year. Pure + unit-tested.
+ */
+export function refreshAlignment(
+  nextRefreshYear: string,
+  horizonEndYear: number
+): RefreshAlignment {
+  const y = parseInt(nextRefreshYear, 10)
+  if (!Number.isFinite(y)) return 'unknown'
+  return y <= horizonEndYear ? 'aligned' : 'misaligned'
+}
+
+const ALIGN_MD_LABEL: Record<RefreshAlignment, string> = {
+  aligned: 'On budget',
+  misaligned: 'After horizon ⚠',
+  unknown: 'TBD',
+}
+
+function buildMarkdown(s: RefreshState, horizonEndYear: number): string {
   const lines: string[] = []
   lines.push('# Refresh-Cycle Alignment')
   lines.push('')
   lines.push(
     'Embedding PQC migration tasks into already-funded infrastructure refresh ' +
-      `programs (planning horizon: ${s.planningHorizonYears.trim() || '_(TBD)_'} years) ` +
+      `programs (planning horizon: ${s.planningHorizonYears.trim() || '_(TBD)_'} years, ` +
+      `through ${Number.isFinite(horizonEndYear) ? horizonEndYear : '_(TBD)_'}) ` +
       'so the work rides existing budgets — cost avoidance, not net-new spend.'
   )
   lines.push('')
-  lines.push('| Refresh program | Next refresh | PQC task to embed |')
-  lines.push('|---|---|---|')
+  lines.push('| Refresh program | Next refresh | Alignment | PQC task to embed |')
+  lines.push('|---|---|---|---|')
+  let misaligned = 0
   for (const row of s.rows) {
     const program = row.programName.trim() || '_(unnamed)_'
     const year = row.nextRefreshYear.trim() || '_(TBD)_'
     const task = row.pqcTaskToEmbed.trim() || '_(not yet defined)_'
-    lines.push(`| ${program} | ${year} | ${task} |`)
+    const align = refreshAlignment(row.nextRefreshYear, horizonEndYear)
+    if (align === 'misaligned') misaligned++
+    lines.push(`| ${program} | ${year} | ${ALIGN_MD_LABEL[align]} | ${task} |`)
+  }
+  lines.push('')
+  if (misaligned > 0) {
+    lines.push(
+      `> **${misaligned} of ${s.rows.length} program${s.rows.length === 1 ? '' : 's'} refresh after the planning horizon** — those can't ride the existing budget. Accelerate the refresh or plan separate PQC spend.`
+    )
+  } else {
+    lines.push(
+      '> All dated programs refresh within the planning horizon — PQC work can ride the existing budgets.'
+    )
   }
   lines.push('')
   lines.push('---')
@@ -65,11 +107,24 @@ function buildMarkdown(s: RefreshState): string {
   return lines.join('\n')
 }
 
+const ALIGN_BADGE: Record<RefreshAlignment, { label: string; cls: string }> = {
+  aligned: {
+    label: 'On budget',
+    cls: 'border-status-success/40 bg-status-success/10 text-status-success',
+  },
+  misaligned: {
+    label: 'After horizon',
+    cls: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
+  },
+  unknown: { label: 'TBD', cls: 'border-border bg-muted text-muted-foreground' },
+}
+
 export const RefreshCycleAlignment: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   const [state, setState] = useState<RefreshState>(() => ({
     planningHorizonYears: '3',
     rows: SEED_PROGRAM_NAMES.map((programName) => ({
+      id: newId(),
       programName,
       nextRefreshYear: '',
       pqcTaskToEmbed: '',
@@ -79,14 +134,40 @@ export const RefreshCycleAlignment: React.FC = () => {
   const set = <K extends keyof RefreshState>(key: K, value: RefreshState[K]) =>
     setState((prev) => ({ ...prev, [key]: value }))
 
-  const setRow = (index: number, field: keyof RefreshRow, value: string) =>
+  const setRow = (id: string, field: keyof RefreshRow, value: string) =>
     setState((prev) => ({
       ...prev,
-      rows: prev.rows.map((row, i) => (i === index ? { ...row, [field]: value } : row)),
+      rows: prev.rows.map((row) => (row.id === id ? { ...row, [field]: value } : row)),
     }))
 
-  const exportMarkdown = useMemo(() => buildMarkdown(state), [state])
+  const addRow = () =>
+    setState((prev) => ({
+      ...prev,
+      rows: [
+        ...prev.rows,
+        { id: newId(), programName: '', nextRefreshYear: '', pqcTaskToEmbed: '' },
+      ],
+    }))
 
+  const removeRow = (id: string) =>
+    setState((prev) => ({ ...prev, rows: prev.rows.filter((row) => row.id !== id) }))
+
+  const horizonEndYear = useMemo(() => {
+    const h = parseInt(state.planningHorizonYears, 10)
+    return new Date().getFullYear() + (Number.isFinite(h) ? h : 0)
+  }, [state.planningHorizonYears])
+
+  const exportMarkdown = useMemo(
+    () => buildMarkdown(state, horizonEndYear),
+    [state, horizonEndYear]
+  )
+
+  const misalignedCount = useMemo(
+    () =>
+      state.rows.filter((r) => refreshAlignment(r.nextRefreshYear, horizonEndYear) === 'misaligned')
+        .length,
+    [state.rows, horizonEndYear]
+  )
   const rowCount = state.rows.length
 
   return (
@@ -106,16 +187,25 @@ export const RefreshCycleAlignment: React.FC = () => {
         <h3 className="text-sm font-semibold text-foreground">Planning horizon</h3>
         <div className="block">
           <label htmlFor="refresh-horizon" className="text-xs font-medium text-muted-foreground">
-            Planning horizon (years)
+            Planning horizon (years) — programs refreshing after{' '}
+            <span className="font-semibold text-foreground">{horizonEndYear}</span> can&apos;t ride
+            the budget
           </label>
           <Input
             id="refresh-horizon"
-            className="mt-1"
+            className="mt-1 max-w-[12rem]"
+            inputMode="numeric"
             value={state.planningHorizonYears}
             onChange={(e) => set('planningHorizonYears', e.target.value)}
             placeholder="e.g. 3"
           />
         </div>
+        {misalignedCount > 0 && (
+          <p className="text-xs text-status-warning">
+            ⚠ {misalignedCount} of {rowCount} program{rowCount === 1 ? '' : 's'} refresh after{' '}
+            {horizonEndYear} — accelerate the refresh or plan separate PQC spend.
+          </p>
+        )}
       </section>
 
       <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
@@ -127,48 +217,75 @@ export const RefreshCycleAlignment: React.FC = () => {
           concrete PQC task to embed into it.
         </p>
         <div className="space-y-3">
-          {state.rows.map((row, i) => (
-            <div
-              key={row.programName}
-              className="grid grid-cols-1 sm:grid-cols-3 gap-3 border-b border-border pb-3 last:border-b-0 last:pb-0"
-            >
-              <div className="block">
-                <span className="text-xs font-medium text-muted-foreground">Refresh program</span>
-                <p className="mt-1 text-sm font-medium text-foreground">{row.programName}</p>
-              </div>
-              <div className="block">
-                <label
-                  htmlFor={`refresh-year-${i}`}
-                  className="text-xs font-medium text-muted-foreground"
+          {state.rows.map((row) => {
+            const align = refreshAlignment(row.nextRefreshYear, horizonEndYear)
+            const badge = ALIGN_BADGE[align]
+            return (
+              <div
+                key={row.id}
+                className="grid grid-cols-1 sm:grid-cols-[1.4fr_1fr_1.6fr_auto] gap-3 items-end border-b border-border pb-3 last:border-b-0 last:pb-0"
+              >
+                <div className="block">
+                  <span className="text-xs font-medium text-muted-foreground">Refresh program</span>
+                  <Input
+                    className="mt-1"
+                    value={row.programName}
+                    onChange={(e) => setRow(row.id, 'programName', e.target.value)}
+                    placeholder="e.g. Data center hardware"
+                    aria-label="Refresh program"
+                  />
+                </div>
+                <div className="block">
+                  <span className="text-xs font-medium text-muted-foreground">Next refresh</span>
+                  <Input
+                    className="mt-1"
+                    inputMode="numeric"
+                    value={row.nextRefreshYear}
+                    onChange={(e) => setRow(row.id, 'nextRefreshYear', e.target.value)}
+                    placeholder="e.g. 2027"
+                    aria-label="Next refresh year"
+                  />
+                  <span
+                    className={`mt-1 inline-block rounded-full border px-1.5 py-0.5 text-[10px] font-semibold ${badge.cls}`}
+                  >
+                    {badge.label}
+                  </span>
+                </div>
+                <div className="block">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    PQC task to embed
+                  </span>
+                  <Input
+                    className="mt-1"
+                    value={row.pqcTaskToEmbed}
+                    onChange={(e) => setRow(row.id, 'pqcTaskToEmbed', e.target.value)}
+                    placeholder="e.g. Swap to PQC-capable load balancers"
+                    aria-label="PQC task to embed"
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeRow(row.id)}
+                  aria-label="Remove program"
+                  className="h-9 w-9 p-0 text-muted-foreground hover:text-destructive"
                 >
-                  Next refresh
-                </label>
-                <Input
-                  id={`refresh-year-${i}`}
-                  className="mt-1"
-                  value={row.nextRefreshYear}
-                  onChange={(e) => setRow(i, 'nextRefreshYear', e.target.value)}
-                  placeholder="e.g. 2027"
-                />
+                  ×
+                </Button>
               </div>
-              <div className="block">
-                <label
-                  htmlFor={`refresh-task-${i}`}
-                  className="text-xs font-medium text-muted-foreground"
-                >
-                  PQC task to embed
-                </label>
-                <Input
-                  id={`refresh-task-${i}`}
-                  className="mt-1"
-                  value={row.pqcTaskToEmbed}
-                  onChange={(e) => setRow(i, 'pqcTaskToEmbed', e.target.value)}
-                  placeholder="e.g. Swap to PQC-capable load balancers"
-                />
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={addRow}
+          className="h-7 px-3 rounded-full border border-border text-[11px] font-semibold text-muted-foreground hover:bg-muted/50"
+        >
+          + Add refresh program
+        </Button>
       </section>
 
       <ExportableArtifact
@@ -185,6 +302,7 @@ export const RefreshCycleAlignment: React.FC = () => {
             data: exportMarkdown,
             inputs: {
               rowCount,
+              misalignedCount,
             },
             createdAt: Date.now(),
           })

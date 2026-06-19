@@ -135,12 +135,7 @@ export const KPITrackerTemplate: React.FC = () => {
   return (
     <div className="space-y-6">
       {seedSources.length > 0 && (
-        <PreFilledBanner
-          summary={`Tracker auto-scored from ${seedSources.join(' + ')}.`}
-          onClear={() => {
-            /* dimensions auto-recompute from live data; clear is informational */
-          }}
-        />
+        <PreFilledBanner summary={`Tracker auto-scored from ${seedSources.join(' + ')}.`} />
       )}
       <div className="glass-panel p-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">

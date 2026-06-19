@@ -21,6 +21,7 @@ import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBa
 import {
   ROLE_CROSSWALK,
   FTE_PER_CRYPTO_INSTANCES,
+  INSTANCES_PER_PRODUCT_ESTIMATE,
   type FrameworkRoleId,
 } from '@/data/roleCrosswalk'
 import { NICE_WORK_ROLES } from '@/data/niceFramework'
@@ -129,9 +130,9 @@ export const SkillsTeamPlan: React.FC = () => {
   const { myProducts } = useExecutiveModuleData()
 
   // Seed an estate-size order of magnitude from the /migrate selection
-  // (~12 cryptographic instances per selected product).
+  // (~INSTANCES_PER_PRODUCT_ESTIMATE cryptographic instances per selected product).
   const seedInstances = useMemo(
-    () => (myProducts.length > 0 ? String(myProducts.length * 12) : ''),
+    () => (myProducts.length > 0 ? String(myProducts.length * INSTANCES_PER_PRODUCT_ESTIMATE) : ''),
     [myProducts.length]
   )
 

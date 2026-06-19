@@ -98,7 +98,11 @@ describe('recommendTransitionPathway — decision tree', () => {
   })
 
   it('emits an RSA + ML-DSA-65 composite sig when current algorithm is RSA-2048', () => {
-    const rec = recommendTransitionPathway({ ...baseInputs, currentAlgorithm: 'RSA-2048' })
+    const rec = recommendTransitionPathway({
+      ...baseInputs,
+      currentAlgorithm: 'RSA-2048',
+      function: 'both',
+    })
     expect(rec.sigPair).toMatch(/RSA-2048/)
     expect(rec.sigPair).toMatch(/ML-DSA-65/)
   })
@@ -106,6 +110,34 @@ describe('recommendTransitionPathway — decision tree', () => {
   it('produces a sunset date in the future', () => {
     const rec = recommendTransitionPathway({ ...baseInputs, complianceDeadline: '2030' })
     expect(rec.sunsetDate).toMatch(/2030/)
+  })
+
+  // RM-09: inputs that used to be ignored now drive the recommendation.
+  it('forces CNSA 2.0 Category-5 params (ML-KEM-1024 / ML-DSA-87) when cnsa-2 is binding', () => {
+    const rec = recommendTransitionPathway({
+      ...baseInputs,
+      function: 'both',
+      interoperabilityRequirement: ['cnsa-2'],
+    })
+    expect(rec.kemPair).toMatch(/ML-KEM-1024/)
+    expect(rec.sigPair).toMatch(/ML-DSA-87/)
+    expect(rec.kemPair).not.toMatch(/ML-KEM-768/)
+    expect(rec.watchOuts.join(' ')).toMatch(/CNSA 2\.0/)
+  })
+
+  it('marks the unused pair "Not applicable" per the function scope', () => {
+    const kemOnly = recommendTransitionPathway({ ...baseInputs, function: 'kem' })
+    expect(kemOnly.sigPair).toMatch(/Not applicable/)
+    const sigOnly = recommendTransitionPathway({ ...baseInputs, function: 'signature' })
+    expect(sigOnly.kemPair).toMatch(/Not applicable/)
+  })
+
+  it('surfaces the FIPS 140-3 validation-gap watch-out when fips-validated is required', () => {
+    const rec = recommendTransitionPathway({
+      ...baseInputs,
+      interoperabilityRequirement: ['fips-validated'],
+    })
+    expect(rec.watchOuts.join(' ')).toMatch(/FIPS 140-3-validated PQC module/)
   })
 })
 

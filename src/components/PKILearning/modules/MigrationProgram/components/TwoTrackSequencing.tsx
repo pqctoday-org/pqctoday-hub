@@ -8,12 +8,15 @@
  * (`@/data/frameworkPhases` p3 crosswalk) and the threat split already taught in
  * the Quantum Threats module (linked below).
  *
- * Track B (Confidentiality / KEM) defends against Harvest-Now-Decrypt-Later:
+ * Track A (Confidentiality / KEM) defends against Harvest-Now-Decrypt-Later:
  * data captured today is decrypted once a CRQC exists, so the clock is already
- * running and KEM migration is the urgent track. Track A (Authenticity /
+ * running and KEM migration is the urgent track. Track B (Authenticity /
  * Signatures) defends against Harvest-Now-Forge-Later: a forged signature only
  * has value at use-time, so the urgency is gated on CRQC arrival and on PQC
  * signature standards / PKI readiness rather than on data captured today.
+ *
+ * Track identities match the assessment engine's canonical model in
+ * `hooks/assessment/twoTrack.ts` (A = Confidentiality/KEM, B = Integrity/Signatures).
  */
 import React from 'react'
 import { Link } from 'react-router-dom'
@@ -106,7 +109,7 @@ export const TwoTrackSequencing: React.FC = () => (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <TrackCard
             icon={<Lock size={20} className="text-primary" />}
-            track="Track B — lead"
+            track="Track A — lead"
             title="Confidentiality (KEM)"
             subtitle="Defends against Harvest-Now-Decrypt-Later."
             accent="border-primary/30 bg-primary/5"
@@ -118,7 +121,7 @@ export const TwoTrackSequencing: React.FC = () => (
           />
           <TrackCard
             icon={<FileSignature size={20} className="text-secondary" />}
-            track="Track A — follow / parallel"
+            track="Track B — follow / parallel"
             title="Authenticity (Signatures)"
             subtitle="Defends against Harvest-Now-Forge-Later."
             accent="border-secondary/30 bg-secondary/5"
@@ -145,10 +148,10 @@ export const TwoTrackSequencing: React.FC = () => (
             <tr className="border-b border-border text-left">
               <th className="py-2 pr-3 font-semibold text-muted-foreground"> </th>
               <th className="py-2 px-3 font-semibold text-primary">
-                Track B — Confidentiality (KEM)
+                Track A — Confidentiality (KEM)
               </th>
               <th className="py-2 pl-3 font-semibold text-secondary">
-                Track A — Authenticity (Signatures)
+                Track B — Authenticity (Signatures)
               </th>
             </tr>
           </thead>

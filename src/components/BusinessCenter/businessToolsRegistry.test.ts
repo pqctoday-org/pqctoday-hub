@@ -34,6 +34,7 @@ const ALL_ARTIFACT_TYPES: ExecutiveDocumentType[] = [
   'compliance-checklist',
   'audit-checklist',
   'compliance-timeline',
+  'migration-verification',
   'board-deck',
   'contract-clause',
   'kpi-dashboard',

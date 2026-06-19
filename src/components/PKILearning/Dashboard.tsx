@@ -616,7 +616,7 @@ export const Dashboard: React.FC = () => {
                       PQC for Your Organization
                     </span>
                     <span className="text-[9px] font-mono uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
-                      NICE IR 8355
+                      NICE v2.2.0
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground">
