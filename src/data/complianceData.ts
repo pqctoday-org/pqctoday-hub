@@ -448,11 +448,19 @@ export const complianceAsIndustryConfigs: IndustryComplianceConfig[] = framework
 export const complianceDB: Record<
   string,
   { requiresPQC: boolean; deadline: string; notes: string }
-> = Object.fromEntries(
-  frameworks.map((fw) => [
-    fw.label,
-    { requiresPQC: fw.requiresPQC, deadline: fw.deadline, notes: fw.notes },
-  ])
+> = frameworks.reduce<Record<string, { requiresPQC: boolean; deadline: string; notes: string }>>(
+  (acc, fw) => {
+    // Some labels appear on more than one row (e.g. a `compliance_framework` row and a
+    // `standardization_body` row both labelled "ANSSI"). Resolve such collisions
+    // deterministically: a row that REQUIRES PQC wins over one that does not, so the
+    // stronger obligation is never silently dropped by CSV import order.
+    const existing = acc[fw.label]
+    if (!existing || (fw.requiresPQC && !existing.requiresPQC)) {
+      acc[fw.label] = { requiresPQC: fw.requiresPQC, deadline: fw.deadline, notes: fw.notes }
+    }
+    return acc
+  },
+  {}
 )
 
 /**

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { complianceFrameworks } from './complianceData'
+import { complianceFrameworks, complianceDB } from './complianceData'
 
 describe('complianceData', () => {
   it('loads without error', () => {
@@ -42,5 +42,13 @@ describe('complianceData', () => {
     expect(byId('OSFI-B13-PQC')?.pqcRequirement).toBe('expected')
     // CISA's PQC Initiative is advisory guidance, not a partial mandate.
     expect(byId('cisa-pqc-initiative')?.pqcRequirement).toBe('guidance')
+  })
+
+  it('resolves duplicate-label rows (ANSSI, CRYPTREC) to requiresPQC=true, order-independent', () => {
+    // ANSSI and CRYPTREC each appear as a compliance_framework row AND a
+    // standardization_body row. The PQC-requiring variant must win deterministically,
+    // so the assessment scoring is never silently shadowed by CSV import order.
+    expect(complianceDB['ANSSI'].requiresPQC).toBe(true)
+    expect(complianceDB['CRYPTREC'].requiresPQC).toBe(true)
   })
 })

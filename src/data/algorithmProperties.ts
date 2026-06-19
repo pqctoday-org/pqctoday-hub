@@ -207,7 +207,7 @@ export const ALGORITHM_REGISTRY: Record<string, AlgorithmProps> = {
     fipsStandard: 'FIPS 205',
   },
 
-  // ── FN-DSA (FIPS 206, draft) ──────────────────────────────────────────
+  // ── FN-DSA (FIPS 206, planned — not yet drafted) ──────────────────────
   'FN-DSA-512': {
     name: 'FN-DSA-512',
     family: 'Signature',
@@ -215,7 +215,7 @@ export const ALGORITHM_REGISTRY: Record<string, AlgorithmProps> = {
     privateKeyBytes: 1281,
     signatureOrCiphertextBytes: 666,
     securityLevel: 1,
-    fipsStandard: 'FIPS 206',
+    fipsStandard: 'FIPS 206 (planned)',
   },
   'FN-DSA-1024': {
     name: 'FN-DSA-1024',
@@ -224,7 +224,7 @@ export const ALGORITHM_REGISTRY: Record<string, AlgorithmProps> = {
     privateKeyBytes: 2305,
     signatureOrCiphertextBytes: 1280,
     securityLevel: 5,
-    fipsStandard: 'FIPS 206',
+    fipsStandard: 'FIPS 206 (planned)',
   },
 
   // ── FrodoKEM (not NIST-selected) ──────────────────────────────────────
