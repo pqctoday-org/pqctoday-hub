@@ -2,7 +2,11 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState } from 'react'
 import { CheckSquare, Square, AlertTriangle, CheckCircle } from 'lucide-react'
-import { DATABASE_PROFILES, COMPLEXITY_LABELS } from '../data/databaseConstants'
+import {
+  DATABASE_PROFILES,
+  COMPLEXITY_LABELS,
+  getProfilePqcSupport,
+} from '../data/databaseConstants'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
 
@@ -295,16 +299,16 @@ export const DatabaseMigrationReadiness: React.FC = () => {
                     <td className="py-2 px-2">
                       <span
                         className={`font-bold ${
-                          db.pqcSupport === 'ga'
+                          getProfilePqcSupport(db) === 'ga'
                             ? 'text-status-success'
-                            : db.pqcSupport === 'planned'
+                            : getProfilePqcSupport(db) === 'planned'
                               ? 'text-status-warning'
                               : 'text-muted-foreground'
                         }`}
                       >
-                        {db.pqcSupport === 'ga'
+                        {getProfilePqcSupport(db) === 'ga'
                           ? 'GA'
-                          : db.pqcSupport === 'planned'
+                          : getProfilePqcSupport(db) === 'planned'
                             ? 'Planned'
                             : 'None'}
                       </span>

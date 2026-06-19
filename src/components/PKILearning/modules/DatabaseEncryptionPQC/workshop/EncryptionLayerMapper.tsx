@@ -5,6 +5,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   DATABASE_PROFILES,
   ENCRYPTION_LAYER_LABELS,
+  getProfilePqcSupport,
   type EncryptionLayer,
   type DatabaseEncryptionProfile,
 } from '../data/databaseConstants'
@@ -255,11 +256,11 @@ export const EncryptionLayerMapper: React.FC = () => {
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">PQC Support</span>
                     <span
-                      className={`font-bold ${selectedDb.pqcSupport === 'ga' ? 'text-status-success' : selectedDb.pqcSupport === 'planned' ? 'text-status-warning' : 'text-status-error'}`}
+                      className={`font-bold ${getProfilePqcSupport(selectedDb) === 'ga' ? 'text-status-success' : getProfilePqcSupport(selectedDb) === 'planned' ? 'text-status-warning' : 'text-status-error'}`}
                     >
-                      {selectedDb.pqcSupport === 'ga'
+                      {getProfilePqcSupport(selectedDb) === 'ga'
                         ? 'GA'
-                        : selectedDb.pqcSupport === 'planned'
+                        : getProfilePqcSupport(selectedDb) === 'planned'
                           ? 'Planned'
                           : 'None'}
                     </span>
