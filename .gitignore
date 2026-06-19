@@ -307,6 +307,11 @@ public/data/rag-index-freshness.json
 !scripts/snapshot-timeline-via-playwright.ts
 !scripts/audit-timeline-enrichment-freshness.ts
 
+# Content-freshness audit — CI gate that flags time-sensitive sim claims
+# (CMVP/FIPS status, protocol-matrix snapshot, Q-Day anchor) aged past 90 days.
+# Reads src/data/contentFreshness.ts. Must be tracked to run in CI.
+!scripts/audit-content-freshness.ts
+
 # Vendor-ref integrity audit — CI gate that validates vendor_id assignments in
 # the product catalog against the vendor roadmap CSV. Catches wrong VND-*
 # assignments (deprecated refs, name mismatches). Pure read-only against public data.
