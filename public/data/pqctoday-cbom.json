@@ -3403,6 +3403,90 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "84b42579724b2d62",
+      "name": "Sophos XGS",
+      "version": "R82",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Sophos Firewall (SFOS) for XGS appliances — official v21.5 GA release notes (Build 171, released 2025-05-29) contain exactly ONE PQC-related item: a Path MTU Discovery enhancement in the DPI engine th",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://docs.sophos.com/releasenotes/output/en-us/nsg/sf_215_rn.html"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "sophos-xgs"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Network Security Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (Trusted) (classical algorithms only; PQC not in FIPS scope)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "d316fb24695bc824",
+      "name": "SonicWall NSa / TZ (SonicOS)",
+      "version": "R82",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "SonicOS firewall crypto contains NO post-quantum support today. (1) IPsec VPN cryptography docs (SonicOS 7.0/7.1/8.0) document only classical algorithms: AES 128-256, 3DES, DES, ECDH/Diffie-Hellman ke",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.sonicwall.com/support/technical-documentation/docs/sonicos-7-0-0-0-ipsec_vpn/Content/ipsec-vpn-types-vpn-security-about-suite-b.htm/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "sonicwall-sonicos"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Network Security Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (Trusted) (classical algorithms only; PQC not in FIPS scope)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "2cfae86f34e1cea4",
       "name": "SandboxAQ Sandwich",
       "version": "0.3.0 (final; repo archived)",
