@@ -6760,6 +6760,90 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "b64c5e7a986d0c1e",
+      "name": "ForgeRock Access Management (AM)",
+      "version": "13.0.3",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "ForgeRock Access Management (now PingAM, Ping Identity-owned after the Aug 2023 merger) is a Java/servlet application (runs in Tomcat on the JVM; uses Bouncy Castle FIPS for FIPS 140 mode). NATIVE PQC",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://docs.pingidentity.com/pingam/release-notes/requirements.html"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "forgerock-access-management"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Identity & Access Management (IAM)"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (FIPS 140-3 via Bouncy Castle FIPS 2.0.1)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a6b06b218e11f5d4",
+      "name": "SailPoint Identity Security Cloud",
+      "version": "13.0.3",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "SailPoint's Trust Center documents the full crypto stack for Identity Security Cloud (ISC): data encrypted at rest with AES-256, data in transit over TLS 1.2+, plus \"Zero Knowledge Encryption\" (SHA-25",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.sailpoint.com/why-us/trust/cybersecurity"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "sailpoint-identity-security-cloud"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Identity & Access Management (IAM)"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (FIPS 140-3 via Bouncy Castle FIPS 2.0.1)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "32323de1c4672d85",
       "name": "Thales CipherTrust Data Security Platform",
       "version": "CipherTrust Manager 2.21.0",
@@ -8923,6 +9007,52 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "07d8cbf5ff0fbbe1",
+      "name": "Debian 13 (Trixie)",
+      "version": "12.13",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Debian 13 (Trixie), released 2025-08-09, ships OpenSSL 3.5.6 (package openssl 3.5.6-1~deb13u2; siblings openssl-provider-legacy 3.5.5, openssl-provider-fips 3.5.4), confirmed on packages.debian.org/tr",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://packages.debian.org/"
+        },
+        {
+          "type": "website",
+          "url": "https://packages.debian.org/trixie/openssl"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "debian-13-trixie"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Operating Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "OS"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
         }
       ]
     },
@@ -11277,6 +11407,136 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "620e8d52300441f7",
+      "name": "Azure Managed HSM",
+      "version": "Current",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Microsoft's current official Managed HSM key docs (azure-security-docs, \"About keys in Managed HSM\" + \"About keys\" general page, ms.date 2026-05-21, updated 2026-06-12) list ONLY classical HSM-protect",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://github.com/MicrosoftDocs/azure-security-docs/blob/main/articles/key-vault/managed-hsm/about-keys.md"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "azure-managed-hsm"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Secrets Management"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (FIPS 140-3 L3)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "7017a1834b79b61d",
+      "name": "AWS Secrets Manager",
+      "version": "Current",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "KEM"
+        }
+      },
+      "description": "AWS Secrets Manager supports hybrid post-quantum TLS using ML-KEM (Module-Lattice KEM, FIPS 203) combined with classical X25519 for the key exchange on its API endpoints (all Regions except China). An",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/pqtls.html"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "aws-secrets-manager"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Secrets Management"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (FIPS 140-3 L3)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "ccee045905dc37c3",
+      "name": "GCP Secret Manager",
+      "version": "Current",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Google Cloud Secret Manager is a storage service that encrypts secrets at rest with AES-256 symmetric keys and in transit with standard TLS. Its own crypto docs contain NO mention of post-quantum, ML-",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://docs.cloud.google.com/secret-manager/docs/cmek"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "gcp-secret-manager"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Secrets Management"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (FIPS 140-3 L3)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
         }
       ]
     },
