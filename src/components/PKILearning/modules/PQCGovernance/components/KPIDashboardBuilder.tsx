@@ -43,54 +43,79 @@ export const KPIDashboardBuilder: React.FC = () => {
   )
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const scoresRef = useRef<Record<string, number>>({})
+  const weightsRef = useRef<Record<string, number>>({})
   useEffect(() => {
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     }
   }, [])
 
+  // Persist using the SAME effective weights the on-screen scorecard shows — the
+  // user's weight edits, falling back to the per-persona defaults — so the saved
+  // artifact always matches what's on screen (not the defaults).
+  const persistScorecard = useCallback(() => {
+    const scores = scoresRef.current
+    const weights = weightsRef.current
+    const ew = (d: (typeof dimensions)[number]) =>
+      d.id in weights ? (weights[d.id] ?? 0) : d.weight
+
+    let weightedSum = 0
+    let totalWeight = 0
+    for (const d of dimensions) {
+      if (d.disabled) continue
+      weightedSum += (scores[d.id] ?? 0) * ew(d)
+      totalWeight += ew(d)
+    }
+    const overall = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
+
+    let md = '# PQC Governance KPI Dashboard\n\n'
+    md += `**Persona Lens:** ${activePersona}\n`
+    md += `**Overall Score: ${overall}/100**\n\n`
+    md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+    md += '| KPI | Score | Weight | Target |\n'
+    md += '|-----|-------|--------|--------|\n'
+    for (const d of dimensions) {
+      if (d.disabled) {
+        md += `| ${d.label} | _locked_ | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} |\n`
+        continue
+      }
+      md += `| ${d.label} | ${scores[d.id] ?? 0}/100 | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} |\n`
+    }
+
+    // Honest methodology — the weighted-average score the dashboard computes.
+    md += '\n' + METHODOLOGY_MD + '\n'
+
+    addExecutiveDocument({
+      id: `kpi-dashboard-${activePersona}-pqc-governance`,
+      moduleId: 'pqc-governance',
+      type: 'kpi-dashboard',
+      title: `PQC Governance KPI Dashboard — ${activePersona}`,
+      data: md,
+      createdAt: Date.now(),
+    })
+  }, [dimensions, addExecutiveDocument, activePersona])
+
+  const scheduleSave = useCallback(() => {
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    saveTimerRef.current = setTimeout(persistScorecard, 500)
+  }, [persistScorecard])
+
   const handleScoreChange = useCallback(
     (scores: Record<string, number>) => {
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
-      saveTimerRef.current = setTimeout(() => {
-        let weightedSum = 0
-        let totalWeight = 0
-        for (const d of dimensions) {
-          if (d.disabled) continue
-          const score = scores[d.id] ?? 0
-          weightedSum += score * d.weight
-          totalWeight += d.weight
-        }
-        const overall = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
-
-        let md = '# PQC Governance KPI Dashboard\n\n'
-        md += `**Persona Lens:** ${activePersona}\n`
-        md += `**Overall Score: ${overall}/100**\n\n`
-        md += `Generated: ${new Date().toLocaleDateString()}\n\n`
-        md += '| KPI | Score | Weight | Target |\n'
-        md += '|-----|-------|--------|--------|\n'
-        for (const d of dimensions) {
-          if (d.disabled) {
-            md += `| ${d.label} | _locked_ | ${Math.round(d.weight * 100)}% | ${d.target ?? '—'} |\n`
-            continue
-          }
-          md += `| ${d.label} | ${scores[d.id] ?? 0}/100 | ${Math.round(d.weight * 100)}% | ${d.target ?? '—'} |\n`
-        }
-
-        // Honest methodology — the weighted-average score the dashboard computes.
-        md += '\n' + METHODOLOGY_MD + '\n'
-
-        addExecutiveDocument({
-          id: `kpi-dashboard-${activePersona}-pqc-governance`,
-          moduleId: 'pqc-governance',
-          type: 'kpi-dashboard',
-          title: `PQC Governance KPI Dashboard — ${activePersona}`,
-          data: md,
-          createdAt: Date.now(),
-        })
-      }, 500)
+      scoresRef.current = scores
+      scheduleSave()
     },
-    [dimensions, addExecutiveDocument, activePersona]
+    [scheduleSave]
+  )
+
+  // Weight edits must also re-persist (with the latest scores) so saved == on-screen.
+  const handleWeightChange = useCallback(
+    (weights: Record<string, number>) => {
+      weightsRef.current = weights
+      scheduleSave()
+    },
+    [scheduleSave]
   )
 
   const seedSources: string[] = []
@@ -142,6 +167,7 @@ export const KPIDashboardBuilder: React.FC = () => {
         dimensions={dimensions}
         colorScale="readiness"
         onScoreChange={handleScoreChange}
+        onWeightChange={handleWeightChange}
         allowWeightEditing={true}
         showExport={true}
         exportFilename={`pqc-governance-kpi-${activePersona}`}
