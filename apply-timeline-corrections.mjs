@@ -1,7 +1,9 @@
 // One-shot timeline-CSV correction pass (run-1 audit findings, 2026-06-18).
-// Reads timeline_06072026.csv → applies corrections → writes timeline_06182026.csv.
+// Reads timeline_06072026.csv → applies corrections → writes timeline_06192026.csv.
 // Never deletes rows: fabricated/superseded rows get status='deprecated' (+reason),
 // which the loader's filterActive() excludes. Re-runnable (idempotent).
+// run-5 (2026-06-19): Japan sim-deadline URL upgraded to official gov.jp source;
+//   22 rows bulk-assigned confidence_score (85 = authoritative primary, 60 = secondary/draft).
 import { readFileSync, writeFileSync } from 'fs'
 import Papa from 'papaparse'
 
@@ -234,6 +236,62 @@ const R2_REINSTATE = [
     },
   ],
 ]
+
+// ── run-5 corrections (2026-06-19) ───────────────────────────────────────────
+// JP sim-deadline: SourceUrl was a PQShield blog post. Primary source confirmed:
+//   Cabinet Secretariat (内閣官房) National Cyber Security Center "Interim Summary
+//   Regarding the Transition to PQC in Government Agencies" (2025-11-20).
+//   URL: https://www.cas.go.jp/jp/seisaku/pqc/pdf/report_202511.pdf
+//   Sets a target ("原則2035年までに") for all government agencies to migrate to PQC by 2035.
+//
+// 22 rows bulk-assigned confidence_score:
+//   85 = authoritative primary source (NIST SP/FIPS, RFC, EU regulation, official gov doc)
+//   60 = secondary, draft, or partially-verified source
+const R5_FIX_FLAG = [
+  // [FlagCode, Title, changes]  — matched by FlagCode+Title like R2_REINSTATE
+  [
+    'JP',
+    'Government PQC Transition Deadline',
+    {
+      SourceUrl: 'https://www.cas.go.jp/jp/seisaku/pqc/pdf/report_202511.pdf',
+      SourceDate: '2025-11-20',
+      source_url_quality: 'url_authoritative',
+      peer_reviewed: 'yes',
+      confidence_score: '85',
+      data_quality_notes:
+        'SourceUrl upgraded 2026-06-19 from PQShield blog to primary gov.jp source: Cabinet Secretariat (内閣官房) National Cyber Security Center interim summary (中間とりまとめ) published 2025-11-20. Sets target "原則2035年までにPQCに移行" for all government agencies. Policy hub: https://www.cas.go.jp/jp/seisaku/pqc/index.html',
+    },
+  ],
+]
+
+// Bulk confidence scoring — matched by Country+Title.
+// Rows that already have a confidence_score are left untouched (idempotent).
+const R5_CONFIDENCE = [
+  // 85 — authoritative primary sources
+  ['United States', 'CISA PQC Product Category List — EO 14306 Deadline', '85'],
+  ['United States', 'NIST SP 800-227 KEM Recommendations', '85'],
+  ['United States', 'NIST IR 8545 Round 4 Status Report', '85'],
+  ['United States', 'GSA PQC Buyer Guide v1.0', '85'],
+  ['United States', 'Additional Signatures Round 3 Advances', '85'],
+  ['European Union', 'EU Cyber Resilience Act In Force', '85'],
+  ['European Union', 'ENISA PQC Anticipating Threats', '85'],
+  ['Japan', 'CRYPTREC Adds ML-KEM to Ciphers List', '85'],
+  ['International', 'RFC 9881 ML-DSA in X.509', '85'],
+  ['International', 'RFC 9941 SSH PQ-Hybrid Key Exchange', '85'],
+  ['International', 'RFC 9370 Multiple Key Exchanges in IKEv2', '85'],
+  ['International', 'ISO/IEC SC27 PQC Standardization', '85'],
+  ['Germany', 'BSI TR-02102-1 2026 Edition', '85'],
+  ['Canada', 'ITSP.40.111 v4 PQC Algorithms Approved', '85'],
+  ['Spain', 'CCN-TEC 009 Post-Quantum Transition', '85'],
+  ['South Korea', 'K-PQC Master Plan to 2035', '85'],
+  // 60 — secondary, draft, or partially-verified
+  ['United States', 'DoD PQC Migration Memorandum', '60'],
+  ['Saudi Arabia', 'Saudi National Cryptographic Standards', '60'],
+  ['United Arab Emirates', 'UAE Crypto Discovery Tool and PQC Index', '60'],
+  ['International', 'draft-ietf-tls-ecdhe-mlkem Hybrid KEX', '60'],
+  ['International', 'draft-ietf-lamps-kyber-certificates', '60'],
+  ['Nigeria', 'NDPA General Application Directive 2025', '60'],
+]
 const R2_FIX = [
   [
     'OpenSSL 3.5.0 Native PQC Release',
@@ -263,6 +321,10 @@ const R2_DEPRECATE = [
 const { data, meta } = Papa.parse(readFileSync(SRC, 'utf8'), { header: true, skipEmptyLines: true })
 const find = (country, title) => data.find((r) => r.Country === country && r.Title === title)
 const findT = (title) => data.find((r) => r.Title === title)
+// Prefers an active row over a deprecated one when both share Country+Title.
+const findActive = (country, title) =>
+  data.find((r) => r.Country === country && r.Title === title && r.status !== 'deprecated') ??
+  data.find((r) => r.Country === country && r.Title === title)
 
 let dep = 0
 let fix = 0
@@ -362,6 +424,30 @@ for (const [flag, title, changes] of R2_REINSTATE) {
   r2reinstate++
 }
 
+// ── run-5 corrections ────────────────────────────────────────────────────────
+let r5fix = 0
+for (const [flag, title, changes] of R5_FIX_FLAG) {
+  const r = data.find((x) => x.FlagCode === flag && x.Title === title)
+  if (!r) {
+    misses.push(`R5FIX ${flag}/${title}`)
+    continue
+  }
+  Object.assign(r, changes)
+  r5fix++
+}
+let r5conf = 0
+for (const [country, title, score] of R5_CONFIDENCE) {
+  const r = findActive(country, title)
+  if (!r) {
+    misses.push(`R5CONF ${country}/${title}`)
+    continue
+  }
+  if (!r.confidence_score) {
+    r.confidence_score = score
+    r5conf++
+  }
+}
+
 // New column: tag each country's canonical sim deadline (empty for all others).
 // Runs AFTER all deprecate/reinstate passes so status is final.
 for (const r of data) r.is_sim_deadline = ''
@@ -386,7 +472,8 @@ writeFileSync(OUT, Papa.unparse(data, { columns }) + '\n')
 console.log(
   `wrote ${OUT}: ${data.length} rows, ` +
     `${dep + r2dep + r4dep} deprecated (+${r2dep} run-2, +${r4dep} run-4), ` +
-    `${fix + r2fix + r3fix + r4fix} field-fixed (+${r2fix} run-2, +${r3fix} run-3, +${r4fix} run-4), ` +
+    `${fix + r2fix + r3fix + r4fix + r5fix} field-fixed (+${r2fix} run-2, +${r3fix} run-3, +${r4fix} run-4, +${r5fix} run-5), ` +
+    `${r5conf} confidence-scored (run-5), ` +
     `${r2reinstate} reinstated, ` +
     `${tag} sim-deadline-tagged`
 )
