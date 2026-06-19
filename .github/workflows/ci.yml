@@ -81,6 +81,11 @@ jobs:
       - name: Audit timeline aliases
         run: npm run audit:timeline-aliases
 
+      - name: Audit migration-phase tagging (step filter never silently empties)
+        # Guards the Migrate catalog's migration_phases column against the 7-step
+        # framework: every step reachable, no unknown tokens, empty ratio capped.
+        run: npm run audit:migration-phases
+
       - name: Audit timeline evidence (every active row resolves to local file)
         # Verifies that every active row in the latest timeline_*.csv has an
         # acceptable entry in public/timeline/evidence/manifest.json
