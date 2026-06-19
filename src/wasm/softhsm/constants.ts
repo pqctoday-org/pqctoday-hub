@@ -115,11 +115,16 @@ export const CKM_ECDH1_COFACTOR_DERIVE = 0x1051 // PKCS#11 v3.2 §2.3.2 — cofa
 export const CKM_EC_EDWARDS_KEY_PAIR_GEN = 0x1055
 export const CKM_EDDSA = 0x1057
 
-export const CKM_BIP32_MASTER_DERIVE = 0x0000105b
-export const CKM_BIP32_CHILD_DERIVE = 0x0000105c
+// BIP32 codepoints live in PKCS#11 vendor space (pkcs11t.h §BIP32):
+// CKM_BIP32_* = CKM_VENDOR_DEFINED(0x80000000) | 0x105B/0x105C
+// CKA_BIP32_* = CKA_VENDOR_DEFINED(0x80000000) | 0x1021/0x1022
+// (the bare 0x105B/0x105C/0x1021/0x1022 forms are OASIS-unassigned; the engine
+//  accepts them only as deprecated aliases — the hub uses the canonical values.)
+export const CKM_BIP32_MASTER_DERIVE = 0x8000105b
+export const CKM_BIP32_CHILD_DERIVE = 0x8000105c
 export const CKF_BIP32_HARDENED = 0x80000000
-export const CKA_BIP32_CHAIN_CODE = 0x00001021
-export const CKA_BIP32_CHILD_INDEX = 0x00001022
+export const CKA_BIP32_CHAIN_CODE = 0x80001021
+export const CKA_BIP32_CHILD_INDEX = 0x80001022
 
 // PBKDF2 (PKCS#11 v3.2 §5.7.3.1)
 export const CKM_PKCS5_PBKD2 = 0x3b0
@@ -138,7 +143,7 @@ export const CKM_AES_CBC_PAD = 0x1085
 export const CKM_AES_GCM = 0x1087
 export const CKM_AES_CMAC = 0x108a
 export const CKM_AES_KEY_WRAP = 0x2109
-export const CKM_AES_KEY_WRAP_KWP = 0x210a // RFC 5649 / NIST SP 800-38F (PKCS#11 v3.2 CKM_AES_KEY_WRAP_PAD)
+export const CKM_AES_KEY_WRAP_KWP = 0x210b // RFC 5649 / NIST SP 800-38F (pkcs11t.h: CKM_AES_KEY_WRAP_PAD=0x210a, CKM_AES_KEY_WRAP_KWP=0x210b)
 export const CKM_SHA256_HMAC = 0x251
 export const CKM_SHA384_HMAC = 0x261
 export const CKM_SHA512_HMAC = 0x271

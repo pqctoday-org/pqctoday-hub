@@ -2095,7 +2095,7 @@ export const CKM_AES_CBC_PAD = 0x1085
 export const CKM_AES_GCM = 0x1087
 export const CKM_AES_CMAC = 0x108a
 export const CKM_AES_KEY_WRAP = 0x2109
-export const CKM_AES_KEY_WRAP_KWP = 0x210a // RFC 5649 / NIST SP 800-38F (PKCS#11 v3.2 CKM_AES_KEY_WRAP_PAD)
+export const CKM_AES_KEY_WRAP_KWP = 0x210b // RFC 5649 / NIST SP 800-38F (pkcs11t.h: CKM_AES_KEY_WRAP_PAD=0x210a, CKM_AES_KEY_WRAP_KWP=0x210b)
 export const CKM_SHA256_HMAC = 0x251
 export const CKM_SHA384_HMAC = 0x261
 export const CKM_SHA512_HMAC = 0x271
@@ -2154,7 +2154,7 @@ export const CKA_UNWRAP = 0x107
 export const CKA_DERIVE = 0x10c
 export const CKA_EC_PARAMS = 0x180
 export const CKA_EC_POINT = 0x181 // DER-encoded ECPoint (uncompressed or compressed)
-export const CKA_PUBLIC_KEY_INFO = 0x248 // SPKI-encoded public key (PKCS#11 v3.2)
+export const CKA_PUBLIC_KEY_INFO = 0x129 // SPKI-encoded public key (PKCS#11 v3.2 §4.14, pkcs11t.h 0x00000129)
 
 // SLH-DSA signature and public key sizes (bytes), keyed by CKP_SLH_DSA_* constant
 // Ordering follows pkcs11t.h: interleaved SHA2/SHAKE per security level
