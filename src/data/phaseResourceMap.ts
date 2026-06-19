@@ -127,6 +127,7 @@ export const BUSINESS_PHASES: Record<string, PhaseResource> = {
   'refresh-cycle-alignment': { phasesServed: ['p4'], legs: ['practice', 'output'] },
   'accelerated-execution-profile': { phasesServed: ['p4'], legs: ['practice', 'output'] },
   'data-at-rest-strategy': { phasesServed: ['p5'], legs: ['practice', 'output'] },
+  'migration-verification': { phasesServed: ['verify-close'], legs: ['practice', 'output'] },
 }
 
 export const PLAYGROUND_PHASES: Record<string, PhaseResource> = {

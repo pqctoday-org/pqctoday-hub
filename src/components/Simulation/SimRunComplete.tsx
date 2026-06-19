@@ -70,7 +70,7 @@ export function SimRunComplete({
           className="glass-panel relative w-full max-w-md rounded-2xl border-2 border-primary/40 p-6 text-center shadow-xl sm:p-8"
         >
           <div
-            className="mx-auto mb-3 flex items-center justify-center rounded-full text-white"
+            className="mx-auto mb-3 flex items-center justify-center rounded-full text-primary-foreground"
             style={{
               width: 64,
               height: 64,

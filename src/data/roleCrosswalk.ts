@@ -84,8 +84,8 @@ export const ROLE_CROSSWALK: Record<FrameworkRoleId, RoleMapping> = {
     typicalFte: '1.0',
     persona: 'executive',
     niceRoles: ['is-security-manager', 'risk-manager'],
-    phases: ['p0', 'p4', 'p7', 'foundations'],
-    // p0 govern · p4 implement · p7 govern · foundations all five
+    phases: ['p0', 'p4', 'p7', 'verify-close', 'foundations'],
+    // p0 govern · p4 implement · p7 govern · verify-close closure · foundations all five
     cswp39Steps: ['govern', 'inventory', 'identify-gaps', 'prioritise', 'implement'],
   },
   'exec-sponsor': {
@@ -95,7 +95,7 @@ export const ROLE_CROSSWALK: Record<FrameworkRoleId, RoleMapping> = {
     persona: 'executive',
     niceRoles: ['is-security-manager'],
     phases: ['p0'],
-    // p0 govern
+    // p0 govern (the sponsor's closure role is captured by the G8 gate authority)
     cswp39Steps: ['govern'],
   },
   'crypto-architect': {
@@ -171,6 +171,16 @@ export const ROLE_CROSSWALK: Record<FrameworkRoleId, RoleMapping> = {
  * cryptographic instances** in the CBOM. Drives the Skills/Team gap-closer (§6.5).
  */
 export const FTE_PER_CRYPTO_INSTANCES = 500
+
+/**
+ * Rough order-of-magnitude estimate for seeding an estate size from a product
+ * count: ~this many cryptographic instances (keys, certs, library call-sites,
+ * protocol endpoints) per selected product. NOT a sourced figure — it is an
+ * editable starting point only; the user is expected to refine it with a real
+ * inventory. Shared by Initial Scoping and the Skills & Team plan so the two
+ * seeds can't drift, and surfaced in the UI rather than hidden in a comment.
+ */
+export const INSTANCES_PER_PRODUCT_ESTIMATE = 12
 
 /**
  * Persona → framework roles fan-out, derived from `ROLE_CROSSWALK`.

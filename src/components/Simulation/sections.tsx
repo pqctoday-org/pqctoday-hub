@@ -438,7 +438,7 @@ export function QuarterReport({
 }) {
   const drift = +(report.clockFrom - report.clockTo).toFixed(2)
   return (
-    <div className="fixed inset-0 z-[100] grid place-items-center bg-black/50 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] grid place-items-center bg-black/60 p-4 backdrop-blur-sm">
       <Button
         type="button"
         variant="ghost"

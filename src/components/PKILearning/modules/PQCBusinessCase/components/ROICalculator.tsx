@@ -203,10 +203,17 @@ export const ROICalculator: React.FC = () => {
       return r.npv ?? 0
     }
 
+    // Whole-number drivers (e.g. horizon years) must stay integers — the NPV loop
+    // bound truncates fractional years, which would mis-rank their sensitivity bar.
+    const INTEGER_KEYS: ReadonlySet<keyof ROIAssumptions> = new Set(['horizonYears'])
     const vary = (label: string, key: keyof ROIAssumptions): TornadoRow => {
       const base = assumptions[key] as number
-      const low = recompute({ [key]: base * 0.7 } as Partial<ROIAssumptions>)
-      const high = recompute({ [key]: base * 1.3 } as Partial<ROIAssumptions>)
+      const perturb = (factor: number): number => {
+        const v = base * factor
+        return INTEGER_KEYS.has(key) ? Math.max(1, Math.round(v)) : v
+      }
+      const low = recompute({ [key]: perturb(0.7) } as Partial<ROIAssumptions>)
+      const high = recompute({ [key]: perturb(1.3) } as Partial<ROIAssumptions>)
       return { label, low: low - baseNpv, high: high - baseNpv, delta: Math.abs(high - low) }
     }
 
@@ -330,14 +337,7 @@ export const ROICalculator: React.FC = () => {
         if (data.migrationDeadlineYear)
           sources.push(`deadline ${data.migrationDeadlineYear} from /timeline`)
         if (sources.length === 0) return null
-        return (
-          <PreFilledBanner
-            summary={`ROI defaults pulled from ${sources.join(' + ')}.`}
-            onClear={() => {
-              /* assumptions are user-driven sliders; PreFilledBanner here is informational */
-            }}
-          />
-        )
+        return <PreFilledBanner summary={`ROI defaults pulled from ${sources.join(' + ')}.`} />
       })()}
 
       {/* Financial Summary KPI Cards */}

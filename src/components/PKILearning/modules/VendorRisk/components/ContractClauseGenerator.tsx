@@ -410,12 +410,7 @@ export const ContractClauseGenerator: React.FC = () => {
   return (
     <div className="space-y-6">
       {seedSources.length > 0 && (
-        <PreFilledBanner
-          summary={`Contract scope informed by ${seedSources.join(' + ')}.`}
-          onClear={() => {
-            /* CONTRACT_SECTIONS are static — clear is informational */
-          }}
-        />
+        <PreFilledBanner summary={`Contract scope informed by ${seedSources.join(' + ')}.`} />
       )}
       {showHighSeverityHint && (
         <div className="rounded-lg border border-status-warning/40 bg-status-warning/5 p-3 text-xs text-foreground/80">

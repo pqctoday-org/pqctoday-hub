@@ -10,7 +10,7 @@ import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import type { SoftwareItem } from '@/types/MigrateTypes'
-import { pqcReadinessTier } from '@/data/kpiCatalog'
+import { pqcReadinessTier, isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
 import type {
   AssessmentResult,
   HNDLRiskWindow,
@@ -156,17 +156,8 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
         }
       }
 
-      const fipsLower = (s.fipsValidated || '').toLowerCase()
-      if (
-        fipsLower.startsWith('yes') ||
-        fipsLower === 'validated' ||
-        (fipsLower.includes('fips 140') && !fipsLower.startsWith('no'))
-      ) {
-        fipsValidatedCount++
-      }
-      if (s.pqcSupport && s.pqcSupport !== 'None' && s.pqcSupport !== 'No') {
-        pqcReadyCount++
-      }
+      if (isFips1403Validated(s.fipsValidated)) fipsValidatedCount++
+      if (isPqcReady(s.pqcSupport)) pqcReadyCount++
       readinessWeightSum += pqcReadinessTier(s.pqcSupport)
     }
 

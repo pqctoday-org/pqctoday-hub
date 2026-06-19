@@ -17,6 +17,7 @@ import React, { useMemo, useState } from 'react'
 import { Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
 
@@ -191,9 +192,10 @@ export const AcceleratedExecutionProfile: React.FC = () => {
           >
             Compressed wave order
           </label>
-          <Input
+          <Textarea
             id="aep-compressed-sequence"
             className="mt-1"
+            rows={3}
             value={state.compressedSequence}
             onChange={(e) => set('compressedSequence', e.target.value)}
             placeholder="e.g. Wave 1 (crown-jewel HNDL data) → Wave 2 (external TLS) → defer low-risk waves"
@@ -210,9 +212,10 @@ export const AcceleratedExecutionProfile: React.FC = () => {
           >
             Risk acceptances cleared in advance
           </label>
-          <Input
+          <Textarea
             id="aep-risk-acceptances"
             className="mt-1"
+            rows={3}
             value={state.riskAcceptances}
             onChange={(e) => set('riskAcceptances', e.target.value)}
             placeholder="e.g. Accept temporary perf regression on internal APIs during rollout"
@@ -229,9 +232,10 @@ export const AcceleratedExecutionProfile: React.FC = () => {
           >
             Pre-drafted budget / headcount ask
           </label>
-          <Input
+          <Textarea
             id="aep-resource-request"
             className="mt-1"
+            rows={3}
             value={state.resourceRequest}
             onChange={(e) => set('resourceRequest', e.target.value)}
             placeholder="e.g. +$2M surge budget, 4 contract engineers for 90 days"

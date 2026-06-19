@@ -17,6 +17,7 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'compliance-checklist': 'Compliance Checklist',
   'audit-checklist': 'Audit Checklist',
   'compliance-timeline': 'Compliance Timeline',
+  'migration-verification': 'Migration Verification & Closure',
   'board-deck': 'Board Deck',
   'contract-clause': 'Contract Clause',
   'kpi-dashboard': 'KPI Dashboard',

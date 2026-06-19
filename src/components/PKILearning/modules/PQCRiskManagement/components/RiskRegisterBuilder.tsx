@@ -5,6 +5,9 @@ import { Button } from '@/components/ui/button'
 import { useModuleStore } from '@/store/useModuleStore'
 import { markdownToPdf } from '@/services/export/pdfExport'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+// Single source of truth for the illustrative demo entries (shared with the
+// store + standalone adapter) so the two can't drift.
+import { DEFAULT_RISK_ENTRIES } from '@/store/useRiskRegisterStore'
 
 interface RiskEntry {
   id: string
@@ -46,45 +49,6 @@ const ALGORITHM_OPTIONS = [
   'Other',
 ]
 
-const DEFAULT_ENTRIES: RiskEntry[] = [
-  {
-    id: 'default-1',
-    assetName: 'TLS Certificates (Public Web)',
-    currentAlgorithm: 'RSA-2048',
-    threatVector: 'shor',
-    likelihood: 4,
-    impact: 5,
-    mitigation: 'Migrate to ML-DSA certificates; deploy hybrid TLS with X25519MLKEM768',
-  },
-  {
-    id: 'default-2',
-    assetName: 'Customer Database Encryption',
-    currentAlgorithm: 'AES-128',
-    threatVector: 'grover',
-    likelihood: 2,
-    impact: 4,
-    mitigation: 'Upgrade to AES-256; re-encrypt sensitive records',
-  },
-  {
-    id: 'default-3',
-    assetName: 'Code Signing Infrastructure',
-    currentAlgorithm: 'ECDSA P-256',
-    threatVector: 'forgery',
-    likelihood: 3,
-    impact: 5,
-    mitigation: 'Adopt ML-DSA or SLH-DSA for software signing; implement dual-signature validation',
-  },
-  {
-    id: 'default-4',
-    assetName: 'VPN Gateway (Site-to-Site)',
-    currentAlgorithm: 'DH-2048',
-    threatVector: 'hndl',
-    likelihood: 4,
-    impact: 3,
-    mitigation: 'Deploy IKEv2 with ML-KEM hybrid key exchange; upgrade firmware',
-  },
-]
-
 function getRiskLevel(score: number): { label: string; color: string; bgColor: string } {
   if (score >= 20)
     return { label: 'Critical', color: 'text-status-error', bgColor: 'bg-status-error/10' }
@@ -101,10 +65,11 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
   const [copied, setCopied] = React.useState(false)
   const { addExecutiveDocument } = useModuleStore()
 
-  // Initialize with defaults if empty
+  // Initialize with the illustrative demo entries if empty (labelled as examples
+  // by the standalone adapter's banner so they aren't mistaken for real data).
   React.useEffect(() => {
     if (riskEntries.length === 0) {
-      onRiskEntriesChange(DEFAULT_ENTRIES)
+      onRiskEntriesChange(DEFAULT_RISK_ENTRIES)
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 

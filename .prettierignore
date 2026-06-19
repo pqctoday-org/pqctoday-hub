@@ -55,3 +55,10 @@ public/data/pqctoday-oscal-assessment-plan.json
 public/data/pqctoday-cbom.json
 public/data/community-signals.json
 public/data/revisions.jsonl
+
+# Vendored upstream JSON schemas (CycloneDX 1.6, SPDX, JSF) — kept verbatim for
+# ajv validation; reformatting would diverge from the canonical upstream files.
+src/services/cbom/schema/**
+
+# Machine-generated document enrichments (scripts/enrich-docs-ollama.py output).
+src/data/doc-enrichments/**

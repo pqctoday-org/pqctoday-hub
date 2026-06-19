@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useEffect, useMemo, useState } from 'react'
-import { FlaskConical } from 'lucide-react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { Download, FlaskConical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
@@ -13,6 +13,19 @@ import { HSM_VENDORS } from '../data/hsmVendors'
 import { FILE_ARTIFACTS } from '../data/fileArtifacts'
 import { SAMPLE_SBOMS } from '../data/sampleSBOMs'
 import type { CbomExportItem } from '../data/workshopTypes'
+import {
+  buildCbomDocument,
+  downloadCbomJson,
+  type CbomComponentInput,
+} from '@/services/cbom/cycloneDx'
+import {
+  cbomRowToCbomInput,
+  fileArtifactToCbomInput,
+  hsmToCbomInput,
+  libraryToCbomInput,
+  matchLibrary,
+  type CbomRow,
+} from './cbomAdapters'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
@@ -65,17 +78,6 @@ const POSTURE_LIGHT: Record<RiskColor, string> = {
   green: 'bg-status-success',
 }
 
-interface CbomRow {
-  name: string
-  version: string
-  matched: boolean
-  fipsStatus: FipsStatus
-  esvStatus: EsvStatus
-  pqcSupport: string
-  posture: RiskColor
-  notes: string
-}
-
 interface LibraryCBOMBuilderProps {
   onCbomExport?: (items: CbomExportItem[]) => void
 }
@@ -105,11 +107,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
         const c = (raw ?? {}) as Record<string, unknown>
         const name = String(c.name ?? '')
         const version = String(c.version ?? '')
-        const lib = CRYPTO_LIBRARIES.find(
-          (l) =>
-            l.name.toLowerCase() === name.toLowerCase() ||
-            name.toLowerCase().includes(l.name.toLowerCase().split(' ')[0])
-        )
+        const lib = matchLibrary(name, version)
         return {
           name,
           version,
@@ -140,6 +138,36 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
     }))
     onCbomExport(items)
   }, [cbomSlice, onCbomExport])
+
+  /** A schema-valid CycloneDX 1.6 CBOM for the current mode's inventory. Unlike
+   *  the Markdown export, this is a real machine-readable artifact downstream
+   *  tooling (Dependency-Track, scanners, auditors) can ingest. */
+  const cycloneDxJson = useMemo(() => {
+    let inputs: CbomComponentInput[]
+    switch (mode) {
+      case 'sbom':
+        inputs = cbomSlice.map(cbomRowToCbomInput)
+        break
+      case 'hsm':
+        inputs = HSM_VENDORS.map(hsmToCbomInput)
+        break
+      case 'files':
+        inputs = FILE_ARTIFACTS.map(fileArtifactToCbomInput)
+        break
+      // 'libs' and 'assessment' both export the library posture inventory.
+      default:
+        inputs = CRYPTO_LIBRARIES.map(libraryToCbomInput)
+        break
+    }
+    return buildCbomDocument(inputs, {
+      toolName: 'PQC Today CBOM Builder',
+      properties: [{ name: 'pqctoday:mode', value: mode }],
+    }).json
+  }, [mode, cbomSlice])
+
+  const handleDownloadCycloneDx = useCallback(() => {
+    downloadCbomJson(cycloneDxJson, 'crypto-bom-cyclonedx')
+  }, [cycloneDxJson])
 
   /** Markdown serialization of the current CBOM slice + library posture +
    *  HSM coverage for Command Center export. The format mirrors a CycloneDX
@@ -648,6 +676,20 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
           </p>
         </div>
       )}
+
+      {/* Machine-readable CycloneDX 1.6 export */}
+      <div className="glass-panel p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <p className="text-sm text-muted-foreground">
+          Download a schema-valid <span className="font-medium text-foreground">CycloneDX 1.6</span>{' '}
+          CBOM of the current view — a real machine-readable artifact for Dependency-Track,
+          scanners, or auditors (PQC algorithms emit as <code>cryptographic-asset</code>{' '}
+          components).
+        </p>
+        <Button onClick={handleDownloadCycloneDx} variant="outline" className="shrink-0">
+          <Download className="w-4 h-4 mr-2" />
+          Download CycloneDX 1.6
+        </Button>
+      </div>
 
       {/* Save to Command Center / export */}
       <ExportableArtifact

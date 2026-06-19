@@ -46,6 +46,35 @@ type ProtocolId = (typeof PROTOCOL_OPTIONS)[number]
 
 const yesNo = (on: boolean): string => (on ? 'Yes' : 'No')
 
+/** Highest number mentioned in a string ("5-15" → 15, "3x" → 3, "banana" → null). */
+export function parseUpperNumber(s: string): number | null {
+  const nums = (s.match(/\d+(\.\d+)?/g) ?? []).map(Number).filter(Number.isFinite)
+  return nums.length ? Math.max(...nums) : null
+}
+
+/**
+ * Derive capacity-readiness flags from the parsed inputs — the tool's "capacity
+ * plan" should analyse the numbers, not just echo them. Thresholds: CPU impact
+ * ≥ 20% needs headroom verification; a cert-storage multiplier ≥ 2 needs
+ * provisioning ahead of cutover.
+ */
+export function capacityFlags(cpuImpactPct: string, certStorageMultiplier: string): string[] {
+  const out: string[] = []
+  const cpu = parseUpperNumber(cpuImpactPct)
+  if (cpu !== null && cpu >= 20) {
+    out.push(
+      `High CPU impact (up to ${cpu}%) - verify compute headroom or plan to scale out before PQC cutover.`
+    )
+  }
+  const mult = parseUpperNumber(certStorageMultiplier)
+  if (mult !== null && mult >= 2) {
+    out.push(
+      `Certificate stores grow ~${mult}x - provision additional cert-store capacity before cutover.`
+    )
+  }
+  return out
+}
+
 function buildMarkdown(s: InfraModernizationState): string {
   const lines: string[] = []
   lines.push('# Infrastructure Modernization Plan')
@@ -99,6 +128,12 @@ function buildMarkdown(s: InfraModernizationState): string {
   lines.push(
     `- **Certificate-storage multiplier:** ${s.certStorageMultiplier.trim() || '_(TBD)_'}×`
   )
+  const flags = capacityFlags(s.cpuImpactPct, s.certStorageMultiplier)
+  if (flags.length > 0) {
+    lines.push('')
+    lines.push('**Capacity readiness flags:**')
+    for (const f of flags) lines.push(`- ⚠ ${f}`)
+  }
   lines.push('')
 
   lines.push('---')
@@ -145,6 +180,11 @@ export const InfraModernizationPlanner: React.FC = () => {
     }))
 
   const exportMarkdown = useMemo(() => buildMarkdown(state), [state])
+
+  const capacityNotes = useMemo(
+    () => capacityFlags(state.cpuImpactPct, state.certStorageMultiplier),
+    [state.cpuImpactPct, state.certStorageMultiplier]
+  )
 
   const protocolCount = PROTOCOL_OPTIONS.filter((id) => state.protocols[id]).length
 
@@ -381,12 +421,25 @@ export const InfraModernizationPlanner: React.FC = () => {
             <Input
               id="infra-cert-storage"
               className="mt-1"
+              inputMode="numeric"
               value={state.certStorageMultiplier}
               onChange={(e) => set('certStorageMultiplier', e.target.value)}
               placeholder="e.g. 3"
             />
           </div>
         </div>
+        {capacityNotes.length > 0 && (
+          <div className="rounded-md border border-status-warning/30 bg-status-warning/5 p-2 space-y-1">
+            <p className="text-xs font-semibold text-status-warning">Capacity readiness</p>
+            <ul className="list-disc pl-4 space-y-0.5">
+              {capacityNotes.map((f) => (
+                <li key={f} className="text-[11px] text-muted-foreground">
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </section>
 
       <ExportableArtifact

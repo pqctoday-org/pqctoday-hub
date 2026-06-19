@@ -4,10 +4,12 @@
  *
  * Captures the per-data-store data-at-rest decision the framework's Phase 5
  * expects: for every store holding harvest-now-decrypt-later-exposed data,
- * pick one of five remediation strategies — re-encrypt under PQC keys, wrap
- * existing data keys under a PQC KEK (KEK/DEK), crypto-shred, delete, or
- * accept & monitor. Backups and archives are called out as their own line so
- * cold copies are not silently inherited from the live store decision.
+ * pick one of five remediation strategies — re-encrypt with a fresh AES-256 key
+ * wrapped by a PQC KEK, re-wrap the existing data key under a PQC KEK (KEK/DEK),
+ * crypto-shred, delete, or accept & monitor. Bulk data stays AES-256 (quantum-
+ * resistant); PQC enters only at the key-wrapping layer. Backups and archives
+ * are called out as their own line so cold copies are not silently inherited
+ * from the live store decision.
  *
  * Emits a downloadable markdown artifact (a | Data store | Strategy | Notes |
  * table) and saves it to the Command Center, recording the chosen strategy per
@@ -20,10 +22,11 @@ import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
 
-/** The five data-at-rest remediation strategies offered per store. */
+/** The five data-at-rest remediation strategies offered per store. Bulk data
+ *  stays AES-256 in every case; PQC applies at the key-wrap (KEK) layer. */
 const STRATEGY_OPTIONS = [
-  'Re-encrypt under PQC keys',
-  'PQC key-wrap (KEK/DEK)',
+  'Re-encrypt with fresh AES-256 DEK (PQC-wrapped KEK)',
+  'Re-wrap existing DEK under PQC KEK',
   'Crypto-shred',
   'Delete',
   'Accept & monitor',
@@ -44,9 +47,19 @@ interface DataAtRestState {
 const newId = (): string => `store-${Math.random().toString(36).slice(2, 9)}`
 
 const SEED_STORES: StoreRow[] = [
-  { id: newId(), name: 'Customer PII database', strategy: 'Re-encrypt under PQC keys', note: '' },
-  { id: newId(), name: 'Backups & archives', strategy: 'PQC key-wrap (KEK/DEK)', note: '' },
-  { id: newId(), name: 'Document store', strategy: 'PQC key-wrap (KEK/DEK)', note: '' },
+  {
+    id: newId(),
+    name: 'Customer PII database',
+    strategy: 'Re-encrypt with fresh AES-256 DEK (PQC-wrapped KEK)',
+    note: '',
+  },
+  {
+    id: newId(),
+    name: 'Backups & archives',
+    strategy: 'Re-wrap existing DEK under PQC KEK',
+    note: '',
+  },
+  { id: newId(), name: 'Document store', strategy: 'Re-wrap existing DEK under PQC KEK', note: '' },
   { id: newId(), name: 'Analytics warehouse', strategy: 'Accept & monitor', note: '' },
 ]
 
@@ -58,6 +71,13 @@ function buildMarkdown(s: DataAtRestState): string {
     'Per-data-store remediation decision for cryptographically protected data at rest. ' +
       'For each store holding data with a long confidentiality lifetime (harvest-now, ' +
       'decrypt-later exposure), one strategy is chosen below.'
+  )
+  lines.push('')
+  lines.push(
+    '> **Why most data-at-rest is lower-urgency:** bulk encryption stays AES-256, which ' +
+      "Grover's algorithm only weakens to a ~128-bit effective level (still safe per NIST IR 8547). " +
+      'Post-quantum risk concentrates at the *key-wrapping* layer, so these strategies swap the ' +
+      'KEK to ML-KEM rather than replacing the AES-256 data cipher.'
   )
   lines.push('')
   lines.push('| Data store | Strategy | Notes |')

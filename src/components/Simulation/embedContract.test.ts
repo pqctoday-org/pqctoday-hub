@@ -10,6 +10,7 @@ import {
   isTimelineStep,
   isAlgorithmTabStep,
   isScenarioStep,
+  isReferenceEmbedStep,
   isStepComplete,
   type StepCompletionContext,
 } from './embedContract'
@@ -19,6 +20,7 @@ import {
   ARTIFACT_TYPE_TO_TOOL_ID,
   WORKSHOP_TOOL_COMPONENTS,
 } from './resourceContract'
+import { SIM_REFERENCE_EMBEDS } from './referenceEmbeds'
 import { SANDBOX_SCENARIOS } from '@/data/sandboxScenarios'
 import { SIM_TREES, flattenTree, type TreeStep, type StepKind } from '@/simulation'
 
@@ -123,6 +125,16 @@ describe('embed contract (WS-09)', () => {
         } else if (isAlgorithmTabStep(s)) {
           // C5: all Algorithms tabs embed via SIM_ALGORITHM_TABS.
           expect(isAlgorithmTabStep(s), `${phase}: algorithm-tab step is recognised`).toBe(true)
+        } else if (isReferenceEmbedStep(s)) {
+          // Full-page reference embeds (Migrate / Library / Compliance / Threats)
+          // render under the sim header via SIM_REFERENCE_EMBEDS (referenceEmbeds.tsx).
+          expect(
+            SIM_REFERENCE_EMBEDS[s.refId!],
+            `${phase}: reference-embed ${s.refId} has a component`
+          ).toBeTruthy()
+        } else if (isScenarioStep(s)) {
+          // C3: sandbox scenario labs embed when the scenario id resolves.
+          expect(isScenarioStep(s), `${phase}: scenario step is recognised`).toBe(true)
         } else {
           // the only other embeddable reference is the assess-engine wizard
           expect(isAssessStep(s), `${phase}: embeddable ref ${s.refId} is the assess wizard`).toBe(

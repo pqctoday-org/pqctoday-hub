@@ -28,8 +28,30 @@ import type { ZoneId, Cswp39StepId } from './cswp39ZoneData'
  */
 export const FRAMEWORK_VERSION = 'v2.1'
 
+/**
+ * Source attribution for the framework this product's phase model is built on.
+ * The framework is published under CC BY 4.0 (credit + link required); these
+ * constants are the single source of truth for the acknowledgment shown in the
+ * tools that surface the framework.
+ */
+export const FRAMEWORK_NAME = 'Applied Quantum PQC Migration Framework'
+export const FRAMEWORK_AUTHOR = 'Marin Ivezic / Applied Quantum'
+export const FRAMEWORK_LICENSE = 'CC BY 4.0'
+/** Canonical framework site (home + license + research). */
+export const FRAMEWORK_URL = 'https://pqcframework.com'
+
 /** The Applied Quantum migration phases. `foundations` is the spanning base band. */
-export type PhaseId = 'p0' | 'p1' | 'p2' | 'p3' | 'p4' | 'p5' | 'p6' | 'p7' | 'foundations'
+export type PhaseId =
+  | 'p0'
+  | 'p1'
+  | 'p2'
+  | 'p3'
+  | 'p4'
+  | 'p5'
+  | 'p6'
+  | 'p7'
+  | 'verify-close'
+  | 'foundations'
 
 /** How a phase progresses relative to its neighbours (drives the rail layout). */
 export type Cadence = 'sequential' | 'parallel' | 'iterative' | 'continuous' | 'spanning'
@@ -137,8 +159,8 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
       { route: '/business', ref: 'crqc-scenario', status: 'live' },
       { route: '/business', ref: 'raci-builder', status: 'live' },
       { route: '/business', ref: 'policy-generator', status: 'live' },
-      { route: '/business', ref: 'program-charter', status: 'gap' },
-      { route: '/business', ref: 'initial-scoping', status: 'gap' },
+      { route: '/business', ref: 'program-charter', status: 'live' },
+      { route: '/business', ref: 'initial-scoping', status: 'live' },
     ],
     surfaces: ['/assess', '/business', '/report'],
     crosswalk: {
@@ -194,7 +216,7 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     communicate: { route: '/report', ref: 'cbom-section', status: 'live' },
     produce: [
       { route: '/business', ref: 'crypto-cbom-builder', status: 'live' },
-      { route: '/migrate', ref: 'cyclonedx-export', status: 'gap' },
+      { route: '/migrate', ref: 'cyclonedx-export', status: 'live' },
     ],
     surfaces: ['/business', '/migrate', '/report'],
     crosswalk: {
@@ -372,6 +394,29 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
       dutchHandbook: 'Cross-cutting — crypto-agility, KPIs & skills',
     },
   },
+  'verify-close': {
+    id: 'verify-close',
+    number: null,
+    name: 'Verification & Closure',
+    tagline: 'evidence · decommission · BAU handover',
+    cadence: 'sequential',
+    gate: {
+      id: 'G8',
+      criterion: 'Verification complete; classical material decommissioned; closed to BAU',
+      authority: 'Executive Sponsor',
+    },
+    cswp39Zones: ['governance'],
+    cswp39Steps: ['implement', 'govern'],
+    communicate: { route: '/report', ref: 'closure-record', status: 'gap' },
+    produce: [{ route: '/business', ref: 'migration-verification', status: 'live' }],
+    surfaces: ['/business', '/report'],
+    crosswalk: {
+      nistCsf: ['GV.OV-03', 'ID.IM-03', 'PR.PS-06'],
+      pqcc: 'Monitoring — verify, decommission classical material, sustain',
+      etsiTr103619: 'Stage 3 — Migration (verification & decommissioning)',
+      dutchHandbook: 'Execution — verify migration & decommission classical material',
+    },
+  },
 }
 
 /** Canonical iteration order for the phases (rail layout: 0→1∥2→3→4→5⇄6, 7, Foundations). */
@@ -384,5 +429,6 @@ export const PHASE_ORDER: PhaseId[] = [
   'p5',
   'p6',
   'p7',
+  'verify-close',
   'foundations',
 ]

@@ -20,7 +20,9 @@ import { ROLE_CROSSWALK } from '@/data/roleCrosswalk'
 import { computeSimMosca, COUNTRY_DEADLINE_YEAR, SIM_CRQC_YEAR } from '@/data/moscaClock'
 import type { QuarterReportData } from '@/components/Simulation/sections'
 
-const LIFECYCLE = PHASE_ORDER.filter((p) => p !== 'foundations')
+// Played migration phases. Excludes the spanning Foundations band and the
+// terminal Verification & Closure band — neither is a quarter-by-quarter phase.
+const LIFECYCLE = PHASE_ORDER.filter((p) => p !== 'foundations' && p !== 'verify-close')
 const autoKey = (phase: string, to: string) => `${phase}::${to}`
 
 export interface QuarterEngineInput {

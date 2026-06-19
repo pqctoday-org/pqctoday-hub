@@ -10,7 +10,7 @@ import {
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { generateNiceGapReport } from '@/utils/niceGapReport'
-import { NICE_COMPETENCY_AREAS } from '@/data/niceFramework'
+import { NICE_COMPETENCY_AREAS, CA_TO_NFCOM, NF_COMPETENCY_AREAS } from '@/data/niceFramework'
 import type { AssessmentResult, AssessmentInput } from '@/hooks/assessmentTypes'
 import type { NiceCompetencyAreaId } from '@/data/niceFramework'
 import { Button } from '../ui/button'
@@ -79,7 +79,7 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
         <div>
           <p className="text-sm text-muted-foreground">
             Mapped to <span className="font-medium text-foreground">NICE Framework</span> (NIST SP
-            800-181 Rev 1 + IR 8355) · Self-attested,{' '}
+            800-181 Rev 1, Components v2.2.0) · Self-attested,{' '}
             <a
               href="https://www.nist.gov/nice/framework"
               target="_blank"
@@ -119,6 +119,17 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
                       {gap.competencyAreaId}
                     </span>
                     <span className="text-sm font-medium text-foreground">{gap.title}</span>
+                    {(() => {
+                      const nf = CA_TO_NFCOM[gap.competencyAreaId]
+                      return nf ? (
+                        <span
+                          className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-status-info/30 bg-status-info/10 text-status-info"
+                          title={`Official NICE v2.2.0 competency area: ${NF_COMPETENCY_AREAS[nf].title}`}
+                        >
+                          NICE {nf}
+                        </span>
+                      ) : null
+                    })()}
                   </div>
                   <span
                     className={`text-xs px-2 py-0.5 rounded-full font-medium ${tierCfg.className}`}

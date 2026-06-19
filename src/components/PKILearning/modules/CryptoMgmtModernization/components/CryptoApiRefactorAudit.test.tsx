@@ -116,6 +116,20 @@ describe('auditCryptoApi - language-specific output', () => {
   })
 })
 
+describe('auditCryptoApi - current-API watch-outs (RM-09)', () => {
+  it('the currentCryptoApi input now drives per-API watch-outs (was previously ignored)', () => {
+    expect(
+      auditCryptoApi({ ...baseInputs, currentCryptoApi: ['pkcs11'] }).watchOuts.join(' ')
+    ).toMatch(/PKCS#11: target v3\.2/)
+    expect(
+      auditCryptoApi({ ...baseInputs, currentCryptoApi: ['openssl-legacy'] }).watchOuts.join(' ')
+    ).toMatch(/EVP_PKEY high-level API/)
+    expect(
+      auditCryptoApi({ ...baseInputs, currentCryptoApi: ['hand-rolled'] }).watchOuts.join(' ')
+    ).toMatch(/highest-risk/)
+  })
+})
+
 describe('auditCryptoApi - provider compatibility notes', () => {
   it('HSM provider emits Luna / nCipher / CloudHSM note', () => {
     const rec = auditCryptoApi({ ...baseInputs, provider: ['hsm'] })

@@ -262,10 +262,24 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   {
     id: 'roadmap-builder',
     name: 'Roadmap Builder',
-    description: 'Create phased migration roadmaps with milestones and dependencies',
+    description:
+      'Build a two-track migration roadmap (key-exchange/HNDL ∥ signatures-PKI/TNFL) on the 8-phase spine, with gates G0–G7 and milestone dependencies',
     category: 'Migration Planning',
     icon: Map,
-    keywords: ['roadmap', 'migration', 'plan', 'milestone', 'phase', 'timeline'],
+    keywords: [
+      'roadmap',
+      'migration',
+      'plan',
+      'milestone',
+      'phase',
+      'timeline',
+      'two-track',
+      'track',
+      'gate',
+      'dependency',
+      'hndl',
+      'tnfl',
+    ],
     cswp39Zone: 'migration',
     cswp39SectionRef: '§3.2',
     cswp39SubSection: 'Algorithm transitions',
@@ -483,10 +497,10 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'crypto-vulnerability-watch',
     name: 'Crypto Vulnerability Watch',
     description:
-      'NIST NVD CVE digest for the products on your /migrate selection — Heartbleed, POODLE, BEAST, FREAK, and the rest, joined via CPE',
+      'NIST NVD CVE digest for the products on your /migrate selection, joined via CPE — the top CVEs per product by severity from the current snapshot',
     category: 'Migration Planning',
     icon: ShieldAlert,
-    keywords: ['cve', 'nvd', 'vulnerability', 'cpe', 'heartbleed', 'poodle', 'logjam'],
+    keywords: ['cve', 'nvd', 'vulnerability', 'cpe', 'severity', 'nvd snapshot'],
     cswp39Zone: 'assets',
     cswp39ZoneSubElement: 'Code',
     cswp39SectionRef: '§5',
@@ -655,6 +669,29 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39SubSection: 'Data-at-rest strategy',
     frameworkPhase: 'p5',
   },
+  {
+    id: 'migration-verification',
+    name: 'Migration Verification & Closure',
+    description:
+      "Prove migration with the framework's 5-point evidence standard, log classical-key decommissioning (SP 800-88), and record program closure & BAU handover",
+    category: 'Migration Planning',
+    icon: ClipboardCheck,
+    keywords: [
+      'verification',
+      'closure',
+      'evidence',
+      'decommission',
+      'dossier',
+      'bau',
+      'sign-off',
+      'sp 800-88',
+      'tnfl',
+    ],
+    cswp39Zone: 'governance',
+    cswp39SectionRef: '§5.5',
+    cswp39SubSection: 'Migration verification & evidence',
+    frameworkPhase: 'verify-close',
+  },
 ]
 
 export const BUSINESS_CATEGORIES = [
@@ -711,6 +748,7 @@ export const ARTIFACT_TYPE_TO_TOOL_ID: Partial<Record<ExecutiveDocumentType, str
   'refresh-cycle-alignment': 'refresh-cycle-alignment',
   'accelerated-execution-profile': 'accelerated-execution-profile',
   'data-at-rest-strategy': 'data-at-rest-strategy',
+  'migration-verification': 'migration-verification',
 }
 
 /** Look up the CSWP.39 §-reference (and optional sub-section label) for an

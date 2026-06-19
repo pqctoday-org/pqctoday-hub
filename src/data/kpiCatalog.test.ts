@@ -7,6 +7,8 @@ import {
   getKpiSet,
   getWeightSum,
   pqcReadinessTier,
+  isPqcReady,
+  isFips1403Validated,
 } from './kpiCatalog'
 import { getKpiTarget } from './kpiTargets'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
@@ -527,5 +529,34 @@ describe('crown-jewel-coverage (E1)', () => {
     const cj = dims.find((d) => d.id === 'crown-jewel-coverage')
     expect(cj).toBeDefined()
     expect(cj?.disabled).toBeFalsy()
+  })
+})
+
+describe('isPqcReady — one shared definition (RM-11)', () => {
+  it('counts deployed/full and hybrid as ready', () => {
+    expect(isPqcReady('Yes (ML-KEM production)')).toBe(true)
+    expect(isPqcReady('Partial (ML-KEM, hybrid)')).toBe(true)
+  })
+  it('does NOT count planned, pilot, narrative or none as ready (the old over-count)', () => {
+    expect(isPqcReady('Planned (ML-DSA 2026)')).toBe(false)
+    expect(isPqcReady('Pilot')).toBe(false)
+    expect(isPqcReady('Credential management')).toBe(false)
+    expect(isPqcReady('None')).toBe(false)
+    expect(isPqcReady('No')).toBe(false)
+    expect(isPqcReady('')).toBe(false)
+  })
+})
+
+describe('isFips1403Validated — 140-2 must not pass as 140-3 (RM-11)', () => {
+  it('accepts explicit 140-3 / generic validated', () => {
+    expect(isFips1403Validated('Yes (FIPS 140-3)')).toBe(true)
+    expect(isFips1403Validated('FIPS 140-3 Level 2')).toBe(true)
+    expect(isFips1403Validated('Validated')).toBe(true)
+  })
+  it('rejects FIPS 140-2 and negatives', () => {
+    expect(isFips1403Validated('FIPS 140-2')).toBe(false)
+    expect(isFips1403Validated('Yes (FIPS 140-2)')).toBe(false)
+    expect(isFips1403Validated('No')).toBe(false)
+    expect(isFips1403Validated('')).toBe(false)
   })
 })

@@ -39,7 +39,16 @@ import { MigrateEmbed } from '@/components/shared/widgets/MigrateEmbed'
 import { PlaygroundProvider } from '@/components/Playground/PlaygroundProvider'
 import { AssessWizard } from '@/components/Assess/AssessWizard'
 import { Button } from '@/components/ui/button'
-import { FRAMEWORK_PHASES, PHASE_ORDER, type PhaseId } from '@/data/frameworkPhases'
+import {
+  FRAMEWORK_PHASES,
+  FRAMEWORK_AUTHOR,
+  FRAMEWORK_LICENSE,
+  FRAMEWORK_NAME,
+  FRAMEWORK_URL,
+  FRAMEWORK_VERSION,
+  PHASE_ORDER,
+  type PhaseId,
+} from '@/data/frameworkPhases'
 import { MATURITY_LEVEL_NAMES, PHASE_WIN_LEVEL, LEVEL_EVIDENCE } from '@/data/phaseMaturity'
 import { SIM_MISSIONS } from '@/data/simMissions'
 import {
@@ -165,7 +174,9 @@ const TOOL_TO_ARTIFACT: Record<string, ExecutiveDocumentType> = Object.fromEntri
   )
 )
 
-const LIFECYCLE = PHASE_ORDER.filter((p) => p !== 'foundations')
+// Played migration phases for the sim board. Excludes the spanning Foundations
+// band and the terminal Verification & Closure band (shown on the rail, not played).
+const LIFECYCLE = PHASE_ORDER.filter((p) => p !== 'foundations' && p !== 'verify-close')
 
 const cycle = <T extends { id: string }>(arr: readonly T[], cur: string) =>
   arr[(arr.findIndex((a) => a.id === cur) + 1) % arr.length].id
@@ -291,7 +302,7 @@ export function SimulationView() {
   } | null>(null)
 
   const LearnComp = learnEmbed ? SIM_LEARN_MODULES[learnEmbed.moduleId] : null
-  // eslint-disable-next-line security/detect-object-injection
+
   const ReferenceComp = referenceEmbed
     ? SIM_REFERENCE_EMBEDS[referenceEmbed.refId]?.Component
     : null
@@ -832,6 +843,15 @@ export function SimulationView() {
               <div className="font-mono text-[8px] font-bold uppercase tracking-[0.14em] text-background/50">
                 PQC Migration Simulation
               </div>
+              <a
+                href={FRAMEWORK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={`${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE})`}
+                className="font-mono text-[8px] font-semibold tracking-[0.08em] text-background/40 underline decoration-dotted underline-offset-2 hover:text-background/70"
+              >
+                Built on the {FRAMEWORK_NAME} {FRAMEWORK_VERSION} ↗
+              </a>
             </div>
           </div>
           <Link
@@ -889,6 +909,15 @@ export function SimulationView() {
             <div className="font-mono text-[8px] font-bold uppercase tracking-[0.14em] text-background/50">
               PQC Migration Simulation
             </div>
+            <a
+              href={FRAMEWORK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={`${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE})`}
+              className="font-mono text-[8px] font-semibold tracking-[0.08em] text-background/40 underline decoration-dotted underline-offset-2 hover:text-background/70"
+            >
+              Built on the {FRAMEWORK_NAME} {FRAMEWORK_VERSION} ↗
+            </a>
           </div>
         </div>
         {/* ORG / JURISDICTION / SECTOR are READ-ONLY — sourced from the user's
@@ -1101,8 +1130,7 @@ export function SimulationView() {
                         : algorithmTabEmbed
                           ? (SIM_ALGORITHM_TABS[algorithmTabEmbed.refId]?.label ?? 'Algorithms')
                           : referenceEmbed
-                            ? // eslint-disable-next-line security/detect-object-injection
-                              (SIM_REFERENCE_EMBEDS[referenceEmbed.refId]?.label ?? 'Reference')
+                            ? (SIM_REFERENCE_EMBEDS[referenceEmbed.refId]?.label ?? 'Reference')
                             : 'Assess'}{' '}
               · Phase {phase.number}
             </span>
@@ -1750,9 +1778,9 @@ export function SimulationView() {
                   // workshops embed through — so route them via the WORKSHOP arm too,
                   // keeping them UNDER the "● Simulation mode" header instead of
                   // navigating out to /playground (where the player leaves the sim).
-                  // eslint-disable-next-line security/detect-object-injection
+
                   const isWorkshopTool = !!WORKSHOP_TOOL_COMPONENTS[it.id]
-                  // eslint-disable-next-line security/detect-object-injection
+
                   const artifactType = TOOL_TO_ARTIFACT[it.id]
                   const step: TreeStep = isWorkshopTool
                     ? { kind: 'workshop', label: it.label, to: it.to, workshopId: it.id }
