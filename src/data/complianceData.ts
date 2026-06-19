@@ -455,7 +455,10 @@ export const complianceDB: Record<
     // deterministically: a row that REQUIRES PQC wins over one that does not, so the
     // stronger obligation is never silently dropped by CSV import order.
     const existing = acc[fw.label]
-    if (!existing || (fw.requiresPQC && !existing.requiresPQC)) {
+    // Prefer a PQC-requiring row; among rows with the SAME requiresPQC, keep the
+    // later one — matching the prior Object.fromEntries last-wins for deadline/notes
+    // so this only changes the silently-dropped requiresPQC flag, nothing else.
+    if (!existing || fw.requiresPQC || !existing.requiresPQC) {
       acc[fw.label] = { requiresPQC: fw.requiresPQC, deadline: fw.deadline, notes: fw.notes }
     }
     return acc

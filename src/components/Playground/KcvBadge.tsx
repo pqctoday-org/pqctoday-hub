@@ -7,10 +7,10 @@ import { bytesToHex, hexToBytes } from '@/utils/dataInputUtils'
  * Renders a 3-byte "key check value" (KCV) fingerprint of a hex-encoded secret.
  *
  * The software playground has no PKCS#11 `CKA_CHECK_VALUE`, so this is a
- * SHA-256(secret)[0:3] fingerprint — the same first-3-bytes-of-SHA-256
- * methodology the HSM panels use for asymmetric keys, so the software and HSM
- * values are directly comparable. It is a short fingerprint for confirming two
- * parties derived the same secret, not a spec-compliant PKCS#11 KCV.
+ * SHA-256(secret)[0:3] fingerprint over the raw secret bytes it is given — the
+ * same first-3-bytes-of-SHA-256 method the HSM uses, so for raw secrets the two
+ * are directly comparable. It is a short fingerprint for confirming two parties
+ * derived the same secret, not a spec-compliant PKCS#11 KCV.
  */
 export function KcvBadge({ secretHex, label = 'KCV' }: { secretHex: string; label?: string }) {
   const [kcv, setKcv] = useState('')
