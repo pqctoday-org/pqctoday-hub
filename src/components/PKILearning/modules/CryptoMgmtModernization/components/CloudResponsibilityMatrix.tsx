@@ -399,7 +399,7 @@ const AVAIL_ORDER: PqcAvailability[] = [
 ]
 
 /** Map the catalog's canonical PQC status to the matrix availability scale. */
-function canonicalToAvailability(canonical: string): PqcAvailability {
+function canonicalToAvailability(canonical: string | undefined): PqcAvailability {
   const c = (canonical || '').trim().toLowerCase()
   if (c.startsWith('available') || c === 'yes' || c === 'production') return 'available'
   if (c.startsWith('partial') || c === 'in-development') return 'partial'

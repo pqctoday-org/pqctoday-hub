@@ -67,8 +67,9 @@ export interface SoftwareItem {
   cisaCategory: string
   pqcSupport: string
   /** Normalized PQC status from the catalog: available | partial | roadmap |
-   *  none | unknown (the single source of truth for product PQC status). */
-  pqcStatusCanonical: string
+   *  none | unknown (the single source of truth for product PQC status).
+   *  Optional so test mocks / older data may omit it; the loader always sets it. */
+  pqcStatusCanonical?: string
   pqcCapabilityDescription: string
   licenseType: string
   license: string
