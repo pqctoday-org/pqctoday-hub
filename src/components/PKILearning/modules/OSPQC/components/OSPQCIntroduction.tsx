@@ -15,7 +15,12 @@ import {
   Server,
   HardDrive,
 } from 'lucide-react'
-import { OS_VENDORS, OS_VENDOR_STATUS_LABELS, FIPS_STATUS_LABELS } from '../data/osProviderData'
+import {
+  OS_VENDORS,
+  OS_VENDOR_STATUS_LABELS,
+  FIPS_STATUS_LABELS,
+  getOsPqcStatus,
+} from '../data/osProviderData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
@@ -396,7 +401,7 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
           </div>
           <div className="space-y-2">
             {OS_VENDORS.slice(0, 5).map((vendor) => {
-              const pqcLabel = OS_VENDOR_STATUS_LABELS[vendor.pqcStatus]
+              const pqcLabel = OS_VENDOR_STATUS_LABELS[getOsPqcStatus(vendor)]
               const fipsLabel = FIPS_STATUS_LABELS[vendor.fipsMode]
               return (
                 <div
