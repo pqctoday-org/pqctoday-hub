@@ -77,6 +77,9 @@ const KNOWN_INDIRECT: Array<{ prefix: string; vnd: string }> = [
   { prefix: 'chromeos', vnd: 'VND-018' },
   { prefix: 'go-jose-', vnd: 'VND-018' },
   { prefix: 'go-stdlib-', vnd: 'VND-018' },
+  { prefix: 'gcp-', vnd: 'VND-018' },
+  // Ping Identity (acquired ForgeRock in Aug 2023)
+  { prefix: 'forgerock-', vnd: 'VND-178' },
   // IBM (covers ibm-* and lto tape)
   { prefix: 'ibm-', vnd: 'VND-019' },
   { prefix: 'lto-10-', vnd: 'VND-019' },
