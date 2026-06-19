@@ -424,6 +424,7 @@ export interface QuarterReportData {
   over: number
   clearedFrom: number
   clearedTo: number
+  totalPhases: number
   events: SimEvent[]
   aiProgress: string[]
   recommend: string
@@ -472,7 +473,9 @@ export function QuarterReport({
             </div>
             <div className="rounded-xl border border-border bg-card p-3">
               <Eyebrow>Phases cleared</Eyebrow>
-              <div className="mt-0.5 text-xl font-extrabold text-success">{report.clearedTo}/8</div>
+              <div className="mt-0.5 text-xl font-extrabold text-success">
+                {report.clearedTo}/{report.totalPhases}
+              </div>
               <div className="text-[10.5px] text-muted-foreground">
                 {report.clearedTo > report.clearedFrom
                   ? `+${report.clearedTo - report.clearedFrom} this quarter`

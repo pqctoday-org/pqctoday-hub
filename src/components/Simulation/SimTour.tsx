@@ -17,7 +17,7 @@ export interface TourStep {
 export const TOUR_STEPS: TourStep[] = [
   {
     title: 'Welcome to Mission Control',
-    body: 'Run a post-quantum migration program: race the Mosca clock and climb each of the 8 framework phases up the maturity ladder.',
+    body: 'Run a post-quantum migration program: race the Mosca clock and climb each of the 9 framework phases — P0–P7 plus Verification & Closure — up the maturity ladder.',
   },
   {
     title: 'Your org comes from your assessment',

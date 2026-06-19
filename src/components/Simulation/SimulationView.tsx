@@ -3,8 +3,9 @@
  * SimulationView — the PQC-migration "Mission Control" console.
  *
  * A serious-game over the existing hub: pick an organisation profile, race the
- * Mosca clock (X+Y>Z), and climb each of the framework's 8 phases up a 0–4
- * maturity ladder — staffing/briefing an AI team and choosing sound vs trap
+ * Mosca clock (X+Y>Z), and climb each of the framework's 9 phases (P0–P7 + the
+ * terminal Verification & Closure band) up a 0–4 maturity ladder — staffing/
+ * briefing an AI team and choosing sound vs trap
  * "next moves". A conductor over the hub: every resource is a real Command-
  * Center tool / Playground sandbox / Learn workshop. State persists via
  * useSimulationStore. Design: reports/framework-gap/SIMULATION-DESIGN.md +
@@ -46,7 +47,7 @@ import {
   FRAMEWORK_NAME,
   FRAMEWORK_URL,
   FRAMEWORK_VERSION,
-  PHASE_ORDER,
+  LIFECYCLE_PHASES,
   type PhaseId,
 } from '@/data/frameworkPhases'
 import { MATURITY_LEVEL_NAMES, PHASE_WIN_LEVEL, LEVEL_EVIDENCE } from '@/data/phaseMaturity'
@@ -174,9 +175,10 @@ const TOOL_TO_ARTIFACT: Record<string, ExecutiveDocumentType> = Object.fromEntri
   )
 )
 
-// Played migration phases for the sim board. Excludes the spanning Foundations
-// band and the terminal Verification & Closure band (shown on the rail, not played).
-const LIFECYCLE = PHASE_ORDER.filter((p) => p !== 'foundations' && p !== 'verify-close')
+// Played migration phases for the sim board (P0–P7 + terminal Verification &
+// Closure; excludes only the spanning Foundations band). Shared SoT with the
+// quarter engine — see LIFECYCLE_PHASES in frameworkPhases.ts.
+const LIFECYCLE = LIFECYCLE_PHASES
 
 const cycle = <T extends { id: string }>(arr: readonly T[], cur: string) =>
   arr[(arr.findIndex((a) => a.id === cur) + 1) % arr.length].id
@@ -1082,7 +1084,7 @@ export function SimulationView() {
         </div>
         <Stat
           label="Phases cleared"
-          value={`${cleared}/8`}
+          value={`${cleared}/${LIFECYCLE.length}`}
           sub="win bar = Level 2"
           tone="text-success"
         />
@@ -1144,7 +1146,12 @@ export function SimulationView() {
                           : referenceEmbed
                             ? (SIM_REFERENCE_EMBEDS[referenceEmbed.refId]?.label ?? 'Reference')
                             : 'Assess'}{' '}
-              · Phase {phase.number}
+              ·{' '}
+              {phase.number !== null
+                ? `Phase ${phase.number}`
+                : phase.id === 'verify-close'
+                  ? 'Closure'
+                  : 'Foundations'}
             </span>
             <span className="min-w-0 flex-1 truncate text-[12.5px] font-bold text-foreground">
               {learnEmbed
@@ -1359,7 +1366,7 @@ export function SimulationView() {
               <div className="mb-2 flex items-center justify-between">
                 <Eyebrow>Phase journey</Eyebrow>
                 <span className="rounded-full bg-muted px-2 py-0.5 font-mono text-[10px] font-bold text-muted-foreground">
-                  0 → 7
+                  0 → 7 → ◆
                 </span>
               </div>
               <div className="flex flex-col gap-0.5">
@@ -1392,7 +1399,7 @@ export function SimulationView() {
                               : 'bg-muted text-muted-foreground'
                         }`}
                       >
-                        {fp.number}
+                        {fp.number ?? '◆'}
                       </span>
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-[12px] font-bold text-foreground">
@@ -1442,7 +1449,12 @@ export function SimulationView() {
                   phaseCleared ? 'bg-success/15 text-success' : 'bg-primary/15 text-primary'
                 }`}
               >
-                {phaseCleared ? 'CLEARED' : 'ACTIVE'} · PHASE {phase.number}
+                {phaseCleared ? 'CLEARED' : 'ACTIVE'} ·{' '}
+                {phase.number !== null
+                  ? `PHASE ${phase.number}`
+                  : phase.id === 'verify-close'
+                    ? 'CLOSURE'
+                    : 'FOUNDATIONS'}
               </span>
               {phaseAutoActive && (
                 // W2c: be honest that an AI-delegated phase wasn't learned by the

@@ -6,8 +6,8 @@ import { SimRunComplete } from './SimRunComplete'
 const base = {
   horizonYear: 2029,
   readinessPct: 82,
-  clearedCount: 8,
-  totalPhases: 8,
+  clearedCount: 9,
+  totalPhases: 9,
   onClose: () => {},
 }
 
@@ -15,7 +15,7 @@ describe('SimRunComplete (W2b run-end verdict)', () => {
   it('renders the "beat Q-Day" verdict when the Mosca margin is safe (over <= 0)', () => {
     render(<SimRunComplete {...base} over={-3} />)
     expect(screen.getByRole('dialog', { name: /migration program complete/i })).toBeInTheDocument()
-    expect(screen.getByText(/All 8 of 8 phases cleared/i)).toBeInTheDocument()
+    expect(screen.getByText(/All 9 of 9 phases cleared/i)).toBeInTheDocument()
     // |over| years of margin, framed as a win
     expect(screen.getByText(/3y of margin before Q-Day 2029/i)).toBeInTheDocument()
     expect(screen.getByText(/readiness 82%/i)).toBeInTheDocument()

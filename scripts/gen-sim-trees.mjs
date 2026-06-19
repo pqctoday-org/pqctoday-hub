@@ -83,6 +83,7 @@ const ART_TOOL = {
   'kpi-tracker': 'kpi-tracker',
   'skills-team-plan': 'skills-team-plan',
   'audit-checklist': 'audit-checklist',
+  'migration-verification': 'migration-verification',
 }
 const L = (moduleId, label) => ({ kind: 'learn', label, to: `/learn/${moduleId}`, moduleId })
 const A = (artifactType, label) => {
@@ -163,6 +164,12 @@ const INDICATORS = {
     3: 'KPIs reported to the board; regulatory/standards alignment maintained; crypto-agility OKRs tracked; evidence dossier kept',
     4: 'Foundations run as BAU; migration verification & program-closure standard applied; algorithm changes are routine',
   },
+  'verify-close': {
+    1: 'Closure discussed on milestones; no evidence standard applied; "done" is declared, not proven',
+    2: 'Migration verified against the 5-point evidence standard; classical key material decommissioning logged (SP 800-88); program closure record produced',
+    3: 'Independent verification of Tier-1 systems; crypto-agility/rollback drill evidenced; executive-sponsor sign-off; BAU handover funded',
+    4: 'Verification & closure run as BAU; evidence dossier continuously maintained; decommissioning and attestations folded into posture monitoring',
+  },
 }
 
 const GATES = {
@@ -178,6 +185,12 @@ const GATES = {
   // The earlier invented 'G7' contradicted the framework (audit fidelity gap, Q3);
   // p7 clears via its maturity level, not a gate certificate.
   foundations: { id: 'GF', criterion: 'Foundations sustained as BAU' },
+  // verify-close (Verification & Closure) is the terminal SEQUENTIAL phase with a
+  // real one-time gate (frameworkPhases.ts G8) — unlike continuous p7.
+  'verify-close': {
+    id: 'G8',
+    criterion: 'Verification complete; classical material decommissioned; closed to BAU',
+  },
 }
 
 // ---- the framework activities, level-tagged, mapped to real hub leaves ------
@@ -708,6 +721,52 @@ const FRAMEWORK = {
       ],
     },
   ],
+  'verify-close': [
+    {
+      id: 'VC.1',
+      level: 1,
+      title: 'Set the Verification Standard & Closure Plan',
+      do: 'Adopt the 5-point migration-verification evidence standard and the program-closure record up front, so "done" means proven, not declared.',
+      output: 'Verification standard & closure plan',
+      steps: [
+        R('report', 'Reference: the program closure record & 5-point evidence standard'),
+        R('compliance', 'Reference: closeout attestations & applicable mandates'),
+      ],
+    },
+    {
+      id: 'VC.2',
+      level: 2,
+      title: 'Assemble the Migration Evidence Dossier',
+      do: 'Prove each migrated system against the evidence standard (observed PQC negotiation, negative testing, configuration attestation) and log classical key-material decommissioning (SP 800-88).',
+      output: 'Migration-verification evidence dossier',
+      steps: [
+        A('migration-verification', 'Assemble the evidence dossier & log decommissioning'),
+        A('audit-checklist', 'Run the closure audit-readiness checklist'),
+      ],
+    },
+    {
+      id: 'VC.3',
+      level: 3,
+      title: 'Independent Verification & Sign-off',
+      do: 'Independently verify Tier-1 systems, evidence the crypto-agility / rollback drill, and obtain executive-sponsor closure sign-off with a funded BAU handover.',
+      output: 'Independent verification & signed closure',
+      steps: [
+        A('crypto-cbom', 'Export the final CBOM as durable closure evidence'),
+        R('library', 'Reference: SP 800-88 decommissioning & evidence standards'),
+      ],
+    },
+    {
+      id: 'VC.4',
+      level: 4,
+      title: 'Run Verification & Closure as BAU',
+      do: 'Fold verification, decommissioning and attestations into the continuous posture-monitoring loop so algorithm changes and re-verification are routine.',
+      output: 'BAU verification & posture monitoring',
+      steps: [
+        A('kpi-tracker', 'Track post-closure crypto-posture KPIs as BAU'),
+        R('algorithms-transition', 'Reference: monitor the algorithm-transition landscape'),
+      ],
+    },
+  ],
 }
 
 // ---- per-phase "Common Failures" → the wrong moves (Applied Quantum v2.1) ---
@@ -908,6 +967,20 @@ const PITFALLS = {
     {
       title: 'Skip the maturity baseline (run no assessment)',
       why: 'Without the weakest-link view you over-report progress and miss the gating domain that actually constrains readiness.',
+    },
+  ],
+  'verify-close': [
+    {
+      title: 'Declare the migration "done" on milestones',
+      why: 'Closing on milestone completion instead of verified posture — without evidence (observed negotiation, negative testing, the dossier) the migration is a belief, not a fact, and an auditor asks for proof, not milestones.',
+    },
+    {
+      title: 'Orphan the capabilities at closure',
+      why: 'Treating closure as end-of-funding rather than a funded BAU handover — CBOM, discovery and vendor governance decay within quarters without owners.',
+    },
+    {
+      title: 'Skip classical-key decommissioning',
+      why: 'Leaving old classical keys and material live keeps the harvest-now-decrypt-later exposure open even after PQC is deployed — closure requires SP 800-88 decommissioning evidence.',
     },
   ],
 }

@@ -432,3 +432,12 @@ export const PHASE_ORDER: PhaseId[] = [
   'verify-close',
   'foundations',
 ]
+
+/**
+ * The PLAYED migration phases for the simulation board — PHASE_ORDER minus only
+ * the spanning Foundations band. Includes the terminal Verification & Closure
+ * phase (the run-complete ceremony withholds until it clears, so "done" requires
+ * the closure evidence dossier). Single source of truth shared by SimulationView
+ * and the quarter engine so the two can never drift on the phase count.
+ */
+export const LIFECYCLE_PHASES: PhaseId[] = PHASE_ORDER.filter((p) => p !== 'foundations')
