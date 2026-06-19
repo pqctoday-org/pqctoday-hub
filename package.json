@@ -40,6 +40,7 @@
     "audit:vendor-refs": "tsx scripts/audit-vendor-refs.ts",
     "audit:module-infographics": "tsx scripts/audit-module-infographics.ts",
     "audit:timeline-aliases": "tsx scripts/audit-timeline-aliases.ts",
+    "audit:migration-phases": "tsx scripts/audit-migration-phases.ts",
     "audit:compliance-countries": "tsx scripts/audit-compliance-countries.ts",
     "audit:data-regressions": "tsx scripts/ci/check-data-regressions.ts",
     "audit:tokens": "tsx scripts/audit-semantic-tokens.ts",

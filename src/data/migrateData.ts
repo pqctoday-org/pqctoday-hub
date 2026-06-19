@@ -217,6 +217,30 @@ softwareData.forEach((item) => {
 // Re-export vendorMap with computed productCounts
 export { vendorMap }
 
+/**
+ * Alias from a legacy catalog token to its canonical MIGRATION_STEPS id.
+ * The catalog historically tags `prepare`; the canonical step id is `preparation`.
+ * (Map, not a plain object, to avoid dynamic-key object-injection.)
+ */
+const MIGRATION_STEP_ALIASES = new Map<string, string>([['prepare', 'preparation']])
+
+/**
+ * Whether a product (by its `migration_phases` cell) applies to a given migration
+ * step. Robust to comma/semicolon delimiters and the prepare/preparation alias;
+ * an UNTAGGED product is phase-agnostic and matches EVERY step rather than being
+ * silently dropped from the step filter (was dropping ~41% of the catalog).
+ */
+export function matchesMigrationStep(migrationPhases: string | undefined, stepId: string): boolean {
+  const phases = (migrationPhases ?? '')
+    .split(/[,;]/)
+    .map((p) => {
+      const t = p.trim().toLowerCase()
+      return MIGRATION_STEP_ALIASES.get(t) ?? t
+    })
+    .filter(Boolean)
+  return phases.length === 0 || phases.includes(stepId)
+}
+
 export function getMigrateItemsForModule(moduleId: string): SoftwareItem[] {
   return softwareData.filter((item) => {
     if (!item.learningModules) return false
