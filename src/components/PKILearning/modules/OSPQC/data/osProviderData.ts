@@ -1,11 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { getCatalogStatus, type CatalogAvailability } from '@/data/catalogStatus'
+
+export type OsPqcStatus = 'ga' | 'preview' | 'roadmap' | 'not-planned'
 
 export interface OSVendorStatus {
   id: string
   vendor: string
   platform: string
   opensslVersion: string
-  pqcStatus: 'ga' | 'preview' | 'roadmap' | 'not-planned'
+  /**
+   * Reference to the product's `software_name` in the central catalog
+   * (`pqc_product_catalog_*.csv`). The headline `pqcStatus` is DERIVED from the
+   * catalog via `getOsPqcStatus` — never stored here. The per-OS teaching detail
+   * (openssl version / ssh / pkg-signing / ml-kem / ml-dsa / notes) stays
+   * module-authored.
+   */
+  catalogName: string
   fipsMode: 'fips-140-3' | 'fips-140-2' | 'partial' | 'not-supported'
   sshPqcStatus: string
   pkgSigningPqc: string
@@ -20,7 +30,24 @@ export type PqcStatusLabel = {
   className: string
 }
 
-export const OS_VENDOR_STATUS_LABELS: Record<OSVendorStatus['pqcStatus'], PqcStatusLabel> = {
+// ── Catalog-derived headline status ───────────────────────────────────────────
+// An OS's overall PQC status is the SINGLE SOURCE OF TRUTH in the central product
+// catalog. Map catalog availability → this module's display vocabulary.
+const AVAIL_TO_PQC: Record<CatalogAvailability, OsPqcStatus> = {
+  available: 'ga',
+  partial: 'preview',
+  roadmap: 'roadmap',
+  none: 'not-planned',
+  unverified: 'roadmap',
+}
+
+/** Headline PQC status for an OS, derived live from the central catalog. */
+export function getOsPqcStatus(v: OSVendorStatus): OsPqcStatus {
+  const status = getCatalogStatus(v.catalogName)
+  return status ? AVAIL_TO_PQC[status.availability] : 'roadmap'
+}
+
+export const OS_VENDOR_STATUS_LABELS: Record<OsPqcStatus, PqcStatusLabel> = {
   ga: {
     label: 'GA',
     className: 'text-status-success bg-status-success/10 border-status-success/30',
@@ -63,23 +90,26 @@ export const OS_VENDORS: OSVendorStatus[] = [
     id: 'rhel',
     vendor: 'Red Hat',
     platform: 'RHEL 9.x / 10.x',
-    opensslVersion: 'OpenSSL 3.0.7 (RHEL 9) / 3.4.x (RHEL 10)',
-    pqcStatus: 'preview',
+    opensslVersion: 'OpenSSL 3.5 (RHEL 10) / 3.0.7 (RHEL 9)',
+    catalogName: 'Red Hat Enterprise Linux 10.2',
     fipsMode: 'fips-140-3',
-    sshPqcStatus: 'No production SSH PQC keys yet; draft ssh-mldsa65 tracking',
-    pkgSigningPqc: 'Evaluating ML-DSA for RHEL 11 package signing via rpm-sign',
-    roadmapYear: '2026-2027 (RHEL 10)',
-    mlKemSupport: 'ML-KEM preview in RHEL 10 via OpenSSL 3.4+ + oqsprovider',
-    mlDsaSupport: 'ML-DSA preview in RHEL 10; FIPS cert pending for PQC OpenSSL module',
+    sshPqcStatus:
+      'RHEL 10.2: OpenSSH ML-KEM SSH key exchange (mlkem768nistp256) default-on in all crypto policies',
+    pkgSigningPqc:
+      'RHEL 10.2 podman-sequoia composite PQC signatures; Red Hat Certificate System 11.0 integrates ML-DSA',
+    roadmapYear: '2025 (RHEL 10.1 GA)',
+    mlKemSupport:
+      'ML-KEM GA in RHEL 10.1+ via OpenSSL 3.5 / GnuTLS / NSS; preferred by the default crypto policy',
+    mlDsaSupport: 'ML-DSA GA in RHEL 10.1+ (OpenSSL/GnuTLS/NSS); ML-DSA TLS certificates supported',
     notes:
-      'RHEL 9 FIPS mode uses OpenSSL 3.0.7 with FIPS 140-3 certificate — this module does NOT yet include ML-KEM or ML-DSA. RHEL 10 targets OpenSSL 3.4+ with PQC FIPS module under validation. crypto-policies FUTURE policy adds hybrid TLS groups. CNSA 2.0 compliance path via RHEL 10.',
+      'Verified 2026-06-19: catalog status available. RHEL 10.1+ ships GA NIST PQC across OpenSSL 3.5, GnuTLS, NSS and (10.2) OpenSSH — the default system-wide crypto policy enables and PREFERS hybrid ML-KEM key exchange, so TLS/SSH to/from RHEL 10.1+ use PQC by default. RHEL 10.0 was tech-preview; RHEL 9 (OpenSSL 3.0.7) has no PQC. CNSA 2.0 path via RHEL 10.',
   },
   {
     id: 'ubuntu',
     vendor: 'Canonical',
-    platform: 'Ubuntu 24.04 LTS (Noble Numbat)',
-    opensslVersion: 'OpenSSL 3.0.x (base) / 3.4.x (24.04.1+)',
-    pqcStatus: 'preview',
+    platform: 'Ubuntu 26.04 LTS (Resolute Raccoon) / 25.10',
+    opensslVersion: 'OpenSSL 3.5 (25.10 / 26.04) — 24.04 LTS is OpenSSL 3.0 (no PQC)',
+    catalogName: 'Ubuntu 26.04 LTS',
     fipsMode: 'fips-140-3',
     sshPqcStatus: 'No production PQC SSH; tracking OpenSSH experimental branch',
     pkgSigningPqc: 'ML-DSA for APT package signing targeted for Ubuntu 26.04 LTS (DEP-18)',
@@ -87,14 +117,14 @@ export const OS_VENDORS: OSVendorStatus[] = [
     mlKemSupport: 'ML-KEM hybrid TLS in OpenSSL 3.0.x via oqsprovider or OpenSSL 3.5 native',
     mlDsaSupport: 'ML-DSA available via oqsprovider; native OpenSSL 3.5+ in Ubuntu 25.10+',
     notes:
-      'Ubuntu 24.04 ships with OpenSSL 3.0.x. ML-KEM hybrid TLS groups (x25519mlkem768) configurable in /etc/ssl/openssl.cnf. Ubuntu FIPS 140-3 certification covers OpenSSL 3.0.x module — PQC algorithms not yet in certified FIPS module. Ubuntu Pro subscribers can enable FIPS mode.',
+      'Verified 2026-06-19: Canonical ships GA PQC in current releases (catalog tracks Ubuntu 26.04 LTS = available). Ubuntu 25.10 (OpenSSL 3.5.3, OpenSSH 10.0) and 26.04 LTS (OpenSSH 10.2p1) enable hybrid ML-KEM in TLS and SSH by default. The widely-deployed Ubuntu 24.04 LTS ships OpenSSL 3.0 and has NO native PQC — it is not backported (catalog: Ubuntu 24.04 LTS = none); PQC on 24.04 requires a manual oqsprovider build.',
   },
   {
     id: 'windows-server',
     vendor: 'Microsoft',
     platform: 'Windows Server 2025 / Windows 11 24H2',
     opensslVersion: 'CNG (native) + SymCrypt 103.4+',
-    pqcStatus: 'ga',
+    catalogName: 'Windows Server 2025',
     fipsMode: 'fips-140-3',
     sshPqcStatus: 'Win32-OpenSSH tracking upstream OpenSSH experimental PQC branch',
     pkgSigningPqc: 'Windows Update uses RSA-4096; ML-DSA code signing in Windows roadmap 2027',
@@ -108,8 +138,8 @@ export const OS_VENDORS: OSVendorStatus[] = [
     id: 'debian',
     vendor: 'Debian Project',
     platform: 'Debian 13 (Trixie) / Debian 12 (Bookworm)',
-    opensslVersion: 'OpenSSL 3.3.x (Trixie) / 3.0.x (Bookworm)',
-    pqcStatus: 'preview',
+    opensslVersion: 'OpenSSL 3.5.6 (Trixie) / 3.0.x (Bookworm)',
+    catalogName: 'Debian 13 (Trixie)',
     fipsMode: 'not-supported',
     sshPqcStatus: 'No production PQC SSH; experimental package tracking OpenSSH PQC branch',
     pkgSigningPqc: 'DEP-18 proposal for ML-DSA APT signing; not yet scheduled',
@@ -117,14 +147,14 @@ export const OS_VENDORS: OSVendorStatus[] = [
     mlKemSupport: 'ML-KEM in experimental repository; OpenSSL 3.3 baseline with oqsprovider',
     mlDsaSupport: 'ML-DSA in experimental; native OpenSSL 3.5+ planned for Debian 14 (Forky)',
     notes:
-      'Debian 13 (Trixie) ships with OpenSSL 3.3 which supports PQC algorithms via oqsprovider. No FIPS mode — Debian does not maintain a FIPS-certified crypto module. PQC adoption depends on upstream OpenSSL. Debian stable releases are conservative; PQC production use requires experimental packages.',
+      'Verified 2026-06-19: catalog status partial. Debian 13 (Trixie, Aug 2025) ships OpenSSL 3.5.6, so TLS 1.3 negotiates the hybrid X25519MLKEM768 group by DEFAULT (inherited from OpenSSL, no config). Debian has no native PQC primitive of its own and no FIPS-certified crypto module. Debian 12 (Bookworm, OpenSSL 3.0) has no PQC (catalog: none).',
   },
   {
     id: 'alpine',
     vendor: 'Alpine Linux Project',
     platform: 'Alpine Linux 3.20+',
-    opensslVersion: 'OpenSSL 3.3.x (default)',
-    pqcStatus: 'preview',
+    opensslVersion: 'OpenSSL 3.5 (Alpine 3.22+) / 3.3.x (3.20)',
+    catalogName: 'Alpine Linux',
     fipsMode: 'not-supported',
     sshPqcStatus: 'No production PQC SSH; OpenSSH experimental branch required',
     pkgSigningPqc: 'APK signing uses RSA-4096 GPG; PQC not on near-term roadmap',
@@ -132,29 +162,31 @@ export const OS_VENDORS: OSVendorStatus[] = [
     mlKemSupport: 'ML-KEM via liboqs-provider package on OpenSSL 3.3.x',
     mlDsaSupport: 'ML-DSA via liboqs-provider package on OpenSSL 3.3.x',
     notes:
-      "Alpine Linux uses musl libc and is the default base image for millions of Docker containers. Alpine 3.20+ ships OpenSSL 3.3.x enabling ML-KEM via the liboqs-provider package. Alpine's minimal footprint (5MB base image) makes PQC library deployment size a consideration.",
+      'Verified 2026-06-19: catalog status available. Alpine 3.22 ships OpenSSL 3.5, providing built-in ML-KEM/ML-DSA/SLH-DSA and hybrid X25519MLKEM768 TLS with no external plugin. Alpine uses musl libc and is the default base image for millions of Docker containers, so this makes a large container fleet quantum-safe in transit by default. (Alpine 3.20/3.21 on OpenSSL 3.3 needed the liboqs-provider package.)',
   },
   {
     id: 'freebsd',
     vendor: 'FreeBSD Project',
     platform: 'FreeBSD 14.x',
-    opensslVersion: 'OpenSSL 3.0.x (base system) / 3.x (ports)',
-    pqcStatus: 'roadmap',
+    opensslVersion: 'OpenSSL 3.0.x (base) + OpenSSH 10.0 (base, ML-KEM SSH) / 3.5 (ports)',
+    catalogName: 'FreeBSD',
     fipsMode: 'not-supported',
-    sshPqcStatus: 'Base OpenSSH 9.x; no PQC host key support in base system',
+    sshPqcStatus:
+      'FreeBSD 14.4 base OpenSSH 10.0p2 uses hybrid mlkem768x25519-sha256 (NIST ML-KEM) by DEFAULT',
     pkgSigningPqc: 'pkg uses RSA-4096 repository signing; ML-DSA on 2026+ roadmap',
-    roadmapYear: '2026 (FreeBSD 15)',
-    mlKemSupport: 'Available via security/oqsprovider port; not in base OpenSSL',
-    mlDsaSupport: 'Available via security/oqsprovider port; pkg signing RSA only currently',
+    roadmapYear: '2026-03 (FreeBSD 14.4)',
+    mlKemSupport:
+      'ML-KEM default-on in base OpenSSH 10.0 (SSH KEX); TLS PQC still needs OpenSSL 3.5 from ports',
+    mlDsaSupport: 'Via security/oqsprovider port; pkg signing RSA only currently',
     notes:
-      'FreeBSD 14 base system uses OpenSSL 3.0.x which predates native PQC. The ports collection offers security/openssl-quic and security/oqsprovider for PQC-capable builds. FreeBSD 15 (2026) targets OpenSSL 3.4+ in base. pkg repository signing migration to ML-DSA is tracked in FreeBSD quarterly reviews.',
+      'Verified 2026-06-19: catalog status partial. FreeBSD 14.4 (Mar 2026) base OpenSSH 10.0p2 enables the hybrid mlkem768x25519-sha256 SSH key exchange by default (NIST ML-KEM). But base TLS is still OpenSSL 3.0 (no PQC) — PQC TLS requires OpenSSL 3.5 from ports. So PQC is default-on for SSH but not TLS: inherited and partial, not a native OS feature.',
   },
   {
     id: 'macos',
     vendor: 'Apple',
     platform: 'macOS 26 / iOS 26',
     opensslVersion: 'Security.framework (native) / Homebrew OpenSSL 3.x (user)',
-    pqcStatus: 'ga',
+    catalogName: 'iOS 26 / macOS 26',
     fipsMode: 'partial',
     sshPqcStatus: 'macOS ships OpenSSH 9.x; no PQC host key support in system SSH',
     pkgSigningPqc: 'macOS Gatekeeper / code signing uses ECDSA P-256; ML-DSA not yet',
@@ -170,15 +202,15 @@ export const OS_VENDORS: OSVendorStatus[] = [
     vendor: 'Google (Android)',
     platform: 'Android 16',
     opensslVersion: 'BoringSSL (Conscrypt JCA provider)',
-    pqcStatus: 'ga',
+    catalogName: 'Android 16',
     fipsMode: 'partial',
     sshPqcStatus: 'N/A — Android does not run sshd in standard configurations',
     pkgSigningPqc: 'APK signing uses ECDSA P-256 / RSA-4096; ML-DSA on Android roadmap',
     roadmapYear: '2025-06',
     mlKemSupport:
-      'ML-KEM-768 GA in Android 16 via Conscrypt + BoringSSL; X25519MLKEM768 in Chrome Android',
-    mlDsaSupport: 'ML-DSA in Android 16 BoringSSL; APK signing migration post-2026',
+      'Android 16: ML-KEM only at the app/Chrome layer (Chrome/WebView X25519MLKEM768 via BoringSSL); platform-level Keystore/Conscrypt PQC is Android 17',
+    mlDsaSupport: 'Platform ML-DSA targeted for Android 17; APK signing migration post-2026',
     notes:
-      "Android uses BoringSSL (Google's OpenSSL fork) via the Conscrypt JCA/JCE provider. Android 16 ships BoringSSL with ML-KEM enabled for TLS. The Android Keystore system (backed by TEE/StrongBox) does not yet support PQC key storage — ML-KEM and ML-DSA operations run in Conscrypt userspace. APK signing with ML-DSA pending Conscrypt KeyStore API extension.",
+      'Verified 2026-06-19: catalog status is roadmap for Android 16. PQC reaches Android 16 only at the app layer (Chrome/WebView negotiate X25519MLKEM768 via their bundled BoringSSL); platform-level Keystore (TEE/StrongBox) and Conscrypt ML-DSA/ML-KEM are announced for Android 17, not shipping in 16. APK signing with ML-DSA pending a Conscrypt KeyStore API extension.',
   },
 ]
