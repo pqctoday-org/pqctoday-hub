@@ -16,7 +16,7 @@ import {
   Info,
 } from 'lucide-react'
 import { ENTERPRISE_SCENARIO, ROTATION_POLICIES } from '../data/kmsConstants'
-import { KMS_PROVIDERS, KMS_STATUS_LABELS } from '../data/kmsProviderData'
+import { KMS_PROVIDERS, KMS_STATUS_LABELS, getKmsPqcStatus } from '../data/kmsProviderData'
 import { Button } from '@/components/ui/button'
 
 type MigrationPhase = 'inventory' | 'hybrid' | 'full-pqc'
@@ -370,7 +370,7 @@ export const KmsRotationPlanner: React.FC = () => {
           {scenario.kmsProviders.map((provider) => {
             // Find matching full provider data
             const fullProvider = KMS_PROVIDERS.find((p) => p.id === provider.id)
-            const status = fullProvider ? KMS_STATUS_LABELS[fullProvider.pqcStatus] : null
+            const status = fullProvider ? KMS_STATUS_LABELS[getKmsPqcStatus(fullProvider)] : null
 
             return (
               <div key={provider.id} className="bg-muted/50 rounded-lg p-4 border border-border">
