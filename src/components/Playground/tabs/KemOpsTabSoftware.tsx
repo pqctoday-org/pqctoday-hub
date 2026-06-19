@@ -8,6 +8,7 @@ import { DataInput } from '../DataInput'
 import { logEvent } from '../../../utils/analytics'
 import { FilterDropdown } from '../../common/FilterDropdown'
 import { X25519ECDHPanel } from './X25519ECDHPanel'
+import { KcvBadge } from '../KcvBadge'
 import { Button } from '@/components/ui/button'
 export const KemOpsTabSoftware: React.FC = () => {
   const { loading } = useSettingsContext()
@@ -594,6 +595,15 @@ export const KemOpsTabSoftware: React.FC = () => {
                   <div className="font-bold text-sm">
                     {kemDecapsulationResult ? '✓ MATCH' : '✗ MISMATCH'}
                   </div>
+                </div>
+              )}
+
+              {(sharedSecret || decapsulatedSecret) && (
+                <div className="flex flex-wrap items-center gap-2 mt-2">
+                  {sharedSecret && <KcvBadge secretHex={sharedSecret} label="Shared KCV" />}
+                  {decapsulatedSecret && (
+                    <KcvBadge secretHex={decapsulatedSecret} label="Recovered KCV" />
+                  )}
                 </div>
               )}
             </div>
