@@ -395,6 +395,9 @@ pqc_*.png
 pqctoday*.png
 pqctoday*.jpg
 weneed*.png
+# …but the Simulation's logo is a real source asset, not a root-level marketing
+# image — it's imported by SimulationView.tsx, so it must be tracked.
+!src/assets/pqctoday-logo.png
 
 # Private sync tooling and build pipeline
 sync-private.sh
