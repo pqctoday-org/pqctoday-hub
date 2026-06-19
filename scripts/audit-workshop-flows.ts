@@ -162,13 +162,24 @@ function buildSourceCorpus(): Corpus {
       }
 
       // `<LearnStepper>` emits `<section data-section-id={step.id}>` for every
-      // step in the per-module step list defined in `moduleData.ts`. Collect
-      // every `{ id: 'foo', label: ... }` literal in that file only — that's
-      // the file that actually feeds LearnStepper. Same for the
-      // CuriousSummaryBanner sectionData.
+      // step it renders. Historically those step lists lived in `moduleData.ts`;
+      // the A1 single-source cut-over moved them into each module's `manifest.ts`
+      // `learnSections` array. Collect ids from BOTH so scroll-to cues resolve.
       if (p.endsWith('PKILearning/moduleData.ts')) {
         const stepIdRe = /\{\s*id\s*:\s*['"]([a-zA-Z0-9_-]+)['"]\s*,\s*label\s*:/g
         while ((m = stepIdRe.exec(text))) sectionIds.add(m[1])
+      }
+      // Per-module manifest: src/components/PKILearning/modules/<Mod>/manifest.ts
+      // declares `learnSections: [{ id, label }]` — each id becomes a runtime
+      // `data-section-id` anchor via LearnStepper (the source of truth after the
+      // cut-over). Scope extraction to that array so unrelated `{ id, label }`
+      // literals (e.g. workshopSteps) don't mask a genuinely broken scroll-to cue.
+      if (/PKILearning\/modules\/[^/]+\/manifest\.tsx?$/.test(p)) {
+        const learnSections = /learnSections\s*:\s*\[([\s\S]*?)\]/.exec(text)
+        if (learnSections) {
+          const idRe = /\{\s*id\s*:\s*['"]([a-zA-Z0-9_-]+)['"]/g
+          while ((m = idRe.exec(learnSections[1]))) sectionIds.add(m[1])
+        }
       }
 
       // `<TabsTrigger value="X">` (src/components/ui/tabs.tsx:107) auto-emits
