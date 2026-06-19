@@ -176,7 +176,10 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     standalone-required) in timeline_06182026.csv. generate-rag-corpus skips
   //     deprecated rows, so a local `npm run refresh-index` drops these chunks and
   //     drives this back to 0; the committed corpus lags per the data-PR convention.
-  timeline: 6,
+  //     2026-06-19: bumped 6 → 7 — run-2 audit deprecated OpenSSL 3.6.1 row
+  //     (CVE bugfix; no PQC content; PQC landed in 3.5). corpus lags until
+  //     refresh-index.
+  timeline: 7,
   algorithms: 0,
   //     2026-05-31: bumped 113 → 118 — 5 new catalog enrichments (Tectia SSH, IVPN, libcrux, Trail of Bits ml-dsa, InfoSec Global AgileSec)
   'document-enrichment': 118,

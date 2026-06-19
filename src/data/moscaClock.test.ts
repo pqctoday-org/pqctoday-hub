@@ -54,24 +54,26 @@ describe('moscaClock', () => {
   })
 
   // Deadlines are DERIVED from the timeline CSV (the is_sim_deadline-tagged row),
-  // not hardcoded. The 7 tagged jurisdictions resolve; AU/JP/SG (no tagged row)
+  // not hardcoded. The 8 tagged jurisdictions resolve; AU/SG (no tagged row)
   // fall back to the Q-Day anchor.
   it('derives per-country deadlines from the timeline CSV (tagged rows)', () => {
-    for (const c of ['US', 'DE', 'FR', 'UK', 'EU', 'CA', 'KR'] as const) {
+    for (const c of ['US', 'DE', 'FR', 'UK', 'EU', 'CA', 'KR', 'JP'] as const) {
       expect(typeof COUNTRY_DEADLINE_YEAR[c], `${c} deadline`).toBe('number')
       expect(COUNTRY_DEADLINE_PROVENANCE[c], `${c} provenance`).toBe('planning')
     }
     // FR's first hard gate (2027) falls before Q-Day → it binds the horizon.
     expect(horizonYearFor('FR')).toBe(2027)
+    // JP's deadline (2035) is after Q-Day → falls back to the Q-Day anchor.
+    expect(horizonYearFor('JP')).toBe(SIM_CRQC_YEAR)
     // Untagged jurisdictions have no national deadline milestone → fall back to Q-Day.
-    for (const c of ['AU', 'JP', 'SG'] as const) {
+    for (const c of ['AU', 'SG'] as const) {
       expect(COUNTRY_DEADLINE_YEAR[c], `${c} absent`).toBeUndefined()
       expect(horizonYearFor(c), `${c} fallback`).toBe(SIM_CRQC_YEAR)
     }
   })
 
   it('tagged jurisdictions at/after Q-Day resolve Z to the Q-Day anchor', () => {
-    for (const c of ['EU', 'CA', 'KR', 'UK', 'US', 'DE'] as const) {
+    for (const c of ['EU', 'CA', 'KR', 'UK', 'US', 'DE', 'JP'] as const) {
       expect(horizonYearFor(c), `${c} horizon`).toBe(SIM_CRQC_YEAR)
     }
   })
