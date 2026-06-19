@@ -30,7 +30,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Radar, Siren } from 'lucide-react'
 import { ThreatClassBadge, ShorTierBadge } from './ThreatClassBadges'
 import { getSocUseCases, getIrPlaybook, getShorTier, SHOR_TIER_DEFS } from './threatClassification'
-import { getAttackProfile, type AlgorithmAttackProfile } from '@/data/implementationAttackProfiles'
+import { getAttackProfiles } from '@/data/implementationAttackProfiles'
 
 interface ThreatDetailDialogProps {
   threat: ThreatItem
@@ -40,18 +40,10 @@ interface ThreatDetailDialogProps {
 export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, onClose }) => {
   // Implementation-attack surface of the recommended PQC replacement(s) — cross-linked
   // from the single-source attack-profile data (no duplication of the Algorithms tab).
-  const replacementAttackProfiles = useMemo<AlgorithmAttackProfile[]>(() => {
-    const seen = new Set<string>()
-    const out: AlgorithmAttackProfile[] = []
-    for (const token of threat.pqcReplacement.split(/[,+/]|\band\b/i)) {
-      const profile = getAttackProfile(token)
-      if (profile && !seen.has(profile.algorithm)) {
-        seen.add(profile.algorithm)
-        out.push(profile)
-      }
-    }
-    return out
-  }, [threat.pqcReplacement])
+  const replacementAttackProfiles = useMemo(
+    () => getAttackProfiles(threat.pqcReplacement),
+    [threat.pqcReplacement]
+  )
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {

@@ -648,19 +648,39 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
   },
 ]
 
+/** Classical component tokens that appear inside composite/hybrid profile labels
+ *  (e.g. "Composite Signatures (ML-DSA+ECDSA)") but must NOT match a bare classical
+ *  algorithm name — those have no PQC implementation-attack profile. */
+const CLASSICAL_ALIAS_TOKENS = new Set(['rsa', 'ecdsa', 'ecdh', 'x25519', 'ed25519', 'dh', 'aes'])
+
 /**
  * Look up the implementation-attack profile whose algorithm label matches a
  * free-text name (e.g. "ML-KEM-768" -> "ML-KEM / Kyber"). Returns undefined when
- * no profile applies (e.g. classical RSA/ECC, which have no PQC attack profile).
+ * no PQC profile applies — including for a bare classical name like "ECDSA" or
+ * "X25519", which only appear as *components* of composite/hybrid profiles.
  */
 export function getAttackProfile(name: string): AlgorithmAttackProfile | undefined {
   const n = name.toLowerCase().trim()
-  if (!n) return undefined
+  if (n.length < 3) return undefined
   return ATTACK_PROFILES.find((p) =>
     p.algorithm
       .toLowerCase()
       .split(/[/()+]/)
       .map((s) => s.trim())
-      .some((alias) => alias.length > 2 && (n.includes(alias) || alias.includes(n)))
+      .some((alias) => alias.length > 2 && !CLASSICAL_ALIAS_TOKENS.has(alias) && n.includes(alias))
   )
+}
+
+/**
+ * Resolve a free-text replacement string (which may name several algorithms,
+ * e.g. "ML-KEM-768 + X25519") into the unique attack profiles it names. Owns the
+ * tokenization + de-dup so callers don't re-implement splitting.
+ */
+export function getAttackProfiles(freeText: string): AlgorithmAttackProfile[] {
+  const byAlgorithm = new Map<string, AlgorithmAttackProfile>()
+  for (const token of freeText.split(/[,+/]|\band\b/i)) {
+    const profile = getAttackProfile(token)
+    if (profile) byAlgorithm.set(profile.algorithm, profile)
+  }
+  return [...byAlgorithm.values()]
 }
