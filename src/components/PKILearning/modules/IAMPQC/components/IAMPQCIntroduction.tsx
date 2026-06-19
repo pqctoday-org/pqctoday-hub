@@ -20,7 +20,7 @@ import {
   CRYPTO_RISKS,
   SIGNATURE_SIZE_DATA,
 } from '../data/iamConstants'
-import { IAM_VENDORS, PQC_STATUS_LABELS } from '../data/iamProviderData'
+import { IAM_VENDORS, PQC_STATUS_LABELS, getVendorPqcStatus } from '../data/iamProviderData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
@@ -354,7 +354,7 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
 
         <div className="space-y-3">
           {IAM_VENDORS.slice(0, 4).map((vendor) => {
-            const status = PQC_STATUS_LABELS[vendor.pqcStatus]
+            const status = PQC_STATUS_LABELS[getVendorPqcStatus(vendor)]
             return (
               <div key={vendor.id} className="bg-muted/50 rounded-lg p-4 border border-border">
                 <div className="flex items-start gap-3">

@@ -5,12 +5,17 @@ import { Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
-import { IAM_VENDORS, PQC_STATUS_LABELS, type IAMVendorStatus } from '../data/iamProviderData'
+import {
+  IAM_VENDORS,
+  PQC_STATUS_LABELS,
+  getVendorPqcStatus,
+  type IAMVendorStatus,
+} from '../data/iamProviderData'
 
 const VENDOR_OPTIONS = IAM_VENDORS.map((v) => ({ id: v.id, label: v.vendor + ' — ' + v.product }))
 
 function VendorCard({ vendor }: { vendor: IAMVendorStatus }) {
-  const status = PQC_STATUS_LABELS[vendor.pqcStatus]
+  const status = PQC_STATUS_LABELS[getVendorPqcStatus(vendor)]
 
   return (
     <div className="glass-panel p-5 space-y-4">
@@ -79,7 +84,7 @@ export const VendorReadinessScorer: React.FC = () => {
 
   const handleExport = () => {
     const v = selectedVendor
-    const status = PQC_STATUS_LABELS[v.pqcStatus]
+    const status = PQC_STATUS_LABELS[getVendorPqcStatus(v)]
     const lines = [
       `IAM PQC Vendor Status Report`,
       `Generated: ${new Date().toISOString().split('T')[0]}`,
