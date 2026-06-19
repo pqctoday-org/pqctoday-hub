@@ -428,7 +428,7 @@ export const SANDBOX_TRACKS: SandboxTrack[] = [
     id: 'web',
     label: 'Web & Network Security',
     subtitle:
-      'Browser TLS negotiation, migration impact quantification, HAProxy edge-termination, DNSSEC, and NTP',
+      'Browser TLS negotiation, migration impact quantification, and HAProxy edge-termination',
     difficulty: 'Intermediate',
   },
   {
