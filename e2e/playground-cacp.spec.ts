@@ -23,6 +23,9 @@ test.beforeEach(async ({ page }) => {
       JSON.stringify({ state: { lastSeenVersion: '99.0.0' }, version: 0 })
     )
     localStorage.setItem('pqc-tour-completed', 'true')
+    // Drive the page in Expert mode so the KMIP Wire panel + raw-bytes view are
+    // rendered (Guided mode hides them behind the progressive-disclosure toggle).
+    localStorage.setItem('cacp-mode', 'expert')
   })
 })
 
@@ -37,8 +40,10 @@ test('boots the in-browser engine and runs a real Create → Activate → Sign �
     timeout: 30000,
   })
 
-  // Default algorithm is the PQC signer ML-DSA-65 → signing lifecycle.
-  await expect(page.locator('#kmip-algo')).toHaveValue('ML-DSA-65')
+  // Default algorithm is the PQC signer ML-DSA-65 → signing lifecycle. The
+  // algorithm picker is now a FilterDropdown (button trigger), wrapped in a
+  // testid hook; its trigger shows the selected label.
+  await expect(page.getByTestId('kmip-algo')).toContainText('ML-DSA-65')
 
   const result = page.getByRole('heading', { name: 'Result' }).locator('..')
 
@@ -57,6 +62,8 @@ test('boots the in-browser engine and runs a real Create → Activate → Sign �
   await page.getByRole('button', { name: '3 · Sign' }).click()
   await expect(result.getByText('Sign', { exact: true })).toBeVisible({ timeout: 15000 })
 
+  // The KMIP Wire response lives in the Inspector's "KMIP Wire" tab (Expert).
+  await page.getByRole('button', { name: 'KMIP Wire' }).click()
   // Real TTLV came back on the wire (non-zero byte count in the wire panel).
   await expect(page.getByText(/\d+ bytes on the wire/i)).toBeVisible()
   // The raw bytes are actually shown (not just claimed) — the literal hex view.
@@ -97,10 +104,10 @@ test('switching policy resolves a decision on the agility plane', async ({ page 
     timeout: 30000,
   })
 
-  // Plane 1 lists the policy presets; loading one marks it active.
-  const plane1 = page.getByRole('heading', { name: /Plane 1 · Crypto Agility/i }).locator('..')
-  const pqcPolicy = plane1.getByRole('button', { name: /PQC/i }).first()
-  await pqcPolicy.click()
-  await expect(plane1.getByText('active', { exact: true })).toBeVisible({ timeout: 15000 })
-  await expect(plane1.getByText(/Active policy:\s*pqc/i)).toBeVisible()
+  // The Active-Policy strip lists the presets as chips; clicking one loads it and
+  // marks the chip active.
+  await expect(page.getByRole('heading', { name: /Plane 1 · Active Policy/i })).toBeVisible()
+  const pqcChip = page.getByRole('button', { name: /PQC \(the "after"\)/i })
+  await pqcChip.click()
+  await expect(pqcChip.getByText('active', { exact: true })).toBeVisible({ timeout: 15000 })
 })

@@ -14,20 +14,16 @@ import { useCallback, useEffect, useState } from 'react'
 import {
   Cpu,
   KeyRound,
-  ShieldCheck,
   ScrollText,
-  Boxes,
   Play,
   Loader2,
   AlertTriangle,
   CheckCircle2,
   XCircle,
-  Database,
-  Server,
-  Info,
-  X,
+  RotateCcw,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   getKmipEngine,
   decisionOf,
@@ -38,14 +34,25 @@ import {
   type AuditEvent,
   type PolicyStatus,
 } from '@/wasm/kmip/kmipEngine'
-import { ALGORITHMS, POLICY_PRESETS, type PolicyPreset } from '@/wasm/kmip/kmipMeta'
-import { WireTreeView } from './WireTreeView'
-import { PolicyRulesView } from './PolicyRulesView'
-import { PolicyTester } from './PolicyTester'
+import { ALGORITHMS, type PolicyPreset } from '@/wasm/kmip/kmipMeta'
+import { PolicyControlStrip } from './PolicyControlStrip'
 import { AgilityScenario } from './AgilityScenario'
-import { AuditTrailPanel } from './AuditTrailPanel'
+import { Inspector } from './Inspector'
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '')
+
+/** Progressive-disclosure mode. Guided = newcomer (hides the wire, raw bytes,
+ * secondary KMIP ops, PKCS#11 mechanism strings, and keystore UIDs; shows a
+ * plain-English "what this means" callout). Expert = full fidelity. */
+type ViewMode = 'guided' | 'expert'
+
+const readMode = (): ViewMode => {
+  try {
+    return localStorage.getItem('cacp-mode') === 'expert' ? 'expert' : 'guided'
+  } catch {
+    return 'guided'
+  }
+}
 
 /** A synthetic failed [`OpResult`] for surfacing a thrown engine error (a wasm
  * panic comes back as a JS Error; a malformed return throws in `JSON.parse`).
@@ -97,6 +104,33 @@ function narrate(r: OpResult): string {
   }
 }
 
+/** Guided-mode "what this means" — one extra sentence of context tying the raw
+ * result back to the crypto-agility story. Returns null when there's nothing
+ * useful to add (so the callout doesn't render an empty box). */
+function whatThisMeans(r: OpResult): string | null {
+  const d = decisionOf(r)
+  if (d.kind === 'Rekey')
+    return `The policy didn't just allow this — it migrated the key to ${d.algorithm ?? 'a quantum-safe algorithm'}. The old key was retired automatically; your application code never changed.`
+  if (d.kind === 'Deny')
+    return 'The active policy forbids this algorithm, so the request was refused before any key was used. Switch to a policy that permits it, or pick a compliant algorithm.'
+  if (d.kind === 'Allow' && d.algorithm)
+    return `You asked for an operation and let the policy choose the algorithm — it resolved to ${d.algorithm}. Flip the policy above and the same request resolves differently.`
+  if (!r.ok) return null
+  switch (r.operation) {
+    case 'CreateKeyPair':
+    case 'Create':
+      return 'Nothing is usable yet — a fresh key starts inactive. Activate it next, then sign or encapsulate.'
+    case 'Activate':
+      return 'The key is now live and the policy will govern every operation you run against it.'
+    case 'Sign':
+      return 'This signature was produced by the HSM engine itself — the same Rust code the appliance ships, running here in your tab.'
+    case 'SignatureVerify':
+      return 'Verification re-runs the math against the public key; a valid result proves the signature and message match.'
+    default:
+      return null
+  }
+}
+
 export function KmipPlaygroundView() {
   const [engine, setEngine] = useState<KmipEngine | null>(null)
   const [bootError, setBootError] = useState<string | null>(null)
@@ -109,14 +143,12 @@ export function KmipPlaygroundView() {
   const [result, setResult] = useState<OpResult | null>(null)
   const [lastSpec, setLastSpec] = useState<OpSpec | null>(null)
 
-  const [showIntro, setShowIntro] = useState(
-    () =>
-      typeof localStorage === 'undefined' || localStorage.getItem('kmip-intro-dismissed') !== '1'
-  )
-  const dismissIntro = () => {
-    setShowIntro(false)
+  const [mode, setMode] = useState<ViewMode>(readMode)
+  const expert = mode === 'expert'
+  const chooseMode = (m: ViewMode) => {
+    setMode(m)
     try {
-      localStorage.setItem('kmip-intro-dismissed', '1')
+      localStorage.setItem('cacp-mode', m)
     } catch {
       /* ignore */
     }
@@ -215,6 +247,24 @@ export function KmipPlaygroundView() {
     if (priv) await run({ op: 'Revoke', uid: priv })
   }
 
+  // Reset the workbench scratch state — the audit/activity trail, the last result,
+  // and the working-key references (so the numbered lifecycle buttons disable
+  // again for a fresh run). Deliberately does NOT touch the active policy or the
+  // Guided/Expert mode (those are user context, not per-run scratch). The engine
+  // exposes no "drop all objects" call, so previously-created keys stay in the
+  // keystore — clearing the refs just detaches this UI flow from them.
+  const onReset = () => {
+    if (!engine) return
+    engine.clearAudit()
+    setAudit([])
+    setResult(null)
+    setLastSpec(null)
+    setPriv(null)
+    setPub(null)
+    setSigHex(null)
+    setCtHex(null)
+  }
+
   const onLoadPolicy = async (preset: PolicyPreset) => {
     if (!engine) return
     setBusy(true)
@@ -255,69 +305,58 @@ export function KmipPlaygroundView() {
   return (
     <div className="h-full overflow-auto animate-fade-in p-1">
       {/* Header */}
-      <div className="mb-4">
-        <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-          <Cpu size={20} className="text-primary" /> Crypto-Agility Control Plane{' '}
-          <span className="text-muted-foreground font-normal text-base">(CACP)</span>
-        </h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          A real KMIP 3.0 control plane + PKCS#11 HSM, compiled to WebAssembly and running{' '}
-          <span className="font-medium text-foreground">entirely in this tab</span> — no server, no
-          Docker. Every operation is a genuine KMIP request answered by the same Rust engine the
-          appliance ships.
-        </p>
-      </div>
-
-      {/* ── How this works (dismissible) ─────────────────────────────────── */}
-      {showIntro && (
-        <div className="mb-4 rounded-xl border border-border bg-muted/30 p-4 relative">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={dismissIntro}
-            aria-label="Dismiss"
-            className="absolute top-2 right-2 h-6 w-6 p-0 text-muted-foreground"
-          >
-            <X size={14} />
-          </Button>
-          <p className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-            <Info size={15} className="text-primary" /> How this works
-          </p>
-          <p className="text-xs text-muted-foreground mt-1.5">
-            <strong className="text-foreground">KMIP</strong> is the industry standard for talking
-            to a key manager; <strong className="text-foreground">PKCS#11</strong> is how a key
-            manager talks to an HSM. This page runs both — a real KMIP 3.0 server and a PKCS#11 HSM
-            — compiled to WebAssembly, entirely in your browser. Work flows through three planes:
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-2.5">
-            <div className="rounded-lg border border-status-warning/30 bg-status-warning/[0.04] p-2">
-              <p className="text-xs font-semibold text-status-warning">① Crypto Agility</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
-                A policy decides what crypto is allowed and which algorithm a request gets — the
-                control plane KMIP alone lacks.
-              </p>
-            </div>
-            <div className="rounded-lg border border-primary/30 bg-primary/[0.04] p-2">
-              <p className="text-xs font-semibold text-primary">② KMIP Key Management</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
-                Create, activate, sign, encrypt — each a real KMIP request you can see on the wire.
-              </p>
-            </div>
-            <div className="rounded-lg border border-status-success/30 bg-status-success/[0.04] p-2">
-              <p className="text-xs font-semibold text-status-success">③ PKCS#11 Execution</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
-                The HSM engine does the real ML-DSA / ML-KEM / RSA / AES crypto. Watch the actual{' '}
-                <code>C_*</code> calls in the audit.
-              </p>
-            </div>
-          </div>
-          <p className="text-[11px] text-muted-foreground mt-2.5">
-            New here? Hit <strong className="text-foreground">"Run the agility scenario"</strong>{' '}
-            below to watch one unchanged operation migrate from classical to post-quantum, driven
-            only by policy.
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+            <Cpu size={20} className="text-primary" /> Crypto-Agility Control Plane{' '}
+            <span className="text-muted-foreground font-normal text-base">(CACP)</span>
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            A real KMIP 3.0 control plane + PKCS#11 HSM, compiled to WebAssembly and running{' '}
+            <span className="font-medium text-foreground">entirely in this tab</span> — no server,
+            no Docker. Every operation is a genuine KMIP request answered by the same Rust engine
+            the appliance ships.
           </p>
         </div>
-      )}
+        {/* VIEW · Guided / Expert progressive-disclosure toggle */}
+        <div className="shrink-0 flex items-center gap-2">
+          <span className="hidden sm:inline text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">
+            View
+          </span>
+          <div
+            role="group"
+            aria-label="Detail level"
+            className="flex items-center gap-0.5 rounded-lg border border-border bg-muted/40 p-0.5"
+          >
+            {(['guided', 'expert'] as const).map((m) => (
+              <Button
+                key={m}
+                size="sm"
+                variant="ghost"
+                aria-pressed={mode === m}
+                onClick={() => chooseMode(m)}
+                className={`h-7 px-3 text-xs capitalize rounded-md ${
+                  mode === m
+                    ? 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
+                    : 'text-muted-foreground'
+                }`}
+              >
+                {m}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Plane 1 · the persistent policy "brain" ─────────────────────── */}
+      <PolicyControlStrip
+        engine={engine}
+        policy={policy}
+        policyYaml={policyYaml}
+        busy={busy}
+        expert={expert}
+        onLoadPolicy={onLoadPolicy}
+      />
 
       {/* ── The headline: watch a policy migrate an unchanged operation ──── */}
       <div className="mb-4">
@@ -329,55 +368,26 @@ export function KmipPlaygroundView() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* ── Plane 1 — Agility ─────────────────────────────────────────── */}
-        <section className="rounded-xl border border-border bg-card p-4">
-          <h3 className="font-semibold flex items-center gap-2 text-status-warning">
-            <ShieldCheck size={16} /> Plane 1 · Crypto Agility
-          </h3>
-          <p className="text-xs text-muted-foreground mt-1 mb-3">
-            The control plane KMIP alone can’t give you. Switch policy and the <em>same</em>{' '}
-            operations are allowed, denied, or auto-rekeyed.
-          </p>
-          <div className="space-y-2">
-            {POLICY_PRESETS.map((p) => {
-              const active =
-                policy.name === p.name ||
-                (p.name === 'training-permissive' && policy.name === 'built-in-permissive')
-              return (
-                <Button
-                  key={p.file}
-                  variant="ghost"
-                  disabled={busy}
-                  onClick={() => onLoadPolicy(p)}
-                  className={`w-full h-auto flex-col items-start gap-0 whitespace-normal text-left rounded-lg border p-2.5 transition-colors ${
-                    active
-                      ? 'border-status-warning/60 bg-status-warning/10'
-                      : 'border-border hover:bg-accent/50'
-                  }`}
-                >
-                  <span className="w-full flex items-center justify-between">
-                    <span className="text-sm font-medium text-foreground">{p.label}</span>
-                    {active && (
-                      <span className="text-[10px] uppercase tracking-wide text-status-warning font-semibold">
-                        active
-                      </span>
-                    )}
-                  </span>
-                  <span className="text-xs text-muted-foreground mt-0.5 block">{p.blurb}</span>
-                </Button>
-              )
-            })}
-          </div>
-          <p className="text-[11px] text-muted-foreground mt-3">
-            Active policy: <span className="font-mono text-foreground">{policy.name ?? '—'}</span>
-            {typeof policy.rules === 'number' ? ` · ${policy.rules} rule(s)` : ''}
-          </p>
-          <PolicyRulesView yaml={policyYaml} />
-          <PolicyTester engine={engine} />
-        </section>
+      {/* ── Manual workbench: operate → result → inspect ─────────────────── */}
+      <div className="mt-6 mb-3 flex items-center gap-2 flex-wrap">
+        <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+          Manual Workbench
+        </span>
+        <span className="text-xs text-muted-foreground">
+          — drive the lifecycle yourself; the active policy still governs every call.
+        </span>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onReset}
+          className="ml-auto h-7 gap-1.5 px-2.5 text-[11px] text-muted-foreground hover:text-foreground"
+        >
+          <RotateCcw size={13} /> Reset
+        </Button>
+      </div>
 
-        {/* ── Plane 2 — KMIP lifecycle ──────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-4 items-start">
+        {/* ── Left · Operate (Plane 2 — KMIP lifecycle) ─────────────────── */}
         <section className="rounded-xl border border-border bg-card p-4">
           <h3 className="font-semibold flex items-center gap-2 text-primary">
             <KeyRound size={16} /> Plane 2 · KMIP Lifecycle
@@ -386,22 +396,19 @@ export function KmipPlaygroundView() {
             Each button sends a real KMIP 3.0 request.
           </p>
 
-          <label htmlFor="kmip-algo" className="text-xs font-medium text-muted-foreground">
-            Algorithm
-          </label>
-          <select
-            id="kmip-algo"
-            value={algo}
-            onChange={(e) => setAlgo(e.target.value)}
-            className="w-full mt-1 mb-3 rounded-md border border-border bg-background px-2 py-1.5 text-sm"
-          >
-            {ALGORITHMS.map((a) => (
-              <option key={a.value} value={a.value}>
-                {a.label}
-                {a.pqc ? ' · PQC' : ''}
-              </option>
-            ))}
-          </select>
+          <p className="text-xs font-medium text-muted-foreground mb-1">Algorithm</p>
+          <div className="mb-3" data-testid="kmip-algo">
+            <FilterDropdown
+              items={ALGORITHMS.map((a) => ({
+                id: a.value,
+                label: a.pqc ? `${a.label} · PQC` : a.label,
+              }))}
+              selectedId={algo}
+              onSelect={setAlgo}
+              label="Algorithm"
+              className="w-full"
+            />
+          </div>
 
           <div className="grid grid-cols-2 gap-2">
             <Button disabled={busy} onClick={onCreate} className="col-span-2 gap-1.5">
@@ -445,207 +452,127 @@ export function KmipPlaygroundView() {
             />
           )}
 
-          <div className="flex flex-wrap gap-2 mt-3">
-            <Button
-              size="sm"
-              variant="ghost"
-              disabled={busy}
-              onClick={() => run({ op: 'Query' })}
-              className="text-xs"
-            >
-              Query
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              disabled={busy}
-              onClick={() => run({ op: 'Locate' })}
-              className="text-xs"
-            >
-              Locate
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              disabled={busy || !priv}
-              onClick={onGet}
-              className="text-xs"
-            >
-              Get
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              disabled={busy || !priv}
-              onClick={onRevoke}
-              className="text-xs"
-            >
-              Revoke
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              disabled={busy || !priv}
-              onClick={() => priv && run({ op: 'Destroy', uid: priv })}
-              className="text-xs"
-            >
-              Destroy
-            </Button>
-          </div>
-        </section>
-
-        {/* ── Result / plain-English ────────────────────────────────────── */}
-        <section className="rounded-xl border border-border bg-card p-4">
-          <h3 className="font-semibold flex items-center gap-2 text-foreground">
-            <ScrollText size={16} /> Result
-          </h3>
-          {!result ? (
-            <p className="text-xs text-muted-foreground mt-2 italic">
-              Run a step to see what happened.
-            </p>
-          ) : (
-            <div className="mt-2">
-              <div className="flex items-center gap-2 flex-wrap">
-                {result.ok ? (
-                  <CheckCircle2 size={16} className="text-status-success" />
-                ) : (
-                  <XCircle size={16} className="text-destructive" />
-                )}
-                <span className="text-sm font-medium">{result.operation}</span>
-                <span
-                  className={`text-xs ${result.ok ? 'text-status-success' : 'text-destructive'}`}
-                >
-                  {result.status}
-                </span>
-                {(() => {
-                  const d = decisionOf(result)
-                  if (d.kind === 'Unknown') return null
-                  const tone =
-                    d.kind === 'Allow'
-                      ? 'text-status-success'
-                      : d.kind === 'Rekey'
-                        ? 'text-status-warning'
-                        : 'text-destructive'
-                  return (
-                    <span className={`text-[10px] px-1.5 rounded bg-muted font-semibold ${tone}`}>
-                      policy: {d.kind}
-                      {d.algorithm ? ` → ${d.algorithm}` : ''}
-                    </span>
-                  )
-                })()}
-              </div>
-              <p className="text-sm text-foreground mt-1.5">{narrate(result)}</p>
-              {busy && <Loader2 size={14} className="animate-spin text-muted-foreground mt-2" />}
+          {expert && (
+            <div className="flex flex-wrap gap-2 mt-3">
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={busy}
+                onClick={() => run({ op: 'Query' })}
+                className="text-xs"
+              >
+                Query
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={busy}
+                onClick={() => run({ op: 'Locate' })}
+                className="text-xs"
+              >
+                Locate
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={busy || !priv}
+                onClick={onGet}
+                className="text-xs"
+              >
+                Get
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={busy || !priv}
+                onClick={onRevoke}
+                className="text-xs"
+              >
+                Revoke
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={busy || !priv}
+                onClick={() => priv && run({ op: 'Destroy', uid: priv })}
+                className="text-xs"
+              >
+                Destroy
+              </Button>
             </div>
           )}
         </section>
-      </div>
 
-      {/* ── Wire view (real TTLV) ───────────────────────────────────────── */}
-      <section className="rounded-xl border border-border bg-card p-4 mt-4">
-        <h3 className="font-semibold flex items-center gap-2 text-status-info mb-2">
-          <Server size={16} /> KMIP Wire (real TTLV response)
-          {result && result.responseWireLen > 0 && (
-            <span className="text-xs text-muted-foreground font-normal">
-              {result.responseWireLen} bytes on the wire
-            </span>
-          )}
-        </h3>
-        {lastSpec && (
-          <div className="mb-2 rounded-md border border-border bg-muted/20 p-2 text-xs">
-            <span className="text-muted-foreground">request → </span>
-            <span className="font-mono text-foreground">{lastSpec.op}</span>
-            {Object.entries(lastSpec)
-              .filter(([k]) => k !== 'op')
-              .map(([k, v]) => (
-                <span key={k} className="font-mono text-muted-foreground ml-2">
-                  {k}=
-                  <span className="text-foreground">
-                    {String(v).length > 24 ? `${String(v).slice(0, 24)}…` : String(v)}
+        {/* ── Right · Result + Inspector ────────────────────────────────── */}
+        <div className="flex flex-col gap-4">
+          <section className="rounded-xl border border-border bg-card p-4">
+            <h3 className="font-semibold flex items-center gap-2 text-foreground">
+              <ScrollText size={16} /> Result
+            </h3>
+            {!result ? (
+              <p className="text-xs text-muted-foreground mt-2 italic">
+                Run a step to see what happened.
+              </p>
+            ) : (
+              <div className="mt-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  {result.ok ? (
+                    <CheckCircle2 size={16} className="text-status-success" />
+                  ) : (
+                    <XCircle size={16} className="text-destructive" />
+                  )}
+                  <span className="text-sm font-medium">{result.operation}</span>
+                  <span
+                    className={`text-xs ${result.ok ? 'text-status-success' : 'text-destructive'}`}
+                  >
+                    {result.status}
                   </span>
-                </span>
-              ))}
-          </div>
-        )}
-        <WireTreeView root={result?.responseTree ?? null} />
-        {result?.responseWireHex && (
-          <details className="mt-2">
-            <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
-              Raw bytes (hex) — the {result.responseWireLen} bytes exactly as they came off the wire
-            </summary>
-            <pre className="mt-1 max-h-40 overflow-auto rounded-md border border-border bg-muted/20 p-2 text-[10px] font-mono break-all whitespace-pre-wrap text-foreground">
-              {result.responseWireHex}
-            </pre>
-          </details>
-        )}
-      </section>
+                  {(() => {
+                    const d = decisionOf(result)
+                    if (d.kind === 'Unknown') return null
+                    const tone =
+                      d.kind === 'Allow'
+                        ? 'text-status-success'
+                        : d.kind === 'Rekey'
+                          ? 'text-status-warning'
+                          : 'text-destructive'
+                    return (
+                      <span className={`text-[10px] px-1.5 rounded bg-muted font-semibold ${tone}`}>
+                        policy: {d.kind}
+                        {d.algorithm ? ` → ${d.algorithm}` : ''}
+                      </span>
+                    )
+                  })()}
+                </div>
+                <p className="text-sm text-foreground mt-1.5">{narrate(result)}</p>
+                {!expert &&
+                  (() => {
+                    const wtm = whatThisMeans(result)
+                    return wtm ? (
+                      <p className="mt-2 border-l-2 border-primary/60 bg-muted/30 pl-2.5 py-1.5 text-xs text-muted-foreground">
+                        <span className="font-semibold text-foreground">What this means · </span>
+                        {wtm}
+                      </p>
+                    ) : null
+                  })()}
+                {busy && <Loader2 size={14} className="animate-spin text-muted-foreground mt-2" />}
+              </div>
+            )}
+          </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-        {/* ── Plane 3 / keystore ──────────────────────────────────────── */}
-        <section className="rounded-xl border border-border bg-card p-4">
-          <h3 className="font-semibold flex items-center gap-2 text-status-success mb-2">
-            <Boxes size={16} /> Keystore{' '}
-            <span className="text-xs text-muted-foreground font-normal">
-              {objects.length} object(s)
-            </span>
-          </h3>
-          {objects.length === 0 ? (
-            <p className="text-xs text-muted-foreground italic">
-              No objects yet — create a key pair.
-            </p>
-          ) : (
-            <div className="overflow-auto max-h-72">
-              <table className="w-full text-xs">
-                <thead className="text-muted-foreground border-b border-border">
-                  <tr className="text-left">
-                    <th className="py-1 pr-2">Algorithm</th>
-                    <th className="py-1 pr-2">Type</th>
-                    <th className="py-1 pr-2">State</th>
-                    <th className="py-1">UID</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {objects.map((o) => (
-                    <tr key={o.uid} className="border-b border-border/40">
-                      <td className="py-1 pr-2 font-medium text-foreground">
-                        {o.algorithm}
-                        {o.quantumSafe && (
-                          <span className="ml-1 text-[9px] px-1 rounded bg-status-success/15 text-status-success align-middle">
-                            PQC
-                          </span>
-                        )}
-                      </td>
-                      <td className="py-1 pr-2 text-muted-foreground">{o.objectType}</td>
-                      <td className="py-1 pr-2 text-muted-foreground">{o.state}</td>
-                      <td className="py-1 font-mono text-[10px] text-muted-foreground truncate max-w-[140px]">
-                        {o.uid}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-
-        {/* ── Cross-plane audit trail ─────────────────────────────────── */}
-        <section className="rounded-xl border border-border bg-card p-4">
-          <h3 className="font-semibold flex items-center gap-2 text-foreground mb-2">
-            <Database size={16} /> Cross-plane Audit
-            <Button
-              variant="ghost"
-              size="sm"
-              className="ml-auto h-auto px-2 py-0.5 text-[11px] text-muted-foreground hover:text-foreground"
-              onClick={() => {
-                engine.clearAudit()
-                setAudit([])
-              }}
-            >
-              clear
-            </Button>
-          </h3>
-          <AuditTrailPanel events={audit} />
-        </section>
+          {/* ── Inspector · Keystore / KMIP Wire (Expert) / Audit ─────────── */}
+          <Inspector
+            objects={objects}
+            audit={audit}
+            result={result}
+            lastSpec={lastSpec}
+            expert={expert}
+            onClearAudit={() => {
+              engine.clearAudit()
+              setAudit([])
+            }}
+          />
+        </div>
       </div>
 
       <p className="text-[11px] text-muted-foreground mt-4">
