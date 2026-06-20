@@ -9,13 +9,12 @@ import { AlgorithmFilters } from './AlgorithmFilters'
 import { AlgorithmCompareBar } from './AlgorithmCompareBar'
 import { AlgorithmComparisonPanel } from './AlgorithmComparisonPanel'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { ArrowRight, BarChart3, Shield, Lightbulb, Network, Info } from 'lucide-react'
+import { ArrowRight, BarChart3, Shield, Network, Info } from 'lucide-react'
 import { Skeleton } from '../ui/skeleton'
 import { PageHeader } from '../common/PageHeader'
 import { AlgorithmInfoModal } from './AlgorithmInfoModal'
 import { AlgorithmEntryStrip } from './AlgorithmEntryStrip'
 import { Cnsa20Panel } from './Cnsa20Panel'
-import { ShieldCheck } from 'lucide-react'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { Button } from '../ui/button'
 import { getAlgorithmDefaults } from '../../data/personaConfig'
@@ -96,6 +95,17 @@ export function AlgorithmsView() {
   } = useAlgorithmExplorer(personaDefaults)
 
   const [infoOpen, setInfoOpen] = useState(false)
+  const [hintDismissed, setHintDismissed] = useState(false)
+
+  // Clear every active filter + search in one action (deck "Clear all").
+  const handleClearAllFilters = () => {
+    handleCryptoFamilyChange('All')
+    handleFunctionChange('All')
+    handleSecurityLevelChange('All')
+    handleRegionChange('All')
+    handleStatusChange('All')
+    handleSearchChange('')
+  }
 
   const isCuriousPreview =
     selectedPersona === 'curious' && viewAccess === 'preview' && !searchParams.get('highlight')
@@ -172,35 +182,6 @@ export function AlgorithmsView() {
         onExport={handleExportCsv}
       />
 
-      {/* eslint-disable-next-line security/detect-object-injection */}
-      {selectedPersona && ALGO_PERSONA_HINTS[selectedPersona] && (
-        <div className="mt-3 mb-2 flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/5 border border-primary/15 text-xs text-muted-foreground">
-          <Lightbulb size={13} className="shrink-0 text-primary mt-0.5" aria-hidden="true" />
-          {/* eslint-disable-next-line security/detect-object-injection */}
-          <span className="flex-1">{ALGO_PERSONA_HINTS[selectedPersona]}</span>
-          {selectedPersona === 'executive' && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-auto px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/10 border border-primary/20 rounded shrink-0"
-              onClick={() =>
-                setSearchParams(
-                  (prev) => {
-                    const next = new URLSearchParams(prev)
-                    next.set('highlight', 'ML-KEM-768,ML-DSA-65,SLH-DSA-SHA2-128s,FN-DSA-512')
-                    next.set('tab', 'detailed')
-                    return next
-                  },
-                  { replace: true }
-                )
-              }
-            >
-              View Top 4 →
-            </Button>
-          )}
-        </div>
-      )}
-
       <AlgorithmEntryStrip
         persona={selectedPersona}
         hasActiveParams={hasActiveParams}
@@ -263,7 +244,7 @@ export function AlgorithmsView() {
       {/* Filters + View */}
       {!isLoading && !isCuriousPreview && (
         <>
-          {/* Shared filters */}
+          {/* Control deck — filters + QuickView + CNSA lens + persona hint in one panel */}
           <AlgorithmFilters
             cryptoFamily={filterCryptoFamily}
             onCryptoFamilyChange={handleCryptoFamilyChange}
@@ -282,28 +263,39 @@ export function AlgorithmsView() {
             availableLevels={availableLevels}
             persona={selectedPersona}
             onQuickView={handleQuickView}
+            cnsaLens={cnsaLens}
+            onToggleCnsaLens={handleToggleCnsaLens}
+            onClearAll={handleClearAllFilters}
+            personaHint={
+              /* eslint-disable-next-line security/detect-object-injection */
+              selectedPersona && !hintDismissed ? ALGO_PERSONA_HINTS[selectedPersona] : undefined
+            }
+            onDismissHint={() => setHintDismissed(true)}
+            hintAction={
+              selectedPersona === 'executive' ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/10 border border-primary/20 rounded shrink-0"
+                  onClick={() =>
+                    setSearchParams(
+                      (prev) => {
+                        const next = new URLSearchParams(prev)
+                        next.set('highlight', 'ML-KEM-768,ML-DSA-65,SLH-DSA-SHA2-128s,FN-DSA-512')
+                        next.set('tab', 'detailed')
+                        return next
+                      },
+                      { replace: true }
+                    )
+                  }
+                >
+                  View Top 4 →
+                </Button>
+              ) : undefined
+            }
           />
 
-          {/* CNSA 2.0 lens toggle (gap-closer #1). Additive: off by default. */}
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <Button
-              variant={cnsaLens ? 'gradient' : 'outline'}
-              size="sm"
-              onClick={handleToggleCnsaLens}
-              aria-pressed={cnsaLens}
-              className="gap-1.5"
-              title="Filter to the NSA CNSA 2.0 suite — ML-KEM-1024 / ML-DSA-87 required; SLH-DSA excluded"
-            >
-              <ShieldCheck size={14} aria-hidden="true" />
-              CNSA 2.0 lens
-            </Button>
-            {cnsaLens && (
-              <span className="text-xs text-muted-foreground">
-                Showing only the CNSA 2.0 suite for U.S. National Security Systems.
-              </span>
-            )}
-          </div>
-
+          {/* CNSA 2.0 suite detail — inline below the deck only when the lens is on */}
           {cnsaLens && <Cnsa20Panel />}
 
           {/* Cross-link to PQC Candidates module when filtering by Candidate status */}

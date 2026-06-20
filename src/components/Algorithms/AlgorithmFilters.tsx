@@ -10,10 +10,13 @@ import {
   Star,
   BadgeCheck,
   ListFilter,
+  ShieldCheck,
+  Lightbulb,
+  X,
 } from 'lucide-react'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { Input } from '../ui/input'
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import type { PersonaId } from '../../data/learningPersonas'
@@ -87,6 +90,16 @@ interface AlgorithmFiltersProps {
   persona?: PersonaId | null
   /** Called when a QuickView preset is selected. Implementation lives in AlgorithmsView. */
   onQuickView?: (preset: QuickViewPreset) => void
+  /** CNSA 2.0 lens state — rendered as a Row-1 toggle inside the deck. */
+  cnsaLens?: boolean
+  onToggleCnsaLens?: () => void
+  /** One-line persona hint shown as the deck's bottom row; dismissible. */
+  personaHint?: string
+  /** Optional action rendered at the end of the persona-hint line (e.g. executive "View Top 4"). */
+  hintAction?: ReactNode
+  onDismissHint?: () => void
+  /** Clears every active filter + search in one click. */
+  onClearAll?: () => void
 }
 
 /**
@@ -180,15 +193,20 @@ export function AlgorithmFilters({
   availableLevels,
   persona = null,
   onQuickView,
+  cnsaLens = false,
+  onToggleCnsaLens,
+  personaHint,
+  hintAction,
+  onDismissHint,
+  onClearAll,
 }: AlgorithmFiltersProps) {
   const levelItems = availableLevels
     ? LEVEL_ITEMS.filter((item) => item.id === 'All' || availableLevels.includes(parseInt(item.id)))
     : LEVEL_ITEMS
 
-  const [isMobileOpen, setIsMobileOpen] = useState(false)
-  // Binary personas (executive / ops / curious) hide the five-dropdown bar by
-  // default — they get the QuickView segmented control as the primary entry
-  // point. Ternary / researcher / no-persona always see the full bar inline.
+  // Binary personas (executive / ops / curious) collapse the five-dropdown bar
+  // by default — they lead with the QuickView segmented control + search.
+  // Ternary / researcher / no-persona open the dropdown row inline.
   const isBinaryPersona = granularityForPersona(persona) === 'binary'
   const [advancedOpen, setAdvancedOpen] = useState(!isBinaryPersona)
   const hasActiveFilters =
@@ -200,176 +218,170 @@ export function AlgorithmFilters({
     searchQuery !== ''
 
   return (
-    <div className="glass-panel p-3 md:p-4">
-      {/* Mobile Toggle Button */}
-      <div className="md:hidden flex items-center justify-between">
-        <Button
-          variant="ghost"
-          onClick={() => setIsMobileOpen(!isMobileOpen)}
-          className="flex items-center gap-2 text-sm font-medium text-foreground p-2 rounded-md bg-muted/50 w-full justify-between"
-        >
-          <div className="flex items-center gap-2">
-            <SlidersHorizontal size={16} className="text-muted-foreground" />
-            <span>Filter Algorithms</span>
-            {hasActiveFilters && (
-              <span className="w-2 h-2 rounded-full bg-primary inline-block ml-1" />
-            )}
-          </div>
-          <ChevronDown
-            size={16}
-            className={clsx(
-              'text-muted-foreground transition-transform',
-              isMobileOpen && 'rotate-180'
-            )}
-          />
-        </Button>
-      </div>
-
-      {/* QuickView segmented control + "More filters" disclosure for binary personas */}
-      {onQuickView && (
-        <div
-          className={clsx(
-            'flex flex-wrap items-center gap-2 mt-3 md:mt-0',
-            isMobileOpen ? 'flex' : 'hidden md:flex'
-          )}
-        >
-          <QuickViewSegmented
-            status={status}
-            cryptoFamily={cryptoFamily}
-            functionGroup={functionGroup}
-            onQuickView={onQuickView}
-          />
-          {isBinaryPersona && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setAdvancedOpen((v) => !v)}
-              className="h-7 gap-1 px-2 text-xs text-muted-foreground"
-              aria-expanded={advancedOpen}
-            >
-              <SlidersHorizontal size={12} />
-              {advancedOpen ? 'Hide filters' : 'More filters'}
-              <ChevronDown
-                size={12}
-                className={clsx('transition-transform', advancedOpen && 'rotate-180')}
-              />
-            </Button>
-          )}
-          <span
-            className="text-xs text-muted-foreground md:ml-auto whitespace-nowrap"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            Showing {filteredCount} of {totalCount}
-          </span>
-        </div>
-      )}
-
-      {/* Filters Container (Hidden on mobile unless open) */}
-      <div
-        className={clsx(
-          'flex-col md:flex-row md:items-center gap-3 mt-3 md:mt-0',
-          isMobileOpen ? 'flex' : 'hidden md:flex',
-          !advancedOpen && 'md:!hidden'
-        )}
-      >
-        <div className="hidden md:flex items-center gap-2">
-          <Filter size={18} className="text-muted-foreground" />
-          <span className="text-sm font-medium text-muted-foreground">Filters:</span>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <FilterDropdown
-            items={CRYPTO_FAMILY_ITEMS}
-            selectedId={cryptoFamily}
-            onSelect={(id) => {
-              onCryptoFamilyChange(id)
-              setIsMobileOpen(false)
-            }}
-            label="Family"
-            defaultLabel="All Families"
-            noContainer
-          />
-
-          <FilterDropdown
-            items={FUNCTION_ITEMS}
-            selectedId={functionGroup}
-            onSelect={(id) => {
-              onFunctionGroupChange(id)
-              setIsMobileOpen(false)
-            }}
-            label="Function"
-            defaultLabel="All Functions"
-            noContainer
-          />
-
-          <FilterDropdown
-            items={levelItems}
-            selectedId={securityLevel}
-            onSelect={(id) => {
-              onSecurityLevelChange(id)
-              setIsMobileOpen(false)
-            }}
-            label="Security"
-            defaultLabel="All Levels"
-            defaultIcon={<Shield size={16} className="text-primary" />}
-            noContainer
-          />
-
-          <FilterDropdown
-            items={REGION_ITEMS}
-            selectedId={region}
-            onSelect={(id) => {
-              onRegionChange(id)
-              setIsMobileOpen(false)
-            }}
-            label="Region"
-            defaultLabel="All Regions"
-            defaultIcon={<Globe size={16} className="text-primary" />}
-            noContainer
-          />
-
-          <FilterDropdown
-            items={STATUS_ITEMS}
-            selectedId={status}
-            onSelect={(id) => {
-              onStatusChange(id)
-              setIsMobileOpen(false)
-            }}
-            label="Status"
-            defaultLabel="All Statuses"
-            defaultIcon={<CheckCircle size={16} className="text-primary" />}
-            noContainer
-          />
-        </div>
-
-        <div className="relative flex-1 min-w-[180px] md:max-w-xs">
+    <div className="glass-panel p-3 md:p-4 space-y-3">
+      {/* Row 1 — primary controls, always visible */}
+      <div className="flex flex-wrap items-center gap-2">
+        {/* Search (primary) */}
+        <div className="relative flex-1 min-w-[200px] md:max-w-sm">
           <Search
             size={16}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
           />
           <Input
             type="text"
-            placeholder="Search algorithms..."
+            placeholder='Search — try "lattice KEM" or "replaces RSA"'
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-9 pr-3 py-2 text-sm"
+            aria-label="Search algorithms"
           />
-          <p className="text-[10px] text-muted-foreground mt-1 ml-1 hidden md:block">
-            Try "lattice KEM", "FIPS certified", or "replaces RSA"
-          </p>
         </div>
 
-        {!onQuickView && (
-          <div
-            className="text-sm text-muted-foreground md:ml-auto whitespace-nowrap"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            Showing {filteredCount} of {totalCount} algorithms
-          </div>
+        {onQuickView && (
+          <QuickViewSegmented
+            status={status}
+            cryptoFamily={cryptoFamily}
+            functionGroup={functionGroup}
+            onQuickView={onQuickView}
+          />
         )}
+
+        {/* CNSA 2.0 lens toggle — primary-tinted when active */}
+        {onToggleCnsaLens && (
+          <Button
+            variant={cnsaLens ? 'gradient' : 'outline'}
+            size="sm"
+            onClick={onToggleCnsaLens}
+            aria-pressed={cnsaLens}
+            className="h-7 gap-1.5 px-2 text-xs"
+            title="Filter to the NSA CNSA 2.0 suite — ML-KEM-1024 / ML-DSA-87 required; SLH-DSA excluded"
+          >
+            <ShieldCheck size={13} aria-hidden="true" />
+            CNSA 2.0
+          </Button>
+        )}
+
+        {/* Filters disclosure — toggles the dropdown row */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setAdvancedOpen((v) => !v)}
+          className="h-7 gap-1 px-2 text-xs text-muted-foreground"
+          aria-expanded={advancedOpen}
+        >
+          <SlidersHorizontal size={12} />
+          Filters
+          {hasActiveFilters && (
+            <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block" />
+          )}
+          <ChevronDown
+            size={12}
+            className={clsx('transition-transform', advancedOpen && 'rotate-180')}
+          />
+        </Button>
+
+        <span
+          className="text-xs text-muted-foreground ml-auto whitespace-nowrap"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          Showing {filteredCount} of {totalCount}
+        </span>
       </div>
+
+      {/* Row 2 — dropdown filters, collapsible */}
+      {advancedOpen && (
+        <div className="flex flex-col md:flex-row md:items-center gap-3">
+          <div className="hidden md:flex items-center gap-2 shrink-0">
+            <Filter size={18} className="text-muted-foreground" />
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Filters
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <FilterDropdown
+              items={CRYPTO_FAMILY_ITEMS}
+              selectedId={cryptoFamily}
+              onSelect={onCryptoFamilyChange}
+              label="Family"
+              defaultLabel="All Families"
+              noContainer
+            />
+
+            <FilterDropdown
+              items={FUNCTION_ITEMS}
+              selectedId={functionGroup}
+              onSelect={onFunctionGroupChange}
+              label="Function"
+              defaultLabel="All Functions"
+              noContainer
+            />
+
+            <FilterDropdown
+              items={levelItems}
+              selectedId={securityLevel}
+              onSelect={onSecurityLevelChange}
+              label="Security"
+              defaultLabel="All Levels"
+              defaultIcon={<Shield size={16} className="text-primary" />}
+              noContainer
+            />
+
+            <FilterDropdown
+              items={REGION_ITEMS}
+              selectedId={region}
+              onSelect={onRegionChange}
+              label="Region"
+              defaultLabel="All Regions"
+              defaultIcon={<Globe size={16} className="text-primary" />}
+              noContainer
+            />
+
+            <FilterDropdown
+              items={STATUS_ITEMS}
+              selectedId={status}
+              onSelect={onStatusChange}
+              label="Status"
+              defaultLabel="All Statuses"
+              defaultIcon={<CheckCircle size={16} className="text-primary" />}
+              noContainer
+            />
+
+            {onClearAll && hasActiveFilters && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onClearAll}
+                className="h-7 gap-1 px-2 text-xs text-muted-foreground"
+              >
+                <X size={12} />
+                Clear all
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Row 3 — single-line persona hint, dismissible */}
+      {personaHint && (
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/5 border border-primary/15 text-xs text-muted-foreground">
+          <Lightbulb size={13} className="shrink-0 text-primary" aria-hidden="true" />
+          <span className="flex-1">{personaHint}</span>
+          {hintAction}
+          {onDismissHint && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onDismissHint}
+              aria-label="Dismiss hint"
+              className="h-5 w-5 p-0 shrink-0 text-muted-foreground hover:text-foreground"
+            >
+              <X size={12} />
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   )
 }
