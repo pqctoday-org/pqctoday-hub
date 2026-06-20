@@ -382,7 +382,7 @@ const CLOUD_PROVIDER_PRODUCTS: Record<string, { kmsHsm: string[]; tls: string[] 
   },
   Azure: { kmsHsm: ['Azure Key Vault'], tls: [] },
   Oracle: { kmsHsm: ['Oracle Key Vault'], tls: [] },
-  IBM: { kmsHsm: ['IBM Cloud HSM (Utimaco)'], tls: [] },
+  IBM: { kmsHsm: ['IBM Hyper Protect Crypto Services'], tls: [] },
   Alibaba: { kmsHsm: [], tls: [] },
   'on-prem': { kmsHsm: [], tls: [] },
   'multi-cloud': { kmsHsm: [], tls: [] },
