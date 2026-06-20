@@ -61,7 +61,7 @@ describe('sandbox scenario data invariants', () => {
   })
 
   it('every scenario is wired into the workshop registry with an icon and launch tool', () => {
-    const sandboxTools = WORKSHOP_TOOLS.filter((t) => t.category === 'Sandbox')
+    const sandboxTools = WORKSHOP_TOOLS.filter((t) => t.sandbox)
     expect(sandboxTools.length).toBe(SANDBOX_SCENARIOS.length)
     for (const s of SANDBOX_SCENARIOS) {
       const tool = sandboxTools.find((t) => t.id === `${SANDBOX_TOOL_PREFIX}${s.id}`)
@@ -75,7 +75,7 @@ describe('sandbox scenario data invariants', () => {
   })
 
   it('the sandbox surfaces under every persona (no persona is fully excluded)', () => {
-    const sandboxTools = WORKSHOP_TOOLS.filter((t) => t.category === 'Sandbox')
+    const sandboxTools = WORKSHOP_TOOLS.filter((t) => t.sandbox)
     const personas = [
       'executive',
       'developer',

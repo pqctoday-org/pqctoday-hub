@@ -1,0 +1,24 @@
+# Deterministic signing policy — force ML-DSA / SLH-DSA signatures to the
+# deterministic variant (FIPS 204 §3.4: rnd ← 0^32; FIPS 205: addrnd ← PK.seed)
+# for reproducible, side-channel-conservative signatures.
+#
+# Demonstrates mechanism *forcing* (gaps plan P3): the
+# `mechanism_parameter_default` rule emits a CryptographicParameters override
+# that the dispatcher merges into the request — the application's Sign is
+# signed deterministically regardless of what it asked for, with no code change.
+
+schema_version: 1
+
+metadata:
+  name: deterministic-signing
+  description: |
+    Force deterministic ML-DSA / SLH-DSA signing. The WD19 `Deterministic`
+    flag is set on every Sign by policy, overriding the client's choice.
+  authority: pqctoday-hsm/training
+  effective: "always"
+
+rules:
+  - type: mechanism_parameter_default
+    ops: [Sign]
+    deterministic: true
+    reason: "Deterministic signatures mandated by policy"

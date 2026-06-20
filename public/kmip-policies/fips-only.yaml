@@ -1,0 +1,131 @@
+# FIPS-only policy — restricts every operation to FIPS-approved algorithms.
+# Aligned with NIST FIPS 140-3 module boundary expectations.
+
+schema_version: 1
+
+metadata:
+  name: fips-only
+  description: |
+    Enforces FIPS 140-3 algorithm boundary. Only FIPS-approved PQC (FIPS 203
+    ML-KEM, FIPS 204 ML-DSA, FIPS 205 SLH-DSA) and FIPS-validated classical
+    (RSA >= 3072, ECDSA P-256/384/521, AES-128/256) are permitted. Any
+    Round-4 / alternate / non-FIPS algorithm (Falcon, HQC, BIKE, FrodoKEM,
+    Classic McEliece, XMSS until FIPS 205-XMSS-MT specifically) is denied
+    at the policy plane before reaching Plane 2.
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  compliance_mapping:
+    - { framework: "FIPS 140-3",   level: 3 }
+    - { framework: "FIPS 203",     status: required }
+    - { framework: "FIPS 204",     status: required }
+    - { framework: "FIPS 205",     status: required }
+    - { framework: "FIPS 186-5",   status: required }
+    - { framework: "FIPS 197",     status: required }
+
+rules:
+
+  # 1. PQC algorithm allowlist — FIPS 203/204/205 only.
+  - type: algorithm_allowlist
+    ops: [Create]
+    algorithms:
+      # FIPS 203 — ML-KEM
+      - ML-KEM-512
+      - ML-KEM-768
+      - ML-KEM-1024
+      # FIPS 204 — ML-DSA
+      - ML-DSA-44
+      - ML-DSA-65
+      - ML-DSA-87
+      # FIPS 205 — SLH-DSA (SHA2 variants only; SHAKE variants pending FIPS)
+      - SLH-DSA-SHA2-128s
+      - SLH-DSA-SHA2-128f
+      - SLH-DSA-SHA2-192s
+      - SLH-DSA-SHA2-192f
+      - SLH-DSA-SHA2-256s
+      - SLH-DSA-SHA2-256f
+      # FIPS-approved classical
+      - RSA
+      - ECDSA-P256
+      - ECDSA-P384
+      - ECDSA-P521
+      - AES-128
+      - AES-256
+      - HMAC-SHA-256
+      - HMAC-SHA-384
+      - HMAC-SHA-512
+    reason: "Algorithm not in FIPS-approved allowlist"
+
+  # 2. Banned: Round-4 / alternate / non-FIPS PQC.
+  - type: algorithm_denylist
+    ops: [Create, Sign, Encrypt, Encapsulate]
+    algorithms:
+      - Falcon-512
+      - Falcon-1024
+      - HQC-128
+      - HQC-192
+      - HQC-256
+      - BIKE-L1
+      - BIKE-L3
+      - FrodoKEM-640
+      - FrodoKEM-976
+      - FrodoKEM-1344
+      - Classic-McEliece-348864
+      - Classic-McEliece-460896
+      - Classic-McEliece-6688128
+      - SLH-DSA-SHAKE-128s
+      - SLH-DSA-SHAKE-128f
+      - SLH-DSA-SHAKE-192s
+      - SLH-DSA-SHAKE-192f
+      - SLH-DSA-SHAKE-256s
+      - SLH-DSA-SHAKE-256f
+    reason: "Algorithm not FIPS-approved (Round-4 / alternate / SHAKE variant)"
+
+  # 3. RSA minimum 3072 bits per FIPS 186-5 transition.
+  - type: min_key_length
+    algorithm: RSA
+    min_bits: 3072
+    reason: "FIPS 186-5 requires RSA >= 3072 bits"
+
+  # 4. AES minimum 128 bits (already enforced by AES-128 allowlist, but explicit).
+  - type: min_key_length
+    algorithm: AES
+    min_bits: 128
+    reason: "FIPS 197 minimum AES key size"
+
+  # 5. HMAC minimum 256 bits effective security.
+  - type: min_key_length
+    algorithm: HMAC-SHA-256
+    min_bits: 256
+    reason: "HMAC minimum effective key length"
+
+  # 6. Weak digests banned globally.
+  - type: algorithm_denylist
+    ops: [Sign, Encrypt, Create]
+    algorithms: [MD5, SHA1, RSA-PKCS1-v1_5]
+    reason: "Pre-FIPS digest / padding banned"
+
+  # 7. KEM usage mask required.
+  - type: require_usage_mask
+    algorithm: ML-KEM-768
+    flags: [KeyAgreement]
+    reason: "FIPS 203 KEM keys must declare KeyAgreement"
+  - type: require_usage_mask
+    algorithm: ML-KEM-1024
+    flags: [KeyAgreement]
+    reason: "FIPS 203 KEM keys must declare KeyAgreement"
+
+  # 8. Signing usage mask required for sig keys.
+  - type: require_usage_mask
+    algorithm: ML-DSA-65
+    flags: [Sign, Verify]
+    reason: "FIPS 204 sig keys must declare Sign+Verify"
+  - type: require_usage_mask
+    algorithm: ML-DSA-87
+    flags: [Sign, Verify]
+    reason: "FIPS 204 sig keys must declare Sign+Verify"
+
+  # 9. Compliance profile gate (catch-all).
+  - type: compliance_profile_gate
+    profile: FIPS-140-3
+    ops: [Create, Sign, Encrypt, Encapsulate]
+    reason: "Request fails FIPS 140-3 compliance profile"

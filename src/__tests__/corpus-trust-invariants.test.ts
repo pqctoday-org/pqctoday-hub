@@ -171,6 +171,11 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     draft-reddy-cose-jose-pqc-hybrid-hpke, etc.) without trust-score
   //     wiring. Same gap; same remediation. Drive back down via
   //     trustScoreData.ts chunkToResource extension.
+  // 2026-06-19: bumped 0 → 1 — IBM Cloud HSM (Utimaco) row renamed to IBM Hyper
+  //   Protect Crypto Services; stale corpus still has "IBM Cloud HSM (Utimaco)"
+  //   chunk which no longer matches an active softwareName. Drive back to 0 by
+  //   regenerating the corpus after this PR merges.
+  migrate: 1,
   timeline: 0,
   algorithms: 0,
   //     2026-05-31: bumped 113 → 118 — 5 new catalog enrichments (Tectia SSH, IVPN, libcrux, Trail of Bits ml-dsa, InfoSec Global AgileSec)
@@ -179,7 +184,9 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     chunk (AERO) lacks trust-score wiring. Same gap; same remediation
   //     (extend chunkToResource routing in trustScoreData.ts). Unrelated to the
   //     gov-strategy→timeline move; surfaced when the corpus was refreshed.
-  'document-enrichment': 119,
+  //     2026-06-19 (later): bumped 119 → 120 — IBM catalog correction added one
+  //     more unresolved doc-enrichment chunk (AERO sector threat). Same gap.
+  'document-enrichment': 120,
 }
 
 /**

@@ -27,6 +27,7 @@ import {
 } from '../../../wasm/softhsm'
 import { FilterDropdown } from '../../common/FilterDropdown'
 import { HsmClassicalSignPanel } from '../hsm/HsmClassicalSignPanel'
+import { XmssPanel, LmsPanel } from '../hsm/StatefulHashSignPanels'
 import { HsmReadyGuard } from '../hsm/shared'
 import { Pkcs11LogPanel } from '../../shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '../../shared/HsmKeyInspector'
@@ -1110,13 +1111,36 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
 const HsmXmssSignPanel: React.FC<{
   initialAlgo?: string
   onAlgoChange?: (algo: string) => void
-}> = () => {
+}> = ({ initialAlgo }) => {
+  const [hbsMode, setHbsMode] = useState<'xmss' | 'lms'>(
+    initialAlgo?.startsWith('LMS') ? 'lms' : 'xmss'
+  )
   return (
-    <div className="flex h-48 items-center justify-center p-8 bg-muted rounded-xl text-muted-foreground border-dashed border-2">
-      <FileSignature className="w-8 h-8 mr-3 opacity-50" />
-      <span className="font-semibold">
-        XMSS / LMS Stateful Signature Panel under construction (requires softhsmv3 bump).
-      </span>
+    <div className="space-y-3">
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <FileSignature className="w-4 h-4 opacity-70" />
+        <span>
+          Stateful hash-based signatures (PKCS#11 v3.2 §2.4 · NIST SP 800-208). Each private key
+          signs a bounded number of messages — state must never be reused.
+        </span>
+      </div>
+      <div className="flex gap-1 bg-muted p-1 rounded-xl">
+        {(['xmss', 'lms'] as const).map((m) => (
+          <Button
+            variant="ghost"
+            key={m}
+            onClick={() => setHbsMode(m)}
+            className={`flex-1 text-xs rounded-lg px-2 py-1.5 transition-colors ${
+              hbsMode === m
+                ? 'bg-primary/20 text-primary font-medium shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            {m === 'xmss' ? 'XMSS' : 'LMS / HSS'}
+          </Button>
+        ))}
+      </div>
+      {hbsMode === 'xmss' ? <XmssPanel /> : <LmsPanel />}
     </div>
   )
 }

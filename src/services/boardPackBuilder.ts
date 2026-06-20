@@ -13,11 +13,12 @@
  *     recommended-actions.md    — every recommendation by priority + category
  *     compliance-deadlines.csv  — per-framework deadlines + PQC requirement
  *     profile.json              — assessment inputs (machine-readable replay)
+ *     program-effort.md         — illustrative effort/timeline/cost rollup (override)
  *
  * Pure data builder — no React, no DOM. Returns a Blob ready for download.
  */
 import JSZip from 'jszip'
-import type { AssessmentResult } from '@/hooks/assessmentTypes'
+import type { AssessmentResult, MigrationEffortItem } from '@/hooks/assessmentTypes'
 
 export interface BoardPackProfile {
   industry: string
@@ -175,6 +176,85 @@ function buildProfileJson(result: AssessmentResult, profile: BoardPackProfile): 
 /**
  * Build the Board Pack as a single Blob.
  */
+/** Person-month band per migration scope — illustrative planning figures. */
+const SCOPE_PERSON_MONTHS = new Map<MigrationEffortItem['estimatedScope'], [number, number]>([
+  ['quick-win', [0.5, 1]],
+  ['moderate', [1, 2]],
+  ['major-project', [3, 6]],
+  ['multi-year', [6, 12]],
+])
+const SCOPE_LABEL = new Map<MigrationEffortItem['estimatedScope'], string>([
+  ['quick-win', 'Quick win'],
+  ['moderate', 'Moderate'],
+  ['major-project', 'Major project'],
+  ['multi-year', 'Multi-year'],
+])
+/** Illustrative blended, fully-loaded cost per person-month (USD). Override with your rates. */
+const ASSUMED_COST_PER_PERSON_MONTH = 18000
+/** Assumed parallel workstreams used only for the calendar-time band. */
+const ASSUMED_PARALLEL_WORKSTREAMS = 2
+
+/**
+ * Program effort & timeline rollup. Aggregates the per-algorithm migration scopes
+ * into person-month + calendar bands, plus an optional cost band the reader is
+ * explicitly told to override. Never presented as a quote.
+ */
+function buildProgramEffort(result: AssessmentResult): string {
+  const effort = result.migrationEffort ?? []
+  const out: string[] = ['# Program Effort & Timeline (Illustrative)', '']
+  if (effort.length === 0) {
+    out.push(
+      'No per-algorithm migration effort was computed for this assessment (no',
+      'quantum-vulnerable algorithms in scope, or quick-assessment mode was used).'
+    )
+    return out.join('\n')
+  }
+
+  let pmLow = 0
+  let pmHigh = 0
+  const counts = new Map<MigrationEffortItem['estimatedScope'], number>()
+  for (const item of effort) {
+    const band = SCOPE_PERSON_MONTHS.get(item.estimatedScope) ?? [1, 2]
+    pmLow += band[0]
+    pmHigh += band[1]
+    counts.set(item.estimatedScope, (counts.get(item.estimatedScope) ?? 0) + 1)
+  }
+  const calLow = Math.max(1, Math.ceil(pmLow / ASSUMED_PARALLEL_WORKSTREAMS))
+  const calHigh = Math.max(1, Math.ceil(pmHigh / ASSUMED_PARALLEL_WORKSTREAMS))
+  const usd = (n: number) =>
+    n >= 1000 ? `$${Math.round(n / 1000).toLocaleString()}k` : `$${Math.round(n).toLocaleString()}`
+
+  out.push(
+    '> Illustrative planning estimate derived from the per-algorithm migration',
+    '> complexity in this assessment. It is NOT a quote — replace the assumed rate',
+    '> and team capacity below with your own figures.',
+    '',
+    '## Headline',
+    `- **Effort:** ~${pmLow}–${pmHigh} person-months across ${effort.length} algorithm migration(s)`,
+    `- **Calendar time:** ~${calLow}–${calHigh} months (assuming ${ASSUMED_PARALLEL_WORKSTREAMS} parallel workstreams)`,
+    `- **Indicative cost:** ~${usd(pmLow * ASSUMED_COST_PER_PERSON_MONTH)}–${usd(pmHigh * ASSUMED_COST_PER_PERSON_MONTH)} (at ${usd(ASSUMED_COST_PER_PERSON_MONTH)}/person-month, fully loaded — OVERRIDE)`,
+    '',
+    '## By migration scope',
+    '| Scope | Algorithms | Person-months (band) |',
+    '| --- | ---: | ---: |'
+  )
+  for (const scope of SCOPE_PERSON_MONTHS.keys()) {
+    const n = counts.get(scope) ?? 0
+    if (n === 0) continue
+    const band = SCOPE_PERSON_MONTHS.get(scope) ?? [1, 2]
+    out.push(`| ${SCOPE_LABEL.get(scope) ?? scope} | ${n} | ${band[0] * n}–${band[1] * n} |`)
+  }
+  out.push(
+    '',
+    '## Assumptions (override these)',
+    '- Person-month bands per scope: quick-win 0.5–1, moderate 1–2, major-project 3–6, multi-year 6–12.',
+    `- Blended fully-loaded cost: ${usd(ASSUMED_COST_PER_PERSON_MONTH)}/person-month.`,
+    `- ${ASSUMED_PARALLEL_WORKSTREAMS} parallel workstreams for the calendar band.`,
+    '- Excludes procurement, test infrastructure, training, and contingency.'
+  )
+  return out.join('\n')
+}
+
 export async function buildBoardPackBlob(input: BuildBoardPackInput): Promise<Blob> {
   const { result, profile, appVersion } = input
   const zip = new JSZip()
@@ -185,6 +265,7 @@ export async function buildBoardPackBlob(input: BuildBoardPackInput): Promise<Bl
   folder.file('recommended-actions.md', buildRecommendedActions(result))
   folder.file('compliance-deadlines.csv', buildComplianceCsv(result))
   folder.file('profile.json', buildProfileJson(result, profile))
+  folder.file('program-effort.md', buildProgramEffort(result))
   return zip.generateAsync({ type: 'blob' })
 }
 

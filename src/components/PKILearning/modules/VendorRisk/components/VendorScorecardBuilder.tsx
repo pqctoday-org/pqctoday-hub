@@ -137,6 +137,22 @@ export const VendorScorecardBuilder: React.FC = () => {
     return initial
   })
 
+  // User-adjustable weight overrides (0–1). Saved artifact uses the same values.
+  const [weightOverrides, setWeightOverrides] = useState<Record<string, number>>({})
+
+  const effectiveWeight = useCallback(
+    (dimId: string): number =>
+      dimId in weightOverrides
+        ? (weightOverrides[dimId] ?? 0)
+        : (DIMENSIONS.find((d) => d.id === dimId)?.weight ?? 0),
+    [weightOverrides]
+  )
+
+  const handleWeightChange = useCallback((dimId: string, pct: number) => {
+    const clamped = Math.max(0, Math.min(100, Math.round(pct)))
+    setWeightOverrides((prev) => ({ ...prev, [dimId]: clamped / 100 }))
+  }, [])
+
   // Which dimension is expanded — open pqc-roadmap first when the user
   // reports heavy vendor dependency (so they immediately see roadmap risk),
   // otherwise let the user pick.
@@ -189,17 +205,18 @@ export const VendorScorecardBuilder: React.FC = () => {
     [useSlider, sliderScores, checkedProducts, selectedItems, hasProducts]
   )
 
-  // Overall weighted score
+  // Overall weighted score — uses live weight overrides so display and export agree
   const weightedTotal = useMemo(() => {
     let totalWeight = 0
     let weightedSum = 0
     for (const d of DIMENSIONS) {
       const score = getScore(d.id)
-      weightedSum += score * d.weight
-      totalWeight += d.weight
+      const w = effectiveWeight(d.id)
+      weightedSum += score * w
+      totalWeight += w
     }
     return totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
-  }, [getScore])
+  }, [getScore, effectiveWeight])
 
   const toggleProductForDimension = useCallback((dimId: string, key: string) => {
     setCheckedProducts((prev) => {
@@ -240,7 +257,7 @@ export const VendorScorecardBuilder: React.FC = () => {
         useSlider[d.id] || !hasProducts
           ? 'Manual'
           : `${checkedProducts[d.id]?.size ?? 0}/${selectedItems.length} products`
-      md += `| ${d.label} | ${score}/100 | ${Math.round(d.weight * 100)}% | ${method} |\n`
+      md += `| ${d.label} | ${score}/100 | ${Math.round(effectiveWeight(d.id) * 100)}% | ${method} |\n`
     }
 
     // CSWP.39 §5.3 - Observability Tooling Notes
@@ -265,6 +282,7 @@ export const VendorScorecardBuilder: React.FC = () => {
     cveNotes,
     siemNotes,
     ztNotes,
+    effectiveWeight,
   ])
 
   // Save to module store when score is meaningful (store deduplicates by moduleId+type)
@@ -373,7 +391,7 @@ export const VendorScorecardBuilder: React.FC = () => {
                     {score}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    ({Math.round(d.weight * 100)}%)
+                    ({Math.round(effectiveWeight(d.id) * 100)}%)
                   </span>
                 </div>
               </Button>
@@ -482,6 +500,38 @@ export const VendorScorecardBuilder: React.FC = () => {
                       })}
                     </div>
                   )}
+
+                  {/* Weight override — keeps saved artifact in sync with the on-screen display */}
+                  <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border/30">
+                    <span className="text-xs text-muted-foreground flex-1">Dimension weight</span>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={Math.round(effectiveWeight(d.id) * 100)}
+                      onChange={(e) => handleWeightChange(d.id, parseInt(e.target.value) || 0)}
+                      onClick={(e) => e.stopPropagation()}
+                      className="w-16 text-xs text-right border border-border rounded px-1 py-0.5 bg-background focus:outline-none focus:ring-1 focus:ring-primary tabular-nums"
+                    />
+                    <span className="text-xs text-muted-foreground">%</span>
+                    {d.id in weightOverrides && (
+                      <Button
+                        variant="ghost"
+                        type="button"
+                        className="h-auto p-0 text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setWeightOverrides((prev) => {
+                            const next = { ...prev }
+                            delete next[d.id]
+                            return next
+                          })
+                        }}
+                      >
+                        Reset
+                      </Button>
+                    )}
+                  </div>
                 </div>
               )}
             </div>

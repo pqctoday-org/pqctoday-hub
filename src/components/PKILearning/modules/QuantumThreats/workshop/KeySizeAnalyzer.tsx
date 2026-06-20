@@ -157,14 +157,18 @@ export const KeySizeAnalyzer: React.FC<KeySizeAnalyzerProps> = ({
                     ? "Shor's"
                     : dataA.quantumAttack === 'grover'
                       ? "Grover's"
-                      : 'None'}
+                      : dataA.quantumAttack === 'bht'
+                        ? 'BHT'
+                        : 'None'}
                 </td>
                 <td className="p-3 text-center text-xs">
                   {dataB.quantumAttack === 'shor'
                     ? "Shor's"
                     : dataB.quantumAttack === 'grover'
                       ? "Grover's"
-                      : 'None'}
+                      : dataB.quantumAttack === 'bht'
+                        ? 'BHT'
+                        : 'None'}
                 </td>
               </tr>
               {(dataA.estimatedQubits || dataB.estimatedQubits) && (

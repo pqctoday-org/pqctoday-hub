@@ -90,6 +90,22 @@ const byFn: Record<string, Translator> = {
   C_EncapsulateKey: () => 'ML-KEM encapsulate (produce PQC ciphertext + secret)',
   C_DecapsulateKey: () => 'ML-KEM decapsulate (recover secret from ciphertext)',
 
+  // PKCS#11 v3.2 message-based signing (ML-DSA / SLH-DSA single-shot path)
+  C_MessageSignInit: (args) => {
+    if (/ML[-_]DSA/i.test(args)) return 'prepare ML-DSA message signing (PQC)'
+    if (/SLH[-_]DSA/i.test(args)) return 'prepare SLH-DSA message signing (PQC)'
+    return 'prepare message-based signing'
+  },
+  C_SignMessage: () => 'sign the message in one shot',
+  C_MessageSignFinal: () => 'finalize message-based signing',
+  C_MessageVerifyInit: (args) => {
+    if (/ML[-_]DSA/i.test(args)) return 'prepare ML-DSA message verify (PQC)'
+    if (/SLH[-_]DSA/i.test(args)) return 'prepare SLH-DSA message verify (PQC)'
+    return 'prepare message-based verification'
+  },
+  C_VerifyMessage: () => 'verify the message signature',
+  C_WrapKeyAuthenticated: () => 'wrap a key with authenticated encryption (AES-GCM)',
+
   C_FindObjectsInit: () => 'start an object search',
   C_FindObjects: () => 'list matching objects',
   C_FindObjectsFinal: () => 'end the object search',

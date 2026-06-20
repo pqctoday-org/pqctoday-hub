@@ -10402,6 +10402,51 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "0d2a390a4438d2c0",
+      "name": "IBM Hyper Protect Crypto Services",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "KEM"
+        }
+      },
+      "description": "IBM Hyper Protect Crypto Services uses IBM proprietary 4769 CEX hardware (FIPS 140-2 Level 4). IBM Quantum Safe initiative targets ML-KEM and ML-DSA support; not GA as of June 2026.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://cloud.ibm.com/catalog/infrastructure/hardware-security-module"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "ibm-hyper-protect-crypto"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cloud Hardware Security Module (HSM)"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (FIPS 140-2 Level 3)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "55"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "d7bd542af099ce77",
       "name": "IBM Cloud HSM (Utimaco)",
       "cryptoProperties": {

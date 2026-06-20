@@ -167,7 +167,7 @@ export const SHOR_TIER_DEFS: Record<ShorTier, ShorTierDef> = {
     color: 'text-warning',
     bg: 'bg-warning/10 border-warning/20',
     blurb:
-      'Shor-breakable but needs more resource (larger RSA / P-384+). Still on the migration clock; weeks behind Tier 1.',
+      'Shor-breakable but needs more resource (larger RSA / P-384+). Still on the migration clock — close behind Tier 1, just needing more quantum resources.',
   },
   grover: {
     id: 'grover',
