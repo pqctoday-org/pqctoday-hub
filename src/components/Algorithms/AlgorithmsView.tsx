@@ -5,11 +5,12 @@ import { motion } from 'framer-motion'
 import { AlgorithmComparison } from './AlgorithmComparison'
 import { AlgorithmDetailedComparison } from './AlgorithmDetailedComparison'
 import { PQCProtocolMatrix } from './PQCProtocolMatrix'
+import { AlgorithmValidationView } from './AlgorithmValidationView'
 import { AlgorithmFilters } from './AlgorithmFilters'
 import { AlgorithmCompareBar } from './AlgorithmCompareBar'
 import { AlgorithmComparisonPanel } from './AlgorithmComparisonPanel'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { ArrowRight, BarChart3, Shield, Network, Info } from 'lucide-react'
+import { ArrowRight, BarChart3, Shield, Network, Info, Lock, FlaskConical } from 'lucide-react'
 import { Skeleton } from '../ui/skeleton'
 import { PageHeader } from '../common/PageHeader'
 import { AlgorithmInfoModal } from './AlgorithmInfoModal'
@@ -156,10 +157,10 @@ export function AlgorithmsView() {
     }
   }, [activeTab, markAlgorithmsTabVisited])
 
-  // Curious-only gate: hide Protocol Support until they have visited at
-  // least one of the friendlier tabs. Power personas and unlocked-curious
-  // users always see the third tab.
-  const hideSupportTab =
+  // Curious-only gate: keep Protocol Support visible but LOCKED until they have
+  // visited at least one of the friendlier tabs (no layout shift on unlock).
+  // Power personas and unlocked-curious users get it enabled.
+  const supportLocked =
     selectedPersona === 'curious' &&
     !algorithmsTabsVisited.includes('transition') &&
     !algorithmsTabsVisited.includes('detailed')
@@ -329,18 +330,26 @@ export function AlgorithmsView() {
                 <BarChart3 size={18} />
                 Detailed Comparison
               </TabsTrigger>
-              {!hideSupportTab && (
-                <TabsTrigger value="support" className="flex items-center gap-2">
-                  <Network size={18} />
-                  Protocol Support
-                  <span
-                    className="rounded-sm bg-primary/15 text-primary px-1 py-0 text-[9px] font-bold uppercase tracking-wider"
-                    title="Tracks 14 IETF protocols across pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. Updated weekly from datatracker."
-                  >
-                    Beta
-                  </span>
-                </TabsTrigger>
-              )}
+              <TabsTrigger
+                value="support"
+                disabled={supportLocked}
+                className="flex items-center gap-2"
+                title={
+                  supportLocked
+                    ? 'Explore Transition or Detailed first'
+                    : 'Tracks 14 IETF protocols across pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. Updated weekly from datatracker.'
+                }
+              >
+                {supportLocked ? <Lock size={16} /> : <Network size={18} />}
+                Protocol Support
+                <span className="rounded-sm bg-primary/15 text-primary px-1 py-0 text-[9px] font-bold uppercase tracking-wider">
+                  Beta
+                </span>
+              </TabsTrigger>
+              <TabsTrigger value="validation" className="flex items-center gap-2">
+                <FlaskConical size={18} />
+                Validation
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="transition">
@@ -400,19 +409,32 @@ export function AlgorithmsView() {
                 <PQCProtocolMatrix />
               </motion.div>
             </TabsContent>
+
+            <TabsContent value="validation">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                data-workshop-target="section-algorithm-validation"
+              >
+                <AlgorithmValidationView />
+              </motion.div>
+            </TabsContent>
           </Tabs>
 
-          {/* Comparison panel — only meaningful for transition/detailed tabs; suppressed on Protocol Support */}
-          {showComparison && comparisonAlgos.length >= 2 && activeTab !== 'support' && (
-            <div ref={comparisonPanelRef} className="mt-6">
-              <AlgorithmComparisonPanel
-                algorithms={comparisonAlgos}
-                baseline={baselineAlgo}
-                activeTab={activeTab}
-                onClose={() => setShowComparison(false)}
-              />
-            </div>
-          )}
+          {/* Comparison panel — only meaningful for transition/detailed tabs */}
+          {showComparison &&
+            comparisonAlgos.length >= 2 &&
+            (activeTab === 'transition' || activeTab === 'detailed') && (
+              <div ref={comparisonPanelRef} className="mt-6">
+                <AlgorithmComparisonPanel
+                  algorithms={comparisonAlgos}
+                  baseline={baselineAlgo}
+                  activeTab={activeTab}
+                  onClose={() => setShowComparison(false)}
+                />
+              </div>
+            )}
 
           {/* Sticky compare bar */}
           <AlgorithmCompareBar

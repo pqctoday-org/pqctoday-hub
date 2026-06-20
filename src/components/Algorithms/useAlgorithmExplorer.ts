@@ -83,16 +83,19 @@ export function useAlgorithmExplorer(
   const comparisonPanelRef = useRef<HTMLDivElement>(null)
 
   // --- Active tab ---
+  const isAlgorithmTab = (t: string | null): t is AlgorithmTabId =>
+    t === 'transition' || t === 'detailed' || t === 'support' || t === 'validation'
+
   const [activeTab, setActiveTab] = useState<AlgorithmTabId>(() => {
     const tab = searchParams.get('tab')
-    if (tab === 'transition' || tab === 'detailed' || tab === 'support') return tab
+    if (isAlgorithmTab(tab)) return tab
     if (searchParams.get('highlight')) return 'detailed'
     return personaDefaults.tab
   })
 
   useEffect(() => {
     const tab = searchParams.get('tab')
-    if (tab === 'transition' || tab === 'detailed' || tab === 'support') {
+    if (isAlgorithmTab(tab)) {
       setActiveTab((prev) => (prev !== tab ? tab : prev))
     }
   }, [searchParams])

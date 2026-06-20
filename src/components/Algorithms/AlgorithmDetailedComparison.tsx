@@ -22,8 +22,6 @@ import {
   ArrowDown,
   SearchX,
   Scale,
-  ShieldAlert,
-  FlaskConical,
   ChevronDown,
 } from 'lucide-react'
 import clsx from 'clsx'
@@ -32,8 +30,6 @@ import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'
-import { ImplementationAttacksView } from './ImplementationAttacksView'
-import { KATView } from './KATView'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { getAlgorithmDefaults } from '@/data/personaConfig'
@@ -144,13 +140,6 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
       label: 'Use Cases',
       content: <UseCasesView {...sharedViewProps} />,
     },
-    {
-      id: 'attacks',
-      icon: <ShieldAlert size={16} />,
-      label: 'Implementation Attacks',
-      content: <ImplementationAttacksView />,
-    },
-    { id: 'kat', icon: <FlaskConical size={16} />, label: 'KAT Validation', content: <KATView /> },
   ]
 
   return (
