@@ -13,17 +13,16 @@ metadata:
     Classic McEliece, XMSS until FIPS 205-XMSS-MT specifically) is denied
     at the policy plane before reaching Plane 2.
   authority: pqctoday-hsm/training
-  effective: "2026-01-01"
+  effective: '2026-01-01'
   compliance_mapping:
-    - { framework: "FIPS 140-3",   level: 3 }
-    - { framework: "FIPS 203",     status: required }
-    - { framework: "FIPS 204",     status: required }
-    - { framework: "FIPS 205",     status: required }
-    - { framework: "FIPS 186-5",   status: required }
-    - { framework: "FIPS 197",     status: required }
+    - { framework: 'FIPS 140-3', level: 3 }
+    - { framework: 'FIPS 203', status: required }
+    - { framework: 'FIPS 204', status: required }
+    - { framework: 'FIPS 205', status: required }
+    - { framework: 'FIPS 186-5', status: required }
+    - { framework: 'FIPS 197', status: required }
 
 rules:
-
   # 1. PQC algorithm allowlist — FIPS 203/204/205 only.
   - type: algorithm_allowlist
     ops: [Create]
@@ -53,7 +52,7 @@ rules:
       - HMAC-SHA-256
       - HMAC-SHA-384
       - HMAC-SHA-512
-    reason: "Algorithm not in FIPS-approved allowlist"
+    reason: 'Algorithm not in FIPS-approved allowlist'
 
   # 2. Banned: Round-4 / alternate / non-FIPS PQC.
   - type: algorithm_denylist
@@ -78,54 +77,54 @@ rules:
       - SLH-DSA-SHAKE-192f
       - SLH-DSA-SHAKE-256s
       - SLH-DSA-SHAKE-256f
-    reason: "Algorithm not FIPS-approved (Round-4 / alternate / SHAKE variant)"
+    reason: 'Algorithm not FIPS-approved (Round-4 / alternate / SHAKE variant)'
 
   # 3. RSA minimum 3072 bits per FIPS 186-5 transition.
   - type: min_key_length
     algorithm: RSA
     min_bits: 3072
-    reason: "FIPS 186-5 requires RSA >= 3072 bits"
+    reason: 'FIPS 186-5 requires RSA >= 3072 bits'
 
   # 4. AES minimum 128 bits (already enforced by AES-128 allowlist, but explicit).
   - type: min_key_length
     algorithm: AES
     min_bits: 128
-    reason: "FIPS 197 minimum AES key size"
+    reason: 'FIPS 197 minimum AES key size'
 
   # 5. HMAC minimum 256 bits effective security.
   - type: min_key_length
     algorithm: HMAC-SHA-256
     min_bits: 256
-    reason: "HMAC minimum effective key length"
+    reason: 'HMAC minimum effective key length'
 
   # 6. Weak digests banned globally.
   - type: algorithm_denylist
     ops: [Sign, Encrypt, Create]
     algorithms: [MD5, SHA1, RSA-PKCS1-v1_5]
-    reason: "Pre-FIPS digest / padding banned"
+    reason: 'Pre-FIPS digest / padding banned'
 
   # 7. KEM usage mask required.
   - type: require_usage_mask
     algorithm: ML-KEM-768
     flags: [KeyAgreement]
-    reason: "FIPS 203 KEM keys must declare KeyAgreement"
+    reason: 'FIPS 203 KEM keys must declare KeyAgreement'
   - type: require_usage_mask
     algorithm: ML-KEM-1024
     flags: [KeyAgreement]
-    reason: "FIPS 203 KEM keys must declare KeyAgreement"
+    reason: 'FIPS 203 KEM keys must declare KeyAgreement'
 
   # 8. Signing usage mask required for sig keys.
   - type: require_usage_mask
     algorithm: ML-DSA-65
     flags: [Sign, Verify]
-    reason: "FIPS 204 sig keys must declare Sign+Verify"
+    reason: 'FIPS 204 sig keys must declare Sign+Verify'
   - type: require_usage_mask
     algorithm: ML-DSA-87
     flags: [Sign, Verify]
-    reason: "FIPS 204 sig keys must declare Sign+Verify"
+    reason: 'FIPS 204 sig keys must declare Sign+Verify'
 
   # 9. Compliance profile gate (catch-all).
   - type: compliance_profile_gate
     profile: FIPS-140-3
     ops: [Create, Sign, Encrypt, Encapsulate]
-    reason: "Request fails FIPS 140-3 compliance profile"
+    reason: 'Request fails FIPS 140-3 compliance profile'
