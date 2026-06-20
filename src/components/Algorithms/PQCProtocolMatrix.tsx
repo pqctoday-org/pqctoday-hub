@@ -552,6 +552,7 @@ export function PQCProtocolMatrix() {
   const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>('all')
   const [sortKey, setSortKey] = useState<SortKey>('matrix')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
+  const [showStageHelp, setShowStageHelp] = useState(false)
   // ?protocol=<id> preselects that row's detail modal (powers the
   // "Related: Protocol Matrix" breadcrumb from sandbox scenarios). Resolved
   // once via a lazy initializer so it needs no setState-in-effect.
@@ -676,26 +677,6 @@ export function PQCProtocolMatrix() {
         </div>
       )}
 
-      {/* WIP banner */}
-      <div className="flex items-start gap-3 rounded-lg border border-status-warning/40 bg-status-warning/10 p-3">
-        <AlertTriangle size={18} className="mt-0.5 shrink-0 text-status-warning" />
-        <div className="space-y-1 text-sm">
-          <div className="flex items-center gap-2">
-            <span className="rounded bg-status-warning text-background px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
-              WIP
-            </span>
-            <span className="font-semibold text-foreground">
-              Protocol Support Matrix — work in progress
-            </span>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Data and schema are still being validated against the underlying enrichment dataset (66
-            docs enriched 2026-05-15) and the live playground tools. Dimension flags, constraints,
-            and library back-links may change. Use as a reference, not a compliance artifact.
-          </p>
-        </div>
-      </div>
-
       {/* Intro panel + view toggle */}
       <div className="glass-panel space-y-3 p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -749,7 +730,20 @@ export function PQCProtocolMatrix() {
           </div>
         )}
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-[11px]">
-          <span className="text-muted-foreground">IETF stage</span>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowStageHelp((v) => !v)}
+            aria-expanded={showStageHelp}
+            className="h-auto gap-1 px-1 py-0 text-[11px] font-normal text-muted-foreground hover:text-foreground"
+            title="What do the IETF stages mean?"
+          >
+            IETF stage
+            <span className="rounded-full border border-current px-1 text-[9px] font-bold leading-none">
+              i
+            </span>
+          </Button>
           <div className="inline-flex overflow-hidden rounded-md border border-border text-[10px] tabular-nums">
             <span className="bg-muted px-1.5 py-0.5 text-muted-foreground" title="0 — no PQC track">
               0
@@ -780,13 +774,13 @@ export function PQCProtocolMatrix() {
             </span>
             <span
               className="bg-primary/20 px-1.5 py-0.5 text-primary"
-              title="5 — Submitted to IESG"
+              title="5 — IETF Last Call (whole-IETF community review)"
             >
               5
             </span>
             <span
               className="bg-status-success/15 px-1.5 py-0.5 text-status-success"
-              title="6 — IETF Last Call / RFC Editor queue"
+              title="6 — IESG review (telechat) / approved · RFC Editor queue"
             >
               6
             </span>
@@ -815,6 +809,49 @@ export function PQCProtocolMatrix() {
             — N/A
           </span>
         </div>
+        {showStageHelp && (
+          <div className="mt-1 space-y-1.5 rounded-lg border border-border bg-card p-3 text-xs text-muted-foreground">
+            <p className="font-semibold text-foreground">
+              How an IETF spec progresses — official order, earliest → latest
+            </p>
+            <ol className="list-decimal space-y-0.5 pl-4">
+              <li>
+                <span className="text-foreground">Individual draft</span> — one author’s
+                Internet-Draft <span className="tabular-nums">(stage 3)</span>.
+              </li>
+              <li>
+                <span className="text-foreground">Working group adopts it</span> — the WG takes
+                ownership <span className="tabular-nums">(stage 4)</span>.
+              </li>
+              <li>
+                <span className="text-foreground">WG Last Call</span> — the WG agrees it looks done{' '}
+                <span className="tabular-nums">(stage 4)</span>.
+              </li>
+              <li>
+                <span className="text-foreground">IETF Last Call</span> — the whole IETF community
+                gets ~2 weeks to object <span className="tabular-nums">(stage 5)</span>.
+              </li>
+              <li>
+                <span className="text-foreground">IESG review</span> — the steering group / Area
+                Directors vote, usually on a scheduled “telechat”{' '}
+                <span className="tabular-nums">(stage 6)</span>.
+              </li>
+              <li>
+                <span className="text-foreground">Approved → RFC Editor queue</span> — copyedit and
+                final checks <span className="tabular-nums">(stage 6)</span>.
+              </li>
+              <li>
+                <span className="text-foreground">Published as an RFC</span> — the final spec{' '}
+                <span className="tabular-nums">(stage 7)</span>.
+              </li>
+            </ol>
+            <p>
+              The 0–7 colours track exactly this order (IESG review correctly outranks IETF Last
+              Call). Non-IETF rows — OASIS PKCS#11 / KMIP, Signal, Sigstore — sit off this ladder
+              and use the coarse RFC / Draft / Exp colours instead.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Filter & sort toolbar — single row, no inline labels (dropdowns self-describe) */}

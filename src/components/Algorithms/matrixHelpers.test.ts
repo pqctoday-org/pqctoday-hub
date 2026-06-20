@@ -59,8 +59,8 @@ describe('DRAFT_STAGE_LEVEL — IETF stage → 0–7 KAT', () => {
     ['individual-draft', 3],
     ['wg-document', 4],
     ['wg-last-call', 4],
-    ['iesg-submitted', 5],
-    ['ietf-last-call', 6],
+    ['ietf-last-call', 5],
+    ['iesg-submitted', 6],
     ['rfc-editor-queue', 6],
     ['rfc-published', 7],
   ]
