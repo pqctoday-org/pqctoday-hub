@@ -26,7 +26,9 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
-The PQC VPN simulator now runs the post-quantum IKEv2 handshake for real — hybrid key exchange, message fragmentation, and tunnel (CHILD_SA) negotiation all execute in the browser instead of being narrated — and every byte is inspectable in a new live packet capture.
+## [4.0.0] - 2026-06-20
+
+Version 4.0 makes the Migration Simulation the heart of the app — your learning modules, business tools, workshops, the product catalog, the timeline and the algorithm comparisons now run _inside_ the simulation instead of sending you elsewhere — and adds a real in-browser KMIP control plane + PKCS#11 HSM, a much-expanded and re-validated protocol-support matrix, and new SOC / GRC / Team learning modules. The PQC VPN simulator now also runs the post-quantum IKEv2 handshake for real — hybrid key exchange, message fragmentation, and tunnel (CHILD_SA) negotiation all execute in the browser instead of being narrated — and every byte is inspectable in a new live packet capture.
 
 ### Added
 
