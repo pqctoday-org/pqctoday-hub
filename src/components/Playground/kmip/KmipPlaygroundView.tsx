@@ -47,6 +47,25 @@ import { AuditTrailPanel } from './AuditTrailPanel'
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '')
 
+/** A synthetic failed [`OpResult`] for surfacing a thrown engine error (a wasm
+ * panic comes back as a JS Error; a malformed return throws in `JSON.parse`).
+ * Without this the catch-less call sites would swallow the throw and leave the
+ * UI showing a stale result. */
+function engineError(operation: string, err: unknown): OpResult {
+  return {
+    ok: false,
+    operation,
+    status: 'Error',
+    resultReason: null,
+    message: err instanceof Error ? err.message : String(err),
+    summary: {},
+    responseWireHex: '',
+    responseWireLen: 0,
+    responseTree: { tag: '', type: '' },
+    audit: [],
+  }
+}
+
 /** Friendly one-liner describing what an op result means. */
 function narrate(r: OpResult): string {
   const s = r.summary
@@ -149,6 +168,9 @@ export function KmipPlaygroundView() {
         setResult(r)
         refresh(engine)
         return r
+      } catch (err) {
+        setResult(engineError(spec.op, err))
+        return null
       } finally {
         setBusy(false)
       }
@@ -200,20 +222,11 @@ export function KmipPlaygroundView() {
       const yaml = await fetch(`/kmip-policies/${preset.file}`).then((r) => r.text())
       setPolicyYaml(yaml)
       const res = engine.loadPolicy(yaml)
-      if (!res.ok)
-        setResult({
-          ok: false,
-          operation: 'LoadPolicy',
-          status: 'Error',
-          resultReason: null,
-          message: res.error ?? 'policy load failed',
-          summary: {},
-          responseWireHex: '',
-          responseWireLen: 0,
-          responseTree: { tag: '', type: '' },
-          audit: [],
-        })
+      if (!res.ok) setResult(engineError('LoadPolicy', res.error ?? 'policy load failed'))
       refresh(engine)
+    } catch (err) {
+      // fetch failure (missing/!ok policy file) or a wasm panic in load_policy.
+      setResult(engineError('LoadPolicy', err))
     } finally {
       setBusy(false)
     }
@@ -308,7 +321,12 @@ export function KmipPlaygroundView() {
 
       {/* ── The headline: watch a policy migrate an unchanged operation ──── */}
       <div className="mb-4">
-        <AgilityScenario engine={engine} onChanged={() => refresh(engine)} />
+        <AgilityScenario
+          engine={engine}
+          busy={busy}
+          onBusyChange={setBusy}
+          onChanged={() => refresh(engine)}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -550,6 +568,16 @@ export function KmipPlaygroundView() {
           </div>
         )}
         <WireTreeView root={result?.responseTree ?? null} />
+        {result?.responseWireHex && (
+          <details className="mt-2">
+            <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
+              Raw bytes (hex) — the {result.responseWireLen} bytes exactly as they came off the wire
+            </summary>
+            <pre className="mt-1 max-h-40 overflow-auto rounded-md border border-border bg-muted/20 p-2 text-[10px] font-mono break-all whitespace-pre-wrap text-foreground">
+              {result.responseWireHex}
+            </pre>
+          </details>
+        )}
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">

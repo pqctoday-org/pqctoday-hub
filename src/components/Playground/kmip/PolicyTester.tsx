@@ -6,7 +6,7 @@
 // store. Teaches the agility engine directly and lets you probe a policy before
 // running a lifecycle.
 import { useState } from 'react'
-import { FlaskConical, Loader2 } from 'lucide-react'
+import { FlaskConical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { KmipEngine, DryRunResult } from '@/wasm/kmip/kmipEngine'
 
@@ -82,8 +82,7 @@ export function PolicyTester({ engine }: { engine: KmipEngine }) {
           existing key (test migration)
         </label>
         <Button size="sm" variant="secondary" onClick={test} className="h-7 px-2 text-xs gap-1">
-          {engine ? <FlaskConical size={12} /> : <Loader2 size={12} className="animate-spin" />}{' '}
-          Test
+          <FlaskConical size={12} /> Test
         </Button>
       </div>
       {result && (
