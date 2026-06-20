@@ -498,7 +498,7 @@ function BrowseTable({
   ]
 
   const perfCell = (
-    category: string,
+    category: ReturnType<typeof getPerformanceCategory>,
     cycles: string,
     multiplier: number,
     max: number,
