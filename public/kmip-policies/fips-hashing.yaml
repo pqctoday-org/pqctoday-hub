@@ -1,0 +1,28 @@
+# FIPS hashing policy — restrict signature hashes to the FIPS-approved
+# SHA-2 / SHA-3 families. SHA-1 and the legacy MD/RIPEMD/Tiger/Whirlpool
+# hashes are rejected at the policy plane.
+#
+# Demonstrates the crypto-policy mechanism dimension (gaps plan G1, hashing
+# agility): the `hash_algorithm_allowlist` rule gates the request's KMIP
+# `Hashing Algorithm` regardless of the signing key algorithm. Switching the
+# allowed set is a policy edit — no application change.
+
+schema_version: 1
+
+metadata:
+  name: fips-hashing
+  description: |
+    Restrict Sign / SignatureVerify hashing to the FIPS 180-4 (SHA-2) and
+    FIPS 202 (SHA-3) families. SHA-1 and legacy hashes are denied. Names are
+    KMIP 3.0 `Hashing Algorithm` enum names.
+  authority: pqctoday-hsm/training
+  effective: "always"
+  compliance_mapping:
+    - { framework: "FIPS 180-4", status: required }
+    - { framework: "FIPS 202",   status: required }
+
+rules:
+  - type: hash_algorithm_allowlist
+    ops: [Sign, SignatureVerify]
+    hashing_algorithms: [SHA-256, SHA-384, SHA-512, SHA3-256, SHA3-384, SHA3-512]
+    reason: "Only FIPS-approved SHA-2 / SHA-3 hashes are permitted for signing"

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { ShieldAlert, BrainCircuit, ChevronDown } from 'lucide-react'
@@ -7,6 +7,23 @@ import { Button } from '@/components/ui/button'
 
 export function RagAiSection() {
   const [isPqcAssistantOpen, setIsPqcAssistantOpen] = useState(false)
+  // Live corpus size — read from the embedding-index manifest so it never goes stale
+  // as the corpus grows. Falls back to a static estimate if the fetch fails.
+  const [chunkCount, setChunkCount] = useState<number | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    fetch('/data/embeddings-meta.json')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((meta) => {
+        if (!cancelled && meta && typeof meta.chunkCount === 'number') {
+          setChunkCount(meta.chunkCount)
+        }
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   return (
     <motion.div
@@ -47,13 +64,13 @@ export function RagAiSection() {
                 The PQC Assistant chatbot uses{' '}
                 <strong className="text-foreground">Retrieval-Augmented Generation (RAG)</strong> to
                 deliver grounded, sourced answers about post-quantum cryptography. When you ask a
-                question, it searches a curated corpus of ~3,970 PQC knowledge chunks &mdash;
-                covering algorithms, standards, threats, compliance certifications, migration
-                products, leaders, and learning modules &mdash; retrieves the 10&ndash;20 most
-                relevant passages (adaptive per query intent), and injects them as context into a{' '}
-                <strong className="text-foreground">Gemini 2.5 Flash</strong> prompt. The result is
-                an answer grounded in platform data, enriched with deep links to the exact page or
-                section being discussed.
+                question, it searches a curated corpus of ~{(chunkCount ?? 12000).toLocaleString()}{' '}
+                PQC knowledge chunks &mdash; covering algorithms, standards, threats, compliance
+                certifications, migration products, leaders, and learning modules &mdash; retrieves
+                the 10&ndash;20 most relevant passages (adaptive per query intent), and injects them
+                as context into a <strong className="text-foreground">Gemini 2.5 Flash</strong>{' '}
+                prompt. The result is an answer grounded in platform data, enriched with deep links
+                to the exact page or section being discussed.
               </p>
               <p className="text-muted-foreground mt-3">
                 To use the PQC Assistant, you need to provide your own{' '}

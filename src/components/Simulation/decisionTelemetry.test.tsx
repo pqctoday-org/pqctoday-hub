@@ -40,6 +40,7 @@ const props = {
   onVisitRef: () => {},
   canEmbed: () => false,
   onOpenStep: () => {},
+  onWrongPick: vi.fn(),
 }
 
 const renderDecision = () =>
@@ -49,13 +50,17 @@ const renderDecision = () =>
     </MemoryRouter>
   )
 
-beforeEach(() => vi.mocked(logSimTrapPick).mockClear())
+beforeEach(() => {
+  vi.mocked(logSimTrapPick).mockClear()
+  props.onWrongPick.mockClear()
+})
 
 describe('decision telemetry (WS-16)', () => {
   it('the correct pick fires no trap telemetry', () => {
     renderDecision()
     fireEvent.click(screen.getByText('CORRECT-MOVE').closest('button')!)
     expect(logSimTrapPick).not.toHaveBeenCalled()
+    expect(props.onWrongPick).not.toHaveBeenCalled()
   })
 
   it('a wrong pick fires a phase-keyed trap-pick event', () => {
@@ -68,6 +73,9 @@ describe('decision telemetry (WS-16)', () => {
     expect(logSimTrapPick).toHaveBeenCalledTimes(1)
     expect(vi.mocked(logSimTrapPick).mock.calls[0][0]).toBe('p0')
     expect(vi.mocked(logSimTrapPick).mock.calls[0][1]).toBeTruthy()
+    // I1: the wrong pick also fires the time-setback callback with the move label.
+    expect(props.onWrongPick).toHaveBeenCalledTimes(1)
+    expect(props.onWrongPick).toHaveBeenCalledWith(expect.any(String))
   })
 
   it('W3: a wrong pick reveals the sound move + a scenario-specific consequence', () => {

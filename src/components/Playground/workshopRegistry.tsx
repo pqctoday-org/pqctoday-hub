@@ -27,6 +27,10 @@ import { lazyWithRetry } from '@/utils/lazyWithRetry'
 import type { PersonaId } from '@/data/learningPersonas'
 import { SANDBOX_SCENARIOS, type SandboxTrackId } from '@/data/sandboxScenarios'
 
+// Domain categories — "what a tool does". The Docker-sandbox runtime is a
+// cross-cutting *facet* (see `WorkshopTool.sandbox`), not a category: a sandbox
+// scenario still belongs to a real domain. 'Sandbox' was removed as a category
+// in the Crypto Lab Workbench redesign; each scenario is re-homed to its domain.
 export const CATEGORIES = [
   'OpenSSL Studio',
   'HSM / PKCS#11',
@@ -35,7 +39,6 @@ export const CATEGORIES = [
   'Digital Identity',
   'Blockchain & Digital Assets',
   'Protocol Simulations',
-  'Sandbox',
 ] as const
 
 export type WorkshopCategory = (typeof CATEGORIES)[number]
@@ -62,6 +65,13 @@ export interface WorkshopTool {
   difficulty: ToolDifficulty
   /** Personas for whom this tool is a primary (★★) fit */
   recommendedPersonas: PersonaId[]
+  /**
+   * Cross-cutting facet: this tool is a Docker-sandbox scenario that runs in a
+   * real, access-gated container (vs. in-browser WASM). It still has a real
+   * domain `category`; `sandbox` only marks *where/how* it runs. Drives the
+   * "Sandbox" badge and the runtime-locked presentation in the Crypto Lab.
+   */
+  sandbox?: boolean
   /** Tool is under active development — show WIP badge on card */
   wip?: boolean
   /** true if any workshop step produces crypto output (key, sig, ciphertext) */
@@ -901,6 +911,51 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       url: 'https://github.com/openmls/openmls',
     },
   },
+  {
+    id: 'cacp-kmip',
+    pt_id: 'PT-033',
+    version: '1.0.0',
+    name: 'Crypto-Agility Control Plane (KMIP)',
+    description:
+      'In-browser KMIP 3.0 control plane + softhsmrustv3 HSM, compiled to WebAssembly. Load a crypto-agility policy (pqc.yaml / classical.yaml), run key lifecycle ops (CreateKeyPair → Activate → Sign / Encap / Decap), and watch the policy auto-rekey classical keys to ML-DSA-87 on the same Sign call — no server, no Docker.',
+    category: 'HSM / PKCS#11',
+    algorithms: [
+      'ML-DSA-44',
+      'ML-DSA-65',
+      'ML-DSA-87',
+      'ML-KEM-768',
+      'ML-KEM-1024',
+      'AES-256',
+      'ECDSA',
+      'KMIP 3.0',
+    ],
+    icon: ShieldCheck,
+    moduleLink: '/playground/cacp',
+    keywords: [
+      'kmip',
+      'cacp',
+      'crypto-agility',
+      'crypto agility',
+      'control plane',
+      'hsm',
+      'softhsm',
+      'policy',
+      'rekey',
+      'key lifecycle',
+      'ml-dsa',
+      'ml-kem',
+      'ttlv',
+      'wire',
+      'pkcs11',
+      'wasm',
+    ],
+    difficulty: 'advanced',
+    recommendedPersonas: ['developer', 'architect', 'researcher'],
+    opensourceTool: {
+      name: 'pqctoday-kmip',
+      url: 'https://github.com/pqctoday/pqctoday-kmip',
+    },
+  },
 ]
 
 /** Prefix applied to sandbox scenario ids to avoid collisions with native tools
@@ -931,18 +986,51 @@ const SANDBOX_TRACK_PERSONAS: Record<SandboxTrackId, PersonaId[]> = {
   applications: ['developer', 'architect', 'researcher'],
 }
 
+// ── Sandbox re-homing (Crypto Lab Workbench, §6) ───────────────────────────
+// Each sandbox scenario keeps a real *domain* category; "runs in a container"
+// is a facet (`sandbox: true`), not a category. Default per track, with
+// per-scenario overrides where a scenario clearly belongs in another domain.
+const SANDBOX_TRACK_CATEGORY: Record<SandboxTrackId, WorkshopCategory> = {
+  'protocol-simulation': 'Protocol Simulations',
+  infrastructure: 'Certificates & Proofs',
+  'supply-chain': 'Certificates & Proofs',
+  quantum: 'Protocol Simulations',
+  'secrets-kms': 'HSM / PKCS#11',
+  web: 'Protocol Simulations',
+  applications: 'Protocol Simulations',
+}
+
+const SANDBOX_SCENARIO_CATEGORY: Record<string, WorkshopCategory> = {
+  // infrastructure track — key management / mail belong elsewhere
+  'cloud-kms': 'HSM / PKCS#11',
+  'secrets-vault': 'HSM / PKCS#11',
+  smime: 'OpenSSL Studio',
+  wireguard: 'Protocol Simulations',
+  // supply-chain track — TPM key hierarchy is an HSM/key concern
+  'tpm-pqc-migration': 'HSM / PKCS#11',
+  // applications track — JOSE/JWT, automated CA, firmware keys
+  'api-security-jwt': 'OpenSSL Studio',
+  stepca: 'Certificates & Proofs',
+  'firmware-hss': 'HSM / PKCS#11',
+}
+
+function sandboxDomainCategory(s: { id: string; trackId: SandboxTrackId }): WorkshopCategory {
+  return SANDBOX_SCENARIO_CATEGORY[s.id] ?? SANDBOX_TRACK_CATEGORY[s.trackId]
+}
+
 const SANDBOX_TOOLS: WorkshopTool[] = SANDBOX_SCENARIOS.map((s, idx) => ({
   id: `${SANDBOX_TOOL_PREFIX}${s.id}`,
   pt_id: `PT-SBX-${String(idx + 1).padStart(3, '0')}`,
   version: '1.0.0',
   name: s.title,
   description: s.useCase.length > 120 ? `${s.useCase.slice(0, 117)}...` : s.useCase,
-  category: 'Sandbox',
+  category: sandboxDomainCategory(s),
+  sandbox: true,
   algorithms: s.algorithms,
   icon: SANDBOX_ICONS[s.trackId],
   moduleLink: '',
   keywords: Array.from(
-    new Set([s.id, s.tool.name, s.trackId, ...s.algorithms].map((k) => k.toLowerCase()))
+    new Set([s.id, s.tool.name, s.trackId, 'sandbox', ...s.algorithms].map((k) => k.toLowerCase()))
   ),
   difficulty: s.difficulty,
   recommendedPersonas: SANDBOX_TRACK_PERSONAS[s.trackId],

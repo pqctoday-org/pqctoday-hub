@@ -164,6 +164,7 @@ export const PLAYGROUND_PHASES: Record<string, PhaseResource> = {
   'slh-dsa': { phasesServed: ['foundations', 'p5'], legs: ['practice', 'output'] },
   'lms-hss': { phasesServed: ['foundations', 'p5'], legs: ['practice', 'output'] },
   'openssl-studio': { phasesServed: ['foundations', 'p5'], legs: ['practice', 'output'] },
+  'cacp-kmip': { phasesServed: ['p5', 'p6', 'p7'], legs: ['practice', 'output'] },
 }
 
 /**

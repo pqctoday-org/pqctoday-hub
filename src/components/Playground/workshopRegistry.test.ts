@@ -8,18 +8,29 @@ import {
 } from './workshopRegistry'
 import { SANDBOX_SCENARIOS } from '@/data/sandboxScenarios'
 
-describe('workshopRegistry — Sandbox category wiring', () => {
-  it("includes 'Sandbox' in CATEGORIES", () => {
-    expect(CATEGORIES).toContain('Sandbox')
+describe('workshopRegistry — Sandbox facet wiring', () => {
+  it("no longer exposes 'Sandbox' as a category (it is a cross-cutting facet)", () => {
+    expect(CATEGORIES).not.toContain('Sandbox')
   })
 
-  it('registers a WorkshopTool for every sandbox scenario with the sbx- prefix', () => {
+  it('registers a sandbox-facet WorkshopTool, re-homed to a real domain, for every scenario', () => {
     for (const scenario of SANDBOX_SCENARIOS) {
       const toolId = `${SANDBOX_TOOL_PREFIX}${scenario.id}`
       const tool = WORKSHOP_TOOLS.find((t) => t.id === toolId)
       expect(tool, `missing WorkshopTool for ${toolId}`).toBeDefined()
-      expect(tool?.category).toBe('Sandbox')
       expect(tool?.name).toBe(scenario.title)
+      // Marked as a sandbox scenario…
+      expect(tool?.sandbox, `${toolId} must carry sandbox: true`).toBe(true)
+      // …but homed in a real domain category, never the removed 'Sandbox' one.
+      expect(tool?.category).not.toBe('Sandbox')
+      expect(CATEGORIES).toContain(tool?.category)
+    }
+  })
+
+  it('marks sandbox tools (and only sandbox tools) with the sandbox facet', () => {
+    const sandboxIds = new Set(SANDBOX_SCENARIOS.map((s) => `${SANDBOX_TOOL_PREFIX}${s.id}`))
+    for (const tool of WORKSHOP_TOOLS) {
+      expect(Boolean(tool.sandbox)).toBe(sandboxIds.has(tool.id))
     }
   })
 
@@ -31,7 +42,7 @@ describe('workshopRegistry — Sandbox category wiring', () => {
   })
 
   it('does not collide sandbox ids with existing native tool ids', () => {
-    const nativeIds = WORKSHOP_TOOLS.filter((t) => t.category !== 'Sandbox').map((t) => t.id)
+    const nativeIds = WORKSHOP_TOOLS.filter((t) => !t.sandbox).map((t) => t.id)
     for (const scenario of SANDBOX_SCENARIOS) {
       // Raw scenario id ('tls', 'ssh', ...) may collide with a native tool; the
       // prefix is what protects us. This test asserts we actually applied it.

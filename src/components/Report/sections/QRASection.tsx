@@ -34,6 +34,8 @@ import { ROLE_CROSSWALK, type FrameworkRoleId } from '@/data/roleCrosswalk'
 /** Display order for owner-assignment options, derived from the crosswalk. */
 const ROLE_OPTION_ORDER = Object.keys(ROLE_CROSSWALK) as FrameworkRoleId[]
 import { FRAMEWORK_PHASES } from '@/data/frameworkPhases'
+import { CRQC_ESTIMATES } from '@/data/regulatoryTimelines'
+import { QC_FIRST_YEAR } from '@/data/quantumTimeline'
 import type { AssessmentInput, AssessmentResult } from '@/hooks/assessmentTypes'
 import type { QRAHeatmapCell, QRABacklogItem } from '@/hooks/assessment/qra'
 import clsx from 'clsx'
@@ -207,17 +209,34 @@ function Backlog({ items }: { items: QRABacklogItem[] }) {
   )
 }
 
+/** Optimistic / expected / pessimistic CRQC arrival, plus the conservative planning anchor. */
+function CrqcWindow() {
+  return (
+    <div className="rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
+      <span className="font-semibold text-foreground">CRQC arrival window</span> — when a quantum
+      computer could break today&apos;s RSA/ECC: optimistic ~{CRQC_ESTIMATES.lowerBound} · expected
+      ~{CRQC_ESTIMATES.moderate} · pessimistic ~{CRQC_ESTIMATES.upperBound}. This assessment plans
+      against a conservative {QC_FIRST_YEAR} anchor for the most sensitive, long-lived data. Source:
+      GRI Quantum Threat Timeline 2025 (median 2029–2032).
+    </div>
+  )
+}
+
 function RegulatoryGaps({ gaps }: { gaps: ReturnType<typeof buildQRA>['regulatoryGaps'] }) {
   if (gaps.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground inline-flex items-center gap-2">
-        <CheckCircle2 size={16} className="text-success" aria-hidden="true" />
-        No frameworks in scope explicitly mandate PQC yet — but track the regulatory horizon.
-      </p>
+      <div className="space-y-3">
+        <CrqcWindow />
+        <p className="text-sm text-muted-foreground inline-flex items-center gap-2">
+          <CheckCircle2 size={16} className="text-success" aria-hidden="true" />
+          No frameworks in scope explicitly mandate PQC yet — but track the regulatory horizon.
+        </p>
+      </div>
     )
   }
   return (
     <div className="space-y-3">
+      <CrqcWindow />
       <p className="text-sm text-muted-foreground">
         {gaps.length} in-scope framework{gaps.length !== 1 ? 's' : ''} explicitly require
         {gaps.length === 1 ? 's' : ''} PQC — these are gaps against current posture.

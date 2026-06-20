@@ -37,8 +37,8 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'OpenSSL TLS 1.3 + Composite Cert',
     emoji: '🔐',
     useCase:
-      'Execute OpenSSL TLS 1.3 handshakes with configurable certificate formats: pure ML-DSA-65 (PQC auth) or a LAMPS draft-19 composite cert (ML-DSA-65 + ECDSA-P256, OID 1.3.6.1.5.5.7.6.45) where both signatures are generated via C_Sign through softhsmv3 PKCS#11 v3.2. Combine with X25519MLKEM768 hybrid KEX for a fully quantum-safe connection.',
-    algorithms: ['ML-KEM-768', 'TLS 1.3', 'LAMPS Composite', 'PKCS#11 v3.2'],
+      'Execute OpenSSL TLS 1.3 handshakes with configurable certificate formats. In pure-ML-DSA mode the server cert is an ML-DSA-65 cert (key from openssl genpkey) and ML-DSA authenticates the connection. In composite mode a LAMPS draft-19 composite CERTIFICATE (ML-DSA-65 + ECDSA-P256, OID 1.3.6.1.5.5.7.6.45) is constructed by composite_mkcert from softhsmv3 PKCS#11 keys — but the live TLS handshake authenticates with a fresh ephemeral ECDSA-P256 key (the composite SignatureScheme is not yet in OpenSSL mainline, so ML-DSA does not sign CertificateVerify). Both modes pair with the X25519MLKEM768 hybrid KEX for a quantum-safe key exchange.',
+    algorithms: ['ML-KEM-768', 'TLS 1.3', 'LAMPS Composite cert', 'softhsmv3 PKCS#11 keys'],
     difficulty: 'advanced',
     trackId: 'protocol-simulation',
     tool: { name: 'OpenSSL', url: 'https://github.com/openssl/openssl' },
@@ -84,7 +84,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'Enterprise PKI Chains',
     emoji: '🏛️',
     useCase:
-      'Build a hierarchical PQC Certificate Authority with OpenSSL 3.6 — a mixed-algorithm chain: Root CA (SLH-DSA-SHA2-128s) → Intermediate CA (ML-DSA-65) → Leaf (ML-DSA-44) — verified end-to-end and compared against an all-RSA-2048 classical chain.',
+      "Build a hierarchical PQC Certificate Authority with OpenSSL 3.6 — a mixed-algorithm chain: Root CA (SLH-DSA-SHA2-128s) → Intermediate CA (ML-DSA-65) → Leaf (ML-DSA-44) — verified end-to-end and compared against an all-RSA-2048 classical chain. The ML-DSA-65 tier is also exercised as an HSM-resident CA: the key is generated inside softhsmv3 and the issued leaf's certificate signature is a real HSM C_Sign, so the live PKCS#11 panel shows the actual C_GenerateKeyPair / C_Sign (ML-DSA-65) captured by pkcs11-spy.",
     algorithms: ['SLH-DSA-128s', 'ML-DSA-65', 'ML-DSA-44', 'X.509'],
     difficulty: 'beginner',
     trackId: 'infrastructure',
@@ -111,7 +111,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     difficulty: 'advanced',
     trackId: 'infrastructure',
     tool: {
-      name: 'OpenSSL 3.6.2 + pkcs11-provider + SoftHSMv3',
+      name: 'OpenSSL 3.6.2 (file-based keys; no HSM)',
       url: 'https://github.com/openssl/openssl',
     },
   },
@@ -236,8 +236,8 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'PQCToday KMIP 3.0 KMS',
     emoji: '🏢',
     useCase:
-      'Drive a real crypto-agile KMIP 3.0 key lifecycle with pqctoday-kmip (Rust, MIT) backed by softhsmrustv3 — CreateKeyPair → Activate → Sign for ML-DSA-65, and CreateKeyPair → Activate → Encapsulate → Decapsulate for ML-KEM-768.',
-    algorithms: ['ML-DSA/ML-KEM', 'KMIP 3.0'],
+      'Drive a real crypto-agile KMIP key lifecycle with pqctoday-kmip (Rust, MIT) backed by softhsmrustv3 — CreateKeyPair → Activate → Sign for ML-DSA-65, and CreateKeyPair → Activate → Encapsulate → Decapsulate for ML-KEM-768. The server speaks KMIP ProtocolVersion 3.0; note that KMIP 3.0 is still an OASIS Committee Specification Draft (the latest ratified standard is 2.1) and the PQC algorithm tags come from KMIP Working Draft 19.',
+    algorithms: ['ML-DSA/ML-KEM', 'KMIP 3.0 (OASIS draft / PQC WD19)'],
     difficulty: 'advanced',
     trackId: 'secrets-kms',
     tool: {
@@ -380,8 +380,8 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'Lightweight MQTT Telemetry',
     emoji: '📡',
     useCase:
-      'Measure the compute execution burden of hybridizing IoT device metrics via MQTT protocol layers protected by ML-KEM encapsulation.',
-    algorithms: ['ML-KEM-768', 'Battery Drain'],
+      'Run a real Mosquitto 2.1.2 TLS broker (built against OpenSSL 3.6) and compare a classical ECDSA-P256 / secp256r1 arm against a PQC ML-DSA-65 cert / X25519MLKEM768 KEM arm — driving a live TLS 1.3 handshake plus end-to-end pub/sub over TLS in each. WHY IT MATTERS: MQTT telemetry from sensors, meters, and medical/industrial devices is a prime harvest-now-decrypt-later (HNDL) target — long-lived deployments mean traffic captured today can be decrypted once a CRQC exists, and firmware that ships classical-only crypto may outlive the quantum transition. The PQC arm moves the key exchange to the NIST ML-KEM hybrid group (quantum-safe) while the cost (larger ML-DSA-65 cert, ~1KB KEM ciphertext, broker memory) is exactly what constrained-device migration planning must budget for.',
+    algorithms: ['ML-KEM-768', 'Battery (estimate)'],
     difficulty: 'intermediate',
     trackId: 'applications',
     tool: { name: 'Eclipse Mosquitto', url: 'https://mosquitto.org/' },
@@ -428,7 +428,7 @@ export const SANDBOX_TRACKS: SandboxTrack[] = [
     id: 'web',
     label: 'Web & Network Security',
     subtitle:
-      'Browser TLS negotiation, migration impact quantification, and HAProxy edge-termination',
+      'Browser TLS negotiation, migration impact quantification, HAProxy edge-termination, A/B handshake benchmarking, and live PQC traffic analysis',
     difficulty: 'Intermediate',
   },
   {

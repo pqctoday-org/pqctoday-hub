@@ -50,8 +50,8 @@ export const CrqcCapabilityStrip: React.FC = () => {
     []
   )
 
-  // The most-urgent target needs the fewest logical qubits — show progress
-  // toward the smallest Shor target (≈1,200 logical qubits for ECC-256).
+  // The most-urgent target needs the fewest logical qubits — show progress toward the
+  // low-end Shor target for ECC-256 (≈1,200 logical qubits; published estimates range to ~2,330+).
   const SHOR_TARGET_QUBITS = 1200
   const progressPct = useMemo(
     () => Math.min(100, (leadMachine.estimatedLogicalQubits / SHOR_TARGET_QUBITS) * 100),
@@ -140,6 +140,9 @@ export const CrqcCapabilityStrip: React.FC = () => {
             aria-label="Logical-qubit progress toward the smallest Shor target"
           >
             <div className="h-full bg-primary rounded-full" style={{ width: `${progressPct}%` }} />
+          </div>
+          <div className="text-[10px] text-muted-foreground mt-1">
+            ~1,200 LQ is the low-end ECC-256 estimate; published work ranges to ~2,330+ LQ.
           </div>
           <div className="text-[10px] text-muted-foreground mt-1">
             Lead: {leadMachine.vendor} {leadMachine.name} ({leadMachine.qubitType})

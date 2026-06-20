@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
+import { lazy, Suspense, useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
@@ -38,7 +38,13 @@ import { DeveloperImplementationView } from './views/DeveloperImplementationView
 import { OpsRotationView } from './views/OpsRotationView'
 import { CuriousOrientationView } from './views/CuriousOrientationView'
 import { LibraryDetailPopover } from '@/components/Library/LibraryDetailPopover'
-import { ThreatDetailDialog } from '@/components/Threats/ThreatDetailDialog'
+// Lazy: keeps the dialog's implementation-attack data out of the Compliance
+// route chunk until a user opens a threat detail.
+const ThreatDetailDialog = lazy(() =>
+  import('@/components/Threats/ThreatDetailDialog').then((m) => ({
+    default: m.ThreatDetailDialog,
+  }))
+)
 import {
   TimelineDocumentDetailPopover,
   type TimelineDocumentRow,
@@ -263,7 +269,9 @@ function ForYouSection({ onExportCsv }: { onExportCsv?: () => void }) {
         item={selectedLibrary}
       />
       {selectedThreat && (
-        <ThreatDetailDialog threat={selectedThreat} onClose={() => setSelectedThreat(null)} />
+        <Suspense fallback={null}>
+          <ThreatDetailDialog threat={selectedThreat} onClose={() => setSelectedThreat(null)} />
+        </Suspense>
       )}
       <TimelineDocumentDetailPopover
         isOpen={!!selectedTimeline}

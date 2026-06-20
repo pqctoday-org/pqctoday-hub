@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Search,
   AlertTriangle,
@@ -47,7 +47,11 @@ import { ThreatsCardGrid } from './ThreatsCardGrid'
 import { ThreatsTable } from './ThreatsTable'
 import { IndustryStack } from './IndustryStack'
 
-import { ThreatDetailDialog } from './ThreatDetailDialog'
+// Lazy: keeps the implementation-attack data the dialog pulls in out of the
+// Threats route chunk until a user opens a threat detail.
+const ThreatDetailDialog = lazy(() =>
+  import('./ThreatDetailDialog').then((m) => ({ default: m.ThreatDetailDialog }))
+)
 import { MobileThreatsList } from './MobileThreatsList'
 import { ThreatEconomicsHeader } from './ThreatEconomicsHeader'
 import { CrqcCapabilityStrip } from './CrqcCapabilityStrip'
@@ -766,13 +770,15 @@ export const ThreatsDashboard: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = 
       {/* End detail dialog wrapper */}
       <AnimatePresence>
         {selectedThreat && (
-          <ThreatDetailDialog
-            threat={selectedThreat}
-            onClose={() => {
-              setSelectedThreat(null)
-              syncFiltersToUrl({ id: null })
-            }}
-          />
+          <Suspense fallback={null}>
+            <ThreatDetailDialog
+              threat={selectedThreat}
+              onClose={() => {
+                setSelectedThreat(null)
+                syncFiltersToUrl({ id: null })
+              }}
+            />
+          </Suspense>
         )}
       </AnimatePresence>
     </div>

@@ -1,0 +1,92 @@
+# Hybrid signing migration window — dual-sign with classical + PQC during 2026–2029.
+# Every signing operation produces a composite signature per LAMPS draft-19.
+
+schema_version: 1
+
+metadata:
+  name: hybrid-migration-window
+  description: |
+    During the 2026-01-01 to 2029-12-31 migration window, every Sign operation
+    must produce a composite signature combining a classical algorithm (Ed25519
+    or ECDSA-P384) with a PQC algorithm (ML-DSA-65 or ML-DSA-87) per LAMPS
+    draft-ietf-lamps-pq-composite-sigs-19. After 2029-12-31, pure PQC is
+    permitted; before 2026-01-01, classical-only is permitted (legacy).
+
+    Rationale: protect against both classical-now-broken-tomorrow (PQC tail
+    risk) AND PQC-implementation-flaw-discovered-tomorrow (defense in depth).
+
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  compliance_mapping:
+    - { framework: "LAMPS draft-19",   status: implemented }
+    - { framework: "NIST IR 8547",     status: aligned }
+    - { framework: "ANSSI hybrid 2024", status: aligned }
+
+rules:
+
+  # 1. During migration window, every signing CreateKeyPair must use a
+  #    composite algorithm (LAMPS draft-19).
+  - type: hybrid_dual_sign_requirement
+    primary:   ML-DSA-65
+    secondary: Ed25519
+    effective_from: "2026-01-01"
+    effective_until: "2029-12-31"
+    ops_affected: [Create, Sign]
+    composite_oid: "2.16.840.1.114027.80.8.1.1"   # ML-DSA-65-Ed25519 per LAMPS draft-19
+    reason: "Migration window: composite ML-DSA-65 + Ed25519 required"
+
+  # 2. Alternative composite for high-assurance contexts.
+  - type: hybrid_dual_sign_requirement
+    primary:   ML-DSA-87
+    secondary: ECDSA-P384
+    effective_from: "2026-01-01"
+    effective_until: "2029-12-31"
+    ops_affected: [Create, Sign]
+    composite_oid: "2.16.840.1.114027.80.8.1.7"
+    triggered_by_custom_attribute: { name: pqctoday-assurance, value: high }
+    reason: "High-assurance context: composite ML-DSA-87 + ECDSA-P384 required"
+
+  # 3. Pure ML-DSA signing creation banned during the migration window.
+  - type: algorithm_denylist
+    ops: [Create]
+    algorithms: [ML-DSA-44, ML-DSA-65, ML-DSA-87]
+    effective_from: "2026-01-01"
+    effective_until: "2029-12-31"
+    exception_custom_attribute: { name: pqctoday-purpose, value: research }
+    reason: "Pure PQC signing creation banned in migration window; use composite OR set x-pqctoday-purpose=research"
+
+  # 4. Pure classical signing creation also banned during the migration window.
+  - type: algorithm_denylist
+    ops: [Create]
+    algorithms: [Ed25519, ECDSA-P256, ECDSA-P384, ECDSA-P521, RSA]
+    effective_from: "2026-01-01"
+    effective_until: "2029-12-31"
+    exception_custom_attribute: { name: pqctoday-purpose, value: legacy-verify }
+    reason: "Pure classical signing creation banned in migration window; use composite OR set x-pqctoday-purpose=legacy-verify"
+
+  # 5. After 2030-01-01, pure ML-DSA is permitted.
+  - type: temporal_cutoff
+    op: Create
+    algorithm_class: classical
+    algorithms: [Ed25519, ECDSA-P256, ECDSA-P384, RSA]
+    after: "2030-01-01"
+    reason: "Post-migration: pure classical Create banned"
+
+  # 6. Verify operations remain unrestricted (need to verify legacy artefacts).
+  #    No rule needed — absence of Deny = Allow.
+
+  # 7. Composite-sig verification key usage mask must include both Sign + Verify.
+  - type: require_usage_mask
+    algorithm: ML-DSA-65-ED25519
+    flags: [Sign, Verify]
+    reason: "Composite signing keys must declare both Sign+Verify"
+  - type: require_usage_mask
+    algorithm: ML-DSA-87-ECDSA-P384
+    flags: [Sign, Verify]
+    reason: "Composite signing keys must declare both Sign+Verify"
+
+  # 8. Lifecycle gate: only Active keys for signing.
+  - type: lifecycle_state_gate
+    op: Sign
+    allowed_states: [Active]
+    reason: "Composite signing only with Active keys"

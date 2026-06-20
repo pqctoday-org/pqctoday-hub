@@ -1,0 +1,84 @@
+# PQC migration policy with a 2030-01-01 hard cutoff for classical signing/encryption.
+# Models a realistic enterprise PQC roadmap aligned with NIST guidance.
+
+schema_version: 1
+
+metadata:
+  name: pqc-migration-2030
+  description: |
+    Enterprise PQC migration policy. Before 2030-01-01, classical algorithms
+    remain allowed for backward-compatible verification + decryption of
+    legacy artefacts. After 2030-01-01, classical algorithms are banned for
+    signing AND encryption (verify + decrypt of pre-cutoff material remains
+    allowed). Hybrid composite signatures are required for any new signing
+    key created from 2027-01-01 onward.
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  compliance_mapping:
+    - { framework: "NIST IR 8547", status: aligned }
+    - { framework: "CNSA-2.0",    status: partial }
+
+rules:
+
+  # 1. Weak classical algorithms always banned, regardless of date.
+  - type: algorithm_denylist
+    ops: [Create, Sign, Encrypt]
+    algorithms: [RSA-PKCS1-v1_5, ECDSA-SHA1, DES, 3DES, MD5, SHA1]
+    reason: "Weak/legacy algorithms banned by policy at all times"
+
+  # 2. Minimum RSA key length 3072 bits for any new key after 2026-01-01.
+  - type: min_key_length
+    algorithm: RSA
+    min_bits: 3072
+    reason: "RSA-2048 below organizational minimum; require >= 3072 bits"
+
+  # 3. No new ECDSA P-256 signing keys created after 2027-01-01.
+  - type: temporal_cutoff
+    op: Create
+    algorithm_class: classical
+    algorithms: [ECDSA-P256, ECDSA-P384]
+    after: "2027-01-01"
+    reason: "Classical ECDSA new-key creation cutoff per migration roadmap"
+
+  # 4. Hard cutoff: no classical Sign or Encrypt after 2030-01-01.
+  - type: temporal_cutoff
+    op: Sign
+    algorithm_class: classical
+    after: "2030-01-01"
+    reason: "Classical signing banned by migration roadmap from 2030-01-01"
+
+  - type: temporal_cutoff
+    op: Encrypt
+    algorithm_class: classical
+    after: "2030-01-01"
+    reason: "Classical encryption banned by migration roadmap from 2030-01-01"
+
+  # 5. Verify + Decrypt of legacy classical artefacts remain allowed
+  #    indefinitely (no rule needed — absence of Deny = Allow).
+
+  # 6. Production-classification signing keys must be PQC or composite.
+  - type: require_custom_attribute
+    attribute_name: pqctoday-purpose
+    algorithms: [ML-DSA-44, ML-DSA-65, ML-DSA-87, SLH-DSA-SHA2-128s, SLH-DSA-SHA2-256s,
+                 ML-DSA-65-ED25519, ML-DSA-87-ECDSA-P384]
+    reason: "Production PQC signing keys must declare x-pqctoday-purpose"
+
+  # 7. KEM-only keys (ML-KEM) must carry KeyAgreement usage mask.
+  - type: require_usage_mask
+    algorithm: ML-KEM-768
+    flags: [KeyAgreement]
+    reason: "ML-KEM keys must declare KeyAgreement usage"
+  - type: require_usage_mask
+    algorithm: ML-KEM-1024
+    flags: [KeyAgreement]
+    reason: "ML-KEM keys must declare KeyAgreement usage"
+
+  # 8. Only Active keys allowed for new Sign/Encrypt ops.
+  - type: lifecycle_state_gate
+    op: Sign
+    allowed_states: [Active]
+    reason: "Signing only with Active keys (no Deactivated/Compromised re-use)"
+  - type: lifecycle_state_gate
+    op: Encrypt
+    allowed_states: [Active]
+    reason: "Encryption only with Active keys"

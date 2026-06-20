@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { softwareData, softwareMetadata, vendorMap } from '../../data/migrateData'
+import {
+  softwareData,
+  softwareMetadata,
+  vendorMap,
+  matchesMigrationStep,
+} from '../../data/migrateData'
 import { useSearchParams } from 'react-router-dom'
 
 import { SoftwareTable } from './SoftwareTable'
@@ -583,10 +588,9 @@ export const MigrateView: React.FC<MigrateViewProps> = ({
     return activePartitions.reduce(
       (acc, layer) => {
         acc[layer.id] = softwareData.filter((item) => {
-          // Step filter
-          if (stepFilter) {
-            const phases = item.migrationPhases?.split(',').map((p) => p.trim()) ?? []
-            if (!phases.includes(stepFilter.stepId)) return false
+          // Step filter — untagged products are phase-agnostic (match every step)
+          if (stepFilter && !matchesMigrationStep(item.migrationPhases, stepFilter.stepId)) {
+            return false
           }
           // Layer filter
           if (effectiveViewMode === 'cisaStack') {
@@ -815,10 +819,9 @@ export const MigrateView: React.FC<MigrateViewProps> = ({
   // All products filtered by global filters + layer dropdown + category dropdown
   const allFilteredProducts = useMemo(() => {
     return softwareData.filter((item) => {
-      // Step filter
-      if (stepFilter) {
-        const phases = item.migrationPhases?.split(',').map((p) => p.trim()) ?? []
-        if (!phases.includes(stepFilter.stepId)) return false
+      // Step filter — untagged products are phase-agnostic (match every step)
+      if (stepFilter && !matchesMigrationStep(item.migrationPhases, stepFilter.stepId)) {
+        return false
       }
       // Industry filter
       if (industryFilter) {

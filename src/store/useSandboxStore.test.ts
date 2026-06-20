@@ -4,8 +4,6 @@ import {
   useSandboxStore,
   isSandboxAvailable,
   filterToolsBySandboxAvailability,
-  availableCategoriesForSandboxStatus,
-  SANDBOX_CATEGORY,
   type SandboxStatus,
 } from './useSandboxStore'
 import { WORKSHOP_TOOLS, CATEGORIES } from '@/components/Playground/workshopRegistry'
@@ -62,16 +60,20 @@ describe('useSandboxStore', () => {
 describe('sandbox catalog gating — invariants against the real registry', () => {
   const NON_ONLINE: SandboxStatus[] = ['idle', 'checking', 'offline']
 
-  it('precondition: registry actually contains at least one Sandbox-category tool + the Sandbox category', () => {
-    expect(WORKSHOP_TOOLS.some((t) => t.category === SANDBOX_CATEGORY)).toBe(true)
-    expect(CATEGORIES).toContain(SANDBOX_CATEGORY)
+  it('precondition: registry contains sandbox-facet tools, all homed in real domain categories', () => {
+    expect(WORKSHOP_TOOLS.some((t) => t.sandbox)).toBe(true)
+    // 'Sandbox' is no longer a category — every sandbox tool lives in a real domain.
+    expect(CATEGORIES).not.toContain('Sandbox')
+    for (const t of WORKSHOP_TOOLS.filter((x) => x.sandbox)) {
+      expect(CATEGORIES).toContain(t.category)
+    }
   })
 
   it.each(NON_ONLINE)(
-    'filterToolsBySandboxAvailability strips every Sandbox tool when status=%s',
+    'filterToolsBySandboxAvailability strips every sandbox tool when status=%s',
     (status) => {
       const filtered = filterToolsBySandboxAvailability(WORKSHOP_TOOLS, status)
-      expect(filtered.some((t) => t.category === SANDBOX_CATEGORY)).toBe(false)
+      expect(filtered.some((t) => t.sandbox)).toBe(false)
       expect(filtered.length).toBeLessThan(WORKSHOP_TOOLS.length)
     }
   )
@@ -79,19 +81,5 @@ describe('sandbox catalog gating — invariants against the real registry', () =
   it('filterToolsBySandboxAvailability returns the full catalog when online', () => {
     const filtered = filterToolsBySandboxAvailability(WORKSHOP_TOOLS, 'online')
     expect(filtered).toEqual(WORKSHOP_TOOLS)
-  })
-
-  it.each(NON_ONLINE)(
-    'availableCategoriesForSandboxStatus omits the Sandbox category when status=%s',
-    (status) => {
-      const cats = availableCategoriesForSandboxStatus(CATEGORIES, status)
-      expect(cats).not.toContain(SANDBOX_CATEGORY)
-      expect(cats.length).toBe(CATEGORIES.length - 1)
-    }
-  )
-
-  it('availableCategoriesForSandboxStatus returns the full list when online', () => {
-    const cats = availableCategoriesForSandboxStatus(CATEGORIES, 'online')
-    expect(cats).toEqual(CATEGORIES)
   })
 })
