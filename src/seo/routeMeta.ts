@@ -157,7 +157,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
       '@graph': [
         {
           '@type': 'ItemList',
-          name: 'Post-Quantum Cryptography Algorithms',
+          name: 'Post-Quantum Algorithms & Protocols',
           description:
             'NIST standardized and candidate PQC algorithms with key sizes and benchmarks.',
           itemListElement: [

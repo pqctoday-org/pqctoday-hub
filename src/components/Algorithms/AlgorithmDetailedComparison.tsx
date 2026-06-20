@@ -38,6 +38,7 @@ import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { getAlgorithmDefaults } from '@/data/personaConfig'
 import { classifyCnsa20, cnsa20ChipClasses } from './cnsa20'
+import { MAX_COMPARE } from './useAlgorithmExplorer'
 
 type SortField = 'name' | 'type' | 'keygen' | 'sign' | 'verify' | 'ram' | 'optimization'
 type SortDir = 'asc' | 'desc'
@@ -267,7 +268,7 @@ function CompareButton({
             ? 'Remove from comparison'
             : !canToggle
               ? maxCompareReached
-                ? 'Max 3 reached'
+                ? `Max ${MAX_COMPARE} reached`
                 : `Requires ${compareType}`
               : 'Add to comparison'
         }
@@ -284,7 +285,7 @@ function CompareButton({
       </Button>
       {!canToggle && !isCompared && (
         <span className="absolute left-full ml-2 whitespace-nowrap bg-status-error text-status-error-foreground text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover/compare:opacity-100 transition-opacity pointer-events-none z-10 hidden sm:block">
-          {maxCompareReached ? 'Max 3 reached' : `Compare ${compareType} only`}
+          {maxCompareReached ? `Max ${MAX_COMPARE} reached` : `Compare ${compareType} only`}
         </span>
       )}
     </div>

@@ -159,8 +159,8 @@ export function AlgorithmsView() {
       <PageHeader
         icon={Shield}
         pageId="algorithms"
-        title="Post-Quantum Cryptography Algorithms"
-        description="Migration from classical to post-quantum cryptographic algorithms"
+        title="Post-Quantum Algorithms & Protocols"
+        description="Compare post-quantum algorithms and track their support across IETF protocols"
         dataSource={
           `Data Sources: ${transitionMetadata?.filename ?? 'algorithms_transitions.csv'}, ` +
           `${metadata?.filename ?? 'pqc_complete_algorithm_reference.csv'} • Updated: ` +
@@ -426,6 +426,7 @@ export function AlgorithmsView() {
           <AlgorithmCompareBar
             compareKeys={compareKeys}
             baselineName={baselineName}
+            compareType={compareType}
             onRemove={(key) => handleToggleCompare(key)}
             onClearAll={handleClearCompare}
             onCompare={handleOpenComparison}

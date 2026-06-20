@@ -60,9 +60,9 @@ describe('AlgorithmsView', () => {
           <AlgorithmsView />
         </MemoryRouter>
       )
-      expect(screen.getByText(/Post-Quantum Cryptography Algorithms/i)).toBeInTheDocument()
+      expect(screen.getByText(/Post-Quantum Algorithms & Protocols/i)).toBeInTheDocument()
       expect(
-        screen.getAllByText(/Migration from classical to post-quantum/i)[0]
+        screen.getAllByText(/track their support across IETF protocols/i)[0]
       ).toBeInTheDocument()
       expect(await screen.findByText(/Data Sources:/i)).toBeInTheDocument()
       expect(await screen.findByText('Transition Guide')).toBeInTheDocument()
@@ -109,7 +109,7 @@ describe('AlgorithmsView', () => {
           <AlgorithmsView />
         </MemoryRouter>
       )
-      expect(screen.getByText(/Post-Quantum Cryptography Algorithms/i)).toBeInTheDocument()
+      expect(screen.getByText(/Post-Quantum Algorithms & Protocols/i)).toBeInTheDocument()
       expect(await screen.findByText('Transition Guide')).toBeInTheDocument()
       expect(await screen.findByTestId('algorithm-comparison')).toBeInTheDocument()
     })
