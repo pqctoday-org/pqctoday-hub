@@ -15,8 +15,6 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { getAlgorithmDefaults } from '@/data/personaConfig'
 import { useAlgorithmExplorer, MAX_COMPARE } from '@/components/Algorithms/useAlgorithmExplorer'
 import { AlgorithmDetailedComparison } from '@/components/Algorithms/AlgorithmDetailedComparison'
-import { AlgorithmCompareBar } from '@/components/Algorithms/AlgorithmCompareBar'
-import { AlgorithmComparisonPanel } from '@/components/Algorithms/AlgorithmComparisonPanel'
 import { AlgorithmInfoModal } from '@/components/Algorithms/AlgorithmInfoModal'
 import { Button } from '@/components/ui/button'
 
@@ -54,6 +52,8 @@ export function AlgorithmDetailedEmbed({ onConfirm, confirmed }: AlgorithmDetail
         </div>
       )}
 
+      {/* Browse ↔ Compare lives inside the component now (compare panel +
+          selection bar included), so the embed no longer needs its own. */}
       <AlgorithmDetailedComparison
         highlightAlgorithms={undefined}
         onInfoOpen={() => setInfoOpen(true)}
@@ -62,25 +62,10 @@ export function AlgorithmDetailedEmbed({ onConfirm, confirmed }: AlgorithmDetail
         compareType={x.compareType}
         maxCompareReached={x.compareKeys.length >= MAX_COMPARE}
         onToggleCompare={x.handleToggleCompare}
-      />
-
-      {x.showComparison && x.comparisonAlgos.length >= 2 && (
-        <div className="mt-6">
-          <AlgorithmComparisonPanel
-            algorithms={x.comparisonAlgos}
-            baseline={x.baselineAlgo}
-            activeTab="detailed"
-            onClose={() => x.setShowComparison(false)}
-          />
-        </div>
-      )}
-
-      <AlgorithmCompareBar
-        compareKeys={x.compareKeys}
-        baselineName={x.baselineName}
-        onRemove={(key) => x.handleToggleCompare(key)}
-        onClearAll={x.handleClearCompare}
-        onCompare={x.handleOpenComparison}
+        detailMode={x.detailMode}
+        onDetailModeChange={x.handleDetailModeChange}
+        comparisonAlgos={x.comparisonAlgos}
+        baselineAlgo={x.baselineAlgo}
       />
 
       <AlgorithmInfoModal isOpen={infoOpen} onClose={() => setInfoOpen(false)} />

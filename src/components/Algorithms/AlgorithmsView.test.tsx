@@ -345,4 +345,34 @@ describe('AlgorithmsView', () => {
       expect(await screen.findByText('Protocol Support')).toBeInTheDocument()
     })
   })
+
+  describe('Validation tab (Attacks + KAT)', () => {
+    beforeEach(() => {
+      usePersonaStore.getState().clearPreferences()
+      usePersonaStore.getState().setPersona('developer')
+      global.innerWidth = 1024
+    })
+    afterEach(() => usePersonaStore.getState().clearPreferences())
+
+    it('renders a Validation tab alongside the other tabs', async () => {
+      render(
+        <MemoryRouter initialEntries={['/algorithms']}>
+          <AlgorithmsView />
+        </MemoryRouter>
+      )
+      expect(await screen.findByText('Validation')).toBeInTheDocument()
+      expect(screen.getByText('Protocol Support')).toBeInTheDocument()
+    })
+
+    it('shows the Implementation Attacks + KAT sections when the Validation tab is opened', async () => {
+      render(
+        <MemoryRouter initialEntries={['/algorithms']}>
+          <AlgorithmsView />
+        </MemoryRouter>
+      )
+      fireEvent.click(await screen.findByText('Validation'))
+      expect(await screen.findByText('Implementation Attacks')).toBeInTheDocument()
+      expect(screen.getByText('KAT Validation')).toBeInTheDocument()
+    })
+  })
 })
