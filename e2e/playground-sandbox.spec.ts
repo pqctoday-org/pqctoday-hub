@@ -4,8 +4,7 @@ import { test, expect } from '@playwright/test'
 const SANDBOX_ORIGIN = 'http://localhost:4000'
 
 // Stub the sandbox so the E2E does not require docker-compose to be running.
-// Fulfils:
-//  - /api/status → empty 200 (satisfies the reachability probe)
+//  - /api/status → empty 200 (satisfies the reachability probe → "online")
 //  - /embed/scenarios/* → tiny HTML that posts pqc:ready immediately
 async function stubSandbox(page: import('@playwright/test').Page) {
   await page.route(`${SANDBOX_ORIGIN}/api/status`, (route) =>
@@ -26,11 +25,13 @@ async function stubSandbox(page: import('@playwright/test').Page) {
   )
 }
 
-test.describe('Playground — Sandbox category', () => {
+// A sandbox scenario re-homed into the Protocol Simulations domain category.
+const SANDBOX_TILE = 'OpenSSL TLS 1.3 + Composite Cert'
+const PROTOCOL_SIMS_URL = '/playground?cat=Protocol%20Simulations'
+
+test.describe('Crypto Lab Workbench — Sandbox facet', () => {
   test.beforeEach(async ({ page }) => {
-    // Suppress the three blocking overlays: first-visit disclaimer, WhatsNew
-    // alertdialog, and the guided tour. Any of them intercepts pointer events
-    // on the playground tiles.
+    // Suppress the blocking overlays that intercept pointer events.
     await page.addInitScript(() => {
       localStorage.setItem(
         'pqc-disclaimer-storage',
@@ -45,61 +46,52 @@ test.describe('Playground — Sandbox category', () => {
     await stubSandbox(page)
   })
 
-  test('?cat=Sandbox filters the grid to sandbox tiles', async ({ page }) => {
-    // PlaygroundWorkshop reads `?cat` from the URL (PlaygroundWorkshop.tsx:283),
-    // so navigating directly applies the category filter without clicking
-    // through the Filters popover. Default wipFilter is 'all' on non-embedded,
-    // so Sandbox tiles (which are wip: true) render unconditionally.
-    await page.goto('/playground?cat=Sandbox')
-
-    const firstTile = page.locator('a[href^="/playground/sbx-"]').first()
-    await expect(firstTile).toBeVisible({ timeout: 10000 })
-  })
-
-  test('when sandbox probe fails, Sandbox category + tiles disappear from the catalog', async ({
+  test('sandbox scenarios live inside a domain category, carrying a Sandbox badge', async ({
     page,
   }) => {
-    // Override the beforeEach stub: make /api/status reject so the probe lands
-    // in 'offline' state. Routes registered later take precedence.
-    await page.route(`${SANDBOX_ORIGIN}/api/status`, (route) => route.abort('failed'))
+    await page.goto(PROTOCOL_SIMS_URL)
+    // Wait for the runtime probe to settle online.
+    await expect(page.getByText(/Runtime active/i)).toBeVisible({ timeout: 10000 })
 
-    await page.goto('/playground')
-
-    // Wait for the chip to settle into "Sandbox offline" so we know the probe
-    // ran and state propagated to PlaygroundWorkshop's catalogTools/availableCategories.
-    await page.waitForFunction(
-      () => {
-        return Array.from(document.querySelectorAll('button')).some((b) =>
-          (b as HTMLButtonElement).innerText.includes('Sandbox offline')
-        )
-      },
-      undefined,
-      { timeout: 10000 }
-    )
-
-    // No "Sandbox" category pill (filter dropdown entry) — would render as
-    // "Sandbox <count>" if present. We exclude the chip itself by requiring a digit.
-    const sandboxPillCount = await page.evaluate(() => {
-      const buttons = Array.from(document.querySelectorAll('button')) as HTMLButtonElement[]
-      return buttons.filter((b) => /^Sandbox\s+\d/.test(b.innerText.trim())).length
-    })
-    expect(sandboxPillCount).toBe(0)
-
-    // No sandbox tool tiles in the grid (sbx-* hrefs).
-    const tileCount = await page.locator('a[href^="/playground/sbx-"]').count()
-    expect(tileCount).toBe(0)
+    const card = page.locator('[role="button"]', { hasText: SANDBOX_TILE }).first()
+    await expect(card).toBeVisible({ timeout: 10000 })
+    await expect(card.getByText('Sandbox', { exact: true })).toBeVisible()
+    // Online → not locked.
+    await expect(card.getByText('needs runtime')).toHaveCount(0)
   })
 
-  test('clicking a sandbox tile renders the iframe for its scenario', async ({ page }) => {
-    await page.goto('/playground?cat=Sandbox')
+  test('when the probe fails, sandbox scenarios stay listed but render locked', async ({
+    page,
+  }) => {
+    // Override the stub: make /api/status fail so the probe lands 'offline'.
+    await page.route(`${SANDBOX_ORIGIN}/api/status`, (route) => route.abort('failed'))
+    await page.goto(PROTOCOL_SIMS_URL)
 
-    const firstTile = page.locator('a[href^="/playground/sbx-"]').first()
-    await expect(firstTile).toBeVisible({ timeout: 10000 })
-    const href = await firstTile.getAttribute('href')
-    expect(href).toMatch(/^\/playground\/sbx-/)
-    await firstTile.click()
+    // Sidebar hint reflects the locked runtime.
+    await expect(page.getByText(/Docker scenarios locked/i)).toBeVisible({ timeout: 10000 })
 
-    await expect(page).toHaveURL(new RegExp(`${href}$`))
+    // The scenario is still in the grid (not stripped), but locked.
+    const card = page.locator('[role="button"]', { hasText: SANDBOX_TILE }).first()
+    await expect(card).toBeVisible()
+    await expect(card.getByText('needs runtime')).toBeVisible()
+
+    // The category surfaces an inline "Start runtime" call to action.
+    await expect(page.getByRole('button', { name: 'Start runtime' })).toBeVisible()
+  })
+
+  test('opening an unlocked sandbox scenario routes to its embedded iframe', async ({ page }) => {
+    await page.goto(PROTOCOL_SIMS_URL)
+    await expect(page.getByText(/Runtime active/i)).toBeVisible({ timeout: 10000 })
+
+    const card = page.locator('[role="button"]', { hasText: SANDBOX_TILE }).first()
+    await card.click()
+
+    // The detail modal opens with an "Open tool" action (not "Start runtime").
+    const dialog = page.getByRole('dialog')
+    await expect(dialog).toBeVisible()
+    await dialog.getByRole('button', { name: /Open tool/i }).click()
+
+    await expect(page).toHaveURL(/\/playground\/sbx-tls$/)
     const iframe = page.locator('iframe[data-scenario-id]')
     await expect(iframe).toBeVisible()
     await expect(iframe).toHaveAttribute(
