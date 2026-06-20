@@ -55,8 +55,10 @@ export interface Finding {
 const VALID_STEP_IDS = ['assess', 'plan', 'preparation', 'test', 'migrate', 'launch', 'rampup']
 // Keep in sync with MIGRATION_STEP_ALIASES (src/data/migrateData.ts).
 const STEP_ALIASES: Record<string, string> = { prepare: 'preparation' }
-// Current empty ratio is ~0.41; cap with a little headroom so it can't quietly grow.
-const EMPTY_RATIO_BASELINE = 0.42
+// After the 06192026_r3 migration-phase re-tag the empty ratio dropped to ~6.8%
+// (the remainder are products the classifier left phase-agnostic). Cap just above
+// that so it can't quietly grow back.
+const EMPTY_RATIO_BASELINE = 0.08
 
 function findLatestCatalogCsv(dataDir: string): string {
   const re = /^pqc_product_catalog_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
