@@ -1,0 +1,106 @@
+# PQC crypto policy — the "after" half of the agility demo.
+#
+# Pair this with `classical.yaml`. The application code does NOT change
+# between the two policies. Flipping the Hub UI dropdown from `classical`
+# to `pqc` does three things to the unchanged application:
+#
+#   1. New KEM keys default to ML-KEM-1024 (was ECDH-P256).
+#   2. New signing keys default to ML-DSA-87 (was ECDSA-P256).
+#   3. Existing classical keys auto-rekey to PQC at first Sign / Encrypt
+#      via the substitution rules below — the engine emits
+#      Decision::RekeyAndProceed, the Phase-5 dispatcher executes the
+#      multi-op rekey transaction (new key → mark old Deprecated →
+#      link via x-pqctoday-supersedes → re-issue the original op).
+#
+# This is the bit KMIP 3.0 alone cannot do — it's the agility engine's
+# value-add. See `classical.yaml` for the op-name convention.
+
+schema_version: 1
+
+metadata:
+  name: pqc
+  description: |
+    Post-PQC default policy. KEM = ML-KEM-1024, signature = ML-DSA-87,
+    asymmetric-encrypt = ML-KEM-1024 (key delivery) + AES-256 (bulk).
+    Existing classical keys are auto-rekeyed at first use via
+    algorithm_substitution rules — application sees only the handle.
+  authority: pqctoday-hsm/demo
+  effective: "2026-01-01"
+  compliance_mapping:
+    - { framework: "FIPS 203 ML-KEM",  status: required }
+    - { framework: "FIPS 204 ML-DSA",  status: required }
+    - { framework: "FIPS 197 AES-256", status: required }
+    - { framework: "NSA CNSA-2.0",     status: aligned }
+
+rules:
+
+  # ── KEM default → ML-KEM-1024 ─────────────────────────────────────────
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    default_algorithm: ML-KEM-1024
+    reason: "PQC KEM default (FIPS 203, CNSA 2.0 Level 5)"
+
+  # ── Signature default → ML-DSA-87 ─────────────────────────────────────
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    default_algorithm: ML-DSA-87
+    reason: "PQC signature default (FIPS 204, CNSA 2.0 Level 5)"
+
+  # ── Asymmetric encryption default → ML-KEM-1024 ──────────────────────
+  # ML-KEM delivers the AES bulk key.
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Encrypt"]
+    default_algorithm: ML-KEM-1024
+    reason: "PQC asymmetric encryption: ML-KEM key delivery + AES-256 bulk"
+
+  # ── Symmetric encryption default ─────────────────────────────────────
+  # Unchanged from classical — AES-256 is PQC-safe (Grover halves the
+  # security level; AES-256 → 128-bit post-quantum security, still safe).
+  - type: algorithm_default
+    ops: [Create]
+    default_algorithm: AES-256
+    reason: "AES-256 — PQC-safe symmetric (Grover-resistant)"
+
+  # ── Existing-key rekey: ECDSA-P256 → ML-DSA-87 on Sign ────────────────
+  # Triggered when the application calls Sign against a key created under
+  # classical.yaml. Engine emits Decision::RekeyAndProceed — dispatcher
+  # generates a fresh ML-DSA-87 keypair, marks the ECDSA key Deprecated,
+  # links new ↔ old via x-pqctoday-supersedes, re-issues the Sign.
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: ECDSA-P256
+    to: ML-DSA-87
+    reason: "Rekey legacy ECDSA signing key to ML-DSA-87 at first use"
+
+  # ── Existing-key rekey: RSA-3072 → ML-KEM-1024 on Encrypt ────────────
+  # Same mechanism for the asymmetric-encrypt flow. Application keeps
+  # calling Encrypt against the RSA UID; engine + dispatcher migrate it
+  # to ML-KEM under the covers.
+  - type: algorithm_substitution
+    ops: [Encrypt]
+    from: RSA-3072
+    to: ML-KEM-1024
+    reason: "Rekey legacy RSA encryption key to ML-KEM-1024 at first use"
+
+  # ── Classical asymmetric Create denied ───────────────────────────────
+  # Once flipped to PQC, no new classical asymmetric keys may be created.
+  # Existing ones can still be Verify'd / Decrypt'd until rekey completes.
+  - type: algorithm_denylist
+    ops:
+      - CreateKeyPair
+      - "CreateKeyPair:KeyAgreement"
+      - "CreateKeyPair:Sign"
+      - "CreateKeyPair:Encrypt"
+    algorithms:
+      - RSA
+      - RSA-2048
+      - RSA-3072
+      - RSA-4096
+      - ECDSA-P256
+      - ECDSA-P384
+      - ECDSA-P521
+      - ECDH-P256
+      - ECDH-P384
+      - Ed25519
+      - Ed448
+    reason: "Classical asymmetric Create denied under PQC policy — use defaults or migrate"

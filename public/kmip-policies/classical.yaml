@@ -1,0 +1,93 @@
+# Classical crypto policy — the "before" half of the agility demo.
+#
+# Application code is unchanged between this policy and `pqc.yaml`.
+# Selecting this file in the Hub scenario UI dropdown gives every
+# CreateKeyPair / Sign / Encrypt request a classical algorithm; flipping
+# the dropdown to `pqc.yaml` migrates the same application to PQC.
+#
+# Coverage:
+#   - KEM        → ECDH-P256
+#   - Signature  → ECDSA-P256
+#   - Encryption → RSA-3072 (asymmetric) + AES-256 (symmetric)
+#
+# ## Op-name convention
+#
+# Multiple `algorithm_default` rules for the same op cannot coexist
+# (Pass-1 "last match wins" semantics). The dispatcher therefore
+# canonicalises CreateKeyPair into one of three purpose-discriminated
+# strings derived from CryptographicUsageMask:
+#
+#   - CreateKeyPair:KeyAgreement  ← when mask contains KeyAgreement (KEM)
+#   - CreateKeyPair:Sign          ← when mask contains Sign|Verify
+#   - CreateKeyPair:Encrypt       ← when mask contains Encrypt|Decrypt
+#
+# Substitution rules in `pqc.yaml` use ECDSA-P256 / RSA-3072 as the
+# `from:` clause, so existing keys created under THIS policy auto-rekey
+# to PQC at first Sign / Encrypt after flipping.
+
+schema_version: 1
+
+metadata:
+  name: classical
+  description: |
+    Pre-PQC baseline. Every new key defaults to a classical algorithm.
+    Demonstrates the application's "before" state in the classical → PQC
+    agility scenario. Flip to pqc.yaml in the Hub UI to migrate.
+  authority: pqctoday-hsm/demo
+  effective: "always"
+  compliance_mapping:
+    - { framework: "Pre-PQC baseline",  status: representative }
+    - { framework: "FIPS 140-3 legacy", status: aligned }
+
+rules:
+
+  # ── KEM default ────────────────────────────────────────────────────────
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    default_algorithm: ECDH-P256
+    reason: "Classical KEM default (ECDH-P256)"
+
+  # ── Signing default ───────────────────────────────────────────────────
+  # ECDSA-P256 for new signing keys. The PQC policy's substitution rule
+  # uses `from: ECDSA-P256` so flipping triggers rekey at first Sign.
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    default_algorithm: ECDSA-P256
+    reason: "Classical signing default (ECDSA-P256)"
+
+  # ── Asymmetric encryption default ─────────────────────────────────────
+  # RSA-3072 for new asymmetric-encrypt keys. Pairs with the PQC policy's
+  # `from: RSA-3072` substitution rule.
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Encrypt"]
+    default_algorithm: RSA-3072
+    reason: "Classical asymmetric-encrypt default (RSA-3072)"
+
+  # ── Symmetric encryption default ─────────────────────────────────────
+  - type: algorithm_default
+    ops: [Create]
+    default_algorithm: AES-256
+    reason: "Symmetric encryption default (AES-256)"
+
+  # ── PQC explicitly denied (proves the boundary) ───────────────────────
+  # If the application directly asks for ML-DSA / ML-KEM under the
+  # classical policy, deny — this policy is the "before" state.
+  - type: algorithm_denylist
+    ops:
+      - Create
+      - CreateKeyPair
+      - "CreateKeyPair:KeyAgreement"
+      - "CreateKeyPair:Sign"
+      - "CreateKeyPair:Encrypt"
+      - Sign
+      - Encrypt
+    algorithms:
+      - ML-KEM-512
+      - ML-KEM-768
+      - ML-KEM-1024
+      - ML-DSA-44
+      - ML-DSA-65
+      - ML-DSA-87
+      - SLH-DSA-SHA2-128s
+      - SLH-DSA-SHA2-256s
+    reason: "PQC algorithms gated off under the classical policy — flip to pqc.yaml to enable"

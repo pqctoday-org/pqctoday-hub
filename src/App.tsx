@@ -58,6 +58,11 @@ const HsmPlayground = lazyWithRetry(() =>
     default: module.HsmPlayground,
   }))
 )
+const KmipPlaygroundView = lazyWithRetry(() =>
+  import('./components/Playground/kmip/KmipPlaygroundView').then((module) => ({
+    default: module.KmipPlaygroundView,
+  }))
+)
 const DockerPlaygroundView = lazyWithRetry(() =>
   import('./components/Playground/DockerPlaygroundView').then((module) => ({
     default: module.DockerPlaygroundView,
@@ -257,6 +262,7 @@ function App() {
         <Route index element={<PlaygroundWorkshop />} />
         <Route path="interactive" element={<PlaygroundView />} />
         <Route path="hsm" element={<HsmPlayground />} />
+        <Route path="cacp" element={<KmipPlaygroundView />} />
         <Route path="docker" element={<DockerPlaygroundView />} />
         <Route path=":toolId" element={<PlaygroundToolRoute />} />
       </Route>
