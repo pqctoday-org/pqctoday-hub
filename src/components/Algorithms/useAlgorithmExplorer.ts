@@ -164,6 +164,17 @@ export function useAlgorithmExplorer(
   )
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '')
 
+  // Detailed-tab view mode: Browse (unified table) ↔ Compare (transposed
+  // side-by-side matrix). Synced to ?mode=compare; absent means browse.
+  const [detailMode, setDetailMode] = useState<'browse' | 'compare'>(() =>
+    searchParams.get('mode') === 'compare' ? 'compare' : 'browse'
+  )
+
+  useEffect(() => {
+    const mode = searchParams.get('mode')
+    setDetailMode(mode === 'compare' ? 'compare' : 'browse')
+  }, [searchParams])
+
   // CNSA 2.0 lens — additive. When off (default) the page behaves exactly as
   // before; when on, a lens panel renders and the detailed/transition lists
   // narrow to the CNSA 2.0 suite. Synced to the URL via ?cnsa=1.
@@ -234,6 +245,14 @@ export function useAlgorithmExplorer(
       )
     },
     [setSearchParams]
+  )
+
+  const handleDetailModeChange = useCallback(
+    (mode: 'browse' | 'compare') => {
+      setDetailMode(mode)
+      updateSearchParams({ mode: mode === 'compare' ? 'compare' : null })
+    },
+    [updateSearchParams]
   )
 
   const handleToggleCnsaLens = useCallback(() => {
@@ -554,6 +573,7 @@ export function useAlgorithmExplorer(
     filterStatus,
     searchQuery,
     cnsaLens,
+    detailMode,
     // url sync
     searchParams,
     setSearchParams,
@@ -568,6 +588,7 @@ export function useAlgorithmExplorer(
     handleTabChange,
     handleQuickView,
     handleToggleCnsaLens,
+    handleDetailModeChange,
     handleToggleCompare,
     handleToggleTransitionRow,
     handleClearCompare,

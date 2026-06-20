@@ -73,6 +73,8 @@ export function AlgorithmsView() {
     handleTabChange,
     handleQuickView,
     handleToggleCnsaLens,
+    detailMode,
+    handleDetailModeChange,
     handleToggleCompare,
     handleToggleTransitionRow,
     handleClearCompare,
@@ -385,16 +387,10 @@ export function AlgorithmsView() {
                   compareType={compareType}
                   maxCompareReached={compareKeys.length >= MAX_COMPARE}
                   onToggleCompare={handleToggleCompare}
-                  initialSection={
-                    (searchParams.get('section') ?? searchParams.get('subtab') ?? undefined) as
-                      | 'performance'
-                      | 'security'
-                      | 'sizes'
-                      | 'usecases'
-                      | 'attacks'
-                      | 'kat'
-                      | undefined
-                  }
+                  detailMode={detailMode}
+                  onDetailModeChange={handleDetailModeChange}
+                  comparisonAlgos={comparisonAlgos}
+                  baselineAlgo={baselineAlgo}
                 />
               </motion.div>
             </TabsContent>
@@ -422,29 +418,31 @@ export function AlgorithmsView() {
             </TabsContent>
           </Tabs>
 
-          {/* Comparison panel — only meaningful for transition/detailed tabs */}
-          {showComparison &&
-            comparisonAlgos.length >= 2 &&
-            (activeTab === 'transition' || activeTab === 'detailed') && (
-              <div ref={comparisonPanelRef} className="mt-6">
-                <AlgorithmComparisonPanel
-                  algorithms={comparisonAlgos}
-                  baseline={baselineAlgo}
-                  activeTab={activeTab}
-                  onClose={() => setShowComparison(false)}
-                />
-              </div>
-            )}
+          {/* Comparison panel + sticky tray — Transition tab only. The Detailed
+              tab now hosts comparison inline via its own Browse ↔ Compare mode. */}
+          {activeTab === 'transition' && (
+            <>
+              {showComparison && comparisonAlgos.length >= 2 && (
+                <div ref={comparisonPanelRef} className="mt-6">
+                  <AlgorithmComparisonPanel
+                    algorithms={comparisonAlgos}
+                    baseline={baselineAlgo}
+                    activeTab={activeTab}
+                    onClose={() => setShowComparison(false)}
+                  />
+                </div>
+              )}
 
-          {/* Sticky compare bar */}
-          <AlgorithmCompareBar
-            compareKeys={compareKeys}
-            baselineName={baselineName}
-            compareType={compareType}
-            onRemove={(key) => handleToggleCompare(key)}
-            onClearAll={handleClearCompare}
-            onCompare={handleOpenComparison}
-          />
+              <AlgorithmCompareBar
+                compareKeys={compareKeys}
+                baselineName={baselineName}
+                compareType={compareType}
+                onRemove={(key) => handleToggleCompare(key)}
+                onClearAll={handleClearCompare}
+                onCompare={handleOpenComparison}
+              />
+            </>
+          )}
         </>
       )}
 
