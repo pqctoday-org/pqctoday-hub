@@ -841,7 +841,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'api-security-jwt',
     pt_id: 'PT-032',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'API Security & JWT Workshop',
     description:
       'Sign JWTs with ML-DSA-44/65/87, SLH-DSA, and composite ML-DSA-65+Ed25519 using real @noble/post-quantum or softhsmv3 PKCS#11. JWE encryption via ML-KEM-768 per draft-ietf-jose-pqc-kem.',
