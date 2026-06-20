@@ -421,16 +421,22 @@ export function useAlgorithmExplorer(
     [semantic.mode, semantic.hits]
   )
 
-  // --- Filtered data (Detailed Comparison) ---
-  const filteredAlgorithms = useMemo(() => {
-    return algorithmData.filter((algo) => {
+  // Algorithm filter predicate, parameterised on whether the security-level
+  // filter participates. `availableLevels` reuses this with the level filter
+  // OFF so picking a level never narrows the set of levels you can switch to.
+  const passesAlgoFilters = useCallback(
+    (algo: AlgorithmDetail, opts: { applyLevel: boolean } = { applyLevel: true }) => {
       if (cnsaLens && !passesCnsa20Filter(algo)) return false
       if (filterCryptoFamily !== 'All' && algo.cryptoFamily !== filterCryptoFamily) return false
       if (filterFunction !== 'All') {
         const group = getFunctionGroup(algo)
         if (group !== filterFunction) return false
       }
-      if (filterSecurityLevel !== 'All' && algo.securityLevel !== parseInt(filterSecurityLevel))
+      if (
+        opts.applyLevel &&
+        filterSecurityLevel !== 'All' &&
+        algo.securityLevel !== parseInt(filterSecurityLevel)
+      )
         return false
       if (filterRegion !== 'All' && algo.region !== filterRegion) return false
       if (!matchesStatusFilter(algo.status)) return false
@@ -447,18 +453,24 @@ export function useAlgorithmExplorer(
         }
       }
       return true
-    })
-  }, [
-    algorithmData,
-    filterCryptoFamily,
-    filterFunction,
-    filterSecurityLevel,
-    filterRegion,
-    matchesStatusFilter,
-    searchQuery,
-    semanticAlgoNameSet,
-    cnsaLens,
-  ])
+    },
+    [
+      cnsaLens,
+      filterCryptoFamily,
+      filterFunction,
+      filterSecurityLevel,
+      filterRegion,
+      matchesStatusFilter,
+      searchQuery,
+      semanticAlgoNameSet,
+    ]
+  )
+
+  // --- Filtered data (Detailed Comparison) ---
+  const filteredAlgorithms = useMemo(
+    () => algorithmData.filter((algo) => passesAlgoFilters(algo)),
+    [algorithmData, passesAlgoFilters]
+  )
 
   // --- Filtered data (Transition Guide) ---
   const filteredTransitions = useMemo(() => {
@@ -500,12 +512,18 @@ export function useAlgorithmExplorer(
   ])
 
   // --- Available security levels ---
+  // Derived from the dataset filtered by everything EXCEPT the active level
+  // filter, so selecting a level never hides the other levels you could switch
+  // to (previously this fed off the already-level-filtered list — a trap).
   const availableLevels = useMemo(() => {
     const levels = new Set(
-      filteredAlgorithms.map((a) => a.securityLevel).filter((l): l is number => l !== null)
+      algorithmData
+        .filter((a) => passesAlgoFilters(a, { applyLevel: false }))
+        .map((a) => a.securityLevel)
+        .filter((l): l is number => l !== null)
     )
     return Array.from(levels).sort()
-  }, [filteredAlgorithms])
+  }, [algorithmData, passesAlgoFilters])
 
   // --- CSV export ---
   const handleExportCsv = useCallback(() => {
