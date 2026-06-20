@@ -54,6 +54,8 @@ The PQC VPN simulator now runs the post-quantum IKEv2 handshake for real — hyb
 - **Compare and commit your PQC algorithms without leaving the simulation** [view:/simulation] [persona:architect] [persona:executive]: the Algorithms "Transition" and "Detailed Comparison" tabs now open right inside the migration board — map your classical→PQC replacements, or weigh candidates by key size, performance and security level, then confirm to record a CBOM / crypto-architecture for that phase. Both are reachable from the phase's resource rail.
 - **The migration program now has a finish line** [view:/simulation] [persona:executive]: clearing all eight phases ends with a verdict that ties your run back to the Mosca clock — whether you reached PQC readiness before Q-Day or finished past it with assets exposed — instead of just another "cleared" badge.
 - **In-sim study now pays off** [view:/simulation] [persona:curious] [persona:executive]: finishing a learning module while playing the simulation now shows the same belt + awareness-score reward card you get on the Learn pages, so studying inside the sim counts toward your progress.
+- **Key fingerprints in the Crypto Lab** [view:/playground] [view:/report] [persona:developer] [persona:architect]: keys you create in the in-browser keystore now show a short fingerprint (a key check value), so you can tell keys apart and confirm two keys match at a glance — shown in the keystore, the key-encapsulation tab, and the report.
+- **Tune the vendor scorecard's weights live** [view:/scorecard] [persona:executive] [persona:architect]: you can now adjust how much each factor counts in the vendor scorecard and watch the rankings update immediately, so the scoring can match your own priorities.
 
 ### Changed
 
@@ -78,6 +80,7 @@ The PQC VPN simulator now runs the post-quantum IKEv2 handshake for real — hyb
 ### Data
 
 - **Two foundational frameworks added to the Library** [view:/library] [persona:executive] [persona:architect]: NIST Cybersecurity Framework (CSF) 2.0 and the Dutch PQC Migration Handbook (2nd edition) are now in the reference corpus — searchable and enriched, and the sources behind the new framework crosswalk.
+- **Product catalog accuracy overhaul** [view:/migrate] [view:/compliance] [persona:architect] [persona:developer]: a full re-check of the ~950-product catalog. A new vendor registry (38 vendors added, products linked to it); dozens of evidence-backed corrections from a record-by-record validation, with every previously-unverifiable product now resolved with a source; seven product categories (cloud key managers, databases, network firewalls, hardware security modules, identity, secrets managers and operating systems) rebuilt to read their post-quantum status from one central list instead of conflicting copies; IBM's cloud HSM corrected to Hyper Protect Crypto Services; and 276 products tagged to the migration phase they belong to.
 
 ## [3.19.5] - 2026-06-09
 
