@@ -59,12 +59,36 @@ test('boots the in-browser engine and runs a real Create → Activate → Sign �
 
   // Real TTLV came back on the wire (non-zero byte count in the wire panel).
   await expect(page.getByText(/\d+ bytes on the wire/i)).toBeVisible()
+  // The raw bytes are actually shown (not just claimed) — the literal hex view.
+  await expect(page.getByText(/Raw bytes \(hex\)/i)).toBeVisible()
 
   // 4 · Verify the signature we just produced.
   const verify = page.getByRole('button', { name: '4 · Verify' })
   await expect(verify).toBeEnabled()
   await verify.click()
   await expect(result.getByText('SignatureVerify', { exact: true })).toBeVisible({ timeout: 15000 })
+})
+
+test('agility scenario migrates classical → PQC, and the "migrated" claim is backed by a real Rekey decision', async ({
+  page,
+}) => {
+  await page.goto('/playground/cacp')
+  await expect(page.getByRole('heading', { name: /Crypto-Agility Control Plane/i })).toBeVisible({
+    timeout: 30000,
+  })
+
+  await page.getByRole('button', { name: /Run the agility scenario/i }).click()
+
+  // The headline payoff: the same CreateKeyPair call resolves to two different
+  // algorithms (classical under one policy, PQC under the other).
+  await expect(page.getByText('Same call')).toBeVisible({ timeout: 20000 })
+
+  // The final step claims the OLD classical key was auto-migrated — and that
+  // claim must be accompanied by a real Rekey decision badge (the fix: never
+  // show "migrated" on a plain Allow).
+  const migratedStep = page.getByText(/transparently migrated →/i).locator('../..')
+  await expect(migratedStep).toBeVisible({ timeout: 20000 })
+  await expect(migratedStep.getByText('Rekey')).toBeVisible()
 })
 
 test('switching policy resolves a decision on the agility plane', async ({ page }) => {

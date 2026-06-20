@@ -29,9 +29,17 @@ const decisionTone: Record<PolicyDecision['kind'], string> = {
 
 export function AgilityScenario({
   engine,
+  busy,
+  onBusyChange,
   onChanged,
 }: {
   engine: KmipEngine
+  /** True while a manual op is running elsewhere on the page — disables the
+   * scenario button so the two drivers can't hit the engine at once. */
+  busy: boolean
+  /** Report the scenario's own running state up, so the parent disables the
+   * manual controls while the scenario plays. */
+  onBusyChange: (running: boolean) => void
   onChanged: () => void
 }) {
   const [steps, setSteps] = useState<Step[]>([])
@@ -46,6 +54,7 @@ export function AgilityScenario({
 
   const runScenario = async () => {
     setRunning(true)
+    onBusyChange(true)
     setSteps([])
     setResolved({})
     const out: Step[] = []
@@ -116,21 +125,43 @@ export function AgilityScenario({
       // deactivated + superseded, and the signature comes back under ML-DSA-87.
       const s2 = engine.runOp({ op: 'Sign', uid: priv1, text: 'agility demo' })
       const d3 = decisionOf(s2)
+      // Only claim a migration when the engine actually returned a Rekey
+      // decision — a plain Allow (substitution didn't fire) must NOT be dressed
+      // up as "migrated → superseded". The target algorithm is the engine's own
+      // `d3.algorithm`, never a hardcoded guess.
+      const migrated = d3.kind === 'Rekey'
+      const sigLen = Number(s2.summary?.signatureLen) || 0
       await push({
-        title: 'Sign the OLD classical key — engine auto-migrates it',
+        title: migrated
+          ? 'Sign the OLD classical key — engine auto-migrates it'
+          : 'Sign the OLD classical key under the PQC policy',
         policy: 'pqc',
         op: 'Sign',
         decision: d3,
-        detail: s2.ok
-          ? `transparently migrated → ${d3.algorithm ?? 'ML-DSA-87'}: ${Number(s2.summary?.signatureLen) || 0}-byte PQC signature; old key deactivated + superseded`
-          : (s2.message ?? 'policy refused the operation'),
+        detail: !s2.ok
+          ? (s2.message ?? 'policy refused the operation')
+          : migrated
+            ? `transparently migrated → ${d3.algorithm ?? '?'}: ${sigLen}-byte PQC signature; old key deactivated + superseded`
+            : `re-signed${d3.algorithm ? ` → ${d3.algorithm}` : ''} (no migration fired): ${sigLen}-byte signature`,
         ok: s2.ok,
         highlight: true,
       })
 
       onChanged()
+    } catch (e) {
+      // A wasm panic surfaces as a thrown JS Error (or a JSON.parse failure on a
+      // malformed return) — surface it as a failed step instead of leaving the
+      // sequence silently half-finished.
+      out.push({
+        title: 'Scenario aborted — engine error',
+        policy: '—',
+        detail: e instanceof Error ? e.message : String(e),
+        ok: false,
+      })
+      setSteps([...out])
     } finally {
       setRunning(false)
+      onBusyChange(false)
     }
   }
 
@@ -146,7 +177,7 @@ export function AgilityScenario({
             driven entirely by policy.
           </p>
         </div>
-        <Button onClick={runScenario} disabled={running} className="gap-1.5">
+        <Button onClick={runScenario} disabled={running || busy} className="gap-1.5">
           {running ? <Loader2 size={14} className="animate-spin" /> : <Wand2 size={14} />} Run the
           agility scenario
         </Button>
