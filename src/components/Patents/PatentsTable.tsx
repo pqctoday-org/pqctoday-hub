@@ -18,6 +18,7 @@ import { ColumnPicker } from './ColumnPicker'
 import type { ColumnId, PresetKey } from './patentColumns'
 import type { PatentItem, ImpactLevel, CryptoAgilityMode } from '@/types/PatentTypes'
 import { inferRegion, NIST_STATUS_LABELS } from './PatentsInsights'
+import { usePatentResults } from './usePatentResults'
 import {
   logPatentSearch,
   logPatentFilter,
@@ -448,55 +449,9 @@ export function PatentsTable({
 
   const inCorpusIds = useMemo(() => new Set(patents.map((p) => p.patentNumber)), [patents])
 
-  const filtered = useMemo(() => {
-    const q = search.toLowerCase()
-    const assigneeF = searchParams.get('assignee') ?? ''
-    const agilityF = searchParams.get('agility') ?? ''
-    const domainF = searchParams.get('domain') ?? ''
-    const impactF = searchParams.get('impact') ?? ''
-    const quantumTechF = searchParams.get('quantumTech') ?? ''
-    const quantumRelevanceF = searchParams.get('quantumRelevance') ?? ''
-    const regionF = searchParams.get('region') ?? ''
-    const protocolF = searchParams.get('protocol') ?? ''
-    const classicalAlgorithmF = searchParams.get('classicalAlgorithm') ?? ''
-    const hardwareComponentF = searchParams.get('hardwareComponent') ?? ''
-    const nistStatusF = searchParams.get('nistStatus') ?? ''
-
-    return patents.filter((p) => {
-      if (
-        q &&
-        !p.title.toLowerCase().includes(q) &&
-        !p.summary.toLowerCase().includes(q) &&
-        !p.primaryInventiveClaim.toLowerCase().includes(q) &&
-        !p.assignee.toLowerCase().includes(q) &&
-        !p.patentNumber.toLowerCase().includes(q)
-      )
-        return false
-      if (assigneeF && p.assignee !== assigneeF) return false
-      if (agilityF && p.cryptoAgilityMode !== agilityF) return false
-      if (domainF && !p.applicationDomain.includes(domainF)) return false
-      if (impactF && p.impactLevel !== impactF) return false
-      if (quantumTechF && !p.quantumTechnology.includes(quantumTechF)) return false
-      if (quantumRelevanceF && p.quantumRelevance !== quantumRelevanceF) return false
-      if (regionF && inferRegion(p.assignee) !== regionF) return false
-      if (protocolF && !p.protocols.includes(protocolF)) return false
-      if (classicalAlgorithmF && !p.classicalAlgorithms.includes(classicalAlgorithmF)) return false
-      if (hardwareComponentF && !p.hardwareComponents.includes(hardwareComponentF)) return false
-      if (nistStatusF && !p.nistRoundStatus.some((n) => n.status === nistStatusF)) return false
-      return true
-    })
-  }, [patents, search, searchParams])
-
-  const sorted = useMemo(() => {
-    return [...filtered].sort((a, b) => {
-      let cmp = 0
-      if (sortKey === 'issueDate') cmp = a.issueDate.localeCompare(b.issueDate)
-      else if (sortKey === 'priorityDate') cmp = a.priorityDate.localeCompare(b.priorityDate)
-      else if (sortKey === 'impactScore') cmp = a.impactScore - b.impactScore
-      else if (sortKey === 'title') cmp = a.title.localeCompare(b.title)
-      return sortDir === 'asc' ? cmp : -cmp
-    })
-  }, [filtered, sortKey, sortDir])
+  // Filter + sort pipeline lifted to a shared hook (single source of truth for the
+  // table render and the redesign orchestrator's count + drawer nav).
+  const sorted = usePatentResults(patents, searchParams, sortKey, sortDir)
 
   const handleSort = useCallback(
     (key: SortKey) => {
@@ -573,7 +528,7 @@ export function PatentsTable({
           )}
 
           <span className="ml-auto text-xs text-muted-foreground tabular-nums">
-            {filtered.length} of {patents.length}
+            {sorted.length} of {patents.length}
           </span>
 
           <ColumnPicker
