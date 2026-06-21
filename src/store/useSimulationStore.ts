@@ -55,6 +55,10 @@ export interface SimulationState {
   difficulty: DifficultyId
   /** Whether the first-run guided tour has been seen/dismissed (WS-12). */
   tourSeen: boolean
+  /** Novice "Guided" mode (PR-4) — expands labels, slows the tour, and captions
+   *  the Mosca dials in plain language. Independent of difficulty (a beginner can
+   *  play Realistic with guidance on). */
+  guided: boolean
 
   setSize: (v: string) => void
   setCountry: (v: string) => void
@@ -95,6 +99,8 @@ export interface SimulationState {
   setDifficulty: (d: DifficultyId) => void
   /** Mark the first-run guided tour as seen (WS-12). */
   markTourSeen: () => void
+  /** Toggle novice Guided mode (PR-4); independent of difficulty. */
+  setGuided: (v: boolean) => void
   reset: () => void
   /** Serialize the current run to a portable JSON save string (WS-08). */
   exportSave: () => string
@@ -144,7 +150,7 @@ const SEED = {
   difficulty: 'realistic' as DifficultyId,
 }
 
-const STORE_VERSION = 12
+const STORE_VERSION = 13
 const SAVE_KIND = 'pqc-simulation-save'
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
@@ -213,6 +219,7 @@ export const useSimulationStore = create<SimulationState>()(
       ...SEED,
       seed: newSeed(),
       tourSeen: false,
+      guided: false,
       setSize: (size) => set({ size }),
       setCountry: (country) => set({ country }),
       setSector: (sector) => set({ sector }),
@@ -270,8 +277,10 @@ export const useSimulationStore = create<SimulationState>()(
         set((s) => ({ auto: s.auto.filter((k) => !k.startsWith(`${phase}::`)) })),
       setDifficulty: (difficulty) => set({ difficulty }),
       markTourSeen: () => set({ tourSeen: true }),
-      // RESET clears the run but NOT the onboarding flag (don't re-show the tour).
-      reset: () => set((s) => ({ ...SEED, seed: newSeed(), tourSeen: s.tourSeen })),
+      setGuided: (guided) => set({ guided }),
+      // RESET clears the run but NOT the onboarding / guidance prefs.
+      reset: () =>
+        set((s) => ({ ...SEED, seed: newSeed(), tourSeen: s.tourSeen, guided: s.guided })),
       exportSave: () =>
         JSON.stringify(
           { app: 'pqc-today', kind: SAVE_KIND, version: STORE_VERSION, state: saveSlice(get()) },
@@ -299,7 +308,7 @@ export const useSimulationStore = create<SimulationState>()(
       version: STORE_VERSION,
       // tourSeen persists alongside the run slice but is NOT part of saveSlice,
       // so it never travels in a run export / app snapshot.
-      partialize: (s) => ({ ...saveSlice(s), tourSeen: s.tourSeen }),
+      partialize: (s) => ({ ...saveSlice(s), tourSeen: s.tourSeen, guided: s.guided }),
       migrate: (persisted: unknown) => {
         // Defensive: ensure every field exists with a safe default. v3 introduced
         // strict maturity gating, so legacy pre-leveled progress (checks / turn) is
@@ -333,6 +342,7 @@ export const useSimulationStore = create<SimulationState>()(
           seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
           difficulty: asDifficulty(s.difficulty),
           tourSeen: typeof s.tourSeen === 'boolean' ? s.tourSeen : false,
+          guided: typeof s.guided === 'boolean' ? s.guided : false,
         }
       },
       onRehydrateStorage: () => (_state, error) => {

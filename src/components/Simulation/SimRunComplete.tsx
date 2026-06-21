@@ -3,8 +3,10 @@
  * SimRunComplete (W2b) — the run-end ceremony. Fires once when every lifecycle
  * phase is cleared, tying the whole program back to the Mosca outcome: did the
  * migration finish before Q-Day, or were sensitive assets exposed past it? Until
- * this, clearing the 8th phase produced only another "cleared" chip and no
- * summative reflection (the audit's "the game has no ending" gap).
+ * this, clearing the terminal phase produced only another "cleared" chip and no
+ * summative reflection (the audit's "the game has no ending" gap). The terminal
+ * phase is now Verification & Closure — the ceremony withholds until its evidence
+ * dossier is assembled, so "done" means proven, not merely declared.
  *
  * Presentational + props-driven. Reduced-motion safe (scale-in dropped under
  * prefers-reduced-motion). Accessible: role="dialog" + aria-modal, labelled,
@@ -80,7 +82,7 @@ export function SimRunComplete({
             <Trophy size={30} aria-hidden="true" />
           </div>
 
-          <div className="mb-1 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-primary">
+          <div className="mb-1 font-mono text-sim-micro font-bold uppercase tracking-[0.16em] text-primary">
             Migration program complete
           </div>
           <h2 className="mb-3 text-xl font-bold text-foreground">

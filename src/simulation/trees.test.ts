@@ -15,14 +15,15 @@ import { REFERENCE_PHASES } from '@/data/phaseResourceMap'
 import { resLinks } from '@/components/Simulation/sections'
 
 const PHASES = ['p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7'] as const
-// Foundations is the spanning band — a real, playable tree (so it gets the
-// resource-validity, framework-version and deep-link guards via ALL_TREE_PHASES)
-// but is exempt from the numbered-gate / activity-id-prefix / strict-gating
-// invariants below (by design it has gate 'GF' and 'F.x' activity ids).
-const ALL_TREE_PHASES = [...PHASES, 'foundations'] as const
+// Foundations (spanning band) and verify-close (terminal Verification & Closure
+// band) are real, playable trees — they get the resource-validity, framework-
+// version and deep-link guards via ALL_TREE_PHASES — but are exempt from the
+// numbered-gate / activity-id-prefix / strict-gating invariants below (by design
+// foundations has gate 'GF'/'F.x' ids and verify-close has gate 'G8'/'VC.x' ids).
+const ALL_TREE_PHASES = [...PHASES, 'foundations', 'verify-close'] as const
 
 describe('SIM_TREES — coverage & shape', () => {
-  it('loads a dated tree for all eight phases + Foundations', () => {
+  it('loads a dated tree for all eight phases + Foundations + Verification & Closure', () => {
     expect(Object.keys(SIM_TREES).sort()).toEqual([...ALL_TREE_PHASES].sort())
   })
 

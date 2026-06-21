@@ -14,7 +14,7 @@ const input: SimRoadmapInput = {
     { id: 'p1', name: 'Discovery', level: 1, cleared: false },
   ],
   clearedCount: 1,
-  totalPhases: 8,
+  totalPhases: 9,
   readinessPct: 42,
   yearsToHorizon: 3,
   over: 1,
@@ -36,7 +36,7 @@ describe('buildSimRoadmapDoc (WS-15)', () => {
   it('serializes the run into a readable roadmap body', () => {
     const md = serializeSimRoadmap(input)
     expect(md).toContain('PQC Migration Roadmap')
-    expect(md).toContain('1/8 phases cleared')
+    expect(md).toContain('1/9 phases cleared')
     expect(md).toContain('readiness 42%')
     expect(md).toContain('✓ P0 Executive Mandate — L2')
   })

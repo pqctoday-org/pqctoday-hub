@@ -23,7 +23,7 @@ describe('phaseMaturity', () => {
     }
   })
 
-  it('covers all eight lifecycle phases p0–p7', () => {
+  it('covers all eight lifecycle phases p0–p7 + the terminal verify-close phase', () => {
     expect(Object.keys(PHASE_MATURITY).sort()).toEqual([
       'p0',
       'p1',
@@ -33,6 +33,7 @@ describe('phaseMaturity', () => {
       'p5',
       'p6',
       'p7',
+      'verify-close',
     ])
   })
 

@@ -108,6 +108,20 @@ jobs:
       - name: Audit semantic tokens (no hardcoded colours)
         run: npm run audit:tokens
 
+      - name: Timeline facts derived from the CSV (single source of truth)
+        # Fails if src/data/timelineFacts.generated.ts is stale vs the timeline
+        # CSV — i.e. the CSV was edited without regenerating, or the generated
+        # file was hand-edited. Keeps the sim/pages in sync with the one source.
+        run: npm run gen:timeline-facts:check
+
+      - name: Audit content freshness (dated claims < 90d)
+        # Non-blocking on first rollout — flags time-sensitive claims (CMVP/FIPS
+        # status, protocol-matrix snapshot, Q-Day anchor) that have aged past the
+        # review window. Remove `continue-on-error` to make it gate once the
+        # first quarterly pass has cleared the backlog (see CONTENT-FRESHNESS.md).
+        run: npm run audit:content-freshness
+        continue-on-error: true
+
       - name: Verify trust-engine attestations
         # Verify ML-DSA-65 signatures on committed trust artifacts
         # (revisions.jsonl, rag-corpus.json, OSCAL exports, CBOM,

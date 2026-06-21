@@ -42,6 +42,8 @@ interface Rule {
   message: string
   /** Return true if this specific match should be SKIPPED (allowlist) */
   allow?: (_match: string, _line: string) => boolean
+  /** Only apply this rule to files whose repo-relative path matches. */
+  scope?: (_rel: string) => boolean
 }
 
 const RULES: Rule[] = [
@@ -82,6 +84,17 @@ const RULES: Rule[] = [
     pattern: /\b(bg-zinc-\d{3}|bg-slate-\d{3})\b/g,
     message:
       'bg-zinc-* / bg-slate-* surface classes are forbidden. Use bg-background, bg-card, or bg-muted.',
+  },
+  {
+    // PR-4 type floor — the Simulation console must not drop below the legibility
+    // floor. text-[8px]/[9px] (and their .5 variants) are banned; use the
+    // text-sim-micro (11px body) / text-sim-chip (10px chip) tokens instead.
+    id: 'T07',
+    pattern: /text-\[(?:8|9)(?:\.\d+)?px\]/g,
+    message:
+      'Sub-floor text size in the Simulation console. Use text-sim-micro (11px) or text-sim-chip (10px) — PR-4 type floor.',
+    scope: (rel) =>
+      rel.includes('components/Simulation/') || rel.includes('components\\Simulation\\'),
   },
 ]
 
@@ -132,6 +145,7 @@ function audit(): Violation[] {
       // Skip comment-only lines and lines explicitly opted out
       if (line.trimStart().startsWith('//') || line.includes('// ds-tokens-ok')) continue
       for (const rule of RULES) {
+        if (rule.scope && !rule.scope(rel)) continue
         let m: RegExpExecArray | null
         rule.pattern.lastIndex = 0
         while ((m = rule.pattern.exec(line)) !== null) {

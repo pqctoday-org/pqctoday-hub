@@ -11,8 +11,17 @@
  * in time: act now. Pure + deterministic — the page passes the current year in.
  */
 import { QC_FIRST_YEAR } from './quantumTimeline'
+import { TIMELINE_COUNTRY_DEADLINE_YEAR } from './timelineFacts.generated'
 
 export type SimSize = 'small' | 'mid' | 'large' | 'global'
+
+/**
+ * Provenance of a figure shown in the sim. `'standard'` = a published, citable
+ * fact (FIPS param, RFC). `'planning'` = an illustrative planning anchor (a
+ * shelf-life, a government deadline, the Q-Day year) that a learner must NOT
+ * quote as a published standard. Drives the PlanningBadge affordance in the UI.
+ */
+export type Provenance = 'standard' | 'planning'
 
 /**
  * CRQC horizon year Z baseline = the simulation's Q-Day (first CRQC). Single
@@ -29,27 +38,62 @@ export interface SimSector {
   /** X — how long this sector's data must stay confidential (years). */
   shelfLifeYears: number
   hint: string
+  /** Always `'planning'` — these shelf-lives are illustrative planning anchors. */
+  provenance: Provenance
 }
 
-/** Sectors set X — the data shelf-life that drives Harvest-Now-Decrypt-Later risk. */
+/** Sectors set X — the data shelf-life that drives Harvest-Now-Decrypt-Later risk.
+ *  Every shelf-life is an illustrative planning anchor (`provenance: 'planning'`). */
 export const SECTORS: SimSector[] = [
-  { id: 'general', label: 'General', shelfLifeYears: 5, hint: 'mixed business data' },
-  { id: 'retail', label: 'Retail', shelfLifeYears: 3, hint: 'shorter-lived commercial data' },
-  { id: 'telecom', label: 'Telecom', shelfLifeYears: 7, hint: 'subscriber + signalling data' },
+  {
+    id: 'general',
+    label: 'General',
+    shelfLifeYears: 5,
+    hint: 'mixed business data',
+    provenance: 'planning',
+  },
+  {
+    id: 'retail',
+    label: 'Retail',
+    shelfLifeYears: 3,
+    hint: 'shorter-lived commercial data',
+    provenance: 'planning',
+  },
+  {
+    id: 'telecom',
+    label: 'Telecom',
+    shelfLifeYears: 7,
+    hint: 'subscriber + signalling data',
+    provenance: 'planning',
+  },
   {
     id: 'financial',
     label: 'Financial',
     shelfLifeYears: 10,
     hint: 'transactions + records retention',
+    provenance: 'planning',
   },
-  { id: 'energy', label: 'Energy/OT', shelfLifeYears: 10, hint: 'grid + long-lived OT' },
+  {
+    id: 'energy',
+    label: 'Energy/OT',
+    shelfLifeYears: 10,
+    hint: 'grid + long-lived OT',
+    provenance: 'planning',
+  },
   {
     id: 'healthcare',
     label: 'Healthcare',
     shelfLifeYears: 15,
     hint: 'patient records — long retention',
+    provenance: 'planning',
   },
-  { id: 'government', label: 'Government', shelfLifeYears: 20, hint: 'classified / long-secret' },
+  {
+    id: 'government',
+    label: 'Government',
+    shelfLifeYears: 20,
+    hint: 'classified / long-secret',
+    provenance: 'planning',
+  },
 ]
 
 export const DEFAULT_SECTOR = 'general'
@@ -67,14 +111,23 @@ export const SIZE_MIGRATION_YEARS: Record<SimSize, number> = {
   global: 6,
 }
 
-/** Illustrative government PQC deadline by country (planning horizon). */
-export const COUNTRY_DEADLINE_YEAR: Record<string, number> = {
-  US: 2030, // CNSA 2.0
-  DE: 2030, // BSI
-  FR: 2030, // ANSSI
-  UK: 2035, // NCSC (later roadmap)
-  AU: 2030, // ASD
-}
+/**
+ * Government PQC deadline by country — DERIVED from the timeline reference CSV
+ * (the row a human tagged `is_sim_deadline=true`), the single source of truth.
+ * To change a value, edit the CSV and re-run `npm run gen:timeline-facts` (runs
+ * automatically in prebuild). Countries with no tagged deadline are absent, so
+ * `horizonYearFor` falls back to the Q-Day anchor for them.
+ */
+export const COUNTRY_DEADLINE_YEAR: Record<string, number> = TIMELINE_COUNTRY_DEADLINE_YEAR
+
+/**
+ * Provenance flag the badge layer reads — every government deadline is surfaced
+ * in the sim as a planning horizon. Derived from the deadline keys so the two
+ * never drift.
+ */
+export const COUNTRY_DEADLINE_PROVENANCE: Record<string, Provenance> = Object.fromEntries(
+  Object.keys(COUNTRY_DEADLINE_YEAR).map((c) => [c, 'planning' as Provenance])
+)
 
 /** The binding horizon Z: the sooner of the CRQC estimate and the country deadline. */
 export function horizonYearFor(country: string): number {

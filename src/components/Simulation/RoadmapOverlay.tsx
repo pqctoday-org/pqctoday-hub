@@ -41,7 +41,7 @@ export const RoadmapOverlay: React.FC = () => {
               className="text-base font-bold text-foreground flex items-center gap-2 flex-wrap"
             >
               Build Your Roadmap
-              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded border border-primary/30 bg-primary/10 text-primary uppercase tracking-wide">
+              <span className="text-sim-chip font-medium px-1.5 py-0.5 rounded border border-primary/30 bg-primary/10 text-primary uppercase tracking-wide">
                 Phase 4 · Roadmap &amp; Governance
               </span>
             </h2>
@@ -97,7 +97,7 @@ export const RoadmapOverlay: React.FC = () => {
                   {y.phases.map((p) => (
                     <span
                       key={p}
-                      className="text-[9px] font-medium px-1 py-0.5 rounded border border-primary/30 bg-primary/5 text-primary"
+                      className="text-sim-chip font-medium px-1 py-0.5 rounded border border-primary/30 bg-primary/5 text-primary"
                     >
                       {phaseBadge(p)}
                     </span>
@@ -106,7 +106,7 @@ export const RoadmapOverlay: React.FC = () => {
               </li>
             ))}
           </ol>
-          <p className="text-[10px] text-muted-foreground mt-3">
+          <p className="text-sim-micro text-muted-foreground mt-3">
             Source: Applied Quantum Phase 4 Activity 4.2 (p.84–85). The national deadlines above are
             the backdrop; this is the template you execute against them.
           </p>
