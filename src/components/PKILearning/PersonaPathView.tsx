@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo } from 'react'
-import { Sparkles } from 'lucide-react'
+import { Fragment, useMemo } from 'react'
+import { Sparkles, CheckSquare } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useModuleStore } from '../../store/useModuleStore'
 import { useLearnStore } from '../../store/useLearnStore'
@@ -18,6 +18,10 @@ interface PersonaPathViewProps {
   isModuleAboveLevel: (moduleId: string) => boolean
   /** Triggered by the curious-only "Show me everything (advanced)" button. */
   onShowEverything?: () => void
+  /** When provided, render an integrated checkpoint-quiz row after each phase
+   *  (used by the redesigned /learn). Legacy callers omit it, so their layout is
+   *  unchanged. */
+  onTakeCheckpointQuiz?: (categories: string[], label: string) => void
 }
 
 /** Module IDs counted as the "common ground" overlay between executive and curious paths. */
@@ -53,6 +57,7 @@ export const PersonaPathView = ({
   isModuleRelevant,
   isModuleAboveLevel,
   onShowEverything,
+  onTakeCheckpointQuiz,
 }: PersonaPathViewProps) => {
   const summary = usePersonaPathItems(personaId)
   const modules = useModuleStore((s) => s.modules)
@@ -130,22 +135,53 @@ export const PersonaPathView = ({
         const expandedOverride =
           // eslint-disable-next-line security/detect-object-injection
           key in phaseExpansion ? phaseExpansion[key] : undefined
+        const isComplete = totalCount > 0 && completedCount === totalCount
         return (
-          <PersonaPathPhase
-            key={key}
-            title={phase.title}
-            moduleIds={phase.moduleIds}
-            defaultExpanded={defaultExpanded}
-            completedCount={completedCount}
-            totalCount={totalCount}
-            onSelectModule={onSelectModule}
-            isModuleRelevant={isModuleRelevant}
-            isModuleAboveLevel={isModuleAboveLevel}
-            commonGroundModuleIds={showCommonGroundContext ? COMMON_GROUND_MODULE_IDS : undefined}
-            personaId={personaId}
-            expandedOverride={expandedOverride}
-            onToggle={(expanded) => setPhaseExpanded(key, expanded)}
-          />
+          <Fragment key={key}>
+            <PersonaPathPhase
+              title={phase.title}
+              moduleIds={phase.moduleIds}
+              defaultExpanded={defaultExpanded}
+              completedCount={completedCount}
+              totalCount={totalCount}
+              onSelectModule={onSelectModule}
+              isModuleRelevant={isModuleRelevant}
+              isModuleAboveLevel={isModuleAboveLevel}
+              commonGroundModuleIds={showCommonGroundContext ? COMMON_GROUND_MODULE_IDS : undefined}
+              personaId={personaId}
+              expandedOverride={expandedOverride}
+              onToggle={(expanded) => setPhaseExpanded(key, expanded)}
+            />
+            {/* Integrated checkpoint quiz — closes each phase (redesign only). */}
+            {onTakeCheckpointQuiz && phase.categories.length > 0 && (
+              <div className="flex items-center justify-between gap-3 sm:ml-6 px-4 py-2.5 rounded-lg border border-accent/25 bg-accent/5">
+                <div className="flex items-center gap-2 min-w-0">
+                  <CheckSquare
+                    size={15}
+                    className={`shrink-0 ${isComplete ? 'text-status-success' : 'text-accent'}`}
+                    aria-hidden="true"
+                  />
+                  <div className="min-w-0">
+                    <div className="text-xs font-semibold text-foreground">
+                      Checkpoint quiz — {phase.title}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground">
+                      Short quiz over the {totalCount} module{totalCount === 1 ? '' : 's'} in this
+                      phase.
+                    </div>
+                  </div>
+                </div>
+                <Button
+                  variant={isComplete ? 'outline' : 'gradient'}
+                  size="sm"
+                  className="shrink-0 text-xs"
+                  onClick={() => onTakeCheckpointQuiz(phase.categories, phase.title)}
+                >
+                  {isComplete ? 'Review quiz' : 'Take quiz'}
+                </Button>
+              </div>
+            )}
+          </Fragment>
         )
       })}
 
