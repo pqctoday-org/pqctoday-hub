@@ -22,6 +22,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { useSimulationStore } from '@/store/useSimulationStore'
+import { hasSimExited } from '@/components/Simulation/simChrome'
 import pqctodayLogo from '@/assets/pqctoday-logo.png'
 
 const FLAG = 'sim:resume'
@@ -61,6 +62,9 @@ export function ResumeSimBar() {
     /* ignore */
   }
 
+  // The player quit the sim via the "← HUB" button — they chose to leave, so the
+  // resume header stays hidden until they re-open the sim from the top nav.
+  if (hasSimExited()) return null
   if (dismissed || (!flagged && !hasActiveRun)) return null
 
   const dismiss = () => {

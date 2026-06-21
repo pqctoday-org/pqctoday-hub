@@ -10,10 +10,50 @@ import type { MoveKind } from '@/data/simMoves'
 import type { StepKind } from '@/simulation'
 import { BUSINESS_TOOLS, WORKSHOP_TOOLS } from './resourceContract'
 
-/** Flag an outbound navigation so MainLayout shows the "Resume Simulation" bar. */
+const RESUME_FLAG = 'sim:resume'
+const EXITED_FLAG = 'sim:exited'
+
+/** Flag an outbound navigation as a RESOURCE PEEK so the hub shows the
+ *  "Resume Simulation" header. A peek is the opposite of quitting, so it also
+ *  clears any prior exit marker. */
 export const markSimResume = () => {
   try {
-    sessionStorage.setItem('sim:resume', '1')
+    sessionStorage.setItem(RESUME_FLAG, '1')
+    sessionStorage.removeItem(EXITED_FLAG)
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Flag a DELIBERATE quit via the sim's "← HUB" button so the hub does NOT show
+ *  the "Resume Simulation" header — the player chose to leave the simulation,
+ *  not to peek at a resource. Cleared when they re-open the console from the top
+ *  nav (see clearSimExcursion). */
+export const markSimExited = () => {
+  try {
+    sessionStorage.setItem(EXITED_FLAG, '1')
+    sessionStorage.removeItem(RESUME_FLAG)
+  } catch {
+    /* ignore */
+  }
+}
+
+/** True when the player quit the sim via the HUB button and has not re-opened it. */
+export const hasSimExited = () => {
+  try {
+    return sessionStorage.getItem(EXITED_FLAG) === '1'
+  } catch {
+    return false
+  }
+}
+
+/** Reset both excursion markers — called on the sim console's mount, so re-opening
+ *  the simulation from the top nav starts clean (a later peek re-arms the header;
+ *  a later HUB quit suppresses it again). */
+export const clearSimExcursion = () => {
+  try {
+    sessionStorage.removeItem(RESUME_FLAG)
+    sessionStorage.removeItem(EXITED_FLAG)
   } catch {
     /* ignore */
   }

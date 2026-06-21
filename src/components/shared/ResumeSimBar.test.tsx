@@ -58,4 +58,12 @@ describe('ResumeSimBar', () => {
     fireEvent.click(screen.getByRole('button', { name: /Dismiss/i }))
     expect(screen.queryByText(/Resume Simulation/i)).not.toBeInTheDocument()
   })
+
+  it('stays hidden after the player quits via the HUB button (even mid-run)', () => {
+    // Active run, but the player chose to leave the sim via "← HUB".
+    useSimulationStore.getState().setLevel('inventory', 1)
+    sessionStorage.setItem('sim:exited', '1')
+    renderBar()
+    expect(screen.queryByText(/Resume Simulation/i)).not.toBeInTheDocument()
+  })
 })
