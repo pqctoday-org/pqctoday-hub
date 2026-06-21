@@ -183,18 +183,30 @@ export function prioritiseTier(metrics: BusinessMetrics): StepTierResult {
   const crqc = hasArtifact(metrics, 'crqc-scenario')
   const history = metrics.assessmentHistory.length
 
-  const formulaDocumented = artifactContainsSection(metrics, 'kpi-dashboard', 'Formula Explainer')
+  // The kpi-dashboard export documents its scoring methodology under a
+  // "## How this score is computed" section (renamed from the old "Formula
+  // Explainer"). Match the current heading so this Tier-4 path stays reachable.
+  const methodologyDocumented = artifactContainsSection(
+    metrics,
+    'kpi-dashboard',
+    'How this score is computed'
+  )
 
   if (timeline) reasons.push('Compliance timeline on file')
   if (anyKpi) reasons.push('KPI dashboard / tracker on file')
   if (crqc) reasons.push('CRQC scenario on file')
   if (history >= 3) reasons.push(`${history} assessments completed`)
-  if (formulaDocumented) reasons.push('Composite scoring formula documented (kpi-dashboard §5.4)')
+  if (methodologyDocumented) reasons.push('KPI scoring methodology documented (kpi-dashboard)')
 
   let tier: MaturityTier = 1
   if (timeline || anyKpi) tier = 2
   if (timeline && anyKpi) tier = 3
-  if (crqc && anyKpi && history >= T.prioritiseAssessmentHistoryForAdaptive && formulaDocumented)
+  if (
+    crqc &&
+    anyKpi &&
+    history >= T.prioritiseAssessmentHistoryForAdaptive &&
+    methodologyDocumented
+  )
     tier = 4
 
   return { tier, reasons }

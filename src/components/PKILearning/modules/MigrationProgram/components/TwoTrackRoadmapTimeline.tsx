@@ -14,6 +14,7 @@ import {
   TRACK_META,
   TRACK_ORDER,
   criticalPathLength,
+  criticalPathSpanYears,
   newMilestoneId,
   type RoadmapMilestone,
   type RoadmapTrack,
@@ -53,6 +54,7 @@ export const TwoTrackRoadmapTimeline: React.FC<TwoTrackRoadmapTimelineProps> = (
 
   const labelById = useMemo(() => new Map(milestones.map((m) => [m.id, m.label])), [milestones])
   const critPath = useMemo(() => criticalPathLength(milestones), [milestones])
+  const critSpan = useMemo(() => criticalPathSpanYears(milestones), [milestones])
   const years = useMemo(() => {
     const out: number[] = []
     for (let y = min; y <= max; y++) out.push(y)
@@ -184,9 +186,13 @@ export const TwoTrackRoadmapTimeline: React.FC<TwoTrackRoadmapTimelineProps> = (
       })}
 
       <p className="text-xs text-muted-foreground">
-        Critical path: <span className="font-semibold text-foreground">{critPath}</span> milestone
-        {critPath !== 1 ? 's' : ''} deep (longest dependency chain — what actually constrains the
-        timeline).
+        Critical path: spans{' '}
+        <span className="font-semibold text-foreground">
+          {critSpan === 0 ? 'within one year' : `${critSpan} year${critSpan !== 1 ? 's' : ''}`}
+        </span>{' '}
+        across <span className="font-semibold text-foreground">{critPath}</span> milestone
+        {critPath !== 1 ? 's' : ''} (longest dependency chain — the time span is what actually
+        constrains the timeline).
       </p>
 
       {/* Add-milestone form */}

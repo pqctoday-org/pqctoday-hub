@@ -502,9 +502,25 @@ function computeWatchOuts(inputs: CloudMatrixInputs): string[] {
     providers.filter((p) => p !== 'on-prem' && p !== 'multi-cloud').length > 1
 
   if (isMultiCloud) {
-    out.push(
-      'Multi-cloud: ML-KEM-768 GA on AWS lands ~2026-Q2 (commercial), while GCP and Azure are still in preview. Expect a hybrid period where one cloud is ahead — plan workload-level fallbacks rather than a single switch-over.'
-    )
+    // Name each selected cloud's PQC posture from the catalog-backed PQC_ROADMAP
+    // rather than a hardcoded claim (the old copy asserted "GCP and Azure are
+    // still in preview", which contradicted the catalog once GCP KMS shipped).
+    // Listing each provider + status keeps the warning honest as the catalog
+    // evolves, instead of baking in a fixed "who's ahead" ordering.
+    const named = providers.filter((p) => p !== 'multi-cloud' && p !== 'on-prem')
+    if (named.length) {
+      const statusList = named
+        // eslint-disable-next-line security/detect-object-injection
+        .map((p) => `${p} (KMS PQC: ${PQC_ROADMAP[p]?.kmsHsm ?? 'unverified'})`)
+        .join(', ')
+      out.push(
+        `Multi-cloud: ${statusList}, per the product catalog. Where the statuses differ, expect a hybrid period where one cloud is ahead — plan workload-level fallbacks rather than a single switch-over.`
+      )
+    } else {
+      out.push(
+        'Multi-cloud: provider PQC maturity may differ across your selected clouds — check each cloud against the catalog before committing, and plan workload-level fallbacks rather than a single switch-over.'
+      )
+    }
   }
 
   if (

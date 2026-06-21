@@ -80,6 +80,10 @@ export interface ExecutiveModuleData {
   // Derived
   isAssessmentComplete: boolean
   migrationDeadlineYear: number | null
+  /** Program start year for pace-to-deadline. Not derived by the hook — tools
+   *  that capture it (e.g. the KPI tracker) merge it into the data they pass to
+   *  `buildDimensions`. Optional; absent → pace-to-deadline stays manual. */
+  migrationStartYear?: number | null
 }
 
 export function useExecutiveModuleData(selectedProductKeys?: string[]): ExecutiveModuleData {

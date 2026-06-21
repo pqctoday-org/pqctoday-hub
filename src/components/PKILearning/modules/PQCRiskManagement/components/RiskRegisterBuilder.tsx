@@ -22,6 +22,10 @@ interface RiskEntry {
 interface RiskRegisterBuilderProps {
   riskEntries: RiskEntry[]
   onRiskEntriesChange: (entries: RiskEntry[]) => void
+  /** Show the "example entries" banner when the register is still the seeded
+   *  illustrative defaults. Default true; set false when a wrapper (e.g. the
+   *  BusinessCenter standalone adapter) already renders its own banner. */
+  showExampleBanner?: boolean
 }
 
 const THREAT_VECTORS = [
@@ -61,6 +65,7 @@ function getRiskLevel(score: number): { label: string; color: string; bgColor: s
 export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
   riskEntries,
   onRiskEntriesChange,
+  showExampleBanner = true,
 }) => {
   const [copied, setCopied] = React.useState(false)
   const { addExecutiveDocument } = useModuleStore()
@@ -164,11 +169,22 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
   }, [exportMarkdown])
 
   const handleDownloadPdf = useCallback(async () => {
-    await markdownToPdf(exportMarkdown, 'quantum-risk-register', 'Quantum Risk Register')
+    await markdownToPdf(exportMarkdown, 'quantum-risk-register', 'Quantum Risk Register', {
+      wideTable: true,
+    })
   }, [exportMarkdown])
+
+  const showingExamples =
+    riskEntries.length > 0 && riskEntries.every((e) => e.id.startsWith('default-'))
 
   return (
     <div className="space-y-6">
+      {showExampleBanner && showingExamples && (
+        <div className="rounded-lg border border-status-warning/30 bg-status-warning/5 px-3 py-2 text-xs text-muted-foreground">
+          <span className="font-medium text-foreground">Example entries</span> — illustrative
+          placeholders, not your data. Edit or replace them to build your own register.
+        </div>
+      )}
       {/* Action bar */}
       <div className="flex flex-wrap items-center gap-3">
         <Button variant="outline" size="sm" onClick={addEntry}>
