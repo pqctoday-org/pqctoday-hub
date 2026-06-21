@@ -20,16 +20,30 @@ describe('useMigrateSelectionStore — workbench plan (v9)', () => {
     useMigrateSelectionStore.getState().chooseProduct('vpn', 'Acme PQ VPN')
     const s = useMigrateSelectionStore.getState()
     expect(s.plan).toContain('vpn')
-    expect(s.choice.vpn).toBe('Acme PQ VPN')
+    expect(s.choice.vpn).toEqual(['Acme PQ VPN'])
   })
 
-  it('re-choosing the same product clears the choice but keeps the asset planned', () => {
+  it('keeps multiple chosen products per asset (multi-select)', () => {
     const { chooseProduct } = useMigrateSelectionStore.getState()
-    chooseProduct('vpn', 'Acme PQ VPN')
-    chooseProduct('vpn', 'Acme PQ VPN')
+    chooseProduct('foundations', 'OpenSSL')
+    chooseProduct('foundations', 'BoringSSL')
     const s = useMigrateSelectionStore.getState()
-    expect(s.choice.vpn).toBeUndefined()
-    expect(s.plan).toContain('vpn')
+    expect(s.choice.foundations).toEqual(['OpenSSL', 'BoringSSL'])
+    expect(s.plan).toContain('foundations')
+  })
+
+  it('re-choosing the same product removes just it; dropping the last clears the asset', () => {
+    const { chooseProduct } = useMigrateSelectionStore.getState()
+    chooseProduct('foundations', 'OpenSSL')
+    chooseProduct('foundations', 'BoringSSL')
+    chooseProduct('foundations', 'OpenSSL') // toggle OpenSSL off — BoringSSL stays
+    let s = useMigrateSelectionStore.getState()
+    expect(s.choice.foundations).toEqual(['BoringSSL'])
+    expect(s.plan).toContain('foundations')
+    chooseProduct('foundations', 'BoringSSL') // remove the last → asset leaves the plan
+    s = useMigrateSelectionStore.getState()
+    expect(s.choice.foundations).toBeUndefined()
+    expect(s.plan).not.toContain('foundations')
   })
 
   it('leaving the plan drops the chosen product for that asset', () => {
