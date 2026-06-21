@@ -217,9 +217,7 @@ export function buildCbomDocument(
             primitive: algo.primitive,
             executionEnvironment: 'software-plain-ram',
             ...(algo.parameterSet ? { parameterSetIdentifier: algo.parameterSet } : {}),
-            ...(algo.securityCategory
-              ? { nistQuantumSecurityLevel: algo.securityCategory }
-              : {}),
+            ...(algo.securityCategory ? { nistQuantumSecurityLevel: algo.securityCategory } : {}),
             cryptoFunctions:
               algo.primitive === 'kem' ? ['encapsulate', 'decapsulate'] : ['sign', 'verify'],
           },

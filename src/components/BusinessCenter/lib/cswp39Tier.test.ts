@@ -252,9 +252,7 @@ describe('cswp39Tier — prioritise', () => {
     m.artifactsByPillar.risk = [doc('crqc-scenario')]
     m.artifactsByPillar.vendor = [doc('kpi-tracker')]
     m.artifactsByPillar.compliance = [doc('compliance-timeline')]
-    m.artifactsByPillar.governance = [
-      doc('kpi-dashboard', 0, '## How this score is computed\n'),
-    ]
+    m.artifactsByPillar.governance = [doc('kpi-dashboard', 0, '## How this score is computed\n')]
     m.assessmentHistory = Array.from({ length: 3 }, (_, i) => ({
       completedAt: `2025-0${i + 1}-01`,
       riskScore: 50,

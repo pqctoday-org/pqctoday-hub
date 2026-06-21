@@ -4,10 +4,12 @@ import { rowsToCsv } from './csvExport'
 
 describe('rowsToCsv (RFC-4180)', () => {
   it('joins plain cells with commas and CRLF rows', () => {
-    expect(rowsToCsv([
-      ['Framework', 'Deadline', 'Status'],
-      ['CNSA 2.0', '2033', 'On track'],
-    ])).toBe('Framework,Deadline,Status\r\nCNSA 2.0,2033,On track')
+    expect(
+      rowsToCsv([
+        ['Framework', 'Deadline', 'Status'],
+        ['CNSA 2.0', '2033', 'On track'],
+      ])
+    ).toBe('Framework,Deadline,Status\r\nCNSA 2.0,2033,On track')
   })
 
   it('quotes cells containing a comma, quote, or newline', () => {

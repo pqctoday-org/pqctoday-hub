@@ -46,10 +46,10 @@ import { softwareData } from '../../data/migrateData'
 import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
 import { ReportCswp39Nav } from './ReportCswp39Nav'
-import { ReportLockedOverlay } from './redesign/ReportLockedOverlay';
-import { KpiEmptyState, KpiPreviewSkeleton } from './redesign/ReportKpiStates';
-import { ReportVerdictBlock } from './redesign/ReportVerdictBlock';
-import { ReportUpgradeNudge } from './redesign/ReportUpgradeNudge';
+import { ReportLockedOverlay } from './redesign/ReportLockedOverlay'
+import { KpiEmptyState, KpiPreviewSkeleton } from './redesign/ReportKpiStates'
+import { ReportVerdictBlock } from './redesign/ReportVerdictBlock'
+import { ReportUpgradeNudge } from './redesign/ReportUpgradeNudge'
 import { ReportControlDeck } from './redesign/ReportControlDeck'
 import { useThreatsData } from '../../hooks/useThreatsData'
 import { GlossaryAutoWrap } from '../PKILearning/common/GlossaryAutoWrap'
