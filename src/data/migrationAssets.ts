@@ -320,6 +320,9 @@ const MATCH_RULES: ReadonlyArray<readonly [DomainId, readonly string[]]> = [
       'tpm',
       'secure element',
       'smart card',
+      // Payment HSMs / payment cryptography systems (payShield, Vectera, etc.).
+      // Precise phrase so "Payment PQC Research" still falls through to programs.
+      'payment cryptography',
     ],
   ],
   ['kms', ['key management', 'kms', 'secrets', 'key manag']],
@@ -339,7 +342,9 @@ const MATCH_RULES: ReadonlyArray<readonly [DomainId, readonly string[]]> = [
     ],
   ],
   ['identity', ['identity', 'iam', 'ciam', 'verifiable credential']],
-  ['blockchain', ['blockchain', 'dlt', 'digital asset', 'custody', 'cbdc', 'payment']],
+  // NOTE: do NOT add bare 'payment' here — payment cryptography systems are
+  // routed to 'hsm' above; 'cbdc' stays (central-bank digital currency is DLT).
+  ['blockchain', ['blockchain', 'dlt', 'digital asset', 'custody', 'cbdc']],
   // discovery/tooling is more specific than the broad 'platform'/'network'
   // catch-alls below — e.g. "Cryptographic Discovery Platforms" is tooling, not
   // a generic platform — so it must rank ahead of them.

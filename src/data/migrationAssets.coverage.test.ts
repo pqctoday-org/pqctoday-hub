@@ -83,6 +83,10 @@ describe('migrationAssets coverage', () => {
       ['Cryptographic Discovery Platforms', 'Security Stack', 'discovery'],
       ['Blockchain & DLT Protocols', 'Application', 'blockchain'],
       ['National PQC Roadmap', 'Standard', 'programs'],
+      // Payment cryptography systems are HSMs, not blockchain (regression).
+      ['Payment Cryptography Systems', 'AppServers', 'hsm'],
+      // …but payment *research* is a program, not an HSM.
+      ['Payment PQC Research', 'Standard', 'programs'],
     ]
     for (const [cat, layer, expected] of cases) {
       expect(classifyProductDomain(cat, layer), `${cat}`).toBe(expected)
