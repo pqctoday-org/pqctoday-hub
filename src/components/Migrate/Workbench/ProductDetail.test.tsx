@@ -37,16 +37,20 @@ function makeItem(over: Partial<SoftwareItem>): SoftwareItem {
 }
 
 describe('ProductDetail', () => {
-  it('renders capability text + validation proof link from the item', () => {
+  it('renders a labelled PQC capabilities section (support detail + description)', () => {
     render(
       <ProductDetail
         product={makeItem({
+          pqcSupport: 'Yes (ACVP: ML-DSA, ML-KEM, SLH-DSA)',
           pqcCapabilityDescription: 'Supports ML-KEM-768 hybrid key exchange.',
           proofUrl: 'https://example.com/proof',
           proofPublicationDate: '2026-01-01',
         })}
       />
     )
+    expect(screen.getByText('PQC capabilities')).toBeInTheDocument()
+    // concise support detail extracted from the pqcSupport string (Yes stripped)
+    expect(screen.getByText('ACVP: ML-DSA, ML-KEM, SLH-DSA')).toBeInTheDocument()
     expect(screen.getByText(/Supports ML-KEM-768 hybrid key exchange/)).toBeInTheDocument()
     const proof = screen.getByRole('link', { name: /Validation proof/i })
     expect(proof).toHaveAttribute('href', 'https://example.com/proof')
