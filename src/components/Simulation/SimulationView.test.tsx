@@ -194,11 +194,11 @@ describe('SimulationView (Mission Control)', () => {
     for (let i = 0; i < 12; i++) {
       fireEvent.click(screen.getByRole('button', { name: /End Quarter/ }))
       const dialog = screen.getByRole('dialog')
-      // both board and report render "Phases cleared" as "n/8"; while the report
+      // both board and report render "Phases cleared" as "n/9"; while the report
       // is open they must show the SAME number.
-      const reportVal = within(dialog).getByText(/^\d+\/8$/).textContent
+      const reportVal = within(dialog).getByText(/^\d+\/9$/).textContent
       const boardVals = screen
-        .getAllByText(/^\d+\/8$/)
+        .getAllByText(/^\d+\/9$/)
         .filter((el) => !dialog.contains(el))
         .map((el) => el.textContent)
       expect(boardVals).toContain(reportVal)

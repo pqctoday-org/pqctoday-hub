@@ -6,6 +6,7 @@
  * Picking a trap explains WHY it fails. Verdicts are context-aware.
  */
 import type { PhaseId } from './frameworkPhases'
+import type { Freshness } from './contentFreshness'
 
 export interface MoveCtx {
   /** Country/jurisdiction with hybrid mandate + end state. */
@@ -26,6 +27,12 @@ export interface SimMove {
   label: string
   desc: string
   evaluate: (ctx: MoveCtx) => MoveVerdict
+  /**
+   * Structured freshness for a move whose verdict cites a time-sensitive fact
+   * (e.g. "as of June 2026 — re-check the live CMVP list"). Aggregated into the
+   * content-freshness manifest so the date can't silently go stale in prose.
+   */
+  freshness?: Freshness
 }
 
 const sound =
@@ -224,6 +231,10 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       evaluate: trap(
         'Fails (as of June 2026 — re-check the live CMVP list, since validated ML-KEM/ML-DSA modules are expected imminently). Until a FIPS 140-3-validated PQC module exists, a FIPS-required environment is non-compliant — gate PQC there behind CAVP/validation, and deploy first where validation is not mandated.'
       ),
+      freshness: {
+        asOf: '2026-06-18',
+        recheck: 'https://csrc.nist.gov/projects/cryptographic-module-validation-program',
+      },
     },
     {
       label: 'Skip the library-readiness check',
@@ -292,6 +303,25 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       desc: 'Seven-domain score (overall = weakest) + a board KPI baseline.',
       evaluate: sound(
         'Sound. The seven-domain self-assessment (overall = your weakest domain) plus a board KPI baseline make progress measurable and sustainable — the foundation every phase reports against.'
+      ),
+    },
+    {
+      label: 'Skip the maturity baseline; report progress phase-by-phase',
+      desc: 'Track phase completion instead of the weakest-domain maturity score.',
+      evaluate: trap(
+        'Fails. Common failure: no maturity baseline. Without the seven-domain weakest-link view you over-report progress and miss the gating domain that actually constrains readiness.'
+      ),
+    },
+  ],
+  // Terminal Verification & Closure phase — the lesson "migrated is a belief
+  // until there's an evidence dossier" now lands inside the phase that teaches it
+  // (migrated here from foundations). Wrong picks still fire logSimTrapPick.
+  'verify-close': [
+    {
+      label: 'Prove each migration against the evidence standard & log decommissioning',
+      desc: 'Assemble the dossier (observed PQC negotiation, negative testing, attestation) and record SP 800-88 decommissioning.',
+      evaluate: sound(
+        'Sound. "Done" now means proven: the 5-point evidence dossier plus a logged classical-key decommissioning turn a declared migration into a verifiable, audit-ready one — and close the harvest-now-decrypt-later exposure.'
       ),
     },
     {

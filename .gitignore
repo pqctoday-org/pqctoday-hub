@@ -242,6 +242,9 @@ scripts/*
 # Simulation activity-tree generator — emits the committed dated trees in
 # src/simulation/trees from the public framework + hub registries.
 !scripts/gen-sim-trees.mjs
+# Timeline single-source codegen — derives sim/page facts from the timeline CSV.
+# Tracked: runs in prebuild and the CI freshness gate.
+!scripts/gen-timeline-facts.mjs
 # Simulation live-feed generator — emits the committed dated sim_feed_*.csv.
 !scripts/gen-sim-feed.mjs
 
@@ -306,6 +309,11 @@ public/data/rag-index-freshness.json
 !scripts/wayback-snapshot-timeline.ts
 !scripts/snapshot-timeline-via-playwright.ts
 !scripts/audit-timeline-enrichment-freshness.ts
+
+# Content-freshness audit — CI gate that flags time-sensitive sim claims
+# (CMVP/FIPS status, protocol-matrix snapshot, Q-Day anchor) aged past 90 days.
+# Reads src/data/contentFreshness.ts. Must be tracked to run in CI.
+!scripts/audit-content-freshness.ts
 
 # Vendor-ref integrity audit — CI gate that validates vendor_id assignments in
 # the product catalog against the vendor roadmap CSV. Catches wrong VND-*

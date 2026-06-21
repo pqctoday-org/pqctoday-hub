@@ -16,8 +16,20 @@
  * quantumTimeline.test.ts so the two blocks can't silently drift apart.
  */
 
+import type { Freshness } from './contentFreshness'
+
 /** First CRQC ("Q-Day") — the most sensitive assets become breakable.
  *  Deliberately aggressive (≤ CRQC_ESTIMATES.lowerBound) as a planning anchor. */
 export const QC_FIRST_YEAR = 2029
 /** CRQC broadly available — every sensitivity tier is at risk (== CRQC_ESTIMATES.moderate). */
 export const QC_BROAD_YEAR = 2035
+
+/**
+ * When the Q-Day planning anchor was last reconciled against the public CRQC
+ * research range. Surfaced in the content-freshness manifest so the deliberately
+ * aggressive 2029 anchor gets a periodic re-check rather than silently aging.
+ */
+export const Q_DAY_FRESHNESS: Freshness = {
+  asOf: '2026-06-18',
+  recheck: 'https://csrc.nist.gov/projects/post-quantum-cryptography',
+}

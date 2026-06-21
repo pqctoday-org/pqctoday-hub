@@ -9,10 +9,44 @@ import { Button } from '@/components/ui/button'
 import { PHASE_WIN_LEVEL } from '@/data/phaseMaturity'
 
 export const eyebrow =
-  'font-mono text-[9.5px] font-bold uppercase tracking-[0.14em] text-muted-foreground'
+  'font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-muted-foreground'
 
 export function Eyebrow({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <span className={`${eyebrow} ${className}`}>{children}</span>
+}
+
+/**
+ * Marks a figure as an illustrative *planning anchor* rather than a published
+ * standard (shelf-lives, government deadlines, the Q-Day year). The contrast
+ * with un-badged standards (FIPS params, RFC numbers) is what teaches the
+ * difference — so badge ONLY soft figures, never algorithm/standard chips.
+ *
+ * Accessibility: a real focusable `<button>` carrying the full explanation in
+ * `aria-label` (reachable by keyboard + screen reader) — never a bare `title`.
+ * `title` is supplied additionally for sighted hover. 10px keeps it above the
+ * chip floor. `label` / `tip` let each site phrase the affordance for its figure.
+ */
+export function PlanningBadge({
+  label = 'planning estimate',
+  tip = 'Illustrative planning anchor, not a published standard — re-check the live source.',
+  className = '',
+}: {
+  label?: string
+  tip?: string
+  className?: string
+}) {
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      title={tip}
+      aria-label={`${label}: ${tip}`}
+      data-testid="planning-badge"
+      className={`inline-flex h-auto cursor-help items-center rounded-sm border border-warning/40 bg-warning/10 px-1 py-0 font-mono text-sim-chip font-semibold uppercase leading-tight tracking-[0.06em] text-warning underline decoration-dotted decoration-warning/60 underline-offset-2 hover:bg-warning/20 ${className}`}
+    >
+      {label}
+    </Button>
+  )
 }
 
 export function Ring({ level, sz = 30 }: { level: number; sz?: number }) {
@@ -49,7 +83,7 @@ export function Ring({ level, sz = 30 }: { level: number; sz?: number }) {
       </svg>
       <div
         className="absolute inset-0 grid place-items-center font-mono font-extrabold"
-        style={{ fontSize: sz * 0.3, color: col }}
+        style={{ fontSize: Math.max(10, sz * 0.3), color: col }}
       >
         {level}
       </div>
@@ -117,7 +151,7 @@ export function Radial({
           </div>
           <div
             className="mt-0.5 font-mono tracking-[0.1em] text-muted-foreground"
-            style={{ fontSize: sz * 0.08 }}
+            style={{ fontSize: Math.max(10, sz * 0.08) }}
           >
             TO Q-DAY
           </div>
@@ -150,11 +184,11 @@ export function Dial({
       aria-label={`${label}: ${value}. Activate to change.`}
       className="h-auto items-start justify-start whitespace-normal flex flex-col gap-px rounded-lg border border-background/20 bg-background/10 px-3 py-1.5 text-left hover:bg-background/20"
     >
-      <span className="font-mono text-[8px] font-bold uppercase tracking-[0.14em] text-background/50">
+      <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
         {label} ⟳
       </span>
       <span className="text-[12.5px] font-bold text-background">{value}</span>
-      <span className="text-[9.5px] text-background/50">{hint}</span>
+      <span className="text-sim-micro text-background/50">{hint}</span>
     </Button>
   )
 }
@@ -171,12 +205,15 @@ export function ReadonlyDial({
   hint,
   note,
   title,
+  badge,
 }: {
   label: string
   value: string
   hint: string
   note?: string
   title?: string
+  /** Optional affordance (e.g. a {@link PlanningBadge}) shown next to the label. */
+  badge?: ReactNode
 }) {
   return (
     <div
@@ -184,12 +221,13 @@ export function ReadonlyDial({
       aria-label={`${label}: ${value}. ${hint}.`}
       className="flex flex-col gap-px rounded-lg border border-background/20 bg-background/5 px-3 py-1.5 text-left"
     >
-      <span className="font-mono text-[8px] font-bold uppercase tracking-[0.14em] text-background/50">
+      <span className="flex items-center gap-1 font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
         {label}
+        {badge}
       </span>
       <span className="text-[12.5px] font-bold text-background">{value}</span>
-      <span className="text-[9.5px] text-background/50">{hint}</span>
-      {note && <span className="text-[8.5px] italic text-background/40">{note}</span>}
+      <span className="text-sim-micro text-background/50">{hint}</span>
+      {note && <span className="text-sim-micro italic text-background/40">{note}</span>}
     </div>
   )
 }

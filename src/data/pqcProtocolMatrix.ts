@@ -44,8 +44,20 @@
  *  - 'na'      dimension not applicable to this protocol
  */
 
+import type { Freshness } from './contentFreshness'
+
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
 export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-06-20'
+
+/**
+ * Structured freshness for the content-freshness manifest — pairs the snapshot
+ * date above with the live source to re-verify the matrix's RFC/draft stages and
+ * vendor GA dates against (the IETF datatracker the enrichment job already uses).
+ */
+export const PROTOCOL_MATRIX_FRESHNESS: Freshness = {
+  asOf: PROTOCOL_MATRIX_LAST_UPDATED,
+  recheck: 'https://datatracker.ietf.org/',
+}
 
 export type DimensionStatusValue = 'rfc' | 'draft' | 'experimental' | 'none' | 'na'
 
