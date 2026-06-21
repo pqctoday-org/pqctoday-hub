@@ -25,7 +25,9 @@ Some trailing prose with no pipes.`
 describe('parseDocxBlocks — table grouping (audit C1)', () => {
   it('groups consecutive pipe rows into one table block and drops the separator', () => {
     const blocks = parseDocxBlocks(TABLE_MD)
-    const tables = blocks.filter((b): b is Extract<DocxBlock, { kind: 'table' }> => b.kind === 'table')
+    const tables = blocks.filter(
+      (b): b is Extract<DocxBlock, { kind: 'table' }> => b.kind === 'table'
+    )
     expect(tables).toHaveLength(1)
     expect(tables[0].head).toEqual(['Role', 'Typical FTE', 'Status'])
     expect(tables[0].body).toHaveLength(2)

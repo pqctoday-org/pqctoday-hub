@@ -184,9 +184,7 @@ function docxTable(head: string[], body: string[][]): Table {
   const mkCell = (text: string, bold: boolean): TableCell =>
     new TableCell({
       width: { size: colWidth, type: WidthType.PERCENTAGE },
-      shading: bold
-        ? { type: ShadingType.CLEAR, color: 'auto', fill: 'E8EAF6' }
-        : undefined,
+      shading: bold ? { type: ShadingType.CLEAR, color: 'auto', fill: 'E8EAF6' } : undefined,
       children: [new Paragraph({ children: [new TextRun({ text: stripInline(text), bold })] })],
     })
 
@@ -248,7 +246,9 @@ export function markdownToDocxChildren(markdown: string): (Paragraph | Table)[] 
       case 'check':
         out.push(
           new Paragraph({
-            children: [new TextRun({ text: `${block.checked ? '☑' : '☐'} ${stripInline(block.text)}` })],
+            children: [
+              new TextRun({ text: `${block.checked ? '☑' : '☐'} ${stripInline(block.text)}` }),
+            ],
             spacing: { after: 60 },
             indent: { left: 360 },
           })

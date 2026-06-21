@@ -137,7 +137,14 @@ export const KPITrackerTemplate: React.FC = () => {
       const scoreCell = d.disabled
         ? `locked — ${d.disabledReason ?? 'no data'}`
         : `${userScores[d.id] ?? d.autoScore ?? 0}/100`
-      return [d.label, scoreCell, `${Math.round(ew(d) * 100)}%`, d.target ?? '', d.description, activePersona]
+      return [
+        d.label,
+        scoreCell,
+        `${Math.round(ew(d) * 100)}%`,
+        d.target ?? '',
+        d.description,
+        activePersona,
+      ]
     })
     return rowsToCsv([header, ...rows])
   }, [dimensions, activePersona, userScores, userWeights])
@@ -210,8 +217,8 @@ export const KPITrackerTemplate: React.FC = () => {
         <p className="text-xs text-muted-foreground mt-1 mb-2">
           Set this to compute a real <span className="font-medium">Pace-to-Deadline</span> score —
           your PQC-readiness progress vs. the straight-line pace expected between the start year and
-          your {execData.migrationDeadlineYear ?? 'target'} deadline (50 = on track, &gt;50 = ahead).
-          Until set, Pace-to-Deadline stays a manual slider.
+          your {execData.migrationDeadlineYear ?? 'target'} deadline (50 = on track, &gt;50 =
+          ahead). Until set, Pace-to-Deadline stays a manual slider.
         </p>
         <input
           id="kpi-start-year"
