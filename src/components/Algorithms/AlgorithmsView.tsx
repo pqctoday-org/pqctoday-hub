@@ -5,17 +5,17 @@ import { motion } from 'framer-motion'
 import { AlgorithmComparison } from './AlgorithmComparison'
 import { AlgorithmDetailedComparison } from './AlgorithmDetailedComparison'
 import { PQCProtocolMatrix } from './PQCProtocolMatrix'
+import { AlgorithmValidationView } from './AlgorithmValidationView'
 import { AlgorithmFilters } from './AlgorithmFilters'
 import { AlgorithmCompareBar } from './AlgorithmCompareBar'
 import { AlgorithmComparisonPanel } from './AlgorithmComparisonPanel'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { ArrowRight, BarChart3, Shield, Lightbulb, Network, Info } from 'lucide-react'
+import { ArrowRight, BarChart3, Shield, Network, Info, Lock, FlaskConical } from 'lucide-react'
 import { Skeleton } from '../ui/skeleton'
 import { PageHeader } from '../common/PageHeader'
 import { AlgorithmInfoModal } from './AlgorithmInfoModal'
 import { AlgorithmEntryStrip } from './AlgorithmEntryStrip'
 import { Cnsa20Panel } from './Cnsa20Panel'
-import { ShieldCheck } from 'lucide-react'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { Button } from '../ui/button'
 import { getAlgorithmDefaults } from '../../data/personaConfig'
@@ -73,6 +73,8 @@ export function AlgorithmsView() {
     handleTabChange,
     handleQuickView,
     handleToggleCnsaLens,
+    detailMode,
+    handleDetailModeChange,
     handleToggleCompare,
     handleToggleTransitionRow,
     handleClearCompare,
@@ -96,6 +98,17 @@ export function AlgorithmsView() {
   } = useAlgorithmExplorer(personaDefaults)
 
   const [infoOpen, setInfoOpen] = useState(false)
+  const [hintDismissed, setHintDismissed] = useState(false)
+
+  // Clear every active filter + search in one action (deck "Clear all").
+  const handleClearAllFilters = () => {
+    handleCryptoFamilyChange('All')
+    handleFunctionChange('All')
+    handleSecurityLevelChange('All')
+    handleRegionChange('All')
+    handleStatusChange('All')
+    handleSearchChange('')
+  }
 
   const isCuriousPreview =
     selectedPersona === 'curious' && viewAccess === 'preview' && !searchParams.get('highlight')
@@ -146,10 +159,10 @@ export function AlgorithmsView() {
     }
   }, [activeTab, markAlgorithmsTabVisited])
 
-  // Curious-only gate: hide Protocol Support until they have visited at
-  // least one of the friendlier tabs. Power personas and unlocked-curious
-  // users always see the third tab.
-  const hideSupportTab =
+  // Curious-only gate: keep Protocol Support visible but LOCKED until they have
+  // visited at least one of the friendlier tabs (no layout shift on unlock).
+  // Power personas and unlocked-curious users get it enabled.
+  const supportLocked =
     selectedPersona === 'curious' &&
     !algorithmsTabsVisited.includes('transition') &&
     !algorithmsTabsVisited.includes('detailed')
@@ -159,8 +172,8 @@ export function AlgorithmsView() {
       <PageHeader
         icon={Shield}
         pageId="algorithms"
-        title="Post-Quantum Cryptography Algorithms"
-        description="Migration from classical to post-quantum cryptographic algorithms"
+        title="Post-Quantum Algorithms & Protocols"
+        description="Compare post-quantum algorithms and track their support across IETF protocols"
         dataSource={
           `Data Sources: ${transitionMetadata?.filename ?? 'algorithms_transitions.csv'}, ` +
           `${metadata?.filename ?? 'pqc_complete_algorithm_reference.csv'} • Updated: ` +
@@ -171,35 +184,6 @@ export function AlgorithmsView() {
         shareText={`Compare ${algorithmData.length || 'dozens of'} cryptographic algorithms side-by-side — security levels, key sizes, and performance.`}
         onExport={handleExportCsv}
       />
-
-      {/* eslint-disable-next-line security/detect-object-injection */}
-      {selectedPersona && ALGO_PERSONA_HINTS[selectedPersona] && (
-        <div className="mt-3 mb-2 flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/5 border border-primary/15 text-xs text-muted-foreground">
-          <Lightbulb size={13} className="shrink-0 text-primary mt-0.5" aria-hidden="true" />
-          {/* eslint-disable-next-line security/detect-object-injection */}
-          <span className="flex-1">{ALGO_PERSONA_HINTS[selectedPersona]}</span>
-          {selectedPersona === 'executive' && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-auto px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/10 border border-primary/20 rounded shrink-0"
-              onClick={() =>
-                setSearchParams(
-                  (prev) => {
-                    const next = new URLSearchParams(prev)
-                    next.set('highlight', 'ML-KEM-768,ML-DSA-65,SLH-DSA-SHA2-128s,FN-DSA-512')
-                    next.set('tab', 'detailed')
-                    return next
-                  },
-                  { replace: true }
-                )
-              }
-            >
-              View Top 4 →
-            </Button>
-          )}
-        </div>
-      )}
 
       <AlgorithmEntryStrip
         persona={selectedPersona}
@@ -263,7 +247,7 @@ export function AlgorithmsView() {
       {/* Filters + View */}
       {!isLoading && !isCuriousPreview && (
         <>
-          {/* Shared filters */}
+          {/* Control deck — filters + QuickView + CNSA lens + persona hint in one panel */}
           <AlgorithmFilters
             cryptoFamily={filterCryptoFamily}
             onCryptoFamilyChange={handleCryptoFamilyChange}
@@ -282,28 +266,39 @@ export function AlgorithmsView() {
             availableLevels={availableLevels}
             persona={selectedPersona}
             onQuickView={handleQuickView}
+            cnsaLens={cnsaLens}
+            onToggleCnsaLens={handleToggleCnsaLens}
+            onClearAll={handleClearAllFilters}
+            personaHint={
+              /* eslint-disable-next-line security/detect-object-injection */
+              selectedPersona && !hintDismissed ? ALGO_PERSONA_HINTS[selectedPersona] : undefined
+            }
+            onDismissHint={() => setHintDismissed(true)}
+            hintAction={
+              selectedPersona === 'executive' ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/10 border border-primary/20 rounded shrink-0"
+                  onClick={() =>
+                    setSearchParams(
+                      (prev) => {
+                        const next = new URLSearchParams(prev)
+                        next.set('highlight', 'ML-KEM-768,ML-DSA-65,SLH-DSA-SHA2-128s,FN-DSA-512')
+                        next.set('tab', 'detailed')
+                        return next
+                      },
+                      { replace: true }
+                    )
+                  }
+                >
+                  View Top 4 →
+                </Button>
+              ) : undefined
+            }
           />
 
-          {/* CNSA 2.0 lens toggle (gap-closer #1). Additive: off by default. */}
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <Button
-              variant={cnsaLens ? 'gradient' : 'outline'}
-              size="sm"
-              onClick={handleToggleCnsaLens}
-              aria-pressed={cnsaLens}
-              className="gap-1.5"
-              title="Filter to the NSA CNSA 2.0 suite — ML-KEM-1024 / ML-DSA-87 required; SLH-DSA excluded"
-            >
-              <ShieldCheck size={14} aria-hidden="true" />
-              CNSA 2.0 lens
-            </Button>
-            {cnsaLens && (
-              <span className="text-xs text-muted-foreground">
-                Showing only the CNSA 2.0 suite for U.S. National Security Systems.
-              </span>
-            )}
-          </div>
-
+          {/* CNSA 2.0 suite detail — inline below the deck only when the lens is on */}
           {cnsaLens && <Cnsa20Panel />}
 
           {/* Cross-link to PQC Candidates module when filtering by Candidate status */}
@@ -337,18 +332,23 @@ export function AlgorithmsView() {
                 <BarChart3 size={18} />
                 Detailed Comparison
               </TabsTrigger>
-              {!hideSupportTab && (
-                <TabsTrigger value="support" className="flex items-center gap-2">
-                  <Network size={18} />
-                  Protocol Support
-                  <span
-                    className="rounded-sm bg-primary/15 text-primary px-1 py-0 text-[9px] font-bold uppercase tracking-wider"
-                    title="Tracks 14 IETF protocols across pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. Updated weekly from datatracker."
-                  >
-                    Beta
-                  </span>
-                </TabsTrigger>
-              )}
+              <TabsTrigger
+                value="support"
+                disabled={supportLocked}
+                className="flex items-center gap-2"
+                title={
+                  supportLocked
+                    ? 'Explore Transition or Detailed first'
+                    : 'Tracks 14 IETF protocols across pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. Updated weekly from datatracker.'
+                }
+              >
+                {supportLocked ? <Lock size={16} /> : <Network size={18} />}
+                Protocol Support
+              </TabsTrigger>
+              <TabsTrigger value="validation" className="flex items-center gap-2">
+                <FlaskConical size={18} />
+                Validation
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="transition">
@@ -384,16 +384,10 @@ export function AlgorithmsView() {
                   compareType={compareType}
                   maxCompareReached={compareKeys.length >= MAX_COMPARE}
                   onToggleCompare={handleToggleCompare}
-                  initialSection={
-                    (searchParams.get('section') ?? searchParams.get('subtab') ?? undefined) as
-                      | 'performance'
-                      | 'security'
-                      | 'sizes'
-                      | 'usecases'
-                      | 'attacks'
-                      | 'kat'
-                      | undefined
-                  }
+                  detailMode={detailMode}
+                  onDetailModeChange={handleDetailModeChange}
+                  comparisonAlgos={comparisonAlgos}
+                  baselineAlgo={baselineAlgo}
                 />
               </motion.div>
             </TabsContent>
@@ -408,28 +402,44 @@ export function AlgorithmsView() {
                 <PQCProtocolMatrix />
               </motion.div>
             </TabsContent>
+
+            <TabsContent value="validation">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                data-workshop-target="section-algorithm-validation"
+              >
+                <AlgorithmValidationView />
+              </motion.div>
+            </TabsContent>
           </Tabs>
 
-          {/* Comparison panel — only meaningful for transition/detailed tabs; suppressed on Protocol Support */}
-          {showComparison && comparisonAlgos.length >= 2 && activeTab !== 'support' && (
-            <div ref={comparisonPanelRef} className="mt-6">
-              <AlgorithmComparisonPanel
-                algorithms={comparisonAlgos}
-                baseline={baselineAlgo}
-                activeTab={activeTab}
-                onClose={() => setShowComparison(false)}
-              />
-            </div>
-          )}
+          {/* Comparison panel + sticky tray — Transition tab only. The Detailed
+              tab now hosts comparison inline via its own Browse ↔ Compare mode. */}
+          {activeTab === 'transition' && (
+            <>
+              {showComparison && comparisonAlgos.length >= 2 && (
+                <div ref={comparisonPanelRef} className="mt-6">
+                  <AlgorithmComparisonPanel
+                    algorithms={comparisonAlgos}
+                    baseline={baselineAlgo}
+                    activeTab={activeTab}
+                    onClose={() => setShowComparison(false)}
+                  />
+                </div>
+              )}
 
-          {/* Sticky compare bar */}
-          <AlgorithmCompareBar
-            compareKeys={compareKeys}
-            baselineName={baselineName}
-            onRemove={(key) => handleToggleCompare(key)}
-            onClearAll={handleClearCompare}
-            onCompare={handleOpenComparison}
-          />
+              <AlgorithmCompareBar
+                compareKeys={compareKeys}
+                baselineName={baselineName}
+                compareType={compareType}
+                onRemove={(key) => handleToggleCompare(key)}
+                onClearAll={handleClearCompare}
+                onCompare={handleOpenComparison}
+              />
+            </>
+          )}
         </>
       )}
 

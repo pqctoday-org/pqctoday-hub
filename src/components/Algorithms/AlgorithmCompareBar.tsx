@@ -1,21 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { X, Scale, ArrowRightLeft } from 'lucide-react'
+import { X, Scale, ArrowRightLeft, Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
+import { MAX_COMPARE } from './useAlgorithmExplorer'
 
 interface AlgorithmCompareBarProps {
   compareKeys: string[]
   baselineName: string | null
+  /** Function type locked by the first pick (KEM vs Signature), if any. */
+  compareType?: 'KEM' | 'Signature' | null
   onRemove: (key: string) => void
   onClearAll: () => void
   onCompare: () => void
 }
 
-const MAX = 3
-
 export function AlgorithmCompareBar({
   compareKeys,
   baselineName,
+  compareType,
   onRemove,
   onClearAll,
   onCompare,
@@ -24,6 +26,7 @@ export function AlgorithmCompareBar({
   if (compareKeys.length === 0) return null
 
   const canCompare = compareKeys.length >= 2
+  const emptySlots = Math.max(0, MAX_COMPARE - compareKeys.length)
 
   return (
     <div
@@ -32,7 +35,17 @@ export function AlgorithmCompareBar({
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between gap-2 overflow-x-auto hide-scrollbar">
         <div className="flex items-center gap-2 shrink-0">
           <Scale size={15} className="text-secondary hidden sm:block" />
-          <span className="text-sm font-medium text-foreground hidden sm:block">Compare:</span>
+          <span className="text-sm font-medium text-foreground hidden sm:block whitespace-nowrap">
+            {compareKeys.length} of {MAX_COMPARE} selected
+          </span>
+
+          {/* Locked function type — set by the first pick */}
+          {compareType && (
+            <span className="hidden sm:flex items-center gap-1 text-[10px] sm:text-xs bg-primary/10 text-primary border border-primary/30 rounded-full px-2 py-0.5 whitespace-nowrap">
+              <Lock size={10} aria-hidden="true" />
+              <span className="font-semibold">{compareType} only</span>
+            </span>
+          )}
 
           {/* Baseline chip (locked) */}
           {baselineName && (
@@ -64,7 +77,7 @@ export function AlgorithmCompareBar({
                 </Button>
               </span>
             ))}
-            {Array.from({ length: MAX - compareKeys.length }).map((_, i) => (
+            {Array.from({ length: emptySlots }).map((_, i) => (
               <span
                 key={`slot-${i}`}
                 className="text-[10px] sm:text-xs text-muted-foreground/60 border border-dashed border-border rounded-full px-2 sm:px-3 py-0.5 select-none whitespace-nowrap"

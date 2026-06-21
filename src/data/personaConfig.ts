@@ -85,7 +85,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
  * to the URL-driven state. See `AlgorithmsView.tsx` `hasActiveParams`.
  * ────────────────────────────────────────────────────────────────────────────── */
 
-export type AlgorithmTabId = 'transition' | 'detailed' | 'support'
+export type AlgorithmTabId = 'transition' | 'detailed' | 'support' | 'validation'
 
 export type AlgorithmFilterKey = 'family' | 'fn' | 'level' | 'region' | 'status'
 

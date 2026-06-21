@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:pqctoday-cbom-20260619",
+  "serialNumber": "urn:uuid:pqctoday-cbom-20260620",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-06-19T00:00:00.000Z",
+    "timestamp": "2026-06-20T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -41251,6 +41251,55 @@
         {
           "name": "pqctoday:cswp39_tags",
           "value": "packet-analysis;dissection;tls;network-analysis"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "1ee230b4cc487be4",
+      "name": "Cryptsoft KMIP & PKCS#11 SDK",
+      "version": "SDK (2026)",
+      "manufacturer": {
+        "name": "Cryptsoft Pty Ltd"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "KEM"
+        }
+      },
+      "description": "OEM KMIP (1.0-3.0) and PKCS#11 (v3.2) client/server SDK toolkits (C/C++/C#/Java/Python). First PQC-ready KMIP 3.0 + PKCS#11 v3.2 SDKs (Mar 2025); supports ML-KEM (FIPS 203), ML-DSA (FIPS 204) and SLH-DSA (FIPS 205); completed multi-vendor KMIP PQC interoperability testing. Embedded inside many commercial KMS/HSM products.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "Cryptsoft"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "cryptsoft"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic SDKs & Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "70"
         }
       ]
     }

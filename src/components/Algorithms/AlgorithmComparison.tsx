@@ -512,7 +512,9 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                         key={`${algo.classical}-${algo.function}-${index}`}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.05 }}
+                        // Cap the stagger so a ~40-row table doesn't animate for
+                        // ~2s or re-stagger fully on every sort/filter change.
+                        transition={{ delay: Math.min(index, 8) * 0.04 }}
                         className={clsx(
                           'transition-colors group',
                           isHighlighted

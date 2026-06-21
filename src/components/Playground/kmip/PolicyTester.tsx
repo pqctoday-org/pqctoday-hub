@@ -8,6 +8,7 @@
 import { useState } from 'react'
 import { FlaskConical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import type { KmipEngine, DryRunResult } from '@/wasm/kmip/kmipEngine'
 
 const TEST_ALGOS: { value: string; kind: 'sig' | 'kem' | 'sym' }[] = [
@@ -61,18 +62,13 @@ export function PolicyTester({ engine }: { engine: KmipEngine }) {
         created)
       </p>
       <div className="flex flex-wrap items-center gap-2">
-        <select
-          value={algo}
-          onChange={(e) => setAlgo(e.target.value)}
-          aria-label="Algorithm to test"
-          className="rounded-md border border-border bg-background px-2 py-1 text-xs"
-        >
-          {TEST_ALGOS.map((a) => (
-            <option key={a.value} value={a.value}>
-              {a.value}
-            </option>
-          ))}
-        </select>
+        <FilterDropdown
+          items={TEST_ALGOS.map((a) => a.value)}
+          selectedId={algo}
+          onSelect={setAlgo}
+          label="Algorithm to test"
+          size="sm"
+        />
         <label className="text-[11px] text-muted-foreground flex items-center gap-1">
           <input
             type="checkbox"
