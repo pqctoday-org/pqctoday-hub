@@ -163,6 +163,9 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
         }}
         isModuleRelevant={() => true}
         isModuleAboveLevel={() => false}
+        onTakeCheckpointQuiz={(categories) =>
+          navigate(`/learn/quiz?category=${categories.join(',')}`)
+        }
       />
 
       {/* Capstone */}
