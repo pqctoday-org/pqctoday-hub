@@ -20,10 +20,27 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
   const enrichment = product.vendorId ? enrichmentByVendorId.get(product.vendorId) : undefined
   const vendor = product.vendorId ? vendorMap.get(product.vendorId) : undefined
 
+  // The pqcSupport string carries the concise capability detail
+  // (e.g. "Yes (ACVP: ML-DSA, ML-KEM, SLH-DSA)"). Strip the leading Yes/No.
+  const supportDetail = (product.pqcSupport || '')
+    .replace(/^\s*(yes|no|partial)\b[\s:,-]*/i, '')
+    .replace(/^\(|\)$/g, '')
+    .trim()
+
   return (
     <div className="flex flex-col gap-3 border-t border-border bg-muted/20 px-3 py-3 text-xs">
-      {product.pqcCapabilityDescription && (
-        <p className="leading-relaxed text-foreground/80">{product.pqcCapabilityDescription}</p>
+      {(supportDetail || product.pqcCapabilityDescription) && (
+        <div>
+          <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+            PQC capabilities
+          </p>
+          {supportDetail && <p className="font-medium text-foreground">{supportDetail}</p>}
+          {product.pqcCapabilityDescription && (
+            <p className="mt-0.5 leading-relaxed text-foreground/80">
+              {product.pqcCapabilityDescription}
+            </p>
+          )}
+        </div>
       )}
 
       {certs.length > 0 && (
