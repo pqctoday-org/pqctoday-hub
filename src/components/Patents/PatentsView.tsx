@@ -26,7 +26,7 @@ import {
   type PresetKey,
 } from './patentColumns'
 
-const PATENTS_CSV_COLUMNS: CsvColumnConfig<PatentItem>[] = [
+export const PATENTS_CSV_COLUMNS: CsvColumnConfig<PatentItem>[] = [
   { header: 'Patent Number', accessor: (p) => p.patentNumber },
   { header: 'Title', accessor: (p) => p.title },
   { header: 'Assignee', accessor: (p) => p.assignee },
