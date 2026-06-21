@@ -46,7 +46,8 @@ import { softwareData } from '../../data/migrateData'
 import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
 import { ReportCswp39Nav } from './ReportCswp39Nav'
-import { ReportLockedOverlay } from './redesign/ReportLockedOverlay'
+import { ReportLockedOverlay } from './redesign/ReportLockedOverlay';
+import { KpiEmptyState, KpiPreviewSkeleton } from './redesign/ReportKpiStates'
 import { useThreatsData } from '../../hooks/useThreatsData'
 import { GlossaryAutoWrap } from '../PKILearning/common/GlossaryAutoWrap'
 import { MigrationRoadmap } from './MigrationRoadmap'
@@ -1624,13 +1625,26 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       infoTip={<SectionInfoTip sectionId="roiCalculator" />}
                     />
 
-                    {/* KPI Trending */}
-                    {result.categoryScores && (
-                      <KPITrendingSection
-                        history={assessmentHistory}
-                        currentResult={result}
-                        defaultOpen={false}
-                      />
+                    {/* KPI Trending — comprehensive-gated (categoryScores). Three states:
+                        locked on a quick assessment, empty until ≥2 saved snapshots,
+                        populated otherwise. */}
+                    {result.categoryScores ? (
+                      assessmentHistory.length >= 2 ? (
+                        <KPITrendingSection
+                          history={assessmentHistory}
+                          currentResult={result}
+                          defaultOpen={false}
+                        />
+                      ) : (
+                        <KpiEmptyState />
+                      )
+                    ) : (
+                      <ReportLockedOverlay
+                        reason="Track your risk score over time"
+                        detail="Progress trends come from saved comprehensive assessments. Finish the full assessment to start tracking your risk score and crypto-agility over time."
+                      >
+                        <KpiPreviewSkeleton />
+                      </ReportLockedOverlay>
                     )}
 
                     {/* Industry Threat Landscape */}
