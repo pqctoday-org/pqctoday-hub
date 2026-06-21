@@ -885,12 +885,14 @@ export function SimulationView() {
             <div className="mt-6 flex flex-col items-stretch gap-2.5 sm:flex-row sm:justify-center">
               <Link
                 to="/assess"
+                onClick={() => markSimResume()}
                 className="rounded-lg bg-gradient-to-r from-primary to-secondary px-5 py-2.5 text-[13px] font-extrabold text-background hover:opacity-90"
               >
                 Start the assessment
               </Link>
               <Link
                 to="/report"
+                onClick={() => markSimResume()}
                 className="rounded-lg border border-border px-5 py-2.5 text-[13px] font-bold text-foreground hover:bg-muted"
               >
                 View report
@@ -991,6 +993,7 @@ export function SimulationView() {
           />
           <Link
             to="/assess"
+            onClick={() => markSimResume()}
             className="self-center rounded-md px-1.5 font-mono text-sim-micro font-bold text-background/60 underline-offset-2 hover:text-background hover:underline"
           >
             change in /assess →
