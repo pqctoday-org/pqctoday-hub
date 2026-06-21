@@ -3,8 +3,8 @@
 // The persistent step-map rail — domain-grouped steps with progress, time-left,
 // answered ticks and click-to-edit on any reached step. Replaces the legacy thin
 // StepIndicator.
-import React from 'react'
-import { Check, Zap } from 'lucide-react'
+import React, { useState } from 'react'
+import { Check, Zap, ChevronDown } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { DOMAIN_META, TONES } from './tones'
 import { STEP_META, type AssessStepKey, type AssessTrack } from './assessFlowModel'
@@ -17,8 +17,12 @@ interface AssessStepRailProps {
 }
 
 export const AssessStepRail: React.FC<AssessStepRailProps> = ({ flow, mode, onSwitchToFull }) => {
-  const { renderOrder, stepIdx, maxIdx, isValid } = flow
+  const { renderOrder, stepIdx, maxIdx, isValid, activeKey } = flow
   const furthest = Math.max(maxIdx, stepIdx)
+  // The step map is collapsed by default on mobile (< lg) and shown as a tappable
+  // progress header; on lg+ it is always expanded as the sticky rail.
+  const [expanded, setExpanded] = useState(false)
+  const currentDomain = DOMAIN_META[STEP_META[activeKey].domain]
 
   // A required step is "answered" once its validator passes (value or "not sure").
   // A freely-optional step (compliance/use-cases/infra) shows a tick once the
@@ -39,14 +43,31 @@ export const AssessStepRail: React.FC<AssessStepRailProps> = ({ flow, mode, onSw
   )
 
   return (
-    <aside className="w-full lg:w-[236px] lg:shrink-0">
+    <aside className="w-full lg:sticky lg:top-4 lg:w-[236px] lg:shrink-0">
       <div className="glass-panel p-3.5">
-        <div className="mb-1.5 flex items-center justify-between">
-          <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground/70">
-            {answeredCount} of {total} answered
+        {/* Header: tappable progress toggle on mobile; static on lg+. */}
+        <Button
+          variant="ghost"
+          onClick={() => setExpanded((e) => !e)}
+          aria-expanded={expanded}
+          className="mb-1.5 h-auto w-full items-center justify-between gap-2 p-0 hover:bg-transparent lg:pointer-events-none"
+        >
+          <span className="flex min-w-0 flex-col text-left">
+            <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground/70">
+              {answeredCount} of {total} answered
+            </span>
+            <span className="truncate text-[11px] font-medium text-muted-foreground lg:hidden">
+              Step {stepIdx + 1} of {total} · {currentDomain.label}
+            </span>
           </span>
-          <span className="font-mono text-[10.5px] text-primary">~{minsLeft} min left</span>
-        </div>
+          <span className="flex shrink-0 items-center gap-1.5">
+            <span className="font-mono text-[10.5px] text-primary">~{minsLeft} min left</span>
+            <ChevronDown
+              size={15}
+              className={`text-muted-foreground transition-transform lg:hidden ${expanded ? 'rotate-180' : ''}`}
+            />
+          </span>
+        </Button>
         <div className="mb-3.5 h-1.5 overflow-hidden rounded-full bg-muted">
           <div
             className="h-full rounded-full bg-primary transition-[width]"
@@ -54,7 +75,7 @@ export const AssessStepRail: React.FC<AssessStepRailProps> = ({ flow, mode, onSw
           />
         </div>
 
-        <ol className="flex flex-col gap-0.5">
+        <ol className={`flex-col gap-0.5 lg:flex ${expanded ? 'flex' : 'hidden'}`}>
           {renderOrder.map((key, i) => {
             const meta = STEP_META[key]
             // eslint-disable-next-line security/detect-object-injection
@@ -117,7 +138,7 @@ export const AssessStepRail: React.FC<AssessStepRailProps> = ({ flow, mode, onSw
       </div>
 
       {mode === 'quick' && (
-        <div className="mt-3 rounded-xl border border-status-warning/30 bg-status-warning/10 p-3">
+        <div className="mt-3 hidden rounded-xl border border-status-warning/30 bg-status-warning/10 p-3 lg:block">
           <div className="mb-1 text-[11px] font-bold text-status-warning">
             Fast track → partial report
           </div>
