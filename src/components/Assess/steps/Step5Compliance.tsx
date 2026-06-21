@@ -30,11 +30,12 @@ import { TIER_STYLES } from '../../applicability/parts/tierStyles'
 import { Button } from '../../ui/button'
 import { PersonaHint } from './PersonaHint'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
+import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
 
 // Tiers shown in the assess step — informational omitted (too noisy for selection).
 const TIER_ORDER: ApplicabilityTier[] = ['mandatory', 'recognized', 'cross-border', 'advisory']
 
-const Step5Compliance = () => {
+const Step5Compliance = ({ hideHeading = false, hideHints = false }: EmbeddedStepProps = {}) => {
   const {
     complianceRequirements,
     toggleCompliance,
@@ -153,9 +154,11 @@ const Step5Compliance = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-xl font-bold text-foreground">
-          Which compliance frameworks apply to you?
-        </h3>
+        {!hideHeading && (
+          <h3 className="text-xl font-bold text-foreground">
+            Which compliance frameworks apply to you?
+          </h3>
+        )}
         <Button
           variant="ghost"
           type="button"
@@ -177,10 +180,12 @@ const Step5Compliance = () => {
           {importComplianceSelection ? 'Synced' : 'Import off'}
         </Button>
       </div>
-      <p className="text-sm text-muted-foreground">
-        Select all regulatory or compliance frameworks your organization must adhere to. This helps
-        identify PQC-related obligations.
-      </p>
+      {!hideHeading && (
+        <p className="text-sm text-muted-foreground">
+          Select all regulatory or compliance frameworks your organization must adhere to. This
+          helps identify PQC-related obligations.
+        </p>
+      )}
 
       {importComplianceSelection && myFrameworks.length > 0 && (
         <div className="glass-panel p-3 border-l-4 border-l-secondary">
@@ -197,7 +202,7 @@ const Step5Compliance = () => {
         </div>
       )}
 
-      <PersonaHint stepKey="compliance" />
+      {!hideHints && <PersonaHint stepKey="compliance" />}
 
       {/* None apply / I don't know */}
       <Button

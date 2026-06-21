@@ -18,7 +18,12 @@ import {
   getPersonaOptionDescriptions,
 } from '../../../data/personaWizardHints'
 
-const Step10CryptoAgility = () => {
+import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
+
+const Step10CryptoAgility = ({
+  hideHeading = false,
+  hideHints = false,
+}: EmbeddedStepProps = {}) => {
   const { cryptoAgility, setCryptoAgility, agilityUnknown, setAgilityUnknown, industry } =
     useAssessmentStore()
   const persona = usePersonaStore((s) => s.selectedPersona)
@@ -54,20 +59,29 @@ const Step10CryptoAgility = () => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-foreground">
-        {stepContent.title ?? 'How easily can you swap cryptographic algorithms?'}
-      </h3>
-      <p className="text-sm text-muted-foreground">
-        {stepContent.description ?? (
-          <>
-            <InlineTooltip term="Crypto Agility">Crypto agility</InlineTooltip> is a major factor in
-            migration complexity. Abstracted implementations are far easier to migrate.
-          </>
-        )}
-      </p>
+      {!hideHeading && (
+        <>
+          <h3 className="text-xl font-bold text-foreground">
+            {stepContent.title ?? 'How easily can you swap cryptographic algorithms?'}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {stepContent.description ?? (
+              <>
+                <InlineTooltip term="Crypto Agility">Crypto agility</InlineTooltip> is a major
+                factor in migration complexity. Abstracted implementations are far easier to
+                migrate.
+              </>
+            )}
+          </p>
+        </>
+      )}
 
-      <PersonaHint stepKey="agility" />
-      <WhyWeAskHint stepKey="agility" />
+      {!hideHints && (
+        <>
+          <PersonaHint stepKey="agility" />
+          <WhyWeAskHint stepKey="agility" />
+        </>
+      )}
 
       {/* Smart defaults escape hatch */}
       <Button

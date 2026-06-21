@@ -9,6 +9,8 @@ import {
   TRACK_INFO,
   legacyIndexOf,
   keyAtLegacyIndex,
+  storeIndexOf,
+  keyAtStoreIndex,
   renderOrderFor,
   type AssessValidatorState,
 } from './assessFlowModel'
@@ -78,6 +80,26 @@ describe('assess flow model — index translation', () => {
       expect(legacyIndexOf(key)).toBe(i)
       expect(keyAtLegacyIndex(i)).toBe(key)
     })
+  })
+
+  it('store index is track-relative and round-trips for both tracks', () => {
+    // quick: store index == position in the 8-step quick array
+    RENDER_ORDER_QUICK.forEach((key) => {
+      expect(keyAtStoreIndex('quick', storeIndexOf('quick', key))).toBe(key)
+    })
+    // comprehensive: store index == position in LEGACY_ORDER
+    LEGACY_ORDER.forEach((key) => {
+      expect(keyAtStoreIndex('comprehensive', storeIndexOf('comprehensive', key))).toBe(key)
+    })
+  })
+
+  it('store index differs from render position where migration moved', () => {
+    // migration: store index 5 (legacy), but render position 8 (after credential)
+    expect(storeIndexOf('comprehensive', 'migration')).toBe(5)
+    expect(RENDER_ORDER_FULL.indexOf('migration')).toBe(8)
+    // credential-lifetime sits at legacy store index 8 — what the OLD wizard
+    // would render at index 8 — proving the two interpret currentStep consistently.
+    expect(keyAtStoreIndex('comprehensive', 8)).toBe('credential-lifetime')
   })
 })
 

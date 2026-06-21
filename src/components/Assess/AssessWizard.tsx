@@ -27,7 +27,7 @@ import { Step11Infrastructure } from './steps/Step11Infrastructure'
 import { Step13TimelinePressure } from './steps/Step13TimelinePressure'
 import { CSWP39StepBadge } from '../shared/CSWP39StepBadge'
 import { ASSESS_STEP_TO_CSWP39 } from '../../data/assessStepToCswp39'
-import { STEP_VALIDATORS } from './redesign/assessFlowModel'
+import { STEP_VALIDATORS, PROFICIENCY_SUGGEST_MAP } from './redesign/assessFlowModel'
 import {
   logAssessStart,
   logAssessStep,
@@ -65,25 +65,6 @@ const STEP_TITLES_QUICK = [
 interface AssessWizardProps {
   onComplete: () => void
   mode?: AssessmentMode
-}
-
-/**
- * Steps that support "I don't know" auto-suggestion, categorized by technical depth.
- * - 'technical': auto-suggested for 'new' AND 'basics' proficiency
- * - 'general': auto-suggested only for 'new' proficiency
- */
-const PROFICIENCY_SUGGEST_MAP: Record<string, 'technical' | 'general'> = {
-  crypto: 'technical',
-  scale: 'technical',
-  agility: 'technical',
-  infra: 'technical',
-  sensitivity: 'general',
-  compliance: 'general',
-  migration: 'general',
-  'use-cases': 'general',
-  retention: 'general',
-  'credential-lifetime': 'general',
-  timeline: 'general',
 }
 
 // Step order + components. Validity for each step is sourced from the shared

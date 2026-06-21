@@ -13,6 +13,19 @@
 
 import type { AssessDomain } from './tones'
 
+/**
+ * Slot props for embedding a legacy step component inside the redesign question
+ * pane. The pane supplies the heading/subtitle and the single consolidated
+ * assist strip, so the step suppresses its own duplicates — but KEEPS its option
+ * grid, escape hatch(es), import-sync toggles and data-workshop-target hooks.
+ */
+export interface EmbeddedStepProps {
+  /** Hide the step's own <h3> question + <p> description (the pane shows them). */
+  hideHeading?: boolean
+  /** Hide the step's own PersonaHint + WhyWeAskHint (the pane's assist strip shows "Why we ask"). */
+  hideHints?: boolean
+}
+
 export type AssessStepKey =
   | 'industry'
   | 'country'
@@ -258,6 +271,27 @@ export const STEP_VALIDATORS: Record<AssessStepKey, (s: AssessValidatorState) =>
   timeline: (s) => !!s.timelinePressure || s.timelineUnknown,
 }
 
+/**
+ * Steps that support persona/proficiency auto-suggestion of "I'm not sure",
+ * categorized by technical depth. Shared by the legacy wizard and the redesign
+ * so the auto-prefill behaviour stays identical.
+ * - 'technical': auto-suggested for 'curious' AND 'basics' proficiency
+ * - 'general': auto-suggested only for 'curious' proficiency
+ */
+export const PROFICIENCY_SUGGEST_MAP: Record<string, 'technical' | 'general'> = {
+  crypto: 'technical',
+  scale: 'technical',
+  agility: 'technical',
+  infra: 'technical',
+  sensitivity: 'general',
+  compliance: 'general',
+  migration: 'general',
+  'use-cases': 'general',
+  retention: 'general',
+  'credential-lifetime': 'general',
+  timeline: 'general',
+}
+
 export type AssessTrack = 'quick' | 'comprehensive'
 
 /** Render order for a given track (mode). */
@@ -274,6 +308,27 @@ export function legacyIndexOf(key: AssessStepKey): number {
 export function keyAtLegacyIndex(i: number): AssessStepKey | undefined {
   // eslint-disable-next-line security/detect-object-injection
   return LEGACY_ORDER[i]
+}
+
+// The meaning of `store.currentStep` is TRACK-RELATIVE, matching the legacy
+// wizard: in quick mode it indexes the 8-item quick array (which equals
+// RENDER_ORDER_QUICK), in comprehensive mode it indexes the full 13 in
+// LEGACY_ORDER (the original ALL_STEPS order). The redesign renders
+// RENDER_ORDER_* but reads/writes currentStep through these helpers so the two
+// wizards interpret currentStep identically.
+function storeOrderFor(mode: AssessTrack): readonly AssessStepKey[] {
+  return mode === 'quick' ? RENDER_ORDER_QUICK : LEGACY_ORDER
+}
+
+/** The `store.currentStep` value that denotes `key` in the given track. */
+export function storeIndexOf(mode: AssessTrack, key: AssessStepKey): number {
+  return storeOrderFor(mode).indexOf(key)
+}
+
+/** The step key denoted by a `store.currentStep` value in the given track. */
+export function keyAtStoreIndex(mode: AssessTrack, idx: number): AssessStepKey | undefined {
+  // eslint-disable-next-line security/detect-object-injection
+  return storeOrderFor(mode)[idx]
 }
 
 /** Per-track question count + time estimate, for chooser + control-deck copy. */
