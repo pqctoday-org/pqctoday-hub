@@ -113,6 +113,9 @@ import { TrapInsightsPanel } from './TrapInsightsPanel'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
+import { computeAssessment } from '@/hooks/useAssessmentEngine'
+import type { AssessmentInput } from '@/hooks/assessmentTypes'
 import { useAwarenessScore } from '@/hooks/useAwarenessScore'
 import { ModuleCompletionCard } from '@/components/PKILearning/ModuleCompletionCard'
 import { SimRunComplete } from './SimRunComplete'
@@ -897,6 +900,41 @@ export function SimulationView() {
                 View report
               </Link>
             </div>
+            <div className="mt-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  // Soft cold-start: let a curious visitor explore without first
+                  // running an assessment. Computed through the real engine so the
+                  // numbers are internally consistent; replaced the moment the user
+                  // runs their own assessment.
+                  const result = computeAssessment({
+                    industry: 'Finance & Banking',
+                    currentCrypto: ['RSA-2048', 'ECDSA', 'AES-256', 'SHA-256'],
+                    dataSensitivity: ['critical', 'high'],
+                    complianceRequirements: ['PCI DSS', 'GDPR'],
+                    migrationStatus: 'not-started',
+                    cryptoUseCases: ['TLS/HTTPS', 'Data-at-rest encryption', 'Digital signatures'],
+                    dataRetention: ['10-25y', 'indefinite'],
+                    systemCount: '200-plus',
+                    teamSize: '11-50',
+                    cryptoAgility: 'partially-abstracted',
+                    infrastructure: ['Cloud Storage', 'HSM / Hardware security modules'],
+                    vendorDependency: 'mixed',
+                    timelinePressure: 'within-2-3y',
+                  } satisfies AssessmentInput)
+                  useAssessmentResultStore.getState().setResult(result)
+                  useAssessmentResultStore.setState({ completedAt: new Date().toISOString() })
+                }}
+                className="h-auto w-full whitespace-normal py-2.5 text-[13px]"
+              >
+                Explore with a sample organization
+              </Button>
+              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+                Loads a sample Finance &amp; Banking · US run so you can try the simulation now —
+                run your own assessment anytime to replace it with your real numbers.
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -982,8 +1020,8 @@ export function SimulationView() {
           <Dial
             label="GUIDED"
             value={guided ? 'On' : 'Off'}
-            hint="plain-language help"
-            title="Guided mode — defines unfamiliar terms (Mosca's inequality, HNDL, hybrid vs pure), slows the tour, and captions the dials in plain language. Independent of difficulty."
+            hint="simpler view + help"
+            title="Guided mode — a focused, low-density view: hides the advanced intel panels, defines unfamiliar terms (Mosca's inequality, HNDL, hybrid vs pure), and captions the dials in plain language. Turn off for the full Expert console. Independent of difficulty."
             onClick={() => {
               const next = !guided
               setGuided(next)
@@ -1353,7 +1391,9 @@ export function SimulationView() {
           </div>
         </div>
       ) : (
-        <div className="grid min-h-0 flex-1 gap-3.5 p-4 lg:grid-cols-[300px_1fr_332px]">
+        <div
+          className={`grid min-h-0 flex-1 gap-3.5 p-4 ${guided ? 'lg:grid-cols-[300px_1fr]' : 'lg:grid-cols-[300px_1fr_332px]'}`}
+        >
           {/* left — team (who runs this phase) above the phase journey */}
           <div className="flex min-h-0 flex-col gap-3.5 overflow-auto">
             <div className="rounded-xl border border-border bg-card p-4">
@@ -1882,418 +1922,424 @@ export function SimulationView() {
             </div>
           </div>
 
-          {/* right — phase-relevant intel: artifacts produced this phase + the
-            views that matter to it (architecture only for estate/infra phases) */}
-          <div className="flex min-h-0 flex-col gap-3.5 overflow-auto">
-            {/* Assessment KPIs — read-only category scores (informational; never
+          {/* right — phase-relevant intel (Expert only; Guided hides it for a
+            focused, low-density view). Architecture only for estate/infra phases. */}
+          {!guided && (
+            <div className="flex min-h-0 flex-col gap-3.5 overflow-auto">
+              {/* Assessment KPIs — read-only category scores (informational; never
                 grant maturity, which is earned in-game) */}
-            {assessKpis && (
-              <div className="rounded-xl border border-secondary/30 bg-secondary/5 p-4">
+              {assessKpis && (
+                <div className="rounded-xl border border-secondary/30 bg-secondary/5 p-4">
+                  <Eyebrow className="mb-2 block">
+                    Assessment KPIs{' '}
+                    <span className="text-muted-foreground/60">· informational</span>
+                  </Eyebrow>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {(
+                      [
+                        ['Quantum exposure', assessKpis.quantumExposure, true],
+                        ['Migration complexity', assessKpis.migrationComplexity, true],
+                        ['Regulatory pressure', assessKpis.regulatoryPressure, true],
+                        ['Org readiness', assessKpis.organizationalReadiness, false],
+                      ] as const
+                    ).map(([label, val, higherIsWorse]) => {
+                      const tone =
+                        val >= 67
+                          ? higherIsWorse
+                            ? 'text-destructive'
+                            : 'text-success'
+                          : val >= 34
+                            ? 'text-warning'
+                            : higherIsWorse
+                              ? 'text-success'
+                              : 'text-destructive'
+                      return (
+                        <div
+                          key={label}
+                          className="flex items-baseline justify-between rounded-lg border border-border bg-card px-2 py-1.5"
+                        >
+                          <span className="text-sim-micro leading-tight text-muted-foreground">
+                            {label}
+                          </span>
+                          <span className={`font-mono text-[13px] font-extrabold ${tone}`}>
+                            {Math.round(val)}
+                          </span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Readiness trend — assessed baseline vs in-sim maturity (sim-local) */}
+              {readinessTrend && (
+                <div className="rounded-xl border border-border bg-card p-4">
+                  <Eyebrow className="mb-2 block">
+                    Readiness trend{' '}
+                    <span className="text-muted-foreground/60">· assessed → in-sim</span>
+                  </Eyebrow>
+                  <div className="flex items-baseline justify-between font-mono">
+                    <span className="text-[11px] text-muted-foreground">
+                      Assessed{' '}
+                      <span className="text-[15px] font-extrabold text-foreground">
+                        {readinessTrend.baseline}
+                      </span>
+                    </span>
+                    <span className="text-muted-foreground/50">→</span>
+                    <span className="text-[11px] text-muted-foreground">
+                      In-sim{' '}
+                      <span className="text-[15px] font-extrabold text-success">
+                        {readinessTrend.projected}
+                      </span>
+                    </span>
+                    <span
+                      className={`rounded-full px-1.5 py-0.5 text-sim-micro font-bold ${
+                        readinessTrend.delta > 0
+                          ? 'bg-success/15 text-success'
+                          : 'bg-muted text-muted-foreground'
+                      }`}
+                    >
+                      {readinessTrend.delta > 0 ? `▲ +${readinessTrend.delta}` : '—'}
+                    </span>
+                  </div>
+                  <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full bg-success"
+                      style={{ width: `${readinessTrend.projected}%` }}
+                    />
+                    <div
+                      className="-mt-2 h-2 border-r-2 border-foreground/40"
+                      style={{ width: `${readinessTrend.baseline}%` }}
+                    />
+                  </div>
+                  <p className="mt-1.5 text-sim-micro leading-snug text-muted-foreground">
+                    Projection rises as you clear framework maturity in-game — sim-local, never
+                    written back to your assessment.
+                  </p>
+                </div>
+              )}
+
+              {/* Critical assets — discovered in P0; value + date-driven quantum exposure */}
+              <div className="rounded-xl border border-border bg-card p-4">
                 <Eyebrow className="mb-2 block">
-                  Assessment KPIs <span className="text-muted-foreground/60">· informational</span>
+                  Critical assets{' '}
+                  <span className="text-muted-foreground/60">· €{totalValueM}M</span>
                 </Eyebrow>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {(
-                    [
-                      ['Quantum exposure', assessKpis.quantumExposure, true],
-                      ['Migration complexity', assessKpis.migrationComplexity, true],
-                      ['Regulatory pressure', assessKpis.regulatoryPressure, true],
-                      ['Org readiness', assessKpis.organizationalReadiness, false],
-                    ] as const
-                  ).map(([label, val, higherIsWorse]) => {
-                    const tone =
-                      val >= 67
-                        ? higherIsWorse
-                          ? 'text-destructive'
-                          : 'text-success'
-                        : val >= 34
-                          ? 'text-warning'
-                          : higherIsWorse
-                            ? 'text-success'
-                            : 'text-destructive'
+                {!assetsDiscovered && (
+                  <p className="mb-2 rounded-md border border-dashed border-warning/50 bg-warning/5 px-2 py-1 text-sim-chip text-warning">
+                    Estimated — run P0 “Assess Data &amp; Asset Sensitivity” to discover &amp;
+                    confirm.
+                  </p>
+                )}
+                <div className="flex flex-col gap-1.5">
+                  {assets.map((a) => {
+                    const hot = a.exposurePct >= 0.6 // medium+ exposure
                     return (
                       <div
-                        key={label}
-                        className="flex items-baseline justify-between rounded-lg border border-border bg-card px-2 py-1.5"
+                        key={a.id}
+                        className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
+                          hot
+                            ? 'border-destructive/40 bg-destructive/5'
+                            : 'border-border bg-muted/40'
+                        }`}
                       >
-                        <span className="text-sim-micro leading-tight text-muted-foreground">
-                          {label}
+                        <span
+                          className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${TIER_CHIP[a.tier]}`}
+                        >
+                          {a.tier}
                         </span>
-                        <span className={`font-mono text-[13px] font-extrabold ${tone}`}>
-                          {Math.round(val)}
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-[11.5px] font-semibold text-foreground">
+                            {a.label}
+                          </span>
+                          <span className="block font-mono text-sim-micro text-muted-foreground">
+                            {a.exposure} · €{a.valueM}M · {Math.round(a.exposurePct * 100)}% exposed
+                          </span>
+                        </span>
+                        <span
+                          className={`shrink-0 font-mono text-sim-micro font-bold ${hot ? 'text-destructive' : 'text-muted-foreground'}`}
+                        >
+                          €{a.exposedM}M
                         </span>
                       </div>
                     )
                   })}
                 </div>
+                <div className="mt-2 flex items-center justify-between font-mono text-sim-micro">
+                  <span className="text-muted-foreground">Quantum-exposed value</span>
+                  <span className="font-bold text-destructive">€{exposedValueM}M</span>
+                </div>
               </div>
-            )}
 
-            {/* Readiness trend — assessed baseline vs in-sim maturity (sim-local) */}
-            {readinessTrend && (
+              {/* Applicable compliance — from the assessment; scoping context for P0 */}
+              {sel === 'p0' && assessCompliance.length > 0 && (
+                <div className="rounded-xl border border-border bg-card p-4">
+                  <Eyebrow className="mb-2 block">
+                    Applicable compliance{' '}
+                    <span className="text-muted-foreground/60">· from assessment</span>
+                  </Eyebrow>
+                  <div className="flex flex-col gap-1.5">
+                    {assessCompliance.map((c) => (
+                      <div
+                        key={c.framework}
+                        className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
+                      >
+                        <span
+                          className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${
+                            c.requiresPQC
+                              ? 'bg-destructive/15 text-destructive'
+                              : c.requiresPQC === false
+                                ? 'bg-muted text-muted-foreground'
+                                : 'bg-warning/15 text-warning'
+                          }`}
+                        >
+                          {c.requiresPQC ? 'PQC' : c.requiresPQC === false ? 'n/a' : '?'}
+                        </span>
+                        <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold text-foreground">
+                          {c.framework}
+                        </span>
+                        {c.deadline && (
+                          <span className="shrink-0 font-mono text-sim-micro text-muted-foreground">
+                            {c.deadline}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Cyber insurance — policy limit vs the quantum-exposed value */}
               <div className="rounded-xl border border-border bg-card p-4">
-                <Eyebrow className="mb-2 block">
-                  Readiness trend{' '}
-                  <span className="text-muted-foreground/60">· assessed → in-sim</span>
-                </Eyebrow>
-                <div className="flex items-baseline justify-between font-mono">
-                  <span className="text-[11px] text-muted-foreground">
-                    Assessed{' '}
-                    <span className="text-[15px] font-extrabold text-foreground">
-                      {readinessTrend.baseline}
-                    </span>
+                <Eyebrow className="mb-2 block">Cyber insurance</Eyebrow>
+                <div className="flex items-baseline justify-between">
+                  <span className="text-[19px] font-extrabold text-foreground">
+                    €{insurancePolicyM}M
                   </span>
-                  <span className="text-muted-foreground/50">→</span>
-                  <span className="text-[11px] text-muted-foreground">
-                    In-sim{' '}
-                    <span className="text-[15px] font-extrabold text-success">
-                      {readinessTrend.projected}
-                    </span>
+                  <span className="font-mono text-sim-micro text-muted-foreground">
+                    covers critical + high
                   </span>
-                  <span
-                    className={`rounded-full px-1.5 py-0.5 text-sim-micro font-bold ${
-                      readinessTrend.delta > 0
-                        ? 'bg-success/15 text-success'
-                        : 'bg-muted text-muted-foreground'
-                    }`}
-                  >
-                    {readinessTrend.delta > 0 ? `▲ +${readinessTrend.delta}` : '—'}
+                </div>
+                <div className="mt-0.5 flex items-center justify-between font-mono text-sim-micro">
+                  <span className="text-muted-foreground">Annual premium · 0.15%</span>
+                  <span className="font-bold text-foreground">
+                    {premiumM >= 1 ? `€${premiumM}M` : `€${Math.round(premiumM * 1000)}k`}/yr
                   </span>
                 </div>
                 <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
                   <div
-                    className="h-full bg-success"
-                    style={{ width: `${readinessTrend.projected}%` }}
-                  />
-                  <div
-                    className="-mt-2 h-2 border-r-2 border-foreground/40"
-                    style={{ width: `${readinessTrend.baseline}%` }}
+                    className={uninsuredM > 0 ? 'h-full bg-warning' : 'h-full bg-success'}
+                    style={{
+                      width: `${exposedValueM > 0 ? Math.min(100, (Math.min(insurancePolicyM, exposedValueM) / exposedValueM) * 100) : 100}%`,
+                    }}
                   />
                 </div>
-                <p className="mt-1.5 text-sim-micro leading-snug text-muted-foreground">
-                  Projection rises as you clear framework maturity in-game — sim-local, never
-                  written back to your assessment.
-                </p>
-              </div>
-            )}
-
-            {/* Critical assets — discovered in P0; value + date-driven quantum exposure */}
-            <div className="rounded-xl border border-border bg-card p-4">
-              <Eyebrow className="mb-2 block">
-                Critical assets <span className="text-muted-foreground/60">· €{totalValueM}M</span>
-              </Eyebrow>
-              {!assetsDiscovered && (
-                <p className="mb-2 rounded-md border border-dashed border-warning/50 bg-warning/5 px-2 py-1 text-sim-chip text-warning">
-                  Estimated — run P0 “Assess Data &amp; Asset Sensitivity” to discover &amp;
-                  confirm.
-                </p>
-              )}
-              <div className="flex flex-col gap-1.5">
-                {assets.map((a) => {
-                  const hot = a.exposurePct >= 0.6 // medium+ exposure
-                  return (
-                    <div
-                      key={a.id}
-                      className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
-                        hot ? 'border-destructive/40 bg-destructive/5' : 'border-border bg-muted/40'
-                      }`}
-                    >
-                      <span
-                        className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${TIER_CHIP[a.tier]}`}
-                      >
-                        {a.tier}
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-[11.5px] font-semibold text-foreground">
-                          {a.label}
-                        </span>
-                        <span className="block font-mono text-sim-micro text-muted-foreground">
-                          {a.exposure} · €{a.valueM}M · {Math.round(a.exposurePct * 100)}% exposed
-                        </span>
-                      </span>
-                      <span
-                        className={`shrink-0 font-mono text-sim-micro font-bold ${hot ? 'text-destructive' : 'text-muted-foreground'}`}
-                      >
-                        €{a.exposedM}M
-                      </span>
-                    </div>
-                  )
-                })}
-              </div>
-              <div className="mt-2 flex items-center justify-between font-mono text-sim-micro">
-                <span className="text-muted-foreground">Quantum-exposed value</span>
-                <span className="font-bold text-destructive">€{exposedValueM}M</span>
-              </div>
-            </div>
-
-            {/* Applicable compliance — from the assessment; scoping context for P0 */}
-            {sel === 'p0' && assessCompliance.length > 0 && (
-              <div className="rounded-xl border border-border bg-card p-4">
-                <Eyebrow className="mb-2 block">
-                  Applicable compliance{' '}
-                  <span className="text-muted-foreground/60">· from assessment</span>
-                </Eyebrow>
-                <div className="flex flex-col gap-1.5">
-                  {assessCompliance.map((c) => (
-                    <div
-                      key={c.framework}
-                      className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
-                    >
-                      <span
-                        className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${
-                          c.requiresPQC
-                            ? 'bg-destructive/15 text-destructive'
-                            : c.requiresPQC === false
-                              ? 'bg-muted text-muted-foreground'
-                              : 'bg-warning/15 text-warning'
-                        }`}
-                      >
-                        {c.requiresPQC ? 'PQC' : c.requiresPQC === false ? 'n/a' : '?'}
-                      </span>
-                      <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold text-foreground">
-                        {c.framework}
-                      </span>
-                      {c.deadline && (
-                        <span className="shrink-0 font-mono text-sim-micro text-muted-foreground">
-                          {c.deadline}
-                        </span>
-                      )}
-                    </div>
-                  ))}
+                <div className="mt-1.5 flex items-center justify-between font-mono text-sim-micro">
+                  <span className="text-muted-foreground">Uninsured quantum exposure</span>
+                  <span
+                    className={`font-bold ${uninsuredM > 0 ? 'text-destructive' : 'text-success'}`}
+                  >
+                    €{uninsuredM}M
+                  </span>
                 </div>
               </div>
-            )}
 
-            {/* Cyber insurance — policy limit vs the quantum-exposed value */}
-            <div className="rounded-xl border border-border bg-card p-4">
-              <Eyebrow className="mb-2 block">Cyber insurance</Eyebrow>
-              <div className="flex items-baseline justify-between">
-                <span className="text-[19px] font-extrabold text-foreground">
-                  €{insurancePolicyM}M
-                </span>
-                <span className="font-mono text-sim-micro text-muted-foreground">
-                  covers critical + high
-                </span>
-              </div>
-              <div className="mt-0.5 flex items-center justify-between font-mono text-sim-micro">
-                <span className="text-muted-foreground">Annual premium · 0.15%</span>
-                <span className="font-bold text-foreground">
-                  {premiumM >= 1 ? `€${premiumM}M` : `€${Math.round(premiumM * 1000)}k`}/yr
-                </span>
-              </div>
-              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
-                <div
-                  className={uninsuredM > 0 ? 'h-full bg-warning' : 'h-full bg-success'}
-                  style={{
-                    width: `${exposedValueM > 0 ? Math.min(100, (Math.min(insurancePolicyM, exposedValueM) / exposedValueM) * 100) : 100}%`,
-                  }}
-                />
-              </div>
-              <div className="mt-1.5 flex items-center justify-between font-mono text-sim-micro">
-                <span className="text-muted-foreground">Uninsured quantum exposure</span>
-                <span
-                  className={`font-bold ${uninsuredM > 0 ? 'text-destructive' : 'text-success'}`}
-                >
-                  €{uninsuredM}M
-                </span>
-              </div>
-            </div>
-
-            {/* Artifacts this phase produces — completed vs still to generate */}
-            <div className="rounded-xl border border-border bg-card p-4">
-              <Eyebrow className="mb-2.5 block">
-                {phase.name} artifacts{' '}
-                <span className="text-muted-foreground/60">
-                  · {phaseDocs.length}/{phaseArtifactTypes.size}
-                </span>
-              </Eyebrow>
-              {/* import a completed assessment as the P0 scoping artifact (Assess→Sim, data only) */}
-              {assessSnap &&
-                phaseArtifactTypes.has('initial-scoping') &&
-                !docTypes.has('initial-scoping') && (
-                  <div className="mb-2">
-                    <Button
-                      type="button"
-                      onClick={importAssessReport}
-                      className="h-auto w-full rounded-md bg-secondary px-2.5 py-1.5 text-[11px] font-bold text-secondary-foreground"
-                    >
-                      ▸ Import assessment as scoping artifact
-                    </Button>
-                    <p className="mt-1 px-0.5 text-sim-micro leading-snug text-muted-foreground">
-                      Also sets the org dials (industry · size · country) from your assessment — you
-                      can still change them.
-                    </p>
-                  </div>
-                )}
-              {phaseArtifactTypes.size === 0 ? (
-                <p className="text-[11px] text-muted-foreground">
-                  This phase produces no Command-Center artifact — progress comes from Learn modules
-                  and reference look-ups.
-                </p>
-              ) : (
-                <div className="flex flex-col gap-1.5">
-                  {phaseArtifacts.map((a) => {
-                    const made = phaseDocs.find((d) => d.type === a.type)
-                    return (
-                      <div
-                        key={a.type}
-                        className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
-                          made
-                            ? 'border-success/40 bg-success/5'
-                            : 'border-dashed border-border bg-muted/40'
-                        }`}
+              {/* Artifacts this phase produces — completed vs still to generate */}
+              <div className="rounded-xl border border-border bg-card p-4">
+                <Eyebrow className="mb-2.5 block">
+                  {phase.name} artifacts{' '}
+                  <span className="text-muted-foreground/60">
+                    · {phaseDocs.length}/{phaseArtifactTypes.size}
+                  </span>
+                </Eyebrow>
+                {/* import a completed assessment as the P0 scoping artifact (Assess→Sim, data only) */}
+                {assessSnap &&
+                  phaseArtifactTypes.has('initial-scoping') &&
+                  !docTypes.has('initial-scoping') && (
+                    <div className="mb-2">
+                      <Button
+                        type="button"
+                        onClick={importAssessReport}
+                        className="h-auto w-full rounded-md bg-secondary px-2.5 py-1.5 text-[11px] font-bold text-secondary-foreground"
                       >
-                        <span
-                          className={`grid h-4 w-4 shrink-0 place-items-center rounded-full text-sim-micro font-bold ${
-                            made
-                              ? 'bg-success text-success-foreground'
-                              : 'bg-card text-muted-foreground'
-                          }`}
-                        >
-                          {made ? '✓' : '○'}
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-[11.5px] font-semibold text-foreground">
-                            {made ? made.title : a.label}
-                          </span>
-                          <span className="block font-mono text-sim-micro text-muted-foreground">
-                            {made ? a.type : 'not generated yet'}
-                          </span>
-                        </span>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* Architecture view — only for phases that act on the estate/infra */}
-            {ARCH_PHASES.has(sel) && (
-              <ArchitecturePanel
-                size={size as 'small' | 'mid' | 'large' | 'global'}
-                country={country}
-              />
-            )}
-
-            {/* PQC migration backlog + two-track split — from the assessment, for
-                the remediation phases (P3 plan, P5 execute) */}
-            {sel === 'p3' && assessFrameworkRisk && (
-              <div className="rounded-xl border border-border bg-card p-4">
-                <Eyebrow className="mb-2 block">
-                  Quantum risk — four scoring dimensions{' '}
-                  <span className="text-muted-foreground/60">· from assessment</span>
-                </Eyebrow>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {(
-                    [
-                      ['HNDL exposure', assessFrameworkRisk.hndl],
-                      ['TNFL (signatures)', assessFrameworkRisk.tnfl],
-                      ['Regulatory', assessFrameworkRisk.regulatory],
-                      ['Feasibility', assessFrameworkRisk.feasibility],
-                    ] as const
-                  ).map(([dimLabel, val]) => (
-                    <div
-                      key={dimLabel}
-                      className="rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-sim-micro font-semibold text-foreground">
-                          {dimLabel}
-                        </span>
-                        <span className="font-mono text-sim-micro text-muted-foreground">
-                          {val}/100
-                        </span>
-                      </div>
-                      <div className="mt-1 h-1 rounded-full bg-muted">
-                        <div
-                          className={`h-1 rounded-full ${
-                            val >= 70 ? 'bg-destructive' : val >= 40 ? 'bg-warning' : 'bg-success'
-                          }`}
-                          style={{ width: `${Math.max(0, Math.min(100, val))}%` }}
-                        />
-                      </div>
+                        ▸ Import assessment as scoping artifact
+                      </Button>
+                      <p className="mt-1 px-0.5 text-sim-micro leading-snug text-muted-foreground">
+                        Also sets the org dials (industry · size · country) from your assessment —
+                        you can still change them.
+                      </p>
                     </div>
-                  ))}
-                </div>
-                <p className="mt-2 text-sim-micro leading-snug text-muted-foreground">
-                  These are the framework's Phase-3 scoring dimensions for your org — they drive the
-                  QRA you produce here.
-                </p>
-              </div>
-            )}
-
-            {(sel === 'p3' || sel === 'p5') && (assessBacklog.length > 0 || assessTwoTrack) && (
-              <div className="rounded-xl border border-border bg-card p-4">
-                <Eyebrow className="mb-2 block">
-                  PQC migration backlog{' '}
-                  <span className="text-muted-foreground/60">· from assessment</span>
-                </Eyebrow>
-                {assessTwoTrack && (
-                  <div className="mb-2.5 flex flex-col gap-1.5">
-                    {(['A', 'B'] as const).map((t) => {
-                      const track = t === 'A' ? assessTwoTrack.trackA : assessTwoTrack.trackB
-                      const lead = assessTwoTrack.leadTrack === t
+                  )}
+                {phaseArtifactTypes.size === 0 ? (
+                  <p className="text-[11px] text-muted-foreground">
+                    This phase produces no Command-Center artifact — progress comes from Learn
+                    modules and reference look-ups.
+                  </p>
+                ) : (
+                  <div className="flex flex-col gap-1.5">
+                    {phaseArtifacts.map((a) => {
+                      const made = phaseDocs.find((d) => d.type === a.type)
                       return (
                         <div
-                          key={t}
-                          className={`rounded-lg border px-2.5 py-1.5 ${
-                            track.isAtRisk
-                              ? 'border-destructive/40 bg-destructive/5'
-                              : 'border-border bg-muted/40'
+                          key={a.type}
+                          className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
+                            made
+                              ? 'border-success/40 bg-success/5'
+                              : 'border-dashed border-border bg-muted/40'
                           }`}
                         >
-                          <div className="flex items-center gap-2">
-                            <span className="shrink-0 rounded bg-primary px-1 font-mono text-sim-chip font-extrabold text-primary-foreground">
-                              {track.label.split('—')[0].trim()}
+                          <span
+                            className={`grid h-4 w-4 shrink-0 place-items-center rounded-full text-sim-micro font-bold ${
+                              made
+                                ? 'bg-success text-success-foreground'
+                                : 'bg-card text-muted-foreground'
+                            }`}
+                          >
+                            {made ? '✓' : '○'}
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate text-[11.5px] font-semibold text-foreground">
+                              {made ? made.title : a.label}
                             </span>
-                            {lead && (
-                              <span className="shrink-0 rounded-full bg-secondary/20 px-1.5 py-0.5 font-mono text-sim-chip font-bold text-secondary">
-                                lead
-                              </span>
-                            )}
-                            <span className="min-w-0 flex-1 truncate text-[10.5px] font-semibold text-foreground">
-                              {track.focus}
+                            <span className="block font-mono text-sim-micro text-muted-foreground">
+                              {made ? a.type : 'not generated yet'}
                             </span>
-                          </div>
-                          <p className="mt-0.5 text-sim-micro leading-snug text-muted-foreground">
-                            {track.effort.length} algo
-                            {track.effort.length !== 1 ? 's' : ''} · {track.actions.length} action
-                            {track.actions.length !== 1 ? 's' : ''}
-                          </p>
+                          </span>
                         </div>
                       )
                     })}
                   </div>
                 )}
-                {assessBacklog.length > 0 && (
-                  <div className="flex flex-col gap-1.5">
-                    {assessBacklog.map((m) => (
+              </div>
+
+              {/* Architecture view — only for phases that act on the estate/infra */}
+              {ARCH_PHASES.has(sel) && (
+                <ArchitecturePanel
+                  size={size as 'small' | 'mid' | 'large' | 'global'}
+                  country={country}
+                />
+              )}
+
+              {/* PQC migration backlog + two-track split — from the assessment, for
+                the remediation phases (P3 plan, P5 execute) */}
+              {sel === 'p3' && assessFrameworkRisk && (
+                <div className="rounded-xl border border-border bg-card p-4">
+                  <Eyebrow className="mb-2 block">
+                    Quantum risk — four scoring dimensions{' '}
+                    <span className="text-muted-foreground/60">· from assessment</span>
+                  </Eyebrow>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {(
+                      [
+                        ['HNDL exposure', assessFrameworkRisk.hndl],
+                        ['TNFL (signatures)', assessFrameworkRisk.tnfl],
+                        ['Regulatory', assessFrameworkRisk.regulatory],
+                        ['Feasibility', assessFrameworkRisk.feasibility],
+                      ] as const
+                    ).map(([dimLabel, val]) => (
                       <div
-                        key={m.classical}
-                        className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
+                        key={dimLabel}
+                        className="rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
                       >
-                        <span
-                          className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${
-                            m.urgency === 'immediate'
-                              ? 'bg-destructive/15 text-destructive'
-                              : m.urgency === 'near-term'
-                                ? 'bg-warning/15 text-warning'
-                                : 'bg-muted text-muted-foreground'
-                          }`}
-                        >
-                          {m.urgency}
-                        </span>
-                        <span className="min-w-0 flex-1 truncate font-mono text-sim-micro text-foreground">
-                          {m.classical} <span className="text-muted-foreground">→</span>{' '}
-                          {m.replacement}
-                        </span>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sim-micro font-semibold text-foreground">
+                            {dimLabel}
+                          </span>
+                          <span className="font-mono text-sim-micro text-muted-foreground">
+                            {val}/100
+                          </span>
+                        </div>
+                        <div className="mt-1 h-1 rounded-full bg-muted">
+                          <div
+                            className={`h-1 rounded-full ${
+                              val >= 70 ? 'bg-destructive' : val >= 40 ? 'bg-warning' : 'bg-success'
+                            }`}
+                            style={{ width: `${Math.max(0, Math.min(100, val))}%` }}
+                          />
+                        </div>
                       </div>
                     ))}
                   </div>
-                )}
-              </div>
-            )}
-          </div>
+                  <p className="mt-2 text-sim-micro leading-snug text-muted-foreground">
+                    These are the framework's Phase-3 scoring dimensions for your org — they drive
+                    the QRA you produce here.
+                  </p>
+                </div>
+              )}
+
+              {(sel === 'p3' || sel === 'p5') && (assessBacklog.length > 0 || assessTwoTrack) && (
+                <div className="rounded-xl border border-border bg-card p-4">
+                  <Eyebrow className="mb-2 block">
+                    PQC migration backlog{' '}
+                    <span className="text-muted-foreground/60">· from assessment</span>
+                  </Eyebrow>
+                  {assessTwoTrack && (
+                    <div className="mb-2.5 flex flex-col gap-1.5">
+                      {(['A', 'B'] as const).map((t) => {
+                        const track = t === 'A' ? assessTwoTrack.trackA : assessTwoTrack.trackB
+                        const lead = assessTwoTrack.leadTrack === t
+                        return (
+                          <div
+                            key={t}
+                            className={`rounded-lg border px-2.5 py-1.5 ${
+                              track.isAtRisk
+                                ? 'border-destructive/40 bg-destructive/5'
+                                : 'border-border bg-muted/40'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="shrink-0 rounded bg-primary px-1 font-mono text-sim-chip font-extrabold text-primary-foreground">
+                                {track.label.split('—')[0].trim()}
+                              </span>
+                              {lead && (
+                                <span className="shrink-0 rounded-full bg-secondary/20 px-1.5 py-0.5 font-mono text-sim-chip font-bold text-secondary">
+                                  lead
+                                </span>
+                              )}
+                              <span className="min-w-0 flex-1 truncate text-[10.5px] font-semibold text-foreground">
+                                {track.focus}
+                              </span>
+                            </div>
+                            <p className="mt-0.5 text-sim-micro leading-snug text-muted-foreground">
+                              {track.effort.length} algo
+                              {track.effort.length !== 1 ? 's' : ''} · {track.actions.length} action
+                              {track.actions.length !== 1 ? 's' : ''}
+                            </p>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                  {assessBacklog.length > 0 && (
+                    <div className="flex flex-col gap-1.5">
+                      {assessBacklog.map((m) => (
+                        <div
+                          key={m.classical}
+                          className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
+                        >
+                          <span
+                            className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${
+                              m.urgency === 'immediate'
+                                ? 'bg-destructive/15 text-destructive'
+                                : m.urgency === 'near-term'
+                                  ? 'bg-warning/15 text-warning'
+                                  : 'bg-muted text-muted-foreground'
+                            }`}
+                          >
+                            {m.urgency}
+                          </span>
+                          <span className="min-w-0 flex-1 truncate font-mono text-sim-micro text-foreground">
+                            {m.classical} <span className="text-muted-foreground">→</span>{' '}
+                            {m.replacement}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
