@@ -38,7 +38,7 @@ describe('computePosture', () => {
 
   it('nextMove = first ready by (wave, year), carries chosen product', () => {
     // certs (wave2, hybrid=ready) + hsm (wave3, roadmap=blocked)
-    const p = computePosture(['hsm', 'certs'], { certs: 'My CA' })
+    const p = computePosture(['hsm', 'certs'], { certs: ['My CA'] })
     expect(p.nextMove?.asset.id).toBe('certs')
     expect(p.nextMove?.product).toBe('My CA')
   })

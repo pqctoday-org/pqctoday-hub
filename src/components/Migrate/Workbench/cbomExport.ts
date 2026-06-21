@@ -10,7 +10,7 @@ import { REPLACE_ASSETS, DECISIONS, type ReplaceAsset } from '@/data/migrationAs
 
 interface PlanExportInput {
   planIds: string[]
-  choice: Record<string, string>
+  choice: Record<string, string[]>
   /** ISO timestamp — passed in so the function stays deterministic/testable. */
   timestamp: string
 }
@@ -24,7 +24,7 @@ export function buildPlanCbom(input: PlanExportInput): Record<string, unknown> {
 
   const components = assets.map((asset) => {
     const decision = DECISIONS[asset.decision]
-    const chosen = input.choice[asset.id]
+    const chosen = input.choice[asset.id] ?? []
     return {
       type: 'cryptographic-asset',
       name: asset.label,
@@ -37,7 +37,8 @@ export function buildPlanCbom(input: PlanExportInput): Record<string, unknown> {
         { name: 'pqc:wave', value: String(asset.wave) },
         { name: 'pqc:cnsaYear', value: String(asset.cnsaYear) },
         { name: 'pqc:hndl', value: String(asset.hndl) },
-        ...(chosen ? [{ name: 'pqc:chosenProduct', value: chosen }] : []),
+        // one property per chosen product (multi-select)
+        ...chosen.map((product) => ({ name: 'pqc:chosenProduct', value: product })),
       ],
     }
   })
