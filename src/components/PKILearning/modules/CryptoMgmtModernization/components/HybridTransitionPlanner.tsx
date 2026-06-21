@@ -119,7 +119,7 @@ function suggestSigPair(
   if (cnsa2) return 'ML-DSA-87 (FIPS 204 — CNSA 2.0 Category 5 mandate)'
   if (targetState === 'pure-PQC') return 'ML-DSA-65 (FIPS 204)'
   if (targetState === 'hybrid-PQC+PQC') {
-    return 'ML-DSA-65 + SLH-DSA-SHA2-128s (lattice + hash-based)'
+    return 'ML-DSA-65 (FIPS 204) + SLH-DSA-SHA2-128s (FIPS 205, hash-based)'
   }
   if (targetState === 'crypto-gateway') {
     return 'Gateway-terminated ML-DSA-65 (legacy peer keeps classical sig)'
@@ -418,7 +418,7 @@ const SECTIONS: ArtifactSection[] = [
   },
   {
     id: 'plan',
-    title: 'Step 4 — Plan narrative (editable)',
+    title: 'Step 3 — Plan narrative (editable)',
     description:
       'Edit the narrative, risks, and validation steps that will appear in the exported plan.',
     fields: [

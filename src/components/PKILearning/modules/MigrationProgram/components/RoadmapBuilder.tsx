@@ -583,6 +583,7 @@ export const RoadmapBuilder: React.FC = () => {
         exportData={exportMarkdown}
         filename="pqc-migration-roadmap"
         formats={['markdown', 'pdf']}
+        wideTable
         onExport={handleExport}
       >
         <p className="text-sm text-muted-foreground">

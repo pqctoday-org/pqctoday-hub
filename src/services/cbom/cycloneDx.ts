@@ -17,6 +17,11 @@
 export interface CbomAlgorithm {
   canonical: string
   primitive: string
+  /** Specific parameter set when named in the source, e.g. "ML-KEM-768" — lets
+   *  a CBOM consumer tell ML-KEM-768 from ML-KEM-1024. */
+  parameterSet?: string
+  /** NIST PQC security category (1-5) implied by the parameter set, if known. */
+  securityCategory?: number
 }
 
 /** A FIPS/ACVP certification surfaced as component evidence. */
@@ -90,9 +95,44 @@ export function extractPqcAlgorithmsFromText(text: string): CbomAlgorithm[] {
   const haystack = (text || '').toUpperCase()
   const out: CbomAlgorithm[] = []
   for (const { tokens, canonical, primitive } of PQC_ALGO_TOKENS) {
-    if (tokens.some((t) => haystack.includes(t))) out.push({ canonical, primitive })
+    if (tokens.some((t) => haystack.includes(t)))
+      out.push({ canonical, primitive, ...detectParameterSet(canonical, haystack) })
   }
   return out
+}
+
+/** Infer the specific parameter set + NIST category for the lattice/hash
+ *  standards when the source text names one (e.g. "ML-KEM-768"). Returns an
+ *  empty object for families with no standardized numeric suffix detected. */
+function detectParameterSet(
+  canonical: string,
+  haystack: string
+): { parameterSet?: string; securityCategory?: number } {
+  if (canonical === 'ML-KEM') {
+    const m = haystack.match(/ML-?KEM-?(512|768|1024)/)
+    if (m) {
+      const n = m[1]
+      return {
+        parameterSet: `ML-KEM-${n}`,
+        securityCategory: n === '512' ? 1 : n === '768' ? 3 : 5,
+      }
+    }
+  }
+  if (canonical === 'ML-DSA') {
+    const m = haystack.match(/ML-?DSA-?(44|65|87)/)
+    if (m) {
+      const n = m[1]
+      return { parameterSet: `ML-DSA-${n}`, securityCategory: n === '44' ? 2 : n === '65' ? 3 : 5 }
+    }
+  }
+  if (canonical === 'SLH-DSA') {
+    const m = haystack.match(/SLH-?DSA[A-Z0-9-]*?(128|192|256)/)
+    if (m) {
+      const n = m[1]
+      return { parameterSet: m[0], securityCategory: n === '128' ? 1 : n === '192' ? 3 : 5 }
+    }
+  }
+  return {}
 }
 
 /** A deterministic bom-ref slug. */
@@ -164,15 +204,22 @@ export function buildCbomDocument(
     // Child crypto-asset components for each PQC algorithm the component exposes.
     for (const algo of input.algorithms ?? []) {
       cryptoAssetCount++
+      // Prefer the specific parameter set as the asset name/ref so consumers can
+      // distinguish ML-KEM-768 from ML-KEM-1024.
+      const label = algo.parameterSet ?? algo.canonical
       components.push({
         type: 'cryptographic-asset',
-        'bom-ref': `${input.bomRef}#${algo.canonical}`,
-        name: algo.canonical,
+        'bom-ref': `${input.bomRef}#${label}`,
+        name: label,
         cryptoProperties: {
           assetType: 'algorithm',
           algorithmProperties: {
             primitive: algo.primitive,
             executionEnvironment: 'software-plain-ram',
+            ...(algo.parameterSet ? { parameterSetIdentifier: algo.parameterSet } : {}),
+            ...(algo.securityCategory
+              ? { nistQuantumSecurityLevel: algo.securityCategory }
+              : {}),
             cryptoFunctions:
               algo.primitive === 'kem' ? ['encapsulate', 'decapsulate'] : ['sign', 'verify'],
           },

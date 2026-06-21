@@ -225,6 +225,34 @@ describe('sanitizeForLatin1 (audit B2)', () => {
   })
 })
 
+describe('sanitizeForLatin1 — super/subscript math notation (audit C3)', () => {
+  it('maps a multi-digit superscript exponent to ^<digits> as one token', () => {
+    // 2⁸⁵ must become 2^85, never 2^8^5 or 2?? (the pre-fix behaviour).
+    expect(sanitizeForLatin1('~2⁸⁵')).toBe('~2^85')
+    expect(sanitizeForLatin1('~2⁶⁴')).toBe('~2^64')
+  })
+
+  it('maps latin1 superscripts (¹ ² ³) consistently, grouped with unmapped ones', () => {
+    // 2¹²⁸ mixes ¹²(latin1) + ⁸(>0xFF) — all collapse into one ^128.
+    expect(sanitizeForLatin1('~2¹²⁸')).toBe('~2^128')
+    expect(sanitizeForLatin1('m²')).toBe('m^2')
+  })
+
+  it('maps subscript digit runs to _<digits>', () => {
+    expect(sanitizeForLatin1('CO₂')).toBe('CO_2')
+    expect(sanitizeForLatin1('x₁₀')).toBe('x_10')
+  })
+
+  it('maps the almost-equal sign to ~ instead of dropping it', () => {
+    // Skills & Team Plan emits "≈ 4.8" — must not become "? 4.8".
+    expect(sanitizeForLatin1('≈ 4.8')).toBe('~ 4.8')
+  })
+
+  it('leaves a bare caret/underscore and plain digits untouched', () => {
+    expect(sanitizeForLatin1('2^85 and x_10')).toBe('2^85 and x_10')
+  })
+})
+
 // ── Audit B2 integration: real PDF render swallows typographic glyphs ──────
 describe('buildArtifactPdf — latin1 sanitisation integration (audit B2)', () => {
   it('replaces em-dashes and smart quotes in body text', () => {

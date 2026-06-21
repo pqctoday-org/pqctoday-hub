@@ -293,6 +293,7 @@ export const RefreshCycleAlignment: React.FC = () => {
         exportData={exportMarkdown}
         filename="refresh-cycle-alignment"
         formats={['markdown', 'pdf', 'docx']}
+        wideTable
         onExport={() => {
           addExecutiveDocument({
             id: `refresh-cycle-alignment-${Date.now()}`,

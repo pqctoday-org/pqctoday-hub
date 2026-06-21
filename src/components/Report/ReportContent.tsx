@@ -46,6 +46,11 @@ import { softwareData } from '../../data/migrateData'
 import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
 import { ReportCswp39Nav } from './ReportCswp39Nav'
+import { ReportLockedOverlay } from './redesign/ReportLockedOverlay';
+import { KpiEmptyState, KpiPreviewSkeleton } from './redesign/ReportKpiStates';
+import { ReportVerdictBlock } from './redesign/ReportVerdictBlock';
+import { ReportUpgradeNudge } from './redesign/ReportUpgradeNudge';
+import { ReportControlDeck } from './redesign/ReportControlDeck'
 import { useThreatsData } from '../../hooks/useThreatsData'
 import { GlossaryAutoWrap } from '../PKILearning/common/GlossaryAutoWrap'
 import { MigrationRoadmap } from './MigrationRoadmap'
@@ -756,6 +761,17 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       </span>
                     </div>
 
+                    {/* Control deck (redesign) — derived track label + persona lens. */}
+                    <ReportControlDeck fullTrack={!!result.categoryScores} />
+
+                    {/* Persona verdict (redesign) — re-leads the result for the active role,
+                      above the "Do this first" hero. */}
+                    <ReportVerdictBlock persona={selectedPersona} />
+
+                    {/* Fast-track upgrade nudge (redesign) — quick assessments only; ties the
+                      locked sections to one clear unlock path. */}
+                    {!result.categoryScores && <ReportUpgradeNudge />}
+
                     {/* Top-3 actions hero (P15-P1-02) — teases the highest-priority
                       recommended actions before the full report scroll. Hidden in print. */}
                     {result.recommendedActions.length > 0 && (
@@ -990,10 +1006,11 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         </CollapsibleSection>
                       )}
 
-                    {/* Category Score Breakdown */}
+                    {/* Category Score Breakdown — comprehensive-only; the lock model
+                        owns this section, so a quick assessment shows a locked preview
+                        (redesign) instead of omitting it. */}
                     {phaseVisible('riskBreakdown') &&
-                      result.categoryScores &&
-                      cfg('riskBreakdown').state !== 'hidden' && (
+                      (result.categoryScores ? (
                         <div id="report-section-riskBreakdown">
                           <CategoryBreakdown
                             scores={result.categoryScores}
@@ -1007,7 +1024,24 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                             }
                           />
                         </div>
-                      )}
+                      ) : (
+                        <div id="report-section-riskBreakdown">
+                          <ReportLockedOverlay
+                            reason="Per-domain scores need the full assessment"
+                            detail="A quick assessment can't separate Quantum Exposure, Migration Complexity, Regulatory Pressure and Organizational Readiness. Finish the full assessment to unlock the breakdown."
+                          >
+                            <CategoryBreakdown
+                              scores={{
+                                quantumExposure: 72,
+                                migrationComplexity: 58,
+                                regulatoryPressure: 65,
+                                organizationalReadiness: 40,
+                              }}
+                              defaultOpen
+                            />
+                          </ReportLockedOverlay>
+                        </div>
+                      ))}
 
                     {/* Framework Risk Lens (Applied Quantum P3) — derived alongside the categories */}
                     {phaseVisible('riskBreakdown') &&
@@ -1605,13 +1639,26 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       infoTip={<SectionInfoTip sectionId="roiCalculator" />}
                     />
 
-                    {/* KPI Trending */}
-                    {result.categoryScores && (
-                      <KPITrendingSection
-                        history={assessmentHistory}
-                        currentResult={result}
-                        defaultOpen={false}
-                      />
+                    {/* KPI Trending — comprehensive-gated (categoryScores). Three states:
+                        locked on a quick assessment, empty until ≥2 saved snapshots,
+                        populated otherwise. */}
+                    {result.categoryScores ? (
+                      assessmentHistory.length >= 2 ? (
+                        <KPITrendingSection
+                          history={assessmentHistory}
+                          currentResult={result}
+                          defaultOpen={false}
+                        />
+                      ) : (
+                        <KpiEmptyState />
+                      )
+                    ) : (
+                      <ReportLockedOverlay
+                        reason="Track your risk score over time"
+                        detail="Progress trends come from saved comprehensive assessments. Finish the full assessment to start tracking your risk score and crypto-agility over time."
+                      >
+                        <KpiPreviewSkeleton />
+                      </ReportLockedOverlay>
                     )}
 
                     {/* Industry Threat Landscape */}

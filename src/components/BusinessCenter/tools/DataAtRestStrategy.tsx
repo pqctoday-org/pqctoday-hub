@@ -137,8 +137,10 @@ export const DataAtRestStrategy: React.FC = () => {
         <div>
           <h2 className="text-lg font-semibold text-foreground">Data-at-Rest Strategy</h2>
           <p className="text-sm text-muted-foreground">
-            Phase 5 — Activity 5.6. Decide a per-data-store data-at-rest strategy: re-encrypt under
-            PQC keys, PQC key-wrap (KEK/DEK), crypto-shred, delete, or accept &amp; monitor.
+            Phase 5 — Activity 5.6. Decide a per-data-store strategy: re-wrap the AES-256 key under
+            an ML-KEM (PQC) KEK, write a fresh AES-256 DEK with a PQC-wrapped KEK, crypto-shred,
+            delete, or accept &amp; monitor. Bulk data stays AES-256 (Grover only halves it to
+            ~128-bit — still quantum-safe); PQC protects the key, not the cipher.
           </p>
         </div>
       </header>
