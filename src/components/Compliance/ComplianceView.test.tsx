@@ -137,10 +137,11 @@ describe('ComplianceView', () => {
         <ComplianceView />
       </MemoryRouter>
     )
-    // Both desktop and mobile strips have a "Records" button — click the first.
-    const recordsButtons = screen.getAllByRole('button', { name: /^Records$/i })
-    fireEvent.click(recordsButtons[0])
-    expect(recordsButtons[0]).toBeInTheDocument()
+    // The stable tab bar exposes a "Product Records" tab (role="tab").
+    const recordsTabs = screen.getAllByRole('tab', { name: /Product Records/i })
+    fireEvent.click(recordsTabs[0])
+    expect(recordsTabs[0]).toBeInTheDocument()
+    expect(screen.getByTestId('compliance-table')).toBeInTheDocument()
   }, 15000)
 
   it('renders persona-hint CTA for Finance industry and logs analytics on click', () => {
