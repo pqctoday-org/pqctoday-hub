@@ -13,8 +13,10 @@ const num = (v: unknown): number | undefined => (typeof v === 'number' ? v : und
 const obj = (v: unknown): Record<string, unknown> =>
   v && typeof v === 'object' ? (v as Record<string, unknown>) : {}
 
-/** One friendly line for an audit event, by type. */
-function describe(ev: Record<string, unknown>): string {
+/** One friendly line for an audit event, by type. In Guided mode (`detailed`
+ * false) the PKCS#11 line drops the raw mechanism + CK_RV + latency, keeping
+ * just the human-readable function name. */
+function describe(ev: Record<string, unknown>, detailed: boolean): string {
   switch (ev.type) {
     case 'KmipRequestReceived':
       return `▸ ${str(ev.op)}${str(ev.request_summary) ? `  ·  ${str(ev.request_summary)}` : ''}`
@@ -22,13 +24,15 @@ function describe(ev: Record<string, unknown>): string {
       const o = obj(ev.outcome)
       const extra = str(o.algorithm_override) || str(o.new_algorithm)
       const rule = num(o.substituted_by_rule) ?? num(ev.fired_rule_index)
-      return `decision: ${str(o.type) || '?'}${extra ? ` → ${extra}` : ''}${rule ? `  (rule #${rule})` : ''}`
+      return `decision: ${str(o.type) || '?'}${extra ? ` → ${extra}` : ''}${detailed && rule ? `  (rule #${rule})` : ''}`
     }
     case 'RekeyPlanned':
-      return `rekey ${str(ev.from_algorithm)} → ${str(ev.new_algorithm)}  (rule #${num(ev.triggered_by_rule) ?? '?'})`
+      return `rekey ${str(ev.from_algorithm)} → ${str(ev.new_algorithm)}${detailed ? `  (rule #${num(ev.triggered_by_rule) ?? '?'})` : ''}`
     case 'Pkcs11Call': {
+      const fn = str(ev.function) || 'call'
+      if (!detailed) return `HSM ran ${fn}`
       const lat = num(ev.latency_ms)
-      return `${str(ev.function) || 'call'}  ·  ${friendlyMechanism(str(ev.mechanism))}  ·  ${str(ev.rv_name) || ''}${lat !== undefined ? `  ·  ${lat}ms` : ''}`
+      return `${fn}  ·  ${friendlyMechanism(str(ev.mechanism))}  ·  ${str(ev.rv_name) || ''}${lat !== undefined ? `  ·  ${lat}ms` : ''}`
     }
     case 'KmipResponseSent': {
       const r = obj(ev.result)
@@ -69,7 +73,14 @@ function groupByTxn(events: AuditEvent[]): Txn[] {
   return txns.reverse() // newest transaction first
 }
 
-export function AuditTrailPanel({ events }: { events: AuditEvent[] }) {
+export function AuditTrailPanel({
+  events,
+  detailed = true,
+}: {
+  events: AuditEvent[]
+  /** Expert mode shows raw PKCS#11 mechanism + CK_RV + rule numbers. */
+  detailed?: boolean
+}) {
   if (events.length === 0)
     return <p className="text-xs text-muted-foreground italic">No events yet.</p>
   const txns = groupByTxn(events)
@@ -93,7 +104,7 @@ export function AuditTrailPanel({ events }: { events: AuditEvent[] }) {
                 <div key={i} className="flex items-start gap-2 px-2 py-1 text-[11px]">
                   <span className={`${info.tone} font-semibold shrink-0 w-28`}>{info.label}</span>
                   <span className="font-mono text-muted-foreground break-all">
-                    {describe(obj(e.event))}
+                    {describe(obj(e.event), detailed)}
                   </span>
                 </div>
               )

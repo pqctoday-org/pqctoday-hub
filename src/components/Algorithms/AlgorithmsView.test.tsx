@@ -60,9 +60,9 @@ describe('AlgorithmsView', () => {
           <AlgorithmsView />
         </MemoryRouter>
       )
-      expect(screen.getByText(/Post-Quantum Cryptography Algorithms/i)).toBeInTheDocument()
+      expect(screen.getByText(/Post-Quantum Algorithms & Protocols/i)).toBeInTheDocument()
       expect(
-        screen.getAllByText(/Migration from classical to post-quantum/i)[0]
+        screen.getAllByText(/track their support across IETF protocols/i)[0]
       ).toBeInTheDocument()
       expect(await screen.findByText(/Data Sources:/i)).toBeInTheDocument()
       expect(await screen.findByText('Transition Guide')).toBeInTheDocument()
@@ -109,7 +109,7 @@ describe('AlgorithmsView', () => {
           <AlgorithmsView />
         </MemoryRouter>
       )
-      expect(screen.getByText(/Post-Quantum Cryptography Algorithms/i)).toBeInTheDocument()
+      expect(screen.getByText(/Post-Quantum Algorithms & Protocols/i)).toBeInTheDocument()
       expect(await screen.findByText('Transition Guide')).toBeInTheDocument()
       expect(await screen.findByTestId('algorithm-comparison')).toBeInTheDocument()
     })
@@ -343,6 +343,36 @@ describe('AlgorithmsView', () => {
       })
       // Once the visit is recorded, the Protocol Support tab is rendered.
       expect(await screen.findByText('Protocol Support')).toBeInTheDocument()
+    })
+  })
+
+  describe('Validation tab (Attacks + KAT)', () => {
+    beforeEach(() => {
+      usePersonaStore.getState().clearPreferences()
+      usePersonaStore.getState().setPersona('developer')
+      global.innerWidth = 1024
+    })
+    afterEach(() => usePersonaStore.getState().clearPreferences())
+
+    it('renders a Validation tab alongside the other tabs', async () => {
+      render(
+        <MemoryRouter initialEntries={['/algorithms']}>
+          <AlgorithmsView />
+        </MemoryRouter>
+      )
+      expect(await screen.findByText('Validation')).toBeInTheDocument()
+      expect(screen.getByText('Protocol Support')).toBeInTheDocument()
+    })
+
+    it('shows the Implementation Attacks + KAT sections when the Validation tab is opened', async () => {
+      render(
+        <MemoryRouter initialEntries={['/algorithms']}>
+          <AlgorithmsView />
+        </MemoryRouter>
+      )
+      fireEvent.click(await screen.findByText('Validation'))
+      expect(await screen.findByText('Implementation Attacks')).toBeInTheDocument()
+      expect(screen.getByText('KAT Validation')).toBeInTheDocument()
     })
   })
 })

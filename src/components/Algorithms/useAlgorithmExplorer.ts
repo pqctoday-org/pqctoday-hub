@@ -83,16 +83,19 @@ export function useAlgorithmExplorer(
   const comparisonPanelRef = useRef<HTMLDivElement>(null)
 
   // --- Active tab ---
+  const isAlgorithmTab = (t: string | null): t is AlgorithmTabId =>
+    t === 'transition' || t === 'detailed' || t === 'support' || t === 'validation'
+
   const [activeTab, setActiveTab] = useState<AlgorithmTabId>(() => {
     const tab = searchParams.get('tab')
-    if (tab === 'transition' || tab === 'detailed' || tab === 'support') return tab
+    if (isAlgorithmTab(tab)) return tab
     if (searchParams.get('highlight')) return 'detailed'
     return personaDefaults.tab
   })
 
   useEffect(() => {
     const tab = searchParams.get('tab')
-    if (tab === 'transition' || tab === 'detailed' || tab === 'support') {
+    if (isAlgorithmTab(tab)) {
       setActiveTab((prev) => (prev !== tab ? tab : prev))
     }
   }, [searchParams])
@@ -160,6 +163,17 @@ export function useAlgorithmExplorer(
     () => searchParams.get('status') || personaDefaults.filters.status || 'All'
   )
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '')
+
+  // Detailed-tab view mode: Browse (unified table) ↔ Compare (transposed
+  // side-by-side matrix). Synced to ?mode=compare; absent means browse.
+  const [detailMode, setDetailMode] = useState<'browse' | 'compare'>(() =>
+    searchParams.get('mode') === 'compare' ? 'compare' : 'browse'
+  )
+
+  useEffect(() => {
+    const mode = searchParams.get('mode')
+    setDetailMode(mode === 'compare' ? 'compare' : 'browse')
+  }, [searchParams])
 
   // CNSA 2.0 lens — additive. When off (default) the page behaves exactly as
   // before; when on, a lens panel renders and the detailed/transition lists
@@ -231,6 +245,14 @@ export function useAlgorithmExplorer(
       )
     },
     [setSearchParams]
+  )
+
+  const handleDetailModeChange = useCallback(
+    (mode: 'browse' | 'compare') => {
+      setDetailMode(mode)
+      updateSearchParams({ mode: mode === 'compare' ? 'compare' : null })
+    },
+    [updateSearchParams]
   )
 
   const handleToggleCnsaLens = useCallback(() => {
@@ -421,16 +443,22 @@ export function useAlgorithmExplorer(
     [semantic.mode, semantic.hits]
   )
 
-  // --- Filtered data (Detailed Comparison) ---
-  const filteredAlgorithms = useMemo(() => {
-    return algorithmData.filter((algo) => {
+  // Algorithm filter predicate, parameterised on whether the security-level
+  // filter participates. `availableLevels` reuses this with the level filter
+  // OFF so picking a level never narrows the set of levels you can switch to.
+  const passesAlgoFilters = useCallback(
+    (algo: AlgorithmDetail, opts: { applyLevel: boolean } = { applyLevel: true }) => {
       if (cnsaLens && !passesCnsa20Filter(algo)) return false
       if (filterCryptoFamily !== 'All' && algo.cryptoFamily !== filterCryptoFamily) return false
       if (filterFunction !== 'All') {
         const group = getFunctionGroup(algo)
         if (group !== filterFunction) return false
       }
-      if (filterSecurityLevel !== 'All' && algo.securityLevel !== parseInt(filterSecurityLevel))
+      if (
+        opts.applyLevel &&
+        filterSecurityLevel !== 'All' &&
+        algo.securityLevel !== parseInt(filterSecurityLevel)
+      )
         return false
       if (filterRegion !== 'All' && algo.region !== filterRegion) return false
       if (!matchesStatusFilter(algo.status)) return false
@@ -447,18 +475,24 @@ export function useAlgorithmExplorer(
         }
       }
       return true
-    })
-  }, [
-    algorithmData,
-    filterCryptoFamily,
-    filterFunction,
-    filterSecurityLevel,
-    filterRegion,
-    matchesStatusFilter,
-    searchQuery,
-    semanticAlgoNameSet,
-    cnsaLens,
-  ])
+    },
+    [
+      cnsaLens,
+      filterCryptoFamily,
+      filterFunction,
+      filterSecurityLevel,
+      filterRegion,
+      matchesStatusFilter,
+      searchQuery,
+      semanticAlgoNameSet,
+    ]
+  )
+
+  // --- Filtered data (Detailed Comparison) ---
+  const filteredAlgorithms = useMemo(
+    () => algorithmData.filter((algo) => passesAlgoFilters(algo)),
+    [algorithmData, passesAlgoFilters]
+  )
 
   // --- Filtered data (Transition Guide) ---
   const filteredTransitions = useMemo(() => {
@@ -500,12 +534,18 @@ export function useAlgorithmExplorer(
   ])
 
   // --- Available security levels ---
+  // Derived from the dataset filtered by everything EXCEPT the active level
+  // filter, so selecting a level never hides the other levels you could switch
+  // to (previously this fed off the already-level-filtered list — a trap).
   const availableLevels = useMemo(() => {
     const levels = new Set(
-      filteredAlgorithms.map((a) => a.securityLevel).filter((l): l is number => l !== null)
+      algorithmData
+        .filter((a) => passesAlgoFilters(a, { applyLevel: false }))
+        .map((a) => a.securityLevel)
+        .filter((l): l is number => l !== null)
     )
     return Array.from(levels).sort()
-  }, [filteredAlgorithms])
+  }, [algorithmData, passesAlgoFilters])
 
   // --- CSV export ---
   const handleExportCsv = useCallback(() => {
@@ -533,6 +573,7 @@ export function useAlgorithmExplorer(
     filterStatus,
     searchQuery,
     cnsaLens,
+    detailMode,
     // url sync
     searchParams,
     setSearchParams,
@@ -547,6 +588,7 @@ export function useAlgorithmExplorer(
     handleTabChange,
     handleQuickView,
     handleToggleCnsaLens,
+    handleDetailModeChange,
     handleToggleCompare,
     handleToggleTransitionRow,
     handleClearCompare,
