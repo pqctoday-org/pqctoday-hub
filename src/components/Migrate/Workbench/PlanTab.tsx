@@ -18,7 +18,7 @@ export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
   const removeFromPlan = useMigrateSelectionStore((s) => s.removeFromPlan)
   const plan = useMigrateSelectionStore((s) => s.plan)
 
-  if (posture.plannedAssets.length === 0) {
+  if (posture.plannedAssets.length === 0 && posture.foundations.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-border p-8 text-center">
         <p className="text-sm font-semibold text-foreground">Nothing in your plan yet</p>
@@ -121,6 +121,49 @@ export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
           </div>
         )
       })}
+
+      {posture.foundations.length > 0 && (
+        <div className="overflow-hidden rounded-xl border border-border">
+          <div className="flex items-center gap-2.5 bg-muted/40 px-3 py-2">
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-bold text-foreground">
+                Foundations &amp; infrastructure
+              </span>
+              <span className="block text-[11px] text-muted-foreground">
+                Cross-cutting building blocks &amp; tooling — no fixed wave
+              </span>
+            </span>
+            <span className="font-mono text-[11px] text-muted-foreground">
+              {posture.foundations.length} in plan
+            </span>
+          </div>
+          <div className="flex flex-col divide-y divide-border">
+            {posture.foundations.map((f) => {
+              const chosen = choice[f.id]
+              return (
+                <div key={f.id} className="flex items-center gap-2.5 px-3 py-2.5">
+                  <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-primary/60" aria-hidden />
+                  <span className="min-w-0 flex-1">
+                    <span className="text-sm font-semibold text-foreground">{f.label}</span>
+                    <span className="block text-[11px] text-muted-foreground">
+                      {chosen ? `Chosen: ${chosen}` : 'No product chosen yet'}
+                    </span>
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeFromPlan(f.id)}
+                    aria-label={`Remove ${f.label} from plan`}
+                    className="h-7 w-7 shrink-0 p-0 text-muted-foreground hover:text-foreground"
+                  >
+                    <X size={14} />
+                  </Button>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="flex justify-end">
         <Button

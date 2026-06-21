@@ -7,15 +7,24 @@
 import { useMemo } from 'react'
 import {
   REPLACE_ASSETS,
+  DOMAINS,
   DECISIONS,
   type ReplaceAsset,
   type ReplaceAssetId,
+  type DomainId,
 } from '@/data/migrationAssets'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 
 export interface WaveGroup {
   wave: 1 | 2 | 3 | 4
   assets: ReplaceAsset[]
+}
+
+/** A planned foundation/infrastructure domain (no wave/decision — shown in its
+ *  own plan section per the domain-model design). */
+export interface FoundationPlanEntry {
+  id: string
+  label: string
 }
 
 export interface NextMove {
@@ -41,6 +50,8 @@ export interface MigrationPosture {
   waves: WaveGroup[]
   /** planned assets with no GA path (decision === 'mitigate') */
   gaps: ReplaceAsset[]
+  /** planned foundation/infrastructure domains (no wave) — shown separately */
+  foundations: FoundationPlanEntry[]
 }
 
 const ASSET_BY_ID = new Map<string, ReplaceAsset>(REPLACE_ASSETS.map((a) => [a.id, a]))
@@ -60,11 +71,21 @@ export function computePosture(
 ): MigrationPosture {
   const seen = new Set<string>()
   const plannedAssets: ReplaceAsset[] = []
+  const foundations: FoundationPlanEntry[] = []
   for (const id of planIds) {
     if (seen.has(id)) continue
     seen.add(id)
     const asset = ASSET_BY_ID.get(id)
-    if (asset) plannedAssets.push(asset)
+    if (asset) {
+      plannedAssets.push(asset)
+      continue
+    }
+    // Not a replace-asset — surface foundation/infrastructure domains so their
+    // chosen products still appear in the plan (in their own section).
+    const domain = DOMAINS[id as DomainId]
+    if (domain && domain.kind === 'foundation') {
+      foundations.push({ id: domain.id, label: domain.label })
+    }
   }
   plannedAssets.sort(byWaveThenYear)
 
@@ -107,6 +128,7 @@ export function computePosture(
     nextMove,
     waves,
     gaps,
+    foundations,
   }
 }
 
