@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest'
 import {
   trackForFunction,
   criticalPathLength,
+  criticalPathSpanYears,
   TRACK_META,
   type RoadmapMilestone,
 } from './roadmapTracks'
@@ -67,5 +68,42 @@ describe('criticalPathLength', () => {
     const result = criticalPathLength(cyclic)
     expect(Number.isFinite(result)).toBe(true)
     expect(result).toBeGreaterThan(0)
+  })
+})
+
+describe('criticalPathSpanYears (duration, not depth)', () => {
+  const ms = (id: string, year: number, dependsOn?: string[]): RoadmapMilestone => ({
+    id,
+    label: id,
+    year,
+    phaseId: 'p5',
+    track: 'A',
+    dependsOn,
+  })
+
+  it('is 0 for an empty roadmap or independent same-year milestones', () => {
+    expect(criticalPathSpanYears([])).toBe(0)
+    expect(criticalPathSpanYears([ms('a', 2027), ms('b', 2027)])).toBe(0)
+  })
+
+  it('measures the year span of the longest-duration chain', () => {
+    // a(2026) <- b(2030): span 4, even though it is only 2 milestones deep.
+    const longDuration = [ms('a', 2026), ms('b', 2030, ['a'])]
+    expect(criticalPathSpanYears(longDuration)).toBe(4)
+  })
+
+  it('prefers a 2-deep 4-year chain over a 3-deep same-year chain', () => {
+    const sameYearDeep = [ms('x', 2027), ms('y', 2027, ['x']), ms('z', 2027, ['y'])]
+    const twoYearWide = [ms('a', 2026), ms('b', 2030, ['a'])]
+    // criticalPathLength (count) ranks the 3-deep chain higher...
+    expect(criticalPathLength(sameYearDeep)).toBeGreaterThan(criticalPathLength(twoYearWide))
+    // ...but the duration metric correctly flags the wider one as the constraint.
+    expect(criticalPathSpanYears(sameYearDeep)).toBe(0)
+    expect(criticalPathSpanYears(twoYearWide)).toBe(4)
+  })
+
+  it('does not loop on a cyclic graph', () => {
+    const cyclic = [ms('a', 2026, ['b']), ms('b', 2030, ['a'])]
+    expect(() => criticalPathSpanYears(cyclic)).not.toThrow()
   })
 })

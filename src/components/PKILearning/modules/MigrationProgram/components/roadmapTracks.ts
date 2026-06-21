@@ -45,7 +45,7 @@ export const TRACK_META: Record<RoadmapTrack, TrackMeta> = {
     label: 'Track A — Confidentiality (KEM / HNDL)',
     focus: 'Key exchange & data-at-rest',
     rationale:
-      'Harvest-Now-Decrypt-Later: intercepted ciphertext and key-exchange material can be decrypted retroactively once a quantum computer exists, so confidentiality must be protected first — urgent now even before a quantum computer exists.',
+      'Harvest-Now-Decrypt-Later: ciphertext and key-exchange material intercepted today can be decrypted retroactively once a CRQC exists, so confidentiality is urgent now — years before that computer is built.',
   },
   B: {
     id: 'B',
@@ -96,6 +96,41 @@ export function criticalPathLength(milestones: RoadmapMilestone[]): number {
   let max = 0
   for (const m of milestones) max = Math.max(max, depth(m.id))
   return max
+}
+
+/**
+ * Time span (years) of the longest-*duration* dependency chain — the widest gap
+ * between a milestone and the earliest milestone it transitively depends on.
+ * This is what actually constrains the schedule: a 2-deep chain spanning
+ * 2026→2030 constrains the timeline more than a 3-deep chain inside one year,
+ * which {@link criticalPathLength} (a milestone count) can't distinguish.
+ */
+export function criticalPathSpanYears(milestones: RoadmapMilestone[]): number {
+  const byId = new Map(milestones.map((m) => [m.id, m]))
+  const memo = new Map<string, number>()
+  const visiting = new Set<string>()
+
+  // Earliest year reachable from `id` through its dependency chain (inclusive).
+  function earliest(id: string): number {
+    const cached = memo.get(id)
+    if (cached !== undefined) return cached
+    const m = byId.get(id)
+    if (!m) return Infinity
+    if (visiting.has(id)) return m.year // cycle guard
+    visiting.add(id)
+    let min = m.year
+    for (const dep of m.dependsOn ?? []) min = Math.min(min, earliest(dep))
+    visiting.delete(id)
+    memo.set(id, min)
+    return min
+  }
+
+  let span = 0
+  for (const m of milestones) {
+    const start = earliest(m.id)
+    if (Number.isFinite(start)) span = Math.max(span, m.year - start)
+  }
+  return span
 }
 
 /** Stable-ish id for a new user-added milestone (app runtime; not used in tests). */

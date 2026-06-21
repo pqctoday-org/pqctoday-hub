@@ -89,9 +89,10 @@ describe('recommendMTI — decision tree', () => {
     expect(rec.kemAlternates.join(' ')).toMatch(/HQC-128/)
   })
 
-  it('US federal -> SHA-256 hash MTI with SHA-512 alternate', () => {
+  it('US federal -> SHA-384 hash MTI (CNSA 2.0) with SHA-512 alternate', () => {
     const rec = recommendMTI({ ...baseInputs, audience: 'us-federal' })
-    expect(rec.hashMTI).toMatch(/SHA-256/)
+    // CNSA 2.0 mandates SHA-384 for NSS — not SHA-256.
+    expect(rec.hashMTI).toMatch(/SHA-384/)
     expect(rec.hashAlternates.join(' ')).toMatch(/SHA-512/)
   })
 

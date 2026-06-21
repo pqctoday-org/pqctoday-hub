@@ -270,6 +270,7 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     produce: [
       { route: '/business', ref: 'roadmap-builder', status: 'live' },
       { route: '/timeline', ref: 'compliance-timeline', status: 'live' },
+      { route: '/business', ref: 'stakeholder-comms', status: 'live' },
     ],
     communicate: { route: '/report', ref: 'migration-roadmap', status: 'live' },
     surfaces: ['/business', '/timeline', '/report'],
