@@ -34,9 +34,17 @@ import { useSeedAssessFromPersona } from '../../../hooks/assessment/useSeedAsses
 import { Button } from '../../ui/button'
 import { PageHeader } from '../../common/PageHeader'
 import { WorkflowBreadcrumb } from '../../shared/WorkflowBreadcrumb'
+import { logAssessComplete } from '../../../utils/analytics'
 import { AssessTrackChooser } from './AssessTrackChooser'
 import { AssessWizardScreen } from './AssessWizardScreen'
-import { keyAtStoreIndex, storeIndexOf, renderOrderFor } from './assessFlowModel'
+import { AssessReview } from './AssessReview'
+import { AssessDone } from './AssessDone'
+import {
+  keyAtStoreIndex,
+  storeIndexOf,
+  renderOrderFor,
+  type AssessStepKey,
+} from './assessFlowModel'
 
 // Legacy-order step labels (the meaning of store.currentStep). Used by the
 // resume banner + the phase overlay, identical to AssessView.
@@ -76,6 +84,10 @@ export const AssessViewRedesign: React.FC = () => {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const recommendedMode = selectedPersona ? PERSONA_RECOMMENDED_MODE[selectedPersona] : null
   const [showResumeBanner, setShowResumeBanner] = useState(false)
+  // Local view state: which screen of the flow is showing. A completed
+  // assessment does NOT auto-jump anywhere — the user lands on the wizard (their
+  // saved answers) and chooses: edit + regenerate, or use the "View Report" banner.
+  const [screen, setScreen] = useState<'wizard' | 'review' | 'done'>('wizard')
 
   // Migration-Program phase overlay (additive), identical to AssessView.
   const { activePhase, matches } = usePhaseFilter()
@@ -150,19 +162,41 @@ export const AssessViewRedesign: React.FC = () => {
     }
   }
 
-  const handleComplete = () => {
-    markComplete()
-    navigate('/report')
+  // Last wizard step → review (no silent jump to the report).
+  const goToReview = () => setScreen('review')
+
+  // Edit a specific answer from the review screen.
+  const editFromReview = (key: AssessStepKey) => {
+    if (effectiveAssessmentMode) setStep(storeIndexOf(effectiveAssessmentMode, key))
+    setScreen('wizard')
   }
 
-  // Already complete + untouched → report. (Interim: the embedded wizard
-  // navigates to /report on completion, so this only catches return visits.)
-  useEffect(() => {
-    if (assessmentStatus === 'complete' && currentStep === 0) {
-      navigate('/report', { replace: true })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // Generate from review → mark complete + show the done screen (the upsell
+  // lives there). The report is opened from the done screen's button.
+  const generate = () => {
+    markComplete()
+    logAssessComplete(selectedPersona ?? 'unknown')
+    setScreen('done')
+  }
+
+  // Retake from done → clear answers, back to the chooser.
+  const retake = () => {
+    reset()
+    setAssessmentMode(null)
+    setScreen('wizard')
+  }
+
+  // Fast-track upsell → switch to full track at the first full-only question.
+  const continueToFull = () => {
+    const firstFullOnly = renderOrderFor('comprehensive').find(
+      (k) => !renderOrderFor('quick').includes(k)
+    )
+    setAssessmentMode('comprehensive')
+    if (firstFullOnly) setStep(storeIndexOf('comprehensive', firstFullOnly))
+    setScreen('wizard')
+  }
+
+  // No auto-redirect for completed assessments — the user decides what to do.
 
   // Resume banner for a saved in-progress assessment (<24h).
   useEffect(() => {
@@ -237,8 +271,10 @@ export const AssessViewRedesign: React.FC = () => {
         </motion.div>
       )}
 
-      {/* Already-complete banner. */}
-      {assessmentStatus === 'complete' && (
+      {/* Already-complete banner — lets a returning user choose: edit the
+          answers below, or jump to their existing report. Hidden on the
+          review/done screens (which carry their own report CTA). */}
+      {assessmentStatus === 'complete' && screen === 'wizard' && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -247,8 +283,8 @@ export const AssessViewRedesign: React.FC = () => {
           <div className="glass-panel border-l-4 border-l-success p-4">
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
               <p className="text-sm text-foreground">
-                Your assessment is complete. View your personalized report or open the Business
-                Center to plan next steps.
+                Your assessment is complete. Edit any answer below to update it, view your
+                personalized report, or open the Business Center to plan next steps.
               </p>
               <div className="flex shrink-0 items-center gap-2">
                 <Button
@@ -278,61 +314,78 @@ export const AssessViewRedesign: React.FC = () => {
       )}
 
       {/* Resume banner — Continue-first hierarchy. */}
-      {showResumeBanner && lastWizardUpdate && assessmentStatus !== 'complete' && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6"
-        >
-          <div className="glass-panel border-l-4 border-l-primary p-4">
-            <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
-              <div>
-                <p className="text-sm font-semibold text-foreground">Resume saved assessment?</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  You left off at step {currentStep + 1} ({resumeStepLabel}) on{' '}
-                  {new Date(lastWizardUpdate).toLocaleDateString(undefined, {
-                    month: 'short',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: '2-digit',
-                  })}
-                  .
-                </p>
-              </div>
-              <div className="flex w-full shrink-0 items-center gap-2 sm:w-auto">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowResumeBanner(false)}
-                  className="gap-1.5 text-xs font-semibold"
-                >
-                  <PlayCircle size={12} />
-                  Continue
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    reset()
-                    setShowResumeBanner(false)
-                  }}
-                  className="gap-1.5 text-xs text-muted-foreground hover:text-destructive"
-                >
-                  <RotateCcw size={12} />
-                  Start over
-                </Button>
+      {showResumeBanner &&
+        lastWizardUpdate &&
+        assessmentStatus !== 'complete' &&
+        screen === 'wizard' && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6"
+          >
+            <div className="glass-panel border-l-4 border-l-primary p-4">
+              <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Resume saved assessment?</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    You left off at step {currentStep + 1} ({resumeStepLabel}) on{' '}
+                    {new Date(lastWizardUpdate).toLocaleDateString(undefined, {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: '2-digit',
+                    })}
+                    .
+                  </p>
+                </div>
+                <div className="flex w-full shrink-0 items-center gap-2 sm:w-auto">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowResumeBanner(false)}
+                    className="gap-1.5 text-xs font-semibold"
+                  >
+                    <PlayCircle size={12} />
+                    Continue
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      reset()
+                      setShowResumeBanner(false)
+                    }}
+                    className="gap-1.5 text-xs text-muted-foreground hover:text-destructive"
+                  >
+                    <RotateCcw size={12} />
+                    Start over
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        </motion.div>
-      )}
+          </motion.div>
+        )}
 
       {!effectiveAssessmentMode ? (
         <AssessTrackChooser onStart={handleStart} recommendedMode={recommendedMode} />
+      ) : screen === 'review' ? (
+        <AssessReview
+          mode={effectiveAssessmentMode}
+          onEdit={editFromReview}
+          onBack={() => setScreen('wizard')}
+          onGenerate={generate}
+        />
+      ) : screen === 'done' ? (
+        <AssessDone
+          mode={effectiveAssessmentMode}
+          onViewReport={() => navigate('/report')}
+          onRetake={retake}
+          onContinueToFull={continueToFull}
+        />
       ) : (
         <AssessWizardScreen
           mode={effectiveAssessmentMode}
-          onComplete={handleComplete}
+          onComplete={goToReview}
           onExitToChooser={() => setAssessmentMode(null)}
           onSwitchTrack={handleSwitchTrack}
         />
