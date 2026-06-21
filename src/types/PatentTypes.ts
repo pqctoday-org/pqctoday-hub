@@ -37,6 +37,10 @@ export interface InsightsFilter {
   classicalAlgorithm?: string
   hardwareComponent?: string
   nistStatus?: string
+  /** Redesign: filter to patents covering a given PQC algorithm (leaderboard drill). */
+  pqc?: string
+  /** Redesign: synthetic predicate — patents mapping to a FIPS 203/4/5 standard (KPI drill). */
+  fips?: string
 }
 
 export interface ClaimDependency {

@@ -78,7 +78,7 @@ function readPqcOnly(): boolean {
 
 // "PQC only" keeps patents that actually involve post-quantum crypto:
 // at least one PQC algorithm, or a pqc_only / hybrid crypto-agility mode.
-function isPqcPatent(p: PatentItem): boolean {
+export function isPqcPatent(p: PatentItem): boolean {
   return (
     p.pqcAlgorithms.length > 0 ||
     p.cryptoAgilityMode === 'pqc_only' ||
