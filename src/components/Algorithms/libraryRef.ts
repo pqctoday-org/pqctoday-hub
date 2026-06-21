@@ -28,6 +28,8 @@ const SPEC_ALIASES: Record<string, string> = {
   'Signal-PQXDH-Rev3': 'Signal-PQXDH-Spec',
   'UEFI-2.10': 'UEFI-SPEC-2.10-SecureBoot',
   '3GPP-TR-33.841': '3GPP-PQC-Study-2025',
+  // The matrix's "…Part3-Published" was superseded in the Library by the v1.85 Errata.
+  'TCG-TPM-2.0-Library-v1.85-Part3-Published': 'TCG-TPM-2.0-Library-v1.85-Errata',
 }
 
 // Build (once) a normalized-key → exact-referenceId index over the whole
