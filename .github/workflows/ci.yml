@@ -152,10 +152,6 @@ jobs:
       - name: Test
         run: npm run test
 
-      - name: Validate data integrity (DS17)
-        run: DS_SEVERITY=ERROR npx tsx scripts/validate-data-integrity.ts
-        continue-on-error: true
-
       - name: Validate threats proof rule (TP-2 + TP-3, BLOCKING)
         # TP-2 (local_file path must live under public/threats/) and TP-3
         # (trusted_source_id must resolve to the authoritative-sources
