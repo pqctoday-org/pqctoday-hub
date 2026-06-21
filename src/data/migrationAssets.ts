@@ -48,6 +48,7 @@ export type FoundationDomainId =
   | 'identity'
   | 'blockchain'
   | 'network'
+  | 'hardware'
   | 'platform'
   | 'foundations'
   | 'discovery'
@@ -108,6 +109,7 @@ export const DOMAINS: Record<DomainId, DomainMeta> = {
   identity: { id: 'identity', label: 'Identity & access', kind: 'foundation' },
   blockchain: { id: 'blockchain', label: 'Blockchain & digital assets', kind: 'foundation' },
   network: { id: 'network', label: 'Network security & encryptors', kind: 'foundation' },
+  hardware: { id: 'hardware', label: 'Cryptographic hardware', kind: 'foundation' },
   platform: { id: 'platform', label: 'Platforms & infrastructure', kind: 'foundation' },
   foundations: { id: 'foundations', label: 'Crypto libraries & frameworks', kind: 'foundation' },
   discovery: { id: 'discovery', label: 'Discovery & validation tooling', kind: 'foundation' },
@@ -369,6 +371,20 @@ const MATCH_RULES: ReadonlyArray<readonly [DomainId, readonly string[]]> = [
       'ntp',
     ],
   ],
+  // Cryptographic hardware: chips/semiconductors, PQC hardware IP/accelerators,
+  // confidential computing. MUST precede 'platform' (which would otherwise
+  // catch 'confidential computing' / hardware via its broad list + the Hardware
+  // layer fallback). IoT *hardware* is handled layer-aware in the classifier.
+  [
+    'hardware',
+    [
+      'semiconductor',
+      'pqc hardware',
+      'hardware accelerator',
+      'hardware ip',
+      'confidential computing',
+    ],
+  ],
   [
     'platform',
     [
@@ -466,12 +482,15 @@ export function classifyProductDomain(
   infrastructureLayer: string
 ): DomainId | null {
   const cat = (categoryName || '').toLowerCase()
+  const layer = (infrastructureLayer || '').toLowerCase()
+  // IoT *hardware* → cryptographic hardware; IoT software/cloud stays in
+  // platform (handled by the 'iot' keyword in the platform rule below).
+  if (cat.includes('iot') && layer.includes('hardware')) return 'hardware'
   for (const [domain, keywords] of MATCH_RULES) {
     for (const kw of keywords) {
       if (cat.includes(kw)) return domain
     }
   }
-  const layer = (infrastructureLayer || '').toLowerCase()
   for (const [needle, domain] of LAYER_FALLBACK) {
     if (layer.includes(needle)) return domain
   }

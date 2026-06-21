@@ -87,6 +87,12 @@ describe('migrationAssets coverage', () => {
       ['Payment Cryptography Systems', 'AppServers', 'hsm'],
       // …but payment *research* is a program, not an HSM.
       ['Payment PQC Research', 'Standard', 'programs'],
+      // Cryptographic hardware split out of the Platforms catch-all.
+      ['Hardware Security & Semiconductors', 'Hardware', 'hardware'],
+      ['PQC Hardware Accelerator', 'Hardware', 'hardware'],
+      ['Confidential Computing', 'Hardware', 'hardware'],
+      ['IoT Security', 'Hardware', 'hardware'], // IoT hardware → cryptographic hardware
+      ['IoT Security', 'SecSoftware', 'platform'], // …IoT software stays in platform
     ]
     for (const [cat, layer, expected] of cases) {
       expect(classifyProductDomain(cat, layer), `${cat}`).toBe(expected)
