@@ -86,6 +86,11 @@ const OpenSSLStudioView = lazyWithRetry(() =>
 const LibraryView = lazyWithRetry(() =>
   import('./components/Library/LibraryView').then((module) => ({ default: module.LibraryView }))
 )
+const LibraryViewRedesign = lazyWithRetry(() =>
+  import('./components/Library/redesign/LibraryViewRedesign').then((module) => ({
+    default: module.LibraryViewRedesign,
+  }))
+)
 const MigrateView = lazyWithRetry(() =>
   import('./components/Migrate/MigrateView').then((module) => ({
     default: module.MigrateView,
@@ -242,6 +247,14 @@ function App() {
       />
       <Route
         path="library"
+        element={
+          <ErrorBoundary>
+            <LibraryViewRedesign />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="library/legacy"
         element={
           <ErrorBoundary>
             <LibraryView />
