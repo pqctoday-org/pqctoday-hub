@@ -221,7 +221,7 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     hndl: false,
     deadlineLabel: 'Gated on vendor firmware',
     note: 'PQC support depends on HSM firmware + PKCS#11 v3.2. Track your vendor roadmap; validate FIPS 140-3 PQC module status before committing migration timelines.',
-    focusPersonas: ['operator'],
+    focusPersonas: ['ops'],
   },
   {
     id: 'kms',
@@ -235,7 +235,7 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     hndl: true,
     deadlineLabel: 'API transport carries HNDL risk',
     note: 'The KMS API transport (TLS) is the near-term exposure; key-wrap algorithm support follows the provider roadmap. Prefer providers exposing hybrid KEM key-wrap.',
-    focusPersonas: ['operator'],
+    focusPersonas: ['ops'],
   },
   {
     id: 'msg',
@@ -277,7 +277,7 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     hndl: true,
     deadlineLabel: 'Symmetric-safe; re-wrap the keys',
     note: 'AES-256 itself is quantum-resistant — the exposure is the RSA/ECDH key-wrapping of the data-encryption keys. Re-wrap DEKs under an ML-KEM hybrid KEK; no bulk re-encryption needed.',
-    focusPersonas: ['operator'],
+    focusPersonas: ['ops'],
   },
 ]
 
