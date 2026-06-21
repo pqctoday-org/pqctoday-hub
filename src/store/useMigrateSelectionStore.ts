@@ -5,7 +5,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 export type MigrateViewMode = 'stack' | 'cisaStack' | 'cards' | 'table'
 
 /** Workbench redesign tabs (URL-synced via ?tab=). */
-export type MigrateTab = 'replace' | 'plan'
+export type MigrateTab = 'replace' | 'plan' | 'roadmaps'
 
 /** Return a shallow copy of `obj` without `key`. Lint-friendly omit. */
 function omitKey(obj: Record<string, string>, key: string): Record<string, string> {
@@ -210,7 +210,7 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
             state.choice && typeof state.choice === 'object' && !Array.isArray(state.choice)
               ? state.choice
               : {}
-          state.tab = state.tab === 'plan' ? 'plan' : 'replace'
+          state.tab = ['replace', 'plan', 'roadmaps'].includes(state.tab) ? state.tab : 'replace'
         }
         return state
       },
