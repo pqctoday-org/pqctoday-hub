@@ -46,6 +46,7 @@ import { softwareData } from '../../data/migrateData'
 import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
 import { ReportCswp39Nav } from './ReportCswp39Nav'
+import { ReportLockedOverlay } from './redesign/ReportLockedOverlay'
 import { useThreatsData } from '../../hooks/useThreatsData'
 import { GlossaryAutoWrap } from '../PKILearning/common/GlossaryAutoWrap'
 import { MigrationRoadmap } from './MigrationRoadmap'
@@ -990,10 +991,11 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         </CollapsibleSection>
                       )}
 
-                    {/* Category Score Breakdown */}
+                    {/* Category Score Breakdown — comprehensive-only; the lock model
+                        owns this section, so a quick assessment shows a locked preview
+                        (redesign) instead of omitting it. */}
                     {phaseVisible('riskBreakdown') &&
-                      result.categoryScores &&
-                      cfg('riskBreakdown').state !== 'hidden' && (
+                      (result.categoryScores ? (
                         <div id="report-section-riskBreakdown">
                           <CategoryBreakdown
                             scores={result.categoryScores}
@@ -1007,7 +1009,24 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                             }
                           />
                         </div>
-                      )}
+                      ) : (
+                        <div id="report-section-riskBreakdown">
+                          <ReportLockedOverlay
+                            reason="Per-domain scores need the full assessment"
+                            detail="A quick assessment can't separate Quantum Exposure, Migration Complexity, Regulatory Pressure and Organizational Readiness. Finish the full assessment to unlock the breakdown."
+                          >
+                            <CategoryBreakdown
+                              scores={{
+                                quantumExposure: 72,
+                                migrationComplexity: 58,
+                                regulatoryPressure: 65,
+                                organizationalReadiness: 40,
+                              }}
+                              defaultOpen
+                            />
+                          </ReportLockedOverlay>
+                        </div>
+                      ))}
 
                     {/* Framework Risk Lens (Applied Quantum P3) — derived alongside the categories */}
                     {phaseVisible('riskBreakdown') &&
