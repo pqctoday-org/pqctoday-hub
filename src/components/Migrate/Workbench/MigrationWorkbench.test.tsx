@@ -67,6 +67,18 @@ describe('MigrationWorkbench (integration)', () => {
     expect(useMigrateSelectionStore.getState().choice.foundations).toBeTruthy()
   })
 
+  it('a chosen foundation product shows in the Plan tab under its own section', () => {
+    renderWorkbench()
+    fireEvent.click(screen.getByText('Crypto libraries & frameworks'))
+    fireEvent.click(screen.getAllByRole('button', { name: /^Choose / })[0])
+    // switch to the Plan tab — the foundation choice must surface (it was
+    // previously dropped because the plan only understood replace-assets)
+    fireEvent.click(screen.getByRole('button', { name: /Plan & sequence/i }))
+    expect(screen.getByText('Foundations & infrastructure')).toBeInTheDocument()
+    expect(screen.getByText('Crypto libraries & frameworks')).toBeInTheDocument()
+    expect(screen.getByText(/^Chosen: /)).toBeInTheDocument()
+  })
+
   it('plan tab shows waves once an asset is planned', () => {
     useMigrateSelectionStore.setState({ plan: ['tls'], tab: 'plan' })
     renderWorkbench()
