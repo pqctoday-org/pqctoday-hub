@@ -2,13 +2,17 @@
 import { test, expect } from '@playwright/test'
 
 /**
- * P13-P1-06 — Curious 5-question Assess wizard variant.
+ * P13-P1-06 — Curious 5-question Assess wizard variant (legacy page).
  *
  * When `selectedPersona === 'curious'`, AssessWizard filters ALL_STEPS to
  * the five highest-signal CURIOUS_STEP_KEYS (industry, country, sensitivity,
  * compliance, migration). The variant trigger is the persona, NOT
  * experienceLevel — a developer with experienceLevel='curious' still gets
  * the full 8-step path.
+ *
+ * NOTE: the redesign at the default /assess dropped the curious variant
+ * (curious → the 8-question Fast track), so this exercises the preserved
+ * legacy page at /assess/legacy.
  */
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -44,7 +48,7 @@ test('renders the 5-question variant for the curious persona', async ({ page }) 
     )
   })
 
-  await page.goto('/assess?mode=quick')
+  await page.goto('/assess/legacy?mode=quick')
 
   // Wizard header shows "Step 1 of 5" for the curious variant.
   // Assess is lazy-loaded; allow 15s for the chunk to compile cold.
@@ -74,7 +78,7 @@ test('renders the full 8-question path for non-curious personas', async ({ page 
     )
   })
 
-  await page.goto('/assess?mode=quick')
+  await page.goto('/assess/legacy?mode=quick')
 
   // 8-question path — header shows "Step 1 of 8".
   await expect(page.getByText(/Step 1 of 8/).last()).toBeVisible({ timeout: 15000 })
@@ -106,7 +110,7 @@ test('developer + experienceLevel=curious still gets the full 8-question path', 
     )
   })
 
-  await page.goto('/assess?mode=quick')
+  await page.goto('/assess/legacy?mode=quick')
 
   // 8-question path — header shows "Step 1 of 8".
   await expect(page.getByText(/Step 1 of 8/).last()).toBeVisible({ timeout: 15000 })

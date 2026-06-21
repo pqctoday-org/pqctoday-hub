@@ -13,7 +13,12 @@ import clsx from 'clsx'
 import { PersonaHint } from './PersonaHint'
 import { WhyWeAskHint } from './WhyWeAskHint'
 
-const StepCredentialLifetime = () => {
+import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
+
+const StepCredentialLifetime = ({
+  hideHeading = false,
+  hideHints = false,
+}: EmbeddedStepProps = {}) => {
   const {
     credentialLifetime,
     toggleCredentialLifetime,
@@ -57,17 +62,25 @@ const StepCredentialLifetime = () => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-foreground">
-        How long must your digital signatures &amp; certificates remain trusted?
-      </h3>
-      <p className="text-sm text-muted-foreground">
-        Select all that apply — <InlineTooltip term="HNFL">HNFL</InlineTooltip> risk is assessed
-        against the longest period. Credentials that outlive the quantum threat horizon are
-        vulnerable to signature forgery.
-      </p>
+      {!hideHeading && (
+        <>
+          <h3 className="text-xl font-bold text-foreground">
+            How long must your digital signatures &amp; certificates remain trusted?
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Select all that apply — <InlineTooltip term="HNFL">HNFL</InlineTooltip> risk is assessed
+            against the longest period. Credentials that outlive the quantum threat horizon are
+            vulnerable to signature forgery.
+          </p>
+        </>
+      )}
 
-      <PersonaHint stepKey="credential" />
-      <WhyWeAskHint stepKey="credential" />
+      {!hideHints && (
+        <>
+          <PersonaHint stepKey="credential" />
+          <WhyWeAskHint stepKey="credential" />
+        </>
+      )}
 
       <div className="glass-panel p-4 border-l-4 border-l-destructive mb-4">
         <div className="flex items-start gap-2">

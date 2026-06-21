@@ -207,13 +207,8 @@ export const AssessView: React.FC = () => {
     navigate('/report')
   }
 
-  // If assessment is already complete and no wizard interaction, redirect to report
-  useEffect(() => {
-    if (assessmentStatus === 'complete' && currentStep === 0) {
-      navigate('/report', { replace: true })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // A completed assessment does NOT auto-redirect to the report — the user
+  // decides: edit/update their answers below, or use the "View Report" banner.
 
   // Check for saved incomplete assessment on mount
   useEffect(() => {

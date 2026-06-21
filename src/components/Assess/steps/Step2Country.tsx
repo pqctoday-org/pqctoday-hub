@@ -13,10 +13,12 @@ import { usePersonaStore } from '../../../store/usePersonaStore'
 
 import { REGION_COUNTRIES_MAP } from '../../../data/personaConfig'
 
+import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
+
 /** Non-sovereign groupings used in the timeline Gantt but not valid jurisdictions */
 const EXCLUDED_FROM_ASSESS = new Set(['Global', 'G7', 'NATO', 'International'])
 
-const Step2Country = () => {
+const Step2Country = ({ hideHeading = false }: EmbeddedStepProps = {}) => {
   const { country, setCountry } = useAssessmentStore()
   const { selectedRegion } = usePersonaStore()
 
@@ -38,13 +40,17 @@ const Step2Country = () => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-foreground">
-        Which jurisdiction applies to your organization?
-      </h3>
-      <p className="text-sm text-muted-foreground">
-        Your country&apos;s regulatory timeline will be used to align your migration deadline
-        recommendations.
-      </p>
+      {!hideHeading && (
+        <>
+          <h3 className="text-xl font-bold text-foreground">
+            Which jurisdiction applies to your organization?
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Your country&apos;s regulatory timeline will be used to align your migration deadline
+            recommendations.
+          </p>
+        </>
+      )}
       <div
         className="grid grid-cols-1 md:grid-cols-2 gap-2"
         role="radiogroup"

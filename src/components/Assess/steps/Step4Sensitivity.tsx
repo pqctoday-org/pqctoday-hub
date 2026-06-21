@@ -17,7 +17,9 @@ import clsx from 'clsx'
 
 import { PersonaHint } from './PersonaHint'
 
-const Step4Sensitivity = () => {
+import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
+
+const Step4Sensitivity = ({ hideHeading = false, hideHints = false }: EmbeddedStepProps = {}) => {
   const {
     dataSensitivity,
     toggleDataSensitivity,
@@ -64,23 +66,27 @@ const Step4Sensitivity = () => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-foreground">
-        {stepContent.title ?? 'How sensitive is your data?'}
-      </h3>
-      <p className="text-sm text-muted-foreground">
-        {stepContent.description ?? (
-          <>
-            Data sensitivity determines your exposure to{' '}
-            <InlineTooltip term="HNDL">
-              &ldquo;Harvest Now, Decrypt Later&rdquo; (HNDL)
-            </InlineTooltip>{' '}
-            attacks. Select all that apply — your risk is assessed against the highest level
-            present.
-          </>
-        )}
-      </p>
+      {!hideHeading && (
+        <>
+          <h3 className="text-xl font-bold text-foreground">
+            {stepContent.title ?? 'How sensitive is your data?'}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {stepContent.description ?? (
+              <>
+                Data sensitivity determines your exposure to{' '}
+                <InlineTooltip term="HNDL">
+                  &ldquo;Harvest Now, Decrypt Later&rdquo; (HNDL)
+                </InlineTooltip>{' '}
+                attacks. Select all that apply — your risk is assessed against the highest level
+                present.
+              </>
+            )}
+          </p>
+        </>
+      )}
 
-      <PersonaHint stepKey="sensitivity" />
+      {!hideHints && <PersonaHint stepKey="sensitivity" />}
 
       <div className="glass-panel p-4 border-l-4 border-l-warning mb-4">
         <div className="flex items-start gap-2">
