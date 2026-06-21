@@ -20,7 +20,7 @@ describe('buildPlanCbom', () => {
   })
 
   it('carries classical→target, decision, and chosen product', () => {
-    const doc = buildPlanCbom({ planIds: ['certs'], choice: { certs: 'My CA' }, timestamp: TS })
+    const doc = buildPlanCbom({ planIds: ['certs'], choice: { certs: ['My CA'] }, timestamp: TS })
     const props = (
       doc.components as Array<{ properties: Array<{ name: string; value: string }> }>
     )[0].properties

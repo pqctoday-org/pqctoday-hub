@@ -75,8 +75,27 @@ describe('MigrationWorkbench (integration)', () => {
     // previously dropped because the plan only understood replace-assets)
     fireEvent.click(screen.getByRole('button', { name: /Plan & sequence/i }))
     expect(screen.getByText('Foundations & infrastructure')).toBeInTheDocument()
+    // category shown as the row caption, with a per-product remove button
     expect(screen.getByText('Crypto libraries & frameworks')).toBeInTheDocument()
-    expect(screen.getByText(/^Chosen: /)).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: /Remove .* from plan/i }).length).toBeGreaterThan(
+      0
+    )
+  })
+
+  it('keeps multiple chosen products in a category, each as its own plan row', () => {
+    renderWorkbench()
+    fireEvent.click(screen.getByText('Crypto libraries & frameworks'))
+    const chooseButtons = screen.getAllByRole('button', { name: /^Choose / })
+    fireEvent.click(chooseButtons[0])
+    // the first pick must NOT revert when a second product is chosen
+    fireEvent.click(screen.getAllByRole('button', { name: /^Choose / })[0])
+    const inPlan = useMigrateSelectionStore.getState().choice.foundations ?? []
+    expect(inPlan.length).toBe(2)
+    fireEvent.click(screen.getByRole('button', { name: /Plan & sequence/i }))
+    // two distinct product rows, each removable
+    expect(
+      screen.getAllByRole('button', { name: /Remove .* from plan/i }).length
+    ).toBeGreaterThanOrEqual(2)
   })
 
   it('plan tab shows waves once an asset is planned', () => {

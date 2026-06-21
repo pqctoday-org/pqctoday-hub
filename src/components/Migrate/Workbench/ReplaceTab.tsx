@@ -112,7 +112,7 @@ export function ReplaceTab({ persona }: ReplaceTabProps) {
                     // foundation/infrastructure domains have no ReplaceAsset, so
                     // gating on `asset` left their Choose button dead. For replace
                     // domains selectedDomain === asset.id, so behavior is unchanged.
-                    chosen={choice[selectedDomain] === p.softwareName}
+                    chosen={(choice[selectedDomain] ?? []).includes(p.softwareName)}
                     onChoose={() => chooseProduct(selectedDomain, p.softwareName)}
                   />
                 ))

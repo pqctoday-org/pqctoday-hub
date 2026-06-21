@@ -60,10 +60,12 @@ interface MigrateSelectionState {
   togglePlanAsset: (assetId: string) => void
   removeFromPlan: (assetId: string) => void
   clearPlan: () => void
-  /** Chosen replacement product per asset: assetId → product name. */
-  choice: Record<string, string>
-  /** Record a chosen product for an asset (ensures the asset is in the plan).
-   *  Re-choosing the same product clears the choice. */
+  /** Chosen replacement products per asset/domain: id → product names.
+   *  Multi-valued so several products can be planned per category. */
+  choice: Record<string, string[]>
+  /** Toggle a chosen product for an asset/domain. Adds it (and ensures the
+   *  asset is in the plan) or, if already chosen, removes just that product.
+   *  Removing the last product drops the asset/domain from the plan. */
   chooseProduct: (assetId: string, productName: string) => void
   /** Active workbench tab (URL-synced). */
   tab: MigrateTab
@@ -139,14 +141,20 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
       chooseProduct: (assetId, productName) =>
         set((state) => {
           // eslint-disable-next-line security/detect-object-injection
-          const current = state.choice[assetId]
-          // re-choosing the same product clears the choice
-          if (current === productName) {
-            return { choice: omitKey(state.choice, assetId) }
+          const current = state.choice[assetId] ?? []
+          const nextList = current.includes(productName)
+            ? current.filter((p) => p !== productName) // remove just this product
+            : [...current, productName] // add — keeps any already-chosen products
+          if (nextList.length === 0) {
+            // last product removed → drop the asset/domain from the plan too
+            return {
+              plan: state.plan.filter((id) => id !== assetId),
+              choice: omitKey(state.choice, assetId),
+            }
           }
           // choosing ensures the asset is in the plan
           const plan = state.plan.includes(assetId) ? state.plan : [...state.plan, assetId]
-          return { plan, choice: { ...state.choice, [assetId]: productName } }
+          return { plan, choice: { ...state.choice, [assetId]: nextList } }
         }),
 
       setTab: (tab) => set({ tab }),
@@ -154,7 +162,7 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
     {
       name: 'pqc-migrate-selection',
       storage: createJSONStorage(() => localStorage),
-      version: 9,
+      version: 10,
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
@@ -211,6 +219,19 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
               ? state.choice
               : {}
           state.tab = ['replace', 'plan', 'roadmaps'].includes(state.tab) ? state.tab : 'replace'
+        }
+        if (version < 10) {
+          // v9 → v10: choice became multi-valued (productName → productName[]).
+          if (state.choice && typeof state.choice === 'object' && !Array.isArray(state.choice)) {
+            const next: Record<string, string[]> = {}
+            for (const [k, v] of Object.entries(state.choice)) {
+              // eslint-disable-next-line security/detect-object-injection
+              next[k] = Array.isArray(v) ? (v as string[]) : typeof v === 'string' && v ? [v] : []
+            }
+            state.choice = next
+          } else {
+            state.choice = {}
+          }
         }
         return state
       },
