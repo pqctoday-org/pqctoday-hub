@@ -234,6 +234,10 @@ export const MainLayout = () => {
         Skip to main content
       </a>
 
+      {/* Sim header strip — kept visible on every hub resource opened from the
+          PQC Today Sim, so the simulation context is never lost on a redirect. */}
+      <ResumeSimBar />
+
       <header
         className="m-4 sticky top-[max(1rem,env(safe-area-inset-top))] z-50 transition-all duration-300 print:hidden"
         role="banner"
@@ -501,9 +505,6 @@ export const MainLayout = () => {
       <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
         {/* Main Content Area */}
         <main id="main-content" className="container py-4 px-4 md:py-8 md:px-8" role="main">
-          {/* Return-to-simulation banner (shown when arriving from the sim) */}
-          <ResumeSimBar />
-
           {/* Offline mode info banner */}
           <AirplaneModeBanner />
 
