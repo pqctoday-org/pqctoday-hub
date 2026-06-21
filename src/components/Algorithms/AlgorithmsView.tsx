@@ -344,9 +344,6 @@ export function AlgorithmsView() {
               >
                 {supportLocked ? <Lock size={16} /> : <Network size={18} />}
                 Protocol Support
-                <span className="rounded-sm bg-primary/15 text-primary px-1 py-0 text-[9px] font-bold uppercase tracking-wider">
-                  Beta
-                </span>
               </TabsTrigger>
               <TabsTrigger value="validation" className="flex items-center gap-2">
                 <FlaskConical size={18} />
