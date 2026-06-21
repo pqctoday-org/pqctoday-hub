@@ -55,6 +55,18 @@ describe('MigrationWorkbench (integration)', () => {
     expect(screen.getByText('Crypto libraries & frameworks')).toBeInTheDocument()
   })
 
+  it('Choose records a product in foundation/infrastructure domains (regression)', () => {
+    // Regression: these domains have no ReplaceAsset, so the Choose button used
+    // to be gated on a null `asset` and did nothing. It must now record the
+    // choice keyed on the domain id.
+    renderWorkbench()
+    fireEvent.click(screen.getByText('Crypto libraries & frameworks'))
+    const chooseButtons = screen.getAllByRole('button', { name: /^Choose / })
+    expect(chooseButtons.length).toBeGreaterThan(0)
+    fireEvent.click(chooseButtons[0])
+    expect(useMigrateSelectionStore.getState().choice.foundations).toBeTruthy()
+  })
+
   it('plan tab shows waves once an asset is planned', () => {
     useMigrateSelectionStore.setState({ plan: ['tls'], tab: 'plan' })
     renderWorkbench()
