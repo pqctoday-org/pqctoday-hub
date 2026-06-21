@@ -13,10 +13,13 @@ import {
   ExternalLink,
   ArrowRight,
   ChevronRight,
+  Database,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { MaturityEvidenceGrid } from '../MaturityEvidenceGrid'
+import { maturityRequirements } from '@/data/maturityGovernanceData'
 import {
   CSWP39_STEPS,
   CSWP39_TIERS,
@@ -55,14 +58,30 @@ interface CSWP39AgilityExplorerProps {
     targetTab: 'standards' | 'technical' | 'certification' | 'compliance',
     searchQuery: string
   ) => void
+  /** Deep-link into the authoritative-evidence grid, filtered to a source refId. */
+  evref?: string
+  onClearEvref?: () => void
 }
 
-export function CSWP39AgilityExplorer({ onNavigateToFramework }: CSWP39AgilityExplorerProps) {
+export function CSWP39AgilityExplorer({
+  onNavigateToFramework,
+  evref,
+  onClearEvref,
+}: CSWP39AgilityExplorerProps) {
   const persona = usePersonaStore((s) => s.selectedPersona)
-  const [view, setView] = useState<SubView>('cycle')
+  const [view, setView] = useState<SubView>(evref ? 'evidence' : 'cycle')
   const [stepId, setStepId] = useState<CSWP39Step['id']>('govern')
   const [tier, setTier] = useState(2)
   const [openDossier, setOpenDossier] = useState<string | null>(null)
+
+  // A fresh evref deep-link (e.g. from a Landscape drawer crosswalk) snaps to
+  // the evidence view so the filtered grid is visible. Adjusting state during
+  // render on a prop change is the React-recommended pattern (vs. an effect).
+  const [prevEvref, setPrevEvref] = useState(evref)
+  if (evref !== prevEvref) {
+    setPrevEvref(evref)
+    if (evref) setView('evidence')
+  }
 
   const ownedSteps = useMemo(
     () =>
@@ -159,7 +178,12 @@ export function CSWP39AgilityExplorer({ onNavigateToFramework }: CSWP39AgilityEx
       )}
       {view === 'maturity' && <MaturityView tier={tier} onTierChange={setTier} />}
       {view === 'evidence' && (
-        <EvidenceView openDossier={openDossier} onToggleDossier={setOpenDossier} />
+        <EvidenceView
+          openDossier={openDossier}
+          onToggleDossier={setOpenDossier}
+          evref={evref}
+          onClearEvref={onClearEvref}
+        />
       )}
     </div>
   )
@@ -402,12 +426,89 @@ function MaturityView({ tier, onTierChange }: { tier: number; onTierChange: (t: 
 function EvidenceView({
   openDossier,
   onToggleDossier,
+  evref,
+  onClearEvref,
 }: {
   openDossier: string | null
   onToggleDossier: (id: string | null) => void
+  evref?: string
+  onClearEvref?: () => void
 }) {
+  const uniqueSources = useMemo(() => new Set(maturityRequirements.map((r) => r.refId)).size, [])
+  const cswpRequirements = useMemo(
+    () =>
+      maturityRequirements.filter(
+        (r) => /CSWP\s*39/i.test(r.sourceName) || /CSWP\s*39/i.test(r.refId)
+      ),
+    []
+  )
+  const kpi = useMemo(() => {
+    // 4 levels × 5 pillars = 20 cells in the canonical agility grid.
+    const populated = new Set(cswpRequirements.map((r) => `${r.maturityLevel}:${r.pillar}`)).size
+    const confidenceMap = { low: 25, medium: 60, high: 95 } as const
+    const confidenceSum = cswpRequirements.reduce(
+      (sum, r) => sum + (confidenceMap[r.confidence] ?? 0),
+      0
+    )
+    const meanConfidence = cswpRequirements.length
+      ? Math.round(confidenceSum / cswpRequirements.length)
+      : 0
+    return {
+      coverage: Math.round((populated / 20) * 100),
+      populated,
+      total: 20,
+      meanConfidence,
+      recordCount: cswpRequirements.length,
+    }
+  }, [cswpRequirements])
+
   return (
     <div className="space-y-5">
+      {/* Authoritative evidence — the real LLM-extracted governance corpus. */}
+      <section className="rounded-2xl border border-border bg-card p-5">
+        <div className="mb-4 flex items-center gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <Database size={18} />
+          </span>
+          <div>
+            <h3 className="text-sm font-bold text-foreground">
+              Authoritative Evidence — {maturityRequirements.length} requirements from{' '}
+              {uniqueSources} sources
+            </h3>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              LLM-extracted governance obligations mapped to each CSWP.39 pillar and maturity tier.
+              Click any highlighted cell to see sourced requirements.
+            </p>
+          </div>
+        </div>
+        <div className="mb-4 grid grid-cols-1 gap-4 rounded-xl border border-border bg-muted/30 p-4 sm:grid-cols-3">
+          <KpiCell
+            label="CSWP-39 grid coverage"
+            value={`${kpi.coverage}%`}
+            sub={`${kpi.populated}/${kpi.total} cells populated`}
+          />
+          <KpiCell
+            label="Mean confidence"
+            value={`${kpi.meanConfidence}/100`}
+            sub={
+              kpi.recordCount > 0
+                ? 'across extracted CSWP-39 requirements'
+                : 'no CSWP-39 requirements extracted yet'
+            }
+          />
+          <KpiCell
+            label="CSWP-39 source records"
+            value={String(kpi.recordCount)}
+            sub="rows in the CSWP-39 slice"
+          />
+        </div>
+        <MaturityEvidenceGrid
+          requirements={maturityRequirements}
+          initialRefFilter={evref}
+          onClearRefFilter={onClearEvref}
+        />
+      </section>
+
       {/* Satisfies table */}
       <div className="overflow-hidden rounded-2xl border border-border bg-card">
         <div className="overflow-x-auto">
@@ -505,6 +606,16 @@ function EvidenceView({
           })}
         </div>
       </div>
+    </div>
+  )
+}
+
+function KpiCell({ label, value, sub }: { label: string; value: string; sub: string }) {
+  return (
+    <div>
+      <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className="mt-0.5 text-xl font-extrabold text-foreground">{value}</div>
+      <div className="text-[11px] text-muted-foreground">{sub}</div>
     </div>
   )
 }

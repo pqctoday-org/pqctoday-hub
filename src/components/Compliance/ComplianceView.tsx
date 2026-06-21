@@ -350,6 +350,7 @@ export const ComplianceView = () => {
   const {
     setSearchParams,
     certParam,
+    evref,
     activeTab,
     setActiveTab,
     setLandscapeType,
@@ -545,6 +546,17 @@ export const ComplianceView = () => {
     },
     [setActiveTab, setSearchParams]
   )
+
+  const handleClearEvref = useCallback(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('evref')
+        return next
+      },
+      { replace: true }
+    )
+  }, [setSearchParams])
 
   // Landscape filter pass-through bundle for the pillar pipeline.
   const landscapeProps = {
@@ -876,7 +888,11 @@ export const ComplianceView = () => {
         {/* ── CSWP.39 Agility ── */}
         {activeStableTab === 'cswp39' && (
           <div className="mt-0 space-y-4">
-            <CSWP39AgilityExplorer onNavigateToFramework={handleCswp39Jump} />
+            <CSWP39AgilityExplorer
+              onNavigateToFramework={handleCswp39Jump}
+              evref={evref}
+              onClearEvref={handleClearEvref}
+            />
           </div>
         )}
       </div>
