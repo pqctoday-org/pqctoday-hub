@@ -47,7 +47,8 @@ import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
 import { ReportCswp39Nav } from './ReportCswp39Nav'
 import { ReportLockedOverlay } from './redesign/ReportLockedOverlay';
-import { KpiEmptyState, KpiPreviewSkeleton } from './redesign/ReportKpiStates'
+import { KpiEmptyState, KpiPreviewSkeleton } from './redesign/ReportKpiStates';
+import { ReportVerdictBlock } from './redesign/ReportVerdictBlock'
 import { useThreatsData } from '../../hooks/useThreatsData'
 import { GlossaryAutoWrap } from '../PKILearning/common/GlossaryAutoWrap'
 import { MigrationRoadmap } from './MigrationRoadmap'
@@ -757,6 +758,10 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         {result.categoryScores ? 'Comprehensive Assessment' : 'Quick Assessment'}
                       </span>
                     </div>
+
+                    {/* Persona verdict (redesign) — re-leads the result for the active role,
+                      above the "Do this first" hero. */}
+                    <ReportVerdictBlock persona={selectedPersona} />
 
                     {/* Top-3 actions hero (P15-P1-02) — teases the highest-priority
                       recommended actions before the full report scroll. Hidden in print. */}
