@@ -7,16 +7,22 @@ import { Button } from '../../ui/button'
 
 import clsx from 'clsx'
 
-const Step1Industry = () => {
+import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
+
+const Step1Industry = ({ hideHeading = false }: EmbeddedStepProps = {}) => {
   const { industry, setIndustry } = useAssessmentStore()
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-foreground">What industry are you in?</h3>
-      <p className="text-sm text-muted-foreground">
-        Quantum risk varies significantly by sector. Select the industry that best describes your
-        organization.
-      </p>
+      {!hideHeading && (
+        <>
+          <h3 className="text-xl font-bold text-foreground">What industry are you in?</h3>
+          <p className="text-sm text-muted-foreground">
+            Quantum risk varies significantly by sector. Select the industry that best describes
+            your organization.
+          </p>
+        </>
+      )}
       <div
         className="grid grid-cols-1 md:grid-cols-2 gap-2"
         role="radiogroup"

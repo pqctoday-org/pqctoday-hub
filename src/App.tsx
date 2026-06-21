@@ -122,6 +122,11 @@ const LandingView = lazyWithRetry(() =>
 const AssessView = lazyWithRetry(() =>
   import('./components/Assess/AssessView').then((module) => ({ default: module.AssessView }))
 )
+const AssessViewRedesign = lazyWithRetry(() =>
+  import('./components/Assess/redesign/AssessViewRedesign').then((module) => ({
+    default: module.AssessViewRedesign,
+  }))
+)
 const ReportView = lazyWithRetry(() =>
   import('./components/Report/ReportView').then((module) => ({ default: module.ReportView }))
 )
@@ -363,6 +368,14 @@ function App() {
       />
       <Route
         path="assess"
+        element={
+          <ErrorBoundary>
+            <AssessViewRedesign />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="assess/legacy"
         element={
           <ErrorBoundary>
             <AssessView />

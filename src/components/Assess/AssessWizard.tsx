@@ -27,6 +27,7 @@ import { Step11Infrastructure } from './steps/Step11Infrastructure'
 import { Step13TimelinePressure } from './steps/Step13TimelinePressure'
 import { CSWP39StepBadge } from '../shared/CSWP39StepBadge'
 import { ASSESS_STEP_TO_CSWP39 } from '../../data/assessStepToCswp39'
+import { STEP_VALIDATORS, PROFICIENCY_SUGGEST_MAP } from './redesign/assessFlowModel'
 import {
   logAssessStart,
   logAssessStep,
@@ -66,89 +67,23 @@ interface AssessWizardProps {
   mode?: AssessmentMode
 }
 
-/**
- * Steps that support "I don't know" auto-suggestion, categorized by technical depth.
- * - 'technical': auto-suggested for 'new' AND 'basics' proficiency
- * - 'general': auto-suggested only for 'new' proficiency
- */
-const PROFICIENCY_SUGGEST_MAP: Record<string, 'technical' | 'general'> = {
-  crypto: 'technical',
-  scale: 'technical',
-  agility: 'technical',
-  infra: 'technical',
-  sensitivity: 'general',
-  compliance: 'general',
-  migration: 'general',
-  'use-cases': 'general',
-  retention: 'general',
-  'credential-lifetime': 'general',
-  timeline: 'general',
-}
-
+// Step order + components. Validity for each step is sourced from the shared
+// STEP_VALIDATORS map in ./redesign/assessFlowModel so the legacy wizard and the
+// redesign can never drift on what counts as a valid answer.
 const ALL_STEPS = [
-  {
-    key: 'industry',
-    component: <Step1Industry />,
-    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      !!s.industry,
-  },
-  {
-    key: 'country',
-    component: <Step2Country />,
-    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      !!s.country,
-  },
-  {
-    key: 'crypto',
-    component: <Step3Crypto />,
-    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      s.currentCryptoCategories.length > 0 || s.cryptoUnknown,
-  },
-  {
-    key: 'sensitivity',
-    component: <Step4Sensitivity />,
-    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      s.dataSensitivity.length > 0 || s.sensitivityUnknown,
-  },
-  { key: 'compliance', component: <Step5Compliance />, canProceed: () => true },
-  {
-    key: 'migration',
-    component: <Step6Migration />,
-    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      !!s.migrationStatus || s.migrationUnknown,
-  },
-  { key: 'use-cases', component: <Step7UseCases />, canProceed: () => true },
-  {
-    key: 'retention',
-    component: <Step8DataRetention />,
-    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      s.dataRetention.length > 0 || s.retentionUnknown,
-  },
-  {
-    key: 'credential-lifetime',
-    component: <StepCredentialLifetime />,
-    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      s.credentialLifetime.length > 0 || s.credentialLifetimeUnknown,
-  },
-  {
-    key: 'scale',
-    component: <Step9OrgScale />,
-    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      (!!s.systemCount && !!s.teamSize) || s.scaleUnknown,
-  },
-  {
-    key: 'agility',
-    component: <Step10CryptoAgility />,
-    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      !!s.cryptoAgility || s.agilityUnknown,
-  },
-  { key: 'infra', component: <Step11Infrastructure />, canProceed: () => true },
-  {
-    key: 'timeline',
-    component: <Step13TimelinePressure />,
-    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      !!s.timelinePressure || s.timelineUnknown,
-  },
+  { key: 'industry', component: <Step1Industry /> },
+  { key: 'country', component: <Step2Country /> },
+  { key: 'crypto', component: <Step3Crypto /> },
+  { key: 'sensitivity', component: <Step4Sensitivity /> },
+  { key: 'compliance', component: <Step5Compliance /> },
+  { key: 'migration', component: <Step6Migration /> },
+  { key: 'use-cases', component: <Step7UseCases /> },
+  { key: 'retention', component: <Step8DataRetention /> },
+  { key: 'credential-lifetime', component: <StepCredentialLifetime /> },
+  { key: 'scale', component: <Step9OrgScale /> },
+  { key: 'agility', component: <Step10CryptoAgility /> },
+  { key: 'infra', component: <Step11Infrastructure /> },
+  { key: 'timeline', component: <Step13TimelinePressure /> },
 ] as const
 
 // Quick mode covers all 5 CSWP.39 process steps with minimal user input:
@@ -310,7 +245,10 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
   const canProceed = () => {
     // eslint-disable-next-line security/detect-object-injection
     const step = steps[currentStep]
-    return step ? step.canProceed(store) : false
+    if (!step) return false
+
+    const validate = STEP_VALIDATORS[step.key]
+    return validate ? validate(store) : true
   }
 
   const handleNext = () => {
