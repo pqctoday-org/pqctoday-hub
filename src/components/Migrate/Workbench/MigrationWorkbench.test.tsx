@@ -68,6 +68,8 @@ describe('MigrationWorkbench (integration)', () => {
     fireEvent.click(screen.getByRole('button', { name: /Vendor roadmaps/i }))
     expect(screen.getByText(/vendors with a published\s+PQC roadmap/i)).toBeInTheDocument()
     expect(screen.getByLabelText('Filter vendor roadmaps')).toBeInTheDocument()
+    // at least one vendor card links to its products
+    expect(screen.getAllByRole('button', { name: /View \d+ products?/i }).length).toBeGreaterThan(0)
   })
 
   it('empty plan tab prompts to add assets', () => {

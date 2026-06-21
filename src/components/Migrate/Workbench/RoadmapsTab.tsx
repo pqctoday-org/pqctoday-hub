@@ -5,12 +5,15 @@
 // the same VendorRoadmapPanel used in the product detail.
 
 import { useMemo, useState } from 'react'
-import { Search, Map as MapIcon } from 'lucide-react'
+import { Search, Map as MapIcon, ChevronDown } from 'lucide-react'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 import { enrichmentByVendorId } from '@/data/vendorRoadmapEnrichmentData'
 import { vendorMap } from '@/data/migrateData'
 import { Input } from '../../ui/input'
+import { Button } from '../../ui/button'
 import { VendorRoadmapPanel } from '../VendorRoadmapPanel'
+import { ProductRow } from './ProductRow'
+import { productsForVendor } from './workbenchCatalog'
 
 interface RoadmapEntry {
   vendorId: string
@@ -72,16 +75,52 @@ export function RoadmapsTab() {
           No vendors match “{query}”.
         </p>
       ) : (
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+        <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">
           {filtered.map((e) => (
-            <div key={e.vendorId} className="rounded-xl border border-border bg-card p-3">
-              <p className="mb-2 text-sm font-semibold text-foreground">{e.vendorName}</p>
-              <VendorRoadmapPanel
-                roadmap={roadmapByVendorId.get(e.vendorId)}
-                enrichment={enrichmentByVendorId.get(e.vendorId)}
-              />
-            </div>
+            <RoadmapCard key={e.vendorId} vendorId={e.vendorId} vendorName={e.vendorName} />
           ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function RoadmapCard({ vendorId, vendorName }: { vendorId: string; vendorName: string }) {
+  const [showProducts, setShowProducts] = useState(false)
+  const products = useMemo(() => productsForVendor(vendorId), [vendorId])
+
+  return (
+    <div className="rounded-xl border border-border bg-card p-3">
+      <p className="mb-2 text-sm font-semibold text-foreground">{vendorName}</p>
+      <VendorRoadmapPanel
+        roadmap={roadmapByVendorId.get(vendorId)}
+        enrichment={enrichmentByVendorId.get(vendorId)}
+      />
+
+      {products.length > 0 && (
+        <div className="mt-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowProducts((v) => !v)}
+            aria-expanded={showProducts}
+            className="h-7 px-2 text-xs text-primary"
+          >
+            <ChevronDown
+              size={13}
+              className={`mr-1 transition-transform ${showProducts ? 'rotate-180' : ''}`}
+              aria-hidden
+            />
+            {showProducts ? 'Hide' : 'View'} {products.length}{' '}
+            {products.length === 1 ? 'product' : 'products'}
+          </Button>
+          {showProducts && (
+            <div className="mt-2 flex flex-col gap-2">
+              {products.map((p) => (
+                <ProductRow key={p.productId || p.softwareName} product={p} />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
