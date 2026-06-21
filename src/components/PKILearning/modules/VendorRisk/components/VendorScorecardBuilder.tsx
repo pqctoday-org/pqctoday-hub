@@ -97,6 +97,63 @@ function getBarColor(value: number): string {
 
 const productKey = (item: SoftwareItem) => item.productId
 
+export interface VendorScorecardRow {
+  vendor: string
+  productCount: number
+  dimScores: Record<string, number>
+  overall: number
+}
+
+/**
+ * Per-vendor readiness. Groups the selected products by vendor and scores each
+ * vendor independently — a dimension's score for a vendor is the share of THAT
+ * vendor's products that satisfy it (slider dimensions are global, applied to
+ * all vendors). Replaces the single blended "vendor" number, which mixed every
+ * vendor's products into one misleading figure for procurement. Pure for tests.
+ */
+export function computeVendorScorecards(
+  items: SoftwareItem[],
+  checkedProducts: Record<string, Set<string>>,
+  weightOf: (dimId: string) => number,
+  opts: { useSlider: Record<string, boolean>; sliderScores: Record<string, number> }
+): VendorScorecardRow[] {
+  const groups = new Map<string, SoftwareItem[]>()
+  for (const item of items) {
+    const vendor = item.vendorId?.trim() || 'Unknown vendor'
+    const arr = groups.get(vendor) ?? []
+    arr.push(item)
+    groups.set(vendor, arr)
+  }
+  const rows: VendorScorecardRow[] = []
+  for (const [vendor, group] of groups) {
+    const keys = new Set(group.map(productKey))
+    const dimScores: Record<string, number> = {}
+    let weightedSum = 0
+    let totalWeight = 0
+    for (const d of DIMENSIONS) {
+      let score: number
+      if (opts.useSlider[d.id]) {
+        score = opts.sliderScores[d.id] ?? 0
+      } else {
+        const checked = checkedProducts[d.id]
+        const hits = checked ? [...keys].filter((k) => checked.has(k)).length : 0
+        score = group.length > 0 ? Math.round((hits / group.length) * 100) : 0
+      }
+      dimScores[d.id] = score
+      const w = weightOf(d.id)
+      weightedSum += score * w
+      totalWeight += w
+    }
+    rows.push({
+      vendor,
+      productCount: group.length,
+      dimScores,
+      overall: totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0,
+    })
+  }
+  return rows.sort((a, b) => b.overall - a.overall || a.vendor.localeCompare(b.vendor))
+}
+
 export const VendorScorecardBuilder: React.FC = () => {
   const myProducts = useMigrateSelectionStore((s) => s.myProducts)
   const { addExecutiveDocument } = useModuleStore()
@@ -218,6 +275,18 @@ export const VendorScorecardBuilder: React.FC = () => {
     return totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
   }, [getScore, effectiveWeight])
 
+  // Per-vendor breakdown — each vendor scored on its own products, sorted best
+  // to worst. The headline above is a portfolio average; this is what a buyer
+  // actually compares.
+  const vendorScorecards = useMemo(
+    () =>
+      computeVendorScorecards(selectedItems, checkedProducts, effectiveWeight, {
+        useSlider,
+        sliderScores,
+      }),
+    [selectedItems, checkedProducts, effectiveWeight, useSlider, sliderScores]
+  )
+
   const toggleProductForDimension = useCallback((dimId: string, key: string) => {
     setCheckedProducts((prev) => {
       const set = new Set(prev[dimId] ?? [])
@@ -243,7 +312,7 @@ export const VendorScorecardBuilder: React.FC = () => {
 
   const exportMarkdown = useMemo(() => {
     let md = '# Vendor PQC Readiness Scorecard\n\n'
-    md += `**Overall Score: ${weightedTotal}/100**\n\n`
+    md += `**Portfolio average (all products): ${weightedTotal}/100**\n\n`
     md += `Generated: ${new Date().toLocaleDateString()}\n`
     if (hasProducts) {
       md += `Products assessed: ${selectedItems.length}\n`
@@ -258,6 +327,17 @@ export const VendorScorecardBuilder: React.FC = () => {
           ? 'Manual'
           : `${checkedProducts[d.id]?.size ?? 0}/${selectedItems.length} products`
       md += `| ${d.label} | ${score}/100 | ${Math.round(effectiveWeight(d.id) * 100)}% | ${method} |\n`
+    }
+
+    if (hasProducts && vendorScorecards.length > 0) {
+      md += '\n## Per-Vendor Readiness\n\n'
+      md += `| Vendor | Products | Overall | ${DIMENSIONS.map((d) => d.label).join(' | ')} |\n`
+      md += `|${'---|'.repeat(3 + DIMENSIONS.length)}\n`
+      for (const v of vendorScorecards) {
+        md += `| ${v.vendor} | ${v.productCount} | ${v.overall}/100 | ${DIMENSIONS.map(
+          (d) => v.dimScores[d.id] ?? 0
+        ).join(' | ')} |\n`
+      }
     }
 
     // CSWP.39 §5.3 - Observability Tooling Notes
@@ -283,6 +363,7 @@ export const VendorScorecardBuilder: React.FC = () => {
     siemNotes,
     ztNotes,
     effectiveWeight,
+    vendorScorecards,
   ])
 
   // Save to module store when score is meaningful (store deduplicates by moduleId+type)
@@ -344,12 +425,55 @@ export const VendorScorecardBuilder: React.FC = () => {
 
       {/* Overall score */}
       <div className="glass-panel p-6 text-center">
-        <p className="text-sm text-muted-foreground mb-2">Vendor PQC Readiness — Overall Score</p>
+        <p className="text-sm text-muted-foreground mb-2">
+          PQC Readiness — Portfolio average (across all products)
+        </p>
         <p className={`text-3xl md:text-5xl font-bold ${getScoreColor(weightedTotal)}`}>
           {weightedTotal}
         </p>
         <p className="text-sm text-muted-foreground mt-1">/100</p>
+        {vendorScorecards.length > 1 && (
+          <p className="text-xs text-muted-foreground mt-2">
+            This blends {vendorScorecards.length} vendors — see the per-vendor breakdown below for
+            procurement comparisons.
+          </p>
+        )}
       </div>
+
+      {/* Per-vendor breakdown */}
+      {hasProducts && vendorScorecards.length > 0 && (
+        <div className="glass-panel p-4">
+          <p className="text-sm font-semibold text-foreground mb-1">Per-vendor readiness</p>
+          <p className="text-xs text-muted-foreground mb-3">
+            Each vendor scored on its own products (best to worst). The portfolio average above can
+            hide a weak vendor inside a strong set.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs text-muted-foreground border-b border-border">
+                  <th className="py-1.5 pr-3 font-medium">Vendor</th>
+                  <th className="py-1.5 px-2 font-medium text-center">Products</th>
+                  <th className="py-1.5 px-2 font-medium text-center">Overall</th>
+                </tr>
+              </thead>
+              <tbody>
+                {vendorScorecards.map((v) => (
+                  <tr key={v.vendor} className="border-b border-border/50">
+                    <td className="py-1.5 pr-3 text-foreground">{v.vendor}</td>
+                    <td className="py-1.5 px-2 text-center text-muted-foreground">
+                      {v.productCount}
+                    </td>
+                    <td className={`py-1.5 px-2 text-center font-bold ${getScoreColor(v.overall)}`}>
+                      {v.overall}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Dimension cards */}
       <div className="space-y-3">
@@ -643,6 +767,7 @@ export const VendorScorecardBuilder: React.FC = () => {
         exportData={exportMarkdown}
         filename="vendor-pqc-scorecard"
         formats={['markdown', 'pdf']}
+        wideTable
       >
         <p className="text-sm text-muted-foreground">
           Export the scorecard above as a shareable document. Includes observability tooling notes.

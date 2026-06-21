@@ -11,6 +11,7 @@ import {
 } from '@/components/PKILearning/common/executive'
 import type { KpiPersonaId } from '@/data/kpiCatalog'
 import { KPI_PERSONAS, buildDimensions } from '@/data/kpiCatalog'
+import { rowsToCsv } from '@/services/export/csvExport'
 
 const MODULE_ID = 'migration-program'
 const SURFACE = 'migration' as const
@@ -43,6 +44,10 @@ export const KPITrackerTemplate: React.FC = () => {
   const [personaOverride, setPersonaOverride] = useState<KpiPersonaId | null>(null)
   const activePersona: KpiPersonaId = personaOverride ?? coercePersona(globalPersona)
 
+  // Program start year — enables a real Pace-to-Deadline score (progress vs.
+  // expected) instead of a constant. Until set, Pace-to-Deadline stays manual.
+  const [startYear, setStartYear] = useState<number | null>(null)
+
   // Record a risk-score snapshot whenever the assessment yields a new value
   useEffect(() => {
     if (execData.riskScore !== null && typeof execData.riskScore === 'number') {
@@ -51,8 +56,14 @@ export const KPITrackerTemplate: React.FC = () => {
   }, [execData.riskScore, pushRiskScoreSnapshot])
 
   const dimensions = useMemo(
-    () => buildDimensions(activePersona, SURFACE, execData, execData.country),
-    [activePersona, execData]
+    () =>
+      buildDimensions(
+        activePersona,
+        SURFACE,
+        { ...execData, migrationStartYear: startYear },
+        execData.country
+      ),
+    [activePersona, execData, startYear]
   )
 
   // The scorecard manages its own internal scores. We mirror them into local
@@ -116,6 +127,21 @@ export const KPITrackerTemplate: React.FC = () => {
     return md
   }, [dimensions, activePersona, riskHistory, userScores, userWeights])
 
+  // Structured CSV (one row per KPI) built from the live dimensions — not the
+  // markdown body, so `.csv` opens as real columns in a spreadsheet. Audit C5.
+  const exportCsv = useMemo(() => {
+    const ew = (d: (typeof dimensions)[number]) =>
+      d.id in userWeights ? (userWeights[d.id] ?? 0) : d.weight
+    const header = ['KPI', 'Score', 'Weight %', 'Target', 'Description', 'Persona']
+    const rows = dimensions.map((d) => {
+      const scoreCell = d.disabled
+        ? `locked — ${d.disabledReason ?? 'no data'}`
+        : `${userScores[d.id] ?? d.autoScore ?? 0}/100`
+      return [d.label, scoreCell, `${Math.round(ew(d) * 100)}%`, d.target ?? '', d.description, activePersona]
+    })
+    return rowsToCsv([header, ...rows])
+  }, [dimensions, activePersona, userScores, userWeights])
+
   const handleExport = useCallback(() => {
     addExecutiveDocument({
       id: `kpi-tracker-${activePersona}-${Date.now()}`,
@@ -177,6 +203,29 @@ export const KPITrackerTemplate: React.FC = () => {
         </div>
       </div>
 
+      <div className="glass-panel p-4">
+        <label htmlFor="kpi-start-year" className="text-sm font-medium text-foreground">
+          Program start year
+        </label>
+        <p className="text-xs text-muted-foreground mt-1 mb-2">
+          Set this to compute a real <span className="font-medium">Pace-to-Deadline</span> score —
+          your PQC-readiness progress vs. the straight-line pace expected between the start year and
+          your {execData.migrationDeadlineYear ?? 'target'} deadline (50 = on track, &gt;50 = ahead).
+          Until set, Pace-to-Deadline stays a manual slider.
+        </p>
+        <input
+          id="kpi-start-year"
+          type="number"
+          inputMode="numeric"
+          min={2015}
+          max={2050}
+          value={startYear ?? ''}
+          onChange={(e) => setStartYear(e.target.value ? parseInt(e.target.value, 10) : null)}
+          placeholder="e.g. 2024"
+          className="w-32 rounded-md border border-input bg-background px-3 py-2 text-sm"
+        />
+      </div>
+
       <DataDrivenScorecard
         title="PQC Migration KPI Tracker"
         description={`Migration progress — ${activePersona} lens.`}
@@ -194,6 +243,7 @@ export const KPITrackerTemplate: React.FC = () => {
         exportData={exportMarkdown}
         filename={`pqc-kpi-tracker-${activePersona}`}
         formats={['markdown', 'csv', 'pdf']}
+        csvData={exportCsv}
         onExport={handleExport}
       >
         <p className="text-sm text-muted-foreground">

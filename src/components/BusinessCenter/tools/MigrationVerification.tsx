@@ -66,6 +66,17 @@ const EVIDENCE_FIELDS: { key: EvidenceField; label: string; hint: string }[] = [
 const DECOMMISSION_KINDS = ['signing-key', 'certificate', 'kek', 'other'] as const
 type DecommissionKind = (typeof DECOMMISSION_KINDS)[number]
 
+// NIST SP 800-88 Rev.1 sanitization categories + the crypto-erase variant used
+// for key material. Drives the per-row "Method" select so the decommissioning
+// record captures *how* the material was destroyed, not just that it was.
+const DECOMMISSION_METHODS = [
+  'SP 800-88 purge',
+  'SP 800-88 destroy',
+  'crypto-shred (key erase)',
+  'revoke & archive',
+  'other',
+] as const
+
 const BAU_CAPABILITIES = ['Discovery', 'CBOM', 'Risk', 'Vendor governance'] as const
 type BauCapability = (typeof BAU_CAPABILITIES)[number]
 
@@ -396,7 +407,7 @@ export const MigrationVerification: React.FC = () => {
           {state.decommissions.map((d) => (
             <div
               key={d.id}
-              className="grid grid-cols-1 sm:grid-cols-6 gap-2 items-center rounded-md border border-border p-2"
+              className="grid grid-cols-1 sm:grid-cols-8 gap-2 items-center rounded-md border border-border p-2"
             >
               <Input
                 value={d.material}
@@ -420,12 +431,31 @@ export const MigrationVerification: React.FC = () => {
                 ))}
               </select>
               <Input
+                type="date"
+                value={d.retiredDate}
+                onChange={(e) => setDecommission(d.id, { retiredDate: e.target.value })}
+                aria-label="Retired date"
+                className="text-xs"
+              />
+              <Input
                 value={d.owner}
                 onChange={(e) => setDecommission(d.id, { owner: e.target.value })}
                 placeholder="Owner"
                 aria-label="Owner"
                 className="text-xs"
               />
+              <select
+                value={d.method}
+                onChange={(e) => setDecommission(d.id, { method: e.target.value })}
+                aria-label="Destruction method"
+                className="text-xs rounded-md border border-input bg-background p-2"
+              >
+                {DECOMMISSION_METHODS.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
               <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <input
                   type="checkbox"

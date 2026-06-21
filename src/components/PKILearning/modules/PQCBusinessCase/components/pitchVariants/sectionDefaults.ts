@@ -229,11 +229,11 @@ export function buildCostBenefitDefault(data: Data): string {
   const multiplier = tier === 'major' ? '3-5×' : '2-3×'
   const parts: string[] = []
   parts.push(
-    `Cost of inaction (${tier}): regulatory penalties, breach response, contract loss, and reputational damage typically total ${multiplier} the migration investment. The ROI Calculator (Step 1 of this workshop) provides organization-specific figures.`
+    `Cost of inaction (${tier}): regulatory penalties, breach response, contract loss, and reputational damage are illustrative and typically fall in the ${multiplier} range of the migration investment - this varies widely by organization, so treat it as a starting estimate and use the ROI Calculator (Step 1 of this workshop) for organization-specific figures.`
   )
   if (data.migrationDeadlineYear) {
     parts.push(
-      `Deadline-driven urgency: ${data.migrationDeadlineYear} compliance window compresses procurement and training lead times - late-start projects consistently overrun by 40-60%.`
+      `Deadline-driven urgency: the ${data.migrationDeadlineYear} compliance window compresses procurement and training lead times - late-start projects often run over (industry estimates put schedule/cost slippage around 40-60%; illustrative, not a guarantee).`
     )
   }
   if (data.hndlRiskWindow?.isAtRisk) {
@@ -249,10 +249,36 @@ export function buildCostBenefitDefault(data: Data): string {
 
 export function buildBudgetDefault(data: Data): { amount: string; breakdown: string } {
   const level = data.assessmentResult?.riskLevel
-  // Ranges are illustrative - the ROI Calculator refines them per org.
-  let amount = '$500K - $1.5M over 18-24 months'
-  if (level === 'high') amount = '$1M - $3M over 24 months'
-  if (level === 'critical') amount = '$2M - $6M over 24-36 months'
+  // Risk level sets the base band; estate size (product count in scope) shifts
+  // it. Both are ILLUSTRATIVE starting points - the ROI Calculator computes the
+  // real figure per org. Labelled illustrative in the output so a reader doesn't
+  // mistake it for a quote.
+  let lo = 0.5
+  let hi = 1.5
+  let months = '18-24 months'
+  if (level === 'high') {
+    lo = 1
+    hi = 3
+    months = '24 months'
+  }
+  if (level === 'critical') {
+    lo = 2
+    hi = 6
+    months = '24-36 months'
+  }
+  const n = data.totalProducts
+  if (typeof n === 'number' && n > 0) {
+    const factor = n >= 200 ? 1.5 : n >= 50 ? 1.2 : n < 10 ? 0.7 : 1
+    lo *= factor
+    hi *= factor
+  }
+  const fmtM = (m: number) =>
+    m >= 1 ? `$${Number.isInteger(m) ? m : m.toFixed(1)}M` : `$${Math.round(m * 1000)}K`
+  const scaleNote =
+    typeof n === 'number' && n > 0
+      ? ` (illustrative, scaled to ~${n} products in scope; refine in the ROI Calculator)`
+      : ' (illustrative; refine in the ROI Calculator)'
+  const amount = `${fmtM(lo)} - ${fmtM(hi)} over ${months}${scaleNote}`
 
   const breakdown =
     '- Software (PQC-enabled libraries, HSM/KMS upgrades): 30%\n' +

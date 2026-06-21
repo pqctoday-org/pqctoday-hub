@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button'
 import { GanttDetailPopover } from '@/components/Timeline/GanttDetailPopover'
 import { AskAssistantButton } from '@/components/ui/AskAssistantButton'
 import { ExportableArtifact } from '../../../common/executive/ExportableArtifact'
+import { rowsToCsv } from '@/services/export/csvExport'
 import { ComplianceGantt } from './ComplianceGantt'
 import type { ComplianceGanttRow, UserMilestone, ComplianceDeadline } from './ComplianceGantt'
 import type { TimelinePhase, TimelineEvent, EventType } from '@/types/timeline'
@@ -551,6 +552,42 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
     return md
   }, [ganttRows, milestones, gapAnalysis])
 
+  // Structured CSV (all three tables, section-labelled) built from the live data
+  // so `.csv` opens as real spreadsheet rows, not pipe text. Audit C5.
+  const exportCsv = useMemo(() => {
+    const sections: (string | number)[][] = []
+    if (ganttRows.length > 0) {
+      sections.push(['Regulatory Timeline'])
+      sections.push(['Country', 'Organization', 'Phase', 'Type', 'Start Year', 'End Year', 'Title'])
+      for (const row of ganttRows)
+        for (const p of row.phases)
+          sections.push([
+            row.country.countryName,
+            row.bodyName,
+            p.phase,
+            p.type,
+            p.startYear,
+            p.endYear,
+            p.title,
+          ])
+    }
+    if (milestones.length > 0) {
+      if (sections.length) sections.push([])
+      sections.push(['Migration Milestones'])
+      sections.push(['Year', 'Milestone', 'Category', 'Done'])
+      for (const m of milestones)
+        sections.push([m.year, m.label, m.category || '', m.completed ? 'Yes' : 'No'])
+    }
+    if (gapAnalysis.length > 0) {
+      if (sections.length) sections.push([])
+      sections.push(['Gap Analysis'])
+      sections.push(['Framework', 'Deadline', 'Status', 'Notes'])
+      for (const g of gapAnalysis)
+        sections.push([g.framework, g.deadlineYear, g.status.toUpperCase(), g.gap])
+    }
+    return rowsToCsv(sections)
+  }, [ganttRows, milestones, gapAnalysis])
+
   const handleSaveToDocuments = () => {
     addExecutiveDocument({
       id: `compliance-timeline-${Date.now()}`,
@@ -869,6 +906,8 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
           exportData={exportMarkdown}
           filename="compliance-timeline"
           formats={['markdown', 'csv', 'pdf']}
+          csvData={exportCsv}
+          wideTable
           onExport={handleSaveToDocuments}
         >
           <p className="text-sm text-muted-foreground">

@@ -254,7 +254,7 @@ export const ROICalculator: React.FC = () => {
     md += `- Capex per product: ${formatCurrency(assumptions.costPerProduct)}\n`
     md += `- **Total capex: ${formatCurrency(financials.totalMigrationCost)}**\n`
     md += `- Annual opex: ${assumptions.annualOpexPct}% of capex = ${formatCurrency(financials.annualOpex)}/year\n\n`
-    md += `### Risk Reduction (quantum amplification ${quantumMultiplier.toFixed(2)}×)\n`
+    md += `### Risk Reduction (quantum amplification ${quantumMultiplier.toFixed(2)}× - illustrative)\n`
     md += `- Industry baseline (${data.industry || 'Other'}): ${formatCurrency(industryBreachBaseline)} (IBM 2024)\n`
     md += `- HNDL exposure: ${assumptions.hndlExposurePct}%\n`
     md += `- Post-CRQC attacker uplift: ${assumptions.crqcAttackerUpliftPct}%\n`
@@ -264,7 +264,7 @@ export const ROICalculator: React.FC = () => {
     md += `### Regulatory Exposure\n`
     md += `- Applicable frameworks: ${assumptions.applicableFrameworks} of ${data.frameworksByIndustry.length}\n`
     md += `- Penalty per incident: ${formatCurrency(assumptions.penaltyPerIncident)}\n`
-    md += `- Incident rate: ${Math.round(DEFAULT_COMPLIANCE_INCIDENT_RATE * 100)}% per framework per year\n`
+    md += `- Incident rate: ${Math.round(DEFAULT_COMPLIANCE_INCIDENT_RATE * 100)}% per framework per year (illustrative assumption)\n`
     md += `- **Annual savings: ${formatCurrency(financials.complianceSavings)}**\n\n`
     md += `### Financial Modeling\n`
     md += `- Planning horizon: ${assumptions.horizonYears} years\n`

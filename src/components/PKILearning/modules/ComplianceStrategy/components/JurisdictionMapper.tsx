@@ -16,6 +16,7 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { ExportableArtifact } from '../../../common/executive'
+import { rowsToCsv } from '@/services/export/csvExport'
 import { Button } from '@/components/ui/button'
 import { softwareData } from '@/data/migrateData'
 import type { ComplianceFramework } from '@/data/complianceData'
@@ -366,6 +367,28 @@ export const JurisdictionMapper: React.FC<JurisdictionMapperProps> = ({
     return md
   }, [selectedJurisdictions, selectedFrameworks, conflicts, countryDeadlineMap])
 
+  // Structured CSV from the live framework + conflict data so `.csv` opens as
+  // real spreadsheet rows, not pipe text. Audit C5.
+  const exportCsv = useMemo(() => {
+    const sections: (string | number)[][] = []
+    sections.push(['Applicable Frameworks'])
+    sections.push(['Framework', 'Jurisdictions', 'Deadline', 'PQC Required'])
+    for (const fw of selectedFrameworks)
+      sections.push([
+        fw.label,
+        fw.jurisdictionLabels.join('; '),
+        fw.deadline,
+        fw.requiresPQC ? 'Yes' : 'No',
+      ])
+    if (conflicts.length > 0) {
+      sections.push([])
+      sections.push(['Conflicts & Overlaps'])
+      sections.push(['Severity', 'Description'])
+      for (const c of conflicts) sections.push([c.severity.toUpperCase(), c.description])
+    }
+    return rowsToCsv(sections)
+  }, [selectedFrameworks, conflicts])
+
   const regions = useMemo(() => {
     const regionMap = new Map<string, JurisdictionConfig[]>()
     for (const jur of JURISDICTIONS) {
@@ -670,6 +693,7 @@ export const JurisdictionMapper: React.FC<JurisdictionMapperProps> = ({
           exportData={exportMarkdown}
           filename="jurisdiction-compliance-map"
           formats={['markdown', 'csv']}
+          csvData={exportCsv}
         >
           <p className="text-sm text-muted-foreground">
             Export your jurisdiction compliance map with {selectedFrameworks.length} applicable

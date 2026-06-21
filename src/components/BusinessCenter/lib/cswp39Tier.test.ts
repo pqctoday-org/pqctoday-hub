@@ -247,13 +247,13 @@ describe('cswp39Tier — prioritise', () => {
     expect(prioritiseTier(m).tier).toBe(3)
   })
 
-  it('tier 4 needs CRQC + KPI (with formula explainer) + ≥3 assessments', () => {
+  it('tier 4 needs CRQC + KPI (with scoring methodology) + ≥3 assessments', () => {
     const m = emptyMetrics()
     m.artifactsByPillar.risk = [doc('crqc-scenario')]
     m.artifactsByPillar.vendor = [doc('kpi-tracker')]
     m.artifactsByPillar.compliance = [doc('compliance-timeline')]
     m.artifactsByPillar.governance = [
-      doc('kpi-dashboard', 0, '## Formula Explainer (CSWP.39 §5.4)\n'),
+      doc('kpi-dashboard', 0, '## How this score is computed\n'),
     ]
     m.assessmentHistory = Array.from({ length: 3 }, (_, i) => ({
       completedAt: `2025-0${i + 1}-01`,
@@ -262,7 +262,7 @@ describe('cswp39Tier — prioritise', () => {
     expect(prioritiseTier(m).tier).toBe(4)
   })
 
-  it('prioritise caps at 3 if formula explainer missing', () => {
+  it('prioritise caps at 3 if scoring methodology missing', () => {
     const m = emptyMetrics()
     m.artifactsByPillar.risk = [doc('crqc-scenario')]
     m.artifactsByPillar.vendor = [doc('kpi-tracker')]

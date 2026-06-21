@@ -182,13 +182,16 @@ describe('buildCloudResponsibilityMatrix - PQC availability lookup', () => {
 })
 
 describe('buildCloudResponsibilityMatrix - watch-outs', () => {
-  it('multi-cloud (>=2 providers) emits the AWS/GCP timing-skew warning', () => {
+  it('multi-cloud (>=2 providers) names each cloud + its catalog-derived PQC status', () => {
     const rec = buildCloudResponsibilityMatrix({
       ...baseInputs,
       cloudProviders: ['AWS', 'GCP'],
     })
     expect(rec.watchOuts.join(' ')).toMatch(/Multi-cloud/i)
-    expect(rec.watchOuts.join(' ')).toMatch(/AWS|GCP/)
+    expect(rec.watchOuts.join(' ')).toMatch(/AWS/)
+    expect(rec.watchOuts.join(' ')).toMatch(/GCP/)
+    // status is derived from the catalog, not a hardcoded "GCP still in preview"
+    expect(rec.watchOuts.join(' ')).toMatch(/KMS PQC:/)
   })
 
   it('explicit multi-cloud token also triggers the multi-cloud warning', () => {

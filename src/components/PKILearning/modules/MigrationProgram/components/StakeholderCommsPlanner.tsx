@@ -60,10 +60,10 @@ function buildCommsSections(opts: {
       fields: [
         {
           id: 'key-stakeholders',
-          label: 'Key Stakeholders',
+          label: 'Key Stakeholders (with power / interest)',
           type: 'textarea',
           placeholder:
-            'List key stakeholders (e.g., CISO, CTO, VP Engineering, Head of Compliance, Vendor Management Lead, Board Risk Committee Chair)',
+            "One per line with each stakeholder's power and interest, e.g. 'CISO - high power, high interest (manage closely)'; 'Board Risk Committee - high power, low interest (keep satisfied)'; 'Dev teams - low power, high interest (keep informed)'",
           defaultValue: stakeholderDefault || '',
         },
         {
@@ -76,15 +76,16 @@ function buildCommsSections(opts: {
         },
         {
           id: 'influence-level',
-          label: 'Influence Level',
+          label: 'Default engagement strategy',
           type: 'select',
-          placeholder: 'Select influence level',
+          placeholder: 'Select the default power/interest strategy',
           options: [
-            { value: 'high', label: 'High' },
-            { value: 'medium', label: 'Medium' },
-            { value: 'low', label: 'Low' },
+            { value: 'manage-closely', label: 'Manage closely (high power, high interest)' },
+            { value: 'keep-satisfied', label: 'Keep satisfied (high power, low interest)' },
+            { value: 'keep-informed', label: 'Keep informed (low power, high interest)' },
+            { value: 'monitor', label: 'Monitor (low power, low interest)' },
           ],
-          defaultValue: 'high',
+          defaultValue: 'manage-closely',
         },
       ],
     },
@@ -196,9 +197,12 @@ function renderCommsPreview(data: Record<string, Record<string, string | string[
   const stakeholders = data['stakeholder-map']?.['key-stakeholders'] || '_Not specified_'
   const concerns = data['stakeholder-map']?.['stakeholder-concerns'] || '_Not specified_'
   const influence = data['stakeholder-map']?.['influence-level'] || '_Not specified_'
-  md += `**Key Stakeholders:**\n${stakeholders}\n\n`
+  md += `**Stakeholders (power / interest map):**\n${stakeholders}\n\n`
   md += `**Their Concerns:**\n${concerns}\n\n`
-  md += `**Influence Level:** ${String(influence).charAt(0).toUpperCase() + String(influence).slice(1)}\n\n---\n\n`
+  const strategyLabel = String(influence)
+    .replace(/-/g, ' ')
+    .replace(/^\w/, (c) => c.toUpperCase())
+  md += `**Default engagement strategy:** ${strategyLabel}\n\n---\n\n`
 
   // Message Framework
   md += '## 2. Message Framework\n\n'

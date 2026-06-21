@@ -195,7 +195,11 @@ export function RiskRegisterBuilderStandalone() {
           (run an assessment to auto-seed from your reported algorithms).
         </div>
       )}
-      <RiskRegisterBuilder riskEntries={riskEntries} onRiskEntriesChange={setRiskEntries} />
+      <RiskRegisterBuilder
+        riskEntries={riskEntries}
+        onRiskEntriesChange={setRiskEntries}
+        showExampleBanner={false}
+      />
     </div>
   )
 }

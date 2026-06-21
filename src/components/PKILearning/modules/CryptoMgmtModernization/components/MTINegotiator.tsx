@@ -190,10 +190,10 @@ function recommendHash(inputs: MTIInputs): {
 
   if (audience === 'us-federal') {
     return {
-      mti: 'SHA-256 (FIPS 180-4)',
+      mti: 'SHA-384 (FIPS 180-4)',
       alternates: ['SHA-512 (FIPS 180-4)'],
       rationale:
-        'CNSA 2.0 names SHA-256 as the primary hash; SHA-512 is the higher-strength alternate.',
+        'CNSA 2.0 mandates SHA-384 for US National Security Systems; SHA-512 is the higher-strength alternate.',
     }
   }
   if (audience === 'eu-regulated') {
