@@ -71,7 +71,7 @@ import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
 import { getBalance, type DifficultyId } from '@/data/simBalance'
 import { Eyebrow, Ring, Radial, Dial, ReadonlyDial, Stat, PlanningBadge } from './atoms'
 import { SimTour } from './SimTour'
-import { KIND_CHIP, markSimResume } from './simChrome'
+import { KIND_CHIP, markSimResume, markSimExited, clearSimExcursion } from './simChrome'
 import { canResolveDeepLink } from '@/simulation/deepLinks'
 import {
   ResCol,
@@ -268,13 +268,10 @@ export function SimulationView() {
   // WS-14: the active difficulty balance the engine + scoring read (config swap).
   const balance = getBalance(difficulty)
   const [report, setReport] = useState<QuarterReportData | null>(null)
-  // back in the sim → clear the "Resume Simulation" flag the hub banner reads
+  // re-opened the sim from the top nav → start a clean excursion (clears both the
+  // "peek" resume flag and any prior HUB-quit marker the hub header reads)
   useEffect(() => {
-    try {
-      sessionStorage.removeItem('sim:resume')
-    } catch {
-      /* ignore */
-    }
+    clearSimExcursion()
   }, [])
   // in-sim embedding: a Learn module (panel under the sim header), an activity
   // editor (Business-Center tool), or the assessment wizard. Keeps the player
@@ -866,6 +863,7 @@ export function SimulationView() {
           <Link
             to="/"
             aria-label="Exit to hub"
+            onClick={() => markSimExited()}
             className="ml-auto flex h-auto items-center rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
           >
             ← HUB
@@ -1004,6 +1002,7 @@ export function SimulationView() {
           <Link
             to="/"
             aria-label="Exit to hub"
+            onClick={() => markSimExited()}
             className="flex h-auto items-center rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
           >
             ← HUB
