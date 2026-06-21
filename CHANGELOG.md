@@ -26,6 +26,16 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+### Changed
+
+- **The Library is far easier to navigate** [view:/library] [persona:executive] [persona:developer] [persona:architect]: the standards library was rebuilt around a single role selector that tailors the starting picks, sort order and emphasis to how you work. The crowded row of controls is now one clean, search-led deck with the rest of the filters tucked into a quiet side rail; a single "Recently changed" strip surfaces new and updated documents at the top instead of two stacked feeds; each result is a lighter, scannable card that opens a detail drawer for the full picture — key facts, CSWP-39 requirements, trust evidence, and every earlier revision of the document; and every role now gets a "Start here" set so you are never staring at a blank page. The previous layout is still available at /library/legacy.
+- **Migrate opens the redesigned Migration Workbench by default** [view:/migrate] [persona:architect] [persona:developer]: the Workbench — which frames migration around the cryptography you actually run, with replace / plan tabs and vendor roadmaps — is now what you land on at /migrate, instead of being parked on a separate URL that nothing linked to.
+
+### Fixed
+
+- **The Migration Simulation is now reachable from the top navigation** [view:/simulation] [persona:executive] [persona:curious]: the simulation was missing from the nav bar for every role, so there was no way to find it without knowing the URL — it now appears for everyone, right after Home.
+- **The simulation keeps your place when you step out to a hub resource** [view:/simulation] [persona:curious] [persona:architect]: opening a reference, assessment or workshop from inside the simulation now keeps a "Resume Simulation" header on screen the whole time, so a live run is never lost on a redirect — and that header correctly disappears once you deliberately leave the simulation with the "← HUB" button, reappearing only when you re-open the sim.
+
 ## [4.0.0] - 2026-06-20
 
 Version 4.0 makes the Migration Simulation the heart of the app — your learning modules, business tools, workshops, the product catalog, the timeline and the algorithm comparisons now run _inside_ the simulation instead of sending you elsewhere — and adds a real in-browser KMIP control plane + PKCS#11 HSM, a much-expanded and re-validated protocol-support matrix, and new SOC / GRC / Team learning modules. The PQC VPN simulator now also runs the post-quantum IKEv2 handshake for real — hybrid key exchange, message fragmentation, and tunnel (CHILD_SA) negotiation all execute in the browser instead of being narrated — and every byte is inspectable in a new live packet capture.
