@@ -55,6 +55,7 @@ const ThreatDetailDialog = lazy(() =>
 import { MobileThreatsList } from './MobileThreatsList'
 import { ThreatEconomicsHeader } from './ThreatEconomicsHeader'
 import { CrqcCapabilityStrip } from './CrqcCapabilityStrip'
+import { SectorExposureHero } from './SectorExposureHero'
 import { THREAT_CLASS_DEFS, threatMatchesClass, type ThreatClass } from './threatClassification'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 
@@ -452,6 +453,26 @@ export const ThreatsDashboard: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = 
     return PERSONA_FRAMING[selectedPersona] ?? null // eslint-disable-line security/detect-object-injection
   }, [selectedPersona, selectedIndustries])
 
+  // Effective industries the page is scoped to (explicit selection, else persona default).
+  const heroScopedIndustries = useMemo<string[]>(
+    () =>
+      selectedIndustries.length > 0
+        ? selectedIndustries
+        : personaDefaultActive
+          ? personaDefaultThreatIndustries
+          : [],
+    [selectedIndustries, personaDefaultActive, personaDefaultThreatIndustries]
+  )
+  // Threats applicable to the scoped sector(s) — the hero's exposure set (sector
+  // scope only; criticality/class/search filters don't shrink "your exposure").
+  const heroApplicable = useMemo<ThreatItem[]>(
+    () =>
+      heroScopedIndustries.length > 0
+        ? threatsData.filter((t) => heroScopedIndustries.includes(t.industry))
+        : threatsData,
+    [heroScopedIndustries]
+  )
+
   return (
     <div>
       {!simEmbed && (
@@ -489,11 +510,24 @@ export const ThreatsDashboard: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = 
         />
       )}
 
-      {/* Threat Economics — HNDL vs HNFL framing + Mosca mini-calc (additive) */}
-      <ThreatEconomicsHeader />
+      {/* Persona-forward exposure hero — your scoped sector's applicable threats,
+          the CRQC consensus window, and your per-sector Mosca deadline, above the
+          fold so the threats lead instead of two stacked context panels. */}
+      <SectorExposureHero applicable={heroApplicable} scopedIndustries={heroScopedIndustries} />
 
-      {/* Consolidated CRQC capability / Z-estimate strip (additive) — Threats #5 */}
-      <CrqcCapabilityStrip />
+      {/* Full methodology — the detailed Threat-Economics framing (HNDL vs HNFL +
+          Mosca mini-calc) and the CRQC capability watch, collapsed by default so
+          they stay one click away without walling off the threat list. */}
+      <details className="group mb-4">
+        <summary className="inline-flex cursor-pointer items-center gap-2 px-1 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+          <span className="text-xs transition-transform group-open:rotate-90">▸</span>
+          Methodology &amp; full CRQC capability watch
+        </summary>
+        <div className="mt-3 space-y-4">
+          <ThreatEconomicsHeader />
+          <CrqcCapabilityStrip />
+        </div>
+      </details>
 
       {/* Persona summary card */}
       {personaSummary && (
