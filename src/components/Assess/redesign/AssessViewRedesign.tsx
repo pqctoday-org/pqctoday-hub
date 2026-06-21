@@ -22,7 +22,6 @@ import {
   X,
   LayoutDashboard,
 } from 'lucide-react'
-import { AssessWizard } from '../AssessWizard'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import type { AssessmentMode } from '../../../store/useAssessmentStore'
 import { metadata } from '../../../data/industryAssessConfig'
@@ -36,8 +35,8 @@ import { Button } from '../../ui/button'
 import { PageHeader } from '../../common/PageHeader'
 import { WorkflowBreadcrumb } from '../../shared/WorkflowBreadcrumb'
 import { AssessTrackChooser } from './AssessTrackChooser'
-import { AssessControlDeck } from './AssessControlDeck'
-import { TRACK_INFO } from './assessFlowModel'
+import { AssessWizardScreen } from './AssessWizardScreen'
+import { keyAtStoreIndex, storeIndexOf, renderOrderFor } from './assessFlowModel'
 
 // Legacy-order step labels (the meaning of store.currentStep). Used by the
 // resume banner + the phase overlay, identical to AssessView.
@@ -136,14 +135,19 @@ export const AssessViewRedesign: React.FC = () => {
     setAssessmentMode(mode)
   }
 
-  // Switch track from the control deck. Clamp currentStep so a full→fast switch
-  // never lands past the shorter track's last step (the legacy wizard body does
-  // not clamp on its own).
+  // Switch track from the control deck / rail. Preserve the current question
+  // across the switch when it exists in the new track; otherwise restart at step 0.
   const handleSwitchTrack = (mode: AssessmentMode) => {
     if (mode === effectiveAssessmentMode) return
+    const curKey = effectiveAssessmentMode
+      ? keyAtStoreIndex(effectiveAssessmentMode, currentStep)
+      : undefined
     setAssessmentMode(mode)
-    const total = TRACK_INFO[mode].count
-    if (currentStep > total - 1) setStep(Math.max(0, total - 1))
+    if (curKey && renderOrderFor(mode).includes(curKey)) {
+      setStep(storeIndexOf(mode, curKey))
+    } else {
+      setStep(0)
+    }
   }
 
   const handleComplete = () => {
@@ -172,10 +176,6 @@ export const AssessViewRedesign: React.FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  const wizardTotal = effectiveAssessmentMode ? TRACK_INFO[effectiveAssessmentMode].count : 0
-  const wizardContext =
-    wizardTotal > 0 ? `Step ${Math.min(currentStep + 1, wizardTotal)} of ${wizardTotal}` : ''
 
   // eslint-disable-next-line security/detect-object-injection
   const resumeStepLabel = STEP_LABELS[currentStep] ?? ''
@@ -330,15 +330,12 @@ export const AssessViewRedesign: React.FC = () => {
       {!effectiveAssessmentMode ? (
         <AssessTrackChooser onStart={handleStart} recommendedMode={recommendedMode} />
       ) : (
-        <>
-          <AssessControlDeck
-            mode={effectiveAssessmentMode}
-            onSetMode={handleSwitchTrack}
-            context={wizardContext}
-            showUpgrade={effectiveAssessmentMode === 'quick'}
-          />
-          <AssessWizard onComplete={handleComplete} mode={effectiveAssessmentMode} />
-        </>
+        <AssessWizardScreen
+          mode={effectiveAssessmentMode}
+          onComplete={handleComplete}
+          onExitToChooser={() => setAssessmentMode(null)}
+          onSwitchTrack={handleSwitchTrack}
+        />
       )}
     </div>
   )

@@ -12,6 +12,7 @@ import { getPersonaStepContent } from '../../../data/personaWizardHints'
 import { PersonaHint } from './PersonaHint'
 import { LAYERS } from '../../Migrate/InfrastructureStack'
 import { softwareData } from '../../../data/migrateData'
+import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
 
 const CRYPTO_LIBRARY_OPTIONS = [
   'OpenSSL',
@@ -64,7 +65,10 @@ const VENDOR_OPTIONS = [
   },
 ]
 
-const Step11Infrastructure = () => {
+const Step11Infrastructure = ({
+  hideHeading = false,
+  hideHints = false,
+}: EmbeddedStepProps = {}) => {
   const {
     infrastructure,
     toggleInfrastructure,
@@ -231,9 +235,11 @@ const Step11Infrastructure = () => {
     <div className="space-y-4">
       {/* Header with sync toggle */}
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-xl font-bold text-foreground">
-          {stepContent.title ?? 'What infrastructure handles your cryptography?'}
-        </h3>
+        {!hideHeading && (
+          <h3 className="text-xl font-bold text-foreground">
+            {stepContent.title ?? 'What infrastructure handles your cryptography?'}
+          </h3>
+        )}
         <Button
           variant="ghost"
           type="button"
@@ -256,12 +262,14 @@ const Step11Infrastructure = () => {
         </Button>
       </div>
 
-      <p className="text-sm text-muted-foreground">
-        {stepContent.description ??
-          'Select the infrastructure layers that handle cryptography in your environment, then indicate how you manage crypto dependencies.'}
-      </p>
+      {!hideHeading && (
+        <p className="text-sm text-muted-foreground">
+          {stepContent.description ??
+            'Select the infrastructure layers that handle cryptography in your environment, then indicate how you manage crypto dependencies.'}
+        </p>
+      )}
 
-      <PersonaHint stepKey="infra" />
+      {!hideHints && <PersonaHint stepKey="infra" />}
 
       <div className="glass-panel p-4 border-l-4 border-l-warning">
         <div className="flex items-start gap-2">

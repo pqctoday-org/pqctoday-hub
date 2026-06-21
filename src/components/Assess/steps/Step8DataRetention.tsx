@@ -19,7 +19,9 @@ import clsx from 'clsx'
 
 import { PersonaHint } from './PersonaHint'
 
-const Step8DataRetention = () => {
+import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
+
+const Step8DataRetention = ({ hideHeading = false, hideHints = false }: EmbeddedStepProps = {}) => {
   const { dataRetention, toggleDataRetention, retentionUnknown, setRetentionUnknown, industry } =
     useAssessmentStore()
 
@@ -38,15 +40,19 @@ const Step8DataRetention = () => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-foreground">
-        How long must your data stay confidential?
-      </h3>
-      <p className="text-sm text-muted-foreground">
-        Select all categories that apply — <InlineTooltip term="HNDL">HNDL</InlineTooltip> risk is
-        assessed against the longest period.
-      </p>
+      {!hideHeading && (
+        <>
+          <h3 className="text-xl font-bold text-foreground">
+            How long must your data stay confidential?
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Select all categories that apply — <InlineTooltip term="HNDL">HNDL</InlineTooltip> risk
+            is assessed against the longest period.
+          </p>
+        </>
+      )}
 
-      <PersonaHint stepKey="retention" />
+      {!hideHints && <PersonaHint stepKey="retention" />}
 
       <div className="glass-panel p-4 border-l-4 border-l-warning mb-4">
         <div className="flex items-start gap-2">

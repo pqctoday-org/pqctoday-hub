@@ -26,6 +26,8 @@ import { getPersonaStepContent } from '../../../data/personaWizardHints'
 
 import { PersonaHint } from './PersonaHint'
 
+import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
+
 interface CryptoCategory {
   id: string
   label: string
@@ -118,7 +120,7 @@ function makeDisplayLabel(classical: string, keySize?: string): string {
   return `${classical} (${keySize})`
 }
 
-const Step3Crypto = () => {
+const Step3Crypto = ({ hideHeading = false, hideHints = false }: EmbeddedStepProps = {}) => {
   const {
     currentCrypto,
     currentCryptoCategories,
@@ -174,15 +176,19 @@ const Step3Crypto = () => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-foreground">
-        {stepContent.title ?? 'What cryptography do you use today?'}
-      </h3>
-      <p className="text-sm text-muted-foreground">
-        {stepContent.description ??
-          'Select the algorithm categories your systems use. Optionally narrow to specific algorithms within each category.'}
-      </p>
+      {!hideHeading && (
+        <>
+          <h3 className="text-xl font-bold text-foreground">
+            {stepContent.title ?? 'What cryptography do you use today?'}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {stepContent.description ??
+              'Select the algorithm categories your systems use. Optionally narrow to specific algorithms within each category.'}
+          </p>
+        </>
+      )}
 
-      <PersonaHint stepKey="crypto" />
+      {!hideHints && <PersonaHint stepKey="crypto" />}
 
       {/* Smart defaults escape hatch */}
       <Button

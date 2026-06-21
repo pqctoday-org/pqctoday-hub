@@ -16,8 +16,9 @@ import {
   getPersonaStepContent,
   getPersonaOptionDescriptions,
 } from '../../../data/personaWizardHints'
+import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
 
-const Step6Migration = () => {
+const Step6Migration = ({ hideHeading = false, hideHints = false }: EmbeddedStepProps = {}) => {
   const { migrationStatus, setMigrationStatus, migrationUnknown, setMigrationUnknown, industry } =
     useAssessmentStore()
   const persona = usePersonaStore((s) => s.selectedPersona)
@@ -49,20 +50,28 @@ const Step6Migration = () => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-foreground">
-        {stepContent.title ?? (
-          <>
-            What is your <InlineTooltip term="PQC">PQC</InlineTooltip> migration status?
-          </>
-        )}
-      </h3>
-      <p className="text-sm text-muted-foreground">
-        {stepContent.description ??
-          'Understanding where you are in the migration journey helps prioritize recommendations.'}
-      </p>
+      {!hideHeading && (
+        <>
+          <h3 className="text-xl font-bold text-foreground">
+            {stepContent.title ?? (
+              <>
+                What is your <InlineTooltip term="PQC">PQC</InlineTooltip> migration status?
+              </>
+            )}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {stepContent.description ??
+              'Understanding where you are in the migration journey helps prioritize recommendations.'}
+          </p>
+        </>
+      )}
 
-      <PersonaHint stepKey="migration" />
-      <WhyWeAskHint stepKey="migration" />
+      {!hideHints && (
+        <>
+          <PersonaHint stepKey="migration" />
+          <WhyWeAskHint stepKey="migration" />
+        </>
+      )}
 
       {/* Smart defaults escape hatch */}
       <Button
