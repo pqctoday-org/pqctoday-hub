@@ -29,8 +29,9 @@ export const MIGRATION_REFERENCES: MigrationReference[] = [
   {
     name: 'NIST IR 8547',
     organization: 'NIST',
-    url: 'https://csrc.nist.gov/pubs/ir/8547/final',
-    description: 'Transition to Post-Quantum Cryptography Standards (Final, March 2025)',
+    url: 'https://csrc.nist.gov/pubs/ir/8547/ipd',
+    description:
+      'Transition to Post-Quantum Cryptography Standards (Initial Public Draft, November 2024)',
     type: 'Government',
   },
   {

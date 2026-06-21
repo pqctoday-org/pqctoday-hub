@@ -2,6 +2,7 @@
 import React, { Suspense, useRef, type ComponentType } from 'react'
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { Dashboard } from './Dashboard'
+import { LearnRedesignView } from './redesign/LearnRedesignView'
 import { ArrowLeft } from 'lucide-react'
 import { GlossaryButton } from '../ui/GlossaryButton'
 import { UserManualButton } from '../ui/UserManualButton'
@@ -48,7 +49,10 @@ export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const contentRef = useRef<HTMLDivElement>(null)
-  const isDashboard = location.pathname === '/learn' || location.pathname === '/learn/'
+  const isDashboard =
+    location.pathname === '/learn' ||
+    location.pathname === '/learn/' ||
+    location.pathname === '/learn/legacy'
 
   const isEmbed = useIsEmbedded()
 
@@ -168,7 +172,9 @@ export const PKILearningView: React.FC = () => {
               }
             >
               <Routes>
-                <Route index element={<Dashboard />} />
+                <Route index element={<LearnRedesignView />} />
+                {/* Legacy five-mode dashboard, kept reachable during the redesign rollout. */}
+                <Route path="legacy" element={<Dashboard />} />
                 {/* Module routes — derived from the manifests (single source). */}
                 {[...MODULE_COMPONENTS].map(([path, Component]) => (
                   <Route key={path} path={path} element={<Component />} />
