@@ -175,6 +175,11 @@ const PatentsView = lazyWithRetry(() =>
     default: module.PatentsView,
   }))
 )
+const PatentsViewRedesign = lazyWithRetry(() =>
+  import('./components/Patents/redesign/PatentsViewRedesign').then((module) => ({
+    default: module.PatentsViewRedesign,
+  }))
+)
 const RevisionsView = lazyWithRetry(() =>
   import('./components/Revisions/RevisionsView').then((module) => ({
     default: module.RevisionsView,
@@ -426,6 +431,14 @@ function App() {
       />
       <Route
         path="patents"
+        element={
+          <ErrorBoundary>
+            <PatentsViewRedesign />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="patents/legacy"
         element={
           <ErrorBoundary>
             <PatentsView />
