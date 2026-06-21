@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { getIndustryIcon } from './threatsHelper'
+import { ArrowRight, BookmarkCheck, Bookmark } from 'lucide-react'
+import clsx from 'clsx'
 import { ThreatClassBadge, ShorTierBadge } from './ThreatClassBadges'
 import type { ThreatItem } from '../../data/threatsData'
 import { StatusBadge } from '../common/StatusBadge'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
-import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
-import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
-import { SourcePassagesDrawer } from '@/components/ui/SourcePassagesDrawer'
-import { useRevisions, byRecord } from '@/hooks/useRevisions'
-import { EndorseButton } from '../ui/EndorseButton'
-import { FlagButton } from '../ui/FlagButton'
-import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
-import clsx from 'clsx'
-import { BookmarkCheck, Bookmark } from 'lucide-react'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { Button } from '@/components/ui/button'
 
@@ -25,11 +16,69 @@ interface ThreatCardProps {
   dimmed?: boolean
 }
 
+/** Criticality → severity-bar / badge tone (icon+text, never colour alone). */
+function critTone(criticality: string): { bar: string; pill: string } {
+  const c = criticality.toLowerCase()
+  if (c === 'critical')
+    return {
+      bar: 'bg-status-error',
+      pill: 'bg-status-error/10 border-status-error/40 text-status-error',
+    }
+  if (c === 'high' || c === 'medium-high')
+    return {
+      bar: 'bg-status-warning',
+      pill: 'bg-status-warning/10 border-status-warning/40 text-status-warning',
+    }
+  if (c === 'medium')
+    return {
+      bar: 'bg-status-warning/60',
+      pill: 'bg-status-warning/10 border-status-warning/30 text-status-warning',
+    }
+  return {
+    bar: 'bg-muted-foreground/40',
+    pill: 'bg-muted/50 border-border text-muted-foreground',
+  }
+}
+
+const Chips = ({
+  values,
+  tone,
+  max = 2,
+}: {
+  values: string
+  tone: 'risk' | 'pqc'
+  max?: number
+}) => {
+  const list = values
+    .split(',')
+    .map((v) => v.trim())
+    .filter(Boolean)
+  const shown = list.slice(0, max)
+  const extra = list.length - shown.length
+  return (
+    <>
+      {shown.map((c, i) => (
+        <span
+          key={i}
+          className={clsx(
+            'whitespace-nowrap rounded-sm border px-1.5 py-0.5',
+            tone === 'risk'
+              ? 'border-status-error/25 bg-status-error/5 text-status-error/90'
+              : 'border-status-success/25 bg-status-success/5 text-status-success/90'
+          )}
+        >
+          {c}
+        </span>
+      ))}
+      {extra > 0 && <span className="self-center text-muted-foreground/60">+{extra}</span>}
+    </>
+  )
+}
+
 export const ThreatCard = ({ item, index = 0, onClick, dimmed = false }: ThreatCardProps) => {
   const isBookmarked = useBookmarkStore((s) => s.myThreats.includes(item.threatId))
   const toggleMyThreat = useBookmarkStore((s) => s.toggleMyThreat)
-  const { revisions } = useRevisions()
-  const [drilldownOpen, setDrilldownOpen] = useState(false)
+  const tone = critTone(item.criticality)
 
   return (
     <motion.article
@@ -39,7 +88,7 @@ export const ThreatCard = ({ item, index = 0, onClick, dimmed = false }: ThreatC
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, delay: index * 0.03 }}
       className={clsx(
-        'glass-panel p-5 flex flex-col h-full hover:border-secondary/50 transition-all bg-card/50 relative cursor-pointer scroll-mt-20',
+        'group glass-panel relative flex h-full cursor-pointer overflow-hidden p-0 scroll-mt-20 transition-all hover:border-secondary/50',
         dimmed && 'opacity-40 hover:opacity-100'
       )}
       onClick={() => onClick?.(item)}
@@ -52,157 +101,71 @@ export const ThreatCard = ({ item, index = 0, onClick, dimmed = false }: ThreatC
         }
       }}
     >
-      {/* Top row: layer badge + status */}
-      <div className="flex items-center gap-2 mb-3">
-        <div
-          className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-xs"
-          title={item.industry}
-        >
-          {getIndustryIcon(item.industry, 12)}
-          <span className="hidden sm:inline">{item.industry}</span>
-        </div>
+      {/* severity bar */}
+      <span className={clsx('w-1 shrink-0', tone.bar)} aria-hidden="true" />
 
-        <div className="ml-auto flex items-center gap-2">
-          <Button
-            variant="ghost"
-            onClick={(e) => {
-              e.stopPropagation()
-              toggleMyThreat(item.threatId)
-            }}
-            className={`p-1 rounded transition-colors ${isBookmarked ? 'text-primary hover:text-primary/80' : 'text-muted-foreground/40 hover:text-primary'}`}
-            aria-label={isBookmarked ? 'Remove from My Threats' : 'Add to My Threats'}
-          >
-            {isBookmarked ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
-          </Button>
-          {item.status && <StatusBadge status={item.status} size="sm" />}
+      <div className="flex min-w-0 flex-1 flex-col gap-2 px-4 py-3">
+        {/* top line: criticality · id · status — right: class/shor/trust + bookmark */}
+        <div className="flex flex-wrap items-center gap-2">
           <span
             className={clsx(
-              'px-2 py-0.5 rounded text-xs font-bold border',
-              item.criticality.toLowerCase() === 'critical'
-                ? 'bg-status-error text-status-error border-status-error'
-                : item.criticality.toLowerCase() === 'high'
-                  ? 'bg-status-error text-status-error border-status-error'
-                  : 'bg-primary/10 text-primary border-primary/20'
+              'inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide',
+              tone.pill
             )}
           >
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />
             {item.criticality}
           </span>
-        </div>
-      </div>
-
-      {/* Threat title & id */}
-      <div className="flex items-center gap-2 mb-2">
-        <h3 className="text-sm font-semibold text-foreground leading-snug font-mono">
-          {item.threatId}
-        </h3>
-        <TrustScoreBadge resourceType="threats" resourceId={item.threatId} size="sm" />
-        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-        <span onClick={(e) => e.stopPropagation()}>
-          <ReviewedBadge
-            domain="threats"
-            entityId={item.threatId}
-            showUnreviewed={false}
-            onOpenDrilldown={() => setDrilldownOpen(true)}
-          />
-        </span>
-      </div>
-
-      {/* Derived dimensions: threat class + Shor tier — Threats #2/#4 */}
-      <div className="flex flex-wrap gap-1 mb-2">
-        <ThreatClassBadge threat={item} />
-        <ShorTierBadge threat={item} />
-      </div>
-
-      <p className="text-xs text-muted-foreground mb-4 line-clamp-3 leading-relaxed min-h-[4.5em]">
-        {item.description}
-      </p>
-
-      {/* Crypto & PQC Replacements block */}
-      <div className="flex flex-col gap-2 mt-auto text-xs font-mono">
-        <div className="flex flex-wrap gap-1">
-          <span className="text-muted-foreground/50 mr-1 text-[10px] uppercase font-sans tracking-wide self-center">
-            At Risk:
-          </span>
-          {item.cryptoAtRisk.split(',').map((c, i) => (
-            <span
-              key={i}
-              className="px-1.5 py-0.5 rounded-sm bg-muted/50 border border-border/50 text-muted-foreground whitespace-nowrap"
+          <span className="font-mono text-[11px] text-muted-foreground">{item.threatId}</span>
+          {item.status && <StatusBadge status={item.status} size="sm" />}
+          <div className="ml-auto flex items-center gap-1.5">
+            <ThreatClassBadge threat={item} />
+            <ShorTierBadge threat={item} />
+            <TrustScoreBadge resourceType="threats" resourceId={item.threatId} size="sm" />
+            <Button
+              variant="ghost"
+              onClick={(e) => {
+                e.stopPropagation()
+                toggleMyThreat(item.threatId)
+              }}
+              className={clsx(
+                'h-auto rounded p-1 transition-colors',
+                isBookmarked
+                  ? 'text-status-warning hover:text-status-warning/80'
+                  : 'text-muted-foreground/40 hover:text-status-warning'
+              )}
+              aria-label={isBookmarked ? 'Remove from My Threats' : 'Add to My Threats'}
             >
-              {c.trim()}
-            </span>
-          ))}
+              {isBookmarked ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
+            </Button>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-1">
-          <span className="text-status-success/50 mr-1 text-[10px] uppercase font-sans tracking-wide self-center">
-            PQC Repl:
+
+        {/* description (2-line clamp) */}
+        <p className="line-clamp-2 text-[12.5px] leading-snug text-foreground/90">
+          {item.description}
+        </p>
+
+        {/* footer: at-risk crypto → PQC replacement + open dossier */}
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-1">
+          <div className="flex min-w-0 flex-wrap items-center gap-1 font-mono text-[11px]">
+            <span className="mr-0.5 font-sans text-[10px] uppercase tracking-wide text-muted-foreground/70">
+              At risk
+            </span>
+            <Chips values={item.cryptoAtRisk} tone="risk" />
+            <ArrowRight
+              size={12}
+              className="mx-0.5 shrink-0 text-muted-foreground/50"
+              aria-hidden="true"
+            />
+            <Chips values={item.pqcReplacement} tone="pqc" />
+          </div>
+          <span className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-primary">
+            Open dossier
+            <ArrowRight size={12} aria-hidden="true" />
           </span>
-          {item.pqcReplacement.split(',').map((c, i) => (
-            <span
-              key={i}
-              className="px-1.5 py-0.5 rounded-sm bg-status-success/10 border border-status-success/20 text-status-success/80 whitespace-nowrap"
-            >
-              {c.trim()}
-            </span>
-          ))}
         </div>
       </div>
-
-      <SourcePassagesDrawer chunkId={`threat-${item.threatId}`} className="mb-3" />
-
-      {/* Action Bar */}
-      <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
-        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-        <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-          <EndorseButton
-            endorseUrl={buildEndorsementUrl({
-              category: 'threat-endorsement',
-              title: `Endorse: ${item.threatId} — ${item.industry}`,
-              resourceType: 'Threat Assessment',
-              resourceId: item.threatId,
-              resourceDetails: [
-                `**Threat ID:** ${item.threatId}`,
-                `**Industry:** ${item.industry}`,
-                `**Criticality:** ${item.criticality}`,
-                `**At-Risk Crypto:** ${item.cryptoAtRisk}`,
-                `**PQC Mitigation:** ${item.pqcReplacement}`,
-              ].join('\n'),
-              pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
-            })}
-            resourceLabel="Endorse"
-            resourceType="Threat"
-          />
-          <FlagButton
-            flagUrl={buildFlagUrl({
-              category: 'threat-endorsement',
-              title: `Flag: ${item.threatId} — ${item.industry}`,
-              resourceType: 'Threat Assessment',
-              resourceId: item.threatId,
-              resourceDetails: [
-                `**Threat ID:** ${item.threatId}`,
-                `**Industry:** ${item.industry}`,
-                `**Criticality:** ${item.criticality}`,
-                `**At-Risk Crypto:** ${item.cryptoAtRisk}`,
-                `**PQC Mitigation:** ${item.pqcReplacement}`,
-              ].join('\n'),
-              pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
-            })}
-            resourceLabel="Flag"
-            resourceType="Threat"
-          />
-        </div>
-      </div>
-      {drilldownOpen && (
-        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-        <div onClick={(e) => e.stopPropagation()}>
-          <RevisionDrilldownPanel
-            domain="threats"
-            entityId={item.threatId}
-            entityLabel={item.threatId}
-            revisions={byRecord(revisions, 'threats', item.threatId)}
-            onClose={() => setDrilldownOpen(false)}
-          />
-        </div>
-      )}
     </motion.article>
   )
 }
