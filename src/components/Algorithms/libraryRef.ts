@@ -19,6 +19,17 @@ function normalizeRefKey(id: string): string {
   return s.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
 }
 
+// Explicit aliases for specs whose matrix id and Library referenceId diverge
+// too much for the normalizer (different vendor/version naming). Each target is
+// verified to exist in the loaded Library.
+const SPEC_ALIASES: Record<string, string> = {
+  'PKCS11-v3.2-CS01': 'PKCS11-V32-OASIS',
+  'KMIP-v3.0-CSD01': 'KMIP-V2-1-OASIS',
+  'Signal-PQXDH-Rev3': 'Signal-PQXDH-Spec',
+  'UEFI-2.10': 'UEFI-SPEC-2.10-SecureBoot',
+  '3GPP-TR-33.841': '3GPP-PQC-Study-2025',
+}
+
 // Build (once) a normalized-key → exact-referenceId index over the whole
 // Library tree (roots + children).
 const REF_BY_KEY = new Map<string, string>()
@@ -31,11 +42,14 @@ libraryData.forEach(indexItem)
 
 /** The exact Library referenceId for a matrix doc id, or null if not present. */
 export function resolveLibraryRef(docId: string): string | null {
-  return REF_BY_KEY.get(normalizeRefKey(docId)) ?? null
+  // eslint-disable-next-line security/detect-object-injection
+  return SPEC_ALIASES[docId] ?? REF_BY_KEY.get(normalizeRefKey(docId)) ?? null
 }
 
-/** In-app Library deep-link for a doc id, or null when it isn't in the Library. */
-export function libraryHref(docId: string): string | null {
+/** In-app Library deep-link for a doc id. Always stays in the app: links to the
+ *  exact entry when we have one, otherwise to a Library search for the id. The
+ *  external (RFC/datatracker) link lives inside the Library entry itself. */
+export function libraryHref(docId: string): string {
   const ref = resolveLibraryRef(docId)
-  return ref ? `/library?ref=${encodeURIComponent(ref)}` : null
+  return ref ? `/library?ref=${encodeURIComponent(ref)}` : `/library?q=${encodeURIComponent(docId)}`
 }

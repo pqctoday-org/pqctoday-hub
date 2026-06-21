@@ -1,0 +1,345 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
+// AssessViewRedesign — the rebuilt /assess page (handoff: design_handoff_assess_redesign).
+//
+// Pass 1 scope: the new outcome-framed track chooser + the always-visible control
+// deck (Fast/Full toggle), wrapping the existing AssessWizard body. All legacy
+// behaviours are preserved verbatim from AssessView (deep links ?reset/?mode/
+// ?prefs/?phase, persona auto-skip, resume/complete/phase banners, persona
+// seeding). The step-map rail + assist strip + review/done screens land in later
+// slices; the new rail/pane will replace <AssessWizard> here.
+//
+// Wired at /assess/redesign — live /assess still renders the legacy AssessView
+// until the flip is approved.
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import {
+  ClipboardCheck,
+  RotateCcw,
+  PlayCircle,
+  FileBarChart,
+  X,
+  LayoutDashboard,
+} from 'lucide-react'
+import { AssessWizard } from '../AssessWizard'
+import { useAssessmentStore } from '../../../store/useAssessmentStore'
+import type { AssessmentMode } from '../../../store/useAssessmentStore'
+import { metadata } from '../../../data/industryAssessConfig'
+import { usePhaseFilter } from '../../../hooks/usePhaseFilter'
+import { FRAMEWORK_PHASES } from '../../../data/frameworkPhases'
+import { ASSESS_STEP_MAPPINGS } from '../../../data/assessStepToCswp39'
+import { usePersonaStore } from '../../../store/usePersonaStore'
+import { PERSONA_NAV_PATHS, PERSONA_RECOMMENDED_MODE } from '../../../data/personaConfig'
+import { useSeedAssessFromPersona } from '../../../hooks/assessment/useSeedAssessFromPersona'
+import { Button } from '../../ui/button'
+import { PageHeader } from '../../common/PageHeader'
+import { WorkflowBreadcrumb } from '../../shared/WorkflowBreadcrumb'
+import { AssessTrackChooser } from './AssessTrackChooser'
+import { AssessControlDeck } from './AssessControlDeck'
+import { TRACK_INFO } from './assessFlowModel'
+
+// Legacy-order step labels (the meaning of store.currentStep). Used by the
+// resume banner + the phase overlay, identical to AssessView.
+const STEP_LABELS = [
+  'Industry',
+  'Country',
+  'Crypto',
+  'Sensitivity',
+  'Compliance',
+  'Migration',
+  'Use Cases',
+  'Retention',
+  'Credential',
+  'Scale',
+  'Agility',
+  'Infra',
+  'Timeline',
+]
+
+const ASSESS_STEP_LABELS: { key: string; label: string }[] = Object.keys(ASSESS_STEP_MAPPINGS).map(
+  (key, i) => ({ key, label: STEP_LABELS[i] ?? key })
+)
+
+export const AssessViewRedesign: React.FC = () => {
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const {
+    assessmentStatus,
+    markComplete,
+    reset,
+    currentStep,
+    setStep,
+    lastWizardUpdate,
+    assessmentMode,
+    setAssessmentMode,
+  } = useAssessmentStore()
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const recommendedMode = selectedPersona ? PERSONA_RECOMMENDED_MODE[selectedPersona] : null
+  const [showResumeBanner, setShowResumeBanner] = useState(false)
+
+  // Migration-Program phase overlay (additive), identical to AssessView.
+  const { activePhase, matches } = usePhaseFilter()
+  const phase = activePhase ? FRAMEWORK_PHASES[activePhase] : null
+  const phaseSteps = activePhase
+    ? ASSESS_STEP_LABELS.filter(({ key }) =>
+        // eslint-disable-next-line security/detect-object-injection
+        matches(ASSESS_STEP_MAPPINGS[key].frameworkPhase)
+      )
+    : []
+
+  const clearPhase = () => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('phase')
+        return next
+      },
+      { replace: true }
+    )
+  }
+
+  // ?reset=1 — clear prior state (workshop deep-link).
+  useEffect(() => {
+    if (searchParams.get('reset') === '1') {
+      reset()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
+
+  // ?mode=quick|comprehensive — force track.
+  useEffect(() => {
+    const m = searchParams.get('mode')
+    if (m === 'quick' || m === 'comprehensive') {
+      if (assessmentMode !== m) setAssessmentMode(m)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
+
+  // Persona-aware auto-skip of the chooser — render-time derivation (no effect),
+  // identical to AssessView. Respects ?mode / ?prefs=off / prior mode.
+  const personaAutoSkipApplies =
+    !assessmentMode &&
+    !!recommendedMode &&
+    searchParams.get('prefs') !== 'off' &&
+    !searchParams.get('mode')
+  const effectiveAssessmentMode: AssessmentMode | null =
+    assessmentMode ?? (personaAutoSkipApplies ? recommendedMode : null)
+
+  const personaSeesBusinessCenter = selectedPersona
+    ? (PERSONA_NAV_PATHS[selectedPersona]?.includes('/business') ?? false)
+    : false
+
+  useSeedAssessFromPersona()
+
+  const handleStart = (mode: AssessmentMode) => {
+    setAssessmentMode(mode)
+  }
+
+  // Switch track from the control deck. Clamp currentStep so a full→fast switch
+  // never lands past the shorter track's last step (the legacy wizard body does
+  // not clamp on its own).
+  const handleSwitchTrack = (mode: AssessmentMode) => {
+    if (mode === effectiveAssessmentMode) return
+    setAssessmentMode(mode)
+    const total = TRACK_INFO[mode].count
+    if (currentStep > total - 1) setStep(Math.max(0, total - 1))
+  }
+
+  const handleComplete = () => {
+    markComplete()
+    navigate('/report')
+  }
+
+  // Already complete + untouched → report. (Interim: the embedded wizard
+  // navigates to /report on completion, so this only catches return visits.)
+  useEffect(() => {
+    if (assessmentStatus === 'complete' && currentStep === 0) {
+      navigate('/report', { replace: true })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Resume banner for a saved in-progress assessment (<24h).
+  useEffect(() => {
+    if (assessmentStatus === 'complete') return
+    const state = useAssessmentStore.getState()
+    if (state.assessmentMode !== null && state.industry && state.lastWizardUpdate) {
+      const ageMs = Date.now() - new Date(state.lastWizardUpdate).getTime()
+      if (ageMs < 24 * 60 * 60 * 1000) {
+        setShowResumeBanner(true)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const wizardTotal = effectiveAssessmentMode ? TRACK_INFO[effectiveAssessmentMode].count : 0
+  const wizardContext =
+    wizardTotal > 0 ? `Step ${Math.min(currentStep + 1, wizardTotal)} of ${wizardTotal}` : ''
+
+  // eslint-disable-next-line security/detect-object-injection
+  const resumeStepLabel = STEP_LABELS[currentStep] ?? ''
+
+  return (
+    <div className="animate-fade-in">
+      <WorkflowBreadcrumb current="assess" />
+      <PageHeader
+        icon={ClipboardCheck}
+        pageId="assess"
+        title="PQC Risk Assessment"
+        description="Answer a few questions to get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
+        dataSource={
+          metadata
+            ? `${metadata.filename} • Updated: ${metadata.lastUpdate.toLocaleDateString()}`
+            : undefined
+        }
+        shareTitle="PQC Risk Assessment — Post-Quantum Cryptography Migration Tool"
+        shareText="Get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
+      />
+
+      {/* Phase overlay banner (additive). */}
+      {phase && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6"
+          data-testid="assess-phase-banner"
+        >
+          <div className="glass-panel border-l-4 border-l-primary p-4">
+            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  {phase.number !== null ? `Phase ${phase.number} — ` : ''}
+                  {phase.name}
+                </p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{phase.tagline}</p>
+                {phaseSteps.length > 0 && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Assess steps for this phase:{' '}
+                    <span className="font-medium text-foreground/80">
+                      {phaseSteps.map((s) => s.label).join(' · ')}
+                    </span>
+                  </p>
+                )}
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearPhase}
+                className="shrink-0 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+                data-testid="assess-clear-phase"
+              >
+                <X size={12} />
+                Clear phase
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Already-complete banner. */}
+      {assessmentStatus === 'complete' && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6"
+        >
+          <div className="glass-panel border-l-4 border-l-success p-4">
+            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+              <p className="text-sm text-foreground">
+                Your assessment is complete. View your personalized report or open the Business
+                Center to plan next steps.
+              </p>
+              <div className="flex shrink-0 items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/report')}
+                  className="gap-1.5 text-xs font-semibold"
+                >
+                  <FileBarChart size={12} />
+                  View Report
+                </Button>
+                {personaSeesBusinessCenter && (
+                  <Button
+                    variant="gradient"
+                    size="sm"
+                    onClick={() => navigate('/business')}
+                    className="gap-1.5 text-xs font-semibold"
+                  >
+                    <LayoutDashboard size={12} />
+                    Command Center
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Resume banner — Continue-first hierarchy. */}
+      {showResumeBanner && lastWizardUpdate && assessmentStatus !== 'complete' && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6"
+        >
+          <div className="glass-panel border-l-4 border-l-primary p-4">
+            <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+              <div>
+                <p className="text-sm font-semibold text-foreground">Resume saved assessment?</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  You left off at step {currentStep + 1} ({resumeStepLabel}) on{' '}
+                  {new Date(lastWizardUpdate).toLocaleDateString(undefined, {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  })}
+                  .
+                </p>
+              </div>
+              <div className="flex w-full shrink-0 items-center gap-2 sm:w-auto">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowResumeBanner(false)}
+                  className="gap-1.5 text-xs font-semibold"
+                >
+                  <PlayCircle size={12} />
+                  Continue
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    reset()
+                    setShowResumeBanner(false)
+                  }}
+                  className="gap-1.5 text-xs text-muted-foreground hover:text-destructive"
+                >
+                  <RotateCcw size={12} />
+                  Start over
+                </Button>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {!effectiveAssessmentMode ? (
+        <AssessTrackChooser onStart={handleStart} recommendedMode={recommendedMode} />
+      ) : (
+        <>
+          <AssessControlDeck
+            mode={effectiveAssessmentMode}
+            onSetMode={handleSwitchTrack}
+            context={wizardContext}
+            showUpgrade={effectiveAssessmentMode === 'quick'}
+          />
+          <AssessWizard onComplete={handleComplete} mode={effectiveAssessmentMode} />
+        </>
+      )}
+    </div>
+  )
+}
