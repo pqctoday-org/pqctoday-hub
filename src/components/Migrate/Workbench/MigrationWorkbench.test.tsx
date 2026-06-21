@@ -63,6 +63,13 @@ describe('MigrationWorkbench (integration)', () => {
     expect(screen.getByRole('button', { name: /Export plan \+ CBOM/i })).toBeInTheDocument()
   })
 
+  it('vendor roadmaps tab lists vendors with roadmaps', () => {
+    renderWorkbench()
+    fireEvent.click(screen.getByRole('button', { name: /Vendor roadmaps/i }))
+    expect(screen.getByText(/vendors with a published\s+PQC roadmap/i)).toBeInTheDocument()
+    expect(screen.getByLabelText('Filter vendor roadmaps')).toBeInTheDocument()
+  })
+
   it('empty plan tab prompts to add assets', () => {
     useMigrateSelectionStore.setState({ plan: [], tab: 'plan' })
     renderWorkbench()

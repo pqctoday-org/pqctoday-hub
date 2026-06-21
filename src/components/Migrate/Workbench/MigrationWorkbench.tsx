@@ -7,7 +7,7 @@
 
 import { useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { TrendingUp, ArrowRightLeft, BarChart3 } from 'lucide-react'
+import { TrendingUp, ArrowRightLeft, BarChart3, Map as MapIcon } from 'lucide-react'
 import { PageHeader } from '../../common/PageHeader'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useMigrateSelectionStore, type MigrateTab } from '@/store/useMigrateSelectionStore'
@@ -16,11 +16,15 @@ import { useMigrationPlan } from './useMigrationPlan'
 import { PostureCommandCenter } from './PostureCommandCenter'
 import { ReplaceTab } from './ReplaceTab'
 import { PlanTab } from './PlanTab'
+import { RoadmapsTab } from './RoadmapsTab'
 
 interface MigrationWorkbenchProps {
   /** When embedded in the Simulation, hide the PageHeader and don't touch the URL. */
   embedded?: boolean
 }
+
+const isTab = (v: string | null): v is MigrateTab =>
+  v === 'replace' || v === 'plan' || v === 'roadmaps'
 
 export function MigrationWorkbench({ embedded = false }: MigrationWorkbenchProps) {
   const persona = usePersonaStore((s) => s.selectedPersona)
@@ -32,17 +36,11 @@ export function MigrationWorkbench({ embedded = false }: MigrationWorkbenchProps
 
   // URL is the source of truth when standalone; store when embedded.
   const urlTab = searchParams.get('tab')
-  const activeTab: MigrateTab = embedded
-    ? tab
-    : urlTab === 'plan'
-      ? 'plan'
-      : urlTab === 'replace'
-        ? 'replace'
-        : tab
+  const activeTab: MigrateTab = embedded ? tab : isTab(urlTab) ? urlTab : tab
 
   const setTab = useCallback(
     (next: string) => {
-      const t: MigrateTab = next === 'plan' ? 'plan' : 'replace'
+      const t: MigrateTab = isTab(next) ? next : 'replace'
       setTabStore(t)
       if (!embedded) {
         const sp = new URLSearchParams(searchParams)
@@ -82,6 +80,10 @@ export function MigrationWorkbench({ embedded = false }: MigrationWorkbenchProps
               </span>
             )}
           </TabsTrigger>
+          <TabsTrigger value="roadmaps">
+            <MapIcon size={15} className="mr-1.5" aria-hidden />
+            Vendor roadmaps
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="replace" className="mt-4">
@@ -89,6 +91,9 @@ export function MigrationWorkbench({ embedded = false }: MigrationWorkbenchProps
         </TabsContent>
         <TabsContent value="plan" className="mt-4">
           <PlanTab posture={posture} onGoToReplace={() => setTab('replace')} />
+        </TabsContent>
+        <TabsContent value="roadmaps" className="mt-4">
+          <RoadmapsTab />
         </TabsContent>
       </Tabs>
     </div>
