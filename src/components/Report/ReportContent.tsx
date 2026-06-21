@@ -48,7 +48,8 @@ import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThrea
 import { ReportCswp39Nav } from './ReportCswp39Nav'
 import { ReportLockedOverlay } from './redesign/ReportLockedOverlay';
 import { KpiEmptyState, KpiPreviewSkeleton } from './redesign/ReportKpiStates';
-import { ReportVerdictBlock } from './redesign/ReportVerdictBlock'
+import { ReportVerdictBlock } from './redesign/ReportVerdictBlock';
+import { ReportUpgradeNudge } from './redesign/ReportUpgradeNudge'
 import { useThreatsData } from '../../hooks/useThreatsData'
 import { GlossaryAutoWrap } from '../PKILearning/common/GlossaryAutoWrap'
 import { MigrationRoadmap } from './MigrationRoadmap'
@@ -762,6 +763,10 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                     {/* Persona verdict (redesign) — re-leads the result for the active role,
                       above the "Do this first" hero. */}
                     <ReportVerdictBlock persona={selectedPersona} />
+
+                    {/* Fast-track upgrade nudge (redesign) — quick assessments only; ties the
+                      locked sections to one clear unlock path. */}
+                    {!result.categoryScores && <ReportUpgradeNudge />}
 
                     {/* Top-3 actions hero (P15-P1-02) — teases the highest-priority
                       recommended actions before the full report scroll. Hidden in print. */}
