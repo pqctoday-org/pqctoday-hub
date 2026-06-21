@@ -97,8 +97,8 @@ export const AssessQuestionPane: React.FC<AssessQuestionPaneProps> = ({
         )}
       </div>
 
-      {/* Footer control deck */}
-      <div className="glass-panel flex flex-wrap items-center gap-3 px-4 py-3">
+      {/* Footer control deck — sticky to the bottom on mobile for thumb reach. */}
+      <div className="glass-panel sticky bottom-0 z-10 flex flex-wrap items-center gap-3 px-4 py-3 lg:static">
         <Button
           variant="outline"
           onClick={() => (stepIdx === 0 ? onExitToChooser() : flow.back())}
