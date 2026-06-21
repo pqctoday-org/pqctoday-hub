@@ -2,7 +2,11 @@
 import { test, expect } from '@playwright/test'
 
 /**
- * Persona-overwhelm audit acceptance — /assess page.
+ * Persona-overwhelm audit acceptance — /assess/legacy page.
+ *
+ * NOTE: the redesign at the default /assess replaced the ModeSelector with the
+ * outcome chooser + Fast/Full toggle, so these ModeSelector/Switch-mode
+ * assertions now exercise the preserved legacy page at /assess/legacy.
  *
  * Goal (per audit `pqctoday-priv/docs/platform/ux/page-audits/
  * 2026-05-22-persona-overwhelm/assess.md`): PERSONA_RECOMMENDED_MODE was
@@ -48,7 +52,7 @@ test('executive persona auto-skips ModeSelector and lands in Quick wizard', asyn
     )
   })
 
-  await page.goto('/assess')
+  await page.goto('/assess/legacy')
 
   // The "Switch mode" link with our testid is the sentinel — present only
   // when AssessWizard is rendered (i.e. assessmentMode has been set).
@@ -81,7 +85,7 @@ test('Switch mode link returns the user to ModeSelector', async ({ page }) => {
     )
   })
 
-  await page.goto('/assess')
+  await page.goto('/assess/legacy')
 
   const switchModeLink = page.getByTestId('assess-switch-mode')
   await expect(switchModeLink).toBeVisible({ timeout: 15000 })
@@ -113,7 +117,7 @@ test('?prefs=off keeps ModeSelector visible for executive', async ({ page }) => 
     )
   })
 
-  await page.goto('/assess?prefs=off')
+  await page.goto('/assess/legacy?prefs=off')
 
   // With ?prefs=off the persona auto-skip is bypassed; ModeSelector renders.
   await expect(page.locator('[data-workshop-target="assess-mode-quick"]')).toBeVisible({

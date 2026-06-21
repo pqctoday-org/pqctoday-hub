@@ -370,15 +370,15 @@ function App() {
         path="assess"
         element={
           <ErrorBoundary>
-            <AssessView />
+            <AssessViewRedesign />
           </ErrorBoundary>
         }
       />
       <Route
-        path="assess/redesign"
+        path="assess/legacy"
         element={
           <ErrorBoundary>
-            <AssessViewRedesign />
+            <AssessView />
           </ErrorBoundary>
         }
       />

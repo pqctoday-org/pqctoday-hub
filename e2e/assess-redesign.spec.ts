@@ -2,8 +2,9 @@
 import { test, expect } from '@playwright/test'
 
 /**
- * Assess redesign (/assess/redesign) — outcome chooser → two-pane wizard, plus
- * the no-auto-jump regression lock on BOTH the live page and the redesign:
+ * Assess redesign — now the default /assess (the old page lives at
+ * /assess/legacy). Covers the outcome chooser → two-pane wizard, plus the
+ * no-auto-jump regression lock on BOTH the default and the legacy page:
  * arriving with a completed assessment must NOT silently redirect to /report;
  * the user decides (edit the answers, or use the "View Report" banner).
  */
@@ -71,7 +72,7 @@ function injectCompleteAssessment() {
 test.describe('Assess redesign — happy path', () => {
   test('outcome chooser previews report sections and starts the wizard', async ({ page }) => {
     // ?prefs=off forces the chooser even if a persona recommends a track.
-    await page.goto('/assess/redesign?prefs=off')
+    await page.goto('/assess?prefs=off')
 
     await expect(page.getByRole('button', { name: /start full track/i })).toBeVisible({
       timeout: 15000,
@@ -90,7 +91,7 @@ test.describe('Assess redesign — happy path', () => {
 
   test('answering a required question advances to the next', async ({ page }) => {
     // ?mode=comprehensive sets the track and skips the chooser.
-    await page.goto('/assess/redesign?mode=comprehensive')
+    await page.goto('/assess?mode=comprehensive')
 
     await expect(page.getByRole('heading', { name: /what industry are you in/i })).toBeVisible({
       timeout: 15000,
@@ -103,7 +104,9 @@ test.describe('Assess redesign — happy path', () => {
 })
 
 test.describe('Assess — no auto-jump to report for a completed assessment', () => {
-  test('live /assess stays on the page and offers "View Report"', async ({ page }) => {
+  test('default /assess (redesign) stays on the page and offers "View Report"', async ({
+    page,
+  }) => {
     await page.addInitScript(injectCompleteAssessment)
 
     await page.goto('/assess')
@@ -115,13 +118,13 @@ test.describe('Assess — no auto-jump to report for a completed assessment', ()
     await expect(page.getByRole('button', { name: /view report/i }).first()).toBeVisible()
   })
 
-  test('redesign /assess/redesign stays on the page too', async ({ page }) => {
+  test('legacy /assess/legacy (old page) stays on the page too', async ({ page }) => {
     await page.addInitScript(injectCompleteAssessment)
 
-    await page.goto('/assess/redesign')
+    await page.goto('/assess/legacy')
 
     await expect(page.getByText(/your assessment is complete/i)).toBeVisible({ timeout: 15000 })
     await expect(page).not.toHaveURL(/\/report/)
-    await expect(page).toHaveURL(/\/assess\/redesign/)
+    await expect(page).toHaveURL(/\/assess\/legacy/)
   })
 })
