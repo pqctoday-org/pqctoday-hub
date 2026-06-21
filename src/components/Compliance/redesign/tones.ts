@@ -89,6 +89,7 @@ export const TONES: Record<Tone, ToneClasses> = {
  * `{color}1C / {color} / {color}45` formula, expressed in semantic tokens.
  */
 export function pillClasses(tone: Tone): string {
+  // eslint-disable-next-line security/detect-object-injection
   const t = TONES[tone]
   return `inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10.5px] font-semibold ${t.text} ${t.softBg} ${t.border}`
 }

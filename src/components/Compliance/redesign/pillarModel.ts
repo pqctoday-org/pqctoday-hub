@@ -105,6 +105,7 @@ const BODY_TYPE_LABEL: Record<BodyType, string> = {
 }
 
 export function bodyTypeLabel(bodyType: BodyType): string {
+  // eslint-disable-next-line security/detect-object-injection
   return BODY_TYPE_LABEL[bodyType]
 }
 

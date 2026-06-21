@@ -1,36 +1,29 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { Link, useSearchParams } from 'react-router-dom'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
+import { useSearchParams } from 'react-router-dom'
 import { ComplianceTable } from './ComplianceTable'
-import { ComplianceLandscape, type FrameworkSortOption } from './ComplianceLandscape'
+import { type FrameworkSortOption } from './ComplianceLandscape'
 import { DeadlineTimelineGate } from './DeadlineTimelineGate'
 import { AboutThisPageStrip } from './AboutThisPageStrip'
 import { PersonaHintCta } from './PersonaHintCta'
-import { CrossTabSearchHint, type LandscapeTab } from './CrossTabSearchHint'
 import { useComplianceRefresh } from './services'
 import {
   ShieldCheck,
   GlobeLock,
   Info,
-  ExternalLink,
   Workflow,
   ArrowLeft,
   Sparkles,
   X,
   Layers,
 } from 'lucide-react'
-import { CSWP39Explorer } from './CSWP39Explorer'
 import {
   TrustTierFilter,
   useTrustTierFilter,
   matchesTrustTierFilter,
 } from '../common/TrustTierFilter'
-import { MoreTabsMenu } from './MoreTabsMenu'
 import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
-import { LandscapeTab as LandscapeTabBody } from './LandscapeTab'
-import { LandscapeTypeFacet, type LandscapeType } from './LandscapeTypeFacet'
 import { ExecutiveTimelineView } from './views/ExecutiveTimelineView'
 import { ArchitectStandardsView } from './views/ArchitectStandardsView'
 import { ResearcherEvidenceView } from './views/ResearcherEvidenceView'
@@ -47,9 +40,8 @@ import { FrameworkDetailPopover } from '@/components/Compliance/FrameworkDetailP
 import type { LibraryItem } from '@/data/libraryData'
 import type { ThreatData } from '@/data/threatsData'
 import type { TimelineEvent } from '@/types/timeline'
-import type { ComplianceFramework, RegionBloc, DeadlinePhase } from '@/data/complianceData'
+import type { ComplianceFramework } from '@/data/complianceData'
 import { useApplicability } from '@/hooks/useApplicability'
-import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { logComplianceFilter } from '../../utils/analytics'
 import { PageHeader } from '../common/PageHeader'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
@@ -62,29 +54,50 @@ import { useHistoryStore } from '@/store/useHistoryStore'
 import { RoleFilter } from '../common/RoleFilter'
 import { normalizeCountry } from '@/utils/applicabilityEngine'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
-import { useComplianceUrlState, type MobileSection } from './useComplianceUrlState'
+import { useComplianceUrlState, isLandscapeTab, type MobileSection } from './useComplianceUrlState'
 import { PreviewBanner } from '../common/PreviewBanner'
-import {
-  getComplianceTabOrder,
-  getComplianceOverflowTabs,
-  type ComplianceTabId,
-} from '@/data/personaConfig'
-import { BookOpen, Award } from 'lucide-react'
-
-/** Tab metadata for the persona-aware TabsList in ComplianceView. */
-const TAB_META: Record<
-  ComplianceTabId,
-  { label: string; icon: React.ComponentType<{ size?: number; className?: string }> }
-> = {
-  foryou: { label: 'For You', icon: Sparkles },
-  landscape: { label: 'Landscape', icon: Layers },
-  records: { label: 'Records', icon: GlobeLock },
-  cswp39: { label: 'CSWP.39', icon: Workflow },
-  standards: { label: 'Standardization Bodies', icon: BookOpen },
-  certification: { label: 'Certification Schemes', icon: Award },
-}
-import type { ViewMode } from '@/components/Library/ViewToggle'
 import { INDUSTRY_COMPLIANCE_HINT, REGION_COMPLIANCE_HINT } from '@/data/compliancePersonaHints'
+// ── Redesign components ────────────────────────────────────────────────────
+import { ControlDeck } from './redesign/ControlDeck'
+import { PillarPipeline } from './redesign/PillarPipeline'
+import { ComplianceDetailDrawer } from './redesign/ComplianceDetailDrawer'
+import { CSWP39AgilityExplorer } from './redesign/CSWP39AgilityExplorer'
+import { RecordsGlossaryStrip } from './redesign/RecordsGlossaryStrip'
+import { type PillarId } from './redesign/pillarModel'
+
+// ── Stable tab model ───────────────────────────────────────────────────────
+// Four tabs, same order for every persona. Persona is a LENS (it tunes content
+// in place via the shared control deck) — it never reorders the bar.
+
+type StableTab = 'landscape' | 'records' | 'foryou' | 'cswp39'
+
+const STABLE_TABS: { id: StableTab; label: string; icon: typeof Layers }[] = [
+  { id: 'landscape', label: 'Landscape', icon: Layers },
+  { id: 'records', label: 'Product Records', icon: GlobeLock },
+  { id: 'foryou', label: 'For You', icon: Sparkles },
+  { id: 'cswp39', label: 'CSWP.39 Agility', icon: Workflow },
+]
+
+function stableTabFor(activeTab: MobileSection): StableTab {
+  if (isLandscapeTab(activeTab)) return 'landscape'
+  if (activeTab === 'records') return 'records'
+  if (activeTab === 'cswp39') return 'cswp39'
+  if (activeTab === 'foryou') return 'foryou'
+  return 'landscape'
+}
+
+// pillar ↔ legacy landscape-tab mappings (keeps deep links / CSWP.39 crosswalk
+// working against the existing URL-state hook).
+function tabToPillar(tab: MobileSection): PillarId {
+  if (tab === 'certification') return 'certify'
+  if (tab === 'compliance') return 'comply'
+  return 'standardize'
+}
+function pillarToTab(pillar: PillarId): MobileSection {
+  if (pillar === 'certify') return 'certification'
+  if (pillar === 'comply') return 'compliance'
+  return 'standards'
+}
 
 // ── Section header strip ───────────────────────────────────────────────
 
@@ -92,77 +105,19 @@ interface SectionHeaderProps {
   icon: React.ReactNode
   title: string
   description: string
-  learnLabel: string
-  learnTo: string
-  /**
-   * Optional glossary of acronyms/schemes shown inside the header as an expandable
-   * row. Used on the Certification Schemes tab to distinguish FIPS 140-3 from ACVP,
-   * Common Criteria, EUCC, CNSA 2.0, etc.
-   */
-  glossary?: { term: string; definition: string }[]
 }
 
-function SectionHeader({
-  icon,
-  title,
-  description,
-  learnLabel,
-  learnTo,
-  glossary,
-}: SectionHeaderProps) {
-  const [glossaryOpen, setGlossaryOpen] = useState(false)
-  const hasGlossary = !!glossary && glossary.length > 0
-
+function SectionHeader({ icon, title, description }: SectionHeaderProps) {
   return (
-    <div className="flex flex-col gap-3 mb-4 p-4 rounded-lg border border-border bg-muted/20">
-      <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-        <div className="flex items-center gap-2 shrink-0">{icon}</div>
-        <div className="flex-1 min-w-0">
-          <h2 className="text-base font-semibold text-foreground">{title}</h2>
-          <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
-          {hasGlossary && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => setGlossaryOpen((v) => !v)}
-              className="h-auto text-xs px-3 py-1.5 border border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30 font-medium"
-              aria-expanded={glossaryOpen}
-              aria-controls="section-header-glossary"
-            >
-              <Info size={12} />
-              {glossaryOpen ? 'Hide glossary' : 'Glossary'}
-            </Button>
-          )}
-          <Link
-            to={learnTo}
-            className="print:hidden inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded border border-primary/30 text-primary hover:bg-primary/5 transition-colors font-medium"
-          >
-            <ExternalLink size={12} />
-            {learnLabel}
-          </Link>
-        </div>
+    <div className="mb-4 flex items-start gap-3 rounded-lg border border-border bg-muted/20 p-4">
+      <div className="flex shrink-0 items-center gap-2">{icon}</div>
+      <div className="min-w-0 flex-1">
+        <h2 className="text-base font-semibold text-foreground">{title}</h2>
+        <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
       </div>
-      {hasGlossary && glossaryOpen && (
-        <dl
-          id="section-header-glossary"
-          className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-xs bg-card rounded-md border border-border p-3"
-        >
-          {glossary!.map((g) => (
-            <div key={g.term} className="flex flex-col">
-              <dt className="font-semibold text-foreground">{g.term}</dt>
-              <dd className="text-muted-foreground mt-0.5">{g.definition}</dd>
-            </div>
-          ))}
-        </dl>
-      )}
     </div>
   )
 }
-
-// ── Mobile toggle ──────────────────────────────────────────────────────
 
 function timelineEventToRow(ev: TimelineEvent): TimelineDocumentRow {
   return {
@@ -181,18 +136,9 @@ function timelineEventToRow(ev: TimelineEvent): TimelineDocumentRow {
 }
 
 /**
- * Resolves the For-You tab content per persona:
- *   executive  → ExecutiveTimelineView (regulatory clock + framework cards + milestones)
- *   architect  → ArchitectStandardsView (standards landscape + crypto-agility focus)
- *   researcher → ResearcherEvidenceView (full evidence browser + citation depth)
- *   developer  → DeveloperImplementationView (algorithm coverage + tool jumps + standards→impl)
- *   ops        → OpsRotationView (deadline phases + toolchain jumps + framework timing table)
- *   curious    → CuriousOrientationView (plain-language orientation + 1-2-3 framing)
- *   no persona → ApplicabilityPanel (generic recommendation surface)
- *
- * All branches consume the same `useApplicability` engine output; only the rendering
- * differs. Profile override is plumbed identically so the workshop deep-link
- * `?country=Australia&ind=Government & Defense` works regardless of persona.
+ * Resolves the For-You tab content per persona. The persona is the shared lens
+ * (driven by the control deck); each branch consumes the same `useApplicability`
+ * output and only the rendering differs.
  */
 function ForYouSection({ onExportCsv }: { onExportCsv?: () => void }) {
   const persona = usePersonaStore((s) => s.selectedPersona)
@@ -203,11 +149,8 @@ function ForYouSection({ onExportCsv }: { onExportCsv?: () => void }) {
   const setIndustry = useAssessmentFormStore((s) => s.setIndustry)
   const [searchParams] = useSearchParams()
 
-  // Backwards compat for workshop / Landscape deep-links (`?country=…&industry=…`,
-  // `?ind=…`, `?geo=…`, `?sector=…`): on first mount, mirror them into the
-  // assessment store if it's empty. From there, the editable ProfileSummary in
-  // ApplicabilityPanel is the single source of truth, so user edits are no
-  // longer shadowed by a stale URL override.
+  // Backwards compat for workshop / Landscape deep-links: on first mount, mirror
+  // them into the assessment store if it's empty.
   const didSyncRef = useRef(false)
   useEffect(() => {
     if (didSyncRef.current) return
@@ -287,253 +230,25 @@ function ForYouSection({ onExportCsv }: { onExportCsv?: () => void }) {
   )
 }
 
-// ── Explore section helpers ────────────────────────────────────────────
-
-function isExploreSection(
-  s: MobileSection
-): s is 'standards' | 'technical' | 'certification' | 'compliance' {
-  return s === 'standards' || s === 'technical' || s === 'certification' || s === 'compliance'
-}
-
-function mobileSectionToLandscapeType(s: MobileSection): LandscapeType {
-  if (s === 'technical') return 'standards'
-  if (s === 'certification') return 'certifications'
-  if (s === 'compliance') return 'regulations'
-  return 'bodies'
-}
-
-function landscapeTypeToMobileSection(t: LandscapeType): MobileSection {
-  if (t === 'standards') return 'technical'
-  if (t === 'certifications') return 'certification'
-  if (t === 'regulations') return 'compliance'
-  return 'standards'
-}
-
-function MobileViewToggle({
-  activeSection,
-  onSectionChange,
-  onCswp39Jump,
-  evref,
-  onClearEvref,
-  onNavigateToCswp39,
-  onExportCsv,
-  landscapeProps,
-  tableProps,
-}: {
-  activeSection: MobileSection
-  onSectionChange: (section: MobileSection) => void
-  onCswp39Jump: (targetTab: MobileSection, searchQuery: string) => void
-  evref?: string
-  onClearEvref?: () => void
-  onExportCsv?: () => void
-  onNavigateToCswp39?: (refId: string) => void
-  landscapeProps: {
-    orgFilter: string
-    industryFilter: string
-    regionFilter: RegionBloc | 'All'
-    countryFilter: string
-    deadlineFilter: 'All' | DeadlinePhase
-    searchText: string
-    searchInputValue: string
-    sortBy: FrameworkSortOption
-    viewMode: ViewMode
-    onOrgFilterChange: (org: string) => void
-    onIndustryFilterChange: (ind: string) => void
-    onRegionFilterChange: (region: RegionBloc | 'All') => void
-    onCountryFilterChange: (country: string) => void
-    onDeadlineFilterChange: (phase: 'All' | DeadlinePhase) => void
-    onSearchTextChange: (text: string) => void
-    onSortByChange: (sort: FrameworkSortOption) => void
-    onViewModeChange: (mode: ViewMode) => void
-    highlightFrameworkId?: string | null
-    onSelectFramework?: (fw: import('@/data/complianceData').ComplianceFramework) => void
-  }
-  tableProps: React.ComponentProps<typeof ComplianceTable>
-}) {
-  const section = activeSection
-  const setSection = onSectionChange
-
-  // Industry alliances (PQC-COALITION, PQCA, QED-C) are surfaced alongside
-  // standardization bodies — they're standardization-adjacent organisations that
-  // produce reference implementations, policy guidance, and migration tooling.
-  const tierFilter = useTrustTierFilter()
-  const tierFilteredFrameworks = useMemo(
-    () =>
-      tierFilter.length === 0
-        ? complianceFrameworks
-        : complianceFrameworks.filter((f) =>
-            matchesTrustTierFilter(tierFilter, 'compliance', f.id)
-          ),
-    [tierFilter]
-  )
-  const standardsFrameworks = useMemo(
-    () =>
-      tierFilteredFrameworks.filter(
-        (f) => f.bodyType === 'standardization_body' || f.bodyType === 'industry_alliance'
-      ),
-    [tierFilteredFrameworks]
-  )
-  const technicalStandards = useMemo(
-    () => tierFilteredFrameworks.filter((f) => f.bodyType === 'technical_standard'),
-    [tierFilteredFrameworks]
-  )
-  const certificationFrameworks = useMemo(
-    () => tierFilteredFrameworks.filter((f) => f.bodyType === 'certification_body'),
-    [tierFilteredFrameworks]
-  )
-  const complianceOnlyFrameworks = useMemo(
-    () => tierFilteredFrameworks.filter((f) => f.bodyType === 'compliance_framework'),
-    [tierFilteredFrameworks]
-  )
-
-  const landscapeTabFrameworks = useMemo(
-    () => ({
-      standards: standardsFrameworks,
-      technical: technicalStandards,
-      certification: certificationFrameworks,
-      compliance: complianceOnlyFrameworks,
-    }),
-    [standardsFrameworks, technicalStandards, certificationFrameworks, complianceOnlyFrameworks]
-  )
-
-  const typeCounts = useMemo(
-    () => ({
-      regulations: complianceOnlyFrameworks.length,
-      standards: technicalStandards.length,
-      certifications: certificationFrameworks.length,
-      bodies: standardsFrameworks.length,
-    }),
-    [complianceOnlyFrameworks, technicalStandards, certificationFrameworks, standardsFrameworks]
-  )
-
-  const switchLandscapeTab = useCallback(
-    (tab: LandscapeTab) => setSection(tab as MobileSection),
-    [setSection]
-  )
-
-  const btnClass = (active: boolean) =>
-    `flex-none px-3 py-1.5 min-h-[44px] rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
-      active ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-    }`
-
-  return (
-    <div className="space-y-4" id="compliance-tabs-mobile">
-      {/* Navigation strip — primary tabs + explore sub-type row */}
-      <div className="bg-card border border-border rounded-xl p-1.5 space-y-1.5">
-        <div className="relative">
-          <div className="flex gap-1.5 overflow-x-auto scrollbar-none">
-            <Button
-              variant="ghost"
-              data-workshop-target="compliance-tab-foryou"
-              className={btnClass(section === 'foryou')}
-              onClick={() => setSection('foryou')}
-            >
-              For You
-            </Button>
-            <Button
-              variant="ghost"
-              className={btnClass(isExploreSection(section))}
-              onClick={() => {
-                if (!isExploreSection(section)) setSection('standards')
-              }}
-            >
-              Explore
-            </Button>
-            <Button
-              variant="ghost"
-              className={btnClass(section === 'records')}
-              onClick={() => setSection('records')}
-            >
-              Records
-            </Button>
-            <Button
-              variant="ghost"
-              className={btnClass(section === 'cswp39')}
-              onClick={() => setSection('cswp39')}
-            >
-              CSWP.39
-            </Button>
-          </div>
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-card to-transparent"
-          />
-        </div>
-        {/* Type facet sub-row — only when Explore is active */}
-        {isExploreSection(section) && (
-          <div className="border-t border-border/50 pt-1 animate-in fade-in slide-in-from-top-1 duration-150">
-            <LandscapeTypeFacet
-              value={mobileSectionToLandscapeType(section)}
-              counts={typeCounts}
-              onChange={(type) => setSection(landscapeTypeToMobileSection(type))}
-            />
-          </div>
-        )}
-      </div>
-      {section === 'foryou' && (
-        <div className="space-y-4">
-          <div className="flex flex-wrap gap-2">
-            <RoleFilter syncWithPersona />
-          </div>
-          <ForYouSection onExportCsv={onExportCsv} />
-        </div>
-      )}
-      {isExploreSection(section) && (
-        <div className="space-y-3">
-          <CrossTabSearchHint
-            searchText={landscapeProps.searchText}
-            currentTab={section as LandscapeTab}
-            tabFrameworks={landscapeTabFrameworks}
-            onSwitchTab={switchLandscapeTab}
-          />
-          <ComplianceLandscape
-            frameworks={
-              section === 'technical'
-                ? technicalStandards
-                : section === 'certification'
-                  ? certificationFrameworks
-                  : section === 'compliance'
-                    ? complianceOnlyFrameworks
-                    : standardsFrameworks
-            }
-            showDeadlineTimeline={false}
-            maturityByRefId={section === 'compliance' ? maturityByRefId : undefined}
-            onNavigateToCswp39={section === 'compliance' ? onNavigateToCswp39 : undefined}
-            {...landscapeProps}
-          />
-        </div>
-      )}
-      {section === 'records' && (
-        <div className="mt-2">
-          <ComplianceTable {...tableProps} />
-        </div>
-      )}
-      {section === 'cswp39' && (
-        <CSWP39Explorer
-          onNavigateToFramework={onCswp39Jump}
-          evref={evref}
-          onClearEvref={onClearEvref}
-        />
-      )}
-    </div>
-  )
-}
-
 // ── Main view ──────────────────────────────────────────────────────────
 
 export const ComplianceView = () => {
   useWorkflowPhaseTracker('comply')
-  const [selectedFramework, setSelectedFramework] = useState<ComplianceFramework | null>(null)
-  // Trust-tier filter (URL ?tier=) — feeds both the Landscape memos via
-  // MobileViewToggle props AND the Records ComplianceTable directly.
+
+  // Drawer state — selected framework + the pillar it was opened from (drives
+  // the traceability chain). Replaces FrameworkDetailPopover on Landscape.
+  const [drawerFramework, setDrawerFramework] = useState<ComplianceFramework | null>(null)
+  const [drawerPillar, setDrawerPillar] = useState<PillarId>('comply')
+
   const tierFilter = useTrustTierFilter()
   const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
   const { selectedIndustries, selectedRegion } = usePersonaStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
+  const toggleMyFramework = useComplianceSelectionStore((s) => s.toggleMyFramework)
   const addHistoryEvent = useHistoryStore((s) => s.addEvent)
 
-  // Fire history event on selection change (debounced 1.5s) — mirrors MigrateView pattern
+  // Fire history event on selection change (debounced 1.5s).
   const prevCountRef = useRef(myFrameworks.length)
   useEffect(() => {
     const count = myFrameworks.length
@@ -564,11 +279,7 @@ export const ComplianceView = () => {
       ? 'EU region'
       : null
 
-  // Per-industry/region dismissal — once a user clicks through (or X's out of)
-  // a hint, suppress it for that exact industry or region key only. Switching
-  // industry re-prompts because the storage key changes with the key string.
-  // Derive the flag from localStorage on every render (cheap), and bump
-  // `personaHintDismissTick` to force a recompute after a dismiss write.
+  // Per-industry/region dismissal.
   const personaHintDismissKey = primaryIndustry
     ? `compliance-persona-hint-dismissed-industry:${primaryIndustry}`
     : selectedRegion === 'eu'
@@ -582,15 +293,8 @@ export const ComplianceView = () => {
     } catch {
       return false
     }
-    // `personaHintDismissTick` is deliberate: bumping it invalidates this
-    // memo after a dismissal write to localStorage.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [personaHintDismissKey, personaHintDismissTick])
-  // Stable identity label for analytics so the editorial mapping can be tuned
-  // per-industry/region (P2-3). Falls back to 'unknown' only when neither
-  // industry nor a region-hint is set, which the dismissPersonaHint /
-  // handlePersonaHintNavigate handlers never see in practice because they're
-  // unreachable without a resolved hint.
   const personaHintIdentity = primaryIndustry
     ? `industry:${primaryIndustry}`
     : selectedRegion === 'eu'
@@ -602,7 +306,7 @@ export const ComplianceView = () => {
     try {
       window.localStorage.setItem(personaHintDismissKey, '1')
     } catch {
-      /* private browsing / quota — flag just won't persist this session */
+      /* private browsing / quota */
     }
     setPersonaHintDismissTick((t) => t + 1)
     logComplianceFilter('PersonaHintDismiss', personaHintIdentity)
@@ -610,8 +314,7 @@ export const ComplianceView = () => {
 
   const [exportError, setExportError] = useState<string | null>(null)
 
-  // Intro banner dismissal — persists across sessions. Bump the version suffix
-  // if the copy changes substantively so returning users see the new wording.
+  // Intro banner dismissal.
   const INTRO_DISMISS_KEY = 'compliance-intro-dismissed-v1'
   const [introDismissed, setIntroDismissed] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false
@@ -626,7 +329,7 @@ export const ComplianceView = () => {
     try {
       window.localStorage.setItem(INTRO_DISMISS_KEY, '1')
     } catch {
-      /* private browsing / quota — banner just won't persist this session */
+      /* private browsing / quota */
     }
   }, [])
 
@@ -642,15 +345,13 @@ export const ComplianceView = () => {
     }
   }, [data])
 
-  // ── URL-synced filter state (owned by useComplianceUrlState) ──────────
+  // ── URL-synced filter state ──────────────────────────────────────────
 
   const {
     setSearchParams,
     certParam,
-    evref,
     activeTab,
     setActiveTab,
-    landscapeType,
     setLandscapeType,
     highlightFrameworkId,
     lsOrg,
@@ -695,11 +396,31 @@ export const ComplianceView = () => {
     handleRecPageChange,
   } = useComplianceUrlState()
 
-  // CSWP.39 jump-back marker + query (ephemeral UI state, not URL-bound).
+  // Active pillar — derived from the landscape tab, kept in local state so the
+  // pipeline can drive it independently.
+  const [pillar, setPillar] = useState<PillarId>(() =>
+    isLandscapeTab(activeTab) ? tabToPillar(activeTab) : 'standardize'
+  )
+  useEffect(() => {
+    if (isLandscapeTab(activeTab)) setPillar(tabToPillar(activeTab))
+  }, [activeTab])
+
+  // CSWP.39 jump-back marker + query (ephemeral UI state).
   const [cswp39JumpActive, setCswp39JumpActive] = useState(false)
   const [cswp39JumpQuery, setCswp39JumpQuery] = useState('')
 
-  // Resolve effective For-You profile for the country-specific DeadlineTimeline.
+  // Tier-filtered framework universe for the pillar pipeline.
+  const tierFilteredFrameworks = useMemo(
+    () =>
+      tierFilter.length === 0
+        ? complianceFrameworks
+        : complianceFrameworks.filter((f) =>
+            matchesTrustTierFilter(tierFilter, 'compliance', f.id)
+          ),
+    [tierFilter]
+  )
+
+  // For-You DeadlineTimeline.
   const forYouProfileOverride = useMemo(
     () => ({
       country: lsCountry !== 'All' ? lsCountry : undefined,
@@ -722,16 +443,6 @@ export const ComplianceView = () => {
       ? `${forYouProfile.country} deadlines`
       : undefined
 
-  // ── Persona-aware tab order (P11-P1-01) ──────────────────────────────
-  const primaryTabs = useMemo(
-    () => getComplianceTabOrder(selectedPersona) as ComplianceTabId[],
-    [selectedPersona]
-  )
-  const overflowTabs = useMemo(
-    () => getComplianceOverflowTabs(selectedPersona) as ComplianceTabId[],
-    [selectedPersona]
-  )
-
   // ── Tab handlers ─────────────────────────────────────────────────────
 
   const handleTabChange = useCallback(
@@ -744,30 +455,43 @@ export const ComplianceView = () => {
     [setActiveTab, syncFiltersToUrl]
   )
 
+  const handleStableTabSelect = useCallback(
+    (id: StableTab) => {
+      if (id === 'landscape') handleTabChange(pillarToTab(pillar))
+      else handleTabChange(id as MobileSection)
+    },
+    [handleTabChange, pillar]
+  )
+
+  const handlePillarChange = useCallback(
+    (next: PillarId) => {
+      setPillar(next)
+      setLandscapeType(
+        next === 'certify' ? 'certifications' : next === 'comply' ? 'regulations' : 'bodies'
+      )
+      const tab = pillarToTab(next)
+      setActiveTab(tab)
+      syncFiltersToUrl({ tab })
+      logComplianceFilter('Pillar', next)
+    },
+    [setActiveTab, setLandscapeType, syncFiltersToUrl]
+  )
+
   const handlePersonaHintNavigate = useCallback(
     (
       section: MobileSection,
       subFacet?: import('@/data/compliancePersonaHints').ComplianceHintSubFacet
     ) => {
       setActiveTab(section)
-      // Apply the sub-facet (e.g. ?rtab=fips) alongside the tab jump so a
-      // Finance user landing on Certification Schemes has FIPS 140-3
-      // pre-filtered when they pivot to Records.
       const urlOverrides: Parameters<typeof syncFiltersToUrl>[0] = { tab: section }
       if (subFacet?.rtab) urlOverrides.rtab = subFacet.rtab
       syncFiltersToUrl(urlOverrides)
-      // Existing `PersonaHint` event preserved for dashboards already wired
-      // to the section value. `PersonaHintCtaClick` carries the identity
-      // label so the editorial industry→section mapping can be tuned (P2-3).
       logComplianceFilter('PersonaHint', section)
       logComplianceFilter('PersonaHintCtaClick', `${personaHintIdentity}→${section}`)
       setCswp39JumpActive(false)
       requestAnimationFrame(() => {
         document
           .getElementById('compliance-tabs')
-          ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        document
-          .getElementById('compliance-tabs-mobile')
           ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       })
     },
@@ -776,9 +500,6 @@ export const ComplianceView = () => {
 
   const handleCswp39Jump = useCallback(
     (targetTab: MobileSection, searchQuery: string) => {
-      // Bypass the debounced search path — its stale closure of syncFiltersToUrl
-      // (captured while activeTab was 'cswp39') would overwrite the tab param
-      // 200ms later and snap the user back to the CSWP.39 tab.
       setLsSearchInput(searchQuery)
       setLsSearch(searchQuery)
       setActiveTab(targetTab)
@@ -789,9 +510,6 @@ export const ComplianceView = () => {
       requestAnimationFrame(() => {
         document
           .getElementById('compliance-tabs')
-          ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        document
-          .getElementById('compliance-tabs-mobile')
           ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       })
     },
@@ -828,24 +546,42 @@ export const ComplianceView = () => {
     [setActiveTab, setSearchParams]
   )
 
-  const handleClearEvref = useCallback(() => {
-    setSearchParams(
-      (prev) => {
-        const next = new URLSearchParams(prev)
-        next.delete('evref')
-        return next
-      },
-      { replace: true }
-    )
-  }, [setSearchParams])
+  // Landscape filter pass-through bundle for the pillar pipeline.
+  const landscapeProps = {
+    orgFilter: lsOrg,
+    industryFilter: lsIndustry,
+    regionFilter: lsRegion,
+    countryFilter: lsCountry,
+    deadlineFilter: lsDeadline,
+    searchText: lsSearch,
+    searchInputValue: lsSearchInput,
+    sortBy: lsSort as FrameworkSortOption,
+    viewMode: lsView,
+    onOrgFilterChange: handleLsOrgChange,
+    onIndustryFilterChange: handleLsIndustryChange,
+    onRegionFilterChange: handleLsRegionChange,
+    onCountryFilterChange: handleLsCountryChange,
+    onDeadlineFilterChange: handleLsDeadlineChange,
+    onSearchTextChange: handleLsSearchChange,
+    onSortByChange: handleLsSortChange,
+    onViewModeChange: handleLsViewChange,
+    onNavigateToCswp39: handleNavigateToCswp39,
+    highlightFrameworkId,
+    onSelectFramework: (fw: ComplianceFramework) => {
+      setDrawerPillar(pillar)
+      setDrawerFramework(fw)
+    },
+  }
+
+  const activeStableTab = stableTabFor(activeTab)
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="animate-fade-in space-y-6">
       <PageHeader
         icon={ShieldCheck}
         pageId="compliance"
-        title="Standardization, Compliance and Certification"
-        description="Explore the three pillars of PQC compliance: standardization bodies that define the algorithms, certification bodies that validate implementations, and compliance frameworks that mandate adoption."
+        title="Standardization, Certification & Compliance"
+        description="Who defines the algorithms, who validates the products, who mandates adoption — across standardization bodies, certification schemes, and compliance frameworks."
         dataSource={
           complianceMetadata
             ? `${complianceMetadata.filename} • Updated: ${complianceMetadata.lastUpdate.toLocaleDateString()}`
@@ -868,22 +604,25 @@ export const ComplianceView = () => {
         }
       />
 
+      {/* Consolidated control deck — shared persona lens drives every tab. */}
+      <ControlDeck />
+
       {exportError && (
         <div
           role="alert"
-          className="flex items-start gap-3 p-3 rounded-lg border border-status-error/40 bg-status-error/5 text-sm"
+          className="flex items-start gap-3 rounded-lg border border-status-error/40 bg-status-error/5 p-3 text-sm"
         >
-          <Info size={16} className="text-status-error mt-0.5 shrink-0" />
+          <Info size={16} className="mt-0.5 shrink-0 text-status-error" />
           <div className="flex-1">
             <p className="font-medium text-status-error">CSV export failed</p>
-            <p className="text-muted-foreground text-xs mt-0.5">{exportError}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">{exportError}</p>
           </div>
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={() => setExportError(null)}
-            className="h-auto text-xs px-2 py-1 text-muted-foreground hover:text-foreground"
+            className="h-auto px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
             aria-label="Dismiss export error"
           >
             Dismiss
@@ -891,28 +630,25 @@ export const ComplianceView = () => {
         </div>
       )}
 
-      {/* New-to-compliance intro — 3-column structured brief with direct CTAs.
-          Suppressed entirely when a persona hint is going to render: the hint
-          is strictly more targeted, and showing both creates duplicate
-          onboarding chrome above the tab body. */}
+      {/* New-to-compliance intro — suppressed when a persona hint will render. */}
       {!introDismissed && !(complianceHint && complianceHintLabel && !personaHintDismissed) && (
-        <div className="rounded-lg border border-secondary/20 bg-secondary/5 p-4 space-y-3">
+        <div className="space-y-3 rounded-lg border border-secondary/20 bg-secondary/5 p-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <Info size={15} className="text-secondary shrink-0" />
+              <Info size={15} className="shrink-0 text-secondary" />
               <span className="text-sm font-semibold text-foreground">New to PQC compliance?</span>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={dismissIntro}
-              className="h-auto text-xs px-2 py-1 text-muted-foreground hover:text-foreground shrink-0"
+              className="h-auto shrink-0 px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
               aria-label="Dismiss compliance intro"
             >
               <X size={14} />
             </Button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div className="grid grid-cols-1 gap-3 text-xs sm:grid-cols-3">
             <div className="space-y-1">
               <span className="font-medium text-foreground">Standardization Bodies</span>
               <p className="text-muted-foreground">
@@ -924,9 +660,9 @@ export const ComplianceView = () => {
                 size="sm"
                 onClick={() => {
                   dismissIntro()
-                  handleTabChange('standards')
+                  handlePillarChange('standardize')
                 }}
-                className="h-auto text-xs px-0 py-0 text-primary hover:text-primary/80 font-medium"
+                className="h-auto px-0 py-0 text-xs font-medium text-primary hover:text-primary/80"
               >
                 Browse bodies →
               </Button>
@@ -942,9 +678,9 @@ export const ComplianceView = () => {
                 size="sm"
                 onClick={() => {
                   dismissIntro()
-                  handleTabChange('certification')
+                  handlePillarChange('certify')
                 }}
-                className="h-auto text-xs px-0 py-0 text-primary hover:text-primary/80 font-medium"
+                className="h-auto px-0 py-0 text-xs font-medium text-primary hover:text-primary/80"
               >
                 Browse schemes →
               </Button>
@@ -960,15 +696,15 @@ export const ComplianceView = () => {
                 size="sm"
                 onClick={() => {
                   dismissIntro()
-                  handleTabChange('compliance')
+                  handlePillarChange('comply')
                 }}
-                className="h-auto text-xs px-0 py-0 text-primary hover:text-primary/80 font-medium"
+                className="h-auto px-0 py-0 text-xs font-medium text-primary hover:text-primary/80"
               >
                 Browse frameworks →
               </Button>
             </div>
           </div>
-          <div className="flex items-center gap-2 pt-1 border-t border-secondary/20 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2 border-t border-secondary/20 pt-1 text-xs text-muted-foreground">
             <span>Or jump straight to</span>
             <Button
               variant="ghost"
@@ -977,7 +713,7 @@ export const ComplianceView = () => {
                 dismissIntro()
                 handleTabChange('records')
               }}
-              className="h-auto text-xs px-0 py-0 text-primary hover:text-primary/80 font-medium"
+              className="h-auto px-0 py-0 text-xs font-medium text-primary hover:text-primary/80"
             >
               live product certifications →
             </Button>
@@ -985,8 +721,7 @@ export const ComplianceView = () => {
         </div>
       )}
 
-      {/* Persona/industry context hint — one-click navigation to the
-          recommended compliance section. */}
+      {/* Persona/industry context hint. */}
       {complianceHint && complianceHintLabel && !personaHintDismissed && (
         <PersonaHintCta
           label={complianceHintLabel}
@@ -996,20 +731,18 @@ export const ComplianceView = () => {
         />
       )}
 
-      {/* PQC deadline timeline — persona-gated. Full timeline for
-          executive/ops/null; narrative line for curious; closed disclosure
-          for developer/architect/researcher. */}
+      {/* PQC deadline timeline — persona-gated. */}
       <DeadlineTimelineGate
         persona={selectedPersona}
         frameworks={deadlineTimelineFrameworks}
         label={deadlineTimelineLabel}
       />
 
-      {/* Jump-back banner — visible after CSWP.39 cross-walk navigation */}
+      {/* Jump-back banner after a CSWP.39 cross-walk navigation. */}
       {cswp39JumpActive && activeTab !== 'cswp39' && (
-        <div className="flex items-center gap-2 p-2.5 rounded-lg border border-primary/30 bg-primary/5 text-sm">
-          <Workflow size={16} className="text-primary shrink-0" />
-          <span className="text-foreground/80 text-xs flex-1 min-w-0 truncate">
+        <div className="flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 p-2.5 text-sm">
+          <Workflow size={16} className="shrink-0 text-primary" />
+          <span className="min-w-0 flex-1 truncate text-xs text-foreground/80">
             {cswp39JumpQuery ? (
               <>
                 Cross-walk result for{' '}
@@ -1022,7 +755,7 @@ export const ComplianceView = () => {
           <Button
             variant="ghost"
             onClick={handleReturnToCswp39}
-            className="h-auto px-2 py-1 text-xs text-primary hover:text-primary hover:bg-primary/10 flex items-center gap-1 shrink-0"
+            className="flex h-auto shrink-0 items-center gap-1 px-2 py-1 text-xs text-primary hover:bg-primary/10 hover:text-primary"
           >
             <ArrowLeft size={14} />
             Back to CSWP.39
@@ -1033,7 +766,7 @@ export const ComplianceView = () => {
               setCswp39JumpActive(false)
               setCswp39JumpQuery('')
             }}
-            className="h-auto px-1.5 py-1 text-muted-foreground hover:text-foreground shrink-0"
+            className="h-auto shrink-0 px-1.5 py-1 text-muted-foreground hover:text-foreground"
             aria-label="Dismiss cross-walk banner"
           >
             <X size={14} />
@@ -1041,231 +774,58 @@ export const ComplianceView = () => {
         </div>
       )}
 
-      {/* Mobile: 3-section toggle */}
-      <div className="md:hidden">
-        <MobileViewToggle
-          activeSection={activeTab}
-          onSectionChange={handleTabChange}
-          onCswp39Jump={handleCswp39Jump}
-          evref={evref}
-          onClearEvref={handleClearEvref}
-          onNavigateToCswp39={handleNavigateToCswp39}
-          onExportCsv={handleExportCsv}
-          landscapeProps={{
-            orgFilter: lsOrg,
-            industryFilter: lsIndustry,
-            regionFilter: lsRegion,
-            countryFilter: lsCountry,
-            deadlineFilter: lsDeadline,
-            searchText: lsSearch,
-            searchInputValue: lsSearchInput,
-            sortBy: lsSort,
-            viewMode: lsView,
-            onOrgFilterChange: handleLsOrgChange,
-            onIndustryFilterChange: handleLsIndustryChange,
-            onRegionFilterChange: handleLsRegionChange,
-            onCountryFilterChange: handleLsCountryChange,
-            onDeadlineFilterChange: handleLsDeadlineChange,
-            onSearchTextChange: handleLsSearchChange,
-            onSortByChange: handleLsSortChange,
-            onViewModeChange: handleLsViewChange,
-            highlightFrameworkId,
-            onSelectFramework: setSelectedFramework,
-          }}
-          tableProps={{
-            data: data,
-            onRefresh: refresh,
-            isRefreshing: loading,
-            lastUpdated: lastUpdated,
-            onEnrich: enrichRecord,
-            certType: rtab,
-            onCertTypeChange: handleRtabChange,
-            filterText: recSearchInput,
-            pqcFilters: recPqc,
-            categoryFilters: recCat,
-            sourceFilters: recSrc,
-            vendorFilters: recVendor,
-            sortColumn: recSortCol,
-            sortDirection: recSortDir,
-            currentPage: recPage,
-            selectedRecordId: certParam,
-            onFilterTextChange: handleRecSearchChange,
-            onPqcFiltersChange: handleRecPqcChange,
-            onCategoryFiltersChange: handleRecCatChange,
-            onSourceFiltersChange: handleRecSrcChange,
-            onVendorFiltersChange: handleRecVendorChange,
-            migrateCatFilters: recMcat,
-            onMigrateCatFiltersChange: handleRecMcatChange,
-            onSortColumnChange: handleRecSortColChange,
-            onSortDirectionChange: handleRecSortDirChange,
-            onCurrentPageChange: handleRecPageChange,
-          }}
-        />
-      </div>
-
-      {/* Desktop: 3-tab layout — refactored from 7 tabs.
-          For You · Landscape (with type facet) · Records.
-          CSWP.39 still reachable via the More menu and via deep links. */}
-      <div id="compliance-tabs" className="hidden md:block">
-        <Tabs
-          value={
-            // Map any legacy landscape tab value into the unified 'landscape' surface.
-            activeTab === 'standards' ||
-            activeTab === 'technical' ||
-            activeTab === 'certification' ||
-            activeTab === 'compliance'
-              ? 'landscape'
-              : activeTab
-          }
-          className="w-full"
-          onValueChange={(tab) => {
-            if (tab === 'landscape') {
-              // Land on whichever facet the user last had selected.
-              const map: Record<LandscapeType, MobileSection> = {
-                regulations: 'compliance',
-                standards: 'technical',
-                certifications: 'certification',
-                bodies: 'standards',
-              }
-              // eslint-disable-next-line security/detect-object-injection
-              handleTabChange(map[landscapeType])
-            } else {
-              handleTabChange(tab as MobileSection)
-            }
-          }}
+      {/* ── Stable tab bar — same order for every persona ── */}
+      <div id="compliance-tabs">
+        <div
+          className="mb-4 flex items-center gap-1 overflow-x-auto border-b border-border"
+          role="tablist"
+          aria-label="Compliance views"
         >
-          <TabsList className="mb-4 bg-muted/50 border border-border h-auto flex items-center gap-1">
-            {primaryTabs.map((id) => {
-              const meta = TAB_META[id]
-              if (!meta) return null
-              const Icon = meta.icon
-              return (
-                <TabsTrigger
-                  key={id}
-                  value={id}
-                  data-workshop-target={id === 'foryou' ? 'compliance-tab-foryou' : undefined}
-                  className="flex items-center gap-1.5"
-                >
-                  <Icon size={14} />
-                  {meta.label}
-                </TabsTrigger>
-              )
-            })}
-            {overflowTabs.length > 0 && (
-              <MoreTabsMenu
-                activeTab={activeTab}
-                onSelect={(tab) => handleTabChange(tab as unknown as MobileSection)}
-                tabs={overflowTabs}
-              />
-            )}
-            <div className="ml-auto pr-2">
-              <TrustTierFilter />
-            </div>
-          </TabsList>
+          {STABLE_TABS.map(({ id, label, icon: Icon }) => {
+            const active = activeStableTab === id
+            return (
+              <Button
+                key={id}
+                type="button"
+                variant="ghost"
+                role="tab"
+                aria-selected={active}
+                data-workshop-target={id === 'foryou' ? 'compliance-tab-foryou' : undefined}
+                onClick={() => handleStableTabSelect(id)}
+                className={`h-auto shrink-0 gap-1.5 rounded-none border-b-2 px-4 py-2.5 text-sm font-semibold ${
+                  active
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Icon size={14} />
+                {label}
+              </Button>
+            )
+          })}
+        </div>
 
-          {/* ── Tab: For You — applies user profile across all content ── */}
-          <TabsContent value="foryou" className="mt-0 space-y-4">
-            <SectionHeader
-              icon={<Sparkles size={20} className="text-primary" />}
-              title="For You"
-              description="Standards, threats, library docs, and timeline milestones that apply to your industry, country, and region. Powered by your assessment profile (or set inline below)."
-              learnLabel="Take the full assessment"
-              learnTo="/assess"
+        {/* ── Landscape — three-pillar pipeline ── */}
+        {activeStableTab === 'landscape' && (
+          <div className="mt-0 space-y-4">
+            <PillarPipeline
+              frameworks={tierFilteredFrameworks}
+              activePillar={pillar}
+              onPillarChange={handlePillarChange}
+              {...landscapeProps}
             />
-            <div className="flex flex-wrap gap-2">
-              <RoleFilter syncWithPersona />
-            </div>
-            <ForYouSection onExportCsv={handleExportCsv} />
-          </TabsContent>
+          </div>
+        )}
 
-          {/* ── Landscape — unified surface with a type facet ── */}
-          <TabsContent value="landscape" className="mt-0 space-y-4">
-            <LandscapeTabBody
-              type={landscapeType}
-              onTypeChange={(next) => {
-                setLandscapeType(next)
-                // Mirror the facet change into the legacy ?tab= param so
-                // CSWP.39 cross-walk + share links still work.
-                const map: Record<LandscapeType, MobileSection> = {
-                  regulations: 'compliance',
-                  standards: 'technical',
-                  certifications: 'certification',
-                  bodies: 'standards',
-                }
-                // eslint-disable-next-line security/detect-object-injection
-                const targetTab = map[next]
-                setActiveTab(targetTab)
-                syncFiltersToUrl({ tab: targetTab })
-              }}
-              orgFilter={lsOrg}
-              industryFilter={lsIndustry}
-              regionFilter={lsRegion}
-              countryFilter={lsCountry}
-              deadlineFilter={lsDeadline}
-              searchText={lsSearch}
-              searchInputValue={lsSearchInput}
-              sortBy={lsSort}
-              viewMode={lsView}
-              onOrgFilterChange={handleLsOrgChange}
-              onIndustryFilterChange={handleLsIndustryChange}
-              onRegionFilterChange={handleLsRegionChange}
-              onCountryFilterChange={handleLsCountryChange}
-              onDeadlineFilterChange={handleLsDeadlineChange}
-              onSearchTextChange={handleLsSearchChange}
-              onSortByChange={handleLsSortChange}
-              onViewModeChange={handleLsViewChange}
-              onNavigateToCswp39={handleNavigateToCswp39}
-              highlightFrameworkId={highlightFrameworkId}
-              onSelectFramework={setSelectedFramework}
-            />
-          </TabsContent>
-
-          {/* ── Tab 5: Cert Records ── */}
-          <TabsContent value="records" className="mt-0 space-y-4">
+        {/* ── Product Records ── */}
+        {activeStableTab === 'records' && (
+          <div className="mt-0 space-y-4">
             <SectionHeader
               icon={<GlobeLock size={20} className="text-primary" />}
               title="Product Certification Records"
               description="Live certification records from NIST CMVP, NIST CAVP, and Common Criteria Portal — searchable product validations for FIPS 140-3, ACVP algorithm testing, and CC evaluations."
-              learnLabel="Understand the cert chain"
-              learnTo="/learn/standards-bodies?step=2"
-              glossary={[
-                {
-                  term: 'FIPS 140-3',
-                  definition:
-                    'NIST cryptographic module validation standard (supersedes FIPS 140-2). CMVP-issued certificate covers the entire module — software, firmware, hardware. Required for US federal procurement.',
-                },
-                {
-                  term: 'ACVP',
-                  definition:
-                    "Automated Cryptographic Validation Protocol — NIST CAVP's algorithm-level testing. ACVP certs validate individual primitives (e.g. ML-DSA-65) and are a prerequisite for FIPS 140-3 module certs.",
-                },
-                {
-                  term: 'Common Criteria',
-                  definition:
-                    'ISO/IEC 15408 product-evaluation framework. Evaluations are issued under national schemes (BSI, ANSSI, NIAP, CCN, etc.) and mutually recognised under CCRA up to EAL2/EAL4.',
-                },
-                {
-                  term: 'EUCC',
-                  definition:
-                    'European Union Common Criteria scheme — operative since 2024 under the EU Cybersecurity Act. Co-managed by ENISA and ECCG; supersedes SOG-IS MRA inside the EU.',
-                },
-                {
-                  term: 'CNSA 2.0',
-                  definition:
-                    'NSA Commercial National Security Algorithm suite v2.0 (2022) — binding PQC algorithm requirements for US National Security Systems. Mandates ML-KEM, ML-DSA, SLH-DSA, AES-256, SHA-384/512 with full transition by 2035.',
-                },
-                {
-                  term: 'HNDL',
-                  definition:
-                    'Harvest-Now-Decrypt-Later — the threat model that motivates near-term PQC migration. Adversaries collect encrypted traffic today and decrypt it once a cryptographically relevant quantum computer exists. Drives urgency for long-lived data (health, finance, state secrets).',
-                },
-                {
-                  term: 'NIS2 / DORA',
-                  definition:
-                    'NIS2 Directive (EU) 2022/2555 — cybersecurity baseline for essential and important entities, effective Oct 2024. DORA (EU) 2022/2554 — financial-sector digital operational resilience, effective Jan 2025. Both invoke "state of the art" cryptography, which ENISA interprets as covering PQC readiness.',
-                },
-              ]}
             />
+            <RecordsGlossaryStrip />
             <ComplianceTable
               data={data}
               onRefresh={refresh}
@@ -1295,24 +855,43 @@ export const ComplianceView = () => {
               onSortDirectionChange={handleRecSortDirChange}
               onCurrentPageChange={handleRecPageChange}
             />
-          </TabsContent>
+          </div>
+        )}
 
-          {/* ── Tab 6: CSWP.39 Framework ── */}
-          <TabsContent value="cswp39" className="mt-0 space-y-4">
-            <CSWP39Explorer
-              onNavigateToFramework={(targetTab, searchQuery) =>
-                handleCswp39Jump(targetTab as MobileSection, searchQuery)
-              }
-              evref={evref}
-              onClearEvref={handleClearEvref}
+        {/* ── For You — stable skeleton, tuned per persona via the shared lens ── */}
+        {activeStableTab === 'foryou' && (
+          <div className="mt-0 space-y-4">
+            <SectionHeader
+              icon={<Sparkles size={20} className="text-primary" />}
+              title="For You"
+              description="Standards, threats, library docs, and timeline milestones that apply to your industry, country, and region — tuned by the lens above and your assessment profile."
             />
-          </TabsContent>
-        </Tabs>
+            <div className="flex flex-wrap gap-2">
+              <RoleFilter syncWithPersona />
+            </div>
+            <ForYouSection onExportCsv={handleExportCsv} />
+          </div>
+        )}
+
+        {/* ── CSWP.39 Agility ── */}
+        {activeStableTab === 'cswp39' && (
+          <div className="mt-0 space-y-4">
+            <CSWP39AgilityExplorer onNavigateToFramework={handleCswp39Jump} />
+          </div>
+        )}
       </div>
-      <FrameworkDetailPopover
-        isOpen={!!selectedFramework}
-        onClose={() => setSelectedFramework(null)}
-        framework={selectedFramework}
+
+      {/* Drill-down traceability drawer (Landscape rows). */}
+      <ComplianceDetailDrawer
+        framework={drawerFramework}
+        pillar={drawerPillar}
+        onClose={() => setDrawerFramework(null)}
+        onOpenCswp39={(refId) => {
+          setDrawerFramework(null)
+          handleNavigateToCswp39(refId)
+        }}
+        onTrack={(fw) => toggleMyFramework(fw.id)}
+        isTracked={drawerFramework ? myFrameworks.includes(drawerFramework.id) : false}
       />
     </div>
   )

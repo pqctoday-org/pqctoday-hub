@@ -146,6 +146,7 @@ export function ComplianceDetailDrawer({
                   {d.phases.map((ph, i) => {
                     const tone =
                       ph.state === 'done' ? 'success' : ph.state === 'active' ? 'warning' : 'muted'
+                    // eslint-disable-next-line security/detect-object-injection
                     const dot = TONES[tone]
                     return (
                       <li
