@@ -315,7 +315,7 @@ function App() {
         path="migrate"
         element={
           <ErrorBoundary>
-            <MigrateView />
+            <MigrationWorkbench />
           </ErrorBoundary>
         }
       />
@@ -324,6 +324,14 @@ function App() {
         element={
           <ErrorBoundary>
             <MigrationWorkbench />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="migrate/legacy"
+        element={
+          <ErrorBoundary>
+            <MigrateView />
           </ErrorBoundary>
         }
       />
