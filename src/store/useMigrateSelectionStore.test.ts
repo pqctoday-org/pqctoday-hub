@@ -46,6 +46,15 @@ describe('useMigrateSelectionStore — workbench plan (v9)', () => {
     expect(s.plan).not.toContain('foundations')
   })
 
+  it('replace assets stay planned when their last product is unpicked', () => {
+    const { chooseProduct } = useMigrateSelectionStore.getState()
+    chooseProduct('tls', 'OpenSSL') // tls (replace asset) enters the plan
+    chooseProduct('tls', 'OpenSSL') // unpick the only product
+    const s = useMigrateSelectionStore.getState()
+    expect(s.choice.tls).toBeUndefined()
+    expect(s.plan).toContain('tls') // …but tls stays planned (managed by Add to plan)
+  })
+
   it('leaving the plan drops the chosen product for that asset', () => {
     const { chooseProduct, togglePlanAsset } = useMigrateSelectionStore.getState()
     chooseProduct('certs', 'Some CA')

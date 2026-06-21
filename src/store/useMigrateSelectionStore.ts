@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import { REPLACE_ASSETS } from '@/data/migrationAssets'
 
 export type MigrateViewMode = 'stack' | 'cisaStack' | 'cards' | 'table'
 
@@ -8,14 +9,20 @@ export type MigrateViewMode = 'stack' | 'cisaStack' | 'cards' | 'table'
 export type MigrateTab = 'replace' | 'plan' | 'roadmaps'
 
 /** Return a shallow copy of `obj` without `key`. Lint-friendly omit. */
-function omitKey(obj: Record<string, string>, key: string): Record<string, string> {
-  const rest: Record<string, string> = {}
+function omitKey<T>(obj: Record<string, T>, key: string): Record<string, T> {
+  const rest: Record<string, T> = {}
   for (const k of Object.keys(obj)) {
     // eslint-disable-next-line security/detect-object-injection
     if (k !== key) rest[k] = obj[k]
   }
   return rest
 }
+
+/** Replace-asset ids — these stay in the plan even with no chosen product
+ *  (they're added/removed via the asset-level "Add to plan" toggle). Foundation
+ *  domains, by contrast, are only in the plan because a product was chosen, so
+ *  clearing their last product removes them. */
+const REPLACE_ASSET_IDS = new Set(REPLACE_ASSETS.map((a) => a.id))
 
 /** Convert old composite key to productId slug */
 function migrateKey(key: string): string {
@@ -146,11 +153,13 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
             ? current.filter((p) => p !== productName) // remove just this product
             : [...current, productName] // add — keeps any already-chosen products
           if (nextList.length === 0) {
-            // last product removed → drop the asset/domain from the plan too
-            return {
-              plan: state.plan.filter((id) => id !== assetId),
-              choice: omitKey(state.choice, assetId),
-            }
+            // Last product removed. Foundation domains exist in the plan only
+            // because a product was chosen, so drop them. Replace assets are
+            // managed by the "Add to plan" toggle, so keep them planned.
+            const choice = omitKey(state.choice, assetId)
+            return REPLACE_ASSET_IDS.has(assetId)
+              ? { choice }
+              : { plan: state.plan.filter((id) => id !== assetId), choice }
           }
           // choosing ensures the asset is in the plan
           const plan = state.plan.includes(assetId) ? state.plan : [...state.plan, assetId]

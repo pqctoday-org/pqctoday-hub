@@ -143,26 +143,49 @@ export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
               {foundationItems.length} in plan
             </span>
           </div>
-          {/* One row per selected product (consistent with the wave rows). */}
+          {/* Grouped by sub-category (domain), each with its chosen products. */}
           <div className="flex flex-col divide-y divide-border">
-            {foundationItems.map(({ id, label, product }) => (
-              <div key={`${id}::${product}`} className="flex items-center gap-2.5 px-3 py-2.5">
-                <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-primary/60" aria-hidden />
-                <span className="min-w-0 flex-1">
-                  <span className="text-sm font-semibold text-foreground">{product}</span>
-                  <span className="block text-[11px] text-muted-foreground">{label}</span>
-                </span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => chooseProduct(id, product)}
-                  aria-label={`Remove ${product} from plan`}
-                  className="h-7 w-7 shrink-0 p-0 text-muted-foreground hover:text-foreground"
-                >
-                  <X size={14} />
-                </Button>
-              </div>
-            ))}
+            {posture.foundations.map((f) => {
+              const products = choice[f.id] ?? []
+              if (products.length === 0) return null
+              return (
+                <div key={f.id}>
+                  <div className="flex items-center justify-between bg-muted/20 px-3 py-1.5">
+                    <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                      {f.label}
+                    </span>
+                    <span className="font-mono text-[10px] text-muted-foreground">
+                      {products.length}
+                    </span>
+                  </div>
+                  <div className="flex flex-col divide-y divide-border/50">
+                    {products.map((product) => (
+                      <div
+                        key={`${f.id}::${product}`}
+                        className="flex items-center gap-2.5 py-2.5 pl-6 pr-3"
+                      >
+                        <span
+                          className="h-2.5 w-2.5 shrink-0 rounded-full bg-primary/60"
+                          aria-hidden
+                        />
+                        <span className="min-w-0 flex-1 text-sm font-semibold text-foreground">
+                          {product}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => chooseProduct(f.id, product)}
+                          aria-label={`Remove ${product} from plan`}
+                          className="h-7 w-7 shrink-0 p-0 text-muted-foreground hover:text-foreground"
+                        >
+                          <X size={14} />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       )}
