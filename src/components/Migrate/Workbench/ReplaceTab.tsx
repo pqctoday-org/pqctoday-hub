@@ -108,8 +108,12 @@ export function ReplaceTab({ persona }: ReplaceTabProps) {
                   <ProductRow
                     key={p.productId || p.softwareName}
                     product={p}
-                    chosen={!!asset && choice[asset.id] === p.softwareName}
-                    onChoose={() => asset && chooseProduct(asset.id, p.softwareName)}
+                    // Key the choice on the domain id, not the replace-asset id:
+                    // foundation/infrastructure domains have no ReplaceAsset, so
+                    // gating on `asset` left their Choose button dead. For replace
+                    // domains selectedDomain === asset.id, so behavior is unchanged.
+                    chosen={choice[selectedDomain] === p.softwareName}
+                    onChoose={() => chooseProduct(selectedDomain, p.softwareName)}
                   />
                 ))
               )}
