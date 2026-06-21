@@ -7,7 +7,7 @@ import { CNSA_2_0 } from '@/data/regulatoryTimelines'
 
 export const content: ModuleContent = {
   moduleId: 'exec-quantum-impact',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-03-28',
 
   standards: [
