@@ -377,6 +377,10 @@ interface Props {
   columnPreset: PresetKey | 'custom'
   onPresetChange: (preset: PresetKey) => void
   onColumnsChange: (columns: ColumnId[]) => void
+  /** Redesign 'bare' mode: render grid only (full width, no internal filter bar
+   *  or split-panel detail) — the orchestrator owns the filter bar + drawer.
+   *  Default true keeps the legacy split-panel behaviour. */
+  chrome?: boolean
 }
 
 export function PatentsTable({
@@ -390,6 +394,7 @@ export function PatentsTable({
   columnPreset,
   onPresetChange,
   onColumnsChange,
+  chrome = true,
 }: Props) {
   const [searchParams, setSearchParams] = useSearchParams()
   const [isDetailExpanded, setIsDetailExpanded] = useState(false)
@@ -461,6 +466,7 @@ export function PatentsTable({
     [onSort]
   )
 
+  const collapseForDetail = chrome && selectedId != null
   const selectedPatent = useMemo(
     () => (selectedId ? (patents.find((p) => p.patentNumber === selectedId) ?? null) : null),
     [selectedId, patents]
@@ -484,60 +490,68 @@ export function PatentsTable({
       {/* Main panel */}
       <div
         className={`flex flex-col min-w-0 transition-all duration-200 ${
-          selectedPatent ? (isDetailExpanded ? 'hidden' : 'hidden sm:flex sm:w-1/2') : 'w-full'
+          !chrome
+            ? 'w-full'
+            : selectedPatent
+              ? isDetailExpanded
+                ? 'hidden'
+                : 'hidden sm:flex sm:w-1/2'
+              : 'w-full'
         }`}
       >
-        {/* Filter bar */}
-        <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2.5">
-          <Input
-            type="search"
-            placeholder="Search patents…"
-            value={search}
-            onChange={(e) => setFilter('search', e.target.value)}
-            className="h-7 text-xs w-44"
-          />
-
-          {activeFilters.map(({ key, value }) => (
-            <FilterChip
-              key={key}
-              dimLabel={FILTER_DEFS.find((d) => d.key === key)?.label ?? key}
-              value={getValueLabel(key, value)}
-              onRemove={() => setFilter(key, '')}
+        {/* Filter bar — hidden in bare mode (redesign renders its own above the table) */}
+        {chrome && (
+          <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2.5">
+            <Input
+              type="search"
+              placeholder="Search patents…"
+              value={search}
+              onChange={(e) => setFilter('search', e.target.value)}
+              className="h-7 text-xs w-44"
             />
-          ))}
 
-          <AddFilterPopover
-            patents={patents}
-            activeKeys={activeKeys}
-            onAdd={(key, value) => {
-              logPatentFilter(key, value)
-              setFilter(key, value)
-            }}
-          />
+            {activeFilters.map(({ key, value }) => (
+              <FilterChip
+                key={key}
+                dimLabel={FILTER_DEFS.find((d) => d.key === key)?.label ?? key}
+                value={getValueLabel(key, value)}
+                onRemove={() => setFilter(key, '')}
+              />
+            ))}
 
-          {hasFilters && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={clearFilters}
-              className="h-auto p-0 text-xs text-muted-foreground hover:text-foreground hover:bg-transparent transition-colors"
-            >
-              Clear all
-            </Button>
-          )}
+            <AddFilterPopover
+              patents={patents}
+              activeKeys={activeKeys}
+              onAdd={(key, value) => {
+                logPatentFilter(key, value)
+                setFilter(key, value)
+              }}
+            />
 
-          <span className="ml-auto text-xs text-muted-foreground tabular-nums">
-            {sorted.length} of {patents.length}
-          </span>
+            {hasFilters && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={clearFilters}
+                className="h-auto p-0 text-xs text-muted-foreground hover:text-foreground hover:bg-transparent transition-colors"
+              >
+                Clear all
+              </Button>
+            )}
 
-          <ColumnPicker
-            preset={columnPreset}
-            visibleColumns={visibleColumns}
-            onPresetChange={onPresetChange}
-            onColumnsChange={onColumnsChange}
-          />
-        </div>
+            <span className="ml-auto text-xs text-muted-foreground tabular-nums">
+              {sorted.length} of {patents.length}
+            </span>
+
+            <ColumnPicker
+              preset={columnPreset}
+              visibleColumns={visibleColumns}
+              onPresetChange={onPresetChange}
+              onColumnsChange={onColumnsChange}
+            />
+          </div>
+        )}
 
         {/* Table */}
         <div className="flex-1 overflow-auto">
@@ -552,7 +566,7 @@ export function PatentsTable({
                 <tr>
                   {show('num') && <ThCol label="#" className="w-10" {...thProps} />}
                   {show('title') && <ThCol label="Title" sortable="title" {...thProps} />}
-                  {show('assignee') && !selectedPatent && (
+                  {show('assignee') && !collapseForDetail && (
                     <ThCol label="Assignee" className="hidden sm:table-cell" {...thProps} />
                   )}
                   {show('pqcAlgorithms') && (
@@ -665,7 +679,7 @@ export function PatentsTable({
                           </span>
                         </td>
                       )}
-                      {show('assignee') && !selectedPatent && (
+                      {show('assignee') && !collapseForDetail && (
                         <td className="hidden sm:table-cell px-3 py-2.5 text-xs text-muted-foreground max-w-[180px] truncate">
                           {p.assignee}
                         </td>
@@ -766,7 +780,7 @@ export function PatentsTable({
       </div>
 
       {/* Detail panel — full-width on mobile, half-width on sm+ (or full when expanded) */}
-      {selectedPatent && (
+      {chrome && selectedPatent && (
         <div
           className={`flex flex-col w-full sm:border-l border-border overflow-hidden transition-all duration-200 ${
             isDetailExpanded ? 'sm:w-full sm:border-l-0' : 'sm:w-1/2'
