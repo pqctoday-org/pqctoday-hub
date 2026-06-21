@@ -147,7 +147,7 @@ export const AssessQuestionPane: React.FC<AssessQuestionPaneProps> = ({
           data-workshop-target={isLast ? 'assess-submit' : 'assess-next'}
           className="gap-1.5 font-bold"
         >
-          {isLast ? 'Generate report' : 'Continue'}
+          {isLast ? 'Review answers' : 'Continue'}
           <ChevronRight size={15} />
         </Button>
       </div>
