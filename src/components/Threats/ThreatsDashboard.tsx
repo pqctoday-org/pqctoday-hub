@@ -80,7 +80,7 @@ export const ThreatsDashboard: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = 
           return next.toString() === prev.toString() ? prev : next
         })
     : realSetSearchParams
-  const { selectedIndustries: storeIndustries, selectedPersona } = usePersonaStore()
+  const { selectedIndustries: storeIndustries, selectedPersona, setPersona } = usePersonaStore()
 
   const initialIndustries = useMemo(() => {
     const param = searchParams.get('industry')
@@ -554,11 +554,12 @@ export const ThreatsDashboard: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = 
         </div>
       )}
 
-      {/* Filters Section */}
-      <div className="bg-card border border-border rounded-lg shadow-lg p-2 mb-8 flex flex-col items-center gap-4">
-        {/* Mobile: Header to toggle filters + Search */}
-        <div className="flex w-full md:hidden items-center justify-between gap-2">
-          <div className="flex relative w-full flex-1">
+      {/* Control deck — consolidated filters in the redesign language: sector + search
+          (row 1); role lens + severity/class chips + trust + my + view (row 2). */}
+      <div className="glass-panel mb-8 space-y-3 p-3">
+        {/* Mobile: search + a filters toggle for the rest of the deck */}
+        <div className="flex items-center gap-2 md:hidden">
+          <div className="relative flex-1">
             <Search
               size={16}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -571,13 +572,13 @@ export const ThreatsDashboard: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = 
                 setSearchQuery(e.target.value)
                 syncFiltersToUrl({ q: e.target.value })
               }}
-              className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
+              className="w-full rounded-lg border border-border bg-muted/30 py-2 pl-10 pr-4 text-sm text-foreground transition-colors placeholder:text-muted-foreground hover:bg-muted/50 focus:border-primary/50 focus:outline-none"
             />
           </div>
           <Button
             variant="outline"
             size="icon"
-            className="shrink-0 h-[44px] w-[44px]"
+            className="h-[44px] w-[44px] shrink-0"
             onClick={() => setShowMobileFilters(!showMobileFilters)}
             aria-label="Toggle filters"
           >
@@ -585,15 +586,13 @@ export const ThreatsDashboard: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = 
           </Button>
         </div>
 
-        {/* Filters Container: Hidden on mobile unless showMobileFilters is true */}
-        <div
-          className={clsx(
-            'w-full md:w-full md:flex flex-col md:flex-row items-center gap-4',
-            showMobileFilters ? 'flex' : 'hidden'
-          )}
-        >
-          <div className="flex flex-col md:flex-row items-center gap-2 w-full md:w-auto text-xs">
-            <div className="flex-1 w-full md:min-w-[120px]">
+        <div className={clsx('space-y-3', showMobileFilters ? 'block' : 'hidden md:block')}>
+          {/* Row 1 — your sector + search */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+              Your sector
+            </span>
+            <div className="min-w-[180px] max-w-xs flex-1 sm:flex-none">
               <FilterDropdown
                 items={industryItems}
                 selectedId="All"
@@ -604,95 +603,169 @@ export const ThreatsDashboard: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = 
                   syncFiltersToUrl({ industry: ids })
                   logEvent('Threats', 'Filter Industry', ids.join(','))
                 }}
-                defaultLabel="Industry"
+                defaultLabel="All industries"
                 defaultIcon={<Briefcase size={14} className="text-primary" />}
                 opaque
                 className="mb-0 w-full"
                 noContainer
               />
             </div>
+            <span className="text-[11px] text-muted-foreground">
+              <span className="font-semibold text-foreground">{heroApplicable.length}</span> in
+              scope
+            </span>
+            <div className="relative ml-auto hidden min-w-[200px] max-w-xs flex-1 md:flex">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              />
+              <input
+                type="text"
+                placeholder='Search — try "HNDL settlement data"'
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  syncFiltersToUrl({ q: e.target.value })
+                }}
+                className="w-full rounded-lg border border-border bg-muted/30 py-1.5 pl-9 pr-3 text-sm text-foreground transition-colors placeholder:text-muted-foreground hover:bg-muted/50 focus:border-primary/50 focus:outline-none"
+              />
+            </div>
+          </div>
 
-            <div className="flex-1 w-full md:min-w-[120px]">
-              <FilterDropdown
-                items={criticalityItems}
-                selectedId={selectedCriticality}
-                onSelect={(id) => {
-                  setSelectedCriticality(id)
-                  syncFiltersToUrl({ criticality: id })
-                  logEvent('Threats', 'Filter Criticality', id)
-                }}
-                defaultLabel="Criticality"
-                defaultIcon={<AlertCircle size={14} className="text-primary" />}
-                opaque
-                className="mb-0 w-full"
-                noContainer
-              />
+          {/* Row 2 — role lens + severity + class + trust + my + view + count */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border pt-3">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+                Role
+              </span>
+              {(
+                [
+                  { id: 'executive', label: 'Executive' },
+                  { id: 'developer', label: 'Developer' },
+                  { id: 'architect', label: 'Architect' },
+                  { id: 'ops', label: 'IT Ops' },
+                  { id: 'researcher', label: 'Researcher' },
+                  { id: 'curious', label: 'Curious' },
+                ] as const
+              ).map((r) => {
+                const active = selectedPersona === r.id
+                return (
+                  <Button
+                    key={r.id}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setPersona(active ? null : r.id)}
+                    aria-pressed={active}
+                    className={clsx(
+                      'h-auto rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
+                      active
+                        ? 'border-secondary/50 bg-secondary/10 text-secondary'
+                        : 'border-border text-muted-foreground hover:text-foreground'
+                    )}
+                  >
+                    {r.label}
+                  </Button>
+                )
+              })}
             </div>
-            <div className="flex-1 w-full md:min-w-[120px]">
-              <FilterDropdown
-                items={threatClassItems}
-                selectedId={selectedClass}
-                onSelect={(id) => {
-                  setSelectedClass(id)
-                  syncFiltersToUrl({ threatClass: id })
-                  logEvent('Threats', 'Filter Class', id)
-                }}
-                defaultLabel="Threat Class"
-                defaultIcon={<ShieldHalf size={14} className="text-primary" />}
-                opaque
-                className="mb-0 w-full"
-                noContainer
-              />
+
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+                Severity
+              </span>
+              {criticalityItems.map((c) => {
+                const active = selectedCriticality === c.id
+                return (
+                  <Button
+                    key={c.id}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedCriticality(c.id)
+                      syncFiltersToUrl({ criticality: c.id })
+                      logEvent('Threats', 'Filter Criticality', c.id)
+                    }}
+                    aria-pressed={active}
+                    className={clsx(
+                      'h-auto rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
+                      active
+                        ? 'border-primary/50 bg-primary/10 text-primary'
+                        : 'border-border text-muted-foreground hover:text-foreground'
+                    )}
+                  >
+                    {c.id === 'All' ? 'All' : c.label}
+                  </Button>
+                )
+              })}
             </div>
-            {/* Tier filter writes ?tier= to the page URL — hidden in the sim embed
-                (would corrupt /simulation; its read-side useTrustTierFilter is inert). */}
-            {!simEmbed && (
-              <div className="flex-1 w-full md:min-w-[120px]">
-                <TrustTierFilter className="mb-0 w-full" />
-              </div>
+
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+                Class
+              </span>
+              {threatClassItems.map((c) => {
+                const active = selectedClass === c.id
+                return (
+                  <Button
+                    key={c.id}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedClass(c.id)
+                      syncFiltersToUrl({ threatClass: c.id })
+                      logEvent('Threats', 'Filter Class', c.id)
+                    }}
+                    aria-pressed={active}
+                    className={clsx(
+                      'h-auto rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
+                      active
+                        ? 'border-primary/50 bg-primary/10 text-primary'
+                        : 'border-border text-muted-foreground hover:text-foreground'
+                    )}
+                  >
+                    {c.id === 'All' ? 'All' : c.id.toUpperCase()}
+                  </Button>
+                )
+              })}
+            </div>
+
+            {/* Tier filter writes ?tier= — hidden in the sim embed. */}
+            {!simEmbed && <TrustTierFilter className="mb-0" />}
+
+            {myThreats.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowOnlyThreats(!showOnlyThreats)}
+                aria-pressed={showOnlyThreats}
+                className={clsx(
+                  'inline-flex h-auto items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
+                  showOnlyThreats
+                    ? 'border-status-warning/50 bg-status-warning/10 text-status-warning'
+                    : 'border-border text-muted-foreground hover:text-foreground'
+                )}
+              >
+                <BookmarkCheck size={12} />
+                My ({myThreats.length})
+              </Button>
             )}
-          </div>
 
-          <span className="hidden md:inline text-muted-foreground px-2">Search:</span>
-          <div className="hidden md:flex relative w-full md:flex-1 md:min-w-[200px]">
-            <Search
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            />
-            <input
-              type="text"
-              placeholder="Search threats..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value)
-                syncFiltersToUrl({ q: e.target.value })
-              }}
-              className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
-            />
-          </div>
-          {myThreats.length > 0 && (
-            <Button
-              variant="ghost"
-              onClick={() => setShowOnlyThreats(!showOnlyThreats)}
-              className={`hidden md:inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
-                showOnlyThreats
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
-              }`}
-              aria-pressed={showOnlyThreats}
-            >
-              <BookmarkCheck size={12} />
-              My ({myThreats.length})
-            </Button>
-          )}
-          <div className="hidden md:block">
-            <ThreatsViewToggle
-              mode={viewMode}
-              onChange={(mode) => {
-                setViewMode(mode)
-                syncFiltersToUrl({ mode })
-              }}
-            />
+            <div className="ml-auto flex items-center gap-3">
+              <span className="whitespace-nowrap text-[11px] text-muted-foreground">
+                Showing{' '}
+                <span className="font-semibold text-foreground">
+                  {filteredAndSortedData.length}
+                </span>{' '}
+                of {heroApplicable.length}
+              </span>
+              <ThreatsViewToggle
+                mode={viewMode}
+                onChange={(mode) => {
+                  setViewMode(mode)
+                  syncFiltersToUrl({ mode })
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
