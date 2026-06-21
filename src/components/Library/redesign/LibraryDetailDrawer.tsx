@@ -117,10 +117,10 @@ function DrawerPanel({
               </span>
               <span
                 className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold ${lifecyclePillClass(
-                  item.documentStatusBucket
+                  item.groupStatusBucket ?? item.documentStatusBucket
                 )}`}
               >
-                {lifecycleLabel(item.documentStatusBucket)}
+                {lifecycleLabel(item.groupStatusBucket ?? item.documentStatusBucket)}
               </span>
               {item.status && (
                 <span
@@ -209,6 +209,52 @@ function DrawerPanel({
                     </span>
                   ))}
               </div>
+            </Section>
+          )}
+
+          {item.priorRevisions && item.priorRevisions.length > 0 && (
+            <Section title={`Previous revisions (${item.priorRevisions.length})`}>
+              <ul className="space-y-2">
+                {item.priorRevisions.map((rev) => (
+                  <li
+                    key={rev.referenceId}
+                    className="flex items-start justify-between gap-2 rounded-lg border border-border p-2.5"
+                  >
+                    <div className="min-w-0">
+                      <p
+                        className="truncate text-[12.5px] text-foreground"
+                        title={rev.documentTitle}
+                      >
+                        {rev.documentTitle}
+                      </p>
+                      <div className="mt-1 flex items-center gap-2">
+                        <span
+                          className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${lifecyclePillClass(
+                            rev.documentStatusBucket
+                          )}`}
+                        >
+                          {lifecycleLabel(rev.documentStatusBucket)}
+                        </span>
+                        <span className="truncate font-mono text-[11px] text-muted-foreground">
+                          {rev.referenceId}
+                        </span>
+                      </div>
+                    </div>
+                    {rev.downloadUrl && (
+                      <a
+                        href={rev.downloadUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex shrink-0 items-center gap-1 text-[12px] text-secondary hover:text-primary"
+                        title={`Open source for ${rev.referenceId}`}
+                      >
+                        <ExternalLink size={13} aria-hidden="true" />
+                        Source
+                      </a>
+                    )}
+                  </li>
+                ))}
+              </ul>
             </Section>
           )}
 

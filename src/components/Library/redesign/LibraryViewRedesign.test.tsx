@@ -38,6 +38,14 @@ describe('LibraryViewRedesign', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument()
   })
 
+  it('surfaces all prior revisions of a multi-revision document in the drawer', () => {
+    // NIST-FIPS140-3-IG-PQC collapses an earlier edition into priorRevisions.
+    renderView('/library?ref=NIST-FIPS140-3-IG-PQC')
+    const drawer = screen.getByRole('dialog')
+    expect(within(drawer).getByText(/Previous revisions/i)).toBeInTheDocument()
+    expect(within(drawer).getByText('NIST-FIPS-140-3-IG-Sep-2025-PQC')).toBeInTheDocument()
+  })
+
   it('a persona narrows the grid to its focus areas (architect ≠ all docs)', () => {
     renderView()
     const allCount = screen.getByText(/\d+ documents?/i).textContent
