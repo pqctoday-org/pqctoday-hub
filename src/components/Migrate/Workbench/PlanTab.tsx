@@ -16,9 +16,15 @@ interface PlanTabProps {
 export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
   const choice = useMigrateSelectionStore((s) => s.choice)
   const removeFromPlan = useMigrateSelectionStore((s) => s.removeFromPlan)
+  const chooseProduct = useMigrateSelectionStore((s) => s.chooseProduct)
   const plan = useMigrateSelectionStore((s) => s.plan)
 
-  if (posture.plannedAssets.length === 0 && posture.foundations.length === 0) {
+  // Flatten planned foundation domains → one entry per selected product.
+  const foundationItems = posture.foundations.flatMap((f) =>
+    (choice[f.id] ?? []).map((product) => ({ id: f.id, label: f.label, product }))
+  )
+
+  if (posture.plannedAssets.length === 0 && foundationItems.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-border p-8 text-center">
         <p className="text-sm font-semibold text-foreground">Nothing in your plan yet</p>
@@ -76,7 +82,7 @@ export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
             <div className="flex flex-col divide-y divide-border">
               {group.assets.map((asset) => {
                 const decision = DECISIONS[asset.decision]
-                const chosen = choice[asset.id]
+                const chosen = choice[asset.id] ?? []
                 return (
                   <div key={asset.id} className="flex items-center gap-2.5 px-3 py-2.5">
                     <span
@@ -92,8 +98,8 @@ export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
                         </span>
                       </span>
                       <span className="block text-[11px] text-muted-foreground">
-                        {chosen
-                          ? `Chosen: ${chosen}`
+                        {chosen.length > 0
+                          ? `Chosen: ${chosen.join(', ')}`
                           : asset.decision === 'mitigate'
                             ? 'No product — mitigate'
                             : 'No product chosen yet'}
@@ -122,7 +128,7 @@ export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
         )
       })}
 
-      {posture.foundations.length > 0 && (
+      {foundationItems.length > 0 && (
         <div className="overflow-hidden rounded-xl border border-border">
           <div className="flex items-center gap-2.5 bg-muted/40 px-3 py-2">
             <span className="min-w-0 flex-1">
@@ -134,33 +140,29 @@ export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
               </span>
             </span>
             <span className="font-mono text-[11px] text-muted-foreground">
-              {posture.foundations.length} in plan
+              {foundationItems.length} in plan
             </span>
           </div>
+          {/* One row per selected product (consistent with the wave rows). */}
           <div className="flex flex-col divide-y divide-border">
-            {posture.foundations.map((f) => {
-              const chosen = choice[f.id]
-              return (
-                <div key={f.id} className="flex items-center gap-2.5 px-3 py-2.5">
-                  <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-primary/60" aria-hidden />
-                  <span className="min-w-0 flex-1">
-                    <span className="text-sm font-semibold text-foreground">{f.label}</span>
-                    <span className="block text-[11px] text-muted-foreground">
-                      {chosen ? `Chosen: ${chosen}` : 'No product chosen yet'}
-                    </span>
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removeFromPlan(f.id)}
-                    aria-label={`Remove ${f.label} from plan`}
-                    className="h-7 w-7 shrink-0 p-0 text-muted-foreground hover:text-foreground"
-                  >
-                    <X size={14} />
-                  </Button>
-                </div>
-              )
-            })}
+            {foundationItems.map(({ id, label, product }) => (
+              <div key={`${id}::${product}`} className="flex items-center gap-2.5 px-3 py-2.5">
+                <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-primary/60" aria-hidden />
+                <span className="min-w-0 flex-1">
+                  <span className="text-sm font-semibold text-foreground">{product}</span>
+                  <span className="block text-[11px] text-muted-foreground">{label}</span>
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => chooseProduct(id, product)}
+                  aria-label={`Remove ${product} from plan`}
+                  className="h-7 w-7 shrink-0 p-0 text-muted-foreground hover:text-foreground"
+                >
+                  <X size={14} />
+                </Button>
+              </div>
+            ))}
           </div>
         </div>
       )}

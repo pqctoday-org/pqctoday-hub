@@ -67,7 +67,7 @@ function byWaveThenYear(a: ReplaceAsset, b: ReplaceAsset): number {
  */
 export function computePosture(
   planIds: string[],
-  choice: Record<string, string>
+  choice: Record<string, string[]>
 ): MigrationPosture {
   const seen = new Set<string>()
   const plannedAssets: ReplaceAsset[] = []
@@ -107,7 +107,7 @@ export function computePosture(
   // nextMove: first ready planned asset by (wave, year) — list is already sorted.
   const firstReady = plannedAssets.find((a) => DECISIONS[a.decision].ready) ?? null
   const nextMove: NextMove | null = firstReady
-    ? { asset: firstReady, product: choice[firstReady.id] }
+    ? { asset: firstReady, product: (choice[firstReady.id] ?? []).join(', ') || undefined }
     : null
 
   const waves: WaveGroup[] = ([1, 2, 3, 4] as const)
