@@ -2,15 +2,15 @@
 //
 // AssessViewRedesign — the rebuilt /assess page (handoff: design_handoff_assess_redesign).
 //
-// Pass 1 scope: the new outcome-framed track chooser + the always-visible control
-// deck (Fast/Full toggle), wrapping the existing AssessWizard body. All legacy
-// behaviours are preserved verbatim from AssessView (deep links ?reset/?mode/
-// ?prefs/?phase, persona auto-skip, resume/complete/phase banners, persona
-// seeding). The step-map rail + assist strip + review/done screens land in later
-// slices; the new rail/pane will replace <AssessWizard> here.
+// Composition: outcome-framed track chooser → two-pane wizard (step-map rail +
+// question pane with the single consolidated assist strip, reusing the real step
+// components) → review → done. All legacy behaviours preserved from AssessView
+// (deep links ?reset/?mode/?prefs/?phase/?step, persona auto-skip, resume/
+// complete/phase banners, persona seeding, analytics, CSWP-3.9 badge). A
+// completed assessment does NOT auto-redirect — the user decides.
 //
-// Wired at /assess/redesign — live /assess still renders the legacy AssessView
-// until the flip is approved.
+// This is the DEFAULT /assess route; the previous page is preserved at
+// /assess/legacy.
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
