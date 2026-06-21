@@ -39,6 +39,27 @@ export function productsForDomain(domain: DomainId): SoftwareItem[] {
   return INDEX.get(domain) ?? []
 }
 
+// vendorId → products index (status-sorted), for the vendor-roadmap tab.
+const VENDOR_INDEX = new Map<string, SoftwareItem[]>()
+for (const item of softwareData) {
+  if (!item.vendorId) continue
+  const list = VENDOR_INDEX.get(item.vendorId)
+  if (list) list.push(item)
+  else VENDOR_INDEX.set(item.vendorId, [item])
+}
+for (const list of VENDOR_INDEX.values()) {
+  list.sort((a, b) => {
+    const ra = PQC_STATUS_RANK[productPqcStatus(a).status]
+    const rb = PQC_STATUS_RANK[productPqcStatus(b).status]
+    return ra - rb || a.softwareName.localeCompare(b.softwareName)
+  })
+}
+
+/** Products belonging to a vendor (already status-sorted). */
+export function productsForVendor(vendorId: string): SoftwareItem[] {
+  return VENDOR_INDEX.get(vendorId) ?? []
+}
+
 /** Count of products per domain (for sidebar/section counts). */
 export function domainProductCount(domain: DomainId): number {
   return INDEX.get(domain)?.length ?? 0

@@ -9,8 +9,9 @@ import { ProductDetail } from './ProductDetail'
 
 interface ProductRowProps {
   product: SoftwareItem
-  chosen: boolean
-  onChoose: () => void
+  /** When omitted (e.g. vendor-roadmap context) the Choose button is hidden. */
+  chosen?: boolean
+  onChoose?: () => void
 }
 
 /** A candidate replacement product. Expands to the full detail (roadmap, certs,
@@ -61,25 +62,27 @@ export function ProductRow({ product, chosen, onChoose }: ProductRowProps) {
             {product.categoryName}
           </p>
         </div>
-        <Button
-          variant={chosen ? 'secondary' : 'outline'}
-          size="sm"
-          className="shrink-0"
-          onClick={onChoose}
-          aria-label={
-            chosen ? `Remove ${product.softwareName} from plan` : `Choose ${product.softwareName}`
-          }
-        >
-          {chosen ? (
-            <>
-              <Check size={14} /> In plan
-            </>
-          ) : (
-            <>
-              <Plus size={14} /> Choose
-            </>
-          )}
-        </Button>
+        {onChoose && (
+          <Button
+            variant={chosen ? 'secondary' : 'outline'}
+            size="sm"
+            className="shrink-0"
+            onClick={onChoose}
+            aria-label={
+              chosen ? `Remove ${product.softwareName} from plan` : `Choose ${product.softwareName}`
+            }
+          >
+            {chosen ? (
+              <>
+                <Check size={14} /> In plan
+              </>
+            ) : (
+              <>
+                <Plus size={14} /> Choose
+              </>
+            )}
+          </Button>
+        )}
       </div>
 
       {expanded && <ProductDetail product={product} />}
