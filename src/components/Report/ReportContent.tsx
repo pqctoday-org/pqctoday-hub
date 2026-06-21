@@ -49,7 +49,8 @@ import { ReportCswp39Nav } from './ReportCswp39Nav'
 import { ReportLockedOverlay } from './redesign/ReportLockedOverlay';
 import { KpiEmptyState, KpiPreviewSkeleton } from './redesign/ReportKpiStates';
 import { ReportVerdictBlock } from './redesign/ReportVerdictBlock';
-import { ReportUpgradeNudge } from './redesign/ReportUpgradeNudge'
+import { ReportUpgradeNudge } from './redesign/ReportUpgradeNudge';
+import { ReportControlDeck } from './redesign/ReportControlDeck'
 import { useThreatsData } from '../../hooks/useThreatsData'
 import { GlossaryAutoWrap } from '../PKILearning/common/GlossaryAutoWrap'
 import { MigrationRoadmap } from './MigrationRoadmap'
@@ -759,6 +760,9 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         {result.categoryScores ? 'Comprehensive Assessment' : 'Quick Assessment'}
                       </span>
                     </div>
+
+                    {/* Control deck (redesign) — derived track label + persona lens. */}
+                    <ReportControlDeck fullTrack={!!result.categoryScores} />
 
                     {/* Persona verdict (redesign) — re-leads the result for the active role,
                       above the "Do this first" hero. */}
