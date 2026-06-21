@@ -1,0 +1,85 @@
+// SPDX-License-Identifier: GPL-3.0-only
+import { describe, it, expect, beforeEach } from 'vitest'
+import { render, screen, fireEvent, within } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
+import '@testing-library/jest-dom'
+import { MigrationWorkbench } from './MigrationWorkbench'
+import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+
+function renderWorkbench() {
+  return render(
+    <MemoryRouter>
+      <MigrationWorkbench embedded />
+    </MemoryRouter>
+  )
+}
+
+describe('MigrationWorkbench (integration)', () => {
+  beforeEach(() => {
+    useMigrateSelectionStore.setState({ plan: [], choice: {}, tab: 'replace' })
+  })
+
+  it('renders the asset list + posture', () => {
+    renderWorkbench()
+    expect(screen.getByText('What you run — pick to see replacements')).toBeInTheDocument()
+    expect(screen.getByText('Your readiness')).toBeInTheDocument()
+    // 0% with empty plan
+    expect(screen.getByText('0%')).toBeInTheDocument()
+  })
+
+  it('adding an asset to the plan updates readiness + plan count', () => {
+    renderWorkbench()
+    // TLS is the default selected asset → its detail "Add to plan" button shows
+    fireEvent.click(screen.getByRole('button', { name: /Add TLS key exchange to plan/i }))
+    // readiness now 100% (tls is drop-in / ready) and 1 in plan
+    expect(screen.getByText('100%')).toBeInTheDocument()
+    expect(useMigrateSelectionStore.getState().plan).toContain('tls')
+  })
+
+  it('selecting a different asset swaps the contextual catalog', () => {
+    renderWorkbench()
+    fireEvent.click(screen.getByRole('button', { name: /IPsec \/ IKEv2 VPN/i }))
+    // the VPN asset detail card heading appears
+    expect(screen.getByRole('heading', { name: 'IPsec / IKEv2 VPN' })).toBeInTheDocument()
+  })
+
+  it('email asset shows the mitigate gap card (no GA product)', () => {
+    renderWorkbench()
+    fireEvent.click(screen.getByRole('button', { name: /Secure email/i }))
+    expect(screen.getByText(/No GA quantum-safe product for this yet/i)).toBeInTheDocument()
+  })
+
+  it('foundation domains are reachable (catalog not orphaned)', () => {
+    renderWorkbench()
+    // the Foundations section lists the crypto-libraries bucket
+    expect(screen.getByText('Crypto libraries & frameworks')).toBeInTheDocument()
+  })
+
+  it('plan tab shows waves once an asset is planned', () => {
+    useMigrateSelectionStore.setState({ plan: ['tls'], tab: 'plan' })
+    renderWorkbench()
+    fireEvent.click(screen.getByRole('button', { name: /Plan & sequence/i }))
+    expect(screen.getByText('External-facing live traffic')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Export plan \+ CBOM/i })).toBeInTheDocument()
+  })
+
+  it('empty plan tab prompts to add assets', () => {
+    useMigrateSelectionStore.setState({ plan: [], tab: 'plan' })
+    renderWorkbench()
+    fireEvent.click(screen.getByRole('button', { name: /Plan & sequence/i }))
+    expect(screen.getByText('Nothing in your plan yet')).toBeInTheDocument()
+  })
+
+  it('contextual catalog renders product rows for the selected asset', () => {
+    renderWorkbench()
+    // default tls selected → "Products that replace this" header + at least one Choose button
+    expect(screen.getByText(/Products that replace this/i)).toBeInTheDocument()
+    const chooseButtons = screen.getAllByRole('button', { name: /^Choose / })
+    expect(chooseButtons.length).toBeGreaterThan(0)
+    // choosing records the choice + plans the asset
+    fireEvent.click(
+      within(chooseButtons[0].closest('div')!).getByRole('button', { name: /^Choose / })
+    )
+    expect(useMigrateSelectionStore.getState().plan).toContain('tls')
+  })
+})

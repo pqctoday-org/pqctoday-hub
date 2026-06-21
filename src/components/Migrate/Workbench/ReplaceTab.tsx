@@ -50,11 +50,18 @@ export function ReplaceTab({ persona }: ReplaceTabProps) {
 
       <div className="min-w-0 flex-1 lg:min-w-[380px]">
         {asset ? (
-          <AssetDetailCard
-            asset={asset}
-            inPlan={plan.includes(asset.id)}
-            onToggle={() => togglePlanAsset(asset.id)}
-          />
+          <>
+            <AssetDetailCard
+              asset={asset}
+              inPlan={plan.includes(asset.id)}
+              onToggle={() => togglePlanAsset(asset.id)}
+            />
+            {asset.decision === 'mitigate' && (
+              <div className="mt-3">
+                <GapCard asset={asset} hasCandidates={products.length > 0} />
+              </div>
+            )}
+          </>
         ) : selectedDomain ? (
           <div className="rounded-xl border border-border bg-gradient-to-br from-primary/5 to-transparent p-4">
             <h2 className="text-base font-bold text-foreground">{DOMAINS[selectedDomain].label}</h2>
@@ -88,8 +95,10 @@ export function ReplaceTab({ persona }: ReplaceTabProps) {
             </div>
 
             <div className="mt-3 flex flex-col gap-2">
-              {filtered.length === 0 && products.length === 0 && asset ? (
-                <GapCard asset={asset} />
+              {products.length === 0 ? (
+                <p className="rounded-xl border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
+                  No catalog products mapped here yet.
+                </p>
               ) : filtered.length === 0 ? (
                 <p className="rounded-xl border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
                   No products match “{filter}”.
@@ -169,7 +178,7 @@ function AssetDetailCard({
   )
 }
 
-function GapCard({ asset }: { asset: ReplaceAsset }) {
+function GapCard({ asset, hasCandidates }: { asset: ReplaceAsset; hasCandidates: boolean }) {
   return (
     <div className="rounded-xl border border-dashed border-status-error/40 bg-status-error/5 p-4">
       <div className="flex items-center gap-2 text-status-error">
@@ -179,6 +188,7 @@ function GapCard({ asset }: { asset: ReplaceAsset }) {
       <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{asset.note}</p>
       <p className="mt-2 text-xs text-muted-foreground">
         Lands in Wave {asset.wave}, flagged <strong className="text-status-error">Mitigate</strong>.
+        {hasCandidates && ' Partial / early candidates are listed below — none are GA yet.'}
       </p>
     </div>
   )

@@ -55,6 +55,7 @@ export function AssetList({ persona, selectedDomain, onSelect }: AssetListProps)
                 key={asset.id}
                 role="button"
                 tabIndex={0}
+                aria-label={`Select ${asset.label}`}
                 onClick={() => onSelect(asset.id)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
