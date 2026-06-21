@@ -409,6 +409,7 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
 /** Nav paths that are always shown regardless of persona. */
 export const ALWAYS_VISIBLE_PATHS = [
   '/',
+  '/simulation',
   '/learn',
   '/timeline',
   '/threats',
