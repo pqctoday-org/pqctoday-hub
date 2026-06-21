@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { GraduationCap, Compass } from 'lucide-react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { GraduationCap, Compass, ListChecks } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
@@ -27,6 +27,7 @@ type Mode = 'path' | 'browse'
  * the old five-mode Dashboard (kept at /learn/legacy).
  */
 export const LearnRedesignView = () => {
+  const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const deepLinkNice = searchParams.get('view') === 'nice'
 
@@ -51,17 +52,30 @@ export const LearnRedesignView = () => {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-start gap-3">
-        <div className="w-11 h-11 rounded-[13px] bg-gradient-to-br from-primary to-accent flex items-center justify-center shrink-0">
-          <GraduationCap className="text-background" size={22} aria-hidden="true" />
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3">
+          <div className="w-11 h-11 rounded-[13px] bg-gradient-to-br from-primary to-accent flex items-center justify-center shrink-0">
+            <GraduationCap className="text-background" size={22} aria-hidden="true" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold tracking-tight text-gradient">Learn</h1>
+            <p className="text-xs text-muted-foreground">
+              One guided path through post-quantum cryptography — tuned to your role ·{' '}
+              {TOTAL_MODULE_COUNT} modules · {TRACK_COUNT} tracks
+            </p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-xl font-bold tracking-tight text-gradient">Learn</h1>
-          <p className="text-xs text-muted-foreground">
-            One guided path through post-quantum cryptography — tuned to your role ·{' '}
-            {TOTAL_MODULE_COUNT} modules · {TRACK_COUNT} tracks
-          </p>
-        </div>
+        {/* Always-available quiz entry — reachable in both modes, any persona,
+            regardless of completion (the capstone below is the gated 'final' run). */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigate('/learn/quiz')}
+          className="shrink-0 gap-1.5"
+        >
+          <ListChecks size={14} aria-hidden="true" />
+          Quiz
+        </Button>
       </div>
 
       {/* Persona lens */}
