@@ -46,6 +46,7 @@ import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ProtocolDetailModal } from './ProtocolDetailModal'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+import { libraryHref } from './libraryRef'
 
 // Resolve the canonical destination for a matrix PlaygroundTool cell.
 // Priority: explicit per-cell `url` > registry `moduleLink` > playground fallback.
@@ -239,13 +240,24 @@ function DimensionRefChip({ cellRef }: { cellRef: DimensionRef }) {
   ]
     .filter(Boolean)
     .join(' — ')
+  const chipCls = `inline-flex max-w-full items-center gap-1 truncate rounded border px-1.5 py-0 text-[10px] font-medium transition-colors ${tone}`
+  // Prefer the in-app Library entry; fall back to the external spec URL.
+  const libHref = libraryHref(cellRef.id)
+  if (libHref) {
+    return (
+      <Link to={libHref} className={chipCls} title={`Open ${cellRef.id} in the Library`}>
+        <FileText size={9} className="shrink-0" />
+        <span className="truncate">{display}</span>
+      </Link>
+    )
+  }
   if (cellRef.url) {
     return (
       <a
         href={cellRef.url}
         target="_blank"
         rel="noopener noreferrer"
-        className={`inline-flex max-w-full items-center gap-1 truncate rounded border px-1.5 py-0 text-[10px] font-medium transition-colors ${tone}`}
+        className={chipCls}
         title={titleText || cellRef.id}
       >
         <FileText size={9} className="shrink-0" />
@@ -676,19 +688,31 @@ function ProtocolCard({
         <div className="space-y-3 border-t border-border/50 p-3">
           {specs.length > 0 && (
             <CardSection label="Specifications">
-              {specs.map((d) => (
-                <a
-                  key={d.id}
-                  href={d.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={d.title}
-                  className="inline-flex items-center gap-1 rounded border border-border bg-muted/30 px-1.5 py-0.5 text-[10px] text-foreground hover:border-primary/50 hover:text-primary"
-                >
-                  <FileText size={10} />
-                  {d.id}
-                </a>
-              ))}
+              {specs.map((d) => {
+                const href = libraryHref(d.id)
+                const cls =
+                  'inline-flex items-center gap-1 rounded border border-border bg-muted/30 px-1.5 py-0.5 text-[10px] text-foreground hover:border-primary/50 hover:text-primary'
+                // In-app Library entry when we have one; otherwise the external spec.
+                return href ? (
+                  <Link key={d.id} to={href} title={`Open ${d.id} in the Library`} className={cls}>
+                    <FileText size={10} />
+                    {d.id}
+                  </Link>
+                ) : (
+                  <a
+                    key={d.id}
+                    href={d.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={d.title}
+                    className={cls}
+                  >
+                    <FileText size={10} />
+                    {d.id}
+                    <ExternalLink size={9} className="opacity-60" />
+                  </a>
+                )
+              })}
             </CardSection>
           )}
 
