@@ -556,7 +556,7 @@ export const ThreatsDashboard: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = 
 
       {/* Control deck — consolidated filters in the redesign language: sector + search
           (row 1); role lens + severity/class chips + trust + my + view (row 2). */}
-      <div className="glass-panel mb-8 space-y-3 p-3">
+      <div className="glass-panel mb-8 space-y-3 p-3" data-testid="threats-control-deck">
         {/* Mobile: search + a filters toggle for the rest of the deck */}
         <div className="flex items-center gap-2 md:hidden">
           <div className="relative flex-1">
@@ -603,7 +603,7 @@ export const ThreatsDashboard: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = 
                   syncFiltersToUrl({ industry: ids })
                   logEvent('Threats', 'Filter Industry', ids.join(','))
                 }}
-                defaultLabel="All industries"
+                defaultLabel="Industry"
                 defaultIcon={<Briefcase size={14} className="text-primary" />}
                 opaque
                 className="mb-0 w-full"

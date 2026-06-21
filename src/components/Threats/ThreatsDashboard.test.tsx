@@ -175,18 +175,14 @@ describe('ThreatsDashboard', () => {
     expect(within(table).queryByText('Automotive')).not.toBeInTheDocument()
   })
 
-  it('filters by Criticality using dropdown', () => {
+  it('filters by Criticality (severity filter, via its URL param)', () => {
+    // The deck's severity chips set ?criticality=; assert the filtering behavior
+    // through that contract (robust to the chip UI).
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={['/threats?criticality=High']}>
         <ThreatsDashboard />
       </MemoryRouter>
     )
-
-    // Interact with Criticality dropdown
-    const dropdown = screen.getByTestId('filter-Criticality') // defaultLabel="Criticality"
-    const highOption = within(dropdown).getByText('High')
-
-    fireEvent.click(highOption)
 
     // Check filtered state (Healthcare is High, Finance is Critical)
     const table = screen.getByRole('table')
