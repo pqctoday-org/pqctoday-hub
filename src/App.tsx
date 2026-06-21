@@ -73,6 +73,11 @@ const PlaygroundToolRoute = lazyWithRetry(() =>
     default: module.PlaygroundToolRoute,
   }))
 )
+const MigrationWorkbench = lazyWithRetry(() =>
+  import('./components/Migrate/Workbench/MigrationWorkbench').then((module) => ({
+    default: module.MigrationWorkbench,
+  }))
+)
 const OpenSSLStudioView = lazyWithRetry(() =>
   import('./components/OpenSSLStudio/OpenSSLStudioView').then((module) => ({
     default: module.OpenSSLStudioView,
@@ -311,6 +316,14 @@ function App() {
         element={
           <ErrorBoundary>
             <MigrateView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="migrate/workbench"
+        element={
+          <ErrorBoundary>
+            <MigrationWorkbench />
           </ErrorBoundary>
         }
       />
