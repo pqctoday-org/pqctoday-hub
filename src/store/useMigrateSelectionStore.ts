@@ -22,7 +22,7 @@ function omitKey<T>(obj: Record<string, T>, key: string): Record<string, T> {
  *  (they're added/removed via the asset-level "Add to plan" toggle). Foundation
  *  domains, by contrast, are only in the plan because a product was chosen, so
  *  clearing their last product removes them. */
-const REPLACE_ASSET_IDS = new Set(REPLACE_ASSETS.map((a) => a.id))
+const REPLACE_ASSET_IDS = new Set<string>(REPLACE_ASSETS.map((a) => a.id))
 
 /** Convert old composite key to productId slug */
 function migrateKey(key: string): string {
