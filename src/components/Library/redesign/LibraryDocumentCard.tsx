@@ -5,7 +5,7 @@
  * + source, bookmark + Open) and opens the detail drawer on click. The dense data
  * the live card carried (CSWP-39 grid, region chips, analysis) lives in the drawer.
  */
-import { Building2, Bookmark, ExternalLink } from 'lucide-react'
+import { Building2, Bookmark, ExternalLink, Layers } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { LibraryItem } from '@/data/libraryData'
 import {
@@ -32,6 +32,10 @@ export function LibraryDocumentCard({
   const trust = trustInfo(item.referenceId)
   const cats = (item.categories ?? []).slice(0, 2)
   const showUrgency = item.migrationUrgency === 'Critical' || item.migrationUrgency === 'High'
+  // The lifecycle pill reflects the most-advanced edition across this record and
+  // its prior revisions (matches the live card), not just the current row.
+  const lifecycleBucket = item.groupStatusBucket ?? item.documentStatusBucket
+  const revisionCount = item.priorRevisions?.length ?? 0
 
   return (
     <div
@@ -66,10 +70,10 @@ export function LibraryDocumentCard({
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <span
           className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold ${lifecyclePillClass(
-            item.documentStatusBucket
+            lifecycleBucket
           )}`}
         >
-          {lifecycleLabel(item.documentStatusBucket)}
+          {lifecycleLabel(lifecycleBucket)}
         </span>
         {cats.map((c) => (
           <span
@@ -86,6 +90,15 @@ export function LibraryDocumentCard({
             )}`}
           >
             {item.migrationUrgency}
+          </span>
+        )}
+        {revisionCount > 0 && (
+          <span
+            className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/40 px-1.5 py-0.5 text-[11px] text-muted-foreground"
+            title={`${revisionCount} earlier revision${revisionCount === 1 ? '' : 's'} — open for details`}
+          >
+            <Layers size={10} aria-hidden="true" />
+            {revisionCount} rev{revisionCount === 1 ? '' : 's'}
           </span>
         )}
       </div>
