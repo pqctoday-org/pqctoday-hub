@@ -138,7 +138,7 @@ const INDICATORS = {
     1: 'Informal plan exists (spreadsheet, no governance); single-year horizon',
     2: 'Multi-year roadmap approved; Year 1 plan resourced; SteerCo operational; KPI baseline set',
     3: 'Quarterly roadmap reviews operational; dependency mapping maintained; refresh cycle alignment documented; vendor engagement tracked on dashboard',
-    4: 'Roadmap is a living instrument with quarterly updates; contingency triggers defined and tested; leading indicators monitored',
+    4: 'Roadmap is a living instrument with quarterly updates; contingency triggers defined and tested; leading indicators monitored; program transitioning from migration execution to ongoing posture management',
   },
   p5: {
     1: 'Lab testing only; no production exposure',
@@ -156,7 +156,7 @@ const INDICATORS = {
     1: 'Ad-hoc inquiries to a few vendors; no structured tracking',
     2: 'Top 10 vendors formally engaged; questionnaires sent; responses tracked; vendor criticality classification complete',
     3: 'PQC in standard procurement language; contracts include dated commitments and remedies; bridging patterns deployed for blocked systems; vendor scorecard reported to SteerCo',
-    4: 'All strategic vendors PQC-committed with verified delivery; open-source dependency tracking operational; vendor governance is permanent BAU function',
+    4: 'All strategic vendors PQC-committed with verified delivery; bridging patterns eliminated as vendor support matures; open-source dependency tracking operational; vendor governance is permanent BAU function',
   },
   foundations: {
     1: 'Cross-cutting capabilities recognized; ad hoc maturity awareness; no KPIs',
@@ -184,7 +184,9 @@ const GATES = {
   // (frameworkPhases.ts: cadence 'continuous', no gate) — it has no one-time gate.
   // The earlier invented 'G7' contradicted the framework (audit fidelity gap, Q3);
   // p7 clears via its maturity level, not a gate certificate.
-  foundations: { id: 'GF', criterion: 'Foundations sustained as BAU' },
+  // foundations (Program Foundations) is a SPANNING cross-cutting band, not a
+  // gated phase — frameworkPhases.ts gives it no gate, so neither does the tree.
+  // (The earlier invented 'GF' had no basis in the framework or the hub model.)
   // verify-close (Verification & Closure) is the terminal SEQUENTIAL phase with a
   // real one-time gate (frameworkPhases.ts G8) — unlike continuous p7.
   'verify-close': {
@@ -197,76 +199,72 @@ const GATES = {
 // level = the maturity level the activity primarily delivers (from the
 // per-phase Maturity Indicators); do/output paraphrased from the framework prose.
 const FRAMEWORK = {
+  // p0 activity ids + titles are VERBATIM the framework's Phase 0 activities
+  // (0.1–0.5; sub-activities 0.2b/0.2c are folded into 0.2's scope). The earlier
+  // tree renumbered these onto wrong/invented labels (0.2 "Assess Data…", an
+  // invented 0.6, QRA mis-placed into p0) — see frameworkFidelity.test.ts. Every
+  // hub resource that was attached is preserved, redistributed onto the real
+  // activity it delivers; maturity bands stay L1 (case) → L2 (budget/governance/
+  // charter) → L3 (scoping), matching the p0 Maturity Indicators.
   p0: [
     {
       id: '0.1',
       level: 1,
       title: 'Frame the Business Case',
-      do: 'Structure the executive argument around regulatory deadlines, HNDL and TNFL exposure, and stakeholder expectations.',
+      do: 'Structure the executive argument around the four urgency drivers — regulatory deadlines, HNDL and TNFL exposure, the threat horizon, and client/investor/insurer expectations.',
       output: 'Executive business case',
       steps: [
         L('pqc-business-case', 'Learn: PQC Business Case'),
         L('exec-quantum-impact', 'Learn: Executive Quantum Impact'),
+        L('pqc-risk-management', 'Learn: PQC Risk Management'),
+        L('compliance-strategy', 'Learn: Compliance & Regulatory Strategy'),
         R('threats', 'Check the CRQC threat horizon'),
-        A('roi-model', 'Model the migration ROI'),
+        R('compliance', 'Map the binding regulatory deadlines'),
+        A('crqc-scenario', 'Quantify HNDL/TNFL exposure with a CRQC scenario'),
       ],
     },
     {
       id: '0.2',
-      level: 1,
-      title: 'Assess Data & Asset Sensitivity',
-      do: 'Discover the critical assets, classify their sensitivity and confidentiality horizon — the exposure that justifies the budget the board will commit.',
-      output: 'Initial scoping & asset-sensitivity assessment',
-      steps: [
-        L('data-asset-sensitivity', 'Learn: Data & Asset Sensitivity'),
-        R('assess-engine', 'Run the assessment engine'),
-        A('initial-scoping', 'Produce the scoping & asset assessment'),
-      ],
+      level: 2,
+      title: 'Build the Budget Structure',
+      do: 'Structure funding as a phased multi-year program aligned to existing infrastructure refresh cycles, sized from migration cost estimates and ROI.',
+      output: 'Multi-year budget commitment',
+      steps: [A('roi-model', 'Model the multi-year migration budget & ROI')],
     },
     {
       id: '0.3',
       level: 2,
-      title: 'Identify Applicable Standards, Certifications & Compliance',
-      do: 'Map the regulations, standards and certifications that bind this org (and their deadlines) into a compliance & regulatory strategy.',
-      output: 'Compliance & regulatory strategy',
+      title: 'Establish Governance Structure',
+      do: 'Stand up the roles (Sponsor, SteerCo, QRPM) and workstreams, the RACI, the decision cadence, and the cryptography policy / risk-appetite framing.',
+      output: 'Governance structure',
       steps: [
-        L('compliance-strategy', 'Learn: Compliance & Regulatory Strategy'),
-        R('compliance', 'Map applicable regs & certifications'),
+        L('pqc-governance', 'Learn: PQC Governance & Policy'),
+        A('raci-matrix', 'Build the RACI matrix'),
+        A('policy-draft', 'Draft the cryptography policy'),
       ],
     },
     {
       id: '0.4',
       level: 2,
-      title: 'Assess the Quantum Risk',
-      do: 'Score the quantum risk to the discovered assets (HNDL + TNFL) to size and prioritise the program.',
-      output: 'Quantum risk assessment',
+      title: 'Draft the Program Charter',
+      do: 'Produce the one-page charter (purpose, scope, success criteria, cadence, escalation) and secure the board mandate with the KPI pack.',
+      output: 'Approved program charter & board mandate',
       steps: [
-        L('pqc-risk-management', 'Learn: PQC Risk Management'),
-        A('crqc-scenario', 'Run a CRQC scenario'),
+        A('program-charter', 'Produce the Program Charter'),
+        A('board-deck', 'Pitch the board for the mandate'),
+        A('kpi-dashboard', 'Set the board KPI pack (Coverage/Trust/Inventory/Vendors/Agility)'),
       ],
     },
     {
       id: '0.5',
-      level: 2,
-      title: 'Establish Governance & Draft the Charter',
-      do: 'Define roles (Sponsor, SteerCo, QRPM), the RACI, and the one-page program charter.',
-      output: 'Governance structure & approved charter',
-      steps: [
-        L('pqc-governance', 'Learn: PQC Governance & Policy'),
-        A('raci-matrix', 'Build the RACI matrix'),
-        A('program-charter', 'Produce the Program Charter'),
-      ],
-    },
-    {
-      id: '0.6',
       level: 3,
-      title: 'Secure the Board Mandate & Multi-Year Budget',
-      do: 'Pitch the board with the exposure-justified ask and secure multi-year funding and cryptography policy.',
-      output: 'Signed mandate & multi-year budget',
+      title: 'Conduct Initial Scoping Assessment',
+      do: 'Run a rapid 2–4 week scoping of the top ~20 critical systems — their cryptography, data sensitivity and confidentiality horizon, and the 5–10 timeline-constraining vendors.',
+      output: 'Initial scoping assessment',
       steps: [
-        A('board-deck', 'Pitch the board for budget'),
-        A('kpi-dashboard', 'Set the board KPI pack (Coverage/Trust/Inventory/Vendors/Agility)'),
-        A('policy-draft', 'Draft the cryptography policy'),
+        L('data-asset-sensitivity', 'Learn: Data & Asset Sensitivity'),
+        R('assess-engine', 'Run the scoping assessment engine'),
+        A('initial-scoping', 'Produce the scoping & asset assessment'),
       ],
     },
   ],
@@ -548,7 +546,7 @@ const FRAMEWORK = {
     {
       id: '5.7',
       level: 4,
-      title: 'AI-Assisted Migration (the gate that stays closed)',
+      title: 'AI-Assisted Migration: Where It Helps, and the Gate That Stays Closed',
       do: 'Use AI to triage and enrich, but keep full review rigor on AI-modified cryptographic code.',
       output: null,
       steps: [A('crypto-api-refactor', 'Audit AI-assisted crypto refactors')],
@@ -609,7 +607,7 @@ const FRAMEWORK = {
       title: 'Capacity Planning for PQC at Scale',
       do: 'Estimate CPU, memory, bandwidth and storage impact; benchmark on production hardware.',
       output: 'Capacity plan',
-      steps: [R('algorithms-catalog', 'Reference: the algorithm size catalog')],
+      steps: [R('algorithms-detailed', 'Reference: detailed algorithm size comparison')],
     },
   ],
   p7: [
@@ -645,14 +643,29 @@ const FRAMEWORK = {
       steps: [A('contract-clause', 'Draft a PQC contract clause')],
     },
     {
-      id: '7.4–7.6',
+      id: '7.4',
       level: 3,
-      title: 'Manage Blockers, Ongoing Governance & Uncompellable Counterparties',
-      do: 'Deploy bridging patterns, run a recurring scorecard cadence and coordinate ecosystem partners.',
+      title: 'Manage Vendor-as-Blocker Scenarios',
+      do: 'When a critical vendor cannot deliver PQC in time, deploy bridging patterns (gateway, overlay, key-wrap), run champion-challenger, escalate contractually, or accept-and-document the residual risk.',
+      output: 'Bridging pattern deployments',
+      steps: [A('deployment-playbook', 'Deploy bridging patterns for blocked vendors')],
+    },
+    {
+      id: '7.5',
+      level: 3,
+      title: 'Establish Ongoing Vendor Governance',
+      do: 'Run the recurring vendor-governance cadence — track roadmaps, verify GA commitments, update the vendor scorecard, and report to SteerCo.',
       output: 'Vendor governance cadence',
+      steps: [A('kpi-dashboard', 'Run the vendor-KPI / SteerCo governance cadence')],
+    },
+    {
+      id: '7.6',
+      level: 3,
+      title: 'Coordinate Counterparties You Cannot Contractually Compel',
+      do: 'For partners, customers and API consumers with no contractual leverage, run the coordination pattern — readiness discovery, dual-stack windows, deprecation protocol, interop test events, and API versioning.',
+      output: 'Counterparty coordination plan',
       steps: [
-        A('kpi-dashboard', 'Run the vendor-KPI / SteerCo governance cadence'),
-        A('deployment-playbook', 'Deploy bridging patterns for blocked vendors'),
+        A('stakeholder-comms', 'Plan dual-stack windows & deprecation comms for counterparties'),
       ],
     },
     {

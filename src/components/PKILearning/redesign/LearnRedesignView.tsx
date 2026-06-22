@@ -3,6 +3,8 @@ import { useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { GraduationCap, Compass, ListChecks } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { PageHeader } from '@/components/common/PageHeader'
+import { useIsEmbedded } from '@/embed/EmbedProvider'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import { usePersonaPathItems } from '../usePersonaPathItems'
@@ -31,6 +33,8 @@ export const LearnRedesignView = () => {
   const [searchParams] = useSearchParams()
   const deepLinkNice = searchParams.get('view') === 'nice'
 
+  const isEmbed = useIsEmbedded()
+
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const setPersona = usePersonaStore((s) => s.setPersona)
 
@@ -51,32 +55,31 @@ export const LearnRedesignView = () => {
 
   return (
     <div className="space-y-4">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-3">
-          <div className="w-11 h-11 rounded-[13px] bg-gradient-to-br from-primary to-accent flex items-center justify-center shrink-0">
-            <GraduationCap className="text-background" size={22} aria-hidden="true" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold tracking-tight text-gradient">Learn</h1>
-            <p className="text-xs text-muted-foreground">
-              One guided path through post-quantum cryptography — tuned to your role ·{' '}
-              {TOTAL_MODULE_COUNT} modules · {TRACK_COUNT} tracks
-            </p>
-          </div>
-        </div>
-        {/* Always-available quiz entry — reachable in both modes, any persona,
-            regardless of completion (the capstone below is the gated 'final' run). */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => navigate('/learn/quiz')}
-          className="shrink-0 gap-1.5"
-        >
-          <ListChecks size={14} aria-hidden="true" />
-          Quiz
-        </Button>
-      </div>
+      {/* Header — shared PageHeader, identical to /compliance and every other
+          data page (centered icon + title + description + one action cluster).
+          The always-available Quiz entry rides in that cluster via `actions`
+          rather than floating in a bespoke row. Suppressed when embedded. */}
+      {!isEmbed && (
+        <PageHeader
+          icon={GraduationCap}
+          pageId="learn"
+          title="Learn"
+          description="One guided path through post-quantum cryptography — tuned to your role."
+          dataSource={`${TOTAL_MODULE_COUNT} modules · ${TRACK_COUNT} tracks`}
+          testId="learn-page-header"
+          actions={
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/learn/quiz')}
+              className="gap-1.5"
+            >
+              <ListChecks size={14} aria-hidden="true" />
+              Quiz
+            </Button>
+          }
+        />
+      )}
 
       {/* Persona lens */}
       <div className="flex items-center gap-2.5 flex-wrap">

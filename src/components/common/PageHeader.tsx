@@ -51,6 +51,13 @@ interface PageHeaderProps {
    * `TrustPathPopover` + the explicit external link grid (ux-standard P10).
    */
   suppressSources?: boolean
+  /**
+   * Page-specific action(s) rendered inside the shared action cluster (both the
+   * desktop row and the mobile menu), alongside Glossary/Guide/Assistant. Pass
+   * small buttons so they sit naturally among the standard actions — e.g.
+   * /learn rides its Quiz entry here instead of building a bespoke header.
+   */
+  actions?: ReactNode
 }
 
 /**
@@ -76,6 +83,7 @@ export const PageHeader = ({
   pageId,
   testId,
   suppressSources,
+  actions,
 }: PageHeaderProps) => {
   const showSources = !!viewType && !suppressSources
   const openChat = useRightPanelStore((s) => s.open)
@@ -100,7 +108,8 @@ export const PageHeader = ({
     onExport ||
     endorseUrl ||
     flagUrl ||
-    pageId
+    pageId ||
+    actions
 
   const embedState = useEmbedState()
   const showAssistant =
@@ -161,6 +170,7 @@ export const PageHeader = ({
                 <GlossaryButton />
                 <FAQButton />
                 {pageId && <UserManualButton pageId={pageId} />}
+                {actions}
                 {onExport && <ExportButton onExport={onExport} />}
                 {showAssistant && (
                   <Button
@@ -191,6 +201,7 @@ export const PageHeader = ({
           {shareTitle && <ShareButton title={shareTitle} text={shareText} />}
           <GlossaryButton />
           {pageId && <UserManualButton pageId={pageId} />}
+          {actions}
           {onExport && <ExportButton onExport={onExport} />}
           {endorseUrl && (
             <EndorseButton

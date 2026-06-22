@@ -281,7 +281,7 @@ const ROLE_ADAPTATIONS: {
     icon: Server,
     color: 'text-secondary',
     highlights: [
-      'Primary CTA opens "Start the Journey"; secondary jumps directly to the Migration Catalog',
+      'Primary CTA opens "Start the Journey"; secondary jumps directly to the Migration Workbench',
       'Featured surfaces: Learn modules, Migrate, OpenSSL Studio, Risk Assessment',
       'Headings and descriptions focus on infrastructure deployment and operations',
     ],

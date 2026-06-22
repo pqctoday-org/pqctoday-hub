@@ -48,7 +48,7 @@ export interface DataSourceSummary {
 
 const SOURCE_CONFIG: Record<DataSourceId, { label: string; iconName: string; route: string }> = {
   library: { label: 'Library', iconName: 'BookOpen', route: '/library' },
-  migrate: { label: 'Migration Catalog', iconName: 'ArrowRightLeft', route: '/migrate' },
+  migrate: { label: 'Migration Workbench', iconName: 'ArrowRightLeft', route: '/migrate' },
   threats: { label: 'Threat Intelligence', iconName: 'AlertTriangle', route: '/threats' },
   timeline: { label: 'Timeline', iconName: 'Globe', route: '/timeline' },
   leaders: { label: 'Thought Leaders', iconName: 'Users', route: '/leaders' },
@@ -388,7 +388,7 @@ const CURIOUS_SECTION_LABELS: Record<SectionType, string> = {
 // Curious-friendly data source labels
 const CURIOUS_SOURCE_LABELS: Record<string, string> = {
   Library: 'Reference documents and standards',
-  'Migration Catalog': 'Software and tools tracker',
+  'Migration Workbench': 'Software and tools tracker',
   'Threat Intelligence': 'Security risk updates',
   Timeline: 'Country migration deadlines',
   'Thought Leaders': 'Expert profiles',

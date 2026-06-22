@@ -274,7 +274,7 @@ const Step2WorkshopAndResources: React.FC<{ onNavigateToWorkshop: () => void }> 
         >
           <Building2 size={18} className="text-primary shrink-0" />
           <div>
-            <div className="text-sm font-medium text-foreground">Migration Catalog</div>
+            <div className="text-sm font-medium text-foreground">Migration Workbench</div>
             <div className="text-xs text-muted-foreground">
               Browse PQC-ready products to estimate migration costs
             </div>

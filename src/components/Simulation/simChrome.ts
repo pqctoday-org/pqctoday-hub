@@ -47,6 +47,20 @@ export const hasSimExited = () => {
   }
 }
 
+/** True when the player is peeking at a hub resource FROM inside a sim run (the
+ *  resume flag is armed and they haven't quit). Lets a resource — e.g. the
+ *  assessment gate flow — send the player back to /simulation on completion
+ *  instead of stranding them on /report. */
+export const isSimResumePending = () => {
+  try {
+    return (
+      sessionStorage.getItem(RESUME_FLAG) === '1' && sessionStorage.getItem(EXITED_FLAG) !== '1'
+    )
+  } catch {
+    return false
+  }
+}
+
 /** Reset both excursion markers — called on the sim console's mount, so re-opening
  *  the simulation from the top nav starts clean (a later peek re-arms the header;
  *  a later HUB quit suppresses it again). */

@@ -27,6 +27,7 @@ vi.mock('@/services/search/useSemanticSearch', () => ({
 import { TimelineEmbed } from './TimelineEmbed'
 import { ProtocolMatrixEmbed } from './ProtocolMatrixEmbed'
 import { MigrateEmbed } from './MigrateEmbed'
+import { MigrateWorkbenchEmbed } from './MigrateWorkbenchEmbed'
 import { AlgorithmTransitionEmbed } from './AlgorithmTransitionEmbed'
 import { AlgorithmDetailedEmbed } from './AlgorithmDetailedEmbed'
 
@@ -65,6 +66,15 @@ describe('embed widgets — render smoke tests (inside an outer router)', () => 
     // simEmbed hides the PageHeader; the catalog body still renders.
     expect(container.firstChild).toBeTruthy()
     expect(screen.getByPlaceholderText(/Search software/i)).toBeInTheDocument()
+  })
+
+  it('Migrate: MigrateWorkbenchEmbed mounts the NEW Migration Workbench, not the legacy catalog', () => {
+    renderEmbedded(<MigrateWorkbenchEmbed />)
+    // The redesigned Migrate (what /migrate now renders) — its tabs are body
+    // content shown even with the PageHeader hidden in embed mode.
+    expect(screen.getByText(/Replace what you own/i)).toBeInTheDocument()
+    // …and NOT the legacy MigrateView "Enterprise Infrastructure Stack" catalog.
+    expect(screen.queryByText(/Enterprise Infrastructure Stack/i)).not.toBeInTheDocument()
   })
 
   it('C5-full: AlgorithmTransitionEmbed mounts headless (urlSync:false, no nested router)', () => {

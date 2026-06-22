@@ -53,7 +53,7 @@ const PERSONA_HERO_CTA: Record<
   },
   ops: {
     primary: { label: 'Start the Journey', path: '/learn' },
-    secondary: { label: 'Jump to Migration Catalog', path: '/migrate' },
+    secondary: { label: 'Jump to Migration Workbench', path: '/migrate' },
   },
   curious: {
     primary: { label: 'Start Learning', path: '/learn' },
@@ -67,7 +67,7 @@ const PERSONA_HERO_CTA: Record<
 // for ops, and "what is this" for the curious.
 export const PERSONA_HERO_TAGLINE: Record<string, string> = {
   executive:
-    'Boards are asking now. CNSA 2.0 deadlines start landing in 2027 — get a defensible answer before the next audit cycle.',
+    'Boards are asking now. CNSA 2.0 deadlines are already landing; NSS acquisitions due January 2027. Get a defensible answer before the next audit cycle.',
   developer:
     'OpenSSL 3.x, BoringSSL, and JOSE are already shipping PQC. See the algorithms, test the libraries, and find the one that fits your stack.',
   architect:
