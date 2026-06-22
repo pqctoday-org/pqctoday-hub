@@ -34,8 +34,10 @@ describe('PKILearning', () => {
     usePersonaStore.setState({ selectedPersona: null, hasSeenPersonaPicker: true })
   })
 
-  // With no persona selected, the redesigned /learn defaults to Browse mode,
-  // which renders the full module catalog (no view-mode radio anymore).
+  // With no persona selected, the redesigned /learn defaults to "My Path" (the
+  // guided cold-start). The full module catalog lives under the "Browse all" tab.
+  const goToBrowse = () =>
+    fireEvent.click(screen.getByRole('button', { name: /browse all \d+ modules/i }))
 
   it('renders the redesigned Learn header and the module catalog', () => {
     renderWithRouter()
@@ -43,13 +45,15 @@ describe('PKILearning', () => {
     expect(screen.getByRole('heading', { name: 'Learn' })).toBeInTheDocument()
     expect(screen.getByText('Viewing as')).toBeInTheDocument()
 
-    // Browse mode shows the catalog cards
+    // Switch to Browse to see the catalog cards
+    goToBrowse()
     expect(screen.getByText('Digital Assets')).toBeInTheDocument()
     expect(screen.getByText('PKI')).toBeInTheDocument() // PKIWorkshop card title
   })
 
   it('navigates to Digital Assets module on click', async () => {
     renderWithRouter()
+    goToBrowse()
 
     fireEvent.click(screen.getByText('Digital Assets'))
 
@@ -61,6 +65,7 @@ describe('PKILearning', () => {
 
   it('navigates to PKI Workshop module on click', async () => {
     renderWithRouter()
+    goToBrowse()
 
     fireEvent.click(screen.getByText('PKI'))
 
@@ -71,6 +76,7 @@ describe('PKILearning', () => {
 
   it('allows navigating back from a module', async () => {
     renderWithRouter()
+    goToBrowse()
 
     fireEvent.click(screen.getByText('Digital Assets'))
     expect(

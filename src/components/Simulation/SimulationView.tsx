@@ -38,7 +38,7 @@ import { parseTimelineScope } from '@/data/timelineScope'
 import { MigrateWorkbenchEmbed } from '@/components/shared/widgets/MigrateWorkbenchEmbed'
 import { SandboxScenarioEmbed } from '@/components/Playground/SandboxScenarioEmbed'
 import { PlaygroundProvider } from '@/components/Playground/PlaygroundProvider'
-import { AssessWizard } from '@/components/Assess/AssessWizard'
+import { AssessViewRedesign } from '@/components/Assess/redesign/AssessViewRedesign'
 import { Button } from '@/components/ui/button'
 import {
   FRAMEWORK_PHASES,
@@ -1346,11 +1346,14 @@ export function SimulationView() {
                    screens (they have no page container in the sim). */}
             <div className="mx-auto w-full max-w-[1800px] px-4 md:px-6 lg:px-8">
               {assessEmbed ? (
-                // Re-run / refine the assessment in-sim. onComplete closes back to
-                // the board (NOT /report); the wizard writes to the assessment store,
-                // so assessSnap + the read-only org dials / derived maturity update.
-                <div className="mx-auto max-w-3xl p-4 md:p-6">
-                  <AssessWizard onComplete={closeEmbed} />
+                // Re-run / refine the assessment in-sim — the REDESIGNED /assess
+                // surface (track chooser + two-pane wizard), embedded headless.
+                // onComplete closes back to the board (NOT /report); the wizard
+                // writes to the assessment store, so assessSnap + the read-only org
+                // dials / derived maturity update. Two-pane layout → full width
+                // (no max-w-3xl, which would squish the rail + question pane).
+                <div className="p-1 md:p-2">
+                  <AssessViewRedesign simEmbed onComplete={closeEmbed} />
                 </div>
               ) : learnEmbed && LearnComp ? (
                 <EmbeddedLearnProvider>

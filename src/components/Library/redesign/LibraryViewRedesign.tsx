@@ -9,7 +9,7 @@
  * filter/sort/view/ref state in the URL (?cat/org/q/sort/view/lifecycle/cswp39/qv/
  * ref/prefs plus the geo[]/sector[]/tier params the shared filters own).
  */
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BookOpen, X } from 'lucide-react'
 import { PageHeader } from '@/components/common/PageHeader'
@@ -51,8 +51,26 @@ const FILTER_PARAMS = [
   'tier',
 ]
 
-export function LibraryViewRedesign() {
-  const [params, setParams] = useSearchParams()
+export function LibraryViewRedesign({ simEmbed = false }: { simEmbed?: boolean } = {}) {
+  // When embedded in the sim, the library must NOT read/write the page URL (it
+  // would corrupt /simulation's route) and can't nest its own <Router>. So its
+  // filter URL state is backed by local state, kept API-compatible with
+  // useSearchParams. (Same pattern as the legacy LibraryView / MigrateView.)
+  const [realParams, realSetParams] = useSearchParams()
+  const [embedParams, setEmbedParamsState] = useState(() => new URLSearchParams())
+  const params = simEmbed ? embedParams : realParams
+  const setParams: typeof realSetParams = simEmbed
+    ? (nextInit) =>
+        setEmbedParamsState((prev) => {
+          const next = new URLSearchParams(
+            typeof nextInit === 'function'
+              ? (nextInit(prev) as URLSearchParams)
+              : (nextInit as URLSearchParams)
+          )
+          // keep object identity when unchanged so params-keyed effects don't loop
+          return next.toString() === prev.toString() ? prev : next
+        })
+    : realSetParams
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const setPersona = usePersonaStore((s) => s.setPersona)
   const libraryBookmarks = useBookmarkStore((s) => s.libraryBookmarks)
@@ -163,21 +181,23 @@ export function LibraryViewRedesign() {
 
   return (
     <div className="animate-fade-in space-y-4 pb-24">
-      <PageHeader
-        icon={BookOpen}
-        pageId="library"
-        title="PQC Library"
-        description="The standards, drafts and guidance that define post-quantum cryptography."
-        dataSource={
-          libraryMetadata
-            ? `${libraryMetadata.filename} • Updated: ${libraryMetadata.lastUpdate.toLocaleDateString()}`
-            : undefined
-        }
-        viewType="Library"
-        shareTitle="PQC Library — NIST, IETF, ETSI & More"
-        shareText="Explore post-quantum cryptography standards, drafts, and key documents."
-        onExport={handleExportCsv}
-      />
+      {!simEmbed && (
+        <PageHeader
+          icon={BookOpen}
+          pageId="library"
+          title="PQC Library"
+          description="The standards, drafts and guidance that define post-quantum cryptography."
+          dataSource={
+            libraryMetadata
+              ? `${libraryMetadata.filename} • Updated: ${libraryMetadata.lastUpdate.toLocaleDateString()}`
+              : undefined
+          }
+          viewType="Library"
+          shareTitle="PQC Library — NIST, IETF, ETSI & More"
+          shareText="Explore post-quantum cryptography standards, drafts, and key documents."
+          onExport={handleExportCsv}
+        />
+      )}
 
       <LibraryRoleLens
         selectedPersona={selectedPersona}
