@@ -465,7 +465,7 @@ function computeActionItems(
       icon: ArrowRightLeft,
       title: 'Bookmark migration products',
       description: 'Build your migration pipeline by selecting PQC-ready products.',
-      action: { label: 'Browse Catalog', path: '/migrate' },
+      action: { label: 'Browse Workbench', path: '/migrate' },
     })
   }
 

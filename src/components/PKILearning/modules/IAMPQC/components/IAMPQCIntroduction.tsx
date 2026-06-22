@@ -532,7 +532,7 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
           >
             <Route size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
-              <div className="text-sm font-medium text-foreground">Migration Catalog</div>
+              <div className="text-sm font-medium text-foreground">Migration Workbench</div>
               <div className="text-xs text-muted-foreground">
                 IAM vendor migration status and PQC product catalog
               </div>

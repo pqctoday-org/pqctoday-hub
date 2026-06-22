@@ -27,6 +27,7 @@ import {
   isTimelineStep,
   isAlgorithmTabStep,
   isReferenceEmbedStep,
+  isScenarioStep,
   isStepComplete,
   type StepCompletionContext,
 } from './embedContract'
@@ -34,9 +35,8 @@ import { SIM_ALGORITHM_TABS } from './algorithmTabs'
 import { SIM_REFERENCE_EMBEDS } from './referenceEmbeds'
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
 import { parseTimelineScope } from '@/data/timelineScope'
-import { isPqcCapable } from './catalogCompletion'
-import { softwareData } from '@/data/migrateData'
-import { MigrateEmbed } from '@/components/shared/widgets/MigrateEmbed'
+import { MigrateWorkbenchEmbed } from '@/components/shared/widgets/MigrateWorkbenchEmbed'
+import { SandboxScenarioEmbed } from '@/components/Playground/SandboxScenarioEmbed'
 import { PlaygroundProvider } from '@/components/Playground/PlaygroundProvider'
 import { AssessWizard } from '@/components/Assess/AssessWizard'
 import { Button } from '@/components/ui/button'
@@ -114,6 +114,7 @@ import { useSimulationStore } from '@/store/useSimulationStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
+import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { computeAssessment } from '@/hooks/useAssessmentEngine'
 import type { AssessmentInput } from '@/hooks/assessmentTypes'
 import { useAwarenessScore } from '@/hooks/useAwarenessScore'
@@ -254,6 +255,7 @@ export function SimulationView() {
     visitedWorkshops,
     markWorkshopVisited,
     visitedScenarios,
+    markScenarioVisited,
     auto,
     autoCompleteSteps,
     clearAuto,
@@ -306,6 +308,11 @@ export function SimulationView() {
     refId: string
     title: string
   } | null>(null)
+  // C3: a live sandbox lab embedded under the sim header (SandboxScenarioEmbed).
+  const [scenarioEmbed, setScenarioEmbed] = useState<{
+    scenarioId: string
+    title: string
+  } | null>(null)
 
   const LearnComp = learnEmbed ? SIM_LEARN_MODULES[learnEmbed.moduleId] : null
 
@@ -331,6 +338,7 @@ export function SimulationView() {
     setCatalogEmbed(null)
     setAlgorithmTabEmbed(null)
     setReferenceEmbed(null)
+    setScenarioEmbed(null)
   }
   const openStep = (s: TreeStep) => {
     if (s.kind === 'learn' && s.moduleId && isEmbeddableModule(s.moduleId)) {
@@ -370,6 +378,13 @@ export function SimulationView() {
       clearAllEmbeds()
       setReferenceEmbed({ refId: s.refId, title: s.label })
       markRefVisited(s.refId)
+    } else if (isScenarioStep(s) && s.scenarioId) {
+      // C3: live sandbox lab embedded under the header. Opening it in-sim counts
+      // as visiting the lab (the standalone /playground route has no separate
+      // in-sim completion signal); the lab can also report done via postMessage.
+      clearAllEmbeds()
+      setScenarioEmbed({ scenarioId: s.scenarioId, title: s.label })
+      markScenarioVisited(s.scenarioId)
     }
   }
   const closeEmbed = clearAllEmbeds
@@ -402,33 +417,40 @@ export function SimulationView() {
     })
     setAlgorithmTabEmbed(null)
   }
-  // C7 (Decision 4): game-scoped picks, NOT the global My Products store — so a
-  // product bookmarked on the standalone /migrate page never pre-completes a
-  // catalog step, and in-sim picks never leak out.
-  const simPicks = useSimulationStore((s) => s.picks)
-  // C7 (Decision 3): each catalog task is earned independently — it's marked done
-  // when the player picks a PQC-capable product WHILE that task's catalog is open.
   const catalogCompleted = useSimulationStore((s) => s.catalogCompleted)
   const markCatalogStepDone = useSimulationStore((s) => s.markCatalogStepDone)
-  // C7: earn the OPEN catalog task when the player adds a PQC-capable product to
-  // the picks. Only the task whose catalog is currently open is credited, so the
-  // four catalog tasks complete independently (not all-at-once).
-  const prevPicksRef = useRef<string[]>(simPicks)
+  // The redesigned Migrate is the MigrationWorkbench (a review/plan tool), not the
+  // old product-pick catalog — so a catalog task is cleared by OPENING and
+  // reviewing the Workbench (reviewed-on-open), the same model as a reference.
+  // (The earlier "pick a PQC-capable product while the catalog is open" mechanic
+  // belonged to the legacy MigrateView catalog the sim no longer embeds.)
   useEffect(() => {
-    const added = simPicks.filter((id) => !prevPicksRef.current.includes(id))
-    prevPicksRef.current = simPicks
-    const catalogId = catalogEmbed?.catalogId
-    if (!catalogId || added.length === 0) return
-    const byId = new Map(softwareData.map((sw) => [sw.productId, sw]))
-    const gotPqc = added.some((id) => {
-      const item = byId.get(id)
-      return !!item && isPqcCapable(item)
-    })
-    if (gotPqc) markCatalogStepDone(catalogId)
-  }, [simPicks, catalogEmbed, markCatalogStepDone])
+    if (catalogEmbed?.catalogId) markCatalogStepDone(catalogEmbed.catalogId)
+  }, [catalogEmbed, markCatalogStepDone])
   // read-only Assess → Sim bridge: offer to import a completed assessment as the
   // Phase-0 scoping artifact (data only; the sim's gate still decides it counts).
   const assessSnap = useAssessSnapshot()
+  // SELF-UNLOCK: the sim unlocks off the assessment RESULT (useAssessSnapshot),
+  // which is normally computed by the /report page. A player who completes the
+  // assessment from the sim gate and is returned here never visits /report, so
+  // the form is `complete` but no result is persisted → the gate would wrongly
+  // re-appear ("run your assessment"). Derive the result from the completed form
+  // so the sim opens unlocked. Runs once; a later /report visit recomputes a
+  // richer result and harmlessly overwrites this.
+  const {
+    assessmentStatus: assessFormStatus,
+    getInput: getAssessInput,
+    reset: resetAssessment,
+  } = useAssessmentStore()
+  useEffect(() => {
+    if (assessSnap) return
+    if (assessFormStatus !== 'complete') return
+    const input = getAssessInput?.()
+    if (!input) return
+    const result = computeAssessment(input)
+    useAssessmentResultStore.getState().setResult(result)
+    useAssessmentResultStore.setState({ completedAt: new Date().toISOString() })
+  }, [assessSnap, assessFormStatus, getAssessInput])
   // The org profile is now SOURCED FROM THE ASSESSMENT (single source of truth):
   // ORG / JURISDICTION / SECTOR dials are read-only and derive from here. SEAT
   // defaults from the persona; MODE (difficulty) stays freely editable.
@@ -515,6 +537,24 @@ export function SimulationView() {
     for (const id of SIM_TRACKED.modules) resetModuleProgress(id)
     for (const d of docs ?? []) if (SIM_TRACKED.artifacts.has(d.type)) deleteExecutiveDocument(d.id)
     reset()
+  }
+  // START OVER — the full reset: the game run (as RESET) PLUS the assessment
+  // (form + result), so the sim re-locks and re-prompts the assessment from
+  // scratch. Clearing the result alone wouldn't be enough — the self-unlock
+  // effect would re-derive it from the still-complete form — so resetAssessment()
+  // (proxy: form.reset() + result.reset()) clears both.
+  const startOver = () => {
+    if (
+      typeof window !== 'undefined' &&
+      !window.confirm(
+        'Start over completely? This clears your simulation run AND your assessment — you will run the assessment again before the simulation unlocks.'
+      )
+    )
+      return
+    for (const id of SIM_TRACKED.modules) resetModuleProgress(id)
+    for (const d of docs ?? []) if (SIM_TRACKED.artifacts.has(d.type)) deleteExecutiveDocument(d.id)
+    reset()
+    resetAssessment()
   }
   // WS-08 — durable save: download the run as JSON / restore it from a file, so a
   // run survives a cache-clear or moves between browsers without an account.
@@ -1084,9 +1124,19 @@ export function SimulationView() {
             type="button"
             variant="ghost"
             onClick={resetAll}
+            title="Clear this simulation run (your progress) — keeps your assessment, sim stays unlocked."
             className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
           >
-            RESET
+            RESET RUN
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={startOver}
+            title="Clear everything — run AND assessment — and start from the assessment again."
+            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
+          >
+            START OVER
           </Button>
           <span className="font-mono text-[11px] font-bold text-background/70">
             TURN · Q{q} {year}
@@ -1193,7 +1243,8 @@ export function SimulationView() {
       timelineEmbed ||
       catalogEmbed ||
       algorithmTabEmbed ||
-      referenceEmbed ? (
+      referenceEmbed ||
+      scenarioEmbed ? (
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex shrink-0 items-center gap-2 border-b-2 border-primary bg-primary/10 px-4 py-2">
             <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-sim-chip font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
@@ -1214,7 +1265,9 @@ export function SimulationView() {
                           ? (SIM_ALGORITHM_TABS[algorithmTabEmbed.refId]?.label ?? 'Algorithms')
                           : referenceEmbed
                             ? (SIM_REFERENCE_EMBEDS[referenceEmbed.refId]?.label ?? 'Reference')
-                            : 'Assess'}{' '}
+                            : scenarioEmbed
+                              ? 'Lab'
+                              : 'Assess'}{' '}
               ·{' '}
               {phase.number !== null
                 ? `Phase ${phase.number}`
@@ -1231,6 +1284,7 @@ export function SimulationView() {
                   catalogEmbed?.title ??
                   algorithmTabEmbed?.title ??
                   referenceEmbed?.title ??
+                  scenarioEmbed?.title ??
                   assessEmbed?.title)}
             </span>
             {/* Completion toggle — guarantees a "mark complete" path for every
@@ -1357,9 +1411,10 @@ export function SimulationView() {
                   }}
                 />
               ) : catalogEmbed ? (
-                // C7: Migrate product catalog in an isolated MemoryRouter (prevents
-                // the catalog's setSearchParams calls from corrupting /simulation URL).
-                <MigrateEmbed catalogLayer={catalogEmbed.layer} />
+                // The redesigned Migrate (MigrationWorkbench) embedded under the sim
+                // header — same component the /migrate route uses (its `embedded`
+                // prop hides the PageHeader and keeps filter state off the URL).
+                <MigrateWorkbenchEmbed />
               ) : algorithmTabEmbed ? (
                 // C5-full: every Algorithms tab via SIM_ALGORITHM_TABS. Review tabs
                 // (Protocol Support) mount with no confirm; "choice that counts" tabs
@@ -1386,6 +1441,10 @@ export function SimulationView() {
                 >
                   <ReferenceComp />
                 </Suspense>
+              ) : scenarioEmbed ? (
+                // C3: live sandbox lab embedded under the header (passes the scenario
+                // id directly — the component falls back to the route param off-sim).
+                <SandboxScenarioEmbed scenarioId={scenarioEmbed.scenarioId} />
               ) : null}
             </div>
           </div>

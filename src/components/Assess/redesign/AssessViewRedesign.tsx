@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import type { AssessmentMode } from '../../../store/useAssessmentStore'
+import { isSimResumePending } from '../../Simulation/simChrome'
 import { metadata } from '../../../data/industryAssessConfig'
 import { usePhaseFilter } from '../../../hooks/usePhaseFilter'
 import { FRAMEWORK_PHASES } from '../../../data/frameworkPhases'
@@ -176,6 +177,13 @@ export const AssessViewRedesign: React.FC = () => {
   const generate = () => {
     markComplete()
     logAssessComplete(selectedPersona ?? 'unknown')
+    // Came from a sim run (the locked-sim gate sent the player to /assess) →
+    // return to the now-unlocked simulation instead of stranding them on the
+    // done/report screen. The report stays reachable from inside the sim.
+    if (isSimResumePending()) {
+      navigate('/simulation')
+      return
+    }
     setScreen('done')
   }
 

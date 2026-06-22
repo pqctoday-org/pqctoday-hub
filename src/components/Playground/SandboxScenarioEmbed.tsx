@@ -43,11 +43,13 @@ interface EmbedConfigPayload {
   expiresAt?: number
 }
 
-export function SandboxScenarioEmbed() {
+export function SandboxScenarioEmbed({ scenarioId: scenarioIdProp }: { scenarioId?: string } = {}) {
+  // Route usage reads the scenario id from the `:toolId` param; the simulation
+  // mounts this headless and passes `scenarioId` directly (no /playground route).
   const { toolId } = useParams<{ toolId: string }>()
-  const scenarioId = toolId?.startsWith(TOOL_ID_PREFIX)
-    ? toolId.slice(TOOL_ID_PREFIX.length)
-    : toolId
+  const scenarioId =
+    scenarioIdProp ??
+    (toolId?.startsWith(TOOL_ID_PREFIX) ? toolId.slice(TOOL_ID_PREFIX.length) : toolId)
   const scenario = useMemo(() => SANDBOX_SCENARIOS.find((s) => s.id === scenarioId), [scenarioId])
   const track = useMemo(() => SANDBOX_TRACKS.find((t) => t.id === scenario?.trackId), [scenario])
   const protocolRef = useMemo(

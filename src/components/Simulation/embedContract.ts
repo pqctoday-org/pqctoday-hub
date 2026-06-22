@@ -119,6 +119,7 @@ export const REFERENCE_EMBED_IDS = new Set([
   'compliance',
   'compliance-cert-check',
   'threats',
+  'report',
 ])
 
 /** True for a reference step that has a full-page embed widget. */

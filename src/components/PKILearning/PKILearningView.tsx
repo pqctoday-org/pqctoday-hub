@@ -53,6 +53,10 @@ export const PKILearningView: React.FC = () => {
     location.pathname === '/learn' ||
     location.pathname === '/learn/' ||
     location.pathname === '/learn/legacy'
+  // The redesigned dashboard (not legacy) owns its header via the shared
+  // PageHeader, which already carries Glossary + Guide. Suppress this top
+  // utility bar there so those buttons don't render twice.
+  const isRedesignDashboard = location.pathname === '/learn' || location.pathname === '/learn/'
 
   const isEmbed = useIsEmbedded()
 
@@ -72,74 +76,76 @@ export const PKILearningView: React.FC = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="flex items-center justify-between flex-wrap gap-y-2 mb-6">
-        {!isDashboard && !isEmbed ? (
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/learn')}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft size={20} />
-            Back to Dashboard
-          </Button>
-        ) : (
-          <div />
-        )}
-        <div className="flex items-center gap-1 shrink-0">
-          {showSidebar && moduleMeta && (
-            <>
-              <EndorseButton
-                endorseUrl={buildEndorsementUrl({
-                  category: 'learn-module-endorsement',
-                  title: `Endorse: ${moduleMeta.title}`,
-                  resourceType: 'Learn Module',
-                  resourceId: moduleMeta.title,
-                  resourceDetails: [
-                    `**Module:** ${moduleMeta.title}`,
-                    `**Duration:** ${moduleMeta.duration}`,
-                    `**Difficulty:** ${moduleMeta.difficulty}`,
-                    `**Description:** ${moduleMeta.description}`,
-                  ].join('\n'),
-                  pageUrl: `/learn/${moduleId}`,
-                })}
-                resourceLabel={moduleMeta.title}
-                resourceType="Learn Module"
-              />
-              <FlagButton
-                flagUrl={buildFlagUrl({
-                  category: 'learn-module-endorsement',
-                  title: `Flag: ${moduleMeta.title}`,
-                  resourceType: 'Learn Module',
-                  resourceId: moduleMeta.title,
-                  resourceDetails: [
-                    `**Module:** ${moduleMeta.title}`,
-                    `**Duration:** ${moduleMeta.duration}`,
-                    `**Difficulty:** ${moduleMeta.difficulty}`,
-                    `**Description:** ${moduleMeta.description}`,
-                  ].join('\n'),
-                  pageUrl: `/learn/${moduleId}`,
-                })}
-                resourceLabel={moduleMeta.title}
-                resourceType="Learn Module"
-              />
-              <ShareButton
-                title={moduleMeta.title}
-                text={`Learn about ${moduleMeta.title} — PQC Timeline`}
-              />
-            </>
+      {!isRedesignDashboard && (
+        <div className="flex items-center justify-between flex-wrap gap-y-2 mb-6">
+          {!isDashboard && !isEmbed ? (
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/learn')}
+              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ArrowLeft size={20} />
+              Back to Dashboard
+            </Button>
+          ) : (
+            <div />
           )}
-          {showSidebar && moduleMeta && <WipModuleBadge moduleMeta={moduleMeta} />}
-          {showSidebar && LM_ID_MAP[moduleId] && (
-            <HistoryButton
-              itemId={moduleId}
-              trackingId={LM_ID_MAP[moduleId]}
-              itemLabel={`${LM_ID_MAP[moduleId]} · ${moduleId}`}
-            />
-          )}
-          <GlossaryButton />
-          <UserManualButton pageId="learn" />
+          <div className="flex items-center gap-1 shrink-0">
+            {showSidebar && moduleMeta && (
+              <>
+                <EndorseButton
+                  endorseUrl={buildEndorsementUrl({
+                    category: 'learn-module-endorsement',
+                    title: `Endorse: ${moduleMeta.title}`,
+                    resourceType: 'Learn Module',
+                    resourceId: moduleMeta.title,
+                    resourceDetails: [
+                      `**Module:** ${moduleMeta.title}`,
+                      `**Duration:** ${moduleMeta.duration}`,
+                      `**Difficulty:** ${moduleMeta.difficulty}`,
+                      `**Description:** ${moduleMeta.description}`,
+                    ].join('\n'),
+                    pageUrl: `/learn/${moduleId}`,
+                  })}
+                  resourceLabel={moduleMeta.title}
+                  resourceType="Learn Module"
+                />
+                <FlagButton
+                  flagUrl={buildFlagUrl({
+                    category: 'learn-module-endorsement',
+                    title: `Flag: ${moduleMeta.title}`,
+                    resourceType: 'Learn Module',
+                    resourceId: moduleMeta.title,
+                    resourceDetails: [
+                      `**Module:** ${moduleMeta.title}`,
+                      `**Duration:** ${moduleMeta.duration}`,
+                      `**Difficulty:** ${moduleMeta.difficulty}`,
+                      `**Description:** ${moduleMeta.description}`,
+                    ].join('\n'),
+                    pageUrl: `/learn/${moduleId}`,
+                  })}
+                  resourceLabel={moduleMeta.title}
+                  resourceType="Learn Module"
+                />
+                <ShareButton
+                  title={moduleMeta.title}
+                  text={`Learn about ${moduleMeta.title} — PQC Timeline`}
+                />
+              </>
+            )}
+            {showSidebar && moduleMeta && <WipModuleBadge moduleMeta={moduleMeta} />}
+            {showSidebar && LM_ID_MAP[moduleId] && (
+              <HistoryButton
+                itemId={moduleId}
+                trackingId={LM_ID_MAP[moduleId]}
+                itemLabel={`${LM_ID_MAP[moduleId]} · ${moduleId}`}
+              />
+            )}
+            <GlossaryButton />
+            <UserManualButton pageId="learn" />
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
         {/* Main module content */}
