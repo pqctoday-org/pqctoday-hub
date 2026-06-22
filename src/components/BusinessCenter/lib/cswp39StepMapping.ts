@@ -30,16 +30,30 @@ export const STEP_ARTIFACT_TYPES: Record<CSWP39StepId, ExecutiveDocumentType[]> 
     'contract-clause',
     'mti-negotiator',
     'cloud-responsibility-matrix',
+    // Phase-0 program-establishment artifacts (charter & initial scope).
+    'program-charter',
+    'initial-scoping',
   ],
   inventory: ['supply-chain-matrix', 'crypto-cbom', 'crypto-vulnerability-watch'],
   'identify-gaps': ['risk-register', 'vendor-scorecard'],
-  prioritise: ['kpi-dashboard', 'kpi-tracker', 'compliance-timeline', 'crqc-scenario'],
+  prioritise: [
+    'kpi-dashboard',
+    'kpi-tracker',
+    'compliance-timeline',
+    'crqc-scenario',
+    // Foundations staffing artifact lives alongside the KPI/maturity surfaces.
+    'skills-team-plan',
+    'refresh-cycle-alignment',
+    'accelerated-execution-profile',
+  ],
   implement: [
     'risk-treatment-plan',
     'migration-roadmap',
     'deployment-playbook',
     'hybrid-transition',
     'crypto-api-refactor',
+    'infra-modernization-plan',
+    'data-at-rest-strategy',
   ],
 }
 
@@ -55,6 +69,7 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'audit-checklist': 'compliance',
   'compliance-checklist': 'compliance',
   'compliance-timeline': 'compliance',
+  'migration-verification': 'compliance',
   'raci-matrix': 'governance',
   'policy-draft': 'governance',
   'kpi-dashboard': 'governance',
@@ -75,6 +90,16 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'mti-negotiator': 'governance',
   'crypto-api-refactor': 'architecture',
   'cloud-responsibility-matrix': 'governance',
+  // Phase-0 / Foundations program-establishment artifacts.
+  'program-charter': 'governance',
+  'initial-scoping': 'governance',
+  'skills-team-plan': 'governance',
+  'infra-modernization-plan': 'architecture',
+  'refresh-cycle-alignment': 'architecture',
+  'accelerated-execution-profile': 'governance',
+  'data-at-rest-strategy': 'architecture',
+  // Simulation-produced roadmap (WS-15) — same pillar as a migration roadmap.
+  'sim-roadmap': 'architecture',
 }
 
 export function getPillarForType(type: ExecutiveDocumentType): PillarKey {
@@ -109,7 +134,11 @@ export function getArtifactsForStep(
 /** Orphan artifact types whose zone cannot be derived from the tool registry
  *  (because the type has no corresponding tool yet). Keep this small and
  *  explicit — every entry should have a follow-up to wire a real builder. */
-const ORPHAN_TYPE_ZONE: Partial<Record<ExecutiveDocumentType, ZoneId>> = {}
+const ORPHAN_TYPE_ZONE: Partial<Record<ExecutiveDocumentType, ZoneId>> = {
+  // sim-roadmap (WS-15) has no builder tool, so it isn't in ARTIFACT_TYPE_TO_TOOL_ID;
+  // bucket it in the migration zone like a hand-built migration roadmap.
+  'sim-roadmap': 'migration',
+}
 
 /** Single source of truth for artifact-type → CSWP.39 Fig 3 zone, derived from
  *  the tool registry plus the orphan override map. Computed at module load. */

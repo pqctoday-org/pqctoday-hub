@@ -259,7 +259,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   },
 
   migrate: {
-    title: 'Migration Catalog',
+    title: 'Migration Workbench',
     summary:
       'Browse 521+ PQC-ready software products organized across 9 infrastructure layers with certification cross-references and migration planning tools.',
     sections: [

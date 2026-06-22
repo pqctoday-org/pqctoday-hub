@@ -1,6 +1,13 @@
 @import 'tailwindcss';
 
 @theme {
+  /* Simulation type floor (PR-4): legibility tokens so the console can't drop
+     below the a11y floor. `text-sim-micro` (11px) is the body/label floor;
+     `text-sim-chip` (10px) is the dense-chip floor. Replace raw text-[8–10px]
+     utilities under src/components/Simulation/ with these. */
+  --text-sim-micro: 11px;
+  --text-sim-chip: 10px;
+
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
@@ -158,6 +165,23 @@
 
   .animate-workshop-progress {
     animation: workshop-progress 1.4s ease-in-out infinite;
+  }
+
+  /* Simulation live-feed marquee — scrolls the duplicated track left so every
+     message can be read; the second copy makes the loop seamless. */
+  @keyframes sim-ticker {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  .animate-sim-ticker {
+    animation: sim-ticker 45s linear infinite;
+  }
+  .animate-sim-ticker:hover {
+    animation-play-state: paused;
   }
 
   /* Respect user's reduced-motion preference for CSS animations/transitions */

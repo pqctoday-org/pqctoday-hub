@@ -5,6 +5,7 @@ import { useEmbedAuth } from './useEmbedAuth'
 import { createPersistenceService, NoPersistence } from './EmbedPersistenceService'
 import type { IEmbedPersistenceService } from './EmbedPersistenceService'
 import { UnifiedStorageService } from '../services/storage/UnifiedStorageService'
+import { mergeModuleProgress } from '../services/storage/mergeProgress'
 
 // Import all stores we want to persist
 import { useModuleStore } from '../store/useModuleStore'
@@ -104,6 +105,17 @@ export function useEmbedPersistence() {
     service.loadSnapshot(userId).then((snapshot) => {
       if (!isMounted) return
       if (snapshot) {
+        // Two-device sync: MERGE the remote module progress with whatever this
+        // device already has, so neither side loses progress (B1 #3). The merge
+        // is lossless (union completedSteps/mastery/artifacts, max time/scores).
+        // Other slices restore as-is — remote is the synced source of truth.
+        if (snapshot.stores.moduleProgress) {
+          const local = useModuleStore.getState().getFullProgress()
+          snapshot.stores.moduleProgress = mergeModuleProgress(
+            local,
+            snapshot.stores.moduleProgress
+          )
+        }
         UnifiedStorageService.restoreSnapshot(snapshot)
       }
     })

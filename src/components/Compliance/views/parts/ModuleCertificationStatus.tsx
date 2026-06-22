@@ -61,9 +61,12 @@ export const ModuleCertificationStatus: React.FC<Props> = ({ records }) => {
           aria-hidden="true"
         />
         <p>
-          {counts.noPqc.toLocaleString()} modules in the registry still ship classical-only crypto —
-          if your dependency tree includes any of them, the CI gate above will trip when you wire it
-          in. Browse the full Records tab to find your exact upstream.
+          {counts.noPqc.toLocaleString()} modules confirmed classical-only
+          {counts.unanalyzed > 0 && (
+            <> · {counts.unanalyzed.toLocaleString()} not yet analyzed for PQC</>
+          )}{' '}
+          — if your dependency tree includes classical-only modules, the CI gate above will trip.
+          Browse the full Records tab to find your exact upstream.
         </p>
       </div>
 
@@ -83,19 +86,36 @@ interface CertCounts {
   total: number
   pqc: number
   noPqc: number
+  unanalyzed: number
   mlkem: number
   mldsa: number
   slhdsa: number
   lms: number
 }
 
+// Labels that are heuristic-only or unanalyzed — not confirmed PQC.
+const UNCONFIRMED_RE = /potentially pqc|not yet analyzed|pending check/i
+
 function computeCounts(records: readonly ComplianceRecord[]): CertCounts {
-  const c: CertCounts = { total: 0, pqc: 0, noPqc: 0, mlkem: 0, mldsa: 0, slhdsa: 0, lms: 0 }
+  const c: CertCounts = {
+    total: 0,
+    pqc: 0,
+    noPqc: 0,
+    unanalyzed: 0,
+    mlkem: 0,
+    mldsa: 0,
+    slhdsa: 0,
+    lms: 0,
+  }
   for (const r of records) {
     c.total++
     const cov = typeof r.pqcCoverage === 'string' ? r.pqcCoverage : ''
     if (!cov || /no pqc/i.test(cov)) {
       c.noPqc++
+      continue
+    }
+    if (UNCONFIRMED_RE.test(cov)) {
+      c.unanalyzed++
       continue
     }
     c.pqc++

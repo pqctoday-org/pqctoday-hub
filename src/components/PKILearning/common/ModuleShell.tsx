@@ -1,0 +1,404 @@
+// SPDX-License-Identifier: GPL-3.0-only
+/* eslint-disable security/detect-object-injection */
+/**
+ * ModuleShell — the shared chrome every learn module copy-pastes today: the
+ * gradient header, the ModuleTabBar, the data-driven Visual/References/Tools
+ * tabs, and the workshop stepper (progress dots, step header, prev/next/
+ * complete). Reproduced verbatim from the golden master (modules/HsmPqc) so a
+ * module that adopts it renders identically.
+ *
+ * Module-specific content is supplied via slots:
+ *  - `learn` / `exercises`: the tab bodies (Learn is glossary-wrapped here)
+ *  - `workshopParts` + `renderWorkshopStep`: the workshop steps + their bodies
+ *  - `children`: for `custom` modules (Quiz) that own their whole body
+ *
+ * Header text is a slot (`title`/`description`) defaulting to the manifest —
+ * because a module's in-page header often differs from its catalog description.
+ */
+import { useState, type ReactNode } from 'react'
+import { Link } from 'react-router-dom'
+import type { LucideIcon } from 'lucide-react'
+import { Trash2, Gamepad2 } from 'lucide-react'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
+import { Button } from '@/components/ui/button'
+import { ModuleTabBar } from './ModuleTabBar'
+import { useEmbeddedLearn } from '../embeddedLearnContext'
+import { ModuleVisualTab } from './ModuleVisualTab'
+import { ModuleReferencesTab } from './ModuleReferencesTab'
+import { ModuleMigrateTab } from './ModuleMigrateTab'
+import { WorkshopStepHeader } from './WorkshopStepHeader'
+import { GlossaryAutoWrap } from './GlossaryAutoWrap'
+import { useModuleProgress } from './useModuleProgress'
+import { STANDARD_TABS, type ModuleManifest } from '../manifest/types'
+
+export interface WorkshopPart {
+  id: string
+  title: string
+  description: string
+  icon: LucideIcon
+  /** optional CSWP.39 process badge rendered in the step header (default: none,
+   *  so existing modules are unaffected) */
+  cswp39Step?: string
+}
+
+/** Handlers the shell exposes to function slots so Learn/Exercises content can
+ *  drive navigation owned by the shell's progress hook (the per-module
+ *  onNavigateToWorkshop / onSetWorkshopConfig callbacks). */
+export interface ModuleSlotApi {
+  /** complete the current tab and jump to the Workshop tab, optionally landing
+   *  on a specific step (the per-module onNavigateToWorkshop(step?) callback) */
+  goToWorkshop: (step?: number) => void
+  /** complete the current tab and jump to a named tab */
+  goToTab: (tab: string) => void
+  /** open the Workshop at a specific step (remounts the step body), optionally
+   *  with a config object passed through to renderWorkshopStep — used to pre-fill
+   *  the step from an exercise (the per-module onSetWorkshopConfig). */
+  openWorkshopStep: (step: number, config?: Record<string, unknown>) => void
+  /** run the same confirmed-reset the stepper's Reset button does (clears
+   *  pre-fill config + fires onReset). For NON-stepper `workshop` slots that
+   *  render their own Reset button (the stepper chrome is bypassed). */
+  resetWorkshop: () => void
+}
+
+/** A tab body: a static node, or a function given the nav API. */
+export type ModuleSlot = ReactNode | ((api: ModuleSlotApi) => ReactNode)
+
+export interface ModuleShellProps {
+  manifest: ModuleManifest
+  /** header title; defaults to manifest.title */
+  title?: ReactNode
+  /** header description; defaults to manifest.description (often overridden) */
+  description?: ReactNode
+  /** Learn tab body (wrapped in GlossaryAutoWrap by the shell) */
+  learn?: ModuleSlot
+  /** Learn tab body rendered WITHOUT the shell's GlossaryAutoWrap — for modules
+   *  whose Learn tab owns its own layout (e.g. an InPageToc two-column shell) and
+   *  must glossary-wrap only part of it. Takes precedence over `learn`. */
+  learnRaw?: ModuleSlot
+  /** Visual tab body; defaults to the data-driven <ModuleVisualTab>. Override for
+   *  modules that prepend a bespoke diagram before the standard visual. */
+  visual?: ModuleSlot
+  /** Exercises tab body */
+  exercises?: ModuleSlot
+  /**
+   * Custom Workshop tab body — escape hatch for modules whose workshop is NOT a
+   * stepper (e.g. DigitalAssets' chain-selector grid). When provided it renders
+   * verbatim in the Workshop tab INSTEAD of the WorkshopStepper, so a
+   * non-stepper workshop adopts the shared chrome without changing its render.
+   * Mutually exclusive with workshopParts/renderWorkshopStep.
+   */
+  workshop?: ModuleSlot
+  /** workshop stepper parts (omit for modules with no workshop) */
+  workshopParts?: WorkshopPart[]
+  /** renders the active workshop step body, keyed by configKey for remounts;
+   *  `config` carries the optional pre-fill from openWorkshopStep; `goToStep`
+   *  lets a step body advance the stepper (an in-step "Continue" button that
+   *  marks the current step complete and moves forward — same semantics as the
+   *  stepper's Next button). Existing modules ignore the extra arg. */
+  renderWorkshopStep?: (
+    index: number,
+    configKey: number,
+    config: Record<string, unknown> | undefined,
+    goToStep: (step: number) => void
+  ) => ReactNode
+  /** Called when the workshop Reset is CONFIRMED (after the shell clears its
+   *  pre-fill config). For modules that hold cross-TAB state in their own FC
+   *  (above the shell, so it survives tab switches) which the original Reset
+   *  cleared — e.g. an assessed risk register or selected jurisdictions. Does
+   *  NOT fire if the user cancels the confirm. Omit it and nothing extra clears. */
+  onReset?: () => void
+  /** custom modules (Quiz) render their own body — no tabs */
+  children?: ReactNode
+}
+
+interface WorkshopStepperProps {
+  moduleId: string
+  parts: WorkshopPart[]
+  currentPart: number
+  configKey: number
+  onPartChange: (index: number) => void
+  onReset: () => void
+  onComplete: (stepId: string) => void
+  renderStep: (index: number, configKey: number, goToStep: (step: number) => void) => ReactNode
+}
+
+function WorkshopStepper({
+  moduleId,
+  parts,
+  currentPart,
+  configKey,
+  onPartChange,
+  onReset,
+  onComplete,
+  renderStep,
+}: WorkshopStepperProps) {
+  return (
+    <div className="max-w-7xl mx-auto space-y-6">
+      <div className="flex justify-end">
+        <Button
+          variant="ghost"
+          onClick={onReset}
+          className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
+        >
+          <Trash2 size={16} />
+          Reset
+        </Button>
+      </div>
+
+      <div className="overflow-x-auto px-2 sm:px-0">
+        <div className="flex justify-evenly relative min-w-0">
+          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
+          {parts.map((part, idx) => {
+            const Icon = part.icon
+            return (
+              <Button
+                variant="ghost"
+                key={part.id}
+                onClick={() => onPartChange(idx)}
+                className={`flex flex-col items-center gap-1 group px-1 sm:px-2 py-1 h-auto ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
+              >
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
+                    ${
+                      idx === currentPart
+                        ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
+                        : idx < currentPart
+                          ? 'border-success text-success'
+                          : 'border-border text-muted-foreground'
+                    }`}
+                >
+                  <Icon size={16} />
+                </div>
+                <span className="text-sm font-medium hidden md:block">
+                  {part.title.split(':')[0]}
+                </span>
+              </Button>
+            )
+          })}
+        </div>
+      </div>
+
+      <div className="glass-panel p-4 sm:p-6 md:p-8 min-h-[400px] md:min-h-[600px] animate-fade-in">
+        <WorkshopStepHeader
+          moduleId={moduleId}
+          stepId={parts[currentPart].id}
+          stepTitle={parts[currentPart].title}
+          stepDescription={parts[currentPart].description}
+          stepIndex={currentPart}
+          totalSteps={parts.length}
+          cswp39Step={parts[currentPart].cswp39Step}
+          steps={parts.map((p) => ({ id: p.id, label: p.title }))}
+          onStepClick={onPartChange}
+        />
+        {renderStep(currentPart, configKey, onPartChange)}
+      </div>
+
+      <div className="flex flex-col sm:flex-row justify-between gap-3">
+        <Button
+          variant="ghost"
+          onClick={() => onPartChange(Math.max(0, currentPart - 1))}
+          disabled={currentPart === 0}
+          className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
+          data-workshop-target="learn-stepper-prev"
+        >
+          &larr; Previous Step
+        </Button>
+        {currentPart === parts.length - 1 ? (
+          <Button
+            variant="gradient"
+            onClick={() => onComplete(parts[currentPart].id)}
+            className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
+            data-workshop-target="learn-stepper-complete"
+          >
+            Complete Module
+          </Button>
+        ) : (
+          <Button
+            variant="gradient"
+            onClick={() => onPartChange(currentPart + 1)}
+            className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
+            data-workshop-target="learn-stepper-next"
+          >
+            Next Step &rarr;
+          </Button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export const ModuleShell = ({
+  manifest,
+  title,
+  description,
+  learn,
+  learnRaw,
+  visual,
+  exercises,
+  workshop,
+  workshopParts,
+  renderWorkshopStep,
+  onReset,
+  children,
+}: ModuleShellProps) => {
+  const parts = workshopParts ?? []
+  const {
+    activeTab,
+    handleTabChange,
+    navigateToTab,
+    currentPart,
+    setCurrentPart,
+    configKey,
+    bumpConfig,
+    handlePartChange,
+    handleReset,
+    completeStep,
+    workshopDot,
+  } = useModuleProgress(manifest.id, {
+    steps: parts.length ? parts : manifest.workshopSteps,
+    // dot tracks the canonical workshopSteps (matches the golden master), even
+    // if the UI parts are wired differently
+    dotSteps: manifest.workshopSteps,
+    resetLabel: `Restart ${manifest.title}?`,
+  })
+
+  // last config passed from an exercise (openWorkshopStep) — threaded to
+  // renderWorkshopStep so a step can pre-fill itself (the old onSetWorkshopConfig)
+  const [workshopConfig, setWorkshopConfig] = useState<Record<string, unknown> | undefined>(
+    undefined
+  )
+  // The confirmed-reset handler, shared by the stepper's Reset button and the
+  // slot API: clears the exercise pre-fill config and fires the module's
+  // onReset, but only when the user confirms (handleReset owns the confirm()).
+  const resetWorkshop = () =>
+    handleReset(() => {
+      setWorkshopConfig(undefined)
+      onReset?.()
+    })
+  const slotApi: ModuleSlotApi = {
+    goToWorkshop: (step) => {
+      navigateToTab('workshop')
+      // honor an optional target step; `typeof` guards against a stray event arg
+      if (typeof step === 'number') setCurrentPart(step)
+    },
+    goToTab: navigateToTab,
+    openWorkshopStep: (step, config) => {
+      setCurrentPart(step)
+      setWorkshopConfig(config)
+      bumpConfig()
+    },
+    resetWorkshop,
+  }
+  const resolve = (slot: ModuleSlot | undefined): ReactNode =>
+    typeof slot === 'function' ? slot(slotApi) : slot
+
+  const headerDescription = description ?? manifest.description
+  // C1: a "Practice in the Simulation" CTA for program/governance modules — only
+  // on the standalone Learn page, never when this module is itself embedded in
+  // the sim (where the CTA would be a confusing loop back to where you are).
+  const embedded = useEmbeddedLearn()
+  const showSimCta = !!manifest.practiceInSim && !embedded
+
+  const header = (
+    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <h1 className="text-3xl font-bold text-gradient">{title ?? manifest.title}</h1>
+          {/* A4 — depth signal on the in-module header (consistent with the cards +
+              Journey, which read the same manifest.difficulty). */}
+          {manifest.difficulty ? (
+            <span
+              className={
+                'rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ' +
+                (manifest.difficulty === 'beginner'
+                  ? 'bg-status-success/15 text-status-success'
+                  : manifest.difficulty === 'intermediate'
+                    ? 'bg-status-warning/15 text-status-warning'
+                    : 'bg-status-error/15 text-status-error')
+              }
+            >
+              {manifest.difficulty}
+            </span>
+          ) : null}
+        </div>
+        {headerDescription ? (
+          <p className="text-muted-foreground mt-2">{headerDescription}</p>
+        ) : null}
+      </div>
+      {showSimCta ? (
+        <Link
+          to="/simulation"
+          className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/20"
+        >
+          <Gamepad2 size={16} />
+          Practice in the Simulation
+        </Link>
+      ) : null}
+    </div>
+  )
+
+  // Custom modules (Quiz) own their entire body; the hook still tracks time.
+  if (manifest.custom) {
+    return <div className="space-y-6">{children}</div>
+  }
+
+  const tabs = manifest.tabs ?? STANDARD_TABS
+  const present = new Set(tabs.map((t) => t.value))
+  const barTabs = tabs.map((t) => (t.value === 'workshop' ? { ...t, hasDot: workshopDot } : t))
+
+  return (
+    <div className="space-y-6">
+      {header}
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <ModuleTabBar tabs={barTabs} value={activeTab} onValueChange={handleTabChange} />
+
+        {present.has('learn') && (
+          <TabsContent value="learn">
+            {learnRaw !== undefined ? (
+              resolve(learnRaw)
+            ) : (
+              <GlossaryAutoWrap>{resolve(learn)}</GlossaryAutoWrap>
+            )}
+          </TabsContent>
+        )}
+        {present.has('visual') && (
+          <TabsContent value="visual">
+            {visual !== undefined ? resolve(visual) : <ModuleVisualTab moduleId={manifest.id} />}
+          </TabsContent>
+        )}
+        {present.has('workshop') && workshop && (
+          <TabsContent value="workshop">{resolve(workshop)}</TabsContent>
+        )}
+        {present.has('workshop') && !workshop && parts.length > 0 && renderWorkshopStep && (
+          <TabsContent value="workshop">
+            <WorkshopStepper
+              moduleId={manifest.id}
+              parts={parts}
+              currentPart={currentPart}
+              configKey={configKey}
+              onPartChange={handlePartChange}
+              onReset={resetWorkshop}
+              onComplete={(stepId) => completeStep(stepId)}
+              renderStep={(index, key, goToStep) =>
+                renderWorkshopStep(index, key, workshopConfig, goToStep)
+              }
+            />
+          </TabsContent>
+        )}
+        {present.has('exercises') && (
+          <TabsContent value="exercises">{resolve(exercises)}</TabsContent>
+        )}
+        {present.has('references') && (
+          <TabsContent value="references">
+            <ModuleReferencesTab moduleId={manifest.id} />
+          </TabsContent>
+        )}
+        {present.has('tools') && (
+          <TabsContent value="tools">
+            <ModuleMigrateTab moduleId={manifest.id} />
+          </TabsContent>
+        )}
+      </Tabs>
+    </div>
+  )
+}

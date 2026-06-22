@@ -14,14 +14,14 @@ import {
 } from 'lucide-react'
 
 export const MISSION_TAGS = [
-  '48 learning modules',
-  '14 business planning tools',
-  '14-step risk assessment',
-  '385+ migration catalog',
-  '200+ PQC patents',
+  '59 learning modules',
+  '34 business planning tools',
+  '13-step risk assessment',
+  '800+ migration catalog',
+  '1,600+ PQC patents',
   'PKCS#11 v3.2 simulator',
   'FIPS 203 / 204 / 205',
-  'AI assistant — runs locally',
+  'AI assistant — local or cloud',
   'Zero data collected',
 ]
 
@@ -72,17 +72,17 @@ export const NOT_ITEMS = [
 ]
 
 export const DATA_FOUNDATION = [
-  { dataset: 'Timeline Events', records: 234, sources: '80+ orgs, 50+ countries' },
-  { dataset: 'Library Resources', records: 741, sources: '30+ standards bodies' },
-  { dataset: 'Algorithm Reference', records: 102, sources: 'FIPS 203/204/205/206' },
-  { dataset: 'Compliance Frameworks', records: 165, sources: 'NIST, ACVP, CC, ANSSI' },
-  { dataset: 'Migrate Products', records: 838, sources: '7 infrastructure layers' },
+  { dataset: 'Timeline Events', records: 246, sources: '80+ orgs, 50+ countries' },
+  { dataset: 'Library Resources', records: 754, sources: '30+ standards bodies' },
+  { dataset: 'Algorithm Reference', records: 98, sources: 'FIPS 203/204/205 (+206 draft)' },
+  { dataset: 'Compliance Frameworks', records: 170, sources: 'NIST, ACVP, CC, ANSSI' },
+  { dataset: 'Migrate Products', records: 835, sources: '7 infrastructure layers' },
   { dataset: 'Threat Landscape', records: 110, sources: '8+ industry sectors' },
   { dataset: 'Industry Leaders', records: 341, sources: 'Public, Private, Academic' },
   { dataset: 'Quiz Questions', records: 909, sources: 'All PQC topic areas' },
   { dataset: 'Authoritative Sources', records: 143, sources: 'Gov, Academic, Industry' },
-  { dataset: 'Learning Modules', records: 55, sources: '2,800+ min of content' },
-  { dataset: 'PQC Patents', records: 928, sources: 'USPTO, EPO, WIPO' },
+  { dataset: 'Learning Modules', records: 59, sources: '2,800+ min of content' },
+  { dataset: 'PQC Patents', records: 1647, sources: 'USPTO, EPO, WIPO' },
 ]
 
 export const DISCUSSIONS_BASE = 'https://github.com/pqctoday-org/pqctoday-hub/discussions/'

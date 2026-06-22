@@ -4,6 +4,7 @@ import { Key as KeyIcon, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'
 import clsx from 'clsx'
 import type { Key } from '../../../types'
 import { getKeySize, formatBytes } from './keySizeUtils'
+import { KeyKcvBadge } from './KeyKcvBadge'
 import { Button } from '@/components/ui/button'
 
 interface KeyTableProps {
@@ -189,7 +190,12 @@ export const KeyTable: React.FC<KeyTableProps> = ({
                       }
                     }}
                   >
-                    <td className="p-4 font-medium text-foreground truncate">{key.name}</td>
+                    <td className="p-4 font-medium text-foreground">
+                      <div className="truncate">{key.name}</div>
+                      <div className="mt-1">
+                        <KeyKcvBadge k={key} />
+                      </div>
+                    </td>
                     <td className="p-4">
                       <span
                         className={clsx(
@@ -267,6 +273,7 @@ export const KeyTable: React.FC<KeyTableProps> = ({
                       return size !== null ? formatBytes(size) : '-'
                     })()}
                   </span>
+                  <KeyKcvBadge k={key} />
                 </div>
               </Button>
             ))}

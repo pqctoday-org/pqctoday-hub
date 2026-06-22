@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { motion } from 'framer-motion'
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState, useMemo } from 'react'
 import React from 'react'
 import {
   type AlgorithmDetail,
@@ -12,19 +11,14 @@ import {
   isResearchNeeded,
 } from '../../data/pqcAlgorithmsData'
 import {
-  Shield,
-  Zap,
-  HardDrive,
-  TrendingUp,
   Info,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
   SearchX,
-  Scale,
-  ShieldAlert,
-  FlaskConical,
-  ChevronDown,
+  LayoutList,
+  GitCompare,
+  ArrowRight,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
@@ -32,13 +26,12 @@ import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'
-import { ImplementationAttacksView } from './ImplementationAttacksView'
-import { KATView } from './KATView'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
-import { usePersonaStore } from '@/store/usePersonaStore'
-import { getAlgorithmDefaults } from '@/data/personaConfig'
+import { classifyCnsa20, cnsa20ChipClasses } from './cnsa20'
+import { MAX_COMPARE } from './useAlgorithmExplorer'
+import { AlgorithmComparisonPanel } from './AlgorithmComparisonPanel'
 
-type SortField = 'name' | 'type' | 'keygen' | 'sign' | 'verify' | 'ram' | 'optimization'
+type SortField = 'name' | 'type' | 'pubkey' | 'sig' | 'keygen' | 'sign' | 'verify' | 'ram'
 type SortDir = 'asc' | 'desc'
 
 function getPerformanceMultiplier(cycles: string): number {
@@ -48,8 +41,6 @@ function getPerformanceMultiplier(cycles: string): number {
   return match ? parseFloat(match[1]) : 1
 }
 
-type SubTab = 'performance' | 'security' | 'sizes' | 'usecases' | 'attacks' | 'kat'
-
 interface AlgorithmDetailedComparisonProps {
   highlightAlgorithms?: Set<string>
   onInfoOpen?: () => void
@@ -58,8 +49,12 @@ interface AlgorithmDetailedComparisonProps {
   compareType: 'KEM' | 'Signature' | null
   maxCompareReached: boolean
   onToggleCompare: (name: string) => void
-  /** Section to scroll to and expand on mount (driven by ?section= URL param). */
-  initialSection?: SubTab
+  /** Browse (unified table) ↔ Compare (transposed matrix). */
+  detailMode: 'browse' | 'compare'
+  onDetailModeChange: (mode: 'browse' | 'compare') => void
+  /** Resolved algorithms + baseline for Compare mode (from the explorer hook). */
+  comparisonAlgos: AlgorithmDetail[]
+  baselineAlgo: AlgorithmDetail | null
 }
 
 export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonProps> = ({
@@ -70,148 +65,176 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
   compareType,
   maxCompareReached,
   onToggleCompare,
-  initialSection,
+  detailMode,
+  onDetailModeChange,
+  comparisonAlgos,
+  baselineAlgo,
 }) => {
-  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const [openSections, setOpenSections] = useState<Set<SubTab>>(() => {
-    const personaSections = getAlgorithmDefaults(selectedPersona).openSections as SubTab[]
-    const defaults = new Set<SubTab>(personaSections)
-    if (initialSection) defaults.add(initialSection)
-    return defaults
-  })
-
-  const sectionRefs = useRef<Partial<Record<SubTab, HTMLElement | null>>>({})
-
-  useEffect(() => {
-    if (!initialSection) return
-    // Defer scroll until the section has rendered (already open via useState initializer)
-    const frame = requestAnimationFrame(() => {
-      sectionRefs.current[initialSection]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    })
-    return () => cancelAnimationFrame(frame)
-  }, [initialSection])
-
-  const toggleSection = (id: SubTab) => {
-    setOpenSections((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
-      } else {
-        next.add(id)
-      }
-      return next
-    })
-  }
-
-  const sharedViewProps = {
-    algorithms: filteredAlgorithms,
-    highlightAlgorithms,
-    compareSet,
-    compareType,
-    maxCompareReached,
-    onToggleCompare,
-  }
-
-  const sections: Array<{
-    id: SubTab
-    icon: React.ReactNode
-    label: string
-    content: React.ReactNode
-  }> = [
-    {
-      id: 'performance',
-      icon: <Zap size={16} />,
-      label: 'Performance',
-      content: <PerformanceView {...sharedViewProps} />,
-    },
-    {
-      id: 'security',
-      icon: <Shield size={16} />,
-      label: 'Security Levels',
-      content: <SecurityView {...sharedViewProps} />,
-    },
-    {
-      id: 'sizes',
-      icon: <HardDrive size={16} />,
-      label: 'Size Comparison',
-      content: <SizesView {...sharedViewProps} />,
-    },
-    {
-      id: 'usecases',
-      icon: <TrendingUp size={16} />,
-      label: 'Use Cases',
-      content: <UseCasesView {...sharedViewProps} />,
-    },
-    {
-      id: 'attacks',
-      icon: <ShieldAlert size={16} />,
-      label: 'Implementation Attacks',
-      content: <ImplementationAttacksView />,
-    },
-    { id: 'kat', icon: <FlaskConical size={16} />, label: 'KAT Validation', content: <KATView /> },
-  ]
+  const selectedCount = compareSet.size
 
   return (
     <div className="space-y-3">
-      {onInfoOpen && (
-        <div className="flex justify-end">
+      {/* Mode switch + About */}
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <div
+          className="inline-flex rounded-md border border-border bg-card p-0.5"
+          role="group"
+          aria-label="Detailed comparison view mode"
+        >
           <Button
-            variant="ghost"
-            onClick={onInfoOpen}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-muted/50 border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors text-xs"
-            aria-label="Performance data methodology"
-            title="About performance data"
+            type="button"
+            variant={detailMode === 'browse' ? 'gradient' : 'ghost'}
+            size="sm"
+            onClick={() => onDetailModeChange('browse')}
+            aria-pressed={detailMode === 'browse'}
+            className="h-8 gap-1.5 px-3 text-xs"
           >
-            <Info size={14} />
-            <span className="hidden sm:inline">About</span>
+            <LayoutList size={14} />
+            Browse all
+          </Button>
+          <Button
+            type="button"
+            variant={detailMode === 'compare' ? 'gradient' : 'ghost'}
+            size="sm"
+            onClick={() => onDetailModeChange('compare')}
+            aria-pressed={detailMode === 'compare'}
+            className="h-8 gap-1.5 px-3 text-xs"
+          >
+            <GitCompare size={14} />
+            Compare side-by-side
+            {selectedCount > 0 && (
+              <span className="rounded-full bg-background/30 px-1.5 text-[10px] font-bold">
+                {selectedCount}
+              </span>
+            )}
           </Button>
         </div>
-      )}
 
-      {sections.map(({ id, icon, label, content }) => {
-        const isOpen = openSections.has(id)
-        return (
-          <section
-            key={id}
-            id={`section-${id}`}
-            ref={(el) => {
-              sectionRefs.current[id] = el
-            }}
-            className="glass-panel overflow-hidden"
-          >
+        <div className="flex items-center gap-2">
+          <span className="hidden sm:inline text-xs text-muted-foreground">
+            All filters above apply to both views.
+          </span>
+          {onInfoOpen && (
             <Button
               variant="ghost"
-              onClick={() => toggleSection(id)}
-              className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-muted/30 transition-colors h-auto rounded-none"
-              aria-expanded={isOpen}
-              aria-controls={`section-body-${id}`}
+              onClick={onInfoOpen}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-muted/50 border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors text-xs h-auto"
+              aria-label="Performance data methodology"
+              title="About performance data"
             >
-              <span className="flex items-center gap-2 font-semibold text-foreground text-sm">
-                <span className="text-primary">{icon}</span>
-                {label}
-              </span>
-              <ChevronDown
-                size={16}
-                className={clsx(
-                  'text-muted-foreground transition-transform duration-200',
-                  isOpen && 'rotate-180'
-                )}
-              />
+              <Info size={14} />
+              <span className="hidden sm:inline">About</span>
             </Button>
-            {isOpen && (
-              <motion.div
-                id={`section-body-${id}`}
-                initial={{ opacity: 0, y: -4 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.15 }}
-                className="border-t border-border/40 px-4 pb-4 pt-4"
-              >
-                {content}
-              </motion.div>
-            )}
-          </section>
-        )
-      })}
+          )}
+        </div>
+      </div>
+
+      {detailMode === 'compare' ? (
+        <CompareView
+          comparisonAlgos={comparisonAlgos}
+          baselineAlgo={baselineAlgo}
+          onBrowse={() => onDetailModeChange('browse')}
+        />
+      ) : (
+        <>
+          <BrowseTable
+            algorithms={filteredAlgorithms}
+            highlightAlgorithms={highlightAlgorithms}
+            compareSet={compareSet}
+            compareType={compareType}
+            maxCompareReached={maxCompareReached}
+            onToggleCompare={onToggleCompare}
+          />
+          <SelectionBar
+            count={selectedCount}
+            compareType={compareType}
+            onCompare={() => onDetailModeChange('compare')}
+          />
+        </>
+      )}
+    </div>
+  )
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+ * Compare mode — the transposed side-by-side matrix is the centerpiece.
+ * ────────────────────────────────────────────────────────────────────────── */
+function CompareView({
+  comparisonAlgos,
+  baselineAlgo,
+  onBrowse,
+}: {
+  comparisonAlgos: AlgorithmDetail[]
+  baselineAlgo: AlgorithmDetail | null
+  onBrowse: () => void
+}) {
+  if (comparisonAlgos.length < 2) {
+    return (
+      <div className="glass-panel border-dashed border-2 border-border p-10 flex flex-col items-center justify-center text-center">
+        <GitCompare size={40} className="text-muted-foreground/50 mb-3" />
+        <h4 className="text-base font-semibold text-foreground mb-1">Pick algorithms to compare</h4>
+        <p className="text-sm text-muted-foreground max-w-sm mb-4">
+          Select at least two algorithms of the same function type in Browse to see a transposed
+          side-by-side comparison against a classical baseline.
+        </p>
+        <Button variant="gradient" size="sm" onClick={onBrowse} className="gap-1.5">
+          <LayoutList size={14} />
+          Browse algorithms
+        </Button>
+      </div>
+    )
+  }
+  return (
+    <div className="space-y-2">
+      <div className="flex justify-end">
+        <Button variant="outline" size="sm" onClick={onBrowse} className="gap-1.5">
+          <ArrowRight size={14} className="rotate-180" />
+          Edit picks
+        </Button>
+      </div>
+      <AlgorithmComparisonPanel
+        algorithms={comparisonAlgos}
+        baseline={baselineAlgo}
+        activeTab="detailed"
+        onClose={onBrowse}
+      />
+    </div>
+  )
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+ * Browse-mode selection footer.
+ * ────────────────────────────────────────────────────────────────────────── */
+function SelectionBar({
+  count,
+  compareType,
+  onCompare,
+}: {
+  count: number
+  compareType: 'KEM' | 'Signature' | null
+  onCompare: () => void
+}) {
+  return (
+    <div className="glass-panel p-3 flex items-center justify-between gap-3 flex-wrap">
+      <span className="text-sm text-muted-foreground">
+        <strong className="text-foreground">{count}</strong> of {MAX_COMPARE} selected
+        {compareType && (
+          <>
+            {' · '}
+            <span className="text-primary font-medium">{compareType}</span> locked by 1st pick
+          </>
+        )}
+      </span>
+      <Button
+        variant="gradient"
+        size="sm"
+        disabled={count < 2}
+        onClick={onCompare}
+        className="gap-1.5"
+      >
+        Compare side-by-side
+        <ArrowRight size={14} />
+      </Button>
     </div>
   )
 }
@@ -226,67 +249,47 @@ const EmptyState = () => (
   </div>
 )
 
-interface DetailViewProps {
+interface BrowseTableProps {
   algorithms: AlgorithmDetail[]
   highlightAlgorithms?: Set<string>
-  compareSet?: Set<string>
-  compareType?: 'KEM' | 'Signature' | null
-  maxCompareReached?: boolean
-  onToggleCompare?: (name: string) => void
+  compareSet: Set<string>
+  compareType: 'KEM' | 'Signature' | null
+  maxCompareReached: boolean
+  onToggleCompare: (name: string) => void
 }
 
-function CompareButton({
+/** Checkbox that toggles comparison membership, honoring the type-lock + cap. */
+function CompareCheckbox({
   algo,
   compareSet,
   compareType,
   maxCompareReached,
   onToggleCompare,
-}: {
-  algo: AlgorithmDetail
-  compareSet?: Set<string>
-  compareType?: 'KEM' | 'Signature' | null
-  maxCompareReached?: boolean
-  onToggleCompare?: (name: string) => void
-}) {
-  if (!onToggleCompare) return null
+}: BrowseTableProps & { algo: AlgorithmDetail }) {
   const algoGroup = getFunctionGroup(algo)
-  if (algoGroup !== 'KEM' && algoGroup !== 'Signature') return null
-  const isCompared = compareSet?.has(algo.name) ?? false
+  if (algoGroup !== 'KEM' && algoGroup !== 'Signature') {
+    return <span className="inline-block w-4 shrink-0" aria-hidden="true" />
+  }
+  const isCompared = compareSet.has(algo.name)
   const canToggle =
     isCompared || (!maxCompareReached && (compareType === null || compareType === algoGroup))
+  const reason = isCompared
+    ? 'Remove from comparison'
+    : !canToggle
+      ? maxCompareReached
+        ? `Max ${MAX_COMPARE} reached`
+        : `${compareType} only`
+      : 'Add to comparison'
   return (
-    <div className="relative group/compare flex items-center shrink-0">
-      <Button
-        variant="ghost"
-        type="button"
-        onClick={() => onToggleCompare(algo.name)}
-        disabled={!canToggle && !isCompared}
-        title={
-          isCompared
-            ? 'Remove from comparison'
-            : !canToggle
-              ? maxCompareReached
-                ? 'Max 3 reached'
-                : `Requires ${compareType}`
-              : 'Add to comparison'
-        }
-        className={clsx(
-          'shrink-0 p-1 rounded transition-colors',
-          isCompared
-            ? 'text-secondary bg-secondary/10'
-            : canToggle
-              ? 'text-muted-foreground hover:text-secondary hover:bg-secondary/10'
-              : 'text-muted-foreground/30 cursor-not-allowed'
-        )}
-      >
-        <Scale size={14} />
-      </Button>
-      {!canToggle && !isCompared && (
-        <span className="absolute left-full ml-2 whitespace-nowrap bg-status-error text-status-error-foreground text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover/compare:opacity-100 transition-opacity pointer-events-none z-10 hidden sm:block">
-          {maxCompareReached ? 'Max 3 reached' : `Compare ${compareType} only`}
-        </span>
-      )}
-    </div>
+    <input
+      type="checkbox"
+      checked={isCompared}
+      disabled={!canToggle && !isCompared}
+      onChange={() => onToggleCompare(algo.name)}
+      title={reason}
+      aria-label={`${reason}: ${algo.name}`}
+      className="h-4 w-4 shrink-0 rounded border-border accent-primary cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+    />
   )
 }
 
@@ -319,6 +322,33 @@ function DraftBadge({ algo }: { algo: AlgorithmDetail }) {
   )
 }
 
+/**
+ * CNSA 2.0 chip — shown only for algorithms with a meaningful CNSA 2.0 stance
+ * (required selections, the firmware-only stateful-hash approval, and the
+ * explicitly-excluded SLH-DSA). Below-floor / not-in-suite rows show nothing.
+ */
+function Cnsa20Badge({ algo }: { algo: AlgorithmDetail }) {
+  const verdict = classifyCnsa20(algo)
+  if (
+    verdict.status !== 'required' &&
+    verdict.status !== 'approved-limited' &&
+    verdict.status !== 'excluded'
+  ) {
+    return null
+  }
+  return (
+    <span
+      className={clsx(
+        'inline-flex items-center text-[10px] px-1.5 py-0.5 rounded border font-medium',
+        cnsa20ChipClasses(verdict.status)
+      )}
+      title={verdict.rationale}
+    >
+      {verdict.label}
+    </span>
+  )
+}
+
 function ResearchNeededBadge({ algo }: { algo: AlgorithmDetail }) {
   if (!algo.hasResearchGap) return null
   return (
@@ -332,15 +362,15 @@ function ResearchNeededBadge({ algo }: { algo: AlgorithmDetail }) {
 }
 
 /** Render either the formatted byte count or the literal "Research needed" placeholder. */
-function ByteSize({ value, unknown }: { value: number; unknown: boolean }) {
-  if (unknown) {
+function ByteSize({ value, unknown }: { value: number | null; unknown: boolean }) {
+  if (unknown || value === null || value === undefined) {
     return (
       <span className="italic text-muted-foreground" title="Not yet researched">
         {RESEARCH_NEEDED}
       </span>
     )
   }
-  return <>{value.toLocaleString()} bytes</>
+  return <>{value.toLocaleString()} B</>
 }
 
 /** Render either the cycles string or the literal "Research needed" placeholder. */
@@ -355,15 +385,18 @@ function CyclesValue({ value }: { value: string }) {
   return <>{value}</>
 }
 
-// Performance View Component
-const PerformanceView = ({
+/* ────────────────────────────────────────────────────────────────────────────
+ * Browse mode — ONE unified, sortable table; one row per algorithm carrying all
+ * metrics (sizes + performance + standard), with a comparison checkbox.
+ * ────────────────────────────────────────────────────────────────────────── */
+function BrowseTable({
   algorithms,
   highlightAlgorithms,
   compareSet,
   compareType,
   maxCompareReached,
   onToggleCompare,
-}: DetailViewProps) => {
+}: BrowseTableProps) {
   const [sortField, setSortField] = useState<SortField>('name')
   const [sortDir, setSortDir] = useState<SortDir>('asc')
   const [drilldownAlgo, setDrilldownAlgo] = useState<string | null>(null)
@@ -378,6 +411,9 @@ const PerformanceView = ({
     }
   }
 
+  const sizeForSort = (algo: AlgorithmDetail, key: 'publicKeySize' | 'signatureCiphertextSize') =>
+    algo.sizesUnknown ? Number.MAX_SAFE_INTEGER : (algo[key] ?? Number.MAX_SAFE_INTEGER)
+
   const sorted = useMemo(() => {
     return [...algorithms].sort((a, b) => {
       const dir = sortDir === 'asc' ? 1 : -1
@@ -386,6 +422,13 @@ const PerformanceView = ({
           return dir * a.name.localeCompare(b.name)
         case 'type':
           return dir * a.family.localeCompare(b.family)
+        case 'pubkey':
+          return dir * (sizeForSort(a, 'publicKeySize') - sizeForSort(b, 'publicKeySize'))
+        case 'sig':
+          return (
+            dir *
+            (sizeForSort(a, 'signatureCiphertextSize') - sizeForSort(b, 'signatureCiphertextSize'))
+          )
         case 'keygen':
           return (
             dir *
@@ -405,15 +448,13 @@ const PerformanceView = ({
           )
         case 'ram':
           return dir * (a.stackRAM - b.stackRAM)
-        case 'optimization':
-          return dir * a.optimizationTarget.localeCompare(b.optimizationTarget)
         default:
           return 0
       }
     })
   }, [algorithms, sortField, sortDir])
 
-  // Max values for normalizing inline bar widths (relative comparison across visible rows)
+  // Max values for normalizing inline bar widths (relative across visible rows).
   const maxValues = useMemo(() => {
     const maxKeygen = Math.max(...sorted.map((a) => getPerformanceMultiplier(a.keyGenCycles)), 1)
     const maxSign = Math.max(...sorted.map((a) => getPerformanceMultiplier(a.signEncapsCycles)), 1)
@@ -445,6 +486,40 @@ const PerformanceView = ({
 
   if (algorithms.length === 0) return <EmptyState />
 
+  const headers: [SortField, string][] = [
+    ['name', 'Algorithm'],
+    ['type', 'Family'],
+    ['pubkey', 'Pub key'],
+    ['sig', 'Sig / CT'],
+    ['keygen', 'KeyGen'],
+    ['sign', 'Sign / Enc'],
+    ['verify', 'Verify / Dec'],
+    ['ram', 'RAM'],
+  ]
+
+  const perfCell = (
+    category: ReturnType<typeof getPerformanceCategory>,
+    cycles: string,
+    multiplier: number,
+    max: number,
+    barColor: string
+  ) => (
+    <div className="flex flex-col gap-0.5">
+      <span
+        className={clsx(
+          'text-xs px-2 py-1 rounded border font-medium w-fit',
+          getPerformanceColor(category)
+        )}
+      >
+        {category}
+      </span>
+      <span className="text-xs text-muted-foreground font-mono">
+        <CyclesValue value={cycles} />
+      </span>
+      {!isResearchNeeded(cycles) && <PerfBar value={multiplier} max={max} color={barColor} />}
+    </div>
+  )
+
   return (
     <div className="glass-panel overflow-hidden">
       {/* Desktop table */}
@@ -452,28 +527,20 @@ const PerformanceView = ({
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-muted/50 text-muted-foreground text-xs uppercase tracking-wider border-b border-border">
-              {(
-                [
-                  ['name', 'Algorithm'],
-                  ['type', 'Type'],
-                  ['keygen', 'KeyGen'],
-                  ['sign', 'Sign/Encaps'],
-                  ['verify', 'Verify/Decaps'],
-                  ['ram', 'Stack RAM'],
-                  ['optimization', 'Optimization'],
-                ] as [SortField, string][]
-              ).map(([field, label]) => (
-                <th key={field} className="p-4 font-semibold">
+              <th className="p-3 w-8" aria-label="Select for comparison" />
+              {headers.map(([field, label]) => (
+                <th key={field} className="p-3 font-semibold">
                   <Button
                     variant="ghost"
                     onClick={() => handleSort(field)}
-                    className="flex items-center gap-1.5 hover:text-foreground transition-colors"
+                    className="flex items-center gap-1.5 hover:text-foreground transition-colors h-auto p-0 text-xs uppercase tracking-wider"
                   >
                     {label}
                     <SortIcon field={field} />
                   </Button>
                 </th>
               ))}
+              <th className="p-3 font-semibold">Standard</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/50">
@@ -482,150 +549,124 @@ const PerformanceView = ({
               const signPerf = getPerformanceCategory(algo.signEncapsCycles)
               const verifyPerf = getPerformanceCategory(algo.verifyDecapsCycles)
               const highlighted = isHighlighted(algo, highlightAlgorithms)
+              const checked = compareSet.has(algo.name)
 
               return (
                 <tr
                   key={`${algo.name}-${index}`}
                   className={clsx(
                     'transition-colors hover:bg-primary/10',
-                    highlighted
-                      ? 'bg-primary/15 ring-1 ring-inset ring-primary/30'
-                      : index % 2 === 0
-                        ? 'bg-card/50'
-                        : 'bg-muted/20'
+                    checked
+                      ? 'bg-secondary/10'
+                      : highlighted
+                        ? 'bg-primary/15 ring-1 ring-inset ring-primary/30'
+                        : index % 2 === 0
+                          ? 'bg-card/50'
+                          : 'bg-muted/20'
                   )}
                 >
-                  <td className="p-4">
-                    <div className="flex items-start gap-2">
-                      <CompareButton
+                  <td className="p-3 align-top">
+                    <div className="pt-1">
+                      <CompareCheckbox
                         algo={algo}
+                        algorithms={algorithms}
                         compareSet={compareSet}
                         compareType={compareType}
                         maxCompareReached={maxCompareReached}
                         onToggleCompare={onToggleCompare}
                       />
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-semibold text-foreground">{algo.name}</span>
-                          <TrustScoreBadge
-                            resourceType="algorithm"
-                            resourceId={algo.name}
-                            size="sm"
-                          />
-                          <ReviewedBadge
-                            domain="algorithms"
-                            entityId={algo.name}
-                            showUnreviewed={false}
-                            onOpenDrilldown={() => setDrilldownAlgo(algo.name)}
-                          />
-                          <DraftBadge algo={algo} />
-                          <ResearchNeededBadge algo={algo} />
-                        </div>
-                        {algo.securityLevel && (
-                          <span
-                            className={clsx(
-                              'text-xs px-2 py-0.5 rounded border w-fit',
-                              getSecurityLevelColor(algo.securityLevel)
-                            )}
-                          >
-                            Level {algo.securityLevel}
-                          </span>
-                        )}
-                        <AlgoCtaStrip algoName={algo.name} />
+                    </div>
+                  </td>
+                  <td className="p-3 align-top">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-semibold text-foreground">{algo.name}</span>
+                        <TrustScoreBadge
+                          resourceType="algorithm"
+                          resourceId={algo.name}
+                          size="sm"
+                        />
+                        <ReviewedBadge
+                          domain="algorithms"
+                          entityId={algo.name}
+                          showUnreviewed={false}
+                          onOpenDrilldown={() => setDrilldownAlgo(algo.name)}
+                        />
+                        <DraftBadge algo={algo} />
+                        <Cnsa20Badge algo={algo} />
+                        <ResearchNeededBadge algo={algo} />
                       </div>
-                    </div>
-                  </td>
-                  <td className="p-4 text-sm text-muted-foreground">{algo.family}</td>
-                  <td className="p-4 min-w-[110px]">
-                    <div className="flex flex-col gap-0.5">
-                      <span
-                        className={clsx(
-                          'text-xs px-2 py-1 rounded border font-medium w-fit',
-                          getPerformanceColor(keyGenPerf)
-                        )}
-                      >
-                        {keyGenPerf}
-                      </span>
-                      <span className="text-xs text-muted-foreground font-mono">
-                        <CyclesValue value={algo.keyGenCycles} />
-                      </span>
-                      {!isResearchNeeded(algo.keyGenCycles) && (
-                        <PerfBar
-                          value={getPerformanceMultiplier(algo.keyGenCycles)}
-                          max={maxValues.maxKeygen}
-                          color="bg-primary/50"
-                        />
-                      )}
-                    </div>
-                  </td>
-                  <td className="p-4 min-w-[110px]">
-                    <div className="flex flex-col gap-0.5">
-                      <span
-                        className={clsx(
-                          'text-xs px-2 py-1 rounded border font-medium w-fit',
-                          getPerformanceColor(signPerf)
-                        )}
-                      >
-                        {signPerf}
-                      </span>
-                      <span className="text-xs text-muted-foreground font-mono">
-                        <CyclesValue value={algo.signEncapsCycles} />
-                      </span>
-                      {!isResearchNeeded(algo.signEncapsCycles) && (
-                        <PerfBar
-                          value={getPerformanceMultiplier(algo.signEncapsCycles)}
-                          max={maxValues.maxSign}
-                          color="bg-accent/50"
-                        />
-                      )}
-                    </div>
-                  </td>
-                  <td className="p-4 min-w-[110px]">
-                    <div className="flex flex-col gap-0.5">
-                      <span
-                        className={clsx(
-                          'text-xs px-2 py-1 rounded border font-medium w-fit',
-                          getPerformanceColor(verifyPerf)
-                        )}
-                      >
-                        {verifyPerf}
-                      </span>
-                      <span className="text-xs text-muted-foreground font-mono">
-                        <CyclesValue value={algo.verifyDecapsCycles} />
-                      </span>
-                      {!isResearchNeeded(algo.verifyDecapsCycles) && (
-                        <PerfBar
-                          value={getPerformanceMultiplier(algo.verifyDecapsCycles)}
-                          max={maxValues.maxVerify}
-                          color="bg-secondary/50"
-                        />
-                      )}
-                    </div>
-                  </td>
-                  <td className="p-4 min-w-[90px]">
-                    <div className="flex flex-col gap-0.5">
-                      {algo.stackRAM > 0 ? (
-                        <>
-                          <span className="text-sm font-mono text-muted-foreground">
-                            ~{(algo.stackRAM / 1000).toFixed(1)}KB
-                          </span>
-                          <PerfBar
-                            value={algo.stackRAM}
-                            max={maxValues.maxRam}
-                            color="bg-muted-foreground/40"
-                          />
-                        </>
-                      ) : (
+                      {algo.securityLevel && (
                         <span
-                          className="text-xs italic text-muted-foreground"
-                          title="Not yet researched"
+                          className={clsx(
+                            'text-xs px-2 py-0.5 rounded border w-fit',
+                            getSecurityLevelColor(algo.securityLevel)
+                          )}
                         >
-                          {RESEARCH_NEEDED}
+                          Level {algo.securityLevel}
                         </span>
                       )}
+                      <AlgoCtaStrip algoName={algo.name} />
                     </div>
                   </td>
-                  <td className="p-4 text-sm text-muted-foreground">{algo.optimizationTarget}</td>
+                  <td className="p-3 align-top text-sm text-muted-foreground">{algo.family}</td>
+                  <td className="p-3 align-top text-xs font-mono text-foreground whitespace-nowrap">
+                    <ByteSize value={algo.publicKeySize} unknown={algo.sizesUnknown} />
+                  </td>
+                  <td className="p-3 align-top text-xs font-mono text-foreground whitespace-nowrap">
+                    <ByteSize value={algo.signatureCiphertextSize} unknown={algo.sizesUnknown} />
+                  </td>
+                  <td className="p-3 align-top min-w-[110px]">
+                    {perfCell(
+                      keyGenPerf,
+                      algo.keyGenCycles,
+                      getPerformanceMultiplier(algo.keyGenCycles),
+                      maxValues.maxKeygen,
+                      'bg-primary/50'
+                    )}
+                  </td>
+                  <td className="p-3 align-top min-w-[110px]">
+                    {perfCell(
+                      signPerf,
+                      algo.signEncapsCycles,
+                      getPerformanceMultiplier(algo.signEncapsCycles),
+                      maxValues.maxSign,
+                      'bg-accent/50'
+                    )}
+                  </td>
+                  <td className="p-3 align-top min-w-[110px]">
+                    {perfCell(
+                      verifyPerf,
+                      algo.verifyDecapsCycles,
+                      getPerformanceMultiplier(algo.verifyDecapsCycles),
+                      maxValues.maxVerify,
+                      'bg-secondary/50'
+                    )}
+                  </td>
+                  <td className="p-3 align-top min-w-[80px]">
+                    {algo.stackRAM > 0 ? (
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-sm font-mono text-muted-foreground">
+                          ~{(algo.stackRAM / 1000).toFixed(1)}KB
+                        </span>
+                        <PerfBar
+                          value={algo.stackRAM}
+                          max={maxValues.maxRam}
+                          color="bg-muted-foreground/40"
+                        />
+                      </div>
+                    ) : (
+                      <span
+                        className="text-xs italic text-muted-foreground"
+                        title="Not yet researched"
+                      >
+                        {RESEARCH_NEEDED}
+                      </span>
+                    )}
+                  </td>
+                  <td className="p-3 align-top text-xs font-mono text-muted-foreground whitespace-nowrap">
+                    {algo.fipsStandard}
+                  </td>
                 </tr>
               )
             })}
@@ -639,20 +680,33 @@ const PerformanceView = ({
           const keyGenPerf = getPerformanceCategory(algo.keyGenCycles)
           const signPerf = getPerformanceCategory(algo.signEncapsCycles)
           const verifyPerf = getPerformanceCategory(algo.verifyDecapsCycles)
+          const checked = compareSet.has(algo.name)
 
           return (
-            <div key={`${algo.name}-${index}`} className="p-4 space-y-2">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-1.5 flex-wrap">
+            <div
+              key={`${algo.name}-${index}`}
+              className={clsx('p-4 space-y-2', checked && 'bg-secondary/10')}
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <CompareCheckbox
+                    algo={algo}
+                    algorithms={algorithms}
+                    compareSet={compareSet}
+                    compareType={compareType}
+                    maxCompareReached={maxCompareReached}
+                    onToggleCompare={onToggleCompare}
+                  />
                   <span className="font-semibold text-foreground">{algo.name}</span>
                   <DraftBadge algo={algo} />
+                  <Cnsa20Badge algo={algo} />
                   <ResearchNeededBadge algo={algo} />
                   <span className="text-xs text-muted-foreground">{algo.family}</span>
                 </div>
                 {algo.securityLevel && (
                   <span
                     className={clsx(
-                      'text-xs px-2 py-0.5 rounded border',
+                      'text-xs px-2 py-0.5 rounded border shrink-0',
                       getSecurityLevelColor(algo.securityLevel)
                     )}
                   >
@@ -661,7 +715,21 @@ const PerformanceView = ({
                 )}
               </div>
               <AlgoCtaStrip algoName={algo.name} />
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div>
+                  <span className="text-muted-foreground block">Pub key</span>
+                  <span className="font-mono text-foreground">
+                    <ByteSize value={algo.publicKeySize} unknown={algo.sizesUnknown} />
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground block">Sig / CT</span>
+                  <span className="font-mono text-foreground">
+                    <ByteSize value={algo.signatureCiphertextSize} unknown={algo.sizesUnknown} />
+                  </span>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-xs">
                 <div>
                   <span className="text-muted-foreground block">KeyGen</span>
                   <span
@@ -702,7 +770,7 @@ const PerformanceView = ({
                     <span className="italic">{RESEARCH_NEEDED}</span>
                   )}
                 </span>
-                <span>{algo.optimizationTarget}</span>
+                <span className="font-mono">{algo.fipsStandard}</span>
               </div>
             </div>
           )
@@ -717,340 +785,6 @@ const PerformanceView = ({
           onClose={() => setDrilldownAlgo(null)}
         />
       )}
-    </div>
-  )
-}
-
-const HARDNESS_ASSUMPTIONS: Record<string, string> = {
-  Lattice: 'Module-LWE / NTRU (shortest vector problems on structured lattices)',
-  'Code-based': 'Decoding random linear / quasi-cyclic codes',
-  'Hash-based': 'Hash function collision and preimage resistance',
-  Multivariate: 'Solving systems of multivariate quadratic equations (MQ problem)',
-  Isogeny: 'Computing isogenies between supersingular elliptic curves',
-  // P2.1: renamed from 'Hybrid' to disambiguate from protocol-level hybrid signature.
-  Composite: 'Combination of classical (DLP/factoring) and PQC hardness assumptions',
-  Classical: 'Integer factoring (RSA) or discrete logarithm (ECC/DH)',
-}
-
-// Security View Component
-const SecurityView = ({
-  algorithms,
-  highlightAlgorithms,
-  compareSet,
-  compareType,
-  maxCompareReached,
-  onToggleCompare,
-}: DetailViewProps) => {
-  if (algorithms.length === 0) return <EmptyState />
-
-  const groupedByLevel = algorithms.reduce(
-    (acc, algo) => {
-      const level = algo.securityLevel?.toString() || 'Classical'
-      if (level === '__proto__' || level === 'constructor' || level === 'prototype') return acc
-
-      // eslint-disable-next-line security/detect-object-injection
-      if (!acc[level]) acc[level] = []
-      // eslint-disable-next-line security/detect-object-injection
-      acc[level].push(algo)
-      return acc
-    },
-    {} as Record<string, AlgorithmDetail[]>
-  )
-
-  return (
-    <div className="space-y-6">
-      {Object.entries(groupedByLevel)
-        .sort(([a], [b]) => {
-          if (a === 'Classical') return 1
-          if (b === 'Classical') return -1
-          return parseInt(a) - parseInt(b)
-        })
-        .map(([level, algos]) => (
-          <div key={level} className="glass-panel p-6">
-            <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <Shield className="text-primary" size={20} />
-              {level === 'Classical' ? (
-                'Classical Algorithms'
-              ) : (
-                <>
-                  NIST Security Level {level}
-                  <span className="text-sm font-normal text-muted-foreground">
-                    ({algos[0]?.aesEquivalent})
-                  </span>
-                </>
-              )}
-            </h4>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {algos.map((algo, index) => (
-                <div
-                  key={`${algo.name}-${index}`}
-                  className={clsx(
-                    'border border-border rounded-lg p-4 hover:border-primary/50 transition-colors',
-                    isHighlighted(algo, highlightAlgorithms)
-                      ? 'bg-primary/15 ring-1 ring-inset ring-primary/30'
-                      : 'bg-muted/30'
-                  )}
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center gap-1.5">
-                      <CompareButton
-                        algo={algo}
-                        compareSet={compareSet}
-                        compareType={compareType}
-                        maxCompareReached={maxCompareReached}
-                        onToggleCompare={onToggleCompare}
-                      />
-                      <h5 className="font-semibold text-foreground">{algo.name}</h5>
-                    </div>
-                    <span className="text-xs px-2 py-1 rounded bg-primary/20 text-primary border border-primary/30">
-                      {algo.family}
-                    </span>
-                  </div>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Standard:</span>
-                      <span className="text-foreground font-mono text-xs">{algo.fipsStandard}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Pub Key:</span>
-                      <span className="text-foreground font-mono text-xs">
-                        <ByteSize value={algo.publicKeySize} unknown={algo.sizesUnknown} />
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Priv Key:</span>
-                      <span className="text-foreground font-mono text-xs">
-                        <ByteSize value={algo.privateKeySize} unknown={algo.sizesUnknown} />
-                      </span>
-                    </div>
-                    {HARDNESS_ASSUMPTIONS[algo.cryptoFamily] && (
-                      <div className="pt-1 border-t border-border/50">
-                        <span className="text-[10px] text-muted-foreground leading-snug">
-                          <span className="font-medium text-foreground">{algo.cryptoFamily}:</span>{' '}
-                          {HARDNESS_ASSUMPTIONS[algo.cryptoFamily]}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-    </div>
-  )
-}
-
-// Sizes View Component
-const SizesView = ({
-  algorithms,
-  highlightAlgorithms,
-  compareSet,
-  compareType,
-  maxCompareReached,
-  onToggleCompare,
-}: DetailViewProps) => {
-  if (algorithms.length === 0) return <EmptyState />
-
-  // Skip entries with unknown sizes when computing chart maxima so bars stay meaningful.
-  const knownSizeAlgos = algorithms.filter((a) => !a.sizesUnknown)
-  const maxPubKey = Math.max(1, ...knownSizeAlgos.map((a) => a.publicKeySize))
-  const maxPrivKey = Math.max(1, ...knownSizeAlgos.map((a) => a.privateKeySize))
-  const maxSig = Math.max(1, ...knownSizeAlgos.map((a) => a.signatureCiphertextSize || 0))
-
-  return (
-    <div className="glass-panel p-4 md:p-6">
-      <div className="space-y-6">
-        {algorithms.map((algo, index) => (
-          <div
-            key={`${algo.name}-${index}`}
-            className={clsx(
-              'border-b border-border/50 last:border-0 pb-6 last:pb-0',
-              isHighlighted(algo, highlightAlgorithms) &&
-                'bg-primary/15 ring-1 ring-inset ring-primary/30 rounded-lg p-4'
-            )}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-1.5">
-                <CompareButton
-                  algo={algo}
-                  compareSet={compareSet}
-                  compareType={compareType}
-                  maxCompareReached={maxCompareReached}
-                  onToggleCompare={onToggleCompare}
-                />
-                <h5 className="font-semibold text-foreground">{algo.name}</h5>
-                <DraftBadge algo={algo} />
-                <ResearchNeededBadge algo={algo} />
-              </div>
-              <span className="text-xs px-2 py-1 rounded bg-primary/20 text-primary border border-primary/30">
-                {algo.family}
-              </span>
-            </div>
-
-            <div className="space-y-3">
-              {/* Public Key */}
-              <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-muted-foreground">Public Key</span>
-                  <span className="font-mono text-foreground">
-                    <ByteSize value={algo.publicKeySize} unknown={algo.sizesUnknown} />
-                  </span>
-                </div>
-                {!algo.sizesUnknown && (
-                  <div className="h-2 bg-muted/50 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-primary/50 rounded-full"
-                      style={{ width: `${(algo.publicKeySize / maxPubKey) * 100}%` }}
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Private Key */}
-              <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-muted-foreground">Private Key</span>
-                  <span className="font-mono text-foreground">
-                    <ByteSize value={algo.privateKeySize} unknown={algo.sizesUnknown} />
-                  </span>
-                </div>
-                {!algo.sizesUnknown && (
-                  <div className="h-2 bg-muted/50 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-accent/50 rounded-full"
-                      style={{ width: `${(algo.privateKeySize / maxPrivKey) * 100}%` }}
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Signature/Ciphertext */}
-              {algo.signatureCiphertextSize && maxSig > 0 && !algo.sizesUnknown && (
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-muted-foreground">
-                      {algo.family.includes('Sig') ? 'Signature' : 'Ciphertext'}
-                    </span>
-                    <span className="font-mono text-foreground">
-                      {algo.signatureCiphertextSize.toLocaleString()} bytes
-                    </span>
-                  </div>
-                  <div className="h-2 bg-muted/50 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-secondary/50 rounded-full"
-                      style={{
-                        width: `${(algo.signatureCiphertextSize / maxSig) * 100}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Shared Secret */}
-              {algo.sharedSecretSize && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Shared Secret</span>
-                  <span className="font-mono text-foreground">{algo.sharedSecretSize} bytes</span>
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-// Use Cases View Component
-const UseCasesView = ({
-  algorithms,
-  highlightAlgorithms,
-  compareSet,
-  compareType,
-  maxCompareReached,
-  onToggleCompare,
-}: DetailViewProps) => {
-  if (algorithms.length === 0) return <EmptyState />
-
-  return (
-    <div className="space-y-6">
-      <div className="glass-panel p-4 md:p-6">
-        <div className="flex items-start gap-3 mb-6 p-4 bg-status-info border border-border rounded-lg">
-          <Info className="text-primary flex-shrink-0 mt-0.5" size={20} />
-          <div className="text-sm">
-            <p className="font-semibold mb-1 text-foreground">Global Use Case Recommendations</p>
-            <p className="text-muted-foreground">
-              These recommendations apply across all industries including finance, healthcare,
-              government, telecommunications, IoT, and enterprise applications.
-            </p>
-          </div>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {algorithms.map((algo, index) => (
-            <div
-              key={`${algo.name}-${index}`}
-              className={clsx(
-                'border border-border rounded-lg p-5 hover:border-primary/50 transition-colors',
-                isHighlighted(algo, highlightAlgorithms)
-                  ? 'bg-primary/15 ring-1 ring-inset ring-primary/30'
-                  : 'bg-muted/30'
-              )}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-1.5">
-                  <CompareButton
-                    algo={algo}
-                    compareSet={compareSet}
-                    compareType={compareType}
-                    maxCompareReached={maxCompareReached}
-                    onToggleCompare={onToggleCompare}
-                  />
-                  <h5 className="font-semibold text-foreground text-lg">{algo.name}</h5>
-                </div>
-                {algo.securityLevel && (
-                  <span
-                    className={clsx(
-                      'text-xs px-2 py-1 rounded border',
-                      getSecurityLevelColor(algo.securityLevel)
-                    )}
-                  >
-                    L{algo.securityLevel}
-                  </span>
-                )}
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <span className="text-xs font-semibold text-primary uppercase tracking-wider">
-                    Optimization
-                  </span>
-                  <p className="text-sm text-muted-foreground mt-1">{algo.optimizationTarget}</p>
-                </div>
-
-                {algo.useCaseNotes && (
-                  <div>
-                    <span className="text-xs font-semibold text-primary uppercase tracking-wider">
-                      Recommendations
-                    </span>
-                    <p className="text-sm text-foreground mt-1 leading-relaxed">
-                      {algo.useCaseNotes}
-                    </p>
-                  </div>
-                )}
-
-                <div className="pt-3 border-t border-border">
-                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Standard
-                  </span>
-                  <p className="text-sm text-foreground mt-1 font-mono">{algo.fipsStandard}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   )
 }

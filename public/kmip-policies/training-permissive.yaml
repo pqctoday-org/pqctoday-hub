@@ -1,0 +1,23 @@
+# Default sandbox policy — allows everything.
+# Use this for KAT validation, KMIP conformance testing, and trainee free exploration.
+#
+# DO NOT USE IN PRODUCTION OR REGULATED ENVIRONMENTS.
+
+schema_version: 1
+
+metadata:
+  name: training-permissive
+  description: |
+    Default policy for the pqctoday-hsm/kmip subsystem. Allows every KMIP
+    operation with every supported algorithm. No temporal, length, usage-mask,
+    or compliance gates. Intended for development, KAT replay, training labs,
+    and OASIS conformance work where the policy plane must not interfere with
+    protocol validation.
+  authority: pqctoday-hsm
+  effective: always
+
+rules: []
+
+# No rules → every request is Allowed at Plane 1.
+# Plane 2 (KMIP lifecycle FSM + usage mask) and Plane 3 (PKCS#11 errors)
+# still apply normally.

@@ -10,11 +10,11 @@ import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import type { SoftwareItem } from '@/types/MigrateTypes'
-import { pqcReadinessTier } from '@/data/kpiCatalog'
+import { pqcReadinessTier, isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
 import type {
   AssessmentResult,
   HNDLRiskWindow,
-  HNFLRiskWindow,
+  TNFLRiskWindow,
   MigrationEffortItem,
   AlgorithmMigration,
   CategoryScores,
@@ -60,7 +60,7 @@ export interface ExecutiveModuleData {
   preBoostScore: number | null
   boosts: ScoreBoost[]
   hndlRiskWindow: HNDLRiskWindow | null
-  hnflRiskWindow: HNFLRiskWindow | null
+  tnflRiskWindow: TNFLRiskWindow | null
   categoryScores: CategoryScores | null
   categoryDrivers: CategoryDrivers | null
   migrationEffort: MigrationEffortItem[]
@@ -80,6 +80,10 @@ export interface ExecutiveModuleData {
   // Derived
   isAssessmentComplete: boolean
   migrationDeadlineYear: number | null
+  /** Program start year for pace-to-deadline. Not derived by the hook — tools
+   *  that capture it (e.g. the KPI tracker) merge it into the data they pass to
+   *  `buildDimensions`. Optional; absent → pace-to-deadline stays manual. */
+  migrationStartYear?: number | null
 }
 
 export function useExecutiveModuleData(selectedProductKeys?: string[]): ExecutiveModuleData {
@@ -156,17 +160,8 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
         }
       }
 
-      const fipsLower = (s.fipsValidated || '').toLowerCase()
-      if (
-        fipsLower.startsWith('yes') ||
-        fipsLower === 'validated' ||
-        (fipsLower.includes('fips 140') && !fipsLower.startsWith('no'))
-      ) {
-        fipsValidatedCount++
-      }
-      if (s.pqcSupport && s.pqcSupport !== 'None' && s.pqcSupport !== 'No') {
-        pqcReadyCount++
-      }
+      if (isFips1403Validated(s.fipsValidated)) fipsValidatedCount++
+      if (isPqcReady(s.pqcSupport)) pqcReadyCount++
       readinessWeightSum += pqcReadinessTier(s.pqcSupport)
     }
 
@@ -249,7 +244,7 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
       preBoostScore: lastResult?.preBoostScore ?? null,
       boosts: lastResult?.boosts ?? [],
       hndlRiskWindow: lastResult?.hndlRiskWindow ?? null,
-      hnflRiskWindow: lastResult?.hnflRiskWindow ?? null,
+      tnflRiskWindow: lastResult?.tnflRiskWindow ?? null,
       categoryScores: lastResult?.categoryScores ?? null,
       categoryDrivers: lastResult?.categoryDrivers ?? null,
       migrationEffort: lastResult?.migrationEffort ?? [],

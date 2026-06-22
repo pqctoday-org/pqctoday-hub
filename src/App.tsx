@@ -33,6 +33,11 @@ const AlgorithmsView = lazyWithRetry(() =>
     default: module.AlgorithmsView,
   }))
 )
+const SimulationView = lazyWithRetry(() =>
+  import('./components/Simulation/SimulationView').then((module) => ({
+    default: module.SimulationView,
+  }))
+)
 const PlaygroundShell = lazyWithRetry(() =>
   import('./components/Playground/PlaygroundShell').then((module) => ({
     default: module.PlaygroundShell,
@@ -53,6 +58,11 @@ const HsmPlayground = lazyWithRetry(() =>
     default: module.HsmPlayground,
   }))
 )
+const KmipPlaygroundView = lazyWithRetry(() =>
+  import('./components/Playground/kmip/KmipPlaygroundView').then((module) => ({
+    default: module.KmipPlaygroundView,
+  }))
+)
 const DockerPlaygroundView = lazyWithRetry(() =>
   import('./components/Playground/DockerPlaygroundView').then((module) => ({
     default: module.DockerPlaygroundView,
@@ -63,6 +73,11 @@ const PlaygroundToolRoute = lazyWithRetry(() =>
     default: module.PlaygroundToolRoute,
   }))
 )
+const MigrationWorkbench = lazyWithRetry(() =>
+  import('./components/Migrate/Workbench/MigrationWorkbench').then((module) => ({
+    default: module.MigrationWorkbench,
+  }))
+)
 const OpenSSLStudioView = lazyWithRetry(() =>
   import('./components/OpenSSLStudio/OpenSSLStudioView').then((module) => ({
     default: module.OpenSSLStudioView,
@@ -70,6 +85,11 @@ const OpenSSLStudioView = lazyWithRetry(() =>
 )
 const LibraryView = lazyWithRetry(() =>
   import('./components/Library/LibraryView').then((module) => ({ default: module.LibraryView }))
+)
+const LibraryViewRedesign = lazyWithRetry(() =>
+  import('./components/Library/redesign/LibraryViewRedesign').then((module) => ({
+    default: module.LibraryViewRedesign,
+  }))
 )
 const MigrateView = lazyWithRetry(() =>
   import('./components/Migrate/MigrateView').then((module) => ({
@@ -101,6 +121,11 @@ const LandingView = lazyWithRetry(() =>
 )
 const AssessView = lazyWithRetry(() =>
   import('./components/Assess/AssessView').then((module) => ({ default: module.AssessView }))
+)
+const AssessViewRedesign = lazyWithRetry(() =>
+  import('./components/Assess/redesign/AssessViewRedesign').then((module) => ({
+    default: module.AssessViewRedesign,
+  }))
 )
 const ReportView = lazyWithRetry(() =>
   import('./components/Report/ReportView').then((module) => ({ default: module.ReportView }))
@@ -153,6 +178,11 @@ const ExploreView = lazyWithRetry(() =>
 const PatentsView = lazyWithRetry(() =>
   import('./components/Patents/PatentsView').then((module) => ({
     default: module.PatentsView,
+  }))
+)
+const PatentsViewRedesign = lazyWithRetry(() =>
+  import('./components/Patents/redesign/PatentsViewRedesign').then((module) => ({
+    default: module.PatentsViewRedesign,
   }))
 )
 const RevisionsView = lazyWithRetry(() =>
@@ -229,6 +259,14 @@ function App() {
         path="library"
         element={
           <ErrorBoundary>
+            <LibraryViewRedesign />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="library/legacy"
+        element={
+          <ErrorBoundary>
             <LibraryView />
           </ErrorBoundary>
         }
@@ -252,6 +290,7 @@ function App() {
         <Route index element={<PlaygroundWorkshop />} />
         <Route path="interactive" element={<PlaygroundView />} />
         <Route path="hsm" element={<HsmPlayground />} />
+        <Route path="cacp" element={<KmipPlaygroundView />} />
         <Route path="docker" element={<DockerPlaygroundView />} />
         <Route path=":toolId" element={<PlaygroundToolRoute />} />
       </Route>
@@ -299,6 +338,22 @@ function App() {
         path="migrate"
         element={
           <ErrorBoundary>
+            <MigrationWorkbench />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="migrate/workbench"
+        element={
+          <ErrorBoundary>
+            <MigrationWorkbench />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="migrate/legacy"
+        element={
+          <ErrorBoundary>
             <MigrateView />
           </ErrorBoundary>
         }
@@ -313,6 +368,14 @@ function App() {
       />
       <Route
         path="assess"
+        element={
+          <ErrorBoundary>
+            <AssessViewRedesign />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="assess/legacy"
         element={
           <ErrorBoundary>
             <AssessView />
@@ -383,6 +446,14 @@ function App() {
         path="patents"
         element={
           <ErrorBoundary>
+            <PatentsViewRedesign />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="patents/legacy"
+        element={
+          <ErrorBoundary>
             <PatentsView />
           </ErrorBoundary>
         }
@@ -432,6 +503,16 @@ function App() {
             {commonRoutes}
             <Route path="*" element={<Navigate to={`/embed${window.location.search}`} replace />} />
           </Route>
+
+          {/* Full-viewport console — rendered OUTSIDE MainLayout (no nav shell). */}
+          <Route
+            path="/simulation"
+            element={
+              <ErrorBoundary>
+                <SimulationView />
+              </ErrorBoundary>
+            }
+          />
 
           <Route element={<MainLayout />}>
             <Route

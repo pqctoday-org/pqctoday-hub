@@ -1,35 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-only
-/* eslint-disable security/detect-object-injection */
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
-import { Trash2, Database, ListChecks, Scale, SlidersHorizontal, Map } from 'lucide-react'
+import { useState, useMemo, type FC } from 'react'
+import { Database, ListChecks, Scale, SlidersHorizontal, Map } from 'lucide-react'
 import { DataAssetIntroduction } from './components/DataAssetIntroduction'
-import { DataAssetExercises, type WorkshopConfig } from './components/DataAssetExercises'
+import { DataAssetExercises } from './components/DataAssetExercises'
 import { AssetInventoryBuilder } from './workshop/AssetInventoryBuilder'
 import { ClassificationChallenge } from './workshop/ClassificationChallenge'
 import { SensitivityConflictResolver } from './workshop/SensitivityConflictResolver'
 import { SensitivityScoringEngine } from './workshop/SensitivityScoringEngine'
 import { PQCMigrationPriorityMap } from './workshop/PQCMigrationPriorityMap'
-import { useModuleStore } from '@/store/useModuleStore'
-import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
-import { Tabs, TabsContent } from '@/components/ui/tabs'
-import { ModuleTabBar } from '@/components/PKILearning/common/ModuleTabBar'
-import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
-import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
-import { ModuleVisualTab } from '../../common/ModuleVisualTab'
-import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 import {
   DEFAULT_ASSETS,
   ESTIMATED_CRQC_YEAR,
   type DataAsset,
   type ScoredAsset,
 } from './data/sensitivityConstants'
-import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
-import { Button } from '@/components/ui/button'
-import { WORKSHOP_STEPS } from '@/components/PKILearning/moduleData'
+import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
+import manifest from './manifest'
 
-const MODULE_ID = 'data-asset-sensitivity'
-
-const PARTS = [
+const PARTS: WorkshopPart[] = [
   {
     id: 'asset-inventory',
     title: 'Step 1: Asset Inventory',
@@ -67,287 +55,97 @@ const PARTS = [
   },
 ]
 
-export const DataAssetSensitivityModule: React.FC = () => {
-  const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
-  const [activeTab, setActiveTab] = useState(deepLink.initialTab)
-  const [currentPart, setCurrentPart] = useState(deepLink.initialStep)
-  useSyncDeepLink(activeTab, currentPart)
-  const [configKey, setConfigKey] = useState(0)
-  const startTimeRef = useRef(0)
-  const { updateModuleProgress, markStepComplete, modules } = useModuleStore()
-
-  // ── Shared state lifted from workshop steps ────────────────────────────────
+/**
+ * Holds the cross-step shared state the workshop lifts above its steps
+ * (assets / scoredAssets / crqcYear, plus the derived compliance mandates).
+ * Mounted once for the whole workshop; the individual step bodies still remount
+ * on `configKey` via their per-step `key`.
+ *
+ * Reset is handled by the caller via the wrapper's `key`: the shell's Reset
+ * bumps `configKey` with no config, so the caller keys this component on
+ * `reset-${configKey}` and the default assets/scores/CRQC year are restored by
+ * a fresh mount — matching the pre-ModuleShell Reset behavior. An exercise
+ * prefill always carries a defined config, so it keeps a stable key and the
+ * data survives (as before).
+ */
+const DataAssetWorkshop: FC<{
+  index: number
+  configKey: number
+}> = ({ index, configKey }) => {
   const [assets, setAssets] = useState<DataAsset[]>([...DEFAULT_ASSETS])
   const [scoredAssets, setScoredAssets] = useState<ScoredAsset[]>([])
   const [crqcYear, setCrqcYear] = useState(ESTIMATED_CRQC_YEAR)
 
-  // Derive mandates from assets' compliance flags (replaces ComplianceMatrix selection)
-  // Must be memoized — a new array reference every render would cascade into the
-  // SensitivityScoringEngine's useMemo chain and cause a setState-during-render loop.
+  // Derive mandates from assets' compliance flags (replaces ComplianceMatrix
+  // selection). Memoized — a new array reference every render would cascade into
+  // the SensitivityScoringEngine's useMemo chain and cause a setState-during-
+  // render loop.
   const derivedMandates = useMemo(
     () => [...new Set(assets.flatMap((a) => a.complianceFlags))],
     [assets]
   )
 
-  // ── Time tracking ──────────────────────────────────────────────────────────
-  useEffect(() => {
-    startTimeRef.current = Date.now()
-    updateModuleProgress(MODULE_ID, {
-      status: 'in-progress',
-      lastVisited: Date.now(),
-    })
-
-    return () => {
-      const elapsedMs = Date.now() - startTimeRef.current
-      const elapsed = elapsedMs / 60000
-      const current = useModuleStore.getState().modules[MODULE_ID]
-      updateModuleProgress(MODULE_ID, {
-        timeSpent: (current?.timeSpent || 0) + elapsed,
-      })
-    }
-  }, [updateModuleProgress])
-
-  // ── Tab change ─────────────────────────────────────────────────────────────
-  const handleTabChange = useCallback(
-    (tab: string) => {
-      markStepComplete(MODULE_ID, activeTab)
-      setActiveTab(tab)
-    },
-    [activeTab, markStepComplete]
-  )
-
-  const navigateToWorkshop = useCallback(() => {
-    markStepComplete(MODULE_ID, activeTab)
-    setActiveTab('workshop')
-  }, [activeTab, markStepComplete])
-
-  const handleSetWorkshopConfig = useCallback((config: WorkshopConfig) => {
-    setCurrentPart(config.step)
-    setConfigKey((prev) => prev + 1)
-  }, [])
-
-  // ── Step navigation ────────────────────────────────────────────────────────
-  const handlePartChange = useCallback(
-    (newPart: number) => {
-      const partIds = PARTS.map((p) => p.id)
-      if (newPart > currentPart) {
-        markStepComplete(MODULE_ID, partIds[currentPart], currentPart)
-      }
-      setCurrentPart(newPart)
-    },
-    [currentPart, markStepComplete]
-  )
-
-  // ── Reset ──────────────────────────────────────────────────────────────────
-  const handleReset = () => {
-    if (confirm('Restart Data & Asset Sensitivity Assessment module?')) {
-      setAssets([...DEFAULT_ASSETS])
-      setScoredAssets([])
-      setCrqcYear(ESTIMATED_CRQC_YEAR)
-      setCurrentPart(0)
-      setConfigKey((prev) => prev + 1)
-      startTimeRef.current = Date.now()
-      updateModuleProgress(MODULE_ID, {
-        status: 'in-progress',
-        completedSteps: [],
-        timeSpent: 0,
-      })
-    }
-  }
-
-  const workshopSteps = WORKSHOP_STEPS[MODULE_ID] ?? []
-  const completedSteps = modules[MODULE_ID]?.completedSteps ?? []
-  const workshopDone = workshopSteps.filter((s) => completedSteps.includes(s.id)).length
-  const workshopDot = workshopDone > 0 && workshopDone < workshopSteps.length
-
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gradient">
-            Data &amp; Asset Sensitivity Assessment
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Classify your data assets, map compliance obligations across GDPR, HIPAA, NIS2, and CNSA
-            2.0, then generate a prioritized PQC migration list using NIST RMF, ISO 27005, FAIR, and
-            DORA methodologies.
-          </p>
-        </div>
-      </div>
-
-      <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <ModuleTabBar
-          tabs={[
-            { value: 'learn', label: 'Learn' },
-            { value: 'visual', label: 'Visual' },
-            { value: 'workshop', label: 'Workshop', hasDot: workshopDot },
-            { value: 'exercises', label: 'Exercises' },
-            { value: 'references', label: 'References' },
-            { value: 'tools', label: 'Tools & Products' },
-          ]}
-          value={activeTab}
-          onValueChange={handleTabChange}
+  switch (index) {
+    case 0:
+      return (
+        <AssetInventoryBuilder
+          key={`inventory-${configKey}`}
+          assets={assets}
+          onAssetsChange={setAssets}
+          crqcYear={crqcYear}
+          onCrqcYearChange={setCrqcYear}
         />
-
-        {/* ── Learn Tab ─────────────────────────────────────────────────── */}
-        <TabsContent value="learn">
-          <GlossaryAutoWrap>
-            <DataAssetIntroduction onNavigateToWorkshop={navigateToWorkshop} />
-          </GlossaryAutoWrap>
-        </TabsContent>
-
-        {/* ── Workshop Tab ──────────────────────────────────────────────── */}
-
-        <TabsContent value="visual">
-          <ModuleVisualTab moduleId={MODULE_ID} />
-        </TabsContent>
-
-        <TabsContent value="workshop">
-          <div className="max-w-7xl mx-auto space-y-6">
-            <div className="flex justify-end">
-              <Button
-                variant="ghost"
-                onClick={handleReset}
-                className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
-              >
-                <Trash2 size={16} />
-                Reset
-              </Button>
-            </div>
-
-            {/* Step Progress */}
-            <div className="overflow-x-auto px-2 sm:px-0">
-              <div className="flex justify-evenly relative min-w-0">
-                <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
-                {PARTS.map((part, idx) => {
-                  const Icon = part.icon
-                  return (
-                    <Button
-                      variant="ghost"
-                      key={part.id}
-                      onClick={() => handlePartChange(idx)}
-                      className={`flex flex-col items-center gap-1 group px-1 sm:px-2 py-1 h-auto ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
-                    >
-                      <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
-                          ${
-                            idx === currentPart
-                              ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
-                              : idx < currentPart
-                                ? 'border-success text-success'
-                                : 'border-border text-muted-foreground'
-                          }`}
-                      >
-                        <Icon size={16} />
-                      </div>
-                      <span className="text-sm font-medium hidden md:block">
-                        {part.title.split(':')[0]}
-                      </span>
-                    </Button>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* Content Area */}
-            <div className="glass-panel p-4 sm:p-6 md:p-8 min-h-[400px] md:min-h-[600px] animate-fade-in">
-              <WorkshopStepHeader
-                moduleId={MODULE_ID}
-                stepId={PARTS[currentPart].id}
-                stepTitle={PARTS[currentPart].title}
-                stepDescription={PARTS[currentPart].description}
-                stepIndex={currentPart}
-                totalSteps={PARTS.length}
-                steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
-                onStepClick={handlePartChange}
-              />
-
-              {currentPart === 0 && (
-                <AssetInventoryBuilder
-                  key={`inventory-${configKey}`}
-                  assets={assets}
-                  onAssetsChange={setAssets}
-                  crqcYear={crqcYear}
-                  onCrqcYearChange={setCrqcYear}
-                />
-              )}
-              {currentPart === 1 && (
-                <ClassificationChallenge key={`classification-${configKey}`} assets={assets} />
-              )}
-              {currentPart === 2 && (
-                <SensitivityConflictResolver key={`conflict-${configKey}`} assets={assets} />
-              )}
-              {currentPart === 3 && (
-                <SensitivityScoringEngine
-                  key={`scoring-${configKey}`}
-                  assets={assets}
-                  selectedMandates={derivedMandates}
-                  onScoredAssetsChange={setScoredAssets}
-                  crqcYear={crqcYear}
-                />
-              )}
-              {currentPart === 4 && (
-                <PQCMigrationPriorityMap
-                  key={`priority-${configKey}`}
-                  assets={assets}
-                  selectedMandates={derivedMandates}
-                  scoredAssets={scoredAssets}
-                />
-              )}
-            </div>
-
-            {/* Step Navigation */}
-            <div className="flex flex-col sm:flex-row justify-between gap-3">
-              <Button
-                variant="ghost"
-                onClick={() => handlePartChange(Math.max(0, currentPart - 1))}
-                disabled={currentPart === 0}
-                className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
-                data-workshop-target="learn-stepper-prev"
-              >
-                &larr; Previous Step
-              </Button>
-              {currentPart === PARTS.length - 1 ? (
-                <Button
-                  variant="gradient"
-                  onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
-                  className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
-                  data-workshop-target="learn-stepper-complete"
-                >
-                  Complete Module
-                </Button>
-              ) : (
-                <Button
-                  variant="gradient"
-                  onClick={() => handlePartChange(currentPart + 1)}
-                  className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
-                  data-workshop-target="learn-stepper-next"
-                >
-                  Next Step &rarr;
-                </Button>
-              )}
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* ── Exercises Tab ─────────────────────────────────────────────── */}
-        <TabsContent value="exercises">
-          <DataAssetExercises
-            onNavigateToWorkshop={navigateToWorkshop}
-            onSetWorkshopConfig={handleSetWorkshopConfig}
-          />
-        </TabsContent>
-
-        {/* ── References Tab ────────────────────────────────────────────── */}
-        <TabsContent value="references">
-          <ModuleReferencesTab moduleId={MODULE_ID} />
-        </TabsContent>
-
-        {/* ── Tools Tab ─────────────────────────────────────────────────── */}
-        <TabsContent value="tools">
-          <ModuleMigrateTab moduleId={MODULE_ID} />
-        </TabsContent>
-      </Tabs>
-    </div>
-  )
+      )
+    case 1:
+      return <ClassificationChallenge key={`classification-${configKey}`} assets={assets} />
+    case 2:
+      return <SensitivityConflictResolver key={`conflict-${configKey}`} assets={assets} />
+    case 3:
+      return (
+        <SensitivityScoringEngine
+          key={`scoring-${configKey}`}
+          assets={assets}
+          selectedMandates={derivedMandates}
+          onScoredAssetsChange={setScoredAssets}
+          crqcYear={crqcYear}
+        />
+      )
+    case 4:
+      return (
+        <PQCMigrationPriorityMap
+          key={`priority-${configKey}`}
+          assets={assets}
+          selectedMandates={derivedMandates}
+          scoredAssets={scoredAssets}
+        />
+      )
+    default:
+      return null
+  }
 }
+
+export const DataAssetSensitivityModule: FC = () => (
+  <ModuleShell
+    manifest={manifest}
+    title="Data &amp; Asset Sensitivity Assessment"
+    description="Classify your data assets, map compliance obligations across GDPR, HIPAA, NIS2, and CNSA 2.0, then generate a prioritized PQC migration list using NIST RMF, ISO 27005, FAIR, and DORA methodologies."
+    learn={(api) => <DataAssetIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
+    exercises={(api) => (
+      <DataAssetExercises
+        onNavigateToWorkshop={api.goToWorkshop}
+        onSetWorkshopConfig={(config) => api.openWorkshopStep(config.step, { ...config })}
+      />
+    )}
+    workshopParts={PARTS}
+    renderWorkshopStep={(index, configKey, config) => (
+      <DataAssetWorkshop
+        // Reset (configKey bump with no config) remounts → defaults restored;
+        // an exercise prefill carries a config, so the key stays stable and the
+        // shared assets/scores survive the step jump.
+        key={config === undefined ? `reset-${configKey}` : 'data-asset-workshop'}
+        index={index}
+        configKey={configKey}
+      />
+    )}
+  />
+)

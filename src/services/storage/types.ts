@@ -61,6 +61,15 @@ export type ExecutiveDocumentType =
   | 'mti-negotiator'
   | 'crypto-api-refactor'
   | 'cloud-responsibility-matrix'
+  | 'program-charter'
+  | 'initial-scoping'
+  | 'skills-team-plan'
+  | 'infra-modernization-plan'
+  | 'refresh-cycle-alignment'
+  | 'accelerated-execution-profile'
+  | 'data-at-rest-strategy'
+  | 'migration-verification'
+  | 'sim-roadmap'
 
 export interface ExecutiveDocumentRevision {
   /** Unix ms when this revision was recorded. */
@@ -109,7 +118,7 @@ export interface LearningProgress {
     [moduleId: string]: {
       status: 'not-started' | 'in-progress' | 'completed'
       lastVisited: number
-      timeSpent: number // Seconds
+      timeSpent: number // Minutes (accumulated as elapsedMs / 60000 on unmount)
       completedSteps: string[]
       quizScores: { [quizId: string]: number }
       learnSectionChecks?: Record<string, boolean> // sectionId → manually checked by user

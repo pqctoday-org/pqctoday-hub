@@ -43,7 +43,7 @@ function makeData(overrides: Partial<ExecutiveModuleData> = {}): ExecutiveModule
     preBoostScore: null,
     boosts: [],
     hndlRiskWindow: null,
-    hnflRiskWindow: null,
+    tnflRiskWindow: null,
     categoryScores: null,
     categoryDrivers: null,
     migrationEffort: [],
@@ -152,14 +152,14 @@ describe('buildQuantumUrgencyDefault', () => {
         isAtRisk: true,
         riskWindowYears: 16,
       },
-      hnflRiskWindow: {
+      tnflRiskWindow: {
         credentialLifetimeYears: 10,
         estimatedQuantumThreatYear: 2035,
         currentYear: 2026,
         isAtRisk: true,
         riskWindowYears: 1,
         hasSigningAlgorithms: true,
-        hnflRelevantUseCases: ['Code signing'],
+        tnflRelevantUseCases: ['Code signing'],
       },
     })
     const out = buildQuantumUrgencyDefault(data)

@@ -124,6 +124,17 @@ for (const moduleId of affectedModuleIds) {
   }
 
   const relativePath = path.relative(repoRoot, contentPath)
+
+  // The A1 single-source cut-over removed inline module entries from
+  // moduleData.ts, so a module can be "affected in moduleData.ts" purely because
+  // its entry moved into a manifest — with no content change. The version lives
+  // in content.ts, so only require a bump when content.ts actually changed vs
+  // main; otherwise the cut-over diff alone would demand spurious bumps.
+  if (!run(`git diff --name-only origin/main...HEAD -- ${relativePath}`).trim()) {
+    console.log(`  ✓ Module '${moduleId}' content.ts unchanged vs main — no bump needed`)
+    continue
+  }
+
   const headSrc = fs.readFileSync(contentPath, 'utf-8')
   const headVersion = parseVersion(headSrc)
 

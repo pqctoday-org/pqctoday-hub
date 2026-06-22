@@ -135,6 +135,10 @@ function buildMarkdown(components: ArchComponent[]): string {
   }
 
   md += '\n## Dependency diagram\n\n'
+  md +=
+    '_Rendered as an interactive diagram in the PQC Today Hub web app. In exported ' +
+    'PDF/print, the Components table above is the textual equivalent — its "Depends on" ' +
+    'column lists every edge in this diagram._\n\n'
   md += '```mermaid\n'
   md += buildMermaid(components)
   md += '\n```\n'
@@ -247,7 +251,13 @@ export const CryptoArchitectureDiagram: React.FC = () => {
   }, [markdown])
 
   const handleDownloadPdf = useCallback(async () => {
-    await markdownToPdf(markdown, 'crypto-architecture', 'Crypto Architecture (CSWP.39 §5.4)')
+    await markdownToPdf(markdown, 'crypto-architecture', 'Crypto Architecture (CSWP.39 §5.4)', {
+      // The Components table carries free-text Detail/Depends-on columns; render
+      // landscape so they don't cramp in portrait. The Mermaid diagram itself is
+      // not rasterised into the PDF (see the note in the Dependency diagram
+      // section) — the table is its textual equivalent.
+      wideTable: true,
+    })
   }, [markdown])
 
   return (

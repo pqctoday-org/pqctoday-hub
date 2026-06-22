@@ -25,7 +25,7 @@ import {
   HYBRID_COMBINER_MODES,
   ENTERPRISE_SCENARIO,
 } from '../data/kmsConstants'
-import { KMS_PROVIDERS, KMS_STATUS_LABELS } from '../data/kmsProviderData'
+import { KMS_PROVIDERS, KMS_STATUS_LABELS, getKmsPqcStatus } from '../data/kmsProviderData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
@@ -332,7 +332,7 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
 
         <div className="space-y-4">
           {KMS_PROVIDERS.map((provider) => {
-            const status = KMS_STATUS_LABELS[provider.pqcStatus]
+            const status = KMS_STATUS_LABELS[getKmsPqcStatus(provider)]
             return (
               <div key={provider.id} className="bg-muted/50 rounded-lg p-4 border border-border">
                 <div className="flex items-center gap-2 mb-3 flex-wrap">

@@ -39,6 +39,12 @@ export interface TransitionInputs {
   complianceDeadline: string
   /** 'strict' | 'moderate' | 'generous' */
   bandwidthBudget: string
+  /**
+   * Multi-select interop/compliance constraints. `'cnsa-2'` forces the CNSA 2.0
+   * Category-5 parameter sets (ML-KEM-1024 / ML-DSA-87); `'fips-validated'`
+   * surfaces the FIPS 140-3 validation-gap watch-out. Optional — defaults to none.
+   */
+  interoperabilityRequirement?: string[]
 }
 
 export interface TransitionRecommendation {
@@ -82,7 +88,13 @@ function isImmediateDeadline(complianceDeadline: string): boolean {
   return Number.isFinite(year) && year <= 2027
 }
 
-function suggestKemPair(targetState: TargetState, currentAlgorithm: string): string {
+function suggestKemPair(
+  targetState: TargetState,
+  currentAlgorithm: string,
+  cnsa2: boolean
+): string {
+  // CNSA 2.0 mandates ML-KEM-1024 (Category 5) and discourages hybrid for NSS.
+  if (cnsa2) return 'ML-KEM-1024 (FIPS 203 — CNSA 2.0 Category 5 mandate)'
   if (targetState === 'pure-PQC') return 'ML-KEM-768 (FIPS 203)'
   if (targetState === 'hybrid-PQC+PQC') return 'ML-KEM-768 + HQC-128 (PQC + PQC defence-in-depth)'
   if (targetState === 'crypto-gateway') {
@@ -98,10 +110,16 @@ function suggestKemPair(targetState: TargetState, currentAlgorithm: string): str
   return 'X25519MLKEM768 (IETF draft-ietf-tls-hybrid-design)'
 }
 
-function suggestSigPair(targetState: TargetState, currentAlgorithm: string): string {
+function suggestSigPair(
+  targetState: TargetState,
+  currentAlgorithm: string,
+  cnsa2: boolean
+): string {
+  // CNSA 2.0 mandates ML-DSA-87 (Category 5).
+  if (cnsa2) return 'ML-DSA-87 (FIPS 204 — CNSA 2.0 Category 5 mandate)'
   if (targetState === 'pure-PQC') return 'ML-DSA-65 (FIPS 204)'
   if (targetState === 'hybrid-PQC+PQC') {
-    return 'ML-DSA-65 + SLH-DSA-SHA2-128s (lattice + hash-based)'
+    return 'ML-DSA-65 (FIPS 204) + SLH-DSA-SHA2-128s (FIPS 205, hash-based)'
   }
   if (targetState === 'crypto-gateway') {
     return 'Gateway-terminated ML-DSA-65 (legacy peer keeps classical sig)'
@@ -176,7 +194,12 @@ export function recommendTransitionPathway(inputs: TransitionInputs): Transition
     cryptoAgility,
     complianceDeadline,
     bandwidthBudget,
+    function: cryptoFunction = 'both',
+    interoperabilityRequirement = [],
   } = inputs
+
+  const cnsa2 = interoperabilityRequirement.includes('cnsa-2')
+  const fipsRequired = interoperabilityRequirement.includes('fips-validated')
 
   let targetState: TargetState
 
@@ -215,12 +238,30 @@ export function recommendTransitionPathway(inputs: TransitionInputs): Transition
   const hybridTargetDate = `Q4 ${hybridTargetYear}`
   const sunsetDate = `Q4 ${deadlineYear}`
 
+  // A KEM-only or signature-only deployment doesn't need the other pair.
+  let kemPair = suggestKemPair(targetState, currentAlgorithm, cnsa2)
+  let sigPair = suggestSigPair(targetState, currentAlgorithm, cnsa2)
+  if (cryptoFunction === 'kem') sigPair = 'Not applicable — KEM-only function'
+  if (cryptoFunction === 'signature') kemPair = 'Not applicable — signature-only function'
+
+  const watchOuts = watchOutsForTarget(targetState, bandwidthBudget)
+  if (cnsa2) {
+    watchOuts.unshift(
+      'CNSA 2.0 binding: mandates ML-KEM-1024 + ML-DSA-87 (Category 5) and discourages hybrid for National Security Systems — prefer pure-PQC at these parameter sets.'
+    )
+  }
+  if (fipsRequired) {
+    watchOuts.push(
+      'FIPS-validated module required: as of 2026 no FIPS 140-3-validated PQC module exists — gate production on the CMVP validated-module list, not algorithm GA.'
+    )
+  }
+
   return {
     targetState,
     rationale: rationaleForTarget(targetState),
-    kemPair: suggestKemPair(targetState, currentAlgorithm),
-    sigPair: suggestSigPair(targetState, currentAlgorithm),
-    watchOuts: watchOutsForTarget(targetState, bandwidthBudget),
+    kemPair,
+    sigPair,
+    watchOuts,
     hybridTargetDate,
     sunsetDate,
   }
@@ -377,7 +418,7 @@ const SECTIONS: ArtifactSection[] = [
   },
   {
     id: 'plan',
-    title: 'Step 4 — Plan narrative (editable)',
+    title: 'Step 3 — Plan narrative (editable)',
     description:
       'Edit the narrative, risks, and validation steps that will appear in the exported plan.',
     fields: [
@@ -464,6 +505,10 @@ export function renderHybridTransitionMarkdown(
   const con = data.constraints ?? {}
   const plan = data.plan ?? {}
 
+  const interop = Array.isArray(con.interoperabilityRequirement)
+    ? (con.interoperabilityRequirement as string[])
+    : []
+
   const inputs: TransitionInputs = {
     protocol: (inv.protocol as string) || 'TLS 1.3',
     currentAlgorithm: (inv.currentAlgorithm as string) || 'X25519',
@@ -473,12 +518,10 @@ export function renderHybridTransitionMarkdown(
     cryptoAgility: (con.cryptoAgility as string) || 'medium',
     complianceDeadline: (con.complianceDeadline as string) || '2030',
     bandwidthBudget: (con.bandwidthBudget as string) || 'moderate',
+    interoperabilityRequirement: interop,
   }
 
   const rec = recommendTransitionPathway(inputs)
-  const interop = Array.isArray(con.interoperabilityRequirement)
-    ? (con.interoperabilityRequirement as string[])
-    : []
 
   const interopLabels: Record<string, string> = {
     'classical-peers': 'Must interop with non-PQC peers',

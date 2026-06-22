@@ -820,8 +820,17 @@
   {
     "term": "Harvest Now, Forge Later",
     "acronym": "HNFL",
-    "definition": "An attack strategy where adversaries record digitally signed data today, planning to forge signatures once quantum computers can break the signing algorithm.",
-    "technicalNote": "While HNDL targets confidentiality (encrypted data), HNFL targets authenticity and integrity — firmware updates, certificates, and legal documents signed with RSA/ECDSA become forgeable.",
+    "definition": "An attack strategy where adversaries record digitally signed data today, planning to forge signatures once quantum computers can break the signing algorithm. Also called Trust Now, Forge Later (TNFL); the two terms are interchangeable and used equally across the platform.",
+    "technicalNote": "While HNDL targets confidentiality (encrypted data), HNFL / TNFL targets authenticity and integrity — firmware updates, certificates, and legal documents signed with RSA/ECDSA become forgeable. HNFL (Harvest Now, Forge Later) and TNFL (Trust Now, Forge Later) name the same risk: the Applied Quantum framework and the simulation use TNFL; the learning content uses HNFL.",
+    "relatedModule": "/learn/pqc-101",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "term": "Trust Now, Forge Later",
+    "acronym": "TNFL",
+    "definition": "The same risk as Harvest Now, Forge Later (HNFL): data signed and trusted today can be forged once a quantum computer can break the signing algorithm. TNFL and HNFL are interchangeable — the Applied Quantum framework and the simulation use TNFL; the learning content uses HNFL.",
+    "technicalNote": "Targets authenticity and integrity (signatures, certificates, firmware, legal documents) rather than confidentiality. See also Harvest Now, Forge Later (HNFL).",
     "relatedModule": "/learn/pqc-101",
     "complexity": "beginner",
     "category": "concept"

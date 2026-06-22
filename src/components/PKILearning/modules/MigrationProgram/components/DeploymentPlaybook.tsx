@@ -2,8 +2,6 @@
 import React, { useCallback } from 'react'
 import { OpsChecklist, type ChecklistSection } from '@/components/PKILearning/common/OpsChecklist'
 import { useModuleStore } from '@/store/useModuleStore'
-import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
-import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 
 const sections: ChecklistSection[] = [
   {
@@ -207,7 +205,6 @@ const sections: ChecklistSection[] = [
 
 export const DeploymentPlaybook: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
-  const { myProducts, migrationDeadlineYear, industry } = useExecutiveModuleData()
 
   const handleSave = useCallback(
     ({ markdown, checkedItems }: { markdown: string; checkedItems: string[] }) => {
@@ -224,24 +221,8 @@ export const DeploymentPlaybook: React.FC = () => {
     [addExecutiveDocument]
   )
 
-  const seedSources: string[] = []
-  if (myProducts.length > 0)
-    seedSources.push(
-      `${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`
-    )
-  if (industry) seedSources.push(`industry (${industry})`)
-  if (migrationDeadlineYear) seedSources.push(`deadline ${migrationDeadlineYear} from /timeline`)
-
   return (
     <div className="space-y-3">
-      {seedSources.length > 0 && (
-        <PreFilledBanner
-          summary={`Playbook scope informed by ${seedSources.join(' + ')}.`}
-          onClear={() => {
-            /* Sections are static — clear is informational */
-          }}
-        />
-      )}
       <OpsChecklist
         title="PQC Deployment Playbook"
         description="Operational procedures for deploying PQC across production infrastructure — covering hybrid mode, canary testing, progressive rollout, validation, and rollback."

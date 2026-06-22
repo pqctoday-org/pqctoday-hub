@@ -1,11 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { getCatalogStatus, type CatalogAvailability } from '@/data/catalogStatus'
+
+export type KmsPqcStatus = 'ga' | 'preview' | 'experimental' | 'planned'
 
 export interface KMSProvider {
   id: string
   name: string
   product: string
   type: 'cloud' | 'on-prem' | 'hybrid'
-  pqcStatus: 'ga' | 'preview' | 'experimental' | 'planned'
+  /** Catalog softwareName. PQC status is read from the central product catalog
+   *  via this reference (NOT stored here, to avoid drift) — see getKmsPqcStatus().
+   *  The fields below are module-specific teaching detail and stay here. */
+  catalogName: string
   pqcAlgorithms: {
     kem: { name: string; status: string }[]
     sign: { name: string; status: string }[]
@@ -25,7 +31,7 @@ export const KMS_PROVIDERS: KMSProvider[] = [
     name: 'AWS',
     product: 'AWS KMS',
     type: 'cloud',
-    pqcStatus: 'ga',
+    catalogName: 'AWS KMS',
     pqcAlgorithms: {
       kem: [{ name: 'ML-KEM (hybrid TLS)', status: 'GA — all KMS endpoints' }],
       sign: [
@@ -58,7 +64,7 @@ aws kms sign \\
     name: 'Google Cloud',
     product: 'Cloud KMS',
     type: 'cloud',
-    pqcStatus: 'preview',
+    catalogName: 'Google Cloud KMS',
     pqcAlgorithms: {
       kem: [
         { name: 'ML-KEM-768', status: 'GA' },
@@ -94,7 +100,7 @@ gcloud kms keys create my-xwing-key \\
     name: 'Microsoft Azure',
     product: 'Azure Key Vault',
     type: 'cloud',
-    pqcStatus: 'planned',
+    catalogName: 'Azure Key Vault',
     pqcAlgorithms: {
       kem: [{ name: 'ML-KEM', status: 'Integration via SymCrypt — not yet as Key Vault key type' }],
       sign: [{ name: 'ML-DSA', status: 'Planned — SymCrypt supports it, Key Vault API pending' }],
@@ -123,7 +129,7 @@ az keyvault key create \\
     name: 'HashiCorp',
     product: 'Vault Enterprise',
     type: 'on-prem',
-    pqcStatus: 'experimental',
+    catalogName: 'HashiCorp Vault',
     pqcAlgorithms: {
       kem: [],
       sign: [
@@ -158,7 +164,7 @@ vault write transit/sign/my-pqc-key \\
     name: 'Thales',
     product: 'CipherTrust Manager',
     type: 'on-prem',
-    pqcStatus: 'ga',
+    catalogName: 'Thales CipherTrust Manager',
     pqcAlgorithms: {
       kem: [{ name: 'ML-KEM (TLS)', status: 'GA (v2.22.0+)' }],
       sign: [{ name: 'ML-DSA', status: 'Via Luna HSM backend' }],
@@ -192,7 +198,7 @@ POST /v1/cckm/aws/upload-key
     name: 'Fortanix',
     product: 'Data Security Manager (DSM)',
     type: 'hybrid',
-    pqcStatus: 'planned',
+    catalogName: 'Fortanix Data Security Manager',
     pqcAlgorithms: {
       kem: [{ name: 'ML-KEM', status: 'Planned' }],
       sign: [
@@ -225,10 +231,25 @@ GET /pqc-central/v1/inventory
   },
 ]
 
-export const KMS_STATUS_LABELS: Record<
-  KMSProvider['pqcStatus'],
-  { label: string; className: string }
-> = {
+const AVAIL_TO_KMS: Record<CatalogAvailability, KmsPqcStatus> = {
+  available: 'ga',
+  partial: 'preview',
+  roadmap: 'planned',
+  none: 'planned',
+  unverified: 'planned',
+}
+
+/**
+ * Derive a KMS provider's display status from the CENTRAL CATALOG (single source
+ * of truth) by its catalogName — never from a value stored on the provider.
+ * Falls back to 'planned' if the product isn't in the catalog.
+ */
+export function getKmsPqcStatus(provider: KMSProvider): KmsPqcStatus {
+  const status = getCatalogStatus(provider.catalogName)
+  return status ? AVAIL_TO_KMS[status.availability] : 'planned'
+}
+
+export const KMS_STATUS_LABELS: Record<KmsPqcStatus, { label: string; className: string }> = {
   ga: {
     label: 'GA',
     className: 'bg-success/10 text-success border-success/20',

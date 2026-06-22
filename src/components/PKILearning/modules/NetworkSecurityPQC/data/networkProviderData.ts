@@ -1,11 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { getCatalogStatus, type CatalogAvailability } from '@/data/catalogStatus'
 
 export interface VendorMigrationStatus {
   id: string
   vendor: string
   product: string
   tier: 'enterprise' | 'mid-market' | 'open-source'
-  pqcStatus: 'ga' | 'beta' | 'roadmap' | 'not-planned'
+  /**
+   * Reference to the product's `software_name` in the central catalog
+   * (`pqc_product_catalog_*.csv`). The headline `pqcStatus` is DERIVED from the
+   * catalog via `getVendorPqcStatus` — it is NOT stored here, so the module can
+   * never drift from the single source of truth. The granular per-capability
+   * fields below (ml-kem / ml-dsa / tls-inspection / hardware-offload) remain
+   * module-authored teaching detail the catalog does not track.
+   */
+  catalogName: string
   tlsInspectionPQC: 'supported' | 'partial' | 'roadmap' | 'not-supported'
   mlKemStatus: 'ga' | 'beta' | 'roadmap' | 'not-supported'
   mlDsaStatus: 'ga' | 'beta' | 'roadmap' | 'not-supported'
@@ -80,7 +89,7 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
     vendor: 'Cisco',
     product: 'ASA / Firepower Threat Defense (FTD 7.4+)',
     tier: 'enterprise',
-    pqcStatus: 'roadmap',
+    catalogName: 'Cisco ASA (Adaptive Security Appliance)',
     tlsInspectionPQC: 'roadmap',
     mlKemStatus: 'roadmap',
     mlDsaStatus: 'roadmap',
@@ -100,7 +109,7 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
     vendor: 'Palo Alto Networks',
     product: 'PAN-OS 12.1',
     tier: 'enterprise',
-    pqcStatus: 'ga',
+    catalogName: 'Palo Alto PAN-OS',
     tlsInspectionPQC: 'supported',
     mlKemStatus: 'ga',
     mlDsaStatus: 'ga',
@@ -120,10 +129,10 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
     vendor: 'Fortinet',
     product: 'FortiGate / FortiOS 7.6+',
     tier: 'enterprise',
-    pqcStatus: 'beta',
-    tlsInspectionPQC: 'roadmap',
-    mlKemStatus: 'beta',
-    mlDsaStatus: 'beta',
+    catalogName: 'Fortinet FortiGate (FortiOS)',
+    tlsInspectionPQC: 'partial',
+    mlKemStatus: 'ga',
+    mlDsaStatus: 'ga',
     hybridMode: true,
     certSizeLimit: '4KB (current); 16KB planned FortiOS 7.6.2',
     roadmapYear: 2026,
@@ -138,12 +147,12 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
   {
     id: 'juniper-srx',
     vendor: 'Juniper Networks',
-    product: 'SRX Series (Junos 24.x)',
+    product: 'SRX Series (Junos 24.x / 25.4R1)',
     tier: 'enterprise',
-    pqcStatus: 'beta',
+    catalogName: 'Juniper SRX Series Firewalls',
     tlsInspectionPQC: 'roadmap',
-    mlKemStatus: 'beta',
-    mlDsaStatus: 'roadmap',
+    mlKemStatus: 'roadmap',
+    mlDsaStatus: 'ga',
     hybridMode: true,
     certSizeLimit: '4KB (Junos 24.x)',
     roadmapYear: 2026,
@@ -160,7 +169,7 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
     vendor: 'Check Point',
     product: 'Quantum Security Gateway (R82)',
     tier: 'enterprise',
-    pqcStatus: 'ga',
+    catalogName: 'Check Point Quantum',
     tlsInspectionPQC: 'not-supported',
     mlKemStatus: 'ga',
     mlDsaStatus: 'roadmap',
@@ -180,47 +189,47 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
     vendor: 'Sophos',
     product: 'XGS Series (SFOS 21.x)',
     tier: 'mid-market',
-    pqcStatus: 'roadmap',
+    catalogName: 'Sophos XGS',
     tlsInspectionPQC: 'not-supported',
-    mlKemStatus: 'roadmap',
+    mlKemStatus: 'not-supported',
     mlDsaStatus: 'not-supported',
     hybridMode: false,
     certSizeLimit: '3KB (SFOS current)',
-    roadmapYear: 2026,
+    roadmapYear: 0,
     hardwareOffload: false,
     fipsCompliant: false,
     upgradeRequired: true,
     upgradeDetails:
-      'SFOS 21.5 (Q3 2026) planned PQC TLS support via OpenSSL 3.x backend upgrade. XGS 5500+ hardware recommended for PQC workloads. Sophos Central policy management updated for PQC configuration. No hardware crypto offload on current XGS lineup.',
+      'No committed native PQC roadmap. The only PQC-related change in SFOS 21.5 (GA 2025) is a DPI Path-MTU fix so the firewall correctly passes through clients negotiating ML-KEM (Kyber) TLS — the firewall itself does not implement ML-KEM/ML-DSA. XGS hardware lacks a dedicated crypto ASIC.',
     notes:
-      'Sophos SFOS migrating from internal TLS stack to OpenSSL 3.3 in SFOS 21.5, enabling FIPS 203/204 algorithm support. XGS hardware lacks dedicated crypto ASIC — all PQC operations will run in software. Mid-market price point means hardware refresh unlikely before 2027.',
+      'Verified 2026-06-19 against the official SFOS 21.5 release notes: no native NIST PQC (ML-KEM/ML-DSA) in the firewall data or management plane — only transparent pass-through of client ML-KEM TLS. Catalog status: none.',
   },
   {
     id: 'sonicwall',
     vendor: 'SonicWall',
     product: 'NSa / TZ Series (SonicOS 7.1+)',
     tier: 'mid-market',
-    pqcStatus: 'roadmap',
+    catalogName: 'SonicWall NSa / TZ (SonicOS)',
     tlsInspectionPQC: 'not-supported',
     mlKemStatus: 'not-supported',
     mlDsaStatus: 'not-supported',
     hybridMode: false,
     certSizeLimit: '2KB (SonicOS current)',
-    roadmapYear: 2027,
+    roadmapYear: 0,
     hardwareOffload: false,
     fipsCompliant: false,
     upgradeRequired: true,
     upgradeDetails:
-      'SonicOS 7.2+ (2027) targeted for PQC TLS inspection. NSa 9700 hardware platform has Cavium-based crypto engine with potential PQC support via firmware. Network Security Manager (NSM) 3.x planned for PQC policy management.',
+      'No committed native PQC roadmap. SonicOS 7.0/7.1/8.0 IPsec & SSL VPN cryptography documents only classical algorithms (AES, 3DES, ECDH/DH, ECDSA, SHA-2, Suite B). PQC feasibility on the NSa 9700 Cavium OCTEON engine remains under evaluation with no public commitment.',
     notes:
-      'SonicWall SonicOS 7.1 uses OpenSSL 3.x internally but has not exposed PQC algorithms in the TLS inspection pipeline. NSa 9700 Cavium OCTEON crypto engine supports custom algorithm loading — PQC feasibility under evaluation. TZ series (SMB) unlikely to receive PQC TLS inspection due to hardware constraints.',
+      'Verified 2026-06-19 against SonicOS VPN crypto docs: no ML-KEM/ML-DSA in the TLS-inspection or VPN pipeline. Catalog status: none.',
   },
   {
-    id: 'pfsense-opnsense',
-    vendor: 'Netgate / Deciso',
-    product: 'pfSense Community / OPNsense 24.7+',
+    id: 'opnsense',
+    vendor: 'Deciso',
+    product: 'OPNsense 24.7+',
     tier: 'open-source',
-    pqcStatus: 'beta',
+    catalogName: 'OPNsense',
     tlsInspectionPQC: 'not-supported',
     mlKemStatus: 'beta',
     mlDsaStatus: 'not-supported',
@@ -231,11 +240,49 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
     fipsCompliant: false,
     upgradeRequired: false,
     upgradeDetails:
-      'pfSense CE has no PQC roadmap. OPNsense 24.7+ includes strongSwan plugin with experimental ML-KEM hybrid IKEv2 support.',
+      'OPNsense 24.7+ ships a strongSwan plugin with hybrid ML-KEM IKEv2 key exchange (IKEv2 KE method per RFC 9370) and inherits PQC TLS from its OpenSSL/LibreSSL base. Enable the post-quantum proposals in the IPsec connection settings.',
     notes:
-      'The OPNsense team has been proactive with PQC integration compared to pfSense. Suricata IDS/IPS in OPNsense supports PQC traffic detection.',
+      'Split from the former combined pfSense/OPNsense row (2026-06-19): OPNsense is the one with a PQC path (strongSwan hybrid ML-KEM), so the catalog tracks it as partial. Suricata IDS/IPS additionally classifies PQC traffic.',
+  },
+  {
+    id: 'pfsense',
+    vendor: 'Netgate',
+    product: 'pfSense Community Edition',
+    tier: 'open-source',
+    catalogName: 'pfSense Community Edition',
+    tlsInspectionPQC: 'not-supported',
+    mlKemStatus: 'not-supported',
+    mlDsaStatus: 'not-supported',
+    hybridMode: false,
+    certSizeLimit: 'No limit (OS-level, no appliance buffer)',
+    roadmapYear: 0,
+    hardwareOffload: false,
+    fipsCompliant: false,
+    upgradeRequired: false,
+    upgradeDetails:
+      'pfSense Community Edition has no committed PQC roadmap and ships no native ML-KEM/ML-DSA in its IPsec/TLS path as released. Migrating workloads to OPNsense (or a PQC-capable upstream) is required for quantum-safe key exchange.',
+    notes:
+      'Split from the former combined pfSense/OPNsense row (2026-06-19): pfSense CE does not ship the PQC path that OPNsense does, so the catalog tracks it as none.',
   },
 ]
+
+// ── Catalog-derived headline status ───────────────────────────────────────────
+// A vendor's overall PQC status is the SINGLE SOURCE OF TRUTH in the central
+// product catalog (`pqc_product_catalog_*.csv` → `softwareData`). This module no
+// longer stores it; it maps catalog availability → the module's display vocabulary.
+const AVAIL_TO_PQC: Record<CatalogAvailability, PQCStatusKey> = {
+  available: 'ga',
+  partial: 'beta',
+  roadmap: 'roadmap',
+  none: 'not-planned',
+  unverified: 'roadmap',
+}
+
+/** Headline PQC status for a vendor row, derived live from the central catalog. */
+export function getVendorPqcStatus(v: VendorMigrationStatus): PQCStatusKey {
+  const status = getCatalogStatus(v.catalogName)
+  return status ? AVAIL_TO_PQC[status.availability] : 'roadmap'
+}
 
 // ── Feature Filters ───────────────────────────────────────────────────────────
 

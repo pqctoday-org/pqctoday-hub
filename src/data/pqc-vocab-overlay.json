@@ -46,37 +46,37 @@
     {
       "code": "PQC-ROLE-CISO",
       "label": "CISO / Security Executive",
-      "maps_to": "SP-MGT-001",
+      "maps_to": "OG-WRL-007",
       "persona_alias": "executive",
-      "rationale": "NICE SP-MGT-001 (Security Manager) is closest; CISO role is more senior"
+      "rationale": "NICE v2.2.0 OG-WRL-007 (Executive Cybersecurity Leadership) is closest; CISO is a more senior framing"
     },
     {
       "code": "PQC-ROLE-CRYPTOENGINEER",
       "label": "Cryptographic Engineer",
-      "maps_to": "SP-DEV-002",
+      "maps_to": "DD-WRL-003",
       "persona_alias": "developer",
-      "rationale": "NICE SP-DEV-002 (Software Developer) with cryptography specialization"
+      "rationale": "NICE v2.2.0 DD-WRL-003 (Secure Software Development) with cryptography specialization"
     },
     {
       "code": "PQC-ROLE-SYSARCH",
       "label": "Security Architect",
-      "maps_to": "SP-ARC-002",
+      "maps_to": "DD-WRL-001",
       "persona_alias": "architect",
-      "rationale": "NICE SP-ARC-002 (Security Architect) direct match"
+      "rationale": "NICE v2.2.0 DD-WRL-001 (Cybersecurity Architecture) direct match"
     },
     {
       "code": "PQC-ROLE-RESEARCHER",
       "label": "Cryptography Researcher",
-      "maps_to": "SP-RSK-001",
+      "maps_to": "DD-WRL-008",
       "persona_alias": "researcher",
-      "rationale": "NICE SP-RSK-001 (Authoritative Knowledgeable Specialist) closest match"
+      "rationale": "NICE v2.2.0 DD-WRL-008 (Technology Research and Development) closest match for a research role"
     },
     {
       "code": "PQC-ROLE-OPSEC",
       "label": "Security Operations",
-      "maps_to": "PR-OPS-001",
+      "maps_to": "PD-WRL-001",
       "persona_alias": "ops",
-      "rationale": "NICE PR-OPS-001 (Cyber Operator) closest match for ops persona"
+      "rationale": "NICE v2.2.0 PD-WRL-001 (Defensive Cybersecurity) closest match for security operations"
     }
   ],
   "codes": [

@@ -15,6 +15,7 @@ import { maturityByRefId } from '../../data/maturityGovernanceData'
 import { CSWP39_TIERS } from '../Compliance/cswp39Data'
 import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_STYLES, PILLAR_TO_ZONE } from '../../data/cswp39ZoneData'
 import { DocumentAnalysis } from './DocumentAnalysis'
+import { FrameworkCrosswalkPanel } from './FrameworkCrosswalkPanel'
 import { BUCKET_STYLES } from '../../utils/documentStatusBucket'
 import { PillarDisclaimer } from '../BusinessCenter/widgets/PillarDisclaimer'
 import { leadersData } from '../../data/leadersData'
@@ -415,6 +416,10 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                     relatedLeaders={relatedLeaders}
                   />
                 )}
+
+                {/* Framework crosswalk (App. G) + protocol coverage (App. H) —
+                    renders only for the Applied Quantum framework entry. */}
+                <FrameworkCrosswalkPanel item={item} />
 
                 {/* Previous revisions — older editions collapsed into this tile */}
                 {item.priorRevisions && item.priorRevisions.length > 0 && (

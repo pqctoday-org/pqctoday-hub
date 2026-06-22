@@ -259,6 +259,14 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
                           <p className="text-xs text-foreground flex-1 leading-relaxed">
                             {action.action}
                           </p>
+                          {action.cswp39Step && (
+                            <span
+                              className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded shrink-0 bg-muted text-muted-foreground"
+                              title="CSWP.39 step"
+                            >
+                              {action.cswp39Step.replace('-', ' ')}
+                            </span>
+                          )}
                           <span
                             className={clsx(
                               'text-[10px] font-bold uppercase px-1.5 py-0.5 rounded shrink-0',

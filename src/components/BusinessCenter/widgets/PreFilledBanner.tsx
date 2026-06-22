@@ -10,8 +10,12 @@ import { Button } from '@/components/ui/button'
 export interface PreFilledBannerProps {
   /** Short summary of what was pre-filled (e.g., "3 algorithms from your assessment"). */
   summary: string
-  /** Called when the user clicks "Clear all" — builder should reset its state. */
-  onClear: () => void
+  /**
+   * Called when the user clicks "Clear all" — builder should reset its state.
+   * Omit it for purely informational banners (no resettable state); the
+   * "Clear all" button is then hidden rather than rendered as a dead no-op.
+   */
+  onClear?: () => void
   /** Optional dense variant for builders with tight headers. */
   dense?: boolean
 }
@@ -30,9 +34,11 @@ export function PreFilledBanner({ summary, onClear, dense = false }: PreFilledBa
           <span className="font-semibold">Pre-filled from your assessment.</span> {summary}
         </p>
       </div>
-      <Button variant="ghost" size="sm" onClick={onClear} className="shrink-0 h-7 px-2 text-xs">
-        Clear all
-      </Button>
+      {onClear && (
+        <Button variant="ghost" size="sm" onClick={onClear} className="shrink-0 h-7 px-2 text-xs">
+          Clear all
+        </Button>
+      )}
     </div>
   )
 }

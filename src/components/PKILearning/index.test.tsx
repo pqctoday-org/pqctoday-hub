@@ -34,30 +34,24 @@ describe('PKILearning', () => {
     usePersonaStore.setState({ selectedPersona: null, hasSeenPersonaPicker: true })
   })
 
-  const switchToCardsView = () => {
-    // Default view is 'stack' (collapsed tracks); switch to 'cards' to see all modules
-    fireEvent.click(screen.getByRole('radio', { name: /cards/i }))
-  }
+  // With no persona selected, the redesigned /learn defaults to Browse mode,
+  // which renders the full module catalog (no view-mode radio anymore).
 
-  it('renders the header and module navigation cards', () => {
+  it('renders the redesigned Learn header and the module catalog', () => {
     renderWithRouter()
-    switchToCardsView()
 
-    expect(screen.getByText('Learning Workshops')).toBeInTheDocument()
-    expect(screen.getByText(/Interactive hands-on workshops/)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Learn' })).toBeInTheDocument()
+    expect(screen.getByText('Viewing as')).toBeInTheDocument()
 
-    // Check for module cards
+    // Browse mode shows the catalog cards
     expect(screen.getByText('Digital Assets')).toBeInTheDocument()
-    expect(screen.getByText('PKI')).toBeInTheDocument() // "PKI" is the title in Dashboard.tsx
+    expect(screen.getByText('PKI')).toBeInTheDocument() // PKIWorkshop card title
   })
 
   it('navigates to Digital Assets module on click', async () => {
     renderWithRouter()
-    switchToCardsView()
 
-    // Find button/link for Digital Assets
-    const title = screen.getByText('Digital Assets')
-    fireEvent.click(title)
+    fireEvent.click(screen.getByText('Digital Assets'))
 
     // Expect DigitalAssets component to render (5s timeout — lazy component may take longer on CI)
     expect(
@@ -67,10 +61,8 @@ describe('PKILearning', () => {
 
   it('navigates to PKI Workshop module on click', async () => {
     renderWithRouter()
-    switchToCardsView()
 
-    const title = screen.getByText('PKI') // Title is "PKI"
-    fireEvent.click(title)
+    fireEvent.click(screen.getByText('PKI'))
 
     expect(
       await screen.findByTestId('module-pki-workshop', {}, { timeout: 5000 })
@@ -79,20 +71,31 @@ describe('PKILearning', () => {
 
   it('allows navigating back from a module', async () => {
     renderWithRouter()
-    switchToCardsView()
 
-    // Enter module
     fireEvent.click(screen.getByText('Digital Assets'))
     expect(
       await screen.findByTestId('module-digital-assets', {}, { timeout: 5000 })
     ).toBeInTheDocument()
 
-    // Click Back
-    const backButton = screen.getByText('Back to Dashboard')
-    fireEvent.click(backButton)
+    // Click Back — returns to the redesigned dashboard at /learn
+    fireEvent.click(screen.getByText('Back to Dashboard'))
 
-    // Expect to see main menu again
-    expect(screen.getByText(/Interactive hands-on workshops/)).toBeInTheDocument()
+    expect(screen.getByText('Viewing as')).toBeInTheDocument()
     expect(screen.queryByTestId('module-digital-assets')).not.toBeInTheDocument()
+  })
+
+  it('keeps the legacy five-mode dashboard reachable at /learn/legacy', () => {
+    render(
+      <EmbedProvider>
+        <MemoryRouter initialEntries={['/learn/legacy']}>
+          <Routes>
+            <Route path="/learn/*" element={<PKILearning />} />
+          </Routes>
+        </MemoryRouter>
+      </EmbedProvider>
+    )
+
+    // The legacy dashboard keeps its view-mode radiogroup (Journey/Stack/Cards/Table)
+    expect(screen.getByRole('radiogroup', { name: /view mode/i })).toBeInTheDocument()
   })
 })

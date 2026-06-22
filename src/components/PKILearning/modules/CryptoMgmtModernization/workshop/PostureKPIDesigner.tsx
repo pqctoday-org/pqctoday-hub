@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { POSTURE_KPIS, type KpiAudience } from '../data/postureKPIs'
-import { PILLARS, type PillarId } from '../data/maturityModel'
+import { PILLARS, type PillarId } from '../data/cpmMaturityModel'
 
 const AUDIENCE_LABELS: Record<KpiAudience, string> = {
   board: 'Board',

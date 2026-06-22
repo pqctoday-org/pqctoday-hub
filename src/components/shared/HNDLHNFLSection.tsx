@@ -3,7 +3,7 @@ import React from 'react'
 import { Clock } from 'lucide-react'
 import { CollapsibleSection } from '../ui/CollapsibleSection'
 import clsx from 'clsx'
-import type { HNDLRiskWindow, HNFLRiskWindow } from '../../hooks/assessmentTypes'
+import type { HNDLRiskWindow, TNFLRiskWindow } from '../../hooks/assessmentTypes'
 
 const HNDLTimelineBar = ({ hndl }: { hndl: HNDLRiskWindow }) => {
   const totalSpan = Math.max(
@@ -101,7 +101,7 @@ const HNDLTimelineBar = ({ hndl }: { hndl: HNDLRiskWindow }) => {
   )
 }
 
-const HNFLTimelineBar = ({ hnfl }: { hnfl: HNFLRiskWindow }) => {
+const HNFLTimelineBar = ({ hnfl }: { hnfl: TNFLRiskWindow }) => {
   const totalSpan = Math.max(
     hnfl.credentialLifetimeYears + 5,
     hnfl.estimatedQuantumThreatYear - hnfl.currentYear + 10
@@ -185,9 +185,9 @@ const HNFLTimelineBar = ({ hnfl }: { hnfl: HNFLRiskWindow }) => {
               </span>
             )}
           </p>
-          {hnfl.hnflRelevantUseCases.length > 0 && (
+          {hnfl.tnflRelevantUseCases.length > 0 && (
             <p className="text-xs text-muted-foreground">
-              High-risk use cases: {hnfl.hnflRelevantUseCases.join(', ')}
+              High-risk use cases: {hnfl.tnflRelevantUseCases.join(', ')}
             </p>
           )}
         </div>
@@ -250,7 +250,7 @@ export function HNDLHNFLSection({
   infoTip,
 }: {
   hndl?: HNDLRiskWindow
-  hnfl?: HNFLRiskWindow
+  hnfl?: TNFLRiskWindow
   defaultOpen?: boolean
   headerExtra?: React.ReactNode
   infoTip?: React.ReactNode

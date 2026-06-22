@@ -27,7 +27,7 @@ function makeData(overrides: Partial<ExecutiveModuleData> = {}): ExecutiveModule
     preBoostScore: null,
     boosts: [],
     hndlRiskWindow: null,
-    hnflRiskWindow: null,
+    tnflRiskWindow: null,
     categoryScores: null,
     categoryDrivers: null,
     migrationEffort: [],

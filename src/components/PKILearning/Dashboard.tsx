@@ -55,6 +55,7 @@ import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useAssessmentResultStore } from '../../store/useAssessmentResultStore'
 import { inferRecommendedModules } from '../../utils/inferRecommendedModules'
 import { AssessmentRecommendationsBanner } from './AssessmentRecommendationsBanner'
+import { WhereToStartTree } from './WhereToStartTree'
 import { ContentUpdatesFeed } from '@/components/ui/ContentUpdatesFeed'
 
 // ---------------------------------------------------------------------------
@@ -582,6 +583,15 @@ export const Dashboard: React.FC = () => {
         />
       )}
 
+      {/* A3 cold-start hero — a first-time learner (no persona chosen) lands here
+          with no curated journey. Surface the "Where do I start?" router OPEN and
+          prominent at the top so they immediately get a route, instead of having to
+          scroll to the collapsed disclosure at the bottom of the page. Personas keep
+          that bottom disclosure (they already have their Journey). */}
+      {!isEmbedded && (selectedPersona === null || selectedPersona === undefined) && (
+        <WhereToStartTree defaultOpen />
+      )}
+
       {/* Common Ground callout — shown only when path view ISN'T already surfacing these
           modules. For executive/curious in default (non-showEverything) mode, PersonaPathView
           renders the same five modules with a "Common Ground" badge, so the standalone
@@ -606,7 +616,7 @@ export const Dashboard: React.FC = () => {
                       PQC for Your Organization
                     </span>
                     <span className="text-[9px] font-mono uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
-                      NICE IR 8355
+                      NICE v2.2.0
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground">
@@ -1072,6 +1082,11 @@ const ModuleTracksGrid = ({
           <span>{totalModuleCount - touchedCount} not started</span>
         </p>
       )}
+
+      {/* "Where do I start?" router + framework crosswalk (App. B / App. G).
+          Null-persona users get this OPEN as a hero at the top instead (A3
+          cold-start), so here it's only the collapsed disclosure for personas. */}
+      {!isEmbedded && selectedPersona != null && <WhereToStartTree />}
 
       {/* Mobile Search & Filter Drawer */}
       <div className="flex md:hidden items-center gap-2">

@@ -57,6 +57,16 @@ jobs:
       - name: Audit protocol matrix refs
         run: npm run audit:matrix-refs
 
+      - name: Check sandbox scenarios are in sync with the sandbox source
+        # src/data/sandboxScenarios.ts is generated from
+        # pqctoday-sandbox/ui/src/data/scenarios.ts by scripts/sync-sandbox-scenarios.ts.
+        # Fails if someone edited the generated file by hand or forgot to re-run
+        # `npm run sync:sandbox` after the sandbox source changed (the 2026-06-17
+        # drift that shipped vaporware/stale scenarios to the hub).
+        # The script itself no-ops (exit 0) when the sibling sandbox checkout is
+        # absent, so this only fails on genuine drift.
+        run: npm run sync:sandbox:check
+
       - name: Audit vendor-id referential integrity
         # Catches wrong VND-* assignments in the product catalog (e.g. a product
         # pointing to a deprecated vendor, or a VND that resolves to a completely
@@ -70,6 +80,11 @@ jobs:
 
       - name: Audit timeline aliases
         run: npm run audit:timeline-aliases
+
+      - name: Audit migration-phase tagging (step filter never silently empties)
+        # Guards the Migrate catalog's migration_phases column against the 7-step
+        # framework: every step reachable, no unknown tokens, empty ratio capped.
+        run: npm run audit:migration-phases
 
       - name: Audit timeline evidence (every active row resolves to local file)
         # Verifies that every active row in the latest timeline_*.csv has an
@@ -92,6 +107,20 @@ jobs:
 
       - name: Audit semantic tokens (no hardcoded colours)
         run: npm run audit:tokens
+
+      - name: Timeline facts derived from the CSV (single source of truth)
+        # Fails if src/data/timelineFacts.generated.ts is stale vs the timeline
+        # CSV — i.e. the CSV was edited without regenerating, or the generated
+        # file was hand-edited. Keeps the sim/pages in sync with the one source.
+        run: npm run gen:timeline-facts:check
+
+      - name: Audit content freshness (dated claims < 90d)
+        # Non-blocking on first rollout — flags time-sensitive claims (CMVP/FIPS
+        # status, protocol-matrix snapshot, Q-Day anchor) that have aged past the
+        # review window. Remove `continue-on-error` to make it gate once the
+        # first quarterly pass has cleared the backlog (see CONTENT-FRESHNESS.md).
+        run: npm run audit:content-freshness
+        continue-on-error: true
 
       - name: Verify trust-engine attestations
         # Verify ML-DSA-65 signatures on committed trust artifacts
@@ -122,10 +151,6 @@ jobs:
 
       - name: Test
         run: npm run test
-
-      - name: Validate data integrity (DS17)
-        run: DS_SEVERITY=ERROR npx tsx scripts/validate-data-integrity.ts
-        continue-on-error: true
 
       - name: Validate threats proof rule (TP-2 + TP-3, BLOCKING)
         # TP-2 (local_file path must live under public/threats/) and TP-3

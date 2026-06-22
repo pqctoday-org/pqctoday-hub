@@ -1,0 +1,2138 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# ATTRIBUTION (required — CC BY 4.0)
+#   Source work: "Applied Quantum PQC Migration Framework", Version 2.1
+#   Author:      Marin Ivezić — Applied Quantum / PostQuantum.com
+#   URL:         https://pqcframework.com
+#   License:     Creative Commons Attribution 4.0 International (CC BY 4.0)
+#                https://creativecommons.org/licenses/by/4.0/
+#   This file is a STRUCTURED EXTRACTION of the above work, not the work itself.
+#   Any reuse of this file must preserve this attribution to Marin Ivezić /
+#   Applied Quantum and the https://pqcframework.com source URL.
+# ─────────────────────────────────────────────────────────────────────────────
+# Source PDF: applied-quantum-marin-ivezic-pqc-migration-framework-universal-2-1.pdf (210 pp)
+# Extracted 2026-06-21 by full-text read of all 210 pages; tables verified against the rendered PDF.
+# Every entry cites its source line range in the pdftotext extraction (and pdf_page where a table was checked).
+# Reusable source of truth — the framework need not be re-parsed from the PDF.
+# Counts: phases=8, activities=49, stage_gates=7, appendices=8
+
+framework:
+  title: Applied Quantum PQC Migration Framework
+  version: '2.1'
+  author: Marin Ivezić (Applied Quantum)
+  source_url: https://pqcframework.com
+  source_pdf: applied-quantum-marin-ivezic-pqc-migration-framework-universal-2-1.pdf
+  license: CC BY 4.0
+  attribution: >-
+    "Applied Quantum PQC Migration Framework" v2.1 by Marin Ivezić / Applied Quantum
+    (PostQuantum.com), https://pqcframework.com — licensed CC BY 4.0. This YAML is a
+    structured extraction of that work; reuse requires the same attribution.
+  pages: 210
+  subtitle: From Discovery to Deployment - The comprehensive, phase-by-phase guide to migrating enterprise cryptography before quantum computers arrive
+  publisher: Applied Quantum / PostQuantum.com
+  date: June 2026
+  license: Creative Commons Attribution 4.0 International (CC BY 4.0)
+  document_type: Enterprise methodology and practitioner framework
+  intended_audience: CISOs, security architects, cryptographic engineers, program managers, risk and compliance officers, vendor/procurement teams
+  assumed_knowledge: Familiarity with quantum threat fundamentals (HNDL, TNFL, CRQC timelines, NIST PQC standards)
+  scope: Industry-agnostic core methodology with integrated operational security (SOC and GRC implementation); sector-specific adaptations included as summary notes, dedicated sector annexes published separately.
+  summary: An executable methodology for enterprise PQC migration — not a whitepaper, checklist, or vendor pitch. Structured as an 8-phase lifecycle (Phase 0 through Phase 7) with cross-cutting concerns woven throughout. Described as the first published PQC migration methodology covering the complete migration lifecycle at operational depth in a single integrated framework (a survey of 80+ published PQC frameworks found no other single framework covers this full scope; organizations otherwise combine four or five separate frameworks). Informed by but not derivative of NIST FIPS 203/204/205, NIST IR 8547, NIST SP 1800-38, NIST SP 800-227, NSA CNSA 2.0, the PQCC Migration Roadmap, the Dutch PQC Migration Handbook, GSMA PQ.01–PQ.03, ETSI TR 103 619 / TR 104 016, and the PKI Consortium PQCMM. Key differentiators include the Minimum Viable CBOM model, risk-driven discovery scoping, emphasis on vendor governance as the primary external constraint on timelines, and an integrated operational security
+    architecture (SOC and GRC).
+  lifecycle: '8 phases (Phase 0–7) + cross-cutting concerns (Program Foundations: Governance, Crypto-Agility, Skills & Team, SOC Implementation, GRC Implementation) + Migration Verification & Program Closure'
+  phases:
+  - number: 0
+    name: Executive Mandate & Business Case
+  - number: 1
+    name: Discovery & Inventory
+  - number: 2
+    name: CBOM & Documentation
+  - number: 3
+    name: Risk Scoring & Prioritization
+  - number: 4
+    name: Roadmap & Governance
+  - number: 5
+    name: Pilots & Migration Execution
+  - number: 6
+    name: Infrastructure Modernization & Performance
+  - number: 7
+    name: Vendor & Supply Chain Governance
+  standards_informed_by:
+  - NIST FIPS 203/204/205 (ML-KEM, ML-DSA, SLH-DSA algorithm standards)
+  - NIST IR 8547 (Transition to Post-Quantum Cryptography Standards)
+  - NIST SP 1800-38 (NCCoE Migration to Post-Quantum Cryptography)
+  - NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms)
+  - NSA CNSA 2.0 (Commercial National Security Algorithm Suite)
+  - PQCC Migration Roadmap (Post-Quantum Cryptography Coalition / MITRE)
+  - Dutch PQC Migration Handbook (AIVD/CWI/TNO, 2nd edition)
+  - GSMA PQ.01–PQ.03 v2.0 (Post-Quantum Telco Network Task Force)
+  - ETSI TR 103 619 / TR 104 016 (Migration to Post-Quantum Cryptography)
+  - PKI Consortium PQCMM (Post-Quantum Cryptography Maturity Model)
+  citation: 'Ivezic, M. (2026). The Applied Quantum PQC Migration Framework: A Practitioner’s Methodology for Enterprise Post-Quantum Cryptography Migration (Version 2.1). PostQuantum.com / Applied Quantum.'
+  source:
+    lines:
+    - 1
+    - 257
+intro:
+  how_to_use: 'An executable methodology, not a whitepaper, checklist, or vendor pitch. Structured as an 8-phase lifecycle (Phase 0 through Phase 7) with cross-cutting concerns woven throughout. Each phase defines: Prerequisites (what must be in place before you start); Activities (what you do, with enough specificity to assign to a team next Monday); Decision Points (where choices branch based on your context); Outputs (what you produce, with quality criteria); Interdependencies (what feeds into and out of this phase); Common Failures (what goes wrong and how to avoid it); and Maturity Indicators (how to assess whether you''ve done this phase well enough to proceed). Organizations should not expect to execute phases sequentially in a clean waterfall — real programs overlap (e.g. running Phase 1 discovery on some systems while executing Phase 5 pilots on others). The phase structure provides a logical dependency order; the calendar comes from the Phase 4 roadmap.'
+  architecture_at_a_glance: 'Phases are logically sequential but operationally overlapping: real programs run discovery, documentation, pilots, and vendor engagement concurrently.'
+  role_reading_paths:
+  - role: CISO and executive sponsor
+    read: Phase 0, the Regulatory Timeline Context, the Maturity Levels, the board-level KPI pack in Metrics, KPIs & Reporting, the GRC Implementation foundation, and Appendix F for the objections you will hear in the funding conversation.
+  - role: Program manager (QRPM)
+    read: Phase 4 in full, the governance structure in Phase 0, the Year-1 quarter-by-quarter plan, the Interdependencies subsection of every phase, the Accelerated Execution Profile (Activity 4.7), and the Metrics section.
+  - role: Security architect and cryptographic engineer
+    read: Phases 1, 2, 5, and 6, Appendix A for algorithm parameters, Appendix H for protocol-family coverage, and the Crypto-Agility foundation.
+  - role: Risk and compliance officer
+    read: Phase 3, the GRC Implementation foundation, the Regulatory & Standards Alignment Map, the Migration Verification & Program Closure section, and Appendix G for mapping this framework onto frameworks the organization has already adopted.
+  - role: Procurement and vendor management
+    read: Phase 7 in full, with particular attention to the contract language in Activity 7.3, the readiness questionnaire in Activity 7.2, and the cloud and SaaS classification in Activity 7.7.
+  right_sizing:
+    note: Validated on programs exceeding 120,000 tasks; the methodology scales down. What changes by organization size is which activities merge and how heavy the governance machinery needs to be, not which questions get answered. Team sizing by CBOM instance count appears in the Skills & Team Structure foundation.
+    profiles:
+    - profile: Small (under ~2,000 employees)
+      typical_shape: Hundreds of certificates; estate dominated by SaaS and cloud
+      compresses: Phases 0 and 4 merge into a single charter-plus-plan; one combined inventory/CBOM workstream; SteerCo folds into an existing security forum; one or two pilots
+      non_negotiable: Risk-driven scoping (1.0); a queryable CBOM; questionnaires to the top 10 vendors; hybrid TLS on internet-facing endpoints
+    - profile: Mid-size (~2,000–20,000)
+      typical_shape: Thousands of certificates; mixed cloud and on-premises; some OT or embedded
+      compresses: Eight workstreams consolidate to four or five; Year-1 plan runs on a two-quarter rhythm; Waves 1 and 2 combine
+      non_negotiable: A dedicated QRPM; Phases 1–3 at full Tier-1 depth; milestone gates; vendor governance cadence
+    - profile: Large (~20,000–100,000)
+      typical_shape: Tens of thousands of certificates; significant OT, legacy, and vendor estate
+      compresses: The framework applies as written
+      non_negotiable: Everything, including the PMO discipline in Activity 4.4
+    - profile: Hyperscale or multi-entity group (100,000+)
+      typical_shape: Federated estates across subsidiaries, jurisdictions, and regulators
+      compresses: Nothing compresses; Phases 1–3 run as per-entity instances feeding a federated CBOM, with group-level Phase 0 and Phase 4
+      non_negotiable: Federation governance; cross-entity dependency mapping; jurisdiction-specific algorithm tracks
+  version_changelog_highlights:
+  - version: '1.0'
+    date: June 2025
+    changes: Initial publication. 8-phase lifecycle, cross-cutting sections, 5 appendices.
+  - version: '1.1'
+    date: Mar 2026
+    changes: Reviewed and updated; 40+ updates including NIST IR 8547 timeline, ML-DSA sizes, CNSA 2.0 milestones, LMS/XMSS status, SSH/TLS details, hybrid jurisdictional nuance. Added library readiness, FN-DSA/HQC, Confidential Computing, legal risk, Q-by-Q Year 1 plan, dependency chains.
+  - version: '2.0'
+    date: Jun 2026
+    changes: 'Major version. Three methodological changes: (1) two-track migration model separating key exchange (HNDL) and signature/PKI (TNFL) as parallel tracks; (2) PKI architecture fork with definitive position on Merkle Tree Certificates for public Web PKI; (3) FIPS 140-3 validation gap as hard deployment constraint with environment classification. New Program Foundation sections (SOC Implementation, GRC Implementation), expanded Governance / Crypto-Agility / Skills & Team Structure, plus cost estimation methodology, NIST CSWP 39 alignment, 2026–2030 regulatory deadline convergence analysis, multinational hybrid navigation framework, deployment ecosystem status data, algorithm pipeline update, objection-handling Appendix F.'
+  - version: '2.1'
+    date: June 2026
+    changes: 'Targeted update. Activity 3.3 sequencing harmonized with the two-track model; explicit position on hybrid/composite signatures; algorithm-specific vulnerability weighting added to Phase 3 risk scoring (ECC/RSA quantum resource analysis); SP 800-208 hash-based signatures foregrounded as the deploy-now component of Track B. New: Activity 2.5 (Secure the CBOM and Program Artifacts), Migration Verification & Program Closure section, identity and authentication stack in Track B scope. Added: reference program economics (0.2c), confidentiality-horizon method (1.1), evidence dossier as litigation defense, M&A due diligence, procurement model-language references, additional common failures and benefit arguments; Web PQC adoption datapoint corrected to F5 Labs mid-2025 attribution; companion book (Quantum Ready) cross-references; data-at-rest decision framework (5.6); AI-assisted migration position (5.7) with a Phase 1 tool category; counterparty coordination (7.6); cloud shared responsibility
+      and SaaS (7.7); Accelerated Execution Profile (4.7); risk-weighted coverage KPI; algorithm sovereignty and standards fragmentation; crisis communications and industry information sharing (GRC); skills matrix; role-based reading paths and right-sizing profiles; Appendix G (framework crosswalk); Appendix H (protocol coverage matrix).'
+  regulatory_timeline_context:
+    note: 'The framework is designed to satisfy converging deadlines. The regulatory table mixes binding requirements, recommended roadmaps, and planning milestones at varying stages of finalization; not every date is legally binding. Implication: organizations starting now have 4–9 years depending on jurisdiction and system criticality; a credibly planned migration for a large enterprise requires 4–15 years of execution. There is no slack in the schedule.'
+    key_milestones:
+    - body: NIST IR 8547
+      milestone: Deprecate quantum-vulnerable public-key algorithms (112-bit security)
+      deadline: After 2030
+      status: Initial Public Draft (Nov 2024)
+    - body: NIST IR 8547
+      milestone: Disallow quantum-vulnerable public-key algorithms
+      deadline: After 2035
+      status: Initial Public Draft (Nov 2024)
+    - body: NSA CNSA 2.0
+      milestone: New NSS acquisitions CNSA 2.0 compliant
+      deadline: '2027'
+      status: Binding for NSS
+    - body: NSA CNSA 2.0
+      milestone: Software/firmware signing uses PQC
+      deadline: '2030'
+      status: Binding for NSS
+    - body: NSA CNSA 2.0
+      milestone: Networking equipment (VPNs, routers) exclusively uses CNSA 2.0
+      deadline: '2030'
+      status: Binding for NSS
+    - body: NSA CNSA 2.0
+      milestone: Most NSS (web, cloud, OS, and other platforms) migrated
+      deadline: '2033'
+      status: Binding for NSS
+    - body: NSA CNSA 2.0
+      milestone: All NSS including custom/legacy systems fully migrated
+      deadline: '2035'
+      status: Binding for NSS
+    - body: Australia (ASD)
+      milestone: Cease traditional asymmetric crypto in Australian Government systems
+      deadline: '2030'
+      status: Government guidance
+    - body: NCSC UK
+      milestone: Discovery and planning complete
+      deadline: '2028'
+      status: National guidance
+    - body: NCSC UK
+      milestone: High-priority migration complete
+      deadline: '2031'
+      status: National guidance
+    - body: NCSC UK
+      milestone: Full migration complete
+      deadline: '2035'
+      status: National guidance
+    - body: EU Coordinated Roadmap
+      milestone: First steps (awareness, inventories, pilots)
+      deadline: End of 2026
+      status: Roadmap for Member States
+    - body: EU Coordinated Roadmap
+      milestone: High-risk migration complete
+      deadline: End of 2030
+      status: Roadmap for Member States
+    - body: EU Coordinated Roadmap
+      milestone: Medium-risk migration complete
+      deadline: End of 2035
+      status: Roadmap for Member States
+    - body: Government of Canada (CCCS)
+      milestone: Departmental PQC migration plans developed
+      deadline: April 2026
+      status: Federal government
+    - body: Government of Canada (CCCS)
+      milestone: High-priority systems migrated
+      deadline: '2031'
+      status: Federal government
+    - body: PCI DSS v4.0 Req 12.3.3
+      milestone: Documentation and annual review of cryptographic cipher suites and protocols in use
+      deadline: Required after March 31, 2025
+      status: Binding for PCI-scoped entities
+  notes: Companion book 'Quantum Ready' (QuantumReady.com) provides the complete treatment (reasoning behind each phase, extended case examples, leading the program from first board conversation through closure); this framework is the execution methodology. Companion site PQCFramework.com hosts templates and supporting materials.
+  source:
+    lines:
+    - 658
+    - 866
+overall_maturity_model:
+  levels:
+  - level: 0
+    name: Unaware
+    description: No organizational awareness of quantum cryptographic risk; no activities planned or underway
+    source:
+      lines:
+      - 6234
+      - 6235
+  - level: 1
+    name: Aware
+    description: Quantum risk acknowledged at leadership level; initial education conducted; no formal program
+    source:
+      lines:
+      - 6237
+      - 6238
+  - level: 2
+    name: Initiated
+    description: Formal program chartered; budget allocated; discovery underway; initial CBOM in development
+    source:
+      lines:
+      - 6240
+      - 6241
+  - level: 3
+    name: Progressing
+    description: CBOM operational; risk scoring complete; hybrid pilots in production; vendor engagement active; KPIs reported
+    source:
+      lines:
+      - 6243
+      - 6244
+  - level: 4
+    name: Advanced
+    description: Tier-1 systems migrated to hybrid/PQC; PKI modernized; crypto-agility demonstrated; vendor commitments secured
+    source:
+      lines:
+      - 6246
+      - 6247
+  - level: 5
+    name: Optimized
+    description: Estate-wide PQC migration substantially complete; crypto-agility is organizational capability; continuous monitoring and posture management operational
+    source:
+      lines:
+      - 6249
+      - 6251
+  domains_note: Grid verified against rendered PDF pages 146-147 (Assessment Across Seven Domains table). Grid is scored Level 1 through Level 5 (no Level 0 column).
+  domains:
+  - name: Cryptographic Inventory
+    by_level:
+      1: Awareness that inventory is needed
+      2: Partial inventory of known systems
+      3: ≥70% Tier-1 coverage; automated discovery deployed
+      4: ≥90% coverage; continuous monitoring; IT+OT+cloud
+      5: Real-time posture management; auto-alerting on drift
+    source:
+      lines:
+      - 6259
+      - 6263
+      pdf_page: 146
+  - name: Governance & Ownership
+    by_level:
+      1: Informal awareness
+      2: Charter exists; QRPM appointed
+      3: SteerCo operational; RACI defined; budget committed
+      4: Multi-year governance; integrated into risk register
+      5: Quantum readiness part of BAU enterprise governance
+    source:
+      lines:
+      - 6265
+      - 6269
+      pdf_page: 146
+  - name: Pilots & Deployment
+    by_level:
+      1: No pilots
+      2: Lab testing only
+      3: 2+ production pilots with measured results
+      4: Tier-1 systems on hybrid/PQC; wave rollout underway
+      5: Estate-wide deployment; transitioning to PQC-only
+    source:
+      lines:
+      - 6280
+      - 6284
+      pdf_page: 147
+  - name: Vendor & Supply Chain
+    by_level:
+      1: No vendor engagement
+      2: Ad-hoc inquiries
+      3: Top 10 vendors formally engaged; questionnaires sent
+      4: PQC in procurement; contracts include clauses; blockers managed
+      5: All strategic vendors PQC-committed; bridging patterns eliminated
+    source:
+      lines:
+      - 6286
+      - 6292
+      pdf_page: 147
+  - name: Compliance & Standards
+    by_level:
+      1: Unaware of requirements
+      2: Regulatory requirements mapped
+      3: Compliance gaps identified; remediation planned
+      4: Meeting current deadlines; evidence documented
+      5: Proactive compliance; contributing to standards development
+    source:
+      lines:
+      - 6294
+      - 6298
+      pdf_page: 147
+  - name: Crypto-Agility
+    by_level:
+      1: Hardcoded algorithms throughout
+      2: Awareness of agility need
+      3: Abstraction layers in new development
+      4: Algorithm swap via config for Tier-1 systems; automated cert lifecycle
+      5: Organization-wide agility; algorithm changes are routine operations
+    source:
+      lines:
+      - 6300
+      - 6306
+      pdf_page: 147
+  - name: Risk & Prioritization
+    by_level:
+      1: No quantum risk assessment
+      2: Basic awareness of HNDL/TNFL
+      3: Formal risk scoring; prioritized backlog
+      4: QRA updated quarterly; migration tracking against backlog
+      5: Continuous risk posture management; automated re-scoring
+    source:
+      lines:
+      - 6308
+      - 6313
+      pdf_page: 147
+  scoring_rule: For each domain, score 0–5. Overall maturity level is the lowest individual domain score (the weakest domain constrains overall readiness).
+  scoring_rule_source:
+    lines:
+    - 6318
+    - 6320
+    pdf_page: 147
+  targets:
+  - 'End of Year 1: Level 2 across all domains'
+  - 'End of Year 2: Level 3 across all domains'
+  - 'End of Year 3: Level 4 across at least 5 of 7 domains'
+  - 'End of Year 5: Level 4 or 5 across all domains'
+  targets_source:
+    lines:
+    - 6329
+    - 6337
+  source:
+    lines:
+    - 6231
+    - 6343
+stage_gates:
+  source_note: Activity 4.6 Define Milestone Gates — each phase transition requires a milestone gate review. The pdftotext extraction merged the Criteria and Decision Authority columns on the G5→G6 row ('Tier-1 SteerCo'); transcribed from the rendered PDF for fidelity.
+  gates:
+  - id: G0->G1
+    criteria:
+    - Charter approved
+    - budget committed
+    - QRPM appointed
+    authority: Executive Sponsor
+    source:
+      lines:
+      - 3925
+      - 3926
+      pdf_page: 88
+  - id: G1->G2
+    criteria:
+    - ≥70% Tier-1 inventory complete
+    - CBOM structure defined
+    authority: SteerCo
+    source:
+      lines:
+      - 3928
+      - 3928
+      pdf_page: 88
+  - id: G2->G3
+    criteria:
+    - CBOM populated
+    - risk scoring complete
+    - QRA delivered
+    authority: SteerCo
+    source:
+      lines:
+      - 3930
+      - 3930
+      pdf_page: 88
+  - id: G3->G4
+    criteria:
+    - Multi-year roadmap approved
+    - Year 1 plan resourced
+    authority: Executive Sponsor
+    source:
+      lines:
+      - 3932
+      - 3933
+      pdf_page: 88
+  - id: G4->G5
+    criteria:
+    - Pilot designs approved
+    - success criteria defined
+    - rollback plans documented
+    authority: SteerCo
+    source:
+      lines:
+      - 3935
+      - 3936
+      pdf_page: 88
+  - id: G5->G6
+    criteria:
+    - Pilots validated
+    - performance baselines established
+    - Tier-1 rollout approved
+    authority: SteerCo
+    source:
+      lines:
+      - 3938
+      - 3939
+      pdf_page: 88
+  - id: G6->G7
+    criteria:
+    - Infrastructure upgrades scheduled
+    - vendor commitments tracked
+    authority: QRPM
+    source:
+      lines:
+      - 3941
+      - 3942
+      pdf_page: 88
+phases:
+- id: p0
+  number: 0
+  name: Phase 0 — Executive Mandate & Business Case
+  cadence: sequential (the only phase that must be substantially complete before others begin)
+  summary: Establish the governance foundation and secure multi-year funding, authority, and organizational commitment. Frames PQC migration as a multi-year enterprise transformation program (not an IT project) and is the single most common failure point.
+  overlaps_with: Late-stage Phase 0 activities (governance finalization, detailed budget approval) can overlap with early Phase 1 discovery on the highest-priority systems; experienced organizations run a lightweight 'Phase 0.5' concurrently to scope the top 10–20 critical systems and top 10 vendor dependencies.
+  source_pages:
+  - 20
+  - 38
+  source:
+    lines:
+    - 877
+    - 1655
+  activities:
+  - id: '0.1'
+    title: Frame the Business Case
+    do: Structure the executive argument around four concrete, current 'urgency drivers' rather than speculative Q-Day predictions.
+    output: Board briefing deck
+    detail: 'The four urgency drivers: (1) Regulatory and compliance deadlines — map exposure to the timeline table; e.g. PCI DSS v4.0 Requirement 12.3.3 (annual review of all crypto cipher suites/protocols), NIS2 and DORA for EU operations, CNSA 2.0 for government suppliers. (2) Harvest Now, Decrypt Later (HNDL) exposure — data with 10+ year confidentiality requirements (trade secrets, M&A plans, health records, national security info, long-lived financial instruments, attorney-client communications); risk is active now. (3) Trust Now, Forge Later (TNFL) exposure — long-lived signatures/trust anchors (PKI roots often 20+ year validity, code-signing keys, firmware signing keys, legal/regulatory document signatures, OT safety certificates). (4) Client, investor, and insurer expectations — fiduciary duty, investor due diligence, cyber insurance underwriting, procurement requirements. Decision Point: data with >10-year confidentiality AND regulated industry → HNDL alone justifies immediate
+      action; signature-integrity primary risk (OT/ICS, PKI operators) → TNFL drives urgency on different systems.'
+    source:
+      lines:
+      - 961
+      - 995
+  - id: '0.2'
+    title: Build the Budget Structure
+    do: Structure funding as a multi-year program with phased investment rather than a single project budget line, and align spend to existing infrastructure refresh cycles.
+    output: Multi-year budget commitment
+    detail: 'Year 1 (Foundation): inventory and discovery tooling, initial CBOM development, 2–3 hybrid pilots, vendor engagement, policy updates, team training; illustrative range for a large enterprise $1.5M–$4M (varies by estate complexity/tooling). Years 2–3 (Bulk Migration): rollout to Tier-1 systems, PKI modernization, key-lifetime reductions, dual-signing pilots, vendor upgrade coordination; most capital-intensive phase. Years 4–5 (Long Tail and Hardening): embedded/OT systems, legacy containment, eliminating compensating controls, crypto-agility maturation. Key budget strategy: align spending to existing refresh cycles (data center refreshes, SD-WAN upgrades, cloud migrations, PKI renewals, vendor contract renewals) to avoid big-bang spikes. The ''umbrella program'' strategy positions quantum readiness as the organizing framework for long-overdue security modernization (PKI, certificate lifecycle, HSMs, asset inventories, vendor governance). Align with innovation/R&D/digitization
+      budgets; position PQC as a mandatory security track within broader programs rather than competing for separate allocation.'
+    source:
+      lines:
+      - 999
+      - 1048
+  - id: 0.2b
+    title: Build the Business Case — Additional Benefit Arguments
+    do: Beyond the four urgency drivers, marshal additional arguments that strengthen the business case.
+    output: Board briefing deck
+    detail: Regulatory trust and approval acceleration — a mature quantum readiness posture (documented CBOM, risk assessment, migration roadmap) signals proactive technology-risk management to regulators and can reduce friction during supervisory review of new products/services (depends on sector, jurisdiction, regulator). Immediate security value from cryptographic inventory — a quantum-vulnerability-focused inventory surfaces classically vulnerable cryptography (deprecated TLS 1.0/1.1, weak keys RSA-1024/DH-1024, insecure cipher suites RC4/3DES/export ciphers, expired/misconfigured certificates, hardcoded keys, unpatched libraries with CVEs, downgrade-allowing protocols) remediable immediately; makes the Phase 1 investment self-funding from a security perspective. Competitive differentiation and market access — quantum resilience becomes a market signal; procurement increasingly includes quantum readiness criteria. Security talent attraction and retention — PQC and crypto-agility expertise
+      is scarce; a serious program offers frontier work and is a recruiting/retention asset.
+    source:
+      lines:
+      - 1052
+      - 1117
+  - id: 0.2c
+    title: Develop Migration Cost Estimates
+    do: Build a budget structure despite inherent imprecision; estimate each cost-driver category separately rather than waiting for precise data.
+    output: Multi-year budget commitment
+    detail: 'Cost Driver Taxonomy (eight categories): Discovery and inventory tooling (SandboxAQ, IBM Quantum Safe, Keyfactor, ISARA Advance, CryptoNext or equivalent, plus deployment/integration and ongoing license costs); Cryptographic engineering labor (typically the largest category; PQC talent scarce, premium rates); Vendor PQC licensing and upgrades (HSM firmware upgrades alone $50K–$500K+ depending on module count); HSM and hardware refresh (older HSMs may not support PQC key types; procurement lead times 6–12 months; budget hardware + commissioning, key ceremony, migration); PKI modernization (CA upgrades, automated certificate lifecycle management, root CA ceremonies, intermediate CA provisioning — required regardless of PQC for shorter certificate lifetimes); Performance and capacity uplift (CPU, memory, bandwidth, storage increases); Testing environments (production-mirror environments); Program management overhead (QRPM, PMO tools, SteerCo/working-group facilitation, training,
+      vendor management, compliance tracking, board reporting). The Infrastructure Modernization Umbrella: combine independently justified investments (PKI automation for 47-day certificate lifetimes, FIPS 140-3 upgrades for FIPS 140-2 sunset, HSM refresh for EOL hardware, library/platform upgrades for CVEs) into a single ''cryptographic infrastructure modernization'' program. Reference Program Economics (anchors from a published large global telco program, PostQuantum.com): discovery and inventory $2–5M for a large operator (~1 year); assessment/planning ~1–2% of total but determines whether the remaining 98% is spent in the right order; implementation dominates; steady-state ops a few million/year. Order of magnitude $300–500M over a decade for a major global telco vs U.S. federal civilian comparator $7.1B for 2025–2035 (OMB). Peak staffing dozens of FTEs (the telco model peaked around 50). Present gross program cost and net incremental cost separately.'
+    source:
+      lines:
+      - 1128
+      - 1224
+  - id: '0.3'
+    title: Establish Governance Structure
+    do: Stand up the program's roles, workstreams, decision cadence, board oversight model, risk appetite statement, and three-lines-of-defense structure.
+    output: Governance structure
+    detail: 'Roles: Executive Sponsor (CISO or CIO) — visible owner, clears roadblocks, briefs board quarterly, reports to Board/Risk Committee; Steering Committee (SteerCo) — cross-functional (Security, Enterprise Architecture, AppDev, Infrastructure/NetSec, PKI/Identity, Compliance/Legal, Procurement, Business Unit reps), reports monthly to Sponsor; Quantum Readiness Program Manager (QRPM) — day-to-day leader, runs plan/risk log/KPIs, reports weekly to SteerCo lead; Workstream Leads (one per domain) — execute phase activities, report weekly to QRPM. Eight workstreams: (1) Inventory & Discovery (Crypto-BOM ownership); (2) Network & TLS/VPN (hybrid rollouts); (3) PKI & Code Signing (roots, issuers, toolchains); (4) Applications & Platforms (libraries, service mesh, cloud); (5) Embedded/IoT/OT (gateways, compensating controls); (6) Policy/Compliance/Procurement (standards, clauses); (7) Vendor Orchestration (roadmaps, SLAs); (8) Education & Change Management (training, comms). Decision cadence:
+      Weekly PMO; Monthly SteerCo; Quarterly Board/Risk Committee. Program leadership: the CISO should lead in most organizations (PQC is a security risk response, not a tech refresh); CIO co-sponsors and chairs technical workstreams. Board oversight runs through the existing risk/audit committee: initial briefing 60–90 min once during Phase 0; quarterly KPI review 15–20 min (five board KPIs — Coverage, Trust, Inventory, Vendors, Agility); annual risk appetite review; escalation triggers (material CRQC timeline change, program >6 months behind regulatory buffer, confirmed vulnerability in a deployed PQC algorithm, Tier 1 vendor abandoning PQC without alternative). Risk Appetite operates at strategic level plus operational tolerances (illustrative): HNDL ≤20% of >10-year secrecy data quantum-vulnerable by end of 2027, 0% by end of 2029; TNFL all production software/firmware signing using NIST-approved quantum-resistant signatures by end of 2027, all CA signing keys PQC-capable by end of 2029;
+      Regulatory compliance ≥12 months before deadline; Crypto-agility mandatory for all systems deployed from Q3 2026. Three Lines of Defense: first line owns/executes; second line (CISO/risk/compliance, QRPM sits here) governs; third line (internal audit) provides assurance. SOC must develop detection for five quantum-related threat scenarios; GRC owns the risk appetite statement, KRI framework, regulatory intelligence, audit evidence dossier, insurance prep; the critical SOC/GRC handoff is the cryptographic inventory (a shared, machine-readable, SIEM-integrated asset — a Phase 1 architecture decision).'
+    source:
+      lines:
+      - 1232
+      - 1475
+  - id: '0.4'
+    title: Draft the Program Charter
+    do: Produce a one-page charter document.
+    output: Approved program charter
+    detail: 'Covers: Purpose (quantum-safe migration and crypto-agility); Scope (TLS/VPN, PKI/code-signing, applications/platforms, embedded/OT, policy/procurement, vendors, training); Success criteria (stop new HNDL exposure; protect long-lived trust anchors; meet 2030/2035 regulatory timelines; embed crypto-agility as organizational capability); Cadence (weekly PMO; monthly SteerCo; quarterly board); Escalation path (sponsor decides on funding/dates; risk acceptance decisions documented and auditable).'
+    source:
+      lines:
+      - 1486
+      - 1500
+  - id: '0.5'
+    title: Conduct Initial Scoping Assessment
+    do: Before launching full discovery, perform a rapid (2–4 week) scoping assessment to establish program boundaries.
+    output: Initial scoping assessment
+    detail: (1) Identify the top 20 revenue-generating or mission-critical systems. (2) For each, determine primary cryptographic protocols in use, data sensitivity classification, number of dependent systems, vendor ownership vs internal control. (3) Estimate the approximate size of the cryptographic estate (TLS endpoints, certificates, VPN tunnels, HSM-protected keys, code-signing pipelines). (4) Identify the 5–10 vendors whose PQC readiness will most constrain the migration timeline. Becomes the input for Phase 1 prioritization and calibrates Year 1 budget and staffing.
+    source:
+      lines:
+      - 1504
+      - 1520
+  maturity_indicators:
+    0: No executive awareness of quantum risk; no budget discussion
+    1: Quantum risk acknowledged; no formal program
+    2: Charter approved; QRPM appointed; Year 1 budget secured
+    3: Multi-year budget committed; SteerCo operational; scoping assessment complete
+    4: Program integrated into enterprise risk register; quantum risk reported to board quarterly alongside other strategic risks
+  common_failures:
+  - title: '''Innovation project'' framing'
+    why: Treating PQC migration as an R&D initiative or skunkworks project instead of a funded, governed program guarantees it will be deprioritized when competing for resources with operational imperatives.
+    source:
+      lines:
+      - 1600
+      - 1602
+  - title: Single-year budget
+    why: Securing one year of funding and hoping to 'show results' to justify the next year. PQC migration is a 4–15 year program; without multi-year commitment, teams cannot plan realistically or retain specialized talent.
+    source:
+      lines:
+      - 1604
+      - 1606
+  - title: Missing business unit representation on SteerCo
+    why: The migration touches every application, integration, and vendor relationship; without business-unit buy-in at the governance level, workstream leads face constant political resistance.
+    source:
+      lines:
+      - 1608
+      - 1610
+  - title: Delegating to vendors
+    why: Assuming 'our vendors will sort this out' and not running an internal program. Vendors update products on their own timelines; without an internal program driving requirements, tracking commitments, and testing deployments, the organization has no control over its migration timeline. The single most dangerous misconception.
+    source:
+      lines:
+      - 1612
+      - 1616
+  - title: Premature lockdown
+    why: Reacting to quantum headlines or a regulator's inquiry by abruptly restricting data access or disabling systems. HNDL risk is not reduced by making data harder to use; already-harvested traffic is already gone, and knee-jerk restrictions burn operational goodwill the program will need for a decade. Channel urgency into the structured program instead.
+    source:
+      lines:
+      - 1618
+      - 1623
+  gate:
+    id: G0
+    maps_to_transition: G0->G1
+    note: 'Phase 0 exit corresponds to the executive-mandate gate: charter approved, multi-year budget committed, governance structure (SteerCo confirmed, QRPM appointed, cadence established), initial scoping assessment, and board briefing delivered.'
+- id: p1
+  number: 1
+  name: Phase 1 — Discovery & Inventory
+  cadence: iterative / continuous (transitions from project-mode initial discovery into a permanent continuous-discovery capability; never fully ends in mature programs)
+  summary: Build a comprehensive, continuously updated inventory of all cryptographic usage across IT, OT, cloud, IoT, and third-party systems. Foundational activity on which every subsequent phase depends — you cannot migrate what you cannot see. Major organizations should plan 12–24 months of dedicated team effort; no single tool provides 100% discovery.
+  overlaps_with: Runs in parallel with Phase 2 from an early stage (CBOM data structure defined before large-scale discovery so inventory populates the CBOM directly); also generates early inputs for Phase 7 (vendor dependency data) and Phase 3 (first risk-relevant metadata); and runs in parallel with itself indefinitely as continuous discovery.
+  source_pages:
+  - 38
+  - 58
+  source:
+    lines:
+    - 1660
+    - 2670
+  activities:
+  - id: '1.0'
+    title: Risk-Driven Scoping — Decide What to Inventory First
+    do: Apply an 80/20 prioritization to determine where to focus initial discovery effort before launching broad discovery; an architecture-first approach concentrating discovery where risk concentrates.
+    output: Risk-driven scoping document
+    detail: 'Step 1 — Identify Tier-1 systems using existing organizational knowledge (revenue data, business impact assessments, regulatory scope documents, incident history, architecture diagrams): top 20–50 systems by business criticality. Step 2 — Classify by exposure type: Internet-exposed flows (external TLS, partner VPNs, email gateways) → immediate HNDL risk; long-lived secrecy data with confidentiality requirement >10 years → highest HNDL value; long-lived trust anchors with signature validity 5+ years (PKI roots, code-signing, firmware signing) → TNFL risk. Step 3 — Assign discovery priority tiers: Priority A (internet-exposed + long-lived secrecy data or trust anchors) discover first, target 30–60 days; Priority B (internal Tier-1 with significant data sensitivity) discover next, target 60–120 days; Priority C (everything else) discover on an ongoing basis, target 6–12 months. Delivers 70–80% of risk coverage with 20–30% of total discovery effort; Priority A output is sufficient
+      to begin Phase 2 CBOM population and Phase 3 risk scoring.'
+    source:
+      lines:
+      - 1755
+      - 1795
+  - id: '1.1'
+    title: Establish Three Parallel Inventory Tracks
+    do: Run integrated discovery across three interdependent domains coordinated through a single governance structure, even if executed by different teams with different tools.
+    output: Cryptographic asset inventory; Sensitive data map (integrated); Systems and assets register (integrated)
+    detail: 'Track A — Cryptographic Inventory: all uses of cryptography (algorithms, key sizes, protocols, libraries, certificate chains, key lifetimes). Track B — Sensitive Data Discovery and Classification: catalogs sensitive data by confidentiality requirements and retention periods; determines HNDL urgency. Track C — Systems and Assets Inventory: hardware/software assets, criticality, vendor ownership, lifecycle status; determines feasibility/sequencing. The intersection of all three enables defensible Phase 3 prioritization. Confidentiality horizons (Track B): for each data category assign a horizon in order of precedence: (1) statutory/regulatory retention (health 10–30y, audit/tax 7–10y), (2) contractual confidentiality (NDA survival), (3) IP lifetime (trade secrets 15y+), (4) business value decay (M&A 2–5y, strategic plans 3–7y, pricing 1–3y). Longest horizon governs; record on each data store; Phase 3 Dimension 1 consumes it. Resist classifying everything as long-lived.'
+    source:
+      lines:
+      - 1806
+      - 1841
+  - id: '1.2'
+    title: Deploy Cryptographic Discovery — Layered Approach
+    do: Deploy a combination of discovery techniques because no single technique covers all cryptographic usage; supplement with tool selection across capability categories.
+    output: Cryptographic asset inventory
+    detail: 'Five layers: Layer 1 Network Traffic Analysis (passive monitoring captures TLS/SSH/IPsec handshakes — cipher suites, certificate chains, key sizes, protocol versions; cannot see encrypted payloads or data at rest). Layer 2 Static Code Analysis (scan repos for crypto API calls, hardcoded algorithms, library imports; cannot detect runtime/dynamically loaded crypto or third-party binaries without source). Layer 3 Configuration and Certificate Scanning (enumerate certs from cert mgmt + CT logs, scan network device configs, query cloud KMS metadata; shows configured policy not runtime negotiation). Layer 4 Runtime and Binary Analysis (for systems without source — vendor appliances, legacy binaries, embedded firmware; requires specialized skills). Layer 5 Manual Investigation (interviews, architecture docs, vendor security docs, HSM/KMS usage logs; catches custom/proprietary/embedded crypto; labor-intensive). Tool categories: (1) Dedicated Cryptographic Discovery Platforms (CBOM output
+      — SandboxAQ, IBM, Keyfactor [acquired InfoSec Global, CipherInsights], ISARA Advance, CryptoNext, Palo Alto Networks); (2) Network Traffic Analysis; (3) SAST with crypto detection; (4) SCA/SBOM; (5) Certificate/PKI Discovery (incl. CT logs); (6) CSPM; (7) Binary Analysis/Reverse Engineering; (8) Extract crypto metadata from existing security tools (SIEM, vuln scanners — rapid baseline); (9) AI-Assisted Analysis (emerged 2026; ~92% functional correctness reported on crypto code migration; treat findings as candidates requiring verification). Recommendation: deploy Categories 1–2, supplement with 7/8 for hard-to-reach systems, manual investigation (Layer 5) for the top 20 critical systems; prioritize tools producing CycloneDX CBOM.'
+    source:
+      lines:
+      - 1845
+      - 1998
+  - id: '1.3'
+    title: Map the Cryptographic Estate
+    do: For every cryptographic instance discovered, record a standard set of fields.
+    output: Cryptographic asset inventory
+    detail: 'Fields per instance: System/Asset ID (linked to CMDB); Cryptographic Function (key exchange, signing, encryption at rest); Algorithm (RSA-2048, ECDHE-P256, AES-256-GCM); Key Size (bits); Protocol (TLS 1.2, SSH 2.0, IPsec IKEv2); Library/Implementation (OpenSSL 3.0.12, BoringSSL, Java 17 JCA); Certificate Details (issuer, validity, chain depth); Key Lifetime (ephemeral, 1 year, 20-year root); Data Sensitivity (Confidential/Restricted/Public); Quantum Vulnerability (Shor, Grover, or neither); Owner; Vendor Dependency; Control Posture (Full/Partial/No control of both endpoints).'
+    source:
+      lines:
+      - 2002
+      - 2052
+  - id: '1.4'
+    title: Address the Asset Discovery Problem
+    do: Confront the asset discovery gap directly — you cannot scan a system you do not know exists — by going far beyond the CMDB across many data sources.
+    output: Systems and assets register (integrated); Discovery gap register
+    detail: 'Eleven asset discovery sources: (1) CMDB (often stale; validate/extend); (2) ITAM databases; (3) Procurement/purchasing records; (4) Cloud consoles/APIs (AWS Config, Azure Resource Graph, GCP Cloud Asset Inventory, CSPM — incl. non-production accounts); (5) Network scanning/traffic (Nmap, Shodan, NetFlow, DNS/DHCP logs — rogue/shadow IT/IoT); (6) Certificate Transparency logs; (7) DNS zone files/records; (8) Physical walkthroughs/site surveys (only reliable way for OT/embedded); (9) Service desk/incident records; (10) Third-party/vendor-managed systems; (11) M&A history. Decision Point: if the org cannot produce >80% IT / >60% OT asset coverage, it has a foundational problem to address; the quantum readiness program often becomes the forcing function for asset-inventory completeness.'
+    source:
+      lines:
+      - 2062
+      - 2172
+  - id: '1.5'
+    title: Integrate with Existing Data Sources
+    do: Do not build the cryptographic inventory from scratch in isolation; integrate existing organizational data to save effort, improve accuracy, and inherit business context.
+    output: Cryptographic asset inventory; Systems and assets register (integrated)
+    detail: 'Integrate: CMDB (ownership, lifecycle, criticality, relationships); ITAM (hardware models, firmware, software licenses); Business Impact Assessments (criticality, RTO/RPO — flows into Phase 3 risk scoring); Data classification registers (feed HNDL scoring); Certificate Management Systems (inventory, expiry, issuer relationships, renewal history); SBOM (library versions, dependency trees, vulns); Vulnerability Management (crypto-library CVEs); CSPM (cloud encryption configs, KMS key policies); Network Security Monitoring (traffic flows, protocol negotiations); Enterprise Architecture repos; Procurement systems (vendor catalogs, contracts, licenses); Service catalogs/API registries; IAM systems (auth methods — cert-based, SAML/OIDC crypto deps); Backup/DR systems (encryption-at-rest configs, backup-encryption keys). The more sources integrated, the faster and more accurate the inventory.'
+    source:
+      lines:
+      - 2176
+      - 2244
+  - id: '1.6'
+    title: Establish Continuous Discovery
+    do: Treat the cryptographic inventory as a living data set maintained continuously, spanning CI/CD integration, passive monitoring, change management, scheduled rescans, external intelligence, alerting, culture, and effectiveness metrics.
+    output: Continuous discovery operating model
+    detail: 'An inventory not continuously maintained decays within weeks; continuous discovery is also a prerequisite for crypto-agility. 1.6.1 CI/CD integration (SAST gates flag new quantum-vulnerable API calls; SCA dependency scanning; container/IaC scanning; CBOM auto-generation on deploy). 1.6.2 Passive network monitoring (taps/SPAN at DC borders, cloud transit, VPN concentrators, internet edge; baselines + deviation alerts). 1.6.3 Change management integration (''Cryptographic Impact'' field on CAB templates; CBOM update as change-approval condition). 1.6.4 Scheduled rescans (Quarterly full network; Semi-annual deep; Annual comprehensive incl. physical OT walkthroughs; event-triggered after deployments/M&A/vuln disclosures). 1.6.5 External monitoring/intelligence (CT logs, EASM, crypto vuln intel cross-referenced to CBOM, standards/algorithm monitoring re-flagging entries for Phase 3 re-scoring). 1.6.6 Tiered alerting: Critical (deprecated/broken crypto in production, unknown internet-facing
+      endpoint — remediate/isolate within 72h); High (quantum-vulnerable algorithm in new Tier-1 deploy — plan within 2 weeks); Medium (CBOM drift — within 1 month); Informational (log, next review). 1.6.7 Culture/training (train developers, designate crypto champions, feedback channels, inventory maintenance in objectives). 1.6.8 Effectiveness metrics: CBOM freshness ≥90% updated within 90 days; discovery-to-CBOM lag within 5 business days; drift rate <5%; unknown-unknowns closure −20%/quarter; time-to-detect new unauthorized endpoint within 7 days.'
+    source:
+      lines:
+      - 2248
+      - 2498
+  maturity_indicators:
+    0: No cryptographic inventory exists; no awareness of the need
+    1: Partial manual inventory of obvious systems (web servers, VPN); CMDB-only asset register; no continuous discovery
+    2: Risk-driven scoping complete; automated discovery deployed on Priority A systems; ≥70% Tier-1 coverage; inventory is queryable; classical vulnerabilities being remediated; multiple asset data sources cross-referenced
+    3: ≥90% coverage; continuous discovery in CI/CD and passive monitoring; integrated with CMDB, SBOM, BIA, and certificate management; change management integration live; crypto champions designated; alerting framework operational
+    4: Real-time cryptographic posture monitoring with tiered alerting; automated drift detection; coverage spans IT, OT, cloud, and third-party; discovery effectiveness metrics tracked and reported; discovery gap register trending toward zero
+  common_failures:
+  - title: Interview-driven inventory
+    why: Relying on application owners to self-report cryptographic usage; people don't know what crypto their systems use. Automated discovery supplemented by manual investigation is the only defensible approach.
+    source:
+      lines:
+      - 2599
+      - 2601
+  - title: Spreadsheet-only inventory
+    why: A static spreadsheet becomes stale within weeks; the inventory must be maintained in a queryable system with automated refresh.
+    source:
+      lines:
+      - 2603
+      - 2605
+  - title: Waiting for 100% completeness before proceeding
+    why: Completeness is asymptotic — you will never find everything. Use the 80/20 risk-driven scoping (Activity 1.0) to deliver actionable results quickly, proceed to Phase 2/3, and continue discovery in parallel.
+    source:
+      lines:
+      - 2607
+      - 2609
+  - title: Ignoring OT and embedded systems
+    why: These are often the hardest to discover AND the hardest to migrate; excluding them guarantees surprises later. Physical walkthroughs are essential for OT environments.
+    source:
+      lines:
+      - 2611
+      - 2613
+  - title: Trusting a single tool for coverage
+    why: No cryptographic discovery tool covers all five layers (network, code, config, runtime, manual). Deploy tools from multiple categories plus manual investigation.
+    source:
+      lines:
+      - 2615
+      - 2617
+  - title: CMDB-only asset discovery
+    why: The CMDB is rarely complete; relying solely on it undercounts the estate, particularly cloud resources, shadow IT, OT devices, and vendor-managed systems. Integrate the full range of data sources in Activity 1.4.
+    source:
+      lines:
+      - 2619
+      - 2622
+  - title: Ignoring the immediate classical findings
+    why: A quantum-focused inventory inevitably surfaces classically vulnerable cryptography; failing to remediate immediately wastes near-term security value and undermines the business case. Report and remediate classical findings in parallel.
+    source:
+      lines:
+      - 2624
+      - 2629
+  - title: Treating discovery as a project with an end date
+    why: Discovery is a permanent operational capability, not a phase that 'completes'. Organizations that disband the discovery team after the initial inventory find their CBOM becomes stale within 6 months.
+    source:
+      lines:
+      - 2631
+      - 2634
+  gate:
+    id: G1
+    maps_to_transition: G1->G2
+    note: 'Phase 1 exit: risk-driven scoping document; cryptographic asset inventory (Priority A ≥90% within 60 days, ≥90% of all Tier-1 within 12 months); classical vulnerability findings reported; integrated sensitive-data map and systems/assets register; discovery gap register; continuous-discovery operating model.'
+- id: p2
+  number: 2
+  name: CBOM & Documentation
+  cadence: parallel
+  summary: Transform raw Phase 1 inventory data into a durable, queryable, standardized Cryptographic Bill of Materials (CBOM) that serves as the single source of truth for all subsequent phases, making PQC migration auditable, plannable, and measurable.
+  overlaps_with: Runs concurrently with Phase 1 (CBOM schema/tooling defined in the first weeks of Phase 1 so discovery data flows in structured) and with Phase 3 (ready CBOM entries, especially Layers 1–2, can be scored before full CBOM completion).
+  source_pages:
+  - 59
+  - 69
+  activities:
+  - id: '2.1'
+    title: Select CBOM Format and Tooling
+    do: Choose the CBOM format and hosting platform and define the per-entry record structure. Recommended format is CycloneDX, the de facto CBOM standard with native support for cryptographic asset types (algorithms, certificates, keys, protocols, related dependencies).
+    output: CycloneDX CBOM (format/tooling decision and record schema)
+    detail: 'CycloneDX is supported by OWASP, adopted by the PQCC, and integrated into tooling from IBM, SandboxAQ, and the Linux Foundation''s PQCA (CBOMkit). Each CBOM entry captures at minimum: Component identifier (links to asset inventory/CMDB); Algorithm OID; Key size / security parameter; Protocol context (TLS, IPsec, S/MIME); Implementation (library + version); Certificate reference; Data classification (from Track B of Phase 1); Quantum vulnerability status (Vulnerable (Shor), graded by quantum attack resource tier per algorithm and key size per Phase 3; weakened (Grover); safe); Migration status (Not started / Planned / In progress / Hybrid / PQC-only / Not applicable); Owner; Vendor dependency flag (self-controlled vs vendor-dependent).'
+    source:
+      lines:
+      - 2803
+      - 2842
+  - id: '2.2'
+    title: Populate CBOM from Inventory Data
+    do: Map Phase 1 inventory data into CBOM records as a data transformation and enrichment exercise.
+    output: Populated CycloneDX CBOM records
+    detail: 'Six steps: 1) Import automated discovery results into CycloneDX using tool-native exporters or CBOMkit; 2) Enrich with manual investigation findings for systems not covered by automated tools; 3) Cross-reference with SBOM data to establish library dependency chains; 4) Link to certificate management system for PKI-related entries; 5) Add data classification tags from Track B of Phase 1; 6) Flag vendor dependencies from Track C of Phase 1.'
+    source:
+      lines:
+      - 2852
+      - 2868
+  - id: '2.3'
+    title: Integrate CBOM into Operational Processes
+    do: Embed the CBOM into operational processes so it is a live system rather than a static document.
+    output: CI/CD integration
+    detail: 'Integrate into: CI/CD pipelines (new deployments auto-generate/update CBOM entries; block deployments introducing quantum-vulnerable algorithms without documented justification and migration plan); Change management (CAB reviews include CBOM impact assessment); Vendor onboarding (new vendor products must provide CBOM-compatible cryptographic documentation as a procurement requirement); Audit and compliance (CBOM snapshots at regular intervals provide audit trail for regulatory evidence).'
+    source:
+      lines:
+      - 2872
+      - 2887
+  - id: '2.4'
+    title: Establish CBOM Freshness Governance
+    do: Define trigger-to-action rules that keep the CBOM current.
+    output: CBOM governance policy
+    detail: 'Trigger/Action pairs: New system deployment → auto-generate CBOM entries via CI/CD; Library version update → update implementation version, check for algorithm changes; Certificate renewal/rotation → update certificate reference and validity dates; Quarterly full scan → reconcile CBOM against latest discovery results, flag discrepancies; Vendor product update → request updated CBOM data from vendor, update entries; Algorithm deprecation notice → flag all CBOM entries using deprecated algorithm, trigger Phase 3 re-scoring.'
+    source:
+      lines:
+      - 2890
+      - 2916
+  - id: '2.5'
+    title: Secure the CBOM and Program Artifacts
+    do: Protect the CBOM, QRA, and prioritized migration backlog, which together form a map of every weak cryptographic point in the enterprise and a target-selection shopping list for HNDL adversaries.
+    output: CBOM protection controls
+    detail: 'Because the framework deliberately widens the CBOM''s access surface (SIEM/SOC integration, GRC consumption, vendor CBOM exchange), protection is non-optional: Classify at the highest standard tier (typically Restricted); Apply role-based access with least privilege (broad dashboard access exposes aggregated posture metrics, not queryable system-level vulnerability detail); Log and review access (queries enumerating unmigrated systems get vulnerability-management-DB-level scrutiny); Control external sharing (vendors receive only entries relevant to their own products; auditors/regulators receive point-in-time extracts; consultant access ends with the engagement); Name CBOM exfiltration as a detection concern (the SOC''s data exfiltration monitoring — SOC Use Case 5 — should include the CBOM repository and GRC evidence stores among high-sensitivity assets).'
+    source:
+      lines:
+      - 2920
+      - 2963
+  maturity_indicators:
+    0: No CBOM exists; cryptographic documentation is ad hoc or absent
+    1: Partial CBOM in spreadsheet form covering known systems; no standard format
+    2: CycloneDX CBOM operational for Layers 1–2; queryable; SBOM linkage established for key applications
+    3: CBOM covers Layers 1–3; integrated into CI/CD; freshness governance enforced; change management integration live
+    4: CBOM is a real-time operational asset; auto-updated on deployment; Layer 4 gaps systematically managed through vendor governance; CBOM drives automated compliance reporting
+  common_failures:
+  - title: Completeness trap
+    why: Insisting on 100% CBOM coverage before proceeding to risk scoring and migration. Layer 4 (embedded/third-party) will never be fully visible — accept this, document the gaps, and manage through vendor governance.
+    source:
+      lines:
+      - 3054
+      - 3056
+  - title: CBOM as document, not system
+    why: Producing a CBOM in a PDF or spreadsheet that is never updated. The CBOM must be a live, queryable data set integrated into operational processes.
+    source:
+      lines:
+      - 3058
+      - 3060
+  - title: Ignoring the SBOM-CBOM linkage
+    why: CBOM entries without SBOM context miss critical dependency chains; a vulnerable algorithm in a widely-shared library affects every application that depends on it.
+    source:
+      lines:
+      - 3062
+      - 3064
+  gate:
+    id: G2
+    maps_to_transition: G2->G3
+    note: Phase 2 exit (CycloneDX CBOM operational for Layers 1–2 with freshness governance and protection controls) corresponds to the G2->G3 transition; authoritative gate criteria live in the global stage_gates table.
+- id: p3
+  number: 3
+  name: Risk Scoring & Prioritization
+  cadence: iterative
+  summary: Translate CBOM data into a defensible, sequenced migration priority list, producing the prioritized backlog and Quantum Readiness Assessment (QRA) that drive Phase 4 roadmap planning and Phase 5 execution sequencing. A structured, transparent scoring model depoliticizes sequencing by replacing opinion with repeatable criteria.
+  overlaps_with: Runs in parallel with Phase 2 (begins as soon as CBOM entries are sufficiently enriched, scoring Layers 1–2 while Layer 3 discovery continues) and with itself iteratively — the QRA is a living document re-run at least quarterly as inventory, regulatory deadlines, vendor timelines, and NIST standards evolve.
+  source_pages:
+  - 70
+  - 80
+  activities:
+  - id: '3.1'
+    title: Define Risk Scoring Model
+    do: Define a quantum-specific risk scoring model that extends established information security risk methodologies (ISO/IEC 27005, NIST SP 800-30, NIST RMF). Default weights are a starting configuration to be calibrated by sector, risk profile, and regulatory context. Score each CBOM entry across four dimensions.
+    output: Risk scoring model (four-dimension, calibrated weights)
+    detail: 'Dimension 1 — Data Sensitivity × Exposure Window (HNDL Risk): Data confidentiality requirement in years (High weight; >15yr=Critical, 10–15yr=High, 5–10yr=Medium, <5yr=Low); Data volume/flow rate (Medium); Accessibility to adversary (High; Internet-facing=Critical, Partner-facing=High, Internal=Medium, Air-gapped=Low). Dimension 2 — Trust Infrastructure Criticality (TNFL Risk): Key/certificate lifetime (High; Root CA (20yr)=Critical, Intermediate CA (10yr)=High, End-entity (1yr)=Medium); Scope of trust dependency (High); Signature verification period (Medium; Firmware signed 15yr=Critical). Dimension 3 — Migration Feasibility: Control posture (High; Full control=Easy, Vendor-dependent=Hard); Protocol/standard maturity (Medium); Interoperability constraints (Medium); System age and architecture (Medium). Dimension 4 — Regulatory and Compliance Pressure: Specific regulatory deadline (High; within 2 years=Critical); Audit exposure (Medium); Contractual requirement (Medium). Algorithm-Specific
+      Vulnerability Weighting: quantum attack cost scales with key size, not classical strength; at equal classical security P-256 vs RSA-3072, breaking the ECC key needs ~2.6× fewer logical qubits and two orders of magnitude fewer Toffoli gates; treat ECC-256 and RSA-2048 as the same urgency tier, with RSA-3072+ one tier behind; do not deprioritize ECC-protected assets; record algorithm + key size in each CBOM entry so the weighting is applied mechanically.'
+    source:
+      lines:
+      - 3194
+      - 3307
+  - id: '3.2'
+    title: Calculate Priority Scores
+    do: Compute a composite priority score for each CBOM entry and classify it into a migration urgency tier.
+    output: Scored and tiered CBOM
+    detail: 'Priority = (HNDL Risk × 0.35) + (TNFL Risk × 0.25) + (Regulatory Pressure × 0.25) + (Migration Feasibility Inverse × 0.15). Feasibility is inverted because harder migrations may need earlier starts (longer lead times) despite lower risk; weighting reflects HNDL as the most immediately exploitable threat. Urgency tiers: Tier 1 Immediate (Critical HNDL + high accessibility + feasible; begin within 6 months, hybrid within 12); Tier 2 High Priority (High HNDL/TNFL + regulatory deadline within 3 years; begin within 12 months, hybrid within 24); Tier 3 Standard (Medium risk + feasible with vendor coordination; begin within 24 months, complete within regulatory deadline); Tier 4 Long Tail (Lower risk OR currently infeasible; monitor, compensating controls, migrate when feasible).'
+    source:
+      lines:
+      - 3318
+      - 3348
+  - id: '3.3'
+    title: Apply Migration Sequencing Logic
+    do: 'Sequence the prioritized backlog within the Two-Track Migration Model from Phase 5: Track A (key exchange and confidentiality) and Track B (signatures, PKI, authentication) run as parallel workstreams, not a serial list. v2.1 retires the earlier key-exchange-then-signatures-then-data-at-rest serialization because treating signatures as second systematically delays the migrations with the longest lead times.'
+    output: Migration sequencing recommendation
+    detail: 'Within each tier: 1) Track A — key exchange (TLS, VPN, key establishment), sequenced by exposure: internet-facing TLS and partner VPNs first (each migrated channel immediately stops creating new HNDL-vulnerable sessions), then internal east-west, then app-embedded key establishment. 2) Track B — signatures and PKI (code/firmware signing, CA infrastructure, document signing), sequenced by trust-anchor longevity and lead time: code and firmware signing first (a forged update cascades through every downstream system — SolarWinds pattern without the months of infiltration), then CA modernization and key-lifetime reduction, then end-entity/document signing; TNFL exploitation requires an operational CRQC, but signature migration has the longest lead times (PKI architecture, toolchain, HSM dependencies), which is why Track B starts in parallel. 3) Data at rest (within Track A): re-encrypt long-lived archives with AES-256 or apply PQC-aware key wrapping (Activity 5.5); lower urgency
+      than data in transit, but stores with the longest confidentiality horizons must not fall off the roadmap.'
+    source:
+      lines:
+      - 3352
+      - 3389
+  - id: '3.4'
+    title: Produce the Quantum Readiness Assessment (QRA)
+    do: Consolidate risk scoring into a formal Quantum Readiness Assessment document as the defensible basis for migration planning and regulatory evidence.
+    output: Quantum Readiness Assessment (QRA)
+    detail: 'QRA contents: Executive summary (overall quantum risk posture; aggregate maturity score; comparison to regulatory deadlines); Heatmap (risk across the estate by system tier and domain); Prioritized migration backlog (sequenced list of all CBOM entries with tier assignments, target timelines, owner assignments); Gap analysis (where posture falls short of regulatory requirements, with remediation actions); Compliance mapping (QRA outputs mapped to NIST, CNSA 2.0, ETSI, and sector-specific requirements).'
+    source:
+      lines:
+      - 3393
+      - 3410
+  maturity_indicators:
+    0: No quantum risk assessment exists
+    1: Informal awareness of which systems are "probably vulnerable"; no structured scoring
+    2: Formal risk scoring model applied to Tier-1 CBOM entries; prioritized migration backlog exists; QRA document produced
+    3: QRA updated quarterly; all CBOM entries scored and tiered; migration sequencing drives Phase 5 execution; legal risk dimension assessed
+    4: Continuous risk posture management; automated re-scoring when CBOM changes or regulatory deadlines shift; QRA integrated into enterprise risk register and audit cycle
+  common_failures:
+  - title: Equal priority for everything
+    why: Treating all quantum-vulnerable crypto as equally urgent, which dilutes resources and yields no meaningful progress on the highest-risk systems.
+    source:
+      lines:
+      - 3493
+      - 3495
+  - title: Ignoring migration feasibility in prioritization
+    why: Assigning highest priority to systems that cannot be migrated yet (no vendor support, no standard) while ignoring high-risk systems that could be migrated today.
+    source:
+      lines:
+      - 3497
+      - 3499
+  - title: Static risk assessment
+    why: Producing the QRA once and never updating it; risk scores change as standards mature, vendor products ship, and regulatory deadlines approach.
+    source:
+      lines:
+      - 3501
+      - 3503
+  - title: Neglecting the legal and data-retention dimension
+    why: Organizations storing long-lived encrypted data face compounding legal risk — data encrypted today with quantum-vulnerable algorithms may become decryptable later, potentially violating data-protection principles (e.g. GDPR security requirements) and contractual confidentiality. The QRA should prompt a legal risk assessment alongside the technical one; engage legal counsel early.
+    source:
+      lines:
+      - 3505
+      - 3515
+  - title: Assuming ECC's classical strength buys quantum time
+    why: Migrating RSA first because it is classically weaker misreads the threat model; quantum attack cost tracks key size, so 256-bit ECC keys are at least as exposed as RSA-2048 and more exposed than RSA-3072. Apply the algorithm-specific weighting in Activity 3.1.
+    source:
+      lines:
+      - 3517
+      - 3522
+  gate:
+    id: G3
+    maps_to_transition: G3->G4
+    note: Phase 3 exit (scored/tiered CBOM and a produced QRA with prioritized backlog ready for Phase 4) corresponds to the G3->G4 transition; authoritative gate criteria live in the global stage_gates table.
+- id: p4
+  number: 4
+  name: Phase 4 — Roadmap & Governance
+  cadence: continuous (living instrument; initial roadmap drafted as soon as first Phase 3 risk scoring outputs are available, revised quarterly thereafter)
+  summary: Translate the prioritized Phase 3 migration backlog into a multi-year execution plan with realistic milestones, resource allocations, vendor coordination timelines, and governance checkpoints. Establishes PMO discipline and models external constraints (vendor GA dates, hardware refresh, regulatory deadlines, scarce crypto skills) explicitly, not just internal work sequencing.
+  overlaps_with: Runs in parallel with Phases 5, 6, and 7 (roadmap is a living instrument revised quarterly); activates Phase 7 vendor engagement immediately; Phases 1 and 2 discovery/CBOM continue throughout
+  source_pages:
+  - 82
+  - 94
+  activities:
+  - id: '4.1'
+    title: Define Year-1 Starter Plan (90-Day Governance Sprint)
+    do: Deliver five things in the first 90 days across Organization, People, Plan, Policy/Procurement, and KPI pack; then execute a quarter-by-quarter Year-1 detailed plan (Q1-Q4) spanning Governance & People, Discovery & CBOM, Pilots & Technical, and Vendor & Policy workstreams.
+    output: Year 1 detailed plan
+    detail: 'Five deliverables: (1) Organization — executive sponsor and QRPM confirmed; SteerCo calendar and charter published; RACI matrix for all workstreams. (2) People — 10-to-20 person training cohort enrolled in PQC fundamentals; crypto champions designated per platform team. (3) Plan — Crypto-BOM v1 with >=70% Tier-1 coverage; 2 hybrid pilots selected (TLS and VPN); vendor questionnaires sent to top 10 strategic vendors. (4) Policy/Procurement — cryptographic policy updated (approved cipher suites include PQC hybrids; shorter key lifetimes for new certificates); PQC and crypto-agility clause added to all new RFPs and contract renewals. (5) KPI pack — baseline values established; Q+1 targets set; board reporting template ready. Quarterly plan: Q1 appoint QRPM/SteerCo/charter/RACI, deploy Priority A discovery on internet-facing Tier-1, begin CBOM structure design, select 2 pilot targets, set up lab/staging, send questionnaires to top 10 vendors; Q2 first SteerCo milestone review, complete
+      Priority A and begin Priority B discovery, publish Crypto-BOM v1 (>=70% Tier-1), execute pilots in lab/staging and measure baselines, classify vendors by PQC criticality; Q3 present QRA findings, refine Year 2 budget, begin Phase 3 risk scoring on Priority A, integrate CBOM into CI/CD, promote validated pilots to production canary (1-5% traffic), begin Wave 1 planning, follow up non-responsive vendors and insert PQC clauses into renewals; Q4 first formal quarterly board report, complete QRA for Tier-1, publish Crypto-BOM v2 (>=90% Tier-1, >=60% Tier-2), establish continuous discovery rhythm, complete canary validation and begin Wave 2, publish vendor PQC scorecard, set Year 2 vendor engagement calendar, finalize multi-year roadmap.'
+    source:
+      lines:
+      - 3653
+      - 3726
+  - id: '4.2'
+    title: Structure the Multi-Year Roadmap
+    do: Lay out a 5-year roadmap with a focus theme and key milestones per year.
+    output: Multi-year roadmap
+    detail: Year 1 Foundation — Crypto-BOM v1; 2-4 hybrid pilots (TLS, VPN); vendor commitments secured; policy updates; team training. Year 2 Tier-1 Rollout — hybrid/PQC deployed on all Tier-1 internet-facing endpoints; PKI key-lifetime reductions; dual-sign pilots for code signing. Year 3 Bulk Migration — Tier-2 systems migrated; internal east-west traffic hybrid-enabled; HSM firmware upgrades; vendor product upgrades tracked. Year 4 Long Tail & OT — Tier-3/4 systems; OT gateway protections; embedded device migration or containment; compensating controls where infeasible. Year 5 Hardening & Agility — eliminate remaining compensating controls; achieve crypto-agility across the estate; transition hybrid to PQC-only where ecosystem supports; achieve target maturity level.
+    source:
+      lines:
+      - 3730
+      - 3758
+  - id: '4.3'
+    title: Align to Infrastructure Refresh Cycles
+    do: Map migration tasks to existing planned expenditures so PQC piggybacks on already-funded infrastructure changes.
+    output: Multi-year roadmap (refresh-cycle alignment)
+    detail: 'Refresh-to-opportunity mapping: Data center network refresh -> PQC-capable switches/load balancers, hybrid TLS at edge; SD-WAN/VPN upgrade -> require PQC support in new concentrators, hybrid IPsec; Cloud migration wave -> PQC-capable TLS on cloud load balancers, cloud-native PQC KMS; PKI renewal/CA migration -> PQC-capable CA, hybrid/composite certs, shorter lifetimes; HSM replacement cycle -> procure PQC-capable HSMs (Thales Luna v7.9+, Utimaco Quantum Protect, or equivalent); Vendor contract renewal -> insert PQC roadmap requirements, crypto-agility clauses, SLAs; Application modernization -> cryptographic abstraction layers, replace hardcoded algorithm calls with provider pattern.'
+    source:
+      lines:
+      - 3762
+      - 3787
+  - id: '4.4'
+    title: Establish PMO Structure for Scale
+    do: For programs exceeding 10,000 tasks, stand up PMO machinery and map/track the critical dependency chains.
+    output: PMO operating model
+    detail: 'Establish: WBS aligned to the 8 workstreams from Phase 0; dependency mapping between workstreams; critical path analysis (longest dependency chain determines minimum program duration); resource leveling to avoid overloading shared teams (PKI, security architecture, vendor management); risk register with escalation triggers (e.g. ''if vendor X misses PQC GA date by >6 months, escalate to SteerCo for alternate vendor''). Critical dependency chains: CBOM v1 before risk scoring; risk scoring before pilot target selection; HSM firmware upgrade before HSM-dependent app migration; PKI CA modernization before dual-sign/PQC certificate deployment; library upgrade before application hybrid enablement; vendor PQC GA release before migration of vendor-dependent systems; network middlebox testing before production hybrid deployment on affected paths; procurement policy update before new system acquisitions. Typical critical path: Discovery -> CBOM -> Risk Scoring -> Roadmap -> Pilot -> Production
+      Rollout, with vendor engagement in parallel from Q1 Year 1 and vendor GA gating pilot/rollout (vendor dependency usually the longest segment).'
+    source:
+      lines:
+      - 3791
+      - 3867
+  - id: '4.5'
+    title: Manage the Roadmap as a Living Instrument
+    do: Treat the roadmap as a living instrument, not a static Gantt chart; run a quarterly roadmap review as a standing SteerCo agenda item presenting KPIs alongside leading indicators, and apply a decision playbook when adjustment is needed.
+    output: Multi-year roadmap (quarterly review governance)
+    detail: 'Leading indicators reviewed quarterly: Quantum technology signals (logical qubit milestones, resource-estimate drops, gate speed, lab announcements); Adversary signals (HNDL campaign intel, supply-chain targeting of PKI/code-signing toolchains); Standards/regulatory signals (NIST/IETF/ETSI/ISO updates, parameter changes, hybrid profiles to RFCs, new/earlier mandates); Vendor milestone signals (GA dates met/missed, new PQC products, FIPS validation completions). Decision playbook: KPIs off track -> add resources, descope lower-risk items, pull forward bridging patterns; leading indicators worsen (CRQC timeline shortens) -> move to accelerated track with pre-drafted resource request; performance issues at scale -> deploy offload/scale-out, adjust SLOs, extend pilot windows; critical vendor misses a date -> activate champion-challenger (Phase 7), deploy bridging pattern, escalate contractually.'
+    source:
+      lines:
+      - 3871
+      - 3916
+  - id: '4.6'
+    title: Define Milestone Gates
+    do: Define a milestone gate review for each phase transition, with explicit criteria and a decision authority per gate.
+    output: Milestone gate definitions (PMO operating model)
+    detail: 'Phase 4''s own exit gate is G3 -> G4: ''Multi-year roadmap approved; Year 1 plan resourced'' with Decision Authority = Executive Sponsor. (The full G0->G7 transition table is in stage_gates.)'
+    source:
+      lines:
+      - 3919
+      - 3942
+  - id: '4.7'
+    title: Pre-Draft the Accelerated Execution Profile
+    do: Pre-draft the accelerated track as a concrete, pre-approved artifact before it is needed, and exercise it annually as a tabletop scenario.
+    output: Accelerated Execution Profile (pre-approved package)
+    detail: 'Pre-approved package with five elements: (1) trigger conditions — a credible reassessment of CRQC timelines by a SteerCo-designated source, regulatory deadline compression, or a cryptanalytic event against a deployed algorithm; (2) compressed sequence — discovery narrows to Priority A, the CBOM accepts documented Layer 3/4 gaps, Waves 2–4 merge into a single accelerated rollout with relaxed canary thresholds, lower-tier systems move directly to compensating controls (segmentation, overlay encryption, key-lifetime reduction) rather than full migration; (3) pre-approved risk acceptances signed in advance so invocation does not wait on committee cycles; (4) pre-drafted resource request — contractor capacity identified, emergency procurement clauses pre-negotiated, pre-authorized budget reallocation; (5) activation authority — who can invoke and through which escalation path. Exercise the profile annually as a tabletop (the SOC Implementation foundation provides the exercise structure).'
+    source:
+      lines:
+      - 3953
+      - 3977
+  maturity_indicators:
+    0: No migration plan exists
+    1: Informal plan exists (spreadsheet, no governance); single-year horizon
+    2: Multi-year roadmap approved; Year 1 plan resourced; SteerCo operational; KPI baseline set
+    3: Quarterly roadmap reviews operational; dependency mapping maintained; refresh cycle alignment documented; vendor engagement tracked on dashboard
+    4: Roadmap is a living instrument with quarterly updates; contingency triggers defined and tested; leading indicators monitored; program transitioning from migration execution to ongoing posture management
+  common_failures:
+  - title: Planning in isolation from refresh cycles.
+    why: Building a PQC migration plan that ignores existing hardware refresh, cloud migration, and vendor contract renewal schedules, resulting in 'big-bang' budget requests that get rejected and missed opportunities to embed PQC into already-funded programs.
+    source:
+      lines:
+      - 4063
+      - 4066
+  - title: Underestimating the vendor dependency on the critical path.
+    why: The longest segment of most PQC migration critical paths is waiting for vendor products to ship PQC support; organizations that start vendor engagement in Year 2 instead of Q1 Year 1 discover too late that their timeline is vendor-constrained and cannot be compressed with internal effort alone.
+    source:
+      lines:
+      - 4068
+      - 4072
+  - title: Single-track roadmap with no contingencies.
+    why: A roadmap that assumes every vendor delivers on time, every pilot succeeds first try, and no regulatory timeline changes; build in explicit contingency triggers and pre-drafted acceleration/deceleration plans.
+    source:
+      lines:
+      - 4074
+      - 4077
+  - title: Treating the roadmap as a project plan rather than a program plan.
+    why: PQC migration is not a project with a defined end date but a permanent operational capability (crypto-agility); the roadmap should transition from 'migration execution' to 'ongoing cryptographic posture management' by Year 4-5, not declare victory and disband the team.
+    source:
+      lines:
+      - 4079
+      - 4083
+  - title: Governance without teeth.
+    why: Establishing a SteerCo that meets but does not make binding decisions, approve funding, or hold workstream leads accountable; the governance structure must have decision authority over budget, timelines, risk acceptance, and vendor escalation.
+    source:
+      lines:
+      - 4085
+      - 4088
+  gate:
+    id: G4
+    maps_to_transition: G3->G4
+    note: 'Phase 4 exit corresponds to gate G3 -> G4: ''Multi-year roadmap approved; Year 1 plan resourced'' (Executive Sponsor), per Activity 4.6''s milestone gate table at lines ~3932-3933'
+- id: p5
+  number: 5
+  name: Phase 5 — Pilots & Migration Execution
+  cadence: iterative (controlled pilots validated then scaled to production through sequential waves Wave 0-5)
+  summary: Execute the migration through controlled pilots, validate patterns, and scale to production through waves, operationalizing the Phase 4 roadmap starting with the highest-priority, most-controllable systems. Produces the program's first tangible security outcomes and deliberately surfaces infrastructure incompatibilities, performance regressions, middlebox failures, and interoperability problems in a controlled setting with tested rollback.
+  overlaps_with: Runs concurrently with Phase 6 (Infrastructure Modernization) and Phase 7 (Vendor Governance) in a tightly coupled feedback loop; Phase 1 discovery and Phase 2 CBOM maintenance continue throughout
+  source_pages:
+  - 95
+  - 115
+  activities:
+  - id: '5.1'
+    title: Select Pilot Targets
+    do: Choose 2-4 initial pilots based on Tier-1 priority from Phase 3 risk scoring, full organizational control of both endpoints, a measurable baseline, representative architecture, and rollback capability.
+    output: Pilot results reports (pilot candidates for both Track A and Track B)
+    detail: 'Selection criteria: Tier-1 priority; full organizational control (both endpoints, no external partner dependency); measurable baseline; representative architecture; rollback capability. Recommended starter pilots: Hybrid TLS on internet-facing web app (highest HNDL exposure, strong library/browser support — proves PQC key exchange at scale); Hybrid IPsec/VPN between two controlled sites (proves PQC for site-to-site, validates concentrator/firewall compatibility); Internal mTLS between microservices (east-west, high-volume — proves service mesh PQC capability, library compatibility); Certificate lifecycle with shortened validity (proves PKI can handle increased rotation frequency).'
+    source:
+      lines:
+      - 4452
+      - 4487
+  - id: '5.2'
+    title: Design Hybrid Deployments
+    do: Default to Hybrid ML-KEM-768 + X25519 for TLS key exchange (the X25519MLKEM768 named group in TLS 1.3); choose hybrid over pure PQC for the stated reasons; default to composite/dual signatures where toolchains support them; and verify cryptographic library readiness before committing to a deployment pattern.
+    output: Validated migration patterns
+    detail: 'NIST SP 800-227 discusses the related X-Wing hybrid KEM. Why hybrid not pure PQC: (1) immediate quantum resistance without waiting for universal PQC adoption; (2) preserves interoperability during phased rollout when support exists (test, don''t assume); (3) reduces deployment risk (protected against known quantum threats and unknown weaknesses in new PQC algorithms); (4) proven at large production scale (Chrome/Chromium, Cloudflare, AWS; Cloudflare reports a majority of human-generated TLS traffic now uses PQC-hybrid key exchange). Hybrid signatures (framework position): composite/dual signatures (classical + PQC) the default wherever toolchains support; published analysis of early ML-DSA implementation flaws (Bernstein, June 2026) estimates dropping the classical layer increases breakable signature keys by ~an order of magnitude over five years; deploying solo ML-DSA is a recorded risk decision, not a default. Per-protocol architecture: TLS 1.3 (X25519 + ML-KEM-768 / X-Wing
+      SP 800-227; production-ready); IPsec IKEv2 (ECDH P-256 + ML-KEM-768; RFC 9370); SSH (X25519 + ML-KEM-768; OpenSSH 9.9+ mlkem768x25519-sha256, default from 10.0); S/MIME (ECDH P-256 + ML-KEM-768; IETF drafts, limited); Code Signing (ECDSA P-256 + ML-DSA-65; composite IETF, early); FIDO2/WebAuthn (ES256/RS256 + ML-DSA; COSE PQC identifiers IANA Apr 2025; not yet); Token signing JWT/OIDC/SAML (RS256/ES256 + ML-DSA; JOSE/COSE drafts, early). Library readiness: OpenSSL native ML-KEM/ML-DSA/SLH-DSA since 3.5 (Apr 2025); BoringSSL/Chrome (ML-KEM Sep 2024, default Chrome 131); AWS-LC (first open-source FIPS 140-3 validated with ML-KEM); Bouncy Castle (Java); wolfSSL (embedded/IoT, CNSA 2.0 aligned); Libsodium/MbedTLS (limited/in progress). If a library lacks PQC: upgrade, switch library, or deploy a PQC-capable gateway/proxy bridge. Hybrid mandate divergence: BSI/ANSSI/Netherlands strongly recommend or require hybrid; NCSC UK prefers single migration to pure PQC but accepts hybrid as interim;
+      NIST permits not requires; NSA CNSA 2.0 accepts hybrid as interim only. Multinational recommendation: adopt hybrid as default interim bridge to PQC-only.'
+    source:
+      lines:
+      - 4497
+      - 4661
+  - id: '5.3'
+    title: Execute Pilots with Measurement
+    do: For each pilot, define and measure performance SLOs, anticipate expected performance impacts, and define explicit rollback criteria/triggers.
+    output: Pilot results reports (performance data, compatibility findings, issues log, recommendations)
+    detail: 'Performance SLOs: handshake latency (p50/p95/p99 before/after); CPU utilization (server + client delta); connection throughput; error rates (connection failures, negotiation fallbacks, compatibility); memory utilization. Expected impacts: TLS 1.3 hybrid (e.g. X25519MLKEM768) — materially larger ClientHello and ~1 KB additional key-exchange data per handshake; real latency impact path-, MTU-, middlebox-dependent (a measurement exercise); ML-KEM CPU typically negligible on modern hardware, dominant factor is packetization and middlebox behavior. IPsec hybrid — similar latency, slightly higher CPU. Signature verification (ML-DSA) — ML-DSA-44 ~2,420 bytes, ML-DSA-65 ~3,309 bytes vs ~64 bytes for ECDSA P-256 (where real infrastructure stress appears). Rollback triggers: error rate exceeds X% above baseline; latency p99 exceeds Y ms above baseline; security vulnerability in PQC implementation; interoperability failure with a critical downstream system.'
+    source:
+      lines:
+      - 4665
+      - 4704
+  - id: '5.4'
+    title: Scale from Pilot to Production Through Waves
+    do: Sequence deployment through controlled waves, each with a defined scope and an explicit prerequisite gate from the prior wave.
+    output: Wave deployment plan
+    detail: 'Wave 0 Lab/Staging (isolated test; prerequisite: pilot design approved); Wave 1 Internal Non-Critical (dev tools, monitoring, non-critical APIs; prerequisite: lab validation passed); Wave 2 Internal Production (internal Tier-1, east-west; prerequisite: Wave 1 metrics acceptable); Wave 3 External Controlled (partner-facing APIs with cooperative counterparties; prerequisite: Wave 2 stable, partner coordination complete); Wave 4 External Broad (public-facing web apps, customer APIs; prerequisite: Wave 3 stable, external compatibility validated); Wave 5 Long Tail (legacy, OT gateways, embedded; prerequisite: vendor support available or containment strategy deployed).'
+    source:
+      lines:
+      - 4713
+      - 4733
+  - id: '5.5'
+    title: Implement Defense-in-Depth Beyond Pure PQC
+    do: Complement hybrid/PQC deployment with layered controls that reduce cryptographic protection surface and protect data across in-transit, at-rest, and in-use states.
+    output: Defense-in-depth implementation (tokenization, segmentation, AES-256 defaults)
+    detail: Tokenization (replace sensitive data with tokens — a scope reducer eliminating categories of HNDL exposure); data minimization and retention reduction (delete data with no business value); network segmentation (isolate high-value data flows into enhanced-monitoring zones); AES-256 as universal symmetric default (Grover-resistant; low-effort high-impact vs AES-128); key lifetime reduction (a 90-day certificate limits the TNFL window vs a 2-year cert); Confidential Computing as complementary (hardware TEEs protect data in use — PQC in transit, AES-256 at rest, Confidential Computing during processing; Intel SGX/TDX, AMD SEV-SNP, ARM CCA); enhanced key wrapping for data at rest (wrap existing DEKs with PQC key encapsulation rather than re-encrypting petabyte-scale archives).
+    source:
+      lines:
+      - 4737
+      - 4785
+  - id: '5.6'
+    title: Decide the Data-at-Rest Strategy
+    do: Make a per-data-store choice among five data-at-rest strategies, driven by the data's confidentiality horizon (Phase 1 classification), volume, and exfiltration exposure; record the chosen strategy per data store in the CBOM.
+    output: Per-data-store strategy recorded in the CBOM
+    detail: 'Data at rest is sequenced after data in transit (3.3) since an adversary must exfiltrate stored ciphertext before HNDL applies. Five strategies: Re-encrypt under PQC-protected keys (high-sensitivity, long-horizon data in actively managed stores; watch throughput/downtime, verify no copy under old keys survives); PQC key-wrap (KEK/DEK redesign) (large stores where re-encrypting data is infeasible; protects keys not already-exfiltrated ciphertext, requires KMS/HSM PQC support); Crypto-shred (destroy the keys) (data past its confidentiality requirement that policy cannot yet delete; produce destruction evidence per the closure standard); Delete (no remaining business/legal value; requires legal sign-off); Accept and monitor (low-sensitivity/short-horizon; a recorded risk decision with a re-evaluation trigger, not a default). Backups/archives: tape libraries and immutable backups cannot be re-encrypted in place — let old generations age out under a documented schedule while new
+      generations write under PQC-protected keys, with key-wrap on long-retention archives; petabyte-scale decrypt-old/re-encrypt-new is a Phase 6 capacity exercise.'
+    source:
+      lines:
+      - 4796
+      - 4849
+  - id: '5.7'
+    title: 'AI-Assisted Migration: Where It Helps, and the Gate That Stays Closed'
+    do: Use AI tooling where it genuinely accelerates migration (triage and drafting) while holding a non-negotiable gate that AI-modified cryptographic code passes the same (or more) review/testing/validation rigor as human-written code; keep algorithm selection, parameter choices, and risk acceptances as human decisions, and record AI-assisted provenance.
+    output: AI-assisted provenance recorded on migrated components
+    detail: 'Where AI genuinely accelerates: triaging discovery findings at Layer 3 scale; enriching CBOM entries from vendor documentation; generating test cases and interoperability matrices; drafting repetitive engineering artifacts (configuration variants, rollout runbooks). Fine-tuned models demonstrated ~92% functional correctness on cryptographic code migration in 2026 research — argues for using the tooling on triage and drafting, not for trusting the output (at estate scale remaining failures land somewhere, and a functional-looking failure in cryptographic code can be a security failure). The non-negotiable gate: AI-modified cryptographic code passes the same review, testing, and validation rigor as human-written code, and where the change touches key generation, signing, or protocol state machines, more rigor not less. Algorithm selection, parameter choices, and risk acceptances remain human decisions; record AI-assisted provenance so reviewers and auditors know which artifacts
+      carry it. The failure mode to refuse: treating AI throughput as a reason to compress review; the tooling buys speed in the steps before and after review, never in review itself.'
+    source:
+      lines:
+      - 4853
+      - 4874
+  maturity_indicators:
+    0: No PQC pilots planned or underway
+    1: Lab testing only; no production exposure
+    2: 2+ production pilots running with measured results; rollback procedures tested; validated patterns documented
+    3: Tier-1 internet-facing systems on hybrid/PQC; wave rollout underway for Tier-2; defense-in-depth measures (tokenization, AES-256, segmentation) deployed
+    4: Estate-wide hybrid/PQC deployment substantially complete; transitioning selected systems from hybrid to PQC-only; crypto-agility demonstrated via algorithm-swap drill
+  common_failures:
+  - title: Piloting the easy systems, not the important ones.
+    why: Choosing pilot targets by convenience rather than Phase 3 risk prioritization; a pilot that succeeds on a developer sandbox proves little — pilots must prove PQC works on the highest-priority, highest-risk systems.
+    source:
+      lines:
+      - 4979
+      - 4982
+  - title: Skipping rollback planning.
+    why: Deploying hybrid/PQC without a tested, documented rollback path; when a pilot causes unexpected failures, the team must revert within minutes, not hours — define rollback triggers and test the procedure before going live.
+    source:
+      lines:
+      - 4984
+      - 4987
+  - title: '''Big bang'' instead of waves.'
+    why: Attempting to migrate all Tier-1 systems simultaneously rather than sequencing through controlled waves (lab -> internal non-critical -> internal production -> external controlled -> external broad -> long tail), where each wave validates assumptions and generates lessons for the next.
+    source:
+      lines:
+      - 4989
+      - 4993
+  - title: Ignoring library version as a hard constraint.
+    why: Designing a pilot for a system whose cryptographic library does not yet support PQC; verify library readiness (5.2) before committing, otherwise the pilot becomes a library upgrade project with different risks and timelines.
+    source:
+      lines:
+      - 4995
+      - 4998
+  - title: Measuring only latency, ignoring compatibility.
+    why: Focusing pilot metrics on handshake latency while neglecting compatibility with downstream systems, middleboxes, monitoring tools, and partner endpoints — the most common production failures from PQC deployment are compatibility issues, not performance.
+    source:
+      lines:
+      - 5000
+      - 5003
+  - title: Treating hybrid as the end state.
+    why: Hybrid is a transition mechanism, not a permanent architecture; organizations that deploy hybrid and declare victory face a second migration when hybrid is deprecated or when jurisdictions (NCSC UK, CNSA 2.0) require pure PQC — plan the hybrid-to-PQC-only transition from the start.
+    source:
+      lines:
+      - 5005
+      - 5009
+  gate:
+    id: G5
+    maps_to_transition: G5->G6
+    note: 'Phase 5 exit corresponds to gate G5 -> G6: ''Pilots validated; performance baselines established; Tier-1 rollout approved'' (SteerCo)'
+- id: p6
+  number: 6
+  name: Infrastructure Modernization & Performance
+  cadence: iterative
+  summary: Modernize the cryptographic infrastructure stack (PKI, HSMs, KMS, network devices, middleboxes) to support PQC operations at production scale, and address the performance, capacity, and compatibility challenges PQC introduces to real infrastructure.
+  overlaps_with: Runs iteratively alongside Phase 5 (pilots reveal infra issues; infra upgrades enable broader pilots — a continuous feedback loop); depends heavily on Phase 7 vendor timelines. Early-start activities (HSM inventory, PKI lifetime reduction) begin as early as Phase 0/1.
+  source_pages:
+  - 115
+  - 127
+  activities:
+  - id: '6.1'
+    title: PKI Modernization
+    do: 'Address PQC''s fundamental challenges to PKI (certificate size explosion, increased chain verification time, middlebox compatibility) by executing the PKI migration strategy: shorten key lifetimes immediately, deploy dual-stack CA infrastructure, track Merkle Tree Certificates for web PKI, and test certificate chain processing through all middleboxes before production.'
+    output: PKI modernization plan
+    detail: 'Certificate size explosion: ML-DSA-65 signatures are 3,309 bytes (ML-DSA-44 is 2,420 bytes) versus ~64 bytes for ECDSA. Strategy steps: (1) Shorten key lifetimes immediately — root CA from 20+ years to 10 years, intermediate CAs to 5 years, end-entity to 90–365 days (limits TNFL exposure, builds rotation muscle). (2) Deploy dual-stack CA infrastructure — PQC-capable CA alongside classical CA; issue hybrid/composite certificates; maintain classical-only certs for systems not ready. (3) Track Merkle Tree Certificates (MTC) for web PKI — Google/Cloudflare MTC initiative live-testing in Chrome as of early 2026 under IETF PLANTS WG; CA signs a Merkle tree head, browser gets a compact inclusion proof (<1 KB); still experimental, not yet a near-term compliance obligation. (4) Test certificate chain processing — verify all middleboxes (firewalls, WAFs, IDS/IPS, DLP, forward proxies) process PQC chains without failure or truncation before any production deployment.'
+    source:
+      lines:
+      - 5154
+      - 5191
+  - id: '6.2'
+    title: HSM and KMS Modernization
+    do: Inventory all HSMs by model, firmware version, and PQC capability (immediate); upgrade HSM firmware to PQC-capable versions as available; plan HSM hardware replacement aligned to refresh cycle where firmware upgrade is insufficient; configure cloud KMS for PQC key types as available; and deploy software-based PQC key-wrapping overlay as a bridge for HSMs not yet upgradeable.
+    output: HSM/KMS upgrade schedule
+    detail: 'Many HSMs in production cannot support PQC without firmware or hardware upgrade. Thales Luna 7.8.0+ introduced initial PQC support (ML-KEM, ML-DSA); Luna 7.9 (June 2025) adds further PQC capabilities. Utimaco Quantum Protect is a new hardware variant (not a firmware upgrade for existing devices — budget for hardware replacement if running older Utimaco models). Budget for a 2–4 year replacement cycle where hardware replacement is needed. Cloud KMS (AWS KMS, Azure Key Vault, Google Cloud KMS): check current PQC support status. As a bridge, use PQC key-wrapping around classical HSM operations for interim protection.'
+    source:
+      lines:
+      - 5202
+      - 5231
+      pdf_page: 117
+  - id: '6.3'
+    title: Network Infrastructure Assessment
+    do: Test the ways PQC impacts network infrastructure before production deployment, covering handshake size impact and protocol-specific concerns (TLS 1.3, DTLS/UDP, IKEv2/IPsec, QUIC, constrained IoT, satellite/LPWAN, mobile networks), applying the per-protocol mitigations.
+    output: Network compatibility report
+    detail: 'Handshake size impact: classical TLS 1.3 ~1–2 KB; hybrid TLS 1.3 (X25519 + ML-KEM-768) ~2–3 KB (key exchange adds ~1 KB); PQC certificate chain with ML-DSA can exceed 10 KB for a 3-certificate chain. Protocol concerns/mitigations: TLS 1.3 — larger ClientHello may fragment, some middleboxes reject oversized handshakes → test with production middleboxes, verify MTU handling, consider TLS certificate compression. DTLS (UDP) — larger handshake fragments, amplification concerns → test fragmentation handling, verify anti-amplification mechanisms. IKEv2/IPsec — larger IKE_SA_INIT messages, fragmentation across VPN concentrators → use IKE fragmentation (RFC 7383), test with production VPN devices. QUIC — designed for larger handshakes, generally more PQC-friendly → test with production load balancers. Constrained IoT (CoAP, LPWAN) — extremely limited bandwidth, PQC key sizes may be prohibitive → consider pre-shared key approaches, gateway-based PQC termination, sector-specific protocols.
+      Satellite/LPWAN — high latency and limited bandwidth exacerbate handshake size impact → use session resumption aggressively, consider PQC gateway at ground station. Mobile networks — handshake latency affects UX, cellular bandwidth constraints → test on representative cellular connections, measure impact on connection establishment time.'
+    source:
+      lines:
+      - 5234
+      - 5284
+      pdf_page: 118
+  - id: '6.4'
+    title: Performance Testing Methodology
+    do: For each system targeted for PQC migration, execute baseline measurement, lab validation, canary deployment, SLO evaluation, and capacity planning.
+    output: Performance baseline and projections
+    detail: '(1) Baseline measurement: capture current performance metrics (latency p50/p95/p99, CPU utilization, memory, throughput) under representative production load. (2) Lab validation: deploy hybrid/PQC in isolated test environment; measure same metrics. (3) Canary deployment: deploy to 1–5% of production traffic with A/B comparison. (4) SLO evaluation: compare canary metrics against SLOs defined in Phase 5. (5) Capacity planning: if PQC requires additional compute/memory/bandwidth, estimate requirements for full production rollout and include in Phase 4 budget.'
+    source:
+      lines:
+      - 5287
+      - 5310
+  - id: '6.5'
+    title: Capacity Planning for PQC at Scale
+    do: Plan for the expected resource impact of PQC across CPU, memory, network bandwidth, and storage, taking the prescribed planning action for each.
+    output: Performance baseline and projections (capacity plan for production rollout)
+    detail: 'CPU — ML-KEM key generation/encapsulation: minimal impact; ML-DSA signature verification: moderate → benchmark on production hardware, plan for 5–15% server CPU increase for signature-heavy workloads. Memory — larger key material and expanded TLS session state → minimal for most systems, test on memory-constrained devices. Network bandwidth — hybrid handshakes add ~1 KB; PQC certificates add 2–10 KB per connection → significant for high-volume TLS termination points (CDN edges, load balancers), calculate aggregate bandwidth. Storage — larger certificates and keys in certificate stores; larger OCSP responses → manageable, plan for 2–5x increase in certificate storage.'
+    source:
+      lines:
+      - 5314
+      - 5331
+      pdf_page: 122
+  maturity_indicators:
+    0: No awareness of PQC infrastructure impact; no testing
+    1: Awareness of PKI/HSM/network challenges; no concrete plans
+    2: HSMs inventoried with PQC status; PKI modernization plan drafted; initial middlebox testing underway
+    3: HSM upgrades in progress; PKI dual-stack operational; all production middleboxes tested; performance baselines established for Tier-1 systems
+    4: Infrastructure fully PQC-capable across IT estate; capacity planning validated at production scale; PKI automated with shortened lifetimes; middlebox monitoring integrated into continuous discovery
+  common_failures:
+  - title: Assuming PQC is a "drop-in" library swap.
+    why: The most pervasive misconception. PQC changes key sizes, signature sizes, handshake characteristics, and certificate chain weights. Every network path, middlebox, load balancer, and TLS termination point must be tested, not just application endpoints; otherwise firewalls drop oversized ClientHellos, IDS/IPS cannot parse PQC chains, or WAF rules break on larger payloads in production.
+    source:
+      lines:
+      - 5502
+      - 5508
+  - title: Ignoring middleboxes.
+    why: Firewalls, IDS/IPS, WAFs, DLP, forward proxies, and TLS inspection appliances sit on network paths and often have hardcoded buffer sizes or parsing assumptions that break with PQC-sized handshakes and certificates. Test every middlebox on every production network path and create a middlebox inventory as a Phase 6 sub-deliverable.
+    source:
+      lines:
+      - 5510
+      - 5515
+  - title: Deferring HSM upgrades.
+    why: HSMs are long-lead-time procurements with complex deployment (key ceremony, compliance validation, HA configuration). Waiting until Year 3 to discover HSMs don't support PQC key types causes 12–18 month procurement/delivery/deployment delays. Inventory HSM PQC capability in Year 1 and place replacement orders immediately.
+    source:
+      lines:
+      - 5517
+      - 5522
+  - title: Planning PKI modernization as a single event.
+    why: 'PKI changes (new CAs, shorter lifetimes, dual-stack operation) should be phased: start with end-entity certificate lifetime reduction (low risk, high value), then intermediate CA modernization, then root CA planning. Attempting all three simultaneously in a single maintenance window risks outages.'
+    source:
+      lines:
+      - 5524
+      - 5528
+  - title: Neglecting capacity planning for high-volume TLS termination.
+    why: A CDN edge or load balancer handling millions of TLS handshakes per second will see measurable aggregate bandwidth increase from hybrid handshakes. Model the capacity impact before production deployment.
+    source:
+      lines:
+      - 5530
+      - 5533
+  gate:
+    id: G5->G6
+    maps_to_transition: G5->G6
+    note: 'Phase 6 exit corresponds to infrastructure readiness gating scaled Phase 5 production deployment; each Phase 6 deliverable (PKI dual-stack, HSM upgrade, middlebox clearance) unblocks a corresponding set of Phase 5 migration targets. Note: Phase 6 is iterative/parallel with Phase 5, so this maps to the framework''s infrastructure-readiness transition rather than a single hard cutover.'
+- id: p7
+  number: 7
+  name: Vendor & Supply Chain Governance
+  cadence: continuous
+  summary: Ensure third-party products and services support the organization's PQC migration timeline. Vendor dependencies are the single largest external constraint on migration speed; vendors update on their own timelines unless contractually compelled otherwise.
+  overlaps_with: Begins in Q1 Year 1 (as soon as the Phase 0 top-10 critical vendor list is available) and runs continuously throughout the program, escalating in intensity as Phase 2 CBOM, Phase 3 risk scoring, and Phase 5 pilot findings provide more specific requirements. Constrains Phase 6 (HSM/PKI/network vendor timelines) and gates Phase 5 (vendor GA releases). Transitions into a permanent BAU governance function — not a project workstream.
+  source_pages:
+  - 128
+  - 139
+  activities:
+  - id: '7.1'
+    title: Classify Vendor Portfolio by PQC Impact
+    do: Classify each vendor into one of three categories by PQC impact and take the corresponding action.
+    output: Vendor PQC readiness register (vendor classification matrix)
+    detail: Strategic Blocking — vendor product is in the critical path for Tier-1/2 migration, no PQC support = migration stops → immediate engagement, executive-level escalation, contract leverage, parallel evaluation of alternatives. Strategic Enabling — vendor product is PQC-relevant but alternatives exist or migration is not blocked → standard engagement, require PQC roadmap, include in contract renewals. Non-Critical — vendor product handles no quantum-vulnerable cryptography or protects only low-priority data → monitor, include PQC in standard procurement language for renewals.
+    source:
+      lines:
+      - 5684
+      - 5698
+      pdf_page: 131
+  - id: '7.2'
+    title: Execute Vendor Engagement
+    do: For each strategic vendor, obtain a PQC feature matrix, GA version and dates, interoperability guidance, performance data, fallback behavior, and CBOM data; drive engagement using the core Vendor PQC Readiness Questionnaire.
+    output: Vendor questionnaire responses
+    detail: 'Obtain: (1) PQC feature matrix — which products support which PQC algorithms, current vs. planned; (2) GA version and dates — when PQC support is generally available (not beta, not "coming soon"); (3) interoperability guidance — tested configurations with common counterparties; (4) performance data — vendor''s own PQC benchmarks; (5) fallback behavior — graceful degradation to classical or hard failure when PQC negotiation fails; (6) CBOM data for the product. Core questionnaire questions: 1) Which NIST-standardized PQC algorithms (ML-KEM, ML-DSA, SLH-DSA) does your product currently support? 2) For unsupported algorithms, what is the GA date and version? 3) Does your product support hybrid/composite operation (classical + PQC simultaneously)? 4) Can cryptographic algorithms be changed via configuration without recompilation, reinstallation, or hardware replacement? 5) What is the performance impact of PQC operation (provide benchmark data)? 6) What interoperability testing
+      have you done with common ecosystem counterparties? 7) Will you provide CBOM data in CycloneDX format? 8) What is your commitment timeline for FIPS 140-3 validated PQC implementations?'
+    source:
+      lines:
+      - 5701
+      - 5746
+  - id: '7.3'
+    title: Insert PQC Requirements into Procurement
+    do: For all new purchases and contract renewals, add a PQC warranty/crypto-agility clause (adapted by legal counsel) and add PQC requirements to RFPs; adapt existing government model language rather than drafting from scratch.
+    output: Updated procurement requirements
+    detail: 'Add a supplier clause warranting support for NIST-approved PQC algorithms (FIPS 203, 204, and/or 205 as applicable) and crypto-agility (algorithm changes via configuration, not requiring recompilation or hardware replacement), with GA timelines, performance guidance, interoperability matrices, and remedies for failure to deliver by a stated date (maintenance credits / right to replace / contract termination). RFP requirements: Mandatory — NIST-standardized PQC algorithm support with published GA date; Mandatory — crypto-agility (algorithm selection via configuration); Preferred — hybrid operation support (classical + PQC); Preferred — CBOM data in CycloneDX format; Required — FIPS 140-3 validation timeline for PQC implementations. Adapt public model language: Government of Canada ITSM.00.501 and Treasury Board PQC requirements, U.S. DoD CIO quantum-resistant cryptography memorandum, and CISA procurement-relevant product-category guidance.'
+    source:
+      lines:
+      - 5750
+      - 5781
+  - id: '7.4'
+    title: Manage Vendor-as-Blocker Scenarios
+    do: When a critical vendor cannot provide PQC support within the migration timeline, deploy bridging patterns, run champion-challenger evaluation, escalate contractually, and accept-and-document residual risk if no alternative exists.
+    output: Bridging pattern deployments
+    detail: (1) Deploy bridging patterns — software PQC overlay (gateway TLS termination, PQC key-wrapping around classical HSM, double-encryption layer) until native vendor support arrives. (2) Run champion-challenger — evaluate an alternative vendor through POC while maintaining the incumbent, and communicate the POC to the incumbent as leverage. (3) Escalate contractually — invoke SLA remedies, maintenance credit provisions, or right-to-replace clauses. (4) Accept and document risk — if no alternative exists and no bridge is feasible, formally document residual risk in the risk register with SteerCo approval and a re-evaluation trigger date.
+    source:
+      lines:
+      - 5792
+      - 5808
+  - id: '7.5'
+    title: Establish Ongoing Vendor Governance
+    do: Run the ongoing vendor governance cadence (tracking roadmaps, verifying GA commitments, updating scorecards, reporting to SteerCo, re-evaluating classifications) and report the vendor KPI board to SteerCo.
+    output: Vendor governance cadence
+    detail: 'Cadence: track vendor PQC roadmap status — monthly (strategic blocking vendors), quarterly (others); verify vendor GA commitments against actuals — at each committed milestone date; update vendor PQC scorecard — quarterly; report vendor status to SteerCo — monthly; re-evaluate vendor classification (strategic blocking/enabling/non-critical) — semi-annually. Vendor KPI board (report to SteerCo): % of strategic vendors with signed PQC commitments and dates; number of products with GA hybrid/PQC capability in your estate; age of oldest unsupported critical product (days since vendor committed and missed); number of bridging patterns deployed (indicates vendor gaps being compensated).'
+    source:
+      lines:
+      - 5812
+      - 5839
+      pdf_page: 134
+  - id: '7.6'
+    title: Coordinate Counterparties You Cannot Contractually Compel
+    do: Coordinate partners, customers, API consumers, and interbank/B2B counterparties (who offer no contractual leverage but on whom Wave 3 "External, Controlled" deployment depends) using a six-element negotiation pattern.
+    output: Counterparty coordination (negotiation pattern, feeds the risk register)
+    detail: 'Six elements: (1) Readiness discovery — determine each counterparty''s PQC posture from observed protocol negotiation on shared connections (passive monitoring from Activity 1.6 captures it) plus a lightweight readiness inquiry rather than the full vendor questionnaire. (2) Dual-stack windows — commit to a published period during which both classical and hybrid negotiation are accepted on shared interfaces, avoiding a flag-day cutover. (3) Deprecation protocol — announce classical-only retirement on a T-minus schedule (announcement, reminder at six months, enforcement date), in writing, through the commercial relationship owner and the technical channel. (4) Interoperability test events — offer scheduled test windows against hybrid-enabled endpoints before enforcement, where failures are cheap. (5) API versioning — expose PQC-capable endpoints as a parallel version rather than an in-place change, so counterparties migrate by endpoint choice and rollback is trivial. (6) The refusal
+      decision — when a counterparty won''t move: documented risk acceptance with compensating monitoring, commercial escalation through relationship owners, or termination for connections carrying long-horizon data; the decision belongs to the business relationship owner, made on the program''s evidence, and goes in the risk register either way. Sector extensions (Payments and Financial Services) operationalize this for interbank messaging and card schemes.'
+    source:
+      lines:
+      - 5847
+      - 5882
+  - id: '7.7'
+    title: Cloud Shared Responsibility and the SaaS Class
+    do: Apply the cloud shared-responsibility split (who migrates what) with boundary verification, and treat SaaS as a distinct control-posture class where vendor governance is the only lever.
+    output: Vendor PQC readiness register (provider attestations + SaaS classification)
+    detail: 'The provider migrates what it controls unilaterally (TLS termination on managed front ends, internals of managed services, its own inter-facility links) on its own schedule. The customer keeps everything above that line: application-layer cryptography, customer-managed keys and their KMS key types, workload-to-workload encryption, and every data-at-rest decision from Activity 5.6. Boundary verification: do not mark a provider-side component migrated on the strength of a blog post — capture provider attestations in the vendor register and verify with observed algorithm negotiation at the service boundary wherever visible. SaaS is a control-posture class of its own (not a cloud variant): there is no bridging pattern (you cannot terminate its TLS, wrap its keys, or proxy its internals), so vendor governance is the only lever. Classify each SaaS app in the CBOM by data sensitivity/confidentiality horizon crossed with the vendor''s PQC posture (Activity 7.2). For high-sensitivity
+      SaaS with a non-committal vendor, the options are the Activity 7.6 refusal decision applied to a vendor you pay: risk-accept with monitoring, reduce the data entrusted (tokenization and minimization, Activity 5.5), or replace.'
+    source:
+      lines:
+      - 5886
+      - 5914
+  maturity_indicators:
+    0: No vendor engagement on PQC; assumption that "vendors will sort it out"
+    1: Ad-hoc inquiries to a few vendors; no structured tracking
+    2: Top 10 vendors formally engaged; questionnaires sent; responses tracked; vendor criticality classification complete
+    3: PQC in standard procurement language; contracts include dated commitments and remedies; bridging patterns deployed for blocked systems; vendor scorecard reported to SteerCo
+    4: All strategic vendors PQC-committed with verified delivery; bridging patterns eliminated as vendor support matures; open-source dependency tracking operational; vendor governance is permanent BAU function
+  common_failures:
+  - title: Starting vendor engagement too late.
+    why: The vendor dependency is typically the longest segment of the PQC migration critical path. Deferring formal engagement until after the CBOM is "complete" loses 12–24 months. Begin in Q1 Year 1 using the top 10 vendor list from Phase 0 scoping — you do not need a finished CBOM to send a PQC roadmap questionnaire.
+    source:
+      lines:
+      - 6004
+      - 6008
+  - title: Accepting verbal commitments without contractual backing.
+    why: A vendor sales engineer saying "PQC is on our roadmap" is not a commitment. Insist on written GA dates, specific product versions, and contractual consequences for missed dates; verbal assurances evaporate when vendor priorities shift.
+    source:
+      lines:
+      - 6010
+      - 6013
+  - title: Treating all vendors equally.
+    why: Vendors should be triaged by criticality (Strategic Blocking / Strategic Enabling / Non-Critical). Applying the same engagement intensity to all vendors wastes resources; focus executive-level engagement and contractual leverage on the 5–10 Strategic Blocking vendors that constrain the migration timeline.
+    source:
+      lines:
+      - 6015
+      - 6019
+  - title: No bridging strategy for vendor gaps.
+    why: When a critical vendor cannot deliver PQC on your timeline, the response cannot be "wait and hope." Define bridging patterns (PQC gateway, overlay encryption, proxy-based TLS termination) proactively so they can be deployed immediately when a vendor misses a milestone.
+    source:
+      lines:
+      - 6021
+      - 6024
+  - title: The vendor delegation trap.
+    why: Assuming that because a vendor controls the cryptographic implementation, the vendor also owns the migration risk. The vendor owns their product; the organization owns the risk to its data, operations, and regulatory compliance. Vendor readiness is a dependency to manage, not a responsibility to delegate.
+    source:
+      lines:
+      - 6026
+      - 6030
+  - title: Ignoring open-source dependencies.
+    why: 'Many organizations track commercial vendor PQC readiness but neglect open-source components (OpenSSL, Bouncy Castle, language-specific crypto libraries) that underpin custom applications. These require the same discipline: monitor release schedules, test upgrades, and plan for version transitions.'
+    source:
+      lines:
+      - 6032
+      - 6036
+  gate:
+    id: null
+    note: continuous phase — framework defines no one-time gate
+verification_closure:
+  summary: 'Defines how to prove the migration happened (verification) and how the program ends (closure into BAU). Both are routinely neglected: systems get reported migrated on change tickets rather than observed behavior, and programs drift into an unfunded twilight instead of closing deliberately.'
+  evidence_standard:
+  - 1. Observed negotiation, not configuration. Passive monitoring (the Phase 1 continuous discovery infrastructure) must show the system negotiating the expected hybrid or PQC algorithms in production traffic. Configuration states intent; handshakes state fact.
+  - 2. Negative testing where classical-only must be refused. For systems whose plan requires rejecting classical-only negotiation (post-transition environments, CNSA 2.0 scope), actively test that a classical-only client is refused. The absence of PQC failures does not prove the presence of PQC enforcement.
+  - 3. Certificate chain validation under PQC. For Track B migrations, verify the full lifecycle (issuance, validation by production clients, revocation) operates with PQC or composite certificates. Certificate issuance alone does not demonstrate this.
+  - '4. Downgrade and fallback behavior documented. Record what the system does when a counterparty cannot negotiate PQC, and confirm the behavior matches approved policy: graceful classical fallback during transition, refusal after.'
+  - 5. Evidence captured to the dossier. Each verified system contributes a verification record (date, method, observed algorithms, tester) to the evidence dossier. This converts the dossier from self-reported progress into audit-grade proof.
+  evidence_standard_source:
+    lines:
+    - 6086
+    - 6107
+  verification_coverage: 'Verification is sampled, not exhaustive, for large estates: verify 100% of Tier 1 systems and a documented sample (10–20% per migration wave) of lower tiers, with any sampled failure triggering full verification of that wave.'
+  verification_coverage_source:
+    lines:
+    - 6109
+    - 6111
+  closure_criteria: 'Define closure criteria in advance: typically maturity Level 4 or higher across all seven domains; verification complete for Tier 1 and Tier 2 systems; and every remaining item carried as an explicit risk acceptance with an owner and a re-evaluation date.'
+  closure_criteria_source:
+    lines:
+    - 6141
+    - 6143
+  closure_handover: 'At closure, execute a formal handover: QRPM transitions to a standing cryptographic governance owner; CBOM and continuous discovery, vendor governance cadence, SOC detection content, KRI reporting, and crypto-agility OKRs transfer to named permanent owners with funded budgets; evidence dossier archived to the records system under regulator-required retention; SteerCo formally accepts the residual risk register; closure decision minuted at the level that chartered the program.'
+  closure_handover_source:
+    lines:
+    - 6145
+    - 6152
+  decommissioning:
+    detail: 'Migration is not complete while the old keys remain. For each completed migration: revoke superseded certificates on schedule (rather than letting them expire silently); destroy retired private keys under the organization''s key destruction standard, with destruction certificates for HSM-held keys; remove retired roots and signing certificates from trust stores (a key is only retired when nothing trusts it); remove classical-only cipher suites from configurations once counterparty support permits; update the CBOM entry to reflect retired material. Retired-but-trusted classical signing keys are a standing TNFL liability.'
+    sp_800_88_cited: false
+    sp_800_88_note: NIST SP 800-88 is NOT cited in this Decommissioning Classical Material section. The text refers to 'the organization's key destruction standard', not to SP 800-88 specifically.
+    source:
+      lines:
+      - 6120
+      - 6129
+  common_failures:
+  - title: Declared done.
+    why: Closing on milestone completion rather than verified posture. If verification evidence does not exist, the migration is a belief, not a fact, and the first auditor, regulator, or counterparty who asks for proof will treat it accordingly.
+    source:
+      lines:
+      - 6188
+      - 6190
+  - title: Orphaned capabilities.
+    why: Treating closure as the end of funding rather than a handover. The CBOM, discovery infrastructure, and vendor governance decay within quarters if they close with the program instead of transferring to funded owners.
+    source:
+      lines:
+      - 6192
+      - 6194
+  outputs:
+  - name: Verification records
+    criteria: Evidence standard applied; 100% Tier 1 coverage, documented sampling for lower tiers; records filed in the evidence dossier
+  - name: Decommissioning log
+    criteria: Certificates revoked on schedule; keys destroyed with certificates; trust stores cleaned; CBOM entries updated
+  - name: Closure decision record
+    criteria: Closure criteria met or explicitly risk-accepted; decision minuted by the governance level that chartered the program
+  - name: BAU handover register
+    criteria: Named permanent owner, funded budget, and operating cadence for every continuing capability
+  outputs_source:
+    lines:
+    - 6163
+    - 6176
+  source:
+    lines:
+    - 6074
+    - 6200
+cross_cutting:
+  maturity_levels_ref: points to overall_maturity_model
+  overview: 'Program Foundations are capabilities that span every phase and operate continuously across the program lifecycle. Five foundational capabilities: a maturity model for benchmarking, metrics and KPIs for tracking/reporting, crypto-agility as architectural end-state, regulatory and standards alignment, and the skills and team structures to execute. Each should be established early (Phase 0/Phase 1) and maintained throughout.'
+  overview_source:
+    lines:
+    - 6205
+    - 6220
+  metrics_kpis:
+    board_pack:
+    - 'Coverage — % of Tier-1 endpoints using hybrid/PQC key exchange. Target: Year 1: 10%; Year 2: 60%; Year 3: 95%'
+    - 'Trust — # of PKI/signing anchors with shortened lifetimes and/or PQC capability. Target: Year 1: Root CAs assessed; Year 2: Intermediates shortened; Year 3: End-entity automated'
+    - 'Inventory — % of RSA/ECC locations mapped and risk-ranked in CBOM. Target: Year 1: 70% Tier-1; Year 2: 90% all tiers; Year 3: continuous'
+    - 'Vendors — % of strategic suppliers with dated PQC commitments. Target: Year 1: 50%; Year 2: 80%; Year 3: 95%'
+    - 'Agility — % of services that can swap key-agreement algorithm via configuration within 2 weeks. Target: Year 1: baseline; Year 2: 30%; Year 3: 60%'
+    board_pack_cadence: Report Quarterly
+    risk_weighted_companion: 'Report an exposure-weighted companion to the Coverage KPI: the share of HNDL-relevant traffic volume, or of long-retention data flows, protected by hybrid or PQC. Inputs already exist (traffic volumes from Activity 1.6 passive monitoring; confidentiality horizons from Phase 1 classification). Offered alongside, not as a replacement.'
+    operational_kpis:
+      cadence: Report Monthly to SteerCo
+      kpis:
+      - Migration tasks completed vs. plan — Earned value / planned value (by workstream)
+      - 'Pilot performance delta — p95 latency increase vs. baseline (target: <2ms for TLS)'
+      - Discovery gap closure — % of Phase 1 gap register items resolved
+      - Vendor milestone adherence — % of vendor GA commitments met on time
+      - Policy compliance — % of new deployments passing PQC CI/CD check
+      - Training coverage — % of target staff completing PQC training modules
+    evidence_dossier:
+      contents:
+      - CBOM snapshots (quarterly)
+      - Pilot test reports with SLO data
+      - Vendor questionnaire responses and commitment letters
+      - Updated cryptographic and procurement policies
+      - SteerCo meeting minutes and decision records
+      - Training completion records
+      - Risk register with quantum risk entry and mitigation status
+      litigation_defense: 'Serves as negligence defense. Should deliberately capture three artifact types: risk-acceptance decisions with rationale and re-evaluation dates; budget requests including denied ones (a logged, declined funding request is evidence the risk was raised); and the annual record of threat reassessment. A documented decision to defer is defensible; undocumented inaction is not.'
+    detail: Board KPI pack reported quarterly; operational KPIs monthly to SteerCo; evidence dossier continuously updated for audit and regulatory use.
+    source:
+      lines:
+      - 6348
+      - 6436
+  crypto_agility:
+    why: PQC algorithms will eventually need replacement (cf. SHA-1, MD5, DES, 3DES, SSL, early TLS). Goal is not merely to swap RSA for ML-KEM but to build the organizational capability to change cryptographic algorithms routinely. The PQC algorithm set is still evolving (NIST advanced nine signature candidates to round three May 2026; HQC standardized as non-lattice ML-KEM backup; questions raised on specific ML-DSA parameter sets).
+    marins_law: 'Marin''s Law on Crypto-Agility: ''The effort required to change cryptography in a system is inversely proportional to the agility built into that system from the start.'' Formally: Y ≈ K / A, where Y is migration effort, K is complexity of the cryptographic estate, and A is the agility level.'
+    dimensions:
+    - 'Dimension 1: Architectural agility — Systems designed so algorithm selection is configuration-driven, not hardcoded. Test: can the org change the key exchange algorithm on a Tier-1 service via configuration, without modifying application code, rebuilding containers, or a 90-day change request?'
+    - 'Dimension 2: Operational agility — Tested, documented processes for executing algorithm changes; automated certificate rotation; drift monitoring; tested rollback. Test: has the org executed an algorithm swap drill, changing the negotiated algorithm for a production service within 10 business days?'
+    - 'Dimension 3: Governance agility — An ''approved algorithms'' list exists, is maintained, and enforced via CI/CD checks and network monitoring; new-algorithm evaluation/approval documented and executable in weeks not months. Test: if NIST published a new algorithm recommendation tomorrow, how long to evaluate, approve, and begin deploying it?'
+    - 'Dimension 4: Skills agility — People who can evaluate, assess suitability of, and implement new cryptographic algorithms (security engineers who understand the provider-pattern architecture + a CTI function). Test: can the org assess the security implications of a new algorithm within 48 hours of publication?'
+    - 'Dimension 5: Supply chain agility — Vendors/third parties support configuration-driven algorithm selection; HSM firmware updatable without hardware replacement; cloud KMS exposes algorithm selection as a customer-configurable parameter. Test: if the org decided to add HQC alongside ML-KEM, how many vendor dependencies would block it?'
+    principles:
+    - '1. No direct algorithm calls in application code (use providers/adapters: JCA configurable providers, OpenSSL pluggable engines, cloud KMS APIs).'
+    - 2. Algorithm selection is configuration-driven (policy file, env var, or central config; X25519→ML-KEM-768 is a config change, not a code change).
+    - 3. Dual-stack capability during transition (negotiate classical + PQC simultaneously / hybrid mode, gracefully degrade).
+    - 4. Automated certificate and key lifecycle management (issuance, renewal, rotation, revocation fully automated).
+    - 5. Algorithm changes are tested in CI/CD (staging, canary, monitored, rollback-capable).
+    - 6. Monitoring of cryptographic posture (detect algorithm drift, expired configs, non-compliant deployments; alert on deprecated algorithms).
+    - 7. Approved algorithms policy with enforcement (CI/CD policy checks + network monitoring; unapproved algorithms in Tier-1 trigger remediation).
+    roadmap: Year 1 Foundation; Year 2 Adoption; Year 3 Verification (full production algorithm swap drill within 10 business days; measure Agility KPI); Year 4+ Maturation (algorithm changes are routine operational events).
+    okrs:
+    - objective: Algorithm changes don't require code changes
+      key_result: 100% of Tier-1 services use provider-pattern cryptography by Year 3
+      method: Architecture review; verified through algorithm swap drill
+    - objective: Certificate rotation is fully automated
+      key_result: Mean time to rotate end-entity certificate < 1 hour; zero manual steps
+      method: Automated rotation test across 10 representative services
+    - objective: Algorithm swap executable within 2 weeks
+      key_result: Swap negotiated algorithm for Tier-1 service from hybrid to PQC-only within 10 business days
+      method: Annual drill with documented timeline
+    - objective: Cryptographic posture is continuously monitored
+      key_result: 100% of Tier-1 endpoints reporting negotiated algorithms to monitoring system
+      method: SOC dashboard verification; monthly false-positive review
+    - objective: New algorithm evaluation completed within 48 hours
+      key_result: CTI assessment of new algorithm's relevance and security within 48 hours
+      method: Annual simulation exercise
+    - objective: Approved algorithms policy enforced
+      key_result: 100% of new deployments pass CI/CD crypto-policy check
+      method: CI/CD pass rate; quarterly audit of production cipher suites
+    cswp39_alignment: 'NIST CSWP 39 (final, Dec 2025) ''Considerations for Achieving Crypto Agility'' establishes crypto-agility as a mandatory organizational capability; identifies the same core mechanisms (modular architecture, config-driven selection, automated cert/key lifecycle, continuous monitoring, integration into ERM) and introduces its own crypto-agility maturity model. Framework extends beyond CSWP 39 in three areas: Marin''s Law (quantitative model), the five-dimension model (vs CSWP 39''s primarily architectural focus), and the implementation roadmap integrated into existing phase structure.'
+    source:
+      lines:
+      - 6447
+      - 6662
+  skills_team:
+    skills_challenge: 'PQC migration requires deep cryptographic knowledge + enterprise program management at scale + domain-specific technical expertise — a combination that rarely coexists in one team. Realistic approach: small core of cryptographic expertise, supplemented by upskilled existing enterprise security/IT staff, augmented by external specialists for capabilities not developable internally in time.'
+    sizing_heuristic: 'Sizing heuristic: one dedicated FTE per 500 cryptographic instances in the CBOM for the first two years (discovery, CBOM, risk scoring, and pilot phases). This drops to one per 1,000 during production rollout as processes mature and tooling automates repetitive tasks. The QRPM, Cryptographic Architect, and PMO Analyst are dedicated overhead regardless of estate size.'
+    sizing_extras: Team size depends on cryptographic estate complexity more than on revenue/headcount. For <1,000 instances, a part-time QRPM with consulting augmentation for the Cryptographic Architect role is viable. For >10,000 instances, plan a dedicated program office with 8–12 FTEs at peak.
+    sizing_source:
+      lines:
+      - 6941
+      - 6955
+    roles:
+    - role: QRPM
+      skills: Program management; stakeholder management; risk governance; basic crypto literacy; board-level communication
+      source: Internal senior PM with PQC training
+      fte: '1.0'
+    - role: Cryptographic Architect
+      skills: Deep cryptography expertise; PKI architecture; protocol design; PQC algorithm knowledge; crypto-agility design patterns
+      source: Internal security architect + specialized training; rare external hire
+      fte: 0.5–1.0
+    - role: Security Engineers (PQC)
+      skills: TLS/SSH/IPsec configuration; HSM management; certificate lifecycle; library evaluation; hybrid deployment
+      source: Internal security engineers with PQC training
+      fte: 2–4
+    - role: Application Security Lead
+      skills: Code review; SAST/DAST tooling; library management; CI/CD pipeline integration; crypto-agility patterns
+      source: Internal AppSec team with crypto-agility focus
+      fte: '1.0'
+    - role: OT Security Specialist
+      skills: ICS/SCADA knowledge; OT network architecture; safety case management; vendor coordination
+      source: Specialized hire or external partner; very scarce
+      fte: 0.5–1.0 (if OT in scope)
+    - role: Vendor/Procurement Lead
+      skills: Contract negotiation; RFP management; vendor relationship management; SLA design
+      source: Internal procurement with PQC requirements training
+      fte: '0.5'
+    - role: PMO Analyst
+      skills: KPI tracking; reporting; evidence dossier management; SteerCo coordination
+      source: Internal PMO or shared resource
+      fte: 0.5–1.0
+    roles_source:
+      lines:
+      - 6886
+      - 6937
+    training_levels:
+    - 1. Executive education (half-day to one day) — SteerCo, board risk committee, senior leadership
+    - 2. PQC foundations (3–5 days) — all workstream participants; covers ML-KEM, ML-DSA, SLH-DSA, FN-DSA, hybrid deployment, CBOM, risk assessment, crypto-agility design
+    - 3. Deep technical (ongoing, lab-based) — hands-on hybrid TLS, HSM PQC config, CycloneDX CBOM, cert lifecycle automation, performance testing
+    - 4. Crypto champion program — one champion per platform/application team; sign off on 'crypto readiness' in design reviews
+    sustaining: QRPM evolves into permanent 'Cryptographic Governance Lead' within the CISO's function; crypto champions become a standing network; CBOM becomes a maintained operational asset; crypto-agility OKRs become standing enterprise dashboard metrics; SOC detection rules become part of the permanent detection library.
+    source:
+      lines:
+      - 6869
+      - 7104
+  soc_implementation:
+    prerequisite: 'Every SOC detection capability depends on a single prerequisite: a queryable, continuously updated cryptographic posture registry mapping systems to their expected cryptographic configuration (hybrid / classical-only-pending / PQC-only; expected algorithms and cipher suites; last status-change date). It is a derivative of the Phase 1/Phase 2 inventory/CBOM — the migration program builds it, GRC governs it, the SOC consumes it. Must be machine-readable and SIEM-integrated; designing the integration is a Phase 1 architecture decision.'
+    use_cases:
+    - id: 1
+      name: 'Use Case 1: Hybrid Downgrade Detection'
+      detail: SIEM correlation rules flag connections negotiating classical-only key shares when the expected configuration is hybrid (analogous to TLS downgrade attacks). Illustrative severity High; FP rate 5–10% in a well-maintained registry. Hybrid key exchanges negotiated via IANA NamedGroup codepoints (not X.509 OIDs); ML-KEM hybrid group values must be added manually (1–2 weeks rule dev per platform). Most common FP source is the org's own middleboxes fragmenting/stripping large hybrid ClientHellos, forcing benign classical fallback; Phase 6 should flag middlebox upgrades.
+    - id: 2
+      name: 'Use Case 2: Cryptographic Drift Monitoring'
+      detail: 'Continuous network monitoring flags connections using deprecated cipher suites marked for retirement — continuous compliance verification at the network layer. Alert when an endpoint uses classical-only key share with a system classified ''migration complete''; Severity Medium escalating to High on repeats. Metric: ''Cryptographic Migration Coverage'' (% PQC/hybrid vs classical-only TLS sessions, weekly), monotonically increasing toward 100%, regression investigated within 24 hours. Requires east-west traffic visibility.'
+    - id: 3
+      name: 'Use Case 3: Certificate Lifecycle Anomalies'
+      detail: 'Targets: failed PQC certificate chain validations (Medium); unauthorized certificate issuance during transition — alert on internal-CA issuance using a PQC signature algorithm not on the approved list (High); CA signing key access outside scheduled issuance windows (Critical). Tooling gap: CT monitoring for PQC certificates is immature; SOC may need custom monitoring around internal CA logs.'
+    - id: 4
+      name: 'Use Case 4: TNFL and Signature Integrity Monitoring'
+      detail: 'Heightened monitoring of code signing events, software update authentication, and systems relying on automated signature verification (firmware updates, financial transaction authorization, identity federation). Alert on unexpected signing keys/identities/times (Critical); modification to signature verification policies in production (Critical); anomalous signing volume beyond two standard deviations (High). Metric: MTD-Signing under 15 minutes for production code signing.'
+    - id: 5
+      name: 'Use Case 5: Enhanced HNDL-Indicator Detection'
+      detail: 'Same data exfiltration monitoring SOCs already do, with quantum-informed reprioritization weighting long-lived data. Alert on sustained outbound transfers from segments hosting data with secrecy requirements >10 years even below traditional DLP thresholds (High); bulk access to archival storage by accounts that don''t normally access them (High). Metric: ''HNDL Exposure Score''; target 100% coverage for 10+ year secrecy data stores, mean detection time under 4 hours. Depends on data classification quality.'
+    cti: 'Three horizons — Tactical (hours-days: PQC implementation CVEs, cryptanalysis papers with implementation impact; TTAssess-PQC target <4h); Operational (weeks-months: adversary collection pattern shifts toward HNDL, supply-chain indicators — watch-and-wait as of mid-2026); Strategic (months-years: tracking quantum hardware toward CRQC, national programs, cryptanalytic trends; output = quarterly Quantum Threat Landscape Assessment to CISO/risk committee, feeds the Material Developments KRI).'
+    incident_playbooks:
+    - 'Playbook 1: PQC Algorithm Vulnerability Disclosure (drill metric: impact assessment under 4 hours)'
+    - 'Playbook 2: Confirmed Hybrid Downgrade Attack'
+    - 'Playbook 3: Credible CRQC Announcement'
+    - 'Playbook 4: Emergency Algorithm Rotation (SOC must not mistake rotation for attack; drill metric FP rate <10%)'
+    tabletop_exercises:
+    - 'Exercise 1: The Friday Afternoon CVE (liboqs CVE in production TLS termination)'
+    - 'Exercise 2: The Ambiguous Cryptanalysis Paper (claimed polynomial-time attack on ML-KEM L3)'
+    - 'Exercise 3: Silent Downgrade (classical-only TLS for 72h after load balancer firmware update)'
+    - 'Exercise 4: The CRQC Announcement (Shor factoring 1024-bit RSA in <8h)'
+    - 'Exercise 5: Signing Key Compromise (unauthorized code signing, firmware already distributed)'
+    roadmap: 'Phase 1 (0–3 mo): operationalize posture registry, tactical CTI, draft vuln-disclosure playbook + first tabletop. Phase 2 (3–9 mo): hybrid downgrade detection, PQC cipher-suite parsing, drift monitoring, HNDL/DLP review. Phase 3 (9–18 mo): full-scope detection, cert lifecycle monitoring, TNFL signing monitoring, quarterly threat assessment, full rotation drill. Phase 4 (Ongoing): refine.'
+    source:
+      lines:
+      - 7109
+      - 7625
+  grc_implementation:
+    why_erm_breaks: Standard ERM assumes observable precursors, historical frequency, established loss models, bounded timelines — quantum risk has none. Timing uncertain (10 to 30+ years); no historical incidents; risk straddles technology/compliance/strategic/operational categories. Fix is adapting the existing ERM framework so quantum risk gets the same structured treatment (risk appetite, KRIs, escalation thresholds, board cadence) as other top-tier risks.
+    instruments:
+      risk_appetite: 'Two levels: Strategic (board language) — a single sentence defining overall posture (e.g. complete migration of all >10-year-confidentiality systems before earliest credible CRQC estimates, and achieve compliance with all applicable PQC deadlines with a minimum 12-month buffer). Operational tolerances (program language) — measurable thresholds for HNDL, TNFL, regulatory compliance, crypto-agility. Presented to the board during Phase 0 alongside charter/budget; reviewed annually. Examples: HNDL ≤20% of >10-year-secrecy data on quantum-vulnerable algorithms by end-2027, 0% by end-2029; TNFL all production software/firmware signing on quantum-resistant signatures by end-2027, all CA signing keys PQC-capable by end-2029; Regulatory at least 12 months before deadline; Crypto-agility for all systems deployed from Q3 2026.'
+      kri_framework: 'Three-level cascade. Board-level (quarterly): Migration Completion Rate (variance >5pp triggers SteerCo review + board notification), HNDL Residual Exposure (any quarter failing to decrease escalates to risk committee), Regulatory Compliance Buffer (<12mo amber, <6mo red + board intervention), Third-Party Quantum Readiness, Material Developments Flag (qualitative, from CTI). CISO-level (monthly): Inventory Completeness (<80% = unreliable plan), Migration Velocity (<70% two months triggers review), Crypto-Agility Adoption (<95% triggers architecture governance review), Regulatory Horizon Tracker, Vendor Readiness Scores, Budget Consumption vs Plan. Operational (weekly/real-time): Migration Throughput, Cryptographic Drift Count (any non-zero investigated), Hybrid Downgrade Alerts, Certificate Transition Progress, Open Exceptions/Deferrals (>6 months without plan escalates), TTR-PQC.'
+      regulatory_intelligence: 'Quarterly minimum cadence (monthly for regulated sectors). Defined process, assigned ownership, structured output. Sources: NIST PQC/NCCoE, NSA CNSA 2.0, EU NIS Cooperation Group, CISA, sector regulators (BIS/BCBS, EMA, NERC), standards bodies (ETSI, ISO, IETF), national agencies. Output: quarterly Regulatory Horizon Report to SteerCo + risk committee, classifying developments Confirmed / Proposed / Signaled and flagging cross-jurisdiction divergences.'
+      third_party_assessment: 'Operationalizes vendor exposure ongoing (complements Phase 7). Tiering: Tier 1 migration-constraining (HSM vendors, CAs, cloud platforms, payment processors, MSSPs — detailed assessment + active engagement, require CycloneDX 1.6+ CBOM); Tier 2 cryptographic dependency (standard assessment); Tier 3 no crypto dependency (no assessment). Contractual provisions: support NIST PQC by a date, vulnerability notification, right to audit, crypto-agile configuration commitment. Concentration risk: documented substitution assessment per Tier 1 vendor. M&A due diligence: quantum readiness on the standard checklist.'
+      audit_evidence_dossier: 'Internal audit subjects the program to the same oversight as comparable enterprise programs. Audit: inventory completeness, plan realism, migration execution (actually migrated vs marked migrated), risk appetite, KRI framework, regulatory compliance, vendor assessments. Evidence: timestamped inventory DB, quarterly CBOM snapshots, SteerCo minutes, board-approved risk appetite statement, Regulatory Horizon Report, vendor records, exception/deferral register, pilot test reports, training records. Timing: initial within 6 months, mid-program at 18–24 months, annual thereafter; audit observes tabletop exercises.'
+      insurance: Cyber insurance underwriters incorporate quantum readiness into risk assessments, asking about inventories, PQC migration plans, and crypto-agility at renewal. Organizations unable to demonstrate a coherent transition plan may face higher premiums or explicit quantum-exclusions. GRC ensures migration-program documentation is presentable to underwriters.
+    crisis_comms: A quantum cryptographic event is a confidence crisis before a technical incident. GRC owns the external response (SOC owns technical). Maintain pre-drafted templates (customer, regulator, counterparty/partner, market/investor), naming spokesperson and approval chain in advance, exercised in the same tabletops. Expect an attestation surge after any public quantum event; the evidence dossier should make answering an export, not a project.
+    grc_soc_handoff: 'The cryptographic posture registry the five SOC use cases depend on is a GRC asset. Beyond it, GRC produces four outputs the SOC consumes: the risk appetite statement (defines SOC alert escalation thresholds), the regulatory compliance tracker (highest-priority systems to monitor), the vendor readiness assessments (informs third-party connection monitoring), and the exception/deferral register (a dynamic suppression list). Designing these data flows is a Phase 0 governance decision.'
+    source:
+      lines:
+      - 7636
+      - 8117
+appendices:
+- id: A
+  title: Algorithm Quick Reference
+  content:
+    table_note: Main table is column-merged in pdftotext; transcribed and verified against rendered PDF (Appendix A table, 3 rows). Additional parameter sets/sizes appear in the Notes column and surrounding prose.
+    algorithms:
+    - name: ML-KEM-768
+      nist_standard: FIPS 203 (formerly CRYSTALS-Kyber)
+      type: Lattice-based KEM
+      primary_use: Key exchange (TLS, VPN, SSH)
+      key_signature_size: 'Public key: 1,184 bytes; Ciphertext: 1,088 bytes'
+      notes: Default recommendation for hybrid TLS (with X25519). ML-KEM-512 for constrained environments; ML-KEM-1024 for highest security. On modern server hardware, performance overhead is negligible; on constrained devices, test memory and latency impact before selecting parameter set.
+      source:
+        lines:
+        - 8252
+        - 8271
+        pdf_page: 190
+    - name: ML-DSA-65
+      nist_standard: FIPS 204 (formerly CRYSTALS-Dilithium)
+      type: Lattice-based signature
+      primary_use: Digital signatures (PKI, code signing, document signing)
+      key_signature_size: 'Public key: 1,952 bytes; Signature: 3,309 bytes'
+      notes: Default recommendation for most signature use cases. ML-DSA-44 for constrained; ML-DSA-87 for highest security.
+      source:
+        lines:
+        - 8273
+        - 8280
+        pdf_page: 190
+    - name: SLH-DSA
+      nist_standard: FIPS 205 (formerly SPHINCS+)
+      type: Hash-based signature
+      primary_use: Digital signatures (conservative choice)
+      key_signature_size: Varies widely by parameter set
+      notes: Stateless hash-based; no lattice assumptions. Larger signatures but different security foundation. Recommended as backup/alternative if lattice cryptanalysis advances.
+      source:
+        lines:
+        - 8282
+        - 8290
+        pdf_page: 190
+    - name: FN-DSA (formerly FALCON)
+      nist_standard: Draft FIPS 206
+      type: Compact lattice-based signatures
+      status: Pending standardization (NIST) / In Standardization
+      key_signature_size: Approximately 666 bytes at NIST Security Level 1 versus 2,420 bytes for ML-DSA-44
+      notes: Suitable for bandwidth-constrained environments, though it requires complex floating-point arithmetic to implement safely. Expected to complement ML-DSA where signature size is critical. Draft in NIST/Commerce clearance as of June 2026; final expected late 2026 or early 2027. Do not deploy pre-standard. Plan for it in crypto-agility architecture.
+      source:
+        lines:
+        - 8303
+        - 8343
+    - name: HQC
+      nist_standard: In Standardization (selected by NIST March 2025)
+      type: Code-based key encapsulation mechanism (KEM)
+      status: Pending standardization (NIST); final expected 2027
+      primary_use: Non-lattice-based alternative / algorithmic diversity backup for ML-KEM
+      notes: Uses a different mathematical hardness assumption (error-correcting codes versus structured lattices). If a future attack compromises lattice-based KEMs, HQC provides a non-lattice fallback. Worth tracking as a diversification option even though it is not yet a final NIST standard.
+      source:
+        lines:
+        - 8308
+        - 8360
+    - name: HBS (LMS/XMSS)
+      nist_standard: NIST SP 800-208 (finalized October 2020)
+      type: Stateful hash-based signature schemes
+      status: Already standardized (NIST Special Publication)
+      primary_use: Specific use cases such as firmware and software update signing, where cryptographic state can be managed safely
+      notes: Intended for niche, tightly controlled use cases rather than as general-purpose replacements for ML-DSA or SLH-DSA.
+      source:
+        lines:
+        - 8314
+        - 8318
+    cnsa_2_0_algorithm_requirements:
+      key_establishment: ML-KEM-1024 (NIST Security Level 5) -- lower security levels are not permitted for national security systems
+      digital_signatures: ML-DSA-87 (NIST Security Level 5)
+      slh_dsa: Excluded from CNSA 2.0 despite being a NIST-standardized algorithm -- likely due to larger signature sizes and slower verification compared to ML-DSA
+      symmetric: AES-256
+      hash: SHA-384 or SHA-512 (unchanged from CNSA 1.0)
+      note: CNSA 2.0 is being adopted by financial services organizations as a 'highest common denominator' standard even when not regulatorily required.
+      source:
+        lines:
+        - 8373
+        - 8384
+    regional_variations:
+    - jurisdiction: BSI (Germany)
+      stance: Recommends hybrid schemes with ML-KEM as primary; acknowledges FrodoKEM and Classic McEliece as having undergone extensive cryptanalysis
+      source:
+        lines:
+        - 8322
+        - 8325
+    - jurisdiction: South Korea (KpqC)
+      stance: Sovereign algorithms SMAUG-T, NTRU+, HAETAE, AIMer (January 2025 final selections)
+      source:
+        lines:
+        - 8327
+        - 8329
+    additional_signatures_third_round:
+      note: Third Round (9 candidates, May 2026). NIST announced May 13, 2026 that nine candidates advanced. Evaluation expected ~two years. Not for production planning; relevant only to demonstrate why crypto-agility is not optional.
+      candidates:
+      - FAEST
+      - HAWK
+      - MAYO
+      - MQOM
+      - QR-UOV
+      - SDitH
+      - SNOVA
+      - SQIsign
+      - UOV
+      source:
+        lines:
+        - 8362
+        - 8369
+  source:
+    lines:
+    - 8248
+    - 8385
+- id: B
+  title: Decision Tree — 'Where Do I Start?'
+  content:
+    branches:
+    - condition: If you have done nothing yet
+      action: Go to Phase 0. Secure executive mandate and budget. Nothing else works without this.
+    - condition: If you have budget but no inventory
+      action: Go to Phase 1. Deploy automated discovery on your top 20 systems. Simultaneously begin Phase 2 CBOM structure design.
+    - condition: If you have an inventory but no migration plan
+      action: Go to Phase 3. Score and prioritize your inventory. Then Phase 4 for roadmap.
+    - condition: If you have a plan but no pilots
+      action: Go to Phase 5. Select your first hybrid TLS pilot on an internet-facing system you fully control.
+    - condition: If you have pilots running but infrastructure isn't ready to scale
+      action: Go to Phase 6. Assess PKI, HSM, and network device readiness.
+    - condition: If you're blocked on vendors
+      action: Go to Phase 7. Classify vendors by criticality, engage formally, deploy bridging patterns.
+    - condition: If you don't know where you stand
+      action: Run the Maturity Model self-assessment (Cross-Cutting section). Your weakest domain tells you where to focus.
+  source:
+    lines:
+    - 8395
+    - 8416
+- id: C
+  title: Mosca's Inequality — The Decision Framework
+  content:
+    intro: Mosca's Theorem provides the mathematical framework for migration urgency.
+    formula: If X + Y > Z, you must act now.
+    terms:
+      X: 'Security shelf-life: the number of years the data you are protecting must remain confidential'
+      Y: 'Migration time: the number of years required to migrate your cryptographic infrastructure to quantum-safe'
+      Z: 'Threat timeline: the number of years until a cryptanalytically relevant quantum computer (CRQC) exists'
+    decision_logic:
+    - If your data needs 15 years of confidentiality (X=15) and migration takes 5 years (Y=5), then X+Y=20. If CRQC arrives in 15 years (Z=15), you are already 5 years too late.
+    - The PQCC roadmap distinguishes 'urgent adopters' (X+Y>Z) and 'regular adopters' (X+Y≤Z) using this inequality.
+    - For HNDL-exposed data, X is the data's remaining confidentiality requirement. For TNFL-exposed signatures, X is the remaining validity period of the trust anchor.
+    uncomfortable_reality: For most large enterprises, Y is 4–15 years. For sensitive data with long-lived confidentiality requirements, X is 10–20 years. Most credible CRQC estimates place Z at 10–20 years. The math is uncomfortably tight, and it gets worse with every year of delay.
+  source:
+    lines:
+    - 8426
+    - 8457
+- id: D
+  title: Hybrid Approach Jurisdictional Compliance Matrix
+  content:
+    rows:
+    - jurisdiction: BSI (Germany)
+      hybrid_position: Strongly recommended for all PQC KEMs and signatures (except standalone hash-based signatures). Mandated in BSI certification ('visa') contexts.
+      implication: Hybrid should be the default design assumption in German-facing deployments
+      source:
+        lines:
+        - 8471
+        - 8474
+    - jurisdiction: ANSSI (France)
+      hybrid_position: Strongly emphasized short and medium term; Phase 2 of ANSSI's timeline keeps hybrid mandatory for long-term-security claims in ANSSI's visa framework
+      implication: Hybrid is the safer default for French assurance-sensitive products
+      source:
+        lines:
+        - 8476
+        - 8479
+    - jurisdiction: Netherlands (AIVD/CWI/TNO)
+      hybrid_position: Recommended in the PQC Migration Handbook, especially hybrid-AND internally; guidance, not a legal mandate
+      implication: Strong guidance toward hybrid, with explicit policy for exceptions
+      source:
+        lines:
+        - 8481
+        - 8483
+    - jurisdiction: NCSC UK
+      hybrid_position: Prefers a single migration to fully post-quantum PKI rather than an intermediate hybrid PKI; acknowledges hybrid as an acceptable interim measure for confidentiality and interoperability
+      implication: Use hybrid selectively, especially for key exchange/confidentiality; do not treat hybrid as the UK end-state
+      source:
+        lines:
+        - 8485
+        - 8489
+    - jurisdiction: NIST (US)
+      hybrid_position: Hybrid key establishment is allowed but not required; SP 800-227 discusses X-Wing as an example general-purpose hybrid KEM
+      implication: Flexibility to choose hybrid or pure PQC per system
+      source:
+        lines:
+        - 8491
+        - 8493
+    - jurisdiction: NSA CNSA 2.0
+      hybrid_position: Accepted as interim only
+      implication: Hybrid acceptable during transition; end-state must be CNSA 2.0 compliant (pure PQC)
+      source:
+        lines:
+        - 8495
+        - 8497
+    - jurisdiction: ASD (Australia)
+      hybrid_position: Not recommended, but not prohibited
+      implication: Pure PQC preferred long term; hybrid used only where interoperability or resiliency justifies it
+      source:
+        lines:
+        - 8499
+        - 8502
+    multinational_recommendation: Deploy hybrid as the default deployment pattern. This satisfies the strictest requirements (continental European agency guidance), preserves interoperability during transition, and provides defense-in-depth against unknown PQC algorithm weaknesses. Plan for eventual transition to pure PQC to satisfy NCSC UK preferences and CNSA 2.0 end-state. This single approach satisfies all jurisdictions simultaneously.
+  source:
+    lines:
+    - 8468
+    - 8509
+- id: E
+  title: Quick-Reference Checklists
+  content:
+    checklists:
+    - name: 90-Day Quick Start Checklist
+      items:
+      - Executive sponsor identified and committed
+      - QRPM appointed
+      - SteerCo convened; charter published; RACI defined
+      - Multi-year budget (minimum 3 years) approved or in approval process
+      - Top 20 critical systems identified (Phase 0 scoping)
+      - Cryptographic discovery tool selected and procurement initiated
+      - Quantum risk added to enterprise risk register
+      - Cryptographic policy updated to include PQC-approved cipher suites
+      - Procurement policy updated to require PQC roadmaps from vendors
+      - Training cohort (10–20 people) enrolled in PQC fundamentals
+      - First 2 hybrid pilot targets selected
+      - Vendor questionnaires sent to top 10 strategic vendors
+      - KPI baseline values established; Q+1 targets set
+      - Board briefing delivered and documented
+      source:
+        lines:
+        - 8519
+        - 8546
+    - name: Quarterly Board Report Template
+      items:
+      - 'Overall maturity level: [0–5] with trend arrow'
+      - 'Coverage KPI: X% of Tier-1 endpoints on hybrid/PQC (target: Y%)'
+      - 'Inventory KPI: X% of estate mapped in CBOM (target: Y%)'
+      - 'Vendor KPI: X% of strategic vendors with dated PQC commitments (target: Y%)'
+      - 'Trust KPI: X PKI/signing anchors shortened/rotated this quarter'
+      - 'Key risks: [Top 3 risks with mitigation status]'
+      - 'Key decisions required: [Any SteerCo escalations needing board input]'
+      - 'Budget status: On track / Variance [±X%]'
+      - 'Next quarter milestones: [3–5 concrete deliverables]'
+      source:
+        lines:
+        - 8550
+        - 8559
+  source:
+    lines:
+    - 8518
+    - 8559
+- id: F
+  title: Common Objections and Evidence-Based Responses
+  content:
+    intro: Evidence-based responses to the most common objections. Each entry acknowledges the grain of truth before explaining why it is incomplete or incorrect.
+    objections:
+    - objection: Quantum computers are decades away.
+      response: 'Confuses the quantum computing timeline with the migration timeline. Mosca''s Inequality (X + Y > Z) shows organizations with long-lived sensitive data and multi-year migration timelines must start now regardless of CRQC date. HNDL is an active present-tense threat: adversaries are harvesting encrypted data today. Regulatory deadlines (CNSA 2.0, NIS2 amendment, G7 roadmap) do not wait for Q-Day.'
+      source:
+        lines:
+        - 8580
+        - 8588
+    - objection: Our vendors will handle it.
+      response: 'Vendor timelines are set by vendor business priorities, not yours. Phase 7 documents why vendor delegation is dangerous: vendors control when PQC is available in GA releases, not when your organization migrates. Without proactive engagement starting in Year 1, organizations discover vendor blocking issues in Year 3 when it is too late to influence roadmaps.'
+      source:
+        lines:
+        - 8592
+        - 8599
+    - objection: We will wait for standards to settle.
+      response: The core standards are settled. NIST finalized FIPS 203 (ML-KEM), 204 (ML-DSA), and 205 (SLH-DSA) in August 2024. Additional algorithms (FN-DSA, HQC) in standardization do not change the production-ready status of the primary standards. Crypto-agility architecture ensures new algorithms can be adopted via configuration.
+      source:
+        lines:
+        - 8603
+        - 8609
+    - objection: We do not have budget.
+      response: 'Framing it as a standalone budget line is strategically suboptimal. The infrastructure modernization umbrella strategy (Activity 0.2c) positions PQC within broader IT modernization that is independently justified: PKI automation for shorter certificate lifetimes, FIPS 140-3 migration for the FIPS 140-2 sunset, HSM refresh for EOL hardware, library upgrades for CVE remediation. The PQC-specific incremental cost is a fraction of the total.'
+      source:
+        lines:
+        - 8619
+        - 8625
+    - objection: This is just an IT problem.
+      response: PQC migration touches every vendor relationship, data flow, compliance obligation, and business process that depends on digital trust. Phase 0 governance intentionally includes business units, procurement, legal, and compliance. Organizations that treat PQC as an IT project discover during Phase 5 that they lack the authority, budget, and cross-functional coordination to execute at enterprise scale.
+      source:
+        lines:
+        - 8629
+        - 8635
+    - objection: We will do it during the next refresh cycle.
+      response: 'Refresh cycles are typically 3-7 years; some embedded/OT systems 15-40 years. If the next refresh is 2030, the organization starts after multiple regulatory deadlines have passed. The wave-based deployment model avoids big-bang refresh dependencies: migrate via software/configuration updates now, align hardware-dependent migrations with refresh cycles, deploy compensating controls (quantum-safe gateways, overlay encryption) for systems that cannot migrate until refresh.'
+      source:
+        lines:
+        - 8639
+        - 8648
+    - objection: Nobody in our sector has started.
+      response: Factually incorrect. F5 Labs measured 42% of the top 100 websites supporting hybrid PQC key exchange as early as mid-2025. Google, Cloudflare, Meta, Apple, and Signal have deployed PQC in production. OpenSSL, Go, and Node.js ship with PQC defaults. The G7 has published a PQC roadmap for financial services. The EU has proposed explicit PQC requirements in NIS2.
+      source:
+        lines:
+        - 8652
+        - 8658
+    - objection: We did an inventory -- we are done.
+      response: 'Inventory is Phase 1 of an 8-phase framework. Completing an inventory means knowing what needs to be migrated; it does not mean anything has been migrated. The value is in what it enables: CBOM (Phase 2), risk scoring (Phase 3), roadmap (Phase 4), and migration execution (Phases 5-7). An inventory without a migration plan is an audit artifact, not a security outcome.'
+      source:
+        lines:
+        - 8669
+        - 8674
+  source:
+    lines:
+    - 8569
+    - 8674
+- id: G
+  title: Crosswalk to Other Frameworks
+  content:
+    intro: Positions this framework as the execution layer under existing commitments (NIST CSF 2.0, PQCC Migration Roadmap, ETSI TR 103 619, Dutch PQC Migration Handbook) rather than a competitor. Mappings are indicative.
+    columns:
+    - Framework phase
+    - NIST CSF 2.0
+    - PQCC Roadmap
+    - ETSI TR 103 619
+    - Dutch Handbook
+    rows:
+    - framework_phase: Phase 0 — Executive Mandate
+      nist_csf_2_0: Govern (GV.OC, GV.RM, GV.RR)
+      pqcc_roadmap: Preparation
+      etsi_tr_103_619: Stage 1 (initiation)
+      dutch_handbook: Diagnosis
+      source:
+        lines:
+        - 8695
+        - 8698
+    - framework_phase: Phase 1 — Discovery & Inventory
+      nist_csf_2_0: Identify (ID.AM)
+      pqcc_roadmap: Baseline Understanding
+      etsi_tr_103_619: Stage 1 (inventory compilation)
+      dutch_handbook: Diagnosis
+      source:
+        lines:
+        - 8700
+        - 8702
+    - framework_phase: Phase 2 — CBOM
+      nist_csf_2_0: Identify (ID.AM)
+      pqcc_roadmap: Baseline Understanding
+      etsi_tr_103_619: Stage 1 (inventory compilation)
+      dutch_handbook: Diagnosis
+      source:
+        lines:
+        - 8704
+        - 8706
+    - framework_phase: Phase 3 — Risk Scoring
+      nist_csf_2_0: Identify (ID.RA)
+      pqcc_roadmap: Baseline Understanding
+      etsi_tr_103_619: Stage 2 (migration planning)
+      dutch_handbook: Diagnosis / Planning
+      source:
+        lines:
+        - 8708
+        - 8710
+    - framework_phase: Phase 4 — Roadmap & Governance
+      nist_csf_2_0: Govern, Identify (GV.PO, ID.IM)
+      pqcc_roadmap: Planning and Execution
+      etsi_tr_103_619: Stage 2 (migration planning)
+      dutch_handbook: Planning
+      source:
+        lines:
+        - 8712
+        - 8714
+    - framework_phase: Phase 5 — Pilots & Migration
+      nist_csf_2_0: Protect (PR.DS, PR.PS)
+      pqcc_roadmap: Planning and Execution
+      etsi_tr_103_619: Stage 3 (migration execution)
+      dutch_handbook: Execution
+      source:
+        lines:
+        - 8716
+        - 8718
+    - framework_phase: Phase 6 — Infrastructure
+      nist_csf_2_0: Protect (PR.PS, PR.IR)
+      pqcc_roadmap: Planning and Execution
+      etsi_tr_103_619: Stage 3 (migration execution)
+      dutch_handbook: Execution
+      source:
+        lines:
+        - 8720
+        - 8722
+    - framework_phase: Phase 7 — Vendor & Supply Chain
+      nist_csf_2_0: Govern (GV.SC)
+      pqcc_roadmap: Planning and Execution
+      etsi_tr_103_619: Stages 2–3 (supplier actions)
+      dutch_handbook: Planning / Execution
+      source:
+        lines:
+        - 8733
+        - 8735
+    - framework_phase: Program Foundations (SOC, GRC, agility, skills, metrics)
+      nist_csf_2_0: Detect, Respond, Recover; Govern
+      pqcc_roadmap: Monitoring and Evaluation
+      etsi_tr_103_619: Cross-stage
+      dutch_handbook: Cross-step
+      source:
+        lines:
+        - 8737
+        - 8740
+    milestone_mapping: 'NCSC UK: discovery/planning complete by 2028 = Phases 0–4; high-priority migration by 2031 = first waves of Phases 5–6; full migration by 2035 = wave completion plus Migration Verification & Program Closure. CNSA 2.0: 2027 acquisition requirement = Phase 7 procurement language; 2030 software/firmware signing = Track B''s SP 800-208 deployment; 2030 networking equipment = Track A''s infrastructure waves; 2033/2035 horizons = outer years of the multi-year roadmap.'
+  source:
+    lines:
+    - 8685
+    - 8752
+- id: H
+  title: Protocol Coverage Matrix
+  content:
+    intro: 'Completeness check against your own estate: every protocol family carries quantum-vulnerable cryptography, and several are routinely forgotten because no single team owns them. Deployability reflects standards/implementations as of June 2026.'
+    columns:
+    - Protocol family
+    - Quantum threat
+    - Standards status (June 2026)
+    - Deployability
+    - Framework reference
+    rows:
+    - protocol_family: TLS 1.3 (web, APIs)
+      quantum_threat: HNDL (key exchange); TNFL (certificates)
+      standards_status: Hybrid ML-KEM deployed at scale; MTC drafts for public Web PKI
+      deployability: Deploy now (Track A); plan the PKI fork
+      framework_reference: Activity 5.2; Phase 6 PKI
+      source:
+        lines:
+        - 8773
+        - 8776
+    - protocol_family: VPN / IPsec (IKEv2)
+      quantum_threat: HNDL
+      standards_status: RFC 9370 hybrid IKEv2
+      deployability: Deploy now
+      framework_reference: Activity 5.2
+      source:
+        lines:
+        - 8778
+        - 8779
+    - protocol_family: SSH
+      quantum_threat: HNDL; TNFL (host and user keys)
+      standards_status: Hybrid default in current OpenSSH
+      deployability: Deploy now
+      framework_reference: Activity 5.2
+      source:
+        lines:
+        - 8781
+        - 8783
+    - protocol_family: Email transport (SMTP over TLS)
+      quantum_threat: HNDL
+      standards_status: Same hybrid TLS mechanisms
+      deployability: Deploy as mail servers support it
+      framework_reference: Activity 5.2
+      source:
+        lines:
+        - 8785
+        - 8787
+    - protocol_family: Email signing (S/MIME, PGP)
+      quantum_threat: TNFL
+      standards_status: IETF LAMPS drafts; immature
+      deployability: Monitor; shorten key lifetimes
+      framework_reference: Track B
+      source:
+        lines:
+        - 8789
+        - 8790
+    - protocol_family: DKIM
+      quantum_threat: TNFL (RSA throughout)
+      standards_status: No PQC standard yet
+      deployability: Monitor; rotate keys; track IETF
+      framework_reference: Track B
+      source:
+        lines:
+        - 8792
+        - 8794
+    - protocol_family: DNSSEC
+      quantum_threat: TNFL only
+      standards_status: IETF strategy work; ML-DSA/SLH-DSA research; root KSK rollover measured in years
+      deployability: Monitor only; no unilateral action possible
+      framework_reference: Track B
+      source:
+        lines:
+        - 8795
+        - 8799
+    - protocol_family: Code and firmware signing
+      quantum_threat: TNFL (highest persistence)
+      standards_status: SP 800-208 LMS/XMSS final; composite ML-DSA drafts
+      deployability: Deploy now (LMS/XMSS, dual-signed)
+      framework_reference: Track B; Activity 5.2
+      source:
+        lines:
+        - 8810
+        - 8813
+    - protocol_family: Document signing and RFC 3161 time-stamping
+      quantum_threat: TNFL (decades-long validity)
+      standards_status: PQC time-stamping immature; ERS (RFC 4998) re-anchoring patterns
+      deployability: Plan re-signing and re-timestamping cycles for archives
+      framework_reference: Track B; Closure
+      source:
+        lines:
+        - 8815
+        - 8819
+    - protocol_family: Long-lived signed records and archives
+      quantum_threat: TNFL
+      standards_status: Re-sign versus Merkle-anchor strategies; evidence record syntax
+      deployability: Decide per archive; document in the CBOM
+      framework_reference: Activity 5.6; Closure
+      source:
+        lines:
+        - 8821
+        - 8825
+    - protocol_family: Kerberos / Active Directory (PKINIT)
+      quantum_threat: TNFL; HNDL on ticket exchange
+      standards_status: Vendor-dependent; early
+      deployability: Track operating-system vendor roadmaps
+      framework_reference: Track B identity
+      source:
+        lines:
+        - 8827
+        - 8830
+    - protocol_family: FIDO2 / WebAuthn passkeys
+      quantum_threat: TNFL (ES256/RS256 credentials)
+      standards_status: PQC COSE codepoints assigned; ML-DSA drafts active
+      deployability: Monitor; plan re-enrollment; ask CIAM vendors
+      framework_reference: Track B identity
+      source:
+        lines:
+        - 8832
+        - 8835
+    - protocol_family: OIDC / SAML token signing
+      quantum_threat: TNFL
+      standards_status: Algorithm-agile by design; PQC profiles early
+      deployability: Inventory signing keys; migrate with IdP support
+      framework_reference: Track B identity
+      source:
+        lines:
+        - 8837
+        - 8839
+    - protocol_family: 802.1X EAP-TLS (network access)
+      quantum_threat: HNDL; TNFL (certificates)
+      standards_status: Follows TLS and internal PKI
+      deployability: Migrate with internal PKI
+      framework_reference: Phase 6 PKI
+      source:
+        lines:
+        - 8841
+        - 8843
+    - protocol_family: Wi-Fi WPA3 (enterprise)
+      quantum_threat: Enterprise mode rests on EAP-TLS; SAE is symmetric
+      standards_status: Follows EAP-TLS
+      deployability: Cover via the 802.1X row
+      framework_reference: Phase 6
+      source:
+        lines:
+        - 8845
+        - 8848
+    - protocol_family: Constrained IoT / LPWAN / satellite
+      quantum_threat: HNDL; TNFL (device identity)
+      standards_status: Profiles immature; severely size-constrained
+      deployability: Gateway termination; PSK overlays; see sector extensions
+      framework_reference: Activities 6.3, 5.5
+      source:
+        lines:
+        - 8859
+        - 8862
+  source:
+    lines:
+    - 8763
+    - 8862

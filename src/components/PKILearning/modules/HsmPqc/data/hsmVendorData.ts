@@ -1,11 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { getCatalogStatus, type CatalogAvailability } from '@/data/catalogStatus'
+
+export type PqcSupportStatusKey = 'production' | 'beta' | 'limited' | 'roadmap'
+
 export interface HSMVendor {
   id: string
   name: string
   product: string
   type: 'on-prem' | 'cloud'
-  pqcSupportStatus: 'production' | 'beta' | 'limited' | 'roadmap'
+  /**
+   * Reference to the product's `software_name` in the central catalog
+   * (`pqc_product_catalog_*.csv`). The headline `pqcSupportStatus` is DERIVED
+   * from the catalog via `getVendorPqcSupportStatus` — never stored here, so the
+   * module cannot drift from the single source of truth. The per-algorithm
+   * detail (supportedPQCAlgorithms / firmwareVersion / PKCS#11 mechanisms /
+   * FIPS level) stays as module-authored teaching content the catalog omits.
+   */
+  catalogName: string
   fips140Level: string
   supportedPQCAlgorithms: string[]
   formFactor: 'network' | 'pcie' | 'cloud' | 'usb'
@@ -35,7 +47,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     name: 'Thales',
     product: 'Luna Network HSM 7',
     type: 'on-prem',
-    pqcSupportStatus: 'production',
+    catalogName: 'Thales Luna HSM',
     fips140Level: 'FIPS 140-3 Level 3',
     supportedPQCAlgorithms: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS/HSS'],
     formFactor: 'network',
@@ -56,7 +68,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     name: 'Entrust',
     product: 'nShield 5',
     type: 'on-prem',
-    pqcSupportStatus: 'production',
+    catalogName: 'Entrust nShield',
     fips140Level: 'FIPS 140-3 Level 3 (cert #4765; PQC firmware resubmission pending)',
     supportedPQCAlgorithms: [
       'ML-KEM-512/768/1024',
@@ -83,7 +95,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     name: 'Utimaco',
     product: 'SecurityServer Se Gen2 (Quantum Protect)',
     type: 'on-prem',
-    pqcSupportStatus: 'production',
+    catalogName: 'Utimaco SecurityServer',
     fips140Level: 'FIPS 140-3 Level 3 (cert #3925)',
     supportedPQCAlgorithms: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS', 'XMSS'],
     formFactor: 'pcie',
@@ -104,7 +116,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     name: 'Marvell',
     product: 'LiquidSecurity 2 (LS2)',
     type: 'on-prem',
-    pqcSupportStatus: 'beta',
+    catalogName: 'Marvell LiquidSecurity 2',
     fips140Level: 'FIPS 140-3 Level 3',
     supportedPQCAlgorithms: ['ML-KEM-768', 'ML-DSA-65', 'LMS'],
     formFactor: 'pcie',
@@ -120,7 +132,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     name: 'Futurex',
     product: 'CryptoHub HSM',
     type: 'on-prem',
-    pqcSupportStatus: 'beta',
+    catalogName: 'Futurex CryptoHub',
     fips140Level: 'FIPS 140-3 Level 3',
     supportedPQCAlgorithms: ['ML-KEM-768', 'ML-DSA-65'],
     formFactor: 'network',
@@ -137,7 +149,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     name: 'AWS',
     product: 'CloudHSM',
     type: 'cloud',
-    pqcSupportStatus: 'limited',
+    catalogName: 'AWS CloudHSM',
     fips140Level: 'FIPS 140-3 Level 3 (via AWS-LC)',
     supportedPQCAlgorithms: ['ML-DSA-44/65/87 (preview)'],
     formFactor: 'cloud',
@@ -153,7 +165,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     name: 'Microsoft',
     product: 'Azure Dedicated HSM',
     type: 'cloud',
-    pqcSupportStatus: 'production',
+    catalogName: 'Azure Dedicated HSM (Marvell LiquidSecurity)',
     fips140Level: 'FIPS 140-3 Level 3 (via Thales Luna 7 cert)',
     supportedPQCAlgorithms: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS/HSS'],
     formFactor: 'cloud',
@@ -172,7 +184,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     name: 'Google Cloud',
     product: 'Cloud HSM',
     type: 'cloud',
-    pqcSupportStatus: 'roadmap',
+    catalogName: 'Google Cloud HSM',
     fips140Level: 'FIPS 140-2 Level 3',
     supportedPQCAlgorithms: ['Planned: ML-KEM, ML-DSA (via Cloud KMS integration)'],
     formFactor: 'cloud',
@@ -189,7 +201,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     name: 'Crypto4A',
     product: 'QxHSM (QASM core)',
     type: 'on-prem',
-    pqcSupportStatus: 'production',
+    catalogName: 'Crypto4A QxHSM',
     fips140Level: 'FIPS 140-3 Level 3 (cert #4250, Active)',
     supportedPQCAlgorithms: [
       'ML-KEM-512/768/1024',
@@ -443,10 +455,24 @@ C_GetAttributeValue(
   },
 ]
 
-export const STATUS_LABELS: Record<
-  HSMVendor['pqcSupportStatus'],
-  { label: string; className: string }
-> = {
+// ── Catalog-derived headline status ───────────────────────────────────────────
+// A vendor's overall PQC maturity is the SINGLE SOURCE OF TRUTH in the central
+// product catalog. Map catalog availability → this module's display vocabulary.
+const AVAIL_TO_SUPPORT: Record<CatalogAvailability, PqcSupportStatusKey> = {
+  available: 'production',
+  partial: 'limited',
+  roadmap: 'roadmap',
+  none: 'roadmap',
+  unverified: 'roadmap',
+}
+
+/** Headline PQC support status for a vendor, derived live from the central catalog. */
+export function getVendorPqcSupportStatus(v: HSMVendor): PqcSupportStatusKey {
+  const status = getCatalogStatus(v.catalogName)
+  return status ? AVAIL_TO_SUPPORT[status.availability] : 'roadmap'
+}
+
+export const STATUS_LABELS: Record<PqcSupportStatusKey, { label: string; className: string }> = {
   production: {
     label: 'PRODUCTION',
     className: 'bg-success/10 text-success border-success/20',

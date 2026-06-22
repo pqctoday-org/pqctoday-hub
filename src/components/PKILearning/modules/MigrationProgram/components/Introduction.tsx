@@ -17,6 +17,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
 import { Button } from '@/components/ui/button'
+import { TwoTrackSequencing } from './TwoTrackSequencing'
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
@@ -375,6 +376,11 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
       id: 'roadmap',
       label: 'Program Overview & 7-Phase Framework',
       content: <Step1ProgramAndFramework />,
+    },
+    {
+      id: 'two-track',
+      label: 'Two-Track Sequencing (KEM vs Signatures)',
+      content: <TwoTrackSequencing />,
     },
     {
       id: 'deployment',

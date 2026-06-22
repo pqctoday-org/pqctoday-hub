@@ -1,12 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo, useCallback } from 'react'
 import { ChevronDown, ChevronUp, ArrowUpDown, Server, Cloud, Filter, Shield } from 'lucide-react'
-import { HSM_VENDORS, STATUS_LABELS, type HSMVendor } from '../data/hsmVendorData'
+import {
+  HSM_VENDORS,
+  STATUS_LABELS,
+  getVendorPqcSupportStatus,
+  type PqcSupportStatusKey,
+} from '../data/hsmVendorData'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
 
 type FilterType = 'all' | 'on-prem' | 'cloud'
-type FilterStatus = 'all' | HSMVendor['pqcSupportStatus']
+type FilterStatus = 'all' | PqcSupportStatusKey
 type SortKey = 'name' | 'type'
 
 export const VendorComparison: React.FC = () => {
@@ -22,7 +27,7 @@ export const VendorComparison: React.FC = () => {
       vendors = vendors.filter((v) => v.type === filterType)
     }
     if (filterStatus !== 'all') {
-      vendors = vendors.filter((v) => v.pqcSupportStatus === filterStatus)
+      vendors = vendors.filter((v) => getVendorPqcSupportStatus(v) === filterStatus)
     }
 
     vendors.sort((a, b) => {
@@ -42,7 +47,7 @@ export const VendorComparison: React.FC = () => {
   const stats = useMemo(() => {
     const total = filteredVendors.length
     const productionReady = filteredVendors.filter(
-      (v) => v.pqcSupportStatus === 'production'
+      (v) => getVendorPqcSupportStatus(v) === 'production'
     ).length
     return { total, productionReady }
   }, [filteredVendors])
@@ -147,7 +152,7 @@ export const VendorComparison: React.FC = () => {
       {/* Vendor Table */}
       <div className="space-y-2">
         {filteredVendors.map((vendor) => {
-          const statusInfo = STATUS_LABELS[vendor.pqcSupportStatus]
+          const statusInfo = STATUS_LABELS[getVendorPqcSupportStatus(vendor)]
           const isExpanded = expandedVendor === vendor.id
 
           return (

@@ -768,12 +768,7 @@ export const PolicyTemplateGenerator: React.FC = () => {
   return (
     <div className="space-y-6">
       {seedSources.length > 0 && (
-        <PreFilledBanner
-          summary={`Policy fields seeded from ${seedSources.join(' + ')}.`}
-          onClear={() => {
-            /* Per-section defaults are computed in buildSections — clear is informational */
-          }}
-        />
+        <PreFilledBanner summary={`Policy fields seeded from ${seedSources.join(' + ')}.`} />
       )}
       <p className="text-sm text-muted-foreground">
         Select a policy type, fill in the template fields, and export a customized PQC policy

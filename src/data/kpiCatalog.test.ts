@@ -7,6 +7,9 @@ import {
   getKpiSet,
   getWeightSum,
   pqcReadinessTier,
+  isPqcReady,
+  isFips1403Validated,
+  computePaceToDeadline,
 } from './kpiCatalog'
 import { getKpiTarget } from './kpiTargets'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
@@ -106,7 +109,7 @@ describe('KPI_CATALOG integrity', () => {
       preBoostScore: null,
       boosts: [],
       hndlRiskWindow: null,
-      hnflRiskWindow: null,
+      tnflRiskWindow: null,
       categoryScores: null,
       categoryDrivers: null,
       migrationEffort: [],
@@ -234,7 +237,7 @@ function mockData(overrides: Partial<ExecutiveModuleData> = {}): ExecutiveModule
     preBoostScore: null,
     boosts: [],
     hndlRiskWindow: null,
-    hnflRiskWindow: null,
+    tnflRiskWindow: null,
     categoryScores: null,
     categoryDrivers: null,
     migrationEffort: [],
@@ -527,5 +530,69 @@ describe('crown-jewel-coverage (E1)', () => {
     const cj = dims.find((d) => d.id === 'crown-jewel-coverage')
     expect(cj).toBeDefined()
     expect(cj?.disabled).toBeFalsy()
+  })
+})
+
+describe('isPqcReady — one shared definition (RM-11)', () => {
+  it('counts deployed/full and hybrid as ready', () => {
+    expect(isPqcReady('Yes (ML-KEM production)')).toBe(true)
+    expect(isPqcReady('Partial (ML-KEM, hybrid)')).toBe(true)
+  })
+  it('does NOT count planned, pilot, narrative or none as ready (the old over-count)', () => {
+    expect(isPqcReady('Planned (ML-DSA 2026)')).toBe(false)
+    expect(isPqcReady('Pilot')).toBe(false)
+    expect(isPqcReady('Credential management')).toBe(false)
+    expect(isPqcReady('None')).toBe(false)
+    expect(isPqcReady('No')).toBe(false)
+    expect(isPqcReady('')).toBe(false)
+  })
+})
+
+describe('isFips1403Validated — 140-2 must not pass as 140-3 (RM-11)', () => {
+  it('accepts explicit 140-3 / generic validated', () => {
+    expect(isFips1403Validated('Yes (FIPS 140-3)')).toBe(true)
+    expect(isFips1403Validated('FIPS 140-3 Level 2')).toBe(true)
+    expect(isFips1403Validated('Validated')).toBe(true)
+  })
+  it('rejects FIPS 140-2 and negatives', () => {
+    expect(isFips1403Validated('FIPS 140-2')).toBe(false)
+    expect(isFips1403Validated('Yes (FIPS 140-2)')).toBe(false)
+    expect(isFips1403Validated('No')).toBe(false)
+    expect(isFips1403Validated('')).toBe(false)
+  })
+})
+
+describe('computePaceToDeadline (real pace, not a constant)', () => {
+  const NOW = 2027
+
+  it('returns null when there is no deadline, start year, or progress signal', () => {
+    expect(computePaceToDeadline(2024, null, 0.5, NOW)).toBeNull()
+    expect(computePaceToDeadline(null, 2030, 0.5, NOW)).toBeNull()
+    expect(computePaceToDeadline(2024, 2030, undefined, NOW)).toBeNull()
+    // start year not before the deadline is nonsensical -> null
+    expect(computePaceToDeadline(2030, 2030, 0.5, NOW)).toBeNull()
+  })
+
+  it('scores 50 when actual progress equals expected (on track)', () => {
+    // 2024 -> 2030, now 2027: half-elapsed -> expected 0.5. progress 0.5 -> 50.
+    expect(computePaceToDeadline(2024, 2030, 0.5, NOW)).toBe(50)
+  })
+
+  it('scores >50 when ahead of the expected line and <50 when behind', () => {
+    expect(computePaceToDeadline(2024, 2030, 0.75, NOW)).toBeGreaterThan(50) // ahead
+    expect(computePaceToDeadline(2024, 2030, 0.25, NOW)).toBeLessThan(50) // behind
+  })
+
+  it('clamps to [0,100] and never returns a fixed 50 regardless of inputs', () => {
+    expect(computePaceToDeadline(2024, 2030, 1, NOW)).toBe(100) // way ahead -> capped
+    expect(computePaceToDeadline(2024, 2030, 0, NOW)).toBe(0) // no progress -> floor
+  })
+
+  it('treats a reached/past deadline as max urgency (100)', () => {
+    expect(computePaceToDeadline(2024, 2026, 0.1, NOW)).toBe(100)
+  })
+
+  it('returns 100 right at program start (nothing expected yet)', () => {
+    expect(computePaceToDeadline(2027, 2030, 0, NOW)).toBe(100)
   })
 })

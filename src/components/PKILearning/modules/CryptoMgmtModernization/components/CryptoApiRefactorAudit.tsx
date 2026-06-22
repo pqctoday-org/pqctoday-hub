@@ -247,8 +247,37 @@ function getProviderNotes(providers: string[]): string[] {
 // Watch-outs
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Per-API migration notes — the `currentCryptoApi` input (which used to be
+// collected but never affect the output) now adds the relevant note per API.
+const CURRENT_API_NOTES: Record<string, string> = {
+  'openssl-legacy':
+    'OpenSSL legacy RSA_* / EC_* direct calls have no PQC path - migrate to the EVP_PKEY high-level API first, then add ML-KEM / ML-DSA.',
+  boringssl:
+    'BoringSSL has no stable external API contract (it tracks Chrome/Android) - pin a snapshot and re-test PQC support on every update.',
+  'web-crypto':
+    'Web Crypto API has no standardized PQC algorithms yet - use a vetted WASM crypto library until the WebCrypto PQC additions land.',
+  pkcs11:
+    'PKCS#11: target v3.2 for ML-KEM / ML-DSA mechanisms - older tokens will not expose PQC mechanisms.',
+  bouncycastle:
+    "BouncyCastle: use the BC-FIPS build for validated PQC; the general provider's PQC is outside a FIPS module boundary.",
+  'dotnet-syscrypto':
+    '.NET: ML-KEM / ML-DSA are native types from .NET 9/10 - prefer those over third-party providers.',
+  'kms-backed':
+    'KMS-backed: PQC depends on the cloud KMS roadmap - track AWS/GCP/Azure PQC key-type GA, not just algorithm standardisation.',
+  'proprietary-hsm':
+    "Proprietary HSM SDK: PQC needs vendor firmware inside a validated module - gate on the vendor's FIPS 140-3 PQC roadmap.",
+  'hand-rolled':
+    'Hand-rolled crypto is the highest-risk surface - replace it with a vetted library exposing a swappable provider before adding PQC.',
+}
+
 function computeWatchOuts(inputs: CryptoApiInputs): string[] {
   const out: string[] = []
+
+  // Per-API notes for the selected current crypto API(s).
+  for (const api of inputs.currentCryptoApi) {
+    const note = CURRENT_API_NOTES[api]
+    if (note) out.push(note)
+  }
 
   if (inputs.cryptoAgilityNow === 'fully-hardcoded' && inputs.callSiteCount === 'legacy-mass') {
     out.push(

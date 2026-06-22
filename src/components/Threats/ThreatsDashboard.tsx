@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Search,
   AlertTriangle,
@@ -10,6 +10,8 @@ import {
   Filter,
   Briefcase,
   BookmarkCheck,
+  ShieldHalf,
+  FileSignature,
 } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { threatsData, threatsMetadata } from '../../data/threatsData'
@@ -45,15 +47,40 @@ import { ThreatsCardGrid } from './ThreatsCardGrid'
 import { ThreatsTable } from './ThreatsTable'
 import { IndustryStack } from './IndustryStack'
 
-import { ThreatDetailDialog } from './ThreatDetailDialog'
+// Lazy: keeps the implementation-attack data the dialog pulls in out of the
+// Threats route chunk until a user opens a threat detail.
+const ThreatDetailDialog = lazy(() =>
+  import('./ThreatDetailDialog').then((m) => ({ default: m.ThreatDetailDialog }))
+)
 import { MobileThreatsList } from './MobileThreatsList'
+import { ThreatEconomicsHeader } from './ThreatEconomicsHeader'
+import { CrqcCapabilityStrip } from './CrqcCapabilityStrip'
+import { SectorExposureHero } from './SectorExposureHero'
+import { THREAT_CLASS_DEFS, threatMatchesClass, type ThreatClass } from './threatClassification'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 
 // Threat Detail Dialog Component - Moved outside to ./ThreatDetailDialog.tsx
 
-export const ThreatsDashboard: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const { selectedIndustries: storeIndustries, selectedPersona } = usePersonaStore()
+export const ThreatsDashboard: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false }) => {
+  // When embedded in the sim, the dashboard must NOT read/write the page URL (it
+  // would corrupt /simulation's route) and can't nest its own <Router>. So its
+  // filter URL state is backed by local state, kept API-compatible with
+  // useSearchParams. (Same pattern as MigrateView / LibraryView.)
+  const [realSearchParams, realSetSearchParams] = useSearchParams()
+  const [embedSearchParams, setEmbedSearchParamsState] = useState(() => new URLSearchParams())
+  const searchParams = simEmbed ? embedSearchParams : realSearchParams
+  const setSearchParams: typeof realSetSearchParams = simEmbed
+    ? (nextInit) =>
+        setEmbedSearchParamsState((prev) => {
+          const next = new URLSearchParams(
+            typeof nextInit === 'function'
+              ? (nextInit(prev) as URLSearchParams)
+              : (nextInit as URLSearchParams)
+          )
+          return next.toString() === prev.toString() ? prev : next
+        })
+    : realSetSearchParams
+  const { selectedIndustries: storeIndustries, selectedPersona, setPersona } = usePersonaStore()
 
   const initialIndustries = useMemo(() => {
     const param = searchParams.get('industry')
@@ -78,6 +105,9 @@ export const ThreatsDashboard: React.FC = () => {
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>(initialIndustries)
   const [selectedCriticality, setSelectedCriticality] = useState<string>(
     () => searchParams.get('criticality') ?? 'All'
+  )
+  const [selectedClass, setSelectedClass] = useState<string>(
+    () => searchParams.get('class') ?? 'All'
   )
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
   const [sortField, setSortField] = useState<SortField>(
@@ -107,6 +137,7 @@ export const ThreatsDashboard: React.FC = () => {
     const indParam = searchParams.get('industry')
     const idParam = searchParams.get('id')
     const nextCrit = searchParams.get('criticality') ?? 'All'
+    const nextClass = searchParams.get('class') ?? 'All'
     const nextQ = searchParams.get('q') ?? ''
     const nextSort = (searchParams.get('sort') as SortField | null) ?? 'industry'
     const nextDir = (searchParams.get('dir') as SortDirection | null) ?? 'asc'
@@ -128,6 +159,7 @@ export const ThreatsDashboard: React.FC = () => {
       if (found) setSelectedThreat(found)
     }
     setSelectedCriticality((prev) => (prev !== nextCrit ? nextCrit : prev))
+    setSelectedClass((prev) => (prev !== nextClass ? nextClass : prev))
     setSearchQuery((prev) => (prev !== nextQ ? nextQ : prev))
     setSortField((prev) => (prev !== nextSort ? nextSort : prev))
     setSortDirection((prev) => (prev !== nextDir ? nextDir : prev))
@@ -140,6 +172,7 @@ export const ThreatsDashboard: React.FC = () => {
     (overrides: {
       industry?: string[]
       criticality?: string
+      threatClass?: string
       q?: string
       sort?: SortField
       dir?: SortDirection
@@ -151,6 +184,7 @@ export const ThreatsDashboard: React.FC = () => {
           const next = new URLSearchParams(prev)
           const inds = overrides.industry ?? selectedIndustries
           const crit = overrides.criticality ?? selectedCriticality
+          const cls = overrides.threatClass ?? selectedClass
           const q = overrides.q ?? searchQuery
           const sort = overrides.sort ?? sortField
           const dir = overrides.dir ?? sortDirection
@@ -161,6 +195,8 @@ export const ThreatsDashboard: React.FC = () => {
           else next.delete('industry')
           if (crit !== 'All') next.set('criticality', crit)
           else next.delete('criticality')
+          if (cls !== 'All') next.set('class', cls)
+          else next.delete('class')
           if (q) next.set('q', q)
           else next.delete('q')
           if (sort !== 'industry') next.set('sort', sort)
@@ -179,6 +215,7 @@ export const ThreatsDashboard: React.FC = () => {
     [
       selectedIndustries,
       selectedCriticality,
+      selectedClass,
       searchQuery,
       sortField,
       sortDirection,
@@ -219,6 +256,23 @@ export const ThreatsDashboard: React.FC = () => {
       },
       { id: 'Medium', label: 'Medium', icon: <Info size={16} className="text-primary" /> },
       { id: 'Low', label: 'Low', icon: <CheckCircle size={16} className="text-status-success" /> },
+    ]
+  }, [])
+
+  // Threat-class items (HNDL decrypt-later vs HNFL/TNFL forge-later) — Threats #2
+  const threatClassItems = useMemo(() => {
+    return [
+      { id: 'All', label: 'All Classes', icon: null },
+      {
+        id: 'hndl',
+        label: THREAT_CLASS_DEFS.hndl.label,
+        icon: <ShieldHalf size={16} className="text-secondary" />,
+      },
+      {
+        id: 'hnfl',
+        label: THREAT_CLASS_DEFS.hnfl.label,
+        icon: <FileSignature size={16} className="text-status-warning" />,
+      },
     ]
   }, [])
 
@@ -278,6 +332,11 @@ export const ThreatsDashboard: React.FC = () => {
     // Filter by Criticality
     if (selectedCriticality !== 'All') {
       data = data.filter((item) => item.criticality === selectedCriticality)
+    }
+
+    // Filter by Threat Class (HNDL / HNFL-TNFL) — derived dimension, Threats #2
+    if (selectedClass !== 'All') {
+      data = data.filter((item) => threatMatchesClass(item, selectedClass as ThreatClass))
     }
 
     // Filter by Search Query — lexical floor + semantic supplement
@@ -349,6 +408,7 @@ export const ThreatsDashboard: React.FC = () => {
   }, [
     selectedIndustries,
     selectedCriticality,
+    selectedClass,
     searchQuery,
     semanticIdSet,
     sortField,
@@ -393,40 +453,81 @@ export const ThreatsDashboard: React.FC = () => {
     return PERSONA_FRAMING[selectedPersona] ?? null // eslint-disable-line security/detect-object-injection
   }, [selectedPersona, selectedIndustries])
 
+  // Effective industries the page is scoped to (explicit selection, else persona default).
+  const heroScopedIndustries = useMemo<string[]>(
+    () =>
+      selectedIndustries.length > 0
+        ? selectedIndustries
+        : personaDefaultActive
+          ? personaDefaultThreatIndustries
+          : [],
+    [selectedIndustries, personaDefaultActive, personaDefaultThreatIndustries]
+  )
+  // Threats applicable to the scoped sector(s) — the hero's exposure set (sector
+  // scope only; criticality/class/search filters don't shrink "your exposure").
+  const heroApplicable = useMemo<ThreatItem[]>(
+    () =>
+      heroScopedIndustries.length > 0
+        ? threatsData.filter((t) => heroScopedIndustries.includes(t.industry))
+        : threatsData,
+    [heroScopedIndustries]
+  )
+
   return (
     <div>
-      <PageHeader
-        icon={AlertTriangle}
-        pageId="threats"
-        title="Quantum Threats"
-        description="Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements."
-        dataSource={`${threatsMetadata?.filename ?? 'quantum_threats_hsm_industries.csv'} • Updated: ${threatsMetadata?.lastUpdate?.toLocaleDateString() ?? 'Unknown'}`}
-        viewType="Threats"
-        shareTitle="Quantum Threats Dashboard — Industry Risk Analysis"
-        shareText="Detailed analysis of quantum threats across industries — criticality ratings, at-risk cryptography, and PQC replacements."
-        endorseUrl={buildEndorsementUrl({
-          category: 'threat-endorsement',
-          title: 'Endorse: Quantum Threats Dashboard',
-          resourceType: 'Threats Page',
-          resourceId: 'Quantum Threats Dashboard',
-          resourceDetails:
-            '**Page:** Quantum Threats — Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements.',
-          pageUrl: '/threats',
-        })}
-        endorseLabel="Threats Page"
-        endorseResourceType="Threats"
-        flagUrl={buildFlagUrl({
-          category: 'threat-endorsement',
-          title: 'Flag: Quantum Threats Dashboard',
-          resourceType: 'Threats Page',
-          resourceId: 'Quantum Threats Dashboard',
-          resourceDetails:
-            '**Page:** Quantum Threats — Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements.',
-          pageUrl: '/threats',
-        })}
-        flagLabel="Threats Page"
-        flagResourceType="Threats"
-      />
+      {!simEmbed && (
+        <PageHeader
+          icon={AlertTriangle}
+          pageId="threats"
+          title="Quantum Threats"
+          description="Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements."
+          dataSource={`${threatsMetadata?.filename ?? 'quantum_threats_hsm_industries.csv'} • Updated: ${threatsMetadata?.lastUpdate?.toLocaleDateString() ?? 'Unknown'}`}
+          viewType="Threats"
+          shareTitle="Quantum Threats Dashboard — Industry Risk Analysis"
+          shareText="Detailed analysis of quantum threats across industries — criticality ratings, at-risk cryptography, and PQC replacements."
+          endorseUrl={buildEndorsementUrl({
+            category: 'threat-endorsement',
+            title: 'Endorse: Quantum Threats Dashboard',
+            resourceType: 'Threats Page',
+            resourceId: 'Quantum Threats Dashboard',
+            resourceDetails:
+              '**Page:** Quantum Threats — Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements.',
+            pageUrl: '/threats',
+          })}
+          endorseLabel="Threats Page"
+          endorseResourceType="Threats"
+          flagUrl={buildFlagUrl({
+            category: 'threat-endorsement',
+            title: 'Flag: Quantum Threats Dashboard',
+            resourceType: 'Threats Page',
+            resourceId: 'Quantum Threats Dashboard',
+            resourceDetails:
+              '**Page:** Quantum Threats — Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements.',
+            pageUrl: '/threats',
+          })}
+          flagLabel="Threats Page"
+          flagResourceType="Threats"
+        />
+      )}
+
+      {/* Persona-forward exposure hero — your scoped sector's applicable threats,
+          the CRQC consensus window, and your per-sector Mosca deadline, above the
+          fold so the threats lead instead of two stacked context panels. */}
+      <SectorExposureHero applicable={heroApplicable} scopedIndustries={heroScopedIndustries} />
+
+      {/* Full methodology — the detailed Threat-Economics framing (HNDL vs HNFL +
+          Mosca mini-calc) and the CRQC capability watch, collapsed by default so
+          they stay one click away without walling off the threat list. */}
+      <details className="group mb-4">
+        <summary className="inline-flex cursor-pointer items-center gap-2 px-1 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+          <span className="text-xs transition-transform group-open:rotate-90">▸</span>
+          Methodology &amp; full CRQC capability watch
+        </summary>
+        <div className="mt-3 space-y-4">
+          <ThreatEconomicsHeader />
+          <CrqcCapabilityStrip />
+        </div>
+      </details>
 
       {/* Persona summary card */}
       {personaSummary && (
@@ -453,11 +554,12 @@ export const ThreatsDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* Filters Section */}
-      <div className="bg-card border border-border rounded-lg shadow-lg p-2 mb-8 flex flex-col items-center gap-4">
-        {/* Mobile: Header to toggle filters + Search */}
-        <div className="flex w-full md:hidden items-center justify-between gap-2">
-          <div className="flex relative w-full flex-1">
+      {/* Control deck — consolidated filters in the redesign language: sector + search
+          (row 1); role lens + severity/class chips + trust + my + view (row 2). */}
+      <div className="glass-panel mb-8 space-y-3 p-3" data-testid="threats-control-deck">
+        {/* Mobile: search + a filters toggle for the rest of the deck */}
+        <div className="flex items-center gap-2 md:hidden">
+          <div className="relative flex-1">
             <Search
               size={16}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -470,13 +572,13 @@ export const ThreatsDashboard: React.FC = () => {
                 setSearchQuery(e.target.value)
                 syncFiltersToUrl({ q: e.target.value })
               }}
-              className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
+              className="w-full rounded-lg border border-border bg-muted/30 py-2 pl-10 pr-4 text-sm text-foreground transition-colors placeholder:text-muted-foreground hover:bg-muted/50 focus:border-primary/50 focus:outline-none"
             />
           </div>
           <Button
             variant="outline"
             size="icon"
-            className="shrink-0 h-[44px] w-[44px]"
+            className="h-[44px] w-[44px] shrink-0"
             onClick={() => setShowMobileFilters(!showMobileFilters)}
             aria-label="Toggle filters"
           >
@@ -484,15 +586,13 @@ export const ThreatsDashboard: React.FC = () => {
           </Button>
         </div>
 
-        {/* Filters Container: Hidden on mobile unless showMobileFilters is true */}
-        <div
-          className={clsx(
-            'w-full md:w-full md:flex flex-col md:flex-row items-center gap-4',
-            showMobileFilters ? 'flex' : 'hidden'
-          )}
-        >
-          <div className="flex flex-col md:flex-row items-center gap-2 w-full md:w-auto text-xs">
-            <div className="flex-1 w-full md:min-w-[120px]">
+        <div className={clsx('space-y-3', showMobileFilters ? 'block' : 'hidden md:block')}>
+          {/* Row 1 — your sector + search */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+              Your sector
+            </span>
+            <div className="min-w-[180px] max-w-xs flex-1 sm:flex-none">
               <FilterDropdown
                 items={industryItems}
                 selectedId="All"
@@ -510,68 +610,162 @@ export const ThreatsDashboard: React.FC = () => {
                 noContainer
               />
             </div>
-
-            <div className="flex-1 w-full md:min-w-[120px]">
-              <FilterDropdown
-                items={criticalityItems}
-                selectedId={selectedCriticality}
-                onSelect={(id) => {
-                  setSelectedCriticality(id)
-                  syncFiltersToUrl({ criticality: id })
-                  logEvent('Threats', 'Filter Criticality', id)
+            <span className="text-[11px] text-muted-foreground">
+              <span className="font-semibold text-foreground">{heroApplicable.length}</span> in
+              scope
+            </span>
+            <div className="relative ml-auto hidden min-w-[200px] max-w-xs flex-1 md:flex">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              />
+              <input
+                type="text"
+                placeholder='Search — try "HNDL settlement data"'
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  syncFiltersToUrl({ q: e.target.value })
                 }}
-                defaultLabel="Criticality"
-                defaultIcon={<AlertCircle size={14} className="text-primary" />}
-                opaque
-                className="mb-0 w-full"
-                noContainer
+                className="w-full rounded-lg border border-border bg-muted/30 py-1.5 pl-9 pr-3 text-sm text-foreground transition-colors placeholder:text-muted-foreground hover:bg-muted/50 focus:border-primary/50 focus:outline-none"
               />
             </div>
-            <div className="flex-1 w-full md:min-w-[120px]">
-              <TrustTierFilter className="mb-0 w-full" />
-            </div>
           </div>
 
-          <span className="hidden md:inline text-muted-foreground px-2">Search:</span>
-          <div className="hidden md:flex relative w-full md:flex-1 md:min-w-[200px]">
-            <Search
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            />
-            <input
-              type="text"
-              placeholder="Search threats..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value)
-                syncFiltersToUrl({ q: e.target.value })
-              }}
-              className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
-            />
-          </div>
-          {myThreats.length > 0 && (
-            <Button
-              variant="ghost"
-              onClick={() => setShowOnlyThreats(!showOnlyThreats)}
-              className={`hidden md:inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
-                showOnlyThreats
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
-              }`}
-              aria-pressed={showOnlyThreats}
-            >
-              <BookmarkCheck size={12} />
-              My ({myThreats.length})
-            </Button>
-          )}
-          <div className="hidden md:block">
-            <ThreatsViewToggle
-              mode={viewMode}
-              onChange={(mode) => {
-                setViewMode(mode)
-                syncFiltersToUrl({ mode })
-              }}
-            />
+          {/* Row 2 — role lens + severity + class + trust + my + view + count */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border pt-3">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+                Role
+              </span>
+              {(
+                [
+                  { id: 'executive', label: 'Executive' },
+                  { id: 'developer', label: 'Developer' },
+                  { id: 'architect', label: 'Architect' },
+                  { id: 'ops', label: 'IT Ops' },
+                  { id: 'researcher', label: 'Researcher' },
+                  { id: 'curious', label: 'Curious' },
+                ] as const
+              ).map((r) => {
+                const active = selectedPersona === r.id
+                return (
+                  <Button
+                    key={r.id}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setPersona(active ? null : r.id)}
+                    aria-pressed={active}
+                    className={clsx(
+                      'h-auto rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
+                      active
+                        ? 'border-secondary/50 bg-secondary/10 text-secondary'
+                        : 'border-border text-muted-foreground hover:text-foreground'
+                    )}
+                  >
+                    {r.label}
+                  </Button>
+                )
+              })}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+                Severity
+              </span>
+              {criticalityItems.map((c) => {
+                const active = selectedCriticality === c.id
+                return (
+                  <Button
+                    key={c.id}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedCriticality(c.id)
+                      syncFiltersToUrl({ criticality: c.id })
+                      logEvent('Threats', 'Filter Criticality', c.id)
+                    }}
+                    aria-pressed={active}
+                    className={clsx(
+                      'h-auto rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
+                      active
+                        ? 'border-primary/50 bg-primary/10 text-primary'
+                        : 'border-border text-muted-foreground hover:text-foreground'
+                    )}
+                  >
+                    {c.id === 'All' ? 'All' : c.label}
+                  </Button>
+                )
+              })}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+                Class
+              </span>
+              {threatClassItems.map((c) => {
+                const active = selectedClass === c.id
+                return (
+                  <Button
+                    key={c.id}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedClass(c.id)
+                      syncFiltersToUrl({ threatClass: c.id })
+                      logEvent('Threats', 'Filter Class', c.id)
+                    }}
+                    aria-pressed={active}
+                    className={clsx(
+                      'h-auto rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
+                      active
+                        ? 'border-primary/50 bg-primary/10 text-primary'
+                        : 'border-border text-muted-foreground hover:text-foreground'
+                    )}
+                  >
+                    {c.id === 'All' ? 'All' : c.id.toUpperCase()}
+                  </Button>
+                )
+              })}
+            </div>
+
+            {/* Tier filter writes ?tier= — hidden in the sim embed. */}
+            {!simEmbed && <TrustTierFilter className="mb-0" />}
+
+            {myThreats.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowOnlyThreats(!showOnlyThreats)}
+                aria-pressed={showOnlyThreats}
+                className={clsx(
+                  'inline-flex h-auto items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
+                  showOnlyThreats
+                    ? 'border-status-warning/50 bg-status-warning/10 text-status-warning'
+                    : 'border-border text-muted-foreground hover:text-foreground'
+                )}
+              >
+                <BookmarkCheck size={12} />
+                My ({myThreats.length})
+              </Button>
+            )}
+
+            <div className="ml-auto flex items-center gap-3">
+              <span className="whitespace-nowrap text-[11px] text-muted-foreground">
+                Showing{' '}
+                <span className="font-semibold text-foreground">
+                  {filteredAndSortedData.length}
+                </span>{' '}
+                of {heroApplicable.length}
+              </span>
+              <ThreatsViewToggle
+                mode={viewMode}
+                onChange={(mode) => {
+                  setViewMode(mode)
+                  syncFiltersToUrl({ mode })
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -683,13 +877,15 @@ export const ThreatsDashboard: React.FC = () => {
       {/* End detail dialog wrapper */}
       <AnimatePresence>
         {selectedThreat && (
-          <ThreatDetailDialog
-            threat={selectedThreat}
-            onClose={() => {
-              setSelectedThreat(null)
-              syncFiltersToUrl({ id: null })
-            }}
-          />
+          <Suspense fallback={null}>
+            <ThreatDetailDialog
+              threat={selectedThreat}
+              onClose={() => {
+                setSelectedThreat(null)
+                syncFiltersToUrl({ id: null })
+              }}
+            />
+          </Suspense>
         )}
       </AnimatePresence>
     </div>

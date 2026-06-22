@@ -46,7 +46,7 @@ const RFC_RE = /\bRFC[\s-]?(\d{4,5})\b/gi
 const DRAFT_RE = /\b(draft-[a-z]+(?:-[a-z0-9]+)+(?:-\d+)?)/gi
 
 const REF_ID_RE =
-  /^(RFC \d{4,5}|draft-[a-z0-9]+(?:-[a-z0-9]+)+|TCG [A-Za-z0-9. -]+|3GPP T[RS] \d+\.\d+|UEFI \d+\.\d+|IEEE [A-Z0-9.]+(?:-\d+)?)$/
+  /^(RFC \d{4,5}|draft-[a-z0-9]+(?:-[a-z0-9]+)+|TCG [A-Za-z0-9. -]+|3GPP T[RS] \d+\.\d+|UEFI \d+\.\d+|IEEE [A-Z0-9.]+(?:-\d+)?|PKCS#11 v\d+\.\d+ (?:CSD|CS|OS|WD)\d+|KMIP \d+\.\d+ (?:CSD|CS|OS|WD)\d+|Signal [A-Za-z0-9 -]+|sigstore\/[a-z-]+)$/
 
 export interface Finding {
   rowId: string

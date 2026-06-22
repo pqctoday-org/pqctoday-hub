@@ -239,6 +239,14 @@ scripts/*
 # emitting public output: nothing private to protect.
 !scripts/generate-oscal.ts
 !scripts/generate-cbom.ts
+# Simulation activity-tree generator — emits the committed dated trees in
+# src/simulation/trees from the public framework + hub registries.
+!scripts/gen-sim-trees.mjs
+# Timeline single-source codegen — derives sim/page facts from the timeline CSV.
+# Tracked: runs in prebuild and the CI freshness gate.
+!scripts/gen-timeline-facts.mjs
+# Simulation live-feed generator — emits the committed dated sim_feed_*.csv.
+!scripts/gen-sim-feed.mjs
 
 # Workshop flow static audit — runs in CI, must be tracked. Reads
 # public/workshop/*.json + src/. The companion timing fixer
@@ -261,6 +269,12 @@ public/data/rag-index-freshness.json
 # against doc-ID citations leaking into note / deploymentNote / playground /
 # liveDeployment text fields. Pure read-only against public data.
 !scripts/audit-matrix-refs.ts
+
+# Sandbox scenario sync generator — CI gate (sync:sandbox:check) that keeps
+# src/data/sandboxScenarios.ts regenerated from the public sandbox source repo
+# (pqctoday-sandbox/ui/src/data/scenarios.ts). Pure read-only against public
+# data; must be tracked so CI and other devs can run `npm run sync:sandbox`.
+!scripts/sync-sandbox-scenarios.ts
 
 # Module infographic coverage audit — CI gate that fails the build if any
 # MODULE_CATALOG entry lacks public/images/infographics/pqcstd_<id>.png.
@@ -295,6 +309,11 @@ public/data/rag-index-freshness.json
 !scripts/wayback-snapshot-timeline.ts
 !scripts/snapshot-timeline-via-playwright.ts
 !scripts/audit-timeline-enrichment-freshness.ts
+
+# Content-freshness audit — CI gate that flags time-sensitive sim claims
+# (CMVP/FIPS status, protocol-matrix snapshot, Q-Day anchor) aged past 90 days.
+# Reads src/data/contentFreshness.ts. Must be tracked to run in CI.
+!scripts/audit-content-freshness.ts
 
 # Vendor-ref integrity audit — CI gate that validates vendor_id assignments in
 # the product catalog against the vendor roadmap CSV. Catches wrong VND-*
@@ -384,6 +403,9 @@ pqc_*.png
 pqctoday*.png
 pqctoday*.jpg
 weneed*.png
+# …but the Simulation's logo is a real source asset, not a root-level marketing
+# image — it's imported by SimulationView.tsx, so it must be tracked.
+!src/assets/pqctoday-logo.png
 
 # Private sync tooling and build pipeline
 sync-private.sh

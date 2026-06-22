@@ -164,7 +164,9 @@ const ComplianceRow = ({
 
       {/* PQC Coverage Column */}
       <td className="px-4 py-3 relative group">
-        {record.pqcCoverage && record.pqcCoverage !== 'No PQC Mechanisms Detected' ? (
+        {record.pqcCoverage === 'Not Yet Analyzed' ? (
+          <span className="text-xs text-muted-foreground italic">Not yet analyzed</span>
+        ) : record.pqcCoverage && record.pqcCoverage !== 'No PQC Mechanisms Detected' ? (
           <div className="flex items-center">
             <Button
               variant="ghost"
@@ -1528,7 +1530,8 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                       </div>
                       {record.pqcCoverage &&
                         record.pqcCoverage !== 'No PQC Mechanisms Detected' &&
-                        record.pqcCoverage !== 'Pending Check...' && (
+                        record.pqcCoverage !== 'Pending Check...' &&
+                        record.pqcCoverage !== 'Not Yet Analyzed' && (
                           <ShieldCheck size={16} className="text-tertiary shrink-0 mt-0.5" />
                         )}
                     </div>

@@ -11,7 +11,7 @@ import {
   type InventoryAsset,
 } from '../data/sampleInventory'
 import { CLM_SCENARIOS } from '../data/clmScenarios'
-import { ASSET_CLASS_LABELS, type AssetClass } from '../data/maturityModel'
+import { ASSET_CLASS_LABELS, type AssetClass } from '../data/cpmMaturityModel'
 
 const stageIndex = (s: LoopStage) => LOOP_STAGES.indexOf(s)
 

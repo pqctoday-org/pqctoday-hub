@@ -23,7 +23,7 @@ import {
   type MaturityLevel,
   type PillarId,
   type AssetClass,
-} from '../data/maturityModel'
+} from '../data/cpmMaturityModel'
 
 type AssetScores = Record<AssetClass, MaturityLevel>
 type Scores = Record<PillarId, AssetScores>

@@ -26,9 +26,15 @@ import {
   Scale,
   Code2,
   Cloud,
+  ClipboardList,
+  Server,
+  CalendarClock,
+  Zap,
+  Database,
 } from 'lucide-react'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import type { ZoneId } from '@/data/cswp39ZoneData'
+import type { PhaseId } from '@/data/frameworkPhases'
 
 // ---------------------------------------------------------------------------
 // Business tool registry — non-cryptographic planning & governance tools
@@ -53,6 +59,9 @@ export interface BusinessTool {
   cswp39SectionRef: string
   /** Optional sub-section human label, e.g. "Hybrid Cryptographic Algorithms". */
   cswp39SubSection?: string
+  /** Applied Quantum migration phase this tool produces an artifact for. Must
+   *  stay consistent with `FRAMEWORK_PHASES[phase].produce` (drift-guarded). */
+  frameworkPhase: PhaseId
 }
 
 export const BUSINESS_TOOLS: BusinessTool[] = [
@@ -69,6 +78,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Business Requirements',
     cswp39SectionRef: '§5',
     cswp39SubSection: 'Strategic plan — business case',
+    frameworkPhase: 'p0',
   },
   {
     id: 'board-pitch',
@@ -81,6 +91,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Business Requirements',
     cswp39SectionRef: '§5',
     cswp39SubSection: 'Strategic plan — business case',
+    frameworkPhase: 'p0',
   },
   {
     id: 'crqc-scenario',
@@ -93,6 +104,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Threats',
     cswp39SectionRef: '§6.1',
     cswp39SubSection: 'Resource considerations — threat horizon',
+    frameworkPhase: 'p0',
   },
   {
     id: 'risk-register',
@@ -105,6 +117,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Risk Analysis Engine',
     cswp39SectionRef: '§6.5',
     cswp39SubSection: 'Maturity assessment',
+    frameworkPhase: 'p3',
   },
   {
     id: 'risk-treatment-plan',
@@ -117,6 +130,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Risk Analysis Engine',
     cswp39SectionRef: '§6.5',
     cswp39SubSection: 'Maturity assessment',
+    frameworkPhase: 'p3',
   },
 
   // ── Compliance & Audit ─────────────────────────────────────────────────────
@@ -132,6 +146,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Standards',
     cswp39SectionRef: '§5.1',
     cswp39SubSection: 'Standards, regulations, mandates',
+    frameworkPhase: 'foundations',
   },
   {
     id: 'audit-checklist',
@@ -145,6 +160,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Standards',
     cswp39SectionRef: '§5.1',
     cswp39SubSection: 'Standards, regulations, mandates',
+    frameworkPhase: 'foundations',
   },
   {
     id: 'compliance-timeline',
@@ -157,6 +173,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Regulations/Mandates',
     cswp39SectionRef: '§5.1',
     cswp39SubSection: 'Standards, regulations, mandates',
+    frameworkPhase: 'p4',
   },
 
   // ── Governance & Policy ────────────────────────────────────────────────────
@@ -171,6 +188,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Crypto Policies',
     cswp39SectionRef: '§5',
     cswp39SubSection: 'Strategic plan — governance',
+    frameworkPhase: 'p0',
   },
   {
     id: 'policy-generator',
@@ -183,6 +201,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Crypto Policies',
     cswp39SectionRef: '§5.2',
     cswp39SubSection: 'Crypto security policy enforcement',
+    frameworkPhase: 'p0',
   },
   {
     id: 'kpi-dashboard',
@@ -195,6 +214,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'KPI Dashboards',
     cswp39SectionRef: '§6.5',
     cswp39SubSection: 'Maturity assessment',
+    frameworkPhase: 'foundations',
   },
 
   // ── Vendor & Supply Chain ──────────────────────────────────────────────────
@@ -209,6 +229,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Supply Chains',
     cswp39SectionRef: '§5.3',
     cswp39SubSection: 'Technology supply chains',
+    frameworkPhase: 'p7',
   },
   {
     id: 'contract-clause',
@@ -221,6 +242,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Supply Chains',
     cswp39SectionRef: '§5.3',
     cswp39SubSection: 'Technology supply chains',
+    frameworkPhase: 'p7',
   },
   {
     id: 'supply-chain-matrix',
@@ -233,19 +255,35 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Supply Chains',
     cswp39SectionRef: '§5.3',
     cswp39SubSection: 'Technology supply chains',
+    frameworkPhase: 'p7',
   },
 
   // ── Migration Planning ─────────────────────────────────────────────────────
   {
     id: 'roadmap-builder',
     name: 'Roadmap Builder',
-    description: 'Create phased migration roadmaps with milestones and dependencies',
+    description:
+      'Build a two-track migration roadmap (key-exchange/HNDL ∥ signatures-PKI/TNFL) on the 8-phase spine, with gates G0–G7 and milestone dependencies',
     category: 'Migration Planning',
     icon: Map,
-    keywords: ['roadmap', 'migration', 'plan', 'milestone', 'phase', 'timeline'],
+    keywords: [
+      'roadmap',
+      'migration',
+      'plan',
+      'milestone',
+      'phase',
+      'timeline',
+      'two-track',
+      'track',
+      'gate',
+      'dependency',
+      'hndl',
+      'tnfl',
+    ],
     cswp39Zone: 'migration',
     cswp39SectionRef: '§3.2',
     cswp39SubSection: 'Algorithm transitions',
+    frameworkPhase: 'p4',
   },
   {
     id: 'stakeholder-comms',
@@ -258,6 +296,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Crypto Policies',
     cswp39SectionRef: '§5',
     cswp39SubSection: 'Strategic plan — governance',
+    frameworkPhase: 'p4',
   },
   {
     id: 'kpi-tracker',
@@ -270,6 +309,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'KPI Dashboards',
     cswp39SectionRef: '§6.5',
     cswp39SubSection: 'Maturity assessment',
+    frameworkPhase: 'foundations',
   },
   {
     id: 'deployment-playbook',
@@ -281,6 +321,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39Zone: 'mitigation',
     cswp39SectionRef: '§4',
     cswp39SubSection: 'System implementations',
+    frameworkPhase: 'p5',
   },
   {
     id: 'hybrid-transition-planner',
@@ -304,6 +345,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Protocol negotiation updates',
     cswp39SectionRef: '§3.2.4',
     cswp39SubSection: 'Hybrid Cryptographic Algorithms',
+    frameworkPhase: 'p5',
   },
   {
     id: 'mti-negotiator',
@@ -329,6 +371,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Protocol negotiation updates',
     cswp39SectionRef: '§3.1.1',
     cswp39SubSection: 'Mandatory-to-Implement Algorithms',
+    frameworkPhase: 'p5',
   },
   {
     id: 'crypto-api-refactor-audit',
@@ -355,6 +398,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Library upgrades',
     cswp39SectionRef: '§4.1',
     cswp39SubSection: 'Using an API in a Crypto Library Application',
+    frameworkPhase: 'p5',
   },
   {
     id: 'cloud-responsibility-matrix',
@@ -383,6 +427,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Supply Chains',
     cswp39SectionRef: '§6.4',
     cswp39SubSection: 'Crypto Agility in the Cloud',
+    frameworkPhase: 'p7',
   },
 
   // ── Architecture (CSWP.39 §5.4) ────────────────────────────────────────────
@@ -407,6 +452,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Crypto Architecture',
     cswp39SectionRef: '§5.4',
     cswp39SubSection: 'Cryptographic architecture',
+    frameworkPhase: 'p1',
   },
 
   // ── Management Tools (CSWP.39 Fig 3 — discovery / assessment / config / enforcement) ──
@@ -431,6 +477,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39Zone: 'management-tools',
     cswp39SectionRef: '§5',
     cswp39SubSection: 'Identify gaps in enterprise management tools',
+    frameworkPhase: 'p1',
   },
   {
     id: 'crypto-cbom-builder',
@@ -444,19 +491,206 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39ZoneSubElement: 'Libraries',
     cswp39SectionRef: '§5.2',
     cswp39SubSection: 'Crypto security policy enforcement (CBOM ingestion)',
+    frameworkPhase: 'p2',
   },
   {
     id: 'crypto-vulnerability-watch',
     name: 'Crypto Vulnerability Watch',
     description:
-      'NIST NVD CVE digest for the products on your /migrate selection — Heartbleed, POODLE, BEAST, FREAK, and the rest, joined via CPE',
+      'NIST NVD CVE digest for the products on your /migrate selection, joined via CPE — the top CVEs per product by severity from the current snapshot',
     category: 'Migration Planning',
     icon: ShieldAlert,
-    keywords: ['cve', 'nvd', 'vulnerability', 'cpe', 'heartbleed', 'poodle', 'logjam'],
+    keywords: ['cve', 'nvd', 'vulnerability', 'cpe', 'severity', 'nvd snapshot'],
     cswp39Zone: 'assets',
     cswp39ZoneSubElement: 'Code',
     cswp39SectionRef: '§5',
     cswp39SubSection: 'Vulnerability discovery on the crypto attack surface',
+    frameworkPhase: 'p1',
+  },
+
+  // ── Program Establishment (Applied Quantum Phase 0 / Foundations) ───────────
+  {
+    id: 'program-charter',
+    name: 'Program Charter',
+    description:
+      'Phase 0 mandate artifact — sponsor sign-off, Steering Committee, QRPM appointment, governance cadence, and the multi-year budget commitment',
+    category: 'Governance & Policy',
+    icon: ScrollText,
+    keywords: [
+      'charter',
+      'mandate',
+      'sponsor',
+      'steerco',
+      'steering committee',
+      'qrpm',
+      'governance',
+      'budget',
+      'cadence',
+    ],
+    cswp39Zone: 'governance',
+    cswp39ZoneSubElement: 'Crypto Policies',
+    cswp39SectionRef: '§5',
+    cswp39SubSection: 'Strategic plan — governance',
+    frameworkPhase: 'p0',
+  },
+  {
+    id: 'initial-scoping',
+    name: 'Initial Scoping Assessment',
+    description:
+      'Phase 0 first-cut scope — top-20 in-scope systems, an estate-size estimate, and the top-10 vendor dependencies; seedable from your /migrate selection',
+    category: 'Risk & Strategy',
+    icon: ClipboardList,
+    keywords: [
+      'scoping',
+      'scope',
+      'estate',
+      'systems',
+      'vendors',
+      'dependencies',
+      'inventory',
+      'top-20',
+    ],
+    cswp39Zone: 'governance',
+    cswp39ZoneSubElement: 'Business Requirements',
+    cswp39SectionRef: '§5',
+    cswp39SubSection: 'Strategic plan — scope',
+    frameworkPhase: 'p0',
+  },
+  {
+    id: 'skills-team-plan',
+    name: 'Skills & Team Plan',
+    description:
+      'Foundations staffing plan — core roles + FTE from the framework role model, the 1-FTE-per-500-instances sizing heuristic, and build / borrow / buy per role',
+    category: 'Governance & Policy',
+    icon: Users,
+    keywords: [
+      'skills',
+      'team',
+      'staffing',
+      'fte',
+      'roles',
+      'build',
+      'borrow',
+      'buy',
+      'hiring',
+      'sizing',
+    ],
+    cswp39Zone: 'risk-management',
+    cswp39ZoneSubElement: 'KPI Dashboards',
+    cswp39SectionRef: '§6.5',
+    cswp39SubSection: 'Maturity assessment',
+    frameworkPhase: 'foundations',
+  },
+  {
+    id: 'infra-modernization-planner',
+    name: 'Infrastructure Modernization Planner',
+    description:
+      'Phase 6 deliverable — consolidates the PKI modernization plan, HSM/KMS upgrade schedule, network/middlebox compatibility report, and PQC capacity plan into one infrastructure-readiness artifact',
+    category: 'Migration Planning',
+    icon: Server,
+    keywords: [
+      'infrastructure',
+      'pki',
+      'hsm',
+      'kms',
+      'middlebox',
+      'capacity',
+      'performance',
+      'modernization',
+      'mtc',
+    ],
+    cswp39Zone: 'mitigation',
+    cswp39SectionRef: '§6',
+    cswp39SubSection: 'Infrastructure modernization',
+    frameworkPhase: 'p6',
+  },
+  {
+    id: 'refresh-cycle-alignment',
+    name: 'Refresh-Cycle Alignment',
+    description:
+      'Phase 4 Activity 4.3 — maps PQC migration tasks onto already-funded infrastructure refresh programs (data center, SD-WAN, cloud, PKI, HSM, vendor renewals) so PQC work rides existing budgets',
+    category: 'Migration Planning',
+    icon: CalendarClock,
+    keywords: [
+      'refresh',
+      'cycle',
+      'roadmap',
+      'budget',
+      'cost avoidance',
+      'hardware',
+      'renewal',
+      'alignment',
+    ],
+    cswp39Zone: 'migration',
+    cswp39SectionRef: '§4',
+    cswp39SubSection: 'Roadmap — refresh-cycle alignment',
+    frameworkPhase: 'p4',
+  },
+  {
+    id: 'accelerated-execution-profile',
+    name: 'Accelerated Execution Profile',
+    description:
+      'Phase 4 Activity 4.7 — a pre-drafted contingency package (trigger conditions, compressed sequence, pre-approved risk acceptances, emergency resource request, activation authority) activated if the quantum timeline accelerates',
+    category: 'Governance & Policy',
+    icon: Zap,
+    keywords: [
+      'accelerated',
+      'contingency',
+      'trigger',
+      'emergency',
+      'tabletop',
+      'compressed',
+      'profile',
+    ],
+    cswp39Zone: 'migration',
+    cswp39SectionRef: '§4',
+    cswp39SubSection: 'Roadmap — contingency',
+    frameworkPhase: 'p4',
+  },
+  {
+    id: 'data-at-rest-strategy',
+    name: 'Data-at-Rest Strategy',
+    description:
+      'Phase 5 Activity 5.6 — per-store data-at-rest decision (re-encrypt under PQC keys, PQC key-wrap, crypto-shred, delete, or accept & monitor), recorded back into the CBOM',
+    category: 'Migration Planning',
+    icon: Database,
+    keywords: [
+      'data at rest',
+      'encryption',
+      'key wrap',
+      'crypto-shred',
+      'aes-256',
+      'database',
+      'backups',
+      'strategy',
+    ],
+    cswp39Zone: 'mitigation',
+    cswp39SectionRef: '§5',
+    cswp39SubSection: 'Data-at-rest strategy',
+    frameworkPhase: 'p5',
+  },
+  {
+    id: 'migration-verification',
+    name: 'Migration Verification & Closure',
+    description:
+      "Prove migration with the framework's 5-point evidence standard, log classical-key decommissioning (SP 800-88), and record program closure & BAU handover",
+    category: 'Migration Planning',
+    icon: ClipboardCheck,
+    keywords: [
+      'verification',
+      'closure',
+      'evidence',
+      'decommission',
+      'dossier',
+      'bau',
+      'sign-off',
+      'sp 800-88',
+      'tnfl',
+    ],
+    cswp39Zone: 'governance',
+    cswp39SectionRef: '§5.5',
+    cswp39SubSection: 'Migration verification & evidence',
+    frameworkPhase: 'verify-close',
   },
 ]
 
@@ -507,6 +741,14 @@ export const ARTIFACT_TYPE_TO_TOOL_ID: Partial<Record<ExecutiveDocumentType, str
   'mti-negotiator': 'mti-negotiator',
   'crypto-api-refactor': 'crypto-api-refactor-audit',
   'cloud-responsibility-matrix': 'cloud-responsibility-matrix',
+  'program-charter': 'program-charter',
+  'initial-scoping': 'initial-scoping',
+  'skills-team-plan': 'skills-team-plan',
+  'infra-modernization-plan': 'infra-modernization-planner',
+  'refresh-cycle-alignment': 'refresh-cycle-alignment',
+  'accelerated-execution-profile': 'accelerated-execution-profile',
+  'data-at-rest-strategy': 'data-at-rest-strategy',
+  'migration-verification': 'migration-verification',
 }
 
 /** Look up the CSWP.39 §-reference (and optional sub-section label) for an

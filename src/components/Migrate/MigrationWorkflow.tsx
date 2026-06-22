@@ -4,6 +4,7 @@ import { MigrationStepIndicator } from './MigrationStepIndicator'
 import { MigrationStepCard } from './MigrationStepCard'
 import { MigrationReferences } from './MigrationReferences'
 import { MigrationGapAnalysis } from './MigrationGapAnalysis'
+import { MigratePlaybookPanel } from './MigratePlaybookPanel'
 import {
   MIGRATION_STEPS,
   MIGRATION_REFERENCES,
@@ -36,6 +37,9 @@ export const MigrationWorkflow: React.FC<MigrationWorkflowProps> = ({ onViewSoft
 
       {/* Active Step Card */}
       {activeStep && <MigrationStepCard step={activeStep} onViewSoftware={onViewSoftware} />}
+
+      {/* Phase-5 rollout playbook + cross-links (additive; collapsed by default) */}
+      <MigratePlaybookPanel />
 
       {/* References */}
       <MigrationReferences references={MIGRATION_REFERENCES} />

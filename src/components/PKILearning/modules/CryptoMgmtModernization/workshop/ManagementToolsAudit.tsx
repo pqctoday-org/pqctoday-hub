@@ -126,21 +126,28 @@ const TOOLS: ToolDef[] = [
 
 export const ManagementToolsAudit: React.FC = () => {
   const { myProducts, industry } = useExecutiveModuleData()
-  const initLevels = () =>
-    Object.fromEntries(TOOLS.map((t) => [t.id, 0 as CoverageLevel])) as Record<
-      string,
-      CoverageLevel
-    >
-  // Seed coverage % from /migrate selections — products in mgmt-tool layers
-  // hint that the user has at least Partial coverage.
+  // Count /migrate products that sit in a management-tool layer (scanner, SIEM,
+  // CMDB, SBOM, zero-trust, inventory, PAM). Drives BOTH seeds below so the
+  // maturity headline and the coverage sliders tell the same story.
+  const productMgmt = myProducts.filter((p) =>
+    /(scanner|siem|cmdb|sbom|zero[- ]?trust|inventory|pam)/i.test(
+      `${p.softwareName} ${p.infrastructureLayer || ''}`
+    )
+  ).length
+  // Seed maturity from /migrate. A detected mgmt-tool product means the tool is
+  // *present* — seed Manual (1), not Partial, so the headline opens non-zero
+  // without overstating maturity. Previously this was hardcoded 0, which made
+  // the "Tool-chain completeness" headline read 0% while the coverage sliders
+  // below were seeded 25-75% — a contradiction.
+  const initLevels = () => {
+    const seed: CoverageLevel = productMgmt > 0 ? 1 : 0
+    return Object.fromEntries(TOOLS.map((t) => [t.id, seed])) as Record<string, CoverageLevel>
+  }
+  // Seed systems-coverage % from the same signal. No detected products → 0
+  // (honestly unseeded), not a fabricated 25% floor.
   const initPct = () => {
     const base: Record<string, number> = {}
-    const productMgmt = myProducts.filter((p) =>
-      /(scanner|siem|cmdb|sbom|zero[- ]?trust|inventory|pam)/i.test(
-        `${p.softwareName} ${p.infrastructureLayer || ''}`
-      )
-    ).length
-    const seed = productMgmt > 0 ? Math.min(75, 25 + productMgmt * 10) : 25
+    const seed = productMgmt > 0 ? Math.min(75, 25 + productMgmt * 10) : 0
     for (const t of TOOLS) base[t.id] = seed
     return base
   }
@@ -214,9 +221,10 @@ export const ManagementToolsAudit: React.FC = () => {
     <div className="space-y-6">
       {seedSources.length > 0 && (
         <PreFilledBanner
-          summary={`Coverage % seeded from ${seedSources.join(' + ')}.`}
+          summary={`Coverage seeded from ${seedSources.join(' + ')}.`}
           onClear={() => {
-            setSysPct(Object.fromEntries(TOOLS.map((t) => [t.id, 25])))
+            setSysPct(Object.fromEntries(TOOLS.map((t) => [t.id, 0])))
+            setLevels(Object.fromEntries(TOOLS.map((t) => [t.id, 0 as CoverageLevel])))
             setSeedCleared(true)
           }}
         />
@@ -370,7 +378,7 @@ export const ManagementToolsAudit: React.FC = () => {
         <div className="text-xs text-muted-foreground border-t border-border pt-3 mt-1">
           <strong className="text-foreground">CSWP.39 §5.3:</strong> The Information Repository must
           be fed by automated Management Tools — not manual surveys. Tool-chain completeness below
-          60% means the Risk Analysis Engine (Step 7) is operating on incomplete data.
+          75% means the Risk Analysis Engine (Step 7) is operating on incomplete data.
         </div>
       </div>
 
@@ -380,6 +388,7 @@ export const ManagementToolsAudit: React.FC = () => {
         exportData={exportMarkdown}
         filename="management-tools-audit"
         formats={['markdown', 'pdf', 'docx']}
+        wideTable
         onExport={() => {
           addExecutiveDocument({
             id: `management-tools-audit-${Date.now()}`,

@@ -17,18 +17,21 @@
  *  - 'none'         not specified, not pursued
  *  - 'na'           not applicable for this protocol family
  *
- * DraftStage (optional, finer 0–7 scale aligned with the IETF progression):
+ * DraftStage — finer 0–7 scale aligned with the OFFICIAL IETF progression
+ * (earliest → latest). The 8-shade heatmap makes two adjacent pairs share a
+ * colour tier (WG-doc/WG-LC, and IESG/RFC-Ed-queue); the per-cell IETF-stage
+ * tooltip spells out all seven official steps distinctly.
  *  - 'none'              0  no plan / no work
- *  - 'identified'        1  problem flagged, no WG draft yet
- *  - 'experimental'      2  expired or non-IETF / vendor pre-standard
- *  - 'individual-draft'  3  individual Internet-Draft
- *  - 'wg-document'       4  WG-adopted document
- *  - 'wg-last-call'      4  WG Last Call (same color tier as wg-document)
- *  - 'iesg-submitted'    5  submitted to the IESG
- *  - 'ietf-last-call'    6  IETF Last Call
- *  - 'rfc-editor-queue'  6  in the RFC Editor publication queue
- *  - 'rfc-published'     7  published RFC / final spec
- *  - 'na'               n/a not applicable for this dimension
+ *  - 'identified'        1  problem flagged, not yet on the standards track
+ *  - 'experimental'      2  off-track: expired draft / non-IETF / vendor pre-standard
+ *  - 'individual-draft'  3  step 1 — individual Internet-Draft
+ *  - 'wg-document'       4  step 2 — WG-adopted document
+ *  - 'wg-last-call'      4  step 3 — WG Last Call
+ *  - 'ietf-last-call'    5  step 4 — IETF Last Call (community-wide review)
+ *  - 'iesg-submitted'    6  step 5 — IESG review / telechat (AFTER IETF Last Call)
+ *  - 'rfc-editor-queue'  6  step 6 — Approved; in the RFC Editor publication queue
+ *  - 'rfc-published'     7  step 7 — published RFC / final spec
+ *  - 'na'                0  not applicable for this dimension
  *
  * When `stage` is populated, the matrix renders a graduated heatmap (PQCC-style)
  * instead of the 5-bucket coarse coloring. The coarse `value` must remain
@@ -41,8 +44,20 @@
  *  - 'na'      dimension not applicable to this protocol
  */
 
+import type { Freshness } from './contentFreshness'
+
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-05-20'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-06-20'
+
+/**
+ * Structured freshness for the content-freshness manifest — pairs the snapshot
+ * date above with the live source to re-verify the matrix's RFC/draft stages and
+ * vendor GA dates against (the IETF datatracker the enrichment job already uses).
+ */
+export const PROTOCOL_MATRIX_FRESHNESS: Freshness = {
+  asOf: PROTOCOL_MATRIX_LAST_UPDATED,
+  recheck: 'https://datatracker.ietf.org/',
+}
 
 export type DimensionStatusValue = 'rfc' | 'draft' | 'experimental' | 'none' | 'na'
 
@@ -73,8 +88,8 @@ export const DRAFT_STAGE_LEVEL: Record<DraftStage, number> = {
   'individual-draft': 3,
   'wg-document': 4,
   'wg-last-call': 4,
-  'iesg-submitted': 5,
-  'ietf-last-call': 6,
+  'ietf-last-call': 5,
+  'iesg-submitted': 6,
   'rfc-editor-queue': 6,
   'rfc-published': 7,
 }
@@ -394,11 +409,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2025-11',
       },
       {
-        id: 'draft-miller-sshm-mldsa65-ed25519-composite-sigs',
+        id: 'draft-miller-sshm-mldsa44-ed25519-composite-sigs',
         title:
-          'draft-miller-sshm-mldsa65-ed25519-composite-sigs — Composite ML-DSA+Ed25519 for SSH',
-        url: 'https://datatracker.ietf.org/doc/draft-miller-sshm-mldsa65-ed25519-composite-sigs/',
-        date: '2026-02',
+          'draft-miller-sshm-mldsa44-ed25519-composite-sigs — Composite ML-DSA-44+Ed25519 for SSH (replaces the ML-DSA-65 draft)',
+        url: 'https://datatracker.ietf.org/doc/draft-miller-sshm-mldsa44-ed25519-composite-sigs/',
+        date: '2026-06-02',
       },
       {
         id: 'draft-becker-cnsa2-ssh-profile-03',
@@ -476,10 +491,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         refs: [
           {
             kind: 'draft',
-            id: 'draft-miller-sshm-mldsa65-ed25519-composite-sigs',
-            title: 'Composite ML-DSA65+Ed25519 Signatures for SSH',
-            url: 'https://datatracker.ietf.org/doc/draft-miller-sshm-mldsa65-ed25519-composite-sigs/',
-            publishedOn: '2026-02',
+            id: 'draft-miller-sshm-mldsa44-ed25519-composite-sigs',
+            title: 'Composite ML-DSA-44+Ed25519 Signatures for SSH',
+            url: 'https://datatracker.ietf.org/doc/draft-miller-sshm-mldsa44-ed25519-composite-sigs/',
+            publishedOn: '2026-06-02',
           },
         ],
       },
@@ -612,11 +627,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-tls-ecdhe-mlkem-04',
-        title: 'draft-ietf-tls-ecdhe-mlkem-04 — Hybrid X25519MLKEM768 / SecP256r1MLKEM768',
+        id: 'draft-ietf-tls-ecdhe-mlkem-05',
+        title: 'draft-ietf-tls-ecdhe-mlkem-05 — Hybrid X25519MLKEM768 / SecP256r1MLKEM768',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/',
-        date: '2026-02-08',
-        localFile: '/library/draft-ietf-tls-ecdhe-mlkem-04.html',
+        date: '2026-05-26',
+        localFile: '/library/draft-ietf-tls-ecdhe-mlkem-05.html',
       },
       {
         id: 'draft-ietf-tls-mlkem-07',
@@ -626,11 +641,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         localFile: '/library/draft-ietf-tls-mlkem-07.html',
       },
       {
-        id: 'draft-ietf-tls-mldsa-03',
-        title: 'draft-ietf-tls-mldsa-03 — ML-DSA in TLS 1.3',
+        id: 'draft-ietf-tls-mldsa-04',
+        title: 'draft-ietf-tls-mldsa-04 — ML-DSA in TLS 1.3',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/',
-        date: '2026-05-06',
-        localFile: '/library/draft-ietf-tls-mldsa-03.html',
+        date: '2026-06-18',
+        localFile: '/library/draft-ietf-tls-mldsa-04.html',
       },
       {
         id: 'draft-ietf-tls-hybrid-design-16',
@@ -667,7 +682,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridKem: {
         value: 'draft',
         stage: 'rfc-editor-queue',
-        stageNote: 'RFC Ed Queue (EDIT) — draft-ietf-tls-ecdhe-mlkem-04',
+        stageNote: 'Approved — RFC Editor queue (draft-ietf-tls-ecdhe-mlkem-05)',
         note: 'X25519MLKEM768 hybrid group (IANA codepoint 4588) — already shipped in production while spec is in the RFC Editor queue.',
         deploymentPosture: 'production',
         deploymentNote:
@@ -684,8 +699,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
-        stage: 'ietf-last-call',
-        stageNote: 'IETF Last Call (ends 2026-06-01) — draft-ietf-tls-mldsa-03',
+        stage: 'iesg-submitted',
+        stageNote: 'Submitted to IESG — on 2026-07-02 telechat (draft-ietf-tls-mldsa-04)',
         refs: [
           {
             kind: 'draft',
@@ -857,11 +872,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         localFile: '/library/draft-ietf-lamps-pq-composite-sigs-19.html',
       },
       {
-        id: 'draft-ietf-lamps-pq-composite-kem-14',
-        title: 'draft-ietf-lamps-pq-composite-kem-14 — Composite ML-KEM in X.509',
+        id: 'draft-ietf-lamps-pq-composite-kem-16',
+        title: 'draft-ietf-lamps-pq-composite-kem-16 — Composite ML-KEM in X.509',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
-        date: '2026-03-27',
-        localFile: '/library/draft-ietf-lamps-pq-composite-kem-14.html',
+        date: '2026-06-15',
+        localFile: '/library/draft-ietf-lamps-pq-composite-kem-16.html',
       },
     ],
     dimensions: {
@@ -884,7 +899,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridKem: {
         value: 'draft',
         stage: 'iesg-submitted',
-        stageNote: 'Submitted to IESG (Mar 2026)',
+        stageNote: 'Submitted to IESG — AD Evaluation (draft-16, Jun 2026)',
         note: 'Composite mode pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
         refs: [
           {
@@ -1440,11 +1455,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-lamps-pq-composite-kem-14',
-        title: 'draft-ietf-lamps-pq-composite-kem-14 — Composite ML-KEM (enrollment payload)',
+        id: 'draft-ietf-lamps-pq-composite-kem-16',
+        title: 'draft-ietf-lamps-pq-composite-kem-16 — Composite ML-KEM (enrollment payload)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
-        date: '2026-03-27',
-        localFile: '/library/draft-ietf-lamps-pq-composite-kem-14.html',
+        date: '2026-06-15',
+        localFile: '/library/draft-ietf-lamps-pq-composite-kem-16.html',
       },
       {
         id: 'draft-ietf-lamps-pq-composite-sigs-19',
@@ -1547,7 +1562,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         pureKemNote:
           'ML-KEM-768 key generation + encapsulation/decapsulation drives the RFC 9810 encrCert POP round-trip; full CMP KUR PKIMessage wrap is illustrative.',
         hybridKemNote:
-          'Composite KEM (draft-ietf-lamps-pq-composite-kem-14) deferred — awaiting OpenSSL composite provider integration.',
+          'Composite KEM (draft-ietf-lamps-pq-composite-kem-16) deferred — awaiting OpenSSL composite provider integration.',
         hybridSigNote:
           'Composite sigs (draft-ietf-lamps-pq-composite-sigs-19) deferred — awaiting OpenSSL composite provider integration.',
       },
@@ -1761,9 +1776,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     liveDeployments: [
       {
         provider: 'Proton Mail',
-        what: 'Quantum-safe PGP encryption shipped for inter-Proton mail',
-        since: '2024',
-        referenceUrl: 'https://proton.me/blog/post-quantum-encryption',
+        what: 'Hybrid ML-KEM (OpenPGP v6) encryption rolled out to all plans incl. free, for new encrypted mail',
+        since: '2026-05',
+        referenceUrl: 'https://proton.me/blog/introducing-post-quantum-encryption',
       },
     ],
   },
@@ -1811,11 +1826,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-ipsecme-ikev2-mlkem-05',
-        title: 'draft-ietf-ipsecme-ikev2-mlkem-05 — ML-KEM in IKEv2',
+        id: 'draft-ietf-ipsecme-ikev2-mlkem-06',
+        title: 'draft-ietf-ipsecme-ikev2-mlkem-06 — ML-KEM in IKEv2',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-mlkem/',
-        date: '2026-03-14',
-        localFile: '/library/draft-ietf-ipsecme-ikev2-mlkem-05.html',
+        date: '2026-06-17',
+        localFile: '/library/draft-ietf-ipsecme-ikev2-mlkem-06.html',
       },
       {
         id: 'draft-ietf-ipsecme-ikev2-pqc-auth-08',
@@ -1835,7 +1850,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       pureKem: {
         value: 'draft',
         stage: 'iesg-submitted',
-        stageNote: 'Submitted to IESG (Mar 2026) — same draft covers Pure + Hybrid KEM',
+        stageNote:
+          'Submitted to IESG — on 2026-07-02 telechat (draft-06); same draft covers Pure + Hybrid KEM',
         note: 'IKEv2 multi-KE framework (RFC 9370) carries either pure or hybrid ML-KEM. There is NO RFC for IKEv2 hybrid KEM yet — both modes ride the same draft.',
         refs: [
           {
@@ -1850,7 +1866,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridKem: {
         value: 'draft',
         stage: 'iesg-submitted',
-        stageNote: 'Submitted to IESG (Mar 2026) — same draft as Pure KEM; no RFC yet',
+        stageNote:
+          'Submitted to IESG — on 2026-07-02 telechat (draft-06); same draft as Pure KEM; no RFC yet',
         note: 'Same draft as Pure KEM. No standalone RFC for hybrid KEM in IKEv2 (corrects an earlier mis-encoding to "rfc"). RFC 9370 multi-KE framework + draft-ietf-ipsecme-ikev2-mlkem together define the hybrid binding.',
         deploymentPosture: 'production',
         deploymentNote:
@@ -2729,5 +2746,321 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
     ],
     inheritsFromProtocolId: 'x509',
+  },
+  // ── Key-management & supply-chain standards (non-IETF: OASIS / Signal / CNCF) ──
+  // These do not sit on the IETF 0–7 ladder, so `stage` is omitted and the coarse
+  // `value` + `stageNote` carry the OASIS/vendor status. PKCS#11 + KMIP are wired
+  // to our own in-browser implementations (SoftHSM v3 / pqctoday-kmip).
+  {
+    id: 'pkcs11',
+    name: 'PKCS#11',
+    description:
+      'OASIS PKCS#11 v3.2 — the HSM / crypto-token API. v3.2 adds ML-KEM, ML-DSA and SLH-DSA mechanisms (CKM_ML_KEM, CKM_ML_DSA, CKM_SLH_DSA) plus C_EncapsulateKey / C_DecapsulateKey.',
+    latestRelease: [
+      {
+        id: 'PKCS11-v3.2-CS01',
+        title: 'PKCS#11 Specification v3.2 — Committee Specification 01',
+        url: 'https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.html',
+        date: '2025-11-14',
+      },
+    ],
+    latestDraft: [],
+    dimensions: {
+      pureKem: {
+        value: 'draft',
+        stageNote:
+          'OASIS Committee Specification CS01 (2025-11-14) — one step from OASIS Standard; ML-KEM mechanisms (CKM_ML_KEM)',
+        note: 'ML-KEM-512/768/1024 via CKM_ML_KEM + C_EncapsulateKey / C_DecapsulateKey.',
+        deploymentPosture: 'production',
+        refs: [
+          {
+            kind: 'spec',
+            id: 'PKCS#11 v3.2 CS01',
+            title: 'PKCS#11 v3.2 — ML-KEM mechanisms',
+            url: 'https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.html',
+            publishedOn: '2025-11-14',
+          },
+        ],
+      },
+      hybridKem: {
+        value: 'na',
+        note: 'PKCS#11 is a mechanism-level token API; hybrid/composite KEMs are composed by callers, not defined by the spec.',
+      },
+      pureSig: {
+        value: 'draft',
+        stageNote:
+          'OASIS CS01 (2025-11-14) — ML-DSA + SLH-DSA mechanisms (CKM_ML_DSA, CKM_SLH_DSA)',
+        note: 'ML-DSA-44/65/87 (incl. HashML-DSA) + SLH-DSA via CKM_ML_DSA / CKM_SLH_DSA.',
+        deploymentPosture: 'production',
+        refs: [
+          {
+            kind: 'spec',
+            id: 'PKCS#11 v3.2 CS01',
+            title: 'PKCS#11 v3.2 — ML-DSA / SLH-DSA mechanisms',
+            url: 'https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.html',
+            publishedOn: '2025-11-14',
+          },
+        ],
+      },
+      hybridSig: {
+        value: 'na',
+        note: 'No native composite-signature mechanism; callers combine atomic per-key signatures above the API.',
+      },
+    },
+    ossLibraries: [
+      {
+        productId: 'softhsm',
+        name: 'SoftHSM v3 (pqctoday)',
+        versionNote: 'Our fork — PKCS#11 v3.2 ML-KEM + ML-DSA on an OpenSSL 3.5 backend',
+      },
+      { productId: 'opensc', name: 'OpenSC', versionNote: 'PKCS#11 client tooling' },
+      {
+        productId: 'openssl',
+        name: 'OpenSSL pkcs11-provider',
+        versionNote: 'bridges OpenSSL 3.x to PKCS#11 v3.2 tokens',
+      },
+    ],
+    commercialLibraries: [
+      {
+        productId: 'cryptsoft',
+        name: 'Cryptsoft PKCS#11 SDK',
+        versionNote: 'PKCS#11 v3.2 SDK — “first PQC-ready” (Mar 2025); ML-KEM / ML-DSA / SLH-DSA',
+      },
+      {
+        productId: 'thales-luna-t-series-hsm',
+        name: 'Thales Luna T-Series HSM',
+        versionNote: 'fw 7.15.0 — standards-compliant ML-KEM + ML-DSA via PKCS#11',
+      },
+      {
+        productId: 'entrust-nshield',
+        name: 'Entrust nShield',
+        versionNote: 'firmware (2025) — ML-KEM + ML-DSA via PKCS#11 / CNG / JCE',
+      },
+      {
+        productId: 'utimaco-securityserver',
+        name: 'Utimaco SecurityServer',
+        versionNote: 'fw 4.40+ — PQC (ML-KEM / ML-DSA) via PKCS#11',
+      },
+    ],
+    playgrounds: [
+      {
+        toolId: 'hsm',
+        toolName: 'PKCS#11 HSM',
+        url: '/playground/hsm',
+        testability: { pureKem: 'full', hybridKem: 'na', pureSig: 'full', hybridSig: 'na' },
+      },
+    ],
+    liveDeployments: [
+      {
+        provider: 'pqctoday SoftHSM v3',
+        what: 'PKCS#11 v3.2 ML-KEM + ML-DSA software HSM (WASM) — runnable in the in-browser HSM playground',
+        since: '2026',
+        referenceUrl: 'https://github.com/pqctoday-org/pqctoday-hsm',
+      },
+    ],
+    recommended: true,
+    recommendedReason:
+      'PKCS#11 v3.2 (OASIS CS01) fully supports ML-KEM + ML-DSA and is already implemented (our SoftHSM v3 + vendor HSMs); exercisable live in the HSM playground.',
+  },
+  {
+    id: 'kmip',
+    name: 'KMIP',
+    description:
+      'OASIS Key Management Interoperability Protocol v3.0 — key lifecycle over the wire. Adds PQC managed objects + operations: ML-KEM (Encapsulate / Decapsulate) and ML-DSA (Sign / SignatureVerify).',
+    latestRelease: [],
+    latestDraft: [
+      {
+        id: 'KMIP-v3.0-CSD01',
+        title: 'KMIP Specification v3.0 — Committee Specification Draft 01',
+        url: 'https://docs.oasis-open.org/kmip/kmip-spec/v3.0/',
+        date: '2026-01-01',
+      },
+    ],
+    dimensions: {
+      pureKem: {
+        value: 'draft',
+        stageNote:
+          'OASIS Committee Specification Draft CSD01 — ML-KEM objects + Encapsulate/Decapsulate',
+        note: 'ML-KEM-512/768/1024 managed objects with Encapsulate / Decapsulate operations.',
+        deploymentPosture: 'pilot',
+        refs: [
+          {
+            kind: 'spec',
+            id: 'KMIP 3.0 CSD01',
+            title: 'KMIP v3.0 — PQC objects (ML-KEM)',
+            url: 'https://docs.oasis-open.org/kmip/kmip-spec/v3.0/',
+            publishedOn: '2026-01-01',
+          },
+        ],
+      },
+      hybridKem: {
+        value: 'na',
+        note: 'KMIP transports whatever algorithm the server registers; it defines no composite/hybrid KEM construct of its own.',
+      },
+      pureSig: {
+        value: 'draft',
+        stageNote: 'OASIS CSD01 — ML-DSA objects + Sign / SignatureVerify',
+        note: 'ML-DSA-44/65/87 managed objects with Sign / SignatureVerify operations.',
+        deploymentPosture: 'pilot',
+        refs: [
+          {
+            kind: 'spec',
+            id: 'KMIP 3.0 CSD01',
+            title: 'KMIP v3.0 — PQC objects (ML-DSA)',
+            url: 'https://docs.oasis-open.org/kmip/kmip-spec/v3.0/',
+            publishedOn: '2026-01-01',
+          },
+        ],
+      },
+      hybridSig: {
+        value: 'na',
+        note: 'No native composite-signature object; hybrids are composed above the protocol.',
+      },
+    },
+    ossLibraries: [
+      {
+        productId: 'pqctoday-kmip',
+        name: 'pqctoday-kmip',
+        versionNote:
+          'Our Rust KMIP 3.0 server (MIT) on softhsmrustv3 — full ML-KEM + ML-DSA + crypto-agility policy',
+      },
+      {
+        productId: 'pykmip',
+        name: 'PyKMIP',
+        versionNote: 'Classical KMIP client — no PQC objects',
+      },
+    ],
+    commercialLibraries: [],
+    playgrounds: [
+      {
+        toolId: 'cacp-kmip',
+        toolName: 'KMIP Control Plane',
+        url: '/playground/cacp',
+        testability: { pureKem: 'full', hybridKem: 'na', pureSig: 'full', hybridSig: 'na' },
+      },
+    ],
+    liveDeployments: [
+      {
+        provider: 'pqctoday-kmip (CACP)',
+        what: 'KMIP 3.0 control plane with ML-KEM + ML-DSA and crypto-agility policy — runnable in the in-browser CACP playground',
+        since: '2026',
+        referenceUrl: 'https://github.com/pqctoday-org/pqctoday-hsm',
+      },
+    ],
+    recommended: true,
+    recommendedReason:
+      'KMIP 3.0 fully supports ML-KEM + ML-DSA; we ship a working Rust KMIP 3.0 control plane (pqctoday-kmip) exercisable live in the CACP playground.',
+  },
+  {
+    id: 'signal-pqxdh',
+    name: 'Signal (PQXDH)',
+    description:
+      'Signal’s post-quantum extended Diffie–Hellman (PQXDH) — the initial key agreement for secure messaging. Hybrid X25519/X448 + ML-KEM (CRYSTALS-Kyber). Deployed in Signal Messenger.',
+    latestRelease: [
+      {
+        id: 'Signal-PQXDH-Rev3',
+        title: 'The PQXDH Key Agreement Protocol (Revision 3)',
+        url: 'https://signal.org/docs/specifications/pqxdh/',
+        date: '2024-01-23',
+      },
+    ],
+    latestDraft: [],
+    dimensions: {
+      pureKem: {
+        value: 'na',
+        note: 'PQXDH is hybrid by construction (classical + PQ KEM); there is no pure-PQ-only mode.',
+      },
+      hybridKem: {
+        value: 'experimental',
+        stageNote:
+          'Signal Foundation specification (Rev 3, 2023; updated 2024-01) — not an IETF/OASIS standard, but live in production',
+        note: 'X25519/X448 ECDH combined with ML-KEM / CRYSTALS-Kyber; mutual auth via classical XEdDSA-signed prekeys.',
+        deploymentPosture: 'production',
+        refs: [
+          {
+            kind: 'spec',
+            id: 'Signal PQXDH',
+            title: 'The PQXDH Key Agreement Protocol',
+            url: 'https://signal.org/docs/specifications/pqxdh/',
+            publishedOn: '2024-01-23',
+          },
+        ],
+      },
+      pureSig: {
+        value: 'na',
+        note: 'PQXDH is key agreement only; prekeys are authenticated with classical XEdDSA, not a PQ signature.',
+      },
+      hybridSig: {
+        value: 'na',
+        note: 'No signature dimension — PQXDH establishes a shared secret.',
+      },
+    },
+    ossLibraries: [
+      {
+        productId: 'libsignal',
+        name: 'libsignal',
+        versionNote: 'Signal’s client library — ships PQXDH',
+      },
+    ],
+    commercialLibraries: [],
+    playgrounds: [],
+    liveDeployments: [
+      {
+        provider: 'Signal Messenger',
+        what: 'PQXDH (X25519 + ML-KEM/Kyber) as the default initial key agreement for all conversations',
+        since: '2023',
+        referenceUrl: 'https://signal.org/blog/pqxdh/',
+      },
+    ],
+    recommendedReason:
+      'One of the first at-scale production PQC deployments — but a Signal-specific spec, not a cross-vendor standard.',
+  },
+  {
+    id: 'sigstore',
+    name: 'Sigstore',
+    description:
+      'Sigstore — keyless software-supply-chain signing (cosign + Fulcio CA + Rekor transparency log). PQC is experimental: cosign forks can sign with ML-DSA, but the public Fulcio CA still issues classical certs.',
+    latestRelease: [],
+    latestDraft: [],
+    dimensions: {
+      pureKem: {
+        value: 'na',
+        note: 'Sigstore is a signing system; no key-encapsulation dimension.',
+      },
+      hybridKem: { value: 'na', note: 'No KEM dimension.' },
+      pureSig: {
+        value: 'experimental',
+        stageNote:
+          'CNCF/OpenSSF project — ML-DSA signing experimental in cosign forks; public CA still classical',
+        note: 'cosign can sign artifacts with ML-DSA in experimental/forked builds; Fulcio (CA) + Rekor (log) PQC support is not yet shipped.',
+        refs: [
+          {
+            kind: 'spec',
+            id: 'sigstore/cosign',
+            title: 'Sigstore cosign — artifact signing',
+            url: 'https://github.com/sigstore/cosign',
+            publishedOn: '2026-01-01',
+          },
+        ],
+      },
+      hybridSig: {
+        value: 'none',
+        note: 'No composite/hybrid signing track in Sigstore yet.',
+      },
+    },
+    ossLibraries: [
+      {
+        productId: 'cosign',
+        name: 'cosign (pqctoday fork)',
+        versionNote: 'Our fork — ML-DSA, HSM-backed artifact signing',
+      },
+      { productId: 'fulcio', name: 'Fulcio', versionNote: 'keyless signing CA (classical today)' },
+      { productId: 'rekor', name: 'Rekor', versionNote: 'transparency log' },
+    ],
+    commercialLibraries: [],
+    playgrounds: [],
+    liveDeployments: [],
+    noDeploymentReason:
+      'The public Sigstore (Fulcio CA + Rekor log) issues and logs classical (ECDSA) signatures only. PQC ML-DSA signing exists in experimental cosign forks but there is no production PQC Sigstore deployment yet.',
   },
 ]

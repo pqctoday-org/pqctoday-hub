@@ -20,6 +20,9 @@ export interface UserMilestone {
   year: number
   quarter?: 1 | 2 | 3 | 4
   category?: string
+  /** Real completion signal. A deadline is only "met" when a covering
+   *  Certification/Renewal milestone is marked done — not merely planned. */
+  completed?: boolean
 }
 
 export interface ComplianceDeadline {

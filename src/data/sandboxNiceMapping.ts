@@ -29,18 +29,24 @@ const TIER_FROM_DIFFICULTY: Record<'beginner' | 'intermediate' | 'advanced', Nic
 
 // Default CAs per sandbox track (used when no override applies)
 const TRACK_DEFAULT_CAS: Record<SandboxTrackId, NiceCompetencyAreaId[]> = {
+  'protocol-simulation': ['CA-NETDEF', 'CA-CRYPTO'],
   infrastructure: ['CA-SYSARCH'],
+  'supply-chain': ['CA-SECPROG', 'CA-GOVCOMP'],
+  quantum: ['CA-CRYPTO'],
+  'secrets-kms': ['CA-DATASEC', 'CA-SYSARCH'],
   web: ['CA-NETDEF'],
   applications: ['CA-SECPROG'],
-  quantum: ['CA-CRYPTO'],
 }
 
 // Default work roles per sandbox track
 const TRACK_DEFAULT_WORK_ROLES: Record<SandboxTrackId, NiceWorkRoleId[]> = {
+  'protocol-simulation': ['security-architect', 'systems-security-analyst'],
   infrastructure: ['security-architect', 'security-developer'],
+  'supply-chain': ['security-developer', 'is-security-manager'],
+  quantum: ['security-architect', 'systems-security-analyst'],
+  'secrets-kms': ['security-architect', 'system-administrator'],
   web: ['security-architect', 'systems-security-analyst'],
   applications: ['security-developer', 'security-architect'],
-  quantum: ['security-architect', 'systems-security-analyst'],
 }
 
 // Per-scenario overrides for CAs (additive — TRACK_DEFAULT is NOT applied when an override exists).
@@ -51,11 +57,11 @@ const SCENARIO_CA_OVERRIDES: Record<string, NiceCompetencyAreaId[]> = {
   stepca: ['CA-IDENT', 'CA-SECPROG'],
   'cert-validation': ['CA-IDENT', 'CA-CRYPTO'],
   'hybrid-certs': ['CA-IDENT', 'CA-CRYPTO'],
-  dnssec: ['CA-NETDEF', 'CA-IDENT'],
+  mtc: ['CA-IDENT', 'CA-NETDEF'],
   // Data-at-rest / secrets management
   'secrets-vault': ['CA-DATASEC', 'CA-SYSARCH'],
   sops: ['CA-DATASEC', 'CA-SECPROG'],
-  'cosmian-kms': ['CA-DATASEC', 'CA-SYSARCH'],
+  'pqctoday-kmip': ['CA-DATASEC', 'CA-SYSARCH'],
   'cloud-kms': ['CA-DATASEC', 'CA-SYSARCH'],
   'database-postgres': ['CA-DATASEC', 'CA-SECPROG'],
   // Network transport
@@ -67,7 +73,7 @@ const SCENARIO_CA_OVERRIDES: Record<string, NiceCompetencyAreaId[]> = {
   haproxy: ['CA-NETDEF', 'CA-SYSARCH'],
   'browser-tls': ['CA-NETDEF', 'CA-CRYPTO'],
   pqcflow: ['CA-NETDEF', 'CA-RISK'],
-  chronyd: ['CA-NETDEF', 'CA-SYSARCH'],
+  'ab-handshake-bench': ['CA-NETDEF', 'CA-RISK'],
   // Inventory / governance / risk
   'cbom-compliance': ['CA-GOVCOMP', 'CA-RISK'],
   'migration-impact': ['CA-RISK', 'CA-GOVCOMP'],
@@ -77,16 +83,10 @@ const SCENARIO_CA_OVERRIDES: Record<string, NiceCompetencyAreaId[]> = {
   'supply-chain-signing': ['CA-SECPROG', 'CA-GOVCOMP'],
   'firmware-hss': ['CA-SECPROG', 'CA-SYSARCH'],
   'tpm-pqc-migration': ['CA-SYSARCH', 'CA-CRYPTO'],
-  'confidential-computing': ['CA-SYSARCH', 'CA-DATASEC'],
+  'tpm-playground': ['CA-CRYPTO', 'CA-SYSARCH'],
   // Application protocol
   'api-security-jwt': ['CA-SECPROG', 'CA-IDENT'],
-  web3: ['CA-SECPROG', 'CA-CRYPTO'],
-  algorand: ['CA-SECPROG', 'CA-CRYPTO'],
-  besu: ['CA-SECPROG', 'CA-CRYPTO'],
   // Quantum-native crypto
-  qkdsim: ['CA-CRYPTO'],
-  openqkd: ['CA-CRYPTO'],
-  sequence: ['CA-CRYPTO'],
   sequoia: ['CA-CRYPTO', 'CA-SECPROG'],
   // Email
   smime: ['CA-CRYPTO', 'CA-DATASEC'],

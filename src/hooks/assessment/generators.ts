@@ -5,15 +5,34 @@ import type {
   ComplianceImpact,
   CategoryDrivers,
   HNDLRiskWindow,
-  HNFLRiskWindow,
+  TNFLRiskWindow,
   MigrationEffortItem,
   RecommendedAction,
   AlgorithmMigration,
 } from '../assessmentTypes'
 
 import { getMaxSensitivity, getMaxRetentionYears, getIndustryRetentionDefault } from './scoring'
+import type { Cswp39StepId } from '@/data/cswp39ZoneData'
 
-import { computeHNFLRiskWindow, getEffectiveThreatYear } from './riskWindows'
+/**
+ * Tag a recommended action with its CSWP.39 step (Govern → Inventory →
+ * Identify-gaps → Prioritise → Implement) by keyword, so the Assess output is
+ * visibly CSWP.39-structured. First match wins; defaults to govern.
+ */
+export function classifyCswp39Step(action: RecommendedAction): Cswp39StepId {
+  const t = `${action.action} ${action.relatedModule}`.toLowerCase()
+  if (/invent|discover|cbom|catalog|scan|estate/.test(t)) return 'inventory'
+  // prioritise before implement so "prioritise the migration roadmap" isn't caught by "migrat"
+  if (/prioriti|roadmap|sequenc|backlog|wave|plan\b/.test(t)) return 'prioritise'
+  if (
+    /deploy|pilot|hybrid|rollout|roll out|replace|rotate|upgrade|implement|migrat|cutover/.test(t)
+  )
+    return 'implement'
+  if (/risk|gap|score|qra|assess|threat|vulnerab|exposure|readiness/.test(t)) return 'identify-gaps'
+  return 'govern'
+}
+
+import { computeTNFLRiskWindow, getEffectiveThreatYear } from './riskWindows'
 
 export function buildAlgorithmHighlightUrl(algorithms: string[]): string {
   if (algorithms.length === 0) return '/algorithms'
@@ -296,9 +315,9 @@ export function generateExtendedActions(
     })
   }
 
-  const hnfl = computeHNFLRiskWindow(input)
+  const hnfl = computeTNFLRiskWindow(input)
   if ((input.currentCrypto ?? []).some((a) => SIGNING_ALGORITHMS.has(a)) && hnfl?.isAtRisk) {
-    if (hnfl.hnflRelevantUseCases.some((uc) => uc.includes('PKI') || uc.includes('code signing'))) {
+    if (hnfl.tnflRelevantUseCases.some((uc) => uc.includes('PKI') || uc.includes('code signing'))) {
       actions.push({
         priority: priority++,
         action:
@@ -500,7 +519,7 @@ export function generateExecutiveSummary(
   vulnerableCount: number,
   migrationEffort: MigrationEffortItem[],
   hndl: HNDLRiskWindow | undefined,
-  hnfl: HNFLRiskWindow | undefined,
+  hnfl: TNFLRiskWindow | undefined,
   pqcFrameworkCount: number
 ): string {
   const parts: string[] = []
@@ -670,7 +689,7 @@ export function generateKeyFindings(
   algorithmMigrations: AlgorithmMigration[],
   complianceImpacts: ComplianceImpact[],
   hndlRiskWindow?: HNDLRiskWindow,
-  hnflRiskWindow?: HNFLRiskWindow
+  tnflRiskWindow?: TNFLRiskWindow
 ): string[] {
   const findings: string[] = []
   const p = input.persona
@@ -716,9 +735,9 @@ export function generateKeyFindings(
   }
 
   // 3. HNFL risk
-  if (hnflRiskWindow?.isAtRisk && hnflRiskWindow.hasSigningAlgorithms) {
+  if (tnflRiskWindow?.isAtRisk && tnflRiskWindow.hasSigningAlgorithms) {
     findings.push(
-      `Harvest-Now-Forge-Later risk: signing credentials may remain trusted past the quantum threat year, exposing ${hnflRiskWindow.hnflRelevantUseCases.length} use case${hnflRiskWindow.hnflRelevantUseCases.length !== 1 ? 's' : ''} to forgery attacks.`
+      `Harvest-Now-Forge-Later risk: signing credentials may remain trusted past the quantum threat year, exposing ${tnflRiskWindow.tnflRelevantUseCases.length} use case${tnflRiskWindow.tnflRelevantUseCases.length !== 1 ? 's' : ''} to forgery attacks.`
     )
   }
 

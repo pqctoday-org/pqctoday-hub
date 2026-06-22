@@ -82,20 +82,6 @@ function formatValue(val: string | number | null): string {
   return val
 }
 
-function getCellHighlight(
-  field: ComparisonField,
-  value: string | number | null,
-  baselineValue: string | number | null
-): string {
-  if (!field.compare || value === null || baselineValue === null) return ''
-  if (typeof value !== 'number' || typeof baselineValue !== 'number') return ''
-  if (value === baselineValue) return ''
-  if (field.compare === 'lower-better') {
-    return value < baselineValue ? 'text-status-success' : 'text-status-warning'
-  }
-  return value > baselineValue ? 'text-status-success' : 'text-status-warning'
-}
-
 interface AlgorithmComparisonPanelProps {
   algorithms: AlgorithmDetail[]
   baseline: AlgorithmDetail | null
@@ -183,21 +169,36 @@ export function AlgorithmComparisonPanel({
           </thead>
           <tbody>
             {DETAIL_FIELDS.map((field) => {
-              const baselineVal = baseline ? field.getValue(baseline) : null
+              // Best-in-row: for lower-is-better numeric rows, find the minimum
+              // value across ALL columns (baseline + PQC) and flag it green ✓.
+              const rowMin =
+                field.compare === 'lower-better'
+                  ? Math.min(
+                      ...allAlgos
+                        .map((a) => field.getValue(a))
+                        .filter((v): v is number => typeof v === 'number')
+                    )
+                  : Infinity
               return (
                 <tr key={field.key} className="border-b border-border/50 hover:bg-muted/30">
                   <td className="px-3 py-2 text-xs font-medium text-muted-foreground whitespace-nowrap">
                     {field.label}
                   </td>
-                  {allAlgos.map((a, i) => {
+                  {allAlgos.map((a) => {
                     const val = field.getValue(a)
-                    const highlight =
-                      i > 0 && baseline ? getCellHighlight(field, val, baselineVal) : ''
+                    const isBest =
+                      allAlgos.length > 1 &&
+                      Number.isFinite(rowMin) &&
+                      typeof val === 'number' &&
+                      val === rowMin
                     const isFamilyField = field.key === 'cryptoFamily'
                     return (
                       <td
                         key={a.name}
-                        className={clsx('px-3 py-2 text-xs text-foreground', highlight)}
+                        className={clsx(
+                          'px-3 py-2 text-xs',
+                          isBest ? 'text-status-success font-semibold' : 'text-foreground'
+                        )}
                       >
                         {isFamilyField && typeof val === 'string' ? (
                           <span
@@ -209,7 +210,14 @@ export function AlgorithmComparisonPanel({
                             {val}
                           </span>
                         ) : (
-                          formatValue(val)
+                          <>
+                            {isBest && (
+                              <span aria-hidden="true" className="mr-0.5">
+                                ✓
+                              </span>
+                            )}
+                            {formatValue(val)}
+                          </>
                         )}
                       </td>
                     )

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { flushSync } from 'react-dom'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   Printer,
   Share2,
@@ -23,6 +23,8 @@ import {
   Layers,
   Compass,
   GraduationCap,
+  Filter,
+  X,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
@@ -44,6 +46,11 @@ import { softwareData } from '../../data/migrateData'
 import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
 import { ReportCswp39Nav } from './ReportCswp39Nav'
+import { ReportLockedOverlay } from './redesign/ReportLockedOverlay'
+import { KpiEmptyState, KpiPreviewSkeleton } from './redesign/ReportKpiStates'
+import { ReportVerdictBlock } from './redesign/ReportVerdictBlock'
+import { ReportUpgradeNudge } from './redesign/ReportUpgradeNudge'
+import { ReportControlDeck } from './redesign/ReportControlDeck'
 import { useThreatsData } from '../../hooks/useThreatsData'
 import { GlossaryAutoWrap } from '../PKILearning/common/GlossaryAutoWrap'
 import { MigrationRoadmap } from './MigrationRoadmap'
@@ -55,7 +62,9 @@ import type { ROISummary } from '../shared/ROICalculatorSection'
 import { KPITrendingSection } from './KPITrendingSection'
 import { BoardBriefSection } from './BoardBriefSection'
 import { BoardPackExport } from './BoardPackExport'
-import { REPORT_SECTION_LABELS } from '../../data/reportSectionToCswp39'
+import { REPORT_SECTION_LABELS, REPORT_SECTION_TO_CSWP39 } from '../../data/reportSectionToCswp39'
+import { FRAMEWORK_PHASES } from '../../data/frameworkPhases'
+import { usePhaseFilter } from '../../hooks/usePhaseFilter'
 import { formatDriver } from '../../data/driverLabels'
 import { RiskGauge, riskConfig } from '../shared/widgets/RiskGauge'
 import { Button } from '../ui/button'
@@ -70,12 +79,13 @@ import type {
   CategoryScores,
   CategoryDrivers,
   HNDLRiskWindow,
-  HNFLRiskWindow,
+  TNFLRiskWindow,
 } from '../../hooks/assessmentTypes'
 import { SIGNING_ALGORITHMS } from '../../hooks/assessmentData'
 import { encodeShareToken } from '@/utils/reportShareToken'
 import { FilteredChip } from './FilteredChip'
 import { NiceGapReportSection } from './NiceGapReportSection'
+import { QRASection } from './sections/QRASection'
 
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
@@ -453,7 +463,7 @@ interface AssessReportProps {
 /** Report-specific HNDL/HNFL wrapper that injects SectionInfoTip */
 const ReportHNDLHNFLSection = (props: {
   hndl?: HNDLRiskWindow
-  hnfl?: HNFLRiskWindow
+  hnfl?: TNFLRiskWindow
   defaultOpen?: boolean
   headerExtra?: React.ReactNode
 }) => <SharedHNDLHNFLSection {...props} infoTip={<SectionInfoTip sectionId="hndlHnfl" />} />
@@ -485,6 +495,25 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   const restoreAllThreats = useAssessmentStore((s) => s.restoreAllThreats)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const hiddenProducts = useMigrateSelectionStore((s) => s.hiddenProducts)
+
+  // Migration-Program phase overlay: when `?phase=` is active, narrow the report
+  // to the sections that *communicate* that phase (per REPORT_SECTION_TO_CSWP39)
+  // and surface a compact phase header. With no phase active, `activePhase` is
+  // null and `phaseVisible` is `true` for every section — page is unchanged.
+  const { activePhase, matches } = usePhaseFilter()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activePhaseDef = activePhase ? FRAMEWORK_PHASES[activePhase] : null
+
+  /** `true` when a report section should show under the active phase filter. */
+  const phaseVisible = (sectionId: ReportSectionId): boolean =>
+    matches(REPORT_SECTION_TO_CSWP39[sectionId].frameworkPhase)
+
+  /** Clears `?phase=` while preserving every other query param (deep-links). */
+  const clearPhase = () => {
+    const next = new URLSearchParams(searchParams)
+    next.delete('phase')
+    setSearchParams(next, { replace: true })
+  }
 
   const hiddenForIndustryCount = useMemo(() => {
     if (!hiddenThreats.length || !industry) return 0
@@ -732,6 +761,17 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       </span>
                     </div>
 
+                    {/* Control deck (redesign) — derived track label + persona lens. */}
+                    <ReportControlDeck fullTrack={!!result.categoryScores} />
+
+                    {/* Persona verdict (redesign) — re-leads the result for the active role,
+                      above the "Do this first" hero. */}
+                    <ReportVerdictBlock persona={selectedPersona} />
+
+                    {/* Fast-track upgrade nudge (redesign) — quick assessments only; ties the
+                      locked sections to one clear unlock path. */}
+                    {!result.categoryScores && <ReportUpgradeNudge />}
+
                     {/* Top-3 actions hero (P15-P1-02) — teases the highest-priority
                       recommended actions before the full report scroll. Hidden in print. */}
                     {result.recommendedActions.length > 0 && (
@@ -759,6 +799,40 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                     {/* CSWP.39 navigation legend — re-groups report sections under the 5-step
                       narrative shared with /business and /assess. Hidden in print. */}
                     <ReportCswp39Nav />
+
+                    {/* Phase overlay header — only when `?phase=` is active. Names the
+                      Applied Quantum phase the report is narrowed to and offers a
+                      clear affordance back to the full report. Hidden in print. */}
+                    {activePhaseDef && (
+                      <div
+                        className="glass-panel p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 print:hidden border-l-4 border-l-primary"
+                        data-testid="report-phase-header"
+                      >
+                        <div className="flex items-start gap-2 text-sm">
+                          <Filter size={16} className="text-primary shrink-0 mt-0.5" />
+                          <div>
+                            <span className="font-semibold text-foreground">
+                              {activePhaseDef.number !== null
+                                ? `Phase ${activePhaseDef.number} — ${activePhaseDef.name}`
+                                : activePhaseDef.name}
+                            </span>
+                            <span className="block text-xs text-muted-foreground">
+                              {activePhaseDef.tagline} · showing the report sections for this phase
+                            </span>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={clearPhase}
+                          className="text-xs h-7 px-3 border border-border whitespace-nowrap gap-1.5"
+                          aria-label="Clear phase filter and show the full report"
+                        >
+                          <X size={12} />
+                          Clear phase
+                        </Button>
+                      </div>
+                    )}
 
                     {/* Summary / full report toggle (shown when persona hides sections) */}
                     {hasSummaryMode && !showFullReport && (
@@ -793,106 +867,121 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                     )}
 
                     {/* Country PQC Migration Timeline */}
-                    {cfg('countryTimeline').state !== 'hidden' && (
-                      <CollapsibleSection
-                        id="report-section-countryTimeline"
-                        title={
-                          country
-                            ? `${country} PQC Migration Timeline`
-                            : 'Country PQC Migration Timeline'
-                        }
-                        icon={<Calendar className="text-primary" size={20} />}
-                        defaultOpen={cfg('countryTimeline').state === 'open'}
-                        infoTip="countryTimeline"
-                      >
-                        <ReportTimelineStrip countryName={country} />
-                        <Link
-                          to={
+                    {phaseVisible('countryTimeline') &&
+                      cfg('countryTimeline').state !== 'hidden' && (
+                        <CollapsibleSection
+                          id="report-section-countryTimeline"
+                          title={
                             country
-                              ? `/timeline?country=${encodeURIComponent(country)}`
-                              : '/timeline'
+                              ? `${country} PQC Migration Timeline`
+                              : 'Country PQC Migration Timeline'
                           }
-                          className="flex items-center gap-1.5 text-xs text-primary hover:underline mt-3 print:hidden"
+                          icon={<Calendar className="text-primary" size={20} />}
+                          defaultOpen={cfg('countryTimeline').state === 'open'}
+                          infoTip="countryTimeline"
                         >
-                          <ArrowRight size={12} />
-                          View full {country ? `${country} ` : ''}timeline
-                        </Link>
+                          <ReportTimelineStrip countryName={country} />
+                          <Link
+                            to={
+                              country
+                                ? `/timeline?country=${encodeURIComponent(country)}`
+                                : '/timeline'
+                            }
+                            className="flex items-center gap-1.5 text-xs text-primary hover:underline mt-3 print:hidden"
+                          >
+                            <ArrowRight size={12} />
+                            View full {country ? `${country} ` : ''}timeline
+                          </Link>
+                        </CollapsibleSection>
+                      )}
+
+                    {/* Risk Score */}
+                    {phaseVisible('riskScore') && (
+                      <CollapsibleSection
+                        id="report-section-riskScore"
+                        title="Risk Score"
+                        icon={<ShieldAlert className={config.color} size={20} />}
+                        defaultOpen={cfg('riskScore').state === 'open'}
+                        className={clsx('border-l-4', config.border)}
+                        infoTip="riskScore"
+                      >
+                        <RiskGauge score={result.riskScore} level={result.riskLevel} />
+                        {previousRiskScore !== null && previousRiskScore !== result.riskScore && (
+                          <div className="flex items-center justify-center gap-2 mt-2 print:hidden">
+                            <span
+                              className={clsx(
+                                'text-xs font-mono px-2 py-0.5 rounded-full',
+                                result.riskScore < previousRiskScore
+                                  ? 'bg-success/10 text-success'
+                                  : 'bg-destructive/10 text-destructive'
+                              )}
+                            >
+                              {result.riskScore < previousRiskScore ? '' : '+'}
+                              {result.riskScore - previousRiskScore} since last assessment
+                            </span>
+                          </div>
+                        )}
+                        {lastModifiedAt && (
+                          <p className="text-[10px] text-muted-foreground/60 text-center mt-1 font-mono print:hidden">
+                            Last updated:{' '}
+                            {new Date(lastModifiedAt).toLocaleDateString(undefined, {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric',
+                              hour: 'numeric',
+                              minute: '2-digit',
+                            })}
+                          </p>
+                        )}
+                        <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-muted-foreground">
+                          {selectedPersona === 'curious' ? (
+                            <GlossaryAutoWrap>
+                              {result.personaNarrative ?? result.narrative}
+                            </GlossaryAutoWrap>
+                          ) : (
+                            (result.personaNarrative ?? result.narrative)
+                          )}
+                        </p>
+                        {result.boosts &&
+                          result.boosts.length > 0 &&
+                          result.preBoostScore !== undefined && (
+                            <div className="mt-4 p-3 rounded-lg border border-border bg-muted/20 print:bg-transparent">
+                              <p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground mb-2">
+                                Situational boosts raised this score from {result.preBoostScore} to{' '}
+                                {result.riskScore}
+                              </p>
+                              <ul className="space-y-1">
+                                {result.boosts.map((b) => (
+                                  <li
+                                    key={b.id}
+                                    className="flex items-start gap-2 text-xs text-foreground"
+                                  >
+                                    <span className="text-destructive shrink-0 font-mono">
+                                      +{(b.delta * 100).toFixed(0)}%
+                                    </span>
+                                    <span>{b.label}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
                       </CollapsibleSection>
                     )}
 
-                    {/* Risk Score */}
-                    <CollapsibleSection
-                      id="report-section-riskScore"
-                      title="Risk Score"
-                      icon={<ShieldAlert className={config.color} size={20} />}
-                      defaultOpen={cfg('riskScore').state === 'open'}
-                      className={clsx('border-l-4', config.border)}
-                      infoTip="riskScore"
-                    >
-                      <RiskGauge score={result.riskScore} level={result.riskLevel} />
-                      {previousRiskScore !== null && previousRiskScore !== result.riskScore && (
-                        <div className="flex items-center justify-center gap-2 mt-2 print:hidden">
-                          <span
-                            className={clsx(
-                              'text-xs font-mono px-2 py-0.5 rounded-full',
-                              result.riskScore < previousRiskScore
-                                ? 'bg-success/10 text-success'
-                                : 'bg-destructive/10 text-destructive'
-                            )}
-                          >
-                            {result.riskScore < previousRiskScore ? '' : '+'}
-                            {result.riskScore - previousRiskScore} since last assessment
-                          </span>
-                        </div>
-                      )}
-                      {lastModifiedAt && (
-                        <p className="text-[10px] text-muted-foreground/60 text-center mt-1 font-mono print:hidden">
-                          Last updated:{' '}
-                          {new Date(lastModifiedAt).toLocaleDateString(undefined, {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                            hour: 'numeric',
-                            minute: '2-digit',
-                          })}
-                        </p>
-                      )}
-                      <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-muted-foreground">
-                        {selectedPersona === 'curious' ? (
-                          <GlossaryAutoWrap>
-                            {result.personaNarrative ?? result.narrative}
-                          </GlossaryAutoWrap>
-                        ) : (
-                          (result.personaNarrative ?? result.narrative)
-                        )}
-                      </p>
-                      {result.boosts &&
-                        result.boosts.length > 0 &&
-                        result.preBoostScore !== undefined && (
-                          <div className="mt-4 p-3 rounded-lg border border-border bg-muted/20 print:bg-transparent">
-                            <p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground mb-2">
-                              Situational boosts raised this score from {result.preBoostScore} to{' '}
-                              {result.riskScore}
-                            </p>
-                            <ul className="space-y-1">
-                              {result.boosts.map((b) => (
-                                <li
-                                  key={b.id}
-                                  className="flex items-start gap-2 text-xs text-foreground"
-                                >
-                                  <span className="text-destructive shrink-0 font-mono">
-                                    +{(b.delta * 100).toFixed(0)}%
-                                  </span>
-                                  <span>{b.label}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                    </CollapsibleSection>
+                    {/* Quantum Readiness Assessment (QRA) — the framework's
+                        communicate artifact (spec §6.1; Report #1). Phase 3.
+                        Additive: only renders when an assessment exists (input
+                        present) and respects the `?phase=` overlay. */}
+                    {matches('p3') &&
+                      getInput() &&
+                      (() => {
+                        const qraInput = getInput()
+                        return qraInput ? <QRASection input={qraInput} result={result} /> : null
+                      })()}
 
                     {/* Key Findings */}
-                    {result.keyFindings &&
+                    {phaseVisible('keyFindings') &&
+                      result.keyFindings &&
                       result.keyFindings.length > 0 &&
                       cfg('keyFindings').state !== 'hidden' && (
                         <CollapsibleSection
@@ -917,56 +1006,125 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         </CollapsibleSection>
                       )}
 
-                    {/* Category Score Breakdown */}
-                    {result.categoryScores && cfg('riskBreakdown').state !== 'hidden' && (
-                      <div id="report-section-riskBreakdown">
-                        <CategoryBreakdown
-                          scores={result.categoryScores}
-                          drivers={result.categoryDrivers}
-                          defaultOpen={cfg('riskBreakdown').state === 'open'}
-                          headerExtra={
-                            <AskAssistantButton
-                              question={`Explain my PQC risk score of ${result.riskScore}/100 (${result.riskLevel}) for ${industry}`}
-                              className="print:hidden"
+                    {/* Category Score Breakdown — comprehensive-only; the lock model
+                        owns this section, so a quick assessment shows a locked preview
+                        (redesign) instead of omitting it. */}
+                    {phaseVisible('riskBreakdown') &&
+                      (result.categoryScores ? (
+                        <div id="report-section-riskBreakdown">
+                          <CategoryBreakdown
+                            scores={result.categoryScores}
+                            drivers={result.categoryDrivers}
+                            defaultOpen={cfg('riskBreakdown').state === 'open'}
+                            headerExtra={
+                              <AskAssistantButton
+                                question={`Explain my PQC risk score of ${result.riskScore}/100 (${result.riskLevel}) for ${industry}`}
+                                className="print:hidden"
+                              />
+                            }
+                          />
+                        </div>
+                      ) : (
+                        <div id="report-section-riskBreakdown">
+                          <ReportLockedOverlay
+                            reason="Per-domain scores need the full assessment"
+                            detail="A quick assessment can't separate Quantum Exposure, Migration Complexity, Regulatory Pressure and Organizational Readiness. Finish the full assessment to unlock the breakdown."
+                          >
+                            <CategoryBreakdown
+                              scores={{
+                                quantumExposure: 72,
+                                migrationComplexity: 58,
+                                regulatoryPressure: 65,
+                                organizationalReadiness: 40,
+                              }}
+                              defaultOpen
                             />
-                          }
-                        />
-                      </div>
-                    )}
+                          </ReportLockedOverlay>
+                        </div>
+                      ))}
+
+                    {/* Framework Risk Lens (Applied Quantum P3) — derived alongside the categories */}
+                    {phaseVisible('riskBreakdown') &&
+                      result.frameworkRisk &&
+                      cfg('riskBreakdown').state !== 'hidden' && (
+                        <CollapsibleSection
+                          title="Framework Risk Lens (Applied Quantum)"
+                          icon={<ShieldAlert className="text-primary" size={20} />}
+                          defaultOpen={false}
+                        >
+                          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                            {(
+                              [
+                                ['HNDL', result.frameworkRisk.hndl, 'Harvest-now confidentiality'],
+                                ['TNFL', result.frameworkRisk.tnfl, 'Forge-later integrity'],
+                                [
+                                  'Regulatory',
+                                  result.frameworkRisk.regulatory,
+                                  'Compliance / deadline pressure',
+                                ],
+                                [
+                                  'Feasibility',
+                                  result.frameworkRisk.feasibility,
+                                  'Ease of migration (higher = easier)',
+                                ],
+                              ] as const
+                            ).map(([label, val, note]) => (
+                              <div
+                                key={label}
+                                className="rounded-lg border border-border bg-card p-3"
+                              >
+                                <div className="text-2xl font-extrabold text-foreground">{val}</div>
+                                <div className="text-sm font-semibold text-foreground">{label}</div>
+                                <div className="text-xs text-muted-foreground">{note}</div>
+                              </div>
+                            ))}
+                          </div>
+                          <p className="mt-2 text-xs text-muted-foreground">
+                            The framework&apos;s P3 risk dimensions, derived alongside the category
+                            scores. HNDL / TNFL / Regulatory are exposure (higher = more risk);
+                            Feasibility is ease of migration (higher = easier).
+                          </p>
+                        </CollapsibleSection>
+                      )}
 
                     {/* Executive Summary */}
-                    {result.executiveSummary && cfg('executiveSummary').state !== 'hidden' && (
-                      <CollapsibleSection
-                        id="report-section-executiveSummary"
-                        title="Executive Summary"
-                        icon={<Briefcase className="text-primary" size={20} />}
-                        defaultOpen={cfg('executiveSummary').state === 'open'}
-                        className="border-l-4 border-l-primary"
-                        infoTip="executiveSummary"
-                      >
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                          {result.executiveSummary}
-                        </p>
-                      </CollapsibleSection>
-                    )}
+                    {phaseVisible('executiveSummary') &&
+                      result.executiveSummary &&
+                      cfg('executiveSummary').state !== 'hidden' && (
+                        <CollapsibleSection
+                          id="report-section-executiveSummary"
+                          title="Executive Summary"
+                          icon={<Briefcase className="text-primary" size={20} />}
+                          defaultOpen={cfg('executiveSummary').state === 'open'}
+                          className="border-l-4 border-l-primary"
+                          infoTip="executiveSummary"
+                        >
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {result.executiveSummary}
+                          </p>
+                        </CollapsibleSection>
+                      )}
 
                     {/* Assessment Profile */}
-                    {result.assessmentProfile && cfg('assessmentProfile').state !== 'hidden' && (
-                      <div id="report-section-assessmentProfile">
-                        <AssessmentProfileSummary
-                          profile={result.assessmentProfile}
-                          defaultOpen={cfg('assessmentProfile').state === 'open'}
-                        />
-                      </div>
-                    )}
+                    {phaseVisible('assessmentProfile') &&
+                      result.assessmentProfile &&
+                      cfg('assessmentProfile').state !== 'hidden' && (
+                        <div id="report-section-assessmentProfile">
+                          <AssessmentProfileSummary
+                            profile={result.assessmentProfile}
+                            defaultOpen={cfg('assessmentProfile').state === 'open'}
+                          />
+                        </div>
+                      )}
 
                     {/* Consolidated HNDL / HNFL Risk Windows */}
-                    {(result.hndlRiskWindow || result.hnflRiskWindow) &&
+                    {phaseVisible('hndlHnfl') &&
+                      (result.hndlRiskWindow || result.tnflRiskWindow) &&
                       cfg('hndlHnfl').state !== 'hidden' && (
                         <div id="report-section-hndlHnfl">
                           <ReportHNDLHNFLSection
                             hndl={result.hndlRiskWindow}
-                            hnfl={result.hnflRiskWindow}
+                            hnfl={result.tnflRiskWindow}
                             defaultOpen={cfg('hndlHnfl').state === 'open'}
                             headerExtra={
                               <AskAssistantButton
@@ -1000,7 +1158,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       )}
 
                     {/* HNFL warning for quick assessments with signing algorithms */}
-                    {!result.categoryScores && !result.hnflRiskWindow && hasSigningAlgos && (
+                    {!result.categoryScores && !result.tnflRiskWindow && hasSigningAlgos && (
                       <div className="glass-panel p-4 border-l-4 border-l-destructive flex items-start gap-3">
                         <AlertTriangle size={18} className="text-destructive shrink-0 mt-0.5" />
                         <div>
@@ -1018,7 +1176,8 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                     )}
 
                     {/* Algorithm Migration Matrix */}
-                    {result.algorithmMigrations.length > 0 &&
+                    {phaseVisible('algorithmMigration') &&
+                      result.algorithmMigrations.length > 0 &&
                       cfg('algorithmMigration').state !== 'hidden' && (
                         <CollapsibleSection
                           id="report-section-algorithmMigration"
@@ -1215,7 +1374,8 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       )}
 
                     {/* Compliance Impact */}
-                    {result.complianceImpacts.length > 0 &&
+                    {phaseVisible('complianceImpact') &&
+                      result.complianceImpacts.length > 0 &&
                       cfg('complianceImpact').state !== 'hidden' && (
                         <CollapsibleSection
                           id="report-section-complianceImpact"
@@ -1328,141 +1488,147 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       )}
 
                     {/* Recommended Actions */}
-                    {cfg('recommendedActions').state !== 'hidden' && (
-                      <CollapsibleSection
-                        id="report-section-recommendedActions"
-                        title={`Recommended Actions${cfg('recommendedActions').maxItems ? ` (Top ${cfg('recommendedActions').maxItems})` : ''}`}
-                        icon={<ArrowRight className="text-primary" size={20} />}
-                        defaultOpen={cfg('recommendedActions').state === 'open'}
-                        className="print:break-inside-auto"
-                        infoTip="recommendedActions"
-                        headerExtra={
-                          <AskAssistantButton
-                            question={`What should I prioritize for PQC migration in ${industry}?`}
-                            className="print:hidden"
-                          />
-                        }
-                      >
-                        <div className="space-y-3">
-                          {result.recommendedActions
-                            .slice(0, cfg('recommendedActions').maxItems)
-                            .map((action) => (
-                              <div
-                                key={action.priority}
-                                className="flex items-start gap-3 p-3 rounded-lg border border-border hover:border-primary/30 transition-colors"
-                              >
+                    {phaseVisible('recommendedActions') &&
+                      cfg('recommendedActions').state !== 'hidden' && (
+                        <CollapsibleSection
+                          id="report-section-recommendedActions"
+                          title={`Recommended Actions${cfg('recommendedActions').maxItems ? ` (Top ${cfg('recommendedActions').maxItems})` : ''}`}
+                          icon={<ArrowRight className="text-primary" size={20} />}
+                          defaultOpen={cfg('recommendedActions').state === 'open'}
+                          className="print:break-inside-auto"
+                          infoTip="recommendedActions"
+                          headerExtra={
+                            <AskAssistantButton
+                              question={`What should I prioritize for PQC migration in ${industry}?`}
+                              className="print:hidden"
+                            />
+                          }
+                        >
+                          <div className="space-y-3">
+                            {result.recommendedActions
+                              .slice(0, cfg('recommendedActions').maxItems)
+                              .map((action) => (
                                 <div
-                                  className={clsx(
-                                    'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 border-2',
-                                    action.category === 'immediate'
-                                      ? 'border-destructive text-destructive'
-                                      : action.category === 'short-term'
-                                        ? 'border-warning text-warning'
-                                        : 'border-border text-muted-foreground'
-                                  )}
+                                  key={action.priority}
+                                  className="flex items-start gap-3 p-3 rounded-lg border border-border hover:border-primary/30 transition-colors"
                                 >
-                                  {action.priority}
-                                </div>
-                                <div className="flex-1">
-                                  <p className="text-sm text-foreground">{action.action}</p>
-                                  <div className="flex items-center gap-3 mt-1">
-                                    <span
-                                      className={clsx(
-                                        'text-[10px] font-bold uppercase',
-                                        action.category === 'immediate'
-                                          ? 'text-destructive'
-                                          : action.category === 'short-term'
-                                            ? 'text-warning'
-                                            : 'text-muted-foreground'
-                                      )}
-                                    >
-                                      {action.category}
-                                    </span>
-                                    {action.effort && (
+                                  <div
+                                    className={clsx(
+                                      'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 border-2',
+                                      action.category === 'immediate'
+                                        ? 'border-destructive text-destructive'
+                                        : action.category === 'short-term'
+                                          ? 'border-warning text-warning'
+                                          : 'border-border text-muted-foreground'
+                                    )}
+                                  >
+                                    {action.priority}
+                                  </div>
+                                  <div className="flex-1">
+                                    <p className="text-sm text-foreground">{action.action}</p>
+                                    <div className="flex items-center gap-3 mt-1">
                                       <span
                                         className={clsx(
-                                          'text-[10px] font-bold uppercase px-1.5 py-0.5 rounded',
-
-                                          effortConfig[action.effort]?.bg ?? 'bg-muted',
-
-                                          effortConfig[action.effort]?.color ??
-                                            'text-muted-foreground'
+                                          'text-[10px] font-bold uppercase',
+                                          action.category === 'immediate'
+                                            ? 'text-destructive'
+                                            : action.category === 'short-term'
+                                              ? 'text-warning'
+                                              : 'text-muted-foreground'
                                         )}
                                       >
-                                        {effortConfig[action.effort]?.label ?? action.effort} effort
+                                        {action.category}
                                       </span>
-                                    )}
-                                    {isPathVisible(action.relatedModule) && (
-                                      <Link
-                                        to={
-                                          action.relatedModule.startsWith('/migrate') && industry
-                                            ? `${action.relatedModule}${action.relatedModule.includes('?') ? '&' : '?'}industry=${encodeURIComponent(industry)}`
-                                            : action.relatedModule
-                                        }
-                                        className="text-xs text-primary hover:underline flex items-center gap-1 print:hidden"
-                                      >
-                                        <ArrowRight size={10} />
-                                        Explore
-                                      </Link>
-                                    )}
-                                  </div>
-                                  {action.relatedModule.startsWith('/migrate') &&
-                                    relevantSoftware.length > 0 && (
-                                      <div className="flex flex-wrap gap-1 mt-1.5 print:hidden">
-                                        <span className="text-[10px] text-muted-foreground/70">
-                                          Tools:
+                                      {action.effort && (
+                                        <span
+                                          className={clsx(
+                                            'text-[10px] font-bold uppercase px-1.5 py-0.5 rounded',
+
+                                            effortConfig[action.effort]?.bg ?? 'bg-muted',
+
+                                            effortConfig[action.effort]?.color ??
+                                              'text-muted-foreground'
+                                          )}
+                                        >
+                                          {effortConfig[action.effort]?.label ?? action.effort}{' '}
+                                          effort
                                         </span>
-                                        {relevantSoftware.slice(0, 2).map((sw) => (
-                                          <Link
-                                            to={`/migrate?industry=${encodeURIComponent(industry)}`}
-                                            key={sw.softwareName}
-                                            className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
-                                          >
-                                            {sw.softwareName}
-                                          </Link>
-                                        ))}
+                                      )}
+                                      {isPathVisible(action.relatedModule) && (
+                                        <Link
+                                          to={
+                                            action.relatedModule.startsWith('/migrate') && industry
+                                              ? `${action.relatedModule}${action.relatedModule.includes('?') ? '&' : '?'}industry=${encodeURIComponent(industry)}`
+                                              : action.relatedModule
+                                          }
+                                          className="text-xs text-primary hover:underline flex items-center gap-1 print:hidden"
+                                        >
+                                          <ArrowRight size={10} />
+                                          Explore
+                                        </Link>
+                                      )}
+                                    </div>
+                                    {action.relatedModule.startsWith('/migrate') &&
+                                      relevantSoftware.length > 0 && (
+                                        <div className="flex flex-wrap gap-1 mt-1.5 print:hidden">
+                                          <span className="text-[10px] text-muted-foreground/70">
+                                            Tools:
+                                          </span>
+                                          {relevantSoftware.slice(0, 2).map((sw) => (
+                                            <Link
+                                              to={`/migrate?industry=${encodeURIComponent(industry)}`}
+                                              key={sw.softwareName}
+                                              className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
+                                            >
+                                              {sw.softwareName}
+                                            </Link>
+                                          ))}
+                                        </div>
+                                      )}
+                                    {action.drivers && action.drivers.length > 0 && (
+                                      <div
+                                        className="mt-1.5 text-[10px] text-muted-foreground leading-relaxed"
+                                        title={`Based on your answers: ${action.drivers
+                                          .map(formatDriver)
+                                          .join('; ')}`}
+                                      >
+                                        <span className="font-semibold">
+                                          Based on your answers:{' '}
+                                        </span>
+                                        {action.drivers.map(formatDriver).join('; ')}
                                       </div>
                                     )}
-                                  {action.drivers && action.drivers.length > 0 && (
-                                    <div
-                                      className="mt-1.5 text-[10px] text-muted-foreground leading-relaxed"
-                                      title={`Based on your answers: ${action.drivers
-                                        .map(formatDriver)
-                                        .join('; ')}`}
-                                    >
-                                      <span className="font-semibold">Based on your answers: </span>
-                                      {action.drivers.map(formatDriver).join('; ')}
-                                    </div>
-                                  )}
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
-                        </div>
-                      </CollapsibleSection>
-                    )}
+                              ))}
+                          </div>
+                        </CollapsibleSection>
+                      )}
 
                     {/* Migration Roadmap */}
-                    {cfg('migrationRoadmap').state !== 'hidden' && (
-                      <div id="report-section-migrationRoadmap">
-                        <MigrationRoadmap
-                          actions={result.recommendedActions}
-                          countryName={country || undefined}
-                          defaultOpen={cfg('migrationRoadmap').state === 'open'}
-                        />
-                      </div>
-                    )}
+                    {phaseVisible('migrationRoadmap') &&
+                      cfg('migrationRoadmap').state !== 'hidden' && (
+                        <div id="report-section-migrationRoadmap">
+                          <MigrationRoadmap
+                            actions={result.recommendedActions}
+                            countryName={country || undefined}
+                            defaultOpen={cfg('migrationRoadmap').state === 'open'}
+                          />
+                        </div>
+                      )}
 
                     {/* Migration Toolkit — products from Migrate catalog */}
-                    {cfg('migrationToolkit').state !== 'hidden' && (
-                      <div id="report-section-migrationToolkit">
-                        <MigrationToolkit
-                          assessmentInfrastructure={infrastructure}
-                          assessmentSubCategories={infrastructureSubCategories}
-                          assessmentIndustry={industry}
-                          defaultOpen={cfg('migrationToolkit').state === 'open'}
-                        />
-                      </div>
-                    )}
+                    {phaseVisible('migrationToolkit') &&
+                      cfg('migrationToolkit').state !== 'hidden' && (
+                        <div id="report-section-migrationToolkit">
+                          <MigrationToolkit
+                            assessmentInfrastructure={infrastructure}
+                            assessmentSubCategories={infrastructureSubCategories}
+                            assessmentIndustry={industry}
+                            defaultOpen={cfg('migrationToolkit').state === 'open'}
+                          />
+                        </div>
+                      )}
 
                     {/* ROI Calculator */}
                     <ROICalculatorSection
@@ -1473,50 +1639,66 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       infoTip={<SectionInfoTip sectionId="roiCalculator" />}
                     />
 
-                    {/* KPI Trending */}
-                    {result.categoryScores && (
-                      <KPITrendingSection
-                        history={assessmentHistory}
-                        currentResult={result}
-                        defaultOpen={false}
-                      />
+                    {/* KPI Trending — comprehensive-gated (categoryScores). Three states:
+                        locked on a quick assessment, empty until ≥2 saved snapshots,
+                        populated otherwise. */}
+                    {result.categoryScores ? (
+                      assessmentHistory.length >= 2 ? (
+                        <KPITrendingSection
+                          history={assessmentHistory}
+                          currentResult={result}
+                          defaultOpen={false}
+                        />
+                      ) : (
+                        <KpiEmptyState />
+                      )
+                    ) : (
+                      <ReportLockedOverlay
+                        reason="Track your risk score over time"
+                        detail="Progress trends come from saved comprehensive assessments. Finish the full assessment to start tracking your risk score and crypto-agility over time."
+                      >
+                        <KpiPreviewSkeleton />
+                      </ReportLockedOverlay>
                     )}
 
                     {/* Industry Threat Landscape */}
-                    {cfg('threatLandscape').state !== 'hidden' && (
-                      <div
-                        id="report-section-threatLandscape"
-                        className="print:break-before-page print:break-inside-auto"
-                      >
-                        <CollapsibleSection
-                          title={
-                            industry ? `${industry} Threat Landscape` : 'Industry Threat Landscape'
-                          }
-                          icon={<ShieldAlert className="text-destructive" size={20} />}
-                          defaultOpen={cfg('threatLandscape').state === 'open'}
-                          infoTip="threatLandscape"
-                          headerExtra={
-                            hiddenForIndustryCount > 0 ? (
-                              <FilteredChip
-                                context={industry ?? 'industry'}
-                                hiddenCount={hiddenForIndustryCount}
-                                onRestore={(e) => {
-                                  e.stopPropagation()
-                                  restoreAllThreats()
-                                }}
-                              />
-                            ) : undefined
-                          }
+                    {phaseVisible('threatLandscape') &&
+                      cfg('threatLandscape').state !== 'hidden' && (
+                        <div
+                          id="report-section-threatLandscape"
+                          className="print:break-before-page print:break-inside-auto"
                         >
-                          <ReportThreatsAppendix
-                            industry={industry}
-                            userAlgorithms={currentCrypto}
-                            hiddenThreatIds={hiddenThreats}
-                            onHideThreat={hideThreat}
-                          />
-                        </CollapsibleSection>
-                      </div>
-                    )}
+                          <CollapsibleSection
+                            title={
+                              industry
+                                ? `${industry} Threat Landscape`
+                                : 'Industry Threat Landscape'
+                            }
+                            icon={<ShieldAlert className="text-destructive" size={20} />}
+                            defaultOpen={cfg('threatLandscape').state === 'open'}
+                            infoTip="threatLandscape"
+                            headerExtra={
+                              hiddenForIndustryCount > 0 ? (
+                                <FilteredChip
+                                  context={industry ?? 'industry'}
+                                  hiddenCount={hiddenForIndustryCount}
+                                  onRestore={(e) => {
+                                    e.stopPropagation()
+                                    restoreAllThreats()
+                                  }}
+                                />
+                              ) : undefined
+                            }
+                          >
+                            <ReportThreatsAppendix
+                              industry={industry}
+                              userAlgorithms={currentCrypto}
+                              hiddenThreatIds={hiddenThreats}
+                              onHideThreat={hideThreat}
+                            />
+                          </CollapsibleSection>
+                        </div>
+                      )}
 
                     {/* NICE Framework Workforce Gap Report */}
                     {getInput() && (

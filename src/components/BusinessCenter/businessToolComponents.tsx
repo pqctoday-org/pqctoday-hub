@@ -150,6 +150,36 @@ export const BUSINESS_TOOL_COMPONENTS: Record<string, LazyComp> = {
       (m) => ({ default: m.CloudResponsibilityMatrix })
     )
   ),
+  'program-charter': lazyWithRetry(() =>
+    import('./tools/ProgramCharter').then((m) => ({ default: m.ProgramCharter }))
+  ),
+  'initial-scoping': lazyWithRetry(() =>
+    import('./tools/InitialScopingAssessment').then((m) => ({
+      default: m.InitialScopingAssessment,
+    }))
+  ),
+  'skills-team-plan': lazyWithRetry(() =>
+    import('./tools/SkillsTeamPlan').then((m) => ({ default: m.SkillsTeamPlan }))
+  ),
+  'infra-modernization-planner': lazyWithRetry(() =>
+    import('./tools/InfraModernizationPlanner').then((m) => ({
+      default: m.InfraModernizationPlanner,
+    }))
+  ),
+  'refresh-cycle-alignment': lazyWithRetry(() =>
+    import('./tools/RefreshCycleAlignment').then((m) => ({ default: m.RefreshCycleAlignment }))
+  ),
+  'accelerated-execution-profile': lazyWithRetry(() =>
+    import('./tools/AcceleratedExecutionProfile').then((m) => ({
+      default: m.AcceleratedExecutionProfile,
+    }))
+  ),
+  'data-at-rest-strategy': lazyWithRetry(() =>
+    import('./tools/DataAtRestStrategy').then((m) => ({ default: m.DataAtRestStrategy }))
+  ),
+  'migration-verification': lazyWithRetry(() =>
+    import('./tools/MigrationVerification').then((m) => ({ default: m.MigrationVerification }))
+  ),
 }
 
 /** Look up the lazy-loaded builder component for a given artifact type. */

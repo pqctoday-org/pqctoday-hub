@@ -13,7 +13,12 @@ import clsx from 'clsx'
 import { PersonaHint } from './PersonaHint'
 import { WhyWeAskHint } from './WhyWeAskHint'
 
-const Step13TimelinePressure = () => {
+import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
+
+const Step13TimelinePressure = ({
+  hideHeading = false,
+  hideHints = false,
+}: EmbeddedStepProps = {}) => {
   const { country, timelinePressure, setTimelinePressure, timelineUnknown, setTimelineUnknown } =
     useAssessmentStore()
 
@@ -78,13 +83,21 @@ const Step13TimelinePressure = () => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-foreground">Do you have a migration deadline?</h3>
-      <p className="text-sm text-muted-foreground">
-        Timeline pressure affects how aggressively migration must be prioritized.
-      </p>
+      {!hideHeading && (
+        <>
+          <h3 className="text-xl font-bold text-foreground">Do you have a migration deadline?</h3>
+          <p className="text-sm text-muted-foreground">
+            Timeline pressure affects how aggressively migration must be prioritized.
+          </p>
+        </>
+      )}
 
-      <PersonaHint stepKey="timeline" />
-      <WhyWeAskHint stepKey="timeline" />
+      {!hideHints && (
+        <>
+          <PersonaHint stepKey="timeline" />
+          <WhyWeAskHint stepKey="timeline" />
+        </>
+      )}
 
       {hasCountryDeadlines ? (
         <>

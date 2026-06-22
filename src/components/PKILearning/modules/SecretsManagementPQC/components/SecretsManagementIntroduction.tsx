@@ -614,7 +614,7 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
           >
             <Route size={18} className="text-primary shrink-0" />
             <div>
-              <div className="text-sm font-medium text-foreground">Migration Catalog</div>
+              <div className="text-sm font-medium text-foreground">Migration Workbench</div>
               <div className="text-xs text-muted-foreground">
                 Vault, AWS, Azure, GCP PQC readiness tracker
               </div>

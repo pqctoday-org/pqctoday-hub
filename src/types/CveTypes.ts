@@ -1,16 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
-/** Slim CVE record produced by `scripts/scrape-nvd.py`. Low / None severity
- *  records are excluded at scrape time, so only Medium+ ever appears here. */
+/** Slim CVE record produced by `scripts/scrape-nvd.py`. The per-CPE sweep keeps
+ *  only Medium+, but a small curated set of famous teaching CVEs (Heartbleed,
+ *  POODLE, FREAK, Logjam, DROWN, BEAST) is pinned in even when modern CVSS v3
+ *  scores them LOW — so `'LOW'` can appear, but only for those pinned entries. */
 export interface CveRecord {
   cveId: string
   summary: string
-  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM'
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'
   cvssScore: number | null
   /** ISO date (YYYY-MM-DD). */
   published: string
   /** ISO date (YYYY-MM-DD). */
   lastModified: string
   refUrl: string
+  /** True for the curated famous-CVE teaching set pinned past the Medium+ floor.
+   *  Lets the UI badge them as a deliberate educational inclusion. */
+  pinned?: boolean
 }
 
 /** On-disk shape of `public/data/cve-snapshot.json`. Generated nightly. */

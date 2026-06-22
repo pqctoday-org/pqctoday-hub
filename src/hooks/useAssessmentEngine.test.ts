@@ -113,6 +113,8 @@ describe('useAssessmentEngine / computeAssessment', () => {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentional partial input for fallback testing
     const result = computeAssessment(input as any)
+    // This degenerate input (industry only, everything else empty) hits the
+    // insufficient-input early-return guard, so it carries no risk window.
     expect(result.hndlRiskWindow).toBeUndefined()
   })
 

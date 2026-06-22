@@ -10,27 +10,9 @@ vi.mock('../utils/analytics', () => ({
 }))
 
 describe('useModuleStore', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
-  let mockLink: any
-
   beforeEach(() => {
     vi.clearAllMocks()
     useModuleStore.getState().resetProgress()
-
-    // Mock URL and createElement for saveProgress
-    mockLink = {
-      href: '',
-      download: '',
-      click: vi.fn(),
-    }
-
-    global.URL.createObjectURL = vi.fn().mockReturnValue('blob:test')
-    global.URL.revokeObjectURL = vi.fn()
-    vi.spyOn(document, 'createElement').mockImplementation((tagName: string) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
-      if (tagName === 'a') return mockLink as any
-      return document.createElement(tagName)
-    })
   })
 
   it('initializes with default state', () => {
@@ -94,12 +76,41 @@ describe('useModuleStore', () => {
     expect(analytics.logArtifactGenerated).toHaveBeenCalledWith('learning', 'csr')
   })
 
-  it('loads progress', () => {
+  it('loads progress AND migrates it through the version ladder (no stale shapes)', () => {
+    // A v2 backup must be UPGRADED to the current data version on import — not
+    // imported as-is (the old data-loss behaviour, where an old backup kept
+    // partial/stale shapes because loadProgress bypassed the migrate ladder).
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
     const customProgress = { version: '2.0.0', preferences: { theme: 'light' } } as any
     useModuleStore.getState().loadProgress(customProgress)
-    expect(useModuleStore.getState().version).toBe('2.0.0')
-    expect(useModuleStore.getState().preferences.theme).toBe('light')
+    expect(useModuleStore.getState().version).toBe('14.0.0') // migrated to current
+    expect(useModuleStore.getState().preferences.theme).toBe('light') // value preserved
+  })
+
+  it('runs the v5→v6 key-management split when importing an old backup', () => {
+    // The concrete data-loss case: a pre-v6 backup still carrying the retired
+    // `key-management` id. Import must split it into kms-pqc / hsm-pqc (via the
+    // migrate ladder) instead of stranding that progress under a dead id.
+    const oldBackup = {
+      version: '5.0.0',
+      modules: {
+        'key-management': {
+          status: 'completed',
+          lastVisited: 1,
+          timeSpent: 42,
+          completedSteps: ['intro'],
+          quizScores: { q1: 80 },
+        },
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial backup mock
+    } as any
+    useModuleStore.getState().loadProgress(oldBackup)
+    const mods = useModuleStore.getState().modules
+    expect(mods['key-management']).toBeUndefined()
+    expect(mods['kms-pqc']).toBeDefined()
+    expect(mods['kms-pqc'].timeSpent).toBe(42)
+    expect(mods['hsm-pqc']).toBeDefined()
+    expect(useModuleStore.getState().version).toBe('14.0.0')
   })
 
   it('resets a specific module', () => {
@@ -115,17 +126,8 @@ describe('useModuleStore', () => {
   it('gets full progress without functions', () => {
     const progress = useModuleStore.getState().getFullProgress()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- checking function exclusion
-    expect((progress as any).saveProgress).toBeUndefined()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- checking function exclusion
     expect((progress as any).loadProgress).toBeUndefined()
     expect(progress.version).toBe('1.0.0')
-  })
-
-  it('saves progress to file', () => {
-    useModuleStore.getState().saveProgress()
-    expect(global.URL.createObjectURL).toHaveBeenCalled()
-    expect(mockLink.click).toHaveBeenCalled()
-    expect(global.URL.revokeObjectURL).toHaveBeenCalledWith('blob:test')
   })
 
   it('migrates from version 0 to current (7), initializing all fields', () => {

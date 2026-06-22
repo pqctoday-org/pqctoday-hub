@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { getCatalogStatus, type CatalogAvailability } from '@/data/catalogStatus'
 
 export type DatabaseType = 'relational' | 'document' | 'cache' | 'time-series' | 'graph'
 export type EncryptionLayer = 'tde' | 'column' | 'field' | 'queryable' | 'application'
@@ -13,13 +14,34 @@ export interface DatabaseEncryptionProfile {
   encryptionLayers: EncryptionLayer[]
   tdeMechanism: string
   columnEncryption: string
-  pqcSupport: 'ga' | 'planned' | 'none'
+  /** Catalog softwareName — PQC support is derived from the central catalog via
+   *  getProfilePqcSupport(), not stored here. Other fields are teaching detail. */
+  catalogName: string
   pqcTimeline: string
   keyManagement: KeyOwnership[]
   hsmIntegration: boolean
   fipsValidated: boolean
   migrationComplexity: MigrationComplexity
   notes: string
+}
+
+export type DatabasePqcSupport = 'ga' | 'planned' | 'none'
+
+const AVAIL_TO_DB: Record<CatalogAvailability, DatabasePqcSupport> = {
+  available: 'ga',
+  partial: 'planned',
+  roadmap: 'planned',
+  none: 'none',
+  unverified: 'planned',
+}
+
+/**
+ * Derive a database profile's PQC support from the CENTRAL CATALOG (single source
+ * of truth) by its catalogName. Falls back to 'planned' if not in the catalog.
+ */
+export function getProfilePqcSupport(profile: DatabaseEncryptionProfile): DatabasePqcSupport {
+  const status = getCatalogStatus(profile.catalogName)
+  return status ? AVAIL_TO_DB[status.availability] : 'planned'
 }
 
 export interface TDEMigrationStep {
@@ -80,7 +102,7 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     encryptionLayers: ['tde', 'column', 'application'],
     tdeMechanism: 'AES-256-GCM (tablespace-level), keystore in wallet or external KMS',
     columnEncryption: 'Oracle Transparent Column Encryption (TCE) — RSA-wrapped CEK',
-    pqcSupport: 'planned',
+    catalogName: 'Oracle Key Vault',
     pqcTimeline: 'Oracle 23ai roadmap 2026 — ML-KEM-1024 HYOK via OCI KMS',
     keyManagement: ['provider-managed', 'byok', 'hyok'],
     hsmIntegration: true,
@@ -97,7 +119,7 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     encryptionLayers: ['tde', 'column', 'queryable', 'application'],
     tdeMechanism: 'AES-256 (database encryption key wrapped by service master key)',
     columnEncryption: 'Always Encrypted with secure enclaves (VBS/SGX), RSA-OAEP CMK wrapping',
-    pqcSupport: 'planned',
+    catalogName: 'SQL Server TDE/Always Encrypted',
     pqcTimeline: 'Azure KV ML-KEM support planned 2026; on-prem TDE PQC in SQL Server vNext',
     keyManagement: ['provider-managed', 'byok', 'hyok'],
     hsmIntegration: true,
@@ -114,7 +136,7 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     encryptionLayers: ['tde', 'field', 'application'],
     tdeMechanism: 'pg_tde extension (Percona) — AES-256-XTS at tablespace level',
     columnEncryption: 'pgcrypto extension — pgp_sym_encrypt / pgp_pub_encrypt (no native CLE)',
-    pqcSupport: 'planned',
+    catalogName: 'PostgreSQL',
     pqcTimeline: 'Percona pg_tde ML-KEM key provider under development (2026)',
     keyManagement: ['byok', 'hyok'],
     hsmIntegration: false,
@@ -131,7 +153,7 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     encryptionLayers: ['tde', 'field', 'queryable', 'application'],
     tdeMechanism: 'WiredTiger encrypted storage engine — AES-256-CBC at file level',
     columnEncryption: 'Client-Side Field Level Encryption (FLE 2.0) — Queryable Encryption indexes',
-    pqcSupport: 'planned',
+    catalogName: 'MongoDB Queryable Encryption',
     pqcTimeline: 'MongoDB 8.x roadmap: ML-KEM key wrapping for FLE 2.0 DEKs (2026)',
     keyManagement: ['provider-managed', 'byok'],
     hsmIntegration: true,
@@ -148,7 +170,7 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     encryptionLayers: ['application'],
     tdeMechanism: 'No native TDE — data-at-rest requires OS/disk encryption or application-layer',
     columnEncryption: 'No column encryption — field-level via application pattern only',
-    pqcSupport: 'none',
+    catalogName: 'Redis',
     pqcTimeline: 'No PQC roadmap announced; TLS 1.3 transport uses ECDHE (no ML-KEM yet)',
     keyManagement: ['provider-managed', 'byok'],
     hsmIntegration: false,
@@ -166,7 +188,7 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     tdeMechanism:
       'InnoDB Tablespace Encryption — AES-256-CBC, key wrapped by master key in keyring',
     columnEncryption: 'No native CLE — AES_ENCRYPT() function (ECB mode by default, insecure)',
-    pqcSupport: 'none',
+    catalogName: 'MySQL Enterprise Encryption',
     pqcTimeline: 'No PQC roadmap; keyring_hashicorp for HashiCorp Vault integration',
     keyManagement: ['provider-managed', 'byok'],
     hsmIntegration: false,
@@ -183,7 +205,7 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     encryptionLayers: ['tde', 'application'],
     tdeMechanism: 'Enterprise Encryption at Rest — AES-128/256 store key, rotated via CLI',
     columnEncryption: 'No native CLE — application layer via SQL functions',
-    pqcSupport: 'none',
+    catalogName: 'CockroachDB Encryption',
     pqcTimeline: 'No PQC roadmap; KMIP v2 integration for external key management',
     keyManagement: ['byok'],
     hsmIntegration: false,
@@ -200,7 +222,7 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     encryptionLayers: ['tde', 'column', 'field', 'application'],
     tdeMechanism: 'AES-256-GCM + ML-native encryption (experimental) — vector embedding protection',
     columnEncryption: 'ML-native column encryption for AI vector data; TCE for standard columns',
-    pqcSupport: 'planned',
+    catalogName: 'Oracle AI Database 26ai',
     pqcTimeline: '2026 release — ML-KEM-1024 for AI vector DEK wrapping via Oracle Key Vault',
     keyManagement: ['provider-managed', 'byok', 'hyok'],
     hsmIntegration: true,
