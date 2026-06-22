@@ -8,8 +8,8 @@ export type MigrateViewMode = 'stack' | 'cisaStack' | 'cards' | 'table'
 export type MigrateTab = 'replace' | 'plan' | 'roadmaps'
 
 /** Return a shallow copy of `obj` without `key`. Lint-friendly omit. */
-function omitKey(obj: Record<string, string>, key: string): Record<string, string> {
-  const rest: Record<string, string> = {}
+function omitKey<T>(obj: Record<string, T>, key: string): Record<string, T> {
+  const rest: Record<string, T> = {}
   for (const k of Object.keys(obj)) {
     // eslint-disable-next-line security/detect-object-injection
     if (k !== key) rest[k] = obj[k]
