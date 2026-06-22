@@ -2,6 +2,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { ChevronDown, ChevronUp, Lock, Target } from 'lucide-react'
 import { ExportableArtifact } from './ExportableArtifact'
+import { rowsToCsv } from '@/services/export/csvExport'
 import { Button } from '@/components/ui/button'
 
 export interface ScorecardDimension {
@@ -194,31 +195,30 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     effectiveWeight,
   ])
 
-  const exportData = useMemo(() => {
-    if (exportFormats.includes('csv') && exportFormats[0] === 'csv') {
-      // When CSV is the primary format, serialise rows. Other formats still read markdown.
-      const rows: string[] = [
-        ['dimension_id', 'label', 'score', 'weight', 'target', 'disabled', 'disabled_reason'].join(
-          ','
-        ),
-      ]
-      for (const d of dimensions) {
-        rows.push(
-          [
-            d.id,
-            `"${d.label.replace(/"/g, '""')}"`,
-            d.disabled ? '' : String(scores[d.id] ?? 0),
-            (effectiveWeight(d) * 100).toFixed(0),
-            d.target ?? '',
-            d.disabled ? 'true' : 'false',
-            d.disabledReason ? `"${d.disabledReason.replace(/"/g, '""')}"` : '',
-          ].join(',')
-        )
-      }
-      return rows.join('\n')
-    }
-    return exportMarkdown
-  }, [exportFormats, dimensions, scores, effectiveWeight, exportMarkdown])
+  // Markdown/PDF read the markdown body; `.csv` reads a structured rows export
+  // (built regardless of format order, RFC-4180-escaped). Audit C5.
+  const exportData = exportMarkdown
+  const exportCsv = useMemo(() => {
+    const header = [
+      'Dimension ID',
+      'Label',
+      'Score',
+      'Weight %',
+      'Target',
+      'Disabled',
+      'Disabled Reason',
+    ]
+    const rows = dimensions.map((d) => [
+      d.id,
+      d.label,
+      d.disabled ? '' : String(scores[d.id] ?? 0),
+      (effectiveWeight(d) * 100).toFixed(0),
+      d.target ?? '',
+      d.disabled ? 'true' : 'false',
+      d.disabledReason ?? '',
+    ])
+    return rowsToCsv([header, ...rows])
+  }, [dimensions, scores, effectiveWeight])
 
   return (
     <div className="space-y-6">
@@ -367,6 +367,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
           exportData={exportData}
           filename={exportFilename}
           formats={exportFormats}
+          csvData={exportCsv}
         >
           <p className="text-sm text-muted-foreground">
             Export the scorecard above as a shareable document.

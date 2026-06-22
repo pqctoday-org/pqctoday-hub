@@ -89,6 +89,18 @@ const headTools = parseToolEntries(headContent)
 const baseMap = new Map(baseTools.map((t) => [t.id, t]))
 const headMap = new Map(headTools.map((t) => [t.id, t]))
 
+// Changed (+/-) lines of the registry diff. A tool counts as "modified" only if
+// its own id appears here. The previous raw-block regex couldn't span nested
+// braces and mis-attributed blocks when other tools shifted position, so it
+// flagged untouched tools whenever the registry changed at all (the A1 manifest
+// cut-over churns this file heavily). Anchoring on the real diff is precise.
+const registryChangedLines = run(
+  'git diff origin/main...HEAD -- src/components/Playground/workshopRegistry.tsx'
+)
+  .split('\n')
+  .filter((l) => /^[+-]/.test(l) && !/^[+-]{3}/.test(l))
+  .join('\n')
+
 const errors: string[] = []
 const bumpedTools: { tool_id: string; old_version: string; new_version: string }[] = []
 
@@ -99,19 +111,13 @@ for (const [id, headTool] of headMap) {
     continue
   }
 
-  // Compare entire relevant fields to detect modification
-  const baseStr = JSON.stringify({ id: baseTool.id, pt_id: baseTool.pt_id })
-  const headStr = JSON.stringify({ id: headTool.id, pt_id: headTool.pt_id })
-
-  // Check if anything else in the block changed by comparing raw block extraction
-  const baseBlockRe = new RegExp(
-    `\\{[^{}]*?id:\\s*['"]${id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}['"][^{}]*?\\}`,
-    's'
-  )
-  const baseBlock = baseBlockRe.exec(baseContent)?.[0] ?? ''
-  const headBlock = baseBlockRe.exec(headContent)?.[0] ?? ''
-
-  const toolModified = baseBlock !== headBlock || baseStr !== headStr
+  // A tool needs a version bump only if its own definition changed. Detect that
+  // from the real diff (its id on a changed line) or a pt_id change — robust to
+  // the cut-over churn that the old raw-block regex mis-attributed.
+  const escId = id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const toolModified =
+    baseTool.pt_id !== headTool.pt_id ||
+    new RegExp(`['"\`]${escId}['"\`]`).test(registryChangedLines)
 
   if (!toolModified) continue
 

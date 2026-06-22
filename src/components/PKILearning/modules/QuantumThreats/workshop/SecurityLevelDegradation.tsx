@@ -78,6 +78,8 @@ export const SecurityLevelDegradation: React.FC<SecurityLevelDegradationProps> =
         return "Shor's Algorithm"
       case 'grover':
         return "Grover's Algorithm"
+      case 'bht':
+        return 'BHT (collision search)'
       case 'none':
         return 'No known quantum attack'
     }

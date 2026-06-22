@@ -22,7 +22,7 @@ export const NIST_STATUS_LABELS: Record<string, string> = {
   classical: 'Classical',
 }
 
-function BarChart({
+export function BarChart({
   data,
   maxValue,
   total,
@@ -145,7 +145,7 @@ const RELEVANCE_KEY_MAP: Record<string, string> = {
   None: 'none',
 }
 
-function DonutChart({
+export function DonutChart({
   segments,
   solid = false,
   size = 72,
@@ -216,7 +216,7 @@ function DonutChart({
   )
 }
 
-function PieCard({
+export function PieCard({
   title,
   data,
   colorMap,
@@ -292,7 +292,7 @@ function PieCard({
 }
 
 // SVG area sparkline for time series
-function Section({
+export function Section({
   title,
   hint,
   children,
@@ -319,7 +319,10 @@ function Section({
   )
 }
 
-function countBy<T>(items: T[], key: (item: T) => string): { label: string; value: number }[] {
+export function countBy<T>(
+  items: T[],
+  key: (item: T) => string
+): { label: string; value: number }[] {
   const map = new Map<string, number>()
   items.forEach((item) => {
     const k = key(item)
@@ -330,7 +333,7 @@ function countBy<T>(items: T[], key: (item: T) => string): { label: string; valu
     .sort((a, b) => b.value - a.value)
 }
 
-function countByList<T>(
+export function countByList<T>(
   items: T[],
   key: (item: T) => string[]
 ): { label: string; value: number }[] {

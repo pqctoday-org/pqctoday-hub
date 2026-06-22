@@ -58,9 +58,11 @@ describe('Dashboard — persona-path integration', () => {
     // Path view exposes the "Browse all" disclosure; stack-mode pages don't.
     expect(screen.getByText(/Browse all \d+ modules \(\d+ tracks\)/i)).toBeInTheDocument()
     // PersonaPathView mounts the curated section.
-    expect(screen.getByRole('region', { name: /Your curated learning path/i })).toBeInTheDocument()
-    // The 'Path' chip in the view toggle is the active radio.
-    expect(screen.getByRole('radio', { name: /^Path/i })).toHaveAttribute('aria-checked', 'true')
+    expect(
+      screen.getByRole('region', { name: /Your curated learning journey/i })
+    ).toBeInTheDocument()
+    // The 'Journey' chip in the view toggle (value 'path') is the active radio.
+    expect(screen.getByRole('radio', { name: /^Journey/i })).toHaveAttribute('aria-checked', 'true')
   })
 
   it('P0-1 regression: curious starts pre-filtered to its own path (NOT "All")', () => {
@@ -81,7 +83,7 @@ describe('Dashboard — persona-path integration', () => {
     renderDashboard()
 
     expect(
-      screen.queryByRole('region', { name: /Your curated learning path/i })
+      screen.queryByRole('region', { name: /Your curated learning journey/i })
     ).not.toBeInTheDocument()
     expect(screen.queryByText(/Browse all \d+ modules/i)).not.toBeInTheDocument()
     expect(screen.getByRole('radio', { name: /^Stack/i })).toHaveAttribute('aria-checked', 'true')
@@ -98,10 +100,64 @@ describe('Dashboard — persona-path integration', () => {
     // useLearnStore.showEverything flag is set so a returning curious user
     // keeps the catalog they opted into.
     expect(
-      screen.queryByRole('region', { name: /Your curated learning path/i })
+      screen.queryByRole('region', { name: /Your curated learning journey/i })
     ).not.toBeInTheDocument()
     expect(useLearnStore.getState().showEverything).toBe(true)
     expect(usePersonaStore.getState().selectedPersona).toBeNull()
+  })
+
+  it('A3 cold-start: null persona gets the OPEN "where to start" hero up top', () => {
+    seedPersona(null)
+    renderDashboard()
+
+    // The hero uses the cold-start summary copy (not the plain "Where do I start?")
+    // and its <details> is open by default so the router shows immediately.
+    const heroSummary = screen.getByText(/New here\? Start with the right module/i)
+    expect(heroSummary).toBeInTheDocument()
+    expect(heroSummary.closest('details')).toHaveAttribute('open')
+  })
+
+  it('A3 cold-start: a persona gets only the collapsed bottom disclosure (no hero)', () => {
+    seedPersona('developer')
+    renderDashboard()
+
+    // No cold-start hero copy for a persona...
+    expect(screen.queryByText(/New here\? Start with the right module/i)).not.toBeInTheDocument()
+    // ...and the standard "Where do I start?" disclosure is present but collapsed.
+    expect(screen.getByText(/Where do I start\?/i).closest('details')).not.toHaveAttribute('open')
+  })
+
+  it('A3: NICE is a separate lens button (not a peer radio), and opens the grouped view', async () => {
+    const user = userEvent.setup()
+    seedPersona('developer')
+    renderDashboard()
+
+    // NICE is no longer a co-equal radio in the "View mode" group...
+    expect(screen.queryByRole('radio', { name: /NICE/i })).not.toBeInTheDocument()
+    // ...it's its own toggle button.
+    const niceLens = screen.getByRole('button', { name: /NICE roles/i })
+    expect(niceLens).toBeInTheDocument()
+
+    // Clicking it switches into the grouped competency-area view (NiceView).
+    await user.click(niceLens)
+    expect(screen.getByText(/pick a NICE Work Role/i)).toBeInTheDocument()
+  })
+
+  it('A3: the ?view=nice deep-link opens the grouped view with the lens pressed', () => {
+    seedPersona('developer')
+    render(
+      <EmbedProvider>
+        <MemoryRouter initialEntries={['/learn?view=nice']}>
+          <Dashboard />
+        </MemoryRouter>
+      </EmbedProvider>
+    )
+
+    expect(screen.getByRole('button', { name: /NICE roles/i })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
+    expect(screen.getByText(/pick a NICE Work Role/i)).toBeInTheDocument()
   })
 
   it('P1-2 regression: persona-active path renders the "Curated order" badge instead of silently disabling sort', () => {

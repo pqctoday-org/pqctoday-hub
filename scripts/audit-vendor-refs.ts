@@ -77,6 +77,9 @@ const KNOWN_INDIRECT: Array<{ prefix: string; vnd: string }> = [
   { prefix: 'chromeos', vnd: 'VND-018' },
   { prefix: 'go-jose-', vnd: 'VND-018' },
   { prefix: 'go-stdlib-', vnd: 'VND-018' },
+  { prefix: 'gcp-', vnd: 'VND-018' },
+  // Ping Identity (acquired ForgeRock in Aug 2023)
+  { prefix: 'forgerock-', vnd: 'VND-178' },
   // IBM (covers ibm-* and lto tape)
   { prefix: 'ibm-', vnd: 'VND-019' },
   { prefix: 'lto-10-', vnd: 'VND-019' },
@@ -225,9 +228,11 @@ function isKnownIndirect(productId: string, vendorId: string): boolean {
 export function audit(): Finding[] {
   const catalogPath = latestCSV(/^pqc_product_catalog_\d{8}(?:_r\d+)?\.csv$/, 'product catalog')
   const roadmapPath = latestCSV(/^migrate_vendor_roadmap_\d{8}(?:_r\d+)?\.csv$/, 'vendor roadmap')
+  const registryPath = latestCSV(/^vendors_\d{8}(?:_r\d+)?\.csv$/, 'vendor registry')
 
   const catalog = parseCSV(catalogPath)
   const roadmap = parseCSV(roadmapPath)
+  const registry = parseCSV(registryPath)
 
   // Build roadmap lookup: VND-* → { name, status }
   const roadmapById = new Map<string, { name: string; status: string }>()
@@ -238,6 +243,20 @@ export function audit(): Finding[] {
         name: row['vendor_name']?.trim() ?? '',
         status: row['status']?.trim() ?? 'active',
       })
+    }
+  }
+
+  // Build registry lookup: VND-* → status. The vendor REGISTRY (vendors_*.csv)
+  // is the authoritative product↔vendor entity link; the roadmap CSV is a
+  // SEPARATE dataset (which vendors have a published PQC roadmap). A vendor can
+  // be active as an entity while its roadmap entry is deprecated ("no published
+  // PQC roadmap") — that is not a wrong vendor_id, and the roadmap UI already
+  // filters deprecated roadmaps at load, so it cannot surface stale data.
+  const registryStatusById = new Map<string, string>()
+  for (const row of registry) {
+    const id = row['vendor_id']?.trim()
+    if (id?.startsWith('VND-')) {
+      registryStatusById.set(id, row['status']?.trim() ?? 'active')
     }
   }
 
@@ -261,14 +280,26 @@ export function audit(): Finding[] {
 
     const { name: roadmapName, status: roadmapStatus } = roadmapEntry
 
-    // A) Deprecated vendor
-    if (roadmapStatus === 'deprecated') {
+    // A) Deprecated vendor — only an error if the vendor ENTITY is deprecated in
+    //    the registry (the authoritative product↔vendor link). A deprecated
+    //    ROADMAP entry for an entity that is still active in the registry just
+    //    means "this active vendor has no published PQC roadmap"; the product is
+    //    correctly attributed and the roadmap UI filters the deprecated row, so
+    //    it is not a wrong/stale vendor_id.
+    const registryStatus = registryStatusById.get(vendorId)
+    if (roadmapStatus === 'deprecated' && registryStatus !== 'active') {
       findings.push({
         productId,
         vendorId,
-        detail: `points to deprecated roadmap vendor '${roadmapName}' — clear or remap to active vendor`,
+        detail:
+          `points to '${roadmapName}' whose roadmap is deprecated AND which is ` +
+          `${registryStatus ? 'deprecated' : 'absent'} in the vendor registry — clear or remap to an active vendor`,
         severity: 'error',
       })
+      continue
+    }
+    if (roadmapStatus === 'deprecated') {
+      // active registry entity, deprecated roadmap → fine, skip name/other checks
       continue
     }
 

@@ -39,12 +39,14 @@ import {
   ArrowDown,
   Globe2,
   Star,
+  ChevronRight,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ProtocolDetailModal } from './ProtocolDetailModal'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+import { libraryHref } from './libraryRef'
 
 // Resolve the canonical destination for a matrix PlaygroundTool cell.
 // Priority: explicit per-cell `url` > registry `moduleLink` > playground fallback.
@@ -231,35 +233,17 @@ function DimensionRefChip({ cellRef }: { cellRef: DimensionRef }) {
         ? 'bg-accent/10 text-accent border-accent/30 hover:bg-accent/20'
         : 'bg-primary/10 text-primary border-primary/30 hover:bg-primary/20'
   const display = shortRefLabel(cellRef.id)
-  const titleText = [
-    cellRef.id !== display ? cellRef.id : null,
-    cellRef.title,
-    cellRef.publishedOn ? `(${cellRef.publishedOn})` : null,
-  ]
-    .filter(Boolean)
-    .join(' — ')
-  if (cellRef.url) {
-    return (
-      <a
-        href={cellRef.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`inline-flex max-w-full items-center gap-1 truncate rounded border px-1.5 py-0 text-[10px] font-medium transition-colors ${tone}`}
-        title={titleText || cellRef.id}
-      >
-        <FileText size={9} className="shrink-0" />
-        <span className="truncate">{display}</span>
-      </a>
-    )
-  }
+  const chipCls = `inline-flex max-w-full items-center gap-1 truncate rounded border px-1.5 py-0 text-[10px] font-medium transition-colors ${tone}`
+  // Always link in-app to the Library; the external spec URL lives in the entry.
   return (
-    <span
-      className={`inline-flex max-w-full items-center gap-1 truncate rounded border px-1.5 py-0 text-[10px] font-medium ${tone}`}
-      title={titleText || cellRef.id}
+    <Link
+      to={libraryHref(cellRef.id)}
+      className={chipCls}
+      title={`Open ${cellRef.id} in the Library`}
     >
       <FileText size={9} className="shrink-0" />
       <span className="truncate">{display}</span>
-    </span>
+    </Link>
   )
 }
 
@@ -534,6 +518,209 @@ function getRowBlockerNames(protocolId: string): string[] {
   )
 }
 
+const DIMENSION_CARD_LABELS: Array<{
+  key: 'pureKem' | 'hybridKem' | 'pureSig' | 'hybridSig'
+  label: string
+}> = [
+  { key: 'pureKem', label: 'Pure KEM' },
+  { key: 'hybridKem', label: 'Hybrid KEM' },
+  { key: 'pureSig', label: 'Pure Sig' },
+  { key: 'hybridSig', label: 'Hybrid Sig' },
+]
+
+/** Small labelled section wrapper used inside an expanded protocol card. */
+function CardSection({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1">
+      <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </span>
+      <div className="flex flex-wrap gap-1">{children}</div>
+    </div>
+  )
+}
+
+/**
+ * Detailed-mode protocol card (progressive disclosure). Collapsed: name +
+ * recommended star + inheritance chip + OSS/commercial/live summary + a
+ * maturity meter (score /16). Always-visible 4-dimension status strip. On
+ * expand: specifications, implementations, live deployments, playground links,
+ * and any transport-layer blockers. Replaces the old 8-column-wide table row.
+ */
+function ProtocolCard({
+  p,
+  expanded,
+  onToggle,
+  onOpenDetail,
+  granularity,
+  parent,
+}: {
+  p: ProtocolMatrixRow
+  expanded: boolean
+  onToggle: () => void
+  onOpenDetail: () => void
+  granularity: PersonaStageGranularity
+  parent?: ProtocolMatrixRow
+}) {
+  const oss = p.ossLibraries.length
+  const com = p.commercialLibraries.length
+  const live = p.liveDeployments?.length ?? 0
+  const maturity = rowMaturity(p)
+  const blockers = getRowBlockerNames(p.id)
+  const specs = [...p.latestRelease, ...p.latestDraft]
+
+  return (
+    <div
+      className={`glass-panel overflow-hidden transition-colors ${
+        expanded ? 'border-primary/40' : ''
+      } ${p.recommended ? 'ring-1 ring-inset ring-status-warning/20' : ''}`}
+    >
+      {/* Collapsed header */}
+      <div className="flex items-center gap-2 p-3">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={onToggle}
+          aria-expanded={expanded}
+          aria-label={expanded ? `Collapse ${p.name}` : `Expand ${p.name}`}
+          className="h-7 w-7 shrink-0 p-0"
+        >
+          <ChevronRight
+            size={16}
+            className={`text-muted-foreground transition-transform ${expanded ? 'rotate-90' : ''}`}
+          />
+        </Button>
+
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <div className="flex flex-wrap items-center gap-1.5">
+            {parent && <GitBranch size={12} className="shrink-0 text-muted-foreground" />}
+            <Button
+              type="button"
+              variant="link"
+              size="sm"
+              onClick={onOpenDetail}
+              className="h-auto p-0 text-left font-semibold text-foreground no-underline hover:underline"
+              aria-label={`Open details for ${p.name}`}
+            >
+              {p.name}
+            </Button>
+            {p.recommended && (
+              <span
+                className="inline-flex items-center gap-0.5 rounded border border-status-warning/30 bg-status-warning/10 px-1 py-0 text-[9px] font-medium text-status-warning"
+                title={p.recommendedReason ?? 'Recommended for production use'}
+              >
+                <Star size={8} />
+                Rec
+              </span>
+            )}
+            {parent && (
+              <span className="inline-flex items-center gap-1 rounded-md border border-muted-foreground/30 bg-muted/30 px-1.5 py-0 text-[10px] text-muted-foreground">
+                inherits {parent.name}
+              </span>
+            )}
+          </div>
+          <span className="text-[10px] leading-tight text-muted-foreground line-clamp-1">
+            {p.description}
+          </span>
+        </div>
+
+        {/* Summary + maturity meter */}
+        <div className="hidden shrink-0 flex-col items-end gap-1 sm:flex">
+          <span className="text-[10px] text-muted-foreground">
+            {oss} OSS · {com} commercial · {live} live
+          </span>
+          <div className="flex items-center gap-1.5" title={`Maturity ${maturity} / 16`}>
+            <div className="h-1.5 w-20 rounded-full bg-border/60">
+              <div
+                className="h-full rounded-full bg-primary"
+                style={{ width: `${(maturity / 16) * 100}%` }}
+              />
+            </div>
+            <span className="font-mono text-[10px] text-muted-foreground">{maturity}/16</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Always-visible 4-dimension strip */}
+      <div className="grid grid-cols-2 gap-2 border-t border-border/50 px-3 py-2 lg:grid-cols-4">
+        {DIMENSION_CARD_LABELS.map(({ key, label }) => (
+          <div key={key} className="flex min-w-0 flex-col gap-1">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {label}
+            </span>
+            <DimensionBadge status={p.dimensions[key]} granularity={granularity} />
+          </div>
+        ))}
+      </div>
+
+      {/* Expanded detail */}
+      {expanded && (
+        <div className="space-y-3 border-t border-border/50 p-3">
+          {specs.length > 0 && (
+            <CardSection label="Specifications">
+              {specs.map((d) => (
+                <Link
+                  key={d.id}
+                  to={libraryHref(d.id)}
+                  title={`Open ${d.id} in the Library`}
+                  className="inline-flex items-center gap-1 rounded border border-border bg-muted/30 px-1.5 py-0.5 text-[10px] text-foreground hover:border-primary/50 hover:text-primary"
+                >
+                  <FileText size={10} />
+                  {d.id}
+                </Link>
+              ))}
+            </CardSection>
+          )}
+
+          {oss + com > 0 && (
+            <CardSection label="Implementations">
+              {p.ossLibraries.map((lib) => (
+                <LibraryChip key={`oss-${lib.productId}`} lib={lib} tone="oss" />
+              ))}
+              {p.commercialLibraries.map((lib) => (
+                <LibraryChip key={`com-${lib.productId}`} lib={lib} tone="commercial" />
+              ))}
+            </CardSection>
+          )}
+
+          {live > 0 && p.liveDeployments && (
+            <CardSection label="Live deployments">
+              {p.liveDeployments.map((d, idx) => (
+                <DeploymentChip key={`${d.provider}-${idx}`} deployment={d} />
+              ))}
+            </CardSection>
+          )}
+
+          <CardSection label="Try it">
+            <PlaygroundCell tools={p.playgrounds} />
+          </CardSection>
+
+          {blockers.length > 0 && (
+            <div className="flex items-start gap-1.5 rounded-md border border-status-warning/30 bg-status-warning/5 px-2 py-1.5 text-[11px] text-status-warning">
+              <AlertTriangle size={12} className="mt-0.5 shrink-0" />
+              <span>Transport-layer blockers: {blockers.join(', ')}</span>
+            </div>
+          )}
+
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              variant="link"
+              size="sm"
+              onClick={onOpenDetail}
+              className="h-auto gap-1 p-0 text-xs text-primary"
+            >
+              Full details
+              <ExternalLink size={11} />
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 const RECOMMENDED_ROWS = PROTOCOL_MATRIX.filter((r) => r.recommended)
 
 export function PQCProtocolMatrix() {
@@ -552,8 +739,17 @@ export function PQCProtocolMatrix() {
   const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>('all')
   const [sortKey, setSortKey] = useState<SortKey>('matrix')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
-  const [selectedProtocol, setSelectedProtocol] = useState<ProtocolMatrixRow | null>(null)
+  const [showStageHelp, setShowStageHelp] = useState(false)
+  // ?protocol=<id> preselects that row's detail modal (powers the
+  // "Related: Protocol Matrix" breadcrumb from sandbox scenarios). Resolved
+  // once via a lazy initializer so it needs no setState-in-effect.
+  const [selectedProtocol, setSelectedProtocol] = useState<ProtocolMatrixRow | null>(() => {
+    const p = searchParams.get('protocol')
+    return p ? (PROTOCOL_MATRIX.find((r) => r.id === p) ?? null) : null
+  })
   const firstRecommendedRef = useRef<HTMLTableRowElement | null>(null)
+  // Single-open accordion for the detailed-mode protocol cards.
+  const [expandedProtocolId, setExpandedProtocolId] = useState<string | null>(null)
   const isHeatmap = viewMode === 'heatmap'
 
   // ?highlight=recommended — scroll to first recommended row on mount
@@ -670,26 +866,6 @@ export function PQCProtocolMatrix() {
         </div>
       )}
 
-      {/* WIP banner */}
-      <div className="flex items-start gap-3 rounded-lg border border-status-warning/40 bg-status-warning/10 p-3">
-        <AlertTriangle size={18} className="mt-0.5 shrink-0 text-status-warning" />
-        <div className="space-y-1 text-sm">
-          <div className="flex items-center gap-2">
-            <span className="rounded bg-status-warning text-background px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
-              WIP
-            </span>
-            <span className="font-semibold text-foreground">
-              Protocol Support Matrix — work in progress
-            </span>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Data and schema are still being validated against the underlying enrichment dataset (66
-            docs enriched 2026-05-15) and the live playground tools. Dimension flags, constraints,
-            and library back-links may change. Use as a reference, not a compliance artifact.
-          </p>
-        </div>
-      </div>
-
       {/* Intro panel + view toggle */}
       <div className="glass-panel space-y-3 p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -743,7 +919,20 @@ export function PQCProtocolMatrix() {
           </div>
         )}
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-[11px]">
-          <span className="text-muted-foreground">IETF stage</span>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowStageHelp((v) => !v)}
+            aria-expanded={showStageHelp}
+            className="h-auto gap-1 px-1 py-0 text-[11px] font-normal text-muted-foreground hover:text-foreground"
+            title="What do the IETF stages mean?"
+          >
+            IETF stage
+            <span className="rounded-full border border-current px-1 text-[9px] font-bold leading-none">
+              i
+            </span>
+          </Button>
           <div className="inline-flex overflow-hidden rounded-md border border-border text-[10px] tabular-nums">
             <span className="bg-muted px-1.5 py-0.5 text-muted-foreground" title="0 — no PQC track">
               0
@@ -774,13 +963,13 @@ export function PQCProtocolMatrix() {
             </span>
             <span
               className="bg-primary/20 px-1.5 py-0.5 text-primary"
-              title="5 — Submitted to IESG"
+              title="5 — IETF Last Call (whole-IETF community review)"
             >
               5
             </span>
             <span
               className="bg-status-success/15 px-1.5 py-0.5 text-status-success"
-              title="6 — IETF Last Call / RFC Editor queue"
+              title="6 — IESG review (telechat) / approved · RFC Editor queue"
             >
               6
             </span>
@@ -809,6 +998,49 @@ export function PQCProtocolMatrix() {
             — N/A
           </span>
         </div>
+        {showStageHelp && (
+          <div className="mt-1 space-y-1.5 rounded-lg border border-border bg-card p-3 text-xs text-muted-foreground">
+            <p className="font-semibold text-foreground">
+              How an IETF spec progresses — official order, earliest → latest
+            </p>
+            <ol className="list-decimal space-y-0.5 pl-4">
+              <li>
+                <span className="text-foreground">Individual draft</span> — one author’s
+                Internet-Draft <span className="tabular-nums">(stage 3)</span>.
+              </li>
+              <li>
+                <span className="text-foreground">Working group adopts it</span> — the WG takes
+                ownership <span className="tabular-nums">(stage 4)</span>.
+              </li>
+              <li>
+                <span className="text-foreground">WG Last Call</span> — the WG agrees it looks done{' '}
+                <span className="tabular-nums">(stage 4)</span>.
+              </li>
+              <li>
+                <span className="text-foreground">IETF Last Call</span> — the whole IETF community
+                gets ~2 weeks to object <span className="tabular-nums">(stage 5)</span>.
+              </li>
+              <li>
+                <span className="text-foreground">IESG review</span> — the steering group / Area
+                Directors vote, usually on a scheduled “telechat”{' '}
+                <span className="tabular-nums">(stage 6)</span>.
+              </li>
+              <li>
+                <span className="text-foreground">Approved → RFC Editor queue</span> — copyedit and
+                final checks <span className="tabular-nums">(stage 6)</span>.
+              </li>
+              <li>
+                <span className="text-foreground">Published as an RFC</span> — the final spec{' '}
+                <span className="tabular-nums">(stage 7)</span>.
+              </li>
+            </ol>
+            <p>
+              The 0–7 colours track exactly this order (IESG review correctly outranks IETF Last
+              Call). Non-IETF rows — OASIS PKCS#11 / KMIP, Signal, Sigstore — sit off this ladder
+              and use the coarse RFC / Draft / Exp colours instead.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Filter & sort toolbar — single row, no inline labels (dropdowns self-describe) */}
@@ -915,209 +1147,250 @@ export function PQCProtocolMatrix() {
         </span>
       </div>
 
-      {/* Main matrix table */}
-      <div className="glass-panel overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border bg-muted/40">
-              <th className="sticky left-0 z-10 bg-muted/60 px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Protocol
-              </th>
-              <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Pure KEM
-              </th>
-              <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Hybrid KEM
-              </th>
-              <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Pure Sig
-              </th>
-              <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Hybrid Sig
-              </th>
-              <th
-                className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground"
-                title="Libraries — open-source (blue) and commercial (accent)"
-              >
-                Libraries
-              </th>
-              <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Live Deployments
-              </th>
-              <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Playground
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredRows.length === 0 && (
-              <tr>
-                <td colSpan={8} className="px-3 py-8 text-center text-sm text-muted-foreground">
-                  No protocols match the current filters.{' '}
-                  <Button
-                    type="button"
-                    variant="link"
-                    size="sm"
-                    onClick={clearFilters}
-                    className="h-auto p-0 text-primary"
-                  >
-                    Clear filters
-                  </Button>
-                </td>
-              </tr>
-            )}
-            {filteredRows.map((p) => {
-              const parent = p.inheritsFromProtocolId
-                ? PROTOCOL_MATRIX.find((r) => r.id === p.inheritsFromProtocolId)
-                : undefined
-              const isInheritance = Boolean(parent)
-              const rowBlockerNames = isHeatmap ? getRowBlockerNames(p.id) : []
-              const isRecommended = Boolean(p.recommended)
-              const isFirstRecommended =
-                isRecommended && RECOMMENDED_ROWS.findIndex((r) => r.id === p.id) === 0
-              return (
-                <tr
-                  key={p.id}
-                  ref={isFirstRecommended ? firstRecommendedRef : undefined}
-                  className={`border-b border-border/50 align-top transition-colors ${
-                    isRecommended && highlightRecommended
-                      ? 'bg-status-warning/5 ring-1 ring-inset ring-status-warning/20'
-                      : isInheritance
-                        ? 'bg-muted/10 hover:bg-muted/30'
-                        : 'hover:bg-muted/20'
-                  }`}
+      {/* Heatmap mode — compact protocol × dimension grid */}
+      {isHeatmap && (
+        <div className="glass-panel overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted/40">
+                <th className="sticky left-0 z-10 bg-muted/60 px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Protocol
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Pure KEM
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Hybrid KEM
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Pure Sig
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Hybrid Sig
+                </th>
+                <th
+                  className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                  title="Libraries — open-source (blue) and commercial (accent)"
                 >
-                  <td className="sticky left-0 z-10 bg-card px-3 py-3">
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-1.5">
-                        {isInheritance && (
-                          <GitBranch size={12} className="shrink-0 text-muted-foreground" />
-                        )}
-                        <Button
-                          type="button"
-                          variant="link"
-                          size="sm"
-                          onClick={() => setSelectedProtocol(p)}
-                          className={`h-auto p-0 font-semibold text-left no-underline hover:underline focus-visible:underline ${
-                            isInheritance ? 'italic text-muted-foreground' : 'text-foreground'
-                          }`}
-                          aria-label={`Open details for ${p.name}`}
-                        >
-                          {p.name}
-                        </Button>
-                        {isRecommended && (
-                          <span
-                            className="inline-flex items-center gap-0.5 rounded border border-status-warning/30 bg-status-warning/10 px-1 py-0 text-[9px] font-medium text-status-warning shrink-0"
-                            title={p.recommendedReason ?? 'Recommended for production use'}
+                  Libraries
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Live Deployments
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Playground
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredRows.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="px-3 py-8 text-center text-sm text-muted-foreground">
+                    No protocols match the current filters.{' '}
+                    <Button
+                      type="button"
+                      variant="link"
+                      size="sm"
+                      onClick={clearFilters}
+                      className="h-auto p-0 text-primary"
+                    >
+                      Clear filters
+                    </Button>
+                  </td>
+                </tr>
+              )}
+              {filteredRows.map((p) => {
+                const parent = p.inheritsFromProtocolId
+                  ? PROTOCOL_MATRIX.find((r) => r.id === p.inheritsFromProtocolId)
+                  : undefined
+                const isInheritance = Boolean(parent)
+                const rowBlockerNames = isHeatmap ? getRowBlockerNames(p.id) : []
+                const isRecommended = Boolean(p.recommended)
+                const isFirstRecommended =
+                  isRecommended && RECOMMENDED_ROWS.findIndex((r) => r.id === p.id) === 0
+                return (
+                  <tr
+                    key={p.id}
+                    ref={isFirstRecommended ? firstRecommendedRef : undefined}
+                    className={`border-b border-border/50 align-top transition-colors ${
+                      isRecommended && highlightRecommended
+                        ? 'bg-status-warning/5 ring-1 ring-inset ring-status-warning/20'
+                        : isInheritance
+                          ? 'bg-muted/10 hover:bg-muted/30'
+                          : 'hover:bg-muted/20'
+                    }`}
+                  >
+                    <td className="sticky left-0 z-10 bg-card px-3 py-3">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1.5">
+                          {isInheritance && (
+                            <GitBranch size={12} className="shrink-0 text-muted-foreground" />
+                          )}
+                          <Button
+                            type="button"
+                            variant="link"
+                            size="sm"
+                            onClick={() => setSelectedProtocol(p)}
+                            className={`h-auto p-0 font-semibold text-left no-underline hover:underline focus-visible:underline ${
+                              isInheritance ? 'italic text-muted-foreground' : 'text-foreground'
+                            }`}
+                            aria-label={`Open details for ${p.name}`}
                           >
-                            <Star size={8} />
-                            Rec
+                            {p.name}
+                          </Button>
+                          {isRecommended && (
+                            <span
+                              className="inline-flex items-center gap-0.5 rounded border border-status-warning/30 bg-status-warning/10 px-1 py-0 text-[9px] font-medium text-status-warning shrink-0"
+                              title={p.recommendedReason ?? 'Recommended for production use'}
+                            >
+                              <Star size={8} />
+                              Rec
+                            </span>
+                          )}
+                        </div>
+                        {isInheritance && parent && (
+                          <span className="text-[10px] leading-tight text-muted-foreground">
+                            inherits from{' '}
+                            <span className="font-medium text-foreground">{parent.name}</span>
+                          </span>
+                        )}
+                        {!isInheritance && p.inheritedBy && p.inheritedBy.length > 0 && (
+                          <span
+                            className="inline-flex w-fit items-center gap-1 rounded-md border border-accent/30 bg-accent/10 px-1.5 py-0 text-[10px] text-accent"
+                            title={`Same PQC posture also covers: ${p.inheritedBy.join(', ')}`}
+                          >
+                            <GitBranch size={9} />
+                            inherits: {p.inheritedBy.join(', ')}
+                          </span>
+                        )}
+                        {!isHeatmap && (
+                          <span className="text-[10px] leading-tight text-muted-foreground line-clamp-2">
+                            {p.description}
                           </span>
                         )}
                       </div>
-                      {isInheritance && parent && (
-                        <span className="text-[10px] leading-tight text-muted-foreground">
-                          inherits from{' '}
-                          <span className="font-medium text-foreground">{parent.name}</span>
-                        </span>
-                      )}
-                      {!isInheritance && p.inheritedBy && p.inheritedBy.length > 0 && (
-                        <span
-                          className="inline-flex w-fit items-center gap-1 rounded-md border border-accent/30 bg-accent/10 px-1.5 py-0 text-[10px] text-accent"
-                          title={`Same PQC posture also covers: ${p.inheritedBy.join(', ')}`}
-                        >
-                          <GitBranch size={9} />
-                          inherits: {p.inheritedBy.join(', ')}
-                        </span>
-                      )}
-                      {!isHeatmap && (
-                        <span className="text-[10px] leading-tight text-muted-foreground line-clamp-2">
-                          {p.description}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
-                    <DimensionBadge
-                      status={p.dimensions.pureKem}
-                      compact={isHeatmap}
-                      blockerNames={rowBlockerNames}
-                      granularity={effectiveGranularity}
-                    />
-                  </td>
-                  <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
-                    <DimensionBadge
-                      status={p.dimensions.hybridKem}
-                      compact={isHeatmap}
-                      blockerNames={rowBlockerNames}
-                      granularity={effectiveGranularity}
-                    />
-                  </td>
-                  <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
-                    <DimensionBadge
-                      status={p.dimensions.pureSig}
-                      compact={isHeatmap}
-                      blockerNames={rowBlockerNames}
-                      granularity={effectiveGranularity}
-                    />
-                  </td>
-                  <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
-                    <DimensionBadge
-                      status={p.dimensions.hybridSig}
-                      compact={isHeatmap}
-                      blockerNames={rowBlockerNames}
-                      granularity={effectiveGranularity}
-                    />
-                  </td>
-                  <td className="px-3 py-3">
-                    {isHeatmap ? (
-                      <div className="flex flex-wrap gap-1">
-                        <AvailabilityBadge count={p.ossLibraries.length} tone="oss" />
-                        <AvailabilityBadge count={p.commercialLibraries.length} tone="commercial" />
-                      </div>
-                    ) : p.ossLibraries.length === 0 && p.commercialLibraries.length === 0 ? (
-                      <span className="text-xs text-muted-foreground">—</span>
-                    ) : (
-                      <div className="flex flex-wrap gap-1">
-                        {p.ossLibraries.map((lib) => (
-                          <LibraryChip key={`oss-${lib.productId}`} lib={lib} tone="oss" />
-                        ))}
-                        {p.commercialLibraries.map((lib) => (
-                          <LibraryChip key={`com-${lib.productId}`} lib={lib} tone="commercial" />
-                        ))}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-3 py-3">
-                    {isHeatmap ? (
-                      <DeploymentCountBadge
-                        deployments={p.liveDeployments ?? []}
-                        noDeploymentReason={p.noDeploymentReason}
+                    </td>
+                    <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
+                      <DimensionBadge
+                        status={p.dimensions.pureKem}
+                        compact={isHeatmap}
+                        blockerNames={rowBlockerNames}
+                        granularity={effectiveGranularity}
                       />
-                    ) : !p.liveDeployments || p.liveDeployments.length === 0 ? (
-                      <span
-                        className="inline-flex items-center gap-1 text-xs text-muted-foreground"
-                        title="No known production deployment"
-                      >
-                        <Globe2 size={11} className="opacity-50" /> None
-                      </span>
-                    ) : (
-                      <div className="flex flex-wrap gap-1">
-                        {p.liveDeployments.map((d, idx) => (
-                          <DeploymentChip key={`${d.provider}-${idx}`} deployment={d} />
-                        ))}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-3 py-3">
-                    <PlaygroundCell tools={p.playgrounds} compact={isHeatmap} />
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
+                    </td>
+                    <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
+                      <DimensionBadge
+                        status={p.dimensions.hybridKem}
+                        compact={isHeatmap}
+                        blockerNames={rowBlockerNames}
+                        granularity={effectiveGranularity}
+                      />
+                    </td>
+                    <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
+                      <DimensionBadge
+                        status={p.dimensions.pureSig}
+                        compact={isHeatmap}
+                        blockerNames={rowBlockerNames}
+                        granularity={effectiveGranularity}
+                      />
+                    </td>
+                    <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
+                      <DimensionBadge
+                        status={p.dimensions.hybridSig}
+                        compact={isHeatmap}
+                        blockerNames={rowBlockerNames}
+                        granularity={effectiveGranularity}
+                      />
+                    </td>
+                    <td className="px-3 py-3">
+                      {isHeatmap ? (
+                        <div className="flex flex-wrap gap-1">
+                          <AvailabilityBadge count={p.ossLibraries.length} tone="oss" />
+                          <AvailabilityBadge
+                            count={p.commercialLibraries.length}
+                            tone="commercial"
+                          />
+                        </div>
+                      ) : p.ossLibraries.length === 0 && p.commercialLibraries.length === 0 ? (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      ) : (
+                        <div className="flex flex-wrap gap-1">
+                          {p.ossLibraries.map((lib) => (
+                            <LibraryChip key={`oss-${lib.productId}`} lib={lib} tone="oss" />
+                          ))}
+                          {p.commercialLibraries.map((lib) => (
+                            <LibraryChip key={`com-${lib.productId}`} lib={lib} tone="commercial" />
+                          ))}
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-3 py-3">
+                      {isHeatmap ? (
+                        <DeploymentCountBadge
+                          deployments={p.liveDeployments ?? []}
+                          noDeploymentReason={p.noDeploymentReason}
+                        />
+                      ) : !p.liveDeployments || p.liveDeployments.length === 0 ? (
+                        <span
+                          className="inline-flex items-center gap-1 text-xs text-muted-foreground"
+                          title="No known production deployment"
+                        >
+                          <Globe2 size={11} className="opacity-50" /> None
+                        </span>
+                      ) : (
+                        <div className="flex flex-wrap gap-1">
+                          {p.liveDeployments.map((d, idx) => (
+                            <DeploymentChip key={`${d.provider}-${idx}`} deployment={d} />
+                          ))}
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-3 py-3">
+                      <PlaygroundCell tools={p.playgrounds} compact={isHeatmap} />
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Detailed mode — expandable card per protocol */}
+      {!isHeatmap && (
+        <div className="space-y-2">
+          {filteredRows.length === 0 ? (
+            <div className="glass-panel px-3 py-8 text-center text-sm text-muted-foreground">
+              No protocols match the current filters.{' '}
+              <Button
+                type="button"
+                variant="link"
+                size="sm"
+                onClick={clearFilters}
+                className="h-auto p-0 text-primary"
+              >
+                Clear filters
+              </Button>
+            </div>
+          ) : (
+            filteredRows.map((p) => (
+              <ProtocolCard
+                key={p.id}
+                p={p}
+                expanded={expandedProtocolId === p.id}
+                onToggle={() => setExpandedProtocolId((cur) => (cur === p.id ? null : p.id))}
+                onOpenDetail={() => setSelectedProtocol(p)}
+                granularity={effectiveGranularity}
+                parent={
+                  p.inheritsFromProtocolId
+                    ? PROTOCOL_MATRIX.find((r) => r.id === p.inheritsFromProtocolId)
+                    : undefined
+                }
+              />
+            ))
+          )}
+        </div>
+      )}
 
       {/* Transport-layer blockers panel (detailed view only) */}
       {!isHeatmap && TRANSPORT_ISSUES.length > 0 && (

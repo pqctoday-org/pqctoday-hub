@@ -67,9 +67,10 @@ function buildInitialMatrix(): MatrixState {
   return matrix
 }
 
-/** Default Accountable + key Responsible assignments per CSWP.39 §5 governance
- *  patterns. The user is expected to refine; this surfaces sensible owners
- *  rather than an empty grid. */
+/** Sensible default Accountable + key Responsible assignments for a §5-governance
+ *  PQC program. These are illustrative starting points (CSWP.39 does not prescribe
+ *  a specific RACI grid) that the user is expected to refine — surfaced so the
+ *  builder opens with owners rather than an empty grid. */
 const DEFAULT_ASSIGNMENTS: Record<string, Partial<Record<(typeof ROLES)[number], RACIValue>>> = {
   'Crypto Inventory': { CISO: 'A', 'Enterprise Architect': 'R', 'Dev Lead': 'C' },
   'Risk Assessment': { CISO: 'A', 'Compliance Officer': 'C', 'Enterprise Architect': 'R' },
@@ -170,7 +171,7 @@ export const RACIBuilder: React.FC = () => {
     <div className="space-y-6">
       {!seedCleared && (
         <PreFilledBanner
-          summary={`Default Accountable / Responsible assignments seeded from CSWP.39 governance patterns${industry ? ` (${industry} context)` : ''}. Refine per your org chart.`}
+          summary={`Illustrative default Accountable / Responsible assignments for a PQC governance program${industry ? ` (${industry} context)` : ''}. Refine per your org chart.`}
           onClear={() => {
             setMatrix(buildInitialMatrix())
             setSeedCleared(true)

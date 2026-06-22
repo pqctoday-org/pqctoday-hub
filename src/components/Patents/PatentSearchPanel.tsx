@@ -34,6 +34,9 @@ interface PatentSearchResult {
 interface PatentSearchPanelProps {
   patents: PatentItem[]
   onSelectPatent: (id: string) => void
+  /** Redesign: expose the current ranked results (in order) so a host can drive
+   *  prev/next through the search hits from a detail drawer. */
+  onResults?: (patents: PatentItem[]) => void
 }
 
 // ── MiniSearch index (built once per patent array reference) ──────────────────
@@ -126,7 +129,7 @@ function highlight(text: string, query: string): string {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function PatentSearchPanel({ patents, onSelectPatent }: PatentSearchPanelProps) {
+export function PatentSearchPanel({ patents, onSelectPatent, onResults }: PatentSearchPanelProps) {
   const [query, setQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [isBuilding, setIsBuilding] = useState(true)
@@ -217,6 +220,11 @@ export function PatentSearchPanel({ patents, onSelectPatent }: PatentSearchPanel
     merged.sort((a, b) => b.score - a.score)
     return merged.slice(0, 30)
   }, [debouncedQuery, index, patentMap, semantic.mode, semantic.hits])
+
+  // Lift the ranked results to a host (redesign drawer prev/next).
+  useEffect(() => {
+    onResults?.(results.map((r) => r.patent))
+  }, [results, onResults])
 
   const showEmpty = debouncedQuery.trim().length >= 2 && results.length === 0 && !isBuilding
   const showResults = results.length > 0

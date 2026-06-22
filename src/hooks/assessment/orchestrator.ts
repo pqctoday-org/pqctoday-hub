@@ -18,7 +18,7 @@ import type {
   CategoryScores,
   CategoryDrivers,
   HNDLRiskWindow,
-  HNFLRiskWindow,
+  TNFLRiskWindow,
   MigrationEffortItem,
   RecommendedAction,
   AssessmentResult,
@@ -31,9 +31,10 @@ import {
   computeRegulatoryPressure,
   computeCompositeScoreWithBoosts,
   computeOrganizationalReadiness,
+  computeFrameworkRisk,
   getMaxSensitivity,
 } from './scoring'
-import { computeHNDLRiskWindow, computeHNFLRiskWindow, computeMigrationEffort } from './riskWindows'
+import { computeHNDLRiskWindow, computeTNFLRiskWindow, computeMigrationEffort } from './riskWindows'
 import {
   generateCategoryDrivers,
   generateExtendedActions,
@@ -41,6 +42,7 @@ import {
   generateQuickSummary,
   generateNarrative,
   generateKeyFindings,
+  classifyCswp39Step,
 } from './generators'
 import { reframeActionsForPersona, generatePersonaNarrative } from './personas'
 
@@ -127,9 +129,10 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
   )
   let riskScore: number
   let categoryScores: CategoryScores | undefined
+  let frameworkRisk: AssessmentResult['frameworkRisk']
   let categoryDrivers: CategoryDrivers | undefined
   let hndlRiskWindow: HNDLRiskWindow | undefined
-  let hnflRiskWindow: HNFLRiskWindow | undefined
+  let tnflRiskWindow: TNFLRiskWindow | undefined
   let migrationEffort: MigrationEffortItem[] | undefined
   let recommendedActions: RecommendedAction[]
   let executiveSummary: string | undefined
@@ -154,7 +157,8 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     preBoostScore = compositeResult.preBoostScore
     boosts = compositeResult.boosts
     hndlRiskWindow = computeHNDLRiskWindow(input)
-    hnflRiskWindow = computeHNFLRiskWindow(input)
+    tnflRiskWindow = computeTNFLRiskWindow(input)
+    frameworkRisk = computeFrameworkRisk(categoryScores, hndlRiskWindow, tnflRiskWindow)
     migrationEffort = computeMigrationEffort(input)
     categoryDrivers = generateCategoryDrivers(input, vulnerableCount, pqcCompliance.length)
     recommendedActions = generateExtendedActions(
@@ -307,7 +311,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
       vulnerableCount,
       migrationEffort!,
       hndlRiskWindow,
-      hnflRiskWindow,
+      tnflRiskWindow,
       pqcCompliance.length
     )
   } else {
@@ -329,7 +333,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     migrationEffort,
     categoryScores,
     hndlRiskWindow,
-    hnflRiskWindow,
+    tnflRiskWindow,
     pqcCompliance.length
   )
 
@@ -340,21 +344,41 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     algorithmMigrations,
     complianceImpacts,
     hndlRiskWindow,
-    hnflRiskWindow
+    tnflRiskWindow
   )
+
+  // Even the legacy / minimal path (Curious mode or partial input) emits COARSE
+  // category scores + HNDL/TNFL windows + framework-risk lens, so a short
+  // assessment still populates the Simulation & Report (KPIs, Mosca Y, the P3
+  // risk lens). The headline riskScore stays the legacy additive score above.
+  if (!categoryScores) {
+    categoryScores = {
+      quantumExposure: computeQuantumExposure(input, vulnerableCount),
+      migrationComplexity: computeMigrationComplexity(input),
+      regulatoryPressure: computeRegulatoryPressure(input, complianceImpacts),
+      organizationalReadiness: computeOrganizationalReadiness(input),
+    }
+    hndlRiskWindow = computeHNDLRiskWindow(input)
+    tnflRiskWindow = computeTNFLRiskWindow(input)
+    frameworkRisk = computeFrameworkRisk(categoryScores, hndlRiskWindow, tnflRiskWindow)
+  }
 
   return {
     riskScore,
     riskLevel,
     algorithmMigrations,
     complianceImpacts,
-    recommendedActions,
+    recommendedActions: recommendedActions.map((a) => ({
+      ...a,
+      cswp39Step: classifyCswp39Step(a),
+    })),
     narrative,
     generatedAt: new Date().toISOString(),
     categoryScores,
+    frameworkRisk,
     categoryDrivers,
     hndlRiskWindow,
-    hnflRiskWindow,
+    tnflRiskWindow,
     migrationEffort,
     executiveSummary,
     personaNarrative,
@@ -483,9 +507,10 @@ export async function computeAssessmentAsync(
 
   let riskScore: number
   let categoryScores: CategoryScores | undefined
+  let frameworkRisk: AssessmentResult['frameworkRisk']
   let categoryDrivers: CategoryDrivers | undefined
   let hndlRiskWindow: HNDLRiskWindow | undefined
-  let hnflRiskWindow: HNFLRiskWindow | undefined
+  let tnflRiskWindow: TNFLRiskWindow | undefined
   let migrationEffort: MigrationEffortItem[] | undefined
   let recommendedActions: RecommendedAction[]
   let preBoostScore: number | undefined
@@ -516,7 +541,7 @@ export async function computeAssessmentAsync(
     preBoostScore = compositeResult.preBoostScore
     boosts = compositeResult.boosts
     hndlRiskWindow = await stage('Computing HNDL risk window', () => computeHNDLRiskWindow(input))
-    hnflRiskWindow = await stage('Computing HNFL risk window', () => computeHNFLRiskWindow(input))
+    tnflRiskWindow = await stage('Computing HNFL risk window', () => computeTNFLRiskWindow(input))
     migrationEffort = await stage('Estimating migration effort', () =>
       computeMigrationEffort(input)
     )
@@ -551,7 +576,7 @@ export async function computeAssessmentAsync(
       vulnerableCount,
       migrationEffort!,
       hndlRiskWindow,
-      hnflRiskWindow,
+      tnflRiskWindow,
       pqcCompliance.length
     )
   )
@@ -565,7 +590,7 @@ export async function computeAssessmentAsync(
       migrationEffort,
       categoryScores,
       hndlRiskWindow,
-      hnflRiskWindow,
+      tnflRiskWindow,
       pqcCompliance.length
     )
   )
@@ -576,22 +601,42 @@ export async function computeAssessmentAsync(
       algorithmMigrations,
       complianceImpacts,
       hndlRiskWindow,
-      hnflRiskWindow
+      tnflRiskWindow
     )
   )
+
+  // Even the legacy / minimal path (Curious mode or partial input) emits COARSE
+  // category scores + HNDL/TNFL windows + framework-risk lens, so a short
+  // assessment still populates the Simulation & Report (KPIs, Mosca Y, the P3
+  // risk lens). The headline riskScore stays the legacy additive score above.
+  if (!categoryScores) {
+    categoryScores = {
+      quantumExposure: computeQuantumExposure(input, vulnerableCount),
+      migrationComplexity: computeMigrationComplexity(input),
+      regulatoryPressure: computeRegulatoryPressure(input, complianceImpacts),
+      organizationalReadiness: computeOrganizationalReadiness(input),
+    }
+    hndlRiskWindow = computeHNDLRiskWindow(input)
+    tnflRiskWindow = computeTNFLRiskWindow(input)
+    frameworkRisk = computeFrameworkRisk(categoryScores, hndlRiskWindow, tnflRiskWindow)
+  }
 
   return {
     riskScore,
     riskLevel,
     algorithmMigrations,
     complianceImpacts,
-    recommendedActions,
+    recommendedActions: recommendedActions.map((a) => ({
+      ...a,
+      cswp39Step: classifyCswp39Step(a),
+    })),
     narrative,
     generatedAt: new Date().toISOString(),
     categoryScores,
+    frameworkRisk,
     categoryDrivers,
     hndlRiskWindow,
-    hnflRiskWindow,
+    tnflRiskWindow,
     migrationEffort,
     executiveSummary,
     personaNarrative,

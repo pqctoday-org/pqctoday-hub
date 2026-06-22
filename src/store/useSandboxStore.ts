@@ -9,6 +9,8 @@ interface SandboxState {
   error: string | null
   baseUrl: string
   probe: () => Promise<SandboxStatus>
+  /** User-disable the runtime (turn the sandbox toggle off) without a network call. */
+  disable: () => void
 }
 
 const HEALTH_PATH = '/api/status'
@@ -33,7 +35,14 @@ export const useSandboxStore = create<SandboxState>((set, get) => ({
     const ctrl = new AbortController()
     const timer = setTimeout(() => ctrl.abort(), PROBE_TIMEOUT_MS)
     try {
-      await fetch(`${baseUrl}${HEALTH_PATH}`, { mode: 'cors', signal: ctrl.signal })
+      const res = await fetch(`${baseUrl}${HEALTH_PATH}`, { mode: 'cors', signal: ctrl.signal })
+      // A resolved fetch is not enough — the backend returns 503 when the
+      // pqc-network upstream is down. Treat any non-2xx as offline so the
+      // catalog doesn't surface sandbox tools that can't actually run.
+      if (!res.ok) {
+        set({ status: 'offline', error: `status ${res.status}`, lastChecked: Date.now() })
+        return 'offline'
+      }
       set({ status: 'online', error: null, lastChecked: Date.now() })
       return 'online'
     } catch (e) {
@@ -44,28 +53,23 @@ export const useSandboxStore = create<SandboxState>((set, get) => ({
       clearTimeout(timer)
     }
   },
+  disable: () => set({ status: 'idle', error: null }),
 }))
 
 export function isSandboxAvailable(status: SandboxStatus): boolean {
   return status === 'online'
 }
 
-export const SANDBOX_CATEGORY = 'Sandbox' as const
-
-export function filterToolsBySandboxAvailability<T extends { category: string }>(
+/**
+ * Filter out Docker-sandbox scenarios when the runtime isn't reachable.
+ * "Runs in a sandbox" is now a cross-cutting facet (`WorkshopTool.sandbox`),
+ * not a category — so this keys off the flag. The Crypto Lab Workbench itself
+ * prefers to render locked scenarios dimmed rather than strip them; this helper
+ * remains for callers that want a hard filter.
+ */
+export function filterToolsBySandboxAvailability<T extends { sandbox?: boolean }>(
   tools: readonly T[],
   status: SandboxStatus
 ): T[] {
-  return isSandboxAvailable(status)
-    ? [...tools]
-    : tools.filter((t) => t.category !== SANDBOX_CATEGORY)
-}
-
-export function availableCategoriesForSandboxStatus<C extends string>(
-  categories: readonly C[],
-  status: SandboxStatus
-): C[] {
-  return isSandboxAvailable(status)
-    ? [...categories]
-    : categories.filter((c) => c !== SANDBOX_CATEGORY)
+  return isSandboxAvailable(status) ? [...tools] : tools.filter((t) => !t.sandbox)
 }

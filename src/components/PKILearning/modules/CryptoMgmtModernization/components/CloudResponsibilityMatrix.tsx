@@ -21,6 +21,7 @@ import { Cloud, ShieldCheck, ArrowRight } from 'lucide-react'
 import { ArtifactBuilder } from '@/components/PKILearning/common/executive'
 import type { ArtifactSection } from '@/components/PKILearning/common/executive'
 import { useModuleStore } from '@/store/useModuleStore'
+import { softwareData } from '@/data/migrateData'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Recommendation engine (pure function — testable in isolation)
@@ -28,7 +29,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 
 export type ServiceModel = 'IaaS' | 'PaaS' | 'SaaS' | 'FaaS'
 export type Owner = 'customer' | 'provider' | 'shared'
-export type PqcAvailability = 'available' | 'partial' | 'roadmap' | 'no-public-plan'
+export type PqcAvailability = 'available' | 'partial' | 'roadmap' | 'no-public-plan' | 'unverified'
 
 export interface ResponsibilityCell {
   assetClass: string
@@ -352,7 +353,12 @@ function getCellTemplate(assetClass: string, serviceModel: ServiceModel): CellTe
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// PQC availability lookup (per cloud + service-model + asset, 2025 roadmap)
+// PQC availability per cloud — DERIVED from the product catalog
+// (pqc_product_catalog_*.csv via migrateData), the single source of truth. This
+// file holds NO hand-maintained PQC status: CLOUD_PROVIDER_PRODUCTS only names
+// which catalog products represent each cloud's KMS/HSM + TLS surface, and the
+// status is read live from those products' pqcStatusCanonical. Update product
+// PQC status in the catalog CSV (with a digital proof), never here.
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface PqcRoadmapEntry {
@@ -361,34 +367,87 @@ interface PqcRoadmapEntry {
   tls: PqcAvailability
 }
 
-const PQC_ROADMAP: Record<string, PqcRoadmapEntry> = {
-  AWS: { kmsHsm: 'partial', tls: 'roadmap' },
-  GCP: { kmsHsm: 'roadmap', tls: 'roadmap' },
-  Azure: { kmsHsm: 'roadmap', tls: 'roadmap' },
-  Oracle: { kmsHsm: 'no-public-plan', tls: 'no-public-plan' },
-  IBM: { kmsHsm: 'partial', tls: 'roadmap' },
-  Alibaba: { kmsHsm: 'no-public-plan', tls: 'no-public-plan' },
-  'on-prem': { kmsHsm: 'roadmap', tls: 'roadmap' },
-  'multi-cloud': { kmsHsm: 'roadmap', tls: 'roadmap' },
+/** References INTO the product catalog — which products represent each cloud's
+ *  KMS/HSM + TLS surface. No PQC status lives here; it is read from the catalog
+ *  below. An empty list means the catalog has no product for that surface yet,
+ *  so the cell is reported as 'unverified' (an honest no-claim). */
+const CLOUD_PROVIDER_PRODUCTS: Record<string, { kmsHsm: string[]; tls: string[] }> = {
+  AWS: {
+    kmsHsm: ['AWS KMS', 'AWS CloudHSM'],
+    tls: ['AWS KMS (Cloud Gateway)', 'AWS Application Load Balancer (ALB)'],
+  },
+  GCP: {
+    kmsHsm: ['Google Cloud KMS', 'Google Cloud HSM'],
+    tls: ['Google Cloud KMS (Cloud Gateway)'],
+  },
+  Azure: { kmsHsm: ['Azure Key Vault'], tls: [] },
+  Oracle: { kmsHsm: ['Oracle Key Vault'], tls: [] },
+  IBM: { kmsHsm: ['IBM Hyper Protect Crypto Services'], tls: [] },
+  Alibaba: { kmsHsm: [], tls: [] },
+  'on-prem': { kmsHsm: [], tls: [] },
+  'multi-cloud': { kmsHsm: [], tls: [] },
 }
+
+/** Best-to-worst order. 'unverified' = the catalog covers no product for this
+ *  cell, so the matrix makes no claim (shown as "confirm with vendor"). */
+const AVAIL_ORDER: PqcAvailability[] = [
+  'available',
+  'partial',
+  'roadmap',
+  'no-public-plan',
+  'unverified',
+]
+
+/** Map the catalog's canonical PQC status to the matrix availability scale. */
+function canonicalToAvailability(canonical: string | undefined): PqcAvailability {
+  const c = (canonical || '').trim().toLowerCase()
+  if (c.startsWith('available') || c === 'yes' || c === 'production') return 'available'
+  if (c.startsWith('partial') || c === 'in-development') return 'partial'
+  if (c.startsWith('roadmap') || c.startsWith('planned')) return 'roadmap'
+  if (c === 'none') return 'no-public-plan'
+  return 'unverified'
+}
+
+/** A provider's availability for a family = the BEST status across its
+ *  referenced catalog products ("highest level the cloud offers"). */
+function deriveCloudAvailability(provider: string, family: 'kmsHsm' | 'tls'): PqcAvailability {
+  // eslint-disable-next-line security/detect-object-injection
+  const names = CLOUD_PROVIDER_PRODUCTS[provider]?.[family] ?? []
+  let bestIdx = AVAIL_ORDER.length
+  for (const name of names) {
+    const item = softwareData.find((s) => s.softwareName === name)
+    if (!item) continue
+    const idx = AVAIL_ORDER.indexOf(canonicalToAvailability(item.pqcStatusCanonical))
+    if (idx < bestIdx) bestIdx = idx
+  }
+  return bestIdx < AVAIL_ORDER.length ? AVAIL_ORDER[bestIdx] : 'unverified'
+}
+
+/** Derived once from the catalog (softwareData is a static import). Not a second
+ *  source of truth — every value traces back to a catalog product. */
+const PQC_ROADMAP: Record<string, PqcRoadmapEntry> = Object.fromEntries(
+  Object.keys(CLOUD_PROVIDER_PRODUCTS).map((p) => [
+    p,
+    { kmsHsm: deriveCloudAvailability(p, 'kmsHsm'), tls: deriveCloudAvailability(p, 'tls') },
+  ])
+)
 
 /** Pick the worst availability across the chosen providers — that's the cell's
  *  effective availability. If you adopt across AWS + Oracle you inherit
- *  Oracle's no-public-plan story regardless of AWS being further along. */
+ *  Oracle's weaker story regardless of AWS being further along. */
 function pickWorstAvailability(providers: string[], family: 'kmsHsm' | 'tls'): PqcAvailability {
-  const ORDER: PqcAvailability[] = ['available', 'partial', 'roadmap', 'no-public-plan']
   let worstIdx = -1
   for (const p of providers) {
     // eslint-disable-next-line security/detect-object-injection
     const entry = PQC_ROADMAP[p]
     if (!entry) continue
     // eslint-disable-next-line security/detect-object-injection
-    const idx = ORDER.indexOf(entry[family])
+    const idx = AVAIL_ORDER.indexOf(entry[family])
     if (idx > worstIdx) worstIdx = idx
   }
-  if (worstIdx < 0) return 'roadmap'
+  if (worstIdx < 0) return 'unverified'
   // eslint-disable-next-line security/detect-object-injection
-  return ORDER[worstIdx]
+  return AVAIL_ORDER[worstIdx]
 }
 
 function classifyAssetFamily(assetClass: string): 'kmsHsm' | 'tls' {
@@ -443,9 +502,25 @@ function computeWatchOuts(inputs: CloudMatrixInputs): string[] {
     providers.filter((p) => p !== 'on-prem' && p !== 'multi-cloud').length > 1
 
   if (isMultiCloud) {
-    out.push(
-      'Multi-cloud: ML-KEM-768 GA on AWS lands ~2026-Q2 (commercial), while GCP and Azure are still in preview. Expect a hybrid period where one cloud is ahead — plan workload-level fallbacks rather than a single switch-over.'
-    )
+    // Name each selected cloud's PQC posture from the catalog-backed PQC_ROADMAP
+    // rather than a hardcoded claim (the old copy asserted "GCP and Azure are
+    // still in preview", which contradicted the catalog once GCP KMS shipped).
+    // Listing each provider + status keeps the warning honest as the catalog
+    // evolves, instead of baking in a fixed "who's ahead" ordering.
+    const named = providers.filter((p) => p !== 'multi-cloud' && p !== 'on-prem')
+    if (named.length) {
+      const statusList = named
+        // eslint-disable-next-line security/detect-object-injection
+        .map((p) => `${p} (KMS PQC: ${PQC_ROADMAP[p]?.kmsHsm ?? 'unverified'})`)
+        .join(', ')
+      out.push(
+        `Multi-cloud: ${statusList}, per the product catalog. Where the statuses differ, expect a hybrid period where one cloud is ahead — plan workload-level fallbacks rather than a single switch-over.`
+      )
+    } else {
+      out.push(
+        'Multi-cloud: provider PQC maturity may differ across your selected clouds — check each cloud against the catalog before committing, and plan workload-level fallbacks rather than a single switch-over.'
+      )
+    }
   }
 
   if (
@@ -543,7 +618,7 @@ function computeRecommendations(inputs: CloudMatrixInputs): string[] {
   }
 
   out.push(
-    'Refresh the cloud responsibility matrix every 6 months — provider PQC roadmaps shift quarterly, and FIPS 140-3 re-validation status changes the customer/provider boundary in practice.'
+    'PQC availability here is derived from the PQCToday product catalog (per-product, proof-backed status) — still verify current GA status with each provider before committing; this market moves quarterly. Cells with no catalog coverage show "unverified". FIPS 140-3 re-validation status also shifts the customer/provider boundary in practice.'
   )
 
   return out
@@ -793,6 +868,7 @@ const AVAILABILITY_LABELS: Record<PqcAvailability, string> = {
   partial: 'Partial / preview',
   roadmap: 'Roadmap',
   'no-public-plan': 'No public plan',
+  unverified: 'Unverified — confirm with vendor',
 }
 
 function labelOr(map: Record<string, string>, key: string): string {
@@ -903,6 +979,7 @@ export function renderCloudMatrixMarkdown(
   }
 
   md += `---\n\n`
+  md += `> **Data vintage:** PQC availability per provider is derived from the PQCToday product catalog (per-product, proof-backed) — verify current GA status with each provider.\n\n`
   md += `> Per CSWP 39 Section 6.4: "${CSWP39_64_QUOTE}"\n\n`
   md += `*Generated by PQC Today Hub. Standards citations: NIST CSWP 39 Section 6.4, Section 5.3. https://doi.org/10.6028/NIST.CSWP.39*\n`
 

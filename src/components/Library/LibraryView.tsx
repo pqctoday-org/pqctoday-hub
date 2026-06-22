@@ -163,8 +163,34 @@ function findByRef(
   return null
 }
 
-export const LibraryView: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams()
+interface LibraryViewProps {
+  /** When true, renders headless inside the simulation: PageHeader hidden and the
+   *  filter URL state is backed by local component state (so it never corrupts the
+   *  /simulation route — the view can't nest its own Router). Mirrors MigrateView. */
+  simEmbed?: boolean
+}
+
+export const LibraryView: React.FC<LibraryViewProps> = ({ simEmbed = false }) => {
+  // When embedded in the sim, the library must NOT read/write the page URL (it
+  // would corrupt /simulation's route) and can't nest its own <Router>. So its
+  // filter URL state is backed by local state, kept API-compatible with
+  // useSearchParams. (Same pattern as MigrateView.)
+  const [realSearchParams, realSetSearchParams] = useSearchParams()
+  const [embedSearchParams, setEmbedSearchParamsState] = useState(() => new URLSearchParams())
+  const searchParams = simEmbed ? embedSearchParams : realSearchParams
+  const setSearchParams: typeof realSetSearchParams = simEmbed
+    ? (nextInit) =>
+        setEmbedSearchParamsState((prev) => {
+          const next = new URLSearchParams(
+            typeof nextInit === 'function'
+              ? (nextInit(prev) as URLSearchParams)
+              : (nextInit as URLSearchParams)
+          )
+          // keep the same object identity when unchanged, so effects keyed on
+          // `searchParams` don't loop forever (matches real setSearchParams no-op).
+          return next.toString() === prev.toString() ? prev : next
+        })
+    : realSetSearchParams
   const { selectedPersona } = usePersonaStore()
   const { libraryBookmarks, showOnlyLibraryBookmarks, setShowOnlyLibraryBookmarks } =
     useBookmarkStore()
@@ -838,21 +864,23 @@ export const LibraryView: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        icon={BookOpen}
-        pageId="library"
-        title="PQC Library"
-        description="Explore the latest Post-Quantum Cryptography standards, drafts, and related documents."
-        dataSource={
-          libraryMetadata
-            ? `${libraryMetadata.filename} • Updated: ${libraryMetadata.lastUpdate.toLocaleDateString()}`
-            : undefined
-        }
-        viewType="Library"
-        shareTitle="PQC Library — NIST, IETF, ETSI & More"
-        shareText="Explore post-quantum cryptography standards, drafts, and key documents from NIST, IETF, ETSI, and other organizations."
-        onExport={handleExportCsv}
-      />
+      {!simEmbed && (
+        <PageHeader
+          icon={BookOpen}
+          pageId="library"
+          title="PQC Library"
+          description="Explore the latest Post-Quantum Cryptography standards, drafts, and related documents."
+          dataSource={
+            libraryMetadata
+              ? `${libraryMetadata.filename} • Updated: ${libraryMetadata.lastUpdate.toLocaleDateString()}`
+              : undefined
+          }
+          viewType="Library"
+          shareTitle="PQC Library — NIST, IETF, ETSI & More"
+          shareText="Explore post-quantum cryptography standards, drafts, and key documents from NIST, IETF, ETSI, and other organizations."
+          onExport={handleExportCsv}
+        />
+      )}
 
       {/* Persona picks panel (P04 audit, PR 2). Renders a curated list of
           high-signal documents above the main library grid for personas with
@@ -1192,12 +1220,16 @@ export const LibraryView: React.FC = () => {
                     <SectorFilter className="w-full" />
                   </div>
 
-                  <div className="flex-1 min-w-[160px]">
-                    <span className="text-xs font-medium text-muted-foreground mb-1 block">
-                      Trust tier
-                    </span>
-                    <TrustTierFilter className="w-full" />
-                  </div>
+                  {/* Tier filter writes ?tier= to the page URL — hidden in the sim
+                      embed (would corrupt /simulation's route). */}
+                  {!simEmbed && (
+                    <div className="flex-1 min-w-[160px]">
+                      <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                        Trust tier
+                      </span>
+                      <TrustTierFilter className="w-full" />
+                    </div>
+                  )}
                 </div>
               )}
 

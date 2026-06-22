@@ -65,7 +65,7 @@ async function extract(blob: Blob): Promise<Record<string, string>> {
 }
 
 describe('buildBoardPackBlob', () => {
-  it('emits all 6 expected files inside the board-pack/ folder', async () => {
+  it('emits all 7 expected files inside the board-pack/ folder', async () => {
     const blob = await buildBoardPackBlob({ result: baseResult, profile: baseProfile })
     const files = await extract(blob)
     expect(Object.keys(files).sort()).toEqual([
@@ -74,8 +74,15 @@ describe('buildBoardPackBlob', () => {
       'board-pack/executive-summary.md',
       'board-pack/key-findings.md',
       'board-pack/profile.json',
+      'board-pack/program-effort.md',
       'board-pack/recommended-actions.md',
     ])
+  })
+
+  it('includes an illustrative, override-flagged program effort rollup', async () => {
+    const blob = await buildBoardPackBlob({ result: baseResult, profile: baseProfile })
+    const files = await extract(blob)
+    expect(files['board-pack/program-effort.md']).toContain('Program Effort & Timeline')
   })
 
   it('puts the risk score and persona in the executive summary', async () => {

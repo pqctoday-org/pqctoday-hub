@@ -2,7 +2,7 @@ import type {
   AssessmentInput,
   CategoryScores,
   HNDLRiskWindow,
-  HNFLRiskWindow,
+  TNFLRiskWindow,
   MigrationEffortItem,
   RecommendedAction,
 } from '../assessmentTypes'
@@ -225,7 +225,7 @@ function generateExecNarrative(
   migrationEffort: MigrationEffortItem[] | undefined,
   pqcFrameworkCount: number,
   hndl: HNDLRiskWindow | undefined,
-  hnfl: HNFLRiskWindow | undefined
+  hnfl: TNFLRiskWindow | undefined
 ): string {
   const parts: string[] = []
   parts.push(
@@ -385,7 +385,7 @@ function generateResearcherNarrative(
   migrationEffort: MigrationEffortItem[] | undefined,
   categoryScores: CategoryScores | undefined,
   hndl: HNDLRiskWindow | undefined,
-  hnfl: HNFLRiskWindow | undefined,
+  hnfl: TNFLRiskWindow | undefined,
   pqcFrameworkCount: number
 ): string {
   const parts: string[] = []
@@ -415,7 +415,7 @@ function generateResearcherNarrative(
   }
   if (hnfl?.isAtRisk && hnfl.hasSigningAlgorithms) {
     parts.push(
-      `HNFL exposure: ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} of signing key exposure, ${hnfl.hnflRelevantUseCases.length} affected use case${hnfl.hnflRelevantUseCases.length !== 1 ? 's' : ''} (${hnfl.hnflRelevantUseCases.slice(0, 3).join(', ')}${hnfl.hnflRelevantUseCases.length > 3 ? '...' : ''}).`
+      `HNFL exposure: ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} of signing key exposure, ${hnfl.tnflRelevantUseCases.length} affected use case${hnfl.tnflRelevantUseCases.length !== 1 ? 's' : ''} (${hnfl.tnflRelevantUseCases.slice(0, 3).join(', ')}${hnfl.tnflRelevantUseCases.length > 3 ? '...' : ''}).`
     )
   }
   if (pqcFrameworkCount > 0) {
@@ -508,7 +508,7 @@ export function generatePersonaNarrative(
   migrationEffort: MigrationEffortItem[] | undefined,
   categoryScores: CategoryScores | undefined,
   hndl: HNDLRiskWindow | undefined,
-  hnfl: HNFLRiskWindow | undefined,
+  hnfl: TNFLRiskWindow | undefined,
   pqcFrameworkCount: number
 ): string | undefined {
   if (!persona) return undefined

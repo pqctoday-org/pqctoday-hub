@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Globe, Link2, Check, Search, Download, Lightbulb } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { timelineData, timelineMetadata, transformToGanttData } from '../../data/timelineData'
+import { applyTimelineScope, applyTierFilter } from '@/data/timelineScope'
 import type { GanttCountryData } from '../../types/timeline'
 import { FilterChip } from '../common/FilterChip'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -18,12 +19,8 @@ import { CountryFlag } from '../common/CountryFlag'
 import { PageHeader } from '../common/PageHeader'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { FilterDropdown } from '../common/FilterDropdown'
-import {
-  TrustTierFilter,
-  useTrustTierFilter,
-  matchesTrustTierFilter,
-} from '../common/TrustTierFilter'
-import { CategoryFilter, useCategoryFilter, matchesCategoryFilter } from './CategoryFilter'
+import { TrustTierFilter, useTrustTierFilter } from '../common/TrustTierFilter'
+import { CategoryFilter, useCategoryFilter } from './CategoryFilter'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { TIMELINE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
@@ -235,26 +232,16 @@ export const TimelineView = () => {
   const categoryKey = categoryFilter.join('|')
 
   // Always call hooks first (React rules). Filter events at the leaf level by
-  // org category (always — default hides vendor) and trust tier (when active).
+  // org category (always — default hides vendor) and trust tier (when active),
+  // via the SHARED applyTimelineScope / applyTierFilter helpers (single source of
+  // truth — the same functions the sim's TimelineEmbed uses). Category first, then
+  // tier: equivalent to the old single combined predicate (an event survives iff
+  // it matches category AND tier; empty bodies/countries are dropped either way).
   const ganttData = useMemo(() => {
     if (!timelineData || timelineData.length === 0) return []
-    const filteredCountries = timelineData
-      .map((country) => ({
-        ...country,
-        bodies: country.bodies
-          .map((body) => ({
-            ...body,
-            events: body.events.filter(
-              (event) =>
-                matchesCategoryFilter(categoryFilter, event.entityType) &&
-                (tierFilter.length === 0 ||
-                  matchesTrustTierFilter(tierFilter, 'timeline', event.title))
-            ),
-          }))
-          .filter((body) => body.events.length > 0),
-      }))
-      .filter((country) => country.bodies.length > 0)
-    return transformToGanttData(filteredCountries)
+    const byCategory = applyTimelineScope(timelineData, { categories: categoryFilter })
+    const scoped = applyTierFilter(byCategory, tierFilter)
+    return transformToGanttData(scoped)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tierFilter, categoryKey])
 

@@ -84,6 +84,9 @@ const LATIN1_SUBSTITUTIONS: ReadonlyArray<readonly [RegExp, string]> = [
   [/±/g, '+/-'], // U+00B1
   [/°/g, ' deg'], // U+00B0
   [/∞/g, 'inf'], // U+221E
+  [/≈/g, '~'], // U+2248 almost-equal
+  [/≅/g, '~'], // U+2245 approximately-equal-to
+  [/√/g, 'sqrt'], // U+221A square root
   // Greek letters used in PQC math notation
   [/α/g, 'alpha'],
   [/β/g, 'beta'],
@@ -102,6 +105,61 @@ const LATIN1_SUBSTITUTIONS: ReadonlyArray<readonly [RegExp, string]> = [
   [/★/g, '[*]'], // U+2605
 ]
 
+// ── Super/subscript digits (audit C3) ──────────────────────────────────────
+/**
+ * Math notation like `2⁸⁵` or `CO₂` uses Unicode super/subscript digits that
+ * are not in WinAnsi — the unmapped ones (⁰ ⁴-⁹ and all subscripts) would
+ * otherwise become `?`, and the latin1 ones (¹ ² ³) would render inconsistently
+ * as raw superscript glyphs. Map a *run* of them to `^85` / `_2` so a multi-
+ * digit exponent stays one token (`2⁸⁵`→`2^85`, never `2^8^5`).
+ */
+const SUPERSCRIPT_DIGITS: Record<string, string> = {
+  '⁰': '0',
+  '¹': '1',
+  '²': '2',
+  '³': '3',
+  '⁴': '4',
+  '⁵': '5',
+  '⁶': '6',
+  '⁷': '7',
+  '⁸': '8',
+  '⁹': '9',
+}
+const SUBSCRIPT_DIGITS: Record<string, string> = {
+  '₀': '0',
+  '₁': '1',
+  '₂': '2',
+  '₃': '3',
+  '₄': '4',
+  '₅': '5',
+  '₆': '6',
+  '₇': '7',
+  '₈': '8',
+  '₉': '9',
+}
+
+function mapSuperSubscripts(input: string): string {
+  let out = input.replace(
+    /[⁰¹²³⁴-⁹]+/g,
+    (run) =>
+      '^' +
+      Array.from(run)
+        // eslint-disable-next-line security/detect-object-injection
+        .map((ch) => SUPERSCRIPT_DIGITS[ch] ?? '')
+        .join('')
+  )
+  out = out.replace(
+    /[₀-₉]+/g,
+    (run) =>
+      '_' +
+      Array.from(run)
+        // eslint-disable-next-line security/detect-object-injection
+        .map((ch) => SUBSCRIPT_DIGITS[ch] ?? '')
+        .join('')
+  )
+  return out
+}
+
 /**
  * Replace non-latin1 glyphs with ASCII equivalents. After the explicit table
  * is applied, any surviving character with codepoint > 0xFF is replaced with
@@ -110,7 +168,9 @@ const LATIN1_SUBSTITUTIONS: ReadonlyArray<readonly [RegExp, string]> = [
  */
 export function sanitizeForLatin1(input: string): string {
   if (!input) return input
-  let out = input
+  // Super/subscript digit runs first, so `2⁸⁵` becomes `2^85` before the
+  // per-char >0xFF fallback would otherwise turn the exponent into `??`.
+  let out = mapSuperSubscripts(input)
   for (const [pattern, replacement] of LATIN1_SUBSTITUTIONS) {
     out = out.replace(pattern, replacement)
   }

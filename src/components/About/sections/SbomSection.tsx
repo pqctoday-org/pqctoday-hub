@@ -98,7 +98,7 @@ export function SbomSection() {
                     <span className="text-muted-foreground">React Router</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
-                      <span className="text-xs text-muted-foreground/60">v7.13.1</span>
+                      <span className="text-xs text-muted-foreground/60">v7.17.0</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
@@ -195,6 +195,13 @@ export function SbomSection() {
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
                       <span className="text-xs text-muted-foreground/60">v3.8.1</span>
+                    </div>
+                  </li>
+                  <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
+                    <span className="text-muted-foreground">mermaid</span>
+                    <div className="flex flex-col items-end shrink-0">
+                      <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
+                      <span className="text-xs text-muted-foreground/60">v11.15.0</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
@@ -459,7 +466,7 @@ export function SbomSection() {
                     <span className="text-muted-foreground">Vite</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
-                      <span className="text-xs text-muted-foreground/60">v7.3.2</span>
+                      <span className="text-xs text-muted-foreground/60">v7.3.5</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
@@ -513,7 +520,7 @@ export function SbomSection() {
                     <span className="text-muted-foreground">Vitest</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
-                      <span className="text-xs text-muted-foreground/60">v4.1.7</span>
+                      <span className="text-xs text-muted-foreground/60">v4.1.8</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">

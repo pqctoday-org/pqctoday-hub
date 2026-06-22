@@ -17,6 +17,7 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'compliance-checklist': 'Compliance Checklist',
   'audit-checklist': 'Audit Checklist',
   'compliance-timeline': 'Compliance Timeline',
+  'migration-verification': 'Migration Verification & Closure',
   'board-deck': 'Board Deck',
   'contract-clause': 'Contract Clause',
   'kpi-dashboard': 'KPI Dashboard',
@@ -35,6 +36,14 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'mti-negotiator': 'MTI Recommendation',
   'crypto-api-refactor': 'Crypto API Refactor Audit',
   'cloud-responsibility-matrix': 'Cloud Responsibility Matrix',
+  'program-charter': 'Program Charter',
+  'initial-scoping': 'Initial Scoping Assessment',
+  'skills-team-plan': 'Skills & Team Plan',
+  'infra-modernization-plan': 'Infrastructure Modernization Plan',
+  'refresh-cycle-alignment': 'Refresh-Cycle Alignment',
+  'accelerated-execution-profile': 'Accelerated Execution Profile',
+  'data-at-rest-strategy': 'Data-at-Rest Strategy',
+  'sim-roadmap': 'Simulation Roadmap',
 }
 
 const PILLAR_COLORS: Record<string, string> = {

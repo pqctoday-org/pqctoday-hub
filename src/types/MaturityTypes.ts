@@ -3,7 +3,7 @@ import type {
   PillarId,
   MaturityLevel,
   AssetClass,
-} from '@/components/PKILearning/modules/CryptoMgmtModernization/data/maturityModel'
+} from '@/components/PKILearning/modules/CryptoMgmtModernization/data/cpmMaturityModel'
 
 export type { PillarId, MaturityLevel, AssetClass }
 

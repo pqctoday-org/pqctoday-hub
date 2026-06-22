@@ -56,6 +56,151 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   )
 }
 
+// ─── Data-at-Rest Strategy Chooser (Applied Quantum §5.6) ────────────────────
+// Maps three data-at-rest characteristics to one of three migration strategies:
+// re-encrypt (rewrite ciphertext under PQC), key-wrap (re-wrap the DEK with an
+// ML-KEM KEK, leaving bulk ciphertext in place), or crypto-shred (destroy keys
+// to render data unrecoverable). Pure UI; no persistence, fully keyboard-driven.
+
+type AtRestStrategy = 'reencrypt' | 'keywrap' | 'cryptoshred'
+
+const AT_REST_STRATEGIES: Record<
+  AtRestStrategy,
+  { label: string; how: string; icon: React.ReactNode; accent: string }
+> = {
+  reencrypt: {
+    label: 'Re-encrypt in place',
+    how: 'Decrypt and re-encrypt the bulk data under a PQC-wrapped key. Highest cost; required when the ciphertext itself must become quantum-safe.',
+    icon: <RefreshCw size={16} className="text-status-warning" />,
+    accent: 'border-status-warning/30 bg-status-warning/5',
+  },
+  keywrap: {
+    label: 'PQC key-wrap (re-wrap the DEK)',
+    how: 'Leave bulk ciphertext as-is; re-wrap the data-encryption key with an ML-KEM key-encryption key. Cheapest quantum-safe path when the symmetric layer (AES-256) is already strong.',
+    icon: <KeyRound size={16} className="text-primary" />,
+    accent: 'border-primary/30 bg-primary/5',
+  },
+  cryptoshred: {
+    label: 'Crypto-shred',
+    how: 'Destroy the wrapping keys to render data permanently unrecoverable. Use for end-of-life or low-value data instead of paying to migrate it.',
+    icon: <Lock size={16} className="text-destructive" />,
+    accent: 'border-destructive/30 bg-destructive/5',
+  },
+}
+
+const DataAtRestStrategyChooser: React.FC = () => {
+  const [retention, setRetention] = useState<'short' | 'long'>('long')
+  const [symmetric, setSymmetric] = useState<'aes256' | 'weak'>('aes256')
+  const [value, setValue] = useState<'active' | 'eol'>('active')
+
+  // Decision tree (Applied Quantum §5.6):
+  //  - end-of-life / low value  → crypto-shred (don't pay to migrate it)
+  //  - symmetric layer weak OR ciphertext itself must change → re-encrypt
+  //  - otherwise (AES-256, still in use) → key-wrap is the cheapest safe path
+  // `retention` sharpens the urgency message but, with a strong symmetric layer,
+  // key-wrap is the cheapest safe path regardless of lifetime.
+  let strategy: AtRestStrategy
+  if (value === 'eol') {
+    strategy = 'cryptoshred'
+  } else if (symmetric === 'weak') {
+    strategy = 'reencrypt'
+  } else {
+    strategy = 'keywrap'
+  }
+
+  // eslint-disable-next-line security/detect-object-injection -- `strategy` is a typed union
+  const rec = AT_REST_STRATEGIES[strategy]
+
+  const choiceRow = (
+    label: string,
+    options: { id: string; label: string; active: boolean; onClick: () => void }[]
+  ) => (
+    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+      <span className="text-xs font-medium text-muted-foreground w-44 shrink-0">{label}</span>
+      <div className="flex flex-wrap gap-2">
+        {options.map((o) => (
+          <Button
+            key={o.id}
+            variant={o.active ? 'gradient' : 'outline'}
+            size="sm"
+            onClick={o.onClick}
+            aria-pressed={o.active}
+          >
+            {o.label}
+          </Button>
+        ))}
+      </div>
+    </div>
+  )
+
+  return (
+    <div className="space-y-4">
+      <p>
+        Not all data-at-rest needs the same treatment. Describe the dataset and this chooser
+        recommends a migration strategy &mdash; from cheapest (key-wrap) to most expensive
+        (re-encrypt), or crypto-shred when migration isn&apos;t worth it.
+      </p>
+
+      <div className="space-y-3 p-4 rounded-lg bg-muted/40 border border-border">
+        {choiceRow('Secrecy lifetime', [
+          {
+            id: 'short',
+            label: 'Short (<1 yr)',
+            active: retention === 'short',
+            onClick: () => setRetention('short'),
+          },
+          {
+            id: 'long',
+            label: 'Long (years / HNDL-exposed)',
+            active: retention === 'long',
+            onClick: () => setRetention('long'),
+          },
+        ])}
+        {choiceRow('Symmetric layer', [
+          {
+            id: 'aes256',
+            label: 'AES-256 (quantum-OK)',
+            active: symmetric === 'aes256',
+            onClick: () => setSymmetric('aes256'),
+          },
+          {
+            id: 'weak',
+            label: 'Weak / non-AES-256',
+            active: symmetric === 'weak',
+            onClick: () => setSymmetric('weak'),
+          },
+        ])}
+        {choiceRow('Data value', [
+          {
+            id: 'active',
+            label: 'Active / in use',
+            active: value === 'active',
+            onClick: () => setValue('active'),
+          },
+          {
+            id: 'eol',
+            label: 'End-of-life / low value',
+            active: value === 'eol',
+            onClick: () => setValue('eol'),
+          },
+        ])}
+      </div>
+
+      <div className={`rounded-lg p-4 border ${rec.accent}`} role="status" aria-live="polite">
+        <div className="flex items-center gap-2 mb-1">
+          {rec.icon}
+          <span className="text-sm font-bold text-foreground">Recommended: {rec.label}</span>
+        </div>
+        <p className="text-xs text-muted-foreground">{rec.how}</p>
+      </div>
+
+      <p className="text-[11px] text-muted-foreground">
+        Source: Applied Quantum PQC Migration Framework §5.6 (Data-at-rest strategy).
+      </p>
+    </div>
+  )
+}
+
 export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
@@ -474,6 +619,14 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             risk for new data immediately; historical records require re-encryption.
           </p>
         </div>
+      </CollapsibleSection>
+
+      {/* Data-at-Rest Strategy Chooser (Applied Quantum §5.6) */}
+      <CollapsibleSection
+        icon={<HardDrive size={24} className="text-primary" />}
+        title="Lab: Data-at-Rest Strategy Chooser"
+      >
+        <DataAtRestStrategyChooser />
       </CollapsibleSection>
 
       <VendorCoverageNotice migrateLayer="Database" />

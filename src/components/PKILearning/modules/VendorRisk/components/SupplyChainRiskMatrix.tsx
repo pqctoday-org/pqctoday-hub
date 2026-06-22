@@ -6,6 +6,9 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
 import { LAYERS } from '@/components/Migrate/InfrastructureStack'
+import { softwareItemToCbomInput } from '@/components/Migrate/cbomExport'
+import { buildCbomDocument, downloadCbomJson } from '@/services/cbom/cycloneDx'
+import { isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import {
   Info,
@@ -205,7 +208,8 @@ export const SupplyChainRiskMatrix: React.FC = () => {
 
   // CSWP.39 §5.2 educational extensions: CBOM by asset class + pipeline metadata.
   const [pipelineSources, setPipelineSources] = useState('')
-  const [refreshCadence, setRefreshCadence] = useState('Quarterly')
+  // No silent pre-fill — the input shows a placeholder of suggested cadences instead.
+  const [refreshCadence, setRefreshCadence] = useState('')
   const [cmdbMapping, setCmdbMapping] = useState('')
 
   const cbomBuckets = useMemo(() => {
@@ -248,17 +252,8 @@ export const SupplyChainRiskMatrix: React.FC = () => {
       if (!products || products.length === 0) continue
 
       const total = products.length
-      const pqcReady = products.filter(
-        (p) => p.pqcSupport && p.pqcSupport !== 'None' && p.pqcSupport !== 'No'
-      ).length
-      const fipsValid = products.filter((p) => {
-        const s = (p.fipsValidated || '').toLowerCase()
-        return (
-          s.startsWith('yes') ||
-          s === 'validated' ||
-          (s.includes('fips 140') && !s.startsWith('no'))
-        )
-      }).length
+      const pqcReady = products.filter((p) => isPqcReady(p.pqcSupport)).length
+      const fipsValid = products.filter((p) => isFips1403Validated(p.fipsValidated)).length
       const hybrid = products.filter((p) => {
         const desc = (p.pqcCapabilityDescription || '').toLowerCase()
         const support = (p.pqcSupport || '').toLowerCase()
@@ -360,53 +355,28 @@ export const SupplyChainRiskMatrix: React.FC = () => {
     cmdbMapping,
   ])
 
-  const cbomJson = useMemo(() => {
-    // Minimal CycloneDX-shaped CBOM (educational, not spec-complete).
-    return {
-      bomFormat: 'CycloneDX',
-      specVersion: '1.6',
-      version: 1,
-      metadata: {
-        timestamp: new Date().toISOString(),
-        component: { type: 'application', name: 'PQC Today CBOM Export' },
-        properties: [
-          ...(industry ? [{ name: 'industry', value: industry }] : []),
-          ...(country ? [{ name: 'country', value: country }] : []),
-        ],
-      },
-      components: (Object.keys(cbomBuckets) as CSWP39AssetClass[]).flatMap((cls) =>
-        cbomBuckets[cls].map((item) => ({
-          type: 'cryptographic-asset',
-          name: item.softwareName,
-          publisher: item.vendorId ?? undefined,
-          version: item.latestVersion || undefined,
-          properties: [
-            { name: 'cswp39:assetClass', value: cls },
-            { name: 'cswp39:pqcSupport', value: item.pqcSupport || 'Unknown' },
-            { name: 'cswp39:fipsValidated', value: item.fipsValidated || 'Unknown' },
-            ...(item.infrastructureLayer
-              ? [{ name: 'pqctoday:infrastructureLayer', value: item.infrastructureLayer }]
-              : []),
-            ...(item.categoryName
-              ? [{ name: 'pqctoday:categoryName', value: item.categoryName }]
-              : []),
-          ],
-        }))
-      ),
-    }
+  // A real, schema-valid CycloneDX 1.6 CBOM (shared emitter). Each product maps
+  // through the same SoftwareItem adapter the Migrate export uses, tagged with its
+  // CSWP.39 asset class; PQC algorithms surface as `cryptographic-asset` children
+  // carrying `cryptoProperties` (the part the old inline JSON was missing).
+  const cbomResult = useMemo(() => {
+    const inputs = (Object.keys(cbomBuckets) as CSWP39AssetClass[]).flatMap((cls) =>
+      cbomBuckets[cls].map((item) =>
+        softwareItemToCbomInput(item, [{ name: 'cswp39:assetClass', value: cls }])
+      )
+    )
+    return buildCbomDocument(inputs, {
+      toolName: 'PQC Today Supply-Chain CBOM',
+      properties: [
+        ...(industry ? [{ name: 'industry', value: industry }] : []),
+        ...(country ? [{ name: 'country', value: country }] : []),
+      ],
+    })
   }, [cbomBuckets, industry, country])
 
   const handleDownloadCbomJson = useCallback(() => {
-    const blob = new Blob([JSON.stringify(cbomJson, null, 2)], {
-      type: 'application/vnd.cyclonedx+json',
-    })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `cbom-${Date.now()}.cdx.json`
-    a.click()
-    URL.revokeObjectURL(url)
-  }, [cbomJson])
+    downloadCbomJson(cbomResult.json, 'cbom-cyclonedx')
+  }, [cbomResult])
 
   const handleExport = useCallback(() => {
     addExecutiveDocument({
@@ -450,12 +420,7 @@ export const SupplyChainRiskMatrix: React.FC = () => {
   return (
     <div className="space-y-6">
       {seedSources.length > 0 && (
-        <PreFilledBanner
-          summary={`Matrix derived from ${seedSources.join(' + ')}.`}
-          onClear={() => {
-            /* matrix recomputes from live catalog data; clear is informational */
-          }}
-        />
+        <PreFilledBanner summary={`Matrix derived from ${seedSources.join(' + ')}.`} />
       )}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-sm text-foreground/80">
@@ -613,7 +578,7 @@ export const SupplyChainRiskMatrix: React.FC = () => {
         <div className="mt-3">
           <Button variant="outline" size="sm" onClick={handleDownloadCbomJson}>
             <Download size={14} className="mr-1" />
-            Download CBOM JSON (CycloneDX-shaped)
+            Download CBOM JSON (CycloneDX 1.6)
           </Button>
         </div>
       </div>

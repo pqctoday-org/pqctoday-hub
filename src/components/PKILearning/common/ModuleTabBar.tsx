@@ -3,12 +3,16 @@ import { useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { TabsTrigger } from '@/components/ui/tabs'
+import { useEmbeddedLearn } from '../embeddedLearnContext'
 
 interface TabItem {
   value: string
   label: string
   hasDot?: boolean
 }
+
+// When a module is embedded in the Simulation, keep only Learn / Visual / Workshop.
+const HIDE_IN_SIM = new Set(['exercises', 'references', 'tools'])
 
 interface ModuleTabBarProps {
   tabs: TabItem[]
@@ -26,13 +30,16 @@ interface ModuleTabBarProps {
  * trigger to indicate in-progress content (Workshop, Visual tabs only).
  */
 export const ModuleTabBar = ({
-  tabs,
+  tabs: allTabs,
   value,
   onValueChange,
   visibleOnMobile = 3,
 }: ModuleTabBarProps) => {
   const [overflowOpen, setOverflowOpen] = useState(false)
   const overflowRef = useRef<HTMLDivElement>(null)
+  // hide Exercises / References / Tools & Products when embedded in the simulation
+  const embedded = useEmbeddedLearn()
+  const tabs = embedded ? allTabs.filter((t) => !HIDE_IN_SIM.has(t.value)) : allTabs
 
   useEffect(() => {
     const handle = (e: Event) => {

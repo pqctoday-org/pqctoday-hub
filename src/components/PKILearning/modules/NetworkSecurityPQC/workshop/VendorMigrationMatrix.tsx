@@ -6,6 +6,7 @@ import {
   PQC_STATUS_LABELS,
   SUPPORT_STATUS_LABELS,
   FEATURE_FILTERS,
+  getVendorPqcStatus,
   type PQCStatusKey,
   type SupportStatusKey,
 } from '../data/networkProviderData'
@@ -50,7 +51,7 @@ export const VendorMigrationMatrix: React.FC = () => {
         case 'hardware-offload':
           return v.hardwareOffload
         case 'ga':
-          return v.pqcStatus === 'ga'
+          return getVendorPqcStatus(v) === 'ga'
         case 'enterprise':
           return v.tier === 'enterprise'
         default:
@@ -60,9 +61,9 @@ export const VendorMigrationMatrix: React.FC = () => {
   }, [selectedFilter])
 
   const readinessBreakdown = useMemo(() => {
-    const ga = VENDOR_MIGRATION_DATA.filter((v) => v.pqcStatus === 'ga').length
-    const beta = VENDOR_MIGRATION_DATA.filter((v) => v.pqcStatus === 'beta').length
-    const roadmap = VENDOR_MIGRATION_DATA.filter((v) => v.pqcStatus === 'roadmap').length
+    const ga = VENDOR_MIGRATION_DATA.filter((v) => getVendorPqcStatus(v) === 'ga').length
+    const beta = VENDOR_MIGRATION_DATA.filter((v) => getVendorPqcStatus(v) === 'beta').length
+    const roadmap = VENDOR_MIGRATION_DATA.filter((v) => getVendorPqcStatus(v) === 'roadmap').length
     return { ga, beta, roadmap, total: VENDOR_MIGRATION_DATA.length }
   }, [])
 
@@ -135,7 +136,7 @@ export const VendorMigrationMatrix: React.FC = () => {
             </thead>
             <tbody>
               {filteredVendors.map((vendor) => {
-                const pqcLabel = PQC_STATUS_LABELS[vendor.pqcStatus as PQCStatusKey]
+                const pqcLabel = PQC_STATUS_LABELS[getVendorPqcStatus(vendor)]
                 const isExpanded = expandedId === vendor.id
                 return (
                   <React.Fragment key={vendor.id}>
@@ -262,7 +263,7 @@ export const VendorMigrationMatrix: React.FC = () => {
       {/* Mobile Cards */}
       <div className="space-y-3 md:hidden">
         {filteredVendors.map((vendor) => {
-          const pqcLabel = PQC_STATUS_LABELS[vendor.pqcStatus as PQCStatusKey]
+          const pqcLabel = PQC_STATUS_LABELS[getVendorPqcStatus(vendor)]
           const isExpanded = expandedId === vendor.id
           return (
             <div key={vendor.id} className="glass-panel p-4">

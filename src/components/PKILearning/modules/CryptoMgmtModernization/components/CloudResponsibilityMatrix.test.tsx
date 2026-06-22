@@ -147,45 +147,51 @@ describe('buildCloudResponsibilityMatrix - cell content assertions', () => {
 })
 
 describe('buildCloudResponsibilityMatrix - PQC availability lookup', () => {
-  it('AWS for TLS asset class returns "roadmap" (TLS preview)', () => {
+  // Availability is now DERIVED from the product catalog (single source of
+  // truth), so these expectations track the catalog: AWS KMS/CloudHSM + gateway
+  // products are 'available'; Oracle Key Vault is 'roadmap'.
+  it('AWS for TLS asset class returns "available" (catalog: AWS gateway/ALB available)', () => {
     const rec = buildCloudResponsibilityMatrix({
       ...baseInputs,
       cloudProviders: ['AWS'],
       assetClasses: ['TLS termination'],
       serviceModelMix: ['IaaS'],
     })
-    expect(rec.matrix[0].pqcAvailability).toBe('roadmap')
+    expect(rec.matrix[0].pqcAvailability).toBe('available')
   })
 
-  it('AWS for KMS asset class returns "partial" (KMS rolling out)', () => {
+  it('AWS for KMS asset class returns "available" (catalog: AWS KMS available)', () => {
     const rec = buildCloudResponsibilityMatrix({
       ...baseInputs,
       cloudProviders: ['AWS'],
       assetClasses: ['KMS-backed keys'],
       serviceModelMix: ['IaaS'],
     })
-    expect(rec.matrix[0].pqcAvailability).toBe('partial')
+    expect(rec.matrix[0].pqcAvailability).toBe('available')
   })
 
-  it('Multi-provider takes the worst-case availability (AWS + Oracle => no-public-plan)', () => {
+  it('Multi-provider takes the worst-case availability (AWS available + Oracle roadmap => roadmap)', () => {
     const rec = buildCloudResponsibilityMatrix({
       ...baseInputs,
       cloudProviders: ['AWS', 'Oracle'],
       assetClasses: ['KMS-backed keys'],
       serviceModelMix: ['IaaS'],
     })
-    expect(rec.matrix[0].pqcAvailability).toBe('no-public-plan')
+    expect(rec.matrix[0].pqcAvailability).toBe('roadmap')
   })
 })
 
 describe('buildCloudResponsibilityMatrix - watch-outs', () => {
-  it('multi-cloud (>=2 providers) emits the AWS/GCP timing-skew warning', () => {
+  it('multi-cloud (>=2 providers) names each cloud + its catalog-derived PQC status', () => {
     const rec = buildCloudResponsibilityMatrix({
       ...baseInputs,
       cloudProviders: ['AWS', 'GCP'],
     })
     expect(rec.watchOuts.join(' ')).toMatch(/Multi-cloud/i)
-    expect(rec.watchOuts.join(' ')).toMatch(/AWS|GCP/)
+    expect(rec.watchOuts.join(' ')).toMatch(/AWS/)
+    expect(rec.watchOuts.join(' ')).toMatch(/GCP/)
+    // status is derived from the catalog, not a hardcoded "GCP still in preview"
+    expect(rec.watchOuts.join(' ')).toMatch(/KMS PQC:/)
   })
 
   it('explicit multi-cloud token also triggers the multi-cloud warning', () => {

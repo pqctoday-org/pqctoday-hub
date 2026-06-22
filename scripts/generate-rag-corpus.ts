@@ -18,6 +18,9 @@ import {
   NICE_WORK_ROLES,
 } from '../src/data/niceFramework'
 import { NICE_MODULE_MAP } from '../src/data/niceModuleMapping'
+import { pathToFileURL } from 'url'
+import { buildCatalog, buildModuleTracks } from '../src/components/PKILearning/manifest/derive'
+import type { ModuleManifest } from '../src/components/PKILearning/manifest/types'
 import { PROTOCOL_MATRIX } from '../src/data/pqcProtocolMatrix'
 import {
   CNSA_2_0,
@@ -1186,37 +1189,51 @@ function processLeaders(): RAGChunk[] {
   return chunks
 }
 
-function processModules(): RAGChunk[] {
-  // Read moduleData.ts directly — parse the MODULE_CATALOG entries
-  const filePath = path.join(process.cwd(), 'src', 'components', 'PKILearning', 'moduleData.ts')
-  const raw = fs.readFileSync(filePath, 'utf-8')
+let _manifestCache: ModuleManifest[] | null = null
+/**
+ * Node-safe module-manifest loader. The app's `manifest/registry.ts` discovers
+ * manifests with Vite's `import.meta.glob`, which doesn't exist in this tsx
+ * script — so we glob the co-located `modules/<X>/manifest.ts` files ourselves
+ * and import their default export. (The A1 single-source cut-over moved module
+ * definitions out of inline `MODULE_CATALOG` literals into these manifests; this
+ * loader is what lets the corpus generator follow.)
+ */
+async function loadModuleManifests(): Promise<ModuleManifest[]> {
+  if (_manifestCache) return _manifestCache
+  const dir = path.join(process.cwd(), 'src', 'components', 'PKILearning', 'modules')
+  const files = fs
+    .readdirSync(dir)
+    .map((d) => path.join(dir, d, 'manifest.ts'))
+    .filter((f) => fs.existsSync(f))
+  const mods = await Promise.all(files.map((f) => import(pathToFileURL(f).href)))
+  _manifestCache = mods.map((m) => m.default as ModuleManifest).filter(Boolean)
+  return _manifestCache
+}
+
+async function processModules(): Promise<RAGChunk[]> {
+  // Build the catalog from the single-source manifests (A1 cut-over). This used
+  // to regex-scrape inline MODULE_CATALOG literals from moduleData.ts, which the
+  // manifest migration removed — leaving 0 module chunks.
+  const catalog = buildCatalog(await loadModuleManifests())
 
   const chunks: RAGChunk[] = []
-  // Match module entries: 'module-id': { ... } or module-id: { ... } (unquoted keys are valid JS)
-  const moduleRegex =
-    /(?:['"]([^'"]+)['"]|([\w-]+))\s*:\s*\{(?:[^{}]*?)id:\s*['"]([^'"]+)['"]\s*,(?:[^{}]*?)title:\s*['"]([^'"]+)['"]\s*,(?:[^{}]*?)description:\s*(?:'((?:[^'\\]|\\.)*)'|"((?:[^"\\]|\\.)*)")\s*,(?:[^{}]*?)duration:\s*['"]([^'"]+)['"]/gs
-
-  let match
-  while ((match = moduleRegex.exec(raw)) !== null) {
-    const [, , , id, title, desc1, desc2, duration] = match
-    const description = (desc1 ?? desc2 ?? '').replace(/\\'/g, "'")
-
+  for (const [id, mod] of Object.entries(catalog)) {
     if (id === 'quiz' || id === 'assess') continue // skip non-learning modules
 
     const content = [
-      `Learning Module: ${title}`,
-      `Description: ${description}`,
-      `Duration: ${duration}`,
+      `Learning Module: ${mod.title}`,
+      `Description: ${mod.description}`,
+      `Duration: ${mod.duration}`,
       `URL: /learn/${id}`,
     ].join('\n')
 
     chunks.push({
       id: `module-${id}`,
       source: 'modules',
-      title,
+      title: mod.title,
       content,
       category: 'learning',
-      metadata: { moduleId: id, duration },
+      metadata: { moduleId: id, duration: mod.duration },
       deepLink: `/learn/${id}`,
     })
   }
@@ -1524,36 +1541,18 @@ function processCswp39Steps(): RAGChunk[] {
 }
 
 /**
- * Process MODULE_TRACKS from moduleData.ts → one chunk per learning track.
- * Chunk ID: `track-${slug}`. Links to its constituent modules via metadata.moduleIds.
+ * Process learning tracks from the single-source manifests → one chunk per
+ * track. Chunk ID: `track-${slug}`. Links to its constituent modules via
+ * metadata.moduleIds. (Was a regex scrape of moduleData.ts before the A1 cut-over.)
  */
-function processLearningTracks(): RAGChunk[] {
-  const filePath = path.join(process.cwd(), 'src', 'components', 'PKILearning', 'moduleData.ts')
-  if (!fs.existsSync(filePath)) return []
-  const raw = fs.readFileSync(filePath, 'utf-8')
+async function processLearningTracks(): Promise<RAGChunk[]> {
+  const tracks = buildModuleTracks(await loadModuleManifests())
 
   const chunks: RAGChunk[] = []
-  // Find all track names first (in declaration order)
-  const trackNameRegex = /track:\s*['"]([^'"]+)['"]/g
-  const trackPositions: { name: string; idx: number }[] = []
-  let tm: RegExpExecArray | null
-  while ((tm = trackNameRegex.exec(raw)) !== null) {
-    trackPositions.push({ name: tm[1], idx: tm.index })
-  }
-
-  // For each track, grab MODULE_CATALOG['xxx'] occurrences between this track and the next
-  const idRegex = /MODULE_CATALOG\[['"]([^'"]+)['"]\]/g
-  for (let i = 0; i < trackPositions.length; i++) {
-    const start = trackPositions[i].idx
-    const end = i + 1 < trackPositions.length ? trackPositions[i + 1].idx : raw.length
-    const block = raw.slice(start, end)
-    const modIds: string[] = []
-    idRegex.lastIndex = 0
-    let im: RegExpExecArray | null
-    while ((im = idRegex.exec(block)) !== null) modIds.push(im[1])
+  for (const { track: trackName, modules } of tracks) {
+    const modIds = modules.map((m) => m.id)
     if (modIds.length === 0) continue
 
-    const trackName = trackPositions[i].name
     const slug = trackName
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')

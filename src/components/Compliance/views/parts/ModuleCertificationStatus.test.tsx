@@ -39,7 +39,7 @@ describe('ModuleCertificationStatus', () => {
       stub({ id: '2', pqcCoverage: 'ML-KEM' }),
       stub({ id: '3', pqcCoverage: 'No PQC Mechanisms Detected' }),
     ])
-    // 3 total, 2 with PQC (67%), ML-KEM=2 (rows 1+2), ML-DSA=1 (row 1)
+    // 3 total, 2 with confirmed PQC (67%), ML-KEM=2 (rows 1+2), ML-DSA=1 (row 1)
     expect(screen.getByText('Modules tracked').parentElement).toHaveTextContent('3')
     const pqcTile = screen.getByText('With PQC support').parentElement
     expect(pqcTile).toHaveTextContent('2')
@@ -48,16 +48,45 @@ describe('ModuleCertificationStatus', () => {
     expect(screen.getByText('ML-DSA validated').parentElement).toHaveTextContent('1')
   })
 
+  it('does NOT count heuristic or pending labels as confirmed PQC', () => {
+    renderPanel([
+      stub({ id: '1', pqcCoverage: 'ML-KEM' }), // confirmed
+      stub({ id: '2', pqcCoverage: 'Potentially PQC' }), // heuristic → unanalyzed
+      stub({ id: '3', pqcCoverage: 'Potentially PQC (Name Match)' }), // heuristic
+      stub({ id: '4', pqcCoverage: 'Not Yet Analyzed' }), // CC unanalyzed
+      stub({ id: '5', pqcCoverage: 'Pending Check...' }), // ACVP pending
+    ])
+    // Only row 1 counts as confirmed PQC
+    const pqcTile = screen.getByText('With PQC support').parentElement
+    expect(pqcTile).toHaveTextContent('1')
+    // 4 unanalyzed rows appear in the footer note
+    expect(screen.getByText(/not yet analyzed for PQC/)).toBeInTheDocument()
+  })
+
   it('mentions the count of classical-only modules in the footer', () => {
     renderPanel([
       stub({ id: '1', pqcCoverage: 'No PQC Mechanisms Detected' }),
       stub({ id: '2', pqcCoverage: '' }),
       stub({ id: '3', pqcCoverage: 'ML-KEM' }),
     ])
-    // 2 are no-PQC (one explicit, one empty string)
-    expect(
-      screen.getByText(/2 modules in the registry still ship classical-only/)
-    ).toBeInTheDocument()
+    // 2 are confirmed no-PQC (one explicit, one empty string)
+    expect(screen.getByText(/2 modules confirmed classical-only/)).toBeInTheDocument()
+  })
+
+  it('shows unanalyzed count in footer when non-zero', () => {
+    renderPanel([
+      stub({ id: '1', pqcCoverage: 'Not Yet Analyzed' }),
+      stub({ id: '2', pqcCoverage: 'ML-KEM' }),
+    ])
+    expect(screen.getByText(/1 not yet analyzed for PQC/)).toBeInTheDocument()
+  })
+
+  it('omits unanalyzed note in footer when count is zero', () => {
+    renderPanel([
+      stub({ id: '1', pqcCoverage: 'No PQC Mechanisms Detected' }),
+      stub({ id: '2', pqcCoverage: 'ML-KEM' }),
+    ])
+    expect(screen.queryByText(/not yet analyzed for PQC/)).toBeNull()
   })
 
   it('links to the Records tab', () => {

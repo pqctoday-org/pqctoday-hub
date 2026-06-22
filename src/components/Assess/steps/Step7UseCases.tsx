@@ -16,7 +16,9 @@ import clsx from 'clsx'
 import { PersonaHint } from './PersonaHint'
 import { WhyWeAskHint } from './WhyWeAskHint'
 
-const Step7UseCases = () => {
+import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
+
+const Step7UseCases = ({ hideHeading = false, hideHints = false }: EmbeddedStepProps = {}) => {
   const { cryptoUseCases, toggleCryptoUseCase, useCasesUnknown, setUseCasesUnknown, industry } =
     useAssessmentStore()
 
@@ -49,14 +51,22 @@ const Step7UseCases = () => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-foreground">Where do you use cryptography?</h3>
-      <p className="text-sm text-muted-foreground">
-        Select all cryptographic use cases in your organization. This helps prioritize which
-        migrations are most urgent.
-      </p>
+      {!hideHeading && (
+        <>
+          <h3 className="text-xl font-bold text-foreground">Where do you use cryptography?</h3>
+          <p className="text-sm text-muted-foreground">
+            Select all cryptographic use cases in your organization. This helps prioritize which
+            migrations are most urgent.
+          </p>
+        </>
+      )}
 
-      <PersonaHint stepKey="use-cases" />
-      <WhyWeAskHint stepKey="use-cases" />
+      {!hideHints && (
+        <>
+          <PersonaHint stepKey="use-cases" />
+          <WhyWeAskHint stepKey="use-cases" />
+        </>
+      )}
 
       {/* I don't know — Step 3 model */}
       <Button

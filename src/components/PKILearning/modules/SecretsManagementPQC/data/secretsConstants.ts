@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { getCatalogStatus, type CatalogAvailability } from '@/data/catalogStatus'
+
+export type SecretsProviderPqcStatus = 'ga' | 'preview' | 'planned' | 'none'
 
 export type SecretType =
   | 'api-key'
@@ -53,7 +56,14 @@ export interface CloudSecretsProvider {
   name: string
   product: string
   type: 'cloud' | 'on-prem' | 'hybrid'
-  pqcStatus: 'ga' | 'preview' | 'planned' | 'none'
+  /**
+   * Reference to the product's `software_name` in the central catalog
+   * (`pqc_product_catalog_*.csv`). The headline `pqcStatus` is DERIVED from the
+   * catalog via `getProviderPqcStatus` — never stored here. The granular detail
+   * (pqcAlgorithms / encryptionAtRest / envelope / dynamic secrets / roadmapNote)
+   * stays module-authored.
+   */
+  catalogName: string
   pqcAlgorithms: string[]
   encryptionAtRest: string
   encryptionInTransit: string
@@ -368,7 +378,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     name: 'HashiCorp',
     product: 'Vault Enterprise',
     type: 'on-prem',
-    pqcStatus: 'planned',
+    catalogName: 'HashiCorp Vault',
     pqcAlgorithms: ['ML-KEM-768 (planned 2026)', 'ML-DSA-65 (planned 2026)', 'SLH-DSA (roadmap)'],
     encryptionAtRest: 'AES-256-GCM with Shamir Secret Sharing for unseal keys',
     encryptionInTransit: 'TLS 1.3 (hybrid ML-KEM planned via HPKE)',
@@ -384,7 +394,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     name: 'Amazon Web Services',
     product: 'AWS Secrets Manager',
     type: 'cloud',
-    pqcStatus: 'none',
+    catalogName: 'AWS Secrets Manager',
     pqcAlgorithms: [
       'Inherits AWS KMS: ML-KEM-768 (GA via ML-KEM key spec)',
       'ML-DSA-44/65/87 (GA 2024)',
@@ -403,28 +413,24 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     name: 'Microsoft Azure',
     product: 'Azure Key Vault (Managed HSM)',
     type: 'cloud',
-    pqcStatus: 'planned',
-    pqcAlgorithms: [
-      'ML-KEM-768/1024 (planned 2026)',
-      'ML-DSA-44/65/87 (planned 2026)',
-      'SymCrypt internal support available',
-    ],
-    encryptionAtRest: 'AES-256-CBC/GCM, RSA-OAEP-256 for key wrapping (FIPS 140-2 Level 3)',
-    encryptionInTransit: 'TLS 1.3 (hybrid ML-KEM planned H1 2026)',
+    catalogName: 'Azure Managed HSM',
+    pqcAlgorithms: ['None — RSA-HSM / EC-HSM / oct-HSM key types only (no NIST PQC)'],
+    encryptionAtRest: 'AES-256-CBC/GCM, RSA-OAEP-256 for key wrapping (FIPS 140-3 Level 3)',
+    encryptionInTransit: 'TLS 1.3',
     envelopeEncryption: true,
     dynamicSecrets: false,
     kubernetesIntegration:
       'Azure Key Vault Provider for Secrets Store CSI Driver / External Secrets Operator',
     fipsMode: true,
     roadmapNote:
-      "Managed HSM PQC support announced for 2026. SymCrypt (Microsoft's crypto library) already supports ML-KEM and ML-DSA internally; Key Vault API exposure is the remaining gap. No dynamic secrets native.",
+      "Verified 2026-06-19: Managed HSM exposes only classical HSM key types (RSA-HSM/EC-HSM/oct-HSM) — no ML-KEM/ML-DSA key support and none announced. Microsoft's SymCrypt/CNG PQC lives at the OS/PKI layer (Windows Server 2025 AD CS), not in the Managed HSM crypto module. Catalog: none.",
   },
   {
     id: 'gcp-secret-manager',
     name: 'Google Cloud',
     product: 'GCP Secret Manager',
     type: 'cloud',
-    pqcStatus: 'none',
+    catalogName: 'GCP Secret Manager',
     pqcAlgorithms: [
       'Inherits Cloud KMS: ML-KEM (preview)',
       'ML-DSA (preview)',
@@ -444,18 +450,36 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     name: 'Delinea',
     product: 'Secret Server (Privileged Access)',
     type: 'hybrid',
-    pqcStatus: 'planned',
-    pqcAlgorithms: ['ML-KEM-768 (roadmap 2027)', 'ML-DSA-65 (roadmap 2027)'],
-    encryptionAtRest: 'AES-256-CBC with RSA-2048 key wrapping (pre-PQC)',
-    encryptionInTransit: 'TLS 1.2/1.3 (PQC TLS upgrade planned 2026)',
+    catalogName: 'Delinea Secret Server',
+    pqcAlgorithms: ['CRYSTALS-Kyber-1024 (QuantumLock, opt-in, shipping since Mar 2024)'],
+    encryptionAtRest:
+      'AES-256 with DoubleLock; QuantumLock wraps the DoubleLock key with Kyber-1024 (opt-in) instead of RSA-2048',
+    encryptionInTransit: 'TLS 1.2/1.3',
     envelopeEncryption: true,
     dynamicSecrets: true,
     kubernetesIntegration: 'Delinea Kubernetes Connector (DKAP)',
     fipsMode: true,
     roadmapNote:
-      'Privileged Access Management (PAM) platform with session recording, vaulting, and just-in-time access. PQC roadmap announced 2025, targeting algorithm upgrade in 2027. FIPS 140-2 validated currently.',
+      "Verified 2026-06-19: Secret Server ships QuantumLock 'Quantum Safe Encryption' (industry-first, Mar 2024) using CRYSTALS-Kyber-1024 to protect the DoubleLock private key — opt-in (RSA-2048 by default). Native shipping PQC, so catalog: available.",
   },
 ]
+
+// ── Catalog-derived headline status ───────────────────────────────────────────
+// A provider's overall PQC status is the SINGLE SOURCE OF TRUTH in the central
+// product catalog. Map catalog availability → this module's display vocabulary.
+const AVAIL_TO_PQC: Record<CatalogAvailability, SecretsProviderPqcStatus> = {
+  available: 'ga',
+  partial: 'preview',
+  roadmap: 'planned',
+  none: 'none',
+  unverified: 'planned',
+}
+
+/** Headline PQC status for a secrets provider, derived live from the central catalog. */
+export function getProviderPqcStatus(p: CloudSecretsProvider): SecretsProviderPqcStatus {
+  const status = getCatalogStatus(p.catalogName)
+  return status ? AVAIL_TO_PQC[status.availability] : 'planned'
+}
 
 export const PIPELINE_INTEGRATION_PATTERNS: PipelineIntegrationPattern[] = [
   {
@@ -613,7 +637,7 @@ export const HNDL_RISK_LABELS: Record<PQCRiskLevel, string> = {
   low: 'Low',
 }
 
-export const PQC_STATUS_LABELS: Record<CloudSecretsProvider['pqcStatus'], string> = {
+export const PQC_STATUS_LABELS: Record<SecretsProviderPqcStatus, string> = {
   ga: 'GA',
   preview: 'Preview',
   planned: 'Planned',

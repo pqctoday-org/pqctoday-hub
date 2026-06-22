@@ -152,6 +152,13 @@ export function RiskRegisterBuilderStandalone() {
   const seededFromAssessment =
     riskEntries.length > 0 && riskEntries[0]?.id?.startsWith('assess-risk-')
 
+  // True when the register is showing the illustrative demo defaults (cold start,
+  // no assessment data) — these must be labelled as examples, not the user's data.
+  const showingExamples =
+    !seededFromAssessment &&
+    riskEntries.length > 0 &&
+    riskEntries.every((e) => e.id.startsWith('default-'))
+
   useEffect(() => {
     // Only auto-seed when the register is empty AND we have at least one
     // seed row. Otherwise let RiskRegisterBuilder's own defaults run.
@@ -181,7 +188,18 @@ export function RiskRegisterBuilderStandalone() {
           onClear={handleClear}
         />
       )}
-      <RiskRegisterBuilder riskEntries={riskEntries} onRiskEntriesChange={setRiskEntries} />
+      {showingExamples && (
+        <div className="rounded-lg border border-status-warning/30 bg-status-warning/5 px-3 py-2 text-xs text-muted-foreground">
+          <span className="font-medium text-foreground">Example entries</span> — these are
+          illustrative placeholders, not your data. Edit or replace them to build your own register
+          (run an assessment to auto-seed from your reported algorithms).
+        </div>
+      )}
+      <RiskRegisterBuilder
+        riskEntries={riskEntries}
+        onRiskEntriesChange={setRiskEntries}
+        showExampleBanner={false}
+      />
     </div>
   )
 }

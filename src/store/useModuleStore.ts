@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
+import { persist } from 'zustand/middleware'
+import { guardedJSONStorage } from './guardedStorage'
 import type { LearningProgress, ExecutiveDocument } from '../services/storage/types'
 import {
   logModuleStart,
@@ -10,6 +11,7 @@ import {
   logArtifactGenerated,
 } from '../utils/analytics'
 import { LEARN_SECTIONS, WORKSHOP_STEPS } from '../components/PKILearning/moduleData'
+import { applyModuleRenames } from '../components/PKILearning/manifest/contentVersion'
 
 const MODULE_STORE_VERSION = 14
 const KPI_HISTORY_CAP = 30
@@ -28,7 +30,6 @@ interface ModuleState extends LearningProgress {
   toggleLearnSection: (moduleId: string, sectionId: string) => void
   markLearnSectionRead: (moduleId: string, sectionId: string) => void
   markAllLearnSectionsComplete: (moduleId: string) => void
-  saveProgress: () => void
   loadProgress: (progress: LearningProgress) => void
   resetProgress: () => void
   resetModuleProgress: (moduleId: string) => void
@@ -70,6 +71,21 @@ const INITIAL_STATE: LearningProgress = {
   notes: {},
   sessionTracking: undefined,
   quizMastery: { correctQuestionIds: [] },
+}
+
+/**
+ * Major number of the persisted data-version string ("14.0.0" → 14) — the input
+ * the migrate ladder expects. The data-version major tracks MODULE_STORE_VERSION
+ * (each migrate step sets `state.version = '<N>.0.0'`). Absent/unparseable → 0,
+ * so a very old or unversioned file runs the full ladder.
+ */
+function parseDataVersion(v: unknown): number {
+  if (typeof v === 'number') return v
+  if (typeof v === 'string') {
+    const major = parseInt(v.split('.')[0], 10)
+    return Number.isNaN(major) ? 0 : major
+  }
+  return 0
 }
 
 export const useModuleStore = create<ModuleState>()(
@@ -387,27 +403,29 @@ export const useModuleStore = create<ModuleState>()(
           }
         }),
 
-      saveProgress: () => {
-        const progress = get().getFullProgress()
-        const dataStr = JSON.stringify(progress, null, 2)
-        const dataBlob = new Blob([dataStr], { type: 'application/json' })
-        const url = URL.createObjectURL(dataBlob)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = `pki-learning-progress-${new Date().toISOString().split('T')[0]}.json`
-        link.click()
-        URL.revokeObjectURL(url)
-      },
-
       loadProgress: (progress) =>
-        set((state) => ({
-          ...state,
-          ...progress,
-          // Preserve sessionTracking from live state if imported file predates v3
-          sessionTracking: progress.sessionTracking ?? state.sessionTracking,
-          // Preserve quizMastery from live state if imported file predates v4
-          quizMastery: progress.quizMastery ?? state.quizMastery,
-        })),
+        set((state) => {
+          // Route the imported file through the SAME migrate ladder that runs on
+          // localStorage rehydrate (reused via persist.getOptions().migrate — one
+          // source of truth, no duplicated logic). Without this, an old backup
+          // imported as-is keeps stale/partial shapes — e.g. a pre-v6 file still
+          // carrying the retired `key-management` id would never be split into
+          // kms-pqc / hsm-pqc, silently losing that progress. Deep-copy first:
+          // the migrate ladder mutates its argument.
+          const fromVersion = parseDataVersion(progress.version)
+          const migrate = useModuleStore.persist.getOptions().migrate
+          const migrated = (
+            migrate ? migrate(JSON.parse(JSON.stringify(progress)), fromVersion) : progress
+          ) as LearningProgress
+          return {
+            ...state,
+            ...migrated,
+            // Preserve original import semantics: prefer the file's value, else
+            // keep live — session streak (v3+) and cumulative quiz mastery (v4+).
+            sessionTracking: progress.sessionTracking ?? state.sessionTracking,
+            quizMastery: progress.quizMastery ?? state.quizMastery,
+          }
+        }),
 
       resetProgress: () => set(INITIAL_STATE),
 
@@ -433,8 +451,6 @@ export const useModuleStore = create<ModuleState>()(
 
       getFullProgress: () => {
         const {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          saveProgress: _saveProgress,
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           loadProgress: _loadProgress,
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -494,7 +510,7 @@ export const useModuleStore = create<ModuleState>()(
     {
       name: 'pki-module-storage',
       version: MODULE_STORE_VERSION,
-      storage: createJSONStorage(() => localStorage),
+      storage: guardedJSONStorage(),
       // Migration function for handling state version upgrades
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -703,6 +719,14 @@ export const useModuleStore = create<ModuleState>()(
           }
           state.version = '14.0.0'
           state.timestamp = Date.now()
+        }
+
+        // B2: apply the DECLARATIVE id rename-map (generalises the one-off
+        // key-management split above) so a renamed module's progress carries
+        // over. Idempotent + runs after all version steps — a future rename is
+        // a one-line MODULE_ID_RENAMES entry + a version bump, not a new step.
+        if (state.modules) {
+          state.modules = applyModuleRenames(state.modules)
         }
 
         return state

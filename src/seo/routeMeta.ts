@@ -157,7 +157,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
       '@graph': [
         {
           '@type': 'ItemList',
-          name: 'Post-Quantum Cryptography Algorithms',
+          name: 'Post-Quantum Algorithms & Protocols',
           description:
             'NIST standardized and candidate PQC algorithms with key sizes and benchmarks.',
           itemListElement: [
@@ -259,7 +259,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   },
 
   '/migrate': {
-    title: 'PQC Migration Catalog — Software & Infrastructure PQC Readiness | PQC Today',
+    title: 'PQC Migration Workbench — Software & Infrastructure PQC Readiness | PQC Today',
     description:
       'Navigate every step of your PQC migration. Track software and infrastructure readiness across 7 technology layers, with FIPS validation status and migration phases mapped to your regulatory obligations.',
     canonical: `${BASE_URL}/migrate`,

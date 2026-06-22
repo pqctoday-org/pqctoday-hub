@@ -19,7 +19,9 @@ import clsx from 'clsx'
 
 import { PersonaHint } from './PersonaHint'
 
-const Step8DataRetention = () => {
+import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
+
+const Step8DataRetention = ({ hideHeading = false, hideHints = false }: EmbeddedStepProps = {}) => {
   const { dataRetention, toggleDataRetention, retentionUnknown, setRetentionUnknown, industry } =
     useAssessmentStore()
 
@@ -38,22 +40,26 @@ const Step8DataRetention = () => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-foreground">
-        How long must your data stay confidential?
-      </h3>
-      <p className="text-sm text-muted-foreground">
-        Select all categories that apply — <InlineTooltip term="HNDL">HNDL</InlineTooltip> risk is
-        assessed against the longest period.
-      </p>
+      {!hideHeading && (
+        <>
+          <h3 className="text-xl font-bold text-foreground">
+            How long must your data stay confidential?
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Select all categories that apply — <InlineTooltip term="HNDL">HNDL</InlineTooltip> risk
+            is assessed against the longest period.
+          </p>
+        </>
+      )}
 
-      <PersonaHint stepKey="retention" />
+      {!hideHints && <PersonaHint stepKey="retention" />}
 
       <div className="glass-panel p-4 border-l-4 border-l-warning mb-4">
         <div className="flex items-start gap-2">
           <Info size={16} className="text-warning shrink-0 mt-0.5" />
           <p className="text-xs text-muted-foreground">
-            If your encrypted data needs to remain confidential past ~2035, adversaries may already
-            be harvesting it today for future quantum decryption.
+            If your encrypted data needs to remain confidential past the first CRQC (~2029),
+            adversaries may already be harvesting it today for future quantum decryption.
           </p>
         </div>
       </div>

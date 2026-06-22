@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { Shuffle, Shield, Cloud, Info, CheckCircle } from 'lucide-react'
 import { HYBRID_COMBINER_MODES } from '../data/kmsConstants'
-import { KMS_PROVIDERS, KMS_STATUS_LABELS } from '../data/kmsProviderData'
+import { KMS_PROVIDERS, KMS_STATUS_LABELS, getKmsPqcStatus } from '../data/kmsProviderData'
 import { Button } from '@/components/ui/button'
 
 type WrapMode = 'classical' | 'pqc' | 'hybrid'
@@ -124,7 +124,7 @@ export const HybridKeyWrapping: React.FC = () => {
 
   const activeHybrid = HYBRID_COMBINER_MODES.find((m) => m.id === selectedMode)
   const activeProvider = CLOUD_PROVIDERS.find((p) => p.id === selectedProvider)
-  const providerStatus = activeProvider ? KMS_STATUS_LABELS[activeProvider.pqcStatus] : null
+  const providerStatus = activeProvider ? KMS_STATUS_LABELS[getKmsPqcStatus(activeProvider)] : null
 
   return (
     <div className="space-y-6">
@@ -323,7 +323,7 @@ export const HybridKeyWrapping: React.FC = () => {
         {/* Provider selector */}
         <div className="flex flex-wrap gap-2 mb-4">
           {CLOUD_PROVIDERS.map((provider) => {
-            const status = KMS_STATUS_LABELS[provider.pqcStatus]
+            const status = KMS_STATUS_LABELS[getKmsPqcStatus(provider)]
             return (
               <Button
                 variant="ghost"

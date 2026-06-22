@@ -26,7 +26,7 @@ import {
   type PresetKey,
 } from './patentColumns'
 
-const PATENTS_CSV_COLUMNS: CsvColumnConfig<PatentItem>[] = [
+export const PATENTS_CSV_COLUMNS: CsvColumnConfig<PatentItem>[] = [
   { header: 'Patent Number', accessor: (p) => p.patentNumber },
   { header: 'Title', accessor: (p) => p.title },
   { header: 'Assignee', accessor: (p) => p.assignee },
@@ -78,7 +78,7 @@ function readPqcOnly(): boolean {
 
 // "PQC only" keeps patents that actually involve post-quantum crypto:
 // at least one PQC algorithm, or a pqc_only / hybrid crypto-agility mode.
-function isPqcPatent(p: PatentItem): boolean {
+export function isPqcPatent(p: PatentItem): boolean {
   return (
     p.pqcAlgorithms.length > 0 ||
     p.cryptoAgilityMode === 'pqc_only' ||

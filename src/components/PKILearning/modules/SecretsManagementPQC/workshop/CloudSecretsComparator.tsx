@@ -5,13 +5,15 @@ import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCove
 import {
   CLOUD_SECRETS_PROVIDERS,
   PQC_STATUS_LABELS,
+  getProviderPqcStatus,
   type CloudSecretsProvider,
+  type SecretsProviderPqcStatus,
 } from '../data/secretsConstants'
 import { Button } from '@/components/ui/button'
 
 type FilterType = 'all' | 'cloud' | 'on-prem' | 'hybrid'
 
-const PQC_STATUS_BADGE: Record<CloudSecretsProvider['pqcStatus'], string> = {
+const PQC_STATUS_BADGE: Record<SecretsProviderPqcStatus, string> = {
   ga: 'text-status-success bg-status-success/10 border-status-success/30',
   preview: 'text-primary bg-primary/10 border-primary/20',
   planned: 'text-status-warning bg-status-warning/10 border-status-warning/30',
@@ -111,9 +113,9 @@ export const CloudSecretsComparator: React.FC = () => {
                     </td>
                     <td className="py-3 px-2">
                       <span
-                        className={`text-[9px] px-1.5 py-0.5 rounded border font-bold ${PQC_STATUS_BADGE[provider.pqcStatus]}`}
+                        className={`text-[9px] px-1.5 py-0.5 rounded border font-bold ${PQC_STATUS_BADGE[getProviderPqcStatus(provider)]}`}
                       >
-                        {PQC_STATUS_LABELS[provider.pqcStatus]}
+                        {PQC_STATUS_LABELS[getProviderPqcStatus(provider)]}
                       </span>
                     </td>
                     <td className="py-3 px-2 text-center">
@@ -215,9 +217,9 @@ export const CloudSecretsComparator: React.FC = () => {
                     {provider.type}
                   </span>
                   <span
-                    className={`text-[9px] px-1.5 py-0.5 rounded border font-bold ${PQC_STATUS_BADGE[provider.pqcStatus]}`}
+                    className={`text-[9px] px-1.5 py-0.5 rounded border font-bold ${PQC_STATUS_BADGE[getProviderPqcStatus(provider)]}`}
                   >
-                    {PQC_STATUS_LABELS[provider.pqcStatus]}
+                    {PQC_STATUS_LABELS[getProviderPqcStatus(provider)]}
                   </span>
                 </div>
               </div>

@@ -8,7 +8,9 @@ import { Info } from 'lucide-react'
 
 import { PersonaHint } from './PersonaHint'
 
-const Step9OrgScale = () => {
+import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
+
+const Step9OrgScale = ({ hideHeading = false, hideHints = false }: EmbeddedStepProps = {}) => {
   const {
     systemCount,
     setSystemCount,
@@ -35,12 +37,16 @@ const Step9OrgScale = () => {
 
   return (
     <div className="space-y-6">
-      <h3 className="text-xl font-bold text-foreground">What is your organizational scale?</h3>
-      <p className="text-sm text-muted-foreground">
-        Migration scope and team capacity directly affect timelines and effort.
-      </p>
+      {!hideHeading && (
+        <>
+          <h3 className="text-xl font-bold text-foreground">What is your organizational scale?</h3>
+          <p className="text-sm text-muted-foreground">
+            Migration scope and team capacity directly affect timelines and effort.
+          </p>
+        </>
+      )}
 
-      <PersonaHint stepKey="scale" />
+      {!hideHints && <PersonaHint stepKey="scale" />}
 
       <Button
         variant="ghost"

@@ -110,6 +110,29 @@ export function pqcReadinessTier(pqcSupport: string | undefined | null): number 
   return 0.3
 }
 
+/**
+ * Single source of truth for the binary "is this product PQC-ready?" used across
+ * the vendor scorecard, supply-chain matrix and executive metrics — derived from
+ * the tier so the three can't disagree. "Ready" = deployed/full or hybrid
+ * (tier ≥ 0.7); planned, pilot and narrative-only values do NOT count (they used
+ * to, which over-stated readiness).
+ */
+export function isPqcReady(pqcSupport: string | undefined | null): boolean {
+  return pqcReadinessTier(pqcSupport) >= 0.7
+}
+
+/**
+ * FIPS 140-**3** validation specifically. A bare "FIPS 140-2" string must NOT
+ * qualify (it previously did, via a loose `includes('fips 140')` check).
+ */
+export function isFips1403Validated(fipsValidated: string | undefined | null): boolean {
+  const s = (fipsValidated || '').toLowerCase().trim()
+  if (!s || s.startsWith('no')) return false
+  if (s.includes('140-3')) return true // explicit 140-3 wins, even if 140-2 is also mentioned
+  if (s.includes('140-2')) return false // 140-2 alone is NOT 140-3
+  return s.startsWith('yes') || s === 'validated'
+}
+
 // ── Shared auto-score helpers ────────────────────────────────────────────
 function clamp(v: number, lo = 0, hi = 100): number {
   return Math.max(lo, Math.min(hi, v))
@@ -152,19 +175,40 @@ const complianceGapsAuto: KpiAutoScoreFn = (data) => {
   return Math.round((closed / selected.length) * 100)
 }
 
-// Pace-to-deadline. Needs `migrationDeadlineYear` + an `algorithmsMigrated`
-// user input — so we read the current stored value from the KPI state at
-// render time via a thin caller. Here we only return null unless a baseline
-// year exists; the component blends this with the user's slider.
-const paceToDeadlineAuto: KpiAutoScoreFn = (data) => {
-  if (!data.migrationDeadlineYear) return null
-  const now = new Date().getFullYear()
-  const totalYears = data.migrationDeadlineYear - now
-  if (totalYears <= 0) return 100 // deadline reached → assume on-track pressure
-  // Without an algorithmsMigrated signal this is indicative only.
-  // Component overlays the real "progress vs expected" view.
-  return clamp(50)
+/**
+ * Pace-to-deadline = actual progress vs the progress *expected* by now on a
+ * straight line from the program start year to the deadline. 50 = on track,
+ * >50 = ahead, <50 = behind.
+ *
+ * Returns `null` (so the user's manual slider stands) when it cannot be computed
+ * honestly — no deadline, no start year, or no progress signal. It never
+ * returns a fabricated constant. Exported pure for unit testing.
+ *
+ * @param progressFraction estate PQC-readiness in [0,1] — the "actual progress".
+ */
+export function computePaceToDeadline(
+  startYear: number | null | undefined,
+  deadlineYear: number | null | undefined,
+  progressFraction: number | null | undefined,
+  now: number
+): number | null {
+  if (!deadlineYear) return null
+  if (deadlineYear - now <= 0) return 100 // deadline reached/past -> max urgency
+  if (startYear == null || deadlineYear <= startYear || typeof progressFraction !== 'number') {
+    return null // no baseline year / progress -> can't compute pace; stay manual
+  }
+  const expected = Math.max(0, Math.min(1, (now - startYear) / (deadlineYear - startYear)))
+  if (expected <= 0) return 100 // program just started; nothing expected by now
+  return clamp(Math.round(50 * (progressFraction / expected)))
 }
+
+const paceToDeadlineAuto: KpiAutoScoreFn = (data) =>
+  computePaceToDeadline(
+    data.migrationStartYear ?? null,
+    data.migrationDeadlineYear,
+    data.vendorReadinessWeighted,
+    new Date().getFullYear()
+  )
 
 // HNDL time-horizon — higher score = more headroom before HNDL risk peaks.
 const hndlHorizonAuto: KpiAutoScoreFn = (data) => {

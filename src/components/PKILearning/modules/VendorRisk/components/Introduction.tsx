@@ -276,7 +276,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           >
             <Route size={18} className="text-primary shrink-0" />
             <div>
-              <div className="text-sm font-medium text-foreground">Migration Catalog</div>
+              <div className="text-sm font-medium text-foreground">Migration Workbench</div>
               <div className="text-xs text-muted-foreground">
                 Browse PQC-ready products across infrastructure layers
               </div>

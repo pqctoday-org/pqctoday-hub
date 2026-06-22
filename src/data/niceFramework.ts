@@ -1,11 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * NICE Framework (NIST SP 800-181 Rev 1 + IR 8355) data layer for pqctoday.
+ * NICE Framework data layer for pqctoday.
  *
- * Competency Areas and Work Roles are drawn from the NICE Framework Resource
- * Center (https://www.nist.gov/nice/framework). Only the subset relevant to
- * post-quantum cryptography is included here. TKS statement IDs reference the
- * live NICE Framework dataset — verify currency against the Resource Center.
+ * Aligned to the **NICE Framework Components v2.2.0** (NIST SP 800-181 Rev 1),
+ * released 2025-04-28. The authoritative source is vendored at
+ * `pqc-references/NICE-Framework-Components-v2.2.0.json` (+ the `-mapping.md`),
+ * and a drift-guard test (`niceFramework.drift.test.ts`) asserts every official
+ * code used here exists in that file.
+ *
+ * Work Roles carry their official v2.2.0 ID (`niceCode`, e.g. 'DD-WRL-001') and
+ * category; we keep familiar job-title labels (`title`) with the official
+ * activity name in `officialName`. Competency Areas + TKS samples below remain an
+ * internal pedagogical lens (Release 2 adds the official NF-COM-### crosswalk).
  *
  * Proficiency tiers:
  *   'awareness'    – Knowledge-only TKS; conceptual understanding, no hands-on required
@@ -16,7 +22,7 @@
 /** Proficiency tier aligned to NICE proficiency scale concept */
 export type NiceProficiencyTier = 'awareness' | 'practitioner' | 'expert'
 
-/** NICE Work Role identifier (NIST SP 800-181 Rev 1) */
+/** Internal work-role slug (stable key; maps to an official v2.2.0 work-role ID via `niceCode`). */
 export type NiceWorkRoleId =
   | 'security-architect'
   | 'security-developer'
@@ -26,6 +32,18 @@ export type NiceWorkRoleId =
   | 'iam-specialist'
   | 'systems-security-analyst'
   | 'is-security-manager'
+
+/** Official NICE Framework v2.2.0 work-role category. */
+export type NiceWorkRoleCategory = 'DD' | 'IO' | 'PD' | 'IN' | 'OG'
+
+/** Official v2.2.0 work-role category labels. */
+export const NICE_WORK_ROLE_CATEGORIES: Record<NiceWorkRoleCategory, string> = {
+  DD: 'Design and Development',
+  IO: 'Implementation and Operation',
+  PD: 'Protection and Defense',
+  IN: 'Investigation',
+  OG: 'Oversight and Governance',
+}
 
 /** NICE Competency Area identifier (NICE Framework Resource Center) */
 export type NiceCompetencyAreaId =
@@ -63,13 +81,30 @@ export interface NiceCompetencyArea {
   targetPersonas: string[]
 }
 
-/** A NICE Work Role (NIST SP 800-181 Rev 1) */
+/**
+ * A NICE Work Role.
+ *
+ * `niceCode` is the official **NICE Framework v2.2.0** work-role ID (verified
+ * against the vendored components JSON by the drift-guard test). We keep our
+ * familiar job-title in `title` and carry the official activity name in
+ * `officialName` (decision 2026-06-18). Two of our roles — `risk-manager` and
+ * `iam-specialist` — have no exact v2.2.0 equivalent because the framework moved
+ * risk and identity/access out of the work-role layer; they carry a nearest-match
+ * code plus a `nearestMatchNote`.
+ */
 export interface NiceWorkRole {
   id: NiceWorkRoleId
-  /** NICE category code + title (e.g., "SP-ARC-001 Security Architect") */
+  /** Official v2.2.0 work-role ID, e.g. 'DD-WRL-001'. */
   niceCode: string
+  /** Official v2.2.0 work-role (activity) name, e.g. 'Cybersecurity Architecture'. */
+  officialName: string
+  /** Official v2.2.0 category. */
+  category: NiceWorkRoleCategory
+  /** Familiar job-title label shown to learners. */
   title: string
   description: string
+  /** Set when `niceCode` is a nearest match rather than an exact equivalent. */
+  nearestMatchNote?: string
   /** Competency Areas most relevant to this role */
   competencyAreas: NiceCompetencyAreaId[]
 }
@@ -86,23 +121,8 @@ export const NICE_COMPETENCY_AREAS: Record<NiceCompetencyAreaId, NiceCompetencyA
       "This Competency Area describes a learner's capabilities related to applying cryptographic techniques, standards, and tools to protect data and communications, including selecting algorithms, managing keys, and implementing cryptographic protocols.",
     tksSample: [
       { type: 'K', id: 'K0018', label: 'Knowledge of encryption algorithms' },
-      {
-        type: 'K',
-        id: 'K0019',
-        label: 'Knowledge of cryptography and cryptographic key management concepts',
-      },
-      {
-        type: 'K',
-        id: 'K0308',
-        label: 'Knowledge of cryptographic tools for protecting information in transit',
-      },
-      {
-        type: 'K',
-        id: 'K0403',
-        label: 'Knowledge of cryptographic key distribution methods',
-      },
-      { type: 'S', id: 'S0138', label: 'Skill in using PKI encryption and digital signatures' },
-      { type: 'S', id: 'S0205', label: 'Skill in implementing encryption protocols' },
+      { type: 'K', id: 'K0635', label: 'Knowledge of decryption' },
+      { type: 'T', id: 'T1499', label: 'Integrate public-key cryptography into applications' },
     ],
     primaryWorkRoles: [
       'security-architect',
@@ -119,23 +139,13 @@ export const NICE_COMPETENCY_AREAS: Record<NiceCompetencyAreaId, NiceCompetencyA
     description:
       "This Competency Area describes a learner's capabilities related to identifying, assessing, prioritizing, and mitigating cybersecurity risks to organizational assets and operations, including compliance with regulatory requirements.",
     tksSample: [
+      { type: 'T', id: 'T1265', label: 'Develop a cybersecurity risk management plan' },
       {
-        type: 'K',
-        id: 'K0162',
-        label: 'Knowledge of cyber threats and vulnerabilities',
+        type: 'T',
+        id: 'T1294',
+        label: 'Advise on Risk Management Framework activities and documentation',
       },
-      {
-        type: 'K',
-        id: 'K0165',
-        label: 'Knowledge of risk management processes and frameworks',
-      },
-      {
-        type: 'K',
-        id: 'K0261',
-        label: 'Knowledge of privacy laws and their applicability',
-      },
-      { type: 'T', id: 'T0084', label: 'Assess the effectiveness of security controls' },
-      { type: 'T', id: 'T0177', label: 'Perform risk assessments' },
+      { type: 'T', id: 'T1366', label: 'Identify supply-chain risks for critical system elements' },
     ],
     primaryWorkRoles: ['risk-manager', 'systems-security-analyst', 'is-security-manager'],
     targetPersonas: ['executive', 'architect', 'ops', 'curious'],
@@ -148,21 +158,12 @@ export const NICE_COMPETENCY_AREAS: Record<NiceCompetencyAreaId, NiceCompetencyA
       "This Competency Area describes a learner's capabilities related to designing, writing, and reviewing code that satisfies security requirements, including using cryptographic APIs securely and validating implementations against known-answer test vectors.",
     tksSample: [
       {
-        type: 'K',
-        id: 'K0016',
-        label: 'Knowledge of computer programming principles and secure coding techniques',
+        type: 'T',
+        id: 'T1203',
+        label: 'Implement software development cybersecurity methodologies',
       },
-      {
-        type: 'K',
-        id: 'K0039',
-        label: 'Knowledge of software quality assurance and security testing',
-      },
-      {
-        type: 'S',
-        id: 'S0172',
-        label: 'Skill in applying secure coding techniques',
-      },
-      { type: 'T', id: 'T0111', label: 'Develop secure software' },
+      { type: 'T', id: 'T1559', label: 'Resolve vulnerabilities in systems and system components' },
+      { type: 'T', id: 'T1028', label: 'Research new vulnerabilities in emerging technologies' },
     ],
     primaryWorkRoles: ['security-developer'],
     targetPersonas: ['developer', 'researcher'],
@@ -174,18 +175,9 @@ export const NICE_COMPETENCY_AREAS: Record<NiceCompetencyAreaId, NiceCompetencyA
     description:
       "This Competency Area describes a learner's capabilities related to protecting network infrastructure and communications through secure protocol configuration, monitoring, and defense-in-depth strategies including post-quantum-safe transport.",
     tksSample: [
-      {
-        type: 'K',
-        id: 'K0001',
-        label: 'Knowledge of computer networking concepts, protocols, and network security',
-      },
-      {
-        type: 'K',
-        id: 'K0056',
-        label: 'Knowledge of network access, identity, and access management',
-      },
-      { type: 'S', id: 'S0077', label: 'Skill in securing network communications' },
-      { type: 'T', id: 'T0080', label: 'Implement cybersecurity countermeasures for networks' },
+      { type: 'T', id: 'T1050', label: 'Improve network security practices' },
+      { type: 'T', id: 'T1102', label: 'Identify intrusions' },
+      { type: 'T', id: 'T1103', label: 'Analyze intrusions' },
     ],
     primaryWorkRoles: ['network-security-specialist', 'system-administrator', 'security-architect'],
     targetPersonas: ['developer', 'architect', 'ops', 'researcher'],
@@ -197,18 +189,12 @@ export const NICE_COMPETENCY_AREAS: Record<NiceCompetencyAreaId, NiceCompetencyA
     description:
       "This Competency Area describes a learner's capabilities related to managing digital identities, credentials, certificates, and access control systems, including PKI, federated identity, and post-quantum-resistant authentication protocols.",
     tksSample: [
+      { type: 'T', id: 'T1130', label: 'Develop group policies and access control lists' },
       {
-        type: 'K',
-        id: 'K0305',
-        label: 'Knowledge of authentication, authorization, and access control methods',
+        type: 'T',
+        id: 'T1246',
+        label: 'Establish security assessment and authorization processes',
       },
-      {
-        type: 'K',
-        id: 'K0336',
-        label: 'Knowledge of access management frameworks',
-      },
-      { type: 'S', id: 'S0138', label: 'Skill in using PKI encryption and digital signatures' },
-      { type: 'T', id: 'T0144', label: 'Implement identity and access management solutions' },
     ],
     primaryWorkRoles: ['iam-specialist', 'security-architect', 'system-administrator'],
     targetPersonas: ['developer', 'architect', 'ops', 'researcher'],
@@ -220,14 +206,13 @@ export const NICE_COMPETENCY_AREAS: Record<NiceCompetencyAreaId, NiceCompetencyA
     description:
       "This Competency Area describes a learner's capabilities related to protecting data at rest, in transit, and in use through encryption, key management, classification, and data lifecycle controls.",
     tksSample: [
+      { type: 'T', id: 'T1132', label: 'Design system data backup capabilities' },
+      { type: 'T', id: 'T1882', label: 'Determine if projects comply with data security policies' },
       {
-        type: 'K',
-        id: 'K0622',
-        label:
-          'Knowledge of controls related to the use, processing, storage, and transmission of data',
+        type: 'T',
+        id: 'T1853',
+        label: 'Determine if services comply with privacy and data security policies',
       },
-      { type: 'K', id: 'K0427', label: 'Knowledge of encryption standards and algorithms' },
-      { type: 'T', id: 'T0485', label: 'Develop data classification policies and procedures' },
     ],
     primaryWorkRoles: ['systems-security-analyst', 'security-architect', 'risk-manager'],
     targetPersonas: ['executive', 'architect', 'developer', 'ops'],
@@ -239,22 +224,13 @@ export const NICE_COMPETENCY_AREAS: Record<NiceCompetencyAreaId, NiceCompetencyA
     description:
       "This Competency Area describes a learner's capabilities related to designing and analyzing security architectures for information systems, including crypto-agility, hybrid cryptography, key management infrastructure, and hardware security.",
     tksSample: [
+      { type: 'T', id: 'T1077', label: "Assess the organization's cybersecurity architecture" },
       {
-        type: 'K',
-        id: 'K0090',
-        label: 'Knowledge of system life cycle management principles',
+        type: 'T',
+        id: 'T1027',
+        label: 'Integrate organizational goals into security architecture',
       },
-      {
-        type: 'K',
-        id: 'K0026',
-        label: 'Knowledge of business continuity and disaster recovery',
-      },
-      {
-        type: 'S',
-        id: 'S0022',
-        label: 'Skill in designing security architectures',
-      },
-      { type: 'T', id: 'T0328', label: 'Design security architecture for a system' },
+      { type: 'T', id: 'T1148', label: 'Develop systems security design documentation' },
     ],
     primaryWorkRoles: ['security-architect', 'systems-security-analyst'],
     targetPersonas: ['architect', 'researcher'],
@@ -267,21 +243,12 @@ export const NICE_COMPETENCY_AREAS: Record<NiceCompetencyAreaId, NiceCompetencyA
       "This Competency Area describes a learner's capabilities related to cybersecurity governance, policy development, regulatory compliance, and managing organizational risk programs aligned to frameworks such as NIST CSF, CMMC, and FedRAMP.",
     tksSample: [
       {
-        type: 'K',
-        id: 'K0101',
-        label: "Knowledge of the organization's enterprise IT goals and objectives",
-      },
-      {
-        type: 'K',
-        id: 'K0198',
-        label: 'Knowledge of organizational compliance requirements',
-      },
-      {
         type: 'T',
-        id: 'T0177',
-        label: 'Perform risk assessments in accordance with applicable policies',
+        id: 'T0220',
+        label: 'Resolve conflicts in laws, regulations, policies, standards, or procedures',
       },
-      { type: 'T', id: 'T0193', label: 'Develop policies and programs' },
+      { type: 'T', id: 'T0274', label: 'Create auditable evidence of security measures' },
+      { type: 'T', id: 'T0116', label: 'Identify organizational policy stakeholders' },
     ],
     primaryWorkRoles: ['is-security-manager', 'risk-manager'],
     targetPersonas: ['executive', 'architect', 'ops'],
@@ -295,7 +262,9 @@ export const NICE_COMPETENCY_AREAS: Record<NiceCompetencyAreaId, NiceCompetencyA
 export const NICE_WORK_ROLES: Record<NiceWorkRoleId, NiceWorkRole> = {
   'security-architect': {
     id: 'security-architect',
-    niceCode: 'SP-ARC-001',
+    niceCode: 'DD-WRL-001',
+    officialName: 'Cybersecurity Architecture',
+    category: 'DD',
     title: 'Security Architect',
     description:
       "Ensures that the stakeholder security requirements necessary to protect the organization's mission and business processes are adequately addressed in all aspects of enterprise architecture.",
@@ -303,7 +272,9 @@ export const NICE_WORK_ROLES: Record<NiceWorkRoleId, NiceWorkRole> = {
   },
   'security-developer': {
     id: 'security-developer',
-    niceCode: 'SP-ARC-002',
+    niceCode: 'DD-WRL-003',
+    officialName: 'Secure Software Development',
+    category: 'DD',
     title: 'Security Developer',
     description:
       'Develops and writes code that incorporates security best practices and cryptographic primitives to protect information assets.',
@@ -311,7 +282,9 @@ export const NICE_WORK_ROLES: Record<NiceWorkRoleId, NiceWorkRole> = {
   },
   'system-administrator': {
     id: 'system-administrator',
-    niceCode: 'OM-ADM-001',
+    niceCode: 'IO-WRL-005',
+    officialName: 'Systems Administration',
+    category: 'IO',
     title: 'System Administrator',
     description:
       'Responsible for setting up and maintaining a system or specific components of a system.',
@@ -319,7 +292,9 @@ export const NICE_WORK_ROLES: Record<NiceWorkRoleId, NiceWorkRole> = {
   },
   'network-security-specialist': {
     id: 'network-security-specialist',
-    niceCode: 'OM-NET-001',
+    niceCode: 'IO-WRL-004',
+    officialName: 'Network Operations',
+    category: 'IO',
     title: 'Network Operations Specialist',
     description:
       'Plans, implements, and operates network services/systems, including hardware and virtual environments.',
@@ -327,23 +302,33 @@ export const NICE_WORK_ROLES: Record<NiceWorkRoleId, NiceWorkRole> = {
   },
   'risk-manager': {
     id: 'risk-manager',
-    niceCode: 'SP-RSK-001',
+    niceCode: 'OG-WRL-013',
+    officialName: 'Systems Authorization',
+    category: 'OG',
     title: 'Risk Manager',
     description:
       "Leads, oversees, and provides guidance on risk management activities for an organization's information systems.",
+    nearestMatchNote:
+      'Nearest v2.2.0 match: risk is no longer a standalone work role; Systems Authorization (OG-WRL-013) owns operating a system at an acceptable level of risk.',
     competencyAreas: ['CA-RISK', 'CA-GOVCOMP', 'CA-DATASEC'],
   },
   'iam-specialist': {
     id: 'iam-specialist',
-    niceCode: 'SP-DEV-001',
+    niceCode: 'IO-WRL-005',
+    officialName: 'Systems Administration',
+    category: 'IO',
     title: 'IAM Specialist',
     description:
       'Develops and implements identity and access management solutions including PKI, federation, and PQC-resistant authentication.',
+    nearestMatchNote:
+      'Nearest v2.2.0 match: identity/access is now the Access Controls Competency Area (NF-COM-001), carried out within Systems Administration (IO-WRL-005).',
     competencyAreas: ['CA-IDENT', 'CA-CRYPTO'],
   },
   'systems-security-analyst': {
     id: 'systems-security-analyst',
-    niceCode: 'SP-SYS-001',
+    niceCode: 'IO-WRL-006',
+    officialName: 'Systems Security Analysis',
+    category: 'IO',
     title: 'Systems Security Analyst',
     description:
       'Analyzes and assesses the security posture of information systems and recommends remediation strategies.',
@@ -351,12 +336,133 @@ export const NICE_WORK_ROLES: Record<NiceWorkRoleId, NiceWorkRole> = {
   },
   'is-security-manager': {
     id: 'is-security-manager',
-    niceCode: 'OV-MGT-001',
+    niceCode: 'OG-WRL-014',
+    officialName: 'Systems Security Management',
+    category: 'OG',
     title: 'Information Systems Security Manager',
     description:
       'Oversees the cybersecurity of a program, organization, system, or enclave and establishes and maintains governance for cybersecurity risk.',
     competencyAreas: ['CA-GOVCOMP', 'CA-RISK'],
   },
+}
+
+// ---------------------------------------------------------------------------
+// Official NICE Framework v2.2.0 competency-area layer (dual-layer crosswalk)
+// ---------------------------------------------------------------------------
+//
+// The 8 `CA-*` areas above are our internal pedagogical lens. The block below is
+// the *official* competency-area taxonomy from NICE Framework Components v2.2.0
+// (11 areas, verbatim titles + descriptions from the vendored components JSON),
+// plus a crosswalk stamping each internal lens with its nearest official area.
+// Decision 2026-06-18: best-fit for the 6 lenses that have a home; Governance and
+// Risk are intentionally left unmapped (NICE has no competency area for them) —
+// their content still gains official codes from any other lens it carries.
+
+/** Official NICE Framework v2.2.0 competency-area ID. */
+export type NfComId =
+  | 'NF-COM-001'
+  | 'NF-COM-002'
+  | 'NF-COM-003'
+  | 'NF-COM-004'
+  | 'NF-COM-005'
+  | 'NF-COM-006'
+  | 'NF-COM-007'
+  | 'NF-COM-008'
+  | 'NF-COM-009'
+  | 'NF-COM-010'
+  | 'NF-COM-011'
+
+/** An official NICE v2.2.0 Competency Area (verbatim from the components JSON). */
+export interface NfCompetencyArea {
+  id: NfComId
+  title: string
+  description: string
+}
+
+/** The 11 official competency areas, verbatim from NICE Framework Components v2.2.0. */
+export const NF_COMPETENCY_AREAS: Record<NfComId, NfCompetencyArea> = {
+  'NF-COM-001': {
+    id: 'NF-COM-001',
+    title: 'Access Controls',
+    description:
+      "This Competency Area describes a learner's capabilities to define, manage, and monitor the roles and secure access privileges of who is authorized to access protected data and resources and understand the impact of different types of access controls.",
+  },
+  'NF-COM-002': {
+    id: 'NF-COM-002',
+    title: 'Artificial Intelligence (AI) Security',
+    description:
+      "This Competency Area describes a learner's capability to understand Artificial Intelligence (AI) systems and to use them in a secure manner that maximizes AI's benefits while minimizing potential negative risks.",
+  },
+  'NF-COM-003': {
+    id: 'NF-COM-003',
+    title: 'Asset Management',
+    description:
+      "This Competency Area describes a learner's capabilities to conduct and maintain an accurate inventory of all digital assets, to include identifying, developing, operating, maintaining, upgrading, and disposing of assets.",
+  },
+  'NF-COM-004': {
+    id: 'NF-COM-004',
+    title: 'Cloud Security',
+    description:
+      "This Competency Area describes a learner's capabilities to protect cloud data, applications, and infrastructure from internal and external threats.",
+  },
+  'NF-COM-005': {
+    id: 'NF-COM-005',
+    title: 'Communications Security',
+    description:
+      "This Competency Area describes a learner's capabilities to secure the transmissions, broadcasting, switching, control, and operation of communications and related network infrastructures.",
+  },
+  'NF-COM-006': {
+    id: 'NF-COM-006',
+    title: 'Cryptography',
+    description:
+      "This Competency Area describes a learner's capabilities to transform data using cryptographic processes to ensure it can only be read by the person who is authorized to access it.",
+  },
+  'NF-COM-007': {
+    id: 'NF-COM-007',
+    title: 'Cyber Resiliency',
+    description:
+      "This Competency Area describes a learner's capability related to architecting, designing, developing, implementing, and maintaining the trustworthiness of systems that use or are enabled by cyber resources in order to anticipate, withstand, recover from, and adapt to adverse conditions, stresses, attacks, or compromises.",
+  },
+  'NF-COM-008': {
+    id: 'NF-COM-008',
+    title: 'DevSecOps',
+    description:
+      "This Competency Area describes a learner's capabilities to integrate security as a shared responsibility throughout the development, security, and operations (DevSecOps) life cycle of technologies.",
+  },
+  'NF-COM-009': {
+    id: 'NF-COM-009',
+    title: 'Operating Systems (OS) Security',
+    description:
+      "This Competency Area describes a learner's capabilities to install, administer, troubleshoot, backup, and conduct recovery of Operating Systems (OS), including in simulated environments.",
+  },
+  'NF-COM-010': {
+    id: 'NF-COM-010',
+    title: 'Operational Technology (OT) Security',
+    description:
+      "This Competency Area describes a learner's capabilities to improve and maintain the security of Operational Technology (OT) systems while addressing their unique performance, reliability, and safety requirements.",
+  },
+  'NF-COM-011': {
+    id: 'NF-COM-011',
+    title: 'Supply Chain Security',
+    description:
+      "This Competency Area describes a learner's capabilities to analyze and control digital and physical risks presented by technology products or services purchased from parties outside your organization.",
+  },
+}
+
+/**
+ * Crosswalk: internal pedagogical lens → nearest official v2.2.0 competency area.
+ * `null` = no official competency area exists for this lens (Governance, Risk).
+ * Confirmed 2026-06-18.
+ */
+export const CA_TO_NFCOM: Record<NiceCompetencyAreaId, NfComId | null> = {
+  'CA-CRYPTO': 'NF-COM-006', // Cryptography (exact)
+  'CA-IDENT': 'NF-COM-001', // Access Controls (strong)
+  'CA-SECPROG': 'NF-COM-008', // DevSecOps (good)
+  'CA-NETDEF': 'NF-COM-005', // Communications Security (fit)
+  'CA-DATASEC': 'NF-COM-003', // Asset Management (best available)
+  'CA-SYSARCH': 'NF-COM-007', // Cyber Resiliency (best available)
+  'CA-GOVCOMP': null, // no official competency area for governance
+  'CA-RISK': null, // no official competency area for risk
 }
 
 // ---------------------------------------------------------------------------
@@ -381,4 +487,23 @@ export function getCompetencyAreasForPersona(personaId: string): NiceCompetencyA
 /** Return Work Roles that require a given Competency Area */
 export function getWorkRolesForCompetencyArea(caId: NiceCompetencyAreaId): NiceWorkRole[] {
   return Object.values(NICE_WORK_ROLES).filter((role) => role.competencyAreas.includes(caId))
+}
+
+/**
+ * Map internal competency-area lenses to their official v2.2.0 competency areas
+ * (deduped; lenses with no official equivalent — Governance, Risk — are dropped).
+ * This is the dual-layer crosswalk: content keeps its pedagogical lens AND gains
+ * the nearest official NICE code.
+ */
+export function getOfficialCompetencyAreas(ids: NiceCompetencyAreaId[]): NfCompetencyArea[] {
+  const seen = new Set<NfComId>()
+  const out: NfCompetencyArea[] = []
+  for (const id of ids) {
+    const nf = CA_TO_NFCOM[id]
+    if (nf && !seen.has(nf)) {
+      seen.add(nf)
+      out.push(NF_COMPETENCY_AREAS[nf])
+    }
+  }
+  return out
 }

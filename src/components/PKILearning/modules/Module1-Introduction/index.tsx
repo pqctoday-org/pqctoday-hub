@@ -322,7 +322,7 @@ export const Module1: React.FC = () => {
 
         {/* References Tab */}
         <TabsContent value="references">
-          <ModuleReferencesTab moduleId="introduction" />
+          <ModuleReferencesTab moduleId="pqc-101" />
         </TabsContent>
 
         {/* Tools & Products Tab */}

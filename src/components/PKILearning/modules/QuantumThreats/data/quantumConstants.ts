@@ -5,7 +5,7 @@ export interface AlgorithmSecurityData {
   category: 'asymmetric' | 'symmetric' | 'hash'
   classicalBits: number
   quantumBits: number
-  quantumAttack: 'shor' | 'grover' | 'none'
+  quantumAttack: 'shor' | 'grover' | 'bht' | 'none'
   estimatedQubits: number | null
   status: 'broken' | 'weakened' | 'safe'
   notes: string
@@ -56,7 +56,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 1200,
     status: 'broken',
     notes:
-      "Revised per Google Quantum AI (Mar 2026): improved Shor's circuits break 256-bit ECC with \u22641,200 logical qubits — roughly half prior estimates. Fewer qubits needed than RSA at equivalent security.",
+      "Revised per Google Quantum AI (Mar 2026): improved Shor's circuits break 256-bit ECC with \u22641,200 logical qubits — roughly half prior estimates. Fewer qubits needed than RSA at equivalent security. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits.",
   },
   {
     name: 'ECDSA P-384',
@@ -79,7 +79,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 1200,
     status: 'broken',
     notes:
-      "Curve25519 ECDH falls to Shor's just like NIST curves. Revised to ~1,200 logical qubits per Google Quantum AI (Mar 2026) circuit efficiency improvements for 256-bit elliptic curves.",
+      "Curve25519 ECDH falls to Shor's just like NIST curves. Revised to ~1,200 logical qubits per Google Quantum AI (Mar 2026) circuit efficiency improvements for 256-bit elliptic curves. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits.",
   },
   {
     name: 'Ed25519',
@@ -91,7 +91,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 1200,
     status: 'broken',
     notes:
-      "EdDSA signatures rely on discrete log — vulnerable to Shor's. Revised to ~1,200 logical qubits per Google Quantum AI (Mar 2026) circuit efficiency improvements for 256-bit elliptic curves.",
+      "EdDSA signatures rely on discrete log — vulnerable to Shor's. Revised to ~1,200 logical qubits per Google Quantum AI (Mar 2026) circuit efficiency improvements for 256-bit elliptic curves. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits.",
   },
   {
     name: 'ECDSA secp256k1',
@@ -103,7 +103,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 1200,
     status: 'broken',
     notes:
-      'Google Quantum AI & Ethereum Foundation (Mar 2026): \u22641,200 logical qubits + \u226490M Toffoli gates breaks secp256k1 ECDLP via Shor\u2019s algorithm. Used in Bitcoin, Ethereum, and most blockchain protocols.',
+      'Google Quantum AI & Ethereum Foundation (Mar 2026): \u22641,200 logical qubits + \u226490M Toffoli gates breaks secp256k1 ECDLP via Shor\u2019s algorithm. Used in Bitcoin, Ethereum, and most blockchain protocols. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits.',
   },
   // Symmetric (weakened by Grover's)
   {
@@ -147,7 +147,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     category: 'hash',
     classicalBits: 128,
     quantumBits: 85,
-    quantumAttack: 'grover',
+    quantumAttack: 'bht',
     estimatedQubits: null,
     status: 'safe',
     notes:
@@ -159,7 +159,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     category: 'hash',
     classicalBits: 192,
     quantumBits: 128,
-    quantumAttack: 'grover',
+    quantumAttack: 'bht',
     estimatedQubits: null,
     status: 'safe',
     notes: 'Collision resistance: 192-bit classical → ~128-bit quantum. Remains secure.',
@@ -170,7 +170,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     category: 'hash',
     classicalBits: 256,
     quantumBits: 170,
-    quantumAttack: 'grover',
+    quantumAttack: 'bht',
     estimatedQubits: null,
     status: 'safe',
     notes: 'Collision resistance: 256-bit classical → ~170-bit quantum. Remains secure.',
@@ -181,7 +181,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     category: 'hash',
     classicalBits: 128,
     quantumBits: 85,
-    quantumAttack: 'grover',
+    quantumAttack: 'bht',
     estimatedQubits: null,
     status: 'safe',
     notes: 'Same quantum impact as SHA-256. Sponge construction provides no quantum advantage.',
@@ -318,6 +318,16 @@ export interface CRQCEstimate {
   notes: string
 }
 
+/**
+ * Multi-source CRQC arrival estimates backing the Threats-page capability strip.
+ * The canonical optimistic/expected/pessimistic planning triple (2030 / 2035 / 2040)
+ * lives in `regulatoryTimelines.ts` (`CRQC_ESTIMATES` object); these per-source rows
+ * are the detail behind that range and now agree on its bounds. Rows are CRQC
+ * *arrival* estimates — not regulatory mandate dates (e.g. CNSA 2.0's 2025 is a
+ * migration deadline, kept in the notes, not used as a CRQC-arrival year). The
+ * GRI 2025 survey puts the median expert estimate at 2029–2032, so the window
+ * floor is ~2029, not 2025.
+ */
 export const CRQC_ESTIMATES: CRQCEstimate[] = [
   {
     source: 'Google Quantum AI & Ethereum Foundation (2026)',
@@ -345,10 +355,11 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
   },
   {
     source: 'NSA CNSA 2.0 (2022)',
-    yearLow: 2025,
+    yearLow: 2030,
     yearHigh: 2033,
     confidence: 'Mandate',
-    notes: 'Software/firmware PQC by 2025, networking by 2026, all NSS by 2033.',
+    notes:
+      'Migration MANDATE dates (not a CRQC-arrival prediction): software/firmware PQC by 2025, networking by 2026, all NSS by 2033 — implying a CRQC-relevant horizon of ~2030–2033.',
   },
   {
     source: 'BSI Germany (2024)',

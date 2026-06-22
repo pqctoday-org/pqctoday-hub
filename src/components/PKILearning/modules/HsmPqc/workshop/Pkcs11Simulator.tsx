@@ -12,7 +12,12 @@ import {
   Loader2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { HSM_PKCS11_OPERATIONS, HSM_VENDORS, STATUS_LABELS } from '../data/hsmVendorData'
+import {
+  HSM_PKCS11_OPERATIONS,
+  HSM_VENDORS,
+  STATUS_LABELS,
+  getVendorPqcSupportStatus,
+} from '../data/hsmVendorData'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
@@ -657,7 +662,7 @@ export const Pkcs11Simulator: React.FC = () => {
               </thead>
               <tbody>
                 {HSM_VENDORS.map((vendor) => {
-                  const statusInfo = STATUS_LABELS[vendor.pqcSupportStatus]
+                  const statusInfo = STATUS_LABELS[getVendorPqcSupportStatus(vendor)]
                   return (
                     <tr key={vendor.id} className="border-b border-border/50">
                       <td className="p-2 text-xs font-bold text-foreground">{vendor.name}</td>

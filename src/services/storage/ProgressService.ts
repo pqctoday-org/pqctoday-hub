@@ -157,7 +157,7 @@ export class ProgressService {
           errors.push(`Module ${moduleId} timeSpent must be a number`)
         } else if (m.timeSpent < 0 || m.timeSpent > 1000000) {
           errors.push(
-            `Module ${moduleId} timeSpent ${m.timeSpent} is out of range (0-1000000 seconds)`
+            `Module ${moduleId} timeSpent ${m.timeSpent} is out of range (0-1000000 minutes)`
           )
         }
 

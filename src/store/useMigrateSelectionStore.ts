@@ -1,8 +1,28 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import { REPLACE_ASSETS } from '@/data/migrationAssets'
 
 export type MigrateViewMode = 'stack' | 'cisaStack' | 'cards' | 'table'
+
+/** Workbench redesign tabs (URL-synced via ?tab=). */
+export type MigrateTab = 'replace' | 'plan' | 'roadmaps'
+
+/** Return a shallow copy of `obj` without `key`. Lint-friendly omit. */
+function omitKey<T>(obj: Record<string, T>, key: string): Record<string, T> {
+  const rest: Record<string, T> = {}
+  for (const k of Object.keys(obj)) {
+    // eslint-disable-next-line security/detect-object-injection
+    if (k !== key) rest[k] = obj[k]
+  }
+  return rest
+}
+
+/** Replace-asset ids — these stay in the plan even with no chosen product
+ *  (they're added/removed via the asset-level "Add to plan" toggle). Foundation
+ *  domains, by contrast, are only in the plan because a product was chosen, so
+ *  clearing their last product removes them. */
+const REPLACE_ASSET_IDS = new Set<string>(REPLACE_ASSETS.map((a) => a.id))
 
 /** Convert old composite key to productId slug */
 function migrateKey(key: string): string {
@@ -39,6 +59,24 @@ interface MigrateSelectionState {
   /** Whether the MigrationWorkflow hero section is collapsed */
   workflowCollapsed: boolean
   setWorkflowCollapsed: (collapsed: boolean) => void
+
+  // ── Workbench redesign (asset-first plan) ────────────────────────────────
+  /** Asset ids (from REPLACE_ASSETS) the user has added to their migration plan.
+   *  Distinct from `myProducts` (product-keyed, legacy) — kept side-by-side. */
+  plan: string[]
+  togglePlanAsset: (assetId: string) => void
+  removeFromPlan: (assetId: string) => void
+  clearPlan: () => void
+  /** Chosen replacement products per asset/domain: id → product names.
+   *  Multi-valued so several products can be planned per category. */
+  choice: Record<string, string[]>
+  /** Toggle a chosen product for an asset/domain. Adds it (and ensures the
+   *  asset is in the plan) or, if already chosen, removes just that product.
+   *  Removing the last product drops the asset/domain from the plan. */
+  chooseProduct: (assetId: string, productName: string) => void
+  /** Active workbench tab (URL-synced). */
+  tab: MigrateTab
+  setTab: (tab: MigrateTab) => void
 }
 
 export const useMigrateSelectionStore = create<MigrateSelectionState>()(
@@ -51,6 +89,9 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
       showOnlyMyProducts: false,
       viewMode: 'stack' as MigrateViewMode,
       workflowCollapsed: true,
+      plan: [],
+      choice: {},
+      tab: 'replace' as MigrateTab,
 
       hideProduct: (key) =>
         set((state) => ({
@@ -83,11 +124,54 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
 
       setViewMode: (mode) => set({ viewMode: mode }),
       setWorkflowCollapsed: (collapsed) => set({ workflowCollapsed: collapsed }),
+
+      togglePlanAsset: (assetId) =>
+        set((state) => {
+          if (state.plan.includes(assetId)) {
+            // leaving the plan also drops any chosen product for this asset
+            return {
+              plan: state.plan.filter((id) => id !== assetId),
+              choice: omitKey(state.choice, assetId),
+            }
+          }
+          return { plan: [...state.plan, assetId] }
+        }),
+
+      removeFromPlan: (assetId) =>
+        set((state) => ({
+          plan: state.plan.filter((id) => id !== assetId),
+          choice: omitKey(state.choice, assetId),
+        })),
+
+      clearPlan: () => set({ plan: [], choice: {} }),
+
+      chooseProduct: (assetId, productName) =>
+        set((state) => {
+          // eslint-disable-next-line security/detect-object-injection
+          const current = state.choice[assetId] ?? []
+          const nextList = current.includes(productName)
+            ? current.filter((p) => p !== productName) // remove just this product
+            : [...current, productName] // add — keeps any already-chosen products
+          if (nextList.length === 0) {
+            // Last product removed. Foundation domains exist in the plan only
+            // because a product was chosen, so drop them. Replace assets are
+            // managed by the "Add to plan" toggle, so keep them planned.
+            const choice = omitKey(state.choice, assetId)
+            return REPLACE_ASSET_IDS.has(assetId)
+              ? { choice }
+              : { plan: state.plan.filter((id) => id !== assetId), choice }
+          }
+          // choosing ensures the asset is in the plan
+          const plan = state.plan.includes(assetId) ? state.plan : [...state.plan, assetId]
+          return { plan, choice: { ...state.choice, [assetId]: nextList } }
+        }),
+
+      setTab: (tab) => set({ tab }),
     }),
     {
       name: 'pqc-migrate-selection',
       storage: createJSONStorage(() => localStorage),
-      version: 8,
+      version: 10,
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
@@ -133,6 +217,29 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
           }
           if (Array.isArray(state.myProducts)) {
             state.myProducts = [...new Set(state.myProducts.map(migrateKey))]
+          }
+        }
+        if (version < 9) {
+          // v8 → v9: add asset-first plan fields (workbench redesign).
+          // `myProducts` is preserved untouched for back-compat.
+          state.plan = Array.isArray(state.plan) ? state.plan : []
+          state.choice =
+            state.choice && typeof state.choice === 'object' && !Array.isArray(state.choice)
+              ? state.choice
+              : {}
+          state.tab = ['replace', 'plan', 'roadmaps'].includes(state.tab) ? state.tab : 'replace'
+        }
+        if (version < 10) {
+          // v9 → v10: choice became multi-valued (productName → productName[]).
+          if (state.choice && typeof state.choice === 'object' && !Array.isArray(state.choice)) {
+            const next: Record<string, string[]> = {}
+            for (const [k, v] of Object.entries(state.choice)) {
+              // eslint-disable-next-line security/detect-object-injection
+              next[k] = Array.isArray(v) ? (v as string[]) : typeof v === 'string' && v ? [v] : []
+            }
+            state.choice = next
+          } else {
+            state.choice = {}
           }
         }
         return state

@@ -27,6 +27,11 @@ interface ExportableArtifactProps {
   /** Render the PDF in A4 landscape for wide tables (RACI matrix, CBOM,
    *  supply-chain grid, framework checklist, contract clauses). Audit M4. */
   wideTable?: boolean
+  /** Structured CSV for the `.csv` export, built by the tool from its own data
+   *  model (RFC-4180). When the `csv` format is offered, the tool MUST pass this
+   *  — otherwise the button would save the markdown body with a `.csv`
+   *  extension, which opens as one column of pipe text. Audit C5. */
+  csvData?: string
 }
 
 export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
@@ -37,6 +42,7 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
   formats = ['markdown'],
   onExport,
   wideTable = false,
+  csvData,
 }) => {
   const [copied, setCopied] = React.useState(false)
   const [savedFlash, setSavedFlash] = React.useState(false)
@@ -96,8 +102,11 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
         json: 'application/json',
         csv: 'text/csv',
       }
+      // For `.csv`, prefer the tool's structured CSV; fall back to the markdown
+      // body only if the tool didn't provide one (avoids pipe-text-in-Excel).
+      const payload = format === 'csv' && csvData != null ? csvData : exportData
       // eslint-disable-next-line security/detect-object-injection
-      const blob = new Blob([exportData], { type: mimeMap[format] || 'text/plain' })
+      const blob = new Blob([payload], { type: mimeMap[format] || 'text/plain' })
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
@@ -106,7 +115,7 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
       URL.revokeObjectURL(url)
       triggerSave()
     },
-    [exportData, filename, title, triggerSave, wideTable]
+    [exportData, filename, title, triggerSave, wideTable, csvData]
   )
 
   const handlePrint = useCallback(() => {

@@ -1,0 +1,374 @@
+// SPDX-License-Identifier: GPL-3.0-only
+/**
+ * PhaseRail — the persistent, collapsible "Migration Program" **left rail**.
+ *
+ * Renders the Applied Quantum Phase 0–7 + Foundations journey as a cross-page
+ * lens over the NIST CSWP.39 spine. Implements PHASE-OVERLAY-SPEC.md §4 (the
+ * visible rail) and §4.1 (navigation model): cadence-aware vertical layout,
+ * store-driven node status, click-to-route with `?phase=<id>`, and a persona
+ * "≈ your view" badge derived from the role crosswalk.
+ *
+ * Orientation: a sticky left sidebar on `lg+` (hidden below `lg` for now — a
+ * mobile drawer is a follow-up). Minimize/expand is a persisted store flag
+ * (`railCollapsed`): expanded shows labels + taglines (w-56); collapsed shows a
+ * number + status-dot icon strip (w-14) with hover tooltips.
+ *
+ * The rail is *derived* — cadence from `FrameworkPhase.cadence`, status from
+ * `useMigrationWorkflowStore.phaseStatus`, persona ownership from
+ * `personaToRoles` × `ROLE_CROSSWALK` — so it cannot drift from the model.
+ */
+import { useMemo } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import clsx from 'clsx'
+import { Check, Circle, CircleDot, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import { Button } from '../ui/button'
+import {
+  FRAMEWORK_PHASES,
+  PHASE_ORDER,
+  type FrameworkPhase,
+  type PhaseId,
+  type Route,
+} from '../../data/frameworkPhases'
+import { ROLE_CROSSWALK, personaToRoles, type FrameworkRoleId } from '../../data/roleCrosswalk'
+import { PERSONAS } from '../../data/learningPersonas'
+import { useMigrationWorkflowStore, type PhaseStatus } from '../../store/useMigrationWorkflowStore'
+import { usePersonaStore } from '../../store/usePersonaStore'
+
+/**
+ * The phase's primary surface route — the page a rail click lands on. Prefer the
+ * phase's *resource/produce* surface (where its tools live) so e.g. P0 → Command
+ * Center and P1 → Migrate, not the cross-phase Assess intake; fall back to the
+ * diagnose surface (Assess) then the first listed surface.
+ */
+function primaryRoute(phase: FrameworkPhase): Route {
+  return phase.produce?.[0]?.route ?? phase.diagnose?.route ?? phase.surfaces[0]
+}
+
+/** Compute the set of phases the current persona owns (via role crosswalk). */
+function useOwnedPhases(): Set<PhaseId> {
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  return useMemo(() => {
+    const owned = new Set<PhaseId>()
+    if (!selectedPersona) return owned
+    const roles = personaToRoles[selectedPersona] ?? []
+    for (const roleId of roles) {
+      for (const phaseId of ROLE_CROSSWALK[roleId].phases) owned.add(phaseId)
+    }
+    return owned
+  }, [selectedPersona])
+}
+
+/** Human-readable list of the owning roles for a phase (for the badge tooltip). */
+function owningRoles(phaseId: PhaseId): FrameworkRoleId[] {
+  return Object.values(ROLE_CROSSWALK)
+    .filter((r) => r.phases.includes(phaseId))
+    .map((r) => r.id)
+}
+
+const STATUS_ICON: Record<PhaseStatus, typeof Check> = {
+  done: Check,
+  active: CircleDot,
+  todo: Circle,
+}
+
+function statusColor(status: PhaseStatus): string {
+  return status === 'done'
+    ? 'text-status-success'
+    : status === 'active'
+      ? 'text-primary'
+      : 'text-muted-foreground'
+}
+
+interface NodeProps {
+  phase: FrameworkPhase
+  status: PhaseStatus
+  owned: boolean
+  collapsed: boolean
+  /** 'here' = the phase you navigated to (?phase=); 'on-page' = a phase this route serves. */
+  locationState?: 'here' | 'on-page'
+  onNavigate: (phase: FrameworkPhase) => void
+}
+
+function PhaseNode({ phase, status, owned, collapsed, locationState, onNavigate }: NodeProps) {
+  const Icon = STATUS_ICON[status]
+  const numberGlyph =
+    phase.number === null ? (phase.id === 'verify-close' ? 'VC' : 'F') : String(phase.number)
+  const label = phase.number === null ? phase.name : `${phase.number} · ${phase.name}`
+  const roles = owned ? owningRoles(phase.id) : []
+  const roleLabels = roles.map((r) => ROLE_CROSSWALK[r].label).join(', ')
+  const stateWord = status === 'done' ? '(done)' : status === 'active' ? '(current)' : '(to-do)'
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      onClick={() => onNavigate(phase)}
+      aria-current={
+        locationState === 'here' ? 'location' : status === 'active' ? 'step' : undefined
+      }
+      aria-label={`Phase ${label} — ${phase.tagline} ${stateWord}${
+        owned ? ` — your view (${roleLabels})` : ''
+      }. Go to phase`}
+      title={
+        collapsed
+          ? `${label} — ${phase.tagline}${owned ? ' · ≈ your view' : ''}`
+          : owned
+            ? `${roleLabels} · ≈ your view`
+            : roleLabels || undefined
+      }
+      className={clsx(
+        'group flex h-auto w-full items-center rounded-md border text-left transition-colors',
+        collapsed ? 'justify-center px-0 py-1.5' : 'gap-2 px-2 py-1.5',
+        status === 'active'
+          ? 'border-primary/40 bg-primary/10'
+          : status === 'done'
+            ? 'border-border bg-muted/40 hover:bg-muted/60'
+            : 'border-border bg-transparent hover:bg-muted/40',
+        owned && 'ring-1 ring-primary/30',
+        locationState === 'here' && 'ring-2 ring-primary',
+        locationState === 'on-page' && 'border-l-2 border-l-primary/60'
+      )}
+    >
+      {collapsed ? (
+        <span className="flex flex-col items-center leading-none">
+          <Icon size={12} aria-hidden="true" className={statusColor(status)} />
+          <span className="mt-0.5 text-[10px] font-semibold text-foreground">{numberGlyph}</span>
+          {owned && <span className="mt-0.5 h-1 w-1 rounded-full bg-primary" aria-hidden="true" />}
+          {locationState === 'here' && (
+            <span
+              className="mt-0.5 h-1.5 w-1.5 rounded-full bg-primary ring-1 ring-primary/40"
+              aria-hidden="true"
+            />
+          )}
+        </span>
+      ) : (
+        <>
+          <Icon size={13} aria-hidden="true" className={clsx('shrink-0', statusColor(status))} />
+          <span className="min-w-0 flex-1">
+            <span
+              className={clsx(
+                'block truncate text-xs font-semibold',
+                status === 'active' ? 'text-primary' : 'text-foreground'
+              )}
+            >
+              {label}
+            </span>
+            <span className="block truncate text-[10px] text-muted-foreground">
+              {phase.tagline}
+            </span>
+            {locationState === 'here' && (
+              <span className="mt-0.5 block text-[9px] font-semibold uppercase tracking-wide text-primary">
+                ◂ you are here
+              </span>
+            )}
+          </span>
+          {owned && (
+            <span
+              className="shrink-0 text-[10px] font-semibold text-primary"
+              aria-hidden="true"
+              title="≈ your view"
+            >
+              ★
+            </span>
+          )}
+        </>
+      )}
+    </Button>
+  )
+}
+
+/** A bordered cadence group (parallel / iterative pair, continuous, foundations). */
+function Group({
+  label,
+  marker,
+  collapsed,
+  dashed,
+  children,
+}: {
+  label: string
+  marker?: string
+  collapsed: boolean
+  dashed?: boolean
+  children: React.ReactNode
+}) {
+  return (
+    <div
+      className={clsx(
+        'rounded-md border',
+        dashed ? 'border-dashed border-border/70' : 'border-border bg-muted/20',
+        collapsed ? 'p-0.5' : 'p-1'
+      )}
+      aria-label={label}
+    >
+      {!collapsed && (
+        <div className="px-1 pb-0.5 text-[9px] uppercase tracking-wide text-muted-foreground">
+          {marker ? `${marker} ` : ''}
+          {label}
+        </div>
+      )}
+      <div className="space-y-1">{children}</div>
+    </div>
+  )
+}
+
+/** Vertical connector between sequential nodes (hidden when collapsed). */
+function Connector({ collapsed }: { collapsed: boolean }) {
+  if (collapsed) return null
+  return (
+    <div className="flex justify-center py-0.5 text-muted-foreground/60" aria-hidden="true">
+      ↓
+    </div>
+  )
+}
+
+export function PhaseRail() {
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const { pathname } = useLocation()
+  const phaseStatus = useMigrationWorkflowStore((s) => s.phaseStatus)
+  const collapsed = useMigrationWorkflowStore((s) => s.railCollapsed)
+  const toggleCollapsed = useMigrationWorkflowStore((s) => s.toggleRailCollapsed)
+  const ownedPhases = useOwnedPhases()
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+
+  // Reverse highlight (hub → rail): the phase you navigated to (?phase=) is
+  // "here"; absent that, any phase whose surfaces include the current route is
+  // "on-page", so direct navigation still reflects where you are.
+  const phaseParam = searchParams.get('phase')
+  const activePhase: PhaseId | null =
+    phaseParam && PHASE_ORDER.includes(phaseParam as PhaseId) ? (phaseParam as PhaseId) : null
+  const phasesForRoute = useMemo(
+    () =>
+      new Set(
+        PHASE_ORDER.filter((p) => (FRAMEWORK_PHASES[p].surfaces as string[]).includes(pathname))
+      ),
+    [pathname]
+  )
+
+  const handleNavigate = (phase: FrameworkPhase) => {
+    navigate(`${primaryRoute(phase)}?phase=${phase.id}`)
+  }
+
+  const yourViewLabel = useMemo(() => {
+    if (!selectedPersona || ownedPhases.size === 0) return null
+    return PERSONAS[selectedPersona]?.label ?? null
+  }, [selectedPersona, ownedPhases])
+
+  const has = (id: PhaseId) => PHASE_ORDER.includes(id)
+  const node = (id: PhaseId) =>
+    has(id) ? (
+      <PhaseNode
+        phase={FRAMEWORK_PHASES[id]}
+        status={phaseStatus[id] ?? 'todo'}
+        owned={ownedPhases.has(id)}
+        collapsed={collapsed}
+        locationState={
+          activePhase === id
+            ? 'here'
+            : !activePhase && phasesForRoute.has(id)
+              ? 'on-page'
+              : undefined
+        }
+        onNavigate={handleNavigate}
+      />
+    ) : null
+
+  return (
+    <aside
+      aria-label="Migration Program phases"
+      className={clsx(
+        'hidden shrink-0 self-start rounded-lg border border-border bg-card/40 transition-[width] duration-200 lg:flex lg:flex-col lg:sticky lg:top-4 print:hidden',
+        'max-h-[calc(100dvh-6rem)] overflow-y-auto',
+        collapsed ? 'w-14' : 'w-56'
+      )}
+    >
+      {/* Header + minimize/expand toggle */}
+      <div
+        className={clsx(
+          'flex items-center gap-1 border-b border-border/60 px-2 py-2',
+          collapsed ? 'justify-center' : 'justify-between'
+        )}
+      >
+        {!collapsed && (
+          <span className="text-xs font-semibold uppercase tracking-wide text-foreground">
+            Migration Program
+          </span>
+        )}
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={toggleCollapsed}
+          aria-expanded={!collapsed}
+          aria-label={collapsed ? 'Expand phase rail' : 'Minimize phase rail'}
+          title={collapsed ? 'Expand' : 'Minimize'}
+          className="h-7 w-7 shrink-0 p-0"
+        >
+          {collapsed ? (
+            <PanelLeftOpen size={16} aria-hidden="true" />
+          ) : (
+            <PanelLeftClose size={16} aria-hidden="true" />
+          )}
+        </Button>
+      </div>
+
+      {yourViewLabel && !collapsed && (
+        <div className="px-2 pt-2">
+          <span className="inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+            your view: {yourViewLabel}
+          </span>
+        </div>
+      )}
+
+      <div className="space-y-1 p-2">
+        {node('p0')}
+        {has('p0') && (has('p1') || has('p2')) && <Connector collapsed={collapsed} />}
+
+        {(has('p1') || has('p2')) && (
+          <Group label="parallel" marker="∥" collapsed={collapsed} dashed>
+            {node('p1')}
+            {node('p2')}
+          </Group>
+        )}
+
+        {(has('p1') || has('p2')) && has('p3') && <Connector collapsed={collapsed} />}
+        {node('p3')}
+        {has('p3') && has('p4') && <Connector collapsed={collapsed} />}
+        {node('p4')}
+        {has('p4') && (has('p5') || has('p6')) && <Connector collapsed={collapsed} />}
+
+        {(has('p5') || has('p6')) && (
+          <Group label="iterative" marker="⇄" collapsed={collapsed} dashed>
+            {node('p5')}
+            {node('p6')}
+          </Group>
+        )}
+
+        {has('p7') && (
+          <Group label="continuous" collapsed={collapsed}>
+            {node('p7')}
+          </Group>
+        )}
+
+        {has('verify-close') && (
+          <Group label="closure" collapsed={collapsed}>
+            {node('verify-close')}
+          </Group>
+        )}
+
+        {has('foundations') && (
+          <Group label="Foundations" collapsed={collapsed}>
+            {node('foundations')}
+          </Group>
+        )}
+
+        {!collapsed && (
+          <p className="px-1 pt-1 text-[10px] text-muted-foreground">
+            ✓ done · ● current · ○ to-do
+          </p>
+        )}
+      </div>
+    </aside>
+  )
+}

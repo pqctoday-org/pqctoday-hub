@@ -12,7 +12,7 @@ import {
 import type {
   AssessmentInput,
   HNDLRiskWindow,
-  HNFLRiskWindow,
+  TNFLRiskWindow,
   MigrationEffortItem,
 } from '../assessmentTypes'
 
@@ -45,7 +45,7 @@ export function computeHNDLRiskWindow(input: AssessmentInput): HNDLRiskWindow | 
   }
 }
 
-export function computeHNFLRiskWindow(input: AssessmentInput): HNFLRiskWindow | undefined {
+export function computeTNFLRiskWindow(input: AssessmentInput): TNFLRiskWindow | undefined {
   const isEstimated = !!input.credentialLifetimeUnknown
   if (!input.credentialLifetime?.length && !isEstimated) return undefined
   const currentYear = new Date().getFullYear()
@@ -60,8 +60,8 @@ export function computeHNFLRiskWindow(input: AssessmentInput): HNFLRiskWindow | 
   const effectiveThreatYear = getEffectiveThreatYear(input.country)
   const credentialExpiryYear = currentYear + lifetimeYears
   const riskWindowYears = credentialExpiryYear - effectiveThreatYear
-  const hnflRelevantUseCases = (input.cryptoUseCases ?? []).filter(
-    (uc) => (USE_CASE_WEIGHTS[uc]?.hnflRelevance ?? 0) >= 7 // eslint-disable-line security/detect-object-injection
+  const tnflRelevantUseCases = (input.cryptoUseCases ?? []).filter(
+    (uc) => (USE_CASE_WEIGHTS[uc]?.tnflRelevance ?? 0) >= 7 // eslint-disable-line security/detect-object-injection
   )
   return {
     credentialLifetimeYears: lifetimeYears,
@@ -70,7 +70,7 @@ export function computeHNFLRiskWindow(input: AssessmentInput): HNFLRiskWindow | 
     isAtRisk: riskWindowYears > 0 && hasSigningAlgorithms,
     riskWindowYears: Math.max(0, riskWindowYears),
     hasSigningAlgorithms,
-    hnflRelevantUseCases,
+    tnflRelevantUseCases,
     isEstimated,
   }
 }

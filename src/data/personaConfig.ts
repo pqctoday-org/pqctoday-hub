@@ -85,7 +85,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
  * to the URL-driven state. See `AlgorithmsView.tsx` `hasActiveParams`.
  * ────────────────────────────────────────────────────────────────────────────── */
 
-export type AlgorithmTabId = 'transition' | 'detailed' | 'support'
+export type AlgorithmTabId = 'transition' | 'detailed' | 'support' | 'validation'
 
 export type AlgorithmFilterKey = 'family' | 'fn' | 'level' | 'region' | 'status'
 
@@ -409,6 +409,7 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
 /** Nav paths that are always shown regardless of persona. */
 export const ALWAYS_VISIBLE_PATHS = [
   '/',
+  '/simulation',
   '/learn',
   '/timeline',
   '/threats',
@@ -774,20 +775,20 @@ export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
     { afterPhase: 'exec-cp-3', route: '/assess', label: 'Run Risk Assessment' },
     { afterPhase: 'exec-cp-3', route: '/compliance', label: 'Check Compliance Deadlines' },
     { afterPhase: 'exec-cp-4', route: '/business', label: 'Explore Business Tools' },
-    { afterPhase: 'exec-cp-4', route: '/migrate', label: 'Browse Migration Catalog' },
+    { afterPhase: 'exec-cp-4', route: '/migrate', label: 'Browse Migration Workbench' },
   ],
   developer: [
     { afterPhase: 'dev-cp-3', route: '/playground', label: 'Try the Playground' },
     { afterPhase: 'dev-cp-3', route: '/openssl', label: 'OpenSSL Studio' },
     { afterPhase: 'dev-cp-4', route: '/assess', label: 'Run Risk Assessment' },
-    { afterPhase: 'dev-cp-5', route: '/migrate', label: 'Browse Migration Catalog' },
+    { afterPhase: 'dev-cp-5', route: '/migrate', label: 'Browse Migration Workbench' },
     { afterPhase: 'dev-cp-5', route: '/playground', label: 'Run ACVP Tests' },
   ],
   architect: [
     { afterPhase: 'arch-cp-2', route: '/assess', label: 'Run Risk Assessment' },
     { afterPhase: 'arch-cp-2', route: '/compliance', label: 'Check Compliance Deadlines' },
     { afterPhase: 'arch-cp-3b', route: '/playground', label: 'Try the Playground' },
-    { afterPhase: 'arch-cp-4', route: '/migrate', label: 'Browse Migration Catalog' },
+    { afterPhase: 'arch-cp-4', route: '/migrate', label: 'Browse Migration Workbench' },
   ],
   researcher: [
     { afterPhase: 'res-cp-2', route: '/playground', label: 'Try the Playground' },
@@ -800,7 +801,7 @@ export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
     { afterPhase: 'ops-cp-3', route: '/playground', label: 'Try the Playground' },
     { afterPhase: 'ops-cp-3', route: '/assess', label: 'Run Risk Assessment' },
     { afterPhase: 'ops-cp-3', route: '/playground', label: 'Run ACVP Tests' },
-    { afterPhase: 'ops-cp-4a', route: '/migrate', label: 'Browse Migration Catalog' },
+    { afterPhase: 'ops-cp-4a', route: '/migrate', label: 'Browse Migration Workbench' },
   ],
   curious: [
     { afterPhase: 'curious-cp-2', route: '/assess', label: 'Take Assessment' },

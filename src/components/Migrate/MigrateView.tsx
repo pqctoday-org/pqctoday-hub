@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { softwareData, softwareMetadata, vendorMap } from '../../data/migrateData'
+import {
+  softwareData,
+  softwareMetadata,
+  vendorMap,
+  matchesMigrationStep,
+} from '../../data/migrateData'
 import { useSearchParams } from 'react-router-dom'
 
 import { SoftwareTable } from './SoftwareTable'
@@ -28,6 +33,7 @@ import {
   BookmarkCheck,
   HelpCircle,
   Map as MapIcon,
+  FileJson,
 } from 'lucide-react'
 
 import debounce from 'lodash/debounce'
@@ -56,6 +62,7 @@ import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { CatalogSizeBanner } from './CatalogSizeBanner'
 import { MigrateContextStrip } from './MigrateContextStrip'
 import { ProductExtractionModal } from './ProductExtractionModal'
+import { downloadCbom } from './cbomExport'
 import { getProductExtraction } from '../../data/productExtractionData'
 import { catalogEnrichments } from '../../data/catalogEnrichmentData'
 import { roadmapByVendorId } from '../../data/vendorRoadmapData'
@@ -81,14 +88,49 @@ function isPersonaRelevant(item: SoftwareItem, preferredLayers: string[]): boole
   return itemLayers.some((l) => preferredLayers.includes(l))
 }
 
-export const MigrateView: React.FC = () => {
+interface MigrateViewProps {
+  /** When true, renders headless inside the simulation (PageHeader hidden, URL
+   *  state is local to the MemoryRouter the sim wraps this in). */
+  simEmbed?: boolean
+  /** C7 game-scoped selection: when provided (sim embed), product picks read/write
+   *  THIS instead of the global useMigrateSelectionStore.myProducts, so in-sim picks
+   *  never touch the standalone catalog's "My Products" (and vice-versa). */
+  selected?: string[]
+  onToggle?: (productId: string) => void
+}
+
+export const MigrateView: React.FC<MigrateViewProps> = ({
+  simEmbed = false,
+  selected,
+  onToggle,
+}) => {
   const isEmbedded = useIsEmbedded()
   useWorkflowPhaseTracker('migrate')
   const addHistoryEvent = useHistoryStore((s) => s.addEvent)
   const persona = usePersonaStore((s) => s.selectedPersona)
   const preferredLayers = persona ? (PERSONA_MIGRATE_LAYERS[persona] ?? []) : [] // eslint-disable-line security/detect-object-injection
   const personaDefaults = usePersonaDefaults()
-  const [searchParams, setSearchParams] = useSearchParams()
+  // When embedded in the simulation, the catalog must NOT read/write the page
+  // URL (it would corrupt /simulation's route) — and it can't nest its own
+  // <Router> (the app already has one). So its filter URL state is backed by
+  // local component state instead, kept fully API-compatible with useSearchParams.
+  const [realSearchParams, realSetSearchParams] = useSearchParams()
+  const [embedSearchParams, setEmbedSearchParamsState] = useState(() => new URLSearchParams())
+  const searchParams = simEmbed ? embedSearchParams : realSearchParams
+  const setSearchParams: typeof realSetSearchParams = simEmbed
+    ? (nextInit) =>
+        setEmbedSearchParamsState((prev) => {
+          const next = new URLSearchParams(
+            typeof nextInit === 'function'
+              ? (nextInit(prev) as URLSearchParams)
+              : (nextInit as URLSearchParams)
+          )
+          // Keep the SAME object when content is unchanged — otherwise a fresh
+          // URLSearchParams identity on every set would re-fire the effects keyed
+          // on `searchParams` forever (matches real setSearchParams' no-op).
+          return next.toString() === prev.toString() ? prev : next
+        })
+    : realSetSearchParams
   const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
   const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
   const [detailProduct, setDetailProduct] = useState<SoftwareItem | null>(null)
@@ -124,8 +166,8 @@ export const MigrateView: React.FC = () => {
     activeSubCategory,
     setActiveLayer,
     setActiveSubCategory,
-    myProducts,
-    toggleMyProduct,
+    myProducts: storeMyProducts,
+    toggleMyProduct: storeToggleMyProduct,
     showOnlyMyProducts,
     setShowOnlyMyProducts,
     viewMode,
@@ -133,6 +175,12 @@ export const MigrateView: React.FC = () => {
     workflowCollapsed,
     setWorkflowCollapsed,
   } = useMigrateSelectionStore()
+
+  // C7 game-scoped selection: inside the sim the picks come from props (the sim
+  // store), otherwise from the global My Products store. One pair of accessors so
+  // every picker/membership/badge below is source-agnostic.
+  const myProducts = selected ?? storeMyProducts
+  const toggleMyProduct = onToggle ?? storeToggleMyProduct
 
   // Shared expanded-row state — survives layer/filter switches; init from ?product= deep link
   const [tableExpandedIds, setTableExpandedIds] = useState<Set<string>>(() => {
@@ -462,9 +510,12 @@ export const MigrateView: React.FC = () => {
   const myProductsSet = useMemo(() => new Set(myProducts), [myProducts])
   const isStackAllView = isStackMode && activeInfrastructureLayer === 'All'
 
-  // Fire a history event when the product selection changes meaningfully (debounced)
+  // Fire a history event when the product selection changes meaningfully (debounced).
+  // Suppressed in the sim embed — game-scoped picks shouldn't write to the global
+  // learning history.
   const prevProductCountRef = useRef(myProducts.length)
   useEffect(() => {
+    if (simEmbed) return
     const count = myProducts.length
     if (count === prevProductCountRef.current) return
     prevProductCountRef.current = count
@@ -479,7 +530,7 @@ export const MigrateView: React.FC = () => {
       })
     }, 1500)
     return () => clearTimeout(timer)
-  }, [myProducts.length, addHistoryEvent])
+  }, [myProducts.length, addHistoryEvent, simEmbed])
 
   // Debounced search
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -537,10 +588,9 @@ export const MigrateView: React.FC = () => {
     return activePartitions.reduce(
       (acc, layer) => {
         acc[layer.id] = softwareData.filter((item) => {
-          // Step filter
-          if (stepFilter) {
-            const phases = item.migrationPhases?.split(',').map((p) => p.trim()) ?? []
-            if (!phases.includes(stepFilter.stepId)) return false
+          // Step filter — untagged products are phase-agnostic (match every step)
+          if (stepFilter && !matchesMigrationStep(item.migrationPhases, stepFilter.stepId)) {
+            return false
           }
           // Layer filter
           if (effectiveViewMode === 'cisaStack') {
@@ -769,10 +819,9 @@ export const MigrateView: React.FC = () => {
   // All products filtered by global filters + layer dropdown + category dropdown
   const allFilteredProducts = useMemo(() => {
     return softwareData.filter((item) => {
-      // Step filter
-      if (stepFilter) {
-        const phases = item.migrationPhases?.split(',').map((p) => p.trim()) ?? []
-        if (!phases.includes(stepFilter.stepId)) return false
+      // Step filter — untagged products are phase-agnostic (match every step)
+      if (stepFilter && !matchesMigrationStep(item.migrationPhases, stepFilter.stepId)) {
+        return false
       }
       // Industry filter
       if (industryFilter) {
@@ -1018,6 +1067,16 @@ export const MigrateView: React.FC = () => {
     downloadCsv(csv, csvFilename('pqc-migrate-catalog'))
   }, [allFilteredProducts])
 
+  // CycloneDX CBOM export — emits the currently-filtered product set as a
+  // machine-verifiable Cryptographic Bill of Materials (reuses CPE/PURL/FIPS
+  // xrefs already held on each product). Falls back to the full catalog when
+  // no filter is active.
+  const handleExportCbom = useCallback(() => {
+    const items = allFilteredProducts.length > 0 ? allFilteredProducts : softwareData
+    const result = downloadCbom(items)
+    logMigrateAction('Export CBOM', `${result.componentCount} products`)
+  }, [allFilteredProducts])
+
   const handleViewSoftware = useCallback(
     (step: MigrationStep) => {
       setStepFilter({
@@ -1039,21 +1098,23 @@ export const MigrateView: React.FC = () => {
 
   return (
     <div className={`space-y-8 ${compareKeys.length > 0 ? 'pb-20' : ''}`}>
-      <PageHeader
-        icon={ArrowRightLeft}
-        pageId="migrate"
-        title="PQC Migration Guide"
-        description="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance."
-        dataSource={
-          softwareMetadata
-            ? `${softwareMetadata.filename} • Updated: ${softwareMetadata.lastUpdate.toLocaleDateString()}`
-            : undefined
-        }
-        viewType="Migrate"
-        shareTitle="PQC Migration Guide — 7-Phase Framework for Post-Quantum Readiness"
-        shareText="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance. Explore software readiness and migration steps."
-        onExport={handleExportCsv}
-      />
+      {!simEmbed && (
+        <PageHeader
+          icon={ArrowRightLeft}
+          pageId="migrate"
+          title="PQC Migration Guide"
+          description="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance."
+          dataSource={
+            softwareMetadata
+              ? `${softwareMetadata.filename} • Updated: ${softwareMetadata.lastUpdate.toLocaleDateString()}`
+              : undefined
+          }
+          viewType="Migrate"
+          shareTitle="PQC Migration Guide — 7-Phase Framework for Post-Quantum Readiness"
+          shareText="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance. Explore software readiness and migration steps."
+          onExport={handleExportCsv}
+        />
+      )}
 
       {persona === 'curious' && (
         <PreviewBanner pageContext="Developer, Architect, Ops, Researcher" />
@@ -1613,6 +1674,18 @@ export const MigrateView: React.FC = () => {
             </div>
           )
         })()}
+
+        {/* CBOM export — CycloneDX Cryptographic Bill of Materials for the
+            current product selection. Reuses CPE/PURL/FIPS xrefs. */}
+        <Button
+          variant="outline"
+          onClick={handleExportCbom}
+          className="mt-2 sm:mt-0 sm:ml-auto inline-flex items-center gap-1.5 text-xs h-auto px-3 py-1.5"
+          aria-label="Export CycloneDX CBOM for the current product selection"
+        >
+          <FileJson size={13} aria-hidden="true" />
+          Export CBOM (CycloneDX)
+        </Button>
 
         {/* Compare Onboarding Tooltip banner */}
         {!hasDismissedCompareOnboarding && (

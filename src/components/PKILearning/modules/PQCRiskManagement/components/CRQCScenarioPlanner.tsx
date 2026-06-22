@@ -73,7 +73,7 @@ const ALGORITHMS: AlgorithmImpact[] = [
     breakYear: null,
     replacement: 'AES-256 (recommended)',
     notes:
-      'Grover\u2019s algorithm reduces effective security to 64-bit. Upgrade to AES-256 recommended.',
+      'Grover\u2019s algorithm gives only a quadratic speedup (~2\u2076\u2074 sequential work), whose circuit depth is impractical, so AES-128 retains substantial security and NIST still treats it as acceptable. AES-256 recommended for long-term / CNSA 2.0 assurance.',
   },
   {
     name: 'AES-256',
@@ -89,7 +89,7 @@ const ALGORITHMS: AlgorithmImpact[] = [
     breakYear: null,
     replacement: 'No change needed',
     notes:
-      'Grover\u2019s reduces preimage resistance from 2\u00b2\u2075\u2076 to \u223c2\u00b9\u00b2\u2078 and collision resistance to \u223c2\u2078\u2075. NIST considers this sufficient; SHA-256 is quantum-safe per NIST IR 8547.',
+      'Grover lowers preimage resistance to \u223c2\u00b9\u00b2\u2078 (still strong). The theoretical quantum collision bound (\u223c2\u2078\u2075 via BHT) requires impractical quantum memory and is not a real-world threat. SHA-256/384/512 are quantum-safe per NIST IR 8547.',
   },
 ]
 
@@ -560,6 +560,7 @@ export const CRQCScenarioPlanner: React.FC = () => {
         exportData={exportMarkdown}
         filename="crqc-scenario-analysis"
         formats={['markdown', 'pdf']}
+        wideTable
         onExport={handleExport}
       >
         <p className="text-sm text-muted-foreground">

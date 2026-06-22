@@ -8,6 +8,7 @@ import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { softwareData } from '@/data/migrateData'
+import { isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import {
   Info,
@@ -37,22 +38,14 @@ const DIMENSIONS: Dimension[] = [
     label: 'PQC Algorithm Support',
     description: 'Vendor supports NIST-approved PQC algorithms',
     weight: 0.25,
-    autoDetect: (item) => {
-      const s = (item.pqcSupport || '').toLowerCase()
-      return s.startsWith('yes') || s.startsWith('partial') || s.startsWith('limited')
-    },
+    autoDetect: (item) => isPqcReady(item.pqcSupport),
   },
   {
     id: 'fips-validation',
     label: 'FIPS 140-3 Validation',
     description: 'Cryptographic modules have current FIPS validation',
     weight: 0.2,
-    autoDetect: (item) => {
-      const s = (item.fipsValidated || '').toLowerCase()
-      return (
-        s.startsWith('yes') || s === 'validated' || (s.includes('fips 140') && !s.startsWith('no'))
-      )
-    },
+    autoDetect: (item) => isFips1403Validated(item.fipsValidated),
   },
   {
     id: 'pqc-roadmap',
@@ -104,6 +97,63 @@ function getBarColor(value: number): string {
 
 const productKey = (item: SoftwareItem) => item.productId
 
+export interface VendorScorecardRow {
+  vendor: string
+  productCount: number
+  dimScores: Record<string, number>
+  overall: number
+}
+
+/**
+ * Per-vendor readiness. Groups the selected products by vendor and scores each
+ * vendor independently — a dimension's score for a vendor is the share of THAT
+ * vendor's products that satisfy it (slider dimensions are global, applied to
+ * all vendors). Replaces the single blended "vendor" number, which mixed every
+ * vendor's products into one misleading figure for procurement. Pure for tests.
+ */
+export function computeVendorScorecards(
+  items: SoftwareItem[],
+  checkedProducts: Record<string, Set<string>>,
+  weightOf: (dimId: string) => number,
+  opts: { useSlider: Record<string, boolean>; sliderScores: Record<string, number> }
+): VendorScorecardRow[] {
+  const groups = new Map<string, SoftwareItem[]>()
+  for (const item of items) {
+    const vendor = item.vendorId?.trim() || 'Unknown vendor'
+    const arr = groups.get(vendor) ?? []
+    arr.push(item)
+    groups.set(vendor, arr)
+  }
+  const rows: VendorScorecardRow[] = []
+  for (const [vendor, group] of groups) {
+    const keys = new Set(group.map(productKey))
+    const dimScores: Record<string, number> = {}
+    let weightedSum = 0
+    let totalWeight = 0
+    for (const d of DIMENSIONS) {
+      let score: number
+      if (opts.useSlider[d.id]) {
+        score = opts.sliderScores[d.id] ?? 0
+      } else {
+        const checked = checkedProducts[d.id]
+        const hits = checked ? [...keys].filter((k) => checked.has(k)).length : 0
+        score = group.length > 0 ? Math.round((hits / group.length) * 100) : 0
+      }
+      dimScores[d.id] = score
+      const w = weightOf(d.id)
+      weightedSum += score * w
+      totalWeight += w
+    }
+    rows.push({
+      vendor,
+      productCount: group.length,
+      dimScores,
+      overall: totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0,
+    })
+  }
+  return rows.sort((a, b) => b.overall - a.overall || a.vendor.localeCompare(b.vendor))
+}
+
 export const VendorScorecardBuilder: React.FC = () => {
   const myProducts = useMigrateSelectionStore((s) => s.myProducts)
   const { addExecutiveDocument } = useModuleStore()
@@ -143,6 +193,22 @@ export const VendorScorecardBuilder: React.FC = () => {
     }
     return initial
   })
+
+  // User-adjustable weight overrides (0–1). Saved artifact uses the same values.
+  const [weightOverrides, setWeightOverrides] = useState<Record<string, number>>({})
+
+  const effectiveWeight = useCallback(
+    (dimId: string): number =>
+      dimId in weightOverrides
+        ? (weightOverrides[dimId] ?? 0)
+        : (DIMENSIONS.find((d) => d.id === dimId)?.weight ?? 0),
+    [weightOverrides]
+  )
+
+  const handleWeightChange = useCallback((dimId: string, pct: number) => {
+    const clamped = Math.max(0, Math.min(100, Math.round(pct)))
+    setWeightOverrides((prev) => ({ ...prev, [dimId]: clamped / 100 }))
+  }, [])
 
   // Which dimension is expanded — open pqc-roadmap first when the user
   // reports heavy vendor dependency (so they immediately see roadmap risk),
@@ -196,17 +262,30 @@ export const VendorScorecardBuilder: React.FC = () => {
     [useSlider, sliderScores, checkedProducts, selectedItems, hasProducts]
   )
 
-  // Overall weighted score
+  // Overall weighted score — uses live weight overrides so display and export agree
   const weightedTotal = useMemo(() => {
     let totalWeight = 0
     let weightedSum = 0
     for (const d of DIMENSIONS) {
       const score = getScore(d.id)
-      weightedSum += score * d.weight
-      totalWeight += d.weight
+      const w = effectiveWeight(d.id)
+      weightedSum += score * w
+      totalWeight += w
     }
     return totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
-  }, [getScore])
+  }, [getScore, effectiveWeight])
+
+  // Per-vendor breakdown — each vendor scored on its own products, sorted best
+  // to worst. The headline above is a portfolio average; this is what a buyer
+  // actually compares.
+  const vendorScorecards = useMemo(
+    () =>
+      computeVendorScorecards(selectedItems, checkedProducts, effectiveWeight, {
+        useSlider,
+        sliderScores,
+      }),
+    [selectedItems, checkedProducts, effectiveWeight, useSlider, sliderScores]
+  )
 
   const toggleProductForDimension = useCallback((dimId: string, key: string) => {
     setCheckedProducts((prev) => {
@@ -233,7 +312,7 @@ export const VendorScorecardBuilder: React.FC = () => {
 
   const exportMarkdown = useMemo(() => {
     let md = '# Vendor PQC Readiness Scorecard\n\n'
-    md += `**Overall Score: ${weightedTotal}/100**\n\n`
+    md += `**Portfolio average (all products): ${weightedTotal}/100**\n\n`
     md += `Generated: ${new Date().toLocaleDateString()}\n`
     if (hasProducts) {
       md += `Products assessed: ${selectedItems.length}\n`
@@ -247,7 +326,18 @@ export const VendorScorecardBuilder: React.FC = () => {
         useSlider[d.id] || !hasProducts
           ? 'Manual'
           : `${checkedProducts[d.id]?.size ?? 0}/${selectedItems.length} products`
-      md += `| ${d.label} | ${score}/100 | ${Math.round(d.weight * 100)}% | ${method} |\n`
+      md += `| ${d.label} | ${score}/100 | ${Math.round(effectiveWeight(d.id) * 100)}% | ${method} |\n`
+    }
+
+    if (hasProducts && vendorScorecards.length > 0) {
+      md += '\n## Per-Vendor Readiness\n\n'
+      md += `| Vendor | Products | Overall | ${DIMENSIONS.map((d) => d.label).join(' | ')} |\n`
+      md += `|${'---|'.repeat(3 + DIMENSIONS.length)}\n`
+      for (const v of vendorScorecards) {
+        md += `| ${v.vendor} | ${v.productCount} | ${v.overall}/100 | ${DIMENSIONS.map(
+          (d) => v.dimScores[d.id] ?? 0
+        ).join(' | ')} |\n`
+      }
     }
 
     // CSWP.39 §5.3 - Observability Tooling Notes
@@ -272,6 +362,8 @@ export const VendorScorecardBuilder: React.FC = () => {
     cveNotes,
     siemNotes,
     ztNotes,
+    effectiveWeight,
+    vendorScorecards,
   ])
 
   // Save to module store when score is meaningful (store deduplicates by moduleId+type)
@@ -333,12 +425,55 @@ export const VendorScorecardBuilder: React.FC = () => {
 
       {/* Overall score */}
       <div className="glass-panel p-6 text-center">
-        <p className="text-sm text-muted-foreground mb-2">Vendor PQC Readiness — Overall Score</p>
+        <p className="text-sm text-muted-foreground mb-2">
+          PQC Readiness — Portfolio average (across all products)
+        </p>
         <p className={`text-3xl md:text-5xl font-bold ${getScoreColor(weightedTotal)}`}>
           {weightedTotal}
         </p>
         <p className="text-sm text-muted-foreground mt-1">/100</p>
+        {vendorScorecards.length > 1 && (
+          <p className="text-xs text-muted-foreground mt-2">
+            This blends {vendorScorecards.length} vendors — see the per-vendor breakdown below for
+            procurement comparisons.
+          </p>
+        )}
       </div>
+
+      {/* Per-vendor breakdown */}
+      {hasProducts && vendorScorecards.length > 0 && (
+        <div className="glass-panel p-4">
+          <p className="text-sm font-semibold text-foreground mb-1">Per-vendor readiness</p>
+          <p className="text-xs text-muted-foreground mb-3">
+            Each vendor scored on its own products (best to worst). The portfolio average above can
+            hide a weak vendor inside a strong set.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs text-muted-foreground border-b border-border">
+                  <th className="py-1.5 pr-3 font-medium">Vendor</th>
+                  <th className="py-1.5 px-2 font-medium text-center">Products</th>
+                  <th className="py-1.5 px-2 font-medium text-center">Overall</th>
+                </tr>
+              </thead>
+              <tbody>
+                {vendorScorecards.map((v) => (
+                  <tr key={v.vendor} className="border-b border-border/50">
+                    <td className="py-1.5 pr-3 text-foreground">{v.vendor}</td>
+                    <td className="py-1.5 px-2 text-center text-muted-foreground">
+                      {v.productCount}
+                    </td>
+                    <td className={`py-1.5 px-2 text-center font-bold ${getScoreColor(v.overall)}`}>
+                      {v.overall}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Dimension cards */}
       <div className="space-y-3">
@@ -380,7 +515,7 @@ export const VendorScorecardBuilder: React.FC = () => {
                     {score}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    ({Math.round(d.weight * 100)}%)
+                    ({Math.round(effectiveWeight(d.id) * 100)}%)
                   </span>
                 </div>
               </Button>
@@ -489,6 +624,38 @@ export const VendorScorecardBuilder: React.FC = () => {
                       })}
                     </div>
                   )}
+
+                  {/* Weight override — keeps saved artifact in sync with the on-screen display */}
+                  <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border/30">
+                    <span className="text-xs text-muted-foreground flex-1">Dimension weight</span>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={Math.round(effectiveWeight(d.id) * 100)}
+                      onChange={(e) => handleWeightChange(d.id, parseInt(e.target.value) || 0)}
+                      onClick={(e) => e.stopPropagation()}
+                      className="w-16 text-xs text-right border border-border rounded px-1 py-0.5 bg-background focus:outline-none focus:ring-1 focus:ring-primary tabular-nums"
+                    />
+                    <span className="text-xs text-muted-foreground">%</span>
+                    {d.id in weightOverrides && (
+                      <Button
+                        variant="ghost"
+                        type="button"
+                        className="h-auto p-0 text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setWeightOverrides((prev) => {
+                            const next = { ...prev }
+                            delete next[d.id]
+                            return next
+                          })
+                        }}
+                      >
+                        Reset
+                      </Button>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -600,6 +767,7 @@ export const VendorScorecardBuilder: React.FC = () => {
         exportData={exportMarkdown}
         filename="vendor-pqc-scorecard"
         formats={['markdown', 'pdf']}
+        wideTable
       >
         <p className="text-sm text-muted-foreground">
           Export the scorecard above as a shareable document. Includes observability tooling notes.

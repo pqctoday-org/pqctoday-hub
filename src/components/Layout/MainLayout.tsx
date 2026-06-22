@@ -25,6 +25,7 @@ import {
   Search,
   ScrollText,
   UserCog,
+  Gamepad2,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewModal } from '../ui/WhatsNewModal'
@@ -34,6 +35,8 @@ import { PhaseCompletionToast } from '../ui/PhaseCompletionToast'
 
 import { GuidedTour } from '../common/GuidedTour'
 import { Breadcrumb } from '../common/Breadcrumb'
+import { PhaseContextBanner } from '../shared/PhaseContextBanner'
+import { ResumeSimBar } from '../shared/ResumeSimBar'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
 import { WorkflowBanner } from '../common/WorkflowBanner'
@@ -99,6 +102,7 @@ export const MainLayout = () => {
 
   const navItems = [
     { path: '/', label: 'Home', icon: Home, end: true },
+    { path: '/simulation', label: 'Simulation', icon: Gamepad2, section: 'start' },
     // — Explore entry point (curious persona only) —
     { path: '/explore', label: 'Explore', icon: Compass, section: 'start', curiousOnly: true },
     // — Start the Journey —
@@ -229,6 +233,10 @@ export const MainLayout = () => {
       >
         Skip to main content
       </a>
+
+      {/* Sim header strip — kept visible on every hub resource opened from the
+          PQC Today Sim, so the simulation context is never lost on a redirect. */}
+      <ResumeSimBar />
 
       <header
         className="m-4 sticky top-[max(1rem,env(safe-area-inset-top))] z-50 transition-all duration-300 print:hidden"
@@ -525,9 +533,15 @@ export const MainLayout = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
+              className="lg:flex lg:items-start lg:gap-6"
             >
-              <Breadcrumb />
-              <Outlet />
+              <div className="min-w-0 lg:flex-1">
+                <Breadcrumb />
+                {/* "You're viewing Phase X" banner — shows when a ?phase= param is
+                    present (e.g. a deep link); self-skips Assess/Report/Command Center. */}
+                <PhaseContextBanner />
+                <Outlet />
+              </div>
             </motion.div>
           </React.Suspense>
         </main>

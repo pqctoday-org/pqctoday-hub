@@ -7,10 +7,29 @@ import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
-import { TimelinePlanner, ExportableArtifact } from '../../../common/executive'
-import type { ExternalDeadline, Milestone } from '../../../common/executive'
+import { ExportableArtifact } from '../../../common/executive'
+import type { ExternalDeadline } from '../../../common/executive'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import type { SimRoadmapInput } from '@/simulation/simRoadmap'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
+import {
+  FRAMEWORK_PHASES,
+  FRAMEWORK_AUTHOR,
+  FRAMEWORK_LICENSE,
+  FRAMEWORK_NAME,
+  FRAMEWORK_URL,
+  FRAMEWORK_VERSION,
+  PHASE_ORDER,
+  type PhaseId,
+} from '@/data/frameworkPhases'
+import { TwoTrackRoadmapTimeline } from './TwoTrackRoadmapTimeline'
+import {
+  TRACK_META,
+  TRACK_ORDER,
+  criticalPathLength,
+  trackForFunction,
+  type RoadmapMilestone,
+} from './roadmapTracks'
 
 interface MitigationGatewayRow {
   asset: string
@@ -21,49 +40,119 @@ interface MitigationGatewayRow {
 
 const MODULE_ID = 'migration-program'
 
-const DEFAULT_CATEGORIES = [
-  'Discovery',
-  'Planning',
-  'Pilot',
-  'Migration',
-  'Validation',
-  'Completion',
-]
-
-const DEFAULT_MILESTONES: Milestone[] = [
+/**
+ * A teaching default that shows the framework's real shape: a governance spine
+ * (P0→P3) that both technical tracks depend on, then Track A (confidentiality /
+ * KEM) and Track B (integrity / signatures-PKI) running in parallel.
+ */
+const DEFAULT_MILESTONES: RoadmapMilestone[] = [
   {
-    id: 'ms-default-1',
-    label: 'Complete Crypto Inventory',
-    year: 2025,
-    category: 'Discovery',
-  },
-  {
-    id: 'ms-default-2',
-    label: 'Pilot PQC in TLS',
+    id: 'def-mandate',
+    label: 'Executive mandate & budget approved',
     year: 2026,
-    category: 'Pilot',
+    phaseId: 'p0',
+    track: 'program',
   },
   {
-    id: 'ms-default-3',
-    label: 'Full Migration',
+    id: 'def-inventory',
+    label: 'Cryptographic inventory complete',
+    year: 2026,
+    phaseId: 'p1',
+    track: 'program',
+  },
+  {
+    id: 'def-cbom',
+    label: 'CBOM published (machine-verifiable)',
+    year: 2027,
+    phaseId: 'p2',
+    track: 'program',
+    dependsOn: ['def-inventory'],
+  },
+  {
+    id: 'def-qra',
+    label: 'Risk scoring & QRA delivered',
+    year: 2027,
+    phaseId: 'p3',
+    track: 'program',
+    dependsOn: ['def-cbom'],
+  },
+  {
+    id: 'def-kem-pilot',
+    label: 'Pilot ML-KEM hybrid in TLS',
+    year: 2027,
+    phaseId: 'p5',
+    track: 'A',
+    dependsOn: ['def-qra'],
+  },
+  {
+    id: 'def-kem-vpn',
+    label: 'Migrate VPN / IPsec key exchange',
+    year: 2028,
+    phaseId: 'p5',
+    track: 'A',
+    dependsOn: ['def-kem-pilot'],
+  },
+  {
+    id: 'def-sig-codesign',
+    label: 'Migrate code/firmware signing to ML-DSA',
+    year: 2028,
+    phaseId: 'p5',
+    track: 'B',
+    dependsOn: ['def-qra'],
+  },
+  {
+    id: 'def-sig-pki',
+    label: 'Re-issue root / intermediate CAs (PQC)',
     year: 2030,
-    category: 'Migration',
+    phaseId: 'p6',
+    track: 'B',
+    dependsOn: ['def-sig-codesign'],
   },
 ]
 
 /**
  * Parse the Year out of a transition CSV deprecation/standardization date.
- * The CSV uses formats like "2030 (Deprecated) / 2035 (Disallowed)" or
- * "2024 (FIPS 203)" or just "2030". Returns the FIRST 4-digit year.
+ * Formats like "2030 (Deprecated) / 2035 (Disallowed)" or "2024 (FIPS 203)" or
+ * just "2030". Returns the FIRST 4-digit year.
  */
 function extractYear(raw: string): number | null {
   const m = raw.match(/(20\d{2})/)
   return m ? Number(m[1]) : null
 }
 
+const isPhaseId = (s: string): s is PhaseId => (PHASE_ORDER as string[]).includes(s)
+
+/** Shape guard for a persisted milestone (restored from a saved roadmap's `inputs`). */
+function isValidMilestone(m: unknown): m is RoadmapMilestone {
+  if (!m || typeof m !== 'object') return false
+  const x = m as Record<string, unknown>
+  return (
+    typeof x.id === 'string' &&
+    typeof x.label === 'string' &&
+    typeof x.year === 'number' &&
+    (x.track === 'program' || x.track === 'A' || x.track === 'B') &&
+    typeof x.phaseId === 'string' &&
+    isPhaseId(x.phaseId as string)
+  )
+}
+
+interface SavedRoadmapInputs {
+  milestones?: unknown
+  selectedDeadlines?: ExternalDeadline[]
+  mitigations?: MitigationGatewayRow[]
+}
+
+/** Short "P3 · G3" style phase/gate tag for export. */
+function phaseGateTag(id: PhaseId): string {
+  const p = FRAMEWORK_PHASES[id]
+  const label = p.number !== null ? `P${p.number}` : id === 'verify-close' ? 'V&C' : 'Foundations'
+  return p.gate ? `${label} · ${p.gate.id}` : label
+}
+
 export const RoadmapBuilder: React.FC = () => {
   const { countryDeadlines, algorithmMigrations } = useExecutiveModuleData()
   const { addExecutiveDocument } = useModuleStore()
+  const executiveDocuments = useModuleStore((s) => s.artifacts.executiveDocuments)
   const transitions = useAlgorithmTransitionsForAssessment()
   const myTimelineCountries = useBookmarkStore((s) => s.myTimelineCountries)
   const myProductIdsBookmarked = useMigrateSelectionStore((s) => s.myProducts)
@@ -75,22 +164,16 @@ export const RoadmapBuilder: React.FC = () => {
     for (const country of countryDeadlines) {
       for (const body of country.bodies) {
         for (const event of body.events) {
-          // Include milestones and deadlines as external reference points
           if (
             event.phase === 'Deadline' ||
             event.phase === 'Regulation' ||
             event.phase === 'Policy'
           ) {
-            deadlines.push({
-              label: event.title,
-              year: event.endYear,
-              source: country.countryName,
-            })
+            deadlines.push({ label: event.title, year: event.endYear, source: country.countryName })
           }
         }
       }
     }
-    // Deduplicate by label+year and sort by year
     const seen = new Set<string>()
     return deadlines
       .filter((d) => {
@@ -103,9 +186,9 @@ export const RoadmapBuilder: React.FC = () => {
   }, [countryDeadlines])
 
   // Assessment-derived milestones: one per reported algorithm transition,
-  // anchored on the deprecation year from the NIST transitions CSV. Falls back
-  // to algorithmMigrations[] urgency when the transition date is missing.
-  const assessmentMilestones = useMemo<Milestone[]>(() => {
+  // routed to Track A (KEM/confidentiality) or Track B (signature/integrity) by
+  // the transition's `function`, anchored on the NIST deprecation year.
+  const assessmentMilestones = useMemo<RoadmapMilestone[]>(() => {
     if (transitions.length === 0) return []
     return transitions.map((t, i) => {
       const year =
@@ -118,26 +201,84 @@ export const RoadmapBuilder: React.FC = () => {
         id: `assess-ms-${i + 1}`,
         label: `Migrate ${t.classical}${t.keySize ? ` (${t.keySize})` : ''} → ${t.pqc}`,
         year,
-        category: 'Migration',
+        phaseId: 'p5' as PhaseId,
+        track: trackForFunction(t.function),
       }
     })
   }, [transitions, algorithmMigrations])
 
-  const seedMilestones = assessmentMilestones.length > 0 ? assessmentMilestones : DEFAULT_MILESTONES
-  const [currentMilestones, setCurrentMilestones] = React.useState<Milestone[]>(seedMilestones)
-  const [seededFromAssessment, setSeededFromAssessment] = React.useState(
-    assessmentMilestones.length > 0
+  // Seed from the latest committed Simulation roadmap (its UNCLEARED phases) →
+  // the governance spine. Higher priority than the assessment-derived seed.
+  const simRoadmapMilestones = useMemo<RoadmapMilestone[]>(() => {
+    const latest = (executiveDocuments ?? [])
+      .filter((d) => d.type === 'sim-roadmap' && d.inputs)
+      .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0))[0]
+    const input = latest?.inputs as SimRoadmapInput | undefined
+    const uncleared = input?.phases?.filter((p) => !p.cleared) ?? []
+    if (uncleared.length === 0) return []
+    const horizon = Math.max(1, input?.yearsToHorizon || uncleared.length)
+    const thisYear = new Date().getFullYear()
+    return uncleared.map((p, i) => ({
+      id: `sim-ms-${p.id}`,
+      label: `Clear ${p.name}`,
+      year: thisYear + Math.max(1, Math.ceil(((i + 1) / uncleared.length) * horizon)),
+      phaseId: isPhaseId(p.id) ? p.id : 'p4',
+      track: 'program' as const,
+    }))
+  }, [executiveDocuments])
+
+  // Restore the user's own last-saved roadmap (highest priority) so the plan is
+  // round-trippable — this is the read-back half of persisting `inputs`.
+  const savedRoadmap = useMemo<SavedRoadmapInputs | undefined>(() => {
+    const latest = (executiveDocuments ?? [])
+      .filter((d) => d.type === 'migration-roadmap' && d.inputs)
+      .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0))[0]
+    return latest?.inputs as SavedRoadmapInputs | undefined
+  }, [executiveDocuments])
+  const savedMilestones = useMemo<RoadmapMilestone[]>(() => {
+    const ms = savedRoadmap?.milestones
+    return Array.isArray(ms) ? ms.filter(isValidMilestone) : []
+  }, [savedRoadmap])
+
+  const seedSource: 'saved' | 'sim' | 'assessment' | null =
+    savedMilestones.length > 0
+      ? 'saved'
+      : simRoadmapMilestones.length > 0
+        ? 'sim'
+        : assessmentMilestones.length > 0
+          ? 'assessment'
+          : null
+  const seedMilestones =
+    seedSource === 'saved'
+      ? savedMilestones
+      : seedSource === 'sim'
+        ? simRoadmapMilestones
+        : seedSource === 'assessment'
+          ? assessmentMilestones
+          : DEFAULT_MILESTONES
+  const [currentMilestones, setCurrentMilestones] =
+    React.useState<RoadmapMilestone[]>(seedMilestones)
+  const [seededFrom, setSeededFrom] = React.useState<'saved' | 'sim' | 'assessment' | null>(
+    seedSource
   )
-  // Pre-select deadlines from countries the user bookmarked on /timeline.
-  // Match by `country.countryName` since that's the field stored in
-  // `myTimelineCountries`.
+
+  // Deadlines: restore from a saved roadmap, else pre-select from bookmarked countries.
   const initialSelectedDeadlines = useMemo<ExternalDeadline[]>(() => {
+    if (Array.isArray(savedRoadmap?.selectedDeadlines)) return savedRoadmap.selectedDeadlines
     if (myTimelineCountries.length === 0) return []
     const set = new Set(myTimelineCountries.map((c) => c.toLowerCase()))
     return externalDeadlines.filter((d) => set.has(d.source.toLowerCase()))
-  }, [myTimelineCountries, externalDeadlines])
+  }, [savedRoadmap, myTimelineCountries, externalDeadlines])
   const [selectedDeadlines, setSelectedDeadlines] =
     React.useState<ExternalDeadline[]>(initialSelectedDeadlines)
+
+  const deadlineKey = (d: ExternalDeadline) => `${d.label}-${d.year}-${d.source}`
+  const toggleDeadline = (d: ExternalDeadline) =>
+    setSelectedDeadlines((prev) =>
+      prev.some((x) => deadlineKey(x) === deadlineKey(d))
+        ? prev.filter((x) => deadlineKey(x) !== deadlineKey(d))
+        : [...prev, d]
+    )
 
   // CSWP.39 §4.6 — Mitigation gateway rows for assets where direct migration is blocked.
   const myProductIds = useMigrateSelectionStore((s) => s.myProducts)
@@ -154,8 +295,9 @@ export const RoadmapBuilder: React.FC = () => {
       .sort((a, b) => Number(b.selected) - Number(a.selected) || a.label.localeCompare(b.label))
   }, [myProductIds])
 
-  const [mitigations, setMitigations] = React.useState<MitigationGatewayRow[]>([])
-
+  const [mitigations, setMitigations] = React.useState<MitigationGatewayRow[]>(
+    Array.isArray(savedRoadmap?.mitigations) ? savedRoadmap.mitigations : []
+  )
   const addMitigation = () =>
     setMitigations((prev) => [...prev, { asset: '', gatewayProductId: '', reason: '', sunset: '' }])
   const updateMitigation = (idx: number, patch: Partial<MitigationGatewayRow>) =>
@@ -163,39 +305,60 @@ export const RoadmapBuilder: React.FC = () => {
   const removeMitigation = (idx: number) =>
     setMitigations((prev) => prev.filter((_, i) => i !== idx))
 
+  const yearRange = useMemo<[number, number]>(
+    () => [2025, Math.max(2036, new Date().getFullYear() + 10)],
+    []
+  )
+
   const exportMarkdown = useMemo(() => {
-    let md = '# PQC Migration Roadmap\n\n'
+    const labelById = new Map(currentMilestones.map((m) => [m.id, m.label]))
+    let md = '# PQC Migration Roadmap (Two-Track)\n\n'
     md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+    md += `_Built on the ${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE}). ${FRAMEWORK_URL}_\n\n`
 
     if (selectedDeadlines.length > 0) {
       md += '## External Regulatory Deadlines\n\n'
-      md += '| Year | Deadline | Source |\n'
-      md += '|------|----------|--------|\n'
-      for (const d of selectedDeadlines) {
+      md += '| Year | Deadline | Source |\n|------|----------|--------|\n'
+      for (const d of [...selectedDeadlines].sort((a, b) => a.year - b.year)) {
         md += `| ${d.year} | ${d.label} | ${d.source} |\n`
       }
       md += '\n'
     }
 
-    md += '## Migration Milestones\n\n'
-    md += '| Year | Milestone | Phase |\n'
-    md += '|------|-----------|-------|\n'
-    for (const m of currentMilestones) {
-      md += `| ${m.year} | ${m.label} | ${m.category || ''} |\n`
-    }
-    md += '\n'
-
-    md += '## Migration Phases\n\n'
-    for (const cat of DEFAULT_CATEGORIES) {
-      const catMilestones = currentMilestones.filter((m) => m.category === cat)
-      if (catMilestones.length > 0) {
-        md += `### ${cat}\n\n`
-        for (const m of catMilestones) {
-          md += `- ${m.year}: ${m.label}\n`
-        }
-        md += '\n'
+    // Per-track milestones — the framework's parallel-workstream structure.
+    for (const track of TRACK_ORDER) {
+      const laneMs = currentMilestones
+        .filter((m) => m.track === track)
+        .sort((a, b) => a.year - b.year)
+      if (laneMs.length === 0) continue
+      const meta = TRACK_META[track]
+      md += `## ${meta.label}\n\n`
+      md += `_${meta.focus} — ${meta.rationale}_\n\n`
+      md +=
+        '| Year | Phase · Gate | Milestone | Depends on |\n|------|------|-----------|------------|\n'
+      for (const m of laneMs) {
+        const deps = (m.dependsOn ?? []).map((d) => labelById.get(d) ?? d).join('; ') || '—'
+        md += `| ${m.year} | ${phaseGateTag(m.phaseId)} | ${m.label} | ${deps} |\n`
       }
+      md += '\n'
     }
+
+    // Gate table for the phases present.
+    const phasesUsed = [...new Set(currentMilestones.map((m) => m.phaseId))].sort(
+      (a, b) => PHASE_ORDER.indexOf(a) - PHASE_ORDER.indexOf(b)
+    )
+    if (phasesUsed.length > 0) {
+      md += '## Milestone Gates\n\n'
+      md += '| Gate | Phase | Criterion | Sign-off |\n|------|-------|-----------|----------|\n'
+      for (const pid of phasesUsed) {
+        const p = FRAMEWORK_PHASES[pid]
+        if (!p.gate) continue
+        md += `| ${p.gate.id} | ${p.name} | ${p.gate.criterion} | ${p.gate.authority} |\n`
+      }
+      md += '\n'
+    }
+
+    md += `**Critical path:** ${criticalPathLength(currentMilestones)} milestones deep (longest dependency chain).\n\n`
 
     // CSWP.39 §4.6 — Mitigation Gateway specs (with mandatory sunset date).
     md += '## Mitigation Gateway (CSWP.39 §4.6)\n\n'
@@ -224,43 +387,96 @@ export const RoadmapBuilder: React.FC = () => {
       type: 'migration-roadmap',
       title: 'PQC Migration Roadmap',
       data: exportMarkdown,
+      // Persist the structured plan so the roadmap is restorable (C1 read-back).
+      inputs: { milestones: currentMilestones, selectedDeadlines, mitigations },
       createdAt: Date.now(),
     })
-  }, [addExecutiveDocument, exportMarkdown])
+  }, [addExecutiveDocument, exportMarkdown, currentMilestones, selectedDeadlines, mitigations])
 
   return (
     <div className="space-y-6">
-      {seededFromAssessment && (
+      {seededFrom === 'saved' && (
         <PreFilledBanner
-          summary={`${assessmentMilestones.length} milestone${assessmentMilestones.length !== 1 ? 's' : ''} from your reported algorithms, anchored on NIST deprecation dates.`}
+          summary={`Restored ${savedMilestones.length} milestone${savedMilestones.length !== 1 ? 's' : ''} from your last saved roadmap — edit and re-export to update it.`}
           onClear={() => {
             setCurrentMilestones(DEFAULT_MILESTONES)
-            setSeededFromAssessment(false)
+            setSeededFrom(null)
+          }}
+        />
+      )}
+      {seededFrom === 'sim' && (
+        <PreFilledBanner
+          summary={`${simRoadmapMilestones.length} milestone${simRoadmapMilestones.length !== 1 ? 's' : ''} seeded from your latest Simulation run — refine the draft here.`}
+          onClear={() => {
+            setCurrentMilestones(DEFAULT_MILESTONES)
+            setSeededFrom(null)
+          }}
+        />
+      )}
+      {seededFrom === 'assessment' && (
+        <PreFilledBanner
+          summary={`${assessmentMilestones.length} milestone${assessmentMilestones.length !== 1 ? 's' : ''} from your reported algorithms, split into Track A (key-exchange) and Track B (signatures) and anchored on NIST deprecation dates.`}
+          onClear={() => {
+            setCurrentMilestones(DEFAULT_MILESTONES)
+            setSeededFrom(null)
           }}
         />
       )}
 
       <div className="glass-panel p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-2 h-2 rounded-full bg-primary" />
-          <p className="text-sm font-medium text-foreground">
-            {externalDeadlines.length} regulatory deadlines available from Timeline data
-          </p>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Select the deadlines relevant to your organization, then add your milestones to see how
-          your plan aligns with compliance requirements.
+        <p className="text-sm text-foreground mb-1">
+          A PQC migration runs as <span className="font-semibold">two parallel tracks</span> on the
+          framework&apos;s phase spine, not one linear list:
         </p>
+        <ul className="text-xs text-muted-foreground list-disc pl-5 space-y-0.5">
+          <li>
+            <span className="font-medium text-foreground">Track A (Confidentiality / KEM)</span> —
+            urgent now because of Harvest-Now-Decrypt-Later.
+          </li>
+          <li>
+            <span className="font-medium text-foreground">
+              Track B (Integrity / Signatures &amp; PKI)
+            </span>{' '}
+            — not urgent today but the longest lead time, so it must start early.
+          </li>
+        </ul>
       </div>
 
-      <TimelinePlanner
-        title="PQC Migration Roadmap"
-        initialMilestones={seedMilestones}
-        deadlines={externalDeadlines}
-        yearRange={[2025, Math.max(2036, new Date().getFullYear() + 10)] as [number, number]}
-        categories={DEFAULT_CATEGORIES}
-        onMilestonesChange={setCurrentMilestones}
-        onSelectedDeadlinesChange={setSelectedDeadlines}
+      {/* Regulatory deadline selector */}
+      {externalDeadlines.length > 0 && (
+        <div className="glass-panel p-4 space-y-2">
+          <p className="text-sm font-medium text-foreground">
+            Regulatory deadlines ({selectedDeadlines.length}/{externalDeadlines.length} selected)
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {externalDeadlines.map((d) => {
+              const on = selectedDeadlines.some((x) => deadlineKey(x) === deadlineKey(d))
+              return (
+                <Button
+                  key={deadlineKey(d)}
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => toggleDeadline(d)}
+                  className={`h-auto rounded px-2 py-0.5 text-[11px] border font-normal ${
+                    on
+                      ? 'bg-status-error/15 border-status-error/40 text-status-error'
+                      : 'bg-background border-border text-muted-foreground'
+                  }`}
+                >
+                  {d.year} · {d.label} ({d.source})
+                </Button>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      <TwoTrackRoadmapTimeline
+        milestones={currentMilestones}
+        deadlines={selectedDeadlines}
+        yearRange={yearRange}
+        onChange={setCurrentMilestones}
       />
 
       {/* CSWP.39 §4.6 — Mitigation Gateway specs */}
@@ -367,11 +583,12 @@ export const RoadmapBuilder: React.FC = () => {
         exportData={exportMarkdown}
         filename="pqc-migration-roadmap"
         formats={['markdown', 'pdf']}
+        wideTable
         onExport={handleExport}
       >
         <p className="text-sm text-muted-foreground">
-          Export your migration roadmap with milestones, regulatory deadlines, and mitigation
-          gateways.
+          Export your two-track migration roadmap with per-track milestones, gates, dependencies,
+          regulatory deadlines, and mitigation gateways.
         </p>
       </ExportableArtifact>
     </div>

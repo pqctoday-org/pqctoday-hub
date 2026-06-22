@@ -1,334 +1,721 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useMemo, useCallback } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+//
+// Crypto Lab Workbench — the /playground page.
+//
+// An app-like two-pane layout: a persistent sidebar (domain categories + a
+// single "Viewing as" role selector + My tools + a Sandbox runtime toggle) and
+// a main pane with one search field, difficulty chips, an Overview landing, a
+// per-category grid, and a tool-detail modal. Replaces the previous monolith
+// that stacked seven overlapping ways to organise the same tools.
+//
+// Sandbox model: "runs in a Docker container" is a cross-cutting *facet*
+// (WorkshopTool.sandbox), not a category. Scenarios live in their real domain,
+// carry a "Sandbox" badge, and render locked (dimmed) until the runtime probe
+// reports the container reachable. Access is gated via useSandboxStore.
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   Search,
-  Play,
-  Cpu,
-  FlaskConical,
-  Sparkles,
-  ArrowRight,
-  BookOpen,
-  BookmarkCheck,
   X,
+  ChevronDown,
+  ArrowRight,
+  Star,
+  Container,
+  FlaskConical,
+  Mail,
+  Wrench,
+  RefreshCw,
 } from 'lucide-react'
-import { PageHeader } from '../common/PageHeader'
-import { PreviewBanner } from '../common/PreviewBanner'
+import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
-import { EmptyState } from '../ui/empty-state'
-import { WORKSHOP_TOOLS, CATEGORIES, type WorkshopTool } from './workshopRegistry'
+import {
+  WORKSHOP_TOOLS,
+  type WorkshopTool,
+  type WorkshopCategory,
+  type ToolDifficulty,
+} from './workshopRegistry'
+import type { PersonaId } from '@/data/learningPersonas'
+import {
+  CATEGORY_META,
+  SIDEBAR_CATEGORIES,
+  ROLE_OPTIONS,
+  roleLabel,
+  PERSONA_CHIP_LABEL,
+  FEATURE_PLAYGROUNDS,
+  KMIP_PLAYGROUND_ROUTE,
+  SANDBOX_ACCESS_MAILTO,
+  type FeatureAccent,
+} from './cryptoLabMeta'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { useSandboxStore, isSandboxAvailable } from '@/store/useSandboxStore'
 import { logEvent, personaLabel } from '@/utils/analytics'
-import type { PersonaId } from '@/data/learningPersonas'
-import { usePersonaDefaults } from '@/hooks/usePersonaDefaults'
-import { useIsEmbedded } from '../../embed/EmbedProvider'
-import { PlaygroundViewToggle, type PlaygroundViewMode } from './PlaygroundViewToggle'
-import { MobilePlaygroundFilterDrawer } from './MobilePlaygroundFilterDrawer'
-import { DesktopPlaygroundFilterPopover, type WipFilter } from './DesktopPlaygroundFilterPopover'
-import { ToolTaxonomyFilter } from './ToolTaxonomyFilter'
-import { toolMatchesAlgorithm } from './toolFilters'
-import { ToolCard, WipBadge } from './views/ToolCard'
-import { ToolStack } from './views/ToolStack'
-import { ToolTable } from './views/ToolTable'
-import { PlaygroundPersonaPathView } from './views/PlaygroundPersonaPathView'
-import { PlaygroundNiceView } from './views/PlaygroundNiceView'
-import { SandboxStatusToggle } from './SandboxStatusToggle'
-import {
-  useSandboxStore,
-  filterToolsBySandboxAvailability,
-  availableCategoriesForSandboxStatus,
-} from '@/store/useSandboxStore'
 
 // ---------------------------------------------------------------------------
-// Persona display metadata
+// Constants & small style maps
 // ---------------------------------------------------------------------------
 
-const PERSONA_META: Record<PersonaId, { label: string; subtitle: string; starterTools: string[] }> =
-  {
-    executive: {
-      label: 'Executive / GRC',
-      subtitle: 'Risk & governance focus',
-      starterTools: ['hybrid-certs', 'token-migration', 'envelope-encrypt'],
-    },
-    developer: {
-      label: 'Developer / Engineer',
-      subtitle: 'Protocol & implementation focus',
-      starterTools: ['binary-signing', 'openssl-studio'],
-    },
-    architect: {
-      label: 'Security Architect',
-      subtitle: 'Architecture & infrastructure focus',
-      starterTools: ['pkcs11-sim', 'envelope-encrypt', 'hybrid-certs'],
-    },
-    researcher: {
-      label: 'Researcher / Academic',
-      subtitle: 'Comprehensive deep dive',
-      starterTools: ['entropy-test', 'slh-dsa', 'kdf-derivation'],
-    },
-    ops: {
-      label: 'IT Ops / DevOps',
-      subtitle: 'Deploy & operate focus',
-      starterTools: ['firmware-signing', 'hybrid-certs', 'token-migration'],
-    },
-    curious: {
-      label: 'Curious Explorer',
-      subtitle: 'New to cryptography',
-      starterTools: ['qrng-demo', 'rng-demo', 'binary-signing'],
-    },
-  }
+const SANDBOX_TOOL_COUNT = WORKSHOP_TOOLS.filter((t) => t.sandbox).length
 
-const PROFESSIONAL_PERSONA_FILTER_ITEMS = [
-  { id: 'All', label: 'All Roles' },
-  { id: 'executive', label: 'Executive / GRC' },
-  { id: 'developer', label: 'Developer / Engineer' },
-  { id: 'architect', label: 'Security Architect' },
-  { id: 'ops', label: 'IT Ops / DevOps' },
-  { id: 'researcher', label: 'Researcher' },
+type DifficultyValue = 'All' | ToolDifficulty
+const DIFFICULTY_CHIPS: { value: DifficultyValue; label: string }[] = [
+  { value: 'All', label: 'All' },
+  { value: 'beginner', label: 'Beginner' },
+  { value: 'intermediate', label: 'Intermediate' },
+  { value: 'advanced', label: 'Advanced' },
 ]
 
-const CURIOUS_PERSONA_FILTER_ITEMS = [
-  { id: 'All', label: 'All Paths' },
-  { id: 'curious', label: 'Curious Explorer' },
-]
+const DIFFICULTY_BADGE: Record<ToolDifficulty, string> = {
+  beginner: 'bg-status-success/15 text-status-success',
+  intermediate: 'bg-status-warning/15 text-status-warning',
+  advanced: 'bg-status-error/15 text-status-error',
+}
+
+const FEATURE_TILE: Record<FeatureAccent, string> = {
+  primary: 'bg-primary/15 text-primary',
+  secondary: 'bg-secondary/15 text-secondary',
+  success: 'bg-status-success/15 text-status-success',
+}
+const FEATURE_TAG: Record<FeatureAccent, string> = {
+  primary: 'text-primary',
+  secondary: 'text-secondary',
+  success: 'text-status-success',
+}
+
+// `mytools` and `overview` are pseudo-nav targets alongside the real categories.
+type NavTarget = 'overview' | 'mytools' | (string & {})
 
 // ---------------------------------------------------------------------------
-// Banners (preserved from previous implementation)
+// Presentational atoms
 // ---------------------------------------------------------------------------
 
-const ExecutiveBanner = () => (
-  <div className="glass-panel p-5 border-primary/30 space-y-3">
-    <div className="flex items-start gap-3">
-      <Sparkles className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-      <div>
-        <p className="font-semibold text-foreground">Tailored for Executive / GRC</p>
-        <p className="text-sm text-muted-foreground mt-1">
-          The Crypto Lab demonstrates the technical operations behind PQC migration. For
-          business-case framing, compliance deadlines, and risk governance — start with the
-          Assessment to get a personalised migration readiness report.
-        </p>
-      </div>
-    </div>
-    <div className="flex flex-wrap gap-2">
-      <Link
-        to="/assess"
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground text-sm font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
+const DifficultyBadge: React.FC<{ level: ToolDifficulty }> = ({ level }) => (
+  <span
+    className={cn(
+      'inline-block text-[10px] leading-none px-1.5 py-0.5 rounded font-semibold capitalize',
+      // eslint-disable-next-line security/detect-object-injection -- `level` is a ToolDifficulty union key
+      DIFFICULTY_BADGE[level]
+    )}
+  >
+    {level}
+  </span>
+)
+
+const WipBadge: React.FC = () => (
+  <span className="inline-flex items-center gap-1 text-[10px] leading-none px-1.5 py-0.5 rounded font-semibold bg-status-warning/15 text-status-warning border border-status-warning/30">
+    <Wrench className="w-2.5 h-2.5" aria-hidden="true" />
+    WIP
+  </span>
+)
+
+const SandboxBadge: React.FC = () => (
+  <span className="inline-flex items-center gap-1 text-[10px] leading-none px-1.5 py-0.5 rounded font-semibold bg-status-warning/15 text-status-warning">
+    <Container className="w-2.5 h-2.5" aria-hidden="true" />
+    Sandbox
+  </span>
+)
+
+const ForYouBadge: React.FC = () => (
+  <span className="inline-flex items-center gap-1 text-[10px] leading-none px-1.5 py-0.5 rounded font-semibold bg-secondary/15 text-secondary">
+    <Star className="w-2.5 h-2.5 fill-current" aria-hidden="true" />
+    for you
+  </span>
+)
+
+const CategoryChip: React.FC<{ label: string }> = ({ label }) => (
+  <span className="inline-block text-[10px] leading-none px-1.5 py-0.5 rounded font-medium bg-muted text-muted-foreground">
+    {label}
+  </span>
+)
+
+const AlgoChips: React.FC<{ algorithms: string[]; locked?: boolean }> = ({
+  algorithms,
+  locked,
+}) => (
+  <div className="flex flex-wrap items-center gap-1.5 mt-2">
+    {algorithms.slice(0, 3).map((a) => (
+      <span
+        key={a}
+        className="inline-block text-[10px] leading-none px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-mono"
       >
-        Start Assessment <ArrowRight className="w-3.5 h-3.5" />
-      </Link>
-      <Link
-        to="/compliance"
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground transition-colors"
-      >
-        <BookOpen className="w-3.5 h-3.5" />
-        Compliance Tracker
-      </Link>
-    </div>
-    <p className="text-xs text-muted-foreground">
-      The 3 tools below give a live side-by-side view of classical vs PQC cryptography — useful for
-      board-level demonstrations.
-    </p>
+        {a}
+      </span>
+    ))}
+    {locked && (
+      <span className="inline-flex items-center gap-1 text-[10px] text-status-warning">
+        <Container className="w-2.5 h-2.5" aria-hidden="true" />
+        needs runtime
+      </span>
+    )}
   </div>
 )
 
-const CuriousStartHere = () => {
-  const steps = [
-    {
-      n: 1,
-      id: 'qrng-demo',
-      title: 'See where randomness comes from',
-      caption:
-        'Quantum random numbers — the raw material every encryption key depends on. Watch one being made.',
-    },
-    {
-      n: 2,
-      id: 'tls-simulator',
-      title: 'Watch a website handshake',
-      caption:
-        'Every padlock icon hides a 50-millisecond conversation between browser and server. Step through it.',
-    },
-    {
-      n: 3,
-      id: 'hybrid-encrypt',
-      title: 'Try hybrid (old + new) encryption',
-      caption:
-        "How the world is migrating: keep today's algorithms running side-by-side with the new quantum-safe ones.",
-    },
-  ]
-  return (
-    <div className="glass-panel p-5 border-primary/20 space-y-3">
-      <div className="flex items-center gap-2">
-        <Sparkles className="w-4 h-4 text-primary" />
-        <p className="font-semibold text-foreground">Start Here — Curious Explorer</p>
-      </div>
-      <p className="text-sm text-muted-foreground">
-        No cryptography background required. Follow these three steps to understand what quantum
-        computing means for everyday security.
-      </p>
-      <div className="space-y-2">
-        {steps.map(({ n, id, title, caption }) => (
-          <Link
-            key={id}
-            to={`/playground/${id}`}
-            className="flex items-start gap-3 p-3 rounded-lg border border-border hover:border-primary/40 transition-colors group"
-          >
-            <span className="shrink-0 w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center">
-              {n}
-            </span>
-            <div>
-              <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
-                {title}
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5">{caption}</p>
-            </div>
-            <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary ml-auto shrink-0 mt-0.5 transition-colors" />
-          </Link>
-        ))}
-      </div>
-    </div>
-  )
+// ---------------------------------------------------------------------------
+// Tool card
+// ---------------------------------------------------------------------------
+
+interface ToolCardProps {
+  tool: WorkshopTool
+  locked: boolean
+  recommended: boolean
+  bookmarked: boolean
+  showCategory?: boolean
+  onOpen: (_tool: WorkshopTool) => void
+  onToggleBookmark: (_id: string) => void
 }
 
-const PersonaBanner = ({
-  persona,
-  recommendedCount,
-  showingPersona,
-  onToggle,
-}: {
-  persona: PersonaId
-  recommendedCount: number
-  showingPersona: boolean
-  onToggle: () => void
+const ToolCardView: React.FC<ToolCardProps> = ({
+  tool,
+  locked,
+  recommended,
+  bookmarked,
+  showCategory,
+  onOpen,
+  onToggleBookmark,
 }) => {
-  const meta = PERSONA_META[persona]
+  const Icon = tool.icon
   return (
-    <div className="flex items-center justify-between gap-3 p-3 rounded-lg border border-primary/20 bg-primary/5">
-      <div className="flex items-center gap-2 min-w-0">
-        <Sparkles className="w-4 h-4 text-primary shrink-0" />
-        <div className="min-w-0">
-          <span className="text-sm font-medium text-foreground">{meta.label}</span>
-          <span className="text-xs text-muted-foreground ml-1.5">· {meta.subtitle}</span>
+    <div className="relative">
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => onOpen(tool)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onOpen(tool)
+          }
+        }}
+        className={cn(
+          'glass-panel p-3.5 rounded-xl cursor-pointer transition-colors hover:border-primary/50',
+          locked && 'opacity-60'
+        )}
+      >
+        <div className="flex items-start gap-3">
+          <span className="shrink-0 w-[30px] h-[30px] rounded-lg bg-primary/10 flex items-center justify-center">
+            <Icon className="w-4 h-4 text-primary" aria-hidden="true" />
+          </span>
+          <div className="min-w-0 flex-1 pr-6">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <p className="font-semibold text-[13px] text-foreground">{tool.name}</p>
+              <DifficultyBadge level={tool.difficulty} />
+              {tool.sandbox && <SandboxBadge />}
+              {tool.wip && !tool.sandbox && <WipBadge />}
+              {recommended && <ForYouBadge />}
+              {showCategory && <CategoryChip label={tool.category} />}
+            </div>
+            <p className="text-[11.5px] text-muted-foreground mt-1 leading-snug line-clamp-2">
+              {tool.description}
+            </p>
+            <AlgoChips algorithms={tool.algorithms} locked={locked} />
+          </div>
         </div>
       </div>
       <Button
         variant="ghost"
-        onClick={onToggle}
-        className={`shrink-0 text-xs px-3 py-1.5 rounded-lg border font-medium transition-colors ${
-          showingPersona
-            ? 'bg-primary/15 text-primary border-primary/30 hover:bg-primary/10'
-            : 'text-muted-foreground border-border hover:text-foreground hover:border-border/60'
-        }`}
+        onClick={(e) => {
+          e.stopPropagation()
+          onToggleBookmark(tool.id)
+        }}
+        aria-label={bookmarked ? 'Remove from My tools' : 'Add to My tools'}
+        aria-pressed={bookmarked}
+        className={cn(
+          'absolute top-2.5 right-2.5 h-7 w-7 p-0 hover:bg-transparent',
+          bookmarked
+            ? 'text-primary hover:text-primary/80'
+            : 'text-muted-foreground/50 hover:text-primary'
+        )}
       >
-        {showingPersona
-          ? `Showing ${recommendedCount} recommended`
-          : `Show ${recommendedCount} recommended`}
+        <Star className={cn('w-4 h-4', bookmarked && 'fill-current')} aria-hidden="true" />
       </Button>
     </div>
   )
 }
 
-const HeroCard = ({
-  to,
-  icon: Icon,
-  title,
-  description,
-  badge,
-  wip,
-}: {
-  to: string
-  icon: React.ElementType
-  title: string
-  description: string
-  badge?: string
-  wip?: boolean
-}) => (
-  <Link
-    to={to}
-    className="glass-panel p-5 flex items-start gap-4 hover:border-primary/60 transition-colors group cursor-pointer"
-  >
-    <div className="shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-      <Icon className="w-5 h-5 text-primary" aria-hidden="true" />
+// ---------------------------------------------------------------------------
+// Role selector ("Viewing as")
+// ---------------------------------------------------------------------------
+
+interface RoleSelectorProps {
+  role: PersonaId | null
+  onSelect: (_role: PersonaId | null) => void
+}
+
+const RoleSelector: React.FC<RoleSelectorProps> = ({ role, onSelect }) => {
+  const [open, setOpen] = useState(false)
+  const wrapperRef = React.useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const onDocClick = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) setOpen(false)
+    }
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('mousedown', onDocClick)
+    document.addEventListener('keydown', onEsc)
+    return () => {
+      document.removeEventListener('mousedown', onDocClick)
+      document.removeEventListener('keydown', onEsc)
+    }
+  }, [open])
+
+  return (
+    <div ref={wrapperRef} className="relative mt-4">
+      <Button
+        variant="ghost"
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className="w-full h-auto flex-col items-start gap-0.5 rounded-lg border border-border bg-muted/30 px-3 py-2 hover:border-primary/40"
+      >
+        <span className="text-[9.5px] font-bold uppercase tracking-wider text-muted-foreground">
+          Viewing as
+        </span>
+        <span className="flex w-full items-center justify-between">
+          <span className="text-[13px] font-semibold text-primary">{roleLabel(role)}</span>
+          <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" />
+        </span>
+      </Button>
+      {open && (
+        <div
+          role="listbox"
+          aria-label="Viewing as role"
+          className="glass-panel absolute left-0 right-0 top-full z-30 mt-1.5 rounded-xl p-1.5 shadow-glow"
+        >
+          {ROLE_OPTIONS.map((opt) => {
+            const active = opt.id === role
+            return (
+              <Button
+                key={opt.id ?? 'everyone'}
+                variant="ghost"
+                role="option"
+                aria-selected={active}
+                onClick={() => {
+                  onSelect(opt.id)
+                  setOpen(false)
+                }}
+                className={cn(
+                  'w-full justify-start rounded-lg px-2.5 py-2 text-[12.5px] font-normal',
+                  active ? 'text-primary font-semibold' : 'text-foreground'
+                )}
+              >
+                {opt.label}
+              </Button>
+            )
+          })}
+        </div>
+      )}
     </div>
-    <div className="min-w-0 flex-1">
-      <div className="flex items-center gap-2 flex-wrap">
-        <p className="font-semibold text-foreground group-hover:text-primary transition-colors">
-          {title}
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Sidebar nav item
+// ---------------------------------------------------------------------------
+
+const NavItem: React.FC<{
+  label: React.ReactNode
+  count?: number
+  active: boolean
+  onClick: () => void
+}> = ({ label, count, active, onClick }) => (
+  <Button
+    variant="ghost"
+    onClick={onClick}
+    aria-current={active ? 'page' : undefined}
+    className={cn(
+      'w-full justify-between rounded-lg px-2.5 py-2 text-[12.5px] font-normal h-auto',
+      active ? 'bg-primary/10 text-primary font-semibold' : 'text-foreground/80 hover:bg-muted/40'
+    )}
+  >
+    <span className="flex min-w-0 items-center gap-2 truncate">{label}</span>
+    {count !== undefined && (
+      <span
+        className={cn('text-[11px] shrink-0', active ? 'text-primary' : 'text-muted-foreground')}
+      >
+        {count}
+      </span>
+    )}
+  </Button>
+)
+
+// ---------------------------------------------------------------------------
+// Feature playground card
+// ---------------------------------------------------------------------------
+
+const FeatureCard: React.FC<{ item: (typeof FEATURE_PLAYGROUNDS)[number] }> = ({ item }) => {
+  const Icon = item.icon
+  return (
+    <Link
+      to={item.to}
+      onClick={() => logEvent('Playground', 'Full Playground Open', item.title)}
+      className="glass-panel group flex flex-col rounded-xl p-4 transition-colors hover:border-primary/50"
+    >
+      <div className="flex items-center gap-2.5">
+        <span
+          className={cn(
+            'w-[30px] h-[30px] rounded-lg flex items-center justify-center',
+            FEATURE_TILE[item.accent]
+          )}
+        >
+          <Icon className="w-4 h-4" aria-hidden="true" />
+        </span>
+        <p className="font-semibold text-[14px] text-foreground group-hover:text-primary transition-colors">
+          {item.title}
         </p>
-        {wip && <WipBadge />}
-        {badge && !wip && (
-          <span className="inline-block text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
-            {badge}
+      </div>
+      <p className="mt-2.5 text-[12.5px] text-muted-foreground leading-snug">{item.description}</p>
+      <p className={cn('mt-2.5 text-[10px] font-semibold font-mono', FEATURE_TAG[item.accent])}>
+        {item.tag}
+      </p>
+    </Link>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Tool detail modal
+// ---------------------------------------------------------------------------
+
+interface ToolModalProps {
+  tool: WorkshopTool
+  locked: boolean
+  bookmarked: boolean
+  onClose: () => void
+  onOpenTool: (_tool: WorkshopTool) => void
+  onStartRuntime: () => void
+  onToggleBookmark: (_id: string) => void
+}
+
+const ToolDetailModal: React.FC<ToolModalProps> = ({
+  tool,
+  locked,
+  bookmarked,
+  onClose,
+  onOpenTool,
+  onStartRuntime,
+  onToggleBookmark,
+}) => {
+  useEffect(() => {
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', onEsc)
+    return () => document.removeEventListener('keydown', onEsc)
+  }, [onClose])
+
+  const Icon = tool.icon
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-6">
+      {/* Click-outside backdrop as a real, labelled close affordance. */}
+      <Button
+        variant="ghost"
+        onClick={onClose}
+        aria-label="Close dialog"
+        className="absolute inset-0 h-full w-full cursor-default rounded-none bg-transparent hover:bg-transparent"
+      />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={tool.name}
+        className="relative glass-panel w-[480px] max-w-full rounded-2xl p-6 shadow-glow"
+      >
+        <div className="flex items-start gap-3">
+          <span className="shrink-0 w-[42px] h-[42px] rounded-xl bg-primary/12 flex items-center justify-center">
+            <Icon className="w-5 h-5 text-primary" aria-hidden="true" />
           </span>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-lg font-bold text-foreground">{tool.name}</h2>
+              <DifficultyBadge level={tool.difficulty} />
+            </div>
+            <p className="mt-1 text-[11.5px] text-muted-foreground">
+              {tool.category}
+              {tool.sandbox && ' · Docker sandbox'}
+            </p>
+          </div>
+          <Button
+            variant="ghost"
+            onClick={onClose}
+            aria-label="Close"
+            className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+          >
+            <X className="w-4 h-4" aria-hidden="true" />
+          </Button>
+        </div>
+
+        <p className="mt-4 text-[13px] text-foreground/80 leading-relaxed">{tool.description}</p>
+
+        <p className="mt-5 mb-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          Algorithms
+        </p>
+        <div className="flex flex-wrap gap-1.5">
+          {tool.algorithms.map((a) => (
+            <span
+              key={a}
+              className="text-[11px] px-2 py-1 rounded-md bg-muted text-muted-foreground font-mono"
+            >
+              {a}
+            </span>
+          ))}
+        </div>
+
+        {tool.recommendedPersonas.length > 0 && (
+          <>
+            <p className="mt-5 mb-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Recommended for
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {tool.recommendedPersonas.map((p) => {
+                // eslint-disable-next-line security/detect-object-injection -- `p` is a PersonaId
+                const label = PERSONA_CHIP_LABEL[p]
+                return (
+                  <span
+                    key={p}
+                    className="text-[11px] px-2 py-1 rounded-md bg-secondary/10 text-secondary"
+                  >
+                    {label}
+                  </span>
+                )
+              })}
+            </div>
+          </>
+        )}
+
+        <div className="mt-6 flex gap-2.5">
+          {locked ? (
+            <Button
+              variant="gradient"
+              onClick={onStartRuntime}
+              className="flex-1 rounded-lg py-2.5 font-bold"
+            >
+              Start sandbox runtime
+            </Button>
+          ) : (
+            <Button
+              variant="gradient"
+              onClick={() => onOpenTool(tool)}
+              className="flex-1 rounded-lg py-2.5 font-bold"
+            >
+              Open tool
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+            </Button>
+          )}
+          <Button
+            variant="outline"
+            onClick={() => onToggleBookmark(tool.id)}
+            aria-pressed={bookmarked}
+            className={cn('rounded-lg px-4 py-2.5 font-semibold', bookmarked && 'text-primary')}
+          >
+            <Star className={cn('w-4 h-4', bookmarked && 'fill-current')} aria-hidden="true" />
+            {bookmarked ? 'Saved' : 'Save'}
+          </Button>
+        </div>
+
+        {locked && (
+          <a
+            href={SANDBOX_ACCESS_MAILTO}
+            className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
+          >
+            <Mail className="w-3 h-3" aria-hidden="true" />
+            Container access required — request access
+          </a>
         )}
       </div>
-      <p className="text-sm text-muted-foreground mt-1">{description}</p>
     </div>
-  </Link>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Empty state
+// ---------------------------------------------------------------------------
+
+const EmptyResults: React.FC<{ title: string; subtitle: string }> = ({ title, subtitle }) => (
+  <div className="glass-panel mt-6 rounded-2xl p-10 text-center">
+    <span className="mx-auto flex w-[42px] h-[42px] items-center justify-center rounded-xl bg-muted text-muted-foreground">
+      <Search className="w-5 h-5" aria-hidden="true" />
+    </span>
+    <p className="mt-3.5 text-sm font-semibold text-foreground">{title}</p>
+    <p className="mt-1 text-[12.5px] text-muted-foreground">{subtitle}</p>
+  </div>
 )
+
+// ---------------------------------------------------------------------------
+// Sidebar Sandbox-runtime toggle
+// ---------------------------------------------------------------------------
+//
+// "Runs in a container" is real, access-gated state — it can't be faked on.
+// Clicking probes the runtime; while it checks, the switch shows a checking
+// state; if it can't connect, an access panel (request access + retry) drops
+// so a click always produces a visible, explanatory response.
+const SandboxRuntimeToggle: React.FC = () => {
+  const status = useSandboxStore((s) => s.status)
+  const probe = useSandboxStore((s) => s.probe)
+  const disable = useSandboxStore((s) => s.disable)
+  const runtimeOn = isSandboxAvailable(status)
+  const [open, setOpen] = useState(false)
+  const wrapperRef = React.useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const onDoc = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) setOpen(false)
+    }
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('mousedown', onDoc)
+    document.addEventListener('keydown', onEsc)
+    return () => {
+      document.removeEventListener('mousedown', onDoc)
+      document.removeEventListener('keydown', onEsc)
+    }
+  }, [open])
+
+  const handleClick = () => {
+    if (status === 'checking') return
+    if (runtimeOn) {
+      // On → turn it off (re-locks the sandbox scenarios).
+      disable()
+      setOpen(false)
+      return
+    }
+    // Off → try to connect; reveal the access path if it can't.
+    void probe()
+    setOpen(true)
+  }
+
+  const hint = runtimeOn
+    ? `Runtime active · ${SANDBOX_TOOL_COUNT} sandbox scenarios unlocked`
+    : status === 'checking'
+      ? 'Checking sandbox…'
+      : `Off · ${SANDBOX_TOOL_COUNT} Docker scenarios locked`
+
+  // Solid, contrasting switch (knob colour differs from the track in both themes).
+  const trackClass = runtimeOn
+    ? 'bg-status-success'
+    : status === 'checking'
+      ? 'bg-status-warning'
+      : 'bg-muted-foreground/40'
+
+  return (
+    <div ref={wrapperRef} className="relative">
+      <Button
+        variant="ghost"
+        onClick={handleClick}
+        aria-pressed={runtimeOn}
+        aria-expanded={open}
+        className="h-auto w-full justify-between rounded-lg px-2.5 py-2 text-[12.5px] font-normal text-foreground/80 hover:bg-muted/40"
+      >
+        <span>Sandbox runtime</span>
+        <span
+          className={cn(
+            'relative inline-block h-[18px] w-8 rounded-full transition-colors',
+            trackClass
+          )}
+          aria-hidden="true"
+        >
+          <span
+            className={cn(
+              'absolute top-0.5 h-3.5 w-3.5 rounded-full bg-foreground shadow-sm transition-all',
+              runtimeOn ? 'right-0.5' : 'left-0.5',
+              status === 'checking' && 'animate-pulse'
+            )}
+          />
+        </span>
+      </Button>
+      <p className="px-2.5 pt-1 text-[10px] leading-snug text-muted-foreground/80">{hint}</p>
+      {open && !runtimeOn && (
+        <div
+          role="dialog"
+          aria-label="Sandbox access"
+          className="glass-panel absolute bottom-full left-0 right-0 z-40 mb-2 space-y-2 rounded-xl p-3 shadow-glow"
+        >
+          <div className="flex items-start gap-2">
+            <Container className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+            <div className="min-w-0">
+              <p className="text-[12px] font-semibold text-foreground">Container access required</p>
+              <p className="mt-0.5 text-[10.5px] leading-relaxed text-muted-foreground">
+                Sandbox scenarios run in isolated Docker containers hosted by PQC Today. Contact us
+                to have your environment provisioned.
+              </p>
+            </div>
+          </div>
+          <a
+            href={SANDBOX_ACCESS_MAILTO}
+            className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-1.5 text-[11px] font-medium text-foreground hover:bg-primary/20"
+          >
+            <Mail className="h-3 w-3" aria-hidden="true" />
+            pqctoday@gmail.com — Request access
+          </a>
+          <Button
+            variant="ghost"
+            onClick={() => void probe()}
+            disabled={status === 'checking'}
+            className="w-full justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] text-muted-foreground hover:text-foreground"
+          >
+            <RefreshCw
+              className={cn('h-3 w-3', status === 'checking' && 'animate-spin')}
+              aria-hidden="true"
+            />
+            Retry probe
+          </Button>
+        </div>
+      )}
+    </div>
+  )
+}
 
 // ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
 
 export const PlaygroundWorkshop = () => {
-  const isEmbedded = useIsEmbedded()
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
-  const [searchText, setSearchText] = useState('')
 
-  // ── URL-driven state ────────────────────────────────────────────────────
-  // ?cat=  : category
-  // ?view= : view mode (path/stack/cards/table/nice)
-  // ?role= : NICE role (handled inside PlaygroundNiceView)
-  const activeCategoryFromUrl = searchParams.get('cat')
-  const activeCategory: string = activeCategoryFromUrl ?? 'All'
-  const setActiveCategory = useCallback(
-    (cat: string) => {
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams(prev)
-          if (cat && cat !== 'All') next.set('cat', cat)
-          else next.delete('cat')
-          return next
-        },
-        { replace: true }
-      )
-    },
-    [setSearchParams]
-  )
-
-  // ── Local filter state ──────────────────────────────────────────────────
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('All')
-  const [wipFilter, setWipFilter] = useState<WipFilter>(isEmbedded ? 'hide' : 'all')
-  const [showPersonaFilter, setShowPersonaFilter] = useState(true)
-  const [selectedAlgorithm, setSelectedAlgorithm] = useState<string | null>(null)
-
-  // Persona — synced with persona store (mirrors Learn's pattern)
-  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  // Role — backed by the shared persona store (mirrors Learn).
+  const role = usePersonaStore((s) => s.selectedPersona)
   const setPersona = usePersonaStore((s) => s.setPersona)
-  const [selectedPersonaFilter, setSelectedPersonaFilter] = useState<string>(
-    selectedPersona ?? 'All'
-  )
-  const isCuriousMode = selectedPersona === 'curious'
-  const personaFilterItems = isCuriousMode
-    ? CURIOUS_PERSONA_FILTER_ITEMS
-    : PROFESSIONAL_PERSONA_FILTER_ITEMS
 
-  // View mode — default 'cards' (preserves the existing visual feel)
-  const initialViewMode: PlaygroundViewMode = (() => {
-    const v = searchParams.get('view')
-    if (v === 'path' || v === 'stack' || v === 'cards' || v === 'table' || v === 'nice') return v
-    return 'cards'
-  })()
-  const [viewMode, setViewMode] = useState<PlaygroundViewMode>(initialViewMode)
-  const handleViewModeChange = useCallback(
-    (mode: PlaygroundViewMode) => {
-      setViewMode(mode)
+  // Bookmarks — backed by the shared bookmark store ("My tools").
+  const myPlaygroundTools = useBookmarkStore((s) => s.myPlaygroundTools)
+  const toggleBookmark = useBookmarkStore((s) => s.toggleMyPlaygroundTool)
+
+  // Sandbox runtime — reachability probe.
+  const sandboxStatus = useSandboxStore((s) => s.status)
+  const probe = useSandboxStore((s) => s.probe)
+  const runtimeOn = isSandboxAvailable(sandboxStatus)
+
+  // Probe once on mount so locked/unlocked state reflects reality. Status is
+  // read via getState() rather than as an effect dependency, so a later
+  // user-disable (status → 'idle') does NOT retrigger a probe that would
+  // immediately flip the runtime back on.
+  useEffect(() => {
+    if (useSandboxStore.getState().status === 'idle') void probe()
+  }, [probe])
+
+  // Local UI state.
+  const [searchText, setSearchText] = useState('')
+  const [difficulty, setDifficulty] = useState<DifficultyValue>('All')
+  const [selectedTool, setSelectedTool] = useState<WorkshopTool | null>(null)
+
+  // Active nav target lives in the URL (?cat=) so it is shareable.
+  const navParam = searchParams.get('cat')
+  const activeNav: NavTarget =
+    navParam &&
+    (navParam === 'mytools' || (SIDEBAR_CATEGORIES as readonly string[]).includes(navParam))
+      ? navParam
+      : 'overview'
+  const setActiveNav = useCallback(
+    (target: NavTarget) => {
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev)
-          if (mode === 'cards') next.delete('view')
-          else next.set('view', mode)
+          if (target === 'overview') next.delete('cat')
+          else next.set('cat', target)
           return next
         },
         { replace: true }
@@ -337,57 +724,47 @@ export const PlaygroundWorkshop = () => {
     [setSearchParams]
   )
 
-  // Bookmarks
-  const myPlaygroundTools = useBookmarkStore((s) => s.myPlaygroundTools)
-  const showOnlyPlaygroundTools = useBookmarkStore((s) => s.showOnlyPlaygroundTools)
-  const setShowOnlyPlaygroundTools = useBookmarkStore((s) => s.setShowOnlyPlaygroundTools)
+  const searchActive = searchText.trim().length > 0
+  const isLocked = useCallback((t: WorkshopTool) => !!t.sandbox && !runtimeOn, [runtimeOn])
+  const isRecommended = useCallback(
+    (t: WorkshopTool) => !!role && t.recommendedPersonas.includes(role),
+    [role]
+  )
 
-  // Sandbox availability — drives whether 'Sandbox' category tools surface in the catalog
-  const sandboxStatus = useSandboxStore((s) => s.status)
+  // Difficulty-filtered universe (search & nav narrow further).
+  const difficultyTools = useMemo(
+    () =>
+      difficulty === 'All'
+        ? WORKSHOP_TOOLS
+        : WORKSHOP_TOOLS.filter((t) => t.difficulty === difficulty),
+    [difficulty]
+  )
 
-  // Persona handler — keeps persona store + local filter in sync
-  const handlePersonaFilterChange = useCallback(
-    (id: string) => {
-      setSelectedPersonaFilter(id)
-      setPersona(id === 'All' ? null : (id as PersonaId))
+  // Stable sort: recommended-for-role first, locked sandbox scenarios last.
+  const sortTools = useCallback(
+    (tools: WorkshopTool[]) => {
+      const score = (t: WorkshopTool) => (isLocked(t) ? 2 : isRecommended(t) ? 0 : 1)
+      return [...tools].sort((a, b) => score(a) - score(b))
     },
-    [setPersona]
+    [isLocked, isRecommended]
   )
 
-  // ── Filter pipeline ─────────────────────────────────────────────────────
-  // Persona-recommended pre-filter (when persona banner is "on"). Mirrors the
-  // existing behavior: only narrows when no search and no category and no
-  // other filter is doing the narrowing itself.
-  const personaRecommendedActive =
-    showPersonaFilter && !!selectedPersona && !searchText.trim() && activeCategory === 'All'
-
-  const catalogTools = useMemo(
-    () => filterToolsBySandboxAvailability(WORKSHOP_TOOLS, sandboxStatus),
-    [sandboxStatus]
-  )
-
-  const availableCategories = useMemo(
-    () => availableCategoriesForSandboxStatus(CATEGORIES, sandboxStatus),
-    [sandboxStatus]
-  )
-
-  const baselineTools = personaRecommendedActive
-    ? catalogTools.filter((t) => t.recommendedPersonas.includes(selectedPersona))
-    : catalogTools
-
-  const filteredTools = useMemo(() => {
-    let tools = baselineTools
-    if (activeCategory !== 'All') tools = tools.filter((t) => t.category === activeCategory)
-    if (selectedDifficulty !== 'All')
-      tools = tools.filter((t) => t.difficulty === selectedDifficulty)
-    if (selectedPersonaFilter !== 'All' && !personaRecommendedActive) {
-      tools = tools.filter((t) =>
-        t.recommendedPersonas.includes(selectedPersonaFilter as PersonaId)
-      )
+  // Per-category counts for the sidebar (respect the difficulty filter).
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    for (const cat of SIDEBAR_CATEGORIES) {
+      // eslint-disable-next-line security/detect-object-injection -- `cat` is a known WorkshopCategory
+      counts[cat] = difficultyTools.filter((t) => t.category === cat).length
     }
-    if (searchText.trim()) {
-      const q = searchText.toLowerCase()
-      tools = tools.filter(
+    return counts
+  }, [difficultyTools])
+
+  // Search matches name + description + algorithms + keywords + category.
+  const searchResults = useMemo(() => {
+    if (!searchActive) return []
+    const q = searchText.trim().toLowerCase()
+    return sortTools(
+      difficultyTools.filter(
         (t) =>
           t.name.toLowerCase().includes(q) ||
           t.description.toLowerCase().includes(q) ||
@@ -395,335 +772,384 @@ export const PlaygroundWorkshop = () => {
           t.keywords.some((k) => k.includes(q)) ||
           t.category.toLowerCase().includes(q)
       )
-    }
-    if (showOnlyPlaygroundTools) tools = tools.filter((t) => myPlaygroundTools.includes(t.id))
-    if (wipFilter === 'only') tools = tools.filter((t) => t.wip)
-    if (wipFilter === 'hide') tools = tools.filter((t) => !t.wip)
-    if (selectedAlgorithm) tools = tools.filter((t) => toolMatchesAlgorithm(t, selectedAlgorithm))
-    return tools
-  }, [
-    baselineTools,
-    activeCategory,
-    selectedDifficulty,
-    selectedPersonaFilter,
-    personaRecommendedActive,
-    searchText,
-    showOnlyPlaygroundTools,
-    myPlaygroundTools,
-    wipFilter,
-    selectedAlgorithm,
-  ])
+    )
+  }, [searchActive, searchText, difficultyTools, sortTools])
 
-  const recommendedCount = useMemo(() => {
-    if (!selectedPersona) return 0
-    return WORKSHOP_TOOLS.filter((t) => t.recommendedPersonas.includes(selectedPersona)).length
-  }, [selectedPersona])
-
-  // For grouped-by-category Cards layout
-  const groupedTools = useMemo(() => {
-    const groups: Record<string, WorkshopTool[]> = {}
-    for (const cat of CATEGORIES) {
-      const tools = filteredTools.filter((t) => t.category === cat)
-      if (tools.length > 0) groups[cat] = tools // eslint-disable-line security/detect-object-injection
-    }
-    return groups
-  }, [filteredTools])
-
-  // Active filter count for the popover/drawer badge
-  let activeFilterCount = 0
-  if (activeCategory !== 'All') activeFilterCount++
-  if (selectedDifficulty !== 'All') activeFilterCount++
-  if (selectedPersonaFilter !== 'All') activeFilterCount++
-  if (wipFilter !== (isEmbedded ? 'hide' : 'all')) activeFilterCount++
-  if (selectedAlgorithm) activeFilterCount++
-
-  const filtersActive = activeFilterCount > 0 || searchText.trim() !== ''
-
-  const clearFilters = useCallback(() => {
-    setSearchText('')
-    setActiveCategory('All')
-    setSelectedDifficulty('All')
-    setSelectedPersonaFilter('All')
-    setPersona(null)
-    setWipFilter(isEmbedded ? 'hide' : 'all')
-    setSelectedAlgorithm(null)
-  }, [isEmbedded, setActiveCategory, setPersona])
-
-  // Curious minimum-viable mode — kept as-is
-  const personaDefaults = usePersonaDefaults()
-  const curiousMinimalMode = selectedPersona === 'curious' && !personaDefaults.prefsOff
-
-  // Path view is only available when a persona is selected
-  const pathAvailable = !!selectedPersona
-
-  // The filter content rendered inside the desktop popover & mobile drawer
-  const filterPanelContent = (
-    <DesktopPlaygroundFilterPopover
-      activeFilterCount={activeFilterCount}
-      personaFilterItems={personaFilterItems}
-      selectedPersonaFilter={selectedPersonaFilter}
-      onPersonaChange={handlePersonaFilterChange}
-      selectedCategory={activeCategory}
-      onCategoryChange={setActiveCategory}
-      availableCategories={availableCategories}
-      selectedDifficulty={selectedDifficulty}
-      onDifficultyChange={setSelectedDifficulty}
-      wipFilter={wipFilter}
-      onWipChange={setWipFilter}
-      wipCount={WORKSHOP_TOOLS.filter((t) => t.wip).length}
-      onClear={clearFilters}
-    />
+  const myTools = useMemo(
+    () => sortTools(difficultyTools.filter((t) => myPlaygroundTools.includes(t.id))),
+    [difficultyTools, myPlaygroundTools, sortTools]
   )
 
-  return (
-    <div>
-      <PageHeader
-        icon={FlaskConical}
-        pageId="playground"
-        title="Crypto Lab"
-        description="Hands-on cryptographic tools — interactive playground, PKCS#11 HSM, and 25 specialized crypto demos."
-        shareTitle="PQC Crypto Lab — Interactive Cryptography in Your Browser"
-        shareText="Run real post-quantum cryptographic operations in your browser — key generation, PKCS#11 HSM, ML-KEM, ML-DSA and more via WASM."
-      />
+  const categoryTools = useMemo(() => {
+    if (activeNav === 'overview' || activeNav === 'mytools') return []
+    return sortTools(difficultyTools.filter((t) => t.category === activeNav))
+  }, [activeNav, difficultyTools, sortTools])
 
-      {selectedPersona === 'curious' && (
-        <PreviewBanner pageContext="Developer, Architect, Ops, Researcher" />
-      )}
+  // Overview "Recommended" pool.
+  const recommendedPool = useMemo(() => {
+    const base = role
+      ? difficultyTools.filter((t) => t.recommendedPersonas.includes(role) && !isLocked(t))
+      : difficultyTools.filter((t) => t.difficulty === 'beginner' && !isLocked(t))
+    return sortTools(base).slice(0, 6)
+  }, [role, difficultyTools, isLocked, sortTools])
 
-      {/* Curious minimum-viable mode — orientation + CTA only */}
-      {curiousMinimalMode && (
-        <div className="space-y-4 mt-6">
-          <CuriousStartHere />
-          <div className="flex justify-center">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                personaDefaults.resetToFullSet()
-                logEvent('Playground', 'Curious Show Full Catalog', personaLabel())
-              }}
-              data-testid="playground-show-full-catalog"
-            >
-              Show full catalog ({WORKSHOP_TOOLS.length} tools)
-            </Button>
-          </div>
-          <p className="text-xs text-muted-foreground text-center">
-            The full crypto lab is built for developers, architects, ops, and researchers. The 3
-            steps above are the curated entry path for curious users.
+  // ── Actions ──────────────────────────────────────────────────────────────
+  const openTool = useCallback(
+    (tool: WorkshopTool) => {
+      logEvent('Playground', 'Tool Open', personaLabel(tool.id))
+      setSelectedTool(null)
+      navigate(`/playground/${tool.id}`)
+    },
+    [navigate]
+  )
+
+  const startRuntime = useCallback(() => {
+    void probe()
+  }, [probe])
+
+  // Count of locked sandbox scenarios inside the active category (for the note).
+  const lockedInCategory = useMemo(
+    () =>
+      activeNav !== 'overview' && activeNav !== 'mytools'
+        ? categoryTools.filter(isLocked).length
+        : 0,
+    [activeNav, categoryTools, isLocked]
+  )
+
+  const renderGrid = (tools: WorkshopTool[], showCategory?: boolean) => (
+    <div className="mt-4 grid grid-cols-1 gap-3 xl:grid-cols-2">
+      {tools.map((tool) => (
+        <ToolCardView
+          key={tool.id}
+          tool={tool}
+          locked={isLocked(tool)}
+          recommended={isRecommended(tool)}
+          bookmarked={myPlaygroundTools.includes(tool.id)}
+          showCategory={showCategory}
+          onOpen={setSelectedTool}
+          onToggleBookmark={toggleBookmark}
+        />
+      ))}
+    </div>
+  )
+
+  // ── Sidebar (reused on desktop + stacked on mobile) ───────────────────────
+  const sidebar = (
+    <aside className="flex flex-col gap-1 lg:sticky lg:top-0 lg:h-screen lg:w-[264px] lg:flex-none lg:overflow-y-auto lg:border-r lg:border-border lg:py-5 lg:pr-4">
+      {/* Brand */}
+      <div className="flex items-center gap-2.5 px-1">
+        <span className="flex w-8 h-8 items-center justify-center rounded-lg bg-primary/12">
+          <FlaskConical className="w-4 h-4 text-primary" aria-hidden="true" />
+        </span>
+        <div className="min-w-0">
+          <p className="text-[15px] font-bold leading-tight text-foreground">Crypto Lab</p>
+          <p className="text-[10.5px] text-muted-foreground">
+            {WORKSHOP_TOOLS.length} tools · runs in-browser
           </p>
         </div>
-      )}
+      </div>
 
-      {!curiousMinimalMode && (
-        <div className="space-y-6 pt-4">
-          {/* Persona-specific entry points */}
-          {selectedPersona === 'executive' && <ExecutiveBanner />}
-          {selectedPersona === 'curious' && <CuriousStartHere />}
+      <RoleSelector role={role} onSelect={(r) => setPersona(r)} />
 
-          {/* Persona recommended banner (non-executive/curious) */}
-          {selectedPersona && selectedPersona !== 'executive' && selectedPersona !== 'curious' && (
-            <PersonaBanner
-              persona={selectedPersona}
-              recommendedCount={recommendedCount}
-              showingPersona={personaRecommendedActive}
-              onToggle={() => setShowPersonaFilter((v) => !v)}
-            />
-          )}
-
-          {/* ── Mobile: search + filter drawer ── */}
-          <div className="flex md:hidden items-center gap-2">
-            <div className="relative flex-1">
-              <Search
-                size={14}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                aria-hidden="true"
-              />
-              <Input
-                type="search"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                placeholder="Search tools…"
-                aria-label="Search tools"
-                className="pl-8 h-[44px] text-sm rounded-lg"
-              />
-            </div>
-            <div className="w-[140px] shrink-0">
-              <MobilePlaygroundFilterDrawer
-                activeFilterCount={activeFilterCount}
-                onClearAll={clearFilters}
-                filterContent={
-                  <div className="space-y-6">
-                    {filterPanelContent}
-                    <div className="space-y-2 flex flex-col pt-4 border-t border-border/50">
-                      <span className="text-sm font-semibold text-foreground">View Mode</span>
-                      <PlaygroundViewToggle
-                        mode={viewMode}
-                        onChange={handleViewModeChange}
-                        pathAvailable={pathAvailable}
-                      />
-                    </div>
-                    <div className="space-y-2 flex flex-col pt-4 border-t border-border/50">
-                      <span className="text-sm font-semibold text-foreground">Sandbox</span>
-                      <SandboxStatusToggle />
-                    </div>
-                  </div>
-                }
-              />
-            </div>
-          </div>
-
-          {/* ── Desktop: controls bar ── */}
-          <div className="hidden md:flex flex-wrap items-center gap-2">
-            <div className="relative flex-1 min-w-[160px]">
-              <Search
-                size={14}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                aria-hidden="true"
-              />
-              <Input
-                type="search"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                placeholder="Search tools, algorithms, or keywords…"
-                aria-label="Search tools"
-                className="pl-8 h-9 text-xs"
-              />
-            </div>
-
-            {filterPanelContent}
-
-            {myPlaygroundTools.length > 0 && (
-              <Button
-                variant="ghost"
-                onClick={() => setShowOnlyPlaygroundTools(!showOnlyPlaygroundTools)}
-                className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
-                  showOnlyPlaygroundTools
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
-                }`}
-                aria-pressed={showOnlyPlaygroundTools}
-              >
-                <BookmarkCheck size={12} />
-                My ({myPlaygroundTools.length})
-              </Button>
-            )}
-
-            <SandboxStatusToggle />
-
-            <PlaygroundViewToggle
-              mode={viewMode}
-              onChange={handleViewModeChange}
-              pathAvailable={pathAvailable}
-            />
-          </div>
-
-          {/* Researcher algorithm taxonomy filter — only Stack/Cards modes */}
-          {selectedPersona === 'researcher' &&
-            (viewMode === 'stack' || viewMode === 'cards' || viewMode === 'table') && (
-              <ToolTaxonomyFilter
-                selectedAlgorithm={selectedAlgorithm}
-                onChange={setSelectedAlgorithm}
-              />
-            )}
-
-          {/* Results count + clear */}
-          {filtersActive && (
-            <div className="flex items-center gap-3 text-xs text-muted-foreground">
-              <span>
-                Showing{' '}
-                <span className="font-semibold text-foreground">{filteredTools.length}</span> of{' '}
-                <span className="font-semibold">{WORKSHOP_TOOLS.length}</span> tools
-              </span>
-              <Button
-                variant="link"
-                onClick={clearFilters}
-                className="p-0 h-auto flex items-center gap-1 font-medium"
-              >
-                <X size={12} aria-hidden="true" />
-                Clear filters
-              </Button>
-            </div>
-          )}
-
-          {/* Hero cards — only on Cards mode without category filter */}
-          {viewMode === 'cards' && activeCategory === 'All' && !filtersActive && (
-            <div>
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                Playgrounds
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <HeroCard
-                  to="/playground/interactive"
-                  icon={Play}
-                  title="Interactive Playground"
-                  description="Key generation, KEM & encryption, signing, hashing, symmetric operations — live via WebAssembly."
-                  badge="ML-KEM · ML-DSA · AES"
-                />
-                <HeroCard
-                  to="/playground/hsm"
-                  icon={Cpu}
-                  title="PKCS#11 HSM Playground"
-                  description="Real PKCS#11 v3.2 operations with SoftHSM WASM — dual C++/Rust engine cross-validation and ACVP."
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Empty state */}
-          {filteredTools.length === 0 && (
-            <EmptyState
-              icon={<Search className="w-6 h-6" />}
-              title={
-                searchText ? `No tools match “${searchText}”` : 'No tools match the current filters'
+      {/* Nav */}
+      <nav className="mt-4 flex flex-1 flex-col gap-0.5" aria-label="Crypto Lab categories">
+        <NavItem
+          label={<span>◇ Overview</span>}
+          active={activeNav === 'overview' && !searchActive}
+          onClick={() => {
+            setSearchText('')
+            setActiveNav('overview')
+          }}
+        />
+        <p className="mt-3 mb-1 px-1 text-[9.5px] font-bold uppercase tracking-wider text-muted-foreground/80">
+          Categories
+        </p>
+        {SIDEBAR_CATEGORIES.map((cat) => {
+          /* eslint-disable security/detect-object-injection -- `cat` is a known WorkshopCategory */
+          const Icon = CATEGORY_META[cat].icon
+          const count = categoryCounts[cat]
+          /* eslint-enable security/detect-object-injection */
+          return (
+            <NavItem
+              key={cat}
+              label={
+                <>
+                  <Icon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                  <span className="truncate">{cat}</span>
+                </>
               }
-              action={{ label: 'Clear filters', onClick: clearFilters }}
+              count={count}
+              active={activeNav === cat && !searchActive}
+              onClick={() => {
+                setSearchText('')
+                setActiveNav(cat)
+              }}
             />
-          )}
+          )
+        })}
+      </nav>
 
-          {/* ── View body ── */}
-          {filteredTools.length > 0 && (
+      {/* Footer: My tools + Sandbox runtime */}
+      <div className="mt-2 border-t border-border pt-2">
+        <NavItem
+          label={
             <>
-              {viewMode === 'path' && selectedPersona && (
-                <PlaygroundPersonaPathView personaId={selectedPersona} tools={filteredTools} />
-              )}
-
-              {viewMode === 'stack' && (
-                <ToolStack
-                  tools={filteredTools}
-                  baselineTools={baselineTools}
-                  onClearFilters={clearFilters}
-                />
-              )}
-
-              {viewMode === 'cards' && (
-                <div className="space-y-8">
-                  {CATEGORIES.map((category) => {
-                    const tools = groupedTools[category] // eslint-disable-line security/detect-object-injection
-                    if (!tools) return null
-                    return (
-                      <div key={category}>
-                        <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                          {category}
-                        </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                          {tools.map((tool) => (
-                            <ToolCard key={tool.id} tool={tool} />
-                          ))}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-
-              {viewMode === 'table' && <ToolTable tools={filteredTools} />}
-
-              {viewMode === 'nice' && (
-                <PlaygroundNiceView tools={filteredTools} activePersonaId={selectedPersona} />
-              )}
+              <Star className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+              <span>My tools</span>
             </>
+          }
+          count={myPlaygroundTools.length}
+          active={activeNav === 'mytools' && !searchActive}
+          onClick={() => {
+            setSearchText('')
+            setActiveNav('mytools')
+          }}
+        />
+        <SandboxRuntimeToggle />
+      </div>
+    </aside>
+  )
+
+  // ── Main pane content by mode ─────────────────────────────────────────────
+  let mainBody: React.ReactNode
+  if (searchActive) {
+    mainBody = (
+      <section>
+        <h1 className="text-xl font-bold tracking-tight text-foreground">
+          Results for “{searchText.trim()}”
+        </h1>
+        <p className="mt-1 text-[13px] text-muted-foreground">
+          {searchResults.length} {searchResults.length === 1 ? 'tool' : 'tools'} across all
+          categories
+        </p>
+        {searchResults.length > 0 ? (
+          renderGrid(searchResults, true)
+        ) : (
+          <EmptyResults
+            title="No tools match"
+            subtitle="Try a different keyword or clear the difficulty filter."
+          />
+        )}
+      </section>
+    )
+  } else if (activeNav === 'mytools') {
+    mainBody = (
+      <section>
+        <h1 className="text-xl font-bold tracking-tight text-foreground">My tools</h1>
+        <p className="mt-1 text-[13px] text-muted-foreground">
+          Tools you’ve bookmarked for quick access
+        </p>
+        {myTools.length > 0 ? (
+          renderGrid(myTools, true)
+        ) : (
+          <EmptyResults title="No bookmarks yet" subtitle="Tap the ☆ on any tool to pin it here." />
+        )}
+      </section>
+    )
+  } else if (activeNav !== 'overview') {
+    const cat = activeNav as WorkshopCategory
+    // eslint-disable-next-line security/detect-object-injection -- `cat` is a WorkshopCategory
+    const meta = CATEGORY_META[cat]
+    const HsmIcon = CATEGORY_META['HSM / PKCS#11'].icon
+    const recommendedInCat = role ? categoryTools.filter(isRecommended).length : 0
+    mainBody = (
+      <section>
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h1 className="text-[22px] font-bold tracking-tight text-foreground">{cat}</h1>
+            <p className="mt-1 max-w-xl text-[13px] text-muted-foreground">{meta.description}</p>
+          </div>
+          {recommendedInCat > 0 && (
+            <span className="shrink-0 rounded-lg bg-secondary/12 px-3 py-1.5 text-[11px] font-semibold text-secondary">
+              ★ {recommendedInCat} picked for {roleLabel(role)}
+            </span>
           )}
         </div>
+
+        {cat === 'HSM / PKCS#11' && (
+          <Link
+            to="/playground/hsm"
+            className="glass-panel mt-4 flex items-center gap-3.5 rounded-xl p-4 transition-colors hover:border-primary/50"
+          >
+            <span className="flex w-[38px] h-[38px] items-center justify-center rounded-lg bg-secondary/15 text-secondary">
+              <HsmIcon className="w-4 h-4" aria-hidden="true" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[14px] font-bold text-foreground">PKCS#11 HSM Playground</p>
+              <p className="mt-0.5 text-[12px] text-muted-foreground">
+                Full PKCS#11 v3.2 surface · dual C++/Rust engine cross-validation · ACVP vectors.
+              </p>
+            </div>
+            <span className="shrink-0 rounded-lg bg-primary px-3.5 py-1.5 text-[12px] font-semibold text-primary-foreground">
+              Open
+            </span>
+          </Link>
+        )}
+
+        {lockedInCategory > 0 && (
+          <div className="mt-4 flex items-center gap-3 rounded-xl border border-border bg-status-warning/5 p-3.5">
+            <span className="flex w-[30px] h-[30px] shrink-0 items-center justify-center rounded-lg bg-status-warning/12 text-status-warning">
+              <Container className="w-4 h-4" aria-hidden="true" />
+            </span>
+            <p className="flex-1 text-[12px] leading-snug text-foreground/80">
+              {lockedInCategory} {lockedInCategory === 1 ? 'tool' : 'tools'} here{' '}
+              {lockedInCategory === 1 ? 'runs' : 'run'} in the Docker sandbox. Start the runtime to
+              launch {lockedInCategory === 1 ? 'it' : 'them'}.
+            </p>
+            <Button
+              variant="gradient"
+              onClick={startRuntime}
+              disabled={sandboxStatus === 'checking'}
+              className="shrink-0 rounded-lg px-3 py-1.5 text-[11.5px] font-semibold"
+            >
+              Start runtime
+            </Button>
+          </div>
+        )}
+
+        {categoryTools.length > 0 ? (
+          renderGrid(categoryTools)
+        ) : (
+          <EmptyResults
+            title="Nothing at this difficulty"
+            subtitle="Switch the difficulty filter back to All."
+          />
+        )}
+      </section>
+    )
+  } else {
+    // Overview
+    mainBody = (
+      <section>
+        <h1 className="text-[26px] font-extrabold tracking-tight text-foreground">
+          Run real cryptography in your browser
+        </h1>
+        <p className="mt-2 max-w-2xl text-sm text-muted-foreground leading-relaxed">
+          Pick a category on the left, jump into a full playground, or start with what fits your
+          role. Nothing is installed — every operation executes locally via WebAssembly.
+        </p>
+
+        <p className="mt-6 mb-3 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
+          Full playgrounds
+        </p>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+          {FEATURE_PLAYGROUNDS.map((item) => (
+            <FeatureCard key={item.to} item={item} />
+          ))}
+        </div>
+
+        <div className="mt-8 mb-3 flex items-end justify-between">
+          <p className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
+            {role ? `Recommended for ${roleLabel(role)}` : 'Good places to start'}
+          </p>
+          <p className="text-[11.5px] text-muted-foreground">
+            {role
+              ? `${recommendedPool.length} tools matched to your role`
+              : 'Set your role for tailored picks'}
+          </p>
+        </div>
+        {recommendedPool.length > 0 ? (
+          renderGrid(recommendedPool)
+        ) : (
+          <EmptyResults
+            title="Nothing at this difficulty"
+            subtitle="Switch the difficulty filter back to All."
+          />
+        )}
+
+        <Link
+          to={KMIP_PLAYGROUND_ROUTE}
+          onClick={() => logEvent('Playground', 'Full Playground Open', 'KMIP Banner')}
+          className="glass-panel mt-5 flex items-center gap-4 rounded-2xl p-5 transition-colors hover:border-primary/50"
+        >
+          <span className="flex w-[42px] h-[42px] shrink-0 items-center justify-center rounded-xl bg-primary/14 text-primary">
+            <Container className="w-5 h-5" aria-hidden="true" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[14px] font-bold text-foreground">
+              Crypto-Agile KMIP Playground
+              <span className="ml-1.5 rounded bg-primary/15 px-1.5 py-0.5 text-[10px] font-semibold text-primary align-middle">
+                Featured
+              </span>
+            </p>
+            <p className="mt-1 text-[12.5px] text-muted-foreground leading-snug">
+              A full KMIP 3.0 control plane + PKCS#11 HSM in WebAssembly. Flip a crypto-agility
+              policy and watch the same operations switch to PQC.
+            </p>
+          </div>
+          <ArrowRight className="w-5 h-5 shrink-0 text-primary" aria-hidden="true" />
+        </Link>
+      </section>
+    )
+  }
+
+  return (
+    <div className="lg:flex lg:gap-6">
+      {sidebar}
+      <main className="min-w-0 flex-1 lg:max-w-[1180px] lg:py-6">
+        {/* Control bar */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <div className="relative min-w-[220px] flex-1">
+            <Search
+              size={15}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
+            <Input
+              type="search"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              placeholder={`Search ${WORKSHOP_TOOLS.length} tools, algorithms or keywords…`}
+              aria-label="Search tools"
+              className="h-[42px] rounded-lg pl-10 text-[13.5px]"
+            />
+            {searchActive && (
+              <Button
+                variant="ghost"
+                onClick={() => setSearchText('')}
+                aria-label="Clear search"
+                className="absolute right-1.5 top-1/2 h-7 w-7 -translate-y-1/2 p-0 text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-3.5 h-3.5" aria-hidden="true" />
+              </Button>
+            )}
+          </div>
+          <div className="flex gap-1.5">
+            {DIFFICULTY_CHIPS.map((chip) => {
+              const active = difficulty === chip.value
+              return (
+                <Button
+                  key={chip.value}
+                  variant="ghost"
+                  onClick={() => setDifficulty(chip.value)}
+                  aria-pressed={active}
+                  className={cn(
+                    'rounded-lg px-3 py-1.5 text-[11.5px] h-auto font-medium',
+                    active
+                      ? 'bg-primary text-primary-foreground font-semibold hover:bg-primary/90'
+                      : 'border border-border bg-muted/30 text-muted-foreground hover:border-primary/40'
+                  )}
+                >
+                  {chip.label}
+                </Button>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className="mt-6">{mainBody}</div>
+      </main>
+
+      {selectedTool && (
+        <ToolDetailModal
+          tool={selectedTool}
+          locked={isLocked(selectedTool)}
+          bookmarked={myPlaygroundTools.includes(selectedTool.id)}
+          onClose={() => setSelectedTool(null)}
+          onOpenTool={openTool}
+          onStartRuntime={startRuntime}
+          onToggleBookmark={toggleBookmark}
+        />
       )}
     </div>
   )

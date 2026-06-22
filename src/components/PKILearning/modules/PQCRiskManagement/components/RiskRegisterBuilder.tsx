@@ -5,6 +5,9 @@ import { Button } from '@/components/ui/button'
 import { useModuleStore } from '@/store/useModuleStore'
 import { markdownToPdf } from '@/services/export/pdfExport'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+// Single source of truth for the illustrative demo entries (shared with the
+// store + standalone adapter) so the two can't drift.
+import { DEFAULT_RISK_ENTRIES } from '@/store/useRiskRegisterStore'
 
 interface RiskEntry {
   id: string
@@ -19,6 +22,10 @@ interface RiskEntry {
 interface RiskRegisterBuilderProps {
   riskEntries: RiskEntry[]
   onRiskEntriesChange: (entries: RiskEntry[]) => void
+  /** Show the "example entries" banner when the register is still the seeded
+   *  illustrative defaults. Default true; set false when a wrapper (e.g. the
+   *  BusinessCenter standalone adapter) already renders its own banner. */
+  showExampleBanner?: boolean
 }
 
 const THREAT_VECTORS = [
@@ -46,45 +53,6 @@ const ALGORITHM_OPTIONS = [
   'Other',
 ]
 
-const DEFAULT_ENTRIES: RiskEntry[] = [
-  {
-    id: 'default-1',
-    assetName: 'TLS Certificates (Public Web)',
-    currentAlgorithm: 'RSA-2048',
-    threatVector: 'shor',
-    likelihood: 4,
-    impact: 5,
-    mitigation: 'Migrate to ML-DSA certificates; deploy hybrid TLS with X25519MLKEM768',
-  },
-  {
-    id: 'default-2',
-    assetName: 'Customer Database Encryption',
-    currentAlgorithm: 'AES-128',
-    threatVector: 'grover',
-    likelihood: 2,
-    impact: 4,
-    mitigation: 'Upgrade to AES-256; re-encrypt sensitive records',
-  },
-  {
-    id: 'default-3',
-    assetName: 'Code Signing Infrastructure',
-    currentAlgorithm: 'ECDSA P-256',
-    threatVector: 'forgery',
-    likelihood: 3,
-    impact: 5,
-    mitigation: 'Adopt ML-DSA or SLH-DSA for software signing; implement dual-signature validation',
-  },
-  {
-    id: 'default-4',
-    assetName: 'VPN Gateway (Site-to-Site)',
-    currentAlgorithm: 'DH-2048',
-    threatVector: 'hndl',
-    likelihood: 4,
-    impact: 3,
-    mitigation: 'Deploy IKEv2 with ML-KEM hybrid key exchange; upgrade firmware',
-  },
-]
-
 function getRiskLevel(score: number): { label: string; color: string; bgColor: string } {
   if (score >= 20)
     return { label: 'Critical', color: 'text-status-error', bgColor: 'bg-status-error/10' }
@@ -97,14 +65,16 @@ function getRiskLevel(score: number): { label: string; color: string; bgColor: s
 export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
   riskEntries,
   onRiskEntriesChange,
+  showExampleBanner = true,
 }) => {
   const [copied, setCopied] = React.useState(false)
   const { addExecutiveDocument } = useModuleStore()
 
-  // Initialize with defaults if empty
+  // Initialize with the illustrative demo entries if empty (labelled as examples
+  // by the standalone adapter's banner so they aren't mistaken for real data).
   React.useEffect(() => {
     if (riskEntries.length === 0) {
-      onRiskEntriesChange(DEFAULT_ENTRIES)
+      onRiskEntriesChange(DEFAULT_RISK_ENTRIES)
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -199,11 +169,22 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
   }, [exportMarkdown])
 
   const handleDownloadPdf = useCallback(async () => {
-    await markdownToPdf(exportMarkdown, 'quantum-risk-register', 'Quantum Risk Register')
+    await markdownToPdf(exportMarkdown, 'quantum-risk-register', 'Quantum Risk Register', {
+      wideTable: true,
+    })
   }, [exportMarkdown])
+
+  const showingExamples =
+    riskEntries.length > 0 && riskEntries.every((e) => e.id.startsWith('default-'))
 
   return (
     <div className="space-y-6">
+      {showExampleBanner && showingExamples && (
+        <div className="rounded-lg border border-status-warning/30 bg-status-warning/5 px-3 py-2 text-xs text-muted-foreground">
+          <span className="font-medium text-foreground">Example entries</span> — illustrative
+          placeholders, not your data. Edit or replace them to build your own register.
+        </div>
+      )}
       {/* Action bar */}
       <div className="flex flex-wrap items-center gap-3">
         <Button variant="outline" size="sm" onClick={addEntry}>

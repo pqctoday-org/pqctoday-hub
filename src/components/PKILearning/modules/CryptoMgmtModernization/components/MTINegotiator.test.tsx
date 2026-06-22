@@ -33,14 +33,17 @@ describe('MTINegotiator — component', () => {
 })
 
 describe('recommendMTI — decision tree', () => {
-  it('US federal + 2030 deadline -> ML-DSA-65 + ML-KEM-768', () => {
+  it('US federal + 2030 deadline -> ML-DSA-87 + ML-KEM-1024 (CNSA 2.0, Cat 5)', () => {
     const rec = recommendMTI({
       ...baseInputs,
       audience: 'us-federal',
       complianceDeadline: '2030',
     })
-    expect(rec.sigMTI).toMatch(/ML-DSA-65/)
-    expect(rec.kemMTI).toMatch(/ML-KEM-768/)
+    expect(rec.sigMTI).toMatch(/ML-DSA-87/)
+    expect(rec.kemMTI).toMatch(/ML-KEM-1024/)
+    // Cat-3 sets remain available as the non-NSS / NIST-track federal alternate
+    expect(rec.sigAlternates.join(' ')).toMatch(/ML-DSA-65/)
+    expect(rec.kemAlternates.join(' ')).toMatch(/ML-KEM-768/)
   })
 
   it('Embedded/IoT + low-RAM -> stateless SLH-DSA-SHAKE-128s signature', () => {
@@ -86,9 +89,10 @@ describe('recommendMTI — decision tree', () => {
     expect(rec.kemAlternates.join(' ')).toMatch(/HQC-128/)
   })
 
-  it('US federal -> SHA-256 hash MTI with SHA-512 alternate', () => {
+  it('US federal -> SHA-384 hash MTI (CNSA 2.0) with SHA-512 alternate', () => {
     const rec = recommendMTI({ ...baseInputs, audience: 'us-federal' })
-    expect(rec.hashMTI).toMatch(/SHA-256/)
+    // CNSA 2.0 mandates SHA-384 for NSS — not SHA-256.
+    expect(rec.hashMTI).toMatch(/SHA-384/)
     expect(rec.hashAlternates.join(' ')).toMatch(/SHA-512/)
   })
 
@@ -122,6 +126,19 @@ describe('recommendMTI — decision tree', () => {
   it('always emits the local-policy-override reminder', () => {
     const rec = recommendMTI(baseInputs)
     expect(rec.watchOuts.join(' ')).toMatch(/Local policy/)
+  })
+
+  // RM-09: the `protocol` input now shapes a carriage note (was previously ignored).
+  it('emits a protocol-specific carriage note driven by the protocol input', () => {
+    expect(recommendMTI({ ...baseInputs, protocol: 'TLS 1.3' }).watchOuts.join(' ')).toMatch(
+      /X25519MLKEM768 named group/
+    )
+    expect(recommendMTI({ ...baseInputs, protocol: 'IKEv2' }).watchOuts.join(' ')).toMatch(
+      /RFC 9370/
+    )
+    expect(recommendMTI({ ...baseInputs, protocol: 'SSH' }).watchOuts.join(' ')).toMatch(
+      /sntrup761x25519/
+    )
   })
 })
 

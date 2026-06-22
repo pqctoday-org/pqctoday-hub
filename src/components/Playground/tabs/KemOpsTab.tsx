@@ -10,6 +10,7 @@ import { logEvent } from '../../../utils/analytics'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
 import { FilterDropdown } from '../../common/FilterDropdown'
+import { KcvBadge } from '../KcvBadge'
 import {
   hsm_generateMLKEMKeyPair,
   hsm_encapsulate,
@@ -957,6 +958,15 @@ const KemOpsTabSoftware: React.FC = () => {
                   <div className="font-bold text-sm">
                     {kemDecapsulationResult ? '✓ MATCH' : '✗ MISMATCH'}
                   </div>
+                </div>
+              )}
+
+              {(sharedSecret || decapsulatedSecret) && (
+                <div className="flex flex-wrap items-center gap-2 mt-2">
+                  {sharedSecret && <KcvBadge secretHex={sharedSecret} label="Shared KCV" />}
+                  {decapsulatedSecret && (
+                    <KcvBadge secretHex={decapsulatedSecret} label="Recovered KCV" />
+                  )}
                 </div>
               )}
             </div>

@@ -6,13 +6,18 @@ import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { useModuleStore } from '@/store/useModuleStore'
-import { NICE_COMPETENCY_AREAS, NICE_WORK_ROLES } from '@/data/niceFramework'
+import {
+  NICE_COMPETENCY_AREAS,
+  NICE_WORK_ROLES,
+  CA_TO_NFCOM,
+  NF_COMPETENCY_AREAS,
+} from '@/data/niceFramework'
 import type {
   NiceCompetencyAreaId,
   NiceWorkRoleId,
   NiceProficiencyTier,
 } from '@/data/niceFramework'
-import { getModulesForCompetencyArea } from '@/data/niceModuleMapping'
+import { getModulesForCompetencyArea, getModuleOfficialAreas } from '@/data/niceModuleMapping'
 import { MODULE_CATALOG } from './moduleData'
 
 // Canonical CA display order — foundational → technical → governance
@@ -214,7 +219,10 @@ export function NiceView({ navigate, activePersonaId }: NiceViewProps) {
 
         {selectedRoleData && (
           <div className="border-t border-border pt-2 flex items-start gap-3 flex-wrap">
-            <span className="text-xs font-mono text-primary shrink-0">
+            <span
+              className="text-xs font-mono text-primary shrink-0"
+              title={`NICE Framework v2.2.0: ${selectedRoleData.officialName}`}
+            >
               {selectedRoleData.niceCode}
             </span>
             <p className="text-xs text-muted-foreground flex-1">{selectedRoleData.description}</p>
@@ -277,6 +285,24 @@ export function NiceView({ navigate, activePersonaId }: NiceViewProps) {
                     {caId}
                   </span>
                   <h3 className="text-sm font-semibold text-foreground">{ca.title}</h3>
+                  {(() => {
+                    const nf = CA_TO_NFCOM[caId]
+                    return nf ? (
+                      <span
+                        className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-status-info/30 bg-status-info/10 text-status-info shrink-0"
+                        title={`Official NICE Framework v2.2.0 competency area: ${NF_COMPETENCY_AREAS[nf].title}`}
+                      >
+                        NICE {nf}
+                      </span>
+                    ) : (
+                      <span
+                        className="text-[10px] text-muted-foreground/70 shrink-0 self-center"
+                        title="No official NICE v2.2.0 competency area maps to this lens"
+                      >
+                        no official NICE area
+                      </span>
+                    )
+                  })()}
                   {isCoreForRole && (
                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-medium whitespace-nowrap">
                       Core for {selectedRoleData?.title}
@@ -331,6 +357,7 @@ export function NiceView({ navigate, activePersonaId }: NiceViewProps) {
                         // primary CA is elsewhere) so the duplicate listing
                         // reads as secondary. Applies regardless of role.
                         const isSecondaryCA = ref.competencyAreas[0] !== caId
+                        const officialAreas = getModuleOfficialAreas(ref)
 
                         return (
                           <Button
@@ -338,6 +365,11 @@ export function NiceView({ navigate, activePersonaId }: NiceViewProps) {
                             variant="ghost"
                             size="sm"
                             onClick={() => navigate(ref.moduleId)}
+                            title={
+                              officialAreas.length > 0
+                                ? `Official NICE v2.2.0 areas: ${officialAreas.map((a) => a.title).join(', ')}`
+                                : undefined
+                            }
                             className={clsx(
                               'flex items-center gap-1.5 text-xs px-2.5 py-1.5 h-auto rounded-lg border transition-all',
                               status === 'completed'

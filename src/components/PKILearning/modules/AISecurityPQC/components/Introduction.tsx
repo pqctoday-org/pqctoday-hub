@@ -422,6 +422,64 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         <ReadingCompleteButton />
       </CollapsibleSection>
 
+      {/* AI-Assisted Migration & the Human-Review Gate (Applied Quantum §5.7) */}
+      <CollapsibleSection
+        title="AI-Assisted Migration: the Human-Review Gate"
+        icon={<Bot size={24} className="text-primary" />}
+      >
+        <p className="text-sm text-foreground/80">
+          LLMs and code assistants are increasingly used to <em>accelerate</em> a PQC migration:
+          finding crypto call-sites, drafting CBOM entries, suggesting algorithm swaps, and
+          rewriting config. They are powerful, but cryptographic changes are exactly where a
+          confident-but-wrong suggestion is most dangerous. Treat AI as a drafting tool behind a
+          mandatory <strong>human-review gate</strong> &mdash; never an unattended committer of
+          cryptographic change.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="rounded-lg p-4 border border-primary/30 bg-primary/5">
+            <div className="flex items-center gap-2 mb-1">
+              <FileCheck size={16} className="text-primary" />
+              <span className="text-sm font-bold text-foreground">Good fits for AI assistance</span>
+            </div>
+            <ul className="space-y-1 text-xs text-foreground/80 list-disc pl-4">
+              <li>Surfacing candidate crypto call-sites for human triage.</li>
+              <li>Drafting CBOM entries and migration-ticket boilerplate.</li>
+              <li>Summarising vendor docs and standards for reviewers.</li>
+            </ul>
+          </div>
+          <div className="rounded-lg p-4 border border-destructive/30 bg-destructive/5">
+            <div className="flex items-center gap-2 mb-1">
+              <AlertTriangle size={16} className="text-destructive" />
+              <span className="text-sm font-bold text-foreground">Must pass the review gate</span>
+            </div>
+            <ul className="space-y-1 text-xs text-foreground/80 list-disc pl-4">
+              <li>Any algorithm or parameter selection (e.g. ML-KEM vs hybrid).</li>
+              <li>Generated key-management or crypto-config code.</li>
+              <li>Anything merged into production crypto paths.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="rounded-lg p-4 border border-border bg-muted/40">
+          <div className="flex items-center gap-2 mb-1">
+            <Eye size={16} className="text-primary" />
+            <span className="text-sm font-bold text-foreground">Provenance: record the assist</span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Tag every AI-assisted migration change with its provenance &mdash; which tool/model
+            produced the suggestion and who reviewed and approved it. This audit trail is what lets
+            a reviewer (and a future auditor) distinguish a verified human decision from an
+            unverified machine suggestion.
+          </p>
+        </div>
+
+        <p className="text-[11px] text-muted-foreground">
+          Source: Applied Quantum PQC Migration Framework §5.7 (AI-assisted migration).
+        </p>
+        <ReadingCompleteButton />
+      </CollapsibleSection>
+
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">
         <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
