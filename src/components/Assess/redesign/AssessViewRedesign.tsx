@@ -69,9 +69,31 @@ const ASSESS_STEP_LABELS: { key: string; label: string }[] = Object.keys(ASSESS_
   (key, i) => ({ key, label: STEP_LABELS[i] ?? key })
 )
 
-export const AssessViewRedesign: React.FC = () => {
+export const AssessViewRedesign: React.FC<{
+  /** When true, renders headless inside the simulation: breadcrumb + PageHeader +
+   *  the report/business-center banners are hidden, deep-link params are backed by
+   *  local state (so it never corrupts the /simulation route), and completing the
+   *  assessment calls `onComplete` (close the embed) instead of navigating away. */
+  simEmbed?: boolean
+  onComplete?: () => void
+}> = ({ simEmbed = false, onComplete }) => {
   const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
+  // In the sim embed, back the deep-link params with LOCAL state so the wizard
+  // never reads/writes the /simulation route (it can't nest its own Router).
+  const [realSearchParams, realSetSearchParams] = useSearchParams()
+  const [embedSearchParams, setEmbedSearchParamsState] = useState(() => new URLSearchParams())
+  const searchParams = simEmbed ? embedSearchParams : realSearchParams
+  const setSearchParams: typeof realSetSearchParams = simEmbed
+    ? (nextInit) =>
+        setEmbedSearchParamsState((prev) => {
+          const next = new URLSearchParams(
+            typeof nextInit === 'function'
+              ? (nextInit(prev) as URLSearchParams)
+              : (nextInit as URLSearchParams)
+          )
+          return next.toString() === prev.toString() ? prev : next
+        })
+    : realSetSearchParams
   const {
     assessmentStatus,
     markComplete,
@@ -177,6 +199,12 @@ export const AssessViewRedesign: React.FC = () => {
   const generate = () => {
     markComplete()
     logAssessComplete(selectedPersona ?? 'unknown')
+    // Embedded in the sim → close back to the board (the sim owns the next move);
+    // never navigate away from /simulation or show the standalone done screen.
+    if (simEmbed) {
+      onComplete?.()
+      return
+    }
     // Came from a sim run (the locked-sim gate sent the player to /assess) →
     // return to the now-unlocked simulation instead of stranding them on the
     // done/report screen. The report stays reachable from inside the sim.
@@ -224,20 +252,24 @@ export const AssessViewRedesign: React.FC = () => {
 
   return (
     <div className="animate-fade-in">
-      <WorkflowBreadcrumb current="assess" />
-      <PageHeader
-        icon={ClipboardCheck}
-        pageId="assess"
-        title="PQC Risk Assessment"
-        description="Answer a few questions to get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
-        dataSource={
-          metadata
-            ? `${metadata.filename} • Updated: ${metadata.lastUpdate.toLocaleDateString()}`
-            : undefined
-        }
-        shareTitle="PQC Risk Assessment — Post-Quantum Cryptography Migration Tool"
-        shareText="Get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
-      />
+      {!simEmbed && (
+        <>
+          <WorkflowBreadcrumb current="assess" />
+          <PageHeader
+            icon={ClipboardCheck}
+            pageId="assess"
+            title="PQC Risk Assessment"
+            description="Answer a few questions to get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
+            dataSource={
+              metadata
+                ? `${metadata.filename} • Updated: ${metadata.lastUpdate.toLocaleDateString()}`
+                : undefined
+            }
+            shareTitle="PQC Risk Assessment — Post-Quantum Cryptography Migration Tool"
+            shareText="Get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
+          />
+        </>
+      )}
 
       {/* Phase overlay banner (additive). */}
       {phase && (
@@ -282,7 +314,7 @@ export const AssessViewRedesign: React.FC = () => {
       {/* Already-complete banner — lets a returning user choose: edit the
           answers below, or jump to their existing report. Hidden on the
           review/done screens (which carry their own report CTA). */}
-      {assessmentStatus === 'complete' && screen === 'wizard' && (
+      {!simEmbed && assessmentStatus === 'complete' && screen === 'wizard' && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
