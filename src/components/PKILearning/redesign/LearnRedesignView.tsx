@@ -38,9 +38,11 @@ export const LearnRedesignView = () => {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const setPersona = usePersonaStore((s) => s.setPersona)
 
-  const [mode, setMode] = useState<Mode>(() =>
-    deepLinkNice || !selectedPersona ? 'browse' : 'path'
-  )
+  // First open defaults to "My Path" — the page's headline ("one guided path …
+  // tuned to your role"). With no role yet, My Path shows the cold-start prompt to
+  // pick a role; landing on the dense Browse catalog instead read as "off". Only
+  // the ?view=nice deep-link opens straight into Browse (the workforce lens).
+  const [mode, setMode] = useState<Mode>(() => (deepLinkNice ? 'browse' : 'path'))
   const [showRouter, setShowRouter] = useState(false)
 
   const pathSummary = usePersonaPathItems(selectedPersona)
@@ -171,10 +173,10 @@ export const LearnRedesignView = () => {
           />
         ) : (
           <div className="space-y-3">
-            <div className="glass-panel rounded-xl p-6 text-center space-y-3">
-              <p className="text-sm text-muted-foreground">
-                Pick a role above to get a guided path — or use the catalog.
-              </p>
+            <div className="glass-panel flex flex-wrap items-center justify-center gap-x-2.5 gap-y-2 rounded-xl px-4 py-3 text-center">
+              <span className="text-sm text-muted-foreground">
+                Pick a role above for a guided path — or
+              </span>
               <Button variant="outline" size="sm" onClick={() => setMode('browse')}>
                 Browse all {TOTAL_MODULE_COUNT} modules
               </Button>
