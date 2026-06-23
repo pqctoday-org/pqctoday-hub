@@ -40,7 +40,7 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
       badge: 'HNDL',
       badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
       observe:
-        'With a 30-year retention period and High sensitivity, the HNDL risk year is 2034 − 30 = 2004. Data encrypted and collected as far back as 2004 is already in adversary archives. When you run this asset through the Sensitivity Scoring Engine (Step 4), the composite score will be ≥ 85 — placing it in the Critical urgency band. HIPAA + NIST IR 8547 compliance flags add further urgency.',
+        'With a 30-year retention period and High sensitivity, the HNDL risk year is 2034 − 30 = 2004. In effect, data collected as far back as 2004 (the CRQC year minus the retention period) is already in adversary archives. When you run this asset through the Sensitivity Scoring Engine (Step 4), the composite score will be ≥ 85 — placing it in the Critical urgency band. HIPAA + NIST IR 8547 compliance flags add further urgency.',
       config: { step: 0 },
     },
     {
@@ -62,7 +62,7 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
       badge: 'Methodology',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'NIST RMF categorizes the root CA as FIPS 199 "High" impact — CNSA 2.0 mandates migration by 2030 with ML-DSA-87 or SLH-DSA-256s. ISO 27005 scores it Critical risk (Likelihood 3 × Consequence 5 = 15) — treatment: Mitigate, immediate. FAIR ALE is highest for this asset because root CA compromise enables forging all certificates — catastrophic loss magnitude drives ALE into the tens of millions. DORA/NIS2 Protect pillar fails because RSA-4096 will no longer meet "state-of-the-art." The Priority Map recommends SLH-DSA-256s — stateless hash-based signatures offer the strongest long-term security assurance for key material with indefinite validity periods.',
+        'NIST RMF categorizes the root CA as FIPS 199 "High" impact — for national security systems, CNSA 2.0 specifies ML-DSA-87 for signing (with LMS/XMSS for software/firmware signing) on the 2030 timeline. ISO 27005 scores it Critical risk (Likelihood 3 × Consequence 5 = 15) — treatment: Mitigate, immediate. FAIR ALE is highest for this asset because root CA compromise enables forging all certificates — catastrophic loss magnitude drives ALE into the tens of millions. DORA/NIS2 Protect pillar fails because RSA-4096 will no longer meet "state-of-the-art." For a CNSA 2.0-scoped CA, the compliant choice is ML-DSA-87; where CNSA compliance is not required, the Priority Map highlights SLH-DSA (stateless hash-based) as the most conservative long-term option for key material with indefinite validity periods.',
       config: { step: 2 },
     },
     {

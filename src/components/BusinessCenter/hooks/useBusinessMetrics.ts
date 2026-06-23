@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
-import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { useMigrateSelectionStore, selectedProductIds } from '@/store/useMigrateSelectionStore'
 import { useMigrationWorkflowStore } from '@/store/useMigrationWorkflowStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { computeAssessment } from '@/hooks/assessmentUtils'
@@ -707,7 +707,11 @@ export function useBusinessMetrics(): BusinessMetrics {
     // ── Vendor & supply chain ───────────────────────────────────
     const vendorModuleProgress = getModuleProgress(moduleStore, 'vendor-risk')
 
-    const resolvedProducts: SoftwareItem[] = migrateStore.myProducts
+    // Union of legacy myProducts + the /migrate redesign's choice selections.
+    const resolvedProducts: SoftwareItem[] = selectedProductIds(
+      migrateStore.myProducts,
+      migrateStore.choice
+    )
       .map((key) => {
         return softwareData.find((s) => s.productId === key)
       })

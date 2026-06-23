@@ -69,7 +69,7 @@ export const SLHDSAExercises: React.FC<SLHDSAExercisesProps> = ({
       badge: 'FIPS 205 §11',
       badgeColor: 'bg-muted/40 text-foreground border-border',
       observe:
-        "HashSLH-DSA pre-hashes M before signing: M' = 0x01 || len(ctx) || ctx || OID_DER || H(M). Context strings are NOT allowed in HashSLH-DSA mode (§9.2).",
+        "HashSLH-DSA pre-hashes M before signing: M' = 0x01 || len(ctx) || ctx || OID_DER || H(M). The 0x01 prefix marks the pre-hash variant (Pure SLH-DSA uses 0x00); both variants still support an optional context string (up to 255 bytes).",
       config: { step: 1 },
     },
   ]

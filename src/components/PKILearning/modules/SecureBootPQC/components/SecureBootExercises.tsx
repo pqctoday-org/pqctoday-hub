@@ -60,7 +60,7 @@ export const SecureBootExercises: React.FC<SecureBootExercisesProps> = ({
       badge: 'TPM',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'The AIK key shows "Hybrid Available" status. Expanding the Hybrid Approach section reveals that TPM 2.0\'s hardware constraint requires a two-signature pattern: RSA TPM quote proves hardware binding, ML-DSA co-signature provides quantum safety. Full PQC requires new hardware (TCG 2027 roadmap).',
+        'The AIK key shows "Hybrid Available" status. Expanding the Hybrid Approach section reveals that TPM 2.0\'s hardware constraint requires a two-signature pattern: RSA TPM quote proves hardware binding, ML-DSA co-signature provides quantum safety. Full PQC likely requires future TPM hardware (per the TCG roadmap).',
       config: { step: 2 },
     },
     {
@@ -71,7 +71,7 @@ export const SecureBootExercises: React.FC<SecureBootExercisesProps> = ({
       badge: 'Vendors',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        'HPE iLO 6 is the only enterprise OEM with available ML-DSA firmware signing (iLO 6.20+). EDK2 has ML-DSA merged into mainline (Q1 2026). AMI and Lenovo have 2026 roadmaps. Phoenix has no committed timeline. Intel Boot Guard PQC requires new silicon (Granite Rapids, 2026).',
+        'Firmware-vendor PQC support is early and moves fast: as of mid-2026 HPE ProLiant Gen12 / iLO7 is among the first with quantum-safe firmware signing (hash-based LMS in the silicon root of trust), open-source UEFI (EDK2/Tianocore) work is in progress, several OEMs have 2026-2027 roadmaps, and Intel Boot Guard PQC is tied to newer silicon (CNSA 2.0 requires firmware signing by 2030). Use the Firmware Vendor Matrix for current per-vendor status.',
       config: { step: 3 },
     },
     {

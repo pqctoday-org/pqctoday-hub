@@ -1,46 +1,45 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * SimRunComplete (W2b) — the run-end ceremony. Fires once when every lifecycle
- * phase is cleared, tying the whole program back to the Mosca outcome: did the
- * migration finish before Q-Day, or were sensitive assets exposed past it? Until
- * this, clearing the terminal phase produced only another "cleared" chip and no
- * summative reflection (the audit's "the game has no ending" gap). The terminal
- * phase is now Verification & Closure — the ceremony withholds until its evidence
- * dossier is assembled, so "done" means proven, not merely declared.
- *
- * Presentational + props-driven. Reduced-motion safe (scale-in dropped under
- * prefers-reduced-motion). Accessible: role="dialog" + aria-modal, labelled,
- * Escape closes, focus moves to the primary action on open.
+ * SimRunComplete — the run-end ceremony. Fires once every lifecycle phase reaches its top
+ * band (the migration is complete, not merely declared). It celebrates the THREE objectives
+ * the program was scored on — governance in place, critical assets protected, migration
+ * completed — and the maturity reached, rather than the old static Mosca "beat Q-Day" verdict
+ * (which was unwinnable for most orgs). Presentational + props-driven; reduced-motion safe;
+ * accessible (role=dialog, Escape closes, focus to the primary action).
  */
 import { useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Trophy, ShieldCheck, ShieldAlert } from 'lucide-react'
+import { Trophy, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
+export interface SimRunCompleteObjective {
+  id: string
+  label: string
+  byYear: number
+  done: boolean
+  /** The year it was actually achieved (for the on-time badge); omit if not recorded. */
+  achievedYear?: number
+}
+
 export interface SimRunCompleteProps {
-  /** Mosca margin (X+Y − years-to-Q-Day): ≤ 0 beats Q-Day; > 0 = years past it. */
-  over: number
-  /** The Q-Day horizon year the run was racing. */
-  horizonYear: number
-  /** Estimated PQC readiness at run end. */
-  readinessPct: number
-  /** Phases cleared / total lifecycle phases. */
-  clearedCount: number
-  totalPhases: number
+  /** The three program objectives + whether each was met. */
+  objectives: SimRunCompleteObjective[]
+  /** Program maturity reached (0–4). */
+  maturity: number
+  /** The program horizon year (operate/govern through here). */
+  programEndYear: number
   onClose: () => void
 }
 
 export function SimRunComplete({
-  over,
-  horizonYear,
-  readinessPct,
-  clearedCount,
-  totalPhases,
+  objectives,
+  maturity,
+  programEndYear,
   onClose,
 }: SimRunCompleteProps) {
   const reduce = useReducedMotion()
   const primaryRef = useRef<HTMLButtonElement>(null)
-  const beatQDay = over <= 0
+  const allMet = objectives.length > 0 && objectives.every((o) => o.done)
 
   useEffect(() => {
     primaryRef.current?.focus()
@@ -76,7 +75,7 @@ export function SimRunComplete({
             style={{
               width: 64,
               height: 64,
-              background: beatQDay ? 'hsl(var(--success))' : 'hsl(var(--warning))',
+              background: allMet ? 'hsl(var(--success))' : 'hsl(var(--warning))',
             }}
           >
             <Trophy size={30} aria-hidden="true" />
@@ -86,27 +85,38 @@ export function SimRunComplete({
             Migration program complete
           </div>
           <h2 className="mb-3 text-xl font-bold text-foreground">
-            All {clearedCount} of {totalPhases} phases cleared
+            Program maturity {Math.round(maturity)} / 4
           </h2>
 
-          <div
-            className={`mb-3 flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold ${
-              beatQDay ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'
-            }`}
-          >
-            {beatQDay ? (
-              <ShieldCheck size={18} aria-hidden="true" />
-            ) : (
-              <ShieldAlert size={18} aria-hidden="true" />
-            )}
-            <span>
-              {beatQDay
-                ? `You reached PQC readiness with ${Math.abs(over)}y of margin before Q-Day ${horizonYear}.`
-                : `Every phase cleared — but your migration finishes ${over}y past Q-Day ${horizonYear}, so sensitive assets were exposed.`}
-            </span>
+          <div className="mb-4 space-y-1.5 text-left">
+            {objectives.map((o) => {
+              const onTime = o.done && (o.achievedYear == null || o.achievedYear <= o.byYear)
+              return (
+                <div
+                  key={o.id}
+                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold ${
+                    onTime ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'
+                  }`}
+                >
+                  <ShieldCheck size={16} aria-hidden="true" />
+                  <span className="flex-1 text-foreground">{o.label}</span>
+                  <span className="font-mono text-xs">
+                    {o.done
+                      ? o.achievedYear != null
+                        ? `✓ ${o.achievedYear}`
+                        : `✓ by ${o.byYear}`
+                      : `— by ${o.byYear}`}
+                  </span>
+                </div>
+              )
+            })}
           </div>
 
-          <p className="mb-4 text-xs text-muted-foreground">Estimated readiness {readinessPct}%.</p>
+          <p className="mb-4 text-xs text-muted-foreground">
+            {allMet
+              ? `Critical assets protected and the migration completed on the program timeline — operating at full maturity through ${programEndYear}.`
+              : 'Program complete — some objectives finished behind their target dates.'}
+          </p>
 
           <Button
             ref={primaryRef}

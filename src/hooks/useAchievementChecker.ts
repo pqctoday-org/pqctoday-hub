@@ -4,7 +4,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useChatStore } from '@/store/useChatStore'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
-import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { useAchievementStore } from '@/store/useAchievementStore'
 import { useEndorsementStore } from '@/store/useEndorsementStore'
 import { ACHIEVEMENT_CATALOG } from '@/data/achievementCatalog'
@@ -25,7 +25,7 @@ export function useAchievementChecker() {
   const assessmentStatus = useAssessmentStore((s) => s.assessmentStatus)
   const conversations = useChatStore((s) => s.conversations)
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
-  const myProducts = useMigrateSelectionStore((s) => s.myProducts)
+  const myProducts = useSelectedProductIds()
 
   const playgroundOpCount = useAchievementStore((s) => s.playgroundOpCount)
   const playgroundToolsUsed = useAchievementStore((s) => s.playgroundToolsUsed)

@@ -15,7 +15,7 @@ import {
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
-import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { useMigrateSelectionStore, useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { downloadCsv } from '@/utils/csvExport'
 import { MODULE_CATALOG } from '../PKILearning/moduleData'
 import { WORKSHOP_TOOLS } from '../Playground/workshopRegistry'
@@ -50,9 +50,13 @@ export const BookmarksPanel = () => {
     return `${path}${searchParams}`
   }
 
-  const myProducts = useMigrateSelectionStore((s) => s.myProducts)
-  const toggleMyProduct = useMigrateSelectionStore((s) => s.toggleMyProduct)
+  // Effective selection = legacy myProducts ∪ the /migrate redesign's choice
+  // picks. Remove/clear route through the cross-store actions so they stay
+  // consistent whichever path added the product.
+  const myProducts = useSelectedProductIds()
+  const removeSelectedProduct = useMigrateSelectionStore((s) => s.removeSelectedProduct)
   const clearMyProducts = useMigrateSelectionStore((s) => s.clearMyProducts)
+  const clearPlan = useMigrateSelectionStore((s) => s.clearPlan)
 
   const totalCount =
     libraryBookmarks.length +
@@ -65,6 +69,7 @@ export const BookmarksPanel = () => {
   const handleClearAll = () => {
     clearAll()
     clearMyProducts()
+    clearPlan()
   }
 
   const getProductName = (key: string) => {
@@ -212,7 +217,7 @@ export const BookmarksPanel = () => {
                       variant="ghost"
                       size="sm"
                       className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => toggleMyProduct(key)}
+                      onClick={() => removeSelectedProduct(key)}
                       aria-label={`Remove ${name} bookmark`}
                     >
                       <BookmarkX size={14} className="text-muted-foreground" />

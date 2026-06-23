@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useCallback, useMemo, useRef } from 'react'
-import { Eye, Edit3, Save, Check } from 'lucide-react'
+import React, { useState, useCallback, useMemo } from 'react'
+import { Eye, Edit3 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { ExportableArtifact } from './ExportableArtifact'
+import { CompleteStepAction } from '../CompleteStepAction'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
 
 export interface ArtifactField {
   id: string
@@ -36,6 +38,9 @@ interface ArtifactBuilderProps {
   exportFormats?: ('markdown' | 'json' | 'csv' | 'pptx' | 'docx' | 'pdf')[]
   /** Forward to ExportableArtifact — render PDF in A4 landscape for wide tables. Audit M4. */
   wideTable?: boolean
+  /** Auto-run only: demo values overlaid on field defaults when a playthrough is active
+   *  (keyed sectionId → fieldId). Ignored in normal manual use. */
+  demoFill?: Record<string, Record<string, string | string[]>>
 }
 
 export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
@@ -47,17 +52,23 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
   renderPreview,
   exportFormats = ['markdown'],
   wideTable = false,
+  demoFill,
 }) => {
   const [mode, setMode] = useState<'edit' | 'preview'>('edit')
-  const [savedFlash, setSavedFlash] = useState(false)
+  // Persistent done-state keyed on the form snapshot (survives edits).
+  const [wasSaved, setWasSaved] = useState(false)
+  const [lastSavedKey, setLastSavedKey] = useState<string | null>(null)
   const [formData, setFormData] = useState<Record<string, Record<string, string | string[]>>>(
     () => {
+      // Auto-run: overlay demo values on the field defaults so the form opens filled.
+      const fill = isAutoRunFillActive() ? demoFill : undefined
       const initial: Record<string, Record<string, string | string[]>> = {}
       for (const section of sections) {
         initial[section.id] = {}
         for (const field of section.fields) {
+          const demo = fill?.[section.id]?.[field.id]
           initial[section.id][field.id] =
-            field.defaultValue ?? (field.type === 'checklist' ? [] : '')
+            demo ?? field.defaultValue ?? (field.type === 'checklist' ? [] : '')
         }
       }
       return initial
@@ -89,33 +100,23 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
     })
   }, [])
 
-  const exportedRef = useRef(false)
+  const currentKey = useMemo(() => JSON.stringify(formData), [formData])
+  const editedSince = wasSaved && lastSavedKey !== null && currentKey !== lastSavedKey
 
-  // Reset the save guard when switching back to edit mode so the user can
-  // re-save after making changes.
-  const handleSetMode = useCallback((m: 'edit' | 'preview') => {
-    if (m === 'edit') {
-      exportedRef.current = false
-      setSavedFlash(false)
-    }
-    setMode(m)
-  }, [])
+  const handleSetMode = useCallback((m: 'edit' | 'preview') => setMode(m), [])
 
+  // Save to Command Center — shared by the explicit button and every
+  // export-format button. Saves only when the form changed since the last save,
+  // which keeps the persistent done-state honest and avoids duplicate docs.
   const handleExport = useCallback(() => {
-    if (onExport && !exportedRef.current) {
-      exportedRef.current = true
+    if (onExport && (lastSavedKey === null || currentKey !== lastSavedKey)) {
+      setLastSavedKey(currentKey)
+      setWasSaved(true)
       onExport(formData)
     }
-  }, [onExport, formData])
+  }, [onExport, formData, currentKey, lastSavedKey])
 
-  // Explicit "Save to Command Center" — independent of which export-format
-  // button (markdown, pdf, …) the user clicks. Idempotent within a single
-  // form-edit session via `exportedRef`.
-  const handleSaveClick = useCallback(() => {
-    handleExport()
-    setSavedFlash(true)
-    setTimeout(() => setSavedFlash(false), 2000)
-  }, [handleExport])
+  const handleSaveClick = handleExport
 
   const exportMarkdown = useMemo(() => {
     if (renderPreview) return renderPreview(formData)
@@ -165,16 +166,14 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
           <span className="ml-1.5">Preview</span>
         </Button>
         {onExport && (
-          <Button
-            variant="gradient"
-            size="sm"
+          <CompleteStepAction
+            recordsArtifact
+            saved={wasSaved}
+            editedSinceSave={editedSince}
             onClick={handleSaveClick}
             className="ml-auto"
-            data-workshop-target="artifact-builder-save"
-          >
-            {savedFlash ? <Check size={14} /> : <Save size={14} />}
-            <span className="ml-1.5">{savedFlash ? 'Saved' : 'Save to Command Center'}</span>
-          </Button>
+            dataWorkshopTarget="artifact-builder-save"
+          />
         )}
       </div>
 

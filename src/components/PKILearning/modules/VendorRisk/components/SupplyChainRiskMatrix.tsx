@@ -3,7 +3,7 @@ import React, { useMemo, useCallback, useState } from 'react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { useModuleStore } from '@/store/useModuleStore'
-import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
 import { LAYERS } from '@/components/Migrate/InfrastructureStack'
 import { softwareItemToCbomInput } from '@/components/Migrate/cbomExport'
@@ -189,7 +189,7 @@ const StatBadge: React.FC<StatBadgeProps> = ({ label, count, total, isGap }) => 
 const LAYER_MAP = new Map(LAYERS.map((l) => [l.id, l]))
 
 export const SupplyChainRiskMatrix: React.FC = () => {
-  const myProducts = useMigrateSelectionStore((s) => s.myProducts)
+  const myProducts = useSelectedProductIds()
   const {
     vendorsByLayer,
     fipsValidatedCount,

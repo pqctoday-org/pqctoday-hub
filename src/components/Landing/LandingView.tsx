@@ -22,6 +22,10 @@ import { useGoogleAuth } from '@/contexts/GoogleAuthContext'
 
 const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
 
+// Google Drive cloud-sync UI is HIDDEN for now (code kept — flip to re-enable). The local
+// Export/Import backup remains available; only the "Sync to Google Drive" entry is hidden.
+const SHOW_GOOGLE_DRIVE_SYNC = false
+
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
   visible: {
@@ -405,8 +409,8 @@ export const LandingView = () => {
             </div>
           </motion.button>
 
-          {/* Google Drive Cloud Sync */}
-          {isConfigured && (
+          {/* Google Drive Cloud Sync — hidden via SHOW_GOOGLE_DRIVE_SYNC (code retained) */}
+          {SHOW_GOOGLE_DRIVE_SYNC && isConfigured && (
             <motion.div
               variants={fadeUp}
               initial="hidden"

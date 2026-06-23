@@ -51,13 +51,22 @@ const FILTER_PARAMS = [
   'tier',
 ]
 
-export function LibraryViewRedesign({ simEmbed = false }: { simEmbed?: boolean } = {}) {
+export function LibraryViewRedesign({
+  simEmbed = false,
+  simEmbedQuery,
+}: { simEmbed?: boolean; simEmbedQuery?: string } = {}) {
   // When embedded in the sim, the library must NOT read/write the page URL (it
   // would corrupt /simulation's route) and can't nest its own <Router>. So its
   // filter URL state is backed by local state, kept API-compatible with
   // useSearchParams. (Same pattern as the legacy LibraryView / MigrateView.)
+  // `simEmbedQuery` seeds the initial search so a sim step opens the library scoped
+  // to its topic (e.g. CycloneDX) instead of the full list.
   const [realParams, realSetParams] = useSearchParams()
-  const [embedParams, setEmbedParamsState] = useState(() => new URLSearchParams())
+  const [embedParams, setEmbedParamsState] = useState(() => {
+    const p = new URLSearchParams()
+    if (simEmbedQuery) p.set('q', simEmbedQuery)
+    return p
+  })
   const params = simEmbed ? embedParams : realParams
   const setParams: typeof realSetParams = simEmbed
     ? (nextInit) =>

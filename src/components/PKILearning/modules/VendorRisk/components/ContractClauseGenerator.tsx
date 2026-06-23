@@ -367,6 +367,39 @@ function renderContractPreview(data: Record<string, Record<string, string | stri
   return md
 }
 
+// Auto-run demo fill — scenario: Finance & Banking · US · regulated vendor.
+// Values from the framework (Phase 7 vendor governance) + each field's option set.
+const CONTRACT_DEMO_FILL: Record<string, Record<string, string | string[]>> = {
+  'pqc-timeline': {
+    'deadline-year': '2030',
+    'algorithm-requirements': ['ml-kem', 'ml-dsa'],
+    penalty:
+      'Failure to achieve PQC readiness by the deadline is a material breach: the buyer may terminate with 90 days notice and recover documented migration costs.',
+  },
+  'fips-mandate': {
+    'validation-level': 'level-3',
+    'validation-timeline': 'Within 12 months of contract execution',
+    'evidence-requirements': ['cmvp-cert', 'module-name', 'algorithm-list'],
+  },
+  'cbom-delivery': {
+    'delivery-frequency': 'per-release',
+    format: 'cyclonedx-1.6',
+    scope: ['algorithms', 'protocols', 'certificates', 'quantum-status'],
+  },
+  'change-notification': {
+    'notice-period': '90-days',
+    'approval-process':
+      "All cryptographic changes require written approval from the buyer's CISO office before production deployment.",
+    'testing-requirements': ['regression', 'interop', 'fips-revalidation'],
+  },
+  'audit-rights': {
+    'audit-frequency': 'annual',
+    'audit-scope': ['key-management', 'algorithm-inventory', 'compliance-records', 'pqc-roadmap'],
+    'access-requirements':
+      'Reasonable access to the crypto inventory, CBOM, and FIPS/PQC compliance records under NDA, with 10 business days notice.',
+  },
+}
+
 export const ContractClauseGenerator: React.FC = () => {
   const { addExecutiveDocument } = useModuleStore()
   const { industry, country, myFrameworks, myProducts, migrationDeadlineYear } =
@@ -434,6 +467,7 @@ export const ContractClauseGenerator: React.FC = () => {
         title="PQC Vendor Contract Requirements"
         description="Generated contract clauses for vendor PQC compliance."
         sections={CONTRACT_SECTIONS}
+        demoFill={CONTRACT_DEMO_FILL}
         onExport={handleExport}
         exportFilename="pqc-vendor-contract"
         exportFormats={['markdown', 'pdf']}

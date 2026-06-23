@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { ExportableArtifact } from '../../../common/executive'
 import { useModuleStore } from '@/store/useModuleStore'
-import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
@@ -155,7 +155,7 @@ export function computeVendorScorecards(
 }
 
 export const VendorScorecardBuilder: React.FC = () => {
-  const myProducts = useMigrateSelectionStore((s) => s.myProducts)
+  const myProducts = useSelectedProductIds()
   const { addExecutiveDocument } = useModuleStore()
   const hasProducts = myProducts.length > 0
   const { myFrameworks, industry } = useExecutiveModuleData()
@@ -220,6 +220,10 @@ export const VendorScorecardBuilder: React.FC = () => {
   // Auto-initialize checked products when selectedItems change
   useEffect(() => {
     if (selectedItems.length === 0) return
+    // Guarded derived-state sync: this effect re-runs only when selectedItems/myProducts
+    // change (not on every render) and uses functional updaters, so the cascading-render
+    // this rule guards against cannot occur here. Scoped to the two initialization setstates.
+    /* eslint-disable react-hooks/set-state-in-effect */
     setCheckedProducts((prev) => {
       const next = { ...prev }
       for (const d of DIMENSIONS) {
@@ -247,6 +251,7 @@ export const VendorScorecardBuilder: React.FC = () => {
       }
       return next
     })
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [selectedItems, myProducts])
 
   // Compute score for a dimension
@@ -366,21 +371,19 @@ export const VendorScorecardBuilder: React.FC = () => {
     vendorScorecards,
   ])
 
-  // Save to module store when score is meaningful (store deduplicates by moduleId+type)
-  useEffect(() => {
-    if (weightedTotal > 0) {
-      addExecutiveDocument({
-        id: `vendor-scorecard-${MODULE_ID}`,
-        moduleId: MODULE_ID,
-        type: 'vendor-scorecard',
-        title: `Vendor PQC Readiness Scorecard (${weightedTotal}/100)`,
-        data: exportMarkdown,
-        createdAt: Date.now(),
-      })
-    }
-    // Only save when overall score changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [weightedTotal])
+  // Save to the Command Center on an explicit Save click (the export card below).
+  // Replaces the old silent auto-save; the 0-score hint above tells the user to
+  // score a dimension first.
+  const handleSaveArtifact = useCallback(() => {
+    addExecutiveDocument({
+      id: `vendor-scorecard-${MODULE_ID}`,
+      moduleId: MODULE_ID,
+      type: 'vendor-scorecard',
+      title: `Vendor PQC Readiness Scorecard (${weightedTotal}/100)`,
+      data: exportMarkdown,
+      createdAt: Date.now(),
+    })
+  }, [addExecutiveDocument, weightedTotal, exportMarkdown])
 
   const seedSources: string[] = []
   if (!seedCleared) {
@@ -439,6 +442,17 @@ export const VendorScorecardBuilder: React.FC = () => {
           </p>
         )}
       </div>
+
+      {/* Save gate hint — until the overall score is above zero the scorecard
+          stays at 0/100 and the auto-save never fires, so spell out what to do. */}
+      {weightedTotal === 0 && (
+        <div className="glass-panel border border-status-warning/30 bg-status-warning/5 p-3 text-center text-sm text-status-warning">
+          Score at least one dimension to save this scorecard —{' '}
+          {hasProducts
+            ? 'tick a product capability in any dimension below, or switch a dimension to the slider and drag it above 0.'
+            : 'drag a dimension slider above 0.'}
+        </div>
+      )}
 
       {/* Per-vendor breakdown */}
       {hasProducts && vendorScorecards.length > 0 && (
@@ -767,6 +781,7 @@ export const VendorScorecardBuilder: React.FC = () => {
         exportData={exportMarkdown}
         filename="vendor-pqc-scorecard"
         formats={['markdown', 'pdf']}
+        onExport={handleSaveArtifact}
         wideTable
       >
         <p className="text-sm text-muted-foreground">

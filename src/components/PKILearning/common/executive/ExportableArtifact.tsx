@@ -1,16 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback } from 'react'
-import {
-  Download,
-  Copy,
-  Printer,
-  Check,
-  Presentation,
-  FileText,
-  FileType2,
-  Save,
-} from 'lucide-react'
+import { Download, Copy, Printer, Check, Presentation, FileText, FileType2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { CompleteStepAction } from '../CompleteStepAction'
 import { markdownToPptx } from '@/services/export/pptxExport'
 import { markdownToDocx } from '@/services/export/docxExport'
 import { markdownToPdf } from '@/services/export/pdfExport'
@@ -45,32 +37,24 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
   csvData,
 }) => {
   const [copied, setCopied] = React.useState(false)
-  const [savedFlash, setSavedFlash] = React.useState(false)
-  const savedRef = React.useRef(false)
-  const lastSavedDataRef = React.useRef<string>('')
-
-  // Reset savedRef when exportData changes so re-export saves updated content.
-  // Also clear the visual "Saved" pip so the user sees Save is available again.
-  React.useEffect(() => {
-    if (exportData !== lastSavedDataRef.current) {
-      savedRef.current = false
-      setSavedFlash(false)
-    }
-  }, [exportData])
+  // Persistent done-state: `wasSaved` stays set across edits; once the content
+  // changes after a save the badge reads "Saved · edited since" rather than
+  // flickering back to "Save" on every recompute (sliders/calculators).
+  const [wasSaved, setWasSaved] = React.useState(false)
+  const [lastSavedData, setLastSavedData] = React.useState<string | null>(null)
+  const editedSince = wasSaved && lastSavedData !== null && exportData !== lastSavedData
 
   const triggerSave = useCallback(() => {
-    if (onExport && !savedRef.current) {
-      savedRef.current = true
-      lastSavedDataRef.current = exportData
+    // Save only when there's something new — preserves the no-double-save guard
+    // while still allowing a re-save after the artifact is edited.
+    if (onExport && (lastSavedData === null || exportData !== lastSavedData)) {
+      setLastSavedData(exportData)
+      setWasSaved(true)
       onExport()
     }
-  }, [onExport, exportData])
+  }, [onExport, exportData, lastSavedData])
 
-  const handleSaveClick = useCallback(() => {
-    triggerSave()
-    setSavedFlash(true)
-    setTimeout(() => setSavedFlash(false), 2000)
-  }, [triggerSave])
+  const handleSaveClick = triggerSave
 
   const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(exportData)
@@ -129,15 +113,13 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
         <h3 className="text-lg font-semibold text-foreground">{title}</h3>
         <div className="flex items-center gap-2 flex-wrap">
           {onExport && (
-            <Button
-              variant="gradient"
-              size="sm"
+            <CompleteStepAction
+              recordsArtifact
+              saved={wasSaved}
+              editedSinceSave={editedSince}
               onClick={handleSaveClick}
-              data-workshop-target="executive-artifact-save"
-            >
-              {savedFlash ? <Check size={14} /> : <Save size={14} />}
-              <span className="ml-1.5">{savedFlash ? 'Saved' : 'Save'}</span>
-            </Button>
+              dataWorkshopTarget="executive-artifact-save"
+            />
           )}
           <Button variant="outline" size="sm" onClick={handleCopy}>
             {copied ? <Check size={14} /> : <Copy size={14} />}

@@ -43,7 +43,7 @@ const EXERCISES = [
     badge: 'Escalation',
     badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
     scenario:
-      'Six months before your CNSA 2.0 compliance deadline, your HSM vendor announces that ML-KEM support will be delayed by 12 months due to a supply chain issue. Your entire key management infrastructure depends on this vendor. Three regulated product lines face potential non-compliance. The program manager has already tried and failed to negotiate an interim solution.',
+      'Six months before your CNSA 2.0 milestone deadline (exclusive PQC for the earliest NSS categories by 2030), your HSM vendor announces that ML-KEM support will be delayed by 12 months due to a supply chain issue. Your entire key management infrastructure depends on this vendor. Three regulated product lines face potential non-compliance. The program manager has already tried and failed to negotiate an interim solution.',
     hint: 'Use the Escalation Framework (Step 4) to determine which tier owns this decision. Score the situation using the Exception Request Builder — set Vendor Dependency and Compliance Window to "Yes" and identify appropriate compensating controls.',
     step: 3,
   },

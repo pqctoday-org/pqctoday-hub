@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback, useMemo } from 'react'
-import { Plus, Trash2, Download, Copy, Check, FileType2 } from 'lucide-react'
+import { Plus, Trash2, Copy, Check, FileType2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { CompleteStepAction } from '../../../common/CompleteStepAction'
 import { useModuleStore } from '@/store/useModuleStore'
 import { markdownToPdf } from '@/services/export/pdfExport'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
@@ -68,6 +69,8 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
   showExampleBanner = true,
 }) => {
   const [copied, setCopied] = React.useState(false)
+  const [wasSaved, setWasSaved] = React.useState(false)
+  const [lastSavedKey, setLastSavedKey] = React.useState<string | null>(null)
   const { addExecutiveDocument } = useModuleStore()
 
   // Initialize with the illustrative demo entries if empty (labelled as examples
@@ -143,7 +146,10 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
     return md
   }, [riskEntries])
 
+  const editedSince = wasSaved && lastSavedKey !== null && exportMarkdown !== lastSavedKey
+
   const handleExport = useCallback(() => {
+    if (lastSavedKey !== null && exportMarkdown === lastSavedKey) return
     addExecutiveDocument({
       id: `risk-register-${Date.now()}`,
       type: 'risk-register',
@@ -152,15 +158,9 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
       createdAt: Date.now(),
       moduleId: 'pqc-risk-management',
     })
-
-    const blob = new Blob([exportMarkdown], { type: 'text/markdown' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'quantum-risk-register.md'
-    link.click()
-    URL.revokeObjectURL(url)
-  }, [exportMarkdown, addExecutiveDocument])
+    setLastSavedKey(exportMarkdown)
+    setWasSaved(true)
+  }, [exportMarkdown, addExecutiveDocument, lastSavedKey])
 
   const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(exportMarkdown)
@@ -199,10 +199,12 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
           <FileType2 size={14} />
           <span className="ml-1.5">.pdf</span>
         </Button>
-        <Button variant="outline" size="sm" onClick={handleExport}>
-          <Download size={14} />
-          <span className="ml-1.5">Export &amp; Save</span>
-        </Button>
+        <CompleteStepAction
+          recordsArtifact
+          saved={wasSaved}
+          editedSinceSave={editedSince}
+          onClick={handleExport}
+        />
         <span className="text-xs text-muted-foreground ml-auto">
           {riskEntries.length} {riskEntries.length === 1 ? 'entry' : 'entries'}
         </span>

@@ -11,7 +11,7 @@
  * useSimulationStore. Design: reports/framework-gap/SIMULATION-DESIGN.md +
  * the Mission Control handoff.
  */
-import { useMemo, useState, useEffect, useRef, Suspense } from 'react'
+import { useMemo, useState, useEffect, useRef, useCallback, Suspense } from 'react'
 import { Link } from 'react-router-dom'
 import {
   BUSINESS_TOOL_COMPONENTS,
@@ -33,7 +33,26 @@ import {
 } from './embedContract'
 import { SIM_ALGORITHM_TABS } from './algorithmTabs'
 import { SIM_REFERENCE_EMBEDS } from './referenceEmbeds'
+import { useSimAutoRunPlayer } from './autorun/useSimAutoRunPlayer'
+import { SimAutoRunOverlay } from './autorun/SimAutoRunOverlay'
+import { SimPassIntroModal } from './autorun/SimPassIntroModal'
+import { getScenario } from './autorun/scenarioConfig'
+import { transformationStatus } from './autorun/transformationStatus'
+import { TransformationStatusPanel } from './autorun/TransformationStatusPanel'
+
+/** Per-step Library scope: the search term to open the embedded library on, derived
+ *  from the reference step's title, so each library step shows its topic (CycloneDX,
+ *  SP 800-88, SBOM standards) instead of the full list. */
+function libraryQueryForStep(title: string): string | undefined {
+  if (/CycloneDX/i.test(title)) return 'CycloneDX'
+  if (/800-88|decommission/i.test(title)) return '800-88'
+  if (/SBOM|CT-log|data-source/i.test(title)) return 'SBOM'
+  return undefined
+}
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
+import { LibraryEmbed } from '@/components/shared/widgets/LibraryEmbed'
+import { ComplianceEmbed } from '@/components/shared/widgets/ComplianceEmbed'
+import { CompleteStepAction } from '../PKILearning/common/CompleteStepAction'
 import { parseTimelineScope } from '@/data/timelineScope'
 import { MigrateWorkbenchEmbed } from '@/components/shared/widgets/MigrateWorkbenchEmbed'
 import { SandboxScenarioEmbed } from '@/components/Playground/SandboxScenarioEmbed'
@@ -64,12 +83,20 @@ import { JURISDICTION_RULES } from '@/data/jurisdiction'
 import { ROLE_CROSSWALK, personaToRoles } from '@/data/roleCrosswalk'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
-import { SIM_TREES, flattenTree, achievedTreeLevel, type TreeStep } from '@/simulation'
+import {
+  SIM_TREES,
+  flattenTree,
+  achievedTreeLevel,
+  isGatingStep,
+  type TreeStep,
+} from '@/simulation'
+import { topBandLevel, normalizeLevel, phaseReadinessFraction } from '@/simulation/maturityScale'
+import { useSandboxAvailable } from '@/components/Playground/useSandboxAvailable'
 import { computeReadiness } from '@/simulation/readiness'
 import { runQuarter } from '@/simulation/quarterEngine'
 import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
 import { getBalance, type DifficultyId } from '@/data/simBalance'
-import { Eyebrow, Ring, Radial, Dial, ReadonlyDial, Stat, PlanningBadge } from './atoms'
+import { Eyebrow, Ring, Dial, ReadonlyDial, Stat, PlanningBadge } from './atoms'
 import { SimTour } from './SimTour'
 import { KIND_CHIP, markSimResume, markSimExited, clearSimExcursion } from './simChrome'
 import { canResolveDeepLink } from '@/simulation/deepLinks'
@@ -269,6 +296,8 @@ export function SimulationView() {
     setGuided,
     runCompleteSeen,
     markRunComplete,
+    recordObjectiveAchieved,
+    objectiveAchievedYears,
   } = useSimulationStore()
   // WS-14: the active difficulty balance the engine + scoring read (config swap).
   const balance = getBalance(difficulty)
@@ -287,11 +316,15 @@ export function SimulationView() {
     artifactType: ExecutiveDocumentType
     title: string
   } | null>(null)
-  const [assessEmbed, setAssessEmbed] = useState<{ title: string } | null>(null)
+  const [assessEmbed, setAssessEmbed] = useState<{ title: string; refId?: string } | null>(null)
   const [workshopEmbed, setWorkshopEmbed] = useState<{ workshopId: string; title: string } | null>(
     null
   )
-  const [timelineEmbed, setTimelineEmbed] = useState<{ title: string; to: string } | null>(null)
+  const [timelineEmbed, setTimelineEmbed] = useState<{
+    title: string
+    to: string
+    refId?: string
+  } | null>(null)
   const [catalogEmbed, setCatalogEmbed] = useState<{
     title: string
     layer?: string
@@ -313,6 +346,10 @@ export function SimulationView() {
     scenarioId: string
     title: string
   } | null>(null)
+  // Is a Docker sandbox actually reachable? Scenario (lab) steps are gated on this:
+  // when unavailable they show LOCKED and never open or auto-complete (bonus steps,
+  // so they never block a maturity band either — see isGatingStep).
+  const sandboxAvail = useSandboxAvailable()
 
   const LearnComp = learnEmbed ? SIM_LEARN_MODULES[learnEmbed.moduleId] : null
 
@@ -350,44 +387,42 @@ export function SimulationView() {
     } else if (s.kind === 'workshop' && s.workshopId && WORKSHOP_TOOL_COMPONENTS[s.workshopId]) {
       clearAllEmbeds()
       setWorkshopEmbed({ workshopId: s.workshopId, title: s.label })
-      // opening a workshop in-sim counts as completing the practice leaf (the
-      // standalone /playground page has no separate completion signal).
-      markWorkshopVisited(s.workshopId)
     } else if (s.kind === 'catalog') {
       clearAllEmbeds()
       setCatalogEmbed({ title: s.label, layer: s.catalogLayer, catalogId: s.catalogId })
     } else if (isTimelineStep(s)) {
       clearAllEmbeds()
-      setTimelineEmbed({ title: s.label, to: s.to })
-      if (s.refId) markRefVisited(s.refId)
+      setTimelineEmbed({ title: s.label, to: s.to, refId: s.refId })
     } else if (isAlgorithmTabStep(s) && s.refId) {
       clearAllEmbeds()
       setAlgorithmTabEmbed({ refId: s.refId, title: s.label })
-      // 'review' tabs (Protocol Support) complete on open; 'choice that counts'
-      // tabs (Transition / Detailed) complete only on confirm (handled below).
-
-      if (SIM_ALGORITHM_TABS[s.refId]?.completion === 'review') markRefVisited(s.refId)
     } else if (isAssessStep(s)) {
       clearAllEmbeds()
-      setAssessEmbed({ title: s.label })
-      // opening the wizard in-sim is the equivalent of "visiting" the assess ref
-      // (the navigate flow marks-on-click), so the step counts as done.
-      if (s.refId) markRefVisited(s.refId)
+      setAssessEmbed({ title: s.label, refId: s.refId })
     } else if (isReferenceEmbedStep(s) && s.refId) {
-      // Full-page reference (Migrate, …) embedded under the header. Reviewed-on-open.
+      // Full-page reference (Migrate, …) embedded under the header.
       clearAllEmbeds()
       setReferenceEmbed({ refId: s.refId, title: s.label })
-      markRefVisited(s.refId)
     } else if (isScenarioStep(s) && s.scenarioId) {
-      // C3: live sandbox lab embedded under the header. Opening it in-sim counts
-      // as visiting the lab (the standalone /playground route has no separate
-      // in-sim completion signal); the lab can also report done via postMessage.
+      // C3: live sandbox lab embedded under the header — only when a sandbox is
+      // actually reachable. Otherwise it stays a LOCKED bonus step (see the ladder
+      // UI) so the player never hits a broken/unreachable panel and can't complete
+      // a lab that didn't run.
+      if (sandboxAvail !== 'available') return
       clearAllEmbeds()
       setScenarioEmbed({ scenarioId: s.scenarioId, title: s.label })
-      markScenarioVisited(s.scenarioId)
     }
+    // NOTE: opening an embed no longer auto-completes the step. Completion is an
+    // explicit "Mark complete" click in the embed header (review steps), the
+    // tool's own Save (activity), or the in-body Save (algorithm choice tabs) —
+    // a step is never silently done just by being viewed. AI delegation (`auto`)
+    // still bulk-completes via its own button + the quarter engine.
   }
   const closeEmbed = clearAllEmbeds
+  // Live auto-run playthrough (Play 0→7) — drives the real sim like manual play:
+  // opens each tool inline for a peek, then returns to the board so its sections
+  // tick off in view; the clock advances Q1 2026 → Q1 2035.
+  const autoRunPlayer = useSimAutoRunPlayer({ openStep, closeEmbed })
 
   // real hub completion state: generated artifacts + Learn-module progress
   const docs = useModuleStore((s) => s.artifacts.executiveDocuments)
@@ -415,18 +450,13 @@ export function SimulationView() {
       data: JSON.stringify({ source: spec.completion.moduleId, selected }),
       createdAt: nowMs(),
     })
-    setAlgorithmTabEmbed(null)
+    // Stay open so the "Saved ✓" state is visible; the player returns via
+    // "✕ Back to board" (no auto-close — R9).
   }
   const catalogCompleted = useSimulationStore((s) => s.catalogCompleted)
   const markCatalogStepDone = useSimulationStore((s) => s.markCatalogStepDone)
-  // The redesigned Migrate is the MigrationWorkbench (a review/plan tool), not the
-  // old product-pick catalog — so a catalog task is cleared by OPENING and
-  // reviewing the Workbench (reviewed-on-open), the same model as a reference.
-  // (The earlier "pick a PQC-capable product while the catalog is open" mechanic
-  // belonged to the legacy MigrateView catalog the sim no longer embeds.)
-  useEffect(() => {
-    if (catalogEmbed?.catalogId) markCatalogStepDone(catalogEmbed.catalogId)
-  }, [catalogEmbed, markCatalogStepDone])
+  // A catalog task (review the Workbench) completes on an explicit "Mark complete"
+  // click in the embed header — not silently on open (D-b).
   // read-only Assess → Sim bridge: offer to import a completed assessment as the
   // Phase-0 scoping artifact (data only; the sim's gate still decides it counts).
   const assessSnap = useAssessSnapshot()
@@ -451,6 +481,28 @@ export function SimulationView() {
     useAssessmentResultStore.getState().setResult(result)
     useAssessmentResultStore.setState({ completedAt: new Date().toISOString() })
   }, [assessSnap, assessFormStatus, getAssessInput])
+  // Sample-org cold start — used by the locked-screen "Watch the full migration"
+  // and "Explore" buttons so the sim can be tried (and auto-run) without first
+  // running a real assessment. Replaced the moment the user runs their own.
+  const loadSampleOrg = useCallback(() => {
+    const result = computeAssessment({
+      industry: 'Finance & Banking',
+      currentCrypto: ['RSA-2048', 'ECDSA', 'AES-256', 'SHA-256'],
+      dataSensitivity: ['critical', 'high'],
+      complianceRequirements: ['PCI DSS', 'GDPR'],
+      migrationStatus: 'not-started',
+      cryptoUseCases: ['TLS/HTTPS', 'Data-at-rest encryption', 'Digital signatures'],
+      dataRetention: ['10-25y', 'indefinite'],
+      systemCount: '200-plus',
+      teamSize: '11-50',
+      cryptoAgility: 'partially-abstracted',
+      infrastructure: ['Cloud Storage', 'HSM / Hardware security modules'],
+      vendorDependency: 'mixed',
+      timelinePressure: 'within-2-3y',
+    } satisfies AssessmentInput)
+    useAssessmentResultStore.getState().setResult(result)
+    useAssessmentResultStore.setState({ completedAt: new Date().toISOString() })
+  }, [])
   // The org profile is now SOURCED FROM THE ASSESSMENT (single source of truth):
   // ORG / JURISDICTION / SECTOR dials are read-only and derive from here. SEAT
   // defaults from the persona; MODE (difficulty) stays freely editable.
@@ -629,19 +681,32 @@ export function SimulationView() {
   const levelOf = (p: string) =>
     SIM_TREES[p as PhaseId] ? treeLevel(p) : Math.max(checks[p] ?? 0, evidenceLevel(p))
 
+  // The TOP maturity band a phase actually ships (its tree's highest level). The
+  // framework caps several phases below L4 BY DESIGN — no framework activity sits
+  // higher (e.g. p3 tops at L2, p6 at L3) — so progress is scored RELATIVE to each
+  // phase's own top band: clearing every band a phase has = 100% of that phase,
+  // whether its ladder is 2, 3, or 4 long. Phases with no tree fall back to the
+  // global max. (sim-mapping remediation WS3: without this the readiness bar can
+  // never fill and program maturity stays frozen at L2 because the risk domain maps
+  // only to p3, which can't exceed L2.)
+  const MAX_LEVEL = MATURITY_LEVEL_NAMES.length - 1 // levels run 0..4
+  const topBandOf = (p: string): number => topBandLevel(SIM_TREES[p as PhaseId], MAX_LEVEL)
+  // A phase's achieved level rescaled onto the 0..MAX_LEVEL ladder relative to its
+  // own top band, so a fully-cleared short phase counts as maxed.
+  const normalizedLevelOf = (p: string): number =>
+    normalizeLevel(levelOf(p), topBandOf(p), MAX_LEVEL)
+
   // DERIVED program maturity (0–5) — read-only. A completed assessment makes the
   // program "Aware" (Level 1); Levels 2–5 are EARNED from the sim, each domain
-  // taking the weakest of its mapped phases' earned levels. Overall = the weakest
-  // domain. Recomputes from the same gating reads `levelOf` uses (checks, docTypes,
-  // visitedRefs, auto), so it rises live as phases are completed.
-  const maturity = deriveMaturity(!!assessSnap, (p) => levelOf(p))
+  // taking the weakest of its mapped phases' earned levels (normalized per-phase so
+  // a phase at its own top band counts as maxed). Overall = the weakest domain.
+  const maturity = deriveMaturity(!!assessSnap, (p) => normalizedLevelOf(p))
 
   // T3.1 — sim-local readiness trend: the assessed org-readiness baseline vs the
   // projection earned by clearing framework maturity in-game. Sim-local only.
-  const MAX_LEVEL = MATURITY_LEVEL_NAMES.length - 1 // levels run 0..4
   const maturityFrac =
-    LIFECYCLE.reduce((s, p) => s + Math.min(MAX_LEVEL, levelOf(p)), 0) /
-    (MAX_LEVEL * LIFECYCLE.length)
+    LIFECYCLE.reduce((s, p) => s + phaseReadinessFraction(levelOf(p), topBandOf(p)), 0) /
+    LIFECYCLE.length
   const readinessTrend =
     assessKpis != null ? projectReadiness(assessKpis.organizationalReadiness, maturityFrac) : null
 
@@ -669,15 +734,32 @@ export function SimulationView() {
     horizonYear,
     currentYear,
   })
-  const safeYears = clock.x + clock.y
 
   // KPIs
   // WS-04: readiness is driven by the fraction of P5 activities completed (per-edge,
   // continuous + attributable), not the coarse P5 maturity level.
-  const p5Flat = SIM_TREES.p5 ? flattenTree(SIM_TREES.p5) : []
+  // Bonus scenario (lab) steps don't count toward readiness — they require a
+  // sandbox most players don't have, so they'd cap the fraction below 100%.
+  const p5Flat = (SIM_TREES.p5 ? flattenTree(SIM_TREES.p5) : []).filter(isGatingStep)
   const p5Frac = p5Flat.length ? p5Flat.filter((s) => stepDone(s, 'p5')).length / p5Flat.length : 0
   const readiness = computeReadiness(size, p5Frac)
   const cleared = LIFECYCLE.filter((p) => levelOf(p) >= PHASE_WIN_LEVEL).length
+  // The run is COMPLETE only when every phase reaches its own top band (full maturity) — not
+  // merely the L2 win bar. In the breadth-first climb, all-cleared-to-L2 happens at pass 2, so
+  // the run-end ceremony must wait for the top-band pass (pass 4 ≈ 2035), not fire at pass 2.
+  const fullyMature = LIFECYCLE.every((p) => levelOf(p) >= topBandOf(p))
+  // Transformation status — the board headline (3 objectives + 4 tracks + dynamic HNDL
+  // exposure), scenario-driven. Replaces the static, unwinnable Mosca "over by N years" gauge.
+  const txStatus = transformationStatus({
+    scenario: getScenario(country),
+    // Continuous (avg normalized fraction × MAX) so the headline climbs SMOOTHLY rather than
+    // sitting frozen at the weakest-domain integer until the slowest phase crosses a level.
+    programMaturity: maturityFrac * MAX_LEVEL,
+    p0Level: levelOf('p0'),
+    migrationFraction: p5Frac,
+    allAtTopBand: fullyMature,
+    currentYear: year,
+  })
 
   // W2b: run-end ceremony — fire once when every lifecycle phase is cleared. The
   // store flag (run-slice, cleared by RESET) keeps it from re-firing on reload and
@@ -687,13 +769,23 @@ export function SimulationView() {
   // Guided mode (the novice walkthrough), independent of the one-time tourSeen flag.
   const [tourOpen, setTourOpen] = useState(false)
   useEffect(() => {
-    if (cleared < LIFECYCLE.length || runCompleteSeen) return
+    if (!fullyMature || runCompleteSeen) return
     const id = setTimeout(() => {
       setRunCompleteOpen(true)
       markRunComplete()
     }, 0)
     return () => clearTimeout(id)
-  }, [cleared, runCompleteSeen, markRunComplete])
+  }, [fullyMature, runCompleteSeen, markRunComplete])
+
+  // Record the program year each objective is FIRST achieved, for the ceremony's on-time
+  // badges (idempotent — recordObjectiveAchieved ignores an id already set).
+  const objDoneKey = txStatus.objectives.map((o) => `${o.id}:${o.done ? 1 : 0}`).join('|')
+  useEffect(() => {
+    for (const o of txStatus.objectives) {
+      if (o.done && objectiveAchievedYears[o.id] == null) recordObjectiveAchieved(o.id, year)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [objDoneKey, year])
 
   // ---- date-driven quantum threat (HNDL + TNFL), evolving 2026 → 2029 → 2035 ----
   const sizeKey = size as OrgSize
@@ -755,7 +847,9 @@ export function SimulationView() {
   // step in ANY ORDER — see the maturity-gates ladder, which expands the active
   // band into individually-openable controls. Higher bands stay locked.
   const phaseTree = SIM_TREES[sel]
-  const flatSteps = phaseTree ? flattenTree(phaseTree) : []
+  // Bonus scenario (lab) steps are excluded from the required-progress tally so a
+  // locked lab never holds the count below full (they never gate the level either).
+  const flatSteps = (phaseTree ? flattenTree(phaseTree) : []).filter(isGatingStep)
   const stepsTotal = flatSteps.length
   const stepsDone = flatSteps.filter((s) => stepDone(s, sel)).length
   // index of the first not-yet-done step. -1 ⇒ all done. This drives only the
@@ -778,9 +872,13 @@ export function SimulationView() {
   // The tree DRIVES the recommended move. Build step→(level,activity) metadata in
   // the same flattened order as flatSteps; the recommendation is simply the first
   // not-yet-done leaf. firstOpenIdx === -1 ⇒ every level earned.
-  const stepMeta = (phaseTree?.levels ?? []).flatMap((band) =>
-    band.activities.flatMap((act) => act.steps.map((step) => ({ band, act, step })))
-  )
+  // Same order + filter as flatSteps (bonus scenario steps excluded) so firstOpenIdx
+  // indexes into this metadata correctly.
+  const stepMeta = (phaseTree?.levels ?? [])
+    .flatMap((band) =>
+      band.activities.flatMap((act) => act.steps.map((step) => ({ band, act, step })))
+    )
+    .filter((m) => isGatingStep(m.step))
   const nextMove = firstOpenIdx < 0 ? null : (stepMeta[firstOpenIdx] ?? null)
   // Assess recommendation matching the current next-move's learn module (badge only)
   const nextMoveRec =
@@ -940,39 +1038,27 @@ export function SimulationView() {
                 View report
               </Link>
             </div>
-            <div className="mt-3">
+            <div className="mt-3 space-y-2">
+              <Button
+                onClick={() => {
+                  loadSampleOrg()
+                  autoRunPlayer.start()
+                }}
+                className="h-auto w-full whitespace-normal bg-gradient-to-r from-primary to-secondary py-2.5 text-[13px] font-extrabold text-background hover:opacity-90"
+              >
+                ▶ Watch the full migration (sample org)
+              </Button>
               <Button
                 variant="outline"
-                onClick={() => {
-                  // Soft cold-start: let a curious visitor explore without first
-                  // running an assessment. Computed through the real engine so the
-                  // numbers are internally consistent; replaced the moment the user
-                  // runs their own assessment.
-                  const result = computeAssessment({
-                    industry: 'Finance & Banking',
-                    currentCrypto: ['RSA-2048', 'ECDSA', 'AES-256', 'SHA-256'],
-                    dataSensitivity: ['critical', 'high'],
-                    complianceRequirements: ['PCI DSS', 'GDPR'],
-                    migrationStatus: 'not-started',
-                    cryptoUseCases: ['TLS/HTTPS', 'Data-at-rest encryption', 'Digital signatures'],
-                    dataRetention: ['10-25y', 'indefinite'],
-                    systemCount: '200-plus',
-                    teamSize: '11-50',
-                    cryptoAgility: 'partially-abstracted',
-                    infrastructure: ['Cloud Storage', 'HSM / Hardware security modules'],
-                    vendorDependency: 'mixed',
-                    timelinePressure: 'within-2-3y',
-                  } satisfies AssessmentInput)
-                  useAssessmentResultStore.getState().setResult(result)
-                  useAssessmentResultStore.setState({ completedAt: new Date().toISOString() })
-                }}
+                onClick={loadSampleOrg}
                 className="h-auto w-full whitespace-normal py-2.5 text-[13px]"
               >
                 Explore with a sample organization
               </Button>
               <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-                Loads a sample Finance &amp; Banking · US run so you can try the simulation now —
-                run your own assessment anytime to replace it with your real numbers.
+                “Watch the full migration” loads a sample Finance &amp; Banking · US run and plays
+                the whole thing automatically. Run your own assessment anytime to replace it with
+                your real numbers.
               </p>
             </div>
           </div>
@@ -1088,6 +1174,20 @@ export function SimulationView() {
           <Button
             type="button"
             variant="ghost"
+            onClick={autoRunPlayer.start}
+            disabled={autoRunPlayer.running}
+            title="Auto-play the whole migration (phases 0–7) as a narrated walkthrough — opens each tool, completes every step for real, and clears the run. Reversible via Reset run."
+            className="h-auto rounded-md border border-secondary/50 bg-secondary/15 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-secondary/25 disabled:opacity-40"
+          >
+            ▶ PLAY 0–7
+          </Button>
+          <SimAutoRunOverlay player={autoRunPlayer} />
+          {autoRunPlayer.passIntro && (
+            <SimPassIntroModal pass={autoRunPlayer.passIntro} onBegin={autoRunPlayer.beginPass} />
+          )}
+          <Button
+            type="button"
+            variant="ghost"
             onClick={commitPlan}
             title="Save this run as a draft roadmap in the Command Center"
             className="h-auto rounded-md border border-primary/40 bg-primary/10 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-primary/20"
@@ -1161,46 +1261,7 @@ export function SimulationView() {
 
       {/* KPI ribbon */}
       <div className="flex shrink-0 flex-wrap items-stretch gap-3 border-b border-border bg-card px-4 py-3">
-        <div className="flex shrink-0 items-center gap-3 rounded-xl border border-border bg-card px-4 py-2">
-          <Radial yearsToHorizon={clock.yearsToHorizon} safeYears={safeYears} />
-          <div>
-            <Eyebrow className="text-destructive">Mosca · X+Y &gt; Z</Eyebrow>
-            <div className="mt-1 whitespace-nowrap font-mono text-[11px] font-bold text-foreground">
-              X {clock.x}y + Y {clock.y}y = <b>{safeYears}y</b>
-            </div>
-            <div className="mt-0.5 flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
-              <span className="whitespace-nowrap">
-                {clock.yearsToHorizon}y to Q-Day {clock.horizonYear}
-              </span>
-              <PlanningBadge
-                label="planning"
-                tip="Q-Day (pinned to 2029, at or below the public 2030–2040 CRQC range) and government PQC deadlines are illustrative planning anchors — not published standards. Re-check the live source."
-              />
-            </div>
-            <div className="mt-1.5">
-              {clock.atRisk ? (
-                <span className="rounded-full bg-destructive/15 px-2 py-0.5 font-mono text-sim-chip font-bold text-destructive">
-                  ⚠ OVER BY {clock.over}Y
-                </span>
-              ) : (
-                <span className="rounded-full bg-success/15 px-2 py-0.5 font-mono text-sim-chip font-bold text-success">
-                  ✓ ON TRACK
-                </span>
-              )}
-            </div>
-            {guided && (
-              <div
-                className="mt-1.5 max-w-[230px] text-[11px] leading-snug text-muted-foreground"
-                data-testid="mosca-guided-caption"
-              >
-                <span className="font-bold text-foreground">X</span> = how long this data must stay
-                secret · <span className="font-bold text-foreground">Y</span> = how long migration
-                takes · <span className="font-bold text-foreground">Z</span> = your deadline (Q-Day,
-                or your country&rsquo;s, whichever is sooner).
-              </div>
-            )}
-          </div>
-        </div>
+        <TransformationStatusPanel status={txStatus} />
         <Stat
           label="Phases cleared"
           value={`${cleared}/${LIFECYCLE.length}`}
@@ -1245,7 +1306,7 @@ export function SimulationView() {
       algorithmTabEmbed ||
       referenceEmbed ||
       scenarioEmbed ? (
-        <div className="flex min-h-0 flex-1 flex-col">
+        <div data-sim-embed-pane className="flex min-h-0 flex-1 flex-col">
           <div className="flex shrink-0 items-center gap-2 border-b-2 border-primary bg-primary/10 px-4 py-2">
             <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-sim-chip font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
               ● Simulation mode
@@ -1313,6 +1374,44 @@ export function SimulationView() {
                   </Button>
                 )
               })()}
+            {/* Explicit "Mark complete" for REVIEW embeds (D-b) — opening no longer
+                auto-completes. Excludes: learn (its own toggle above), activity (the
+                tool's own Save), and algorithm choice tabs (in-body Save). */}
+            {(() => {
+              let done = false
+              let onMark: (() => void) | null = null
+              if (referenceEmbed) {
+                done = refDone(referenceEmbed.refId)
+                onMark = () => markRefVisited(referenceEmbed.refId)
+              } else if (workshopEmbed) {
+                done = visitedWorkshops.includes(workshopEmbed.workshopId)
+                onMark = () => markWorkshopVisited(workshopEmbed.workshopId)
+              } else if (catalogEmbed?.catalogId) {
+                const id = catalogEmbed.catalogId
+                done = catalogCompleted.includes(id)
+                onMark = () => markCatalogStepDone(id)
+              } else if (scenarioEmbed) {
+                done = visitedScenarios.includes(scenarioEmbed.scenarioId)
+                onMark = () => markScenarioVisited(scenarioEmbed.scenarioId)
+              } else if (timelineEmbed?.refId) {
+                const id = timelineEmbed.refId
+                done = refDone(id)
+                onMark = () => markRefVisited(id)
+              } else if (assessEmbed?.refId) {
+                const id = assessEmbed.refId
+                done = refDone(id)
+                onMark = () => markRefVisited(id)
+              } else if (
+                algorithmTabEmbed &&
+                SIM_ALGORITHM_TABS[algorithmTabEmbed.refId]?.completion === 'review'
+              ) {
+                const id = algorithmTabEmbed.refId
+                done = refDone(id)
+                onMark = () => markRefVisited(id)
+              }
+              if (!onMark) return null
+              return <CompleteStepAction recordsArtifact={false} saved={done} onClick={onMark} />
+            })()}
             <Button
               type="button"
               variant="ghost"
@@ -1416,8 +1515,9 @@ export function SimulationView() {
               ) : catalogEmbed ? (
                 // The redesigned Migrate (MigrationWorkbench) embedded under the sim
                 // header — same component the /migrate route uses (its `embedded`
-                // prop hides the PageHeader and keeps filter state off the URL).
-                <MigrateWorkbenchEmbed />
+                // prop hides the PageHeader and keeps filter state off the URL). The
+                // catalogId opens it on the matching view (discovery domain / pilots).
+                <MigrateWorkbenchEmbed catalogId={catalogEmbed.catalogId} />
               ) : algorithmTabEmbed ? (
                 // C5-full: every Algorithms tab via SIM_ALGORITHM_TABS. Review tabs
                 // (Protocol Support) mount with no confirm; "choice that counts" tabs
@@ -1442,7 +1542,15 @@ export function SimulationView() {
                     <div className="p-8 text-center text-sm text-muted-foreground">Loading…</div>
                   }
                 >
-                  <ReferenceComp />
+                  {referenceEmbed?.refId === 'library' ? (
+                    <LibraryEmbed query={libraryQueryForStep(referenceEmbed.title)} />
+                  ) : referenceEmbed?.refId === 'compliance' ? (
+                    <ComplianceEmbed initialTab="foryou" />
+                  ) : referenceEmbed?.refId === 'compliance-cert-check' ? (
+                    <ComplianceEmbed initialTab="records" />
+                  ) : (
+                    <ReferenceComp />
+                  )}
                 </Suspense>
               ) : scenarioEmbed ? (
                 // C3: live sandbox lab embedded under the header (passes the scenario
@@ -1454,6 +1562,7 @@ export function SimulationView() {
         </div>
       ) : (
         <div
+          data-sim-board
           className={`grid min-h-0 flex-1 gap-3.5 p-4 ${guided ? 'lg:grid-cols-[300px_1fr]' : 'lg:grid-cols-[300px_1fr_332px]'}`}
         >
           {/* left — team (who runs this phase) above the phase journey */}
@@ -1506,6 +1615,7 @@ export function SimulationView() {
                 {LIFECYCLE.map((p) => {
                   const fp = FRAMEWORK_PHASES[p]
                   const lv = levelOf(p)
+                  const dlv = normalizedLevelOf(p) // 0–4 against the phase's own top band
                   const isCleared = lv >= PHASE_WIN_LEVEL
                   const current = p === sel
                   const owner = Object.values(ROLE_CROSSWALK).some(
@@ -1541,12 +1651,12 @@ export function SimulationView() {
                         <div className="flex gap-1.5 font-mono text-sim-micro text-muted-foreground">
                           <span>
                             {isCleared ? 'cleared' : current ? 'active' : 'locked'} ·{' '}
-                            {MATURITY_LEVEL_NAMES[lv]}
+                            {MATURITY_LEVEL_NAMES[dlv]}
                           </span>
                           {owner && <span className="font-bold text-primary">· you</span>}
                         </div>
                       </div>
-                      <Ring level={lv} />
+                      <Ring level={dlv} />
                     </Button>
                   )
                 })}
@@ -1756,9 +1866,15 @@ export function SimulationView() {
                     level gating is preserved (achievedTreeLevel is unchanged). */}
                 <div className="mb-4 flex flex-col gap-1.5">
                   {phaseTree.levels.map((band) => {
-                    const total = band.activities.reduce((n, a) => n + a.steps.length, 0)
+                    // Required (gating) steps only — bonus scenario labs don't count
+                    // toward the band's "checks" tally (they never gate the level).
+                    const total = band.activities.reduce(
+                      (n, a) => n + a.steps.filter(isGatingStep).length,
+                      0
+                    )
                     const done = band.activities.reduce(
-                      (n, a) => n + a.steps.filter((s) => stepDone(s, sel)).length,
+                      (n, a) =>
+                        n + a.steps.filter((s) => isGatingStep(s) && stepDone(s, sel)).length,
                       0
                     )
                     const earned = level >= band.level
@@ -1841,6 +1957,31 @@ export function SimulationView() {
                                     </span>
                                     <span className="shrink-0 font-mono text-sim-micro text-success">
                                       done
+                                    </span>
+                                  </div>
+                                )
+                              // scenario lab needs a running sandbox — when none is
+                              // reachable show it LOCKED (bonus, non-gating) instead
+                              // of opening a broken/unreachable panel.
+                              if (isScenarioStep(step) && sandboxAvail !== 'available')
+                                return (
+                                  <div
+                                    key={`${step.to}-${i}`}
+                                    aria-disabled="true"
+                                    title="Hands-on lab — start a sandbox to run it. Optional: it never blocks your maturity level."
+                                    className="flex w-full items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 opacity-60"
+                                  >
+                                    <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-muted-foreground">
+                                      🔒
+                                    </span>
+                                    {chip}
+                                    <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                      {step.label}
+                                    </span>
+                                    <span className="shrink-0 font-mono text-sim-micro text-muted-foreground">
+                                      {sandboxAvail === 'checking'
+                                        ? 'checking sandbox…'
+                                        : 'bonus · start sandbox'}
                                     </span>
                                   </div>
                                 )
@@ -2420,11 +2561,16 @@ export function SimulationView() {
       {/* W2b: run-end ceremony — the summative "did you beat Q-Day?" moment */}
       {runCompleteOpen && (
         <SimRunComplete
-          over={clock.over}
-          horizonYear={clock.horizonYear}
-          readinessPct={readiness.pct}
-          clearedCount={cleared}
-          totalPhases={LIFECYCLE.length}
+          objectives={txStatus.objectives.map((o) => ({
+            id: o.id,
+            label: o.label,
+            byYear: o.byYear,
+            done: o.done,
+
+            achievedYear: objectiveAchievedYears[o.id],
+          }))}
+          maturity={txStatus.maturity}
+          programEndYear={getScenario(country).programEndYear}
           onClose={() => setRunCompleteOpen(false)}
         />
       )}

@@ -14,6 +14,6 @@
  */
 import { LibraryViewRedesign } from '@/components/Library/redesign/LibraryViewRedesign'
 
-export function LibraryEmbed() {
-  return <LibraryViewRedesign simEmbed />
+export function LibraryEmbed({ query }: { query?: string } = {}) {
+  return <LibraryViewRedesign simEmbed simEmbedQuery={query} />
 }
