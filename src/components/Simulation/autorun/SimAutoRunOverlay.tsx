@@ -14,8 +14,26 @@ export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
   if (!player.running && !player.done) return null
   const pct = player.total ? Math.round((player.index / player.total) * 100) : 0
 
+  const focus = player.phaseFocus
+
   return (
     <div className="fixed inset-x-0 bottom-0 z-[60] flex flex-col items-center gap-2 border-t border-background/20 bg-foreground/95 px-4 py-3 text-background shadow-2xl backdrop-blur">
+      {focus && (
+        <div className="w-full max-w-3xl rounded-md border border-background/15 bg-background/5 px-3 py-2">
+          <div className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-primary">
+            {focus.name}
+          </div>
+          {focus.summary && (
+            <p className="mt-0.5 text-[12px] leading-relaxed text-background/85">{focus.summary}</p>
+          )}
+          {focus.gate && (
+            <p className="mt-1 text-[11px] leading-relaxed text-background/60">
+              <span className="font-mono font-bold text-background/75">Exit gate:</span>{' '}
+              {focus.gate}
+            </p>
+          )}
+        </div>
+      )}
       <div className="flex w-full max-w-3xl items-center gap-3">
         <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-[11px] font-bold text-background">
           {player.phaseLabel || 'AUTO-RUN'}

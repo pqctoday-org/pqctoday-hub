@@ -18,8 +18,26 @@ import { autoRunQueue, completeStepGenuine, type AutoRunQueueItem } from './simA
 import { getScenario, type SimScenario } from './scenarioConfig'
 import { seedDemoOrg } from './seedDemoOrg'
 import { setAutoRunFill } from './autoRunFill'
+import { FRAMEWORK_PHASE_INTROS } from '@/data/frameworkPhaseIntros.generated'
 
 export type AutoRunSpeed = 'slow' | 'normal' | 'fast' | 'turbo'
+
+/** The framework explanation for the phase the board is currently focused on —
+ *  drives the persistent (non-modal) banner in the overlay and the first-encounter
+ *  modal. Verbatim framework text from FRAMEWORK_PHASE_INTROS. */
+export interface PhaseFocus {
+  phase: PhaseId
+  name: string
+  summary: string
+  gate: string | null
+}
+
+/** A one-time scenario-framing card shown at the very start of the run (before the
+ *  first maturity pass). Years / standards are pulled LIVE from getScenario(). */
+export interface ScenarioIntro {
+  title: string
+  summary: string
+}
 
 export interface SimAutoRunPlayer {
   running: boolean
@@ -35,6 +53,14 @@ export interface SimAutoRunPlayer {
   voiceName: string
   /** When set, the run is paused on a maturity-pass intro modal. */
   passIntro: PassIntro | null
+  /** Framework explanation for the currently-focused phase — drives the persistent
+   *  (always-visible) banner in the overlay. Null until the first phase is focused. */
+  phaseFocus: PhaseFocus | null
+  /** When set, the run is paused on a first-encounter phase intro modal (shown at
+   *  most once per phase across the whole run). */
+  phaseIntro: PhaseFocus | null
+  /** When set, the run is paused on the one-time scenario-framing card (run start). */
+  scenarioIntro: ScenarioIntro | null
   start: () => void
   pause: () => void
   resume: () => void
@@ -43,6 +69,10 @@ export interface SimAutoRunPlayer {
   toggleVoice: () => void
   /** Dismiss the pass-intro modal and start that pass's steps. */
   beginPass: () => void
+  /** Dismiss the first-encounter phase modal and continue the run. */
+  beginPhase: () => void
+  /** Dismiss the one-time scenario-framing card and continue to the first pass. */
+  beginScenario: () => void
   /** Jump the playhead to the start of the previous maturity pass (re-shows its intro). */
   prevPass: () => void
   /** Jump the playhead to the start of the next maturity pass (shows its intro). */
@@ -278,6 +308,48 @@ function phaseLabel(phase: PhaseId): string {
   return `Phase ${phase.slice(1)}`
 }
 
+/** The framework explanation for a phase — name + "what to expect" summary + exit
+ *  gate, verbatim from FRAMEWORK_PHASE_INTROS (the framework SoT). Used for both the
+ *  persistent banner and the first-encounter modal. */
+function phaseFocusFor(phase: PhaseId): PhaseFocus {
+  // eslint-disable-next-line security/detect-object-injection
+  const intro = FRAMEWORK_PHASE_INTROS[phase]
+  return {
+    phase,
+    name: intro?.name ?? phaseLabel(phase),
+    summary: intro?.summary ?? '',
+    gate: intro?.gate ?? null,
+  }
+}
+
+/** Build the one-time scenario-framing card from LIVE scenario dates / standards.
+ *  US → the Executive Order 14409 framing; other countries degrade to a generic
+ *  country framing anchored to the same scenario milestones. */
+function scenarioIntroFor(scenario: SimScenario): ScenarioIntro {
+  const hndl = scenario.tracks.find((t) => t.id === 'hndl-critical')?.year
+  const tnfl = scenario.tracks.find((t) => t.id === 'tnfl-critical')?.year
+  if (scenario.countryCode === 'US') {
+    return {
+      title: 'United States — Executive Order 14409',
+      summary:
+        `United States — Executive Order 14409 (signed June 2026). Two hard deadlines map to the ` +
+        `framework's two-track model: key establishment (${scenario.standards.HNDL}) by ${hndl} ` +
+        `for harvest-now / HNDL data, and digital signatures (${scenario.standards.TNFL}) by ${tnfl}. ` +
+        `A 30-day deadline to name a PQC lead. General-estate assets trail to the ${scenario.programEndYear} ` +
+        `program horizon. Watch the program climb maturity together to hit these dates.`,
+    }
+  }
+  return {
+    title: `${scenario.countryCode} — national PQC migration`,
+    summary:
+      `${scenario.countryCode} — national post-quantum migration scenario. Two deadlines map to the ` +
+      `framework's two-track model: key establishment (${scenario.standards.HNDL}) by ${hndl} for ` +
+      `harvest-now / HNDL data, and digital signatures (${scenario.standards.TNFL}) by ${tnfl}. ` +
+      `Governance is in place by ${scenario.governanceYear}; general-estate assets trail to the ` +
+      `${scenario.programEndYear} program horizon. Watch the program climb maturity together to hit these dates.`,
+  }
+}
+
 function narrationFor(item: AutoRunQueueItem): string {
   // Just the step's own label — no phase prefix (it's in the badge) and no verb.
   return item.step.label
@@ -380,6 +452,9 @@ export function useSimAutoRunPlayer({
   const [voiceOn, setVoiceOn] = useState(true) // on by default; safe (short, cancellable)
   const [voiceName, setVoiceName] = useState('')
   const [passIntro, setPassIntro] = useState<PassIntro | null>(null)
+  const [phaseFocus, setPhaseFocus] = useState<PhaseFocus | null>(null)
+  const [phaseIntro, setPhaseIntro] = useState<PhaseFocus | null>(null)
+  const [scenarioIntro, setScenarioIntro] = useState<ScenarioIntro | null>(null)
 
   const queueRef = useRef<AutoRunQueueItem[]>([])
   const passStartsRef = useRef<{ level: number; start: number }[]>([])
@@ -394,6 +469,15 @@ export function useSimAutoRunPlayer({
   const indexRef = useRef(index)
   const passIntroRef = useRef<number | null>(null)
   const spokenIntroForRef = useRef<number | null>(null)
+  // Set-guards so the heavier per-phase narration / first-encounter modal fire AT
+  // MOST ONCE per phase across the whole run (the level-major queue would otherwise
+  // re-focus each phase ~36×).
+  const spokenPhaseRef = useRef<Set<PhaseId>>(new Set())
+  const shownPhaseModalRef = useRef<Set<PhaseId>>(new Set())
+  const phaseIntroRef = useRef<PhaseId | null>(null)
+  // One-time scenario-framing card: tracks "is showing" + "already spoken".
+  const scenarioIntroRef = useRef(false)
+  const spokenScenarioRef = useRef(false)
   useEffect(() => {
     voiceOnRef.current = voiceOn
   }, [voiceOn])
@@ -409,6 +493,12 @@ export function useSimAutoRunPlayer({
   useEffect(() => {
     passIntroRef.current = passIntro?.level ?? null
   }, [passIntro])
+  useEffect(() => {
+    phaseIntroRef.current = phaseIntro?.phase ?? null
+  }, [phaseIntro])
+  useEffect(() => {
+    scenarioIntroRef.current = scenarioIntro != null
+  }, [scenarioIntro])
 
   // Warm the voice list (loads async) + HARD speech safety: cancel any speech if
   // the tab is hidden, navigated, or closed so it can never keep speaking after the
@@ -461,6 +551,14 @@ export function useSimAutoRunPlayer({
     passStartsRef.current = starts
     lastLevelRef.current = null
     lastSelPhaseRef.current = null
+    // Reset the per-phase Set-guards + arm the one-time scenario-framing card.
+    spokenPhaseRef.current = new Set()
+    shownPhaseModalRef.current = new Set()
+    spokenIntroForRef.current = null
+    spokenScenarioRef.current = false
+    setPhaseFocus(null)
+    setPhaseIntro(null)
+    setScenarioIntro(scenarioIntroFor(scenario))
     setTotal(q.length)
     setIndex(0)
     setDone(false)
@@ -481,6 +579,8 @@ export function useSimAutoRunPlayer({
     setAutoRunFill(false)
     setRunning(false)
     setPaused(false)
+    setScenarioIntro(null)
+    setPhaseIntro(null)
   }, [clearTimer])
   const cycleSpeed = useCallback(
     () =>
@@ -506,6 +606,23 @@ export function useSimAutoRunPlayer({
   // reading the pass description.
   const beginPass = useCallback(() => advancePass(true), [advancePass])
 
+  // First-encounter phase modal: dismiss (manual click cuts the voice; the 6s
+  // auto-advance lets it keep reading the phase summary into the steps).
+  const advancePhase = useCallback((stopVoice: boolean) => {
+    if (phaseIntroRef.current == null) return
+    if (stopVoice) stopSpeech()
+    setPhaseIntro(null)
+  }, [])
+  const beginPhase = useCallback(() => advancePhase(true), [advancePhase])
+
+  // One-time scenario-framing card: dismiss and let the first pass begin.
+  const advanceScenario = useCallback((stopVoice: boolean) => {
+    if (!scenarioIntroRef.current) return
+    if (stopVoice) stopSpeech()
+    setScenarioIntro(null)
+  }, [])
+  const beginScenario = useCallback(() => advanceScenario(true), [advanceScenario])
+
   // Jump the playhead to an index and re-show the pass intro wherever we land.
   const jumpToIndex = useCallback(
     (target: number) => {
@@ -513,8 +630,9 @@ export function useSimAutoRunPlayer({
       stopSpeech()
       closeEmbedRef.current()
       lastLevelRef.current = null // force the pass-intro modal wherever we land
-      lastSelPhaseRef.current = null
+      lastSelPhaseRef.current = null // re-focus the phase + banner wherever we land
       setPassIntro(null)
+      setPhaseIntro(null) // never leave a stale first-encounter modal up after a jump
       setPaused(false)
       setIndex(target)
     },
@@ -542,22 +660,47 @@ export function useSimAutoRunPlayer({
     jumpToIndex(target)
   }, [currentBlock, jumpToIndex])
 
+  // Scenario-framing card (run start, before pass 1): speak the EO / country framing
+  // once and auto-advance after 6s (the card's "Begin" advances sooner).
+  useEffect(() => {
+    if (!scenarioIntro || paused || !running) return
+    if (voiceOnRef.current && !spokenScenarioRef.current) {
+      spokenScenarioRef.current = true
+      speakSequence(splitSentences(scenarioIntro.summary))
+    }
+    const t = setTimeout(() => advanceScenario(false), 6000)
+    return () => clearTimeout(t)
+  }, [scenarioIntro, paused, running, advanceScenario])
+
   // Pass-intro modal: speak the maturity-pass summary and auto-advance after 6s
   // (the modal's "Begin" button advances sooner; the voice keeps reading into the pass).
   useEffect(() => {
-    if (!passIntro || paused || !running) return
+    if (!passIntro || paused || !running || scenarioIntro) return
     if (voiceOnRef.current && spokenIntroForRef.current !== passIntro.level) {
       spokenIntroForRef.current = passIntro.level
       speakSequence(splitSentences(passIntro.summary))
     }
     const t = setTimeout(() => advancePass(false), 6000)
     return () => clearTimeout(t)
-  }, [passIntro, paused, running, advancePass])
+  }, [passIntro, paused, running, scenarioIntro, advancePass])
+
+  // First-encounter phase modal: speak the phase's framework summary and auto-advance
+  // after 6s. Shown at most once per phase (the Set-guard is set when the modal opens).
+  useEffect(() => {
+    if (!phaseIntro || paused || !running) return
+    // Suppress the longer phase voice on turbo (the modal still shows; just no voice).
+    if (voiceOnRef.current && speed !== 'turbo' && !spokenPhaseRef.current.has(phaseIntro.phase)) {
+      spokenPhaseRef.current.add(phaseIntro.phase)
+      speakSequence(splitSentences(phaseIntro.summary))
+    }
+    const t = setTimeout(() => advancePhase(false), 6000)
+    return () => clearTimeout(t)
+  }, [phaseIntro, paused, running, speed, advancePhase])
 
   // The step cycle: peek the tool → complete + return to the board (sections update,
   // clock advances) → dwell on the board → next.
   useEffect(() => {
-    if (!running || paused || done || passIntro) return
+    if (!running || paused || done || passIntro || scenarioIntro || phaseIntro) return
     const q = queueRef.current
     const item = q.at(index)
     if (!item) return
@@ -587,6 +730,22 @@ export function useSimAutoRunPlayer({
         lastSelPhaseRef.current = item.phase
         useSimulationStore.getState().setSel(item.phase)
         setLabel(phaseLabel(item.phase))
+        // Per-phase framework explanation: update the persistent banner; on the FIRST
+        // encounter of this phase show the modal (Set-guarded) and let its effect speak;
+        // on later encounters just narrate the summary (deduped, suppressed on turbo).
+        const focus = phaseFocusFor(item.phase)
+        setPhaseFocus(focus)
+        if (focus.summary) {
+          if (!shownPhaseModalRef.current.has(item.phase)) {
+            shownPhaseModalRef.current.add(item.phase)
+            setPhaseIntro(focus) // first encounter → modal (its effect handles the voice)
+            return
+          }
+          if (voiceOnRef.current && speed !== 'turbo' && !spokenPhaseRef.current.has(item.phase)) {
+            spokenPhaseRef.current.add(item.phase)
+            speakSequence(splitSentences(focus.summary))
+          }
+        }
       }
       // Beat A — open the tool inline (like a manual click) + narrate; wait for the
       // narration to ACTUALLY finish before moving on.
@@ -639,7 +798,7 @@ export function useSimAutoRunPlayer({
       cancelled = true
       timers.forEach(clearTimeout)
     }
-  }, [running, paused, done, index, speed, passIntro])
+  }, [running, paused, done, index, speed, passIntro, scenarioIntro, phaseIntro])
 
   // Stop the timer + any speech if the sim unmounts mid-run.
   useEffect(
@@ -662,6 +821,9 @@ export function useSimAutoRunPlayer({
     voiceOn,
     voiceName,
     passIntro,
+    phaseFocus,
+    phaseIntro,
+    scenarioIntro,
     start,
     pause,
     resume,
@@ -669,6 +831,8 @@ export function useSimAutoRunPlayer({
     cycleSpeed,
     toggleVoice,
     beginPass,
+    beginPhase,
+    beginScenario,
     prevPass,
     nextPass,
   }
