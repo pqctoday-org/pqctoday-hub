@@ -84,7 +84,8 @@ import {
 import { JURISDICTION_RULES } from '@/data/jurisdiction'
 import { ROLE_CROSSWALK, personaToRoles } from '@/data/roleCrosswalk'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
-import type { ExecutiveDocumentType } from '@/services/storage/types'
+import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
+import { ArtifactDrawer } from '@/components/BusinessCenter/ArtifactDrawer'
 import {
   SIM_TREES,
   flattenTree,
@@ -428,6 +429,8 @@ export function SimulationView() {
 
   // real hub completion state: generated artifacts + Learn-module progress
   const docs = useModuleStore((s) => s.artifacts.executiveDocuments)
+  // Read-only inspection of a generated artifact (click a completed row → drawer in view mode).
+  const [viewDoc, setViewDoc] = useState<ExecutiveDocument | null>(null)
   const moduleProgress = useModuleStore((s) => s.modules)
   const resetModuleProgress = useModuleStore((s) => s.resetModuleProgress)
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
@@ -1197,6 +1200,15 @@ export function SimulationView() {
             <SimPhaseIntroModal
               phase={autoRunPlayer.phaseIntro.phase}
               onBegin={autoRunPlayer.beginPhase}
+            />
+          )}
+          {viewDoc && (
+            <ArtifactDrawer
+              document={viewDoc}
+              mode="view"
+              readOnly
+              onClose={() => setViewDoc(null)}
+              onModeChange={() => {}}
             />
           )}
           <Button
@@ -2399,9 +2411,23 @@ export function SimulationView() {
                       return (
                         <div
                           key={a.type}
+                          role={made ? 'button' : undefined}
+                          tabIndex={made ? 0 : undefined}
+                          onClick={made ? () => setViewDoc(made) : undefined}
+                          onKeyDown={
+                            made
+                              ? (e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault()
+                                    setViewDoc(made)
+                                  }
+                                }
+                              : undefined
+                          }
+                          title={made ? 'View this artifact (read-only)' : undefined}
                           className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
                             made
-                              ? 'border-success/40 bg-success/5'
+                              ? 'cursor-pointer border-success/40 bg-success/5 hover:bg-success/10'
                               : 'border-dashed border-border bg-muted/40'
                           }`}
                         >
@@ -2422,6 +2448,11 @@ export function SimulationView() {
                               {made ? a.type : 'not generated yet'}
                             </span>
                           </span>
+                          {made && (
+                            <span className="shrink-0 font-mono text-sim-micro font-bold text-success">
+                              view →
+                            </span>
+                          )}
                         </div>
                       )
                     })}
