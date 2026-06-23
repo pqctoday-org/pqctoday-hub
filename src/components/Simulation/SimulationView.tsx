@@ -1624,6 +1624,7 @@ export function SimulationView() {
                 {LIFECYCLE.map((p) => {
                   const fp = FRAMEWORK_PHASES[p]
                   const lv = levelOf(p)
+                  const dlv = normalizedLevelOf(p) // 0–4 against the phase's own top band
                   const isCleared = lv >= PHASE_WIN_LEVEL
                   const current = p === sel
                   const owner = Object.values(ROLE_CROSSWALK).some(
@@ -1659,12 +1660,12 @@ export function SimulationView() {
                         <div className="flex gap-1.5 font-mono text-sim-micro text-muted-foreground">
                           <span>
                             {isCleared ? 'cleared' : current ? 'active' : 'locked'} ·{' '}
-                            {MATURITY_LEVEL_NAMES[lv]}
+                            {MATURITY_LEVEL_NAMES[dlv]}
                           </span>
                           {owner && <span className="font-bold text-primary">· you</span>}
                         </div>
                       </div>
-                      <Ring level={lv} />
+                      <Ring level={dlv} />
                     </Button>
                   )
                 })}
