@@ -6,7 +6,10 @@ import clsx from 'clsx'
 
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { usePersonaStore } from '../../../store/usePersonaStore'
-import { useMigrateSelectionStore } from '../../../store/useMigrateSelectionStore'
+import {
+  useMigrateSelectionStore,
+  useSelectedProductIds,
+} from '../../../store/useMigrateSelectionStore'
 import { softwareData } from '../../../data/migrateData'
 
 import { InlineTooltip } from '../../ui/InlineTooltip'
@@ -30,8 +33,11 @@ const Step12VendorDependency = () => {
   const stepContent = getPersonaStepContent(persona, 'vendors', experienceLevel, industry)
   const optionDescs = getPersonaOptionDescriptions(persona, 'vendors', industry)
 
-  const myProducts = useMigrateSelectionStore((s) => s.myProducts)
-  const toggleMyProduct = useMigrateSelectionStore((s) => s.toggleMyProduct)
+  // Effective selection = legacy myProducts ∪ the /migrate redesign's choice
+  // picks; removal goes through removeSelectedProduct so it clears the product
+  // from whichever path put it there (myProducts and/or choice).
+  const myProducts = useSelectedProductIds()
+  const removeSelectedProduct = useMigrateSelectionStore((s) => s.removeSelectedProduct)
 
   // Resolve product keys to display info
   const productItems = useMemo(() => {
@@ -55,9 +61,9 @@ const Step12VendorDependency = () => {
 
   const handleRemoveProduct = useCallback(
     (key: string) => {
-      toggleMyProduct(key)
+      removeSelectedProduct(key)
     },
-    [toggleMyProduct]
+    [removeSelectedProduct]
   )
 
   const options = [

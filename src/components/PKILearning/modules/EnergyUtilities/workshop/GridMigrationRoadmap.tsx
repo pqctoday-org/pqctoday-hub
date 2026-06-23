@@ -13,6 +13,7 @@ import {
   AlertTriangle,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { CompleteStepAction } from '../../../common/CompleteStepAction'
 import { MIGRATION_PHASES, adjustPhaseTimeline } from '../data/energyConstants'
 import type {
   UtilityProfile,
@@ -721,10 +722,7 @@ export const GridMigrationRoadmap: React.FC<GridMigrationRoadmapProps> = ({
 
       {/* Mark Complete */}
       <div className="flex justify-center pt-2">
-        <Button variant="gradient" onClick={onComplete} className="flex items-center gap-2">
-          <CheckCircle2 size={16} />
-          Mark Step Complete
-        </Button>
+        <CompleteStepAction recordsArtifact={false} onClick={onComplete} />
       </div>
     </div>
   )

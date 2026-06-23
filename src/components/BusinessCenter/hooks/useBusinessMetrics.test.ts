@@ -52,7 +52,10 @@ vi.mock('@/store/useComplianceSelectionStore', () => ({
 }))
 
 vi.mock('@/store/useMigrateSelectionStore', () => ({
-  useMigrateSelectionStore: () => ({ myProducts: [] }),
+  useMigrateSelectionStore: () => ({ myProducts: [], choice: {} }),
+  // The hook resolves the effective selection via this helper; the test exercises
+  // the empty-selection path, so a passthrough of myProducts is sufficient.
+  selectedProductIds: (myProducts: string[]) => myProducts,
 }))
 
 vi.mock('@/store/useMigrationWorkflowStore', () => ({

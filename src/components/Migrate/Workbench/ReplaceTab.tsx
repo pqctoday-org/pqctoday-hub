@@ -21,15 +21,17 @@ const ASSET_BY_ID = new Map<string, ReplaceAsset>(REPLACE_ASSETS.map((a) => [a.i
 
 interface ReplaceTabProps {
   persona: PersonaId | null
+  /** Optional domain to pre-select (e.g. a sim catalog step opening 'discovery'). */
+  initialDomain?: DomainId
 }
 
-export function ReplaceTab({ persona }: ReplaceTabProps) {
+export function ReplaceTab({ persona, initialDomain }: ReplaceTabProps) {
   const plan = useMigrateSelectionStore((s) => s.plan)
   const choice = useMigrateSelectionStore((s) => s.choice)
   const togglePlanAsset = useMigrateSelectionStore((s) => s.togglePlanAsset)
   const chooseProduct = useMigrateSelectionStore((s) => s.chooseProduct)
 
-  const [selectedDomain, setSelectedDomain] = useState<DomainId | null>('tls')
+  const [selectedDomain, setSelectedDomain] = useState<DomainId | null>(initialDomain ?? 'tls')
   const [filter, setFilter] = useState('')
 
   const onSelect = (d: DomainId) => {

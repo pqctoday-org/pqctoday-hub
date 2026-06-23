@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useMemo } from 'react'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { REPLACE_ASSETS } from '@/data/migrationAssets'
+import { softwareData } from '@/data/migrateData'
 
 export type MigrateViewMode = 'stack' | 'cisaStack' | 'cards' | 'table'
 
 /** Workbench redesign tabs (URL-synced via ?tab=). */
-export type MigrateTab = 'replace' | 'plan' | 'roadmaps'
+export type MigrateTab = 'replace' | 'plan' | 'roadmaps' | 'vendorrisk'
 
 /** Return a shallow copy of `obj` without `key`. Lint-friendly omit. */
 function omitKey<T>(obj: Record<string, T>, key: string): Record<string, T> {
@@ -74,9 +76,41 @@ interface MigrateSelectionState {
    *  asset is in the plan) or, if already chosen, removes just that product.
    *  Removing the last product drops the asset/domain from the plan. */
   chooseProduct: (assetId: string, productName: string) => void
+  /** Remove a product (by productId) from the effective selection regardless of
+   *  which path put it there: drops it from legacy `myProducts` AND un-chooses it
+   *  from every `choice` entry whose product name resolves to that id (dropping
+   *  any emptied non-replace asset from the plan). Lets cross-page surfaces that
+   *  read the union (see {@link useSelectedProductIds}) offer a remove control
+   *  that stays consistent with the workbench. */
+  removeSelectedProduct: (productId: string) => void
   /** Active workbench tab (URL-synced). */
   tab: MigrateTab
   setTab: (tab: MigrateTab) => void
+}
+
+/** softwareName → productId, for resolving workbench `choice` (which stores
+ *  product names) back to the productId slugs the rest of the app keys on. */
+const PRODUCT_ID_BY_NAME = new Map<string, string>(
+  softwareData.map((s) => [s.softwareName, s.productId])
+)
+
+/** Effective selected productIds = legacy `myProducts` (productId slugs) ∪ the
+ *  workbench `choice` selections (stored as product names, resolved here). The
+ *  asset-first /migrate redesign writes only `choice`/`plan`, so any surface that
+ *  still reads `myProducts` alone would miss every workbench pick — this union is
+ *  the single join both selection paths flow through. */
+export function selectedProductIds(
+  myProducts: string[],
+  choice: Record<string, string[]>
+): string[] {
+  const out = new Set<string>(myProducts)
+  for (const names of Object.values(choice)) {
+    for (const name of names) {
+      const id = PRODUCT_ID_BY_NAME.get(name)
+      if (id) out.add(id)
+    }
+  }
+  return [...out]
 }
 
 export const useMigrateSelectionStore = create<MigrateSelectionState>()(
@@ -166,6 +200,33 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
           return { plan, choice: { ...state.choice, [assetId]: nextList } }
         }),
 
+      removeSelectedProduct: (productId) =>
+        set((state) => {
+          // Drop from the legacy product-keyed list.
+          const myProducts = state.myProducts.filter((id) => id !== productId)
+
+          // Un-choose every workbench `choice` entry whose name resolves to this
+          // productId, mirroring chooseProduct's plan bookkeeping: a non-replace
+          // asset left with no products drops out of the plan.
+          const choice: Record<string, string[]> = {}
+          let plan = state.plan
+          for (const [assetId, names] of Object.entries(state.choice)) {
+            const kept = names.filter((name) => PRODUCT_ID_BY_NAME.get(name) !== productId)
+            if (kept.length === names.length) {
+              // eslint-disable-next-line security/detect-object-injection
+              choice[assetId] = names
+              continue
+            }
+            if (kept.length > 0) {
+              // eslint-disable-next-line security/detect-object-injection
+              choice[assetId] = kept
+            } else if (!REPLACE_ASSET_IDS.has(assetId)) {
+              plan = plan.filter((id) => id !== assetId)
+            }
+          }
+          return { myProducts, choice, plan }
+        }),
+
       setTab: (tab) => set({ tab }),
     }),
     {
@@ -227,7 +288,9 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
             state.choice && typeof state.choice === 'object' && !Array.isArray(state.choice)
               ? state.choice
               : {}
-          state.tab = ['replace', 'plan', 'roadmaps'].includes(state.tab) ? state.tab : 'replace'
+          state.tab = ['replace', 'plan', 'roadmaps', 'vendorrisk'].includes(state.tab)
+            ? state.tab
+            : 'replace'
         }
         if (version < 10) {
           // v9 → v10: choice became multi-valued (productName → productName[]).
@@ -252,3 +315,16 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
     }
   )
 )
+
+/** The user's effective product selection as productId slugs — the union of the
+ *  legacy `myProducts` and the workbench `choice` (see {@link selectedProductIds}).
+ *  Cross-page surfaces (Crypto Vulnerability Watch, the executive/business tools,
+ *  vendor risk, the report toolkit…) should read THIS rather than `myProducts`
+ *  directly, otherwise they miss every selection made in the /migrate redesign.
+ *  Selecting the two stored fields separately keeps zustand from handing back a
+ *  fresh array each render; the union is memoised on their identities. */
+export function useSelectedProductIds(): string[] {
+  const myProducts = useMigrateSelectionStore((s) => s.myProducts)
+  const choice = useMigrateSelectionStore((s) => s.choice)
+  return useMemo(() => selectedProductIds(myProducts, choice), [myProducts, choice])
+}

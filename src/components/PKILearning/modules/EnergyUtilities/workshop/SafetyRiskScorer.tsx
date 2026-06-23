@@ -2,6 +2,7 @@
 import React, { useState, useMemo } from 'react'
 import { AlertTriangle, Shield, Leaf, Users, Zap, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { CompleteStepAction } from '../../../common/CompleteStepAction'
 import { ENERGY_SCENARIOS, computeSafetyRisk } from '../data/safetyRiskData'
 import type { EnergyAssetScenario } from '../data/safetyRiskData'
 import type {
@@ -700,10 +701,7 @@ export const SafetyRiskScorer: React.FC<SafetyRiskScorerProps> = ({
 
       {/* Mark Complete */}
       <div className="flex justify-center pt-2">
-        <Button variant="gradient" onClick={onComplete} className="flex items-center gap-2">
-          <CheckCircle2 size={16} />
-          Mark Step Complete
-        </Button>
+        <CompleteStepAction recordsArtifact={false} onClick={onComplete} />
       </div>
     </div>
   )

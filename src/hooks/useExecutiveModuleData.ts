@@ -7,7 +7,7 @@ import { timelineData, type CountryData } from '@/data/timelineData'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
-import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { pqcReadinessTier, isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
@@ -94,7 +94,9 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
   const assessmentStatus = useAssessmentStore((s) => s.assessmentStatus)
   const personaIndustry = usePersonaStore((s) => s.selectedIndustry)
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
-  const myProductIds = useMigrateSelectionStore((s) => s.myProducts)
+  // Effective selection = legacy myProducts ∪ workbench choice (the /migrate
+  // redesign writes choice/plan, not myProducts).
+  const myProductIds = useSelectedProductIds()
   const myThreatIds = useBookmarkStore((s) => s.myThreats)
   const myTimelineCountries = useBookmarkStore((s) => s.myTimelineCountries)
 
