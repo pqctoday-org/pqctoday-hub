@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback, useMemo } from 'react'
-import { Wrench, ChevronDown, ChevronRight, Copy, Check, Save, FileType2 } from 'lucide-react'
+import { Wrench, ChevronDown, ChevronRight, Copy, Check, FileType2 } from 'lucide-react'
+import { CompleteStepAction } from './CompleteStepAction'
 import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { markdownToPdf } from '@/services/export/pdfExport'
@@ -42,7 +43,9 @@ export const OpsChecklist: React.FC<OpsChecklistProps> = ({
     new Set(sections.map((s) => s.title))
   )
   const [copied, setCopied] = useState(false)
-  const [saved, setSaved] = useState(false)
+  // Persistent done-state keyed on the checked items (survives further edits).
+  const [wasSaved, setWasSaved] = useState(false)
+  const [lastSavedKey, setLastSavedKey] = useState<string | null>(null)
 
   const totalItems = useMemo(() => sections.reduce((sum, s) => sum + s.items.length, 0), [sections])
   const checkedCount = checkedItems.size
@@ -86,12 +89,15 @@ export const OpsChecklist: React.FC<OpsChecklistProps> = ({
     setTimeout(() => setCopied(false), 2000)
   }, [buildMarkdown])
 
+  const currentKey = useMemo(() => Array.from(checkedItems).sort().join('|'), [checkedItems])
+  const editedSince = wasSaved && lastSavedKey !== null && currentKey !== lastSavedKey
+
   const handleSave = useCallback(() => {
-    if (!onSave) return
+    if (!onSave || (lastSavedKey !== null && currentKey === lastSavedKey)) return
     onSave({ markdown: buildMarkdown(), checkedItems: Array.from(checkedItems) })
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
-  }, [onSave, buildMarkdown, checkedItems])
+    setLastSavedKey(currentKey)
+    setWasSaved(true)
+  }, [onSave, buildMarkdown, checkedItems, currentKey, lastSavedKey])
 
   const handleDownloadPdf = useCallback(async () => {
     const filename = title.replace(/[^A-Za-z0-9-_ ]/g, '').trim() || 'checklist'
@@ -133,10 +139,12 @@ export const OpsChecklist: React.FC<OpsChecklistProps> = ({
             <span className="ml-1.5">.pdf</span>
           </Button>
           {onSave && (
-            <Button variant="outline" size="sm" onClick={handleSave}>
-              {saved ? <Check size={14} /> : <Save size={14} />}
-              <span className="ml-1.5">{saved ? 'Saved' : 'Save'}</span>
-            </Button>
+            <CompleteStepAction
+              recordsArtifact
+              saved={wasSaved}
+              editedSinceSave={editedSince}
+              onClick={handleSave}
+            />
           )}
         </div>
       </div>

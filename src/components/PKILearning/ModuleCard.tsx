@@ -102,7 +102,7 @@ export const ModuleCard = ({
       animate={{ opacity: isAboveLevel && status !== 'completed' ? 0.4 : 1, scale: 1 }}
       exit={{ opacity: 0, scale: reduced ? 1 : 0.9 }}
       transition={{ duration: reduced ? 0 : 0.2 }}
-      className="glass-panel p-6 flex flex-col h-full transition-colors hover:border-secondary/50 cursor-pointer scroll-mt-20"
+      className="@container glass-panel p-6 flex flex-col h-full transition-colors hover:border-secondary/50 cursor-pointer scroll-mt-20"
       onClick={() => onSelectModule(module.id)}
     >
       <div className="flex items-start justify-between mb-4">
@@ -199,7 +199,7 @@ export const ModuleCard = ({
           )}
           <span
             className={
-              'px-3 py-1 rounded-full text-xs font-bold border ' +
+              'px-3 py-1 rounded-full text-xs font-bold border whitespace-nowrap ' +
               (status === 'completed'
                 ? 'bg-status-success text-status-success'
                 : status === 'in-progress'
@@ -235,10 +235,10 @@ export const ModuleCard = ({
         {module.description}
       </p>
 
-      <div className="flex items-center justify-between pt-4 border-t border-border">
-        <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 pt-4 border-t border-border">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs @sm:text-sm text-muted-foreground min-w-0">
           <Clock size={14} className="shrink-0" />
-          <span className="truncate max-w-[120px] md:max-w-none">{durationDisplay}</span>
+          <span className="whitespace-nowrap">{durationDisplay}</span>
           {module.difficulty && (
             <span
               className={
@@ -270,8 +270,8 @@ export const ModuleCard = ({
             </span>
           )}
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <div className="hidden lg:flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0 ml-auto">
+          <div className="hidden @lg:flex items-center gap-2">
             <EndorseButton
               endorseUrl={buildEndorsementUrl({
                 category: 'learn-module-endorsement',

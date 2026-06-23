@@ -112,6 +112,7 @@ vi.mock('../../store/useMigrateSelectionStore', () => ({
   useMigrateSelectionStore: (selector?: (s: Record<string, unknown>) => unknown) => {
     const state = {
       myProducts: [],
+      choice: {},
       hiddenProducts: [],
       activeLayer: 'All',
       activeSubCategory: 'All',
@@ -120,6 +121,10 @@ vi.mock('../../store/useMigrateSelectionStore', () => ({
     }
     return selector ? selector(state) : state
   },
+  // Cross-page surfaces resolve the effective selection via these; the test
+  // exercises the empty-selection path, so a passthrough of myProducts suffices.
+  selectedProductIds: (myProducts: string[]) => myProducts,
+  useSelectedProductIds: () => [],
 }))
 
 vi.mock('../../store/useMigrationWorkflowStore', () => ({

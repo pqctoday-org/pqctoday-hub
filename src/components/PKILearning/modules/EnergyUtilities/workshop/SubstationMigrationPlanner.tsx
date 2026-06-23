@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo } from 'react'
-import { Factory, MapPin, Zap, Shield, ArrowRight, CheckCircle2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Factory, MapPin, Zap, Shield, ArrowRight } from 'lucide-react'
+import { CompleteStepAction } from '../../../common/CompleteStepAction'
 import { SUBSTATION_ZONES, computeZonePriority, estimateZoneEffort } from '../data/energyConstants'
 import type {
   SubstationProfile,
@@ -376,10 +376,7 @@ export const SubstationMigrationPlanner: React.FC<SubstationMigrationPlannerProp
 
       {/* Complete Button */}
       <div className="flex justify-end pt-2">
-        <Button variant="gradient" onClick={onComplete}>
-          <CheckCircle2 size={16} className="mr-2" />
-          Mark Step Complete
-        </Button>
+        <CompleteStepAction recordsArtifact={false} onClick={onComplete} />
       </div>
     </div>
   )

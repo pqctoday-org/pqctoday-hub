@@ -71,7 +71,7 @@ export const SecretsManagementExercises: React.FC<SecretsManagementExercisesProp
       badge: 'Cloud',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'HashiCorp Vault supports native dynamic secrets (DB, AWS, GCP, Azure credential generation) with FIPS 140-3 (Enterprise), but PQC is planned rather than GA. AWS Secrets Manager has GA PQC via KMS integration but does not generate dynamic secrets natively. GCP Cloud KMS supports ML-KEM-768, ML-KEM-1024, X-Wing, ML-DSA-65, and SLH-DSA (preview), but FIPS mode is unavailable for GCP Secret Manager.',
+        'As of mid-2026 (verify against current provider docs and the workshop comparison): HashiCorp Vault offers native dynamic secrets (DB, AWS, GCP, Azure credential generation) with FIPS 140-3 (Enterprise), and added ML-DSA to its transit engine in Vault Enterprise 1.19 (with more PQC algorithms planned). AWS Secrets Manager surfaces PQC via KMS integration but does not generate dynamic secrets natively. GCP Cloud KMS lists ML-KEM-768, ML-KEM-1024, X-Wing, ML-DSA-65, and SLH-DSA in preview, while FIPS mode is not offered for GCP Secret Manager.',
       config: { step: 3 },
     },
   ]

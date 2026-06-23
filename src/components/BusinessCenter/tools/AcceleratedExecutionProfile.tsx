@@ -14,6 +14,7 @@
  * should be exercised annually as a tabletop so it is ready to pull off the shelf.
  */
 import React, { useMemo, useState } from 'react'
+import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
 import { Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -98,19 +99,39 @@ function buildMarkdown(s: ProfileState): string {
 
 export const AcceleratedExecutionProfile: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
-  const [state, setState] = useState<ProfileState>(() => ({
-    triggers: {
-      'CRQC milestone announced': true,
-      'Regulatory deadline pulled forward': false,
-      'Active HNDL campaign detected': false,
-      'Vendor critical-path slip': false,
-    },
-    otherTrigger: '',
-    compressedSequence: '',
-    riskAcceptances: '',
-    resourceRequest: '',
-    activationAuthority: '',
-  }))
+  const [state, setState] = useState<ProfileState>(() => {
+    const base: ProfileState = {
+      triggers: {
+        'CRQC milestone announced': true,
+        'Regulatory deadline pulled forward': false,
+        'Active HNDL campaign detected': false,
+        'Vendor critical-path slip': false,
+      },
+      otherTrigger: '',
+      compressedSequence: '',
+      riskAcceptances: '',
+      resourceRequest: '',
+      activationAuthority: '',
+    }
+    // Auto-run demo fill — framework Phase 4 activity 4.7 contingency package.
+    if (!isAutoRunFillActive()) return base
+    return {
+      ...base,
+      triggers: {
+        'CRQC milestone announced': true,
+        'Regulatory deadline pulled forward': true,
+        'Active HNDL campaign detected': true,
+        'Vendor critical-path slip': false,
+      },
+      compressedSequence:
+        'Collapse Phases 4–6: run discovery, risk scoring and Tier-1 pilots in parallel; pre-approve hybrid (X25519+ML-KEM-768) for all internet-facing TLS; defer long-tail / OT to a contained track.',
+      riskAcceptances:
+        'Pre-approved: temporary classical fallback for non-Tier-1 systems during transition; vendor roadmap commitments accepted for up to two quarters; residual risk re-reviewed quarterly.',
+      resourceRequest:
+        'Emergency budget uplift (~30% of Year 1) for surge cryptographic-engineering contractors and expedited HSM firmware procurement.',
+      activationAuthority: 'Executive Sponsor (CISO), on SteerCo recommendation.',
+    }
+  })
 
   const set = <K extends keyof ProfileState>(key: K, value: ProfileState[K]) =>
     setState((prev) => ({ ...prev, [key]: value }))

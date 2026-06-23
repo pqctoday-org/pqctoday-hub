@@ -5,28 +5,34 @@
 // sequence). Tab state is URL-synced (?tab=) when standalone, store-only when
 // embedded in the Simulation page.
 
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { TrendingUp, ArrowRightLeft, BarChart3, Map as MapIcon } from 'lucide-react'
+import { TrendingUp, ArrowRightLeft, BarChart3, Map as MapIcon, ShieldAlert } from 'lucide-react'
 import { PageHeader } from '../../common/PageHeader'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useMigrateSelectionStore, type MigrateTab } from '@/store/useMigrateSelectionStore'
+import type { DomainId } from '@/data/migrationAssets'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../ui/tabs'
 import { useMigrationPlan } from './useMigrationPlan'
 import { PostureCommandCenter } from './PostureCommandCenter'
 import { ReplaceTab } from './ReplaceTab'
 import { PlanTab } from './PlanTab'
 import { RoadmapsTab } from './RoadmapsTab'
+import { SupplyChainRiskMatrix } from '../../PKILearning/modules/VendorRisk/components/SupplyChainRiskMatrix'
 
 interface MigrationWorkbenchProps {
   /** When embedded in the Simulation, hide the PageHeader and don't touch the URL. */
   embedded?: boolean
+  /** When embedded from a sim catalog step, which view to open on. The tab is a
+   *  one-time LOCAL seed (it never writes the shared store, so standalone /migrate
+   *  is untouched); the domain pre-selects a ReplaceTab domain (e.g. 'discovery'). */
+  focus?: { tab?: MigrateTab; domain?: DomainId }
 }
 
 const isTab = (v: string | null): v is MigrateTab =>
-  v === 'replace' || v === 'plan' || v === 'roadmaps'
+  v === 'replace' || v === 'plan' || v === 'roadmaps' || v === 'vendorrisk'
 
-export function MigrationWorkbench({ embedded = false }: MigrationWorkbenchProps) {
+export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkbenchProps) {
   const persona = usePersonaStore((s) => s.selectedPersona)
   const posture = useMigrationPlan()
 
@@ -34,19 +40,27 @@ export function MigrationWorkbench({ embedded = false }: MigrationWorkbenchProps
   const setTabStore = useMigrateSelectionStore((s) => s.setTab)
   const [searchParams, setSearchParams] = useSearchParams()
 
-  // URL is the source of truth when standalone; store when embedded.
+  // Embedded-from-a-catalog-step tab is LOCAL state seeded once from focus.tab, so
+  // opening the embed never mutates the shared store that standalone /migrate reads.
+  const [embedTab, setEmbedTab] = useState<MigrateTab | null>(
+    embedded && focus?.tab ? focus.tab : null
+  )
+
+  // URL is the source of truth when standalone; the local seed (then store) when embedded.
   const urlTab = searchParams.get('tab')
-  const activeTab: MigrateTab = embedded ? tab : isTab(urlTab) ? urlTab : tab
+  const activeTab: MigrateTab = embedded ? (embedTab ?? tab) : isTab(urlTab) ? urlTab : tab
 
   const setTab = useCallback(
     (next: string) => {
       const t: MigrateTab = isTab(next) ? next : 'replace'
-      setTabStore(t)
-      if (!embedded) {
-        const sp = new URLSearchParams(searchParams)
-        sp.set('tab', t)
-        setSearchParams(sp, { replace: true })
+      if (embedded) {
+        setEmbedTab(t) // local only — don't pollute the global store
+        return
       }
+      setTabStore(t)
+      const sp = new URLSearchParams(searchParams)
+      sp.set('tab', t)
+      setSearchParams(sp, { replace: true })
     },
     [embedded, searchParams, setSearchParams, setTabStore]
   )
@@ -84,16 +98,23 @@ export function MigrationWorkbench({ embedded = false }: MigrationWorkbenchProps
             <MapIcon size={15} className="mr-1.5" aria-hidden />
             Vendor roadmaps
           </TabsTrigger>
+          <TabsTrigger value="vendorrisk">
+            <ShieldAlert size={15} className="mr-1.5" aria-hidden />
+            Vendor risk
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="replace" className="mt-4">
-          <ReplaceTab persona={persona} />
+          <ReplaceTab persona={persona} initialDomain={focus?.domain} />
         </TabsContent>
         <TabsContent value="plan" className="mt-4">
           <PlanTab posture={posture} onGoToReplace={() => setTab('replace')} />
         </TabsContent>
         <TabsContent value="roadmaps" className="mt-4">
           <RoadmapsTab />
+        </TabsContent>
+        <TabsContent value="vendorrisk" className="mt-4">
+          <SupplyChainRiskMatrix />
         </TabsContent>
       </Tabs>
     </div>

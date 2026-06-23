@@ -13,7 +13,6 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  Scale,
   Code2,
 } from 'lucide-react'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
@@ -528,11 +527,11 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                         <td className="px-4 py-3" style={{ width: `${columnWidths.function}px` }}>
                           <div className="flex items-center gap-2 text-primary font-medium text-sm">
                             {isComparableFunction ? (
-                              <Button
-                                variant="ghost"
-                                type="button"
-                                onClick={() => onToggleTransitionRow(algo)}
+                              <input
+                                type="checkbox"
+                                checked={isCompared}
                                 disabled={!canCompare && !isCompared}
+                                onChange={() => onToggleTransitionRow(algo)}
                                 title={
                                   isCompared
                                     ? 'Remove from comparison'
@@ -542,17 +541,9 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                         : 'Clear to switch type'
                                       : 'Compare classical + PQC'
                                 }
-                                className={clsx(
-                                  'shrink-0 p-1 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
-                                  isCompared
-                                    ? 'text-secondary bg-secondary/10 hover:bg-secondary/20 hover:text-secondary'
-                                    : canCompare
-                                      ? 'text-muted-foreground hover:text-secondary hover:bg-secondary/10'
-                                      : 'text-muted-foreground/30 cursor-not-allowed'
-                                )}
-                              >
-                                <Scale size={14} />
-                              </Button>
+                                aria-label={`Compare ${algo.classical} → ${algo.pqc}`}
+                                className="h-4 w-4 shrink-0 rounded border-border accent-primary cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+                              />
                             ) : (
                               <div className="shrink-0 w-6" />
                             )}

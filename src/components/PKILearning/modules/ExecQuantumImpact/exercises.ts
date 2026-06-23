@@ -18,6 +18,6 @@ export const EXEC_QUANTUM_EXERCISES: ExecExercise[] = [
   {
     title: 'Scenario: Compliance Deadline Collision',
     prompt:
-      'Your organization must comply with CNSA 2.0 (2030), DORA (2025), and NIS2 (2024) simultaneously. Budget is limited. Use the action plan builder to prioritize: which deadlines require immediate action versus which allow phased migration?',
+      'Your organization must navigate overlapping timelines: DORA (effective 2025), NIS2 (transposition 2024), and the draft NIST 2030 deprecation of RSA/ECC (NIST IR 8547). Budget is limited. Use the action plan builder to prioritize: which deadlines require immediate action versus which allow phased migration?',
   },
 ]

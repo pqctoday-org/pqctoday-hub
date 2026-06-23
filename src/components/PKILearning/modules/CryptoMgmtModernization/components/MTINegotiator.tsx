@@ -644,6 +644,14 @@ export function renderMTIMarkdown(data: Record<string, Record<string, string | s
 // Component
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Auto-run demo fill — US / EO 14409 scenario: CNSA-aligned federal audience, FIPS-validated
+// posture, 2030 key-establishment deadline. Overrides the generic defaults only during a run
+// (isAutoRunFillActive, via ArtifactBuilder); normal manual use is unchanged.
+const MTI_DEMO_FILL: Record<string, Record<string, string | string[]>> = {
+  protocolAudience: { audience: 'us-federal', complianceDeadline: '2030' },
+  standardsConstraints: { standardsPosture: 'fips-validated-only' },
+}
+
 export const MTINegotiator: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
 
@@ -716,6 +724,7 @@ export const MTINegotiator: React.FC = () => {
         title="Mandatory-to-Implement Algorithm Recommendation"
         description="Fill in the protocol / audience / constraint sections; the engine returns a per-role MTI plus alternates."
         sections={sections}
+        demoFill={MTI_DEMO_FILL}
         onExport={handleExport}
         exportFilename="mti-recommendation"
         renderPreview={renderMTIMarkdown}

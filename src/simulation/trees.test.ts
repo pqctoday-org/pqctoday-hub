@@ -4,7 +4,8 @@
  * REAL hub resource; if hub coverage changes and a tree goes stale, this fails.
  */
 import { describe, it, expect } from 'vitest'
-import { SIM_TREES, flattenTree, achievedTreeLevel } from './index'
+import { SIM_TREES, flattenTree, achievedTreeLevel, isGatingStep } from './index'
+import { SANDBOX_SCENARIOS } from '@/data/sandboxScenarios'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { ARTIFACT_TYPE_TO_TOOL_ID } from '@/components/BusinessCenter/businessToolsRegistry'
 import { WORKSHOP_TOOL_COMPONENTS } from '@/components/Simulation/resourceContract'
@@ -65,6 +66,17 @@ describe('SIM_TREES — coverage & shape', () => {
                 s.catalogId,
                 `${phase}/${act.id}: catalog step missing a catalogId (needed for per-task completion)`
               ).toBeTruthy()
+            } else if (s.kind === 'scenario') {
+              // C3: live sandbox lab — scenarioId must be a real sandbox scenario and
+              // the link the standalone /playground/sbx-<id> fallback page.
+              expect(
+                SANDBOX_SCENARIOS.some((sc) => sc.id === s.scenarioId),
+                `${phase}/${act.id}: scenario ${s.scenarioId} is not in SANDBOX_SCENARIOS`
+              ).toBe(true)
+              expect(
+                s.to === `/playground/sbx-${s.scenarioId}`,
+                `${phase}/${act.id}: scenario link ${s.to} should be /playground/sbx-${s.scenarioId}`
+              ).toBe(true)
             } else {
               expect(s.refId, `${phase}/${act.id}: reference missing refId`).toBeTruthy()
             }
@@ -72,6 +84,51 @@ describe('SIM_TREES — coverage & shape', () => {
         }
       }
     }
+  })
+
+  it('WS2: the four sandbox-lab (scenario) steps are present (p5 & p6)', () => {
+    const ids = ALL_TREE_PHASES.flatMap((p) => flattenTree(SIM_TREES[p]!))
+      .filter((s) => s.kind === 'scenario')
+      .map((s) => s.scenarioId)
+      .sort()
+    expect(ids).toEqual(['ab-handshake-bench', 'cloud-kms', 'migration-impact', 'pki'])
+  })
+
+  it('WS2: scenario (lab) steps are BONUS — they never gate a band', () => {
+    // A band whose only incomplete step is a scenario still earns: isGatingStep
+    // excludes scenarios, so an unavailable sandbox can never block a maturity level.
+    const tree = {
+      phase: 'p5',
+      generated: '0',
+      source: 'x',
+      pitfalls: [],
+      levels: [
+        {
+          level: 2,
+          indicator: 'i',
+          activities: [
+            {
+              id: '5.3',
+              title: 't',
+              steps: [
+                {
+                  kind: 'activity',
+                  label: 'a',
+                  to: '/business/tools/deployment-playbook',
+                  artifactType: 'deployment-playbook',
+                },
+                { kind: 'scenario', label: 'lab', to: '/playground/sbx-pki', scenarioId: 'pki' },
+              ],
+            },
+          ],
+        },
+      ],
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any
+    // only the non-scenario step is "done" — the band still earns L2.
+    expect(achievedTreeLevel(tree, (s) => s.kind !== 'scenario')).toBe(2)
+    expect(isGatingStep({ kind: 'scenario', label: '', to: '', scenarioId: 'pki' })).toBe(false)
+    expect(isGatingStep({ kind: 'activity', label: '', to: '' })).toBe(true)
   })
 
   it('WS-11: every tree is pinned to the current framework version', () => {

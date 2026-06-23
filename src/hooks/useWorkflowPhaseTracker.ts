@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react'
 import { useMigrationWorkflowStore, type WorkflowPhase } from '@/store/useMigrationWorkflowStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
-import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 
 /**
  * Auto-detects phase completion based on existing app state.
@@ -29,8 +29,9 @@ export function useWorkflowPhaseTracker(phase: WorkflowPhase): void {
     }
   }, [phase, isActivePhase, assessmentStatus, completePhase])
 
-  // Phase: migrate — watch myProducts
-  const myProducts = useMigrateSelectionStore((s) => s.myProducts)
+  // Phase: migrate — watch the effective selection (legacy myProducts ∪ the
+  // /migrate redesign's choice picks) so workbench selections complete the phase.
+  const myProducts = useSelectedProductIds()
   useEffect(() => {
     if (phase !== 'migrate' || !isActivePhase) return
     if (myProducts.length > 0) {

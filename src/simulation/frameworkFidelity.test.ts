@@ -100,6 +100,28 @@ describe('framework fidelity (drift guard vs framework-2.1.yaml)', () => {
     expect(bad, `invented/renumbered activities:\n${bad.join('\n')}`).toEqual([])
   })
 
+  it('every framework activity is COVERED by some tree (folded 0.2b/0.2c exempt)', () => {
+    // The guard above is one-directional (no INVENTED activities). This is the other
+    // direction — no framework activity silently UNMAPPED — so coverage gaps like the
+    // ones the 2026-06-22 sim audit found can't reappear untested. 0.2b/0.2c are folded
+    // into 0.2 by design (see gen-sim-trees.mjs), so they are exempt.
+    const FOLDED = new Set(['0.2b', '0.2c'])
+    const missing: string[] = []
+    for (const phase of FRAMEWORK_PHASE_IDS) {
+      const tree = SIM_TREES[phase]
+      const covered = new Set<string>()
+      for (const band of tree?.levels ?? [])
+        for (const act of band.activities) {
+          covered.add(act.id)
+          for (const part of act.id.split(/[–—-]/)) covered.add(part.trim()) // merged A–B covers each endpoint
+        }
+      for (const act of FW_BY_ID.get(phase)?.activities ?? [])
+        if (!FOLDED.has(act.id) && !covered.has(act.id))
+          missing.push(`${phase}: framework activity ${act.id} ("${act.title}") not in any tree`)
+    }
+    expect(missing, `unmapped framework activities:\n${missing.join('\n')}`).toEqual([])
+  })
+
   it('exact-id activity titles are verbatim (merged ranges exempt)', () => {
     const drift: string[] = []
     for (const phase of FRAMEWORK_PHASE_IDS) {

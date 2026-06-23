@@ -42,7 +42,7 @@ export const VPNSSHExercises: React.FC<VPNSSHExercisesProps> = ({
       badge: 'Classical',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        "The total handshake is approximately 1,784 bytes across 2 round trips. The KE payload carries a 256-byte MODP-3072 public value. This baseline is quantum-vulnerable to Shor's algorithm.",
+        "The total handshake is approximately 1,784 bytes across 2 round trips. The KE payload carries a 384-byte MODP-3072 public value (3072 bits). This baseline is quantum-vulnerable to Shor's algorithm.",
       config: { step: 0, ikev2Mode: 'classical' },
     },
     {
@@ -71,11 +71,11 @@ export const VPNSSHExercises: React.FC<VPNSSHExercisesProps> = ({
       id: 'ssh-mlkem',
       title: '4. SSH with ML-KEM-768 Hybrid (OpenSSH 9.9)',
       description:
-        'Switch to mlkem768x25519-sha256, the NIST-standard hybrid KEX added in OpenSSH 9.9. Compare the message sizes with the classical X25519 exchange.',
+        'Switch to mlkem768x25519-sha256, the ML-KEM-768 + X25519 hybrid KEX added in OpenSSH 9.9 (and made the default in OpenSSH 10.0). Compare the message sizes with the classical X25519 exchange.',
       badge: 'PQC',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'The public key grows from 32 bytes to 1,216 bytes (X25519 + ML-KEM concatenated). The total handshake is approximately 3,296 bytes — a 3.3x increase. The shared secret doubles to 64 bytes.',
+        'The public key grows from 32 bytes to 1,216 bytes (X25519 + ML-KEM concatenated). The total handshake is approximately 3,296 bytes — a 3.3x increase. The combined key material is 64 bytes (the 32-byte X25519 secret concatenated with the 32-byte ML-KEM secret) before being hashed into the final session key.',
       config: { step: 1, sshKex: 'mlkem768x25519-sha256' },
     },
     {

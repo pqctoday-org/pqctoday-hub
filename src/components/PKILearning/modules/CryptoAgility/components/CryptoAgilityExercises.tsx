@@ -83,7 +83,7 @@ export const CryptoAgilityExercises: React.FC<CryptoAgilityExercisesProps> = ({
       badge: 'Full Plan',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'The framework spans from discovery through monitoring. NSA CNSA 2.0 requires phased PQC adoption: exclusive use for web/browsers/networking by 2030, and exclusive use across all legacy NSS by 2033.',
+        'The framework spans from discovery through monitoring. NSA CNSA 2.0 (which applies to U.S. national security systems) sets phased deadlines: software/firmware signing and traditional networking reach exclusive PQC by 2030, while web browsers, cloud services, and operating systems follow by 2033.',
       config: { step: 2 },
     },
   ]

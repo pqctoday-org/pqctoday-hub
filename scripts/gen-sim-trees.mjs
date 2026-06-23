@@ -103,10 +103,24 @@ const W = (workshopId, label) => {
   if (!WORKSHOP_TOOLS.has(workshopId)) throw new Error(`unknown workshop ${workshopId}`)
   return { kind: 'workshop', label, to: `/playground/${workshopId}`, workshopId }
 }
-// C() — a product-catalog step that EMBEDS the Migrate catalog in the sim (C7).
-// `catalogId` is the stable per-task id; completion is INDEPENDENT per task: the
-// step is earned when the player picks a PQC-capable product while it is open.
+// C() — a product-catalog step that EMBEDS the Migrate workbench in the sim (C7).
+// `catalogId` is the stable per-task id; completion is per-task and earned when
+// the embed is opened (reviewed-on-open). Only ids with a real matching workbench
+// view are used: 'discovery' (the Discovery & validation tooling domain) and
+// 'pilots' (the asset picker). The catalogId drives the focus the embed opens on.
 const C = (label, catalogId) => ({ kind: 'catalog', label, to: '/migrate', catalogId })
+// S() — a live sandbox-lab step that EMBEDS a sandbox scenario in the sim (C3).
+// The embed is AVAILABILITY-GATED in the app: the step only opens/completes when a
+// sandbox session is reachable (else it shows locked, never auto-completes, and
+// never blocks the maturity band). `to` is the standalone /playground fallback
+// (SANDBOX_TOOL_PREFIX 'sbx-'); the sim mounts the embed headless. The embed
+// contract (embedContract.test.ts) validates every scenarioId against the real
+// SANDBOX_SCENARIOS registry, so a typo fails the build.
+const SANDBOX_IDS = new Set(['migration-impact', 'cloud-kms', 'pki', 'ab-handshake-bench'])
+const S = (scenarioId, label) => {
+  if (!SANDBOX_IDS.has(scenarioId)) throw new Error(`unknown sandbox scenario ${scenarioId}`)
+  return { kind: 'scenario', label, to: `/playground/sbx-${scenarioId}`, scenarioId }
+}
 
 // ---- per-phase Maturity Indicators (verbatim, Applied Quantum v2.1) ---------
 const INDICATORS = {
@@ -320,8 +334,11 @@ const FRAMEWORK = {
       do: 'Cross-reference CMDB, ITAM, cloud APIs, CT logs, BIA and certificate data for coverage.',
       output: 'Cross-referenced asset coverage',
       steps: [
-        L('platform-eng-pqc', 'Learn: Platform Engineering for PQC'),
-        R('library', 'Mine the Library for asset data'),
+        L(
+          'crypto-mgmt-modernization',
+          'Learn: cross-reference CMDB / ITAM / cloud & certificate data sources'
+        ),
+        R('library', 'Reference: data-source & SBOM / CT-log standards in the Library'),
       ],
     },
     {
@@ -362,10 +379,7 @@ const FRAMEWORK = {
       title: 'Integrate CBOM into Operational Processes',
       do: 'Embed CBOM governance into CI/CD, change management, vendor onboarding and audit.',
       output: null,
-      steps: [
-        C('Wire CBOM into the Migrate pipeline', 'cbom-pipeline'),
-        A('crypto-vulnerability-watch', 'Wire CBOM freshness into CI/CD drift checks'),
-      ],
+      steps: [A('crypto-vulnerability-watch', 'Wire CBOM freshness into CI/CD drift checks')],
     },
     {
       id: '2.4–2.5',
@@ -378,7 +392,6 @@ const FRAMEWORK = {
           'soc-implementation-pqc',
           'Learn: protect the CBOM (it is an HNDL shopping list) — SOC monitoring'
         ),
-        C('Set CBOM freshness triggers in the Migrate pipeline', 'cbom-freshness'),
       ],
     },
   ],
@@ -519,6 +532,10 @@ const FRAMEWORK = {
       output: 'Pilot results reports',
       steps: [
         W('tls-simulator', 'Practice: measure the TLS 1.3 hybrid handshake'),
+        S(
+          'migration-impact',
+          'Lab: migration impact — classical vs PQC TLS (latency, cert size, bandwidth)'
+        ),
         A('deployment-playbook', 'Draft a Deployment Playbook'),
       ],
     },
@@ -540,6 +557,7 @@ const FRAMEWORK = {
         L('confidential-computing', 'Learn: Confidential Computing & defense-in-depth'),
         L('database-encryption-pqc', 'Learn: data-at-rest strategy & DB encryption'),
         W('envelope-encrypt', 'Practice: PQC key-wrapping (envelope encryption)'),
+        S('cloud-kms', 'Lab: ML-KEM key wrapping for cloud KMS (envelope encryption)'),
         A('data-at-rest-strategy', 'Decide the per-store data-at-rest strategy'),
       ],
     },
@@ -563,6 +581,7 @@ const FRAMEWORK = {
         L('pki-workshop', 'Learn: PKI Workshop'),
         L('merkle-tree-certs', 'Learn: Merkle Tree Certificates (the web-PKI path)'),
         W('merkle-proof', 'Practice: Merkle Tree Certificates workshop'),
+        S('pki', 'Lab: enterprise PQC PKI chain (Root SLH-DSA → Int ML-DSA → Leaf)'),
         A('infra-modernization-plan', 'Draft the infrastructure modernization plan'),
       ],
     },
@@ -588,6 +607,7 @@ const FRAMEWORK = {
         L('network-security-pqc', 'Learn: Network Security & PQC'),
         R('algorithms-protocol-matrix', 'Reference: protocol PQC support'),
         W('cert-capacity', 'Practice: certificate chain / handshake size'),
+        S('ab-handshake-bench', 'Lab: A/B TLS handshake throughput (classical vs hybrid)'),
       ],
     },
     {
@@ -708,6 +728,7 @@ const FRAMEWORK = {
       output: 'Crypto-agility roadmap & skills plan',
       steps: [
         L('crypto-agility', 'Learn: Crypto-Agility as end-state'),
+        L('skills-team-structure', 'Learn: skills & team structure (roles, FTE sizing)'),
         A('skills-team-plan', 'Plan skills & team'),
       ],
     },
@@ -728,9 +749,11 @@ const FRAMEWORK = {
       title: 'Migration Verification & Program Closure',
       do: 'Apply the 5-point verification evidence standard, decommission classical material, and hand the capability to funded BAU owners.',
       output: 'Verification record & BAU handover',
+      // Cross-cutting pointer into the terminal Verification & Closure phase (VC.x)
+      // rather than re-running its artifacts here — keeps foundations' L4 band
+      // without duplicating the closure flow (the audit-checklist activity lives in VC.2).
       steps: [
-        A('audit-checklist', 'Run the verification & audit-readiness checklist'),
-        R('report', 'Assemble the evidence dossier & closure record'),
+        R('report', 'Apply the 5-point verification standard in the Verification & Closure phase'),
       ],
     },
   ],

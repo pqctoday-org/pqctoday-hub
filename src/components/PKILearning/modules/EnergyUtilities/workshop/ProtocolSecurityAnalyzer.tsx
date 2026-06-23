@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
-import { Network, Shield, ShieldAlert, ShieldCheck, ArrowRight, CheckCircle2 } from 'lucide-react'
+import { Network, Shield, ShieldAlert, ShieldCheck, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { CompleteStepAction } from '../../../common/CompleteStepAction'
 import {
   ENERGY_PROTOCOLS,
   getVulnerableLayers,
@@ -436,10 +437,7 @@ export const ProtocolSecurityAnalyzer: React.FC<ProtocolSecurityAnalyzerProps> =
 
       {/* Complete Button */}
       <div className="flex justify-end pt-2">
-        <Button variant="gradient" onClick={onComplete}>
-          <CheckCircle2 size={16} className="mr-2" />
-          Mark Step Complete
-        </Button>
+        <CompleteStepAction recordsArtifact={false} onClick={onComplete} />
       </div>
     </div>
   )

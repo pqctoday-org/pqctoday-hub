@@ -48,13 +48,19 @@ function parseTabFromHash(hash: string): MobileSection | null {
 
 // ── Hook ────────────────────────────────────────────────────────────────
 
-export function useComplianceUrlState(simEmbed = false) {
+export function useComplianceUrlState(simEmbed = false, initialTab?: string) {
   // When embedded in the sim, the compliance view must NOT read/write the page URL
   // (it would corrupt /simulation's route) and can't nest its own <Router>. So the
   // whole filter/tab URL state is backed by local state here, kept API-compatible
   // with useSearchParams. (Same pattern as MigrateView / LibraryView.)
+  // `initialTab` seeds the starting tab so a sim step can open e.g. the "For You"
+  // (scenario-scoped) tab instead of the default landscape view.
   const [realSearchParams, realSetSearchParams] = useSearchParams()
-  const [embedSearchParams, setEmbedSearchParamsState] = useState(() => new URLSearchParams())
+  const [embedSearchParams, setEmbedSearchParamsState] = useState(() => {
+    const p = new URLSearchParams()
+    if (initialTab) p.set('tab', initialTab)
+    return p
+  })
   const searchParams = simEmbed ? embedSearchParams : realSearchParams
   const setSearchParams: typeof realSetSearchParams = simEmbed
     ? (nextInit) =>

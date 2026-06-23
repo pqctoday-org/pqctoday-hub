@@ -12,7 +12,7 @@ import type { PhaseId } from '@/data/frameworkPhases'
 import type { PhaseTree } from './types'
 
 export type { PhaseTree, LevelBand, TreeActivity, TreeStep, StepKind, Pitfall } from './types'
-export { flattenTree, achievedTreeLevel } from './types'
+export { flattenTree, achievedTreeLevel, isGatingStep } from './types'
 
 const modules = import.meta.glob<{ default: PhaseTree }>('./trees/simTree.*.ts', {
   eager: true,

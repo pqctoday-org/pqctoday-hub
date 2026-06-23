@@ -12,7 +12,8 @@
  * the same flow as RiskRegisterBuilder etc.
  */
 import React, { useCallback, useMemo, useState } from 'react'
-import { Plus, Trash2, Save, Copy, Check, Network, FileType2 } from 'lucide-react'
+import { Plus, Trash2, Copy, Check, Network, FileType2 } from 'lucide-react'
+import { CompleteStepAction } from '../../../common/CompleteStepAction'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
@@ -216,6 +217,7 @@ export const CryptoArchitectureDiagram: React.FC = () => {
   )
   const [seededFromAssessment, setSeededFromAssessment] = useState<boolean>(hasAssessmentSeed)
   const [savedAt, setSavedAt] = useState<number | null>(null)
+  const [lastSavedMarkdown, setLastSavedMarkdown] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
   const markdown = useMemo(() => buildMarkdown(components), [components])
@@ -242,7 +244,11 @@ export const CryptoArchitectureDiagram: React.FC = () => {
       moduleId: 'crypto-mgmt-modernization',
     })
     setSavedAt(Date.now())
+    setLastSavedMarkdown(markdown)
   }, [markdown, addExecutiveDocument])
+
+  const editedSinceSave =
+    savedAt !== null && lastSavedMarkdown !== null && markdown !== lastSavedMarkdown
 
   const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(markdown)
@@ -390,10 +396,12 @@ export const CryptoArchitectureDiagram: React.FC = () => {
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <Button variant="gradient" onClick={handleSave}>
-          <Save size={14} className="mr-1.5" />
-          Save to Command Center
-        </Button>
+        <CompleteStepAction
+          recordsArtifact
+          saved={savedAt !== null}
+          editedSinceSave={editedSinceSave}
+          onClick={handleSave}
+        />
         <Button variant="outline" onClick={handleCopy}>
           {copied ? (
             <>
@@ -411,11 +419,6 @@ export const CryptoArchitectureDiagram: React.FC = () => {
           <FileType2 size={14} className="mr-1.5" />
           Download PDF
         </Button>
-        {savedAt && (
-          <span className="text-xs text-muted-foreground">
-            Last saved {new Date(savedAt).toLocaleTimeString()}
-          </span>
-        )}
       </div>
     </div>
   )

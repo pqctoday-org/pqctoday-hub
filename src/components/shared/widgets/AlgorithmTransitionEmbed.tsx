@@ -15,14 +15,13 @@
  * into the sim's activity/maturity path.
  */
 import { useMemo } from 'react'
-import { Check } from 'lucide-react'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { getAlgorithmDefaults } from '@/data/personaConfig'
 import { useAlgorithmExplorer, MAX_COMPARE } from '@/components/Algorithms/useAlgorithmExplorer'
 import { AlgorithmComparison } from '@/components/Algorithms/AlgorithmComparison'
 import { AlgorithmCompareBar } from '@/components/Algorithms/AlgorithmCompareBar'
 import { AlgorithmComparisonPanel } from '@/components/Algorithms/AlgorithmComparisonPanel'
-import { Button } from '@/components/ui/button'
+import { CompleteStepAction } from '../../PKILearning/common/CompleteStepAction'
 
 interface AlgorithmTransitionEmbedProps {
   /** Confirm the reviewed PQC replacements (the selected algorithm names) — the
@@ -45,18 +44,16 @@ export function AlgorithmTransitionEmbed({ onConfirm, confirmed }: AlgorithmTran
       {onConfirm && (
         <div className="mb-3 flex flex-col gap-2 rounded-lg border border-primary/30 bg-primary/5 p-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-muted-foreground">
-            Review the PQC replacements for your classical algorithms, select the ones you&rsquo;ll
-            adopt, then confirm to record your replacement plan (a CBOM) for this phase.
+            Review the PQC replacements for your classical algorithms. To select one, tick the
+            checkbox at the start of its row, then Save to record your replacement plan (a CBOM) for
+            this phase.
           </p>
-          <Button
-            type="button"
-            variant={confirmed ? 'outline' : 'gradient'}
+          <CompleteStepAction
+            recordsArtifact
+            saved={!!confirmed}
             onClick={() => onConfirm(x.compareKeys)}
-            className="flex shrink-0 items-center gap-1.5"
-          >
-            <Check size={15} />
-            {confirmed ? 'Replacements confirmed' : 'Confirm my PQC replacements'}
-          </Button>
+            className="shrink-0"
+          />
         </div>
       )}
       <AlgorithmComparison
