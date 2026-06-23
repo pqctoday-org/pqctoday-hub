@@ -296,6 +296,8 @@ export function SimulationView() {
     setGuided,
     runCompleteSeen,
     markRunComplete,
+    recordObjectiveAchieved,
+    objectiveAchievedYears,
   } = useSimulationStore()
   // WS-14: the active difficulty balance the engine + scoring read (config swap).
   const balance = getBalance(difficulty)
@@ -768,6 +770,16 @@ export function SimulationView() {
     }, 0)
     return () => clearTimeout(id)
   }, [cleared, runCompleteSeen, markRunComplete])
+
+  // Record the program year each objective is FIRST achieved, for the ceremony's on-time
+  // badges (idempotent — recordObjectiveAchieved ignores an id already set).
+  const objDoneKey = txStatus.objectives.map((o) => `${o.id}:${o.done ? 1 : 0}`).join('|')
+  useEffect(() => {
+    for (const o of txStatus.objectives) {
+      if (o.done && objectiveAchievedYears[o.id] == null) recordObjectiveAchieved(o.id, year)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [objDoneKey, year])
 
   // ---- date-driven quantum threat (HNDL + TNFL), evolving 2026 → 2029 → 2035 ----
   const sizeKey = size as OrgSize
@@ -2548,6 +2560,8 @@ export function SimulationView() {
             label: o.label,
             byYear: o.byYear,
             done: o.done,
+
+            achievedYear: objectiveAchievedYears[o.id],
           }))}
           maturity={txStatus.maturity}
           programEndYear={getScenario(country).programEndYear}
