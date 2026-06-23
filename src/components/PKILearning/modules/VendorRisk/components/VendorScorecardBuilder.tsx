@@ -220,6 +220,10 @@ export const VendorScorecardBuilder: React.FC = () => {
   // Auto-initialize checked products when selectedItems change
   useEffect(() => {
     if (selectedItems.length === 0) return
+    // Guarded derived-state sync: this effect re-runs only when selectedItems/myProducts
+    // change (not on every render) and uses functional updaters, so the cascading-render
+    // this rule guards against cannot occur here. Scoped to the two initialization setstates.
+    /* eslint-disable react-hooks/set-state-in-effect */
     setCheckedProducts((prev) => {
       const next = { ...prev }
       for (const d of DIMENSIONS) {
@@ -247,6 +251,7 @@ export const VendorScorecardBuilder: React.FC = () => {
       }
       return next
     })
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [selectedItems, myProducts])
 
   // Compute score for a dimension
