@@ -240,7 +240,13 @@ function ForYouSection({ onExportCsv }: { onExportCsv?: () => void }) {
 
 // ── Main view ──────────────────────────────────────────────────────────
 
-export const ComplianceView = ({ simEmbed = false }: { simEmbed?: boolean }) => {
+export const ComplianceView = ({
+  simEmbed = false,
+  initialTab,
+}: {
+  simEmbed?: boolean
+  initialTab?: string
+}) => {
   // simEmbed: rendered headless inside the simulation — PageHeader + the URL-writing
   // tier filters are hidden, and the URL-synced filter/tab state (useComplianceUrlState)
   // is backed by local state so it never corrupts /simulation's route.
@@ -406,7 +412,7 @@ export const ComplianceView = ({ simEmbed = false }: { simEmbed?: boolean }) => 
     handleRecSortColChange,
     handleRecSortDirChange,
     handleRecPageChange,
-  } = useComplianceUrlState(simEmbed)
+  } = useComplianceUrlState(simEmbed, initialTab)
 
   // Active pillar — derived from the landscape tab, kept in local state so the
   // pipeline can drive it independently.
