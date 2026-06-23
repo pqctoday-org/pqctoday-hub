@@ -744,14 +744,20 @@ export function SimulationView() {
   const p5Frac = p5Flat.length ? p5Flat.filter((s) => stepDone(s, 'p5')).length / p5Flat.length : 0
   const readiness = computeReadiness(size, p5Frac)
   const cleared = LIFECYCLE.filter((p) => levelOf(p) >= PHASE_WIN_LEVEL).length
+  // The run is COMPLETE only when every phase reaches its own top band (full maturity) — not
+  // merely the L2 win bar. In the breadth-first climb, all-cleared-to-L2 happens at pass 2, so
+  // the run-end ceremony must wait for the top-band pass (pass 4 ≈ 2035), not fire at pass 2.
+  const fullyMature = LIFECYCLE.every((p) => levelOf(p) >= topBandOf(p))
   // Transformation status — the board headline (3 objectives + 4 tracks + dynamic HNDL
   // exposure), scenario-driven. Replaces the static, unwinnable Mosca "over by N years" gauge.
   const txStatus = transformationStatus({
     scenario: getScenario(country),
-    programMaturity: Math.min(MAX_LEVEL, maturity.overall),
+    // Continuous (avg normalized fraction × MAX) so the headline climbs SMOOTHLY rather than
+    // sitting frozen at the weakest-domain integer until the slowest phase crosses a level.
+    programMaturity: maturityFrac * MAX_LEVEL,
     p0Level: levelOf('p0'),
     migrationFraction: p5Frac,
-    allAtTopBand: LIFECYCLE.every((p) => levelOf(p) >= topBandOf(p)),
+    allAtTopBand: fullyMature,
     currentYear: year,
   })
 
@@ -763,13 +769,13 @@ export function SimulationView() {
   // Guided mode (the novice walkthrough), independent of the one-time tourSeen flag.
   const [tourOpen, setTourOpen] = useState(false)
   useEffect(() => {
-    if (cleared < LIFECYCLE.length || runCompleteSeen) return
+    if (!fullyMature || runCompleteSeen) return
     const id = setTimeout(() => {
       setRunCompleteOpen(true)
       markRunComplete()
     }, 0)
     return () => clearTimeout(id)
-  }, [cleared, runCompleteSeen, markRunComplete])
+  }, [fullyMature, runCompleteSeen, markRunComplete])
 
   // Record the program year each objective is FIRST achieved, for the ceremony's on-time
   // badges (idempotent — recordObjectiveAchieved ignores an id already set).

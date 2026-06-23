@@ -19,7 +19,7 @@ import { getScenario, type SimScenario } from './scenarioConfig'
 import { seedDemoOrg } from './seedDemoOrg'
 import { setAutoRunFill } from './autoRunFill'
 
-export type AutoRunSpeed = 'slow' | 'normal' | 'fast'
+export type AutoRunSpeed = 'slow' | 'normal' | 'fast' | 'turbo'
 
 export interface SimAutoRunPlayer {
   running: boolean
@@ -269,7 +269,7 @@ function speakSequence(chunks: string[]): void {
 
 /** Time to LOOK at the step's output on the board after it completes. */
 function lookMs(speed: AutoRunSpeed): number {
-  return speed === 'slow' ? 4500 : speed === 'fast' ? 1800 : 3200
+  return speed === 'turbo' ? 600 : speed === 'slow' ? 4500 : speed === 'fast' ? 1800 : 3200
 }
 
 function phaseLabel(phase: PhaseId): string {
@@ -286,7 +286,7 @@ function narrationFor(item: AutoRunQueueItem): string {
 function scrollDurationMs(overflowPx: number, speed: AutoRunSpeed): number {
   // Constant SPEED (px per ms): longer content takes proportionally longer to scroll
   // (it does NOT scroll faster). The cap is only a generous safety bound.
-  const pxPerMs = speed === 'slow' ? 0.08 : speed === 'fast' ? 0.26 : 0.13
+  const pxPerMs = speed === 'turbo' ? 1 : speed === 'slow' ? 0.08 : speed === 'fast' ? 0.26 : 0.13
   return Math.max(2000, Math.min(45000, overflowPx / pxPerMs))
 }
 
@@ -314,7 +314,8 @@ function slowScrollEmbed(opts: {
   onDone: () => void
 }): void {
   const { speed, isCancelled, onDone } = opts
-  const noScrollDwell = speed === 'slow' ? 4500 : speed === 'fast' ? 1800 : 3000
+  const noScrollDwell =
+    speed === 'turbo' ? 400 : speed === 'slow' ? 4500 : speed === 'fast' ? 1800 : 3000
   const finish = () => {
     if (!isCancelled()) onDone()
   }
@@ -343,6 +344,11 @@ function slowScrollEmbed(opts: {
   }
   const from = scroller.scrollTop
   const distance = maxOverflow - from
+  if (speed === 'turbo') {
+    scroller.scrollTop = maxOverflow // jump to the bottom so the output is seen, then advance
+    window.setTimeout(finish, noScrollDwell)
+    return
+  }
   const duration = scrollDurationMs(distance, speed)
   const startedAt = window.performance.now()
   const tick = (now: number) => {
@@ -477,7 +483,10 @@ export function useSimAutoRunPlayer({
     setPaused(false)
   }, [clearTimer])
   const cycleSpeed = useCallback(
-    () => setSpeed((s) => (s === 'normal' ? 'fast' : s === 'fast' ? 'slow' : 'normal')),
+    () =>
+      setSpeed((s) =>
+        s === 'normal' ? 'fast' : s === 'fast' ? 'turbo' : s === 'turbo' ? 'slow' : 'normal'
+      ),
     []
   )
   const toggleVoice = useCallback(() => {
