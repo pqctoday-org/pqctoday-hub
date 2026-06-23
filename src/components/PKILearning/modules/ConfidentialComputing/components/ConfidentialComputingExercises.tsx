@@ -35,11 +35,11 @@ export const ConfidentialComputingExercises: React.FC<ExercisesProps> = ({
       title:
         '1. TEE Architecture Selection — Choose the right TEE for ML model inference at a bank',
       description:
-        'In the TEE Architecture Explorer, compare Intel SGX (process-level isolation, 256 MB EPC) against AMD SEV-SNP (full VM encryption) for protecting ML model inference with customer data. Consider TCB size, memory limits, cloud availability, and PQC readiness.',
+        'In the TEE Architecture Explorer, compare Intel SGX (process-level isolation; ~256 MB EPC on legacy client parts, hundreds of GB on recent Xeon) against AMD SEV-SNP (full VM encryption) for protecting ML model inference with customer data. Consider TCB size, memory limits, cloud availability, and PQC readiness.',
       badge: 'Architecture',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'SGX has a smaller TCB (CPU + enclave only) but is limited to 256 MB EPC — too small for large ML models without partitioning. SEV-SNP encrypts the full VM including guest OS, which results in a larger TCB. Both are available on Azure and have distinct PQC attestation roadmaps.',
+        'SGX has a smaller TCB (CPU + enclave only); legacy client SGX was capped at ~256 MB EPC (too small for large ML models without partitioning), though recent Xeon server parts raise this to hundreds of GB. SEV-SNP encrypts the full VM including guest OS, which results in a larger TCB. Both are available on Azure and have distinct PQC attestation roadmaps.',
       config: { step: 0 },
     },
     {
@@ -61,7 +61,7 @@ export const ConfidentialComputingExercises: React.FC<ExercisesProps> = ({
       badge: 'Encryption',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'AES-128 effective security drops to 64-bit under Grover — below the NIST Level 1 threshold (128-bit post-quantum). ARM TrustZone and AWS Nitro use AES-256, which remains at 128-bit post-quantum security. Upgrade path: AES-XTS-256 in next-gen Intel/AMD CPUs.',
+        'The Grover calculator shows AES-128 brute-force search dropping from 2^128 to ~2^64 operations — the theoretical quadratic speedup. In practice that speedup is far less useful (Grover has enormous circuit depth and barely parallelizes), which is why NIST still rates AES-128 at security category 1. AES-256, used by ARM TrustZone and AWS Nitro, keeps a large margin and is the recommended choice for long-term (HNDL) confidentiality. Upgrade path: AES-XTS-256 in next-gen Intel/AMD CPUs.',
       config: { step: 2 },
     },
     {
@@ -94,7 +94,7 @@ export const ConfidentialComputingExercises: React.FC<ExercisesProps> = ({
       badge: 'Assessment',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Nitro attestation uses ECDSA P-384 (quantum-vulnerable). CloudHSM has ML-DSA preview via SDK only — no native PKCS#11 PQC support. AES-256 memory encryption is Grover-resilient. Patient records have long retention (HIPAA: 6+ years) making HNDL exposure critical. Overall: 3 of 5 layers need PQC migration, with attestation and TLS channel as highest priority.',
+        'Nitro attestation uses ECDSA P-384 (quantum-vulnerable). As of mid-2026, AWS CloudHSM exposes PQC mainly through SDK/preview paths rather than native PKCS#11 — confirm current support in AWS documentation. AES-256 memory encryption is Grover-resilient. Patient records have long retention (HIPAA: 6+ years) making HNDL exposure critical. Overall: 3 of 5 layers need PQC migration, with attestation and TLS channel as highest priority.',
       config: { step: 4 },
     },
   ]

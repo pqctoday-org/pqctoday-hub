@@ -11,9 +11,9 @@ const EXERCISES = [
     id: 'ex-1',
     title: 'Scenario: Financial Institution Migration',
     prompt:
-      'Your bank has 500+ applications using RSA-2048 and must comply with CNSA 2.0 by 2030. The CISO wants a 3-year migration roadmap. Build a phased roadmap with milestones, identify the top 5 stakeholders and their concerns, and define 4 KPIs to track progress. Consider regulatory deadlines from NIST, NSA, and your primary regulator.',
+      'Your bank has 500+ applications using RSA-2048 and must plan for the draft 2030 NIST deprecation of RSA/ECC (NIST IR 8547), alongside PQC expectations from its financial regulators. The CISO wants a 3-year migration roadmap. Build a phased roadmap with milestones, identify the top 5 stakeholders and their concerns, and define 4 KPIs to track progress. Consider regulatory drivers from NIST and your primary financial regulator (CNSA 2.0 applies to national security systems, not commercial banks).',
     workshopHint:
-      'Use the Roadmap Builder (Step 1) to lay out phases against the CNSA 2.0 2030 deadline. Map stakeholders in the Stakeholder Comms Planner (Step 2). Define weighted KPIs in the KPI Tracker (Step 3). Review the Deployment Playbook (Step 4) for execution checklists.',
+      'Use the Roadmap Builder (Step 1) to lay out phases against the 2030 NIST deprecation timeline. Map stakeholders in the Stakeholder Comms Planner (Step 2). Define weighted KPIs in the KPI Tracker (Step 3). Review the Deployment Playbook (Step 4) for execution checklists.',
   },
   {
     id: 'ex-2',

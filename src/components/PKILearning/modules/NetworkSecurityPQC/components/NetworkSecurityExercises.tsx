@@ -51,7 +51,7 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       badge: 'TLS Inspection',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Hybrid ECDSA+ML-DSA-65 chains (8.5KB) exceed the 4KB buffer limit on most 2025 NGFW firmware, causing silent inspection bypass. Full inspection latency jumps from 9ms (ECDSA) to 28ms (hybrid) — a 3x increase critical for real-time applications. Pass-through mode adds zero latency but loses Layer 7 visibility.',
+        'Hybrid ECDSA+ML-DSA-65 chains (~8.5KB) can exceed the small certificate buffers in many current NGFW firmware builds, causing silent inspection bypass. The simulator projects full-inspection latency rising several-fold (roughly 9ms to 28ms in this model) — significant for real-time applications. Pass-through mode adds zero latency but loses Layer 7 visibility.',
       config: { step: 1 },
     },
     {
@@ -73,7 +73,7 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       badge: 'Vendor Matrix',
       badgeColor: 'bg-destructive/20 text-status-error border-destructive/50',
       observe:
-        'Only Palo Alto (PAN-OS 11.x) supports partial PQC TLS inspection in 2026. Cisco and Fortinet are in beta with full inspection planned for late 2026. Check Point, Sophos, and SonicWall are on 2027 roadmaps. Open-source pfSense/OPNsense already supports hybrid ML-KEM via OpenSSL 3.x but lacks TLS inspection capability.',
+        'Vendor support varies widely and moves fast: as of mid-2026 Palo Alto (PAN-OS 11.x) leads with partial PQC TLS inspection, while Cisco and Fortinet are earlier-stage and several others are on later roadmaps. Open-source pfSense/OPNsense already supports hybrid ML-KEM via OpenSSL 3.x but lacks TLS inspection. Use the Vendor Matrix for current per-vendor status rather than relying on fixed dates.',
       config: { step: 3 },
     },
     {

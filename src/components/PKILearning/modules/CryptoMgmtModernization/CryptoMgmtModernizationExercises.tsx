@@ -93,8 +93,8 @@ const EXERCISES = [
     badge: 'Mitigate/Migrate',
     badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
     scenario:
-      'A 15-year-old PKI system issues SHA-1 certificates. The original development team is gone, the source code is partially unavailable, and the system cannot be taken offline. CSWP.39 §4.6 describes a "crypto gateway" option. Walk through the decision: gateway now + sunset plan, or emergency migration?',
-    hint: 'CSWP.39 §4.6: use a bump-in-the-wire when direct modification is infeasible. Key questions: Is there a scheduled replacement? Can the gateway itself be made agile? The gateway buys time — it is not a permanent solution. Model the sunset date in the ROI Builder. See the Visual tab for the Mitigation vs. Migration zones in the CSWP.39 process diagram.',
+      'A 15-year-old PKI system issues SHA-1 certificates. The original development team is gone, the source code is partially unavailable, and the system cannot be taken offline. CSWP.39 describes a "crypto gateway" option (a bump-in-the-wire). Walk through the decision: gateway now + sunset plan, or emergency migration?',
+    hint: 'CSWP.39: use a bump-in-the-wire (crypto gateway) when direct modification is infeasible. Key questions: Is there a scheduled replacement? Can the gateway itself be made agile? The gateway buys time — it is not a permanent solution. Model the sunset date in the ROI Builder. See the Visual tab for the Mitigation vs. Migration zones in the CSWP.39 process diagram.',
     step: 3,
   },
 ]

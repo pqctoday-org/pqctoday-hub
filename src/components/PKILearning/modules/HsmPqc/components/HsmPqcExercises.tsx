@@ -73,7 +73,7 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       badge: 'Deployment',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'No cloud HSM currently supports native PKCS#11 ML-KEM encapsulation in firmware. AWS CloudHSM offers ML-DSA preview via SDK only. For ML-KEM key exchange, an on-prem HSM (Thales, Entrust, Utimaco, or Crypto4A) is required today. Azure Dedicated HSM uses the same Thales Luna 7 hardware and gains full PQC once firmware is upgraded via Azure Support.',
+        'As of mid-2026, no cloud HSM supports native PKCS#11 ML-KEM encapsulation in firmware. AWS CloudHSM offers ML-DSA preview via SDK only. For ML-KEM key exchange, an on-prem HSM (Thales, Entrust, Utimaco, or Crypto4A) is required today. Azure Dedicated HSM uses the same Thales Luna 7 hardware and gains full PQC once firmware is upgraded via Azure Support.',
       config: { step: 1 },
     },
     {
@@ -84,7 +84,7 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       badge: 'Migration',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'With Thales Luna 7 (low complexity, 30-60 min/HSM), a rolling upgrade of 10 HSMs takes approximately 5-10 hours. The dual-partition strategy allows classical operations to continue during migration. No FIPS recertification is needed since existing FIPS 140-3 covers PQC firmware.',
+        'With Thales Luna 7 (low complexity, 30-60 min/HSM), a rolling upgrade of 10 HSMs takes approximately 5-10 hours. The dual-partition strategy allows classical operations to continue during migration. Note that adding PQC algorithms in new firmware generally requires fresh ACVP algorithm validations and a FIPS 140-3 module re-validation — the existing certificate does not automatically cover the new firmware, so budget for the CMVP timeline.',
       config: { step: 2 },
     },
     {
@@ -95,7 +95,7 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       badge: 'FIPS',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'LMS has the most ACVP validations across vendors (Thales, Entrust, Utimaco, AWS). Full FIPS 140-3 module-level PQC validation is still limited to Thales Luna 7. Entrust nShield 5 has submitted for FIPS 140-3 but is pending. Algorithm-level ACVP validation is a prerequisite for module-level FIPS 140-3.',
+        'LMS has the most ACVP validations across vendors (Thales, Entrust, Utimaco, AWS). As of mid-2026, full FIPS 140-3 module-level PQC validation is limited to Thales Luna 7 (check the FIPS Validation Tracker for current status). Entrust nShield 5 has submitted for FIPS 140-3 but is pending. Algorithm-level ACVP validation is a prerequisite for module-level FIPS 140-3.',
       config: { step: 3 },
     },
   ]

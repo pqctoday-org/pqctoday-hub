@@ -49,7 +49,7 @@ export const OSPQCExercises: React.FC<OSPQCExercisesProps> = ({
       badge: 'TLS',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'RHEL requires update-crypto-policies --set FUTURE (experimental, disables TLS 1.2). Ubuntu only needs a Groups= line in openssl.cnf — no TLS 1.2 disruption. Windows Server 2025 already has X25519MLKEM768 enabled by default via KB5036893 — zero configuration needed.',
+        'RHEL requires update-crypto-policies --set FUTURE (experimental, disables TLS 1.2). Ubuntu only needs a Groups= line in openssl.cnf — no TLS 1.2 disruption. Windows Server 2025 has begun shipping X25519MLKEM768 support through its 2025-2026 servicing updates (verify the exact build/KB and whether it is on by default in your image).',
       config: { step: 1 },
     },
     {
@@ -60,7 +60,7 @@ export const OSPQCExercises: React.FC<OSPQCExercisesProps> = ({
       badge: 'SSH',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'ML-DSA-65 host keys are 1,952 bytes public / 3,309 bytes signature — vs Ed25519 at 32 bytes / 64 bytes. As of March 2026, no production SSH client supports ssh-mldsa65 — all clients fall back to Ed25519. ML-KEM hybrid key exchange (sntrup761x25519) is already available in OpenSSH 8.5+ stable for session encryption.',
+        'ML-DSA-65 host keys are 1,952 bytes public / 3,309 bytes signature — vs Ed25519 at 32 bytes / 64 bytes. As of mid-2026, ML-DSA SSH host keys are not yet standardized in mainstream OpenSSH, so clients fall back to Ed25519 host keys. For session encryption a hybrid key exchange has been available longer: sntrup761x25519 (Streamlined NTRU Prime + X25519) since OpenSSH 8.5, and the ML-KEM-based mlkem768x25519-sha256 since OpenSSH 9.9 (the default since OpenSSH 10.0).',
       config: { step: 2 },
     },
     {
@@ -82,7 +82,7 @@ export const OSPQCExercises: React.FC<OSPQCExercisesProps> = ({
       badge: 'FIPS',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'Windows Server 2025 (SymCrypt 103.4.0) is the only platform with ML-KEM in a FIPS 140-3 validated module today. RHEL 9 FIPS mode blocks ML-KEM. The recommended approach: keep FIPS for regulated workloads, use dual-provider config for new PQC services, then consolidate when RHEL 10/Ubuntu 26.04 FIPS PQC modules are certified.',
+        'As of mid-2026, FIPS 140-3 validated ML-KEM in an OS module is still rare (Windows Server 2025 / SymCrypt is among the first). On RHEL, FIPS mode exposes only the FIPS-curve ML-KEM hybrids (e.g. SecP256r1MLKEM768, added in RHEL 9.7) — standalone PQC is not yet in the validated FIPS provider, so it remains a FIPS-vs-PQC trade-off. Verify each platform against current CMVP listings. The recommended approach: keep FIPS for regulated workloads, use dual-provider config for new PQC services, then consolidate when RHEL 10/Ubuntu 26.04 FIPS PQC modules are certified.',
       config: { step: 4 },
     },
   ]
