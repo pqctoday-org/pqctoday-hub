@@ -48,6 +48,7 @@ function libraryQueryForStep(title: string): string | undefined {
 }
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
 import { LibraryEmbed } from '@/components/shared/widgets/LibraryEmbed'
+import { ComplianceEmbed } from '@/components/shared/widgets/ComplianceEmbed'
 import { CompleteStepAction } from '../PKILearning/common/CompleteStepAction'
 import { parseTimelineScope } from '@/data/timelineScope'
 import { MigrateWorkbenchEmbed } from '@/components/shared/widgets/MigrateWorkbenchEmbed'
@@ -1555,6 +1556,10 @@ export function SimulationView() {
                 >
                   {referenceEmbed?.refId === 'library' ? (
                     <LibraryEmbed query={libraryQueryForStep(referenceEmbed.title)} />
+                  ) : referenceEmbed?.refId === 'compliance' ? (
+                    <ComplianceEmbed initialTab="foryou" />
+                  ) : referenceEmbed?.refId === 'compliance-cert-check' ? (
+                    <ComplianceEmbed initialTab="records" />
                   ) : (
                     <ReferenceComp />
                   )}
