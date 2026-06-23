@@ -35,7 +35,7 @@ import { SIM_ALGORITHM_TABS } from './algorithmTabs'
 import { SIM_REFERENCE_EMBEDS } from './referenceEmbeds'
 import { useSimAutoRunPlayer } from './autorun/useSimAutoRunPlayer'
 import { SimAutoRunOverlay } from './autorun/SimAutoRunOverlay'
-import { SimPhaseIntroModal } from './autorun/SimPhaseIntroModal'
+import { SimPassIntroModal } from './autorun/SimPassIntroModal'
 
 /** Per-step Library scope: the search term to open the embedded library on, derived
  *  from the reference step's title, so each library step shows its topic (CycloneDX,
@@ -1152,11 +1152,8 @@ export function SimulationView() {
             ▶ PLAY 0–7
           </Button>
           <SimAutoRunOverlay player={autoRunPlayer} />
-          {autoRunPlayer.phaseIntro && (
-            <SimPhaseIntroModal
-              phase={autoRunPlayer.phaseIntro}
-              onBegin={autoRunPlayer.beginPhase}
-            />
+          {autoRunPlayer.passIntro && (
+            <SimPassIntroModal pass={autoRunPlayer.passIntro} onBegin={autoRunPlayer.beginPass} />
           )}
           <Button
             type="button"

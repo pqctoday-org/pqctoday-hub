@@ -30,8 +30,8 @@ export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
       </div>
       <div className="flex flex-wrap items-center justify-center gap-2">
         {!player.done && (
-          <Button type="button" variant="ghost" onClick={player.prevPhase} className={btn}>
-            ⏮ Prev phase
+          <Button type="button" variant="ghost" onClick={player.prevPass} className={btn}>
+            ⏮ Prev pass
           </Button>
         )}
         {player.running && !player.paused && (
@@ -45,8 +45,8 @@ export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
           </Button>
         )}
         {!player.done && (
-          <Button type="button" variant="ghost" onClick={player.nextPhase} className={btn}>
-            Next phase ⏭
+          <Button type="button" variant="ghost" onClick={player.nextPass} className={btn}>
+            Next pass ⏭
           </Button>
         )}
         {!player.done && (
