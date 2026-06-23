@@ -17,6 +17,7 @@ import type { TreeStep } from '@/simulation'
 import { autoRunQueue, completeStepGenuine, type AutoRunQueueItem } from './simAutoRun'
 import { FRAMEWORK_PHASE_INTROS } from '@/data/frameworkPhaseIntros.generated'
 import { seedDemoOrg } from './seedDemoOrg'
+import { setAutoRunFill } from './autoRunFill'
 
 export type AutoRunSpeed = 'slow' | 'normal' | 'fast'
 
@@ -380,6 +381,7 @@ export function useSimAutoRunPlayer({
   const start = useCallback(() => {
     clearTimer()
     seedDemoOrg() // populate the scenario context so embeds have data + a scope to filter by
+    setAutoRunFill(true) // tools opened during the run fill their forms with demo content
     const q = autoRunQueue()
     queueRef.current = q
     const starts: { phase: PhaseId; start: number }[] = []
@@ -406,6 +408,7 @@ export function useSimAutoRunPlayer({
   const stop = useCallback(() => {
     clearTimer()
     stopSpeech()
+    setAutoRunFill(false)
     setRunning(false)
     setPaused(false)
   }, [clearTimer])
@@ -528,6 +531,7 @@ export function useSimAutoRunPlayer({
         after(lookMs(speed), () => {
           if (next >= q.length) {
             setCaption('Migration complete — every phase cleared.')
+            setAutoRunFill(false)
             setRunning(false)
             setDone(true)
           } else {
