@@ -36,6 +36,9 @@ import { SIM_REFERENCE_EMBEDS } from './referenceEmbeds'
 import { useSimAutoRunPlayer } from './autorun/useSimAutoRunPlayer'
 import { SimAutoRunOverlay } from './autorun/SimAutoRunOverlay'
 import { SimPassIntroModal } from './autorun/SimPassIntroModal'
+import { getScenario } from './autorun/scenarioConfig'
+import { transformationStatus } from './autorun/transformationStatus'
+import { TransformationStatusPanel } from './autorun/TransformationStatusPanel'
 
 /** Per-step Library scope: the search term to open the embedded library on, derived
  *  from the reference step's title, so each library step shows its topic (CycloneDX,
@@ -93,7 +96,7 @@ import { computeReadiness } from '@/simulation/readiness'
 import { runQuarter } from '@/simulation/quarterEngine'
 import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
 import { getBalance, type DifficultyId } from '@/data/simBalance'
-import { Eyebrow, Ring, Radial, Dial, ReadonlyDial, Stat, PlanningBadge } from './atoms'
+import { Eyebrow, Ring, Dial, ReadonlyDial, Stat, PlanningBadge } from './atoms'
 import { SimTour } from './SimTour'
 import { KIND_CHIP, markSimResume, markSimExited, clearSimExcursion } from './simChrome'
 import { canResolveDeepLink } from '@/simulation/deepLinks'
@@ -729,7 +732,6 @@ export function SimulationView() {
     horizonYear,
     currentYear,
   })
-  const safeYears = clock.x + clock.y
 
   // KPIs
   // WS-04: readiness is driven by the fraction of P5 activities completed (per-edge,
@@ -740,6 +742,16 @@ export function SimulationView() {
   const p5Frac = p5Flat.length ? p5Flat.filter((s) => stepDone(s, 'p5')).length / p5Flat.length : 0
   const readiness = computeReadiness(size, p5Frac)
   const cleared = LIFECYCLE.filter((p) => levelOf(p) >= PHASE_WIN_LEVEL).length
+  // Transformation status — the board headline (3 objectives + 4 tracks + dynamic HNDL
+  // exposure), scenario-driven. Replaces the static, unwinnable Mosca "over by N years" gauge.
+  const txStatus = transformationStatus({
+    scenario: getScenario(country),
+    programMaturity: Math.min(MAX_LEVEL, maturity.overall),
+    p0Level: levelOf('p0'),
+    migrationFraction: p5Frac,
+    allAtTopBand: LIFECYCLE.every((p) => levelOf(p) >= topBandOf(p)),
+    currentYear: year,
+  })
 
   // W2b: run-end ceremony — fire once when every lifecycle phase is cleared. The
   // store flag (run-slice, cleared by RESET) keeps it from re-firing on reload and
@@ -1231,46 +1243,7 @@ export function SimulationView() {
 
       {/* KPI ribbon */}
       <div className="flex shrink-0 flex-wrap items-stretch gap-3 border-b border-border bg-card px-4 py-3">
-        <div className="flex shrink-0 items-center gap-3 rounded-xl border border-border bg-card px-4 py-2">
-          <Radial yearsToHorizon={clock.yearsToHorizon} safeYears={safeYears} />
-          <div>
-            <Eyebrow className="text-destructive">Mosca · X+Y &gt; Z</Eyebrow>
-            <div className="mt-1 whitespace-nowrap font-mono text-[11px] font-bold text-foreground">
-              X {clock.x}y + Y {clock.y}y = <b>{safeYears}y</b>
-            </div>
-            <div className="mt-0.5 flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
-              <span className="whitespace-nowrap">
-                {clock.yearsToHorizon}y to Q-Day {clock.horizonYear}
-              </span>
-              <PlanningBadge
-                label="planning"
-                tip="Q-Day (pinned to 2029, at or below the public 2030–2040 CRQC range) and government PQC deadlines are illustrative planning anchors — not published standards. Re-check the live source."
-              />
-            </div>
-            <div className="mt-1.5">
-              {clock.atRisk ? (
-                <span className="rounded-full bg-destructive/15 px-2 py-0.5 font-mono text-sim-chip font-bold text-destructive">
-                  ⚠ OVER BY {clock.over}Y
-                </span>
-              ) : (
-                <span className="rounded-full bg-success/15 px-2 py-0.5 font-mono text-sim-chip font-bold text-success">
-                  ✓ ON TRACK
-                </span>
-              )}
-            </div>
-            {guided && (
-              <div
-                className="mt-1.5 max-w-[230px] text-[11px] leading-snug text-muted-foreground"
-                data-testid="mosca-guided-caption"
-              >
-                <span className="font-bold text-foreground">X</span> = how long this data must stay
-                secret · <span className="font-bold text-foreground">Y</span> = how long migration
-                takes · <span className="font-bold text-foreground">Z</span> = your deadline (Q-Day,
-                or your country&rsquo;s, whichever is sooner).
-              </div>
-            )}
-          </div>
-        </div>
+        <TransformationStatusPanel status={txStatus} />
         <Stat
           label="Phases cleared"
           value={`${cleared}/${LIFECYCLE.length}`}

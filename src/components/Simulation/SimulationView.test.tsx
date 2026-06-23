@@ -82,7 +82,7 @@ describe('SimulationView (Mission Control)', () => {
     expect(org.closest('button')).toBeNull()
     // SEAT stays switchable — it keeps the ⟳ glyph on a button.
     expect(screen.getByText('SEAT ⟳')).toBeInTheDocument()
-    expect(screen.getByText(/Mosca/)).toBeInTheDocument()
+    expect(screen.getByText(/Transformation/)).toBeInTheDocument()
     expect(screen.getByText('Phases cleared')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /End Quarter/ })).toBeInTheDocument()
     // exit affordance back to the hub
@@ -227,8 +227,8 @@ describe('SimulationView (Mission Control)', () => {
   // decision options, so a screen reader doesn't hit unlabeled controls.
   it('gives the gauges, dials and decision options accessible names', () => {
     renderPage()
-    // the Mosca gauge is a labelled image, not a bare SVG
-    expect(screen.getByRole('img', { name: /years to Q-Day/i })).toBeInTheDocument()
+    // the maturity gauges are labelled images, not bare SVGs
+    expect(screen.getAllByRole('img', { name: /Maturity level/i }).length).toBeGreaterThan(0)
     // a setup dial announces its value + that it is actionable
     expect(screen.getByRole('button', { name: /seat:.*activate to change/i })).toBeInTheDocument()
     // the first decision option is named
