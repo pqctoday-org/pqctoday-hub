@@ -33,6 +33,8 @@ import {
 } from './embedContract'
 import { SIM_ALGORITHM_TABS } from './algorithmTabs'
 import { SIM_REFERENCE_EMBEDS } from './referenceEmbeds'
+import { useSimAutoRunPlayer } from './autorun/useSimAutoRunPlayer'
+import { SimAutoRunOverlay } from './autorun/SimAutoRunOverlay'
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
 import { CompleteStepAction } from '../PKILearning/common/CompleteStepAction'
 import { parseTimelineScope } from '@/data/timelineScope'
@@ -399,6 +401,9 @@ export function SimulationView() {
     // still bulk-completes via its own button + the quarter engine.
   }
   const closeEmbed = clearAllEmbeds
+  // Live auto-run playthrough (Play 0→7) — drives the real sim through every gating
+  // step with narration; openStep opens each tool inline as it goes.
+  const autoRunPlayer = useSimAutoRunPlayer(openStep)
 
   // real hub completion state: generated artifacts + Learn-module progress
   const docs = useModuleStore((s) => s.artifacts.executiveDocuments)
@@ -1112,6 +1117,17 @@ export function SimulationView() {
           >
             ← HUB
           </Link>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={autoRunPlayer.start}
+            disabled={autoRunPlayer.running}
+            title="Auto-play the whole migration (phases 0–7) as a narrated walkthrough — opens each tool, completes every step for real, and clears the run. Reversible via Reset run."
+            className="h-auto rounded-md border border-secondary/50 bg-secondary/15 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-secondary/25 disabled:opacity-40"
+          >
+            ▶ PLAY 0–7
+          </Button>
+          <SimAutoRunOverlay player={autoRunPlayer} />
           <Button
             type="button"
             variant="ghost"
