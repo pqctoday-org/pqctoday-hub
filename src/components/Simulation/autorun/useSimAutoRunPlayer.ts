@@ -15,7 +15,7 @@ import { useSimulationStore } from '@/store/useSimulationStore'
 import type { PhaseId } from '@/data/frameworkPhases'
 import type { TreeStep } from '@/simulation'
 import { autoRunQueue, completeStepGenuine, type AutoRunQueueItem } from './simAutoRun'
-import { FRAMEWORK_PHASE_INTROS } from '@/data/frameworkPhaseIntros.generated'
+import { getScenario, type SimScenario } from './scenarioConfig'
 import { seedDemoOrg } from './seedDemoOrg'
 import { setAutoRunFill } from './autoRunFill'
 
@@ -33,40 +33,104 @@ export interface SimAutoRunPlayer {
   voiceOn: boolean
   /** Name of the speech voice in use (so the UI can show which one). */
   voiceName: string
-  /** When set, the run is paused on a phase-intro modal for this phase. */
-  phaseIntro: PhaseId | null
+  /** When set, the run is paused on a maturity-pass intro modal. */
+  passIntro: PassIntro | null
   start: () => void
   pause: () => void
   resume: () => void
   stop: () => void
   cycleSpeed: () => void
   toggleVoice: () => void
-  /** Dismiss the phase-intro modal and start that phase's steps. */
-  beginPhase: () => void
-  /** Jump the playhead to the start of the previous phase (re-shows its intro). */
-  prevPhase: () => void
-  /** Jump the playhead to the start of the next phase (shows its intro). */
-  nextPhase: () => void
+  /** Dismiss the pass-intro modal and start that pass's steps. */
+  beginPass: () => void
+  /** Jump the playhead to the start of the previous maturity pass (re-shows its intro). */
+  prevPass: () => void
+  /** Jump the playhead to the start of the next maturity pass (shows its intro). */
+  nextPass: () => void
 }
 
-// ── Program clock — the run spans the framework's multi-year program. ──────────
-const SIM_START_YEAR = 2026
-const SIM_START_Q = 1 // Q1 2026
-const SIM_TOTAL_QUARTERS = 36 // Q1 2026 → Q1 2035 (9 years)
+// ── Program clock — paced by the SCENARIO's maturity passes (not linear). ──────
+// The four maturity passes (L1→L4) land on scenario years: governance(~2027) ·
+// L2 "proceed" bar(~2029) · critical assets protected(scenario, e.g. 2031) ·
+// program horizon(2035). The general-asset tracks genuinely carry the clock to 2035.
+function passEndYears(scenario: SimScenario): number[] {
+  const gov = scenario.governanceYear
+  const critical =
+    scenario.objectives.find((o) => o.id === 'critical')?.byYear ?? scenario.programEndYear
+  const proceed = Math.round((gov + critical) / 2)
+  return [gov, proceed, critical, scenario.programEndYear] // pass 1..4 end years
+}
 
-/** Advance the sim's turn clock proportionally to run progress (index/total),
- *  landing on Q1 2026 at the first step and Q1 2035 at the last. Keeps maturity
- *  checks / CRQC shift untouched (clock-only). */
-function advanceClock(index: number, total: number): void {
-  const st = useSimulationStore.getState()
-  const denom = Math.max(1, total - 1)
-  const elapsed = Math.round((Math.min(index, denom) / denom) * SIM_TOTAL_QUARTERS)
-  const abs = SIM_START_YEAR * 4 + (SIM_START_Q - 1) + elapsed
-  const year = Math.floor(abs / 4)
-  const q = (abs % 4) + 1
-  if (year !== st.year || q !== st.q) {
-    st.applyQuarter({ checks: st.checks, crqcShift: st.crqcShift, year, q, newEvents: [] })
-  }
+function yearToQuarter(frac: number): { year: number; q: number } {
+  const year = Math.floor(frac)
+  const q = Math.min(4, Math.max(1, Math.floor((frac - year) * 4) + 1))
+  return { year, q }
+}
+
+/** A per-queue-index {year,q} plan: within each maturity pass, interpolate from the
+ *  previous pass-end year to this pass-end year by progress through the pass. */
+export function buildClockPlan(
+  queue: AutoRunQueueItem[],
+  scenario: SimScenario
+): { year: number; q: number }[] {
+  const ends = passEndYears(scenario)
+  const startYear = scenario.programStartYear
+  const first = new Map<number, number>()
+  const last = new Map<number, number>()
+  queue.forEach((it, i) => {
+    if (!first.has(it.level)) first.set(it.level, i)
+    last.set(it.level, i)
+  })
+  return queue.map((it, i) => {
+    const lvl = it.level
+    const ps = first.get(lvl) ?? 0
+    const pe = last.get(lvl) ?? ps
+    const span = Math.max(1, pe - ps)
+    const frac = (i - ps) / span
+    const prevEnd = lvl <= 1 ? startYear : (ends[lvl - 2] ?? startYear)
+    const thisEnd = ends[lvl - 1] ?? scenario.programEndYear
+    return yearToQuarter(prevEnd + frac * (thisEnd - prevEnd))
+  })
+}
+
+// Maturity-pass (climb) metadata for the intro modal + voice-over.
+const PASS_META: Record<number, { name: string; goal: string }> = {
+  1: {
+    name: 'Establish',
+    goal: 'Stand up governance and a baseline cryptographic inventory across the whole program.',
+  },
+  2: {
+    name: 'Protect',
+    goal: 'Raise every phase to maturity level 2 — the framework’s "done well enough to proceed" bar. Governance is in place and pilots are running.',
+  },
+  3: {
+    name: 'Scale',
+    goal: 'Drive the migration: critical / high-value assets onto post-quantum cryptography, harvest-now (HNDL) first, then forge-later (TNFL).',
+  },
+  4: {
+    name: 'Optimise',
+    goal: 'Complete the migration across the general estate and make crypto-agility business-as-usual.',
+  },
+}
+
+export interface PassIntro {
+  level: number
+  name: string
+  summary: string
+}
+
+function passIntroFor(level: number, scenario: SimScenario): PassIntro {
+  const meta = PASS_META[level] ?? { name: `Pass ${level}`, goal: '' }
+  const crit = scenario.objectives.find((o) => o.id === 'critical')?.byYear
+  const anchor =
+    level === 2
+      ? ` Governance in place by ${scenario.governanceYear}.`
+      : level === 3 && crit
+        ? ` Critical assets protected by ${crit} (${scenario.standards.HNDL}, then ${scenario.standards.TNFL}).`
+        : level === 4
+          ? ` Full migration complete by ${scenario.programEndYear}.`
+          : ''
+  return { level, name: `Pass ${level} — ${meta.name}`, summary: meta.goal + anchor }
 }
 
 // ── Voice selection (avoid robotic novelty voices; prefer natural ones). ───────
@@ -208,14 +272,6 @@ function lookMs(speed: AutoRunSpeed): number {
   return speed === 'slow' ? 4500 : speed === 'fast' ? 1800 : 3200
 }
 
-/** The voice-over line for a phase — the framework's first "what to expect"
- *  sentence (distinct from the step titles shown in the overlay). */
-function phaseSummary(phase: PhaseId): string {
-  // eslint-disable-next-line security/detect-object-injection
-  const intro = FRAMEWORK_PHASE_INTROS[phase]
-  return intro?.summary || intro?.name || phaseLabel(phase)
-}
-
 function phaseLabel(phase: PhaseId): string {
   if (phase === 'foundations') return 'Foundations'
   if (phase === 'verify-close') return 'Verify & Close'
@@ -317,18 +373,21 @@ export function useSimAutoRunPlayer({
   const [speed, setSpeed] = useState<AutoRunSpeed>('normal')
   const [voiceOn, setVoiceOn] = useState(true) // on by default; safe (short, cancellable)
   const [voiceName, setVoiceName] = useState('')
-  const [phaseIntro, setPhaseIntro] = useState<PhaseId | null>(null)
+  const [passIntro, setPassIntro] = useState<PassIntro | null>(null)
 
   const queueRef = useRef<AutoRunQueueItem[]>([])
-  const phaseStartsRef = useRef<{ phase: PhaseId; start: number }[]>([])
-  const lastPhaseRef = useRef<PhaseId | null>(null)
+  const passStartsRef = useRef<{ level: number; start: number }[]>([])
+  const lastLevelRef = useRef<number | null>(null) // the pass whose intro was consumed
+  const lastSelPhaseRef = useRef<PhaseId | null>(null) // the phase the board is focused on
+  const clockPlanRef = useRef<{ year: number; q: number }[]>([])
+  const scenarioRef = useRef<SimScenario | null>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const voiceOnRef = useRef(voiceOn)
   const openStepRef = useRef(openStep)
   const closeEmbedRef = useRef(closeEmbed)
   const indexRef = useRef(index)
-  const phaseIntroRef = useRef<PhaseId | null>(null)
-  const spokenIntroForRef = useRef<PhaseId | null>(null)
+  const passIntroRef = useRef<number | null>(null)
+  const spokenIntroForRef = useRef<number | null>(null)
   useEffect(() => {
     voiceOnRef.current = voiceOn
   }, [voiceOn])
@@ -342,8 +401,8 @@ export function useSimAutoRunPlayer({
     indexRef.current = index
   }, [index])
   useEffect(() => {
-    phaseIntroRef.current = phaseIntro
-  }, [phaseIntro])
+    passIntroRef.current = passIntro?.level ?? null
+  }, [passIntro])
 
   // Warm the voice list (loads async) + HARD speech safety: cancel any speech if
   // the tab is hidden, navigated, or closed so it can never keep speaking after the
@@ -385,13 +444,17 @@ export function useSimAutoRunPlayer({
     useSimulationStore.getState().markTourSeen() // the first-run tour must not block the playthrough
     const q = autoRunQueue()
     queueRef.current = q
-    const starts: { phase: PhaseId; start: number }[] = []
+    const scenario = getScenario(useSimulationStore.getState().country)
+    scenarioRef.current = scenario
+    clockPlanRef.current = buildClockPlan(q, scenario)
+    const starts: { level: number; start: number }[] = []
     q.forEach((it, i) => {
       const last = starts.at(-1)
-      if (!last || last.phase !== it.phase) starts.push({ phase: it.phase, start: i })
+      if (!last || last.level !== it.level) starts.push({ level: it.level, start: i })
     })
-    phaseStartsRef.current = starts
-    lastPhaseRef.current = null
+    passStartsRef.current = starts
+    lastLevelRef.current = null
+    lastSelPhaseRef.current = null
     setTotal(q.length)
     setIndex(0)
     setDone(false)
@@ -423,27 +486,26 @@ export function useSimAutoRunPlayer({
       return !v
     })
   }, [])
-  const advancePhase = useCallback((stopVoice: boolean) => {
-    const p = phaseIntroRef.current
-    if (!p) return
-    lastPhaseRef.current = p // mark this phase's intro consumed so steps don't re-trigger it
-    useSimulationStore.getState().setSel(p)
-    setLabel(phaseLabel(p))
+  const advancePass = useCallback((stopVoice: boolean) => {
+    const lvl = passIntroRef.current
+    if (lvl == null) return
+    lastLevelRef.current = lvl // mark this pass's intro consumed so steps don't re-trigger it
     if (stopVoice) stopSpeech()
-    setPhaseIntro(null)
+    setPassIntro(null)
   }, [])
   // Manual "Begin" click cuts the narration short; the 6s auto-advance lets it keep
-  // reading the description into the phase.
-  const beginPhase = useCallback(() => advancePhase(true), [advancePhase])
+  // reading the pass description.
+  const beginPass = useCallback(() => advancePass(true), [advancePass])
 
-  // Jump the playhead to an index and re-show that phase's intro modal.
+  // Jump the playhead to an index and re-show the pass intro wherever we land.
   const jumpToIndex = useCallback(
     (target: number) => {
       clearTimer()
       stopSpeech()
       closeEmbedRef.current()
-      lastPhaseRef.current = null // force the phase-intro modal wherever we land
-      setPhaseIntro(null)
+      lastLevelRef.current = null // force the pass-intro modal wherever we land
+      lastSelPhaseRef.current = null
+      setPassIntro(null)
       setPaused(false)
       setIndex(target)
     },
@@ -452,46 +514,41 @@ export function useSimAutoRunPlayer({
 
   const currentBlock = useCallback(() => {
     let cur = 0
-    phaseStartsRef.current.forEach((s, i) => {
+    passStartsRef.current.forEach((s, i) => {
       if (s.start <= indexRef.current) cur = i
     })
     return cur
   }, [])
 
-  const nextPhase = useCallback(() => {
-    const nxt = phaseStartsRef.current.at(currentBlock() + 1)
+  const nextPass = useCallback(() => {
+    const nxt = passStartsRef.current.at(currentBlock() + 1)
     if (nxt) jumpToIndex(nxt.start)
   }, [currentBlock, jumpToIndex])
 
-  const prevPhase = useCallback(() => {
+  const prevPass = useCallback(() => {
     const cur = currentBlock()
-    const curStart = phaseStartsRef.current.at(cur)?.start ?? 0
+    const curStart = passStartsRef.current.at(cur)?.start ?? 0
     const target =
-      indexRef.current > curStart ? curStart : (phaseStartsRef.current.at(cur - 1)?.start ?? 0)
+      indexRef.current > curStart ? curStart : (passStartsRef.current.at(cur - 1)?.start ?? 0)
     jumpToIndex(target)
   }, [currentBlock, jumpToIndex])
 
-  // Phase-intro modal: speak the framework summary and auto-advance after a dwell
-  // (the modal's "Begin" button advances sooner).
+  // Pass-intro modal: speak the maturity-pass summary and auto-advance after 6s
+  // (the modal's "Begin" button advances sooner; the voice keeps reading into the pass).
   useEffect(() => {
-    if (!phaseIntro || paused || !running) return
-    // Speak ONLY the short phase name, once. Never the long summary — long
-    // utterances loop in Chrome. The modal shows the full text to read on screen.
-    const summary = phaseSummary(phaseIntro)
-    if (voiceOnRef.current && spokenIntroForRef.current !== phaseIntro) {
-      spokenIntroForRef.current = phaseIntro
-      speakSequence(splitSentences(summary)) // reads the FULL phase description aloud
+    if (!passIntro || paused || !running) return
+    if (voiceOnRef.current && spokenIntroForRef.current !== passIntro.level) {
+      spokenIntroForRef.current = passIntro.level
+      speakSequence(splitSentences(passIntro.summary))
     }
-    // Auto-continue after 6s if nobody clicks "Begin". The narration keeps reading
-    // the description into the phase (auto-advance does NOT cut the voice).
-    const t = setTimeout(() => advancePhase(false), 6000)
+    const t = setTimeout(() => advancePass(false), 6000)
     return () => clearTimeout(t)
-  }, [phaseIntro, paused, running, advancePhase])
+  }, [passIntro, paused, running, advancePass])
 
   // The step cycle: peek the tool → complete + return to the board (sections update,
   // clock advances) → dwell on the board → next.
   useEffect(() => {
-    if (!running || paused || done || phaseIntro) return
+    if (!running || paused || done || passIntro) return
     const q = queueRef.current
     const item = q.at(index)
     if (!item) return
@@ -507,12 +564,20 @@ export function useSimAutoRunPlayer({
     }
 
     after(index === 0 ? 500 : 300, () => {
-      if (item.phase !== lastPhaseRef.current) {
-        // New phase — pause for the intro modal first (board switches behind it).
+      if (item.level !== lastLevelRef.current) {
+        // New maturity pass — pause for the pass-intro modal (the board stays behind it).
+        const sc = scenarioRef.current
+        if (sc) {
+          setPassIntro(passIntroFor(item.level, sc))
+          return
+        }
+        lastLevelRef.current = item.level
+      }
+      // Within a pass: keep the board focused on the phase currently being raised.
+      if (item.phase !== lastSelPhaseRef.current) {
+        lastSelPhaseRef.current = item.phase
         useSimulationStore.getState().setSel(item.phase)
         setLabel(phaseLabel(item.phase))
-        setPhaseIntro(item.phase)
-        return
       }
       // Beat A — open the tool inline (like a manual click) + narrate; wait for the
       // narration to ACTUALLY finish before moving on.
@@ -525,13 +590,26 @@ export function useSimAutoRunPlayer({
         // update, clock advances).
         completeStepGenuine(item.step)
         closeEmbedRef.current()
-        advanceClock(index, q.length)
+        // Scenario-paced clock: this index's planned {year, q} (passes land on the EO years).
+        const plan = clockPlanRef.current[index]
+        if (plan) {
+          const cs = useSimulationStore.getState()
+          if (plan.year !== cs.year || plan.q !== cs.q) {
+            cs.applyQuarter({
+              checks: cs.checks,
+              crqcShift: cs.crqcShift,
+              year: plan.year,
+              q: plan.q,
+              newEvents: [],
+            })
+          }
+        }
         after(80, scrollBoardToTop) // board re-rendered — show it from the top
         const next = index + 1
         // Beat C — linger on the output before the next step.
         after(lookMs(speed), () => {
           if (next >= q.length) {
-            setCaption('Migration complete — every phase cleared.')
+            setCaption('Migration complete — full program maturity reached.')
             setAutoRunFill(false)
             setRunning(false)
             setDone(true)
@@ -552,7 +630,7 @@ export function useSimAutoRunPlayer({
       cancelled = true
       timers.forEach(clearTimeout)
     }
-  }, [running, paused, done, index, speed, phaseIntro])
+  }, [running, paused, done, index, speed, passIntro])
 
   // Stop the timer + any speech if the sim unmounts mid-run.
   useEffect(
@@ -574,15 +652,15 @@ export function useSimAutoRunPlayer({
     speed,
     voiceOn,
     voiceName,
-    phaseIntro,
+    passIntro,
     start,
     pause,
     resume,
     stop,
     cycleSpeed,
     toggleVoice,
-    beginPhase,
-    prevPhase,
-    nextPhase,
+    beginPass,
+    prevPass,
+    nextPass,
   }
 }
