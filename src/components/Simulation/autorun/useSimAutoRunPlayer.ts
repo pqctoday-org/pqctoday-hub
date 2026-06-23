@@ -165,12 +165,6 @@ function splitSentences(text: string): string[] {
     .filter(Boolean)
 }
 
-/** Generous estimate of the time to speak a passage. */
-function estSpeechMs(text: string): number {
-  const words = text.trim().split(/\s+/).filter(Boolean).length
-  return Math.max(3000, Math.round((words / 1.9) * 1000))
-}
-
 /** Read a passage SENTENCE BY SENTENCE so each utterance stays short (avoids the
  *  Chrome long-utterance loop) while reading the full text. Phonetics applied per
  *  sentence; cleanly cancelled by stopSpeech() (token bump). */
@@ -425,15 +419,18 @@ export function useSimAutoRunPlayer({
       return !v
     })
   }, [])
-  const beginPhase = useCallback(() => {
+  const advancePhase = useCallback((stopVoice: boolean) => {
     const p = phaseIntroRef.current
     if (!p) return
     lastPhaseRef.current = p // mark this phase's intro consumed so steps don't re-trigger it
     useSimulationStore.getState().setSel(p)
     setLabel(phaseLabel(p))
-    stopSpeech()
+    if (stopVoice) stopSpeech()
     setPhaseIntro(null)
   }, [])
+  // Manual "Begin" click cuts the narration short; the 6s auto-advance lets it keep
+  // reading the description into the phase.
+  const beginPhase = useCallback(() => advancePhase(true), [advancePhase])
 
   // Jump the playhead to an index and re-show that phase's intro modal.
   const jumpToIndex = useCallback(
@@ -481,14 +478,11 @@ export function useSimAutoRunPlayer({
       spokenIntroForRef.current = phaseIntro
       speakSequence(splitSentences(summary)) // reads the FULL phase description aloud
     }
-    // Stay on the modal long enough for the voice to cover the whole description
-    // (or a comfortable read time when muted). The "Begin" button skips ahead.
-    const dwell = voiceOnRef.current
-      ? estSpeechMs(summary) + 2500
-      : Math.min(16000, estSpeechMs(summary))
-    const t = setTimeout(() => beginPhase(), dwell)
+    // Auto-continue after 6s if nobody clicks "Begin". The narration keeps reading
+    // the description into the phase (auto-advance does NOT cut the voice).
+    const t = setTimeout(() => advancePhase(false), 6000)
     return () => clearTimeout(t)
-  }, [phaseIntro, paused, running, beginPhase])
+  }, [phaseIntro, paused, running, advancePhase])
 
   // The step cycle: peek the tool → complete + return to the board (sections update,
   // clock advances) → dwell on the board → next.
