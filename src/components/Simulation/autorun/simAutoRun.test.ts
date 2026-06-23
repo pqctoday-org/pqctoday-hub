@@ -11,10 +11,13 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { isStepComplete } from '../embedContract'
+import { SIM_TREES } from '@/simulation'
+import { topBandLevel } from '@/simulation/maturityScale'
 import { PHASE_ORDER, LIFECYCLE_PHASES } from '@/data/frameworkPhases'
 import { PHASE_WIN_LEVEL } from '@/data/phaseMaturity'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import {
+  autoRunQueue,
   completeStepGenuine,
   driveAllPhases,
   gatingStepsForPhase,
@@ -61,6 +64,57 @@ describe('simAutoRun director', () => {
     driveAllPhases()
     // Scenario steps are non-gating and require a live sandbox — never driven.
     expect(useSimulationStore.getState().visitedScenarios).toHaveLength(0)
+  })
+
+  it('queue is level-major (a maturity climb): each level pass is contiguous', () => {
+    const q = autoRunQueue()
+    expect(q.length).toBeGreaterThan(0)
+    // every item carries its band level; the queue runs all L1, then all L2, ... (non-decreasing).
+    let last = 0
+    for (const item of q) {
+      expect(
+        item.level,
+        'queue levels must be non-decreasing (level-major)'
+      ).toBeGreaterThanOrEqual(last)
+      last = item.level
+    }
+    expect(last).toBeGreaterThanOrEqual(2)
+  })
+
+  it('climbs maturity per-phase-monotonically; all phases reach their top band only by the last pass', () => {
+    // NOTE: the climb is monotonic PER PHASE (a phase's level never decreases as more steps
+    // complete), but it is NOT strictly capped at the pass number — some phases (e.g. p4,
+    // verify-close) reach a higher band early because that band's gating steps are satisfied
+    // by SHARED artifact types / refs completed in earlier passes. That is genuine maturity,
+    // not a bug; the auto-run paces the *displayed* climb by pass and caps the per-phase ring
+    // at the current pass (see useSimAutoRunPlayer). What MUST hold: no regression, and the
+    // program only reaches full maturity (every phase at its own top band) at the final pass.
+    const q = autoRunQueue()
+    const maxLevel = Math.max(...q.map((i) => i.level))
+    const prev: Record<string, number> = {}
+    let allAtTopBandBeforeLastPass = false
+    for (let pass = 1; pass <= maxLevel; pass++) {
+      for (const item of q.filter((i) => i.level === pass)) completeStepGenuine(item.step)
+      for (const phase of LIFECYCLE_PHASES) {
+        const lvl = levelOfPhase(phase)
+        expect(lvl, `phase ${phase} regressed at pass ${pass}`).toBeGreaterThanOrEqual(
+          prev[phase] ?? 0
+        )
+        prev[phase] = lvl
+      }
+      if (pass < maxLevel) {
+        const everyTop = LIFECYCLE_PHASES.every(
+          (p) => levelOfPhase(p) >= topBandLevel(SIM_TREES[p], 4)
+        )
+        if (everyTop) allAtTopBandBeforeLastPass = true
+      }
+    }
+    expect(allAtTopBandBeforeLastPass, 'full maturity reached before the last pass').toBe(false)
+    for (const phase of LIFECYCLE_PHASES) {
+      expect(levelOfPhase(phase), `phase ${phase} not cleared`).toBeGreaterThanOrEqual(
+        PHASE_WIN_LEVEL
+      )
+    }
   })
 
   it('has non-empty demo content for every activity type the trees use', () => {

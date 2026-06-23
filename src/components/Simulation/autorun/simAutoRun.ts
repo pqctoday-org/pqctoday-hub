@@ -58,6 +58,18 @@ export function gatingStepsForPhase(phase: PhaseId): TreeStep[] {
   return tree ? flattenTree(tree).filter(isGatingStep) : []
 }
 
+/** The highest maturity band any phase's tree ships — the top of the climb. */
+export const AUTO_RUN_MAX_LEVEL = 4
+
+/** The gating steps of a single phase that belong to one maturity band (level),
+ *  in unlock order. Empty when the phase's tree has no band at that level. */
+export function gatingStepsForPhaseLevel(phase: PhaseId, level: number): TreeStep[] {
+  const tree = treeFor(phase)
+  if (!tree) return []
+  const band = tree.levels.find((b) => b.level === level)
+  return band ? band.activities.flatMap((a) => a.steps).filter(isGatingStep) : []
+}
+
 /** The maturity level a phase has currently EARNED from live hub state. */
 export function levelOfPhase(
   phase: PhaseId,
@@ -135,15 +147,32 @@ export interface AutoRunReport {
 export interface AutoRunQueueItem {
   phase: PhaseId
   step: TreeStep
+  /** The maturity band (1..4) this step belongs to — i.e. which climb pass. */
+  level: number
 }
 
-/** The full ordered list of gating steps across every phase that has a tree — the
- *  queue the live playthrough steps through (scenario steps are already excluded
- *  as non-gating). */
+/**
+ * The live playthrough queue, ordered as a MATURITY CLIMB rather than phase-by-phase.
+ *
+ * Framework 2.1 is explicit that phases are NOT a clean waterfall — they overlap and
+ * run concurrently, climbing maturity together ("the phase structure provides a
+ * logical dependency order; the calendar comes from the roadmap"). So the queue is
+ * LEVEL-MAJOR: pass 1 raises every phase to L1, pass 2 to L2 (the framework's
+ * "done well enough to proceed" bar — governance in place + critical assets
+ * protected), then L3 and L4. Within a pass, phases are visited in PHASE_ORDER.
+ *
+ * The per-phase gating order is preserved (a phase's L1 band is queued before its L2
+ * band, across passes), so `achievedTreeLevel` still unlocks levels in order.
+ */
 export function autoRunQueue(): AutoRunQueueItem[] {
   const items: AutoRunQueueItem[] = []
-  for (const phase of PHASE_ORDER.filter(hasTree)) {
-    for (const step of gatingStepsForPhase(phase)) items.push({ phase, step })
+  const phases = PHASE_ORDER.filter(hasTree)
+  for (let level = 1; level <= AUTO_RUN_MAX_LEVEL; level++) {
+    for (const phase of phases) {
+      for (const step of gatingStepsForPhaseLevel(phase, level)) {
+        items.push({ phase, step, level })
+      }
+    }
   }
   return items
 }
