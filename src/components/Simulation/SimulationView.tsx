@@ -2543,11 +2543,14 @@ export function SimulationView() {
       {/* W2b: run-end ceremony — the summative "did you beat Q-Day?" moment */}
       {runCompleteOpen && (
         <SimRunComplete
-          over={clock.over}
-          horizonYear={clock.horizonYear}
-          readinessPct={readiness.pct}
-          clearedCount={cleared}
-          totalPhases={LIFECYCLE.length}
+          objectives={txStatus.objectives.map((o) => ({
+            id: o.id,
+            label: o.label,
+            byYear: o.byYear,
+            done: o.done,
+          }))}
+          maturity={txStatus.maturity}
+          programEndYear={getScenario(country).programEndYear}
           onClose={() => setRunCompleteOpen(false)}
         />
       )}
