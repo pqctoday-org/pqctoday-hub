@@ -188,10 +188,6 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     Crypto Services; stale corpus had the old "IBM Cloud HSM (Utimaco)" chunk.
   //     2026-06-21: driven back to 0 on the integration branch — refresh-index
   //     regenerates the corpus, flushing all deprecated + renamed-row chunks.
-  //     2026-06-23: bumped 0 → 1 — one orphan chunk "library-NIST IR 8610" (the
-  //     NIST additional-signatures status report) remains in the committed corpus
-  //     after its library row was dropped; clears on the next refresh-index regen.
-  library: 1,
   migrate: 0,
   timeline: 0,
   algorithms: 0,
