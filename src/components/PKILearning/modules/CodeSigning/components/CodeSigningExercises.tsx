@@ -60,7 +60,7 @@ export const CodeSigningExercises: React.FC<CodeSigningExercisesProps> = ({
       badge: 'Packages',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'Hybrid mode produces a signature of ~4,741 bytes (ML-DSA-87 + Ed448 combined), but older RPM tools can still verify using just the Ed448 portion. This is the approach Red Hat has chosen for RHEL 10.',
+        'Hybrid mode produces a signature of ~4,741 bytes (ML-DSA-87 + Ed448 combined), but older RPM tools can still verify using just the Ed448 portion. Dual-signature schemes like this are being explored as a backward-compatible path for Linux package signing.',
       config: { step: 2 },
     },
     {
@@ -71,7 +71,7 @@ export const CodeSigningExercises: React.FC<CodeSigningExercisesProps> = ({
       badge: 'Sigstore',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'The key advantage of Sigstore is that no long-term private keys exist. The ephemeral ML-DSA-65 keypair lives for ~20 minutes, and the transparency log (Rekor) serves as the permanent verification anchor.',
+        'The key advantage of Sigstore is that no long-term private keys exist. The ephemeral keypair — ECDSA P-256 in Fulcio today, with ML-DSA-65 as the post-quantum upgrade — lives for ~20 minutes, and the transparency log (Rekor) serves as the permanent verification anchor.',
       config: { step: 3 },
     },
     {

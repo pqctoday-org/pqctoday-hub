@@ -24,14 +24,14 @@ const EXERCISES = [
   {
     title: 'Scenario: Government Compliance Deadline',
     prompt:
-      'Your agency must comply with CNSA 2.0 by 2030. You have 200+ systems using RSA-3072 and AES-128. Build a prioritized risk register with at least 4 entries covering different asset types and threat vectors.',
+      'Your agency operates national security systems subject to CNSA 2.0 (exclusive PQC by 2030 for the earliest categories). You have 200+ systems using RSA-3072 and ECDSA P-256 (both quantum-vulnerable), plus AES-128 (which CNSA 2.0 upgrades to AES-256). Build a prioritized risk register with at least 4 entries covering different asset types and threat vectors.',
     workshopStep: 1,
     workshopStepLabel: 'Step 2 — Risk Register Builder',
   },
   {
     title: 'Scenario: Compliance Gap Analysis',
     prompt:
-      'Using your completed risk register, run the Compliance Gap Analysis (Step 4). Set the CRQC year to 2032 and identify which assets would miss the NIST 2030 deprecation deadline. List the assets with the highest compliance gap risk and their recommended PQC replacements.',
+      'Using your completed risk register, run the Compliance Gap Analysis (Step 4). Set the CRQC year to 2032 and identify which assets would miss the draft NIST IR 8547 2030 deprecation milestone. List the assets with the highest compliance gap risk and their recommended PQC replacements.',
     workshopStep: 3,
     workshopStepLabel: 'Step 4 — Compliance Gap Analysis',
   },

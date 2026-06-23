@@ -50,7 +50,7 @@ export const StatefulSigsExercises: React.FC<StatefulSigsExercisesProps> = ({
       badge: 'XMSS',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'At the same tree height (H=10), XMSS produces smaller signatures than LMS but has larger private keys due to bitmask storage. XMSS has a stronger security proof against multi-target attacks.',
+        'At the same tree height (H=10), XMSS and LMS produce comparably-sized signatures (the exact order depends on the Winternitz parameter). XMSS uses keyed hashing with per-node bitmasks, which gives it a stronger security proof against multi-target attacks.',
       config: { step: 1, paramId: 'xmss-sha2-10' },
     },
     {
@@ -62,7 +62,7 @@ export const StatefulSigsExercises: React.FC<StatefulSigsExercisesProps> = ({
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
         'XMSS^MT-SHA2_60/6 provides 2^60 signatures (over 10^18) by chaining 6 layers of 10-level trees. This is suitable for long-lived timestamping authorities that sign millions of times per year.',
-      config: { step: 1, paramId: 'xmssmt-sha2-40-4' },
+      config: { step: 1, paramId: 'xmssmt-sha2-60-6' },
     },
     {
       id: 'state-exhaustion',

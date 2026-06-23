@@ -27,9 +27,9 @@ const EXERCISES = [
     id: 'ex-3',
     title: 'Scenario: Healthcare PQC Compliance Timeline',
     prompt:
-      'A hospital network must protect patient records (30-year retention) while complying with HIPAA and the upcoming NIST deprecation of RSA/ECC by 2030. Build a compliance timeline that includes assessment, hybrid deployment, and full PQC migration phases. Where does the HNDL risk window overlap with compliance deadlines?',
+      'A hospital network must protect patient records (30-year retention) while complying with HIPAA and the draft NIST IR 8547 deprecation of RSA/ECC by 2030. Build a compliance timeline that includes assessment, hybrid deployment, and full PQC migration phases. Where does the HNDL risk window overlap with compliance deadlines?',
     workshopHint:
-      'Use the Compliance Timeline Builder (Step 3) to overlay NIST and HIPAA deadlines with migration phases. Factor in the 2035 NIST disallowance date against 30-year data retention.',
+      'Use the Compliance Timeline Builder (Step 3) to overlay NIST and HIPAA deadlines with migration phases. Factor in the draft 2035 NIST IR 8547 disallowance date against 30-year data retention.',
   },
   {
     id: 'ex-4',
@@ -37,7 +37,7 @@ const EXERCISES = [
     prompt:
       'You operate data centers in Germany, France, and the UK. GDPR obligations apply alongside BSI TR-02102 and ANSSI hybrid PQC recommendations. Germany requires BSI-certified modules for classified workloads; France recommends hybrid schemes only. Identify where requirements align and where they conflict. What is your unified migration strategy?',
     workshopHint:
-      'Use the Regulatory Gap Assessment (Step 4) with Germany, France, and UK selected. Note that BSI mandates hybrid ML-KEM + X25519 while ANSSI currently recommends hybrids pending further analysis — these are compatible approaches.',
+      'Use the Regulatory Gap Assessment (Step 4) with Germany, France, and UK selected. Note that BSI requires hybrid ML-KEM + X25519 for classified workloads while ANSSI currently recommends hybrids pending further analysis — these are compatible approaches.',
   },
 ]
 

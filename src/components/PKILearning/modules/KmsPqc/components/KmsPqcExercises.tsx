@@ -40,7 +40,7 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       badge: 'Hierarchy',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Switching from Classical to PQC-only at the Root KEK level increases the public key from 256 bytes (RSA-4096) to 1,568 bytes (ML-KEM-1024). The tree visualization shows how mode choices cascade through the hierarchy.',
+        'Switching from Classical to PQC-only at the Root KEK level increases the public key from 512 bytes (RSA-4096) to 1,568 bytes (ML-KEM-1024). The tree visualization shows how mode choices cascade through the hierarchy.',
       config: { step: 0 },
     },
     {
@@ -73,7 +73,7 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       badge: 'Multi-Cloud',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        'AWS KMS has GA ML-DSA signing (ML-DSA-44/65/87) across all regions. Google Cloud KMS supports ML-KEM-768, ML-KEM-1024, X-Wing, ML-DSA-65, and SLH-DSA (preview). Azure Key Vault does not yet expose PQC key types natively; SymCrypt supports ML-KEM/ML-DSA internally but not through the Key Vault API.',
+        'As of mid-2026: AWS KMS has GA ML-DSA signing (ML-DSA-44/65/87, since 2025) in FIPS 140-3 Level 3 HSMs; Google Cloud KMS lists ML-KEM-768/1024, X-Wing, ML-DSA-65, and SLH-DSA in preview; Azure Key Vault is rolling out ML-KEM/ML-DSA key types via SymCrypt (2026-2027, tier/region dependent). Verify each provider current docs for the latest.',
       config: { step: 2 },
     },
     {
@@ -84,7 +84,7 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       badge: 'Compliance',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'CNSA 2.0 requires all new NSS acquisitions to be PQC-compliant by 2027 and exclusively PQC by 2033. The storage impact multiplier ranges from 1.0x (AES-256 DEKs) to 30.0x (ECDSA → ML-DSA-65 code signing keys).',
+        'CNSA 2.0 phases PQC into U.S. national security systems by category: software/firmware signing and networking by 2030, with web, cloud, and operating systems following by 2033. The storage impact multiplier ranges from 1.0x (AES-256 DEKs) to 30.0x (ECDSA → ML-DSA-65 code signing keys).',
       config: { step: 3 },
     },
   ]
