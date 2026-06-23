@@ -160,9 +160,9 @@ export interface StepCompletionContext {
   isRefVisited: (refId: string) => boolean
   /** workshop: this workshop/tool id has been visited/completed. */
   isWorkshopComplete: (workshopId: string) => boolean
-  /** catalog: this catalog task was earned (a PQC-capable pick made while it was open). */
+  /** catalog: this catalog task was marked complete (explicit click in the embed header). */
   isCatalogStepDone: (catalogId: string) => boolean
-  /** scenario: this sandbox lab reported done (or was marked complete in-sim). */
+  /** scenario: this sandbox lab was marked complete (explicit click in the embed header). */
   isScenarioComplete: (scenarioId: string) => boolean
 }
 

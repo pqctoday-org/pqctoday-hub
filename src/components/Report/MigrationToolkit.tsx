@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Package, ArrowRight, ChevronDown, EyeOff } from 'lucide-react'
-import { useMigrateSelectionStore } from '../../store/useMigrateSelectionStore'
+import { useMigrateSelectionStore, useSelectedProductIds } from '../../store/useMigrateSelectionStore'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { softwareData } from '../../data/migrateData'
 import { Button } from '../ui/button'
@@ -50,7 +50,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
   const hiddenProducts = useMigrateSelectionStore((s) => s.hiddenProducts)
   const hideProduct = useMigrateSelectionStore((s) => s.hideProduct)
   const restoreAll = useMigrateSelectionStore((s) => s.restoreAll)
-  const myProducts = useMigrateSelectionStore((s) => s.myProducts)
+  const myProducts = useSelectedProductIds()
   const importProductSelection = useAssessmentStore((s) => s.importProductSelection)
 
   // "Selected" mode: user has explicitly bookmarked products AND the import toggle is ON

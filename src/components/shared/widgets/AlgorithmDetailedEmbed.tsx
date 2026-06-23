@@ -10,13 +10,12 @@
  * The standalone /algorithms page is untouched.
  */
 import { useMemo, useState } from 'react'
-import { Check } from 'lucide-react'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { getAlgorithmDefaults } from '@/data/personaConfig'
 import { useAlgorithmExplorer, MAX_COMPARE } from '@/components/Algorithms/useAlgorithmExplorer'
 import { AlgorithmDetailedComparison } from '@/components/Algorithms/AlgorithmDetailedComparison'
 import { AlgorithmInfoModal } from '@/components/Algorithms/AlgorithmInfoModal'
-import { Button } from '@/components/ui/button'
+import { CompleteStepAction } from '../../PKILearning/common/CompleteStepAction'
 
 interface AlgorithmDetailedEmbedProps {
   /** Confirm the reviewed architecture choices (selected algorithm names) — the
@@ -37,18 +36,15 @@ export function AlgorithmDetailedEmbed({ onConfirm, confirmed }: AlgorithmDetail
       {onConfirm && (
         <div className="mb-3 flex flex-col gap-2 rounded-lg border border-primary/30 bg-primary/5 p-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-muted-foreground">
-            Compare the PQC candidates in detail, select the ones that fit your architecture, then
-            confirm to record your crypto-architecture decision for this phase.
+            Compare the PQC candidates in detail. To select one, tick the checkbox at the start of
+            its row, then Save to record your crypto-architecture decision for this phase.
           </p>
-          <Button
-            type="button"
-            variant={confirmed ? 'outline' : 'gradient'}
+          <CompleteStepAction
+            recordsArtifact
+            saved={!!confirmed}
             onClick={() => onConfirm(x.compareKeys)}
-            className="flex shrink-0 items-center gap-1.5"
-          >
-            <Check size={15} />
-            {confirmed ? 'Architecture confirmed' : 'Confirm my architecture choices'}
-          </Button>
+            className="shrink-0"
+          />
         </div>
       )}
 

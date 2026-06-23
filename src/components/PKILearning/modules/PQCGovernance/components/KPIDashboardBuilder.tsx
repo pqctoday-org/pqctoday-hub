@@ -5,6 +5,7 @@ import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { DataDrivenScorecard, KpiPersonaSelector } from '@/components/PKILearning/common/executive'
+import { CompleteStepAction } from '@/components/PKILearning/common/CompleteStepAction'
 import type { KpiPersonaId } from '@/data/kpiCatalog'
 import { KPI_PERSONAS, buildDimensions } from '@/data/kpiCatalog'
 
@@ -96,9 +97,21 @@ export const KPIDashboardBuilder: React.FC = () => {
     })
   }, [dimensions, addExecutiveDocument, activePersona])
 
+  // Persistent done-state for the explicit Save button. The debounced auto-save
+  // stays as a convenience, but there's now a visible button + feedback (R3).
+  const [wasSaved, setWasSaved] = useState(false)
+  const [dirtySinceSave, setDirtySinceSave] = useState(false)
+
   const scheduleSave = useCallback(() => {
+    setDirtySinceSave(true)
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     saveTimerRef.current = setTimeout(persistScorecard, 500)
+  }, [persistScorecard])
+
+  const handleSaveNow = useCallback(() => {
+    persistScorecard()
+    setWasSaved(true)
+    setDirtySinceSave(false)
   }, [persistScorecard])
 
   const handleScoreChange = useCallback(
@@ -147,7 +160,15 @@ export const KPIDashboardBuilder: React.FC = () => {
           Readiness and threat-scoped KPIs auto-populate from the catalog, industry threats, and
           your assessment; weights adapt to the selected persona lens.
         </p>
-        <KpiPersonaSelector value={activePersona} onChange={setPersonaOverride} />
+        <div className="flex items-center gap-2">
+          <CompleteStepAction
+            recordsArtifact
+            saved={wasSaved}
+            editedSinceSave={wasSaved && dirtySinceSave}
+            onClick={handleSaveNow}
+          />
+          <KpiPersonaSelector value={activePersona} onChange={setPersonaOverride} />
+        </div>
       </div>
 
       {execData.migrationDeadlineYear && (

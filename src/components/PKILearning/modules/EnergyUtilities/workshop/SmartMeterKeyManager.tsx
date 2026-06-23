@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { Key, Gauge, Radio, Clock, CheckCircle2, BarChart3 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { CompleteStepAction } from '../../../common/CompleteStepAction'
 import {
   COMM_TECHNOLOGIES,
   PQC_KEM_SPECS,
@@ -535,10 +535,7 @@ export const SmartMeterKeyManager: React.FC<SmartMeterKeyManagerProps> = ({
 
       {/* Complete Button */}
       <div className="flex justify-end pt-2">
-        <Button variant="gradient" onClick={onComplete}>
-          <CheckCircle2 size={16} className="mr-2" />
-          Mark Step Complete
-        </Button>
+        <CompleteStepAction recordsArtifact={false} onClick={onComplete} />
       </div>
 
       <KatValidationPanel

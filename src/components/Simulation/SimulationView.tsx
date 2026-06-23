@@ -34,6 +34,7 @@ import {
 import { SIM_ALGORITHM_TABS } from './algorithmTabs'
 import { SIM_REFERENCE_EMBEDS } from './referenceEmbeds'
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
+import { CompleteStepAction } from '../PKILearning/common/CompleteStepAction'
 import { parseTimelineScope } from '@/data/timelineScope'
 import { MigrateWorkbenchEmbed } from '@/components/shared/widgets/MigrateWorkbenchEmbed'
 import { SandboxScenarioEmbed } from '@/components/Playground/SandboxScenarioEmbed'
@@ -64,7 +65,15 @@ import { JURISDICTION_RULES } from '@/data/jurisdiction'
 import { ROLE_CROSSWALK, personaToRoles } from '@/data/roleCrosswalk'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
-import { SIM_TREES, flattenTree, achievedTreeLevel, type TreeStep } from '@/simulation'
+import {
+  SIM_TREES,
+  flattenTree,
+  achievedTreeLevel,
+  isGatingStep,
+  type TreeStep,
+} from '@/simulation'
+import { topBandLevel, normalizeLevel, phaseReadinessFraction } from '@/simulation/maturityScale'
+import { useSandboxAvailable } from '@/components/Playground/useSandboxAvailable'
 import { computeReadiness } from '@/simulation/readiness'
 import { runQuarter } from '@/simulation/quarterEngine'
 import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
@@ -287,11 +296,15 @@ export function SimulationView() {
     artifactType: ExecutiveDocumentType
     title: string
   } | null>(null)
-  const [assessEmbed, setAssessEmbed] = useState<{ title: string } | null>(null)
+  const [assessEmbed, setAssessEmbed] = useState<{ title: string; refId?: string } | null>(null)
   const [workshopEmbed, setWorkshopEmbed] = useState<{ workshopId: string; title: string } | null>(
     null
   )
-  const [timelineEmbed, setTimelineEmbed] = useState<{ title: string; to: string } | null>(null)
+  const [timelineEmbed, setTimelineEmbed] = useState<{
+    title: string
+    to: string
+    refId?: string
+  } | null>(null)
   const [catalogEmbed, setCatalogEmbed] = useState<{
     title: string
     layer?: string
@@ -313,6 +326,10 @@ export function SimulationView() {
     scenarioId: string
     title: string
   } | null>(null)
+  // Is a Docker sandbox actually reachable? Scenario (lab) steps are gated on this:
+  // when unavailable they show LOCKED and never open or auto-complete (bonus steps,
+  // so they never block a maturity band either — see isGatingStep).
+  const sandboxAvail = useSandboxAvailable()
 
   const LearnComp = learnEmbed ? SIM_LEARN_MODULES[learnEmbed.moduleId] : null
 
@@ -350,42 +367,36 @@ export function SimulationView() {
     } else if (s.kind === 'workshop' && s.workshopId && WORKSHOP_TOOL_COMPONENTS[s.workshopId]) {
       clearAllEmbeds()
       setWorkshopEmbed({ workshopId: s.workshopId, title: s.label })
-      // opening a workshop in-sim counts as completing the practice leaf (the
-      // standalone /playground page has no separate completion signal).
-      markWorkshopVisited(s.workshopId)
     } else if (s.kind === 'catalog') {
       clearAllEmbeds()
       setCatalogEmbed({ title: s.label, layer: s.catalogLayer, catalogId: s.catalogId })
     } else if (isTimelineStep(s)) {
       clearAllEmbeds()
-      setTimelineEmbed({ title: s.label, to: s.to })
-      if (s.refId) markRefVisited(s.refId)
+      setTimelineEmbed({ title: s.label, to: s.to, refId: s.refId })
     } else if (isAlgorithmTabStep(s) && s.refId) {
       clearAllEmbeds()
       setAlgorithmTabEmbed({ refId: s.refId, title: s.label })
-      // 'review' tabs (Protocol Support) complete on open; 'choice that counts'
-      // tabs (Transition / Detailed) complete only on confirm (handled below).
-
-      if (SIM_ALGORITHM_TABS[s.refId]?.completion === 'review') markRefVisited(s.refId)
     } else if (isAssessStep(s)) {
       clearAllEmbeds()
-      setAssessEmbed({ title: s.label })
-      // opening the wizard in-sim is the equivalent of "visiting" the assess ref
-      // (the navigate flow marks-on-click), so the step counts as done.
-      if (s.refId) markRefVisited(s.refId)
+      setAssessEmbed({ title: s.label, refId: s.refId })
     } else if (isReferenceEmbedStep(s) && s.refId) {
-      // Full-page reference (Migrate, …) embedded under the header. Reviewed-on-open.
+      // Full-page reference (Migrate, …) embedded under the header.
       clearAllEmbeds()
       setReferenceEmbed({ refId: s.refId, title: s.label })
-      markRefVisited(s.refId)
     } else if (isScenarioStep(s) && s.scenarioId) {
-      // C3: live sandbox lab embedded under the header. Opening it in-sim counts
-      // as visiting the lab (the standalone /playground route has no separate
-      // in-sim completion signal); the lab can also report done via postMessage.
+      // C3: live sandbox lab embedded under the header — only when a sandbox is
+      // actually reachable. Otherwise it stays a LOCKED bonus step (see the ladder
+      // UI) so the player never hits a broken/unreachable panel and can't complete
+      // a lab that didn't run.
+      if (sandboxAvail !== 'available') return
       clearAllEmbeds()
       setScenarioEmbed({ scenarioId: s.scenarioId, title: s.label })
-      markScenarioVisited(s.scenarioId)
     }
+    // NOTE: opening an embed no longer auto-completes the step. Completion is an
+    // explicit "Mark complete" click in the embed header (review steps), the
+    // tool's own Save (activity), or the in-body Save (algorithm choice tabs) —
+    // a step is never silently done just by being viewed. AI delegation (`auto`)
+    // still bulk-completes via its own button + the quarter engine.
   }
   const closeEmbed = clearAllEmbeds
 
@@ -415,18 +426,13 @@ export function SimulationView() {
       data: JSON.stringify({ source: spec.completion.moduleId, selected }),
       createdAt: nowMs(),
     })
-    setAlgorithmTabEmbed(null)
+    // Stay open so the "Saved ✓" state is visible; the player returns via
+    // "✕ Back to board" (no auto-close — R9).
   }
   const catalogCompleted = useSimulationStore((s) => s.catalogCompleted)
   const markCatalogStepDone = useSimulationStore((s) => s.markCatalogStepDone)
-  // The redesigned Migrate is the MigrationWorkbench (a review/plan tool), not the
-  // old product-pick catalog — so a catalog task is cleared by OPENING and
-  // reviewing the Workbench (reviewed-on-open), the same model as a reference.
-  // (The earlier "pick a PQC-capable product while the catalog is open" mechanic
-  // belonged to the legacy MigrateView catalog the sim no longer embeds.)
-  useEffect(() => {
-    if (catalogEmbed?.catalogId) markCatalogStepDone(catalogEmbed.catalogId)
-  }, [catalogEmbed, markCatalogStepDone])
+  // A catalog task (review the Workbench) completes on an explicit "Mark complete"
+  // click in the embed header — not silently on open (D-b).
   // read-only Assess → Sim bridge: offer to import a completed assessment as the
   // Phase-0 scoping artifact (data only; the sim's gate still decides it counts).
   const assessSnap = useAssessSnapshot()
@@ -629,19 +635,32 @@ export function SimulationView() {
   const levelOf = (p: string) =>
     SIM_TREES[p as PhaseId] ? treeLevel(p) : Math.max(checks[p] ?? 0, evidenceLevel(p))
 
+  // The TOP maturity band a phase actually ships (its tree's highest level). The
+  // framework caps several phases below L4 BY DESIGN — no framework activity sits
+  // higher (e.g. p3 tops at L2, p6 at L3) — so progress is scored RELATIVE to each
+  // phase's own top band: clearing every band a phase has = 100% of that phase,
+  // whether its ladder is 2, 3, or 4 long. Phases with no tree fall back to the
+  // global max. (sim-mapping remediation WS3: without this the readiness bar can
+  // never fill and program maturity stays frozen at L2 because the risk domain maps
+  // only to p3, which can't exceed L2.)
+  const MAX_LEVEL = MATURITY_LEVEL_NAMES.length - 1 // levels run 0..4
+  const topBandOf = (p: string): number => topBandLevel(SIM_TREES[p as PhaseId], MAX_LEVEL)
+  // A phase's achieved level rescaled onto the 0..MAX_LEVEL ladder relative to its
+  // own top band, so a fully-cleared short phase counts as maxed.
+  const normalizedLevelOf = (p: string): number =>
+    normalizeLevel(levelOf(p), topBandOf(p), MAX_LEVEL)
+
   // DERIVED program maturity (0–5) — read-only. A completed assessment makes the
   // program "Aware" (Level 1); Levels 2–5 are EARNED from the sim, each domain
-  // taking the weakest of its mapped phases' earned levels. Overall = the weakest
-  // domain. Recomputes from the same gating reads `levelOf` uses (checks, docTypes,
-  // visitedRefs, auto), so it rises live as phases are completed.
-  const maturity = deriveMaturity(!!assessSnap, (p) => levelOf(p))
+  // taking the weakest of its mapped phases' earned levels (normalized per-phase so
+  // a phase at its own top band counts as maxed). Overall = the weakest domain.
+  const maturity = deriveMaturity(!!assessSnap, (p) => normalizedLevelOf(p))
 
   // T3.1 — sim-local readiness trend: the assessed org-readiness baseline vs the
   // projection earned by clearing framework maturity in-game. Sim-local only.
-  const MAX_LEVEL = MATURITY_LEVEL_NAMES.length - 1 // levels run 0..4
   const maturityFrac =
-    LIFECYCLE.reduce((s, p) => s + Math.min(MAX_LEVEL, levelOf(p)), 0) /
-    (MAX_LEVEL * LIFECYCLE.length)
+    LIFECYCLE.reduce((s, p) => s + phaseReadinessFraction(levelOf(p), topBandOf(p)), 0) /
+    LIFECYCLE.length
   const readinessTrend =
     assessKpis != null ? projectReadiness(assessKpis.organizationalReadiness, maturityFrac) : null
 
@@ -674,7 +693,9 @@ export function SimulationView() {
   // KPIs
   // WS-04: readiness is driven by the fraction of P5 activities completed (per-edge,
   // continuous + attributable), not the coarse P5 maturity level.
-  const p5Flat = SIM_TREES.p5 ? flattenTree(SIM_TREES.p5) : []
+  // Bonus scenario (lab) steps don't count toward readiness — they require a
+  // sandbox most players don't have, so they'd cap the fraction below 100%.
+  const p5Flat = (SIM_TREES.p5 ? flattenTree(SIM_TREES.p5) : []).filter(isGatingStep)
   const p5Frac = p5Flat.length ? p5Flat.filter((s) => stepDone(s, 'p5')).length / p5Flat.length : 0
   const readiness = computeReadiness(size, p5Frac)
   const cleared = LIFECYCLE.filter((p) => levelOf(p) >= PHASE_WIN_LEVEL).length
@@ -755,7 +776,9 @@ export function SimulationView() {
   // step in ANY ORDER — see the maturity-gates ladder, which expands the active
   // band into individually-openable controls. Higher bands stay locked.
   const phaseTree = SIM_TREES[sel]
-  const flatSteps = phaseTree ? flattenTree(phaseTree) : []
+  // Bonus scenario (lab) steps are excluded from the required-progress tally so a
+  // locked lab never holds the count below full (they never gate the level either).
+  const flatSteps = (phaseTree ? flattenTree(phaseTree) : []).filter(isGatingStep)
   const stepsTotal = flatSteps.length
   const stepsDone = flatSteps.filter((s) => stepDone(s, sel)).length
   // index of the first not-yet-done step. -1 ⇒ all done. This drives only the
@@ -778,9 +801,13 @@ export function SimulationView() {
   // The tree DRIVES the recommended move. Build step→(level,activity) metadata in
   // the same flattened order as flatSteps; the recommendation is simply the first
   // not-yet-done leaf. firstOpenIdx === -1 ⇒ every level earned.
-  const stepMeta = (phaseTree?.levels ?? []).flatMap((band) =>
-    band.activities.flatMap((act) => act.steps.map((step) => ({ band, act, step })))
-  )
+  // Same order + filter as flatSteps (bonus scenario steps excluded) so firstOpenIdx
+  // indexes into this metadata correctly.
+  const stepMeta = (phaseTree?.levels ?? [])
+    .flatMap((band) =>
+      band.activities.flatMap((act) => act.steps.map((step) => ({ band, act, step })))
+    )
+    .filter((m) => isGatingStep(m.step))
   const nextMove = firstOpenIdx < 0 ? null : (stepMeta[firstOpenIdx] ?? null)
   // Assess recommendation matching the current next-move's learn module (badge only)
   const nextMoveRec =
@@ -1313,6 +1340,44 @@ export function SimulationView() {
                   </Button>
                 )
               })()}
+            {/* Explicit "Mark complete" for REVIEW embeds (D-b) — opening no longer
+                auto-completes. Excludes: learn (its own toggle above), activity (the
+                tool's own Save), and algorithm choice tabs (in-body Save). */}
+            {(() => {
+              let done = false
+              let onMark: (() => void) | null = null
+              if (referenceEmbed) {
+                done = refDone(referenceEmbed.refId)
+                onMark = () => markRefVisited(referenceEmbed.refId)
+              } else if (workshopEmbed) {
+                done = visitedWorkshops.includes(workshopEmbed.workshopId)
+                onMark = () => markWorkshopVisited(workshopEmbed.workshopId)
+              } else if (catalogEmbed?.catalogId) {
+                const id = catalogEmbed.catalogId
+                done = catalogCompleted.includes(id)
+                onMark = () => markCatalogStepDone(id)
+              } else if (scenarioEmbed) {
+                done = visitedScenarios.includes(scenarioEmbed.scenarioId)
+                onMark = () => markScenarioVisited(scenarioEmbed.scenarioId)
+              } else if (timelineEmbed?.refId) {
+                const id = timelineEmbed.refId
+                done = refDone(id)
+                onMark = () => markRefVisited(id)
+              } else if (assessEmbed?.refId) {
+                const id = assessEmbed.refId
+                done = refDone(id)
+                onMark = () => markRefVisited(id)
+              } else if (
+                algorithmTabEmbed &&
+                SIM_ALGORITHM_TABS[algorithmTabEmbed.refId]?.completion === 'review'
+              ) {
+                const id = algorithmTabEmbed.refId
+                done = refDone(id)
+                onMark = () => markRefVisited(id)
+              }
+              if (!onMark) return null
+              return <CompleteStepAction recordsArtifact={false} saved={done} onClick={onMark} />
+            })()}
             <Button
               type="button"
               variant="ghost"
@@ -1416,8 +1481,9 @@ export function SimulationView() {
               ) : catalogEmbed ? (
                 // The redesigned Migrate (MigrationWorkbench) embedded under the sim
                 // header — same component the /migrate route uses (its `embedded`
-                // prop hides the PageHeader and keeps filter state off the URL).
-                <MigrateWorkbenchEmbed />
+                // prop hides the PageHeader and keeps filter state off the URL). The
+                // catalogId opens it on the matching view (discovery domain / pilots).
+                <MigrateWorkbenchEmbed catalogId={catalogEmbed.catalogId} />
               ) : algorithmTabEmbed ? (
                 // C5-full: every Algorithms tab via SIM_ALGORITHM_TABS. Review tabs
                 // (Protocol Support) mount with no confirm; "choice that counts" tabs
@@ -1756,9 +1822,15 @@ export function SimulationView() {
                     level gating is preserved (achievedTreeLevel is unchanged). */}
                 <div className="mb-4 flex flex-col gap-1.5">
                   {phaseTree.levels.map((band) => {
-                    const total = band.activities.reduce((n, a) => n + a.steps.length, 0)
+                    // Required (gating) steps only — bonus scenario labs don't count
+                    // toward the band's "checks" tally (they never gate the level).
+                    const total = band.activities.reduce(
+                      (n, a) => n + a.steps.filter(isGatingStep).length,
+                      0
+                    )
                     const done = band.activities.reduce(
-                      (n, a) => n + a.steps.filter((s) => stepDone(s, sel)).length,
+                      (n, a) =>
+                        n + a.steps.filter((s) => isGatingStep(s) && stepDone(s, sel)).length,
                       0
                     )
                     const earned = level >= band.level
@@ -1841,6 +1913,31 @@ export function SimulationView() {
                                     </span>
                                     <span className="shrink-0 font-mono text-sim-micro text-success">
                                       done
+                                    </span>
+                                  </div>
+                                )
+                              // scenario lab needs a running sandbox — when none is
+                              // reachable show it LOCKED (bonus, non-gating) instead
+                              // of opening a broken/unreachable panel.
+                              if (isScenarioStep(step) && sandboxAvail !== 'available')
+                                return (
+                                  <div
+                                    key={`${step.to}-${i}`}
+                                    aria-disabled="true"
+                                    title="Hands-on lab — start a sandbox to run it. Optional: it never blocks your maturity level."
+                                    className="flex w-full items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 opacity-60"
+                                  >
+                                    <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-muted-foreground">
+                                      🔒
+                                    </span>
+                                    {chip}
+                                    <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                      {step.label}
+                                    </span>
+                                    <span className="shrink-0 font-mono text-sim-micro text-muted-foreground">
+                                      {sandboxAvail === 'checking'
+                                        ? 'checking sandbox…'
+                                        : 'bonus · start sandbox'}
                                     </span>
                                   </div>
                                 )

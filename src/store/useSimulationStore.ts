@@ -44,8 +44,9 @@ export interface SimulationState {
   /** Product ids the player has selected in the in-sim Migrate catalog (C7).
    *  GAME-SCOPED — kept separate from the standalone catalog's global My Products. */
   picks: string[]
-  /** Catalog step ids (C7) earned by picking a PQC-capable product while THAT
-   *  step's catalog was open — so each catalog task is independently completed. */
+  /** Catalog step ids the player has marked complete (explicit "Mark complete"
+   *  in the embed header — the legacy "pick a PQC product while open" mechanic is
+   *  gone). Each catalog task is independently completed. */
   catalogCompleted: string[]
   /** Tree step keys (`${phase}::${to}`) delegated to / auto-done by the AI team. */
   auto: string[]
@@ -75,7 +76,7 @@ export interface SimulationState {
   markRunComplete: () => void
   /** Toggle a product in the game-scoped Migrate catalog selection (C7). */
   togglePick: (productId: string) => void
-  /** Mark a catalog step done (C7) — the player picked a PQC product while it was open. */
+  /** Mark a catalog step done — set on the explicit "Mark complete" click. */
   markCatalogStepDone: (catalogId: string) => void
   /** Cumulative manual tick: clicking the current level un-ticks to level-1. */
   setLevel: (phase: string, level: number) => void

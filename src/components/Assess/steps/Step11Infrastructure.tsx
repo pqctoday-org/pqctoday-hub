@@ -6,7 +6,7 @@ import { Button } from '../../ui/button'
 import clsx from 'clsx'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { usePersonaStore } from '../../../store/usePersonaStore'
-import { useMigrateSelectionStore } from '../../../store/useMigrateSelectionStore'
+import { useSelectedProductIds } from '../../../store/useMigrateSelectionStore'
 import { InlineTooltip } from '../../ui/InlineTooltip'
 import { getPersonaStepContent } from '../../../data/personaWizardHints'
 import { PersonaHint } from './PersonaHint'
@@ -93,7 +93,7 @@ const Step11Infrastructure = ({
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
   const stepContent = getPersonaStepContent(persona, 'infra', experienceLevel, industry)
 
-  const myProducts = useMigrateSelectionStore((s) => s.myProducts)
+  const myProducts = useSelectedProductIds()
 
   // Build a lookup map once
   const itemMap = useMemo(() => new Map(softwareData.map((item) => [item.productId, item])), [])
