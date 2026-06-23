@@ -36,6 +36,8 @@ import { SIM_REFERENCE_EMBEDS } from './referenceEmbeds'
 import { useSimAutoRunPlayer } from './autorun/useSimAutoRunPlayer'
 import { SimAutoRunOverlay } from './autorun/SimAutoRunOverlay'
 import { SimPassIntroModal } from './autorun/SimPassIntroModal'
+import { SimPhaseIntroModal } from './autorun/SimPhaseIntroModal'
+import { SimScenarioIntroCard } from './autorun/SimScenarioIntroCard'
 import { getScenario } from './autorun/scenarioConfig'
 import { transformationStatus } from './autorun/transformationStatus'
 import { TransformationStatusPanel } from './autorun/TransformationStatusPanel'
@@ -1182,8 +1184,20 @@ export function SimulationView() {
             ▶ PLAY ALL {LIFECYCLE.length}
           </Button>
           <SimAutoRunOverlay player={autoRunPlayer} />
-          {autoRunPlayer.passIntro && (
+          {autoRunPlayer.scenarioIntro && (
+            <SimScenarioIntroCard
+              scenario={autoRunPlayer.scenarioIntro}
+              onBegin={autoRunPlayer.beginScenario}
+            />
+          )}
+          {autoRunPlayer.passIntro && !autoRunPlayer.scenarioIntro && (
             <SimPassIntroModal pass={autoRunPlayer.passIntro} onBegin={autoRunPlayer.beginPass} />
+          )}
+          {autoRunPlayer.phaseIntro && (
+            <SimPhaseIntroModal
+              phase={autoRunPlayer.phaseIntro.phase}
+              onBegin={autoRunPlayer.beginPhase}
+            />
           )}
           <Button
             type="button"
