@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { ExportableArtifact } from './ExportableArtifact'
 import { CompleteStepAction } from '../CompleteStepAction'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
 
 export interface ArtifactField {
   id: string
@@ -37,6 +38,9 @@ interface ArtifactBuilderProps {
   exportFormats?: ('markdown' | 'json' | 'csv' | 'pptx' | 'docx' | 'pdf')[]
   /** Forward to ExportableArtifact — render PDF in A4 landscape for wide tables. Audit M4. */
   wideTable?: boolean
+  /** Auto-run only: demo values overlaid on field defaults when a playthrough is active
+   *  (keyed sectionId → fieldId). Ignored in normal manual use. */
+  demoFill?: Record<string, Record<string, string | string[]>>
 }
 
 export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
@@ -48,6 +52,7 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
   renderPreview,
   exportFormats = ['markdown'],
   wideTable = false,
+  demoFill,
 }) => {
   const [mode, setMode] = useState<'edit' | 'preview'>('edit')
   // Persistent done-state keyed on the form snapshot (survives edits).
@@ -55,12 +60,15 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
   const [lastSavedKey, setLastSavedKey] = useState<string | null>(null)
   const [formData, setFormData] = useState<Record<string, Record<string, string | string[]>>>(
     () => {
+      // Auto-run: overlay demo values on the field defaults so the form opens filled.
+      const fill = isAutoRunFillActive() ? demoFill : undefined
       const initial: Record<string, Record<string, string | string[]>> = {}
       for (const section of sections) {
         initial[section.id] = {}
         for (const field of section.fields) {
+          const demo = fill?.[section.id]?.[field.id]
           initial[section.id][field.id] =
-            field.defaultValue ?? (field.type === 'checklist' ? [] : '')
+            demo ?? field.defaultValue ?? (field.type === 'checklist' ? [] : '')
         }
       }
       return initial
