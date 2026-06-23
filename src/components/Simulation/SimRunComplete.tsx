@@ -17,6 +17,8 @@ export interface SimRunCompleteObjective {
   label: string
   byYear: number
   done: boolean
+  /** The year it was actually achieved (for the on-time badge); omit if not recorded. */
+  achievedYear?: number
 }
 
 export interface SimRunCompleteProps {
@@ -87,20 +89,27 @@ export function SimRunComplete({
           </h2>
 
           <div className="mb-4 space-y-1.5 text-left">
-            {objectives.map((o) => (
-              <div
-                key={o.id}
-                className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold ${
-                  o.done ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'
-                }`}
-              >
-                <ShieldCheck size={16} aria-hidden="true" />
-                <span className="flex-1 text-foreground">{o.label}</span>
-                <span className="font-mono text-xs">
-                  {o.done ? '✓' : '—'} by {o.byYear}
-                </span>
-              </div>
-            ))}
+            {objectives.map((o) => {
+              const onTime = o.done && (o.achievedYear == null || o.achievedYear <= o.byYear)
+              return (
+                <div
+                  key={o.id}
+                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold ${
+                    onTime ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'
+                  }`}
+                >
+                  <ShieldCheck size={16} aria-hidden="true" />
+                  <span className="flex-1 text-foreground">{o.label}</span>
+                  <span className="font-mono text-xs">
+                    {o.done
+                      ? o.achievedYear != null
+                        ? `✓ ${o.achievedYear}`
+                        : `✓ by ${o.byYear}`
+                      : `— by ${o.byYear}`}
+                  </span>
+                </div>
+              )
+            })}
           </div>
 
           <p className="mb-4 text-xs text-muted-foreground">

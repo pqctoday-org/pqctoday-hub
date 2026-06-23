@@ -20,6 +20,28 @@ describe('SimRunComplete (run-end ceremony)', () => {
     expect(screen.getByText(/operating at full maturity through 2035/i)).toBeInTheDocument()
   })
 
+  it('shows the actual achievement year (on-time when achieved by the target)', () => {
+    const withYears = [
+      {
+        id: 'governance',
+        label: 'Governance in place',
+        byYear: 2027,
+        done: true,
+        achievedYear: 2026,
+      },
+      {
+        id: 'critical',
+        label: 'Critical assets protected',
+        byYear: 2031,
+        done: true,
+        achievedYear: 2031,
+      },
+    ]
+    render(<SimRunComplete {...base} objectives={withYears} />)
+    expect(screen.getByText(/✓ 2026/)).toBeInTheDocument()
+    expect(screen.getByText(/✓ 2031/)).toBeInTheDocument()
+  })
+
   it('shows a "behind" note when an objective is unmet', () => {
     const partial = objectives.map((o) => (o.id === 'migration' ? { ...o, done: false } : o))
     render(<SimRunComplete {...base} objectives={partial} maturity={3} />)

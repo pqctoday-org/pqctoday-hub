@@ -41,6 +41,9 @@ export interface SimulationState {
   /** True once the run-end ceremony has fired (all lifecycle phases cleared).
    *  Run-slice (cleared by RESET), so a fresh run can celebrate again (W2b). */
   runCompleteSeen: boolean
+  /** Year each objective was first achieved (run-slice, in-memory, cleared by RESET) —
+   *  drives the ceremony's on-time badges. Keyed by objective id. */
+  objectiveAchievedYears: Record<string, number>
   /** Product ids the player has selected in the in-sim Migrate catalog (C7).
    *  GAME-SCOPED — kept separate from the standalone catalog's global My Products. */
   picks: string[]
@@ -74,6 +77,8 @@ export interface SimulationState {
   markScenarioVisited: (id: string) => void
   /** Fire the run-end ceremony exactly once for this run (W2b). */
   markRunComplete: () => void
+  /** Record the year an objective was first achieved (idempotent). */
+  recordObjectiveAchieved: (id: string, year: number) => void
   /** Toggle a product in the game-scoped Migrate catalog selection (C7). */
   togglePick: (productId: string) => void
   /** Mark a catalog step done — set on the explicit "Mark complete" click. */
@@ -144,6 +149,7 @@ const SEED = {
   visitedWorkshops: [] as string[],
   visitedScenarios: [] as string[],
   runCompleteSeen: false,
+  objectiveAchievedYears: {} as Record<string, number>,
   picks: [] as string[],
   catalogCompleted: [] as string[],
   auto: [] as string[],
@@ -237,6 +243,13 @@ export const useSimulationStore = create<SimulationState>()(
           s.visitedScenarios.includes(id) ? s : { visitedScenarios: [...s.visitedScenarios, id] }
         ),
       markRunComplete: () => set({ runCompleteSeen: true }),
+      recordObjectiveAchieved: (id, year) =>
+        set((s) =>
+          // eslint-disable-next-line security/detect-object-injection
+          s.objectiveAchievedYears[id] != null
+            ? {}
+            : { objectiveAchievedYears: { ...s.objectiveAchievedYears, [id]: year } }
+        ),
       togglePick: (productId) =>
         set((s) => ({
           picks: s.picks.includes(productId)
