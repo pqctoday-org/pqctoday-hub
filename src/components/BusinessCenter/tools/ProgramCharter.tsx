@@ -14,6 +14,7 @@
  * Phase-0 tools.
  */
 import React, { useMemo, useState } from 'react'
+import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
 import { ScrollText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -115,27 +116,41 @@ function buildMarkdown(s: CharterState): string {
 
 export const ProgramCharter: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
-  const [state, setState] = useState<CharterState>(() => ({
-    programName: '',
-    sponsorName: '',
-    sponsorTitle: '',
-    qrpmName: '',
-    cadence: 'Monthly',
-    budgetYear1: '',
-    budgetMultiYear: '',
-    budgetHorizonYears: '3',
-    steerCo: {
-      'exec-sponsor': true,
-      qrpm: true,
-      'crypto-architect': true,
-      'vendor-lead': false,
-      'pmo-analyst': true,
-      'security-eng': false,
-      'appsec-lead': false,
-      'ot-specialist': false,
-    },
-    signOffDate: todayIso(),
-  }))
+  const [state, setState] = useState<CharterState>(() => {
+    const base: CharterState = {
+      programName: '',
+      sponsorName: '',
+      sponsorTitle: '',
+      qrpmName: '',
+      cadence: 'Monthly',
+      budgetYear1: '',
+      budgetMultiYear: '',
+      budgetHorizonYears: '3',
+      steerCo: {
+        'exec-sponsor': true,
+        qrpm: true,
+        'crypto-architect': true,
+        'vendor-lead': false,
+        'pmo-analyst': true,
+        'security-eng': false,
+        'appsec-lead': false,
+        'ot-specialist': false,
+      },
+      signOffDate: todayIso(),
+    }
+    // Auto-run demo fill: role titles (no invented names) + framework-anchored
+    // illustrative budget (Phase 0 activity 0.2 cost range).
+    if (!isAutoRunFillActive()) return base
+    return {
+      ...base,
+      programName: 'Post-Quantum Cryptography Migration Program',
+      sponsorName: 'Chief Information Security Officer',
+      sponsorTitle: 'Executive Sponsor',
+      qrpmName: 'Head of Cryptographic Engineering',
+      budgetYear1: '$1.5M–$4M — discovery, tooling, 2–3 hybrid pilots, training',
+      budgetMultiYear: 'Phased multi-year program aligned to infrastructure refresh cycles',
+    }
+  })
 
   const set = <K extends keyof CharterState>(key: K, value: CharterState[K]) =>
     setState((prev) => ({ ...prev, [key]: value }))
