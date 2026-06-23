@@ -28,7 +28,12 @@ export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
       <div className="h-1 w-full max-w-3xl overflow-hidden rounded bg-background/20">
         <div className="h-full rounded bg-primary transition-all" style={{ width: `${pct}%` }} />
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-center gap-2">
+        {!player.done && (
+          <Button type="button" variant="ghost" onClick={player.prevPhase} className={btn}>
+            ⏮ Prev phase
+          </Button>
+        )}
         {player.running && !player.paused && (
           <Button type="button" variant="ghost" onClick={player.pause} className={btn}>
             ❚❚ Pause
@@ -40,10 +45,24 @@ export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
           </Button>
         )}
         {!player.done && (
+          <Button type="button" variant="ghost" onClick={player.nextPhase} className={btn}>
+            Next phase ⏭
+          </Button>
+        )}
+        {!player.done && (
           <Button type="button" variant="ghost" onClick={player.cycleSpeed} className={btn}>
             Speed: {player.speed}
           </Button>
         )}
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={player.toggleVoice}
+          className={btn}
+          title={player.voiceName ? `Voice: ${player.voiceName}` : 'Browser voice'}
+        >
+          {player.voiceOn ? `🔊 ${player.voiceName || 'Voice'}` : '🔇 Muted'}
+        </Button>
         <Button type="button" variant="ghost" onClick={player.stop} className={btn}>
           {player.done ? 'Close' : '■ Stop'}
         </Button>

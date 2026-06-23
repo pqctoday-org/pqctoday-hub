@@ -11,7 +11,7 @@
  * useSimulationStore. Design: reports/framework-gap/SIMULATION-DESIGN.md +
  * the Mission Control handoff.
  */
-import { useMemo, useState, useEffect, useRef, Suspense } from 'react'
+import { useMemo, useState, useEffect, useRef, useCallback, Suspense } from 'react'
 import { Link } from 'react-router-dom'
 import {
   BUSINESS_TOOL_COMPONENTS,
@@ -35,7 +35,19 @@ import { SIM_ALGORITHM_TABS } from './algorithmTabs'
 import { SIM_REFERENCE_EMBEDS } from './referenceEmbeds'
 import { useSimAutoRunPlayer } from './autorun/useSimAutoRunPlayer'
 import { SimAutoRunOverlay } from './autorun/SimAutoRunOverlay'
+import { SimPhaseIntroModal } from './autorun/SimPhaseIntroModal'
+
+/** Per-step Library scope: the search term to open the embedded library on, derived
+ *  from the reference step's title, so each library step shows its topic (CycloneDX,
+ *  SP 800-88, SBOM standards) instead of the full list. */
+function libraryQueryForStep(title: string): string | undefined {
+  if (/CycloneDX/i.test(title)) return 'CycloneDX'
+  if (/800-88|decommission/i.test(title)) return '800-88'
+  if (/SBOM|CT-log|data-source/i.test(title)) return 'SBOM'
+  return undefined
+}
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
+import { LibraryEmbed } from '@/components/shared/widgets/LibraryEmbed'
 import { CompleteStepAction } from '../PKILearning/common/CompleteStepAction'
 import { parseTimelineScope } from '@/data/timelineScope'
 import { MigrateWorkbenchEmbed } from '@/components/shared/widgets/MigrateWorkbenchEmbed'
@@ -401,9 +413,10 @@ export function SimulationView() {
     // still bulk-completes via its own button + the quarter engine.
   }
   const closeEmbed = clearAllEmbeds
-  // Live auto-run playthrough (Play 0→7) — drives the real sim through every gating
-  // step with narration; openStep opens each tool inline as it goes.
-  const autoRunPlayer = useSimAutoRunPlayer(openStep)
+  // Live auto-run playthrough (Play 0→7) — drives the real sim like manual play:
+  // opens each tool inline for a peek, then returns to the board so its sections
+  // tick off in view; the clock advances Q1 2026 → Q1 2035.
+  const autoRunPlayer = useSimAutoRunPlayer({ openStep, closeEmbed })
 
   // real hub completion state: generated artifacts + Learn-module progress
   const docs = useModuleStore((s) => s.artifacts.executiveDocuments)
@@ -462,6 +475,28 @@ export function SimulationView() {
     useAssessmentResultStore.getState().setResult(result)
     useAssessmentResultStore.setState({ completedAt: new Date().toISOString() })
   }, [assessSnap, assessFormStatus, getAssessInput])
+  // Sample-org cold start — used by the locked-screen "Watch the full migration"
+  // and "Explore" buttons so the sim can be tried (and auto-run) without first
+  // running a real assessment. Replaced the moment the user runs their own.
+  const loadSampleOrg = useCallback(() => {
+    const result = computeAssessment({
+      industry: 'Finance & Banking',
+      currentCrypto: ['RSA-2048', 'ECDSA', 'AES-256', 'SHA-256'],
+      dataSensitivity: ['critical', 'high'],
+      complianceRequirements: ['PCI DSS', 'GDPR'],
+      migrationStatus: 'not-started',
+      cryptoUseCases: ['TLS/HTTPS', 'Data-at-rest encryption', 'Digital signatures'],
+      dataRetention: ['10-25y', 'indefinite'],
+      systemCount: '200-plus',
+      teamSize: '11-50',
+      cryptoAgility: 'partially-abstracted',
+      infrastructure: ['Cloud Storage', 'HSM / Hardware security modules'],
+      vendorDependency: 'mixed',
+      timelinePressure: 'within-2-3y',
+    } satisfies AssessmentInput)
+    useAssessmentResultStore.getState().setResult(result)
+    useAssessmentResultStore.setState({ completedAt: new Date().toISOString() })
+  }, [])
   // The org profile is now SOURCED FROM THE ASSESSMENT (single source of truth):
   // ORG / JURISDICTION / SECTOR dials are read-only and derive from here. SEAT
   // defaults from the persona; MODE (difficulty) stays freely editable.
@@ -972,39 +1007,27 @@ export function SimulationView() {
                 View report
               </Link>
             </div>
-            <div className="mt-3">
+            <div className="mt-3 space-y-2">
+              <Button
+                onClick={() => {
+                  loadSampleOrg()
+                  autoRunPlayer.start()
+                }}
+                className="h-auto w-full whitespace-normal bg-gradient-to-r from-primary to-secondary py-2.5 text-[13px] font-extrabold text-background hover:opacity-90"
+              >
+                ▶ Watch the full migration (sample org)
+              </Button>
               <Button
                 variant="outline"
-                onClick={() => {
-                  // Soft cold-start: let a curious visitor explore without first
-                  // running an assessment. Computed through the real engine so the
-                  // numbers are internally consistent; replaced the moment the user
-                  // runs their own assessment.
-                  const result = computeAssessment({
-                    industry: 'Finance & Banking',
-                    currentCrypto: ['RSA-2048', 'ECDSA', 'AES-256', 'SHA-256'],
-                    dataSensitivity: ['critical', 'high'],
-                    complianceRequirements: ['PCI DSS', 'GDPR'],
-                    migrationStatus: 'not-started',
-                    cryptoUseCases: ['TLS/HTTPS', 'Data-at-rest encryption', 'Digital signatures'],
-                    dataRetention: ['10-25y', 'indefinite'],
-                    systemCount: '200-plus',
-                    teamSize: '11-50',
-                    cryptoAgility: 'partially-abstracted',
-                    infrastructure: ['Cloud Storage', 'HSM / Hardware security modules'],
-                    vendorDependency: 'mixed',
-                    timelinePressure: 'within-2-3y',
-                  } satisfies AssessmentInput)
-                  useAssessmentResultStore.getState().setResult(result)
-                  useAssessmentResultStore.setState({ completedAt: new Date().toISOString() })
-                }}
+                onClick={loadSampleOrg}
                 className="h-auto w-full whitespace-normal py-2.5 text-[13px]"
               >
                 Explore with a sample organization
               </Button>
               <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-                Loads a sample Finance &amp; Banking · US run so you can try the simulation now —
-                run your own assessment anytime to replace it with your real numbers.
+                “Watch the full migration” loads a sample Finance &amp; Banking · US run and plays
+                the whole thing automatically. Run your own assessment anytime to replace it with
+                your real numbers.
               </p>
             </div>
           </div>
@@ -1128,6 +1151,12 @@ export function SimulationView() {
             ▶ PLAY 0–7
           </Button>
           <SimAutoRunOverlay player={autoRunPlayer} />
+          {autoRunPlayer.phaseIntro && (
+            <SimPhaseIntroModal
+              phase={autoRunPlayer.phaseIntro}
+              onBegin={autoRunPlayer.beginPhase}
+            />
+          )}
           <Button
             type="button"
             variant="ghost"
@@ -1288,7 +1317,7 @@ export function SimulationView() {
       algorithmTabEmbed ||
       referenceEmbed ||
       scenarioEmbed ? (
-        <div className="flex min-h-0 flex-1 flex-col">
+        <div data-sim-embed-pane className="flex min-h-0 flex-1 flex-col">
           <div className="flex shrink-0 items-center gap-2 border-b-2 border-primary bg-primary/10 px-4 py-2">
             <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-sim-chip font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
               ● Simulation mode
@@ -1524,7 +1553,11 @@ export function SimulationView() {
                     <div className="p-8 text-center text-sm text-muted-foreground">Loading…</div>
                   }
                 >
-                  <ReferenceComp />
+                  {referenceEmbed?.refId === 'library' ? (
+                    <LibraryEmbed query={libraryQueryForStep(referenceEmbed.title)} />
+                  ) : (
+                    <ReferenceComp />
+                  )}
                 </Suspense>
               ) : scenarioEmbed ? (
                 // C3: live sandbox lab embedded under the header (passes the scenario
@@ -1536,6 +1569,7 @@ export function SimulationView() {
         </div>
       ) : (
         <div
+          data-sim-board
           className={`grid min-h-0 flex-1 gap-3.5 p-4 ${guided ? 'lg:grid-cols-[300px_1fr]' : 'lg:grid-cols-[300px_1fr_332px]'}`}
         >
           {/* left — team (who runs this phase) above the phase journey */}
