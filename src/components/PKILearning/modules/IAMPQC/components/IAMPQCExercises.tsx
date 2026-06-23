@@ -49,7 +49,7 @@ export const IAMPQCExercises: React.FC<IAMPQCExercisesProps> = ({
       badge: 'Token Signing',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'ML-DSA-65 signature (3,309 bytes) is ~13x larger than RS256 (256 bytes) and ~52x larger than ES256 (64 bytes). While signing takes only ~2.1ms (faster than most network round trips), the token size increase can impact HTTP Authorization header limits. Check your load balancer max header size.',
+        'ML-DSA-65 signature (3,309 bytes) is ~13x larger than RS256 (256 bytes) and ~52x larger than ES256 (64 bytes). ML-DSA signing is fast (typically a few milliseconds, well under most network round trips), but the token size increase can impact HTTP Authorization header limits. Check your load balancer max header size.',
       config: { step: 1 },
     },
     {
@@ -60,7 +60,7 @@ export const IAMPQCExercises: React.FC<IAMPQCExercisesProps> = ({
       badge: 'Directory',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'Active Directory exposes two critical HNDL vectors: PKINIT RSA decryption (Kerberos TGT traffic) and NTLM credential exposure. Microsoft Entra ID uses long-lived refresh tokens (90-day default) signed with RSA-2048, which are at risk under HNDL if intercepted.',
+        'Active Directory exposes two critical HNDL vectors: PKINIT RSA decryption (Kerberos TGT traffic) and NTLM credential exposure. Microsoft Entra ID issues long-lived refresh tokens; unlike access-token JWTs these are opaque, encrypted artifacts (not RSA-signed), so the main quantum exposure is the TLS transport and the RSA/ECDSA-signed access tokens (JWTs) minted from them.',
       config: { step: 2 },
     },
     {
@@ -71,7 +71,7 @@ export const IAMPQCExercises: React.FC<IAMPQCExercisesProps> = ({
       badge: 'Vendor PQC',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        "Microsoft Entra ID uses SymCrypt which supports ML-KEM and ML-DSA, and holds FedRAMP High certification. Keycloak (open-source) can be integrated with oqsprovider for PQC signing in self-hosted deployments. Roadmap timelines vary by vendor — check each vendor's public announcements for GA dates.",
+        "Microsoft Entra ID relies on SymCrypt, which has added ML-KEM and ML-DSA support (a separate matter from its FedRAMP High authorization). Keycloak (open-source) can be integrated with oqsprovider for PQC signing in self-hosted deployments. Roadmap timelines vary by vendor — check each vendor's public announcements for GA dates.",
       config: { step: 3 },
     },
     {
@@ -82,7 +82,7 @@ export const IAMPQCExercises: React.FC<IAMPQCExercisesProps> = ({
       badge: 'Zero Trust',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'Session Management (hybrid TLS) can be migrated in 2025-2026 with zero application changes — start here for immediate quantum-safe coverage. Device Trust is the longest lead-time item (hardware replacement cycle); begin planning before 2026 even if deployment is 2027-2028.',
+        'Session Management (hybrid TLS) can be migrated now with zero application changes — start here for immediate quantum-safe coverage. Device Trust is the longest lead-time item (hardware replacement cycle); begin planning before 2026 even if deployment is 2027-2028.',
       config: { step: 4 },
     },
   ]

@@ -322,7 +322,7 @@ export const BrowseAllView = ({
                 <h3 className="text-sm font-semibold text-foreground">{g.track}</h3>
                 <span className="text-xs text-muted-foreground">{g.modules.length}</span>
               </div>
-              <div className="grid gap-2.5 [grid-template-columns:repeat(auto-fill,minmax(228px,1fr))]">
+              <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(320px,1fr))]">
                 {g.modules.map((m) => (
                   <ModuleCard
                     key={m.id}

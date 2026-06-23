@@ -28,7 +28,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Key Management',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
-      'The wallet uses ECDSA P-256 for credential binding — the same key is used to sign presentation proofs sent to relying parties. Under a CRQC threat, harvested presentations could be used to forge proofs. ML-DSA-44 (FIPS 204) is the primary PQC replacement for wallet device keys.',
+      'The wallet uses ECDSA P-256 for credential binding — the same key is used to sign presentation proofs sent to relying parties. Under a CRQC threat, harvested presentations could be used to forge proofs. ML-DSA-44 (FIPS 204) is a leading PQC candidate for wallet device keys (its smaller signatures suit constrained wallets).',
     stepIndex: 0,
   },
   {
@@ -39,7 +39,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'PID Issuance',
     badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
     observe:
-      'The PID is issued in mso_mdoc format (ISO 18013-5), signed by the national PID Issuer using ECDSA P-256. The issuer certificate is anchored to the national Trusted List. Per EUDI ARF 2.0, national PID issuers must publish PQC migration roadmaps by December 2026 and complete migration by December 2030.',
+      'The PID is issued in mso_mdoc format (ISO 18013-5), signed by the national PID Issuer using ECDSA P-256. The issuer certificate is anchored to the national Trusted List. The EU Coordinated Implementation Roadmap for PQC recommends national PQC roadmaps by 2026 and migration of high-risk use cases such as identity by 2030 — a policy recommendation rather than a binding EUDI ARF mandate.',
     stepIndex: 1,
   },
   {
@@ -61,7 +61,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'QES / QTSP',
     badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
     observe:
-      "QES requires SCAL2 because the signing key must be under the sole control of the signatory — the QTSP must ensure no third party (including the QTSP itself) can sign on the user's behalf without their active authorisation. QTSPs are governed by ETSI EN 319 411 and listed on National Trusted Lists. The CSC API v2 (Cloud Signature Consortium) standardises the remote signing protocol.",
+      "QES requires SCAL2 because the signing key must be under the sole control of the signatory — the QTSP must ensure no third party (including the QTSP itself) can sign on the user's behalf without their active authorisation. QTSPs that issue qualified certificates follow ETSI EN 319 411, while remote QES signing with SCAL2 is governed by the ETSI EN 419 241 series (with the QSCD covered by EN 419 221-5); QTSPs are listed on National Trusted Lists. The CSC API v2 (Cloud Signature Consortium) standardises the remote signing protocol.",
     stepIndex: 4,
   },
   {

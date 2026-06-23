@@ -82,8 +82,8 @@ export const IoTOTExercises: React.FC<IoTOTExercisesProps> = ({
       badge: 'BLE Mesh',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Due to tight payload limits, transmitting a 1,088-byte ML-KEM public key over standard BLE advertising channels is prohibitive. An out-of-band (OOB) PQC provisioning channel — such as QR codes or NFC — must be used to securely bootstrap the device before standard RF communications begin.',
-      config: { step: 4 },
+        'Due to tight payload limits, transmitting a 1,184-byte ML-KEM-768 public key (whose ciphertext is 1,088 bytes) over standard BLE advertising channels is prohibitive. An out-of-band (OOB) PQC provisioning channel — such as QR codes or NFC — must be used to securely bootstrap the device before standard RF communications begin.',
+      config: { step: 5 },
     },
     {
       id: 'scada-plan',
@@ -94,7 +94,7 @@ export const IoTOTExercises: React.FC<IoTOTExercisesProps> = ({
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
         'The DMZ (Level 3.5) and enterprise boundary (Level 4\u20135) score highest migration priority because they are internet-facing and subject to HNDL. Level 0\u20131 devices may not need PQC directly if they are air-gapped, but gateway devices at Level 2 must protect data in transit from quantum threats.',
-      config: { step: 5 },
+      config: { step: 4 },
     },
   ]
 
