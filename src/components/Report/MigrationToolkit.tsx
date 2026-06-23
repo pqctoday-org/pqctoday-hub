@@ -2,7 +2,10 @@
 import React, { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Package, ArrowRight, ChevronDown, EyeOff } from 'lucide-react'
-import { useMigrateSelectionStore, useSelectedProductIds } from '../../store/useMigrateSelectionStore'
+import {
+  useMigrateSelectionStore,
+  useSelectedProductIds,
+} from '../../store/useMigrateSelectionStore'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { softwareData } from '../../data/migrateData'
 import { Button } from '../ui/button'

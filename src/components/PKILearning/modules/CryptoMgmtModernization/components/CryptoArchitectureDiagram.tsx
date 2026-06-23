@@ -247,7 +247,8 @@ export const CryptoArchitectureDiagram: React.FC = () => {
     setLastSavedMarkdown(markdown)
   }, [markdown, addExecutiveDocument])
 
-  const editedSinceSave = savedAt !== null && lastSavedMarkdown !== null && markdown !== lastSavedMarkdown
+  const editedSinceSave =
+    savedAt !== null && lastSavedMarkdown !== null && markdown !== lastSavedMarkdown
 
   const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(markdown)
