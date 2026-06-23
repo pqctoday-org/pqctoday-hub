@@ -58,7 +58,7 @@ export const CryptoDevAPIsExercises: React.FC<ExercisesProps> = ({
       badge: 'Patterns',
       badgeColor: 'bg-status-success/20 text-status-success border-status-success/50',
       observe:
-        'All three APIs use a two-phase pattern: (1) register/configure the provider at startup, (2) use algorithm-agnostic operations at runtime. JCA uses Security.addProvider() + Signature.getInstance("ML-DSA-65", "BC"). OpenSSL uses OSSL_PROVIDER_load() + EVP_PKEY_sign(). PKCS#11 uses C_Initialize() + CK_MECHANISM {CKM_ML_DSA_65, NULL, 0}. In all cases, the business logic (sign this buffer) is identical — only initialization differs.',
+        'All three APIs use a two-phase pattern: (1) register/configure the provider at startup, (2) use algorithm-agnostic operations at runtime. JCA uses Security.addProvider() + Signature.getInstance("ML-DSA-65", "BC"). OpenSSL uses OSSL_PROVIDER_load() + EVP_PKEY_sign(). PKCS#11 v3.2 uses C_Initialize() + CK_MECHANISM {CKM_ML_DSA, NULL, 0} (the parameter set such as ML-DSA-65 is selected via the CKA_PARAMETER_SET key attribute). In all cases, the business logic (sign this buffer) is identical — only initialization differs.',
       config: { step: 2 },
     },
     {
@@ -70,7 +70,7 @@ export const CryptoDevAPIsExercises: React.FC<ExercisesProps> = ({
       badge: 'Libraries',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        "AWS-LC (Amazon's FIPS-validated fork) is the best fit: FIPS 140-3 validated, ML-KEM-768 in the FIPS module, Java bindings via aws-lc-rs-java. wolfSSL is also FIPS-validated and has ML-KEM support, making it a strong alternative especially for embedded POS terminal code. BoringSSL's \"BoringCrypto\" FIPS module is validated but limited to Google's internal use case.",
+        "As of mid-2026, AWS-LC (Amazon's FIPS-validated fork) is a strong fit: FIPS 140-3 validated, ML-KEM-768 in the FIPS module, Java bindings via aws-lc-rs-java. wolfSSL is also FIPS-validated and has ML-KEM support, making it a strong alternative especially for embedded POS terminal code. BoringSSL's \"BoringCrypto\" FIPS module is validated but limited to Google's internal use case. FIPS and PQC support move quickly, so confirm each option against the PQC Library Explorer and current CMVP listings.",
       config: { step: 4 },
     },
     {

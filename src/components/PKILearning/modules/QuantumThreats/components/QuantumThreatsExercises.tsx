@@ -47,11 +47,11 @@ export const QuantumThreatsExercises: React.FC<QuantumThreatsExercisesProps> = (
       id: 'aes-comparison',
       title: '2. AES-128 vs AES-256 Quantum Security',
       description:
-        "Compare how Grover's algorithm affects AES-128 (drops to 64-bit, insufficient) versus AES-256 (drops to 128-bit, still secure). The fix is simple: double the key size.",
+        "Compare how Grover's algorithm affects AES-128 (a ~64-bit theoretical bound) versus AES-256 (~128-bit) in the Security Level tool. The practical takeaway: prefer AES-256 for long-term confidentiality.",
       badge: "Grover's",
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        "AES-128's post-quantum security (64-bit) falls below the minimum 80-bit threshold. AES-256 retains 128-bit security — the recommended NIST Level 1 minimum.",
+        "The tool shows AES-128 at a ~64-bit Grover bound and AES-256 at ~128-bit. In practice Grover's enormous circuit depth makes even AES-128 far stronger than 64 bits, so NIST still rates AES-128 at security category 1 — but AES-256 (category 5) is the safer choice for long-term data.",
       config: { step: 0, algorithmA: 'AES-128', algorithmB: 'AES-256' },
     },
     {
@@ -91,11 +91,11 @@ export const QuantumThreatsExercises: React.FC<QuantumThreatsExercisesProps> = (
       id: 'ecc-blockchain',
       title: '7. ECC Blockchain Under Quantum Attack',
       description:
-        'A Bitcoin transaction is broadcast to the mempool but not yet confirmed. Google Quantum AI (Mar 2026) demonstrated secp256k1 ECDLP can be broken with \u22641,200 logical qubits — roughly half prior estimates. Use the Security Level tool to compare secp256k1 with RSA-2048 and see why fast-clock CRQCs pose an on-spend threat before PQC migration.',
+        'A Bitcoin transaction is broadcast to the mempool but not yet confirmed. Google Quantum AI (Mar 2026) estimated that breaking secp256k1 ECDLP would require\u22641,200 logical qubits — roughly half prior estimates. Use the Security Level tool to compare secp256k1 with RSA-2048 and see why fast-clock CRQCs pose an on-spend threat before PQC migration.',
       badge: "Shor's",
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        'secp256k1 breaks with \u22641,200 logical qubits — significantly fewer than RSA-2048 (~4,098). A fast-clock CRQC (superconducting) reaching this threshold could derive the private key from an exposed public key within the mempool confirmation window (~10 min for Bitcoin). Migration to PQC signatures is critical for blockchain infrastructure.',
+        'secp256k1 would require an estimated\u22641,200 logical qubits — significantly fewer than RSA-2048 (~4,098). A fast-clock CRQC (superconducting) reaching this threshold could derive the private key from an exposed public key within the mempool confirmation window (~10 min for Bitcoin). Migration to PQC signatures is critical for blockchain infrastructure.',
       config: { step: 0, algorithmA: 'ECDSA secp256k1' },
     },
     {

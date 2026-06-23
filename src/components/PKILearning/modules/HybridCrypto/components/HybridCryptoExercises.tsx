@@ -54,7 +54,7 @@ export const HybridCryptoExercises: React.FC<HybridCryptoExercisesProps> = ({
       badge: 'Signatures',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'ML-DSA-65 private keys (4,032 bytes) are 126x larger than ECDSA P-256 (32 bytes). Signatures are 3,309 bytes vs 72 bytes. This is the main PQC migration challenge for bandwidth-constrained systems.',
+        'ML-DSA-65 private keys (4,032 bytes) are 126x larger than ECDSA P-256 (32 bytes). Signatures are 3,309 bytes vs 64 bytes (raw ECDSA; ~72 bytes when DER-encoded). This is the main PQC migration challenge for bandwidth-constrained systems.',
       config: { step: 0, category: 'signature' },
     },
     {

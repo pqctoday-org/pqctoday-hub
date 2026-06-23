@@ -57,7 +57,7 @@ export const PlatformEngExercises: React.FC<ExercisesProps> = ({
       badge: 'Signing',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Notation has Beta PQC readiness (available in 2025 via the AWS Crypto Tools plugin with ML-DSA-65 composite certificates). cosign is On Roadmap with a 2026 target. For new deployments requiring ML-DSA today, Notation + AWS Crypto plugin is the correct choice. Docker Content Trust (DCT) should be migrated immediately — Notary v1 has no PQC roadmap and is in maintenance mode.',
+        'Notation has early PQC readiness via the AWS Crypto Tools plugin (ML-DSA-65 composite certificates); cosign has PQC on its roadmap. Vendor timelines move quickly, so confirm current status. For new deployments requiring ML-DSA today, Notation + AWS Crypto plugin is the correct choice. Docker Content Trust (DCT) should be migrated immediately — Notary v1 has no PQC roadmap and is in maintenance mode.',
       config: { step: 2 },
     },
     {
