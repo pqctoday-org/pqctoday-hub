@@ -38,8 +38,10 @@ export interface TreeStep {
   /** catalog: the product-catalog layer scope (C7 — embed the Migrate catalog in
    *  the sim). Reserved for an optional focus filter. */
   catalogLayer?: string
-  /** catalog: stable id of this catalog task (C7) — completion is per-task: the
-   *  step is done when the player picks a PQC-capable product while it is open. */
+  /** catalog: stable id of this catalog task (C7) — completion is per-task and
+   *  earned when the embed is opened (reviewed-on-open). The id also selects which
+   *  real workbench view the embed opens on (e.g. 'discovery' → the discovery
+   *  domain, 'pilots' → the asset picker). */
   catalogId?: string
   /** scenario: sandbox scenario id (C3 — embed a live sandbox lab in the sim).
    *  Completion via the visited-scenarios set, set when the lab reports done. */
@@ -96,11 +98,16 @@ export function flattenTree(tree: PhaseTree): TreeStep[] {
   return tree.levels.flatMap((b) => b.activities.flatMap((a) => a.steps))
 }
 
+/** Steps that GATE a band's completion. `scenario` (live sandbox lab) steps are
+ *  BONUS: they require a running sandbox most players don't have, so they never
+ *  block a maturity band — completing them is optional. */
+export const isGatingStep = (s: TreeStep): boolean => s.kind !== 'scenario'
+
 /**
  * The maturity level the player has EARNED from real hub state — the highest
- * present band whose activities are all complete, requiring lower present bands
- * first. Levels absent from the tree are skipped (not required). Returns 0 if
- * the lowest present band is incomplete.
+ * present band whose (gating) activities are all complete, requiring lower present
+ * bands first. Levels absent from the tree are skipped (not required). Bonus
+ * `scenario` steps never gate. Returns 0 if the lowest present band is incomplete.
  */
 export function achievedTreeLevel(
   tree: PhaseTree,
@@ -108,7 +115,9 @@ export function achievedTreeLevel(
 ): MaturityLevelId | 0 {
   let achieved: MaturityLevelId | 0 = 0
   for (const band of tree.levels) {
-    const allDone = band.activities.every((a) => a.steps.every(isDone))
+    const allDone = band.activities.every((a) =>
+      a.steps.every((s) => !isGatingStep(s) || isDone(s))
+    )
     if (!allDone) break
     achieved = band.level
   }
