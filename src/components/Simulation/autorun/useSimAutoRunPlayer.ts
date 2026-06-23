@@ -382,6 +382,7 @@ export function useSimAutoRunPlayer({
     clearTimer()
     seedDemoOrg() // populate the scenario context so embeds have data + a scope to filter by
     setAutoRunFill(true) // tools opened during the run fill their forms with demo content
+    useSimulationStore.getState().markTourSeen() // the first-run tour must not block the playthrough
     const q = autoRunQueue()
     queueRef.current = q
     const starts: { phase: PhaseId; start: number }[] = []
