@@ -73,8 +73,12 @@ export function transformationStatus(inp: StatusInput): TransformationStatus {
     }
   })
 
-  const hndl = tracks.filter((t) => t.track === 'HNDL')
-  const hndlExposure = 1 - hndl.reduce((s, t) => s + t.progress, 0) / Math.max(1, hndl.length)
+  // Harvest-now exposure falls as the HNDL tracks migrate, weighted to the CRITICAL tier — the
+  // high-value, most-targeted data — so protecting critical assets cuts most of the risk by the
+  // critical-protected milestone (rather than plateauing at 50% until the general tier migrates).
+  const hCrit = tracks.find((t) => t.id === 'hndl-critical')?.progress ?? 0
+  const hGen = tracks.find((t) => t.id === 'hndl-general')?.progress ?? 0
+  const hndlExposure = Math.max(0, 1 - (0.7 * hCrit + 0.3 * hGen))
   const criticalDone = tracks.filter((t) => t.tier === 'critical').every((t) => t.done)
 
   const objectives: ObjectiveStatus[] = inp.scenario.objectives.map((o) => {
