@@ -12,6 +12,9 @@ export interface SectorOption {
 interface SectorFilterProps {
   options?: SectorOption[]
   className?: string
+  /** Optional URL-param source override (for the sim embed). Defaults to useSearchParams. */
+  params?: URLSearchParams
+  setParams?: ReturnType<typeof useSearchParams>[1]
 }
 
 // NAICS 2-digit group labels relevant to PQC — used when no custom options provided
@@ -60,8 +63,15 @@ export const INDUSTRY_TO_NAICS: Record<string, string[]> = {
   '91': ['Government & Defense', 'Defense', 'Military', 'National Security'],
 }
 
-export function SectorFilter({ options, className }: SectorFilterProps) {
-  const [searchParams, setSearchParams] = useSearchParams()
+export function SectorFilter({
+  options,
+  className,
+  params: paramsProp,
+  setParams: setParamsProp,
+}: SectorFilterProps) {
+  const [urlParams, setUrlParams] = useSearchParams()
+  const searchParams = paramsProp ?? urlParams
+  const setSearchParams = setParamsProp ?? setUrlParams
   const selected = searchParams.getAll('sector')
 
   function handleChange(codes: string[]) {
@@ -126,10 +136,11 @@ export function industryLabel(token: string): string {
   return token
 }
 
-/** Read sector filter state from URL — returns empty array when unset */
-export function useSectorFilter(): string[] {
-  const [searchParams] = useSearchParams()
-  return searchParams.getAll('sector')
+/** Read sector filter state — returns empty array when unset. Accepts an optional
+ *  URLSearchParams override (for the sim embed). */
+export function useSectorFilter(paramsOverride?: URLSearchParams): string[] {
+  const [urlParams] = useSearchParams()
+  return (paramsOverride ?? urlParams).getAll('sector')
 }
 
 /** Returns true when value matches any selected sector code (or no sectors selected) */

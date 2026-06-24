@@ -13,6 +13,9 @@ export interface GeoOption {
 interface GeoFilterProps {
   options: GeoOption[]
   className?: string
+  /** Optional URL-param source override (for the sim embed). Defaults to useSearchParams. */
+  params?: URLSearchParams
+  setParams?: ReturnType<typeof useSearchParams>[1]
 }
 
 // PQC overlay geography codes always shown at top
@@ -22,8 +25,15 @@ const OVERLAY_OPTIONS: FilterDropdownItem[] = [
   { id: 'PQC-REGION-EU', label: 'European Union' },
 ]
 
-export function GeoFilter({ options, className }: GeoFilterProps) {
-  const [searchParams, setSearchParams] = useSearchParams()
+export function GeoFilter({
+  options,
+  className,
+  params: paramsProp,
+  setParams: setParamsProp,
+}: GeoFilterProps) {
+  const [urlParams, setUrlParams] = useSearchParams()
+  const searchParams = paramsProp ?? urlParams
+  const setSearchParams = setParamsProp ?? setUrlParams
   const selected = searchParams.getAll('geo')
 
   function handleChange(codes: string[]) {
@@ -60,10 +70,11 @@ export function GeoFilter({ options, className }: GeoFilterProps) {
   )
 }
 
-/** Read geo filter state from URL — returns empty array when unset */
-export function useGeoFilter(): string[] {
-  const [searchParams] = useSearchParams()
-  return searchParams.getAll('geo')
+/** Read geo filter state — returns empty array when unset. Accepts an optional
+ *  URLSearchParams override (for the sim embed). */
+export function useGeoFilter(paramsOverride?: URLSearchParams): string[] {
+  const [urlParams] = useSearchParams()
+  return (paramsOverride ?? urlParams).getAll('geo')
 }
 
 /** Returns true when value matches any selected geo code (or no geos selected) */
