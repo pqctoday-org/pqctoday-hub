@@ -4,7 +4,8 @@
  *
  * A scenario's anchor dates come from the country's timeline data (the rows tagged
  * `sim_milestone` in the timeline CSV → `TIMELINE_COUNTRY_MILESTONES`). The US scenario is
- * anchored to EO 14409: key establishment (HNDL) 2030, digital signatures (TNFL) 2031. Other
+ * anchored to the June 2026 PQC Executive Order (EO/FR number not yet assigned): key establishment
+ * (HNDL) 2030, digital signatures (TNFL) 2031. Other
  * countries become scenarios simply by tagging their timeline rows — no code change.
  *
  * Framework 2.1 two-track model (Activity 3.3): Track A = HNDL (key exchange / confidentiality),
