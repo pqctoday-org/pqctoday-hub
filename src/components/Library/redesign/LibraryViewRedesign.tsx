@@ -33,7 +33,7 @@ import type { SortOption } from '@/components/Library/SortControl'
 import type { ViewMode } from '@/components/Library/ViewToggle'
 import type { PersonaId } from '@/data/learningPersonas'
 import { libraryDefaultSortForPersona } from '@/data/libraryPersonaConfig'
-import { useLibraryPipeline, ORG_CANONICAL_MAP } from './useLibraryPipeline'
+import { useLibraryPipeline, ORG_CANONICAL_MAP, ORG_OTHER } from './useLibraryPipeline'
 import { LibraryRoleLens } from './LibraryRoleLens'
 import { LibraryControlDeck } from './LibraryControlDeck'
 import { LibraryFacetRail, type LibraryQuickView } from './LibraryFacetRail'
@@ -218,14 +218,23 @@ export function LibraryViewRedesign({
   // ── Org dropdown options (canonical) ───────────────────────────────────────
   const orgs = useMemo(() => {
     const set = new Set<string>()
+    let hasUnmapped = false
     for (const item of libraryData) {
       if (!item.authorsOrOrganization) continue
+      let mapped = false
       for (const raw of item.authorsOrOrganization.split(';')) {
         const canon = ORG_CANONICAL_MAP[raw.trim()]
-        if (canon) set.add(canon)
+        if (canon) {
+          set.add(canon)
+          mapped = true
+        }
       }
+      if (!mapped) hasUnmapped = true
     }
-    return Array.from(set).sort()
+    const sorted = Array.from(set).sort()
+    // Append "Other" last so docs by unmapped publishers stay reachable.
+    if (hasUnmapped) sorted.push(ORG_OTHER)
+    return sorted
   }, [])
 
   // ── Geography dropdown options (derived from data, deduped vs overlays) ──────
