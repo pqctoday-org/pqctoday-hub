@@ -644,7 +644,7 @@ export function renderMTIMarkdown(data: Record<string, Record<string, string | s
 // Component
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Auto-run demo fill — US / EO 14409 scenario: CNSA-aligned federal audience, FIPS-validated
+// Auto-run demo fill — US PQC Executive Order scenario: CNSA-aligned federal audience, FIPS-validated
 // posture, 2030 key-establishment deadline. Overrides the generic defaults only during a run
 // (isAutoRunFillActive, via ArtifactBuilder); normal manual use is unchanged.
 const MTI_DEMO_FILL: Record<string, Record<string, string | string[]>> = {

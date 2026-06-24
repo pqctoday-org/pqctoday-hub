@@ -14,7 +14,7 @@ export const TIMELINE_COUNTRY_DEADLINE_YEAR: Record<string, number> = {
   JP: 2035, // Government PQC Transition Deadline
   KR: 2035, // Full PQC Roadmap Complete
   UK: 2035, // Full PQC Compliance
-  US: 2030, // EO 14409 Key-Establishment Migration Deadline
+  US: 2030, // PQC Executive Order — Key-Establishment Migration Deadline
 }
 
 /** Per-country scenario milestone years, from rows tagged `sim_milestone` in the
