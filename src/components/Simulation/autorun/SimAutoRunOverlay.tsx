@@ -55,7 +55,9 @@ export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
               className="flex w-full items-center gap-2 text-left font-mono text-[12px] font-bold uppercase tracking-[0.16em] text-primary hover:text-primary/80"
               aria-expanded={expanded}
             >
-              <span className="shrink-0 text-[10px] text-background/50">{expanded ? '▾' : '▸'}</span>
+              <span className="shrink-0 text-[10px] text-background/50">
+                {expanded ? '▾' : '▸'}
+              </span>
               <span className="truncate">{focus.name}</span>
               <span className="ml-auto shrink-0 font-mono text-[10px] normal-case tracking-normal text-background/55">
                 {player.phaseLabel} · {player.index}/{player.total}

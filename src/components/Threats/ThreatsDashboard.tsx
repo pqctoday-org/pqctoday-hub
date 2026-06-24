@@ -604,359 +604,359 @@ export const ThreatsDashboard: React.FC<{
 
       {activeTab === 'list' && (
         <>
-      {/* Persona-forward exposure hero — your scoped sector's applicable threats,
+          {/* Persona-forward exposure hero — your scoped sector's applicable threats,
           above the fold so the threats lead the catalog. */}
-      <SectorExposureHero
-        applicable={heroApplicable}
-        scopedIndustries={heroScopedIndustries}
-        variant="exposure"
-      />
+          <SectorExposureHero
+            applicable={heroApplicable}
+            scopedIndustries={heroScopedIndustries}
+            variant="exposure"
+          />
 
-      {/* Persona summary card */}
-      {personaSummary && (
-        <div className="glass-panel p-3 mb-4 flex items-center gap-2 text-sm text-muted-foreground">
-          <Info size={14} className="text-primary flex-shrink-0" />
-          <span>{personaSummary}</span>
-        </div>
-      )}
+          {/* Persona summary card */}
+          {personaSummary && (
+            <div className="glass-panel p-3 mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+              <Info size={14} className="text-primary flex-shrink-0" />
+              <span>{personaSummary}</span>
+            </div>
+          )}
 
-      {/* Persona-aware default-filter banner — appears when persona has
+          {/* Persona-aware default-filter banner — appears when persona has
           a default-industries set, the user hasn't picked an explicit
           industry, and hasn't opted out via ?prefs=off. */}
-      {personaDefaultActive && (
-        <div className="mb-4">
-          <PersonaDefaultsBanner
-            matchedCount={filteredAndSortedData.length}
-            totalCount={threatsData.length}
-            noun="threat"
-            onReset={() => {
-              personaDefaults.resetToFullSet()
-              logEvent('Threats', 'Persona Prefs Off', personaLabel())
-            }}
-          />
-        </div>
-      )}
+          {personaDefaultActive && (
+            <div className="mb-4">
+              <PersonaDefaultsBanner
+                matchedCount={filteredAndSortedData.length}
+                totalCount={threatsData.length}
+                noun="threat"
+                onReset={() => {
+                  personaDefaults.resetToFullSet()
+                  logEvent('Threats', 'Persona Prefs Off', personaLabel())
+                }}
+              />
+            </div>
+          )}
 
-      {/* Control deck — consolidated filters in the redesign language: sector + search
+          {/* Control deck — consolidated filters in the redesign language: sector + search
           (row 1); role lens + severity/class chips + trust + my + view (row 2). */}
-      <div className="glass-panel mb-8 space-y-3 p-3" data-testid="threats-control-deck">
-        {/* Mobile: search + a filters toggle for the rest of the deck */}
-        <div className="flex items-center gap-2 md:hidden">
-          <div className="relative flex-1">
-            <Search
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            />
-            <input
-              type="text"
-              placeholder="Search threats..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value)
-                syncFiltersToUrl({ q: e.target.value })
-              }}
-              className="w-full rounded-lg border border-border bg-muted/30 py-2 pl-10 pr-4 text-sm text-foreground transition-colors placeholder:text-muted-foreground hover:bg-muted/50 focus:border-primary/50 focus:outline-none"
-            />
-          </div>
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-[44px] w-[44px] shrink-0"
-            onClick={() => setShowMobileFilters(!showMobileFilters)}
-            aria-label="Toggle filters"
-          >
-            <Filter size={18} />
-          </Button>
-        </div>
-
-        <div className={clsx('space-y-3', showMobileFilters ? 'block' : 'hidden md:block')}>
-          {/* Row 1 — your sector + search */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
-              Your sector
-            </span>
-            <div className="min-w-[180px] max-w-xs flex-1 sm:flex-none">
-              <FilterDropdown
-                items={industryItems}
-                selectedId="All"
-                onSelect={() => {}}
-                multiSelectedIds={selectedIndustries}
-                onMultiSelect={(ids) => {
-                  setSelectedIndustries(ids)
-                  syncFiltersToUrl({ industry: ids })
-                  logEvent('Threats', 'Filter Industry', ids.join(','))
-                }}
-                defaultLabel="Industry"
-                defaultIcon={<Briefcase size={14} className="text-primary" />}
-                opaque
-                className="mb-0 w-full"
-                noContainer
-              />
-            </div>
-            <span className="text-[11px] text-muted-foreground">
-              <span className="font-semibold text-foreground">{heroApplicable.length}</span> in
-              scope
-            </span>
-            <div className="relative ml-auto hidden min-w-[200px] max-w-xs flex-1 md:flex">
-              <Search
-                size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-              />
-              <input
-                type="text"
-                placeholder='Search — try "HNDL settlement data"'
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value)
-                  syncFiltersToUrl({ q: e.target.value })
-                }}
-                className="w-full rounded-lg border border-border bg-muted/30 py-1.5 pl-9 pr-3 text-sm text-foreground transition-colors placeholder:text-muted-foreground hover:bg-muted/50 focus:border-primary/50 focus:outline-none"
-              />
-            </div>
-          </div>
-
-          {/* Row 2 — role lens + severity + class + trust + my + view + count */}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border pt-3">
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
-                Role
-              </span>
-              {(
-                [
-                  { id: 'executive', label: 'Executive' },
-                  { id: 'developer', label: 'Developer' },
-                  { id: 'architect', label: 'Architect' },
-                  { id: 'ops', label: 'IT Ops' },
-                  { id: 'researcher', label: 'Researcher' },
-                  { id: 'curious', label: 'Curious' },
-                ] as const
-              ).map((r) => {
-                const active = selectedPersona === r.id
-                return (
-                  <Button
-                    key={r.id}
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setPersona(active ? null : r.id)}
-                    aria-pressed={active}
-                    className={clsx(
-                      'h-auto rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
-                      active
-                        ? 'border-secondary/50 bg-secondary/10 text-secondary'
-                        : 'border-border text-muted-foreground hover:text-foreground'
-                    )}
-                  >
-                    {r.label}
-                  </Button>
-                )
-              })}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
-                Severity
-              </span>
-              {criticalityItems.map((c) => {
-                const active = selectedCriticality === c.id
-                return (
-                  <Button
-                    key={c.id}
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setSelectedCriticality(c.id)
-                      syncFiltersToUrl({ criticality: c.id })
-                      logEvent('Threats', 'Filter Criticality', c.id)
-                    }}
-                    aria-pressed={active}
-                    className={clsx(
-                      'h-auto rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
-                      active
-                        ? 'border-primary/50 bg-primary/10 text-primary'
-                        : 'border-border text-muted-foreground hover:text-foreground'
-                    )}
-                  >
-                    {c.id === 'All' ? 'All' : c.label}
-                  </Button>
-                )
-              })}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
-                Class
-              </span>
-              {threatClassItems.map((c) => {
-                const active = selectedClass === c.id
-                return (
-                  <Button
-                    key={c.id}
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setSelectedClass(c.id)
-                      syncFiltersToUrl({ threatClass: c.id })
-                      logEvent('Threats', 'Filter Class', c.id)
-                    }}
-                    aria-pressed={active}
-                    className={clsx(
-                      'h-auto rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
-                      active
-                        ? 'border-primary/50 bg-primary/10 text-primary'
-                        : 'border-border text-muted-foreground hover:text-foreground'
-                    )}
-                  >
-                    {c.id === 'All' ? 'All' : c.id.toUpperCase()}
-                  </Button>
-                )
-              })}
-            </div>
-
-            {/* Tier filter writes ?tier= — hidden in the sim embed. */}
-            {!simEmbed && <TrustTierFilter className="mb-0" />}
-
-            {myThreats.length > 0 && (
+          <div className="glass-panel mb-8 space-y-3 p-3" data-testid="threats-control-deck">
+            {/* Mobile: search + a filters toggle for the rest of the deck */}
+            <div className="flex items-center gap-2 md:hidden">
+              <div className="relative flex-1">
+                <Search
+                  size={16}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                />
+                <input
+                  type="text"
+                  placeholder="Search threats..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value)
+                    syncFiltersToUrl({ q: e.target.value })
+                  }}
+                  className="w-full rounded-lg border border-border bg-muted/30 py-2 pl-10 pr-4 text-sm text-foreground transition-colors placeholder:text-muted-foreground hover:bg-muted/50 focus:border-primary/50 focus:outline-none"
+                />
+              </div>
               <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowOnlyThreats(!showOnlyThreats)}
-                aria-pressed={showOnlyThreats}
-                className={clsx(
-                  'inline-flex h-auto items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
-                  showOnlyThreats
-                    ? 'border-status-warning/50 bg-status-warning/10 text-status-warning'
-                    : 'border-border text-muted-foreground hover:text-foreground'
-                )}
+                variant="outline"
+                size="icon"
+                className="h-[44px] w-[44px] shrink-0"
+                onClick={() => setShowMobileFilters(!showMobileFilters)}
+                aria-label="Toggle filters"
               >
-                <BookmarkCheck size={12} />
-                My ({myThreats.length})
+                <Filter size={18} />
               </Button>
-            )}
+            </div>
 
-            <div className="ml-auto flex items-center gap-3">
-              <span className="whitespace-nowrap text-[11px] text-muted-foreground">
-                Showing{' '}
-                <span className="font-semibold text-foreground">
-                  {filteredAndSortedData.length}
-                </span>{' '}
-                of {heroApplicable.length}
-              </span>
-              <ThreatsViewToggle
-                mode={viewMode}
-                onChange={(mode) => {
-                  setViewMode(mode)
-                  syncFiltersToUrl({ mode })
-                }}
-              />
+            <div className={clsx('space-y-3', showMobileFilters ? 'block' : 'hidden md:block')}>
+              {/* Row 1 — your sector + search */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+                  Your sector
+                </span>
+                <div className="min-w-[180px] max-w-xs flex-1 sm:flex-none">
+                  <FilterDropdown
+                    items={industryItems}
+                    selectedId="All"
+                    onSelect={() => {}}
+                    multiSelectedIds={selectedIndustries}
+                    onMultiSelect={(ids) => {
+                      setSelectedIndustries(ids)
+                      syncFiltersToUrl({ industry: ids })
+                      logEvent('Threats', 'Filter Industry', ids.join(','))
+                    }}
+                    defaultLabel="Industry"
+                    defaultIcon={<Briefcase size={14} className="text-primary" />}
+                    opaque
+                    className="mb-0 w-full"
+                    noContainer
+                  />
+                </div>
+                <span className="text-[11px] text-muted-foreground">
+                  <span className="font-semibold text-foreground">{heroApplicable.length}</span> in
+                  scope
+                </span>
+                <div className="relative ml-auto hidden min-w-[200px] max-w-xs flex-1 md:flex">
+                  <Search
+                    size={16}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  />
+                  <input
+                    type="text"
+                    placeholder='Search — try "HNDL settlement data"'
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value)
+                      syncFiltersToUrl({ q: e.target.value })
+                    }}
+                    className="w-full rounded-lg border border-border bg-muted/30 py-1.5 pl-9 pr-3 text-sm text-foreground transition-colors placeholder:text-muted-foreground hover:bg-muted/50 focus:border-primary/50 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Row 2 — role lens + severity + class + trust + my + view + count */}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border pt-3">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+                    Role
+                  </span>
+                  {(
+                    [
+                      { id: 'executive', label: 'Executive' },
+                      { id: 'developer', label: 'Developer' },
+                      { id: 'architect', label: 'Architect' },
+                      { id: 'ops', label: 'IT Ops' },
+                      { id: 'researcher', label: 'Researcher' },
+                      { id: 'curious', label: 'Curious' },
+                    ] as const
+                  ).map((r) => {
+                    const active = selectedPersona === r.id
+                    return (
+                      <Button
+                        key={r.id}
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setPersona(active ? null : r.id)}
+                        aria-pressed={active}
+                        className={clsx(
+                          'h-auto rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
+                          active
+                            ? 'border-secondary/50 bg-secondary/10 text-secondary'
+                            : 'border-border text-muted-foreground hover:text-foreground'
+                        )}
+                      >
+                        {r.label}
+                      </Button>
+                    )
+                  })}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+                    Severity
+                  </span>
+                  {criticalityItems.map((c) => {
+                    const active = selectedCriticality === c.id
+                    return (
+                      <Button
+                        key={c.id}
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedCriticality(c.id)
+                          syncFiltersToUrl({ criticality: c.id })
+                          logEvent('Threats', 'Filter Criticality', c.id)
+                        }}
+                        aria-pressed={active}
+                        className={clsx(
+                          'h-auto rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
+                          active
+                            ? 'border-primary/50 bg-primary/10 text-primary'
+                            : 'border-border text-muted-foreground hover:text-foreground'
+                        )}
+                      >
+                        {c.id === 'All' ? 'All' : c.label}
+                      </Button>
+                    )
+                  })}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+                    Class
+                  </span>
+                  {threatClassItems.map((c) => {
+                    const active = selectedClass === c.id
+                    return (
+                      <Button
+                        key={c.id}
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedClass(c.id)
+                          syncFiltersToUrl({ threatClass: c.id })
+                          logEvent('Threats', 'Filter Class', c.id)
+                        }}
+                        aria-pressed={active}
+                        className={clsx(
+                          'h-auto rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
+                          active
+                            ? 'border-primary/50 bg-primary/10 text-primary'
+                            : 'border-border text-muted-foreground hover:text-foreground'
+                        )}
+                      >
+                        {c.id === 'All' ? 'All' : c.id.toUpperCase()}
+                      </Button>
+                    )
+                  })}
+                </div>
+
+                {/* Tier filter writes ?tier= — hidden in the sim embed. */}
+                {!simEmbed && <TrustTierFilter className="mb-0" />}
+
+                {myThreats.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowOnlyThreats(!showOnlyThreats)}
+                    aria-pressed={showOnlyThreats}
+                    className={clsx(
+                      'inline-flex h-auto items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
+                      showOnlyThreats
+                        ? 'border-status-warning/50 bg-status-warning/10 text-status-warning'
+                        : 'border-border text-muted-foreground hover:text-foreground'
+                    )}
+                  >
+                    <BookmarkCheck size={12} />
+                    My ({myThreats.length})
+                  </Button>
+                )}
+
+                <div className="ml-auto flex items-center gap-3">
+                  <span className="whitespace-nowrap text-[11px] text-muted-foreground">
+                    Showing{' '}
+                    <span className="font-semibold text-foreground">
+                      {filteredAndSortedData.length}
+                    </span>{' '}
+                    of {heroApplicable.length}
+                  </span>
+                  <ThreatsViewToggle
+                    mode={viewMode}
+                    onChange={(mode) => {
+                      setViewMode(mode)
+                      syncFiltersToUrl({ mode })
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* View Rendering — left-rail TOC of filtered threats + main view */}
-      <div className="flex flex-col lg:flex-row gap-6">
-        <aside className="lg:w-64 lg:shrink-0 lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
-          <LeftNavTOC
-            title="Industries"
-            ariaLabel="Industries"
-            targetPrefix="threats-toc"
-            activeItemId={activeNavIndustry}
-            onSelect={(slug) => {
-              setActiveNavIndustry(slug)
-              if (viewMode === 'stack') {
-                const ind = filteredAndSortedData.find(
-                  (t) => t.industry.toLowerCase().replace(/[^a-z0-9]+/g, '-') === slug
-                )?.industry
-                if (ind) setActiveLayer(ind)
-              } else {
-                document
-                  .getElementById(`industry-${slug}`)
-                  ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-              }
-            }}
-            groups={[
-              {
-                id: 'industries',
-                label: 'Industries',
-                items: Array.from(
-                  new Map(
-                    filteredAndSortedData.map((t) => [
-                      t.industry,
-                      {
-                        id: t.industry.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-                        label: t.industry,
-                        hint: `${filteredAndSortedData.filter((x) => x.industry === t.industry).length} threats`,
-                      },
-                    ])
-                  ).values()
-                ),
-              },
-            ]}
-            emptyMessage="No threats match the current filters."
-          />
-        </aside>
-
-        <div className="flex-1 min-w-0">
-          {viewMode === 'stack' && (
-            <IndustryStack
-              activeLayer={activeLayer}
-              onSelectLayer={setActiveLayer}
-              items={filteredAndSortedData}
-              expandedContent={
-                <ThreatsTable
-                  items={filteredAndSortedData.filter(
-                    (t) => t.industry === activeLayer || activeLayer === 'All'
-                  )}
-                  sortField={sortField}
-                  sortDirection={sortDirection}
-                  onSort={handleSort}
-                  onItemClick={(item) => {
-                    setSelectedThreat(item)
-                    syncFiltersToUrl({ id: item.threatId })
-                  }}
-                />
-              }
-            />
-          )}
-          {viewMode === 'cards' && (
-            <div className="mb-8">
-              <ThreatsCardGrid
-                items={filteredAndSortedData}
-                onItemClick={(item) => {
-                  setSelectedThreat(item)
-                  syncFiltersToUrl({ id: item.threatId })
+          {/* View Rendering — left-rail TOC of filtered threats + main view */}
+          <div className="flex flex-col lg:flex-row gap-6">
+            <aside className="lg:w-64 lg:shrink-0 lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
+              <LeftNavTOC
+                title="Industries"
+                ariaLabel="Industries"
+                targetPrefix="threats-toc"
+                activeItemId={activeNavIndustry}
+                onSelect={(slug) => {
+                  setActiveNavIndustry(slug)
+                  if (viewMode === 'stack') {
+                    const ind = filteredAndSortedData.find(
+                      (t) => t.industry.toLowerCase().replace(/[^a-z0-9]+/g, '-') === slug
+                    )?.industry
+                    if (ind) setActiveLayer(ind)
+                  } else {
+                    document
+                      .getElementById(`industry-${slug}`)
+                      ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  }
                 }}
-                relevantIndustries={personaRelevantIndustries}
+                groups={[
+                  {
+                    id: 'industries',
+                    label: 'Industries',
+                    items: Array.from(
+                      new Map(
+                        filteredAndSortedData.map((t) => [
+                          t.industry,
+                          {
+                            id: t.industry.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+                            label: t.industry,
+                            hint: `${filteredAndSortedData.filter((x) => x.industry === t.industry).length} threats`,
+                          },
+                        ])
+                      ).values()
+                    ),
+                  },
+                ]}
+                emptyMessage="No threats match the current filters."
               />
+            </aside>
+
+            <div className="flex-1 min-w-0">
+              {viewMode === 'stack' && (
+                <IndustryStack
+                  activeLayer={activeLayer}
+                  onSelectLayer={setActiveLayer}
+                  items={filteredAndSortedData}
+                  expandedContent={
+                    <ThreatsTable
+                      items={filteredAndSortedData.filter(
+                        (t) => t.industry === activeLayer || activeLayer === 'All'
+                      )}
+                      sortField={sortField}
+                      sortDirection={sortDirection}
+                      onSort={handleSort}
+                      onItemClick={(item) => {
+                        setSelectedThreat(item)
+                        syncFiltersToUrl({ id: item.threatId })
+                      }}
+                    />
+                  }
+                />
+              )}
+              {viewMode === 'cards' && (
+                <div className="mb-8">
+                  <ThreatsCardGrid
+                    items={filteredAndSortedData}
+                    onItemClick={(item) => {
+                      setSelectedThreat(item)
+                      syncFiltersToUrl({ id: item.threatId })
+                    }}
+                    relevantIndustries={personaRelevantIndustries}
+                  />
+                </div>
+              )}
+              {viewMode === 'table' && (
+                <>
+                  <div className="hidden md:block">
+                    <ThreatsTable
+                      items={filteredAndSortedData}
+                      sortField={sortField}
+                      sortDirection={sortDirection}
+                      onSort={handleSort}
+                      onItemClick={(item) => {
+                        setSelectedThreat(item)
+                        syncFiltersToUrl({ id: item.threatId })
+                      }}
+                    />
+                  </div>
+                  <div className="md:hidden">
+                    <MobileThreatsList
+                      items={filteredAndSortedData}
+                      onItemClick={(item) => {
+                        setSelectedThreat(item)
+                        syncFiltersToUrl({ id: item.threatId })
+                      }}
+                    />
+                  </div>
+                </>
+              )}
             </div>
-          )}
-          {viewMode === 'table' && (
-            <>
-              <div className="hidden md:block">
-                <ThreatsTable
-                  items={filteredAndSortedData}
-                  sortField={sortField}
-                  sortDirection={sortDirection}
-                  onSort={handleSort}
-                  onItemClick={(item) => {
-                    setSelectedThreat(item)
-                    syncFiltersToUrl({ id: item.threatId })
-                  }}
-                />
-              </div>
-              <div className="md:hidden">
-                <MobileThreatsList
-                  items={filteredAndSortedData}
-                  onItemClick={(item) => {
-                    setSelectedThreat(item)
-                    syncFiltersToUrl({ id: item.threatId })
-                  }}
-                />
-              </div>
-            </>
-          )}
-        </div>
-      </div>
+          </div>
         </>
       )}
       {/* Detail dialog — only ever opened from a catalog row, but kept outside the

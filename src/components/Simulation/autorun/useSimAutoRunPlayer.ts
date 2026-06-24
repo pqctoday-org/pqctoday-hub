@@ -728,12 +728,15 @@ export function useSimAutoRunPlayer({
   useEffect(() => {
     if (!scenarioIntro || paused || !running) return
     let advanced = false
-    const safety = setTimeout(() => {
-      if (!advanced) {
-        advanced = true
-        advanceScenario(false)
-      }
-    }, voiceSafetyMs(scenarioIntro.summary, MODAL_MAX_HOLD_MS))
+    const safety = setTimeout(
+      () => {
+        if (!advanced) {
+          advanced = true
+          advanceScenario(false)
+        }
+      },
+      voiceSafetyMs(scenarioIntro.summary, MODAL_MAX_HOLD_MS)
+    )
     let minTimer: ReturnType<typeof setTimeout> | null = null
     const finish = () => {
       // Hold the modal at least MODAL_MIN_HOLD_MS from when narration ends.
@@ -769,12 +772,15 @@ export function useSimAutoRunPlayer({
   useEffect(() => {
     if (!passIntro || paused || !running || scenarioIntro) return
     let advanced = false
-    const safety = setTimeout(() => {
-      if (!advanced) {
-        advanced = true
-        advancePass(false)
-      }
-    }, voiceSafetyMs(passIntro.summary, MODAL_MAX_HOLD_MS))
+    const safety = setTimeout(
+      () => {
+        if (!advanced) {
+          advanced = true
+          advancePass(false)
+        }
+      },
+      voiceSafetyMs(passIntro.summary, MODAL_MAX_HOLD_MS)
+    )
     let minTimer: ReturnType<typeof setTimeout> | null = null
     const finish = () => {
       minTimer = setTimeout(() => {
@@ -809,12 +815,15 @@ export function useSimAutoRunPlayer({
   useEffect(() => {
     if (!phaseIntro || paused || !running) return
     let advanced = false
-    const safety = setTimeout(() => {
-      if (!advanced) {
-        advanced = true
-        advancePhase(false)
-      }
-    }, voiceSafetyMs(phaseIntro.summary, MODAL_MAX_HOLD_MS))
+    const safety = setTimeout(
+      () => {
+        if (!advanced) {
+          advanced = true
+          advancePhase(false)
+        }
+      },
+      voiceSafetyMs(phaseIntro.summary, MODAL_MAX_HOLD_MS)
+    )
     let minTimer: ReturnType<typeof setTimeout> | null = null
     const finish = () => {
       minTimer = setTimeout(() => {
