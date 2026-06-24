@@ -314,7 +314,7 @@ function speakSequence(chunks: string[], onDone?: () => void): void {
 // sync. MIN keeps a very short line on screen long enough to register; MAX is a
 // safety cap in case the browser drops the final onend; OFF is the fixed hold when
 // there's nothing to narrate (voice off, turbo phase modal, or no speech engine).
-const MODAL_MIN_HOLD_MS = 2500
+const MODAL_MIN_HOLD_MS = 4000 // pause after an intro's narration ends, before advancing
 const MODAL_MAX_HOLD_MS = 22000
 const MODAL_OFF_HOLD_MS = 6000
 
