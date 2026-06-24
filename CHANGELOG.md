@@ -26,6 +26,25 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+### Added
+
+- **A dedicated CRQC "Threat Horizon" view** [view:/threats] [persona:executive] [persona:architect] [persona:researcher]: the Threats page has a new **CRQC Threat Horizon** tab that gathers the "when could a cryptographically-relevant quantum computer arrive" picture into one place — an expanded watch on quantum-computing progress with the Mosca "act-by" calculator shown by default — and the migration simulation now opens straight to it when it explains the threat timeline.
+- **Inspect what the simulation generates, in place** [view:/simulation] [persona:architect] [persona:developer]: any artifact the auto-run produces (charters, plans, CBOMs and the like) can now be opened read-only from the artifacts panel, so you can read exactly what was created at each step without leaving your run.
+
+### Changed
+
+- **The Library is faster to narrow down** [view:/library] [persona:executive] [persona:developer] [persona:architect]: the standards library gained quicker ways to cut the list down — filter by region, by cryptographic algorithm family, and with one-click quick-filter chips, plus a "New" badge that flags recently added or updated documents — and these filters now behave correctly when the Library is opened inside the migration simulation.
+- **The migration timeline now covers ten national programs** [view:/timeline] [view:/simulation] [persona:executive] [persona:architect]: Australia (protect by 2030) and India (2033) join the countries with proof-backed migration deadlines, the EU's final compliance year is set to 2035, and an unsupported 2027 Czech deadline was removed — so the Timeline page and a non-US simulation run reflect a wider, more accurate set of national deadlines.
+- **"Watch the full migration" is now paced by its narration** [view:/simulation] [persona:curious] [persona:executive]: the auto-run lets the spoken explanation drive each transition instead of a fixed timer, reads out the resources it touches at each step, shows its commentary as a clean readable panel, collapses the phase panel once you've heard the intro, and a single play button resumes exactly where you paused. A United States run loads the June 2026 Executive Order scenario by default.
+
+### Fixed
+
+- **Library documents with no reachable source now say so** [view:/library] [persona:developer] [persona:architect]: when a referenced document has no retrievable copy, the Library now shows a clear "Source not available" state instead of a silent or broken link, and 13 documents whose source could not be recovered are marked accordingly.
+
+### Data
+
+- **More Library documents open with a full summary** [view:/library] [persona:developer] [persona:architect]: 27 documents were enriched with detailed summaries and another 6 hard-to-source documents were recovered and added, so more Library entries open with a full picture rather than a bare title.
+
 ## [4.1.0] - 2026-06-23
 
 Version 4.1 lets you watch a complete post-quantum migration run itself in the Migration Simulation, rebuilds that run around three plain goals tied to the new US Executive Order, and brings the redesigned Library, Migrate, Assess, Compliance, Learn, Algorithms, Patents, Report and Threats pages — each rebuilt around a single role selector — out of preview.
