@@ -1,59 +1,91 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Fingerprint, Link2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { SAMPLE_INVENTORY, type ToolId } from '@/data/cryptoEstate'
 
 /**
- * Key Correlator — the same key surfaces under different ASSIGNED identifiers in
- * each system (HSM handle, KMS id, cert thumbprint, code finding). Only the
- * CONTENT-DERIVED public-key (SPKI) fingerprint lines up across all of them, so
- * it is the join key that collapses the artifacts into one logical key.
+ * Key Correlator — each asymmetric key in the estate is found by several tools,
+ * and each tool labels it with a different ASSIGNED identifier (HSM handle,
+ * cert thumbprint, code call, TLS scheme, KMS id). Those ids don't line up; the
+ * content-derived SPKI fingerprint does — so it collapses the raw findings into
+ * logical keys. Built over the shared @/data/cryptoEstate.
  */
 
-interface Sighting {
-  source: string
-  assignedId: string
-  // all four share the same SPKI fingerprint
-  spki: string
-  managed: string
+// The identifier each tool assigns to the same key — deliberately all different.
+function assignedId(tool: ToolId, algo: string): { system: string; id: string } {
+  switch (tool) {
+    case 'hsm-query':
+      return { system: 'HSM (PKCS#11)', id: 'CKA_ID 0x9f…2a' }
+    case 'clm':
+      return { system: 'Certificate (X.509)', id: 'SKI / thumbprint c4…' }
+    case 'vuln-scanner':
+      return {
+        system: 'Network scan',
+        id: algo.includes('ECDSA') ? 'ecdsa_secp256r1_sha256 (0x0403)' : 'rsa_pkcs1_sha256',
+      }
+    case 'cbomkit-source':
+      return { system: 'Source scan', id: 'Signature.getInstance("…")' }
+    case 'cspm':
+      return { system: 'Cloud KMS', id: 'arn:aws:kms:…:key/8f3c…' }
+    case 'cbomkit-theia':
+      return { system: 'Binary scan', id: 'offset 0x4120' }
+    case 'sbom':
+      return { system: 'SBOM', id: 'pkg:maven/…' }
+  }
 }
 
-const SIGHTINGS: Sighting[] = [
-  {
-    source: 'HSM (PKCS#11)',
-    assignedId: 'CKA_ID 0x9f…2a',
-    spki: 'SHA256:7d41…b2',
-    managed: 'HSM · non-exportable',
-  },
-  {
-    source: 'Certificate (X.509)',
-    assignedId: 'SKI 9f…2a / thumbprint c4…',
-    spki: 'SHA256:7d41…b2',
-    managed: 'HSM-backed',
-  },
-  {
-    source: 'Source scan',
-    assignedId: 'Signature.getInstance("…ECDSA")',
-    spki: 'SHA256:7d41…b2',
-    managed: 'declared in code',
-  },
-  {
-    source: 'Network scan',
-    assignedId: 'ecdsa_secp256r1_sha256 (0x0403)',
-    spki: 'SHA256:7d41…b2',
-    managed: 'on the wire',
-  },
-]
+interface Finding {
+  assetId: string
+  name: string
+  algo: string
+  spki: string
+  management: string
+  owner: string
+  system: string
+  id: string
+}
 
 export function KeyCorrelator() {
   const [correlated, setCorrelated] = useState(false)
 
+  const findings = useMemo<Finding[]>(() => {
+    const out: Finding[] = []
+    for (const a of SAMPLE_INVENTORY) {
+      if (!a.spki) continue // symmetric / unparsed — no public-key fingerprint
+      for (const tool of a.discoverableBy) {
+        const ai = assignedId(tool, a.currentAlgorithm)
+        out.push({
+          assetId: a.id,
+          name: a.name,
+          algo: a.currentAlgorithm,
+          spki: a.spki,
+          management: a.management,
+          owner: a.owner,
+          system: ai.system,
+          id: ai.id,
+        })
+      }
+    }
+    return out
+  }, [])
+
+  const keys = useMemo(() => {
+    const byFp = new Map<string, Finding[]>()
+    for (const f of findings) {
+      const arr = byFp.get(f.spki) ?? []
+      arr.push(f)
+      byFp.set(f.spki, arr)
+    }
+    return [...byFp.entries()]
+  }, [findings])
+
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <div className="glass-panel p-4">
-        <h3 className="font-semibold text-foreground mb-1">Collapse artifacts to one key</h3>
+        <h3 className="mb-1 font-semibold text-foreground">Collapse findings into logical keys</h3>
         <p className="text-sm text-muted-foreground">
-          Four discovery layers found the same ECDSA P-256 key — but each names it differently. The
+          {findings.length} raw findings across your tools — each labels the key differently. The
           assigned ids don&apos;t line up; the SPKI fingerprint does.
         </p>
         <Button
@@ -62,43 +94,56 @@ export function KeyCorrelator() {
           onClick={() => setCorrelated((v) => !v)}
           className="mt-3 gap-1.5 border-primary bg-primary/15 text-primary hover:bg-primary/25"
         >
-          <Link2 size={14} /> {correlated ? 'Show raw sightings' : 'Correlate by SPKI fingerprint'}
+          <Link2 size={14} /> {correlated ? 'Show raw findings' : 'Correlate by SPKI fingerprint'}
         </Button>
       </div>
 
       {!correlated ? (
+        <div className="space-y-1.5">
+          {findings.map((f, i) => (
+            <div key={i} className="glass-panel flex items-center justify-between gap-3 p-3">
+              <div className="min-w-0">
+                <span className="text-sm text-foreground">{f.system}</span>
+                <span className="ml-2 font-mono text-xs text-muted-foreground">{f.id}</span>
+              </div>
+              <span className="shrink-0 font-mono text-xs text-muted-foreground/60">{f.algo}</span>
+            </div>
+          ))}
+          <p className="text-xs text-muted-foreground">
+            {findings.length} rows, {findings.length} different identifiers — looks like{' '}
+            {findings.length} keys.
+          </p>
+        </div>
+      ) : (
         <div className="space-y-2">
-          {SIGHTINGS.map((s) => (
-            <div key={s.source} className="glass-panel p-3">
-              <div className="text-sm font-medium text-foreground">{s.source}</div>
-              <div className="text-xs text-muted-foreground font-mono mt-0.5">
-                assigned id: {s.assignedId}
+          <div className="glass-panel border border-primary/30 p-3 text-sm text-foreground">
+            <Fingerprint size={15} className="mr-1 inline text-primary" />
+            {findings.length} findings → <strong>{keys.length} logical keys</strong> (deduped by
+            fingerprint).
+          </div>
+          {keys.map(([fp, group]) => (
+            <div key={fp} className="glass-panel p-3">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-xs text-primary">{fp}</span>
+                <span className="text-xs text-muted-foreground">
+                  {group[0].algo.split(' / ')[0]} · {group[0].management} · {group[0].owner}
+                </span>
+              </div>
+              <div className="mt-1 flex flex-wrap gap-1">
+                {group.map((g, i) => (
+                  <span
+                    key={i}
+                    className="rounded bg-muted/50 px-1.5 py-0.5 text-[10px] text-muted-foreground"
+                  >
+                    {g.system}
+                  </span>
+                ))}
               </div>
             </div>
           ))}
           <p className="text-xs text-muted-foreground">
-            Four rows, four identifiers — looks like four keys.
-          </p>
-        </div>
-      ) : (
-        <div className="glass-panel p-4 border border-primary/30">
-          <div className="flex items-center gap-2 mb-2">
-            <Fingerprint size={18} className="text-primary" />
-            <span className="text-sm font-semibold text-foreground">
-              1 logical key · SPKI SHA256:7d41…b2
-            </span>
-          </div>
-          <ul className="space-y-1 text-xs text-muted-foreground">
-            {SIGHTINGS.map((s) => (
-              <li key={s.source} className="flex justify-between gap-3">
-                <span className="text-foreground">{s.source}</span>
-                <span className="font-mono">{s.managed}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="text-xs text-muted-foreground mt-3">
             Record both — the home-system id (to act on the key) and the SPKI fingerprint (to
-            correlate). Provenance: ECDSA P-256, HSM-managed, non-exportable.
+            correlate). Symmetric keys (no public half) are excluded — they correlate by KCV.
           </p>
         </div>
       )}

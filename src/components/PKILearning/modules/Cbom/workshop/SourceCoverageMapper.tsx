@@ -1,72 +1,37 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
-import { CheckCircle2, AlertTriangle, Layers } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { CheckCircle2, AlertTriangle, Layers, EyeOff, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import {
+  SAMPLE_INVENTORY,
+  DISCOVERY_TOOLS,
+  LAYERS,
+  type ToolId,
+  type InventoryAsset,
+} from '@/data/cryptoEstate'
 
 /**
- * Source Coverage Mapper — the "not another scanner / leverage existing agents"
- * tool. Tick the tools/agents you already run; the grid shows which of the five
- * discovery layers are already covered vs the blind spots (= ghost crypto), and
- * recommends the minimal net-new scanning instead of a blanket rollout.
+ * Source Coverage Mapper — run the discovery tools you have over the shared
+ * sample estate (@/data/cryptoEstate) and see, computed live: how many assets a
+ * tool combination discovers, which stay hidden ("ghost" crypto), per-layer
+ * coverage, and the single best net-new scanner to add. Reuse what you run,
+ * then add net-new only for the blind spots.
  */
 
-const LAYERS = [
-  'Source code',
-  'Binary / container',
-  'Network / TLS',
-  'Infrastructure / KMS',
-  'Cloud',
-] as const
-type Layer = (typeof LAYERS)[number]
+const TOTAL = SAMPLE_INVENTORY.length
 
-interface Tool {
-  id: string
-  name: string
-  note: string
-  covers: Layer[]
-}
-
-const TOOLS: Tool[] = [
-  {
-    id: 'qualys',
-    name: 'Qualys / Tenable / Rapid7',
-    note: 'vuln scanners + on-host agents',
-    covers: ['Network / TLS'],
-  },
-  {
-    id: 'venafi',
-    name: 'Venafi / Keyfactor / DigiCert',
-    note: 'certificate lifecycle',
-    covers: ['Network / TLS', 'Infrastructure / KMS'],
-  },
-  {
-    id: 'sbom',
-    name: 'SBOM / SCA pipeline',
-    note: 'library versions',
-    covers: ['Binary / container'],
-  },
-  { id: 'cspm', name: 'CSPM (Wiz / Prisma / Defender)', note: 'cloud posture', covers: ['Cloud'] },
-  {
-    id: 'edr',
-    name: 'EDR agents (CrowdStrike / Defender)',
-    note: 'already on endpoints',
-    covers: ['Network / TLS'],
-  },
-]
-
-// Net-new tools to recommend for whichever layers stay uncovered.
-const NET_NEW: Record<Layer, string> = {
-  'Source code': 'CBOMkit / sonar-cryptography (source scan)',
-  'Binary / container': 'CBOMkit-theia (container/image scan)',
-  'Network / TLS': 'Active PQC scanner + passive handshake capture',
-  'Infrastructure / KMS': 'HSM/KMS query via PKCS#11 / KMIP',
-  Cloud: 'Cloud KMS/cert APIs (AWS/Azure/GCP) + CSPM rules',
+function discoveredBy(selected: Set<ToolId>): Set<string> {
+  const found = new Set<string>()
+  for (const a of SAMPLE_INVENTORY) {
+    if (a.discoverableBy.some((t) => selected.has(t))) found.add(a.id)
+  }
+  return found
 }
 
 export function SourceCoverageMapper() {
-  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [selected, setSelected] = useState<Set<ToolId>>(new Set(['vuln-scanner', 'clm']))
 
-  const toggle = (id: string) =>
+  const toggle = (id: ToolId) =>
     setSelected((prev) => {
       const next = new Set(prev)
       if (next.has(id)) next.delete(id)
@@ -74,27 +39,46 @@ export function SourceCoverageMapper() {
       return next
     })
 
-  const covered = new Set<Layer>()
-  for (const tool of TOOLS) {
-    if (selected.has(tool.id)) tool.covers.forEach((l) => covered.add(l))
+  const found = useMemo(() => discoveredBy(selected), [selected])
+  const hidden = SAMPLE_INVENTORY.filter((a) => !found.has(a.id))
+  const ghosts = hidden.filter((a) => a.discoverableBy.length === 0)
+
+  // Greedy: which unselected tool reveals the most currently-hidden assets?
+  const bestNetNew = useMemo(() => {
+    let best: { id: ToolId; gain: number } | null = null
+    for (const tool of DISCOVERY_TOOLS) {
+      if (selected.has(tool.id)) continue
+      const gain = hidden.filter((a) => a.discoverableBy.includes(tool.id)).length
+      if (gain > 0 && (!best || gain > best.gain)) best = { id: tool.id, gain }
+    }
+    return best
+  }, [selected, hidden])
+
+  const pct = Math.round((found.size / TOTAL) * 100)
+
+  const layerRow = (layerId: (typeof LAYERS)[number]['id']) => {
+    const all = SAMPLE_INVENTORY.filter((a) => a.layer === layerId)
+    const cov = all.filter((a) => found.has(a.id)).length
+    return { total: all.length, covered: cov }
   }
-  const blindSpots = LAYERS.filter((l) => !covered.has(l))
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <div className="glass-panel p-4">
-        <div className="flex items-center gap-2 mb-1">
+        <div className="mb-1 flex items-center gap-2">
           <Layers size={18} className="text-primary" />
-          <h3 className="font-semibold text-foreground">Reuse before you deploy</h3>
+          <h3 className="font-semibold text-foreground">
+            Discovery coverage over the sample estate ({TOTAL} assets)
+          </h3>
         </div>
         <p className="text-sm text-muted-foreground">
-          Tick the tools and agents you already run. A CBOM is an aggregation layer — reuse existing
-          telemetry first and scan net-new only where you are blind.
+          Tick the tools you already run; net-new scanners are marked{' '}
+          <span className="text-status-info">＋</span>. Coverage is computed live.
         </p>
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-2">
-        {TOOLS.map((tool) => {
+      <div className="grid gap-2 sm:grid-cols-2">
+        {DISCOVERY_TOOLS.map((tool) => {
           const on = selected.has(tool.id)
           return (
             <Button
@@ -107,62 +91,88 @@ export function SourceCoverageMapper() {
             >
               <div className="flex items-center gap-2">
                 <CheckCircle2
-                  size={16}
+                  size={15}
                   className={on ? 'text-primary' : 'text-muted-foreground/40'}
                 />
                 <span className="text-sm font-medium text-foreground">{tool.name}</span>
+                {tool.netNew && (
+                  <span className="rounded bg-status-info/15 px-1 text-[10px] text-status-info">
+                    ＋ net-new
+                  </span>
+                )}
               </div>
-              <p className="ml-6 mt-1 text-xs text-muted-foreground">{tool.note}</p>
+              <p className="ml-6 mt-0.5 text-xs text-muted-foreground">{tool.note}</p>
             </Button>
           )
         })}
       </div>
 
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-semibold text-foreground mb-3">Discovery-layer coverage</h4>
-        <div className="space-y-1.5">
-          {LAYERS.map((layer) => {
-            const ok = covered.has(layer)
+        <div className="flex items-baseline justify-between">
+          <span className="text-sm font-semibold text-foreground">
+            {found.size}/{TOTAL} assets discovered
+          </span>
+          <span className="text-sm text-muted-foreground">{pct}%</span>
+        </div>
+        <div className="mt-2 h-2 w-full overflow-hidden rounded bg-muted">
+          <div className="h-full bg-status-success transition-all" style={{ width: `${pct}%` }} />
+        </div>
+        <div className="mt-3 grid gap-1.5">
+          {LAYERS.map((l) => {
+            const r = layerRow(l.id)
+            const full = r.total > 0 && r.covered === r.total
             return (
-              <div key={layer} className="flex items-center justify-between text-sm">
-                <span className="text-foreground">{layer}</span>
-                {ok ? (
-                  <span className="flex items-center gap-1 text-status-success">
-                    <CheckCircle2 size={14} /> covered
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1 text-status-warning">
-                    <AlertTriangle size={14} /> blind spot
-                  </span>
-                )}
+              <div key={l.id} className="flex items-center justify-between text-xs">
+                <span className="text-foreground">{l.label}</span>
+                <span className={full ? 'text-status-success' : 'text-status-warning'}>
+                  {r.covered}/{r.total} {full ? '✓' : '— gap'}
+                </span>
               </div>
             )
           })}
         </div>
       </div>
 
-      {blindSpots.length > 0 && (
-        <div className="glass-panel p-4 border border-status-warning/30">
-          <h4 className="text-sm font-semibold text-foreground mb-2">
-            Minimal net-new scanning (only the {blindSpots.length} blind spot
-            {blindSpots.length > 1 ? 's' : ''})
-          </h4>
-          <ul className="space-y-1 text-sm text-muted-foreground">
-            {blindSpots.map((l) => (
-              <li key={l}>
-                {/* eslint-disable-next-line security/detect-object-injection -- l is a closed union */}
-                <span className="text-foreground font-medium">{l}:</span> {NET_NEW[l]}
-              </li>
-            ))}
-          </ul>
-          <p className="text-xs text-muted-foreground mt-3">
-            Everything normalizes to one CycloneDX CBOM.
-          </p>
+      {bestNetNew && (
+        <div className="glass-panel border border-status-info/30 p-3 text-sm">
+          <span className="flex items-center gap-1 font-medium text-status-info">
+            <Plus size={14} /> Best next scanner
+          </span>
+          <span className="text-foreground">
+            Add <strong>{DISCOVERY_TOOLS.find((t) => t.id === bestNetNew.id)?.name}</strong> — it
+            reveals <strong>{bestNetNew.gain}</strong> currently-hidden asset
+            {bestNetNew.gain > 1 ? 's' : ''}.
+          </span>
         </div>
       )}
-      {blindSpots.length === 0 && selected.size > 0 && (
-        <div className="glass-panel p-4 border border-status-success/30 text-sm text-foreground">
-          All five layers covered by tools you already run — no net-new scanner rollout required.
+
+      {hidden.length > 0 && (
+        <div className="glass-panel border border-status-warning/30 p-3">
+          <span className="mb-2 flex items-center gap-1 text-sm font-medium text-status-warning">
+            <EyeOff size={14} /> {hidden.length} hidden ({ghosts.length} unfindable by any tool)
+          </span>
+          <div className="space-y-1">
+            {hidden.slice(0, 6).map((a: InventoryAsset) => (
+              <div key={a.id} className="flex items-center justify-between text-xs">
+                <span className="text-foreground">{a.name}</span>
+                <span className="font-mono text-muted-foreground">
+                  {a.currentAlgorithm}
+                  {a.discoverableBy.length === 0 && (
+                    <span className="ml-1 inline-flex items-center gap-0.5 text-status-error">
+                      <AlertTriangle size={10} /> ghost
+                    </span>
+                  )}
+                </span>
+              </div>
+            ))}
+            {hidden.length > 6 && (
+              <p className="text-xs text-muted-foreground">…and {hidden.length - 6} more.</p>
+            )}
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">
+            The legacy appliance is a true ghost — no scanner parses it; it needs manual / passive
+            discovery. Everything found normalizes to one CycloneDX CBOM.
+          </p>
         </div>
       )}
     </div>
