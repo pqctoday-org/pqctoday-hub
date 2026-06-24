@@ -47,6 +47,8 @@ export interface ArtifactDrawerProps {
   /** Fires when the builder persists a new artifact while the drawer is in create mode.
    *  Parent may use this to switch to view mode on the newly created document. */
   onCreated?: (doc: ExecutiveDocument) => void
+  /** View-only: hide the Edit affordance (the doc can be read + exported, not edited). */
+  readOnly?: boolean
 }
 
 export function ArtifactDrawer({
@@ -56,6 +58,7 @@ export function ArtifactDrawer({
   onClose,
   onModeChange,
   onCreated,
+  readOnly,
 }: ArtifactDrawerProps) {
   const [deleteConfirm, setDeleteConfirm] = useState(false)
   // Half/full toggle. Always starts at half — per design, no persistence.
@@ -192,7 +195,7 @@ export function ArtifactDrawer({
             <p className="text-xs text-muted-foreground">{headerSubtitle}</p>
           </div>
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-            {mode === 'view' && document && BuilderComponent && (
+            {mode === 'view' && document && BuilderComponent && !readOnly && (
               <Button variant="outline" size="sm" onClick={() => onModeChange('edit')}>
                 <Pencil size={14} />
                 <span className="hidden sm:inline ml-1">Edit</span>

@@ -39,6 +39,9 @@ const REF_URL = {
   'algorithms-catalog': '/algorithms',
   timeline: '/timeline',
   report: '/report',
+  // Deep-link (not embedded) to the Migration Verification Business-Center tool —
+  // it embodies the 5-point evidence standard + the program-closure record.
+  'migration-verification': '/business/tools/migration-verification',
 }
 // Hands-on Playground workshops (practice leaves). These EMBED in the sim (C2):
 // the id is the Playground tool id (WORKSHOP_TOOL_COMPONENTS key); the `to` is the
@@ -91,9 +94,11 @@ const A = (artifactType, label) => {
   if (!tool) throw new Error(`no tool for artifact ${artifactType}`)
   return { kind: 'activity', label, to: `/business/tools/${tool}`, artifactType }
 }
-const R = (refId, label) => {
-  const to = REF_URL[refId]
+const R = (refId, label, toOverride) => {
+  const to = toOverride ?? REF_URL[refId]
   if (!to) throw new Error(`no url for ref ${refId}`)
+  // A toOverride must still resolve as a deep-link (deepLinks.ts) — e.g. the
+  // /threats?view=horizon tab. The refId stays the same for embed + completion.
   return { kind: 'reference', label, to, refId }
 }
 // W() — a hands-on workshop practice leaf that EMBEDS in the sim (C2). The
@@ -232,7 +237,7 @@ const FRAMEWORK = {
         L('exec-quantum-impact', 'Learn: Executive Quantum Impact'),
         L('pqc-risk-management', 'Learn: PQC Risk Management'),
         L('compliance-strategy', 'Learn: Compliance & Regulatory Strategy'),
-        R('threats', 'Check the CRQC threat horizon'),
+        R('threats', 'Check the CRQC threat horizon', '/threats?view=horizon'),
         R('compliance', 'Map the binding regulatory deadlines'),
         A('crqc-scenario', 'Quantify HNDL/TNFL exposure with a CRQC scenario'),
       ],
@@ -405,7 +410,10 @@ const FRAMEWORK = {
       steps: [
         L('pqc-risk-management', 'Learn: PQC Risk Management'),
         L('data-asset-sensitivity', 'Learn: data sensitivity & legal/data-retention horizon'),
-        R('threats', 'Reference: why 256-bit ECC ≈ RSA-2048 under quantum'),
+        R(
+          'algorithms-detailed',
+          'Reference: why 256-bit ECC ≈ RSA-2048 under quantum (security levels)'
+        ),
         R('algorithms-protocol-matrix', 'Reference: PQC Protocol Matrix'),
       ],
     },
@@ -765,7 +773,10 @@ const FRAMEWORK = {
       do: 'Adopt the 5-point migration-verification evidence standard and the program-closure record up front, so "done" means proven, not declared.',
       output: 'Verification standard & closure plan',
       steps: [
-        R('report', 'Reference: the program closure record & 5-point evidence standard'),
+        R(
+          'migration-verification',
+          'Reference: the program closure record & 5-point evidence standard'
+        ),
         R('compliance', 'Reference: closeout attestations & applicable mandates'),
       ],
     },

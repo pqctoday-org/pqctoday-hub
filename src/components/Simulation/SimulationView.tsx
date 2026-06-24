@@ -36,6 +36,8 @@ import { SIM_REFERENCE_EMBEDS } from './referenceEmbeds'
 import { useSimAutoRunPlayer } from './autorun/useSimAutoRunPlayer'
 import { SimAutoRunOverlay } from './autorun/SimAutoRunOverlay'
 import { SimPassIntroModal } from './autorun/SimPassIntroModal'
+import { SimPhaseIntroModal } from './autorun/SimPhaseIntroModal'
+import { SimScenarioIntroCard } from './autorun/SimScenarioIntroCard'
 import { getScenario } from './autorun/scenarioConfig'
 import { transformationStatus } from './autorun/transformationStatus'
 import { TransformationStatusPanel } from './autorun/TransformationStatusPanel'
@@ -52,6 +54,7 @@ function libraryQueryForStep(title: string): string | undefined {
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
 import { LibraryEmbed } from '@/components/shared/widgets/LibraryEmbed'
 import { ComplianceEmbed } from '@/components/shared/widgets/ComplianceEmbed'
+import { ThreatsEmbed } from '@/components/shared/widgets/ThreatsEmbed'
 import { CompleteStepAction } from '../PKILearning/common/CompleteStepAction'
 import { parseTimelineScope } from '@/data/timelineScope'
 import { MigrateWorkbenchEmbed } from '@/components/shared/widgets/MigrateWorkbenchEmbed'
@@ -82,7 +85,8 @@ import {
 import { JURISDICTION_RULES } from '@/data/jurisdiction'
 import { ROLE_CROSSWALK, personaToRoles } from '@/data/roleCrosswalk'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
-import type { ExecutiveDocumentType } from '@/services/storage/types'
+import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
+import { ArtifactDrawer } from '@/components/BusinessCenter/ArtifactDrawer'
 import {
   SIM_TREES,
   flattenTree,
@@ -426,6 +430,8 @@ export function SimulationView() {
 
   // real hub completion state: generated artifacts + Learn-module progress
   const docs = useModuleStore((s) => s.artifacts.executiveDocuments)
+  // Read-only inspection of a generated artifact (click a completed row → drawer in view mode).
+  const [viewDoc, setViewDoc] = useState<ExecutiveDocument | null>(null)
   const moduleProgress = useModuleStore((s) => s.modules)
   const resetModuleProgress = useModuleStore((s) => s.resetModuleProgress)
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
@@ -1176,14 +1182,39 @@ export function SimulationView() {
             variant="ghost"
             onClick={autoRunPlayer.start}
             disabled={autoRunPlayer.running}
-            title="Auto-play the whole migration (phases 0–7) as a narrated walkthrough — opens each tool, completes every step for real, and clears the run. Reversible via Reset run."
+            title={
+              autoRunPlayer.resumable
+                ? 'Resume the narrated migration walkthrough from where you left off (it picks up at the first step you haven’t completed). Use Reset run to start over from the beginning.'
+                : 'Auto-play the whole migration (all 9 stages — P0 through Verification & Closure) as a narrated walkthrough — opens each tool, completes every step for real, and clears the run. Reversible via Reset run.'
+            }
             className="h-auto rounded-md border border-secondary/50 bg-secondary/15 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-secondary/25 disabled:opacity-40"
           >
-            ▶ PLAY 0–7
+            {autoRunPlayer.resumable ? '▶ Resume' : `▶ PLAY ALL ${LIFECYCLE.length}`}
           </Button>
           <SimAutoRunOverlay player={autoRunPlayer} />
-          {autoRunPlayer.passIntro && (
+          {autoRunPlayer.scenarioIntro && (
+            <SimScenarioIntroCard
+              scenario={autoRunPlayer.scenarioIntro}
+              onBegin={autoRunPlayer.beginScenario}
+            />
+          )}
+          {autoRunPlayer.passIntro && !autoRunPlayer.scenarioIntro && (
             <SimPassIntroModal pass={autoRunPlayer.passIntro} onBegin={autoRunPlayer.beginPass} />
+          )}
+          {autoRunPlayer.phaseIntro && (
+            <SimPhaseIntroModal
+              phase={autoRunPlayer.phaseIntro.phase}
+              onBegin={autoRunPlayer.beginPhase}
+            />
+          )}
+          {viewDoc && (
+            <ArtifactDrawer
+              document={viewDoc}
+              mode="view"
+              readOnly
+              onClose={() => setViewDoc(null)}
+              onModeChange={() => {}}
+            />
           )}
           <Button
             type="button"
@@ -1548,6 +1579,10 @@ export function SimulationView() {
                     <ComplianceEmbed initialTab="foryou" />
                   ) : referenceEmbed?.refId === 'compliance-cert-check' ? (
                     <ComplianceEmbed initialTab="records" />
+                  ) : referenceEmbed?.refId === 'threats' ? (
+                    // The CRQC threat-horizon step opens the Horizon tab directly,
+                    // not the default Threat Catalog list (mirrors ComplianceEmbed).
+                    <ThreatsEmbed initialTab="horizon" />
                   ) : (
                     <ReferenceComp />
                   )}
@@ -2385,9 +2420,23 @@ export function SimulationView() {
                       return (
                         <div
                           key={a.type}
+                          role={made ? 'button' : undefined}
+                          tabIndex={made ? 0 : undefined}
+                          onClick={made ? () => setViewDoc(made) : undefined}
+                          onKeyDown={
+                            made
+                              ? (e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault()
+                                    setViewDoc(made)
+                                  }
+                                }
+                              : undefined
+                          }
+                          title={made ? 'View this artifact (read-only)' : undefined}
                           className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
                             made
-                              ? 'border-success/40 bg-success/5'
+                              ? 'cursor-pointer border-success/40 bg-success/5 hover:bg-success/10'
                               : 'border-dashed border-border bg-muted/40'
                           }`}
                         >
@@ -2408,6 +2457,11 @@ export function SimulationView() {
                               {made ? a.type : 'not generated yet'}
                             </span>
                           </span>
+                          {made && (
+                            <span className="shrink-0 font-mono text-sim-micro font-bold text-success">
+                              view →
+                            </span>
+                          )}
                         </div>
                       )
                     })}

@@ -61,7 +61,13 @@ import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 
 // Threat Detail Dialog Component - Moved outside to ./ThreatDetailDialog.tsx
 
-export const ThreatsDashboard: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false }) => {
+type ThreatsTab = 'list' | 'horizon'
+
+export const ThreatsDashboard: React.FC<{
+  simEmbed?: boolean
+  /** Which tab to open on mount. The real page also seeds this from ?view=. */
+  initialTab?: ThreatsTab
+}> = ({ simEmbed = false, initialTab = 'list' }) => {
   // When embedded in the sim, the dashboard must NOT read/write the page URL (it
   // would corrupt /simulation's route) and can't nest its own <Router>. So its
   // filter URL state is backed by local state, kept API-compatible with
@@ -80,6 +86,41 @@ export const ThreatsDashboard: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = 
           return next.toString() === prev.toString() ? prev : next
         })
     : realSetSearchParams
+  // Two-tab split: the Threat Catalog (list, default) and the CRQC Threat Horizon
+  // (the quantum-arrival clock). On the REAL page the tab seeds from ?view= and is
+  // written back to the URL via the dual-mode setSearchParams; in the sim embed it
+  // seeds from the initialTab prop and stays purely local (never touches the URL).
+  const [activeTab, setActiveTab] = useState<ThreatsTab>(() => {
+    if (simEmbed) return initialTab
+    return searchParams.get('view') === 'horizon' ? 'horizon' : initialTab
+  })
+  // Keep the real page's tab in sync with ?view= on same-route navigations
+  // (e.g. a deep link landing on /threats?view=horizon while already mounted).
+  useEffect(() => {
+    if (simEmbed) return
+    const next: ThreatsTab = searchParams.get('view') === 'horizon' ? 'horizon' : 'list'
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync is the purpose of this effect
+    setActiveTab((prev) => (prev !== next ? next : prev))
+  }, [searchParams, simEmbed])
+  const selectTab = useCallback(
+    (tab: ThreatsTab) => {
+      setActiveTab(tab)
+      if (!simEmbed) {
+        setSearchParams(
+          (prev) => {
+            const params = new URLSearchParams(prev)
+            if (tab === 'horizon') params.set('view', 'horizon')
+            else params.delete('view')
+            return params
+          },
+          { replace: true }
+        )
+      }
+      logEvent('Threats', 'Tab', tab)
+    },
+    [simEmbed, setSearchParams]
+  )
+
   const { selectedIndustries: storeIndustries, selectedPersona, setPersona } = usePersonaStore()
 
   const initialIndustries = useMemo(() => {
@@ -510,24 +551,66 @@ export const ThreatsDashboard: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = 
         />
       )}
 
-      {/* Persona-forward exposure hero — your scoped sector's applicable threats,
-          the CRQC consensus window, and your per-sector Mosca deadline, above the
-          fold so the threats lead instead of two stacked context panels. */}
-      <SectorExposureHero applicable={heroApplicable} scopedIndustries={heroScopedIndustries} />
+      {/* Two tabs: the Threat Catalog (industry threat list, default) and the CRQC
+          Threat Horizon (the quantum-arrival clock + threat economics). Keeping the
+          horizon content on its own tab stops the clock from walling off the list. */}
+      <div
+        className="mb-4 flex items-center gap-1 border-b border-border"
+        role="tablist"
+        aria-label="Threats view"
+      >
+        {(
+          [
+            { id: 'list', label: 'Threat Catalog' },
+            { id: 'horizon', label: 'CRQC Threat Horizon' },
+          ] as const
+        ).map((t) => {
+          const active = activeTab === t.id
+          return (
+            <Button
+              key={t.id}
+              variant="ghost"
+              size="sm"
+              role="tab"
+              aria-selected={active}
+              onClick={() => selectTab(t.id)}
+              className={clsx(
+                '-mb-px h-auto rounded-none border-b-2 px-3 py-2 text-sm font-semibold transition-colors',
+                active
+                  ? 'border-primary text-foreground'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+              )}
+            >
+              {t.label}
+            </Button>
+          )
+        })}
+      </div>
 
-      {/* Full methodology — the detailed Threat-Economics framing (HNDL vs HNFL +
-          Mosca mini-calc) and the CRQC capability watch, collapsed by default so
-          they stay one click away without walling off the threat list. */}
-      <details className="group mb-4">
-        <summary className="inline-flex cursor-pointer items-center gap-2 px-1 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-          <span className="text-xs transition-transform group-open:rotate-90">▸</span>
-          Methodology &amp; full CRQC capability watch
-        </summary>
-        <div className="mt-3 space-y-4">
-          <ThreatEconomicsHeader />
-          <CrqcCapabilityStrip />
+      {activeTab === 'horizon' && (
+        <div className="space-y-4">
+          {/* The CRQC consensus window + your per-sector Mosca deadline, then the
+              detailed Threat-Economics framing and full CRQC capability watch —
+              expanded here instead of buried behind a collapsed panel. */}
+          <SectorExposureHero
+            applicable={heroApplicable}
+            scopedIndustries={heroScopedIndustries}
+            variant="horizon"
+          />
+          <ThreatEconomicsHeader defaultExpanded />
+          <CrqcCapabilityStrip defaultExpanded />
         </div>
-      </details>
+      )}
+
+      {activeTab === 'list' && (
+        <>
+      {/* Persona-forward exposure hero — your scoped sector's applicable threats,
+          above the fold so the threats lead the catalog. */}
+      <SectorExposureHero
+        applicable={heroApplicable}
+        scopedIndustries={heroScopedIndustries}
+        variant="exposure"
+      />
 
       {/* Persona summary card */}
       {personaSummary && (
@@ -874,7 +957,10 @@ export const ThreatsDashboard: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = 
           )}
         </div>
       </div>
-      {/* End detail dialog wrapper */}
+        </>
+      )}
+      {/* Detail dialog — only ever opened from a catalog row, but kept outside the
+          tab conditional so an open dialog survives a tab switch. */}
       <AnimatePresence>
         {selectedThreat && (
           <Suspense fallback={null}>
