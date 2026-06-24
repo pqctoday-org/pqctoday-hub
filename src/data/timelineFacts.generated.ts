@@ -10,13 +10,13 @@ export const TIMELINE_COUNTRY_DEADLINE_YEAR: Record<string, number> = {
   AU: 2030, // Legacy Asymmetric Crypto Disallowed — Full PQC Transition
   CA: 2031, // High Priority Systems Complete
   DE: 2030, // Critical Applications PQC — Hybrid No Longer Required
-  EU: 2030, // High-Risk Systems Secured
+  EU: 2035, // Full EU PQC Transition
   FR: 2027, // PQC Qualification Requirement
   IN: 2033, // Full Nationwide PQC Adoption
   JP: 2035, // Government PQC Transition Deadline
   KR: 2035, // Full PQC Roadmap Complete
   UK: 2035, // Full PQC Compliance
-  US: 2030, // Key-Establishment Migration Deadline (June 2026 EO)
+  US: 2030, // Key-Establishment Migration Deadline (EO June 22 2026)
 }
 
 /** Per-country scenario milestone years, from rows tagged `sim_milestone` in the
