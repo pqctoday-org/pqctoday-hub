@@ -453,6 +453,35 @@ export function computeCitationCounts(
 
 const citationCounts = computeCitationCounts(currentItems)
 
+// ── New / Updated badge derivation (recency window) ──────────────────────────
+// A document is 'New' when its publication date is within the last
+// RECENCY_WINDOW_DAYS, else 'Updated' when its last-update date is. Evaluated at
+// load time as a rolling window (the catalog is static per deploy, so the badge
+// naturally ages out). This replaces the previous-CSV diff, which is inert with a
+// single CSV on disk; the diff result (statusMap) is kept as a fallback.
+export const RECENCY_WINDOW_DAYS = 30
+
+function parseDateMs(value: string | undefined): number | null {
+  if (!value) return null
+  const ms = Date.parse(value.trim())
+  return Number.isNaN(ms) ? null : ms
+}
+
+export function computeRecencyStatus(
+  item: Pick<LibraryItem, 'initialPublicationDate' | 'lastUpdateDate'>,
+  nowMs: number,
+  windowDays: number = RECENCY_WINDOW_DAYS
+): 'New' | 'Updated' | undefined {
+  const windowMs = windowDays * 24 * 60 * 60 * 1000
+  const published = parseDateMs(item.initialPublicationDate)
+  if (published !== null && published <= nowMs && nowMs - published <= windowMs) return 'New'
+  const updated = parseDateMs(item.lastUpdateDate)
+  if (updated !== null && updated <= nowMs && nowMs - updated <= windowMs) return 'Updated'
+  return undefined
+}
+
+const nowMs = Date.now()
+
 // Inject status + citationCount, THEN build the dependency tree as the final step
 // so `children[]` reference the same fully-enriched objects as the top-level array
 // (priorRevisions/groupStatusBucket/status/citationCount all present). This is what
@@ -460,7 +489,7 @@ const citationCounts = computeCitationCounts(currentItems)
 export const libraryData: LibraryItem[] = buildTree(
   currentItems.map((item) => ({
     ...item,
-    status: statusMap.get(item.referenceId),
+    status: computeRecencyStatus(item, nowMs) ?? statusMap.get(item.referenceId),
     citationCount: citationCounts.get(item.referenceId) ?? 0,
   }))
 )

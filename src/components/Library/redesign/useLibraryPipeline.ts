@@ -15,6 +15,7 @@ import { PERSONA_LIBRARY_CATEGORIES } from '@/data/personaConfig'
 import { matchesGeoFilter } from '@/components/common/GeoFilter'
 import { matchesSectorFilter } from '@/components/common/SectorFilter'
 import { matchesTrustTierFilter } from '@/components/common/TrustTierFilter'
+import { matchesAlgorithmFamilyFilter } from '@/components/common/AlgorithmFamilyFilter'
 import type { TrustTier } from '@/data/trustScore'
 import type { SortOption } from '@/components/Library/SortControl'
 import type { PersonaId } from '@/data/learningPersonas'
@@ -43,7 +44,59 @@ export const ORG_CANONICAL_MAP: Record<string, string> = {
   'ASD Australia': 'ASD Australia',
   'Cloudflare Research': 'Cloudflare Research',
   'Open Quantum Safe': 'Open Quantum Safe',
+  // ── Extended publishers (W3): variant spellings collapse to a canonical name ──
+  'IETF TLS WG': 'IETF',
+  'IETF LAMPS WG': 'IETF',
+  'IETF PQUIP': 'IETF',
+  'IETF PQUIP WG': 'IETF',
+  'IETF IPSECME WG': 'IETF',
+  'IETF COSE WG': 'IETF',
+  'IETF OpenPGP WG': 'IETF',
+  'IETF OAuth Working Group': 'IETF',
+  'IETF SMIME WG': 'IETF',
+  'IETF Individual Submission': 'IETF',
+  'ETSI ISG QKD': 'ETSI',
+  'ETSI TC CYBER WG QSC': 'ETSI',
+  'ETSI ISG QSC': 'ETSI',
+  'ETSI QSC': 'ETSI',
+  'NIST CMVP': 'NIST',
+  'Cybersecurity and Infrastructure Security Agency': 'CISA',
+  'NCSC UK': 'UK NCSC',
+  'UK National Cyber Security Centre': 'UK NCSC',
+  ASD: 'ASD Australia',
+  ACSC: 'ASD Australia',
+  'Australian Signals Directorate': 'ASD Australia',
+  'French National Cybersecurity Agency': 'ANSSI',
+  'BSI Germany': 'BSI',
+  'ISO/IEC JTC 1/SC 27': 'ISO',
+  'CA/Browser Forum': 'CA/Browser Forum',
+  '3GPP': '3GPP',
+  IEEE: 'IEEE',
+  'ITU-T SG17': 'ITU-T',
+  'ASC X9': 'ANSI X9',
+  'ANSI X9': 'ANSI X9',
+  'OASIS PKCS11 Technical Committee': 'OASIS',
+  'Trusted Computing Group': 'Trusted Computing Group',
+  'Trusted Computing Group (TCG)': 'Trusted Computing Group',
+  'Cloud Security Alliance': 'Cloud Security Alliance',
+  ENISA: 'ENISA',
+  'European Parliament': 'European Parliament',
+  'Council of the EU': 'Council of the EU',
+  GSMA: 'GSMA',
+  KISA: 'KISA',
+  HKMA: 'HKMA',
+  MAS: 'MAS',
+  'White House': 'White House',
+  Cloudflare: 'Cloudflare Research',
+  'OpenSSL Project': 'OpenSSL',
+  'Ethereum Foundation': 'Ethereum Foundation',
+  DigiCert: 'DigiCert',
+  Thales: 'Thales',
 }
+
+/** Sentinel org value for documents authored only by organizations not in the
+ *  canonical map — keeps them reachable via the org filter instead of vanishing. */
+export const ORG_OTHER = 'Other'
 
 export interface LibraryPipelineInput {
   activeCategory: string // 'All' or a LIBRARY_CATEGORIES value
@@ -52,6 +105,7 @@ export interface LibraryPipelineInput {
   geoFilter: string[]
   sectorFilter: string[]
   tierFilter: TrustTier[]
+  algoFamilyFilter: string[]
   showOnlyLibraryBookmarks: boolean
   libraryBookmarks: string[]
   cswp39Only: boolean
@@ -84,6 +138,7 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
     geoFilter,
     sectorFilter,
     tierFilter,
+    algoFamilyFilter,
     showOnlyLibraryBookmarks,
     libraryBookmarks,
     cswp39Only,
@@ -135,7 +190,12 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
             .map((s) => ORG_CANONICAL_MAP[s.trim()])
             .filter(Boolean)
         : []
-      if (!itemCanonicalOrgs.includes(activeOrg)) return false
+      if (activeOrg === ORG_OTHER) {
+        // "Other": authored, but by no canonically-mapped organization.
+        if (!item.authorsOrOrganization || itemCanonicalOrgs.length > 0) return false
+      } else if (!itemCanonicalOrgs.includes(activeOrg)) {
+        return false
+      }
     }
     if (geoFilter.length > 0) {
       const regionValues = item.regionScope
@@ -150,6 +210,15 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
       if (!matchesSectorFilter(sectorFilter, item.applicableIndustries ?? [])) return false
     }
     if (!matchesTrustTierFilter(tierFilter, 'library', item.referenceId)) return false
+    if (algoFamilyFilter.length > 0) {
+      const famValues = item.algorithmFamily
+        ? item.algorithmFamily
+            .split(';')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : []
+      if (!matchesAlgorithmFamilyFilter(algoFamilyFilter, famValues)) return false
+    }
     if (showOnlyLibraryBookmarks && !libraryBookmarks.includes(item.referenceId)) return false
     if (cswp39Only && !maturityByRefId.has(item.referenceId)) return false
     if (certRelevantOnly && !certRelevantIdSet.has(item.referenceId)) return false
@@ -195,6 +264,7 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
     certRelevantIdSet,
     lifecycleBucket,
     tierFilter,
+    algoFamilyFilter,
     personaPreferredActive,
     personaPreferredCategories,
   ])

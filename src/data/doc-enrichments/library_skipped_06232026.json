@@ -1,7 +1,7 @@
 {
   "generated": "2026-06-23",
   "collection": "library",
-  "skipped_count": 3,
+  "skipped_count": 4,
   "entries": [
     {
       "ref_id": "China YD/T 3834.1-2021",
@@ -9,14 +9,19 @@
       "reason": "Extracted text too short (52 chars) \u2014 likely empty or corrupt source"
     },
     {
+      "ref_id": "NSM-8",
+      "file": "NSM-8.html",
+      "reason": "Extracted text too short (34 chars) \u2014 likely empty or corrupt source"
+    },
+    {
+      "ref_id": "Samsung-Thales-ML-KEM-eSE-2026",
+      "file": "Samsung-Thales-ML-KEM-eSE-2026.html",
+      "reason": "Extracted text too short (32 chars) \u2014 likely empty or corrupt source"
+    },
+    {
       "ref_id": "Forrester-TEI-CLM-Automation",
       "file": "Forrester-TEI-CLM-Automation.html",
       "reason": "Extracted text too short (83 chars) \u2014 likely empty or corrupt source"
-    },
-    {
-      "ref_id": "APRA-CPS-234",
-      "file": "APRA-CPS-234.html",
-      "reason": "Error page detected: \"page not found\" found in first 500 chars"
     }
   ]
 }

@@ -19,9 +19,13 @@ import { LIBRARY_OPS_PICKS } from '@/data/libraryOpsPicks'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
-import { GeoFilter, useGeoFilter } from '@/components/common/GeoFilter'
-import { SectorFilter, useSectorFilter } from '@/components/common/SectorFilter'
+import { GeoFilter, useGeoFilter, type GeoOption } from '@/components/common/GeoFilter'
+import { SectorFilter, useSectorFilter, industryLabel } from '@/components/common/SectorFilter'
 import { TrustTierFilter, useTrustTierFilter } from '@/components/common/TrustTierFilter'
+import {
+  AlgorithmFamilyFilter,
+  useAlgorithmFamilyFilter,
+} from '@/components/common/AlgorithmFamilyFilter'
 import { LibraryTreeTable } from '@/components/Library/LibraryTreeTable'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { LIBRARY_CSV_COLUMNS } from '@/utils/csvExportConfigs'
@@ -29,7 +33,7 @@ import type { SortOption } from '@/components/Library/SortControl'
 import type { ViewMode } from '@/components/Library/ViewToggle'
 import type { PersonaId } from '@/data/learningPersonas'
 import { libraryDefaultSortForPersona } from '@/data/libraryPersonaConfig'
-import { useLibraryPipeline, ORG_CANONICAL_MAP } from './useLibraryPipeline'
+import { useLibraryPipeline, ORG_CANONICAL_MAP, ORG_OTHER } from './useLibraryPipeline'
 import { LibraryRoleLens } from './LibraryRoleLens'
 import { LibraryControlDeck } from './LibraryControlDeck'
 import { LibraryFacetRail, type LibraryQuickView } from './LibraryFacetRail'
@@ -46,10 +50,68 @@ const FILTER_PARAMS = [
   'cswp39',
   'qv',
   'prefs',
-  'geo[]',
-  'sector[]',
+  'geo',
+  'sector',
   'tier',
+  'algo',
 ]
+
+const QUICK_VIEW_LABELS = new Map<string, string>([
+  ['new', 'New & updated'],
+  ['cert', 'Cert-relevant'],
+  ['bookmarked', 'Bookmarked'],
+])
+
+// ISO-ish region_scope codes → friendly labels for the Geography facet + chips.
+// EU / Global / Five-Eyes are surfaced by GeoFilter's built-in overlay options,
+// so they're intentionally skipped in the per-country list (GEO_SKIP below).
+const REGION_LABELS = new Map<string, string>([
+  ['US', 'United States'],
+  ['GB', 'United Kingdom'],
+  ['FR', 'France'],
+  ['DE', 'Germany'],
+  ['AU', 'Australia'],
+  ['CA', 'Canada'],
+  ['JP', 'Japan'],
+  ['KR', 'South Korea'],
+  ['CN', 'China'],
+  ['SG', 'Singapore'],
+  ['IN', 'India'],
+  ['HK', 'Hong Kong'],
+  ['NL', 'Netherlands'],
+  ['AE', 'United Arab Emirates'],
+  ['SA', 'Saudi Arabia'],
+  ['IL', 'Israel'],
+  ['SE', 'Sweden'],
+  ['NO', 'Norway'],
+  ['CZ', 'Czechia'],
+  ['MY', 'Malaysia'],
+  ['ZA', 'South Africa'],
+  ['KE', 'Kenya'],
+  ['NZ', 'New Zealand'],
+  ['G7', 'G7'],
+  ['NATO', 'NATO'],
+])
+
+const GEO_OVERLAY_LABELS = new Map<string, string>([
+  ['PQC-REGION-GLOBAL', 'Global'],
+  ['PQC-REGION-FIVEEYES', 'Five Eyes'],
+  ['PQC-REGION-EU', 'European Union'],
+])
+
+// region_scope tokens already covered by GeoFilter overlays, or too noisy to surface.
+const GEO_SKIP = new Set([
+  'PQC-REGION-GLOBAL',
+  'PQC-REGION-FIVEEYES',
+  'PQC-REGION-EU',
+  'EU',
+  'Global',
+  'UK',
+])
+
+function geoChipLabel(code: string): string {
+  return GEO_OVERLAY_LABELS.get(code) ?? REGION_LABELS.get(code) ?? code
+}
 
 export function LibraryViewRedesign({
   simEmbed = false,
@@ -85,9 +147,12 @@ export function LibraryViewRedesign({
   const libraryBookmarks = useBookmarkStore((s) => s.libraryBookmarks)
   const toggleLibraryBookmark = useBookmarkStore((s) => s.toggleLibraryBookmark)
 
-  const geoFilter = useGeoFilter()
-  const sectorFilter = useSectorFilter()
-  const tierFilter = useTrustTierFilter()
+  // Pass the (embed-aware) param source so geo/sector/tier/algo filters read from
+  // the sim's local state in embed mode instead of the parent page URL (W8).
+  const geoFilter = useGeoFilter(params)
+  const sectorFilter = useSectorFilter(params)
+  const tierFilter = useTrustTierFilter(params)
+  const algoFamilyFilter = useAlgorithmFamilyFilter(params)
 
   // ── URL-derived state ──────────────────────────────────────────────────────
   const activeCategory = params.get('cat') ?? 'All'
@@ -134,6 +199,7 @@ export function LibraryViewRedesign({
     geoFilter,
     sectorFilter,
     tierFilter,
+    algoFamilyFilter,
     showOnlyLibraryBookmarks,
     libraryBookmarks,
     cswp39Only,
@@ -154,14 +220,40 @@ export function LibraryViewRedesign({
   // ── Org dropdown options (canonical) ───────────────────────────────────────
   const orgs = useMemo(() => {
     const set = new Set<string>()
+    let hasUnmapped = false
     for (const item of libraryData) {
       if (!item.authorsOrOrganization) continue
+      let mapped = false
       for (const raw of item.authorsOrOrganization.split(';')) {
         const canon = ORG_CANONICAL_MAP[raw.trim()]
-        if (canon) set.add(canon)
+        if (canon) {
+          set.add(canon)
+          mapped = true
+        }
+      }
+      if (!mapped) hasUnmapped = true
+    }
+    const sorted = Array.from(set).sort()
+    // Append "Other" last so docs by unmapped publishers stay reachable.
+    if (hasUnmapped) sorted.push(ORG_OTHER)
+    return sorted
+  }, [])
+
+  // ── Geography dropdown options (derived from data, deduped vs overlays) ──────
+  const geoOptions = useMemo<GeoOption[]>(() => {
+    const seen = new Set<string>()
+    const out: GeoOption[] = []
+    for (const item of libraryData) {
+      if (!item.regionScope) continue
+      for (const raw of item.regionScope.split(';')) {
+        const code = raw.trim()
+        if (!code || GEO_SKIP.has(code) || code.includes(':')) continue
+        if (seen.has(code)) continue
+        seen.add(code)
+        out.push({ code, label: REGION_LABELS.get(code) ?? code })
       }
     }
-    return Array.from(set).sort()
+    return out.sort((a, b) => a.label.localeCompare(b.label))
   }, [])
 
   const detailItem: LibraryItem | null = useMemo(
@@ -186,7 +278,78 @@ export function LibraryViewRedesign({
   const openDetail = useCallback((ref: string) => setParam('ref', ref), [setParam])
   const closeDetail = useCallback(() => setParam('ref', null), [setParam])
 
+  // Clear a single value of a repeated-key (multi-select) filter param.
+  const clearMulti = useCallback(
+    (key: string, value: string) => {
+      const next = new URLSearchParams(params)
+      const remaining = next.getAll(key).filter((v) => v !== value)
+      next.delete(key)
+      for (const v of remaining) next.append(key, v)
+      setParams(next, { replace: true })
+    },
+    [params, setParams]
+  )
+
   const showNarrowBanner = pipeline.personaPreferredActive && pipeline.newHiddenByPersonaCount > 0
+
+  // Every active filter as a removable chip (drives the chip row + empty-state reset).
+  const activeFilterChips: { id: string; label: string; onClear: () => void }[] = []
+  if (filterText)
+    activeFilterChips.push({
+      id: 'q',
+      label: `“${filterText}”`,
+      onClear: () => setParam('q', null),
+    })
+  if (activeCategory !== 'All')
+    activeFilterChips.push({
+      id: 'cat',
+      label: activeCategory,
+      onClear: () => setParam('cat', null),
+    })
+  if (activeOrg !== 'All')
+    activeFilterChips.push({ id: 'org', label: activeOrg, onClear: () => setParam('org', null) })
+  if (lifecycleBucket !== 'All')
+    activeFilterChips.push({
+      id: 'lifecycle',
+      label: lifecycleBucket,
+      onClear: () => setParam('lifecycle', null),
+    })
+  if (quickView !== 'all')
+    activeFilterChips.push({
+      id: 'qv',
+      label: QUICK_VIEW_LABELS.get(quickView) ?? quickView,
+      onClear: () => setParam('qv', null),
+    })
+  if (cswp39Only)
+    activeFilterChips.push({
+      id: 'cswp39',
+      label: 'Authoritative sources',
+      onClear: () => setParam('cswp39', null),
+    })
+  for (const code of geoFilter)
+    activeFilterChips.push({
+      id: `geo:${code}`,
+      label: geoChipLabel(code),
+      onClear: () => clearMulti('geo', code),
+    })
+  for (const code of sectorFilter)
+    activeFilterChips.push({
+      id: `sector:${code}`,
+      label: industryLabel(code),
+      onClear: () => clearMulti('sector', code),
+    })
+  for (const tier of tierFilter)
+    activeFilterChips.push({
+      id: `tier:${tier}`,
+      label: `Trust: ${tier}`,
+      onClear: () => clearMulti('tier', tier),
+    })
+  for (const fam of algoFamilyFilter)
+    activeFilterChips.push({
+      id: `algo:${fam}`,
+      label: fam,
+      onClear: () => clearMulti('algo', fam),
+    })
 
   return (
     <div className="animate-fade-in space-y-4 pb-24">
@@ -254,9 +417,10 @@ export function LibraryViewRedesign({
             onReset={resetFilters}
             advancedExtra={
               <>
-                <GeoFilter options={[]} />
-                <SectorFilter />
-                <TrustTierFilter />
+                <AlgorithmFamilyFilter params={params} setParams={setParams} />
+                <GeoFilter options={geoOptions} params={params} setParams={setParams} />
+                <SectorFilter params={params} setParams={setParams} />
+                <TrustTierFilter params={params} setParams={setParams} />
               </>
             }
           />
@@ -278,24 +442,33 @@ export function LibraryViewRedesign({
             </div>
           )}
 
-          <div className="flex items-center gap-2 px-1 text-[12.5px] text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-2 px-1 text-[12.5px] text-muted-foreground">
             <span>
               {displayedItems.length} document{displayedItems.length === 1 ? '' : 's'}
             </span>
-            {filterText && (
-              <FilterChip label={`“${filterText}”`} onClear={() => setParam('q', null)} />
-            )}
-            {activeCategory !== 'All' && (
-              <FilterChip label={activeCategory} onClear={() => setParam('cat', null)} />
-            )}
-            {activeOrg !== 'All' && (
-              <FilterChip label={activeOrg} onClear={() => setParam('org', null)} />
+            {activeFilterChips.map((chip) => (
+              <FilterChip key={chip.id} label={chip.label} onClear={chip.onClear} />
+            ))}
+            {activeFilterChips.length > 0 && (
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={resetFilters}
+                className="h-auto px-2 py-0.5 text-[12px] text-secondary"
+              >
+                Clear all
+              </Button>
             )}
           </div>
 
           {displayedItems.length === 0 ? (
-            <div className="glass-panel rounded-2xl p-10 text-center text-muted-foreground">
-              No documents match these filters.
+            <div className="glass-panel flex flex-col items-center gap-4 rounded-2xl p-10 text-center text-muted-foreground">
+              <span>No documents match these filters.</span>
+              {activeFilterChips.length > 0 && (
+                <Button type="button" variant="outline" onClick={resetFilters}>
+                  Clear all filters
+                </Button>
+              )}
             </div>
           ) : view === 'table' ? (
             <LibraryTreeTable data={displayedItems} />

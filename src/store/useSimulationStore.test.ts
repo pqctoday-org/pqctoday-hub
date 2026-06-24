@@ -8,7 +8,7 @@ beforeEach(() => s().reset())
 
 describe('useSimulationStore', () => {
   it('seeds a coherent starting scenario', () => {
-    expect(s().country).toBe('DE')
+    expect(s().country).toBe('US')
     expect(s().sel).toBe('p0')
     expect(s().checks.p0).toBe(0) // levels are earned via gating, nothing pre-set
   })

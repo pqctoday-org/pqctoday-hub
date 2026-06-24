@@ -138,7 +138,7 @@ export function LibraryDocumentCard({
               aria-hidden="true"
             />
           </Button>
-          {item.downloadUrl && (
+          {item.downloadUrl ? (
             <a
               href={item.downloadUrl}
               target="_blank"
@@ -149,6 +149,13 @@ export function LibraryDocumentCard({
               Open
               <ExternalLink size={12} aria-hidden="true" />
             </a>
+          ) : (
+            <span
+              className="px-1.5 py-1 text-[12px] font-medium text-muted-foreground/70"
+              title="No public source link is available for this document yet."
+            >
+              Source not available
+            </span>
           )}
         </div>
       </div>

@@ -32,6 +32,10 @@ export interface SimulationState {
   crqcShift: number
   /** Event feed, newest first, capped at 30. */
   events: SimEvent[]
+  /** Auto-run playhead position to RESUME from (the queue index where the last
+   *  playthrough was interrupted). 0 = no run in progress / start from the top.
+   *  Transient run-control state (not part of saveSlice); cleared by reset(). */
+  autoRunResumeIndex: number
   /** Reference resources the player has opened (playbook completion). */
   visitedRefs: string[]
   /** Hands-on workshops the player has opened in-sim (playbook completion). */
@@ -69,6 +73,8 @@ export interface SimulationState {
   setSector: (v: string) => void
   setSeat: (v: string) => void
   setSel: (v: PhaseId) => void
+  /** Remember the auto-run playhead so the play button resumes from it (0 = top). */
+  setAutoRunResumeIndex: (n: number) => void
   /** Record that a reference resource was opened. */
   markRefVisited: (id: string) => void
   /** Record that a hands-on workshop was opened in-sim. */
@@ -120,7 +126,9 @@ export interface SimulationState {
 
 const SEED = {
   size: 'mid',
-  country: 'DE',
+  // US is the default so the flagship Executive Order 14409 scenario loads out of
+  // the box; other countries are reachable via the org dials / assessment.
+  country: 'US',
   sector: 'healthcare',
   seat: 'executive',
   sel: 'p0' as PhaseId,
@@ -145,6 +153,7 @@ const SEED = {
     },
     { sev: 'info', t: 'Q2 2026', txt: 'OpenSSL 3.6 ships ML-DSA hardware acceleration' },
   ] as SimEvent[],
+  autoRunResumeIndex: 0,
   visitedRefs: [] as string[],
   visitedWorkshops: [] as string[],
   visitedScenarios: [] as string[],
@@ -232,6 +241,7 @@ export const useSimulationStore = create<SimulationState>()(
       setSector: (sector) => set({ sector }),
       setSeat: (seat) => set({ seat }),
       setSel: (sel) => set({ sel }),
+      setAutoRunResumeIndex: (autoRunResumeIndex) => set({ autoRunResumeIndex }),
       markRefVisited: (id) =>
         set((s) => (s.visitedRefs.includes(id) ? s : { visitedRefs: [...s.visitedRefs, id] })),
       markWorkshopVisited: (id) =>

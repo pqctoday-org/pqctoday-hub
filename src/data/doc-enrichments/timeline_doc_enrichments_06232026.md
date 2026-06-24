@@ -675,15 +675,15 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
-## United States:White House — EO 14409 Securing the Nation Against Advanced Cryptographic Attacks
+## United States:White House — Executive Order — Securing the Nation Against Advanced Cryptographic Attacks
 
-- **Reference ID**: United States:White House — EO 14409 Securing the Nation Against Advanced Cryptographic Attacks
-- **Title**: EO 14409 Securing the Nation Against Advanced Cryptographic Attacks
+- **Reference ID**: United States:White House — Executive Order — Securing the Nation Against Advanced Cryptographic Attacks
+- **Title**: Executive Order — Securing the Nation Against Advanced Cryptographic Attacks
 - **Authors**: Executive Office of the President
 - **Publication Date**: 2026-06-22
 - **Last Updated**: Not specified
 - **Document Status**: Validated
-- **Main Topic**: Executive Order 14409 mandates the transition of federal information systems to NIST-approved Post-Quantum Cryptography standards by 2030-2031.
+- **Main Topic**: the June 2026 PQC Executive Order mandates the transition of federal information systems to NIST-approved Post-Quantum Cryptography standards by 2030-2031.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: Harvest now, decrypt later
 - **Migration Timeline Info**: PQC migration lead identified within 30 days; OMB guidance issued within 90 days; NIST pilot completed by December 31, 2027; PQC key establishment transition by December 31, 2030; PQC digital signatures transition by December 31, 2031; covered contractors comply by December 31, 2030
@@ -733,25 +733,25 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Historical Significance**: Represents a high-level executive mandate setting concrete, near-term deadlines for PQC adoption in the United States federal sector.
 - **Implementation Timeline Dates**: 30 days: agencies name a PQC migration lead; 90 days: OMB issues inventory and migration-plan guidance; 2030: HVAs and high-impact systems move to PQC key establishment; 2030: covered contractors comply; 2031: HVAs and high-impact systems move to PQC digital signatures
 - **Successor Events & Dependencies**: OMB inventory and migration-plan guidance; agency appointment of PQC migration leads
-- **Source Document Title**: EO 14409 Securing the Nation Against Advanced Cryptographic Attacks
+- **Source Document Title**: Executive Order — Securing the Nation Against Advanced Cryptographic Attacks
 - **Source Document Publication Date**: June 22 2026
 - **Country Migration Dates**: United States: 2026 — Executive Order issued; United States: 2026 — agencies name PQC migration lead within 30 days; United States: 2026 — OMB issues guidance within 90 days; United States: 2030 — HVAs move to PQC key establishment; United States: 2030 — covered contractors comply; United States: 2031 — HVAs move to PQC digital signatures
-- **Timeline Cross-Reference**: United States 2026: CONSISTENT (CISA PQC Product Category List Publication | also: EO 14409 Securing the Nation Against Adv); United States 2026: CONSISTENT (EO 14409 Securing the Nation Against Advanced Cryp); United States 2026: CONSISTENT (EO 14409 Securing the Nation Against Advanced Cryp); United States 2030: CONSISTENT (EO 14409 Key-Establishment Migration Deadline); United States 2030: CONSISTENT (EO 14409 Key-Establishment Migration Deadline); United States 2031: CONSISTENT (EO 14409 Digital-Signature Migration Deadline)
+- **Timeline Cross-Reference**: United States 2026: CONSISTENT (CISA PQC Product Category List Publication | also: the PQC Executive Order Securing the Nation Against Adv); United States 2026: CONSISTENT (the PQC Executive Order Securing the Nation Against Advanced Cryp); United States 2026: CONSISTENT (the PQC Executive Order Securing the Nation Against Advanced Cryp); United States 2030: CONSISTENT (PQC Executive Order — Key-Establishment Migration Deadline); United States 2030: CONSISTENT (PQC Executive Order — Key-Establishment Migration Deadline); United States 2031: CONSISTENT (PQC Executive Order — Digital-Signature Migration Deadline)
 - **Extraction Note**: No source text available
 - **Extraction Note**: Base enrichment reused from library record EO-14409-Securing-the-Nation; timeline dimensions extracted separately
 - **Extraction Timestamp**: 2026-06-23T11:20:55
 
 ---
 
-## United States:NIST — EO 14409 NIST PQC Migration Pilot Complete
+## United States:NIST — PQC Executive Order — NIST PQC Migration Pilot Complete
 
-- **Reference ID**: United States:NIST — EO 14409 NIST PQC Migration Pilot Complete
-- **Title**: EO 14409 NIST PQC Migration Pilot Complete
+- **Reference ID**: United States:NIST — PQC Executive Order — NIST PQC Migration Pilot Complete
+- **Title**: PQC Executive Order — NIST PQC Migration Pilot Complete
 - **Authors**: National Institute of Standards and Technology
 - **Publication Date**: 2026-06-22
 - **Last Updated**: Not specified
 - **Document Status**: Validated
-- **Main Topic**: Executive Order 14409 mandates the transition of federal information systems to NIST-approved Post-Quantum Cryptography standards by 2030-2031.
+- **Main Topic**: the June 2026 PQC Executive Order mandates the transition of federal information systems to NIST-approved Post-Quantum Cryptography standards by 2030-2031.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: Harvest now, decrypt later
 - **Migration Timeline Info**: PQC migration lead identified within 30 days; OMB guidance issued within 90 days; NIST pilot completed by December 31, 2027; PQC key establishment transition by December 31, 2030; PQC digital signatures transition by December 31, 2031; covered contractors comply by December 31, 2030
@@ -798,28 +798,28 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Sector / Industry Applicability**: Government
 - **Migration Urgency & Priority**: Near-Term (1-3yr)
 - **Phase Transition Narrative**: Transitions from the pilot execution phase to the completion/evaluation phase of the NIST PQC migration.
-- **Historical Significance**: Represents a concrete, near-term deadline for a federal agency's internal PQC migration pilot under Executive Order 14409.
+- **Historical Significance**: Represents a concrete, near-term deadline for a federal agency's internal PQC migration pilot under the June 2026 PQC Executive Order.
 - **Implementation Timeline Dates**: December 31 2027: NIST completes pilot PQC migration project
 - **Successor Events & Dependencies**: None detected
-- **Source Document Title**: EO 14409 NIST PQC Migration Pilot Complete
+- **Source Document Title**: PQC Executive Order — NIST PQC Migration Pilot Complete
 - **Source Document Publication Date**: None detected
 - **Country Migration Dates**: United States: 2027 — NIST completes pilot PQC migration project on its information systems
-- **Timeline Cross-Reference**: United States 2027: CONSISTENT (EO 14409 NIST PQC Migration Pilot Complete)
+- **Timeline Cross-Reference**: United States 2027: CONSISTENT (PQC Executive Order — NIST PQC Migration Pilot Complete)
 - **Extraction Note**: No source text available
 - **Extraction Note**: Base enrichment reused from library record EO-14409-Securing-the-Nation; timeline dimensions extracted separately
 - **Extraction Timestamp**: 2026-06-23T11:21:24
 
 ---
 
-## United States:Federal Agencies — EO 14409 Key-Establishment Migration Deadline
+## United States:Federal Agencies — PQC Executive Order — Key-Establishment Migration Deadline
 
-- **Reference ID**: United States:Federal Agencies — EO 14409 Key-Establishment Migration Deadline
-- **Title**: EO 14409 Key-Establishment Migration Deadline
+- **Reference ID**: United States:Federal Agencies — PQC Executive Order — Key-Establishment Migration Deadline
+- **Title**: PQC Executive Order — Key-Establishment Migration Deadline
 - **Authors**: U.S. Federal Civilian Agencies
 - **Publication Date**: 2026-06-22
 - **Last Updated**: Not specified
 - **Document Status**: Validated
-- **Main Topic**: Executive Order 14409 mandates the transition of federal information systems to NIST-approved Post-Quantum Cryptography standards by 2030-2031.
+- **Main Topic**: the June 2026 PQC Executive Order mandates the transition of federal information systems to NIST-approved Post-Quantum Cryptography standards by 2030-2031.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: Harvest now, decrypt later
 - **Migration Timeline Info**: PQC migration lead identified within 30 days; OMB guidance issued within 90 days; NIST pilot completed by December 31, 2027; PQC key establishment transition by December 31, 2030; PQC digital signatures transition by December 31, 2031; covered contractors comply by December 31, 2030
@@ -872,22 +872,22 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Source Document Title**: None detected
 - **Source Document Publication Date**: None detected
 - **Country Migration Dates**: United States: 2030 — transition to PQC for key establishment by December 31
-- **Timeline Cross-Reference**: United States 2030: CONSISTENT (EO 14409 Key-Establishment Migration Deadline)
+- **Timeline Cross-Reference**: United States 2030: CONSISTENT (PQC Executive Order — Key-Establishment Migration Deadline)
 - **Extraction Note**: No source text available
 - **Extraction Note**: Base enrichment reused from library record EO-14409-Securing-the-Nation; timeline dimensions extracted separately
 - **Extraction Timestamp**: 2026-06-23T11:21:43
 
 ---
 
-## United States:Federal Agencies — EO 14409 Digital-Signature Migration Deadline
+## United States:Federal Agencies — PQC Executive Order — Digital-Signature Migration Deadline
 
-- **Reference ID**: United States:Federal Agencies — EO 14409 Digital-Signature Migration Deadline
-- **Title**: EO 14409 Digital-Signature Migration Deadline
+- **Reference ID**: United States:Federal Agencies — PQC Executive Order — Digital-Signature Migration Deadline
+- **Title**: PQC Executive Order — Digital-Signature Migration Deadline
 - **Authors**: U.S. Federal Civilian Agencies
 - **Publication Date**: 2026-06-22
 - **Last Updated**: Not specified
 - **Document Status**: Validated
-- **Main Topic**: Executive Order 14409 mandates the transition of federal information systems to NIST-approved Post-Quantum Cryptography standards by 2030-2031.
+- **Main Topic**: the June 2026 PQC Executive Order mandates the transition of federal information systems to NIST-approved Post-Quantum Cryptography standards by 2030-2031.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: Harvest now, decrypt later
 - **Migration Timeline Info**: PQC migration lead identified within 30 days; OMB guidance issued within 90 days; NIST pilot completed by December 31, 2027; PQC key establishment transition by December 31, 2030; PQC digital signatures transition by December 31, 2031; covered contractors comply by December 31, 2030

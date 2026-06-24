@@ -45,10 +45,20 @@ const Eyebrow = ({ children }: { children: React.ReactNode }) => (
 export const SectorExposureHero = ({
   applicable,
   scopedIndustries,
+  variant = 'all',
 }: {
   applicable: ThreatData[]
   scopedIndustries: string[]
+  /**
+   * Which of the three cards to render. The Threats page splits the hero across
+   * two tabs: the Catalog tab shows only your sector-exposure card ('exposure');
+   * the CRQC Threat Horizon tab shows the CRQC-watch + Mosca-deadline cards
+   * ('horizon'). 'all' (default) renders the full 3-card row for any other caller.
+   */
+  variant?: 'all' | 'exposure' | 'horizon'
 }) => {
+  const showExposure = variant === 'all' || variant === 'exposure'
+  const showHorizon = variant === 'all' || variant === 'horizon'
   const total = applicable.length
   const critical = applicable.filter((t) => t.criticality === 'Critical').length
   const high = applicable.filter((t) => t.criticality === 'High').length
@@ -92,104 +102,120 @@ export const SectorExposureHero = ({
         ? scopedIndustries[0]
         : `your ${scopedIndustries.length} sectors`
 
+  // Grid column count adapts to how many cards this variant renders so the cards
+  // never stretch awkwardly when only one (exposure) or two (horizon) are shown.
+  const cols = variant === 'all' ? 'lg:grid-cols-3' : variant === 'horizon' ? 'lg:grid-cols-2' : ''
+
   return (
-    <div className="mb-4 grid grid-cols-1 gap-3 lg:grid-cols-3">
+    <div className={`mb-4 grid grid-cols-1 gap-3 ${cols}`}>
       {/* A — your sector exposure */}
-      <Card>
-        <div className="mb-1.5 flex items-center justify-between">
-          <Eyebrow>Your sector exposure</Eyebrow>
-          <ShieldAlert size={14} className="text-primary" aria-hidden="true" />
-        </div>
-        <div className="flex items-baseline gap-2">
-          <span className="text-4xl font-extrabold text-foreground tabular-nums">{total}</span>
-          <span className="text-xs text-muted-foreground">
-            threat{total === 1 ? '' : 's'} apply to{' '}
-            <span className="font-semibold text-foreground">{sectorLabel}</span>
-          </span>
-        </div>
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <div className="rounded-lg border border-status-error/30 bg-status-error/5 px-3 py-2">
-            <div className="text-xl font-extrabold text-status-error tabular-nums">{critical}</div>
-            <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
-              Critical
+      {showExposure && (
+        <Card>
+          <div className="mb-1.5 flex items-center justify-between">
+            <Eyebrow>Your sector exposure</Eyebrow>
+            <ShieldAlert size={14} className="text-primary" aria-hidden="true" />
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-4xl font-extrabold text-foreground tabular-nums">{total}</span>
+            <span className="text-xs text-muted-foreground">
+              threat{total === 1 ? '' : 's'} apply to{' '}
+              <span className="font-semibold text-foreground">{sectorLabel}</span>
+            </span>
+          </div>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="rounded-lg border border-status-error/30 bg-status-error/5 px-3 py-2">
+              <div className="text-xl font-extrabold text-status-error tabular-nums">
+                {critical}
+              </div>
+              <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                Critical
+              </div>
+            </div>
+            <div className="rounded-lg border border-status-warning/30 bg-status-warning/5 px-3 py-2">
+              <div className="text-xl font-extrabold text-status-warning tabular-nums">{high}</div>
+              <div className="text-[10px] uppercase tracking-wide text-muted-foreground">High</div>
             </div>
           </div>
-          <div className="rounded-lg border border-status-warning/30 bg-status-warning/5 px-3 py-2">
-            <div className="text-xl font-extrabold text-status-warning tabular-nums">{high}</div>
-            <div className="text-[10px] uppercase tracking-wide text-muted-foreground">High</div>
+          <div className="mt-3 flex items-center gap-4 border-t border-border pt-2 text-[11px] text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <span className="inline-block h-2 w-2 rounded-sm bg-secondary" aria-hidden="true" />
+              <span className="font-semibold text-foreground">{hndl}</span> decrypt-later
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span
+                className="inline-block h-2 w-2 rounded-sm bg-status-warning"
+                aria-hidden="true"
+              />
+              <span className="font-semibold text-foreground">{hnfl}</span> forge-later
+            </span>
           </div>
-        </div>
-        <div className="mt-3 flex items-center gap-4 border-t border-border pt-2 text-[11px] text-muted-foreground">
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block h-2 w-2 rounded-sm bg-secondary" aria-hidden="true" />
-            <span className="font-semibold text-foreground">{hndl}</span> decrypt-later
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span
-              className="inline-block h-2 w-2 rounded-sm bg-status-warning"
-              aria-hidden="true"
-            />
-            <span className="font-semibold text-foreground">{hnfl}</span> forge-later
-          </span>
-        </div>
-      </Card>
+        </Card>
+      )}
 
       {/* B — CRQC capability watch */}
-      <Card>
-        <div className="mb-1.5 flex items-center justify-between">
-          <Eyebrow>CRQC capability watch</Eyebrow>
-          <Radar size={14} className="text-status-warning" aria-hidden="true" />
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <div className="rounded-lg border border-border bg-muted/30 px-3 py-2">
-            <div className="text-2xl font-extrabold text-status-warning tabular-nums">~{z}</div>
-            <div className="text-[10px] text-muted-foreground">
-              Z consensus · window {earliest}–{latest} · {CRQC_ESTIMATES.length} sources
+      {showHorizon && (
+        <Card>
+          <div className="mb-1.5 flex items-center justify-between">
+            <Eyebrow>CRQC capability watch</Eyebrow>
+            <Radar size={14} className="text-status-warning" aria-hidden="true" />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="rounded-lg border border-border bg-muted/30 px-3 py-2">
+              <div className="text-2xl font-extrabold text-status-warning tabular-nums">~{z}</div>
+              <div className="text-[10px] text-muted-foreground">
+                Z consensus · window {earliest}–{latest} · {CRQC_ESTIMATES.length} sources
+              </div>
+            </div>
+            <div className="rounded-lg border border-border bg-muted/30 px-3 py-2">
+              <div className="text-2xl font-extrabold text-status-error tabular-nums">
+                {earliest}
+              </div>
+              <div className="text-[10px] text-muted-foreground">
+                earliest credible · {Math.max(0, earliest - NOW_YEAR)}y at the low end
+              </div>
             </div>
           </div>
-          <div className="rounded-lg border border-border bg-muted/30 px-3 py-2">
-            <div className="text-2xl font-extrabold text-status-error tabular-nums">{earliest}</div>
-            <div className="text-[10px] text-muted-foreground">
-              earliest credible · {Math.max(0, earliest - NOW_YEAR)}y at the low end
-            </div>
-          </div>
-        </div>
-        <p className="mt-3 border-t border-border pt-2 text-[11px] leading-relaxed text-muted-foreground">
-          When a cryptographically-relevant quantum computer (CRQC) could break today&apos;s
-          public-key crypto — the clock your migration races.
-        </p>
-      </Card>
+          <p className="mt-3 border-t border-border pt-2 text-[11px] leading-relaxed text-muted-foreground">
+            When a cryptographically-relevant quantum computer (CRQC) could break today&apos;s
+            public-key crypto — the clock your migration races.
+          </p>
+        </Card>
+      )}
 
       {/* C — your migration deadline (Mosca) */}
-      <Card>
-        <div className="mb-1.5 flex items-center justify-between">
-          <Eyebrow>Your migration deadline</Eyebrow>
-          <span
-            className={`flex items-center gap-1 text-[10px] font-bold uppercase ${urgencyTone}`}
-          >
-            <Clock size={12} aria-hidden="true" />
-            {urgency}
-          </span>
-        </div>
-        <div className="flex items-baseline gap-2">
-          <span className={`text-4xl font-extrabold tabular-nums ${urgencyTone}`}>{deadline}</span>
-          <span className="text-xs text-muted-foreground">
-            latest safe start for{' '}
-            <span className="font-semibold text-foreground">{sectorLabel}</span>
-          </span>
-        </div>
-        <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-          {rem < 0
-            ? `Already past the safe-start line by ${Math.abs(rem)}y — long-lived data may be exposed.`
-            : `About ${rem}y of runway before you must have started migrating.`}
-        </p>
-        <div className="mt-3 border-t border-border pt-2 font-mono text-[11px] text-muted-foreground">
-          Z {z} − X {dataLife} − Y {MIGRATION_YEARS} = {deadline}
-          <div className="mt-0.5 text-[10px]">
-            X = data lifetime, Y = migration time. Mosca&apos;s inequality.
+      {showHorizon && (
+        <Card>
+          <div className="mb-1.5 flex items-center justify-between">
+            <Eyebrow>Your migration deadline</Eyebrow>
+            <span
+              className={`flex items-center gap-1 text-[10px] font-bold uppercase ${urgencyTone}`}
+            >
+              <Clock size={12} aria-hidden="true" />
+              {urgency}
+            </span>
           </div>
-        </div>
-      </Card>
+          <div className="flex items-baseline gap-2">
+            <span className={`text-4xl font-extrabold tabular-nums ${urgencyTone}`}>
+              {deadline}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              latest safe start for{' '}
+              <span className="font-semibold text-foreground">{sectorLabel}</span>
+            </span>
+          </div>
+          <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+            {rem < 0
+              ? `Already past the safe-start line by ${Math.abs(rem)}y — long-lived data may be exposed.`
+              : `About ${rem}y of runway before you must have started migrating.`}
+          </p>
+          <div className="mt-3 border-t border-border pt-2 font-mono text-[11px] text-muted-foreground">
+            Z {z} − X {dataLife} − Y {MIGRATION_YEARS} = {deadline}
+            <div className="mt-0.5 text-[10px]">
+              X = data lifetime, Y = migration time. Mosca&apos;s inequality.
+            </div>
+          </div>
+        </Card>
+      )}
     </div>
   )
 }
