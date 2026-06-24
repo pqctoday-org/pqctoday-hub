@@ -15,6 +15,7 @@ export function PageMeta() {
       <title>{meta.title}</title>
       <meta name="description" content={meta.description} />
       <link rel="canonical" href={meta.canonical} />
+      {meta.noindex && <meta name="robots" content="noindex,follow" />}
 
       {/* Open Graph */}
       <meta property="og:title" content={meta.title} />
@@ -23,6 +24,8 @@ export function PageMeta() {
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content="PQC Today" />
       <meta property="og:image" content={meta.ogImage ?? 'https://www.pqctoday.com/og-image.png'} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
 
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />

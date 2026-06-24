@@ -7,6 +7,8 @@ export interface RouteMeta {
   canonical: string
   ogImage?: string
   structuredData?: Record<string, unknown>
+  /** When true, PageMeta emits <meta name="robots" content="noindex,follow"> */
+  noindex?: boolean
 }
 
 /** Per-route SEO metadata for all discoverable pages */
@@ -371,6 +373,27 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Terms of Service for PQC Today, including export compliance (ECCN 5D002), sanctions restrictions, educational-use disclaimers, and privacy policy for embedded cryptographic software.',
     canonical: `${BASE_URL}/terms`,
+  },
+
+  '/simulation': {
+    title: 'PQC Migration Simulation — Run Your Quantum-Safe Transition | PQC Today',
+    description:
+      'Play through a full post-quantum cryptography migration for your assessed organization — your sector, size, and jurisdiction. Watch a sample finance-sector run end to end or simulate your own multi-phase transition.',
+    canonical: `${BASE_URL}/simulation`,
+  },
+
+  '/sponsor': {
+    title: 'Sponsor PQC Today — Support Independent Post-Quantum Education | PQC Today',
+    description:
+      'Back PQC Today, the free and neutral post-quantum cryptography platform. Sponsorship tiers for individuals, teams, and vendors fund open education and reference data while preserving strict editorial independence.',
+    canonical: `${BASE_URL}/sponsor`,
+  },
+
+  '/editorial-independence': {
+    title: 'Editorial Independence Policy | PQC Today',
+    description:
+      'The binding policy governing how sponsorship and editorial content interact at PQC Today: what sponsorship buys and does not buy, inclusion and assessment criteria, and conflict-of-interest disclosure.',
+    canonical: `${BASE_URL}/editorial-independence`,
   },
 
   '/changelog': {
@@ -869,24 +892,70 @@ function buildModuleSchema(name: string, duration: string, level: string): Recor
   }
 }
 
+/** Dynamic/child route prefixes that inherit a parent section's title + description. */
+const PARENT_PREFIXES: ReadonlyArray<readonly [string, string]> = [
+  ['/business/tools/', '/business/tools'],
+  ['/learn/', '/learn'],
+  ['/playground/', '/playground'],
+  ['/migrate/', '/migrate'],
+  ['/assess/', '/assess'],
+  ['/patents/', '/patents'],
+  ['/library/', '/library'],
+]
+
+/**
+ * Routes that exist but must not be indexed: legacy duplicates of redesigned
+ * pages and the signed embed surface. They still resolve to real metadata so the
+ * canonical stays self-referential, but PageMeta marks them noindex.
+ */
+export function isNoindexRoute(pathname: string): boolean {
+  return pathname.endsWith('/legacy') || pathname === '/embed' || pathname.startsWith('/embed/')
+}
+
 /**
  * Match a pathname to its route metadata.
- * Falls back to homepage meta for unknown routes.
+ *
+ * Unknown routes NEVER fall back to the homepage's canonical (that would tell
+ * search engines the page is a duplicate of the homepage and drop it). Instead
+ * the canonical is always self-referential; only the human-readable
+ * title/description are inherited from the parent section when available.
  */
 export function getRouteMeta(pathname: string): RouteMeta {
-  // Exact match first — hasOwn guard makes these accesses safe
-  // eslint-disable-next-line security/detect-object-injection
-  if (Object.hasOwn(ROUTE_META, pathname)) return ROUTE_META[pathname]!
+  // Normalize trailing slash (but keep the root "/")
+  const normalized =
+    pathname.length > 1 && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname
 
-  // Normalize trailing slashes
-  const normalized = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname
-  // eslint-disable-next-line security/detect-object-injection
-  if (Object.hasOwn(ROUTE_META, normalized)) return ROUTE_META[normalized]!
+  const noindex = isNoindexRoute(normalized) || undefined
+  const selfCanonical = `${BASE_URL}${normalized === '/' ? '/' : normalized}`
 
-  // Dynamic routes — fall back to parent route meta
-  if (normalized.startsWith('/business/tools/')) return ROUTE_META['/business/tools']!
-  if (normalized.startsWith('/learn/')) return ROUTE_META['/learn']!
+  // Exact match — hasOwn guard makes these accesses safe
+  if (Object.hasOwn(ROUTE_META, normalized)) {
+    // eslint-disable-next-line security/detect-object-injection
+    const meta = ROUTE_META[normalized]!
+    return noindex ? { ...meta, noindex } : meta
+  }
 
-  // Fallback to homepage
-  return ROUTE_META['/']!
+  // Dynamic/child routes — inherit the parent section's title + description, but
+  // keep a self-referential canonical and drop the parent's structured data.
+  for (const [prefix, parent] of PARENT_PREFIXES) {
+    if (normalized.startsWith(prefix) && Object.hasOwn(ROUTE_META, parent)) {
+      // eslint-disable-next-line security/detect-object-injection
+      const meta = ROUTE_META[parent]!
+      return {
+        title: meta.title,
+        description: meta.description,
+        canonical: selfCanonical,
+        ogImage: meta.ogImage,
+        noindex,
+      }
+    }
+  }
+
+  // Unknown top-level route — generic title + homepage description, self canonical.
+  return {
+    title: ROUTE_META['/']!.title,
+    description: ROUTE_META['/']!.description,
+    canonical: selfCanonical,
+    noindex,
+  }
 }
