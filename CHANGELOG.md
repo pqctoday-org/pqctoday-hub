@@ -26,6 +26,10 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.1.1] - 2026-06-23
+
+Version 4.1.1 adds a dedicated CRQC Threat Horizon view and read-only inspection of the artifacts the simulation generates, makes the standards Library quicker to filter, extends the migration timeline to ten national programs, paces the "watch the full migration" auto-run by its narration, and is honest when a referenced document has no reachable source.
+
 ### Added
 
 - **A dedicated CRQC "Threat Horizon" view** [view:/threats] [persona:executive] [persona:architect] [persona:researcher]: the Threats page has a new **CRQC Threat Horizon** tab that gathers the "when could a cryptographically-relevant quantum computer arrive" picture into one place — an expanded watch on quantum-computing progress with the Mosca "act-by" calculator shown by default — and the migration simulation now opens straight to it when it explains the threat timeline.
