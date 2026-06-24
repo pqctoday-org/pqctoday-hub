@@ -24,6 +24,7 @@ const GOLDEN_ROUTE_PATHS = [
   'api-security-jwt',
   'arch-quantum-impact',
   'automotive-pqc',
+  'cbom',
   'code-signing',
   'common-ground',
   'compliance-strategy',

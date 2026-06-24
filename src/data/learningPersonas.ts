@@ -249,6 +249,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'pki-enrollment-protocols' },
       { type: 'module', moduleId: 'crypto-dev-apis' },
       { type: 'module', moduleId: 'crypto-mgmt-modernization' },
+      { type: 'module', moduleId: 'cbom' },
       { type: 'module', moduleId: 'merkle-tree-certs' },
       { type: 'module', moduleId: 'slh-dsa' },
       { type: 'module', moduleId: 'stateful-signatures' },
@@ -396,6 +397,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'crypto-agility' },
       { type: 'module', moduleId: 'crypto-mgmt-modernization' },
+      { type: 'module', moduleId: 'cbom' },
       { type: 'module', moduleId: 'hybrid-crypto' },
       { type: 'module', moduleId: 'qkd' },
       {
@@ -834,6 +836,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'crypto-agility' },
       { type: 'module', moduleId: 'migration-program' },
       { type: 'module', moduleId: 'crypto-mgmt-modernization' },
+      { type: 'module', moduleId: 'cbom' },
       { type: 'module', moduleId: 'platform-eng-pqc' },
       {
         type: 'checkpoint',
