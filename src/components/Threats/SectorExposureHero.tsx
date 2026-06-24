@@ -45,10 +45,20 @@ const Eyebrow = ({ children }: { children: React.ReactNode }) => (
 export const SectorExposureHero = ({
   applicable,
   scopedIndustries,
+  variant = 'all',
 }: {
   applicable: ThreatData[]
   scopedIndustries: string[]
+  /**
+   * Which of the three cards to render. The Threats page splits the hero across
+   * two tabs: the Catalog tab shows only your sector-exposure card ('exposure');
+   * the CRQC Threat Horizon tab shows the CRQC-watch + Mosca-deadline cards
+   * ('horizon'). 'all' (default) renders the full 3-card row for any other caller.
+   */
+  variant?: 'all' | 'exposure' | 'horizon'
 }) => {
+  const showExposure = variant === 'all' || variant === 'exposure'
+  const showHorizon = variant === 'all' || variant === 'horizon'
   const total = applicable.length
   const critical = applicable.filter((t) => t.criticality === 'Critical').length
   const high = applicable.filter((t) => t.criticality === 'High').length
@@ -92,9 +102,14 @@ export const SectorExposureHero = ({
         ? scopedIndustries[0]
         : `your ${scopedIndustries.length} sectors`
 
+  // Grid column count adapts to how many cards this variant renders so the cards
+  // never stretch awkwardly when only one (exposure) or two (horizon) are shown.
+  const cols = variant === 'all' ? 'lg:grid-cols-3' : variant === 'horizon' ? 'lg:grid-cols-2' : ''
+
   return (
-    <div className="mb-4 grid grid-cols-1 gap-3 lg:grid-cols-3">
+    <div className={`mb-4 grid grid-cols-1 gap-3 ${cols}`}>
       {/* A — your sector exposure */}
+      {showExposure && (
       <Card>
         <div className="mb-1.5 flex items-center justify-between">
           <Eyebrow>Your sector exposure</Eyebrow>
@@ -133,8 +148,10 @@ export const SectorExposureHero = ({
           </span>
         </div>
       </Card>
+      )}
 
       {/* B — CRQC capability watch */}
+      {showHorizon && (
       <Card>
         <div className="mb-1.5 flex items-center justify-between">
           <Eyebrow>CRQC capability watch</Eyebrow>
@@ -159,8 +176,10 @@ export const SectorExposureHero = ({
           public-key crypto — the clock your migration races.
         </p>
       </Card>
+      )}
 
       {/* C — your migration deadline (Mosca) */}
+      {showHorizon && (
       <Card>
         <div className="mb-1.5 flex items-center justify-between">
           <Eyebrow>Your migration deadline</Eyebrow>
@@ -190,6 +209,7 @@ export const SectorExposureHero = ({
           </div>
         </div>
       </Card>
+      )}
     </div>
   )
 }

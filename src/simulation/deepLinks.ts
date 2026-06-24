@@ -79,6 +79,17 @@ function checkParams(path: string, params: URLSearchParams): DeepLinkResolution 
     if (bad) return { ok: false, reason: `/compliance: unknown param "${bad}"` }
     return { ok: true }
   }
+  if (path === '/threats') {
+    // ?view= selects the tab (ThreatsDashboard): 'horizon' opens the CRQC Threat
+    // Horizon tab, 'list' (or absent) the default Threat Catalog. Mirrors the
+    // dashboard's real URL API so the same `to` is also a valid navigate-away link.
+    const bad = keys.find((k) => k !== 'view')
+    if (bad) return { ok: false, reason: `/threats: unknown param "${bad}"` }
+    const view = params.get('view')
+    if (view && view !== 'horizon' && view !== 'list')
+      return { ok: false, reason: `/threats: unknown view "${view}"` }
+    return { ok: true }
+  }
   if (path === '/timeline') {
     // C6: sim tree steps can carry a scope query (e.g. ?country=Germany) so the
     // timeline opens pre-scoped inside the simulation pane. Mirrors TimelineView's
