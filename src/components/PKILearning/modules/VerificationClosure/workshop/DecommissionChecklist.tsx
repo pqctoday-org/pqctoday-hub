@@ -1,100 +1,149 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
-import { CheckCircle2, Circle } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { CheckCircle2, Circle, ScanLine, ShieldOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { SAMPLE_INVENTORY } from '@/data/cryptoEstate'
 
 /**
- * Decommission Checklist — retire one classical asset safely: deprecate ->
- * remove -> verify removed -> log. The point learners often miss is the third
- * step: you must verify the classical material is GONE, not just that PQC was
- * added. Anchored to the NIST IR 8547 deprecate-2030 / disallow-2035 schedule.
+ * Decommission Tracker — work the classical estate (the shared
+ * @/data/cryptoEstate, quantum-vulnerable assets, worst-risk first) through
+ * deprecate → remove → verify-removed → log. "Remove" is gated on clearing
+ * dependents; "verify removed" runs a re-scan that fails if the asset was not
+ * actually removed — the step teams skip. Schedule: NIST IR 8547 (disallow 2035).
  */
 
-const STAGES = [
-  {
-    id: 'deprecate',
-    label: 'Deprecate',
-    detail:
-      'Mark the classical key/algorithm deprecated; block new use; set a removal date inside the IR 8547 window (disallowed 2035).',
-  },
-  {
-    id: 'remove',
-    label: 'Remove',
-    detail:
-      'Cut over dependents to the PQC/hybrid replacement, then remove the classical key material and trust anchors.',
-  },
-  {
-    id: 'verify-removed',
-    label: 'Verify removed',
-    detail:
-      'Confirm by observation that the classical material is GONE — not just that PQC was added. Re-scan; the old key must no longer appear.',
-  },
-  {
-    id: 'log',
-    label: 'Log',
-    detail:
-      'Record the decommissioning in the log/evidence dossier: what was removed, when, by whom, and the verification evidence.',
-  },
+type StageId = 'deprecate' | 'remove' | 'verify' | 'log'
+const STAGES: { id: StageId; label: string }[] = [
+  { id: 'deprecate', label: 'Deprecate' },
+  { id: 'remove', label: 'Remove' },
+  { id: 'verify', label: 'Verify removed' },
+  { id: 'log', label: 'Log' },
 ]
 
-export function DecommissionChecklist() {
-  const [done, setDone] = useState<Set<string>>(new Set())
+const ASSETS = SAMPLE_INVENTORY.filter((a) => a.quantumVulnerable).sort(
+  (x, y) => y.riskScore - x.riskScore
+)
 
-  const toggle = (id: string) =>
-    setDone((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
+interface St {
+  stages: Set<StageId>
+  depsCleared: boolean
+  scan: 'unscanned' | 'present' | 'gone'
+}
+const initial = (): Record<string, St> =>
+  Object.fromEntries(
+    ASSETS.map((a) => [a.id, { stages: new Set<StageId>(), depsCleared: false, scan: 'unscanned' }])
+  )
+
+export function DecommissionChecklist() {
+  const [state, setState] = useState<Record<string, St>>(initial)
+
+  const patch = (id: string, fn: (s: St) => St) => setState((p) => ({ ...p, [id]: fn(p[id]) })) // eslint-disable-line security/detect-object-injection
+
+  const advance = (id: string, stage: StageId) =>
+    patch(id, (s) => {
+      if (stage === 'remove' && !s.depsCleared) return s
+      if (stage === 'verify') {
+        const removed = s.stages.has('remove')
+        return {
+          ...s,
+          scan: removed ? 'gone' : 'present',
+          stages: removed ? new Set([...s.stages, 'verify']) : s.stages,
+        }
+      }
+      if (stage === 'log' && !s.stages.has('verify')) return s
+      return { ...s, stages: new Set([...s.stages, stage]) }
     })
 
-  const complete = done.size === STAGES.length
+  const fullyDone = (s: St) => STAGES.every((st) => s.stages.has(st.id))
+  const doneCount = useMemo(() => ASSETS.filter((a) => fullyDone(state[a.id])).length, [state])
 
   return (
     <div className="space-y-4">
       <div className="glass-panel p-4">
-        <h3 className="font-semibold text-foreground mb-1">Retire one classical asset</h3>
+        <h3 className="mb-1 font-semibold text-foreground">Decommission the classical estate</h3>
         <p className="text-sm text-muted-foreground">
-          Example: an RSA-2048 TLS server key being replaced by ML-KEM hybrid. Walk all four stages
-          — the one teams skip is <strong>verify removed</strong>.
+          {ASSETS.length} quantum-vulnerable assets, worst-risk first. Each must reach{' '}
+          <strong>verify removed</strong> — the old key gone, not just PQC added. You can&apos;t{' '}
+          <em>remove</em> until dependents are migrated.
+        </p>
+        <div className="mt-3 h-2 w-full overflow-hidden rounded bg-muted">
+          <div
+            className="h-full bg-status-success transition-all"
+            style={{ width: `${(doneCount / ASSETS.length) * 100}%` }}
+          />
+        </div>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {doneCount}/{ASSETS.length} retired & verified
         </p>
       </div>
 
-      <ol className="space-y-2">
-        {STAGES.map((stage, i) => {
-          const on = done.has(stage.id)
-          return (
-            <li key={stage.id}>
-              <Button
-                variant="ghost"
-                onClick={() => toggle(stage.id)}
-                className={`glass-panel h-auto w-full flex-col items-start justify-start whitespace-normal border p-3 text-left ${
-                  on ? 'border-status-success/40 bg-status-success/5' : 'border-border'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  {on ? (
-                    <CheckCircle2 size={16} className="text-status-success" />
-                  ) : (
-                    <Circle size={16} className="text-muted-foreground/40" />
-                  )}
-                  <span className="text-sm font-semibold text-foreground">
-                    {i + 1}. {stage.label}
-                  </span>
-                </div>
-                <p className="ml-6 mt-1 text-xs text-muted-foreground">{stage.detail}</p>
-              </Button>
-            </li>
-          )
-        })}
-      </ol>
+      {ASSETS.map((asset) => {
+        const s = state[asset.id]
+        return (
+          <div key={asset.id} className="glass-panel p-3">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <span className="text-sm font-medium text-foreground">{asset.name}</span>
+                <span className="ml-2 font-mono text-xs text-muted-foreground">
+                  {asset.currentAlgorithm}
+                </span>
+              </div>
+              <span className="shrink-0 text-xs text-status-warning">risk {asset.riskScore}/5</span>
+            </div>
 
-      {complete && (
-        <div className="glass-panel p-4 border border-status-success/30 text-sm text-foreground">
-          Asset retired and verified-removed, with an audit trail. Repeat per asset, prioritised by
-          the IR 8547 deprecation schedule.
-        </div>
-      )}
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              {STAGES.map((stage, i) => {
+                const on = s.stages.has(stage.id)
+                const gate =
+                  (stage.id === 'remove' && !s.depsCleared) ||
+                  (stage.id === 'log' && !s.stages.has('verify')) ||
+                  (i > 0 && !s.stages.has(STAGES[i - 1].id))
+                return (
+                  <Button
+                    key={stage.id}
+                    variant="outline"
+                    size="sm"
+                    disabled={!on && gate}
+                    onClick={() => advance(asset.id, stage.id)}
+                    className={on ? 'border-status-success/40 text-status-success' : ''}
+                  >
+                    {on ? (
+                      <CheckCircle2 size={13} className="mr-1" />
+                    ) : (
+                      <Circle size={13} className="mr-1" />
+                    )}
+                    {stage.label}
+                  </Button>
+                )
+              })}
+              {fullyDone(s) && <ShieldOff size={14} className="text-status-success" />}
+            </div>
+
+            <div className="mt-2 flex flex-wrap items-center gap-3 text-xs">
+              <label className="flex cursor-pointer items-center gap-1.5 text-muted-foreground">
+                <input
+                  type="checkbox"
+                  checked={s.depsCleared}
+                  onChange={(e) =>
+                    patch(asset.id, (st) => ({ ...st, depsCleared: e.target.checked }))
+                  }
+                />
+                Dependents migrated
+              </label>
+              {s.scan === 'present' && (
+                <span className="flex items-center gap-1 text-status-error">
+                  <ScanLine size={12} /> re-scan: STILL present — not removed
+                </span>
+              )}
+              {s.scan === 'gone' && (
+                <span className="flex items-center gap-1 text-status-success">
+                  <ScanLine size={12} /> re-scan: confirmed gone
+                </span>
+              )}
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
