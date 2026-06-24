@@ -332,7 +332,7 @@ function DrawerPanel({
 
         {/* footer */}
         <div className="flex items-center gap-2 border-t border-border bg-background p-3">
-          {item.downloadUrl && (
+          {item.downloadUrl ? (
             <a
               href={item.downloadUrl}
               target="_blank"
@@ -342,6 +342,13 @@ function DrawerPanel({
               Open document
               <ExternalLink size={13} aria-hidden="true" />
             </a>
+          ) : (
+            <span
+              className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/50 px-4 py-2 text-[13px] font-semibold text-muted-foreground"
+              title="No public source link is available for this document yet."
+            >
+              Source not available
+            </span>
           )}
           <Button
             type="button"
