@@ -547,6 +547,15 @@
       "duration": "60 min",
       "difficulty": "intermediate",
       "frameworkPhase": "p2"
+    },
+    "verification-closure": {
+      "id": "verification-closure",
+      "lm_id": "LM-061",
+      "title": "Decommissioning & Program Closure",
+      "description": "Retire classical cryptography on a defensible schedule, prove the migration actually happened from observed behaviour, and hand the program to business-as-usual.",
+      "duration": "40 min",
+      "difficulty": "intermediate",
+      "frameworkPhase": "verify-close"
     }
   },
   "MODULE_STEP_COUNTS": {
@@ -611,7 +620,8 @@
     "skills-team-structure": 2,
     "quiz": 1,
     "assess": 1,
-    "cbom": 4
+    "cbom": 4,
+    "verification-closure": 3
   },
   "LEARN_SECTIONS": {
     "pqc-101": [
@@ -1776,6 +1786,24 @@
       {
         "id": "cbom-verify",
         "label": "Make it machine-verifiable & protect it"
+      }
+    ],
+    "verification-closure": [
+      {
+        "id": "decommission",
+        "label": "Retire classical crypto safely"
+      },
+      {
+        "id": "verify-evidence",
+        "label": "Prove it from observed behaviour"
+      },
+      {
+        "id": "verify-coverage",
+        "label": "Coverage at estate scale"
+      },
+      {
+        "id": "closure-handover",
+        "label": "Close into business-as-usual"
       }
     ]
   },
@@ -3019,6 +3047,20 @@
         "id": "key-correlator",
         "label": "Key Correlator"
       }
+    ],
+    "verification-closure": [
+      {
+        "id": "decommission-checklist",
+        "label": "Decommission Checklist"
+      },
+      {
+        "id": "coverage-planner",
+        "label": "Verification Coverage Planner"
+      },
+      {
+        "id": "closure-handover-register",
+        "label": "Closure & Handover Register"
+      }
     ]
   },
   "MODULE_TRACKS": [
@@ -3536,6 +3578,15 @@
           "duration": "60 min",
           "difficulty": "advanced",
           "frameworkPhase": "p6"
+        },
+        {
+          "id": "verification-closure",
+          "lm_id": "LM-061",
+          "title": "Decommissioning & Program Closure",
+          "description": "Retire classical cryptography on a defensible schedule, prove the migration actually happened from observed behaviour, and hand the program to business-as-usual.",
+          "duration": "40 min",
+          "difficulty": "intermediate",
+          "frameworkPhase": "verify-close"
         }
       ]
     },
@@ -3701,6 +3752,9 @@
     },
     "cbom": {
       "standards": ["CycloneDX / ECMA-424", "SPDX / ISO 5962", "NIST SP 1800-38"]
+    },
+    "verification-closure": {
+      "standards": ["NIST IR 8547", "NIST SP 800-131A", "ISO/IEC 27001"]
     }
   }
 }
