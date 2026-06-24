@@ -120,7 +120,9 @@ export interface SimulationState {
 
 const SEED = {
   size: 'mid',
-  country: 'DE',
+  // US is the default so the flagship Executive Order 14409 scenario loads out of
+  // the box; other countries are reachable via the org dials / assessment.
+  country: 'US',
   sector: 'healthcare',
   seat: 'executive',
   sel: 'p0' as PhaseId,
