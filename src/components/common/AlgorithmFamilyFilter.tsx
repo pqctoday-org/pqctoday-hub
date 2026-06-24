@@ -68,10 +68,20 @@ export function canonicalAlgorithmFamily(raw: string): AlgorithmFamily | null {
 
 interface AlgorithmFamilyFilterProps {
   className?: string
+  /** Optional URL-param source override. The sim embed backs filter state with
+   *  local state instead of the page URL; defaults to useSearchParams. */
+  params?: URLSearchParams
+  setParams?: ReturnType<typeof useSearchParams>[1]
 }
 
-export function AlgorithmFamilyFilter({ className }: AlgorithmFamilyFilterProps) {
-  const [searchParams, setSearchParams] = useSearchParams()
+export function AlgorithmFamilyFilter({
+  className,
+  params: paramsProp,
+  setParams: setParamsProp,
+}: AlgorithmFamilyFilterProps) {
+  const [urlParams, setUrlParams] = useSearchParams()
+  const searchParams = paramsProp ?? urlParams
+  const setSearchParams = setParamsProp ?? setUrlParams
   const selected = searchParams.getAll('algo').filter(isAlgorithmFamily)
 
   function handleChange(families: string[]) {
@@ -105,10 +115,11 @@ function isAlgorithmFamily(value: string): value is AlgorithmFamily {
   return (ALGORITHM_FAMILIES as readonly string[]).includes(value)
 }
 
-/** Read algorithm-family filter state from URL — empty array when unset. */
-export function useAlgorithmFamilyFilter(): string[] {
-  const [searchParams] = useSearchParams()
-  return searchParams.getAll('algo').filter(isAlgorithmFamily)
+/** Read algorithm-family filter state — empty array when unset. Accepts an
+ *  optional URLSearchParams override (for the sim embed). */
+export function useAlgorithmFamilyFilter(paramsOverride?: URLSearchParams): string[] {
+  const [urlParams] = useSearchParams()
+  return (paramsOverride ?? urlParams).getAll('algo').filter(isAlgorithmFamily)
 }
 
 /**

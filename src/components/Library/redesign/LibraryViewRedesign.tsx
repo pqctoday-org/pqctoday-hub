@@ -147,10 +147,12 @@ export function LibraryViewRedesign({
   const libraryBookmarks = useBookmarkStore((s) => s.libraryBookmarks)
   const toggleLibraryBookmark = useBookmarkStore((s) => s.toggleLibraryBookmark)
 
-  const geoFilter = useGeoFilter()
-  const sectorFilter = useSectorFilter()
-  const tierFilter = useTrustTierFilter()
-  const algoFamilyFilter = useAlgorithmFamilyFilter()
+  // Pass the (embed-aware) param source so geo/sector/tier/algo filters read from
+  // the sim's local state in embed mode instead of the parent page URL (W8).
+  const geoFilter = useGeoFilter(params)
+  const sectorFilter = useSectorFilter(params)
+  const tierFilter = useTrustTierFilter(params)
+  const algoFamilyFilter = useAlgorithmFamilyFilter(params)
 
   // ── URL-derived state ──────────────────────────────────────────────────────
   const activeCategory = params.get('cat') ?? 'All'
@@ -415,10 +417,10 @@ export function LibraryViewRedesign({
             onReset={resetFilters}
             advancedExtra={
               <>
-                <AlgorithmFamilyFilter />
-                <GeoFilter options={geoOptions} />
-                <SectorFilter />
-                <TrustTierFilter />
+                <AlgorithmFamilyFilter params={params} setParams={setParams} />
+                <GeoFilter options={geoOptions} params={params} setParams={setParams} />
+                <SectorFilter params={params} setParams={setParams} />
+                <TrustTierFilter params={params} setParams={setParams} />
               </>
             }
           />
