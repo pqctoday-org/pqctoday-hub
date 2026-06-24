@@ -19,12 +19,21 @@ const EXPAND_MS = 10000
 export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
   const focus = player.phaseFocus
   const [expanded, setExpanded] = useState(true)
+  const [prevPhase, setPrevPhase] = useState(focus?.name)
   const collapseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // On each new phase: open the explanation for ~10s, then shrink to the title.
+  // On each new phase, re-open the explanation. Adjusting state during render
+  // (React's "reset state when a prop changes" pattern) avoids a synchronous
+  // setState inside an effect, which can trigger cascading renders.
+  if (focus?.name !== prevPhase) {
+    setPrevPhase(focus?.name)
+    setExpanded(true)
+  }
+
+  // After re-opening, auto-collapse to just the title after ~10s. The collapse
+  // runs inside the timer callback (async), not synchronously in the effect.
   useEffect(() => {
     if (!focus) return
-    setExpanded(true)
     if (collapseTimer.current) clearTimeout(collapseTimer.current)
     collapseTimer.current = setTimeout(() => setExpanded(false), EXPAND_MS)
     return () => {
@@ -49,11 +58,12 @@ export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-2">
         {focus && (
           <div>
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={toggle}
-              className="flex w-full items-center gap-2 text-left font-mono text-[12px] font-bold uppercase tracking-[0.16em] text-primary hover:text-primary/80"
               aria-expanded={expanded}
+              className="flex h-auto w-full items-center justify-start gap-2 p-0 text-left font-mono text-[12px] font-bold uppercase tracking-[0.16em] text-primary hover:bg-transparent hover:text-primary/80"
             >
               <span className="shrink-0 text-[10px] text-background/50">
                 {expanded ? '▾' : '▸'}
@@ -62,7 +72,7 @@ export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
               <span className="ml-auto shrink-0 font-mono text-[10px] normal-case tracking-normal text-background/55">
                 {player.phaseLabel} · {player.index}/{player.total}
               </span>
-            </button>
+            </Button>
             <div
               className={`overflow-hidden transition-[max-height,opacity,margin] duration-300 ease-out ${
                 expanded ? 'mt-1.5 max-h-[26vh] opacity-100' : 'max-h-0 opacity-0'
