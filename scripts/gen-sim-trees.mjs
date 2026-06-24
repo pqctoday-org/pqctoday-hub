@@ -361,6 +361,7 @@ const FRAMEWORK = {
       do: 'Adopt CycloneDX and establish the record structure and tooling.',
       output: 'CycloneDX CBOM format spec',
       steps: [
+        L('cbom', 'Learn: Cryptography Bill of Materials'),
         L('crypto-mgmt-modernization', 'Learn: CBOM in Cryptographic Management'),
         R('library', 'Reference: CycloneDX in the Library'),
       ],
@@ -765,6 +766,7 @@ const FRAMEWORK = {
       do: 'Adopt the 5-point migration-verification evidence standard and the program-closure record up front, so "done" means proven, not declared.',
       output: 'Verification standard & closure plan',
       steps: [
+        L('verification-closure', 'Learn: Decommissioning & Program Closure'),
         R('report', 'Reference: the program closure record & 5-point evidence standard'),
         R('compliance', 'Reference: closeout attestations & applicable mandates'),
       ],
