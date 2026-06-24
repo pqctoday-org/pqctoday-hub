@@ -31,7 +31,12 @@ export const NAICS_LABELS: Record<string, string> = {
   '92': 'Public Administration',
 }
 
-const DEFAULT_SECTOR_OPTIONS: FilterDropdownItem[] = [
+// Only sectors that actually match ≥1 library document. The previously-listed
+// '56' Administrative & Support Services and the three PQC-SECTOR-* vendor codes
+// matched zero rows (the matcher looks for the code string inside freeform
+// industry text, which never contains it) and were removed. SectorFilter.test.ts
+// guards against re-introducing a dead option.
+export const DEFAULT_SECTOR_OPTIONS: FilterDropdownItem[] = [
   { id: '52', label: 'Finance & Insurance' },
   { id: '92', label: 'Public Administration' },
   { id: '54', label: 'Professional & Technical Services' },
@@ -39,11 +44,7 @@ const DEFAULT_SECTOR_OPTIONS: FilterDropdownItem[] = [
   { id: '62', label: 'Healthcare & Life Sciences' },
   { id: '22', label: 'Energy & Utilities' },
   { id: '48', label: 'Transportation' },
-  { id: '56', label: 'Administrative & Support Services' },
   { id: '91', label: 'Government & Defense' },
-  { id: 'PQC-SECTOR-HSM-VENDOR', label: 'HSM / Crypto Hardware' },
-  { id: 'PQC-SECTOR-CLOUD-KMS', label: 'Cloud Key Management' },
-  { id: 'PQC-SECTOR-PQCLIB-VENDOR', label: 'PQC Library / SDK Vendor' },
 ]
 
 // Freeform industry strings that map to NAICS 2-digit groups
