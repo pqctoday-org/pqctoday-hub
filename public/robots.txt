@@ -1,5 +1,8 @@
 User-agent: *
 Allow: /
+# Cached third-party source/evidence pages (proof archives) — not our content;
+# keep them out of the index to avoid thin/duplicate-content noise.
+Disallow: /products/
 Crawl-delay: 1
 
 Sitemap: https://www.pqctoday.com/sitemap.xml

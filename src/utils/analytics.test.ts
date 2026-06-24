@@ -104,8 +104,11 @@ describe('analytics', () => {
     it('calls ReactGA.initialize when measurement ID is set and not on localhost', () => {
       initGA()
 
-      // initGA() silently calls ReactGA.initialize — no console output by design
-      expect(ReactGA.initialize).toHaveBeenCalledWith('test-measurement-id')
+      // initGA() silently calls ReactGA.initialize — no console output by design.
+      // GA4's automatic page_view is disabled; AnalyticsTracker sends pageviews.
+      expect(ReactGA.initialize).toHaveBeenCalledWith('test-measurement-id', {
+        gtagOptions: { send_page_view: false },
+      })
     })
   })
 
