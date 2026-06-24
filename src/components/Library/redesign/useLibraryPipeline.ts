@@ -15,6 +15,7 @@ import { PERSONA_LIBRARY_CATEGORIES } from '@/data/personaConfig'
 import { matchesGeoFilter } from '@/components/common/GeoFilter'
 import { matchesSectorFilter } from '@/components/common/SectorFilter'
 import { matchesTrustTierFilter } from '@/components/common/TrustTierFilter'
+import { matchesAlgorithmFamilyFilter } from '@/components/common/AlgorithmFamilyFilter'
 import type { TrustTier } from '@/data/trustScore'
 import type { SortOption } from '@/components/Library/SortControl'
 import type { PersonaId } from '@/data/learningPersonas'
@@ -52,6 +53,7 @@ export interface LibraryPipelineInput {
   geoFilter: string[]
   sectorFilter: string[]
   tierFilter: TrustTier[]
+  algoFamilyFilter: string[]
   showOnlyLibraryBookmarks: boolean
   libraryBookmarks: string[]
   cswp39Only: boolean
@@ -84,6 +86,7 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
     geoFilter,
     sectorFilter,
     tierFilter,
+    algoFamilyFilter,
     showOnlyLibraryBookmarks,
     libraryBookmarks,
     cswp39Only,
@@ -150,6 +153,15 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
       if (!matchesSectorFilter(sectorFilter, item.applicableIndustries ?? [])) return false
     }
     if (!matchesTrustTierFilter(tierFilter, 'library', item.referenceId)) return false
+    if (algoFamilyFilter.length > 0) {
+      const famValues = item.algorithmFamily
+        ? item.algorithmFamily
+            .split(';')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : []
+      if (!matchesAlgorithmFamilyFilter(algoFamilyFilter, famValues)) return false
+    }
     if (showOnlyLibraryBookmarks && !libraryBookmarks.includes(item.referenceId)) return false
     if (cswp39Only && !maturityByRefId.has(item.referenceId)) return false
     if (certRelevantOnly && !certRelevantIdSet.has(item.referenceId)) return false
@@ -195,6 +207,7 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
     certRelevantIdSet,
     lifecycleBucket,
     tierFilter,
+    algoFamilyFilter,
     personaPreferredActive,
     personaPreferredCategories,
   ])
