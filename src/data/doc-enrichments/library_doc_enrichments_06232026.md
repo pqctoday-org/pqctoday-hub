@@ -175,12 +175,12 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 ## EO-14409-Securing-the-Nation
 
 - **Reference ID**: EO-14409-Securing-the-Nation
-- **Title**: Executive Order 14409: Securing the Nation Against Advanced Cryptographic Attacks
+- **Title**: Executive Order — Securing the Nation Against Advanced Cryptographic Attacks (June 2026)
 - **Authors**: The White House (Executive Office of the President); OMB; NIST; CISA; NSA
 - **Publication Date**: 2026-06-22
 - **Last Updated**: 2026-06-22
 - **Document Status**: In Force
-- **Main Topic**: Executive Order 14409 mandates the transition of federal information systems to NIST-approved Post-Quantum Cryptography standards by 2030-2031.
+- **Main Topic**: the June 2026 PQC Executive Order mandates the transition of federal information systems to NIST-approved Post-Quantum Cryptography standards by 2030-2031.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: Harvest now, decrypt later
 - **Migration Timeline Info**: PQC migration lead identified within 30 days; OMB guidance issued within 90 days; NIST pilot completed by December 31, 2027; PQC key establishment transition by December 31, 2030; PQC digital signatures transition by December 31, 2031; covered contractors comply by December 31, 2030
