@@ -10,6 +10,8 @@
  */
 import { ThreatsDashboard } from '@/components/Threats/ThreatsDashboard'
 
-export function ThreatsEmbed() {
-  return <ThreatsDashboard simEmbed />
+export function ThreatsEmbed({
+  initialTab,
+}: { initialTab?: 'list' | 'horizon' } = {}) {
+  return <ThreatsDashboard simEmbed initialTab={initialTab} />
 }
