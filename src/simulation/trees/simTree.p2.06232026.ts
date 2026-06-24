@@ -92,6 +92,12 @@ const TREE: PhaseTree = {
           steps: [
             {
               kind: 'learn',
+              label: 'Learn: secure the CBOM & make it machine-verifiable',
+              to: '/learn/cbom',
+              moduleId: 'cbom',
+            },
+            {
+              kind: 'learn',
               label: 'Learn: protect the CBOM (it is an HNDL shopping list) — SOC monitoring',
               to: '/learn/soc-implementation-pqc',
               moduleId: 'soc-implementation-pqc',

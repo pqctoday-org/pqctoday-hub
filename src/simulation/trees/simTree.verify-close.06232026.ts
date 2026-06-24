@@ -58,6 +58,12 @@ const TREE: PhaseTree = {
           output: 'Migration-verification evidence dossier',
           steps: [
             {
+              kind: 'learn',
+              label: 'Learn: decommission classical crypto & assemble evidence',
+              to: '/learn/verification-closure',
+              moduleId: 'verification-closure',
+            },
+            {
               kind: 'activity',
               label: 'Assemble the evidence dossier & log decommissioning',
               to: '/business/tools/migration-verification',
