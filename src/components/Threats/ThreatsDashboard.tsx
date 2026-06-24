@@ -597,8 +597,8 @@ export const ThreatsDashboard: React.FC<{
             scopedIndustries={heroScopedIndustries}
             variant="horizon"
           />
-          <ThreatEconomicsHeader />
-          <CrqcCapabilityStrip />
+          <ThreatEconomicsHeader defaultExpanded />
+          <CrqcCapabilityStrip defaultExpanded />
         </div>
       )}
 
