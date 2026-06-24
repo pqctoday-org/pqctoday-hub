@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * SimAutoRunOverlay — the bottom narration + transport bar for the live auto-run.
- * Renders nothing until a run is playing (or has just finished). Fixed-position, so
- * it can be mounted anywhere in the sim tree.
+ * SimAutoRunOverlay — a compact, opaque transport bar pinned to the bottom of the
+ * screen during the live auto-run. The phase title sits fixed on the left; the phase
+ * explanation scrolls horizontally on a single line (the existing sim-ticker marquee)
+ * so the bar stays short and the sim board above it stays visible. Renders nothing
+ * until a run is playing (or has just finished).
  */
 import { Button } from '@/components/ui/button'
 import type { SimAutoRunPlayer } from './useSimAutoRunPlayer'
@@ -13,77 +15,84 @@ const btn =
 export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
   if (!player.running && !player.done) return null
   const pct = player.total ? Math.round((player.index / player.total) * 100) : 0
-
   const focus = player.phaseFocus
+  const tickerText = focus ? focus.summary + (focus.gate ? ` · Exit gate: ${focus.gate}` : '') : ''
+  // Constant, slow reading pace (~0.22s per character) regardless of phase length.
+  const tickerDur = Math.max(28, Math.round(tickerText.length * 0.22))
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[60] flex flex-col items-center gap-2 border-t border-background/20 bg-foreground/95 px-4 py-3 text-background shadow-2xl backdrop-blur">
-      {focus && (
-        <div className="w-full max-w-3xl rounded-md border border-background/15 bg-background/5 px-3 py-2">
-          <div className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-primary">
-            {focus.name}
+    <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-background/20 bg-foreground px-5 py-2.5 text-background shadow-2xl">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-2">
+        {focus && (
+          <div>
+            <div className="font-mono text-[12px] font-bold uppercase tracking-[0.16em] text-primary">
+              {focus.name}
+            </div>
+            <div className="mt-1 overflow-hidden">
+              <div
+                className="animate-sim-ticker inline-flex whitespace-nowrap text-[18px] leading-snug text-background/90"
+                style={{ animationDuration: `${tickerDur}s` }}
+              >
+                <span className="pr-24">{tickerText}</span>
+                <span className="pr-24" aria-hidden="true">
+                  {tickerText}
+                </span>
+              </div>
+            </div>
           </div>
-          {focus.summary && (
-            <p className="mt-0.5 text-[12px] leading-relaxed text-background/85">{focus.summary}</p>
-          )}
-          {focus.gate && (
-            <p className="mt-1 text-[11px] leading-relaxed text-background/60">
-              <span className="font-mono font-bold text-background/75">Exit gate:</span>{' '}
-              {focus.gate}
-            </p>
-          )}
+        )}
+
+        <div className="flex items-center gap-2">
+          <div className="h-0.5 flex-1 overflow-hidden rounded bg-background/20">
+            <div
+              className="h-full rounded bg-primary transition-all"
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+          <span className="shrink-0 font-mono text-[10px] text-background/55">
+            {player.phaseLabel} · {player.index}/{player.total}
+          </span>
         </div>
-      )}
-      <div className="flex w-full max-w-3xl items-center gap-3">
-        <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-[11px] font-bold text-background">
-          {player.phaseLabel || 'AUTO-RUN'}
-        </span>
-        <span className="flex-1 truncate text-sm font-semibold">{player.caption}</span>
-        <span className="shrink-0 font-mono text-[11px] text-background/60">
-          {player.index}/{player.total}
-        </span>
-      </div>
-      <div className="h-1 w-full max-w-3xl overflow-hidden rounded bg-background/20">
-        <div className="h-full rounded bg-primary transition-all" style={{ width: `${pct}%` }} />
-      </div>
-      <div className="flex flex-wrap items-center justify-center gap-2">
-        {!player.done && (
-          <Button type="button" variant="ghost" onClick={player.prevPass} className={btn}>
-            ⏮ Prev pass
+
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          {!player.done && (
+            <Button type="button" variant="ghost" onClick={player.prevPass} className={btn}>
+              ⏮ Prev pass
+            </Button>
+          )}
+          {player.running && !player.paused && (
+            <Button type="button" variant="ghost" onClick={player.pause} className={btn}>
+              ❚❚ Pause
+            </Button>
+          )}
+          {player.running && player.paused && (
+            <Button type="button" variant="ghost" onClick={player.resume} className={btn}>
+              ▶ Resume
+            </Button>
+          )}
+          {!player.done && (
+            <Button type="button" variant="ghost" onClick={player.nextPass} className={btn}>
+              Next pass ⏭
+            </Button>
+          )}
+          {!player.done && (
+            <Button type="button" variant="ghost" onClick={player.cycleSpeed} className={btn}>
+              Speed: {player.speed}
+            </Button>
+          )}
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={player.toggleVoice}
+            className={btn}
+            title={player.voiceName ? `Voice: ${player.voiceName}` : 'Browser voice'}
+          >
+            {player.voiceOn ? `🔊 ${player.voiceName || 'Voice'}` : '🔇 Muted'}
           </Button>
-        )}
-        {player.running && !player.paused && (
-          <Button type="button" variant="ghost" onClick={player.pause} className={btn}>
-            ❚❚ Pause
+          <Button type="button" variant="ghost" onClick={player.stop} className={btn}>
+            {player.done ? 'Close' : '■ Stop'}
           </Button>
-        )}
-        {player.running && player.paused && (
-          <Button type="button" variant="ghost" onClick={player.resume} className={btn}>
-            ▶ Resume
-          </Button>
-        )}
-        {!player.done && (
-          <Button type="button" variant="ghost" onClick={player.nextPass} className={btn}>
-            Next pass ⏭
-          </Button>
-        )}
-        {!player.done && (
-          <Button type="button" variant="ghost" onClick={player.cycleSpeed} className={btn}>
-            Speed: {player.speed}
-          </Button>
-        )}
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={player.toggleVoice}
-          className={btn}
-          title={player.voiceName ? `Voice: ${player.voiceName}` : 'Browser voice'}
-        >
-          {player.voiceOn ? `🔊 ${player.voiceName || 'Voice'}` : '🔇 Muted'}
-        </Button>
-        <Button type="button" variant="ghost" onClick={player.stop} className={btn}>
-          {player.done ? 'Close' : '■ Stop'}
-        </Button>
+        </div>
       </div>
     </div>
   )
