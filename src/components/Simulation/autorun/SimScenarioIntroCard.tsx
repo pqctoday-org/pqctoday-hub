@@ -2,7 +2,7 @@
 /**
  * SimScenarioIntroCard — the one-time scenario-framing card shown at the very start
  * of the auto-run (before the first maturity pass). For the US scenario it frames
- * Executive Order 14409; other countries degrade to a generic national framing. All
+ * the US PQC executive order; other countries degrade to a generic national framing. All
  * years / standards are pulled LIVE from getScenario() — nothing is hardcoded here.
  */
 import { Button } from '@/components/ui/button'

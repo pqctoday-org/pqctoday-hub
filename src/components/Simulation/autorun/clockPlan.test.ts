@@ -4,7 +4,7 @@ import { autoRunQueue } from './simAutoRun'
 import { getScenario } from './scenarioConfig'
 import { buildClockPlan } from './useSimAutoRunPlayer'
 
-describe('auto-run clock plan (scenario-paced, US / EO 14409)', () => {
+describe('auto-run clock plan (scenario-paced, US / the US PQC executive order)', () => {
   const q = autoRunQueue()
   const plan = buildClockPlan(q, getScenario('US'))
   const levels = q.map((i) => i.level)
