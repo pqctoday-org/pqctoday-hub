@@ -79,6 +79,7 @@ const GOLDEN_ROUTE_PATHS = [
   'stateful-signatures',
   'tls-basics',
   'vendor-risk',
+  'verification-closure',
   'vpn-ssh-pqc',
   'web-gateway-pqc',
 ].sort()
