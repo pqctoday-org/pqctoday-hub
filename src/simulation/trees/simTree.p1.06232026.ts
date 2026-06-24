@@ -71,6 +71,12 @@ const TREE: PhaseTree = {
           output: 'Layered discovery deployment',
           steps: [
             {
+              kind: 'learn',
+              label: 'Learn: layered cryptographic discovery (CBOM)',
+              to: '/learn/cbom',
+              moduleId: 'cbom',
+            },
+            {
               kind: 'catalog',
               label: 'Browse the Migrate discovery catalog',
               to: '/migrate',
