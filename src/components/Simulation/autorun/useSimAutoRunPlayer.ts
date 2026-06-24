@@ -280,7 +280,7 @@ function speakSequence(chunks: string[]): void {
     const utterance = new SpeechSynthesisUtterance(clipped)
     const voice = resolveVoice()
     if (voice) utterance.voice = voice
-    utterance.rate = 1.0
+    utterance.rate = 0.9
     utterance.pitch = 1.0
     let fired = false
     const next = () => {
@@ -295,6 +295,14 @@ function speakSequence(chunks: string[]): void {
     setTimeout(next, clipped.length * 95 + 2500)
   }
   speakNext()
+}
+
+/** How long an intro modal auto-holds before advancing. With voice ON, long
+ *  enough to read the narration aloud (~85ms/char at the slowed rate, 6–20s);
+ *  with voice OFF there's nothing to wait for, so keep it brief. The user can
+ *  always click "Begin" to skip early. */
+function introHoldMs(text: string, voiceOn: boolean): number {
+  return voiceOn ? Math.min(20000, Math.max(6000, text.length * 85)) : 6000
 }
 
 /** Time to LOOK at the step's output on the board after it completes. */
@@ -668,7 +676,7 @@ export function useSimAutoRunPlayer({
       spokenScenarioRef.current = true
       speakSequence(splitSentences(scenarioIntro.summary))
     }
-    const t = setTimeout(() => advanceScenario(false), 6000)
+    const t = setTimeout(() => advanceScenario(false), introHoldMs(scenarioIntro.summary, voiceOnRef.current))
     return () => clearTimeout(t)
   }, [scenarioIntro, paused, running, advanceScenario])
 
@@ -680,7 +688,7 @@ export function useSimAutoRunPlayer({
       spokenIntroForRef.current = passIntro.level
       speakSequence(splitSentences(passIntro.summary))
     }
-    const t = setTimeout(() => advancePass(false), 6000)
+    const t = setTimeout(() => advancePass(false), introHoldMs(passIntro.summary, voiceOnRef.current))
     return () => clearTimeout(t)
   }, [passIntro, paused, running, scenarioIntro, advancePass])
 
@@ -693,7 +701,7 @@ export function useSimAutoRunPlayer({
       spokenPhaseRef.current.add(phaseIntro.phase)
       speakSequence(splitSentences(phaseIntro.summary))
     }
-    const t = setTimeout(() => advancePhase(false), 6000)
+    const t = setTimeout(() => advancePhase(false), introHoldMs(phaseIntro.summary, voiceOnRef.current))
     return () => clearTimeout(t)
   }, [phaseIntro, paused, running, speed, advancePhase])
 
