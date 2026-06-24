@@ -262,17 +262,29 @@ function splitSentences(text: string): string[] {
 
 /** Read a passage SENTENCE BY SENTENCE so each utterance stays short (avoids the
  *  Chrome long-utterance loop) while reading the full text. Phonetics applied per
- *  sentence; cleanly cancelled by stopSpeech() (token bump). */
-function speakSequence(chunks: string[]): void {
+ *  sentence; cleanly cancelled by stopSpeech() (token bump).
+ *
+ *  `onDone` fires EXACTLY ONCE when the sequence finishes NATURALLY (the last
+ *  chunk's `next` runs with no more chunks) — it does NOT fire when the sequence is
+ *  superseded/cancelled by a newer seqToken (pause/stop/navigate or a fresh
+ *  speakSequence). This lets the caller pace UI transitions to the actual voice
+ *  rather than a length estimate. The dropped-onend fallback also reaches `onDone`,
+ *  so a sequence can never stall a caller that is waiting on it. If speech is
+ *  unavailable, `onDone` is NOT called here (the caller's MAX safety timer drives
+ *  advancement instead — see the modal/step effects). */
+function speakSequence(chunks: string[], onDone?: () => void): void {
   if (typeof window === 'undefined' || !window.speechSynthesis || chunks.length === 0) return
   const synth = window.speechSynthesis
   synth.cancel()
   const myToken = ++seqToken
   let i = 0
   const speakNext = () => {
-    if (myToken !== seqToken) return // superseded / cancelled
+    if (myToken !== seqToken) return // superseded / cancelled — do NOT call onDone
     const raw = chunks.at(i)
-    if (raw === undefined) return
+    if (raw === undefined) {
+      onDone?.() // natural completion: the last chunk finished and there are no more
+      return
+    }
     i++
     const spoken = pronounce(raw)
     const clipped =
@@ -291,19 +303,26 @@ function speakSequence(chunks: string[]): void {
     utterance.onend = next
     utterance.onerror = next
     synth.speak(utterance)
-    // Fallback so a dropped onend never stalls the sequence.
+    // Fallback so a dropped onend never stalls the sequence (or its onDone).
     setTimeout(next, clipped.length * 95 + 2500)
   }
   speakNext()
 }
 
-/** How long an intro modal auto-holds before advancing. With voice ON, long
- *  enough to read the narration aloud (~85ms/char at the slowed rate, 6–20s);
- *  with voice OFF there's nothing to wait for, so keep it brief. The user can
- *  always click "Begin" to skip early. */
-function introHoldMs(text: string, voiceOn: boolean): number {
-  return voiceOn ? Math.min(20000, Math.max(6000, text.length * 85)) : 6000
-}
+// Intro-modal hold bounds. The modal now advances WHEN ITS NARRATION FINISHES, not
+// on a length estimate — so the voice-over and the on-screen transition stay in
+// sync. MIN keeps a very short line on screen long enough to register; MAX is a
+// safety cap in case the browser drops the final onend; OFF is the fixed hold when
+// there's nothing to narrate (voice off, turbo phase modal, or no speech engine).
+const MODAL_MIN_HOLD_MS = 2500
+const MODAL_MAX_HOLD_MS = 22000
+const MODAL_OFF_HOLD_MS = 6000
+
+// Per-step announcement pacing. A step's brief "resource name" voice should finish
+// before the next step starts; the step never advances before the existing dwell
+// floor (lookMs — the MIN) and never waits past STEP_VOICE_MAX_MS (the MAX, so a
+// dropped onend can't stall the run).
+const STEP_VOICE_MAX_MS = 6000
 
 /** Time to LOOK at the step's output on the board after it completes. */
 function lookMs(speed: AutoRunSpeed): number {
@@ -674,41 +693,127 @@ export function useSimAutoRunPlayer({
     jumpToIndex(target)
   }, [currentBlock, jumpToIndex])
 
-  // Scenario-framing card (run start, before pass 1): speak the EO / country framing
-  // once and auto-advance after 6s (the card's "Begin" advances sooner).
+  // Scenario-framing card (run start, before pass 1): with voice ON, speak the
+  // EO / country framing and advance WHEN IT FINISHES (kept on screen at least
+  // MODAL_MIN_HOLD_MS so a short line still lingers, and at most MODAL_MAX_HOLD_MS
+  // as a safety cap in case onDone never fires). With voice OFF (or no speech),
+  // keep a brief fixed hold. The card's "Begin" advances sooner.
   useEffect(() => {
     if (!scenarioIntro || paused || !running) return
+    let advanced = false
+    const safety = setTimeout(() => {
+      if (!advanced) {
+        advanced = true
+        advanceScenario(false)
+      }
+    }, MODAL_MAX_HOLD_MS)
+    let minTimer: ReturnType<typeof setTimeout> | null = null
+    const finish = () => {
+      // Hold the modal at least MODAL_MIN_HOLD_MS from when narration ends.
+      minTimer = setTimeout(() => {
+        if (!advanced) {
+          advanced = true
+          advanceScenario(false)
+        }
+      }, MODAL_MIN_HOLD_MS)
+    }
     if (voiceOnRef.current && !spokenScenarioRef.current) {
       spokenScenarioRef.current = true
-      speakSequence(splitSentences(scenarioIntro.summary))
+      speakSequence(splitSentences(scenarioIntro.summary), finish)
+    } else if (!voiceOnRef.current) {
+      // Voice OFF: nothing to wait for — brief fixed hold.
+      minTimer = setTimeout(() => {
+        if (!advanced) {
+          advanced = true
+          advanceScenario(false)
+        }
+      }, MODAL_OFF_HOLD_MS)
     }
-    const t = setTimeout(() => advanceScenario(false), introHoldMs(scenarioIntro.summary, voiceOnRef.current))
-    return () => clearTimeout(t)
+    // (If voice is on but already spoken, only the safety cap applies.)
+    return () => {
+      clearTimeout(safety)
+      if (minTimer) clearTimeout(minTimer)
+    }
   }, [scenarioIntro, paused, running, advanceScenario])
 
-  // Pass-intro modal: speak the maturity-pass summary and auto-advance after 6s
-  // (the modal's "Begin" button advances sooner; the voice keeps reading into the pass).
+  // Pass-intro modal: with voice ON, speak the maturity-pass summary and advance
+  // WHEN IT FINISHES ([MIN .. MAX] bounded). With voice OFF, brief fixed hold. The
+  // modal's "Begin" advances sooner; the voice keeps reading into the pass.
   useEffect(() => {
     if (!passIntro || paused || !running || scenarioIntro) return
+    let advanced = false
+    const safety = setTimeout(() => {
+      if (!advanced) {
+        advanced = true
+        advancePass(false)
+      }
+    }, MODAL_MAX_HOLD_MS)
+    let minTimer: ReturnType<typeof setTimeout> | null = null
+    const finish = () => {
+      minTimer = setTimeout(() => {
+        if (!advanced) {
+          advanced = true
+          advancePass(false)
+        }
+      }, MODAL_MIN_HOLD_MS)
+    }
     if (voiceOnRef.current && spokenIntroForRef.current !== passIntro.level) {
       spokenIntroForRef.current = passIntro.level
-      speakSequence(splitSentences(passIntro.summary))
+      speakSequence(splitSentences(passIntro.summary), finish)
+    } else if (!voiceOnRef.current) {
+      minTimer = setTimeout(() => {
+        if (!advanced) {
+          advanced = true
+          advancePass(false)
+        }
+      }, MODAL_OFF_HOLD_MS)
     }
-    const t = setTimeout(() => advancePass(false), introHoldMs(passIntro.summary, voiceOnRef.current))
-    return () => clearTimeout(t)
+    return () => {
+      clearTimeout(safety)
+      if (minTimer) clearTimeout(minTimer)
+    }
   }, [passIntro, paused, running, scenarioIntro, advancePass])
 
-  // First-encounter phase modal: speak the phase's framework summary and auto-advance
-  // after 6s. Shown at most once per phase (the Set-guard is set when the modal opens).
+  // First-encounter phase modal: with voice ON (and not turbo), speak the phase's
+  // framework summary and advance WHEN IT FINISHES ([MIN .. MAX] bounded) — so the
+  // phase summary always completes BEFORE the phase's steps start narrating. With
+  // voice OFF or turbo, brief fixed hold. Shown at most once per phase (the
+  // Set-guard is set when the modal opens).
   useEffect(() => {
     if (!phaseIntro || paused || !running) return
-    // Suppress the longer phase voice on turbo (the modal still shows; just no voice).
-    if (voiceOnRef.current && speed !== 'turbo' && !spokenPhaseRef.current.has(phaseIntro.phase)) {
-      spokenPhaseRef.current.add(phaseIntro.phase)
-      speakSequence(splitSentences(phaseIntro.summary))
+    let advanced = false
+    const safety = setTimeout(() => {
+      if (!advanced) {
+        advanced = true
+        advancePhase(false)
+      }
+    }, MODAL_MAX_HOLD_MS)
+    let minTimer: ReturnType<typeof setTimeout> | null = null
+    const finish = () => {
+      minTimer = setTimeout(() => {
+        if (!advanced) {
+          advanced = true
+          advancePhase(false)
+        }
+      }, MODAL_MIN_HOLD_MS)
     }
-    const t = setTimeout(() => advancePhase(false), introHoldMs(phaseIntro.summary, voiceOnRef.current))
-    return () => clearTimeout(t)
+    const speakable = voiceOnRef.current && speed !== 'turbo'
+    if (speakable && !spokenPhaseRef.current.has(phaseIntro.phase)) {
+      spokenPhaseRef.current.add(phaseIntro.phase)
+      speakSequence(splitSentences(phaseIntro.summary), finish)
+    } else if (!speakable) {
+      // Voice OFF or turbo: nothing to wait for — brief fixed hold (turbo stays fast).
+      minTimer = setTimeout(() => {
+        if (!advanced) {
+          advanced = true
+          advancePhase(false)
+        }
+      }, MODAL_OFF_HOLD_MS)
+    }
+    return () => {
+      clearTimeout(safety)
+      if (minTimer) clearTimeout(minTimer)
+    }
   }, [phaseIntro, paused, running, speed, advancePhase])
 
   // The step cycle: peek the tool → complete + return to the board (sections update,
@@ -729,7 +834,25 @@ export function useSimAutoRunPlayer({
       )
     }
 
+    // Per-step announcement pacing. The step's brief "resource name" voice (spoken in
+    // Beat A) flips `voiceDone`; Beat C will not advance to the next step until it
+    // does (bounded by [dwell .. STEP_VOICE_MAX_MS]). When per-step voice is not
+    // spoken (voice off / turbo / a modal up), it is treated as done immediately so
+    // today's fast beat timing is preserved.
+    let voiceDone = false
+    let onVoiceDone: (() => void) | null = null
+    const markVoiceDone = () => {
+      if (voiceDone) return
+      voiceDone = true
+      const fn = onVoiceDone
+      onVoiceDone = null
+      fn?.()
+    }
+
     after(index === 0 ? 500 : 300, () => {
+      // True when this beat already started speaking the phase summary (a later
+      // encounter, non-modal) — the per-step announcement below then stays silent.
+      let spokeSummaryThisBeat = false
       if (item.level !== lastLevelRef.current) {
         // New maturity pass — pause for the pass-intro modal (the board stays behind it).
         const sc = scenarioRef.current
@@ -757,15 +880,31 @@ export function useSimAutoRunPlayer({
           }
           if (voiceOnRef.current && speed !== 'turbo' && !spokenPhaseRef.current.has(item.phase)) {
             spokenPhaseRef.current.add(item.phase)
-            speakSequence(splitSentences(focus.summary))
+            // Speak the phase summary AND pace this step to it (Beat C waits on
+            // voiceDone) — the per-step announcement below is skipped so it can't
+            // cut the summary off.
+            speakSequence(splitSentences(focus.summary), markVoiceDone)
+            spokeSummaryThisBeat = true
           }
         }
       }
-      // Beat A — open the tool inline (like a manual click) + narrate; wait for the
-      // narration to ACTUALLY finish before moving on.
+      // Beat A — open the tool inline (like a manual click) + announce the resource.
+      // Speak a BRIEF one-line announcement of the resource being shown (the step's
+      // own label), and pace the step to it (Beat C waits on `voiceDone`). No
+      // per-step voice on turbo or with voice off (keep today's fast beat timing),
+      // and none while a modal is up (guarded by the effect's early-return above).
+      // If a phase summary was just spoken for this same step beat, that IS the
+      // narration — don't speak again (it would cancel the summary).
       const text = narrationFor(item)
       openStepRef.current(item.step)
-      setCaption(text) // overlay shows the self-explanatory title; the voice never reads it
+      setCaption(text) // overlay shows the self-explanatory title
+      if (spokeSummaryThisBeat) {
+        // already speaking the phase summary; Beat C is paced to it via markVoiceDone
+      } else if (voiceOnRef.current && speed !== 'turbo') {
+        speakSequence([text], markVoiceDone)
+      } else {
+        markVoiceDone() // nothing to wait for — preserve the fast beat
+      }
       const toOutput = () => {
         if (cancelled) return
         // Beat B — complete + return to the board so the OUTPUT shows (sections
@@ -788,8 +927,8 @@ export function useSimAutoRunPlayer({
         }
         after(80, scrollBoardToTop) // board re-rendered — show it from the top
         const next = index + 1
-        // Beat C — linger on the output before the next step.
-        after(lookMs(speed), () => {
+        const goNext = () => {
+          if (cancelled) return
           if (next >= q.length) {
             setCaption('Migration complete — full program maturity reached.')
             setAutoRunFill(false)
@@ -797,6 +936,24 @@ export function useSimAutoRunPlayer({
             setDone(true)
           } else {
             setIndex(next)
+          }
+        }
+        // Beat C — linger on the output, then advance — but never before the step's
+        // brief announcement voice has finished (so step N+1 can't cut it off). The
+        // dwell (lookMs) is the MIN; STEP_VOICE_MAX_MS is a safety cap so a dropped
+        // onend can't stall the run.
+        let stepAdvanced = false
+        const advanceStep = () => {
+          if (stepAdvanced || cancelled) return
+          stepAdvanced = true
+          goNext()
+        }
+        after(lookMs(speed), () => {
+          if (voiceDone) {
+            advanceStep()
+          } else {
+            onVoiceDone = advanceStep // advance the moment the announcement finishes
+            after(STEP_VOICE_MAX_MS, advanceStep) // …or at the safety cap
           }
         })
       }
