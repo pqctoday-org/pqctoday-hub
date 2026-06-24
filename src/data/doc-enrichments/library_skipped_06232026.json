@@ -1,12 +1,32 @@
 {
   "generated": "2026-06-23",
   "collection": "library",
-  "skipped_count": 3,
+  "skipped_count": 7,
   "entries": [
     {
       "ref_id": "China YD/T 3834.1-2021",
       "file": "China_YD_T_3834.1-2021.html",
       "reason": "Extracted text too short (52 chars) \u2014 likely empty or corrupt source"
+    },
+    {
+      "ref_id": "WEF-2026-Quantum-Security-Leaders",
+      "file": "WEF-2026-Quantum-Security-Leaders.html",
+      "reason": "Error page detected: \"page not found\" found in first 500 chars"
+    },
+    {
+      "ref_id": "CAB-Forum-SC-081v3",
+      "file": "CAB-Forum-SC-081v3.html",
+      "reason": "Error page detected: \"page not found\" found in first 500 chars"
+    },
+    {
+      "ref_id": "NSM-8",
+      "file": "NSM-8.html",
+      "reason": "Extracted text too short (34 chars) \u2014 likely empty or corrupt source"
+    },
+    {
+      "ref_id": "Samsung-Thales-ML-KEM-eSE-2026",
+      "file": "Samsung-Thales-ML-KEM-eSE-2026.html",
+      "reason": "Extracted text too short (32 chars) \u2014 likely empty or corrupt source"
     },
     {
       "ref_id": "Forrester-TEI-CLM-Automation",
