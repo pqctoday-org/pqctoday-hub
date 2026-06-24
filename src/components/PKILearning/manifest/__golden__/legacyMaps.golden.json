@@ -538,6 +538,15 @@
       "description": "Test your knowledge across all PQC topics — algorithms, standards, compliance, migration, and more.",
       "duration": "10 min",
       "frameworkPhase": "foundations"
+    },
+    "cbom": {
+      "id": "cbom",
+      "lm_id": "LM-060",
+      "title": "Cryptography Bill of Materials (CBOM)",
+      "description": "Choose a CBOM format, discover all your cryptography — including the crypto nobody tracks — give each key its identity and provenance, and make the inventory machine-verifiable.",
+      "duration": "60 min",
+      "difficulty": "intermediate",
+      "frameworkPhase": "p2"
     }
   },
   "MODULE_STEP_COUNTS": {
@@ -601,7 +610,8 @@
     "pqc-grc": 2,
     "skills-team-structure": 2,
     "quiz": 1,
-    "assess": 1
+    "assess": 1,
+    "cbom": 4
   },
   "LEARN_SECTIONS": {
     "pqc-101": [
@@ -1740,6 +1750,32 @@
       {
         "id": "fips-mode",
         "label": "FIPS Mode and PQC-Enabled OS Configurations"
+      }
+    ],
+    "cbom": [
+      {
+        "id": "cbom-why",
+        "label": "Why a CBOM & where Phase 2 sits"
+      },
+      {
+        "id": "cbom-formats",
+        "label": "Formats & governance: CycloneDX vs SPDX"
+      },
+      {
+        "id": "cbom-discovery",
+        "label": "Find all the crypto: layered discovery"
+      },
+      {
+        "id": "cbom-context",
+        "label": "Key identity, provenance & where managed"
+      },
+      {
+        "id": "cbom-codify",
+        "label": "Codifying & normalizing crypto"
+      },
+      {
+        "id": "cbom-verify",
+        "label": "Make it machine-verifiable & protect it"
       }
     ]
   },
@@ -2965,6 +3001,24 @@
         "id": "crypto-champions",
         "label": "Crypto Champion Roster"
       }
+    ],
+    "cbom": [
+      {
+        "id": "source-coverage-mapper",
+        "label": "Source Coverage Mapper"
+      },
+      {
+        "id": "format-chooser",
+        "label": "Format Chooser"
+      },
+      {
+        "id": "cbom-verify",
+        "label": "Policy-as-Code Verify"
+      },
+      {
+        "id": "key-correlator",
+        "label": "Key Correlator"
+      }
     ]
   },
   "MODULE_TRACKS": [
@@ -3097,6 +3151,15 @@
           "duration": "40 min",
           "difficulty": "intermediate",
           "frameworkPhase": "foundations"
+        },
+        {
+          "id": "cbom",
+          "lm_id": "LM-060",
+          "title": "Cryptography Bill of Materials (CBOM)",
+          "description": "Choose a CBOM format, discover all your cryptography — including the crypto nobody tracks — give each key its identity and provenance, and make the inventory machine-verifiable.",
+          "duration": "60 min",
+          "difficulty": "intermediate",
+          "frameworkPhase": "p2"
         }
       ]
     },
@@ -3635,6 +3698,9 @@
     "mls-group-messaging": {
       "algorithms": ["ML-KEM", "ML-DSA"],
       "standards": ["JOSE"]
+    },
+    "cbom": {
+      "standards": ["CycloneDX / ECMA-424", "SPDX / ISO 5962", "NIST SP 1800-38"]
     }
   }
 }
