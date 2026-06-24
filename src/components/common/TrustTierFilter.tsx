@@ -16,6 +16,9 @@ const TIER_OPTIONS: FilterDropdownItem[] = [
 
 interface TrustTierFilterProps {
   className?: string
+  /** Optional URL-param source override (for the sim embed). Defaults to useSearchParams. */
+  params?: URLSearchParams
+  setParams?: ReturnType<typeof useSearchParams>[1]
 }
 
 /**
@@ -23,8 +26,14 @@ interface TrustTierFilterProps {
  * URL state: `?tier=Authoritative&tier=High` (repeated keys).
  * Default: no selection (no filtering applied).
  */
-export function TrustTierFilter({ className }: TrustTierFilterProps) {
-  const [searchParams, setSearchParams] = useSearchParams()
+export function TrustTierFilter({
+  className,
+  params: paramsProp,
+  setParams: setParamsProp,
+}: TrustTierFilterProps) {
+  const [urlParams, setUrlParams] = useSearchParams()
+  const searchParams = paramsProp ?? urlParams
+  const setSearchParams = setParamsProp ?? setUrlParams
   const selected = searchParams.getAll('tier').filter(isTrustTier)
 
   function handleChange(tiers: string[]) {
@@ -59,10 +68,11 @@ function isTrustTier(value: string): value is TrustTier {
   return TIER_ORDER.includes(value as TrustTier)
 }
 
-/** Read trust-tier filter state from URL — returns empty array when unset. */
-export function useTrustTierFilter(): TrustTier[] {
-  const [searchParams] = useSearchParams()
-  return searchParams.getAll('tier').filter(isTrustTier)
+/** Read trust-tier filter state — empty array when unset. Accepts an optional
+ *  URLSearchParams override (for the sim embed). */
+export function useTrustTierFilter(paramsOverride?: URLSearchParams): TrustTier[] {
+  const [urlParams] = useSearchParams()
+  return (paramsOverride ?? urlParams).getAll('tier').filter(isTrustTier)
 }
 
 /**

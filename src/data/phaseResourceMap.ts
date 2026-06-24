@@ -205,7 +205,7 @@ export const REFERENCE_PHASES: Record<string, ReferenceResource> = {
   },
   timeline: { phasesServed: ['p3', 'p4'], legs: ['reference'], deepUrl: '/timeline' },
   compliance: {
-    phasesServed: ['p3', 'p4', 'p7'],
+    phasesServed: ['foundations', 'p3', 'p4', 'p7'],
     legs: ['reference', 'output'],
     deepUrl: '/compliance',
   },
@@ -221,8 +221,12 @@ export const REFERENCE_PHASES: Record<string, ReferenceResource> = {
     deepUrl: '/migrate',
   },
   library: { phasesServed: ['p1', 'p2', 'p5'], legs: ['reference'], deepUrl: '/library' },
-  'assess-engine': { phasesServed: ['p1', 'p3'], legs: ['practice', 'output'], deepUrl: '/assess' },
-  report: { phasesServed: ['p3', 'p4'], legs: ['output'], deepUrl: '/report' },
+  'assess-engine': {
+    phasesServed: ['foundations', 'p1', 'p3'],
+    legs: ['practice', 'output'],
+    deepUrl: '/assess',
+  },
+  report: { phasesServed: ['foundations', 'p3', 'p4'], legs: ['output'], deepUrl: '/report' },
 }
 
 export type ResourceKind = 'learn' | 'business' | 'playground' | 'reference'

@@ -23,8 +23,10 @@ import {
 
 const CURRENT_YEAR = 2026
 
-export const CrqcCapabilityStrip: React.FC = () => {
-  const [expanded, setExpanded] = useState(false)
+export const CrqcCapabilityStrip: React.FC<{ defaultExpanded?: boolean }> = ({
+  defaultExpanded = false,
+}) => {
+  const [expanded, setExpanded] = useState(defaultExpanded)
 
   const consensus = useMemo(() => {
     const lows = CRQC_ESTIMATES.map((e) => e.yearLow)

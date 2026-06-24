@@ -75,8 +75,10 @@ function urgencyMessage(deadline: number, atRiskPhrase: string): string {
   return `${rem} years remaining. Begin cryptographic inventory and planning.`
 }
 
-export const ThreatEconomicsHeader: React.FC = () => {
-  const [expanded, setExpanded] = useState(false)
+export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
+  defaultExpanded = false,
+}) => {
+  const [expanded, setExpanded] = useState(defaultExpanded)
 
   // Mosca mini-calc inputs. Each threat model has its OWN X (the clock that
   // applies): HNDL = data secrecy lifetime, HNFL = credential validity period.

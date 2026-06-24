@@ -26,6 +26,29 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.1.1] - 2026-06-23
+
+Version 4.1.1 adds a dedicated CRQC Threat Horizon view and read-only inspection of the artifacts the simulation generates, makes the standards Library quicker to filter, extends the migration timeline to ten national programs, paces the "watch the full migration" auto-run by its narration, and is honest when a referenced document has no reachable source.
+
+### Added
+
+- **A dedicated CRQC "Threat Horizon" view** [view:/threats] [persona:executive] [persona:architect] [persona:researcher]: the Threats page has a new **CRQC Threat Horizon** tab that gathers the "when could a cryptographically-relevant quantum computer arrive" picture into one place — an expanded watch on quantum-computing progress with the Mosca "act-by" calculator shown by default — and the migration simulation now opens straight to it when it explains the threat timeline.
+- **Inspect what the simulation generates, in place** [view:/simulation] [persona:architect] [persona:developer]: any artifact the auto-run produces (charters, plans, CBOMs and the like) can now be opened read-only from the artifacts panel, so you can read exactly what was created at each step without leaving your run.
+
+### Changed
+
+- **The Library is faster to narrow down** [view:/library] [persona:executive] [persona:developer] [persona:architect]: the standards library gained quicker ways to cut the list down — filter by region, by cryptographic algorithm family, and with one-click quick-filter chips, plus a "New" badge that flags recently added or updated documents — and these filters now behave correctly when the Library is opened inside the migration simulation.
+- **The migration timeline now covers ten national programs** [view:/timeline] [view:/simulation] [persona:executive] [persona:architect]: Australia (protect by 2030) and India (2033) join the countries with proof-backed migration deadlines, the EU's final compliance year is set to 2035, and an unsupported 2027 Czech deadline was removed — so the Timeline page and a non-US simulation run reflect a wider, more accurate set of national deadlines.
+- **"Watch the full migration" is now paced by its narration** [view:/simulation] [persona:curious] [persona:executive]: the auto-run lets the spoken explanation drive each transition instead of a fixed timer, reads out the resources it touches at each step, shows its commentary as a clean readable panel, collapses the phase panel once you've heard the intro, and a single play button resumes exactly where you paused. A United States run loads the June 2026 Executive Order scenario by default.
+
+### Fixed
+
+- **Library documents with no reachable source now say so** [view:/library] [persona:developer] [persona:architect]: when a referenced document has no retrievable copy, the Library now shows a clear "Source not available" state instead of a silent or broken link, and 13 documents whose source could not be recovered are marked accordingly.
+
+### Data
+
+- **More Library documents open with a full summary** [view:/library] [persona:developer] [persona:architect]: 27 documents were enriched with detailed summaries and another 6 hard-to-source documents were recovered and added, so more Library entries open with a full picture rather than a bare title.
+
 ## [4.1.0] - 2026-06-23
 
 Version 4.1 lets you watch a complete post-quantum migration run itself in the Migration Simulation, rebuilds that run around three plain goals tied to the new US Executive Order, and brings the redesigned Library, Migrate, Assess, Compliance, Learn, Algorithms, Patents, Report and Threats pages — each rebuilt around a single role selector — out of preview.
@@ -37,7 +60,7 @@ Version 4.1 lets you watch a complete post-quantum migration run itself in the M
 ### Changed
 
 - **The Simulation now tracks three clear goals instead of a countdown you couldn't win** [view:/simulation] [persona:executive] [persona:architect]: the old "you're N years past the danger line" gauge is replaced by a progress panel built around what a migration actually has to achieve — put governance in place, protect your most sensitive "harvest-now" data first, and finish migrating everything — each shown against its target year. Four bars below it track the real order of work (urgent data first, then signatures, then the rest), and a "harvest-now exposure" figure falls as you protect data, so you watch the risk closing instead of staring at a number you can never beat.
-- **A US run now follows the new Executive Order's deadlines** [view:/simulation] [persona:executive] [persona:architect]: a United States migration is now paced to Executive Order 14409 — protect key exchange by 2030 and signatures by 2031 — and the goals, dates and standards shown in the run (FIPS 203 for key exchange, FIPS 204 for signatures) match it. Because the dates are read from each country's timeline data, other national timelines can drive their own version of the same three goals.
+- **A US run now follows the new Executive Order's deadlines** [view:/simulation] [persona:executive] [persona:architect]: a United States migration is now paced to the June 2026 US post-quantum Executive Order — protect key exchange by 2030 and signatures by 2031 — and the goals, dates and standards shown in the run (FIPS 203 for key exchange, FIPS 204 for signatures) match it. Because the dates are read from each country's timeline data, other national timelines can drive their own version of the same three goals.
 - **Backing up your progress to Google Drive is hidden for now** [view:/] [persona:curious] [persona:executive] [persona:developer]: the option to sync your work to Google Drive has been hidden while it's reworked. Saving and loading a backup file on your own device is unchanged, so you can still move your work between machines.
 - **Hands-on labs now open right inside the Simulation** [view:/simulation] [persona:architect] [persona:developer]: several simulation steps can now launch a live lab in place — measuring a classical-vs-PQC TLS handshake, ML-KEM key-wrapping for cloud KMS, building an enterprise PQC PKI chain, and an A/B handshake-throughput test — so you can practice the real thing without leaving your run. These are optional bonus steps: each appears when a live lab session is available and never blocks your phase progress when it isn't.
 - **Recording your progress in the Simulation now works the same way everywhere** [view:/simulation] [persona:architect] [persona:developer]: every tool and embedded panel inside the simulation now uses one consistent two-step action — Save your input, then Mark the step complete — instead of different labels and behaviours from one tool to the next, so it's always clear how to capture your work and move on. Steps that open a hub tool (for example the migration catalog) now land directly on the right view for that step rather than a generic page.
@@ -70,7 +93,7 @@ Version 4.1 lets you watch a complete post-quantum migration run itself in the M
 
 ### Data
 
-- **The new US Executive Order on post-quantum cryptography is in the Library and on the Timeline** [view:/library] [view:/timeline] [persona:executive] [persona:developer] [persona:architect]: Executive Order 14409 ("Securing the Nation Against Advanced Cryptographic Attacks") is now a searchable Library reference and appears on the migration Timeline with its binding dates — name a post-quantum lead within 30 days, protect key exchange by 2030, and signatures by 2031.
+- **The new US Executive Order on post-quantum cryptography is in the Library and on the Timeline** [view:/library] [view:/timeline] [persona:executive] [persona:developer] [persona:architect]: The June 2026 US Executive Order "Securing the Nation Against Advanced Cryptographic Attacks" (its formal Executive Order number is not yet assigned) is now a searchable Library reference and appears on the migration Timeline with its binding dates — name a post-quantum lead within 30 days, protect key exchange by 2030, and signatures by 2031.
 - **RFC 9980 (Post-Quantum Cryptography in OpenPGP) added to the Library** [view:/library] [persona:developer] [persona:architect]: the published RFC form of the OpenPGP-PQC draft is now a searchable Library reference, so the Protocol Support matrix can link to it directly.
 - **NIST IR 8610 added to the Library** [view:/library] [persona:developer] [persona:architect]: the final Status Report on the Second Round of NIST's Additional Digital Signature Schemes (May 2026) is now a searchable Library reference, and a duplicate NIST SP 1800-38B stub entry was removed.
 

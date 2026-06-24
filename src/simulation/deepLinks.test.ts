@@ -29,7 +29,10 @@ describe('resolveDeepLink (WS-06 drift guard)', () => {
     expect(resolveDeepLink('/algorithms?tab=bogus').ok).toBe(false) // unknown tab
     expect(resolveDeepLink('/algorithms?foo=1').ok).toBe(false) // unknown param
     expect(canResolveDeepLink('/compliance?cert=')).toBe(true)
-    expect(resolveDeepLink('/threats?tab=x').ok).toBe(false) // route takes no params
+    expect(canResolveDeepLink('/threats?view=horizon')).toBe(true) // CRQC Threat Horizon tab
+    expect(canResolveDeepLink('/threats?view=list')).toBe(true) // default Threat Catalog tab
+    expect(resolveDeepLink('/threats?view=bogus').ok).toBe(false) // unknown view
+    expect(resolveDeepLink('/threats?tab=x').ok).toBe(false) // unknown param (only ?view= allowed)
   })
 
   it('reports a reason when it cannot resolve', () => {
