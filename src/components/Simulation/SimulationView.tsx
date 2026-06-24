@@ -54,6 +54,7 @@ function libraryQueryForStep(title: string): string | undefined {
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
 import { LibraryEmbed } from '@/components/shared/widgets/LibraryEmbed'
 import { ComplianceEmbed } from '@/components/shared/widgets/ComplianceEmbed'
+import { ThreatsEmbed } from '@/components/shared/widgets/ThreatsEmbed'
 import { CompleteStepAction } from '../PKILearning/common/CompleteStepAction'
 import { parseTimelineScope } from '@/data/timelineScope'
 import { MigrateWorkbenchEmbed } from '@/components/shared/widgets/MigrateWorkbenchEmbed'
@@ -1574,6 +1575,10 @@ export function SimulationView() {
                     <ComplianceEmbed initialTab="foryou" />
                   ) : referenceEmbed?.refId === 'compliance-cert-check' ? (
                     <ComplianceEmbed initialTab="records" />
+                  ) : referenceEmbed?.refId === 'threats' ? (
+                    // The CRQC threat-horizon step opens the Horizon tab directly,
+                    // not the default Threat Catalog list (mirrors ComplianceEmbed).
+                    <ThreatsEmbed initialTab="horizon" />
                   ) : (
                     <ReferenceComp />
                   )}

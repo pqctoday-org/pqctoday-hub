@@ -91,9 +91,11 @@ const A = (artifactType, label) => {
   if (!tool) throw new Error(`no tool for artifact ${artifactType}`)
   return { kind: 'activity', label, to: `/business/tools/${tool}`, artifactType }
 }
-const R = (refId, label) => {
-  const to = REF_URL[refId]
+const R = (refId, label, toOverride) => {
+  const to = toOverride ?? REF_URL[refId]
   if (!to) throw new Error(`no url for ref ${refId}`)
+  // A toOverride must still resolve as a deep-link (deepLinks.ts) — e.g. the
+  // /threats?view=horizon tab. The refId stays the same for embed + completion.
   return { kind: 'reference', label, to, refId }
 }
 // W() — a hands-on workshop practice leaf that EMBEDS in the sim (C2). The
@@ -232,7 +234,7 @@ const FRAMEWORK = {
         L('exec-quantum-impact', 'Learn: Executive Quantum Impact'),
         L('pqc-risk-management', 'Learn: PQC Risk Management'),
         L('compliance-strategy', 'Learn: Compliance & Regulatory Strategy'),
-        R('threats', 'Check the CRQC threat horizon'),
+        R('threats', 'Check the CRQC threat horizon', '/threats?view=horizon'),
         R('compliance', 'Map the binding regulatory deadlines'),
         A('crqc-scenario', 'Quantify HNDL/TNFL exposure with a CRQC scenario'),
       ],
@@ -405,7 +407,10 @@ const FRAMEWORK = {
       steps: [
         L('pqc-risk-management', 'Learn: PQC Risk Management'),
         L('data-asset-sensitivity', 'Learn: data sensitivity & legal/data-retention horizon'),
-        R('threats', 'Reference: why 256-bit ECC ≈ RSA-2048 under quantum'),
+        R(
+          'algorithms-detailed',
+          'Reference: why 256-bit ECC ≈ RSA-2048 under quantum (security levels)'
+        ),
         R('algorithms-protocol-matrix', 'Reference: PQC Protocol Matrix'),
       ],
     },
