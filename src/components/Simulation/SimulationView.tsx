@@ -1182,10 +1182,14 @@ export function SimulationView() {
             variant="ghost"
             onClick={autoRunPlayer.start}
             disabled={autoRunPlayer.running}
-            title="Auto-play the whole migration (all 9 stages — P0 through Verification & Closure) as a narrated walkthrough — opens each tool, completes every step for real, and clears the run. Reversible via Reset run."
+            title={
+              autoRunPlayer.resumable
+                ? 'Resume the narrated migration walkthrough from where you left off (it picks up at the first step you haven’t completed). Use Reset run to start over from the beginning.'
+                : 'Auto-play the whole migration (all 9 stages — P0 through Verification & Closure) as a narrated walkthrough — opens each tool, completes every step for real, and clears the run. Reversible via Reset run.'
+            }
             className="h-auto rounded-md border border-secondary/50 bg-secondary/15 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-secondary/25 disabled:opacity-40"
           >
-            ▶ PLAY ALL {LIFECYCLE.length}
+            {autoRunPlayer.resumable ? '▶ Resume' : `▶ PLAY ALL ${LIFECYCLE.length}`}
           </Button>
           <SimAutoRunOverlay player={autoRunPlayer} />
           {autoRunPlayer.scenarioIntro && (
