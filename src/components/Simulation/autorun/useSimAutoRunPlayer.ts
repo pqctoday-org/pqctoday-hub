@@ -10,11 +10,18 @@
  * Controls: play / pause / resume / stop / speed / voice / previous + next phase.
  * Scenario (sandbox-lab) steps are excluded by the queue (non-gating).
  */
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSimulationStore } from '@/store/useSimulationStore'
+import { useModuleStore } from '@/store/useModuleStore'
 import type { PhaseId } from '@/data/frameworkPhases'
 import type { TreeStep } from '@/simulation'
-import { autoRunQueue, completeStepGenuine, type AutoRunQueueItem } from './simAutoRun'
+import {
+  autoRunQueue,
+  completeStepGenuine,
+  liveCompletionContext,
+  type AutoRunQueueItem,
+} from './simAutoRun'
+import { isStepComplete } from '../embedContract'
 import { countryNameFor, getScenario, type SimScenario } from './scenarioConfig'
 import { seedDemoOrg } from './seedDemoOrg'
 import { setAutoRunFill } from './autoRunFill'
@@ -61,6 +68,11 @@ export interface SimAutoRunPlayer {
   phaseIntro: PhaseFocus | null
   /** When set, the run is paused on the one-time scenario-framing card (run start). */
   scenarioIntro: ScenarioIntro | null
+  /** True when there is saved progress to RESUME — the first gating step of the run
+   *  is already complete (so `start()` will pick up mid-queue rather than from the
+   *  top). Reactive: flips as steps complete and back to false after a Reset clears
+   *  completion. Drives the play button's "Resume" vs "PLAY ALL" label. */
+  resumable: boolean
   start: () => void
   pause: () => void
   resume: () => void
@@ -582,6 +594,12 @@ export function useSimAutoRunPlayer({
     useSimulationStore.getState().markTourSeen() // the first-run tour must not block the playthrough
     const q = autoRunQueue()
     queueRef.current = q
+    // RESUME: start at the first gating step that isn't already complete (genuine
+    // hub completion persists after stop and is cleared by Reset). A fresh run (no
+    // progress) lands on 0; a partially-complete run picks up where it left off.
+    const ctx = liveCompletionContext()
+    const fi = q.findIndex((it) => !isStepComplete(it.step, ctx))
+    const startAt = fi < 0 ? 0 : fi
     const scenario = getScenario(useSimulationStore.getState().country)
     scenarioRef.current = scenario
     clockPlanRef.current = buildClockPlan(q, scenario)
@@ -600,9 +618,11 @@ export function useSimAutoRunPlayer({
     spokenScenarioRef.current = false
     setPhaseFocus(null)
     setPhaseIntro(null)
-    setScenarioIntro(scenarioIntroFor(scenario))
+    // Only show the one-time scenario-framing card on a FRESH start; resuming
+    // mid-queue skips it (it's already been seen).
+    setScenarioIntro(startAt === 0 ? scenarioIntroFor(scenario) : null)
     setTotal(q.length)
-    setIndex(0)
+    setIndex(startAt)
     setDone(false)
     setPaused(false)
     setLabel('')
@@ -980,6 +1000,33 @@ export function useSimAutoRunPlayer({
     }
   }, [running, paused, done, index, speed, passIntro, scenarioIntro, phaseIntro])
 
+  // Reactive "is there saved progress to resume?" — true when the FIRST gating
+  // step of the run is already complete. Subscribe to exactly the store slices
+  // `liveCompletionContext` reads so the flag flips as steps complete and back to
+  // false after a Reset clears them. The queue is static, so the only inputs are
+  // these completion slices; the memo recomputes only when one changes.
+  const moduleProgress = useModuleStore((s) => s.modules)
+  const executiveDocuments = useModuleStore((s) => s.artifacts.executiveDocuments)
+  const visitedRefs = useSimulationStore((s) => s.visitedRefs)
+  const visitedWorkshops = useSimulationStore((s) => s.visitedWorkshops)
+  const catalogCompleted = useSimulationStore((s) => s.catalogCompleted)
+  const visitedScenarios = useSimulationStore((s) => s.visitedScenarios)
+  const resumable = useMemo(() => {
+    const q = autoRunQueue()
+    if (!q.length) return false
+    return isStepComplete(q[0].step, liveCompletionContext())
+    // The deps are read live inside liveCompletionContext(); listing the slices
+    // here is what makes the memo (and the button label) react to their changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    moduleProgress,
+    executiveDocuments,
+    visitedRefs,
+    visitedWorkshops,
+    catalogCompleted,
+    visitedScenarios,
+  ])
+
   // Stop the timer + any speech if the sim unmounts mid-run.
   useEffect(
     () => () => {
@@ -1004,6 +1051,7 @@ export function useSimAutoRunPlayer({
     phaseFocus,
     phaseIntro,
     scenarioIntro,
+    resumable,
     start,
     pause,
     resume,
