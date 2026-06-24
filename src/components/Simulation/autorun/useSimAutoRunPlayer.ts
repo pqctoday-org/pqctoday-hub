@@ -324,6 +324,15 @@ const MODAL_OFF_HOLD_MS = 6000
 // dropped onend can't stall the run).
 const STEP_VOICE_MAX_MS = 6000
 
+/** Generous upper bound on how long narrating `text` can take (~130ms/char at the
+ *  slowed rate, incl. dropped-onend per-sentence fallbacks), floored at `floor`.
+ *  Used as the speech-safety cap so it can NEVER fire before the voice finishes —
+ *  it only fires if speech never completes at all. Without this, a fixed cap (22s)
+ *  cut every phase whose summary runs longer than the cap (most are 23–42s). */
+function voiceSafetyMs(text: string, floor: number): number {
+  return Math.max(floor, Math.round(text.length * 130) + 5000)
+}
+
 /** Time to LOOK at the step's output on the board after it completes. */
 function lookMs(speed: AutoRunSpeed): number {
   return speed === 'turbo' ? 600 : speed === 'slow' ? 4500 : speed === 'fast' ? 1800 : 3200
@@ -706,7 +715,7 @@ export function useSimAutoRunPlayer({
         advanced = true
         advanceScenario(false)
       }
-    }, MODAL_MAX_HOLD_MS)
+    }, voiceSafetyMs(scenarioIntro.summary, MODAL_MAX_HOLD_MS))
     let minTimer: ReturnType<typeof setTimeout> | null = null
     const finish = () => {
       // Hold the modal at least MODAL_MIN_HOLD_MS from when narration ends.
@@ -747,7 +756,7 @@ export function useSimAutoRunPlayer({
         advanced = true
         advancePass(false)
       }
-    }, MODAL_MAX_HOLD_MS)
+    }, voiceSafetyMs(passIntro.summary, MODAL_MAX_HOLD_MS))
     let minTimer: ReturnType<typeof setTimeout> | null = null
     const finish = () => {
       minTimer = setTimeout(() => {
@@ -787,7 +796,7 @@ export function useSimAutoRunPlayer({
         advanced = true
         advancePhase(false)
       }
-    }, MODAL_MAX_HOLD_MS)
+    }, voiceSafetyMs(phaseIntro.summary, MODAL_MAX_HOLD_MS))
     let minTimer: ReturnType<typeof setTimeout> | null = null
     const finish = () => {
       minTimer = setTimeout(() => {
@@ -953,7 +962,7 @@ export function useSimAutoRunPlayer({
             advanceStep()
           } else {
             onVoiceDone = advanceStep // advance the moment the announcement finishes
-            after(STEP_VOICE_MAX_MS, advanceStep) // …or at the safety cap
+            after(voiceSafetyMs(item.step.label, STEP_VOICE_MAX_MS), advanceStep) // …or at the safety cap
           }
         })
       }
