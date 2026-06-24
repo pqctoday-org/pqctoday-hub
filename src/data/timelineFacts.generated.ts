@@ -7,10 +7,12 @@
  *  `is_sim_deadline=true` in the timeline CSV. Untagged countries fall back to
  *  the Q-Day anchor in moscaClock. */
 export const TIMELINE_COUNTRY_DEADLINE_YEAR: Record<string, number> = {
+  AU: 2030, // Legacy Asymmetric Crypto Disallowed — Full PQC Transition
   CA: 2031, // High Priority Systems Complete
   DE: 2030, // Critical Applications PQC — Hybrid No Longer Required
   EU: 2030, // High-Risk Systems Secured
   FR: 2027, // PQC Qualification Requirement
+  IN: 2033, // Full Nationwide PQC Adoption
   JP: 2035, // Government PQC Transition Deadline
   KR: 2035, // Full PQC Roadmap Complete
   UK: 2035, // Full PQC Compliance
