@@ -15,7 +15,7 @@ import { useSimulationStore } from '@/store/useSimulationStore'
 import type { PhaseId } from '@/data/frameworkPhases'
 import type { TreeStep } from '@/simulation'
 import { autoRunQueue, completeStepGenuine, type AutoRunQueueItem } from './simAutoRun'
-import { getScenario, type SimScenario } from './scenarioConfig'
+import { countryNameFor, getScenario, type SimScenario } from './scenarioConfig'
 import { seedDemoOrg } from './seedDemoOrg'
 import { setAutoRunFill } from './autoRunFill'
 import { FRAMEWORK_PHASE_INTROS } from '@/data/frameworkPhaseIntros.generated'
@@ -347,12 +347,16 @@ function scenarioIntroFor(scenario: SimScenario): ScenarioIntro {
         `program horizon. Watch the program climb maturity together to hit these dates.`,
     }
   }
+  const name = countryNameFor(scenario.countryCode)
+  // Show the standard in parentheses only when it's a specific named standard
+  // (e.g. "FIPS 203 / ML-KEM"), not the generic "PQC key establishment" placeholder.
+  const std = (s: string) => (/\d|FIPS|ML-|SLH|FN-/.test(s) ? ` (${s})` : '')
   return {
-    title: `${scenario.countryCode} — national PQC migration`,
+    title: `${name} — national PQC migration`,
     summary:
-      `${scenario.countryCode} — national post-quantum migration scenario. Two deadlines map to the ` +
-      `framework's two-track model: key establishment (${scenario.standards.HNDL}) by ${hndl} for ` +
-      `harvest-now / HNDL data, and digital signatures (${scenario.standards.TNFL}) by ${tnfl}. ` +
+      `${name} — national post-quantum migration scenario. Two deadlines map to the ` +
+      `framework's two-track model: key establishment${std(scenario.standards.HNDL)} by ${hndl} for ` +
+      `harvest-now / HNDL data, and digital signatures${std(scenario.standards.TNFL)} by ${tnfl}. ` +
       `Governance is in place by ${scenario.governanceYear}; general-estate assets trail to the ` +
       `${scenario.programEndYear} program horizon. Watch the program climb maturity together to hit these dates.`,
   }

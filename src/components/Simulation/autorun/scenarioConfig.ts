@@ -83,6 +83,20 @@ export function resolveCountryCode(country: string): string {
   return NAME_TO_CODE[country] ?? country
 }
 
+// Reverse of NAME_TO_CODE (+ a few common extras), for display: 'FR' → 'France'.
+const CODE_TO_NAME: Record<string, string> = {
+  ...Object.fromEntries(Object.entries(NAME_TO_CODE).map(([name, code]) => [code, name])),
+  GB: 'United Kingdom',
+  IN: 'India',
+  AU: 'Australia',
+  NL: 'Netherlands',
+}
+
+/** Human-readable country name for a code (falls back to the code itself). */
+export function countryNameFor(code: string): string {
+  return CODE_TO_NAME[code] ?? code
+}
+
 /** Build the scenario for a sim country (accepts a timeline code or a display name). */
 export function getScenario(country: string): SimScenario {
   const code = resolveCountryCode(country)

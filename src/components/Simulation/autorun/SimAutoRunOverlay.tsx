@@ -31,7 +31,7 @@ export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
             <div className="mt-1 overflow-hidden">
               <div
                 className="animate-sim-ticker inline-flex whitespace-nowrap text-[18px] leading-snug text-background/90"
-                style={{ animationDuration: `${tickerDur}s`, animationDirection: 'reverse' }}
+                style={{ animationDuration: `${tickerDur}s` }}
               >
                 <span className="pr-24">{tickerText}</span>
                 <span className="pr-24" aria-hidden="true">
