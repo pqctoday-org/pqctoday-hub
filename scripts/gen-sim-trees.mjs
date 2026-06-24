@@ -39,6 +39,9 @@ const REF_URL = {
   'algorithms-catalog': '/algorithms',
   timeline: '/timeline',
   report: '/report',
+  // Deep-link (not embedded) to the Migration Verification Business-Center tool —
+  // it embodies the 5-point evidence standard + the program-closure record.
+  'migration-verification': '/business/tools/migration-verification',
 }
 // Hands-on Playground workshops (practice leaves). These EMBED in the sim (C2):
 // the id is the Playground tool id (WORKSHOP_TOOL_COMPONENTS key); the `to` is the
@@ -770,7 +773,10 @@ const FRAMEWORK = {
       do: 'Adopt the 5-point migration-verification evidence standard and the program-closure record up front, so "done" means proven, not declared.',
       output: 'Verification standard & closure plan',
       steps: [
-        R('report', 'Reference: the program closure record & 5-point evidence standard'),
+        R(
+          'migration-verification',
+          'Reference: the program closure record & 5-point evidence standard'
+        ),
         R('compliance', 'Reference: closeout attestations & applicable mandates'),
       ],
     },
