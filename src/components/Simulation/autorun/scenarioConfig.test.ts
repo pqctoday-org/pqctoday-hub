@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest'
 import { getScenario, resolveCountryCode } from './scenarioConfig'
 
 describe('scenarioConfig', () => {
-  it('resolves the US scenario from EO 14409 timeline tags (HNDL 2030, TNFL 2031)', () => {
+  it('resolves the US scenario from the US PQC executive order timeline tags (HNDL 2030, TNFL 2031)', () => {
     const s = getScenario('US')
     const track = (id: string) => s.tracks.find((t) => t.id === id)!
     expect(track('hndl-critical').year).toBe(2030) // EO key establishment

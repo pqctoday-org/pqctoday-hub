@@ -5,7 +5,7 @@
  * Framework 2.1 is explicit that phases are not a clean waterfall — the program climbs
  * maturity together across overlapping phases. The auto-run reflects that as four passes
  * (Establish → Protect → Scale → Optimise), each raising every phase one level. This modal
- * introduces the current pass + its scenario milestone anchor (EO 14409 for the US scenario).
+ * introduces the current pass + its scenario milestone anchor (the US PQC executive order for the US scenario).
  */
 import { Button } from '@/components/ui/button'
 import type { PassIntro } from './useSimAutoRunPlayer'

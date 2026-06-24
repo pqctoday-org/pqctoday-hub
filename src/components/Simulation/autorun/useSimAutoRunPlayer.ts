@@ -331,20 +331,22 @@ function phaseFocusFor(phase: PhaseId): PhaseFocus {
 }
 
 /** Build the one-time scenario-framing card from LIVE scenario dates / standards.
- *  US → the Executive Order 14409 framing; other countries degrade to a generic
- *  country framing anchored to the same scenario milestones. */
+ *  US → the June-2026 federal PQC executive order; other countries degrade to a
+ *  generic country framing anchored to the same scenario milestones. (The order's
+ *  Federal Register number is not yet assigned, so it is referenced by title.) */
 function scenarioIntroFor(scenario: SimScenario): ScenarioIntro {
   const hndl = scenario.tracks.find((t) => t.id === 'hndl-critical')?.year
   const tnfl = scenario.tracks.find((t) => t.id === 'tnfl-critical')?.year
   if (scenario.countryCode === 'US') {
     return {
-      title: 'United States — Executive Order 14409',
+      title: 'United States — federal PQC executive order',
       summary:
-        `United States — Executive Order 14409 (signed June 2026). Two hard deadlines map to the ` +
-        `framework's two-track model: key establishment (${scenario.standards.HNDL}) by ${hndl} ` +
-        `for harvest-now / HNDL data, and digital signatures (${scenario.standards.TNFL}) by ${tnfl}. ` +
-        `A 30-day deadline to name a PQC lead. General-estate assets trail to the ${scenario.programEndYear} ` +
-        `program horizon. Watch the program climb maturity together to hit these dates.`,
+        `United States — the June 2026 executive order "Securing the Nation Against Advanced ` +
+        `Cryptographic Attacks". Two hard deadlines map to the framework's two-track model: key ` +
+        `establishment (${scenario.standards.HNDL}) by ${hndl} for harvest-now / HNDL data, and ` +
+        `digital signatures (${scenario.standards.TNFL}) by ${tnfl}. A 30-day deadline to name a PQC ` +
+        `lead. General-estate assets trail to the ${scenario.programEndYear} program horizon. Watch ` +
+        `the program climb maturity together to hit these dates.`,
     }
   }
   const name = countryNameFor(scenario.countryCode)
