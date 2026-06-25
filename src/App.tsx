@@ -83,17 +83,9 @@ const OpenSSLStudioView = lazyWithRetry(() =>
     default: module.OpenSSLStudioView,
   }))
 )
-const LibraryView = lazyWithRetry(() =>
-  import('./components/Library/LibraryView').then((module) => ({ default: module.LibraryView }))
-)
 const LibraryViewRedesign = lazyWithRetry(() =>
   import('./components/Library/redesign/LibraryViewRedesign').then((module) => ({
     default: module.LibraryViewRedesign,
-  }))
-)
-const MigrateView = lazyWithRetry(() =>
-  import('./components/Migrate/MigrateView').then((module) => ({
-    default: module.MigrateView,
   }))
 )
 const AboutView = lazyWithRetry(() =>
@@ -118,9 +110,6 @@ const LandingView = lazyWithRetry(() =>
   import('./components/Landing/LandingView').then((module) => ({
     default: module.LandingView,
   }))
-)
-const AssessView = lazyWithRetry(() =>
-  import('./components/Assess/AssessView').then((module) => ({ default: module.AssessView }))
 )
 const AssessViewRedesign = lazyWithRetry(() =>
   import('./components/Assess/redesign/AssessViewRedesign').then((module) => ({
@@ -173,11 +162,6 @@ const SponsorView = lazyWithRetry(() =>
 const ExploreView = lazyWithRetry(() =>
   import('./components/Explore/ExploreView').then((module) => ({
     default: module.ExploreView,
-  }))
-)
-const PatentsView = lazyWithRetry(() =>
-  import('./components/Patents/PatentsView').then((module) => ({
-    default: module.PatentsView,
   }))
 )
 const PatentsViewRedesign = lazyWithRetry(() =>
@@ -264,14 +248,6 @@ function App() {
         }
       />
       <Route
-        path="library/legacy"
-        element={
-          <ErrorBoundary>
-            <LibraryView />
-          </ErrorBoundary>
-        }
-      />
-      <Route
         path="learn/*"
         element={
           <ErrorBoundary>
@@ -351,14 +327,6 @@ function App() {
         }
       />
       <Route
-        path="migrate/legacy"
-        element={
-          <ErrorBoundary>
-            <MigrateView />
-          </ErrorBoundary>
-        }
-      />
-      <Route
         path="about"
         element={
           <ErrorBoundary>
@@ -371,14 +339,6 @@ function App() {
         element={
           <ErrorBoundary>
             <AssessViewRedesign />
-          </ErrorBoundary>
-        }
-      />
-      <Route
-        path="assess/legacy"
-        element={
-          <ErrorBoundary>
-            <AssessView />
           </ErrorBoundary>
         }
       />
@@ -447,14 +407,6 @@ function App() {
         element={
           <ErrorBoundary>
             <PatentsViewRedesign />
-          </ErrorBoundary>
-        }
-      />
-      <Route
-        path="patents/legacy"
-        element={
-          <ErrorBoundary>
-            <PatentsView />
           </ErrorBoundary>
         }
       />
