@@ -25,6 +25,12 @@ const TREE: PhaseTree = {
           output: 'Verification standard & closure plan',
           steps: [
             {
+              kind: 'learn',
+              label: 'Learn: Decommissioning & Program Closure',
+              to: '/learn/verification-closure',
+              moduleId: 'verification-closure',
+            },
+            {
               kind: 'reference',
               label: 'Reference: the program closure record & 5-point evidence standard',
               to: '/business/tools/migration-verification',
@@ -51,6 +57,12 @@ const TREE: PhaseTree = {
           do: 'Prove each migrated system against the evidence standard (observed PQC negotiation, negative testing, configuration attestation) and log classical key-material decommissioning (SP 800-88).',
           output: 'Migration-verification evidence dossier',
           steps: [
+            {
+              kind: 'learn',
+              label: 'Learn: decommission classical crypto & assemble evidence',
+              to: '/learn/verification-closure',
+              moduleId: 'verification-closure',
+            },
             {
               kind: 'activity',
               label: 'Assemble the evidence dossier & log decommissioning',

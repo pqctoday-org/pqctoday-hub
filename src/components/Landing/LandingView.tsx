@@ -334,152 +334,159 @@ export const LandingView = () => {
           persona is curious. Dismiss persists via usePersonaStore v7 migration. */}
       <CuriousGuide />
 
-      {/* Progress Management */}
+      {/* Progress Management — collapsed by default so housekeeping does not compete
+          with the hero/personalization content; the export/import feature is retained. */}
       <section className="pt-4">
-        <h3 className="text-lg font-bold text-foreground mb-3 flex items-center gap-2">
-          <Save size={20} className="text-primary" />
-          Backup &amp; Restore
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <motion.button
-            type="button"
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            aria-label="Export backup — download all progress and settings"
-            className="glass-panel p-3 flex items-center gap-3 hover:border-primary/50 transition-colors text-left w-full"
-            onClick={() => {
-              try {
-                UnifiedStorageService.downloadSnapshot()
-              } catch (error) {
-                console.error('Failed to export backup:', error)
-                alert('Failed to export backup')
-              }
-            }}
-          >
-            <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
-              <Save size={18} aria-hidden="true" />
-            </div>
-            <div className="min-w-0">
-              <h4 className="text-sm font-semibold text-foreground">Export Backup</h4>
-              <p className="text-xs text-muted-foreground leading-snug">
-                Downloads all progress — modules, assessment, persona, quiz mastery, chat history,
-                artifacts, and settings.
-              </p>
-            </div>
-          </motion.button>
-
-          <motion.button
-            type="button"
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            aria-label="Import backup — restore from a previously exported backup file"
-            className="glass-panel p-3 flex items-center gap-3 hover:border-secondary/50 transition-colors text-left w-full"
-            onClick={() => {
-              const input = document.createElement('input')
-              input.type = 'file'
-              input.accept = '.json'
-              input.onchange = async (e) => {
-                const file = (e.target as HTMLInputElement).files?.[0]
-                if (!file) return
-                try {
-                  const snapshot = await UnifiedStorageService.importSnapshot(file)
-                  UnifiedStorageService.restoreSnapshot(snapshot)
-                  alert('Backup restored successfully. The page will now reload.')
-                  setTimeout(() => window.location.reload(), 500)
-                } catch (error) {
-                  console.error('Failed to restore backup:', error)
-                  alert(error instanceof Error ? error.message : 'Failed to restore backup')
-                }
-              }
-              input.click()
-            }}
-          >
-            <div className="p-2 rounded-lg bg-secondary/10 text-secondary shrink-0">
-              <Upload size={18} aria-hidden="true" />
-            </div>
-            <div className="min-w-0">
-              <h4 className="text-sm font-semibold text-foreground">Import Backup</h4>
-              <p className="text-xs text-muted-foreground leading-snug">
-                Restore from a previously exported backup file to resume all progress and settings.
-              </p>
-            </div>
-          </motion.button>
-
-          {/* Google Drive Cloud Sync — hidden via SHOW_GOOGLE_DRIVE_SYNC (code retained) */}
-          {SHOW_GOOGLE_DRIVE_SYNC && isConfigured && (
-            <motion.div
+        <details className="group">
+          <summary className="text-lg font-bold text-foreground mb-3 flex items-center gap-2 cursor-pointer list-none select-none">
+            <Save size={20} className="text-primary" />
+            Backup &amp; Restore progress
+            <span className="text-xs font-normal text-muted-foreground ml-1 group-open:hidden">
+              — export or import your saved progress
+            </span>
+          </summary>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+            <motion.button
+              type="button"
               variants={fadeUp}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
+              aria-label="Export backup — download all progress and settings"
+              className="glass-panel p-3 flex items-center gap-3 hover:border-primary/50 transition-colors text-left w-full"
+              onClick={() => {
+                try {
+                  UnifiedStorageService.downloadSnapshot()
+                } catch (error) {
+                  console.error('Failed to export backup:', error)
+                  alert('Failed to export backup')
+                }
+              }}
             >
-              {isSignedIn ? (
-                <div className="glass-panel p-3 flex flex-col gap-2 h-full border-primary/20">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
-                      {syncStatus === 'syncing' ? (
-                        <Loader2 size={18} aria-hidden="true" className="animate-spin" />
-                      ) : syncStatus === 'error' ? (
-                        <CloudOff size={18} aria-hidden="true" className="text-status-error" />
-                      ) : (
-                        <Cloud size={18} aria-hidden="true" />
-                      )}
+              <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
+                <Save size={18} aria-hidden="true" />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-sm font-semibold text-foreground">Export Backup</h4>
+                <p className="text-xs text-muted-foreground leading-snug">
+                  Downloads all progress — modules, assessment, persona, quiz mastery, chat history,
+                  artifacts, and settings.
+                </p>
+              </div>
+            </motion.button>
+
+            <motion.button
+              type="button"
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              aria-label="Import backup — restore from a previously exported backup file"
+              className="glass-panel p-3 flex items-center gap-3 hover:border-secondary/50 transition-colors text-left w-full"
+              onClick={() => {
+                const input = document.createElement('input')
+                input.type = 'file'
+                input.accept = '.json'
+                input.onchange = async (e) => {
+                  const file = (e.target as HTMLInputElement).files?.[0]
+                  if (!file) return
+                  try {
+                    const snapshot = await UnifiedStorageService.importSnapshot(file)
+                    UnifiedStorageService.restoreSnapshot(snapshot)
+                    alert('Backup restored successfully. The page will now reload.')
+                    setTimeout(() => window.location.reload(), 500)
+                  } catch (error) {
+                    console.error('Failed to restore backup:', error)
+                    alert(error instanceof Error ? error.message : 'Failed to restore backup')
+                  }
+                }
+                input.click()
+              }}
+            >
+              <div className="p-2 rounded-lg bg-secondary/10 text-secondary shrink-0">
+                <Upload size={18} aria-hidden="true" />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-sm font-semibold text-foreground">Import Backup</h4>
+                <p className="text-xs text-muted-foreground leading-snug">
+                  Restore from a previously exported backup file to resume all progress and
+                  settings.
+                </p>
+              </div>
+            </motion.button>
+
+            {/* Google Drive Cloud Sync — hidden via SHOW_GOOGLE_DRIVE_SYNC (code retained) */}
+            {SHOW_GOOGLE_DRIVE_SYNC && isConfigured && (
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                {isSignedIn ? (
+                  <div className="glass-panel p-3 flex flex-col gap-2 h-full border-primary/20">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
+                        {syncStatus === 'syncing' ? (
+                          <Loader2 size={18} aria-hidden="true" className="animate-spin" />
+                        ) : syncStatus === 'error' ? (
+                          <CloudOff size={18} aria-hidden="true" className="text-status-error" />
+                        ) : (
+                          <Cloud size={18} aria-hidden="true" />
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h4 className="text-sm font-semibold text-foreground">Google Drive Sync</h4>
+                        <p className="text-xs text-muted-foreground leading-snug">Connected</p>
+                      </div>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <h4 className="text-sm font-semibold text-foreground">Google Drive Sync</h4>
-                      <p className="text-xs text-muted-foreground leading-snug">Connected</p>
-                    </div>
+                    <p className="text-xs text-muted-foreground leading-snug">
+                      {syncStatus === 'syncing'
+                        ? 'Syncing…'
+                        : syncStatus === 'error'
+                          ? 'Sync failed — will retry on next change'
+                          : syncStatus === 'success' && lastSyncedAt
+                            ? `Synced ${new Date(lastSyncedAt).toLocaleTimeString()}`
+                            : 'Auto-sync active — changes save to your Drive'}
+                    </p>
+                    <Button
+                      variant="ghost"
+                      type="button"
+                      onClick={signOut}
+                      className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mt-auto"
+                    >
+                      <LogOut size={12} aria-hidden="true" />
+                      Sign out
+                    </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground leading-snug">
-                    {syncStatus === 'syncing'
-                      ? 'Syncing…'
-                      : syncStatus === 'error'
-                        ? 'Sync failed — will retry on next change'
-                        : syncStatus === 'success' && lastSyncedAt
-                          ? `Synced ${new Date(lastSyncedAt).toLocaleTimeString()}`
-                          : 'Auto-sync active — changes save to your Drive'}
-                  </p>
+                ) : (
                   <Button
                     variant="ghost"
                     type="button"
-                    onClick={signOut}
-                    className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mt-auto"
+                    onClick={signIn}
+                    className="glass-panel p-3 flex items-center gap-3 hover:border-primary/50 transition-colors text-left w-full h-full"
+                    aria-label="Sign in with Google to sync progress to Google Drive"
                   >
-                    <LogOut size={12} aria-hidden="true" />
-                    Sign out
+                    <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
+                      <Cloud size={18} aria-hidden="true" />
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 flex-wrap">
+                        Sync to Google Drive
+                        <span className="text-[10px] font-mono uppercase tracking-widest px-1.5 py-0.5 rounded bg-status-warning/10 text-status-warning border border-status-warning/30">
+                          WIP
+                        </span>
+                      </h4>
+                      <p className="text-xs text-muted-foreground leading-snug">
+                        Auto-save progress across devices.
+                      </p>
+                    </div>
                   </Button>
-                </div>
-              ) : (
-                <Button
-                  variant="ghost"
-                  type="button"
-                  onClick={signIn}
-                  className="glass-panel p-3 flex items-center gap-3 hover:border-primary/50 transition-colors text-left w-full h-full"
-                  aria-label="Sign in with Google to sync progress to Google Drive"
-                >
-                  <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
-                    <Cloud size={18} aria-hidden="true" />
-                  </div>
-                  <div className="min-w-0">
-                    <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 flex-wrap">
-                      Sync to Google Drive
-                      <span className="text-[10px] font-mono uppercase tracking-widest px-1.5 py-0.5 rounded bg-status-warning/10 text-status-warning border border-status-warning/30">
-                        WIP
-                      </span>
-                    </h4>
-                    <p className="text-xs text-muted-foreground leading-snug">
-                      Auto-save progress across devices.
-                    </p>
-                  </div>
-                </Button>
-              )}
-            </motion.div>
-          )}
-        </div>
+                )}
+              </motion.div>
+            )}
+          </div>
+        </details>
       </section>
     </div>
   )

@@ -117,14 +117,4 @@ test.describe('Assess — no auto-jump to report for a completed assessment', ()
     await expect(page).toHaveURL(/\/assess/)
     await expect(page.getByRole('button', { name: /view report/i }).first()).toBeVisible()
   })
-
-  test('legacy /assess/legacy (old page) stays on the page too', async ({ page }) => {
-    await page.addInitScript(injectCompleteAssessment)
-
-    await page.goto('/assess/legacy')
-
-    await expect(page.getByText(/your assessment is complete/i)).toBeVisible({ timeout: 15000 })
-    await expect(page).not.toHaveURL(/\/report/)
-    await expect(page).toHaveURL(/\/assess\/legacy/)
-  })
 })

@@ -1,85 +1,89 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { ComplianceRecord } from './types'
 
-// A snapshot of representative NIST FIPS 140-3 and ACVP data.
-// Since NIST does not provide a public JSON API for bulk export, this snapshot
-// ensures the user sees populated data. In a production environment, this would
-// be replaced by a periodic backend scraper or a specialized data subscription.
-
+// Fallback snapshot of REAL NIST CMVP (FIPS 140-3) and ACVP validations. Used only
+// when the live NIST scrape returns nothing (e.g. a JS-rendered page) — see services.ts.
+// In production the app loads the full scraped dataset from /data/compliance-data.json
+// (2,400+ records); this curated subset is a small, accurate stand-in so the UI is never
+// empty. Every id / link / certificate below is a real, verifiable CMVP or ACVP record,
+// cross-checked against compliance-data.json on 2026-06-24. Note that most FIPS 140-3
+// *module* validations do not yet carry PQC in their validated boundary (pqcCoverage:false);
+// PQC is currently validated mainly at the algorithm (ACVP) level. Refresh from the
+// scraper rather than hand-editing.
 export const NIST_SNAPSHOT: ComplianceRecord[] = [
-  // FIPS 140-3 L3 Examples (Simulated Real Data based on recent validations)
+  // FIPS 140-3 validated modules (real CMVP certificates)
   {
-    id: 'fips-4282',
+    id: 'fips-4745',
     source: 'NIST',
-    date: '2024-11-20',
-    link: 'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4282',
+    date: '2024-07-31',
+    link: 'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4745',
     type: 'FIPS 140-3',
     status: 'Active',
-    pqcCoverage: 'ML-KEM (Planned)',
-    productName: 'Entrust nShield 5s',
+    pqcCoverage: false,
+    productName: 'nShield 5s Hardware Security Module',
     productCategory: 'Hardware Security Module',
-    vendor: 'Entrust Corporation',
+    vendor: 'Entrust',
   },
   {
-    id: 'fips-4600',
+    id: 'fips-5291',
     source: 'NIST',
-    date: '2024-10-15',
-    link: 'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4600',
+    date: '2026-05-22',
+    link: 'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5291',
     type: 'FIPS 140-3',
     status: 'Active',
     pqcCoverage: false,
-    productName: 'YubiKey 5 Series Cryptographic Module',
+    productName: 'YubiKey 5 Cryptographic Module',
     productCategory: 'Hardware Token',
-    vendor: 'Yubico AB',
+    vendor: 'Yubico, Inc.',
   },
   {
-    id: 'fips-4711',
+    id: 'fips-4800',
     source: 'NIST',
-    date: '2024-12-05',
-    link: 'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4711',
+    date: '2024-09-16',
+    link: 'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4800',
     type: 'FIPS 140-3',
-    status: 'In Process',
-    pqcCoverage: 'Dilithium / Falcon',
-    productName: 'PQShield PQCryptoLib',
+    status: 'Active',
+    pqcCoverage: 'Potentially PQC (name match)',
+    productName: 'PQCryptoLib',
     productCategory: 'Software Library',
-    vendor: 'PQShield Ltd',
+    vendor: 'PQShield LTD',
   },
   {
-    id: 'fips-4521',
+    id: 'fips-5296',
     source: 'NIST',
-    date: '2024-09-10',
-    link: 'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4521',
+    date: '2026-06-02',
+    link: 'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5296',
     type: 'FIPS 140-3',
     status: 'Active',
     pqcCoverage: false,
-    productName: 'Cisco IOS-XE Cryptographic Module',
-    productCategory: 'Firmware',
-    vendor: 'Cisco Systems, Inc.',
+    productName: 'BoringCrypto',
+    productCategory: 'Software Library',
+    vendor: 'Google, LLC',
   },
 
-  // ACVP Examples
+  // ACVP algorithm validations (real PQC algorithm certificates)
   {
-    id: 'acvp-1002',
+    id: 'acvp-A8481',
     source: 'NIST',
-    date: '2024-12-01',
-    link: 'https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=1002',
+    date: '2026-06-03',
+    link: 'https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21289',
     type: 'ACVP',
     status: 'Active',
-    pqcCoverage: 'SHA-3',
-    productName: 'OpenSSL 3.2 FIPS Provider',
-    productCategory: 'Software Library',
-    vendor: 'OpenSSL Software Foundation',
+    pqcCoverage: 'ML-KEM-1024',
+    productName: 'Caliptra ML-KEM-1024 KeyGen, encapDecap',
+    productCategory: 'Algorithm Implementation',
+    vendor: 'Advanced Micro Devices (AMD)',
   },
   {
-    id: 'acvp-998',
+    id: 'acvp-A6462',
     source: 'NIST',
-    date: '2024-11-05',
-    link: 'https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=998',
+    date: '2025-01-06',
+    link: 'https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19197',
     type: 'ACVP',
     status: 'Active',
-    pqcCoverage: 'ML-KEM-768',
-    productName: 'OQS-Provider v0.6',
-    productCategory: 'Software Library',
-    vendor: 'Open Quantum Safe',
+    pqcCoverage: 'ML-DSA, ML-KEM',
+    productName: 'Ah-Crypto library (AhP-Tech Quantum Computing Cloud Platform)',
+    productCategory: 'Algorithm Implementation',
+    vendor: 'AhP-Tech Inc.',
   },
 ]

@@ -69,7 +69,7 @@ export const CRYPTO_APIS: CryptoAPI[] = [
     providerPattern:
       'Security.addProvider(new BouncyCastleProvider()); KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-DSA-65", "BC");',
     pqcStatus:
-      'No built-in PQC in standard JDK. Bouncy Castle provider adds ML-KEM, ML-DSA, SLH-DSA, FN-DSA (Falcon). JCProv (Thales) adds PKCS#11-backed PQC when HSM firmware supports it.',
+      'JDK 24+ adds native ML-KEM (JEP 496) and ML-DSA (JEP 497); the javax.crypto.KEM API arrived in JDK 21 (JEP 452). Bouncy Castle adds these plus SLH-DSA (and Falcon) on older JDKs. JCProv (Thales) adds PKCS#11-backed PQC when HSM firmware supports it.',
     strengths: [
       'Mature provider architecture — swap algorithms without code changes',
       'Extensive ecosystem — hundreds of providers available',
@@ -167,7 +167,7 @@ export const CRYPTO_APIS: CryptoAPI[] = [
     providerPattern:
       'OSSL_PROVIDER *prov = OSSL_PROVIDER_load(NULL, "oqsprovider"); EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_from_name(NULL, "ML-DSA-65", NULL);',
     pqcStatus:
-      'OpenSSL 3.5+ integrates oqsprovider for PQC. ML-KEM-768, ML-DSA-65, SLH-DSA supported. oqsprovider wraps liboqs implementations. Hybrid key exchange in TLS via s_client/s_server.',
+      'OpenSSL 3.5+ ships NATIVE ML-KEM, ML-DSA, and SLH-DSA — no external provider needed. For OpenSSL 3.2–3.4, the oqsprovider (wrapping liboqs) adds PQC. Hybrid key exchange in TLS via s_client/s_server.',
     strengths: [
       'Ubiquitous — default on most Linux/BSD/macOS systems',
       'Provider model enables PQC without core changes',
@@ -226,7 +226,7 @@ export const CRYPTO_APIS: CryptoAPI[] = [
     providerPattern:
       'C_Initialize(NULL); C_GetSlotList(CK_TRUE, slots, &count); C_OpenSession(slots[0], flags, NULL, NULL, &session); C_Login(session, CKU_USER, pin, pinLen);',
     pqcStatus:
-      'PKCS#11 v3.2 (OASIS, 2024) defines CKM_ML_KEM_KEY_PAIR_GEN, CKM_ML_DSA_*, CKM_SLH_DSA_*, CKM_HASH_ML_DSA_*, C_EncapsulateKey/C_DecapsulateKey. Hardware support depends on HSM vendor firmware.',
+      'PKCS#11 v3.2 (OASIS Committee Specification 01, Nov 2025; the published OASIS Standard is v3.1) defines CKM_ML_KEM_KEY_PAIR_GEN, CKM_ML_DSA_*, CKM_SLH_DSA_*, CKM_HASH_ML_DSA_*, C_EncapsulateKey/C_DecapsulateKey. Hardware support depends on HSM vendor firmware.',
     strengths: [
       'Hardware-agnostic — same API works with any HSM/smart card',
       'Keys never leave hardware boundary',

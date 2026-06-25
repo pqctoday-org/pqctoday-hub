@@ -369,11 +369,12 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     notes: 'Recommends hybrid crypto today. Assumes CRQC within planning horizon.',
   },
   {
-    source: 'ANSSI France (2024)',
+    source: 'ANSSI France (2022, upd. 2023)',
     yearLow: 2030,
     yearHigh: 2035,
-    confidence: 'Mandate hybrid by 2025',
-    notes: 'Requires hybrid PQC for all government systems. Assumes near-term threat.',
+    confidence: 'Migration milestone, not a CRQC forecast',
+    notes:
+      'ANSSI gives no CRQC arrival date; 2030/2035 are transition milestones. Hybrid PQC is required only where quantum-resistance is claimed, not mandated for all government systems.',
   },
 ]
 

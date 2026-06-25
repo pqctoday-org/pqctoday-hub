@@ -177,7 +177,7 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
               {DRBG_MECHANISMS.find((m) => m.name === 'XOF_DRBG')?.name}
             </span>
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-bold">
-              New in Rev. 2 (2024)
+              Proposed in draft Rev. 2 (2025)
             </span>
           </div>
           <div className="text-xs text-muted-foreground mb-1">

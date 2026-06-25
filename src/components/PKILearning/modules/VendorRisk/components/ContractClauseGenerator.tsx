@@ -28,15 +28,16 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
           },
           {
             value: '2027',
-            label: '2027 — CNSA 2.0 new networking equipment must support PQC',
+            label: '2027 — CNSA 2.0 new NSS acquisitions / operating systems must support PQC',
           },
           {
             value: '2030',
-            label: '2030 — CNSA 2.0 all software exclusive; NIST IR 8547 RSA/ECC deprecation',
+            label:
+              '2030 — CNSA 2.0 software/firmware signing & traditional networking exclusive; NIST IR 8547 RSA/ECC deprecation',
           },
           {
             value: '2033',
-            label: '2033 — CNSA 2.0 legacy networking equipment replacement',
+            label: '2033 — CNSA 2.0 web browsers / servers / cloud / operating systems exclusive',
           },
           {
             value: '2035',

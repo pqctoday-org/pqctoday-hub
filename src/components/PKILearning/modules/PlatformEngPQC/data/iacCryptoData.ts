@@ -104,11 +104,11 @@ controller:
 controller:
   config:
     ssl-protocols: "TLSv1.3"
-    # X-Wing = ML-KEM-768 + X25519 hybrid (RFC draft)
+    # X25519MLKEM768 = ML-KEM-768 + X25519 hybrid TLS group (draft-ietf-tls-ecdhe-mlkem)
     ssl-ciphers: "TLS_AES_256_GCM_SHA384"
     # Enable PQC key exchange groups (nginx + OpenSSL 3.5)
     ssl-ecdh-curve: "X25519MLKEM768:X25519:P-256"
-# ✅ X-Wing hybrid: classical X25519 + ML-KEM-768
+# ✅ X25519MLKEM768 hybrid: classical X25519 + ML-KEM-768
 # Provides forward secrecy against both classical and quantum`,
   },
   {

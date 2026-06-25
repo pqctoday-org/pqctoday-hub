@@ -24,6 +24,7 @@ const GOLDEN_ROUTE_PATHS = [
   'api-security-jwt',
   'arch-quantum-impact',
   'automotive-pqc',
+  'cbom',
   'code-signing',
   'common-ground',
   'compliance-strategy',
@@ -78,6 +79,7 @@ const GOLDEN_ROUTE_PATHS = [
   'stateful-signatures',
   'tls-basics',
   'vendor-risk',
+  'verification-closure',
   'vpn-ssh-pqc',
   'web-gateway-pqc',
 ].sort()
