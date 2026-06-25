@@ -321,7 +321,8 @@ export const ZTNAPQCDesigner: React.FC = () => {
                   <AlertTriangle size={12} className="text-status-warning shrink-0 mt-0.5" />
                   <span>
                     Moderate risk — hybrid mode provides good interim protection. Plan complete
-                    migration before CNSA 2.0 deadline (2033).
+                    migration before the CNSA 2.0 all-NSS deadline (2035); 2033 applies to
+                    web/cloud/OS systems.
                   </span>
                 </div>
               )}
