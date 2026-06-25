@@ -1511,8 +1511,7 @@ assessmentStatus]`: the hook re-seeds from persona whenever `industry` is empty,
 
   **Timeline** — OpenSSL 3.5.0 (April 2025) added as the milestone when
   ML-KEM, ML-DSA, and SLH-DSA first shipped natively in the world's most
-  widely used TLS library. NIST IR 8547 IPD2 (April 2026) added as a separate
-  event. IBM Kookaburra and IBM Quantum Advantage correctly reclassified as
+  widely used TLS library. IBM Kookaburra and IBM Quantum Advantage correctly reclassified as
   forward-looking roadmap targets rather than completed milestones. One
   unverified entry removed (NXP/PQShield pilot — cited source did not support
   the claim). Source attribution improved across the full timeline.
@@ -1521,11 +1520,10 @@ assessmentStatus]`: the hook re-seeds from persona whenever `industry` is empty,
   ML models that accelerate lattice-reduction attacks, potentially reducing
   security margins of ML-KEM-512 before a quantum computer exists) and _HSM
   key-size incompatibility_ (ML-KEM and ML-DSA keys are far larger than RSA
-  keys — legacy HSM firmware buffer limits can block deployment). NIST IR 8547
-  migration guidance updated to reference the April 2026 IPD2 revision.
+  keys — legacy HSM firmware buffer limits can block deployment).
 
   **Library** — OpenSSL 3.5.0 release notes added as a reference document.
-  NIST IR 8547 now links to the April 2026 IPD2 PDF. FIPS 203, 204, and 205
+  NIST IR 8547 links to its Initial Public Draft (November 2024). FIPS 203, 204, and 205
   publication dates corrected (a data artifact had incorrectly set them to
   April 2026). Seven IETF drafts annotated with current expiry/status. One
   abandoned draft (NTRU Prime SSH, last updated 2022) removed.
