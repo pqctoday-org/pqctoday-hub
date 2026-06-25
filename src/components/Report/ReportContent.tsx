@@ -934,13 +934,11 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           </p>
                         )}
                         <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-muted-foreground">
-                          {selectedPersona === 'curious' ? (
-                            <GlossaryAutoWrap>
-                              {result.personaNarrative ?? result.narrative}
-                            </GlossaryAutoWrap>
-                          ) : (
-                            (result.personaNarrative ?? result.narrative)
-                          )}
+                          {/* Glossary tooltips help every persona decode acronyms in the
+                              narrative (execs/ops most of all), not just the curious reader. */}
+                          <GlossaryAutoWrap>
+                            {result.personaNarrative ?? result.narrative}
+                          </GlossaryAutoWrap>
                         </p>
                         {result.boosts &&
                           result.boosts.length > 0 &&
