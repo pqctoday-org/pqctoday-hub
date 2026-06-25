@@ -29,6 +29,7 @@ import { CopyButton } from '@/components/ui/CopyButton'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
 import { useOpenSSLStore } from './store'
+import type { OpenSSLCategory } from './categories'
 
 type QuickCmd = { label: string; cmd: OpenSSLCategory; hint: string }
 const DEV_CHEATSHEET: QuickCmd[] = [
@@ -46,22 +47,6 @@ const RESEARCHER_LINKS = [
   { label: 'PKCS#12', to: '/library?q=PKCS12' },
   { label: 'X.509', to: '/library?q=X.509' },
 ]
-
-type OpenSSLCategory =
-  | 'genpkey'
-  | 'req'
-  | 'x509'
-  | 'enc'
-  | 'dgst'
-  | 'hash'
-  | 'rand'
-  | 'version'
-  | 'files'
-  | 'kem'
-  | 'pkcs12'
-  | 'lms'
-  | 'configutl'
-  | 'kdf'
 
 /** Alias map for user-friendly ?cmd= values */
 const CMD_ALIASES: Record<string, OpenSSLCategory> = {
