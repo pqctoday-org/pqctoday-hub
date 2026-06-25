@@ -26,7 +26,6 @@ vi.mock('@/services/search/useSemanticSearch', () => ({
 
 import { TimelineEmbed } from './TimelineEmbed'
 import { ProtocolMatrixEmbed } from './ProtocolMatrixEmbed'
-import { MigrateEmbed } from './MigrateEmbed'
 import { MigrateWorkbenchEmbed } from './MigrateWorkbenchEmbed'
 import { AlgorithmTransitionEmbed } from './AlgorithmTransitionEmbed'
 import { AlgorithmDetailedEmbed } from './AlgorithmDetailedEmbed'
@@ -59,13 +58,6 @@ describe('embed widgets — render smoke tests (inside an outer router)', () => 
   it('C5 slice: ProtocolMatrixEmbed mounts the Protocol Support matrix', () => {
     renderEmbedded(<ProtocolMatrixEmbed />)
     expect(screen.getByText(/PQC Protocol Support Matrix/i)).toBeInTheDocument()
-  })
-
-  it('C7: MigrateEmbed mounts the catalog headless (no nested-router / PageHeader crash)', () => {
-    const { container } = renderEmbedded(<MigrateEmbed />)
-    // simEmbed hides the PageHeader; the catalog body still renders.
-    expect(container.firstChild).toBeTruthy()
-    expect(screen.getByPlaceholderText(/Search software/i)).toBeInTheDocument()
   })
 
   it('Migrate: MigrateWorkbenchEmbed mounts the NEW Migration Workbench, not the legacy catalog', () => {

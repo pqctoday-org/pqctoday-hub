@@ -58,11 +58,12 @@ export const CandidatesIntroduction: React.FC<CandidatesIntroductionProps> = ({
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
           Post-quantum cryptography is not a single 2024 event. NIST has already published one KEM
-          and three signatures, picked an alternate KEM, and is mid-flight on a signature on-ramp.
-          Korea, China, and Japan each run parallel national tracks. International bodies (ISO/IEC,
-          IETF, ETSI) layer compatibility and protocol bindings on top. New candidates will keep
-          arriving — the operational question is not <em>which algorithm wins</em> but{' '}
-          <em>how fast your stack can absorb the next one</em>.
+          (FIPS 203 ML-KEM) and two signatures (FIPS 204 ML-DSA, FIPS 205 SLH-DSA) — with a third,
+          FN-DSA (FIPS 206), still in draft — picked an alternate KEM, and is mid-flight on a
+          signature on-ramp. Korea, China, and Japan each run parallel national tracks.
+          International bodies (ISO/IEC, IETF, ETSI) layer compatibility and protocol bindings on
+          top. New candidates will keep arriving — the operational question is not{' '}
+          <em>which algorithm wins</em> but <em>how fast your stack can absorb the next one</em>.
         </p>
         <div className="space-y-2">
           {LIFECYCLE_EVENTS.slice(0, 8).map((evt) => {

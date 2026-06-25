@@ -201,10 +201,10 @@ const MARQUEE: { match: RegExp; def: MarqueeDef }[] = [
         n('Live evidence', '6 CMVP modules', 'in Product Records →', 'success'),
       ],
       phases: [
-        p('2024', 'Suite published', 'done'),
-        p('2027', 'Begin transition', 'active'),
-        p('2030', 'Prefer PQC', 'future'),
-        p('2035', 'Exclusive PQC', 'future'),
+        p('2022', 'Suite published', 'done'),
+        p('2025', 'Support & prefer', 'active'),
+        p('2030', 'Exclusive (sw/fw, networking)', 'future'),
+        p('2035', 'All NSS exclusive', 'future'),
       ],
       dossierFocus: 'Multi-year transition plan for NSS to PQC.',
       dossierItems: [

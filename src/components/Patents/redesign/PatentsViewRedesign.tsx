@@ -22,7 +22,7 @@ import { logPatentExport, logPatentInsightsFilter } from '@/utils/analytics'
 import { PatentSearchPanel } from '@/components/Patents/PatentSearchPanel'
 import { PatentsTable, type SortKey, type SortDir } from '@/components/Patents/PatentsTable'
 import { usePatentResults } from '@/components/Patents/usePatentResults'
-import { isPqcPatent, PATENTS_CSV_COLUMNS } from '@/components/Patents/PatentsView'
+import { isPqcPatent, PATENTS_CSV_COLUMNS } from '@/components/Patents/patentColumns'
 import {
   COLUMN_PRESETS,
   COLUMNS_LS_KEY,

@@ -15,22 +15,11 @@ import clsx from 'clsx'
 import { useOpenSSLStore } from '../store'
 import { logEvent } from '../../../utils/analytics'
 import { Button } from '@/components/ui/button'
+import type { OpenSSLCategory } from '../categories'
 
-export type WorkbenchCategory =
-  | 'genpkey'
-  | 'req'
-  | 'x509'
-  | 'enc'
-  | 'dgst'
-  | 'hash'
-  | 'rand'
-  | 'version'
-  | 'files'
-  | 'kem'
-  | 'pkcs12'
-  | 'lms'
-  | 'configutl'
-  | 'kdf'
+// Single source of truth lives in ../categories; kept as a named alias so the
+// existing WorkbenchCategory importers (e.g. WorkbenchPresets) stay unchanged.
+export type WorkbenchCategory = OpenSSLCategory
 
 interface WorkbenchToolbarProps {
   category: string

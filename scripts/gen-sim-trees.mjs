@@ -320,6 +320,7 @@ const FRAMEWORK = {
       do: 'Deploy discovery across network, code, config, runtime, and manual layers.',
       output: 'Layered discovery deployment',
       steps: [
+        L('cbom', 'Learn: layered cryptographic discovery (CBOM)'),
         C('Browse the Migrate discovery catalog', 'discovery'),
         A('management-tools-audit', 'Run the Management-Tools Audit'),
       ],
@@ -366,6 +367,7 @@ const FRAMEWORK = {
       do: 'Adopt CycloneDX and establish the record structure and tooling.',
       output: 'CycloneDX CBOM format spec',
       steps: [
+        L('cbom', 'Learn: Cryptography Bill of Materials'),
         L('crypto-mgmt-modernization', 'Learn: CBOM in Cryptographic Management'),
         R('library', 'Reference: CycloneDX in the Library'),
       ],
@@ -393,6 +395,7 @@ const FRAMEWORK = {
       do: 'Enforce refresh triggers and protect the CBOM with classification and access control.',
       output: 'CBOM governance & protection policy',
       steps: [
+        L('cbom', 'Learn: secure the CBOM & make it machine-verifiable'),
         L(
           'soc-implementation-pqc',
           'Learn: protect the CBOM (it is an HNDL shopping list) — SOC monitoring'
@@ -773,6 +776,7 @@ const FRAMEWORK = {
       do: 'Adopt the 5-point migration-verification evidence standard and the program-closure record up front, so "done" means proven, not declared.',
       output: 'Verification standard & closure plan',
       steps: [
+        L('verification-closure', 'Learn: Decommissioning & Program Closure'),
         R(
           'migration-verification',
           'Reference: the program closure record & 5-point evidence standard'
@@ -787,6 +791,7 @@ const FRAMEWORK = {
       do: 'Prove each migrated system against the evidence standard (observed PQC negotiation, negative testing, configuration attestation) and log classical key-material decommissioning (SP 800-88).',
       output: 'Migration-verification evidence dossier',
       steps: [
+        L('verification-closure', 'Learn: decommission classical crypto & assemble evidence'),
         A('migration-verification', 'Assemble the evidence dossier & log decommissioning'),
         A('audit-checklist', 'Run the closure audit-readiness checklist'),
       ],

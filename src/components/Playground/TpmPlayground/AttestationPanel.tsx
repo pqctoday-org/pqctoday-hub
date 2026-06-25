@@ -25,6 +25,7 @@ import {
   TPM_GENERATED_VALUE,
   toHex,
 } from './v2p7-reference'
+import { derSeq, derOid, derBitString } from '../derCodec'
 
 interface Props {
   isWasmReady: boolean
@@ -102,41 +103,8 @@ function oidForAk(ak: MlDsaAkSpec): Uint8Array {
   return OID_ML_DSA_87
 }
 
-function derSeq(content: Uint8Array): Uint8Array {
-  return derTLV(0x30, content)
-}
-function derOid(oidBody: Uint8Array): Uint8Array {
-  return derTLV(0x06, oidBody)
-}
-function derBitString(content: Uint8Array): Uint8Array {
-  // BIT STRING with 0 unused bits prefix
-  const wrapped = new Uint8Array(content.length + 1)
-  wrapped[0] = 0
-  wrapped.set(content, 1)
-  return derTLV(0x03, wrapped)
-}
-function derTLV(tag: number, value: Uint8Array): Uint8Array {
-  let lenBytes: number[]
-  if (value.length < 0x80) {
-    lenBytes = [value.length]
-  } else if (value.length < 0x100) {
-    lenBytes = [0x81, value.length]
-  } else if (value.length < 0x10000) {
-    lenBytes = [0x82, (value.length >>> 8) & 0xff, value.length & 0xff]
-  } else {
-    lenBytes = [
-      0x83,
-      (value.length >>> 16) & 0xff,
-      (value.length >>> 8) & 0xff,
-      value.length & 0xff,
-    ]
-  }
-  const out = new Uint8Array(1 + lenBytes.length + value.length)
-  out[0] = tag
-  out.set(lenBytes, 1)
-  out.set(value, 1 + lenBytes.length)
-  return out
-}
+// DER (ASN.1) encoders are shared from ../derCodec (derSeq/derOid/derBitString).
+
 function bytesToBase64(bytes: Uint8Array): string {
   // Avoid String.fromCharCode stack overflow on large signatures by chunking.
   let s = ''

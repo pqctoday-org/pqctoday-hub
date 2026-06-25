@@ -3,39 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>PQC Today — Free Online PQC Education Website & Migration Platform</title>
-    <link rel="canonical" href="https://www.pqctoday.com/" />
     <meta name="google-site-verification" content="lSSC0h-CK8Ps91057B3Ig-aHiKn8kS58RrIzpRgpAl0" />
     <meta
       name="keywords"
       content="free online pqc education website, free online pqc training, post quantum cryptography education platform free online, Post-Quantum Cryptography, PQC, ML-KEM, ML-DSA, SLH-DSA, NIST, quantum computing, cryptography migration, FIPS 203, FIPS 204, FIPS 205, PKCS#11, HSM, SoftHSM, OpenSSL, liboqs"
     />
-    <meta
-      name="description"
-      content="The leading free online PQC education website and guided post-quantum cryptography transformation platform. Explore 49 hands-on learning modules, assess quantum risk, and migrate your cryptography infrastructure in full compliance with NIST, ANSSI, BSI, and global standards."
-    />
     <meta name="author" content="PQC Today" />
 
-    <!-- Open Graph (static, non-route-specific) -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="PQC Today — Free Online PQC Education Website & Migration Platform" />
-    <meta
-      property="og:description"
-      content="The leading free online PQC education website and guided post-quantum cryptography transformation platform. Explore 49 hands-on learning modules, assess quantum risk, and migrate your cryptography infrastructure in full compliance with NIST, ANSSI, BSI, and global standards."
-    />
-    <meta property="og:image" content="https://www.pqctoday.com/og-image.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:site_name" content="PQC Today" />
-
-    <!-- Twitter Card (static) -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="PQC Today — Free Online PQC Education Website & Migration Platform" />
-    <meta
-      name="twitter:description"
-      content="The leading free online PQC education website and guided post-quantum cryptography transformation platform. Explore 49 hands-on learning modules, assess quantum risk, and migrate your cryptography infrastructure in full compliance with NIST, ANSSI, BSI, and global standards."
-    />
-    <meta name="twitter:image" content="https://www.pqctoday.com/og-image.png" />
+    <!--
+      Per-route SEO tags — <title>, description, canonical, Open Graph and Twitter
+      Card — are emitted by src/seo/PageMeta.tsx and baked into every page by the
+      prerender step (scripts/prerender.ts). They are intentionally NOT duplicated
+      here: React 19 hoists PageMeta's tags into <head>, so a static copy would
+      produce conflicting duplicate canonical / og:title tags on every route.
+    -->
 
     <!-- PWA & Theme -->
     <meta name="theme-color" content="#0EA5C8" />

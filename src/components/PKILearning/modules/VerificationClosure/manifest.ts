@@ -1,0 +1,34 @@
+// SPDX-License-Identifier: GPL-3.0-only
+import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+
+const manifest: ModuleManifest = {
+  id: 'verification-closure',
+  lm_id: 'LM-061',
+  title: 'Decommissioning & Program Closure',
+  description:
+    'Retire classical cryptography on a defensible schedule, prove the migration actually happened from observed behaviour, and hand the program to business-as-usual.',
+  duration: '40 min',
+  difficulty: 'intermediate',
+  frameworkPhase: 'verify-close',
+  track: 'Executive',
+  trackOrder: 11,
+  learnSections: [
+    { id: 'decommission', label: 'Retire classical crypto safely' },
+    { id: 'verify-evidence', label: 'Prove it from observed behaviour' },
+    { id: 'verify-coverage', label: 'Coverage at estate scale' },
+    { id: 'closure-handover', label: 'Close into business-as-usual' },
+  ],
+  workshopSteps: [
+    { id: 'decommission-checklist', label: 'Decommission Checklist' },
+    { id: 'coverage-planner', label: 'Verification Coverage Planner' },
+    { id: 'closure-handover-register', label: 'Closure & Handover Register' },
+  ],
+  embeddable: true,
+  practiceInSim: true,
+  taxonomy: {
+    standards: ['NIST IR 8547', 'NIST SP 800-131A', 'ISO/IEC 27001'],
+  },
+  load: () => import('./index').then((m) => ({ default: m.VerificationClosureModule })),
+}
+
+export default manifest

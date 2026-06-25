@@ -31,7 +31,7 @@ export const content: ModuleContent = {
 
   deadlines: [
     {
-      label: 'CNSA 2.0 networking equipment must support PQC',
+      label: 'CNSA 2.0 new NSS acquisitions / OS must support PQC',
       year: CNSA_2_0.networkingRequired,
       source: 'CNSA 2.0',
     },

@@ -19,6 +19,7 @@ import { useAirplaneModeStore } from '@/store/useAirplaneModeStore'
 import { useHSMMode } from '@/store/useHSMMode'
 import { useChatStore } from '@/store/useChatStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { CLOUD_SYNC_WATCHED_STORES } from '@/store/syncWatchedStores'
 import {
   fetchFromDrive,
   writeToDrive,
@@ -241,29 +242,8 @@ export function useSyncEffect() {
   useEffect(() => {
     if (!accessToken) return
 
-    const stores = [
-      useModuleStore,
-      useAssessmentStore,
-      usePersonaStore,
-      useHistoryStore,
-      useMigrateSelectionStore,
-      useComplianceSelectionStore,
-      useAchievementStore,
-      useMigrationWorkflowStore,
-      useTLSStore,
-      useThemeStore,
-      useVersionStore,
-      useEndorsementStore,
-      useRightPanelStore,
-      useDisclaimerStore,
-      useAirplaneModeStore,
-      useHSMMode,
-      useBookmarkStore,
-      useChatStore,
-    ] as const
-
-    const unsubs = stores.map((store) =>
-      (store as unknown as { subscribe: (cb: () => void) => () => void }).subscribe(() => {
+    const unsubs = CLOUD_SYNC_WATCHED_STORES.map((store) =>
+      store.subscribe(() => {
         if (debounceRef.current) clearTimeout(debounceRef.current)
         debounceRef.current = setTimeout(() => {
           doSync(accessToken, driveFileId)

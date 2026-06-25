@@ -106,11 +106,11 @@ export const FIRMWARE_VENDORS: FirmwareVendorStatus[] = [
     category: 'Open-Source UEFI',
     currentAlgorithm: 'RSA-2048 (default), RSA-4096 (configurable)',
     pqcStatus: 'merged',
-    roadmapYear: '2026 (Q1 merged)',
+    roadmapYear: '2026 (in progress)',
     products: ['EDK2 open-source', 'OVMF (QEMU/KVM)', 'CorebootPayload'],
-    pqcAlgorithm: 'ML-DSA-65 (MdeModulePkg, merged Q1 2026)',
+    pqcAlgorithm: 'ML-DSA-65 (CryptoPkg, in-progress effort)',
     migrationGuidance:
-      'ML-DSA-65 support is merged into EDK2 main branch as of Q1 2026. Use CryptoPkg PQC library or OpenSSL provider. Enable via CryptoPkg configuration (PCD names may vary by EDK2 branch). Key enrollment via efi-updatevar tool with ML-DSA cert in EFI_SIGNATURE_LIST format.',
+      'PQC for EDK2 is an in-progress community effort (e.g. CryptoPkg/OpenSSL-provider work, TianoCore Bugzilla 4087) — not confirmed merged to EDK2 main as of mid-2026. When available, key enrollment is via the efi-updatevar tool with an ML-DSA cert in EFI_SIGNATURE_LIST format.',
     notes:
       'EDK2 is the reference UEFI implementation and foundation for most vendor BIOS products. PQC ML-DSA support landed through the EDK2 Crypto community call and is available in stable-202502 branch. OVMF (QEMU) PQC testing available immediately for lab validation.',
     certifications: ['NIST CAVP (via OpenSSL 3.x provider)', 'Open Source (no FIPS)'],

@@ -65,12 +65,12 @@ export const TIMELINE_PERSONA_HINTS: Record<string, string> = {
   developer:
     'Track early-mover countries (US, UK, Germany) to align your library adoption with first production deployments.',
   architect:
-    'Map which countries have entered the Deploy or Validate phase — these migration patterns are production-ready.',
+    'Map which countries have reached the Testing, POC, or Migration phases — these are the production-ready patterns to learn from.',
   researcher:
     'Toggle the region filter to compare migration velocity across blocs and identify adoption outliers.',
-  ops: 'Watch the Deploy phase column — countries entering it set the certificate-rotation clock for your fleet.',
+  ops: 'Watch the Migration and Deadline phases — countries entering them set the certificate-rotation clock for your fleet.',
   curious:
-    'Each row is one country/region; bars show how far they have moved through five PQC migration phases.',
+    'Each row is one country/region; bars show how far it has moved through the PQC migration phases shown in the legend.',
 }
 
 export const TimelineView = () => {

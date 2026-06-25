@@ -25,6 +25,12 @@ const TREE: PhaseTree = {
           steps: [
             {
               kind: 'learn',
+              label: 'Learn: Cryptography Bill of Materials',
+              to: '/learn/cbom',
+              moduleId: 'cbom',
+            },
+            {
+              kind: 'learn',
               label: 'Learn: CBOM in Cryptographic Management',
               to: '/learn/crypto-mgmt-modernization',
               moduleId: 'crypto-mgmt-modernization',
@@ -84,6 +90,12 @@ const TREE: PhaseTree = {
           do: 'Enforce refresh triggers and protect the CBOM with classification and access control.',
           output: 'CBOM governance & protection policy',
           steps: [
+            {
+              kind: 'learn',
+              label: 'Learn: secure the CBOM & make it machine-verifiable',
+              to: '/learn/cbom',
+              moduleId: 'cbom',
+            },
             {
               kind: 'learn',
               label: 'Learn: protect the CBOM (it is an HNDL shopping list) — SOC monitoring',

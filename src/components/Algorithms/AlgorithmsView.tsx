@@ -24,7 +24,7 @@ import { useAlgorithmExplorer, MAX_COMPARE } from './useAlgorithmExplorer'
 
 const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
   executive:
-    'Start with FIPS-standardized picks: ML-KEM-768 and ML-DSA-65 — the required choices for US federal compliance.',
+    'Start with the FIPS-standardized families. FIPS 203/204 each define three levels; ML-KEM-768 / ML-DSA-65 is the common general-use default, while NSA CNSA 2.0 (for US National Security Systems) requires the Level-5 sets ML-KEM-1024 / ML-DSA-87.',
   developer:
     "Filter by 'Standardized' status and compare key/signature sizes — performance varies 10× across families.",
   architect:
@@ -33,7 +33,7 @@ const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
     'Switch to the Detailed tab for full parameter sets, attack vectors, and cross-family security comparisons.',
   ops: 'Filter Status = Certified and look for Production deployment chips on Protocol Support — these are the algorithms safe to deploy in OpenSSL, nginx and HSMs today.',
   curious:
-    'You unlocked the full comparison. The three NIST picks (ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128s) are pre-highlighted; everything else is for specialists.',
+    'You unlocked the full comparison. A common general-use starting set (ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128s) is pre-highlighted; everything else is for specialists.',
 }
 
 export function AlgorithmsView() {

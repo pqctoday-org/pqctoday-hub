@@ -63,7 +63,7 @@ export const CARD_AUTH_SPECS: CardAuthSpec[] = [
       'Quantum computers could forge ICC signatures, undermining the entire offline trust model',
     ],
     pqcMigrationPath:
-      'FN-DSA-512 (Falcon, FIPS 206 draft) produces compact signatures (~690 bytes) that fit constrained card NVM. ML-DSA-44 signatures are ~2,420 bytes. FIPS 206 standardization for FN-DSA is pending.',
+      'FN-DSA-512 (Falcon, FIPS 206 draft) produces compact signatures (~666 bytes, fixed padded size) that fit constrained card NVM. ML-DSA-44 signatures are ~2,420 bytes. FIPS 206 standardization for FN-DSA is pending.',
     prevalence: '~35% of active EMV cards',
   },
   {
@@ -285,7 +285,7 @@ export const CERT_CHAIN_COMPARISONS: CertChainComparison[] = [
         label: 'EMVCo Root CA',
         algorithm: 'FN-DSA-512',
         publicKeyBytes: 897,
-        signatureBytes: 690,
+        signatureBytes: 666,
         certificateBytes: 1687,
       },
       {
@@ -293,7 +293,7 @@ export const CERT_CHAIN_COMPARISONS: CertChainComparison[] = [
         label: 'Network CA',
         algorithm: 'FN-DSA-512',
         publicKeyBytes: 897,
-        signatureBytes: 690,
+        signatureBytes: 666,
         certificateBytes: 1687,
       },
       {
@@ -301,7 +301,7 @@ export const CERT_CHAIN_COMPARISONS: CertChainComparison[] = [
         label: 'Issuer CA',
         algorithm: 'FN-DSA-512',
         publicKeyBytes: 897,
-        signatureBytes: 690,
+        signatureBytes: 666,
         certificateBytes: 1687,
       },
       {
@@ -309,7 +309,7 @@ export const CERT_CHAIN_COMPARISONS: CertChainComparison[] = [
         label: 'ICC Certificate',
         algorithm: 'FN-DSA-512',
         publicKeyBytes: 897,
-        signatureBytes: 690,
+        signatureBytes: 666,
         certificateBytes: 1687,
       },
     ],
