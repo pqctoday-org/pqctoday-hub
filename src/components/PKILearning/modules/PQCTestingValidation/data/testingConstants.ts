@@ -714,8 +714,8 @@ export interface InteropEntry {
 
 export const CLIENT_CONFIGS = [
   { id: 'oqs-openssl', label: 'OQS-OpenSSL (ML-KEM-768)' },
-  { id: 'chrome-hybrid', label: 'Chrome 130+ (X25519+ML-KEM-768)' },
-  { id: 'firefox-hybrid', label: 'Firefox 128+ (X25519+ML-KEM-768)' },
+  { id: 'chrome-hybrid', label: 'Chrome 131+ (X25519+ML-KEM-768)' },
+  { id: 'firefox-hybrid', label: 'Firefox 132+ (X25519+ML-KEM-768)' },
   { id: 'classical-only', label: 'Legacy Client (ECDH only)' },
   { id: 'pure-pqc', label: 'Pure PQC Client (ML-KEM-768 only)' },
 ]
@@ -798,7 +798,7 @@ export const INTEROP_MATRIX: Record<string, Record<string, InteropEntry>> = {
       client: 'firefox-hybrid',
       server: 'oqs-server',
       status: 'compatible',
-      note: 'Firefox 128+ hybrid ML-KEM supported by OQS server',
+      note: 'Firefox 132+ hybrid ML-KEM supported by OQS server',
     },
     cloudflare: {
       client: 'firefox-hybrid',

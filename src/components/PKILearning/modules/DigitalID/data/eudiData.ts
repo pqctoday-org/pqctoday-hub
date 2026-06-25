@@ -165,9 +165,9 @@ export const CREDENTIAL_FORMATS: CredentialFormatSpec[] = [
   },
   {
     id: 'sd-jwt-vc',
-    name: 'SD-JWT VC (RFC 9901)',
+    name: 'SD-JWT VC (vc+sd-jwt)',
     encoding: 'JSON (text, Base64url)',
-    standard: 'RFC 9901 + SD-JWT (IETF draft)',
+    standard: 'draft-ietf-oauth-sd-jwt-vc (on base SD-JWT, RFC 9901)',
     optimizedFor: 'Remote / online services (API, browser)',
     disclosureMethod: 'Salted SHA-256 hash disclosures; holder reveals only requested claims',
     proofType: 'JWT signature (ECDSA ES256 or RS256); key binding JWT for holder proof',
