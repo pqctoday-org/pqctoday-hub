@@ -7,24 +7,11 @@ import type { IEmbedPersistenceService } from './EmbedPersistenceService'
 import { UnifiedStorageService } from '../services/storage/UnifiedStorageService'
 import { mergeModuleProgress } from '../services/storage/mergeProgress'
 
-// Import all stores we want to persist
+// Stores referenced directly below; the change-detection watch set lives in the
+// shared registry (EMBED_WATCHED_STORES).
 import { useModuleStore } from '../store/useModuleStore'
-import { useAssessmentStore } from '../store/useAssessmentStore'
-import { usePersonaStore } from '../store/usePersonaStore'
 import { useHistoryStore } from '../store/useHistoryStore'
-import { useMigrateSelectionStore } from '../store/useMigrateSelectionStore'
-import { useComplianceSelectionStore } from '../store/useComplianceSelectionStore'
-import { useAchievementStore } from '../store/useAchievementStore'
-import { useMigrationWorkflowStore } from '../store/useMigrationWorkflowStore'
-import { useTLSStore } from '../store/tls-learning.store'
-import { useThemeStore } from '../store/useThemeStore'
-import { useVersionStore } from '../store/useVersionStore'
-import { useEndorsementStore } from '../store/useEndorsementStore'
-import { useRightPanelStore } from '../store/useRightPanelStore'
-import { useDisclaimerStore } from '../store/useDisclaimerStore'
-import { useHSMMode } from '../store/useHSMMode'
-import { useBookmarkStore } from '../store/useBookmarkStore'
-import { useChatStore } from '../store/useChatStore'
+import { EMBED_WATCHED_STORES } from '../store/syncWatchedStores'
 
 const DEBOUNCE_MS = 5000
 const EVENT_BATCH_MS = 30000
@@ -129,25 +116,6 @@ export function useEmbedPersistence() {
   useEffect(() => {
     if (!isAuthenticated || persistMode === 'none') return
 
-    const stores = [
-      useModuleStore,
-      useAssessmentStore,
-      usePersonaStore,
-      useMigrateSelectionStore,
-      useComplianceSelectionStore,
-      useAchievementStore,
-      useMigrationWorkflowStore,
-      useTLSStore,
-      useThemeStore,
-      useVersionStore,
-      useEndorsementStore,
-      useRightPanelStore,
-      useDisclaimerStore,
-      useHSMMode,
-      useBookmarkStore,
-      useChatStore,
-    ] as const
-
     const doSave = () => {
       const snapshot = UnifiedStorageService.exportSnapshot('manual')
       service.saveSnapshot(userId, snapshot).catch((err) => {
@@ -155,8 +123,8 @@ export function useEmbedPersistence() {
       })
     }
 
-    const unsubs = stores.map((store) =>
-      (store as unknown as { subscribe: (cb: () => void) => () => void }).subscribe(() => {
+    const unsubs = EMBED_WATCHED_STORES.map((store) =>
+      store.subscribe(() => {
         if (debounceRef.current) clearTimeout(debounceRef.current)
         debounceRef.current = setTimeout(doSave, DEBOUNCE_MS)
       })
