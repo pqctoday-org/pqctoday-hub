@@ -8,7 +8,7 @@ This module explores Quantum Key Distribution, a method of distributing encrypti
 - **BB84 protocol**: First QKD protocol (Bennett & Brassard, 1984); uses single photons encoded in two conjugate bases (rectilinear and diagonal); four steps: qubit preparation, measurement, basis reconciliation (sifted key ~50% of transmitted bits), and eavesdropper detection via QBER threshold (~11%)
 - **State of the art**: Fiber single link (~100 km, commercial), fiber with trusted nodes (>2,000 km, deployed), satellite (>7,000 km, demonstrated), free-space urban (~10 km, research)
 - **Satellite QKD**: Two modes -- trusted-node satellite relay (Micius demonstrated China-Austria 7,600 km, 2017) and entanglement-based (no key material on satellite, Micius over 1,120 km, 2020); key initiatives include Micius/QUESS (China), EAGLE-1/EuroQCI (EU), QEYSSat (Canada), SOCRATES (Japan), SpooQy-1 (Singapore), QKDSat (UK)
-- **NIST position**: NIST IR 8301 does not generally recommend QKD; recommends PQC (FIPS 203/204/205) as primary solution; acknowledges QKD may have niche applications in high-security environments
+- **NIST/NSA position**: NSA and NIST guidance does not generally recommend QKD for national security systems; PQC (FIPS 203/204/205) is the primary recommended solution; QKD may have niche applications in high-security environments
 - **Limitations**: ~100 km fiber distance without trusted nodes, trusted node compromise risk, high cost (dedicated fiber, cryogenic detectors), side-channel vulnerabilities in real devices, low key rates, no built-in authentication
 - **QKD + PQC hybrid integration**: Combines QKD-derived key and ML-KEM shared secret via HKDF; security holds if either source remains unbroken (defense in depth)
 - **QKD + HSM integration**: PKCS#11 key import (C_UnwrapKey/C_CreateObject), HSM manages lifecycle including rotation and destruction; continuous fresh key generation
@@ -24,7 +24,7 @@ This module explores Quantum Key Distribution, a method of distributing encrypti
 
 ## Related Standards
 
-- NIST IR 8301 (Transition to Post-Quantum Cryptography)
+- NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, Initial Public Draft)
 - FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA)
 - NIST SP 800-108 (KDF in Counter Mode)
 - ETSI QKD standards (GS QKD series)
