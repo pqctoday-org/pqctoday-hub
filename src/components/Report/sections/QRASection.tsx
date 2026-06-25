@@ -209,15 +209,17 @@ function Backlog({ items }: { items: QRABacklogItem[] }) {
   )
 }
 
-/** Optimistic / expected / pessimistic CRQC arrival, plus the conservative planning anchor. */
+/** Optimistic / expected / pessimistic CRQC arrival, plus the aggressive planning anchor. */
 function CrqcWindow() {
   return (
     <div className="rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
       <span className="font-semibold text-foreground">CRQC arrival window</span> — when a quantum
       computer could break today&apos;s RSA/ECC: optimistic ~{CRQC_ESTIMATES.lowerBound} · expected
-      ~{CRQC_ESTIMATES.moderate} · pessimistic ~{CRQC_ESTIMATES.upperBound}. This assessment plans
-      against a conservative {QC_FIRST_YEAR} anchor for the most sensitive, long-lived data. Source:
-      GRI Quantum Threat Timeline 2025 (median 2029–2032).
+      ~{CRQC_ESTIMATES.moderate} · pessimistic ~{CRQC_ESTIMATES.upperBound}. For the most sensitive,
+      long-lived data this assessment plans against an aggressive ~{QC_FIRST_YEAR} anchor — a
+      deliberately cautious planning choice below the research floor, not a forecast. There is no
+      consensus date: the GRI / evolutionQ Quantum Threat Timeline 2025 puts a CRQC at roughly
+      28–49% likelihood within 10 years and 51–70% within 15 years.
     </div>
   )
 }
