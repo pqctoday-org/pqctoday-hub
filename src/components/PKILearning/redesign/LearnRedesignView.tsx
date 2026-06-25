@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { GraduationCap, Compass, ListChecks } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -30,20 +30,57 @@ type Mode = 'path' | 'browse'
  */
 export const LearnRedesignView = () => {
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const deepLinkNice = searchParams.get('view') === 'nice'
+  // ?track= presets the Browse catalog filter (restored from the legacy dashboard).
+  const deepLinkTrack = searchParams.get('track') ?? undefined
 
   const isEmbed = useIsEmbedded()
 
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const setPersona = usePersonaStore((s) => s.setPersona)
 
+  // ?persona= presets the persona lens (restored from the legacy dashboard so
+  // chatbot/corpus "learn as <role>" deep-links work again). Applied once.
+  const personaHydratedRef = useRef(false)
+  useEffect(() => {
+    if (personaHydratedRef.current) return
+    const p = searchParams.get('persona')
+    if (p && (PERSONA_ORDER as readonly string[]).includes(p)) {
+      personaHydratedRef.current = true
+      setPersona(p as PersonaId)
+    }
+  }, [searchParams, setPersona])
+
   // First open defaults to "My Path" — the page's headline ("one guided path …
   // tuned to your role"). With no role yet, My Path shows the cold-start prompt to
-  // pick a role; landing on the dense Browse catalog instead read as "off". Only
-  // the ?view=nice deep-link opens straight into Browse (the workforce lens).
-  const [mode, setMode] = useState<Mode>(() => (deepLinkNice ? 'browse' : 'path'))
+  // pick a role; landing on the dense Browse catalog instead read as "off". The
+  // ?mode= deep-link (mypath|browse) — and the legacy ?view=nice — open Browse.
+  const [mode, setMode] = useState<Mode>(() => {
+    const m = searchParams.get('mode')
+    if (m === 'browse') return 'browse'
+    if (m === 'mypath') return 'path'
+    return deepLinkNice ? 'browse' : 'path'
+  })
   const [showRouter, setShowRouter] = useState(false)
+
+  // Toggle mode and reflect it in ?mode= so the active mode is shareable/
+  // restorable. Skip the URL write when embedded (don't touch /simulation).
+  const selectMode = useCallback(
+    (next: Mode) => {
+      setMode(next)
+      if (isEmbed) return
+      setSearchParams(
+        (sp) => {
+          const params = new URLSearchParams(sp)
+          params.set('mode', next === 'browse' ? 'browse' : 'mypath')
+          return params
+        },
+        { replace: true }
+      )
+    },
+    [isEmbed, setSearchParams]
+  )
 
   const pathSummary = usePersonaPathItems(selectedPersona)
 
@@ -100,7 +137,7 @@ export const LearnRedesignView = () => {
               onClick={() => {
                 setPersona(id)
                 setShowRouter(false)
-                setMode('path')
+                selectMode('path')
               }}
               aria-pressed={active}
               className={`h-auto inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-colors ${
@@ -138,7 +175,7 @@ export const LearnRedesignView = () => {
             variant="ghost"
             size="sm"
             aria-pressed={mode === 'path'}
-            onClick={() => setMode('path')}
+            onClick={() => selectMode('path')}
             className={`text-xs rounded-lg ${
               mode === 'path'
                 ? 'bg-gradient-to-br from-primary to-accent text-background font-bold'
@@ -151,7 +188,7 @@ export const LearnRedesignView = () => {
             variant="ghost"
             size="sm"
             aria-pressed={mode === 'browse'}
-            onClick={() => setMode('browse')}
+            onClick={() => selectMode('browse')}
             className={`text-xs rounded-lg ${
               mode === 'browse'
                 ? 'bg-gradient-to-br from-primary to-accent text-background font-bold'
@@ -169,7 +206,7 @@ export const LearnRedesignView = () => {
         selectedPersona ? (
           <MyPathView
             personaId={selectedPersona as PersonaId}
-            onOpenCatalog={() => setMode('browse')}
+            onOpenCatalog={() => selectMode('browse')}
           />
         ) : (
           <div className="space-y-3">
@@ -177,7 +214,7 @@ export const LearnRedesignView = () => {
               <span className="text-sm text-muted-foreground">
                 Pick a role above for a guided path — or
               </span>
-              <Button variant="outline" size="sm" onClick={() => setMode('browse')}>
+              <Button variant="outline" size="sm" onClick={() => selectMode('browse')}>
                 Browse all {TOTAL_MODULE_COUNT} modules
               </Button>
             </div>
@@ -185,7 +222,11 @@ export const LearnRedesignView = () => {
           </div>
         )
       ) : (
-        <BrowseAllView personaId={selectedPersona} initialNiceMode={deepLinkNice} />
+        <BrowseAllView
+          personaId={selectedPersona}
+          initialNiceMode={deepLinkNice}
+          initialTrack={deepLinkTrack}
+        />
       )}
     </div>
   )

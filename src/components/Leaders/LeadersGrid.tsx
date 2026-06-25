@@ -197,12 +197,18 @@ export const LeadersGrid = () => {
     const nextSort = (searchParams.get('sort') as LeaderSortOption | null) ?? 'name'
     const nextMode = (searchParams.get('mode') as LeadersViewMode | null) ?? 'cards'
     const nextLeader = searchParams.get('leader')
+    // ?leader=<name> is the shareable "open this leader" deep link. Resolve the
+    // name to its id so the matching card expands (open), in addition to the
+    // scroll-to highlight handled by the effect below.
+    const nextLeaderId = nextLeader
+      ? (leadersData.find((l) => l.name === nextLeader)?.id ?? null)
+      : null
 
     // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync is the purpose of this effect
     setSearchQuery((prev) => (prev !== nextQ ? nextQ : prev))
     setSortBy((prev) => (prev !== nextSort ? nextSort : prev))
     setViewMode((prev) => (prev !== nextMode ? nextMode : prev))
-    // ?leader= handled by the scroll-to effect below
+    setExpandedLeaderId((prev) => (prev !== nextLeaderId ? nextLeaderId : prev))
     if (nextLeader) setHighlightedLeader((prev) => (prev !== nextLeader ? nextLeader : prev))
   }, [searchParams])
 
@@ -413,13 +419,34 @@ export const LeadersGrid = () => {
     logEvent('Leaders', 'Filter Category', category)
   }
 
-  const toggleDetail = (leader: Leader) =>
-    setExpandedLeaderId((prev) => {
-      const next = prev === leader.id ? null : leader.id
-      logEvent('Leaders', next ? 'Card Open' : 'Card Close', personaLabel(leader.id))
-      return next
-    })
-  const closeDetail = () => setExpandedLeaderId(null)
+  // Writing ?leader=<name> makes the open card a shareable/bookmarkable deep
+  // link. Opening pushes a history entry (so Back closes it); closing strips the
+  // param in place. The URL→state effect above reconciles expandedLeaderId.
+  const writeLeaderParam = useCallback(
+    (name: string | null, { push }: { push: boolean }) => {
+      setSearchParams(
+        (sp) => {
+          const params = new URLSearchParams(sp)
+          if (name) params.set('leader', name)
+          else params.delete('leader')
+          return params
+        },
+        { replace: !push }
+      )
+    },
+    [setSearchParams]
+  )
+
+  const toggleDetail = (leader: Leader) => {
+    const next = expandedLeaderId === leader.id ? null : leader.id
+    setExpandedLeaderId(next)
+    logEvent('Leaders', next ? 'Card Open' : 'Card Close', personaLabel(leader.id))
+    writeLeaderParam(next ? leader.name : null, { push: Boolean(next) })
+  }
+  const closeDetail = () => {
+    setExpandedLeaderId(null)
+    writeLeaderParam(null, { push: false })
+  }
 
   return (
     <div className="space-y-6">
