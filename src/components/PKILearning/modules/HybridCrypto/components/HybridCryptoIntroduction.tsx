@@ -82,8 +82,9 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               </div>
               <p className="text-xs text-muted-foreground">
                 NSA&apos;s Commercial National Security Algorithm Suite 2.0 mandates PQC adoption
-                for national security systems by 2030 &mdash; with hybrid key exchange required
-                during the transition window.
+                (ML-KEM-1024 + ML-DSA-87) for national security systems, with exclusive-use
+                deadlines running to 2030&ndash;2033 by equipment class. CNSA 2.0 does not require
+                hybrid &mdash; it permits pure PQC (hybrid is mandated by ANSSI/BSI, not the NSA).
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">

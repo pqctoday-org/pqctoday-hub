@@ -95,8 +95,12 @@ const ALGORITHMS: AlgorithmImpact[] = [
 
 const COMPLIANCE_DEADLINES = [
   { framework: 'CNSA 2.0 \u2014 Software/Firmware Signing', year: 2025, advisory: false },
-  { framework: 'CNSA 2.0 \u2014 Web/Cloud/Networking (TLS/IPsec)', year: 2030, advisory: false },
-  { framework: 'CNSA 2.0 \u2014 Legacy Infrastructure', year: 2033, advisory: false },
+  { framework: 'CNSA 2.0 \u2014 Traditional networking (TLS/IPsec)', year: 2030, advisory: false },
+  {
+    framework: 'CNSA 2.0 \u2014 Web / cloud / servers / OS exclusive',
+    year: 2033,
+    advisory: false,
+  },
   { framework: 'NIST \u2014 RSA/ECC Deprecation (NIST IR 8547)', year: 2030, advisory: false },
   { framework: 'NIST \u2014 RSA/ECC Disallowed (NIST IR 8547)', year: 2035, advisory: false },
   { framework: 'EU/ANSSI \u2014 PQC Guidance (advisory)', year: 2030, advisory: true },

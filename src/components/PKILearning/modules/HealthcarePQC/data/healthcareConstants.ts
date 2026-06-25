@@ -577,9 +577,9 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
       },
       {
         algorithm: 'FN-DSA',
-        feasible: true,
+        feasible: false,
         rationale:
-          'Fast signature verification with small key sizes and minimal RAM usage. Highly suitable for constrained Cortex-M0+ environments.',
+          'FN-DSA (Falcon) signing relies on double-precision floating-point; the Cortex-M0+ has no FPU, so FP must be emulated — widely considered impractical on this class of device. Prefer stateful hash-based signatures (LMS/XMSS) on-device.',
       },
     ],
   },

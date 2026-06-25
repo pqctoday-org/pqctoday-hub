@@ -93,7 +93,7 @@ gcloud kms keys create my-pqc-key \\
 gcloud kms keys create my-xwing-key \\
   --default-algorithm=X_WING`,
     notes:
-      'Supports ML-KEM-768, ML-KEM-1024, X-Wing hybrid KEM (X25519+ML-KEM-768), ML-DSA-65, and SLH-DSA. X-Wing is a Google-originated hybrid KEM design. Powered by BoringCrypto (Google fork of BoringSSL) and Tink library. ML-KEM and X-Wing in GA; ML-DSA and SLH-DSA in preview.',
+      'Supports ML-KEM-768, ML-KEM-1024, X-Wing hybrid KEM (X25519+ML-KEM-768), ML-DSA-65, and SLH-DSA. X-Wing (draft-connolly-cfrg-xwing-kem) is a community/IETF-CFRG design by Barbosa, Connolly, Schwabe, Westerbaan et al. — not a Google design, and distinct from the TLS group X25519MLKEM768. Powered by BoringCrypto (Google fork of BoringSSL) and Tink library. ML-KEM and X-Wing in GA; ML-DSA and SLH-DSA in preview.',
   },
   {
     id: 'azure-kv',

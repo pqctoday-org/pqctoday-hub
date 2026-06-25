@@ -275,7 +275,7 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     target: 'AES-256 + ML-KEM wrap',
     decision: 'rekey',
     wave: 4,
-    cnsaYear: 2035,
+    cnsaYear: 2033,
     hndl: true,
     deadlineLabel: 'Symmetric-safe; re-wrap the keys',
     note: 'AES-256 itself is quantum-resistant — the exposure is the RSA/ECDH key-wrapping of the data-encryption keys. Re-wrap DEKs under an ML-KEM hybrid KEK; no bulk re-encryption needed.',

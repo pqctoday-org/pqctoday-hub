@@ -237,8 +237,8 @@ const BitcoinP2QRH: React.FC = () => (
           <div>
             <p className="text-sm font-medium text-foreground">Generate a PQC keypair</p>
             <p className="text-xs text-muted-foreground">
-              Use ML-DSA-65 (FIPS 204) or FN-DSA-512 (FIPS 206) instead of secp256k1. Both are
-              NIST-standardised PQC signature schemes.
+              Use ML-DSA-65 (FIPS 204) — a finalized NIST standard — or FN-DSA-512 (FIPS 206, still
+              in draft) instead of secp256k1.
             </p>
           </div>
         </div>
