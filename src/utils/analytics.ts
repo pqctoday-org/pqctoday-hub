@@ -17,7 +17,10 @@ export const initGA = () => {
   if (isLocalhost()) return
 
   if (measurementId) {
-    ReactGA.initialize(measurementId)
+    // Disable GA4's automatic page_view on init — AnalyticsTracker fires the
+    // first (and every) pageview on route change, so letting GA4 also auto-send
+    // one double-counts the landing page.
+    ReactGA.initialize(measurementId, { gtagOptions: { send_page_view: false } })
   } else {
     console.warn('[Analytics] Google Analytics Measurement ID is missing.')
   }
