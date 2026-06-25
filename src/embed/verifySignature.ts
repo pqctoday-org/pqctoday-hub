@@ -380,8 +380,12 @@ function validateToolPath(pathname: string, allowedTools: string[], kid?: string
  *
  * PRD §4.3: collect all params except `sig`, sort alphabetically by key,
  * join as key=value pairs separated by &. Values are NOT URL-encoded.
+ *
+ * Exported for testing — this is the exact byte string that ECDSA verifies, so
+ * its canonicalization (key sort, `sig`/`ind` exclusion, no encoding) is
+ * security-critical and must not drift.
  */
-function buildCanonicalString(params: URLSearchParams): string {
+export function buildCanonicalString(params: URLSearchParams): string {
   const entries: [string, string][] = []
 
   // 'sig' is the signature itself; 'ind' is a post-verification secondary param
