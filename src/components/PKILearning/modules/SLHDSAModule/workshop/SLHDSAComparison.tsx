@@ -43,9 +43,9 @@ const ROWS = [
   },
   {
     label: 'CNSA 2.0',
-    lms: 'Allowed (limited use)',
-    xmss: 'Allowed (limited use)',
-    slhdsa: 'Allowed',
+    lms: 'Allowed (software/firmware signing)',
+    xmss: 'Allowed (software/firmware signing)',
+    slhdsa: 'Not approved (not in CNSA 2.0)',
   },
   {
     label: 'Best use cases',

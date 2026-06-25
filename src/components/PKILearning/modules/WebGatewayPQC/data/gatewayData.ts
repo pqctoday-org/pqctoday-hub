@@ -480,10 +480,10 @@ export const GATEWAY_VENDORS: GatewayVendor[] = [
     name: 'NGINX Plus',
     category: 'reverse-proxy',
     pqcStatus: 'production',
-    pqcVersion: 'R32+',
+    pqcVersion: 'R33+',
     algorithms: ['X25519MLKEM768'],
     fipsStatus: 'FIPS 140-3 (OpenSSL)',
-    notes: 'Commercial NGINX with ML-KEM hybrid via OpenSSL 3.x + liboqs-provider.',
+    notes: 'Commercial NGINX; initial PQC support added in NGINX Plus R33 via the OQS provider.',
   },
   {
     id: 'nginx-oss',
@@ -493,7 +493,8 @@ export const GATEWAY_VENDORS: GatewayVendor[] = [
     pqcVersion: '1.28+',
     algorithms: ['X25519MLKEM768'],
     fipsStatus: 'No',
-    notes: 'PQC when compiled against OpenSSL 3.2+. No vendor support.',
+    notes:
+      'Native ML-KEM (X25519MLKEM768) requires OpenSSL 3.5+; OpenSSL 3.2–3.4 need the external OQS provider. No vendor support.',
   },
   {
     id: 'haproxy',
@@ -529,11 +530,12 @@ export const GATEWAY_VENDORS: GatewayVendor[] = [
     id: 'traefik',
     name: 'Traefik',
     category: 'reverse-proxy',
-    pqcStatus: 'planned',
-    pqcVersion: 'Go 1.25 (expected)',
-    algorithms: ['ML-KEM-768'],
+    pqcStatus: 'production',
+    pqcVersion: '3.5+ (Go 1.24 stdlib)',
+    algorithms: ['X25519MLKEM768'],
     fipsStatus: 'No',
-    notes: 'Kubernetes ingress. PQC via Go stdlib ML-KEM when enabled by default.',
+    notes:
+      'Kubernetes ingress. Traefik 3.5 added X25519MLKEM768; the Go 1.24 stdlib (Feb 2025) enabled it by default.',
   },
   {
     id: 'cloudflare-edge',
@@ -613,7 +615,8 @@ export const GATEWAY_VENDORS: GatewayVendor[] = [
     pqcVersion: '2.4.60+',
     algorithms: ['X25519MLKEM768'],
     fipsStatus: 'No',
-    notes: 'PQC via mod_ssl + OpenSSL 3.2+. Widely deployed web server.',
+    notes:
+      'PQC via mod_ssl; native ML-KEM key exchange requires OpenSSL 3.5+ (3.2–3.4 need the OQS provider). Widely deployed web server.',
   },
   {
     id: 'broadcom-avi',
