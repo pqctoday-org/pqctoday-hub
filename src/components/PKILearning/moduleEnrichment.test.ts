@@ -94,6 +94,12 @@ describe('moduleEnrichment — researcher taxonomy (P2-3)', () => {
       'X.509',
       'PKCS#11',
       'JOSE',
+      'CycloneDX / ECMA-424',
+      'SPDX / ISO 5962',
+      'NIST SP 1800-38',
+      'NIST IR 8547',
+      'NIST SP 800-131A',
+      'ISO/IEC 27001',
     ])
     for (const entry of Object.values(MODULE_TAXONOMY)) {
       for (const alg of entry.algorithms ?? []) {
