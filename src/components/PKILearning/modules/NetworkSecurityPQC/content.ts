@@ -46,7 +46,7 @@ export const content: ModuleContent = {
     workshopSummary:
       'NGFW Cipher Analyzer — cipher policy comparison (classical/hybrid/pure PQC), hardware tier impact, cert size and latency metrics. TLS Inspection Lab — pass-through vs full inspection simulation, PQC cert chain sizes, inspection feasibility matrix. IDS Signature Updater — PQC-aware rule categories, false positive rate analysis, detection coverage balancing. Vendor Migration Matrix — interactive filtering by ML-KEM/ML-DSA support, TLS inspection, hardware offload, readiness status.',
     relatedStandards:
-      'NIST SP 800-227: Key Encapsulation Mechanisms (ML-KEM in TLS). NIST SP 800-207A: Zero Trust Architecture and PQC. RFC 9370: Multiple Key Exchanges in IKEv2 (hybrid KEM for IPsec). CNSA 2.0: Hybrid by 2026, exclusively PQC by 2033 for NSS environments. NIST IR 8547: Classical crypto deprecation timeline (2030/2035)',
+      'NIST SP 800-227: Key Encapsulation Mechanisms (ML-KEM in TLS). NIST SP 800-207A: Zero Trust Architecture and PQC. RFC 9370: Multiple Key Exchanges in IKEv2 (hybrid KEM for IPsec). CNSA 2.0: prefer CNSA 2.0 in new software/firmware by 2025; exclusive use by 2030 (sw/fw signing, traditional networking) and 2033 (web/cloud/OS); all NSS by 2035 — NSA prefers pure PQC and does not require hybrid. NIST IR 8547: Classical crypto deprecation timeline (2030/2035)',
   },
 }
 

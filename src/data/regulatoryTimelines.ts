@@ -39,11 +39,15 @@ const DE_DEADLINE = TIMELINE_COUNTRY_DEADLINE_YEAR['DE'] ?? 2030
 export const CNSA_2_0 = {
   /** New software/firmware should prefer CNSA 2.0 algorithms */
   softwarePreferred: 2025,
-  /** New networking equipment must support CNSA 2.0 */
+  /** New-NSS-acquisition / operating-system support gate (the 2027 milestone is OS
+   * support + new acquisitions, NOT networking — networking support is 2026). Field
+   * name kept for back-compat. */
   networkingRequired: 2027,
-  /** All deployed NSS software must use CNSA 2.0 signatures (= US sim deadline, from CSV) */
+  /** Software/firmware signing must exclusively use CNSA 2.0 (= US sim deadline, from CSV) */
   softwareExclusive: US_DEADLINE,
-  /** Legacy networking equipment must be replaced with CNSA 2.0 */
+  /** Web browsers, servers, cloud services & operating systems exclusively CNSA 2.0.
+   * (Traditional networking equipment is exclusive by 2030, not 2033.) Field name kept
+   * for back-compat. */
   networkingExclusive: 2033,
   /** All remaining NSS systems — web, cloud, servers */
   fullEnforcement: 2035,
@@ -71,14 +75,14 @@ export const CNSA_2_0_BY_CLASS: ReadonlyArray<{
   requirement: string
 }> = [
   {
-    class: 'Software & firmware (acquisitions)',
-    year: CNSA_2_0.networkingRequired, // 2027 — procurement gate
-    requirement: 'New software/firmware acquisitions must support CNSA 2.0',
+    class: 'New NSS acquisitions & operating systems',
+    year: CNSA_2_0.networkingRequired, // 2027 — new-acquisition / OS support gate
+    requirement: 'New NSS acquisitions and operating-system support must use CNSA 2.0',
   },
   {
-    class: 'Networking equipment',
-    year: CNSA_2_0.softwareExclusive, // 2030 per p.156 ("networking by 2030")
-    requirement: 'Networking equipment exclusively CNSA 2.0',
+    class: 'Traditional networking equipment',
+    year: CNSA_2_0.softwareExclusive, // 2030 — networking & sw/fw signing exclusive
+    requirement: 'Traditional networking equipment exclusively CNSA 2.0',
   },
   {
     class: 'Web, cloud & operating systems',
