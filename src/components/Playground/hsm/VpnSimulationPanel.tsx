@@ -75,6 +75,7 @@ import { translateCryptoError } from '@/utils/cryptoErrorHint'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { Button } from '@/components/ui/button'
 import { ChromiumGateBanner, useChromiumGate } from '@/components/shared/ChromiumGateBanner'
+import { derCat, derTLV, derBitString, encodeRsaPublicKeyDER } from '../derCodec'
 
 export interface VpnSimulationPanelProps {
   initialMode?: IKEv2Mode
@@ -84,38 +85,8 @@ type SoftHSMWasmModule = NonNullable<
   ReturnType<typeof getSoftHSMCppModule> extends Promise<infer T> ? T : never
 >
 
-// ── Minimal DER helpers (RSAPublicKey BIT STRING content only) ────────────────
-function derCat(...arrays: Uint8Array[]): Uint8Array {
-  const total = arrays.reduce((s, a) => s + a.length, 0)
-  const out = new Uint8Array(total)
-  let off = 0
-  for (const a of arrays) {
-    out.set(a, off)
-    off += a.length
-  }
-  return out
-}
-function derLen(n: number): Uint8Array {
-  if (n < 0x80) return new Uint8Array([n])
-  if (n < 0x100) return new Uint8Array([0x81, n])
-  return new Uint8Array([0x82, n >>> 8, n & 0xff])
-}
-function derTLV(tag: number, content: Uint8Array): Uint8Array {
-  return derCat(new Uint8Array([tag]), derLen(content.length), content)
-}
-function derInteger(bytes: Uint8Array): Uint8Array {
-  // Pad with 0x00 if high bit set (marks positive integer in two's complement)
-  const padded = bytes[0] & 0x80 ? derCat(new Uint8Array([0x00]), bytes) : bytes
-  return derTLV(0x02, padded)
-}
-/** RSAPublicKey ::= SEQUENCE { modulus INTEGER, publicExponent INTEGER } */
-function encodeRsaPublicKeyDER(n: Uint8Array, e: Uint8Array): Uint8Array {
-  return derTLV(0x30, derCat(derInteger(n), derInteger(e)))
-}
-/** BIT STRING wrapper (unused-bits = 0) — for the outer Certificate signatureValue */
-function derBitStr(bytes: Uint8Array): Uint8Array {
-  return derTLV(0x03, derCat(new Uint8Array([0x00]), bytes))
-}
+// DER (ASN.1) encoders are shared from ../derCodec (see derCat/derTLV/etc. imports).
+
 /** SHA256withRSA AlgorithmIdentifier DER (fixed bytes) */
 const SHA256_RSA_ALG_DER = new Uint8Array([
   0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x01, 0x0b, 0x05, 0x00,
@@ -325,7 +296,7 @@ function buildHsmSelfSignedCert(
 
   // 7. Assemble Certificate DER manually (avoids re-serialisation of TBS)
   //    Certificate ::= SEQUENCE { tbsCertificate, signatureAlgorithm, signatureValue }
-  const certDer = derTLV(0x30, derCat(tbsDer, SHA256_RSA_ALG_DER, derBitStr(signature)))
+  const certDer = derTLV(0x30, derCat(tbsDer, SHA256_RSA_ALG_DER, derBitString(signature)))
 
   // 8. PEM encode
   const b64 = btoa(String.fromCharCode(...certDer))
@@ -422,7 +393,7 @@ function buildHsmMlDsaSelfSignedCert(
 
   // 8. Assemble Certificate DER manually: SEQUENCE { tbsCertificate, signatureAlgorithm, signatureValue }
   const algDer = ML_DSA_ALG_DER_FOR_VARIANT[variant]
-  const certDer = derTLV(0x30, derCat(tbsDer, algDer, derBitStr(signature)))
+  const certDer = derTLV(0x30, derCat(tbsDer, algDer, derBitString(signature)))
 
   // 9. PEM encode
   const b64 = btoa(String.fromCharCode(...certDer))
@@ -495,7 +466,7 @@ async function buildMlDsaSelfSignedCertAsync(
   const signature = await signFn(tbsDer)
 
   const algDer = ML_DSA_ALG_DER_FOR_VARIANT[variant]
-  const certDer = derTLV(0x30, derCat(tbsDer, algDer, derBitStr(signature)))
+  const certDer = derTLV(0x30, derCat(tbsDer, algDer, derBitString(signature)))
   const b64 = btoa(String.fromCharCode(...certDer))
   const lines = b64.match(/.{1,64}/g) ?? []
   return `-----BEGIN CERTIFICATE-----\n${lines.join('\n')}\n-----END CERTIFICATE-----\n`
