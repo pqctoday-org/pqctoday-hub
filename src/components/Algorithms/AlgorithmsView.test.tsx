@@ -311,7 +311,7 @@ describe('AlgorithmsView', () => {
         )
         // Every persona hint contains at least one of these stable, persona-specific phrases.
         const hintMarkers: Record<typeof persona, RegExp> = {
-          executive: /FIPS-standardized picks/,
+          executive: /FIPS-standardized families/,
           developer: /performance varies 10×/,
           architect: /Use the Transition tab/,
           researcher: /Switch to the Detailed tab/,
