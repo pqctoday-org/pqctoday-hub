@@ -70,21 +70,21 @@ const MIGRATION_PHASES: MigrationPhase[] = [
   {
     id: 'phase-2',
     phase: 2,
-    title: 'TLS Key Exchange (X-Wing)',
+    title: 'TLS Key Exchange (X25519MLKEM768)',
     description:
-      'Migrate ingress, Vault mTLS, and service mesh to X-Wing hybrid key exchange (ML-KEM-768 + X25519). This directly addresses HNDL — recorded sessions become undecryptable.',
+      'Migrate ingress, Vault mTLS, and service mesh to X25519MLKEM768 hybrid key exchange (ML-KEM-768 + X25519). This directly addresses HNDL — recorded sessions become undecryptable.',
     durationWeeks: 3,
     dependencies: ['phase-0'],
     stageIds: ['build', 'deploy', 'runtime'],
     actions: [
-      'Upgrade nginx-ingress to OpenSSL 3.5 build with X-Wing support',
+      'Upgrade nginx-ingress to OpenSSL 3.5 build with X25519MLKEM768 support',
       'Set ssl-ecdh-curve: X25519MLKEM768:X25519:P-256 in Helm values',
-      'Enable X-Wing on Vault API TLS listener',
+      'Enable X25519MLKEM768 on Vault API TLS listener',
       'Update Istio ProxyConfig for ML-KEM cipher groups',
       'Validate cipher negotiation with curl --curves X25519MLKEM768',
     ],
     rollbackNote:
-      'X-Wing is a hybrid — X25519 fallback is automatic if clients do not support ML-KEM. No breaking change. Rollback: revert Helm values ssl-ecdh-curve to X25519:P-256.',
+      'X25519MLKEM768 is a hybrid — X25519 fallback is automatic if clients do not support ML-KEM. No breaking change. Rollback: revert Helm values ssl-ecdh-curve to X25519:P-256.',
     crqcUrgency: 'critical',
   },
   {
@@ -182,7 +182,7 @@ const ROLLBACK_TREE: Record<string, RollbackNode> = {
   'kem-revert': {
     id: 'kem-revert',
     action:
-      'Revert ssl-ecdh-curve to X25519:P-256. X-Wing is additive — removing it is non-breaking. File bug with client vendor for ML-KEM support.',
+      'Revert ssl-ecdh-curve to X25519:P-256. X25519MLKEM768 is additive — removing it is non-breaking. File bug with client vendor for ML-KEM support.',
     severity: 'warning',
     question: '',
   },

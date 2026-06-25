@@ -107,8 +107,9 @@ const Step1LandscapeAndFrameworks: React.FC = () => (
             <p className="text-xs text-muted-foreground">
               The Commercial National Security Algorithm Suite 2.0 mandates PQC adoption for
               National Security Systems. Key deadlines: software/firmware signing preferred by 2025,
-              exclusive by 2030; new networking equipment by 2026; web/cloud/servers and all
-              remaining NSS by 2033. Requires <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>
+              exclusive by 2030 (with traditional networking); operating-system support by 2027;
+              web/cloud/servers and operating systems by 2033; all remaining NSS by 2035. Requires{' '}
+              <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>
               -1024 (FIPS&nbsp;203) and <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>-87
               (FIPS&nbsp;204) as minimum security levels.
             </p>
@@ -256,7 +257,8 @@ const Step2ApproachAndDeadlines: React.FC = () => (
             },
             {
               year: '2033',
-              event: 'CNSA 2.0 web/cloud/servers exclusive; all remaining NSS systems',
+              event:
+                'CNSA 2.0 web/cloud/servers & operating systems exclusive (all remaining NSS by 2035)',
               source: 'NSA',
             },
             {
