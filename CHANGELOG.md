@@ -26,6 +26,30 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.2.0] - 2026-06-25
+
+Version 4.2.0 adds two new hands-on learning modules — building a Cryptography Bill of Materials and running a clean program decommissioning and closure — and lands a large accuracy pass that corrects post-quantum standards facts, deadlines, and outbound links across the site. It also removes the old duplicate "legacy" pages and improves how reliably pages are indexed by search engines.
+
+### Added
+
+- **Two new hands-on modules: building a CBOM and closing out a migration** [view:/learn] [persona:architect] [persona:developer] [persona:executive]: a new **Cryptography Bill of Materials (CBOM)** module walks you through layered cryptographic discovery and producing a machine-verifiable inventory, and a new **Decommissioning & Program Closure** module covers retiring classical crypto, assembling the migration-verification evidence, and recording a defensible program closeout. Both include data-driven workshop tools and now appear at the right steps inside the migration simulation.
+
+### Changed
+
+- **A cleaner site with no duplicate "legacy" pages** [view:/migrate] [view:/library] [view:/assess] [view:/patents]: the older duplicate versions of the Migrate, Library, Assess, and Patents pages have been removed, so the redesigned pages are now the only ones — no more confusing parallel set.
+- **More reliable search-engine indexing** [view:/]: every page now carries the correct canonical link, the sitemap is complete, and pages are pre-rendered for crawlers, so the site is indexed more reliably and analytics no longer double-counts a visit.
+
+### Fixed
+
+- **More accurate post-quantum standards facts** [view:/library] [view:/algorithms] [view:/timeline] [persona:architect] [persona:researcher]: corrected the status and versions of several key standards (for example, NIST IR 8547 is still a draft and FIPS 206 / FN-DSA is not yet published), fixed the QKD-related IR number, and tidied other standards details across the Library, Algorithms, and Timeline.
+- **Correct CNSA 2.0 deadlines and signature target** [view:/compliance] [view:/migrate] [persona:executive] [persona:architect]: fixed the CNSA 2.0 deadline scope and dates and corrected the signature target to ML-DSA-87, so the guidance matches the actual NSA requirements.
+- **Honest framing of when a quantum computer could break today's crypto** [view:/threats] [view:/timeline] [persona:executive]: the 2029 "cryptographically-relevant quantum computer" date is now presented as an aggressive planning anchor rather than a settled fact, and overstated or fabricated claims on the Threats page (plus incorrect AES deprecation dates) were corrected.
+- **Re-checked leadership profiles and repaired broken links** [view:/leaders] [persona:researcher]: leadership and source profiles were re-verified against primary sources (removing fabricated entries), and dead or irrelevant outbound links across the site were repointed to working, relevant sources.
+
+### Data
+
+- Refreshed the searchable knowledge index and re-signed the attestable data files after the standards and timeline source updates, so on-site search and the provenance trail stay in sync with the corrected content.
+
 ## [4.1.1] - 2026-06-23
 
 Version 4.1.1 adds a dedicated CRQC Threat Horizon view and read-only inspection of the artifacts the simulation generates, makes the standards Library quicker to filter, extends the migration timeline to ten national programs, paces the "watch the full migration" auto-run by its narration, and is honest when a referenced document has no reachable source.
