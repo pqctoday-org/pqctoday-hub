@@ -360,7 +360,7 @@ function renderContractPreview(data: Record<string, Record<string, string | stri
 
   md += '\n---\n\n'
   md +=
-    '*Aligned to NIST CSWP 39 §5.3 - Cryptographic Technology Supply Chains. https://doi.org/10.6028/NIST.CSWP.39*\n'
+    '*Aligned to NIST NIST CSWP 39 (Considerations for Achieving Cryptographic Agility) §5.3 — supply-chain considerations. https://doi.org/10.6028/NIST.CSWP.39*\n'
 
   // N5: sanitise non-ASCII punctuation in the exported markdown string only.
   md = md.replace(/—/g, '-').replace(/–/g, '-').replace(/[‘’]/g, "'").replace(/[“”]/g, '"')

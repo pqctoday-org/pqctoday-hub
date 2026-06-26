@@ -396,7 +396,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     type: 'cloud',
     catalogName: 'AWS Secrets Manager',
     pqcAlgorithms: [
-      'Inherits AWS KMS: ML-KEM-768 (GA via ML-KEM key spec)',
+      'Inherits AWS KMS hybrid post-quantum TLS (ML-KEM in transit); no ML-KEM key spec for at-rest CMKs (native PQC key types on roadmap)',
       'ML-DSA-44/65/87 (GA 2024)',
     ],
     encryptionAtRest: 'AWS KMS envelope encryption (AES-256-GCM)',
@@ -406,7 +406,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     kubernetesIntegration: 'Secrets Store CSI Driver + AWS provider / External Secrets Operator',
     fipsMode: true,
     roadmapNote:
-      'No native dynamic secrets. PQC comes via KMS integration — use a CMK with ML-KEM key type. Secrets Manager itself adds no PQC beyond what KMS provides. SDK-level TLS uses hybrid ML-KEM since 2024.',
+      'No native dynamic secrets. PQC comes via the KMS endpoint hybrid ML-KEM TLS (data in transit); there is no ML-KEM CMK key type for at-rest encryption. Secrets Manager itself adds no PQC beyond what KMS provides. SDK-level TLS uses hybrid ML-KEM since 2025.',
   },
   {
     id: 'azure-key-vault',
