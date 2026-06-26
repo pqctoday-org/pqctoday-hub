@@ -76,6 +76,7 @@ import { MATURITY_LEVEL_NAMES, PHASE_WIN_LEVEL, LEVEL_EVIDENCE } from '@/data/ph
 import { SIM_MISSIONS } from '@/data/simMissions'
 import { SECTORS } from '@/data/moscaClock'
 import { deriveSimClock } from './hooks/useSimClock'
+import { SeedShare } from './SeedShare'
 import { JURISDICTION_RULES } from '@/data/jurisdiction'
 import { ROLE_CROSSWALK, personaToRoles } from '@/data/roleCrosswalk'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
@@ -1314,6 +1315,11 @@ export function SimulationView() {
           sub={`of €${budgetTarget}M — P0 L${p0Level}`}
           tone={budgetSecured > 0 ? 'text-success' : 'text-muted-foreground'}
         />
+      </div>
+
+      {/* PR7 — shareable scenario code (determinism payoff): copy to share, paste to replay. */}
+      <div className="mt-2">
+        <SeedShare />
       </div>
 
       {/* body — swaps to the embedded Learn module / activity tool when one is open.
