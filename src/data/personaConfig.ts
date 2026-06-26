@@ -2,6 +2,43 @@
 import type { PersonaId } from './learningPersonas'
 import type { Region } from '../store/usePersonaStore'
 import type { AssessmentMode } from '../store/useAssessmentStore'
+import type { PhaseId } from './frameworkPhases'
+
+/**
+ * Persona-aware "Practice in the Simulation" CTA — which migration phases each
+ * profile actually practices in the sim. A Learn module shows the CTA when the
+ * active persona practices that module's `frameworkPhase` (the sim climbs the
+ * same phases p0–p7 + verify-close, and every module carries one).
+ *
+ * Relevance is profile-dependent, not lesson-track-dependent: an exec practices
+ * the governance/program phases; an architect/ops/dev practices the technical
+ * execution & infrastructure phases (p5/p6) where TLS, HSM, 5G, etc. live.
+ * Personas with no entry here (researcher / curious / none) see the CTA on
+ * every phase — a deliberate broad fallback. Tune the per-persona sets below.
+ */
+export const PERSONA_SIM_PRACTICE_PHASES: Partial<Record<PersonaId, PhaseId[]>> = {
+  executive: ['p0', 'p1', 'p2', 'p3', 'p4', 'p7', 'verify-close'],
+  architect: ['p2', 'p5', 'p6'],
+  ops: ['p5', 'p6', 'verify-close'],
+  developer: ['p5', 'p6'],
+  // researcher / curious / (no persona) → undefined ⇒ broad (see helper)
+}
+
+/**
+ * True when the active persona practices this module's phase in the sim, so the
+ * "Practice in the Simulation" CTA should show. No persona — or a persona with
+ * no phase set (researcher / curious) — returns true (broad fallback).
+ */
+export function personaPracticesModulePhase(
+  persona: PersonaId | null,
+  frameworkPhase: PhaseId | PhaseId[]
+): boolean {
+  // eslint-disable-next-line security/detect-object-injection
+  const phases = persona ? PERSONA_SIM_PRACTICE_PHASES[persona] : undefined
+  if (!phases) return true
+  const modulePhases = Array.isArray(frameworkPhase) ? frameworkPhase : [frameworkPhase]
+  return modulePhases.some((p) => phases.includes(p))
+}
 
 /**
  * Nav paths shown per persona (on top of always-visible pages).

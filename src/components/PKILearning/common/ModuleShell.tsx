@@ -32,6 +32,8 @@ import { useModuleProgress } from './useModuleProgress'
 import { STANDARD_TABS, type ModuleManifest } from '../manifest/types'
 import { MODULE_TO_TRACK, TRACK_COLORS, MODULE_TRACKS } from '../moduleData'
 import { useModuleStore } from '@/store/useModuleStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { personaPracticesModulePhase } from '@/data/personaConfig'
 import { FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
 
 /** "Phase 4 · Execute" style label for the header context rail (P2.1). Spanning
@@ -324,13 +326,15 @@ export const ModuleShell = ({
   const phaseLabel = phaseChipLabel(manifest.frameworkPhase)
   const chip = 'rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide'
 
-  // Proposal A — "Practice in the Simulation" is curated to the program/strategy
-  // spine (Executive + Strategy tracks): the modules the sim actually lets you
-  // practice as program steps. Derived from track so it can't drift from a
-  // hand-set flag (manifest.practiceInSim is now superseded by this). Never shown
-  // when the module is itself embedded in the sim (a confusing loop).
-  const simEligible = (track === 'Executive' || track === 'Strategy') && !embedded
-  const showSimCta = simEligible
+  // "Practice in the Simulation" is persona-aware: relevance depends on the
+  // active profile, not the lesson's track. An exec practices the governance/
+  // program phases; an architect/ops/dev practices the technical execution &
+  // infrastructure phases (p5/p6) where TLS, HSM, 5G live (see
+  // PERSONA_SIM_PRACTICE_PHASES). No persona / researcher / curious → broad.
+  // Never shown when the module is itself embedded in the sim (a confusing loop).
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const showSimCta =
+    !embedded && personaPracticesModulePhase(selectedPersona, manifest.frameworkPhase)
 
   // Module completion (drives the handoff footer); the dual learn/workshop
   // progress bars + track momentum render once in ModuleProgressHeader above.
