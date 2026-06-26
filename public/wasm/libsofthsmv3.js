@@ -90,9 +90,9 @@ var createSoftHSMModule = (() => {
     var wasmBinary
     var ABORT = false
     var isFileURI = (filename) => filename.startsWith('file://')
+    class EmscriptenEH {}
+    class EmscriptenSjLj extends EmscriptenEH {}
     var readyPromiseResolve, readyPromiseReject
-    var HEAP8, HEAPU8, HEAP16, HEAPU16, HEAP32, HEAPU32, HEAPF32, HEAPF64
-    var HEAP64, HEAPU64
     var runtimeInitialized = false
     function updateMemoryViews() {
       var b = wasmMemory.buffer
@@ -135,7 +135,7 @@ var createSoftHSMModule = (() => {
     }
     function abort(what) {
       Module['onAbort']?.(what)
-      what = 'Aborted(' + what + ')'
+      what = `Aborted(${what})`
       err(what)
       ABORT = true
       what += '. Build with -sASSERTIONS for more info.'
@@ -222,6 +222,16 @@ var createSoftHSMModule = (() => {
         this.status = status
       }
     }
+    var HEAP16
+    var HEAP32
+    var HEAP64
+    var HEAP8
+    var HEAPF32
+    var HEAPF64
+    var HEAPU16
+    var HEAPU32
+    var HEAPU64
+    var HEAPU8
     var callRuntimeCallbacks = (callbacks) => {
       while (callbacks.length > 0) {
         callbacks.shift()(Module)
@@ -329,25 +339,21 @@ var createSoftHSMModule = (() => {
         return HEAPU32[(this.ptr + 16) >> 2]
       }
     }
-    var exceptionLast = 0
     var uncaughtExceptionCount = 0
     var ___cxa_throw = (ptr, type, destructor) => {
       var info = new ExceptionInfo(ptr)
       info.init(type, destructor)
-      exceptionLast = ptr
       uncaughtExceptionCount++
-      throw exceptionLast
+      abort()
     }
     var initRandomFill = () => {
       if (ENVIRONMENT_IS_NODE) {
         var nodeCrypto = require('node:crypto')
         return (view) => nodeCrypto.randomFillSync(view)
       }
-      return (view) => crypto.getRandomValues(view)
+      return (view) => (crypto.getRandomValues(view), 0)
     }
-    var randomFill = (view) => {
-      ;(randomFill = initRandomFill())(view)
-    }
+    var randomFill = (view) => (randomFill = initRandomFill())(view)
     var PATH = {
       isAbs: (path) => path.charAt(0) === '/',
       splitPath: (filename) => {
@@ -761,7 +767,7 @@ var createSoftHSMModule = (() => {
           node.node_ops = MEMFS.ops_table.file.node
           node.stream_ops = MEMFS.ops_table.file.stream
           node.usedBytes = 0
-          node.contents = null
+          node.contents = MEMFS.emptyFileContents ??= new Uint8Array(0)
         } else if (FS.isLink(node.mode)) {
           node.node_ops = MEMFS.ops_table.link.node
           node.stream_ops = MEMFS.ops_table.link.stream
@@ -777,36 +783,27 @@ var createSoftHSMModule = (() => {
         return node
       },
       getFileDataAsTypedArray(node) {
-        if (!node.contents) return new Uint8Array(0)
-        if (node.contents.subarray) return node.contents.subarray(0, node.usedBytes)
-        return new Uint8Array(node.contents)
+        return node.contents.subarray(0, node.usedBytes)
       },
       expandFileStorage(node, newCapacity) {
-        var prevCapacity = node.contents ? node.contents.length : 0
+        var prevCapacity = node.contents.length
         if (prevCapacity >= newCapacity) return
         var CAPACITY_DOUBLING_MAX = 1024 * 1024
         newCapacity = Math.max(
           newCapacity,
           (prevCapacity * (prevCapacity < CAPACITY_DOUBLING_MAX ? 2 : 1.125)) >>> 0
         )
-        if (prevCapacity != 0) newCapacity = Math.max(newCapacity, 256)
-        var oldContents = node.contents
+        if (prevCapacity) newCapacity = Math.max(newCapacity, 256)
+        var oldContents = MEMFS.getFileDataAsTypedArray(node)
         node.contents = new Uint8Array(newCapacity)
-        if (node.usedBytes > 0) node.contents.set(oldContents.subarray(0, node.usedBytes), 0)
+        node.contents.set(oldContents)
       },
       resizeFileStorage(node, newSize) {
         if (node.usedBytes == newSize) return
-        if (newSize == 0) {
-          node.contents = null
-          node.usedBytes = 0
-        } else {
-          var oldContents = node.contents
-          node.contents = new Uint8Array(newSize)
-          if (oldContents) {
-            node.contents.set(oldContents.subarray(0, Math.min(newSize, node.usedBytes)))
-          }
-          node.usedBytes = newSize
-        }
+        var oldContents = node.contents
+        node.contents = new Uint8Array(newSize)
+        node.contents.set(oldContents.subarray(0, Math.min(newSize, node.usedBytes)))
+        node.usedBytes = newSize
       },
       node_ops: {
         getattr(node) {
@@ -904,11 +901,7 @@ var createSoftHSMModule = (() => {
           var contents = stream.node.contents
           if (position >= stream.node.usedBytes) return 0
           var size = Math.min(stream.node.usedBytes - position, length)
-          if (size > 8 && contents.subarray) {
-            buffer.set(contents.subarray(position, position + size), offset)
-          } else {
-            for (var i = 0; i < size; i++) buffer[offset + i] = contents[position + i]
-          }
+          buffer.set(contents.subarray(position, position + size), offset)
           return size
         },
         write(stream, buffer, offset, length, position, canOwn) {
@@ -918,29 +911,17 @@ var createSoftHSMModule = (() => {
           if (!length) return 0
           var node = stream.node
           node.mtime = node.ctime = Date.now()
-          if (buffer.subarray && (!node.contents || node.contents.subarray)) {
-            if (canOwn) {
-              node.contents = buffer.subarray(offset, offset + length)
-              node.usedBytes = length
-              return length
-            } else if (node.usedBytes === 0 && position === 0) {
-              node.contents = buffer.slice(offset, offset + length)
-              node.usedBytes = length
-              return length
-            } else if (position + length <= node.usedBytes) {
-              node.contents.set(buffer.subarray(offset, offset + length), position)
-              return length
-            }
-          }
-          MEMFS.expandFileStorage(node, position + length)
-          if (node.contents.subarray && buffer.subarray) {
-            node.contents.set(buffer.subarray(offset, offset + length), position)
+          if (canOwn) {
+            node.contents = buffer.subarray(offset, offset + length)
+            node.usedBytes = length
+          } else if (node.usedBytes === 0 && position === 0) {
+            node.contents = buffer.slice(offset, offset + length)
+            node.usedBytes = length
           } else {
-            for (var i = 0; i < length; i++) {
-              node.contents[position + i] = buffer[offset + i]
-            }
+            MEMFS.expandFileStorage(node, position + length)
+            node.contents.set(buffer.subarray(offset, offset + length), position)
+            node.usedBytes = Math.max(node.usedBytes, position + length)
           }
-          node.usedBytes = Math.max(node.usedBytes, position + length)
           return length
         },
         llseek(stream, offset, whence) {
@@ -964,7 +945,7 @@ var createSoftHSMModule = (() => {
           var ptr
           var allocated
           var contents = stream.node.contents
-          if (!(flags & 2) && contents && contents.buffer === HEAP8.buffer) {
+          if (!(flags & 2) && contents.buffer === HEAP8.buffer) {
             allocated = false
             ptr = contents.byteOffset
           } else {
@@ -993,6 +974,7 @@ var createSoftHSMModule = (() => {
       },
     }
     var FS_modeStringToFlags = (str) => {
+      if (typeof str != 'string') return str
       var flagModes = {
         r: 0,
         'r+': 2,
@@ -1006,6 +988,15 @@ var createSoftHSMModule = (() => {
         throw new Error(`Unknown file open mode: ${str}`)
       }
       return flags
+    }
+    var FS_fileDataToTypedArray = (data) => {
+      if (typeof data == 'string') {
+        data = intArrayFromString(data, true)
+      }
+      if (!data.subarray) {
+        data = new Uint8Array(data)
+      }
+      return data
     }
     var FS_getMode = (canRead, canWrite) => {
       var mode = 0
@@ -1443,7 +1434,14 @@ var createSoftHSMModule = (() => {
         var arg = setattr ? stream : node
         setattr ??= node.node_ops.setattr
         FS.checkOpExists(setattr, 63)
-        setattr(arg, attr)
+        try {
+          setattr(arg, attr)
+        } catch (e) {
+          if (e instanceof RangeError) {
+            throw new FS.ErrnoError(22)
+          }
+          throw e
+        }
       },
       chrdev_stream_ops: {
         open(stream) {
@@ -1882,7 +1880,7 @@ var createSoftHSMModule = (() => {
         if (path === '') {
           throw new FS.ErrnoError(44)
         }
-        flags = typeof flags == 'string' ? FS_modeStringToFlags(flags) : flags
+        flags = FS_modeStringToFlags(flags)
         if (flags & 64) {
           mode = (mode & 4095) | 32768
         } else {
@@ -2083,14 +2081,8 @@ var createSoftHSMModule = (() => {
       writeFile(path, data, opts = {}) {
         opts.flags = opts.flags || 577
         var stream = FS.open(path, opts.flags, opts.mode)
-        if (typeof data == 'string') {
-          data = new Uint8Array(intArrayFromString(data, true))
-        }
-        if (ArrayBuffer.isView(data)) {
-          FS.write(stream, data, 0, data.byteLength, undefined, opts.canOwn)
-        } else {
-          abort('Unsupported data type')
-        }
+        data = FS_fileDataToTypedArray(data)
+        FS.write(stream, data, 0, data.byteLength, undefined, opts.canOwn)
         FS.close(stream)
       },
       cwd: () => FS.currentPath,
@@ -2287,11 +2279,7 @@ var createSoftHSMModule = (() => {
         var mode = FS_getMode(canRead, canWrite)
         var node = FS.create(path, mode)
         if (data) {
-          if (typeof data == 'string') {
-            var arr = new Array(data.length)
-            for (var i = 0, len = data.length; i < len; ++i) arr[i] = data.charCodeAt(i)
-            data = arr
-          }
+          data = FS_fileDataToTypedArray(data)
           FS.chmod(node, mode | 146)
           var stream = FS.open(node, 577)
           FS.write(stream, data, 0, data.length, 0, canOwn)
@@ -2685,7 +2673,7 @@ var createSoftHSMModule = (() => {
         },
         handlePeerEvents(sock, peer) {
           var first = true
-          var handleOpen = function () {
+          function handleOpen() {
             sock.connecting = false
             SOCKFS.emit('open', sock.stream.fd)
             try {
@@ -2733,31 +2721,25 @@ var createSoftHSMModule = (() => {
           }
           if (ENVIRONMENT_IS_NODE) {
             peer.socket.on('open', handleOpen)
-            peer.socket.on('message', function (data, isBinary) {
+            peer.socket.on('message', (data, isBinary) => {
               if (!isBinary) {
                 return
               }
               handleMessage(new Uint8Array(data).buffer)
             })
-            peer.socket.on('close', function () {
-              SOCKFS.emit('close', sock.stream.fd)
-            })
-            peer.socket.on('error', function (error) {
+            peer.socket.on('close', () => SOCKFS.emit('close', sock.stream.fd))
+            peer.socket.on('error', (error) => {
               sock.error = 14
               SOCKFS.emit('error', [sock.stream.fd, sock.error, 'ECONNREFUSED: Connection refused'])
             })
-          } else {
-            peer.socket.onopen = handleOpen
-            peer.socket.onclose = function () {
-              SOCKFS.emit('close', sock.stream.fd)
-            }
-            peer.socket.onmessage = function peer_socket_onmessage(event) {
-              handleMessage(event.data)
-            }
-            peer.socket.onerror = function (error) {
-              sock.error = 14
-              SOCKFS.emit('error', [sock.stream.fd, sock.error, 'ECONNREFUSED: Connection refused'])
-            }
+            return
+          }
+          peer.socket.onopen = handleOpen
+          peer.socket.onclose = () => SOCKFS.emit('close', sock.stream.fd)
+          peer.socket.onmessage = (event) => handleMessage(event.data)
+          peer.socket.onerror = (error) => {
+            sock.error = 14
+            SOCKFS.emit('error', [sock.stream.fd, sock.error, 'ECONNREFUSED: Connection refused'])
           }
         },
         poll(sock) {
@@ -2875,7 +2857,7 @@ var createSoftHSMModule = (() => {
           var host = sock.saddr
           sock.server = new WebSocketServer({ host, port: sock.sport })
           SOCKFS.emit('listen', sock.stream.fd)
-          sock.server.on('connection', function (ws) {
+          sock.server.on('connection', (ws) => {
             if (sock.type === 1) {
               var newsock = SOCKFS.createSocket(sock.family, sock.type, sock.protocol)
               var peer = SOCKFS.websocket_sock_ops.createPeer(newsock, ws)
@@ -2888,11 +2870,11 @@ var createSoftHSMModule = (() => {
               SOCKFS.emit('connection', sock.stream.fd)
             }
           })
-          sock.server.on('close', function () {
+          sock.server.on('close', () => {
             SOCKFS.emit('close', sock.stream.fd)
             sock.server = null
           })
-          sock.server.on('error', function (error) {
+          sock.server.on('error', (error) => {
             sock.error = 23
             SOCKFS.emit('error', [sock.stream.fd, sock.error, 'EHOSTUNREACH: Host is unreachable'])
           })
@@ -3226,6 +3208,7 @@ var createSoftHSMModule = (() => {
     var UTF8ToString = (ptr, maxBytesToRead, ignoreNul) =>
       ptr ? UTF8ArrayToString(HEAPU8, ptr, maxBytesToRead, ignoreNul) : ''
     var SYSCALLS = {
+      currentUmask: 18,
       calculateAt(dirfd, path, allowEmpty) {
         if (PATH.isAbs(path)) {
           return path
@@ -3354,7 +3337,8 @@ var createSoftHSMModule = (() => {
             return stream.flags
           case 4: {
             var arg = syscallGetVarargI()
-            stream.flags |= arg
+            var mask = 289792
+            stream.flags = (stream.flags & ~mask) | (arg & mask)
             return 0
           }
           case 12: {
@@ -3387,7 +3371,7 @@ var createSoftHSMModule = (() => {
     function ___syscall_ftruncate64(fd, length) {
       length = bigintToI53Checked(length)
       try {
-        if (isNaN(length)) return -61
+        if (isNaN(length)) return -22
         FS.ftruncate(fd, length)
         return 0
       } catch (e) {
@@ -3559,6 +3543,7 @@ var createSoftHSMModule = (() => {
       try {
         path = SYSCALLS.getStr(path)
         path = SYSCALLS.calculateAt(dirfd, path)
+        mode &= ~SYSCALLS.currentUmask
         FS.mkdir(path, mode, 0)
         return 0
       } catch (e) {
@@ -3585,6 +3570,9 @@ var createSoftHSMModule = (() => {
         path = SYSCALLS.getStr(path)
         path = SYSCALLS.calculateAt(dirfd, path)
         var mode = varargs ? syscallGetVarargI() : 0
+        if (flags & 64) {
+          mode &= ~SYSCALLS.currentUmask
+        }
         return FS.open(path, flags, mode).fd
       } catch (e) {
         if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e
@@ -3830,7 +3818,7 @@ var createSoftHSMModule = (() => {
     function _fd_seek(fd, offset, whence, newOffset) {
       offset = bigintToI53Checked(offset)
       try {
-        if (isNaN(offset)) return 61
+        if (isNaN(offset)) return 22
         var stream = SYSCALLS.getStreamFromFD(fd)
         FS.llseek(stream, offset, whence)
         HEAP64[newOffset >> 3] = BigInt(stream.position)

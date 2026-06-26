@@ -28,9 +28,9 @@
       "buildScript": "scripts/build-wasm.sh",
       "sourceDirs": ["src/lib"],
       "track": "tip",
-      "status": "pending-refresh",
-      "hsmCommit": null,
-      "builtAt": null
+      "status": "built",
+      "hsmCommit": "4a4e9bca81249a586844c74f01661b402586648d",
+      "builtAt": "2026-06-26"
     },
     {
       "name": "openssh-pkcs11",
