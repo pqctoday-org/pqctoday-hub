@@ -132,6 +132,51 @@ export class KmipPlayground {
     }
   }
   /**
+   * High-level **batch** driver: build ONE KMIP 3.0 `Request Message` carrying
+   * many operations and dispatch it through the identical decode → dispatch →
+   * encode path `submit`/`run_op` use. This is a *real* on-the-wire batch (one
+   * request, N `Batch Item`s), not N separate requests. `spec_json`:
+   *
+   * ```json
+   * {
+   *   "errorContinuation": "Stop" | "Continue" | "Undo",   // optional, default Stop
+   *   "items": [
+   *     {"op":"CreateKeyPair","intent":"sign"},
+   *     {"op":"Activate","uid":"$IDPlaceholder"},
+   *     {"op":"Sign","uid":"$IDPlaceholder","text":"hello"}
+   *   ]
+   * }
+   * ```
+   *
+   * `$IDPlaceholder` in any `uid` resolves to the UID the previous
+   * UID-producing item created (KMIP §6.4 ID Placeholder) — so Create →
+   * Activate → Sign chains in a single round trip. `errorContinuation`
+   * controls failure handling (§9.5): `Continue` runs every item, `Stop`
+   * halts after the first failure, `Undo` halts AND rolls earlier successes
+   * back (reported as `OperationUndone`).
+   *
+   * Returns `{ ok, errorContinuation, requested, returned, items[], audit,
+   * responseWireHex, responseWireLen, responseTree }` where each `items[]`
+   * entry mirrors a `run_op` result minus the wire (the wire is the one shared
+   * Response Message).
+   * @param {string} spec_json
+   * @returns {string}
+   */
+  run_batch(spec_json) {
+    let deferred2_0
+    let deferred2_1
+    try {
+      const ptr0 = passStringToWasm0(spec_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc)
+      const len0 = WASM_VECTOR_LEN
+      const ret = wasm.kmipplayground_run_batch(this.__wbg_ptr, ptr0, len0)
+      deferred2_0 = ret[0]
+      deferred2_1 = ret[1]
+      return getStringFromWasm0(ret[0], ret[1])
+    } finally {
+      wasm.__wbindgen_free(deferred2_0, deferred2_1, 1)
+    }
+  }
+  /**
    * High-level driver the UI uses. `spec_json` is a small object the UI
    * builds from friendly controls, e.g.:
    *
@@ -402,26 +447,26 @@ export function _C_Decrypt(
 }
 
 /**
- * @param {number} _h_session
- * @param {number} _p_encrypted_part
- * @param {number} _ul_encrypted_part_len
- * @param {number} _p_part
- * @param {number} _pul_part_len
+ * @param {number} h_session
+ * @param {number} p_encrypted_part
+ * @param {number} ul_encrypted_part_len
+ * @param {number} p_part
+ * @param {number} pul_part_len
  * @returns {number}
  */
 export function _C_DecryptDigestUpdate(
-  _h_session,
-  _p_encrypted_part,
-  _ul_encrypted_part_len,
-  _p_part,
-  _pul_part_len
+  h_session,
+  p_encrypted_part,
+  ul_encrypted_part_len,
+  p_part,
+  pul_part_len
 ) {
   const ret = wasm._C_DecryptDigestUpdate(
-    _h_session,
-    _p_encrypted_part,
-    _ul_encrypted_part_len,
-    _p_part,
-    _pul_part_len
+    h_session,
+    p_encrypted_part,
+    ul_encrypted_part_len,
+    p_part,
+    pul_part_len
   )
   return ret >>> 0
 }
@@ -570,26 +615,26 @@ export function _C_DecryptUpdate(
 }
 
 /**
- * @param {number} _h_session
- * @param {number} _p_encrypted_part
- * @param {number} _ul_encrypted_part_len
- * @param {number} _p_part
- * @param {number} _pul_part_len
+ * @param {number} h_session
+ * @param {number} p_encrypted_part
+ * @param {number} ul_encrypted_part_len
+ * @param {number} p_part
+ * @param {number} pul_part_len
  * @returns {number}
  */
 export function _C_DecryptVerifyUpdate(
-  _h_session,
-  _p_encrypted_part,
-  _ul_encrypted_part_len,
-  _p_part,
-  _pul_part_len
+  h_session,
+  p_encrypted_part,
+  ul_encrypted_part_len,
+  p_part,
+  pul_part_len
 ) {
   const ret = wasm._C_DecryptVerifyUpdate(
-    _h_session,
-    _p_encrypted_part,
-    _ul_encrypted_part_len,
-    _p_part,
-    _pul_part_len
+    h_session,
+    p_encrypted_part,
+    ul_encrypted_part_len,
+    p_part,
+    pul_part_len
   )
   return ret >>> 0
 }
@@ -646,26 +691,26 @@ export function _C_Digest(h_session, p_data, ul_data_len, p_digest, pul_digest_l
 }
 
 /**
- * @param {number} _h_session
- * @param {number} _p_part
- * @param {number} _ul_part_len
- * @param {number} _p_encrypted_part
- * @param {number} _pul_encrypted_part_len
+ * @param {number} h_session
+ * @param {number} p_part
+ * @param {number} ul_part_len
+ * @param {number} p_encrypted_part
+ * @param {number} pul_encrypted_part_len
  * @returns {number}
  */
 export function _C_DigestEncryptUpdate(
-  _h_session,
-  _p_part,
-  _ul_part_len,
-  _p_encrypted_part,
-  _pul_encrypted_part_len
+  h_session,
+  p_part,
+  ul_part_len,
+  p_encrypted_part,
+  pul_encrypted_part_len
 ) {
   const ret = wasm._C_DigestEncryptUpdate(
-    _h_session,
-    _p_part,
-    _ul_part_len,
-    _p_encrypted_part,
-    _pul_encrypted_part_len
+    h_session,
+    p_part,
+    ul_part_len,
+    p_encrypted_part,
+    pul_encrypted_part_len
   )
   return ret >>> 0
 }
@@ -1146,13 +1191,13 @@ export function _C_GetSessionInfo(h_session, p_info) {
 }
 
 /**
- * @param {number} _h_session
- * @param {number} _type
- * @param {number} _p_flags
+ * @param {number} h_session
+ * @param {number} type_
+ * @param {number} p_flags
  * @returns {number}
  */
-export function _C_GetSessionValidationFlags(_h_session, _type, _p_flags) {
-  const ret = wasm._C_GetSessionValidationFlags(_h_session, _type, _p_flags)
+export function _C_GetSessionValidationFlags(h_session, type_, p_flags) {
+  const ret = wasm._C_GetSessionValidationFlags(h_session, type_, p_flags)
   return ret >>> 0
 }
 
@@ -1241,7 +1286,7 @@ export function _C_Login(h_session, user_type, p_pin, ul_pin_len) {
  * @param {number} p_pin
  * @param {number} ul_pin_len
  * @param {number} _p_username
- * @param {number} ul_username_len
+ * @param {number} _ul_username_len
  * @returns {number}
  */
 export function _C_LoginUser(
@@ -1250,7 +1295,7 @@ export function _C_LoginUser(
   p_pin,
   ul_pin_len,
   _p_username,
-  ul_username_len
+  _ul_username_len
 ) {
   const ret = wasm._C_LoginUser(
     h_session,
@@ -1258,7 +1303,7 @@ export function _C_LoginUser(
     p_pin,
     ul_pin_len,
     _p_username,
-    ul_username_len
+    _ul_username_len
   )
   return ret >>> 0
 }
@@ -1460,26 +1505,26 @@ export function _C_Sign(h_session, p_data, ul_data_len, p_signature, pul_signatu
 }
 
 /**
- * @param {number} _h_session
- * @param {number} _p_part
- * @param {number} _ul_part_len
- * @param {number} _p_encrypted_part
- * @param {number} _pul_encrypted_part_len
+ * @param {number} h_session
+ * @param {number} p_part
+ * @param {number} ul_part_len
+ * @param {number} p_encrypted_part
+ * @param {number} pul_encrypted_part_len
  * @returns {number}
  */
 export function _C_SignEncryptUpdate(
-  _h_session,
-  _p_part,
-  _ul_part_len,
-  _p_encrypted_part,
-  _pul_encrypted_part_len
+  h_session,
+  p_part,
+  ul_part_len,
+  p_encrypted_part,
+  pul_encrypted_part_len
 ) {
   const ret = wasm._C_SignEncryptUpdate(
-    _h_session,
-    _p_part,
-    _ul_part_len,
-    _p_encrypted_part,
-    _pul_encrypted_part_len
+    h_session,
+    p_part,
+    ul_part_len,
+    p_encrypted_part,
+    pul_encrypted_part_len
   )
   return ret >>> 0
 }

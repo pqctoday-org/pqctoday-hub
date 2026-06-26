@@ -34,39 +34,40 @@ metadata:
     Demonstrates the application's "before" state in the classical → PQC
     agility scenario. Flip to pqc.yaml in the Hub UI to migrate.
   authority: pqctoday-hsm/demo
-  effective: 'always'
+  effective: "always"
   compliance_mapping:
-    - { framework: 'Pre-PQC baseline', status: representative }
-    - { framework: 'FIPS 140-3 legacy', status: aligned }
+    - { framework: "Pre-PQC baseline",  status: representative }
+    - { framework: "FIPS 140-3 legacy", status: aligned }
 
 rules:
+
   # ── KEM default ────────────────────────────────────────────────────────
   - type: algorithm_default
-    ops: ['CreateKeyPair:KeyAgreement']
+    ops: ["CreateKeyPair:KeyAgreement"]
     default_algorithm: ECDH-P256
-    reason: 'Classical KEM default (ECDH-P256)'
+    reason: "Classical KEM default (ECDH-P256)"
 
   # ── Signing default ───────────────────────────────────────────────────
   # ECDSA-P256 for new signing keys. The PQC policy's substitution rule
   # uses `from: ECDSA-P256` so flipping triggers rekey at first Sign.
   - type: algorithm_default
-    ops: ['CreateKeyPair:Sign']
+    ops: ["CreateKeyPair:Sign"]
     default_algorithm: ECDSA-P256
-    reason: 'Classical signing default (ECDSA-P256)'
+    reason: "Classical signing default (ECDSA-P256)"
 
   # ── Asymmetric encryption default ─────────────────────────────────────
   # RSA-3072 for new asymmetric-encrypt keys. Pairs with the PQC policy's
   # `from: RSA-3072` substitution rule.
   - type: algorithm_default
-    ops: ['CreateKeyPair:Encrypt']
+    ops: ["CreateKeyPair:Encrypt"]
     default_algorithm: RSA-3072
-    reason: 'Classical asymmetric-encrypt default (RSA-3072)'
+    reason: "Classical asymmetric-encrypt default (RSA-3072)"
 
   # ── Symmetric encryption default ─────────────────────────────────────
   - type: algorithm_default
     ops: [Create]
     default_algorithm: AES-256
-    reason: 'Symmetric encryption default (AES-256)'
+    reason: "Symmetric encryption default (AES-256)"
 
   # ── PQC explicitly denied (proves the boundary) ───────────────────────
   # If the application directly asks for ML-DSA / ML-KEM under the
@@ -75,9 +76,9 @@ rules:
     ops:
       - Create
       - CreateKeyPair
-      - 'CreateKeyPair:KeyAgreement'
-      - 'CreateKeyPair:Sign'
-      - 'CreateKeyPair:Encrypt'
+      - "CreateKeyPair:KeyAgreement"
+      - "CreateKeyPair:Sign"
+      - "CreateKeyPair:Encrypt"
       - Sign
       - Encrypt
     algorithms:
@@ -89,4 +90,4 @@ rules:
       - ML-DSA-87
       - SLH-DSA-SHA2-128s
       - SLH-DSA-SHA2-256s
-    reason: 'PQC algorithms gated off under the classical policy — flip to pqc.yaml to enable'
+    reason: "PQC algorithms gated off under the classical policy — flip to pqc.yaml to enable"
