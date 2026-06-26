@@ -1,5 +1,16 @@
 @import 'tailwindcss';
 
+/* Inter — self-hosted (CSP `font-src 'self'` forbids external font CDNs). Single
+   variable woff2 covers weights 100–900. `--font-family-sans` (below) declares
+   Inter but no face existed, so the app silently fell back to system-ui. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/inter-latin-wght-normal.woff2') format('woff2');
+}
+
 @theme {
   /* Simulation type floor (PR-4): legibility tokens so the console can't drop
      below the a11y floor. `text-sim-micro` (11px) is the body/label floor;
@@ -82,6 +93,9 @@
   --color-embed-text: var(--embed-text-color, var(--color-foreground));
 
   --font-family-sans: Inter, system-ui, sans-serif;
+  /* Tailwind v4 `font-sans` utility + preflight default. Mirrors
+     --font-family-sans so existing `font-sans` usages resolve to Inter too. */
+  --font-sans: Inter, system-ui, sans-serif;
 
   /* Z-index scale — centralised stacking order */
   --z-index-wip-badge: 51;
@@ -545,6 +559,7 @@
   html,
   body {
     @apply bg-background text-foreground antialiased;
+    font-family: var(--font-family-sans);
     height: auto;
     width: 100%;
     overflow-x: hidden;
