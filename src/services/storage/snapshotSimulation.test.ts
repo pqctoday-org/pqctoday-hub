@@ -26,8 +26,8 @@ describe('AppSnapshot ↔ simulation store', () => {
 
   it('restores the simulation run from a snapshot', () => {
     sim().setSector('telecom')
+    sim().setEdgeDecision('lb-app1-mTLS', 'hybrid')
     sim().applyQuarter({
-      checks: { ...sim().checks, p0: 2 },
       crqcShift: 1,
       year: 2030,
       q: 2,
@@ -42,7 +42,7 @@ describe('AppSnapshot ↔ simulation store', () => {
     expect(sim().sector).toBe('telecom')
     expect(sim().year).toBe(2030)
     expect(sim().q).toBe(2)
-    expect(sim().checks.p0).toBe(2)
+    expect(sim().edgeDecisions['lb-app1-mTLS']).toBe('hybrid')
     expect(sim().crqcShift).toBe(1)
   })
 

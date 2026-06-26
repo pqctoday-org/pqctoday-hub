@@ -23,8 +23,6 @@ export interface SimulationState {
   seat: string
   /** Active phase. */
   sel: PhaseId
-  /** Per-phase manually-achieved maturity level (0–4). */
-  checks: Record<string, number>
   /** Per-edge migration decision (WS-04) keyed by `edgeKey`. An edge carrying
    *  hybrid/pure is a migrated estate link; absence means not migrated. Drives
    *  grounded readiness once the P5 activity gate unlocks it. */
@@ -93,13 +91,10 @@ export interface SimulationState {
   togglePick: (productId: string) => void
   /** Mark a catalog step done — set on the explicit "Mark complete" click. */
   markCatalogStepDone: (catalogId: string) => void
-  /** Cumulative manual tick: clicking the current level un-ticks to level-1. */
-  setLevel: (phase: string, level: number) => void
   /** Record (or clear, with null) a per-edge migration decision (WS-04). */
   setEdgeDecision: (edgeKey: string, choice: 'hybrid' | 'pure' | null) => void
-  /** Commit an End-Quarter result (AI-advanced checks, shock, new turn, events). */
+  /** Commit an End-Quarter result (shock, new turn, events). */
   applyQuarter: (payload: {
-    checks: Record<string, number>
     crqcShift: number
     year: number
     q: number
@@ -138,11 +133,6 @@ const SEED = {
   sector: 'healthcare',
   seat: 'executive',
   sel: 'p0' as PhaseId,
-  // Levels are EARNED by passing each phase's maturity gates — nothing pre-set.
-  checks: { p0: 0, p1: 0, p2: 0, p3: 0, p4: 0, p5: 0, p6: 0, p7: 0, foundations: 0 } as Record<
-    string,
-    number
-  >,
   edgeDecisions: {} as Record<string, 'hybrid' | 'pure'>,
   year: 2026,
   q: 1,
@@ -193,7 +183,6 @@ const saveSlice = (s: SimulationState): SimulationData => ({
   sector: s.sector,
   seat: s.seat,
   sel: s.sel,
-  checks: s.checks,
   edgeDecisions: s.edgeDecisions,
   year: s.year,
   q: s.q,
@@ -217,9 +206,6 @@ function fromSave(s: Record<string, unknown>) {
     sector: typeof s.sector === 'string' ? s.sector : SEED.sector,
     seat: typeof s.seat === 'string' ? s.seat : SEED.seat,
     sel: (typeof s.sel === 'string' ? s.sel : SEED.sel) as PhaseId,
-    checks: isRecord(s.checks)
-      ? { ...SEED.checks, ...(s.checks as Record<string, number>) }
-      : { ...SEED.checks },
     edgeDecisions: isRecord(s.edgeDecisions)
       ? (s.edgeDecisions as Record<string, 'hybrid' | 'pure'>)
       : {},
@@ -283,10 +269,6 @@ export const useSimulationStore = create<SimulationState>()(
             ? s
             : { catalogCompleted: [...s.catalogCompleted, catalogId] }
         ),
-      setLevel: (phase, level) =>
-        set((s) => ({
-          checks: { ...s.checks, [phase]: s.checks[phase] === level ? level - 1 : level },
-        })),
       setEdgeDecision: (edgeKey, choice) =>
         set((s) => {
           const next = { ...s.edgeDecisions }
@@ -294,9 +276,8 @@ export const useSimulationStore = create<SimulationState>()(
           else next[edgeKey] = choice
           return { edgeDecisions: next }
         }),
-      applyQuarter: ({ checks, crqcShift, year, q, newEvents }) =>
+      applyQuarter: ({ crqcShift, year, q, newEvents }) =>
         set((s) => ({
-          checks,
           crqcShift,
           year,
           q,
@@ -369,7 +350,6 @@ export const useSimulationStore = create<SimulationState>()(
           sector: (s.sector as string) ?? SEED.sector,
           seat: (s.seat as string) ?? SEED.seat,
           sel: SEED.sel,
-          checks: { ...SEED.checks },
           edgeDecisions: {},
           year: SEED.year,
           q: SEED.q,

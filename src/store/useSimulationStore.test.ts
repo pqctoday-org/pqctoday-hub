@@ -10,14 +10,14 @@ describe('useSimulationStore', () => {
   it('seeds a coherent starting scenario', () => {
     expect(s().country).toBe('US')
     expect(s().sel).toBe('p0')
-    expect(s().checks.p0).toBe(0) // levels are earned via gating, nothing pre-set
+    expect(s().edgeDecisions).toEqual({}) // nothing migrated until the player acts
   })
 
-  it('setLevel ticks up and un-ticks when clicking the current level', () => {
-    s().setLevel('p4', 2)
-    expect(s().checks.p4).toBe(2)
-    s().setLevel('p4', 2) // click current → un-tick
-    expect(s().checks.p4).toBe(1)
+  it('setEdgeDecision records and clears a per-edge migration choice', () => {
+    s().setEdgeDecision('lb-app1-mTLS', 'hybrid')
+    expect(s().edgeDecisions['lb-app1-mTLS']).toBe('hybrid')
+    s().setEdgeDecision('lb-app1-mTLS', null) // revert → not migrated
+    expect(s().edgeDecisions['lb-app1-mTLS']).toBeUndefined()
   })
 
   it('applyQuarter advances the turn and prepends events (capped at 30)', () => {
@@ -27,7 +27,6 @@ describe('useSimulationStore', () => {
       txt: `e${i}`,
     }))
     s().applyQuarter({
-      checks: { ...s().checks, p4: 1 },
       crqcShift: 1,
       year: 2026,
       q: 4,
@@ -89,8 +88,8 @@ describe('useSimulationStore', () => {
     s().setSector('financial')
     s().setSize('global')
     s().autoCompleteSteps(['p1::/learn/data-asset-sensitivity'])
+    s().setEdgeDecision('gpki-amer-X.509', 'hybrid')
     s().applyQuarter({
-      checks: { ...s().checks, p0: 2 },
       crqcShift: 1,
       year: 2028,
       q: 3,
@@ -107,7 +106,7 @@ describe('useSimulationStore', () => {
     expect(s().year).toBe(2028)
     expect(s().q).toBe(3)
     expect(s().crqcShift).toBe(1)
-    expect(s().checks.p0).toBe(2)
+    expect(s().edgeDecisions['gpki-amer-X.509']).toBe('hybrid')
     expect(s().auto).toContain('p1::/learn/data-asset-sensitivity')
   })
 
