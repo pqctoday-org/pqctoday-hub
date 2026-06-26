@@ -120,6 +120,12 @@
     }
   }
 
+  /* Simulation (PR6) — subtle entrance for the embed pane / loading state.
+     The global prefers-reduced-motion block below neutralises it. */
+  .sim-fade-in {
+    animation: fade-in 0.18s ease-out;
+  }
+
   @keyframes bounce-subtle {
     0%,
     100% {

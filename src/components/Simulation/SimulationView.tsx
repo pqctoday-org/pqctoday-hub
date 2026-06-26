@@ -42,6 +42,7 @@ import { getScenario } from './autorun/scenarioConfig'
 import { transformationStatus } from './autorun/transformationStatus'
 import { TransformationStatusPanel } from './autorun/TransformationStatusPanel'
 import { RunActionsMenu, type RunActionItem } from './RunActionsMenu'
+import { EmbedLoading } from './EmbedLoading'
 
 /** Per-step Library scope: the search term to open the embedded library on, derived
  *  from the reference step's title, so each library step shows its topic (CycloneDX,
@@ -1350,7 +1351,7 @@ export function SimulationView() {
       algorithmTabEmbed ||
       referenceEmbed ||
       scenarioEmbed ? (
-        <div data-sim-embed-pane className="flex min-h-0 flex-1 flex-col">
+        <div data-sim-embed-pane className="sim-fade-in flex min-h-0 flex-1 flex-col">
           <div className="flex shrink-0 items-center gap-2 border-b-2 border-primary bg-primary/10 px-4 py-2">
             <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-sim-chip font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
               ● Simulation mode
@@ -1509,22 +1510,12 @@ export function SimulationView() {
                     moduleId={learnEmbed.moduleId}
                     title={learnEmbed.title}
                   />
-                  <Suspense
-                    fallback={
-                      <div className="p-8 text-center text-sm text-muted-foreground">
-                        Loading module…
-                      </div>
-                    }
-                  >
+                  <Suspense fallback={<EmbedLoading label="Loading module" />}>
                     <LearnComp />
                   </Suspense>
                 </EmbeddedLearnProvider>
               ) : ActivityComp ? (
-                <Suspense
-                  fallback={
-                    <div className="p-8 text-center text-sm text-muted-foreground">Loading…</div>
-                  }
-                >
+                <Suspense fallback={<EmbedLoading />}>
                   <ActivityComp />
                 </Suspense>
               ) : WorkshopComp ? (
@@ -1534,13 +1525,7 @@ export function SimulationView() {
                 // "useHsmContext must be used within HsmProvider". PlaygroundProvider is a
                 // pure context wrapper (HSM init is lazy), so it's cheap for non-HSM tools.
                 <PlaygroundProvider>
-                  <Suspense
-                    fallback={
-                      <div className="p-8 text-center text-sm text-muted-foreground">
-                        Loading workshop…
-                      </div>
-                    }
-                  >
+                  <Suspense fallback={<EmbedLoading label="Loading workshop" />}>
                     <WorkshopComp />
                   </Suspense>
                 </PlaygroundProvider>
@@ -1581,11 +1566,7 @@ export function SimulationView() {
               ) : ReferenceComp ? (
                 // Full-page reference (Migrate, …) embedded under the header instead
                 // of navigating the player out to its own route.
-                <Suspense
-                  fallback={
-                    <div className="p-8 text-center text-sm text-muted-foreground">Loading…</div>
-                  }
-                >
+                <Suspense fallback={<EmbedLoading />}>
                   {referenceEmbed?.refId === 'library' ? (
                     <LibraryEmbed query={libraryQueryForStep(referenceEmbed.title)} />
                   ) : referenceEmbed?.refId === 'compliance' ? (
