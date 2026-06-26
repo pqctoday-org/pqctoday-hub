@@ -193,7 +193,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What does RFC 9629 cover?',
         answer:
-          'RFC 9629 specifies how to use ML-KEM for key encapsulation within the Cryptographic Message Syntax (CMS), enabling PQC-protected S/MIME email encryption. It defines algorithm identifiers and encoding rules for ML-KEM only — ML-DSA digital signatures in CMS are covered separately by RFC 9882. The Reference Library includes both RFCs alongside related email security standards.',
+          'RFC 9629 defines the generic KEMRecipientInfo mechanism for using any KEM within the Cryptographic Message Syntax (CMS); the ML-KEM-specific CMS profile is RFC 9936, enabling PQC-protected S/MIME email encryption. It defines algorithm identifiers and encoding rules for ML-KEM only — ML-DSA digital signatures in CMS are covered separately by RFC 9882. The Reference Library includes both RFCs alongside related email security standards.',
         deepLink: '/library',
       },
       {
@@ -281,7 +281,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What web browsers support ML-KEM for TLS?',
         answer:
-          'Chrome (since version 124), Microsoft Edge, and Firefox all support the X25519MLKEM768 hybrid key exchange in TLS 1.3, combining classical X25519 ECDH with ML-KEM-768 for post-quantum protection. Safari support is still pending as of early 2026. The Migrate catalog tracks browser PQC support alongside other infrastructure categories.',
+          'Chrome (since version 124), Microsoft Edge, and Firefox all support the X25519MLKEM768 hybrid key exchange in TLS 1.3, combining classical X25519 ECDH with ML-KEM-768 for post-quantum protection. Safari added X25519MLKEM768 support in Safari 26 / iOS 26 / macOS Tahoe 26 (fall 2025). The Migrate catalog tracks browser PQC support alongside other infrastructure categories.',
         deepLink: '/migrate',
       },
       {
@@ -461,13 +461,13 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How does S/MIME support PQC?',
         answer:
-          'RFC 9629 defines how to use ML-KEM for key encapsulation and ML-DSA for digital signatures within the CMS framework that underpins S/MIME email security. Hybrid mode is especially important for email because archived messages must remain confidential for years or decades after encryption. The Email Signing module covers S/MIME PQC deployment and backward compatibility.',
+          'RFC 9629 defines the generic KEMRecipientInfo mechanism for using a KEM such as ML-KEM (not ML-DSA) within the CMS framework that underpins S/MIME email security. Hybrid mode is especially important for email because archived messages must remain confidential for years or decades after encryption. The Email Signing module covers S/MIME PQC deployment and backward compatibility.',
         deepLink: '/learn/email-signing',
       },
       {
         question: 'What is the JWT size problem with PQC?',
         answer:
-          'ML-DSA-65 digital signatures are approximately 3.3KB compared to only 256 bytes for an ECDSA P-256 signature, which causes JWT tokens signed with PQC algorithms to exceed many API gateway and HTTP header size limits. This impacts OAuth 2.0 flows, microservice authentication, and any system that passes signed tokens in HTTP headers. The API Security module explores mitigation strategies including token compression and reference tokens.',
+          'ML-DSA-65 digital signatures are approximately 3.3KB compared to only ~64 bytes for an ECDSA P-256 signature (256 bytes would be RSA-2048), which causes JWT tokens signed with PQC algorithms to exceed many API gateway and HTTP header size limits. This impacts OAuth 2.0 flows, microservice authentication, and any system that passes signed tokens in HTTP headers. The API Security module explores mitigation strategies including token compression and reference tokens.',
         deepLink: '/learn/api-security-jwt',
       },
       {

@@ -194,7 +194,7 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     cnsaYear: 2030,
     hndl: false,
     deadlineLabel: 'CNSA 2.0 deadline',
-    note: 'OpenSSH 9.x defaults to the hybrid mlkem768x25519-sha256 key exchange. Upgrade clients + servers; no key reissue needed for the KEX itself.',
+    note: 'OpenSSH 10.0+ defaults to the hybrid mlkem768x25519-sha256 key exchange (9.x defaulted to sntrup761x25519-sha512; 9.9 added the ML-KEM option). Upgrade clients + servers; no key reissue needed for the KEX itself.',
     focusPersonas: ['architect'],
   },
   {

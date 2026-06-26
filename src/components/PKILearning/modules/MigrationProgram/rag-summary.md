@@ -2,11 +2,11 @@
 
 ## Overview
 
-The Migration Program Management module teaches executives how to plan, execute, and track a PQC migration program at enterprise scale. It covers roadmap building with milestone planning overlaid on real country and compliance deadlines, stakeholder communication planning with audience-specific messaging frameworks, and KPI tracking for measuring migration progress. The module aligns with NIST IR 8547's 7-phase migration framework and integrates live timeline data from the app's country deadline database.
+The Migration Program Management module teaches executives how to plan, execute, and track a PQC migration program at enterprise scale. It covers roadmap building with milestone planning overlaid on real country and compliance deadlines, stakeholder communication planning with audience-specific messaging frameworks, and KPI tracking for measuring migration progress. The module aligns with a phased migration model (per CISA / NIST NCCoE guidance) — NIST IR 8547 itself is the algorithm deprecation/disallow timeline, not a migration framework — and integrates live timeline data from the app's country deadline database.
 
 ## Key Concepts
 
-- **NIST 7-Phase Migration Framework** — Discovery, Inventory, Prioritization, Planning, Pilot, Migration, Validation; the recommended phased approach to PQC transition
+- **Phased Migration Model** — Discovery, Inventory, Prioritization, Planning, Pilot, Migration, Validation; a recommended phased approach to PQC transition (CISA / NIST NCCoE guidance)
 - **Migration Roadmap** — Gantt-style timeline with organizational milestones overlaid on external compliance deadlines (CNSA 2.0, NIST, EU/ANSSI); enables gap analysis between planned milestones and regulatory requirements
 - **Stakeholder Communication** — structured framework covering stakeholder mapping, audience-specific messaging (board/C-suite, technical leadership, development teams, external partners), reporting cadence, and escalation criteria
 - **KPI Tracking** — six progress metrics: systems inventoried (15%), algorithms migrated (25%), vendors assessed (15%), compliance gaps closed (20%), budget vs. allocated (15%), risk trend (10%)

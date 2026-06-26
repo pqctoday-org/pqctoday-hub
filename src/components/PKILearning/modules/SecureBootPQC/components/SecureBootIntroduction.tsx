@@ -288,8 +288,10 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
           </div>
           <p className="text-[10px] text-muted-foreground mt-2">
             SLH-DSA-SHA2-128s has the smallest public key (32 B) but the largest signature (7,856
-            B). For firmware signing where signature size is the bottleneck, ML-DSA-65 is the
-            recommended choice. SLH-DSA may suit long-lived root keys where signing is rare.
+            B). For firmware signing where signature size is the bottleneck, ML-DSA-65 is a common
+            choice. SLH-DSA may suit long-lived root keys where signing is rare. Note: CNSA 2.0
+            firmware/software signing specifically calls for stateful hash-based signatures (LMS or
+            XMSS, NIST SP 800-208); ML-DSA is CNSA 2.0&apos;s general-purpose signature.
           </p>
         </div>
 

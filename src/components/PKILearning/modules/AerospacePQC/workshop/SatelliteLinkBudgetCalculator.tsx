@@ -32,7 +32,7 @@ const AEROSPACE_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'aero-link-kem',
     useCase: 'Space-ground link key establishment',
-    standard: 'CNSA 2.0 + FIPS 203 ACVP',
+    standard: 'FIPS 203 ACVP (ML-KEM-768; CNSA 2.0 mandates ML-KEM-1024)',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
     kind: { type: 'mlkem-decap', variant: 768 },

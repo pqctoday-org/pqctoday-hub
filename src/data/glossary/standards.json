@@ -617,7 +617,7 @@
   },
   {
     "term": "NIST IR 8528",
-    "definition": "NIST Internal Report (October 2024) documenting the nine third-round candidates in the PQC signature on-ramp. Covers four mathematical families: MPC-in-the-Head, multivariate, isogeny, and lattice.",
+    "definition": "NIST Internal Report (October 2024) documenting the 14 second-round candidates in the PQC signature on-ramp. Covers four mathematical families: MPC-in-the-Head, multivariate, isogeny, and lattice.",
     "relatedModule": "/library?ref=NIST IR 8528",
     "complexity": "advanced",
     "category": "standard"
