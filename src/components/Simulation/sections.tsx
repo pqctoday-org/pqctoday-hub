@@ -539,7 +539,7 @@ export function QuarterReport({
           <Button
             type="button"
             onClick={onClose}
-            className="h-auto w-full rounded-lg bg-gradient-to-r from-primary to-secondary py-2.5 text-[13px] font-extrabold text-background"
+            className="h-auto w-full rounded-lg bg-primary py-2.5 text-[13px] font-extrabold text-background"
           >
             Continue →
           </Button>

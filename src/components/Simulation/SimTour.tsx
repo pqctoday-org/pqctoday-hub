@@ -119,7 +119,7 @@ export function SimTour({
             <Button
               type="button"
               onClick={() => (last ? onClose() : setI(idx + 1))}
-              className="h-auto rounded-lg bg-gradient-to-r from-primary to-secondary px-4 py-2 text-[12px] font-extrabold text-background"
+              className="h-auto rounded-lg bg-primary px-4 py-2 text-[12px] font-extrabold text-background"
             >
               {last ? 'Start playing' : 'Next →'}
             </Button>
