@@ -461,7 +461,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How does S/MIME support PQC?',
         answer:
-          'RFC 9629 defines how to use ML-KEM for key encapsulation and ML-DSA for digital signatures within the CMS framework that underpins S/MIME email security. Hybrid mode is especially important for email because archived messages must remain confidential for years or decades after encryption. The Email Signing module covers S/MIME PQC deployment and backward compatibility.',
+          'RFC 9629 defines the generic KEMRecipientInfo mechanism for using a KEM such as ML-KEM (not ML-DSA) within the CMS framework that underpins S/MIME email security. Hybrid mode is especially important for email because archived messages must remain confidential for years or decades after encryption. The Email Signing module covers S/MIME PQC deployment and backward compatibility.',
         deepLink: '/learn/email-signing',
       },
       {
