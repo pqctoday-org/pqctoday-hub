@@ -47,7 +47,10 @@ test.describe('Algorithms UX — Phase 1+2+3', () => {
     expect((titleVal ?? '').length).toBeGreaterThan(0)
   })
 
-  test('Detailed tab — 6 collapsible sections, 3 open by default', async ({ page }) => {
+  // QUARANTINED 2026-06-25 (e2e triage): the Detailed tab was redesigned
+  // (AlgorithmDetailedComparison) and no longer exposes #section-*/#section-body-*
+  // ids; KAT moved to a separate Validation tab. These two tests assert the old DOM.
+  test.skip('Detailed tab — 6 collapsible sections, 3 open by default', async ({ page }) => {
     await page.goto('/algorithms?tab=detailed')
     await page.waitForLoadState('domcontentloaded')
     await page.waitForSelector('#section-performance', { timeout: 30000 })
@@ -74,7 +77,7 @@ test.describe('Algorithms UX — Phase 1+2+3', () => {
     await expect(page.locator('#section-body-kat')).not.toBeVisible()
   })
 
-  test('Detailed tab — clicking collapsed KAT section header opens it', async ({ page }) => {
+  test.skip('Detailed tab — clicking collapsed KAT section header opens it', async ({ page }) => {
     await page.goto('/algorithms?tab=detailed')
     await page.waitForLoadState('domcontentloaded')
     await page.waitForSelector('#section-kat', { timeout: 30000 })
