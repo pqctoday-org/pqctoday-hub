@@ -26,15 +26,27 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.2.1] - 2026-06-25
+
+A correctness-and-polish release: a broad accuracy pass across the learning modules and the reference data behind them, plus shareable links that restore where you left off, an on-site assistant that links you straight to the right place, and a more realistic migration simulation.
+
+### Changed
+
+- **Shareable links that reopen exactly where you left off** [view:/migrate] [view:/learn] [view:/assess] [view:/algorithms] [view:/timeline] [persona:architect]: you can now copy a link that restores your context across the hub — your product selection on Migrate, your track, persona, and mode on Learn, the screen you're on in Assess, a specific protocol on the Algorithms "Protocol Support" view, and individual Leaders and Timeline entries — so a bookmarked or shared link brings the page back the way you saw it.
+- **The on-site assistant links you straight to the right place** [view:/] [persona:architect] [persona:researcher]: the PQC assistant now covers the expanded site and answers with direct deep links to the specific page and section, instead of pointing you at a top-level page.
+- **A more realistic migration simulation** [view:/simulation] [persona:executive] [persona:architect]: your readiness score is now grounded in your actual crypto estate through a two-gate model (so it reflects what you have genuinely migrated), a difficulty lever adjusts the program budget, and a late-stage setback can roll back a connection you had already migrated — so the playthrough behaves more like a real program. You can also share a scenario by code so someone else can run the same setup.
+
 ### Fixed
 
+- **A site-wide accuracy pass across the learning modules and their reference data** [view:/learn] [persona:architect] [persona:researcher]: corrected post-quantum standards facts, migration deadlines, and outbound links across many modules — including Secure Boot, Migration Program, and Aerospace — and across the source catalogs behind them, so what you read on the page and cite from it matches the authoritative sources.
 - **Accurate retirement deadlines in the Decommissioning & Program Closure module** [view:/learn] [persona:executive] [persona:architect]: the lesson, its plain-language summaries, and the workshop now present the 2030/2035 dates as NIST's _draft_ timeline rather than settled rules, note that only the weaker (112-bit) keys are affected in 2030, and describe the UK NCSC milestones correctly (2028 discovery and planning, 2031 highest-priority migration, 2035 full migration) — so the schedule you plan against matches the sources. The module also now points to CISA's January 2026 list of product categories with post-quantum-ready options when you procure replacements.
 - **Source lists restored on two learning modules** [view:/learn] [persona:architect] [persona:researcher]: the Decommissioning & Program Closure and Cryptography Bill of Materials modules were showing "No references found"; their full reference lists are back — including a current ISO/IEC 27001:2022 entry — so you can open the standards behind each module again.
+- **Every entry in the Leaders directory shows its correct trust tier** [view:/leaders] [persona:researcher]: fixed records whose comma-containing fields were splitting and dropping the trust tier, which had left some leaders un-tiered.
 - **The "What's New" pop-up closes when you click outside it** [view:/]: fixed a layering bug that stopped click-outside-to-dismiss from working, so the release-notes pop-up behaves like the site's other dialogs.
 
 ### Data
 
-- Rebuilt and re-signed the searchable knowledge index after the reference-list and ISO/IEC 27001 updates, so on-site search and the provenance trail stay in sync.
+- Rebuilt and re-signed the searchable knowledge index, plus the OSCAL and CBOM artifacts, after the accuracy and reference updates, so on-site search and the provenance trail stay in sync.
 
 ## [4.2.0] - 2026-06-25
 
