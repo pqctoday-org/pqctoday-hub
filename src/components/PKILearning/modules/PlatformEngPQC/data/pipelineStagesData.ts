@@ -146,7 +146,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         pqcAlgorithm: 'slh-dsa',
         exposureWindow: '20+ years (SBOMs are used for compliance audits years after release)',
         notes:
-          'SLH-DSA uses stateless hash-based signatures with no key state to manage, making it suited for long-lived attestation documents like SBOMs that may be referenced years after signing. ML-DSA requires careful key state management.',
+          'SLH-DSA uses stateless hash-based signatures with no key state to manage, making it suited for long-lived attestation documents like SBOMs that may be referenced years after signing. ML-DSA is stateless and requires no key-state management (only stateful XMSS/LMS do).',
       },
       {
         id: 'sign-provenance',
