@@ -122,12 +122,27 @@ export const useModuleStore = create<ModuleState>()(
             logModuleComplete(moduleId)
           }
 
+          // A module mount fires updateModuleProgress({ status: 'in-progress',
+          // lastVisited }) with no completedSteps/timeSpent. Don't let that mount
+          // signal downgrade an already-completed module on revisit (which would
+          // reset the catalog badge, belt/awareness score, journey progress and the
+          // completion handoff). Only an explicit Reset — which also clears
+          // completedSteps — is allowed to take a completed module back to in-progress.
+          const isMountSignal =
+            updates.status === 'in-progress' &&
+            updates.completedSteps === undefined &&
+            updates.timeSpent === undefined
+          const guardedUpdates =
+            isMountSignal && currentModule.status === 'completed'
+              ? { ...updates, status: 'completed' as const }
+              : updates
+
           return {
             modules: {
               ...state.modules,
               [moduleId]: {
                 ...currentModule,
-                ...updates,
+                ...guardedUpdates,
                 lastVisited: Date.now(),
               },
             },
