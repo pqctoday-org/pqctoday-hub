@@ -8,6 +8,8 @@ const manifest: ModuleManifest = {
   description:
     'Start here! A beginner-friendly introduction to the quantum threat and post-quantum cryptography.',
   duration: '10 min',
+  whyThisMatters:
+    'The quantum threat isn\'t hypothetical: "harvest now, decrypt later" means data you send today can be unlocked the day a quantum computer arrives. This is the ground floor.',
   difficulty: 'beginner',
   frameworkPhase: 'foundations',
   track: 'Foundations',

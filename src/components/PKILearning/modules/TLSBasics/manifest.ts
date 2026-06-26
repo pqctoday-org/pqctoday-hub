@@ -7,6 +7,8 @@ const manifest: ModuleManifest = {
   title: 'TLS Basics',
   description: 'Deep dive into TLS 1.3 handshakes, certificates, and cipher suites.',
   duration: '40 min',
+  whyThisMatters:
+    "TLS protects nearly all web traffic; the 1.3 handshake is the prerequisite for every hybrid-PQC rollout you'll plan.",
   difficulty: 'intermediate',
   frameworkPhase: 'p5',
   track: 'Protocols',
