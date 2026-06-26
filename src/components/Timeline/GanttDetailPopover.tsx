@@ -5,6 +5,10 @@ import clsx from 'clsx'
 import FocusLock from 'react-focus-lock'
 import type { TimelinePhase, Phase } from '../../types/timeline'
 import { phaseColors } from '../../data/timelineData'
+import {
+  TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME,
+  type DeadlineMandate,
+} from '../../data/timelineFacts.generated'
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { StatusBadge } from '../common/StatusBadge'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
@@ -88,6 +92,14 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
   const sourceUrl = primaryEvent?.sourceUrl
   const sourceDate = primaryEvent?.sourceDate
 
+  // Binding legal mandate (HARD) vs soft published guidance (SOFT) for this country's
+  // PQC deadline — single source: the timeline CSV `mandate_type`. Only meaningful on a
+  // Deadline phase; absent for countries with no curated national deadline.
+  let deadlineMandate: DeadlineMandate | undefined
+  if (phase.phase === 'Deadline' && primaryEvent) {
+    deadlineMandate = TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME[primaryEvent.countryName]
+  }
+
   const enrichmentKey = primaryEvent
     ? getTimelineEnrichmentKey(primaryEvent.countryName, primaryEvent.orgName, phase.title)
     : null
@@ -138,6 +150,23 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                   {phase.title}
                 </h3>
                 <StatusBadge status={phase.status} size="sm" />
+                {(deadlineMandate === 'HARD' || deadlineMandate === 'SOFT') && (
+                  <span
+                    title={
+                      deadlineMandate === 'HARD'
+                        ? 'Binding legal mandate — law, regulation, or executive order.'
+                        : 'Published guidance — a target, not a binding legal mandate.'
+                    }
+                    className={clsx(
+                      'inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] font-medium',
+                      deadlineMandate === 'HARD'
+                        ? 'border-destructive/30 bg-destructive/10 text-destructive'
+                        : 'border-border bg-muted text-muted-foreground'
+                    )}
+                  >
+                    {deadlineMandate === 'HARD' ? 'binding mandate' : 'guidance'}
+                  </span>
+                )}
               </div>
             </div>
 
