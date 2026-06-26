@@ -31,7 +31,12 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
-test('executive persona narrows /migrate first-paint and reset link works', async ({ page }) => {
+// QUARANTINED 2026-06-25 (e2e triage): /migrate was redesigned to MigrationWorkbench,
+// which no longer renders PersonaDefaultsBanner — the persona-narrowing first-paint
+// behavior these two tests assert is gone. Rewrite against the workbench or delete.
+test.skip('executive persona narrows /migrate first-paint and reset link works', async ({
+  page,
+}) => {
   await page.addInitScript(() => {
     localStorage.setItem(
       'pqc-learning-persona',
@@ -86,7 +91,7 @@ test('executive persona narrows /migrate first-paint and reset link works', asyn
   await expect(banner).not.toBeVisible()
 })
 
-test('researcher persona does not narrow /migrate (no banner)', async ({ page }) => {
+test.skip('researcher persona does not narrow /migrate (no banner)', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem(
       'pqc-learning-persona',

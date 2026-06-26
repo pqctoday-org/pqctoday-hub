@@ -37,7 +37,7 @@ test.describe('Navigation', () => {
     await expect(page).toHaveURL(/\/migrate/)
     // Migrate is lazy-loaded and pulls software-catalog + cert-xref CSVs;
     // the default 5s expect timeout is too tight under parallel-shard load.
-    await expect(page.getByRole('heading', { name: 'PQC Migration Guide' })).toBeVisible({
+    await expect(page.getByRole('heading', { name: 'PQC Migration Workbench' })).toBeVisible({
       timeout: 15000,
     })
   })
