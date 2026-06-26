@@ -177,6 +177,7 @@ e2e/playwright-state.json
 
 # AI / Agent config
 CLAUDE.md
+.claude
 .claude/
 .cursorrules
 .agent/
