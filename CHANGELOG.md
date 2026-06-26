@@ -26,6 +26,10 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+### Added
+
+- **Start the Library from what you're here to do** [view:/library] [persona:executive] [persona:architect] [persona:researcher]: the Library now opens with three plain-language doors at the top — **Learn** (research and analysis), **Reference** (standards, specs and policy), and **Plan migration** (guidance and report picks) — so you can pick an intent instead of scanning the whole catalog first. Choosing a door narrows everything to that set and re-counts the category list on the left to match; "Everything" still shows the full library, and all your existing filters and search keep working inside whichever door you pick.
+
 ### Changed
 
 - **A cleaner, easier-to-read migration simulation** [view:/simulation] [persona:executive] [persona:architect]: the Mission Control console got a usability pass — the command bar now leads with the main actions (Play all, Commit, End Quarter) and tucks the rest into a "More" menu; the intel panel keeps your two most important panels visible and folds the rest behind a "show more" toggle; phases and controls are bigger and easier to click; active text is more legible; and tools show a loading placeholder while they open. Same features, just calmer and quicker to scan.
