@@ -19,6 +19,25 @@ export const TIMELINE_COUNTRY_DEADLINE_YEAR: Record<string, number> = {
   US: 2030, // Key-Establishment Migration Deadline (EO June 22 2026)
 }
 
+/** The same canonical deadlines keyed by full country NAME (matches the
+ *  assessment's `country` field). This is the single source the assessment and
+ *  the report read — it replaced the former hand-coded COUNTRY_PLANNING_HORIZON,
+ *  so Assess/Report now agree with the Timeline and the Simulation. Countries
+ *  without a tagged CSV deadline are omitted and fall back via the consumer's
+ *  EU-member / Q-Day logic. */
+export const TIMELINE_COUNTRY_DEADLINE_BY_NAME: Record<string, number> = {
+  Australia: 2030, // Legacy Asymmetric Crypto Disallowed — Full PQC Transition
+  Canada: 2031, // High Priority Systems Complete
+  'European Union': 2035, // Full EU PQC Transition
+  France: 2027, // PQC Qualification Requirement
+  Germany: 2030, // Critical Applications PQC — Hybrid No Longer Required
+  India: 2033, // Full Nationwide PQC Adoption
+  Japan: 2035, // Government PQC Transition Deadline
+  'South Korea': 2035, // Full PQC Roadmap Complete
+  'United Kingdom': 2035, // Full PQC Compliance
+  'United States': 2030, // Key-Establishment Migration Deadline (EO June 22 2026)
+}
+
 /** Per-country scenario milestone years, from rows tagged `sim_milestone` in the
  *  timeline CSV (e.g. 'hndl-critical', 'tnfl-critical', 'governance'). Powers the
  *  scenario-configurable simulation; untagged milestones (general-asset, governance)

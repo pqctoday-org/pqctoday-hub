@@ -50,13 +50,18 @@ function derive() {
   const active = data.filter((r) => r.status !== 'deprecated')
 
   // The row each country tagged `is_sim_deadline=true` (curated canonical deadline).
+  // Keyed by sim code (UK/US/…) for the sim/timeline, and by full Country NAME for
+  // the assessment/report (whose country field is the full name) — one source, two keys.
   const deadline = {}
+  const deadlineByName = {}
   for (const r of active) {
     if (r.is_sim_deadline !== 'true') continue
     const code = FLAG_TO_SIM[r.FlagCode] ?? r.FlagCode
     const yr = parseInt(r.StartYear, 10)
     if (!code || !Number.isFinite(yr)) continue
     deadline[code] = { year: yr, title: r.Title }
+    const name = (r.Country ?? '').trim()
+    if (name) deadlineByName[name] = { year: yr, title: r.Title }
   }
   // Per-country scenario milestones tagged `sim_milestone` (hndl-critical, tnfl-critical,
   // governance). Drives the scenario-configurable sim; general-asset + governance dates that
@@ -70,12 +75,16 @@ function derive() {
     if (!code || !Number.isFinite(yr)) continue
     ;(milestones[code] ??= {})[key] = yr
   }
-  return { file, deadline, milestones }
+  return { file, deadline, deadlineByName, milestones }
 }
 
-function generate({ file, deadline, milestones }) {
+function generate({ file, deadline, deadlineByName, milestones }) {
   const codes = Object.keys(deadline).sort()
   const lines = codes.map((c) => `  ${c}: ${deadline[c].year}, // ${deadline[c].title}`)
+  const names = Object.keys(deadlineByName).sort()
+  const nlines = names.map(
+    (n) => `  ${JSON.stringify(n)}: ${deadlineByName[n].year}, // ${deadlineByName[n].title}`
+  )
   const mcodes = Object.keys(milestones).sort()
   const mlines = mcodes.map((c) => {
     const entries = Object.entries(milestones[c])
@@ -94,6 +103,16 @@ function generate({ file, deadline, milestones }) {
  *  the Q-Day anchor in moscaClock. */
 export const TIMELINE_COUNTRY_DEADLINE_YEAR: Record<string, number> = {
 ${lines.join('\n')}
+}
+
+/** The same canonical deadlines keyed by full country NAME (matches the
+ *  assessment's \`country\` field). This is the single source the assessment and
+ *  the report read — it replaced the former hand-coded COUNTRY_PLANNING_HORIZON,
+ *  so Assess/Report now agree with the Timeline and the Simulation. Countries
+ *  without a tagged CSV deadline are omitted and fall back via the consumer's
+ *  EU-member / Q-Day logic. */
+export const TIMELINE_COUNTRY_DEADLINE_BY_NAME: Record<string, number> = {
+${nlines.join('\n')}
 }
 
 /** Per-country scenario milestone years, from rows tagged \`sim_milestone\` in the

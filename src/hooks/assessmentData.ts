@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { AssessmentInput } from './assessmentTypes'
 import { QC_FIRST_YEAR } from '../data/quantumTimeline'
+import { TIMELINE_COUNTRY_DEADLINE_BY_NAME } from '../data/timelineFacts.generated'
 
 export const ALGORITHM_DB: Record<
   string,
@@ -426,38 +427,17 @@ export const COUNTRY_REGULATORY_URGENCY: Record<string, number> = {
 // Aligned to the Applied Quantum framework Q-Day (first CRQC). Single source: quantumTimeline.
 export const ESTIMATED_QUANTUM_THREAT_YEAR = QC_FIRST_YEAR
 /**
- * Country-specific regulatory planning horizons (earliest hard deadline year).
- * Sources same as COUNTRY_REGULATORY_URGENCY above.
+ * Country PQC migration horizons — DERIVED from the single source of truth (the
+ * timeline CSV's `is_sim_deadline` rows, via `gen:timeline-facts`), NOT hand-coded.
+ * This replaced the former hand-maintained table so Assess + the Report show the
+ * SAME deadline as the Timeline and the Simulation — one source, no drift.
+ *
+ * Countries the CSV doesn't tag are absent here and fall back via the consumers'
+ * existing logic: smartDefaults' EU-member fallthrough (→2030) and riskWindows'
+ * Q-Day anchor (ESTIMATED_QUANTUM_THREAT_YEAR). To give a jurisdiction its own
+ * curated deadline, tag its row `is_sim_deadline=true` in the timeline CSV.
  */
-export const COUNTRY_PLANNING_HORIZON: Record<string, number> = {
-  'United States': 2030, // CNSA 2.0 software deprecation by 2030
-  Israel: 2027, // INCD inventory & planning phase ends 2027
-  France: 2030, // ANSSI hybrid TLS mandate effective 2025, full migration by 2030
-  Canada: 2030, // CCCS targets 2030 alignment with US CNSA 2.0
-  China: 2030, // NGCC financial sector migration estimate
-  'New Zealand': 2030, // NZISM transition phase target, Five Eyes aligned
-  Singapore: 2030, // MAS advisory alignment with US/UK timelines
-  'Czech Republic': 2030, // NIS2/DORA effective, EU critical systems deadline
-  Switzerland: 2030, // Aligned with EU NIS2 critical systems
-  Norway: 2030, // NIS2 via EEA, aligned with EU critical systems
-  'South Korea': 2035, // KpqC full migration roadmap
-  Germany: 2035, // BSI guidance
-  'United Kingdom': 2035, // NCSC
-  Australia: 2035, // ASD ISM
-  Japan: 2035, // CRYPTREC guidelines
-  Finland: 2030, // NIS2 critical infrastructure
-  Austria: 2030, // NIS2 critical infrastructure
-  Taiwan: 2035, // NICS study ongoing, no hard deadline yet
-  // NIS2 + EU critical-systems 2030 cohort — added so "I don't know" doesn't
-  // fall through to 'no-deadline' for users in these jurisdictions.
-  Italy: 2030, // NIS2 transposition (Legislative Decree 138/2024), EU 2030 critical systems
-  Spain: 2030, // NIS2 transposition, ENS high-level compliance
-  Netherlands: 2030, // NIS2 (Cyberbeveiligingswet), AIVD quantum advisory alignment
-  Belgium: 2030, // NIS2 transposition
-  Sweden: 2030, // NIS2 transposition
-  Denmark: 2030, // NIS2 transposition
-  Poland: 2030, // NIS2 transposition
-}
+export const COUNTRY_PLANNING_HORIZON: Record<string, number> = TIMELINE_COUNTRY_DEADLINE_BY_NAME
 /** Industry-specific composite score weights (must sum to 1.0). */
 export const INDUSTRY_COMPOSITE_WEIGHTS: Record<
   string,
