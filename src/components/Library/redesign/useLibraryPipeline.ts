@@ -9,7 +9,13 @@
  * the URL/store state and passes it in; this hook owns the derivation only.
  */
 import { useMemo } from 'react'
-import { libraryData, LIBRARY_CATEGORIES, type LibraryItem } from '@/data/libraryData'
+import {
+  libraryData,
+  LIBRARY_CATEGORIES,
+  LIBRARY_PURPOSES,
+  type LibraryItem,
+  type LibraryPurpose,
+} from '@/data/libraryData'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { PERSONA_LIBRARY_CATEGORIES } from '@/data/personaConfig'
 import { matchesGeoFilter } from '@/components/common/GeoFilter'
@@ -99,6 +105,7 @@ export const ORG_CANONICAL_MAP: Record<string, string> = {
 export const ORG_OTHER = 'Other'
 
 export interface LibraryPipelineInput {
+  activePurpose: LibraryPurpose | 'all' // coarse intent door, or 'all'
   activeCategory: string // 'All' or a LIBRARY_CATEGORIES value
   activeOrg: string // 'All' or a canonical org
   filterText: string
@@ -122,6 +129,8 @@ export interface LibraryPipelineInput {
 export interface LibraryPipelineResult {
   activityItems: LibraryItem[]
   categoryInfo: { name: string; count: number; hasUpdates: boolean }[]
+  /** Global per-purpose counts for the door bar (stable, ignore active purpose). */
+  purposeInfo: { id: LibraryPurpose; count: number }[]
   filteredItems: LibraryItem[]
   sortedItems: LibraryItem[]
   newHiddenByPersonaCount: number
@@ -132,6 +141,7 @@ export interface LibraryPipelineResult {
 
 export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipelineResult {
   const {
+    activePurpose,
     activeCategory,
     activeOrg,
     filterText,
@@ -161,16 +171,30 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
     []
   )
 
-  const categoryInfo = useMemo(
+  // Category counts reflect the active purpose so the rail stays honest — when a
+  // door is open, a category shows how many of ITS docs live behind that door.
+  const categoryInfo = useMemo(() => {
+    const base =
+      activePurpose === 'all'
+        ? libraryData
+        : libraryData.filter((item) => item.purpose === activePurpose)
+    return LIBRARY_CATEGORIES.map((name) => {
+      const items = base.filter((item) => item.categories.includes(name))
+      return {
+        name,
+        count: items.length,
+        hasUpdates: items.some((item) => item.status === 'New' || item.status === 'Updated'),
+      }
+    })
+  }, [activePurpose])
+
+  // Door counts are global (independent of the active purpose) so the bar is stable.
+  const purposeInfo = useMemo(
     () =>
-      LIBRARY_CATEGORIES.map((name) => {
-        const items = libraryData.filter((item) => item.categories.includes(name))
-        return {
-          name,
-          count: items.length,
-          hasUpdates: items.some((item) => item.status === 'New' || item.status === 'Updated'),
-        }
-      }),
+      LIBRARY_PURPOSES.map((id) => ({
+        id,
+        count: libraryData.filter((item) => item.purpose === id).length,
+      })),
     []
   )
 
@@ -241,6 +265,7 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
 
   const filteredItems = useMemo(() => {
     return libraryData.filter((item) => {
+      if (activePurpose !== 'all' && item.purpose !== activePurpose) return false
       if (activeCategory !== 'All') {
         if (!item.categories.includes(activeCategory)) return false
       } else if (personaPreferredActive && !filterText) {
@@ -251,6 +276,7 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    activePurpose,
     activeCategory,
     activeOrg,
     geoFilter,
@@ -273,12 +299,13 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
     if (!personaPreferredActive) return 0
     const visibleIds = new Set(filteredItems.map((i) => i.referenceId))
     const noNarrow = libraryData.filter((item) => {
+      if (activePurpose !== 'all' && item.purpose !== activePurpose) return false
       if (activeCategory !== 'All' && !item.categories.includes(activeCategory)) return false
       return matchesAllButNarrow(item)
     })
     return noNarrow.filter((i) => i.status === 'New' && !visibleIds.has(i.referenceId)).length
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [personaPreferredActive, filteredItems, activeCategory])
+  }, [personaPreferredActive, filteredItems, activeCategory, activePurpose])
 
   const preferredCategories = useMemo(() => {
     if (!selectedPersona) return []
@@ -329,6 +356,7 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
   return {
     activityItems,
     categoryInfo,
+    purposeInfo,
     filteredItems,
     sortedItems,
     newHiddenByPersonaCount,

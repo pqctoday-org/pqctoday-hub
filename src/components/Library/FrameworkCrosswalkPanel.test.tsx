@@ -28,6 +28,7 @@ function makeItem(overrides: Partial<LibraryItem> = {}): LibraryItem {
     migrationUrgency: 'High',
     manualCategory: 'applied-quantum',
     categories: ['Migration Guidance'],
+    purpose: 'planning',
     ...overrides,
   }
 }
