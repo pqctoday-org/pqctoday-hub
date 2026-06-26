@@ -59,15 +59,19 @@ test('executive persona (no industry picked) narrows /threats and reset works', 
   await expect(banner).toBeVisible({ timeout: 15000 })
 
   const bannerText = await banner.textContent()
-  const match = bannerText?.match(/Showing (\d+) threats? matched to your role\s*·\s*See all (\d+)/)
+  // Banner copy comes from the shared PersonaDefaultsBanner:
+  // "Showing N threats matched to your[ Persona] role (M hidden) · Show all T"
+  const match = bannerText?.match(
+    /Showing (\d+) threats? matched to your(?: \w+)? role.*?Show all (\d+)/
+  )
   expect(match, `banner text: ${bannerText ?? '(null)'}`).not.toBeNull()
   const matched = parseInt(match![1], 10)
   const total = parseInt(match![2], 10)
   expect(matched).toBeGreaterThan(0)
   expect(matched).toBeLessThan(total)
 
-  // Click "See all N" — sets ?prefs=off, banner disappears.
-  await banner.getByRole('button', { name: /^See all \d+$/ }).click()
+  // Click "Show all N" — sets ?prefs=off, banner disappears.
+  await banner.getByRole('button', { name: /^Show all \d+$/ }).click()
   await expect(page).toHaveURL(/[?&]prefs=off(&|$)/, { timeout: 5000 })
   await expect(banner).not.toBeVisible()
 })

@@ -6,7 +6,7 @@ Picture renovating a building: it's not enough to install the new locks — you 
 
 ## Why It Matters
 
-The riskiest moment is thinking you're done when you're not. Adding a post-quantum algorithm alongside the old one leaves the old, breakable cryptography still in place. Real completion means removing it — and _checking_ it's gone — guided by published deadlines (deprecate by 2030, disallow by 2035). And proof should come from watching the system actually behave the new way, not from a status report.
+The riskiest moment is thinking you're done when you're not. Adding a post-quantum algorithm alongside the old one leaves the old, breakable cryptography still in place. Real completion means removing it — and _checking_ it's gone — guided by proposed target dates under NIST's draft timeline (deprecate after 2030, disallow after 2035). And proof should come from watching the system actually behave the new way, not from a status report.
 
 ## The Key Takeaway
 

@@ -319,7 +319,7 @@ export function CyberInsuranceLensSection() {
               <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
                 Based on{' '}
                 <a
-                  href="https://www.lloyds.com/news-and-insights/market-communications/market-bulletins"
+                  href="https://assets.lloyds.com/assets/pdf-market-bulletin-y5258/1/pdf-market-bulletin-y5258.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary hover:underline"

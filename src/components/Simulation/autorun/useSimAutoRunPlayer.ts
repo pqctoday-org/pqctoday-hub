@@ -496,7 +496,7 @@ export function useSimAutoRunPlayer({
   const [caption, setCaption] = useState('')
   const [label, setLabel] = useState('')
   const [speed, setSpeed] = useState<AutoRunSpeed>('normal')
-  const [voiceOn, setVoiceOn] = useState(true) // on by default; safe (short, cancellable)
+  const [voiceOn, setVoiceOn] = useState(false) // OFF by default (user preference); toggle in the overlay
   const [voiceName, setVoiceName] = useState('')
   const [passIntro, setPassIntro] = useState<PassIntro | null>(null)
   const [phaseFocus, setPhaseFocus] = useState<PhaseFocus | null>(null)
@@ -953,7 +953,6 @@ export function useSimAutoRunPlayer({
           const cs = useSimulationStore.getState()
           if (plan.year !== cs.year || plan.q !== cs.q) {
             cs.applyQuarter({
-              checks: cs.checks,
               crqcShift: cs.crqcShift,
               year: plan.year,
               q: plan.q,

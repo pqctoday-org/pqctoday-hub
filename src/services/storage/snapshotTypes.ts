@@ -151,7 +151,7 @@ export interface SimulationData {
   sector: string
   seat: string
   sel: string
-  checks: Record<string, number>
+  edgeDecisions: Record<string, 'hybrid' | 'pure'>
   year: number
   q: number
   crqcShift: number

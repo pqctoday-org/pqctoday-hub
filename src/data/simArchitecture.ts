@@ -207,6 +207,9 @@ const global: Architecture = {
 
 export const ARCHITECTURES: Record<SimSize, Architecture> = { small, mid, large, global }
 
+/** Stable per-edge identity (edges carry no `id`; from+to+protocol is unique). */
+export const edgeKey = (e: ProtocolEdge) => `${e.from}-${e.to}-${e.protocol}`
+
 export type EdgeState = 'migratable' | 'blocked' | 'vendor' | 'monitor' | 'safe'
 
 /** Per-edge migration state under the one readiness rule. */

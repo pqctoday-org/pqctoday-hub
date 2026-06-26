@@ -51,7 +51,7 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
       badge: 'Compliance',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Finance & Banking maps to DORA, GDPR, PCI DSS, NIST IR 8547, ISO 27001, and FIPS 140-3. The DORA/NIS2 tab will flag ECDSA P-256 as a potential "Protect" gap — "state-of-the-art" is a living standard that increasingly implies PQC planning. Short-lived TLS certs (under-1y retention) have low HNDL risk individually, but the FAIR ALE for non-migration is dominated by DORA fine risk (up to 1% of annual global turnover), easily outweighing migration costs.',
+        'Finance & Banking maps to DORA, GDPR, PCI DSS, NIST IR 8547, ISO 27001, and FIPS 140-3. The DORA/NIS2 tab will flag ECDSA P-256 as a potential "Protect" gap — "state-of-the-art" is a living standard that increasingly implies PQC planning. Short-lived TLS certs (under-1y retention) have low HNDL risk individually, but the FAIR ALE for non-migration is dominated by DORA periodic-penalty risk (up to 1% of average daily worldwide turnover, for critical ICT third-party providers), easily outweighing migration costs.',
       config: { step: 1 },
     },
     {

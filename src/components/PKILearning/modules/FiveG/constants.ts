@@ -526,7 +526,7 @@ mac_key = block2  # 256-bit HMAC-SHA3-256 key (full block2)`,
           label: 'Z source',
           value: 'Hybrid: SHA256(Z_ecdh ‖ Z_kem) | Pure: Z_kem directly',
           description:
-            'Hybrid combiner follows the concatenation approach per NIST SP 800-227 (draft): SHA-256 over the ordered concatenation of the classical and PQC shared secrets provides security if either component is secure.',
+            'Hybrid combiner follows the concatenation approach per NIST SP 800-227 (final, Sept 2025): SHA-256 over the ordered concatenation of the classical and PQC shared secrets provides security if either component is secure.',
         },
         {
           label: 'block1',

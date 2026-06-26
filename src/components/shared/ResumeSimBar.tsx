@@ -34,7 +34,7 @@ const DISMISSED = 'sim:resume:dismissed'
 function useHasActiveRun(): boolean {
   return useSimulationStore((s) => {
     if (s.runCompleteSeen) return true
-    if (Object.values(s.checks).some((v) => v > 0)) return true
+    if (Object.keys(s.edgeDecisions).length > 0) return true
     return (
       s.visitedRefs.length > 0 ||
       s.visitedWorkshops.length > 0 ||

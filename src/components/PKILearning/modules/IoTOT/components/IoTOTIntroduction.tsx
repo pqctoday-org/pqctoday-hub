@@ -51,7 +51,7 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
             {[
               {
                 t: 'Memory Constraints',
-                d: 'Many IoT devices have 10–256 KB of RAM (ultra-constrained OS like MS-IoT run on just 2 KB RAM). PQC algorithms like ML-KEM-768 require ~6 KB of stack RAM just for one key exchange — exceeding the memory of many Class 0/1 devices entirely.',
+                d: 'Many IoT devices have 10–256 KB of RAM (ultra-constrained RFC 7228 Class-0 devices run on as little as ~2 KB RAM). PQC algorithms like ML-KEM-768 require ~6 KB of stack RAM just for one key exchange — exceeding the memory of many Class 0/1 devices entirely.',
               },
               {
                 t: 'Bandwidth Limits',

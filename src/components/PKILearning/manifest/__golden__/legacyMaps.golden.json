@@ -22,7 +22,7 @@
       "id": "pqc-candidates",
       "lm_id": "LM-053",
       "title": "PQC Candidates & Lifecycle",
-      "description": "How NIST evaluates new post-quantum mechanisms, the nine third-round signature on-ramp candidates across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).",
+      "description": "How NIST evaluates new post-quantum mechanisms, the 14 second-round signature on-ramp candidates across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).",
       "duration": "55 min",
       "difficulty": "intermediate",
       "frameworkPhase": "foundations"
@@ -566,7 +566,7 @@
     "digital-id": 5,
     "tls-basics": 4,
     "mls-group-messaging": 2,
-    "quantum-threats": 5,
+    "quantum-threats": 6,
     "pqc-candidates": 6,
     "hybrid-crypto": 5,
     "crypto-agility": 4,
@@ -1846,6 +1846,10 @@
       {
         "id": "hnfl-timeline",
         "label": "HNFL Risk Calculator"
+      },
+      {
+        "id": "crqc-trajectory",
+        "label": "Trajectory to Q-Day"
       }
     ],
     "pqc-candidates": [
@@ -3148,7 +3152,7 @@
           "id": "pqc-candidates",
           "lm_id": "LM-053",
           "title": "PQC Candidates & Lifecycle",
-          "description": "How NIST evaluates new post-quantum mechanisms, the nine third-round signature on-ramp candidates across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).",
+          "description": "How NIST evaluates new post-quantum mechanisms, the 14 second-round signature on-ramp candidates across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).",
           "duration": "55 min",
           "difficulty": "intermediate",
           "frameworkPhase": "foundations"

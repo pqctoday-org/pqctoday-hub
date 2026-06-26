@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import {
   PROTOCOL_MATRIX,
@@ -724,7 +724,7 @@ function ProtocolCard({
 const RECOMMENDED_ROWS = PROTOCOL_MATRIX.filter((r) => r.recommended)
 
 export function PQCProtocolMatrix() {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const personaGranularity = granularityForPersona(selectedPersona)
   // User-side override; null means "follow persona default". Researcher / no
@@ -751,6 +751,43 @@ export function PQCProtocolMatrix() {
   // Single-open accordion for the detailed-mode protocol cards.
   const [expandedProtocolId, setExpandedProtocolId] = useState<string | null>(null)
   const isHeatmap = viewMode === 'heatmap'
+
+  // Open/close the protocol detail and mirror it to ?protocol=<id> so a specific
+  // protocol's detail is a shareable/bookmarkable deep link. Opening pushes a
+  // history entry (Back closes the modal); closing strips the param in place.
+  const openProtocol = useCallback(
+    (row: ProtocolMatrixRow) => {
+      setSelectedProtocol(row)
+      setSearchParams(
+        (sp) => {
+          const params = new URLSearchParams(sp)
+          params.set('protocol', row.id)
+          return params
+        },
+        { replace: false }
+      )
+    },
+    [setSearchParams]
+  )
+  const closeProtocol = useCallback(() => {
+    setSelectedProtocol(null)
+    setSearchParams(
+      (sp) => {
+        const params = new URLSearchParams(sp)
+        params.delete('protocol')
+        return params
+      },
+      { replace: true }
+    )
+  }, [setSearchParams])
+
+  // Reconcile the open modal with ?protocol= on back/forward / external nav.
+  const protocolParam = searchParams.get('protocol')
+  useEffect(() => {
+    const row = protocolParam ? (PROTOCOL_MATRIX.find((r) => r.id === protocolParam) ?? null) : null
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync
+    setSelectedProtocol((prev) => (prev?.id === row?.id ? prev : row))
+  }, [protocolParam])
 
   // ?highlight=recommended — scroll to first recommended row on mount
   const highlightRecommended = searchParams.get('highlight') === 'recommended'
@@ -845,7 +882,7 @@ export function PQCProtocolMatrix() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setSelectedProtocol(row)}
+                    onClick={() => openProtocol(row)}
                     className="text-sm font-semibold text-foreground hover:underline text-left p-0 h-auto"
                   >
                     {row.name}
@@ -1230,7 +1267,7 @@ export function PQCProtocolMatrix() {
                             type="button"
                             variant="link"
                             size="sm"
-                            onClick={() => setSelectedProtocol(p)}
+                            onClick={() => openProtocol(p)}
                             className={`h-auto p-0 font-semibold text-left no-underline hover:underline focus-visible:underline ${
                               isInheritance ? 'italic text-muted-foreground' : 'text-foreground'
                             }`}
@@ -1379,7 +1416,7 @@ export function PQCProtocolMatrix() {
                 p={p}
                 expanded={expandedProtocolId === p.id}
                 onToggle={() => setExpandedProtocolId((cur) => (cur === p.id ? null : p.id))}
-                onOpenDetail={() => setSelectedProtocol(p)}
+                onOpenDetail={() => openProtocol(p)}
                 granularity={effectiveGranularity}
                 parent={
                   p.inheritsFromProtocolId
@@ -1442,7 +1479,7 @@ export function PQCProtocolMatrix() {
       {/* Protocol detail modal */}
       <ProtocolDetailModal
         isOpen={selectedProtocol !== null}
-        onClose={() => setSelectedProtocol(null)}
+        onClose={closeProtocol}
         protocol={selectedProtocol}
       />
     </div>

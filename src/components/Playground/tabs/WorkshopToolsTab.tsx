@@ -278,7 +278,7 @@ const WORKSHOP_TOOLS: WorkshopTool[] = [
     id: 'openssl-studio',
     name: 'OpenSSL Studio',
     description:
-      'Full OpenSSL v3.6.1 environment: keygen, certificates, CSR, KEM, signing, KDF, encryption — all via WASM',
+      'Full OpenSSL v3.6.2 environment: keygen, certificates, CSR, KEM, signing, KDF, encryption — all via WASM',
     category: 'OpenSSL Studio',
     algorithms: ['RSA', 'EC', 'Ed25519', 'ML-KEM', 'ML-DSA', 'SLH-DSA', 'AES', 'HKDF', 'X.509'],
     icon: Terminal,

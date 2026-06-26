@@ -6,7 +6,7 @@ This is the end of a post-quantum migration: turning off the old, quantum-vulner
 
 ## Why It Matters
 
-A migration isn't finished when you add post-quantum cryptography — it's finished when the old RSA/ECC keys are actually gone, on a defensible schedule (NIST says deprecate by 2030, disallow by 2035). And you only really know it happened if you can see it in the system's behaviour — for example, capturing the connection handshake and confirming it negotiated a post-quantum algorithm — rather than trusting a change ticket.
+A migration isn't finished when you add post-quantum cryptography — it's finished when the old RSA/ECC keys are actually gone, on a defensible schedule (under NIST's draft timeline, the old cryptography is set to be deprecated after 2030 and disallowed after 2035). And you only really know it happened if you can see it in the system's behaviour — for example, capturing the connection handshake and confirming it negotiated a post-quantum algorithm — rather than trusting a change ticket.
 
 ## The Key Takeaway
 

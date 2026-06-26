@@ -4,9 +4,12 @@
   /* Simulation type floor (PR-4): legibility tokens so the console can't drop
      below the a11y floor. `text-sim-micro` (11px) is the body/label floor;
      `text-sim-chip` (10px) is the dense-chip floor. Replace raw text-[8–10px]
-     utilities under src/components/Simulation/ with these. */
+     utilities under src/components/Simulation/ with these. `text-sim-body`
+     (13px, PR7) lifts primary active-step copy so size carries hierarchy —
+     additive, the 10/11px floor stays valid for chrome. */
   --text-sim-micro: 11px;
   --text-sim-chip: 10px;
+  --text-sim-body: 13px;
 
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));

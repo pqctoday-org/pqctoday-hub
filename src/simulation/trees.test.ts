@@ -10,7 +10,7 @@ import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { ARTIFACT_TYPE_TO_TOOL_ID } from '@/components/BusinessCenter/businessToolsRegistry'
 import { WORKSHOP_TOOL_COMPONENTS } from '@/components/Simulation/resourceContract'
 import { PHASE_MATURITY } from '@/data/phaseMaturity'
-import { FRAMEWORK_VERSION } from '@/data/frameworkPhases'
+import { FRAMEWORK_VERSION, PHASE_ORDER } from '@/data/frameworkPhases'
 import { resolveDeepLink } from './deepLinks'
 import { REFERENCE_PHASES } from '@/data/phaseResourceMap'
 import { resLinks } from '@/components/Simulation/sections'
@@ -26,6 +26,15 @@ const ALL_TREE_PHASES = [...PHASES, 'foundations', 'verify-close'] as const
 describe('SIM_TREES — coverage & shape', () => {
   it('loads a dated tree for all eight phases + Foundations + Verification & Closure', () => {
     expect(Object.keys(SIM_TREES).sort()).toEqual([...ALL_TREE_PHASES].sort())
+  })
+
+  // GUARD (PR5): every framework phase is tree-backed, which is what makes the
+  // removed `checks` fallback in levelOf safe. If a phase ever loses its tree,
+  // the engine would fall through to evidenceLevel — this fails loudly first.
+  it('covers every PHASE_ORDER phase so progression has one representation', () => {
+    for (const p of PHASE_ORDER) {
+      expect(SIM_TREES[p], `phase ${p} must be tree-backed`).toBeDefined()
+    }
   })
 
   it('every leaf points at a real hub resource', () => {

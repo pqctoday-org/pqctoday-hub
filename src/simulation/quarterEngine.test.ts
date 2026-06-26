@@ -16,7 +16,6 @@ const baseInput = (over: Partial<QuarterEngineInput> = {}): QuarterEngineInput =
   simMigrationYears: 3,
   simShelfLifeYears: 10,
   clockYearsToHorizon: 5,
-  checks: { p0: 0, p1: 0, p2: 0, p3: 0, p4: 0, p5: 0, p6: 0, p7: 0, foundations: 0 },
   balance: SIM_PRESETS.realistic,
   levelOf: () => 0,
   evidenceLevel: () => 0,
@@ -34,11 +33,11 @@ describe('runQuarter (pure quarter engine, WS-05)', () => {
     expect(runQuarter(baseInput({ q: 4 })).quarter).toMatchObject({ year: 2027, q: 1 })
   })
 
-  it('AI writes only tree `auto` keys and never mutates checks', () => {
+  it('AI advances progress only via tree `auto` keys (one progression representation)', () => {
     const r = runQuarter(baseInput())
     for (const k of r.newAutoKeys) expect(k).toMatch(/^[a-z0-9]+::.+/)
-    // checks is passed through untouched (Option A — AI advances the tree)
-    expect(r.quarter.checks).toEqual(baseInput().checks)
+    // the quarter payload carries no separate progression counter — just the turn/clock
+    expect(r.quarter).not.toHaveProperty('checks')
   })
 
   it('reports cleared counts from the gating callback (0 when nothing earned)', () => {

@@ -8,7 +8,8 @@ describe('SIM_BALANCE', () => {
       events: { dangerWhenClassical: 0.6, warning: 0.55, goodNews: 0.5, successVsInfo: 0.5 },
       crqc: { pullForwardPerQuarter: 0.22 },
       ai: { advanceChance: 0.35 },
-      budget: { doneWeight: 1, levelWeight: 0 },
+      budget: { doneWeight: 1 },
+      estate: { budgetMultiplier: 1 },
     })
   })
 
@@ -27,8 +28,9 @@ describe('SIM_BALANCE', () => {
     }
   })
 
-  it('budget blend weights sum to 1', () => {
-    expect(SIM_BALANCE.budget.doneWeight + SIM_BALANCE.budget.levelWeight).toBe(1)
+  it('budget is fully activity-driven (doneWeight 1, no inert level term)', () => {
+    expect(SIM_BALANCE.budget.doneWeight).toBe(1)
+    expect(SIM_BALANCE.budget).not.toHaveProperty('levelWeight')
   })
 })
 
@@ -50,7 +52,7 @@ describe('difficulty presets + scenarios (WS-14)', () => {
         expect(p, `${id}`).toBeGreaterThanOrEqual(0)
         expect(p, `${id}`).toBeLessThanOrEqual(1)
       }
-      expect(b.budget.doneWeight + b.budget.levelWeight, `${id} budget`).toBe(1)
+      expect(b.budget.doneWeight, `${id} budget`).toBe(1)
     }
   })
 
@@ -62,6 +64,15 @@ describe('difficulty presets + scenarios (WS-14)', () => {
       SIM_PRESETS.hard.crqc.pullForwardPerQuarter
     )
     expect(SIM_PRESETS.easy.ai.advanceChance).toBeGreaterThan(SIM_PRESETS.hard.ai.advanceChance)
+  })
+
+  it('budget lever (PR4): easy secures more, hard secures less per activity', () => {
+    expect(SIM_PRESETS.easy.estate.budgetMultiplier).toBeGreaterThan(
+      SIM_PRESETS.realistic.estate.budgetMultiplier
+    )
+    expect(SIM_PRESETS.realistic.estate.budgetMultiplier).toBeGreaterThan(
+      SIM_PRESETS.hard.estate.budgetMultiplier
+    )
   })
 
   it('getBalance resolves ids and falls back to realistic', () => {

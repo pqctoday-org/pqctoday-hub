@@ -43,8 +43,8 @@ describe('ResumeSimBar', () => {
   })
 
   it('shows when a run is in progress even without the resume flag', () => {
-    // Player advanced a phase maturity level — a real run is underway.
-    useSimulationStore.getState().setLevel('inventory', 1)
+    // Player migrated an estate link — a real run is underway.
+    useSimulationStore.getState().setEdgeDecision('lb-app1-mTLS', 'hybrid')
     renderBar()
     expect(screen.getByRole('link', { name: /Resume Simulation/i })).toHaveAttribute(
       'href',
@@ -53,7 +53,7 @@ describe('ResumeSimBar', () => {
   })
 
   it('stays hidden once dismissed, even with a run in progress', () => {
-    useSimulationStore.getState().setLevel('inventory', 1)
+    useSimulationStore.getState().setEdgeDecision('lb-app1-mTLS', 'hybrid')
     renderBar()
     fireEvent.click(screen.getByRole('button', { name: /Dismiss/i }))
     expect(screen.queryByText(/Resume Simulation/i)).not.toBeInTheDocument()
@@ -61,7 +61,7 @@ describe('ResumeSimBar', () => {
 
   it('stays hidden after the player quits via the HUB button (even mid-run)', () => {
     // Active run, but the player chose to leave the sim via "← HUB".
-    useSimulationStore.getState().setLevel('inventory', 1)
+    useSimulationStore.getState().setEdgeDecision('lb-app1-mTLS', 'hybrid')
     sessionStorage.setItem('sim:exited', '1')
     renderBar()
     expect(screen.queryByText(/Resume Simulation/i)).not.toBeInTheDocument()

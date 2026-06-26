@@ -2,15 +2,21 @@
 /**
  * ArchitecturePanel — the Simulation's per-size migration board. Systems show
  * their product PQC status; each vulnerable protocol link is migratable now,
- * blocked (product/vendor has no PQC), or monitor-only (irreducible). You pick a
- * migration strategy (hybrid/pure, validated by the jurisdiction) and migrate
- * the eligible links; readiness = migrated ÷ vulnerable.
+ * blocked (product/vendor has no PQC), or monitor-only (irreducible).
+ *
+ * Migrating a link needs BOTH gates (WS-04): the player must have completed
+ * enough P5 activities to UNLOCK a link (effort) AND pick a sound strategy
+ * hybrid/pure (judgment). Decisions persist in the store and drive the grounded
+ * readiness KPI. A choice that the jurisdiction marks non-compliant still
+ * migrates (it is quantum-safe) but lowers a SEPARATE compliance meter — it no
+ * longer blocks the migration.
  */
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   ARCHITECTURES,
   edgeState,
+  edgeKey,
   mermaidFromArchitecture,
   type EdgeState,
   type ProtocolEdge,
@@ -18,6 +24,7 @@ import {
 } from '@/data/simArchitecture'
 import { checkChoice } from '@/data/jurisdiction'
 import type { SimSize } from '@/data/moscaClock'
+import { useSimulationStore } from '@/store/useSimulationStore'
 import { MermaidDiagram } from './MermaidDiagram'
 
 const STATUS_CHIP: Record<PqcStatus, string> = {
@@ -33,30 +40,50 @@ const NON_MIGRATABLE_BADGE: Partial<Record<EdgeState, { label: string; cls: stri
   monitor: { label: '⚠ monitor-only', cls: 'bg-status-warning/15 text-status-warning' },
 }
 
-const edgeKey = (e: ProtocolEdge) => `${e.from}-${e.to}-${e.protocol}`
-
-export function ArchitecturePanel({ size, country }: { size: SimSize; country: string }) {
+export function ArchitecturePanel({
+  size,
+  country,
+  p5Frac,
+}: {
+  size: SimSize
+  country: string
+  /** Fraction (0–1) of P5 activities completed — the effort gate that unlocks links. */
+  p5Frac: number
+}) {
   const arch = ARCHITECTURES[size]
   const byId = new Map(arch.nodes.map((n) => [n.id, n]))
   const [choice, setChoice] = useState<'hybrid' | 'pure'>('hybrid')
-  const [migrated, setMigrated] = useState<Set<string>>(new Set())
   const [view, setView] = useState<'list' | 'diagram'>('list')
+  const edgeDecisions = useSimulationStore((s) => s.edgeDecisions)
+  const setEdgeDecision = useSimulationStore((s) => s.setEdgeDecision)
 
   const verdict = checkChoice(country, choice)
-  const canMigrate = verdict.level !== 'fail'
 
   const vulnerable = arch.edges.filter((e) => e.vulnerable)
   const migratable = vulnerable.filter((e) => edgeState(arch, e) === 'migratable')
-  const done = migratable.filter((e) => migrated.has(edgeKey(e))).length
-  const readinessPct = vulnerable.length ? Math.round((done / vulnerable.length) * 100) : 100
+  const isMigrated = (e: ProtocolEdge) => Boolean(edgeDecisions[edgeKey(e)])
+  const done = migratable.filter(isMigrated).length
+  // Effort gate: completed P5 activities unlock the right to migrate this many links.
+  const unlocked = Math.floor(Math.max(0, Math.min(1, p5Frac)) * migratable.length)
+  const capacity = Math.max(0, unlocked - done) // links you may still migrate now
+  const readinessPct = vulnerable.length
+    ? Math.round((Math.min(done, unlocked) / vulnerable.length) * 100)
+    : 100
 
   const migrate = (e: ProtocolEdge) => {
-    if (!canMigrate) return
-    setMigrated((s) => new Set(s).add(edgeKey(e)))
+    if (capacity <= 0 || isMigrated(e)) return
+    setEdgeDecision(edgeKey(e), choice)
   }
   const migrateAll = () => {
-    if (!canMigrate) return
-    setMigrated(new Set(migratable.map(edgeKey)))
+    // Migrate up to the remaining unlocked capacity. Use a local budget — the
+    // `edgeDecisions` closure is the render snapshot and won't update mid-loop.
+    let budget = capacity
+    for (const e of migratable) {
+      if (budget <= 0) break
+      if (isMigrated(e)) continue
+      setEdgeDecision(edgeKey(e), choice)
+      budget--
+    }
   }
 
   const verdictCls =
@@ -71,7 +98,7 @@ export function ArchitecturePanel({ size, country }: { size: SimSize; country: s
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-sm font-semibold text-foreground">Your architecture ({size})</h2>
         <span className="text-xs text-muted-foreground">
-          {done}/{vulnerable.length} links migrated · ceiling {migratable.length} migratable now
+          {done}/{vulnerable.length} links migrated · {unlocked}/{migratable.length} unlocked via P5
         </span>
       </div>
 
@@ -111,7 +138,7 @@ export function ArchitecturePanel({ size, country }: { size: SimSize; country: s
         </div>
       ) : (
         <>
-          {/* Strategy + jurisdiction compliance */}
+          {/* Strategy + jurisdiction compliance (informational — never blocks) */}
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               Strategy
@@ -136,12 +163,18 @@ export function ArchitecturePanel({ size, country }: { size: SimSize; country: s
               type="button"
               variant="ghost"
               onClick={migrateAll}
-              disabled={!canMigrate || done === migratable.length}
+              disabled={capacity <= 0}
               className="h-auto rounded-md border border-border px-3 py-1 text-xs text-foreground hover:bg-muted"
             >
-              Migrate all eligible
+              Migrate eligible ({capacity})
             </Button>
           </div>
+
+          {capacity <= 0 && done < migratable.length && (
+            <p className="mb-3 text-xs text-status-warning">
+              Complete more P5 (Execute) activities to unlock the next link.
+            </p>
+          )}
 
           <div className="mb-3">
             <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -169,7 +202,7 @@ export function ArchitecturePanel({ size, country }: { size: SimSize; country: s
             <ul className="space-y-1">
               {arch.edges.map((e) => {
                 const st = edgeState(arch, e)
-                const isMigrated = migrated.has(edgeKey(e))
+                const migratedChoice = edgeDecisions[edgeKey(e)]
                 const label = (
                   <span className="min-w-0 truncate text-foreground">
                     {byId.get(e.from)?.label}{' '}
@@ -184,17 +217,17 @@ export function ArchitecturePanel({ size, country }: { size: SimSize; country: s
                       className="flex items-center justify-between gap-2 text-xs"
                     >
                       {label}
-                      {isMigrated ? (
+                      {migratedChoice ? (
                         <span className="shrink-0 rounded bg-status-success/15 px-1.5 py-0.5 font-semibold text-status-success">
-                          ✓ {choice}
+                          ✓ {migratedChoice}
                         </span>
                       ) : (
                         <Button
                           type="button"
                           variant="ghost"
                           onClick={() => migrate(e)}
-                          disabled={!canMigrate}
-                          className="h-auto shrink-0 rounded border border-primary/40 px-2 py-0.5 text-xs font-medium text-primary hover:bg-primary/10"
+                          disabled={capacity <= 0}
+                          className="h-auto shrink-0 rounded border border-primary/40 px-2 py-0.5 text-xs font-medium text-primary hover:bg-primary/10 disabled:opacity-40"
                         >
                           Migrate
                         </Button>
@@ -218,8 +251,9 @@ export function ArchitecturePanel({ size, country }: { size: SimSize; country: s
           </div>
 
           <p className="mt-2 text-xs text-muted-foreground">
-            Migrate the eligible links (hybrid or pure, per your jurisdiction). Blocked links wait
-            on a product/vendor PQC release; monitor-only links are irreducible (defense-in-depth).
+            Migrate the eligible links (hybrid or pure). A non-compliant strategy still migrates but
+            lowers your compliance score. Blocked links wait on a product/vendor PQC release;
+            monitor-only links are irreducible (defense-in-depth).
           </p>
         </>
       )}

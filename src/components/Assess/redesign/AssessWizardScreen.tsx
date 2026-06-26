@@ -9,12 +9,17 @@ import { AssessStepRail } from './AssessStepRail'
 import { AssessQuestionPane } from './AssessQuestionPane'
 import { useAssessFlow } from './useAssessFlow'
 import type { AssessTrack } from './assessFlowModel'
+import type { SetURLSearchParams } from 'react-router-dom'
 
 interface AssessWizardScreenProps {
   mode: AssessTrack
   onComplete: () => void
   onExitToChooser: () => void
   onSwitchTrack: (mode: AssessTrack) => void
+  /** Embed-isolated URL params, threaded to useAssessFlow so ?step doesn't leak
+   *  to the /simulation route when the wizard runs inside the sim embed. */
+  searchParams?: URLSearchParams
+  setSearchParams?: SetURLSearchParams
 }
 
 export const AssessWizardScreen: React.FC<AssessWizardScreenProps> = ({
@@ -22,8 +27,10 @@ export const AssessWizardScreen: React.FC<AssessWizardScreenProps> = ({
   onComplete,
   onExitToChooser,
   onSwitchTrack,
+  searchParams,
+  setSearchParams,
 }) => {
-  const flow = useAssessFlow({ mode, onLastStep: onComplete })
+  const flow = useAssessFlow({ mode, onLastStep: onComplete, searchParams, setSearchParams })
 
   return (
     <>

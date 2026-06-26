@@ -60,7 +60,7 @@ export const PQCCandidatesModule: FC = () => (
   <ModuleShell
     manifest={manifest}
     title="PQC Candidates & Standardisation Lifecycle"
-    description="How NIST evaluates new post-quantum mechanisms, the nine third-round signature on-ramp candidates across four math families, and the worldwide parallel tracks that decide what actually ships."
+    description="How NIST evaluates new post-quantum mechanisms, the 14 second-round signature on-ramp candidates across four math families, and the worldwide parallel tracks that decide what actually ships."
     learn={(api) => <CandidatesIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
     exercises={(api) => (
       <CandidatesExercises
