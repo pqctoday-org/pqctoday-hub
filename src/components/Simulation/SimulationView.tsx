@@ -258,6 +258,9 @@ function SimModuleCompletionWatcher({ moduleId, title }: { moduleId: string; tit
 // ---- main ----------------------------------------------------------------
 export function SimulationView() {
   const navigate = useNavigate()
+  // PR3 — the Expert intel rail pins 2 panels (Critical assets + Artifacts) and
+  // collapses the rest behind a "Show N more" disclosure. Default collapsed.
+  const [railExpanded, setRailExpanded] = useState(false)
   const {
     size,
     country,
@@ -1061,6 +1064,26 @@ export function SimulationView() {
       </div>
     )
   }
+
+  // PR3 — which collapsible rail panels are active for THIS phase (pinned
+  // Critical assets + Artifacts are excluded). Mirrors the per-panel guards
+  // below; drives the disclosure's count + named list so it stays phase-aware.
+  const showRailKpis = !!assessKpis
+  const showRailTrend = !!readinessTrend
+  const showRailCompliance = sel === 'p0' && assessCompliance.length > 0
+  const showRailArch = ARCH_PHASES.has(sel)
+  const showRailQuantum = sel === 'p3' && !!assessFrameworkRisk
+  const showRailBacklog =
+    (sel === 'p3' || sel === 'p5') && (assessBacklog.length > 0 || !!assessTwoTrack)
+  const railMoreShown = [
+    showRailKpis && 'Assessment KPIs',
+    showRailTrend && 'Readiness trend',
+    showRailCompliance && 'Applicable compliance',
+    'Cyber insurance',
+    showRailArch && 'Architecture',
+    showRailQuantum && 'Quantum risk',
+    showRailBacklog && 'Migration backlog',
+  ].filter(Boolean) as string[]
 
   return (
     <div className="fixed inset-0 flex flex-col bg-background text-foreground">
@@ -2163,9 +2186,39 @@ export function SimulationView() {
             focused, low-density view). Architecture only for estate/infra phases. */}
           {!guided && (
             <div className="flex min-h-0 flex-col gap-3.5 overflow-auto">
+              {/* PR3 — rail disclosure. Critical assets + Artifacts stay pinned
+                (always rendered below); the rest collapse here to calm the Expert
+                rail. Count + named list are phase-aware. */}
+              {railMoreShown.length > 0 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  aria-expanded={railExpanded}
+                  onClick={() => setRailExpanded((v) => !v)}
+                  className="flex h-auto w-full items-start justify-between gap-2 whitespace-normal rounded-xl border border-dashed border-border bg-card/50 px-3 py-2 text-left hover:bg-muted/50"
+                >
+                  <span className="flex min-w-0 flex-col">
+                    <span className="text-sim-body font-bold text-foreground">
+                      {railExpanded
+                        ? 'Hide extra panels'
+                        : `Show ${railMoreShown.length} more panel${
+                            railMoreShown.length === 1 ? '' : 's'
+                          }`}
+                    </span>
+                    {!railExpanded && (
+                      <span className="text-sim-micro leading-tight text-muted-foreground">
+                        {railMoreShown.join(' · ')}
+                      </span>
+                    )}
+                  </span>
+                  <span className="shrink-0 font-mono text-sim-micro text-muted-foreground">
+                    {railExpanded ? '▴' : '▾'}
+                  </span>
+                </Button>
+              )}
               {/* Assessment KPIs — read-only category scores (informational; never
                 grant maturity, which is earned in-game) */}
-              {assessKpis && (
+              {railExpanded && showRailKpis && (
                 <div className="rounded-xl border border-secondary/30 bg-secondary/5 p-4">
                   <Eyebrow className="mb-2 block">
                     Assessment KPIs{' '}
@@ -2209,7 +2262,7 @@ export function SimulationView() {
               )}
 
               {/* Readiness trend — assessed baseline vs in-sim maturity (sim-local) */}
-              {readinessTrend && (
+              {railExpanded && showRailTrend && (
                 <div className="rounded-xl border border-border bg-card p-4">
                   <Eyebrow className="mb-2 block">
                     Readiness trend{' '}
@@ -2309,7 +2362,7 @@ export function SimulationView() {
               </div>
 
               {/* Applicable compliance — from the assessment; scoping context for P0 */}
-              {sel === 'p0' && assessCompliance.length > 0 && (
+              {railExpanded && showRailCompliance && (
                 <div className="rounded-xl border border-border bg-card p-4">
                   <Eyebrow className="mb-2 block">
                     Applicable compliance{' '}
@@ -2347,39 +2400,41 @@ export function SimulationView() {
               )}
 
               {/* Cyber insurance — policy limit vs the quantum-exposed value */}
-              <div className="rounded-xl border border-border bg-card p-4">
-                <Eyebrow className="mb-2 block">Cyber insurance</Eyebrow>
-                <div className="flex items-baseline justify-between">
-                  <span className="text-[19px] font-extrabold text-foreground">
-                    €{insurancePolicyM}M
-                  </span>
-                  <span className="font-mono text-sim-micro text-muted-foreground">
-                    covers critical + high
-                  </span>
+              {railExpanded && (
+                <div className="rounded-xl border border-border bg-card p-4">
+                  <Eyebrow className="mb-2 block">Cyber insurance</Eyebrow>
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-[19px] font-extrabold text-foreground">
+                      €{insurancePolicyM}M
+                    </span>
+                    <span className="font-mono text-sim-micro text-muted-foreground">
+                      covers critical + high
+                    </span>
+                  </div>
+                  <div className="mt-0.5 flex items-center justify-between font-mono text-sim-micro">
+                    <span className="text-muted-foreground">Annual premium · 0.15%</span>
+                    <span className="font-bold text-foreground">
+                      {premiumM >= 1 ? `€${premiumM}M` : `€${Math.round(premiumM * 1000)}k`}/yr
+                    </span>
+                  </div>
+                  <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
+                    <div
+                      className={uninsuredM > 0 ? 'h-full bg-warning' : 'h-full bg-success'}
+                      style={{
+                        width: `${exposedValueM > 0 ? Math.min(100, (Math.min(insurancePolicyM, exposedValueM) / exposedValueM) * 100) : 100}%`,
+                      }}
+                    />
+                  </div>
+                  <div className="mt-1.5 flex items-center justify-between font-mono text-sim-micro">
+                    <span className="text-muted-foreground">Uninsured quantum exposure</span>
+                    <span
+                      className={`font-bold ${uninsuredM > 0 ? 'text-destructive' : 'text-success'}`}
+                    >
+                      €{uninsuredM}M
+                    </span>
+                  </div>
                 </div>
-                <div className="mt-0.5 flex items-center justify-between font-mono text-sim-micro">
-                  <span className="text-muted-foreground">Annual premium · 0.15%</span>
-                  <span className="font-bold text-foreground">
-                    {premiumM >= 1 ? `€${premiumM}M` : `€${Math.round(premiumM * 1000)}k`}/yr
-                  </span>
-                </div>
-                <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
-                  <div
-                    className={uninsuredM > 0 ? 'h-full bg-warning' : 'h-full bg-success'}
-                    style={{
-                      width: `${exposedValueM > 0 ? Math.min(100, (Math.min(insurancePolicyM, exposedValueM) / exposedValueM) * 100) : 100}%`,
-                    }}
-                  />
-                </div>
-                <div className="mt-1.5 flex items-center justify-between font-mono text-sim-micro">
-                  <span className="text-muted-foreground">Uninsured quantum exposure</span>
-                  <span
-                    className={`font-bold ${uninsuredM > 0 ? 'text-destructive' : 'text-success'}`}
-                  >
-                    €{uninsuredM}M
-                  </span>
-                </div>
-              </div>
+              )}
 
               {/* Artifacts this phase produces — completed vs still to generate */}
               <div className="rounded-xl border border-border bg-card p-4">
@@ -2469,7 +2524,7 @@ export function SimulationView() {
               </div>
 
               {/* Architecture view — only for phases that act on the estate/infra */}
-              {ARCH_PHASES.has(sel) && (
+              {railExpanded && showRailArch && (
                 <ArchitecturePanel
                   size={size as 'small' | 'mid' | 'large' | 'global'}
                   country={country}
@@ -2479,7 +2534,7 @@ export function SimulationView() {
 
               {/* PQC migration backlog + two-track split — from the assessment, for
                 the remediation phases (P3 plan, P5 execute) */}
-              {sel === 'p3' && assessFrameworkRisk && (
+              {railExpanded && showRailQuantum && (
                 <div className="rounded-xl border border-border bg-card p-4">
                   <Eyebrow className="mb-2 block">
                     Quantum risk — four scoring dimensions{' '}
@@ -2524,7 +2579,7 @@ export function SimulationView() {
                 </div>
               )}
 
-              {(sel === 'p3' || sel === 'p5') && (assessBacklog.length > 0 || assessTwoTrack) && (
+              {railExpanded && showRailBacklog && (
                 <div className="rounded-xl border border-border bg-card p-4">
                   <Eyebrow className="mb-2 block">
                     PQC migration backlog{' '}
