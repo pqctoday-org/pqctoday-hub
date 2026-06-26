@@ -1745,7 +1745,7 @@ export function SimulationView() {
                 </span>
               )}
             </div>
-            <p className="mb-4 mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+            <p className="mb-4 mt-1.5 text-sim-body leading-relaxed text-muted-foreground">
               {mission?.mission}{' '}
               <b className="text-foreground">
                 {phaseOwned
@@ -1937,7 +1937,7 @@ export function SimulationView() {
                           <span className="w-[88px] shrink-0 text-[11.5px] font-bold text-foreground">
                             L{band.level} · {MATURITY_LEVEL_NAMES[band.level]}
                           </span>
-                          <span className="flex-1 text-[10.5px] leading-tight text-muted-foreground">
+                          <span className="flex-1 text-sim-body leading-tight text-muted-foreground">
                             {band.indicator}
                           </span>
                           <span
