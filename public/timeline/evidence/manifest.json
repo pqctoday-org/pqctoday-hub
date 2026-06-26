@@ -1,6 +1,6 @@
 {
   "generated_at": "2026-05-22T22:57:42.127Z",
-  "source_csv": "src/data/timeline_05222026_r1.csv",
+  "source_csv": "src/data/timeline_06262026_r3.csv",
   "total_rows": 235,
   "active_rows": 226,
   "status_counts": {
@@ -3229,18 +3229,18 @@
       "org": "NCO",
       "title": "Government PQC Transition Deadline",
       "start_year": 2035,
-      "source_url": "https://pqshield.com/2035-japans-nco-sets-the-timeline-for-quantum-security/",
-      "source_url_quality": "url_needs_review",
+      "source_url": "https://www.cas.go.jp/jp/seisaku/pqc/pdf/report_202511.pdf",
+      "source_url_quality": "url_authoritative",
       "confidence_score": 60,
-      "csv_local_file": "public/timeline/Japan_NCO_Government_PQC_Transition_Deadline.html",
-      "resolved_local_file": "public/timeline/Japan_NCO_Government_PQC_Transition_Deadline.html",
+      "csv_local_file": "public/timeline/Japan_NCO_Government_PQC_Transition_Deadline.pdf",
+      "resolved_local_file": "public/timeline/Japan_NCO_Government_PQC_Transition_Deadline.pdf",
       "download_status": "ok",
-      "content_type": "text/html",
-      "size_bytes": 52788,
+      "content_type": "application/pdf",
+      "size_bytes": 230950,
       "http_status": null,
       "error_message": null,
-      "downloaded_at": "2026-05-22T22:57:42.126Z",
-      "pre_existed": true
+      "downloaded_at": "2026-06-26T00:00:00.000Z",
+      "pre_existed": false
     },
     {
       "row_key": "TL-malaysia-nacsa-2025-5b61546b",
