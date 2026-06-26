@@ -1,36 +1,91 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * Migration readiness (WS-04) — per-edge, continuous, attributable.
+ * Migration readiness (WS-04) — grounded in the estate, gated by two locks.
  *
- * Readiness is the share of the estate's quantum-vulnerable, migratable edges
- * that have actually been moved. It is driven by the FRACTION of P5 (Pilots /
- * Production) activities completed, so it rises smoothly with each activity —
- * unlike the old 4-step function of the P5 maturity level — and every point
- * traces to a specific edge + the activity that migrated it.
+ * An estate edge counts as MIGRATED only when BOTH gates pass:
+ *   1. Effort   — the player has completed enough P5 activities to "unlock" it
+ *                 (activity gate: floor(p5Frac × migratableEdges)).
+ *   2. Judgment — the player has chosen a sound strategy (hybrid/pure) for it
+ *                 (decision gate: edgeDecisions[edgeKey] ∈ {hybrid, pure}).
+ * Neither gate alone moves the score — a choice on paper with no work, or work
+ * with no choice, both count for nothing.
  *
- * Pure function (no React); the caller supplies the P5 completion fraction.
+ * The denominator is ALL vulnerable edges, so residual edges (no PQC path,
+ * vendor-dependent, or touching a product with no PQC story) permanently hold
+ * readiness below 100% — the intended supply-chain pressure.
+ *
+ * Compliance is a SEPARATE meter: a `pure` choice where the jurisdiction requires
+ * `hybrid` still counts as migrated (it is quantum-safe) but lowers compliance.
+ *
+ * Pure function (no React); the caller supplies the P5 completion fraction, the
+ * persisted per-edge decisions, and the org's country.
  */
-import { ARCHITECTURES } from '@/data/simArchitecture'
+import { ARCHITECTURES, edgeState, edgeKey } from '@/data/simArchitecture'
+import { checkChoice } from '@/data/jurisdiction'
+
+/** Migration strategy persisted per edge (a migrated edge carries hybrid|pure). */
+export type EdgeChoice = 'hybrid' | 'pure'
 
 export interface Readiness {
-  /** 0–100 — percent of migratable vulnerable edges moved. */
+  /** 0–100 — migrated ÷ all vulnerable edges (residual edges cap this < 100). */
   pct: number
-  /** Count of vulnerable edges migrated so far. */
+  /** Vulnerable edges actually migrated (both gates passed). */
   migrated: number
-  /** Total quantum-vulnerable edges that have a PQC path (the migratable set). */
+  /** Total quantum-vulnerable edges (the denominator). */
   vulnerable: number
+  /** Topology ceiling: edges that COULD be migrated (PQC path + both ends ready). */
+  migratable: number
+  /** Activity gate: how many migratable edges P5 progress has unlocked so far. */
+  unlocked: number
+  /** 0–100 — compliant decisions ÷ decisions made (separate from readiness). */
+  compliancePct: number
 }
 
 /**
- * @param size       org size preset (selects the architecture topology)
- * @param p5Frac     fraction (0–1) of P5 activities completed
+ * @param size           org size preset (selects the architecture topology)
+ * @param p5Frac         fraction (0–1) of P5 activities completed (effort gate)
+ * @param edgeDecisions  persisted per-edge migration choices (decision gate)
+ * @param country        org jurisdiction (for the compliance meter)
  */
-export function computeReadiness(size: string, p5Frac: number): Readiness {
-  const edges = (ARCHITECTURES[size as keyof typeof ARCHITECTURES] ?? ARCHITECTURES.mid).edges
-  // Migratable = vulnerable AND has a PQC path (no-path edges are compensate-only).
-  const vulnerable = edges.filter((e) => e.vulnerable && e.pqcPath !== 'none').length
+export function computeReadiness(
+  size: string,
+  p5Frac: number,
+  edgeDecisions: Record<string, EdgeChoice> = {},
+  country = ''
+): Readiness {
+  const arch = ARCHITECTURES[size as keyof typeof ARCHITECTURES] ?? ARCHITECTURES.mid
+  const vuln = arch.edges.filter((e) => e.vulnerable)
+  const migratableEdges = vuln.filter((e) => edgeState(arch, e) === 'migratable')
+
+  // Effort gate — completed P5 activities unlock the right to migrate this many edges.
   const frac = Math.max(0, Math.min(1, p5Frac))
-  // Each completed P5 activity migrates the next vulnerable edge.
-  const migrated = Math.round(vulnerable * frac)
-  return { pct: Math.round((migrated / Math.max(1, vulnerable)) * 100), migrated, vulnerable }
+  const unlocked = Math.floor(frac * migratableEdges.length)
+
+  // Decision gate — migratable edges the player has chosen to migrate (hybrid/pure).
+  const decidedEdges = migratableEdges.filter((e) => {
+    const c = edgeDecisions[edgeKey(e)]
+    return c === 'hybrid' || c === 'pure'
+  })
+
+  // Both gates: an edge counts only if decided AND within activity-unlocked capacity.
+  const migrated = Math.min(decidedEdges.length, unlocked)
+  const pct = vuln.length ? Math.round((migrated / vuln.length) * 100) : 100
+
+  // Compliance meter — a non-compliant (failing) choice still counts migrated above,
+  // but lowers this separate score.
+  const compliant = decidedEdges.filter(
+    (e) => checkChoice(country, edgeDecisions[edgeKey(e)]).level !== 'fail'
+  ).length
+  const compliancePct = decidedEdges.length
+    ? Math.round((compliant / decidedEdges.length) * 100)
+    : 100
+
+  return {
+    pct,
+    migrated,
+    vulnerable: vuln.length,
+    migratable: migratableEdges.length,
+    unlocked,
+    compliancePct,
+  }
 }

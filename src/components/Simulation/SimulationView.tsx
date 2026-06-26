@@ -269,6 +269,7 @@ export function SimulationView() {
     seat,
     sel,
     checks,
+    edgeDecisions,
     year,
     q,
     crqcShift,
@@ -748,7 +749,9 @@ export function SimulationView() {
   // sandbox most players don't have, so they'd cap the fraction below 100%.
   const p5Flat = (SIM_TREES.p5 ? flattenTree(SIM_TREES.p5) : []).filter(isGatingStep)
   const p5Frac = p5Flat.length ? p5Flat.filter((s) => stepDone(s, 'p5')).length / p5Flat.length : 0
-  const readiness = computeReadiness(size, p5Frac)
+  // Grounded readiness (WS-04): estate edge decisions (judgment) gated by P5
+  // activity completion (effort); jurisdiction drives the separate compliance meter.
+  const readiness = computeReadiness(size, p5Frac, edgeDecisions, country)
   const cleared = LIFECYCLE.filter((p) => levelOf(p) >= PHASE_WIN_LEVEL).length
   // The run is COMPLETE only when every phase reaches its own top band (full maturity) — not
   // merely the L2 win bar. In the breadth-first climb, all-cleared-to-L2 happens at pass 2, so
@@ -762,7 +765,8 @@ export function SimulationView() {
     // sitting frozen at the weakest-domain integer until the slowest phase crosses a level.
     programMaturity: maturityFrac * MAX_LEVEL,
     p0Level: levelOf('p0'),
-    migrationFraction: p5Frac,
+    // Grounded: the share of vulnerable edges actually migrated (both gates), not raw P5 progress.
+    migrationFraction: readiness.vulnerable ? readiness.migrated / readiness.vulnerable : 0,
     allAtTopBand: fullyMature,
     currentYear: year,
   })
@@ -1299,7 +1303,11 @@ export function SimulationView() {
         <Stat
           label="Est. readiness"
           value={`${readiness.pct}%`}
-          sub={`${readiness.migrated}/${readiness.vulnerable} vulnerable edges`}
+          sub={
+            readiness.migrated > 0
+              ? `${readiness.migrated}/${readiness.vulnerable} edges · ${readiness.compliancePct}% compliant`
+              : `${readiness.migrated}/${readiness.vulnerable} vulnerable edges`
+          }
           tone="text-primary"
         />
         <Stat
@@ -2471,6 +2479,7 @@ export function SimulationView() {
                 <ArchitecturePanel
                   size={size as 'small' | 'mid' | 'large' | 'global'}
                   country={country}
+                  p5Frac={p5Frac}
                 />
               )}
 
