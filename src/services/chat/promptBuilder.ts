@@ -287,7 +287,7 @@ GUIDELINES:
    - /playground/interactive?tab=<tab>&algo=<algo>, /playground/hsm (softhsmv3 HSM emulator workshop)
    - /business (GRC Command Center, CSWP.39-aligned), /business/tools (planning tools grid)
    - /business/tools/<toolId> — actual toolIds: roi-calculator, board-pitch, crqc-scenario, risk-register, risk-treatment-plan, audit-checklist, compliance-timeline, raci-builder, policy-generator, kpi-dashboard, vendor-scorecard, contract-clause, supply-chain-matrix, roadmap-builder, stakeholder-comms, kpi-tracker, deployment-playbook
-   - /learn (catalog) — /learn?track=<trackName> filters by track (e.g. Foundations, Protocols, Industry-Specific), /learn?persona=<id> filters by persona path (executive|developer|architect|researcher|ops|curious), /learn?mode=<mypath|browse> (My Path guided journey vs Browse all modules)
+   - /learn (catalog) — /learn?mode=<mypath|browse> (My Path guided journey vs Browse all modules). Track filtering only applies in Browse mode, so ALWAYS pair it: /learn?mode=browse&track=<trackName> (track names: Role Guides, Foundations, Strategy, Protocols, Hardware Infrastructure, Software Infrastructure, Applications, Executive, Industries). /learn?persona=<id> presets the persona path/lens (executive|developer|architect|researcher|ops|curious).
    - /learn/<module-id> (learning content), /learn/<module-id>?tab=workshop (hands-on workshop/simulation)
    - /learn/<module-id>?tab=workshop&step=<n>, /learn/<module-id>?category=<cat>, /learn/<module-id>?diveDeeper=<topic>
    - /assess?step=<n> — 0-based wizard step. Comprehensive mode steps in order: 0=industry, 1=country, 2=crypto, 3=sensitivity, 4=compliance, 5=migration, 6=use-cases, 7=retention, 8=credential-lifetime, 9=scale, 10=agility, 11=infra, 12=timeline.
