@@ -117,7 +117,7 @@ export function ArchitecturePanel({
             type="button"
             variant="ghost"
             onClick={() => setView(v)}
-            className={`h-auto rounded-md border px-3 py-1 text-xs transition-colors ${
+            className={`h-auto min-h-[34px] rounded-md border px-3 py-1.5 text-xs transition-colors ${
               view === v
                 ? 'border-primary bg-primary/10 font-medium text-primary'
                 : 'border-border text-muted-foreground hover:bg-muted'
@@ -149,7 +149,7 @@ export function ArchitecturePanel({
                 type="button"
                 variant="ghost"
                 onClick={() => setChoice(c)}
-                className={`h-auto rounded-md border px-3 py-1 text-xs transition-colors ${
+                className={`h-auto min-h-[34px] rounded-md border px-3 py-1.5 text-xs transition-colors ${
                   choice === c
                     ? 'border-primary bg-primary/10 font-medium text-primary'
                     : 'border-border text-muted-foreground hover:bg-muted'
@@ -164,7 +164,7 @@ export function ArchitecturePanel({
               variant="ghost"
               onClick={migrateAll}
               disabled={capacity <= 0}
-              className="h-auto rounded-md border border-border px-3 py-1 text-xs text-foreground hover:bg-muted"
+              className="h-auto min-h-[34px] rounded-md border border-border px-3 py-1.5 text-xs text-foreground hover:bg-muted"
             >
               Migrate eligible ({capacity})
             </Button>
