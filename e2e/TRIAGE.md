@@ -33,8 +33,8 @@ nightly CI run as the authoritative red list**, not a loaded local run.
 
 ## Backlog (recommended, by category)
 
-**SLOW-WASM — bump timeouts, keep (do NOT quarantine; real coverage):**
-`cms-workshop-crypto` (~12), `api-security-jwt-real-crypto` (~7), `cms-hsm-sign` (~4), `acvp-validator` (1), `ssh-pqc-simulator` (live-handshake tests), `_vpn-diagnostic` (1). Raise per-test `test.setTimeout` / inner `waitFor`s (~1.5×). Many already set 300–360s; confirm the inner result `waitFor`s are generous too.
+**SLOW-WASM — DONE (timeouts bumped 2026-06-25; pending CI validation):**
+`cms-workshop-crypto`, `api-security-jwt-real-crypto`, `cms-hsm-sign`, `acvp-validator`, `ssh-pqc-simulator`, `_vpn-diagnostic`. Full/nightly runs now pass `--timeout=180000`; inner result `waitFor`s raised (ssh 60→90s, cms inner 3–10→10–30s, api-jwt 10–30→25–60s, vpn 90→120s). The ssh live-handshake tests had 60s inner waits under a 45s global = a guaranteed-failure bug, now fixed. NOT validated locally (preview server crashes under sustained WASM load on the dev machine). **If any still fail at 180s in the nightly CI run, they are genuinely broken (code/selector), not slow — investigate at the source, do not bump further.**
 
 **DRIFT-REDESIGN — fix selectors (feature still exists):**
 
