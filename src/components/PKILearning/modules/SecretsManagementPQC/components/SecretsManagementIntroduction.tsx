@@ -415,7 +415,7 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
                 'AWS SDK TLS uses hybrid ML-KEM (BoringSSL) since 2024',
                 'No native dynamic secrets — use Lambda rotation or Vault AWS auth',
               ],
-              note: 'The simplest path: create a KMS CMK with key spec ML-KEM-768, configure Secrets Manager to use it as CMEK. All secrets are then ML-KEM protected at rest.',
+              note: 'The simplest path: AWS KMS offers hybrid post-quantum TLS (ML-KEM in transit) for the KMS / Secrets Manager APIs. There is no ML-KEM CMK key spec, so secrets are not ML-KEM-encrypted at rest (native PQC key types are on the AWS roadmap).',
             },
             {
               provider: 'Azure Key Vault (Managed HSM)',
