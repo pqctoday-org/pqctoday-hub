@@ -13,6 +13,16 @@ const manifest: ModuleManifest = {
   frameworkPhase: 'p5',
   track: 'Protocols',
   trackOrder: 5,
+  // The legacy bespoke 'downgrade' tab is folded into the standard `visual` slot
+  // (P3.1) so the tab *values* are catalog-standard; the label keeps its name.
+  tabs: [
+    { value: 'learn', label: 'Learn' },
+    { value: 'workshop', label: 'Workshop' },
+    { value: 'visual', label: 'Downgrade Attack' },
+    { value: 'exercises', label: 'Exercises' },
+    { value: 'references', label: 'References' },
+    { value: 'tools', label: 'Tools & Products' },
+  ],
   learnSections: [
     { id: 'handshake', label: 'TLS 1.3 Handshake Deep Dive' },
     { id: 'certificates', label: 'Certificate Chains & Trust Anchors' },
