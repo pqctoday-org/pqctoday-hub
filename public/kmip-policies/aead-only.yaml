@@ -16,16 +16,16 @@ metadata:
     Encrypt/Decrypt restricted to OAEP padding. Names are KMIP 3.0 `Block
     Cipher Mode` / `Padding Method` enum names.
   authority: pqctoday-hsm/training
-  effective: 'always'
+  effective: "always"
 
 rules:
   - type: mechanism_parameter_constraint
     ops: [Encrypt, Decrypt]
     algorithm: AES
     allowed_block_cipher_modes: [GCM, CCM]
-    reason: 'AES must use an authenticated mode (GCM or CCM)'
+    reason: "AES must use an authenticated mode (GCM or CCM)"
   - type: mechanism_parameter_constraint
     ops: [Encrypt, Decrypt]
     algorithm: RSA
     allowed_padding_methods: [OAEP]
-    reason: 'RSA encryption must use OAEP padding (no PKCS#1 v1.5)'
+    reason: "RSA encryption must use OAEP padding (no PKCS#1 v1.5)"

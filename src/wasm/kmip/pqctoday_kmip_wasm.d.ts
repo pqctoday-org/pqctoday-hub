@@ -50,6 +50,36 @@ export class KmipPlayground {
    */
   policy_status(): string
   /**
+   * High-level **batch** driver: build ONE KMIP 3.0 `Request Message` carrying
+   * many operations and dispatch it through the identical decode → dispatch →
+   * encode path `submit`/`run_op` use. This is a *real* on-the-wire batch (one
+   * request, N `Batch Item`s), not N separate requests. `spec_json`:
+   *
+   * ```json
+   * {
+   *   "errorContinuation": "Stop" | "Continue" | "Undo",   // optional, default Stop
+   *   "items": [
+   *     {"op":"CreateKeyPair","intent":"sign"},
+   *     {"op":"Activate","uid":"$IDPlaceholder"},
+   *     {"op":"Sign","uid":"$IDPlaceholder","text":"hello"}
+   *   ]
+   * }
+   * ```
+   *
+   * `$IDPlaceholder` in any `uid` resolves to the UID the previous
+   * UID-producing item created (KMIP §6.4 ID Placeholder) — so Create →
+   * Activate → Sign chains in a single round trip. `errorContinuation`
+   * controls failure handling (§9.5): `Continue` runs every item, `Stop`
+   * halts after the first failure, `Undo` halts AND rolls earlier successes
+   * back (reported as `OperationUndone`).
+   *
+   * Returns `{ ok, errorContinuation, requested, returned, items[], audit,
+   * responseWireHex, responseWireLen, responseTree }` where each `items[]`
+   * entry mirrors a `run_op` result minus the wire (the wire is the one shared
+   * Response Message).
+   */
+  run_batch(spec_json: string): string
+  /**
    * High-level driver the UI uses. `spec_json` is a small object the UI
    * builds from friendly controls, e.g.:
    *

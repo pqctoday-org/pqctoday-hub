@@ -53,6 +53,7 @@ export function PolicyControlStrip({
   busy,
   expert,
   onLoadPolicy,
+  onOpenLibrary,
 }: {
   engine: KmipEngine
   policy: PolicyStatus
@@ -60,6 +61,8 @@ export function PolicyControlStrip({
   busy: boolean
   expert: boolean
   onLoadPolicy: (preset: PolicyPreset) => void
+  /** Switch to the dedicated Policy view (the full catalog + visualisation). */
+  onOpenLibrary?: () => void
 }) {
   // The signing + key-exchange algorithm the *active* policy resolves to, derived
   // by dry-running the two "let the policy decide" creates (no objects created,
@@ -94,9 +97,10 @@ export function PolicyControlStrip({
         </span>
       </div>
 
-      {/* Policy chips */}
-      <div className="mt-3 flex flex-wrap gap-2">
-        {POLICY_PRESETS.map((p) => {
+      {/* Policy chips — a curated quick-switch set (the full catalog lives in the
+          Policy view). Always include the active policy even if not featured. */}
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        {POLICY_PRESETS.filter((p) => p.featured || isActive(p, policy)).map((p) => {
           const active = isActive(p, policy)
           return (
             <Button
@@ -125,6 +129,17 @@ export function PolicyControlStrip({
             </Button>
           )
         })}
+        {onOpenLibrary && (
+          <Button
+            variant="ghost"
+            size="sm"
+            disabled={busy}
+            onClick={onOpenLibrary}
+            className="h-auto gap-1 rounded-lg border border-dashed border-border px-3 py-2 text-[12px] text-muted-foreground hover:text-foreground hover:border-primary/40"
+          >
+            All {POLICY_PRESETS.length} policies →
+          </Button>
+        )}
       </div>
 
       {/* Detail row: active-policy panel + inline dry-run tester */}

@@ -132,6 +132,51 @@ export class KmipPlayground {
     }
   }
   /**
+   * High-level **batch** driver: build ONE KMIP 3.0 `Request Message` carrying
+   * many operations and dispatch it through the identical decode → dispatch →
+   * encode path `submit`/`run_op` use. This is a *real* on-the-wire batch (one
+   * request, N `Batch Item`s), not N separate requests. `spec_json`:
+   *
+   * ```json
+   * {
+   *   "errorContinuation": "Stop" | "Continue" | "Undo",   // optional, default Stop
+   *   "items": [
+   *     {"op":"CreateKeyPair","intent":"sign"},
+   *     {"op":"Activate","uid":"$IDPlaceholder"},
+   *     {"op":"Sign","uid":"$IDPlaceholder","text":"hello"}
+   *   ]
+   * }
+   * ```
+   *
+   * `$IDPlaceholder` in any `uid` resolves to the UID the previous
+   * UID-producing item created (KMIP §6.4 ID Placeholder) — so Create →
+   * Activate → Sign chains in a single round trip. `errorContinuation`
+   * controls failure handling (§9.5): `Continue` runs every item, `Stop`
+   * halts after the first failure, `Undo` halts AND rolls earlier successes
+   * back (reported as `OperationUndone`).
+   *
+   * Returns `{ ok, errorContinuation, requested, returned, items[], audit,
+   * responseWireHex, responseWireLen, responseTree }` where each `items[]`
+   * entry mirrors a `run_op` result minus the wire (the wire is the one shared
+   * Response Message).
+   * @param {string} spec_json
+   * @returns {string}
+   */
+  run_batch(spec_json) {
+    let deferred2_0
+    let deferred2_1
+    try {
+      const ptr0 = passStringToWasm0(spec_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc)
+      const len0 = WASM_VECTOR_LEN
+      const ret = wasm.kmipplayground_run_batch(this.__wbg_ptr, ptr0, len0)
+      deferred2_0 = ret[0]
+      deferred2_1 = ret[1]
+      return getStringFromWasm0(ret[0], ret[1])
+    } finally {
+      wasm.__wbindgen_free(deferred2_0, deferred2_1, 1)
+    }
+  }
+  /**
    * High-level driver the UI uses. `spec_json` is a small object the UI
    * builds from friendly controls, e.g.:
    *
