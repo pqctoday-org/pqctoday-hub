@@ -4,7 +4,7 @@
 // writes store.currentStep through the track-relative mapping so the legacy
 // wizard and the redesign agree on what "step N" means (resume, ?step, analytics).
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, type SetURLSearchParams } from 'react-router-dom'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { usePersonaStore } from '../../../store/usePersonaStore'
 import { logAssessStart, logAssessStep } from '../../../utils/analytics'
@@ -23,6 +23,11 @@ interface UseAssessFlowArgs {
   mode: AssessTrack
   /** Called when Continue is pressed (and valid) on the LAST render step. */
   onLastStep: () => void
+  /** Embed-isolated URL param pair. When the wizard runs inside the sim embed the
+   *  parent backs these with local state so the hook's ?step read/write never
+   *  touches the real /simulation route. Omitted standalone → uses the page URL. */
+  searchParams?: URLSearchParams
+  setSearchParams?: SetURLSearchParams
 }
 
 export interface AssessFlow {
@@ -42,10 +47,20 @@ export interface AssessFlow {
   renderIndexOf: (key: AssessStepKey) => number
 }
 
-export function useAssessFlow({ mode, onLastStep }: UseAssessFlowArgs): AssessFlow {
+export function useAssessFlow({
+  mode,
+  onLastStep,
+  searchParams: argSearchParams,
+  setSearchParams: argSetSearchParams,
+}: UseAssessFlowArgs): AssessFlow {
   const store = useAssessmentStore()
   const { currentStep, setStep } = store
-  const [searchParams, setSearchParams] = useSearchParams()
+  // Prefer the embed-isolated pair when provided; fall back to the page URL
+  // (standalone /assess and tests). The internal hook is always called to keep
+  // hook order stable, but its writes are unused when the embed pair is passed.
+  const [internalSearchParams, internalSetSearchParams] = useSearchParams()
+  const searchParams = argSearchParams ?? internalSearchParams
+  const setSearchParams = argSetSearchParams ?? internalSetSearchParams
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
   const [attemptedMap, setAttemptedMap] = useState<Record<string, boolean>>({})

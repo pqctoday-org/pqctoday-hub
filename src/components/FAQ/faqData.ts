@@ -424,6 +424,24 @@ export const FAQ_DATA: FAQCategory[] = [
           'Yes, the PQC Risk Assessment report can be printed or saved as a PDF directly from your browser, preserving the full compliance gap analysis, threat landscape visualization, and prioritized migration roadmap. The print layout includes a professional header with your assessment parameters and a methodology explanation. The report is designed for board-level and audit presentations.',
         deepLink: '/assess',
       },
+      {
+        question: 'What is the Migration Workbench?',
+        answer:
+          'The Migrate page is an asset-first workbench: you start from what you actually run, pick quantum-safe replacement products, and assemble a sequenced plan aligned to NIST IR 8547 and CNSA 2.0. Tabs cover "Replace what you own", "Plan & sequence", "Vendor roadmaps", and "Vendor risk". Your selection is saved in your browser, and a Share link lets a colleague open the same plan — they can restore their own selection with one click.',
+        deepLink: '/migrate?tab=plan',
+      },
+      {
+        question: 'What is a Cryptography Bill of Materials (CBOM)?',
+        answer:
+          'A CBOM is a structured inventory of where and how your systems use cryptography — algorithms, key lengths, certificates, protocols, and libraries — analogous to a software bill of materials (SBOM). It is the foundation of crypto-agility: you cannot migrate what you cannot see. The Cryptography Bill of Materials (CBOM) module walks through building one and using it to drive a prioritized migration.',
+        deepLink: '/learn/cbom',
+      },
+      {
+        question: 'How do I safely retire legacy cryptography at the end of a migration?',
+        answer:
+          'The Decommissioning & Program Closure module covers the final phase: verifying that quantum-vulnerable algorithms are fully removed, retiring classical crypto without breaking interoperability, capturing evidence that the work is complete, and handing the program over to business-as-usual operations. It closes the loop so a migration does not quietly leave vulnerable cryptography in place.',
+        deepLink: '/learn/verification-closure',
+      },
     ],
   },
 
@@ -481,6 +499,12 @@ export const FAQ_DATA: FAQCategory[] = [
         answer:
           'Merkle Tree Certificates are a compact certificate format that replaces full certificate chains with short Merkle inclusion proofs, dramatically reducing the TLS handshake overhead caused by large PQC signatures and public keys. Instead of transmitting the full chain, the server provides a proof that its certificate is included in a trusted Merkle tree maintained by a transparency log. The Merkle Tree Certificates module explores this emerging approach to PQC deployment.',
         deepLink: '/learn/merkle-tree-certs',
+      },
+      {
+        question: 'Where can I see which protocols support post-quantum cryptography?',
+        answer:
+          'The Algorithms page has a Protocol Support tab — a matrix showing post-quantum readiness across protocols (TLS 1.2/1.3, SSH, IKEv2/IPsec, S/MIME, DNSSEC, KMIP, MLS, and more) along four dimensions: pure and hybrid KEM, and pure and hybrid signatures. Open any protocol for a detail view of its standardization status and available implementations — each opens with its own shareable link.',
+        deepLink: '/algorithms?tab=support',
       },
     ],
   },
@@ -673,6 +697,30 @@ export const FAQ_DATA: FAQCategory[] = [
         answer:
           "Start with PQC 101 — a 30-minute foundational module covering what quantum computers can break, why migration is urgent, and how to use Mosca's Theorem to gauge your own deadline. If you prefer context by role: executives should visit the Executive Quantum Impact module, developers the Developer Quantum Impact module, and architects the Architect module. For an organization-specific starting point, run the PQC Risk Assessment wizard — it takes about 15 minutes and produces a prioritized action list based on your industry, country, and data profile. Use this FAQ's search bar to jump directly to any specific topic.",
         deepLink: '/learn/pqc-101',
+      },
+      {
+        question: 'What is the Business Center (GRC Command Center)?',
+        answer:
+          'The Business Center is a governance, risk, and compliance command center aligned to NIST CSWP.39, with 34 board-ready planning tools — including an ROI Calculator, Board Pitch builder, CRQC Scenario, Risk Register, Risk Treatment Plan, RACI Builder, Roadmap Builder, KPI dashboards, Vendor Scorecard, and Deployment Playbook. Each tool produces a downloadable artifact (DOCX, PDF, or CSV) you can take into stakeholder and audit conversations.',
+        deepLink: '/business',
+      },
+      {
+        question: 'What is the PQC Migration Simulation?',
+        answer:
+          "The Simulation is a playable, end-to-end walkthrough of a quantum-safe migration. You run an organization through the framework's nine phases (P0–P7 plus program closure), make decisions at each step, watch your Mosca clock (X+Y>Z) and crypto-maturity level respond, and gather the evidence needed to clear each phase gate. It turns the migration framework into a hands-on exercise rather than a checklist.",
+        deepLink: '/simulation',
+      },
+      {
+        question: 'Does PQC Today track the PQC patent landscape?',
+        answer:
+          'Yes. The Patents page is a searchable landscape of post-quantum cryptography patents, scored for quantum relevance and crypto-agility and tagged by assignee, region, protocol, replaced classical algorithm, hardware component, and NIST standardization status. It also serves as CSWP.39 maturity evidence. Use the Insights, Explore, and Search tabs to filter, and open any patent record directly with a shareable link.',
+        deepLink: '/patents',
+      },
+      {
+        question: 'Can I bookmark or share a specific view?',
+        answer:
+          'Yes. Most pages put their state in the URL, so the link in your address bar recreates what you see — an opened item (a specific algorithm protocol, leader, patent, library document, threat, or timeline milestone), a filtered result set, or an active tab. On the Migration Workbench, a Share link even carries your product selection to a colleague. Bookmarking or sharing any of these links reopens the same view, and the browser Back button closes an opened item.',
+        deepLink: '/migrate',
       },
     ],
   },

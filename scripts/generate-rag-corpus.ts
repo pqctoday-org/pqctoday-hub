@@ -4217,7 +4217,7 @@ function processProtocolMatrix(): RAGChunk[] {
         hybridSig: dims.hybridSig.value,
         recommended: String(row.recommended ?? false),
       },
-      deepLink: `/algorithms?tab=protocol&highlight=${encodeParam(row.id)}`,
+      deepLink: `/algorithms?tab=support&protocol=${encodeParam(row.id)}`,
       prov: buildChunkProv({
         attributedTo: 'human',
         enrichmentFile: `src/data/pqcProtocolMatrix.ts:PROTOCOL_MATRIX[id=${row.id}]`,

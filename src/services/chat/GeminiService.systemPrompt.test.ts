@@ -51,6 +51,22 @@ describe('buildSystemPrompt', () => {
       expect(result).toContain('/timeline?country=')
     })
 
+    it('includes the expanded hub-scope deep links', () => {
+      const result = buildSystemPrompt([])
+      // Protocol Support detail (matrix) — new ?protocol= deep link
+      expect(result).toContain('/algorithms?tab=support&protocol=')
+      // Learn My-Path/Browse mode; track must be paired with Browse mode
+      expect(result).toContain('/learn?mode=')
+      expect(result).toContain('/learn?mode=browse&track=')
+      // Migrate workbench tabs
+      expect(result).toContain('/migrate?tab=')
+      // Timeline milestone/phase detail
+      expect(result).toContain('/timeline?event=')
+      // Newer modules in the catalog
+      expect(result).toContain('/learn/cbom')
+      expect(result).toContain('/learn/verification-closure')
+    })
+
     it('includes "CONTEXT FROM PQC TODAY DATABASE" header before context blocks', () => {
       const result = buildSystemPrompt([mockChunk])
       const contextHeader = 'CONTEXT FROM PQC TODAY DATABASE:'
