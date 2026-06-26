@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
-/* eslint-disable security/detect-object-injection */
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Play, Loader2 } from 'lucide-react'
 import { useTLSStore } from '@/store/tls-learning.store'
 import { useModuleStore } from '@/store/useModuleStore'
-import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
-import { Tabs, TabsContent } from '@/components/ui/tabs'
-import { ModuleTabBar } from '@/components/PKILearning/common/ModuleTabBar'
+import { ModuleShell } from '@/components/PKILearning/common/ModuleShell'
 import { TLSClientPanel } from './TLSClientPanel'
 import { TLSServerPanel } from './TLSServerPanel'
 import { TLSNegotiationResults } from './components/TLSNegotiationResults'
@@ -18,8 +15,6 @@ import { TLSSummary } from './components/TLSSummary'
 import { TLSDowngradeScenario } from './components/TLSDowngradeScenario'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateOpenSSLConfig } from './utils/configGenerator'
-import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
-import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
@@ -49,22 +44,12 @@ import {
   DEFAULT_MLDSA87_SERVER_CERT,
   DEFAULT_MLDSA87_CLIENT_CERT,
 } from './utils/defaultCertificates'
-import { WORKSHOP_STEPS } from '@/components/PKILearning/moduleData'
+import manifest from './manifest'
 
 const MODULE_ID = 'tls-basics'
 
 export const TLSBasicsModule: React.FC = () => {
-  const deepLink = getModuleDeepLink({
-    validTabs: ['learn', 'workshop', 'downgrade', 'exercises', 'references', 'tools'],
-  })
-  const [activeTab, setActiveTab] = useState(() => {
-    // 'simulate' was the legacy internal tab name; redirect to canonical 'workshop'
-    const tab = deepLink.initialTab
-    return tab === 'simulate' ? 'workshop' : tab
-  })
-  useSyncDeepLink(activeTab, 0)
-  const startTimeRef = useRef(Date.now())
-  const { updateModuleProgress, markStepComplete, modules } = useModuleStore()
+  const { updateModuleProgress, markStepComplete } = useModuleStore()
 
   /* The TLS simulator's HSM mode (live softhsm keygen + cert-mint at session
    * start, with CertificateVerify signing through pkcs11-provider) was
@@ -90,36 +75,6 @@ export const TLSBasicsModule: React.FC = () => {
     clientMessage,
     serverMessage,
   } = useTLSStore()
-
-  // --- Module Progress Tracking ---
-  useEffect(() => {
-    startTimeRef.current = Date.now()
-    updateModuleProgress(MODULE_ID, {
-      status: 'in-progress',
-      lastVisited: Date.now(),
-    })
-
-    return () => {
-      const elapsedMs = Date.now() - startTimeRef.current
-      const elapsedMins = elapsedMs / 60000
-      if (elapsedMins > 0) {
-        const current = useModuleStore.getState().modules[MODULE_ID]
-        updateModuleProgress(MODULE_ID, {
-          timeSpent: (current?.timeSpent || 0) + elapsedMins,
-        })
-      }
-    }
-  }, [updateModuleProgress])
-
-  // Track tab visits as completed steps
-  const handleTabChange = useCallback(
-    (tab: string) => {
-      // Mark the tab being left
-      markStepComplete(MODULE_ID, activeTab)
-      setActiveTab(tab)
-    },
-    [activeTab, markStepComplete]
-  )
 
   // --- Cleanup on unmount ---
   useEffect(() => {
@@ -311,11 +266,6 @@ export const TLSBasicsModule: React.FC = () => {
     }
   }, [commands, triggerSimulation])
 
-  const navigateToSimulate = useCallback(() => {
-    markStepComplete(MODULE_ID, activeTab)
-    setActiveTab('workshop')
-  }, [activeTab, markStepComplete])
-
   // --- Live HSM demo — HSM-backed TLS server key operations ---
   const hsm = useHSM()
   const [hsmLines, setHsmLines] = useState<string[]>([])
@@ -385,44 +335,23 @@ export const TLSBasicsModule: React.FC = () => {
     }
   }, [hsm])
 
-  const workshopSteps = WORKSHOP_STEPS[MODULE_ID] ?? []
-  const completedSteps = modules[MODULE_ID]?.completedSteps ?? []
-  const workshopDone = workshopSteps.filter((s) => completedSteps.includes(s.id)).length
-  const workshopDot = workshopDone > 0 && workshopDone < workshopSteps.length
-
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gradient">TLS 1.3 Basics</h1>
-          <p className="text-muted-foreground mt-2">
-            Learn about TLS 1.3, configure handshake parameters, and explore PQC migration
-            trade-offs.
-          </p>
-        </div>
-      </div>
-
-      <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <ModuleTabBar
-          tabs={[
-            { value: 'learn', label: 'Learn' },
-            { value: 'workshop', label: 'Workshop', hasDot: workshopDot },
-            { value: 'downgrade', label: 'Downgrade Attack' },
-            { value: 'exercises', label: 'Exercises' },
-            { value: 'references', label: 'References' },
-            { value: 'tools', label: 'Tools & Products' },
-          ]}
-          value={activeTab}
-          onValueChange={handleTabChange}
-        />
-
-        {/* Learn Tab */}
-        <TabsContent value="learn">
-          <TLSIntroduction onNavigateToSimulate={navigateToSimulate} />
-        </TabsContent>
-
-        {/* Simulate Tab */}
-        <TabsContent value="workshop">
+    <ModuleShell
+      manifest={manifest}
+      title="TLS 1.3 Basics"
+      description="Learn about TLS 1.3, configure handshake parameters, and explore PQC migration trade-offs."
+      learn={(api) => <TLSIntroduction onNavigateToSimulate={() => api.goToWorkshop()} />}
+      visual={<TLSDowngradeScenario />}
+      exercises={(api) => (
+        <>
+          <TLSExercises onNavigateToSimulate={() => api.goToWorkshop()} />
+          <div className="mt-6">
+            <TLSConfigGenerator />
+          </div>
+        </>
+      )}
+      workshop={
+        <>
           <div className="space-y-6">
             {/* Capabilities banner — what this simulator does and does NOT
              *  exercise today. Surfaces the gaps explicitly so users aren't
@@ -599,52 +528,28 @@ export const TLSBasicsModule: React.FC = () => {
               </div>
             )}
           </div>
-        </TabsContent>
-
-        {/* Downgrade Attack Tab */}
-        <TabsContent value="downgrade">
-          <TLSDowngradeScenario />
-        </TabsContent>
-
-        {/* Exercises Tab */}
-        <TabsContent value="exercises">
-          <TLSExercises onNavigateToSimulate={navigateToSimulate} />
-          <div className="mt-6">
-            <TLSConfigGenerator />
-          </div>
-        </TabsContent>
-
-        {/* References Tab */}
-        <TabsContent value="references">
-          <ModuleReferencesTab moduleId="tls-basics" />
-        </TabsContent>
-
-        {/* Tools & Products Tab */}
-        <TabsContent value="tools">
-          <ModuleMigrateTab moduleId={MODULE_ID} />
-        </TabsContent>
-      </Tabs>
-
-      {hsm.isReady && (
-        <div className="space-y-4 mt-6">
-          <Pkcs11LogPanel
-            log={hsm.log}
-            onClear={hsm.clearLog}
-            defaultOpen={true}
-            title="PKCS#11 Call Log — TLS Server Operations"
-            emptyMessage="Click 'Execute' to run the HSM-backed TLS server demo."
-            filterFns={TLS_HSM_OPERATIONS}
-          />
-          {hsm.keys.length > 0 && (
-            <HsmKeyInspector
-              keys={hsm.keys}
-              moduleRef={hsm.moduleRef}
-              hSessionRef={hsm.hSessionRef}
-              onRemoveKey={hsm.removeKey}
-            />
+          {hsm.isReady && (
+            <div className="space-y-4 mt-6">
+              <Pkcs11LogPanel
+                log={hsm.log}
+                onClear={hsm.clearLog}
+                defaultOpen={true}
+                title="PKCS#11 Call Log — TLS Server Operations"
+                emptyMessage="Click 'Execute' to run the HSM-backed TLS server demo."
+                filterFns={TLS_HSM_OPERATIONS}
+              />
+              {hsm.keys.length > 0 && (
+                <HsmKeyInspector
+                  keys={hsm.keys}
+                  moduleRef={hsm.moduleRef}
+                  hSessionRef={hsm.hSessionRef}
+                  onRemoveKey={hsm.removeKey}
+                />
+              )}
+            </div>
           )}
-        </div>
-      )}
-    </div>
+        </>
+      }
+    />
   )
 }
