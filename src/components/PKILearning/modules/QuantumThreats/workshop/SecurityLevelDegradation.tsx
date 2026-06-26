@@ -344,8 +344,14 @@ export const SecurityLevelDegradation: React.FC<SecurityLevelDegradationProps> =
                   </thead>
                   <tbody>
                     {CURRENT_QUANTUM_COMPUTERS.map((qc) => {
-                      const ratio = Math.round(qc.physicalQubits / qc.estimatedLogicalQubits)
-                      const physicalNeeded = algorithmData.estimatedQubits! * ratio
+                      // NISQ machines have no fault-tolerant logical qubits — the
+                      // physical/logical ratio is undefined, so show a dash instead.
+                      const hasLogical = qc.estimatedLogicalQubits > 0
+                      const ratio = hasLogical
+                        ? Math.round(qc.physicalQubits / qc.estimatedLogicalQubits)
+                        : null
+                      const physicalNeeded =
+                        ratio !== null ? algorithmData.estimatedQubits! * ratio : null
                       return (
                         <tr
                           key={`ratio-${qc.vendor}-${qc.name}`}
@@ -358,13 +364,13 @@ export const SecurityLevelDegradation: React.FC<SecurityLevelDegradationProps> =
                             {qc.physicalQubits.toLocaleString()}
                           </td>
                           <td className="py-1.5 px-2 text-right text-success">
-                            ~{qc.estimatedLogicalQubits}
+                            {hasLogical ? `~${qc.estimatedLogicalQubits}` : 'NISQ'}
                           </td>
                           <td className="py-1.5 px-2 text-right text-warning">
-                            {ratio.toLocaleString()}:1
+                            {ratio !== null ? `${ratio.toLocaleString()}:1` : '—'}
                           </td>
                           <td className="py-1.5 pl-2 text-right text-destructive font-medium">
-                            ~{physicalNeeded.toLocaleString()}
+                            {physicalNeeded !== null ? `~${physicalNeeded.toLocaleString()}` : '—'}
                           </td>
                         </tr>
                       )

@@ -99,6 +99,15 @@ function checkParams(path: string, params: URLSearchParams): DeepLinkResolution 
     if (bad) return { ok: false, reason: `/timeline: unknown param "${bad}"` }
     return { ok: true }
   }
+  if (path.startsWith('/learn/')) {
+    // Learn modules accept the workshop deep-link params ?tab=workshop&step=N
+    // (mirrors WorkshopStepHeader's real URL API), so a sim "learn" action can
+    // open a specific workshop step inside the module.
+    const LEARN_PARAMS = new Set(['tab', 'step'])
+    const bad = keys.find((k) => !LEARN_PARAMS.has(k))
+    if (bad) return { ok: false, reason: `${path}: unknown param "${bad}"` }
+    return { ok: true }
+  }
   return { ok: false, reason: `${path}: unexpected params (${keys.join(', ')})` }
 }
 

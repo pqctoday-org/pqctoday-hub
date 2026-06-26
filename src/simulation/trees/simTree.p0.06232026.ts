@@ -54,6 +54,12 @@ const TREE: PhaseTree = {
               refId: 'threats',
             },
             {
+              kind: 'learn',
+              label: 'Learn: the trajectory to Q-Day',
+              to: '/learn/quantum-threats?tab=workshop&step=5',
+              moduleId: 'quantum-threats',
+            },
+            {
               kind: 'reference',
               label: 'Map the binding regulatory deadlines',
               to: '/compliance',

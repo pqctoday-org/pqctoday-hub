@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { FC } from 'react'
-import { BarChart3, Grid3X3, GitCompare, Clock, PenLine } from 'lucide-react'
+import { BarChart3, Grid3X3, GitCompare, Clock, PenLine, TrendingUp } from 'lucide-react'
+import { CrqcTrajectoryChart } from '@/components/Threats/CrqcTrajectoryChart'
 import { QuantumThreatsIntroduction } from './components/QuantumThreatsIntroduction'
 import { QuantumThreatsExercises } from './components/QuantumThreatsExercises'
 import { SecurityLevelDegradation } from './workshop/SecurityLevelDegradation'
@@ -42,6 +43,12 @@ const PARTS: WorkshopPart[] = [
     description: 'Calculate when signing credentials must be rotated to PQC.',
     icon: PenLine,
   },
+  {
+    id: 'crqc-trajectory',
+    title: 'Step 6: Trajectory to Q-Day',
+    description: 'Track logical-qubit progress against the qubits needed to break ECC and RSA.',
+    icon: TrendingUp,
+  },
 ]
 
 export const QuantumThreatsModule: FC = () => (
@@ -81,6 +88,8 @@ export const QuantumThreatsModule: FC = () => (
           return <HNDLTimeline />
         case 4:
           return <HNFLTimeline />
+        case 5:
+          return <CrqcTrajectoryChart />
         default:
           return null
       }
