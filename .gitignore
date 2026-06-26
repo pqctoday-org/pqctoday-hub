@@ -353,6 +353,14 @@ public/timeline/*.html
 public/timeline/*_files/
 public/threats/*.pdf
 public/threats/*.html
+# Recursive: third-party docs in NESTED folders (e.g. public/threats/evidence/)
+# must never be tracked in the public repo — they live only in the private backup.
+public/timeline/**/*.pdf
+public/timeline/**/*.html
+public/threats/**/*.pdf
+public/threats/**/*.html
+public/library/**/*.pdf
+public/library/**/*.html
 .cache/*.pdf
 
 # Root-level dev artifacts and one-off scripts
