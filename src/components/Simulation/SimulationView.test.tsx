@@ -85,8 +85,9 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.getByText(/Transformation/)).toBeInTheDocument()
     expect(screen.getByText('Phases cleared')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /End Quarter/ })).toBeInTheDocument()
-    // exit affordance back to the hub
-    expect(screen.getByRole('link', { name: /Exit to hub/i })).toHaveAttribute('href', '/')
+    // exit affordance back to the hub now lives in the ⋯ More overflow menu (PR2)
+    fireEvent.click(screen.getByTitle('More run actions'))
+    expect(screen.getByRole('menuitem', { name: /Exit to hub/i })).toBeInTheDocument()
   })
 
   // The sim runs on the user's assessed org (single source of truth): with no
@@ -174,8 +175,10 @@ describe('SimulationView (Mission Control)', () => {
     // p0 (Executive Mandate) produces artifacts but is not an architecture phase
     expect(screen.getByText(/Executive Mandate artifacts/)).toBeInTheDocument()
     expect(screen.queryByText(/Your architecture/)).not.toBeInTheDocument()
-    // P1 (Discovery) acts on the estate → architecture view appears
+    // P1 (Discovery) acts on the estate → architecture view appears, now behind
+    // the Expert rail's "Show more" disclosure (PR3)
     fireEvent.click(screen.getByRole('button', { name: /Discovery/i }))
+    fireEvent.click(screen.getByRole('button', { name: /Show \d+ more panel/i }))
     expect(screen.getByText(/Your architecture/)).toBeInTheDocument()
   })
 
