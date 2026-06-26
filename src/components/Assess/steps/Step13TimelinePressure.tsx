@@ -6,6 +6,7 @@ import { Info } from 'lucide-react'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 
 import { timelineData, transformToGanttData } from '../../../data/timelineData'
+import { COUNTRY_PLANNING_MANDATE } from '../../../hooks/assessmentData'
 
 import { Button } from '../../ui/button'
 import clsx from 'clsx'
@@ -30,6 +31,12 @@ const Step13TimelinePressure = ({
     if (!entry) return []
     return entry.phases.filter((p) => p.phase === 'Deadline')
   }, [country])
+
+  // Is this country's deadline a binding legal mandate (HARD) or soft guidance (SOFT)?
+  // Single source: timeline CSV `mandate_type` → COUNTRY_PLANNING_MANDATE. Drives the
+  // honest label below so soft guidance isn't presented as a binding regulatory deadline.
+  // eslint-disable-next-line security/detect-object-injection
+  const mandate = country ? COUNTRY_PLANNING_MANDATE[country] : undefined
 
   const staticOptions = [
     {
@@ -106,7 +113,21 @@ const Step13TimelinePressure = ({
             <div className="flex items-start gap-2">
               <Info size={16} className="text-primary shrink-0 mt-0.5" />
               <p className="text-xs text-muted-foreground">
-                Deadlines below are sourced from {country}&apos;s official PQC regulatory timeline.
+                {mandate === 'SOFT' ? (
+                  <>
+                    Deadlines below come from {country}&apos;s official PQC{' '}
+                    <span className="font-medium text-foreground">guidance</span> — published
+                    targets, not a binding legal mandate.
+                  </>
+                ) : mandate === 'HARD' ? (
+                  <>
+                    Deadlines below are a{' '}
+                    <span className="font-medium text-foreground">binding regulatory mandate</span>{' '}
+                    from {country}&apos;s official PQC timeline.
+                  </>
+                ) : (
+                  <>Deadlines below are sourced from {country}&apos;s official PQC timeline.</>
+                )}
               </p>
             </div>
           </div>
