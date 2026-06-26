@@ -37,7 +37,7 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'The Compliance & Regulatory Strategy module teaches executives how to navigate the complex and evolving landscape of PQC compliance requirements across jurisdictions. It covers jurisdiction mapping to identify applicable frameworks and deadline conflicts, audit readiness checklisting with 25 evidence items across 5 categories, and compliance timeline building that overlays organizational milestones on regulatory deadlines with gap analysis.',
+      'The Compliance & Regulatory Strategy module teaches executives how to navigate the complex and evolving landscape of PQC compliance requirements across jurisdictions. It covers jurisdiction mapping to identify applicable frameworks and deadline conflicts, audit readiness checklisting with 30 evidence items across 6 categories (Cryptographic Inventory, Policy & Governance, Risk Assessment, Technical Controls, Vendor Management, Audit & Assurance), and compliance timeline building that overlays organizational milestones on regulatory deadlines with gap analysis.',
     keyConcepts:
       'Major PQC Compliance Frameworks — CNSA 2.0 (NSA, US national security systems), NIST IR 8547 (US federal guidance, initial public draft Nov 2024, not yet finalized), ETSI (European standards), ANSSI (French national agency), BSI (German federal office). CNSA 2.0 Timeline — software/firmware signing preferred 2025, exclusive 2030; new networking equipment 2026; web/cloud/servers and all NSS by 2033. Compliance-First vs.',
     workshopSummary:
