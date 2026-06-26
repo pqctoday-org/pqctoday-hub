@@ -7,6 +7,10 @@ const BASE_URL = `http://localhost:${DEV_PORT}`
 
 export default defineConfig({
   testDir: './e2e',
+  // Warm Vite's dep optimizer before specs run, so a cold dev server (or the
+  // first run after the WASM bundles change) doesn't fail specs with a transient
+  // "504 Outdated Optimize Dep" on the lazy-loaded Playground routes.
+  globalSetup: './e2e/global-setup.ts',
   timeout: 30 * 1000,
   expect: {
     timeout: 5000,
