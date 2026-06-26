@@ -268,7 +268,6 @@ export function SimulationView() {
     sector,
     seat,
     sel,
-    checks,
     edgeDecisions,
     year,
     q,
@@ -684,9 +683,8 @@ export function SimulationView() {
   }
   // STRICT GATING: a phase with an activity tree can only reach level N by passing
   // the gate of every level below it (completing those levels' activities). No
-  // manual/seed bypass. Phases with no tree (foundations) fall back to evidence.
-  const levelOf = (p: string) =>
-    SIM_TREES[p as PhaseId] ? treeLevel(p) : Math.max(checks[p] ?? 0, evidenceLevel(p))
+  // manual/seed bypass. Every phase is tree-backed; evidence is a defensive fallback.
+  const levelOf = (p: string) => (SIM_TREES[p as PhaseId] ? treeLevel(p) : evidenceLevel(p))
 
   // The TOP maturity band a phase actually ships (its tree's highest level). The
   // framework caps several phases below L4 BY DESIGN — no framework activity sits
@@ -940,7 +938,6 @@ export function SimulationView() {
       simMigrationYears,
       simShelfLifeYears,
       clockYearsToHorizon: clock.yearsToHorizon,
-      checks,
       balance,
       levelOf,
       evidenceLevel,
