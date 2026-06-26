@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useEffect } from 'react'
-import { ChevronDown, ChevronUp, Lightbulb, X } from 'lucide-react'
+import { ChevronDown, ChevronUp, Lightbulb, X, ImageOff } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { usePersonaStore } from '../../../store/usePersonaStore'
 import { applyGlossaryToChildren } from '@/utils/parseGlossary'
 import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/ui/empty-state'
 
 /**
  * Eagerly load all curious-summary.md files at bundle time.
@@ -165,7 +166,18 @@ export const CuriousSummaryBanner = ({
   const content = isCuriousMode
     ? curiousContentByModuleId[moduleId] || standardContentByModuleId[moduleId] // eslint-disable-line security/detect-object-injection
     : standardContentByModuleId[moduleId] // eslint-disable-line security/detect-object-injection
-  if (!content) return null
+  if (!content) {
+    // On the standalone Visual tab (isFullPage) a missing summary would render
+    // an empty tab — show a purposeful empty state instead. The inline curious
+    // banner still collapses to nothing.
+    return isFullPage ? (
+      <EmptyState
+        icon={<ImageOff size={32} />}
+        title="No visual summary yet"
+        description="This module doesn't have an infographic or plain-language summary yet."
+      />
+    ) : null
+  }
 
   // Strip the H1 title — we render our own heading
   const body = content.replace(/^#\s+.+\n+/, '')
