@@ -110,6 +110,7 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
     description: 'Assessment wizard',
   },
   { path: exact('/report'), queryKeys: '*', description: 'Assessment report' },
+  { path: exact('/simulation'), queryKeys: '*', description: 'Migration Simulation' },
   { path: exact('/changelog'), queryKeys: '*', description: 'Changelog' },
   { path: exact('/about'), queryKeys: '*', description: 'About' },
   { path: exact('/explore'), queryKeys: '*', description: 'Guided exploration' },
