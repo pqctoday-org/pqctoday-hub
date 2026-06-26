@@ -822,7 +822,10 @@ export function SimulationView() {
   const p0Done = p0Steps.filter((s) => stepDone(s, 'p0')).length
   const p0Level = levelOf('p0')
   const p0Frac = p0Steps.length ? balance.budget.doneWeight * (p0Done / p0Steps.length) : 0
-  const budgetTarget = programBudgetTarget(sector, sizeKey)
+  // Difficulty budget lever (WS-14, PR4): Hard secures less per activity.
+  const budgetTarget = Math.round(
+    programBudgetTarget(sector, sizeKey) * balance.estate.budgetMultiplier
+  )
   const budgetSecured = Math.round(budgetTarget * p0Frac * 10) / 10
 
   // active phase

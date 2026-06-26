@@ -38,6 +38,13 @@ export interface SimBalance {
    * removed; difficulty touches budget via `estate.budgetMultiplier`, see WS-14/PR4.)
    */
   budget: { doneWeight: number }
+  /**
+   * Estate / difficulty structure (WS-14, PR4). Only the budget lever ships now:
+   * `budgetMultiplier` scales the program budget target so Hard secures less per
+   * activity. (Estate-widening fields — extraVulnerableBias etc. — are parked
+   * until the grounded-readiness model settles; see SIMULATION-REMEDIATION-PLAN.)
+   */
+  estate: { budgetMultiplier: number }
 }
 
 /** Difficulty presets (WS-14) — each is a complete SimBalance variant. Pure
@@ -51,6 +58,7 @@ export const SIM_PRESETS: Record<DifficultyId, SimBalance> = {
     crqc: { pullForwardPerQuarter: 0.1 },
     ai: { advanceChance: 0.55 },
     budget: { doneWeight: 1 },
+    estate: { budgetMultiplier: 1.2 },
   },
   // The grounded baseline (the original WS-03 values).
   realistic: {
@@ -58,6 +66,7 @@ export const SIM_PRESETS: Record<DifficultyId, SimBalance> = {
     crqc: { pullForwardPerQuarter: 0.22 },
     ai: { advanceChance: 0.35 },
     budget: { doneWeight: 1 },
+    estate: { budgetMultiplier: 1 },
   },
   // Punishing: more shocks, faster Q-Day creep, sparse AI help.
   hard: {
@@ -65,6 +74,7 @@ export const SIM_PRESETS: Record<DifficultyId, SimBalance> = {
     crqc: { pullForwardPerQuarter: 0.35 },
     ai: { advanceChance: 0.2 },
     budget: { doneWeight: 1 },
+    estate: { budgetMultiplier: 0.8 },
   },
 }
 
