@@ -4,6 +4,7 @@ import { Map, ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
 import { timelineData, transformToGanttData } from '../../data/timelineData'
 import type { RecommendedAction } from '../../hooks/assessmentTypes'
+import { COUNTRY_PLANNING_MANDATE } from '../../hooks/assessmentData'
 import { Button } from '../ui/button'
 import { SectionInfoTip } from './ReportContent'
 
@@ -138,6 +139,24 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
     [countryName]
   )
 
+  // Binding legal mandate (HARD) vs soft guidance/roadmap (SOFT) — same single source
+  // (timeline CSV mandate_type). A SOFT year is a published target, not a binding
+  // deadline, so it's labelled + styled as guidance rather than a red regulatory deadline.
+  // eslint-disable-next-line security/detect-object-injection
+  const isSoft = countryName ? COUNTRY_PLANNING_MANDATE[countryName] === 'SOFT' : false
+  const deadlineBadge = deadlineYear ? (
+    <span
+      className={clsx(
+        'text-xs font-mono px-2 py-1 rounded border',
+        isSoft
+          ? 'border-border bg-muted text-muted-foreground'
+          : 'border-destructive/30 bg-destructive/10 text-destructive'
+      )}
+    >
+      {countryName} {isSoft ? 'guidance target' : 'deadline'}: {deadlineYear}
+    </span>
+  ) : null
+
   const lanes: SwimLane[] = useMemo(() => {
     const phases = computePhaseRanges(deadlineYear)
     const grouped: SwimLane[] = phases.map((p) => ({
@@ -170,11 +189,7 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
             Migration Roadmap
           </div>
           <div className="flex items-center gap-2">
-            {deadlineYear && (
-              <span className="text-xs font-mono px-2 py-1 rounded border border-destructive/30 bg-destructive/10 text-destructive">
-                {countryName} deadline: {deadlineYear}
-              </span>
-            )}
+            {deadlineBadge}
             <ChevronDown
               size={18}
               className={clsx(
@@ -194,11 +209,7 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
           <Map className="text-primary" size={20} />
           Migration Roadmap
         </div>
-        {deadlineYear && (
-          <span className="text-xs font-mono px-2 py-1 rounded border border-destructive/30 bg-destructive/10 text-destructive">
-            {countryName} deadline: {deadlineYear}
-          </span>
-        )}
+        {deadlineBadge}
       </div>
       <div className={clsx('mt-4', !open && 'hidden print:block')}>
         <div className="space-y-4">
