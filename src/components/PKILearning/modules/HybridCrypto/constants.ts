@@ -354,7 +354,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '}', color: 'foreground', indent: 0 },
     ],
     educationalNote:
-      'Alt-Sig (informally called "Catalyst" by the NSA) embeds a PQC public key and signature inside a classical certificate\'s X.509 extensions. Legacy validators ignore the unknown extensions and process only the classical ECDSA signature. PQC-aware verifiers check both signatures. This differs from Related Certificates (RFC 9763), which uses two separate independent certificates bound by a hash.',
+      'Alt-Sig (the alternative-signature extensions from ITU-T X.509 §9.8; ISARA marketed an implementation as "Catalyst") embeds a PQC public key and signature inside a classical certificate\'s X.509 extensions. Legacy validators ignore the unknown extensions and process only the classical ECDSA signature. PQC-aware verifiers check both signatures. This differs from Related Certificates (RFC 9763), which uses two separate independent certificates bound by a hash.',
     classicalAlg: 'EC',
     pqcAlg: 'ML-DSA-65',
   },

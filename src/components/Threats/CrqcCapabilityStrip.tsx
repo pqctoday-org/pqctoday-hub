@@ -2,6 +2,7 @@
 import React, { useMemo, useState } from 'react'
 import { Activity, ChevronDown, Cpu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Link } from 'react-router-dom'
 import {
   CRQC_ESTIMATES,
   CURRENT_QUANTUM_COMPUTERS,
@@ -144,13 +145,35 @@ export const CrqcCapabilityStrip: React.FC<{ defaultExpanded?: boolean }> = ({
             <div className="h-full bg-primary rounded-full" style={{ width: `${progressPct}%` }} />
           </div>
           <div className="text-[10px] text-muted-foreground mt-1">
-            ~1,200 LQ is the low-end ECC-256 estimate; published work ranges to ~2,330+ LQ.
+            ~1,200 LQ is the low-end ECC-256 estimate (Google/Ethereum, 2026); earlier work ranged
+            to ~2,330+ LQ. The bar to break RSA-2048 keeps falling: ~20M physical qubits (2019) →
+            &lt;1M (Gidney 2025) → &lt;100k projected (qLDPC, 2026).
           </div>
           <div className="text-[10px] text-muted-foreground mt-1">
             Lead: {leadMachine.vendor} {leadMachine.name} ({leadMachine.qubitType})
           </div>
         </div>
       </div>
+
+      {/* Concise pointer — the full trajectory chart, technology tracks and driver
+          explanations live in the Quantum Threats learn module. */}
+      <Link
+        to="/learn/quantum-threats?tab=workshop&step=5"
+        className="mt-3 flex items-center justify-between gap-3 rounded-lg border border-warning/20 bg-warning/5 p-3 transition-colors hover:bg-warning/10"
+      >
+        <div>
+          <div className="text-xs font-semibold text-foreground">
+            See the full trajectory to Q-Day
+          </div>
+          <div className="text-[11px] text-muted-foreground mt-0.5">
+            Logical-qubit progress vs the qubits to break ECC &amp; RSA, the competing technology
+            tracks, and what&apos;s driving the timeline — explained.
+          </div>
+        </div>
+        <span className="shrink-0 text-xs font-medium text-warning" aria-hidden="true">
+          Open →
+        </span>
+      </Link>
 
       {/* Per-source + per-machine detail — collapsible */}
       {expanded && (

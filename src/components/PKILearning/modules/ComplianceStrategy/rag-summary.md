@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Compliance & Regulatory Strategy module teaches executives how to navigate the complex and evolving landscape of PQC compliance requirements across jurisdictions. It covers jurisdiction mapping to identify applicable frameworks and deadline conflicts, audit readiness checklisting with 25 evidence items across 5 categories, and compliance timeline building that overlays organizational milestones on regulatory deadlines with gap analysis. The module integrates live data from the app's compliance framework database and country timeline system.
+The Compliance & Regulatory Strategy module teaches executives how to navigate the complex and evolving landscape of PQC compliance requirements across jurisdictions. It covers jurisdiction mapping to identify applicable frameworks and deadline conflicts, audit readiness checklisting with 30 evidence items across 6 categories (Cryptographic Inventory, Policy & Governance, Risk Assessment, Technical Controls, Vendor Management, Audit & Assurance), and compliance timeline building that overlays organizational milestones on regulatory deadlines with gap analysis. The module integrates live data from the app's compliance framework database and country timeline system.
 
 ## Key Concepts
 

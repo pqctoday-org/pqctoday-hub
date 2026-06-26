@@ -35,5 +35,5 @@ Module covering PQC migration for network security infrastructure including NGFW
 - NIST SP 800-227: Key Encapsulation Mechanisms (ML-KEM in TLS)
 - NIST SP 800-207A: Zero Trust Architecture and PQC
 - RFC 9370: Multiple Key Exchanges in IKEv2 (hybrid KEM for IPsec)
-- CNSA 2.0: Hybrid by 2026, exclusively PQC by 2033 for NSS environments
+- CNSA 2.0: exclusive use by 2030-2033 by equipment class, all NSS by 2035 (NSA prefers pure PQC; hybrid not required)
 - NIST IR 8547: Classical crypto deprecation timeline (2030/2035)

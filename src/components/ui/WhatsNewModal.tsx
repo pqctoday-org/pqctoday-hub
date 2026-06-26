@@ -339,7 +339,10 @@ export const WhatsNewModal = () => {
 
           {/* Modal — standalone uses flex centering wrapper; embed uses positionStyle directly */}
           <div
-            className={clsx(!isEmbedded && 'fixed inset-0 flex items-center justify-center p-4')}
+            className={clsx(
+              !isEmbedded &&
+                'fixed inset-0 flex items-center justify-center p-4 pointer-events-none'
+            )}
             style={!isEmbedded ? { zIndex: 9999 } : undefined}
           >
             <motion.div
@@ -348,7 +351,7 @@ export const WhatsNewModal = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="w-full max-w-lg max-h-[90dvh] sm:max-h-[80dvh] flex flex-col glass-panel border border-primary/30 shadow-lg shadow-primary/10 print:hidden"
+              className="w-full max-w-lg max-h-[90dvh] sm:max-h-[80dvh] flex flex-col glass-panel border border-primary/30 shadow-lg shadow-primary/10 print:hidden pointer-events-auto"
               role="dialog"
               aria-modal="true"
               aria-labelledby="whats-new-modal-title"

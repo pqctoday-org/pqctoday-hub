@@ -86,6 +86,9 @@ interface MigrateSelectionState {
   /** Active workbench tab (URL-synced). */
   tab: MigrateTab
   setTab: (tab: MigrateTab) => void
+  /** Replace the asset-first selection wholesale (used when hydrating a shared
+   *  ?share= selection link). Returns nothing; callers snapshot prior state for undo. */
+  applySharedSelection: (plan: string[], choice: Record<string, string[]>) => void
 }
 
 /** softwareName → productId, for resolving workbench `choice` (which stores
@@ -228,6 +231,8 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
         }),
 
       setTab: (tab) => set({ tab }),
+
+      applySharedSelection: (plan, choice) => set({ plan, choice }),
     }),
     {
       name: 'pqc-migrate-selection',

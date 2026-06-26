@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useCallback, useRef, useEffect, Fragment } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   ArrowUpDown,
   ArrowUp,
@@ -102,7 +103,39 @@ export const SimpleGanttChart = ({
   const [countryCopied, setCountryCopied] = useState(false)
   const [sortField, setSortField] = useState<'country' | 'organization'>('country')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
-  const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null)
+  // ?event=<title> deep-links the milestone/phase detail popover so it can be
+  // shared/bookmarked. Disabled when embedded in the sim so it never writes the
+  // /simulation route (the popover then stays pure local state).
+  const [searchParams, setSearchParams] = useSearchParams()
+  const resolveEventPhase = useCallback(
+    (title: string | null): TimelinePhase | null => {
+      if (!title) return null
+      for (const country of data) {
+        const match = country.phases.find((p) => p.title === title)
+        if (match) return match
+      }
+      return null
+    },
+    [data]
+  )
+  const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(() =>
+    embedded ? null : resolveEventPhase(searchParams.get('event'))
+  )
+  const writeEventParam = useCallback(
+    (title: string | null, { push }: { push: boolean }) => {
+      if (embedded) return
+      setSearchParams(
+        (sp) => {
+          const params = new URLSearchParams(sp)
+          if (title) params.set('event', title)
+          else params.delete('event')
+          return params
+        },
+        { replace: !push }
+      )
+    },
+    [embedded, setSearchParams]
+  )
   const [selectedPhaseType, setSelectedPhaseType] = useState('All')
   const [selectedEventType, setSelectedEventType] = useState('All')
 
@@ -146,10 +179,22 @@ export const SimpleGanttChart = ({
   const handlePhaseClick = (phase: TimelinePhase, e: React.MouseEvent) => {
     e.stopPropagation()
     setSelectedPhase(phase)
+    writeEventParam(phase.title, { push: true })
     logEvent('Timeline', 'View Phase Details', `${phase.phase}: ${phase.title}`)
   }
 
-  const handleClosePopover = () => setSelectedPhase(null)
+  const handleClosePopover = () => {
+    setSelectedPhase(null)
+    writeEventParam(null, { push: false })
+  }
+
+  // Reconcile the popover with ?event= on back/forward / external navigation.
+  const eventParam = embedded ? null : searchParams.get('event')
+  useEffect(() => {
+    if (embedded) return
+    const next = resolveEventPhase(eventParam)
+    setSelectedPhase((prev) => (prev?.title === next?.title ? prev : next))
+  }, [embedded, eventParam, resolveEventPhase])
 
   const handleFilterBlur = () => {
     if (filterText) logEvent('Timeline', 'Filter Text', filterText)

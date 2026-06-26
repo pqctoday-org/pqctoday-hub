@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import type { ReactElement } from 'react'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { SimpleGanttChart } from './SimpleGanttChart'
 import { logEvent } from '../../utils/analytics'
 import type { GanttCountryData } from '../../types/timeline'
 import '@testing-library/jest-dom'
 import { Button } from '@/components/ui/button'
+
+// SimpleGanttChart now reads ?event= via useSearchParams, so it needs a Router.
+const renderG = (ui: ReactElement) => render(<MemoryRouter>{ui}</MemoryRouter>)
 
 // Mock dependencies
 vi.mock('./GanttDetailPopover', () => ({
@@ -140,7 +145,7 @@ describe('SimpleGanttChart', () => {
   })
 
   it('renders the table structure', () => {
-    render(<SimpleGanttChart {...defaultProps} />)
+    renderG(<SimpleGanttChart {...defaultProps} />)
     const table = screen.getByRole('table')
     expect(table).toBeInTheDocument()
 
@@ -153,7 +158,7 @@ describe('SimpleGanttChart', () => {
   })
 
   it('renders country and organization data', () => {
-    render(<SimpleGanttChart {...defaultProps} />)
+    renderG(<SimpleGanttChart {...defaultProps} />)
     const table = screen.getByRole('table')
 
     // Use getAllByText because names appear in dropdown too, so scope to table
@@ -164,7 +169,7 @@ describe('SimpleGanttChart', () => {
   })
 
   it('renders phase bars correctly', () => {
-    render(<SimpleGanttChart {...defaultProps} />)
+    renderG(<SimpleGanttChart {...defaultProps} />)
 
     // US Research phase spans multiple years, so multiple buttons with same label exist
     const researchPhases = screen.getAllByLabelText(/Research: PQC Research/i)
@@ -176,7 +181,7 @@ describe('SimpleGanttChart', () => {
   })
 
   it('renders milestone markers (flags)', () => {
-    render(<SimpleGanttChart {...defaultProps} />)
+    renderG(<SimpleGanttChart {...defaultProps} />)
     // Milestones are single points in time but may still have label
     const milestones = screen.getAllByLabelText(/Policy: US Policy Milestone/i)
     expect(milestones.length).toBeGreaterThan(0)
@@ -186,7 +191,7 @@ describe('SimpleGanttChart', () => {
   })
 
   it('filters data by search text', () => {
-    render(<SimpleGanttChart {...defaultProps} />)
+    renderG(<SimpleGanttChart {...defaultProps} />)
 
     const searchInput = screen.getByPlaceholderText(/Filter by country.../i)
     fireEvent.change(searchInput, { target: { value: 'Canada' } })
@@ -197,7 +202,7 @@ describe('SimpleGanttChart', () => {
   })
 
   it('sorts data when clicking headers', () => {
-    render(<SimpleGanttChart {...defaultProps} />)
+    renderG(<SimpleGanttChart {...defaultProps} />)
 
     const countryHeader = screen.getByRole('columnheader', { name: /Country/i })
     expect(countryHeader).toBeInTheDocument()
@@ -209,7 +214,7 @@ describe('SimpleGanttChart', () => {
   })
 
   it('opens popover when clicking a phase', () => {
-    render(<SimpleGanttChart {...defaultProps} />)
+    renderG(<SimpleGanttChart {...defaultProps} />)
 
     const phases = screen.getAllByLabelText(/Research: PQC Research/i)
     // Click any of the phase segments
@@ -220,7 +225,7 @@ describe('SimpleGanttChart', () => {
   })
 
   it('updates parent filter when country dropdown is used', () => {
-    render(<SimpleGanttChart {...defaultProps} />)
+    renderG(<SimpleGanttChart {...defaultProps} />)
 
     const dropdowns = screen.getAllByTestId('filter-dropdown')
     const countryDropdown = dropdowns[1] // Second dropdown is the country filter
@@ -232,14 +237,14 @@ describe('SimpleGanttChart', () => {
 
   describe('Advanced Filtering', () => {
     it('renders phase type and event type filter dropdowns', () => {
-      render(<SimpleGanttChart {...defaultProps} />)
+      renderG(<SimpleGanttChart {...defaultProps} />)
       const dropdowns = screen.getAllByTestId('filter-dropdown')
       // 4 dropdowns: region, country, phase type, event type
       expect(dropdowns).toHaveLength(4)
     })
 
     it('filters by phase type when phase dropdown is used', () => {
-      render(<SimpleGanttChart {...defaultProps} />)
+      renderG(<SimpleGanttChart {...defaultProps} />)
 
       const dropdowns = screen.getAllByTestId('filter-dropdown')
       const phaseDropdown = dropdowns[2]
@@ -255,7 +260,7 @@ describe('SimpleGanttChart', () => {
     })
 
     it('filters by event type (Milestones only)', () => {
-      render(<SimpleGanttChart {...defaultProps} />)
+      renderG(<SimpleGanttChart {...defaultProps} />)
 
       const dropdowns = screen.getAllByTestId('filter-dropdown')
       const eventDropdown = dropdowns[3]
@@ -271,7 +276,7 @@ describe('SimpleGanttChart', () => {
     })
 
     it('filters by event type (Phases only)', () => {
-      render(<SimpleGanttChart {...defaultProps} />)
+      renderG(<SimpleGanttChart {...defaultProps} />)
 
       const dropdowns = screen.getAllByTestId('filter-dropdown')
       const eventDropdown = dropdowns[3]
@@ -288,20 +293,20 @@ describe('SimpleGanttChart', () => {
     })
 
     it('renders export CSV button', () => {
-      render(<SimpleGanttChart {...defaultProps} />)
+      renderG(<SimpleGanttChart {...defaultProps} />)
       const exportBtn = screen.getByLabelText('Export filtered timeline as CSV')
       expect(exportBtn).toBeInTheDocument()
       expect(exportBtn).not.toBeDisabled()
     })
 
     it('disables export button when no data matches filters', () => {
-      render(<SimpleGanttChart {...defaultProps} data={[]} />)
+      renderG(<SimpleGanttChart {...defaultProps} data={[]} />)
       const exportBtn = screen.getByLabelText('Export filtered timeline as CSV')
       expect(exportBtn).toBeDisabled()
     })
 
     it('combines phase type and region filters', () => {
-      render(<SimpleGanttChart {...defaultProps} />)
+      renderG(<SimpleGanttChart {...defaultProps} />)
 
       const dropdowns = screen.getAllByTestId('filter-dropdown')
 
@@ -320,7 +325,7 @@ describe('SimpleGanttChart', () => {
 
   describe('Keyboard Navigation', () => {
     it('supports ArrowDown to navigate between phase rows', () => {
-      render(<SimpleGanttChart {...defaultProps} />)
+      renderG(<SimpleGanttChart {...defaultProps} />)
 
       // Canada sorts first alphabetically, so Canada Testing is row 0
       // US Research is row 1, US Policy is row 2
@@ -337,7 +342,7 @@ describe('SimpleGanttChart', () => {
     })
 
     it('phase buttons have data-phase attributes for navigation', () => {
-      render(<SimpleGanttChart {...defaultProps} />)
+      renderG(<SimpleGanttChart {...defaultProps} />)
 
       // Canada sorts first (row 0), US Research is row 1
       const testingPhases = screen.getAllByLabelText(/Testing: Canada Testing/i)
@@ -352,7 +357,7 @@ describe('SimpleGanttChart', () => {
 
   describe('Edge Cases', () => {
     it('renders empty table when data is empty', () => {
-      render(<SimpleGanttChart {...defaultProps} data={[]} />)
+      renderG(<SimpleGanttChart {...defaultProps} data={[]} />)
       const table = screen.getByRole('table')
       expect(table).toBeInTheDocument()
       // Headers present but no data rows
@@ -409,7 +414,7 @@ describe('SimpleGanttChart', () => {
         },
       ]
 
-      render(<SimpleGanttChart {...defaultProps} data={manyPhasesData} countryItems={[]} />)
+      renderG(<SimpleGanttChart {...defaultProps} data={manyPhasesData} countryItems={[]} />)
       const table = screen.getByRole('table')
       expect(within(table).getByText('Test Country')).toBeInTheDocument()
       // All phase labels should appear
@@ -441,13 +446,13 @@ describe('SimpleGanttChart', () => {
         },
       ]
 
-      render(<SimpleGanttChart {...defaultProps} data={preRangeData} countryItems={[]} />)
+      renderG(<SimpleGanttChart {...defaultProps} data={preRangeData} countryItems={[]} />)
       // Should render without crashing, phase clamped to 2024
       expect(screen.getAllByLabelText(/Research: Early Research/i).length).toBeGreaterThan(0)
     })
 
     it('renders no results when filter matches nothing', () => {
-      render(<SimpleGanttChart {...defaultProps} />)
+      renderG(<SimpleGanttChart {...defaultProps} />)
 
       const searchInput = screen.getByPlaceholderText(/Filter by country.../i)
       fireEvent.change(searchInput, { target: { value: 'NonexistentCountry' } })
@@ -488,7 +493,7 @@ describe('SimpleGanttChart', () => {
         },
       ]
 
-      render(<SimpleGanttChart {...defaultProps} data={overlappingData} countryItems={[]} />)
+      renderG(<SimpleGanttChart {...defaultProps} data={overlappingData} countryItems={[]} />)
       // Both phases should render as separate rows
       expect(screen.getAllByLabelText(/Migration: System A Migration/i).length).toBeGreaterThan(0)
       expect(screen.getAllByLabelText(/Migration: System B Migration/i).length).toBeGreaterThan(0)

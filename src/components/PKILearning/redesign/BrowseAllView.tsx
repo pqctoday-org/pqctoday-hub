@@ -66,10 +66,13 @@ function minutesOf(duration: string): number {
 export const BrowseAllView = ({
   personaId,
   initialNiceMode = false,
+  initialTrack,
 }: {
   personaId: PersonaId | null
   /** Land directly on the workforce (NICE) lens — used by the ?view=nice redirect. */
   initialNiceMode?: boolean
+  /** Preset the track filter (from the ?track= deep link). Ignored if unknown. */
+  initialTrack?: string
 }) => {
   const navigate = useNavigate()
   const modules = useModuleStore((s) => s.modules)
@@ -78,7 +81,9 @@ export const BrowseAllView = ({
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState('All')
   const [sort, setSort] = useState<SortMode>('default')
-  const [track, setTrack] = useState('All')
+  const [track, setTrack] = useState(() =>
+    initialTrack && MODULE_TRACKS.some((t) => t.track === initialTrack) ? initialTrack : 'All'
+  )
   const [savedOnly, setSavedOnly] = useState(false)
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [advancedOpen, setAdvancedOpen] = useState(initialNiceMode)

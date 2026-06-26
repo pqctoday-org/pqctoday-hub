@@ -62,10 +62,12 @@ export const VerificationClosureIntroduction: FC<Props> = ({ onNavigateToWorksho
         <Badge kind="std" />
         The migration isn&apos;t done when PQC is added — it&apos;s done when the classical
         cryptography is <em>gone</em>. The defensible schedule is the deprecation timeline:{' '}
-        <strong>NIST IR 8547</strong> deprecates RSA/ECC/DH/ECDH/ECDSA/EdDSA by{' '}
-        <strong>2030</strong> and disallows them by <strong>2035</strong>; <strong>NCSC-UK</strong>{' '}
-        sets 2028/2031/2035; <strong>NIST SP 800-131A</strong> carries the algorithm-transition
-        rules.
+        <strong>NIST IR 8547</strong> (still a draft) proposes deprecating 112-bit-strength
+        RSA/ECC/finite-field key exchange after <strong>2030</strong> and disallowing all
+        quantum-vulnerable public-key cryptography after <strong>2035</strong>;{' '}
+        <strong>NCSC-UK</strong> sets phased targets — 2028 (discovery + plan), 2031
+        (highest-priority migration), 2035 (complete); <strong>NIST SP 800-131A</strong> carries the
+        transition rules.
       </p>
       <p>
         The discipline is four steps: <strong>deprecate → remove → verify removed → log</strong>.
@@ -128,7 +130,9 @@ export const VerificationClosureIntroduction: FC<Props> = ({ onNavigateToWorksho
         <Badge kind="std" />
         Anchor the generic governance to <strong>ISO/IEC 27001</strong> and the{' '}
         <strong>NIST Risk Management Framework (SP 800-37)</strong> residual-risk-acceptance
-        process.
+        process. Make &ldquo;acquire only PQC-capable products&rdquo; a standing procurement rule —
+        the <strong>CISA product-category list</strong> (Jan 2026) flags the categories where they
+        are already available.
       </p>
       <Button
         variant="outline"
