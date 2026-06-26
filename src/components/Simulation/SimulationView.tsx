@@ -1675,14 +1675,14 @@ export function SimulationView() {
                       key={p}
                       type="button"
                       onClick={() => setSel(p)}
-                      className={`h-auto justify-start whitespace-normal flex w-full items-center gap-2.5 rounded-lg border px-2.5 py-2 text-left ${
+                      className={`flex h-auto min-h-[44px] w-full items-center justify-start gap-2.5 whitespace-normal rounded-lg border px-2.5 py-2 text-left ${
                         current
                           ? 'border-primary bg-primary/10'
                           : 'border-transparent hover:bg-muted'
                       }`}
                     >
                       <span
-                        className={`grid h-[22px] w-[22px] shrink-0 place-items-center rounded-md text-[11px] font-extrabold ${
+                        className={`grid h-[30px] w-[30px] shrink-0 place-items-center rounded-md text-[13px] font-extrabold ${
                           isCleared
                             ? 'bg-success text-success-foreground'
                             : current
