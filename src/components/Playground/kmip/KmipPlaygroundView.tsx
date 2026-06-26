@@ -37,9 +37,9 @@ import {
   type AuditEvent,
   type PolicyStatus,
 } from '@/wasm/kmip/kmipEngine'
-import { ALGORITHMS, type PolicyPreset } from '@/wasm/kmip/kmipMeta'
+import { ALGORITHMS, POLICY_PRESETS, type PolicyPreset } from '@/wasm/kmip/kmipMeta'
 import { PolicyControlStrip } from './PolicyControlStrip'
-import { AgilityScenario } from './AgilityScenario'
+import { PolicyScenario } from './PolicyScenario'
 import { Inspector } from './Inspector'
 import { PolicyView } from './PolicyView'
 import { BatchView } from './BatchView'
@@ -172,6 +172,15 @@ export function KmipPlaygroundView() {
 
   const chosen = ALGORITHMS.find((a) => a.value === algo)
   const isKem = chosen?.kind === 'kem'
+
+  // The active policy's friendly label (built-in permissive aliases the
+  // training-permissive preset) — shown in the policy-test panel.
+  const activePreset = POLICY_PRESETS.find(
+    (p) =>
+      p.name === policy.name ||
+      (p.name === 'training-permissive' && policy.name === 'built-in-permissive')
+  )
+  const policyLabel = activePreset?.label ?? 'Built-in permissive'
 
   // Boot the wasm control plane once.
   useEffect(() => {
@@ -403,13 +412,14 @@ export function KmipPlaygroundView() {
             onOpenLibrary={() => setPlane('policy')}
           />
 
-          {/* ── The headline: watch a policy migrate an unchanged operation ──── */}
+          {/* ── Policy-aware probe: how the SELECTED policy treats key requests ── */}
           <div className="mb-4">
-            <AgilityScenario
+            <PolicyScenario
               engine={engine}
+              policyFingerprint={policy.fingerprint}
+              policyLabel={policyLabel}
               busy={busy}
               onBusyChange={setBusy}
-              onChanged={() => refresh(engine)}
             />
           </div>
 
