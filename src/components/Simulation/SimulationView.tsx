@@ -817,10 +817,7 @@ export function SimulationView() {
   const p0Steps = p0Tree ? flattenTree(p0Tree) : []
   const p0Done = p0Steps.filter((s) => stepDone(s, 'p0')).length
   const p0Level = levelOf('p0')
-  const p0Frac = p0Steps.length
-    ? balance.budget.doneWeight * (p0Done / p0Steps.length) +
-      balance.budget.levelWeight * (p0Level / MAX_LEVEL)
-    : 0
+  const p0Frac = p0Steps.length ? balance.budget.doneWeight * (p0Done / p0Steps.length) : 0
   const budgetTarget = programBudgetTarget(sector, sizeKey)
   const budgetSecured = Math.round(budgetTarget * p0Frac * 10) / 10
 
