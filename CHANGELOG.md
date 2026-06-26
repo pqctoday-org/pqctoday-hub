@@ -26,6 +26,10 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+### Changed
+
+- **A cleaner, easier-to-read migration simulation** [view:/simulation] [persona:executive] [persona:architect]: the Mission Control console got a usability pass — the command bar now leads with the main actions (Play all, Commit, End Quarter) and tucks the rest into a "More" menu; the intel panel keeps your two most important panels visible and folds the rest behind a "show more" toggle; phases and controls are bigger and easier to click; active text is more legible; and tools show a loading placeholder while they open. Same features, just calmer and quicker to scan.
+
 ## [4.2.1] - 2026-06-25
 
 A correctness-and-polish release: a broad accuracy pass across the learning modules and the reference data behind them, plus shareable links that restore where you left off, an on-site assistant that links you straight to the right place, and a more realistic migration simulation.
