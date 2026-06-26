@@ -26,7 +26,7 @@ describe('buildPlanCbom', () => {
     )[0].properties
     const get = (n: string) => props.find((p) => p.name === n)?.value
     expect(get('pqc:classical')).toBe('RSA-2048 / ECDSA')
-    expect(get('pqc:target')).toBe('ML-DSA-87')
+    expect(get('pqc:target')).toBe('ML-DSA-65')
     expect(get('pqc:decision')).toBe('Hybrid config')
     expect(get('pqc:chosenProduct')).toBe('My CA')
   })

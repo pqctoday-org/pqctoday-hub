@@ -566,7 +566,7 @@
     "digital-id": 5,
     "tls-basics": 4,
     "mls-group-messaging": 2,
-    "quantum-threats": 5,
+    "quantum-threats": 6,
     "pqc-candidates": 6,
     "hybrid-crypto": 5,
     "crypto-agility": 4,
@@ -1846,6 +1846,10 @@
       {
         "id": "hnfl-timeline",
         "label": "HNFL Risk Calculator"
+      },
+      {
+        "id": "crqc-trajectory",
+        "label": "Trajectory to Q-Day"
       }
     ],
     "pqc-candidates": [

@@ -26,6 +26,16 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+### Fixed
+
+- **Accurate retirement deadlines in the Decommissioning & Program Closure module** [view:/learn] [persona:executive] [persona:architect]: the lesson, its plain-language summaries, and the workshop now present the 2030/2035 dates as NIST's _draft_ timeline rather than settled rules, note that only the weaker (112-bit) keys are affected in 2030, and describe the UK NCSC milestones correctly (2028 discovery and planning, 2031 highest-priority migration, 2035 full migration) — so the schedule you plan against matches the sources. The module also now points to CISA's January 2026 list of product categories with post-quantum-ready options when you procure replacements.
+- **Source lists restored on two learning modules** [view:/learn] [persona:architect] [persona:researcher]: the Decommissioning & Program Closure and Cryptography Bill of Materials modules were showing "No references found"; their full reference lists are back — including a current ISO/IEC 27001:2022 entry — so you can open the standards behind each module again.
+- **The "What's New" pop-up closes when you click outside it** [view:/]: fixed a layering bug that stopped click-outside-to-dismiss from working, so the release-notes pop-up behaves like the site's other dialogs.
+
+### Data
+
+- Rebuilt and re-signed the searchable knowledge index after the reference-list and ISO/IEC 27001 updates, so on-site search and the provenance trail stay in sync.
+
 ## [4.2.0] - 2026-06-25
 
 Version 4.2.0 adds two new hands-on learning modules — building a Cryptography Bill of Materials and running a clean program decommissioning and closure — and lands a large accuracy pass that corrects post-quantum standards facts, deadlines, and outbound links across the site. It also removes the old duplicate "legacy" pages and improves how reliably pages are indexed by search engines.

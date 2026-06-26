@@ -23,6 +23,7 @@ const manifest: ModuleManifest = {
     { id: 'key-size-analyzer', label: 'Key Size Analyzer' },
     { id: 'hndl-timeline', label: 'HNDL Timeline' },
     { id: 'hnfl-timeline', label: 'HNFL Risk Calculator' },
+    { id: 'crqc-trajectory', label: 'Trajectory to Q-Day' },
   ],
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.QuantumThreatsModule })),
