@@ -9,6 +9,7 @@ describe('SIM_BALANCE', () => {
       crqc: { pullForwardPerQuarter: 0.22 },
       ai: { advanceChance: 0.35 },
       budget: { doneWeight: 1 },
+      estate: { budgetMultiplier: 1 },
     })
   })
 
@@ -63,6 +64,15 @@ describe('difficulty presets + scenarios (WS-14)', () => {
       SIM_PRESETS.hard.crqc.pullForwardPerQuarter
     )
     expect(SIM_PRESETS.easy.ai.advanceChance).toBeGreaterThan(SIM_PRESETS.hard.ai.advanceChance)
+  })
+
+  it('budget lever (PR4): easy secures more, hard secures less per activity', () => {
+    expect(SIM_PRESETS.easy.estate.budgetMultiplier).toBeGreaterThan(
+      SIM_PRESETS.realistic.estate.budgetMultiplier
+    )
+    expect(SIM_PRESETS.realistic.estate.budgetMultiplier).toBeGreaterThan(
+      SIM_PRESETS.hard.estate.budgetMultiplier
+    )
   })
 
   it('getBalance resolves ids and falls back to realistic', () => {
