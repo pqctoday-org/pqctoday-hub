@@ -582,6 +582,79 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedSources: ['algorithms'],
     minTop5Hits: 0, // FN-DSA standardised; "Falcon" was the round-3 NIST name
   },
+
+  // === ROUND 7: Expanded hub scope (Protocol Support matrix, CBOM, Closure,
+  //     Business tools, CSWP.39 governance maturity, Patents) ===
+  // Calibrated against the live corpus. These cover the hub areas that grew since
+  // the earlier rounds; their deep links are in the system-prompt grammar.
+
+  // --- Protocol Support matrix (/algorithms?tab=support&protocol=<id>) ---
+  {
+    query: 'protocol support matrix for post-quantum cryptography',
+    expectedIntent: 'general',
+    mustInclude: ['protocol-matrix-'],
+    expectedSources: ['protocol-matrix'],
+    minTop5Hits: 0, // protocol-matrix chunks in top 15; glossary/library compete for top 5
+  },
+  {
+    query: 'Which protocols have standardized PQC support?',
+    expectedIntent: 'general',
+    mustInclude: ['protocol-matrix-'],
+    expectedSources: ['protocol-matrix', 'tracks'],
+    minTop5Hits: 0,
+  },
+
+  // --- CBOM (Cryptographic Bill of Materials, module cbom) ---
+  {
+    query: 'What is a cryptographic bill of materials?',
+    expectedIntent: 'definition',
+    mustInclude: ['module-summary-cbom'],
+    expectedSources: ['modules', 'module-summaries', 'module-qa'],
+    minTop5Hits: 0, // page-guide/Q&A chunks rank above the cbom summary in top 5
+  },
+
+  // --- Decommissioning / Verification & Closure (module verification-closure) ---
+  {
+    query: 'How do I retire and verify closure of old crypto?',
+    expectedIntent: 'recommendation',
+    mustInclude: ['module-summary-verificationclosure'],
+    expectedSources: ['module-summaries', 'module-topic-summaries'],
+    minTop5Hits: 0,
+  },
+
+  // --- Business Center planning tools (/business/tools/<toolId>) ---
+  {
+    query: 'PQC board pitch deck for executives',
+    expectedIntent: 'general',
+    mustInclude: ['business-tool-board-pitch'],
+    expectedSources: ['business-center'],
+    minTop5Hits: 0,
+  },
+  {
+    query: 'Vendor scorecard for HSM suppliers',
+    expectedIntent: 'general',
+    mustInclude: ['business-tool-vendor-scorecard'],
+    expectedSources: ['business-center'],
+    minTop5Hits: 0,
+  },
+
+  // --- CSWP.39 governance maturity evidence (/compliance?tab=cswp39&evref=<id>) ---
+  {
+    query: 'CSWP.39 governance maturity evidence',
+    expectedIntent: 'general',
+    mustInclude: ['gov-maturity-'],
+    expectedSources: ['governance-maturity', 'cswp39'],
+    minTop5Hits: 0,
+  },
+
+  // --- Patents (/patents?patent=<id>) ---
+  {
+    query: 'Patents about lattice-based cryptography',
+    expectedIntent: 'general',
+    mustInclude: ['patent-'],
+    expectedSources: ['patents'],
+    minTop5Hits: 0, // glossary "lattice" def ranks first; patent chunks follow in top 15
+  },
 ]
 
 let service: RetrievalService
