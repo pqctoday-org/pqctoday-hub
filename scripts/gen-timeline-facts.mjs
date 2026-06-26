@@ -41,6 +41,11 @@ function latestCsv() {
 // CSV uses ISO-3166 flags; the sim uses 'UK' for Great Britain.
 const FLAG_TO_SIM = { GB: 'UK' }
 
+// Emit an object key the way Prettier would (quoteProps: as-needed + singleQuote):
+// bare when it's a valid identifier, else single-quoted. Keeps the generated file
+// Prettier-stable so the `--check` gate doesn't fight the pre-commit formatter.
+const propKey = (s) => (/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(s) ? s : `'${s.replace(/'/g, "\\'")}'`)
+
 function derive() {
   const file = latestCsv()
   const { data } = Papa.parse(readFileSync(join(DATA, file), 'utf8'), {
@@ -59,9 +64,10 @@ function derive() {
     const code = FLAG_TO_SIM[r.FlagCode] ?? r.FlagCode
     const yr = parseInt(r.StartYear, 10)
     if (!code || !Number.isFinite(yr)) continue
-    deadline[code] = { year: yr, title: r.Title }
+    const mandate = (r.mandate_type ?? '').trim() || 'NONE'
+    deadline[code] = { year: yr, title: r.Title, mandate }
     const name = (r.Country ?? '').trim()
-    if (name) deadlineByName[name] = { year: yr, title: r.Title }
+    if (name) deadlineByName[name] = { year: yr, title: r.Title, mandate }
   }
   // Per-country scenario milestones tagged `sim_milestone` (hndl-critical, tnfl-critical,
   // governance). Drives the scenario-configurable sim; general-asset + governance dates that
@@ -83,8 +89,10 @@ function generate({ file, deadline, deadlineByName, milestones }) {
   const lines = codes.map((c) => `  ${c}: ${deadline[c].year}, // ${deadline[c].title}`)
   const names = Object.keys(deadlineByName).sort()
   const nlines = names.map(
-    (n) => `  ${JSON.stringify(n)}: ${deadlineByName[n].year}, // ${deadlineByName[n].title}`
+    (n) => `  ${propKey(n)}: ${deadlineByName[n].year}, // ${deadlineByName[n].title}`
   )
+  const mandateLines = codes.map((c) => `  ${c}: '${deadline[c].mandate}',`)
+  const mandateNameLines = names.map((n) => `  ${propKey(n)}: '${deadlineByName[n].mandate}',`)
   const mcodes = Object.keys(milestones).sort()
   const mlines = mcodes.map((c) => {
     const entries = Object.entries(milestones[c])
@@ -113,6 +121,21 @@ ${lines.join('\n')}
  *  EU-member / Q-Day logic. */
 export const TIMELINE_COUNTRY_DEADLINE_BY_NAME: Record<string, number> = {
 ${nlines.join('\n')}
+}
+
+export type DeadlineMandate = 'HARD' | 'SOFT' | 'DRAFT' | 'NONE'
+
+/** Whether each country's canonical deadline is a binding legal mandate (\`HARD\` —
+ *  law, regulation, executive order, binding directive) or soft guidance / roadmap /
+ *  strategy (\`SOFT\`), from the timeline CSV \`mandate_type\` column. Lets the UI label
+ *  "regulatory deadline" vs "guidance target" instead of presenting every government
+ *  date as binding. Keyed by sim code and by full country name. */
+export const TIMELINE_COUNTRY_DEADLINE_MANDATE: Record<string, DeadlineMandate> = {
+${mandateLines.join('\n')}
+}
+
+export const TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME: Record<string, DeadlineMandate> = {
+${mandateNameLines.join('\n')}
 }
 
 /** Per-country scenario milestone years, from rows tagged \`sim_milestone\` in the

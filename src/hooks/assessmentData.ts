@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { AssessmentInput } from './assessmentTypes'
 import { QC_FIRST_YEAR } from '../data/quantumTimeline'
-import { TIMELINE_COUNTRY_DEADLINE_BY_NAME } from '../data/timelineFacts.generated'
+import {
+  TIMELINE_COUNTRY_DEADLINE_BY_NAME,
+  TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME,
+  type DeadlineMandate,
+} from '../data/timelineFacts.generated'
 
 export const ALGORITHM_DB: Record<
   string,
@@ -438,6 +442,17 @@ export const ESTIMATED_QUANTUM_THREAT_YEAR = QC_FIRST_YEAR
  * curated deadline, tag its row `is_sim_deadline=true` in the timeline CSV.
  */
 export const COUNTRY_PLANNING_HORIZON: Record<string, number> = TIMELINE_COUNTRY_DEADLINE_BY_NAME
+
+/**
+ * Whether a country's planning horizon is a binding legal mandate (`HARD` — law,
+ * regulation, executive order) or soft guidance / roadmap (`SOFT`) — from the same
+ * single source (timeline CSV `mandate_type`). Lets the Report label a "regulatory
+ * deadline" vs a "guidance target" instead of presenting every date as binding.
+ * A country absent here has no curated national deadline (falls back to the estimate).
+ */
+export const COUNTRY_PLANNING_MANDATE: Record<string, DeadlineMandate> =
+  TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME
+export type { DeadlineMandate }
 /** Industry-specific composite score weights (must sum to 1.0). */
 export const INDUSTRY_COMPOSITE_WEIGHTS: Record<
   string,
