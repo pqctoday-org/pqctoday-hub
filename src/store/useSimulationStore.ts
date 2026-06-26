@@ -108,7 +108,7 @@ export interface SimulationState {
   /** Sticky time penalty (I1): a wrong in-sim decision costs the player N quarters
    *  of rework — advancing their OWN clock toward the FIXED Q-Day, which shrinks the
    *  Mosca runway. Deterministic (no RNG); Q-Day (crqcShift) is untouched. */
-  applyDecisionSetback: (quarters: number, txt: string) => void
+  applyDecisionSetback: (quarters: number, txt: string, revertEdgeId?: string) => void
   /** Delegate (auto-complete) tree steps to the AI team by key. */
   autoCompleteSteps: (keys: string[]) => void
   /** Cancel auto-completion for a phase (remove its `${phase}::` keys). */
@@ -302,7 +302,7 @@ export const useSimulationStore = create<SimulationState>()(
           q,
           events: [...newEvents, ...s.events].slice(0, 30),
         })),
-      applyDecisionSetback: (quarters, txt) =>
+      applyDecisionSetback: (quarters, txt, revertEdgeId) =>
         set((s) => {
           let year = s.year
           let q = s.q + quarters
@@ -311,7 +311,14 @@ export const useSimulationStore = create<SimulationState>()(
             year += 1
           }
           const event: SimEvent = { sev: 'danger', t: `Q${s.q} ${s.year}`, txt }
-          return { year, q, events: [event, ...s.events].slice(0, 30) }
+          // I1 + WS-04: a trap on a migration step can also roll back a real estate
+          // link — drops readiness by exactly that edge. Q-Day (crqcShift) is untouched.
+          let edgeDecisions = s.edgeDecisions
+          if (revertEdgeId && edgeDecisions[revertEdgeId]) {
+            edgeDecisions = { ...edgeDecisions }
+            delete edgeDecisions[revertEdgeId]
+          }
+          return { year, q, events: [event, ...s.events].slice(0, 30), edgeDecisions }
         }),
       autoCompleteSteps: (keys) =>
         set((s) => ({ auto: Array.from(new Set([...s.auto, ...keys])) })),

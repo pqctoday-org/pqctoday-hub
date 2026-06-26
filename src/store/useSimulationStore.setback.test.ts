@@ -28,4 +28,27 @@ describe('applyDecisionSetback (I1 sticky time penalty)', () => {
     expect(s.events[0].sev).toBe('danger')
     expect(s.events[0].txt).toBe('skipped discovery scan')
   })
+
+  it('optionally rolls back a migrated edge (readiness drops) without moving Q-Day', () => {
+    // a link was migrated...
+    useSimulationStore.getState().setEdgeDecision('lb-app1-mTLS', 'hybrid')
+    const before = useSimulationStore.getState().crqcShift
+    expect(useSimulationStore.getState().edgeDecisions['lb-app1-mTLS']).toBe('hybrid')
+
+    // a trap on the migration step reverts exactly that link
+    useSimulationStore.getState().applyDecisionSetback(2, 'wrong pilot — rollback', 'lb-app1-mTLS')
+    const s = useSimulationStore.getState()
+    expect(s.edgeDecisions['lb-app1-mTLS']).toBeUndefined() // re-doable
+    expect(s.crqcShift).toBe(before) // Q-Day still fixed
+    expect(s.q).toBe(3) // clock still slipped 2 quarters
+
+    // re-doing the migration restores it
+    useSimulationStore.getState().setEdgeDecision('lb-app1-mTLS', 'hybrid')
+    expect(useSimulationStore.getState().edgeDecisions['lb-app1-mTLS']).toBe('hybrid')
+  })
+
+  it('a revert id that was never migrated is a no-op on edges', () => {
+    useSimulationStore.getState().applyDecisionSetback(1, 'rework', 'does-not-exist')
+    expect(useSimulationStore.getState().edgeDecisions).toEqual({})
+  })
 })
