@@ -147,7 +147,7 @@ export const FIRMWARE_VENDORS: FirmwareVendorStatus[] = [
       'Upgrade iLO 6 firmware to version 6.20 or later to enable ML-DSA firmware signing. Use HPE Integrated Smart Update Manager (iSUM) 5.0+ for PQC-signed firmware packages. HPE Security Protocol and Data Model (SPDM) 1.3 adds ML-DSA device attestation in iLO 6.30.',
     notes:
       'HPE is the first major OEM to GA ML-DSA firmware signing for production servers (iLO 6.20, released Q4 2025). HPE Silicon Root of Trust (iLO Amplifier) supports PQC-signed firmware chains. SPDM 1.3 + ML-DSA attestation available in 6.30 for confidential computing deployments.',
-    certifications: ['FIPS 140-3 Level 1 (iLO 6)', 'CNSA 2.0 (iLO 6.20+)', 'CC EAL2'],
+    certifications: ['FIPS 140-3 Level 1 (iLO 6)', 'CNSA 2.0 (ProLiant Gen12 / iLO 7)', 'CC EAL2'],
   },
   {
     id: 'lenovo',

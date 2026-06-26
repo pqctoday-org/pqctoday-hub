@@ -27,7 +27,7 @@ const EXERCISES = [
     id: 'ex-3',
     title: 'Scenario: Government Agency Mandate',
     prompt:
-      'Your federal agency must report PQC migration progress quarterly to OMB under M-23-02. You have 200 systems across 15 departments with varying levels of crypto maturity. Create a KPI dashboard that tracks progress at both the department and agency level, and define escalation criteria for departments falling behind schedule.',
+      'Your federal agency must submit an annual prioritized inventory of quantum-vulnerable systems to ONCD/CISA under M-23-02 (updated annually). You have 200 systems across 15 departments with varying levels of crypto maturity. Create a KPI dashboard that tracks progress at both the department and agency level, and define escalation criteria for departments falling behind schedule.',
     workshopHint:
       'Use the KPI Tracker (Step 3) to model the 6 weighted dimensions at agency level. Add department-level milestones in the Roadmap Builder (Step 1). Escalation thresholds and gate criteria are covered in the Deployment Playbook (Step 4).',
   },
