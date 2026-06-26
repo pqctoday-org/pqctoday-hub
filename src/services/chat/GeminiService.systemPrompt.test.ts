@@ -55,8 +55,9 @@ describe('buildSystemPrompt', () => {
       const result = buildSystemPrompt([])
       // Protocol Support detail (matrix) — new ?protocol= deep link
       expect(result).toContain('/algorithms?tab=support&protocol=')
-      // Learn My-Path/Browse mode
+      // Learn My-Path/Browse mode; track must be paired with Browse mode
       expect(result).toContain('/learn?mode=')
+      expect(result).toContain('/learn?mode=browse&track=')
       // Migrate workbench tabs
       expect(result).toContain('/migrate?tab=')
       // Timeline milestone/phase detail
