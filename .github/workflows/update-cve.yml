@@ -2,7 +2,7 @@ name: Update CVE Snapshot
 
 on:
   schedule:
-    - cron: '0 9 * * *' # Daily at 09:00 UTC (offset from compliance scrape at 08:00)
+    - cron: '0 9 * * 1' # Weekly, Monday 09:00 UTC (offset from compliance scrape at 08:00)
   workflow_dispatch:
 
 permissions:
