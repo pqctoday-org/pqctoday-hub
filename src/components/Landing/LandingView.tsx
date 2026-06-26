@@ -75,7 +75,7 @@ export const PERSONA_HERO_TAGLINE: Record<string, string> = {
   developer:
     'OpenSSL 3.x, BoringSSL, and JOSE are already shipping PQC. See the algorithms, test the libraries, and find the one that fits your stack.',
   architect:
-    'Hybrid certs, composite signatures, and a 30 % key-size jump reshape every PKI. Map the redesign before it maps you.',
+    'Hybrid certs, composite signatures, and multi-fold key/signature growth reshape every PKI. Map the redesign before it maps you.',
   researcher:
     'FIPS 203/204/205 are out, RFC 9964 just landed, and ACVP vectors are live. Trace the citations and KATs end-to-end.',
   ops: 'Cert rotations get longer, keys get bigger, HSMs get pickier. Plan the cutover before the next renewal window.',
