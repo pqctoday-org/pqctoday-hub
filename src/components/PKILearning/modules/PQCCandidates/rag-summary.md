@@ -1,6 +1,6 @@
 # PQC Candidates & Standardisation Lifecycle
 
-PQC standardisation is a **rolling process**, not a single event. NIST finalised FIPS 203 (ML-KEM), 204 (ML-DSA), 205 (SLH-DSA) in August 2024, added HQC as an alternate KEM in March 2025, and is mid-flight on a signature on-ramp that down-selected to nine third-round candidates in NIST IR 8528 (Oct 2024).
+PQC standardisation is a **rolling process**, not a single event. NIST finalised FIPS 203 (ML-KEM), 204 (ML-DSA), 205 (SLH-DSA) in August 2024, added HQC as an alternate KEM in March 2025, and is mid-flight on a signature on-ramp that down-selected to 14 second-round candidates in NIST IR 8528 (Oct 2024).
 
 ## Four mathematical families
 
