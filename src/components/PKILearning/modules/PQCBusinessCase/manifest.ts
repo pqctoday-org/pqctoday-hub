@@ -8,6 +8,8 @@ const manifest: ModuleManifest = {
   description:
     'Build ROI models, simulate breach costs, and create board-ready pitch decks for PQC investment.',
   duration: '30 min',
+  whyThisMatters:
+    'Migration competes with everything else for budget; a quantified harvest-now-decrypt-later case is how PQC wins the funding.',
   difficulty: 'beginner',
   frameworkPhase: 'p0',
   track: 'Executive',

@@ -14,7 +14,6 @@ import { lazyWithRetry } from '@/utils/lazyWithRetry'
 import { ModuleProgressSidebar } from './ModuleProgressSidebar'
 import { ModuleProgressHeader } from './ModuleProgressHeader'
 import { ModuleCompletionWatcher } from './ModuleCompletionWatcher'
-import { NextModuleCTA } from './NextModuleCTA'
 import { CuriousModuleView } from './common/CuriousModuleView'
 import { MODULE_CATALOG, LM_ID_MAP } from './moduleData'
 import { MANIFESTS } from './manifest/registry'
@@ -194,7 +193,6 @@ export const PKILearningView: React.FC = () => {
               </Routes>
             </Suspense>
           )}
-          {showSidebar && !isCuriousMode && <NextModuleCTA moduleId={moduleId} />}
           {showSidebar && (
             <p className="text-[11px] text-muted-foreground text-center mt-4 opacity-70">
               Learning module content can be inaccurate. Please double-check its information. Report

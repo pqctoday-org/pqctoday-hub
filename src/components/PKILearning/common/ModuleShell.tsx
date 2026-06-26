@@ -18,7 +18,7 @@
 import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import type { LucideIcon } from 'lucide-react'
-import { Trash2, Gamepad2 } from 'lucide-react'
+import { Trash2, Gamepad2, ArrowRight, Wrench, CheckCircle2 } from 'lucide-react'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { ModuleTabBar } from './ModuleTabBar'
@@ -30,6 +30,24 @@ import { WorkshopStepHeader } from './WorkshopStepHeader'
 import { GlossaryAutoWrap } from './GlossaryAutoWrap'
 import { useModuleProgress } from './useModuleProgress'
 import { STANDARD_TABS, type ModuleManifest } from '../manifest/types'
+import { MODULE_TO_TRACK, TRACK_COLORS, MODULE_TRACKS } from '../moduleData'
+import { useModuleStore } from '@/store/useModuleStore'
+import { FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
+
+/** "Phase 4 · Execute" style label for the header context rail (P2.1). Spanning
+ *  modules (frameworkPhase is an array) show their first/primary phase. */
+function phaseChipLabel(phase: PhaseId | PhaseId[]): string | null {
+  const id = Array.isArray(phase) ? phase[0] : phase
+  const p = FRAMEWORK_PHASES[id]
+  if (!p) return null
+  return p.number !== null ? `Phase ${p.number} · ${p.name}` : p.name
+}
+
+const difficultyChip: Record<NonNullable<ModuleManifest['difficulty']>, string> = {
+  beginner: 'bg-status-success/15 text-status-success',
+  intermediate: 'bg-status-warning/15 text-status-warning',
+  advanced: 'bg-status-error/15 text-status-error',
+}
 
 export interface WorkshopPart {
   id: string
@@ -262,6 +280,11 @@ export const ModuleShell = ({
     resetLabel: `Restart ${manifest.title}?`,
   })
 
+  // P2.2 — headline progress + track momentum, read from the same store the
+  // catalog ModuleCard uses (workshop steps for workshop modules, else learn
+  // sections). Hook must run before the `custom` early return below.
+  const moduleStates = useModuleStore((s) => s.modules)
+
   // last config passed from an exercise (openWorkshopStep) — threaded to
   // renderWorkshopStep so a step can pre-fill itself (the old onSetWorkshopConfig)
   const [workshopConfig, setWorkshopConfig] = useState<Record<string, unknown> | undefined>(
@@ -293,36 +316,69 @@ export const ModuleShell = ({
     typeof slot === 'function' ? slot(slotApi) : slot
 
   const headerDescription = description ?? manifest.description
-  // C1: a "Practice in the Simulation" CTA for program/governance modules — only
-  // on the standalone Learn page, never when this module is itself embedded in
-  // the sim (where the CTA would be a confusing loop back to where you are).
   const embedded = useEmbeddedLearn()
-  const showSimCta = !!manifest.practiceInSim && !embedded
+
+  // P2.1 — context rail sourced from the manifest: ties the module to the same
+  // track + framework-phase model the catalog and the simulation use.
+  const track = MODULE_TO_TRACK[manifest.id]
+  const phaseLabel = phaseChipLabel(manifest.frameworkPhase)
+  const chip = 'rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide'
+
+  // Proposal A — "Practice in the Simulation" is curated to the program/strategy
+  // spine (Executive + Strategy tracks): the modules the sim actually lets you
+  // practice as program steps. Derived from track so it can't drift from a
+  // hand-set flag (manifest.practiceInSim is now superseded by this). Never shown
+  // when the module is itself embedded in the sim (a confusing loop).
+  const simEligible = (track === 'Executive' || track === 'Strategy') && !embedded
+  const showSimCta = simEligible
+
+  // Module completion (drives the handoff footer); the dual learn/workshop
+  // progress bars + track momentum render once in ModuleProgressHeader above.
+  const here = moduleStates[manifest.id]
+
+  // P2.3 — next module in this track (trackOrder), for the completion handoff.
+  const nextInTrack = (() => {
+    const entry = MODULE_TRACKS.find((t) => t.track === track)
+    if (!entry) return null
+    const idx = entry.modules.findIndex((m) => m.id === manifest.id)
+    return idx >= 0 && idx < entry.modules.length - 1 ? entry.modules[idx + 1] : null
+  })()
+  const footerLink =
+    'flex items-center gap-2.5 rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-colors hover:border-primary/40 hover:bg-muted'
 
   const header = (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
-        <div className="flex flex-wrap items-center gap-2.5">
-          <h1 className="text-3xl font-bold text-gradient">{title ?? manifest.title}</h1>
-          {/* A4 — depth signal on the in-module header (consistent with the cards +
-              Journey, which read the same manifest.difficulty). */}
+        {/* Context rail (P2.1) — small mono-cased chips above a solid title.
+            Gradient retired here so the active workshop step is the one hero. */}
+        <div className="flex flex-wrap items-center gap-2 mb-2">
+          {track ? (
+            <span className={`${chip} ${TRACK_COLORS[track] ?? 'bg-muted text-muted-foreground'}`}>
+              {track}
+            </span>
+          ) : null}
+          {phaseLabel ? (
+            <span className={`${chip} bg-status-info/15 text-status-info`}>{phaseLabel}</span>
+          ) : null}
           {manifest.difficulty ? (
-            <span
-              className={
-                'rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ' +
-                (manifest.difficulty === 'beginner'
-                  ? 'bg-status-success/15 text-status-success'
-                  : manifest.difficulty === 'intermediate'
-                    ? 'bg-status-warning/15 text-status-warning'
-                    : 'bg-status-error/15 text-status-error')
-              }
-            >
+            <span className={`${chip} ${difficultyChip[manifest.difficulty]}`}>
               {manifest.difficulty}
             </span>
           ) : null}
+          {manifest.duration ? (
+            <span className={`${chip} bg-muted text-muted-foreground`}>{manifest.duration}</span>
+          ) : null}
         </div>
+        <h1 className="text-3xl font-bold text-foreground">{title ?? manifest.title}</h1>
         {headerDescription ? (
           <p className="text-muted-foreground mt-2">{headerDescription}</p>
+        ) : null}
+        {/* "Why this matters" entry frame (P2.1) — rendered only when authored. */}
+        {manifest.whyThisMatters ? (
+          <p className="mt-3 border-l-2 border-primary pl-3 text-sm text-foreground/90">
+            <span className="font-semibold">Why this matters: </span>
+            {manifest.whyThisMatters}
+          </p>
         ) : null}
       </div>
       {showSimCta ? (
@@ -399,6 +455,53 @@ export const ModuleShell = ({
           </TabsContent>
         )}
       </Tabs>
+      {/* P2.3 — completion handoff footer. Replaces the sidebar NextModuleCTA so
+          finishing a module always routes somewhere, never a dead-end "Complete".
+          The sim "Practice" CTA lives in the header (persistent, curated) so it is
+          not duplicated here. */}
+      {!embedded && here?.status === 'completed' ? (
+        <div className="rounded-xl border border-border bg-card p-4 sm:p-5 animate-fade-in">
+          <div className="mb-3 flex items-center gap-2">
+            <CheckCircle2 size={18} className="shrink-0 text-status-success" />
+            <span className="text-sm font-semibold text-foreground">
+              Module complete — keep your momentum
+            </span>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {nextInTrack ? (
+              <Link to={`/learn/${nextInTrack.id}`} className={footerLink}>
+                <ArrowRight size={15} className="shrink-0 text-primary" />
+                <span className="min-w-0">
+                  <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">
+                    Next in {track}
+                  </span>
+                  <span className="block truncate font-medium text-foreground">
+                    {nextInTrack.title}
+                  </span>
+                </span>
+              </Link>
+            ) : (
+              <Link to="/learn" className={footerLink}>
+                <ArrowRight size={15} className="shrink-0 text-primary" />
+                <span className="font-medium text-foreground">Back to the Learning hub</span>
+              </Link>
+            )}
+            {manifest.playgroundTool ? (
+              <Link to={`/playground/${manifest.playgroundTool}`} className={footerLink}>
+                <Wrench size={15} className="shrink-0 text-primary" />
+                <span className="min-w-0">
+                  <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">
+                    Related tool
+                  </span>
+                  <span className="block truncate font-medium text-foreground">
+                    Open in the Playground
+                  </span>
+                </span>
+              </Link>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }

@@ -8,6 +8,8 @@ const manifest: ModuleManifest = {
   description:
     'Build migration roadmaps with real country deadlines, plan stakeholder communications, and track KPIs.',
   duration: '30 min',
+  whyThisMatters:
+    'Discovery, prioritization, rollout, validation: this is the operating model that turns a PQC mandate into shipped systems.',
   difficulty: 'intermediate',
   frameworkPhase: 'p4',
   track: 'Executive',

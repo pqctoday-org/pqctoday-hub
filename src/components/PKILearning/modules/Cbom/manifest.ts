@@ -8,6 +8,8 @@ const manifest: ModuleManifest = {
   description:
     'Choose a CBOM format, discover all your cryptography — including the crypto nobody tracks — give each key its identity and provenance, and make the inventory machine-verifiable.',
   duration: '60 min',
+  whyThisMatters:
+    "You can't migrate crypto you can't see; a Cryptography Bill of Materials is the inventory every later phase depends on.",
   difficulty: 'intermediate',
   frameworkPhase: 'p2',
   track: 'Strategy',

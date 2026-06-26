@@ -8,6 +8,8 @@ const manifest: ModuleManifest = {
   description:
     'Combine classical and PQC algorithms: hybrid KEMs, composite signatures, and side-by-side certificate comparison.',
   duration: '40 min',
+  whyThisMatters:
+    'Hybrid (classical + PQC) lets you deploy now without betting everything on algorithms still maturing in the field.',
   difficulty: 'intermediate',
   frameworkPhase: 'p5',
   track: 'Strategy',

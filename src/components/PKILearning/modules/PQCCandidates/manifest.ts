@@ -8,6 +8,8 @@ const manifest: ModuleManifest = {
   description:
     'How NIST evaluates new post-quantum mechanisms, the 14 second-round signature on-ramp candidates across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).',
   duration: '55 min',
+  whyThisMatters:
+    "ML-KEM, ML-DSA, and SLH-DSA are the algorithms you'll actually deploy; choosing the wrong one means migrating twice.",
   difficulty: 'intermediate',
   frameworkPhase: 'foundations',
   track: 'Foundations',

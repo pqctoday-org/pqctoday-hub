@@ -73,6 +73,13 @@ export interface ModuleManifest {
    * Learn page (hidden when the module is itself embedded inside the sim).
    */
   practiceInSim?: boolean
+
+  /**
+   * One-line "why this matters" framing rendered as a callout under the module
+   * header (P2.1). Optional and rendered only when present, so it can be filled
+   * in progressively starting with the highest-traffic modules.
+   */
+  whyThisMatters?: string
 }
 
 /** The default tab set used by a standard module when `tabs` is omitted. */

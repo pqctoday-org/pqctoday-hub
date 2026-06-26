@@ -230,25 +230,28 @@ describe('ModuleShell', () => {
     cancel.mockRestore()
   })
 
-  it('shows a "Practice in the Simulation" CTA for practiceInSim modules', () => {
-    renderShell(<ModuleShell manifest={{ ...base, practiceInSim: true }} learn={<div>L</div>} />)
+  it('shows a "Practice in the Simulation" CTA for Executive/Strategy-track modules', () => {
+    // Proposal A — the CTA is curated to the program/strategy spine, derived from
+    // track. `cbom` is a Strategy-track module, so it qualifies.
+    renderShell(<ModuleShell manifest={{ ...base, id: 'cbom' }} learn={<div>L</div>} />)
     const cta = screen.getByRole('link', { name: /Practice in the Simulation/i })
     expect(cta).toHaveAttribute('href', '/simulation')
   })
 
-  it('does NOT show the sim CTA for modules without practiceInSim', () => {
+  it('does NOT show the sim CTA for non program/strategy tracks', () => {
+    // base.id `hsm-pqc` is Hardware Infrastructure — not in the curated sim set.
     renderShell(<ModuleShell manifest={base} learn={<div>L</div>} />)
     expect(
       screen.queryByRole('link', { name: /Practice in the Simulation/i })
     ).not.toBeInTheDocument()
   })
 
-  it('hides the sim CTA when the module is embedded in the sim (no loop-back)', () => {
+  it('hides the sim CTA when an eligible module is embedded in the sim (no loop-back)', () => {
     render(
       <EmbedProvider>
         <MemoryRouter>
           <EmbeddedLearnProvider>
-            <ModuleShell manifest={{ ...base, practiceInSim: true }} learn={<div>L</div>} />
+            <ModuleShell manifest={{ ...base, id: 'cbom' }} learn={<div>L</div>} />
           </EmbeddedLearnProvider>
         </MemoryRouter>
       </EmbedProvider>
