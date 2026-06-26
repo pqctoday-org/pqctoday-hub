@@ -1821,8 +1821,17 @@ export function SimulationView() {
                 // I1 pilot: a wrong pick on Inventory (p1) or Pilots (p5) costs the
                 // player 2 quarters of rework — their clock slips toward the fixed Q-Day.
                 sel === 'p1' || sel === 'p5'
-                  ? (label) =>
-                      applyDecisionSetback(2, `Lost 2 quarters to rework — wrong call: ${label}`)
+                  ? (label) => {
+                      // On Pilots (p5) a wrong call also rolls back a migrated estate link,
+                      // so readiness visibly drops on a specific edge (re-doable). p1 = clock only.
+                      const revertId = sel === 'p5' ? Object.keys(edgeDecisions)[0] : undefined
+                      const extra = revertId ? ` — rolled back link ${revertId}` : ''
+                      applyDecisionSetback(
+                        2,
+                        `Lost 2 quarters to rework — wrong call: ${label}${extra}`,
+                        revertId
+                      )
+                    }
                   : undefined
               }
             />
