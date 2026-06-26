@@ -26,6 +26,11 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+### Added
+
+- **Explore and compare crypto policies in the playground** [view:/playground/cacp] [persona:architect] [persona:researcher]: the Crypto-Agility Control Plane has a new Policy view with a library of 13 ready-made policies, grouped by what each one demonstrates — post-quantum defaults, compliance regimes (NSA CNSA 2.0, FIPS, and Germany's BSI), transition roadmaps, and mechanism-level controls. Pick any policy and see, in plain terms, what it enforces: the algorithms it defaults to, what it denies, what it quietly migrates, an at-a-glance map of which algorithms are allowed versus denied, and a visual timeline for any date-based rules. Switching the active policy takes one click, and every operation immediately follows it.
+- **Run several KMIP operations as one request** [view:/playground/cacp] [persona:architect] [persona:researcher]: a new Batch & Macros view shows KMIP's batching — create a key, activate it, and sign with it in a single round trip, where each step automatically points at the key the previous step created, with one-click recipes to try it. You can also choose how a failure is handled, including an "undo" mode that rolls back the earlier successful steps so the whole batch is all-or-nothing.
+
 ### Changed
 
 - **A cleaner, easier-to-read migration simulation** [view:/simulation] [persona:executive] [persona:architect]: the Mission Control console got a usability pass — the command bar now leads with the main actions (Play all, Commit, End Quarter) and tucks the rest into a "More" menu; the intel panel keeps your two most important panels visible and folds the rest behind a "show more" toggle; phases and controls are bigger and easier to click; active text is more legible; and tools show a loading placeholder while they open. Same features, just calmer and quicker to scan.
