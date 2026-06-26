@@ -110,8 +110,6 @@ export interface SimulationState {
   clearAuto: (phase: string) => void
   /** Select a difficulty preset (WS-14). */
   setDifficulty: (d: DifficultyId) => void
-  /** Load a shareable scenario seed (PR7) — same seed + turn reproduces a run. */
-  setSeed: (seed: number) => void
   /** Mark the first-run guided tour as seen (WS-12). */
   markTourSeen: () => void
   /** Toggle novice Guided mode (PR-4); independent of difficulty. */
@@ -308,7 +306,6 @@ export const useSimulationStore = create<SimulationState>()(
       clearAuto: (phase) =>
         set((s) => ({ auto: s.auto.filter((k) => !k.startsWith(`${phase}::`)) })),
       setDifficulty: (difficulty) => set({ difficulty }),
-      setSeed: (seed) => set({ seed: Math.floor(seed) >>> 0 }),
       markTourSeen: () => set({ tourSeen: true }),
       setGuided: (guided) => set({ guided }),
       // RESET clears the run but NOT the onboarding / guidance prefs.
