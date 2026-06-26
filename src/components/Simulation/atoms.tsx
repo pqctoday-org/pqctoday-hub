@@ -7,6 +7,7 @@
 import type { ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { PHASE_WIN_LEVEL } from '@/data/phaseMaturity'
+import { TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME } from '@/data/timelineFacts.generated'
 
 export const eyebrow =
   'font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-muted-foreground'
@@ -43,6 +44,47 @@ export function PlanningBadge({
       aria-label={`${label}: ${tip}`}
       data-testid="planning-badge"
       className={`inline-flex h-auto cursor-help items-center rounded-sm border border-warning/40 bg-warning/10 px-1 py-0 font-mono text-sim-chip font-semibold uppercase leading-tight tracking-[0.06em] text-warning underline decoration-dotted decoration-warning/60 underline-offset-2 hover:bg-warning/20 ${className}`}
+    >
+      {label}
+    </Button>
+  )
+}
+
+/**
+ * Marks whether the jurisdiction's PQC migration deadline is a binding legal
+ * mandate (`HARD` — law / regulation / executive order) or soft published guidance
+ * (`SOFT` — a target, not binding). Single source: the timeline CSV `mandate_type`
+ * via TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME (keyed by full country name, as the
+ * sim's `country` is). Renders nothing for jurisdictions with no curated national
+ * deadline — keeps the sim honest: a guidance year is not a law.
+ */
+export function MandateBadge({
+  country,
+  className = '',
+}: {
+  country?: string
+  className?: string
+}) {
+  // eslint-disable-next-line security/detect-object-injection
+  const mandate = country ? TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME[country] : undefined
+  if (mandate !== 'HARD' && mandate !== 'SOFT') return null
+  const hard = mandate === 'HARD'
+  const label = hard ? 'binding' : 'guidance'
+  const tip = hard
+    ? "This jurisdiction's PQC deadline is a binding legal mandate (law / regulation / executive order)."
+    : "This jurisdiction's PQC date is published guidance — a target, not a binding legal mandate."
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      title={tip}
+      aria-label={`${label}: ${tip}`}
+      data-testid="mandate-badge"
+      className={`inline-flex h-auto cursor-help items-center rounded-sm border px-1 py-0 font-mono text-sim-chip font-semibold uppercase leading-tight tracking-[0.06em] ${
+        hard
+          ? 'border-destructive/40 bg-destructive/10 text-destructive'
+          : 'border-border bg-muted text-muted-foreground'
+      } ${className}`}
     >
       {label}
     </Button>

@@ -96,7 +96,7 @@ import { computeReadiness } from '@/simulation/readiness'
 import { runQuarter } from '@/simulation/quarterEngine'
 import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
 import { getBalance, type DifficultyId } from '@/data/simBalance'
-import { Eyebrow, Ring, Dial, ReadonlyDial, Stat, PlanningBadge } from './atoms'
+import { Eyebrow, Ring, Dial, ReadonlyDial, Stat, PlanningBadge, MandateBadge } from './atoms'
 import { SimTour } from './SimTour'
 import { KIND_CHIP, markSimResume, markSimExited, clearSimExcursion } from './simChrome'
 import { canResolveDeepLink } from '@/simulation/deepLinks'
@@ -1120,6 +1120,7 @@ export function SimulationView() {
             label="JURISDICTION"
             value={assessJurisdiction?.displayName ?? country}
             hint="from your assessment"
+            badge={<MandateBadge country={country} />}
             note={
               assessJurisdiction && !assessJurisdiction.exact
                 ? `(rules modeled on ${assessJurisdiction.countryCode})`
