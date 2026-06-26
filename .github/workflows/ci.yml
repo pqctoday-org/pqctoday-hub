@@ -1,10 +1,23 @@
 name: CI
 
 on:
+  # Already PR + main-only with concurrency-cancel. Additionally skip the heavy
+  # job for pure docs/non-code changes. NOTE: data/** is deliberately NOT ignored
+  # — data changes must still run the audit gates.
   push:
     branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.gitignore'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.gitignore'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
