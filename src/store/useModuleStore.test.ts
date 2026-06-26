@@ -36,6 +36,27 @@ describe('useModuleStore', () => {
     expect(analytics.logModuleStart).not.toHaveBeenCalled()
   })
 
+  it('a module mount does NOT downgrade a completed module to in-progress (revisit guard)', () => {
+    const store = useModuleStore.getState()
+    store.updateModuleProgress('module-1', { status: 'completed' })
+    expect(useModuleStore.getState().modules['module-1'].status).toBe('completed')
+    // simulate revisit: the mount effect fires { status: 'in-progress', lastVisited }
+    store.updateModuleProgress('module-1', { status: 'in-progress', lastVisited: Date.now() })
+    expect(useModuleStore.getState().modules['module-1'].status).toBe('completed')
+  })
+
+  it('an explicit Reset (clears completedSteps) still downgrades a completed module', () => {
+    const store = useModuleStore.getState()
+    store.updateModuleProgress('module-1', { status: 'completed' })
+    // the Reset action sends completedSteps:[] + timeSpent:0 alongside in-progress
+    store.updateModuleProgress('module-1', {
+      status: 'in-progress',
+      completedSteps: [],
+      timeSpent: 0,
+    })
+    expect(useModuleStore.getState().modules['module-1'].status).toBe('in-progress')
+  })
+
   it('marks step complete', () => {
     useModuleStore.getState().markStepComplete('module-1', 'step-1')
     const state = useModuleStore.getState()
