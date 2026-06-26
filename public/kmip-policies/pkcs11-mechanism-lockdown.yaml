@@ -1,0 +1,68 @@
+# PKCS#11 mechanism lockdown — gate crypto at the *mechanism* layer, not just the
+# algorithm. These rules act on the request's canonical PKCS#11 `CKM_*` mechanism
+# (the same value whether the request arrived as a standard KMIP op or via the
+# §6.1.42 PKCS#11 passthrough), so they are bypass-proof by construction. This is
+# the dimension that says "you may use AES — but only AES-GCM, never AES-ECB",
+# and "MAC only with HMAC-SHA-2", expressed in PKCS#11's own vocabulary.
+
+schema_version: 1
+
+metadata:
+  name: pkcs11-mechanism-lockdown
+  description: |
+    Lock the PKCS#11 v3.2 mechanism surface to a vetted set. Authenticated and
+    quantum-safe mechanisms are allowlisted; legacy/unauthenticated mechanisms
+    (PKCS#1 v1.5, AES-ECB/CBC, single-DES/3DES, MD5, SHA-1) are denied; MAC is
+    restricted to the HMAC-SHA-2 family. Gating on the canonical CKM_* means a
+    request cannot dodge the rule by choosing a different KMIP op.
+  authority: pqctoday-hsm/training
+  effective: "always"
+  compliance_mapping:
+    - { framework: "PKCS#11 v3.2",  status: aligned }
+    - { framework: "FIPS 140-3",    level: 3 }
+
+rules:
+
+  # ── Allowlist: only vetted CKM_* mechanisms may be used ───────────────
+  - type: mechanism_allowlist
+    ops: [Create, CreateKeyPair, Sign, SignatureVerify, Encrypt, Decrypt, Encapsulate, Decapsulate, MAC]
+    mechanisms:
+      - CKM_ML_DSA
+      - CKM_ML_DSA_KEY_PAIR_GEN
+      - CKM_ML_KEM
+      - CKM_AES_KEY_GEN
+      - CKM_AES_GCM
+      - CKM_RSA_PKCS_PSS
+      - CKM_RSA_PKCS_OAEP
+      - CKM_EC_KEY_PAIR_GEN
+      - CKM_ECDSA
+      - CKM_SHA256_HMAC
+      - CKM_SHA384_HMAC
+      - CKM_SHA512_HMAC
+    reason: "Mechanism not on the vetted PKCS#11 allowlist"
+
+  # ── Denylist: explicitly reject legacy / unauthenticated mechanisms ───
+  - type: mechanism_denylist
+    ops: [Create, CreateKeyPair, Sign, SignatureVerify, Encrypt, Decrypt]
+    mechanisms:
+      - CKM_RSA_PKCS          # RSA PKCS#1 v1.5 — use PSS / OAEP
+      - CKM_AES_ECB           # unauthenticated, leaks structure
+      - CKM_AES_CBC           # unauthenticated — use AES-GCM
+      - CKM_DES3_CBC          # 3DES retired
+      - CKM_DES_CBC           # single DES
+      - CKM_MD5               # broken digest
+      - CKM_SHA_1             # broken digest
+    reason: "Legacy/unauthenticated mechanism explicitly denied"
+
+  # ── MAC restricted to the HMAC-SHA-2 family ───────────────────────────
+  - type: mac_mechanism_policy
+    ops: [MAC, MACVerify]
+    mac_algorithms: [HMAC-SHA256, HMAC-SHA384, HMAC-SHA512]
+    reason: "MAC restricted to HMAC-SHA-2 (no HMAC-SHA1 / CMAC-DES)"
+
+  # ── AES must use an authenticated mode (belt-and-braces with the CKM denylist) ──
+  - type: mechanism_parameter_constraint
+    ops: [Encrypt, Decrypt]
+    algorithm: AES
+    allowed_block_cipher_modes: [GCM, CCM]
+    reason: "AES must use an authenticated mode (GCM or CCM)"

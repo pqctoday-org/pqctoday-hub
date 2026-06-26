@@ -1,0 +1,462 @@
+// SPDX-License-Identifier: GPL-3.0-only
+/* eslint-disable security/detect-object-injection -- array index swaps use numeric
+   loop counters and map lookups use typed `BatchErrorContinuation` keys, never
+   user input. */
+//
+// BatchView — illustrate KMIP's batch / "macro" capability: many operations in
+// ONE Request Message (not N round trips). Pick a recipe (or build your own
+// sequence), choose how failures are handled (Continue / Stop / Undo), and run.
+// The result is the single shared Response Message decoded into per-item results.
+// `$IDPlaceholder` chains Create → Activate → Sign without ever quoting a UID.
+import { useState } from 'react'
+import {
+  Layers,
+  Play,
+  Loader2,
+  CheckCircle2,
+  XCircle,
+  RotateCcw,
+  Trash2,
+  ArrowUp,
+  ArrowDown,
+  CornerDownRight,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import {
+  type KmipEngine,
+  type OpSpec,
+  type BatchResult,
+  type BatchErrorContinuation,
+  ID_PLACEHOLDER,
+} from '@/wasm/kmip/kmipEngine'
+
+interface Recipe {
+  id: string
+  label: string
+  desc: string
+  cont: BatchErrorContinuation
+  items: OpSpec[]
+}
+
+const RECIPES: Recipe[] = [
+  {
+    id: 'provision-sign',
+    label: 'Provision a signing key',
+    desc: 'CreateKeyPair → Activate → Sign, chained by ID-placeholder in ONE request.',
+    cont: 'Continue',
+    items: [
+      { op: 'CreateKeyPair', intent: 'sign', algorithm: 'ML-DSA-65' },
+      { op: 'Activate', uid: ID_PLACEHOLDER },
+      { op: 'Sign', uid: ID_PLACEHOLDER, text: 'batch-signed payload' },
+    ],
+  },
+  {
+    id: 'provision-kem',
+    label: 'Provision a KEM key',
+    desc: 'CreateKeyPair (KEM) → Activate → Encapsulate in one round trip.',
+    cont: 'Continue',
+    items: [
+      { op: 'CreateKeyPair', intent: 'kem', algorithm: 'ML-KEM-768' },
+      { op: 'Activate', uid: ID_PLACEHOLDER },
+      { op: 'Encapsulate', uid: ID_PLACEHOLDER },
+    ],
+  },
+  {
+    id: 'atomic-undo',
+    label: 'Atomic batch (rollback on failure)',
+    desc: 'Under Undo, if any item fails the earlier successes roll back (OperationUndone). Activate the PQC or CNSA policy first to make the classical key fail.',
+    cont: 'Undo',
+    items: [
+      { op: 'Create', algorithm: 'AES', length: 256 },
+      { op: 'CreateKeyPair', algorithm: 'RSA' },
+      { op: 'Query' },
+    ],
+  },
+  {
+    id: 'inventory',
+    label: 'Server inventory',
+    desc: 'Query + Locate together — capabilities and stored objects in one batch.',
+    cont: 'Continue',
+    items: [{ op: 'Query' }, { op: 'Locate' }],
+  },
+]
+
+const CONT_INFO: Record<BatchErrorContinuation, string> = {
+  Continue: 'Run every item, even after a failure.',
+  Stop: 'Halt after the first failure; later items are not run.',
+  Undo: 'Halt after the first failure AND roll back earlier successes.',
+}
+
+const ADDABLE: OpSpec['op'][] = [
+  'CreateKeyPair',
+  'Create',
+  'Activate',
+  'Sign',
+  'Encapsulate',
+  'Query',
+  'Locate',
+  'Get',
+  'Revoke',
+  'Destroy',
+]
+
+/** One-line label for an item in the sequence. */
+function itemLabel(spec: OpSpec): string {
+  const bits: string[] = [spec.op]
+  if (spec.algorithm) bits.push(spec.algorithm)
+  else if (spec.intent) bits.push(`(${spec.intent})`)
+  if (spec.length) bits.push(`${spec.length}-bit`)
+  if (spec.text) bits.push(`"${spec.text.slice(0, 18)}"`)
+  return bits.join(' ')
+}
+
+const statusIcon = (status: string) => {
+  if (status === 'Success') return <CheckCircle2 size={14} className="text-status-success" />
+  if (status === 'OperationUndone') return <RotateCcw size={14} className="text-status-warning" />
+  return <XCircle size={14} className="text-destructive" />
+}
+
+export function BatchView({
+  engine,
+  busy,
+  expert,
+  onBusyChange,
+  onChanged,
+}: {
+  engine: KmipEngine
+  busy: boolean
+  expert: boolean
+  onBusyChange: (running: boolean) => void
+  onChanged: () => void
+}) {
+  const [items, setItems] = useState<OpSpec[]>(RECIPES[0].items)
+  const [cont, setCont] = useState<BatchErrorContinuation>('Continue')
+  const [activeRecipe, setActiveRecipe] = useState<string | null>(RECIPES[0].id)
+  const [result, setResult] = useState<BatchResult | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [running, setRunning] = useState(false)
+
+  const loadRecipe = (r: Recipe) => {
+    setItems(r.items.map((i) => ({ ...i })))
+    setCont(r.cont)
+    setActiveRecipe(r.id)
+    setResult(null)
+    setError(null)
+  }
+
+  const mutate = (fn: (xs: OpSpec[]) => OpSpec[]) => {
+    setItems((xs) => fn(xs))
+    setActiveRecipe(null)
+  }
+  const removeAt = (i: number) => mutate((xs) => xs.filter((_, k) => k !== i))
+  const move = (i: number, dir: -1 | 1) =>
+    mutate((xs) => {
+      const j = i + dir
+      if (j < 0 || j >= xs.length) return xs
+      const next = xs.slice()
+      ;[next[i], next[j]] = [next[j], next[i]]
+      return next
+    })
+  const addOp = (op: OpSpec['op']) =>
+    mutate((xs) => [
+      ...xs,
+      op === 'CreateKeyPair'
+        ? { op, intent: 'sign', algorithm: 'ML-DSA-65' }
+        : op === 'Create'
+          ? { op, algorithm: 'AES', length: 256 }
+          : op === 'Sign'
+            ? { op, uid: ID_PLACEHOLDER, text: 'hello' }
+            : ['Activate', 'Encapsulate', 'Get', 'Revoke', 'Destroy'].includes(op)
+              ? { op, uid: ID_PLACEHOLDER }
+              : { op },
+    ])
+
+  const run = async () => {
+    if (!items.length) return
+    setRunning(true)
+    onBusyChange(true)
+    setError(null)
+    await new Promise((r) => setTimeout(r, 0))
+    try {
+      const res = engine.runBatch({ errorContinuation: cont, items })
+      setResult(res)
+      onChanged()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setRunning(false)
+      onBusyChange(false)
+    }
+  }
+
+  const undone = result?.items.filter((i) => i.status === 'OperationUndone').length ?? 0
+  const failed = result?.items.filter((i) => !i.ok && i.status !== 'OperationUndone').length ?? 0
+
+  return (
+    <div className="space-y-4">
+      <section className="rounded-xl border border-border bg-card p-4">
+        <h3 className="flex items-center gap-2 font-semibold text-foreground">
+          <Layers size={16} className="text-primary" /> Batch & macros
+          <span className="text-xs font-normal text-muted-foreground">
+            — many operations, ONE KMIP request
+          </span>
+        </h3>
+        <p className="mt-1 text-xs text-muted-foreground">
+          A KMIP batch carries several operations in a single Request Message. The active policy
+          still governs every item, and <code className="text-foreground">{ID_PLACEHOLDER}</code>{' '}
+          lets one item reference the object the previous item created — so
+          Create&nbsp;→&nbsp;Activate&nbsp;→&nbsp;Sign is one round trip, not three.
+        </p>
+
+        {/* Recipes */}
+        <p className="mt-3 mb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+          Recipes
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {RECIPES.map((r) => (
+            <Button
+              key={r.id}
+              variant="ghost"
+              disabled={busy}
+              onClick={() => loadRecipe(r)}
+              className={cn(
+                'h-auto w-full flex-col items-start gap-0.5 whitespace-normal rounded-lg border px-3 py-2 text-left',
+                activeRecipe === r.id
+                  ? 'border-primary/60 bg-primary/10'
+                  : 'border-border bg-background/40 hover:border-primary/40'
+              )}
+            >
+              <span className="text-[12.5px] font-semibold text-foreground">{r.label}</span>
+              <p className="text-[10.5px] font-normal leading-snug text-muted-foreground">
+                {r.desc}
+              </p>
+            </Button>
+          ))}
+        </div>
+      </section>
+
+      {/* Builder */}
+      <section className="rounded-xl border border-border bg-card p-4">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <h4 className="text-xs font-semibold text-foreground">
+            Sequence <span className="font-mono text-muted-foreground">({items.length})</span>
+          </h4>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] text-muted-foreground">add</span>
+            <select
+              value=""
+              disabled={busy}
+              onChange={(e) => {
+                if (e.target.value) addOp(e.target.value as OpSpec['op'])
+                e.target.value = ''
+              }}
+              className="h-7 rounded-md border border-border bg-background px-1.5 text-xs"
+              aria-label="Add operation"
+            >
+              <option value="">＋ op…</option>
+              {ADDABLE.map((op) => (
+                <option key={op} value={op}>
+                  {op}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <ol className="mt-3 space-y-1.5">
+          {items.map((spec, i) => (
+            <li
+              key={i}
+              className="flex items-center gap-2 rounded-md border border-border bg-background/40 px-2 py-1.5"
+            >
+              <span className="font-mono text-[10px] text-muted-foreground w-4 text-right">
+                {i + 1}
+              </span>
+              <span className="text-xs font-medium text-foreground">{itemLabel(spec)}</span>
+              {spec.uid === ID_PLACEHOLDER && (
+                <span className="inline-flex items-center gap-0.5 rounded bg-status-warning/15 px-1.5 py-0.5 text-[9px] font-semibold text-status-warning">
+                  <CornerDownRight size={9} /> prev key
+                </span>
+              )}
+              <div className="ml-auto flex items-center gap-0.5">
+                <Button
+                  variant="ghost"
+                  onClick={() => move(i, -1)}
+                  disabled={busy || i === 0}
+                  className="h-auto w-auto p-1 text-muted-foreground hover:text-foreground"
+                  aria-label="Move up"
+                >
+                  <ArrowUp size={12} />
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => move(i, 1)}
+                  disabled={busy || i === items.length - 1}
+                  className="h-auto w-auto p-1 text-muted-foreground hover:text-foreground"
+                  aria-label="Move down"
+                >
+                  <ArrowDown size={12} />
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => removeAt(i)}
+                  disabled={busy}
+                  className="h-auto w-auto p-1 text-muted-foreground hover:text-destructive"
+                  aria-label="Remove"
+                >
+                  <Trash2 size={12} />
+                </Button>
+              </div>
+            </li>
+          ))}
+          {items.length === 0 && (
+            <li className="rounded-md border border-dashed border-border px-2 py-3 text-center text-[11px] text-muted-foreground">
+              Empty — load a recipe or add an op.
+            </li>
+          )}
+        </ol>
+
+        {/* Error-continuation + run */}
+        <div className="mt-3 flex items-center gap-3 flex-wrap">
+          <div>
+            <p className="text-[9.5px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+              On failure
+            </p>
+            <div className="flex items-center gap-0.5 rounded-lg border border-border bg-muted/40 p-0.5">
+              {(['Continue', 'Stop', 'Undo'] as const).map((c) => (
+                <Button
+                  key={c}
+                  size="sm"
+                  variant="ghost"
+                  aria-pressed={cont === c}
+                  disabled={busy}
+                  onClick={() => setCont(c)}
+                  className={cn(
+                    'h-7 rounded-md px-2.5 text-xs',
+                    cont === c
+                      ? 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
+                      : 'text-muted-foreground'
+                  )}
+                >
+                  {c}
+                </Button>
+              ))}
+            </div>
+          </div>
+          <p className="text-[11px] text-muted-foreground max-w-xs">{CONT_INFO[cont]}</p>
+          <Button disabled={busy || items.length === 0} onClick={run} className="ml-auto gap-1.5">
+            {running ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />} Run
+            batch
+          </Button>
+        </div>
+        {error && (
+          <p className="mt-2 rounded border border-destructive/40 bg-destructive/5 px-2 py-1 text-[11px] text-destructive">
+            {error}
+          </p>
+        )}
+      </section>
+
+      {/* Results */}
+      {result && (
+        <section className="rounded-xl border border-border bg-card p-4">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h4 className="text-xs font-semibold text-foreground">Batch result</h4>
+            <span
+              className={cn(
+                'rounded px-1.5 py-0.5 text-[10px] font-semibold',
+                result.ok
+                  ? 'bg-status-success/15 text-status-success'
+                  : 'bg-destructive/15 text-destructive'
+              )}
+            >
+              {result.ok
+                ? 'all succeeded'
+                : `${failed} failed${undone ? `, ${undone} undone` : ''}`}
+            </span>
+            <span className="text-[10px] text-muted-foreground">
+              {result.returned}/{result.requested} items returned · on-failure{' '}
+              {result.errorContinuation} · {result.responseWireLen} bytes on the wire
+            </span>
+          </div>
+
+          {result.returned < result.requested && (
+            <p className="mt-2 text-[11px] text-status-warning">
+              {result.requested - result.returned} item(s) after the failure were not processed (
+              {result.errorContinuation}).
+            </p>
+          )}
+          {undone > 0 && (
+            <p className="mt-1 text-[11px] text-status-warning">
+              Undo rolled back {undone} earlier success(es) — the batch is atomic.
+            </p>
+          )}
+
+          <ol className="mt-3 space-y-1.5">
+            {result.items.map((it, i) => (
+              <li
+                key={i}
+                className="flex items-start gap-2 rounded-md border border-border bg-background/40 px-2 py-1.5"
+              >
+                <span className="font-mono text-[10px] text-muted-foreground w-4 text-right mt-0.5">
+                  {i + 1}
+                </span>
+                {statusIcon(it.status)}
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-medium text-foreground">{it.operation}</span>
+                    <span
+                      className={cn(
+                        'text-[10px]',
+                        it.ok
+                          ? 'text-status-success'
+                          : it.status === 'OperationUndone'
+                            ? 'text-status-warning'
+                            : 'text-destructive'
+                      )}
+                    >
+                      {it.status}
+                    </span>
+                  </div>
+                  {it.message && (
+                    <p className="text-[10.5px] text-muted-foreground break-all">{it.message}</p>
+                  )}
+                  {it.ok && summarize(it.summary) && (
+                    <p className="text-[10.5px] text-muted-foreground break-all">
+                      {summarize(it.summary)}
+                    </p>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ol>
+
+          {expert && result.responseWireHex && (
+            <details className="mt-3">
+              <summary className="cursor-pointer text-[11px] font-semibold text-muted-foreground hover:text-foreground">
+                shared Response Message — {result.responseWireLen} bytes (hex)
+              </summary>
+              <pre className="mt-1 max-h-40 overflow-auto whitespace-pre-wrap break-all rounded border border-border bg-muted/40 p-2 font-mono text-[9.5px] text-muted-foreground">
+                {result.responseWireHex}
+              </pre>
+            </details>
+          )}
+        </section>
+      )}
+    </div>
+  )
+}
+
+/** Compact one-liner from a batch item's summary object. */
+function summarize(summary: Record<string, unknown>): string {
+  const s = summary as Record<string, string | number | undefined>
+  if (s.privateKeyUid) return `key pair ${String(s.privateKeyUid).slice(0, 30)}…`
+  if (s.uid && s.state) return `${String(s.uid).slice(0, 30)}… → ${s.state}`
+  if (s.signatureLen) return `${s.signatureLen}-byte signature`
+  if (s.ciphertextLen) return `${s.ciphertextLen}-byte ciphertext`
+  if (s.uid) return `${String(s.uid).slice(0, 36)}…`
+  if (s.vendorIdentification) return `vendor "${s.vendorIdentification}"`
+  if (Array.isArray((summary as { uids?: unknown[] }).uids))
+    return `${(summary as { uids: unknown[] }).uids.length} object(s)`
+  return ''
+}

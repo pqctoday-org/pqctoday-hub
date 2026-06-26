@@ -21,6 +21,9 @@ import {
   CheckCircle2,
   XCircle,
   RotateCcw,
+  Wand2,
+  ShieldCheck,
+  Layers,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
@@ -38,6 +41,11 @@ import { ALGORITHMS, type PolicyPreset } from '@/wasm/kmip/kmipMeta'
 import { PolicyControlStrip } from './PolicyControlStrip'
 import { AgilityScenario } from './AgilityScenario'
 import { Inspector } from './Inspector'
+import { PolicyView } from './PolicyView'
+import { BatchView } from './BatchView'
+
+/** Top-level surface of the CACP playground. */
+type Plane = 'agility' | 'policy' | 'batch'
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '')
 
@@ -145,6 +153,7 @@ export function KmipPlaygroundView() {
 
   const [mode, setMode] = useState<ViewMode>(readMode)
   const expert = mode === 'expert'
+  const [plane, setPlane] = useState<Plane>('agility')
   const chooseMode = (m: ViewMode) => {
     setMode(m)
     try {
@@ -348,232 +357,296 @@ export function KmipPlaygroundView() {
         </div>
       </div>
 
-      {/* ── Plane 1 · the persistent policy "brain" ─────────────────────── */}
-      <PolicyControlStrip
-        engine={engine}
-        policy={policy}
-        policyYaml={policyYaml}
-        busy={busy}
-        expert={expert}
-        onLoadPolicy={onLoadPolicy}
-      />
+      {/* ── Top-level tabs ───────────────────────────────────────────────── */}
+      <div
+        role="tablist"
+        aria-label="CACP surface"
+        className="mb-4 flex items-center gap-1 rounded-lg border border-border bg-muted/30 p-1"
+      >
+        {(
+          [
+            { id: 'agility', label: 'Agility & Workbench', icon: Wand2 },
+            { id: 'policy', label: 'Policy', icon: ShieldCheck },
+            { id: 'batch', label: 'Batch & Macros', icon: Layers },
+          ] as const
+        ).map((t) => {
+          const on = plane === t.id
+          const Icon = t.icon
+          return (
+            <Button
+              key={t.id}
+              role="tab"
+              aria-selected={on}
+              variant="ghost"
+              size="sm"
+              onClick={() => setPlane(t.id)}
+              className={`h-8 gap-1.5 rounded-md px-3 text-xs ${
+                on ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'
+              }`}
+            >
+              <Icon size={14} /> {t.label}
+            </Button>
+          )
+        })}
+      </div>
 
-      {/* ── The headline: watch a policy migrate an unchanged operation ──── */}
-      <div className="mb-4">
-        <AgilityScenario
+      {plane === 'agility' && (
+        <>
+          {/* ── Plane 1 · the persistent policy "brain" ─────────────────── */}
+          <PolicyControlStrip
+            engine={engine}
+            policy={policy}
+            policyYaml={policyYaml}
+            busy={busy}
+            expert={expert}
+            onLoadPolicy={onLoadPolicy}
+            onOpenLibrary={() => setPlane('policy')}
+          />
+
+          {/* ── The headline: watch a policy migrate an unchanged operation ──── */}
+          <div className="mb-4">
+            <AgilityScenario
+              engine={engine}
+              busy={busy}
+              onBusyChange={setBusy}
+              onChanged={() => refresh(engine)}
+            />
+          </div>
+
+          {/* ── Manual workbench: operate → result → inspect ─────────────────── */}
+          <div className="mt-6 mb-3 flex items-center gap-2 flex-wrap">
+            <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+              Manual Workbench
+            </span>
+            <span className="text-xs text-muted-foreground">
+              — drive the lifecycle yourself; the active policy still governs every call.
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onReset}
+              className="ml-auto h-7 gap-1.5 px-2.5 text-[11px] text-muted-foreground hover:text-foreground"
+            >
+              <RotateCcw size={13} /> Reset
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-4 items-start">
+            {/* ── Left · Operate (Plane 2 — KMIP lifecycle) ─────────────────── */}
+            <section className="rounded-xl border border-border bg-card p-4">
+              <h3 className="font-semibold flex items-center gap-2 text-primary">
+                <KeyRound size={16} /> Plane 2 · KMIP Lifecycle
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1 mb-3">
+                Each button sends a real KMIP 3.0 request.
+              </p>
+
+              <p className="text-xs font-medium text-muted-foreground mb-1">Algorithm</p>
+              <div className="mb-3" data-testid="kmip-algo">
+                <FilterDropdown
+                  items={ALGORITHMS.map((a) => ({
+                    id: a.value,
+                    label: a.pqc ? `${a.label} · PQC` : a.label,
+                  }))}
+                  selectedId={algo}
+                  onSelect={setAlgo}
+                  label="Algorithm"
+                  className="w-full"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <Button disabled={busy} onClick={onCreate} className="col-span-2 gap-1.5">
+                  <Play size={14} /> 1 · Create {isKem ? 'KEM' : 'signing'} key pair
+                </Button>
+                <Button
+                  variant="secondary"
+                  disabled={busy || !priv}
+                  onClick={onActivate}
+                  className="col-span-2"
+                >
+                  2 · Activate
+                </Button>
+                {!isKem ? (
+                  <>
+                    <Button variant="secondary" disabled={busy || !priv} onClick={onSign}>
+                      3 · Sign
+                    </Button>
+                    <Button variant="secondary" disabled={busy || !sigHex} onClick={onVerify}>
+                      4 · Verify
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="secondary" disabled={busy || !pub} onClick={onEncapsulate}>
+                      3 · Encapsulate
+                    </Button>
+                    <Button variant="secondary" disabled={busy || !ctHex} onClick={onDecapsulate}>
+                      4 · Decapsulate
+                    </Button>
+                  </>
+                )}
+              </div>
+
+              {!isKem && (
+                <input
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="message to sign"
+                  className="w-full mt-2 rounded-md border border-border bg-background px-2 py-1.5 text-xs"
+                />
+              )}
+
+              {expert && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    disabled={busy}
+                    onClick={() => run({ op: 'Query' })}
+                    className="text-xs"
+                  >
+                    Query
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    disabled={busy}
+                    onClick={() => run({ op: 'Locate' })}
+                    className="text-xs"
+                  >
+                    Locate
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    disabled={busy || !priv}
+                    onClick={onGet}
+                    className="text-xs"
+                  >
+                    Get
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    disabled={busy || !priv}
+                    onClick={onRevoke}
+                    className="text-xs"
+                  >
+                    Revoke
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    disabled={busy || !priv}
+                    onClick={() => priv && run({ op: 'Destroy', uid: priv })}
+                    className="text-xs"
+                  >
+                    Destroy
+                  </Button>
+                </div>
+              )}
+            </section>
+
+            {/* ── Right · Result + Inspector ────────────────────────────────── */}
+            <div className="flex flex-col gap-4">
+              <section className="rounded-xl border border-border bg-card p-4">
+                <h3 className="font-semibold flex items-center gap-2 text-foreground">
+                  <ScrollText size={16} /> Result
+                </h3>
+                {!result ? (
+                  <p className="text-xs text-muted-foreground mt-2 italic">
+                    Run a step to see what happened.
+                  </p>
+                ) : (
+                  <div className="mt-2">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {result.ok ? (
+                        <CheckCircle2 size={16} className="text-status-success" />
+                      ) : (
+                        <XCircle size={16} className="text-destructive" />
+                      )}
+                      <span className="text-sm font-medium">{result.operation}</span>
+                      <span
+                        className={`text-xs ${result.ok ? 'text-status-success' : 'text-destructive'}`}
+                      >
+                        {result.status}
+                      </span>
+                      {(() => {
+                        const d = decisionOf(result)
+                        if (d.kind === 'Unknown') return null
+                        const tone =
+                          d.kind === 'Allow'
+                            ? 'text-status-success'
+                            : d.kind === 'Rekey'
+                              ? 'text-status-warning'
+                              : 'text-destructive'
+                        return (
+                          <span
+                            className={`text-[10px] px-1.5 rounded bg-muted font-semibold ${tone}`}
+                          >
+                            policy: {d.kind}
+                            {d.algorithm ? ` → ${d.algorithm}` : ''}
+                          </span>
+                        )
+                      })()}
+                    </div>
+                    <p className="text-sm text-foreground mt-1.5">{narrate(result)}</p>
+                    {!expert &&
+                      (() => {
+                        const wtm = whatThisMeans(result)
+                        return wtm ? (
+                          <p className="mt-2 border-l-2 border-primary/60 bg-muted/30 pl-2.5 py-1.5 text-xs text-muted-foreground">
+                            <span className="font-semibold text-foreground">
+                              What this means ·{' '}
+                            </span>
+                            {wtm}
+                          </p>
+                        ) : null
+                      })()}
+                    {busy && (
+                      <Loader2 size={14} className="animate-spin text-muted-foreground mt-2" />
+                    )}
+                  </div>
+                )}
+              </section>
+
+              {/* ── Inspector · Keystore / KMIP Wire (Expert) / Audit ─────────── */}
+              <Inspector
+                objects={objects}
+                audit={audit}
+                result={result}
+                lastSpec={lastSpec}
+                expert={expert}
+                onClearAudit={() => {
+                  engine.clearAudit()
+                  setAudit([])
+                }}
+              />
+            </div>
+          </div>
+        </>
+      )}
+
+      {plane === 'policy' && (
+        <PolicyView
+          engine={engine}
+          policy={policy}
+          policyYaml={policyYaml}
+          busy={busy}
+          onLoadPolicy={onLoadPolicy}
+        />
+      )}
+
+      {plane === 'batch' && (
+        <BatchView
           engine={engine}
           busy={busy}
+          expert={expert}
           onBusyChange={setBusy}
           onChanged={() => refresh(engine)}
         />
-      </div>
-
-      {/* ── Manual workbench: operate → result → inspect ─────────────────── */}
-      <div className="mt-6 mb-3 flex items-center gap-2 flex-wrap">
-        <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-          Manual Workbench
-        </span>
-        <span className="text-xs text-muted-foreground">
-          — drive the lifecycle yourself; the active policy still governs every call.
-        </span>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onReset}
-          className="ml-auto h-7 gap-1.5 px-2.5 text-[11px] text-muted-foreground hover:text-foreground"
-        >
-          <RotateCcw size={13} /> Reset
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-4 items-start">
-        {/* ── Left · Operate (Plane 2 — KMIP lifecycle) ─────────────────── */}
-        <section className="rounded-xl border border-border bg-card p-4">
-          <h3 className="font-semibold flex items-center gap-2 text-primary">
-            <KeyRound size={16} /> Plane 2 · KMIP Lifecycle
-          </h3>
-          <p className="text-xs text-muted-foreground mt-1 mb-3">
-            Each button sends a real KMIP 3.0 request.
-          </p>
-
-          <p className="text-xs font-medium text-muted-foreground mb-1">Algorithm</p>
-          <div className="mb-3" data-testid="kmip-algo">
-            <FilterDropdown
-              items={ALGORITHMS.map((a) => ({
-                id: a.value,
-                label: a.pqc ? `${a.label} · PQC` : a.label,
-              }))}
-              selectedId={algo}
-              onSelect={setAlgo}
-              label="Algorithm"
-              className="w-full"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            <Button disabled={busy} onClick={onCreate} className="col-span-2 gap-1.5">
-              <Play size={14} /> 1 · Create {isKem ? 'KEM' : 'signing'} key pair
-            </Button>
-            <Button
-              variant="secondary"
-              disabled={busy || !priv}
-              onClick={onActivate}
-              className="col-span-2"
-            >
-              2 · Activate
-            </Button>
-            {!isKem ? (
-              <>
-                <Button variant="secondary" disabled={busy || !priv} onClick={onSign}>
-                  3 · Sign
-                </Button>
-                <Button variant="secondary" disabled={busy || !sigHex} onClick={onVerify}>
-                  4 · Verify
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button variant="secondary" disabled={busy || !pub} onClick={onEncapsulate}>
-                  3 · Encapsulate
-                </Button>
-                <Button variant="secondary" disabled={busy || !ctHex} onClick={onDecapsulate}>
-                  4 · Decapsulate
-                </Button>
-              </>
-            )}
-          </div>
-
-          {!isKem && (
-            <input
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="message to sign"
-              className="w-full mt-2 rounded-md border border-border bg-background px-2 py-1.5 text-xs"
-            />
-          )}
-
-          {expert && (
-            <div className="flex flex-wrap gap-2 mt-3">
-              <Button
-                size="sm"
-                variant="ghost"
-                disabled={busy}
-                onClick={() => run({ op: 'Query' })}
-                className="text-xs"
-              >
-                Query
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                disabled={busy}
-                onClick={() => run({ op: 'Locate' })}
-                className="text-xs"
-              >
-                Locate
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                disabled={busy || !priv}
-                onClick={onGet}
-                className="text-xs"
-              >
-                Get
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                disabled={busy || !priv}
-                onClick={onRevoke}
-                className="text-xs"
-              >
-                Revoke
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                disabled={busy || !priv}
-                onClick={() => priv && run({ op: 'Destroy', uid: priv })}
-                className="text-xs"
-              >
-                Destroy
-              </Button>
-            </div>
-          )}
-        </section>
-
-        {/* ── Right · Result + Inspector ────────────────────────────────── */}
-        <div className="flex flex-col gap-4">
-          <section className="rounded-xl border border-border bg-card p-4">
-            <h3 className="font-semibold flex items-center gap-2 text-foreground">
-              <ScrollText size={16} /> Result
-            </h3>
-            {!result ? (
-              <p className="text-xs text-muted-foreground mt-2 italic">
-                Run a step to see what happened.
-              </p>
-            ) : (
-              <div className="mt-2">
-                <div className="flex items-center gap-2 flex-wrap">
-                  {result.ok ? (
-                    <CheckCircle2 size={16} className="text-status-success" />
-                  ) : (
-                    <XCircle size={16} className="text-destructive" />
-                  )}
-                  <span className="text-sm font-medium">{result.operation}</span>
-                  <span
-                    className={`text-xs ${result.ok ? 'text-status-success' : 'text-destructive'}`}
-                  >
-                    {result.status}
-                  </span>
-                  {(() => {
-                    const d = decisionOf(result)
-                    if (d.kind === 'Unknown') return null
-                    const tone =
-                      d.kind === 'Allow'
-                        ? 'text-status-success'
-                        : d.kind === 'Rekey'
-                          ? 'text-status-warning'
-                          : 'text-destructive'
-                    return (
-                      <span className={`text-[10px] px-1.5 rounded bg-muted font-semibold ${tone}`}>
-                        policy: {d.kind}
-                        {d.algorithm ? ` → ${d.algorithm}` : ''}
-                      </span>
-                    )
-                  })()}
-                </div>
-                <p className="text-sm text-foreground mt-1.5">{narrate(result)}</p>
-                {!expert &&
-                  (() => {
-                    const wtm = whatThisMeans(result)
-                    return wtm ? (
-                      <p className="mt-2 border-l-2 border-primary/60 bg-muted/30 pl-2.5 py-1.5 text-xs text-muted-foreground">
-                        <span className="font-semibold text-foreground">What this means · </span>
-                        {wtm}
-                      </p>
-                    ) : null
-                  })()}
-                {busy && <Loader2 size={14} className="animate-spin text-muted-foreground mt-2" />}
-              </div>
-            )}
-          </section>
-
-          {/* ── Inspector · Keystore / KMIP Wire (Expert) / Audit ─────────── */}
-          <Inspector
-            objects={objects}
-            audit={audit}
-            result={result}
-            lastSpec={lastSpec}
-            expert={expert}
-            onClearAudit={() => {
-              engine.clearAudit()
-              setAudit([])
-            }}
-          />
-        </div>
-      </div>
+      )}
 
       <p className="text-[11px] text-muted-foreground mt-4">
         Want the full-fidelity version with TLS transport and the REST control plane? Run the real{' '}

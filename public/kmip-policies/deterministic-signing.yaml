@@ -15,10 +15,10 @@ metadata:
     Force deterministic ML-DSA / SLH-DSA signing. The WD19 `Deterministic`
     flag is set on every Sign by policy, overriding the client's choice.
   authority: pqctoday-hsm/training
-  effective: 'always'
+  effective: "always"
 
 rules:
   - type: mechanism_parameter_default
     ops: [Sign]
     deterministic: true
-    reason: 'Deterministic signatures mandated by policy'
+    reason: "Deterministic signatures mandated by policy"
