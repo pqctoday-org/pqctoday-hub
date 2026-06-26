@@ -1024,7 +1024,7 @@ export function SimulationView() {
               <Link
                 to="/assess"
                 onClick={() => markSimResume()}
-                className="rounded-lg bg-gradient-to-r from-primary to-secondary px-5 py-2.5 text-[13px] font-extrabold text-background hover:opacity-90"
+                className="rounded-lg bg-primary px-5 py-2.5 text-[13px] font-extrabold text-background hover:opacity-90"
               >
                 Start the assessment
               </Link>
@@ -1042,7 +1042,7 @@ export function SimulationView() {
                   loadSampleOrg()
                   autoRunPlayer.start()
                 }}
-                className="h-auto w-full whitespace-normal bg-gradient-to-r from-primary to-secondary py-2.5 text-[13px] font-extrabold text-background hover:opacity-90"
+                className="h-auto w-full whitespace-normal bg-primary py-2.5 text-[13px] font-extrabold text-background hover:opacity-90"
               >
                 ▶ Watch the full migration (sample org)
               </Button>

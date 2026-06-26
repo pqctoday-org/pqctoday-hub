@@ -31,7 +31,7 @@ export function SimPassIntroModal({ pass, onBegin }: { pass: PassIntro; onBegin:
           </span>
           <Button
             onClick={onBegin}
-            className="h-auto rounded-lg bg-gradient-to-r from-primary to-secondary px-5 py-2 text-[13px] font-extrabold text-background hover:opacity-90"
+            className="h-auto rounded-lg bg-primary px-5 py-2 text-[13px] font-extrabold text-background hover:opacity-90"
           >
             Begin this pass →
           </Button>
