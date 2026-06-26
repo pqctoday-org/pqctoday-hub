@@ -44,12 +44,13 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
   // Top-level pages
   {
     path: exact('/timeline'),
-    queryKeys: ['country', 'region', 'q', 'evref'],
+    queryKeys: ['country', 'region', 'q', 'evref', 'event'],
     description: 'Timeline',
   },
   {
     path: exact('/algorithms'),
-    queryKeys: ['highlight', 'tab', 'subtab', 'compare', 'family', 'level', 'fn', 'q'],
+    // `protocol` opens a Protocol Support matrix row's detail (tab=support).
+    queryKeys: ['highlight', 'tab', 'subtab', 'compare', 'family', 'level', 'fn', 'q', 'protocol'],
     description: 'Algorithms',
   },
   {
@@ -98,6 +99,8 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
       'step',
       'mode',
       'software',
+      'tab',
+      'share',
     ],
     description: 'Migrate catalog',
   },
@@ -107,6 +110,7 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
     description: 'Assessment wizard',
   },
   { path: exact('/report'), queryKeys: '*', description: 'Assessment report' },
+  { path: exact('/simulation'), queryKeys: '*', description: 'Migration Simulation' },
   { path: exact('/changelog'), queryKeys: '*', description: 'Changelog' },
   { path: exact('/about'), queryKeys: '*', description: 'About' },
   { path: exact('/explore'), queryKeys: '*', description: 'Guided exploration' },
@@ -138,7 +142,7 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
   // Learn
   {
     path: exact('/learn'),
-    queryKeys: ['track', 'persona'],
+    queryKeys: ['track', 'persona', 'mode'],
     description: 'Learn catalog',
   },
   {

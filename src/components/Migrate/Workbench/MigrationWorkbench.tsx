@@ -5,12 +5,22 @@
 // sequence). Tab state is URL-synced (?tab=) when standalone, store-only when
 // embedded in the Simulation page.
 
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { TrendingUp, ArrowRightLeft, BarChart3, Map as MapIcon, ShieldAlert } from 'lucide-react'
+import {
+  TrendingUp,
+  ArrowRightLeft,
+  BarChart3,
+  Map as MapIcon,
+  ShieldAlert,
+  Undo2,
+} from 'lucide-react'
 import { PageHeader } from '../../common/PageHeader'
+import { Button } from '../../ui/button'
+import { ShareButton } from '../../ui/ShareButton'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useMigrateSelectionStore, type MigrateTab } from '@/store/useMigrateSelectionStore'
+import { encodeMigrateShareToken, decodeMigrateShareToken } from '@/utils/migrateShareToken'
 import type { DomainId } from '@/data/migrationAssets'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../ui/tabs'
 import { useMigrationPlan } from './useMigrationPlan'
@@ -38,7 +48,48 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
 
   const tab = useMigrateSelectionStore((s) => s.tab)
   const setTabStore = useMigrateSelectionStore((s) => s.setTab)
+  const plan = useMigrateSelectionStore((s) => s.plan)
+  const choice = useMigrateSelectionStore((s) => s.choice)
+  const applySharedSelection = useMigrateSelectionStore((s) => s.applySharedSelection)
   const [searchParams, setSearchParams] = useSearchParams()
+
+  // ── Shared-selection deep link (?share=<token>) ───────────────────────────
+  // A /migrate link can carry the user's product selection so a colleague sees
+  // the same plan. Hydrate once on load (standalone only), snapshotting the
+  // visitor's own selection so they can undo back to it. Disabled when embedded.
+  const [priorSelection, setPriorSelection] = useState<{
+    plan: string[]
+    choice: Record<string, string[]>
+  } | null>(null)
+  const hydratedRef = useRef(false)
+  useEffect(() => {
+    if (embedded || hydratedRef.current) return
+    const token = searchParams.get('share')
+    if (!token) return
+    hydratedRef.current = true
+    // Strip the token from the URL so a refresh doesn't re-apply it.
+    const sp = new URLSearchParams(searchParams)
+    sp.delete('share')
+    setSearchParams(sp, { replace: true })
+    const decoded = decodeMigrateShareToken(token)
+    if (!decoded) return
+    const { plan: priorPlan, choice: priorChoice } = useMigrateSelectionStore.getState()
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time hydrate from the ?share= link
+    setPriorSelection({ plan: priorPlan, choice: priorChoice })
+    applySharedSelection(decoded.plan, decoded.choice)
+  }, [embedded, searchParams, setSearchParams, applySharedSelection])
+
+  const undoSharedSelection = useCallback(() => {
+    if (priorSelection) applySharedSelection(priorSelection.plan, priorSelection.choice)
+    setPriorSelection(null)
+  }, [priorSelection, applySharedSelection])
+
+  const shareUrl = useMemo(
+    () =>
+      `${window.location.origin}${window.location.pathname}?share=${encodeMigrateShareToken(plan, choice)}`,
+    [plan, choice]
+  )
+  const hasSelection = plan.length > 0 || Object.keys(choice).length > 0
 
   // Embedded-from-a-catalog-step tab is LOCAL state seeded once from focus.tab, so
   // opening the embed never mutates the shared store that standalone /migrate reads.
@@ -68,11 +119,30 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
   return (
     <div className="mx-auto w-full max-w-[1180px] px-4 pb-12 pt-4 sm:px-6">
       {!embedded && (
-        <PageHeader
-          icon={TrendingUp}
-          title="PQC Migration Workbench"
-          description="Start from what you run — get a sequenced, quantum-safe plan aligned to NIST IR 8547 & CNSA 2.0."
-        />
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <PageHeader
+            icon={TrendingUp}
+            title="PQC Migration Workbench"
+            description="Start from what you run — get a sequenced, quantum-safe plan aligned to NIST IR 8547 & CNSA 2.0."
+          />
+          {hasSelection && (
+            <ShareButton
+              title="PQC Migration plan"
+              text="Here's my PQC migration product selection"
+              url={shareUrl}
+            />
+          )}
+        </div>
+      )}
+
+      {!embedded && priorSelection && (
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm">
+          <span>Viewing a shared product selection.</span>
+          <Button variant="outline" size="sm" onClick={undoSharedSelection} className="gap-1.5">
+            <Undo2 size={14} aria-hidden />
+            Restore my selection
+          </Button>
+        </div>
       )}
 
       <div className="mt-2">

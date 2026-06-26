@@ -110,7 +110,29 @@ export const AssessViewRedesign: React.FC<{
   // Local view state: which screen of the flow is showing. A completed
   // assessment does NOT auto-jump anywhere — the user lands on the wizard (their
   // saved answers) and chooses: edit + regenerate, or use the "View Report" banner.
-  const [screen, setScreen] = useState<'wizard' | 'review' | 'done'>('wizard')
+  // Seeded from ?screen= so a refresh on the review/done screen stays there
+  // (only honored once the assessment is complete, else fall back to the wizard).
+  const [screen, setScreen] = useState<'wizard' | 'review' | 'done'>(() => {
+    const s = searchParams.get('screen')
+    if ((s === 'review' || s === 'done') && assessmentStatus === 'complete') return s
+    return 'wizard'
+  })
+
+  // Mirror the active screen into ?screen= (default 'wizard' omitted) so it's
+  // refresh-restorable. The embed-aware setSearchParams keeps this off the real
+  // /simulation route when embedded.
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (screen === 'wizard') next.delete('screen')
+        else next.set('screen', screen)
+        return next
+      },
+      { replace: true }
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen])
 
   // Migration-Program phase overlay (additive), identical to AssessView.
   const { activePhase, matches } = usePhaseFilter()
@@ -428,6 +450,8 @@ export const AssessViewRedesign: React.FC<{
           onComplete={goToReview}
           onExitToChooser={() => setAssessmentMode(null)}
           onSwitchTrack={handleSwitchTrack}
+          searchParams={searchParams}
+          setSearchParams={setSearchParams}
         />
       )}
     </div>

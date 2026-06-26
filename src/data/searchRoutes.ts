@@ -8,6 +8,17 @@ import type { SearchChunk } from '@/services/search/SearchIndex'
 export function chunkToRoute(chunk: SearchChunk): string {
   const { source, deepLink, metadata } = chunk
 
+  // Protocol Support matrix: repair the corpus's stale deepLink
+  // (`?tab=protocol&highlight=` — a non-existent tab + wrong param) to the real
+  // Protocol Support tab + `?protocol=<id>` detail deep link. Handled before the
+  // generic explicit-deepLink fallthrough since that link is known-bad.
+  if (source === 'protocol-matrix') {
+    const protocolId = (metadata?.protocolId as string | undefined) ?? ''
+    return protocolId
+      ? `/algorithms?tab=support&protocol=${encodeURIComponent(protocolId)}`
+      : '/algorithms?tab=support'
+  }
+
   // Use explicit deepLink when available and well-formed
   if (deepLink && deepLink.startsWith('/')) return deepLink
 
