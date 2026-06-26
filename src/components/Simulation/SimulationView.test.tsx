@@ -189,7 +189,7 @@ describe('SimulationView (Mission Control)', () => {
   // WS-01 — one tree-gated source of truth: the Quarter Report's cleared count
   // can never disagree with the board, and the AI advances the tree (via `auto`),
   // never the legacy `checks` counter.
-  it('the Quarter Report never contradicts the board; AI advances the tree, not checks', () => {
+  it('the Quarter Report never contradicts the board; AI advances the tree', () => {
     renderPage()
     for (let i = 0; i < 12; i++) {
       fireEvent.click(screen.getByRole('button', { name: /End Quarter/ }))
@@ -204,12 +204,10 @@ describe('SimulationView (Mission Control)', () => {
       expect(boardVals).toContain(reportVal)
       fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
     }
-    // Option A: AI completes real tree steps, so `checks` stays 0 for every
-    // tree-backed phase (it now only matters for the treeless `foundations`).
-    const { checks } = useSimulationStore.getState()
-    for (const p of ['p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7']) {
-      expect(checks[p] ?? 0).toBe(0)
-    }
+    // Option A: the AI advances progress only via real tree `auto` keys — there is
+    // no separate progression counter to drift out of sync with the board.
+    const { auto } = useSimulationStore.getState()
+    for (const k of auto) expect(k).toMatch(/^[a-z0-9]+::.+/)
   })
 
   // WS-12 — the first-run guide shows on a fresh visit, is skippable, and is

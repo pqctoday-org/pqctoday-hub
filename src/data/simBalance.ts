@@ -32,12 +32,19 @@ export interface SimBalance {
     advanceChance: number
   }
   /**
-   * P0 budget blend (WS-04): budget fraction = doneWeight·(P0 steps done / total)
-   * + levelWeight·(P0 level / max). Default is activity-driven (doneWeight 1,
-   * levelWeight 0) so every secured euro traces to a specific completed activity;
-   * presets (WS-14) may dial in a level bonus.
+   * P0 budget fraction (WS-04): budget fraction = doneWeight·(P0 steps done / total).
+   * Activity-driven so every secured euro traces to a specific completed activity.
+   * (A level-bonus term once lived here but shipped inert across all presets and was
+   * removed; difficulty touches budget via `estate.budgetMultiplier`, see WS-14/PR4.)
    */
-  budget: { doneWeight: number; levelWeight: number }
+  budget: { doneWeight: number }
+  /**
+   * Estate / difficulty structure (WS-14, PR4). Only the budget lever ships now:
+   * `budgetMultiplier` scales the program budget target so Hard secures less per
+   * activity. (Estate-widening fields — extraVulnerableBias etc. — are parked
+   * until the grounded-readiness model settles; see SIMULATION-REMEDIATION-PLAN.)
+   */
+  estate: { budgetMultiplier: number }
 }
 
 /** Difficulty presets (WS-14) — each is a complete SimBalance variant. Pure
@@ -50,21 +57,24 @@ export const SIM_PRESETS: Record<DifficultyId, SimBalance> = {
     events: { dangerWhenClassical: 0.4, warning: 0.4, goodNews: 0.65, successVsInfo: 0.65 },
     crqc: { pullForwardPerQuarter: 0.1 },
     ai: { advanceChance: 0.55 },
-    budget: { doneWeight: 1, levelWeight: 0 },
+    budget: { doneWeight: 1 },
+    estate: { budgetMultiplier: 1.2 },
   },
   // The grounded baseline (the original WS-03 values).
   realistic: {
     events: { dangerWhenClassical: 0.6, warning: 0.55, goodNews: 0.5, successVsInfo: 0.5 },
     crqc: { pullForwardPerQuarter: 0.22 },
     ai: { advanceChance: 0.35 },
-    budget: { doneWeight: 1, levelWeight: 0 },
+    budget: { doneWeight: 1 },
+    estate: { budgetMultiplier: 1 },
   },
   // Punishing: more shocks, faster Q-Day creep, sparse AI help.
   hard: {
     events: { dangerWhenClassical: 0.75, warning: 0.65, goodNews: 0.4, successVsInfo: 0.4 },
     crqc: { pullForwardPerQuarter: 0.35 },
     ai: { advanceChance: 0.2 },
-    budget: { doneWeight: 1, levelWeight: 0 },
+    budget: { doneWeight: 1 },
+    estate: { budgetMultiplier: 0.8 },
   },
 }
 

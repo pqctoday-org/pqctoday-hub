@@ -953,7 +953,6 @@ export function useSimAutoRunPlayer({
           const cs = useSimulationStore.getState()
           if (plan.year !== cs.year || plan.q !== cs.q) {
             cs.applyQuarter({
-              checks: cs.checks,
               crqcShift: cs.crqcShift,
               year: plan.year,
               q: plan.q,

@@ -74,14 +74,9 @@ import {
 } from '@/data/frameworkPhases'
 import { MATURITY_LEVEL_NAMES, PHASE_WIN_LEVEL, LEVEL_EVIDENCE } from '@/data/phaseMaturity'
 import { SIM_MISSIONS } from '@/data/simMissions'
-import {
-  computeSimMosca,
-  shelfLifeFor,
-  SIZE_MIGRATION_YEARS,
-  SECTORS,
-  COUNTRY_DEADLINE_YEAR,
-  SIM_CRQC_YEAR,
-} from '@/data/moscaClock'
+import { SECTORS } from '@/data/moscaClock'
+import { deriveSimClock } from './hooks/useSimClock'
+import { SeedShare } from './SeedShare'
 import { JURISDICTION_RULES } from '@/data/jurisdiction'
 import { ROLE_CROSSWALK, personaToRoles } from '@/data/roleCrosswalk'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
@@ -268,7 +263,7 @@ export function SimulationView() {
     sector,
     seat,
     sel,
-    checks,
+    edgeDecisions,
     year,
     q,
     crqcShift,
@@ -683,9 +678,8 @@ export function SimulationView() {
   }
   // STRICT GATING: a phase with an activity tree can only reach level N by passing
   // the gate of every level below it (completing those levels' activities). No
-  // manual/seed bypass. Phases with no tree (foundations) fall back to evidence.
-  const levelOf = (p: string) =>
-    SIM_TREES[p as PhaseId] ? treeLevel(p) : Math.max(checks[p] ?? 0, evidenceLevel(p))
+  // manual/seed bypass. Every phase is tree-backed; evidence is a defensive fallback.
+  const levelOf = (p: string) => (SIM_TREES[p as PhaseId] ? treeLevel(p) : evidenceLevel(p))
 
   // The TOP maturity band a phase actually ships (its tree's highest level). The
   // framework caps several phases below L4 BY DESIGN — no framework activity sits
@@ -722,23 +716,15 @@ export function SimulationView() {
   const jur = JURISDICTION_RULES[country]
   const seatOpt = SEATS.find((s) => s.id === seat) ?? SEATS[0]
 
-  // Mosca clock (turn-aware: fractional year + CRQC shift)
-  const horizonYear = Math.min(
-    SIM_CRQC_YEAR - crqcShift,
-    COUNTRY_DEADLINE_YEAR[country] ?? SIM_CRQC_YEAR
-  )
-  const currentYear = year + (q - 1) * 0.25
-  // Mosca X/Y from the assessment when present, else the sim's sector/size tables
-  const simShelfLifeYears = assessMosca?.shelfLifeYears ?? shelfLifeFor(sector)
-  const simMigrationYears =
-    assessMosca?.migrationYears ??
-    SIZE_MIGRATION_YEARS[size as keyof typeof SIZE_MIGRATION_YEARS] ??
-    3
-  const clock = computeSimMosca({
-    migrationYears: simMigrationYears,
-    shelfLifeYears: simShelfLifeYears,
-    horizonYear,
-    currentYear,
+  // Mosca clock (turn-aware: fractional year + CRQC shift) — derived in useSimClock (PR6).
+  const { clock, currentYear, simShelfLifeYears, simMigrationYears } = deriveSimClock({
+    year,
+    q,
+    country,
+    sector,
+    size,
+    crqcShift,
+    assessMosca,
   })
 
   // KPIs
@@ -748,7 +734,9 @@ export function SimulationView() {
   // sandbox most players don't have, so they'd cap the fraction below 100%.
   const p5Flat = (SIM_TREES.p5 ? flattenTree(SIM_TREES.p5) : []).filter(isGatingStep)
   const p5Frac = p5Flat.length ? p5Flat.filter((s) => stepDone(s, 'p5')).length / p5Flat.length : 0
-  const readiness = computeReadiness(size, p5Frac)
+  // Grounded readiness (WS-04): estate edge decisions (judgment) gated by P5
+  // activity completion (effort); jurisdiction drives the separate compliance meter.
+  const readiness = computeReadiness(size, p5Frac, edgeDecisions, country)
   const cleared = LIFECYCLE.filter((p) => levelOf(p) >= PHASE_WIN_LEVEL).length
   // The run is COMPLETE only when every phase reaches its own top band (full maturity) — not
   // merely the L2 win bar. In the breadth-first climb, all-cleared-to-L2 happens at pass 2, so
@@ -762,7 +750,8 @@ export function SimulationView() {
     // sitting frozen at the weakest-domain integer until the slowest phase crosses a level.
     programMaturity: maturityFrac * MAX_LEVEL,
     p0Level: levelOf('p0'),
-    migrationFraction: p5Frac,
+    // Grounded: the share of vulnerable edges actually migrated (both gates), not raw P5 progress.
+    migrationFraction: readiness.vulnerable ? readiness.migrated / readiness.vulnerable : 0,
     allAtTopBand: fullyMature,
     currentYear: year,
   })
@@ -817,11 +806,11 @@ export function SimulationView() {
   const p0Steps = p0Tree ? flattenTree(p0Tree) : []
   const p0Done = p0Steps.filter((s) => stepDone(s, 'p0')).length
   const p0Level = levelOf('p0')
-  const p0Frac = p0Steps.length
-    ? balance.budget.doneWeight * (p0Done / p0Steps.length) +
-      balance.budget.levelWeight * (p0Level / MAX_LEVEL)
-    : 0
-  const budgetTarget = programBudgetTarget(sector, sizeKey)
+  const p0Frac = p0Steps.length ? balance.budget.doneWeight * (p0Done / p0Steps.length) : 0
+  // Difficulty budget lever (WS-14, PR4): Hard secures less per activity.
+  const budgetTarget = Math.round(
+    programBudgetTarget(sector, sizeKey) * balance.estate.budgetMultiplier
+  )
   const budgetSecured = Math.round(budgetTarget * p0Frac * 10) / 10
 
   // active phase
@@ -936,7 +925,6 @@ export function SimulationView() {
       simMigrationYears,
       simShelfLifeYears,
       clockYearsToHorizon: clock.yearsToHorizon,
-      checks,
       balance,
       levelOf,
       evidenceLevel,
@@ -1302,7 +1290,11 @@ export function SimulationView() {
         <Stat
           label="Est. readiness"
           value={`${readiness.pct}%`}
-          sub={`${readiness.migrated}/${readiness.vulnerable} vulnerable edges`}
+          sub={
+            readiness.migrated > 0
+              ? `${readiness.migrated}/${readiness.vulnerable} edges · ${readiness.compliancePct}% compliant`
+              : `${readiness.migrated}/${readiness.vulnerable} vulnerable edges`
+          }
           tone="text-primary"
         />
         <Stat
@@ -1323,6 +1315,11 @@ export function SimulationView() {
           sub={`of €${budgetTarget}M — P0 L${p0Level}`}
           tone={budgetSecured > 0 ? 'text-success' : 'text-muted-foreground'}
         />
+      </div>
+
+      {/* PR7 — shareable scenario code (determinism payoff): copy to share, paste to replay. */}
+      <div className="mt-2">
+        <SeedShare />
       </div>
 
       {/* body — swaps to the embedded Learn module / activity tool when one is open.
@@ -1816,8 +1813,17 @@ export function SimulationView() {
                 // I1 pilot: a wrong pick on Inventory (p1) or Pilots (p5) costs the
                 // player 2 quarters of rework — their clock slips toward the fixed Q-Day.
                 sel === 'p1' || sel === 'p5'
-                  ? (label) =>
-                      applyDecisionSetback(2, `Lost 2 quarters to rework — wrong call: ${label}`)
+                  ? (label) => {
+                      // On Pilots (p5) a wrong call also rolls back a migrated estate link,
+                      // so readiness visibly drops on a specific edge (re-doable). p1 = clock only.
+                      const revertId = sel === 'p5' ? Object.keys(edgeDecisions)[0] : undefined
+                      const extra = revertId ? ` — rolled back link ${revertId}` : ''
+                      applyDecisionSetback(
+                        2,
+                        `Lost 2 quarters to rework — wrong call: ${label}${extra}`,
+                        revertId
+                      )
+                    }
                   : undefined
               }
             />
@@ -2474,6 +2480,7 @@ export function SimulationView() {
                 <ArchitecturePanel
                   size={size as 'small' | 'mid' | 'large' | 'global'}
                   country={country}
+                  p5Frac={p5Frac}
                 />
               )}
 

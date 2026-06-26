@@ -23,8 +23,10 @@ export interface SimulationState {
   seat: string
   /** Active phase. */
   sel: PhaseId
-  /** Per-phase manually-achieved maturity level (0–4). */
-  checks: Record<string, number>
+  /** Per-edge migration decision (WS-04) keyed by `edgeKey`. An edge carrying
+   *  hybrid/pure is a migrated estate link; absence means not migrated. Drives
+   *  grounded readiness once the P5 activity gate unlocks it. */
+  edgeDecisions: Record<string, 'hybrid' | 'pure'>
   year: number
   /** Quarter 1–4. */
   q: number
@@ -89,11 +91,10 @@ export interface SimulationState {
   togglePick: (productId: string) => void
   /** Mark a catalog step done — set on the explicit "Mark complete" click. */
   markCatalogStepDone: (catalogId: string) => void
-  /** Cumulative manual tick: clicking the current level un-ticks to level-1. */
-  setLevel: (phase: string, level: number) => void
-  /** Commit an End-Quarter result (AI-advanced checks, shock, new turn, events). */
+  /** Record (or clear, with null) a per-edge migration decision (WS-04). */
+  setEdgeDecision: (edgeKey: string, choice: 'hybrid' | 'pure' | null) => void
+  /** Commit an End-Quarter result (shock, new turn, events). */
   applyQuarter: (payload: {
-    checks: Record<string, number>
     crqcShift: number
     year: number
     q: number
@@ -102,13 +103,15 @@ export interface SimulationState {
   /** Sticky time penalty (I1): a wrong in-sim decision costs the player N quarters
    *  of rework — advancing their OWN clock toward the FIXED Q-Day, which shrinks the
    *  Mosca runway. Deterministic (no RNG); Q-Day (crqcShift) is untouched. */
-  applyDecisionSetback: (quarters: number, txt: string) => void
+  applyDecisionSetback: (quarters: number, txt: string, revertEdgeId?: string) => void
   /** Delegate (auto-complete) tree steps to the AI team by key. */
   autoCompleteSteps: (keys: string[]) => void
   /** Cancel auto-completion for a phase (remove its `${phase}::` keys). */
   clearAuto: (phase: string) => void
   /** Select a difficulty preset (WS-14). */
   setDifficulty: (d: DifficultyId) => void
+  /** Load a shareable scenario seed (PR7) — same seed + turn reproduces a run. */
+  setSeed: (seed: number) => void
   /** Mark the first-run guided tour as seen (WS-12). */
   markTourSeen: () => void
   /** Toggle novice Guided mode (PR-4); independent of difficulty. */
@@ -132,11 +135,7 @@ const SEED = {
   sector: 'healthcare',
   seat: 'executive',
   sel: 'p0' as PhaseId,
-  // Levels are EARNED by passing each phase's maturity gates — nothing pre-set.
-  checks: { p0: 0, p1: 0, p2: 0, p3: 0, p4: 0, p5: 0, p6: 0, p7: 0, foundations: 0 } as Record<
-    string,
-    number
-  >,
+  edgeDecisions: {} as Record<string, 'hybrid' | 'pure'>,
   year: 2026,
   q: 1,
   crqcShift: 0,
@@ -186,7 +185,7 @@ const saveSlice = (s: SimulationState): SimulationData => ({
   sector: s.sector,
   seat: s.seat,
   sel: s.sel,
-  checks: s.checks,
+  edgeDecisions: s.edgeDecisions,
   year: s.year,
   q: s.q,
   crqcShift: s.crqcShift,
@@ -209,9 +208,9 @@ function fromSave(s: Record<string, unknown>) {
     sector: typeof s.sector === 'string' ? s.sector : SEED.sector,
     seat: typeof s.seat === 'string' ? s.seat : SEED.seat,
     sel: (typeof s.sel === 'string' ? s.sel : SEED.sel) as PhaseId,
-    checks: isRecord(s.checks)
-      ? { ...SEED.checks, ...(s.checks as Record<string, number>) }
-      : { ...SEED.checks },
+    edgeDecisions: isRecord(s.edgeDecisions)
+      ? (s.edgeDecisions as Record<string, 'hybrid' | 'pure'>)
+      : {},
     year: typeof s.year === 'number' ? s.year : SEED.year,
     q: typeof s.q === 'number' ? s.q : SEED.q,
     crqcShift: typeof s.crqcShift === 'number' ? s.crqcShift : SEED.crqcShift,
@@ -272,19 +271,21 @@ export const useSimulationStore = create<SimulationState>()(
             ? s
             : { catalogCompleted: [...s.catalogCompleted, catalogId] }
         ),
-      setLevel: (phase, level) =>
+      setEdgeDecision: (edgeKey, choice) =>
+        set((s) => {
+          const next = { ...s.edgeDecisions }
+          if (choice === null) delete next[edgeKey]
+          else next[edgeKey] = choice
+          return { edgeDecisions: next }
+        }),
+      applyQuarter: ({ crqcShift, year, q, newEvents }) =>
         set((s) => ({
-          checks: { ...s.checks, [phase]: s.checks[phase] === level ? level - 1 : level },
-        })),
-      applyQuarter: ({ checks, crqcShift, year, q, newEvents }) =>
-        set((s) => ({
-          checks,
           crqcShift,
           year,
           q,
           events: [...newEvents, ...s.events].slice(0, 30),
         })),
-      applyDecisionSetback: (quarters, txt) =>
+      applyDecisionSetback: (quarters, txt, revertEdgeId) =>
         set((s) => {
           let year = s.year
           let q = s.q + quarters
@@ -293,13 +294,21 @@ export const useSimulationStore = create<SimulationState>()(
             year += 1
           }
           const event: SimEvent = { sev: 'danger', t: `Q${s.q} ${s.year}`, txt }
-          return { year, q, events: [event, ...s.events].slice(0, 30) }
+          // I1 + WS-04: a trap on a migration step can also roll back a real estate
+          // link — drops readiness by exactly that edge. Q-Day (crqcShift) is untouched.
+          let edgeDecisions = s.edgeDecisions
+          if (revertEdgeId && edgeDecisions[revertEdgeId]) {
+            edgeDecisions = { ...edgeDecisions }
+            delete edgeDecisions[revertEdgeId]
+          }
+          return { year, q, events: [event, ...s.events].slice(0, 30), edgeDecisions }
         }),
       autoCompleteSteps: (keys) =>
         set((s) => ({ auto: Array.from(new Set([...s.auto, ...keys])) })),
       clearAuto: (phase) =>
         set((s) => ({ auto: s.auto.filter((k) => !k.startsWith(`${phase}::`)) })),
       setDifficulty: (difficulty) => set({ difficulty }),
+      setSeed: (seed) => set({ seed: Math.floor(seed) >>> 0 }),
       markTourSeen: () => set({ tourSeen: true }),
       setGuided: (guided) => set({ guided }),
       // RESET clears the run but NOT the onboarding / guidance prefs.
@@ -344,7 +353,7 @@ export const useSimulationStore = create<SimulationState>()(
           sector: (s.sector as string) ?? SEED.sector,
           seat: (s.seat as string) ?? SEED.seat,
           sel: SEED.sel,
-          checks: { ...SEED.checks },
+          edgeDecisions: {},
           year: SEED.year,
           q: SEED.q,
           crqcShift: SEED.crqcShift,
