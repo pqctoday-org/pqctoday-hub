@@ -316,7 +316,7 @@ export function DecisionSection({
                 >
                   {String.fromCharCode(65 + i)}
                 </span>
-                <span className="text-[11.5px] font-bold leading-tight text-foreground">
+                <span className="text-sim-body font-bold leading-tight text-foreground">
                   {c.label}
                 </span>
               </div>
@@ -342,7 +342,7 @@ export function DecisionSection({
               >
                 {step.kind}
               </span>
-              <span className="min-w-0 flex-1 truncate text-left text-[12px] font-semibold text-foreground">
+              <span className="min-w-0 flex-1 truncate text-left text-sim-body font-semibold text-foreground">
                 {step.label}
               </span>
               <span className="shrink-0 font-mono text-sim-micro text-primary">open here →</span>
@@ -361,7 +361,7 @@ export function DecisionSection({
               >
                 {step.kind}
               </span>
-              <span className="min-w-0 flex-1 truncate text-[12px] font-semibold text-foreground">
+              <span className="min-w-0 flex-1 truncate text-sim-body font-semibold text-foreground">
                 {step.label}
               </span>
               <span className="shrink-0 font-mono text-sim-micro text-primary">open →</span>
@@ -539,7 +539,7 @@ export function QuarterReport({
           <Button
             type="button"
             onClick={onClose}
-            className="h-auto w-full rounded-lg bg-gradient-to-r from-primary to-secondary py-2.5 text-[13px] font-extrabold text-background"
+            className="h-auto w-full rounded-lg bg-primary py-2.5 text-[13px] font-extrabold text-background"
           >
             Continue →
           </Button>

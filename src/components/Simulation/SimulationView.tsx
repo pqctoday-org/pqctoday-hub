@@ -12,7 +12,7 @@
  * the Mission Control handoff.
  */
 import { useMemo, useState, useEffect, useRef, useCallback, Suspense } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   BUSINESS_TOOL_COMPONENTS,
   WORKSHOP_TOOL_COMPONENTS,
@@ -41,6 +41,8 @@ import { SimScenarioIntroCard } from './autorun/SimScenarioIntroCard'
 import { getScenario } from './autorun/scenarioConfig'
 import { transformationStatus } from './autorun/transformationStatus'
 import { TransformationStatusPanel } from './autorun/TransformationStatusPanel'
+import { RunActionsMenu, type RunActionItem } from './RunActionsMenu'
+import { EmbedLoading } from './EmbedLoading'
 
 /** Per-step Library scope: the search term to open the embedded library on, derived
  *  from the reference step's title, so each library step shows its topic (CycloneDX,
@@ -256,6 +258,10 @@ function SimModuleCompletionWatcher({ moduleId, title }: { moduleId: string; tit
 
 // ---- main ----------------------------------------------------------------
 export function SimulationView() {
+  const navigate = useNavigate()
+  // PR3 — the Expert intel rail pins 2 panels (Critical assets + Artifacts) and
+  // collapses the rest behind a "Show N more" disclosure. Default collapsed.
+  const [railExpanded, setRailExpanded] = useState(false)
   const {
     size,
     country,
@@ -1019,7 +1025,7 @@ export function SimulationView() {
               <Link
                 to="/assess"
                 onClick={() => markSimResume()}
-                className="rounded-lg bg-gradient-to-r from-primary to-secondary px-5 py-2.5 text-[13px] font-extrabold text-background hover:opacity-90"
+                className="rounded-lg bg-primary px-5 py-2.5 text-[13px] font-extrabold text-background hover:opacity-90"
               >
                 Start the assessment
               </Link>
@@ -1037,7 +1043,7 @@ export function SimulationView() {
                   loadSampleOrg()
                   autoRunPlayer.start()
                 }}
-                className="h-auto w-full whitespace-normal bg-gradient-to-r from-primary to-secondary py-2.5 text-[13px] font-extrabold text-background hover:opacity-90"
+                className="h-auto w-full whitespace-normal bg-primary py-2.5 text-[13px] font-extrabold text-background hover:opacity-90"
               >
                 ▶ Watch the full migration (sample org)
               </Button>
@@ -1059,6 +1065,26 @@ export function SimulationView() {
       </div>
     )
   }
+
+  // PR3 — which collapsible rail panels are active for THIS phase (pinned
+  // Critical assets + Artifacts are excluded). Mirrors the per-panel guards
+  // below; drives the disclosure's count + named list so it stays phase-aware.
+  const showRailKpis = !!assessKpis
+  const showRailTrend = !!readinessTrend
+  const showRailCompliance = sel === 'p0' && assessCompliance.length > 0
+  const showRailArch = ARCH_PHASES.has(sel)
+  const showRailQuantum = sel === 'p3' && !!assessFrameworkRisk
+  const showRailBacklog =
+    (sel === 'p3' || sel === 'p5') && (assessBacklog.length > 0 || !!assessTwoTrack)
+  const railMoreShown = [
+    showRailKpis && 'Assessment KPIs',
+    showRailTrend && 'Readiness trend',
+    showRailCompliance && 'Applicable compliance',
+    'Cyber insurance',
+    showRailArch && 'Architecture',
+    showRailQuantum && 'Quantum risk',
+    showRailBacklog && 'Migration backlog',
+  ].filter(Boolean) as string[]
 
   return (
     <div className="fixed inset-0 flex flex-col bg-background text-foreground">
@@ -1156,14 +1182,6 @@ export function SimulationView() {
           </Link>
         </div>
         <div className="ml-auto flex shrink-0 items-center gap-2.5">
-          <Link
-            to="/"
-            aria-label="Exit to hub"
-            onClick={() => markSimExited()}
-            className="flex h-auto items-center rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
-          >
-            ← HUB
-          </Link>
           <Button
             type="button"
             variant="ghost"
@@ -1212,24 +1230,6 @@ export function SimulationView() {
           >
             ▸ COMMIT PLAN
           </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={exportRun}
-            title="Download this run as a JSON save"
-            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
-          >
-            EXPORT
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => importFileRef.current?.click()}
-            title="Restore a run from a JSON save"
-            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
-          >
-            IMPORT
-          </Button>
           <input
             ref={importFileRef}
             type="file"
@@ -1238,24 +1238,47 @@ export function SimulationView() {
             className="hidden"
             aria-hidden="true"
           />
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={resetAll}
-            title="Clear this simulation run (your progress) — keeps your assessment, sim stays unlocked."
-            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
-          >
-            RESET RUN
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={startOver}
-            title="Clear everything — run AND assessment — and start from the assessment again."
-            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
-          >
-            START OVER
-          </Button>
+          <RunActionsMenu
+            items={
+              [
+                {
+                  key: 'hub',
+                  label: '← Exit to hub',
+                  description: 'Leave the simulation and return to the hub.',
+                  onSelect: () => {
+                    markSimExited()
+                    navigate('/')
+                  },
+                },
+                {
+                  key: 'export',
+                  label: 'Export',
+                  description: 'Download this run as a JSON save.',
+                  onSelect: exportRun,
+                },
+                {
+                  key: 'import',
+                  label: 'Import',
+                  description: 'Restore a run from a JSON save.',
+                  onSelect: () => importFileRef.current?.click(),
+                },
+                {
+                  key: 'reset',
+                  label: 'Reset run',
+                  description: 'Clear this run (your progress) — keeps your assessment.',
+                  onSelect: resetAll,
+                  tone: 'destructive',
+                },
+                {
+                  key: 'startover',
+                  label: 'Start over',
+                  description: 'Clear the run AND assessment — start from /assess again.',
+                  onSelect: startOver,
+                  tone: 'destructive',
+                },
+              ] satisfies RunActionItem[]
+            }
+          />
           <span className="font-mono text-[11px] font-bold text-background/70">
             TURN · Q{q} {year}
           </span>
@@ -1328,7 +1351,7 @@ export function SimulationView() {
       algorithmTabEmbed ||
       referenceEmbed ||
       scenarioEmbed ? (
-        <div data-sim-embed-pane className="flex min-h-0 flex-1 flex-col">
+        <div data-sim-embed-pane className="sim-fade-in flex min-h-0 flex-1 flex-col">
           <div className="flex shrink-0 items-center gap-2 border-b-2 border-primary bg-primary/10 px-4 py-2">
             <span className="shrink-0 rounded bg-primary px-2 py-0.5 font-mono text-sim-chip font-extrabold uppercase tracking-[0.14em] text-primary-foreground">
               ● Simulation mode
@@ -1487,22 +1510,12 @@ export function SimulationView() {
                     moduleId={learnEmbed.moduleId}
                     title={learnEmbed.title}
                   />
-                  <Suspense
-                    fallback={
-                      <div className="p-8 text-center text-sm text-muted-foreground">
-                        Loading module…
-                      </div>
-                    }
-                  >
+                  <Suspense fallback={<EmbedLoading label="Loading module" />}>
                     <LearnComp />
                   </Suspense>
                 </EmbeddedLearnProvider>
               ) : ActivityComp ? (
-                <Suspense
-                  fallback={
-                    <div className="p-8 text-center text-sm text-muted-foreground">Loading…</div>
-                  }
-                >
+                <Suspense fallback={<EmbedLoading />}>
                   <ActivityComp />
                 </Suspense>
               ) : WorkshopComp ? (
@@ -1512,13 +1525,7 @@ export function SimulationView() {
                 // "useHsmContext must be used within HsmProvider". PlaygroundProvider is a
                 // pure context wrapper (HSM init is lazy), so it's cheap for non-HSM tools.
                 <PlaygroundProvider>
-                  <Suspense
-                    fallback={
-                      <div className="p-8 text-center text-sm text-muted-foreground">
-                        Loading workshop…
-                      </div>
-                    }
-                  >
+                  <Suspense fallback={<EmbedLoading label="Loading workshop" />}>
                     <WorkshopComp />
                   </Suspense>
                 </PlaygroundProvider>
@@ -1559,11 +1566,7 @@ export function SimulationView() {
               ) : ReferenceComp ? (
                 // Full-page reference (Migrate, …) embedded under the header instead
                 // of navigating the player out to its own route.
-                <Suspense
-                  fallback={
-                    <div className="p-8 text-center text-sm text-muted-foreground">Loading…</div>
-                  }
-                >
+                <Suspense fallback={<EmbedLoading />}>
                   {referenceEmbed?.refId === 'library' ? (
                     <LibraryEmbed query={libraryQueryForStep(referenceEmbed.title)} />
                   ) : referenceEmbed?.refId === 'compliance' ? (
@@ -1589,584 +1592,629 @@ export function SimulationView() {
       ) : (
         <div
           data-sim-board
-          className={`grid min-h-0 flex-1 gap-3.5 p-4 ${guided ? 'lg:grid-cols-[300px_1fr]' : 'lg:grid-cols-[300px_1fr_332px]'}`}
+          className={`grid min-h-0 flex-1 gap-3.5 p-4 ${guided ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-[minmax(0,1fr)_332px]'}`}
         >
-          {/* left — team (who runs this phase) above the phase journey */}
-          <div className="flex min-h-0 flex-col gap-3.5 overflow-auto">
-            <div className="rounded-xl border border-border bg-card p-4">
-              <Eyebrow className="mb-2.5 block">Team — who runs this phase</Eyebrow>
-              <div className="flex flex-col gap-2">
-                {phaseRoles.length === 0 && (
-                  <p className="text-sm text-muted-foreground">No role mapped (overlay gap).</p>
-                )}
-                {phaseRoles.map((r) => {
-                  const you = r.persona === seat
-                  return (
-                    <div key={r.id} className="flex items-center gap-2.5">
-                      <span
-                        className={`grid h-[25px] w-[25px] shrink-0 place-items-center rounded-md text-[11px] font-extrabold ${
-                          you
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted text-muted-foreground'
-                        }`}
-                      >
-                        {r.label[0]}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <div className="text-[11.5px] font-bold text-foreground">{r.label}</div>
-                        <div className="font-mono text-sim-micro text-muted-foreground">
-                          {r.typicalFte} FTE
-                        </div>
-                      </div>
-                      <span
-                        className={`rounded-full px-2 py-0.5 font-mono text-sim-micro font-bold ${
-                          you ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'
-                        }`}
-                      >
-                        {you ? 'YOU' : 'AI'}
-                      </span>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-            <div className="flex min-h-0 flex-col overflow-auto rounded-xl border border-border bg-card p-3">
-              <div className="mb-2 flex items-center justify-between">
-                <Eyebrow>Phase journey</Eyebrow>
-                <span className="rounded-full bg-muted px-2 py-0.5 font-mono text-sim-chip font-bold text-muted-foreground">
-                  0 → 7 → ◆
-                </span>
-              </div>
-              <div className="flex flex-col gap-0.5">
-                {LIFECYCLE.map((p) => {
-                  const fp = FRAMEWORK_PHASES[p]
-                  const lv = levelOf(p)
-                  const dlv = normalizedLevelOf(p) // 0–4 against the phase's own top band
-                  const isCleared = lv >= PHASE_WIN_LEVEL
-                  const current = p === sel
-                  const owner = Object.values(ROLE_CROSSWALK).some(
-                    (r) => r.phases.includes(p) && r.persona === seat
-                  )
-                  return (
-                    <Button
-                      variant="ghost"
-                      key={p}
-                      type="button"
-                      onClick={() => setSel(p)}
-                      className={`h-auto justify-start whitespace-normal flex w-full items-center gap-2.5 rounded-lg border px-2.5 py-2 text-left ${
-                        current
-                          ? 'border-primary bg-primary/10'
-                          : 'border-transparent hover:bg-muted'
-                      }`}
-                    >
-                      <span
-                        className={`grid h-[22px] w-[22px] shrink-0 place-items-center rounded-md text-[11px] font-extrabold ${
-                          isCleared
-                            ? 'bg-success text-success-foreground'
-                            : current
+          {/* PR7 — board-main: left (team/journey) + center (active-phase ops)
+            stay together as one unit so the rail reflows beside it (lg) or below
+            it as a 2-up band (md), instead of being buried under the tall centre
+            column. Everything stacks on small screens. */}
+          <div
+            data-board-main
+            className="grid min-h-0 grid-cols-1 gap-3.5 md:grid-cols-[300px_minmax(0,1fr)]"
+          >
+            {/* left — team (who runs this phase) above the phase journey */}
+            <div className="flex min-h-0 flex-col gap-3.5 overflow-auto">
+              <div className="rounded-xl border border-border bg-card p-4">
+                <Eyebrow className="mb-2.5 block">Team — who runs this phase</Eyebrow>
+                <div className="flex flex-col gap-2">
+                  {phaseRoles.length === 0 && (
+                    <p className="text-sm text-muted-foreground">No role mapped (overlay gap).</p>
+                  )}
+                  {phaseRoles.map((r) => {
+                    const you = r.persona === seat
+                    return (
+                      <div key={r.id} className="flex items-center gap-2.5">
+                        <span
+                          className={`grid h-[25px] w-[25px] shrink-0 place-items-center rounded-md text-[11px] font-extrabold ${
+                            you
                               ? 'bg-primary text-primary-foreground'
                               : 'bg-muted text-muted-foreground'
+                          }`}
+                        >
+                          {r.label[0]}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[11.5px] font-bold text-foreground">{r.label}</div>
+                          <div className="font-mono text-sim-micro text-muted-foreground">
+                            {r.typicalFte} FTE
+                          </div>
+                        </div>
+                        <span
+                          className={`rounded-full px-2 py-0.5 font-mono text-sim-micro font-bold ${
+                            you ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'
+                          }`}
+                        >
+                          {you ? 'YOU' : 'AI'}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+              <div className="flex min-h-0 flex-col overflow-auto rounded-xl border border-border bg-card p-3">
+                <div className="mb-2 flex items-center justify-between">
+                  <Eyebrow>Phase journey</Eyebrow>
+                  <span className="rounded-full bg-muted px-2 py-0.5 font-mono text-sim-chip font-bold text-muted-foreground">
+                    0 → 7 → ◆
+                  </span>
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  {LIFECYCLE.map((p) => {
+                    const fp = FRAMEWORK_PHASES[p]
+                    const lv = levelOf(p)
+                    const dlv = normalizedLevelOf(p) // 0–4 against the phase's own top band
+                    const isCleared = lv >= PHASE_WIN_LEVEL
+                    const current = p === sel
+                    const owner = Object.values(ROLE_CROSSWALK).some(
+                      (r) => r.phases.includes(p) && r.persona === seat
+                    )
+                    return (
+                      <Button
+                        variant="ghost"
+                        key={p}
+                        type="button"
+                        onClick={() => setSel(p)}
+                        className={`flex h-auto min-h-[44px] w-full items-center justify-start gap-2.5 whitespace-normal rounded-lg border px-2.5 py-2 text-left ${
+                          current
+                            ? 'border-primary bg-primary/10'
+                            : 'border-transparent hover:bg-muted'
                         }`}
                       >
-                        {fp.number ?? '◆'}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <div className="truncate text-[12px] font-bold text-foreground">
-                          {fp.name}
+                        <span
+                          className={`grid h-[30px] w-[30px] shrink-0 place-items-center rounded-md text-[13px] font-extrabold ${
+                            isCleared
+                              ? 'bg-success text-success-foreground'
+                              : current
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-muted text-muted-foreground'
+                          }`}
+                        >
+                          {fp.number ?? '◆'}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="truncate text-[12px] font-bold text-foreground">
+                            {fp.name}
+                          </div>
+                          <div className="flex gap-1.5 font-mono text-sim-micro text-muted-foreground">
+                            <span>
+                              {isCleared ? 'cleared' : current ? 'active' : 'locked'} ·{' '}
+                              {MATURITY_LEVEL_NAMES[dlv]}
+                            </span>
+                            {owner && <span className="font-bold text-primary">· you</span>}
+                          </div>
                         </div>
-                        <div className="flex gap-1.5 font-mono text-sim-micro text-muted-foreground">
-                          <span>
-                            {isCleared ? 'cleared' : current ? 'active' : 'locked'} ·{' '}
-                            {MATURITY_LEVEL_NAMES[dlv]}
-                          </span>
-                          {owner && <span className="font-bold text-primary">· you</span>}
-                        </div>
-                      </div>
-                      <Ring level={dlv} />
-                    </Button>
-                  )
-                })}
-              </div>
-              <Button
-                variant="ghost"
-                type="button"
-                onClick={() => setSel('foundations')}
-                className={`mt-2 h-auto w-full flex-col items-stretch gap-0 whitespace-normal rounded-lg border border-dashed px-2.5 py-2 text-left ${
-                  sel === 'foundations'
-                    ? 'border-primary bg-primary/10'
-                    : 'border-border bg-muted/40 hover:bg-muted'
-                }`}
-              >
-                <div className="flex w-full items-center justify-between">
-                  <span className="text-[11.5px] font-bold text-foreground">Foundations</span>
-                  <span className="font-mono text-sim-micro text-muted-foreground">
-                    {sel === 'foundations' ? 'active' : 'spanning'} · L{levelOf('foundations')}
-                  </span>
+                        <Ring level={dlv} />
+                      </Button>
+                    )
+                  })}
                 </div>
-                <div className="mt-0.5 font-mono text-sim-micro text-muted-foreground">
-                  agility · KPIs · skills · verification
-                </div>
-              </Button>
-            </div>
-          </div>
-
-          {/* center — active phase ops */}
-          <div className="flex min-h-0 flex-col overflow-auto rounded-xl border border-border bg-card p-5">
-            {/* PR-5: misconception telemetry — which Common Failures you fall for most,
-                linked to the lesson that fixes each. Collapsed by default. */}
-            <TrapInsightsPanel />
-            <div className="mb-1 flex flex-wrap items-center gap-2.5">
-              <span
-                className={`rounded-full px-2 py-0.5 font-mono text-sim-micro font-bold ${
-                  phaseCleared ? 'bg-success/15 text-success' : 'bg-primary/15 text-primary'
-                }`}
-              >
-                {phaseCleared ? 'CLEARED' : 'ACTIVE'} ·{' '}
-                {phase.number !== null
-                  ? `PHASE ${phase.number}`
-                  : phase.id === 'verify-close'
-                    ? 'CLOSURE'
-                    : 'FOUNDATIONS'}
-              </span>
-              {phaseAutoActive && (
-                // W2c: be honest that an AI-delegated phase wasn't learned by the
-                // player — the maturity credit is real, the understanding isn't.
-                <span
-                  className="rounded-full bg-warning/15 px-2 py-0.5 font-mono text-sim-chip font-bold text-warning"
-                  title="This phase was run by your AI team — its tasks are auto-completed, so your own understanding is unverified. See the recommended study below."
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={() => setSel('foundations')}
+                  className={`mt-2 h-auto w-full flex-col items-stretch gap-0 whitespace-normal rounded-lg border border-dashed px-2.5 py-2 text-left ${
+                    sel === 'foundations'
+                      ? 'border-primary bg-primary/10'
+                      : 'border-border bg-muted/40 hover:bg-muted'
+                  }`}
                 >
-                  RUN BY AI · UNVERIFIED
-                </span>
-              )}
-              <span className="text-xl font-extrabold text-foreground">{phase.name}</span>
-              {phase.gate && (
-                <span className="ml-auto font-mono text-[10.5px] text-muted-foreground">
-                  {phase.gate.id} · {phase.gate.criterion}
-                </span>
-              )}
+                  <div className="flex w-full items-center justify-between">
+                    <span className="text-[11.5px] font-bold text-foreground">Foundations</span>
+                    <span className="font-mono text-sim-micro text-muted-foreground">
+                      {sel === 'foundations' ? 'active' : 'spanning'} · L{levelOf('foundations')}
+                    </span>
+                  </div>
+                  <div className="mt-0.5 font-mono text-sim-micro text-muted-foreground">
+                    agility · KPIs · skills · verification
+                  </div>
+                </Button>
+              </div>
             </div>
-            <p className="mb-4 mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
-              {mission?.mission}{' '}
-              <b className="text-foreground">
-                {phaseOwned
-                  ? 'You own this phase.'
-                  : `Run by your AI team${phaseRoles[0] ? ` (${phaseRoles[0].label})` : ''}.`}
-              </b>
-            </p>
 
-            {/* role delegation — phases outside the player's role: auto-complete or do it */}
-            {!phaseOwned && (phaseAutoActive || stepsDone < stepsTotal) && (
-              <div className="mb-3 flex items-center gap-2 rounded-lg border border-secondary/40 bg-secondary/5 px-3 py-2">
-                <span className="min-w-0 flex-1 text-[11px] leading-tight text-muted-foreground">
-                  {phaseAutoActive ? (
-                    <>
-                      <b className="text-foreground">{phase.name}</b> is being run by your AI team.
-                    </>
-                  ) : (
-                    <>
-                      Not your role — your AI team can run{' '}
-                      <b className="text-foreground">{phase.name}</b>, or you can do it yourself.
-                    </>
-                  )}
+            {/* center — active phase ops */}
+            <div className="flex min-h-0 flex-col overflow-auto rounded-xl border border-border bg-card p-5">
+              {/* PR-5: misconception telemetry — which Common Failures you fall for most,
+                linked to the lesson that fixes each. Collapsed by default. */}
+              <TrapInsightsPanel />
+              <div className="mb-1 flex flex-wrap items-center gap-2.5">
+                <span
+                  className={`rounded-full px-2 py-0.5 font-mono text-sim-micro font-bold ${
+                    phaseCleared ? 'bg-success/15 text-success' : 'bg-primary/15 text-primary'
+                  }`}
+                >
+                  {phaseCleared ? 'CLEARED' : 'ACTIVE'} ·{' '}
+                  {phase.number !== null
+                    ? `PHASE ${phase.number}`
+                    : phase.id === 'verify-close'
+                      ? 'CLOSURE'
+                      : 'FOUNDATIONS'}
                 </span>
-                {phaseAutoActive ? (
-                  <Button
-                    variant="ghost"
-                    type="button"
-                    onClick={() => clearAuto(sel)}
-                    className="h-auto shrink-0 rounded-md border border-border px-2.5 py-1 text-[10.5px] font-bold text-foreground hover:bg-muted"
+                {phaseAutoActive && (
+                  // W2c: be honest that an AI-delegated phase wasn't learned by the
+                  // player — the maturity credit is real, the understanding isn't.
+                  <span
+                    className="rounded-full bg-warning/15 px-2 py-0.5 font-mono text-sim-chip font-bold text-warning"
+                    title="This phase was run by your AI team — its tasks are auto-completed, so your own understanding is unverified. See the recommended study below."
                   >
-                    ↺ I’ll do it
-                  </Button>
-                ) : (
-                  <Button
-                    type="button"
-                    onClick={delegateToAI}
-                    className="h-auto shrink-0 rounded-md bg-secondary px-2.5 py-1 text-[10.5px] font-bold text-secondary-foreground"
-                  >
-                    Auto-complete ▸
-                  </Button>
+                    RUN BY AI · UNVERIFIED
+                  </span>
+                )}
+                <span className="text-xl font-extrabold text-foreground">{phase.name}</span>
+                {phase.gate && (
+                  <span className="ml-auto font-mono text-[10.5px] text-muted-foreground">
+                    {phase.gate.id} · {phase.gate.criterion}
+                  </span>
                 )}
               </div>
-            )}
+              <p className="mb-4 mt-1.5 text-sim-body leading-relaxed text-muted-foreground">
+                {mission?.mission}{' '}
+                <b className="text-foreground">
+                  {phaseOwned
+                    ? 'You own this phase.'
+                    : `Run by your AI team${phaseRoles[0] ? ` (${phaseRoles[0].label})` : ''}.`}
+                </b>
+              </p>
 
-            <DecisionSection
-              phaseId={sel}
-              ctx={moveCtx}
-              nextMove={nextMove}
-              level={level}
-              stepsDone={stepsDone}
-              stepsTotal={stepsTotal}
-              gate={phaseTree?.gate}
-              pitfalls={phaseTree?.pitfalls ?? []}
-              onVisitRef={markRefVisited}
-              canEmbed={canEmbedStep}
-              onOpenStep={openStep}
-              assessRec={nextMoveRec}
-              onWrongPick={
-                // I1 pilot: a wrong pick on Inventory (p1) or Pilots (p5) costs the
-                // player 2 quarters of rework — their clock slips toward the fixed Q-Day.
-                sel === 'p1' || sel === 'p5'
-                  ? (label) => {
-                      // On Pilots (p5) a wrong call also rolls back a migrated estate link,
-                      // so readiness visibly drops on a specific edge (re-doable). p1 = clock only.
-                      const revertId = sel === 'p5' ? Object.keys(edgeDecisions)[0] : undefined
-                      const extra = revertId ? ` — rolled back link ${revertId}` : ''
-                      applyDecisionSetback(
-                        2,
-                        `Lost 2 quarters to rework — wrong call: ${label}${extra}`,
-                        revertId
-                      )
-                    }
-                  : undefined
-              }
-            />
+              {/* role delegation — phases outside the player's role: auto-complete or do it */}
+              {!phaseOwned && (phaseAutoActive || stepsDone < stepsTotal) && (
+                <div className="mb-3 flex items-center gap-2 rounded-lg border border-secondary/40 bg-secondary/5 px-3 py-2">
+                  <span className="min-w-0 flex-1 text-[11px] leading-tight text-muted-foreground">
+                    {phaseAutoActive ? (
+                      <>
+                        <b className="text-foreground">{phase.name}</b> is being run by your AI
+                        team.
+                      </>
+                    ) : (
+                      <>
+                        Not your role — your AI team can run{' '}
+                        <b className="text-foreground">{phase.name}</b>, or you can do it yourself.
+                      </>
+                    )}
+                  </span>
+                  {phaseAutoActive ? (
+                    <Button
+                      variant="ghost"
+                      type="button"
+                      onClick={() => clearAuto(sel)}
+                      className="h-auto shrink-0 rounded-md border border-border px-2.5 py-1 text-[10.5px] font-bold text-foreground hover:bg-muted"
+                    >
+                      ↺ I’ll do it
+                    </Button>
+                  ) : (
+                    <Button
+                      type="button"
+                      onClick={delegateToAI}
+                      className="h-auto shrink-0 rounded-md bg-secondary px-2.5 py-1 text-[10.5px] font-bold text-secondary-foreground"
+                    >
+                      Auto-complete ▸
+                    </Button>
+                  )}
+                </div>
+              )}
 
-            {/* C1 #3 + W2c — phase debrief: study what the run skipped. Opens each
+              <DecisionSection
+                phaseId={sel}
+                ctx={moveCtx}
+                nextMove={nextMove}
+                level={level}
+                stepsDone={stepsDone}
+                stepsTotal={stepsTotal}
+                gate={phaseTree?.gate}
+                pitfalls={phaseTree?.pitfalls ?? []}
+                onVisitRef={markRefVisited}
+                canEmbed={canEmbedStep}
+                onOpenStep={openStep}
+                assessRec={nextMoveRec}
+                onWrongPick={
+                  // I1 pilot: a wrong pick on Inventory (p1) or Pilots (p5) costs the
+                  // player 2 quarters of rework — their clock slips toward the fixed Q-Day.
+                  sel === 'p1' || sel === 'p5'
+                    ? (label) => {
+                        // On Pilots (p5) a wrong call also rolls back a migrated estate link,
+                        // so readiness visibly drops on a specific edge (re-doable). p1 = clock only.
+                        const revertId = sel === 'p5' ? Object.keys(edgeDecisions)[0] : undefined
+                        const extra = revertId ? ` — rolled back link ${revertId}` : ''
+                        applyDecisionSetback(
+                          2,
+                          `Lost 2 quarters to rework — wrong call: ${label}${extra}`,
+                          revertId
+                        )
+                      }
+                    : undefined
+                }
+              />
+
+              {/* C1 #3 + W2c — phase debrief: study what the run skipped. Opens each
                 module embedded in the sim (no navigate-away). Shows for a cleared
                 phase OR a delegated one, with honest framing for the AI-run case. */}
-            {(phaseCleared || phaseAutoActive) && recommendedStudy.length > 0 && (
-              <div
-                className={`mb-4 rounded-lg border p-3 ${
-                  phaseAutoActive
-                    ? 'border-warning/30 bg-warning/5'
-                    : 'border-success/30 bg-success/5'
-                }`}
-              >
-                {phaseAutoActive ? (
-                  <Eyebrow className="text-warning">
-                    ⚠ Run by your AI team — study to verify
-                  </Eyebrow>
-                ) : (
-                  <Eyebrow className="text-success">✓ Phase cleared — recommended study</Eyebrow>
-                )}
-                <p className="mt-1 mb-2 text-[11px] text-muted-foreground">
-                  {phaseAutoActive
-                    ? `Your AI team cleared this phase. You haven't completed ${recommendedStudy.length} of its module${recommendedStudy.length !== 1 ? 's' : ''} — study to actually understand what was done:`
-                    : `You advanced past ${recommendedStudy.length} module${recommendedStudy.length !== 1 ? 's' : ''} without completing them. Study to deepen your understanding:`}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {recommendedStudy.map((s) => (
-                    <Button
-                      key={s.moduleId}
-                      type="button"
-                      variant="ghost"
-                      onClick={() => openStep(s)}
-                      className="h-auto rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary hover:bg-primary/20"
-                    >
-                      {s.label}
-                    </Button>
-                  ))}
+              {(phaseCleared || phaseAutoActive) && recommendedStudy.length > 0 && (
+                <div
+                  className={`mb-4 rounded-lg border p-3 ${
+                    phaseAutoActive
+                      ? 'border-warning/30 bg-warning/5'
+                      : 'border-success/30 bg-success/5'
+                  }`}
+                >
+                  {phaseAutoActive ? (
+                    <Eyebrow className="text-warning">
+                      ⚠ Run by your AI team — study to verify
+                    </Eyebrow>
+                  ) : (
+                    <Eyebrow className="text-success">✓ Phase cleared — recommended study</Eyebrow>
+                  )}
+                  <p className="mt-1 mb-2 text-[11px] text-muted-foreground">
+                    {phaseAutoActive
+                      ? `Your AI team cleared this phase. You haven't completed ${recommendedStudy.length} of its module${recommendedStudy.length !== 1 ? 's' : ''} — study to actually understand what was done:`
+                      : `You advanced past ${recommendedStudy.length} module${recommendedStudy.length !== 1 ? 's' : ''} without completing them. Study to deepen your understanding:`}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {recommendedStudy.map((s) => (
+                      <Button
+                        key={s.moduleId}
+                        type="button"
+                        variant="ghost"
+                        onClick={() => openStep(s)}
+                        className="h-auto rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary hover:bg-primary/20"
+                      >
+                        {s.label}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* maturity gates — read-only; each level is earned only by passing its
+              {/* maturity gates — read-only; each level is earned only by passing its
               gate (completing that level's activities from real hub state) */}
-            {phaseTree && (
-              <>
-                <div className="mb-2 flex items-center justify-between">
-                  <Eyebrow>Maturity gates — pass each to advance</Eyebrow>
-                  <span
-                    className={`text-[11px] font-bold ${phaseCleared ? 'text-success' : 'text-muted-foreground'}`}
-                  >
-                    {phaseCleared
-                      ? '✓ phase cleared'
-                      : `at L${level} · ${MATURITY_LEVEL_NAMES[level]}`}
-                  </span>
-                </div>
-                {/* DERIVED program maturity — read-only, rises as phases are
+              {phaseTree && (
+                <>
+                  <div className="mb-2 flex items-center justify-between">
+                    <Eyebrow>Maturity gates — pass each to advance</Eyebrow>
+                    <span
+                      className={`text-[11px] font-bold ${phaseCleared ? 'text-success' : 'text-muted-foreground'}`}
+                    >
+                      {phaseCleared
+                        ? '✓ phase cleared'
+                        : `at L${level} · ${MATURITY_LEVEL_NAMES[level]}`}
+                    </span>
+                  </div>
+                  {/* DERIVED program maturity — read-only, rises as phases are
                     completed. Aware (L1) from your assessment; L2–5 earned in-sim;
                     overall = your weakest area. */}
-                <p className="mb-2 text-sim-micro text-muted-foreground">
-                  <span className="font-bold text-foreground">
-                    Program maturity: L{maturity.overall} · {MATURITY_LEVELS[maturity.overall].name}
-                  </span>
-                  {maturity.overall < 5 && maturity.gating.length > 0 && (
-                    <>
-                      {' '}
-                      — weakest:{' '}
-                      {maturity.gating
-                        .map((id) => MATURITY_DOMAINS.find((d) => d.id === id)?.name ?? id)
-                        .join(' · ')}
-                    </>
-                  )}{' '}
-                  <span className="italic">(rises as you complete phases)</span>
-                </p>
-                {/* ANY-ORDER WITHIN THE ACTIVE LEVEL: the in-progress band (level+1)
+                  <p className="mb-2 text-sim-micro text-muted-foreground">
+                    <span className="font-bold text-foreground">
+                      Program maturity: L{maturity.overall} ·{' '}
+                      {MATURITY_LEVELS[maturity.overall].name}
+                    </span>
+                    {maturity.overall < 5 && maturity.gating.length > 0 && (
+                      <>
+                        {' '}
+                        — weakest:{' '}
+                        {maturity.gating
+                          .map((id) => MATURITY_DOMAINS.find((d) => d.id === id)?.name ?? id)
+                          .join(' · ')}
+                      </>
+                    )}{' '}
+                    <span className="italic">(rises as you complete phases)</span>
+                  </p>
+                  {/* ANY-ORDER WITHIN THE ACTIVE LEVEL: the in-progress band (level+1)
                     expands its steps as individually-openable controls — the player
                     can open/complete ALL of them in ANY ORDER, not forced through a
                     single sequential step. Already-earned bands show ✓; higher
                     bands stay locked (🔒) until the lower levels are earned, so the
                     level gating is preserved (achievedTreeLevel is unchanged). */}
-                <div className="mb-4 flex flex-col gap-1.5">
-                  {phaseTree.levels.map((band) => {
-                    // Required (gating) steps only — bonus scenario labs don't count
-                    // toward the band's "checks" tally (they never gate the level).
-                    const total = band.activities.reduce(
-                      (n, a) => n + a.steps.filter(isGatingStep).length,
-                      0
-                    )
-                    const done = band.activities.reduce(
-                      (n, a) =>
-                        n + a.steps.filter((s) => isGatingStep(s) && stepDone(s, sel)).length,
-                      0
-                    )
-                    const earned = level >= band.level
-                    const current = band.level === level + 1 // the gate in progress (active band)
-                    const locked = band.level > level + 1
-                    const goal = band.level === PHASE_WIN_LEVEL
-                    // the active band's leaf steps — openable in any order
-                    const bandSteps = current ? band.activities.flatMap((a) => a.steps) : []
-                    return (
-                      <div key={band.level}>
-                        <div
-                          className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${
-                            goal ? 'border-warning' : earned ? 'border-success' : 'border-border'
-                          } ${earned ? 'bg-success/10' : 'bg-muted'} ${locked ? 'opacity-50' : ''}`}
-                        >
-                          <span
-                            className={`grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md font-mono text-sim-micro font-extrabold ${
-                              earned
-                                ? 'bg-success text-success-foreground'
-                                : 'bg-card text-muted-foreground'
-                            }`}
+                  <div className="mb-4 flex flex-col gap-1.5">
+                    {phaseTree.levels.map((band) => {
+                      // Required (gating) steps only — bonus scenario labs don't count
+                      // toward the band's "checks" tally (they never gate the level).
+                      const total = band.activities.reduce(
+                        (n, a) => n + a.steps.filter(isGatingStep).length,
+                        0
+                      )
+                      const done = band.activities.reduce(
+                        (n, a) =>
+                          n + a.steps.filter((s) => isGatingStep(s) && stepDone(s, sel)).length,
+                        0
+                      )
+                      const earned = level >= band.level
+                      const current = band.level === level + 1 // the gate in progress (active band)
+                      const locked = band.level > level + 1
+                      const goal = band.level === PHASE_WIN_LEVEL
+                      // the active band's leaf steps — openable in any order
+                      const bandSteps = current ? band.activities.flatMap((a) => a.steps) : []
+                      return (
+                        <div key={band.level}>
+                          <div
+                            className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${
+                              goal ? 'border-warning' : earned ? 'border-success' : 'border-border'
+                            } ${earned ? 'bg-success/10' : 'bg-muted'} ${locked ? 'opacity-50' : ''}`}
                           >
-                            {earned ? '✓' : locked ? '🔒' : band.level}
-                          </span>
-                          <span className="w-[88px] shrink-0 text-[11.5px] font-bold text-foreground">
-                            L{band.level} · {MATURITY_LEVEL_NAMES[band.level]}
-                          </span>
-                          <span className="flex-1 text-[10.5px] leading-tight text-muted-foreground">
-                            {band.indicator}
-                          </span>
-                          <span
-                            className={`shrink-0 font-mono text-sim-micro font-bold ${
-                              earned
-                                ? 'text-success'
-                                : current
-                                  ? 'text-primary'
-                                  : 'text-muted-foreground'
-                            }`}
-                          >
-                            {earned ? 'passed ✓' : `${done}/${total} checks`}
-                          </span>
-                          {goal && (
-                            <span className="shrink-0 rounded-full bg-warning/15 px-2 py-0.5 font-mono text-sim-chip font-bold text-warning">
-                              GOAL
+                            <span
+                              className={`grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md font-mono text-sim-micro font-extrabold ${
+                                earned
+                                  ? 'bg-success text-success-foreground'
+                                  : 'bg-card text-muted-foreground'
+                              }`}
+                            >
+                              {earned ? '✓' : locked ? '🔒' : band.level}
                             </span>
-                          )}
-                        </div>
-                        {/* active band → open any of its steps, in any order */}
-                        {current && bandSteps.length > 0 && (
-                          <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-primary/30 pl-3">
-                            <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.12em] text-primary">
-                              Do these in any order to pass L{band.level}
+                            <span className="w-[88px] shrink-0 text-[11.5px] font-bold text-foreground">
+                              L{band.level} · {MATURITY_LEVEL_NAMES[band.level]}
                             </span>
-                            {bandSteps.map((step, i) => {
-                              const sDone = stepDone(step, sel)
-                              const embeddable = canEmbedStep(step)
-                              const navigable = canResolveDeepLink(step.to)
-                              const chip = (
-                                <span
-                                  className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${KIND_CHIP[step.kind]}`}
-                                >
-                                  {step.kind}
-                                </span>
-                              )
-                              const cls = `flex w-full items-center gap-2 rounded-md border px-2.5 py-1.5 ${
-                                sDone
-                                  ? 'border-success/40 bg-success/5'
-                                  : 'border-border bg-card hover:bg-muted/60'
-                              }`
-                              // completed → static ✓ row
-                              if (sDone)
-                                return (
-                                  <div key={`${step.to}-${i}`} className={cls}>
-                                    <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-success text-sim-chip font-bold text-success-foreground">
-                                      ✓
-                                    </span>
-                                    {chip}
-                                    <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
-                                      {step.label}
-                                    </span>
-                                    <span className="shrink-0 font-mono text-sim-micro text-success">
-                                      done
-                                    </span>
-                                  </div>
+                            <span className="flex-1 text-sim-body leading-tight text-muted-foreground">
+                              {band.indicator}
+                            </span>
+                            <span
+                              className={`shrink-0 font-mono text-sim-micro font-bold ${
+                                earned
+                                  ? 'text-success'
+                                  : current
+                                    ? 'text-primary'
+                                    : 'text-muted-foreground'
+                              }`}
+                            >
+                              {earned ? 'passed ✓' : `${done}/${total} checks`}
+                            </span>
+                            {goal && (
+                              <span className="shrink-0 rounded-full bg-warning/15 px-2 py-0.5 font-mono text-sim-chip font-bold text-warning">
+                                GOAL
+                              </span>
+                            )}
+                          </div>
+                          {/* active band → open any of its steps, in any order */}
+                          {current && bandSteps.length > 0 && (
+                            <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-primary/30 pl-3">
+                              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.12em] text-primary">
+                                Do these in any order to pass L{band.level}
+                              </span>
+                              {bandSteps.map((step, i) => {
+                                const sDone = stepDone(step, sel)
+                                const embeddable = canEmbedStep(step)
+                                const navigable = canResolveDeepLink(step.to)
+                                const chip = (
+                                  <span
+                                    className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${KIND_CHIP[step.kind]}`}
+                                  >
+                                    {step.kind}
+                                  </span>
                                 )
-                              // scenario lab needs a running sandbox — when none is
-                              // reachable show it LOCKED (bonus, non-gating) instead
-                              // of opening a broken/unreachable panel.
-                              if (isScenarioStep(step) && sandboxAvail !== 'available')
+                                const cls = `flex w-full items-center gap-2 rounded-md border px-2.5 py-1.5 ${
+                                  sDone
+                                    ? 'border-success/40 bg-success/5'
+                                    : 'border-border bg-card hover:bg-muted/60'
+                                }`
+                                // completed → static ✓ row
+                                if (sDone)
+                                  return (
+                                    <div key={`${step.to}-${i}`} className={cls}>
+                                      <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-success text-sim-chip font-bold text-success-foreground">
+                                        ✓
+                                      </span>
+                                      {chip}
+                                      <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                        {step.label}
+                                      </span>
+                                      <span className="shrink-0 font-mono text-sim-micro text-success">
+                                        done
+                                      </span>
+                                    </div>
+                                  )
+                                // scenario lab needs a running sandbox — when none is
+                                // reachable show it LOCKED (bonus, non-gating) instead
+                                // of opening a broken/unreachable panel.
+                                if (isScenarioStep(step) && sandboxAvail !== 'available')
+                                  return (
+                                    <div
+                                      key={`${step.to}-${i}`}
+                                      aria-disabled="true"
+                                      title="Hands-on lab — start a sandbox to run it. Optional: it never blocks your maturity level."
+                                      className="flex w-full items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 opacity-60"
+                                    >
+                                      <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-muted-foreground">
+                                        🔒
+                                      </span>
+                                      {chip}
+                                      <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                        {step.label}
+                                      </span>
+                                      <span className="shrink-0 font-mono text-sim-micro text-muted-foreground">
+                                        {sandboxAvail === 'checking'
+                                          ? 'checking sandbox…'
+                                          : 'bonus · start sandbox'}
+                                      </span>
+                                    </div>
+                                  )
+                                // open IN the sim (embed) when possible
+                                if (embeddable)
+                                  return (
+                                    <Button
+                                      key={`${step.to}-${i}`}
+                                      type="button"
+                                      variant="ghost"
+                                      onClick={() => openStep(step)}
+                                      className={`h-auto justify-start whitespace-normal ${cls}`}
+                                    >
+                                      <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
+                                        ✓
+                                      </span>
+                                      {chip}
+                                      <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                        {step.label}
+                                      </span>
+                                      <span className="shrink-0 font-mono text-sim-micro text-primary">
+                                        open here →
+                                      </span>
+                                    </Button>
+                                  )
+                                // else navigate to the real hub resource (reference)
+                                if (navigable)
+                                  return (
+                                    <Link
+                                      key={`${step.to}-${i}`}
+                                      to={step.to}
+                                      onClick={() => {
+                                        markSimResume()
+                                        if (step.kind === 'reference' && step.refId)
+                                          markRefVisited(step.refId)
+                                      }}
+                                      className={cls}
+                                    >
+                                      <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
+                                        ✓
+                                      </span>
+                                      {chip}
+                                      <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                        {step.label}
+                                      </span>
+                                      <span className="shrink-0 font-mono text-sim-micro text-primary">
+                                        open →
+                                      </span>
+                                    </Link>
+                                  )
+                                // WS-06: target no longer resolves — never a dead link
                                 return (
                                   <div
                                     key={`${step.to}-${i}`}
                                     aria-disabled="true"
-                                    title="Hands-on lab — start a sandbox to run it. Optional: it never blocks your maturity level."
-                                    className="flex w-full items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 opacity-60"
+                                    title="This resource has moved — it'll return when the link is updated."
+                                    className={`flex w-full items-center gap-2 rounded-md border border-warning/40 bg-warning/5 px-2.5 py-1.5 opacity-60`}
                                   >
-                                    <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-muted-foreground">
-                                      🔒
-                                    </span>
                                     {chip}
                                     <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
                                       {step.label}
                                     </span>
-                                    <span className="shrink-0 font-mono text-sim-micro text-muted-foreground">
-                                      {sandboxAvail === 'checking'
-                                        ? 'checking sandbox…'
-                                        : 'bonus · start sandbox'}
+                                    <span className="shrink-0 font-mono text-sim-micro text-warning">
+                                      resource moved
                                     </span>
                                   </div>
                                 )
-                              // open IN the sim (embed) when possible
-                              if (embeddable)
-                                return (
-                                  <Button
-                                    key={`${step.to}-${i}`}
-                                    type="button"
-                                    variant="ghost"
-                                    onClick={() => openStep(step)}
-                                    className={`h-auto justify-start whitespace-normal ${cls}`}
-                                  >
-                                    <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
-                                      ✓
-                                    </span>
-                                    {chip}
-                                    <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
-                                      {step.label}
-                                    </span>
-                                    <span className="shrink-0 font-mono text-sim-micro text-primary">
-                                      open here →
-                                    </span>
-                                  </Button>
-                                )
-                              // else navigate to the real hub resource (reference)
-                              if (navigable)
-                                return (
-                                  <Link
-                                    key={`${step.to}-${i}`}
-                                    to={step.to}
-                                    onClick={() => {
-                                      markSimResume()
-                                      if (step.kind === 'reference' && step.refId)
-                                        markRefVisited(step.refId)
-                                    }}
-                                    className={cls}
-                                  >
-                                    <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
-                                      ✓
-                                    </span>
-                                    {chip}
-                                    <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
-                                      {step.label}
-                                    </span>
-                                    <span className="shrink-0 font-mono text-sim-micro text-primary">
-                                      open →
-                                    </span>
-                                  </Link>
-                                )
-                              // WS-06: target no longer resolves — never a dead link
-                              return (
-                                <div
-                                  key={`${step.to}-${i}`}
-                                  aria-disabled="true"
-                                  title="This resource has moved — it'll return when the link is updated."
-                                  className={`flex w-full items-center gap-2 rounded-md border border-warning/40 bg-warning/5 px-2.5 py-1.5 opacity-60`}
-                                >
-                                  {chip}
-                                  <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
-                                    {step.label}
-                                  </span>
-                                  <span className="shrink-0 font-mono text-sim-micro text-warning">
-                                    resource moved
-                                  </span>
-                                </div>
-                              )
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    )
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </>
+              )}
+
+              {/* resources */}
+              <Eyebrow className="mb-2">
+                Open a resource — every activity is a real hub tool
+              </Eyebrow>
+              <div className="mt-auto grid gap-2.5 md:grid-cols-3">
+                <ResCol
+                  title="Learn"
+                  items={resLinks('learn', sel, sector, seat).map((it) => {
+                    const step: TreeStep = {
+                      kind: 'learn',
+                      label: it.label,
+                      to: it.to,
+                      moduleId: it.id,
+                    }
+                    return {
+                      ...it,
+                      done: moduleDone(it.id),
+                      onOpen: canEmbedStep(step) ? () => openStep(step) : undefined,
+                    }
                   })}
-                </div>
-              </>
-            )}
+                />
+                <ResCol
+                  title="Activities"
+                  items={resLinks('activities', sel, sector, seat).map((it) => {
+                    // Business tools embed via the ACTIVITY arm (they emit an artifact).
+                    // Playground/workshop tools (RNG, TLS sim, VPN sim, envelope-encrypt
+                    // …) live in WORKSHOP_TOOL_COMPONENTS — the same registry the journey
+                    // workshops embed through — so route them via the WORKSHOP arm too,
+                    // keeping them UNDER the "● Simulation mode" header instead of
+                    // navigating out to /playground (where the player leaves the sim).
 
-            {/* resources */}
-            <Eyebrow className="mb-2">Open a resource — every activity is a real hub tool</Eyebrow>
-            <div className="mt-auto grid gap-2.5 md:grid-cols-3">
-              <ResCol
-                title="Learn"
-                items={resLinks('learn', sel, sector, seat).map((it) => {
-                  const step: TreeStep = {
-                    kind: 'learn',
-                    label: it.label,
-                    to: it.to,
-                    moduleId: it.id,
-                  }
-                  return {
-                    ...it,
-                    done: moduleDone(it.id),
-                    onOpen: canEmbedStep(step) ? () => openStep(step) : undefined,
-                  }
-                })}
-              />
-              <ResCol
-                title="Activities"
-                items={resLinks('activities', sel, sector, seat).map((it) => {
-                  // Business tools embed via the ACTIVITY arm (they emit an artifact).
-                  // Playground/workshop tools (RNG, TLS sim, VPN sim, envelope-encrypt
-                  // …) live in WORKSHOP_TOOL_COMPONENTS — the same registry the journey
-                  // workshops embed through — so route them via the WORKSHOP arm too,
-                  // keeping them UNDER the "● Simulation mode" header instead of
-                  // navigating out to /playground (where the player leaves the sim).
+                    const isWorkshopTool = !!WORKSHOP_TOOL_COMPONENTS[it.id]
 
-                  const isWorkshopTool = !!WORKSHOP_TOOL_COMPONENTS[it.id]
-
-                  const artifactType = TOOL_TO_ARTIFACT[it.id]
-                  const step: TreeStep = isWorkshopTool
-                    ? { kind: 'workshop', label: it.label, to: it.to, workshopId: it.id }
-                    : { kind: 'activity', label: it.label, to: it.to, artifactType }
-                  return {
-                    ...it,
-                    done: isWorkshopTool
-                      ? visitedWorkshops.includes(it.id)
-                      : artifactDone(artifactType),
-                    onOpen: canEmbedStep(step) ? () => openStep(step) : undefined,
-                  }
-                })}
-              />
-              <ResCol
-                title="Reference"
-                items={resLinks('reference', sel, sector, seat).map((it) => {
-                  const step: TreeStep = {
-                    kind: 'reference',
-                    label: it.label,
-                    to: it.to,
-                    refId: it.id,
-                  }
-                  // the assess-engine ref opens the wizard IN the sim (embed);
-                  // every other reference navigates to its deep link as before.
-                  return {
-                    ...it,
-                    done: refDone(it.id),
-                    onClick: () => markRefVisited(it.id),
-                    onOpen: canEmbedStep(step) ? () => openStep(step) : undefined,
-                  }
-                })}
-              />
+                    const artifactType = TOOL_TO_ARTIFACT[it.id]
+                    const step: TreeStep = isWorkshopTool
+                      ? { kind: 'workshop', label: it.label, to: it.to, workshopId: it.id }
+                      : { kind: 'activity', label: it.label, to: it.to, artifactType }
+                    return {
+                      ...it,
+                      done: isWorkshopTool
+                        ? visitedWorkshops.includes(it.id)
+                        : artifactDone(artifactType),
+                      onOpen: canEmbedStep(step) ? () => openStep(step) : undefined,
+                    }
+                  })}
+                />
+                <ResCol
+                  title="Reference"
+                  items={resLinks('reference', sel, sector, seat).map((it) => {
+                    const step: TreeStep = {
+                      kind: 'reference',
+                      label: it.label,
+                      to: it.to,
+                      refId: it.id,
+                    }
+                    // the assess-engine ref opens the wizard IN the sim (embed);
+                    // every other reference navigates to its deep link as before.
+                    return {
+                      ...it,
+                      done: refDone(it.id),
+                      onClick: () => markRefVisited(it.id),
+                      onOpen: canEmbedStep(step) ? () => openStep(step) : undefined,
+                    }
+                  })}
+                />
+              </div>
             </div>
           </div>
 
           {/* right — phase-relevant intel (Expert only; Guided hides it for a
-            focused, low-density view). Architecture only for estate/infra phases. */}
+            focused, low-density view). Architecture only for estate/infra phases.
+            PR7 — 2-up panel grid below lg so it's a compact band, 1-col beside
+            the board at lg. */}
           {!guided && (
-            <div className="flex min-h-0 flex-col gap-3.5 overflow-auto">
+            <div className="grid min-h-0 grid-cols-1 gap-3.5 overflow-auto sm:grid-cols-2 lg:grid-cols-1">
+              {/* PR3 — rail disclosure. Critical assets + Artifacts stay pinned
+                (always rendered below); the rest collapse here to calm the Expert
+                rail. Count + named list are phase-aware. */}
+              {railMoreShown.length > 0 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  aria-expanded={railExpanded}
+                  onClick={() => setRailExpanded((v) => !v)}
+                  className="flex h-auto w-full items-start justify-between gap-2 whitespace-normal rounded-xl border border-dashed border-border bg-card/50 px-3 py-2 text-left hover:bg-muted/50 sm:col-span-2 lg:col-span-1"
+                >
+                  <span className="flex min-w-0 flex-col">
+                    <span className="text-sim-body font-bold text-foreground">
+                      {railExpanded
+                        ? 'Hide extra panels'
+                        : `Show ${railMoreShown.length} more panel${
+                            railMoreShown.length === 1 ? '' : 's'
+                          }`}
+                    </span>
+                    {!railExpanded && (
+                      <span className="text-sim-micro leading-tight text-muted-foreground">
+                        {railMoreShown.join(' · ')}
+                      </span>
+                    )}
+                  </span>
+                  <span className="shrink-0 font-mono text-sim-micro text-muted-foreground">
+                    {railExpanded ? '▴' : '▾'}
+                  </span>
+                </Button>
+              )}
               {/* Assessment KPIs — read-only category scores (informational; never
                 grant maturity, which is earned in-game) */}
-              {assessKpis && (
+              {railExpanded && showRailKpis && (
                 <div className="rounded-xl border border-secondary/30 bg-secondary/5 p-4">
                   <Eyebrow className="mb-2 block">
                     Assessment KPIs{' '}
@@ -2210,7 +2258,7 @@ export function SimulationView() {
               )}
 
               {/* Readiness trend — assessed baseline vs in-sim maturity (sim-local) */}
-              {readinessTrend && (
+              {railExpanded && showRailTrend && (
                 <div className="rounded-xl border border-border bg-card p-4">
                   <Eyebrow className="mb-2 block">
                     Readiness trend{' '}
@@ -2310,7 +2358,7 @@ export function SimulationView() {
               </div>
 
               {/* Applicable compliance — from the assessment; scoping context for P0 */}
-              {sel === 'p0' && assessCompliance.length > 0 && (
+              {railExpanded && showRailCompliance && (
                 <div className="rounded-xl border border-border bg-card p-4">
                   <Eyebrow className="mb-2 block">
                     Applicable compliance{' '}
@@ -2348,39 +2396,41 @@ export function SimulationView() {
               )}
 
               {/* Cyber insurance — policy limit vs the quantum-exposed value */}
-              <div className="rounded-xl border border-border bg-card p-4">
-                <Eyebrow className="mb-2 block">Cyber insurance</Eyebrow>
-                <div className="flex items-baseline justify-between">
-                  <span className="text-[19px] font-extrabold text-foreground">
-                    €{insurancePolicyM}M
-                  </span>
-                  <span className="font-mono text-sim-micro text-muted-foreground">
-                    covers critical + high
-                  </span>
+              {railExpanded && (
+                <div className="rounded-xl border border-border bg-card p-4">
+                  <Eyebrow className="mb-2 block">Cyber insurance</Eyebrow>
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-[19px] font-extrabold text-foreground">
+                      €{insurancePolicyM}M
+                    </span>
+                    <span className="font-mono text-sim-micro text-muted-foreground">
+                      covers critical + high
+                    </span>
+                  </div>
+                  <div className="mt-0.5 flex items-center justify-between font-mono text-sim-micro">
+                    <span className="text-muted-foreground">Annual premium · 0.15%</span>
+                    <span className="font-bold text-foreground">
+                      {premiumM >= 1 ? `€${premiumM}M` : `€${Math.round(premiumM * 1000)}k`}/yr
+                    </span>
+                  </div>
+                  <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
+                    <div
+                      className={uninsuredM > 0 ? 'h-full bg-warning' : 'h-full bg-success'}
+                      style={{
+                        width: `${exposedValueM > 0 ? Math.min(100, (Math.min(insurancePolicyM, exposedValueM) / exposedValueM) * 100) : 100}%`,
+                      }}
+                    />
+                  </div>
+                  <div className="mt-1.5 flex items-center justify-between font-mono text-sim-micro">
+                    <span className="text-muted-foreground">Uninsured quantum exposure</span>
+                    <span
+                      className={`font-bold ${uninsuredM > 0 ? 'text-destructive' : 'text-success'}`}
+                    >
+                      €{uninsuredM}M
+                    </span>
+                  </div>
                 </div>
-                <div className="mt-0.5 flex items-center justify-between font-mono text-sim-micro">
-                  <span className="text-muted-foreground">Annual premium · 0.15%</span>
-                  <span className="font-bold text-foreground">
-                    {premiumM >= 1 ? `€${premiumM}M` : `€${Math.round(premiumM * 1000)}k`}/yr
-                  </span>
-                </div>
-                <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
-                  <div
-                    className={uninsuredM > 0 ? 'h-full bg-warning' : 'h-full bg-success'}
-                    style={{
-                      width: `${exposedValueM > 0 ? Math.min(100, (Math.min(insurancePolicyM, exposedValueM) / exposedValueM) * 100) : 100}%`,
-                    }}
-                  />
-                </div>
-                <div className="mt-1.5 flex items-center justify-between font-mono text-sim-micro">
-                  <span className="text-muted-foreground">Uninsured quantum exposure</span>
-                  <span
-                    className={`font-bold ${uninsuredM > 0 ? 'text-destructive' : 'text-success'}`}
-                  >
-                    €{uninsuredM}M
-                  </span>
-                </div>
-              </div>
+              )}
 
               {/* Artifacts this phase produces — completed vs still to generate */}
               <div className="rounded-xl border border-border bg-card p-4">
@@ -2470,7 +2520,7 @@ export function SimulationView() {
               </div>
 
               {/* Architecture view — only for phases that act on the estate/infra */}
-              {ARCH_PHASES.has(sel) && (
+              {railExpanded && showRailArch && (
                 <ArchitecturePanel
                   size={size as 'small' | 'mid' | 'large' | 'global'}
                   country={country}
@@ -2480,7 +2530,7 @@ export function SimulationView() {
 
               {/* PQC migration backlog + two-track split — from the assessment, for
                 the remediation phases (P3 plan, P5 execute) */}
-              {sel === 'p3' && assessFrameworkRisk && (
+              {railExpanded && showRailQuantum && (
                 <div className="rounded-xl border border-border bg-card p-4">
                   <Eyebrow className="mb-2 block">
                     Quantum risk — four scoring dimensions{' '}
@@ -2525,7 +2575,7 @@ export function SimulationView() {
                 </div>
               )}
 
-              {(sel === 'p3' || sel === 'p5') && (assessBacklog.length > 0 || assessTwoTrack) && (
+              {railExpanded && showRailBacklog && (
                 <div className="rounded-xl border border-border bg-card p-4">
                   <Eyebrow className="mb-2 block">
                     PQC migration backlog{' '}
