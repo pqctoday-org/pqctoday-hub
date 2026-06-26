@@ -74,14 +74,8 @@ import {
 } from '@/data/frameworkPhases'
 import { MATURITY_LEVEL_NAMES, PHASE_WIN_LEVEL, LEVEL_EVIDENCE } from '@/data/phaseMaturity'
 import { SIM_MISSIONS } from '@/data/simMissions'
-import {
-  computeSimMosca,
-  shelfLifeFor,
-  SIZE_MIGRATION_YEARS,
-  SECTORS,
-  COUNTRY_DEADLINE_YEAR,
-  SIM_CRQC_YEAR,
-} from '@/data/moscaClock'
+import { SECTORS } from '@/data/moscaClock'
+import { deriveSimClock } from './hooks/useSimClock'
 import { JURISDICTION_RULES } from '@/data/jurisdiction'
 import { ROLE_CROSSWALK, personaToRoles } from '@/data/roleCrosswalk'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
@@ -721,23 +715,15 @@ export function SimulationView() {
   const jur = JURISDICTION_RULES[country]
   const seatOpt = SEATS.find((s) => s.id === seat) ?? SEATS[0]
 
-  // Mosca clock (turn-aware: fractional year + CRQC shift)
-  const horizonYear = Math.min(
-    SIM_CRQC_YEAR - crqcShift,
-    COUNTRY_DEADLINE_YEAR[country] ?? SIM_CRQC_YEAR
-  )
-  const currentYear = year + (q - 1) * 0.25
-  // Mosca X/Y from the assessment when present, else the sim's sector/size tables
-  const simShelfLifeYears = assessMosca?.shelfLifeYears ?? shelfLifeFor(sector)
-  const simMigrationYears =
-    assessMosca?.migrationYears ??
-    SIZE_MIGRATION_YEARS[size as keyof typeof SIZE_MIGRATION_YEARS] ??
-    3
-  const clock = computeSimMosca({
-    migrationYears: simMigrationYears,
-    shelfLifeYears: simShelfLifeYears,
-    horizonYear,
-    currentYear,
+  // Mosca clock (turn-aware: fractional year + CRQC shift) — derived in useSimClock (PR6).
+  const { clock, currentYear, simShelfLifeYears, simMigrationYears } = deriveSimClock({
+    year,
+    q,
+    country,
+    sector,
+    size,
+    crqcShift,
+    assessMosca,
   })
 
   // KPIs
