@@ -125,8 +125,8 @@ export const DigitalAssetsModule: React.FC = () => {
 
       {!activeChain ? (
         <>
-          <div className="glass-panel p-6">
-            <h2 className="text-xl font-bold text-gradient mb-2">Choose a Blockchain</h2>
+          <div className="bg-card border border-border rounded-xl p-6">
+            <h2 className="text-xl font-bold text-foreground mb-2">Choose a Blockchain</h2>
             <p className="text-muted-foreground text-sm">
               Select a blockchain to explore its cryptographic primitives hands-on. Each flow walks
               you through key generation, address derivation, transaction formatting, and digital
@@ -139,7 +139,7 @@ export const DigitalAssetsModule: React.FC = () => {
                 variant="ghost"
                 key={chain.id}
                 onClick={() => selectChain(chain.id)}
-                className={`glass-panel p-6 text-left transition-colors group ${
+                className={`bg-card border border-border rounded-xl p-6 text-left transition-colors group ${
                   chain.id === 'pqc-migration'
                     ? 'hover:border-destructive/50 border-destructive/20'
                     : chain.id === 'custody-architecture'
