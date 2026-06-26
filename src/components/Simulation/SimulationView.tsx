@@ -12,7 +12,7 @@
  * the Mission Control handoff.
  */
 import { useMemo, useState, useEffect, useRef, useCallback, Suspense } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   BUSINESS_TOOL_COMPONENTS,
   WORKSHOP_TOOL_COMPONENTS,
@@ -41,6 +41,7 @@ import { SimScenarioIntroCard } from './autorun/SimScenarioIntroCard'
 import { getScenario } from './autorun/scenarioConfig'
 import { transformationStatus } from './autorun/transformationStatus'
 import { TransformationStatusPanel } from './autorun/TransformationStatusPanel'
+import { RunActionsMenu, type RunActionItem } from './RunActionsMenu'
 
 /** Per-step Library scope: the search term to open the embedded library on, derived
  *  from the reference step's title, so each library step shows its topic (CycloneDX,
@@ -256,6 +257,7 @@ function SimModuleCompletionWatcher({ moduleId, title }: { moduleId: string; tit
 
 // ---- main ----------------------------------------------------------------
 export function SimulationView() {
+  const navigate = useNavigate()
   const {
     size,
     country,
@@ -1156,14 +1158,6 @@ export function SimulationView() {
           </Link>
         </div>
         <div className="ml-auto flex shrink-0 items-center gap-2.5">
-          <Link
-            to="/"
-            aria-label="Exit to hub"
-            onClick={() => markSimExited()}
-            className="flex h-auto items-center rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
-          >
-            ← HUB
-          </Link>
           <Button
             type="button"
             variant="ghost"
@@ -1212,24 +1206,6 @@ export function SimulationView() {
           >
             ▸ COMMIT PLAN
           </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={exportRun}
-            title="Download this run as a JSON save"
-            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
-          >
-            EXPORT
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => importFileRef.current?.click()}
-            title="Restore a run from a JSON save"
-            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
-          >
-            IMPORT
-          </Button>
           <input
             ref={importFileRef}
             type="file"
@@ -1238,24 +1214,47 @@ export function SimulationView() {
             className="hidden"
             aria-hidden="true"
           />
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={resetAll}
-            title="Clear this simulation run (your progress) — keeps your assessment, sim stays unlocked."
-            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
-          >
-            RESET RUN
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={startOver}
-            title="Clear everything — run AND assessment — and start from the assessment again."
-            className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
-          >
-            START OVER
-          </Button>
+          <RunActionsMenu
+            items={
+              [
+                {
+                  key: 'hub',
+                  label: '← Exit to hub',
+                  description: 'Leave the simulation and return to the hub.',
+                  onSelect: () => {
+                    markSimExited()
+                    navigate('/')
+                  },
+                },
+                {
+                  key: 'export',
+                  label: 'Export',
+                  description: 'Download this run as a JSON save.',
+                  onSelect: exportRun,
+                },
+                {
+                  key: 'import',
+                  label: 'Import',
+                  description: 'Restore a run from a JSON save.',
+                  onSelect: () => importFileRef.current?.click(),
+                },
+                {
+                  key: 'reset',
+                  label: 'Reset run',
+                  description: 'Clear this run (your progress) — keeps your assessment.',
+                  onSelect: resetAll,
+                  tone: 'destructive',
+                },
+                {
+                  key: 'startover',
+                  label: 'Start over',
+                  description: 'Clear the run AND assessment — start from /assess again.',
+                  onSelect: startOver,
+                  tone: 'destructive',
+                },
+              ] satisfies RunActionItem[]
+            }
+          />
           <span className="font-mono text-[11px] font-bold text-background/70">
             TURN · Q{q} {year}
           </span>
