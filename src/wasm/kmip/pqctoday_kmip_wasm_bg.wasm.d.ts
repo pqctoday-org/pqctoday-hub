@@ -10,6 +10,7 @@ export const kmipplayground_list_objects: (a: number) => [number, number]
 export const kmipplayground_load_policy: (a: number, b: number, c: number) => [number, number]
 export const kmipplayground_new: () => [number, number, number]
 export const kmipplayground_policy_status: (a: number) => [number, number]
+export const kmipplayground_run_batch: (a: number, b: number, c: number) => [number, number]
 export const kmipplayground_run_op: (a: number, b: number, c: number) => [number, number]
 export const kmipplayground_submit: (a: number, b: number, c: number) => [number, number]
 export const _C_AsyncComplete: (a: number, b: number, c: number) => number
@@ -30,6 +31,13 @@ export const _C_DecapsulateKey: (
   h: number
 ) => number
 export const _C_Decrypt: (a: number, b: number, c: number, d: number, e: number) => number
+export const _C_DecryptDigestUpdate: (
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  e: number
+) => number
 export const _C_DecryptFinal: (a: number, b: number, c: number) => number
 export const _C_DecryptInit: (a: number, b: number, c: number) => number
 export const _C_DecryptMessage: (
@@ -61,6 +69,13 @@ export const _C_DecryptMessageNext: (
   h: number
 ) => number
 export const _C_DecryptUpdate: (a: number, b: number, c: number, d: number, e: number) => number
+export const _C_DecryptVerifyUpdate: (
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  e: number
+) => number
 export const _C_DeriveKey: (
   a: number,
   b: number,
@@ -71,6 +86,13 @@ export const _C_DeriveKey: (
 ) => number
 export const _C_DestroyObject: (a: number, b: number) => number
 export const _C_Digest: (a: number, b: number, c: number, d: number, e: number) => number
+export const _C_DigestEncryptUpdate: (
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  e: number
+) => number
 export const _C_DigestFinal: (a: number, b: number, c: number) => number
 export const _C_DigestInit: (a: number, b: number) => number
 export const _C_DigestKey: (a: number, b: number) => number
@@ -140,6 +162,7 @@ export const _C_GetInterfaceList: (a: number, b: number) => number
 export const _C_GetMechanismInfo: (a: number, b: number, c: number) => number
 export const _C_GetObjectSize: (a: number, b: number, c: number) => number
 export const _C_GetSessionInfo: (a: number, b: number) => number
+export const _C_GetSessionValidationFlags: (a: number, b: number, c: number) => number
 export const _C_GetSlotInfo: (a: number, b: number) => number
 export const _C_GetSlotList: (a: number, b: number, c: number) => number
 export const _C_GetTokenInfo: (a: number, b: number) => number
@@ -170,6 +193,7 @@ export const _C_SessionCancel: (a: number, b: number) => number
 export const _C_SetAttributeValue: (a: number, b: number, c: number, d: number) => number
 export const _C_SetPIN: (a: number, b: number, c: number, d: number, e: number) => number
 export const _C_Sign: (a: number, b: number, c: number, d: number, e: number) => number
+export const _C_SignEncryptUpdate: (a: number, b: number, c: number, d: number, e: number) => number
 export const _C_SignFinal: (a: number, b: number, c: number) => number
 export const _C_SignInit: (a: number, b: number, c: number) => number
 export const _C_SignMessage: (
@@ -297,32 +321,9 @@ export const softhsmrust_new: () => number
 export const _C_GetFunctionStatus: (a: number) => number
 export const _C_AsyncGetID: (a: number, b: number, c: number) => number
 export const _C_GetOperationState: (a: number, b: number, c: number) => number
-export const _C_GetSessionValidationFlags: (a: number, b: number, c: number) => number
 export const _C_SignRecoverInit: (a: number, b: number, c: number) => number
 export const _C_VerifyRecoverInit: (a: number, b: number, c: number) => number
-export const _C_DecryptDigestUpdate: (
-  a: number,
-  b: number,
-  c: number,
-  d: number,
-  e: number
-) => number
-export const _C_DecryptVerifyUpdate: (
-  a: number,
-  b: number,
-  c: number,
-  d: number,
-  e: number
-) => number
-export const _C_DigestEncryptUpdate: (
-  a: number,
-  b: number,
-  c: number,
-  d: number,
-  e: number
-) => number
 export const _C_SetOperationState: (a: number, b: number, c: number, d: number, e: number) => number
-export const _C_SignEncryptUpdate: (a: number, b: number, c: number, d: number, e: number) => number
 export const _C_SignRecover: (a: number, b: number, c: number, d: number, e: number) => number
 export const _C_VerifyRecover: (a: number, b: number, c: number, d: number, e: number) => number
 export const wasm_start: () => void
