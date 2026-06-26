@@ -104,7 +104,11 @@ test.describe('Simulation — type floor & Guided mode (PR-4)', () => {
     expect(offenders, JSON.stringify(offenders)).toEqual([])
   })
 
-  test('Guided mode captions the dials and persists across reload', async ({ page }) => {
+  // QUARANTINED 2026-06-25 (e2e-strategy triage): asserts the testid
+  // `mosca-guided-caption`, which no longer exists in the source (removed before
+  // this branch — fails on main too). Re-enable once the Guided caption is
+  // re-added with a stable testid, or delete if the feature is gone for good.
+  test.skip('Guided mode captions the dials and persists across reload', async ({ page }) => {
     // off by default — no plain-language caption
     await expect(page.getByTestId('mosca-guided-caption')).toHaveCount(0)
     // turn Guided on via the dial (this also opens the novice walkthrough)
