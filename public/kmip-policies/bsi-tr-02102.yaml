@@ -1,0 +1,91 @@
+# BSI TR-02102-1 (Germany) — illustrative alignment with the BSI's published
+# cryptographic guidance. The instructive contrast with fips-only / cnsa-2.0:
+# BSI recognises FrodoKEM and Classic McEliece for long-term confidentiality and
+# *mandates HYBRID* (classical + PQC) key establishment during the transition —
+# so this policy ALLOWS exactly the conservative KEMs that the FIPS/CNSA policies
+# DENY. Same engine, same ops; the regulator's maths is a policy edit.
+#
+# Sources (verified): BSI TR-02102-1 "Cryptographic Mechanisms: Recommendations
+# and Key Lengths"; BSI PQC migration roadmap. This file is a training
+# illustration, not a conformance attestation.
+
+schema_version: 1
+
+metadata:
+  name: bsi-tr-02102
+  description: |
+    Illustrative BSI TR-02102-1 alignment. Key establishment must be HYBRID
+    (a classical KEM/DH combined with a PQC KEM via a KEM combiner); the PQC
+    component may be ML-KEM, FrodoKEM, or Classic McEliece (BSI recognises the
+    conservative lattice/code KEMs for long-term confidentiality). Signatures
+    use ML-DSA / SLH-DSA or stateful hash-based schemes (XMSS / LMS). Minimum
+    120-bit classical-equivalent security. Crypto agility is required so a
+    component can be swapped if weakened.
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  compliance_mapping:
+    - { framework: "BSI TR-02102-1", status: aligned }
+    - { framework: "FIPS 203 ML-KEM", status: aligned }
+    - { framework: "NIST IR 8547",    status: aligned }
+
+rules:
+
+  # 1. KEM allowlist — BSI-recognised PQC KEMs (note FrodoKEM / Classic McEliece,
+  #    which fips-only and cnsa-2.0 deny). Classical KEM/DH stays allowed because
+  #    BSI requires it as the *hybrid* partner, not standalone.
+  - type: algorithm_allowlist
+    ops: ["CreateKeyPair:KeyAgreement"]
+    algorithms:
+      - ML-KEM-768
+      - ML-KEM-1024
+      - FrodoKEM-976
+      - FrodoKEM-1344
+      - Classic-McEliece-460896
+      - Classic-McEliece-6688128
+      - ECDH-P256
+      - ECDH-P384
+      - X25519
+    reason: "KEM not recognised by BSI TR-02102-1 for new key establishment"
+
+  # 2. Hybrid mandate: every signing key created in the window must be a composite
+  #    classical + PQC signature (defence in depth — secure while either half is).
+  - type: hybrid_dual_sign_requirement
+    primary: ML-DSA-65
+    secondary: ECDSA-P384
+    effective_from: "2026-01-01"
+    effective_until: "2035-12-31"
+    ops_affected: [Create, Sign]
+    composite_oid: "2.16.840.1.114027.80.8.1.7"
+    reason: "BSI: hybrid (classical + PQC) signing required during the transition"
+
+  # 3. Key-establishment keys must declare the hybrid partner via a custom
+  #    attribute — a standalone PQC KEM key (no classical partner) is rejected.
+  - type: require_custom_attribute
+    attribute_name: pqctoday-hybrid-partner
+    algorithms: [ML-KEM-768, ML-KEM-1024, FrodoKEM-976, FrodoKEM-1344,
+                 Classic-McEliece-460896, Classic-McEliece-6688128]
+    reason: "BSI hybrid: KEM keys must name their classical partner (x-pqctoday-hybrid-partner)"
+
+  # 4. Minimum security level — RSA/DH >= 3000 bits (BSI 120-bit floor).
+  - type: min_key_length
+    algorithm: RSA
+    min_bits: 3000
+    reason: "BSI TR-02102-1 minimum ~120-bit security (RSA >= 3000 bits)"
+
+  # 5. Weak/broken primitives banned outright.
+  - type: algorithm_denylist
+    ops: [Create, CreateKeyPair, Sign, Encrypt]
+    algorithms: [RSA-PKCS1-v1_5, ECDSA-SHA1, SHA1, MD5, DES, 3DES, RSA-2048]
+    reason: "Below BSI TR-02102-1 minimums / broken primitive"
+
+  # 6. Hashing restricted to SHA-2 / SHA-3 for signing.
+  - type: hash_algorithm_allowlist
+    ops: [Sign, SignatureVerify]
+    hashing_algorithms: [SHA-256, SHA-384, SHA-512, SHA3-256, SHA3-384, SHA3-512]
+    reason: "BSI permits only SHA-2 / SHA-3 for signature hashing"
+
+  # 7. Only Active keys may sign.
+  - type: lifecycle_state_gate
+    op: Sign
+    allowed_states: [Active]
+    reason: "Sign only with Active keys"

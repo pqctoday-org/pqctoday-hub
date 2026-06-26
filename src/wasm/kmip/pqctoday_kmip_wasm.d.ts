@@ -50,6 +50,36 @@ export class KmipPlayground {
    */
   policy_status(): string
   /**
+   * High-level **batch** driver: build ONE KMIP 3.0 `Request Message` carrying
+   * many operations and dispatch it through the identical decode → dispatch →
+   * encode path `submit`/`run_op` use. This is a *real* on-the-wire batch (one
+   * request, N `Batch Item`s), not N separate requests. `spec_json`:
+   *
+   * ```json
+   * {
+   *   "errorContinuation": "Stop" | "Continue" | "Undo",   // optional, default Stop
+   *   "items": [
+   *     {"op":"CreateKeyPair","intent":"sign"},
+   *     {"op":"Activate","uid":"$IDPlaceholder"},
+   *     {"op":"Sign","uid":"$IDPlaceholder","text":"hello"}
+   *   ]
+   * }
+   * ```
+   *
+   * `$IDPlaceholder` in any `uid` resolves to the UID the previous
+   * UID-producing item created (KMIP §6.4 ID Placeholder) — so Create →
+   * Activate → Sign chains in a single round trip. `errorContinuation`
+   * controls failure handling (§9.5): `Continue` runs every item, `Stop`
+   * halts after the first failure, `Undo` halts AND rolls earlier successes
+   * back (reported as `OperationUndone`).
+   *
+   * Returns `{ ok, errorContinuation, requested, returned, items[], audit,
+   * responseWireHex, responseWireLen, responseTree }` where each `items[]`
+   * entry mirrors a `run_op` result minus the wire (the wire is the one shared
+   * Response Message).
+   */
+  run_batch(spec_json: string): string
+  /**
    * High-level driver the UI uses. `spec_json` is a small object the UI
    * builds from friendly controls, e.g.:
    *
@@ -149,11 +179,11 @@ export function _C_Decrypt(
 ): number
 
 export function _C_DecryptDigestUpdate(
-  _h_session: number,
-  _p_encrypted_part: number,
-  _ul_encrypted_part_len: number,
-  _p_part: number,
-  _pul_part_len: number
+  h_session: number,
+  p_encrypted_part: number,
+  ul_encrypted_part_len: number,
+  p_part: number,
+  pul_part_len: number
 ): number
 
 export function _C_DecryptFinal(
@@ -204,11 +234,11 @@ export function _C_DecryptUpdate(
 ): number
 
 export function _C_DecryptVerifyUpdate(
-  _h_session: number,
-  _p_encrypted_part: number,
-  _ul_encrypted_part_len: number,
-  _p_part: number,
-  _pul_part_len: number
+  h_session: number,
+  p_encrypted_part: number,
+  ul_encrypted_part_len: number,
+  p_part: number,
+  pul_part_len: number
 ): number
 
 export function _C_DeriveKey(
@@ -231,11 +261,11 @@ export function _C_Digest(
 ): number
 
 export function _C_DigestEncryptUpdate(
-  _h_session: number,
-  _p_part: number,
-  _ul_part_len: number,
-  _p_encrypted_part: number,
-  _pul_encrypted_part_len: number
+  h_session: number,
+  p_part: number,
+  ul_part_len: number,
+  p_encrypted_part: number,
+  pul_encrypted_part_len: number
 ): number
 
 export function _C_DigestFinal(h_session: number, p_digest: number, pul_digest_len: number): number
@@ -427,9 +457,9 @@ export function _C_GetOperationState(
 export function _C_GetSessionInfo(h_session: number, p_info: number): number
 
 export function _C_GetSessionValidationFlags(
-  _h_session: number,
-  _type: number,
-  _p_flags: number
+  h_session: number,
+  type_: number,
+  p_flags: number
 ): number
 
 export function _C_GetSlotInfo(_slot_id: number, p_info: number): number
@@ -472,7 +502,7 @@ export function _C_LoginUser(
   p_pin: number,
   ul_pin_len: number,
   _p_username: number,
-  ul_username_len: number
+  _ul_username_len: number
 ): number
 
 export function _C_Logout(h_session: number): number
@@ -551,11 +581,11 @@ export function _C_Sign(
 ): number
 
 export function _C_SignEncryptUpdate(
-  _h_session: number,
-  _p_part: number,
-  _ul_part_len: number,
-  _p_encrypted_part: number,
-  _pul_encrypted_part_len: number
+  h_session: number,
+  p_part: number,
+  ul_part_len: number,
+  p_encrypted_part: number,
+  pul_encrypted_part_len: number
 ): number
 
 export function _C_SignFinal(
