@@ -66,7 +66,8 @@ const waitForLearnHub = (page: Page) =>
 
 /** Switch to NICE view via the toggle button. */
 const switchToNiceView = async (page: Page) => {
-  await page.getByRole('radio', { name: 'NICE' }).click()
+  // NICE is a separate aria-pressed toggle Button ("NICE roles"), not a radio peer.
+  await page.getByRole('button', { name: /NICE roles/i }).click()
   // At least one CA badge must be visible before assertions proceed
   await expect(page.getByText('CA-CRYPTO').first()).toBeVisible({ timeout: 8000 })
 }
@@ -115,7 +116,7 @@ test.describe('Learn — NICE Framework view', () => {
       .click()
 
     // NIST Work Role code appears in the role description strip
-    await expect(page.getByText('SP-ARC-001')).toBeVisible()
+    await expect(page.getByText('DD-WRL-001')).toBeVisible()
 
     // "Core for Security Architect" badge appears on at least one CA section
     await expect(page.getByText(/Core for Security Architect/).first()).toBeVisible()
@@ -129,11 +130,11 @@ test.describe('Learn — NICE Framework view', () => {
 
     const architectChip = page.getByRole('radio', { name: /Security Architect/ }).first()
     await architectChip.click()
-    await expect(page.getByText('SP-ARC-001')).toBeVisible()
+    await expect(page.getByText('DD-WRL-001')).toBeVisible()
 
     // Click again to deselect
     await architectChip.click()
-    await expect(page.getByText('SP-ARC-001')).not.toBeVisible()
+    await expect(page.getByText('DD-WRL-001')).not.toBeVisible()
   })
 
   test('?view=nice deep-link opens NICE view directly without clicking toggle', async ({
@@ -143,8 +144,11 @@ test.describe('Learn — NICE Framework view', () => {
     await page.goto('/learn?view=nice')
 
     await expect(page.getByText('CA-CRYPTO').first()).toBeVisible({ timeout: 25000 })
-    // NICE toggle is in "checked" state
-    await expect(page.getByRole('radio', { name: 'NICE' })).toHaveAttribute('aria-checked', 'true')
+    // NICE toggle is in "pressed" state
+    await expect(page.getByRole('button', { name: /NICE roles/i })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
   })
 
   test('?view=nice&role=security-architect pre-selects Security Architect', async ({ page }) => {
@@ -152,14 +156,14 @@ test.describe('Learn — NICE Framework view', () => {
     await page.goto('/learn?view=nice&role=security-architect')
 
     // Role description strip with NIST code visible immediately
-    await expect(page.getByText('SP-ARC-001')).toBeVisible({ timeout: 25000 })
+    await expect(page.getByText('DD-WRL-001')).toBeVisible({ timeout: 25000 })
   })
 
   test('?view=nice&role=risk-manager pre-selects Risk Manager', async ({ page }) => {
     await seedPersona(page, null)
     await page.goto('/learn?view=nice&role=risk-manager')
 
-    await expect(page.getByText('SP-RSK-001')).toBeVisible({ timeout: 25000 })
+    await expect(page.getByText('OG-WRL-013')).toBeVisible({ timeout: 25000 })
   })
 
   test('architect persona auto-selects Security Architect role on NICE view mount', async ({
@@ -170,8 +174,8 @@ test.describe('Learn — NICE Framework view', () => {
     await waitForLearnHub(page)
     await switchToNiceView(page)
 
-    // SP-ARC-001 is visible without any manual chip click
-    await expect(page.getByText('SP-ARC-001')).toBeVisible()
+    // DD-WRL-001 is visible without any manual chip click
+    await expect(page.getByText('DD-WRL-001')).toBeVisible()
   })
 
   test('developer persona auto-selects Security Developer', async ({ page }) => {
@@ -180,7 +184,7 @@ test.describe('Learn — NICE Framework view', () => {
     await waitForLearnHub(page)
     await switchToNiceView(page)
 
-    await expect(page.getByText('SP-ARC-002')).toBeVisible()
+    await expect(page.getByText('DD-WRL-003')).toBeVisible()
   })
 
   test('selecting a role updates ?role= in URL', async ({ page }) => {
