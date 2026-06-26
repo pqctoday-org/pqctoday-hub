@@ -40,7 +40,6 @@ export interface QuarterEngineInput {
   simShelfLifeYears: number
   /** the current clock's yearsToHorizon, for the report's "from" value */
   clockYearsToHorizon: number
-  checks: Record<string, number>
   /** active difficulty balance (WS-14) — the engine never branches on preset */
   balance: SimBalance
   /** gating reads from the view (store-derived, kept out of the pure engine) */
@@ -54,7 +53,6 @@ export interface QuarterEngineResult {
   newAutoKeys: string[]
   /** payload for the store's applyQuarter. */
   quarter: {
-    checks: Record<string, number>
     crqcShift: number
     year: number
     q: number
@@ -76,7 +74,6 @@ export function runQuarter(input: QuarterEngineInput): QuarterEngineResult {
     simMigrationYears,
     simShelfLifeYears,
     clockYearsToHorizon,
-    checks,
     balance,
     levelOf,
     evidenceLevel,
@@ -113,8 +110,8 @@ export function runQuarter(input: QuarterEngineInput): QuarterEngineResult {
   }
 
   // AI team advances phases the seat does NOT own — by completing the next
-  // unlocked tree step (the SAME state the player earns via `auto`), never a
-  // separate `checks` counter (WS-01). `checks` matters only for `foundations`.
+  // unlocked tree step (the SAME state the player earns via `auto`). Every phase
+  // is tree-backed, so progression is one representation (no separate counter).
   const newAutoKeys: string[] = []
   const aiProgress: string[] = []
   const willBeDone = (s: TreeStep, p: string) =>
@@ -124,7 +121,7 @@ export function runQuarter(input: QuarterEngineInput): QuarterEngineResult {
     return t ? achievedTreeLevel(t, (s) => willBeDone(s, p)) : 0
   }
   const levelOfWith = (p: string): number =>
-    SIM_TREES[p as PhaseId] ? treeLevelWith(p) : Math.max(checks[p] ?? 0, evidenceLevel(p))
+    SIM_TREES[p as PhaseId] ? treeLevelWith(p) : evidenceLevel(p)
   for (const p of LIFECYCLE) {
     const tree = SIM_TREES[p as PhaseId]
     if (!tree) continue
@@ -164,7 +161,7 @@ export function runQuarter(input: QuarterEngineInput): QuarterEngineResult {
 
   return {
     newAutoKeys,
-    quarter: { checks, crqcShift: newCrqc, year: ny, q: nq, newEvents },
+    quarter: { crqcShift: newCrqc, year: ny, q: nq, newEvents },
     report: {
       from: `Q${q} ${year}`,
       to: label,
