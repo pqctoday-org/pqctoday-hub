@@ -1,0 +1,82 @@
+# Transparent auto-migration policy — the crypto-agility headline turned into a
+# standing rule set. Existing classical keys are rekeyed to their PQC equivalent
+# the FIRST time they are used (lazy, key-by-key, no big-bang re-issue); new keys
+# default to PQC. The application keeps the same handle and the same call — the
+# engine swaps the algorithm underneath and emits Decision::RekeyAndProceed.
+
+schema_version: 1
+
+metadata:
+  name: auto-migrate-on-use
+  description: |
+    Lazy, transparent migration. Each legacy classical key is rekeyed to PQC
+    the first time traffic touches it (Sign / Encrypt), and every new key
+    defaults to PQC. There is no flag day and no application change — migration
+    advances key-by-key as the workload exercises each one. This is the
+    substitution ("rekey-on-use") dimension of crypto agility that KMIP alone
+    cannot express.
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  compliance_mapping:
+    - { framework: "FIPS 203 ML-KEM", status: required }
+    - { framework: "FIPS 204 ML-DSA", status: required }
+    - { framework: "NIST IR 8547",    status: aligned }
+
+rules:
+
+  # ── New keys default to PQC ───────────────────────────────────────────
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    default_algorithm: ML-DSA-65
+    reason: "New signing keys default to ML-DSA-65 (FIPS 204)"
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    default_algorithm: ML-KEM-768
+    reason: "New key-establishment keys default to ML-KEM-768 (FIPS 203)"
+
+  # ── Existing signing keys auto-rekey at first Sign ────────────────────
+  # The engine generates a fresh PQC key, marks the classical one Deprecated,
+  # links them via x-pqctoday-supersedes, and re-issues the Sign — all behind
+  # the original handle.
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: ECDSA-P256
+    to: ML-DSA-65
+    reason: "Rekey legacy ECDSA-P256 signing key to ML-DSA-65 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: ECDSA-P384
+    to: ML-DSA-87
+    reason: "Rekey legacy ECDSA-P384 signing key to ML-DSA-87 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: RSA-3072
+    to: ML-DSA-65
+    reason: "Rekey legacy RSA-3072 signing key to ML-DSA-65 at first use"
+
+  # ── Existing key-establishment keys auto-rekey at first Encrypt ───────
+  - type: algorithm_substitution
+    ops: [Encrypt]
+    from: RSA-3072
+    to: ML-KEM-768
+    reason: "Rekey legacy RSA-3072 key transport to ML-KEM-768 at first use"
+  - type: algorithm_substitution
+    ops: [Encrypt]
+    from: ECDH-P256
+    to: ML-KEM-768
+    reason: "Rekey legacy ECDH-P256 key agreement to ML-KEM-768 at first use"
+
+  # ── No NEW classical asymmetric keys while migrating ──────────────────
+  - type: algorithm_denylist
+    ops:
+      - CreateKeyPair
+      - "CreateKeyPair:Sign"
+      - "CreateKeyPair:KeyAgreement"
+    algorithms: [RSA, RSA-2048, RSA-3072, ECDSA-P256, ECDSA-P384, Ed25519, ECDH-P256]
+    reason: "Migration in progress — create PQC keys; legacy keys rekey on use"
+
+  # ── Signing only with Active keys ─────────────────────────────────────
+  - type: lifecycle_state_gate
+    op: Sign
+    allowed_states: [Active]
+    reason: "Sign only with Active keys (no Deactivated/Compromised re-use)"
