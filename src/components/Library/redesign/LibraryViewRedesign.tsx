@@ -14,7 +14,12 @@ import { useSearchParams } from 'react-router-dom'
 import { BookOpen, X } from 'lucide-react'
 import { PageHeader } from '@/components/common/PageHeader'
 import { Button } from '@/components/ui/button'
-import { libraryData, libraryMetadata, type LibraryItem } from '@/data/libraryData'
+import {
+  libraryData,
+  libraryMetadata,
+  type LibraryItem,
+  type LibraryPurpose,
+} from '@/data/libraryData'
 import { LIBRARY_OPS_PICKS } from '@/data/libraryOpsPicks'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
@@ -37,12 +42,14 @@ import { useLibraryPipeline, ORG_CANONICAL_MAP, ORG_OTHER } from './useLibraryPi
 import { LibraryRoleLens } from './LibraryRoleLens'
 import { LibraryControlDeck } from './LibraryControlDeck'
 import { LibraryFacetRail, type LibraryQuickView } from './LibraryFacetRail'
+import { LibraryPurposeDoors, type LibraryPurposeSelection } from './LibraryPurposeDoors'
 import { LibraryRecentlyChanged } from './LibraryRecentlyChanged'
 import { LibraryStartHere } from './LibraryStartHere'
 import { LibraryDocumentCard } from './LibraryDocumentCard'
 import { LibraryDetailDrawer } from './LibraryDetailDrawer'
 
 const FILTER_PARAMS = [
+  'purpose',
   'cat',
   'org',
   'q',
@@ -55,6 +62,12 @@ const FILTER_PARAMS = [
   'tier',
   'algo',
 ]
+
+const PURPOSE_LABELS: Record<LibraryPurpose, string> = {
+  education: 'Learn',
+  reference: 'Reference',
+  planning: 'Plan migration',
+}
 
 const QUICK_VIEW_LABELS = new Map<string, string>([
   ['new', 'New & updated'],
@@ -155,6 +168,7 @@ export function LibraryViewRedesign({
   const algoFamilyFilter = useAlgorithmFamilyFilter(params)
 
   // ── URL-derived state ──────────────────────────────────────────────────────
+  const activePurpose = (params.get('purpose') as LibraryPurposeSelection | null) ?? 'all'
   const activeCategory = params.get('cat') ?? 'All'
   const activeOrg = params.get('org') ?? 'All'
   const filterText = params.get('q') ?? ''
@@ -193,6 +207,7 @@ export function LibraryViewRedesign({
 
   // ── Pipeline ───────────────────────────────────────────────────────────────
   const pipeline = useLibraryPipeline({
+    activePurpose,
     activeCategory,
     activeOrg,
     filterText,
@@ -216,6 +231,19 @@ export function LibraryViewRedesign({
     if (!newOnly) return pipeline.sortedItems
     return pipeline.sortedItems.filter((i) => i.status === 'New' || i.status === 'Updated')
   }, [pipeline.sortedItems, newOnly])
+
+  // Door counts: global per-purpose totals from the pipeline, plus the full-catalog
+  // count for the "Everything" door.
+  const purposeCounts = useMemo<Record<LibraryPurposeSelection, number>>(() => {
+    const out: Record<LibraryPurposeSelection, number> = {
+      all: libraryData.length,
+      education: 0,
+      reference: 0,
+      planning: 0,
+    }
+    for (const p of pipeline.purposeInfo) out[p.id] = p.count
+    return out
+  }, [pipeline.purposeInfo])
 
   // ── Org dropdown options (canonical) ───────────────────────────────────────
   const orgs = useMemo(() => {
@@ -300,6 +328,13 @@ export function LibraryViewRedesign({
       label: `“${filterText}”`,
       onClear: () => setParam('q', null),
     })
+  if (activePurpose !== 'all')
+    activeFilterChips.push({
+      id: 'purpose',
+      // eslint-disable-next-line security/detect-object-injection
+      label: PURPOSE_LABELS[activePurpose],
+      onClear: () => setParam('purpose', null),
+    })
   if (activeCategory !== 'All')
     activeFilterChips.push({
       id: 'cat',
@@ -379,6 +414,12 @@ export function LibraryViewRedesign({
       <LibraryRecentlyChanged items={pipeline.activityItems} onOpen={openDetail} />
 
       <LibraryStartHere persona={selectedPersona} onOpen={openDetail} />
+
+      <LibraryPurposeDoors
+        active={activePurpose}
+        counts={purposeCounts}
+        onSelect={(p) => setParam('purpose', p === 'all' ? null : p)}
+      />
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
         <LibraryFacetRail
