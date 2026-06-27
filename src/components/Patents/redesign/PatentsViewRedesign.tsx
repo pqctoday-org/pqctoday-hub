@@ -14,6 +14,7 @@ import { useSearchParams } from 'react-router-dom'
 import { ScrollText } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PageHeader } from '@/components/common/PageHeader'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { PreviewBanner } from '@/components/common/PreviewBanner'
 import { patentsData, patentsMetadata } from '@/data/patentsData'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -301,6 +302,28 @@ export function PatentsViewRedesign() {
         description="Cryptographic patents relevant to post-quantum migration, enriched across 25 technical dimensions. For research — not legal or IP advice."
         dataSource={dataSource}
         onExport={handleExport}
+        endorseUrl={buildEndorsementUrl({
+          category: 'patent-endorsement',
+          title: 'Endorse: PQC Patents',
+          resourceType: 'Patents Page',
+          resourceId: 'PQC Patents',
+          resourceDetails:
+            '**Page:** PQC Patents — cryptographic patents relevant to post-quantum migration.',
+          pageUrl: '/patents',
+        })}
+        endorseLabel="Patents Page"
+        endorseResourceType="Patents"
+        flagUrl={buildFlagUrl({
+          category: 'patent-endorsement',
+          title: 'Flag: PQC Patents',
+          resourceType: 'Patents Page',
+          resourceId: 'PQC Patents',
+          resourceDetails:
+            '**Page:** PQC Patents — cryptographic patents relevant to post-quantum migration.',
+          pageUrl: '/patents',
+        })}
+        flagLabel="Patents Page"
+        flagResourceType="Patents"
       />
 
       {/* Control deck */}

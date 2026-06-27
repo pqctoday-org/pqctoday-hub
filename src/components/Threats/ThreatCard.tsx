@@ -8,6 +8,9 @@ import { StatusBadge } from '../common/StatusBadge'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { Button } from '@/components/ui/button'
+import { EndorseButton } from '../ui/EndorseButton'
+import { FlagButton } from '../ui/FlagButton'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 
 interface ThreatCardProps {
   item: ThreatItem
@@ -122,6 +125,38 @@ export const ThreatCard = ({ item, index = 0, onClick, dimmed = false }: ThreatC
             <ThreatClassBadge threat={item} />
             <ShorTierBadge threat={item} />
             <TrustScoreBadge resourceType="threats" resourceId={item.threatId} size="sm" />
+            <EndorseButton
+              endorseUrl={buildEndorsementUrl({
+                category: 'threat-endorsement',
+                title: `Endorse: ${item.threatId} — ${item.industry}`,
+                resourceType: 'Threat Assessment',
+                resourceId: item.threatId,
+                resourceDetails: [
+                  `**Threat ID:** ${item.threatId}`,
+                  `**Industry:** ${item.industry}`,
+                  `**Criticality:** ${item.criticality}`,
+                ].join('\n'),
+                pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
+              })}
+              resourceLabel={item.threatId}
+              resourceType="Threat"
+            />
+            <FlagButton
+              flagUrl={buildFlagUrl({
+                category: 'threat-endorsement',
+                title: `Flag: ${item.threatId} — ${item.industry}`,
+                resourceType: 'Threat Assessment',
+                resourceId: item.threatId,
+                resourceDetails: [
+                  `**Threat ID:** ${item.threatId}`,
+                  `**Industry:** ${item.industry}`,
+                  `**Criticality:** ${item.criticality}`,
+                ].join('\n'),
+                pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
+              })}
+              resourceLabel={item.threatId}
+              resourceType="Threat"
+            />
             <Button
               variant="ghost"
               onClick={(e) => {

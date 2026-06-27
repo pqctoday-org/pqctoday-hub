@@ -13,6 +13,9 @@ import { enrichmentByVendorId } from '@/data/vendorRoadmapEnrichmentData'
 import { vendorMap } from '@/data/migrateData'
 import { VendorRoadmapPanel } from '../VendorRoadmapPanel'
 import { CertBadges, EvidenceWarnings } from '../migrateHelpers'
+import { EndorseButton } from '@/components/ui/EndorseButton'
+import { FlagButton } from '@/components/ui/FlagButton'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 
 export function ProductDetail({ product }: { product: SoftwareItem }) {
   const certs = certsByProduct.get(product.softwareName) ?? []
@@ -95,6 +98,47 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
           {product.proofRelevantInfo}
         </p>
       )}
+
+      <div className="flex items-center gap-1 border-t border-border pt-2">
+        <EndorseButton
+          endorseUrl={buildEndorsementUrl({
+            category: 'pqc-tool-endorsement',
+            title: `Endorse: ${product.softwareName}`,
+            resourceType: 'Product',
+            resourceId: product.softwareName,
+            resourceDetails: [
+              `**Product:** ${product.softwareName}`,
+              vendor?.vendorDisplayName ? `**Vendor:** ${vendor.vendorDisplayName}` : '',
+              product.pqcSupport ? `**PQC support:** ${product.pqcSupport}` : '',
+            ]
+              .filter(Boolean)
+              .join('\n'),
+            pageUrl: `/migrate?product=${encodeURIComponent(product.softwareName)}`,
+          })}
+          resourceLabel={product.softwareName}
+          resourceType="Product"
+          variant="text"
+        />
+        <FlagButton
+          flagUrl={buildFlagUrl({
+            category: 'pqc-tool-endorsement',
+            title: `Flag: ${product.softwareName}`,
+            resourceType: 'Product',
+            resourceId: product.softwareName,
+            resourceDetails: [
+              `**Product:** ${product.softwareName}`,
+              vendor?.vendorDisplayName ? `**Vendor:** ${vendor.vendorDisplayName}` : '',
+              product.pqcSupport ? `**PQC support:** ${product.pqcSupport}` : '',
+            ]
+              .filter(Boolean)
+              .join('\n'),
+            pageUrl: `/migrate?product=${encodeURIComponent(product.softwareName)}`,
+          })}
+          resourceLabel={product.softwareName}
+          resourceType="Product"
+          variant="text"
+        />
+      </div>
     </div>
   )
 }

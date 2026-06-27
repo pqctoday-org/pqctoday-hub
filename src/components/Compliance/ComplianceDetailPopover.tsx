@@ -15,6 +15,9 @@ import {
 import type { ComplianceRecord, ComplianceStatus } from './types'
 import clsx from 'clsx'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
+import { EndorseButton } from '../ui/EndorseButton'
+import { FlagButton } from '../ui/FlagButton'
+import { buildRecordEndorsementUrl, buildRecordFlagUrl, recordLabel } from './complianceEndorsement'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
 import { Button } from '@/components/ui/button'
@@ -139,6 +142,16 @@ export const ComplianceDetailPopover = ({
                   <div className="flex items-center gap-1">
                     <AskAssistantButton
                       question={`What PQC compliance requirements does ${record.productName}${record.vendor ? ` by ${record.vendor}` : ''} enforce under ${record.type}${record.source ? ` (${record.source})` : ''}${record.certificationLevel ? `, level: ${record.certificationLevel}` : ''}?`}
+                    />
+                    <EndorseButton
+                      endorseUrl={buildRecordEndorsementUrl(record)}
+                      resourceLabel={recordLabel(record)}
+                      resourceType="Compliance Record"
+                    />
+                    <FlagButton
+                      flagUrl={buildRecordFlagUrl(record)}
+                      resourceLabel={recordLabel(record)}
+                      resourceType="Compliance Record"
                     />
                     <Button
                       variant="ghost"

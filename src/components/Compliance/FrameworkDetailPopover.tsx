@@ -16,6 +16,12 @@ import {
   Sparkles,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { EndorseButton } from '@/components/ui/EndorseButton'
+import { FlagButton } from '@/components/ui/FlagButton'
+import {
+  buildFrameworkEndorsementUrl,
+  buildFrameworkFlagUrl,
+} from '@/components/Compliance/complianceEndorsement'
 import type { ComplianceFramework } from '@/data/complianceData'
 import type { LibraryItem } from '@/data/libraryData'
 import type { TimelineEvent } from '@/types/timeline'
@@ -159,6 +165,16 @@ export const FrameworkDetailPopover = ({
                 <p className="text-xs text-muted-foreground mt-0.5">{framework.enforcementBody}</p>
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
+                <EndorseButton
+                  endorseUrl={buildFrameworkEndorsementUrl(framework)}
+                  resourceLabel={framework.label}
+                  resourceType="Compliance Framework"
+                />
+                <FlagButton
+                  flagUrl={buildFrameworkFlagUrl(framework)}
+                  resourceLabel={framework.label}
+                  resourceType="Compliance Framework"
+                />
                 {showGraphIcon && (
                   <Button
                     variant="ghost"

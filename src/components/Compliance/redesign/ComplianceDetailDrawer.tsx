@@ -13,6 +13,12 @@ import { Button } from '@/components/ui/button'
 import type { ComplianceFramework } from '@/data/complianceData'
 import { buildDrawerDetail, type PillarId } from './pillarModel'
 import { pillClasses, TONES } from './tones'
+import { EndorseButton } from '@/components/ui/EndorseButton'
+import { FlagButton } from '@/components/ui/FlagButton'
+import {
+  buildFrameworkEndorsementUrl,
+  buildFrameworkFlagUrl,
+} from '@/components/Compliance/complianceEndorsement'
 
 interface ComplianceDetailDrawerProps {
   framework: ComplianceFramework | null
@@ -241,6 +247,16 @@ export function ComplianceDetailDrawer({
                 {isTracked ? 'Tracked' : 'Track'}
               </Button>
             )}
+            <EndorseButton
+              endorseUrl={buildFrameworkEndorsementUrl(framework)}
+              resourceLabel={framework.label}
+              resourceType="Compliance Framework"
+            />
+            <FlagButton
+              flagUrl={buildFrameworkFlagUrl(framework)}
+              resourceLabel={framework.label}
+              resourceType="Compliance Framework"
+            />
             <Button
               type="button"
               variant="ghost"

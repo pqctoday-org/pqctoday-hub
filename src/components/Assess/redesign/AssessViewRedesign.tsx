@@ -34,6 +34,7 @@ import { PERSONA_NAV_PATHS, PERSONA_RECOMMENDED_MODE } from '../../../data/perso
 import { useSeedAssessFromPersona } from '../../../hooks/assessment/useSeedAssessFromPersona'
 import { Button } from '../../ui/button'
 import { PageHeader } from '../../common/PageHeader'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { WorkflowBreadcrumb } from '../../shared/WorkflowBreadcrumb'
 import { logAssessComplete } from '../../../utils/analytics'
 import { AssessTrackChooser } from './AssessTrackChooser'
@@ -289,6 +290,28 @@ export const AssessViewRedesign: React.FC<{
             }
             shareTitle="PQC Risk Assessment — Post-Quantum Cryptography Migration Tool"
             shareText="Get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
+            endorseUrl={buildEndorsementUrl({
+              category: 'pqc-tool-endorsement',
+              title: 'Endorse: PQC Risk Assessment',
+              resourceType: 'Assess Tool',
+              resourceId: 'PQC Risk Assessment',
+              resourceDetails:
+                '**Tool:** PQC Risk Assessment — personalized quantum risk score, migration priorities, and recommendations.',
+              pageUrl: '/assess',
+            })}
+            endorseLabel="Assess Tool"
+            endorseResourceType="Assess"
+            flagUrl={buildFlagUrl({
+              category: 'pqc-tool-endorsement',
+              title: 'Flag: PQC Risk Assessment',
+              resourceType: 'Assess Tool',
+              resourceId: 'PQC Risk Assessment',
+              resourceDetails:
+                '**Tool:** PQC Risk Assessment — personalized quantum risk score, migration priorities, and recommendations.',
+              pageUrl: '/assess',
+            })}
+            flagLabel="Assess Tool"
+            flagResourceType="Assess"
           />
         </>
       )}

@@ -14,6 +14,9 @@ import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import type { PatentItem, NistStatus } from '@/types/PatentTypes'
 import { logExternalLink } from '@/utils/analytics'
+import { EndorseButton } from '@/components/ui/EndorseButton'
+import { FlagButton } from '@/components/ui/FlagButton'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 
 interface Props {
   patent: PatentItem
@@ -233,6 +236,42 @@ export function PatentDetail({
           )}
         </div>
         <div className="flex items-center gap-1 shrink-0">
+          <EndorseButton
+            endorseUrl={buildEndorsementUrl({
+              category: 'patent-endorsement',
+              title: `Endorse: ${patent.patentNumber} — ${patent.title}`,
+              resourceType: 'Patent',
+              resourceId: patent.patentNumber,
+              resourceDetails: [
+                `**Patent:** ${patent.patentNumber}`,
+                `**Title:** ${patent.title}`,
+                patent.assignee ? `**Assignee:** ${patent.assignee}` : '',
+              ]
+                .filter(Boolean)
+                .join('\n'),
+              pageUrl: `/patents?patent=${encodeURIComponent(patent.patentNumber)}`,
+            })}
+            resourceLabel={`${patent.patentNumber} — ${patent.title}`}
+            resourceType="Patent"
+          />
+          <FlagButton
+            flagUrl={buildFlagUrl({
+              category: 'patent-endorsement',
+              title: `Flag: ${patent.patentNumber} — ${patent.title}`,
+              resourceType: 'Patent',
+              resourceId: patent.patentNumber,
+              resourceDetails: [
+                `**Patent:** ${patent.patentNumber}`,
+                `**Title:** ${patent.title}`,
+                patent.assignee ? `**Assignee:** ${patent.assignee}` : '',
+              ]
+                .filter(Boolean)
+                .join('\n'),
+              pageUrl: `/patents?patent=${encodeURIComponent(patent.patentNumber)}`,
+            })}
+            resourceLabel={`${patent.patentNumber} — ${patent.title}`}
+            resourceType="Patent"
+          />
           {onToggleExpand && (
             <Button
               variant="ghost"

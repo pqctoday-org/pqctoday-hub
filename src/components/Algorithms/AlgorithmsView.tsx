@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ArrowRight, BarChart3, Shield, Network, Info, Lock, FlaskConical } from 'lucide-react'
 import { Skeleton } from '../ui/skeleton'
 import { PageHeader } from '../common/PageHeader'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { AlgorithmInfoModal } from './AlgorithmInfoModal'
 import { AlgorithmEntryStrip } from './AlgorithmEntryStrip'
 import { Cnsa20Panel } from './Cnsa20Panel'
@@ -183,6 +184,28 @@ export function AlgorithmsView() {
         shareTitle="PQC Algorithm Comparison — ML-KEM, ML-DSA, SLH-DSA & More"
         shareText={`Compare ${algorithmData.length || 'dozens of'} cryptographic algorithms side-by-side — security levels, key sizes, and performance.`}
         onExport={handleExportCsv}
+        endorseUrl={buildEndorsementUrl({
+          category: 'algorithm-endorsement',
+          title: 'Endorse: PQC Algorithms & Protocols',
+          resourceType: 'Algorithms Page',
+          resourceId: 'Post-Quantum Algorithms & Protocols',
+          resourceDetails:
+            '**Page:** Post-Quantum Algorithms & Protocols — compare PQC algorithms and IETF protocol support.',
+          pageUrl: '/algorithms',
+        })}
+        endorseLabel="Algorithms Page"
+        endorseResourceType="Algorithms"
+        flagUrl={buildFlagUrl({
+          category: 'algorithm-endorsement',
+          title: 'Flag: PQC Algorithms & Protocols',
+          resourceType: 'Algorithms Page',
+          resourceId: 'Post-Quantum Algorithms & Protocols',
+          resourceDetails:
+            '**Page:** Post-Quantum Algorithms & Protocols — compare PQC algorithms and IETF protocol support.',
+          pageUrl: '/algorithms',
+        })}
+        flagLabel="Algorithms Page"
+        flagResourceType="Algorithms"
       />
 
       <AlgorithmEntryStrip

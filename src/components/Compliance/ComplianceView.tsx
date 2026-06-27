@@ -50,6 +50,7 @@ import type { ComplianceFramework } from '@/data/complianceData'
 import { useApplicability } from '@/hooks/useApplicability'
 import { logComplianceFilter } from '../../utils/analytics'
 import { PageHeader } from '../common/PageHeader'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { COMPLIANCE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -622,6 +623,28 @@ export const ComplianceView = ({
           shareTitle="PQC Compliance Tracker — Standards, Certifications, Frameworks"
           shareText="Explore PQC compliance: standardization bodies, certification programs (FIPS 140-3, ACVP, Common Criteria), and regulatory frameworks."
           onExport={handleExportCsv}
+          endorseUrl={buildEndorsementUrl({
+            category: 'compliance-endorsement',
+            title: 'Endorse: Standardization, Certification & Compliance',
+            resourceType: 'Compliance Page',
+            resourceId: 'Standardization, Certification & Compliance',
+            resourceDetails:
+              '**Page:** Standardization, Certification & Compliance — standards bodies, certification schemes, and regulatory frameworks.',
+            pageUrl: '/compliance',
+          })}
+          endorseLabel="Compliance Page"
+          endorseResourceType="Compliance"
+          flagUrl={buildFlagUrl({
+            category: 'compliance-endorsement',
+            title: 'Flag: Standardization, Certification & Compliance',
+            resourceType: 'Compliance Page',
+            resourceId: 'Standardization, Certification & Compliance',
+            resourceDetails:
+              '**Page:** Standardization, Certification & Compliance — standards bodies, certification schemes, and regulatory frameworks.',
+            pageUrl: '/compliance',
+          })}
+          flagLabel="Compliance Page"
+          flagResourceType="Compliance"
         />
       )}
 

@@ -2,6 +2,9 @@
 import { Link } from 'react-router-dom'
 import { FlaskConical, BookOpen, Lightbulb } from 'lucide-react'
 import { getAlgoCtasWithFallback } from '@/data/algorithmCtaMap'
+import { EndorseButton } from '@/components/ui/EndorseButton'
+import { FlagButton } from '@/components/ui/FlagButton'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 
 interface AlgoCtaStripProps {
   algoName: string
@@ -41,6 +44,30 @@ export function AlgoCtaStrip({ algoName, className = '' }: AlgoCtaStripProps) {
         <Lightbulb size={11} />
         Why
       </Link>
+      <EndorseButton
+        endorseUrl={buildEndorsementUrl({
+          category: 'algorithm-endorsement',
+          title: `Endorse: ${algoName}`,
+          resourceType: 'Algorithm',
+          resourceId: algoName,
+          resourceDetails: `**Algorithm:** ${algoName}`,
+          pageUrl: `/algorithms?algorithm=${encodeURIComponent(algoName)}`,
+        })}
+        resourceLabel={algoName}
+        resourceType="Algorithm"
+      />
+      <FlagButton
+        flagUrl={buildFlagUrl({
+          category: 'algorithm-endorsement',
+          title: `Flag: ${algoName}`,
+          resourceType: 'Algorithm',
+          resourceId: algoName,
+          resourceDetails: `**Algorithm:** ${algoName}`,
+          pageUrl: `/algorithms?algorithm=${encodeURIComponent(algoName)}`,
+        })}
+        resourceLabel={algoName}
+        resourceType="Algorithm"
+      />
     </div>
   )
 }
