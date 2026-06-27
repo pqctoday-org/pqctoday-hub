@@ -476,6 +476,11 @@ export function SshSimulationPanel() {
         </TabsContent>
 
         <TabsContent value="wire" className="flex flex-col gap-2">
+          <p className="text-[10px] text-muted-foreground px-2 pt-1">
+            Real runs: the message sequence is the genuine RFC 4253/4252 flow and the KEX-share /
+            signature sizes are the handshake&apos;s actual values; framing bytes are nominal (the
+            in-WASM loopback emits milestones, not captured byte streams).
+          </p>
           <div className="flex gap-1 p-2 border-b border-border/50">
             <Button
               variant={wirePacketsView === 'diagram' ? 'default' : 'outline'}
