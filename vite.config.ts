@@ -118,6 +118,12 @@ export default defineConfig({
     port: 5175,
     host: true,
     strictPort: false,
+    // Pre-transform the heavy HSM playground entry on server start so the first
+    // navigation to /playground/hsm is warm instead of compiling ~hundreds of
+    // lazy-route modules on demand (which made the cold load take 30–60s).
+    warmup: {
+      clientFiles: ['./src/components/Playground/HsmPlayground.tsx'],
+    },
     fs: {
       // Allow importing test fixtures from pqc-tools sibling repo (dev only)
       allow: ['..'],
@@ -251,7 +257,36 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    exclude: ['@oqs/liboqs-js', '@pqctoday/softhsm-wasm', '@peculiar/x509'],
+    // The @peculiar/x509 + wasm packages opt out of pre-bundling. The @capacitor/*
+    // packages are optional native-only deps (not installed in the web tree) and
+    // @rhds/elements / @theme/section-hydration are referenced only by static
+    // vendor-roadmap HTML under public/ — left in, the dep scanner fails to
+    // resolve them, skips pre-bundling entirely, and the dev server then serves
+    // 504 "Outdated Optimize Dep" + full reloads that strand the HSM session.
+    exclude: [
+      '@oqs/liboqs-js',
+      '@pqctoday/softhsm-wasm',
+      '@peculiar/x509',
+      '@capacitor/haptics',
+      '@capacitor/browser',
+      '@capacitor/share',
+      '@capacitor/app',
+      '@capacitor/preferences',
+      '@rhds/elements',
+      '@theme/section-hydration',
+    ],
+    // Pre-bundle the playground's heavy deps at server start so they aren't
+    // discovered + optimized on first navigation (which forced a full page
+    // reload mid-load). lucide-react alone is imported 82× across the playground
+    // and, unbundled, serves each icon as its own module request.
+    include: [
+      'lucide-react',
+      'framer-motion',
+      'recharts',
+      'jszip',
+      'file-saver',
+      'clsx',
+    ],
   },
   build: {
     // Explicit target: esbuild >= 0.27.5 treats safari14 as lacking (buggy) destructuring
