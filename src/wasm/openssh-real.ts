@@ -29,6 +29,10 @@ export interface SshRealRunResult {
 }
 
 export interface SshRealRunCallbacks {
+  /** KEX algorithm wire name, e.g. "mlkem768x25519-sha256" or "curve25519-sha256". */
+  kex?: string
+  /** Host/user key algorithm, e.g. "ssh-mldsa-65" or "ecdsa-sha2-nistp256". */
+  hostalg?: string
   onEvent?: (ev: SshRealEvent) => void
   onLog?: (log: SshRealLog) => void
 }
@@ -98,7 +102,7 @@ export class SshRealEngine {
         this.terminate()
       }
 
-      worker.postMessage({ type: 'RUN' })
+      worker.postMessage({ type: 'RUN', kex: cb.kex, hostalg: cb.hostalg })
     })
   }
 
@@ -183,42 +187,57 @@ export function isRealCombo(kex: string, hostKey: string): boolean {
   return kex === REAL_KEX_ID && hostKey === REAL_HOSTKEY_ID
 }
 
-// ML-DSA-65 fixed sizes (FIPS 204): public key 1952 B, raw signature 3309 B.
-const MLDSA65_PK = 1952
-// mlkem768x25519 KEX shares: client = ML-KEM-768 pk (1184) + X25519 (32); server
-// = ML-KEM-768 ct (1088) + X25519 (32).
-const MLKEM768X25519_CLIENT_SHARE = 1184 + 32
-const MLKEM768X25519_SERVER_SHARE = 1088 + 32
+// Public-key wire sizes by host-key algorithm (approx, for the size bars).
+const HOST_PUBKEY_BYTES: Record<string, number> = {
+  'ssh-mldsa-65': 1952, // FIPS 204 ML-DSA-65 raw public key
+  'ecdsa-sha2-nistp256': 65, // uncompressed P-256 point Q
+}
+// KEX init/reply share sizes by KEX algorithm.
+const KEX_SHARES: Record<string, [number, number]> = {
+  'mlkem768x25519-sha256': [1184 + 32, 1088 + 32], // ML-KEM-768 pk/ct + X25519
+  'curve25519-sha256': [32, 32],
+  'ecdh-sha2-nistp256': [65, 65],
+  'ecdh-sha2-nistp384': [97, 97],
+  'ecdh-sha2-nistp521': [133, 133],
+}
 
 /**
  * Map the real handshake event stream onto the existing `SshHandshakeResult`
- * shape so the comparison/telemetry UI can render a genuine PQC run alongside
- * the modelled classical baseline. Sizes come from the binary's own events
- * (signature lengths) plus the fixed ML-KEM/ML-DSA constants; `auth_ms` is the
- * measured wall-clock for the whole run. Per-phase timings aren't emitted by the
- * shim, so they're left at 0 (shown as "—" intent).
+ * shape so the comparison/telemetry UI can render a genuine run. The KEX and
+ * host-key names come from the binary's own `kex_start` event; signature sizes
+ * come from `host_key_sign`/`user_key_sign`; KEX-share and pubkey sizes from the
+ * lookups above. `auth_ms` is the measured wall-clock; per-phase timings aren't
+ * emitted by the shim, so they're left at 0.
  */
 export function mapRealEventsToResult(
   events: SshRealEvent[],
   rv: number,
   wallMs: number
 ): import('./openssh').SshHandshakeResult {
+  const start = parseEvent<{ kex: string; hostkey: string }>(events, 'kex_start')
   const hostSign = parseEvent<{ sig_len: number }>(events, 'host_key_sign')
   const userSign = parseEvent<{ user_sig_len: number }>(events, 'user_key_sign')
   const newkeys = parseEvent<{ hostsign: string }>(events, 'newkeys')
   const success = parseEvent<{ usersign: string }>(events, 'userauth_success')
   const connection_ok = rv === 0 && success != null && newkeys != null
 
+  const kex = start?.kex ?? 'mlkem768x25519-sha256'
+  const hostalg = start?.hostkey ?? 'ssh-mldsa-65'
+  const [clientShare, serverShare] = KEX_SHARES[kex] ?? [0, 0]
+  const pub = HOST_PUBKEY_BYTES[hostalg] ?? 0
+  // Quantum-safe when the KEX uses ML-KEM and the host key uses ML-DSA.
+  const quantum_safe = kex.includes('mlkem') && hostalg.includes('mldsa')
+
   return {
     connection_ok,
-    quantum_safe: true,
-    host_key_algorithm: 'ssh-mldsa-65',
-    client_auth_algorithm: 'ssh-mldsa-65',
-    kex_algorithm: 'mlkem768x25519-sha256',
-    host_pubkey_bytes: MLDSA65_PK,
-    client_pubkey_bytes: MLDSA65_PK,
-    kex_share_bytes: MLKEM768X25519_CLIENT_SHARE,
-    kex_reply_share_bytes: MLKEM768X25519_SERVER_SHARE,
+    quantum_safe,
+    host_key_algorithm: hostalg,
+    client_auth_algorithm: hostalg,
+    kex_algorithm: kex,
+    host_pubkey_bytes: pub,
+    client_pubkey_bytes: pub,
+    kex_share_bytes: clientShare,
+    kex_reply_share_bytes: serverShare,
     host_sig_bytes: hostSign?.sig_len ?? 0,
     client_sig_bytes: userSign?.user_sig_len ?? 0,
     auth_ms: wallMs,
@@ -234,3 +253,9 @@ export function mapRealEventsToResult(
     error: connection_ok ? undefined : 'real handshake did not reach USERAUTH_SUCCESS',
   }
 }
+
+// Real classical baseline the binary can run (curve25519 KEX + ECDSA P-256 host
+// key, both on the token). Used for the real-vs-real comparison.
+export const REAL_CLASSICAL = { kex: 'curve25519-sha256', hostalg: 'ecdsa-sha2-nistp256' }
+// Real PQC profile (wire names the shim expects).
+export const REAL_PQC = { kex: 'mlkem768x25519-sha256', hostalg: 'ssh-mldsa-65' }

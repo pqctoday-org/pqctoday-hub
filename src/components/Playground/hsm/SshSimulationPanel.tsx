@@ -45,6 +45,8 @@ import {
   isRealCombo,
   REAL_KEX_ID,
   REAL_HOSTKEY_ID,
+  REAL_CLASSICAL,
+  REAL_PQC,
 } from '@/wasm/openssh-real'
 import type { Pkcs11LogEntry } from '@/wasm/softhsm'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
@@ -58,11 +60,6 @@ interface LogEntry {
 
 function ts() {
   return new Date().toISOString().slice(11, 23)
-}
-
-const CLASSICAL_BASELINE = {
-  kex: 'curve25519-sha256' as SshKexAlg,
-  hostKey: 'ssh-ed25519' as SshHostKeyAlg,
 }
 
 export function SshSimulationPanel() {
@@ -105,74 +102,67 @@ export function SshSimulationPanel() {
     sshEngine.terminate()
     sshRealEngine.terminate()
 
-    try {
-      // Ensure softhsmv3 is initialized
-      if (!isReady || !moduleRef.current || !hSessionRef.current) {
-        setPhase('initializing')
-        appendLog('Initializing softhsmv3…')
-        const ok = await autoInit('rust')
-        if (!ok || !moduleRef.current || !hSessionRef.current) {
-          throw new Error('softhsmv3 init failed')
-        }
-        appendLog('softhsmv3 ready.')
+    // Route a real-engine event: genuine PKCS#11 calls → PKCS#11 panel; the
+    // handshake milestones → log.
+    const onRealEvent = (ev: { evType: string; payload: string }) => {
+      if (ev.evType === 'pkcs11') {
+        setPkcs11Log((prev) => {
+          const entry = mapPkcs11Event(ev.payload, prev.length)
+          return entry ? [...prev.slice(-200), entry] : prev
+        })
+      } else {
+        appendLog(`· ${ev.evType} ${ev.payload}`)
       }
-
-      sshEngine.bindHsm({
-        module: moduleRef.current,
-        hSession: hSessionRef.current,
-        onPkcs11: (e) => setPkcs11Log((prev) => [...prev.slice(-200), e]),
+    }
+    const runRealLeg = async (kex: string, hostalg: string) => {
+      const t0 = performance.now()
+      const { rv, events } = await sshRealEngine.runHandshake({
+        kex,
+        hostalg,
+        onEvent: onRealEvent,
+        onLog: (l) => appendLog(l.text, l.level),
       })
+      return mapRealEventsToResult(events, rv, performance.now() - t0)
+    }
 
-      // ── Run 1: classical baseline ─────────────────────────────────────────
+    try {
+      // ── Run 1: REAL classical baseline (curve25519 + ecdsa-nistp256, on token) ──
       setPhase('running-classical')
       appendLog(
-        `Starting classical handshake (${CLASSICAL_BASELINE.kex} + ${CLASSICAL_BASELINE.hostKey})…`
+        `Starting REAL classical handshake (${REAL_CLASSICAL.kex} + ${REAL_CLASSICAL.hostalg})…`
       )
-      const classical = await sshEngine.runHandshake(CLASSICAL_BASELINE)
+      const classical = await runRealLeg(REAL_CLASSICAL.kex, REAL_CLASSICAL.hostalg)
       setClassicalResult(classical)
       appendLog(
         `Classical done: connection_ok=${classical.connection_ok}, auth_ms=${classical.auth_ms.toFixed(1)}ms`
       )
 
-      // Re-bind between runs so the PQC run gets a fresh logging proxy
-      if (moduleRef.current && hSessionRef.current) {
-        sshEngine.bindHsm({
-          module: moduleRef.current,
-          hSession: hSessionRef.current,
-          onPkcs11: (e) => setPkcs11Log((prev) => [...prev.slice(-200), e]),
-        })
-      }
-
       // ── Run 2: user-selected PQC config ───────────────────────────────────
-      // If the chosen combo is the one the REAL OpenSSH binary runs
-      // (mlkem768x25519-sha256 + ssh-mldsa-65), drive the genuine wasm; every
-      // signature is a real token C_Sign. Any other combo is the TS model.
+      // The genuine combo (mlkem768x25519-sha256 + ssh-mldsa-65) drives the real
+      // binary; every signature is a real token C_Sign. Other combos are modeled.
       setPhase('running-pqc')
       if (isRealCombo(pqcKex, pqcHostKey)) {
-        appendLog('Starting REAL OpenSSH handshake (mlkem768x25519-sha256 + ssh-mldsa-65)…')
-        const t0 = performance.now()
-        const { rv, events } = await sshRealEngine.runHandshake({
-          onEvent: (ev) => {
-            // Route genuine PKCS#11 trace events into the PKCS#11 panel; keep the
-            // handshake milestones in the log.
-            if (ev.evType === 'pkcs11') {
-              setPkcs11Log((prev) => {
-                const entry = mapPkcs11Event(ev.payload, prev.length)
-                return entry ? [...prev.slice(-200), entry] : prev
-              })
-            } else {
-              appendLog(`· ${ev.evType} ${ev.payload}`)
-            }
-          },
-          onLog: (l) => appendLog(l.text, l.level),
-        })
-        const pqc = mapRealEventsToResult(events, rv, performance.now() - t0)
+        appendLog(`Starting REAL OpenSSH handshake (${REAL_PQC.kex} + ${REAL_PQC.hostalg})…`)
+        const pqc = await runRealLeg(REAL_PQC.kex, REAL_PQC.hostalg)
         setPqcResult(pqc)
         appendLog(
           `REAL PQC done: connection_ok=${pqc.connection_ok}, host C_Sign=${pqc.host_sig_bytes}B, user C_Sign=${pqc.client_sig_bytes}B, auth_ms=${pqc.auth_ms.toFixed(1)}ms`
         )
       } else {
+        // Modeled combo — needs the shared softhsm.
         appendLog(`Starting MODELED PQC handshake (${pqcKex} + ${pqcHostKey})…`)
+        if (!isReady || !moduleRef.current || !hSessionRef.current) {
+          appendLog('Initializing softhsmv3…')
+          const ok = await autoInit('rust')
+          if (!ok || !moduleRef.current || !hSessionRef.current) {
+            throw new Error('softhsmv3 init failed')
+          }
+        }
+        sshEngine.bindHsm({
+          module: moduleRef.current,
+          hSession: hSessionRef.current,
+          onPkcs11: (e) => setPkcs11Log((prev) => [...prev.slice(-200), e]),
+        })
         const pqc = await sshEngine.runHandshake({ kex: pqcKex, hostKey: pqcHostKey })
         setPqcResult(pqc)
         appendLog(

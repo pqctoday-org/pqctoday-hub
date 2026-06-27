@@ -105,7 +105,7 @@ describe('SshSimulationPanel', () => {
 
   it('renders the comparison panel with empty placeholders', () => {
     renderPanel()
-    expect(screen.getByText('Classical (ed25519 + curve25519)')).toBeInTheDocument()
+    expect(screen.getByText('Classical (ecdsa-nistp256 + curve25519)')).toBeInTheDocument()
     expect(screen.getByText(/ML-DSA-65.*ML-KEM-768/i)).toBeInTheDocument()
   })
 
