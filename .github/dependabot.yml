@@ -3,7 +3,10 @@ updates:
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
-      interval: 'daily'
+      interval: 'monthly'
+    # Batch non-security version bumps monthly and cap open PRs, to keep CI /
+    # Actions usage low. Security updates are NOT affected by this schedule.
+    open-pull-requests-limit: 3
     groups:
       tailwind:
         patterns:
@@ -26,8 +29,18 @@ updates:
         patterns:
           - '@noble/*'
           - '@scure/*'
+      # Catch-all so every remaining npm dep batches into ONE grouped PR instead
+      # of a separate PR (and CI run) each — the main Actions-burn reduction.
+      all-other-npm:
+        patterns:
+          - '*'
 
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
-      interval: 'weekly'
+      interval: 'monthly'
+    open-pull-requests-limit: 3
+    groups:
+      github-actions:
+        patterns:
+          - '*'
