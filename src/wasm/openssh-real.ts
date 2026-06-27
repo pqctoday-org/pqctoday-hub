@@ -126,6 +126,52 @@ export function parseEvent<T = Record<string, unknown>>(
   }
 }
 
+// CKM mechanism codes that appear in the SSH trace (for friendly labels).
+const MECH_NAMES: Record<number, string> = {
+  0x1c: 'CKM_ML_DSA_KEY_PAIR_GEN',
+  0x1d: 'CKM_ML_DSA',
+}
+
+/**
+ * Map a "pkcs11" trace event (emitted by the in-wasm tap in pkcs11_static.c and
+ * the shim) onto the playground's shared `Pkcs11LogEntry` shape, so the real
+ * handshake's genuine C_* calls render in the same PKCS#11 panel the modelled
+ * tools use. Returns null if the payload isn't a recognizable trace line.
+ */
+export function mapPkcs11Event(
+  payload: string,
+  id: number
+): import('./softhsm').Pkcs11LogEntry | null {
+  let o: Record<string, unknown>
+  try {
+    o = JSON.parse(payload)
+  } catch {
+    return null
+  }
+  if (typeof o.op !== 'string') return null
+  const rv = typeof o.rv === 'number' ? o.rv : 0
+  // Build a compact args string from the remaining fields.
+  const args = Object.entries(o)
+    .filter(([k]) => k !== 'op' && k !== 'rv')
+    .map(([k, v]) => {
+      if (k === 'mech' && typeof v === 'number')
+        return `mech=${MECH_NAMES[v] ?? `0x${v.toString(16)}`}`
+      return `${k}=${v}`
+    })
+    .join(' ')
+  return {
+    id,
+    timestamp: new Date().toISOString().slice(11, 19),
+    fn: o.op,
+    args,
+    rvHex: `0x${rv.toString(16).toUpperCase()}`,
+    rvName: rv === 0 ? 'CKR_OK' : `0x${rv.toString(16).toUpperCase()}`,
+    ms: 0,
+    ok: rv === 0,
+    engineName: 'openssh (real)',
+  }
+}
+
 // The one combo the shim currently runs for real (hardcoded in drive_kex until
 // M2a parameterizes it). The model's KEX id `mlkem768-curve25519-sha256` is the
 // same algorithm as OpenSSH's wire name `mlkem768x25519-sha256`.
