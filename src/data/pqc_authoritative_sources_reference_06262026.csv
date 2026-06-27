@@ -159,3 +159,29 @@ anci-chile,ANCI — Agencia Nacional de Ciberseguridad (Chile),Government,Americ
 cnbv-mexico,CNBV — Comisión Nacional Bancaria y de Valores (Mexico),Government,Americas,https://www.cnbv.gob.mx/,CNBV Circular Única de Bancos (Mexico),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
 onti-argentina,ONTI — Oficina Nacional de Tecnologías de Información (Argentina),Government,Americas,https://www.argentina.gob.ar/,Argentina ONTI Cyber Baseline (Secretaría de Innovación Pública),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
 bacen-brazil,BACEN — Banco Central do Brasil,Government,Americas,https://www.bcb.gov.br/,BACEN Resolution 4.893 (Brazil FS Cyber),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+inforeg-za,Information Regulator (South Africa),Government,EMEA,https://inforegulator.org.za/,POPIA,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+ndpc-ng,NDPC (Nigeria Data Protection Commission),Government,EMEA,https://ndpc.gov.ng/,NDPR / NDPA 2023,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+odpc-ke,ODPC (Kenya),Government,EMEA,https://www.odpc.go.ke/,Kenya Data Protection Act 2019,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+mcit-eg,DPC (Egypt),Government,EMEA,https://mcit.gov.eg/,Egypt Personal Data Protection Law,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+au-commission,African Union Commission,Government,Global,https://au.int/,African Union Malabo Convention,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+bssn-id,PDP Authority (under KomDigi) + BSSN,Government,APAC,https://www.bssn.go.id/,Indonesia Personal Data Protection Law (UU PDP),No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+pdpc-th,PDPC (Thailand) + NCSA + ETDA,Government,APAC,https://www.pdpc.or.th/,Thailand Personal Data Protection Act (PDPA 2019),No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+mic-vn,MIC + A05 (Ministry of Public Security),Government,APAC,https://mic.gov.vn/,Vietnam Cybersecurity Law + Decree 13/2023,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+npc-ph,NPC (Philippines) + DICT,Government,APAC,https://www.privacy.gov.ph/,Philippines Data Privacy Act (RA 10173),No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+ria-ee,RIA (Estonian Information System Authority),Government,EMEA,https://www.ria.ee/,Estonia Cybersecurity Act + RIA PQC Guidance,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+ncsc-ie,NCSC-IE (under DECC),Government,EMEA,https://www.ncsc.gov.ie/,Ireland NCSC PQC Guidance + NIS2 Transposition,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+ccb-be,CCB (Centre for Cybersecurity Belgium),Government,EMEA,https://ccb.belgium.be/,Belgium NIS2 Transposition + CCB Cybersecurity Strategy,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+asit-at,BMI + A-SIT,Government,EMEA,https://www.a-sit.at/,Austria NIS2 Transposition + A-SIT Guidance,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+nask-pl,Ministry of Digital Affairs + NASK,Government,EMEA,https://www.nask.pl/,Poland Cyber Security Act + NASK PQC Program,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+sic-co,SIC + MinTIC + ColCERT,Government,Americas,https://www.sic.gov.co/,Colombia Habeas Data Law 1581/2012,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+anpd-pe,ANPD (Peru) + PCM-SeGDi,Government,Americas,https://www.gob.pe/,Peru Personal Data Protection Law (Law 29733),No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+urcdp-uy,URCDP + AGESIC,Government,Americas,https://www.gub.uy/,Uruguay Personal Data Protection Law (Law 18.331),No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+tc26-ru,FSB + TC 26 (Rosstandart),Government,EMEA,https://tc26.ru/,Russia GOST Cryptography (TC 26),No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+kvkk-tr,KVK Kurumu + BTK + TÜBİTAK BİLGEM,Government,EMEA,https://www.kvkk.gov.tr/,"Turkey Personal Data Protection Law (KVKK, Law 6698)",No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+faa,Federal Aviation Administration,Government,Americas,https://www.faa.gov/,FAA AC 119-1: Aircraft Network Security Program,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+ccra,"Common Criteria Recognition Arrangement (CCRA) members including ASD, CSE, ANSSI, BSI, IPA, NCCSA, GCSB, NSRI, MAP/CCN, FMV, NCSC, NSA/NIST",Government,APAC,https://www.commoncriteriaportal.org/,Common Criteria for Information Technology Security Evaluation (CC v3.1),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+oscca-cn,State Cryptography Administration (OSCCA),Government,APAC,http://www.oscca.gov.cn/,China State Cryptography Administration Regulations,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+fca,Financial Conduct Authority,Government,EMEA,https://www.fca.org.uk/,FCA Operational Resilience Requirements,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+occ,Office of the Comptroller of the Currency (OCC),Government,Americas,https://www.occ.gov/,OCC Bulletin 2024-23: Cybersecurity Risk Management Related to Post-Quantum Cryptography,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+rbi,Reserve Bank of India,Government,APAC,https://www.rbi.org.in/,RBI Cyber Security Framework in Banks,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+us-white-house,White House/NSC,Government,Americas,https://bidenwhitehouse.archives.gov/,NSM-10,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
