@@ -1239,18 +1239,21 @@ export function SimulationView() {
             className="hidden"
             aria-hidden="true"
           />
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => {
+              markSimExited()
+              navigate('/')
+            }}
+            title="Leave the simulation and return to the hub"
+            className="h-auto rounded-md border border-background/30 bg-background/10 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-background/20"
+          >
+            ← Exit to hub
+          </Button>
           <RunActionsMenu
             items={
               [
-                {
-                  key: 'hub',
-                  label: '← Exit to hub',
-                  description: 'Leave the simulation and return to the hub.',
-                  onSelect: () => {
-                    markSimExited()
-                    navigate('/')
-                  },
-                },
                 {
                   key: 'export',
                   label: 'Export',
