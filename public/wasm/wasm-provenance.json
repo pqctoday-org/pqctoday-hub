@@ -1,0 +1,58 @@
+{
+  "_comment": "Provenance for WASM bundles built from the pqctoday-hsm repo and vendored into this hub. When you rebuild a bundle with its hsm build script, update its `hsmCommit`/`builtAt`. Verify drift with `npm run sync:wasm:check` (compares against a sibling ../pqctoday-hsm checkout when present; no-op otherwise). Bundles built from other sources (openssl upstream, pqctoday-tpm) are intentionally omitted.",
+  "hsmRepo": "pqctoday-org/pqctoday-hsm",
+  "bundles": [
+    {
+      "name": "cacp-kmip",
+      "files": ["public/wasm/rust-kmip/pqctoday_kmip_wasm_bg.wasm", "src/wasm/kmip/"],
+      "buildScript": "scripts/build-kmip-wasm.sh",
+      "sourceDirs": ["kmip", "wasm"],
+      "track": "tip",
+      "status": "pending-refresh",
+      "hsmCommit": null,
+      "builtAt": null,
+      "_note": "Rebuilt independently on feat/cacp-policy-batch (run_batch export) from an unrecorded hsm commit. main ships a newer 0.6.1 refresh; reconcile/take main's bundle + provenance at merge, then record the real hsmCommit."
+    },
+    {
+      "name": "softhsmrustv3-engine",
+      "files": ["public/wasm/rust/softhsmrustv3_bg.wasm", "src/wasm/softhsmrustv3_bg.wasm"],
+      "buildScript": "rust/build-wasm-bundle.sh",
+      "sourceDirs": ["rust"],
+      "track": "tip",
+      "status": "pending-refresh",
+      "hsmCommit": null,
+      "builtAt": null,
+      "_note": "Rebuilt independently on feat/cacp-policy-batch from an unrecorded hsm commit. main ships a newer 0.6.1 refresh; reconcile/take main's bundle + provenance at merge, then record the real hsmCommit."
+    },
+    {
+      "name": "softhsm-cpp-engine",
+      "files": ["public/wasm/softhsm.wasm", "public/wasm/libsofthsmv3.wasm"],
+      "buildScript": "scripts/build-wasm.sh",
+      "sourceDirs": ["src/lib"],
+      "track": "tip",
+      "status": "pending-refresh",
+      "hsmCommit": null,
+      "builtAt": null
+    },
+    {
+      "name": "openssh-pkcs11",
+      "files": ["public/wasm/openssh-client.wasm", "public/wasm/openssh-server.wasm"],
+      "buildScript": "openssh-pkcs11/scripts/build-wasm.sh",
+      "sourceDirs": ["openssh-pkcs11"],
+      "track": "tip",
+      "status": "pending-refresh",
+      "hsmCommit": null,
+      "builtAt": null
+    },
+    {
+      "name": "strongswan",
+      "files": ["public/wasm/strongswan.wasm", "public/wasm/strongswan-v2.wasm"],
+      "buildScript": "scripts/build-strongswan-wasm.sh",
+      "sourceDirs": ["strongswan-wasm-shims", "strongswan-wasm-v2-shims"],
+      "track": "tip",
+      "status": "built",
+      "hsmCommit": "8e436210c521033d3bc04bded5339208a59c7ead",
+      "builtAt": "2026-06-12"
+    }
+  ]
+}
