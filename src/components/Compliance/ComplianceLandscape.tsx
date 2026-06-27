@@ -639,7 +639,7 @@ function FrameworkCard({
           {fw.cswp39Tags.map((tag) => (
             <span
               key={tag}
-              title={`NIST CSWP 39 consideration: ${tag}`}
+              title={`Crypto posture pillar: ${tag.replace('cswp39:', '')}`}
               className="inline-flex items-center text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium border border-accent/20"
             >
               {tag.replace('cswp39:', '')}
