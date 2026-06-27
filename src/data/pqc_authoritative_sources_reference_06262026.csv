@@ -146,8 +146,8 @@ hhs,US Department of Health and Human Services,Government,Americas,https://www.h
 apra,APRA — Australian Prudential Regulation Authority,Government,APAC,https://www.apra.gov.au/,APRA CPS 234,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
 oaic,OAIC — Office of the Australian Information Commissioner,Government,APAC,https://www.oaic.gov.au/,Australian Privacy Act (APPs),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
 austrac,AUSTRAC — Australian Transaction Reports and Analysis Centre,Government,APAC,https://www.austrac.gov.au/,AUSTRAC AML/CTF Act,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
-osfi,OSFI — Office of the Superintendent of Financial Institutions (Canada),Government,Americas,https://www.osfi-bsif.gc.ca/,OSFI Guideline B-13 — Operational Risk and Resilience (Crypto Controls),No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-uk-dsit,"UK DSIT — Department for Science, Innovation and Technology",Government,EMEA,https://www.gov.uk/,UK DSIT CNI PQC Transition Perspectives,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+osfi,OSFI — Office of the Superintendent of Financial Institutions (Canada),Government,Americas,https://www.osfi-bsif.gc.ca/,OSFI Guideline B-13 — Operational Risk and Resilience (Crypto Controls),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+uk-dsit,"UK DSIT — Department for Science, Innovation and Technology",Government,EMEA,https://www.gov.uk/,UK DSIT CNI PQC Transition Perspectives,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
 acpr-france,ACPR — Autorité de contrôle prudentiel et de résolution (France),Government,EMEA,https://acpr.banque-france.fr/,ACPR (French Banking & Insurance Regulator),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
 amf-france,AMF — Autorité des marchés financiers (France),Government,EMEA,https://www.amf-france.org/,AMF (French Securities Regulator),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
 pra-uk,PRA — Prudential Regulation Authority (Bank of England),Government,EMEA,https://www.bankofengland.co.uk/,PRA Operational Resilience (SS1/21 + cyber),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
@@ -159,25 +159,25 @@ anci-chile,ANCI — Agencia Nacional de Ciberseguridad (Chile),Government,Americ
 cnbv-mexico,CNBV — Comisión Nacional Bancaria y de Valores (Mexico),Government,Americas,https://www.cnbv.gob.mx/,CNBV Circular Única de Bancos (Mexico),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
 onti-argentina,ONTI — Oficina Nacional de Tecnologías de Información (Argentina),Government,Americas,https://www.argentina.gob.ar/,Argentina ONTI Cyber Baseline (Secretaría de Innovación Pública),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
 bacen-brazil,BACEN — Banco Central do Brasil,Government,Americas,https://www.bcb.gov.br/,BACEN Resolution 4.893 (Brazil FS Cyber),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
-inforeg-za,Information Regulator (South Africa),Government,EMEA,https://inforegulator.org.za/,POPIA,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-ndpc-ng,NDPC (Nigeria Data Protection Commission),Government,EMEA,https://ndpc.gov.ng/,NDPR / NDPA 2023,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-odpc-ke,ODPC (Kenya),Government,EMEA,https://www.odpc.go.ke/,Kenya Data Protection Act 2019,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-mcit-eg,DPC (Egypt),Government,EMEA,https://mcit.gov.eg/,Egypt Personal Data Protection Law,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-au-commission,African Union Commission,Government,Global,https://au.int/,African Union Malabo Convention,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-bssn-id,PDP Authority (under KomDigi) + BSSN,Government,APAC,https://www.bssn.go.id/,Indonesia Personal Data Protection Law (UU PDP),No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-pdpc-th,PDPC (Thailand) + NCSA + ETDA,Government,APAC,https://www.pdpc.or.th/,Thailand Personal Data Protection Act (PDPA 2019),No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-mic-vn,MIC + A05 (Ministry of Public Security),Government,APAC,https://mic.gov.vn/,Vietnam Cybersecurity Law + Decree 13/2023,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-npc-ph,NPC (Philippines) + DICT,Government,APAC,https://www.privacy.gov.ph/,Philippines Data Privacy Act (RA 10173),No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-ria-ee,RIA (Estonian Information System Authority),Government,EMEA,https://www.ria.ee/,Estonia Cybersecurity Act + RIA PQC Guidance,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-ncsc-ie,NCSC-IE (under DECC),Government,EMEA,https://www.ncsc.gov.ie/,Ireland NCSC PQC Guidance + NIS2 Transposition,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-ccb-be,CCB (Centre for Cybersecurity Belgium),Government,EMEA,https://ccb.belgium.be/,Belgium NIS2 Transposition + CCB Cybersecurity Strategy,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-asit-at,BMI + A-SIT,Government,EMEA,https://www.a-sit.at/,Austria NIS2 Transposition + A-SIT Guidance,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-nask-pl,Ministry of Digital Affairs + NASK,Government,EMEA,https://www.nask.pl/,Poland Cyber Security Act + NASK PQC Program,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-sic-co,SIC + MinTIC + ColCERT,Government,Americas,https://www.sic.gov.co/,Colombia Habeas Data Law 1581/2012,No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-anpd-pe,ANPD (Peru) + PCM-SeGDi,Government,Americas,https://www.gob.pe/,Peru Personal Data Protection Law (Law 29733),No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-urcdp-uy,URCDP + AGESIC,Government,Americas,https://www.gub.uy/,Uruguay Personal Data Protection Law (Law 18.331),No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-tc26-ru,FSB + TC 26 (Rosstandart),Government,EMEA,https://tc26.ru/,Russia GOST Cryptography (TC 26),No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
-kvkk-tr,KVK Kurumu + BTK + TÜBİTAK BİLGEM,Government,EMEA,https://www.kvkk.gov.tr/,"Turkey Personal Data Protection Law (KVKK, Law 6698)",No,No,No,No,No,Yes,No,2026-06-26,url_needs_review
+inforeg-za,Information Regulator (South Africa),Government,EMEA,https://inforegulator.org.za/,POPIA,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+ndpc-ng,NDPC (Nigeria Data Protection Commission),Government,EMEA,https://ndpc.gov.ng/,NDPR / NDPA 2023,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+odpc-ke,ODPC (Kenya),Government,EMEA,https://www.odpc.go.ke/,Kenya Data Protection Act 2019,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+mcit-eg,DPC (Egypt),Government,EMEA,https://mcit.gov.eg/,Egypt Personal Data Protection Law,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+au-commission,African Union Commission,Government,Global,https://au.int/,African Union Malabo Convention,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+bssn-id,PDP Authority (under KomDigi) + BSSN,Government,APAC,https://www.bssn.go.id/,Indonesia Personal Data Protection Law (UU PDP),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+pdpc-th,PDPC (Thailand) + NCSA + ETDA,Government,APAC,https://www.pdpc.or.th/,Thailand Personal Data Protection Act (PDPA 2019),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+mic-vn,MIC + A05 (Ministry of Public Security),Government,APAC,https://mic.gov.vn/,Vietnam Cybersecurity Law + Decree 13/2023,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+npc-ph,NPC (Philippines) + DICT,Government,APAC,https://www.privacy.gov.ph/,Philippines Data Privacy Act (RA 10173),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+ria-ee,RIA (Estonian Information System Authority),Government,EMEA,https://www.ria.ee/,Estonia Cybersecurity Act + RIA PQC Guidance,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+ncsc-ie,NCSC-IE (under DECC),Government,EMEA,https://www.ncsc.gov.ie/,Ireland NCSC PQC Guidance + NIS2 Transposition,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+ccb-be,CCB (Centre for Cybersecurity Belgium),Government,EMEA,https://ccb.belgium.be/,Belgium NIS2 Transposition + CCB Cybersecurity Strategy,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+asit-at,BMI + A-SIT,Government,EMEA,https://www.a-sit.at/,Austria NIS2 Transposition + A-SIT Guidance,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+nask-pl,Ministry of Digital Affairs + NASK,Government,EMEA,https://www.nask.pl/,Poland Cyber Security Act + NASK PQC Program,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+sic-co,SIC + MinTIC + ColCERT,Government,Americas,https://www.sic.gov.co/,Colombia Habeas Data Law 1581/2012,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+anpd-pe,ANPD (Peru) + PCM-SeGDi,Government,Americas,https://www.gob.pe/,Peru Personal Data Protection Law (Law 29733),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+urcdp-uy,URCDP + AGESIC,Government,Americas,https://www.gub.uy/,Uruguay Personal Data Protection Law (Law 18.331),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+tc26-ru,FSB + TC 26 (Rosstandart),Government,EMEA,https://tc26.ru/,Russia GOST Cryptography (TC 26),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
+kvkk-tr,KVK Kurumu + BTK + TÜBİTAK BİLGEM,Government,EMEA,https://www.kvkk.gov.tr/,"Turkey Personal Data Protection Law (KVKK, Law 6698)",No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
 faa,Federal Aviation Administration,Government,Americas,https://www.faa.gov/,FAA AC 119-1: Aircraft Network Security Program,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
 ccra,"Common Criteria Recognition Arrangement (CCRA) members including ASD, CSE, ANSSI, BSI, IPA, NCCSA, GCSB, NSRI, MAP/CCN, FMV, NCSC, NSA/NIST",Government,APAC,https://www.commoncriteriaportal.org/,Common Criteria for Information Technology Security Evaluation (CC v3.1),No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
 oscca-cn,State Cryptography Administration (OSCCA),Government,APAC,http://www.oscca.gov.cn/,China State Cryptography Administration Regulations,No,No,No,No,No,Yes,No,2026-06-26,url_authoritative
