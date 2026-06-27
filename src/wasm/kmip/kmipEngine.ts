@@ -96,6 +96,50 @@ export interface OpSpec {
   signature?: string // hex
 }
 
+/** The ID-Placeholder sentinel (KMIP 3.0 §6.4). Use it as a batch item's `uid`
+ * to reference the object the previous UID-producing item created — e.g.
+ * CreateKeyPair → Activate(`$IDPlaceholder`) → Sign(`$IDPlaceholder`). The engine
+ * substitutes the live UID before each item runs. */
+export const ID_PLACEHOLDER = '$IDPlaceholder'
+
+/** KMIP 3.0 §9.5 Batch Error Continuation Option: how a batch handles a failed
+ * item. `Continue` runs every item; `Stop` halts after the first failure (later
+ * items are not run/returned); `Undo` halts AND rolls back earlier successes
+ * (reported as `OperationUndone`). Absent ≡ `Stop`. */
+export type BatchErrorContinuation = 'Stop' | 'Continue' | 'Undo'
+
+/** A batch request: an ordered list of op specs run as ONE KMIP request. */
+export interface BatchSpec {
+  errorContinuation?: BatchErrorContinuation
+  items: OpSpec[]
+}
+
+/** One batch item's result — a `run_op` result minus the wire (the wire is the
+ * single shared Response Message on the parent [`BatchResult`]). */
+export interface BatchItemResult {
+  ok: boolean
+  operation: string | null
+  status: OpResult['status']
+  resultReason: number | null
+  message: string | null
+  summary: Record<string, unknown>
+}
+
+/** The result of a `runBatch` call: per-item results + the one shared wire. */
+export interface BatchResult {
+  ok: boolean
+  errorContinuation: BatchErrorContinuation
+  /** Items submitted. */
+  requested: number
+  /** Items returned — fewer than `requested` when `Stop`/`Undo` halted the batch. */
+  returned: number
+  items: BatchItemResult[]
+  responseWireHex: string
+  responseWireLen: number
+  responseTree: TtlvNode
+  audit: AuditEvent[]
+}
+
 /** The Plane-1 decision the engine reached for an op, extracted from its audit. */
 export interface PolicyDecision {
   kind: 'Allow' | 'Deny' | 'Rekey' | 'Unknown'
@@ -136,6 +180,7 @@ export interface DryRunSpec {
 
 interface WasmKmipPlayground {
   run_op(specJson: string): string
+  run_batch(specJson: string): string
   submit(ttlv: Uint8Array): Uint8Array
   load_policy(yaml: string): string
   policy_status(): string
@@ -169,6 +214,13 @@ export class KmipEngine {
   /** Build a real KMIP request, dispatch it, and return the rich result. */
   runOp(spec: OpSpec): OpResult {
     return JSON.parse(this.pg.run_op(JSON.stringify(spec))) as OpResult
+  }
+
+  /** Build ONE KMIP request carrying every item in `spec` and dispatch it as a
+   * real on-the-wire batch (not N separate requests). Returns per-item results
+   * plus the single shared Response Message. */
+  runBatch(spec: BatchSpec): BatchResult {
+    return JSON.parse(this.pg.run_batch(JSON.stringify(spec))) as BatchResult
   }
 
   /** Raw wire entry: TTLV bytes in → TTLV bytes out. */
