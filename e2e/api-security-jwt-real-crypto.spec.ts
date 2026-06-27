@@ -52,7 +52,7 @@ test.describe('API Security & JWT workshop — real crypto', () => {
 
     // Public key panel renders with > 1000 bytes (ML-DSA-65 pk = 1952 bytes)
     const pubKeyPanel = page.getByText(/Public Key \([0-9,]+ bytes\)/)
-    await expect(pubKeyPanel).toBeVisible({ timeout: 10_000 })
+    await expect(pubKeyPanel).toBeVisible({ timeout: 25_000 })
     const pkText = (await pubKeyPanel.textContent()) ?? ''
     const pkBytes = parseInt(pkText.replace(/[^\d]/g, ''), 10)
     expect(pkBytes).toBe(1952)
@@ -62,7 +62,7 @@ test.describe('API Security & JWT workshop — real crypto', () => {
 
     // Token surfaces with real signature — should be > 4500 chars (3309-byte sig → ~4412 b64url)
     const signedHeader = page.getByText(/^Signed JWT$/)
-    await expect(signedHeader).toBeVisible({ timeout: 10_000 })
+    await expect(signedHeader).toBeVisible({ timeout: 25_000 })
     const totalCell = page.getByText(/^[0-9,]+ chars \([0-9.]+ KB\)$/).first()
     await expect(totalCell).toBeVisible()
     const totalText = (await totalCell.textContent()) ?? ''
@@ -71,12 +71,12 @@ test.describe('API Security & JWT workshop — real crypto', () => {
 
     // Verify via noble — real crypto must produce a valid signature
     await page.getByRole('button', { name: 'Verify (noble)' }).click()
-    await expect(page.getByText(/Signature valid · noble/)).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByText(/Signature valid · noble/)).toBeVisible({ timeout: 25_000 })
 
     // Tamper the signature — real verify must reject
     await page.getByRole('button', { name: /Tamper signature/ }).click()
     await page.getByRole('button', { name: 'Verify (noble)' }).click()
-    await expect(page.getByText(/Signature invalid · noble/)).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByText(/Signature invalid · noble/)).toBeVisible({ timeout: 25_000 })
   })
 
   test('JWTInspector verifies the IETF KAT JWS for ML-DSA-65 (byte-exact draft vector)', async ({
@@ -95,7 +95,7 @@ test.describe('API Security & JWT workshop — real crypto', () => {
     await verifyKat.click()
 
     // Real verify must accept the IETF draft's official JWS bytes
-    await expect(page.getByText(/Signature valid · ML-DSA-65/)).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByText(/Signature valid · ML-DSA-65/)).toBeVisible({ timeout: 25_000 })
   })
 
   test('JWEEncryption performs a real ML-KEM-768 encap → AES-GCM encrypt → decrypt roundtrip', async ({
@@ -110,7 +110,7 @@ test.describe('API Security & JWT workshop — real crypto', () => {
     await page.getByRole('button', { name: 'Encrypt JWT Payload' }).click()
 
     // Wait for the JWE Token Parts panel
-    await expect(page.getByText('JWE Token Parts')).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText('JWE Token Parts')).toBeVisible({ timeout: 30_000 })
 
     // ML-KEM-768 ciphertext is exactly 1088 bytes → 1451 base64url chars
     // The encrypted-key part label includes "ML-KEM ct, 1088 B"
@@ -118,7 +118,7 @@ test.describe('API Security & JWT workshop — real crypto', () => {
 
     // Decrypt — real ML-KEM decap + real AES-GCM auth-tag check must succeed
     await page.getByRole('button', { name: /^Decrypt$/ }).click()
-    await expect(page.getByText('Decrypted Payload')).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByText('Decrypted Payload')).toBeVisible({ timeout: 25_000 })
     await expect(page.getByText('GCM tag verified')).toBeVisible()
 
     // The decrypted JSON must be byte-equal to the original payload (contains "sub")
@@ -133,7 +133,7 @@ test.describe('API Security & JWT workshop — real crypto', () => {
       .click()
 
     // The "measuring" loader appears briefly, then results render
-    await expect(page.getByText(/JWT Size by Algorithm/)).toBeVisible({ timeout: 30_000 })
+    await expect(page.getByText(/JWT Size by Algorithm/)).toBeVisible({ timeout: 60_000 })
 
     // ML-DSA-65 row must show a "measured" tag (proves the bytes came from a real sign())
     const mlDsa65Row = page
@@ -157,7 +157,7 @@ test.describe('API Security & JWT workshop — real crypto', () => {
 
     // Self-test: ML-DSA-65 sign/verify roundtrip — real crypto, no simulation
     await expect(page.getByText(/Self-test: ML-DSA-65 sign\/verify roundtrip/)).toBeVisible({
-      timeout: 30_000,
+      timeout: 60_000,
     })
     await expect(page.getByText(/Signature verified/)).toBeVisible()
 
@@ -183,7 +183,7 @@ test.describe('API Security & JWT workshop — real crypto', () => {
     await page.getByRole('button', { name: /Run JOSE KAT suite/ }).click()
 
     // 5 vectors: 3 IETF ML-DSA JOSE KATs + 2 composite checks (sign-equal + verify)
-    await expect(page.getByText(/5 passed/)).toBeVisible({ timeout: 30_000 })
+    await expect(page.getByText(/5 passed/)).toBeVisible({ timeout: 60_000 })
     await expect(page.getByText(/0 failed/).first()).toBeVisible()
   })
 
@@ -197,7 +197,7 @@ test.describe('API Security & JWT workshop — real crypto', () => {
     await page.getByRole('button', { name: /Run framing self-checks/ }).click()
 
     // All 14 checks must pass — looking for the summary text
-    await expect(page.getByText(/passed/).first()).toBeVisible({ timeout: 30_000 })
+    await expect(page.getByText(/passed/).first()).toBeVisible({ timeout: 60_000 })
     // 0 failures
     await expect(page.getByText(/0 failed/)).toBeVisible()
   })

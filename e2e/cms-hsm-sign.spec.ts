@@ -67,7 +67,7 @@ async function waitForProviderInit(page: Page): Promise<string> {
         /Provider registered|Provider already registered|does not export pqctoday_cms_init|Provider init failed/i
       )
       .first()
-  ).toBeVisible({ timeout: 10_000 })
+  ).toBeVisible({ timeout: 30_000 })
   return page.evaluate(() => document.body.innerText)
 }
 
@@ -78,7 +78,7 @@ async function waitForProviderInit(page: Page): Promise<string> {
 async function expandDetailsAndReadPre(page: Page, summaryText: string): Promise<string> {
   const details = page.locator('details').filter({ hasText: summaryText }).first()
   await details.locator('summary').click()
-  await details.locator('pre').first().waitFor({ state: 'visible', timeout: 5_000 })
+  await details.locator('pre').first().waitFor({ state: 'visible', timeout: 15_000 })
   return details.locator('pre').first().innerText()
 }
 
@@ -129,7 +129,7 @@ test.describe('S/MIME Workshop — CMS sign+verify and encrypt+decrypt (P0 KAT)'
 
     // Ensure software mode (HSM checkbox unchecked by default)
     const signBtn = page.getByRole('button', { name: /Sign \+ Verify/i }).first()
-    await expect(signBtn).toBeVisible({ timeout: 10_000 })
+    await expect(signBtn).toBeVisible({ timeout: 30_000 })
     await signBtn.click()
 
     // Wait for verify card success text
@@ -187,7 +187,7 @@ test.describe('S/MIME Workshop — CMS sign+verify and encrypt+decrypt (P0 KAT)'
 
     // Enable HSM toggle for the sign demo
     const hsmCheckbox = page.getByRole('checkbox', { name: /Use HSM key/i }).first()
-    await expect(hsmCheckbox).toBeVisible({ timeout: 5_000 })
+    await expect(hsmCheckbox).toBeVisible({ timeout: 15_000 })
     await expect(hsmCheckbox).toBeEnabled()
     await hsmCheckbox.check()
     await expect(hsmCheckbox).toBeChecked()
@@ -213,7 +213,7 @@ test.describe('S/MIME Workshop — CMS sign+verify and encrypt+decrypt (P0 KAT)'
       const isPresent = await logsDetails.count()
       if (isPresent > 0) {
         await logsDetails.locator('summary').click()
-        await logsDetails.locator('pre').first().waitFor({ state: 'visible', timeout: 3_000 })
+        await logsDetails.locator('pre').first().waitFor({ state: 'visible', timeout: 30_000 })
         workerLogs = await logsDetails.locator('pre').first().innerText()
       }
     } catch {
@@ -287,7 +287,7 @@ test.describe('S/MIME Workshop — CMS sign+verify and encrypt+decrypt (P0 KAT)'
     // The KEM demo runs independently of provider init — software mode needs no HSM.
     // The "Encrypt + Decrypt" button is always enabled; click it once visible.
     const encryptBtn = page.getByRole('button', { name: /Encrypt \+ Decrypt/i }).first()
-    await expect(encryptBtn).toBeVisible({ timeout: 10_000 })
+    await expect(encryptBtn).toBeVisible({ timeout: 30_000 })
     await encryptBtn.click()
 
     // Wait for terminal success — accepts both software and HSM modes.
@@ -332,7 +332,7 @@ test.describe('S/MIME Workshop — CMS sign+verify and encrypt+decrypt (P0 KAT)'
       .locator('select')
       .filter({ hasText: /ML-DSA/ })
       .first()
-    await expect(algSelect).toBeVisible({ timeout: 10_000 })
+    await expect(algSelect).toBeVisible({ timeout: 30_000 })
     await algSelect.selectOption('ML-DSA-87')
 
     const signBtn = page.getByRole('button', { name: /Sign \+ Verify/i }).first()

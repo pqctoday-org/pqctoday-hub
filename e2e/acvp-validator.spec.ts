@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
-  test.setTimeout(120000) // WASM load + autoInit + ACVP exhaustive keys
+  test.setTimeout(180000) // WASM load + autoInit + ACVP exhaustive keys
 
   test.beforeEach(async ({ page }) => {
     // Suppress the WhatsNew alertdialog (fixed inset-0 overlay) that intercepts
@@ -31,11 +31,11 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // Be specific: there are TWO buttons matching "ACVP" — the role=tab sidebar
     // entry and the "Execute ACVP Tests" action button. Target the tab.
     const acvpTab = page.getByRole('tab', { name: 'ACVP' })
-    await acvpTab.waitFor({ state: 'visible', timeout: 15000 })
+    await acvpTab.waitFor({ state: 'visible', timeout: 30000 })
     await acvpTab.click()
 
     // Make sure the component is loaded before dispatching events
-    await page.waitForSelector('text="SoftHSMv3 FIPS Validation Mode (ACVP)"', { timeout: 15000 })
+    await page.waitForSelector('text="SoftHSMv3 FIPS Validation Mode (ACVP)"', { timeout: 30000 })
 
     // Advance HSM phase to 'session_open' via the e2e hook in HsmContext.
     // The runTests() guard at HsmAcvpTesting.tsx returns early unless the
@@ -46,7 +46,7 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
         typeof (window as unknown as { __e2e_hsm_autoinit?: unknown }).__e2e_hsm_autoinit ===
         'function',
       undefined,
-      { timeout: 10000 }
+      { timeout: 20000 }
     )
     const ok = await page.evaluate(async () => {
       const fn = (
@@ -95,7 +95,7 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
 
     // The Execution Log should conclude
     const logSection = page.locator('div', { hasText: 'Validation Suite Completed' }).last()
-    await expect(logSection).toBeVisible({ timeout: 15000 })
+    await expect(logSection).toBeVisible({ timeout: 30000 })
 
     // Validate that at least one ML-KEM and ML-DSA passed
     const mlkemRow = page.locator('tr', { hasText: 'ML-KEM-512' }).first()

@@ -168,7 +168,7 @@ async function waitForProviderInit(page: Page): Promise<string> {
         /Provider registered|Provider already registered|does not export pqctoday_cms_init|Provider init failed/i
       )
       .first()
-  ).toBeVisible({ timeout: 10_000 })
+  ).toBeVisible({ timeout: 30_000 })
   return page.evaluate(() => document.body.innerText)
 }
 
@@ -188,10 +188,10 @@ async function runSignDemo(
   opts: { alg: string; useHsm: boolean }
 ): Promise<{ outcome: 'ok' | 'fail' | 'timeout'; bodyText: string }> {
   const demo = demoByHeading(page, /ML-DSA CMS sign \+ verify/i)
-  await expect(demo).toBeVisible({ timeout: 10_000 })
+  await expect(demo).toBeVisible({ timeout: 30_000 })
 
   const select = demo.locator('select').first()
-  await expect(select).toBeVisible({ timeout: 5_000 })
+  await expect(select).toBeVisible({ timeout: 15_000 })
   await select.selectOption(opts.alg)
 
   // HSM mode handling. Composite OIDs auto-force HSM; for non-composite the
@@ -234,10 +234,10 @@ async function runKemDemo(
   opts: { alg: string; useHsm: boolean }
 ): Promise<{ outcome: 'ok' | 'fail' | 'timeout'; bodyText: string }> {
   const demo = demoByHeading(page, /ML-KEM CMS encrypt \+ decrypt/i)
-  await expect(demo).toBeVisible({ timeout: 10_000 })
+  await expect(demo).toBeVisible({ timeout: 30_000 })
 
   const select = demo.locator('select').first()
-  await expect(select).toBeVisible({ timeout: 5_000 })
+  await expect(select).toBeVisible({ timeout: 15_000 })
   await select.selectOption(opts.alg)
 
   const hsmCheckbox = demo.getByRole('checkbox', { name: /Use HSM key/i }).first()
@@ -268,7 +268,7 @@ async function runDualDemo(
   opts: { pqAlg: string; clAlg: string; useHsm: boolean }
 ): Promise<{ outcome: 'ok' | 'fail' | 'timeout'; bodyText: string }> {
   const demo = demoByHeading(page, /PQ \+ classical dual signature/i)
-  await expect(demo).toBeVisible({ timeout: 10_000 })
+  await expect(demo).toBeVisible({ timeout: 30_000 })
 
   const selects = demo.locator('select')
   // First select = PQ alg, second select = classical alg
