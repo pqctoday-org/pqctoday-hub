@@ -51,4 +51,19 @@ describe('complianceData', () => {
     expect(complianceDB['ANSSI'].requiresPQC).toBe(true)
     expect(complianceDB['CRYPTREC'].requiresPQC).toBe(true)
   })
+
+  it('cswp39Tags use only valid Crypto Posture Management pillars', () => {
+    // Despite the `cswp39:` prefix these tags are the CPM pillars
+    // (cpmMaturityModel.ts `PillarId`), NOT CSWP.39 zones/steps. This guard
+    // catches typos or stray values that would render as broken chips.
+    const PILLARS = new Set(['inventory', 'governance', 'lifecycle', 'observability', 'assurance'])
+    const offenders: string[] = []
+    for (const item of complianceFrameworks) {
+      for (const tag of item.cswp39Tags ?? []) {
+        const pillar = tag.replace('cswp39:', '')
+        if (!PILLARS.has(pillar)) offenders.push(`${item.id}: ${tag}`)
+      }
+    }
+    expect(offenders).toEqual([])
+  })
 })

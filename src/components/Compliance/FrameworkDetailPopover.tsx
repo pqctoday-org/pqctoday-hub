@@ -212,14 +212,14 @@ export const FrameworkDetailPopover = ({
                 <section>
                   <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
                     <Tag size={12} aria-hidden="true" />
-                    CSWP 39 Considerations
+                    Crypto Posture Pillars
                   </h4>
                   <div className="flex flex-wrap gap-1.5">
                     {framework.cswp39Tags.map((tag) => (
                       <span
                         key={tag}
                         className="inline-flex items-center text-xs px-2 py-1 rounded bg-accent/10 text-accent font-medium border border-accent/20"
-                        title={`NIST CSWP 39 consideration: ${tag}`}
+                        title={`Crypto posture pillar: ${tag.replace('cswp39:', '')}`}
                       >
                         {tag.replace('cswp39:', '')}
                       </span>
