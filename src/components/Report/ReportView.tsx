@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { FileBarChart, ClipboardCheck, AlertCircle, ArrowRight } from 'lucide-react'
 import { ReportContent } from './ReportContent'
 import { ReportToc } from './ReportToc'
+import { ReportNextSteps } from './ReportNextSteps'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { computeAssessment } from '../../hooks/assessmentUtils'
 import { computeAssessmentAsync } from '../../hooks/assessment/orchestrator'
@@ -553,6 +554,8 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
           </Link>
         </div>
       )}
+
+      {result && !simEmbed && <ReportNextSteps />}
     </div>
   )
 }
