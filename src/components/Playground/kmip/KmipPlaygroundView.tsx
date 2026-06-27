@@ -420,6 +420,7 @@ export function KmipPlaygroundView() {
               policyLabel={policyLabel}
               busy={busy}
               onBusyChange={setBusy}
+              onChanged={() => refresh(engine)}
             />
           </div>
 
