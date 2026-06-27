@@ -38,6 +38,10 @@ const serverCommand = useDev
 
 export default defineConfig({
   testDir: './e2e',
+  // Warm Vite's dep optimizer before specs run, so a cold dev server (or the
+  // first run after the WASM bundles change) doesn't fail specs with a transient
+  // "504 Outdated Optimize Dep" on the lazy-loaded Playground routes.
+  globalSetup: './e2e/global-setup.ts',
   // WASM/crypto pages need headroom; individual heavy specs may still raise their own.
   timeout: 45 * 1000,
   expect: { timeout: 7500 },

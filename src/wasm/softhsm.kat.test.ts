@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from 'vitest'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import * as SoftHSM from './softhsm'
 import * as crypto from 'crypto'
 
@@ -47,6 +47,13 @@ describe('SoftHSMv3 NIST Known Answer Test (KAT) Suite via Unwrap', () => {
 
     kekHandle = SoftHSM.hsm_createObject(hsmd, sessionHandle, template)
     expect(kekHandle).toBeGreaterThan(0)
+  })
+
+  afterAll(() => {
+    // getSoftHSMRustModule() is a shared singleton across suites; release it
+    // (C_CloseSession + C_Finalize) so the next suite can C_Initialize again
+    // without CKR_CRYPTOKI_ALREADY_INITIALIZED.
+    SoftHSM.hsm_finalize(hsmd, sessionHandle)
   })
 
   // =========================================================================
@@ -213,6 +220,11 @@ describe('SoftHSMv3 Key Management & Operations Gap-Fill Tests', () => {
     const freeSlot = SoftHSM.hsm_getFirstFreeSlot(hsmd)
     const slotId = SoftHSM.hsm_initToken(hsmd, freeSlot, '1234', 'Test Token')
     sessionHandle = SoftHSM.hsm_openUserSession(hsmd, slotId, '1234', '1234')
+  })
+
+  afterAll(() => {
+    // Release the shared Rust WASM singleton so other suites can re-initialize it.
+    SoftHSM.hsm_finalize(hsmd, sessionHandle)
   })
 
   // ── Key Generation & Attribute Query ──────────────────────────────────────
