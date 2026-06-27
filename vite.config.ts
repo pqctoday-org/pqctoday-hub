@@ -251,7 +251,30 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    exclude: ['@oqs/liboqs-js', '@pqctoday/softhsm-wasm', '@peculiar/x509'],
+    // Scope dependency scanning to the real SPA entry. Without this, Vite's
+    // scanner auto-globs every *.html — including the hundreds of static report
+    // files under public/ (library, timeline, vendor-roadmaps) — and aborts
+    // pre-bundling when it can't resolve their inlined <script> tags. That
+    // forces on-demand optimization mid-session, whose reload kills in-flight
+    // dynamic imports ("Failed to fetch dynamically imported module: App.tsx").
+    entries: ['index.html'],
+    // The @capacitor/* packages are native-only and intentionally not installed
+    // for the web build (they're dynamically imported with /* @vite-ignore */
+    // and listed in build.rollupOptions.external). They must also be excluded
+    // here: the dep scanner ignores @vite-ignore, so without this it fails with
+    // "imported but could not be resolved", aborts pre-bundling, and falls back
+    // to on-demand optimization whose mid-session reloads kill in-flight dynamic
+    // imports ("Failed to fetch dynamically imported module: App.tsx").
+    exclude: [
+      '@oqs/liboqs-js',
+      '@pqctoday/softhsm-wasm',
+      '@peculiar/x509',
+      '@capacitor/browser',
+      '@capacitor/preferences',
+      '@capacitor/share',
+      '@capacitor/app',
+      '@capacitor/haptics',
+    ],
   },
   build: {
     // Explicit target: esbuild >= 0.27.5 treats safari14 as lacking (buggy) destructuring

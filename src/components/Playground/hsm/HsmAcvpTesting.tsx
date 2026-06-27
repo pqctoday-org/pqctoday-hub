@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useRef, useEffect } from 'react'
-import { Play, CheckCircle, XCircle, ExternalLink, Copy, Check } from 'lucide-react'
+import { Play, CheckCircle, XCircle, ExternalLink, Copy, Check, Loader2 } from 'lucide-react'
 import clsx from 'clsx'
 import mlkemTestVectors from '../../../data/acvp/mlkem_test.json'
 import mldsaTestVectors from '../../../data/acvp/mldsa_test.json'
@@ -177,6 +177,7 @@ export const HsmAcvpTesting = () => {
   }, [])
 
   const runTests = async () => {
+    if (loading) return
     if (!moduleRef.current || phase !== 'session_open') {
       addLog('Error: HSM Session not open.')
       return
@@ -190,6 +191,22 @@ export const HsmAcvpTesting = () => {
     addLog('Starting ACVP Validation Suite via PKCS#11...')
 
     const newResults: TestResult[] = []
+    // The crypto loop below is fully synchronous; without periodic yields the
+    // browser can't paint the streaming results or the progress bar and the tab
+    // appears frozen. `pushResult` records each check, streams it into state,
+    // and hands control back to the event loop every couple of checks so the
+    // running indicator and live count actually update.
+    let sinceYield = 0
+    const pushResult = async (r: TestResult) => {
+      newResults.push(r)
+      setResults(newResults.slice())
+      if (++sinceYield >= 2) {
+        sinceYield = 0
+        await new Promise((resolve) => setTimeout(resolve, 0))
+      }
+    }
+    // Paint the "running" state before the (heavy, synchronous) engine setup.
+    await new Promise((resolve) => setTimeout(resolve, 0))
 
     // Canonical reference URLs per algorithm / standard
     const REF = {
@@ -319,7 +336,7 @@ export const HsmAcvpTesting = () => {
               recoveredPt.every((b: number, i: number) => b === expectedPt[i])
 
             const ptHex = toHex(recoveredPt)
-            newResults.push({
+            await pushResult({
               id: id1,
               algorithm: `AES-GCM-256 (${eName})`,
               testCase: 'Decrypt KAT',
@@ -334,7 +351,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `aes-err-${eName}`,
               algorithm: `AES-GCM-256 (${eName})`,
               testCase: 'Decrypt KAT',
@@ -374,7 +391,7 @@ export const HsmAcvpTesting = () => {
             const isValid = hsm_hmacVerify(M, hSession, hmacHandle, msgBytes, macBytes)
 
             const macHex = toHex(macBytes)
-            newResults.push({
+            await pushResult({
               id: id2,
               algorithm: `HMAC-SHA256 (${eName})`,
               testCase: 'Verify KAT',
@@ -389,7 +406,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `hmac-err-${eName}`,
               algorithm: `HMAC-SHA256 (${eName})`,
               testCase: 'Verify KAT',
@@ -437,7 +454,7 @@ export const HsmAcvpTesting = () => {
             )
 
             const rsaSigHex = toHex(sigBytes, 16)
-            newResults.push({
+            await pushResult({
               id: id3,
               algorithm: `RSA-PSS-2048 (${eName})`,
               testCase: 'SigVer KAT',
@@ -452,7 +469,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `rsa-err-${eName}`,
               algorithm: `RSA-PSS-2048 (${eName})`,
               testCase: 'SigVer KAT',
@@ -498,7 +515,7 @@ export const HsmAcvpTesting = () => {
             const isValid = hsm_ecdsaVerify(M, hSession, ecPubHandle, tv.msg, sigBytes)
             const ecSigHex = toHex(sigBytes, 16)
 
-            newResults.push({
+            await pushResult({
               id: id4,
               algorithm: `ECDSA P-256 (${eName})`,
               testCase: 'SigVer KAT',
@@ -513,7 +530,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `ecdsa-err-${eName}`,
               algorithm: `ECDSA P-256 (${eName})`,
               testCase: 'SigVer KAT',
@@ -554,7 +571,7 @@ export const HsmAcvpTesting = () => {
             const isValid = hsm_verifyBytes(M, hSession, pubHandle, msgBytes, sigBytes)
             const mldsaSigHex = toHex(sigBytes, 16)
 
-            newResults.push({
+            await pushResult({
               id: id5,
               algorithm: `${algo} (${eName})`,
               testCase: 'SigVer KAT',
@@ -569,7 +586,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-            newResults.push({
+            await pushResult({
               id: `mldsa-err-${algo}-${eName}`,
               algorithm: `${algo} (${eName})`,
               testCase: 'SigVer KAT',
@@ -608,7 +625,7 @@ export const HsmAcvpTesting = () => {
             const isValid = hsm_verify(M, hSession, mldsaPair.pubHandle, 'ACVP NIST PQC test', sig)
             if (isValid) {
               const signHex = toHex(sig, 16)
-              newResults.push({
+              await pushResult({
                 id: id6,
                 algorithm: `${dsaAlgo} (${eName})`,
                 testCase: 'Functional Sign+Verify',
@@ -622,7 +639,7 @@ export const HsmAcvpTesting = () => {
             }
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `mldsa-func-${dsaVariant}-err-${eName}`,
               algorithm: `${dsaAlgo} (${eName})`,
               testCase: 'Functional Sign+Verify',
@@ -676,7 +693,7 @@ export const HsmAcvpTesting = () => {
 
             if (matches) {
               const ssHex = toHex(recoveredSs)
-              newResults.push({
+              await pushResult({
                 id: id7,
                 algorithm: `${algo} (${eName})`,
                 testCase: 'Decapsulate KAT',
@@ -692,7 +709,7 @@ export const HsmAcvpTesting = () => {
               const expHex = Array.from(expectedSsBytes.slice(0, 16))
                 .map((b) => b.toString(16).padStart(2, '0'))
                 .join('')
-              newResults.push({
+              await pushResult({
                 id: id7,
                 algorithm: `${algo} (${eName})`,
                 testCase: 'Decapsulate KAT',
@@ -714,7 +731,7 @@ export const HsmAcvpTesting = () => {
             }
           } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-            newResults.push({
+            await pushResult({
               id: `test-${algo}-err-${eName}`,
               algorithm: `${algo} (${eName})`,
               testCase: 'Decapsulate KAT',
@@ -782,7 +799,7 @@ export const HsmAcvpTesting = () => {
 
             if (ssMatch) {
               const ssHex = toHex(encapSs)
-              newResults.push({
+              await pushResult({
                 id: id8,
                 algorithm: `${kemAlgo} (${eName})`,
                 testCase: 'Encap+Decap Round-Trip',
@@ -792,7 +809,7 @@ export const HsmAcvpTesting = () => {
               })
               addLog(`[${eName}] [id:${id8}] ${kemAlgo} Round-Trip: PASS | SS: ${ssHex}`)
             } else {
-              newResults.push({
+              await pushResult({
                 id: id8,
                 algorithm: `${kemAlgo} (${eName})`,
                 testCase: 'Encap+Decap Round-Trip',
@@ -804,7 +821,7 @@ export const HsmAcvpTesting = () => {
             }
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `mlkem-rt-${kemVariant}-err-${eName}`,
               algorithm: `${kemAlgo} (${eName})`,
               testCase: 'Encap+Decap Round-Trip',
@@ -859,7 +876,7 @@ export const HsmAcvpTesting = () => {
             )
             if (isValid) {
               const sigHex = toHex(sigBytes, 16)
-              newResults.push({
+              await pushResult({
                 id: id9,
                 algorithm: `${slhParam.name} (${eName})`,
                 testCase: 'Functional Sign+Verify',
@@ -875,7 +892,7 @@ export const HsmAcvpTesting = () => {
             }
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `slhdsa-func-${slhParam.name}-err-${eName}`,
               algorithm: `${slhParam.name} (${eName})`,
               testCase: 'Functional Sign+Verify',
@@ -910,7 +927,7 @@ export const HsmAcvpTesting = () => {
                 digest.every((b: number, i: number) => b === expectedMd[i])
 
               const mdHex = toHex(digest)
-              newResults.push({
+              await pushResult({
                 id: id10,
                 algorithm: `SHA-256 (${eName})`,
                 testCase: `Digest KAT tc=${test.tcId}`,
@@ -925,7 +942,7 @@ export const HsmAcvpTesting = () => {
               )
             } catch (e: unknown) {
               const errMessage = e instanceof Error ? e.message : String(e)
-              newResults.push({
+              await pushResult({
                 id: `sha256-tc${test.tcId}-err-${eName}`,
                 algorithm: `SHA-256 (${eName})`,
                 testCase: `Digest KAT tc=${test.tcId}`,
@@ -977,7 +994,7 @@ export const HsmAcvpTesting = () => {
               recoveredPt.every((b: number, i: number) => b === expectedPt[i])
 
             const ptHex = toHex(recoveredPt)
-            newResults.push({
+            await pushResult({
               id: id11,
               algorithm: `AES-CBC-256 (${eName})`,
               testCase: 'Decrypt KAT',
@@ -992,7 +1009,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `aescbc-err-${eName}`,
               algorithm: `AES-CBC-256 (${eName})`,
               testCase: 'Decrypt KAT',
@@ -1051,7 +1068,7 @@ export const HsmAcvpTesting = () => {
               recoveredPt.every((b: number, i: number) => b === expectedPt[i])
 
             const ptHex = toHex(recoveredPt)
-            newResults.push({
+            await pushResult({
               id: id12,
               algorithm: `AES-CTR-256 (${eName})`,
               testCase: 'Decrypt KAT',
@@ -1066,7 +1083,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `aesctr-err-${eName}`,
               algorithm: `AES-CTR-256 (${eName})`,
               testCase: 'Decrypt KAT',
@@ -1109,7 +1126,7 @@ export const HsmAcvpTesting = () => {
               CKM_SHA384_HMAC
             )
             const macHex = toHex(macBytes)
-            newResults.push({
+            await pushResult({
               id: id13,
               algorithm: `HMAC-SHA384 (${eName})`,
               testCase: 'Verify KAT',
@@ -1124,7 +1141,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `hmac384-err-${eName}`,
               algorithm: `HMAC-SHA384 (${eName})`,
               testCase: 'Verify KAT',
@@ -1167,7 +1184,7 @@ export const HsmAcvpTesting = () => {
               CKM_SHA512_HMAC
             )
             const macHex = toHex(macBytes)
-            newResults.push({
+            await pushResult({
               id: id14,
               algorithm: `HMAC-SHA512 (${eName})`,
               testCase: 'Verify KAT',
@@ -1182,7 +1199,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `hmac512-err-${eName}`,
               algorithm: `HMAC-SHA512 (${eName})`,
               testCase: 'Verify KAT',
@@ -1230,7 +1247,7 @@ export const HsmAcvpTesting = () => {
               CKM_ECDSA_SHA384
             )
             const ecSigHex = toHex(sigBytes, 16)
-            newResults.push({
+            await pushResult({
               id: id15,
               algorithm: `ECDSA P-384 (${eName})`,
               testCase: 'SigVer KAT',
@@ -1245,7 +1262,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `ecdsa384-err-${eName}`,
               algorithm: `ECDSA P-384 (${eName})`,
               testCase: 'SigVer KAT',
@@ -1284,7 +1301,7 @@ export const HsmAcvpTesting = () => {
             const msgStr = new TextDecoder().decode(msgBytes)
             const isValid = hsm_eddsaVerify(M, hSession, pubHandle, msgStr, sigBytes)
 
-            newResults.push({
+            await pushResult({
               id: id16,
               algorithm: `EdDSA Ed25519 (${eName})`,
               testCase: 'SigVer KAT',
@@ -1297,7 +1314,7 @@ export const HsmAcvpTesting = () => {
             addLog(`[${eName}] [id:${id16}] EdDSA Ed25519 SigVer KAT: ${isValid ? 'PASS' : 'FAIL'}`)
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `eddsa-sigver-err-${eName}`,
               algorithm: `EdDSA Ed25519 (${eName})`,
               testCase: 'SigVer KAT',
@@ -1330,7 +1347,7 @@ export const HsmAcvpTesting = () => {
               derived1.every((b: number, i: number) => b === derived2[i])
 
             const dkHex = toHex(derived1)
-            newResults.push({
+            await pushResult({
               id: id17,
               algorithm: `PBKDF2-HMAC-SHA512 (${eName})`,
               testCase: 'Functional Derivation',
@@ -1343,7 +1360,7 @@ export const HsmAcvpTesting = () => {
             addLog(`[${eName}] [id:${id17}] PBKDF2: ${matches ? 'PASS' : 'FAIL'} | DK: ${dkHex}`)
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `pbkdf2-func-err-${eName}`,
               algorithm: `PBKDF2-HMAC-SHA512 (${eName})`,
               testCase: 'Functional Derivation',
@@ -1414,7 +1431,7 @@ export const HsmAcvpTesting = () => {
               derived1.every((b: number, i: number) => b === derived2[i])
 
             const dkHex = toHex(derived1)
-            newResults.push({
+            await pushResult({
               id: id18,
               algorithm: `HKDF-SHA256 (${eName})`,
               testCase: 'Functional Derivation',
@@ -1427,7 +1444,7 @@ export const HsmAcvpTesting = () => {
             addLog(`[${eName}] [id:${id18}] HKDF: ${matches ? 'PASS' : 'FAIL'} | OKM: ${dkHex}`)
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `hkdf-func-err-${eName}`,
               algorithm: `HKDF-SHA256 (${eName})`,
               testCase: 'Functional Derivation',
@@ -1495,7 +1512,7 @@ export const HsmAcvpTesting = () => {
               wrapped.every((b: number, i: number) => b === expectedWrapped[i])
 
             const wrappedHex = toHex(wrapped)
-            newResults.push({
+            await pushResult({
               id: id19,
               algorithm: `AES-KW-256 (${eName})`,
               testCase: 'Wrap KAT',
@@ -1510,7 +1527,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `aeskw-err-${eName}`,
               algorithm: `AES-KW-256 (${eName})`,
               testCase: 'Wrap KAT',
@@ -1597,7 +1614,7 @@ export const HsmAcvpTesting = () => {
               // eslint-disable-next-line security/detect-object-injection
               origValue.every((b: number, i: number) => b === unwrappedValue[i])
 
-            newResults.push({
+            await pushResult({
               id: id20,
               algorithm: `AES-KWP-256 (${eName})`,
               testCase: 'Wrap+Unwrap Round-Trip',
@@ -1612,7 +1629,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `aeskwp-func-err-${eName}`,
               algorithm: `AES-KWP-256 (${eName})`,
               testCase: 'Wrap+Unwrap Round-Trip',
@@ -1675,7 +1692,7 @@ export const HsmAcvpTesting = () => {
               sig
             )
             const pass = verifyOk && verifyCrossFail && verifyNoCxtFail
-            newResults.push({
+            await pushResult({
               id: id21,
               algorithm: `SLH-DSA-SHA2-128s (${eName})`,
               testCase: 'Context Binding (FIPS 205 §9.2)',
@@ -1690,7 +1707,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `slhdsa-ctx-binding-err-${eName}`,
               algorithm: `SLH-DSA-SHA2-128s (${eName})`,
               testCase: 'Context Binding (FIPS 205 §9.2)',
@@ -1740,7 +1757,7 @@ export const HsmAcvpTesting = () => {
               detOpts
             )
             const pass = equal && verifyOk
-            newResults.push({
+            await pushResult({
               id: id22,
               algorithm: `SLH-DSA-SHA2-128s (${eName})`,
               testCase: 'Deterministic Mode (FIPS 205 §10)',
@@ -1755,7 +1772,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `slhdsa-deterministic-err-${eName}`,
               algorithm: `SLH-DSA-SHA2-128s (${eName})`,
               testCase: 'Deterministic Mode (FIPS 205 §10)',
@@ -1874,7 +1891,7 @@ export const HsmAcvpTesting = () => {
             void peerBHandle
             void peerAHandle
 
-            newResults.push({
+            await pushResult({
               id: id23,
               algorithm: `X25519 ECDH (${eName})`,
               testCase: 'RFC 7748 §6.1 Round-Trip',
@@ -1889,7 +1906,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `x25519-ecdh-err-${eName}`,
               algorithm: `X25519 ECDH (${eName})`,
               testCase: 'RFC 7748 §6.1 Round-Trip',
@@ -1997,7 +2014,7 @@ export const HsmAcvpTesting = () => {
             void peerBHandle
             void peerAHandle
 
-            newResults.push({
+            await pushResult({
               id: id24,
               algorithm: `X448 ECDH (${eName})`,
               testCase: 'RFC 7748 §6.2 Round-Trip',
@@ -2012,7 +2029,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `x448-ecdh-err-${eName}`,
               algorithm: `X448 ECDH (${eName})`,
               testCase: 'RFC 7748 §6.2 Round-Trip',
@@ -2122,7 +2139,7 @@ export const HsmAcvpTesting = () => {
               k512AB.every((b: number, i: number) => b === k512BA[i])
 
             const pass = sha3_256Match && sha3_512Match
-            newResults.push({
+            await pushResult({
               id: id25,
               algorithm: `X9.63-KDF (${eName})`,
               testCase: 'PKCS#11 v3.2 §5.2.12 — SHA3-256 + SHA3-512 bilateral agreement',
@@ -2137,7 +2154,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `x963-sha3-kdf-err-${eName}`,
               algorithm: `X9.63-KDF (${eName})`,
               testCase: 'PKCS#11 v3.2 §5.2.12 — SHA3-256 + SHA3-512 bilateral agreement',
@@ -2191,7 +2208,7 @@ export const HsmAcvpTesting = () => {
               recoveredPtBytes.length === ptBytes.length &&
               recoveredPtBytes.every((b, i) => b === ptBytes[i])
 
-            newResults.push({
+            await pushResult({
               id: id26,
               algorithm: `ChaCha20-Poly1305 (${eName})`,
               testCase: 'AEAD Encrypt/Decrypt Round-Trip',
@@ -2206,7 +2223,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `chacha20-rt-err-${eName}`,
               algorithm: `ChaCha20-Poly1305 (${eName})`,
               testCase: 'AEAD Encrypt/Decrypt Round-Trip',
@@ -2243,7 +2260,7 @@ export const HsmAcvpTesting = () => {
             const derivedHex = Array.from(derivedKeyBytes)
               .map((b) => b.toString(16).padStart(2, '0'))
               .join('')
-            newResults.push({
+            await pushResult({
               id: id27,
               algorithm: `SP 800-108 KBKDF (${eName})`,
               testCase: 'Counter Mode Derivation',
@@ -2256,7 +2273,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `sp800-108-err-${eName}`,
               algorithm: `SP 800-108 KBKDF (${eName})`,
               testCase: 'Counter Mode Derivation',
@@ -2282,7 +2299,7 @@ export const HsmAcvpTesting = () => {
               preHash: 'sha512',
             })
             if (isValid) {
-              newResults.push({
+              await pushResult({
                 id: id28,
                 algorithm: dsaAlgo,
                 testCase: 'PreHash Sign+Verify',
@@ -2296,7 +2313,7 @@ export const HsmAcvpTesting = () => {
             }
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `hash-mldsa-err-${dsaVariant}-${eName}`,
               algorithm: dsaAlgo,
               testCase: 'PreHash Sign+Verify',
@@ -2341,7 +2358,7 @@ export const HsmAcvpTesting = () => {
             const derivedHex = Array.from(derivedKeyBytes)
               .map((b) => b.toString(16).padStart(2, '0'))
               .join('')
-            newResults.push({
+            await pushResult({
               id: id29,
               algorithm: `SP 800-108 KBKDF (${eName})`,
               testCase: 'Feedback Mode Derivation',
@@ -2354,7 +2371,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `sp800-108-feedback-err-${eName}`,
               algorithm: `SP 800-108 KBKDF (${eName})`,
               testCase: 'Feedback Mode Derivation',
@@ -2380,7 +2397,7 @@ export const HsmAcvpTesting = () => {
               hsm_statefulVerifyBytes(M, hSession, CKM_XMSS, xmssPair.pubHandle, msgBytes, sig) ===
               0
             if (valid) {
-              newResults.push({
+              await pushResult({
                 id: id30,
                 algorithm: `XMSS (${eName})`,
                 testCase: 'Stateful Sign+Verify',
@@ -2394,7 +2411,7 @@ export const HsmAcvpTesting = () => {
             }
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `xmss-err-${eName}`,
               algorithm: `XMSS (${eName})`,
               testCase: 'Stateful Sign+Verify',
@@ -2419,7 +2436,7 @@ export const HsmAcvpTesting = () => {
             const valid =
               hsm_statefulVerifyBytes(M, hSession, CKM_LMS, lmsPair.pubHandle, msgBytes, sig) === 0
             if (valid) {
-              newResults.push({
+              await pushResult({
                 id: id31,
                 algorithm: `LMS (${eName})`,
                 testCase: 'Stateful Sign+Verify',
@@ -2433,7 +2450,7 @@ export const HsmAcvpTesting = () => {
             }
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `lms-err-${eName}`,
               algorithm: `LMS (${eName})`,
               testCase: 'Stateful Sign+Verify',
@@ -2473,7 +2490,7 @@ export const HsmAcvpTesting = () => {
             const sig = hsm_ecdsaSign(M, hSession, kp.privHandle, msg, CKM_ECDSA_SHA256)
             const isValid = hsm_ecdsaVerify(M, hSession, kp.pubHandle, msg, sig, CKM_ECDSA_SHA256)
             if (isValid) {
-              newResults.push({
+              await pushResult({
                 id: id32,
                 algorithm: `ECDSA secp256k1 (${eName})`,
                 testCase: 'Functional Sign+Verify',
@@ -2487,7 +2504,7 @@ export const HsmAcvpTesting = () => {
             }
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `ecdsa-k1-err-${eName}`,
               algorithm: `ECDSA secp256k1 (${eName})`,
               testCase: 'Functional Sign+Verify',
@@ -2527,7 +2544,7 @@ export const HsmAcvpTesting = () => {
             const sig = hsm_ecdsaSign(M, hSession, kp.privHandle, msg, CKM_ECDSA_SHA512)
             const isValid = hsm_ecdsaVerify(M, hSession, kp.pubHandle, msg, sig, CKM_ECDSA_SHA512)
             if (isValid) {
-              newResults.push({
+              await pushResult({
                 id: id33,
                 algorithm: `ECDSA P-521 (${eName})`,
                 testCase: 'Functional Sign+Verify',
@@ -2541,7 +2558,7 @@ export const HsmAcvpTesting = () => {
             }
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `ecdsa521-err-${eName}`,
               algorithm: `ECDSA P-521 (${eName})`,
               testCase: 'Functional Sign+Verify',
@@ -2628,7 +2645,7 @@ export const HsmAcvpTesting = () => {
               secretAB.length === secretBA.length &&
               secretAB.every((b: number, i: number) => b === secretBA[i])
 
-            newResults.push({
+            await pushResult({
               id: id34,
               algorithm: `ECDH P-521 (${eName})`,
               testCase: 'Key Agreement Round-Trip',
@@ -2643,7 +2660,7 @@ export const HsmAcvpTesting = () => {
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
-            newResults.push({
+            await pushResult({
               id: `ecdh521-rt-err-${eName}`,
               algorithm: `ECDH P-521 (${eName})`,
               testCase: 'Key Agreement Round-Trip',
@@ -2676,6 +2693,10 @@ export const HsmAcvpTesting = () => {
     }
   }
 
+  const totalChecks = results.length
+  const passed = results.filter((r) => r.status === 'pass').length
+  const failed = results.filter((r) => r.status === 'fail').length
+
   return (
     <div className="flex flex-col h-full space-y-4">
       <div className="flex items-center justify-between shrink-0">
@@ -2702,10 +2723,63 @@ export const HsmAcvpTesting = () => {
           onClick={runTests}
           className="btn-primary flex items-center gap-2"
           disabled={loading || phase !== 'session_open'}
+          aria-busy={loading}
         >
-          <Play size={18} /> Execute ACVP Tests
+          {loading ? (
+            <>
+              <Loader2 size={18} className="animate-spin" /> Running ACVP… ({totalChecks})
+            </>
+          ) : (
+            <>
+              <Play size={18} /> Execute ACVP Tests
+            </>
+          )}
         </Button>
       </div>
+
+      {/* Live run status: shows the suite is actually executing and how far it
+          has progressed (the count climbs as each check streams in). */}
+      {(loading || totalChecks > 0) && (
+        <div className="shrink-0 space-y-1.5" aria-live="polite">
+          <div className="flex items-center justify-between text-xs">
+            <span className="flex items-center gap-1.5 font-medium text-foreground">
+              {loading ? (
+                <>
+                  <Loader2 size={13} className="animate-spin text-primary" aria-hidden="true" />
+                  Running ACVP validation…
+                </>
+              ) : (
+                <>
+                  <CheckCircle size={13} className="text-success" aria-hidden="true" />
+                  Validation complete
+                </>
+              )}
+            </span>
+            <span className="tabular-nums text-muted-foreground">
+              {totalChecks} {totalChecks === 1 ? 'check' : 'checks'} ·{' '}
+              <span className="text-success">{passed} passed</span>
+              {failed > 0 && (
+                <>
+                  {' '}
+                  · <span className="text-destructive">{failed} failed</span>
+                </>
+              )}
+            </span>
+          </div>
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+            <div
+              className={clsx(
+                'h-full rounded-full transition-all',
+                loading
+                  ? 'w-full animate-pulse bg-primary'
+                  : failed > 0
+                    ? 'w-full bg-destructive'
+                    : 'w-full bg-success'
+              )}
+            />
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-0">
         {/* Results Column */}
