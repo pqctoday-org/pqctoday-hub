@@ -43,8 +43,10 @@ describe('ResumeSimBar', () => {
   })
 
   it('shows when a run is in progress even without the resume flag', () => {
-    // Player migrated an estate link — a real run is underway.
+    // Player migrated an estate link — a real run is underway — and opened the
+    // console this session, so the persisted-run fallback is live.
     useSimulationStore.getState().setEdgeDecision('lb-app1-mTLS', 'hybrid')
+    sessionStorage.setItem('sim:opened', '1')
     renderBar()
     expect(screen.getByRole('link', { name: /Resume Simulation/i })).toHaveAttribute(
       'href',
@@ -52,8 +54,17 @@ describe('ResumeSimBar', () => {
     )
   })
 
+  it('stays hidden for a run left in localStorage when the sim was not opened this session', () => {
+    // Saved progress survives in localStorage across sessions; without opening
+    // the console this session there is no live run, so the strip must not show.
+    useSimulationStore.getState().setEdgeDecision('lb-app1-mTLS', 'hybrid')
+    renderBar()
+    expect(screen.queryByText(/Resume Simulation/i)).not.toBeInTheDocument()
+  })
+
   it('stays hidden once dismissed, even with a run in progress', () => {
     useSimulationStore.getState().setEdgeDecision('lb-app1-mTLS', 'hybrid')
+    sessionStorage.setItem('sim:opened', '1')
     renderBar()
     fireEvent.click(screen.getByRole('button', { name: /Dismiss/i }))
     expect(screen.queryByText(/Resume Simulation/i)).not.toBeInTheDocument()
@@ -62,6 +73,7 @@ describe('ResumeSimBar', () => {
   it('stays hidden after the player quits via the HUB button (even mid-run)', () => {
     // Active run, but the player chose to leave the sim via "← HUB".
     useSimulationStore.getState().setEdgeDecision('lb-app1-mTLS', 'hybrid')
+    sessionStorage.setItem('sim:opened', '1')
     sessionStorage.setItem('sim:exited', '1')
     renderBar()
     expect(screen.queryByText(/Resume Simulation/i)).not.toBeInTheDocument()

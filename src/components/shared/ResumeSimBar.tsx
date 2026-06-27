@@ -11,8 +11,11 @@
  *      (`markSimResume`), the PWA-safe return path (no browser Back in
  *      installed/standalone apps).
  *   2. An ACTIVE RUN detected from the persisted sim store — any progress the
- *      player has made. This covers every outbound navigation, including ones
- *      that never set the flag, which is why the header used to disappear.
+ *      player has made — BUT only once they've opened the sim console THIS
+ *      session (`hasOpenedSimThisSession`). This covers outbound navigations that
+ *      never set the flag (which is why the header used to disappear), while the
+ *      session gate stops a run left in localStorage from a past visit from
+ *      resurrecting the strip on a fresh session with no sim actually running.
  *
  * The strip hides only on an explicit dismiss (per session) and never renders on
  * the full-screen `/simulation` console itself (that route lives outside this
@@ -22,7 +25,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { useSimulationStore } from '@/store/useSimulationStore'
-import { hasSimExited } from '@/components/Simulation/simChrome'
+import { hasSimExited, hasOpenedSimThisSession } from '@/components/Simulation/simChrome'
 import pqctodayLogo from '@/assets/pqctoday-logo.png'
 
 const FLAG = 'sim:resume'
@@ -46,7 +49,9 @@ function useHasActiveRun(): boolean {
 }
 
 export function ResumeSimBar() {
-  const hasActiveRun = useHasActiveRun()
+  // A persisted run only counts as "in progress" if the console was opened this
+  // session — otherwise stale localStorage progress shows the strip with no run.
+  const hasActiveRun = useHasActiveRun() && hasOpenedSimThisSession()
   const [dismissed, setDismissed] = useState(() => {
     try {
       return sessionStorage.getItem(DISMISSED) === '1'
