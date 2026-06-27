@@ -179,23 +179,54 @@ export const ALGORITHMS: AlgoChoice[] = [
   { value: 'ECDSA', label: 'ECDSA (classical)', kind: 'signature', pqc: false },
 ]
 
+/** Visual tone for a policy chip / catalog card. Drives colour + grouping. */
+export type PolicyTone =
+  | 'permissive'
+  | 'classical'
+  | 'pqc'
+  | 'compliance'
+  | 'regional'
+  | 'hybrid'
+  | 'migration'
+  | 'mechanism'
+
+/** Catalog grouping header (the dedicated Policy view groups by this). */
+export type PolicyCategory =
+  | 'Baseline'
+  | 'Post-quantum'
+  | 'Migration & transition'
+  | 'Compliance regimes'
+  | 'Mechanism controls'
+
 export interface PolicyPreset {
   file: string // under /kmip-policies/
   name: string
   label: string
   blurb: string
-  tone: 'pqc' | 'classical' | 'compliance' | 'permissive'
+  tone: PolicyTone
+  /** Grouping header in the Policy catalog. */
+  category: PolicyCategory
+  /** One-liner: the crypto-policy dimension this example illustrates. */
+  illustrates: string
+  /** Shown in the sticky Plane-1 quick-switch strip (a curated subset; the full
+   * catalog of every preset lives in the dedicated Policy view). */
+  featured?: boolean
 }
 
-/** Plane-1 policy presets the panel can activate. `classical` → `pqc` is the
- * canonical "flip the dropdown, watch the same ops migrate" agility demo. */
+/** Plane-1 policy presets. The full breadth lives in the dedicated Policy view;
+ * `featured` marks the curated few in the sticky quick-switch strip. The
+ * `classical` → `pqc` flip is the canonical "same ops migrate" agility demo. */
 export const POLICY_PRESETS: PolicyPreset[] = [
+  // ── Baseline ──────────────────────────────────────────────────────────────
   {
     file: 'training-permissive.yaml',
     name: 'training-permissive',
     label: 'Permissive (default)',
     blurb: 'Allow everything — the sandbox starting point.',
     tone: 'permissive',
+    category: 'Baseline',
+    illustrates: 'No rules — every algorithm and operation is allowed.',
+    featured: true,
   },
   {
     file: 'classical.yaml',
@@ -203,7 +234,11 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     label: 'Classical (the "before")',
     blurb: 'RSA / ECDSA / ECDH defaults — a pre-migration baseline.',
     tone: 'classical',
+    category: 'Baseline',
+    illustrates: 'Algorithm defaults — resolves unspecified keys to classical algorithms.',
+    featured: true,
   },
+  // ── Post-quantum ──────────────────────────────────────────────────────────
   {
     file: 'pqc.yaml',
     name: 'pqc',
@@ -211,7 +246,42 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     blurb:
       'ML-KEM-1024 + ML-DSA-87 defaults; classical asymmetric Create denied; legacy keys auto-rekey at first use.',
     tone: 'pqc',
+    category: 'Post-quantum',
+    illustrates: 'PQC defaults + denials + rekey — the canonical agility flip.',
+    featured: true,
   },
+  {
+    file: 'auto-migrate-on-use.yaml',
+    name: 'auto-migrate-on-use',
+    label: 'Auto-migrate on use',
+    blurb:
+      'Lazy, transparent migration: each legacy key rekeys to its PQC equivalent the first time it is used.',
+    tone: 'migration',
+    category: 'Post-quantum',
+    illustrates: 'Algorithm substitution — rekey-on-use, no flag day, no code change.',
+  },
+  // ── Migration & transition ────────────────────────────────────────────────
+  {
+    file: 'pqc-migration-2030.yaml',
+    name: 'pqc-migration-2030',
+    label: 'PQC migration · 2030 cutoff',
+    blurb:
+      'Enterprise roadmap with dated cutoffs — classical Sign/Encrypt banned after 2030-01-01; verify/decrypt stays.',
+    tone: 'migration',
+    category: 'Migration & transition',
+    illustrates: 'Temporal cutoffs + min-key-length + lifecycle gates on a roadmap.',
+  },
+  {
+    file: 'hybrid-migration-window.yaml',
+    name: 'hybrid-migration-window',
+    label: 'Hybrid window (2026–2029)',
+    blurb:
+      'Every signature must be a composite classical + PQC (LAMPS draft-19) during the migration window.',
+    tone: 'hybrid',
+    category: 'Migration & transition',
+    illustrates: 'Hybrid dual-sign requirement inside a time window.',
+  },
+  // ── Compliance regimes ────────────────────────────────────────────────────
   {
     file: 'cnsa-2.0.yaml',
     name: 'cnsa-2.0',
@@ -219,14 +289,77 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     blurb:
       'Only the CNSA 2.0 Level-5 suite (ML-DSA-87, ML-KEM-1024, AES-256, SHA-384/512); everything else denied.',
     tone: 'compliance',
+    category: 'Compliance regimes',
+    illustrates: 'Strict allowlist to a single national-security suite.',
+    featured: true,
   },
   {
     file: 'fips-only.yaml',
     name: 'fips-only',
     label: 'FIPS-only',
-    blurb: 'Restrict to FIPS-validated algorithms.',
+    blurb: 'Restrict to FIPS 203/204/205 + FIPS-validated classical; deny Round-4 / alternate PQC.',
     tone: 'compliance',
+    category: 'Compliance regimes',
+    illustrates: 'FIPS 140-3 algorithm boundary — allowlist + min-key-length.',
   },
+  {
+    file: 'bsi-tr-02102.yaml',
+    name: 'bsi-tr-02102',
+    label: 'BSI TR-02102-1 (Germany)',
+    blurb:
+      'Hybrid key establishment + the conservative KEMs (FrodoKEM, Classic McEliece) that FIPS/CNSA deny.',
+    tone: 'regional',
+    category: 'Compliance regimes',
+    illustrates: 'A different regulator, a different algorithm set — regional contrast.',
+  },
+  // ── Mechanism controls ────────────────────────────────────────────────────
+  {
+    file: 'aead-only.yaml',
+    name: 'aead-only',
+    label: 'AEAD-only',
+    blurb: 'AES must use an authenticated mode (GCM / CCM); RSA must use OAEP padding.',
+    tone: 'mechanism',
+    category: 'Mechanism controls',
+    illustrates: 'Mechanism-parameter constraint — gates *how* a cipher is used.',
+  },
+  {
+    file: 'deterministic-signing.yaml',
+    name: 'deterministic-signing',
+    label: 'Deterministic signing',
+    blurb: 'Force the deterministic ML-DSA / SLH-DSA variant on every Sign, overriding the client.',
+    tone: 'mechanism',
+    category: 'Mechanism controls',
+    illustrates: 'Mechanism-parameter default — policy *forces* a parameter.',
+  },
+  {
+    file: 'fips-hashing.yaml',
+    name: 'fips-hashing',
+    label: 'FIPS hashing',
+    blurb:
+      'Signature hashing restricted to the FIPS SHA-2 / SHA-3 families; SHA-1 and legacy denied.',
+    tone: 'mechanism',
+    category: 'Mechanism controls',
+    illustrates: 'Hash-algorithm allowlist — hashing agility, independent of the key.',
+  },
+  {
+    file: 'pkcs11-mechanism-lockdown.yaml',
+    name: 'pkcs11-mechanism-lockdown',
+    label: 'PKCS#11 mechanism lockdown',
+    blurb:
+      'Gate on the canonical PKCS#11 CKM_* mechanism — bypass-proof; MAC limited to HMAC-SHA-2.',
+    tone: 'mechanism',
+    category: 'Mechanism controls',
+    illustrates: 'Mechanism allow/deny-list at the PKCS#11 layer.',
+  },
+]
+
+/** The catalog grouping order for the dedicated Policy view. */
+export const POLICY_CATEGORIES: PolicyCategory[] = [
+  'Baseline',
+  'Post-quantum',
+  'Migration & transition',
+  'Compliance regimes',
+  'Mechanism controls',
 ]
 
 /** Plane label → short human name + tailwind tone, for the audit trail. */
