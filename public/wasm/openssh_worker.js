@@ -31,7 +31,7 @@ function loadFactory() {
   return factory
 }
 
-async function run() {
+async function run(cfg) {
   const create = loadFactory()
   const Module = await create({
     noInitialRun: true,
@@ -45,6 +45,17 @@ async function run() {
     printErr: (text) => self.postMessage({ type: 'LOG', level: 'error', text }),
   })
 
+  // Select the KEX + host-key profile before running (defaults to the PQC combo
+  // if not provided). set_handshake_config is a no-op for unknown values.
+  if (cfg && (cfg.kex || cfg.hostalg)) {
+    Module.ccall(
+      'set_handshake_config',
+      null,
+      ['string', 'string'],
+      [cfg.kex || '', cfg.hostalg || '']
+    )
+  }
+
   // __wrap_main is exported directly (native main() is GC'd); ASYNCIFY => Promise.
   let rv = Module.ccall('__wrap_main', 'number', [], [], { async: true })
   if (rv && typeof rv.then === 'function') rv = await rv
@@ -54,7 +65,7 @@ async function run() {
 self.onmessage = (e) => {
   const msg = e.data || {}
   if (msg.type === 'RUN') {
-    run().catch((err) => {
+    run({ kex: msg.kex, hostalg: msg.hostalg }).catch((err) => {
       self.postMessage({ type: 'ERROR', message: err && err.message ? err.message : String(err) })
     })
   }

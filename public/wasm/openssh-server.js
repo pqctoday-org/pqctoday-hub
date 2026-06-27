@@ -6921,6 +6921,7 @@ function wasm_emit_event(type,payload) { if (typeof Module.onHandshakeEvent === 
 var _strerror = makeInvalidEarlyAccess('_strerror');
 var _free = makeInvalidEarlyAccess('_free');
 var _malloc = makeInvalidEarlyAccess('_malloc');
+var _set_handshake_config = Module['_set_handshake_config'] = makeInvalidEarlyAccess('_set_handshake_config');
 var ___wrap_main = Module['___wrap_main'] = makeInvalidEarlyAccess('___wrap_main');
 var _C_GetFunctionList = Module['_C_GetFunctionList'] = makeInvalidEarlyAccess('_C_GetFunctionList');
 var _fflush = makeInvalidEarlyAccess('_fflush');
@@ -6977,6 +6978,7 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['strerror'] != 'undefined', 'missing Wasm export: strerror');
   assert(typeof wasmExports['free'] != 'undefined', 'missing Wasm export: free');
   assert(typeof wasmExports['malloc'] != 'undefined', 'missing Wasm export: malloc');
+  assert(typeof wasmExports['set_handshake_config'] != 'undefined', 'missing Wasm export: set_handshake_config');
   assert(typeof wasmExports['__wrap_main'] != 'undefined', 'missing Wasm export: __wrap_main');
   assert(typeof wasmExports['C_GetFunctionList'] != 'undefined', 'missing Wasm export: C_GetFunctionList');
   assert(typeof wasmExports['fflush'] != 'undefined', 'missing Wasm export: fflush');
@@ -7030,6 +7032,7 @@ function assignWasmExports(wasmExports) {
   _strerror = createExportWrapper('strerror', 1);
   _free = createExportWrapper('free', 1);
   _malloc = createExportWrapper('malloc', 1);
+  _set_handshake_config = Module['_set_handshake_config'] = createExportWrapper('set_handshake_config', 2);
   ___wrap_main = Module['___wrap_main'] = createExportWrapper('__wrap_main', 2);
   _C_GetFunctionList = Module['_C_GetFunctionList'] = createExportWrapper('C_GetFunctionList', 1);
   _fflush = createExportWrapper('fflush', 1);

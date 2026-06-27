@@ -249,7 +249,7 @@ export function SshComparisonPanel({ classical, pqc }: Props) {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <LegCard
-          title="Classical (ed25519 + curve25519)"
+          title="Classical (ecdsa-nistp256 + curve25519)"
           result={classical}
           isPqc={false}
           maxPubBytes={maxPubBytes}
