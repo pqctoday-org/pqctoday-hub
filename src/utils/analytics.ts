@@ -247,7 +247,13 @@ export const logReportShareLinkOpened = () => {
 }
 
 export const logReportCta = (
-  target: 'start-assessment' | 'complete-assessment' | 'view-example'
+  target:
+    | 'start-assessment'
+    | 'complete-assessment'
+    | 'view-example'
+    | 'next-simulation'
+    | 'next-migrate'
+    | 'next-business'
 ) => {
   logEvent('Report', 'CTA Click', personaLabel(target))
 }
