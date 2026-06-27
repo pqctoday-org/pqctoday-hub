@@ -24,6 +24,12 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [Unreleased]
+
+### Changed
+
+- **The SSH playground now runs a real OpenSSH post-quantum handshake** [view:/playground/pqc-ssh-sim] [persona:developer] [persona:architect]: The PQC SSH simulator drives the genuine OpenSSH 10.x binary compiled to WebAssembly — a real ML-KEM-768 + X25519 key exchange with ML-DSA-65 host and user authentication — instead of a model. You can watch the actual PKCS#11 calls (including the `C_Sign` operations that keep both private keys inside the in-browser software HSM), see the real signature sizes on the wire-packet ladder, and compare a genuine classical handshake (ECDSA + curve25519) side-by-side with the post-quantum one. Algorithm choices the real binary can't run yet stay clearly labelled "modeled," and a Config tab shows the matching `sshd_config`/`ssh_config`.
+
 ## [4.3.0] - 2026-06-26
 
 A consolidation release that brings several in-flight improvements together: a faster way into the standards Library, a new policy-and-batch workbench in the crypto playground, clearer "binding versus guidance" labelling on migration deadlines, a more consistent learning-module layout, and refreshed, better-sourced timeline and library data.

@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest'
 import {
   mapRealEventsToResult,
   mapPkcs11Event,
+  buildSshConfigArtifacts,
   isRealCombo,
   REAL_CLASSICAL,
   REAL_PQC,
@@ -79,6 +80,16 @@ describe('openssh-real mapping', () => {
     expect(e!.rvName).toBe('CKR_OK')
     expect(e!.ok).toBe(true)
     expect(e!.args).toContain('sigLen=3309')
+  })
+
+  it('builds sshd_config/ssh_config/authorized_keys reflecting the run', () => {
+    const r = mapRealEventsToResult(pqcEvents, 0, 200)
+    const a = buildSshConfigArtifacts(r)
+    expect(a.sshdConfig).toContain('KexAlgorithms mlkem768x25519-sha256')
+    expect(a.sshdConfig).toContain('HostKeyAlgorithms ssh-mldsa-65')
+    expect(a.sshdConfig).toContain('PKCS11Provider')
+    expect(a.sshConfig).toContain('KexAlgorithms mlkem768x25519-sha256')
+    expect(a.authorizedKeys).toContain('ssh-mldsa-65')
   })
 
   it('knows the real combos', () => {
