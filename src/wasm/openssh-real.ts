@@ -201,6 +201,63 @@ const KEX_SHARES: Record<string, [number, number]> = {
   'ecdh-sha2-nistp521': [133, 133],
 }
 
+// SSH message numbers (RFC 4253 §12, RFC 4252 §6).
+const SSH_MSG = {
+  KEXINIT: 20,
+  NEWKEYS: 21,
+  KEX_ECDH_INIT: 30,
+  KEX_ECDH_REPLY: 31,
+  USERAUTH_REQUEST: 50,
+  USERAUTH_SUCCESS: 52,
+}
+
+/**
+ * Reconstruct the SSH packet ladder for a real run from the milestone sizes the
+ * binary reports (KEX shares, host/user signature lengths). The protocol message
+ * sequence is fixed by RFC 4253/4252; the share/signature sizes are the genuine
+ * values from the handshake, framing bytes are nominal. This drives the existing
+ * wire-packet diagram/compare views for real runs (which otherwise have no
+ * per-packet capture — the loopback only emits milestones, not byte streams).
+ */
+function buildWirePackets(
+  r: import('./openssh').SshHandshakeResult
+): import('./openssh').SshWirePacket[] {
+  const pkt = (
+    direction: 'C→S' | 'S→C',
+    msgType: string,
+    msgNum: number,
+    sizeBytes: number
+  ): import('./openssh').SshWirePacket => ({
+    direction,
+    msgType,
+    msgNum,
+    sizeBytes,
+    hexPreview: msgNum.toString(16).padStart(2, '0'),
+  })
+  return [
+    pkt('C→S', 'SSH_MSG_KEXINIT', SSH_MSG.KEXINIT, 1100),
+    pkt('S→C', 'SSH_MSG_KEXINIT', SSH_MSG.KEXINIT, 1100),
+    pkt('C→S', 'SSH_MSG_KEX_ECDH_INIT', SSH_MSG.KEX_ECDH_INIT, r.kex_share_bytes + 8),
+    // Reply carries the host public key + server KEX share + exchange-hash signature.
+    pkt(
+      'S→C',
+      'SSH_MSG_KEX_ECDH_REPLY',
+      SSH_MSG.KEX_ECDH_REPLY,
+      r.host_pubkey_bytes + r.kex_reply_share_bytes + r.host_sig_bytes + 24
+    ),
+    pkt('C→S', 'SSH_MSG_NEWKEYS', SSH_MSG.NEWKEYS, 16),
+    pkt('S→C', 'SSH_MSG_NEWKEYS', SSH_MSG.NEWKEYS, 16),
+    // Userauth request carries the user public key blob + signature.
+    pkt(
+      'C→S',
+      'SSH_MSG_USERAUTH_REQUEST',
+      SSH_MSG.USERAUTH_REQUEST,
+      r.client_pubkey_bytes + r.client_sig_bytes + 48
+    ),
+    pkt('S→C', 'SSH_MSG_USERAUTH_SUCCESS', SSH_MSG.USERAUTH_SUCCESS, 8),
+  ]
+}
+
 /**
  * Map the real handshake event stream onto the existing `SshHandshakeResult`
  * shape so the comparison/telemetry UI can render a genuine run. The KEX and
@@ -228,7 +285,7 @@ export function mapRealEventsToResult(
   // Quantum-safe when the KEX uses ML-KEM and the host key uses ML-DSA.
   const quantum_safe = kex.includes('mlkem') && hostalg.includes('mldsa')
 
-  return {
+  const result: import('./openssh').SshHandshakeResult = {
     connection_ok,
     quantum_safe,
     host_key_algorithm: hostalg,
@@ -252,6 +309,8 @@ export function mapRealEventsToResult(
     wire_packets: [],
     error: connection_ok ? undefined : 'real handshake did not reach USERAUTH_SUCCESS',
   }
+  result.wire_packets = connection_ok ? buildWirePackets(result) : []
+  return result
 }
 
 // Real classical baseline the binary can run (curve25519 KEX + ECDSA P-256 host
