@@ -12,6 +12,7 @@ import { BUSINESS_TOOLS, WORKSHOP_TOOLS } from './resourceContract'
 
 const RESUME_FLAG = 'sim:resume'
 const EXITED_FLAG = 'sim:exited'
+const OPENED_FLAG = 'sim:opened'
 
 /** Flag an outbound navigation as a RESOURCE PEEK so the hub shows the
  *  "Resume Simulation" header. A peek is the opposite of quitting, so it also
@@ -63,13 +64,29 @@ export const isSimResumePending = () => {
 
 /** Reset both excursion markers — called on the sim console's mount, so re-opening
  *  the simulation from the top nav starts clean (a later peek re-arms the header;
- *  a later HUB quit suppresses it again). */
+ *  a later HUB quit suppresses it again). Also stamps a SESSION marker recording
+ *  that the player opened the console THIS session: the hub header reads it to
+ *  gate the persisted-run fallback, so saved progress from a past visit can't
+ *  resurrect the "Simulation in progress" strip on a fresh session (it persists
+ *  in localStorage forever, unlike this sessionStorage marker). */
 export const clearSimExcursion = () => {
   try {
     sessionStorage.removeItem(RESUME_FLAG)
     sessionStorage.removeItem(EXITED_FLAG)
+    sessionStorage.setItem(OPENED_FLAG, '1')
   } catch {
     /* ignore */
+  }
+}
+
+/** True when the player opened the sim console at least once THIS browser session.
+ *  Gates the persisted-run fallback in the hub's resume header so a stale run left
+ *  in localStorage doesn't show the strip before the sim is re-entered. */
+export const hasOpenedSimThisSession = () => {
+  try {
+    return sessionStorage.getItem(OPENED_FLAG) === '1'
+  } catch {
+    return false
   }
 }
 
