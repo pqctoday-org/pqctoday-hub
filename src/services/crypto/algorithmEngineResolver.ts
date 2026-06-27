@@ -360,7 +360,7 @@ async function benchmarkSoftHsm(algoName: string): Promise<BenchmarkResult> {
     // H20 keygen (~30s) is impractical in-browser; H5/W1 is the confirmed-working playground config
     let lmsResult: ReturnType<typeof softhsm.hsm_generateLMSKeyPair>
     keyGenMs = timeMs(() => {
-      lmsResult = softhsm.hsm_generateLMSKeyPair(mod, hSession, 0x05, 0x01, true)
+      lmsResult = softhsm.hsm_generateLMSKeyPair(mod, hSession, true)
     })
     publicKeyBytes = softhsm.hsm_extractKeyValue(mod, hSession, lmsResult!.pubHandle).length
     privateKeyBytes = softhsm.hsm_extractKeyValue(mod, hSession, lmsResult!.privHandle).length
