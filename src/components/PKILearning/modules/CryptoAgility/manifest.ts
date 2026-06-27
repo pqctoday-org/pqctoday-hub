@@ -8,6 +8,8 @@ const manifest: ModuleManifest = {
   description:
     'Design crypto-agile architectures: abstraction layers, CBOM scanning, and the 7-phase migration framework.',
   duration: '40 min',
+  whyThisMatters:
+    'The one certainty is that algorithms will change again; agility is what lets you swap them without re-architecting every system.',
   difficulty: 'intermediate',
   frameworkPhase: 'foundations',
   track: 'Strategy',

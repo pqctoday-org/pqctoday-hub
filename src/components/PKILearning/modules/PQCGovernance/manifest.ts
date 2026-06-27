@@ -8,6 +8,8 @@ const manifest: ModuleManifest = {
   description:
     'Create RACI matrices, draft PQC policies, and design KPI dashboards for board reporting.',
   duration: '30 min',
+  whyThisMatters:
+    "Without a policy naming owners, deadlines, and exceptions, migration stalls as everyone's job and no one's.",
   difficulty: 'beginner',
   frameworkPhase: 'p0',
   track: 'Executive',

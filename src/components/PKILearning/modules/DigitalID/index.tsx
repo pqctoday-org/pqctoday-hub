@@ -2,7 +2,6 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { Trash2, Shield, FileText, PenTool, Building2, CheckSquare } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
-import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { WalletComponent } from './components/Wallet/WalletComponent'
 import { PIDIssuerComponent } from './components/PIDIssuer/PIDIssuerComponent'
@@ -10,16 +9,12 @@ import { AttestationIssuerComponent } from './components/AttestationIssuer/Attes
 import { QESProviderComponent } from './components/QESProvider/QESProviderComponent'
 import { RelyingPartyComponent } from './components/RelyingParty/RelyingPartyComponent'
 import { OverviewComponent } from './components/Overview/OverviewComponent'
-import { Tabs, TabsContent } from '@/components/ui/tabs'
-import { ModuleTabBar } from '@/components/PKILearning/common/ModuleTabBar'
-import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
-import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
-import { ModuleVisualTab } from '../../common/ModuleVisualTab'
+import { ModuleShell } from '@/components/PKILearning/common/ModuleShell'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 import type { WalletInstance, CryptoKey, VerifiableCredential } from './types'
-import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { Button } from '@/components/ui/button'
 import { DigitalIDExercises } from './components/DigitalIDExercises'
+import manifest from './manifest'
 
 const MODULE_ID = 'digital-id'
 
@@ -73,61 +68,15 @@ const WORKSHOP_STEPS = [
 
 export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
   const resetModuleProgress = useModuleStore((state) => state.resetModuleProgress)
-  const updateModuleProgress = useModuleStore((state) => state.updateModuleProgress)
   const markStepComplete = useModuleStore((state) => state.markStepComplete)
-  const modules = useModuleStore((state) => state.modules)
 
-  const deepLink = getModuleDeepLink({ maxStep: WORKSHOP_STEPS.length - 1 })
-  const [activeTab, setActiveTab] = useState(deepLink.initialTab)
-  const [currentStep, setCurrentStep] = useState(deepLink.initialStep)
-  useSyncDeepLink(activeTab, currentStep)
+  // The workshop is a bespoke shared-state stepper (the EUDI actors pass one
+  // `wallet` between them), so it rides the ModuleShell `workshop` slot verbatim
+  // rather than the generic stepper. ModuleShell owns the tabs, header, deep-link
+  // and time tracking; this component owns only the workshop's own step state.
+  const [currentStep, setCurrentStep] = useState(0)
   const [wallet, setWallet] = useState<WalletInstance>(INITIAL_WALLET)
   const prevStepRef = useRef<number | null>(null)
-  const startTimeRef = useRef(0)
-
-  // Mark module in-progress on mount and track time spent
-  useEffect(() => {
-    startTimeRef.current = Date.now()
-    updateModuleProgress(MODULE_ID, {
-      status: 'in-progress',
-      lastVisited: Date.now(),
-    })
-
-    return () => {
-      const elapsed = (Date.now() - startTimeRef.current) / 60000
-      if (elapsed > 0) {
-        const current = useModuleStore.getState().modules[MODULE_ID]
-        updateModuleProgress(MODULE_ID, {
-          timeSpent: (current?.timeSpent || 0) + elapsed,
-        })
-      }
-    }
-  }, [updateModuleProgress])
-
-  // Track tab visits as completed steps
-  const handleTabChange = useCallback(
-    (tab: string) => {
-      markStepComplete(MODULE_ID, activeTab)
-      setActiveTab(tab)
-    },
-    [activeTab, markStepComplete]
-  )
-
-  // Navigate from Learn tab to Workshop
-  const navigateToWorkshop = useCallback(() => {
-    markStepComplete(MODULE_ID, activeTab)
-    setActiveTab('workshop')
-  }, [activeTab, markStepComplete])
-
-  // Navigate to Workshop and jump to a specific step (used by exercises)
-  const navigateToStep = useCallback(
-    (stepIndex: number) => {
-      setCurrentStep(stepIndex)
-      markStepComplete(MODULE_ID, activeTab)
-      setActiveTab('workshop')
-    },
-    [activeTab, markStepComplete]
-  )
 
   // Mark the previous workshop step complete whenever the user navigates
   useEffect(() => {
@@ -327,82 +276,25 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
     </div>
   )
 
+  // Playground embed (workshopRegistry mounts this with onBack): the workshop
+  // stands alone, no tabs/header.
   if (onBack) {
     return workshopContent
   }
 
-  const workshopSteps = WORKSHOP_STEPS
-  const completedSteps = modules[MODULE_ID]?.completedSteps ?? []
-  const workshopDone = workshopSteps.filter((s) => completedSteps.includes(s.id)).length
-  const workshopDot = workshopDone > 0 && workshopDone < workshopSteps.length
-
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          {onBack && (
-            <Button
-              variant="ghost"
-              onClick={onBack}
-              className="text-muted-foreground hover:text-foreground mb-4 flex items-center gap-2 text-sm transition-colors"
-            >
-              &larr; Back to Playground
-            </Button>
-          )}
-          <h1 className="text-3xl font-bold text-gradient">EUDI Digital Identity Wallet</h1>
-
-          <p className="text-muted-foreground mt-2">
-            Explore the European Digital Identity ecosystem: Issuance, Presentation, and Signing.
-          </p>
-        </div>
-      </div>
-
-      <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <ModuleTabBar
-          tabs={[
-            { value: 'learn', label: 'Learn' },
-            { value: 'visual', label: 'Visual' },
-            { value: 'workshop', label: 'Workshop', hasDot: workshopDot },
-            { value: 'exercises', label: 'Exercises' },
-            { value: 'references', label: 'References' },
-            { value: 'tools', label: 'Tools & Products' },
-          ]}
-          value={activeTab}
-          onValueChange={handleTabChange}
+    <ModuleShell
+      manifest={manifest}
+      title="EUDI Digital Identity Wallet"
+      description="Explore the European Digital Identity ecosystem: Issuance, Presentation, and Signing."
+      learn={(api) => <OverviewComponent onNavigateTo={() => api.goToWorkshop()} />}
+      workshop={workshopContent}
+      exercises={(api) => (
+        <DigitalIDExercises
+          onNavigateToWorkshop={() => api.goToWorkshop()}
+          onNavigateToStep={(stepIndex) => setCurrentStep(stepIndex)}
         />
-
-        {/* Learn Tab */}
-        <TabsContent value="learn">
-          <GlossaryAutoWrap>
-            {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
-            <OverviewComponent onNavigateTo={(_stepId) => navigateToWorkshop()} />
-          </GlossaryAutoWrap>
-        </TabsContent>
-
-        {/* Workshop Tab */}
-
-        <TabsContent value="visual">
-          <ModuleVisualTab moduleId={MODULE_ID} />
-        </TabsContent>
-
-        <TabsContent value="workshop">{workshopContent}</TabsContent>
-
-        {/* Exercises Tab */}
-        <TabsContent value="exercises">
-          <DigitalIDExercises
-            onNavigateToWorkshop={navigateToWorkshop}
-            onNavigateToStep={navigateToStep}
-          />
-        </TabsContent>
-
-        {/* References Tab */}
-        <TabsContent value="references">
-          <ModuleReferencesTab moduleId={MODULE_ID} />
-        </TabsContent>
-        <TabsContent value="tools">
-          <ModuleMigrateTab moduleId={MODULE_ID} />
-        </TabsContent>
-      </Tabs>
-    </div>
+      )}
+    />
   )
 }

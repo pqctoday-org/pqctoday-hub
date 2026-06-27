@@ -5,7 +5,7 @@ import { CheckCircle, Lightbulb, X, ArrowLeft } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useModuleStore } from '../../store/useModuleStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
-import { LEARN_SECTIONS, WORKSHOP_STEPS } from './moduleData'
+import { LEARN_SECTIONS, WORKSHOP_STEPS, MODULE_TRACKS, MODULE_TO_TRACK } from './moduleData'
 import { Button } from '@/components/ui/button'
 
 interface ModuleProgressHeaderProps {
@@ -44,6 +44,15 @@ export const ModuleProgressHeader = ({ moduleId }: ModuleProgressHeaderProps) =>
     workshopSteps.length > 0 ? Math.round((workshopDone / workshopSteps.length) * 100) : 0
 
   const hasWorkshop = workshopSteps.length > 0
+
+  // P2.2 — track momentum: how many modules in this module's track are done.
+  // Echoes the sim's maturity climb so progress reads as movement, not a checkbox.
+  const trackName = MODULE_TO_TRACK[moduleId]
+  const trackEntry = MODULE_TRACKS.find((t) => t.track === trackName)
+  const trackTotal = trackEntry?.modules.length ?? 0
+  const trackDone = trackEntry
+    ? trackEntry.modules.filter((m) => modules[m.id]?.status === 'completed').length
+    : 0
 
   // Completion banner: fires once when pct transitions to 100
   const [banner, setBanner] = useState<BannerType>(null)
@@ -125,6 +134,17 @@ export const ModuleProgressHeader = ({ moduleId }: ModuleProgressHeaderProps) =>
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/10 text-warning text-[10px] font-semibold">
             <Lightbulb size={10} className="shrink-0" />
             Curious Mode
+          </span>
+        </div>
+      ) : null}
+
+      {/* Track momentum (P2.2) — completed modules in this track */}
+      {trackEntry && trackTotal > 0 ? (
+        <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+          <span className="uppercase font-bold tracking-wider">{trackName}</span>
+          <span className="font-mono">
+            <span className="text-foreground font-semibold">{trackDone}</span> / {trackTotal}{' '}
+            modules
           </span>
         </div>
       ) : null}

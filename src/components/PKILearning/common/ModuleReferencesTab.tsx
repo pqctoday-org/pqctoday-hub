@@ -2,6 +2,7 @@
 import { ExternalLink, BookOpen } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { getLibraryItemsForModule } from '@/data/libraryData'
+import { EmptyState } from '@/components/ui/empty-state'
 
 interface ModuleReferencesTabProps {
   moduleId: string
@@ -12,10 +13,11 @@ export function ModuleReferencesTab({ moduleId }: ModuleReferencesTabProps) {
 
   if (items.length === 0) {
     return (
-      <div className="glass-panel p-8 text-center">
-        <BookOpen size={32} className="mx-auto mb-3 text-muted-foreground" />
-        <p className="text-muted-foreground text-sm">No references found for this module.</p>
-      </div>
+      <EmptyState
+        icon={<BookOpen size={32} />}
+        title="No references yet"
+        description="This module doesn't have linked references — the Learn tab is the place to dive in."
+      />
     )
   }
 
