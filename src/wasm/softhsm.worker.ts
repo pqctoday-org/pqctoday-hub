@@ -72,13 +72,7 @@ interface SoftHSMW {
     pSignature: number,
     pulSignatureLen: number
   ): number
-  _C_MessageSignFinal(
-    hSession: number,
-    pParameter: number,
-    ulParameterLen: number,
-    pSignature: number,
-    pulSignatureLen: number
-  ): number
+  _C_MessageSignFinal(hSession: number): number
   _C_MessageVerifyInit(hSession: number, pMechanism: number, hKey: number): number
   _C_VerifyMessage(
     hSession: number,
@@ -395,7 +389,7 @@ function slhdsaSign(privHandle: number, message: string): Uint8Array {
     )
     return M!.HEAPU8.slice(sigP, sigP + readUlong(sigLenP))
   } finally {
-    M!._C_MessageSignFinal(hSession, 0, 0, 0, 0) // close context
+    M!._C_MessageSignFinal(hSession) // close context
     M!._free(mech)
     M!._free(msgP)
     M!._free(sigLenP)
