@@ -26,9 +26,24 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.4.0] - 2026-06-27
+
+A playground-and-feedback release: the crypto playground is reorganized around what you want to do, the SSH simulator now runs a genuine post-quantum handshake, you can endorse or flag any resource again across the hub, and the in-browser HSM's self-tests run reliably with live progress.
+
+### Added
+
+- **Endorse or flag any resource again, everywhere** [view:/algorithms] [view:/patents] [view:/compliance] [view:/library] [view:/threats] [view:/migrate] [persona:architect] [persona:researcher]: the Endorse and Flag buttons — which let you vouch for a resource or report a problem with it — are back on every page and on individual items (algorithms, patents, compliance frameworks, library documents, threats, and the products on Migrate) after several page redesigns had quietly dropped them. Each button opens the matching discussion so your feedback lands in the right place.
+
 ### Changed
 
+- **A clearer crypto playground, organized around what you want to do** [view:/playground] [persona:architect] [persona:developer]: the playground landing was redesigned so you can find a tool by intent — a new command palette (⌘K or "/") jumps straight to any tool, an "I want to…" row and verb-based views group tools by what they actually do, and a run-context filter lets you show only what runs in your browser versus what needs the sandbox. The large categories are split into readable sub-groups, each tool now explains where it runs before you start it, and a built-in guard makes sure the auto-synced sandbox tools can never silently go missing.
 - **The SSH playground now runs a real OpenSSH post-quantum handshake** [view:/playground/pqc-ssh-sim] [persona:developer] [persona:architect]: The PQC SSH simulator drives the genuine OpenSSH 10.x binary compiled to WebAssembly — a real ML-KEM-768 + X25519 key exchange with ML-DSA-65 host and user authentication — instead of a model. You can watch the actual PKCS#11 calls (including the `C_Sign` operations that keep both private keys inside the in-browser software HSM), see the real signature sizes on the wire-packet ladder, and compare a genuine classical handshake (ECDSA + curve25519) side-by-side with the post-quantum one. Algorithm choices the real binary can't run yet stay clearly labelled "modeled," and a Config tab shows the matching `sshd_config`/`ssh_config`.
+
+### Fixed
+
+- **The in-browser HSM self-tests run reliably and show live progress** [view:/playground/hsm] [view:/playground/cacp] [persona:architect] [persona:developer]: the ACVP conformance tests no longer dead-end with a "session not open" error when the page has been idle or reloaded — the run quietly re-establishes the HSM session and continues — and while the suite runs you now see a live "running… (N done)" progress label instead of a button that looks frozen.
+- **"Exit to hub" is a visible button in the simulation** [view:/simulation] [persona:executive] [persona:architect]: leaving the migration simulation no longer means hunting through the "More" menu — there's now a clear "← Exit to hub" button right on the console.
+- **The simulation stops offering to resume a run that isn't there** [view:/simulation] [persona:executive]: the "Resume Simulation" bar only appears when you actually have a playthrough in progress, instead of showing up with nothing to resume.
 
 ## [4.3.0] - 2026-06-26
 
