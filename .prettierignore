@@ -62,3 +62,6 @@ src/services/cbom/schema/**
 
 # Machine-generated document enrichments (scripts/enrich-docs-ollama.py output).
 src/data/doc-enrichments/**
+
+# KMIP policy files are synced/generated from pqctoday-hsm — not hand-formatted
+public/kmip-policies/
