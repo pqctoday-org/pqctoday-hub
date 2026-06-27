@@ -3,6 +3,8 @@ import {
   libraryData,
   computeCitationCounts,
   attachPriorRevisions,
+  detectPurpose,
+  LIBRARY_PURPOSES,
   type LibraryItem,
   type PriorRevision,
 } from './libraryData'
@@ -39,6 +41,39 @@ describe('libraryData', () => {
       expect(typeof item.citationCount).toBe('number')
       expect(item.citationCount).toBeGreaterThanOrEqual(0)
     }
+  })
+
+  it('assigns every item one of the three canonical purposes', () => {
+    for (const item of libraryData) {
+      expect(LIBRARY_PURPOSES).toContain(item.purpose)
+    }
+  })
+})
+
+describe('detectPurpose', () => {
+  it('routes migration-planning categories to planning (checked first)', () => {
+    expect(detectPurpose('Migration Guidance', '')).toBe('planning')
+    expect(detectPurpose('Program Guidance', '')).toBe('planning')
+    expect(detectPurpose('National Migration Strategy', 'Roadmap')).toBe('planning')
+  })
+
+  it('routes research/news/analysis categories to education', () => {
+    expect(detectPurpose('Industry & Research', '')).toBe('education')
+    expect(detectPurpose('Threat Analysis', '')).toBe('education')
+    expect(detectPurpose('Industry News', '')).toBe('education')
+  })
+
+  it('falls back to reference for standards/specs/protocols/policy', () => {
+    expect(detectPurpose('Protocols', '')).toBe('reference')
+    expect(detectPurpose('NIST Standards', '')).toBe('reference')
+    expect(detectPurpose('Government & Policy', '')).toBe('reference')
+    expect(detectPurpose('Algorithm Specifications', '')).toBe('reference')
+  })
+
+  it('falls back to document_type when manual_category is blank', () => {
+    expect(detectPurpose('', 'Migration Playbook')).toBe('planning')
+    expect(detectPurpose(undefined, 'Research Paper')).toBe('education')
+    expect(detectPurpose('   ', 'Technical Specification')).toBe('reference')
   })
 })
 

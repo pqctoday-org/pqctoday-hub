@@ -54,7 +54,7 @@ export function LibraryRecentlyChanged({ items, onOpen, limit = 16 }: LibraryRec
                   {formatLibDate(item.lastUpdateDate)}
                 </span>
               </span>
-              <span className="font-mono text-[11px] font-semibold text-primary">
+              <span className="w-full truncate font-mono text-[11px] font-semibold text-primary">
                 {item.referenceId}
               </span>
               <span className="line-clamp-1 w-full text-[12px] text-foreground">
