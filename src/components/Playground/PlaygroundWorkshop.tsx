@@ -13,6 +13,7 @@
 // carry a "Sandbox" badge, and render locked (dimmed) until the runtime probe
 // reports the container reachable. Access is gated via useSandboxStore.
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import FocusLock from 'react-focus-lock'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   Search,
@@ -25,6 +26,8 @@ import {
   Mail,
   Wrench,
   RefreshCw,
+  Zap,
+  Command,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'
@@ -47,6 +50,18 @@ import {
   SANDBOX_ACCESS_MAILTO,
   type FeatureAccent,
 } from './cryptoLabMeta'
+import {
+  runFor,
+  isEnvironmentTool,
+  SUBGROUPS,
+  subGroupFor,
+  OTHER_GROUP,
+  VERBS,
+  VALID_VERB_IDS,
+  verbsFor,
+  type VerbId,
+} from './cryptoLabTaxonomy'
+import { CommandPalette } from './CommandPalette'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useSandboxStore, isSandboxAvailable } from '@/store/useSandboxStore'
@@ -57,6 +72,9 @@ import { logEvent, personaLabel } from '@/utils/analytics'
 // ---------------------------------------------------------------------------
 
 const SANDBOX_TOOL_COUNT = WORKSHOP_TOOLS.filter((t) => t.sandbox).length
+// Tools that actually appear in the grid (environments are surfaced as their own
+// marquee cards, never as single-concept tools).
+const GRID_TOOL_COUNT = WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id)).length
 
 type DifficultyValue = 'All' | ToolDifficulty
 const DIFFICULTY_CHIPS: { value: DifficultyValue; label: string }[] = [
@@ -64,6 +82,13 @@ const DIFFICULTY_CHIPS: { value: DifficultyValue; label: string }[] = [
   { value: 'beginner', label: 'Beginner' },
   { value: 'intermediate', label: 'Intermediate' },
   { value: 'advanced', label: 'Advanced' },
+]
+
+type RunValue = 'all' | 'browser' | 'sandbox'
+const RUN_CHIPS: { value: RunValue; label: string; icon?: React.ElementType }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'browser', label: 'In-browser', icon: Zap },
+  { value: 'sandbox', label: 'Sandbox', icon: Container },
 ]
 
 const DIFFICULTY_BADGE: Record<ToolDifficulty, string> = {
@@ -127,6 +152,42 @@ const CategoryChip: React.FC<{ label: string }> = ({ label }) => (
   <span className="inline-block text-[10px] leading-none px-1.5 py-0.5 rounded font-medium bg-muted text-muted-foreground">
     {label}
   </span>
+)
+
+// Sub-theme section header inside a grouped category view.
+const GroupHeader: React.FC<{ label: string; count: number }> = ({ label, count }) => (
+  <div className="mb-1 flex items-center gap-2">
+    <h2 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+      {label}
+    </h2>
+    <span className="text-[10.5px] text-muted-foreground/70">{count}</span>
+    <span className="h-px flex-1 bg-border" aria-hidden="true" />
+  </div>
+)
+
+// Sub-theme filter pill (the row above a grouped category grid).
+const SubGroupPill: React.FC<{
+  label: string
+  count: number
+  active: boolean
+  onClick: () => void
+}> = ({ label, count, active, onClick }) => (
+  <Button
+    variant="ghost"
+    onClick={onClick}
+    aria-pressed={active}
+    className={cn(
+      'inline-flex h-auto items-center gap-1.5 rounded-full px-3 py-1 text-[11.5px] font-medium',
+      active
+        ? 'bg-primary/15 text-primary font-semibold'
+        : 'border border-border bg-muted/30 text-muted-foreground hover:border-primary/40'
+    )}
+  >
+    {label}
+    <span className={cn('text-[10.5px]', active ? 'text-primary/80' : 'text-muted-foreground/70')}>
+      {count}
+    </span>
+  </Button>
 )
 
 const AlgoChips: React.FC<{ algorithms: string[]; locked?: boolean }> = ({
@@ -416,114 +477,150 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
         aria-label="Close dialog"
         className="absolute inset-0 h-full w-full cursor-default rounded-none bg-transparent hover:bg-transparent"
       />
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label={tool.name}
-        className="relative glass-panel w-[480px] max-w-full rounded-2xl p-6 shadow-glow"
-      >
-        <div className="flex items-start gap-3">
-          <span className="shrink-0 w-[42px] h-[42px] rounded-xl bg-primary/12 flex items-center justify-center">
-            <Icon className="w-5 h-5 text-primary" aria-hidden="true" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-lg font-bold text-foreground">{tool.name}</h2>
-              <DifficultyBadge level={tool.difficulty} />
+      <FocusLock returnFocus>
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={tool.name}
+          className="relative glass-panel w-[480px] max-w-full rounded-2xl p-6 shadow-glow"
+        >
+          <div className="flex items-start gap-3">
+            <span className="shrink-0 w-[42px] h-[42px] rounded-xl bg-primary/12 flex items-center justify-center">
+              <Icon className="w-5 h-5 text-primary" aria-hidden="true" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-lg font-bold text-foreground">{tool.name}</h2>
+                <DifficultyBadge level={tool.difficulty} />
+                {tool.sandbox ? (
+                  <span className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-semibold bg-status-warning/15 text-status-warning">
+                    <Container className="w-2.5 h-2.5" aria-hidden="true" />
+                    Sandbox
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-semibold bg-status-success/15 text-status-success">
+                    <Zap className="w-2.5 h-2.5" aria-hidden="true" />
+                    In-browser
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 text-[11.5px] text-muted-foreground">{tool.category}</p>
             </div>
-            <p className="mt-1 text-[11.5px] text-muted-foreground">
-              {tool.category}
-              {tool.sandbox && ' · Docker sandbox'}
+            <Button
+              variant="ghost"
+              onClick={onClose}
+              aria-label="Close"
+              className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+            >
+              <X className="w-4 h-4" aria-hidden="true" />
+            </Button>
+          </div>
+
+          <p className="mt-4 text-[13px] text-foreground/80 leading-relaxed">{tool.description}</p>
+
+          {/* Run-context explainer: where & how this tool actually executes. */}
+          <div
+            className={cn(
+              'mt-4 flex items-start gap-2.5 rounded-xl border p-3',
+              tool.sandbox
+                ? 'border-status-warning/30 bg-status-warning/5'
+                : 'border-status-success/30 bg-status-success/5'
+            )}
+          >
+            {tool.sandbox ? (
+              <Container
+                className="mt-0.5 w-4 h-4 shrink-0 text-status-warning"
+                aria-hidden="true"
+              />
+            ) : (
+              <Zap className="mt-0.5 w-4 h-4 shrink-0 text-status-success" aria-hidden="true" />
+            )}
+            <p className="text-[11.5px] leading-snug text-foreground/80">
+              {tool.sandbox
+                ? 'Runs in an access-gated Docker container. Connect the sandbox runtime to launch it.'
+                : 'Runs instantly in your browser via WebAssembly — nothing to install or connect.'}
             </p>
           </div>
-          <Button
-            variant="ghost"
-            onClick={onClose}
-            aria-label="Close"
-            className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
-          >
-            <X className="w-4 h-4" aria-hidden="true" />
-          </Button>
-        </div>
 
-        <p className="mt-4 text-[13px] text-foreground/80 leading-relaxed">{tool.description}</p>
+          <p className="mt-5 mb-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            Algorithms
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {tool.algorithms.map((a) => (
+              <span
+                key={a}
+                className="text-[11px] px-2 py-1 rounded-md bg-muted text-muted-foreground font-mono"
+              >
+                {a}
+              </span>
+            ))}
+          </div>
 
-        <p className="mt-5 mb-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-          Algorithms
-        </p>
-        <div className="flex flex-wrap gap-1.5">
-          {tool.algorithms.map((a) => (
-            <span
-              key={a}
-              className="text-[11px] px-2 py-1 rounded-md bg-muted text-muted-foreground font-mono"
-            >
-              {a}
-            </span>
-          ))}
-        </div>
-
-        {tool.recommendedPersonas.length > 0 && (
-          <>
-            <p className="mt-5 mb-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-              Recommended for
-            </p>
-            <div className="flex flex-wrap gap-1.5">
-              {tool.recommendedPersonas.map((p) => {
-                // eslint-disable-next-line security/detect-object-injection -- `p` is a PersonaId
-                const label = PERSONA_CHIP_LABEL[p]
-                return (
-                  <span
-                    key={p}
-                    className="text-[11px] px-2 py-1 rounded-md bg-secondary/10 text-secondary"
-                  >
-                    {label}
-                  </span>
-                )
-              })}
-            </div>
-          </>
-        )}
-
-        <div className="mt-6 flex gap-2.5">
-          {locked ? (
-            <Button
-              variant="gradient"
-              onClick={onStartRuntime}
-              className="flex-1 rounded-lg py-2.5 font-bold"
-            >
-              Start sandbox runtime
-            </Button>
-          ) : (
-            <Button
-              variant="gradient"
-              onClick={() => onOpenTool(tool)}
-              className="flex-1 rounded-lg py-2.5 font-bold"
-            >
-              Open tool
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </Button>
+          {tool.recommendedPersonas.length > 0 && (
+            <>
+              <p className="mt-5 mb-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Recommended for
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {tool.recommendedPersonas.map((p) => {
+                  // eslint-disable-next-line security/detect-object-injection -- `p` is a PersonaId
+                  const label = PERSONA_CHIP_LABEL[p]
+                  return (
+                    <span
+                      key={p}
+                      className="text-[11px] px-2 py-1 rounded-md bg-secondary/10 text-secondary"
+                    >
+                      {label}
+                    </span>
+                  )
+                })}
+              </div>
+            </>
           )}
-          <Button
-            variant="outline"
-            onClick={() => onToggleBookmark(tool.id)}
-            aria-pressed={bookmarked}
-            className={cn('rounded-lg px-4 py-2.5 font-semibold', bookmarked && 'text-primary')}
-          >
-            <Star className={cn('w-4 h-4', bookmarked && 'fill-current')} aria-hidden="true" />
-            {bookmarked ? 'Saved' : 'Save'}
-          </Button>
-        </div>
 
-        {locked && (
-          <a
-            href={SANDBOX_ACCESS_MAILTO}
-            className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
-          >
-            <Mail className="w-3 h-3" aria-hidden="true" />
-            Container access required — request access
-          </a>
-        )}
-      </div>
+          <div className="mt-6 flex gap-2.5">
+            {locked ? (
+              <Button
+                variant="gradient"
+                onClick={onStartRuntime}
+                data-autofocus
+                className="flex-1 rounded-lg py-2.5 font-bold"
+              >
+                Start sandbox runtime
+              </Button>
+            ) : (
+              <Button
+                variant="gradient"
+                onClick={() => onOpenTool(tool)}
+                data-autofocus
+                className="flex-1 rounded-lg py-2.5 font-bold"
+              >
+                Open tool
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </Button>
+            )}
+            <Button
+              variant="outline"
+              onClick={() => onToggleBookmark(tool.id)}
+              aria-pressed={bookmarked}
+              className={cn('rounded-lg px-4 py-2.5 font-semibold', bookmarked && 'text-primary')}
+            >
+              <Star className={cn('w-4 h-4', bookmarked && 'fill-current')} aria-hidden="true" />
+              {bookmarked ? 'Saved' : 'Save'}
+            </Button>
+          </div>
+
+          {locked && (
+            <a
+              href={SANDBOX_ACCESS_MAILTO}
+              className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
+            >
+              <Mail className="w-3 h-3" aria-hidden="true" />
+              Container access required — request access
+            </a>
+          )}
+        </div>
+      </FocusLock>
     </div>
   )
 }
@@ -577,7 +674,7 @@ const SandboxRuntimeToggle: React.FC = () => {
   const handleClick = () => {
     if (status === 'checking') return
     if (runtimeOn) {
-      // On → turn it off (re-locks the sandbox scenarios).
+      // On → turn it off (re-hides the sandbox scenarios).
       disable()
       setOpen(false)
       return
@@ -591,7 +688,7 @@ const SandboxRuntimeToggle: React.FC = () => {
     ? `Runtime active · ${SANDBOX_TOOL_COUNT} sandbox scenarios unlocked`
     : status === 'checking'
       ? 'Checking sandbox…'
-      : `Off · ${SANDBOX_TOOL_COUNT} Docker scenarios locked`
+      : `Off · ${SANDBOX_TOOL_COUNT} Docker scenarios hidden`
 
   // Solid, contrasting switch (knob colour differs from the track in both themes).
   const trackClass = runtimeOn
@@ -700,7 +797,32 @@ export const PlaygroundWorkshop = () => {
   // Local UI state.
   const [searchText, setSearchText] = useState('')
   const [difficulty, setDifficulty] = useState<DifficultyValue>('All')
+  const [runFilter, setRunFilter] = useState<RunValue>('all')
   const [selectedTool, setSelectedTool] = useState<WorkshopTool | null>(null)
+  const [paletteOpen, setPaletteOpen] = useState(false)
+
+  // Command palette shortcuts: ⌘K / Ctrl-K always toggles; `/` opens it only
+  // when the user isn't typing in a field (so it never hijacks the search box).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setPaletteOpen((o) => !o)
+        return
+      }
+      if (e.key === '/' && !paletteOpen) {
+        const el = document.activeElement as HTMLElement | null
+        const typing =
+          !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable)
+        if (!typing) {
+          e.preventDefault()
+          setPaletteOpen(true)
+        }
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [paletteOpen])
 
   // Active nav target lives in the URL (?cat=) so it is shareable.
   const navParam = searchParams.get('cat')
@@ -716,6 +838,49 @@ export const PlaygroundWorkshop = () => {
           const next = new URLSearchParams(prev)
           if (target === 'overview') next.delete('cat')
           else next.set('cat', target)
+          next.delete('group') // sub-theme is per-category; reset on nav change
+          next.delete('verb') // leaving the intent view
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [setSearchParams]
+  )
+
+  // Intent ("I want to…") view lives in ?verb= (shareable, cross-category).
+  const verbParam = searchParams.get('verb')
+  const activeVerb: VerbId | null =
+    verbParam && VALID_VERB_IDS.has(verbParam as VerbId) ? (verbParam as VerbId) : null
+  const setActiveVerb = useCallback(
+    (verb: VerbId | null) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          if (verb) {
+            next.set('verb', verb)
+            next.delete('cat') // intent spans categories
+            next.delete('group')
+          } else {
+            next.delete('verb')
+          }
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [setSearchParams]
+  )
+
+  // Active sub-theme within a category lives in ?group= (shareable).
+  const activeSubGroup = searchParams.get('group')
+  const setActiveSubGroup = useCallback(
+    (label: string | null) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          if (label) next.set('group', label)
+          else next.delete('group')
           return next
         },
         { replace: true }
@@ -731,14 +896,17 @@ export const PlaygroundWorkshop = () => {
     [role]
   )
 
-  // Difficulty-filtered universe (search & nav narrow further).
-  const difficultyTools = useMemo(
-    () =>
-      difficulty === 'All'
-        ? WORKSHOP_TOOLS
-        : WORKSHOP_TOOLS.filter((t) => t.difficulty === difficulty),
-    [difficulty]
-  )
+  // Tool universe feeding search, categories and counts (nav narrows further):
+  //  • environments are surfaced as their own marquee cards, never as grid tools
+  //  • sandbox scenarios stay hidden while the runtime is off (no clutter)
+  //  • the run-context + difficulty filters narrow what remains
+  const visibleTools = useMemo(() => {
+    let base = WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id))
+    if (!runtimeOn) base = base.filter((t) => !t.sandbox)
+    if (runFilter !== 'all') base = base.filter((t) => runFor(t) === runFilter)
+    if (difficulty !== 'All') base = base.filter((t) => t.difficulty === difficulty)
+    return base
+  }, [difficulty, runFilter, runtimeOn])
 
   // Stable sort: recommended-for-role first, locked sandbox scenarios last.
   const sortTools = useCallback(
@@ -754,17 +922,17 @@ export const PlaygroundWorkshop = () => {
     const counts: Record<string, number> = {}
     for (const cat of SIDEBAR_CATEGORIES) {
       // eslint-disable-next-line security/detect-object-injection -- `cat` is a known WorkshopCategory
-      counts[cat] = difficultyTools.filter((t) => t.category === cat).length
+      counts[cat] = visibleTools.filter((t) => t.category === cat).length
     }
     return counts
-  }, [difficultyTools])
+  }, [visibleTools])
 
   // Search matches name + description + algorithms + keywords + category.
   const searchResults = useMemo(() => {
     if (!searchActive) return []
     const q = searchText.trim().toLowerCase()
     return sortTools(
-      difficultyTools.filter(
+      visibleTools.filter(
         (t) =>
           t.name.toLowerCase().includes(q) ||
           t.description.toLowerCase().includes(q) ||
@@ -773,25 +941,48 @@ export const PlaygroundWorkshop = () => {
           t.category.toLowerCase().includes(q)
       )
     )
-  }, [searchActive, searchText, difficultyTools, sortTools])
+  }, [searchActive, searchText, visibleTools, sortTools])
 
   const myTools = useMemo(
-    () => sortTools(difficultyTools.filter((t) => myPlaygroundTools.includes(t.id))),
-    [difficultyTools, myPlaygroundTools, sortTools]
+    () => sortTools(visibleTools.filter((t) => myPlaygroundTools.includes(t.id))),
+    [visibleTools, myPlaygroundTools, sortTools]
   )
 
   const categoryTools = useMemo(() => {
     if (activeNav === 'overview' || activeNav === 'mytools') return []
-    return sortTools(difficultyTools.filter((t) => t.category === activeNav))
-  }, [activeNav, difficultyTools, sortTools])
+    return sortTools(visibleTools.filter((t) => t.category === activeNav))
+  }, [activeNav, visibleTools, sortTools])
+
+  // Intent view: every visible tool tagged with the active verb.
+  const intentTools = useMemo(
+    () =>
+      activeVerb ? sortTools(visibleTools.filter((t) => verbsFor(t.id).includes(activeVerb))) : [],
+    [activeVerb, visibleTools, sortTools]
+  )
+
+  // The command palette is a global finder: runtime-aware (sandbox hidden while
+  // off) but independent of the difficulty / run-context chips.
+  const paletteUniverse = useMemo(
+    () => WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id) && (runtimeOn || !t.sandbox)),
+    [runtimeOn]
+  )
+
+  // Per-verb counts for the overview "I want to…" row (respect active filters).
+  const verbCounts = useMemo(() => {
+    const counts = new Map<VerbId, number>(VERBS.map((v) => [v.id, 0]))
+    for (const t of visibleTools) {
+      for (const v of verbsFor(t.id)) counts.set(v, (counts.get(v) ?? 0) + 1)
+    }
+    return counts
+  }, [visibleTools])
 
   // Overview "Recommended" pool.
   const recommendedPool = useMemo(() => {
     const base = role
-      ? difficultyTools.filter((t) => t.recommendedPersonas.includes(role) && !isLocked(t))
-      : difficultyTools.filter((t) => t.difficulty === 'beginner' && !isLocked(t))
+      ? visibleTools.filter((t) => t.recommendedPersonas.includes(role) && !isLocked(t))
+      : visibleTools.filter((t) => t.difficulty === 'beginner' && !isLocked(t))
     return sortTools(base).slice(0, 6)
-  }, [role, difficultyTools, isLocked, sortTools])
+  }, [role, visibleTools, isLocked, sortTools])
 
   // ── Actions ──────────────────────────────────────────────────────────────
   const openTool = useCallback(
@@ -807,14 +998,15 @@ export const PlaygroundWorkshop = () => {
     void probe()
   }, [probe])
 
-  // Count of locked sandbox scenarios inside the active category (for the note).
-  const lockedInCategory = useMemo(
-    () =>
-      activeNav !== 'overview' && activeNav !== 'mytools'
-        ? categoryTools.filter(isLocked).length
-        : 0,
-    [activeNav, categoryTools, isLocked]
-  )
+  // Sandbox scenarios in the active category that are hidden because the runtime
+  // is off (they reappear once connected). Counted from the full registry since
+  // they're filtered out of the visible universe.
+  const hiddenSandboxInCategory = useMemo(() => {
+    if (runtimeOn || activeNav === 'overview' || activeNav === 'mytools') return 0
+    return WORKSHOP_TOOLS.filter(
+      (t) => !isEnvironmentTool(t.id) && t.sandbox && t.category === activeNav
+    ).length
+  }, [runtimeOn, activeNav])
 
   const renderGrid = (tools: WorkshopTool[], showCategory?: boolean) => (
     <div className="mt-4 grid grid-cols-1 gap-3 xl:grid-cols-2">
@@ -844,7 +1036,7 @@ export const PlaygroundWorkshop = () => {
         <div className="min-w-0">
           <p className="text-[15px] font-bold leading-tight text-foreground">Crypto Lab</p>
           <p className="text-[10.5px] text-muted-foreground">
-            {WORKSHOP_TOOLS.length} tools · runs in-browser
+            {GRID_TOOL_COUNT} tools · runs in-browser
           </p>
         </div>
       </div>
@@ -932,6 +1124,38 @@ export const PlaygroundWorkshop = () => {
         )}
       </section>
     )
+  } else if (activeVerb) {
+    const verbLabel = VERBS.find((v) => v.id === activeVerb)?.label ?? activeVerb
+    mainBody = (
+      <section>
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <h1 className="text-xl font-bold tracking-tight text-foreground">
+              Tools to {verbLabel.toLowerCase()}
+            </h1>
+            <p className="mt-1 text-[13px] text-muted-foreground">
+              {intentTools.length} {intentTools.length === 1 ? 'tool' : 'tools'} across all
+              categories
+            </p>
+          </div>
+          <Button
+            variant="ghost"
+            onClick={() => setActiveVerb(null)}
+            className="shrink-0 rounded-lg px-3 py-1.5 text-[11.5px] text-muted-foreground hover:text-foreground"
+          >
+            Clear
+          </Button>
+        </div>
+        {intentTools.length > 0 ? (
+          renderGrid(intentTools, true)
+        ) : (
+          <EmptyResults
+            title="Nothing here"
+            subtitle="Try a different task or clear the filters."
+          />
+        )}
+      </section>
+    )
   } else if (activeNav === 'mytools') {
     mainBody = (
       <section>
@@ -952,6 +1176,71 @@ export const PlaygroundWorkshop = () => {
     const meta = CATEGORY_META[cat]
     const HsmIcon = CATEGORY_META['HSM / PKCS#11'].icon
     const recommendedInCat = role ? categoryTools.filter(isRecommended).length : 0
+
+    // Sub-theme grouping (only for categories listed in SUBGROUPS). Buckets the
+    // already-filtered+sorted tools; unfiled tools land in OTHER_GROUP so nothing
+    // can disappear (the taxonomy test keeps that bucket empty in practice).
+    // eslint-disable-next-line security/detect-object-injection -- `cat` is a WorkshopCategory
+    const groups = SUBGROUPS[cat]
+    const byGroup = new Map<string, WorkshopTool[]>()
+    if (groups) {
+      for (const t of categoryTools) {
+        const label = subGroupFor(t) ?? OTHER_GROUP
+        const arr = byGroup.get(label)
+        if (arr) arr.push(t)
+        else byGroup.set(label, [t])
+      }
+    }
+    const groupOrder = groups ? [...groups.map((g) => g.label), OTHER_GROUP] : []
+    const presentGroups = groupOrder.filter(
+      (label, i) => groupOrder.indexOf(label) === i && (byGroup.get(label)?.length ?? 0) > 0
+    )
+    const selectedGroup = activeSubGroup && byGroup.has(activeSubGroup) ? activeSubGroup : null
+
+    const categoryBody =
+      categoryTools.length === 0 ? (
+        hiddenSandboxInCategory > 0 ? null : (
+          <EmptyResults
+            title="Nothing here"
+            subtitle="Try clearing the difficulty or run-context filter."
+          />
+        )
+      ) : !groups ? (
+        renderGrid(categoryTools)
+      ) : (
+        <>
+          <div className="mt-4 flex flex-wrap gap-1.5">
+            <SubGroupPill
+              label="All"
+              count={categoryTools.length}
+              active={!selectedGroup}
+              onClick={() => setActiveSubGroup(null)}
+            />
+            {presentGroups.map((label) => (
+              <SubGroupPill
+                key={label}
+                label={label}
+                count={byGroup.get(label)?.length ?? 0}
+                active={selectedGroup === label}
+                onClick={() => setActiveSubGroup(label)}
+              />
+            ))}
+          </div>
+          {selectedGroup ? (
+            renderGrid(byGroup.get(selectedGroup) ?? [])
+          ) : (
+            <div className="space-y-5">
+              {presentGroups.map((label) => (
+                <div key={label} className="mt-5 first:mt-4">
+                  <GroupHeader label={label} count={byGroup.get(label)?.length ?? 0} />
+                  {renderGrid(byGroup.get(label) ?? [])}
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )
+
     mainBody = (
       <section>
         <div className="flex items-start justify-between gap-4">
@@ -986,15 +1275,15 @@ export const PlaygroundWorkshop = () => {
           </Link>
         )}
 
-        {lockedInCategory > 0 && (
+        {hiddenSandboxInCategory > 0 && (
           <div className="mt-4 flex items-center gap-3 rounded-xl border border-border bg-status-warning/5 p-3.5">
             <span className="flex w-[30px] h-[30px] shrink-0 items-center justify-center rounded-lg bg-status-warning/12 text-status-warning">
               <Container className="w-4 h-4" aria-hidden="true" />
             </span>
             <p className="flex-1 text-[12px] leading-snug text-foreground/80">
-              {lockedInCategory} {lockedInCategory === 1 ? 'tool' : 'tools'} here{' '}
-              {lockedInCategory === 1 ? 'runs' : 'run'} in the Docker sandbox. Start the runtime to
-              launch {lockedInCategory === 1 ? 'it' : 'them'}.
+              {hiddenSandboxInCategory} Docker{' '}
+              {hiddenSandboxInCategory === 1 ? 'demo is' : 'demos are'} hidden here. Connect the
+              sandbox runtime to show {hiddenSandboxInCategory === 1 ? 'it' : 'them'}.
             </p>
             <Button
               variant="gradient"
@@ -1002,19 +1291,12 @@ export const PlaygroundWorkshop = () => {
               disabled={sandboxStatus === 'checking'}
               className="shrink-0 rounded-lg px-3 py-1.5 text-[11.5px] font-semibold"
             >
-              Start runtime
+              Connect runtime
             </Button>
           </div>
         )}
 
-        {categoryTools.length > 0 ? (
-          renderGrid(categoryTools)
-        ) : (
-          <EmptyResults
-            title="Nothing at this difficulty"
-            subtitle="Switch the difficulty filter back to All."
-          />
-        )}
+        {categoryBody}
       </section>
     )
   } else {
@@ -1030,6 +1312,29 @@ export const PlaygroundWorkshop = () => {
         </p>
 
         <p className="mt-6 mb-3 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
+          I want to…
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {VERBS.map((v) => {
+            const Icon = v.icon
+            const count = verbCounts.get(v.id) ?? 0
+            return (
+              <Button
+                key={v.id}
+                variant="ghost"
+                onClick={() => setActiveVerb(v.id)}
+                disabled={count === 0}
+                className="inline-flex h-auto items-center gap-2 rounded-xl border border-border bg-muted/30 px-3 py-2 text-[12.5px] font-medium text-foreground hover:border-primary/40 disabled:opacity-40"
+              >
+                <Icon className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
+                {v.label}
+                <span className="text-[10.5px] text-muted-foreground">{count}</span>
+              </Button>
+            )
+          })}
+        </div>
+
+        <p className="mt-8 mb-3 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
           Full playgrounds
         </p>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
@@ -1099,11 +1404,11 @@ export const PlaygroundWorkshop = () => {
               type="search"
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              placeholder={`Search ${WORKSHOP_TOOLS.length} tools, algorithms or keywords…`}
+              placeholder={`Search ${GRID_TOOL_COUNT} tools, algorithms or keywords…`}
               aria-label="Search tools"
               className="h-[42px] rounded-lg pl-10 text-[13.5px]"
             />
-            {searchActive && (
+            {searchActive ? (
               <Button
                 variant="ghost"
                 onClick={() => setSearchText('')}
@@ -1112,7 +1417,48 @@ export const PlaygroundWorkshop = () => {
               >
                 <X className="w-3.5 h-3.5" aria-hidden="true" />
               </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                onClick={() => setPaletteOpen(true)}
+                aria-label="Open command palette"
+                className="absolute right-1.5 top-1/2 h-7 -translate-y-1/2 gap-1 rounded-md border border-border px-2 text-[10.5px] font-medium text-muted-foreground hover:text-foreground"
+              >
+                <Command className="w-3 h-3" aria-hidden="true" />K
+              </Button>
             )}
+          </div>
+          <div className="flex gap-1.5">
+            {RUN_CHIPS.map((chip) => {
+              const active = runFilter === chip.value
+              const Icon = chip.icon
+              return (
+                <Button
+                  key={chip.value}
+                  variant="ghost"
+                  onClick={() => setRunFilter(chip.value)}
+                  aria-pressed={active}
+                  className={cn(
+                    'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11.5px] h-auto font-medium',
+                    active
+                      ? 'bg-primary/15 text-primary font-semibold'
+                      : 'border border-border bg-muted/30 text-muted-foreground hover:border-primary/40'
+                  )}
+                >
+                  {Icon && (
+                    <Icon
+                      className={cn(
+                        'w-3.5 h-3.5',
+                        chip.value === 'browser' && 'text-status-success',
+                        chip.value === 'sandbox' && 'text-status-warning'
+                      )}
+                      aria-hidden="true"
+                    />
+                  )}
+                  {chip.label}
+                </Button>
+              )
+            })}
           </div>
           <div className="flex gap-1.5">
             {DIFFICULTY_CHIPS.map((chip) => {
@@ -1149,6 +1495,21 @@ export const PlaygroundWorkshop = () => {
           onOpenTool={openTool}
           onStartRuntime={startRuntime}
           onToggleBookmark={toggleBookmark}
+        />
+      )}
+
+      {paletteOpen && (
+        <CommandPalette
+          tools={paletteUniverse}
+          onClose={() => setPaletteOpen(false)}
+          onPickTool={(tool) => {
+            setPaletteOpen(false)
+            setSelectedTool(tool)
+          }}
+          onPickVerb={(verb) => {
+            setPaletteOpen(false)
+            setActiveVerb(verb)
+          }}
         />
       )}
     </div>
