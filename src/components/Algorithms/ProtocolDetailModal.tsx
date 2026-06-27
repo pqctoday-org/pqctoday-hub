@@ -29,6 +29,9 @@ import {
   type TestabilityValue,
 } from '../../data/pqcProtocolMatrix'
 import { Button } from '@/components/ui/button'
+import { EndorseButton } from '@/components/ui/EndorseButton'
+import { FlagButton } from '@/components/ui/FlagButton'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
 
@@ -453,14 +456,50 @@ export function ProtocolDetailModal({ isOpen, onClose, protocol }: ProtocolDetai
                   </div>
                 )}
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onClose}
-                aria-label="Close protocol details"
-              >
-                <X size={20} />
-              </Button>
+              <div className="flex items-center gap-1 shrink-0">
+                <EndorseButton
+                  endorseUrl={buildEndorsementUrl({
+                    category: 'algorithm-endorsement',
+                    title: `Endorse: ${protocol.name} protocol support`,
+                    resourceType: 'Protocol',
+                    resourceId: protocol.name,
+                    resourceDetails: [
+                      `**Protocol:** ${protocol.name}`,
+                      protocol.description ? `**Summary:** ${protocol.description}` : '',
+                    ]
+                      .filter(Boolean)
+                      .join('\n'),
+                    pageUrl: `/algorithms?protocol=${encodeURIComponent(protocol.name)}`,
+                  })}
+                  resourceLabel={protocol.name}
+                  resourceType="Protocol"
+                />
+                <FlagButton
+                  flagUrl={buildFlagUrl({
+                    category: 'algorithm-endorsement',
+                    title: `Flag: ${protocol.name} protocol support`,
+                    resourceType: 'Protocol',
+                    resourceId: protocol.name,
+                    resourceDetails: [
+                      `**Protocol:** ${protocol.name}`,
+                      protocol.description ? `**Summary:** ${protocol.description}` : '',
+                    ]
+                      .filter(Boolean)
+                      .join('\n'),
+                    pageUrl: `/algorithms?protocol=${encodeURIComponent(protocol.name)}`,
+                  })}
+                  resourceLabel={protocol.name}
+                  resourceType="Protocol"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onClose}
+                  aria-label="Close protocol details"
+                >
+                  <X size={20} />
+                </Button>
+              </div>
             </div>
 
             {/* Standardization dimensions */}

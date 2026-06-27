@@ -21,6 +21,9 @@ export type EndorsementCategory =
   | 'timeline-endorsement'
   | 'library-resource-endorsement'
   | 'pqc-tool-endorsement'
+  | 'algorithm-endorsement'
+  | 'patent-endorsement'
+  | 'compliance-endorsement'
 
 interface EndorsementParams {
   category: EndorsementCategory

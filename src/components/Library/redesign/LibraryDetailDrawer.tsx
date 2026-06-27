@@ -14,6 +14,12 @@ import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { libraryEnrichments } from '@/data/libraryEnrichmentData'
 import { getTrustScore } from '@/data/trustScore'
 import { DocumentAnalysis } from '@/components/Library/DocumentAnalysis'
+import { EndorseButton } from '@/components/ui/EndorseButton'
+import { FlagButton } from '@/components/ui/FlagButton'
+import {
+  buildLibraryEndorsementUrl,
+  buildLibraryFlagUrl,
+} from '@/components/Library/libraryEndorsement'
 import { lifecycleLabel, lifecyclePillClass, formatLibDate, trustInfo } from './libraryPills'
 
 interface LibraryDetailDrawerProps {
@@ -364,6 +370,16 @@ function DrawerPanel({
             />
             {bookmarked ? 'Bookmarked' : 'Bookmark'}
           </Button>
+          <EndorseButton
+            endorseUrl={buildLibraryEndorsementUrl(item, true)}
+            resourceLabel={`${item.referenceId} — ${item.documentTitle}`}
+            resourceType="Library Resource"
+          />
+          <FlagButton
+            flagUrl={buildLibraryFlagUrl(item, true)}
+            resourceLabel={`${item.referenceId} — ${item.documentTitle}`}
+            resourceType="Library Resource"
+          />
           <Button
             type="button"
             variant="ghost"

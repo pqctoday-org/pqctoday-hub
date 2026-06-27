@@ -13,6 +13,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BookOpen, X } from 'lucide-react'
 import { PageHeader } from '@/components/common/PageHeader'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { Button } from '@/components/ui/button'
 import {
   libraryData,
@@ -403,6 +404,28 @@ export function LibraryViewRedesign({
           shareTitle="PQC Library — NIST, IETF, ETSI & More"
           shareText="Explore post-quantum cryptography standards, drafts, and key documents."
           onExport={handleExportCsv}
+          endorseUrl={buildEndorsementUrl({
+            category: 'library-resource-endorsement',
+            title: 'Endorse: PQC Library',
+            resourceType: 'Library Page',
+            resourceId: 'PQC Library',
+            resourceDetails:
+              '**Page:** PQC Library — the standards, drafts and guidance that define post-quantum cryptography.',
+            pageUrl: '/library',
+          })}
+          endorseLabel="Library Page"
+          endorseResourceType="Library"
+          flagUrl={buildFlagUrl({
+            category: 'library-resource-endorsement',
+            title: 'Flag: PQC Library',
+            resourceType: 'Library Page',
+            resourceId: 'PQC Library',
+            resourceDetails:
+              '**Page:** PQC Library — the standards, drafts and guidance that define post-quantum cryptography.',
+            pageUrl: '/library',
+          })}
+          flagLabel="Library Page"
+          flagResourceType="Library"
         />
       )}
 
