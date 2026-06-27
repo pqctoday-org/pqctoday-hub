@@ -24,11 +24,14 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [Unreleased]
+## [4.3.0] - 2026-06-26
+
+A consolidation release that brings several in-flight improvements together: a faster way into the standards Library, a new policy-and-batch workbench in the crypto playground, clearer "binding versus guidance" labelling on migration deadlines, a more consistent learning-module layout, and refreshed, better-sourced timeline and library data.
 
 ### Added
 
 - **Start the Library from what you're here to do** [view:/library] [persona:executive] [persona:architect] [persona:researcher]: the Library now opens with three plain-language doors at the top — **Learn** (research and analysis), **Reference** (standards, specs and policy), and **Plan migration** (guidance and report picks) — so you can pick an intent instead of scanning the whole catalog first. Choosing a door narrows everything to that set and re-counts the category list on the left to match; "Everything" still shows the full library, and all your existing filters and search keep working inside whichever door you pick.
+- **See which migration deadlines are legally binding versus guidance** [view:/timeline] [view:/assess] [view:/report] [persona:executive] [persona:architect]: national post-quantum deadlines are now labelled as binding mandates or as guidance across the Timeline, the assessment, and the migration roadmap in your report, so you can tell at a glance which dates carry legal force and which are recommended planning targets. Where a jurisdiction's status isn't verified, the app falls back to the general Q-Day planning horizon rather than implying a mandate that doesn't exist.
 - **Explore and compare crypto policies in the playground** [view:/playground/cacp] [persona:architect] [persona:researcher]: the Crypto-Agility Control Plane has a new Policy view with a library of 13 ready-made policies, grouped by what each one demonstrates — post-quantum defaults, compliance regimes (NSA CNSA 2.0, FIPS, and Germany's BSI), transition roadmaps, and mechanism-level controls. Pick any policy and see, in plain terms, what it enforces: the algorithms it defaults to, what it denies, what it quietly migrates, an at-a-glance map of which algorithms are allowed versus denied, and a visual timeline for any date-based rules. Switching the active policy takes one click, and every operation immediately follows it.
 - **Test what the selected policy actually does** [view:/playground/cacp] [persona:architect] [persona:researcher]: the workbench now runs a set of representative requests against whichever policy you've selected and shows, for each one, whether it's allowed, denied, or quietly upgraded to a post-quantum algorithm — without creating any keys or changing your selection. Switch policies and the panel updates instantly, so you can compare two regimes side by side.
 - **Run several KMIP operations as one request** [view:/playground/cacp] [persona:architect] [persona:researcher]: a new Batch & Macros view shows KMIP's batching — create a key, activate it, and sign with it in a single round trip, where each step automatically points at the key the previous step created, with one-click recipes to try it. You can also choose how a failure is handled, including an "undo" mode that rolls back the earlier successful steps so the whole batch is all-or-nothing.
@@ -36,6 +39,13 @@ first time (don't ship dev-speak and reformat later):
 ### Changed
 
 - **A cleaner, easier-to-read migration simulation** [view:/simulation] [persona:executive] [persona:architect]: the Mission Control console got a usability pass — the command bar now leads with the main actions (Play all, Commit, End Quarter) and tucks the rest into a "More" menu; the intel panel keeps your two most important panels visible and folds the rest behind a "show more" toggle; phases and controls are bigger and easier to click; active text is more legible; and tools show a loading placeholder while they open. Same features, just calmer and quicker to scan.
+- **A more consistent layout across the learning modules** [view:/learn] [persona:architect] [persona:developer]: the PQC 101 introduction and other modules now share one common module layout, so navigation, progress, and the "practice in the simulation" hand-off behave the same way everywhere — and your completion now sticks when you revisit a module instead of resetting.
+- **The guided simulation playthrough now starts quiet** [view:/simulation] [persona:executive] [persona:curious]: the "watch the full migration" auto-run begins with the spoken narration turned off by default — you can still switch voice-over on whenever you like — so the walkthrough no longer starts talking unprompted.
+
+### Data
+
+- **Refreshed and re-sourced the national PQC timeline** [view:/timeline] [persona:executive] [persona:researcher]: the EU, Germany, and Japan entries were re-enriched from their primary government and technical sources (correcting earlier contaminated notes), the June 2026 US Executive Order is now attributed to its formal number (EO 14412), and an India DST registry entry was added — with the on-site search index rebuilt so these read accurately everywhere.
+- **A cleaner, better-sourced standards Library** [view:/library] [persona:architect] [persona:researcher]: 56 records that had no retrievable source and couldn't be enriched are now hidden as deprecated, 20 reference papers gained full enrichment, and unmaintained local preview images were removed in favour of linking straight to the authoritative source.
 
 ## [4.2.1] - 2026-06-25
 
