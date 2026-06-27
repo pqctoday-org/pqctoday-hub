@@ -42,6 +42,7 @@ import {
   sshRealEngine,
   mapRealEventsToResult,
   mapPkcs11Event,
+  buildSshConfigArtifacts,
   isRealCombo,
   REAL_KEX_ID,
   REAL_HOSTKEY_ID,
@@ -422,6 +423,7 @@ export function SshSimulationPanel() {
           <TabsTrigger value="wire">
             Wire Packets{allWirePackets.length > 0 ? ` (${allWirePackets.length})` : ''}
           </TabsTrigger>
+          <TabsTrigger value="config">Config</TabsTrigger>
         </TabsList>
 
         <TabsContent value="logs">
@@ -566,6 +568,44 @@ export function SshSimulationPanel() {
                   </div>
                 ))}
               </div>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="config">
+          <div className="glass-panel p-3 space-y-3">
+            <p className="text-[10px] text-muted-foreground">
+              Accurate representation of the negotiated configuration — the in-WASM driver sets the
+              proposal directly rather than parsing these files; key material lives in the PKCS#11
+              token and is never exported.
+            </p>
+            {!pqcResult && !classicalResult ? (
+              <p className="text-xs text-muted-foreground italic">
+                Run a handshake to generate the configuration.
+              </p>
+            ) : (
+              (() => {
+                const a = buildSshConfigArtifacts((pqcResult ?? classicalResult)!)
+                const blocks: ReadonlyArray<readonly [string, string]> = [
+                  ['sshd_config', a.sshdConfig],
+                  ['ssh_config', a.sshConfig],
+                  ['authorized_keys', a.authorizedKeys],
+                ]
+                return (
+                  <div className="space-y-3">
+                    {blocks.map(([title, text]) => (
+                      <div key={title}>
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+                          {title}
+                        </div>
+                        <pre className="bg-muted/40 rounded p-2 text-[11px] font-mono overflow-x-auto whitespace-pre-wrap">
+                          {text}
+                        </pre>
+                      </div>
+                    ))}
+                  </div>
+                )
+              })()
             )}
           </div>
         </TabsContent>

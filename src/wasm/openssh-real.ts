@@ -318,3 +318,51 @@ export function mapRealEventsToResult(
 export const REAL_CLASSICAL = { kex: 'curve25519-sha256', hostalg: 'ecdsa-sha2-nistp256' }
 // Real PQC profile (wire names the shim expects).
 export const REAL_PQC = { kex: 'mlkem768x25519-sha256', hostalg: 'ssh-mldsa-65' }
+
+export interface SshConfigArtifacts {
+  sshdConfig: string
+  sshConfig: string
+  authorizedKeys: string
+}
+
+// Host-key file basename per algorithm (matches OpenSSH conventions).
+const HOSTKEY_FILE: Record<string, string> = {
+  'ssh-mldsa-65': 'ssh_host_mldsa65_key',
+  'ecdsa-sha2-nistp256': 'ssh_host_ecdsa_key',
+}
+
+/**
+ * Build the sshd_config / ssh_config / authorized_keys that correspond to a real
+ * run. The shim hardcodes the proposal rather than parsing a config file, so
+ * these are an *accurate representation* of what the handshake negotiated (KEX,
+ * host-key and pubkey-auth algorithms) — useful for "how would I configure this"
+ * — not a file the binary read. The panel labels them as such.
+ */
+export function buildSshConfigArtifacts(
+  r: import('./openssh').SshHandshakeResult
+): SshConfigArtifacts {
+  const kex = r.kex_algorithm
+  const alg = r.host_key_algorithm
+  const hostFile = HOSTKEY_FILE[alg] ?? 'ssh_host_key'
+  const sshdConfig = [
+    '# sshd_config — server (key material lives in the PKCS#11 token)',
+    `KexAlgorithms ${kex}`,
+    `HostKey /etc/ssh/${hostFile}`,
+    `HostKeyAlgorithms ${alg}`,
+    `PubkeyAcceptedAlgorithms ${alg}`,
+    'PubkeyAuthentication yes',
+    'PasswordAuthentication no',
+    '# Host key fetched + signed via the PKCS#11 provider (C_Sign); never exported.',
+    'PKCS11Provider /usr/lib/softhsm/libsofthsmv3.so',
+  ].join('\n')
+  const sshConfig = [
+    '# ssh_config — client',
+    'Host pqc-demo',
+    `  KexAlgorithms ${kex}`,
+    `  HostKeyAlgorithms ${alg}`,
+    `  PubkeyAcceptedAlgorithms ${alg}`,
+    '  PKCS11Provider /usr/lib/softhsm/libsofthsmv3.so',
+  ].join('\n')
+  const authorizedKeys = `${alg} AAAA…<${r.client_pubkey_bytes}-byte ${alg} public key>… pqcuser@pqc.today`
+  return { sshdConfig, sshConfig, authorizedKeys }
+}
