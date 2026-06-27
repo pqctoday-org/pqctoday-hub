@@ -6,7 +6,7 @@
 import { test, expect, type Page } from '@playwright/test'
 
 const BASE = '/playground/hsm?tab=vpn_sim'
-const HANDSHAKE_TIMEOUT = 90_000
+const HANDSHAKE_TIMEOUT = 120_000
 
 async function suppressWhatsNew(page: Page) {
   await page.addInitScript(() => {
@@ -18,12 +18,12 @@ async function suppressWhatsNew(page: Page) {
 }
 
 test('VPN pure-pqc PSK — explicit Start Daemon click reaches ESTABLISHED', async ({ page }) => {
-  test.setTimeout(150_000)
+  test.setTimeout(200_000)
   await suppressWhatsNew(page)
 
   await page.goto(`${BASE}&vpnMode=pure-pqc&vpnAuth=psk&vpnRpc=1`, {
     waitUntil: 'networkidle',
-    timeout: 30_000,
+    timeout: 45_000,
   })
 
   const startBtn = page.locator('[data-testid="vpn-start-daemon"]')

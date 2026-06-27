@@ -152,6 +152,24 @@ jobs:
       - name: Test
         run: npm run test
 
+      # E2E smoke tier — the critical user journeys, gated on every PR. Runs the
+      # @smoke-tagged specs against the production build (`vite preview`, served
+      # from the dist/ produced by the Build step above) with bounded workers, so
+      # it stays fast and reliable. The heavy/WASM full suite runs nightly
+      # (.github/workflows/e2e-nightly.yml), off the per-PR critical path.
+      # (E2E was removed from CI 2026-04-02 for being "too slow"; this re-gates a
+      # lean subset rather than the whole 240-test suite.)
+      - name: E2E smoke (Chromium, against the build)
+        run: npm run test:e2e:ci-smoke
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-smoke
+          path: playwright-report/
+          retention-days: 7
+
       - name: Validate threats proof rule (TP-2 + TP-3, BLOCKING)
         # TP-2 (local_file path must live under public/threats/) and TP-3
         # (trusted_source_id must resolve to the authoritative-sources

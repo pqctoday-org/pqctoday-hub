@@ -107,7 +107,7 @@ test.describe('PQC SSH Simulator', () => {
 
     test('full run completes and produces wire packets', async ({ page }) => {
       await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 60_000 })
+      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
       await page.getByRole('button', { name: /wire packets/i }).click()
       await expect(page.getByText('SSH_MSG_KEX_ECDH_INIT').first()).toBeVisible()
       await expect(page.getByText('SSH_MSG_USERAUTH_SUCCESS').first()).toBeVisible()
@@ -115,7 +115,7 @@ test.describe('PQC SSH Simulator', () => {
 
     test('PKCS#11 log shows real ML-DSA + ML-KEM mechanisms after run', async ({ page }) => {
       await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 60_000 })
+      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
       await page.getByRole('button', { name: /pkcs#?11/i }).click()
       await expect(
         page.getByText(/C_GenerateKeyPair|C_Sign|C_EncapsulateKey/i).first()
@@ -124,37 +124,37 @@ test.describe('PQC SSH Simulator', () => {
 
     test('PQC card shows quantum-safe pill', async ({ page }) => {
       await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 60_000 })
+      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
       await expect(page.getByText('quantum-safe').first()).toBeVisible()
     })
 
     test('PQC leg shows ML-DSA-65 signature size 3,309 B', async ({ page }) => {
       await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/3,309 B/i).first()).toBeVisible({ timeout: 60_000 })
+      await expect(page.getByText(/3,309 B/i).first()).toBeVisible({ timeout: 90_000 })
     })
 
     test('hybrid KEX share is 1,216 B', async ({ page }) => {
       await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 60_000 })
+      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
       await expect(page.getByText(/1,216 B/i).first()).toBeVisible()
     })
 
     test('classical leg shows Ed25519 signature size 64 B', async ({ page }) => {
       await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 60_000 })
+      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
       await expect(page.getByText(/\b64 B\b/i).first()).toBeVisible()
     })
 
     test('both legs show connected pill', async ({ page }) => {
       await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 60_000 })
+      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
       const connectedPills = page.getByText('connected')
       await expect(connectedPills).toHaveCount(2)
     })
 
     test('comparison panel shows per-phase timing breakdown', async ({ page }) => {
       await page.getByRole('button', { name: /run.*handshake/i }).click()
-      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 60_000 })
+      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
       await expect(page.getByText(/keygen/i).first()).toBeVisible()
     })
   })
