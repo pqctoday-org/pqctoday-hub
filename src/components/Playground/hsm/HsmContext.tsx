@@ -15,6 +15,7 @@ import {
   getSoftHSMRustModule,
   createLoggingProxy,
   hsm_initialize,
+  hsm_finalize,
   hsm_getFirstSlot,
   hsm_initToken,
   hsm_openUserSession,
@@ -216,10 +217,16 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const engineLabel = mode === 'rust' ? 'rust' : 'cpp'
         const proxy = createLoggingProxy(M, addHsmLog, engineLabel)
         moduleRef.current = proxy
+        // The WASM modules are singletons, so a prior init (e.g. the user
+        // switching engine mode without reloading) leaves C_Initialize already
+        // called — re-initializing would throw CKR_CRYPTOKI_ALREADY_INITIALIZED.
+        // Finalize first; it's a best-effort no-op when nothing was initialized.
+        hsm_finalize(proxy, hSessionRef.current)
         hsm_initialize(proxy)
         if (checkM) {
           const cp = createLoggingProxy(checkM, addHsmLog, 'rust')
           crossCheckModuleRef.current = cp
+          hsm_finalize(cp, hSessionRef.current)
           hsm_initialize(cp)
         }
         setPhase('initialized')

@@ -118,6 +118,12 @@ export default defineConfig({
     port: 5175,
     host: true,
     strictPort: false,
+    // Pre-transform the heavy HSM playground entry on server start so the first
+    // navigation to /playground/hsm is warm instead of compiling ~hundreds of
+    // lazy-route modules on demand (which made the cold load take 30–60s).
+    warmup: {
+      clientFiles: ['./src/components/Playground/HsmPlayground.tsx'],
+    },
     fs: {
       // Allow importing test fixtures from pqc-tools sibling repo (dev only)
       allow: ['..'],
@@ -264,7 +270,8 @@ export default defineConfig({
     // here: the dep scanner ignores @vite-ignore, so without this it fails with
     // "imported but could not be resolved", aborts pre-bundling, and falls back
     // to on-demand optimization whose mid-session reloads kill in-flight dynamic
-    // imports ("Failed to fetch dynamically imported module: App.tsx").
+    // imports. @rhds/elements + @theme/section-hydration are referenced only by
+    // static vendor-roadmap HTML and are excluded for the same reason.
     exclude: [
       '@oqs/liboqs-js',
       '@pqctoday/softhsm-wasm',
@@ -274,7 +281,14 @@ export default defineConfig({
       '@capacitor/share',
       '@capacitor/app',
       '@capacitor/haptics',
+      '@rhds/elements',
+      '@theme/section-hydration',
     ],
+    // Pre-bundle the playground's heavy deps at server start so they aren't
+    // discovered + optimized on first navigation (which forced a full page
+    // reload mid-load). lucide-react alone is imported 82× across the playground
+    // and, unbundled, serves each icon as its own module request.
+    include: ['lucide-react', 'framer-motion', 'recharts', 'jszip', 'file-saver', 'clsx'],
   },
   build: {
     // Explicit target: esbuild >= 0.27.5 treats safari14 as lacking (buggy) destructuring

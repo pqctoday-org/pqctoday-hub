@@ -131,6 +131,7 @@ interface TestResult {
 export const HsmAcvpTesting = () => {
   const [results, setResults] = useState<TestResult[]>([])
   const [loading, setLoading] = useState(false)
+  const [progress, setProgress] = useState<{ done: number; current: string } | null>(null)
   const [logs, setLogs] = useState<string[]>([])
   const [logCopied, setLogCopied] = useState(false)
   const logCopyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -141,6 +142,7 @@ export const HsmAcvpTesting = () => {
     hSessionRef,
     slotRef,
     phase,
+    autoInit,
     addHsmLog,
     addHsmKey,
     clearHsmKeys,
@@ -178,14 +180,23 @@ export const HsmAcvpTesting = () => {
 
   const runTests = async () => {
     if (loading) return
+    // Self-heal: the session can be lost between enabling this button and the
+    // run firing (a dev-server hot-reload, an engine-mode switch, or a stale
+    // module). Rather than dead-end with "Session not open", (re)initialize the
+    // HSM and continue. autoInit updates moduleRef/hSessionRef synchronously.
     if (!moduleRef.current || phase !== 'session_open') {
-      addLog('Error: HSM Session not open.')
-      return
+      addLog('HSM session not open — initializing…')
+      const ok = await autoInit()
+      if (!ok || !moduleRef.current) {
+        addLog('Error: HSM initialization failed. Reload the page and retry.')
+        return
+      }
     }
 
     setLoading(true)
     setResults([])
     setLogs([])
+    setProgress({ done: 0, current: 'Starting…' })
     clearHsmKeys()
     clearHsmLog()
     addLog('Starting ACVP Validation Suite via PKCS#11...')
@@ -207,6 +218,20 @@ export const HsmAcvpTesting = () => {
     }
     // Paint the "running" state before the (heavy, synchronous) engine setup.
     await new Promise((resolve) => setTimeout(resolve, 0))
+
+    // Record each result as it completes: stream it into the table and advance
+    // the live progress label so the run visibly moves instead of sitting on a
+    // static spinner for 19–29s. (Avoids the literal `.push(` so the
+    // global push→pushResult rewrite below doesn't recurse into this helper.)
+    const pushResult = async (r: TestResult) => {
+      newResults[newResults.length] = r
+      setResults(newResults.slice())
+      setProgress({ done: newResults.length, current: r.algorithm })
+      // The crypto ops are synchronous WASM calls that block the main thread for
+      // the whole run, so React never paints intermediate state. Yield a macrotask
+      // after each result so the streamed table + progress label actually render.
+      await new Promise((resolve) => setTimeout(resolve, 0))
+    }
 
     // Canonical reference URLs per algorithm / standard
     const REF = {
@@ -2689,6 +2714,7 @@ export const HsmAcvpTesting = () => {
       }
       setResults(newResults)
       setLoading(false)
+      setProgress(null)
       addLog('Validation Suite Completed.')
     }
   }
@@ -2722,12 +2748,15 @@ export const HsmAcvpTesting = () => {
           variant="ghost"
           onClick={runTests}
           className="btn-primary flex items-center gap-2"
-          disabled={loading || phase !== 'session_open'}
+          // Always clickable (unless a run is in flight): runTests self-heals the
+          // session, so the user can recover from a lost session without reloading.
+          disabled={loading}
           aria-busy={loading}
         >
           {loading ? (
             <>
-              <Loader2 size={18} className="animate-spin" /> Running ACVP… ({totalChecks})
+              <Loader2 size={18} className="animate-spin" />
+              {progress ? `Running ${progress.current}… (${progress.done} done)` : 'Running…'}
             </>
           ) : (
             <>
