@@ -38,6 +38,13 @@ import {
   type SshKexAlg,
   type SshHostKeyAlg,
 } from '@/wasm/openssh'
+import {
+  sshRealEngine,
+  mapRealEventsToResult,
+  isRealCombo,
+  REAL_KEX_ID,
+  REAL_HOSTKEY_ID,
+} from '@/wasm/openssh-real'
 import type { Pkcs11LogEntry } from '@/wasm/softhsm'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { useHsmContext } from './HsmContext'
@@ -95,6 +102,7 @@ export function SshSimulationPanel() {
     setPkcs11Log([])
     setErrorMsg(undefined)
     sshEngine.terminate()
+    sshRealEngine.terminate()
 
     try {
       // Ensure softhsmv3 is initialized
@@ -135,11 +143,30 @@ export function SshSimulationPanel() {
       }
 
       // ── Run 2: user-selected PQC config ───────────────────────────────────
+      // If the chosen combo is the one the REAL OpenSSH binary runs
+      // (mlkem768x25519-sha256 + ssh-mldsa-65), drive the genuine wasm; every
+      // signature is a real token C_Sign. Any other combo is the TS model.
       setPhase('running-pqc')
-      appendLog(`Starting PQC handshake (${pqcKex} + ${pqcHostKey})…`)
-      const pqc = await sshEngine.runHandshake({ kex: pqcKex, hostKey: pqcHostKey })
-      setPqcResult(pqc)
-      appendLog(`PQC done: connection_ok=${pqc.connection_ok}, auth_ms=${pqc.auth_ms.toFixed(1)}ms`)
+      if (isRealCombo(pqcKex, pqcHostKey)) {
+        appendLog('Starting REAL OpenSSH handshake (mlkem768x25519-sha256 + ssh-mldsa-65)…')
+        const t0 = performance.now()
+        const { rv, events } = await sshRealEngine.runHandshake({
+          onEvent: (ev) => appendLog(`· ${ev.evType} ${ev.payload}`),
+          onLog: (l) => appendLog(l.text, l.level),
+        })
+        const pqc = mapRealEventsToResult(events, rv, performance.now() - t0)
+        setPqcResult(pqc)
+        appendLog(
+          `REAL PQC done: connection_ok=${pqc.connection_ok}, host C_Sign=${pqc.host_sig_bytes}B, user C_Sign=${pqc.client_sig_bytes}B, auth_ms=${pqc.auth_ms.toFixed(1)}ms`
+        )
+      } else {
+        appendLog(`Starting MODELED PQC handshake (${pqcKex} + ${pqcHostKey})…`)
+        const pqc = await sshEngine.runHandshake({ kex: pqcKex, hostKey: pqcHostKey })
+        setPqcResult(pqc)
+        appendLog(
+          `Modeled PQC done: connection_ok=${pqc.connection_ok}, auth_ms=${pqc.auth_ms.toFixed(1)}ms`
+        )
+      }
 
       setPhase('done')
     } catch (err) {
@@ -152,6 +179,7 @@ export function SshSimulationPanel() {
 
   const handleReset = useCallback(() => {
     sshEngine.terminate()
+    sshRealEngine.terminate()
     setPhase('idle')
     setClassicalResult(undefined)
     setPqcResult(undefined)
@@ -163,6 +191,8 @@ export function SshSimulationPanel() {
   const browserSupport = useChromiumGate()
   const isRunning =
     phase === 'initializing' || phase === 'running-classical' || phase === 'running-pqc'
+  // True when the chosen PQC combo is the one the genuine OpenSSH binary runs.
+  const realSelected = isRealCombo(pqcKex, pqcHostKey)
 
   const runLabel =
     phase === 'initializing'
@@ -231,6 +261,7 @@ export function SshSimulationPanel() {
                 aria-pressed={pqcKex === opt.id}
               >
                 {opt.id}
+                <RealityBadge real={opt.id === REAL_KEX_ID} />
               </Button>
             ))}
           </div>
@@ -257,10 +288,45 @@ export function SshSimulationPanel() {
                 aria-pressed={pqcHostKey === opt.id}
               >
                 {opt.id}
+                <RealityBadge real={opt.id === REAL_HOSTKEY_ID} />
               </Button>
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Real-vs-modeled honesty banner */}
+      <div
+        className={`flex items-start gap-2 rounded-lg border px-3 py-2 text-xs ${
+          realSelected
+            ? 'border-status-success/30 bg-status-success/5 text-foreground'
+            : 'border-border bg-muted/30 text-muted-foreground'
+        }`}
+      >
+        {realSelected ? (
+          <ShieldCheck size={14} className="mt-0.5 shrink-0 text-status-success" />
+        ) : (
+          <Code size={14} className="mt-0.5 shrink-0" />
+        )}
+        <p>
+          {realSelected ? (
+            <>
+              <strong className="text-foreground">Runs the real OpenSSH binary.</strong> This combo
+              drives the genuine OpenSSH 10.x handshake compiled to WASM — both the host-key and
+              user-key signatures are produced by <span className="font-mono">C_Sign</span> inside
+              the embedded softhsmv3 token. The private keys never leave the HSM. (Client and server
+              run in one WASM process over an in-memory transport; all crypto and wire formats are
+              real.)
+            </>
+          ) : (
+            <>
+              <strong className="text-foreground">Modeled in TypeScript.</strong> The real OpenSSH
+              binary currently runs only{' '}
+              <span className="font-mono">mlkem768x25519-sha256 + ssh-mldsa-65</span> — select those
+              two to drive the genuine handshake. Other parameter sets are simulated for comparison.
+            </>
+          )}
+        </p>
       </div>
 
       {/* Controls */}
@@ -504,6 +570,19 @@ export function SshSimulationPanel() {
     </div>
   )
 }
+
+// Tiny inline badge marking whether a picker option drives the real binary or
+// the TS model. "real" only takes effect when BOTH the real KEX and real host
+// key are selected together (see the banner above the controls).
+const RealityBadge: React.FC<{ real: boolean }> = ({ real }) => (
+  <span
+    className={`ml-1 px-1 rounded text-[8px] uppercase tracking-wide leading-tight ${
+      real ? 'bg-status-success/20 text-status-success' : 'bg-muted text-muted-foreground'
+    }`}
+  >
+    {real ? 'real' : 'model'}
+  </span>
+)
 
 const WirePacketLadder: React.FC<{ packets: SshWirePacket[] }> = ({ packets }) => (
   <div className="p-3 space-y-1.5 font-mono text-xs overflow-x-auto">

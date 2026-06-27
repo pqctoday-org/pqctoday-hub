@@ -34,13 +34,13 @@
     },
     {
       "name": "openssh-pkcs11",
-      "files": ["public/wasm/openssh-client.wasm", "public/wasm/openssh-server.wasm"],
+      "files": ["public/wasm/openssh-server.js", "public/wasm/openssh-server.wasm"],
       "buildScript": "openssh-pkcs11/scripts/build-wasm.sh",
       "sourceDirs": ["openssh-pkcs11"],
       "track": "tip",
-      "status": "pending-refresh",
-      "hsmCommit": null,
-      "builtAt": null
+      "status": "built",
+      "hsmCommit": "80278e58975ea0bd3fe2ffa37ae24168eaaad32a",
+      "builtAt": "2026-06-27"
     },
     {
       "name": "strongswan",
