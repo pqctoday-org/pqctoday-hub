@@ -26,7 +26,7 @@ export const CATEGORY_META: Record<WorkshopCategory, CategoryMeta> = {
   'OpenSSL Studio': {
     icon: Terminal,
     description:
-      'A full OpenSSL 3.6 environment plus protocol simulators, compiled to WebAssembly.',
+      'A full OpenSSL 3.6 environment plus PKI enrollment, S/MIME and JWT workshops, compiled to WebAssembly.',
   },
   'HSM / PKCS#11': {
     icon: Cpu,

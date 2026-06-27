@@ -4,9 +4,13 @@ import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { PlaygroundWorkshop } from './PlaygroundWorkshop'
 import { WORKSHOP_TOOLS } from './workshopRegistry'
+import { isEnvironmentTool } from './cryptoLabTaxonomy'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useSandboxStore } from '@/store/useSandboxStore'
+
+// Tools shown in the grid exclude the marquee "environment" cards.
+const GRID_COUNT = WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id)).length
 
 const renderWorkbench = (path = '/playground') =>
   render(
@@ -27,7 +31,7 @@ describe('Crypto Lab Workbench', () => {
   it('renders the Overview with the brand, tool count and three full-playground cards', () => {
     renderWorkbench()
     expect(screen.getByText('Crypto Lab')).toBeInTheDocument()
-    expect(screen.getByText(`${WORKSHOP_TOOLS.length} tools · runs in-browser`)).toBeInTheDocument()
+    expect(screen.getByText(`${GRID_COUNT} tools · runs in-browser`)).toBeInTheDocument()
     expect(
       screen.getByRole('heading', { name: /Run real cryptography in your browser/i })
     ).toBeInTheDocument()
@@ -71,28 +75,61 @@ describe('Crypto Lab Workbench', () => {
     expect(screen.getByText('Bitcoin Transaction')).toBeInTheDocument()
   })
 
-  it('opens the tool-detail modal with an "Open tool" action for an unlocked tool', () => {
+  it('opens the tool-detail modal with an "Open tool" action and run-context explainer', () => {
     renderWorkbench('/playground?cat=Blockchain%20%26%20Digital%20Assets')
     fireEvent.click(screen.getByText('Bitcoin Transaction'))
     const dialog = screen.getByRole('dialog', { name: 'Bitcoin Transaction' })
     expect(within(dialog).getByRole('button', { name: /Open tool/i })).toBeInTheDocument()
     expect(within(dialog).getByText('Algorithms')).toBeInTheDocument()
+    // Browser tool → explains it runs instantly in-browser via WASM.
+    expect(within(dialog).getByText(/Runs instantly in your browser/i)).toBeInTheDocument()
   })
 
-  it('marks a Docker-sandbox scenario with a Sandbox badge and locks it when the runtime is offline', () => {
+  it('hides Docker-sandbox scenarios when the runtime is offline, with a Connect hint', () => {
     // OpenSSL TLS 1.3 sandbox scenario is re-homed to Protocol Simulations.
+    renderWorkbench('/playground?cat=Protocol%20Simulations')
+    // Offline (beforeEach): sandbox demos are hidden entirely, not shown locked.
+    expect(screen.queryByText('OpenSSL TLS 1.3 + Composite Cert')).toBeNull()
+    // The category surfaces a hint with a Connect-runtime CTA instead.
+    expect(screen.getByRole('button', { name: /Connect runtime/i })).toBeInTheDocument()
+  })
+
+  it('shows Docker-sandbox scenarios with a Sandbox badge when the runtime is online', () => {
+    useSandboxStore.setState({ status: 'online' })
     renderWorkbench('/playground?cat=Protocol%20Simulations')
     const card = screen.getByText('OpenSSL TLS 1.3 + Composite Cert').closest('[role="button"]')
     expect(card).not.toBeNull()
     expect(within(card as HTMLElement).getByText('Sandbox')).toBeInTheDocument()
-    expect(within(card as HTMLElement).getByText('needs runtime')).toBeInTheDocument()
 
-    // Its modal offers to start the runtime rather than open the tool.
+    // Online → opening it offers "Open tool", not a runtime prompt.
     fireEvent.click(card as HTMLElement)
     const dialog = screen.getByRole('dialog')
-    expect(
-      within(dialog).getByRole('button', { name: /Start sandbox runtime/i })
-    ).toBeInTheDocument()
+    expect(within(dialog).getByRole('button', { name: /Open tool/i })).toBeInTheDocument()
+  })
+
+  it('opens the command palette with ⌘/Ctrl-K and runs a tool from it', () => {
+    renderWorkbench()
+    fireEvent.keyDown(window, { key: 'k', ctrlKey: true })
+    const palette = screen.getByRole('dialog', { name: /command palette/i })
+    fireEvent.change(within(palette).getByRole('textbox', { name: /search the crypto lab/i }), {
+      target: { value: 'bitcoin' },
+    })
+    fireEvent.click(within(palette).getByText('Bitcoin Transaction'))
+    // Picking a tool closes the palette and opens its detail modal.
+    expect(screen.getByRole('dialog', { name: 'Bitcoin Transaction' })).toBeInTheDocument()
+  })
+
+  it('navigates from an overview "I want to…" verb chip into the intent view', () => {
+    renderWorkbench()
+    fireEvent.click(screen.getByRole('button', { name: /Sign \/ verify/i }))
+    expect(screen.getByRole('heading', { name: /tools to sign/i })).toBeInTheDocument()
+  })
+
+  it('renders the intent view for ?verb= across categories', () => {
+    renderWorkbench('/playground?verb=sign')
+    expect(screen.getByRole('heading', { name: /tools to sign/i })).toBeInTheDocument()
+    // Bitcoin Transaction is tagged with the "sign" verb.
+    expect(screen.getByText('Bitcoin Transaction')).toBeInTheDocument()
   })
 
   it('toggles a bookmark into the My tools view', () => {

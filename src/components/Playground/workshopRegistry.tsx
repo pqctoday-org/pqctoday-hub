@@ -239,7 +239,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     name: 'PQC VPN Simulator',
     description:
       'Full IKEv2 handshake in WASM with PKCS#11 crypto routed through softhsmv3. Inspect live C_* calls, ECDH key exchange, and PSK authentication between initiator and responder.',
-    category: 'HSM / PKCS#11',
+    category: 'Protocol Simulations',
     algorithms: ['IKEv2', 'ECDH', 'AES-256-CBC', 'HMAC-SHA2-256', 'PKCS#11'],
     icon: Shield,
     moduleLink: '/learn/vpn-ssh-pqc',
@@ -271,7 +271,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     name: 'PQC SSH Simulator',
     description:
       'Full OpenSSH 10.x handshake in WASM: mlkem768x25519-sha256 KEX + ssh-mldsa-65 host auth + publickey userauth backed by softhsmv3 PKCS#11. Compare classical vs PQC byte sizes and latency.',
-    category: 'HSM / PKCS#11',
+    category: 'Protocol Simulations',
     algorithms: ['ML-KEM-768', 'X25519', 'ML-DSA-65', 'ssh-mldsa-65', 'PKCS#11'],
     icon: Terminal,
     moduleLink: '/learn/vpn-ssh-pqc',
@@ -712,7 +712,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     name: 'TLS 1.3 Simulator',
     description:
       'Client–server TLS 1.3 handshake simulator: configure cipher suites, key exchange groups, mTLS, PQC and hybrid certificates',
-    category: 'OpenSSL Studio',
+    category: 'Protocol Simulations',
     algorithms: ['TLS 1.3', 'ML-KEM', 'X25519MLKEM768', 'ML-DSA', 'ECDSA', 'RSA'],
     icon: Shield,
     moduleLink: '/learn/tls-basics',
@@ -1008,10 +1008,13 @@ const SANDBOX_SCENARIO_CATEGORY: Record<string, WorkshopCategory> = {
   wireguard: 'Protocol Simulations',
   // supply-chain track — TPM key hierarchy is an HSM/key concern
   'tpm-pqc-migration': 'HSM / PKCS#11',
-  // applications track — JOSE/JWT, automated CA, firmware keys
+  // applications track — JOSE/JWT, automated CA, firmware keys, code signing
   'api-security-jwt': 'OpenSSL Studio',
   stepca: 'Certificates & Proofs',
   'firmware-hss': 'HSM / PKCS#11',
+  // Code signing (PE/Authenticode) is a supply-chain signing concern, not a
+  // protocol simulation — re-home off the 'applications' track default.
+  osslsigncode: 'Certificates & Proofs',
 }
 
 function sandboxDomainCategory(s: { id: string; trackId: SandboxTrackId }): WorkshopCategory {
