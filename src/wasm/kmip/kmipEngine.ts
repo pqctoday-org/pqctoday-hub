@@ -147,16 +147,40 @@ export interface PolicyDecision {
   algorithm?: string
 }
 
-/** Pull the Plane-1 policy decision out of an op result's audit events. */
-export const decisionOf = (r: OpResult): PolicyDecision => {
-  const p1 = r.audit.find((e) => e.plane === 'p1' && e.event.type === 'PolicyDecided')
-  const outcome = (p1?.event.outcome ?? {}) as {
+const readDecision = (e: AuditEvent): PolicyDecision => {
+  const outcome = (e.event.outcome ?? {}) as {
     type?: string
     algorithm_override?: string
     new_algorithm?: string
   }
   const kind = (outcome.type as PolicyDecision['kind']) ?? 'Unknown'
   return { kind, algorithm: outcome.algorithm_override ?? outcome.new_algorithm }
+}
+
+/** Pull the Plane-1 policy decision out of an op result's audit events. */
+export const decisionOf = (r: OpResult): PolicyDecision => {
+  const p1 = r.audit.find((e) => e.plane === 'p1' && e.event.type === 'PolicyDecided')
+  return p1 ? readDecision(p1) : { kind: 'Unknown' }
+}
+
+/** The MOST significant policy decision across a batch's audit (Deny > Rekey >
+ * Allow). A single batch can hold several `PolicyDecided` events — e.g. a
+ * lifecycle where Create is allowed but a later Sign triggers rekey-on-use — and
+ * the headline outcome is the strongest of them. */
+const DECISION_RANK: Record<PolicyDecision['kind'], number> = {
+  Deny: 3,
+  Rekey: 2,
+  Allow: 1,
+  Unknown: 0,
+}
+export const strongestDecision = (audit: AuditEvent[]): PolicyDecision => {
+  let best: PolicyDecision = { kind: 'Unknown' }
+  for (const e of audit) {
+    if (e.plane !== 'p1' || e.event.type !== 'PolicyDecided') continue
+    const cand = readDecision(e)
+    if (DECISION_RANK[cand.kind] > DECISION_RANK[best.kind]) best = cand
+  }
+  return best
 }
 
 /** What the active policy WOULD decide for an op (no execution). */
