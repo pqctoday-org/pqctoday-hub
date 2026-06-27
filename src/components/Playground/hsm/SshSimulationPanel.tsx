@@ -41,6 +41,7 @@ import {
 import {
   sshRealEngine,
   mapRealEventsToResult,
+  mapPkcs11Event,
   isRealCombo,
   REAL_KEX_ID,
   REAL_HOSTKEY_ID,
@@ -151,7 +152,18 @@ export function SshSimulationPanel() {
         appendLog('Starting REAL OpenSSH handshake (mlkem768x25519-sha256 + ssh-mldsa-65)…')
         const t0 = performance.now()
         const { rv, events } = await sshRealEngine.runHandshake({
-          onEvent: (ev) => appendLog(`· ${ev.evType} ${ev.payload}`),
+          onEvent: (ev) => {
+            // Route genuine PKCS#11 trace events into the PKCS#11 panel; keep the
+            // handshake milestones in the log.
+            if (ev.evType === 'pkcs11') {
+              setPkcs11Log((prev) => {
+                const entry = mapPkcs11Event(ev.payload, prev.length)
+                return entry ? [...prev.slice(-200), entry] : prev
+              })
+            } else {
+              appendLog(`· ${ev.evType} ${ev.payload}`)
+            }
+          },
           onLog: (l) => appendLog(l.text, l.level),
         })
         const pqc = mapRealEventsToResult(events, rv, performance.now() - t0)

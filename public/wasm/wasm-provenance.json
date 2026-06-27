@@ -39,7 +39,7 @@
       "sourceDirs": ["openssh-pkcs11"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "80278e58975ea0bd3fe2ffa37ae24168eaaad32a",
+      "hsmCommit": "65b5c2c64a868a0f3303e54775784ae7031c7ab3",
       "builtAt": "2026-06-27"
     },
     {
