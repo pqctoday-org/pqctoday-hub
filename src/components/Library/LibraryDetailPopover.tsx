@@ -59,7 +59,6 @@ interface LibraryDetailPopoverProps {
 
 export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPopoverProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
-  const [pngVisible, setPngVisible] = useState(false)
   const [cswp39Open, setCswp39Open] = useState(false)
   const isEmbedded = useIsEmbedded()
   const positionStyle = useModalPosition(isEmbedded)
@@ -98,13 +97,6 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
     }
   }, [isOpen, onClose])
 
-  // Reset PNG visibility when item changes
-  useEffect(() => {
-    return () => {
-      setPngVisible(false)
-    }
-  }, [item])
-
   // Body scroll lock while modal is open
   useEffect(() => {
     if (isOpen) {
@@ -139,13 +131,6 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
       }
     }
   }
-
-  // Derive PNG URL from localFile if available (e.g. "public/library/FIPS_203.pdf" → "/library/FIPS_203.png")
-  const stem = item.localFile
-    ?.split('/')
-    .pop()
-    ?.replace(/\.[^.]+$/, '')
-  const pngUrl = stem ? `/library/${stem}.png` : null
 
   const content = (
     <>
@@ -475,17 +460,6 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
               </div>
 
               <div className="space-y-4 order-1 md:order-2 md:sticky md:top-0">
-                {/* PNG Preview — shown only if the file exists (onError hides it) */}
-                {pngUrl && (
-                  <img
-                    src={pngUrl}
-                    alt={`First page preview of ${item.documentTitle}`}
-                    className={`w-full max-h-52 object-contain bg-muted/30 rounded-lg border border-border ${pngVisible ? 'block' : 'hidden'}`}
-                    onLoad={() => setPngVisible(true)}
-                    onError={() => setPngVisible(false)}
-                  />
-                )}
-
                 {/* Metadata Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2 p-3 bg-muted/20 border border-border rounded-lg">
                   <div className="flex flex-row items-baseline gap-2">

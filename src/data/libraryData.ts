@@ -49,6 +49,9 @@ export interface LibraryItem {
   miscInfo?: string
   children?: LibraryItem[]
   categories: string[]
+  /** Coarse intent bucket (Education / Reference / Planning) used by the
+   *  top-level "purpose doors" pre-filter. Heuristic — see `detectPurpose`. */
+  purpose: LibraryPurpose
   peerReviewed?: 'yes' | 'no' | 'partial'
   vettingBody?: string[]
   githubContributionUrl?: string
@@ -89,6 +92,62 @@ export const LIBRARY_CATEGORIES = [
 ] as const
 
 export type LibraryCategory = (typeof LIBRARY_CATEGORIES)[number]
+
+// ── Purpose: a coarse "why are you here" axis layered OVER the 10 topical
+// categories. Three doors let a visitor enter the library by intent — learn,
+// look something up, or plan a migration — before drilling into a category.
+// Heuristic over manual_category (no CSV column backs this yet); measured split
+// across the active catalog is ~Reference 73% / Education 18% / Planning 10%.
+export const LIBRARY_PURPOSES = ['education', 'reference', 'planning'] as const
+export type LibraryPurpose = (typeof LIBRARY_PURPOSES)[number]
+
+// Migration-planning keywords are checked FIRST so a "migration strategy" lands
+// in Planning rather than Reference; Education next; everything else (standards,
+// specs, protocols, policy, PKI, algorithms, frameworks) falls to Reference.
+const PURPOSE_PLANNING_KEYWORDS = [
+  'migration',
+  'program guidance',
+  'playbook',
+  'roadmap',
+  'readiness',
+  'strategy',
+  'transition',
+  'planning',
+  'recommendation',
+]
+const PURPOSE_EDUCATION_KEYWORDS = [
+  'research',
+  'news',
+  'education',
+  'threat',
+  'analysis',
+  'whitepaper',
+  'white paper',
+  'blog',
+  'opinion',
+  'case study',
+  'academ',
+  'book',
+]
+
+/**
+ * Coarse intent bucket for a document. Reads manual_category when present (the
+ * validated signal), else falls back to document_type so the rows with a blank
+ * manual_category still bucket sensibly. Title is deliberately NOT used — it
+ * over-triggers (every other RFC mentions "migration" or "analysis"). Exported
+ * for unit testing the mapping against the real catalog.
+ */
+export function detectPurpose(
+  manualCategory: string | undefined,
+  documentType: string | undefined
+): LibraryPurpose {
+  const hay = (
+    manualCategory && manualCategory.trim() ? manualCategory : (documentType ?? '')
+  ).toLowerCase()
+  if (PURPOSE_PLANNING_KEYWORDS.some((k) => hay.includes(k))) return 'planning'
+  if (PURPOSE_EDUCATION_KEYWORDS.some((k) => hay.includes(k))) return 'education'
+  return 'reference'
+}
 
 // C-002/C-003: Map CSV manual_category values to UI categories
 const CATEGORY_ALIASES: Record<string, LibraryCategory> = {
@@ -305,6 +364,7 @@ function transformLibraryRow(row: RawLibraryRow): LibraryItem | null {
     miscInfo: row.misc_info?.trim() || undefined,
     children: [],
     categories: [], // Will be populated below
+    purpose: detectPurpose(row.manual_category || undefined, row.document_type),
     peerReviewed: (row.peer_reviewed?.toLowerCase() as LibraryItem['peerReviewed']) || undefined,
     vettingBody: row.vetting_body ? splitSemicolon(row.vetting_body) : undefined,
     githubContributionUrl: row.github_contribution_url?.trim() || undefined,
