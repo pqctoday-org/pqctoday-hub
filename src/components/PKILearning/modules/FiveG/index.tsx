@@ -65,11 +65,9 @@ export const FiveGModule: React.FC = () => {
     setCurrentPart(config.part)
     if (config.profile !== undefined) {
       setInitialProfile(config.profile)
-      setCurrentProfile(config.profile)
     }
     if (config.pqcMode !== undefined) {
       setInitialPqcMode(config.pqcMode)
-      setCurrentPqcMode(config.pqcMode)
     }
     setConfigKey((prev) => prev + 1)
   }, [])
