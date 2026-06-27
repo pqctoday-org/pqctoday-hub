@@ -2265,7 +2265,16 @@ export const HsmAcvpTesting = () => {
               true // derive
             )
             const fixedInput = new TextEncoder().encode('ACVP-KDF-CONTEXT')
-            const derivedKeyBytes = hsm_kbkdf(M, hSession, hBaseKey, CKM_SHA256, fixedInput, 32)
+            // SP 800-108 PRF must be a keyed MAC (PKCS#11 v3.2 §6.42 Table 196),
+            // not a bare digest — use CKM_SHA256_HMAC (0x251), not CKM_SHA256 (0x250).
+            const derivedKeyBytes = hsm_kbkdf(
+              M,
+              hSession,
+              hBaseKey,
+              CKM_SHA256_HMAC,
+              fixedInput,
+              32
+            )
 
             const pass = derivedKeyBytes.length === 32
             const derivedHex = Array.from(derivedKeyBytes)
@@ -2359,7 +2368,7 @@ export const HsmAcvpTesting = () => {
               M,
               hSession,
               hBaseKey,
-              CKM_SHA256,
+              CKM_SHA256_HMAC,
               fixedInput,
               ivBytes,
               32

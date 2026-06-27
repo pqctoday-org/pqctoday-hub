@@ -19,8 +19,9 @@
       "sourceDirs": ["rust"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "4a4e9bca81249a586844c74f01661b402586648d",
-      "builtAt": "2026-06-26"
+      "hsmCommit": "e912488d3db86bd18bd23f15f70661a252613df2",
+      "builtAt": "2026-06-27",
+      "_buildNote": "Must be built with --features acvp (added to build script 2026-06-27). Without it C_Initialize rejects non-null pReserved with CKR_ARGUMENTS_BAD, breaking all ACVP KAT seeding."
     },
     {
       "name": "softhsm-cpp-engine",
@@ -29,8 +30,9 @@
       "sourceDirs": ["src/lib"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "4a4e9bca81249a586844c74f01661b402586648d",
-      "builtAt": "2026-06-26"
+      "hsmCommit": "e912488d3db86bd18bd23f15f70661a252613df2",
+      "builtAt": "2026-06-27",
+      "_buildNote": "Includes fix(cpp) 250994d: SP800-108 KDF now requires keyed-MAC PRF (CKM_SHA256_HMAC); bare hash IDs rejected per PKCS#11 v3.2 §6.42."
     },
     {
       "name": "openssh-pkcs11",
