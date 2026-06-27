@@ -1,32 +1,32 @@
 ---
 generated: 2026-06-26
 collection: timeline
-documents_processed: 2
+documents_processed: 3
 enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 ---
 
-## United States:NSA — CNSA 2.0 Algorithms Revised
+## European Union:EC — Full EU PQC Transition
 
-- **Reference ID**: United States:NSA — CNSA 2.0 Algorithms Revised
-- **Title**: CNSA 2.0 Algorithms Revised
-- **Authors**: National Security Agency
-- **Publication Date**: 2025-05-30
+- **Reference ID**: European Union:EC — Full EU PQC Transition
+- **Title**: Full EU PQC Transition
+- **Authors**: European Commission
+- **Publication Date**: 2025-06-23
 - **Last Updated**: Not specified
 - **Document Status**: Validated
-- **Main Topic**: FAQ document with implementation timelines: 2025-2030 prefer, 2030-2033 exclusive, 2035 complete.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA, Falcon, SPHINCS+, CRYSTALS-Kyber, CRYSTALS-Dilithium, XMSS, LMS, HSS, FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), SP 800-208 (LMS/XMSS)
-- **Quantum Threats Addressed**: CRQC (Cryptographically Relevant Quantum Computer), Cryptographically Relevant Quantum, Quantum Computer, Post-Quantum
-- **Migration Timeline Info**: Milestones: p integrity checks) hardware integrity U/OO/194427-22 | PP-24-4014 | December 2024 Ver. 2.1 3 NSA | CNSA Suite 2.0 an... | until the transition mandated by CNSSP 156, expected to occur sometime between 2025 and 2030, depending on equipment ... | e transition mandated by CNSSP 156, expected to occur sometime between 2025 and 2030, depending on equipment type. In... | adoption of CNSA 2.0? A: NSA intends that all NSS will be quantum-resistant by 2035, in accordance with the goal espo... | th CNSA 2.0, or 90 days to request a waiver. CNSSP 15 states that by January 1, 2027, all new acquisitions for NSS wi... | ll be required to be CNSA 2.0 compliant unless otherwise noted. By December 31, 2030, all equipment and services that... | support CNSA 2.0 must be phased out unless otherwise noted, and by December 31, 2031, CNSA 2.0 algorithms are mandate... | ederal government to undertake with the goal of achieving quantum resistance by 2035, including the creation of quant...
-- **Applicable Regions / Bodies**: Regions: United States, International, Bodies: NIST, NSA
+- **Main Topic**: The EU NIS Cooperation Group issued a coordinated implementation roadmap and timeline for the transition to Post-Quantum Cryptography across EU Member States.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Quantum computing identified as a threat to cryptographic algorithms protecting confidentiality and authenticity of data
+- **Migration Timeline Info**: Commission published Recommendation on 11 April 2024; document issued 23 June 2025
+- **Applicable Regions / Bodies**: Regions: EU Member States; Bodies: EU NIS Cooperation Group, Commission, Directorate-General for Communications Networks, Content and Technology
 - **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: IKEv2
-- **Infrastructure Layers**: HSM, Secure Boot, Firmware, Blockchain
-- **Standardization Bodies**: NIST, IETF, CMVP (NIST)
-- **Compliance Frameworks Referenced**: CNSA 2.0, NSM-8/NSM-10, SP 800-208 (LMS/XMSS)
-- **Classical Algorithms Referenced**: RSA, Elliptic Curve Cryptography (ECC), AES, SHA-384, SHA-512, SHA-256
-- **Key Takeaways**: RSA and ECC must be replaced to achieve quantum resistance; ML-KEM-1024 and ML-DSA-87 are required for all classification levels in NSS; LMS and XMSS are approved only for firmware and software signing; HSMs used for signing must be FIPS validated by CMVP; SHA3 is restricted to internal hardware functionality like secure boot
-- **Security Levels & Parameters**: ML-KEM-1024, ML-DSA-87, AES 256-bit keys, SHA-384, SHA-512, LMS SHA-256/192, SHA3-384, SHA3-512
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Cloud
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Member States must implement recommendations for a synchronised transition to PQC; Stakeholders need to be informed on the quantum threat to cryptography; A work stream on PQC was established with the NIS Cooperation Group; The roadmap provides harmonized timelines and priority sectors
+- **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: None detected
 - **Pure PQC KEM Evidence**: None detected
@@ -40,104 +40,170 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: None detected
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: NSS owners and operators, Vendors, Security Architect, Compliance Officer
-- **Implementation Prerequisites**: NIST Cryptographic Module Validation Program (CMVP) validation for signers; NIST Cryptographic Algorithm Validation Program (CAVP) validation for signature verification; Hardware security module (HSM) implementation for signing and state management; Adherence to FIPS 203, FIPS 204, and NIST SP 800-208
-- **Relevant PQC Today Features**: Timeline, Threats, Compliance, Algorithms, code-signing, hsm-pqc, stateful-signatures
-- **Implementation Attack Surface**: state re-use in signing and state management; backup flows involving transferring keys between modules
+- **Target Audience**: Policy Maker, Compliance Officer, Security Architect
+- **Implementation Prerequisites**: Establishment of a work stream on PQC with the NIS Cooperation Group; Implementation of recommendations for synchronised transition
+- **Relevant PQC Today Features**: Timeline, Threats, Compliance, Migrate, pqc-governance
+- **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: NIST Cryptographic Module Validation Program (CMVP); NIST Cryptographic Algorithm Validation Program (CAVP); NIAP validated products
-- **QKD Protocols & Quantum Networking**: Quantum key distribution (QKD); quantum cryptography; specialized hardware using the physics of quantum mechanics
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: internal hardware functionality only (e.g., boot-up integrity checks); firmware signing and software signing; hardware security module (HSM) implementation for signing and state management
-- **Supply Chain & Vendor Risk**: Defense Industrial Base (DIB), vendors, third-party code sources, open-source vs proprietary not explicitly discussed but vendor-specific internal processes mentioned
-- **Deployment & Migration Complexity**: Transition from CNSA 1.0 to CNSA 2.0; adoption dates for new systems; deprecation dates for currently deployed systems; firmware-signing algorithms frequently locked in for the life of a system; quantum-resistant root of trust required in firmware years before the rest of the system upgrades
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: synchronised transition; coordinated transition; harmonized timelines
 - **Financial & Business Impact**: None detected
-- **Organizational Readiness**: Annual reporting requirements for quantum-vulnerable systems under NSM 10; early consultation with NSA required if CNSA 2.0 algorithms do not meet mission system performance requirements
+- **Organizational Readiness**: governance prerequisites (Commission Recommendation); dedicated crypto team required (work stream on PQC with the NIS Cooperation Group); change management scope (ensure all stakeholders are well informed on the quantum threat to cryptography)
 - **Math Family**: None detected
 - **PQC Round**: None detected
-- **Phase Classification Rationale**: This document establishes mandatory algorithm requirements for National Security Systems, defining the specific cryptographic standards (CNSA 2.0) that must be implemented to ensure quantum resistance. It serves as a binding policy directive rather than a technical specification or voluntary guideline.
-- **Regulatory Mandate Level**: Mandatory
-- **Sector / Industry Applicability**: Government; Defense; Technology
-- **Migration Urgency & Priority**: Near-Term (1-3yr)
-- **Phase Transition Narrative**: Transitions from CNSA 1.0/Suite B to CNSA 2.0, enabling the deployment of NIST-standardized PQC algorithms (ML-KEM, ML-DSA) in National Security Systems.
-- **Historical Significance**: Represents the first concrete NSA mandate specifying exact NIST PQC standards (ML-KEM-1024, ML-DSA-87) for national security use, setting a precedent for government-wide PQC adoption.
-- **Implementation Timeline Dates**: 2025-2030: transition mandated by CNSSP 15 depending on equipment type
-- **Successor Events & Dependencies**: NIAP Protection Profiles including quantum-resistant signatures; NIST CAVP validation for LMS/XMSS; IETF RFCs for protocol deployment guidance
-- **Source Document Title**: The Commercial National Security Algorithm Suite 2.0 and Quantum Computing FAQ
-- **Source Document Publication Date**: December 2024
-- **Country Migration Dates**: United States: 2025-2030 — transition mandated by CNSSP 15 depending on equipment type
-- **Timeline Cross-Reference**: United States 2025: CONSISTENT (AQtive Guard Pentagon 5-Year Agreement | also: Software/Firmware Signing Transition)
-- **Extraction Note**: Base enrichment reused from library record NSA CNSA 2.0 FAQ; timeline dimensions extracted separately; v3 dims extracted from timeline doc (3.0s)
-- **Source Document**: United_States_NSA_CNSA_2_0_Algorithms_Revised.pdf (441,742 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-06-26T18:49:42
+- **Phase Classification Rationale**: The document establishes a definitive, multi-year timeline with specific end-dates for national strategy initiation, high-risk migration, and full transition completion, marking the shift from planning to execution deadlines.
+- **Regulatory Mandate Level**: Recommended
+- **Sector / Industry Applicability**: Government; Critical Infrastructure; Finance; Banking; Telecommunications; Energy; Transportation; Technology
+- **Migration Urgency & Priority**: Critical Deadline
+- **Phase Transition Narrative**: Transitions from initial awareness and risk assessment to mandatory national strategy formulation and active cryptographic migration.
+- **Historical Significance**: Represents the first coordinated EU-wide implementation roadmap for PQC, establishing a unified timeline for Member States to mitigate "store now, decrypt later" threats.
+- **Implementation Timeline Dates**: end of 2026: initiate national PQC transition strategy; end of 2030: transition high-risk use cases to PQC; 2035: complete transition for as many systems as practically feasible; 11.12.2027: Cyber Resilience Act enforcement start
+- **Successor Events & Dependencies**: National PQC transition strategies; implementation of Next Steps; refinement of PQC transition plans; compliance with NIS2 Directive and Cyber Resilience Act
+- **Source Document Title**: A Coordinated Implementation Roadmap for the Transition to Post-Quantum Cryptography Part 1, Version: 1.1, EU PQC Workstream
+- **Source Document Publication Date**: 11.06.2025
+- **Country Migration Dates**: European Union: 2026 — initiate national PQC transition strategy; European Union: 2030 — transition high-risk use cases to PQC; European Union: 2035 — complete transition for as many systems as practically feasible
+- **Timeline Cross-Reference**: European Union 2026: CONSISTENT (Member State Strategy Initiation); European Union 2030: CONSISTENT (Critical Infrastructure Migration | also: High-Risk Systems Secured); European Union 2035: CONSISTENT (Full EU PQC Transition)
+- **Extraction Note**: Base enrichment reused from library record EU-NIS-CG-Roadmap-v1.1; timeline dimensions extracted separately; v3 dims extracted from timeline doc (3.0s)
+- **Source Document**: European_Union_NIS-CG_Coordinated_Implementation_Roadmap_PQC.pdf (553,179 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-06-26T19:06:22
 
 ---
 
-## United States:NSA — NSS Acquisitions CNSA 2.0 Required
+## Germany:BSI — Critical Applications PQC — Hybrid No Longer Required
 
-- **Reference ID**: United States:NSA — NSS Acquisitions CNSA 2.0 Required
-- **Title**: NSS Acquisitions CNSA 2.0 Required
-- **Authors**: National Security Agency
-- **Publication Date**: 2024-12-01
+- **Reference ID**: Germany:BSI — Critical Applications PQC — Hybrid No Longer Required
+- **Title**: Critical Applications PQC — Hybrid No Longer Required
+- **Authors**: Bundesamt für Sicherheit in der Informationstechnik
+- **Publication Date**: 2026-01-01
 - **Last Updated**: Not specified
 - **Document Status**: Validated
-- **Main Topic**: FAQ document with implementation timelines: 2025-2030 prefer, 2030-2033 exclusive, 2035 complete.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA, Falcon, SPHINCS+, CRYSTALS-Kyber, CRYSTALS-Dilithium, XMSS, LMS, HSS, FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), SP 800-208 (LMS/XMSS)
-- **Quantum Threats Addressed**: CRQC (Cryptographically Relevant Quantum Computer), Cryptographically Relevant Quantum, Quantum Computer, Post-Quantum
-- **Migration Timeline Info**: Milestones: p integrity checks) hardware integrity U/OO/194427-22 | PP-24-4014 | December 2024 Ver. 2.1 3 NSA | CNSA Suite 2.0 an... | until the transition mandated by CNSSP 156, expected to occur sometime between 2025 and 2030, depending on equipment ... | e transition mandated by CNSSP 156, expected to occur sometime between 2025 and 2030, depending on equipment type. In... | adoption of CNSA 2.0? A: NSA intends that all NSS will be quantum-resistant by 2035, in accordance with the goal espo... | th CNSA 2.0, or 90 days to request a waiver. CNSSP 15 states that by January 1, 2027, all new acquisitions for NSS wi... | ll be required to be CNSA 2.0 compliant unless otherwise noted. By December 31, 2030, all equipment and services that... | support CNSA 2.0 must be phased out unless otherwise noted, and by December 31, 2031, CNSA 2.0 algorithms are mandate... | ederal government to undertake with the goal of achieving quantum resistance by 2035, including the creation of quant...
-- **Applicable Regions / Bodies**: Regions: United States, International, Bodies: NIST, NSA
+- **Main Topic**: BSI Technical Guideline TR-02102-1 (2026-01) providing recommendations for cryptographic mechanisms, key lengths, and quantum-safe migration strategies, including the discontinuation of sole classical asymmetric mechanisms.
+- **PQC Algorithms Covered**: FrodoKEM; Classic McEliece; ML-KEM; HQC; SLH-DSA; ML-DSA; XMSS; LMS
+- **Quantum Threats Addressed**: Quantum-safe cryptography requirements; Harvest Now Decrypt Later (implied by migration periods and discontinuation of classical mechanisms)
+- **Migration Timeline Info**: Discontinuation of DSA recommendation from 2029; Discontinuation of the sole use of classic asymmetric mechanisms; Migration periods included in PQ cryptography updates
+- **Applicable Regions / Bodies**: Germany; Federal Office for Information Security (BSI)
 - **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: IKEv2
-- **Infrastructure Layers**: HSM, Secure Boot, Firmware, Blockchain
-- **Standardization Bodies**: NIST, IETF, CMVP (NIST)
-- **Compliance Frameworks Referenced**: CNSA 2.0, NSM-8/NSM-10, SP 800-208 (LMS/XMSS)
-- **Classical Algorithms Referenced**: RSA, Elliptic Curve Cryptography (ECC), AES, SHA-384, SHA-512, SHA-256
-- **Key Takeaways**: RSA and ECC must be replaced to achieve quantum resistance; ML-KEM-1024 and ML-DSA-87 are required for all classification levels in NSS; LMS and XMSS are approved only for firmware and software signing; HSMs used for signing must be FIPS validated by CMVP; SHA3 is restricted to internal hardware functionality like secure boot
-- **Security Levels & Parameters**: ML-KEM-1024, ML-DSA-87, AES 256-bit keys, SHA-384, SHA-512, LMS SHA-256/192, SHA3-384, SHA3-512
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
+- **Protocols Covered**: MLS; SRTP
+- **Infrastructure Layers**: Cryptographic Hardware Components; Key Management (Key Derivation, Key Wrapping)
+- **Standardization Bodies**: BSI; NIST
+- **Compliance Frameworks Referenced**: AIS 20/31; FIPS 197
+- **Classical Algorithms Referenced**: AES; AES-128; AES-192; AES-256; AES-GCM-SIV; RSA; DSA; ECDSA; Diffie-Hellman; EC Diffie-Hellman; DLIES; ECIES; SHA-2 (implied by hash functions section, though specific names not listed in TOC, SHA-2 is standard context for BSI); Argon2id; CCM mode; PKCS1.5
+- **Key Takeaways**: BSI recommends hybridization of PQC mechanisms with classical asymmetric mechanisms for critical applications; Sole use of classic asymmetric mechanisms is discontinued; DSA recommendation is discontinued from 2029; Security level increased to 120 bits; MLS protocol is included in recommendations
+- **Security Levels & Parameters**: 120 bits; 2000 bits (RSA transitional); FrodoKEM parameters; Classic McEliece parameters; ML-KEM parameters; SLH-DSA parameter sets; ML-DSA parameter sets
+- **Hybrid & Transition Approaches**: Hybridisation of PQC applications with previously recommended asymmetric mechanisms; Key derivation and hybridization updates; Migration periods for PQC
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: "Recommendation of FrodoKEM and Classic McEliece ... in conjunction with a previously recommended asymmetric mechanism"
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "Recommended hybridisation mechanisms" (Table 2.1); "in conjunction with a previously recommended asymmetric mechanism"
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: "discontinuation of the sole use of classic asymmetric mechanisms" implies hybrid or transition, not pure standalone yet; "Quantum-Safe Signature Schemes" listed but context implies hybrid/transition phase
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "discontinuation of the sole use of classic asymmetric mechanisms" implies hybridization; "hybridization" mentioned in updates
+- **PQC Heatmap Protocols Covered**: MLS
+- **PQC Heatmap Protocols Evidence**: MLS: "inclusion of the MLS protocol" (Changes); "C.2 MLS" (Contents)
+- **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: NSS owners and operators, Vendors, Security Architect, Compliance Officer
-- **Implementation Prerequisites**: NIST Cryptographic Module Validation Program (CMVP) validation for signers; NIST Cryptographic Algorithm Validation Program (CAVP) validation for signature verification; Hardware security module (HSM) implementation for signing and state management; Adherence to FIPS 203, FIPS 204, and NIST SP 800-208
-- **Relevant PQC Today Features**: Timeline, Threats, Compliance, Algorithms, code-signing, hsm-pqc, stateful-signatures
-- **Implementation Attack Surface**: state re-use in signing and state management; backup flows involving transferring keys between modules
+- **Target Audience**: Security Architect; Compliance Officer; Developer
+- **Implementation Prerequisites**: AIS 20/31 update for random number generation; GNU/Linux seed generation methods; Windows seed generation methods
+- **Relevant PQC Today Features**: hybrid-crypto; migration-program; pqc-governance; compliance-strategy; algorithms
+- **Implementation Attack Surface**: Side-channel analysis; Random number generation security
 - **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: NIST Cryptographic Module Validation Program (CMVP); NIST Cryptographic Algorithm Validation Program (CAVP); NIAP validated products
-- **QKD Protocols & Quantum Networking**: Quantum key distribution (QKD); quantum cryptography; specialized hardware using the physics of quantum mechanics
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: internal hardware functionality only (e.g., boot-up integrity checks); firmware signing and software signing; hardware security module (HSM) implementation for signing and state management
-- **Supply Chain & Vendor Risk**: Defense Industrial Base (DIB), vendors, third-party code sources, open-source vs proprietary not explicitly discussed but vendor-specific internal processes mentioned
-- **Deployment & Migration Complexity**: Transition from CNSA 1.0 to CNSA 2.0; adoption dates for new systems; deprecation dates for currently deployed systems; firmware-signing algorithms frequently locked in for the life of a system; quantum-resistant root of trust required in firmware years before the rest of the system upgrades
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: QKD (mentioned in updates)
+- **QRNG & Entropy Sources**: Physical Random Number Generators; Deterministic Random Number Generators; Non-Physical Non-Deterministic Random Number Generators; Seed Generation; DRG.3; NTG.1; PTG.2
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Migration periods; Hybridization; Discontinuation of classical mechanisms
 - **Financial & Business Impact**: None detected
-- **Organizational Readiness**: Annual reporting requirements for quantum-vulnerable systems under NSM 10; early consultation with NSA required if CNSA 2.0 algorithms do not meet mission system performance requirements
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: The document establishes a mandatory compliance deadline for National Security Systems to adopt CNSA 2.0 algorithms, specifically citing January 2027 for new acquisitions and a transition window ending by 2030.
-- **Regulatory Mandate Level**: Mandatory
-- **Sector / Industry Applicability**: Government; Defense; Technology
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Code-based; Hash-based
+- **PQC Round**: Standardised
+- **Phase Classification Rationale**: This document represents a Standardization/Regulatory phase event as it is a published Technical Guideline (TR-02102-1) from a national cybersecurity agency (BSI) providing concrete recommendations and deadlines for cryptographic migration.
+- **Regulatory Mandate Level**: Recommended
+- **Sector / Industry Applicability**: All Sectors
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from Research/Standardization to Implementation/Regulation — signals formal adoption and mandatory transition timelines for German entities.
+- **Historical Significance**: BSI TR-02102-1 is a key national guideline for Germany, updating cryptographic standards to include PQC and setting specific discontinuation dates for classical algorithms like DSA.
+- **Implementation Timeline Dates**: 2029: Discontinuation of DSA recommendation; 2026: Publication of updated guideline with PQC recommendations
+- **Successor Events & Dependencies**: Requires implementation of hybrid PQC mechanisms; Depends on NIST standard publication for ML-KEM/ML-DSA parameters
+- **Source Document Title**: Technical Guideline – Cryptographic Algorithms and Key Lengths
+- **Source Document Publication Date**: January 23, 2026
+- **Country Migration Dates**: Germany: 2029 — Discontinuation of DSA recommendation; Germany: 2026 — Update of PQ recommendations and discontinuation of sole use of classic asymmetric mechanisms
+- **Timeline Cross-Reference**: Germany: DATE CHANGE — CSV=2030 (Critical Applications PQC — Hybrid No Longer Required), doc=2029 (2029 — Discontinuation of DSA recommendation) → REVIEW; Germany 2026: CONSISTENT (BSI TR-02102-1 2026 Edition)
+- **Source Document**: Germany_BSI_TR-02102-1_Cryptographic_Mechanisms.pdf (568,388 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-06-26T19:07:04
+
+---
+
+## Japan:NCO — Government PQC Transition Deadline
+
+- **Reference ID**: Japan:NCO — Government PQC Transition Deadline
+- **Title**: Government PQC Transition Deadline
+- **Authors**: National Cyber Command Office
+- **Publication Date**: 2025-11-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Japan's government interim summary on the transition to Post-Quantum Cryptography (PQC), setting a 2035 target deadline and outlining roadmap development.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
+- **Quantum Threats Addressed**: Shor's Algorithm; Grover's Algorithm; Harvest Now, Decrypt Later (HNDL)
+- **Migration Timeline Info**: 2026: Roadmap formulation; 2035: Target deadline for PQC transition
+- **Applicable Regions / Bodies**: Regions: Japan; Bodies: CRYPTREC; Inter-ministerial Liaison Conference on PQC Utilization in Government Agencies
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: PKI; Cryptographic Inventory
+- **Standardization Bodies**: NIST; CRYPTREC
+- **Compliance Frameworks Referenced**: CRYPTREC Cryptographic List; Uniform Standards for Cybersecurity Measures for Government Agencies
+- **Classical Algorithms Referenced**: RSA; RSA-2048; Elliptic Curve Cryptography; Discrete Logarithm Problem
+- **Key Takeaways**: Japan targets 2035 for PQC transition to align with international standards like the US and EU; CRYPTREC is evaluating NIST FIPS 203/204/205 for inclusion in the recommended cryptographic list; Organizations must conduct cryptographic inventories and prioritize systems handling sensitive or long-term data due to HNDL risks; Hybrid deployment or QKD may be considered alongside pure PQC migration; A detailed roadmap will be formulated in FY2026 to guide the transition.
+- **Security Levels & Parameters**: 128-bit symmetric key strength; 2048-bit RSA; 1 million physical qubits (for breaking public key crypto)
+- **Hybrid & Transition Approaches**: Hybrid use of PQC and current mainstream cryptographic technology; Crypto-agility; Quantum Key Distribution (QKD)
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: PQC key sizes are significantly larger than current public key cryptography key sizes
+- **Target Audience**: Policy Maker; CISO; Security Architect; Compliance Officer
+- **Implementation Prerequisites**: Cryptographic inventory; Crypto-agility; Assessment of information sensitivity and protection periods
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Migrate; Assess; Algorithms; crypto-agility; qkd; migration-program; pqc-governance
+- **Implementation Attack Surface**: Side-channel attacks
+- **Cryptographic Discovery & Inventory**: Cryptographic inventory (Crypto-inventory)
+- **Testing & Validation Methods**: Security evaluation; Implementation performance evaluation
+- **QKD Protocols & Quantum Networking**: Quantum Key Distribution (QKD)
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Significant changes required for applications, interfaces, data formats, and protocols; Increased preparation and development costs; Long migration schedule required
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Inter-ministerial coordination; Roadmap formulation in FY2026
+- **Math Family**: Lattice; Hash-based
+- **PQC Round**: Standardised
+- **Phase Classification Rationale**: The document is an "interim summary" (chukan torimatsume) from a government liaison conference, establishing policy direction and a target date rather than a final technical standard or immediate mandate.
+- **Regulatory Mandate Level**: Recommended
+- **Sector / Industry Applicability**: Government; Critical Infrastructure
 - **Migration Urgency & Priority**: Critical Deadline
-- **Phase Transition Narrative**: Transitions from CNSA 1.0/Suite B to CNSA 2.0; enables the deployment of quantum-resistant algorithms in NSS.
-- **Historical Significance**: This document formalizes the U.S. government's first concrete timeline for mandatory post-quantum cryptography adoption in national security systems, setting a precedent for global PQC migration.
-- **Implementation Timeline Dates**: January 2027: New NSS acquisitions must be CNSA 2.0 compliant; 2025-2030: Transition mandated by CNSSP 15 for commercial equipment
-- **Successor Events & Dependencies**: CNSA 2.0 compliance; NIAP validated products; NIST CMVP validation
-- **Source Document Title**: The Commercial National Security Algorithm Suite 2.0 and Quantum Computing FAQ
-- **Source Document Publication Date**: December 2024
-- **Country Migration Dates**: United States: 2027 — New NSS acquisitions must be CNSA 2.0 compliant; United States: 2025 — Start of transition window for commercial equipment per CNSSP 15; United States: 2030 — End of transition window for commercial equipment per CNSSP 15
-- **Timeline Cross-Reference**: United States 2027: CONSISTENT (NSS Acquisitions CNSA 2.0 Required); United States 2025: CONSISTENT (AQtive Guard Pentagon 5-Year Agreement | also: Software/Firmware Signing Transition); United States 2030: CONSISTENT (CNSA 2.0 Exclusive - Network/Signing | also: Key-Establishment Migration Deadline (EO)
-- **Extraction Note**: Base enrichment reused from library record NSA CNSA 2.0 FAQ; timeline dimensions extracted separately; v3 dims extracted from timeline doc (3.0s)
-- **Source Document**: United_States_NSA_NSS_Acquisitions_CNSA_2_0_Required.pdf (441,742 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-06-26T18:50:25
+- **Phase Transition Narrative**: Moves from initial assessment and international alignment to formal roadmap planning (FY2026) and eventual implementation by 2035.
+- **Historical Significance**: Establishes Japan's official 2035 PQC transition target, aligning with US and EU timelines, and initiates the domestic standardization process via CRYPTREC.
+- **Implementation Timeline Dates**: 2026: Formulation of roadmap; 2035: Target deadline for PQC transition
+- **Successor Events & Dependencies**: Requires CRYPTREC evaluation of NIST FIPS standards; Depends on the formulation of the detailed roadmap in FY2026
+- **Source Document Title**: 政府機関等における耐量子計算機暗号（PQC）への移行について（中間とりまとめ）
+- **Source Document Publication Date**: November 2025 (Reiwa 7)
+- **Country Migration Dates**: Japan: 2035 — Target deadline for PQC transition; United States: 2035 — Deadline for eliminating quantum risk; European Union: 2035 — Deadline for PQC transition; United Kingdom: 2035 — Deadline for PQC transition; Canada: 2035 — Deadline for PQC transition
+- **Timeline Cross-Reference**: Japan 2035: CONSISTENT (Government PQC Transition Deadline); United States 2035: CONSISTENT (112-bit Security Algorithms Fully Disallowed); European Union 2035: CONSISTENT (Full EU PQC Transition); United Kingdom 2035: CONSISTENT (NCSC Full Migration Phase | also: Full PQC Compliance); Canada 2035: CONSISTENT (Remaining Systems Migration | also: Full GC Migration Complete)
+- **Source Document**: Japan_NCO_Government_PQC_Transition_Deadline.pdf (230,950 bytes, 8,295 extracted chars)
+- **Extraction Timestamp**: 2026-06-26T19:07:04
 
 ---
 
@@ -2979,72 +3045,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
-## European Union:EC — Full EU PQC Transition
-
-- **Reference ID**: European Union:EC — Full EU PQC Transition
-- **Title**: Full EU PQC Transition
-- **Authors**: European Commission
-- **Publication Date**: 2025-06-23
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: The EU NIS Cooperation Group issued a coordinated implementation roadmap and timeline for the transition to Post-Quantum Cryptography across EU Member States.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Quantum computing identified as a threat to cryptographic algorithms protecting confidentiality and authenticity of data
-- **Migration Timeline Info**: Commission published Recommendation on 11 April 2024; document issued 23 June 2025
-- **Applicable Regions / Bodies**: Regions: EU Member States; Bodies: EU NIS Cooperation Group, Commission, Directorate-General for Communications Networks, Content and Technology
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: Cloud
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Member States must implement recommendations for a synchronised transition to PQC; Stakeholders need to be informed on the quantum threat to cryptography; A work stream on PQC was established with the NIS Cooperation Group; The roadmap provides harmonized timelines and priority sectors
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: None detected
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: None detected
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: None detected
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: None detected
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None detected
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Policy Maker, Compliance Officer, Security Architect
-- **Implementation Prerequisites**: Establishment of a work stream on PQC with the NIS Cooperation Group; Implementation of recommendations for synchronised transition
-- **Relevant PQC Today Features**: Timeline, Threats, Compliance, Migrate, pqc-governance
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: synchronised transition; coordinated transition; harmonized timelines
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: governance prerequisites (Commission Recommendation); dedicated crypto team required (work stream on PQC with the NIS Cooperation Group); change management scope (ensure all stakeholders are well informed on the quantum threat to cryptography)
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Phase Classification Rationale**: None detected
-- **Regulatory Mandate Level**: None detected
-- **Sector / Industry Applicability**: None detected
-- **Migration Urgency & Priority**: None detected
-- **Phase Transition Narrative**: None detected
-- **Historical Significance**: None detected
-- **Implementation Timeline Dates**: None detected
-- **Successor Events & Dependencies**: None detected
-- **Source Document Title**: None detected
-- **Source Document Publication Date**: None detected
-- **Country Migration Dates**: None detected
-- **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
 ## European Union:EC — High-Priority System Migration Begins
 
 - **Reference ID**: European Union:EC — High-Priority System Migration Begins
@@ -5087,72 +5087,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Source Document Publication Date**: None detected
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Germany:BSI — Critical Applications PQC — Hybrid No Longer Required
-
-- **Reference ID**: Germany:BSI — Critical Applications PQC — Hybrid No Longer Required
-- **Title**: Critical Applications PQC — Hybrid No Longer Required
-- **Authors**: Bundesamt für Sicherheit in der Informationstechnik
-- **Publication Date**: 2026-01-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: BSI TR-02102-1 guidance stating that standalone PQC algorithms are permitted for sensitive applications by 2030, removing the mandatory requirement for hybrid schemes.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: store now, decrypt later; cryptanalysis of algorithms used
-- **Migration Timeline Info**: 2030: PQC-protected required for sensitive and critical applications; standalone PQC permitted without hybrid requirement
-- **Applicable Regions / Bodies**: Bodies: BSI
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: BSI
-- **Compliance Frameworks Referenced**: BSI TR-02102-1
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Sensitive and critical applications must be PQC-protected by end of 2030; Standalone PQC algorithms are permitted without hybrid from 2030; Hybrid schemes remain acceptable but are no longer the mandatory minimum for sensitive data
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Hybrid (classical + PQC) remains acceptable but is no longer mandatory; Standalone PQC permitted
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: No
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Compliance Officer; Security Architect; Policy Maker
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Timeline; Compliance; hybrid-crypto; migration-program
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: Hybrid no longer required for sensitive data by end of 2030; standalone PQC algorithms permitted from 2030 per BSI TR-02102-1; hybrid remains acceptable but not mandatory minimum
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Phase Classification Rationale**: The document establishes a specific deadline (end of 2030) by which sensitive applications must be PQC-protected, marking a regulatory milestone for migration completion.
-- **Regulatory Mandate Level**: Mandatory
-- **Sector / Industry Applicability**: Critical Infrastructure; All Sectors
-- **Migration Urgency & Priority**: Critical Deadline
-- **Phase Transition Narrative**: Moves from Hybrid-Required phase to Standalone-Permitted phase for sensitive data, enabling pure PQC deployments while maintaining hybrid as an option.
-- **Historical Significance**: Represents a significant policy shift by BSI, allowing standalone PQC for sensitive data by 2030, reducing the mandatory reliance on hybrid constructions.
-- **Implementation Timeline Dates**: 2030: PQC-protected required for sensitive and critical applications; standalone PQC permitted
-- **Successor Events & Dependencies**: Enables the deployment of standalone PQC algorithms in sensitive applications; contingent on the development and standardization of quantum computer-resistant alternatives by NIST.
-- **Source Document Title**: Critical Applications PQC — Hybrid No Longer Required
-- **Source Document Publication Date**: January 2025
-- **Country Migration Dates**: Germany: 2030 — Sensitive and critical applications must be PQC-protected; standalone PQC permitted without hybrid requirement
-- **Timeline Cross-Reference**: Germany 2030: CONSISTENT (Critical Applications PQC — Hybrid No Longer Requi)
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
@@ -10037,72 +9971,6 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Source Document Publication Date**: October 6, 2025
 - **Country Migration Dates**: Japan: 2025 — METI releases policy package; NISC runs International Cybersecurity Challenge; NTT Communications rolls out PQC system; NEC achieves wireless optical communication demo; METI and NISC establish Software Bill of Materials vision; NEC unveils integrated QKD system
 - **Timeline Cross-Reference**: Japan 2025: CONSISTENT (Cybersecurity Industry Policy Package)
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
-## Japan:NCO — Government PQC Transition Deadline
-
-- **Reference ID**: Japan:NCO — Government PQC Transition Deadline
-- **Title**: Government PQC Transition Deadline
-- **Authors**: National Cyber Command Office
-- **Publication Date**: 2025-11-01
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Japan National Cyber Command Office sets a 2035 deadline for government agencies to complete PQC transition.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: HNDL, Post-Quantum
-- **Migration Timeline Info**: 2035: deadline for government agencies to complete PQC transition; FY2026: detailed implementation roadmap planned
-- **Applicable Regions / Bodies**: Regions: Japan; Bodies: Japan National Cyber Command Office
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: pqcrypto, PQCryptoLib-Core, PQMicroLib-Core
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: IoT, Cloud
-- **Standardization Bodies**: NIST, NCSC, CRYPTREC
-- **Compliance Frameworks Referenced**: FIPS-recognized schemes
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Government agencies must complete PQC transition by 2035; Japan aligns its timeline with the US, UK, and Canada; A detailed implementation roadmap is planned for FY2026; Cryptographic agility and hybrid schemes are recommended during the transition
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Hybrid schemes; Cryptographic agility
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: No
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Policy Maker; Compliance Officer
-- **Implementation Prerequisites**: Detailed implementation roadmap in FY26; System upgrades; Support measures
-- **Relevant PQC Today Features**: Timeline; hybrid-crypto; crypto-agility; pqc-governance
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: decommissioning of old ciphers
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: low footprint
-- **Supply Chain & Vendor Risk**: supply chains and private businesses
-- **Deployment & Migration Complexity**: hybrid PQ/T schemes; cryptographic agility; detailed implementation roadmap in FY26; co-ordinating the necessary system upgrades
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: 2035 deadline for complete transition; collaboration with AIST and NEDO; coordination of necessary system upgrades
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Phase Classification Rationale**: The document explicitly sets a 2035 deadline for government agencies to complete the PQC transition, marking a definitive end-date for the migration phase.
-- **Regulatory Mandate Level**: Mandatory
-- **Sector / Industry Applicability**: Government
-- **Migration Urgency & Priority**: Critical Deadline
-- **Phase Transition Narrative**: Moves from planning and roadmap development (FY2026) to final completion of the PQC transition by 2035.
-- **Historical Significance**: Establishes a concrete national deadline for Japan, aligning it with major global partners (US, UK, Canada) in PQC adoption timelines.
-- **Implementation Timeline Dates**: 2035: deadline for government agencies to complete PQC transition; FY2026: detailed implementation roadmap planned
-- **Successor Events & Dependencies**: Requires the development of a detailed implementation roadmap in FY2026; Enables system upgrades and support measures coordinated by relevant agencies.
-- **Source Document Title**: Government PQC Transition Deadline
-- **Source Document Publication Date**: 28/11/2025
-- **Country Migration Dates**: Japan: 2035 — deadline for government agencies to complete PQC transition
-- **Timeline Cross-Reference**: Japan 2035: CONSISTENT (Government PQC Transition Deadline)
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
@@ -16179,6 +16047,72 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
+## United States:NSA — CNSA 2.0 Algorithms Revised
+
+- **Reference ID**: United States:NSA — CNSA 2.0 Algorithms Revised
+- **Title**: CNSA 2.0 Algorithms Revised
+- **Authors**: National Security Agency
+- **Publication Date**: 2025-05-30
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: FAQ document with implementation timelines: 2025-2030 prefer, 2030-2033 exclusive, 2035 complete.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA, Falcon, SPHINCS+, CRYSTALS-Kyber, CRYSTALS-Dilithium, XMSS, LMS, HSS, FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), SP 800-208 (LMS/XMSS)
+- **Quantum Threats Addressed**: CRQC (Cryptographically Relevant Quantum Computer), Cryptographically Relevant Quantum, Quantum Computer, Post-Quantum
+- **Migration Timeline Info**: Milestones: p integrity checks) hardware integrity U/OO/194427-22 | PP-24-4014 | December 2024 Ver. 2.1 3 NSA | CNSA Suite 2.0 an... | until the transition mandated by CNSSP 156, expected to occur sometime between 2025 and 2030, depending on equipment ... | e transition mandated by CNSSP 156, expected to occur sometime between 2025 and 2030, depending on equipment type. In... | adoption of CNSA 2.0? A: NSA intends that all NSS will be quantum-resistant by 2035, in accordance with the goal espo... | th CNSA 2.0, or 90 days to request a waiver. CNSSP 15 states that by January 1, 2027, all new acquisitions for NSS wi... | ll be required to be CNSA 2.0 compliant unless otherwise noted. By December 31, 2030, all equipment and services that... | support CNSA 2.0 must be phased out unless otherwise noted, and by December 31, 2031, CNSA 2.0 algorithms are mandate... | ederal government to undertake with the goal of achieving quantum resistance by 2035, including the creation of quant...
+- **Applicable Regions / Bodies**: Regions: United States, International, Bodies: NIST, NSA
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: pqcrypto, PQCryptoLib-Core, PQMicroLib-Core
+- **Protocols Covered**: IKEv2
+- **Infrastructure Layers**: HSM, Secure Boot, Firmware, Blockchain
+- **Standardization Bodies**: NIST, IETF, CMVP (NIST)
+- **Compliance Frameworks Referenced**: CNSA 2.0, NSM-8/NSM-10, SP 800-208 (LMS/XMSS)
+- **Classical Algorithms Referenced**: RSA, Elliptic Curve Cryptography (ECC), AES, SHA-384, SHA-512, SHA-256
+- **Key Takeaways**: RSA and ECC must be replaced to achieve quantum resistance; ML-KEM-1024 and ML-DSA-87 are required for all classification levels in NSS; LMS and XMSS are approved only for firmware and software signing; HSMs used for signing must be FIPS validated by CMVP; SHA3 is restricted to internal hardware functionality like secure boot
+- **Security Levels & Parameters**: ML-KEM-1024, ML-DSA-87, AES 256-bit keys, SHA-384, SHA-512, LMS SHA-256/192, SHA3-384, SHA3-512
+- **Hybrid & Transition Approaches**: PQ/T hybrid schemes not recommended for security purposes but CNSA 1.0 algorithms kept as a hybrid layer with CNSA 2.0 for IKEv2 key establishment indefinitely.
+- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: NSS owners and operators, Vendors, Security Architect, Compliance Officer
+- **Implementation Prerequisites**: NIST Cryptographic Module Validation Program (CMVP) validation for signers; NIST Cryptographic Algorithm Validation Program (CAVP) validation for signature verification; Hardware security module (HSM) implementation for signing and state management; Adherence to FIPS 203, FIPS 204, and NIST SP 800-208
+- **Relevant PQC Today Features**: Timeline, Threats, Compliance, Algorithms, code-signing, hsm-pqc, stateful-signatures
+- **Implementation Attack Surface**: state re-use in signing and state management; backup flows involving transferring keys between modules
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: NIST Cryptographic Module Validation Program (CMVP); NIST Cryptographic Algorithm Validation Program (CAVP); NIAP validated products
+- **QKD Protocols & Quantum Networking**: Quantum key distribution (QKD); quantum cryptography; specialized hardware using the physics of quantum mechanics
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: internal hardware functionality only (e.g., boot-up integrity checks); firmware signing and software signing; hardware security module (HSM) implementation for signing and state management
+- **Supply Chain & Vendor Risk**: Defense Industrial Base (DIB), vendors, third-party code sources, open-source vs proprietary not explicitly discussed but vendor-specific internal processes mentioned
+- **Deployment & Migration Complexity**: Transition from CNSA 1.0 to CNSA 2.0; adoption dates for new systems; deprecation dates for currently deployed systems; firmware-signing algorithms frequently locked in for the life of a system; quantum-resistant root of trust required in firmware years before the rest of the system upgrades
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Annual reporting requirements for quantum-vulnerable systems under NSM 10; early consultation with NSA required if CNSA 2.0 algorithms do not meet mission system performance requirements
+- **Math Family**: None detected
+- **PQC Round**: None detected
+- **Phase Classification Rationale**: This document establishes mandatory algorithm requirements for National Security Systems, defining the specific cryptographic standards (CNSA 2.0) that must be implemented to ensure quantum resistance. It serves as a binding policy directive rather than a technical specification or voluntary guideline.
+- **Regulatory Mandate Level**: Mandatory
+- **Sector / Industry Applicability**: Government; Defense; Technology
+- **Migration Urgency & Priority**: Near-Term (1-3yr)
+- **Phase Transition Narrative**: Transitions from CNSA 1.0/Suite B to CNSA 2.0, enabling the deployment of NIST-standardized PQC algorithms (ML-KEM, ML-DSA) in National Security Systems.
+- **Historical Significance**: Represents the first concrete NSA mandate specifying exact NIST PQC standards (ML-KEM-1024, ML-DSA-87) for national security use, setting a precedent for government-wide PQC adoption.
+- **Implementation Timeline Dates**: 2025-2030: transition mandated by CNSSP 15 depending on equipment type
+- **Successor Events & Dependencies**: NIAP Protection Profiles including quantum-resistant signatures; NIST CAVP validation for LMS/XMSS; IETF RFCs for protocol deployment guidance
+- **Source Document Title**: The Commercial National Security Algorithm Suite 2.0 and Quantum Computing FAQ
+- **Source Document Publication Date**: December 2024
+- **Country Migration Dates**: United States: 2025-2030 — transition mandated by CNSSP 15 depending on equipment type
+- **Timeline Cross-Reference**: United States 2025: CONSISTENT (AQtive Guard Pentagon 5-Year Agreement | also: Software/Firmware Signing Transition)
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
 ## United States:NSA — CNSA 2.0 Exclusive - Network/Signing
 
 - **Reference ID**: United States:NSA — CNSA 2.0 Exclusive - Network/Signing
@@ -16505,6 +16439,72 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Source Document Publication Date**: None detected
 - **Country Migration Dates**: None detected
 - **Timeline Cross-Reference**: None detected
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## United States:NSA — NSS Acquisitions CNSA 2.0 Required
+
+- **Reference ID**: United States:NSA — NSS Acquisitions CNSA 2.0 Required
+- **Title**: NSS Acquisitions CNSA 2.0 Required
+- **Authors**: National Security Agency
+- **Publication Date**: 2024-12-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: FAQ document with implementation timelines: 2025-2030 prefer, 2030-2033 exclusive, 2035 complete.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA, Falcon, SPHINCS+, CRYSTALS-Kyber, CRYSTALS-Dilithium, XMSS, LMS, HSS, FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), SP 800-208 (LMS/XMSS)
+- **Quantum Threats Addressed**: CRQC (Cryptographically Relevant Quantum Computer), Cryptographically Relevant Quantum, Quantum Computer, Post-Quantum
+- **Migration Timeline Info**: Milestones: p integrity checks) hardware integrity U/OO/194427-22 | PP-24-4014 | December 2024 Ver. 2.1 3 NSA | CNSA Suite 2.0 an... | until the transition mandated by CNSSP 156, expected to occur sometime between 2025 and 2030, depending on equipment ... | e transition mandated by CNSSP 156, expected to occur sometime between 2025 and 2030, depending on equipment type. In... | adoption of CNSA 2.0? A: NSA intends that all NSS will be quantum-resistant by 2035, in accordance with the goal espo... | th CNSA 2.0, or 90 days to request a waiver. CNSSP 15 states that by January 1, 2027, all new acquisitions for NSS wi... | ll be required to be CNSA 2.0 compliant unless otherwise noted. By December 31, 2030, all equipment and services that... | support CNSA 2.0 must be phased out unless otherwise noted, and by December 31, 2031, CNSA 2.0 algorithms are mandate... | ederal government to undertake with the goal of achieving quantum resistance by 2035, including the creation of quant...
+- **Applicable Regions / Bodies**: Regions: United States, International, Bodies: NIST, NSA
+- **Leaders Contributions Mentioned**: Matthew Stubbs (Author)
+- **PQC Products Mentioned**: pqcrypto, PQCryptoLib-Core, PQMicroLib-Core
+- **Protocols Covered**: IKEv2
+- **Infrastructure Layers**: HSM, Secure Boot, Firmware, Blockchain
+- **Standardization Bodies**: NIST, IETF, CMVP (NIST)
+- **Compliance Frameworks Referenced**: CNSA 2.0, NSM-8/NSM-10, SP 800-208 (LMS/XMSS)
+- **Classical Algorithms Referenced**: RSA, Elliptic Curve Cryptography (ECC), AES, SHA-384, SHA-512, SHA-256
+- **Key Takeaways**: RSA and ECC must be replaced to achieve quantum resistance; ML-KEM-1024 and ML-DSA-87 are required for all classification levels in NSS; LMS and XMSS are approved only for firmware and software signing; HSMs used for signing must be FIPS validated by CMVP; SHA3 is restricted to internal hardware functionality like secure boot
+- **Security Levels & Parameters**: ML-KEM-1024, ML-DSA-87, AES 256-bit keys, SHA-384, SHA-512, LMS SHA-256/192, SHA3-384, SHA3-512
+- **Hybrid & Transition Approaches**: Crypto agility; defense-in-depth strategy using different mathematical foundations for different tasks
+- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: NSS owners and operators, Vendors, Security Architect, Compliance Officer
+- **Implementation Prerequisites**: NIST Cryptographic Module Validation Program (CMVP) validation for signers; NIST Cryptographic Algorithm Validation Program (CAVP) validation for signature verification; Hardware security module (HSM) implementation for signing and state management; Adherence to FIPS 203, FIPS 204, and NIST SP 800-208
+- **Relevant PQC Today Features**: Timeline, Threats, Compliance, Algorithms, code-signing, hsm-pqc, stateful-signatures
+- **Implementation Attack Surface**: state re-use in signing and state management; backup flows involving transferring keys between modules
+- **Cryptographic Discovery & Inventory**: inventory and prioritization; moving ‘high-value’ assets to the front of the queue for PQC transition
+- **Testing & Validation Methods**: NIST Cryptographic Module Validation Program (CMVP); NIST Cryptographic Algorithm Validation Program (CAVP); NIAP validated products
+- **QKD Protocols & Quantum Networking**: Quantum key distribution (QKD); quantum cryptography; specialized hardware using the physics of quantum mechanics
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: internal hardware functionality only (e.g., boot-up integrity checks); firmware signing and software signing; hardware security module (HSM) implementation for signing and state management
+- **Supply Chain & Vendor Risk**: Defense Industrial Base (DIB), vendors, third-party code sources, open-source vs proprietary not explicitly discussed but vendor-specific internal processes mentioned
+- **Deployment & Migration Complexity**: Transition from CNSA 1.0 to CNSA 2.0; adoption dates for new systems; deprecation dates for currently deployed systems; firmware-signing algorithms frequently locked in for the life of a system; quantum-resistant root of trust required in firmware years before the rest of the system upgrades
+- **Financial & Business Impact**: procurement mandate starting 2027 for US government vendors
+- **Organizational Readiness**: Annual reporting requirements for quantum-vulnerable systems under NSM 10; early consultation with NSA required if CNSA 2.0 algorithms do not meet mission system performance requirements
+- **Math Family**: None detected
+- **PQC Round**: None detected
+- **Phase Classification Rationale**: The document establishes a mandatory compliance deadline for National Security Systems to adopt CNSA 2.0 algorithms, specifically citing January 2027 for new acquisitions and a transition window ending by 2030.
+- **Regulatory Mandate Level**: Mandatory
+- **Sector / Industry Applicability**: Government; Defense; Technology
+- **Migration Urgency & Priority**: Critical Deadline
+- **Phase Transition Narrative**: Transitions from CNSA 1.0/Suite B to CNSA 2.0; enables the deployment of quantum-resistant algorithms in NSS.
+- **Historical Significance**: This document formalizes the U.S. government's first concrete timeline for mandatory post-quantum cryptography adoption in national security systems, setting a precedent for global PQC migration.
+- **Implementation Timeline Dates**: January 2027: New NSS acquisitions must be CNSA 2.0 compliant; 2025-2030: Transition mandated by CNSSP 15 for commercial equipment
+- **Successor Events & Dependencies**: CNSA 2.0 compliance; NIAP validated products; NIST CMVP validation
+- **Source Document Title**: The Commercial National Security Algorithm Suite 2.0 and Quantum Computing FAQ
+- **Source Document Publication Date**: December 2024
+- **Country Migration Dates**: United States: 2027 — New NSS acquisitions must be CNSA 2.0 compliant; United States: 2025 — Start of transition window for commercial equipment per CNSSP 15; United States: 2030 — End of transition window for commercial equipment per CNSSP 15
+- **Timeline Cross-Reference**: United States 2027: CONSISTENT (NSS Acquisitions CNSA 2.0 Required); United States 2025: CONSISTENT (AQtive Guard Pentagon 5-Year Agreement | also: Software/Firmware Signing Transition); United States 2030: CONSISTENT (CNSA 2.0 Exclusive - Network/Signing | also: Key-Establishment Migration Deadline (EO)
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
