@@ -6,6 +6,7 @@ import { LAYERS } from '@/components/Migrate/InfrastructureStack'
 import { CertBadges } from '@/components/Migrate/migrateHelpers'
 import { certsByProduct } from '@/data/certificationXrefData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
+import { EmptyState } from '@/components/ui/empty-state'
 
 interface ModuleMigrateTabProps {
   moduleId: string
@@ -92,10 +93,11 @@ export function ModuleMigrateTab({ moduleId }: ModuleMigrateTabProps) {
 
   if (items.length === 0) {
     return (
-      <div className="glass-panel p-8 text-center">
-        <Package size={32} className="mx-auto mb-3 text-muted-foreground" />
-        <p className="text-muted-foreground text-sm">No tools or products found for this module.</p>
-      </div>
+      <EmptyState
+        icon={<Package size={32} />}
+        title="No tools or products yet"
+        description="No mapped tools or products for this module — the Playground has related hands-on tools."
+      />
     )
   }
 

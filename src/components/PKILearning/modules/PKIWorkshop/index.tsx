@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useCallback } from 'react'
 import {
   Trash2,
   FileKey,
@@ -17,15 +17,9 @@ import {
   ChevronDown,
 } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
-import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
-import { Tabs, TabsContent } from '@/components/ui/tabs'
-import { ModuleTabBar } from '@/components/PKILearning/common/ModuleTabBar'
 import { PKIIntroduction } from './components/PKIIntroduction'
 import { PKIExercises } from './components/PKIExercises'
-import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
-import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
-import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 import { CSRGenerator } from './CSRGenerator'
 import { RootCAGenerator } from './RootCAGenerator'
@@ -35,10 +29,10 @@ import { CRLGenerator } from './CRLGenerator'
 import { MTCComparison } from './MTCComparison'
 import { AcmePqcWalkthrough } from './AcmePqcWalkthrough'
 import { CertCapacityCalculator } from './CertCapacityCalculator'
-import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
+import { ModuleShell } from '@/components/PKILearning/common/ModuleShell'
 import { Button } from '@/components/ui/button'
 import { PlaygroundNextStep } from '@/components/Playground/components/PlaygroundNextStep'
-import { WORKSHOP_STEPS } from '@/components/PKILearning/moduleData'
+import manifest from './manifest'
 
 const ARTIFACT_GROUPS = [
   {
@@ -215,54 +209,20 @@ const ALL_PARTS = [
 ]
 
 interface PKIWorkshopProps {
-  /** When true: renders only the 5-step workshop panel (no module tabs, no Step 6 MTC). */
+  /** When true: renders only the 5-step workshop panel (no module tabs, no Step 6+). */
   playgroundMode?: boolean
 }
 
 export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({ playgroundMode = false }) => {
   const parts = playgroundMode ? ALL_PARTS.slice(0, 5) : ALL_PARTS
 
-  const deepLink = getModuleDeepLink({ maxStep: parts.length - 1 })
-  const [activeTab, setActiveTab] = useState(deepLink.initialTab)
-  const [currentStep, setCurrentStep] = useState(deepLink.initialStep)
-  useSyncDeepLink(activeTab, currentStep)
-  const startTimeRef = useRef(0)
-  const { updateModuleProgress, markStepComplete, resetModuleProgress, modules } = useModuleStore()
+  // ModuleShell owns the tabs, header (context rail), deep-link and time
+  // tracking; this component owns its own stepper state and renders the workshop
+  // through the `workshop` slot so the Playground embed (playgroundMode) can
+  // reuse the exact same panel standalone.
+  const [currentStep, setCurrentStep] = useState(0)
+  const { updateModuleProgress, markStepComplete, resetModuleProgress } = useModuleStore()
   const { resetStore } = useOpenSSLStore()
-
-  // --- Module Progress Tracking ---
-  useEffect(() => {
-    startTimeRef.current = Date.now()
-    updateModuleProgress(MODULE_ID, {
-      status: 'in-progress',
-      lastVisited: Date.now(),
-    })
-
-    return () => {
-      const elapsedMs = Date.now() - startTimeRef.current
-      const elapsedMins = elapsedMs / 60000
-      if (elapsedMins > 0) {
-        const current = useModuleStore.getState().modules[MODULE_ID]
-        updateModuleProgress(MODULE_ID, {
-          timeSpent: (current?.timeSpent || 0) + elapsedMins,
-        })
-      }
-    }
-  }, [updateModuleProgress])
-
-  // Track tab visits as completed steps
-  const handleTabChange = useCallback(
-    (tab: string) => {
-      markStepComplete(MODULE_ID, activeTab)
-      setActiveTab(tab)
-    },
-    [activeTab, markStepComplete]
-  )
-
-  const navigateToWorkshop = useCallback(() => {
-    markStepComplete(MODULE_ID, activeTab)
-    setActiveTab('workshop')
-  }, [activeTab, markStepComplete])
 
   const handleSetWorkshopStep = useCallback((step: number) => {
     setCurrentStep(step)
@@ -413,6 +373,8 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({ playgroundMode = false
     </div>
   )
 
+  // Playground embed: the 5-step workshop stands alone (no tabs/header) plus a
+  // hand-off to the capacity calculator.
   if (playgroundMode) {
     return (
       <div>
@@ -426,66 +388,27 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({ playgroundMode = false
     )
   }
 
-  const workshopSteps = WORKSHOP_STEPS[MODULE_ID] ?? []
-  const completedSteps = modules[MODULE_ID]?.completedSteps ?? []
-  const workshopDone = workshopSteps.filter((s) => completedSteps.includes(s.id)).length
-  const workshopDot = workshopDone > 0 && workshopDone < workshopSteps.length
-
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gradient">PKI Workshop</h1>
-          <p className="text-muted-foreground mt-2">
-            Learn PKI fundamentals, build certificate chains hands-on, and explore PQC migration.
-          </p>
-          <p className="text-xs text-muted-foreground/60 mt-1">
+    <ModuleShell
+      manifest={manifest}
+      title="PKI Workshop"
+      description={
+        <>
+          Learn PKI fundamentals, build certificate chains hands-on, and explore PQC migration.
+          <span className="block text-xs text-muted-foreground/60 mt-1">
             Learning sandbox — private keys are stored in your browser and should not be used in
             production.
-          </p>
-        </div>
-      </div>
-
-      <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <ModuleTabBar
-          tabs={[
-            { value: 'learn', label: 'Learn' },
-            { value: 'visual', label: 'Visual' },
-            { value: 'workshop', label: 'Workshop', hasDot: workshopDot },
-            { value: 'exercises', label: 'Exercises' },
-            { value: 'references', label: 'References' },
-            { value: 'tools', label: 'Tools & Products' },
-          ]}
-          value={activeTab}
-          onValueChange={handleTabChange}
+          </span>
+        </>
+      }
+      learn={(api) => <PKIIntroduction onNavigateToWorkshop={() => api.goToWorkshop()} />}
+      workshop={workshopPanel}
+      exercises={(api) => (
+        <PKIExercises
+          onNavigateToWorkshop={() => api.goToWorkshop()}
+          onSetWorkshopStep={handleSetWorkshopStep}
         />
-
-        <TabsContent value="learn">
-          <GlossaryAutoWrap>
-            <PKIIntroduction onNavigateToWorkshop={navigateToWorkshop} />
-          </GlossaryAutoWrap>
-        </TabsContent>
-
-        <TabsContent value="visual">
-          <ModuleVisualTab moduleId={MODULE_ID} />
-        </TabsContent>
-
-        <TabsContent value="workshop">{workshopPanel}</TabsContent>
-
-        <TabsContent value="exercises">
-          <PKIExercises
-            onNavigateToWorkshop={navigateToWorkshop}
-            onSetWorkshopStep={handleSetWorkshopStep}
-          />
-        </TabsContent>
-
-        <TabsContent value="references">
-          <ModuleReferencesTab moduleId={MODULE_ID} />
-        </TabsContent>
-        <TabsContent value="tools">
-          <ModuleMigrateTab moduleId={MODULE_ID} />
-        </TabsContent>
-      </Tabs>
-    </div>
+      )}
+    />
   )
 }

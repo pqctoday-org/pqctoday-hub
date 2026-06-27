@@ -259,34 +259,31 @@ export const Pkcs11LogPanel = ({
   return (
     <div className={`glass-panel p-3 ${className}`}>
       {/* Header */}
-      <Button
-        variant="ghost"
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between gap-2 text-sm font-semibold"
-        aria-expanded={open}
-      >
-        <span className="flex items-center gap-2">
-          {open ? (
-            <ChevronDown size={14} className="text-muted-foreground" />
-          ) : (
-            <ChevronRight size={14} className="text-muted-foreground" />
-          )}
-          {title}
-          <span className="text-xs font-normal text-muted-foreground">
-            ({visibleLog.length} calls
-            {inspectableCount > 0 && (
-              <span className="text-primary"> · {inspectableCount} inspectable</span>
-            )}
-            )
-          </span>
-        </span>
-        {/* role="presentation" + onKeyDown satisfies jsx-a11y for stopPropagation wrapper */}
-        <span
-          role="presentation"
-          className="flex items-center gap-1"
-          onClick={(e) => e.stopPropagation()}
-          onKeyDown={(e) => e.stopPropagation()}
+      <div className="w-full flex items-center justify-between gap-2 text-sm font-semibold">
+        <Button
+          variant="ghost"
+          onClick={() => setOpen((v) => !v)}
+          className="flex items-center gap-2 text-sm font-semibold"
+          aria-expanded={open}
         >
+          <span className="flex items-center gap-2">
+            {open ? (
+              <ChevronDown size={14} className="text-muted-foreground" />
+            ) : (
+              <ChevronRight size={14} className="text-muted-foreground" />
+            )}
+            {title}
+            <span className="text-xs font-normal text-muted-foreground">
+              ({visibleLog.length} calls
+              {inspectableCount > 0 && (
+                <span className="text-primary"> · {inspectableCount} inspectable</span>
+              )}
+              )
+            </span>
+          </span>
+        </Button>
+        {/* Controls are siblings of the toggle button (not nested) — valid DOM. */}
+        <span className="flex items-center gap-1">
           {showBeginnerMode && (
             <Button
               variant={beginnerMode ? 'secondary' : 'ghost'}
@@ -354,7 +351,7 @@ export const Pkcs11LogPanel = ({
             )}
           </Button>
         </span>
-      </Button>
+      </div>
 
       {/* Body */}
       {open && (

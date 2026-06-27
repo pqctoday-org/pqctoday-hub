@@ -8,6 +8,8 @@ const manifest: ModuleManifest = {
   description:
     "Understand how Shor's and Grover's algorithms break cryptography, CRQC timelines, and HNDL/HNFL attack mechanics.",
   duration: '40 min',
+  whyThisMatters:
+    'Knowing exactly which algorithms Shor and Grover break — and which survive — is what separates a real risk assessment from vendor hype.',
   difficulty: 'beginner',
   frameworkPhase: 'foundations',
   track: 'Foundations',

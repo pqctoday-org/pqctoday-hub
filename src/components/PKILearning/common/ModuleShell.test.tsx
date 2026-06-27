@@ -9,6 +9,7 @@ import { EmbedProvider } from '../../../embed/EmbedProvider'
 import { EmbeddedLearnProvider } from '../embeddedLearnContext'
 import { ModuleShell } from './ModuleShell'
 import { useModuleProgress } from './useModuleProgress'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import type { ModuleManifest } from '../manifest/types'
 
 const renderShell = (ui: React.ReactNode) =>
@@ -27,8 +28,12 @@ const base: ModuleManifest = {
 }
 
 // useSyncDeepLink reads/writes window.location (shared across tests in jsdom),
-// so reset to a clean URL before each test to keep them isolated.
-beforeEach(() => window.history.replaceState(null, '', '/'))
+// so reset to a clean URL before each test to keep them isolated. Also clear the
+// persisted persona so the persona-aware sim CTA starts from a known state.
+beforeEach(() => {
+  window.history.replaceState(null, '', '/')
+  usePersonaStore.getState().setPersona(null)
+})
 
 describe('ModuleShell', () => {
   it('renders the header, the Learn slot, and standard tabs', () => {
@@ -230,25 +235,36 @@ describe('ModuleShell', () => {
     cancel.mockRestore()
   })
 
-  it('shows a "Practice in the Simulation" CTA for practiceInSim modules', () => {
-    renderShell(<ModuleShell manifest={{ ...base, practiceInSim: true }} learn={<div>L</div>} />)
+  it('shows the sim CTA when the active persona practices the module phase', () => {
+    // exec practices p0 (Executive Mandate); base.frameworkPhase is 'p0'.
+    usePersonaStore.getState().setPersona('executive')
+    renderShell(<ModuleShell manifest={base} learn={<div>L</div>} />)
     const cta = screen.getByRole('link', { name: /Practice in the Simulation/i })
     expect(cta).toHaveAttribute('href', '/simulation')
   })
 
-  it('does NOT show the sim CTA for modules without practiceInSim', () => {
+  it('hides the sim CTA when the active persona does NOT practice the module phase', () => {
+    // architect practices p2/p5/p6 (technical), not p0 — so an exec-mandate
+    // module shows no "Practice" CTA for an architect.
+    usePersonaStore.getState().setPersona('architect')
     renderShell(<ModuleShell manifest={base} learn={<div>L</div>} />)
     expect(
       screen.queryByRole('link', { name: /Practice in the Simulation/i })
     ).not.toBeInTheDocument()
   })
 
+  it('shows the sim CTA broadly when no persona is selected (fallback)', () => {
+    renderShell(<ModuleShell manifest={base} learn={<div>L</div>} />)
+    expect(screen.getByRole('link', { name: /Practice in the Simulation/i })).toBeInTheDocument()
+  })
+
   it('hides the sim CTA when the module is embedded in the sim (no loop-back)', () => {
+    usePersonaStore.getState().setPersona('executive')
     render(
       <EmbedProvider>
         <MemoryRouter>
           <EmbeddedLearnProvider>
-            <ModuleShell manifest={{ ...base, practiceInSim: true }} learn={<div>L</div>} />
+            <ModuleShell manifest={base} learn={<div>L</div>} />
           </EmbeddedLearnProvider>
         </MemoryRouter>
       </EmbedProvider>

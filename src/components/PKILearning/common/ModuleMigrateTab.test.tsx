@@ -91,7 +91,7 @@ function renderTab(moduleId: string) {
 describe('ModuleMigrateTab', () => {
   it('renders empty state when no products match', () => {
     renderTab('empty-module')
-    expect(screen.getByText('No tools or products found for this module.')).toBeInTheDocument()
+    expect(screen.getByText('No tools or products yet')).toBeInTheDocument()
   })
 
   it('renders products grouped by layer', () => {

@@ -8,6 +8,8 @@ const manifest: ModuleManifest = {
   description:
     'Hardware Security Module operations for PQC: PKCS#11 v3.2, vendor comparison, firmware migration, and FIPS 140-3 validation.',
   duration: '60 min',
+  whyThisMatters:
+    'Your keys are only as safe as the hardware holding them — HSMs are where PQC migration meets the physical root of trust.',
   difficulty: 'advanced',
   frameworkPhase: 'p6',
   track: 'Hardware Infrastructure',

@@ -8,6 +8,8 @@ const manifest: ModuleManifest = {
   description:
     'S/MIME and CMS: signing workflows, KEM-based encryption (RFC 9629), and PQC migration for email security.',
   duration: '40 min',
+  whyThisMatters:
+    'Signatures are long-lived: one trusted for 10 years must resist a quantum attacker who shows up in year 5.',
   difficulty: 'intermediate',
   frameworkPhase: 'p5',
   track: 'Protocols',
