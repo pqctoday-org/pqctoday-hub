@@ -202,20 +202,6 @@ export const HsmAcvpTesting = () => {
     addLog('Starting ACVP Validation Suite via PKCS#11...')
 
     const newResults: TestResult[] = []
-    // The crypto loop below is fully synchronous; without periodic yields the
-    // browser can't paint the streaming results or the progress bar and the tab
-    // appears frozen. `pushResult` records each check, streams it into state,
-    // and hands control back to the event loop every couple of checks so the
-    // running indicator and live count actually update.
-    let sinceYield = 0
-    const pushResult = async (r: TestResult) => {
-      newResults.push(r)
-      setResults(newResults.slice())
-      if (++sinceYield >= 2) {
-        sinceYield = 0
-        await new Promise((resolve) => setTimeout(resolve, 0))
-      }
-    }
     // Paint the "running" state before the (heavy, synchronous) engine setup.
     await new Promise((resolve) => setTimeout(resolve, 0))
 

@@ -85,9 +85,8 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.getByText(/Transformation/)).toBeInTheDocument()
     expect(screen.getByText('Phases cleared')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /End Quarter/ })).toBeInTheDocument()
-    // exit affordance back to the hub now lives in the ⋯ More overflow menu (PR2)
-    fireEvent.click(screen.getByTitle('More run actions'))
-    expect(screen.getByRole('menuitem', { name: /Exit to hub/i })).toBeInTheDocument()
+    // exit affordance back to the hub is a visible button on the console
+    expect(screen.getByRole('button', { name: /Exit to hub/i })).toBeInTheDocument()
   })
 
   // The sim runs on the user's assessed org (single source of truth): with no
