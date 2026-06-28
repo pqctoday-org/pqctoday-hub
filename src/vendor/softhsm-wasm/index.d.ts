@@ -335,13 +335,7 @@ export interface SoftHSMModule {
     ulDataLen: number,
     pbIsLast: number
   ): number
-  _C_MessageSignFinal(
-    hSession: number,
-    pParam: number,
-    ulParamLen: number,
-    pSig: number,
-    pulSigLen: number
-  ): number
+  _C_MessageSignFinal(hSession: number): number
   _C_MessageVerifyInit(hSession: number, pMechanism: number, hKey: number): number
   _C_VerifyMessage(
     hSession: number,
