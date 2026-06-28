@@ -14,10 +14,10 @@ const manifest: ModuleManifest = {
   trackOrder: 3,
   learnSections: [
     { id: 'key-hierarchy', label: 'PQC Key Hierarchy Design' },
-    { id: 'envelope', label: 'ML-KEM Envelope Encryption' },
-    { id: 'hybrid-wrap', label: 'Hybrid Key Wrapping Patterns' },
+    { id: 'envelope', label: 'ML-KEM Envelope Encrypt' },
+    { id: 'hybrid-wrap', label: 'Hybrid Key Wrapping' },
     { id: 'rotation', label: 'Key Rotation Planning' },
-    { id: 'kmip', label: 'KMIP Protocol & Cross-Provider Sync' },
+    { id: 'kmip', label: 'KMIP Cross-Provider Sync' },
   ],
   workshopSteps: [
     { id: 'key-hierarchy', label: 'Key Hierarchy' },

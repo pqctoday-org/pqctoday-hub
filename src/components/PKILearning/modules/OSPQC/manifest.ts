@@ -13,11 +13,11 @@ const manifest: ModuleManifest = {
   track: 'Software Infrastructure',
   trackOrder: 2,
   learnSections: [
-    { id: 'os-crypto-landscape', label: 'OS Cryptographic Subsystems: OpenSSL, CNG, GnuPG' },
-    { id: 'ssh-host-keys', label: 'SSH Host Key Migration to ML-DSA' },
-    { id: 'system-tls', label: 'System-Wide TLS Configuration for PQC' },
-    { id: 'package-signing', label: 'Package Signing and Repository Trust with PQC' },
-    { id: 'fips-mode', label: 'FIPS Mode and PQC-Enabled OS Configurations' },
+    { id: 'os-crypto-landscape', label: 'OS Crypto Subsystems' },
+    { id: 'ssh-host-keys', label: 'SSH Host Key Migration' },
+    { id: 'system-tls', label: 'System TLS for PQC' },
+    { id: 'package-signing', label: 'Package Signing & Trust' },
+    { id: 'fips-mode', label: 'FIPS Mode & PQC OS' },
   ],
   workshopSteps: [
     { id: 'crypto-inventory', label: 'OS Crypto Inventory' },

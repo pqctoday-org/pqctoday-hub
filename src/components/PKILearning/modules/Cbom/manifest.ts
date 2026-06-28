@@ -15,12 +15,12 @@ const manifest: ModuleManifest = {
   track: 'Strategy',
   trackOrder: 4,
   learnSections: [
-    { id: 'cbom-why', label: 'Why a CBOM & where Phase 2 sits' },
-    { id: 'cbom-formats', label: 'Formats & governance: CycloneDX vs SPDX' },
-    { id: 'cbom-discovery', label: 'Find all the crypto: layered discovery' },
-    { id: 'cbom-context', label: 'Key identity, provenance & where managed' },
-    { id: 'cbom-codify', label: 'Codifying & normalizing crypto' },
-    { id: 'cbom-verify', label: 'Make it machine-verifiable & protect it' },
+    { id: 'cbom-why', label: 'Why a CBOM' },
+    { id: 'cbom-formats', label: 'CycloneDX vs SPDX' },
+    { id: 'cbom-discovery', label: 'Layered Crypto Discovery' },
+    { id: 'cbom-context', label: 'Key Identity & Provenance' },
+    { id: 'cbom-codify', label: 'Codifying Crypto' },
+    { id: 'cbom-verify', label: 'Machine-Verifiable CBOM' },
   ],
   workshopSteps: [
     { id: 'source-coverage-mapper', label: 'Source Coverage Mapper' },

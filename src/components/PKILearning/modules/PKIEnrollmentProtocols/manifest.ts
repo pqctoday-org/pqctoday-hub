@@ -13,10 +13,10 @@ const manifest: ModuleManifest = {
   track: 'Protocols',
   trackOrder: 4,
   learnSections: [
-    { id: 'enrollment-overview', label: 'Enrollment Protocols Overview' },
-    { id: 'est-protocol', label: 'EST (RFC 7030) Walkthrough' },
-    { id: 'cmp-protocol', label: 'CMP (RFC 4210 + 9810) Walkthrough' },
-    { id: 'pqc-enrollment', label: 'PQC Enrollment Landscape & Drafts' },
+    { id: 'enrollment-overview', label: 'Enrollment Overview' },
+    { id: 'est-protocol', label: 'EST RFC 7030' },
+    { id: 'cmp-protocol', label: 'CMP RFC 9810' },
+    { id: 'pqc-enrollment', label: 'PQC Enrollment Drafts' },
   ],
   workshopSteps: [
     { id: 'keygen', label: 'Generate End-Entity Key (ML-DSA / ML-KEM)' },

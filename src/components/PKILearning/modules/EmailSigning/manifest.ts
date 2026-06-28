@@ -15,8 +15,8 @@ const manifest: ModuleManifest = {
   track: 'Protocols',
   trackOrder: 7,
   learnSections: [
-    { id: 'smime', label: 'S/MIME, CMS & KEM Encryption' },
-    { id: 'cms', label: 'Certificate Requirements & Migration' },
+    { id: 'smime', label: 'S/MIME CMS & KEM' },
+    { id: 'cms', label: 'Certificate Migration' },
   ],
   workshopSteps: [
     { id: 'smime-cert', label: 'S/MIME Certificates' },

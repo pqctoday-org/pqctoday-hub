@@ -15,8 +15,8 @@ const manifest: ModuleManifest = {
   track: 'Executive',
   trackOrder: 6,
   learnSections: [
-    { id: 'roadmap', label: 'Program Overview & 7-Phase Framework' },
-    { id: 'deployment', label: 'Critical Success Factors & Workshop' },
+    { id: 'roadmap', label: 'Program Overview' },
+    { id: 'deployment', label: 'Critical Success Factors' },
   ],
   workshopSteps: [
     { id: 'roadmap-builder', label: 'Roadmap Builder' },

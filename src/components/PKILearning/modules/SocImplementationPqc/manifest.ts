@@ -13,9 +13,9 @@ const manifest: ModuleManifest = {
   track: 'Executive',
   trackOrder: 10,
   learnSections: [
-    { id: 'why-it-matters', label: 'Five PQC Detection Use Cases & the Posture Registry' },
-    { id: 'what-to-learn', label: 'Detection, CTI & Incident-Response Skills' },
-    { id: 'how-to-act', label: 'Phased SOC Implementation & Quantum Playbooks' },
+    { id: 'why-it-matters', label: 'Why It Matters' },
+    { id: 'what-to-learn', label: 'Detection & CTI Skills' },
+    { id: 'how-to-act', label: 'How to Act' },
   ],
   workshopSteps: [
     { id: 'why-it-matters', label: 'Why It Matters' },

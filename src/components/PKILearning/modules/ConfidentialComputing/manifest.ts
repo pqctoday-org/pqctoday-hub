@@ -13,12 +13,12 @@ const manifest: ModuleManifest = {
   track: 'Hardware Infrastructure',
   trackOrder: 1,
   learnSections: [
-    { id: 'tee-fundamentals', label: 'TEE Fundamentals & Threat Model' },
-    { id: 'vendor-architectures', label: 'Vendor Architectures (SGX, TDX, CCA, SEV-SNP, Nitro)' },
-    { id: 'attestation', label: 'Remote Attestation & Trust Chains' },
-    { id: 'memory-encryption', label: 'Memory Encryption & Data-in-Use Protection' },
-    { id: 'tee-hsm', label: 'TEE-HSM Trusted Communication' },
-    { id: 'quantum-threats', label: 'Quantum Threats to Confidential Computing' },
+    { id: 'tee-fundamentals', label: 'TEE Fundamentals' },
+    { id: 'vendor-architectures', label: 'TEE Vendor Architectures' },
+    { id: 'attestation', label: 'Remote Attestation' },
+    { id: 'memory-encryption', label: 'Memory Encryption' },
+    { id: 'tee-hsm', label: 'TEE-HSM Communication' },
+    { id: 'quantum-threats', label: 'Quantum Threats to TEEs' },
   ],
   workshopSteps: [
     { id: 'tee-architecture-explorer', label: 'TEE Architecture Explorer' },

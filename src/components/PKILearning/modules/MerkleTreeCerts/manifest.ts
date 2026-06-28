@@ -13,11 +13,11 @@ const manifest: ModuleManifest = {
   track: 'Software Infrastructure',
   trackOrder: 4,
   learnSections: [
-    { id: 'merkle', label: 'Merkle Tree Construction & SHA-256' },
-    { id: 'inclusion', label: 'Inclusion Proofs & Authentication Paths' },
-    { id: 'verification', label: 'Proof Verification Algorithm' },
-    { id: 'comparison', label: 'MTC vs X.509: Size & Performance Trade-offs' },
-    { id: 'ct-log', label: 'Certificate Transparency Log (ML-DSA-44 via SoftHSMv3)' },
+    { id: 'merkle', label: 'Merkle Tree & SHA-256' },
+    { id: 'inclusion', label: 'Inclusion & Auth Paths' },
+    { id: 'verification', label: 'Proof Verification' },
+    { id: 'comparison', label: 'MTC vs X.509 Trade-offs' },
+    { id: 'ct-log', label: 'CT Log ML-DSA-44' },
   ],
   workshopSteps: [
     { id: 'build-tree', label: 'Build Tree' },

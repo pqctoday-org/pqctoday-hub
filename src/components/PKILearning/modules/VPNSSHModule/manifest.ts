@@ -13,9 +13,9 @@ const manifest: ModuleManifest = {
   track: 'Protocols',
   trackOrder: 6,
   learnSections: [
-    { id: 'ikev2', label: 'IKEv2 & IPsec with ML-KEM' },
-    { id: 'ssh', label: 'SSH PQC Key Exchange (sntrup761, ML-KEM)' },
-    { id: 'wireguard', label: 'WireGuard Rosenpass & Protocol Comparison' },
+    { id: 'ikev2', label: 'IKEv2 & IPsec ML-KEM' },
+    { id: 'ssh', label: 'SSH PQC Key Exchange' },
+    { id: 'wireguard', label: 'WireGuard Rosenpass' },
   ],
   workshopSteps: [
     { id: 'ikev2-handshake', label: 'IKEv2 Handshake' },

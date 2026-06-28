@@ -13,11 +13,11 @@ const manifest: ModuleManifest = {
   track: 'Foundations',
   trackOrder: 0,
   learnSections: [
-    { id: 'entropy', label: 'Entropy Sources & Collection' },
-    { id: 'drbg', label: 'NIST SP 800-90 DRBG Mechanisms' },
-    { id: 'testing', label: 'Entropy Testing (SP 800-90B)' },
+    { id: 'entropy', label: 'Entropy Sources' },
+    { id: 'drbg', label: 'SP 800-90 DRBG' },
+    { id: 'testing', label: 'Entropy Testing (90B)' },
     { id: 'qrng', label: 'TRNG vs QRNG Comparison' },
-    { id: 'combining', label: 'Defense-in-Depth: Combining Sources' },
+    { id: 'combining', label: 'Combining Sources' },
   ],
   workshopSteps: [
     { id: 'random-generation', label: 'Random Byte Generation' },

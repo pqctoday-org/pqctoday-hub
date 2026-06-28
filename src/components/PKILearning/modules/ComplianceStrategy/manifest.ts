@@ -13,9 +13,9 @@ const manifest: ModuleManifest = {
   track: 'Executive',
   trackOrder: 1,
   learnSections: [
-    { id: 'frameworks', label: 'Compliance Landscape & Key Frameworks' },
-    { id: 'jurisdiction', label: 'Compliance vs Risk Approach & Major Deadlines' },
-    { id: 'audit', label: 'Country Deadlines, Dependencies & Workshop' },
+    { id: 'frameworks', label: 'Compliance Landscape' },
+    { id: 'jurisdiction', label: 'Compliance vs Risk' },
+    { id: 'audit', label: 'Deadlines & Dependencies' },
   ],
   workshopSteps: [
     { id: 'jurisdiction-mapper', label: 'Jurisdiction Mapper' },

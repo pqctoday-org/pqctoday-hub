@@ -374,17 +374,17 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
   const steps = [
     {
       id: 'roadmap',
-      label: 'Program Overview & 7-Phase Framework',
+      label: '7-Phase Framework',
       content: <Step1ProgramAndFramework />,
     },
     {
       id: 'two-track',
-      label: 'Two-Track Sequencing (KEM vs Signatures)',
+      label: 'KEM vs Signatures',
       content: <TwoTrackSequencing />,
     },
     {
       id: 'deployment',
-      label: 'Critical Success Factors & Workshop',
+      label: 'Success Factors',
       content: <Step2SuccessAndWorkshop onNavigateToWorkshop={onNavigateToWorkshop} />,
     },
   ]

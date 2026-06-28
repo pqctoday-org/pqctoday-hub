@@ -13,12 +13,12 @@ const manifest: ModuleManifest = {
   track: 'Industries',
   trackOrder: 1,
   learnSections: [
-    { id: 'why-energy', label: 'Why Energy & Utilities Is Different' },
-    { id: 'nerc-cip', label: 'NERC CIP & IEC 62351 Compliance' },
-    { id: 'substation-protocols', label: 'Substation Protocols (IEC 61850, DNP3, Modbus)' },
-    { id: 'smart-meters', label: 'Smart Meter Key Management at Scale' },
-    { id: 'safety-environmental', label: 'Safety & Environmental Risk' },
-    { id: 'lifecycle-connectivity', label: 'Extended Lifecycles & Connectivity Challenges' },
+    { id: 'why-energy', label: 'Why Energy & Utilities' },
+    { id: 'nerc-cip', label: 'NERC CIP & IEC 62351' },
+    { id: 'substation-protocols', label: 'Substation Protocols' },
+    { id: 'smart-meters', label: 'Smart Meter Management' },
+    { id: 'safety-environmental', label: 'Safety & Environmental' },
+    { id: 'lifecycle-connectivity', label: 'Lifecycle & Connectivity' },
   ],
   workshopSteps: [
     { id: 'protocol-security-analyzer', label: 'Protocol Analyzer' },

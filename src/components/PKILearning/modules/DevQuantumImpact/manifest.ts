@@ -13,9 +13,9 @@ const manifest: ModuleManifest = {
   track: 'Role Guides',
   trackOrder: 1,
   learnSections: [
-    { id: 'why-it-matters', label: 'Why It Matters: Developer Quantum Exposure' },
-    { id: 'what-to-learn', label: 'What to Learn: Knowledge & Skills Gap' },
-    { id: 'how-to-act', label: 'How to Act: Phased Action Plan' },
+    { id: 'why-it-matters', label: 'Why It Matters' },
+    { id: 'what-to-learn', label: 'Knowledge & Skills' },
+    { id: 'how-to-act', label: 'How to Act' },
   ],
   workshopSteps: [
     { id: 'why-it-matters', label: 'Why It Matters' },

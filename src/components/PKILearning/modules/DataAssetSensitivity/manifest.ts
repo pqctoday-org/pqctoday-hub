@@ -14,8 +14,8 @@ const manifest: ModuleManifest = {
   trackOrder: 1,
   learnSections: [
     { id: 'classification', label: 'Data Asset Classification' },
-    { id: 'compliance', label: 'Compliance Mapping (GDPR, HIPAA, DORA, NIS2)' },
-    { id: 'methodology', label: 'Risk Methodology (NIST RMF, ISO 27005, FAIR)' },
+    { id: 'compliance', label: 'Compliance Mapping' },
+    { id: 'methodology', label: 'Risk Methodology' },
   ],
   workshopSteps: [
     { id: 'asset-inventory', label: 'Asset Inventory' },

@@ -13,8 +13,8 @@ const manifest: ModuleManifest = {
   track: 'Protocols',
   trackOrder: 8,
   learnSections: [
-    { id: 'mls-overview', label: 'TreeKEM, HPKE, Key Schedule (RFC 9420)' },
-    { id: 'pq-mls', label: 'PQ ciphersuites & openmls_pqctoday_crypto provider' },
+    { id: 'mls-overview', label: 'TreeKEM & HPKE (RFC 9420)' },
+    { id: 'pq-mls', label: 'PQ Ciphersuites & Crypto' },
   ],
   workshopSteps: [
     { id: 'treekem', label: 'TreeKEM Ratchet Tree Visualizer' },

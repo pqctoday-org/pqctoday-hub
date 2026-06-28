@@ -13,11 +13,11 @@ const manifest: ModuleManifest = {
   track: 'Software Infrastructure',
   trackOrder: 0,
   learnSections: [
-    { id: 'secrets-vs-keys', label: 'Secrets vs Keys: What Needs PQC Protection' },
-    { id: 'hndl-risk', label: 'HNDL Risk for Secrets in Transit and at Rest' },
-    { id: 'automated-rotation', label: 'Automated Rotation with PQC Keys' },
-    { id: 'provider-roadmaps', label: 'AWS / Azure / GCP / Vault PQC Roadmaps' },
-    { id: 'kubernetes-cicd', label: 'Kubernetes, CI/CD, and Zero-Trust Secrets' },
+    { id: 'secrets-vs-keys', label: 'Secrets vs Keys' },
+    { id: 'hndl-risk', label: 'HNDL Transit & At Rest' },
+    { id: 'automated-rotation', label: 'Automated PQC Rotation' },
+    { id: 'provider-roadmaps', label: 'Cloud Provider Roadmaps' },
+    { id: 'kubernetes-cicd', label: 'Kubernetes & Zero-Trust' },
   ],
   workshopSteps: [
     { id: 'secrets-architecture-mapper', label: 'Architecture Mapper' },

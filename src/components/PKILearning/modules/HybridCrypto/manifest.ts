@@ -16,7 +16,7 @@ const manifest: ModuleManifest = {
   trackOrder: 2,
   learnSections: [
     { id: 'why-hybrid', label: 'Why Hybrid Cryptography?' },
-    { id: 'cert-formats', label: 'Hybrid Certificate Formats' },
+    { id: 'cert-formats', label: 'Hybrid Cert Formats' },
     { id: 'kem', label: 'Hybrid KEM Construction' },
     { id: 'composite', label: 'Hybrid Signature Spectrum' },
   ],

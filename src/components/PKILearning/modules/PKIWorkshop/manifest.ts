@@ -13,10 +13,10 @@ const manifest: ModuleManifest = {
   track: 'Software Infrastructure',
   trackOrder: 5,
   learnSections: [
-    { id: 'fundamentals', label: 'PKI Fundamentals & Trust Models' },
-    { id: 'cert-structure', label: 'Certificate Structure & Extensions' },
-    { id: 'ca-hierarchy', label: 'CA Hierarchies & Certificate Chains' },
-    { id: 'lifecycle', label: 'Certificate Lifecycle & Revocation' },
+    { id: 'fundamentals', label: 'PKI Fundamentals' },
+    { id: 'cert-structure', label: 'Certificate Structure' },
+    { id: 'ca-hierarchy', label: 'CA Hierarchies' },
+    { id: 'lifecycle', label: 'Certificate Lifecycle' },
     { id: 'pqc-pki', label: 'PQC PKI Migration Path' },
   ],
   workshopSteps: [

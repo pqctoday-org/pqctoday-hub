@@ -13,11 +13,11 @@ const manifest: ModuleManifest = {
   track: 'Industries',
   trackOrder: 2,
   learnSections: [
-    { id: 'biometric-threat', label: 'Biometric Data: The Irreplaceable Secret' },
-    { id: 'pharma-ip', label: 'Pharmaceutical IP & Research Data Protection' },
-    { id: 'patient-privacy', label: 'Patient Privacy as a Fundamental Right' },
-    { id: 'device-safety', label: 'Medical Device Safety & PQC' },
-    { id: 'healthcare-migration', label: 'Healthcare PQC Migration: A Sector-Wide Challenge' },
+    { id: 'biometric-threat', label: 'Biometric Data Permanence' },
+    { id: 'pharma-ip', label: 'Pharma IP Protection' },
+    { id: 'patient-privacy', label: 'Patient Privacy Rights' },
+    { id: 'device-safety', label: 'Medical Device & PQC' },
+    { id: 'healthcare-migration', label: 'Healthcare PQC Migration' },
   ],
   workshopSteps: [
     { id: 'biometric-vault', label: 'Biometric Vault Assessor' },

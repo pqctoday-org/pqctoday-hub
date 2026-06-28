@@ -15,7 +15,7 @@ const manifest: ModuleManifest = {
   learnSections: [
     { id: 'jwt', label: 'JWT/JWS/JWE Structure' },
     { id: 'pqc-sign', label: 'ML-DSA JWT Signing' },
-    { id: 'hybrid-jwt', label: 'Hybrid JWT & Backwards Compatibility' },
+    { id: 'hybrid-jwt', label: 'Hybrid JWT Compatibility' },
     { id: 'jwe', label: 'ML-KEM JWE Key Agreement' },
     { id: 'oauth', label: 'OAuth 2.0 PQC Migration' },
   ],

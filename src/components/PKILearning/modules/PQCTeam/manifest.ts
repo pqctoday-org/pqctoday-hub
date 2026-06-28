@@ -13,8 +13,8 @@ const manifest: ModuleManifest = {
   track: 'Executive',
   trackOrder: 7,
   learnSections: [
-    { id: 'roles', label: 'Core Roles & the Crypto Champion Network' },
-    { id: 'build-borrow-buy', label: 'Build-Borrow-Buy & Team Sizing' },
+    { id: 'roles', label: 'Crypto Champion Network' },
+    { id: 'build-borrow-buy', label: 'Build-Borrow-Buy' },
   ],
   workshopSteps: [{ id: 'team-sizing', label: 'Team Sizing Calculator' }],
   // reduced 3-tab set (no Visual/References/Tools) — matches the original render

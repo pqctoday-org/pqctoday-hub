@@ -13,12 +13,12 @@ const manifest: ModuleManifest = {
   track: 'Protocols',
   trackOrder: 2,
   learnSections: [
-    { id: 'architecture', label: 'Web Gateway Architecture & TLS Termination Patterns' },
-    { id: 'cert-lifecycle', label: 'Certificate Lifecycle at Edge Scale' },
-    { id: 'performance', label: 'PQC Handshake Performance & Session Optimization' },
-    { id: 'inspection', label: 'WAF/IDS Inspection Challenges with PQC' },
-    { id: 'cdn-edge', label: 'CDN Edge Deployment & Origin Shielding' },
-    { id: 'vendor-paths', label: 'Vendor-Specific PQC Migration Paths' },
+    { id: 'architecture', label: 'Gateway Architecture' },
+    { id: 'cert-lifecycle', label: 'Cert Lifecycle at Edge' },
+    { id: 'performance', label: 'Handshake Performance' },
+    { id: 'inspection', label: 'WAF/IDS Inspection' },
+    { id: 'cdn-edge', label: 'CDN Edge Deployment' },
+    { id: 'vendor-paths', label: 'Vendor Migration Paths' },
   ],
   workshopSteps: [
     { id: 'topology-builder', label: 'Topology Builder' },

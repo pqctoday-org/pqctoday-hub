@@ -545,12 +545,12 @@ const Step4Advanced: React.FC<{ onNavigateToWorkshop: () => void }> = ({
       <div className="space-y-2">
         {[
           {
-            label: 'FIPS 205 — SLH-DSA Standard',
+            label: 'FIPS 205 & SLH-DSA',
             url: 'https://csrc.nist.gov/pubs/fips/205/final',
             desc: 'Full specification: §3–11 cover the primitives, parameter sets, signing, and HashSLH-DSA',
           },
           {
-            label: 'SPHINCS+ Submission (Round 3)',
+            label: 'SPHINCS+ Round 3',
             url: 'https://sphincs.org/data/sphincs+-r3.1-specification.pdf',
             desc: 'Original SPHINCS+ paper with detailed security analysis and parameter justification',
           },
@@ -593,22 +593,22 @@ export const SLHDSAIntroduction: React.FC<SLHDSAIntroductionProps> = ({ onNaviga
   const steps = [
     {
       id: 'overview',
-      label: 'SLH-DSA Overview & Why Stateless',
+      label: 'SLH-DSA Overview',
       content: <Step1Overview />,
     },
     {
       id: 'internals',
-      label: 'WOTS+, FORS & Hypertree Architecture (§3–5)',
+      label: 'WOTS+ & Hypertree',
       content: <Step2Internals />,
     },
     {
       id: 'parameters',
-      label: 'Parameter Sets, Tradeoffs & FIPS 205 §6',
+      label: 'Parameter Sets',
       content: <Step3Parameters />,
     },
     {
       id: 'advanced',
-      label: 'Context Strings, Deterministic Mode & HashSLH-DSA',
+      label: 'HashSLH-DSA Modes',
       content: <Step4Advanced onNavigateToWorkshop={onNavigateToWorkshop} />,
     },
   ]

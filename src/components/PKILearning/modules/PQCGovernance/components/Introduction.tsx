@@ -449,12 +449,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
   const steps = [
     {
       id: 'model',
-      label: 'Why Governance, RACI & Policy Hierarchy',
+      label: 'Governance & RACI',
       content: <Step1WhyRaciPolicy />,
     },
     {
       id: 'policy',
-      label: 'Governance Models, Escalation & KPIs',
+      label: 'Governance Models',
       content: <Step2ModelsEscalationKpis />,
     },
     {

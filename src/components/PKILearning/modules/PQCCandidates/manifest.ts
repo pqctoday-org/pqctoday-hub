@@ -15,10 +15,10 @@ const manifest: ModuleManifest = {
   track: 'Foundations',
   trackOrder: 3,
   learnSections: [
-    { id: 'rolling-process', label: 'Standardisation is a Rolling Process' },
-    { id: 'validation', label: 'How Candidates Are Validated' },
-    { id: 'families', label: 'Four Math Families on the Table' },
-    { id: 'worldwide', label: 'Worldwide Parallel Processes' },
+    { id: 'rolling-process', label: 'Rolling Standardisation' },
+    { id: 'validation', label: 'Candidate Validation' },
+    { id: 'families', label: 'Four Math Families' },
+    { id: 'worldwide', label: 'Worldwide Processes' },
     { id: 'whats-next', label: "What's Coming Next" },
   ],
   workshopSteps: [

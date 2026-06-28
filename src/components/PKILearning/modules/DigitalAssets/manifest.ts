@@ -13,11 +13,11 @@ const manifest: ModuleManifest = {
   track: 'Industries',
   trackOrder: 5,
   learnSections: [
-    { id: 'bitcoin', label: 'Bitcoin: secp256k1 & ECDSA' },
-    { id: 'ethereum', label: 'Ethereum: Keccak-256 & Smart Contracts' },
+    { id: 'bitcoin', label: 'Bitcoin secp256k1 & ECDSA' },
+    { id: 'ethereum', label: 'Ethereum Smart Contracts' },
     { id: 'hd-wallets', label: 'HD Wallets: BIP32/39/44' },
-    { id: 'pqc-blockchain', label: 'PQC Migration for Digital Assets' },
-    { id: 'custody', label: 'Custody Architecture & PQC Threats' },
+    { id: 'pqc-blockchain', label: 'PQC Asset Migration' },
+    { id: 'custody', label: 'Custody Architecture' },
   ],
   workshopSteps: [
     { id: 'bitcoin', label: 'Bitcoin Flow' },

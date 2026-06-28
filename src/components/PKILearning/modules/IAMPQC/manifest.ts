@@ -13,14 +13,14 @@ const manifest: ModuleManifest = {
   track: 'Applications',
   trackOrder: 1,
   learnSections: [
-    { id: 'iam-crypto-foundations', label: 'Crypto in IAM: Tokens, Certificates, MFA' },
-    { id: 'token-migration', label: 'JWT, SAML, and OIDC Token Signing with ML-DSA' },
+    { id: 'iam-crypto-foundations', label: 'IAM Crypto: Tokens & MFA' },
+    { id: 'token-migration', label: 'JWT SAML OIDC Signing' },
     {
       id: 'directory-services',
-      label: 'Active Directory, LDAP, and Kerberos Under Quantum Threat',
+      label: 'Directory Kerberos Threat',
     },
-    { id: 'vendor-roadmaps', label: 'Okta, Entra, PingFederate, ForgeRock Migration Paths' },
-    { id: 'zero-trust-identity', label: 'PQC-Aware Zero Trust Identity Architecture' },
+    { id: 'vendor-roadmaps', label: 'IAM Vendor Roadmaps' },
+    { id: 'zero-trust-identity', label: 'PQC Zero Trust Identity' },
   ],
   workshopSteps: [
     { id: 'iam-crypto-inventory', label: 'IAM Crypto Inventory' },

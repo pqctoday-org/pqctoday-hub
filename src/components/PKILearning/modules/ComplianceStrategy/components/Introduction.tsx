@@ -655,17 +655,17 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
   const steps = [
     {
       id: 'frameworks',
-      label: 'Compliance Landscape & Key Frameworks',
+      label: 'Compliance Landscape',
       content: <Step1LandscapeAndFrameworks />,
     },
     {
       id: 'jurisdiction',
-      label: 'Compliance vs Risk Approach & Major Deadlines',
+      label: 'Compliance vs Risk',
       content: <Step2ApproachAndDeadlines />,
     },
     {
       id: 'audit',
-      label: 'Country Deadlines, Dependencies & Workshop',
+      label: 'Deadlines & Workshop',
       content: <Step3CountriesAndWorkshop onNavigateToWorkshop={onNavigateToWorkshop} />,
     },
   ]

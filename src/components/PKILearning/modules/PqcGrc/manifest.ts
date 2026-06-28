@@ -13,8 +13,8 @@ const manifest: ModuleManifest = {
   track: 'Executive',
   trackOrder: 9,
   learnSections: [
-    { id: 'kri-cascade', label: 'KRI Cascade: Board, CISO & Operational Thresholds' },
-    { id: 'exception-triage', label: 'Exception Register Triage & GRC-SOC Handoff' },
+    { id: 'kri-cascade', label: 'KRI Cascade Thresholds' },
+    { id: 'exception-triage', label: 'GRC-SOC Exception Triage' },
   ],
   workshopSteps: [
     { id: 'kri-cascade', label: 'KRI Cascade' },

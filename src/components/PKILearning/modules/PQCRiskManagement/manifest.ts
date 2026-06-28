@@ -14,8 +14,8 @@ const manifest: ModuleManifest = {
   trackOrder: 0,
   learnSections: [
     { id: 'crqc', label: 'CRQC Timeline Modeling' },
-    { id: 'register', label: 'Risk Register & Quantification' },
-    { id: 'heatmap', label: 'Risk Heatmap & Prioritization' },
+    { id: 'register', label: 'Risk Register' },
+    { id: 'heatmap', label: 'Risk Heatmap' },
   ],
   workshopSteps: [
     { id: 'crqc-scenario-planner', label: 'CRQC Scenario Planner' },

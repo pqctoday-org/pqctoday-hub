@@ -13,10 +13,10 @@ const manifest: ModuleManifest = {
   track: 'Software Infrastructure',
   trackOrder: 7,
   learnSections: [
-    { id: 'overview', label: 'SLH-DSA Overview & Why Stateless' },
-    { id: 'internals', label: 'WOTS+, FORS & Hypertree Architecture (§3–5)' },
-    { id: 'parameters', label: 'Parameter Sets, Tradeoffs & FIPS 205 §6' },
-    { id: 'advanced', label: 'Context Strings, Deterministic Mode & HashSLH-DSA' },
+    { id: 'overview', label: 'SLH-DSA Overview' },
+    { id: 'internals', label: 'WOTS+, FORS & Hypertree' },
+    { id: 'parameters', label: 'Parameters & Tradeoffs' },
+    { id: 'advanced', label: 'Context & Deterministic' },
   ],
   workshopSteps: [
     { id: 'keygen', label: 'Key Generation & Parameter Explorer' },
