@@ -130,13 +130,17 @@ export function _C_MessageEncryptFinal(h_session: number): number;
 
 export function _C_MessageEncryptInit(h_session: number, p_mechanism: number, h_key: number): number;
 
-export function _C_MessageSignFinal(h_session: number, _p_param: number, _ul_param_len: number, _p_signature: number, _pul_signature_len: number): number;
+export function _C_SignMessageBegin(h_session: number, p_param: number, ul_param_len: number): number;
+export function _C_SignMessageNext(h_session: number, p_param: number, ul_param_len: number, p_data: number, ul_data_len: number, p_signature: number, pul_signature_len: number): number;
+export function _C_MessageSignFinal(h_session: number): number;
 
 export function _C_MessageSignInit(h_session: number, p_mechanism: number, h_key: number): number;
 
 export function _C_MessageVerifyFinal(h_session: number): number;
 
 export function _C_MessageVerifyInit(h_session: number, p_mechanism: number, h_key: number): number;
+export function _C_VerifyMessageBegin(h_session: number, p_param: number, ul_param_len: number): number;
+export function _C_VerifyMessageNext(h_session: number, p_param: number, ul_param_len: number, p_data: number, ul_data_len: number, p_signature: number, ul_signature_len: number): number;
 
 export function _C_OpenSession(slot_id: number, flags: number, _p_application: number, _notify: number, ph_session: number): number;
 

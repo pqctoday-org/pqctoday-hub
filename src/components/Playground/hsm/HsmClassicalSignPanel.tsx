@@ -28,6 +28,12 @@ import {
   hsm_signMultiPart,
   CKM_EDDSA,
   CKM_EDDSA_PH,
+  CKM_XMSS,
+  CKM_LMS,
+  hsm_generateXMSSKeyPair,
+  hsm_generateLMSKeyPair,
+  hsm_statefulSignBytes,
+  hsm_statefulVerifyBytes,
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex } from './shared'
