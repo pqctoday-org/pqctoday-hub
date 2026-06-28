@@ -13,10 +13,10 @@ const manifest: ModuleManifest = {
   track: 'Hardware Infrastructure',
   trackOrder: 4,
   learnSections: [
-    { id: 'bb84', label: 'BB84 Protocol & Quantum Channel' },
-    { id: 'integration', label: 'QKD + Classical Protocol Integration' },
-    { id: 'hsm-derivation', label: 'HSM Key Derivation from QKD' },
-    { id: 'deployment', label: 'Global QKD Deployments & Infrastructure' },
+    { id: 'bb84', label: 'BB84 Protocol' },
+    { id: 'integration', label: 'QKD Protocol Integration' },
+    { id: 'hsm-derivation', label: 'HSM QKD Key Derivation' },
+    { id: 'deployment', label: 'QKD Global Deployments' },
   ],
   workshopSteps: [
     { id: 'bb84-simulator', label: 'BB84 Protocol' },

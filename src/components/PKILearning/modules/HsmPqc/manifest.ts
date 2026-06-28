@@ -15,9 +15,9 @@ const manifest: ModuleManifest = {
   track: 'Hardware Infrastructure',
   trackOrder: 2,
   learnSections: [
-    { id: 'pkcs11', label: 'PKCS#11 v3.2 PQC Mechanisms' },
+    { id: 'pkcs11', label: 'PKCS#11 PQC Mechanisms' },
     { id: 'vendors', label: 'HSM Vendor Landscape' },
-    { id: 'migration', label: 'Firmware Migration & Dual-Partition Strategy' },
+    { id: 'migration', label: 'Firmware Dual-Partition' },
   ],
   workshopSteps: [
     { id: 'pkcs11-simulator', label: 'PKCS#11 Simulator' },

@@ -24,9 +24,9 @@ const manifest: ModuleManifest = {
     { value: 'tools', label: 'Tools & Products' },
   ],
   learnSections: [
-    { id: 'handshake', label: 'TLS 1.3 Handshake Deep Dive' },
-    { id: 'certificates', label: 'Certificate Chains & Trust Anchors' },
-    { id: 'ciphers', label: 'Cipher Suites & Key Exchange' },
+    { id: 'handshake', label: 'TLS 1.3 Handshake' },
+    { id: 'certificates', label: 'Certificate Trust Chains' },
+    { id: 'ciphers', label: 'Cipher Suites' },
     { id: 'pqc-tls', label: 'PQC in TLS & Hybrid Modes' },
   ],
   workshopSteps: [

@@ -13,11 +13,11 @@ const manifest: ModuleManifest = {
   track: 'Protocols',
   trackOrder: 1,
   learnSections: [
-    { id: 'pqc-network-impact', label: 'How PQC Changes Network Security Operations' },
-    { id: 'tls-inspection-pqc', label: 'TLS Inspection & Deep Packet Inspection Challenges' },
-    { id: 'ids-ips-migration', label: 'IDS/IPS: Signature Updates & Algorithm Visibility' },
-    { id: 'vendor-roadmaps', label: 'Cisco, Palo Alto, Fortinet, Juniper Migration Timelines' },
-    { id: 'zero-trust-pqc', label: 'Zero Trust Network Access with PQC' },
+    { id: 'pqc-network-impact', label: 'PQC Network Impact' },
+    { id: 'tls-inspection-pqc', label: 'TLS & DPI Challenges' },
+    { id: 'ids-ips-migration', label: 'IDS/IPS Migration' },
+    { id: 'vendor-roadmaps', label: 'Vendor Roadmaps' },
+    { id: 'zero-trust-pqc', label: 'Zero Trust with PQC' },
   ],
   workshopSteps: [
     { id: 'ngfw-cipher-analyzer', label: 'NGFW Cipher Policy Analyzer' },

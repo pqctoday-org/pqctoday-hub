@@ -13,10 +13,10 @@ const manifest: ModuleManifest = {
   track: 'Executive',
   trackOrder: 11,
   learnSections: [
-    { id: 'decommission', label: 'Retire classical crypto safely' },
-    { id: 'verify-evidence', label: 'Prove it from observed behaviour' },
+    { id: 'decommission', label: 'Retire Classical Crypto' },
+    { id: 'verify-evidence', label: 'Prove the Migration' },
     { id: 'verify-coverage', label: 'Coverage at estate scale' },
-    { id: 'closure-handover', label: 'Close into business-as-usual' },
+    { id: 'closure-handover', label: 'Closure Handover' },
   ],
   workshopSteps: [
     { id: 'decommission-checklist', label: 'Decommission Checklist' },

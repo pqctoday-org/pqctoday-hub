@@ -13,11 +13,11 @@ const manifest: ModuleManifest = {
   track: 'Executive',
   trackOrder: 4,
   learnSections: [
-    { id: 'why-now', label: 'Why Modernize Crypto Management Now' },
-    { id: 'cpm-defined', label: 'CPM vs Crypto-Agility vs CryptoCOE' },
-    { id: 'asset-classes', label: 'Four Asset Classes: Certs, Libraries, Software, Keys' },
+    { id: 'why-now', label: 'Why Modernize Crypto Now' },
+    { id: 'cpm-defined', label: 'CPM vs Crypto-Agility' },
+    { id: 'asset-classes', label: 'Four Crypto Asset Classes' },
     { id: 'five-pillars', label: 'The Five Pillars of CPM' },
-    { id: 'dual-loop', label: 'The Dual-Loop Iterative Process' },
+    { id: 'dual-loop', label: 'Dual-Loop Process' },
     { id: 'no-regret-roi', label: 'The No-Regret ROI' },
   ],
   workshopSteps: [

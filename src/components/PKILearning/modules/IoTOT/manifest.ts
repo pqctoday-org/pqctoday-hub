@@ -13,11 +13,11 @@ const manifest: ModuleManifest = {
   track: 'Applications',
   trackOrder: 3,
   learnSections: [
-    { id: 'constrained', label: 'Constrained Devices & Algorithm Selection' },
-    { id: 'firmware', label: 'Firmware Signing (LMS/XMSS/ML-DSA)' },
-    { id: 'protocols', label: 'CoAP/DTLS 1.3 Protocol Impacts' },
-    { id: 'certs', label: 'Certificate Chain Bloat in IoT' },
-    { id: 'scada', label: 'SCADA/ICS & Purdue Model Migration' },
+    { id: 'constrained', label: 'Constrained Devices' },
+    { id: 'firmware', label: 'Firmware Signing' },
+    { id: 'protocols', label: 'CoAP/DTLS Protocols' },
+    { id: 'certs', label: 'Cert Chain Bloat in IoT' },
+    { id: 'scada', label: 'SCADA/ICS Migration' },
   ],
   workshopSteps: [
     { id: 'constrained-algorithm', label: 'Algorithm Explorer' },

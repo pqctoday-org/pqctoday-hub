@@ -13,12 +13,12 @@ const manifest: ModuleManifest = {
   track: 'Protocols',
   trackOrder: 0,
   learnSections: [
-    { id: 'why-pqc-testing', label: 'Why PQC Testing Is Different' },
-    { id: 'passive-vs-active', label: 'Passive Discovery vs Active Scanning' },
-    { id: 'performance-testing-method', label: 'PQC Performance Benchmarking Methodology' },
-    { id: 'interop-testing', label: 'Interoperability Testing & RFC 9794 Compliance' },
-    { id: 'side-channel-tvla', label: 'Side-Channel Testing & TVLA for Lattice Crypto' },
-    { id: 'fips-acvp', label: 'FIPS 140-3 & Algorithmic Validation (ACVP)' },
+    { id: 'why-pqc-testing', label: 'PQC Testing Differences' },
+    { id: 'passive-vs-active', label: 'Passive vs Active Scan' },
+    { id: 'performance-testing-method', label: 'Performance Benchmarking' },
+    { id: 'interop-testing', label: 'Interoperability & RFC' },
+    { id: 'side-channel-tvla', label: 'TVLA Side-Channel Testing' },
+    { id: 'fips-acvp', label: 'FIPS ACVP Validation' },
   ],
   workshopSteps: [
     { id: 'passive-discovery-lab', label: 'Passive Crypto Discovery Lab' },

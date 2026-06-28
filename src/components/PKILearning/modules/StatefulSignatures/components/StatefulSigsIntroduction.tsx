@@ -640,17 +640,17 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
   const steps = [
     {
       id: 'lms',
-      label: 'Why Stateful Signatures & Merkle Trees',
+      label: 'Stateful Signatures',
       content: <Step1WhyAndMerkle />,
     },
     {
       id: 'xmss',
-      label: 'LMS/HSS & XMSS/XMSS^MT',
+      label: 'LMS/HSS & XMSS',
       content: <Step2LmsXmss />,
     },
     {
       id: 'state',
-      label: 'The State Problem & Resources',
+      label: 'State Problem',
       content: <Step3StateAndResources onNavigateToWorkshop={onNavigateToWorkshop} />,
     },
   ]

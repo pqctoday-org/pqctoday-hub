@@ -16,8 +16,8 @@ const manifest: ModuleManifest = {
   trackOrder: 3,
   learnSections: [
     { id: 'abstraction', label: 'Crypto Abstraction Layers' },
-    { id: 'cbom', label: 'Cryptographic Bill of Materials (CBOM)' },
-    { id: 'migration', label: '7-Phase Migration Framework' },
+    { id: 'cbom', label: 'CBOM' },
+    { id: 'migration', label: '7-Phase Migration' },
   ],
   workshopSteps: [
     { id: 'abstraction-layer', label: 'Abstraction Layer' },

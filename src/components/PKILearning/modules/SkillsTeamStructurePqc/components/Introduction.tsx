@@ -448,17 +448,17 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
   const steps = [
     {
       id: 'challenge',
-      label: 'The Skills Challenge & Core Roles',
+      label: 'Skills & Core Roles',
       content: <Step1ChallengeAndRoles />,
     },
     {
       id: 'sizing',
-      label: 'Team Sizing & Build/Borrow/Buy',
+      label: 'Team Sizing & Build',
       content: <Step2SizingAndSourcing />,
     },
     {
       id: 'training',
-      label: 'Training Levels & Crypto Champions',
+      label: 'Training & Champions',
       content: <Step3TrainingAndChampions />,
     },
     {

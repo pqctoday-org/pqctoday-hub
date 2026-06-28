@@ -15,8 +15,8 @@ const manifest: ModuleManifest = {
   track: 'Executive',
   trackOrder: 3,
   learnSections: [
-    { id: 'model', label: 'Why Governance, RACI & Policy Hierarchy' },
-    { id: 'policy', label: 'Governance Models, Escalation & KPIs' },
+    { id: 'model', label: 'Governance & RACI' },
+    { id: 'policy', label: 'Escalation & KPIs' },
     { id: 'kpi', label: 'Resources & Workshop' },
   ],
   workshopSteps: [

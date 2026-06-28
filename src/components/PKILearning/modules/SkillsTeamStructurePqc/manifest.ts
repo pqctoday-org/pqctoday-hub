@@ -13,8 +13,8 @@ const manifest: ModuleManifest = {
   track: 'Executive',
   trackOrder: 8,
   learnSections: [
-    { id: 'team-sizing', label: 'Team Sizing: 1-FTE-per-500-Instances Heuristic' },
-    { id: 'crypto-champions', label: 'Crypto Champion Roster & Readiness Commitments' },
+    { id: 'team-sizing', label: 'Team Sizing Heuristic' },
+    { id: 'crypto-champions', label: 'Crypto Champion Roster' },
   ],
   workshopSteps: [
     { id: 'team-sizing', label: 'Team Sizing Calculator' },

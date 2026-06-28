@@ -15,9 +15,9 @@ const manifest: ModuleManifest = {
   track: 'Foundations',
   trackOrder: 2,
   learnSections: [
-    { id: 'crqc', label: 'CRQC Timeline & Harvest Now Decrypt Later' },
-    { id: 'hndl', label: 'HNDL/HNFL Risk Windows & Prioritization' },
-    { id: 'security-levels', label: 'Post-Quantum Security Levels' },
+    { id: 'crqc', label: 'CRQC Timeline & HNDL' },
+    { id: 'hndl', label: 'HNDL Risk Prioritization' },
+    { id: 'security-levels', label: 'PQ Security Levels' },
   ],
   workshopSteps: [
     { id: 'security-levels', label: 'Security Level Degradation' },

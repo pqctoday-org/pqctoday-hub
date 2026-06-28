@@ -14,12 +14,12 @@ const manifest: ModuleManifest = {
   trackOrder: 4,
   learnSections: [
     { id: 'emv-ecosystem', label: 'The EMV Payment Ecosystem' },
-    { id: 'card-auth', label: 'Card Authentication: SDA, DDA & CDA' },
-    { id: 'network-architecture', label: 'Payment Network Architecture' },
-    { id: 'tokenization', label: 'Tokenization & Mobile Payments' },
-    { id: 'ecommerce', label: 'E-Commerce & Card-Not-Present' },
-    { id: 'pos-terminals', label: 'POS Terminals & Key Injection' },
-    { id: 'quantum-threats', label: 'Quantum Threats to Payment Systems' },
+    { id: 'card-auth', label: 'Card Auth: SDA, DDA & CDA' },
+    { id: 'network-architecture', label: 'Network Architecture' },
+    { id: 'tokenization', label: 'Tokenization & Mobile Pay' },
+    { id: 'ecommerce', label: 'E-Commerce & CNP' },
+    { id: 'pos-terminals', label: 'POS & Key Injection' },
+    { id: 'quantum-threats', label: 'Quantum Payment Threats' },
     { id: 'migration-landscape', label: 'PQC Migration Landscape' },
   ],
   workshopSteps: [

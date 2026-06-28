@@ -13,11 +13,11 @@ const manifest: ModuleManifest = {
   track: 'Applications',
   trackOrder: 5,
   learnSections: [
-    { id: 'eidas', label: 'eIDAS 2.0 Framework Overview' },
+    { id: 'eidas', label: 'eIDAS 2.0 Framework' },
     { id: 'wallet', label: 'EUDI Wallet Architecture' },
-    { id: 'pid', label: 'PID Issuance & Attestations' },
-    { id: 'selective-disclosure', label: 'Selective Disclosure & Verifiable Credentials' },
-    { id: 'qes', label: 'Qualified Electronic Signatures (QES)' },
+    { id: 'pid', label: 'PID & Attestations' },
+    { id: 'selective-disclosure', label: 'Selective Disclosure' },
+    { id: 'qes', label: 'Qualified Signatures QES' },
   ],
   workshopSteps: [
     { id: 'wallet', label: 'EUDI Wallet' },

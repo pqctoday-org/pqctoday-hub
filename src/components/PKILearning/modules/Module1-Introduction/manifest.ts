@@ -15,8 +15,8 @@ const manifest: ModuleManifest = {
   track: 'Foundations',
   trackOrder: 1,
   learnSections: [
-    { id: 'quantum-threat', label: 'The Quantum Threat to Cryptography' },
-    { id: 'algorithms', label: 'NIST-Selected PQC Algorithms' },
+    { id: 'quantum-threat', label: 'Quantum Threat' },
+    { id: 'algorithms', label: 'PQC Algorithms' },
     { id: 'timeline', label: 'Global Migration Timeline' },
     { id: 'readiness', label: 'Organizational Readiness' },
     { id: 'next-steps', label: 'Your Next Steps' },

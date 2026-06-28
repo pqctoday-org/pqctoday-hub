@@ -437,22 +437,22 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
   const steps = [
     {
       id: 'cascade',
-      label: 'Why GRC & the KRI Cascade',
+      label: 'GRC & KRI Cascade',
       content: <Step1WhyAndCascade />,
     },
     {
       id: 'appetite',
-      label: 'Risk Appetite & Regulatory Horizon',
+      label: 'Risk & Regulatory',
       content: <Step2AppetiteAndHorizon />,
     },
     {
       id: 'handoff',
-      label: 'GRC-SOC Handoff & Vendors',
+      label: 'GRC-SOC Handoff',
       content: <Step3HandoffAndVendors />,
     },
     {
       id: 'assurance',
-      label: 'Audit, Insurance & Crisis Comms',
+      label: 'Audit & Crisis Comms',
       content: <Step4AssuranceAndCrisis />,
     },
     {

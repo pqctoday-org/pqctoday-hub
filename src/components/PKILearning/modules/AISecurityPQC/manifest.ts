@@ -13,11 +13,11 @@ const manifest: ModuleManifest = {
   track: 'Applications',
   trackOrder: 2,
   learnSections: [
-    { id: 'pipeline-threats', label: 'AI Data Pipeline: The Quantum Threat Surface' },
-    { id: 'synthetic-data', label: 'The Synthetic Data Crisis: Model Collapse & Authenticity' },
-    { id: 'model-weights', label: 'Model Weight Protection & IP Security' },
-    { id: 'agentic-ai', label: 'Agentic AI: Identity, Delegation & Commerce' },
-    { id: 'scale', label: 'Protecting Data at Scale: Petabyte-Era Cryptography' },
+    { id: 'pipeline-threats', label: 'AI Pipeline Threats' },
+    { id: 'synthetic-data', label: 'Synthetic Data Crisis' },
+    { id: 'model-weights', label: 'Model Weight Protection' },
+    { id: 'agentic-ai', label: 'Agentic AI Identity' },
+    { id: 'scale', label: 'Petabyte-Era Cryptography' },
   ],
   workshopSteps: [
     { id: 'data-protection-analyzer', label: 'Data Protection Analyzer' },

@@ -13,9 +13,9 @@ const manifest: ModuleManifest = {
   track: 'Industries',
   trackOrder: 6,
   learnSections: [
-    { id: 'suci', label: 'SUCI & Subscriber Identity Protection' },
-    { id: 'aka', label: '5G-AKA Authentication Protocol' },
-    { id: 'provisioning', label: 'SIM Key Provisioning & Supply Chain' },
+    { id: 'suci', label: 'SUCI Identity Protection' },
+    { id: 'aka', label: '5G-AKA Authentication' },
+    { id: 'provisioning', label: 'SIM Key Provisioning' },
   ],
   workshopSteps: [
     { id: 'suci', label: 'SUCI Deconcealment' },

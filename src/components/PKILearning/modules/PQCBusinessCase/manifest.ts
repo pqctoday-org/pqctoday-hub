@@ -15,7 +15,7 @@ const manifest: ModuleManifest = {
   track: 'Executive',
   trackOrder: 2,
   learnSections: [
-    { id: 'roi', label: 'Why PQC Investment & Cost Categories' },
+    { id: 'roi', label: 'Investment & Costs' },
     { id: 'board', label: 'Workshop & Resources' },
   ],
   workshopSteps: [

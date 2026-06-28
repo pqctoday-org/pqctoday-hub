@@ -13,10 +13,10 @@ const manifest: ModuleManifest = {
   track: 'Applications',
   trackOrder: 4,
   learnSections: [
-    { id: 'classical', label: 'Classical vs PQC Code Signing' },
-    { id: 'packages', label: 'Package Signing & Verification (RPM/APT)' },
+    { id: 'classical', label: 'Classical vs PQC Signing' },
+    { id: 'packages', label: 'Package Signing RPM/APT' },
     { id: 'sigstore', label: 'Sigstore Keyless Signing' },
-    { id: 'secure-boot', label: 'Secure Boot & Firmware Trust Chains' },
+    { id: 'secure-boot', label: 'Secure Boot Trust Chains' },
   ],
   workshopSteps: [
     { id: 'binary-signing', label: 'Binary Signing' },

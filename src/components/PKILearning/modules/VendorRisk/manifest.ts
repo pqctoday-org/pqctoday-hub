@@ -13,8 +13,8 @@ const manifest: ModuleManifest = {
   track: 'Executive',
   trackOrder: 5,
   learnSections: [
-    { id: 'readiness', label: 'Vendor PQC Readiness Assessment' },
-    { id: 'supply-chain', label: 'Supply Chain Cryptographic Dependencies' },
+    { id: 'readiness', label: 'Vendor PQC Readiness' },
+    { id: 'supply-chain', label: 'Supply Chain Crypto Deps' },
     { id: 'contracts', label: 'PQC Contract Requirements' },
     { id: 'risk-matrix', label: 'Layer-wise Risk Matrix' },
   ],

@@ -15,11 +15,11 @@ const manifest: ModuleManifest = {
   learnSections: [
     {
       id: 'secure-boot-fundamentals',
-      label: 'UEFI Secure Boot: PK, KEK, db, and dbx Key Hierarchy',
+      label: 'UEFI Key Hierarchy',
     },
-    { id: 'firmware-signing', label: 'Firmware Signing and PQC Migration' },
-    { id: 'tpm-attestation', label: 'TPM 2.0 and Measured Boot Attestation' },
-    { id: 'vendor-roadmaps', label: 'UEFI and Firmware Vendor PQC Roadmaps' },
+    { id: 'firmware-signing', label: 'Firmware PQC Migration' },
+    { id: 'tpm-attestation', label: 'TPM 2.0 Attestation' },
+    { id: 'vendor-roadmaps', label: 'Firmware Vendor Roadmaps' },
   ],
   workshopSteps: [
     { id: 'boot-chain-analyzer', label: 'Secure Boot Chain Analyzer' },

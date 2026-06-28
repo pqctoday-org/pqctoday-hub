@@ -13,11 +13,11 @@ const manifest: ModuleManifest = {
   track: 'Software Infrastructure',
   trackOrder: 1,
   learnSections: [
-    { id: 'encryption-layers', label: 'Encryption Layers: TDE, CLE, Field-Level, Queryable' },
-    { id: 'byok-hyok', label: 'BYOK, HYOK, and External PQC Key Managers' },
-    { id: 'online-migration', label: 'Online vs Offline Migration, Performance Overhead' },
-    { id: 'queryable-pqc', label: 'Queryable Encryption Patterns with PQC' },
-    { id: 'compliance', label: 'GDPR, HIPAA, and Regulatory Requirements' },
+    { id: 'encryption-layers', label: 'TDE, CLE & Queryable' },
+    { id: 'byok-hyok', label: 'BYOK, HYOK & PQC Keys' },
+    { id: 'online-migration', label: 'Online vs Offline' },
+    { id: 'queryable-pqc', label: 'Queryable Encryption PQC' },
+    { id: 'compliance', label: 'GDPR, HIPAA & Regulatory' },
   ],
   workshopSteps: [
     { id: 'encryption-layer-mapper', label: 'Encryption Layer Mapper' },

@@ -14,14 +14,14 @@ const manifest: ModuleManifest = {
   trackOrder: 3,
   learnSections: [
     { id: 'landscape', label: 'The Crypto API Landscape' },
-    { id: 'principles', label: 'Common Principles Across All APIs' },
+    { id: 'principles', label: 'Common API Principles' },
     { id: 'jca-bc', label: 'JCA/JCE & Bouncy Castle' },
     { id: 'openssl', label: 'OpenSSL & libcrypto' },
-    { id: 'pkcs11', label: 'PKCS#11 — Hardware Abstraction' },
+    { id: 'pkcs11', label: 'PKCS#11 Abstraction' },
     { id: 'cng', label: 'KSP & Windows CNG' },
-    { id: 'build-buy', label: 'Build vs Buy vs Open Source' },
+    { id: 'build-buy', label: 'Build vs Buy vs OSS' },
     { id: 'pqc-libs', label: 'Open-Source PQC Libraries' },
-    { id: 'languages', label: 'Language Ecosystem Overview' },
+    { id: 'languages', label: 'Language Ecosystem' },
     { id: 'pqc-roadmap', label: 'PQC Readiness & Roadmap' },
   ],
   workshopSteps: [

@@ -13,9 +13,9 @@ const manifest: ModuleManifest = {
   track: 'Software Infrastructure',
   trackOrder: 6,
   learnSections: [
-    { id: 'lms', label: 'Why Stateful Signatures & Merkle Trees' },
+    { id: 'lms', label: 'Stateful Sigs Overview' },
     { id: 'xmss', label: 'LMS/HSS & XMSS/XMSS^MT' },
-    { id: 'state', label: 'The State Problem & Resources' },
+    { id: 'state', label: 'The State Problem' },
   ],
   workshopSteps: [
     { id: 'lms-keygen', label: 'LMS Key Generation' },

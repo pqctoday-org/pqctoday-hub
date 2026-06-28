@@ -327,7 +327,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
   const steps = [
     {
       id: 'roi',
-      label: 'Why PQC Investment & Cost Categories',
+      label: 'Investment & Costs',
       content: <Step1WhyConceptsCosts />,
     },
     {
