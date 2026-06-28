@@ -208,7 +208,7 @@ export const LmsPanel = () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
       // Hardcoded types for LMS_SHA256_M32_H5 (0x05) and LMOTS_SHA256_N32_W1 (0x01)
-      const { pubHandle, privHandle } = hsm_generateLMSKeyPair(M, hSession, 0x05, 0x01, false)
+      const { pubHandle, privHandle } = hsm_generateLMSKeyPair(M, hSession, false)
       addHsmKey({
         handle: pubHandle,
         family: 'lms',

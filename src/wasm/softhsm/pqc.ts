@@ -642,7 +642,7 @@ export const hsm_sign = (
     )
     return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
   } finally {
-    M._C_MessageSignFinal(hSession, 0, 0, 0, 0) // close multi-message context; ignore RV in cleanup
+    M._C_MessageSignFinal(hSession) // close multi-message context; ignore RV in cleanup
     M._free(mech)
     M._free(msgPtr)
     M._free(sigLenPtr)
@@ -685,7 +685,7 @@ export const hsm_signBytesMLDSA = (
     )
     return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
   } finally {
-    M._C_MessageSignFinal(hSession, 0, 0, 0, 0)
+    M._C_MessageSignFinal(hSession)
     M._free(mech)
     M._free(msgPtr)
     M._free(sigLenPtr)
@@ -723,7 +723,7 @@ export const hsm_signBytesSLHDSA = (
     )
     return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
   } finally {
-    M._C_MessageSignFinal(hSession, 0, 0, 0, 0)
+    M._C_MessageSignFinal(hSession)
     M._free(mech)
     M._free(msgPtr)
     M._free(sigLenPtr)
@@ -1042,7 +1042,7 @@ export const hsm_slhdsaSign = (
     )
     return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
   } finally {
-    M._C_MessageSignFinal(hSession, 0, 0, 0, 0) // close multi-message context; ignore RV in cleanup
+    M._C_MessageSignFinal(hSession) // close multi-message context; ignore RV in cleanup
     M._free(mech)
     M._free(msgPtr)
     M._free(sigLenPtr)
