@@ -29,6 +29,8 @@ interface ComplianceDetailDrawerProps {
   /** Footer "Track" — bookmark this framework (My Frameworks). */
   onTrack?: (framework: ComplianceFramework) => void
   isTracked?: boolean
+  /** Related & overlapping row click — navigate to another framework drawer by display name. */
+  onSelectRelated?: (name: string) => void
 }
 
 export function ComplianceDetailDrawer({
@@ -38,6 +40,7 @@ export function ComplianceDetailDrawer({
   onOpenCswp39,
   onTrack,
   isTracked,
+  onSelectRelated,
 }: ComplianceDetailDrawerProps) {
   const panelRef = useRef<HTMLDivElement>(null)
 
@@ -205,9 +208,12 @@ export function ComplianceDetailDrawer({
                 </h3>
                 <div className="space-y-1.5">
                   {d.crosswalk.map((c, i) => (
-                    <div
+                    <Button
                       key={i}
-                      className="flex items-center gap-2.5 rounded-lg border border-border bg-muted/20 px-3 py-2"
+                      type="button"
+                      variant="ghost"
+                      onClick={() => onSelectRelated?.(c.name)}
+                      className={`h-auto w-full justify-start gap-2.5 rounded-lg border border-border bg-muted/20 px-3 py-2 text-left transition-colors${onSelectRelated ? ' cursor-pointer hover:border-primary/40 hover:bg-muted/50' : ' cursor-default'}`}
                     >
                       <span
                         className={`h-1.5 w-1.5 shrink-0 rounded-full ${TONES[c.tone].solidBg}`}
@@ -216,8 +222,11 @@ export function ComplianceDetailDrawer({
                       <span className="min-w-0 flex-1 truncate text-[10.5px] text-muted-foreground">
                         {c.note}
                       </span>
-                      <ChevronRight size={13} className="shrink-0 text-muted-foreground" />
-                    </div>
+                      <ChevronRight
+                        size={13}
+                        className={`shrink-0 transition-colors${onSelectRelated ? ' text-primary/60' : ' text-muted-foreground'}`}
+                      />
+                    </Button>
                   ))}
                 </div>
               </section>
