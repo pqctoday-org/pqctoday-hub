@@ -151,6 +151,26 @@ export interface AutoRunQueueItem {
   level: number
 }
 
+/** A deduplication key for a step based on its completion-predicate key.
+ *  Steps with the same key satisfy the same completion check, so only the
+ *  first occurrence in the queue needs to be shown. */
+function stepDedupeKey(step: TreeStep): string | null {
+  switch (step.kind) {
+    case 'learn':
+      return step.moduleId ? `learn:${step.moduleId}` : null
+    case 'reference':
+      return step.refId ? `ref:${step.refId}` : null
+    case 'activity':
+      return step.artifactType ? `activity:${step.artifactType}` : null
+    case 'workshop':
+      return step.workshopId ? `workshop:${step.workshopId}` : null
+    case 'catalog':
+      return step.catalogId ? `catalog:${step.catalogId}` : null
+    default:
+      return null
+  }
+}
+
 /**
  * The live playthrough queue, ordered as a MATURITY CLIMB rather than phase-by-phase.
  *
@@ -163,13 +183,24 @@ export interface AutoRunQueueItem {
  *
  * The per-phase gating order is preserved (a phase's L1 band is queued before its L2
  * band, across passes), so `achievedTreeLevel` still unlocks levels in order.
+ *
+ * Duplicate steps — same resource referenced from multiple phases or levels — are
+ * deduplicated by their completion-predicate key (moduleId / refId / artifactType /
+ * workshopId / catalogId). Only the first occurrence is kept; later appearances would
+ * re-open the same page for a step that is already satisfied.
  */
 export function autoRunQueue(): AutoRunQueueItem[] {
   const items: AutoRunQueueItem[] = []
+  const seen = new Set<string>()
   const phases = PHASE_ORDER.filter(hasTree)
   for (let level = 1; level <= AUTO_RUN_MAX_LEVEL; level++) {
     for (const phase of phases) {
       for (const step of gatingStepsForPhaseLevel(phase, level)) {
+        const key = stepDedupeKey(step)
+        if (key !== null) {
+          if (seen.has(key)) continue
+          seen.add(key)
+        }
         items.push({ phase, step, level })
       }
     }
