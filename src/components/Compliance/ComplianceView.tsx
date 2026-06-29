@@ -70,7 +70,7 @@ import { PillarPipeline } from './redesign/PillarPipeline'
 import { ComplianceDetailDrawer } from './redesign/ComplianceDetailDrawer'
 import { CSWP39AgilityExplorer } from './redesign/CSWP39AgilityExplorer'
 import { RecordsGlossaryStrip } from './redesign/RecordsGlossaryStrip'
-import { type PillarId } from './redesign/pillarModel'
+import { type PillarId, pillarForBodyType } from './redesign/pillarModel'
 
 // ── Stable tab model ───────────────────────────────────────────────────────
 // Four tabs, same order for every persona. Persona is a LENS (it tunes content
@@ -951,6 +951,19 @@ export const ComplianceView = ({
         }}
         onTrack={(fw) => toggleMyFramework(fw.id)}
         isTracked={drawerFramework ? myFrameworks.includes(drawerFramework.id) : false}
+        onSelectRelated={(name) => {
+          const lower = name.toLowerCase()
+          const match = complianceFrameworks.find(
+            (f) =>
+              f.label.toLowerCase() === lower ||
+              f.label.toLowerCase().includes(lower) ||
+              lower.includes(f.label.toLowerCase())
+          )
+          if (match) {
+            setDrawerPillar(pillarForBodyType(match.bodyType))
+            setDrawerFramework(match)
+          }
+        }}
       />
     </div>
   )
