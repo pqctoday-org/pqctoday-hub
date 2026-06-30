@@ -234,12 +234,12 @@ export function ComplianceDetailDrawer({
           </div>
 
           {/* Footer */}
-          <div className="flex items-center gap-2 border-t border-border bg-background px-5 py-3">
+          <div className="flex flex-wrap items-center gap-2 gap-y-2 border-t border-border bg-background px-5 py-3">
             <Button
               type="button"
               variant="gradient"
               size="sm"
-              className="gap-1.5"
+              className="basis-full sm:basis-auto gap-1.5"
               onClick={() => onOpenCswp39?.(framework.id)}
             >
               <Workflow size={14} />

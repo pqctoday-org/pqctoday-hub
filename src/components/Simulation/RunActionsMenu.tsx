@@ -61,7 +61,7 @@ export function RunActionsMenu({ items }: { items: RunActionItem[] }) {
         <div
           role="menu"
           aria-label="More run actions"
-          className="absolute right-0 top-full z-50 mt-1 w-60 overflow-hidden rounded-lg border border-border bg-card py-1 text-foreground shadow-lg"
+          className="fixed right-4 top-16 z-50 w-60 overflow-hidden rounded-lg border border-border bg-card py-1 text-foreground shadow-lg md:absolute md:right-0 md:top-full md:mt-1"
         >
           {items.map((it) => (
             <Button

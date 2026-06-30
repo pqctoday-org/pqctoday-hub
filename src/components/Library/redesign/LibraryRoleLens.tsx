@@ -46,7 +46,7 @@ export function LibraryRoleLens({ selectedPersona, onSelectPersona }: LibraryRol
                 role="radio"
                 aria-checked={active}
                 onClick={() => onSelectPersona(id)}
-                className={`h-auto rounded-lg px-3 py-1.5 text-[13px] font-bold transition-colors ${
+                className={`h-auto min-h-[44px] md:min-h-0 rounded-lg px-3 py-1.5 text-[13px] font-bold transition-colors ${
                   active
                     ? 'bg-primary text-primary-foreground hover:bg-primary/90'
                     : 'border border-input text-muted-foreground hover:text-foreground'

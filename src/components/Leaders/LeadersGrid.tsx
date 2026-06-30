@@ -164,6 +164,16 @@ export const LeadersGrid = () => {
   const [viewMode, setViewMode] = useState<LeadersViewMode>(
     () => (searchParams.get('mode') as LeadersViewMode | null) ?? 'cards'
   )
+  useEffect(() => {
+    if (window.innerWidth < 768 && viewMode === 'stack') {
+      setViewMode('cards')
+      setSearchParams((prev) => {
+        prev.delete('mode')
+        return prev
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const [sortBy, setSortBy] = useState<LeaderSortOption>(
     () => (searchParams.get('sort') as LeaderSortOption | null) ?? 'name'
   )
@@ -204,7 +214,6 @@ export const LeadersGrid = () => {
       ? (leadersData.find((l) => l.name === nextLeader)?.id ?? null)
       : null
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync is the purpose of this effect
     setSearchQuery((prev) => (prev !== nextQ ? nextQ : prev))
     setSortBy((prev) => (prev !== nextSort ? nextSort : prev))
     setViewMode((prev) => (prev !== nextMode ? nextMode : prev))

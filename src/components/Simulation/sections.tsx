@@ -471,7 +471,7 @@ export function QuarterReport({
           </div>
         </div>
         <div className="p-5">
-          <div className="mb-4 grid grid-cols-2 gap-3">
+          <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl border border-border bg-card p-3">
               <Eyebrow>Q-Day horizon</Eyebrow>
               <div className="mt-0.5 text-xl font-extrabold text-destructive">

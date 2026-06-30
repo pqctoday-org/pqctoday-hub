@@ -144,28 +144,30 @@ export function CSWP39AgilityExplorer({
       )}
 
       {/* Sub-nav */}
-      <div
-        className="inline-flex rounded-xl border border-input bg-muted/40 p-1"
-        role="tablist"
-        aria-label="CSWP.39 views"
-      >
-        {SUB_VIEWS.map((v) => (
-          <Button
-            key={v.id}
-            type="button"
-            variant="ghost"
-            role="tab"
-            aria-selected={view === v.id}
-            onClick={() => setView(v.id)}
-            className={`h-auto rounded-lg px-3 py-1.5 text-xs font-semibold ${
-              view === v.id
-                ? 'bg-primary text-primary-foreground'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            {v.label}
-          </Button>
-        ))}
+      <div className="overflow-x-auto no-scrollbar">
+        <div
+          className="inline-flex rounded-xl border border-input bg-muted/40 p-1"
+          role="tablist"
+          aria-label="CSWP.39 views"
+        >
+          {SUB_VIEWS.map((v) => (
+            <Button
+              key={v.id}
+              type="button"
+              variant="ghost"
+              role="tab"
+              aria-selected={view === v.id}
+              onClick={() => setView(v.id)}
+              className={`h-auto rounded-lg px-3 py-1.5 text-xs font-semibold ${
+                view === v.id
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {v.label}
+            </Button>
+          ))}
+        </div>
       </div>
 
       {view === 'cycle' && (

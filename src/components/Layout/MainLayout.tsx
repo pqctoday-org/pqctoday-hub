@@ -406,7 +406,7 @@ export const MainLayout = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0"
+                className="min-h-[44px] min-w-[44px] p-0"
                 onClick={() => setMoreMenuOpen(false)}
                 aria-label="Close menu"
               >
@@ -424,7 +424,7 @@ export const MainLayout = () => {
                   {({ isActive }) => (
                     <Button
                       variant="ghost"
-                      className={`w-full justify-start gap-2 ${
+                      className={`w-full min-h-[44px] justify-start gap-2 ${
                         isActive
                           ? 'bg-primary/10 text-foreground border border-primary/20'
                           : 'text-muted-foreground hover:text-foreground'

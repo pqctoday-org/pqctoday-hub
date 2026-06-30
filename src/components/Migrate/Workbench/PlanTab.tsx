@@ -59,7 +59,7 @@ function PlanProductRow({
           size="sm"
           onClick={onRemove}
           aria-label={`Remove ${productName} from plan`}
-          className="h-7 w-7 shrink-0 p-0 text-muted-foreground hover:text-foreground"
+          className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 md:h-7 md:w-7 shrink-0 p-0 text-muted-foreground hover:text-foreground"
         >
           <X size={14} />
         </Button>
@@ -146,7 +146,7 @@ export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
                 return (
                   <div key={asset.id}>
                     {/* Asset header — decision + deadline + remove-whole-asset */}
-                    <div className="flex items-center gap-2.5 px-3 py-2.5">
+                    <div className="flex flex-wrap items-center gap-2.5 px-3 py-2.5">
                       <span
                         className={`h-2.5 w-2.5 shrink-0 rounded-full ${TONE_DOT[decision.tone]}`}
                         title={decision.label}

@@ -349,11 +349,13 @@ export function AlgorithmsView() {
             <TabsList className="mb-6 bg-muted/50 border border-border">
               <TabsTrigger value="transition" className="flex items-center gap-2">
                 <ArrowRight size={18} />
-                Transition Guide
+                <span className="hidden sm:inline">Transition Guide</span>
+                <span className="sm:hidden">Transition</span>
               </TabsTrigger>
               <TabsTrigger value="detailed" className="flex items-center gap-2">
                 <BarChart3 size={18} />
-                Detailed Comparison
+                <span className="hidden sm:inline">Detailed Comparison</span>
+                <span className="sm:hidden">Comparison</span>
               </TabsTrigger>
               <TabsTrigger
                 value="support"
@@ -366,7 +368,8 @@ export function AlgorithmsView() {
                 }
               >
                 {supportLocked ? <Lock size={16} /> : <Network size={18} />}
-                Protocol Support
+                <span className="hidden sm:inline">Protocol Support</span>
+                <span className="sm:hidden">Protocol</span>
               </TabsTrigger>
               <TabsTrigger value="validation" className="flex items-center gap-2">
                 <FlaskConical size={18} />

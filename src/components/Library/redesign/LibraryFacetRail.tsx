@@ -157,7 +157,7 @@ export function LibraryFacetRail({
                 variant="ghost"
                 onClick={() => onLifecycle(opt.id)}
                 aria-pressed={active}
-                className={`h-auto rounded-full px-2.5 py-1 text-[12px] font-medium transition-colors ${
+                className={`h-auto min-h-[44px] md:min-h-0 rounded-full px-2.5 py-1 text-[12px] font-medium transition-colors ${
                   active
                     ? 'bg-primary/15 text-primary'
                     : 'bg-muted/40 text-muted-foreground hover:text-foreground'

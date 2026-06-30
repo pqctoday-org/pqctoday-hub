@@ -27,7 +27,7 @@ export function LibraryRecentlyChanged({ items, onOpen, limit = 16 }: LibraryRec
         </span>
         <span className="text-[11px] text-muted-foreground">{items.length} docs</span>
       </div>
-      <div className="flex gap-2 overflow-x-auto pb-1">
+      <div className="flex gap-2 overflow-x-auto pb-1 snap-x snap-mandatory">
         {shown.map((item) => {
           const isNew = item.status === 'New'
           return (
@@ -36,7 +36,7 @@ export function LibraryRecentlyChanged({ items, onOpen, limit = 16 }: LibraryRec
               type="button"
               variant="ghost"
               onClick={() => onOpen(item.referenceId)}
-              className="flex h-auto w-[215px] shrink-0 flex-col items-start justify-start gap-1 rounded-xl border border-border bg-card/40 p-2.5 text-left font-normal hover:border-primary/40 hover:bg-card"
+              className="flex h-auto w-[215px] shrink-0 snap-start flex-col items-start justify-start gap-1 rounded-xl border border-border bg-card/40 p-2.5 text-left font-normal hover:border-primary/40 hover:bg-card"
             >
               <span className="flex items-center gap-1.5">
                 <span

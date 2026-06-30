@@ -802,7 +802,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
 
       {/* Cert Type Toggle + Active Filters (Desktop) */}
       <div className="flex flex-col gap-2 mb-2">
-        <div className="flex gap-2 p-1 bg-muted/50 rounded-lg w-fit">
+        <div className="flex flex-wrap gap-2 p-1 bg-muted/50 rounded-lg">
           {[
             { id: 'all', label: 'All Records', frameworkId: null },
             { id: 'fips', label: 'FIPS 140-3', frameworkId: 'FIPS-140-3' },

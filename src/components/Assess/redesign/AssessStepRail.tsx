@@ -100,7 +100,7 @@ export const AssessStepRail: React.FC<AssessStepRailProps> = ({ flow, mode, onSw
                   onClick={() => flow.jumpTo(i)}
                   aria-current={current ? 'step' : undefined}
                   className={[
-                    'h-auto w-full justify-start gap-2.5 rounded-lg px-2 py-1.5 text-left',
+                    'h-auto min-h-[44px] md:min-h-0 w-full justify-start gap-2.5 rounded-lg px-2 py-1.5 text-left',
                     current
                       ? 'border border-primary/35 bg-primary/10 hover:bg-primary/10'
                       : 'border border-transparent hover:bg-muted/50',

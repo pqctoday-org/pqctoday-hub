@@ -140,7 +140,7 @@ export const LearnRedesignView = () => {
                 selectMode('path')
               }}
               aria-pressed={active}
-              className={`h-auto inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-colors ${
+              className={`h-auto min-h-[44px] md:min-h-0 inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-colors ${
                 active
                   ? 'border-primary/50 text-primary bg-primary/10'
                   : 'border-border text-muted-foreground hover:text-foreground'
@@ -176,7 +176,7 @@ export const LearnRedesignView = () => {
             size="sm"
             aria-pressed={mode === 'path'}
             onClick={() => selectMode('path')}
-            className={`text-xs rounded-lg ${
+            className={`text-xs rounded-lg min-h-[44px] md:min-h-0 ${
               mode === 'path'
                 ? 'bg-gradient-to-br from-primary to-accent text-background font-bold'
                 : 'text-muted-foreground'
@@ -189,7 +189,7 @@ export const LearnRedesignView = () => {
             size="sm"
             aria-pressed={mode === 'browse'}
             onClick={() => selectMode('browse')}
-            className={`text-xs rounded-lg ${
+            className={`text-xs rounded-lg min-h-[44px] md:min-h-0 ${
               mode === 'browse'
                 ? 'bg-gradient-to-br from-primary to-accent text-background font-bold'
                 : 'text-muted-foreground'

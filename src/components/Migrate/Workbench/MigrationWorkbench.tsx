@@ -153,11 +153,13 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
         <TabsList>
           <TabsTrigger value="replace">
             <ArrowRightLeft size={15} className="mr-1.5" aria-hidden />
-            Replace what you own
+            <span className="hidden sm:inline">Replace what you own</span>
+            <span className="sm:hidden">Replace</span>
           </TabsTrigger>
           <TabsTrigger value="plan">
             <BarChart3 size={15} className="mr-1.5" aria-hidden />
-            Plan &amp; sequence
+            <span className="hidden sm:inline">Plan &amp; sequence</span>
+            <span className="sm:hidden">Plan</span>
             {posture.plannedAssets.length > 0 && (
               <span className="ml-1.5 rounded-full bg-primary/15 px-1.5 text-[11px] font-semibold text-primary">
                 {posture.plannedAssets.length}
@@ -166,11 +168,13 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
           </TabsTrigger>
           <TabsTrigger value="roadmaps">
             <MapIcon size={15} className="mr-1.5" aria-hidden />
-            Vendor roadmaps
+            <span className="hidden sm:inline">Vendor roadmaps</span>
+            <span className="sm:hidden">Vendors</span>
           </TabsTrigger>
           <TabsTrigger value="vendorrisk">
             <ShieldAlert size={15} className="mr-1.5" aria-hidden />
-            Vendor risk
+            <span className="hidden sm:inline">Vendor risk</span>
+            <span className="sm:hidden">Risk</span>
           </TabsTrigger>
         </TabsList>
 

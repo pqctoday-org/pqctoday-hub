@@ -158,7 +158,7 @@ function DrawerPanel({
             variant="ghost"
             aria-label="Close"
             onClick={onClose}
-            className="h-auto shrink-0 p-1.5"
+            className="h-auto shrink-0 min-h-[44px] min-w-[44px] p-2.5 md:min-h-0 md:min-w-0 md:p-1.5"
           >
             <X size={18} aria-hidden="true" />
           </Button>
@@ -337,20 +337,20 @@ function DrawerPanel({
         </div>
 
         {/* footer */}
-        <div className="flex items-center gap-2 border-t border-border bg-background p-3">
+        <div className="flex flex-wrap items-center gap-2 gap-y-2 border-t border-border bg-background p-3">
           {item.downloadUrl ? (
             <a
               href={item.downloadUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-[13px] font-bold text-primary-foreground hover:bg-primary/90"
+              className="basis-full sm:basis-auto flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-[13px] font-bold text-primary-foreground hover:bg-primary/90"
             >
               Open document
               <ExternalLink size={13} aria-hidden="true" />
             </a>
           ) : (
             <span
-              className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/50 px-4 py-2 text-[13px] font-semibold text-muted-foreground"
+              className="basis-full sm:basis-auto flex items-center gap-1.5 rounded-lg border border-border bg-muted/50 px-4 py-2 text-[13px] font-semibold text-muted-foreground"
               title="No public source link is available for this document yet."
             >
               Source not available
