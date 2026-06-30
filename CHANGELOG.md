@@ -26,6 +26,10 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.5.0] - 2026-06-29
+
+A mobile-ready and data-consistency release: the hub now works on phones across all pages, jurisdiction data is unified into one source of truth, the simulation generates industry-specific artifacts, and compliance facts in your report warn you when deadlines have been updated since your assessment.
+
 ### Added
 
 - **The hub now works on a phone** [view:/algorithms] [view:/compliance] [view:/library] [view:/migrate] [view:/learn] [view:/simulation] [view:/timeline] [view:/playground] [persona:executive] [persona:architect] [persona:developer]: a full mobile pass across all 28 pages fixes the most serious usability problems on small screens — tap targets that were too small to hit reliably are enlarged, tab bars that overflowed the screen are now scrollable with abbreviated labels, table views that broke on narrow widths are replaced with card or scroll layouts, and drawers have primary actions that don't get cut off. The simulation requires a tablet or larger screen (a "please use a larger device" screen appears on phones). Desktop layout is unchanged.
