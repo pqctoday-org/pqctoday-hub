@@ -98,6 +98,7 @@ import { useSandboxAvailable } from '@/components/Playground/useSandboxAvailable
 import { computeReadiness } from '@/simulation/readiness'
 import { runQuarter } from '@/simulation/quarterEngine'
 import { buildSimRoadmapDoc } from '@/simulation/simRoadmap'
+import { sectorStepsForPhase } from '@/simulation/sectorTrack'
 import { getBalance, type DifficultyId } from '@/data/simBalance'
 import { Eyebrow, Ring, Dial, ReadonlyDial, Stat, PlanningBadge, MandateBadge } from './atoms'
 import { SimTour } from './SimTour'
@@ -123,6 +124,7 @@ import {
   frameworkRiskFromAssess,
   algorithmBacklogFromAssess,
   twoTrackFromAssess,
+  boostsFromAssess,
   projectReadiness,
   type AssessRec,
 } from '@/simulation/assessBridge'
@@ -584,6 +586,11 @@ export function SimulationView() {
     () => (assessSnap ? twoTrackFromAssess(assessSnap.result) : undefined),
     [assessSnap]
   )
+  const assessBoosts = useMemo(
+    () => (assessSnap ? boostsFromAssess(assessSnap.result) : []),
+    [assessSnap]
+  )
+  const assessDrivers = assessSnap?.result.categoryDrivers ?? null
   // RESET clears the sim turn-state plus ONLY the sim-tracked hub progress the
   // gating reads from (the Learn modules + artifacts referenced by the trees) —
   // the player's other hub progress is left untouched.
@@ -1082,10 +1089,13 @@ export function SimulationView() {
   const showRailQuantum = sel === 'p3' && !!assessFrameworkRisk
   const showRailBacklog =
     (sel === 'p3' || sel === 'p5') && (assessBacklog.length > 0 || !!assessTwoTrack)
+  const showRailBoosts = sel === 'p0' && assessBoosts.length > 0
+  const showRailDrivers = sel === 'p3' && !!assessDrivers
   const railMoreShown = [
     showRailKpis && 'Assessment KPIs',
     showRailTrend && 'Readiness trend',
     showRailCompliance && 'Applicable compliance',
+    showRailBoosts && 'Situational factors',
     'Cyber insurance',
     showRailArch && 'Architecture',
     showRailQuantum && 'Quantum risk',
@@ -2164,6 +2174,39 @@ export function SimulationView() {
                           )
                         })}
                       </div>
+
+                      {/* Sector track — optional non-gating learn steps for the
+                          player's specific industry. Completed via the learn module's
+                          own progress (isModuleComplete), same as tree learn steps. */}
+                      {sectorStepsForPhase(sector, sel).map((ss) => {
+                        const ssDone = moduleDone(ss.moduleId)
+                        const ssStep: TreeStep = {
+                          kind: 'learn',
+                          label: ss.label,
+                          to: ss.to,
+                          moduleId: ss.moduleId,
+                        }
+                        return (
+                          <Button
+                            key={ss.moduleId}
+                            variant="ghost"
+                            onClick={() => canEmbedStep(ssStep) && openStep(ssStep)}
+                            className="mt-1 flex h-auto w-full items-center gap-2.5 rounded-lg border border-dashed border-primary/30 bg-primary/5 px-3 py-2 text-left hover:bg-primary/10"
+                          >
+                            <span className="shrink-0 text-[10px] font-bold uppercase tracking-wide text-primary/60">
+                              For your sector
+                            </span>
+                            <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold text-foreground">
+                              {ss.label}
+                            </span>
+                            {ssDone && (
+                              <span className="shrink-0 text-success" aria-label="completed">
+                                ✓
+                              </span>
+                            )}
+                          </Button>
+                        )
+                      })}
                     </>
                   )}
 
@@ -2456,6 +2499,34 @@ export function SimulationView() {
                     </div>
                   )}
 
+                  {/* Situational factors — boosts that elevated the composite score */}
+                  {railExpanded && showRailBoosts && (
+                    <div className="rounded-xl border border-border bg-card p-4">
+                      <Eyebrow className="mb-2 block">
+                        Situational factors{' '}
+                        <span className="text-muted-foreground/60">· from assessment</span>
+                      </Eyebrow>
+                      <div className="flex flex-col gap-1.5">
+                        {assessBoosts.map((b) => (
+                          <div
+                            key={b.id}
+                            className="flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1.5 dark:border-amber-800 dark:bg-amber-950/30"
+                          >
+                            <span className="text-[11.5px] font-semibold text-foreground">
+                              {b.label}
+                            </span>
+                            <span className="font-mono text-sim-micro font-bold text-amber-600 dark:text-amber-400">
+                              +{Math.round(b.delta * 100)} pts
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="mt-2 text-sim-micro leading-snug text-muted-foreground">
+                        These conditions pushed your risk score above the base category weighting.
+                      </p>
+                    </div>
+                  )}
+
                   {/* Cyber insurance — policy limit vs the quantum-exposed value */}
                   {railExpanded && (
                     <div className="rounded-xl border border-border bg-card p-4">
@@ -2637,6 +2708,35 @@ export function SimulationView() {
                         These are the framework's Phase-3 scoring dimensions for your org — they
                         drive the QRA you produce here.
                       </p>
+                    </div>
+                  )}
+
+                  {/* Score drivers — why each category scored high or low */}
+                  {railExpanded && showRailDrivers && assessDrivers && (
+                    <div className="rounded-xl border border-border bg-card p-4">
+                      <Eyebrow className="mb-2 block">
+                        Score drivers{' '}
+                        <span className="text-muted-foreground/60">· why these scores</span>
+                      </Eyebrow>
+                      <div className="flex flex-col gap-2">
+                        {(
+                          [
+                            ['Quantum exposure', assessDrivers.quantumExposure],
+                            ['Migration complexity', assessDrivers.migrationComplexity],
+                            ['Regulatory pressure', assessDrivers.regulatoryPressure],
+                            ['Org readiness', assessDrivers.organizationalReadiness],
+                          ] as const
+                        ).map(([label, text]) => (
+                          <div key={label}>
+                            <span className="text-sim-micro font-semibold text-foreground">
+                              {label}
+                            </span>
+                            <p className="mt-0.5 text-sim-micro leading-snug text-muted-foreground">
+                              {text}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
 
