@@ -233,10 +233,10 @@ const STEPS: Step[] = [
 ]
 
 // ── Component ────────────────────────────────────────────────────────────────
-export const HybridEncryptionDemo: React.FC = () => {
+export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initialStep }) => {
   const hsm = useHSM()
   const stateRef = useRef<Partial<HybridState>>({})
-  const wizard = useStepWizard({ steps: STEPS, onBack: () => {} })
+  const wizard = useStepWizard({ steps: STEPS, onBack: () => {}, initialStep })
 
   const executeCurrentStep = useCallback(async (): Promise<string> => {
     if (!hsm.isReady || !hsm.moduleRef.current || !hsm.hSessionRef.current) {

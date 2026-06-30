@@ -35,6 +35,15 @@ describe('resolveDeepLink (WS-06 drift guard)', () => {
     expect(resolveDeepLink('/threats?tab=x').ok).toBe(false) // unknown param (only ?view= allowed)
   })
 
+  it('accepts ?step=N on playground workshop routes', () => {
+    expect(canResolveDeepLink('/playground/merkle-proof?step=0')).toBe(true)
+    expect(canResolveDeepLink('/playground/tls-simulator?step=3')).toBe(true)
+    expect(canResolveDeepLink('/playground/envelope-encrypt?step=2')).toBe(true)
+    expect(resolveDeepLink('/playground/merkle-proof?step=-1').ok).toBe(false) // negative
+    expect(resolveDeepLink('/playground/merkle-proof?step=abc').ok).toBe(false) // non-integer
+    expect(resolveDeepLink('/playground/merkle-proof?foo=1').ok).toBe(false) // unknown param
+  })
+
   it('reports a reason when it cannot resolve', () => {
     expect(resolveDeepLink('/playground/tools/x').reason).toMatch(/unknown route/)
     expect(resolveDeepLink('/algorithms?tab=bogus').reason).toMatch(/unknown tab/)

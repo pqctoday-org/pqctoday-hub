@@ -424,3 +424,13 @@ import { conceptIdForStoreKey } from './conceptRegistry'
 export function conceptIdForFramework(fw: { id: string }): string | undefined {
   return conceptIdForStoreKey('compliance', fw.id)
 }
+
+/**
+ * Soft lookup — returns undefined if the id is not in the active CSV.
+ * Use this in learning modules to derive display names, deadlines, and
+ * website URLs from the canonical source rather than hardcoding them.
+ * Does NOT throw — callers should provide a fallback for graceful degradation.
+ */
+export function getFrameworkById(id: string): ComplianceFramework | undefined {
+  return complianceFrameworks.find((f) => f.id === id)
+}

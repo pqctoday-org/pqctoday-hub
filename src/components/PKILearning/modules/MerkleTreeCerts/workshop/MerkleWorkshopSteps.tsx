@@ -60,8 +60,8 @@ const PARTS = [
  * Standalone 5-step Merkle Tree workshop for the Playground.
  * Contains only the simulation steps — no Learn/Visual/Exercises/References tabs.
  */
-export const MerkleWorkshopSteps: React.FC = () => {
-  const [currentPart, setCurrentPart] = useState(0)
+export const MerkleWorkshopSteps: React.FC<{ initialStep?: number }> = ({ initialStep = 0 }) => {
+  const [currentPart, setCurrentPart] = useState(initialStep)
   const [configKey, setConfigKey] = useState(0)
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
   // Shared tree built in Step 1 — passed to Step 2 so the user proves their own certificates.

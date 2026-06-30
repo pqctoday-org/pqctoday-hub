@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   Radar,
   RadarChart,
@@ -24,6 +24,7 @@ import {
   type PillarId,
   type AssetClass,
 } from '../data/cpmMaturityModel'
+import type { MaturityOutput } from '../types'
 
 type AssetScores = Record<AssetClass, MaturityLevel>
 type Scores = Record<PillarId, AssetScores>
@@ -40,7 +41,11 @@ const initialScores = (): Scores =>
     {} as Scores
   )
 
-export const MaturityAssessment: React.FC = () => {
+interface MaturityAssessmentProps {
+  onOutput?: (output: MaturityOutput) => void
+}
+
+export const MaturityAssessment: React.FC<MaturityAssessmentProps> = ({ onOutput }) => {
   const [scores, setScores] = useState<Scores>(initialScores())
 
   const setScore = (pillarId: PillarId, ac: AssetClass, level: MaturityLevel) =>
@@ -103,6 +108,16 @@ export const MaturityAssessment: React.FC = () => {
   }, [average])
 
   const uniqueSources = useMemo(() => new Set(maturityRequirements.map((r) => r.refId)).size, [])
+
+  useEffect(() => {
+    if (onOutput) {
+      onOutput({
+        weakestAssetClass: weakest.asset,
+        weakestPillar: weakest.pillar.label,
+        averageScore: average,
+      })
+    }
+  }, [onOutput, weakest, average])
 
   const cswp39Tier = useMemo(() => {
     if (average < 2)

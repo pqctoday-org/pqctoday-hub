@@ -218,8 +218,8 @@ const BlobHexPanel: React.FC<{ label: string; bytes: Uint8Array }> = ({ label, b
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export const EnvelopeEncryptionDemo: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState(0)
+export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initialStep = 0 }) => {
+  const [currentStep, setCurrentStep] = useState(initialStep)
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
   const [executedSteps, setExecutedSteps] = useState<Set<number>>(new Set())
 

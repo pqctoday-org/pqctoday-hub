@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { ExportableArtifact } from '../../../common/executive'
 import { Button } from '@/components/ui/button'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import type { RACIOutput } from '../types'
 
 type RACIValue = 'R' | 'A' | 'C' | 'I' | ''
 
@@ -95,11 +96,27 @@ function buildSeededMatrix(): MatrixState {
   return matrix
 }
 
-export const RACIBuilder: React.FC = () => {
+interface RACIBuilderProps {
+  onOutput?: (output: RACIOutput) => void
+}
+
+export const RACIBuilder: React.FC<RACIBuilderProps> = ({ onOutput }) => {
   const [matrix, setMatrix] = useState<MatrixState>(buildSeededMatrix)
   const [seedCleared, setSeedCleared] = useState(false)
   const { addExecutiveDocument } = useModuleStore()
   const { industry } = useExecutiveModuleData()
+
+  useEffect(() => {
+    if (!onOutput) return
+    const primaryTaskKey = ACTIVITIES[0]
+    const row = matrix[primaryTaskKey]
+    if (!row) return
+    const accountable = (ROLES as readonly string[]).find((r) => row[r] === 'A') ?? ''
+    const responsible = (ROLES as readonly string[]).find((r) => row[r] === 'R') ?? ''
+    if (accountable || responsible) {
+      onOutput({ accountableRole: accountable, responsibleRole: responsible })
+    }
+  }, [matrix, onOutput])
 
   const activitiesMissingAccountable = useMemo(() => {
     return ACTIVITIES.filter((activity) => {

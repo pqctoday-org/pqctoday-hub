@@ -1,7 +1,9 @@
 import clsx from 'clsx'
-import { Briefcase } from 'lucide-react'
+import { Briefcase, AlertTriangle } from 'lucide-react'
 import type { AssessmentProfile } from '../../../hooks/assessmentTypes'
 import { CollapsibleSection } from '../ReportContent'
+import { useComplianceSelectionStore } from '../../../store/useComplianceSelectionStore'
+import { complianceFrameworks } from '../../../data/complianceData'
 
 const AGILITY_LABELS: Record<string, string> = {
   'fully-abstracted': 'Fully abstracted',
@@ -123,6 +125,12 @@ export const AssessmentProfileSection = ({
   profile: AssessmentProfile
   defaultOpen?: boolean
 }) => {
+  const { frameworkSnapshots } = useComplianceSelectionStore()
+  const staleFrameworks = Object.values(frameworkSnapshots).filter((snap) => {
+    const current = complianceFrameworks.find((f) => f.id === snap.id)
+    return current && current.deadline !== snap.deadline
+  })
+
   return (
     <CollapsibleSection
       title="Assessment Profile"
@@ -130,6 +138,17 @@ export const AssessmentProfileSection = ({
       defaultOpen={defaultOpen}
       infoTip="assessmentProfile"
     >
+      {staleFrameworks.length > 0 && (
+        <div className="mb-3 flex items-start gap-2 rounded-md border border-status-warning/30 bg-status-warning/10 px-3 py-2">
+          <AlertTriangle className="mt-0.5 shrink-0 text-status-warning" size={14} />
+          <p className="text-xs text-status-warning">
+            Compliance data updated since this report was generated.{' '}
+            {staleFrameworks.map((s) => s.label).join(', ')}{' '}
+            {staleFrameworks.length === 1 ? 'has' : 'have'} a new deadline. Regenerate the
+            assessment to reflect the latest requirements.
+          </p>
+        </div>
+      )}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <ProfileField label="Industry" value={profile.industry} />
         <ProfileField label="Country" value={profile.country || 'Not specified'} />

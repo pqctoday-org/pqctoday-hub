@@ -48,9 +48,15 @@ const CORPUS_PATH = path.join(REPO_ROOT, 'public/data/rag-corpus.json')
 const EMBEDDINGS_PATH = path.join(REPO_ROOT, 'public/data/embeddings.bin')
 const META_PATH = path.join(REPO_ROOT, 'public/data/embeddings-meta.json')
 
-const DEFAULT_MODEL = 'Xenova/bge-small-en-v1.5'
-const DEFAULT_DIMS = 384
+const DEFAULT_MODEL = 'Xenova/bge-base-en-v1.5'
+const DEFAULT_DIMS = 768
 const DEFAULT_DTYPE = 'float32' as const
+
+const MODEL_DIMS: Record<string, number> = {
+  'Xenova/bge-small-en-v1.5': 384,
+  'Xenova/bge-base-en-v1.5': 768,
+  'Xenova/bge-large-en-v1.5': 1024,
+}
 
 interface CliOptions {
   dryRun: boolean
@@ -174,6 +180,7 @@ async function encodeAll(
 
 async function main(): Promise<number> {
   const opts = parseArgs(process.argv.slice(2))
+  const dims = MODEL_DIMS[opts.model] ?? DEFAULT_DIMS
   console.log('build-embedding-index v1')
   console.log(`  corpus: ${CORPUS_PATH}`)
   console.log(`  model:  ${opts.model}`)
@@ -206,7 +213,7 @@ async function main(): Promise<number> {
   }
 
   if (opts.dryRun) {
-    const estimatedBytes = corpus.length * DEFAULT_DIMS * 4
+    const estimatedBytes = corpus.length * dims * 4
     console.log('')
     console.log('Dry-run plan:')
     console.log(`  chunks to encode: ${corpus.length}`)
@@ -224,7 +231,7 @@ async function main(): Promise<number> {
 
   console.log('Encoding corpus...')
   const startEncode = Date.now()
-  const { vectors, offsets } = await encodeAll(corpus, encoder, DEFAULT_DIMS, opts.workers)
+  const { vectors, offsets } = await encodeAll(corpus, encoder, dims, opts.workers)
   const encodeSec = (Date.now() - startEncode) / 1000
   console.log(`  encoded ${corpus.length} chunks in ${encodeSec.toFixed(1)}s`)
 
@@ -237,7 +244,7 @@ async function main(): Promise<number> {
     model: opts.model,
     modelHash: sha256Hex(opts.model), // placeholder: real model SHA256 lands once we pin a download
     corpusHash,
-    dimensions: DEFAULT_DIMS,
+    dimensions: dims,
     dtype: DEFAULT_DTYPE,
     generatedAt: new Date().toISOString(),
     generatedBy: 'build-embedding-index@v1',

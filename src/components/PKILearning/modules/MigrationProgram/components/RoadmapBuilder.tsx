@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useMemo, useCallback } from 'react'
+import React, { useMemo, useCallback, useEffect } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
@@ -30,6 +30,7 @@ import {
   trackForFunction,
   type RoadmapMilestone,
 } from './roadmapTracks'
+import type { RoadmapOutput } from '../types'
 
 interface MitigationGatewayRow {
   asset: string
@@ -149,7 +150,11 @@ function phaseGateTag(id: PhaseId): string {
   return p.gate ? `${label} · ${p.gate.id}` : label
 }
 
-export const RoadmapBuilder: React.FC = () => {
+interface RoadmapBuilderProps {
+  onOutput?: (output: RoadmapOutput) => void
+}
+
+export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
   const { countryDeadlines, algorithmMigrations } = useExecutiveModuleData()
   const { addExecutiveDocument } = useModuleStore()
   const executiveDocuments = useModuleStore((s) => s.artifacts.executiveDocuments)
@@ -261,6 +266,20 @@ export const RoadmapBuilder: React.FC = () => {
   const [seededFrom, setSeededFrom] = React.useState<'saved' | 'sim' | 'assessment' | null>(
     seedSource
   )
+
+  // Emit structured output whenever milestones change so downstream steps can pre-fill.
+  useEffect(() => {
+    if (!onOutput || currentMilestones.length === 0) return
+    const earliest = currentMilestones.reduce((min, m) => (m.year < min ? m.year : min), Infinity)
+    onOutput({
+      milestones: currentMilestones.map((m) => ({
+        label: m.label,
+        year: m.year,
+        phaseId: m.phaseId,
+      })),
+      earliestYear: isFinite(earliest) ? earliest : null,
+    })
+  }, [onOutput, currentMilestones])
 
   // Deadlines: restore from a saved roadmap, else pre-select from bookmarked countries.
   const initialSelectedDeadlines = useMemo<ExternalDeadline[]>(() => {

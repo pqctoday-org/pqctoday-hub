@@ -27,6 +27,9 @@ interface RiskRegisterBuilderProps {
    *  illustrative defaults. Default true; set false when a wrapper (e.g. the
    *  BusinessCenter standalone adapter) already renders its own banner. */
   showExampleBanner?: boolean
+  /** CRQC arrival year set in Step 1 (CRQCScenarioPlanner). When provided,
+   *  a context banner is shown at the top of the register. */
+  scenarioCrqcYear?: number | null
 }
 
 const THREAT_VECTORS = [
@@ -67,6 +70,7 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
   riskEntries,
   onRiskEntriesChange,
   showExampleBanner = true,
+  scenarioCrqcYear,
 }) => {
   const [copied, setCopied] = React.useState(false)
   const [wasSaved, setWasSaved] = React.useState(false)
@@ -179,6 +183,17 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
 
   return (
     <div className="space-y-6">
+      {typeof scenarioCrqcYear === 'number' && (
+        <div className="glass-panel p-3 border-l-4 border-primary/50">
+          <p className="text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">
+              CRQC modelled to arrive {scenarioCrqcYear}
+            </span>{' '}
+            — assets with data lifetime extending past this year are high-urgency. Consider
+            assigning likelihood: 5 and impact: 5 to those entries.
+          </p>
+        </div>
+      )}
       {showExampleBanner && showingExamples && (
         <div className="rounded-lg border border-status-warning/30 bg-status-warning/5 px-3 py-2 text-xs text-muted-foreground">
           <span className="font-medium text-foreground">Example entries</span> — illustrative

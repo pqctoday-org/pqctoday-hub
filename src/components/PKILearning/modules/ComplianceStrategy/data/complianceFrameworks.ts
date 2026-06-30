@@ -2,6 +2,13 @@
 /**
  * Static framework requirement data for the Regulatory Gap Assessment workshop step.
  * Keyed by jurisdiction ID matching JurisdictionMapper's JURISDICTIONS list.
+ *
+ * MAINTENANCE: deadline values here are PHASE-SPECIFIC (e.g. CNSA 2.0's 2030
+ * key-establishment deadline). They are more granular than the top-level CSV
+ * deadline range and must be updated manually when the underlying regulation changes.
+ * The csvId field links each requirement to its canonical row in compliance_*.csv
+ * for cross-reference. Display labels (framework, primaryFramework, secondaryFrameworks)
+ * are intentionally maintained here as citation strings — the CSV label may differ.
  */
 
 export interface FrameworkRequirement {
@@ -9,8 +16,11 @@ export interface FrameworkRequirement {
   category: 'Inventory' | 'Algorithm' | 'Certification' | 'Policy' | 'Supply Chain' | 'Timeline'
   requirement: string
   framework: string
+  /** Optional: canonical id in compliance_*.csv — for tooling cross-reference only. */
+  csvId?: string
   commonGap: boolean
   effort: 'Low' | 'Medium' | 'High'
+  /** Phase-specific deadline year — maintained here, not derived from CSV top-level range. */
   deadline?: number
 }
 
@@ -35,6 +45,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         requirement:
           'Maintain a complete cryptographic inventory of all assets using classical public-key algorithms',
         framework: 'NIST IR 8547',
+        csvId: 'NIST-IR-8547',
         commonGap: true,
         effort: 'Medium',
       },
@@ -44,6 +55,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         requirement:
           'Deploy ML-KEM for all new key establishment; plan migration of existing RSA/ECDH systems',
         framework: 'CNSA 2.0',
+        csvId: 'CNSA-2',
         commonGap: true,
         effort: 'High',
         deadline: 2030,
@@ -54,6 +66,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         requirement:
           'Deploy ML-DSA or SLH-DSA for all digital signature applications; retire RSA and ECDSA',
         framework: 'CNSA 2.0',
+        csvId: 'CNSA-2',
         commonGap: true,
         effort: 'High',
         deadline: 2030,
@@ -64,6 +77,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         requirement:
           'Use only FIPS 140-3 validated cryptographic modules for classified or sensitive federal systems',
         framework: 'FIPS 140-3',
+        csvId: 'FIPS-140-3',
         commonGap: false,
         effort: 'High',
       },
@@ -73,9 +87,10 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         requirement:
           'Document PQC migration plan with timeline aligned to CNSA 2.0 preferred and exclusive deadlines',
         framework: 'CNSA 2.0',
+        csvId: 'CNSA-2',
         commonGap: true,
         effort: 'Low',
-        deadline: 2025,
+        // 2025 was the CNSA 2.0 "plan in place" target — now past; no future deadline set
       },
       {
         id: 'us-sc-1',
@@ -100,6 +115,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         requirement:
           'Conduct cryptographic agility assessment and document all quantum-vulnerable assets',
         framework: 'ENISA PQC Recommendations',
+        csvId: 'ENISA',
         commonGap: true,
         effort: 'Medium',
       },
@@ -118,6 +134,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         requirement:
           'Align PQC migration with NIS2 risk management obligations for critical infrastructure operators',
         framework: 'NIS2 Directive',
+        csvId: 'NIS2',
         commonGap: true,
         effort: 'Low',
       },
@@ -127,6 +144,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         requirement:
           'Ensure GDPR data minimization obligations are maintained during re-encryption of archived data',
         framework: 'GDPR',
+        csvId: 'GDPR',
         commonGap: true,
         effort: 'Medium',
       },
@@ -303,6 +321,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         requirement:
           'Implement BSI TR-02102 recommended hybrid PQC transition: ML-KEM + X25519 for key agreement',
         framework: 'BSI TR-02102',
+        csvId: 'BSI-TR-02102',
         commonGap: false,
         effort: 'High',
       },
@@ -312,6 +331,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         requirement:
           'Use BSI-approved PQC modules (BSZ scheme) for classified German government systems',
         framework: 'BSI Certification',
+        csvId: 'BSI',
         commonGap: true,
         effort: 'High',
       },
@@ -329,6 +349,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         requirement:
           'Map cryptographic assets against ANSSI recommended algorithms and identify quantum vulnerabilities',
         framework: 'ANSSI Crypto Recommendations',
+        csvId: 'ANSSI',
         commonGap: true,
         effort: 'Medium',
       },
@@ -338,6 +359,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         requirement:
           'ANSSI recommends hybrid post-quantum schemes during transition; pure PQC adoption pending further analysis',
         framework: 'ANSSI PQC Position',
+        csvId: 'ANSSI',
         commonGap: false,
         effort: 'High',
       },
@@ -347,6 +369,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         requirement:
           'OIV/OSE critical infrastructure entities must apply ANSSI PQC guidance under LPM requirements',
         framework: 'ANSSI / LPM',
+        csvId: 'ANSSI-CERT',
         commonGap: true,
         effort: 'Low',
       },
@@ -364,6 +387,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         requirement:
           'Review CRYPTREC recommended cipher list and plan migration from algorithms scheduled for deprecation',
         framework: 'CRYPTREC Cipher List',
+        csvId: 'CRYPTREC',
         commonGap: true,
         effort: 'Medium',
       },
@@ -373,6 +397,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         requirement:
           'Adopt NIST PQC standards; CRYPTREC is evaluating and will issue updated algorithm recommendations',
         framework: 'CRYPTREC',
+        csvId: 'CRYPTREC',
         commonGap: false,
         effort: 'High',
       },

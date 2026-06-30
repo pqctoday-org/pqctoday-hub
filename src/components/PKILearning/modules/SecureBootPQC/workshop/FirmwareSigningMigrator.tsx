@@ -454,13 +454,15 @@ const HASH_ALGO_OPTIONS = ['SHA-256', 'SHA-384', 'SHA-512']
 // Main component
 // ---------------------------------------------------------------------------
 
-export const FirmwareSigningMigrator: React.FC = () => {
+export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
+  initialStep = 0,
+}) => {
   const [isProcessing, setIsProcessing] = useState(false)
   const [signError, setSignError] = useState<string>('')
   const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   // StepWizard state
-  const [wizardStep, setWizardStep] = useState(0)
+  const [wizardStep, setWizardStep] = useState(initialStep)
   const [isWizardExecuting, setIsWizardExecuting] = useState(false)
   const [wizardOutput, setWizardOutput] = useState<string | null>(null)
   const [wizardError, setWizardError] = useState<string | null>(null)

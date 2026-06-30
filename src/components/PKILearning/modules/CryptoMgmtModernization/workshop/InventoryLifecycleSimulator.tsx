@@ -11,7 +11,10 @@ import {
   type InventoryAsset,
 } from '../data/sampleInventory'
 import { CLM_SCENARIOS } from '../data/clmScenarios'
-import { ASSET_CLASS_LABELS, type AssetClass } from '../data/cpmMaturityModel'
+import { ASSET_CLASSES, ASSET_CLASS_LABELS, type AssetClass } from '../data/cpmMaturityModel'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+
+const VALID_ASSET_CLASSES: AssetClass[] = ASSET_CLASSES
 
 const stageIndex = (s: LoopStage) => LOOP_STAGES.indexOf(s)
 
@@ -21,7 +24,13 @@ const riskColor = (score: number) => {
   return 'bg-status-success/15 text-status-success border-status-success/30'
 }
 
-export const InventoryLifecycleSimulator: React.FC = () => {
+interface InventoryLifecycleSimulatorProps {
+  focusAssetClass?: string | null
+}
+
+export const InventoryLifecycleSimulator: React.FC<InventoryLifecycleSimulatorProps> = ({
+  focusAssetClass,
+}) => {
   const [stages, setStages] = useState<Record<string, LoopStage>>(() =>
     SAMPLE_INVENTORY.reduce(
       (acc, a) => ({ ...acc, [a.id]: a.initialStage }),
@@ -29,7 +38,11 @@ export const InventoryLifecycleSimulator: React.FC = () => {
     )
   )
   const [iteration, setIteration] = useState(1)
-  const [filter, setFilter] = useState<AssetClass | 'all'>('all')
+  const [filter, setFilter] = useState<AssetClass | 'all'>(() =>
+    focusAssetClass && VALID_ASSET_CLASSES.includes(focusAssetClass as AssetClass)
+      ? (focusAssetClass as AssetClass)
+      : 'all'
+  )
 
   const filtered = useMemo(
     () =>
@@ -94,6 +107,11 @@ export const InventoryLifecycleSimulator: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {focusAssetClass && VALID_ASSET_CLASSES.includes(focusAssetClass as AssetClass) && (
+        <PreFilledBanner
+          summary={`Focused on ${ASSET_CLASS_LABELS[focusAssetClass as AssetClass]} — your lowest maturity area from Step 1. Switch the filter to view other asset classes.`}
+        />
+      )}
       <p className="text-sm text-muted-foreground">
         Walk a sample enterprise inventory through the six-stage operational loop. Every iteration
         reduces cert MTTR as discovery, remediation, and attestation automation compound.

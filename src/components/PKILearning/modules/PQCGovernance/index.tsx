@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import type { FC } from 'react'
+import { useState, type FC } from 'react'
 import { Users, FileText, BarChart3, GitBranch } from 'lucide-react'
 import { Introduction } from './components/Introduction'
 import { RACIBuilder } from './components/RACIBuilder'
@@ -9,6 +9,8 @@ import { EscalationFramework } from './components/EscalationFramework'
 import { PQCGovernanceExercises } from './PQCGovernanceExercises'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import manifest from './manifest'
+export type { RACIOutput, PolicyOutput } from './types'
+import type { RACIOutput, PolicyOutput } from './types'
 
 const PARTS: WorkshopPart[] = [
   {
@@ -38,26 +40,41 @@ const PARTS: WorkshopPart[] = [
   },
 ]
 
-export const PQCGovernanceModule: FC = () => (
-  <ModuleShell
-    manifest={manifest}
-    description="Establish governance frameworks, define roles, and create policies that guide your organization's PQC transition."
-    learn={(api) => <Introduction onNavigateToWorkshop={api.goToWorkshop} />}
-    exercises={(api) => <PQCGovernanceExercises onNavigateToWorkshop={api.goToWorkshop} />}
-    workshopParts={PARTS}
-    renderWorkshopStep={(index, configKey) => {
-      switch (index) {
-        case 0:
-          return <RACIBuilder key={`raci-${configKey}`} />
-        case 1:
-          return <PolicyTemplateGenerator key={`policy-${configKey}`} />
-        case 2:
-          return <KPIDashboardBuilder key={`kpi-${configKey}`} />
-        case 3:
-          return <EscalationFramework key={`escalation-${configKey}`} />
-        default:
-          return null
-      }
-    }}
-  />
-)
+export const PQCGovernanceModule: FC = () => {
+  const [raciOutput, setRACIOutput] = useState<RACIOutput | null>(null)
+  const [policyOutput, setPolicyOutput] = useState<PolicyOutput | null>(null)
+
+  return (
+    <ModuleShell
+      manifest={manifest}
+      description="Establish governance frameworks, define roles, and create policies that guide your organization's PQC transition."
+      learn={(api) => <Introduction onNavigateToWorkshop={api.goToWorkshop} />}
+      exercises={(api) => <PQCGovernanceExercises onNavigateToWorkshop={api.goToWorkshop} />}
+      workshopParts={PARTS}
+      onReset={() => {
+        setRACIOutput(null)
+        setPolicyOutput(null)
+      }}
+      renderWorkshopStep={(index, configKey) => {
+        switch (index) {
+          case 0:
+            return <RACIBuilder key={`raci-${configKey}`} onOutput={setRACIOutput} />
+          case 1:
+            return (
+              <PolicyTemplateGenerator
+                key={`policy-${configKey}`}
+                raciOutput={raciOutput}
+                onOutput={setPolicyOutput}
+              />
+            )
+          case 2:
+            return <KPIDashboardBuilder key={`kpi-${configKey}`} policyOutput={policyOutput} />
+          case 3:
+            return <EscalationFramework key={`escalation-${configKey}`} />
+          default:
+            return null
+        }
+      }}
+    />
+  )
+}

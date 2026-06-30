@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import type { FC } from 'react'
+import { useState, type FC } from 'react'
 import { ClipboardCheck, ScrollText, Network, Package } from 'lucide-react'
 import { Introduction } from './components/Introduction'
 import { InfrastructureSelector } from './components/InfrastructureSelector'
 import { VendorScorecardBuilder } from './components/VendorScorecardBuilder'
+import type { ScorecardOutput } from './components/VendorScorecardBuilder'
 import { ContractClauseGenerator } from './components/ContractClauseGenerator'
 import { SupplyChainRiskMatrix } from './components/SupplyChainRiskMatrix'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
@@ -84,26 +85,46 @@ function ExercisesTab() {
   )
 }
 
-export const VendorRiskModule: FC = () => (
-  <ModuleShell
-    manifest={manifest}
-    description="Assess vendor PQC readiness, build scorecards, and manage supply chain cryptographic risk."
-    learn={(api) => <Introduction onNavigateToWorkshop={api.goToWorkshop} />}
-    exercises={<ExercisesTab />}
-    workshopParts={PARTS}
-    renderWorkshopStep={(index, configKey) => {
-      switch (index) {
-        case 0:
-          return <InfrastructureSelector key={`selector-${configKey}`} />
-        case 1:
-          return <VendorScorecardBuilder key={`scorecard-${configKey}`} />
-        case 2:
-          return <ContractClauseGenerator key={`contract-${configKey}`} />
-        case 3:
-          return <SupplyChainRiskMatrix key={`matrix-${configKey}`} />
-        default:
-          return null
-      }
-    }}
-  />
-)
+export const VendorRiskModule: FC = () => {
+  const [scorecardOutput, setScorecardOutput] = useState<ScorecardOutput | null>(null)
+
+  return (
+    <ModuleShell
+      manifest={manifest}
+      description="Assess vendor PQC readiness, build scorecards, and manage supply chain cryptographic risk."
+      learn={(api) => <Introduction onNavigateToWorkshop={api.goToWorkshop} />}
+      exercises={<ExercisesTab />}
+      workshopParts={PARTS}
+      onReset={() => setScorecardOutput(null)}
+      renderWorkshopStep={(index, configKey) => {
+        switch (index) {
+          case 0:
+            return <InfrastructureSelector key={`selector-${configKey}`} />
+          case 1:
+            return (
+              <VendorScorecardBuilder
+                key={`scorecard-${configKey}`}
+                onOutput={setScorecardOutput}
+              />
+            )
+          case 2:
+            return (
+              <ContractClauseGenerator
+                key={`contract-${configKey}`}
+                scorecardOutput={scorecardOutput}
+              />
+            )
+          case 3:
+            return (
+              <SupplyChainRiskMatrix
+                key={`matrix-${configKey}`}
+                scorecardOutput={scorecardOutput}
+              />
+            )
+          default:
+            return null
+        }
+      }}
+    />
+  )
+}

@@ -2,6 +2,14 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
+/** Snapshot of a single framework's key facts at the time the assessment was completed. */
+export interface FrameworkSnapshot {
+  id: string
+  label: string
+  deadline: string
+  deadlineYear?: number
+}
+
 interface ComplianceSelectionState {
   /** Framework IDs the user has marked as "My Frameworks" on the compliance page */
   myFrameworks: string[]
@@ -15,6 +23,14 @@ interface ComplianceSelectionState {
    *  on every BC visit after user removes one. */
   hasSeededFromCountry: boolean
   markSeededFromCountry: () => void
+  /**
+   * Snapshot of selected framework facts taken when the assessment is completed.
+   * Used by the Report to detect whether any selected framework's deadline or
+   * label has changed since the assessment was generated.
+   * Keyed by framework id.
+   */
+  frameworkSnapshots: Record<string, FrameworkSnapshot>
+  snapshotFrameworks: (snapshots: FrameworkSnapshot[]) => void
 }
 
 export const useComplianceSelectionStore = create<ComplianceSelectionState>()(
@@ -23,6 +39,7 @@ export const useComplianceSelectionStore = create<ComplianceSelectionState>()(
       myFrameworks: [],
       showOnlyMine: false,
       hasSeededFromCountry: false,
+      frameworkSnapshots: {},
 
       toggleMyFramework: (id) =>
         set((state) => ({
@@ -49,17 +66,23 @@ export const useComplianceSelectionStore = create<ComplianceSelectionState>()(
       setShowOnlyMine: (val) => set({ showOnlyMine: val }),
 
       markSeededFromCountry: () => set({ hasSeededFromCountry: true }),
+
+      snapshotFrameworks: (snapshots) =>
+        set({
+          frameworkSnapshots: Object.fromEntries(snapshots.map((s) => [s.id, s])),
+        }),
     }),
     {
       name: 'pqc-compliance-selection',
       storage: createJSONStorage(() => localStorage),
-      version: 2,
+      version: 3,
       migrate: (persistedState: unknown) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
         state.myFrameworks = Array.isArray(state.myFrameworks) ? state.myFrameworks : []
         state.showOnlyMine = state.showOnlyMine ?? false
         state.hasSeededFromCountry = state.hasSeededFromCountry ?? false
+        state.frameworkSnapshots = state.frameworkSnapshots ?? {}
         return state
       },
       onRehydrateStorage: () => (_state, error) => {
