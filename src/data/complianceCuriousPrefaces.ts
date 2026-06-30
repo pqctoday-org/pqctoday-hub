@@ -17,7 +17,8 @@ export const COMPLIANCE_CURIOUS_PREFACES: Record<string, string> = {
   BSI: "Germany's federal information-security agency. Its TR-02102 series tells every German company which algorithms are still allowed, which are deprecated, and which must be retired by 2030.",
   ANSSI:
     'France\'s national cybersecurity authority. ANSSI tends to publish stricter PQC guidance than the EU average — when ANSSI says "hybrid mandatory until 2030," that\'s the floor for French government contracts.',
-  FIPS: 'The US Federal Information Processing Standards. FIPS 203/204/205 are the formal names for ML-KEM, ML-DSA, and SLH-DSA — once a product claims "FIPS-validated" it has passed a federal lab test against those exact specs.',
+  'FIPS-140-3':
+    'The US Federal Information Processing Standard for cryptographic modules. A product that claims "FIPS 140-3 validated" has been tested by an accredited lab against NIST\'s published spec. FIPS 203/204/205 are the algorithm standards that modules must implement — FIPS 140-3 is the envelope that certifies the implementation is correct.',
   'CNSA-2':
     'The NSA\'s "Commercial National Security Algorithm" suite, version 2. CNSA 2.0 is the deadline that matters most for US defense and federal contracts — software signing must move to PQC by 2025, web traffic by 2030, and everything else by 2033.',
   DORA: "The EU's Digital Operational Resilience Act. DORA forces financial firms (banks, insurers, market infrastructure) to prove their crypto can survive a quantum break — and to test that resilience continuously, not just once.",
