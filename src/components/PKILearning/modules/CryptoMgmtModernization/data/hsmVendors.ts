@@ -8,9 +8,12 @@
  */
 
 import type { EsvStatus, FipsStatus, RiskColor } from './cryptoLibraries'
+import { getCatalogStatus, type CatalogAvailability } from '@/data/catalogStatus'
 
 export interface HsmVendorRecord {
   id: string
+  /** softwareName in the central catalog. Omit only for EOL/deprecated products not in the active catalog. */
+  catalogName?: string
   vendor: string
   product: string
   firmwareRev: string
@@ -28,6 +31,7 @@ export interface HsmVendorRecord {
 export const HSM_VENDORS: HsmVendorRecord[] = [
   {
     id: 'thales-luna-7',
+    catalogName: 'Thales Luna HSM',
     vendor: 'Thales',
     product: 'Luna Network HSM 7',
     firmwareRev: '7.13.3',
@@ -44,6 +48,7 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
   },
   {
     id: 'entrust-nshield-5',
+    catalogName: 'Entrust nShield',
     vendor: 'Entrust',
     product: 'nShield 5c',
     firmwareRev: '13.6.2',
@@ -60,6 +65,7 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
   },
   {
     id: 'utimaco-cp5',
+    catalogName: 'Utimaco SecurityServer',
     vendor: 'Utimaco',
     product: 'SecurityServer CP5 Se-Series',
     firmwareRev: '6.0.1',
@@ -75,7 +81,26 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
       'Validation submitted 2025-Q4; currently in CMVP Modules-in-Process queue. Non-FIPS path usable today with customer risk-acceptance.',
   },
   {
+    id: 'crypto4a-qxhsm',
+    catalogName: 'Crypto4A QxHSM',
+    vendor: 'Crypto4A',
+    product: 'QxHSM (QASM core)',
+    firmwareRev: 'QxOS 5 (v5.0)',
+    fipsLevel: 3,
+    fipsStatus: 'in-mip',
+    cmvpCertNumber: '#4250 (QASM core; v5.0 PQC resubmission in MIP)',
+    esvStatus: 'active',
+    pqcSupport:
+      'ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 param sets), LMS/HSS, XMSS (CAVP A4204 + A5631)',
+    platformBinding: 'QxBMC-1/3/12 chassis (desktop/1U/4U); FPGA-based QASM core',
+    lastVerified: '2026-06-06',
+    posture: 'green',
+    notes:
+      "First HSM submitted for FIPS 140-3 Level 3 covering all NIST PQC algorithms. FPGA-based QASM core enables in-field firmware upgrades without hardware swap. CAVP A5631 (ML-KEM, ML-DSA, SLH-DSA, LMS) and A4204 (LMS — world's first PQC CAVP cert) validated. QxOS 5 (Jun 2025). Classic McEliece on roadmap. Integrations: EJBCA v9.3+, DigiCert, Keyfactor. Canadian sovereign solution (Ottawa).",
+  },
+  {
     id: 'fortanix-dsm',
+    catalogName: 'Fortanix Data Security Manager',
     vendor: 'Fortanix',
     product: 'Data Security Manager (confidential-computing HSM)',
     firmwareRev: '4.42',
@@ -92,6 +117,7 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
   },
   {
     id: 'yubihsm2',
+    catalogName: 'Yubico YubiHSM 2',
     vendor: 'Yubico',
     product: 'YubiHSM 2',
     firmwareRev: '2.4.0',
@@ -108,6 +134,7 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
   },
   {
     id: 'aws-cloudhsm',
+    catalogName: 'AWS CloudHSM',
     vendor: 'Amazon Web Services',
     product: 'AWS CloudHSM (hsm2m.medium)',
     firmwareRev: 'Cavium LiquidSecurity fw 3.4',
@@ -124,6 +151,8 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
   },
   {
     id: 'azure-dedicated-hsm',
+    // No catalogName: this product is deprecated in the active catalog (EOL Aug 2025 — no new customers).
+    // posture: 'red' is correct and intentional; do not wire to a Marvell or Managed HSM entry.
     vendor: 'Microsoft Azure',
     product: 'Azure Dedicated HSM (Luna 7)',
     firmwareRev: '7.7.2',
@@ -140,6 +169,7 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
   },
   {
     id: 'gcp-cloud-hsm',
+    catalogName: 'Google Cloud HSM',
     vendor: 'Google Cloud',
     product: 'Cloud HSM (Marvell LiquidSecurity)',
     firmwareRev: 'LS2 fw 3.4.5',
@@ -155,3 +185,22 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
       'GCP Cloud HSM uses Marvell LS2 (LiquidSecurity 2) hardware; the FIPS cert belongs to Marvell (#5220), not Google. PQC integration pending.',
   },
 ]
+
+// ── Catalog-derived headline status ───────────────────────────────────────────
+// Map catalog availability → this module's posture vocabulary. The catalog is
+// the single source of truth for PQC status; never hardcode posture in records.
+const AVAIL_TO_POSTURE: Record<CatalogAvailability, RiskColor> = {
+  available: 'green',
+  partial: 'yellow',
+  roadmap: 'yellow',
+  none: 'red',
+  unverified: 'yellow',
+}
+
+/** Headline PQC posture for an HSM vendor, derived live from the central catalog.
+ *  Falls back to the record's own posture for EOL products with no active catalog entry. */
+export function getHsmPqcPosture(v: HsmVendorRecord): RiskColor {
+  if (!v.catalogName) return v.posture
+  const status = getCatalogStatus(v.catalogName)
+  return status ? AVAIL_TO_POSTURE[status.availability] : 'yellow'
+}
