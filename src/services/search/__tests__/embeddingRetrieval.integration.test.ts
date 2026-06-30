@@ -97,7 +97,7 @@ describe.skipIf(!hasArtifact)('embeddingRetrieval — integration with real mode
   describe('artifact shape sanity', () => {
     it('meta has the expected schema', () => {
       expect(meta.version).toBe(1)
-      expect(meta.dimensions).toBe(384)
+      expect(meta.dimensions).toBe(768)
       expect(meta.dtype).toBe('float32')
       expect(meta.chunkCount).toBeGreaterThan(1000) // real corpus has thousands
       expect(Object.keys(meta.byteOffsets)).toHaveLength(meta.chunkCount)
@@ -120,7 +120,7 @@ describe.skipIf(!hasArtifact)('embeddingRetrieval — integration with real mode
   })
 
   describe('encoder produces well-formed vectors', () => {
-    it('returns a 384-dim Float32Array', async () => {
+    it('returns a well-formed Float32Array', async () => {
       const hits = await cosineSearch('FIPS 203', { k: 1 })
       // Indirect check: cosineSearch internally encodes; if any output, the
       // encode worked. The vector shape itself is opaque to the consumer.
