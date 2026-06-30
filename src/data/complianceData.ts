@@ -2,6 +2,7 @@
 import type { IndustryComplianceConfig } from './industryAssessConfig'
 import { loadLatestCSV, splitSemicolon, parseBoolYesNo } from './csvUtils'
 import { filterActive } from './loaderUtils'
+import { COUNTRY_CODE_TO_NAME as JURISDICTION_CODE_TO_NAME } from './jurisdictionsData'
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -107,63 +108,12 @@ const validBodyTypes: BodyType[] = [
   'regulatory_body',
 ]
 
-// ISO alpha-2 + PQC-REGION-* overlays used in the normalized compliance CSV
-// (post-2026-05-09 vocab pass) → full country names that the rest of the app
-// (region facet, country dropdown, flag map, "For You" filter, assess defaults)
-// keys off. Identity entries keep older / legacy rows working.
+// ISO alpha-2 → full country name, derived from the canonical jurisdictions CSV.
+// GB alias for United Kingdom is already emitted by the loader (compliance CSV
+// uses GB; the jurisdiction CSV key is UK). PQC-REGION-* synthetic overlay tokens
+// are not real country codes and stay inline here.
 const COUNTRY_CODE_TO_NAME: Record<string, string> = {
-  AE: 'United Arab Emirates',
-  AR: 'Argentina',
-  AT: 'Austria',
-  AU: 'Australia',
-  BE: 'Belgium',
-  BH: 'Bahrain',
-  BR: 'Brazil',
-  CA: 'Canada',
-  CH: 'Switzerland',
-  CL: 'Chile',
-  CN: 'China',
-  CO: 'Colombia',
-  CZ: 'Czech Republic',
-  DE: 'Germany',
-  DK: 'Denmark',
-  EE: 'Estonia',
-  EG: 'Egypt',
-  ES: 'Spain',
-  FI: 'Finland',
-  FR: 'France',
-  GB: 'United Kingdom',
-  HK: 'Hong Kong',
-  ID: 'Indonesia',
-  IE: 'Ireland',
-  IL: 'Israel',
-  IN: 'India',
-  IT: 'Italy',
-  JO: 'Jordan',
-  JP: 'Japan',
-  KE: 'Kenya',
-  KR: 'South Korea',
-  MX: 'Mexico',
-  MY: 'Malaysia',
-  NG: 'Nigeria',
-  NL: 'Netherlands',
-  NO: 'Norway',
-  NZ: 'New Zealand',
-  PE: 'Peru',
-  PH: 'Philippines',
-  PL: 'Poland',
-  RU: 'Russia',
-  SA: 'Saudi Arabia',
-  SE: 'Sweden',
-  SG: 'Singapore',
-  TH: 'Thailand',
-  TR: 'Turkey',
-  TW: 'Taiwan',
-  US: 'United States',
-  UY: 'Uruguay',
-  VN: 'Vietnam',
-  ZA: 'South Africa',
-  EU: 'European Union',
+  ...JURISDICTION_CODE_TO_NAME,
   'PQC-REGION-AU-AFRICA': 'African Union',
   'PQC-REGION-EU': 'European Union',
   'PQC-REGION-GLOBAL': 'Global',

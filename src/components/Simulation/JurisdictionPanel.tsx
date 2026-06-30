@@ -3,6 +3,11 @@
  * JurisdictionPanel — the Simulation's per-country compliance rule. The country
  * dial drives which migration choice (hybrid vs pure) is compliant, not just
  * the deadline. Shows the authority's stance and how each choice scores.
+ *
+ * For fully-curated countries (hybrid + endState + note): shows authority,
+ * stance recommendation, note, and compliance chips for each choice.
+ * For partially-curated countries like India (authority + note, no stance):
+ * shows a factual authority summary without compliance verdict chips.
  */
 import {
   jurisdictionFor,
@@ -10,6 +15,7 @@ import {
   checkChoice,
   type MigChoice,
 } from '@/data/jurisdiction'
+import { JURISDICTION_AUTHORITY_NOTE } from '@/data/jurisdictionsData'
 import type { SimSize } from '@/data/moscaClock'
 
 const LEVEL_CHIP: Record<string, string> = {
@@ -21,7 +27,25 @@ const LEVEL_MARK: Record<string, string> = { ok: '✓', warn: '⚠', fail: '✗'
 
 export function JurisdictionPanel({ country, size }: { country: string; size: SimSize }) {
   const rule = jurisdictionFor(country)
-  if (!rule) return null
+
+  // Partially-curated: has authority + note but no published hybrid/endState ruling.
+  if (!rule) {
+    const partial = JURISDICTION_AUTHORITY_NOTE[country]
+    if (!partial) return null
+    return (
+      <div className="rounded-lg border border-border bg-card/40 p-4">
+        <h2 className="mb-2 text-sm font-semibold text-foreground">
+          Jurisdiction — {partial.authority}
+        </h2>
+        <p className="text-sm text-muted-foreground">{partial.note}</p>
+        <p className="mt-2 text-xs text-muted-foreground/60">
+          No published hybrid/pure-end-state ruling yet — stance chips are omitted until guidance is
+          formally verified.
+        </p>
+      </div>
+    )
+  }
+
   const choices: MigChoice[] = ['hybrid', 'pure', 'classical']
 
   return (

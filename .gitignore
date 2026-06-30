@@ -274,6 +274,9 @@ public/data/rag-index-freshness.json
 # against doc-ID citations leaking into note / deploymentNote / playground /
 # liveDeployment text fields. Pure read-only against public data.
 !scripts/audit-matrix-refs.ts
+# Jurisdiction-refs gate — CI check that all jurisdiction data consumers import
+# from the canonical CSV-driven source (jurisdictionsData.ts).
+!scripts/audit-jurisdiction-refs.ts
 
 # Sandbox scenario sync generator — CI gate (sync:sandbox:check) that keeps
 # src/data/sandboxScenarios.ts regenerated from the public sandbox source repo

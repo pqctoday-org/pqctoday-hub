@@ -105,20 +105,36 @@ describe('assessBridge', () => {
       displayName: 'New Zealand',
       exact: false,
     })
-    // anything else (e.g. Brazil, Canada) → the default US archetype
+    // Brazil has no own archetype → falls back to US
     expect(
       simJurisdictionFromAssess({
         assessmentProfile: { country: 'Brazil' },
       } as unknown as AssessmentResult)?.countryCode
     ).toBe('US')
+    // Canada gained its own archetype in Phase 3 → exact match
     expect(
       simJurisdictionFromAssess({
         assessmentProfile: { country: 'Canada' },
       } as unknown as AssessmentResult)
     ).toEqual({
-      countryCode: 'US',
+      countryCode: 'CA',
       displayName: 'Canada',
-      exact: false,
+      exact: true,
+    })
+    // Japan, South Korea, Singapore, India, European Union also gained own archetypes
+    expect(
+      simJurisdictionFromAssess({
+        assessmentProfile: { country: 'Japan' },
+      } as unknown as AssessmentResult)?.countryCode
+    ).toBe('JP')
+    expect(
+      simJurisdictionFromAssess({
+        assessmentProfile: { country: 'European Union' },
+      } as unknown as AssessmentResult)
+    ).toEqual({
+      countryCode: 'EU',
+      displayName: 'European Union',
+      exact: true,
     })
     // no country → null
     expect(simJurisdictionFromAssess({} as unknown as AssessmentResult)).toBeNull()

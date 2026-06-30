@@ -12,7 +12,7 @@ export const TIMELINE_COUNTRY_DEADLINE_YEAR: Record<string, number> = {
   DE: 2030, // Critical Applications PQC — Hybrid No Longer Required
   EU: 2035, // Full EU PQC Transition
   FR: 2027, // PQC Qualification Requirement
-  IN: 2033, // Full Nationwide PQC Adoption
+  IN: 2027, // CII PQC Foundations Deadline
   JP: 2035, // Government PQC Transition Deadline
   KR: 2035, // Full PQC Roadmap Complete
   UK: 2035, // Full PQC Compliance
@@ -31,7 +31,7 @@ export const TIMELINE_COUNTRY_DEADLINE_BY_NAME: Record<string, number> = {
   'European Union': 2035, // Full EU PQC Transition
   France: 2027, // PQC Qualification Requirement
   Germany: 2030, // Critical Applications PQC — Hybrid No Longer Required
-  India: 2033, // Full Nationwide PQC Adoption
+  India: 2027, // CII PQC Foundations Deadline
   Japan: 2035, // Government PQC Transition Deadline
   'South Korea': 2035, // Full PQC Roadmap Complete
   'United Kingdom': 2035, // Full PQC Compliance
@@ -51,7 +51,7 @@ export const TIMELINE_COUNTRY_DEADLINE_MANDATE: Record<string, DeadlineMandate> 
   DE: 'SOFT',
   EU: 'SOFT',
   FR: 'SOFT',
-  IN: 'SOFT',
+  IN: 'NONE',
   JP: 'SOFT',
   KR: 'SOFT',
   UK: 'SOFT',
@@ -64,7 +64,7 @@ export const TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME: Record<string, DeadlineM
   'European Union': 'SOFT',
   France: 'SOFT',
   Germany: 'SOFT',
-  India: 'SOFT',
+  India: 'NONE',
   Japan: 'SOFT',
   'South Korea': 'SOFT',
   'United Kingdom': 'SOFT',

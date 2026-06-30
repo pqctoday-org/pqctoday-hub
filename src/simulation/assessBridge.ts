@@ -21,6 +21,11 @@ import type {
 import { buildTwoTrackPlan, type TwoTrackPlan } from '@/hooks/assessment/twoTrack'
 import type { Cswp39StepId } from '@/data/cswp39ZoneData'
 import type { ExecutiveDocument } from '@/services/storage/types'
+import {
+  COUNTRY_NAME_TO_ARCHETYPE,
+  COUNTRY_NAME_FALLBACK_ARCHETYPE,
+  type SimArchetype,
+} from '@/data/jurisdictionsData'
 
 export interface AssessSnapshot {
   result: AssessmentResult
@@ -94,69 +99,39 @@ const SCALE_TO_SIZE = new Map<string, string>([
   ['200-plus', 'global'],
 ])
 /**
- * The sim only models five jurisdiction archetypes (US / DE / FR / UK / AU — see
- * `moscaClock` + `jurisdiction`). These five countries map 1:1 to their archetype
- * (an "exact" match). Every OTHER assessment country still resolves to one of the
- * five via a region-based fallback (see {@link COUNTRY_REGION_FALLBACK}), so the
- * sim mechanics always have a rule-set even when the dial shows the real country.
+ * Countries that gained their own sim archetype in the Phase 3 consolidation
+ * (previously mapped to a nearby archetype: CA/EU→DE, JP/KR/SG/IN→US).
+ * Used by the one-time archetype-change notice — see useArchetypeChangeNotice.
  */
-const COUNTRY_NAME_TO_CODE = new Map<string, string>([
-  ['United States', 'US'],
-  ['Germany', 'DE'],
-  ['France', 'FR'],
-  ['United Kingdom', 'UK'],
-  ['Australia', 'AU'],
+export const ARCHETYPE_CHANGED_COUNTRIES = new Set([
+  'Canada',
+  'European Union',
+  'Japan',
+  'South Korea',
+  'Singapore',
+  'India',
 ])
 
 /**
- * Region-based fallback archetype for assessment countries the sim doesn't model
- * 1:1. Picks the closest of the five archetypes by regulatory posture:
- *   - EU/EEA members → 'DE' (BSI — hybrid required), the EU's representative stance
- *   - United Kingdom → 'UK' (handled as an exact match above; listed for clarity)
- *   - Australia / New Zealand → 'AU' (ASD — pure end-state)
- *   - United States / Canada / everything else → 'US' (CNSA 2.0 — the default)
- * Anything not listed here falls through to 'US' in {@link resolveArchetype}.
+ * Resolve any assessment country name to a sim archetype and whether it is an
+ * exact 1:1 match (the country is its own archetype) or a nearest-region fallback.
+ * Both maps derive from jurisdictionsData (the canonical jurisdiction CSV) so
+ * adding new archetypes or reassigning fallbacks only requires a CSV update.
+ *
+ *   exact: country code === archetype code in the CSV (e.g. 'Germany' → 'DE')
+ *   fallback: nearest archetype from the region row (e.g. 'Netherlands' → 'DE')
+ *   default: 'US' for anything not in either map
  */
-const COUNTRY_REGION_FALLBACK = new Map<string, string>([
-  // EU / EEA → German (BSI) hybrid-required archetype
-  ['European Union', 'DE'],
-  ['Italy', 'DE'],
-  ['Spain', 'DE'],
-  ['Czech Republic', 'DE'],
-  ['Netherlands', 'DE'],
-  ['Belgium', 'DE'],
-  ['Poland', 'DE'],
-  ['Sweden', 'DE'],
-  ['Norway', 'DE'],
-  ['Switzerland', 'DE'],
-  ['Ireland', 'DE'],
-  ['Austria', 'DE'],
-  ['Denmark', 'DE'],
-  ['Finland', 'DE'],
-  // Oceania → Australian (ASD) pure end-state archetype
-  ['New Zealand', 'AU'],
-])
-
-/** The sim's default jurisdiction archetype when no closer match is found. */
-const DEFAULT_ARCHETYPE = 'US'
-
-/**
- * Resolve any assessment country name to one of the sim's five archetypes plus
- * whether the match was exact (a 1:1 modelled jurisdiction) or a region fallback.
- *   - exact: the country is one of US/DE/FR/UK/AU → mechanics + display agree
- *   - fallback: an unmodelled country → mechanics use a nearby archetype while the
- *     display keeps the real country name and notes the modelled archetype
- */
-function resolveArchetype(countryName: string): { code: string; exact: boolean } {
-  const exact = COUNTRY_NAME_TO_CODE.get(countryName)
+function resolveArchetype(countryName: string): { code: SimArchetype; exact: boolean } {
+  const exact = COUNTRY_NAME_TO_ARCHETYPE.get(countryName)
   if (exact) return { code: exact, exact: true }
-  const fallback = COUNTRY_REGION_FALLBACK.get(countryName) ?? DEFAULT_ARCHETYPE
-  return { code: fallback, exact: false }
+  const fallback = COUNTRY_NAME_FALLBACK_ARCHETYPE.get(countryName) ?? 'US'
+  return { code: fallback as SimArchetype, exact: false }
 }
 
 export interface SimJurisdictionFromAssess {
-  /** One of the sim's five archetype codes (US/DE/FR/UK/AU) — drives mechanics. */
-  countryCode: string
+  /** Archetype code (e.g. 'CA', 'EU', 'IN') — drives sim mechanics. */
+  countryCode: SimArchetype
   /** The REAL country name from the assessment — shown on the JURISDICTION dial. */
   displayName: string
   /** true when the country is a 1:1 modelled jurisdiction (no archetype note). */
