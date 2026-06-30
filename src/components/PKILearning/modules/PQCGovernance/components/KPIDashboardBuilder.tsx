@@ -8,6 +8,7 @@ import { DataDrivenScorecard, KpiPersonaSelector } from '@/components/PKILearnin
 import { CompleteStepAction } from '@/components/PKILearning/common/CompleteStepAction'
 import type { KpiPersonaId } from '@/data/kpiCatalog'
 import { KPI_PERSONAS, buildDimensions } from '@/data/kpiCatalog'
+import type { PolicyOutput } from '../types'
 
 const SURFACE = 'governance' as const
 
@@ -29,7 +30,11 @@ Coverage, Trust, Inventory, Vendors, and Agility, each with year-1/2/3 targets
 (see Program Foundations · Metrics, KPIs & Reporting).
 `
 
-export const KPIDashboardBuilder: React.FC = () => {
+interface KPIDashboardBuilderProps {
+  policyOutput?: PolicyOutput | null
+}
+
+export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policyOutput }) => {
   const { addExecutiveDocument } = useModuleStore()
   const execData = useExecutiveModuleData()
   const globalPersona = usePersonaStore((s) => s.selectedPersona)
@@ -151,6 +156,11 @@ export const KPIDashboardBuilder: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {policyOutput && (
+        <PreFilledBanner
+          summary={`Policy type: ${policyOutput.policyType}. Set KPI targets to match your policy commitments.`}
+        />
+      )}
       {seedSources.length > 0 && (
         <PreFilledBanner summary={`KPI defaults derived from ${seedSources.join(' + ')}.`} />
       )}

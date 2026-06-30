@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef } from 'react'
 import { logModuleTabSwitch } from '@/utils/analytics'
+import { useEmbeddedLearn } from '@/components/PKILearning/embeddedLearnContext'
 
 /**
  * Parses ?tab= and ?step= from the current URL for module deep-linking.
@@ -39,7 +40,8 @@ export function getModuleDeepLink(
 
 /**
  * Keeps URL search params (?tab=, ?step=, ?flow=) in sync with module navigation state.
- * Uses replaceState to avoid polluting browser history.
+ * Uses replaceState to avoid polluting browser history. No-op when the module is
+ * embedded in the simulation (writing to window.location would corrupt the sim URL).
  */
 export function useSyncDeepLink(
   tab: string,
@@ -47,9 +49,11 @@ export function useSyncDeepLink(
   flow?: string | null,
   defaultTab = 'learn'
 ) {
+  const isEmbed = useEmbeddedLearn()
   const isMounted = useRef(false)
 
   useEffect(() => {
+    if (isEmbed) return
     const url = new URL(window.location.href)
 
     if (tab !== defaultTab) {
@@ -82,5 +86,5 @@ export function useSyncDeepLink(
     } else {
       isMounted.current = true
     }
-  }, [tab, step, flow, defaultTab])
+  }, [tab, step, flow, defaultTab, isEmbed])
 }

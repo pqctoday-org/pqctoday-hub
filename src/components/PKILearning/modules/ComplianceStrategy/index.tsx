@@ -73,7 +73,12 @@ export const ComplianceStrategyModule: FC = () => {
               />
             )
           case 1:
-            return <AuditReadinessChecklist key={`audit-${configKey}`} />
+            return (
+              <AuditReadinessChecklist
+                key={`audit-${configKey}`}
+                selectedJurisdictions={selectedJurisdictions}
+              />
+            )
           case 2:
             return (
               <ComplianceTimelineBuilder

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { FC } from 'react'
 import { useRef, useState } from 'react'
+export type { MaturityOutput } from './types'
+import type { MaturityOutput } from './types'
 import {
   Gauge,
   Repeat,
@@ -111,6 +113,7 @@ export const CryptoMgmtModernizationModule: FC = () => {
   // assets that Steps 4, 7 and 8 consume. Held in the module FC so it survives
   // step changes; the original Reset does NOT clear it, so no onReset slot.
   const [cbomAssets, setCbomAssets] = useState<CbomExportItem[]>([])
+  const [maturityOutput, setMaturityOutput] = useState<MaturityOutput | null>(null)
   // Anchors the in-page ToC (custom two-column Learn layout, hence learnRaw).
   const learnContentRef = useRef<HTMLDivElement>(null)
 
@@ -147,12 +150,17 @@ export const CryptoMgmtModernizationModule: FC = () => {
         />
       )}
       workshopParts={PARTS}
+      onReset={() => setMaturityOutput(null)}
       renderWorkshopStep={(index) => {
         switch (index) {
           case 0:
-            return <MaturityAssessment />
+            return <MaturityAssessment onOutput={setMaturityOutput} />
           case 1:
-            return <InventoryLifecycleSimulator />
+            return (
+              <InventoryLifecycleSimulator
+                focusAssetClass={maturityOutput?.weakestAssetClass ?? null}
+              />
+            )
           case 2:
             return <LibraryCBOMBuilder onCbomExport={setCbomAssets} />
           case 3:

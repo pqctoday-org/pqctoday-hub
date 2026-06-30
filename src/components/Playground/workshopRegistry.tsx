@@ -1177,8 +1177,8 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
   ),
   'pki-workshop': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/PKIWorkshop').then((m) => {
-      function PKIWorkshopPlayground() {
-        return <m.PKIWorkshop playgroundMode />
+      function PKIWorkshopPlayground({ initialStep }: { initialStep?: number }) {
+        return <m.PKIWorkshop playgroundMode initialStep={initialStep} />
       }
       PKIWorkshopPlayground.displayName = 'PKIWorkshopPlayground'
       return { default: PKIWorkshopPlayground }

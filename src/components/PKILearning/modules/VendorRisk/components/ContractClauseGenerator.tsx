@@ -7,6 +7,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import type { ScorecardOutput } from './VendorScorecardBuilder'
 
 const MODULE_ID = 'vendor-risk'
 
@@ -401,7 +402,13 @@ const CONTRACT_DEMO_FILL: Record<string, Record<string, string | string[]>> = {
   },
 }
 
-export const ContractClauseGenerator: React.FC = () => {
+interface ContractClauseGeneratorProps {
+  scorecardOutput?: ScorecardOutput | null
+}
+
+export const ContractClauseGenerator: React.FC<ContractClauseGeneratorProps> = ({
+  scorecardOutput,
+}) => {
   const { addExecutiveDocument } = useModuleStore()
   const { industry, country, myFrameworks, myProducts, migrationDeadlineYear } =
     useExecutiveModuleData()
@@ -441,10 +448,17 @@ export const ContractClauseGenerator: React.FC = () => {
   // clauses. (The clause sections themselves remain editable.)
   const showHighSeverityHint = vendorDependency === 'heavy-vendor' || vendorDependency === 'mixed'
 
+  const lowReadinessVendors = scorecardOutput?.lowReadinessVendors ?? []
+
   return (
     <div className="space-y-6">
       {seedSources.length > 0 && (
         <PreFilledBanner summary={`Contract scope informed by ${seedSources.join(' + ')}.`} />
+      )}
+      {lowReadinessVendors.length > 0 && (
+        <PreFilledBanner
+          summary={`Pre-filled with ${lowReadinessVendors.length} low-readiness vendor${lowReadinessVendors.length !== 1 ? 's' : ''} from Step 2: ${lowReadinessVendors.join(', ')}. Prioritize these vendors in your contract clauses.`}
+        />
       )}
       {showHighSeverityHint && (
         <div className="rounded-lg border border-status-warning/40 bg-status-warning/5 p-3 text-xs text-foreground/80">

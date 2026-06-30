@@ -13,7 +13,37 @@ import type { FormData } from './pitchVariants'
 
 const MODULE_ID = 'pqc-business-case'
 
-export const BoardPitchBuilder: React.FC = () => {
+interface ROIOutput {
+  totalCostUSD: number
+  roiPercent: number
+  paybackMonths: number
+  breachCostSavingsUSD: number
+}
+
+interface BreachOutput {
+  classicalCostUSD: number
+  quantumCostUSD: number
+  deltaUSD: number
+}
+
+function formatCurrency(amount: number): string {
+  const sign = amount < 0 ? '-' : ''
+  const abs = Math.abs(amount)
+  if (abs >= 1_000_000_000) return `${sign}$${(abs / 1_000_000_000).toFixed(1)}B`
+  if (abs >= 1_000_000) return `${sign}$${(abs / 1_000_000).toFixed(1)}M`
+  if (abs >= 1_000) return `${sign}$${(abs / 1_000).toFixed(0)}K`
+  return `${sign}$${abs.toFixed(0)}`
+}
+
+interface BoardPitchBuilderProps {
+  roiOutput?: ROIOutput | null
+  breachOutput?: BreachOutput | null
+}
+
+export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
+  roiOutput,
+  breachOutput,
+}) => {
   const data = useExecutiveModuleData()
   const { addExecutiveDocument } = useModuleStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
@@ -22,6 +52,33 @@ export const BoardPitchBuilder: React.FC = () => {
   // Key the variant (and therefore the whole ArtifactBuilder below) on persona
   // so switching roles resets the form state to the new persona's defaults.
   const variant = useMemo(() => getPitchVariant(selectedPersona, data), [selectedPersona, data])
+
+  const sections = useMemo(() => {
+    return variant.sections.map((s) => ({
+      ...s,
+      fields: s.fields.map((f) => {
+        if (roiOutput && s.id === 'cost-benefit' && f.id === 'analysis') {
+          return {
+            ...f,
+            defaultValue: `Migration investment: ${formatCurrency(roiOutput.totalCostUSD)} | 3-year ROI: ${roiOutput.roiPercent.toFixed(0)}% | Payback: ${Math.round(roiOutput.paybackMonths)} months | Annual breach cost savings: ${formatCurrency(roiOutput.breachCostSavingsUSD)}`,
+          }
+        }
+        if (breachOutput && s.id === 'quantum-urgency' && f.id === 'urgency') {
+          return {
+            ...f,
+            defaultValue: `Classical breach cost: ${formatCurrency(breachOutput.classicalCostUSD)} | Quantum-enabled breach cost: ${formatCurrency(breachOutput.quantumCostUSD)} | Delta: ${formatCurrency(breachOutput.deltaUSD)}\n\n${f.defaultValue}`,
+          }
+        }
+        if (roiOutput && s.id === 'budget' && f.id === 'amount') {
+          return {
+            ...f,
+            defaultValue: formatCurrency(roiOutput.totalCostUSD),
+          }
+        }
+        return f
+      }),
+    }))
+  }, [variant.sections, roiOutput, breachOutput])
 
   const sources: string[] = []
   if (!seedCleared) {
@@ -76,6 +133,19 @@ export const BoardPitchBuilder: React.FC = () => {
         />
       )}
 
+      {(roiOutput || breachOutput) && (
+        <PreFilledBanner
+          summary={[
+            roiOutput &&
+              `ROI data from Step 1 (investment: ${formatCurrency(roiOutput.totalCostUSD)}, ROI: ${roiOutput.roiPercent.toFixed(0)}%)`,
+            breachOutput &&
+              `Breach scenario data from Step 2 (delta: ${formatCurrency(breachOutput.deltaUSD)})`,
+          ]
+            .filter(Boolean)
+            .join(' + ')}
+        />
+      )}
+
       <div className="glass-panel p-4 flex items-start gap-3">
         <FileText size={20} className="text-primary shrink-0 mt-0.5" />
         <div>
@@ -104,7 +174,7 @@ export const BoardPitchBuilder: React.FC = () => {
         key={selectedPersona ?? 'default'}
         title={variant.title}
         description={variant.description}
-        sections={variant.sections}
+        sections={sections}
         onExport={handleExport}
         exportFilename={variant.filename}
         renderPreview={renderPreviewBound}

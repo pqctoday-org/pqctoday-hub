@@ -10,6 +10,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
+import { useEmbedInit } from '@/components/PKILearning/embeddedLearnContext'
 
 export interface UseModuleProgressOptions {
   /** ordered workshop steps (their ids drive completion + the deep-link bound) */
@@ -30,8 +31,12 @@ export function useModuleProgress(moduleId: string, opts: UseModuleProgressOptio
   const stepIds = steps.map((s) => s.id)
 
   const deepLink = getModuleDeepLink({ maxStep: Math.max(0, steps.length - 1) })
-  const [activeTab, setActiveTab] = useState(deepLink.initialTab)
-  const [currentPart, setCurrentPart] = useState(deepLink.initialStep)
+  const embedInit = useEmbedInit()
+  // In embed mode the sim provides the target tab/step via context (the tree
+  // step's `to` URL: ?tab=workshop&step=N). Use those over the window.location
+  // params, which belong to the simulation page, not the embedded module.
+  const [activeTab, setActiveTab] = useState(embedInit.initialTab ?? deepLink.initialTab)
+  const [currentPart, setCurrentPart] = useState(embedInit.initialStep ?? deepLink.initialStep)
   useSyncDeepLink(activeTab, currentPart)
   const [configKey, setConfigKey] = useState(0)
   const startTimeRef = useRef(0)
