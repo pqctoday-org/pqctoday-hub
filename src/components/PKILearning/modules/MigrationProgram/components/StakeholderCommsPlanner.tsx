@@ -5,6 +5,7 @@ import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { ArtifactBuilder } from '../../../common/executive'
 import type { ArtifactSection } from '../../../common/executive'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import type { RoadmapOutput } from '../types'
 
 const MODULE_ID = 'migration-program'
 
@@ -14,8 +15,16 @@ function buildCommsSections(opts: {
   myFrameworksLabels: string[]
   myProductsCount: number
   deadlineYear: number | null
+  roadmapMilestones?: Array<{ label: string; year: number; phaseId: string }> | null
 }): ArtifactSection[] {
-  const { industry, country, myFrameworksLabels, myProductsCount, deadlineYear } = opts
+  const {
+    industry,
+    country,
+    myFrameworksLabels,
+    myProductsCount,
+    deadlineYear,
+    roadmapMilestones,
+  } = opts
   const stakeholderDefault = [
     industry && `${industry} compliance lead`,
     'CISO',
@@ -42,11 +51,20 @@ function buildCommsSections(opts: {
   ]
     .filter(Boolean)
     .join(' ')
+  const milestoneTriggers =
+    roadmapMilestones && roadmapMilestones.length > 0
+      ? roadmapMilestones
+          .slice()
+          .sort((a, b) => a.year - b.year)
+          .map((m) => `- ${m.year}: ${m.label} (Phase ${m.phaseId})`)
+          .join('\n')
+      : null
   const triggersDefault = [
     deadlineYear && `Slip risk against ${deadlineYear} deadline`,
     myProductsCount > 0 && `Critical product without a PQC roadmap by Q-1 of deadline year`,
     'Budget overrun >10%',
     'Compliance gap identified in audit',
+    milestoneTriggers && `\nKey communication events from roadmap:\n${milestoneTriggers}`,
   ]
     .filter(Boolean)
     .join('\n')
@@ -236,7 +254,13 @@ function renderCommsPreview(data: Record<string, Record<string, string | string[
   return md
 }
 
-export const StakeholderCommsPlanner: React.FC = () => {
+interface StakeholderCommsPlannerProps {
+  roadmapOutput?: RoadmapOutput | null
+}
+
+export const StakeholderCommsPlanner: React.FC<StakeholderCommsPlannerProps> = ({
+  roadmapOutput,
+}) => {
   const { addExecutiveDocument } = useModuleStore()
   const { industry, country, migrationDeadlineYear, myFrameworks, myProducts, frameworks } =
     useExecutiveModuleData()
@@ -273,8 +297,17 @@ export const StakeholderCommsPlanner: React.FC = () => {
         myFrameworksLabels: seedCleared ? [] : myFrameworksLabels,
         myProductsCount: seedCleared ? 0 : myProducts.length,
         deadlineYear: seedCleared ? null : migrationDeadlineYear,
+        roadmapMilestones: seedCleared ? null : (roadmapOutput?.milestones ?? null),
       }),
-    [industry, country, myFrameworksLabels, myProducts.length, migrationDeadlineYear, seedCleared]
+    [
+      industry,
+      country,
+      myFrameworksLabels,
+      myProducts.length,
+      migrationDeadlineYear,
+      seedCleared,
+      roadmapOutput,
+    ]
   )
 
   const seedSources: string[] = []
@@ -291,9 +324,10 @@ export const StakeholderCommsPlanner: React.FC = () => {
       )
     if (migrationDeadlineYear) seedSources.push(`deadline ${migrationDeadlineYear} from /timeline`)
   }
+  const roadmapMilestoneCount = roadmapOutput?.milestones?.length ?? 0
   const builderKey = seedCleared
     ? 'cleared'
-    : `${myFrameworksLabels.length}-${myProducts.length}-${migrationDeadlineYear ?? 'no'}`
+    : `${myFrameworksLabels.length}-${myProducts.length}-${migrationDeadlineYear ?? 'no'}-${roadmapMilestoneCount}`
 
   return (
     <div className="space-y-6">
@@ -301,6 +335,11 @@ export const StakeholderCommsPlanner: React.FC = () => {
         <PreFilledBanner
           summary={`Stakeholders, concerns, board message, and escalation triggers seeded from ${seedSources.join(' + ')}.`}
           onClear={() => setSeedCleared(true)}
+        />
+      )}
+      {!seedCleared && roadmapOutput && roadmapOutput.milestones.length > 0 && (
+        <PreFilledBanner
+          summary={`${roadmapOutput.milestones.length} roadmap milestone${roadmapOutput.milestones.length !== 1 ? 's' : ''} from Step 1 added as communication trigger points in the Escalation Criteria section.`}
         />
       )}
       <div className="glass-panel p-4">

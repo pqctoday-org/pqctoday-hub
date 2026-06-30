@@ -9,7 +9,7 @@ import {
   type FipsStatus,
   type RiskColor,
 } from '../data/cryptoLibraries'
-import { HSM_VENDORS } from '../data/hsmVendors'
+import { HSM_VENDORS, getHsmPqcPosture } from '../data/hsmVendors'
 import { FILE_ARTIFACTS } from '../data/fileArtifacts'
 import { SAMPLE_SBOMS } from '../data/sampleSBOMs'
 import type { CbomExportItem } from '../data/workshopTypes'
@@ -618,7 +618,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
                   <td className="p-2 text-muted-foreground max-w-[180px]">{h.platformBinding}</td>
                   <td className="p-2">
                     <span
-                      className={`inline-block w-3 h-3 rounded-full ${POSTURE_LIGHT[h.posture]}`}
+                      className={`inline-block w-3 h-3 rounded-full ${POSTURE_LIGHT[getHsmPqcPosture(h)]}`}
                     />
                   </td>
                 </tr>

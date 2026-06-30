@@ -59,10 +59,23 @@ function computeRows(profile: DelayCostProfile, breachBaseline: number, delay: n
   return rows
 }
 
-export const CostOfInactionAnalyzer: React.FC = () => {
+interface BreachOutput {
+  classicalCostUSD: number
+  quantumCostUSD: number
+  deltaUSD: number
+}
+
+interface CostOfInactionAnalyzerProps {
+  breachOutput?: BreachOutput | null
+}
+
+export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({ breachOutput }) => {
   const [selectedIndustry, setSelectedIndustry] = useState<string>('Finance & Banking')
   const [migrateNowDelay] = useState(0)
   const [delayYears, setDelayYears] = useState<number>(2)
+  // Use the breach simulator's output as the baseline when available.
+  const effectiveBreachOverride =
+    (breachOutput?.quantumCostUSD ?? 0) > 0 ? (breachOutput?.quantumCostUSD ?? null) : null
 
   const profile = useMemo(
     () =>
@@ -71,8 +84,11 @@ export const CostOfInactionAnalyzer: React.FC = () => {
   )
 
   const breachBaseline = useMemo(
-    () => INDUSTRY_BREACH_BASELINES[selectedIndustry] ?? INDUSTRY_BREACH_BASELINES['Other'],
-    [selectedIndustry]
+    () =>
+      effectiveBreachOverride ??
+      INDUSTRY_BREACH_BASELINES[selectedIndustry] ??
+      INDUSTRY_BREACH_BASELINES['Other'],
+    [selectedIndustry, effectiveBreachOverride]
   )
 
   const rowsNow = useMemo(

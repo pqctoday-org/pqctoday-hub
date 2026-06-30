@@ -101,8 +101,8 @@ interface DemoState {
   importWasLive?: boolean // true when step 2 used the real HSM
 }
 
-export const HSMKeyDerivationDemo: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<number>(0) // 0 = not started
+export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initialStep = 0 }) => {
+  const [currentStep, setCurrentStep] = useState<number>(initialStep) // 0 = not started
   const [state, setState] = useState<Partial<DemoState>>({})
   const [processing, setProcessing] = useState(false)
   const hsm = useHSM()

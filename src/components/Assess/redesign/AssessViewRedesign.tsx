@@ -24,6 +24,8 @@ import {
 } from 'lucide-react'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import type { AssessmentMode } from '../../../store/useAssessmentStore'
+import { useComplianceSelectionStore } from '../../../store/useComplianceSelectionStore'
+import { complianceFrameworks } from '../../../data/complianceData'
 import { isSimResumePending } from '../../Simulation/simChrome'
 import { metadata } from '../../../data/industryAssessConfig'
 import { usePhaseFilter } from '../../../hooks/usePhaseFilter'
@@ -106,6 +108,7 @@ export const AssessViewRedesign: React.FC<{
     setAssessmentMode,
   } = useAssessmentStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const { myFrameworks, snapshotFrameworks } = useComplianceSelectionStore()
   const recommendedMode = selectedPersona ? PERSONA_RECOMMENDED_MODE[selectedPersona] : null
   const [showResumeBanner, setShowResumeBanner] = useState(false)
   // Local view state: which screen of the flow is showing. A completed
@@ -220,6 +223,21 @@ export const AssessViewRedesign: React.FC<{
   // Generate from review → mark complete + show the done screen (the upsell
   // lives there). The report is opened from the done screen's button.
   const generate = () => {
+    // Snapshot the live CSV facts for every selected framework so the Report
+    // can later detect if a deadline or label changed after this assessment.
+    const snapshots = myFrameworks.flatMap((id) => {
+      const fw = complianceFrameworks.find((f) => f.id === id)
+      if (!fw) return []
+      return [
+        {
+          id: fw.id,
+          label: fw.label,
+          deadline: fw.deadline,
+          deadlineYear: fw.deadlineYear ?? undefined,
+        },
+      ]
+    })
+    snapshotFrameworks(snapshots)
     markComplete()
     logAssessComplete(selectedPersona ?? 'unknown')
     // Embedded in the sim → close back to the board (the sim owns the next move);

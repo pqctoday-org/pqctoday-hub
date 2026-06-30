@@ -26,12 +26,12 @@ const REPO_ROOT = process.cwd()
 const DATA_DIR = path.resolve(REPO_ROOT, 'src/data')
 const LOADER_FILE = path.resolve(REPO_ROOT, 'src/data/complianceData.ts')
 
-function latestComplianceCSV(): string {
+function latestCSV(pattern: RegExp, datePattern: RegExp, label: string): string {
   const files = fs
     .readdirSync(DATA_DIR)
-    .filter((f) => /^compliance_\d{8}(?:_r\d+)?\.csv$/.test(f))
+    .filter((f) => pattern.test(f))
     .map((f) => {
-      const m = f.match(/^compliance_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)
+      const m = f.match(datePattern)
       if (!m) return null
       const month = parseInt(m[1], 10)
       const day = parseInt(m[2], 10)
@@ -46,16 +46,54 @@ function latestComplianceCSV(): string {
       return b.rev - a.rev
     })
   if (files.length === 0) {
-    throw new Error('No compliance_*.csv found in src/data/')
+    throw new Error(`No ${label} CSV found in src/data/`)
   }
   return path.join(DATA_DIR, files[0].file)
 }
 
+function latestComplianceCSV(): string {
+  return latestCSV(
+    /^compliance_\d{8}(?:_r\d+)?\.csv$/,
+    /^compliance_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+    'compliance_*'
+  )
+}
+
 /**
- * Pulls out the COUNTRY_CODE_TO_NAME and COUNTRY_TO_REGION maps by parsing the
- * loader file as text. We deliberately avoid importing the module — its TS
- * needs the Vite glob shim — and a regex-on-source check is robust enough
- * because both maps are written as plain object literals in this repo.
+ * Build the code→name map from the latest jurisdictions CSV, matching the
+ * runtime logic in jurisdictionsData.ts (ACTIVE_ALL → COUNTRY_CODE_TO_NAME).
+ * GB is added as an alias for United Kingdom (compliance CSV uses GB, not UK).
+ */
+function codeToNameFromJurisdictionsCSV(): Map<string, string> {
+  const csvPath = latestCSV(
+    /^jurisdictions_\d{8}(?:_r\d+)?\.csv$/,
+    /^jurisdictions_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+    'jurisdictions_*'
+  )
+  const raw = fs.readFileSync(csvPath, 'utf8')
+  const parsed = Papa.parse<Record<string, string>>(raw, { header: true, skipEmptyLines: true })
+  const out = new Map<string, string>()
+  for (const row of parsed.data) {
+    const code = row.code?.trim()
+    const name = row.name?.trim()
+    const status = row.status?.trim().toLowerCase()
+    if (!code || !name || status === 'deprecated') continue
+    out.set(code, name)
+  }
+  out.set('GB', 'United Kingdom') // compliance CSV uses GB; jurisdiction CSV key is UK
+  return out
+}
+
+/**
+ * Pulls out the COUNTRY_CODE_TO_NAME and COUNTRY_TO_REGION maps from source.
+ * We avoid importing the module directly — it uses the Vite glob shim.
+ *
+ * COUNTRY_CODE_TO_NAME spreads JURISDICTION_CODE_TO_NAME (built at runtime from
+ * the jurisdictions CSV) plus a few inline PQC-REGION-* tokens. We reconstruct
+ * the full set by parsing the jurisdictions CSV directly and merging the inline
+ * tokens from complianceData.ts, matching exactly what the runtime does.
+ *
+ * COUNTRY_TO_REGION is a plain inline literal — plain regex extraction still works.
  */
 function readMapsFromLoader(): {
   codeToName: Map<string, string>
@@ -63,7 +101,7 @@ function readMapsFromLoader(): {
 } {
   const src = fs.readFileSync(LOADER_FILE, 'utf8')
 
-  function extractMap(varName: string): Map<string, string> {
+  function extractInlineEntries(varName: string): Map<string, string> {
     const re = new RegExp(
       `const ${varName}: Record<string, [A-Za-z()\\-_ ]+> = \\{([\\s\\S]*?)\\n\\}`
     )
@@ -78,14 +116,21 @@ function readMapsFromLoader(): {
     while ((entry = entryRe.exec(body)) !== null) {
       const key = entry[1] ?? entry[2] ?? entry[3]
       const value = entry[4]
-      if (key) out.set(key, value)
+      if (key && !key.startsWith('...')) out.set(key, value)
     }
     return out
   }
 
+  // Start with all codes from the jurisdictions CSV (matches runtime ACTIVE_ALL),
+  // then overlay the inline PQC-REGION-* tokens from complianceData.ts.
+  const codeToName = codeToNameFromJurisdictionsCSV()
+  for (const [k, v] of extractInlineEntries('COUNTRY_CODE_TO_NAME')) {
+    codeToName.set(k, v)
+  }
+
   return {
-    codeToName: extractMap('COUNTRY_CODE_TO_NAME'),
-    countryToRegion: extractMap('COUNTRY_TO_REGION'),
+    codeToName,
+    countryToRegion: extractInlineEntries('COUNTRY_TO_REGION'),
   }
 }
 

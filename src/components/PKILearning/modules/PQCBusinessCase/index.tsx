@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useState } from 'react'
 import type { FC } from 'react'
 import { Calculator, ShieldAlert, Presentation, TrendingDown } from 'lucide-react'
 import { Introduction } from './components/Introduction'
@@ -9,6 +10,19 @@ import { CostOfInactionAnalyzer } from './components/CostOfInactionAnalyzer'
 import { PQCBusinessCaseExercises } from './PQCBusinessCaseExercises'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import manifest from './manifest'
+
+export interface ROIOutput {
+  totalCostUSD: number
+  roiPercent: number
+  paybackMonths: number
+  breachCostSavingsUSD: number
+}
+
+export interface BreachOutput {
+  classicalCostUSD: number
+  quantumCostUSD: number
+  deltaUSD: number
+}
 
 const PARTS: WorkshopPart[] = [
   {
@@ -38,27 +52,46 @@ const PARTS: WorkshopPart[] = [
   },
 ]
 
-export const PQCBusinessCaseModule: FC = () => (
-  <ModuleShell
-    manifest={manifest}
-    title="Building the PQC Business Case"
-    description="Quantify costs, model ROI, and build compelling investment cases for post-quantum cryptography migration."
-    learn={(api) => <Introduction onNavigateToWorkshop={api.goToWorkshop} />}
-    exercises={(api) => <PQCBusinessCaseExercises onNavigateToWorkshop={api.goToWorkshop} />}
-    workshopParts={PARTS}
-    renderWorkshopStep={(index, configKey) => {
-      switch (index) {
-        case 0:
-          return <ROICalculator key={`roi-${configKey}`} />
-        case 1:
-          return <BreachScenarioSimulator key={`breach-${configKey}`} />
-        case 2:
-          return <BoardPitchBuilder key={`board-${configKey}`} />
-        case 3:
-          return <CostOfInactionAnalyzer key={`inaction-${configKey}`} />
-        default:
-          return null
-      }
-    }}
-  />
-)
+export const PQCBusinessCaseModule: FC = () => {
+  const [roiOutput, setROIOutput] = useState<ROIOutput | null>(null)
+  const [breachOutput, setBreachOutput] = useState<BreachOutput | null>(null)
+
+  return (
+    <ModuleShell
+      manifest={manifest}
+      title="Building the PQC Business Case"
+      description="Quantify costs, model ROI, and build compelling investment cases for post-quantum cryptography migration."
+      learn={(api) => <Introduction onNavigateToWorkshop={api.goToWorkshop} />}
+      exercises={(api) => <PQCBusinessCaseExercises onNavigateToWorkshop={api.goToWorkshop} />}
+      workshopParts={PARTS}
+      onReset={() => {
+        setROIOutput(null)
+        setBreachOutput(null)
+      }}
+      renderWorkshopStep={(index, configKey) => {
+        switch (index) {
+          case 0:
+            return <ROICalculator key={`roi-${configKey}`} onOutput={setROIOutput} />
+          case 1:
+            return (
+              <BreachScenarioSimulator key={`breach-${configKey}`} onOutput={setBreachOutput} />
+            )
+          case 2:
+            return (
+              <BoardPitchBuilder
+                key={`board-${configKey}`}
+                roiOutput={roiOutput}
+                breachOutput={breachOutput}
+              />
+            )
+          case 3:
+            return (
+              <CostOfInactionAnalyzer key={`inaction-${configKey}`} breachOutput={breachOutput} />
+            )
+          default:
+            return null
+        }
+      }}
+    />
+  )
+}

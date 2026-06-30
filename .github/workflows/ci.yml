@@ -110,6 +110,13 @@ jobs:
       - name: Audit compliance country tokens
         run: npm run audit:compliance-countries
 
+      - name: Check compliance-data.json freshness
+        # Fails if public/data/compliance-data.json was last committed more than
+        # 30 days ago. Uses git log (not mtime) so the check is accurate in CI.
+        # To unblock: run ./build-data.sh or npx tsx scripts/scrape-compliance.ts --force
+        # in pqctoday-priv, copy the output here, and commit.
+        run: npm run check:compliance-fresh -- --max-days 30
+
       - name: Audit data regressions (no silent record/field loss)
         # Diffs HEAD against the base branch and BLOCKS if compliance-data.json
         # loses records, or a vendor roadmap entry goes from non-empty PQC

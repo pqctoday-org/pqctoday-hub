@@ -213,6 +213,12 @@ export interface AutomotiveComplianceMilestone {
   pqcRelevance: 'direct' | 'indirect' | 'informational'
   confidence: RegulationConfidence
   affectedSystems: string[]
+  /**
+   * Canonical id in compliance_*.csv — for tooling cross-reference only.
+   * year is a phase-specific deadline (more granular than the CSV top-level range)
+   * and is maintained here, not derived from the CSV.
+   */
+  csvId?: string
 }
 
 export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] = [
@@ -279,6 +285,7 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
   },
   {
     id: 'cnsa-2-firmware',
+    csvId: 'CNSA-2',
     name: 'CNSA 2.0 — Firmware Signing Deadline',
     authority: 'NSA',
     region: 'us',
@@ -292,13 +299,14 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
   },
   {
     id: 'cnsa-2-full',
+    csvId: 'CNSA-2',
     name: 'CNSA 2.0 — Full PQC Transition (all NSS)',
     authority: 'NSA',
     region: 'us',
-    year: 2035,
+    year: 2033,
     quarter: 'Q4',
     description:
-      'All National Security Systems must exclusively use CNSA 2.0 PQC algorithms (web/cloud/OS exclusive use is 2033).',
+      'All National Security Systems must exclusively use CNSA 2.0 PQC algorithms by 2033.',
     pqcRelevance: 'direct',
     confidence: 'published',
     affectedSystems: ['All vehicle crypto', 'Supply chain', 'Backend infrastructure'],

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { complianceFrameworks, complianceDB } from './complianceData'
+import { complianceFrameworks, allComplianceFrameworks, complianceDB } from './complianceData'
+import { COMPLIANCE_CURIOUS_PREFACES } from './complianceCuriousPrefaces'
 
 describe('complianceData', () => {
   it('loads without error', () => {
@@ -50,6 +51,44 @@ describe('complianceData', () => {
     // so the assessment scoring is never silently shadowed by CSV import order.
     expect(complianceDB['ANSSI'].requiresPQC).toBe(true)
     expect(complianceDB['CRYPTREC'].requiresPQC).toBe(true)
+  })
+
+  it('has no unexpected duplicate labels in active rows', () => {
+    // Known intentional duplicates: body rows + framework rows share a label.
+    // Any NEW duplicate needs to be added here with an explanation, not silently swallowed.
+    const KNOWN_DUPLICATES = new Set(['ANSSI', 'CRYPTREC'])
+    const active = allComplianceFrameworks.filter(
+      (f) => f.status !== 'deprecated' && f.status !== 'obsolete'
+    )
+    const seen = new Map<string, string>()
+    const unexpected: string[] = []
+    for (const fw of active) {
+      if (seen.has(fw.label) && !KNOWN_DUPLICATES.has(fw.label)) {
+        unexpected.push(`"${fw.label}" (${seen.get(fw.label)} and ${fw.id})`)
+      }
+      if (!seen.has(fw.label)) seen.set(fw.label, fw.id)
+    }
+    expect(unexpected).toEqual([])
+  })
+})
+
+describe('complianceCuriousPrefaces', () => {
+  it('every preface key matches an active CSV row id', () => {
+    // Dead keys are unreachable — getComplianceCuriousPreface() returns undefined
+    // and the component falls through to a generic fallback with no error.
+    // This test catches typos and CSV renames before they ship.
+    //
+    // EXCEPTION: 'SOX' has no CSV row yet — tracked as a content backlog item.
+    // Remove from KNOWN_DEAD once a SOX row is added to the compliance CSV.
+    const KNOWN_DEAD = new Set(['SOX'])
+    const ids = new Set(complianceFrameworks.map((f) => f.id))
+    const dead: string[] = []
+    for (const key of Object.keys(COMPLIANCE_CURIOUS_PREFACES)) {
+      if (!ids.has(key) && !KNOWN_DEAD.has(key)) {
+        dead.push(key)
+      }
+    }
+    expect(dead).toEqual([])
   })
 
   it('cswp39Tags use only valid Crypto Posture Management pillars', () => {

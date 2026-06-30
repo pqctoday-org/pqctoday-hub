@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { OpsChecklist, type ChecklistSection } from '@/components/PKILearning/common/OpsChecklist'
 import { useModuleStore } from '@/store/useModuleStore'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import type { RoadmapOutput } from '../types'
 
 const sections: ChecklistSection[] = [
   {
@@ -203,8 +205,34 @@ const sections: ChecklistSection[] = [
   },
 ]
 
-export const DeploymentPlaybook: React.FC = () => {
+interface DeploymentPlaybookProps {
+  roadmapOutput?: RoadmapOutput | null
+}
+
+export const DeploymentPlaybook: React.FC<DeploymentPlaybookProps> = ({ roadmapOutput }) => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
+
+  // Group roadmap milestones by phaseId to show which phases have planned milestones.
+  const phaseGroups = useMemo(() => {
+    if (!roadmapOutput || roadmapOutput.milestones.length === 0) return null
+    const grouped = new Map<string, Array<{ label: string; year: number }>>()
+    for (const m of roadmapOutput.milestones) {
+      const group = grouped.get(m.phaseId) ?? []
+      group.push({ label: m.label, year: m.year })
+      grouped.set(m.phaseId, group)
+    }
+    return grouped
+  }, [roadmapOutput])
+
+  const roadmapSummary = useMemo(() => {
+    if (!phaseGroups) return null
+    const lines: string[] = []
+    for (const [phaseId, ms] of phaseGroups) {
+      const sorted = [...ms].sort((a, b) => a.year - b.year)
+      lines.push(`Phase ${phaseId}: ${sorted.map((m) => `${m.year} — ${m.label}`).join('; ')}`)
+    }
+    return lines.join(' | ')
+  }, [phaseGroups])
 
   const handleSave = useCallback(
     ({ markdown, checkedItems }: { markdown: string; checkedItems: string[] }) => {
@@ -223,6 +251,11 @@ export const DeploymentPlaybook: React.FC = () => {
 
   return (
     <div className="space-y-3">
+      {roadmapOutput && roadmapOutput.milestones.length > 0 && roadmapSummary && (
+        <PreFilledBanner
+          summary={`${roadmapOutput.milestones.length} roadmap milestone${roadmapOutput.milestones.length !== 1 ? 's' : ''} from Step 1 are available for reference. Phases covered: ${roadmapSummary}.`}
+        />
+      )}
       <OpsChecklist
         title="PQC Deployment Playbook"
         description="Operational procedures for deploying PQC across production infrastructure — covering hybrid mode, canary testing, progressive rollout, validation, and rollback."

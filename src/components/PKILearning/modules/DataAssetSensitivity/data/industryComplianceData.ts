@@ -1,9 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { getFrameworkById } from '@/data/complianceData'
 
 export type ComplianceRegion = 'US Federal' | 'EU' | 'Industry-Specific' | 'Global'
 
 export interface ComplianceMandate {
+  /** Module-internal ID — used by INDUSTRY_COMPLIANCE_MAP lookups. Do not change. */
   id: string
+  /**
+   * Canonical id in compliance_*.csv. Used by RESOLVED_MANDATES to derive
+   * the authoritative label, deadline, and website from the single source of truth.
+   * Undefined for mandates not yet in the CSV (e.g. CCPA-CPRA).
+   */
+  csvId?: string
   name: string
   fullName: string
   region: ComplianceRegion
@@ -23,6 +31,7 @@ export type IndustryComplianceMap = Record<string, string[]>
 export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
   {
     id: 'CNSA-2.0',
+    csvId: 'CNSA-2',
     name: 'CNSA 2.0',
     fullName: 'Commercial National Security Algorithm Suite 2.0',
     region: 'US Federal',
@@ -37,6 +46,7 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
   },
   {
     id: 'NIST-IR-8547',
+    csvId: 'NIST-IR-8547',
     name: 'NIST IR 8547',
     fullName: 'Transition to Post-Quantum Cryptography Standards',
     region: 'US Federal',
@@ -51,6 +61,7 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
   },
   {
     id: 'GDPR',
+    csvId: 'GDPR',
     name: 'GDPR',
     fullName: 'General Data Protection Regulation',
     region: 'EU',
@@ -65,34 +76,39 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
   },
   {
     id: 'NIS2',
+    csvId: 'NIS2',
     name: 'NIS2',
     fullName: 'Network and Information Security Directive 2',
     region: 'EU',
     scope: 'Essential and important entities in EU member states',
     pqcRequirement:
       'Article 21 mandates cryptography and encryption policies. ENISA guidance explicitly covers PQC transition planning for essential services.',
-    hardDeadline: '2024',
-    deadlineYear: 2024,
+    // NIS2 transposition deadline (Oct 2024) is past — no specific forward PQC deadline yet
+    hardDeadline: null,
+    deadlineYear: null,
     pqcMandatoryNow: true,
     relevantArticles: ['Article 21(2)(h)', 'Article 24'],
     url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32022L2555',
   },
   {
     id: 'DORA',
+    csvId: 'DORA',
     name: 'DORA',
     fullName: 'Digital Operational Resilience Act',
     region: 'EU',
     scope: 'Financial entities (banks, insurers, investment firms) in EU',
     pqcRequirement:
       'Article 9 requires ICT security policies including cryptographic controls. Enforceable January 2025. Implicit PQC obligation as regulators update guidance.',
-    hardDeadline: '2025',
-    deadlineYear: 2025,
+    // DORA became applicable Jan 2025 — that date is past; no specific forward PQC deadline yet
+    hardDeadline: null,
+    deadlineYear: null,
     pqcMandatoryNow: true,
     relevantArticles: ['Article 9', 'Article 10', 'Article 16'],
     url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32022R2554',
   },
   {
     id: 'HIPAA',
+    csvId: 'HIPAA',
     name: 'HIPAA',
     fullName: 'Health Insurance Portability and Accountability Act',
     region: 'US Federal',
@@ -108,20 +124,23 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
   },
   {
     id: 'PCI-DSS',
+    csvId: 'PCI-DSS',
     name: 'PCI DSS v4.0',
     fullName: 'Payment Card Industry Data Security Standard v4.0',
     region: 'Industry-Specific',
     scope: 'Any entity that stores, processes, or transmits cardholder data',
     pqcRequirement:
       'Requirement 12.3.3 mandates cryptographic inventory and algorithm review. Req 4.2.1 targets strong cryptography. PQC explicitly planned for future versions.',
-    hardDeadline: '2025',
-    deadlineYear: 2025,
+    // v4.0 became mandatory March 31 2025 — that date is now past; no forward deadline yet
+    hardDeadline: null,
+    deadlineYear: null,
     pqcMandatoryNow: false,
     relevantArticles: ['Req 4.2.1', 'Req 12.3.3'],
     url: 'https://www.pcisecuritystandards.org/',
   },
   {
     id: 'FIPS-140-3',
+    csvId: 'FIPS-140-3',
     name: 'FIPS 140-3',
     fullName: 'FIPS 140-3 Cryptographic Module Validation Program',
     region: 'US Federal',
@@ -136,6 +155,7 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
   },
   {
     id: 'CCPA-CPRA',
+    // No CSV row for CCPA-CPRA yet — add csvId once a row is added to compliance_*.csv
     name: 'CCPA/CPRA',
     fullName: 'California Consumer Privacy Act / California Privacy Rights Act',
     region: 'Industry-Specific',
@@ -150,6 +170,7 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
   },
   {
     id: 'ISO-27001',
+    csvId: 'ISO-27001',
     name: 'ISO 27001',
     fullName: 'ISO/IEC 27001 Information Security Management',
     region: 'Global',
@@ -206,3 +227,19 @@ export function getEarliestDeadline(mandateIds: string[]): {
   if (mandates.length === 0) return { year: null, name: '' }
   return { year: mandates[0].deadlineYear, name: mandates[0].name }
 }
+
+/**
+ * Mandates enriched with live CSV metadata (label, deadline, website).
+ * Prefer this over COMPLIANCE_MANDATES in new code — the module's static
+ * fields are preserved as fallbacks when no CSV row matches.
+ */
+export const RESOLVED_MANDATES = COMPLIANCE_MANDATES.map((m) => {
+  const fw = m.csvId ? getFrameworkById(m.csvId) : undefined
+  return {
+    ...m,
+    // CSV overrides — fall back to module values when no CSV row found
+    name: fw?.label ?? m.name,
+    website: fw?.website ?? m.url,
+    pqcMandatoryNow: fw ? fw.pqcRequirement === 'yes' : m.pqcMandatoryNow,
+  }
+})

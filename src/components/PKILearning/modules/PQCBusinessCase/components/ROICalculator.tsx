@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import {
   TrendingUp,
   TrendingDown,
@@ -70,7 +70,18 @@ interface TornadoRow {
   delta: number
 }
 
-export const ROICalculator: React.FC = () => {
+interface ROIOutput {
+  totalCostUSD: number
+  roiPercent: number
+  paybackMonths: number
+  breachCostSavingsUSD: number
+}
+
+interface ROICalculatorProps {
+  onOutput?: (output: ROIOutput) => void
+}
+
+export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
   const data = useExecutiveModuleData()
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   const industryBreachBaseline = resolveIndustryBreachBaseline(data.industry)
@@ -170,6 +181,23 @@ export const ROICalculator: React.FC = () => {
       ...roi,
     }
   }, [assumptions, industryBreachBaseline, quantumMultiplier])
+
+  useEffect(() => {
+    if (onOutput && financials.totalCost > 0) {
+      onOutput({
+        totalCostUSD: financials.totalCost,
+        roiPercent: financials.roiPercent,
+        paybackMonths: financials.paybackMonths,
+        breachCostSavingsUSD: financials.breachCostSavings,
+      })
+    }
+  }, [
+    onOutput,
+    financials.totalCost,
+    financials.roiPercent,
+    financials.paybackMonths,
+    financials.breachCostSavings,
+  ])
 
   // Sensitivity (tornado): vary each input ±30% and measure NPV impact.
   const tornado: TornadoRow[] = useMemo(() => {

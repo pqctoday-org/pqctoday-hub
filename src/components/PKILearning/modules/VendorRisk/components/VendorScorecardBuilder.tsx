@@ -154,7 +154,14 @@ export function computeVendorScorecards(
   return rows.sort((a, b) => b.overall - a.overall || a.vendor.localeCompare(b.vendor))
 }
 
-export const VendorScorecardBuilder: React.FC = () => {
+export interface ScorecardOutput {
+  rows: VendorScorecardRow[]
+  lowReadinessVendors: string[]
+}
+
+export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOutput) => void }> = ({
+  onOutput,
+}) => {
   const myProducts = useSelectedProductIds()
   const { addExecutiveDocument } = useModuleStore()
   const hasProducts = myProducts.length > 0
@@ -291,6 +298,13 @@ export const VendorScorecardBuilder: React.FC = () => {
       }),
     [selectedItems, checkedProducts, effectiveWeight, useSlider, sliderScores]
   )
+
+  // Emit scorecard output to parent whenever vendor scores change
+  useEffect(() => {
+    if (!onOutput) return
+    const low = vendorScorecards.filter((r) => r.overall < 50).map((r) => r.vendor)
+    onOutput({ rows: vendorScorecards, lowReadinessVendors: low })
+  }, [onOutput, vendorScorecards])
 
   const toggleProductForDimension = useCallback((dimId: string, key: string) => {
     setCheckedProducts((prev) => {

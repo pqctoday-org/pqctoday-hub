@@ -56,6 +56,7 @@ export const PQCRiskManagementModule: FC = () => {
   // the register that Steps 3 and 4 consume. Held in the module FC so it
   // survives step changes; the original Reset cleared it, hence the onReset slot.
   const [riskEntries, setRiskEntries] = useState<RiskEntry[]>([])
+  const [scenarioCrqcYear, setScenarioCrqcYear] = useState<number | null>(null)
 
   return (
     <ModuleShell
@@ -66,17 +67,26 @@ export const PQCRiskManagementModule: FC = () => {
         <PQCRiskManagementExercises onNavigateToWorkshop={() => api.goToWorkshop()} />
       )}
       workshopParts={PARTS}
-      onReset={() => setRiskEntries([])}
+      onReset={() => {
+        setRiskEntries([])
+        setScenarioCrqcYear(null)
+      }}
       renderWorkshopStep={(index, configKey) => {
         switch (index) {
           case 0:
-            return <CRQCScenarioPlanner key={`crqc-${configKey}`} />
+            return (
+              <CRQCScenarioPlanner
+                key={`crqc-${configKey}`}
+                onCrqcYearChange={setScenarioCrqcYear}
+              />
+            )
           case 1:
             return (
               <RiskRegisterBuilder
                 key={`register-${configKey}`}
                 riskEntries={riskEntries}
                 onRiskEntriesChange={setRiskEntries}
+                scenarioCrqcYear={scenarioCrqcYear}
               />
             )
           case 2:

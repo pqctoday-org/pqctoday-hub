@@ -10,6 +10,7 @@ import { softwareItemToCbomInput } from '@/components/Migrate/cbomExport'
 import { buildCbomDocument, downloadCbomJson } from '@/services/cbom/cycloneDx'
 import { isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
 import type { SoftwareItem } from '@/types/MigrateTypes'
+import type { ScorecardOutput } from './VendorScorecardBuilder'
 import {
   Info,
   CheckSquare,
@@ -188,7 +189,9 @@ const StatBadge: React.FC<StatBadgeProps> = ({ label, count, total, isGap }) => 
 // Lookup map for LAYERS by id
 const LAYER_MAP = new Map(LAYERS.map((l) => [l.id, l]))
 
-export const SupplyChainRiskMatrix: React.FC = () => {
+export const SupplyChainRiskMatrix: React.FC<{ scorecardOutput?: ScorecardOutput | null }> = ({
+  scorecardOutput,
+}) => {
   const myProducts = useSelectedProductIds()
   const {
     vendorsByLayer,
@@ -458,6 +461,62 @@ export const SupplyChainRiskMatrix: React.FC = () => {
             Showing all catalog products. Select your infrastructure in Step 1 for personalized
             results.
           </span>
+        </div>
+      )}
+
+      {/* Scorecard import summary from Step 2 */}
+      {scorecardOutput && scorecardOutput.rows.length > 0 && (
+        <div className="glass-panel p-4">
+          <PreFilledBanner
+            summary={`Vendor data imported from Step 2 scorecard — ${scorecardOutput.rows.length} vendor${scorecardOutput.rows.length !== 1 ? 's' : ''}.`}
+          />
+          <div className="mt-3 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs text-muted-foreground border-b border-border">
+                  <th className="py-1.5 pr-3 font-medium">Vendor</th>
+                  <th className="py-1.5 px-2 font-medium text-center">Products</th>
+                  <th className="py-1.5 px-2 font-medium text-center">Readiness Score</th>
+                  <th className="py-1.5 px-2 font-medium text-center">Level</th>
+                </tr>
+              </thead>
+              <tbody>
+                {scorecardOutput.rows.map((row) => {
+                  const isLow = row.overall < 50
+                  const scoreColor =
+                    row.overall >= 75
+                      ? 'text-status-success'
+                      : row.overall >= 50
+                        ? 'text-status-warning'
+                        : 'text-status-error'
+                  return (
+                    <tr key={row.vendor} className="border-b border-border/50">
+                      <td className="py-1.5 pr-3 text-foreground">{row.vendor}</td>
+                      <td className="py-1.5 px-2 text-center text-muted-foreground">
+                        {row.productCount}
+                      </td>
+                      <td className={`py-1.5 px-2 text-center font-bold ${scoreColor}`}>
+                        {row.overall}/100
+                      </td>
+                      <td className="py-1.5 px-2 text-center">
+                        <span
+                          className={`text-[10px] px-1.5 py-0.5 rounded-full border ${
+                            isLow
+                              ? 'bg-destructive/10 text-destructive border-destructive/20'
+                              : row.overall >= 75
+                                ? 'bg-status-success/10 text-status-success border-status-success/20'
+                                : 'bg-status-warning/10 text-status-warning border-status-warning/20'
+                          }`}
+                        >
+                          {isLow ? 'Low' : row.overall >= 75 ? 'High' : 'Medium'}
+                        </span>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
