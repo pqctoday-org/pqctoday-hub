@@ -108,6 +108,17 @@ function checkParams(path: string, params: URLSearchParams): DeepLinkResolution 
     if (bad) return { ok: false, reason: `${path}: unknown param "${bad}"` }
     return { ok: true }
   }
+  if (path.startsWith('/playground/')) {
+    // Playground workshop tools accept ?step=N to open the embed at a specific
+    // step (0-indexed). SimulationView parses this and passes it as `initialStep`
+    // to the workshop component. Only non-negative integers are valid.
+    const bad = keys.find((k) => k !== 'step')
+    if (bad) return { ok: false, reason: `${path}: unknown param "${bad}"` }
+    const step = params.get('step')
+    if (step !== null && !/^\d+$/.test(step))
+      return { ok: false, reason: `${path}: step must be a non-negative integer` }
+    return { ok: true }
+  }
   return { ok: false, reason: `${path}: unexpected params (${keys.join(', ')})` }
 }
 

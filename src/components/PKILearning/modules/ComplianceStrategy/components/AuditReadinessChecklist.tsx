@@ -483,7 +483,13 @@ function renderExceptionsAndEvidenceMd(
   return md
 }
 
-export const AuditReadinessChecklist: React.FC = () => {
+interface AuditReadinessChecklistProps {
+  selectedJurisdictions?: string[]
+}
+
+export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = ({
+  selectedJurisdictions,
+}) => {
   const { isAssessmentComplete, industry, country, myFrameworks, myProducts, myThreats } =
     useExecutiveModuleData()
   const { addExecutiveDocument } = useModuleStore()
@@ -603,6 +609,12 @@ export const AuditReadinessChecklist: React.FC = () => {
             Assessment Wizard for pre-populated items and risk-prioritized guidance.
           </p>
         </div>
+      )}
+
+      {selectedJurisdictions && selectedJurisdictions.length > 0 && (
+        <PreFilledBanner
+          summary={`Filtering for: ${selectedJurisdictions.join(', ')}. Items shown cover all jurisdictions — jurisdiction-specific filtering coming in a future update.`}
+        />
       )}
 
       <ArtifactBuilder

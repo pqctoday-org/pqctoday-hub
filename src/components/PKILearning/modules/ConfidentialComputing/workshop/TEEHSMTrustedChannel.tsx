@@ -219,11 +219,11 @@ function buildProvisioningSteps(
 
 // ── Component ────────────────────────────────────────────────────────────
 
-export const TEEHSMTrustedChannel: React.FC = () => {
+export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initialStep = 0 }) => {
   const [selectedTeeVendor, setSelectedTeeVendor] = useState<string>('All')
   const [selectedHsmVendor, setSelectedHsmVendor] = useState<string>('All')
   const [pqcMode, setPqcMode] = useState(false)
-  const [currentStep, setCurrentStep] = useState(0)
+  const [currentStep, setCurrentStep] = useState(initialStep)
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
 
   // Find matching integration

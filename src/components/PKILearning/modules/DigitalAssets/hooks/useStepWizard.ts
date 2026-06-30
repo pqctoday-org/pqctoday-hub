@@ -6,10 +6,11 @@ import type { LogEntry } from '@/components/PKILearning/common/WorkshopOperation
 interface UseStepWizardProps {
   steps: Step[]
   onBack: () => void
+  initialStep?: number
 }
 
-export const useStepWizard = ({ steps, onBack }: UseStepWizardProps) => {
-  const [currentStep, setCurrentStep] = useState(0)
+export const useStepWizard = ({ steps, onBack, initialStep = 0 }: UseStepWizardProps) => {
+  const [currentStep, setCurrentStep] = useState(initialStep)
   const [isExecuting, setIsExecuting] = useState(false)
   const [output, setOutput] = useState<string | Record<string, string> | null>(null)
   const [error, setError] = useState<string | null>(null)

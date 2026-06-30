@@ -320,15 +320,25 @@ export function SimulationView() {
   // editor (Business-Center tool), or the assessment wizard. Keeps the player
   // inside /simulation. The assess embed re-runs / refines the assessment past
   // the initial gate; on completion it closes back to the board (no /report nav).
-  const [learnEmbed, setLearnEmbed] = useState<{ moduleId: string; title: string } | null>(null)
+  const [learnEmbed, setLearnEmbed] = useState<{
+    moduleId: string
+    title: string
+    /** Tab to open the module at (from ?tab= in the tree's `to` URL, e.g. 'workshop'). */
+    tab?: string
+    /** 0-indexed workshop step (from ?step= in the tree's `to` URL). */
+    step?: number
+  } | null>(null)
   const [activityEmbed, setActivityEmbed] = useState<{
     artifactType: ExecutiveDocumentType
     title: string
   } | null>(null)
   const [assessEmbed, setAssessEmbed] = useState<{ title: string; refId?: string } | null>(null)
-  const [workshopEmbed, setWorkshopEmbed] = useState<{ workshopId: string; title: string } | null>(
-    null
-  )
+  const [workshopEmbed, setWorkshopEmbed] = useState<{
+    workshopId: string
+    title: string
+    /** 0-indexed step to open the workshop at (from ?step=N in the tree's `to` URL). */
+    step?: number
+  } | null>(null)
   const [timelineEmbed, setTimelineEmbed] = useState<{
     title: string
     to: string
@@ -389,13 +399,26 @@ export function SimulationView() {
   const openStep = (s: TreeStep) => {
     if (s.kind === 'learn' && s.moduleId && isEmbeddableModule(s.moduleId)) {
       clearAllEmbeds()
-      setLearnEmbed({ moduleId: s.moduleId, title: s.label })
+      const lqIdx = s.to.indexOf('?')
+      const lp = lqIdx >= 0 ? new URLSearchParams(s.to.slice(lqIdx + 1)) : null
+      const learnTab = lp?.get('tab') ?? undefined
+      const learnStepStr = lp?.get('step') ?? null
+      const learnStep =
+        learnStepStr !== null && /^\d+$/.test(learnStepStr) ? parseInt(learnStepStr, 10) : undefined
+      setLearnEmbed({ moduleId: s.moduleId, title: s.label, tab: learnTab, step: learnStep })
     } else if (s.kind === 'activity' && s.artifactType) {
       clearAllEmbeds()
       setActivityEmbed({ artifactType: s.artifactType, title: s.label })
     } else if (s.kind === 'workshop' && s.workshopId && WORKSHOP_TOOL_COMPONENTS[s.workshopId]) {
       clearAllEmbeds()
-      setWorkshopEmbed({ workshopId: s.workshopId, title: s.label })
+      const qIdx = s.to.indexOf('?')
+      const stepStr = qIdx >= 0 ? new URLSearchParams(s.to.slice(qIdx + 1)).get('step') : null
+      const parsedStep = stepStr !== null ? parseInt(stepStr, 10) : NaN
+      setWorkshopEmbed({
+        workshopId: s.workshopId,
+        title: s.label,
+        step: !isNaN(parsedStep) ? parsedStep : undefined,
+      })
     } else if (s.kind === 'catalog') {
       clearAllEmbeds()
       setCatalogEmbed({ title: s.label, layer: s.catalogLayer, catalogId: s.catalogId })
@@ -1536,7 +1559,7 @@ export function SimulationView() {
                     <AssessViewRedesign simEmbed onComplete={closeEmbed} />
                   </div>
                 ) : learnEmbed && LearnComp ? (
-                  <EmbeddedLearnProvider>
+                  <EmbeddedLearnProvider initialTab={learnEmbed.tab} initialStep={learnEmbed.step}>
                     {/* W2a: the completion ceremony fires INSIDE the sim too — the
                     standalone ModuleCompletionWatcher is gated !isEmbed, leaving
                     in-sim learners with no belt/score beat. This sim-scoped watcher
@@ -1562,7 +1585,7 @@ export function SimulationView() {
                   // pure context wrapper (HSM init is lazy), so it's cheap for non-HSM tools.
                   <PlaygroundProvider>
                     <Suspense fallback={<EmbedLoading label="Loading workshop" />}>
-                      <WorkshopComp />
+                      <WorkshopComp initialStep={workshopEmbed?.step} />
                     </Suspense>
                   </PlaygroundProvider>
                 ) : timelineEmbed ? (

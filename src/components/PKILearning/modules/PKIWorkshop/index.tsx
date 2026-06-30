@@ -211,16 +211,20 @@ const ALL_PARTS = [
 interface PKIWorkshopProps {
   /** When true: renders only the 5-step workshop panel (no module tabs, no Step 6+). */
   playgroundMode?: boolean
+  initialStep?: number
 }
 
-export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({ playgroundMode = false }) => {
+export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({
+  playgroundMode = false,
+  initialStep = 0,
+}) => {
   const parts = playgroundMode ? ALL_PARTS.slice(0, 5) : ALL_PARTS
 
   // ModuleShell owns the tabs, header (context rail), deep-link and time
   // tracking; this component owns its own stepper state and renders the workshop
   // through the `workshop` slot so the Playground embed (playgroundMode) can
   // reuse the exact same panel standalone.
-  const [currentStep, setCurrentStep] = useState(0)
+  const [currentStep, setCurrentStep] = useState(initialStep)
   const { updateModuleProgress, markStepComplete, resetModuleProgress } = useModuleStore()
   const { resetStore } = useOpenSSLStore()
 

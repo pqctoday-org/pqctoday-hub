@@ -3,6 +3,7 @@ import React, { useMemo, useCallback, useState, useEffect, useRef } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import type { RoadmapOutput } from '../types'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import {
   DataDrivenScorecard,
@@ -34,7 +35,11 @@ function trendSummary(history: { ts: number; score: number }[]): string {
   return `${arrow} ${delta > 0 ? '+' : ''}${delta.toFixed(0)} over ${history.length} snapshots`
 }
 
-export const KPITrackerTemplate: React.FC = () => {
+interface KPITrackerTemplateProps {
+  roadmapOutput?: RoadmapOutput | null
+}
+
+export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapOutput }) => {
   const execData = useExecutiveModuleData()
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   const pushRiskScoreSnapshot = useModuleStore((s) => s.pushRiskScoreSnapshot)
@@ -44,9 +49,9 @@ export const KPITrackerTemplate: React.FC = () => {
   const [personaOverride, setPersonaOverride] = useState<KpiPersonaId | null>(null)
   const activePersona: KpiPersonaId = personaOverride ?? coercePersona(globalPersona)
 
-  // Program start year — enables a real Pace-to-Deadline score (progress vs.
-  // expected) instead of a constant. Until set, Pace-to-Deadline stays manual.
+  // Program start year — user override; falls back to roadmap's earliest milestone year.
   const [startYear, setStartYear] = useState<number | null>(null)
+  const effectiveStartYear = startYear ?? roadmapOutput?.earliestYear ?? null
 
   // Record a risk-score snapshot whenever the assessment yields a new value
   useEffect(() => {
@@ -60,10 +65,10 @@ export const KPITrackerTemplate: React.FC = () => {
       buildDimensions(
         activePersona,
         SURFACE,
-        { ...execData, migrationStartYear: startYear },
+        { ...execData, migrationStartYear: effectiveStartYear },
         execData.country
       ),
-    [activePersona, execData, startYear]
+    [activePersona, execData, effectiveStartYear]
   )
 
   // The scorecard manages its own internal scores. We mirror them into local
@@ -178,6 +183,11 @@ export const KPITrackerTemplate: React.FC = () => {
     <div className="space-y-6">
       {seedSources.length > 0 && (
         <PreFilledBanner summary={`Tracker auto-scored from ${seedSources.join(' + ')}.`} />
+      )}
+      {roadmapOutput?.earliestYear != null && (
+        <PreFilledBanner
+          summary={`Start year set to ${roadmapOutput.earliestYear} from your roadmap (earliest milestone). Adjust below if needed.`}
+        />
       )}
       <div className="glass-panel p-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">

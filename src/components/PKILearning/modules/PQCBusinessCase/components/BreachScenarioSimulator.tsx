@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { AlertTriangle, Info, TrendingUp, Shield } from 'lucide-react'
 import { BreachCostModel } from '@/components/PKILearning/common/executive'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
@@ -18,7 +18,17 @@ const AVAILABLE_INDUSTRIES = [
   'Other',
 ]
 
-export const BreachScenarioSimulator: React.FC = () => {
+interface BreachOutput {
+  classicalCostUSD: number
+  quantumCostUSD: number
+  deltaUSD: number
+}
+
+interface BreachScenarioSimulatorProps {
+  onOutput?: (output: BreachOutput) => void
+}
+
+export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = ({ onOutput }) => {
   const data = useExecutiveModuleData()
   const [selectedIndustry, setSelectedIndustry] = useState(data.industry || 'Other')
   const [breachCosts, setBreachCosts] = useState<{
@@ -64,6 +74,16 @@ export const BreachScenarioSimulator: React.FC = () => {
 
     return items
   }, [breachCosts, selectedIndustry, data.criticalThreatCount, data.migrationDeadlineYear])
+
+  useEffect(() => {
+    if (onOutput && breachCosts) {
+      onOutput({
+        classicalCostUSD: breachCosts.classicalCost,
+        quantumCostUSD: breachCosts.quantumCost,
+        deltaUSD: breachCosts.delta,
+      })
+    }
+  }, [onOutput, breachCosts])
 
   return (
     <div className="space-y-8">

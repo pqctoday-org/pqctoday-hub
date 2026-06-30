@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
@@ -11,6 +11,7 @@ import type { ArtifactSection } from '@/components/PKILearning/common/executive'
 import { OptionTile } from '@/components/common/OptionTile'
 import { Button } from '@/components/ui/button'
 import { FileText, KeyRound, Building2, CalendarClock } from 'lucide-react'
+import type { RACIOutput, PolicyOutput } from '../types'
 
 type PolicyType =
   | 'crypto-algorithm'
@@ -686,7 +687,15 @@ function renderKpiDriftRulesMd(rules: KpiDriftRule[]): string {
   return md
 }
 
-export const PolicyTemplateGenerator: React.FC = () => {
+interface PolicyTemplateGeneratorProps {
+  raciOutput?: RACIOutput | null
+  onOutput?: (output: PolicyOutput) => void
+}
+
+export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = ({
+  raciOutput,
+  onOutput,
+}) => {
   const [activePolicyType, setActivePolicyType] = useState<PolicyType>('crypto-algorithm')
   const { addExecutiveDocument } = useModuleStore()
   const execData = useExecutiveModuleData()
@@ -696,6 +705,11 @@ export const PolicyTemplateGenerator: React.FC = () => {
   const cryptoAgility = useAssessmentStore((s) => s.cryptoAgility)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const [kpiDriftRules, setKpiDriftRules] = useState<KpiDriftRule[]>([])
+
+  useEffect(() => {
+    if (!onOutput) return
+    onOutput({ policyType: activePolicyType, targetYear: null })
+  }, [activePolicyType, onOutput])
 
   const addKpiDriftRule = () =>
     setKpiDriftRules((prev) => [...prev, { kpi: '', threshold: '', policyAction: '' }])
@@ -711,29 +725,45 @@ export const PolicyTemplateGenerator: React.FC = () => {
     [execData.frameworksByIndustry]
   )
 
-  const sections = useMemo(
-    () =>
-      buildSections({
-        policyType: activePolicyType,
-        frameworkNames,
-        deadlineYear: execData.migrationDeadlineYear,
-        country,
-        industry,
-        dataSensitivity,
-        cryptoAgility,
-        simplified,
-      }),
-    [
-      activePolicyType,
+  const sections = useMemo(() => {
+    const built = buildSections({
+      policyType: activePolicyType,
       frameworkNames,
-      execData.migrationDeadlineYear,
+      deadlineYear: execData.migrationDeadlineYear,
       country,
       industry,
       dataSensitivity,
       cryptoAgility,
       simplified,
-    ]
-  )
+    })
+    if (!raciOutput) return built
+    // Inject accountableRole → policy-owner, responsibleRole → approver
+    return built.map((section) => {
+      if (section.id !== 'general') return section
+      return {
+        ...section,
+        fields: section.fields.map((field) => {
+          if (field.id === 'policy-owner' && raciOutput.accountableRole) {
+            return { ...field, defaultValue: raciOutput.accountableRole }
+          }
+          if (field.id === 'approver' && raciOutput.responsibleRole) {
+            return { ...field, defaultValue: raciOutput.responsibleRole }
+          }
+          return field
+        }),
+      }
+    })
+  }, [
+    activePolicyType,
+    frameworkNames,
+    execData.migrationDeadlineYear,
+    country,
+    industry,
+    dataSensitivity,
+    cryptoAgility,
+    simplified,
+    raciOutput,
+  ])
 
   const handleExport = useCallback(
     (data: Record<string, Record<string, string | string[]>>) => {
@@ -764,6 +794,8 @@ export const PolicyTemplateGenerator: React.FC = () => {
   if (cryptoAgility) seedSources.push(`crypto agility (${cryptoAgility})`)
   if (execData.migrationDeadlineYear)
     seedSources.push(`deadline ${execData.migrationDeadlineYear} from /timeline`)
+  if (raciOutput?.accountableRole)
+    seedSources.push(`RACI owner (${raciOutput.accountableRole}) from Step 1`)
 
   return (
     <div className="space-y-6">

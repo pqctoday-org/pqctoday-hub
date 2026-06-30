@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { Clock, AlertTriangle, ShieldAlert, ShieldCheck, Calendar, TrendingUp } from 'lucide-react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
@@ -106,13 +106,21 @@ const COMPLIANCE_DEADLINES = [
   { framework: 'EU/ANSSI \u2014 PQC Guidance (advisory)', year: 2030, advisory: true },
 ]
 
-export const CRQCScenarioPlanner: React.FC = () => {
+interface CRQCScenarioPlannerProps {
+  onCrqcYearChange?: (year: number) => void
+}
+
+export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqcYearChange }) => {
   const { migrationDeadlineYear, industry, country, hndlRiskWindow } = useExecutiveModuleData()
   // Derive a default CRQC year from the user's nearest framework deadline
   // (deadline + 3-year buffer) — falls back to 2035 if no data.
   const defaultCrqcYear = migrationDeadlineYear ? migrationDeadlineYear + 3 : 2035
   const [crqcYear, setCrqcYear] = useState(defaultCrqcYear)
   const [seedCleared, setSeedCleared] = useState(false)
+
+  useEffect(() => {
+    onCrqcYearChange?.(crqcYear)
+  }, [crqcYear, onCrqcYearChange])
   const { addExecutiveDocument } = useModuleStore()
   const myThreatIds = useBookmarkStore((s) => s.myThreats)
   const { data: threatsData } = useThreatsData()
