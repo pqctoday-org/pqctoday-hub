@@ -24,6 +24,7 @@
 
 import fs from 'fs'
 import path from 'path'
+import { execSync } from 'child_process'
 
 interface Args {
   maxDays: number
@@ -62,8 +63,23 @@ function main() {
     process.exit(2)
   }
 
-  const stat = fs.statSync(file)
-  const ageMs = Date.now() - stat.mtimeMs
+  // Use git log to find the last commit date of the file — filesystem mtime is
+  // unreliable in CI because `git checkout` sets mtime to the checkout time,
+  // not when the file was last committed.
+  let lastCommitIso: string | null = null
+  try {
+    const raw = execSync(`git log -1 --format=%aI -- "${file}"`, {
+      encoding: 'utf-8',
+    }).trim()
+    if (raw) lastCommitIso = raw
+  } catch {
+    // git not available or file not tracked — fall back to mtime
+  }
+
+  const referenceTime = lastCommitIso
+    ? new Date(lastCommitIso).getTime()
+    : fs.statSync(file).mtimeMs
+  const ageMs = Date.now() - referenceTime
   const ageDays = ageMs / (1000 * 60 * 60 * 24)
   const isStale = ageDays > args.maxDays
 
@@ -76,6 +92,9 @@ function main() {
     // ignore — staleness check works without record count
   }
 
+  const modifiedIso = lastCommitIso ?? new Date(fs.statSync(file).mtimeMs).toISOString()
+  const timestampSource = lastCommitIso ? 'git-log' : 'mtime-fallback'
+
   if (args.json) {
     console.log(
       JSON.stringify({
@@ -83,7 +102,8 @@ function main() {
         file,
         ageDays: Number(ageDays.toFixed(1)),
         maxDays: args.maxDays,
-        modified: new Date(stat.mtimeMs).toISOString(),
+        modified: modifiedIso,
+        timestampSource,
         recordCount,
         ...(isStale && {
           hint: 'Run `./build-data.sh` (private full pipeline) or `npx tsx scripts/scrape-compliance.ts --force` to refresh.',
@@ -93,7 +113,7 @@ function main() {
   } else {
     const tag = isStale ? '[freshness][STALE]' : '[freshness][OK]'
     console.log(
-      `${tag} compliance-data.json age=${ageDays.toFixed(1)}d threshold=${args.maxDays}d records=${recordCount ?? 'unknown'} modified=${new Date(stat.mtimeMs).toISOString()}`
+      `${tag} compliance-data.json age=${ageDays.toFixed(1)}d threshold=${args.maxDays}d records=${recordCount ?? 'unknown'} modified=${modifiedIso} source=${timestampSource}`
     )
     if (isStale) {
       console.error(
