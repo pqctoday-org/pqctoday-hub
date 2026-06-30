@@ -2533,12 +2533,12 @@ export function SimulationView() {
                         {assessBoosts.map((b) => (
                           <div
                             key={b.id}
-                            className="flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1.5 dark:border-amber-800 dark:bg-amber-950/30"
+                            className="flex items-center justify-between rounded-lg border border-status-warning/30 bg-status-warning/10 px-2.5 py-1.5"
                           >
                             <span className="text-[11.5px] font-semibold text-foreground">
                               {b.label}
                             </span>
-                            <span className="font-mono text-sim-micro font-bold text-amber-600 dark:text-amber-400">
+                            <span className="font-mono text-sim-micro font-bold text-status-warning">
                               +{Math.round(b.delta * 100)} pts
                             </span>
                           </div>
