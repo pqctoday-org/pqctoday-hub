@@ -26,6 +26,10 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+### Added
+
+- **The simulation now opens workshops and learning modules at exactly the right step** [view:/simulation] [view:/learn] [persona:executive] [persona:architect]: when the simulation links you into a playground workshop or an embedded learning module — for example, directing you to a specific hands-on exercise — it now opens at precisely the step it intended rather than always starting from the beginning. Shared or bookmarked workshop links that include a step number also restore reliably to that position.
+
 ## [4.5.0] - 2026-06-29
 
 A mobile-ready and data-consistency release: the hub now works on phones across all pages, jurisdiction data is unified into one source of truth, the simulation generates industry-specific artifacts, and compliance facts in your report warn you when deadlines have been updated since your assessment.
