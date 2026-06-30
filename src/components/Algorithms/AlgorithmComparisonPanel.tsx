@@ -128,7 +128,7 @@ export function AlgorithmComparisonPanel({
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border">
-              <th className="text-left px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider w-40">
+              <th className="sticky left-0 z-10 bg-background text-left px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider w-40">
                 Attribute
               </th>
               {allAlgos.map((a) => {
@@ -181,7 +181,7 @@ export function AlgorithmComparisonPanel({
                   : Infinity
               return (
                 <tr key={field.key} className="border-b border-border/50 hover:bg-muted/30">
-                  <td className="px-3 py-2 text-xs font-medium text-muted-foreground whitespace-nowrap">
+                  <td className="sticky left-0 z-10 bg-background px-3 py-2 text-xs font-medium text-muted-foreground whitespace-nowrap">
                     {field.label}
                   </td>
                   {allAlgos.map((a) => {

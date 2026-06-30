@@ -800,6 +800,7 @@ export const PlaygroundWorkshop = () => {
   const [runFilter, setRunFilter] = useState<RunValue>('all')
   const [selectedTool, setSelectedTool] = useState<WorkshopTool | null>(null)
   const [paletteOpen, setPaletteOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   // Command palette shortcuts: ⌘K / Ctrl-K always toggles; `/` opens it only
   // when the user isn't typing in a field (so it never hijacks the search box).
@@ -1027,7 +1028,12 @@ export const PlaygroundWorkshop = () => {
 
   // ── Sidebar (reused on desktop + stacked on mobile) ───────────────────────
   const sidebar = (
-    <aside className="flex flex-col gap-1 lg:sticky lg:top-0 lg:h-screen lg:w-[264px] lg:flex-none lg:overflow-y-auto lg:border-r lg:border-border lg:py-5 lg:pr-4">
+    <aside
+      className={cn(
+        sidebarOpen ? 'flex' : 'hidden',
+        'lg:flex flex-col gap-1 lg:sticky lg:top-0 lg:h-screen lg:w-[264px] lg:flex-none lg:overflow-y-auto lg:border-r lg:border-border lg:py-5 lg:pr-4'
+      )}
+    >
       {/* Brand */}
       <div className="flex items-center gap-2.5 px-1">
         <span className="flex w-8 h-8 items-center justify-center rounded-lg bg-primary/12">
@@ -1390,6 +1396,22 @@ export const PlaygroundWorkshop = () => {
 
   return (
     <div className="lg:flex lg:gap-6">
+      {/* Mobile sidebar toggle — hidden on desktop */}
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={() => setSidebarOpen((o) => !o)}
+        className="lg:hidden mb-3 flex w-full min-h-[44px] items-center justify-between rounded-lg border border-border bg-muted/20 px-4 text-sm font-semibold"
+      >
+        <span className="flex items-center gap-2">
+          <FlaskConical size={16} aria-hidden="true" />
+          Browse &amp; filter
+        </span>
+        <ChevronDown
+          className={cn('h-4 w-4 transition-transform', sidebarOpen && 'rotate-180')}
+          aria-hidden="true"
+        />
+      </Button>
       {sidebar}
       <main className="min-w-0 flex-1 lg:max-w-[1180px] lg:py-6">
         {/* Control bar */}

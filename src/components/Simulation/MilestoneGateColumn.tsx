@@ -89,12 +89,12 @@ export const MilestoneGateColumn: React.FC = () => {
                     <td className="px-3 py-2">
                       <span className="font-mono font-bold text-primary">{p.gate!.id}</span>
                     </td>
-                    <td className="px-3 py-2 text-foreground whitespace-nowrap">
+                    <td className="px-3 py-2 text-foreground">
                       {p.number !== null ? `P${p.number} · ` : ''}
                       {p.name}
                     </td>
                     <td className="px-3 py-2 text-muted-foreground">{p.gate!.criterion}</td>
-                    <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">
+                    <td className="px-3 py-2 text-muted-foreground max-w-[120px] break-words">
                       {p.gate!.authority}
                     </td>
                   </tr>

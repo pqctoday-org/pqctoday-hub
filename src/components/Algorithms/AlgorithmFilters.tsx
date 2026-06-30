@@ -163,7 +163,7 @@ function QuickViewSegmented({
           variant={active === id ? 'gradient' : 'ghost'}
           size="sm"
           onClick={() => onQuickView(id)}
-          className="h-7 gap-1 px-2 text-xs"
+          className="min-h-[44px] md:min-h-0 md:h-7 gap-1 px-2 text-xs"
           aria-pressed={active === id}
           title={title}
         >
@@ -253,7 +253,7 @@ export function AlgorithmFilters({
             size="sm"
             onClick={onToggleCnsaLens}
             aria-pressed={cnsaLens}
-            className="h-7 gap-1.5 px-2 text-xs"
+            className="min-h-[44px] md:min-h-0 md:h-7 gap-1.5 px-2 text-xs"
             title="Filter to the NSA CNSA 2.0 suite — ML-KEM-1024 / ML-DSA-87 required; SLH-DSA excluded"
           >
             <ShieldCheck size={13} aria-hidden="true" />
@@ -266,7 +266,7 @@ export function AlgorithmFilters({
           variant="ghost"
           size="sm"
           onClick={() => setAdvancedOpen((v) => !v)}
-          className="h-7 gap-1 px-2 text-xs text-muted-foreground"
+          className="min-h-[44px] md:min-h-0 md:h-7 gap-1 px-2 text-xs text-muted-foreground"
           aria-expanded={advancedOpen}
         >
           <SlidersHorizontal size={12} />

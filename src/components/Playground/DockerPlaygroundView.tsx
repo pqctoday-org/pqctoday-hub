@@ -80,30 +80,44 @@ export const DockerPlaygroundView = () => {
 
   return (
     <Card className="p-3 md:p-6 flex flex-col gap-4">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shrink-0">
-        <h3 className="text-xl md:text-2xl font-bold flex items-center gap-2">
-          <Server className="text-primary" aria-hidden="true" />
-          Enterprise Docker Simulation
-        </h3>
-        <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-          Sandbox
-        </span>
+      {/* Hard block below lg — Docker terminal requires a keyboard and mouse */}
+      <div className="flex lg:hidden flex-col items-center justify-center gap-4 py-12 text-center">
+        <Server className="h-10 w-10 text-muted-foreground" aria-hidden="true" />
+        <div>
+          <p className="text-sm font-semibold text-foreground">Desktop required</p>
+          <p className="mt-1 text-xs text-muted-foreground max-w-[260px]">
+            The Docker sandbox requires a full keyboard and mouse. Open this page on a laptop or
+            desktop.
+          </p>
+        </div>
       </div>
-      <p className="text-sm text-muted-foreground">
-        Powered by pqctoday-sandbox — requires the local UI server on port 4000.
-      </p>
+      <div className="hidden lg:contents">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shrink-0">
+          <h3 className="text-xl md:text-2xl font-bold flex items-center gap-2">
+            <Server className="text-primary" aria-hidden="true" />
+            Enterprise Docker Simulation
+          </h3>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+            Sandbox
+          </span>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Powered by pqctoday-sandbox — requires the local UI server on port 4000.
+        </p>
 
-      <div className="relative w-full overflow-hidden rounded-lg border border-border bg-background">
-        <iframe
-          ref={iframeRef}
-          title="pqctoday-sandbox"
-          src={embedUrl}
-          className="block w-full"
-          style={{ height }}
-          sandbox="allow-scripts allow-same-origin allow-forms allow-downloads allow-popups"
-          allow="clipboard-write"
-        />
+        <div className="relative w-full overflow-hidden rounded-lg border border-border bg-background">
+          <iframe
+            ref={iframeRef}
+            title="pqctoday-sandbox"
+            src={embedUrl}
+            className="block w-full"
+            style={{ height }}
+            sandbox="allow-scripts allow-same-origin allow-forms allow-downloads allow-popups"
+            allow="clipboard-write"
+          />
+        </div>
       </div>
+      {/* end hidden lg:contents */}
     </Card>
   )
 }

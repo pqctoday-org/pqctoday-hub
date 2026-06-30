@@ -72,7 +72,7 @@ export const AssessControlDeck: React.FC<AssessControlDeckProps> = ({
         </span>
       </div>
 
-      <div className="h-6 w-px bg-border" />
+      <div className="h-6 w-px bg-border hidden sm:block" />
 
       <span className="text-xs font-semibold text-muted-foreground">{context}</span>
 
@@ -83,7 +83,8 @@ export const AssessControlDeck: React.FC<AssessControlDeckProps> = ({
           className="ml-auto h-auto gap-2 rounded-lg border border-status-warning/40 bg-status-warning/10 px-3 py-1.5 text-xs font-bold text-status-warning hover:bg-status-warning/15 hover:text-status-warning"
         >
           <Lock size={14} />
-          Switch to full track — unlocks the complete report →
+          Switch to full track
+          <span className="hidden sm:inline"> — unlocks the complete report</span> →
         </Button>
       )}
     </div>

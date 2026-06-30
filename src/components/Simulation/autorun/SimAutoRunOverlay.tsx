@@ -54,7 +54,7 @@ export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
   const pct = player.total ? Math.round((player.index / player.total) * 100) : 0
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-background/20 bg-foreground px-5 py-2.5 text-background shadow-2xl">
+    <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-background/20 bg-foreground px-5 py-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom,0px))] text-background shadow-2xl">
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-2">
         {focus && (
           <div>

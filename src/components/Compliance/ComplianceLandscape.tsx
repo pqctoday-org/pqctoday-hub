@@ -2,6 +2,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import type { MaturityRequirement } from '@/types/MaturityTypes'
 import { Button } from '@/components/ui/button'
+import { ScrollFadeContainer } from '@/components/ui/ScrollFadeContainer'
 import { Link } from 'react-router-dom'
 import {
   Network,
@@ -248,7 +249,7 @@ export function DeadlineTimeline({
           </span>
         )}
       </div>
-      <div className="relative overflow-x-auto">
+      <ScrollFadeContainer>
         {/* px-3 keeps edge dots (2024 / 2036) fully visible inside the overflow container. */}
         <div className="min-w-[480px] px-3">
           {/* Year labels: absolute-positioned so they line up exactly with dot columns. */}
@@ -327,7 +328,7 @@ export function DeadlineTimeline({
             </span>
           </div>
         </div>
-      </div>
+      </ScrollFadeContainer>
     </div>
   )
 }

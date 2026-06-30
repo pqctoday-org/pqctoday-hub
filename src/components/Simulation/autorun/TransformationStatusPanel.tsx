@@ -42,7 +42,7 @@ export function TransformationStatusPanel({ status }: { status: TransformationSt
         </div>
       </div>
 
-      <div className="flex min-w-[210px] flex-col justify-center gap-0.5">
+      <div className="flex flex-1 min-w-0 md:min-w-[210px] flex-col justify-center gap-0.5">
         {status.objectives.map((o) => {
           const c = chip(o.onTime)
           return (
@@ -55,7 +55,7 @@ export function TransformationStatusPanel({ status }: { status: TransformationSt
         })}
       </div>
 
-      <div className="flex min-w-[190px] flex-col justify-center gap-1">
+      <div className="flex flex-1 min-w-0 md:min-w-[190px] flex-col justify-center gap-1">
         {status.tracks.map((t) => (
           <div key={t.id} className="font-mono text-[10px]">
             <div className="flex justify-between text-muted-foreground">

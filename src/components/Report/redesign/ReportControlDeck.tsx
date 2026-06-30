@@ -72,7 +72,7 @@ export function ReportControlDeck({ fullTrack, shared = false }: ReportControlDe
                 role="radio"
                 aria-checked={active}
                 onClick={() => setPersona(active ? null : id)}
-                className={`h-auto rounded-lg px-2.5 py-1 text-[12.5px] font-bold transition-colors ${
+                className={`h-auto min-h-[44px] md:min-h-0 rounded-lg px-2.5 py-1 text-[12.5px] font-bold transition-colors ${
                   active
                     ? 'bg-primary text-primary-foreground hover:bg-primary/90'
                     : 'border border-input text-muted-foreground hover:text-foreground'

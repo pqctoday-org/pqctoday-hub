@@ -109,39 +109,43 @@ export const PKILearningView: React.FC = () => {
                   resourceLabel={moduleMeta.title}
                   resourceType="Learn Module"
                 />
-                <FlagButton
-                  flagUrl={buildFlagUrl({
-                    category: 'learn-module-endorsement',
-                    title: `Flag: ${moduleMeta.title}`,
-                    resourceType: 'Learn Module',
-                    resourceId: moduleMeta.title,
-                    resourceDetails: [
-                      `**Module:** ${moduleMeta.title}`,
-                      `**Duration:** ${moduleMeta.duration}`,
-                      `**Difficulty:** ${moduleMeta.difficulty}`,
-                      `**Description:** ${moduleMeta.description}`,
-                    ].join('\n'),
-                    pageUrl: `/learn/${moduleId}`,
-                  })}
-                  resourceLabel={moduleMeta.title}
-                  resourceType="Learn Module"
-                />
+                <div className="hidden md:flex items-center gap-1">
+                  <FlagButton
+                    flagUrl={buildFlagUrl({
+                      category: 'learn-module-endorsement',
+                      title: `Flag: ${moduleMeta.title}`,
+                      resourceType: 'Learn Module',
+                      resourceId: moduleMeta.title,
+                      resourceDetails: [
+                        `**Module:** ${moduleMeta.title}`,
+                        `**Duration:** ${moduleMeta.duration}`,
+                        `**Difficulty:** ${moduleMeta.difficulty}`,
+                        `**Description:** ${moduleMeta.description}`,
+                      ].join('\n'),
+                      pageUrl: `/learn/${moduleId}`,
+                    })}
+                    resourceLabel={moduleMeta.title}
+                    resourceType="Learn Module"
+                  />
+                </div>
                 <ShareButton
                   title={moduleMeta.title}
                   text={`Learn about ${moduleMeta.title} — PQC Timeline`}
                 />
               </>
             )}
-            {showSidebar && moduleMeta && <WipModuleBadge moduleMeta={moduleMeta} />}
-            {showSidebar && LM_ID_MAP[moduleId] && (
-              <HistoryButton
-                itemId={moduleId}
-                trackingId={LM_ID_MAP[moduleId]}
-                itemLabel={`${LM_ID_MAP[moduleId]} · ${moduleId}`}
-              />
-            )}
-            <GlossaryButton />
-            <UserManualButton pageId="learn" />
+            <div className="hidden md:flex items-center gap-1">
+              {showSidebar && moduleMeta && <WipModuleBadge moduleMeta={moduleMeta} />}
+              {showSidebar && LM_ID_MAP[moduleId] && (
+                <HistoryButton
+                  itemId={moduleId}
+                  trackingId={LM_ID_MAP[moduleId]}
+                  itemLabel={`${LM_ID_MAP[moduleId]} · ${moduleId}`}
+                />
+              )}
+              <GlossaryButton />
+              <UserManualButton pageId="learn" />
+            </div>
           </div>
         </div>
       )}

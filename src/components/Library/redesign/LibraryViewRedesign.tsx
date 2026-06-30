@@ -9,9 +9,10 @@
  * filter/sort/view/ref state in the URL (?cat/org/q/sort/view/lifecycle/cswp39/qv/
  * ref/prefs plus the geo[]/sector[]/tier params the shared filters own).
  */
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { BookOpen, X } from 'lucide-react'
+import { BookOpen, ChevronDown, X } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { PageHeader } from '@/components/common/PageHeader'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { Button } from '@/components/ui/button'
@@ -191,6 +192,32 @@ export function LibraryViewRedesign({
     },
     [params, setParams]
   )
+
+  // ── Mobile: facet rail open state + table-view URL guard ───────────────────
+  const [filtersOpen, setFiltersOpen] = useState(() =>
+    [
+      'q',
+      'purpose',
+      'cat',
+      'org',
+      'lifecycle',
+      'cswp39',
+      'qv',
+      'geo',
+      'sector',
+      'tier',
+      'algo',
+    ].some((k) => {
+      const v = params.get(k)
+      return Boolean(v) && v !== 'all' && v !== 'All'
+    })
+  )
+  useEffect(() => {
+    if (window.innerWidth < 768 && view === 'table') {
+      setParam('view', 'cards')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // ── Quick-view → pipeline flag mapping ─────────────────────────────────────
   const certRelevantOnly = quickView === 'cert'
@@ -445,22 +472,46 @@ export function LibraryViewRedesign({
       />
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-        <LibraryFacetRail
-          quickView={quickView}
-          onQuickView={(qv) => setParam('qv', qv)}
-          categoryInfo={pipeline.categoryInfo}
-          activeCategory={activeCategory}
-          onCategory={(c) => setParam('cat', c)}
-          personaPreferredCategories={pipeline.personaPreferredCategories}
-          lifecycleBucket={lifecycleBucket}
-          onLifecycle={(b) => setParam('lifecycle', b)}
-          counts={{
-            all: libraryData.length,
-            new: pipeline.activityItems.length,
-            cert: certRelevantIdSet.size,
-            bookmarked: libraryBookmarks.length,
-          }}
-        />
+        {/* Filter toggle — mobile/tablet only */}
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => setFiltersOpen((f) => !f)}
+          className="flex w-full min-h-[44px] items-center justify-between rounded-lg border border-border bg-muted/20 px-4 text-sm font-semibold lg:hidden"
+        >
+          <span className="flex items-center gap-2">
+            Filters
+            {activeFilterChips.length > 0 && (
+              <span className="rounded-full bg-primary/15 px-2 text-[11px] font-semibold text-primary">
+                {activeFilterChips.length}
+              </span>
+            )}
+          </span>
+          <ChevronDown
+            className={cn('h-4 w-4 transition-transform', filtersOpen && 'rotate-180')}
+            aria-hidden="true"
+          />
+        </Button>
+
+        {/* Facet rail — collapsible on mobile, always visible on lg+ */}
+        <div className={cn(filtersOpen ? 'flex' : 'hidden', 'flex-col lg:flex')}>
+          <LibraryFacetRail
+            quickView={quickView}
+            onQuickView={(qv) => setParam('qv', qv)}
+            categoryInfo={pipeline.categoryInfo}
+            activeCategory={activeCategory}
+            onCategory={(c) => setParam('cat', c)}
+            personaPreferredCategories={pipeline.personaPreferredCategories}
+            lifecycleBucket={lifecycleBucket}
+            onLifecycle={(b) => setParam('lifecycle', b)}
+            counts={{
+              all: libraryData.length,
+              new: pipeline.activityItems.length,
+              cert: certRelevantIdSet.size,
+              bookmarked: libraryBookmarks.length,
+            }}
+          />
+        </div>
 
         <div className="min-w-0 flex-1 space-y-4">
           <LibraryControlDeck
@@ -535,7 +586,14 @@ export function LibraryViewRedesign({
               )}
             </div>
           ) : view === 'table' ? (
-            <LibraryTreeTable data={displayedItems} />
+            <>
+              <div className="md:hidden rounded-lg border border-border bg-muted/20 px-4 py-3 text-sm text-muted-foreground">
+                Table view is only available on wider screens.
+              </div>
+              <div className="hidden md:block">
+                <LibraryTreeTable data={displayedItems} />
+              </div>
+            </>
           ) : (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {displayedItems.map((item) => (

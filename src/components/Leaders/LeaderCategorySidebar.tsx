@@ -49,7 +49,7 @@ export const LeaderCategorySidebar = ({
         variant="ghost"
         onClick={() => onSelect('All')}
         className={clsx(
-          'flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all',
+          'flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all min-h-[44px] md:min-h-0',
           active === 'All'
             ? 'bg-primary/10 text-primary border border-primary/30'
             : 'text-muted-foreground hover:bg-muted/30 hover:text-foreground border border-transparent'
@@ -70,7 +70,7 @@ export const LeaderCategorySidebar = ({
           key={cat.name}
           onClick={() => onSelect(cat.name)}
           className={clsx(
-            'flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all',
+            'flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all min-h-[44px] md:min-h-0',
             active === cat.name
               ? 'bg-primary/10 text-primary border border-primary/30'
               : 'text-muted-foreground hover:bg-muted/30 hover:text-foreground border border-transparent'

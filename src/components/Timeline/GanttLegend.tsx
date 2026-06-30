@@ -26,31 +26,25 @@ export const GanttLegend = ({ className = '' }: GanttLegendProps) => {
         Phase Color Code
       </h3>
 
-      <div className="overflow-x-auto rounded-lg border border-border">
-        <table className="w-full border-collapse">
-          <tbody>
-            <tr>
-              {phases.map((phase) => {
-                // eslint-disable-next-line security/detect-object-injection
-                const colors = phaseColors[phase]
-                return (
-                  <td
-                    key={phase}
-                    className="p-3 text-center border-r border-border last:border-r-0 transition-all hover:opacity-90"
-                    style={{
-                      background: `linear-gradient(90deg, ${colors.start}, ${colors.end})`,
-                      boxShadow: `inset 0 0 10px ${colors.glow}`,
-                    }}
-                  >
-                    <span className="text-xs font-bold text-primary-foreground drop-shadow-md">
-                      {phase}
-                    </span>
-                  </td>
-                )
-              })}
-            </tr>
-          </tbody>
-        </table>
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-px rounded-lg overflow-hidden border border-border bg-border">
+        {phases.map((phase) => {
+          // eslint-disable-next-line security/detect-object-injection
+          const colors = phaseColors[phase]
+          return (
+            <div
+              key={phase}
+              className="p-3 text-center transition-all hover:opacity-90"
+              style={{
+                background: `linear-gradient(90deg, ${colors.start}, ${colors.end})`,
+                boxShadow: `inset 0 0 10px ${colors.glow}`,
+              }}
+            >
+              <span className="text-xs font-bold text-primary-foreground drop-shadow-md">
+                {phase}
+              </span>
+            </div>
+          )
+        })}
       </div>
 
       <div className="mt-4 pt-4 border-t border-border">

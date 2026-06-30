@@ -111,7 +111,7 @@ export function ReportToc({ sections, onExpandAll, onCollapseAll }: ReportTocPro
           onChange={(e) => {
             if (e.target.value) scrollTo(e.target.value)
           }}
-          className="h-7 text-xs rounded border border-border bg-card text-muted-foreground px-2 flex-1 min-w-0"
+          className="h-auto min-h-[44px] md:h-7 md:min-h-0 text-xs rounded border border-border bg-card text-muted-foreground px-2 flex-1 min-w-0"
         >
           <option value="">Jump to section…</option>
           {sections.map(({ id, label }) => (
@@ -125,7 +125,7 @@ export function ReportToc({ sections, onExpandAll, onCollapseAll }: ReportTocPro
           variant="ghost"
           size="sm"
           onClick={onExpandAll}
-          className="h-7 text-xs px-2 border border-border text-muted-foreground hover:text-foreground"
+          className="min-h-[44px] md:min-h-0 md:h-7 text-xs px-2 border border-border text-muted-foreground hover:text-foreground"
         >
           <ChevronsUpDown className="h-3 w-3 mr-1" />
           Expand
@@ -135,7 +135,7 @@ export function ReportToc({ sections, onExpandAll, onCollapseAll }: ReportTocPro
           variant="ghost"
           size="sm"
           onClick={onCollapseAll}
-          className="h-7 text-xs px-2 border border-border text-muted-foreground hover:text-foreground"
+          className="min-h-[44px] md:min-h-0 md:h-7 text-xs px-2 border border-border text-muted-foreground hover:text-foreground"
         >
           <ChevronsDownUp className="h-3 w-3 mr-1" />
           Collapse

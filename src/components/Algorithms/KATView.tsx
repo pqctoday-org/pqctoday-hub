@@ -544,7 +544,7 @@ const ResultsTable: React.FC<{ results: KATResult[] }> = ({ results }) => (
     <table className="w-full text-xs text-left">
       <thead>
         <tr className="bg-muted/40 border-b border-border text-muted-foreground uppercase tracking-wider">
-          <th className="px-3 py-2 font-semibold">Use Case</th>
+          <th className="sticky left-0 z-10 bg-background px-3 py-2 font-semibold">Use Case</th>
           <th className="px-3 py-2 font-semibold">Algorithm</th>
           <th className="px-3 py-2 font-semibold">Status</th>
           <th className="px-3 py-2 font-semibold">Details</th>
@@ -553,7 +553,9 @@ const ResultsTable: React.FC<{ results: KATResult[] }> = ({ results }) => (
       <tbody className="divide-y divide-border/40">
         {results.map((r) => (
           <tr key={r.id} className="hover:bg-muted/20 transition-colors">
-            <td className="px-3 py-2 font-medium text-foreground">{r.useCase}</td>
+            <td className="sticky left-0 z-10 bg-background px-3 py-2 font-medium text-foreground">
+              {r.useCase}
+            </td>
             <td className="px-3 py-2 font-mono text-foreground">{r.algorithm}</td>
             <td className="px-3 py-2">
               <span

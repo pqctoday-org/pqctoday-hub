@@ -544,7 +544,7 @@ export function BusinessCenterView() {
                         key={zone}
                         variant="ghost"
                         onClick={() => handleZoneSelect(zone)}
-                        className={`shrink-0 h-7 px-2.5 text-[10px] font-semibold rounded-md border transition-colors ${
+                        className={`shrink-0 h-auto min-h-[44px] px-2.5 text-[10px] font-semibold rounded-md border transition-colors ${
                           isActive
                             ? `${style.activeBg} ${style.text} ${style.border}`
                             : 'border-border text-muted-foreground'

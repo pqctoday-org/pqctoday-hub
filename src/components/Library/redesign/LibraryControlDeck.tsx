@@ -70,7 +70,7 @@ export function LibraryControlDeck({
             onChange={(e) => onSearch(e.target.value)}
             placeholder={'Search — try "ML-KEM", "FIPS 203", or "hybrid TLS"'}
             aria-label="Search the library"
-            className="pl-9"
+            className="pl-9 min-h-[44px]"
           />
         </div>
         <div className="flex items-center gap-2">

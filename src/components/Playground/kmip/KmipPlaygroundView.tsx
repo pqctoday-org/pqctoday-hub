@@ -323,7 +323,7 @@ export function KmipPlaygroundView() {
   return (
     <div className="h-full overflow-auto animate-fade-in p-1">
       {/* Header */}
-      <div className="mb-4 flex items-start justify-between gap-4">
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
             <Cpu size={20} className="text-primary" /> Crypto-Agility Control Plane{' '}
@@ -353,7 +353,7 @@ export function KmipPlaygroundView() {
                 variant="ghost"
                 aria-pressed={mode === m}
                 onClick={() => chooseMode(m)}
-                className={`h-7 px-3 text-xs capitalize rounded-md ${
+                className={`min-h-[44px] md:min-h-0 md:h-7 px-3 text-xs capitalize rounded-md ${
                   mode === m
                     ? 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
                     : 'text-muted-foreground'
@@ -367,36 +367,38 @@ export function KmipPlaygroundView() {
       </div>
 
       {/* ── Top-level tabs ───────────────────────────────────────────────── */}
-      <div
-        role="tablist"
-        aria-label="CACP surface"
-        className="mb-4 flex items-center gap-1 rounded-lg border border-border bg-muted/30 p-1"
-      >
-        {(
-          [
-            { id: 'agility', label: 'Agility & Workbench', icon: Wand2 },
-            { id: 'policy', label: 'Policy', icon: ShieldCheck },
-            { id: 'batch', label: 'Batch & Macros', icon: Layers },
-          ] as const
-        ).map((t) => {
-          const on = plane === t.id
-          const Icon = t.icon
-          return (
-            <Button
-              key={t.id}
-              role="tab"
-              aria-selected={on}
-              variant="ghost"
-              size="sm"
-              onClick={() => setPlane(t.id)}
-              className={`h-8 gap-1.5 rounded-md px-3 text-xs ${
-                on ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'
-              }`}
-            >
-              <Icon size={14} /> {t.label}
-            </Button>
-          )
-        })}
+      <div className="overflow-x-auto no-scrollbar mb-4">
+        <div
+          role="tablist"
+          aria-label="CACP surface"
+          className="flex items-center gap-1 rounded-lg border border-border bg-muted/30 p-1 w-max min-w-full"
+        >
+          {(
+            [
+              { id: 'agility', label: 'Agility & Workbench', icon: Wand2 },
+              { id: 'policy', label: 'Policy', icon: ShieldCheck },
+              { id: 'batch', label: 'Batch & Macros', icon: Layers },
+            ] as const
+          ).map((t) => {
+            const on = plane === t.id
+            const Icon = t.icon
+            return (
+              <Button
+                key={t.id}
+                role="tab"
+                aria-selected={on}
+                variant="ghost"
+                size="sm"
+                onClick={() => setPlane(t.id)}
+                className={`h-8 gap-1.5 rounded-md px-3 text-xs ${
+                  on ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'
+                }`}
+              >
+                <Icon size={14} /> {t.label}
+              </Button>
+            )
+          })}
+        </div>
       </div>
 
       {plane === 'agility' && (

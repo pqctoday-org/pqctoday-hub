@@ -526,7 +526,7 @@ export const TimelineView = () => {
           </div>
 
           {/* Filters & Actions row */}
-          <div className="flex gap-2 mb-3">
+          <div className="flex flex-col sm:flex-row gap-2 mb-3">
             <div className="flex-1 min-w-0">
               <FilterDropdown
                 items={regionItems}

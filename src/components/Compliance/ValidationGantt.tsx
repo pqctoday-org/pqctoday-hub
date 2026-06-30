@@ -72,93 +72,95 @@ export const ValidationGantt: React.FC<Props> = ({
       </header>
 
       {rows.length > 0 && (
-        <div className="relative">
-          {/* Year axis */}
-          <div className="grid grid-cols-[160px_1fr] gap-3 items-center">
-            <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
-              Framework
+        <div className="overflow-x-auto no-scrollbar">
+          <div className="relative min-w-[480px]">
+            {/* Year axis */}
+            <div className="grid grid-cols-[160px_1fr] gap-3 items-center">
+              <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                Framework
+              </div>
+              <div className="relative h-5 border-b border-border/60">
+                {Array.from({ length: span + 1 }, (_, i) => {
+                  const year = yearMin + i
+                  const pct = (i / span) * 100
+                  return (
+                    <span
+                      key={year}
+                      className="absolute -translate-x-1/2 text-[10px] text-muted-foreground tabular-nums"
+                      style={{ left: `${pct}%`, top: 0 }}
+                    >
+                      {year}
+                    </span>
+                  )
+                })}
+              </div>
             </div>
-            <div className="relative h-5 border-b border-border/60">
-              {Array.from({ length: span + 1 }, (_, i) => {
-                const year = yearMin + i
-                const pct = (i / span) * 100
+
+            {/* Today marker */}
+            <div className="grid grid-cols-[160px_1fr] gap-3">
+              <div />
+              <div className="relative h-0">
+                <span
+                  aria-hidden="true"
+                  className="absolute top-0 bottom-0 border-l-2 border-primary/40"
+                  style={{ left: `${nowPct}%`, height: `${rows.length * 28}px` }}
+                />
+                <span
+                  className="absolute -translate-x-1/2 text-[9px] font-mono uppercase tracking-wider text-primary/70"
+                  style={{ left: `${nowPct}%`, top: 2 }}
+                >
+                  now
+                </span>
+              </div>
+            </div>
+
+            {/* Rows */}
+            <div className="mt-1 space-y-1.5">
+              {rows.map((fw) => {
+                const year = fw.deadlineYear as number
+                const startPct = ((Math.max(currentYear, yearMin) - yearMin) / span) * 100
+                const endPct = ((year - yearMin) / span) * 100
+                const widthPct = Math.max(2, endPct - startPct)
+                const phaseClass = PHASE_BAR_CLASS[fw.deadlinePhase] ?? 'bg-muted'
+                const labelClickable = !!onSelectFramework
+
                 return (
-                  <span
-                    key={year}
-                    className="absolute -translate-x-1/2 text-[10px] text-muted-foreground tabular-nums"
-                    style={{ left: `${pct}%`, top: 0 }}
-                  >
-                    {year}
-                  </span>
+                  <div key={fw.id} className="grid grid-cols-[160px_1fr] gap-3 items-center group">
+                    {labelClickable ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onSelectFramework?.(fw)}
+                        className="h-auto px-0 py-1 justify-start text-xs font-medium text-foreground truncate group-hover:text-primary"
+                        title={`${fw.label} — deadline ${year}`}
+                      >
+                        {fw.label}
+                      </Button>
+                    ) : (
+                      <span
+                        className="text-xs font-medium text-foreground truncate"
+                        title={`${fw.label} — deadline ${year}`}
+                      >
+                        {fw.label}
+                      </span>
+                    )}
+                    <div className="relative h-6 rounded-sm bg-muted/30">
+                      <div
+                        className={`absolute top-1 bottom-1 rounded-sm ${phaseClass}`}
+                        style={{
+                          left: `${startPct}%`,
+                          width: `${widthPct}%`,
+                        }}
+                        title={`${fw.label}: ${fw.deadlinePhase} (${year})`}
+                      />
+                      <span className="absolute right-2 inset-y-0 flex items-center text-[10px] font-mono text-foreground/80 tabular-nums">
+                        {year}
+                      </span>
+                    </div>
+                  </div>
                 )
               })}
             </div>
-          </div>
-
-          {/* Today marker */}
-          <div className="grid grid-cols-[160px_1fr] gap-3">
-            <div />
-            <div className="relative h-0">
-              <span
-                aria-hidden="true"
-                className="absolute top-0 bottom-0 border-l-2 border-primary/40"
-                style={{ left: `${nowPct}%`, height: `${rows.length * 28}px` }}
-              />
-              <span
-                className="absolute -translate-x-1/2 text-[9px] font-mono uppercase tracking-wider text-primary/70"
-                style={{ left: `${nowPct}%`, top: 2 }}
-              >
-                now
-              </span>
-            </div>
-          </div>
-
-          {/* Rows */}
-          <div className="mt-1 space-y-1.5">
-            {rows.map((fw) => {
-              const year = fw.deadlineYear as number
-              const startPct = ((Math.max(currentYear, yearMin) - yearMin) / span) * 100
-              const endPct = ((year - yearMin) / span) * 100
-              const widthPct = Math.max(2, endPct - startPct)
-              const phaseClass = PHASE_BAR_CLASS[fw.deadlinePhase] ?? 'bg-muted'
-              const labelClickable = !!onSelectFramework
-
-              return (
-                <div key={fw.id} className="grid grid-cols-[160px_1fr] gap-3 items-center group">
-                  {labelClickable ? (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => onSelectFramework?.(fw)}
-                      className="h-auto px-0 py-1 justify-start text-xs font-medium text-foreground truncate group-hover:text-primary"
-                      title={`${fw.label} — deadline ${year}`}
-                    >
-                      {fw.label}
-                    </Button>
-                  ) : (
-                    <span
-                      className="text-xs font-medium text-foreground truncate"
-                      title={`${fw.label} — deadline ${year}`}
-                    >
-                      {fw.label}
-                    </span>
-                  )}
-                  <div className="relative h-6 rounded-sm bg-muted/30">
-                    <div
-                      className={`absolute top-1 bottom-1 rounded-sm ${phaseClass}`}
-                      style={{
-                        left: `${startPct}%`,
-                        width: `${widthPct}%`,
-                      }}
-                      title={`${fw.label}: ${fw.deadlinePhase} (${year})`}
-                    />
-                    <span className="absolute right-2 inset-y-0 flex items-center text-[10px] font-mono text-foreground/80 tabular-nums">
-                      {year}
-                    </span>
-                  </div>
-                </div>
-              )
-            })}
           </div>
         </div>
       )}

@@ -247,7 +247,7 @@ export const HsmPlayground = () => {
       variant="ghost"
       size="sm"
       className={clsx(
-        'whitespace-nowrap',
+        'whitespace-nowrap min-h-[44px] md:min-h-0',
         activeTab === id
           ? 'bg-primary/20 text-primary shadow-sm'
           : 'text-muted-foreground hover:text-foreground hover:bg-accent'
@@ -275,7 +275,7 @@ export const HsmPlayground = () => {
             {(['cpp', 'rust', 'dual'] as const).map((mode) => (
               <label
                 key={mode}
-                className={`flex items-center gap-1 sm:gap-1.5 text-xs min-h-[36px] ${phase === 'idle' ? 'cursor-pointer hover:text-primary' : 'opacity-60 cursor-not-allowed'}`}
+                className={`flex items-center gap-1 sm:gap-1.5 text-xs min-h-[44px] md:min-h-[36px] ${phase === 'idle' ? 'cursor-pointer hover:text-primary' : 'opacity-60 cursor-not-allowed'}`}
               >
                 <input
                   type="radio"

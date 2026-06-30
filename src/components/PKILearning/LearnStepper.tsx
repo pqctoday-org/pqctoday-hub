@@ -71,8 +71,8 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
   return (
     <div className="w-full">
       {/* Sticky table-of-contents — numbered circles with connecting line */}
-      <div className="sticky top-16 z-10 mb-8 -mx-4 px-4 pt-3 pb-5 bg-background/80 backdrop-blur-sm border-b border-border">
-        <div className="relative mx-auto flex w-fit max-w-full items-start justify-center gap-x-6 sm:gap-x-12">
+      <div className="sticky top-16 z-10 mb-8 -mx-4 px-4 pt-3 pb-5 bg-background/80 backdrop-blur-sm border-b border-border overflow-x-auto no-scrollbar">
+        <div className="relative flex w-max min-w-full items-start justify-center gap-x-6 sm:gap-x-12">
           <div className="absolute top-4 left-10 right-10 h-0.5 bg-border -z-10" />
           {steps.map((step) => {
             const done = checks[step.id]
