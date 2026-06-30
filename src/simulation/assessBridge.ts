@@ -17,6 +17,7 @@ import type {
   CategoryScores,
   AlgorithmMigration,
   FrameworkRisk,
+  ScoreBoost,
 } from '@/hooks/assessmentTypes'
 import { buildTwoTrackPlan, type TwoTrackPlan } from '@/hooks/assessment/twoTrack'
 import type { Cswp39StepId } from '@/data/cswp39ZoneData'
@@ -309,12 +310,33 @@ export function serializeAssessReport(r: AssessmentResult): string {
     for (const c of r.complianceImpacts)
       lines.push(`- ${c.framework}${c.deadline ? ` (deadline ${c.deadline})` : ''}`)
   }
+  if (r.categoryDrivers) {
+    lines.push('')
+    lines.push('## Score drivers')
+    const d = r.categoryDrivers
+    lines.push(`- **Quantum exposure:** ${d.quantumExposure}`)
+    lines.push(`- **Migration complexity:** ${d.migrationComplexity}`)
+    lines.push(`- **Regulatory pressure:** ${d.regulatoryPressure}`)
+    lines.push(`- **Organisational readiness:** ${d.organizationalReadiness}`)
+  }
+  if (r.boosts?.length) {
+    lines.push('')
+    lines.push('## Situational factors')
+    for (const b of r.boosts)
+      lines.push(`- ${b.label} (+${Math.round(b.delta * 100)} pts above base)`)
+    if (r.preBoostScore != null) lines.push(`\nBase score before factors: ${r.preBoostScore}/100`)
+  }
   if (r.executiveSummary) {
     lines.push('')
     lines.push('## Executive summary')
     lines.push(r.executiveSummary)
   }
   return lines.join('\n')
+}
+
+/** The situational boosts that elevated the composite score, if any. */
+export function boostsFromAssess(r: AssessmentResult): ScoreBoost[] {
+  return r.boosts ?? []
 }
 
 /**

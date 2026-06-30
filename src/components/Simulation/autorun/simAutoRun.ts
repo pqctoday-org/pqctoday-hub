@@ -84,7 +84,7 @@ export function levelOfPhase(
  * (sandbox-lab) steps are intentionally skipped — they are non-gating and require
  * a live sandbox. Returns true if an action was taken.
  */
-export function completeStepGenuine(step: TreeStep): boolean {
+export function completeStepGenuine(step: TreeStep, sector?: string): boolean {
   const sim = useSimulationStore.getState()
   const mod = useModuleStore.getState()
   switch (step.kind) {
@@ -106,7 +106,8 @@ export function completeStepGenuine(step: TreeStep): boolean {
       return true
     case 'activity': {
       if (!step.artifactType) return false
-      const doc = demoDocFor(step.artifactType)
+      const activeSector = sector ?? useSimulationStore.getState().sector
+      const doc = demoDocFor(step.artifactType, activeSector)
       mod.addExecutiveDocument({
         id: `sim-autorun-${step.artifactType}`,
         moduleId: 'sim-autorun',
