@@ -12,7 +12,7 @@
  * sectorTrack.test.ts asserts every moduleId here resolves in SIM_LEARN_MODULES
  * so a renamed module fails CI instead of silently breaking.
  */
-import type { PhaseId } from '@/simulation/types'
+import type { PhaseId } from '@/data/frameworkPhases'
 
 export interface SectorStep {
   moduleId: string
