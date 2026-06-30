@@ -45,6 +45,7 @@
     "check-index-freshness": "tsx scripts/ci/check-index-freshness.ts",
     "check:compliance-fresh": "tsx scripts/ci/check-compliance-freshness.ts",
     "validate:workshop": "tsx scripts/validate-workshop.ts",
+    "audit:jurisdiction-refs": "tsx scripts/audit-jurisdiction-refs.ts",
     "audit:matrix-refs": "tsx scripts/audit-matrix-refs.ts",
     "audit:vendor-refs": "tsx scripts/audit-vendor-refs.ts",
     "audit:module-infographics": "tsx scripts/audit-module-infographics.ts",

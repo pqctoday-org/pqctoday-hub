@@ -2,40 +2,20 @@
 import { useMemo } from 'react'
 
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
-
-import { timelineData } from '../../../data/timelineData'
-
+import { ALL_JURISDICTIONS, REGION_COUNTRIES_MAP } from '../../../data/jurisdictionsData'
 import { Button } from '../../ui/button'
-
 import clsx from 'clsx'
-
 import { usePersonaStore } from '../../../store/usePersonaStore'
-
-import { REGION_COUNTRIES_MAP } from '../../../data/personaConfig'
-
 import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
-
-/** Non-sovereign groupings used in the timeline Gantt but not valid jurisdictions */
-const EXCLUDED_FROM_ASSESS = new Set(['Global', 'G7', 'NATO', 'International'])
 
 const Step2Country = ({ hideHeading = false }: EmbeddedStepProps = {}) => {
   const { country, setCountry } = useAssessmentStore()
   const { selectedRegion } = usePersonaStore()
 
   const countries = useMemo(() => {
-    const seen = new Set<string>()
-    const list: Array<{ name: string; flagCode: string }> = []
-    timelineData.forEach((c) => {
-      if (EXCLUDED_FROM_ASSESS.has(c.countryName)) return
-      if (!seen.has(c.countryName)) {
-        seen.add(c.countryName)
-        list.push({ name: c.countryName, flagCode: c.flagCode })
-      }
-    })
-    const sorted = list.sort((a, b) => a.name.localeCompare(b.name))
-    if (!selectedRegion || selectedRegion === 'global') return sorted
+    if (!selectedRegion || selectedRegion === 'global') return ALL_JURISDICTIONS
     const allowed = new Set(REGION_COUNTRIES_MAP[selectedRegion])
-    return sorted.filter((c) => allowed.has(c.name))
+    return ALL_JURISDICTIONS.filter((j) => allowed.has(j.name))
   }, [selectedRegion])
 
   return (
@@ -56,22 +36,22 @@ const Step2Country = ({ hideHeading = false }: EmbeddedStepProps = {}) => {
         role="radiogroup"
         aria-label="Country selection"
       >
-        {countries.map((c) => (
+        {countries.map((j) => (
           <Button
-            key={c.name}
+            key={j.name}
             variant="ghost"
             role="radio"
-            aria-checked={country === c.name}
-            onClick={() => setCountry(c.name)}
+            aria-checked={country === j.name}
+            onClick={() => setCountry(j.name)}
             className={clsx(
               'h-auto p-3 justify-start gap-2 border',
-              country === c.name
+              country === j.name
                 ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
                 : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground hover:bg-transparent'
             )}
           >
             <img
-              src={`https://flagcdn.com/w20/${c.flagCode.toLowerCase()}.png`}
+              src={`https://flagcdn.com/w20/${j.flagCode.toLowerCase()}.png`}
               alt=""
               aria-hidden="true"
               width={20}
@@ -81,7 +61,7 @@ const Step2Country = ({ hideHeading = false }: EmbeddedStepProps = {}) => {
                 ;(e.currentTarget as HTMLImageElement).style.display = 'none'
               }}
             />
-            {c.name}
+            {j.name}
           </Button>
         ))}
       </div>

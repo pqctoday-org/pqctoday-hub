@@ -73,8 +73,10 @@ describe('moscaClock', () => {
   })
 
   it('tagged jurisdictions at/after Q-Day resolve Z to the Q-Day anchor', () => {
-    for (const c of ['EU', 'CA', 'KR', 'UK', 'US', 'DE', 'JP', 'AU', 'IN'] as const) {
+    for (const c of ['EU', 'CA', 'KR', 'UK', 'US', 'DE', 'JP', 'AU'] as const) {
       expect(horizonYearFor(c), `${c} horizon`).toBe(SIM_CRQC_YEAR)
     }
+    // IN's CII deadline (2027) falls before Q-Day → binds the horizon directly.
+    expect(horizonYearFor('IN'), 'IN horizon').toBe(2027)
   })
 })
