@@ -64,15 +64,15 @@ export interface PathProgress {
   essentialsTotal: number
   /** Essentials percent (0–100, rounded). */
   essentialsPct: number
-  /** True once every Essentials module is complete. Becomes the capstone gate in A1 Slice 2. */
+  /** True once every Essentials module is complete → unlocks the capstone (A1). */
   essentialsComplete: boolean
   /** True once every non-wrap-up module in the path is complete → the optional "mastery" badge. */
   fullTrackComplete: boolean
   /**
-   * Whether the capstone (final quiz) is unlocked. NOTE (A1 Slice 1): this still
-   * mirrors `fullTrackComplete` (the pre-A1 all-modules rule) so behaviour is
-   * unchanged until the My Path UI is updated together in Slice 2, where it will be
-   * re-pointed to `essentialsComplete`.
+   * Whether the capstone (final quiz) is unlocked. A1: gated on the Essentials
+   * (`essentialsComplete`) rather than the full track, so a learner reaches the
+   * capstone after the short core instead of every module. `fullTrackComplete`
+   * remains available for the optional "full track mastered" badge.
    */
   capstoneUnlocked: boolean
 }
@@ -114,7 +114,7 @@ export function computePathProgress(
     essentialsPct,
     essentialsComplete,
     fullTrackComplete,
-    // Slice 1: unchanged behaviour (all-modules). Slice 2 re-points to `essentialsComplete`.
-    capstoneUnlocked: fullTrackComplete,
+    // A1: the capstone unlocks on the Essentials core, not the full track.
+    capstoneUnlocked: essentialsComplete,
   }
 }

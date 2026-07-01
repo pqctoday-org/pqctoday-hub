@@ -1157,3 +1157,55 @@ export function inferPersonaFromAssessment(assessment: {
   // assessment has expressed enough intent to map to a functional persona instead.
   return null
 }
+
+/**
+ * Maps the modules that appear in any persona's `essentials` to their quiz category.
+ * Most module IDs are their own category, but a few differ (e.g. pki-workshop →
+ * pki-infrastructure). Only the essentials union needs coverage here.
+ */
+const ESSENTIALS_MODULE_QUIZ_CATEGORY: Record<string, string> = {
+  'pqc-101': 'pqc-fundamentals',
+  'pqc-candidates': 'pqc-fundamentals',
+  'quantum-threats': 'quantum-threats',
+  'entropy-randomness': 'entropy-randomness',
+  'dev-quantum-impact': 'dev-quantum-impact',
+  'arch-quantum-impact': 'arch-quantum-impact',
+  'ops-quantum-impact': 'ops-quantum-impact',
+  'research-quantum-impact': 'research-quantum-impact',
+  'exec-quantum-impact': 'exec-quantum-impact',
+  'tls-basics': 'tls-basics',
+  'vpn-ssh-pqc': 'vpn-ssh-pqc',
+  'hybrid-crypto': 'hybrid-crypto',
+  'crypto-agility': 'crypto-agility',
+  'crypto-mgmt-modernization': 'crypto-mgmt-modernization',
+  'standards-bodies': 'standards-bodies',
+  'pki-workshop': 'pki-infrastructure',
+  'kms-pqc': 'kms-pqc',
+  'hsm-pqc': 'hsm-pqc',
+  'migration-program': 'migration-program',
+  'crypto-dev-apis': 'crypto-dev-apis',
+  'pqc-risk-management': 'pqc-risk-management',
+  'pqc-business-case': 'pqc-business-case',
+  'pqc-governance': 'pqc-governance',
+  'compliance-strategy': 'compliance-strategy',
+}
+
+/**
+ * Quiz categories that cover a persona's Essentials — used to scope the capstone quiz
+ * so an Essentials-only learner is tested only on what they studied. Intentionally
+ * under-inclusive: a category is included only if it maps from an essential AND is in
+ * the persona's own `quizCategories` (an empty `quizCategories`, as researcher uses,
+ * means "all categories", so no filter is applied). Missing a category just yields
+ * fewer questions; it can never surface questions on unstudied modules.
+ */
+export function essentialsQuizCategories(personaId: PersonaId): string[] {
+  const persona = PERSONAS[personaId]
+  const allowAll = persona.quizCategories.length === 0
+  const allowed = new Set(persona.quizCategories)
+  const cats = new Set<string>()
+  for (const moduleId of persona.essentials) {
+    const cat = ESSENTIALS_MODULE_QUIZ_CATEGORY[moduleId]
+    if (cat && (allowAll || allowed.has(cat))) cats.add(cat)
+  }
+  return [...cats]
+}

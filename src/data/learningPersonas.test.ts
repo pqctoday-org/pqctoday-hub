@@ -1,7 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */ // keys are trusted (PERSONAS ids / path module ids)
 import { describe, it, expect } from 'vitest'
-import { PERSONAS, inferPersonaFromAssessment, type PathItem } from './learningPersonas'
+import {
+  PERSONAS,
+  inferPersonaFromAssessment,
+  essentialsQuizCategories,
+  type PathItem,
+} from './learningPersonas'
 import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
 
 const moduleIdsFromPathItems = (items: PathItem[]): string[] =>
@@ -70,6 +75,20 @@ describe('learningPersonas — essentials (A1)', () => {
   it.each(personaIds)('%s: the essentials track is shorter than the full track', (id) => {
     const persona = PERSONAS[id]
     expect(persona.essentialsMinutes).toBeLessThan(persona.estimatedMinutes)
+  })
+
+  // The capstone quiz is scoped to these categories so an Essentials-only learner is
+  // never tested on unstudied modules. Must be non-empty and — unless the persona
+  // opts into all categories (empty quizCategories, e.g. researcher) — a subset of them.
+  it.each(personaIds)('%s: essentialsQuizCategories is a valid, non-empty scope', (id) => {
+    const persona = PERSONAS[id]
+    const cats = essentialsQuizCategories(id)
+    expect(cats.length).toBeGreaterThan(0)
+    expect(new Set(cats).size).toBe(cats.length) // no dupes
+    if (persona.quizCategories.length > 0) {
+      const allowed = new Set(persona.quizCategories)
+      expect(cats.filter((c) => !allowed.has(c))).toEqual([])
+    }
   })
 })
 
