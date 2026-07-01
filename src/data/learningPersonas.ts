@@ -51,6 +51,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'crypto-agility',
       'migration-program',
       'vendor-risk',
+      'verification-closure',
       'iam-pqc',
       'kms-pqc',
       'healthcare-pqc',
