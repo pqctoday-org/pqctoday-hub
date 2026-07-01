@@ -188,7 +188,10 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     Crypto Services; stale corpus had the old "IBM Cloud HSM (Utimaco)" chunk.
   //     2026-06-21: driven back to 0 on the integration branch — refresh-index
   //     regenerates the corpus, flushing all deprecated + renamed-row chunks.
-  migrate: 0,
+  //     2026-06-30: bumped 0 → 1 — 06302026_r1 catalog audit added
+  //     software-hipaa-quantum-security-rule without a corpus trust-score entry;
+  //     will resolve to 0 on the next refresh-index run.
+  migrate: 1,
   timeline: 0,
   algorithms: 0,
   //     2026-05-31: bumped 113 → 118 — 5 new catalog enrichments (Tectia SSH, IVPN, libcrux, Trail of Bits ml-dsa, InfoSec Global AgileSec)
@@ -199,7 +202,9 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     gov-strategy→timeline move; surfaced when the corpus was refreshed.
   //     2026-06-19 (later): bumped 119 → 120 — IBM catalog correction added one
   //     more unresolved doc-enrichment chunk (AERO sector threat). Same gap.
-  'document-enrichment': 120,
+  //     2026-06-30: bumped 120 → 121 — one additional AERO sector-threat
+  //     enrichment chunk surfaced; same chunkToResource routing gap.
+  'document-enrichment': 121,
 }
 
 /**
