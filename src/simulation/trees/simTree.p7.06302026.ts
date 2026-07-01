@@ -99,6 +99,13 @@ const TREE: PhaseTree = {
               to: '/business/tools/deployment-playbook',
               artifactType: 'deployment-playbook',
             },
+            {
+              kind: 'activity',
+              label:
+                'Accept-and-document residual vendor risk when no bridge or alternative exists',
+              to: '/business/tools/risk-register',
+              artifactType: 'risk-register',
+            },
           ],
         },
         {
@@ -126,6 +133,12 @@ const TREE: PhaseTree = {
               label: 'Plan dual-stack windows & deprecation comms for counterparties',
               to: '/business/tools/stakeholder-comms',
               artifactType: 'stakeholder-comms',
+            },
+            {
+              kind: 'activity',
+              label: 'Record the counterparty refusal decision in the risk register',
+              to: '/business/tools/risk-register',
+              artifactType: 'risk-register',
             },
           ],
         },
