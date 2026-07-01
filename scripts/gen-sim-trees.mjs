@@ -203,7 +203,7 @@ const GATES = {
     criterion:
       'CBOM live for Layers 1–2; freshness governance enforced; protection controls applied',
   },
-  p3: { id: 'G3', criterion: 'QRA approved' },
+  p3: { id: 'G3', criterion: 'Risk scoring complete; QRA with prioritized backlog delivered' },
   p4: { id: 'G4', criterion: 'Multi-year roadmap & PMO established' },
   p5: { id: 'G5', criterion: 'Pilots validated; wave migration underway' },
   p6: { id: 'G6', criterion: 'Infrastructure PQC-ready; performance validated' },
@@ -431,6 +431,10 @@ const FRAMEWORK = {
           'Reference: why 256-bit ECC ≈ RSA-2048 under quantum (security levels)'
         ),
         R('algorithms-protocol-matrix', 'Reference: PQC Protocol Matrix'),
+        R(
+          'timeline',
+          'Reference: regulatory deadline clock — calibrate Dimension 4 (within 2 years = Critical)'
+        ),
       ],
     },
     {

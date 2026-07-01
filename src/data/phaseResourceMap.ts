@@ -68,7 +68,7 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
   'pqc-governance': { phasesServed: ['p0'], legs: ['learn', 'reference'] },
   'pqc-team': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'vendor-risk': { phasesServed: ['p7'], legs: ['learn', 'reference'] },
-  'migration-program': { phasesServed: ['p4'], legs: ['learn', 'reference'] },
+  'migration-program': { phasesServed: ['p3', 'p4'], legs: ['learn', 'reference'] },
   'compliance-strategy': { phasesServed: ['foundations', 'p0'], legs: ['learn', 'reference'] },
   'data-asset-sensitivity': { phasesServed: ['p1', 'p3'], legs: ['learn', 'reference'] },
   'standards-bodies': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
