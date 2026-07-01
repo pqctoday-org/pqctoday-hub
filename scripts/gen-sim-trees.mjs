@@ -185,7 +185,7 @@ const INDICATORS = {
   },
   'verify-close': {
     1: 'Closure discussed on milestones; no evidence standard applied; "done" is declared, not proven',
-    2: 'Migration verified against the 5-point evidence standard; classical key material decommissioning logged (SP 800-88); program closure record produced',
+    2: 'Migration verified against the 5-point evidence standard; classical key material decommissioning logged; program closure record produced',
     3: 'Independent verification of Tier-1 systems; crypto-agility/rollback drill evidenced; executive-sponsor sign-off; BAU handover funded',
     4: 'Verification & closure run as BAU; evidence dossier continuously maintained; decommissioning and attestations folded into posture monitoring',
   },
@@ -826,7 +826,7 @@ const FRAMEWORK = {
       id: 'VC.2',
       level: 2,
       title: 'Assemble the Migration Evidence Dossier',
-      do: 'Prove each migrated system against the evidence standard (observed PQC negotiation, negative testing, configuration attestation) and log classical key-material decommissioning (SP 800-88).',
+      do: 'Prove each migrated system against the evidence standard (observed PQC negotiation, negative testing, configuration attestation) and log classical key-material decommissioning per org key-destruction standard.',
       output: 'Migration-verification evidence dossier',
       steps: [
         L('verification-closure', 'Learn: decommission classical crypto & assemble evidence'),
@@ -842,7 +842,7 @@ const FRAMEWORK = {
       output: 'Independent verification & signed closure',
       steps: [
         A('crypto-cbom', 'Export the final CBOM as durable closure evidence'),
-        R('library', 'Reference: SP 800-88 decommissioning & evidence standards'),
+        R('library', 'Reference: decommissioning guidance & evidence standards'),
       ],
     },
     {
@@ -1074,7 +1074,7 @@ const PITFALLS = {
     },
     {
       title: 'Skip classical-key decommissioning',
-      why: 'Leaving old classical keys and material live keeps the harvest-now-decrypt-later exposure open even after PQC is deployed — closure requires SP 800-88 decommissioning evidence.',
+      why: "Leaving old classical keys and material live keeps the harvest-now-decrypt-later exposure open even after PQC is deployed — closure requires key-destruction evidence per the org's destruction standard.",
     },
   ],
 }
