@@ -47,7 +47,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-06-20'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-06-30'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -244,6 +244,21 @@ export interface LiveDeployment {
 
 export type TestabilityValue = 'full' | 'partial' | 'none' | 'na'
 
+/**
+ * Row-level "Sources & further reading" citation. Use for authoritative
+ * references that back the row's freshness (WG document indexes, release-notes
+ * pages, standards trackers) but are NOT already surfaced per-cell via
+ * `refs` / `latestRelease` / `latestDraft` / `liveDeployments`. The detail
+ * modal renders these DEDUPED against every other URL already shown, so an
+ * entry whose `url` already appears elsewhere in the row is silently skipped —
+ * only genuinely-missing sources are displayed.
+ */
+export interface RowSource {
+  label: string
+  url: string
+  note?: string
+}
+
 export interface PlaygroundTool {
   toolId: string
   toolName: string
@@ -323,6 +338,13 @@ export interface ProtocolMatrixRow {
   recommended?: boolean
   /** One-sentence rationale for `recommended: true`, shown in the panel and modal. */
   recommendedReason?: string
+  /**
+   * Authoritative "Sources & further reading" links that back this row's
+   * freshness but are not already surfaced per-cell. Rendered DEDUPED against
+   * every other URL shown in the modal — entries already linked elsewhere are
+   * skipped. Omit when every citation already has a per-cell home.
+   */
+  sources?: RowSource[]
 }
 
 /** Transport-layer blockers tracked by PQCC heatmap (April 2026). */
@@ -503,7 +525,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         productId: 'openssh',
         name: 'OpenSSH',
-        versionNote: '9.9+ (sntrup761x25519, mlkem768x25519)',
+        versionNote: '10.0+ (mlkem768x25519 default); 10.3p1 latest (2026-04)',
       },
     ],
     commercialLibraries: [
@@ -527,9 +549,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     liveDeployments: [
       {
         provider: 'OpenSSH',
-        what: 'mlkem768x25519-sha256 default in OpenSSH 9.9',
-        since: '2024-09',
-        referenceUrl: 'https://www.openssh.org/txt/release-9.9',
+        what: 'mlkem768x25519-sha256 default key exchange since OpenSSH 10.0 (added in 9.9); 10.1+ warns on non-PQ KEX',
+        since: '2025-04',
+        referenceUrl: 'https://www.openssh.com/pq.html',
       },
       {
         provider: 'GitHub SSH',
@@ -548,7 +570,18 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     recommended: true,
     recommendedReason:
-      'RFC 9941 published (April 2026), mlkem768x25519 shipped by default in OpenSSH 9.9, GitHub SSH, and AWS Transfer Family — the most deployment-ready PQC protocol today.',
+      'RFC 9941 published (April 2026), mlkem768x25519 shipped by default in OpenSSH 10.0, GitHub SSH, and AWS Transfer Family — the most deployment-ready PQC protocol today.',
+    sources: [
+      {
+        label: 'OpenSSH release notes',
+        url: 'https://www.openssh.com/releasenotes.html',
+        note: 'mlkem768x25519 default since 10.0 (Apr 2025); 10.3p1 latest (Apr 2026)',
+      },
+      {
+        label: 'IETF SSHM working group documents',
+        url: 'https://datatracker.ietf.org/wg/sshm/documents/',
+      },
+    ],
   },
   {
     id: 'tls-1-2',
@@ -634,11 +667,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         localFile: '/library/draft-ietf-tls-ecdhe-mlkem-05.html',
       },
       {
-        id: 'draft-ietf-tls-mlkem-07',
-        title: 'draft-ietf-tls-mlkem-07 — Standalone ML-KEM groups for TLS',
+        id: 'draft-ietf-tls-mlkem-08',
+        title: 'draft-ietf-tls-mlkem-08 — Standalone ML-KEM groups for TLS (In WG Last Call)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/',
-        date: '2026-02-12',
-        localFile: '/library/draft-ietf-tls-mlkem-07.html',
+        date: '2026-06-24',
       },
       {
         id: 'draft-ietf-tls-mldsa-04',
@@ -664,8 +696,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'wg-document',
-        stageNote: 'WG document',
+        stage: 'wg-last-call',
+        stageNote: 'In WG Last Call (draft-08, Jun 2026; intended status Informational)',
         deploymentPosture: 'pilot',
         deploymentNote:
           'Standalone ML-KEM groups gated behind feature flags in BoringSSL / Chromium experimental builds.',
@@ -675,7 +707,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-tls-mlkem',
             title: 'Standalone ML-KEM groups for TLS',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/',
-            publishedOn: '2026-02-12',
+            publishedOn: '2026-06-24',
           },
         ],
       },
@@ -785,7 +817,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         provider: 'AWS',
-        what: 'ML-KEM hybrid TLS in KMS, ACM, Secrets Manager (non-FIPS endpoints)',
+        what: 'ML-KEM hybrid TLS on by default (Apr 2026) across KMS, ACM, Secrets Manager, Payment Cryptography, S3; Kyber being retired',
         since: '2025-05',
         referenceUrl:
           'https://aws.amazon.com/blogs/security/ml-kem-post-quantum-tls-now-supported-in-aws-kms-acm-and-secrets-manager/',
@@ -822,11 +854,30 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         since: '2025',
         referenceUrl: 'https://www.security.com/product-insights/post-quantum-security-edge',
       },
+      {
+        provider: 'Mozilla Firefox',
+        what: 'mlkem768x25519 (X25519MLKEM768) default for TLS 1.3 HTTPS since Firefox 132 (via NSS 3.118)',
+        since: '2024-10',
+        referenceUrl: 'https://bugzilla.mozilla.org/show_bug.cgi?id=1919097',
+      },
+      {
+        provider: 'Google Android',
+        what: 'Android 17 mandates system-level PQC; ML-KEM in TLS and ML-DSA in the Keystore / boot chain',
+        since: '2026-06',
+        referenceUrl:
+          'https://blog.google/security/security-for-the-quantum-era-implementing-post-quantum-cryptography-in-android/',
+      },
     ],
     inheritedBy: ['DTLS 1.3', 'FIDO 2', 'MACsec'],
     recommended: true,
     recommendedReason:
       'X25519MLKEM768 hybrid group already in production at Cloudflare, Google, and AWS; spec is in the RFC Editor queue (EDIT) — the de-facto standard for TLS PQC migration today.',
+    sources: [
+      {
+        label: 'IETF TLS working group documents',
+        url: 'https://datatracker.ietf.org/wg/tls/documents/',
+      },
+    ],
   },
   {
     id: 'x509',
@@ -1007,8 +1058,28 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         referenceUrl:
           'https://aws.amazon.com/blogs/security/post-quantum-ml-dsa-code-signing-with-aws-private-ca-and-aws-kms/',
       },
+      {
+        provider: 'Microsoft AD CS',
+        what: 'ML-DSA certificate issuance GA on Windows Server 2025 Active Directory Certificate Services',
+        since: '2026-05',
+        referenceUrl:
+          'https://techcommunity.microsoft.com/blog/microsoft-security-blog/post-quantum-cryptography-apis-now-generally-available-on-microsoft-platforms/4469093',
+      },
+      {
+        provider: 'Cloudflare',
+        what: 'Accepts ML-DSA (FIPS 204) origin certificates via Authenticated Origin Pulls + Custom Origin Trust Store',
+        since: '2026-06',
+        referenceUrl:
+          'https://developers.cloudflare.com/changelog/post/2026-06-17-pqc-mldsa-aop-cots/',
+      },
     ],
     inheritedBy: ['UEFI'],
+    sources: [
+      {
+        label: 'IETF LAMPS working group documents',
+        url: 'https://datatracker.ietf.org/wg/lamps/documents/',
+      },
+    ],
   },
   {
     id: 'smime',
@@ -1089,8 +1160,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'wg-last-call',
-        stageNote: 'WG Last Call (May 2026)',
+        stage: 'iesg-submitted',
+        stageNote: 'Publication Requested — submitted to IESG (Jun 2026)',
         note: 'Uses the CMS KEMRecipientInfo structure; pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
         refs: [
           {
@@ -1163,6 +1234,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     noDeploymentReason:
       'S/MIME PQ standards are very fresh (ML-DSA Oct 2025, SLH-DSA Jul 2025, ML-KEM Mar 2026) — typical standards-to-ship gap is 12–24 months. The quantum-safe consumer-email market migrated to OpenPGP (Proton Mail) and proprietary protocols (Tuta / TutaCrypt) rather than S/MIME; mainstream providers (Gmail / Outlook / Apple Mail) rely on TLS-in-transit + at-rest encryption and do not drive S/MIME at all. The procurement-cycle slots that will force S/MIME PQ deployment — CNSA 2.0 S/MIME profile (still draft) and X9 Financial PKI consumers — have not yet shipped a product. Building blocks (OpenSSL 3.5 `cms`, Bouncy Castle 1.79+ CMS API) exist and IETF Hackathon runs cross-vendor interop tests, but no end-user product deployment.',
+    sources: [
+      {
+        label: 'IETF LAMPS working group documents',
+        url: 'https://datatracker.ietf.org/wg/lamps/documents/',
+      },
+    ],
   },
   {
     id: 'cose',
@@ -1684,21 +1761,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2024-07',
         localFile: '/library/RFC_9581.html',
       },
+      {
+        id: 'RFC-9980',
+        title: 'RFC 9980 — Post-Quantum Cryptography in OpenPGP',
+        url: 'https://www.rfc-editor.org/rfc/rfc9980.html',
+        date: '2026-06',
+      },
     ],
     latestDraft: [
-      {
-        id: 'draft-ietf-openpgp-pqc-17',
-        title: 'draft-ietf-openpgp-pqc-17 — PQC for OpenPGP (in AUTH48)',
-        url: 'https://datatracker.ietf.org/doc/draft-ietf-openpgp-pqc/',
-        date: '2026-01-13',
-        localFile: '/library/draft-ietf-openpgp-pqc-17.html',
-      },
-      {
-        id: 'RFC 9980',
-        title: 'RFC 9980 (AUTH48 in progress) — Post-Quantum Cryptography in OpenPGP',
-        url: 'https://datatracker.ietf.org/doc/draft-ietf-openpgp-pqc/',
-        date: '2026-05',
-      },
       {
         id: 'draft-ietf-openpgp-nist-bp-comp-03',
         title: 'draft-ietf-openpgp-nist-bp-comp-03 — NIST + Brainpool composites',
@@ -1715,53 +1785,53 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         note: 'OpenPGP-PQC ships composite KEM only; pure ML-KEM mode is chartered but not yet specified.',
       },
       hybridKem: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
+        value: 'rfc',
+        stage: 'rfc-published',
         stageNote:
-          'RFC Ed Queue (AUTH48 — RFC 9980 assigned) — draft-ietf-openpgp-pqc-17 covers Pure/Hybrid Sig too',
-        note: 'Composite mode pairs ML-KEM-768/1024 with ECDH P-256 / P-384 / X25519 / X448. Same draft draft-ietf-openpgp-pqc covers Pure Sig and Hybrid Sig.',
+          'RFC 9980 published Jun 2026 (formerly the OpenPGP-PQC draft) — covers Hybrid KEM + Pure/Hybrid Sig',
+        note: 'Composite mode pairs ML-KEM-768/1024 with ECDH P-256 / P-384 / X25519 / X448. RFC 9980 covers Pure Sig and Hybrid Sig in the same document.',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-openpgp-pqc',
+            kind: 'rfc',
+            id: 'RFC 9980',
             title: 'Post-Quantum Cryptography in OpenPGP (covers hybrid KEM + pure/hybrid sig)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-openpgp-pqc/',
-            publishedOn: '2026-01-13',
+            url: 'https://www.rfc-editor.org/rfc/rfc9980.html',
+            publishedOn: '2026-06',
           },
         ],
       },
       pureSig: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
-        stageNote: 'RFC Ed Queue (AUTH48 — RFC 9980 assigned) — same draft as Hybrid KEM',
+        value: 'rfc',
+        stage: 'rfc-published',
+        stageNote: 'RFC 9980 published Jun 2026 — same document as Hybrid KEM',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-openpgp-pqc',
+            kind: 'rfc',
+            id: 'RFC 9980',
             title: 'Post-Quantum Cryptography in OpenPGP (covers hybrid KEM + pure/hybrid sig)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-openpgp-pqc/',
-            publishedOn: '2026-01-13',
+            url: 'https://www.rfc-editor.org/rfc/rfc9980.html',
+            publishedOn: '2026-06',
           },
         ],
       },
       hybridSig: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
-        stageNote: 'RFC Ed Queue (AUTH48 — RFC 9980 assigned) — same draft as Hybrid KEM',
+        value: 'rfc',
+        stage: 'rfc-published',
+        stageNote: 'RFC 9980 published Jun 2026 — same document as Hybrid KEM',
         note: 'Composite mode pairs ML-DSA with ECDSA / EdDSA classical signatures.',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-openpgp-pqc',
+            kind: 'rfc',
+            id: 'RFC 9980',
             title: 'Post-Quantum Cryptography in OpenPGP (covers hybrid KEM + pure/hybrid sig)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-openpgp-pqc/',
-            publishedOn: '2026-01-13',
+            url: 'https://www.rfc-editor.org/rfc/rfc9980.html',
+            publishedOn: '2026-06',
           },
         ],
       },
     },
     ossLibraries: [
-      { productId: 'gnupg', name: 'GnuPG', versionNote: 'PQC branch tracking draft -17' },
+      { productId: 'gnupg', name: 'GnuPG', versionNote: 'PQC branch tracking RFC 9980' },
       { productId: 'sequoia-pgp-pqc', name: 'Sequoia-PGP PQC' },
       { productId: 'openpgp-js', name: 'OpenPGP.js', versionNote: 'PQC PR series' },
     ],
@@ -1779,6 +1849,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         what: 'Hybrid ML-KEM (OpenPGP v6) encryption rolled out to all plans incl. free, for new encrypted mail',
         since: '2026-05',
         referenceUrl: 'https://proton.me/blog/introducing-post-quantum-encryption',
+      },
+    ],
+    sources: [
+      {
+        label: 'RFC 9980 — PQC in OpenPGP (published Jun 2026)',
+        url: 'https://www.rfc-editor.org/rfc/rfc9980.html',
+      },
+      {
+        label: 'IETF OpenPGP working group documents',
+        url: 'https://datatracker.ietf.org/wg/openpgp/documents/',
       },
     ],
   },
@@ -1826,11 +1906,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-ipsecme-ikev2-mlkem-06',
-        title: 'draft-ietf-ipsecme-ikev2-mlkem-06 — ML-KEM in IKEv2',
+        id: 'draft-ietf-ipsecme-ikev2-mlkem-08',
+        title: 'draft-ietf-ipsecme-ikev2-mlkem-08 — ML-KEM in IKEv2',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-mlkem/',
-        date: '2026-06-17',
-        localFile: '/library/draft-ietf-ipsecme-ikev2-mlkem-06.html',
+        date: '2026-06-27',
       },
       {
         id: 'draft-ietf-ipsecme-ikev2-pqc-auth-08',
@@ -1851,7 +1930,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'iesg-submitted',
         stageNote:
-          'Submitted to IESG — on 2026-07-02 telechat (draft-06); same draft covers Pure + Hybrid KEM',
+          'Submitted to IESG — on 2026-07-02 telechat (draft-08, has a DISCUSS); same draft covers Pure + Hybrid KEM',
         note: 'IKEv2 multi-KE framework (RFC 9370) carries either pure or hybrid ML-KEM. There is NO RFC for IKEv2 hybrid KEM yet — both modes ride the same draft.',
         refs: [
           {
@@ -1867,7 +1946,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'iesg-submitted',
         stageNote:
-          'Submitted to IESG — on 2026-07-02 telechat (draft-06); same draft as Pure KEM; no RFC yet',
+          'Submitted to IESG — on 2026-07-02 telechat (draft-08, has a DISCUSS); same draft as Pure KEM; no RFC yet',
         note: 'Same draft as Pure KEM. No standalone RFC for hybrid KEM in IKEv2 (corrects an earlier mis-encoding to "rfc"). RFC 9370 multi-KE framework + draft-ietf-ipsecme-ikev2-mlkem together define the hybrid binding.',
         deploymentPosture: 'production',
         deploymentNote:
@@ -1983,6 +2062,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'https://docs.paloaltonetworks.com/network-security/quantum-security/administration/quantum-security-concepts/support-for-quantum-features',
       },
     ],
+    sources: [
+      {
+        label: 'IETF IPSECME working group documents',
+        url: 'https://datatracker.ietf.org/wg/ipsecme/documents/',
+      },
+    ],
   },
   {
     id: 'mls',
@@ -2025,7 +2110,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       pureKem: {
         value: 'draft',
         stage: 'wg-last-call',
-        stageNote: 'WG Last Call (Apr 2026) — single draft covers all 4 cases',
+        stageNote:
+          'WG Last Call — awaiting WG chair go-ahead; revised I-D needed after WGLC feedback (draft-04). Single draft covers all 4 cases',
         refs: [
           {
             kind: 'draft',
@@ -2039,7 +2125,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridKem: {
         value: 'draft',
         stage: 'wg-last-call',
-        stageNote: 'WG Last Call (Apr 2026) — same draft as Pure KEM',
+        stageNote: 'WG Last Call — revised I-D needed after WGLC feedback (draft-04); same draft as Pure KEM',
         note: 'Combiner seeds PQ guarantees into the traditional ciphersuite via the exporter secret.',
         refs: [
           {
@@ -2054,7 +2140,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       pureSig: {
         value: 'draft',
         stage: 'wg-last-call',
-        stageNote: 'WG Last Call (Apr 2026) — same draft as Pure KEM',
+        stageNote: 'WG Last Call — revised I-D needed after WGLC feedback (draft-04); same draft as Pure KEM',
         note: 'Cipher suites bundle ML-DSA with the PQ KEM as a paired choice.',
         refs: [
           {
@@ -2069,7 +2155,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridSig: {
         value: 'draft',
         stage: 'wg-last-call',
-        stageNote: 'WG Last Call (Apr 2026) — same draft as Pure KEM',
+        stageNote: 'WG Last Call — revised I-D needed after WGLC feedback (draft-04); same draft as Pure KEM',
         note: 'Hybrid sig path is via session combination; cert-layer composite-sigs lives in the X.509 row.',
         refs: [
           {
@@ -2119,9 +2205,15 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         provider: 'Signal Protocol (PQXDH)',
-        what: 'X3DH replaced with PQXDH (Kyber + X25519); also used by WhatsApp',
+        what: 'X3DH replaced with PQXDH (Kyber + X25519) for the initial key agreement',
         since: '2023-09',
         referenceUrl: 'https://signal.org/blog/pqxdh/',
+      },
+    ],
+    sources: [
+      {
+        label: 'IETF MLS working group documents',
+        url: 'https://datatracker.ietf.org/wg/mls/documents/',
       },
     ],
   },
@@ -3010,6 +3102,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         what: 'PQXDH (X25519 + ML-KEM/Kyber) as the default initial key agreement for all conversations',
         since: '2023',
         referenceUrl: 'https://signal.org/blog/pqxdh/',
+      },
+      {
+        provider: 'Signal Messenger (SPQR / Triple Ratchet)',
+        what: 'Sparse Post-Quantum Ratchet (ML-KEM-768) adds PQ to the continuous ratchet, not just the handshake — rolling out to clients',
+        since: '2025-10',
+        referenceUrl: 'https://signal.org/blog/spqr/',
       },
     ],
     recommendedReason:

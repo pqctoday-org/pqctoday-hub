@@ -12,6 +12,7 @@ import {
   AlertTriangle,
   Globe2,
   Star,
+  BookOpen,
 } from 'lucide-react'
 import {
   PROTOCOL_MATRIX,
@@ -26,6 +27,7 @@ import {
   type PlaygroundTool,
   type ProtocolDoc,
   type ProtocolMatrixRow,
+  type RowSource,
   type TestabilityValue,
 } from '../../data/pqcProtocolMatrix'
 import { Button } from '@/components/ui/button'
@@ -369,6 +371,48 @@ function PlaygroundCard({ tool }: { tool: PlaygroundTool }) {
   )
 }
 
+/** Normalize a URL for dedup comparison (trim, drop trailing slash, lowercase). */
+function normalizeUrl(url: string): string {
+  return url.trim().replace(/\/+$/, '').toLowerCase()
+}
+
+/** Every URL already surfaced elsewhere in the modal — per-cell refs, release /
+ *  draft docs, and deployment references. Used to dedup the Sources section so
+ *  it only shows citations that don't already have a home in the row. */
+function collectShownUrls(protocol: ProtocolMatrixRow): Set<string> {
+  const urls = new Set<string>()
+  const add = (u?: string) => {
+    if (u) urls.add(normalizeUrl(u))
+  }
+  protocol.latestRelease.forEach((d) => add(d.url))
+  protocol.latestDraft.forEach((d) => add(d.url))
+  Object.values(protocol.dimensions).forEach((dim) => dim.refs?.forEach((r) => add(r.url)))
+  protocol.liveDeployments?.forEach((d) => add(d.referenceUrl))
+  return urls
+}
+
+function SourceRow({ source }: { source: RowSource }) {
+  return (
+    <a
+      href={source.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex items-start gap-2 rounded-md border border-border bg-card/50 px-3 py-2 transition-colors hover:border-primary/30 hover:bg-primary/5"
+    >
+      <BookOpen size={12} className="mt-0.5 shrink-0 text-primary" />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-1 text-xs font-medium text-foreground group-hover:text-primary">
+          <span className="truncate">{source.label}</span>
+          <ExternalLink size={10} className="shrink-0 opacity-60" />
+        </div>
+        {source.note && (
+          <div className="text-[10px] leading-tight text-muted-foreground">{source.note}</div>
+        )}
+      </div>
+    </a>
+  )
+}
+
 export function ProtocolDetailModal({ isOpen, onClose, protocol }: ProtocolDetailModalProps) {
   const isEmbedded = useIsEmbedded()
   const positionStyle = useModalPosition(isEmbedded)
@@ -380,6 +424,14 @@ export function ProtocolDetailModal({ isOpen, onClose, protocol }: ProtocolDetai
         : undefined,
     [protocol]
   )
+
+  // Row-level sources, deduped against every URL already shown in the modal —
+  // only citations that aren't already linked per-cell are surfaced.
+  const extraSources = useMemo(() => {
+    if (!protocol?.sources?.length) return []
+    const shown = collectShownUrls(protocol)
+    return protocol.sources.filter((s) => !shown.has(normalizeUrl(s.url)))
+  }, [protocol])
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -635,6 +687,20 @@ export function ProtocolDetailModal({ isOpen, onClose, protocol }: ProtocolDetai
                 </div>
               )}
             </section>
+
+            {/* Sources & further reading — deduped against links shown above */}
+            {extraSources.length > 0 && (
+              <section className="mt-6">
+                <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                  <BookOpen size={13} /> Sources &amp; further reading ({extraSources.length})
+                </h3>
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                  {extraSources.map((s) => (
+                    <SourceRow key={s.url} source={s} />
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Footer */}
             <div className="mt-6 pt-3 border-t border-border flex items-center justify-between text-[10px] text-muted-foreground">
