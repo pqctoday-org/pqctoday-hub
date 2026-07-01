@@ -8,7 +8,7 @@ const TREE: PhaseTree = {
   phase: 'p5',
   gate: {
     id: 'G5',
-    criterion: 'Pilots validated; wave migration underway',
+    criterion: 'Pilots validated; performance baselines established; Tier-1 rollout approved',
   },
   generated: '06302026',
   source: 'Applied Quantum PQC Migration Framework v2.1 (Marin Ivezić)',
@@ -46,6 +46,13 @@ const TREE: PhaseTree = {
               label: 'Reference: which protocols have a PQC path',
               to: '/algorithms?tab=support',
               refId: 'algorithms-protocol-matrix',
+            },
+            {
+              kind: 'learn',
+              label:
+                'Learn: TLS 1.3 hybrid — the recommended first pilot (X25519+ML-KEM-768, downgrade attack mitigations)',
+              to: '/learn/tls-basics',
+              moduleId: 'tls-basics',
             },
             {
               kind: 'learn',

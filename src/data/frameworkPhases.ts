@@ -292,8 +292,8 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     parallelWith: ['p6'],
     gate: {
       id: 'G5',
-      criterion: 'Pilots validated; wave migration underway',
-      authority: 'Application Security Lead',
+      criterion: 'Pilots validated; performance baselines established; Tier-1 rollout approved',
+      authority: 'SteerCo',
     },
     cswp39Zones: ['mitigation', 'migration'],
     cswp39Steps: ['implement'],
