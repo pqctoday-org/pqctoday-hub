@@ -710,7 +710,13 @@ const FRAMEWORK = {
       title: 'Manage Vendor-as-Blocker Scenarios',
       do: 'When a critical vendor cannot deliver PQC in time, deploy bridging patterns (gateway, overlay, key-wrap), run champion-challenger, escalate contractually, or accept-and-document the residual risk.',
       output: 'Bridging pattern deployments',
-      steps: [A('deployment-playbook', 'Deploy bridging patterns for blocked vendors')],
+      steps: [
+        A('deployment-playbook', 'Deploy bridging patterns for blocked vendors'),
+        A(
+          'risk-register',
+          'Accept-and-document residual vendor risk when no bridge or alternative exists'
+        ),
+      ],
     },
     {
       id: '7.5',
@@ -728,6 +734,7 @@ const FRAMEWORK = {
       output: 'Counterparty coordination plan',
       steps: [
         A('stakeholder-comms', 'Plan dual-stack windows & deprecation comms for counterparties'),
+        A('risk-register', 'Record the counterparty refusal decision in the risk register'),
       ],
     },
     {
