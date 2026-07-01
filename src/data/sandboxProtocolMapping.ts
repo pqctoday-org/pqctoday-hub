@@ -42,6 +42,10 @@ const SANDBOX_PROTOCOL_MAP: Record<string, SandboxProtocolRef> = {
   smime: { protocolId: 'smime', label: 'S/MIME' },
   // OpenPGP
   sequoia: { protocolId: 'openpgp', label: 'OpenPGP' },
+  // KMIP
+  'pqctoday-kmip': { protocolId: 'kmip', label: 'KMIP' },
+  // Software supply-chain signing
+  'supply-chain-signing': { protocolId: 'sigstore', label: 'Sigstore' },
   // JOSE / JWT
   'api-security-jwt': { protocolId: 'jose', label: 'JOSE / JWT' },
   // TPM 2.0
