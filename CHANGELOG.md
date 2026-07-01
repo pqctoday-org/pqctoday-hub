@@ -26,6 +26,10 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.6.0] - 2026-06-30
+
+A simulation-fidelity and executive-experience release: every simulation phase now matches the published migration framework exactly, executives get a purpose-built view across the whole hub, the protocol support matrix is updated to what's actually shipping today, and the product catalog had an accuracy sweep.
+
 ### Added
 
 - **The simulation now opens workshops and learning modules at exactly the right step** [view:/simulation] [view:/learn] [persona:executive] [persona:architect]: when the simulation links you into a playground workshop or an embedded learning module — for example, directing you to a specific hands-on exercise — it now opens at precisely the step it intended rather than always starting from the beginning. Shared or bookmarked workshop links that include a step number also restore reliably to that position.
