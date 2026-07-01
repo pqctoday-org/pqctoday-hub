@@ -14,7 +14,12 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import type { PhaseId } from '@/data/frameworkPhases'
 import type { TreeStep } from '@/simulation'
-import { autoRunQueue, completeStepGenuine, type AutoRunQueueItem } from './simAutoRun'
+import {
+  autoRunQueue,
+  autoRunWalkthroughQueue,
+  completeStepGenuine,
+  type AutoRunQueueItem,
+} from './simAutoRun'
 import { countryNameFor, getScenario, type SimScenario } from './scenarioConfig'
 import { seedDemoOrg } from './seedDemoOrg'
 import { setAutoRunFill } from './autoRunFill'
@@ -39,10 +44,16 @@ export interface ScenarioIntro {
   summary: string
 }
 
+/** Which run the player is driving: the full maturity CLIMB (Play 0→7) or the
+ *  executive WALKTHROUGH (a phase-major single pass — a tour, not a win). */
+export type RunMode = 'climb' | 'walkthrough'
+
 export interface SimAutoRunPlayer {
   running: boolean
   paused: boolean
   done: boolean
+  /** The run currently loaded — drives tour-vs-climb UI (win ceremony, dates, panels). */
+  mode: RunMode
   caption: string
   phaseLabel: string
   index: number
@@ -66,7 +77,7 @@ export interface SimAutoRunPlayer {
    *  top). Reactive: flips as steps complete and back to false after a Reset clears
    *  completion. Drives the play button's "Resume" vs "PLAY ALL" label. */
   resumable: boolean
-  start: () => void
+  start: (opts?: { mode?: RunMode }) => void
   pause: () => void
   resume: () => void
   stop: () => void
@@ -502,6 +513,7 @@ export function useSimAutoRunPlayer({
   const [phaseFocus, setPhaseFocus] = useState<PhaseFocus | null>(null)
   const [phaseIntro, setPhaseIntro] = useState<PhaseFocus | null>(null)
   const [scenarioIntro, setScenarioIntro] = useState<ScenarioIntro | null>(null)
+  const [mode, setMode] = useState<RunMode>('climb')
 
   const queueRef = useRef<AutoRunQueueItem[]>([])
   const passStartsRef = useRef<{ level: number; start: number }[]>([])
@@ -509,6 +521,7 @@ export function useSimAutoRunPlayer({
   const lastSelPhaseRef = useRef<PhaseId | null>(null) // the phase the board is focused on
   const clockPlanRef = useRef<{ year: number; q: number }[]>([])
   const scenarioRef = useRef<SimScenario | null>(null)
+  const modeRef = useRef<RunMode>('climb') // synchronous mode read for the step effect + end caption
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const voiceOnRef = useRef(voiceOn)
   const openStepRef = useRef(openStep)
@@ -580,51 +593,65 @@ export function useSimAutoRunPlayer({
     }
   }, [])
 
-  const start = useCallback(() => {
-    clearTimer()
-    seedDemoOrg() // populate the scenario context so embeds have data + a scope to filter by
-    setAutoRunFill(true) // tools opened during the run fill their forms with demo content
-    useSimulationStore.getState().markTourSeen() // the first-run tour must not block the playthrough
-    const q = autoRunQueue()
-    queueRef.current = q
-    // RESUME from the remembered playhead — the queue index where the last run was
-    // interrupted (saved by stop(), cleared on completion + by Reset). Completion can
-    // NOT locate the playhead: the queue shares completion keys across passes (a
-    // module / reference / artifact-type recurs), so "first step not yet complete"
-    // skips ahead to a unique late step — the closure. The remembered index is the
-    // literal last position; Reset clears it (it lives in SEED) so a fresh run starts
-    // at the top.
-    const remembered = useSimulationStore.getState().autoRunResumeIndex
-    const startAt = remembered > 0 && remembered < q.length ? remembered : 0
-    const scenario = getScenario(useSimulationStore.getState().country)
-    scenarioRef.current = scenario
-    clockPlanRef.current = buildClockPlan(q, scenario)
-    const starts: { level: number; start: number }[] = []
-    q.forEach((it, i) => {
-      const last = starts.at(-1)
-      if (!last || last.level !== it.level) starts.push({ level: it.level, start: i })
-    })
-    passStartsRef.current = starts
-    lastLevelRef.current = null
-    lastSelPhaseRef.current = null
-    // Reset the per-phase Set-guards + arm the one-time scenario-framing card.
-    spokenPhaseRef.current = new Set()
-    shownPhaseModalRef.current = new Set()
-    spokenIntroForRef.current = null
-    spokenScenarioRef.current = false
-    setPhaseFocus(null)
-    setPhaseIntro(null)
-    // Only show the one-time scenario-framing card on a FRESH start; resuming
-    // mid-queue skips it (it's already been seen).
-    setScenarioIntro(startAt === 0 ? scenarioIntroFor(scenario) : null)
-    setTotal(q.length)
-    setIndex(startAt)
-    setDone(false)
-    setPaused(false)
-    setLabel('')
-    setCaption('Starting the migration playthrough…')
-    setRunning(true)
-  }, [clearTimer])
+  const start = useCallback(
+    (opts?: { mode?: RunMode }) => {
+      const runMode: RunMode = opts?.mode ?? 'climb'
+      setMode(runMode)
+      modeRef.current = runMode
+      clearTimer()
+      seedDemoOrg() // populate the scenario context so embeds have data + a scope to filter by
+      setAutoRunFill(true) // tools opened during the run fill their forms with demo content
+      useSimulationStore.getState().markTourSeen() // the first-run tour must not block the playthrough
+      const q = runMode === 'walkthrough' ? autoRunWalkthroughQueue() : autoRunQueue()
+      queueRef.current = q
+      // RESUME from the remembered playhead — the queue index where the last run was
+      // interrupted (saved by stop(), cleared on completion + by Reset). Completion can
+      // NOT locate the playhead: the queue shares completion keys across passes (a
+      // module / reference / artifact-type recurs), so "first step not yet complete"
+      // skips ahead to a unique late step — the closure. The remembered index is the
+      // literal last position; Reset clears it (it lives in SEED) so a fresh run starts
+      // at the top.
+      const remembered = useSimulationStore.getState().autoRunResumeIndex
+      // The walkthrough is a short linear tour — always start at the top (no resume).
+      const startAt =
+        runMode === 'walkthrough' ? 0 : remembered > 0 && remembered < q.length ? remembered : 0
+      const scenario = getScenario(useSimulationStore.getState().country)
+      scenarioRef.current = scenario
+      // Walkthrough freezes the calendar (a tour, not a timed run): an empty clock plan
+      // means the per-step advance never calls applyQuarter, so no dates ever move.
+      clockPlanRef.current = runMode === 'walkthrough' ? [] : buildClockPlan(q, scenario)
+      const starts: { level: number; start: number }[] = []
+      q.forEach((it, i) => {
+        const last = starts.at(-1)
+        if (!last || last.level !== it.level) starts.push({ level: it.level, start: i })
+      })
+      passStartsRef.current = starts
+      lastLevelRef.current = null
+      lastSelPhaseRef.current = null
+      // Reset the per-phase Set-guards + arm the one-time scenario-framing card.
+      spokenPhaseRef.current = new Set()
+      shownPhaseModalRef.current = new Set()
+      spokenIntroForRef.current = null
+      spokenScenarioRef.current = false
+      setPhaseFocus(null)
+      setPhaseIntro(null)
+      // Only show the one-time scenario-framing card on a FRESH start; resuming
+      // mid-queue skips it (it's already been seen).
+      // The climb opens on the dated scenario-framing card; the walkthrough suppresses it
+      // (dates are hidden) and leads with its own concept-led opening instead.
+      setScenarioIntro(
+        runMode === 'walkthrough' ? null : startAt === 0 ? scenarioIntroFor(scenario) : null
+      )
+      setTotal(q.length)
+      setIndex(startAt)
+      setDone(false)
+      setPaused(false)
+      setLabel('')
+      setCaption('Starting the migration playthrough…')
+      setRunning(true)
+    },
+    [clearTimer]
+  )
 
   const pause = useCallback(() => {
     stopSpeech()
@@ -892,7 +919,9 @@ export function useSimAutoRunPlayer({
       if (item.level !== lastLevelRef.current) {
         // New maturity pass — pause for the pass-intro modal (the board stays behind it).
         const sc = scenarioRef.current
-        if (sc) {
+        // The walkthrough is a single level-1 pass with no maturity passes — never
+        // interrupt it with a pass-intro modal.
+        if (sc && modeRef.current !== 'walkthrough') {
           setPassIntro(passIntroFor(item.level, sc))
           return
         }
@@ -965,7 +994,11 @@ export function useSimAutoRunPlayer({
         const goNext = () => {
           if (cancelled) return
           if (next >= q.length) {
-            setCaption('Migration complete — full program maturity reached.')
+            setCaption(
+              modeRef.current === 'walkthrough'
+                ? 'That’s the full program, end to end.'
+                : 'Migration complete — full program maturity reached.'
+            )
             setAutoRunFill(false)
             setRunning(false)
             setDone(true)
@@ -1028,6 +1061,7 @@ export function useSimAutoRunPlayer({
     running,
     paused,
     done,
+    mode,
     caption,
     phaseLabel: label,
     index,
