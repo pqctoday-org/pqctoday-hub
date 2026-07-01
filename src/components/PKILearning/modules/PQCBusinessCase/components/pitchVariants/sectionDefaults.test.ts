@@ -143,7 +143,7 @@ describe('buildRiskOverviewDefault', () => {
 })
 
 describe('buildQuantumUrgencyDefault', () => {
-  it('describes at-risk HNDL and HNFL windows', () => {
+  it('describes at-risk HNDL and TNFL windows', () => {
     const data = makeData({
       hndlRiskWindow: {
         dataRetentionYears: 25,
@@ -164,14 +164,14 @@ describe('buildQuantumUrgencyDefault', () => {
     })
     const out = buildQuantumUrgencyDefault(data)
     expect(out).toMatch(/HNDL/)
-    expect(out).toMatch(/HNFL/)
+    expect(out).toMatch(/TNFL/)
     expect(out).toContain('25-year')
     expect(out).toContain('Code signing')
   })
 
   it('falls back to educational copy when windows are absent', () => {
     const data = makeData()
-    expect(buildQuantumUrgencyDefault(data)).toMatch(/HNDL.*HNFL|HNFL.*HNDL/s)
+    expect(buildQuantumUrgencyDefault(data)).toMatch(/HNDL.*TNFL|TNFL.*HNDL/s)
   })
 })
 

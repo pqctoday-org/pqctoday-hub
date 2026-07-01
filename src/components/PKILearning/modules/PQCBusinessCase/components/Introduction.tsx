@@ -12,6 +12,10 @@ import {
   Scale,
   BarChart3,
   Building2,
+  KeyRound,
+  FileSignature,
+  Layers,
+  Umbrella,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
@@ -55,6 +59,81 @@ const Step1WhyConceptsCosts: React.FC = () => (
           bridges the gap between technical teams who understand the urgency and decision-makers who
           control budgets.
         </p>
+      </div>
+    </section>
+
+    {/* Section 1b: The two time-bound risks — HNDL and TNFL */}
+    <section className="glass-panel p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-lg bg-status-error/10">
+          <ShieldAlert size={24} className="text-status-error" />
+        </div>
+        <h2 className="text-xl font-bold text-gradient">The Two Time-Bound Quantum Risks</h2>
+      </div>
+      <div className="space-y-4 text-sm text-foreground/80">
+        <p>
+          A credible business case names <em>two</em> distinct, already-running risks — not one.
+          They hit different systems, on different clocks, and they map to the two parallel
+          migration tracks a program runs. Framing only the data-confidentiality risk leaves the
+          signature-forgery half of the estate — and whole sectors like OT, PKI operators, and
+          code-signing shops — out of the argument.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-muted/50 rounded-lg p-4 border border-border flex flex-col">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-1.5 rounded bg-primary/10 text-primary">
+                <KeyRound size={16} />
+              </div>
+              <div className="text-sm font-bold text-foreground">
+                HNDL &mdash; Harvest Now, Decrypt Later
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground mb-2 flex-grow">
+              Adversaries capture encrypted traffic <strong>today</strong> and store it to decrypt
+              once a quantum computer exists. The risk is active now — any data whose
+              confidentiality must outlast the quantum threat horizon is already exposed.
+            </p>
+            <div className="text-[11px] text-muted-foreground/80 border-t border-border pt-2">
+              <strong>Drives urgency on:</strong> long-lived secrets (trade secrets, M&amp;A, health
+              records, attorney-client) and internet-exposed key exchange.
+              <br />
+              <strong>Migration Track A:</strong> key exchange &amp; confidentiality (TLS, VPN,
+              data-at-rest).
+            </div>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-4 border border-border flex flex-col">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-1.5 rounded bg-status-warning/10 text-status-warning">
+                <FileSignature size={16} />
+              </div>
+              <div className="text-sm font-bold text-foreground">
+                TNFL &mdash; Trust Now, Forge Later
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground mb-2 flex-grow">
+              Long-lived signatures and trust anchors signed today stay trusted for years. Once a
+              quantum computer can forge them, an attacker can mint trusted software updates,
+              certificates, or firmware. Signature migration has the{' '}
+              <strong>longest lead times</strong> (PKI, toolchains, HSMs), so it must start in
+              parallel — not after HNDL.
+            </p>
+            <div className="text-[11px] text-muted-foreground/80 border-t border-border pt-2">
+              <strong>Drives urgency on:</strong> PKI roots (20+ yr), code- &amp; firmware-signing
+              keys, OT safety certificates, long-validity document signatures.
+              <br />
+              <strong>Migration Track B:</strong> signatures, PKI &amp; authentication.
+            </div>
+          </div>
+        </div>
+        <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
+          <p className="text-xs text-foreground/90">
+            <strong>The decision point:</strong> data with a 10+ year confidentiality requirement in
+            a regulated industry means <strong>HNDL alone</strong> justifies immediate action; where
+            signature integrity is the primary risk (OT/ICS, PKI operators),{' '}
+            <strong>TNFL drives the urgency on a different set of systems</strong>. Most enterprises
+            carry both and therefore run both tracks at once.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -171,6 +250,148 @@ const Step1WhyConceptsCosts: React.FC = () => (
               <li>&bull; Vendor and partner ecosystem alignment</li>
             </ul>
           </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Section 3b: The eight cost-driver categories + umbrella framing */}
+    <section className="glass-panel p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-lg bg-secondary/10">
+          <Layers size={24} className="text-secondary" />
+        </div>
+        <h2 className="text-xl font-bold text-gradient">Sizing the Spend: Eight Cost Drivers</h2>
+      </div>
+      <div className="space-y-4 text-sm text-foreground/80">
+        <p>
+          Don&apos;t wait for precise numbers — estimate each cost driver separately and refine as
+          discovery matures. A multi-year PQC budget breaks into eight categories:
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {[
+            {
+              t: 'Discovery & inventory tooling',
+              d: 'Crypto-discovery platforms plus deployment, integration, and ongoing licenses.',
+            },
+            {
+              t: 'Cryptographic engineering labor',
+              d: 'Usually the largest category — PQC talent is scarce and commands premium rates.',
+            },
+            {
+              t: 'Vendor PQC licensing & upgrades',
+              d: 'HSM firmware upgrades alone can run $50K–$500K+ depending on module count.',
+            },
+            {
+              t: 'HSM & hardware refresh',
+              d: 'Older HSMs may not support PQC key types; 6–12 month procurement lead times.',
+            },
+            {
+              t: 'PKI modernization',
+              d: 'CA upgrades, automated certificate lifecycle, root-CA ceremonies — needed regardless of PQC.',
+            },
+            {
+              t: 'Performance & capacity uplift',
+              d: 'CPU, memory, bandwidth, and storage increases from larger keys and signatures.',
+            },
+            {
+              t: 'Testing environments',
+              d: 'Production-mirror environments to validate before rollout.',
+            },
+            {
+              t: 'Program management overhead',
+              d: 'QRPM, PMO tooling, SteerCo facilitation, training, compliance tracking, board reporting.',
+            },
+          ].map((c, i) => (
+            <div key={i} className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-foreground mb-0.5">{c.t}</div>
+              <p className="text-[11px] text-muted-foreground">{c.d}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="bg-primary/5 rounded-lg p-4 border border-primary/20 flex gap-3">
+          <Umbrella size={20} className="text-primary shrink-0 mt-0.5" />
+          <div>
+            <div className="text-sm font-bold text-foreground mb-1">
+              The infrastructure-modernization umbrella
+            </div>
+            <p className="text-xs text-foreground/90">
+              Combine independently justified investments — PKI automation for short certificate
+              lifetimes, FIPS 140-3 upgrades for the FIPS 140-2 sunset, HSM refresh for end-of-life
+              hardware, library upgrades for CVEs — into a single &ldquo;cryptographic
+              infrastructure modernization&rdquo; program. Positioning PQC as the organizing wrapper
+              for overdue security modernization avoids a big-bang budget spike and aligns spend to
+              already-funded refresh cycles.
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-muted/50 rounded-lg p-4 border border-border">
+          <div className="text-xs font-bold text-foreground mb-2">
+            Reference anchors (order-of-magnitude)
+          </div>
+          <ul className="text-[11px] text-muted-foreground space-y-1">
+            <li>
+              &bull; Discovery &amp; inventory: <strong>$2–5M</strong> for a large operator (~1
+              year).
+            </li>
+            <li>
+              &bull; Assessment &amp; planning: only <strong>~1–2%</strong> of total — but
+              determines whether the other 98% is spent in the right order.
+            </li>
+            <li>
+              &bull; Full program: order of <strong>$300–500M over a decade</strong> for a major
+              global telco; U.S. federal civilian comparator <strong>$7.1B for 2025–2035</strong>{' '}
+              (OMB). Peak staffing dozens of FTEs.
+            </li>
+          </ul>
+          <p className="text-[10px] text-muted-foreground/70 mt-2">
+            Present gross program cost and net <em>incremental</em> cost separately — much of the
+            spend is modernization you needed anyway.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* Section 3c: Benefit arguments beyond the urgency drivers */}
+    <section className="glass-panel p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-lg bg-success/10">
+          <TrendingUp size={24} className="text-success" />
+        </div>
+        <h2 className="text-xl font-bold text-gradient">
+          Benefit Arguments That Strengthen the Case
+        </h2>
+      </div>
+      <div className="space-y-3 text-sm text-foreground/80">
+        <p>
+          Beyond avoiding the two quantum risks, four arguments turn a defensive ask into a positive
+          investment case:
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {[
+            {
+              t: 'Immediate classical-security value',
+              d: 'A quantum-focused inventory surfaces deprecated TLS, weak keys, expired certs, and CVE-laden libraries you can fix now — making the discovery spend self-funding on classical grounds alone.',
+            },
+            {
+              t: 'Regulatory trust & approval acceleration',
+              d: 'A documented CBOM, risk assessment, and roadmap signal proactive risk management to regulators and can smooth supervisory review of new products.',
+            },
+            {
+              t: 'Competitive differentiation & market access',
+              d: 'Quantum readiness is increasingly a procurement criterion; demonstrable PQC infrastructure wins bids that laggards cannot answer.',
+            },
+            {
+              t: 'Talent attraction & retention',
+              d: 'PQC and crypto-agility work is frontier engineering — a serious program is a recruiting and retention asset in a scarce-skills market.',
+            },
+          ].map((b, i) => (
+            <div key={i} className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-primary mb-0.5">{b.t}</div>
+              <p className="text-[11px] text-muted-foreground">{b.d}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

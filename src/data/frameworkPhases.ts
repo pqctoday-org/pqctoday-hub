@@ -146,7 +146,7 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     cadence: 'sequential',
     gate: {
       id: 'G0',
-      criterion: 'Mandate signed',
+      criterion: 'Charter, budget & QRPM approved',
       authority: 'Executive Sponsor',
     },
     cswp39Zones: ['governance'],

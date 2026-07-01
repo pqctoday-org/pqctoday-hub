@@ -29,7 +29,7 @@ export interface PhaseResource {
 
 export const LEARN_PHASES: Record<string, PhaseResource> = {
   'pqc-101': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
-  'quantum-threats': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
+  'quantum-threats': { phasesServed: ['foundations', 'p0'], legs: ['learn', 'reference'] },
   'pqc-candidates': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'hybrid-crypto': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'crypto-agility': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
@@ -69,7 +69,7 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
   'pqc-team': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'vendor-risk': { phasesServed: ['p7'], legs: ['learn', 'reference'] },
   'migration-program': { phasesServed: ['p4'], legs: ['learn', 'reference'] },
-  'compliance-strategy': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
+  'compliance-strategy': { phasesServed: ['foundations', 'p0'], legs: ['learn', 'reference'] },
   'data-asset-sensitivity': { phasesServed: ['p1', 'p3'], legs: ['learn', 'reference'] },
   'standards-bodies': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'confidential-computing': { phasesServed: ['p6'], legs: ['learn', 'reference'] },

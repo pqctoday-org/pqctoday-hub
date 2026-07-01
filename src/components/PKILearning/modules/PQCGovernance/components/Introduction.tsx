@@ -15,6 +15,9 @@ import {
   BookOpen,
   Briefcase,
   Landmark,
+  ShieldCheck,
+  Gauge,
+  Layers,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
@@ -251,6 +254,112 @@ const Step2ModelsEscalationKpis: React.FC = () => (
       </div>
     </section>
 
+    {/* Section 4b: Roles, Workstreams & Three Lines of Defense */}
+    <section className="glass-panel p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-lg bg-primary/10">
+          <Layers size={24} className="text-primary" />
+        </div>
+        <h2 className="text-xl font-bold text-gradient">
+          Roles, Workstreams &amp; Lines of Defense
+        </h2>
+      </div>
+      <div className="space-y-5 text-sm text-foreground/80">
+        <div>
+          <div className="text-sm font-bold text-foreground mb-2">The four core roles</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {[
+              {
+                r: 'Executive Sponsor',
+                d: 'CISO or CIO — visible owner, clears roadblocks, briefs the board quarterly. Reports to the Board / Risk Committee.',
+              },
+              {
+                r: 'Steering Committee (SteerCo)',
+                d: 'Cross-functional: Security, Enterprise Architecture, AppDev, Infra/NetSec, PKI/Identity, Compliance/Legal, Procurement, and Business-Unit reps. Reports monthly to the Sponsor.',
+              },
+              {
+                r: 'Quantum Readiness Program Manager (QRPM)',
+                d: 'Day-to-day leader — runs the plan, risk log, and KPIs. Reports weekly to the SteerCo lead.',
+              },
+              {
+                r: 'Workstream Leads',
+                d: 'One per domain — execute the phase activities and report weekly to the QRPM.',
+              },
+            ].map((x, i) => (
+              <div key={i} className="bg-muted/50 rounded-lg p-3 border border-border">
+                <div className="text-xs font-bold text-primary mb-0.5">{x.r}</div>
+                <p className="text-[11px] text-muted-foreground">{x.d}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-[11px] text-muted-foreground/80 mt-2">
+            <strong>Decision cadence:</strong> weekly PMO &middot; monthly SteerCo &middot;
+            quarterly Board / Risk Committee. The CISO should lead in most organizations — PQC
+            migration is a security risk response, not a technology refresh.
+          </p>
+        </div>
+
+        <div>
+          <div className="text-sm font-bold text-foreground mb-2">The eight workstreams</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+            {[
+              'Inventory & Discovery (Crypto-BOM ownership)',
+              'Network & TLS/VPN (hybrid rollouts)',
+              'PKI & Code Signing (roots, issuers, toolchains)',
+              'Applications & Platforms (libraries, service mesh, cloud)',
+              'Embedded / IoT / OT (gateways, compensating controls)',
+              'Policy / Compliance / Procurement (standards, clauses)',
+              'Vendor Orchestration (roadmaps, SLAs)',
+              'Education & Change Management (training, comms)',
+            ].map((w, i) => (
+              <div
+                key={i}
+                className="flex items-start gap-2 bg-muted/50 rounded-lg p-2 border border-border"
+              >
+                <span className="text-[11px] font-bold text-primary shrink-0 w-4 text-center">
+                  {i + 1}
+                </span>
+                <span className="text-[11px] text-muted-foreground">{w}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <ShieldCheck size={16} className="text-primary" />
+            <div className="text-sm font-bold text-foreground">Three lines of defense</div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+            {[
+              {
+                l: 'First line',
+                d: 'Owns and executes — workstream leads and system owners running the migration.',
+              },
+              {
+                l: 'Second line',
+                d: 'Governs — CISO, risk, and compliance functions. The QRPM sits here, setting policy and the risk-appetite framing.',
+              },
+              {
+                l: 'Third line',
+                d: 'Assures — internal audit provides independent assurance over the program.',
+              },
+            ].map((x, i) => (
+              <div key={i} className="bg-muted/50 rounded-lg p-3 border border-border">
+                <div className="text-xs font-bold text-foreground mb-0.5">{x.l}</div>
+                <p className="text-[11px] text-muted-foreground">{x.d}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-[11px] text-muted-foreground/80 mt-2">
+            The critical SOC/GRC handoff is the cryptographic inventory — a shared,
+            machine-readable, SIEM-integrated asset that both the SOC (threat detection) and GRC
+            (evidence, KRIs) depend on.
+          </p>
+        </div>
+      </div>
+    </section>
+
     {/* Section 4.5: Escalation & Conflict Resolution */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -339,6 +448,89 @@ const Step2ModelsEscalationKpis: React.FC = () => (
               <li>&bull; % of vendors with signed PQC migration commitments</li>
             </ul>
           </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Section 5b: Board Oversight & Risk Appetite */}
+    <section className="glass-panel p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-lg bg-secondary/10">
+          <Landmark size={24} className="text-secondary" />
+        </div>
+        <h2 className="text-xl font-bold text-gradient">Board Oversight &amp; Risk Appetite</h2>
+      </div>
+      <div className="space-y-5 text-sm text-foreground/80">
+        <div>
+          <div className="text-sm font-bold text-foreground mb-2">
+            Board oversight runs through the existing risk/audit committee
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {[
+              {
+                t: 'Initial briefing',
+                d: '60–90 minutes, once, during Phase 0 — establish the mandate and the risk framing.',
+              },
+              {
+                t: 'Quarterly KPI review',
+                d: '15–20 minutes — the five board KPIs: Coverage, Trust, Inventory, Vendors, Agility.',
+              },
+              {
+                t: 'Annual risk-appetite review',
+                d: 'Re-confirm tolerances as the threat horizon and standards evolve.',
+              },
+              {
+                t: 'Escalation triggers',
+                d: 'Material CRQC-timeline change, program >6 months behind the regulatory buffer, a confirmed vulnerability in a deployed PQC algorithm, or a Tier-1 vendor abandoning PQC without an alternative.',
+              },
+            ].map((x, i) => (
+              <div key={i} className="bg-muted/50 rounded-lg p-3 border border-border">
+                <div className="text-xs font-bold text-primary mb-0.5">{x.t}</div>
+                <p className="text-[11px] text-muted-foreground">{x.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Gauge size={16} className="text-primary" />
+            <div className="text-sm font-bold text-foreground">
+              Risk appetite — illustrative tolerances
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            {[
+              {
+                k: 'HNDL',
+                v: '≤20% of data with a >10-year secrecy requirement may remain quantum-vulnerable by end of 2027; 0% by end of 2029.',
+              },
+              {
+                k: 'TNFL',
+                v: 'All production software/firmware signing uses NIST-approved quantum-resistant signatures by end of 2027; all CA signing keys PQC-capable by end of 2029.',
+              },
+              {
+                k: 'Regulatory',
+                v: 'Compliance achieved ≥12 months before each binding deadline.',
+              },
+              {
+                k: 'Crypto-agility',
+                v: 'Mandatory for all systems deployed from Q3 2026 onward.',
+              },
+            ].map((x, i) => (
+              <div
+                key={i}
+                className="flex items-start gap-3 bg-muted/50 rounded-lg p-3 border border-border"
+              >
+                <span className="text-[11px] font-bold text-primary shrink-0 w-20">{x.k}</span>
+                <span className="text-[11px] text-muted-foreground">{x.v}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-[10px] text-muted-foreground/70 mt-2">
+            Illustrative figures — calibrate to your sector, jurisdiction, and confidentiality
+            horizons. The GRC function owns the risk-appetite statement and the KRI framework.
+          </p>
         </div>
       </div>
     </section>
