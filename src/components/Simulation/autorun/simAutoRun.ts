@@ -27,6 +27,7 @@ import type { TreeStep, PhaseTree } from '@/simulation'
 import { isStepComplete, type StepCompletionContext } from '../embedContract'
 import { PHASE_ORDER, LIFECYCLE_PHASES, type PhaseId } from '@/data/frameworkPhases'
 import { PHASE_WIN_LEVEL } from '@/data/phaseMaturity'
+import { EXEC_TOUR_STAGES } from './execTourConfig'
 import { demoDocFor } from './demoDocs'
 
 /** SIM_TREES is keyed by PhaseId; centralise the typed-key read so the safe
@@ -204,6 +205,63 @@ export function autoRunQueue(): AutoRunQueueItem[] {
         }
         items.push({ phase, step, level })
       }
+    }
+  }
+  return items
+}
+
+/** The identifier used to match a hand-picked light-stage step (mirrors stepDedupeKey's fields). */
+function stepRef(step: TreeStep): string | undefined {
+  switch (step.kind) {
+    case 'learn':
+      return step.moduleId
+    case 'reference':
+      return step.refId
+    case 'activity':
+      return step.artifactType
+    case 'workshop':
+      return step.workshopId
+    case 'catalog':
+      return step.catalogId
+    default:
+      return undefined
+  }
+}
+
+/**
+ * The Executive Overview walkthrough queue — a phase-major SINGLE PASS through the
+ * program, ordered and shaped by EXEC_TOUR_STAGES. DEEP stages contribute the activity
+ * steps that generate their reveal documents (hoisted across maturity bands, since a
+ * phase's artifact steps may not live at level 1 — e.g. p6 has no level-1 band); LIGHT
+ * stages contribute their one hand-picked step. Every item's level is normalized to 1
+ * so the walkthrough fires no maturity-pass intros (the player also empties the clock
+ * plan, so the calendar stays frozen). Reveal order follows revealArtifacts.
+ */
+export function autoRunWalkthroughQueue(): AutoRunQueueItem[] {
+  const items: AutoRunQueueItem[] = []
+  const seen = new Set<string>()
+  for (const stage of EXEC_TOUR_STAGES) {
+    const phaseSteps = gatingStepsForPhase(stage.phase)
+    const steps: TreeStep[] = []
+    if (stage.depth === 'deep') {
+      for (const artifactType of stage.revealArtifacts ?? []) {
+        const match = phaseSteps.find(
+          (s) => s.kind === 'activity' && s.artifactType === artifactType
+        )
+        if (match) steps.push(match)
+      }
+    } else if (stage.lightStep) {
+      const { kind, ref } = stage.lightStep
+      const match = phaseSteps.find((s) => s.kind === kind && stepRef(s) === ref)
+      if (match) steps.push(match)
+    }
+    for (const step of steps) {
+      const key = stepDedupeKey(step)
+      if (key !== null) {
+        if (seen.has(key)) continue
+        seen.add(key)
+      }
+      items.push({ phase: stage.phase, step, level: 1 })
     }
   }
   return items
