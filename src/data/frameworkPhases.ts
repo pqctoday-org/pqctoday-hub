@@ -179,7 +179,8 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     parallelWith: ['p2'],
     gate: {
       id: 'G1',
-      criterion: '≥70% Tier-1 systems inventoried',
+      criterion:
+        'Scoping doc done; Priority-A inventory ≥90%; classical findings reported; continuous discovery live',
       authority: 'Cryptographic Architect',
     },
     cswp39Zones: ['assets'],
