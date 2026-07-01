@@ -270,6 +270,40 @@ export function AlgorithmsView() {
       {/* Filters + View */}
       {!isLoading && !isCuriousPreview && (
         <>
+          {/* Executive mandate readout — turns the comparison workbench into a
+              "what must I adopt, and where are the deadlines" answer. Exec only. */}
+          {selectedPersona === 'executive' && (
+            <div className="mt-4 rounded-lg border border-primary/30 bg-primary/5 p-4">
+              <div className="flex items-start gap-3">
+                <Shield size={18} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
+                <div className="flex-1 text-sm">
+                  <p className="font-semibold text-foreground mb-1">
+                    What you&apos;re required to adopt
+                  </p>
+                  <p className="text-muted-foreground leading-relaxed mb-2">
+                    For US federal systems, CNSA 2.0 requires{' '}
+                    <strong className="text-foreground">ML-KEM-768</strong> (FIPS 203) for key
+                    establishment and <strong className="text-foreground">ML-DSA-65</strong> (FIPS
+                    204) for signatures. The tables below are the engineering detail — for the
+                    deadlines that apply to your sector and region, see the compliance timeline.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <Link to="/compliance">
+                      <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
+                        Compliance deadlines →
+                      </Button>
+                    </Link>
+                    <Link to="/timeline">
+                      <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
+                        Migration timeline →
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Control deck — filters + QuickView + CNSA lens + persona hint in one panel */}
           <AlgorithmFilters
             cryptoFamily={filterCryptoFamily}

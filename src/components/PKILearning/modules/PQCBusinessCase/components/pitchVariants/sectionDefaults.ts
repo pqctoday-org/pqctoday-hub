@@ -82,20 +82,20 @@ export function buildQuantumUrgencyDefault(data: Data): string {
     const est = hnfl.isEstimated ? ' (estimated - credential lifetime unknown)' : ''
     if (hnfl.isAtRisk) {
       parts.push(
-        `HNFL (harvest-now-forge-later): signing credentials remain trusted for ${hnfl.credentialLifetimeYears} years - ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} past the quantum threat line. Forgery liability grows with every unrotated certificate${est}.`
+        `TNFL (trust-now-forge-later): signing credentials remain trusted for ${hnfl.credentialLifetimeYears} years - ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} past the quantum threat line. Forgery liability grows with every unrotated certificate${est}.`
       )
       if (hnfl.tnflRelevantUseCases.length > 0) {
         parts.push(`High-relevance use cases: ${hnfl.tnflRelevantUseCases.join(', ')}.`)
       }
     } else if (hnfl.hasSigningAlgorithms) {
       parts.push(
-        `HNFL: signing present but credential lifetimes do not extend past the quantum threat window - rotation cadence is adequate for now${est}.`
+        `TNFL: signing present but credential lifetimes do not extend past the quantum threat window - rotation cadence is adequate for now${est}.`
       )
     }
   }
 
   if (parts.length === 0) {
-    return 'Harvest-now-decrypt-later (HNDL) and harvest-now-forge-later (HNFL) are the two time-bound quantum risks. HNDL targets long-retention encrypted data captured today. HNFL targets signing credentials whose trust extends past the quantum threat horizon. Complete the assessment to quantify your exposure window.'
+    return 'Harvest-now-decrypt-later (HNDL) and trust-now-forge-later (TNFL) are the two time-bound quantum risks. HNDL targets long-retention encrypted data captured today. TNFL targets signing credentials whose trust extends past the quantum threat horizon. Complete the assessment to quantify your exposure window.'
   }
   return parts.join('\n\n')
 }
@@ -304,10 +304,16 @@ export function buildGovernanceDefault(data: Data, persona: PersonaId): string {
         context,
         'Recommended RACI:',
         '- Accountable: CISO (budget + audit sign-off).',
-        '- Responsible: Crypto lead / PKI owner.',
-        '- Consulted: Legal (compliance), Architecture, Procurement.',
+        '- Responsible: Crypto lead / PKI owner (QRPM).',
+        '- Consulted: Legal (compliance), Enterprise Architecture, Procurement.',
         '- Informed: Board (quarterly), Audit Committee (milestones).',
-        'Recommended executive sponsor: CISO or CTO. Progress reported quarterly against a named PQC migration charter.',
+        '',
+        'Migration Charter - five required elements:',
+        '1. Signatories: CEO + CFO + CISO. CISO-only approval is advisory and cannot compel cross-BU cooperation or financial commitment.',
+        '2. Scope: named systems, subsidiaries, and geographies covered - plus explicit exclusions for this phase (systems retiring before [date], etc.).',
+        '3. Authority: QRPM has documented power to require remediation plans and, with CISO approval, delay launches introducing non-PQC-ready cryptographic dependencies.',
+        '4. Budget line: named, ring-fenced program budget in the operating plan - not project-by-project re-approval at each phase gate.',
+        '5. Timeline: Gate G1 review date + program completion horizon aligned to the binding regulatory deadline.',
       ]
         .filter(Boolean)
         .join('\n')

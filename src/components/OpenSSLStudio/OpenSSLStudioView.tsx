@@ -18,12 +18,12 @@ import {
   PanelLeft,
   Network,
   ArrowRight,
-  Info,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { LogsTab } from './LogsTab'
 import { PageHeader } from '../common/PageHeader'
 import { PreviewBanner } from '../common/PreviewBanner'
+import { ExecutiveRedirectBanner } from '../common/ExecutiveRedirectBanner'
 import { Button } from '../ui/button'
 import { CopyButton } from '@/components/ui/CopyButton'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -159,34 +159,16 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
 
       {/* Executive redirect banner — this is a developer/operator tool, surface higher-level pages */}
       {!embedded && selectedPersona === 'executive' && (
-        <div className="mb-4 flex items-start gap-3 px-4 py-3 rounded-lg bg-info/5 border border-info/30 text-sm">
-          <Info size={16} className="shrink-0 text-info mt-0.5" aria-hidden="true" />
-          <div className="flex-1">
-            <p className="text-foreground/90 font-medium mb-1">
-              OpenSSL Studio is a hands-on engineering tool.
-            </p>
-            <p className="text-xs text-muted-foreground mb-2 leading-relaxed">
-              You can explore freely below, but for executive-level PQC context you may prefer:
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <Link to="/compliance">
-                <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
-                  Compliance landscape →
-                </Button>
-              </Link>
-              <Link to="/migrate">
-                <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
-                  Migration framework →
-                </Button>
-              </Link>
-              <Link to="/algorithms">
-                <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
-                  Algorithm comparison →
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
+        <ExecutiveRedirectBanner
+          className="mb-4"
+          title="OpenSSL Studio is a hands-on engineering tool."
+          subtitle="You can explore freely below, but for executive-level PQC context you may prefer:"
+          ctas={[
+            { label: 'Compliance landscape →', to: '/compliance' },
+            { label: 'Migration framework →', to: '/migrate' },
+            { label: 'Algorithm comparison →', to: '/algorithms' },
+          ]}
+        />
       )}
 
       {/* Developer cheat sheet / Researcher doc links — persona-aware strip */}

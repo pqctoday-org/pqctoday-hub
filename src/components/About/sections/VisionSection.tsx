@@ -8,10 +8,10 @@ import { getCurrentVersion } from '@/store/useVersionStore'
 import { MISSION_TAGS, PRINCIPLES, NOT_ITEMS } from '../aboutData'
 import { CareerJourneyModal } from '../CareerJourneyModal'
 
-export function VisionSection() {
+export function VisionSection({ defaultExpanded = false }: { defaultExpanded?: boolean }) {
   const version = getCurrentVersion()
 
-  const [isMissionOpen, setIsMissionOpen] = useState(false)
+  const [isMissionOpen, setIsMissionOpen] = useState(defaultExpanded)
   const [isJourneyModalOpen, setIsJourneyModalOpen] = useState(false)
 
   return (

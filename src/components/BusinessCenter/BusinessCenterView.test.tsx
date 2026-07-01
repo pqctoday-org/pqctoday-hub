@@ -245,7 +245,11 @@ describe('BusinessCenterView', () => {
   it('shows welcome state when fully empty', () => {
     renderView()
     expect(screen.getByText('Welcome to your PQC Command Center')).toBeInTheDocument()
-    expect(screen.getByText('Run Risk Assessment')).toBeInTheDocument()
+    // First-visit primer: the four board-level questions + foregrounded top tools
+    // + the secondary explore CTAs.
+    expect(screen.getByText("What's at risk?")).toBeInTheDocument()
+    expect(screen.getByText('What will it cost?')).toBeInTheDocument()
+    expect(screen.getByText('Start with these tools')).toBeInTheDocument()
     expect(screen.getByText('Explore Compliance')).toBeInTheDocument()
     expect(screen.getByText('Start Executive Learning')).toBeInTheDocument()
   })

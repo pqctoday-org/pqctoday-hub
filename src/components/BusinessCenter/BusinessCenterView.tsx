@@ -1,15 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useCallback, useEffect, useMemo } from 'react'
 import { flushSync } from 'react-dom'
-import {
-  LayoutDashboard,
-  ClipboardCheck,
-  ShieldCheck,
-  BookOpen,
-  Download,
-  Filter,
-  X,
-} from 'lucide-react'
+import { LayoutDashboard, ShieldCheck, BookOpen, Download, Filter, X } from 'lucide-react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import JSZip from 'jszip'
 import { PageHeader } from '@/components/common/PageHeader'
@@ -54,23 +46,105 @@ import { ArtifactDrawer, type DrawerMode } from './ArtifactDrawer'
 import { CryptoAgilityDefinitions } from './widgets/CryptoAgilityDefinitions'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 
+// The four board-level questions every PQC program has to answer, each mapped to
+// the surface that answers it. Turns an empty state into a "what a program looks
+// like" primer instead of three bare buttons.
+const BOARD_QUESTIONS: { q: string; desc: string; to: string; cta: string }[] = [
+  {
+    q: "What's at risk?",
+    desc: 'Size your quantum exposure by system and data sensitivity.',
+    to: '/assess',
+    cta: 'Run risk assessment',
+  },
+  {
+    q: "What's the deadline?",
+    desc: 'See the mandates and dates that apply to your sector and region.',
+    to: '/compliance?tab=compliance',
+    cta: 'Compliance deadlines',
+  },
+  {
+    q: 'What will it cost?',
+    desc: 'Model the budget, ROI, and the cost of waiting.',
+    to: '/business/tools/roi-calculator',
+    cta: 'ROI calculator',
+  },
+  {
+    q: 'Who owns it?',
+    desc: 'Assign accountability and set the governance model.',
+    to: '/business/tools/raci-builder',
+    cta: 'RACI builder',
+  },
+]
+
+// The three highest-value executive tools, foregrounded so the best starting
+// points aren't one extra click away at /business/tools.
+const TOP_TOOL_IDS = ['roi-calculator', 'board-pitch', 'risk-register']
+
 function WelcomeState() {
   const navigate = useNavigate()
+  const topTools = TOP_TOOL_IDS.map((id) => BUSINESS_TOOLS.find((t) => t.id === id)).filter(
+    (t): t is (typeof BUSINESS_TOOLS)[number] => Boolean(t)
+  )
+
   return (
-    <div className="glass-panel p-8 text-center">
-      <LayoutDashboard size={48} className="mx-auto mb-4 text-muted-foreground" />
-      <h2 className="text-xl font-semibold text-foreground mb-2">
-        Welcome to your PQC Command Center
-      </h2>
-      <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto">
-        This is your command center for PQC readiness. Get started by running a risk assessment,
-        exploring compliance frameworks, or beginning the executive learning path.
-      </p>
+    <div className="space-y-6">
+      <div className="glass-panel p-6 md:p-8 text-center">
+        <LayoutDashboard size={44} className="mx-auto mb-4 text-muted-foreground" />
+        <h2 className="text-xl font-semibold text-foreground mb-2">
+          Welcome to your PQC Command Center
+        </h2>
+        <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto">
+          A post-quantum migration is a program, and every program answers the same four board-level
+          questions. Start with whichever you need first.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2 text-left max-w-2xl mx-auto">
+          {BOARD_QUESTIONS.map((item) => (
+            <Link
+              key={item.q}
+              to={item.to}
+              className="glass-panel p-4 hover:border-primary/40 transition-colors group"
+            >
+              <p className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                {item.q}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1 mb-2 leading-relaxed">{item.desc}</p>
+              <span className="text-xs font-medium text-primary">{item.cta} →</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {topTools.length > 0 && (
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+            Start with these tools
+          </p>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {topTools.map((tool) => {
+              const Icon = tool.icon
+              return (
+                <Link
+                  key={tool.id}
+                  to={`/business/tools/${tool.id}`}
+                  className="glass-panel p-4 hover:border-primary/40 transition-colors group flex items-start gap-3"
+                >
+                  <Icon className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="font-medium text-foreground group-hover:text-primary transition-colors">
+                      {tool.name}
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                      {tool.description}
+                    </p>
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-wrap items-center justify-center gap-3">
-        <Button variant="gradient" onClick={() => navigate('/assess')}>
-          <ClipboardCheck size={16} className="mr-2" />
-          Run Risk Assessment
-        </Button>
         <Button variant="outline" onClick={() => navigate('/compliance?tab=compliance')}>
           <ShieldCheck size={16} className="mr-2" />
           Explore Compliance

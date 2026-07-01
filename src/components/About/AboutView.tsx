@@ -16,11 +16,14 @@ import { RagAiSection } from './sections/RagAiSection'
 import { CryptoBuffSection } from './sections/CryptoBuffSection'
 import { AppearanceSection } from './sections/AppearanceSection'
 import { AboutNextStepCTA } from './AboutNextStepCTA'
+import { ExecutiveAboutSummary } from './ExecutiveAboutSummary'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { logAboutOutboundLink } from '@/utils/analytics'
 
 export function AboutView() {
   const isEmbedded = useIsEmbedded()
+  const isExecutive = usePersonaStore((s) => s.selectedPersona) === 'executive'
   const containerRef = useRef<HTMLDivElement>(null)
 
   /**
@@ -50,8 +53,9 @@ export function AboutView() {
 
   return (
     <div ref={containerRef} className="max-w-6xl mx-auto space-y-6 md:space-y-8">
+      {isExecutive && !isEmbedded && <ExecutiveAboutSummary />}
       <AboutSection slug="vision">
-        <VisionSection />
+        <VisionSection defaultExpanded={isExecutive} />
       </AboutSection>
       <AboutSection slug="release-notes">
         <ReleaseNotesSection />

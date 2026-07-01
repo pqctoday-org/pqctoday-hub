@@ -491,7 +491,7 @@ function programCharter(sector: DemoSector): DemoDoc {
     data: md(
       `# Program Charter — Post-Quantum Cryptography Migration Program`,
       '',
-      `*Phase 0 — Executive Mandate (Governance & Sponsorship). Gate G0: Mandate signed.*`,
+      `*Phase 0 — Executive Mandate (Governance & Sponsorship). Gate G0: Charter, budget & QRPM approved.*`,
       '',
       '## 1. Executive sponsorship',
       '',
@@ -846,7 +846,7 @@ function migrationRoadmap(sector: DemoSector): DemoDoc {
       '| Root CA transition | 2028 | New root, 20-yr lifetime |',
       '',
       '## Milestone Gates',
-      '- G0: Mandate signed; G1: Inventory ≥70%; G2: Pilot completed; G3: Tier-1 migrated',
+      '- G0: Charter, budget & QRPM approved; G1: Scoping done, Priority-A ≥90%, classical findings reported, continuous discovery live; G2: CBOM live, freshness governance enforced; G3: CBOM scored; QRA delivered; G4: Roadmap approved; Year 1 plan resourced; G5: Pilots validated; Tier-1 rollout approved; G6: Infrastructure upgrades scheduled; vendor commitments tracked; G8: Verification complete; classical material decommissioned; closed to BAU',
       '',
       '## Mitigation Gateway (CSWP.39 §4.6)',
       '- Classical key material decommissioned per SP 800-88 after dual-stack validation.'
