@@ -47,7 +47,7 @@ export const BusinessToolsGrid = () => {
         title="Business Tools"
         description="Interactive planning and governance tools for PQC migration — ROI calculators, RACI builders, vendor scorecards, and more."
         shareTitle="PQC Business Tools — Planning & Governance Toolkit"
-        shareText="14 interactive business planning tools for PQC migration readiness."
+        shareText={`${BUSINESS_TOOLS.length} interactive business planning tools for PQC migration readiness.`}
       />
 
       {/* Search + filter */}
