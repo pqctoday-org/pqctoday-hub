@@ -2429,6 +2429,14 @@
     "category": "concept"
   },
   {
+    "term": "Classical Security Bits",
+    "definition": "The cost of the best known classical attack on an algorithm, measured in equivalent brute-force operations — not the key length. RSA-2048 reaches only ~112 bits because the General Number Field Sieve (GNFS) factors large numbers sub-exponentially. ECC P-256 reaches ~128 bits because Pollard's rho is fully exponential, costing exactly k/2 bits where k is the key size. Under Shor's algorithm on a quantum computer, both reach 0 — all classical asymmetric algorithms are fully broken regardless of key size.",
+    "technicalNote": "Source: NIST SP 800-57 Part 1 Rev 5 Table 2 (RSA-2048 = 112 bits). Quantum resource estimates: Gidney & Ekerå 2021 (RSA) and Roetteler et al. 2017 (ECC).",
+    "relatedModule": "/algorithms",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
     "term": "Hypertree",
     "definition": "The multi-layer Merkle structure at the core of SLH-DSA. d layers of trees each of height h/d: the bottom layer authenticates a FORS public key; higher layers each authenticate a WOTS+ public key; the root of the topmost tree is the SLH-DSA public key.",
     "technicalNote": "Increasing d makes signing faster (-f variants) but enlarges the signature. Decreasing d (-s variants) yields smaller signatures at the cost of more hash work per layer. Same security level at any choice of d within a parameter set.",
