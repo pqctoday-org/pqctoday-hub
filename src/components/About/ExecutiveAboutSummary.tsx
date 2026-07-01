@@ -32,7 +32,7 @@ export function ExecutiveAboutSummary() {
             <Link to="/simulation?run=exec">
               <Button variant="gradient" size="sm" className="gap-1.5">
                 <PlayCircle size={14} aria-hidden="true" />
-                Watch the 20-min overview
+                Watch the guided overview
               </Button>
             </Link>
             <Link to="/business">

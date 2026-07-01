@@ -1359,7 +1359,7 @@ export function SimulationView() {
               variant="ghost"
               onClick={() => autoRunPlayer.start({ mode: 'walkthrough' })}
               disabled={autoRunPlayer.running}
-              title="Play the ~20-minute Executive Overview — a narrated, board-level walk through the whole program (governance, risk, roadmap, verification) with the key documents shown along the way. No technical detail."
+              title="Play the guided Executive Overview — a short narrated, board-level walk through the whole program (governance, risk, roadmap, verification) with the key documents shown along the way. No technical detail."
               className="h-auto rounded-md border border-primary/50 bg-primary/15 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-primary/25 disabled:opacity-40"
             >
               ▶ Executive overview

@@ -109,7 +109,7 @@ function WelcomeState() {
           <Link to="/simulation?run=exec">
             <Button variant="gradient" size="sm" className="gap-1.5">
               <PlayCircle size={14} aria-hidden="true" />
-              New here? Watch the 20-min overview
+              New here? Watch the guided overview
             </Button>
           </Link>
         </div>
