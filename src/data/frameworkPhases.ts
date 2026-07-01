@@ -264,7 +264,7 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     cadence: 'sequential',
     gate: {
       id: 'G4',
-      criterion: 'Multi-year roadmap & PMO established',
+      criterion: 'Multi-year roadmap approved; Year 1 plan resourced',
       authority: 'QRPM',
     },
     cswp39Zones: ['migration', 'governance'],

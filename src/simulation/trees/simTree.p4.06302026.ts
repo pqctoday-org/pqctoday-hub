@@ -8,7 +8,7 @@ const TREE: PhaseTree = {
   phase: 'p4',
   gate: {
     id: 'G4',
-    criterion: 'Multi-year roadmap & PMO established',
+    criterion: 'Multi-year roadmap approved; Year 1 plan resourced',
   },
   generated: '06302026',
   source: 'Applied Quantum PQC Migration Framework v2.1 (Marin Ivezić)',
@@ -111,6 +111,13 @@ const TREE: PhaseTree = {
           do: 'Run quarterly reviews with leading indicators and formal G0–G6 gate criteria.',
           output: 'Quarterly review process & gate criteria',
           steps: [
+            {
+              kind: 'reference',
+              label:
+                'Monitor the threat horizon — CRQC timeline signals that trigger accelerated execution',
+              to: '/threats',
+              refId: 'threats',
+            },
             {
               kind: 'reference',
               label: 'Track gates on the Report page',

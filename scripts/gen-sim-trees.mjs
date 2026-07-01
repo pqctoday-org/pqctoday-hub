@@ -204,7 +204,7 @@ const GATES = {
       'CBOM live for Layers 1–2; freshness governance enforced; protection controls applied',
   },
   p3: { id: 'G3', criterion: 'Risk scoring complete; QRA with prioritized backlog delivered' },
-  p4: { id: 'G4', criterion: 'Multi-year roadmap & PMO established' },
+  p4: { id: 'G4', criterion: 'Multi-year roadmap approved; Year 1 plan resourced' },
   p5: { id: 'G5', criterion: 'Pilots validated; wave migration underway' },
   p6: { id: 'G6', criterion: 'Infrastructure PQC-ready; performance validated' },
   // p7 (Vendor & Supply Chain) is a CONTINUOUS phase in the framework
@@ -516,7 +516,13 @@ const FRAMEWORK = {
       title: 'Manage the Roadmap as a Living Instrument & Define Milestone Gates',
       do: 'Run quarterly reviews with leading indicators and formal G0–G6 gate criteria.',
       output: 'Quarterly review process & gate criteria',
-      steps: [R('report', 'Track gates on the Report page')],
+      steps: [
+        R(
+          'threats',
+          'Monitor the threat horizon — CRQC timeline signals that trigger accelerated execution'
+        ),
+        R('report', 'Track gates on the Report page'),
+      ],
     },
     {
       id: '4.7',

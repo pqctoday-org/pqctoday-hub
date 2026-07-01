@@ -219,7 +219,7 @@ export const REFERENCE_PHASES: Record<string, ReferenceResource> = {
     legs: ['reference'],
     deepUrl: '/compliance?cert=',
   },
-  threats: { phasesServed: ['p3'], legs: ['reference'], deepUrl: '/threats' },
+  threats: { phasesServed: ['p3', 'p4'], legs: ['reference'], deepUrl: '/threats' },
   migrate: {
     phasesServed: ['p1', 'p2', 'p5', 'p6'],
     legs: ['reference', 'practice', 'output'],
