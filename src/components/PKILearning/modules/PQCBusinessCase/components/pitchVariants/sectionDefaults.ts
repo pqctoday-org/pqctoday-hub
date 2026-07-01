@@ -304,10 +304,16 @@ export function buildGovernanceDefault(data: Data, persona: PersonaId): string {
         context,
         'Recommended RACI:',
         '- Accountable: CISO (budget + audit sign-off).',
-        '- Responsible: Crypto lead / PKI owner.',
-        '- Consulted: Legal (compliance), Architecture, Procurement.',
+        '- Responsible: Crypto lead / PKI owner (QRPM).',
+        '- Consulted: Legal (compliance), Enterprise Architecture, Procurement.',
         '- Informed: Board (quarterly), Audit Committee (milestones).',
-        'Recommended executive sponsor: CISO or CTO. Progress reported quarterly against a named PQC migration charter.',
+        '',
+        'Migration Charter - five required elements:',
+        '1. Signatories: CEO + CFO + CISO. CISO-only approval is advisory and cannot compel cross-BU cooperation or financial commitment.',
+        '2. Scope: named systems, subsidiaries, and geographies covered - plus explicit exclusions for this phase (systems retiring before [date], etc.).',
+        '3. Authority: QRPM has documented power to require remediation plans and, with CISO approval, delay launches introducing non-PQC-ready cryptographic dependencies.',
+        '4. Budget line: named, ring-fenced program budget in the operating plan - not project-by-project re-approval at each phase gate.',
+        '5. Timeline: Gate G1 review date + program completion horizon aligned to the binding regulatory deadline.',
       ]
         .filter(Boolean)
         .join('\n')

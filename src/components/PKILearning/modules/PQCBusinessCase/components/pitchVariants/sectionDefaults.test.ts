@@ -364,6 +364,17 @@ describe('buildGovernanceDefault', () => {
     expect(buildGovernanceDefault(data, 'architect')).toMatch(/Crypto Review Board|CRB/)
     expect(buildGovernanceDefault(data, 'ops')).toMatch(/On-call|runbook/i)
   })
+
+  it('includes charter checklist for executive persona', () => {
+    const data = makeData()
+    const out = buildGovernanceDefault(data, 'executive')
+    expect(out).toMatch(/Charter/i)
+    expect(out).toMatch(/Signatories/)
+    expect(out).toMatch(/Scope/)
+    expect(out).toMatch(/Authority/)
+    expect(out).toMatch(/Budget line/)
+    expect(out).toMatch(/Timeline/)
+  })
 })
 
 describe('buildPeerBenchmarkDefault', () => {
