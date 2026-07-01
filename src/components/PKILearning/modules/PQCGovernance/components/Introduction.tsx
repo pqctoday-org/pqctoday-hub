@@ -18,6 +18,7 @@ import {
   ShieldCheck,
   Gauge,
   Layers,
+  ScrollText,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
@@ -176,6 +177,83 @@ const Step1WhyRaciPolicy: React.FC = () => (
               </div>
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+
+    {/* Section 3b: The PQC Migration Charter */}
+    <section className="glass-panel p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-lg bg-primary/10">
+          <ScrollText size={24} className="text-primary" />
+        </div>
+        <h2 className="text-xl font-bold text-gradient">The PQC Migration Charter</h2>
+      </div>
+      <div className="space-y-4 text-sm text-foreground/80">
+        <p>
+          The charter is the founding authority document for the entire program. Without it, the
+          Quantum Readiness Program Manager (QRPM) has no formal power to compel other business
+          units, and budget requests get re-litigated at every phase gate. Framework 2.1 identifies
+          insufficient mandate scope as the most common reason Phase 0 programs stall before Phase
+          1.
+        </p>
+        <div className="text-sm font-bold text-foreground">
+          Five elements every charter must contain
+        </div>
+        <div className="space-y-2">
+          {[
+            {
+              n: '1. Signatories',
+              d: 'Who signs determines who the charter can compel. CISO-only approval is advisory. CEO + CFO + CISO creates financial obligation and the authority to compel cross-BU cooperation.',
+              warn: 'Weak: "CISO approved."',
+              good: 'Strong: "Signed by CEO, CFO, and CISO."',
+            },
+            {
+              n: '2. Scope',
+              d: 'Named systems, subsidiaries, and geographies — plus explicit out-of-scope exclusions for this phase to prevent future disputes about what was covered.',
+              warn: 'Weak: "All production systems."',
+              good: 'Strong: "All systems handling Confidential or Regulated data in [regions], including third-party-hosted services. Out of scope: systems scheduled for retirement before [date]."',
+            },
+            {
+              n: '3. Authority granted',
+              d: 'What the QRPM can actually do without requiring a separate approval each time. Advisory language means every enforcement action stalls waiting for sign-off.',
+              warn: 'Weak: "The QRPM should work with teams to ensure timely migration."',
+              good: 'Strong: "The QRPM may require remediation plans and, with CISO approval, delay product launches that introduce non-PQC-ready cryptographic dependencies."',
+            },
+            {
+              n: '4. Budget line',
+              d: 'A named, ring-fenced program budget in the operating plan. Project-by-project approval forces re-justification at every phase gate and creates the risk of mid-program defunding.',
+              warn: 'Weak: "Funding will be allocated as needed."',
+              good: 'Strong: "Program budget of [$X] committed for [period], line item: PQC Migration Program, in the [Year] operating plan."',
+            },
+            {
+              n: '5. Timeline commitment',
+              d: 'At minimum, the Gate G1 review date and the overall program completion horizon tied to the binding regulatory deadline.',
+              warn: 'Weak: "Migration will proceed as resources allow."',
+              good: 'Strong: "Gate G1 review: [date]. Program completion target: [year], aligned to [regulatory deadline]."',
+            },
+          ].map((el, i) => (
+            <div key={i} className="bg-muted/50 rounded-lg p-3 border border-border space-y-1.5">
+              <div className="text-xs font-bold text-primary">{el.n}</div>
+              <p className="text-[11px] text-muted-foreground">{el.d}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
+                <div className="rounded p-2 bg-muted border border-border/80">
+                  <p className="text-[10px] text-muted-foreground/70">{el.warn}</p>
+                </div>
+                <div className="rounded p-2 bg-primary/5 border border-primary/20">
+                  <p className="text-[10px] text-foreground/80">{el.good}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="bg-muted/50 rounded-lg p-3 border border-border">
+          <p className="text-xs text-foreground/90">
+            <strong>Framework 2.1 common failure:</strong> organizations reach Gate G1 with a signed
+            email thread instead of a formal charter. The SteerCo has no documented authority,
+            budget re-approval is required at each phase, and the first procurement dispute stalls
+            the program for months.
+          </p>
         </div>
       </div>
     </section>
