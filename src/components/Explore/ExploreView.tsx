@@ -8,6 +8,7 @@ import {
   ShieldCheck,
   ClipboardCheck,
   Shield,
+  LayoutDashboard,
   Unlock,
   Sparkles,
   type LucideIcon,
@@ -75,6 +76,15 @@ const TILES: ExploreTile[] = [
     recommendedFor: ['executive', 'architect'],
   },
   {
+    icon: LayoutDashboard,
+    title: 'Command Center',
+    description:
+      'Executive planning tools — ROI calculators, board packs, vendor scorecards, and a sequenced migration roadmap.',
+    path: '/business',
+    accent: 'text-accent bg-accent/10',
+    recommendedFor: ['executive'],
+  },
+  {
     icon: Shield,
     title: 'Compare PQC Algorithms',
     description:
@@ -93,6 +103,19 @@ export function ExploreView() {
   const isGated = isCurious && viewAccess !== 'unlocked'
   const showUnlockPrompt = isGated
 
+  // A tile is "recommended" for the current (non-curious) persona when it lists them.
+  const isTileRecommended = (tile: ExploreTile) =>
+    selectedPersona != null &&
+    selectedPersona !== 'curious' &&
+    !!tile.recommendedFor?.includes(selectedPersona)
+
+  // Surface each viewer's own recommended tiles first (stable sort preserves the
+  // authored order within each group). For curious / no-persona users nothing is
+  // recommended, so the display order is unchanged.
+  const orderedTiles = [...TILES].sort(
+    (a, b) => Number(isTileRecommended(b)) - Number(isTileRecommended(a))
+  )
+
   return (
     <div className="max-w-5xl mx-auto py-4 md:py-8 px-2">
       {/* Header */}
@@ -109,13 +132,10 @@ export function ExploreView() {
 
       {/* Tile grid — max-w-5xl prevents stretching on ultrawide */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
-        {TILES.map((tile) => {
+        {orderedTiles.map((tile) => {
           const Icon = tile.icon
           const destination = isGated && tile.gatedPath ? tile.gatedPath : tile.path
-          const isRecommended =
-            selectedPersona != null &&
-            selectedPersona !== 'curious' &&
-            tile.recommendedFor?.includes(selectedPersona)
+          const isRecommended = isTileRecommended(tile)
           return (
             <Button
               key={tile.path}

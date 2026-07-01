@@ -89,6 +89,8 @@ interface SponsorPersona {
   title: string
   description: string
   bullets: string[]
+  /** Optional link to a concrete deliverable so buyers can preview what they get. */
+  cta?: { label: string; to: string }
 }
 
 const PERSONAS: SponsorPersona[] = [
@@ -113,6 +115,7 @@ const PERSONAS: SponsorPersona[] = [
       'Vendor-mapping data refreshed monthly',
       'Priority support and onboarding calls',
     ],
+    cta: { label: 'See a sample migration-readiness report', to: '/report' },
   },
   {
     icon: UserRoundCog,
@@ -229,6 +232,15 @@ function Personas() {
                   </li>
                 ))}
               </ul>
+              {persona.cta && (
+                <Link
+                  to={persona.cta.to}
+                  className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                >
+                  {persona.cta.label}
+                  <ArrowRight size={14} aria-hidden="true" />
+                </Link>
+              )}
             </div>
           )
         })}
@@ -388,8 +400,7 @@ function Goal() {
       </h2>
       <p className="text-sm md:text-base text-secondary leading-relaxed mb-6">
         Our goal is <strong className="text-foreground">$15,000/month</strong> in recurring GitHub
-        Sponsors revenue, additive to direct-agreement Strategic and Founding sponsorships. Reaching
-        it funds:
+        Sponsors revenue, additive to any custom direct sponsorship agreements. Reaching it funds:
       </p>
       <div className="grid sm:grid-cols-2 gap-3">
         {FUNDED.map(({ icon: Icon, label }) => (
@@ -408,8 +419,8 @@ function ContactCTA() {
     <section className="text-center py-8">
       <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2">Ready to sponsor?</h2>
       <p className="text-sm text-muted-foreground mb-6 max-w-xl mx-auto">
-        Sponsor directly through GitHub for Listed and Category tiers, or reach out to discuss
-        Strategic and Founding sponsorship.
+        Sponsor directly through GitHub for the Supporter, Sponsor, and Patron tiers, or reach out
+        to discuss a custom vendor or enterprise sponsorship.
       </p>
       <div className="flex flex-wrap justify-center gap-3">
         <a href={GITHUB_SPONSORS_URL} target="_blank" rel="noopener noreferrer">

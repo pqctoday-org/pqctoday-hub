@@ -51,12 +51,8 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'crypto-agility',
       'migration-program',
       'vendor-risk',
+      'verification-closure',
       'iam-pqc',
-      'kms-pqc',
-      'healthcare-pqc',
-      'emv-payment-pqc',
-      'ai-security-pqc',
-      'aerospace-pqc',
       'quiz',
     ],
     pathItems: [
@@ -116,28 +112,15 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
           'migration-planning',
         ],
       },
-      { type: 'module', moduleId: 'kms-pqc' },
-      { type: 'module', moduleId: 'healthcare-pqc' },
-      { type: 'module', moduleId: 'emv-payment-pqc' },
-      { type: 'module', moduleId: 'ai-security-pqc' },
-      { type: 'module', moduleId: 'aerospace-pqc' },
-      {
-        type: 'checkpoint',
-        id: 'exec-cp-5',
-        label: 'Infrastructure & Industries',
-        categories: [
-          'kms-pqc',
-          'healthcare-pqc',
-          'emv-payment-pqc',
-          'ai-security-pqc',
-          'aerospace-pqc',
-        ],
-      },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 865,
+    // Core GRC track only. The industry deep-dive modules (kms / healthcare /
+    // emv / ai / aerospace) were removed from the mandatory executive path so a
+    // busy exec reaches the capstone after the governance core (~10h) instead of
+    // ~14h; those modules remain available via Browse for anyone who wants them.
+    estimatedMinutes: 650,
     quizDescription:
-      'Test your knowledge on quantum threats, risk management, data asset classification, business cases, governance, compliance strategy, cryptographic management modernization, migration planning, healthcare/PHI risks, and payment system security.',
+      'Test your knowledge on quantum threats, risk management, data asset classification, business cases, governance, compliance strategy, cryptographic management modernization, migration planning, vendor risk, and identity & access management.',
     quizCategories: [
       'pqc-fundamentals',
       'exec-quantum-impact',
@@ -155,12 +138,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'crypto-agility',
       'migration-program',
       'vendor-risk',
-      'kms-pqc',
       'iam-pqc',
-      'healthcare-pqc',
-      'emv-payment-pqc',
-      'ai-security-pqc',
-      'aerospace-pqc',
     ],
   },
   developer: {
