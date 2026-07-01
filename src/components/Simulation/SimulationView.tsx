@@ -37,6 +37,7 @@ import { SIM_REFERENCE_EMBEDS } from './referenceEmbeds'
 import { useSimAutoRunPlayer } from './autorun/useSimAutoRunPlayer'
 import { SimAutoRunOverlay } from './autorun/SimAutoRunOverlay'
 import { SimConceptPeek } from './autorun/SimConceptPeek'
+import { SimArtifactReveal } from './autorun/SimArtifactReveal'
 import {
   EXEC_TOUR_STAGES,
   EXEC_TOUR_OPENING_CONCEPTS,
@@ -1347,6 +1348,7 @@ export function SimulationView() {
             </Button>
             <SimAutoRunOverlay player={autoRunPlayer} />
             <SimConceptPeek concepts={walkthroughConcepts} />
+            <SimArtifactReveal type={autoRunPlayer.reveal} />
             {autoRunPlayer.scenarioIntro && (
               <SimScenarioIntroCard
                 scenario={autoRunPlayer.scenarioIntro}
