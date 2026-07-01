@@ -470,6 +470,13 @@ export function SimulationView() {
     setSearchParams(next, { replace: true })
   }, [searchParams, setSearchParams, startRun])
 
+  // While the Executive Overview walkthrough is playing (or on its end screen), the
+  // maturity/objective scoreboard and the "did you beat Q-Day?" win ceremony are
+  // suppressed — it's a tour, not a scored run, and it shows no dates. Climb (Play 0→7)
+  // and all interactive play fall through unchanged (mode is never 'walkthrough' there).
+  const suppressWinUI =
+    autoRunPlayer.mode === 'walkthrough' && (autoRunPlayer.running || autoRunPlayer.done)
+
   // real hub completion state: generated artifacts + Learn-module progress
   const docs = useModuleStore((s) => s.artifacts.executiveDocuments)
   // Read-only inspection of a generated artifact (click a completed row → drawer in view mode).
@@ -1426,7 +1433,7 @@ export function SimulationView() {
 
         {/* KPI ribbon */}
         <div className="flex shrink-0 flex-wrap items-stretch gap-3 border-b border-border bg-card px-4 py-3">
-          <TransformationStatusPanel status={txStatus} />
+          {!suppressWinUI && <TransformationStatusPanel status={txStatus} />}
           <Stat
             label="Phases cleared"
             value={`${cleared}/${LIFECYCLE.length}`}
@@ -2919,7 +2926,7 @@ export function SimulationView() {
           />
         )}
         {/* W2b: run-end ceremony — the summative "did you beat Q-Day?" moment */}
-        {runCompleteOpen && (
+        {runCompleteOpen && !suppressWinUI && (
           <SimRunComplete
             objectives={txStatus.objectives.map((o) => ({
               id: o.id,
