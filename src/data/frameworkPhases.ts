@@ -209,7 +209,8 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     parallelWith: ['p1'],
     gate: {
       id: 'G2',
-      criterion: 'Machine-verifiable CBOM published',
+      criterion:
+        'CBOM live for Layers 1–2; freshness governance enforced; protection controls applied',
       authority: 'Cryptographic Architect',
     },
     cswp39Zones: ['assets'],

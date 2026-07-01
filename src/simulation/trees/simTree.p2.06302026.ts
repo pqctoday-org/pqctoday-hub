@@ -8,7 +8,8 @@ const TREE: PhaseTree = {
   phase: 'p2',
   gate: {
     id: 'G2',
-    criterion: 'Machine-verifiable CBOM published',
+    criterion:
+      'CBOM live for Layers 1–2; freshness governance enforced; protection controls applied',
   },
   generated: '06302026',
   source: 'Applied Quantum PQC Migration Framework v2.1 (Marin Ivezić)',
@@ -57,6 +58,13 @@ const TREE: PhaseTree = {
           output: 'Populated CycloneDX CBOM',
           steps: [
             {
+              kind: 'learn',
+              label:
+                'Learn: CBOM population — six-step transformation (import → enrich → SBOM link → certs → classify → vendor flags)',
+              to: '/learn/cbom',
+              moduleId: 'cbom',
+            },
+            {
               kind: 'activity',
               label: 'Build a CycloneDX CBOM',
               to: '/business/tools/crypto-cbom-builder',
@@ -98,7 +106,8 @@ const TREE: PhaseTree = {
             },
             {
               kind: 'learn',
-              label: 'Learn: protect the CBOM (it is an HNDL shopping list) — SOC monitoring',
+              label:
+                'Learn: involve the SOC — posture-registry integration and CBOM exfiltration monitoring',
               to: '/learn/soc-implementation-pqc',
               moduleId: 'soc-implementation-pqc',
             },

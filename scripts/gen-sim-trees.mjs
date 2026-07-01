@@ -198,7 +198,11 @@ const GATES = {
     criterion:
       'Scoping doc done; Priority-A inventory ≥90%; classical findings reported; continuous discovery live',
   },
-  p2: { id: 'G2', criterion: 'Machine-verifiable CBOM published' },
+  p2: {
+    id: 'G2',
+    criterion:
+      'CBOM live for Layers 1–2; freshness governance enforced; protection controls applied',
+  },
   p3: { id: 'G3', criterion: 'QRA approved' },
   p4: { id: 'G4', criterion: 'Multi-year roadmap & PMO established' },
   p5: { id: 'G5', criterion: 'Pilots validated; wave migration underway' },
@@ -381,7 +385,13 @@ const FRAMEWORK = {
       title: 'Populate CBOM from Inventory Data',
       do: 'Transform Phase 1 inventory into enriched CycloneDX records linked to the SBOM.',
       output: 'Populated CycloneDX CBOM',
-      steps: [A('crypto-cbom', 'Build a CycloneDX CBOM')],
+      steps: [
+        L(
+          'cbom',
+          'Learn: CBOM population — six-step transformation (import → enrich → SBOM link → certs → classify → vendor flags)'
+        ),
+        A('crypto-cbom', 'Build a CycloneDX CBOM'),
+      ],
     },
     {
       id: '2.3',
@@ -401,7 +411,7 @@ const FRAMEWORK = {
         L('cbom', 'Learn: secure the CBOM & make it machine-verifiable'),
         L(
           'soc-implementation-pqc',
-          'Learn: protect the CBOM (it is an HNDL shopping list) — SOC monitoring'
+          'Learn: involve the SOC — posture-registry integration and CBOM exfiltration monitoring'
         ),
       ],
     },
