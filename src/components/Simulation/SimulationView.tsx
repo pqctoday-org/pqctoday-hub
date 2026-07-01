@@ -13,7 +13,7 @@
  */
 import { useMemo, useState, useEffect, useRef, useCallback, Suspense } from 'react'
 import { Monitor } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   BUSINESS_TOOL_COMPONENTS,
   WORKSHOP_TOOL_COMPONENTS,
@@ -455,6 +455,20 @@ export function SimulationView() {
   // opens each tool inline for a peek, then returns to the board so its sections
   // tick off in view; the clock advances Q1 2026 → Q1 2035.
   const autoRunPlayer = useSimAutoRunPlayer({ openStep, closeEmbed })
+
+  // Deep link: /simulation?run=exec auto-starts the Executive Overview walkthrough,
+  // then strips the param so a reload doesn't re-trigger it.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const ranExecDeepLink = useRef(false)
+  const startRun = autoRunPlayer.start
+  useEffect(() => {
+    if (ranExecDeepLink.current || searchParams.get('run') !== 'exec') return
+    ranExecDeepLink.current = true
+    startRun({ mode: 'walkthrough' })
+    const next = new URLSearchParams(searchParams)
+    next.delete('run')
+    setSearchParams(next, { replace: true })
+  }, [searchParams, setSearchParams, startRun])
 
   // real hub completion state: generated artifacts + Learn-module progress
   const docs = useModuleStore((s) => s.artifacts.executiveDocuments)
@@ -1292,6 +1306,16 @@ export function SimulationView() {
               className="h-auto rounded-md border border-secondary/50 bg-secondary/15 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-secondary/25 disabled:opacity-40"
             >
               {autoRunPlayer.resumable ? '▶ Resume' : `▶ PLAY ALL ${LIFECYCLE.length}`}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => autoRunPlayer.start({ mode: 'walkthrough' })}
+              disabled={autoRunPlayer.running}
+              title="Play the ~20-minute Executive Overview — a narrated, board-level walk through the whole program (governance, risk, roadmap, verification) with the key documents shown along the way. No technical detail."
+              className="h-auto rounded-md border border-primary/50 bg-primary/15 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-primary/25 disabled:opacity-40"
+            >
+              ▶ Executive overview
             </Button>
             <SimAutoRunOverlay player={autoRunPlayer} />
             {autoRunPlayer.scenarioIntro && (
