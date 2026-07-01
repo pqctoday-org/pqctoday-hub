@@ -2125,7 +2125,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridKem: {
         value: 'draft',
         stage: 'wg-last-call',
-        stageNote: 'WG Last Call — revised I-D needed after WGLC feedback (draft-04); same draft as Pure KEM',
+        stageNote:
+          'WG Last Call — revised I-D needed after WGLC feedback (draft-04); same draft as Pure KEM',
         note: 'Combiner seeds PQ guarantees into the traditional ciphersuite via the exporter secret.',
         refs: [
           {
@@ -2140,7 +2141,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       pureSig: {
         value: 'draft',
         stage: 'wg-last-call',
-        stageNote: 'WG Last Call — revised I-D needed after WGLC feedback (draft-04); same draft as Pure KEM',
+        stageNote:
+          'WG Last Call — revised I-D needed after WGLC feedback (draft-04); same draft as Pure KEM',
         note: 'Cipher suites bundle ML-DSA with the PQ KEM as a paired choice.',
         refs: [
           {
@@ -2155,7 +2157,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridSig: {
         value: 'draft',
         stage: 'wg-last-call',
-        stageNote: 'WG Last Call — revised I-D needed after WGLC feedback (draft-04); same draft as Pure KEM',
+        stageNote:
+          'WG Last Call — revised I-D needed after WGLC feedback (draft-04); same draft as Pure KEM',
         note: 'Hybrid sig path is via session combination; cert-layer composite-sigs lives in the X.509 row.',
         refs: [
           {

@@ -56,7 +56,8 @@ interface Props {
  */
 export function TimelineExecutiveDeadline({ ganttData, regionFilter, regionLabel }: Props) {
   const next = nearestBindingMilestone(ganttData, regionFilter)
-  const scope = regionFilter === 'All' || regionFilter === 'global' ? 'globally' : `in ${regionLabel}`
+  const scope =
+    regionFilter === 'All' || regionFilter === 'global' ? 'globally' : `in ${regionLabel}`
   const yearsOut = next ? next.year - CURRENT_YEAR : null
 
   return (
@@ -68,22 +69,22 @@ export function TimelineExecutiveDeadline({ ganttData, regionFilter, regionLabel
           {next ? (
             <p className="text-muted-foreground leading-relaxed mb-2">
               {scope.charAt(0).toUpperCase() + scope.slice(1)}, the soonest enforceable milestone in
-              this view is <strong className="text-foreground">{next.title}</strong> ({next.country},{' '}
-              <strong className="text-foreground">{next.year}</strong>
+              this view is <strong className="text-foreground">{next.title}</strong> ({next.country}
+              , <strong className="text-foreground">{next.year}</strong>
               {yearsOut !== null && yearsOut <= 0
                 ? ' — now'
                 : yearsOut !== null
                   ? ` — about ${yearsOut} year${yearsOut === 1 ? '' : 's'} out`
                   : ''}
               ). The colored bars below are analyst phases; binding regulations and deadlines carry
-              more weight than advisory guidance — confirm the dates that legally apply to you on the
-              compliance page.
+              more weight than advisory guidance — confirm the dates that legally apply to you on
+              the compliance page.
             </p>
           ) : (
             <p className="text-muted-foreground leading-relaxed mb-2">
-              No upcoming binding regulation or deadline appears in this view. Widen the region filter
-              or confirm the obligations that apply to you on the compliance page — and start planning
-              now, before one lands.
+              No upcoming binding regulation or deadline appears in this view. Widen the region
+              filter or confirm the obligations that apply to you on the compliance page — and start
+              planning now, before one lands.
             </p>
           )}
           <div className="flex flex-wrap gap-2">

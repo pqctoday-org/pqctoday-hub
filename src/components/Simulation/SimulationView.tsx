@@ -822,7 +822,6 @@ export function SimulationView() {
   useEffect(() => {
     if (tourSeen) return
     if (selectedPersona === 'executive' || selectedPersona === 'curious') setGuided(true)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tourSeen, selectedPersona, setGuided])
 
   // Record the program year each objective is FIRST achieved, for the ceremony's on-time
@@ -1066,9 +1065,9 @@ export function SimulationView() {
               Run your PQC assessment to start the simulation
             </h1>
             <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
-              See how much of your business is exposed to the quantum threat today — and the cost and
-              sequence of closing it. The simulation runs on your assessed organization: your sector,
-              size and jurisdiction come from your assessment.
+              See how much of your business is exposed to the quantum threat today — and the cost
+              and sequence of closing it. The simulation runs on your assessed organization: your
+              sector, size and jurisdiction come from your assessment.
             </p>
             <div className="mt-6 flex flex-col items-stretch gap-2.5 sm:flex-row sm:justify-center">
               <Link
