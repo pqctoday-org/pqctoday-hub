@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:pqctoday-cbom-20260624",
+  "serialNumber": "urn:uuid:pqctoday-cbom-20260630",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-06-24T00:00:00.000Z",
+    "timestamp": "2026-06-30T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -7796,7 +7796,7 @@
           "primitive": "Signature"
         }
       },
-      "description": "Supports all finalist NIST PQC algorithms. Specifically supports Dilithium, FALCON, and SPHINCS+ for certificate issuance and signing. Enables inventory of keys/certificates/algorithms including Dilithium certificates. Allows creation of post-quantum CAs and code signing with PQC certificates. Available in EJBCA 8.0 and SignServer 6.0.",
+      "description": "Supports all finalist NIST PQC algorithms. Specifically supports Dilithium, FALCON, and SPHINCS+ for certificate issuance and signing. Enables inventory of keys/certificates/algorithms including Dilithium certificates. Allows creation of post-quantum CAs and code signing with PQC certificates. Available in EJBCA 8.0 and SignServer 6.0 (Dilithium in 9.x; ML-DSA available in EJBCA 9.3+ only via experimental flag — verify version)",
       "externalReferences": [
         {
           "type": "vcs",
@@ -11421,7 +11421,7 @@
           "primitive": "KEM"
         }
       },
-      "description": "Delinea introduced industry-first quantum-safe encryption for Secret Server / Delinea Platform (announced March 2024), leveraging NIST-recommended CRYSTALS-Kyber (Kyber-1024 in place of AES-256 for secret data encryption). The QuantumLock feature (an upgrade of DoubleLock) adds a quantum-resistant layer protecting privileged access to secrets.",
+      "description": "Delinea introduced industry-first quantum-safe encryption for Secret Server / Delinea Platform (announced March 2024), leveraging NIST-recommended CRYSTALS-Kyber (Kyber-1024 in place of AES-256 for secret data encryption). The QuantumLock feature (an upgrade of DoubleLock) adds a quantum-resistant layer protecting privileged access to secrets (Kyber/pre-FIPS 203; NIST ML-KEM compliance not confirmed)",
       "externalReferences": [
         {
           "type": "website",
@@ -11820,7 +11820,7 @@
           "primitive": "KEM"
         }
       },
-      "description": "Splunk Enterprise 10.4 (GA 2026-05-18) adds post-quantum cryptography support in TLS 1.3 connections. Supports ML-KEM (FIPS 203) key-exchange groups: hybrid X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024, and pure MLKEM512/768/1024. Described as the first milestone of phased PQC support (algorithms based on Kyber/Dilithium/SPHINCS+ toward FIPS 203/204/205).",
+      "description": "Splunk Enterprise 10.4 (GA 2026-05-18) adds post-quantum cryptography support in TLS 1.3 connections. Supports ML-KEM (FIPS 203) key-exchange groups: hybrid X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024, and pure MLKEM512/768/1024. Described as the first milestone of phased PQC support (algorithms based on Kyber/Dilithium/SPHINCS+ toward FIPS 203/204/205) (Dilithium referenced; FIPS 204/ML-DSA compliance not confirmed)",
       "externalReferences": [
         {
           "type": "website",
@@ -18160,7 +18160,7 @@
           "primitive": "KEM"
         }
       },
-      "description": "Supports Post Quantum Cryptography algorithms: Crystal Kyber (KEM) and Crystal Dilithium (Signature). Features a dedicated ad-X4 hardware cryptographic accelerator for fast encryption/authentication including PQC acceleration.",
+      "description": "Supports Post Quantum Cryptography algorithms: Crystal Kyber (KEM) and Crystal Dilithium (Signature). Features a dedicated ad-X4 hardware cryptographic accelerator for fast encryption/authentication including PQC acceleration (Kyber/Dilithium per SEALSQ datasheets; NIST FIPS 203/204 compliance not confirmed)",
       "externalReferences": [
         {
           "type": "website",
@@ -22627,7 +22627,7 @@
           "primitive": "Signature"
         }
       },
-      "description": "Khatim PKI Server v5.0 offers experimental support for PQC, specifically the Dilithium algorithm (levels 2, 3, and 5). It supports generating CA certificates, CRLs, OCSP responses, Timestamp responses, End Entity certificates, and PKCS#1 signatures using Dilithium. Note: Windows OS currently does not support verifying these PQC certificates. Future support for PAdES, XAdES, CAdES, JAdES, and ASic is planned.",
+      "description": "Khatim PKI Server v5.0 offers experimental support for PQC, specifically the Dilithium algorithm (levels 2, 3, and 5). It supports generating CA certificates, CRLs, OCSP responses, Timestamp responses, End Entity certificates, and PKCS#1 signatures using Dilithium. Note: Windows OS currently does not support verifying these PQC certificates. Future support for PAdES, XAdES, CAdES, JAdES, and ASic is planned (experimental Dilithium pre-FIPS; not FIPS 204/ML-DSA compliant)",
       "externalReferences": [
         {
           "type": "website",
@@ -23885,7 +23885,7 @@
           "primitive": "Signature"
         }
       },
-      "description": "Khatim PKI Server v5.0 offers experimental support for PQC, specifically the Dilithium algorithm (levels 2, 3, and 5). It supports generating CA certificates, CRLs, OCSP responses, timestamp responses, end-entity certificates, and PKCS#1 signatures using Dilithium. Note: Windows OS currently does not support verifying these PQC certificates. Future support for PAdES, XAdES, CAdES, JAdES, and ASic is planned.",
+      "description": "Khatim PKI Server v5.0 offers experimental support for PQC, specifically the Dilithium algorithm (levels 2, 3, and 5). It supports generating CA certificates, CRLs, OCSP responses, timestamp responses, end-entity certificates, and PKCS#1 signatures using Dilithium. Note: Windows OS currently does not support verifying these PQC certificates. Future support for PAdES, XAdES, CAdES, JAdES, and ASic is planned (experimental Dilithium pre-FIPS; not FIPS 204/ML-DSA compliant)",
       "externalReferences": [
         {
           "type": "website",
@@ -24383,7 +24383,7 @@
           "primitive": "KEM"
         }
       },
-      "description": "Quantum-resistant encryption using Kyber for key exchange combined with AES-256 and zero-knowledge architecture.",
+      "description": "Quantum-resistant encryption using Kyber for key exchange combined with AES-256 and zero-knowledge architecture (Kyber hybrid; NIST ML-KEM/FIPS 203 compliance not confirmed)",
       "externalReferences": [
         {
           "type": "website",
@@ -24470,9 +24470,13 @@
       "name": "QVerse",
       "version": "2025",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "KEM"
+        }
       },
-      "description": "India's first quantum-safe messaging platform. Enterprise messaging, file/audio/video sharing with quantum-safe encryption.",
+      "description": "India's first quantum-safe messaging platform. Enterprise messaging, file/audio/video sharing with quantum-safe encryption (CRYSTALS-Kyber pre-FIPS; not FIPS 203/ML-KEM compliant)",
       "externalReferences": [
         {
           "type": "website",
@@ -26134,7 +26138,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Email Encryption Software"
+          "value": "Email Encryption & Collaboration"
         },
         {
           "name": "pqctoday:layer",
@@ -26440,7 +26444,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Blockchain & DLT"
+          "value": "Blockchain & DLT Protocols"
         },
         {
           "name": "pqctoday:layer",
@@ -26482,7 +26486,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Blockchain & DLT"
+          "value": "Blockchain & DLT Protocols"
         },
         {
           "name": "pqctoday:layer",
@@ -26612,7 +26616,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "VPN & Secure Tunnels"
+          "value": "VPN and IPsec Software"
         },
         {
           "name": "pqctoday:layer",
@@ -26746,7 +26750,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Blockchain & DLT"
+          "value": "Blockchain & DLT Protocols"
         },
         {
           "name": "pqctoday:layer",
@@ -26792,7 +26796,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "VPN & Secure Tunnels"
+          "value": "VPN and IPsec Software"
         },
         {
           "name": "pqctoday:layer",
@@ -27132,7 +27136,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "VPN & Secure Tunnels"
+          "value": "VPN and IPsec Software"
         },
         {
           "name": "pqctoday:layer",
@@ -27216,7 +27220,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Blockchain & DLT"
+          "value": "Blockchain & DLT Protocols"
         },
         {
           "name": "pqctoday:layer",
@@ -27262,7 +27266,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Blockchain & DLT"
+          "value": "Blockchain & DLT Protocols"
         },
         {
           "name": "pqctoday:layer",
@@ -27816,7 +27820,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Email Encryption Software"
+          "value": "Email Encryption & Collaboration"
         },
         {
           "name": "pqctoday:layer",
@@ -27900,7 +27904,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Email Encryption Software"
+          "value": "Email Encryption & Collaboration"
         },
         {
           "name": "pqctoday:layer",
@@ -28374,7 +28378,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Email Encryption Software"
+          "value": "Email Encryption & Collaboration"
         },
         {
           "name": "pqctoday:layer",
@@ -29038,9 +29042,13 @@
       "name": "Genua Quantum-Resistant VPN",
       "version": "2025",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "KEM"
+        }
       },
-      "description": "BSI-approved quantum-resistant VPN gateway and client. Bundesdruckerei Group.",
+      "description": "BSI-approved quantum-resistant VPN gateway and client. Bundesdruckerei Group (Kyber768 pre-FIPS; not FIPS 203/ML-KEM; BSI-approved genuscreen 8.4)",
       "externalReferences": [
         {
           "type": "website",
@@ -29054,7 +29062,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "VPN & Secure Tunnels"
+          "value": "VPN and IPsec Software"
         },
         {
           "name": "pqctoday:layer",
@@ -29206,9 +29214,13 @@
       "name": "PowerDNS PQC DNSSEC",
       "version": "2024",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "Signature"
+        }
       },
-      "description": "Authoritative DNS server with experimental PQC DNSSEC. Field-tested via RIPE ATLAS.",
+      "description": "Authoritative DNS server with experimental PQC DNSSEC. Field-tested via RIPE ATLAS (Dilithium in DNSSEC context; verify FIPS 204/ML-DSA compliance)",
       "externalReferences": [
         {
           "type": "website",
@@ -35018,7 +35030,7 @@
           "primitive": "KEM"
         }
       },
-      "description": "IVPN implements quantum-resistant VPN connections via a hybrid KEM approach layered over WireGuard. Uses Kyber-1024 and Classic McEliece as post-quantum KEMs combined with X25519 via WireGuard PresharedKey rotation. Documented in official help centre.",
+      "description": "IVPN implements quantum-resistant VPN connections via a hybrid KEM approach layered over WireGuard. Uses Kyber-1024 and Classic McEliece as post-quantum KEMs combined with X25519 via WireGuard PresharedKey rotation. Documented in official help centre (sntrup761 + Kyber pre-FIPS; not FIPS 203/ML-KEM compliant)",
       "externalReferences": [
         {
           "type": "website",
@@ -41300,6 +41312,210 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "70"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "86362eaf31a12efa",
+      "name": "cryptography (pyca/cryptography)",
+      "version": "49.0.0",
+      "manufacturer": {
+        "name": "Python Cryptographic Authority (PyCA)"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "KEM"
+        }
+      },
+      "description": "Python cryptography library with ML-KEM (FIPS 203) and ML-DSA (FIPS 204) support added across v47–v49 (Apr–Jun 2026). v47.0.0 added ML-KEM/ML-DSA for AWS-LC and BoringSSL backends; v48.0.0 extended to OpenSSL 3.5.0+ making PQC available in standard pip wheels; v49.0.0 added ML-DSA X.509 certificate/CSR/CRL signing. SLH-DSA not yet present.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/pyca/cryptography"
+        },
+        {
+          "type": "website",
+          "url": "https://cryptography.io/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "python-cryptography"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "85"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "343409c3488b4dd8",
+      "name": "Microsoft 365",
+      "version": "Current (SaaS)",
+      "manufacturer": {
+        "name": "Microsoft"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "KEM"
+        }
+      },
+      "description": "Microsoft 365 (Exchange Online, Outlook, Teams) is on the Microsoft Quantum Safe Program roadmap. SymCrypt (underlying crypto library) includes ML-KEM/ML-DSA since 2025, but no end-user-facing PQC feature (ML-KEM TLS for Exchange Online, PQC S/MIME) has shipped. Timeline: early adoption by 2029, full completion by 2033.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.microsoft.com/en-us/microsoft-365"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "microsoft-365"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Email Encryption & Collaboration"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Applications"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "66b9eb9b2ee57da8",
+      "name": "Python ssl module (CPython stdlib)",
+      "version": "3.14.x (stable, no PQC); 3.15 scheduled 2026-10-01",
+      "manufacturer": {
+        "name": "Python Software Foundation (CPython)"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Python 3.15 (stable release date 2026-10-01 per PEP 790) adds ssl.SSLContext.set_groups(), get_groups(), and SSLSocket.group() supporting post-quantum and hybrid TLS groups including X25519MLKEM768 when OpenSSL 3.5+ is the backend. No released stable version (3.13 or 3.14) supports PQC. Distinct from pyca/cryptography.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/python/cpython"
+        },
+        {
+          "type": "website",
+          "url": "https://docs.python.org/3.15/library/ssl.html"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "python-ssl-module"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "566e338503e7aae1",
+      "name": "Prometheus",
+      "version": "3.12.0",
+      "manufacturer": {
+        "name": "Prometheus Authors (CNCF)"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "KEM"
+        }
+      },
+      "description": "Prometheus 3.12.0 (2026-05-28) is built with Go 1.25.7. Go 1.24 made X25519MLKEM768 (ML-KEM-768 + X25519 hybrid) the default TLS key exchange when CurvePreferences is nil — no Prometheus-specific configuration required. Prometheus HTTPS server and any TLS scrape connections automatically negotiate ML-KEM-768 hybrid with compatible clients. PQC signatures (ML-DSA) are not implemented at this layer.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/prometheus/prometheus"
+        },
+        {
+          "type": "website",
+          "url": "https://prometheus.io/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "prometheus"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "DevOps and Observability"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Applications"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
         }
       ]
     }
