@@ -23,6 +23,14 @@ export interface LearningPersona {
   /** Interleaved path items: module stops + quiz checkpoints */
   pathItems: PathItem[]
   estimatedMinutes: number
+  /**
+   * Core module IDs (a subset of `recommendedPath`, excluding the `quiz`) that make
+   * up the short "Essentials" track. Completing these is what unlocks the capstone
+   * (A1); the remaining recommendedPath modules stay available as optional mastery.
+   */
+  essentials: string[]
+  /** Sum of the essentials' module durations, in minutes (guard-tested vs manifests). */
+  essentialsMinutes: number
   /** Persona-specific quiz card description shown in the learning path */
   quizDescription: string
   /** Quiz categories pre-selected for this persona (matches QuizCategory type) */
@@ -119,6 +127,16 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     // busy exec reaches the capstone after the governance core (~10h) instead of
     // ~14h; those modules remain available via Browse for anyone who wants them.
     estimatedMinutes: 555,
+    essentials: [
+      'pqc-101',
+      'exec-quantum-impact',
+      'quantum-threats',
+      'pqc-risk-management',
+      'pqc-business-case',
+      'pqc-governance',
+      'compliance-strategy',
+    ],
+    essentialsMinutes: 200,
     quizDescription:
       'Test your knowledge on quantum threats, risk management, data asset classification, business cases, governance, compliance strategy, cryptographic management modernization, migration planning, vendor risk, and identity & access management.',
     quizCategories: [
@@ -281,6 +299,17 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'quiz' },
     ],
     estimatedMinutes: 1635,
+    essentials: [
+      'pqc-101',
+      'dev-quantum-impact',
+      'pqc-candidates',
+      'tls-basics',
+      'hybrid-crypto',
+      'crypto-agility',
+      'pki-workshop',
+      'crypto-dev-apis',
+    ],
+    essentialsMinutes: 325,
     quizDescription:
       'Test your knowledge on quantum threats, TLS, VPN/SSH, MLS group messaging, PKI enrollment, cryptographic APIs, hybrid cryptography, crypto agility, PQC testing & validation, protocol integration, cryptographic management modernization, SLH-DSA, and stateful hash signatures.',
     quizCategories: [
@@ -459,6 +488,18 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'quiz' },
     ],
     estimatedMinutes: 1725,
+    essentials: [
+      'pqc-101',
+      'arch-quantum-impact',
+      'pqc-candidates',
+      'crypto-agility',
+      'crypto-mgmt-modernization',
+      'hybrid-crypto',
+      'kms-pqc',
+      'hsm-pqc',
+      'pki-workshop',
+    ],
+    essentialsMinutes: 380,
     quizDescription:
       'Test your knowledge on cryptographic foundations, architecture strategy (crypto agility, crypto management modernization, hybrid crypto, QKD), infrastructure protocols (TLS, network security, MLS group messaging, KMS, HSMs, stateful signatures, SLH-DSA, PKI, Merkle tree certs), PQC testing & validation, identity and credentials, API security, code signing, and IoT/OT security.',
     quizCategories: [
@@ -715,6 +756,18 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'quiz' },
     ],
     estimatedMinutes: 2765,
+    essentials: [
+      'pqc-101',
+      'research-quantum-impact',
+      'pqc-candidates',
+      'entropy-randomness',
+      'hybrid-crypto',
+      'crypto-agility',
+      'standards-bodies',
+      'tls-basics',
+      'pki-workshop',
+    ],
+    essentialsMinutes: 325,
     quizDescription:
       'Full assessment across all PQC categories — algorithms, protocols, standards, compliance, industries, and applications.',
     quizCategories: [], // empty = all categories shown (full coverage for researcher)
@@ -848,6 +901,18 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'quiz' },
     ],
     estimatedMinutes: 1645,
+    essentials: [
+      'pqc-101',
+      'ops-quantum-impact',
+      'tls-basics',
+      'vpn-ssh-pqc',
+      'pki-workshop',
+      'crypto-agility',
+      'migration-program',
+      'kms-pqc',
+      'hsm-pqc',
+    ],
+    essentialsMinutes: 360,
     quizDescription:
       'Test your knowledge on TLS operations, VPN/SSH, hybrid cryptography, web gateways, PQC testing & validation, PKI certificate management, KMS and HSM operations, stateful hash signatures, crypto management modernization, standards bodies, energy/utilities, and infrastructure migration planning.',
     quizCategories: [
@@ -978,6 +1043,15 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'quiz' },
     ],
     estimatedMinutes: 815,
+    essentials: [
+      'pqc-101',
+      'pqc-candidates',
+      'quantum-threats',
+      'pqc-risk-management',
+      'compliance-strategy',
+      'tls-basics',
+    ],
+    essentialsMinutes: 205,
     quizDescription:
       'Test your understanding of quantum threats, PQC algorithm families, risk basics, compliance timelines, migration concepts, practical security foundations, and real-world digital identity applications.',
     quizCategories: [

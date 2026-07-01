@@ -45,6 +45,34 @@ describe('learningPersonas — path consistency', () => {
   })
 })
 
+describe('learningPersonas — essentials (A1)', () => {
+  const personaIds = Object.keys(PERSONAS) as (keyof typeof PERSONAS)[]
+
+  it.each(personaIds)(
+    '%s: essentials is a non-empty, duplicate-free subset of recommendedPath, excluding quiz',
+    (id) => {
+      const persona = PERSONAS[id]
+      expect(persona.essentials.length).toBeGreaterThan(0)
+      expect(persona.essentials.length).toBeLessThanOrEqual(10) // sanity: "essentials" stays short
+      expect(persona.essentials).not.toContain('quiz') // the quiz IS the capstone, not an essential
+      expect(new Set(persona.essentials).size).toBe(persona.essentials.length) // no dupes
+      const recommended = new Set(persona.recommendedPath)
+      expect(persona.essentials.filter((m) => !recommended.has(m))).toEqual([])
+    }
+  )
+
+  it.each(personaIds)('%s: essentialsMinutes equals the sum of its essentials durations', (id) => {
+    const persona = PERSONAS[id]
+    const summed = persona.essentials.reduce((t, m) => t + durationMinutes(m), 0)
+    expect(persona.essentialsMinutes).toBe(summed)
+  })
+
+  it.each(personaIds)('%s: the essentials track is shorter than the full track', (id) => {
+    const persona = PERSONAS[id]
+    expect(persona.essentialsMinutes).toBeLessThan(persona.estimatedMinutes)
+  })
+})
+
 describe('inferPersonaFromAssessment — role targeting', () => {
   type Assessment = Parameters<typeof inferPersonaFromAssessment>[0]
   const complete = (over: Partial<Assessment> = {}): Assessment => ({
