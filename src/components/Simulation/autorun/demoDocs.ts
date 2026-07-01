@@ -846,7 +846,7 @@ function migrationRoadmap(sector: DemoSector): DemoDoc {
       '| Root CA transition | 2028 | New root, 20-yr lifetime |',
       '',
       '## Milestone Gates',
-      '- G0: Charter, budget & QRPM approved; G1: Scoping done, Priority-A ≥90%, classical findings reported, continuous discovery live; G2: CBOM live, freshness governance enforced; G3: CBOM scored; QRA delivered; G4: Roadmap approved; Year 1 plan resourced; G5: Pilots validated; Tier-1 rollout approved',
+      '- G0: Charter, budget & QRPM approved; G1: Scoping done, Priority-A ≥90%, classical findings reported, continuous discovery live; G2: CBOM live, freshness governance enforced; G3: CBOM scored; QRA delivered; G4: Roadmap approved; Year 1 plan resourced; G5: Pilots validated; Tier-1 rollout approved; G6: Infrastructure upgrades scheduled; vendor commitments tracked',
       '',
       '## Mitigation Gateway (CSWP.39 §4.6)',
       '- Classical key material decommissioned per SP 800-88 after dual-stack validation.'

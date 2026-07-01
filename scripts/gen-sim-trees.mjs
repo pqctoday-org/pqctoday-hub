@@ -209,7 +209,7 @@ const GATES = {
     id: 'G5',
     criterion: 'Pilots validated; performance baselines established; Tier-1 rollout approved',
   },
-  p6: { id: 'G6', criterion: 'Infrastructure PQC-ready; performance validated' },
+  p6: { id: 'G6', criterion: 'Infrastructure upgrades scheduled; vendor commitments tracked' },
   // p7 (Vendor & Supply Chain) is a CONTINUOUS phase in the framework
   // (frameworkPhases.ts: cadence 'continuous', no gate) — it has no one-time gate.
   // The earlier invented 'G7' contradicted the framework (audit fidelity gap, Q3);
@@ -636,6 +636,7 @@ const FRAMEWORK = {
         L('hsm-pqc', 'Learn: HSM & PQC Operations'),
         L('kms-pqc', 'Learn: KMS & PQC'),
         W('hsm-capacity', 'Practice: HSM capacity calculator'),
+        W('envelope-encrypt', 'Practice: PQC key-wrapping — bridge for HSMs not yet upgradeable'),
       ],
     },
     {

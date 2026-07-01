@@ -8,7 +8,7 @@ const TREE: PhaseTree = {
   phase: 'p6',
   gate: {
     id: 'G6',
-    criterion: 'Infrastructure PQC-ready; performance validated',
+    criterion: 'Infrastructure upgrades scheduled; vendor commitments tracked',
   },
   generated: '06302026',
   source: 'Applied Quantum PQC Migration Framework v2.1 (Marin Ivezić)',
@@ -79,6 +79,12 @@ const TREE: PhaseTree = {
               label: 'Practice: HSM capacity calculator',
               to: '/playground/hsm-capacity',
               workshopId: 'hsm-capacity',
+            },
+            {
+              kind: 'workshop',
+              label: 'Practice: PQC key-wrapping — bridge for HSMs not yet upgradeable',
+              to: '/playground/envelope-encrypt',
+              workshopId: 'envelope-encrypt',
             },
           ],
         },

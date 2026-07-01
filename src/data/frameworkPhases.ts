@@ -323,8 +323,8 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     parallelWith: ['p5'],
     gate: {
       id: 'G6',
-      criterion: 'Infrastructure PQC-ready; performance validated',
-      authority: 'Security Engineers (PQC)',
+      criterion: 'Infrastructure upgrades scheduled; vendor commitments tracked',
+      authority: 'QRPM',
     },
     cswp39Zones: ['management-tools'],
     cswp39Steps: ['implement'],
