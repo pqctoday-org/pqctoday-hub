@@ -92,7 +92,7 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
   'iam-pqc': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'secure-boot-pqc': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
   'os-pqc': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
-  'soc-implementation-pqc': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
+  'soc-implementation-pqc': { phasesServed: ['p2', 'p6'], legs: ['learn', 'reference'] },
   'pqc-grc': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'skills-team-structure': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   quiz: { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
