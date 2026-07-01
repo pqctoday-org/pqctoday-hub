@@ -62,6 +62,7 @@ import {
   type VerbId,
 } from './cryptoLabTaxonomy'
 import { CommandPalette } from './CommandPalette'
+import { ExecutiveRedirectBanner } from '../common/ExecutiveRedirectBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useSandboxStore, isSandboxAvailable } from '@/store/useSandboxStore'
@@ -1309,6 +1310,18 @@ export const PlaygroundWorkshop = () => {
     // Overview
     mainBody = (
       <section>
+        {role === 'executive' && (
+          <ExecutiveRedirectBanner
+            className="mb-6"
+            title="Crypto Lab is a hands-on engineering workbench."
+            subtitle="Crypto-agility — being able to swap algorithms on demand — is a board-level cost and risk decision, not just an implementation detail. You can explore freely below, but for executive-level PQC context you may prefer:"
+            ctas={[
+              { label: 'Compliance landscape →', to: '/compliance' },
+              { label: 'Migration framework →', to: '/migrate' },
+              { label: 'Algorithm comparison →', to: '/algorithms' },
+            ]}
+          />
+        )}
         <h1 className="text-[26px] font-extrabold tracking-tight text-foreground">
           Run real cryptography in your browser
         </h1>
