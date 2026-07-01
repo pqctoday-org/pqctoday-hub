@@ -118,7 +118,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     // emv / ai / aerospace) were removed from the mandatory executive path so a
     // busy exec reaches the capstone after the governance core (~10h) instead of
     // ~14h; those modules remain available via Browse for anyone who wants them.
-    estimatedMinutes: 650,
+    estimatedMinutes: 555,
     quizDescription:
       'Test your knowledge on quantum threats, risk management, data asset classification, business cases, governance, compliance strategy, cryptographic management modernization, migration planning, vendor risk, and identity & access management.',
     quizCategories: [
@@ -165,6 +165,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'pki-enrollment-protocols',
       'crypto-dev-apis',
       'crypto-mgmt-modernization',
+      'cbom',
       'merkle-tree-certs',
       'slh-dsa',
       'stateful-signatures',
@@ -279,7 +280,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1510,
+    estimatedMinutes: 1635,
     quizDescription:
       'Test your knowledge on quantum threats, TLS, VPN/SSH, MLS group messaging, PKI enrollment, cryptographic APIs, hybrid cryptography, crypto agility, PQC testing & validation, protocol integration, cryptographic management modernization, SLH-DSA, and stateful hash signatures.',
     quizCategories: [
@@ -330,6 +331,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'pqc-candidates',
       'crypto-agility',
       'crypto-mgmt-modernization',
+      'cbom',
       'hybrid-crypto',
       'qkd',
       'tls-basics',
@@ -456,7 +458,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1600,
+    estimatedMinutes: 1725,
     quizDescription:
       'Test your knowledge on cryptographic foundations, architecture strategy (crypto agility, crypto management modernization, hybrid crypto, QKD), infrastructure protocols (TLS, network security, MLS group messaging, KMS, HSMs, stateful signatures, SLH-DSA, PKI, Merkle tree certs), PQC testing & validation, identity and credentials, API security, code signing, and IoT/OT security.',
     quizCategories: [
@@ -534,14 +536,14 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'merkle-tree-certs',
       'confidential-computing',
       'crypto-dev-apis',
-      'digital-assets',
-      '5g-security',
       'digital-id',
       'iam-pqc',
       'code-signing',
       'platform-eng-pqc',
       'iot-ot-pqc',
       'ai-security-pqc',
+      'digital-assets',
+      '5g-security',
       'emv-payment-pqc',
       'energy-utilities-pqc',
       'healthcare-pqc',
@@ -712,7 +714,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2640,
+    estimatedMinutes: 2765,
     quizDescription:
       'Full assessment across all PQC categories — algorithms, protocols, standards, compliance, industries, and applications.',
     quizCategories: [], // empty = all categories shown (full coverage for researcher)
@@ -748,6 +750,8 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'crypto-agility',
       'migration-program',
       'crypto-mgmt-modernization',
+      'cbom',
+      'verification-closure',
       'platform-eng-pqc',
       'iot-ot-pqc',
       'energy-utilities-pqc',
@@ -843,7 +847,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1490,
+    estimatedMinutes: 1645,
     quizDescription:
       'Test your knowledge on TLS operations, VPN/SSH, hybrid cryptography, web gateways, PQC testing & validation, PKI certificate management, KMS and HSM operations, stateful hash signatures, crypto management modernization, standards bodies, energy/utilities, and infrastructure migration planning.',
     quizCategories: [
@@ -1033,6 +1037,22 @@ export function inferPersonaFromAssessment(assessment: {
     infraCount <= 2
   ) {
     return 'executive'
+  }
+
+  // Developer: hands-on implementer actively doing the migration. Checked BEFORE the
+  // infra-count-driven ops/architect branches so a small, hands-on team on an
+  // infra-heavy stack (infraCount >= 3) — or with a partially-abstracted crypto layer —
+  // is not misrouted to ops/architect. `teamSize` is the IC-vs-org-scale discriminator
+  // (previously part of the signature but never read); '1-10' skews to hands-on ICs who
+  // write and deploy the code themselves. Larger teams keep their ops/architect routing
+  // below. `fully-abstracted` is excluded here because it is the strongest architect
+  // (design-first) signal.
+  if (
+    (assessment.migrationStatus === 'started' || assessment.migrationStatus === 'planning') &&
+    assessment.teamSize === '1-10' &&
+    assessment.cryptoAgility !== 'fully-abstracted'
+  ) {
+    return 'developer'
   }
 
   // Ops: deep infrastructure involvement + actively migrating + hands-on (not fully abstracted)
