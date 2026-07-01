@@ -74,18 +74,19 @@ export interface TourConcept {
   id: TourConceptId
   title: string
   /** Where the plain-language body comes from; 'inline' bodies are authored here. */
-  source: 'glossary' | 'guidedDef' | 'inline'
-  /** Resolver key for glossary / GUIDED_DEFS lookups (source !== 'inline'). Aligned when SimConceptPeek is built. */
+  source: 'guidedDef' | 'inline'
+  /** Title keyword to resolve the GUIDED_DEFS entry (source === 'guidedDef'), matched
+   *  case-insensitively — reuses the tour's existing plain-English definitions (no drift). */
   key?: string
   /** Authored body (source === 'inline'). Fact-free: no dates/numbers (those come from live components). */
   inline?: string
 }
 
-/** Concept content, reusing existing definitions where they exist (no drift). */
+/** Concept content, reusing the existing plain-English GUIDED_DEFS where they exist (no drift). */
 export const EXEC_TOUR_CONCEPTS: Record<TourConceptId, TourConcept> = {
-  hndl: { id: 'hndl', title: 'Harvest now, decrypt later', source: 'glossary', key: 'HNDL' },
-  mosca: { id: 'mosca', title: "Mosca's inequality", source: 'guidedDef', key: 'mosca' },
-  hybrid: { id: 'hybrid', title: 'Hybrid vs pure', source: 'glossary', key: 'hybrid' },
+  hndl: { id: 'hndl', title: 'Harvest now, decrypt later', source: 'guidedDef', key: 'HNDL' },
+  mosca: { id: 'mosca', title: 'Mosca’s inequality', source: 'guidedDef', key: 'Mosca' },
+  hybrid: { id: 'hybrid', title: 'Hybrid vs pure', source: 'guidedDef', key: 'hybrid' },
   'two-track': {
     id: 'two-track',
     title: 'Two tracks: confidentiality and integrity',

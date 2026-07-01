@@ -36,6 +36,13 @@ import { SIM_ALGORITHM_TABS } from './algorithmTabs'
 import { SIM_REFERENCE_EMBEDS } from './referenceEmbeds'
 import { useSimAutoRunPlayer } from './autorun/useSimAutoRunPlayer'
 import { SimAutoRunOverlay } from './autorun/SimAutoRunOverlay'
+import { SimConceptPeek } from './autorun/SimConceptPeek'
+import {
+  EXEC_TOUR_STAGES,
+  EXEC_TOUR_OPENING_CONCEPTS,
+  EXEC_TOUR_CONCEPTS,
+  type TourConcept,
+} from './autorun/execTourConfig'
 import { SimPassIntroModal } from './autorun/SimPassIntroModal'
 import { SimPhaseIntroModal } from './autorun/SimPhaseIntroModal'
 import { SimScenarioIntroCard } from './autorun/SimScenarioIntroCard'
@@ -476,6 +483,20 @@ export function SimulationView() {
   // and all interactive play fall through unchanged (mode is never 'walkthrough' there).
   const suppressWinUI =
     autoRunPlayer.mode === 'walkthrough' && (autoRunPlayer.running || autoRunPlayer.done)
+
+  // Concept peeks (non-blocking) surfaced during the walkthrough, keyed to the current
+  // phase: HNDL + Mosca at the open (p0), the two-track model at the roadmap, hybrid at
+  // pilots. Empty outside a running walkthrough.
+  const walkthroughConcepts = useMemo<TourConcept[]>(() => {
+    if (autoRunPlayer.mode !== 'walkthrough' || !autoRunPlayer.running) return []
+    const phase = autoRunPlayer.phaseFocus?.phase
+    if (!phase) return []
+    const ids: TourConcept['id'][] = []
+    if (phase === EXEC_TOUR_STAGES[0]?.phase) ids.push(...EXEC_TOUR_OPENING_CONCEPTS)
+    const stage = EXEC_TOUR_STAGES.find((s) => s.phase === phase)
+    if (stage?.conceptCard) ids.push(stage.conceptCard)
+    return ids.map((id) => EXEC_TOUR_CONCEPTS[id])
+  }, [autoRunPlayer.mode, autoRunPlayer.running, autoRunPlayer.phaseFocus?.phase])
 
   // real hub completion state: generated artifacts + Learn-module progress
   const docs = useModuleStore((s) => s.artifacts.executiveDocuments)
@@ -1325,6 +1346,7 @@ export function SimulationView() {
               ▶ Executive overview
             </Button>
             <SimAutoRunOverlay player={autoRunPlayer} />
+            <SimConceptPeek concepts={walkthroughConcepts} />
             {autoRunPlayer.scenarioIntro && (
               <SimScenarioIntroCard
                 scenario={autoRunPlayer.scenarioIntro}
