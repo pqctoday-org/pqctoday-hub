@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { FC } from 'react'
-import { BookOpen, FileText, Search, Fingerprint, Languages, ShieldCheck } from 'lucide-react'
+import {
+  BookOpen,
+  FileText,
+  Search,
+  Fingerprint,
+  Languages,
+  ShieldCheck,
+  Database,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface Props {
@@ -39,6 +47,7 @@ const SECTIONS = [
   { id: 'cbom-why', label: 'Why a CBOM' },
   { id: 'cbom-formats', label: 'Formats' },
   { id: 'cbom-discovery', label: 'Discovery' },
+  { id: 'cbom-estate', label: 'Estate fields' },
   { id: 'cbom-context', label: 'Key identity' },
   { id: 'cbom-codify', label: 'Codification' },
   { id: 'cbom-verify', label: 'Verify' },
@@ -134,6 +143,81 @@ export const CbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => (
       >
         Try the Source Coverage Mapper →
       </Button>
+    </Section>
+
+    <Section id="cbom-estate" icon={Database} title="Estate mapping — what to record per instance">
+      <p>
+        <Badge kind="view" />
+        Framework v2.1 Activity 1.3 defines <strong>13 mandatory fields</strong> per cryptographic
+        instance. Recording them consistently is what turns a raw discovery export into a queryable,
+        risk-rankable backlog that Phase 3 can score and Phase 4 can sequence.
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {[
+          {
+            f: 'System / Asset ID',
+            d: 'Linked to your CMDB — the anchor that ties the crypto instance to an owned, managed asset.',
+          },
+          {
+            f: 'Cryptographic Function',
+            d: 'Key exchange, signing, encryption at rest, MAC, hashing — what the crypto is doing.',
+          },
+          {
+            f: 'Algorithm',
+            d: 'Fully qualified: RSA-2048, ECDHE-P256, AES-256-GCM. Avoid shorthand (e.g. "RSA") — the key size determines vulnerability.',
+          },
+          {
+            f: 'Key Size (bits)',
+            d: 'Critical for quantum-vulnerability classification; a 1024-bit RSA key is more urgent than a 4096-bit one.',
+          },
+          {
+            f: 'Protocol',
+            d: 'TLS 1.2 / 1.3, SSH 2.0, IPsec IKEv2, S/MIME — the transport context.',
+          },
+          {
+            f: 'Library / Implementation',
+            d: 'OpenSSL 3.0.12, BoringSSL, Java 17 JCA — the version determines upgrade path and CVE exposure.',
+          },
+          {
+            f: 'Certificate Details',
+            d: 'Issuer, validity period, chain depth. Long-lived roots (20-year) are a TNFL risk; expiry gaps are a classical risk.',
+          },
+          {
+            f: 'Key Lifetime',
+            d: 'Ephemeral (per-session), short (1 year), long-lived (20-year root). Drives both HNDL and TNFL risk scoring.',
+          },
+          {
+            f: 'Data Sensitivity',
+            d: 'Confidential / Restricted / Public — feeds the HNDL urgency calculation in Phase 3.',
+          },
+          {
+            f: 'Quantum Vulnerability',
+            d: 'Shor-vulnerable (RSA, ECC, DH), Grover-weakened (symmetric, hashes), or neither. Set by algorithm + key size.',
+          },
+          {
+            f: 'Owner',
+            d: 'The team or person accountable for migrating this instance. No owner = no migration action.',
+          },
+          {
+            f: 'Vendor Dependency',
+            d: 'Whether migration requires a vendor to ship a PQC-capable version. Flags Phase 7 vendor-orchestration work.',
+          },
+          {
+            f: 'Control Posture',
+            d: 'Full (control both endpoints), Partial (one endpoint only), or None (third-party managed). Determines migration feasibility.',
+          },
+        ].map((row, i) => (
+          <div key={i} className="bg-muted/50 rounded-lg p-2.5 border border-border">
+            <div className="text-[11px] font-bold text-primary mb-0.5">{row.f}</div>
+            <p className="text-[10px] text-muted-foreground leading-relaxed">{row.d}</p>
+          </div>
+        ))}
+      </div>
+      <p className="text-xs text-muted-foreground">
+        <strong>Minimum Viable CBOM shortcut:</strong> if full capture is too slow, start with
+        Algorithm + Key Size + Owner + Control Posture. Those four fields alone let you produce a
+        prioritized remediation queue and unblock Phase 3 scoring for your highest-risk systems.
+      </p>
     </Section>
 
     <Section

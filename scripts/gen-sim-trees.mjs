@@ -193,7 +193,11 @@ const INDICATORS = {
 
 const GATES = {
   p0: { id: 'G0', criterion: 'Charter, budget & QRPM approved' },
-  p1: { id: 'G1', criterion: '≥70% Tier-1 systems inventoried' },
+  p1: {
+    id: 'G1',
+    criterion:
+      'Scoping doc done; Priority-A inventory ≥90%; classical findings reported; continuous discovery live',
+  },
   p2: { id: 'G2', criterion: 'Machine-verifiable CBOM published' },
   p3: { id: 'G3', criterion: 'QRA approved' },
   p4: { id: 'G4', criterion: 'Multi-year roadmap & PMO established' },
@@ -302,10 +306,10 @@ const FRAMEWORK = {
       id: '1.1',
       level: 2,
       title: 'Establish Three Parallel Inventory Tracks',
-      do: 'Stand up Track A (crypto usage), Track B (data classification), Track C (systems/assets).',
+      do: 'Stand up Track A (crypto usage), Track B (data classification), Track C (systems/assets — CMDB, ITAM, BIA cross-reference; detailed methodology in 1.4–1.5).',
       output: null,
       steps: [
-        L('crypto-mgmt-modernization', 'Learn: Cryptographic Management Modernization'),
+        L('crypto-mgmt-modernization', 'Learn: Track A — cryptographic management modernization'),
         L(
           'data-asset-sensitivity',
           'Learn: Track B — data classification & confidentiality horizons'
@@ -354,7 +358,7 @@ const FRAMEWORK = {
       output: 'Continuous discovery operating model',
       steps: [
         A('crypto-vulnerability-watch', 'Set up the Crypto-Vulnerability Watch'),
-        L('pqc-testing-validation', 'Learn: continuous discovery & validation'),
+        L('cbom', 'Learn: CBOM-driven continuous discovery'),
       ],
     },
   ],
@@ -864,6 +868,10 @@ const PITFALLS = {
     {
       title: 'Trust a single discovery tool',
       why: 'No one tool covers all five discovery layers; multiple categories are required.',
+    },
+    {
+      title: 'Rely on the CMDB alone for asset discovery',
+      why: 'The CMDB is rarely complete; it systematically undercounts cloud resources, shadow IT, OT devices, and vendor-managed systems. Integrate the eleven asset-discovery sources in Activity 1.4 or the CMDB gap becomes a migration gap.',
     },
     {
       title: 'Treat discovery as one-time',

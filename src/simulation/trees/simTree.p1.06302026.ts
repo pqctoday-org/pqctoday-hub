@@ -8,7 +8,8 @@ const TREE: PhaseTree = {
   phase: 'p1',
   gate: {
     id: 'G1',
-    criterion: '≥70% Tier-1 systems inventoried',
+    criterion:
+      'Scoping doc done; Priority-A inventory ≥90%; classical findings reported; continuous discovery live',
   },
   generated: '06302026',
   source: 'Applied Quantum PQC Migration Framework v2.1 (Marin Ivezić)',
@@ -48,11 +49,11 @@ const TREE: PhaseTree = {
         {
           id: '1.1',
           title: 'Establish Three Parallel Inventory Tracks',
-          do: 'Stand up Track A (crypto usage), Track B (data classification), Track C (systems/assets).',
+          do: 'Stand up Track A (crypto usage), Track B (data classification), Track C (systems/assets — CMDB, ITAM, BIA cross-reference; detailed methodology in 1.4–1.5).',
           steps: [
             {
               kind: 'learn',
-              label: 'Learn: Cryptographic Management Modernization',
+              label: 'Learn: Track A — cryptographic management modernization',
               to: '/learn/crypto-mgmt-modernization',
               moduleId: 'crypto-mgmt-modernization',
             },
@@ -145,9 +146,9 @@ const TREE: PhaseTree = {
             },
             {
               kind: 'learn',
-              label: 'Learn: continuous discovery & validation',
-              to: '/learn/pqc-testing-validation',
-              moduleId: 'pqc-testing-validation',
+              label: 'Learn: CBOM-driven continuous discovery',
+              to: '/learn/cbom',
+              moduleId: 'cbom',
             },
           ],
         },
@@ -174,6 +175,10 @@ const TREE: PhaseTree = {
     {
       title: 'Trust a single discovery tool',
       why: 'No one tool covers all five discovery layers; multiple categories are required.',
+    },
+    {
+      title: 'Rely on the CMDB alone for asset discovery',
+      why: 'The CMDB is rarely complete; it systematically undercounts cloud resources, shadow IT, OT devices, and vendor-managed systems. Integrate the eleven asset-discovery sources in Activity 1.4 or the CMDB gap becomes a migration gap.',
     },
     {
       title: 'Treat discovery as one-time',
