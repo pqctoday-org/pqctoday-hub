@@ -147,7 +147,9 @@ export interface AlgorithmDefaults {
 
 export const ALGORITHM_PERSONA_DEFAULTS: Record<PersonaId, AlgorithmDefaults> = {
   executive: {
-    tab: 'detailed',
+    // Business-relevant default: the classical→PQC mapping (Transition Guide),
+    // not the developer parameter comparison. Specialist tabs are one click away.
+    tab: 'transition',
     filters: { status: 'Certified' },
     openSections: ['sizes'],
     highlight: ['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s', 'Falcon-512'],
