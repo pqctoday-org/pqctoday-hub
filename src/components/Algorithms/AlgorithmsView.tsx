@@ -277,7 +277,9 @@ export function AlgorithmsView() {
               <div className="flex items-start gap-3">
                 <Shield size={18} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
                 <div className="flex-1 text-sm">
-                  <p className="font-semibold text-foreground mb-1">What you&apos;re required to adopt</p>
+                  <p className="font-semibold text-foreground mb-1">
+                    What you&apos;re required to adopt
+                  </p>
                   <p className="text-muted-foreground leading-relaxed mb-2">
                     For US federal systems, CNSA 2.0 requires{' '}
                     <strong className="text-foreground">ML-KEM-768</strong> (FIPS 203) for key

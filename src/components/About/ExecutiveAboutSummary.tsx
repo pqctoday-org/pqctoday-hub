@@ -18,7 +18,9 @@ export function ExecutiveAboutSummary() {
           <Briefcase className="text-primary" size={22} aria-hidden="true" />
         </div>
         <div className="min-w-0 flex-1">
-          <h2 className="text-lg font-semibold text-foreground mb-1">For risk & governance leaders</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-1">
+            For risk & governance leaders
+          </h2>
           <p className="text-sm text-muted-foreground leading-relaxed mb-4">
             PQC Today is a neutral, independent platform for planning and governing your
             post-quantum migration — quantify the risk, track the compliance deadlines that apply to

@@ -1,14 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useCallback, useEffect, useMemo } from 'react'
 import { flushSync } from 'react-dom'
-import {
-  LayoutDashboard,
-  ShieldCheck,
-  BookOpen,
-  Download,
-  Filter,
-  X,
-} from 'lucide-react'
+import { LayoutDashboard, ShieldCheck, BookOpen, Download, Filter, X } from 'lucide-react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import JSZip from 'jszip'
 import { PageHeader } from '@/components/common/PageHeader'
@@ -101,8 +94,8 @@ function WelcomeState() {
           Welcome to your PQC Command Center
         </h2>
         <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto">
-          A post-quantum migration is a program, and every program answers the same four
-          board-level questions. Start with whichever you need first.
+          A post-quantum migration is a program, and every program answers the same four board-level
+          questions. Start with whichever you need first.
         </p>
         <div className="grid gap-3 sm:grid-cols-2 text-left max-w-2xl mx-auto">
           {BOARD_QUESTIONS.map((item) => (

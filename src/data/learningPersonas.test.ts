@@ -3,7 +3,9 @@ import { describe, it, expect } from 'vitest'
 import { PERSONAS, type PathItem } from './learningPersonas'
 
 const moduleIdsFromPathItems = (items: PathItem[]): string[] =>
-  items.filter((p): p is Extract<PathItem, { type: 'module' }> => p.type === 'module').map((p) => p.moduleId)
+  items
+    .filter((p): p is Extract<PathItem, { type: 'module' }> => p.type === 'module')
+    .map((p) => p.moduleId)
 
 describe('learningPersonas — path consistency', () => {
   // The rendered learning path is driven by `pathItems`; `recommendedPath` is the flat

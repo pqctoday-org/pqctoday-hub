@@ -74,7 +74,8 @@ export function LeadersExecutivePanel({ leaders }: { leaders: Leader[] }) {
               <span className="text-muted-foreground"> ({categoryCounts.get(cat) ?? 0})</span>
               <span className="text-muted-foreground">
                 {' '}
-                — {/* eslint-disable-next-line security/detect-object-injection -- cat is a LEADER_CATEGORIES member */}
+                —{' '}
+                {/* eslint-disable-next-line security/detect-object-injection -- cat is a LEADER_CATEGORIES member */}
                 {CATEGORY_WHY[cat]}
               </span>
             </li>

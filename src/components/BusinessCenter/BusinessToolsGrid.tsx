@@ -5,7 +5,11 @@ import { Search, Wrench } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { Input } from '../ui/input'
 import { EmptyState } from '../ui/empty-state'
-import { BUSINESS_TOOLS, BUSINESS_CATEGORIES, type BusinessToolAudience } from './businessToolsRegistry'
+import {
+  BUSINESS_TOOLS,
+  BUSINESS_CATEGORIES,
+  type BusinessToolAudience,
+} from './businessToolsRegistry'
 import { Button } from '@/components/ui/button'
 import { logBusinessToolsSearch, logBusinessToolsFilter } from '@/utils/analytics'
 
@@ -204,7 +208,7 @@ export const BusinessToolsGrid = () => {
                           </p>
                           {tool.audience && tool.audience !== 'business' && (
                             <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-secondary/10 text-secondary shrink-0">
-                              {/* eslint-disable-next-line security/detect-object-injection -- audience is a BusinessToolAudience union key */}
+                              {}
                               {AUDIENCE_BADGE[tool.audience]}
                             </span>
                           )}
