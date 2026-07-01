@@ -236,7 +236,7 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     cadence: 'sequential',
     gate: {
       id: 'G3',
-      criterion: 'QRA approved',
+      criterion: 'Risk scoring complete; QRA with prioritized backlog delivered',
       authority: 'QRPM',
     },
     cswp39Zones: ['risk-management'],

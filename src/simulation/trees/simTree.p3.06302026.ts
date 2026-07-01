@@ -8,7 +8,7 @@ const TREE: PhaseTree = {
   phase: 'p3',
   gate: {
     id: 'G3',
-    criterion: 'QRA approved',
+    criterion: 'Risk scoring complete; QRA with prioritized backlog delivered',
   },
   generated: '06302026',
   source: 'Applied Quantum PQC Migration Framework v2.1 (Marin Ivezić)',
@@ -47,6 +47,13 @@ const TREE: PhaseTree = {
               label: 'Reference: PQC Protocol Matrix',
               to: '/algorithms?tab=support',
               refId: 'algorithms-protocol-matrix',
+            },
+            {
+              kind: 'reference',
+              label:
+                'Reference: regulatory deadline clock — calibrate Dimension 4 (within 2 years = Critical)',
+              to: '/timeline',
+              refId: 'timeline',
             },
           ],
         },
