@@ -29,7 +29,7 @@ export interface PhaseResource {
 
 export const LEARN_PHASES: Record<string, PhaseResource> = {
   'pqc-101': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
-  'quantum-threats': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
+  'quantum-threats': { phasesServed: ['foundations', 'p0'], legs: ['learn', 'reference'] },
   'pqc-candidates': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'hybrid-crypto': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'crypto-agility': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
@@ -68,8 +68,8 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
   'pqc-governance': { phasesServed: ['p0'], legs: ['learn', 'reference'] },
   'pqc-team': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'vendor-risk': { phasesServed: ['p7'], legs: ['learn', 'reference'] },
-  'migration-program': { phasesServed: ['p4'], legs: ['learn', 'reference'] },
-  'compliance-strategy': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
+  'migration-program': { phasesServed: ['p3', 'p4'], legs: ['learn', 'reference'] },
+  'compliance-strategy': { phasesServed: ['foundations', 'p0'], legs: ['learn', 'reference'] },
   'data-asset-sensitivity': { phasesServed: ['p1', 'p3'], legs: ['learn', 'reference'] },
   'standards-bodies': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'confidential-computing': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
@@ -92,7 +92,7 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
   'iam-pqc': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'secure-boot-pqc': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
   'os-pqc': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
-  'soc-implementation-pqc': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
+  'soc-implementation-pqc': { phasesServed: ['p2', 'p6'], legs: ['learn', 'reference'] },
   'pqc-grc': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'skills-team-structure': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   quiz: { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
@@ -219,7 +219,7 @@ export const REFERENCE_PHASES: Record<string, ReferenceResource> = {
     legs: ['reference'],
     deepUrl: '/compliance?cert=',
   },
-  threats: { phasesServed: ['p3'], legs: ['reference'], deepUrl: '/threats' },
+  threats: { phasesServed: ['p3', 'p4'], legs: ['reference'], deepUrl: '/threats' },
   migrate: {
     phasesServed: ['p1', 'p2', 'p5', 'p6'],
     legs: ['reference', 'practice', 'output'],

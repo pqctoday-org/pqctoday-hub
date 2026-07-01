@@ -146,7 +146,7 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     cadence: 'sequential',
     gate: {
       id: 'G0',
-      criterion: 'Mandate signed',
+      criterion: 'Charter, budget & QRPM approved',
       authority: 'Executive Sponsor',
     },
     cswp39Zones: ['governance'],
@@ -179,7 +179,8 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     parallelWith: ['p2'],
     gate: {
       id: 'G1',
-      criterion: '≥70% Tier-1 systems inventoried',
+      criterion:
+        'Scoping doc done; Priority-A inventory ≥90%; classical findings reported; continuous discovery live',
       authority: 'Cryptographic Architect',
     },
     cswp39Zones: ['assets'],
@@ -208,7 +209,8 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     parallelWith: ['p1'],
     gate: {
       id: 'G2',
-      criterion: 'Machine-verifiable CBOM published',
+      criterion:
+        'CBOM live for Layers 1–2; freshness governance enforced; protection controls applied',
       authority: 'Cryptographic Architect',
     },
     cswp39Zones: ['assets'],
@@ -234,7 +236,7 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     cadence: 'sequential',
     gate: {
       id: 'G3',
-      criterion: 'QRA approved',
+      criterion: 'Risk scoring complete; QRA with prioritized backlog delivered',
       authority: 'QRPM',
     },
     cswp39Zones: ['risk-management'],
@@ -262,7 +264,7 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     cadence: 'sequential',
     gate: {
       id: 'G4',
-      criterion: 'Multi-year roadmap & PMO established',
+      criterion: 'Multi-year roadmap approved; Year 1 plan resourced',
       authority: 'QRPM',
     },
     cswp39Zones: ['migration', 'governance'],
@@ -290,8 +292,8 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     parallelWith: ['p6'],
     gate: {
       id: 'G5',
-      criterion: 'Pilots validated; wave migration underway',
-      authority: 'Application Security Lead',
+      criterion: 'Pilots validated; performance baselines established; Tier-1 rollout approved',
+      authority: 'SteerCo',
     },
     cswp39Zones: ['mitigation', 'migration'],
     cswp39Steps: ['implement'],
@@ -321,8 +323,8 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
     parallelWith: ['p5'],
     gate: {
       id: 'G6',
-      criterion: 'Infrastructure PQC-ready; performance validated',
-      authority: 'Security Engineers (PQC)',
+      criterion: 'Infrastructure upgrades scheduled; vendor commitments tracked',
+      authority: 'QRPM',
     },
     cswp39Zones: ['management-tools'],
     cswp39Steps: ['implement'],

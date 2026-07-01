@@ -185,20 +185,31 @@ const INDICATORS = {
   },
   'verify-close': {
     1: 'Closure discussed on milestones; no evidence standard applied; "done" is declared, not proven',
-    2: 'Migration verified against the 5-point evidence standard; classical key material decommissioning logged (SP 800-88); program closure record produced',
+    2: 'Migration verified against the 5-point evidence standard; classical key material decommissioning logged; program closure record produced',
     3: 'Independent verification of Tier-1 systems; crypto-agility/rollback drill evidenced; executive-sponsor sign-off; BAU handover funded',
     4: 'Verification & closure run as BAU; evidence dossier continuously maintained; decommissioning and attestations folded into posture monitoring',
   },
 }
 
 const GATES = {
-  p0: { id: 'G0', criterion: 'Mandate signed' },
-  p1: { id: 'G1', criterion: '≥70% Tier-1 systems inventoried' },
-  p2: { id: 'G2', criterion: 'Machine-verifiable CBOM published' },
-  p3: { id: 'G3', criterion: 'QRA approved' },
-  p4: { id: 'G4', criterion: 'Multi-year roadmap & PMO established' },
-  p5: { id: 'G5', criterion: 'Pilots validated; wave migration underway' },
-  p6: { id: 'G6', criterion: 'Infrastructure PQC-ready; performance validated' },
+  p0: { id: 'G0', criterion: 'Charter, budget & QRPM approved' },
+  p1: {
+    id: 'G1',
+    criterion:
+      'Scoping doc done; Priority-A inventory ≥90%; classical findings reported; continuous discovery live',
+  },
+  p2: {
+    id: 'G2',
+    criterion:
+      'CBOM live for Layers 1–2; freshness governance enforced; protection controls applied',
+  },
+  p3: { id: 'G3', criterion: 'Risk scoring complete; QRA with prioritized backlog delivered' },
+  p4: { id: 'G4', criterion: 'Multi-year roadmap approved; Year 1 plan resourced' },
+  p5: {
+    id: 'G5',
+    criterion: 'Pilots validated; performance baselines established; Tier-1 rollout approved',
+  },
+  p6: { id: 'G6', criterion: 'Infrastructure upgrades scheduled; vendor commitments tracked' },
   // p7 (Vendor & Supply Chain) is a CONTINUOUS phase in the framework
   // (frameworkPhases.ts: cadence 'continuous', no gate) — it has no one-time gate.
   // The earlier invented 'G7' contradicted the framework (audit fidelity gap, Q3);
@@ -235,7 +246,6 @@ const FRAMEWORK = {
       steps: [
         L('pqc-business-case', 'Learn: PQC Business Case'),
         L('exec-quantum-impact', 'Learn: Executive Quantum Impact'),
-        L('pqc-risk-management', 'Learn: PQC Risk Management'),
         L('compliance-strategy', 'Learn: Compliance & Regulatory Strategy'),
         R('threats', 'Check the CRQC threat horizon', '/threats?view=horizon'),
         R('compliance', 'Map the binding regulatory deadlines'),
@@ -303,10 +313,10 @@ const FRAMEWORK = {
       id: '1.1',
       level: 2,
       title: 'Establish Three Parallel Inventory Tracks',
-      do: 'Stand up Track A (crypto usage), Track B (data classification), Track C (systems/assets).',
+      do: 'Stand up Track A (crypto usage), Track B (data classification), Track C (systems/assets — CMDB, ITAM, BIA cross-reference; detailed methodology in 1.4–1.5).',
       output: null,
       steps: [
-        L('crypto-mgmt-modernization', 'Learn: Cryptographic Management Modernization'),
+        L('crypto-mgmt-modernization', 'Learn: Track A — cryptographic management modernization'),
         L(
           'data-asset-sensitivity',
           'Learn: Track B — data classification & confidentiality horizons'
@@ -355,7 +365,7 @@ const FRAMEWORK = {
       output: 'Continuous discovery operating model',
       steps: [
         A('crypto-vulnerability-watch', 'Set up the Crypto-Vulnerability Watch'),
-        L('pqc-testing-validation', 'Learn: continuous discovery & validation'),
+        L('cbom', 'Learn: CBOM-driven continuous discovery'),
       ],
     },
   ],
@@ -378,7 +388,13 @@ const FRAMEWORK = {
       title: 'Populate CBOM from Inventory Data',
       do: 'Transform Phase 1 inventory into enriched CycloneDX records linked to the SBOM.',
       output: 'Populated CycloneDX CBOM',
-      steps: [A('crypto-cbom', 'Build a CycloneDX CBOM')],
+      steps: [
+        L(
+          'cbom',
+          'Learn: CBOM population — six-step transformation (import → enrich → SBOM link → certs → classify → vendor flags)'
+        ),
+        A('crypto-cbom', 'Build a CycloneDX CBOM'),
+      ],
     },
     {
       id: '2.3',
@@ -398,7 +414,7 @@ const FRAMEWORK = {
         L('cbom', 'Learn: secure the CBOM & make it machine-verifiable'),
         L(
           'soc-implementation-pqc',
-          'Learn: protect the CBOM (it is an HNDL shopping list) — SOC monitoring'
+          'Learn: involve the SOC — posture-registry integration and CBOM exfiltration monitoring'
         ),
       ],
     },
@@ -418,6 +434,10 @@ const FRAMEWORK = {
           'Reference: why 256-bit ECC ≈ RSA-2048 under quantum (security levels)'
         ),
         R('algorithms-protocol-matrix', 'Reference: PQC Protocol Matrix'),
+        R(
+          'timeline',
+          'Reference: regulatory deadline clock — calibrate Dimension 4 (within 2 years = Critical)'
+        ),
       ],
     },
     {
@@ -499,7 +519,13 @@ const FRAMEWORK = {
       title: 'Manage the Roadmap as a Living Instrument & Define Milestone Gates',
       do: 'Run quarterly reviews with leading indicators and formal G0–G6 gate criteria.',
       output: 'Quarterly review process & gate criteria',
-      steps: [R('report', 'Track gates on the Report page')],
+      steps: [
+        R(
+          'threats',
+          'Monitor the threat horizon — CRQC timeline signals that trigger accelerated execution'
+        ),
+        R('report', 'Track gates on the Report page'),
+      ],
     },
     {
       id: '4.7',
@@ -530,6 +556,10 @@ const FRAMEWORK = {
       output: null,
       steps: [
         R('algorithms-protocol-matrix', 'Reference: which protocols have a PQC path'),
+        L(
+          'tls-basics',
+          'Learn: TLS 1.3 hybrid — the recommended first pilot (X25519+ML-KEM-768, downgrade attack mitigations)'
+        ),
         L('vpn-ssh-pqc', 'Learn: VPN/IPsec & SSH PQC patterns'),
         L('code-signing', 'Learn: code & firmware signing (Track B — integrity)'),
         A('hybrid-transition', 'Plan the hybrid transition'),
@@ -606,6 +636,7 @@ const FRAMEWORK = {
         L('hsm-pqc', 'Learn: HSM & PQC Operations'),
         L('kms-pqc', 'Learn: KMS & PQC'),
         W('hsm-capacity', 'Practice: HSM capacity calculator'),
+        W('envelope-encrypt', 'Practice: PQC key-wrapping — bridge for HSMs not yet upgradeable'),
       ],
     },
     {
@@ -679,7 +710,13 @@ const FRAMEWORK = {
       title: 'Manage Vendor-as-Blocker Scenarios',
       do: 'When a critical vendor cannot deliver PQC in time, deploy bridging patterns (gateway, overlay, key-wrap), run champion-challenger, escalate contractually, or accept-and-document the residual risk.',
       output: 'Bridging pattern deployments',
-      steps: [A('deployment-playbook', 'Deploy bridging patterns for blocked vendors')],
+      steps: [
+        A('deployment-playbook', 'Deploy bridging patterns for blocked vendors'),
+        A(
+          'risk-register',
+          'Accept-and-document residual vendor risk when no bridge or alternative exists'
+        ),
+      ],
     },
     {
       id: '7.5',
@@ -697,6 +734,7 @@ const FRAMEWORK = {
       output: 'Counterparty coordination plan',
       steps: [
         A('stakeholder-comms', 'Plan dual-stack windows & deprecation comms for counterparties'),
+        A('risk-register', 'Record the counterparty refusal decision in the risk register'),
       ],
     },
     {
@@ -788,7 +826,7 @@ const FRAMEWORK = {
       id: 'VC.2',
       level: 2,
       title: 'Assemble the Migration Evidence Dossier',
-      do: 'Prove each migrated system against the evidence standard (observed PQC negotiation, negative testing, configuration attestation) and log classical key-material decommissioning (SP 800-88).',
+      do: 'Prove each migrated system against the evidence standard (observed PQC negotiation, negative testing, configuration attestation) and log classical key-material decommissioning per org key-destruction standard.',
       output: 'Migration-verification evidence dossier',
       steps: [
         L('verification-closure', 'Learn: decommission classical crypto & assemble evidence'),
@@ -804,7 +842,7 @@ const FRAMEWORK = {
       output: 'Independent verification & signed closure',
       steps: [
         A('crypto-cbom', 'Export the final CBOM as durable closure evidence'),
-        R('library', 'Reference: SP 800-88 decommissioning & evidence standards'),
+        R('library', 'Reference: decommissioning guidance & evidence standards'),
       ],
     },
     {
@@ -865,6 +903,10 @@ const PITFALLS = {
     {
       title: 'Trust a single discovery tool',
       why: 'No one tool covers all five discovery layers; multiple categories are required.',
+    },
+    {
+      title: 'Rely on the CMDB alone for asset discovery',
+      why: 'The CMDB is rarely complete; it systematically undercounts cloud resources, shadow IT, OT devices, and vendor-managed systems. Integrate the eleven asset-discovery sources in Activity 1.4 or the CMDB gap becomes a migration gap.',
     },
     {
       title: 'Treat discovery as one-time',
@@ -1032,7 +1074,7 @@ const PITFALLS = {
     },
     {
       title: 'Skip classical-key decommissioning',
-      why: 'Leaving old classical keys and material live keeps the harvest-now-decrypt-later exposure open even after PQC is deployed — closure requires SP 800-88 decommissioning evidence.',
+      why: "Leaving old classical keys and material live keeps the harvest-now-decrypt-later exposure open even after PQC is deployed — closure requires key-destruction evidence per the org's destruction standard.",
     },
   ],
 }

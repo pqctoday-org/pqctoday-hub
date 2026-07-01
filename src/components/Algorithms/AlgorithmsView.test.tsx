@@ -269,15 +269,16 @@ describe('AlgorithmsView', () => {
       usePersonaStore.getState().clearPreferences()
     })
 
-    it('executive lands on the Detailed tab on first paint', async () => {
+    it('executive lands on the Transition Guide tab on first paint', async () => {
       usePersonaStore.getState().setPersona('executive')
       render(
         <MemoryRouter initialEntries={['/algorithms']}>
           <AlgorithmsView />
         </MemoryRouter>
       )
-      // Detailed comparison mounts (its mocked test-id) instead of the transition view.
-      expect(await screen.findByTestId('algorithm-detailed')).toBeInTheDocument()
+      // Business-relevant default: the classical→PQC mapping (Transition Guide,
+      // mocked as algorithm-comparison), not the developer parameter comparison.
+      expect(await screen.findByTestId('algorithm-comparison')).toBeInTheDocument()
     })
 
     it('ops lands on the Transition tab on first paint', async () => {

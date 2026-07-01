@@ -2,6 +2,7 @@
 import { Fragment, useState, useCallback, useMemo } from 'react'
 import { X, Loader2, Play, AlertTriangle, ChevronRight } from 'lucide-react'
 import { Button } from '../ui/button'
+import { InlineTooltip } from '../ui/InlineTooltip'
 import {
   type AlgorithmDetail,
   getCryptoFamilyColor,
@@ -20,6 +21,7 @@ import clsx from 'clsx'
 interface ComparisonField {
   key: string
   label: string
+  tooltip?: string
   getValue: (algo: AlgorithmDetail) => string | number | null
   compare?: 'lower-better' | 'higher-better'
 }
@@ -29,6 +31,7 @@ const DETAIL_FIELDS: ComparisonField[] = [
   {
     key: 'securityLevel',
     label: 'Security Level',
+    tooltip: 'Classical Security Bits',
     getValue: (a) =>
       a.securityLevel !== null ? `Level ${a.securityLevel} (${a.aesEquivalent})` : a.aesEquivalent,
   },
@@ -182,7 +185,11 @@ export function AlgorithmComparisonPanel({
               return (
                 <tr key={field.key} className="border-b border-border/50 hover:bg-muted/30">
                   <td className="sticky left-0 z-10 bg-background px-3 py-2 text-xs font-medium text-muted-foreground whitespace-nowrap">
-                    {field.label}
+                    {field.tooltip ? (
+                      <InlineTooltip term={field.tooltip}>{field.label}</InlineTooltip>
+                    ) : (
+                      field.label
+                    )}
                   </td>
                   {allAlgos.map((a) => {
                     const val = field.getValue(a)
