@@ -41,6 +41,11 @@ import type { PhaseId } from '@/data/frameworkPhases'
 // extracted from executive learn modules (zero-prop, standalone components)
 // ---------------------------------------------------------------------------
 
+/** Intended primary reader. Defaults to 'business' (Executive / GRC) when unset;
+ *  only the handful of protocol/implementation tools carry a technical audience
+ *  so a non-coder can tell at a glance which tools are meant for them. */
+export type BusinessToolAudience = 'business' | 'architect' | 'developer'
+
 export interface BusinessTool {
   id: string
   name: string
@@ -48,6 +53,8 @@ export interface BusinessTool {
   category: string
   icon: React.ElementType
   keywords: string[]
+  /** Intended reader; omit for the default Executive / GRC audience. */
+  audience?: BusinessToolAudience
   /** CSWP.39 Fig 3 zone (Crypto Agility Strategic Plan). Drives which Command
    *  Center panel surfaces this tool. Required. */
   cswp39Zone: ZoneId
@@ -326,6 +333,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   {
     id: 'hybrid-transition-planner',
     name: 'Hybrid Transition Planner',
+    audience: 'architect',
     description:
       'Architect-facing decision tree from CSWP.39 §3.2.4 - pick traditional+PQC, PQC+PQC, pure PQC, or crypto-gateway pathway with concrete algorithm pairings',
     category: 'Migration Planning',
@@ -350,6 +358,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   {
     id: 'mti-negotiator',
     name: 'MTI Negotiator',
+    audience: 'architect',
     description:
       'Protocol-designer + architect decision tool from CSWP.39 §3.1.1 - picks Mandatory-to-Implement signature / KEM / hash plus alternates from audience, deadline, and constraint inputs',
     category: 'Migration Planning',
@@ -376,6 +385,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   {
     id: 'crypto-api-refactor-audit',
     name: 'Crypto API Refactor Audit',
+    audience: 'developer',
     description:
       'Architect + senior-developer audit from CSWP.39 §4.1 - grades current crypto-agility state and emits a phased refactor checklist with language-specific call-site guidance (Go / Java / .NET / Node / Python / Rust / C / C++ / JS)',
     category: 'Migration Planning',
@@ -403,6 +413,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   {
     id: 'cloud-responsibility-matrix',
     name: 'Cloud Responsibility Matrix',
+    audience: 'architect',
     description:
       'Architect + compliance-lead matrix from CSWP.39 §6.4 - per-asset-class shared-responsibility model across IaaS / PaaS / SaaS / FaaS, with PQC availability per cloud and watch-outs for multi-cloud, BYOK, FedRAMP, and sovereign-cloud overlays',
     category: 'Migration Planning',

@@ -813,6 +813,18 @@ export function SimulationView() {
     return () => clearTimeout(id)
   }, [fullyMature, runCompleteSeen, markRunComplete])
 
+  // First-visit default: start non-technical roles (executive / curious) in the
+  // low-density Guided view instead of the dense Expert console. Gated on
+  // `!tourSeen`, so it fires only on the very first visit and never overrides a
+  // later manual toggle; technical roles are untouched and keep Expert as default.
+  // `guided` is intentionally NOT a dependency — re-asserting it would fight a
+  // user who turns it off while still on their first visit.
+  useEffect(() => {
+    if (tourSeen) return
+    if (selectedPersona === 'executive' || selectedPersona === 'curious') setGuided(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tourSeen, selectedPersona, setGuided])
+
   // Record the program year each objective is FIRST achieved, for the ceremony's on-time
   // badges (idempotent — recordObjectiveAchieved ignores an id already set).
   const objDoneKey = txStatus.objectives.map((o) => `${o.id}:${o.done ? 1 : 0}`).join('|')
@@ -1054,8 +1066,9 @@ export function SimulationView() {
               Run your PQC assessment to start the simulation
             </h1>
             <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
-              The simulation runs on your assessed organization — your sector, size and jurisdiction
-              come from your assessment.
+              See how much of your business is exposed to the quantum threat today — and the cost and
+              sequence of closing it. The simulation runs on your assessed organization: your sector,
+              size and jurisdiction come from your assessment.
             </p>
             <div className="mt-6 flex flex-col items-stretch gap-2.5 sm:flex-row sm:justify-center">
               <Link
@@ -1127,15 +1140,44 @@ export function SimulationView() {
 
   return (
     <>
-      {/* Phone block — shown below md, covers entire viewport */}
-      <div className="flex md:hidden fixed inset-0 z-50 flex-col items-center justify-center bg-background px-8 text-center gap-6">
-        <Monitor className="h-12 w-12 text-muted-foreground" aria-hidden="true" />
-        <div className="space-y-2">
-          <h2 className="text-lg font-bold">Desktop or tablet required</h2>
-          <p className="text-sm text-muted-foreground max-w-[280px]">
-            The Simulation is designed for a wider screen. Open it on a tablet or desktop to play.
+      {/* Phone block — shown below md. The board is desktop/tablet-only to play,
+          but a mobile reader still gets a read-only headline of where the run
+          stands (so a CISO on a phone isn't sent to a dead end). */}
+      <div className="flex md:hidden fixed inset-0 z-50 flex-col items-center justify-center overflow-auto bg-background px-6 py-10 text-center gap-5">
+        <Monitor className="h-10 w-10 text-muted-foreground" aria-hidden="true" />
+        <div className="space-y-1">
+          <h2 className="text-lg font-bold">Your migration at a glance</h2>
+          <p className="text-xs text-muted-foreground max-w-[300px]">
+            The playable board needs a wider screen — open it on a tablet or desktop. Here&apos;s
+            where your run stands today.
           </p>
         </div>
+        <dl className="w-full max-w-[320px] space-y-2 text-left">
+          {[
+            { label: 'Migration phases', value: `${cleared} of ${LIFECYCLE.length} cleared` },
+            {
+              label: 'Program maturity',
+              value: `Level ${Math.round(txStatus.maturity)} of ${MAX_LEVEL}`,
+            },
+            {
+              label: 'Quantum-exposed value',
+              value: `€${Math.round(exposedValueM)}M (€${Math.round(uninsuredM)}M uninsured)`,
+            },
+            { label: 'Years to act (Mosca)', value: `${clock.yearsToHorizon.toFixed(1)}y` },
+            {
+              label: 'Budget secured',
+              value: `€${budgetSecured}M of €${budgetTarget}M`,
+            },
+          ].map((row) => (
+            <div
+              key={row.label}
+              className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-3 py-2"
+            >
+              <dt className="text-xs text-muted-foreground">{row.label}</dt>
+              <dd className="text-sm font-semibold text-foreground">{row.value}</dd>
+            </div>
+          ))}
+        </dl>
         <Link to="/" className="text-sm text-primary underline underline-offset-4">
           Back to hub
         </Link>
