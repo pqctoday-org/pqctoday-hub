@@ -205,7 +205,10 @@ const GATES = {
   },
   p3: { id: 'G3', criterion: 'Risk scoring complete; QRA with prioritized backlog delivered' },
   p4: { id: 'G4', criterion: 'Multi-year roadmap approved; Year 1 plan resourced' },
-  p5: { id: 'G5', criterion: 'Pilots validated; wave migration underway' },
+  p5: {
+    id: 'G5',
+    criterion: 'Pilots validated; performance baselines established; Tier-1 rollout approved',
+  },
   p6: { id: 'G6', criterion: 'Infrastructure PQC-ready; performance validated' },
   // p7 (Vendor & Supply Chain) is a CONTINUOUS phase in the framework
   // (frameworkPhases.ts: cadence 'continuous', no gate) — it has no one-time gate.
@@ -553,6 +556,10 @@ const FRAMEWORK = {
       output: null,
       steps: [
         R('algorithms-protocol-matrix', 'Reference: which protocols have a PQC path'),
+        L(
+          'tls-basics',
+          'Learn: TLS 1.3 hybrid — the recommended first pilot (X25519+ML-KEM-768, downgrade attack mitigations)'
+        ),
         L('vpn-ssh-pqc', 'Learn: VPN/IPsec & SSH PQC patterns'),
         L('code-signing', 'Learn: code & firmware signing (Track B — integrity)'),
         A('hybrid-transition', 'Plan the hybrid transition'),
