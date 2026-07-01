@@ -49,12 +49,12 @@ const TREE: PhaseTree = {
     {
       level: 2,
       indicator:
-        'Migration verified against the 5-point evidence standard; classical key material decommissioning logged (SP 800-88); program closure record produced',
+        'Migration verified against the 5-point evidence standard; classical key material decommissioning logged; program closure record produced',
       activities: [
         {
           id: 'VC.2',
           title: 'Assemble the Migration Evidence Dossier',
-          do: 'Prove each migrated system against the evidence standard (observed PQC negotiation, negative testing, configuration attestation) and log classical key-material decommissioning (SP 800-88).',
+          do: 'Prove each migrated system against the evidence standard (observed PQC negotiation, negative testing, configuration attestation) and log classical key-material decommissioning per org key-destruction standard.',
           output: 'Migration-verification evidence dossier',
           steps: [
             {
@@ -98,7 +98,7 @@ const TREE: PhaseTree = {
             },
             {
               kind: 'reference',
-              label: 'Reference: SP 800-88 decommissioning & evidence standards',
+              label: 'Reference: decommissioning guidance & evidence standards',
               to: '/library',
               refId: 'library',
             },
@@ -145,7 +145,7 @@ const TREE: PhaseTree = {
     },
     {
       title: 'Skip classical-key decommissioning',
-      why: 'Leaving old classical keys and material live keeps the harvest-now-decrypt-later exposure open even after PQC is deployed — closure requires SP 800-88 decommissioning evidence.',
+      why: "Leaving old classical keys and material live keeps the harvest-now-decrypt-later exposure open even after PQC is deployed — closure requires key-destruction evidence per the org's destruction standard.",
     },
   ],
 }
