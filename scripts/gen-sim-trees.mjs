@@ -192,7 +192,7 @@ const INDICATORS = {
 }
 
 const GATES = {
-  p0: { id: 'G0', criterion: 'Mandate signed' },
+  p0: { id: 'G0', criterion: 'Charter, budget & QRPM approved' },
   p1: { id: 'G1', criterion: '≥70% Tier-1 systems inventoried' },
   p2: { id: 'G2', criterion: 'Machine-verifiable CBOM published' },
   p3: { id: 'G3', criterion: 'QRA approved' },
@@ -235,7 +235,6 @@ const FRAMEWORK = {
       steps: [
         L('pqc-business-case', 'Learn: PQC Business Case'),
         L('exec-quantum-impact', 'Learn: Executive Quantum Impact'),
-        L('pqc-risk-management', 'Learn: PQC Risk Management'),
         L('compliance-strategy', 'Learn: Compliance & Regulatory Strategy'),
         R('threats', 'Check the CRQC threat horizon', '/threats?view=horizon'),
         R('compliance', 'Map the binding regulatory deadlines'),

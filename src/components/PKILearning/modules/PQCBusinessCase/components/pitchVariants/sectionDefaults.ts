@@ -82,20 +82,20 @@ export function buildQuantumUrgencyDefault(data: Data): string {
     const est = hnfl.isEstimated ? ' (estimated - credential lifetime unknown)' : ''
     if (hnfl.isAtRisk) {
       parts.push(
-        `HNFL (harvest-now-forge-later): signing credentials remain trusted for ${hnfl.credentialLifetimeYears} years - ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} past the quantum threat line. Forgery liability grows with every unrotated certificate${est}.`
+        `TNFL (trust-now-forge-later): signing credentials remain trusted for ${hnfl.credentialLifetimeYears} years - ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} past the quantum threat line. Forgery liability grows with every unrotated certificate${est}.`
       )
       if (hnfl.tnflRelevantUseCases.length > 0) {
         parts.push(`High-relevance use cases: ${hnfl.tnflRelevantUseCases.join(', ')}.`)
       }
     } else if (hnfl.hasSigningAlgorithms) {
       parts.push(
-        `HNFL: signing present but credential lifetimes do not extend past the quantum threat window - rotation cadence is adequate for now${est}.`
+        `TNFL: signing present but credential lifetimes do not extend past the quantum threat window - rotation cadence is adequate for now${est}.`
       )
     }
   }
 
   if (parts.length === 0) {
-    return 'Harvest-now-decrypt-later (HNDL) and harvest-now-forge-later (HNFL) are the two time-bound quantum risks. HNDL targets long-retention encrypted data captured today. HNFL targets signing credentials whose trust extends past the quantum threat horizon. Complete the assessment to quantify your exposure window.'
+    return 'Harvest-now-decrypt-later (HNDL) and trust-now-forge-later (TNFL) are the two time-bound quantum risks. HNDL targets long-retention encrypted data captured today. TNFL targets signing credentials whose trust extends past the quantum threat horizon. Complete the assessment to quantify your exposure window.'
   }
   return parts.join('\n\n')
 }
