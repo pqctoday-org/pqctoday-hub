@@ -26,6 +26,7 @@ import { CountryFlag } from '../common/CountryFlag'
 import { LeaderCard } from './LeaderCard'
 import { LeadersTable } from './LeadersTable'
 import { LeaderCategorySidebar, LEADER_CATEGORIES } from './LeaderCategorySidebar'
+import { LeadersExecutivePanel } from './LeadersExecutivePanel'
 import { FLAG_CODE_MAP, LEADERS_REGION_COUNTRIES } from './leadersConstants'
 import { LeadersViewToggle } from './LeadersViewToggle'
 import type { LeadersViewMode } from './LeadersViewToggle'
@@ -146,6 +147,16 @@ const LEADER_SORT_OPTIONS: { id: LeaderSortOption; label: string }[] = [
   { id: 'country', label: 'Country' },
   { id: 'category', label: 'Category' },
 ]
+
+// Executive lens: float the governance-relevant categories (regulators, standards
+// authors, suppliers) ahead of pure research contributors. Lower = higher.
+const EXEC_CATEGORY_PRIORITY: Record<string, number> = {
+  Government: 0,
+  Standards: 1,
+  'Industry Vendor': 2,
+  'Industry Adopter': 3,
+  'Algorithm Inventor': 4,
+}
 
 export const LeadersGrid = () => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -407,6 +418,14 @@ export const LeadersGrid = () => {
         items.sort((a, b) => a.category.localeCompare(b.category))
         break
     }
+    // Executive lens: float governance-relevant categories first (applied before
+    // the industry-relevance float, so industry match stays the dominant signal).
+    if (selectedPersona === 'executive') {
+      const rank = (c: string) =>
+        // eslint-disable-next-line security/detect-object-injection -- c is a leader category string
+        EXEC_CATEGORY_PRIORITY[c] ?? 99
+      items.sort((a, b) => rank(a.category) - rank(b.category))
+    }
     // Stable secondary sort: industry-relevant leaders float to top
     if (industryRelevant.size > 0) {
       items.sort((a, b) => {
@@ -416,7 +435,7 @@ export const LeadersGrid = () => {
       })
     }
     return items
-  }, [filteredLeaders, sortBy, industryRelevant])
+  }, [filteredLeaders, sortBy, industryRelevant, selectedPersona])
 
   const handleExportCsv = useCallback(() => {
     const csv = generateCsv(sortedLeaders, LEADERS_CSV_COLUMNS)
@@ -496,6 +515,10 @@ export const LeadersGrid = () => {
         flagLabel="Community Page"
         flagResourceType="Community"
       />
+
+      {/* Executive overview — institutional influence + why each group matters.
+          Exec only; other roles see the directory unchanged. */}
+      {selectedPersona === 'executive' && <LeadersExecutivePanel leaders={leadersData} />}
 
       {/* Curious user intro context */}
       {(selectedPersona === 'curious' || experienceLevel === 'curious') && (

@@ -11,6 +11,7 @@ import { usePersonaStore } from '../../store/usePersonaStore'
 import { REGION_COUNTRIES_MAP, PERSONA_TIMELINE_REGION } from '../../data/personaConfig'
 import { COUNTRY_ALIASES } from '../../data/countryAliases'
 import { SimpleGanttChart } from './SimpleGanttChart'
+import { TimelineExecutiveDeadline } from './TimelineExecutiveDeadline'
 import { LeftNavTOC } from '@/components/common/LeftNavTOC'
 import { GanttLegend } from './GanttLegend'
 import { MobileTimelineList } from './MobileTimelineList'
@@ -434,6 +435,16 @@ export const TimelineView = () => {
           {/* eslint-disable-next-line security/detect-object-injection */}
           <span>{TIMELINE_PERSONA_HINTS[selectedPersona]}</span>
         </div>
+      )}
+
+      {/* Executive deadline readout — the decision (nearest binding milestone +
+          next step) before the analyst Gantt. Exec only. */}
+      {selectedPersona === 'executive' && (
+        <TimelineExecutiveDeadline
+          ganttData={ganttData}
+          regionFilter={regionFilter}
+          regionLabel={REGION_LABELS[regionFilter] ?? regionFilter}
+        />
       )}
 
       <CoverageByRegion
