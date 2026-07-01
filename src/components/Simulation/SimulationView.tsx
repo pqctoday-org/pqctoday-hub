@@ -38,6 +38,7 @@ import { useSimAutoRunPlayer } from './autorun/useSimAutoRunPlayer'
 import { SimAutoRunOverlay } from './autorun/SimAutoRunOverlay'
 import { SimConceptPeek } from './autorun/SimConceptPeek'
 import { SimArtifactReveal } from './autorun/SimArtifactReveal'
+import { SimExecWalkthroughComplete } from './autorun/SimExecWalkthroughComplete'
 import {
   EXEC_TOUR_STAGES,
   EXEC_TOUR_OPENING_CONCEPTS,
@@ -584,6 +585,23 @@ export function SimulationView() {
   // ORG / JURISDICTION / SECTOR dials are read-only and derive from here. SEAT
   // defaults from the persona; MODE (difficulty) stays freely editable.
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const setExecOverviewSeen = usePersonaStore((s) => s.setExecOverviewSeen)
+  // Walkthrough end screen: open once when the tour completes (mark the overview seen),
+  // and reset when a new run starts. Dismissing sticks (the ref guards re-opening).
+  const [walkthroughDoneOpen, setWalkthroughDoneOpen] = useState(false)
+  const walkthroughCelebratedRef = useRef(false)
+  useEffect(() => {
+    if (autoRunPlayer.mode === 'walkthrough' && autoRunPlayer.done) {
+      if (!walkthroughCelebratedRef.current) {
+        walkthroughCelebratedRef.current = true
+        setWalkthroughDoneOpen(true)
+        setExecOverviewSeen(true)
+      }
+    } else if (!autoRunPlayer.done) {
+      walkthroughCelebratedRef.current = false
+      setWalkthroughDoneOpen(false)
+    }
+  }, [autoRunPlayer.mode, autoRunPlayer.done, setExecOverviewSeen])
   const assessFrameworkRisk = useMemo(
     () => (assessSnap ? frameworkRiskFromAssess(assessSnap.result) : null),
     [assessSnap]
@@ -2964,6 +2982,9 @@ export function SimulationView() {
             programEndYear={getScenario(country).programEndYear}
             onClose={() => setRunCompleteOpen(false)}
           />
+        )}
+        {walkthroughDoneOpen && (
+          <SimExecWalkthroughComplete onClose={() => setWalkthroughDoneOpen(false)} />
         )}
       </div>
     </>
