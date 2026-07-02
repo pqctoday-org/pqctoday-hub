@@ -19,7 +19,7 @@ export const PRODUCT_CATEGORY_TO_MIGRATE: Record<string, MigrateCategoryRef> = {
     categoryId: 'CSC-009',
     categoryName: 'Digital Signature Software',
   },
-  Mobility: { categoryId: 'CSC-019', categoryName: 'Operating Systems & Platforms' },
+  Mobility: { categoryId: 'CSC-031', categoryName: 'Operating Systems' },
   embarqué: { categoryId: 'CSC-026', categoryName: 'Secure Boot and Firmware Security' },
   'logiciel embarqué': {
     categoryId: 'CSC-026',
@@ -55,30 +55,30 @@ export const PRODUCT_CATEGORY_TO_MIGRATE: Record<string, MigrateCategoryRef> = {
     categoryName: 'Identity & Access Management (IAM)',
   },
   accès: { categoryId: 'CSC-042', categoryName: 'Identity & Access Management (IAM)' },
-  'Data Protection': { categoryId: 'CSC-043', categoryName: 'Data Security & Protection' },
+  'Data Protection': { categoryId: 'CSC-043', categoryName: 'Data Storage & Protection' },
   'ANSSI SYNACKTIV Stockage sécurisé': {
     categoryId: 'CSC-053',
     categoryName: 'Secrets Management',
   }, // KeePassXC — password/secrets manager
   'D AMOSSYS Stockage sécurisé': {
     categoryId: 'CSC-043',
-    categoryName: 'Data Security & Protection',
+    categoryName: 'Data Storage & Protection',
   },
   'FORECOMM SYNACKTIV Stockage sécurisé': {
     categoryId: 'CSC-043',
-    categoryName: 'Data Security & Protection',
+    categoryName: 'Data Storage & Protection',
   },
   'GTS THALES Stockage sécurisé': {
     categoryId: 'CSC-043',
-    categoryName: 'Data Security & Protection',
+    categoryName: 'Data Storage & Protection',
   },
   'O AMOSSYS stockage sécurisé': {
     categoryId: 'CSC-043',
-    categoryName: 'Data Security & Protection',
+    categoryName: 'Data Storage & Protection',
   },
   'OPPIDA Stockage sécurisé': {
     categoryId: 'CSC-043',
-    categoryName: 'Data Security & Protection',
+    categoryName: 'Data Storage & Protection',
   },
   'Trusted Computing': { categoryId: 'CSC-052', categoryName: 'Confidential Computing' },
   'ICs, Smart Cards and Smart Card-Related Devices and Systems': {
@@ -96,7 +96,7 @@ export const PRODUCT_CATEGORY_TO_MIGRATE: Record<string, MigrateCategoryRef> = {
   },
   'AMOSSYS Cartes à puce': {
     categoryId: 'CSC-043',
-    categoryName: 'Data Security & Protection',
+    categoryName: 'Data Storage & Protection',
   }, // Blancco Driver Eraser — data erasure software (not a smart card product despite the label)
   // Previously unmapped — assigned from vendor/product evidence
   'Certified Product': {
@@ -109,7 +109,7 @@ export const PRODUCT_CATEGORY_TO_MIGRATE: Record<string, MigrateCategoryRef> = {
   }, // Smart TVs and connected devices (Samsung Knox, LG webOS)
   'Multi-Function Devices': {
     categoryId: 'CSC-043',
-    categoryName: 'Data Security & Protection',
+    categoryName: 'Data Storage & Protection',
   }, // Printers/MFPs evaluated for document data security (HP, Kyocera, Xerox)
   'Generic software and network products': {
     categoryId: 'CSC-033',
