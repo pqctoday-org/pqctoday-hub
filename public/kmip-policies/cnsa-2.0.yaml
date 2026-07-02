@@ -45,7 +45,7 @@ rules:
   #    `CreateKeyPair` (not just symmetric `Create`) is gated so classical
   #    RSA/ECDSA key-pair generation is actually denied (Y2 op-name fix).
   - type: algorithm_allowlist
-    ops: [Create, CreateKeyPair]
+    ops: [Create, CreateKeyPair, Register, Import]
     algorithms:
       - AES-256
       - SHA-384
@@ -81,9 +81,10 @@ rules:
     algorithms: [SHA-256, HMAC-SHA-256]
     reason: "CNSA 2.0 requires SHA-384 or SHA-512"
 
-  # 5. All classical asymmetric algorithms denied (post-PQC-transition).
+  # 5. All classical asymmetric algorithms denied (post-PQC-transition). Register
+  #    /Import are gated too so a banned key can't enter the store out-of-band.
   - type: algorithm_denylist
-    ops: [Create, CreateKeyPair]
+    ops: [Create, CreateKeyPair, Register, Import]
     algorithms: [RSA, ECDSA-P256, ECDSA-P384, ECDSA-P521, Ed25519, Ed448, X25519, X448]
     reason: "CNSA 2.0 mandates PQC; classical asymmetric not approved for new keys"
 

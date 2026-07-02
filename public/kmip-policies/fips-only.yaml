@@ -30,7 +30,7 @@ rules:
   #    Gate `CreateKeyPair` too so asymmetric key-pair generation is evaluated
   #    against the FIPS allowlist, not just symmetric `Create` (Y2).
   - type: algorithm_allowlist
-    ops: [Create, CreateKeyPair]
+    ops: [Create, CreateKeyPair, Register, Import]
     algorithms:
       # FIPS 203 — ML-KEM
       - ML-KEM-512
