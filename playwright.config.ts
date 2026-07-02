@@ -59,11 +59,13 @@ export default defineConfig({
     baseURL: BASE_URL,
   },
   projects: [
-    // Full suite — every spec. Runs nightly (.github/workflows/e2e-nightly.yml)
-    // and locally via `npm run test:e2e`.
+    // Full suite — every spec EXCEPT the local-only `*.local.spec.ts` tier
+    // (directive 2026-07-01: new suites are local-only). Runs nightly
+    // (.github/workflows/e2e-nightly.yml) and locally via `npm run test:e2e`.
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: ['**/*.local.spec.ts'],
     },
     // SMOKE tier — a fast, curated, reliably-green subset of critical user
     // journeys, gated on every PR (ci.yml). Membership is an explicit allowlist
@@ -74,6 +76,14 @@ export default defineConfig({
       name: 'smoke',
       use: { ...devices['Desktop Chrome'] },
       testMatch: SMOKE_SPECS.map((f) => `**/${f}`),
+    },
+    // LOCAL tier — `*.local.spec.ts` only. Never runs in CI (both CI projects
+    // above exclude it); run on the local gate via `npm run test:e2e:cacp-visual`
+    // or `playwright test --project=local`.
+    {
+      name: 'local',
+      use: { ...devices['Desktop Chrome'] },
+      testMatch: ['**/*.local.spec.ts'],
     },
   ],
   webServer: {
