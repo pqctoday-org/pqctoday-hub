@@ -24,18 +24,26 @@ import {
   type EditablePolicy,
   type EditableRule,
 } from './policyEditModel'
-import {
-  RULE_CATALOG,
-  FAMILY_META,
-  summarizeRule,
-  isRuleTypeId,
-  type RuleTypeId,
-} from './ruleCatalog'
+import { RULE_CATALOG, type RuleTypeId } from './ruleCatalog'
 import { RulePalette } from './RulePalette'
 import { RuleInspector } from './RuleInspector'
 import { RequestSimulator } from './RequestSimulator'
 import { PolicyValidation } from './PolicyValidation'
 import { evaluatePolicy, type SimRequest, type SimResult } from './policySim'
+import { GraphCanvas, type FlowToken } from './GraphCanvas'
+import {
+  defaultLayout,
+  relayout,
+  nodeW,
+  portOf,
+  sinkInPort,
+  NODE_H,
+  REQ,
+  SINK,
+  type Dir,
+  type Layout,
+  type TerminalKind,
+} from './graphGeometry'
 
 interface Props {
   engine: KmipEngine
@@ -84,6 +92,9 @@ export function PolicyGraphView({
   )
   const [baseline] = useState(() => serialize(seeded))
   const [policy, setPolicy] = useState<EditablePolicy>(seeded)
+  const [dir, setDir] = useState<Dir>('tb')
+  const [layout, setLayout] = useState<Layout>(() => defaultLayout(seeded, 'tb'))
+  const [token, setToken] = useState<FlowToken | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [rightTab, setRightTab] = useState<RightTab>('simulate')
   const [yamlOpen, setYamlOpen] = useState(false)
@@ -116,6 +127,7 @@ export function PolicyGraphView({
       if (res && !res.ok) setEngineWarnings([res.error ?? 'engine rejected the edited policy'])
       else setEngineWarnings(res?.warnings ?? [])
       setSim(null) // last sim is stale after an edit
+      setToken(null)
     }, 400)
     return () => {
       if (applyTimer.current) clearTimeout(applyTimer.current)
@@ -132,33 +144,61 @@ export function PolicyGraphView({
   const patchMap = (id: string, key: string, value: { name: string; value: string }) =>
     patchRule(id, (r) => ({ ...r, maps: { ...r.maps, [key]: value } }))
   const toggleRule = (id: string) => patchRule(id, (r) => ({ ...r, enabled: !r.enabled }))
+
+  // Rebuild layout after a structural change (add/delete/reorder), preserving
+  // manual drag positions for surviving nodes. Kept in the event handler (not an
+  // effect) so it never triggers a synchronous-setState-in-effect cascade.
+  const relayoutFor = (next: EditablePolicy) => setLayout((prev) => relayout(next, dir, prev))
+
   const deleteRule = (id: string) => {
-    setPolicy((p) => ({ ...p, rules: p.rules.filter((r) => r.id !== id) }))
+    setPolicy((p) => {
+      const next = { ...p, rules: p.rules.filter((r) => r.id !== id) }
+      relayoutFor(next)
+      return next
+    })
     if (selectedId === id) setSelectedId(null)
   }
   const addRule = (type: RuleTypeId) => {
     const made = RULE_CATALOG[type].make()
     const rule: EditableRule = { id: newRuleId(), type, enabled: true, ...made }
-    setPolicy((p) => ({ ...p, rules: [...p.rules, rule] }))
+    setPolicy((p) => {
+      const next = { ...p, rules: [...p.rules, rule] }
+      relayoutFor(next)
+      return next
+    })
     setSelectedId(rule.id)
     setRightTab('inspect')
   }
-  const moveRule = (id: string, dir: -1 | 1) =>
+  const moveRule = (id: string, delta: -1 | 1) =>
     setPolicy((p) => {
       const i = p.rules.findIndex((r) => r.id === id)
-      const j = i + dir
+      const j = i + delta
       if (i < 0 || j < 0 || j >= p.rules.length) return p
       const rules = p.rules.slice()
       const [x] = rules.splice(i, 1)
       rules.splice(j, 0, x)
-      return { ...p, rules }
+      const next = { ...p, rules }
+      relayoutFor(next)
+      return next
     })
+  const moveNode = (id: string, xy: { x: number; y: number }) =>
+    setLayout((l) => ({ ...l, pos: { ...l.pos, [id]: xy } }))
+
+  const setOrientation = (next: Dir) => {
+    if (next === dir) return
+    setDir(next)
+    setLayout(relayout(policy, next, null))
+    setToken(null)
+    setSim(null)
+  }
 
   const reset = () => {
-    const seeded = toEditable(baseline)
-    setPolicy(seeded)
+    const reseed = toEditable(baseline)
+    setPolicy(reseed)
+    setLayout(relayout(reseed, dir, null))
     setSelectedId(null)
     setSim(null)
+    setToken(null)
     onApplyYaml(baseline)
     setEngineWarnings([])
   }
@@ -169,25 +209,105 @@ export function PolicyGraphView({
   }
 
   // ── run simulation: engine verdict (authoritative) + illustrative trace ──
+  const rafRef = useRef<number | null>(null)
   const run = useCallback(() => {
-    setRunning(true)
     const result = evaluatePolicy(policy, req)
     setSim(result)
     const newObject = /^(Create|CreateKeyPair|Register|Import)/.test(req.op)
     try {
-      const verdict = engine.dryRun({
-        op: req.op,
-        algorithm: req.algorithm || undefined,
-        currentAlgorithm: newObject ? undefined : req.algorithm || undefined,
-        length: req.bits === '' ? undefined : Number(req.bits),
-        state: req.keyState || undefined,
-      })
-      setEngineVerdict(verdict)
+      setEngineVerdict(
+        engine.dryRun({
+          op: req.op,
+          algorithm: req.algorithm || undefined,
+          currentAlgorithm: newObject ? undefined : req.algorithm || undefined,
+          length: req.bits === '' ? undefined : Number(req.bits),
+          state: req.keyState || undefined,
+        })
+      )
     } catch {
       setEngineVerdict(null)
     }
-    setRunning(false)
-  }, [engine, policy, req])
+
+    // Build the flow path points (request → matched nodes → terminal) and the
+    // per-hop token labels (morphs across resolve nodes).
+    const flowIds: string[] = []
+    for (const r of policy.rules) {
+      flowIds.push(r.id)
+      if (result.deciderId && r.id === result.deciderId) break
+    }
+    const nw = nodeW(dir)
+    const reqRect = { x: layout.reqPos.x, y: layout.reqPos.y, w: REQ.w, h: REQ.h }
+    const pts = [portOf(reqRect, 'out', dir)]
+    let label = req.algorithm
+    const labels = [label]
+    for (const id of flowIds) {
+      const p = layout.pos[id]
+      if (!p) continue
+      pts.push({ x: p.x + nw / 2, y: p.y + NODE_H / 2 })
+      const r = policy.rules.find((x) => x.id === id)
+      if (
+        r?.type === 'algorithm_substitution' &&
+        label.toLowerCase() === (r.scalars.from ?? '').toLowerCase()
+      )
+        label = r.scalars.to ?? label
+      if (r?.type === 'algorithm_default' && !label) label = r.scalars.default_algorithm ?? label
+      labels.push(label)
+    }
+    const sinkKey: TerminalKind = result.verdict.kind
+    const skRect = { x: layout.sinks[sinkKey].x, y: layout.sinks[sinkKey].y, w: SINK.w, h: SINK.h }
+    pts.push(sinkInPort(sinkKey, skRect, dir))
+    labels.push(result.verdict.kind === 'deny' ? '✕' : label)
+    const color =
+      result.verdict.kind === 'allow'
+        ? 'hsl(var(--success))'
+        : result.verdict.kind === 'rekey'
+          ? 'hsl(var(--warning))'
+          : 'hsl(var(--destructive))'
+
+    const reduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    if (reduced || pts.length < 2) {
+      const last = pts[pts.length - 1]
+      setToken({ x: last.x, y: last.y, label: labels[labels.length - 1], color })
+      return
+    }
+
+    setRunning(true)
+    if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    const segMs = 620
+    const total = (pts.length - 1) * segMs
+    const start = performance.now()
+    const tick = (now: number) => {
+      const el = now - start
+      const gp = Math.min(el / segMs, pts.length - 1)
+      const seg = Math.min(Math.floor(gp), pts.length - 2)
+      const f = gp - seg
+      const a = pts[seg]
+      const b = pts[seg + 1]
+      const ease = f < 0.5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2
+      setToken({
+        x: a.x + (b.x - a.x) * ease,
+        y: a.y + (b.y - a.y) * ease,
+        label: labels[Math.min(seg + (f > 0.6 ? 1 : 0), labels.length - 1)],
+        color,
+      })
+      if (el < total) rafRef.current = requestAnimationFrame(tick)
+      else {
+        const last = pts[pts.length - 1]
+        setToken({ x: last.x, y: last.y, label: labels[labels.length - 1], color })
+        setRunning(false)
+      }
+    }
+    rafRef.current = requestAnimationFrame(tick)
+  }, [engine, policy, req, dir, layout])
+
+  useEffect(
+    () => () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    },
+    []
+  )
 
   // Illustrative-vs-engine divergence (date/attrs the engine can't yet see).
   const approximated = useMemo(() => {
@@ -216,93 +336,33 @@ export function PolicyGraphView({
           />
         </aside>
 
-        {/* Center: WP2 placeholder rule list (WP3 → GraphCanvas) */}
-        <main className="relative min-h-0 overflow-y-auto bg-background/40 p-3">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-              Decision pipeline · {policy.rules.length} rule{policy.rules.length === 1 ? '' : 's'}
+        {/* Center: the decision-pipeline canvas */}
+        <main className="relative min-h-0">
+          {modified && (
+            <span className="absolute left-3 top-3 z-20 inline-flex items-center gap-1.5 rounded border border-status-warning/40 bg-status-warning/10 px-1.5 py-0.5 text-[10px] font-semibold text-status-warning">
+              modified
+              <Button
+                variant="ghost"
+                onClick={reset}
+                title="Reset to preset"
+                className="inline-flex h-auto items-center gap-0.5 p-0 text-[10px] font-semibold text-status-warning hover:bg-transparent hover:underline"
+              >
+                <RotateCcw size={10} /> reset
+              </Button>
             </span>
-            {modified && (
-              <span className="inline-flex items-center gap-1.5 rounded border border-status-warning/40 bg-status-warning/10 px-1.5 py-0.5 text-[10px] font-semibold text-status-warning">
-                modified
-                <Button
-                  variant="ghost"
-                  onClick={reset}
-                  title="Reset to preset"
-                  className="inline-flex h-auto items-center gap-0.5 p-0 text-[10px] font-semibold text-status-warning hover:bg-transparent hover:underline"
-                >
-                  <RotateCcw size={10} /> reset
-                </Button>
-              </span>
-            )}
-          </div>
-          {policy.rules.length === 0 ? (
-            <p className="mt-8 text-center text-[12px] text-muted-foreground">
-              No rules yet — add one from the palette. An empty policy allows everything.
-            </p>
-          ) : (
-            <ol className="space-y-1.5">
-              {policy.rules.map((r, i) => {
-                const spec = isRuleTypeId(r.type) ? RULE_CATALOG[r.type] : undefined
-                const fam = spec ? FAMILY_META[spec.family] : undefined
-                const Icon = spec?.icon
-                const decided = sim?.deciderId === r.id
-                const step = sim?.trace.find((t) => t.ruleId === r.id)
-                return (
-                  <li key={r.id}>
-                    <Button
-                      variant="ghost"
-                      onClick={() => select(r.id)}
-                      className={cn(
-                        'flex h-auto w-full items-center justify-start gap-2 rounded-lg border-l-4 bg-card p-2 text-left font-normal transition-all hover:bg-card',
-                        fam?.border ?? 'border-l-border',
-                        selectedId === r.id
-                          ? 'ring-2 ring-primary'
-                          : 'border-y border-r border-border',
-                        !r.enabled && 'opacity-50',
-                        decided && 'ring-2 ring-destructive',
-                        step && !step.matched && step.effect !== 'off' && sim && 'opacity-60'
-                      )}
-                    >
-                      {Icon && fam && (
-                        <span
-                          className={cn(
-                            'grid h-7 w-7 shrink-0 place-items-center rounded-md',
-                            fam.bg
-                          )}
-                        >
-                          <Icon size={14} className={fam.text} />
-                        </span>
-                      )}
-                      <span className="flex min-w-0 flex-col">
-                        <span className="flex items-center gap-1.5">
-                          <span className="text-[12.5px] font-semibold text-foreground">
-                            {spec?.title ?? r.type}
-                          </span>
-                          <span className="font-mono text-[9.5px] text-muted-foreground">
-                            #{i + 1}
-                          </span>
-                        </span>
-                        <span className="truncate font-mono text-[11px] text-muted-foreground">
-                          {summarizeRule(r)}
-                        </span>
-                      </span>
-                      {step?.matched && (
-                        <span
-                          className={cn(
-                            'ml-auto text-[9px] font-bold uppercase',
-                            step.effect === 'deny' ? 'text-destructive' : 'text-status-success'
-                          )}
-                        >
-                          {step.effect}
-                        </span>
-                      )}
-                    </Button>
-                  </li>
-                )
-              })}
-            </ol>
           )}
+          <GraphCanvas
+            policy={policy}
+            layout={layout}
+            sim={sim}
+            selectedId={selectedId}
+            request={req}
+            token={token}
+            onSelect={select}
+            onMoveNode={moveNode}
+            onToggle={toggleRule}
+            onOrientation={setOrientation}
+          />
         </main>
 
         {/* Right: inspect / simulate / check */}
