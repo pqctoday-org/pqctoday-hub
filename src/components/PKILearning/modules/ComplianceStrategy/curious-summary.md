@@ -4,7 +4,7 @@ Global governments and standards bodies—including NIST, NSA, ETSI, ANSSI, and 
 
 ### Why It Matters
 
-Failure to map compliance correctly means missing severe, overlapping deadlines starting as early as 2025. Organizations cannot simply migrate unilaterally; they are gated by external compliance dependencies such as FIPS 140-3 Cryptographic Module Validation Program (CMVP) bottlenecks, EU Digital Identity (eIDAS 2.0) requirements, and financial mandates like DORA. Furthermore, procurement changes (driven by EO 14306) immediately affect vendor contracts requiring Cryptographic Bills of Materials (CBOMs).
+Failure to map compliance correctly means missing severe, overlapping deadlines starting as early as 2025. Organizations cannot simply migrate unilaterally; they are gated by external compliance dependencies such as FIPS 140-3 Cryptographic Module Validation Program (CMVP) bottlenecks, EU Digital Identity (eIDAS 2.0) requirements, and financial mandates like DORA. Furthermore, the June 2026 PQC Executive Order (EO 14412) introduces Cryptographic Bill of Materials (CBOM) requirements that affect vendor contracts (EO 14306 had earlier removed EO 14144's binding procurement trigger).
 
 ### The Key Takeaway
 

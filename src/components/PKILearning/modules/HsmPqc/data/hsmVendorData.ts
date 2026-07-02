@@ -202,7 +202,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     product: 'QxHSM (QASM core)',
     type: 'on-prem',
     catalogName: 'Crypto4A QxHSM',
-    fips140Level: 'FIPS 140-3 Level 3 (cert #4250, Active)',
+    fips140Level: 'FIPS 140-2 Level 3 (cert #4250, Active)',
     supportedPQCAlgorithms: [
       'ML-KEM-512/768/1024',
       'ML-DSA-44/65/87',
@@ -213,7 +213,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     ],
     formFactor: 'network',
     notes:
-      "World's first FIPS 140-3 Level 3 validated PQC-capable HSM (cert #4250). CAVP A4204 (LMS — world's first PQC cert) and A5631 (ML-KEM, ML-DSA, SLH-DSA, LMS) validated. FPGA-based crypto-agility enables firmware updates for new algorithms without hardware replacement. QxOS 5 (June 2025). Modular blade design (QxBMC-1/3/12 chassis — up to 12 blades per 4RU). Classic McEliece support on roadmap (not yet CAVP validated). Integrations: EJBCA (v9.3+), DigiCert, Keyfactor. Canadian sovereign solution (Ottawa).",
+      "FIPS 140-2 Level 3 validated (cert #4250, 2022). CAVP A4204 (LMS — world's first PQC cert) and A5631 (ML-KEM, ML-DSA, SLH-DSA, LMS) validated. FPGA-based crypto-agility enables firmware updates for new algorithms without hardware replacement. QxOS 5 (June 2025). Modular blade design (QxBMC-1/3/12 chassis — up to 12 blades per 4RU). Classic McEliece support on roadmap (not yet CAVP validated). Integrations: EJBCA (v9.3+), DigiCert, Keyfactor. Canadian sovereign solution (Ottawa).",
     firmwareVersion: 'v4.4+ (production PQC); v5.0 (FIPS 140-3 resubmission pending)',
     pkcs11Version: '3.0 (PQC extensions)',
     hybridSupport: true,
@@ -356,7 +356,7 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
   Signature Length: 3,309 bytes
   Algorithm:       ML-DSA-65
   NIST Level:      3
-  Hedged Signing:  YES (rnd ≠ 0, per FIPS 204 §5.2)
+  Hedged Signing:  YES (rnd ≠ 0, per FIPS 204 §3.4)
   Note:            Hedged mode recommended for side-channel protection`,
     classicalEquivalent: 'CKM_ECDSA with P-256 → 64-byte signature (51x smaller)',
     vendorNotes: {

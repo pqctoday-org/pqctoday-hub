@@ -13,7 +13,7 @@ export interface PKCS11Mechanism {
 export interface FipsValidationEntry {
   vendorId: string
   vendorName: string
-  certType: 'FIPS 140-3' | 'ACVP' | 'CAVP' | 'Common Criteria'
+  certType: 'FIPS 140-3' | 'FIPS 140-2' | 'ACVP' | 'CAVP' | 'Common Criteria'
   certId: string
   /** For ACVP: PQC algorithms validated. For FIPS 140-3: empty — module certs do not include PQC. */
   algorithms: string[]
@@ -665,7 +665,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
   {
     vendorId: 'crypto4a-qxhsm',
     vendorName: 'Crypto4A QASM Cryptographic Module',
-    certType: 'FIPS 140-3',
+    certType: 'FIPS 140-2',
     certId: '4250',
     algorithms: [],
     status: 'Active',
@@ -673,7 +673,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     level: 'Level 3',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4250',
-    note: 'Certifies hardware module + classical algorithms. FIPS 140-3 v5.0 (PQC firmware) resubmission in progress. ACVP A5631 covers ML-KEM, ML-DSA, SLH-DSA, and LMS.',
+    note: 'Certifies hardware module + classical algorithms. FIPS 140-3 v5.0 (PQC firmware) submission in progress. ACVP A5631 covers ML-KEM, ML-DSA, SLH-DSA, and LMS.',
   },
   {
     vendorId: 'crypto4a-qxhsm',
@@ -741,7 +741,7 @@ export const SIDE_CHANNEL_VECTORS: SideChannelVector[] = [
     description:
       'Inducing faults during ML-DSA signing (e.g., voltage glitching, laser fault injection) can cause the signer to produce a faulty signature that leaks the secret key. This is why ML-DSA uses hedged signing.',
     countermeasure:
-      'ML-DSA hedged signing mode (FIPS 204 §3.5.2): rnd parameter is random, not zero. This makes the signing output non-deterministic, preventing fault attacks from producing exploitable faulty signatures. FIPS 140-3 Level 3+ HSMs also have tamper-responsive enclosures.',
+      'ML-DSA hedged signing mode (FIPS 204 §3.4): rnd parameter is random, not zero. This makes the signing output non-deterministic, preventing fault attacks from producing exploitable faulty signatures. FIPS 140-3 Level 3+ HSMs also have tamper-responsive enclosures.',
     hsmRelevance: 'high',
   },
   {
@@ -822,7 +822,7 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     upgradeComplexity: 'low',
     estimatedDowntime: '30-60 minutes per HSM (FPGA firmware update)',
     notes:
-      "FPGA-based design enables algorithm agility via firmware update — no hardware replacement needed. World's first FIPS 140-3 Level 3 validated PQC-capable HSM (cert #4250, Active). CAVP A5631 validated (ML-KEM, ML-DSA, SLH-DSA, LMS). v5.0 FIPS 140-3 resubmission in progress for PQC firmware.",
+      'FPGA-based design enables algorithm agility via firmware update — no hardware replacement needed. FIPS 140-2 Level 3 validated (cert #4250, Active). CAVP A5631 validated (ML-KEM, ML-DSA, SLH-DSA, LMS). v5.0 FIPS 140-3 submission in progress for PQC firmware.',
   },
 ]
 

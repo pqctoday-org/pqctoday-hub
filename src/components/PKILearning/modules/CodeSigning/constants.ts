@@ -92,7 +92,8 @@ export const SIGSTORE_STEPS: SigstoreStep[] = [
   {
     step: 2,
     title: 'Ephemeral Key Generation',
-    description: 'Short-lived ML-DSA-65 keypair created (valid ~20 minutes)',
+    description:
+      'Ephemeral ECDSA P-256 keypair created (valid ~20 minutes); ML-DSA is a proposed future upgrade',
     icon: 'Key',
   },
   {

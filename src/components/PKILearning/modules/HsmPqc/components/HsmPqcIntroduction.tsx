@@ -657,7 +657,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <Shield size={16} className="text-primary shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-sm font-bold text-foreground mb-1">
-                  ML-DSA Hedged Signing (FIPS 204 &sect;5.2)
+                  ML-DSA Hedged Signing (FIPS 204 &sect;3.4)
                 </h4>
                 <p className="text-xs text-muted-foreground">
                   ML-DSA supports a &quot;hedged&quot; signing mode where the{' '}

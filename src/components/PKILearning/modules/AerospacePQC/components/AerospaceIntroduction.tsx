@@ -306,10 +306,10 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
                 Lattice-Based (ML-DSA/ML-KEM) &mdash; Vulnerable
               </h4>
               <p className="text-xs text-muted-foreground">
-                Private keys are large structured matrices (1,312&ndash;2,592 bytes). A single bit
-                flip changes the algebraic structure, producing valid-looking but{' '}
-                <strong>cryptographically incorrect</strong> outputs. ECC memory helps but adds
-                12&ndash;25% overhead.
+                Keys are large structured matrices (public keys 1,312&ndash;2,592 bytes; private
+                keys 2,560&ndash;4,896 bytes). A single bit flip changes the algebraic structure,
+                producing valid-looking but <strong>cryptographically incorrect</strong> outputs.
+                ECC memory helps but adds 12&ndash;25% overhead.
               </p>
             </div>
           </div>

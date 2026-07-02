@@ -87,7 +87,7 @@ export const CERT_CAPACITY_DEFAULTS: AlgoCapacityProfile[] = [
     securityLevel: 3,
     publicKeyBytes: 1952,
     privateKeyBytes: 4032,
-    signatureBytes: 3293,
+    signatureBytes: 3309,
     signCpuMicros: 44, // 130 676 cycles ÷ 3 GHz
     verifyCpuMicros: 28, // 84 906 cycles ÷ 3 GHz
     tlsCertOverheadBytes: 3037,
@@ -99,7 +99,7 @@ export const CERT_CAPACITY_DEFAULTS: AlgoCapacityProfile[] = [
     securityLevel: 5,
     publicKeyBytes: 2592,
     privateKeyBytes: 4896,
-    signatureBytes: 4595,
+    signatureBytes: 4627,
     signCpuMicros: 66, // 197 960 cycles ÷ 3 GHz
     verifyCpuMicros: 42, // 126 839 cycles ÷ 3 GHz
     tlsCertOverheadBytes: 4339,

@@ -201,15 +201,15 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
             </div>
             <div className="space-y-2">
               {[
-                { label: 'Classical (X25519 + ECDSA)', size: '~5 KB', color: 'bg-status-success' },
+                { label: 'Classical (X25519 + ECDSA)', size: '~1 KB', color: 'bg-status-success' },
                 {
                   label: 'Hybrid (X25519MLKEM768 + ECDSA)',
-                  size: '~15 KB',
+                  size: '~3.3 KB',
                   color: 'bg-status-warning',
                 },
                 {
                   label: 'Pure PQC (ML-KEM-768 + ML-DSA-65)',
-                  size: '~25 KB',
+                  size: '~13 KB',
                   color: 'bg-status-error',
                 },
               ].map((item) => (
@@ -328,8 +328,9 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
             Content Delivery Networks deploy PQC at{' '}
             <InlineTooltip term="Edge PoP">edge Points of Presence (PoPs)</InlineTooltip>{' '}
             distributed globally. Cloudflare deployed X25519MLKEM768 in production in 2024, AWS
-            CloudFront offers hybrid TLS in preview, and nginx supports it via OpenSSL. This makes
-            CDN edge nodes the largest real-world PQC deployment today.
+            CloudFront enabled PQC hybrid key establishment by default on all its TLS security
+            policies (client-to-edge) in September 2025, and nginx supports it via OpenSSL. This
+            makes CDN edge nodes the largest real-world PQC deployment today.
           </p>
 
           <div className="space-y-2">

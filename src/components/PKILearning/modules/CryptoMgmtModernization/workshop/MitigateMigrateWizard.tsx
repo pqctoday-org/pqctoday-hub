@@ -285,8 +285,9 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
                 </ol>
               </div>
               <p className="text-xs text-muted-foreground border-t border-border pt-3">
-                <strong>Compliance target:</strong> CNSA 2.0 preferred 2030, exclusive 2033 (NSS).
-                CA/B Forum 47-day TLS cadence: March 2029. CSWP.39 §3.2 + §5 (Implement step).
+                <strong>Compliance target:</strong> CNSA 2.0 (NSS): support-and-prefer 2025–2027 by
+                category; exclusive use 2030 (signing, networking) / 2033 (web, cloud, OS). CA/B
+                Forum 47-day TLS cadence: March 2029. CSWP.39 §3.2 + §5 (Implement step).
               </p>
             </div>
           ) : (

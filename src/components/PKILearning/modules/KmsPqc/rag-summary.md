@@ -18,7 +18,7 @@ workshop_steps: 5
 - KMS provider PQC landscape (AWS KMS, Google Cloud KMS, Azure Key Vault, HashiCorp Vault, Thales CipherTrust, Fortanix DSM)
 - PQC key rotation strategies and compliance deadlines (CNSA 2.0, NIST IR 8547)
 - Enterprise architecture patterns for multi-cloud PQC key management
-- KMIP v2.1 protocol operations and PQC key type enumerations
+- KMIP v3.0 protocol operations and PQC key type enumerations
 - Cross-provider key sync via KMIP orchestration
 - AWS KMS Key Policies for enforcing Hybrid PQC TLS (aws:tlsCipherSuites)
 
@@ -40,4 +40,4 @@ workshop_steps: 5
 - FIPS 205 (SLH-DSA)
 - NIST IR 8547 (PQC Transition)
 - CNSA 2.0 (NSA)
-- KMIP v2.1 (OASIS Key Management Interoperability Protocol)
+- KMIP v3.0 (OASIS Key Management Interoperability Protocol)

@@ -54,7 +54,7 @@ const CUR: Record<DemoSector, string> = {
 const REG: Record<DemoSector, string> = {
   financial: 'CISA / SEC / DORA',
   healthcare: 'NIS2 / GDPR / HIPAA',
-  government: 'CISA BOD / NIST SP 800-208 / NSM-10',
+  government: 'FISMA / OMB M-23-02 / NSM-10',
   energy: 'NCSC / NIS2-UK / NERC CIP',
   telecom: 'FCC / CISA / 3GPP',
   retail: 'ASD ISM / PCI DSS / Privacy Act 2020',
@@ -73,7 +73,7 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       `# CRQC Exposure Scenario — ${ORG.financial}`,
       '',
       '## Harvest-now, decrypt-later (HNDL)',
-      '- Customer financial records and transaction histories protected by RSA-2048 / ECDHE have a regulatory retention horizon of 7 years (SOX, PCI DSS).',
+      '- Customer financial records and transaction histories protected by RSA-2048 / ECDHE have a regulatory retention horizon of 7 years (SOX audit-record retention; sector rules vary).',
       '- Assume bulk capture today; CRQC availability modelled 2029–2033 — the exposure window opens inside the retention horizon.',
       '',
       '## Threaten-now, forge-later (TNFL)',
@@ -107,13 +107,13 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       '',
       '## Harvest-now, decrypt-later (HNDL)',
       '- FOUO / CUI data with 25+ year classification horizons is protected by RSA-2048 / ECDHE on inter-agency links.',
-      '- NSM-10 and CISA BOD 23-02 presuppose state-actor harvest operations already underway.',
+      '- NSM-10 and OMB M-23-02 presuppose state-actor harvest operations already underway.',
       '',
       '## Threaten-now, forge-later (TNFL)',
       '- PKI trust anchors (DoD Root CA) have 20-year lifetimes; firmware signing for embedded systems runs 15+ years.',
       '',
       '## Mosca inequality',
-      '- X (secrecy) ≈ 25y, Y (migration) ≈ 5y, Z (CRQC) ≈ 5–9y → X + Y > Z. NSM-10 2030 deadline is binding.'
+      "- X (secrecy) ≈ 25y, Y (migration) ≈ 5y, Z (CRQC) ≈ 5–9y → X + Y > Z. The June 2026 EO's 2030 key-establishment deadline is binding (NSM-10 set the 2035 whole-of-NSS goal)."
     ),
   },
   energy: {
@@ -153,13 +153,13 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       `# CRQC Exposure Scenario — ${ORG.retail}`,
       '',
       '## Harvest-now, decrypt-later (HNDL)',
-      '- Payment card tokens and loyalty PII retained 7 years under PCI DSS 4.0 are protected by RSA-2048 / ECDHE on checkout flows.',
+      '- Payment card tokens and loyalty PII retained under sector record-retention practice are protected by RSA-2048 / ECDHE on checkout flows.',
       '',
       '## Threaten-now, forge-later (TNFL)',
       '- Code-signing keys for payment firmware (EMV kernel) have a 10-year lifecycle.',
       '',
       '## Mosca inequality',
-      '- X (secrecy) ≈ 7y, Y (migration) ≈ 4y, Z (CRQC) ≈ 5–9y → X + Y > Z. PCI DSS 5.0 PQC requirements expected 2026–2027.'
+      '- X (secrecy) ≈ 7y, Y (migration) ≈ 4y, Z (CRQC) ≈ 5–9y → X + Y > Z. PCI SSC has signaled PQC attention but published no PQC requirements or v5.0 timeline yet.'
     ),
   },
   general: {
@@ -219,7 +219,7 @@ const roiModel: Record<DemoSector, DemoDoc> = {
       '| Driver | 3-yr cost avoided |',
       '| --- | --- |',
       '| Breach of FOUO / CUI data (expected value at classification level) | $31.0M |',
-      '| FISMA / NIST SP 800-208 non-compliance remediation cost | $8.4M |',
+      '| FISMA / OMB M-23-02 non-compliance remediation cost | $8.4M |',
       '| Emergency migration premium (no refresh alignment) | $9.6M |',
       '',
       'Planned program cost (phased, NSM-10 aligned): $14.2M over 5 years → mandatory compliance, not optional ROI.'
@@ -442,7 +442,7 @@ const raciMatrix: Record<DemoSector, DemoDoc> = {
 function policyDraft(sector: DemoSector): DemoDoc {
   const algorithms =
     sector === 'government'
-      ? 'ML-KEM-768 (CNSA 2.0), ML-DSA-65 (CNSA 2.0); hybrid (X25519+ML-KEM) during transition.'
+      ? 'ML-KEM-1024 (CNSA 2.0), ML-DSA-87 (CNSA 2.0).'
       : 'ML-KEM-768 and ML-DSA-65 for new systems; hybrid (X25519+ML-KEM) during transition.'
   return {
     title: 'Cryptography Policy (Draft)',
@@ -455,7 +455,7 @@ function policyDraft(sector: DemoSector): DemoDoc {
       '3. **Crypto-agility** — all new services must externalise algorithm choice behind a provider interface.',
       '4. **Exceptions** — time-boxed, risk-accepted by the CISO, logged in the exception register.',
       '',
-      '## KPI Drift Rules (CSWP.39 §5.4 → §5.1 feedback loop)',
+      '## KPI Drift Rules (CSWP.39 §5.2 Crypto Security Policy Enforcement feedback loop)',
       '',
       '| KPI | Threshold | Policy action |',
       '| --- | --- | --- |',
@@ -549,8 +549,8 @@ function boardDeck(sector: DemoSector): DemoDoc {
     data: md(
       `# Board Pitch — Securing ${ORG[sector]} Against the Quantum Threat`,
       '',
-      `1. **The threat is dated:** adversaries harvest encrypted data today; a cryptographically relevant quantum computer (CRQC) arriving 2029–2033 will decrypt it retroactively.`,
-      `2. **The deadline is binding:** ${reg} timelines require demonstrable PQC migration progress by 2027–2030.`,
+      `1. **The threat is dated:** adversaries harvest encrypted data today; a cryptographically relevant quantum computer (CRQC) — expert estimates cluster around 2029–2033 — would decrypt it retroactively.`,
+      `2. **The deadlines are real:** the June 2026 US Executive Order sets binding PQC deadlines (key establishment 2030, signatures 2031; CNSA 2.0 for national-security systems), and regulators behind ${reg} increasingly expect demonstrable migration progress.`,
       `3. **The ask:** a phased mandate of ${budgetAsk} aligned to existing refresh cycles — deferral doubles cost.`,
       `4. **The cost of waiting:** an unplanned migration runs ~2× and risks regulatory penalty plus a notifiable data breach.`
     ),
@@ -811,7 +811,7 @@ function riskTreatmentPlan(sector: DemoSector): DemoDoc {
       `| Internal PKI | High | Issue PQC-hybrid subordinate CA; dual-stack TLS | PKI team | Q1 2027 |`,
       `| Low-sensitivity systems | Medium | Accept during transition; flag for next refresh | CISO | 2028 |`,
       '',
-      `*Controls aligned to NIST CSWP 39 §4.6 and ${REG[sector]}.*`
+      `*Controls aligned to NIST CSWP 39 §5.4 (Cryptographic Architecture) and ${REG[sector]}.*`
     ),
   }
 }
@@ -826,7 +826,7 @@ function migrationRoadmap(sector: DemoSector): DemoDoc {
       `# PQC Migration Roadmap (Two-Track) — ${ORG[sector]}`,
       '',
       '## External Regulatory Deadlines',
-      `- ${REG[sector]}: PQC migration demonstrable by 2027–2030`,
+      `- ${REG[sector]}: regulators increasingly expect demonstrable PQC progress; binding US deadlines come from the June 2026 Executive Order (key establishment 2030, signatures 2031)`,
       '',
       '## Track A — Confidentiality (KEM)',
       '',
@@ -869,7 +869,7 @@ function stakeholderComms(sector: DemoSector): DemoDoc {
       '## 2. Message Framework',
       '',
       '### Board / C-Suite',
-      `Quantum computing threatens current encryption; ${REG[sector]} mandates PQC migration by 2030. Planned program: phased, refresh-aligned, net-positive ROI by year 2.`,
+      `Quantum computing threatens current encryption; regulators behind ${REG[sector]} increasingly expect demonstrable PQC progress, and the June 2026 US Executive Order sets binding 2030/2031 deadlines. Planned program: phased, refresh-aligned, net-positive ROI by year 2.`,
       '',
       '### Technical Leadership',
       'NIST FIPS 203/204/205 (ML-KEM, ML-DSA, SLH-DSA) are final. Two-track plan: Track A (KEM) starts 2025; Track B (signatures) starts 2026. Hybrid mode required during transition per CSWP.39.',
@@ -901,9 +901,9 @@ function hybridTransition(sector: DemoSector): DemoDoc {
       '',
       '| Protocol | Classical | PQC | Hybrid standard | Status |',
       '| --- | --- | --- | --- | --- |',
-      '| TLS 1.3 KEM | X25519 | ML-KEM-768 | IETF draft-ounsworth-tls-mlkem | Pilot |',
-      '| IKEv2 / IPsec | ECDH P-256 | ML-KEM-768 | RFC 9242 / NIST SP 1800-38 | Planned 2025 |',
-      '| SSH KEX | ECDH P-256 | ML-KEM-768 | draft-josefsson-ssh-pqc | Planned 2025 |',
+      '| TLS 1.3 KEM | X25519 | ML-KEM-768 | IETF draft-ietf-tls-ecdhe-mlkem | Pilot |',
+      '| IKEv2 / IPsec | ECDH P-256 | ML-KEM-768 | RFC 9370 / NIST SP 1800-38 | Planned 2025 |',
+      '| SSH KEX | ECDH P-256 | ML-KEM-768 | draft-ietf-sshm-mlkem-hybrid-kex | Planned 2025 |',
       '| Code signing | ECDSA P-256 | ML-DSA-65 | FIPS 204 | Track B 2026 |',
       '| Certificate issuance | RSA-2048 | ML-DSA-65 | FIPS 204 / dual-stack | Planned 2026 |',
       '',
@@ -1004,7 +1004,7 @@ function vendorScorecard(sector: DemoSector): DemoDoc {
       '| Identity Provider | 2 | 62 | 70 | 75 | 42 |',
       '| TLS Library | 5 | 82 | 85 | 95 | 75 |',
       '',
-      '## Observability Tooling Notes (CSWP.39 §5.3)',
+      '## Observability Tooling Notes (CSWP.39 §4.3 / §5.2)',
       '- **Crypto scanner:** openssl-scan + syft CBOM extraction (weekly)',
       '- **CVE feed:** NVD subscription, CISA KEV alerting (daily)',
       '- **SIEM rules:** classical-algorithm negotiation alerts active',
@@ -1048,7 +1048,7 @@ function supplyChainMatrix(sector: DemoSector): DemoDoc {
       '### Cloud / SaaS Layer (2 products)',
       '- Cloud KMS: PQC KEK available; SaaS IdP: hybrid 2025',
       '',
-      '## CBOM (CSWP.39 §5.2 — 6 asset classes)',
+      '## CBOM (CSWP.39 Fig. 3 — 6 asset classes)',
       '- Code: 4 classical libs identified; 1 hybrid-capable',
       '- Library: openssl 3.3, libpqcrypto, bouncycastle',
       '- Application: 8 apps using classical KEM directly',
@@ -1106,7 +1106,7 @@ function cloudResponsibilityMatrix(sector: DemoSector): DemoDoc {
       '| CBOM ingestion & scanning | — | ✓ | Tool-dependent |',
       '| PQC compliance attestation | Provider audit scope | Customer audit scope | ✓ |',
       '',
-      '*Responsibility boundaries aligned to NIST SP 800-210 cloud security guidance and CSWP.39 §5.3 observability requirements.*'
+      '*Responsibility boundaries aligned to NIST SP 800-210 cloud security guidance and CSWP.39 §5.3 technology supply-chain requirements.*'
     ),
   }
 }
@@ -1142,7 +1142,7 @@ function infraModernizationPlan(sector: DemoSector): DemoDoc {
       '',
       '## Network Compatibility',
       '',
-      '- TLS 1.3 + X25519/ML-KEM-768 hybrid: tested on nginx 1.25, Go 1.23',
+      '- TLS 1.3 + X25519/ML-KEM-768 hybrid: tested on nginx 1.25, Go 1.24',
       '- IKEv2 + ML-KEM-768: tested on strongSwan 6.0',
       '- SSH: OpenSSH 9.x ML-KEM draft: tested',
       '',
@@ -1165,7 +1165,7 @@ function managementToolsAudit(sector: DemoSector): DemoDoc {
     data: md(
       `# Cryptographic Management Tools Audit — ${ORG[sector]}`,
       '',
-      '| Tool category (CSWP.39 §5.3) | Current tool | PQC-ready | Gap | Priority |',
+      '| Tool category (CSWP.39 Fig. 3 Management Tools) | Current tool | PQC-ready | Gap | Priority |',
       '| --- | --- | --- | --- | --- |',
       '| Crypto discovery / CBOM | syft + grype | Partial | No ML-KEM/ML-DSA detection | High |',
       '| Certificate lifecycle | Vault PKI | No | Classical CA only | High |',
@@ -1369,10 +1369,10 @@ function skillsTeamPlan(sector: DemoSector): DemoDoc {
       '',
       '| Role | Typical FTE | NICE work role | Build/Borrow/Buy |',
       '| --- | --- | --- | --- |',
-      '| Quantum-Readiness Program Manager | 0.5 | SP-MGT-001 | Borrow (CISO team) |',
-      '| Cryptographic Engineer | 1.5 | SP-DEV-002 | Buy (contract) |',
-      '| PKI / CA Specialist | 0.5 | SP-OPS-001 | Build (upskill) |',
-      '| Security Architect (PQC) | 0.5 | SP-ARC-002 | Borrow (external advisory) |',
+      '| Quantum-Readiness Program Manager | 0.5 | OG-WRL-014 (Systems Security Management) | Borrow (CISO team) |',
+      '| Cryptographic Engineer | 1.5 | DD-WRL-003 (Secure Software Development) | Buy (contract) |',
+      '| PKI / CA Specialist | 0.5 | IO-WRL-005 (Systems Administration) | Build (upskill) |',
+      '| Security Architect (PQC) | 0.5 | DD-WRL-001 (Cybersecurity Architecture) | Borrow (external advisory) |',
       '',
       '## Build / borrow / buy summary',
       '- **Build:** PKI specialist upskill via NIST PQC training programme',

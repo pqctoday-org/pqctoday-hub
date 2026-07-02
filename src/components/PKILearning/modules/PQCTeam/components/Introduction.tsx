@@ -2,7 +2,7 @@
 /**
  * "Building Your PQC Team" lesson (Applied Quantum Skills appendix, p.160–164).
  * Covers core roles, the Crypto Champion network, Build-Borrow-Buy, and the
- * 1-per-500-engineers Crypto Champion sizing heuristic.
+ * ~1-dedicated-FTE-per-500-cryptographic-instances sizing heuristic.
  */
 import React from 'react'
 import { Link } from 'react-router-dom'
@@ -38,7 +38,7 @@ const CORE_ROLES = [
   },
   {
     role: 'Crypto Champions (federated)',
-    what: 'Embedded per-team advocates who carry context into each delivery squad. Size ~1 per 500 engineers.',
+    what: 'Embedded per-team advocates who carry context into each delivery squad. Size ~1 per team.',
   },
 ]
 
@@ -118,8 +118,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
       <div className="mt-4 rounded-lg border border-primary/20 bg-primary/5 p-4">
         <p className="text-sm text-foreground/90">
           <strong>Sizing heuristic:</strong> staff roughly{' '}
-          <strong>one Crypto Champion per 500 engineers</strong>, plus a fixed core team. The
-          Workshop turns this into a concrete FTE estimate for your org size.
+          <strong>one dedicated FTE per 500 cryptographic instances in your CBOM</strong> (~1 per
+          1,000 during steady rollout), plus a fixed core team and a Crypto Champion in each
+          delivery team. The Workshop turns this into a concrete FTE estimate for your estate.
         </p>
       </div>
     </section>

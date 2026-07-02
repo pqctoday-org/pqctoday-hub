@@ -97,13 +97,13 @@ export const PipelineIntegrationLab: React.FC = () => {
               {
                 label: 'TLS Channel Security',
                 status:
-                  'TLS 1.3 with hybrid ML-KEM (via Vault 1.18+ / cloud SDK) → Protects secrets in transit',
+                  'TLS 1.3 with hybrid ML-KEM (via cloud SDK / TLS termination) → Protects secrets in transit',
                 isSafe: false,
               },
               {
                 label: 'Secret Encryption at Rest',
                 status:
-                  'Vault AES-256-GCM with ML-KEM KEK (Vault 1.18+) → Protects vault backups from HNDL',
+                  'Vault AES-256-GCM with ML-KEM KEK (roadmap; Vault transit PQC is experimental ML-DSA in 1.19+) → Protects vault backups from HNDL',
                 isSafe: false,
               },
               {

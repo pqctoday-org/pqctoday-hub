@@ -398,17 +398,18 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
           </div>
         </div>
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
-          <div className="text-sm font-bold text-foreground mb-1">NIST Position on QKD</div>
+          <div className="text-sm font-bold text-foreground mb-1">NSA Position on QKD</div>
           <p className="text-xs text-muted-foreground italic">
-            &quot;NIST does not generally recommend QKD &hellip; QKD addresses only the key
-            distribution problem &hellip; it requires special-purpose equipment &hellip; [and] is
-            only proven secure under certain theoretical models that may not match real-world
-            implementations.&quot;
+            &quot;NSA does not recommend the usage of quantum key distribution and quantum
+            cryptography for securing the transmission of data in National Security Systems
+            &hellip;&quot; QKD addresses only the key distribution problem, requires special-purpose
+            equipment, and is only proven secure under theoretical models that may not match
+            real-world implementations.
           </p>
           <p className="text-xs text-muted-foreground mt-2">
-            NIST recommends post-quantum cryptography (FIPS 203/204/205) as the primary solution for
-            quantum-resistant security, while acknowledging QKD may have niche applications in
-            high-security environments.
+            NSA instead recommends post-quantum cryptography (NIST FIPS 203/204/205) as the primary
+            solution for quantum-resistant security, while acknowledging QKD may have niche
+            applications in high-security environments.
           </p>
         </div>
       </section>

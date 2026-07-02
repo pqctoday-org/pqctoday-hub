@@ -303,7 +303,9 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Standard</span>
-                <span className="text-foreground">RFC 8032</span>
+                <span className="text-foreground">
+                  {classicalAlgo === 'Ed25519' ? 'RFC 8032' : 'FIPS 186-5'}
+                </span>
               </div>
             </div>
             <div className="text-xs space-y-1.5">

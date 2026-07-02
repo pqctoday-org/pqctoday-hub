@@ -198,15 +198,15 @@ const MARQUEE: { match: RegExp; def: MarqueeDef }[] = [
         n('Mandate', 'CNSA 2.0 (NSM-8)', 'NSA directive — binding', 'error'),
         n('Requires', 'FIPS 140-3 validated', 'CMVP module certificate', 'secondary'),
         n('Covers algorithms', 'ML-KEM-1024 · ML-DSA-87', 'FIPS 203 / 204', 'primary'),
-        n('Live evidence', '6 CMVP modules', 'in Product Records →', 'success'),
+        n('Live evidence', 'CMVP modules', 'in Product Records →', 'success'),
       ],
       phases: [
         p('2022', 'Suite published', 'done'),
         p('2025', 'Support & prefer', 'active'),
         p('2030', 'Exclusive (sw/fw, networking)', 'future'),
-        p('2035', 'All NSS exclusive', 'future'),
+        p('2033', 'Exclusive: web/cloud, OS, large PKI', 'future'),
       ],
-      dossierFocus: 'Multi-year transition plan for NSS to PQC.',
+      dossierFocus: 'Multi-year transition plan for NSS to PQC (NSM-10 targets all NSS by 2035).',
       dossierItems: [
         'Signed multi-year migration roadmap with gate dates',
         'Per-system migration status tracker',

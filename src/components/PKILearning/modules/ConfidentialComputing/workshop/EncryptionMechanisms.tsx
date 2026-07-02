@@ -45,51 +45,47 @@ const ALL_PROTECTION_SCOPES = [
   'KMS key material in-transit',
 ]
 
-function getNistLevelAssessment(postQuantumBits: number): {
+function getNistLevelAssessment(keyWidth: number): {
   label: string
   color: string
   description: string
 } {
-  if (postQuantumBits >= 256)
+  if (keyWidth >= 256)
     return {
-      label: 'NIST Level 5',
+      label: 'NIST Category 5',
       color: 'text-status-success',
-      description: 'Exceeds all NIST post-quantum security levels.',
+      description:
+        'AES-256-class strength — the highest NIST post-quantum security category. Retains a 128-bit effective margin even under Grover.',
     }
-  if (postQuantumBits >= 192)
+  if (keyWidth >= 192)
     return {
-      label: 'NIST Level 3+',
+      label: 'NIST Category 3',
       color: 'text-status-success',
-      description: 'Exceeds NIST Level 3 (192-bit) post-quantum threshold.',
+      description:
+        'AES-192-class strength (NIST Category 3). Grover reduces the effective margin to ~96 bits.',
     }
-  if (postQuantumBits >= 128)
+  if (keyWidth >= 128)
     return {
-      label: 'NIST Level 1',
-      color: 'text-status-success',
-      description: 'Meets NIST Level 1 (128-bit) post-quantum security. Considered adequate.',
-    }
-  if (postQuantumBits >= 96)
-    return {
-      label: 'Below NIST Level 1',
+      label: 'NIST Category 1',
       color: 'text-status-warning',
       description:
-        'Below NIST Level 1 but may provide short-term security. Key expansion recommended.',
+        'AES-128-class strength (NIST Category 1). Grover reduces the effective margin to ~64 bits — prefer AES-256 for long-lived data.',
     }
   return {
     label: 'Insufficient',
     color: 'text-status-error',
     description:
-      'Post-quantum security is insufficient. Immediate upgrade to AES-256 or larger keys required.',
+      'Below all NIST post-quantum security categories. Immediate upgrade to AES-256 or larger keys required.',
   }
 }
 
 function getRecommendation(keyWidth: number): string {
   if (keyWidth >= 256)
-    return 'AES-256 provides 128-bit post-quantum security under Grover, meeting NIST Level 1. No immediate action needed for memory encryption key width.'
+    return 'AES-256 is NIST Category 5 — the highest post-quantum security category — and retains 128-bit effective security under Grover. No immediate action needed for memory encryption key width.'
   if (keyWidth >= 192)
-    return 'AES-192 provides 96-bit post-quantum security under Grover. While below NIST Level 1, it offers a reasonable security margin. Consider upgrading to AES-256 for future-proofing.'
+    return 'AES-192 is NIST Category 3. Grover reduces its effective security to ~96 bits, which remains a reasonable margin. Consider upgrading to AES-256 for future-proofing.'
   if (keyWidth >= 128)
-    return 'AES-128 provides only 64-bit post-quantum security under Grover, well below the NIST Level 1 threshold of 128-bit. Upgrade to AES-256 memory encryption is recommended when next-generation CPUs become available.'
+    return 'AES-128 is NIST Category 1, but Grover reduces its effective security to ~64 bits. Upgrade to AES-256 memory encryption is recommended when next-generation CPUs become available.'
   return 'Key width below 128 bits is critically insufficient even against classical attacks. Immediate upgrade required.'
 }
 
@@ -104,7 +100,7 @@ export const EncryptionMechanisms: React.FC = () => {
   const groverCalc = useMemo(() => {
     const classicalBits = groverKeyWidth
     const postQuantumBits = Math.floor(groverKeyWidth / 2)
-    const nist = getNistLevelAssessment(postQuantumBits)
+    const nist = getNistLevelAssessment(groverKeyWidth)
     const recommendation = getRecommendation(groverKeyWidth)
     const isSafe = postQuantumBits >= 128
     return { classicalBits, postQuantumBits, nist, recommendation, isSafe }

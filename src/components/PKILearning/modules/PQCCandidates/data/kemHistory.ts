@@ -40,7 +40,7 @@ export const KEM_HISTORY: KemHistoryEntry[] = [
     family: 'Code',
     outcome: 'monitoring',
     summary:
-      'Maintained as a 4th-round candidate. Public key is ~1 MB but signature security has held since 1978 — kept as long-tail insurance.',
+      'NIST Round 4 concluded in 2025 with HQC selected — McEliece was not selected and continues on an ISO standardisation track. Public key is ~1 MB but its encryption/KEM security has held since 1978.',
   },
   {
     name: 'BIKE',

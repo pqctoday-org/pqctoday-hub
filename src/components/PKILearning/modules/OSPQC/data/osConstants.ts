@@ -129,9 +129,9 @@ export const CRYPTO_SUBSYSTEMS: CryptoSubsystem[] = [
     platform: 'Windows Server 2025 / Windows 11 24H2',
     type: 'userspace',
     pqcStatus: 'supported',
-    version: 'CNG v10+ (KB5036893)',
+    version: 'Windows 11 24H2+ / Server 2025 (Nov 2025)',
     notes:
-      'ML-KEM-768 and ML-KEM-1024 added in KB5036893 (April 2024). Schannel TLS 1.3 supports X25519MLKEM768 hybrid group. ML-DSA signing via CNG planned for Windows Server 2026.',
+      'ML-KEM, ML-DSA, and SLH-DSA APIs GA in CNG since November 2025 on Windows 11 24H2+ and Windows Server 2025. Schannel TLS 1.3 hybrid key exchange (X25519MLKEM768) is in preview via Windows Insider builds and disabled by default — it must be enabled via Group Policy or TLS cmdlets.',
   },
   {
     id: 'gnutls',
@@ -151,7 +151,7 @@ export const CRYPTO_SUBSYSTEMS: CryptoSubsystem[] = [
     pqcStatus: 'supported',
     version: 'NSS 3.101+',
     notes:
-      'ML-KEM-768 hybrid TLS 1.3 (X25519MLKEM768) enabled by default in Firefox 128+. Chrome 131+ uses X25519MLKEM768 by default. ML-DSA support in NSS is not yet available; PQC signature algorithm integration is on the roadmap.',
+      'ML-KEM-768 hybrid TLS 1.3 (X25519MLKEM768) enabled by default in Firefox 132+. Chrome 131+ uses X25519MLKEM768 by default. ML-DSA support in NSS is not yet available; PQC signature algorithm integration is on the roadmap.',
   },
 ]
 
@@ -283,11 +283,13 @@ export const SYSTEM_TLS_POLICIES: SystemTLSPolicy[] = [
   {
     id: 'windows-schannel',
     os: 'Windows Server 2025',
-    policyMechanism: 'Schannel registry + PowerShell TLS cmdlets',
-    defaultPolicy: 'TLS 1.3 + X25519MLKEM768 hybrid (KB5036893+)',
-    pqcPolicy: 'X25519MLKEM768 enabled by default in TLS 1.3 ClientHello',
-    command: 'Set-TlsCipherSuite -Name "TLS_AES_256_GCM_SHA384" -Position 0 (via PowerShell)',
+    policyMechanism: 'Schannel Group Policy + PowerShell TLS cmdlets',
+    defaultPolicy: 'TLS 1.3 with classical groups; PQC hybrid disabled by default',
+    pqcPolicy:
+      'X25519MLKEM768 preview via Windows Insider builds — disabled by default, must be enabled via Group Policy or TLS cmdlets',
+    command:
+      'Enable-TlsEccCurve / Group Policy: SSL Configuration Settings → ECC Curve Order (add X25519MLKEM768)',
     notes:
-      'Windows Server 2025 with KB5036893 includes ML-KEM-768 hybrid TLS. Schannel automatically negotiates X25519MLKEM768 in TLS 1.3. Group priority is managed via registry HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Cryptography\\Configuration\\Local\\SSL.',
+      'CNG PQC APIs (ML-KEM, ML-DSA, SLH-DSA) are GA since November 2025, but Schannel TLS 1.3 hybrid key exchange (X25519MLKEM768) is preview-only on Windows Insider builds and disabled by default. Enable it explicitly via Group Policy or TLS cmdlets; group priority is managed via registry HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Cryptography\\Configuration\\Local\\SSL.',
   },
 ]

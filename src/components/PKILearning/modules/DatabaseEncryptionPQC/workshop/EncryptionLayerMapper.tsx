@@ -32,7 +32,7 @@ const LAYER_INFO: LayerInfo[] = [
       'Individual fields, objects, or payloads — application controls all key material.',
     classicalAlgorithm: 'AES-256-GCM with RSA-OAEP or ECDH key exchange for key agreement.',
     pqcUpgradePath:
-      'Replace ECDH key agreement with ML-KEM-768 or ML-KEM-1024. Update application crypto library (OpenSSL 3.4+, Bouncy Castle 1.78+). Symmetric AES-256-GCM unchanged.',
+      'Replace ECDH key agreement with ML-KEM-768 or ML-KEM-1024. Update application crypto library (OpenSSL 3.5+, Bouncy Castle 1.78+). Symmetric AES-256-GCM unchanged.',
     depth: 'Outermost',
   },
   {

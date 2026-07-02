@@ -281,11 +281,12 @@ export function AlgorithmsView() {
                     What you&apos;re required to adopt
                   </p>
                   <p className="text-muted-foreground leading-relaxed mb-2">
-                    For US federal systems, CNSA 2.0 requires{' '}
-                    <strong className="text-foreground">ML-KEM-768</strong> (FIPS 203) for key
-                    establishment and <strong className="text-foreground">ML-DSA-65</strong> (FIPS
-                    204) for signatures. The tables below are the engineering detail — for the
-                    deadlines that apply to your sector and region, see the compliance timeline.
+                    For US National Security Systems, CNSA 2.0 requires{' '}
+                    <strong className="text-foreground">ML-KEM-1024</strong> for key establishment
+                    and <strong className="text-foreground">ML-DSA-87</strong> for signatures.
+                    Federal civilian systems commonly deploy ML-KEM-768 / ML-DSA-65 under NIST
+                    guidance. The tables below are the engineering detail — for the deadlines that
+                    apply to your sector and region, see the compliance timeline.
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <Link to="/compliance">

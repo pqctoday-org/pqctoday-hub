@@ -10,6 +10,7 @@ type StatusFilter = 'all' | FipsValidationEntry['status']
 
 const CERT_TYPE_COLORS: Record<FipsValidationEntry['certType'], string> = {
   'FIPS 140-3': 'bg-success/10 text-success border-success/20',
+  'FIPS 140-2': 'bg-muted/40 text-muted-foreground border-border',
   ACVP: 'bg-primary/10 text-primary border-primary/20',
   CAVP: 'bg-secondary/10 text-secondary border-secondary/20',
   'Common Criteria': 'bg-warning/10 text-warning border-warning/20',

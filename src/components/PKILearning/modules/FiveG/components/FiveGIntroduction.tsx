@@ -68,7 +68,7 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
                 Profile C: <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip> (Kyber) concealment
               </li>
               <li>Quantum-resistant subscriber privacy</li>
-              <li>Under 3GPP SA3 study (TR 33.841)</li>
+              <li>Under 3GPP SA3 study (TR 33.938)</li>
             </ul>
           </div>
         </div>
@@ -160,7 +160,7 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           </div>
         </div>
         <p className="text-xs text-muted-foreground mt-3">
-          Profile C is under active 3GPP SA3 study (TR 33.841) and not yet standardized. It supports
+          Profile C is under active 3GPP SA3 study (TR 33.938) and not yet standardized. It supports
           both hybrid (X25519 + ML-KEM) and pure PQC modes.
         </p>
       </section>

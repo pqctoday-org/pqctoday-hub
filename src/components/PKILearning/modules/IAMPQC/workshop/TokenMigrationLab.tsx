@@ -183,7 +183,7 @@ const JWKS_EXAMPLES: Record<SigningAlgorithm, string> = {
     "kty": "AKP",
     "alg": "ML-DSA-44",
     "kid": "ml-dsa-44-key-001",
-    "pub": "<2592-byte ML-DSA-44 public key, base64url>",
+    "pub": "<1312-byte ML-DSA-44 public key, base64url>",
     "use": "sig"
   }]
 }`,
@@ -192,7 +192,7 @@ const JWKS_EXAMPLES: Record<SigningAlgorithm, string> = {
     "kty": "AKP",
     "alg": "ML-DSA-65",
     "kid": "ml-dsa-65-key-001",
-    "pub": "<3872-byte ML-DSA-65 public key, base64url>",
+    "pub": "<1952-byte ML-DSA-65 public key, base64url>",
     "use": "sig"
   }]
 }`,
@@ -201,7 +201,7 @@ const JWKS_EXAMPLES: Record<SigningAlgorithm, string> = {
     "kty": "AKP",
     "alg": "ML-DSA-87",
     "kid": "ml-dsa-87-key-001",
-    "pub": "<4864-byte ML-DSA-87 public key, base64url>",
+    "pub": "<2592-byte ML-DSA-87 public key, base64url>",
     "use": "sig"
   }]
 }`,

@@ -185,10 +185,11 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             },
             {
               os: 'Windows Server 2025',
-              mechanism: 'Schannel (KB5036893)',
-              command: 'X25519MLKEM768 enabled by default in TLS 1.3 ClientHello',
-              effect: 'No configuration needed — hybrid KEM active after Windows Update',
-              status: 'default',
+              mechanism: 'Schannel (Insider preview)',
+              command: 'Enable X25519MLKEM768 via Group Policy or TLS cmdlets',
+              effect:
+                'Disabled by default — hybrid KEM requires explicit enablement on Windows Insider builds',
+              status: 'experimental',
             },
             {
               os: 'FreeBSD 14.x',

@@ -311,8 +311,9 @@ export const VaultPQCSimulator: React.FC = () => {
               REQUIRED
             </span>
             <div className="text-xs text-muted-foreground">
-              <strong className="text-foreground">Vault version</strong>: HashiCorp Vault 1.18+
-              (planned H2 2026) required for PQC key types in transit engine.
+              <strong className="text-foreground">Vault version</strong>: HashiCorp Vault 1.19+
+              (experimental transit ML-DSA/SLH-DSA) (planned H2 2026) required for PQC key types in
+              transit engine.
             </div>
           </div>
         </div>

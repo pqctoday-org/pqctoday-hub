@@ -459,9 +459,7 @@ const Step4Advanced: React.FC<{ onNavigateToWorkshop: () => void }> = ({
           <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside leading-relaxed">
             <li>Pre-hashes M with an external hash function before signing</li>
             <li>Approved hashes (FIPS 205 §11): SHA-256, SHA-512, SHAKE-128, SHAKE-256</li>
-            <li>
-              Context strings are <strong className="text-foreground">NOT</strong> allowed
-            </li>
+            <li>Context strings (0–255 bytes) are supported, identically to pure SLH-DSA</li>
             <li>Use when the protocol mandates pre-hashing (e.g. legacy interop)</li>
           </ul>
         </div>
@@ -492,7 +490,7 @@ const Step4Advanced: React.FC<{ onNavigateToWorkshop: () => void }> = ({
         </p>
       </div>
       <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside leading-relaxed">
-        <li>Pure SLH-DSA only — context strings are forbidden in HashSLH-DSA mode</li>
+        <li>Supported in both pure SLH-DSA and HashSLH-DSA (Algorithm 23 takes ctx)</li>
         <li>Context must be supplied identically at both sign and verify time</li>
         <li>Empty context (0 bytes) is the default — most applications use this</li>
         <li>
