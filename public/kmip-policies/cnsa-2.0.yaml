@@ -38,8 +38,10 @@ metadata:
 rules:
 
   # 1. ONLY CNSA 2.0 approved algorithms — strict allowlist.
+  #    `CreateKeyPair` (not just symmetric `Create`) is gated so classical
+  #    RSA/ECDSA key-pair generation is actually denied (Y2 op-name fix).
   - type: algorithm_allowlist
-    ops: [Create]
+    ops: [Create, CreateKeyPair]
     algorithms:
       - AES-256
       - SHA-384
@@ -57,7 +59,7 @@ rules:
   # 2. Sub-Level-5 ML-KEM and ML-DSA explicitly denied (FIPS-approved but
   #    below CNSA 2.0 strength requirement).
   - type: algorithm_denylist
-    ops: [Create]
+    ops: [Create, CreateKeyPair]
     algorithms: [ML-KEM-512, ML-KEM-768, ML-DSA-44, ML-DSA-65]
     reason: "CNSA 2.0 requires Level 5 strength: ML-KEM-1024 and ML-DSA-87 only"
 
@@ -75,13 +77,13 @@ rules:
 
   # 5. All classical asymmetric algorithms denied (post-PQC-transition).
   - type: algorithm_denylist
-    ops: [Create]
+    ops: [Create, CreateKeyPair]
     algorithms: [RSA, ECDSA-P256, ECDSA-P384, ECDSA-P521, Ed25519, Ed448, X25519, X448]
     reason: "CNSA 2.0 mandates PQC; classical asymmetric not approved for new keys"
 
   # 6. All non-CNSA-2.0 PQC algorithms denied.
   - type: algorithm_denylist
-    ops: [Create]
+    ops: [Create, CreateKeyPair]
     algorithms:
       - SLH-DSA-SHA2-128s
       - SLH-DSA-SHA2-128f
@@ -139,5 +141,5 @@ rules:
   # 10. Compliance profile catch-all.
   - type: compliance_profile_gate
     profile: CNSA-2.0
-    ops: [Create, Sign, Encrypt, Encapsulate]
+    ops: [Create, CreateKeyPair, Sign, Encrypt, Encapsulate]
     reason: "Request fails CNSA 2.0 compliance profile"

@@ -42,22 +42,26 @@ rules:
     reason: "Mechanism not on the vetted PKCS#11 allowlist"
 
   # ── Denylist: explicitly reject legacy / unauthenticated mechanisms ───
+  #    DES/3DES/MD5/SHA-1 are not implemented by this HSM at all (retired), so
+  #    the engine can never emit their CKM_* — listing them here would be an
+  #    unmatchable no-op (and the Phase-2 loader lint rejects unknown names).
+  #    The allowlist above is the real control; these are the ones the engine
+  #    CAN produce and we still refuse.
   - type: mechanism_denylist
     ops: [Create, CreateKeyPair, Sign, SignatureVerify, Encrypt, Decrypt]
     mechanisms:
       - CKM_RSA_PKCS          # RSA PKCS#1 v1.5 — use PSS / OAEP
       - CKM_AES_ECB           # unauthenticated, leaks structure
       - CKM_AES_CBC           # unauthenticated — use AES-GCM
-      - CKM_DES3_CBC          # 3DES retired
-      - CKM_DES_CBC           # single DES
-      - CKM_MD5               # broken digest
-      - CKM_SHA_1             # broken digest
     reason: "Legacy/unauthenticated mechanism explicitly denied"
 
   # ── MAC restricted to the HMAC-SHA-2 family ───────────────────────────
+  #    Names are the dispatcher-canonical dashed form (HMAC-SHA-256), which is
+  #    what the engine emits for the MAC op — the old "HMAC-SHA256" spelling
+  #    never matched and silently bricked every legitimate HMAC (Y14).
   - type: mac_mechanism_policy
     ops: [MAC, MACVerify]
-    mac_algorithms: [HMAC-SHA256, HMAC-SHA384, HMAC-SHA512]
+    mac_algorithms: [HMAC-SHA-256, HMAC-SHA-384, HMAC-SHA-512]
     reason: "MAC restricted to HMAC-SHA-2 (no HMAC-SHA1 / CMAC-DES)"
 
   # ── AES must use an authenticated mode (belt-and-braces with the CKM denylist) ──
