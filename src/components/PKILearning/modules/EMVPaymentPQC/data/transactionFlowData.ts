@@ -49,7 +49,7 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
         fromActor: 'card',
         toActor: 'terminal',
         description:
-          'Card generates Application Request Cryptogram (ARQC) using 3DES/AES session key derived from card master key. Includes transaction amount, terminal data, and unpredictable number.',
+          'Card generates Authorization Request Cryptogram (ARQC) using 3DES/AES session key derived from card master key. Includes transaction amount, terminal data, and unpredictable number.',
         cryptoUsed: ['3DES-CBC MAC (legacy)', 'AES-CMAC (newer cards)'],
         quantumVulnerable: false,
         dataSize: '~64 bytes',

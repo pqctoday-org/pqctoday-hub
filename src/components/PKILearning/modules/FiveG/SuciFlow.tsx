@@ -33,14 +33,14 @@ const FIVEG_KAT_SPECS: KatTestSpec[] = [
   {
     id: '5g-suci-encap',
     useCase: 'SUCI subscriber concealment',
-    standard: '3GPP TR 33.841 + FIPS 203',
+    standard: '3GPP TR 33.938 + FIPS 203',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
     kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
   },
   {
     id: '5g-gnb-decap',
     useCase: 'gNB session key derivation',
-    standard: '3GPP TR 33.841 + FIPS 203 ACVP',
+    standard: '3GPP TR 33.938 + FIPS 203 ACVP',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
     kind: { type: 'mlkem-decap', variant: 768 },
@@ -48,7 +48,7 @@ const FIVEG_KAT_SPECS: KatTestSpec[] = [
   {
     id: '5g-nas-sigver',
     useCase: 'NAS/RRC control plane integrity',
-    standard: '3GPP TR 33.841 + FIPS 204 ACVP',
+    standard: '3GPP TR 33.938 + FIPS 204 ACVP',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 65 },
@@ -285,12 +285,12 @@ const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(
 )
 // Pure PQC: no classical ECC keypair is generated`,
     compute_shared_secret: `// SoftHSMv3 WASM: Profile C Pure PQC — ML-KEM Encapsulation only
-// Pure PQC: Z = Z_kem directly — no ECDH combiner per 3GPP TR 33.841 §5.2.4
+// Pure PQC: Z = Z_kem directly — no ECDH combiner per 3GPP TR 33.938
 // → C_EncapsulateKey(CKM_ML_KEM)
 const { ciphertextBytes, secretHandle } = hsm_pqcEncap(M, hSession, hnPubHandle, 'ML-KEM-768')
 const zKemBytes = hsm_extractKeyValue(M, hSession, secretHandle)
 
-// Z = Z_kem directly (no ECDH component in pure PQC mode per TR 33.841 §5.2.4)
+// Z = Z_kem directly (no ECDH component in pure PQC mode per TR 33.938)
 const Z = zKemBytes`,
   }
 
@@ -400,7 +400,7 @@ const Z = zKemBytes`,
             let hybridNote = ''
             if (pqcMode === 'hybrid') {
               // Hybrid Profile C also requires an X25519 HN keypair for the ECDH component
-              // (3GPP TR 33.841 §5.2.5.2: Z = SHA256(Z_ecdh || Z_kem))
+              // (3GPP TR 33.938: Z = SHA256(Z_ecdh || Z_kem))
               const eccResult = hsm_generateECKeyPair(
                 M,
                 hSession,
@@ -424,7 +424,7 @@ const Z = zKemBytes`,
                 role: 'private',
                 generatedAt: new Date().toISOString(),
               })
-              hybridNote = `\nX25519 HN ECC pub handle: ${eccResult.pubHandle}\nX25519 HN ECC priv handle: ${eccResult.privHandle}\n[Hybrid] Both ML-KEM + X25519 components ready per TR 33.841 §5.2.5.2`
+              hybridNote = `\nX25519 HN ECC pub handle: ${eccResult.pubHandle}\nX25519 HN ECC priv handle: ${eccResult.privHandle}\n[Hybrid] Both ML-KEM + X25519 components ready per TR 33.938`
             }
             hsmResult = `ML-KEM-768 pub handle:  ${pubHandle}\nML-KEM-768 priv handle: ${privHandle}${hybridNote}\n\nHome Network key pair generated via SoftHSM3 WASM.\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
           } else {
@@ -735,7 +735,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
               .join('')
 
             if (pqcMode === 'hybrid' && hsmHandlesRef.current.hnEccPubHandle !== undefined) {
-              // Hybrid TR 33.841 §5.2.5.2: Z = SHA256(Z_ecdh || Z_kem)
+              // Hybrid TR 33.938: Z = SHA256(Z_ecdh || Z_kem)
               // Step 1: ECDH(eph_priv, hn_ecc_pub) → Z_ecdh
               const hnEccPubBytes = hsm_extractECPoint(
                 M,
@@ -776,7 +776,7 @@ X25519 ECDH:
   hnEccPub bytes: ${hnEccPubBytes.length}
   → Z_ecdh (hex): ${zEcdhHex.slice(0, 64)}...
 
-Hybrid Combine (TR 33.841 §5.2.5.2):
+Hybrid Combine (TR 33.938):
   Z = SHA256(Z_ecdh ‖ Z_kem)
   → Z_combined (hex): ${combinedZHex.slice(0, 64)}...
 
@@ -954,7 +954,7 @@ block1 = SHA-256(Z ‖ 0x00000001 ‖ SharedInfo): ${block1Hex}
 
 Note: ECDH inside HSM; KDF via SubtleCrypto SHA-256 (no CKM_ANSI_X9_63_KDF in PKCS#11 v3.2). (Derived)`
           } else {
-            // Profile C: ANSI X9.63-KDF with SHA3-256 per 3GPP TR 33.841 — spec-compliant.
+            // Profile C: ANSI X9.63-KDF with SHA3-256 per 3GPP TR 33.938 — spec-compliant.
             // Hybrid: Z = SHA256(Z_ecdh || Z_kem) from compute_shared_secret step.
             // Pure PQC: Z = Z_kem directly from sharedSecretHandle.
             const zBytesC =
@@ -1014,7 +1014,7 @@ Note: ECDH inside HSM; KDF via SubtleCrypto SHA-256 (no CKM_ANSI_X9_63_KDF in PK
                 ? 'Z = SHA256(Z_ecdh ‖ Z_kem) [hybrid, from compute_shared_secret]'
                 : `Z_kem from handle ${hsmHandlesRef.current.sharedSecretHandle} [pure PQC]`
             hsmResult = `Z source: ${zSource}
-KDF: ANSI X9.63-KDF (SHA3-256) — spec-compliant per 3GPP TR 33.841
+KDF: ANSI X9.63-KDF (SHA3-256) — spec-compliant per 3GPP TR 33.938
      (C_Digest(CKM_SHA3_256) inside HSM; no CKM_ANSI_X9_63_KDF in PKCS#11 v3.2)
 SharedInfo: ${sharedInfoC.length > 0 ? `raw X25519 ephemeral key (${sharedInfoC.length} bytes, C_GetAttributeValue CKA_EC_POINT)` : 'empty (Pure PQC mode)'}
 block1 = SHA3-256(Z ‖ 0x00000001 ‖ SharedInfo): ${block1CHex}
@@ -1118,7 +1118,7 @@ block2 = SHA3-256(Z ‖ 0x00000002 ‖ SharedInfo): ${block2CHex}
               .map((b) => b.toString(16).padStart(2, '0'))
               .join('')
 
-            // Z = SHA256(Z_ecdh || Z_kem) per TR 33.841 §5.2.5.2
+            // Z = SHA256(Z_ecdh || Z_kem) per TR 33.938
             const zConcatC = concatU8C(zEcdhBytesC, zKemBytesC)
             sidfZBytesC = hsm_digest(M, hSession, zConcatC, CKM_SHA256)
             const zCombinedHexC = Array.from(sidfZBytesC)
@@ -1127,7 +1127,7 @@ block2 = SHA3-256(Z ‖ 0x00000002 ‖ SharedInfo): ${block2CHex}
 
             zCombineNote = `Z_ecdh (re-derived): ${zEcdhHexC.slice(0, 48)}...
 Z_kem  (decapped):   ${zKemHexC.slice(0, 48)}...
-Z = SHA256(Z_ecdh ‖ Z_kem): ${zCombinedHexC.slice(0, 48)}... [TR 33.841 §5.2.5.2]`
+Z = SHA256(Z_ecdh ‖ Z_kem): ${zCombinedHexC.slice(0, 48)}... [TR 33.938]`
           }
 
           // Step 3: ANSI X9.63-KDF with SHA3-256 → K_enc (AES-256), K_mac (HMAC-SHA3-256)
@@ -1160,7 +1160,7 @@ Z = SHA256(Z_ecdh ‖ Z_kem): ${zCombinedHexC.slice(0, 48)}... [TR 33.841 §5.2.
             .join('')
             .toUpperCase()
 
-          // Step 4: MAC verification (authenticate-then-decrypt per 3GPP TR 33.841)
+          // Step 4: MAC verification (authenticate-then-decrypt per 3GPP TR 33.938)
           let macLineC = '4. Verifying MAC...[SKIPPED — run encrypt_msin + compute_mac first]'
           let macOkC = false
           const cipherHexC = fiveGService.state.encryptedMSINHex
@@ -1218,7 +1218,7 @@ Z = SHA256(Z_ecdh ‖ Z_kem): ${zCombinedHexC.slice(0, 48)}... [TR 33.841 §5.2.
    KEM ciphertext: ${hsmHandlesRef.current.kemCiphertext!.length} bytes
    → Z_kem (hex): ${zKemHexC.slice(0, 64)}...
 
-2. Key Combination (TR 33.841 §5.2.5.2):
+2. Key Combination (TR 33.938):
    ${zCombineNote}
 
 3. ANSI X9.63-KDF (SHA3-256):
@@ -1550,7 +1550,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
               </div>
               <div className="text-xs opacity-70 mt-1">ML-KEM (FIPS 203) + AES-256</div>
               <div className="text-xs italic text-muted-foreground mt-1">
-                3GPP SA3 study (TR 33.841) · Rel-19 standardization in progress
+                3GPP SA3 study (TR 33.938) · Rel-19 standardization in progress
               </div>
             </Button>
           </div>
@@ -1713,7 +1713,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
       <KatValidationPanel
         specs={FIVEG_KAT_SPECS}
         label="5G PQC Known Answer Tests"
-        authorityNote="3GPP TR 33.841 · NIST FIPS 203/204 · NIST SP 800-227 (hybrid combiner)"
+        authorityNote="3GPP TR 33.938 · NIST FIPS 203/204 · NIST SP 800-227 (hybrid combiner)"
       />
     </div>
   )

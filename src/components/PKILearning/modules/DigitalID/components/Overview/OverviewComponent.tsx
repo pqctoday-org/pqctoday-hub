@@ -222,7 +222,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
         </p>
         <div className="bg-muted/50 rounded-lg p-3 border border-border mb-3">
           <div className="text-xs font-bold text-foreground mb-1">
-            EU PQC Transition Roadmap (April 2024)
+            NIS Cooperation Group Coordinated Implementation Roadmap (June 2025)
           </div>
           <ul className="text-xs text-muted-foreground space-y-1">
             <li>Dec 2026: National PQC transition roadmaps due</li>

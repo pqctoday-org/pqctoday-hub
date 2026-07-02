@@ -19,7 +19,7 @@ const PHASES = [
   {
     id: 'mid',
     label: 'Mid (2029–2030)',
-    body: 'KpqC schemes (SMAUG-T, NTRU+, HAETAE, AIMer) reach Korean national standardisation. ISO/IEC adoption of NIST on-ramp winners completes. CACR / OSCCA publishes PQC-extended SM-series specifications.',
+    body: 'KpqC winners (SMAUG-T, NTRU+, HAETAE, AIMer — selected January 2025) roll out across Korean government systems. ISO/IEC adoption of NIST on-ramp winners completes. CACR / OSCCA publishes PQC-extended SM-series specifications.',
   },
   {
     id: 'long',

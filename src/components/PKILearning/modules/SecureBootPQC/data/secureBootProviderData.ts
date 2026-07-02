@@ -57,7 +57,8 @@ export const FIRMWARE_VENDORS: FirmwareVendorStatus[] = [
     pqcStatus: 'roadmap',
     roadmapYear: '2026',
     products: ['APTIO V (Intel)', 'APTIO V (AMD)', 'APTIO OpenEdition'],
-    pqcAlgorithm: 'ML-DSA-65 (firmware signing), ML-DSA-87 (PK)',
+    pqcAlgorithm:
+      'ML-DSA-65 (UEFI Secure Boot), ML-DSA-87 (PK); CNSA 2.0 firmware signing uses LMS/XMSS (SP 800-208)',
     migrationGuidance:
       'AMI has announced ML-DSA-65 support in APTIO V for Xeon Scalable 5th/6th Gen and EPYC Genoa/Turin platforms. Customers must upgrade firmware to APTIO V 5.35+ and re-enroll PK/KEK/db with ML-DSA certificates. AMI provides a BIOS Signing Upgrade Kit with migration utilities.',
     notes:
@@ -125,9 +126,9 @@ export const FIRMWARE_VENDORS: FirmwareVendorStatus[] = [
     pqcStatus: 'roadmap',
     roadmapYear: '2026',
     products: ['PowerEdge R650/R750/R760', 'Precision 7xxx', 'OptiPlex (enterprise)'],
-    pqcAlgorithm: 'ML-DSA-65 firmware signing; CNSA 2.0 PK migration',
+    pqcAlgorithm: 'LMS/XMSS (SP 800-208) firmware signing for CNSA 2.0; ML-DSA PK migration',
     migrationGuidance:
-      "Dell's CNSA 2.0 roadmap targets PowerEdge server platforms for ML-DSA-65 firmware signing in 2026. Use Dell iDRAC 9 firmware update API with PQC signing certificates. Dell Server Update Utility (SUU) will validate ML-DSA signatures from Dell Cybersecurity firmware package.",
+      "Dell's CNSA 2.0 roadmap targets PowerEdge server platforms for LMS/XMSS (SP 800-208) firmware signing in 2026. Use Dell iDRAC 9 firmware update API with PQC signing certificates. Dell Server Update Utility (SUU) will validate ML-DSA signatures from Dell Cybersecurity firmware package.",
     notes:
       "Dell iDRAC 9 (firmware signing) targets CNSA 2.0 compliance ahead of US Federal procurement requirements. iDRAC 10 (Spire chipset, PowerEdge Gen17) has PQC-native attestation. Dell's Product Security Office published a PQC posture statement in November 2024.",
     certifications: ['FIPS 140-2 Level 1 (iDRAC)', 'CNSA 2.0 (target 2026)', 'CC EAL2'],
@@ -135,19 +136,19 @@ export const FIRMWARE_VENDORS: FirmwareVendorStatus[] = [
   {
     id: 'hpe',
     vendor: 'HPE',
-    product: 'HPE iLO 6 (ProLiant / Synergy)',
+    product: 'HPE iLO 7 (ProLiant Gen12)',
     tier: 'enterprise',
     category: 'OEM UEFI / BMC',
     currentAlgorithm: 'RSA-2048 (firmware signing), ECDSA P-384 (iLO TLS)',
     pqcStatus: 'available',
-    roadmapYear: '2025 (iLO 6.20+)',
-    products: ['ProLiant DL360 Gen11', 'ProLiant DL380 Gen11', 'Synergy 480 Gen11'],
-    pqcAlgorithm: 'ML-DSA-65 firmware signing in iLO 6.20+',
+    roadmapYear: '2025 (ProLiant Gen12 / iLO 7)',
+    products: ['ProLiant DL360 Gen12', 'ProLiant DL380 Gen12', 'ProLiant Compute Gen12'],
+    pqcAlgorithm: 'LMS (SP 800-208) firmware signing on ProLiant Gen12 / iLO 7',
     migrationGuidance:
-      'Upgrade iLO 6 firmware to version 6.20 or later to enable ML-DSA firmware signing. Use HPE Integrated Smart Update Manager (iSUM) 5.0+ for PQC-signed firmware packages. HPE Security Protocol and Data Model (SPDM) 1.3 adds ML-DSA device attestation in iLO 6.30.',
+      'Deploy ProLiant Gen12 servers with iLO 7 to get LMS-based (SP 800-208, stateful hash-based) firmware signing anchored in the Silicon Root of Trust. Use HPE Smart Update Manager for signed firmware packages.',
     notes:
-      'HPE is the first major OEM to GA ML-DSA firmware signing for production servers (iLO 6.20, released Q4 2025). HPE Silicon Root of Trust (iLO Amplifier) supports PQC-signed firmware chains. SPDM 1.3 + ML-DSA attestation available in 6.30 for confidential computing deployments.',
-    certifications: ['FIPS 140-3 Level 1 (iLO 6)', 'CNSA 2.0 (ProLiant Gen12 / iLO 7)', 'CC EAL2'],
+      'HPE is the first major OEM to ship quantum-resistant firmware signing for production servers: LMS-based (SP 800-208) signing on ProLiant Gen12 with iLO 7, in line with CNSA 2.0 for software/firmware signing. HPE Silicon Root of Trust supports the PQC-signed firmware chain.',
+    certifications: ['FIPS 140-3 Level 1 (iLO)', 'CNSA 2.0 (ProLiant Gen12 / iLO 7)', 'CC EAL2'],
   },
   {
     id: 'lenovo',
@@ -159,7 +160,7 @@ export const FIRMWARE_VENDORS: FirmwareVendorStatus[] = [
     pqcStatus: 'roadmap',
     roadmapYear: '2026 Q3',
     products: ['ThinkSystem SR650 V3', 'ThinkSystem SR850 V3', 'ThinkStation P Series'],
-    pqcAlgorithm: 'ML-DSA-65 (ThinkShield PQC Firmware Signing)',
+    pqcAlgorithm: 'LMS/XMSS (SP 800-208) — ThinkShield PQC Firmware Signing for CNSA 2.0',
     migrationGuidance:
       'Lenovo ThinkShield PQC migration roadmap targets Q3 2026 for ThinkSystem servers. Lenovo will provide a ThinkShield Migration Toolkit including ML-DSA certificate enrollment scripts, BIOS update packages with PQC signatures, and XClarity integrator for automated deployment.',
     notes:

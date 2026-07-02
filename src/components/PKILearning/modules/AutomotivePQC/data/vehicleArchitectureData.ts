@@ -195,7 +195,7 @@ export const BUS_PROFILES: BusProfile[] = [
     authenticationSupport: 'SecOC with CMAC; CAN XL (future) up to 2048 bytes',
     pqcFeasibility: 'challenging',
     notes:
-      '64-byte payload still too small for PQC signatures. CAN XL (ISO 11898-2:2024) may enable PQC but not yet deployed.',
+      '64-byte payload still too small for PQC signatures. CAN XL (ISO 11898-1:2024) may enable PQC but not yet deployed.',
   },
   {
     id: 'lin',

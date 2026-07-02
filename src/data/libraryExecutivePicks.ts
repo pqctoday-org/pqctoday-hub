@@ -21,7 +21,7 @@ export const LIBRARY_EXECUTIVE_PICKS: readonly LibraryExecutivePick[] = [
     referenceId: 'NIST-CSWP-39',
     label: 'NIST CSWP 39 — Cybersecurity Maturity',
     blurb:
-      'NIST\'s organisational-maturity yardstick: 189 requirements, mapped across governance, planning, and operations. The board-level answer to "are we ready?"',
+      'NIST\'s crypto-agility considerations paper: strategies, practices, and a four-tier maturity model. The board-level answer to "are we ready?"',
   },
   {
     referenceId: 'NIST IR 8547',

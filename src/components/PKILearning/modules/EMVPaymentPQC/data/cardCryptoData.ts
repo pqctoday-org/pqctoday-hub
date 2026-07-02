@@ -69,14 +69,14 @@ export const CARD_AUTH_SPECS: CardAuthSpec[] = [
   {
     id: 'cda',
     name: 'CDA',
-    fullName: 'Combined Data Authentication',
+    fullName: 'Combined DDA/Application Cryptogram Generation',
     algorithm: 'RSA-2048',
     keySize: 2048,
     signatureBytes: 256,
     offlineCapable: true,
     quantumVulnerable: true,
     description:
-      'CDA (Combined Data Authentication) combines dynamic card authentication with the Application Cryptogram (AC), binding card identity to the specific transaction. The card signs both its challenge response AND the transaction authorization data in a single RSA signature, providing both card authentication and transaction integrity.',
+      'CDA (Combined DDA/Application Cryptogram Generation) combines dynamic card authentication with the Application Cryptogram (AC), binding card identity to the specific transaction. The card signs both its challenge response AND the transaction authorization data in a single RSA signature, providing both card authentication and transaction integrity.',
     howItWorks: [
       'Terminal requests a Generate AC command from the card, including transaction data',
       'Card computes the Application Cryptogram (AC) using its symmetric session key (3DES/AES)',
@@ -329,7 +329,7 @@ export const PQC_ALGORITHM_SIZES = [
   {
     algorithm: 'FN-DSA-512 (Falcon)',
     publicKeyBytes: 897,
-    signatureOrCiphertextBytes: 690,
+    signatureOrCiphertextBytes: 666,
     suitableForCard: true,
     suitableForTerminal: true,
     notes: 'Compact signatures. Best fit for card NVM. FIPS 206 draft.',

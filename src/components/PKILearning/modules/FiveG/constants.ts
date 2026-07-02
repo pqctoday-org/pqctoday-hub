@@ -435,7 +435,7 @@ const supi = mcc + mnc + msin    // e.g. '310260123456789'`,
       id: 'init_network_key',
       title: '1. Home Network Key Generation (Profile C)',
       description:
-        'For Profile C (Post-Quantum), the home network provisions key material per 3GPP TR 33.841. In Hybrid mode, two keypairs are generated: an ML-KEM-768 keypair (FIPS 203, lattice-based, quantum-resistant) for the KEM component, and an X25519 keypair for the classical ECDH component. The combined shared secret Z = SHA256(Z_ecdh ‖ Z_kem) provides security against both classical and quantum adversaries. In Pure PQC mode, only the ML-KEM-768 keypair is generated. Both private keys are held in the HSM for SIDF deconcealment.',
+        'For Profile C (Post-Quantum), the home network provisions key material per 3GPP TR 33.938. In Hybrid mode, two keypairs are generated: an ML-KEM-768 keypair (FIPS 203, lattice-based, quantum-resistant) for the KEM component, and an X25519 keypair for the classical ECDH component. The combined shared secret Z = SHA256(Z_ecdh ‖ Z_kem) provides security against both classical and quantum adversaries. In Pure PQC mode, only the ML-KEM-768 keypair is generated. Both private keys are held in the HSM for SIDF deconcealment.',
       code: `// SoftHSMv3 WASM: Generate ML-KEM-768 + X25519 HN keypairs (Hybrid mode)
 const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(
   hsmd, sessionHandle, 768, false, '5G HN Key (ML-KEM)'
@@ -497,7 +497,7 @@ const hnEccPubBytes = hsm_extractECPoint(M, hSession, hnEccPubHandle)
 const zEcdhHandle = hsm_ecdhDerive(M, hSession, ephPrivHandle, hnEccPubBytes)
 const zEcdhBytes = hsm_extractKeyValue(M, hSession, zEcdhHandle)
 
-// Step C: Z = SHA256(Z_ecdh || Z_kem) per 3GPP TR 33.841 §5.2.5.2
+// Step C: Z = SHA256(Z_ecdh || Z_kem) per 3GPP TR 33.938 §5.2.5.2
 const Z = hsm_digest(M, hSession, concat(zEcdhBytes, zKemBytes), CKM_SHA256)`,
       output: `[USIM] Computing Hybrid Shared Secret...`,
     },
@@ -505,8 +505,8 @@ const Z = hsm_digest(M, hSession, concat(zEcdhBytes, zKemBytes), CKM_SHA256)`,
       id: 'derive_keys',
       title: '6. Derive Keys (KDF w/ SHA3)',
       description:
-        'The shared secret is passed through ANSI X9.63 KDF using SHA3-256 per 3GPP TR 33.841 (§5.2.4 pure PQC / §5.2.5.2 hybrid). SHA3-256 replaces SHA-256 to ensure post-quantum security of the KDF itself. Two iterations produce K_enc (256-bit AES-256, full block1) and K_mac (256-bit HMAC-SHA3-256, full block2). SharedInfo = raw X25519 ephemeral public key (32 bytes) for hybrid mode; empty for pure PQC. Note: 3GPP TR 33.841 test vectors for Profile C are pending Rel-19 standardization.',
-      code: `# ANSI X9.63 KDF with SHA3-256 per 3GPP TR 33.841 (2 iterations)
+        'The shared secret is passed through ANSI X9.63 KDF using SHA3-256 per 3GPP TR 33.938 (§5.2.4 pure PQC / §5.2.5.2 hybrid). SHA3-256 replaces SHA-256 to ensure post-quantum security of the KDF itself. Two iterations produce K_enc (256-bit AES-256, full block1) and K_mac (256-bit HMAC-SHA3-256, full block2). SharedInfo = raw X25519 ephemeral public key (32 bytes) for hybrid mode; empty for pure PQC. Note: 3GPP TR 33.938 test vectors for Profile C are pending Rel-19 standardization.',
+      code: `# ANSI X9.63 KDF with SHA3-256 per 3GPP TR 33.938 (2 iterations)
 # Hybrid:  Z = SHA256(Z_ecdh ‖ Z_kem), SharedInfo = raw X25519 eph pub key (32 bytes)
 # Pure PQC: Z = Z_kem,                  SharedInfo = empty
 block1 = SHA3_256(Z || 0x00000001 || SharedInfo)  # 32 bytes → K_enc (AES-256)
@@ -518,9 +518,9 @@ mac_key = block2  # 256-bit HMAC-SHA3-256 key (full block2)`,
       explanationTable: [
         {
           label: 'Standard',
-          value: '3GPP TR 33.841 §5.2.4 (pure PQC) / §5.2.5.2 (hybrid)',
+          value: '3GPP TR 33.938 §5.2.4 (pure PQC) / §5.2.5.2 (hybrid)',
           description:
-            'TR 33.841 is a 3GPP SA3 study item targeting Rel-19 standardization. Profile C test vectors are not yet published. Execute the step to see live computed values.',
+            'TR 33.938 is a 3GPP SA3 study item targeting Rel-19 standardization. Profile C test vectors are not yet published. Execute the step to see live computed values.',
         },
         {
           label: 'Z source',
@@ -543,7 +543,7 @@ mac_key = block2  # 256-bit HMAC-SHA3-256 key (full block2)`,
           label: 'SharedInfo',
           value: 'Hybrid: raw X25519 eph pub key (32 bytes) | Pure PQC: empty (0 bytes)',
           description:
-            'Pure PQC mode omits SharedInfo because there is no ECDH ephemeral key. The empty SharedInfo is correct per the TR 33.841 pure-PQC construction.',
+            'Pure PQC mode omits SharedInfo because there is no ECDH ephemeral key. The empty SharedInfo is correct per the TR 33.938 pure-PQC construction.',
         },
         {
           label: 'K_enc',
@@ -565,7 +565,7 @@ mac_key = block2  # 256-bit HMAC-SHA3-256 key (full block2)`,
       description:
         'This is the Encryption Point (AES-256-CTR). AES-CTR is length-preserving — the ciphertext has the same byte length as the plaintext MSIN, keeping the SUCI compact over the air interface.',
       code: `// SoftHSMv3 WASM: C_Encrypt (AES-256-CTR)
-// 3GPP TR 33.841 Profile C uses AES-256-CTR with zero IV
+// 3GPP TR 33.938 Profile C uses AES-256-CTR with zero IV
 const ciphertext = hsm_aesEncrypt(
   hsmd, sessionHandle, hKenc, Buffer.from(msin), iv, 'ctr'
 );`,
@@ -634,8 +634,8 @@ const macTagFull = hsm_hmac(
       id: 'sidf_decryption',
       title: '11. Network SIDF: Decrypt SUCI (Decryption Point)',
       description:
-        'For Profile C, the SIDF re-derives the same combined shared secret and verifies integrity before decrypting. Authenticate-then-decrypt is mandatory per 3GPP TR 33.841: MAC MUST pass before decryption begins.',
-      code: `// SoftHSMv3 WASM: Profile C SIDF — Hybrid Deconcealment (TR 33.841)
+        'For Profile C, the SIDF re-derives the same combined shared secret and verifies integrity before decrypting. Authenticate-then-decrypt is mandatory per 3GPP TR 33.938: MAC MUST pass before decryption begins.',
+      code: `// SoftHSMv3 WASM: Profile C SIDF — Hybrid Deconcealment (TR 33.938)
 
 // 1. ML-KEM-768 Decapsulation → Z_kem
 // → C_DecapsulateKey(CKM_ML_KEM)
@@ -651,7 +651,7 @@ const zEcdhHandle = hsm_ecdhDerive(M, hSession, hnEccPrivHandle, ephPubBytes)
 const zEcdhBytes = hsm_extractKeyValue(M, hSession, zEcdhHandle)
 const Z = hsm_digest(M, hSession, concat(zEcdhBytes, zKemBytes), CKM_SHA256)
 
-// 3. ANSI X9.63-KDF (SHA3-256) per 3GPP TR 33.841
+// 3. ANSI X9.63-KDF (SHA3-256) per 3GPP TR 33.938
 const kEnc = hsm_digest(M, hSession, concat(Z, 0x00000001, sharedInfo), CKM_SHA3_256)
 const kMac = hsm_digest(M, hSession, concat(Z, 0x00000002, sharedInfo), CKM_SHA3_256)
 

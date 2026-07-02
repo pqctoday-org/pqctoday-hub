@@ -58,8 +58,9 @@ const Step8DataRetention = ({ hideHeading = false, hideHints = false }: Embedded
         <div className="flex items-start gap-2">
           <Info size={16} className="text-warning shrink-0 mt-0.5" />
           <p className="text-xs text-muted-foreground">
-            If your encrypted data needs to remain confidential past the first CRQC (~2029),
-            adversaries may already be harvesting it today for future quantum decryption.
+            If your encrypted data needs to remain confidential past the aggressive planning anchor
+            for a first CRQC (~2029; expert estimates span 2030–2040), adversaries may already be
+            harvesting it today for future quantum decryption.
           </p>
         </div>
       </div>

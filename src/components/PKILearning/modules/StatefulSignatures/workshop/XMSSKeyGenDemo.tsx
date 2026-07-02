@@ -46,7 +46,7 @@ import {
 } from '@/wasm/softhsm/pqc'
 import { hsm_extractKeyValue } from '@/wasm/softhsm'
 
-type XMSSHash = 'SHA-256' | 'SHAKE-256'
+type XMSSHash = 'SHA-256' | 'SHAKE-128'
 type XMSSHeight = 10 | 16 | 20
 
 const XMSS_HEIGHTS: XMSSHeight[] = [10, 16, 20]
@@ -60,13 +60,13 @@ const XMSS_KEYGEN_MS: Record<XMSSHeight, number> = { 10: 5000, 16: 20000, 20: 60
 // Map (hash, height) → CKP constant
 const XMSS_CKP: Record<XMSSHash, Record<XMSSHeight, number>> = {
   'SHA-256': { 10: CKP_XMSS_SHA2_10_256, 16: CKP_XMSS_SHA2_16_256, 20: CKP_XMSS_SHA2_20_256 },
-  'SHAKE-256': { 10: CKP_XMSS_SHAKE_10_256, 16: CKP_XMSS_SHAKE_16_256, 20: CKP_XMSS_SHAKE_20_256 },
+  'SHAKE-128': { 10: CKP_XMSS_SHAKE_10_256, 16: CKP_XMSS_SHAKE_16_256, 20: CKP_XMSS_SHAKE_20_256 },
 }
 
 // Map (hash, height) → XMSS_PARAMETER_SETS id (for tree visualization & LMS comparison)
 const XMSS_PARAM_ID: Record<XMSSHash, Record<XMSSHeight, string>> = {
   'SHA-256': { 10: 'xmss-sha2-10', 16: 'xmss-sha2-16', 20: 'xmss-sha2-20' },
-  'SHAKE-256': { 10: 'xmss-shake-10', 16: 'xmss-shake-16', 20: 'xmss-shake-20' },
+  'SHAKE-128': { 10: 'xmss-shake-10', 16: 'xmss-shake-16', 20: 'xmss-shake-20' },
 }
 
 const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
@@ -316,9 +316,9 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">XMSS Key Generation</h3>
         <p className="text-sm text-muted-foreground">
-          Select an SP 800-208 XMSS parameter set to explore tree structure and compare with LMS at
-          equivalent security levels. XMSS adds bitmask-based tree hashing for stronger multi-target
-          attack resistance.
+          Select an RFC 8391 XMSS parameter set (the SHA-256 sets are also SP 800-208 approved) to
+          explore tree structure and compare with LMS at equivalent security levels. XMSS adds
+          bitmask-based tree hashing for stronger multi-target attack resistance.
         </p>
       </div>
 
@@ -328,7 +328,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
         <div className="flex items-center gap-3">
           <span className="text-xs text-muted-foreground w-14 shrink-0">Hash</span>
           <div className="flex gap-2">
-            {(['SHA-256', 'SHAKE-256'] as XMSSHash[]).map((h) => (
+            {(['SHA-256', 'SHAKE-128'] as XMSSHash[]).map((h) => (
               <Button
                 variant="ghost"
                 key={h}
@@ -403,7 +403,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
         >
           <span className="flex items-center gap-2">
             <Info size={14} className="text-secondary" />
-            Algorithm details — SP 800-208 XMSS
+            Algorithm details — XMSS (RFC 8391 / SP 800-208)
           </span>
           {showAlgoInfo ? (
             <ChevronUp size={14} className="text-muted-foreground" />
@@ -419,8 +419,8 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                 value: xmssHash,
                 body:
                   xmssHash === 'SHA-256'
-                    ? 'SHA-256 relies on collision resistance. Standard choice; NIST FIPS 180-4 compliant.'
-                    : 'SHAKE-256 uses XOF bitmasks — removes the collision-resistance assumption. Same parameter names and sizes; stronger multi-target security than SHA-256.',
+                    ? 'SHA-256 relies on collision resistance. Standard choice; NIST FIPS 180-4 compliant. The XMSS-SHA2_h_256 sets are approved in SP 800-208.'
+                    : 'SHAKE128 XOF per the RFC 8391 XMSS-SHAKE_h_256 sets — same sizes as SHA-256. Note: SP 800-208’s SHAKE sets are the separate XMSS-SHAKE256_h_192/256 sets, which use SHAKE256.',
               },
               {
                 label: 'n = 32 bytes (fixed)',

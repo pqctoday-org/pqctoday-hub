@@ -346,7 +346,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
       '26-expert survey (March 2026). Significant acceleration: 28-49% probability within 10 years (up from 19-34% in 2024). Majority consider CRQC by 2035 quite likely.',
   },
   {
-    source: 'NIST IR 8547 (2025)',
+    source: 'NIST IR 8547 (IPD, Nov 2024)',
     yearLow: 2030,
     yearHigh: 2035,
     confidence: 'Planning horizon',
@@ -359,7 +359,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     yearHigh: 2033,
     confidence: 'Mandate',
     notes:
-      'Migration MANDATE dates (not a CRQC-arrival prediction): software/firmware PQC by 2025, networking by 2026, all NSS by 2033 — implying a CRQC-relevant horizon of ~2030–2033.',
+      'Migration MANDATE dates (not a CRQC-arrival prediction): support-and-prefer from 2025 (sw/fw signing) and 2026 (networking); exclusive use 2030 (signing, networking) and 2033 (web/cloud, OS). NSM-10 targets all NSS quantum-resistant by 2035.',
   },
   {
     source: 'BSI Germany (2024)',
@@ -496,7 +496,7 @@ export const CRQC_DRIVERS: CrqcDriver[] = [
     summary:
       'Smarter factoring and discrete-log algorithms keep cutting the qubits an attack needs.',
     evidence:
-      'RSA-2048 estimate fell ~20×: ~20M physical qubits (2019) → <1M (Gidney 2025). ECC P-256 logical qubits cut ~44% (EUROCRYPT 2026); Chevignard–Fouque–Schrottenloher ~1,730 logical.',
+      'RSA-2048 estimate fell ~20×: ~20M physical qubits (2019) → <1M (Gidney 2025). ECC P-256 logical qubits cut ~44% (EUROCRYPT 2026); Chevignard–Fouque–Schrottenloher ~1,193 logical (~1,730 is their RSA-2048 figure).',
   },
   {
     category: 'Error correction',

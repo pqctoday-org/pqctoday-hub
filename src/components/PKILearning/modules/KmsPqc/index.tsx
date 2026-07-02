@@ -43,7 +43,7 @@ const PARTS: WorkshopPart[] = [
     id: 'kmip-explorer',
     title: 'Step 5: KMIP Protocol',
     description:
-      'Explore KMIP v2.1 operations, PQC key type mappings, and cross-provider key sync.',
+      'Explore KMIP v3.0 operations, PQC key type mappings, and cross-provider key sync.',
     icon: Globe,
   },
   {

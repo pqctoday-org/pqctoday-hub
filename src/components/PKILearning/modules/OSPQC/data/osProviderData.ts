@@ -129,10 +129,11 @@ export const OS_VENDORS: OSVendorStatus[] = [
     sshPqcStatus: 'Win32-OpenSSH tracking upstream OpenSSH experimental PQC branch',
     pkgSigningPqc: 'Windows Update uses RSA-4096; ML-DSA code signing in Windows roadmap 2027',
     roadmapYear: '2025-11 (Nov 2025 Update)',
-    mlKemSupport: 'ML-KEM-768 + X25519MLKEM768 GA in Schannel TLS 1.3 (Nov 2025 Update)',
-    mlDsaSupport: 'ML-DSA in CNG planned for Windows Server 2026 / Windows 12',
+    mlKemSupport:
+      'ML-KEM GA in CNG APIs (Nov 2025); Schannel TLS 1.3 X25519MLKEM768 is preview (Insider builds), disabled by default',
+    mlDsaSupport: 'ML-DSA (and SLH-DSA) GA in CNG APIs since November 2025',
     notes:
-      'Windows Server 2025 is the most advanced OS for PQC TLS deployment. KB5036893 enables X25519MLKEM768 hybrid group in Schannel by default for TLS 1.3 connections. SymCrypt (the underlying crypto library) fully supports ML-KEM and ML-DSA. FIPS 140-3 certificate covers SymCrypt 103.4.0+.',
+      'The November 2025 GA covers the CNG APIs (ML-KEM, ML-DSA, SLH-DSA) on Windows 11 24H2+ and Windows Server 2025. Schannel TLS hybrid key exchange (X25519MLKEM768) remains preview via Windows Insider builds and is disabled by default — enable it via Group Policy or TLS cmdlets. SymCrypt (the underlying crypto library) fully supports ML-KEM and ML-DSA. FIPS 140-3 certificate covers SymCrypt 103.4.0+.',
   },
   {
     id: 'debian',

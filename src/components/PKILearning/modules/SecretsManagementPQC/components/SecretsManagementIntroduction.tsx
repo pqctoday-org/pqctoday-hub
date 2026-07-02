@@ -358,12 +358,13 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
             <p className="text-xs text-muted-foreground">
               Vault Transit Engine performs crypto operations server-side. Migrating key types from{' '}
               <code className="bg-muted px-1 rounded border border-border">rsa-4096</code> to{' '}
-              <code className="bg-muted px-1 rounded border border-border">ml-kem-768</code> or{' '}
-              <code className="bg-muted px-1 rounded border border-border">ml-dsa-65</code> (Vault
-              1.18+) changes the internal transit key store without breaking the API surface.
-              Applications simply update the <code>key_type</code> parameter during key creation,
-              and Vault mechanically handles the larger PQC ciphertexts and nested encapsulation
-              transparency.
+              <code className="bg-muted px-1 rounded border border-border">ml-dsa-65</code>{' '}
+              (experimental, Vault Enterprise 1.19) — with{' '}
+              <code className="bg-muted px-1 rounded border border-border">ml-kem-768</code> still
+              on the roadmap — changes the internal transit key store without breaking the API
+              surface. Applications simply update the <code>key_type</code> parameter during key
+              creation, and Vault mechanically handles the larger PQC ciphertexts and nested
+              encapsulation transparency.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -395,11 +396,11 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
           {[
             {
               provider: 'HashiCorp Vault (Enterprise)',
-              status: 'Planned 2026',
+              status: 'Experimental (1.19)',
               statusCls: 'text-status-warning bg-status-warning/10 border-status-warning/30',
               details: [
-                'Transit engine PQC key types (ML-KEM-768, ML-DSA-65) — Vault 1.18 (H2 2026)',
-                'ML-KEM envelope encryption for seal/unseal mechanism — Vault 1.19',
+                'Transit ML-DSA and SLH-DSA sign/verify — experimental in Vault Enterprise 1.19',
+                'ML-KEM transit key types and PQC seal/unseal — roadmap, not yet announced',
                 'FIPS 140-3 validation for PQC algorithms — 2027 target',
                 'Hybrid TLS (X25519+ML-KEM) for Vault API — via HPKE RFC 9180',
               ],
@@ -410,12 +411,12 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
               status: 'Via KMS (GA)',
               statusCls: 'text-status-info bg-status-info/10 border-status-info/30',
               details: [
-                'No native PQC — inherits from AWS KMS ML-KEM key spec (GA since 2024)',
-                'Configure CMEK with ML-KEM key type for envelope encryption',
-                'AWS SDK TLS uses hybrid ML-KEM (BoringSSL) since 2024',
+                'No secrets-manager-native PQC — inherits AWS KMS ML-DSA-44/65/87 signing key specs (GA June 2025)',
+                'No ML-KEM key spec: AWS ML-KEM is hybrid post-quantum TLS in transit only, not an at-rest key type',
+                'AWS SDK TLS uses hybrid ML-KEM (AWS-LC) since 2025',
                 'No native dynamic secrets — use Lambda rotation or Vault AWS auth',
               ],
-              note: 'The simplest path: AWS KMS offers hybrid post-quantum TLS (ML-KEM in transit) for the KMS / Secrets Manager APIs. There is no ML-KEM CMK key spec, so secrets are not ML-KEM-encrypted at rest (native PQC key types are on the AWS roadmap).',
+              note: 'The simplest path: AWS KMS offers hybrid post-quantum TLS (ML-KEM in transit) for the KMS / Secrets Manager APIs. There is no ML-KEM CMK key spec, so secrets are not ML-KEM-encrypted at rest (AWS KMS native PQC today is ML-DSA signing key specs, GA June 2025).',
             },
             {
               provider: 'Azure Key Vault (Managed HSM)',

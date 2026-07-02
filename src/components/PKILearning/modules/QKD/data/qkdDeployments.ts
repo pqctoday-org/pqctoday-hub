@@ -287,7 +287,7 @@ export const QKD_DEPLOYMENTS: QKDDeployment[] = [
     technology: 'Fiber',
     status: 'Completed',
     yearStarted: 2022,
-    distance: '~32 km',
+    distance: 'up to ~100 km (~70 km with load)',
     description:
       'QKD field trial securing financial communications over deployed fiber in the New York metropolitan area. Demonstrated QKD for blockchain network protection.',
     source: 'https://www.jpmorgan.com/technology/technology-blog/quantum-key-distribution',

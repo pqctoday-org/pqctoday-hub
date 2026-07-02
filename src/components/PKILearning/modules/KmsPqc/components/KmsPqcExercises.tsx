@@ -80,7 +80,7 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       id: 'compliance-rotation',
       title: '5. Compliance-Driven Rotation',
       description:
-        'Plan a key rotation schedule for 500 certificates aligned with CNSA 2.0 (2027-2033), NIST IR 8547 (2030/2035), and provider-specific rotation capabilities. Calculate storage and bandwidth impact across three migration phases.',
+        'Plan a key rotation schedule for 500 certificates aligned with CNSA 2.0 (2025-2033), NIST IR 8547 (2030/2035), and provider-specific rotation capabilities. Calculate storage and bandwidth impact across three migration phases.',
       badge: 'Compliance',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:

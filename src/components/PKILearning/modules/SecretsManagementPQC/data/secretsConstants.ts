@@ -146,7 +146,7 @@ export const SECRET_CATEGORIES: SecretCategory[] = [
     atRestRisk:
       'Code signing keys stored in software keystores (JKS, PKCS#12) with RSA/ECDSA are directly at risk from CRQC offline attacks. HSM storage is mandatory for critical signing keys.',
     mitigationStrategy:
-      'Migrate all signing operations to ML-DSA-87 (FIPS 204 Level 5) for long-term artifacts. Use Sigstore for keyless signing with short-lived ML-DSA certificates. Store root signing keys in HSMs.',
+      'Migrate all signing operations to ML-DSA-87 (FIPS 204 Level 5) for long-term artifacts. Use Sigstore for keyless signing with short-lived certificates (ECDSA P-256 today; ML-DSA is a proposed future upgrade). Store root signing keys in HSMs.',
     exampleProducts: ['Sigstore/Cosign', 'Vault Transit', 'AWS Signer', 'DigiCert ONE'],
   },
   {
@@ -231,7 +231,8 @@ vault write transit/encrypt/my-key \\
 
 # PQC Vault transit (AES-256-GCM, ML-KEM-wrapped key)
 # Key type: aes256-gcm96 (unchanged)
-# KEK wrapping: ml-kem-768 (new in Vault 1.18+)
+# KEK wrapping: ml-kem-768 (roadmap — no ML-KEM transit key type yet;
+# Vault Enterprise 1.19 only ships experimental ML-DSA/SLH-DSA sign/verify)
 vault write transit/encrypt/my-pqc-key \\
   plaintext=$(base64 <<< "sensitive data") \\
   key_version=2`,
@@ -379,7 +380,11 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     product: 'Vault Enterprise',
     type: 'on-prem',
     catalogName: 'HashiCorp Vault',
-    pqcAlgorithms: ['ML-KEM-768 (planned 2026)', 'ML-DSA-65 (planned 2026)', 'SLH-DSA (roadmap)'],
+    pqcAlgorithms: [
+      'ML-DSA (experimental, Vault Enterprise 1.19 transit)',
+      'SLH-DSA (experimental, Vault Enterprise 1.19 transit)',
+      'ML-KEM (roadmap)',
+    ],
     encryptionAtRest: 'AES-256-GCM with Shamir Secret Sharing for unseal keys',
     encryptionInTransit: 'TLS 1.3 (hybrid ML-KEM planned via HPKE)',
     envelopeEncryption: true,
@@ -387,7 +392,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     kubernetesIntegration: 'vault-agent-injector / Vault Secrets Operator (VSO)',
     fipsMode: true,
     roadmapNote:
-      'Transit engine PQC key types planned for Vault 1.18 (H2 2026). ML-KEM envelope encryption for seal/unseal in Vault 1.19. FIPS 140-3 validation for PQC algorithms expected 2027.',
+      'Transit ML-DSA and SLH-DSA sign/verify shipped as experimental in Vault Enterprise 1.19. ML-KEM transit key types and PQC seal support are not yet announced. FIPS 140-3 validation for PQC algorithms expected 2027.',
   },
   {
     id: 'aws-secrets-manager',
@@ -396,8 +401,8 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     type: 'cloud',
     catalogName: 'AWS Secrets Manager',
     pqcAlgorithms: [
-      'Inherits AWS KMS hybrid post-quantum TLS (ML-KEM in transit); no ML-KEM key spec for at-rest CMKs (native PQC key types on roadmap)',
-      'ML-DSA-44/65/87 (GA 2024)',
+      'Inherits AWS KMS hybrid post-quantum TLS (ML-KEM in transit); no ML-KEM key spec for at-rest CMKs',
+      'ML-DSA-44/65/87 signing key specs (GA June 2025)',
     ],
     encryptionAtRest: 'AWS KMS envelope encryption (AES-256-GCM)',
     encryptionInTransit: 'TLS 1.3 with hybrid ML-KEM (via AWS SDK)',
@@ -626,7 +631,8 @@ provider "aws" {
 }
 
 # PQC note: Vault token auth to provider should use
-# ML-DSA-signed JWT (planned Vault 1.18+)`,
+# ML-DSA-signed JWT (transit ML-DSA is experimental
+# in Vault Enterprise 1.19)`,
   },
 ]
 

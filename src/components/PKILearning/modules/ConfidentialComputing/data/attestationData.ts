@@ -291,7 +291,7 @@ export const MEMORY_ENCRYPTION_ENGINES: MemoryEncryptionEngine[] = [
     integrityMechanism: 'Integrity trees with TD partitioning (TDX) or MEE integrity tree (SGX)',
     quantumImpact: 'grover-halved',
     quantumNotes:
-      "AES-128 effective security drops to 64-bit under Grover's algorithm. This is below the NIST Level 1 threshold (128-bit post-quantum). Upgrade path: AES-XTS-256 in future CPU generations.",
+      "AES-128 (NIST Category 1) effective security drops to 64-bit under Grover's algorithm — a much thinner margin than AES-256 (Category 5). Upgrade path: AES-XTS-256 in future CPU generations.",
     sealingKeyDerivation:
       'Platform root key (fused) → CPU SVN → Enclave identity (MRENCLAVE/MRSIGNER) → Sealing key via EGETKEY',
     protectionScope: [
@@ -327,7 +327,7 @@ export const MEMORY_ENCRYPTION_ENGINES: MemoryEncryptionEngine[] = [
     integrityProtection: false,
     quantumImpact: 'none',
     quantumNotes:
-      'AES-256 provides 128-bit post-quantum security under Grover — meets NIST Level 1. However, TrustZone relies on access control (TZASC) rather than encryption for most isolation, which is not cryptographically affected by quantum.',
+      'AES-256 (NIST Category 5) provides 128-bit effective post-quantum security under Grover. However, TrustZone relies on access control (TZASC) rather than encryption for most isolation, which is not cryptographically affected by quantum.',
     sealingKeyDerivation:
       'Hardware Unique Key (HUK, fused per-SoC) → Key derivation via Secure World service (vendor-specific KDF)',
     protectionScope: [
@@ -475,7 +475,7 @@ export const QUANTUM_THREAT_VECTORS: QuantumThreatVector[] = [
     component: 'Memory Encryption',
     currentCrypto: 'AES-XTS-128 (Intel TME-MK, AMD SME/SEV)',
     vulnerability:
-      "Grover's algorithm reduces AES-128 effective security to 64-bit. While brute-forcing AES-128 memory encryption keys in real-time is unlikely even with a CRQC (requires sustained high qubit count), it weakens the security margin below NIST Level 1.",
+      "Grover's algorithm reduces AES-128 (NIST Category 1) effective security to 64-bit. While brute-forcing AES-128 memory encryption keys in real-time is unlikely even with a CRQC (requires sustained high qubit count), it leaves a much thinner margin than AES-256 (Category 5).",
     severity: 'medium',
     migrationPriority: 3,
     pqcSolution:

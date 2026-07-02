@@ -444,7 +444,7 @@ export async function sidfDecrypt(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
           decapLine = `2. Decapsulating Shared Secret (ML-KEM-768)...
    KEM Ciphertext: ${ciphertextHexC.substring(0, 32)}... (${ctBytes.length} bytes)
    > openssl pkeyutl -decap -inkey hn_pqc_priv.key -in kem_ct.bin -out z_kem.bin
-   Z_kem (32 bytes): ${zKemHex}${isHybrid ? '\n   Combined Z = SHA256(Z_ecdh ‖ Z_kem) per 3GPP TR 33.841 [hybrid mode]' : '\n   Z = Z_kem [pure PQC mode]'}`
+   Z_kem (32 bytes): ${zKemHex}${isHybrid ? '\n   Combined Z = SHA256(Z_ecdh ‖ Z_kem) per 3GPP TR 33.938 [hybrid mode]' : '\n   Z = Z_kem [pure PQC mode]'}`
         } else {
           decapLine = `2. Decapsulating Shared Secret...[ERROR — decap output missing; stderr: ${decapRes.stderr?.substring(0, 100) || 'none'}]`
         }

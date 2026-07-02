@@ -271,9 +271,10 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
               (MongoDB FLE 2.0, SQL Server{' '}
               <InlineTooltip term="Always Encrypted">Always Encrypted</InlineTooltip> with secure
               enclaves) allows specific query types (equality, range) to execute on encrypted data
-              without full decryption. MongoDB uses HMAC-SHA-256 equality tokens and
-              order-preserving encryption for range queries. SQL Server uses secure enclaves (VBS or
-              SGX) to execute queries on plaintext inside a trusted execution environment.
+              without full decryption. MongoDB uses HMAC-SHA-256 equality tokens and structured
+              encryption over fully randomized ciphertext for range queries. SQL Server uses secure
+              enclaves (VBS or SGX) to execute queries on plaintext inside a trusted execution
+              environment.
             </p>
           </div>
         </div>
@@ -513,12 +514,14 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             <p className="text-xs text-muted-foreground">
               For equality queries, FLE 2.0 stores an HMAC-SHA-256 token of the plaintext alongside
               the ciphertext. The server compares tokens without seeing plaintext. For range
-              queries, an order-preserving encryption (OPE) scheme is used for the index &mdash;
-              range queries work by comparing encrypted values directly.
+              queries, a structured encryption scheme over fully randomized ciphertext is used for
+              the index &mdash; the server matches encrypted index tokens without learning plaintext
+              order.
             </p>
             <div className="mt-2 text-[10px] bg-background rounded p-2 border border-border font-mono text-muted-foreground">
-              PQC Impact: HMAC-SHA-256 is quantum-safe. OPE scheme under PQC review. DEK wrapping
-              upgrade path: RSA-OAEP → ML-KEM-1024 (MongoDB 8.x roadmap).
+              PQC Impact: HMAC-SHA-256 is quantum-safe. Range indexes use symmetric primitives
+              (quantum-safe). DEK wrapping upgrade path: RSA-OAEP → ML-KEM-1024 (MongoDB 8.x
+              roadmap).
             </div>
           </div>
 
@@ -543,9 +546,9 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             <p className="text-xs text-muted-foreground">
               Equality queries are straightforward to make PQC-safe: HMAC-SHA-256 tokens are
               quantum-safe, and DEK wrapping upgrades are independent. Range query encryption is
-              harder: order-preserving encryption (OPE) and range-revealing encryption schemes are
-              not yet standardized for PQC. Expect formal standards from NIST by 2028 for
-              PQC-compatible queryable encryption.
+              harder: structured encryption range schemes (MongoDB uses fully randomized ciphertext,
+              not order-preserving encryption) are not yet standardized for PQC. Expect formal
+              standards from NIST by 2028 for PQC-compatible queryable encryption.
             </p>
           </div>
         </div>

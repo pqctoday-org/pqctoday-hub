@@ -103,33 +103,31 @@ export const PQC_SUPPORT_MATRIX: PQCSupportCell[] = [
     apiId: 'openssl',
     algorithmId: 'ml-kem',
     status: 'supported',
-    version: '3.5+ oqsprovider',
-    notes: 'Via oqsprovider (liboqs)',
-    codeSnippet:
-      'EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_from_name(NULL, "ML-KEM-768", "provider=oqsprovider");',
+    version: '3.5+ (native)',
+    notes: 'Native in default provider since OpenSSL 3.5; oqsprovider only for 3.2-3.4',
+    codeSnippet: 'EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_from_name(NULL, "ML-KEM-768", NULL);',
   },
   {
     apiId: 'openssl',
     algorithmId: 'ml-dsa',
     status: 'supported',
-    version: '3.5+ oqsprovider',
-    notes: 'Via oqsprovider (liboqs)',
-    codeSnippet:
-      'EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_from_name(NULL, "ML-DSA-65", "provider=oqsprovider");',
+    version: '3.5+ (native)',
+    notes: 'Native in default provider since OpenSSL 3.5; oqsprovider only for 3.2-3.4',
+    codeSnippet: 'EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_from_name(NULL, "ML-DSA-65", NULL);',
   },
   {
     apiId: 'openssl',
     algorithmId: 'slh-dsa',
     status: 'supported',
-    version: '3.5+ oqsprovider',
-    notes: 'Via oqsprovider',
+    version: '3.5+ (native)',
+    notes: 'Native in default provider since OpenSSL 3.5',
   },
   {
     apiId: 'openssl',
     algorithmId: 'fn-dsa',
     status: 'supported',
-    version: '3.5+ oqsprovider',
-    notes: 'Via oqsprovider',
+    version: 'via oqsprovider',
+    notes: 'Not native; requires oqsprovider (liboqs)',
   },
   {
     apiId: 'openssl',
@@ -142,15 +140,15 @@ export const PQC_SUPPORT_MATRIX: PQCSupportCell[] = [
     apiId: 'openssl',
     algorithmId: 'hqc',
     status: 'supported',
-    version: '3.5+ oqsprovider',
-    notes: 'Via oqsprovider',
+    version: 'via oqsprovider',
+    notes: 'Not native; requires oqsprovider (liboqs)',
   },
   {
     apiId: 'openssl',
     algorithmId: 'mceliece',
     status: 'supported',
-    version: '3.5+ oqsprovider',
-    notes: 'Via oqsprovider — very large keys',
+    version: 'via oqsprovider',
+    notes: 'Not native; via oqsprovider — very large keys',
   },
 
   // PKCS#11
@@ -380,16 +378,16 @@ export const ROADMAP_EVENTS: RoadmapEvent[] = [
     algorithms: ['ml-kem', 'ml-dsa', 'slh-dsa'],
   },
   {
-    apiId: 'pkcs11',
-    date: '2024-Q3',
-    event: 'PKCS#11 v3.2 published with PQC mechanisms',
-    algorithms: ['ml-kem', 'ml-dsa', 'slh-dsa'],
-  },
-  {
     apiId: 'openssl',
     date: '2025-Q1',
     event: 'oqsprovider 1.0 stable release',
     algorithms: ['ml-kem', 'ml-dsa', 'slh-dsa', 'fn-dsa'],
+  },
+  {
+    apiId: 'pkcs11',
+    date: '2025-Q4',
+    event: 'PKCS#11 v3.2 Committee Specification 01 approved (Nov 2025) with PQC mechanisms',
+    algorithms: ['ml-kem', 'ml-dsa', 'slh-dsa'],
   },
   {
     apiId: 'ksp-cng',
@@ -399,9 +397,9 @@ export const ROADMAP_EVENTS: RoadmapEvent[] = [
   },
   {
     apiId: 'ksp-cng',
-    date: '2026-H2',
-    event: 'Windows CNG PQC (projected)',
-    algorithms: ['ml-kem', 'ml-dsa'],
+    date: '2025-Q4',
+    event: 'Windows CNG PQC APIs GA (Nov 2025)',
+    algorithms: ['ml-kem', 'ml-dsa', 'slh-dsa'],
   },
 ]
 

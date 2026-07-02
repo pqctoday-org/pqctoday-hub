@@ -51,7 +51,7 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       badge: 'Signing',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'ML-DSA-65 signatures are 3,309 bytes (vs 64 bytes for ECDSA P-256 — a 51x increase). Hedged signing mode (rnd != 0) is enabled by default in all production HSMs for side-channel protection per FIPS 204 section 3.5.2.',
+        'ML-DSA-65 signatures are 3,309 bytes (vs 64 bytes for ECDSA P-256 — a 51x increase). Hedged signing mode (rnd != 0) is enabled by default in all production HSMs for side-channel protection per FIPS 204 section 3.4.',
       config: { step: 0 },
     },
     {

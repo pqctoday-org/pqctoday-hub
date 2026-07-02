@@ -284,7 +284,7 @@ export const CRYPTO_APIS: CryptoAPI[] = [
     providerPattern:
       'BCryptOpenAlgorithmProvider(&hAlg, BCRYPT_RSA_ALGORITHM, NULL, 0); NCryptOpenStorageProvider(&hProv, MS_KEY_STORAGE_PROVIDER, 0);',
     pqcStatus:
-      'No native PQC support as of Windows 11 24H2. Microsoft has announced PQC roadmap for Windows but no public timeline for CNG/KSP PQC algorithms. SymCrypt (internal library) has experimental ML-KEM.',
+      'Native PQC GA since November 2025: CNG exposes ML-KEM, ML-DSA, and SLH-DSA APIs on Windows 11 24H2+ and Windows Server 2025, backed by SymCrypt (which implements ML-KEM and ML-DSA). Schannel TLS hybrid key exchange remains preview and disabled by default.',
     strengths: [
       'Deep Windows OS integration — certificate store, smart card, TPM 2.0',
       'Key isolation — keys can be non-exportable and process-isolated',
@@ -294,7 +294,7 @@ export const CRYPTO_APIS: CryptoAPI[] = [
     ],
     limitations: [
       'Windows-only — no cross-platform story',
-      'No PQC support yet — significant gap vs OpenSSL/Bouncy Castle',
+      'PQC APIs are new (GA Nov 2025) and require Windows 11 24H2+ / Server 2025',
       'Limited to Microsoft-approved algorithm set',
       'Custom KSP development requires Windows Driver Kit knowledge',
       'Documentation is extensive but scattered across MSDN',

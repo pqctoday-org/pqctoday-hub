@@ -108,7 +108,8 @@ const Step1LandscapeAndFrameworks: React.FC = () => (
               The Commercial National Security Algorithm Suite 2.0 mandates PQC adoption for
               National Security Systems. Key deadlines: software/firmware signing preferred by 2025,
               exclusive by 2030 (with traditional networking); operating-system support by 2027;
-              web/cloud/servers and operating systems by 2033; all remaining NSS by 2035. Requires{' '}
+              web/cloud/servers and operating systems by 2033 (NSM-10 targets all NSS
+              quantum-resistant by 2035). Requires{' '}
               <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>
               -1024 (FIPS&nbsp;203) and <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>-87
               (FIPS&nbsp;204) as minimum security levels.
@@ -258,7 +259,7 @@ const Step2ApproachAndDeadlines: React.FC = () => (
             {
               year: '2033',
               event:
-                'CNSA 2.0 web/cloud/servers & operating systems exclusive (all remaining NSS by 2035)',
+                'CNSA 2.0 web/cloud/servers & operating systems exclusive (NSM-10 targets all NSS quantum-resistant by 2035)',
               source: 'NSA',
             },
             {
@@ -474,8 +475,9 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
               Nation&apos;s Cybersecurity&rdquo; &mdash; directs CISA, in consultation with NSA, to
               publish and maintain a list of product categories in which PQC-capable products are
               widely available (initial list due December 1, 2025). CISA subsequently issued
-              procurement guidance requiring PQC capabilities in new federal product and service
-              acquisitions, driving market demand for PQC-capable solutions.
+              advisory procurement guidance recommending that agencies acquire PQC capabilities in
+              new federal product and service acquisitions (EO 14306 removed EO 14144&apos;s binding
+              solicitation requirement), encouraging market demand for PQC-capable solutions.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">

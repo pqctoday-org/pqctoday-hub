@@ -379,9 +379,9 @@ function phaseFocusFor(phase: PhaseId): PhaseFocus {
 }
 
 /** Build the one-time scenario-framing card from LIVE scenario dates / standards.
- *  US → the June-2026 federal PQC executive order; other countries degrade to a
- *  generic country framing anchored to the same scenario milestones. (The order's
- *  Federal Register number is not yet assigned, so it is referenced by title.) */
+ *  US → the June-2026 federal PQC executive order (EO 14412); other countries
+ *  degrade to a generic country framing anchored to the same scenario
+ *  milestones. */
 function scenarioIntroFor(scenario: SimScenario): ScenarioIntro {
   const hndl = scenario.tracks.find((t) => t.id === 'hndl-critical')?.year
   const tnfl = scenario.tracks.find((t) => t.id === 'tnfl-critical')?.year

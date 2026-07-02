@@ -1343,7 +1343,7 @@ export function SimulationView() {
             <Button
               type="button"
               variant="ghost"
-              onClick={autoRunPlayer.start}
+              onClick={() => autoRunPlayer.start()}
               disabled={autoRunPlayer.running}
               title={
                 autoRunPlayer.resumable
