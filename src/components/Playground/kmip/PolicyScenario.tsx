@@ -4,9 +4,12 @@
 // REAL in-browser engine:
 //
 //   • Preview (dry-run)  — asks the engine `dry_run` what it WOULD decide for a
-//     battery of representative requests. Read-only: no keys, no audit, the
-//     active policy is untouched. Use it to see Allow/Deny/Rekey instantly and
-//     to compare policies side by side (flip the policy above, preview again).
+//     battery of representative requests. No keys are created and the active
+//     policy is untouched. (Dry-run DOES emit a Plane-1 PolicyDecided audit
+//     event per probe — correlation_id `dry-run` — so the decision is traceable;
+//     it just performs no key/store mutation.) Use it to see Allow/Deny/Rekey
+//     instantly and to compare policies side by side (flip the policy, preview
+//     again).
 //
 //   • Run for real        — executes each request as a genuine KMIP batch
 //     (Create → Activate → Sign/Encapsulate) through the same engine the
