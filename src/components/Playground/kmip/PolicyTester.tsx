@@ -19,6 +19,8 @@ const TEST_ALGOS: { value: string; kind: 'sig' | 'kem' | 'sym' }[] = [
   { value: 'ML-DSA-87', kind: 'sig' },
   { value: 'ML-KEM-768', kind: 'kem' },
   { value: 'ML-KEM-1024', kind: 'kem' },
+  { value: 'X25519MLKEM768', kind: 'kem' },
+  { value: 'SecP256r1MLKEM768', kind: 'kem' },
   { value: 'AES-256', kind: 'sym' },
 ]
 
