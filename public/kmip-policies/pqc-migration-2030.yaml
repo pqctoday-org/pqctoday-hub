@@ -22,7 +22,7 @@ rules:
 
   # 1. Weak classical algorithms always banned, regardless of date.
   - type: algorithm_denylist
-    ops: [Create, Sign, Encrypt]
+    ops: [Create, CreateKeyPair, Sign, Encrypt]
     algorithms: [RSA-PKCS1-v1_5, ECDSA-SHA1, DES, 3DES, MD5, SHA1]
     reason: "Weak/legacy algorithms banned by policy at all times"
 
@@ -33,8 +33,10 @@ rules:
     reason: "RSA-2048 below organizational minimum; require >= 3072 bits"
 
   # 3. No new ECDSA P-256 signing keys created after 2027-01-01.
+  #    ECDSA is asymmetric, so the creation op is `CreateKeyPair` (not the
+  #    symmetric `Create`) — the op-name fix (Y2) makes this cutoff bite.
   - type: temporal_cutoff
-    op: Create
+    op: CreateKeyPair
     algorithm_class: classical
     algorithms: [ECDSA-P256, ECDSA-P384]
     after: "2027-01-01"

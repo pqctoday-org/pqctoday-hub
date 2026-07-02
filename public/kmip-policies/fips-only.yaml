@@ -25,8 +25,10 @@ metadata:
 rules:
 
   # 1. PQC algorithm allowlist — FIPS 203/204/205 only.
+  #    Gate `CreateKeyPair` too so asymmetric key-pair generation is evaluated
+  #    against the FIPS allowlist, not just symmetric `Create` (Y2).
   - type: algorithm_allowlist
-    ops: [Create]
+    ops: [Create, CreateKeyPair]
     algorithms:
       # FIPS 203 — ML-KEM
       - ML-KEM-512
@@ -57,7 +59,7 @@ rules:
 
   # 2. Banned: Round-4 / alternate / non-FIPS PQC.
   - type: algorithm_denylist
-    ops: [Create, Sign, Encrypt, Encapsulate]
+    ops: [Create, CreateKeyPair, Sign, Encrypt, Encapsulate]
     algorithms:
       - Falcon-512
       - Falcon-1024
@@ -127,5 +129,5 @@ rules:
   # 9. Compliance profile gate (catch-all).
   - type: compliance_profile_gate
     profile: FIPS-140-3
-    ops: [Create, Sign, Encrypt, Encapsulate]
+    ops: [Create, CreateKeyPair, Sign, Encrypt, Encapsulate]
     reason: "Request fails FIPS 140-3 compliance profile"
