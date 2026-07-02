@@ -8,19 +8,23 @@ metadata:
   description: |
     Enforces the NSA's CNSA 2.0 algorithm suite, the mandatory algorithm
     set for classified U.S. National Security Systems (NSS) handling
-    information up to TOP SECRET. CNSA 2.0 requires PQC adoption by
-    2025-2030 depending on system class. This policy denies anything
+    information up to TOP SECRET. CNSA 2.0 transition timeline: software and
+    firmware signing exclusively CNSA 2.0 by 2030 (earliest, since firmware
+    roots of trust are hardest to update); most other categories by 2033; all
+    NSS quantum-resistant by 2035 (NSM-10). This policy denies anything
     outside the CNSA 2.0 approved list.
 
-    Approved suite (CNSA 2.0, current as of 2024):
+    Approved suite (CNSA 2.0):
       - Symmetric:   AES-256
       - Hashing:     SHA-384, SHA-512
       - Signing:     ML-DSA-87 (Module-Lattice Digital Signature Algorithm Level 5)
       - KEM:         ML-KEM-1024 (Module-Lattice KEM Level 5)
-      - Hash-based:  LMS / HSS (RFC 8554, with HSS levels 1-3)
-                     XMSS / XMSS^MT (RFC 8391)
+      - Hash-based:  LMS (RFC 8554) and XMSS (RFC 8391), SINGLE-TREE only,
+                     approved for firmware/software signing.
 
     Not in CNSA 2.0:
+      - HSS and XMSS^MT — the multi-tree variants are explicitly NOT allowed
+        (NSA CNSA 2.0 FAQ)
       - ML-DSA-44, ML-DSA-65 (below Level 5)
       - ML-KEM-512, ML-KEM-768 (below Level 5)
       - SLH-DSA (not specified in CNSA 2.0 even though FIPS 205)
@@ -50,10 +54,12 @@ rules:
       - HMAC-SHA-512
       - ML-DSA-87
       - ML-KEM-1024
+      # CNSA 2.0 approves ONLY the single-tree stateful HBS schemes LMS and
+      # XMSS for firmware/software signing. The multi-tree variants HSS and
+      # XMSS^MT are explicitly NOT allowed (NSA CNSA 2.0 FAQ; wolfSSL CNSA 2.0
+      # Part 3). Verified 2026-07-01.
       - LMS
-      - HSS
       - XMSS
-      - XMSS-MT
     reason: "Algorithm not in CNSA 2.0 approved suite"
 
   # 2. Sub-Level-5 ML-KEM and ML-DSA explicitly denied (FIPS-approved but
@@ -115,22 +121,20 @@ rules:
   # 7. Custom attribute required tagging the CNSA classification.
   - type: require_custom_attribute
     attribute_name: pqctoday-cnsa-classification
-    algorithms: [ML-DSA-87, ML-KEM-1024, AES-256, LMS, HSS, XMSS, XMSS-MT]
+    algorithms: [ML-DSA-87, ML-KEM-1024, AES-256, LMS, XMSS]
     reason: "CNSA 2.0 keys must declare x-pqctoday-cnsa-classification (Unclassified|Secret|TopSecret)"
 
-  # 8. Stateful sig usage mask.
+  # 8. Stateful HBS usage mask — LMS/XMSS are approved for firmware/software
+  #    signing only, so they must carry Sign+Verify (stateful: track remaining
+  #    one-time signatures).
   - type: require_usage_mask
     algorithm: LMS
     flags: [Sign, Verify]
     reason: "LMS keys must declare Sign+Verify (stateful — track remaining signatures)"
   - type: require_usage_mask
-    algorithm: HSS
+    algorithm: XMSS
     flags: [Sign, Verify]
-    reason: "HSS keys must declare Sign+Verify"
-  - type: require_usage_mask
-    algorithm: XMSS-MT
-    flags: [Sign, Verify]
-    reason: "XMSS-MT keys must declare Sign+Verify"
+    reason: "XMSS keys must declare Sign+Verify (stateful — firmware/software signing)"
 
   # 9. Lifecycle: only Active CNSA keys may sign.
   - type: lifecycle_state_gate

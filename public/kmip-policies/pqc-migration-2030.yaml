@@ -12,11 +12,19 @@ metadata:
     signing AND encryption (verify + decrypt of pre-cutoff material remains
     allowed). Hybrid composite signatures are required for any new signing
     key created from 2027-01-01 onward.
+
+    STRICTER THAN THE CITED SOURCE: NIST IR 8547 (an initial public draft as
+    of Nov 2024) DEPRECATES 112-bit-security classical public-key after 2030
+    and DISALLOWS it after 2035 — it does not hard-ban at 2030. This policy
+    hard-stops classical signing/encryption at 2030 by deliberate enterprise
+    choice, and scopes the ban to quantum-vulnerable PUBLIC-KEY algorithms
+    (AES and other symmetric primitives stay allowed — they are quantum-safe).
   authority: pqctoday-hsm/training
   effective: "2026-01-01"
   compliance_mapping:
-    - { framework: "NIST IR 8547", status: aligned }
-    - { framework: "CNSA-2.0",    status: partial }
+    # "stricter-than": exceeds IR 8547's draft deprecation schedule (see above).
+    - { framework: "NIST IR 8547 (ipd)", status: stricter-than }
+    - { framework: "CNSA-2.0",           status: partial }
 
 rules:
 

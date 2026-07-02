@@ -17,7 +17,8 @@ const EXPECTED_RULES: Record<string, number> = {
   'auto-migrate-on-use.yaml': 7,
   'bsi-tr-02102.yaml': 7,
   'classical.yaml': 5,
-  'cnsa-2.0.yaml': 12,
+  // Y9: HSS + XMSS^MT removed (multi-tree not in CNSA 2.0) → 12→11.
+  'cnsa-2.0.yaml': 11,
   'deterministic-signing.yaml': 1,
   'fips-hashing.yaml': 1,
   'fips-only.yaml': 11,
