@@ -127,6 +127,7 @@ const LogEntryRow = ({
 const CRYPTO_OPS = new Set([
   'C_GenerateKeyPair',
   'C_GenerateKey',
+  'C_CreateObject', // key import (e.g. importing an externally-derived secret) — a real op, not housekeeping
   'C_DeriveKey',
   'C_WrapKey',
   'C_UnwrapKey',
