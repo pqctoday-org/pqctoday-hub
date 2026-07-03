@@ -69,17 +69,6 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     tool: { name: 'strongSwan', url: 'https://www.strongswan.org' },
   },
   {
-    id: 'tpm-playground',
-    title: 'TPM 2.0 PQC Playground',
-    emoji: '🛠️',
-    useCase:
-      'Execute raw TPM 2.0 Post-Quantum operations (ML-KEM & ML-DSA) entirely in the browser utilizing a WebAssembly port of libtpms coupled with real-time compliance validation.',
-    algorithms: ['WASM TPM', 'TCG V1.85'],
-    difficulty: 'advanced',
-    trackId: 'protocol-simulation',
-    tool: { name: 'libtpms WASM', url: 'https://github.com/stefanberger/libtpms' },
-  },
-  {
     id: 'pki',
     title: 'Enterprise PKI Chains',
     emoji: '🏛️',

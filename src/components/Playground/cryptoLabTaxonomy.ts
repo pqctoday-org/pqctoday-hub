@@ -115,7 +115,9 @@ export const VERB_TAGS: Record<string, VerbId[]> = {
   'sbx-tls': ['simulate'],
   'sbx-ssh': ['simulate'],
   'sbx-vpn': ['simulate'],
-  'sbx-tpm-playground': ['simulate'],
+  // 'sbx-tpm-playground' omitted: WIP-gated in pqctoday-sandbox (empty,
+  // unimplemented catalog stub — 07-2026 playground audit graded it F) and
+  // dropped from the hub's sync:sandbox projection until real content lands.
   'sbx-pki': ['certs'],
   'sbx-cert-validation': ['certs'],
   'sbx-hybrid-certs': ['certs'],
@@ -212,7 +214,8 @@ export const SUBGROUPS: Record<string, SubGroup[]> = {
     },
     {
       label: 'Hardware & TPM',
-      ids: ['tpm-playground', 'sbx-tpm-playground'],
+      // 'sbx-tpm-playground' omitted: see VERB_TAGS comment above.
+      ids: ['tpm-playground'],
     },
     {
       label: 'Benchmark & discovery',
