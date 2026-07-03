@@ -72,15 +72,13 @@ rules:
     to: ML-DSA-87
     reason: "Rekey legacy ECDSA signing key to ML-DSA-87 at first use"
 
-  # ── Existing-key rekey: RSA-3072 → ML-KEM-1024 on Encrypt ────────────
-  # Same mechanism for the asymmetric-encrypt flow. Application keeps
-  # calling Encrypt against the RSA UID; engine + dispatcher migrate it
-  # to ML-KEM under the covers.
-  - type: algorithm_substitution
-    ops: [Encrypt]
-    from: RSA-3072
-    to: ML-KEM-1024
-    reason: "Rekey legacy RSA encryption key to ML-KEM-1024 at first use"
+  # ── Existing-key rekey on the KEM path — DEFERRED to Phase 5 ─────────
+  # RSA key-transport → ML-KEM is a cross-primitive migration (encrypt →
+  # encapsulate), not a like-for-like rekey the Encrypt path can execute, so
+  # advertising it here would promise behaviour the engine rejects (Y5). The
+  # KEM-side auto-migration lands with the Encapsulate rekey work in Phase 5;
+  # the Sign-side rekey above is the live crypto-agility demo. Do NOT add an
+  # `ops: [Encrypt]` substitution to a KEM target until that path executes it.
 
   # ── Classical asymmetric Create denied ───────────────────────────────
   # Once flipped to PQC, no new classical asymmetric keys may be created.
