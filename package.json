@@ -88,6 +88,8 @@
     "generate-embeddings:dry": "tsx scripts/build-embedding-index.ts --dry-run",
     "sync:sandbox": "tsx scripts/sync-sandbox-scenarios.ts",
     "sync:sandbox:check": "tsx scripts/sync-sandbox-scenarios.ts --check",
+    "sync:kmip-policies": "tsx scripts/sync-kmip-policies.ts",
+    "sync:kmip-policies:check": "tsx scripts/sync-kmip-policies.ts --check",
     "sync:wasm:check": "tsx scripts/ci/check-wasm-provenance.ts --check",
     "sync:wasm:report": "tsx scripts/ci/check-wasm-provenance.ts",
     "normalize-vocab": "tsx scripts/ci/normalize-vocab-tags.ts",
