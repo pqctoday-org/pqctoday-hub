@@ -200,6 +200,26 @@ export interface DryRunSpec {
   currentAlgorithm?: string
   length?: number
   state?: string
+  /** Simulated request date (YYYY-MM-DD) — drives temporal rules (WP4b).
+   * Absent → the engine evaluates at "now". */
+  date?: string
+  /** Custom x-attributes ({name: value}, x- prefix optional) — drives
+   * require_custom_attribute and denylist/trigger exceptions. */
+  attrs?: Record<string, string>
+  /** Usage-mask flag names (Sign, Verify, …). Absent → None, so
+   * require_usage_mask fails closed exactly like an undeclared Create. */
+  usageMask?: string[]
+  /** Activation date of the targeted key (YYYY-MM-DD) — drives
+   * max_key_age_days. */
+  activationDate?: string
+  /** Mechanism dimension; names resolve through the engine's own tables. */
+  mechanism?: {
+    hash?: string
+    blockMode?: string
+    padding?: string
+    deterministic?: boolean
+    mech?: string
+  }
 }
 
 interface WasmKmipPlayground {

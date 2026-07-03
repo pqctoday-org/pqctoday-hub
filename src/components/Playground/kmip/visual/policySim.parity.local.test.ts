@@ -17,7 +17,7 @@
 /* eslint-disable security/detect-non-literal-fs-filename -- reads fixed repo dirs */
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 import { toEditable } from './policyEditModel'
 import { evaluatePolicy, type SimRequest, type SimResult } from './policySim'
 
@@ -300,5 +300,198 @@ describe('cross-cutting simulator fidelity fixes', () => {
         }
       }
     }
+  })
+})
+
+// ── Layer 2 — REAL WASM engine cross-check (WP4b) ───────────────────────────
+// Boots the actual staged wasm binary and asserts the illustrative simulator
+// reaches the SAME verdict the engine's dry_run does, for every case above
+// that the engine can decide. This replaces the native Rust facade tests
+// (KmipPlayground calls wasm-bindgen imports, so it cannot run off-wasm).
+
+interface WasmExports {
+  __wbindgen_start: () => void
+}
+interface BgModule {
+  __wbg_set_wasm: (exports: unknown) => void
+  KmipPlayground: new () => {
+    load_policy: (yaml: string) => string
+    dry_run: (specJson: string) => string
+    free: () => void
+  }
+}
+
+type EnginePg = InstanceType<BgModule['KmipPlayground']>
+
+const toDrySpec = (r: SimRequest): Record<string, unknown> => {
+  const newObject = /^(Create|CreateKeyPair|Register|Import)/.test(r.op)
+  const attrs: Record<string, string> = {}
+  for (const a of r.attrs) {
+    const [name, ...rest] = a.split('=')
+    if (name) attrs[name] = rest.join('=')
+  }
+  const mechanism: Record<string, unknown> = {}
+  if (r.hash) mechanism.hash = r.hash
+  if (r.blockMode) mechanism.blockMode = r.blockMode
+  if (r.padding) mechanism.padding = r.padding
+  if (r.deterministic !== '') mechanism.deterministic = r.deterministic === 'true'
+  if (r.mechanism) mechanism.mech = r.mechanism
+  return {
+    op: r.op,
+    algorithm: r.algorithm || undefined,
+    currentAlgorithm: newObject ? undefined : r.algorithm || undefined,
+    length: r.bits === '' ? undefined : Number(r.bits),
+    state: r.keyState || undefined,
+    date: r.date || undefined,
+    attrs: Object.keys(attrs).length ? attrs : undefined,
+    usageMask: r.usageFlags.length ? r.usageFlags : undefined,
+    activationDate: r.keyActivatedOn || undefined,
+    mechanism: Object.keys(mechanism).length ? mechanism : undefined,
+  }
+}
+
+describe('layer 2 — sim verdict ≡ real engine dry_run verdict', () => {
+  let bg: BgModule
+
+  beforeAll(async () => {
+    bg = (await import('@/wasm/kmip/pqctoday_kmip_wasm_bg.js')) as unknown as BgModule
+    const bytes = readFileSync(join(process.cwd(), 'src/wasm/kmip/pqctoday_kmip_wasm_bg.wasm'))
+    const { instance } = await WebAssembly.instantiate(bytes, {
+      './pqctoday_kmip_wasm_bg.js': bg as unknown as WebAssembly.ModuleImports,
+    })
+    bg.__wbg_set_wasm(instance.exports)
+    ;(instance.exports as unknown as WasmExports).__wbindgen_start()
+  }, 30_000)
+
+  const engineVerdict = (pg: EnginePg, r: SimRequest): string => {
+    const out = JSON.parse(pg.dry_run(JSON.stringify(toDrySpec(r)))) as { kind: string }
+    return out.kind.toLowerCase()
+  }
+
+  // (policy file, request, expected verdict) — expected is what BOTH layers
+  // must produce. Rekey cases compare kind only.
+  const MATRIX: [string, Partial<SimRequest>, 'allow' | 'deny' | 'rekey'][] = [
+    // date reaches temporal + windowed rules
+    [
+      'hybrid-migration-window.yaml',
+      { op: 'Create', algorithm: 'ECDSA-P256', date: '2025-06-01' },
+      'allow',
+    ],
+    [
+      'hybrid-migration-window.yaml',
+      { op: 'Create', algorithm: 'ECDSA-P256', date: '2027-06-01' },
+      'deny',
+    ],
+    [
+      'hybrid-migration-window.yaml',
+      { op: 'Create', algorithm: 'ECDSA-P256', date: '2031-12-30' },
+      'deny',
+    ],
+    [
+      'hybrid-migration-window.yaml',
+      { op: 'Sign', algorithm: 'ECDSA-P256', date: '2027-06-01' },
+      'deny',
+    ],
+    // KNOWN YAML GAP (Phase 3): post-window classical Sign — both layers allow
+    [
+      'hybrid-migration-window.yaml',
+      { op: 'Sign', algorithm: 'ECDSA-P256', date: '2031-12-30' },
+      'allow',
+    ],
+    // usage mask fails closed / passes when declared (composite Sign)
+    [
+      'hybrid-migration-window.yaml',
+      { op: 'Sign', algorithm: 'ML-DSA-65-ED25519', date: '2027-06-01', usageFlags: [] },
+      'deny',
+    ],
+    [
+      'hybrid-migration-window.yaml',
+      {
+        op: 'Sign',
+        algorithm: 'ML-DSA-65-ED25519',
+        date: '2027-06-01',
+        usageFlags: ['Sign', 'Verify'],
+      },
+      'allow',
+    ],
+    // KNOWN YAML GAP (Phase 3): composite Create denied by the ML-DSA family denylist
+    [
+      'hybrid-migration-window.yaml',
+      {
+        op: 'Create',
+        algorithm: 'ML-DSA-65-ED25519',
+        date: '2027-06-01',
+        usageFlags: ['Sign', 'Verify'],
+      },
+      'deny',
+    ],
+    // hash allowlist
+    ['fips-hashing.yaml', { op: 'Sign', algorithm: 'RSA-3072', hash: 'SHA-1' }, 'deny'],
+    ['fips-hashing.yaml', { op: 'Sign', algorithm: 'RSA-3072', hash: 'SHA-256' }, 'allow'],
+    ['fips-hashing.yaml', { op: 'Sign', algorithm: 'RSA-3072' }, 'allow'],
+    // mechanism parameter constraints
+    ['aead-only.yaml', { op: 'Encrypt', algorithm: 'AES-256', blockMode: 'ECB' }, 'deny'],
+    ['aead-only.yaml', { op: 'Encrypt', algorithm: 'AES-256', blockMode: 'GCM' }, 'allow'],
+    ['aead-only.yaml', { op: 'Encrypt', algorithm: 'RSA-3072', padding: 'PKCS1 v1.5' }, 'deny'],
+    // CKM allow/denylists
+    [
+      'pkcs11-mechanism-lockdown.yaml',
+      { op: 'Encrypt', algorithm: 'AES-256', mechanism: 'CKM_AES_ECB' },
+      'deny',
+    ],
+    [
+      'pkcs11-mechanism-lockdown.yaml',
+      { op: 'Encrypt', algorithm: 'AES-256', mechanism: 'CKM_AES_GCM' },
+      'allow',
+    ],
+    // MAC policy gates on the request algorithm
+    ['pkcs11-mechanism-lockdown.yaml', { op: 'MAC', algorithm: 'HMAC-SHA-256' }, 'allow'],
+    ['pkcs11-mechanism-lockdown.yaml', { op: 'MAC', algorithm: 'HMAC-SHA-1' }, 'deny'],
+    // custom-attr exception on a denylist (pure PQC Create + research tag —
+    // rule 1 in-window precedes, so test OUTSIDE the window via denylist dates:
+    // use pqc-migration-2030's require_custom_attribute instead)
+    [
+      'pqc-migration-2030.yaml',
+      { op: 'Sign', algorithm: 'ECDSA-P256', date: '2031-06-01' },
+      'deny',
+    ],
+    [
+      'pqc-migration-2030.yaml',
+      {
+        op: 'Encrypt',
+        algorithm: 'AES-256',
+        date: '2031-06-01',
+        usageFlags: ['Encrypt', 'Decrypt'],
+      },
+      'allow',
+    ],
+    // rekey parity (agility substitution on use)
+    [
+      'auto-migrate-on-use.yaml',
+      { op: 'Sign', algorithm: 'ECDSA-P256', date: '2026-07-01' },
+      'rekey',
+    ],
+  ]
+
+  it('every matrix case: sim verdict === engine verdict === expected', () => {
+    // ONE playground for the whole matrix — the PKCS#11 engine behind the
+    // playground is a per-module singleton, so a second constructor call
+    // fails with CKR_SESSION_EXISTS (0xB6). load_policy() swaps the active
+    // policy in place, exactly like the UI does.
+    const pg = new bg.KmipPlayground()
+    for (const [file, over, expected] of MATRIX) {
+      const yaml = readFileSync(join(POLICY_DIR, file), 'utf8')
+      const loaded = JSON.parse(pg.load_policy(yaml)) as { ok: boolean; error?: string }
+      expect(loaded.ok, `${file} must load: ${loaded.error}`).toBe(true)
+
+      const r = req(over)
+      const simKind = evaluatePolicy(load(file), r).verdict.kind
+      const engKind = engineVerdict(pg, r)
+      const label = `${file} ${r.op} ${r.algorithm} @${r.date}`
+
+      expect(simKind, `${label}: sim`).toBe(expected)
+      expect(engKind, `${label}: engine`).toBe(expected)
+    }
+    pg.free()
   })
 })
