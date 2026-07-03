@@ -56,9 +56,10 @@ export async function generateEphemeralKey(
       const cmd2 = `openssl pkey -in ${privFile} -pubout -out ${pubFile} `
       await openSSLService.execute(cmd2)
 
-      // Ephemeral Public Hex
+      // Ephemeral Public Hex (-pubin: the input file holds a PUBLIC key —
+      // without it, pkey expects a private key and this command always failed)
       await openSSLService.execute(
-        `openssl pkey -in ${pubFile} -pubout -outform DER -out ${pubDer} `
+        `openssl pkey -pubin -in ${pubFile} -pubout -outform DER -out ${pubDer} `
       )
       const pubHex = await ctx.readFileHex(pubDer)
 
@@ -114,8 +115,9 @@ ${pubHex.match(/.{1,64}/g)?.join('\n')}
         ctx.state.ephPrivHex = privHex
 
         await openSSLService.execute(`openssl pkey -in ${privFile} -pubout -out ${pubFile} `)
+        // -pubin: input is a PUBLIC key file (see profile A/B branch above)
         await openSSLService.execute(
-          `openssl pkey -in ${pubFile} -pubout -outform DER -out ${pubDer} `
+          `openssl pkey -pubin -in ${pubFile} -pubout -outform DER -out ${pubDer} `
         )
         const pubHex = await ctx.readFileHex(pubDer)
         ctx.state.ephemeralPubKeyHex = pubHex
