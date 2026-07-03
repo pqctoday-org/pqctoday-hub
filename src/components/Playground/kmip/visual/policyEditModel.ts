@@ -319,10 +319,78 @@ const opsOverlap = (a: string[], b: string[]): boolean => {
   return a.some((o) => bs.has(base(o)))
 }
 
+/** Rule types that can independently DENY/gate a request on their own (as
+ * opposed to `algorithm_default`/`algorithm_allowlist`, whose "no match" case
+ * is silent, not a deny). Two ENABLED rules of the *same* gating type, in
+ * order, where the earlier one is unconditional (no `triggered_by_custom_attribute`)
+ * and their op scopes overlap: the earlier one decides every matching request
+ * first-match-wins, so the later one can never fire. This is the exact shape
+ * of the documented `hybrid-migration-window.yaml` gap (rule 2's high-assurance
+ * composite is shadowed by rule 1's triggerless one) — the A-grade review's A3
+ * finding, generalized to any same-type pair rather than special-cased. */
+const GATING_TYPES = new Set([
+  'algorithm_denylist',
+  'temporal_cutoff',
+  'require_usage_mask',
+  'require_custom_attribute',
+  'min_key_length',
+  'max_key_age_days',
+  'lifecycle_state_gate',
+  'mechanism_denylist',
+  'hybrid_dual_sign_requirement',
+  'mac_mechanism_policy',
+  'hash_algorithm_allowlist',
+  'mechanism_parameter_constraint',
+])
+const isUnconditional = (r: EditableRule): boolean => !r.maps.triggered_by_custom_attribute?.name
+
+/** `true` when two same-type gating rules can be PROVEN to target disjoint
+ * algorithms — e.g. `aead-only.yaml`'s AES-mode rule and RSA-padding rule are
+ * both `mechanism_parameter_constraint` over the same ops, but neither can
+ * ever shadow the other because each only matches its own `algorithm`. Only a
+ * pair that's provably disjoint is safe to treat as non-overlapping; anything
+ * ambiguous (no scalar `algorithm`, no central list on either side — e.g. two
+ * `temporal_cutoff`s keyed by `algorithm_class`) is left overlapping, matching
+ * this lint's conservative bias (prefer a false "unreachable" over a missed
+ * one). */
+const algorithmScopesDisjoint = (a: EditableRule, b: EditableRule): boolean => {
+  if (a.scalars.algorithm && b.scalars.algorithm)
+    return lower(a.scalars.algorithm) !== lower(b.scalars.algorithm)
+  const aList = centralListOf(a)?.values
+  const bList = centralListOf(b)?.values
+  if (aList?.length && bList?.length) {
+    const bSet = new Set(bList.map(lower))
+    return !aList.some((x) => bSet.has(lower(x)))
+  }
+  return false
+}
+
+/** Algorithm-family names that only ever arrive via `CreateKeyPair` (an
+ * asymmetric key pair) — never bare `Create` (a symmetric/secret-data
+ * object). Mirrors the engine's real op split (`ops/create.rs` vs
+ * `ops/create_key_pair.rs`) closely enough to catch the common authoring slip
+ * the A-grade review's A4 finding names: a rule scoped to `Create` that lists
+ * an asymmetric algorithm can never actually match anything. */
+const ASYMMETRIC_FAMILIES = [
+  'ML-DSA',
+  'ML-KEM',
+  'SLH-DSA',
+  'RSA',
+  'ECDSA',
+  'ECDH',
+  'Ed25519',
+  'Ed448',
+  'X25519',
+  'X448',
+  'FrodoKEM',
+  'Classic-McEliece',
+]
+const isAsymmetric = (algo: string): boolean =>
+  ASYMMETRIC_FAMILIES.some((f) => algo.toUpperCase().startsWith(f.toUpperCase()))
+
 /**
- * Static policy lint — no engine needed. Four checks (per the implementation
- * plan §8): deny∩allow conflict, dead default, empty central list, disabled
- * substitution. The engine loader's own warnings are merged in by the caller.
+ * Static policy lint — no engine needed. The engine loader's own warnings are
+ * merged in by the caller (see `PolicyValidation`).
  */
 export function validate(policy: EditablePolicy): EditorIssue[] {
   const issues: EditorIssue[] = []
@@ -385,6 +453,68 @@ export function validate(policy: EditablePolicy): EditorIssue[] {
         level: 'warn',
         ruleId: r.id,
         message: `Rekey rule ${i + 1} (${r.scalars.from ?? '?'} → ${r.scalars.to ?? '?'}) is off — matching keys will not migrate.`,
+      })
+    }
+  }
+
+  // (e) unreachable rule — an earlier, unconditional, same-type gating rule
+  // with an overlapping op scope always decides first (first-match-wins), so
+  // a later rule of the same type can never fire.
+  for (const [j, later] of enabled.entries()) {
+    if (!GATING_TYPES.has(later.type)) continue
+    for (let k = 0; k < j; k++) {
+      const earlier = enabled[k]
+      if (earlier.type !== later.type || !isUnconditional(earlier)) continue
+      if (!opsOverlap(opsOf(earlier), opsOf(later))) continue
+      if (algorithmScopesDisjoint(earlier, later)) continue
+      const earlierIdx = rules.indexOf(earlier) + 1
+      const laterIdx = rules.indexOf(later) + 1
+      const title = isRuleTypeId(later.type) ? RULE_CATALOG[later.type].title : later.type
+      issues.push({
+        level: 'error',
+        ruleId: later.id,
+        message: `Rule ${laterIdx} (${title}) is unreachable — rule ${earlierIdx}, unconditional and earlier, already decides every request this rule would match.`,
+      })
+      break // one citation per shadowed rule is enough
+    }
+  }
+
+  // (f) op-name miss — a rule scoped EXCLUSIVELY to bare `Create` (symmetric
+  // objects only) that names an asymmetric algorithm, which `CreateKeyPair` —
+  // not `Create` — actually produces; the rule can never match anything it
+  // names. Deliberately narrow (single-op `[Create]` only): a rule scoped to
+  // `Create` alongside `Sign`/`Encrypt`/`CreateKeyPair` legitimately reaches
+  // the same algorithm name through one of those other ops (e.g.
+  // fips-only.yaml's `[Sign, Encrypt, Create]` weak-primitive denylist, or
+  // bsi-tr-02102.yaml's combined symmetric+asymmetric denylist) — only a
+  // rule with no OTHER op path at all is unreachable for that name.
+  for (const [i, r] of rules.entries()) {
+    if (!r.enabled) continue
+    const ops = opsOf(r)
+    if (ops.length !== 1 || ops[0] !== 'Create') continue
+    const central = centralListOf(r)
+    const offender = central?.values.find(isAsymmetric)
+    if (offender) {
+      const title = isRuleTypeId(r.type) ? RULE_CATALOG[r.type].title : r.type
+      issues.push({
+        level: 'error',
+        ruleId: r.id,
+        message: `Rule ${i + 1} (${title}) scopes "${offender}" to op Create, but asymmetric key pairs arrive via CreateKeyPair — Create never matches this. Use CreateKeyPair (or CreateKeyPair:Sign / CreateKeyPair:KeyAgreement) instead.`,
+      })
+    }
+  }
+
+  // (g) a temporal window that never opens (effective_from is after effective_until)
+  for (const [i, r] of rules.entries()) {
+    if (!r.enabled) continue
+    const from = r.scalars.effective_from
+    const until = r.scalars.effective_until
+    if (from && until && from > until) {
+      const title = isRuleTypeId(r.type) ? RULE_CATALOG[r.type].title : r.type
+      issues.push({
+        level: 'error',
+        ruleId: r.id,
+        message: `Rule ${i + 1} (${title}) has effective_from (${from}) after effective_until (${until}) — this window never opens; the rule can never fire.`,
       })
     }
   }

@@ -158,11 +158,46 @@ export interface AlgoChoice {
   label: string
   kind: 'signature' | 'kem' | 'symmetric'
   pqc: boolean
+  /** `true` sends `intent` instead of `algorithm` — the active policy resolves
+   * the algorithm itself (the crypto-agility "flip the policy, same request
+   * resolves differently" lesson, made hands-on). */
+  auto?: boolean
+  /** `false` marks a real PQC algorithm this in-browser engine cannot
+   * actually create — a policy may still name it in an allow/denylist (the
+   * dry-run/matrix will show a verdict for the string), but no lifecycle op
+   * can run it here. Omitted/`true` = runnable. See `isRunnable`. */
+  runnable?: boolean
+  /** Key-size/curve choices for RSA/ECDSA (A-grade review item #18) — the
+   * engine's `CryptographicLength` attribute is a REAL functional input, not
+   * a cosmetic label: it drives both the actual RSA bit length / ECDSA curve
+   * generated (`ecdsa_curve_from_length` in `create_key_pair.rs`) and the
+   * qualified name (`RSA-2048`, `ECDSA-P384`, …) `min_key_length` rules gate
+   * on. Several shipped policies (fips-only, bsi-tr-02102,
+   * pqc-migration-2030) deny RSA below 3072 bits — without this picker the
+   * workbench could only ever send the 2048-bit default and could never
+   * demonstrate that denial by hand. */
+  sizes?: { length: number; label: string }[]
 }
 
+/** The sentinel `AlgoChoice.value` for the "Auto" picker entry. */
+export const AUTO_ALGO = '__auto__'
+
 /** Algorithms the lifecycle picker offers (a representative cross-section of
- * the engine's full set — PQC first, classical for the agility contrast). */
+ * the engine's full set — PQC first, classical for the agility contrast).
+ * "Auto" is first: the headline crypto-agility lesson (A-grade review C1) —
+ * omit the algorithm, let the active policy resolve it, flip the policy,
+ * watch the SAME request resolve differently. The two spec-only entries
+ * (A-grade review A1) show real PQC algorithms a policy can reference that
+ * this in-browser engine cannot actually create, so picking one explains
+ * why rather than silently disappearing from the catalog. */
 export const ALGORITHMS: AlgoChoice[] = [
+  {
+    value: AUTO_ALGO,
+    label: 'Auto — let the policy decide',
+    kind: 'signature',
+    pqc: true,
+    auto: true,
+  },
   { value: 'ML-DSA-44', label: 'ML-DSA-44 (FIPS 204)', kind: 'signature', pqc: true },
   { value: 'ML-DSA-65', label: 'ML-DSA-65 (FIPS 204)', kind: 'signature', pqc: true },
   { value: 'ML-DSA-87', label: 'ML-DSA-87 (FIPS 204)', kind: 'signature', pqc: true },
@@ -175,9 +210,85 @@ export const ALGORITHMS: AlgoChoice[] = [
   { value: 'ML-KEM-512', label: 'ML-KEM-512 (FIPS 203)', kind: 'kem', pqc: true },
   { value: 'ML-KEM-768', label: 'ML-KEM-768 (FIPS 203)', kind: 'kem', pqc: true },
   { value: 'ML-KEM-1024', label: 'ML-KEM-1024 (FIPS 203)', kind: 'kem', pqc: true },
-  { value: 'RSA', label: 'RSA (classical)', kind: 'signature', pqc: false },
-  { value: 'ECDSA', label: 'ECDSA (classical)', kind: 'signature', pqc: false },
+  {
+    value: 'RSA',
+    label: 'RSA (classical)',
+    kind: 'signature',
+    pqc: false,
+    sizes: [
+      { length: 2048, label: '2048-bit' },
+      { length: 3072, label: '3072-bit' },
+      { length: 4096, label: '4096-bit' },
+    ],
+  },
+  {
+    value: 'ECDSA',
+    label: 'ECDSA (classical)',
+    kind: 'signature',
+    pqc: false,
+    sizes: [
+      { length: 256, label: 'P-256' },
+      { length: 384, label: 'P-384' },
+      { length: 521, label: 'P-521' },
+    ],
+  },
+  { value: 'AES', label: 'AES-256 (symmetric, quantum-safe)', kind: 'symmetric', pqc: false },
+  {
+    value: 'FrodoKEM-1344',
+    label: 'FrodoKEM-1344 (spec-only)',
+    kind: 'kem',
+    pqc: true,
+    runnable: false,
+  },
+  {
+    value: 'Classic-McEliece-6688128',
+    label: 'Classic-McEliece-6688128 (spec-only)',
+    kind: 'kem',
+    pqc: true,
+    runnable: false,
+  },
 ]
+
+/** Exact algorithm names the wasm engine's `CreateKeyPair`/`Create` can
+ * actually instantiate — mirrors the exact-match arms of
+ * `pqctoday-hsm/kmip/src/ops/create_key_pair.rs::parse_algorithm`. Keep in
+ * sync with that function; it is the single source of truth. */
+const RUNNABLE_EXACT = new Set([
+  'ML-KEM-512',
+  'ML-KEM-768',
+  'ML-KEM-1024',
+  'ML-DSA-44',
+  'ML-DSA-65',
+  'ML-DSA-87',
+  'SLH-DSA-SHA2-128s',
+  'SLH-DSA-SHA2-128f',
+  'SLH-DSA-SHA2-192s',
+  'SLH-DSA-SHA2-192f',
+  'SLH-DSA-SHA2-256s',
+  'SLH-DSA-SHA2-256f',
+  'SLH-DSA-SHAKE-128s',
+  'SLH-DSA-SHAKE-128f',
+  'SLH-DSA-SHAKE-192s',
+  'SLH-DSA-SHAKE-192f',
+  'SLH-DSA-SHAKE-256s',
+  'SLH-DSA-SHAKE-256f',
+  'X25519MLKEM768',
+  'SecP256r1MLKEM768',
+])
+
+/** Family prefixes `parse_algorithm` collapses to a concrete algorithm
+ * regardless of the qualifying suffix (`ECDSA-P256` → `Ecdsa`, etc.). */
+const RUNNABLE_FAMILIES = new Set(['AES', 'RSA', 'ECDSA', 'ECDH'])
+
+/** `true` if the wasm engine can actually create/use a real key for this
+ * algorithm name — a policy may still reference a non-runnable name (e.g.
+ * `FrodoKEM-1344`, bare `Ed25519`, a hash name like `SHA-1`) in an
+ * allow/denylist, and the dry-run engine will happily evaluate a verdict for
+ * the literal string, but no lifecycle op can create/sign/encapsulate one
+ * here. Distinguishing this is the fix for A-grade review finding A1 — "the
+ * tool proves BSI permits FrodoKEM" when the tool simply can't do FrodoKEM. */
+export const isRunnable = (algo: string): boolean =>
+  RUNNABLE_EXACT.has(algo) || RUNNABLE_FAMILIES.has(algo.split('-')[0])
 
 /** Visual tone for a policy chip / catalog card. Drives colour + grouping. */
 export type PolicyTone =
@@ -198,6 +309,24 @@ export type PolicyCategory =
   | 'Compliance regimes'
   | 'Mechanism controls'
 
+/** A seed request for the Visual tab's simulator that demonstrates a preset's
+ * `illustrates` line in one click (A-grade review item #16 — "Load this
+ * policy's example"). Sparse — merged over the simulator's own defaults, so
+ * only the fields that matter for the demo need setting. Field names mirror
+ * `visual/policySim.ts`'s `SimRequest` (kept local here to avoid a
+ * meta-data → visual-editor cross-import). */
+export interface PolicyExample {
+  op: string
+  algorithm: string
+  date?: string
+  bits?: string
+  attrs?: string[]
+  usageFlags?: string[]
+  hash?: string
+  blockMode?: string
+  mechanism?: string
+}
+
 export interface PolicyPreset {
   file: string // under /kmip-policies/
   name: string
@@ -211,6 +340,8 @@ export interface PolicyPreset {
   /** Shown in the sticky Plane-1 quick-switch strip (a curated subset; the full
    * catalog of every preset lives in the dedicated Policy view). */
   featured?: boolean
+  /** The request that demonstrates `illustrates` — see [`PolicyExample`]. */
+  example?: PolicyExample
 }
 
 /** Plane-1 policy presets. The full breadth lives in the dedicated Policy view;
@@ -227,6 +358,7 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     category: 'Baseline',
     illustrates: 'No rules — every algorithm and operation is allowed.',
     featured: true,
+    example: { op: 'CreateKeyPair', algorithm: 'FrodoKEM-1344' },
   },
   {
     file: 'classical.yaml',
@@ -237,6 +369,7 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     category: 'Baseline',
     illustrates: 'Algorithm defaults — resolves unspecified keys to classical algorithms.',
     featured: true,
+    example: { op: 'CreateKeyPair:Sign', algorithm: '' },
   },
   // ── Post-quantum ──────────────────────────────────────────────────────────
   {
@@ -249,6 +382,7 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     category: 'Post-quantum',
     illustrates: 'PQC defaults + denials + rekey — the canonical agility flip.',
     featured: true,
+    example: { op: 'CreateKeyPair:Sign', algorithm: '' },
   },
   {
     file: 'auto-migrate-on-use.yaml',
@@ -259,6 +393,7 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     tone: 'migration',
     category: 'Post-quantum',
     illustrates: 'Algorithm substitution — rekey-on-use, no flag day, no code change.',
+    example: { op: 'Sign', algorithm: 'ECDSA-P256', date: '2026-07-01' },
   },
   // ── Migration & transition ────────────────────────────────────────────────
   {
@@ -270,6 +405,9 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     tone: 'migration',
     category: 'Migration & transition',
     illustrates: 'Temporal cutoffs + min-key-length + lifecycle gates on a roadmap.',
+    // The review's own worked example: set the date past the cutoff and Sign
+    // with a classical algorithm — watch it flip from Allow to Deny.
+    example: { op: 'Sign', algorithm: 'ECDSA-P256', date: '2031-01-01' },
   },
   {
     file: 'hybrid-migration-window.yaml',
@@ -280,6 +418,7 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     tone: 'hybrid',
     category: 'Migration & transition',
     illustrates: 'Hybrid dual-sign requirement inside a time window.',
+    example: { op: 'Sign', algorithm: 'ECDSA-P256', date: '2027-06-01' },
   },
   // ── Compliance regimes ────────────────────────────────────────────────────
   {
@@ -292,6 +431,7 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     category: 'Compliance regimes',
     illustrates: 'Strict allowlist to a single national-security suite.',
     featured: true,
+    example: { op: 'Sign', algorithm: 'RSA-3072', date: '2026-07-01' },
   },
   {
     file: 'fips-only.yaml',
@@ -301,6 +441,7 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     tone: 'compliance',
     category: 'Compliance regimes',
     illustrates: 'FIPS 140-3 algorithm boundary — allowlist + min-key-length.',
+    example: { op: 'Encapsulate', algorithm: 'FrodoKEM-976' },
   },
   {
     file: 'bsi-tr-02102.yaml',
@@ -311,6 +452,9 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     tone: 'regional',
     category: 'Compliance regimes',
     illustrates: 'A different regulator, a different algorithm set — regional contrast.',
+    // BSI allows FrodoKEM, but only paired with its classical partner —
+    // omitting the attribute is denied even though the algorithm is allowlisted.
+    example: { op: 'CreateKeyPair:KeyAgreement', algorithm: 'FrodoKEM-1344' },
   },
   // ── Mechanism controls ────────────────────────────────────────────────────
   {
@@ -321,6 +465,7 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     tone: 'mechanism',
     category: 'Mechanism controls',
     illustrates: 'Mechanism-parameter constraint — gates *how* a cipher is used.',
+    example: { op: 'Encrypt', algorithm: 'AES-256', blockMode: 'ECB' },
   },
   {
     file: 'deterministic-signing.yaml',
@@ -330,6 +475,7 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     tone: 'mechanism',
     category: 'Mechanism controls',
     illustrates: 'Mechanism-parameter default — policy *forces* a parameter.',
+    example: { op: 'Sign', algorithm: 'ML-DSA-65' },
   },
   {
     file: 'fips-hashing.yaml',
@@ -340,6 +486,7 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     tone: 'mechanism',
     category: 'Mechanism controls',
     illustrates: 'Hash-algorithm allowlist — hashing agility, independent of the key.',
+    example: { op: 'Sign', algorithm: 'RSA-3072', hash: 'SHA-1' },
   },
   {
     file: 'pkcs11-mechanism-lockdown.yaml',
@@ -350,6 +497,7 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     tone: 'mechanism',
     category: 'Mechanism controls',
     illustrates: 'Mechanism allow/deny-list at the PKCS#11 layer.',
+    example: { op: 'Encrypt', algorithm: 'AES-256', mechanism: 'CKM_AES_ECB' },
   },
 ]
 
@@ -360,6 +508,18 @@ export const POLICY_CATEGORIES: PolicyCategory[] = [
   'Migration & transition',
   'Compliance regimes',
   'Mechanism controls',
+]
+
+/** "Which regime governs you?" quick-pick (A-grade review item #18) — a
+ * shortcut into the same catalog below for the four learners most often ask
+ * "which policy is mine", by regulator/regime name rather than by what the
+ * rule illustrates. Not a 19th preset — every `file` here already exists in
+ * `POLICY_PRESETS`; the button just calls the same `onLoadPolicy`. */
+export const REGULATORS: { label: string; file: string }[] = [
+  { label: 'US · NSA CNSA 2.0', file: 'cnsa-2.0.yaml' },
+  { label: 'US · FIPS 140-3', file: 'fips-only.yaml' },
+  { label: 'Germany · BSI', file: 'bsi-tr-02102.yaml' },
+  { label: 'Enterprise · 2030 roadmap', file: 'pqc-migration-2030.yaml' },
 ]
 
 /** Plane label → short human name + tailwind tone, for the audit trail. */

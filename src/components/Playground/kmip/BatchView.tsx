@@ -431,8 +431,19 @@ export function BatchView({
             ))}
           </ol>
 
-          {expert && result.responseWireHex && (
+          {expert && result.requestWireHex && (
             <details className="mt-3">
+              <summary className="cursor-pointer text-[11px] font-semibold text-muted-foreground hover:text-foreground">
+                shared Request Message — {result.requestWireLen} bytes (hex) — every item above, ONE
+                round trip
+              </summary>
+              <pre className="mt-1 max-h-40 overflow-auto whitespace-pre-wrap break-all rounded border border-border bg-muted/40 p-2 font-mono text-[9.5px] text-muted-foreground">
+                {result.requestWireHex}
+              </pre>
+            </details>
+          )}
+          {expert && result.responseWireHex && (
+            <details className="mt-2">
               <summary className="cursor-pointer text-[11px] font-semibold text-muted-foreground hover:text-foreground">
                 shared Response Message — {result.responseWireLen} bytes (hex)
               </summary>

@@ -243,6 +243,7 @@ function buildChips(
       'when',
       `x-${maps.triggered_by_custom_attribute.name}=${maps.triggered_by_custom_attribute.value}`
     )
+  add('implements', scalars.clause)
   return chips
 }
 
