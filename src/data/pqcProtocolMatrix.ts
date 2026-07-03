@@ -47,7 +47,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-06-30'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-07-03'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -1277,6 +1277,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         localFile: '/library/draft-ietf-cose-falcon-04.html',
       },
       {
+        id: 'draft-ietf-cose-hpke-25',
+        title: 'draft-ietf-cose-hpke-25 — HPKE with COSE (IESG AD evaluation)',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-hpke/',
+        date: '2026-04-07',
+      },
+      {
         id: 'draft-reddy-cose-jose-pqc-hybrid-hpke-11',
         title:
           'draft-reddy-cose-jose-pqc-hybrid-hpke-11 — PQ/T Hybrid KEMs for HPKE with JOSE/COSE',
@@ -1287,8 +1293,18 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     dimensions: {
       pureKem: {
-        value: 'experimental',
+        value: 'draft',
+        stage: 'iesg-submitted',
+        stageNote:
+          'HPKE-in-COSE enabling framework (draft-ietf-cose-hpke-25) in IESG AD evaluation as of 2026-04-07; concrete PQ algorithm profile (draft-reddy) remains an individual draft with no IETF standing',
         refs: [
+          {
+            kind: 'draft',
+            id: 'draft-ietf-cose-hpke',
+            title: 'Use of Hybrid Public-Key Encryption (HPKE) with COSE',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-hpke/',
+            publishedOn: '2026-04-07',
+          },
           {
             kind: 'draft',
             id: 'draft-reddy-cose-jose-pqc-hybrid-hpke',
@@ -1299,9 +1315,19 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       hybridKem: {
-        value: 'experimental',
+        value: 'draft',
+        stage: 'iesg-submitted',
+        stageNote:
+          'HPKE-in-COSE enabling framework (draft-ietf-cose-hpke-25) in IESG AD evaluation as of 2026-04-07; concrete hybrid KEM algorithm profile (draft-reddy: MLKEM768+P256/X25519, MLKEM1024+P384) remains an individual draft with no IETF standing',
         note: 'Same HPKE construction covers both pure and hybrid KEM modes.',
         refs: [
+          {
+            kind: 'draft',
+            id: 'draft-ietf-cose-hpke',
+            title: 'Use of Hybrid Public-Key Encryption (HPKE) with COSE',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-hpke/',
+            publishedOn: '2026-04-07',
+          },
           {
             kind: 'draft',
             id: 'draft-reddy-cose-jose-pqc-hybrid-hpke',
@@ -1334,7 +1360,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       hybridSig: {
-        value: 'experimental',
+        value: 'draft',
+        stage: 'wg-document',
+        stageNote:
+          'WG document (datatracker 2026-02-27) — same status as the JOSE row; ENISA "Hybridization Standardisation Status" (30 Apr 2026) independently confirms WG Draft',
         note: 'Composite signatures are specified at the JOSE layer — see JOSE row.',
         refs: [
           {
@@ -1405,6 +1434,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         localFile: '/library/draft-ietf-jose-pq-composite-sigs.html',
       },
       {
+        id: 'draft-ietf-jose-hpke-encrypt-20',
+        title: 'draft-ietf-jose-hpke-encrypt-20 — HPKE with JOSE (IESG-approved, AD Followup)',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/',
+        date: '2026-06-15',
+      },
+      {
         id: 'draft-reddy-cose-jose-pqc-hybrid-hpke-11',
         title:
           'draft-reddy-cose-jose-pqc-hybrid-hpke-11 — PQ/T Hybrid KEMs for HPKE with JOSE/COSE',
@@ -1427,8 +1462,19 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       hybridKem: {
-        value: 'experimental',
+        value: 'draft',
+        stage: 'rfc-editor-queue',
+        stageNote:
+          'HPKE-in-JOSE enabling framework (draft-ietf-jose-hpke-encrypt-20) IESG-approved, in AD Followup ahead of RFC Editor queue as of 2026-07-02; concrete hybrid KEM algorithm profile (draft-reddy: MLKEM768+P256/X25519, MLKEM1024+P384) remains an individual draft with no IETF standing',
+        note: 'Same HPKE construction covers both pure and hybrid KEM modes.',
         refs: [
+          {
+            kind: 'draft',
+            id: 'draft-ietf-jose-hpke-encrypt',
+            title: 'Use of Hybrid Public Key Encryption (HPKE) with JOSE',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/',
+            publishedOn: '2026-06-15',
+          },
           {
             kind: 'draft',
             id: 'draft-reddy-cose-jose-pqc-hybrid-hpke',
