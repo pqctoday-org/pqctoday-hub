@@ -5,6 +5,14 @@ export type WorkerMessage =
       command: string
       args: string[]
       files?: { name: string; data: Uint8Array }[]
+      /**
+       * When true, `files` are the COMPLETE filesystem: the worker's
+       * persistent VFS is cleared before this command. Omit for merge
+       * semantics (files persist across COMMANDs so chained calls see each
+       * other's outputs). See openssl.worker.ts "Persistent virtual
+       * filesystem" for the full contract.
+       */
+      replaceVfs?: boolean
       requestId?: string
     }
   | { type: 'LOAD'; url: string; requestId?: string }

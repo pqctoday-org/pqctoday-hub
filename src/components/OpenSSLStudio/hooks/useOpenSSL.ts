@@ -200,6 +200,11 @@ export const useOpenSSL = () => {
           command: cmd,
           args,
           files: filesAsUint8Array,
+          // The Studio's Zustand store is its filesystem source of truth and
+          // is re-sent in full on every command — clear the worker's
+          // persistent VFS so files deleted from the store don't linger as
+          // ghosts in the worker.
+          replaceVfs: true,
           requestId,
         } as WorkerMessage)
       }

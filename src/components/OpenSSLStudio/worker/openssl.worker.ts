@@ -10,6 +10,17 @@ type WorkerMessage =
       command: string
       args: string[]
       files?: { name: string; data: Uint8Array }[]
+      /**
+       * When true, the provided `files` are treated as the COMPLETE filesystem:
+       * the worker's persistent VFS is cleared before this command runs.
+       * OpenSSL Studio sets this (it re-sends its whole file store on every
+       * command, and its store — not the worker — is its source of truth, so a
+       * file deleted in the Studio UI must not linger here as a ghost).
+       * Callers that omit it get merge semantics: files persist across
+       * COMMANDs, so chained calls (genpkey → pkey -in …) see each other's
+       * outputs.
+       */
+      replaceVfs?: boolean
       requestId?: string
     }
   | { type: 'LOAD'; url: string; requestId?: string }
@@ -311,6 +322,63 @@ distinguished_name = req_distinguished_name
   }
 }
 
+// ----------------------------------------------------------------------------
+// Persistent virtual filesystem (VFS)
+//
+// The openssl.wasm bundle is built with -sEXIT_RUNTIME=1: every callMain()
+// tears the runtime down, so each COMMAND gets a brand-new module with an
+// empty MEMFS. Without this map, a file written by one COMMAND simply does
+// not exist for the next one — which silently broke every tool that chained
+// commands without re-sending files (the whole 5G/SUCI module fell back to
+// fake output because of it). Same pattern as EmailSigning's cms.worker.ts
+// `vfs` and the FiveG audit tests' WasmAdapter: snapshot root files after
+// each command, rehydrate them into the next fresh module.
+// ----------------------------------------------------------------------------
+
+// Keyed by bare root filename (no leading '/'), matching FILE_CREATED /
+// DELETE_FILE `name` fields.
+var commandVfs: Map<string, Uint8Array> = new Map()
+
+// Per-command internals recreated by configureEnvironment/injectEntropy —
+// never worth persisting or rehydrating.
+var VFS_EXCLUDED = new Set(['openssl.cnf', 'random.seed'])
+
+var rehydrateVfs = (module: EmscriptenModule, requestId?: string) => {
+  for (const [name, data] of commandVfs) {
+    try {
+      module.FS.writeFile('/' + name, data)
+    } catch (e) {
+      self.postMessage({
+        type: 'LOG',
+        stream: 'stderr',
+        message: `[VFS] Failed to rehydrate ${name}: ${(e as Error).message}`,
+        requestId,
+      })
+    }
+  }
+}
+
+/** Snapshot every regular file at the FS root into commandVfs (overwrites). */
+var snapshotVfs = (module: EmscriptenModule) => {
+  try {
+    const entries = module.FS.readdir('/')
+    for (const name of entries) {
+      if (name === '.' || name === '..') continue
+      if (VFS_EXCLUDED.has(name)) continue
+      try {
+        const stat = module.FS.stat('/' + name)
+        if (module.FS.isFile(stat.mode)) {
+          commandVfs.set(name, module.FS.readFile('/' + name))
+        }
+      } catch {
+        /* skip unreadable entries */
+      }
+    }
+  } catch {
+    /* FS may be unusable after a hard crash — keep whatever we had */
+  }
+}
+
 var writeInputFiles = (
   module: EmscriptenModule,
   files: { name: string; data: Uint8Array }[],
@@ -456,7 +524,8 @@ var executeCommand = async (
   command: string,
   args: string[],
   inputFiles: { name: string; data: Uint8Array }[] = [],
-  requestId?: string
+  requestId?: string,
+  replaceVfs?: boolean
 ) => {
   self.postMessage({
     type: 'LOG',
@@ -512,6 +581,15 @@ var executeCommand = async (
       requestId,
     })
 
+    // Persistent-VFS handling: rehydrate files from prior commands into this
+    // fresh module BEFORE caller-supplied inputs, so explicit inputs win.
+    if (replaceVfs) commandVfs.clear()
+    // Names that existed before this command ran — used below so FILE_CREATED
+    // only reports files this command actually created (not rehydrated ones,
+    // which were already reported by the command that created them).
+    const preexisting = new Set<string>(commandVfs.keys())
+    rehydrateVfs(openSSLModule, requestId)
+
     self.postMessage({
       type: 'LOG',
       stream: 'stdout',
@@ -519,6 +597,7 @@ var executeCommand = async (
       requestId,
     })
     const writtenFiles = writeInputFiles(openSSLModule, inputFiles, requestId)
+    for (const name of writtenFiles) preexisting.add(name)
 
     self.postMessage({
       type: 'LOG',
@@ -578,10 +657,14 @@ var executeCommand = async (
         }
         throw e
       }
+    } finally {
+      // Persist FS state regardless of exit status (POSIX-like: partial
+      // outputs of a failed command remain on disk for the next command).
+      snapshotVfs(openSSLModule)
     }
 
-    // Scan for output files
-    scanOutputFiles(openSSLModule, writtenFiles, requestId)
+    // Scan for output files — report only files new to this command
+    scanOutputFiles(openSSLModule, preexisting, requestId)
 
     // Inform user about encap outputs
     if (command === 'pkeyutl' && args.includes('-encap')) {
@@ -600,7 +683,7 @@ var executeCommand = async (
     // Inform user about public key extraction for genpkey
     if (command === 'genpkey') {
       const files = openSSLModule.FS.readdir('/')
-      const privateKeyFile = files.find((f: string) => f.endsWith('.key') && !writtenFiles.has(f))
+      const privateKeyFile = files.find((f: string) => f.endsWith('.key') && !preexisting.has(f))
       if (privateKeyFile) {
         const publicKeyFile = privateKeyFile.replace('.key', '.pub')
         self.postMessage({
@@ -935,13 +1018,14 @@ self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
       await loadOpenSSLScript(event.data.url, requestId)
       self.postMessage({ type: 'READY', requestId })
     } else if (type === 'COMMAND') {
-      const { command, args, files } = event.data as {
+      const { command, args, files, replaceVfs } = event.data as {
         type: 'COMMAND'
         command: string
         args: string[]
         files?: { name: string; data: Uint8Array }[]
+        replaceVfs?: boolean
       }
-      await executeCommand(command, args, files, requestId)
+      await executeCommand(command, args, files, requestId, replaceVfs)
     } else if (type === 'TLS_SIMULATE') {
       const { clientConfig, serverConfig, files, commands } = event.data as {
         type: 'TLS_SIMULATE'
@@ -989,33 +1073,19 @@ self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
       await generateCaRoot(g.algorithm, g.subjectDn, g.keyOutPath, g.certOutPath, g.days, requestId)
     } else if (type === 'DELETE_FILE') {
       const { name } = event.data as { type: 'DELETE_FILE'; name: string }
-      // moduleFactory is not defined in this scope, assuming it's a global or imported variable
-      // if (!moduleFactory) {
-      //   throw new Error('Module not loaded')
-      // }
-      try {
-        // Attempt to get the module instance to access FS
-        const module = await createOpenSSLInstance(requestId)
-        try {
-          module.FS.unlink('/' + name)
-          self.postMessage({
-            type: 'LOG',
-            stream: 'stdout',
-            message: `[Worker] Deleted file: ${name}`,
-            requestId,
-          })
-        } catch (e) {
-          // File might not exist, which is fine during cleanup
-          self.postMessage({
-            type: 'LOG',
-            stream: 'stdout',
-            message: `[Worker] Delete failed (non-fatal): ${name} - ${(e as Error).message}`,
-            requestId,
-          })
-        }
-      } catch (e) {
-        throw new Error(`Failed to access OpenSSL instance for deletion: ${(e as Error).message}`)
-      }
+      // Files live in the persistent commandVfs between commands (each WASM
+      // module instance is discarded after its command), so deletion is a
+      // map removal. The old implementation created a FRESH instance and
+      // unlinked from its empty FS — a complete no-op.
+      const existed = commandVfs.delete(name)
+      self.postMessage({
+        type: 'LOG',
+        stream: 'stdout',
+        message: existed
+          ? `[Worker] Deleted file: ${name}`
+          : `[Worker] Delete skipped (not present): ${name}`,
+        requestId,
+      })
 
       self.postMessage({ type: 'DONE', requestId })
     } else if (type === 'SKEY_OPERATION') {

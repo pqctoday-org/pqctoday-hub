@@ -233,8 +233,10 @@ Public Key Hex: ${pubHex} `,
       // Use X25519 generation logic (same as Profile A)
       await openSSLService.execute(`openssl genpkey -algorithm x25519 -out ${eccPriv} `)
       await openSSLService.execute(`openssl pkey -in ${eccPriv} -pubout -out ${eccPub} `)
+      // -pubin: input is a PUBLIC key file — without it pkey expects a
+      // private key and this conversion always failed
       const resEcc = await openSSLService.execute(
-        `openssl pkey -in ${eccPub} -pubout -outform DER -out ${eccDer} `
+        `openssl pkey -pubin -in ${eccPub} -pubout -outform DER -out ${eccDer} `
       )
 
       if (resEcc.files.find((f) => f.name === eccDer)) {
