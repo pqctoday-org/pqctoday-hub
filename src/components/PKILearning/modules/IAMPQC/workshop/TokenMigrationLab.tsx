@@ -693,8 +693,8 @@ export const TokenMigrationLab: React.FC = () => {
             <ul className="text-[10px] text-muted-foreground space-y-0.5">
               <li>&bull; Text (base64url JSON)</li>
               <li>&bull; Wide browser/library support</li>
-              <li>&bull; draft-ietf-jose-pqc-algorithms</li>
-              <li>&bull; IETF standardization in progress</li>
+              <li>&bull; RFC 9964 (ML-DSA for JOSE and COSE)</li>
+              <li>&bull; Published May 2026</li>
             </ul>
           </div>
           <div className="bg-muted/40 rounded-lg p-3 border border-border">
@@ -704,7 +704,7 @@ export const TokenMigrationLab: React.FC = () => {
             <ul className="text-[10px] text-muted-foreground space-y-0.5">
               <li>&bull; Binary (CBOR-encoded)</li>
               <li>&bull; Smaller envelope overhead</li>
-              <li>&bull; draft-ietf-cose-dilithium</li>
+              <li>&bull; RFC 9964 (ML-DSA for JOSE and COSE)</li>
               <li>&bull; Used in ISO 18013-5 mDL</li>
             </ul>
           </div>
@@ -722,8 +722,7 @@ export const TokenMigrationLab: React.FC = () => {
         </div>
         <p className="text-[10px] text-muted-foreground mt-3">
           Both JWT and CWT use the same underlying ML-DSA (FIPS 204) signature — only the token
-          envelope encoding differs. See{' '}
-          <span className="text-primary">draft-ietf-cose-dilithium</span> and{' '}
+          envelope encoding differs. See <span className="text-primary">RFC 9964</span> and{' '}
           <span className="text-primary">RFC 9052</span> in the Library for specification details.
         </p>
       </div>
@@ -757,9 +756,8 @@ export const TokenMigrationLab: React.FC = () => {
           {isQuantumSafe && (
             <p className="text-[10px] text-muted-foreground mt-1">
               ML-DSA public keys use <code className="text-primary">kty: &quot;AKP&quot;</code>{' '}
-              (Algorithm Key Pair) per draft-ietf-jose-pqc-algorithms. The{' '}
-              <code className="text-primary">pub</code> field holds the base64url-encoded public
-              key.
+              (Algorithm Key Pair) per RFC 9964. The <code className="text-primary">pub</code> field
+              holds the base64url-encoded public key.
             </p>
           )}
         </div>
@@ -871,6 +869,12 @@ export const TokenMigrationLab: React.FC = () => {
         label="IAM PQC Known Answer Tests"
         authorityNote="OpenID Connect · SAML 2.0 · FIPS 204 · FIPS 198-1 · NIST SP 800-132"
       />
+      <p className="text-[10px] text-muted-foreground -mt-2">
+        Known issue: the password-derivation (PBKDF2) test errors with{' '}
+        <code className="text-primary">CKR_ARGUMENTS_BAD</code> — this is a softhsm-wasm{' '}
+        <code className="text-primary">C_DeriveKey</code> binding limitation, not a cryptographic
+        failure. The other KAT rows are unaffected.
+      </p>
 
       {hsm.isReady && (
         <div className="space-y-4">

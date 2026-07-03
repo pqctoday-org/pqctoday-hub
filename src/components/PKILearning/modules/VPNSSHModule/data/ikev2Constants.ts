@@ -132,8 +132,8 @@ export const IKE_V2_EXCHANGES: Record<IKEv2Mode, IKEv2ExchangeData> = {
           {
             name: 'Key Exchange',
             abbreviation: 'KE',
-            description: 'MODP-3072 public value (DH Group 15, 256 bytes)',
-            sizeBytes: 264,
+            description: 'MODP-3072 public value (DH Group 15, 384 bytes)',
+            sizeBytes: 392,
           },
           {
             name: 'Nonce',
@@ -163,8 +163,8 @@ export const IKE_V2_EXCHANGES: Record<IKEv2Mode, IKEv2ExchangeData> = {
           {
             name: 'Key Exchange',
             abbreviation: 'KE',
-            description: 'MODP-3072 public value (DH Group 15, 256 bytes)',
-            sizeBytes: 264,
+            description: 'MODP-3072 public value (DH Group 15, 384 bytes)',
+            sizeBytes: 392,
           },
           {
             name: 'Nonce',
@@ -215,9 +215,9 @@ export const IKE_V2_EXCHANGES: Record<IKEv2Mode, IKEv2ExchangeData> = {
         ],
       },
     },
-    totalInitiatorBytes: 900,
-    totalResponderBytes: 884,
-    totalBytes: 1784,
+    totalInitiatorBytes: 1028,
+    totalResponderBytes: 1012,
+    totalBytes: 2040,
     roundTrips: 2,
   },
   hybrid: {

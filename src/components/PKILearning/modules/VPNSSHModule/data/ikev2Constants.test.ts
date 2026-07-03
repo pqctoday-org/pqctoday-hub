@@ -42,9 +42,9 @@ describe('IKE_V2_EXCHANGES byte accounting', () => {
 
   it('classical totals match the documented MODP-3072 model', () => {
     const ex = IKE_V2_EXCHANGES.classical
-    expect(ex.totalInitiatorBytes).toBe(900)
-    expect(ex.totalResponderBytes).toBe(884)
-    expect(ex.totalBytes).toBe(1784)
+    expect(ex.totalInitiatorBytes).toBe(1028)
+    expect(ex.totalResponderBytes).toBe(1012)
+    expect(ex.totalBytes).toBe(2040)
   })
 
   it('hybrid totals match the ML-KEM-768 + ECP-256 model', () => {
@@ -82,9 +82,9 @@ describe('ML-KEM-768 key-exchange payload sizes', () => {
     expect(keSize(IKE_V2_EXCHANGES['pure-pqc'].ikeSaInit.responder)).toBe(1096)
   })
 
-  it('classical IKE_SA_INIT carries a MODP-3072 KE payload (256 + 8 = 264 B)', () => {
-    expect(keSize(IKE_V2_EXCHANGES.classical.ikeSaInit.initiator)).toBe(264)
-    expect(keSize(IKE_V2_EXCHANGES.classical.ikeSaInit.responder)).toBe(264)
+  it('classical IKE_SA_INIT carries a MODP-3072 KE payload (384 + 8 = 392 B, RFC 3526)', () => {
+    expect(keSize(IKE_V2_EXCHANGES.classical.ikeSaInit.initiator)).toBe(392)
+    expect(keSize(IKE_V2_EXCHANGES.classical.ikeSaInit.responder)).toBe(392)
   })
 })
 

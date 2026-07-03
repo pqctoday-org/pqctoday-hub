@@ -84,7 +84,7 @@ export const USE_CASES: UseCase[] = [
         'Cloudflare/Fastly published TLS handshake rate data',
       ],
       pqcImpact:
-        'ECDSA P-256 → ML-DSA-65; ECDH P-256 → hybrid ML-KEM-768 + ECDH P-256 (X25519MLKEM768, draft-ietf-tls-ecdhe-mlkem-04 — already deployed in Chrome/Firefox). Hybrid KEM adds an extra ECDH operation per handshake alongside ML-KEM-768. ML-DSA-65 at 500 ops/s on a classical HSM is the primary bottleneck (40× slower than ECDSA); ECDH P-256 hardware throughput is unchanged.',
+        'ECDSA P-256 → ML-DSA-65; ECDH P-256 → hybrid ML-KEM-768 + ECDH P-256 (SecP256r1MLKEM768, draft-ietf-tls-ecdhe-mlkem-04 — already deployed in Chrome/Firefox). Hybrid KEM adds an extra ECDH operation per handshake alongside ML-KEM-768. ML-DSA-65 at 150 ops/s on a classical HSM is the primary bottleneck (~133× slower than ECDSA); ECDH P-256 hardware throughput is unchanged.',
     },
   },
   {
@@ -150,7 +150,7 @@ export const USE_CASES: UseCase[] = [
         'PCI PIN Security Requirements §18',
       ],
       pqcImpact:
-        'AES-128 PIN block encryption → AES-256 (NIST SP 800-57 post-quantum recommendation). RSA-2048 zone-key exchange → ML-KEM-768 (FIPS 203). AES-256 throughput on classical HSMs (~150,000 ops/s) comfortably handles the symmetric load; ML-KEM-768 at ~3,000 ops/s is negligible at this TPS.',
+        'AES-128 PIN block encryption → AES-256 (NIST SP 800-57 post-quantum recommendation). RSA-2048 zone-key exchange → ML-KEM-768 (FIPS 203). AES-256 throughput on classical HSMs (~20,000 ops/s) comfortably handles the symmetric load; ML-KEM-768 at ~500 ops/s is negligible at this TPS.',
     },
   },
   {
@@ -210,7 +210,7 @@ export const USE_CASES: UseCase[] = [
     estimation: {
       rationale:
         'TPS is driven by the number of microservices and applications calling KMS, volume of encrypted objects, data-key cache TTL (shorter = more KMS calls per app), and number of tenants or encryption contexts. A medium enterprise with ~200 microservices each making ~5 KMS decrypt calls/sec (to unwrap cached data keys) generates 1,000 KMS TPS; every 5th call triggers a new data-key via ECDH. A small org (20 services at 5 calls/sec) reaches 100 TPS. A large multi-tenant SaaS platform reaches 10,000 TPS because it runs thousands of services, enforces short key cache TTLs for compliance, and handles per-tenant key isolation that multiplies HSM operations per request.',
-      math: 'At medium (1,000 TPS): 1,000 AES-256 ops/s + 200 ECDH P-256 ops/s (classical); 1,000 AES-256 ops/s + 200 ML-KEM-768 ops/s (PQC). ML-KEM-768 at ~3,000 ops/s on classical HSM handles this easily.',
+      math: 'At medium (1,000 TPS): 1,000 AES-256 ops/s + 200 ECDH P-256 ops/s (classical); 1,000 AES-256 ops/s + 200 ML-KEM-768 ops/s (PQC). ML-KEM-768 at ~500 ops/s on a classical HSM needs 1 dedicated HSM just for the 200 ops/s KEM share at this TPS — it is not negligible the way AES/ECDH throughput is.',
       sources: [
         'AWS KMS Developer Guide (envelope encryption pattern)',
         'Google Cloud KMS architecture whitepaper',
@@ -218,7 +218,7 @@ export const USE_CASES: UseCase[] = [
         'NIST SP 800-175B Rev. 1',
       ],
       pqcImpact:
-        'ECDH P-256 data-key delivery → ML-KEM-768 (FIPS 203). AES-256 key wrapping is quantum-resistant. ML-KEM-768 at 3,000 ops/s on classical HSM firmware handles the KMS key-delivery load for all deployment sizes.',
+        'ECDH P-256 data-key delivery → ML-KEM-768 (FIPS 203). AES-256 key wrapping is quantum-resistant. ML-KEM-768 at 500 ops/s on classical HSM firmware handles small/medium deployments, but becomes a ~4-HSM bottleneck at the large-deployment KMS key-delivery load (2,000 ops/s) — unlike AES/ECDH, this does not scale for free.',
     },
   },
   {
@@ -241,7 +241,7 @@ export const USE_CASES: UseCase[] = [
         'draft-ietf-ipsecme-ikev2-mlkem (PQC key exchange for IKEv2)',
       ],
       pqcImpact:
-        'ECDSA P-256 AUTH × 2 → ML-DSA-65 × 2 (RFC 7296 §2.15 mutual auth: both initiator and responder authenticate); ECDH P-256 → ML-KEM-768 (draft-ietf-ipsecme-ikev2-mlkem). At 1,000 TPS (large), 2,000 ML-DSA-65 ops/s on a classical HSM (500 ops/s) requires 4 HSMs just for IKE AUTH.',
+        'ECDSA P-256 AUTH × 2 → ML-DSA-65 × 2 (RFC 7296 §2.15 mutual auth: both initiator and responder authenticate); ECDH P-256 → ML-KEM-768 (draft-ietf-ipsecme-ikev2-mlkem). At 1,000 TPS (large), 2,000 ML-DSA-65 ops/s on a classical HSM (150 ops/s) requires 14 HSMs just for IKE AUTH.',
     },
   },
   {
@@ -264,7 +264,7 @@ export const USE_CASES: UseCase[] = [
         'draft-kampanakis-curdle-ssh-pq-ke (PQC key exchange for SSH)',
       ],
       pqcImpact:
-        'ECDSA P-256 → ML-DSA-65; ECDH P-256 → ML-KEM-768 (draft-kampanakis-curdle-ssh-pq-ke). Full KEM migration modelled as the most conservative capacity estimate. At 2,000 TPS (large), ML-DSA-65 at 500 ops/s on a classical HSM requires 4 HSMs for SSH AUTH; ML-KEM-768 at 3,000 ops/s adds 1 additional HSM.',
+        'ECDSA P-256 → ML-DSA-65; ECDH P-256 → ML-KEM-768 (draft-kampanakis-curdle-ssh-pq-ke). Full KEM migration modelled as the most conservative capacity estimate. At 2,000 TPS (large), ML-DSA-65 at 150 ops/s on a classical HSM requires 14 HSMs for SSH AUTH; ML-KEM-768 at 500 ops/s adds 4 more HSMs.',
     },
   },
   {
@@ -288,7 +288,7 @@ export const USE_CASES: UseCase[] = [
         'draft-ietf-dnsop-dnssec-pqc',
       ],
       pqcImpact:
-        'ECDSA P-256 ZSK/KSK signing → ML-DSA-65. At 1,000 TPS (large), classical HSM re-signing throughput drops to 500 ops/s — requiring 2+ HSMs. More critically, ML-DSA-65 signatures are 3,309 bytes vs. 64 bytes for ECDSA P-256, forcing TCP fallback for virtually all signed DNS responses (UDP limit: 512 bytes), significantly impacting DNS infrastructure design and resolver latency.',
+        'ECDSA P-256 ZSK/KSK signing → ML-DSA-65. At 1,000 TPS (large), classical HSM re-signing throughput drops to 150 ops/s — requiring 7 HSMs. More critically, ML-DSA-65 signatures are 3,309 bytes vs. 64 bytes for ECDSA P-256, forcing TCP fallback for virtually all signed DNS responses (UDP limit: 512 bytes), significantly impacting DNS infrastructure design and resolver latency.',
     },
   },
 ]

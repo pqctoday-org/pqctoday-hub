@@ -23,9 +23,9 @@ export const PROTOCOL_SIZE_DATA: ProtocolSizeEntry[] = [
     modeLabel: 'MODP-3072',
     kexAlgorithm: 'DH Group 15 (MODP-3072)',
     authAlgorithm: 'RSA-2048 / ECDSA-P256',
-    handshakeBytes: 1784,
+    handshakeBytes: 2040,
     roundTrips: 2,
-    publicKeyBytes: 256,
+    publicKeyBytes: 384, // RFC 3526 MODP-3072 public value
     ciphertextBytes: 0,
     notes: 'Standard IKEv2 with DH Group 15',
   },

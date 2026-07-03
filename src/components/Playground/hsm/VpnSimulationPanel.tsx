@@ -3353,6 +3353,16 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             <Loader2 size={10} className="animate-spin" />
             Loading strongSwan WASM…
           </span>
+        ) : ssState === 'LOADING' ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+            <Loader2 size={10} className="animate-spin" />
+            Compiling strongSwan WASM — can take up to ~2 minutes on first load…
+          </span>
+        ) : ssState === 'ERROR' ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-status-error/10 px-2.5 py-0.5 text-xs font-medium text-status-error">
+            <span className="h-1.5 w-1.5 rounded-full bg-status-error" />
+            strongSwan WASM failed to start — reload to retry
+          </span>
         ) : ssState === 'RUNNING' ? (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-status-success/10 px-2.5 py-0.5 text-xs font-medium text-status-success">
             <span className="h-1.5 w-1.5 rounded-full bg-status-success" />

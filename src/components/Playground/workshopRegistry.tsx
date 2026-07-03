@@ -240,7 +240,15 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     description:
       'Full IKEv2 handshake in WASM with PKCS#11 crypto routed through softhsmv3. Inspect live C_* calls, ECDH key exchange, and PSK authentication between initiator and responder.',
     category: 'Protocol Simulations',
-    algorithms: ['IKEv2', 'ECDH', 'AES-256-CBC', 'HMAC-SHA2-256', 'PKCS#11'],
+    algorithms: [
+      'IKEv2',
+      'ML-KEM-768',
+      'ML-DSA-65',
+      'ECDH',
+      'AES-256-CBC',
+      'HMAC-SHA2-256',
+      'PKCS#11',
+    ],
     icon: Shield,
     moduleLink: '/learn/vpn-ssh-pqc',
     keywords: [

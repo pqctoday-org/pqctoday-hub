@@ -153,6 +153,15 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
 
   const passCount = testResults?.filter((r) => r.passed).length ?? 0
   const totalCount = testResults?.length ?? 0
+  const failedResults = testResults?.filter((r) => !r.passed) ?? []
+  // minEntropyEstimate() appends this exact caveat to `detail` when n < 1000 —
+  // at this tool's default 64/128-byte samples, Min-Entropy structurally
+  // cannot clear its confidence-bound threshold even for perfect randomness
+  // (SP 800-90B's z-score correction dominates at small n). Without this
+  // check, a real random sample reliably shows "detectable patterns," which
+  // is backwards.
+  const allFailuresAreSmallSampleArtifacts =
+    failedResults.length > 0 && failedResults.every((r) => r.detail.includes('small sample'))
 
   const bins = sampleData ? binnedFrequency(sampleData, 16) : null
   const maxBinCount = bins ? Math.max(...bins) : 0
@@ -303,7 +312,7 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
             {/* Summary bar */}
             <div className="glass-panel p-4">
               <div className="flex items-center gap-3">
-                {passCount === totalCount ? (
+                {passCount === totalCount || allFailuresAreSmallSampleArtifacts ? (
                   <CheckCircle size={20} className="text-success shrink-0" />
                 ) : passCount === 0 ? (
                   <XCircle size={20} className="text-destructive shrink-0" />
@@ -317,9 +326,11 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
                   <div className="text-xs text-muted-foreground">
                     {passCount === totalCount
                       ? 'All tests passed — this sample shows good randomness characteristics.'
-                      : passCount === 0
-                        ? 'All tests failed — this data has no randomness.'
-                        : `${totalCount - passCount} test${totalCount - passCount > 1 ? 's' : ''} failed — this data has detectable patterns.`}
+                      : allFailuresAreSmallSampleArtifacts
+                        ? `${totalCount - passCount} test${totalCount - passCount > 1 ? 's' : ''} inconclusive at this sample size (see "small sample" note below) — not evidence of detectable patterns. Try a larger sample for a real pass/fail read.`
+                        : passCount === 0
+                          ? 'All tests failed — this data has no randomness.'
+                          : `${totalCount - passCount} test${totalCount - passCount > 1 ? 's' : ''} failed — this data has detectable patterns.`}
                   </div>
                 </div>
                 {pasteHexError && <p className="mt-1 text-xs text-status-error">{pasteHexError}</p>}
