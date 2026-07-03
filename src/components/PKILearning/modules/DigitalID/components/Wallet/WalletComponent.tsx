@@ -37,7 +37,9 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
           protect against quantum threats.
           <span className="text-muted-foreground/80">
             {' '}
-            Target: 2027–2030 per ETSI TS 119 182-2 and the EU eIDAS 2.0 implementing acts.
+            Target: high-risk use cases (which EUDI Wallets qualify as) migrated by Dec 2030, per
+            the NIS Cooperation Group Coordinated Implementation Roadmap (June 2025) — not ETSI TS
+            119 182-2, which is the unrelated JAdES JSON-signature format spec.
           </span>
         </p>
       </div>

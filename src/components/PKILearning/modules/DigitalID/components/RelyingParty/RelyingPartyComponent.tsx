@@ -187,7 +187,9 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
       }
     }
 
-    addLog('Checking credential revocation status (Token Status List — RFC 9701)...')
+    addLog(
+      'Checking credential revocation status (Token Status List — draft-ietf-oauth-status-list, still IETF draft, not yet an RFC)...'
+    )
     await new Promise((r) => setTimeout(r, 500))
     addLog('Status checked. No revocations found.')
     addLog('Trust Chain Valid (eIDAS Trust Framework).')
