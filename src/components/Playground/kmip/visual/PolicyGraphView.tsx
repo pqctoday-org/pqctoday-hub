@@ -104,7 +104,14 @@ export function PolicyGraphView({
     keyState: 'Active',
     bits: '',
     date: '2026-06-01',
-    attrs: ['x-pqctoday-purpose'],
+    attrs: ['x-pqctoday-purpose=research'],
+    usageFlags: ['Sign', 'Verify'],
+    hash: '',
+    blockMode: '',
+    padding: '',
+    mechanism: '',
+    deterministic: '',
+    keyActivatedOn: '',
   })
   const [sim, setSim] = useState<SimResult | null>(null)
   const [engineVerdict, setEngineVerdict] = useState<DryRunResult | null>(null)

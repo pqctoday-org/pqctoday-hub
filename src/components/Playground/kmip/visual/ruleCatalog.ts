@@ -162,6 +162,49 @@ export const USAGE_FLAGS = [
 
 export const ALGORITHM_CLASSES = ['classical', 'pqc', 'symmetric']
 
+// Request-simulator vocabularies — mirror the engine's name tables in
+// `pqctoday-hsm/kmip/src/policy/rule.rs` (hash_name_to_code,
+// block_cipher_mode_name_to_code, padding_method_name_to_code,
+// ckm_name_to_code). Names, not codepoints: the sim compares names and the
+// engine's tables are injective, so name equality ⇔ codepoint equality.
+export const HASH_NAMES = [
+  'SHA-1',
+  'SHA-224',
+  'SHA-256',
+  'SHA-384',
+  'SHA-512',
+  'SHA-512/224',
+  'SHA-512/256',
+  'SHA3-224',
+  'SHA3-256',
+  'SHA3-384',
+  'SHA3-512',
+]
+
+export const BLOCK_MODES = ['CBC', 'ECB', 'CFB', 'OFB', 'CTR', 'CMAC', 'CCM', 'GCM', 'XTS']
+
+export const PADDING_METHODS = ['None', 'OAEP', 'PKCS5', 'PKCS1 v1.5', 'X9.31', 'PSS']
+
+export const CKM_SUGGESTIONS = [
+  'CKM_AES_GCM',
+  'CKM_AES_CBC',
+  'CKM_AES_CBC_PAD',
+  'CKM_AES_CTR',
+  'CKM_AES_ECB',
+  'CKM_RSA_PKCS',
+  'CKM_RSA_PKCS_PSS',
+  'CKM_RSA_PKCS_OAEP',
+  'CKM_ECDSA',
+  'CKM_ECDSA_SHA256',
+  'CKM_ML_DSA',
+  'CKM_ML_KEM',
+  'CKM_ML_DSA_KEY_PAIR_GEN',
+  'CKM_ML_KEM_KEY_PAIR_GEN',
+  'CKM_EC_KEY_PAIR_GEN',
+  'CKM_AES_KEY_GEN',
+  'CKM_DES3_CBC',
+]
+
 /** Suggestion pool for algorithm fields (datalist — free text stays allowed). */
 export const ALGO_SUGGESTIONS = [
   'ML-DSA-44',
