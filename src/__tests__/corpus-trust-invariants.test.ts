@@ -226,9 +226,12 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *   2026-06-23: 676 (bumped +4 after the integration merge's refresh-index —
  *               new EO-2026-06-22-Securing-the-Nation row plus Phase-D library
  *               catalog changes added 4 unenriched docs. Enrich to drive down).
+ *   2026-07-02: 678 (bumped +2 after the accuracy re-audit refresh-index —
+ *               library_r4 + product-catalog data changes brought in 2 more
+ *               unenriched reference docs. Enrich to drive down).
  * Only DECREASE — every reduction is enrichment improving.
  */
-const MAX_DOC_WITHOUT_PASSAGES = 676
+const MAX_DOC_WITHOUT_PASSAGES = 678
 
 /** Pinned count of CSV files referenced in prov.was_derived_from but missing on disk. */
 const MAX_MISSING_CSVS = 0

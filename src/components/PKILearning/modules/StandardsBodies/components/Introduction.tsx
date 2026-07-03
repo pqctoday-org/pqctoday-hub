@@ -279,7 +279,10 @@ const Step2GovVsNonGov: React.FC = () => (
                 },
                 { body: 'IETF', role: 'Internet protocols (open membership, rough consensus)' },
                 { body: 'ETSI', role: 'European telecom standards (800+ member orgs)' },
-                { body: '3GPP SA3', role: '5G security standards, PQC study (TR 33.841)' },
+                {
+                  body: '3GPP SA3',
+                  role: '5G security standards, PQC transition study (TR 33.938)',
+                },
                 { body: 'OASIS', role: 'PKCS#11 v3.2 (HSM PQC support)' },
                 { body: 'W3C', role: 'Web standards (relevant for EUDI Wallet formats)' },
               ].map((item) => (
@@ -380,13 +383,13 @@ const Step3GlobalRegional: React.FC = () => (
             {
               name: 'ITU-T SG17',
               role: 'Telecom security, X.509 co-author',
-              pqc: 'X.1363 (quantum-safe for telecom)',
+              pqc: 'X.1811 (quantum-safe for telecom)',
               members: '193 UN member states',
             },
             {
               name: '3GPP SA3',
               role: '5G and mobile security',
-              pqc: 'TR 33.841 (PQC study for 5G)',
+              pqc: 'TR 33.938 (Study on Preparing for Transition to PQC in 3GPP)',
               members: '700+ member companies',
             },
           ].map((item) => (
@@ -673,7 +676,7 @@ const Step4AppPagesGuide: React.FC = () => (
             n: 4,
             title: 'CNSA 2.0 mandate activates',
             body: 'Regulatory agency (NSA)',
-            desc: 'NSA CNSA 2.0 requires federal agencies to use ML-KEM-1024 (from FIPS 203) exclusively by 2030 for NSS key establishment.',
+            desc: 'NSA CNSA 2.0 requires National Security Systems to use ML-KEM-1024 (from FIPS 203) for key establishment, with exclusive use phased in by 2030 (signing, networking) and 2033 (web/cloud, OS).',
           },
           {
             n: 5,

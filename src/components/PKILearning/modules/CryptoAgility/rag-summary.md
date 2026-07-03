@@ -18,7 +18,7 @@ The Crypto Agility module teaches how to design systems that can rapidly swap cr
 - **CBOM (Cryptographic Bill of Materials)** — uses the CycloneDX standard to inventory all cryptographic algorithms, key sizes, usage locations, security levels, and compliance requirements across an organization
 - **CBOM generation tools**: IBM Quantum Safe Explorer, Keyfactor CBOM Generator, InfoSec Global AgileSec, Cryptosense Analyzer, manual audit and code scanning
 - **7-Phase Migration Framework**: (1) Assessment and Inventory, (2) Risk Prioritization, (3) Preparation and Tooling, (4) Testing and Validation, (5) Hybrid Migration, (6) Production Deployment, (7) Monitoring
-- **Industry case studies**: Cloudflare enabled hybrid PQC key exchange (X25519MLKEM768) with approximately 4% TLS handshake time increase; Google Chrome enabled hybrid PQC by default in Chrome 124, upgraded to standardized X25519MLKEM768 in Chrome 131; Apple iMessage adopted PQ3 protocol (P-256 ECDH + Kyber-1024 initial keys, Kyber-768 rekeying ratchet — both now standardized as ML-KEM-1024 / ML-KEM-768 per FIPS 203) in iOS 17.4
+- **Industry case studies**: Cloudflare enabled hybrid PQC key exchange (X25519MLKEM768) with approximately 4% TLS handshake time increase; Google Chrome enabled hybrid PQC by default in Chrome 124, upgraded to standardized X25519MLKEM768 in Chrome 131; Apple iMessage adopted PQ3 protocol (P-256 ECDH + Kyber-1024 initial keys and Kyber-1024 rekeying ratchet — Kyber-1024 is ML-KEM-1024-level per FIPS 203) in iOS 17.4
 
 ## Workshop / Interactive Activities
 

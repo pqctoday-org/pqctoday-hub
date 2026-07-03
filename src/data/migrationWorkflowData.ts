@@ -391,13 +391,13 @@ export const MIGRATION_STEPS: PhaseTaggedMigrationStep[] = [
       { source: 'NIST IR 8547', mapping: 'Ongoing monitoring' },
       {
         source: 'NSA CNSA 2.0',
-        mapping: '2033 exclusive across all equipment types',
+        mapping: 'Exclusive use 2030 (signing, networking) / 2033 (web/cloud, OS, niche)',
       },
       { source: 'ETSI TR 103 619', mapping: 'Continuous improvement' },
     ],
     relevantSoftwareCategories: ['CSC-028', 'CSC-023', 'CSC-030', 'CSC-025'],
     nsaTimeline:
-      '2033: CNSA 2.0 exclusive across all NSS equipment types; 2035: Quantum-vulnerable algorithms disallowed (per NIST IR 8547)',
+      '2033: CNSA 2.0 exclusive for web/cloud, OS, and niche/legacy equipment (signing/networking already exclusive from 2030; NSM-10 targets all NSS by 2035); 2035: Quantum-vulnerable algorithms disallowed (per NIST IR 8547)',
     estimatedDuration: 'Ongoing',
   },
 ]

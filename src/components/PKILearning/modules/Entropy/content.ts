@@ -30,6 +30,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'Random Byte Generation: Generate and compare random bytes from Web Crypto API and OpenSSL WASM. Entropy Testing: Run simplified SP 800-90B statistical tests on generated random data. ESV Validation Walkthrough: Step through the NIST Entropy Source Validation process (source description, noise model, raw samples, health tests, conditioning). QRNG Exploration: Compare pre-fetched quantum random data (ANU QRNG) with local TRNG output.',
     relatedStandards:
-      'NIST SP 800-90A Rev. 1 and Rev. 2 (DRBG Mechanisms). NIST SP 800-90B (Entropy Source Validation). NIST SP 800-90C (RBG Constructions). NIST SP 800-131A Rev. 3 (Security Strength Requirements). FIPS 203 (ML-KEM) and FIPS 204 (ML-DSA) seed requirements. NIST ESV Program (Entropy Source Validation under CMVP)',
+      'NIST SP 800-90A Rev. 1 and the Rev. 2 pre-draft (DRBG Mechanisms). NIST SP 800-90B (Entropy Source Validation). NIST SP 800-90C (RBG Constructions). NIST SP 800-131A Rev. 3 draft (Security Strength Requirements). FIPS 203 (ML-KEM) and FIPS 204 (ML-DSA) seed requirements. NIST ESV Program (Entropy Source Validation under CMVP)',
   },
 }

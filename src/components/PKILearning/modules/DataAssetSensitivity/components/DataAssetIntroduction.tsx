@@ -450,7 +450,7 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
                   {
                     name: 'FAIR',
                     detail: 'Factor Analysis of Information Risk',
-                    origin: 'Open FAIR / PRMIA',
+                    origin: 'The Open Group (Open FAIR) / FAIR Institute',
                     output: 'Annualized Loss Expectancy ($) — quantitative financial model',
                     audience: 'Finance, insurance, board-level reporting',
                     pqc: 'Quantifies breach cost of delayed PQC migration for ROI analysis',

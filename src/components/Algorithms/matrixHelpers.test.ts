@@ -38,7 +38,7 @@ describe('shortRefLabel — draft prefix stripping', () => {
 
   it.each([
     ['TCG TPM 2.0 v1.85', 'TCG TPM 2.0 v1.85'],
-    ['3GPP TR 33.841', '3GPP TR 33.841'],
+    ['3GPP TR 33.938', '3GPP TR 33.938'],
     ['UEFI 2.10', 'UEFI 2.10'],
     ['IEEE 802.1AE-2018', 'IEEE 802.1AE-2018'],
   ])('vendor / SDO spec ids pass through unchanged: %s', (input, expected) => {

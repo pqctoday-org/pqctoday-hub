@@ -31,6 +31,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'Part 1 -- SUCI Deconcealment: Step through the full 11-step SUCI construction and deconcealment process for Profile A (X25519), Profile B (P-256), and Profile C (ML-KEM), with real OpenSSL commands showing key generation, ECDH/KEM operations, KDF derivation, AES encryption, and HMAC computation.',
     relatedStandards:
-      '3GPP TS 33.501 (5G security architecture), 3GPP TS 35.206 (MILENAGE algorithm), 3GPP TR 33.841 (PQC study for 5G). 3GPP TS 23.003 (SUPI/SUCI identifier formats), 3GPP TS 31.102 (USIM application). FIPS 203 (ML-KEM), NIST SP 800-56C (KDF recommendations). RFC 7748 (X25519 Diffie-Hellman), ANSI X9.63 (Key Derivation Function)',
+      '3GPP TS 33.501 (5G security architecture), 3GPP TS 35.206 (MILENAGE algorithm), 3GPP TR 33.938 (Study on Preparing for Transition to PQC in 3GPP). 3GPP TS 23.003 (SUPI/SUCI identifier formats), 3GPP TS 31.102 (USIM application). FIPS 203 (ML-KEM), NIST SP 800-56C (KDF recommendations). RFC 7748 (X25519 Diffie-Hellman), ANSI X9.63 (Key Derivation Function)',
   },
 }

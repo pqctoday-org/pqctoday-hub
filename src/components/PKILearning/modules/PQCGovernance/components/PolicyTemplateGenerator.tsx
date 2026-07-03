@@ -243,7 +243,11 @@ function cryptoAlgorithmSections(args: BuildArgs): ArtifactSection[] {
       value: 'classical-asym',
       label: 'All classical asymmetric crypto (RSA, ECDSA, ECDH, DH, DSA)',
     },
-    { value: 'rsa-lt-3072', label: 'RSA < 3072 bits (weak even against classical attacks)' },
+    {
+      value: 'rsa-lt-3072',
+      label:
+        'RSA < 3072 bits (classically secure today, but deprecated after 2030 per NIST SP 800-131A and quantum-vulnerable)',
+    },
   ]
 
   const migrationRequiredFull = [

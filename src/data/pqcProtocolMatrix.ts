@@ -570,7 +570,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     recommended: true,
     recommendedReason:
-      'RFC 9941 published (April 2026), mlkem768x25519 shipped by default in OpenSSH 10.0, GitHub SSH, and AWS Transfer Family — the most deployment-ready PQC protocol today.',
+      'RFC 9941 published (April 2026) standardizes sntrup761x25519 — the hybrid GitHub SSH runs; mlkem768x25519 ships by default in OpenSSH 10.0 and is offered by AWS Transfer Family — the most deployment-ready PQC protocol today.',
     sources: [
       {
         label: 'OpenSSH release notes',
@@ -817,7 +817,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         provider: 'AWS',
-        what: 'ML-KEM hybrid TLS on by default (Apr 2026) across KMS, ACM, Secrets Manager, Payment Cryptography, S3; Kyber being retired',
+        what: 'ML-KEM hybrid TLS supported in AWS KMS, ACM, and Secrets Manager; Kyber support being retired in favor of ML-KEM',
         since: '2025-05',
         referenceUrl:
           'https://aws.amazon.com/blogs/security/ml-kem-post-quantum-tls-now-supported-in-aws-kms-acm-and-secrets-manager/',
@@ -856,14 +856,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         provider: 'Mozilla Firefox',
-        what: 'mlkem768x25519 (X25519MLKEM768) default for TLS 1.3 HTTPS since Firefox 132 (via NSS 3.118)',
+        what: 'mlkem768x25519 (X25519MLKEM768) default for TLS 1.3 HTTPS since Firefox 132 (via NSS 3.105)',
         since: '2024-10',
         referenceUrl: 'https://bugzilla.mozilla.org/show_bug.cgi?id=1919097',
       },
       {
         provider: 'Google Android',
-        what: 'Android 17 mandates system-level PQC; ML-KEM in TLS and ML-DSA in the Keystore / boot chain',
-        since: '2026-06',
+        what: 'Android 17 adds ML-DSA to Keystore and Verified Boot (phased PQC rollout)',
+        since: '2026-03',
         referenceUrl:
           'https://blog.google/security/security-for-the-quantum-era-implementing-post-quantum-cryptography-in-android/',
       },
@@ -1670,9 +1670,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: '3GPP-TR-33.841',
-        title: '3GPP TR 33.841 — Study on Preparing for Transition to PQC in 3GPP',
-        url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.841/',
+        id: '3GPP-TR-33.938',
+        title: '3GPP TR 33.938 — Study on Preparing for Transition to PQC in 3GPP',
+        url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/',
         date: '2025-05',
         localFile: '/library/3GPP-PQC-Study-2025.html',
       },
@@ -1680,26 +1680,26 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'experimental',
-        note: '3GPP TR 33.841 "Profile C" — ML-KEM-768 standalone for SUCI concealment (study item).',
+        note: '3GPP TR 33.938 "Profile C" — ML-KEM-768 standalone for SUCI concealment (study item).',
         refs: [
           {
             kind: 'spec',
-            id: '3GPP TR 33.841',
+            id: '3GPP TR 33.938',
             title: 'Study on Preparing for Transition to PQC in 3GPP (Profile C)',
-            url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.841/',
+            url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/',
             publishedOn: '2025-05',
           },
         ],
       },
       hybridKem: {
         value: 'experimental',
-        note: '3GPP TR 33.841 Profile C hybrid mode — X25519 + ML-KEM-768 SUCI concealment (study item).',
+        note: '3GPP TR 33.938 Profile C hybrid mode — X25519 + ML-KEM-768 SUCI concealment (study item).',
         refs: [
           {
             kind: 'spec',
-            id: '3GPP TR 33.841',
+            id: '3GPP TR 33.938',
             title: 'Study on Preparing for Transition to PQC in 3GPP (Profile C hybrid)',
-            url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.841/',
+            url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/',
             publishedOn: '2025-05',
           },
         ],
@@ -1727,7 +1727,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         toolName: '5G SUCI Construction',
         testability: { pureKem: 'partial', hybridKem: 'partial', pureSig: 'na', hybridSig: 'na' },
         pureKemNote:
-          'SUCI tool demonstrates Profile C ML-KEM-768 concealment in pre-standard form (3GPP TR 33.841 is a study item, not standardized).',
+          'SUCI tool demonstrates Profile C ML-KEM-768 concealment in pre-standard form (3GPP TR 33.938 is a study item, not standardized).',
         hybridKemNote:
           'Hybrid X25519 + ML-KEM-768 mode is illustrative — 3GPP has not finalized Profile C wire format.',
       },

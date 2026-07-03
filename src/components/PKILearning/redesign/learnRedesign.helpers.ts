@@ -58,13 +58,29 @@ export interface PathProgress {
   checkpointsTotal: number
   /** Overall percent across the path's modules (0–100, rounded). */
   pct: number
-  /** True once every non-wrap-up module in the path is complete → capstone unlocks. */
+  /** Completed count among the persona's Essentials (0 if no essentials passed in). */
+  essentialsDone: number
+  /** Total Essentials modules for the persona. */
+  essentialsTotal: number
+  /** Essentials percent (0–100, rounded). */
+  essentialsPct: number
+  /** True once every Essentials module is complete → unlocks the capstone (A1). */
+  essentialsComplete: boolean
+  /** True once every non-wrap-up module in the path is complete → the optional "mastery" badge. */
+  fullTrackComplete: boolean
+  /**
+   * Whether the capstone (final quiz) is unlocked. A1: gated on the Essentials
+   * (`essentialsComplete`) rather than the full track, so a learner reaches the
+   * capstone after the short core instead of every module. `fullTrackComplete`
+   * remains available for the optional "full track mastered" badge.
+   */
   capstoneUnlocked: boolean
 }
 
 export function computePathProgress(
   phases: PersonaPathPhase[],
-  statusById: Record<string, string | undefined>
+  statusById: Record<string, string | undefined>,
+  essentialsIds: readonly string[] = []
 ): PathProgress {
   const checkpointPhases = phases.filter((p) => p.id !== 'wrap-up')
   let doneModules = 0
@@ -79,12 +95,26 @@ export function computePathProgress(
   }
   const checkpointsTotal = checkpointPhases.length
   const pct = totalModules > 0 ? Math.round((doneModules / totalModules) * 100) : 0
+
+  const essentialsTotal = essentialsIds.length
+  const essentialsDone = essentialsIds.filter((id) => statusById[id] === 'completed').length
+  const essentialsPct =
+    essentialsTotal > 0 ? Math.round((essentialsDone / essentialsTotal) * 100) : 0
+  const essentialsComplete = essentialsTotal > 0 && essentialsDone === essentialsTotal
+  const fullTrackComplete = totalModules > 0 && doneModules === totalModules
+
   return {
     doneModules,
     totalModules,
     checkpointsPassed,
     checkpointsTotal,
     pct,
-    capstoneUnlocked: totalModules > 0 && doneModules === totalModules,
+    essentialsDone,
+    essentialsTotal,
+    essentialsPct,
+    essentialsComplete,
+    fullTrackComplete,
+    // A1: the capstone unlocks on the Essentials core, not the full track.
+    capstoneUnlocked: essentialsComplete,
   }
 }

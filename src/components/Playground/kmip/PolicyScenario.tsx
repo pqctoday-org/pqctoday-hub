@@ -4,9 +4,12 @@
 // REAL in-browser engine:
 //
 //   • Preview (dry-run)  — asks the engine `dry_run` what it WOULD decide for a
-//     battery of representative requests. Read-only: no keys, no audit, the
-//     active policy is untouched. Use it to see Allow/Deny/Rekey instantly and
-//     to compare policies side by side (flip the policy above, preview again).
+//     battery of representative requests. No keys are created and the active
+//     policy is untouched. (Dry-run DOES emit a Plane-1 PolicyDecided audit
+//     event per probe — correlation_id `dry-run` — so the decision is traceable;
+//     it just performs no key/store mutation.) Use it to see Allow/Deny/Rekey
+//     instantly and to compare policies side by side (flip the policy, preview
+//     again).
 //
 //   • Run for real        — executes each request as a genuine KMIP batch
 //     (Create → Activate → Sign/Encapsulate) through the same engine the
@@ -21,7 +24,15 @@
 // the MOST restrictive verdict; a real run reports the strongest decision the
 // engine actually emitted across the batch (e.g. Create allowed but Sign rekeyed).
 import { useState } from 'react'
-import { FlaskConical, Play, Loader2, CheckCircle2, XCircle, ArrowRight } from 'lucide-react'
+import {
+  FlaskConical,
+  Play,
+  Loader2,
+  CheckCircle2,
+  XCircle,
+  ArrowRight,
+  CircleSlash,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   strongestDecision,
@@ -107,11 +118,15 @@ const PROBES: Probe[] = [
     dryKind: 'algo',
     algorithm: 'FrodoKEM-1344',
     ops: ['Create', 'CreateKeyPair', 'CreateKeyPair:KeyAgreement'],
-    live: [{ op: 'CreateKeyPair', algorithm: 'FrodoKEM-1344' }],
+    // intent:'kem' shapes the request correctly for when FrodoKEM is
+    // implemented; today the engine rejects the unknown algorithm outright
+    // (H1) and the live run reports "not implemented" — Preview still shows the
+    // real policy verdict for the name.
+    live: [{ op: 'CreateKeyPair', intent: 'kem', algorithm: 'FrodoKEM-1344' }],
   },
 ]
 
-type Verdict = 'Allow' | 'Deny' | 'Rekey'
+type Verdict = 'Allow' | 'Deny' | 'Rekey' | 'Skip'
 interface Row {
   probe: Probe
   kind: Verdict
@@ -160,7 +175,14 @@ function liveRow(p: Probe, res: BatchResult): Row {
 
   if (kind === 'Deny') {
     const failed = res.items.find((i) => !i.ok)
-    return { probe: p, kind, detail: failed?.message || 'denied by policy' }
+    const msg = failed?.message || 'denied by policy'
+    // H1 — distinguish "the engine can't run this" (unimplemented algorithm)
+    // from a genuine policy denial, so the FrodoKEM probe doesn't read as if the
+    // policy rejected it when really the engine has no such algorithm.
+    if (/unknown algorithm|not implemented|not supported/i.test(msg)) {
+      return { probe: p, kind: 'Skip', detail: 'not implemented by this engine' }
+    }
+    return { probe: p, kind: 'Deny', detail: msg }
   }
   const algo = d.algorithm ?? p.requested
   const signed = res.items.some((i) => i.operation === 'Sign' && i.ok)
@@ -173,6 +195,7 @@ const TONE: Record<Verdict, { badge: string; text: string }> = {
   Allow: { badge: 'bg-status-success/15 text-status-success', text: 'text-status-success' },
   Rekey: { badge: 'bg-status-warning/15 text-status-warning', text: 'text-status-warning' },
   Deny: { badge: 'bg-destructive/15 text-destructive', text: 'text-destructive' },
+  Skip: { badge: 'bg-muted text-muted-foreground', text: 'text-muted-foreground' },
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
@@ -329,6 +352,8 @@ export function PolicyScenario({
                   <CheckCircle2 size={15} className="mt-0.5 shrink-0 text-status-success" />
                 ) : kind === 'Rekey' ? (
                   <ArrowRight size={15} className="mt-0.5 shrink-0 text-status-warning" />
+                ) : kind === 'Skip' ? (
+                  <CircleSlash size={15} className="mt-0.5 shrink-0 text-muted-foreground" />
                 ) : (
                   <XCircle size={15} className="mt-0.5 shrink-0 text-destructive" />
                 )}

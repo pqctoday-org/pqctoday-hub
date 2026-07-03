@@ -501,8 +501,10 @@ export function buildKdfInput(
 // not the ASN.1 wrapper.
 //   X25519 SPKI DER: 44 bytes total — 12-byte OID header + 32-byte raw key
 //   P-256 SPKI DER:  91 bytes total — 26-byte OID/wrapper + 65-byte uncompressed EC point (04 prefix)
+//   NOTE: for Profile B, TS 33.501 Annex C specifies the 33-byte COMPRESSED ephemeral public
+//   key as SharedInfo; this demo currently passes the 65-byte uncompressed point below.
 //   Profile C hybrid: SharedInfo = raw X25519 ephemeral key (same offset as Profile A)
-//   Profile C pure PQC: SharedInfo = empty (no ephemeral EC key per 3GPP TR 33.841)
+//   Profile C pure PQC: SharedInfo = empty (no ephemeral EC key per 3GPP TR 33.938)
 function extractRawPubKeyBytes(spkiHex: string, profile: 'A' | 'B' | 'C'): Uint8Array {
   const spki = (spkiHex.match(/.{1,2}/g) ?? []).map((b) => parseInt(b, 16))
   if (profile === 'A' && spki.length === 44) return new Uint8Array(spki.slice(12)) // X25519: 32 bytes
@@ -575,7 +577,7 @@ Step 1: Input Shared Secret (Z)
 Z: ${zHex}
 
 Step 2: SharedInfo = raw ephemeral public key (per 3GPP TS 33.501 §C.3.3)
-  Note: ASN.1/SPKI wrapper stripped — ${profile === 'A' ? '32-byte X25519 key' : profile === 'B' ? '65-byte uncompressed P-256 point' : sharedInfo.length > 0 ? '32-byte X25519 key (hybrid mode)' : 'empty (pure PQC mode)'}
+  Note: ASN.1/SPKI wrapper stripped — ${profile === 'A' ? '32-byte X25519 key' : profile === 'B' ? '65-byte uncompressed P-256 point (demo; spec: 33-byte compressed key per TS 33.501 Annex C)' : sharedInfo.length > 0 ? '32-byte X25519 key (hybrid mode)' : 'empty (pure PQC mode)'}
 ${sharedInfoHex ? sharedInfoHex.substring(0, 64) + (sharedInfoHex.length > 64 ? '...' : '') : '(empty)'}
 
 Step 3: KDF Iteration 1 — ${hashName}(Z || 0x00000001 || SharedInfo)

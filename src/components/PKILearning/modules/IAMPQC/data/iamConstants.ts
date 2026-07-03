@@ -253,7 +253,7 @@ export const DIRECTORY_SERVICES: DirectoryService[] = [
     vulnerabilities: [
       'JWT ID tokens signed with RSA-2048 — HNDL captures allow future forgery',
       'SAML assertions are long-lived federation tokens — high HNDL risk',
-      'Refresh tokens (90-day lifetime) signed with RSA — HNDL target',
+      'Refresh tokens are opaque encrypted blobs (not RSA-signed JWTs); HNDL exposure concentrates in RSA-signed access and ID tokens',
       'Entra DS LDAPS uses TLS with classical ciphers',
     ],
     migrationPath:

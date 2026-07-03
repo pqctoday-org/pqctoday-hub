@@ -312,7 +312,9 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
                     <ShieldCheck className="w-6 h-6" /> Identity Verified
                   </div>
                   <div className="bg-secondary/5 p-3 rounded-lg border border-secondary/20 text-sm text-muted-foreground">
-                    <p className="font-medium text-foreground mb-1">Format: RFC 9901 (SD-JWT VC)</p>
+                    <p className="font-medium text-foreground mb-1">
+                      Format: SD-JWT VC (draft-ietf-oauth-sd-jwt-vc, built on SD-JWT / RFC 9901)
+                    </p>
                     <p>
                       For online verification scenarios (like University Diplomas), EUDI ARF
                       mandates

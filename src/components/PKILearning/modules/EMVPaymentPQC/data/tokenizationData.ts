@@ -264,9 +264,9 @@ export const MOBILE_WALLETS: MobileWallet[] = [
       'ECDSA P-256 (device attestation)',
       'AES-256 (Knox Vault storage)',
       'AES-256 (per-transaction cryptogram)',
-      'Samsung S3SSE2A secure microcontroller (ANSSI PQC certified Oct 2025)',
+      'Samsung S3SSE2A secure element (Common Criteria EAL6+, hardware PQC)',
     ],
     pqcStatus:
-      'Samsung S3SSE2A microcontroller received ANSSI PQC security certification (Oct 2025) \u2014 first PQC-certified payment-grade secure element. Samsung Pay integration not yet announced.',
+      'Samsung S3SSE2A secure element is Common Criteria EAL6+ certified with hardware PQC support and won a CES Innovation Award 2026 as a hardware-PQC secure element. Samsung Pay integration not yet announced.',
   },
 ]

@@ -11,12 +11,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
   Library,
-  ChevronDown,
-  ChevronRight,
   ShieldCheck,
   FlaskConical,
   CalendarClock,
   Grid3x3,
+  List as ListIcon,
+  Workflow,
+  Code2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -36,6 +37,7 @@ import {
 } from './policyModel'
 import { PolicyRulesDisplay, PolicyRulesLegend } from './PolicyRulesDisplay'
 import { PolicyTimeline } from './PolicyTimeline'
+import { PolicyGraphView } from './visual/PolicyGraphView'
 
 /** Tone → dot colour for catalog chips. */
 const TONE_DOT: Record<PolicyTone, string> = {
@@ -112,21 +114,27 @@ function DefaultPill({ label, algo }: { label: string; algo: string | null }) {
   )
 }
 
+type DetailTab = 'list' | 'visual' | 'timeline' | 'yaml'
+
 export function PolicyView({
   engine,
   policy,
   policyYaml,
   busy,
+  expert,
   onLoadPolicy,
+  onApplyYaml,
 }: {
   engine: KmipEngine
   policy: PolicyStatus
   policyYaml: string | null
   busy: boolean
+  expert: boolean
   onLoadPolicy: (preset: PolicyPreset) => void
+  onApplyYaml: (yaml: string) => { ok: boolean; warnings?: string[]; error?: string } | undefined
 }) {
   const [models, setModels] = useState<Record<string, PolicyModel>>({})
-  const [showSource, setShowSource] = useState(false)
+  const [detailTab, setDetailTab] = useState<DetailTab>('list')
 
   // Fetch + parse every preset once, so each catalog card can show a rule count
   // and the detail panel can render without a per-selection round trip.
@@ -170,11 +178,26 @@ export function PolicyView({
   const kemDefault = resolveDefault('CreateKeyPair:KeyAgreement')
 
   const temporal = activeModel ? temporalRules(activeModel) : []
+  const visualActive = detailTab === 'visual'
+
+  const tabs: { id: DetailTab; label: string; icon: typeof ListIcon }[] = [
+    { id: 'list', label: 'List', icon: ListIcon },
+    { id: 'visual', label: 'Visual', icon: Workflow },
+    { id: 'timeline', label: 'Timeline', icon: CalendarClock },
+    { id: 'yaml', label: 'YAML', icon: Code2 },
+  ]
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-4 items-start">
-      {/* ── Catalog ─────────────────────────────────────────────────────── */}
-      <section className="rounded-xl border border-border bg-card p-3">
+    <div
+      className={cn(
+        'grid grid-cols-1 gap-4 items-start',
+        !visualActive && 'lg:grid-cols-[300px_1fr]'
+      )}
+    >
+      {/* ── Catalog (hidden in Visual mode — the palette has its own switcher) ─ */}
+      <section
+        className={cn('rounded-xl border border-border bg-card p-3', visualActive && 'hidden')}
+      >
         <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
           <Library size={15} className="text-primary" /> Policy library
           <span className="ml-auto text-[10px] font-mono text-muted-foreground">
@@ -305,75 +328,129 @@ export function PolicyView({
           </div>
         </section>
 
-        {/* Algorithm disposition matrix */}
-        {activeModel && (
-          <section className="rounded-xl border border-border bg-card p-4">
-            <h4 className="flex items-center gap-2 text-xs font-semibold text-foreground">
-              <Grid3x3 size={14} className="text-primary" /> Algorithm disposition
-            </h4>
-            <div className="mt-2.5 flex flex-wrap gap-1.5">
-              {MATRIX_ALGOS.map((algo) => {
-                const d = dispositionOf(activeModel, algo)
-                const s = DISPOSITION_STYLE[d]
-                return (
-                  <div
-                    key={algo}
-                    className={cn('rounded-md border px-2 py-1', s.cls)}
-                    title={`${algo}: ${s.label}`}
-                  >
-                    <span className="font-mono text-[10.5px] text-foreground">{algo}</span>
-                    <span className="ml-1.5 text-[9px] font-semibold">{s.label}</span>
-                  </div>
-                )
-              })}
-            </div>
-            <p className="mt-2 text-[9.5px] text-muted-foreground">
-              Derived from the rules below (ignores per-op scope, time bounds, and attribute
-              exceptions). For the engine's live verdict, use the dry-run tester on the Agility tab.
-            </p>
+        {/* ── Sub-tab row ─────────────────────────────────────────────── */}
+        <div className="flex items-center gap-1 border-b border-border" role="tablist">
+          {tabs.map((t) => {
+            const Icon = t.icon
+            const on = detailTab === t.id
+            return (
+              <Button
+                key={t.id}
+                variant="ghost"
+                role="tab"
+                aria-selected={on}
+                onClick={() => setDetailTab(t.id)}
+                className={cn(
+                  '-mb-px inline-flex h-auto items-center gap-1.5 rounded-none border-b-2 px-3 py-2 text-[12.5px] font-medium transition-colors hover:bg-transparent',
+                  on
+                    ? 'border-primary font-semibold text-foreground'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                )}
+              >
+                <Icon size={13} />
+                {t.label}
+              </Button>
+            )
+          })}
+          {visualActive && (
+            <span className="ml-auto pr-2 text-[10.5px] text-muted-foreground">
+              graph is the source of truth
+            </span>
+          )}
+        </div>
+
+        {/* ── List: disposition matrix + rule cards ─────────────────────── */}
+        {detailTab === 'list' && (
+          <>
+            {activeModel && (
+              <section className="rounded-xl border border-border bg-card p-4">
+                <h4 className="flex items-center gap-2 text-xs font-semibold text-foreground">
+                  <Grid3x3 size={14} className="text-primary" /> Algorithm disposition
+                </h4>
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  {MATRIX_ALGOS.map((algo) => {
+                    const d = dispositionOf(activeModel, algo)
+                    const s = DISPOSITION_STYLE[d]
+                    return (
+                      <div
+                        key={algo}
+                        className={cn('rounded-md border px-2 py-1', s.cls)}
+                        title={`${algo}: ${s.label}`}
+                      >
+                        <span className="font-mono text-[10.5px] text-foreground">{algo}</span>
+                        <span className="ml-1.5 text-[9px] font-semibold">{s.label}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+                <p className="mt-2 text-[9.5px] text-muted-foreground">
+                  Derived from the rules below (ignores per-op scope, time bounds, and attribute
+                  exceptions). For the engine's live verdict, use the Visual tab's simulator or the
+                  dry-run tester on the Agility tab.
+                </p>
+              </section>
+            )}
+
+            <section className="rounded-xl border border-border bg-card p-4">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <h4 className="text-xs font-semibold text-foreground">What this policy enforces</h4>
+                {activeModel && <PolicyRulesLegend rules={activeModel.rules} />}
+              </div>
+              <div className="mt-3">
+                <PolicyRulesDisplay rules={activeModel?.rules ?? []} />
+              </div>
+            </section>
+          </>
+        )}
+
+        {/* ── Visual: the node-graph editor ─────────────────────────────── */}
+        {visualActive && (
+          <section className="overflow-hidden rounded-xl border border-border bg-card">
+            <PolicyGraphView
+              key={activePreset?.file ?? '__builtin__'}
+              engine={engine}
+              initialYaml={policyYaml}
+              presetFile={activePreset?.file ?? null}
+              guided={!expert}
+              onLoadPreset={onLoadPolicy}
+              onApplyYaml={onApplyYaml}
+            />
           </section>
         )}
 
-        {/* Rules */}
-        <section className="rounded-xl border border-border bg-card p-4">
-          <div className="flex items-center justify-between gap-2 flex-wrap">
-            <h4 className="text-xs font-semibold text-foreground">What this policy enforces</h4>
-            {activeModel && <PolicyRulesLegend rules={activeModel.rules} />}
-          </div>
-          <div className="mt-3">
-            <PolicyRulesDisplay rules={activeModel?.rules ?? []} />
-          </div>
-        </section>
-
-        {/* Timeline */}
-        {temporal.length > 0 && (
+        {/* ── Timeline ──────────────────────────────────────────────────── */}
+        {detailTab === 'timeline' && (
           <section className="rounded-xl border border-border bg-card p-4">
             <h4 className="flex items-center gap-2 text-xs font-semibold text-foreground">
               <CalendarClock size={14} className="text-status-warning" /> Timeline — time-bounded
               rules
             </h4>
             <div className="mt-3">
-              <PolicyTimeline rules={temporal} />
+              {temporal.length > 0 ? (
+                <PolicyTimeline rules={temporal} />
+              ) : (
+                <p className="text-[12px] text-muted-foreground">
+                  This policy has no time-bounded rules (temporal cutoffs or effective windows).
+                </p>
+              )}
             </div>
           </section>
         )}
 
-        {/* Raw YAML */}
-        {policyYaml && (
+        {/* ── YAML ──────────────────────────────────────────────────────── */}
+        {detailTab === 'yaml' && (
           <section className="rounded-xl border border-border bg-card p-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowSource((s) => !s)}
-              className="h-auto px-1 py-0.5 inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground"
-            >
-              {showSource ? <ChevronDown size={12} /> : <ChevronRight size={12} />} policy source
-              (YAML)
-            </Button>
-            {showSource && (
-              <pre className="mt-2 max-h-80 overflow-auto whitespace-pre-wrap rounded border border-border bg-muted/40 p-2 font-mono text-[10px]">
+            <h4 className="flex items-center gap-2 text-xs font-semibold text-foreground">
+              <Code2 size={14} className="text-primary" /> Policy source (YAML)
+            </h4>
+            {policyYaml ? (
+              <pre className="mt-2 max-h-[32rem] overflow-auto whitespace-pre rounded border border-border bg-muted/40 p-2 font-mono text-[10.5px] leading-relaxed">
                 {policyYaml}
               </pre>
+            ) : (
+              <p className="mt-2 text-[12px] text-muted-foreground">
+                Built-in permissive policy — no source file. Pick a policy from the library.
+              </p>
             )}
           </section>
         )}

@@ -92,7 +92,7 @@
   },
   {
     "term": "FIPS 206",
-    "definition": "The NIST standard defining FN-DSA (FFT over NTRU-Lattice-Based Digital Signature Algorithm, formerly Falcon), published October 2024.",
+    "definition": "The draft NIST standard defining FN-DSA (FFT over NTRU-Lattice-Based Digital Signature Algorithm, formerly Falcon); still in draft, not yet published.",
     "relatedModule": "/library?ref=FIPS 206",
     "complexity": "intermediate",
     "category": "standard"
@@ -617,7 +617,7 @@
   },
   {
     "term": "NIST IR 8528",
-    "definition": "NIST Internal Report (October 2024) documenting the 14 second-round candidates in the PQC signature on-ramp. Covers four mathematical families: MPC-in-the-Head, multivariate, isogeny, and lattice.",
+    "definition": "NIST Internal Report (October 2024) that down-selected the PQC signature on-ramp to 14 second-round candidates across four mathematical families: MPC-in-the-Head, multivariate, isogeny, and lattice. Superseded by NIST IR 8610 (May 2026), which closed the second round and advanced nine candidates to the third round.",
     "relatedModule": "/library?ref=NIST IR 8528",
     "complexity": "advanced",
     "category": "standard"

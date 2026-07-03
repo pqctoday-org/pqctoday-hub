@@ -88,10 +88,11 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     firmwareRev: 'QxOS 5 (v5.0)',
     fipsLevel: 3,
     fipsStatus: 'in-mip',
-    cmvpCertNumber: '#4250 (QASM core; v5.0 PQC resubmission in MIP)',
+    cmvpCertNumber:
+      '#4250 = FIPS 140-2 Level 3 (2022, QASM core); FIPS 140-3 v5.0 PQC submission in MIP',
     esvStatus: 'active',
     pqcSupport:
-      'ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 param sets), LMS/HSS, XMSS (CAVP A4204 + A5631)',
+      'ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 param sets), LMS/HSS (CAVP A4204 = LMS; A5631 = LMS/ML-DSA/ML-KEM/SLH-DSA)',
     platformBinding: 'QxBMC-1/3/12 chassis (desktop/1U/4U); FPGA-based QASM core',
     lastVerified: '2026-06-06',
     posture: 'green',

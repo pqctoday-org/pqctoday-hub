@@ -1,7 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useCallback, useEffect, useMemo } from 'react'
 import { flushSync } from 'react-dom'
-import { LayoutDashboard, ShieldCheck, BookOpen, Download, Filter, X } from 'lucide-react'
+import {
+  LayoutDashboard,
+  ShieldCheck,
+  BookOpen,
+  Download,
+  Filter,
+  X,
+  PlayCircle,
+} from 'lucide-react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import JSZip from 'jszip'
 import { PageHeader } from '@/components/common/PageHeader'
@@ -97,6 +105,14 @@ function WelcomeState() {
           A post-quantum migration is a program, and every program answers the same four board-level
           questions. Start with whichever you need first.
         </p>
+        <div className="mb-6">
+          <Link to="/simulation?run=exec">
+            <Button variant="gradient" size="sm" className="gap-1.5">
+              <PlayCircle size={14} aria-hidden="true" />
+              New here? Watch the guided overview
+            </Button>
+          </Link>
+        </div>
         <div className="grid gap-3 sm:grid-cols-2 text-left max-w-2xl mx-auto">
           {BOARD_QUESTIONS.map((item) => (
             <Link

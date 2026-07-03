@@ -9,12 +9,15 @@ schema_version: 1
 metadata:
   name: auto-migrate-on-use
   description: |
-    Lazy, transparent migration. Each legacy classical key is rekeyed to PQC
-    the first time traffic touches it (Sign / Encrypt), and every new key
-    defaults to PQC. There is no flag day and no application change — migration
-    advances key-by-key as the workload exercises each one. This is the
-    substitution ("rekey-on-use") dimension of crypto agility that KMIP alone
-    cannot express.
+    Lazy, transparent migration. Each legacy classical signing key is rekeyed
+    to PQC the first time traffic touches it (Sign), and new keys default to
+    quantum-safe algorithms: signing key pairs to ML-DSA-65, key-establishment
+    key pairs to ML-KEM-768, symmetric keys to AES-256. (Asymmetric-encrypt
+    key pairs and Encrypt-path rekey are deferred with the Phase-5
+    encapsulation work — see the rule comments.) There is no flag day and no
+    application change — migration advances key-by-key as the workload
+    exercises each one. This is the substitution ("rekey-on-use") dimension
+    of crypto agility that KMIP alone cannot express.
   authority: pqctoday-hsm/training
   effective: "2026-01-01"
   compliance_mapping:
@@ -33,6 +36,10 @@ rules:
     ops: ["CreateKeyPair:KeyAgreement"]
     default_algorithm: ML-KEM-768
     reason: "New key-establishment keys default to ML-KEM-768 (FIPS 203)"
+  - type: algorithm_default
+    ops: [Create]
+    default_algorithm: AES-256
+    reason: "New symmetric keys default to AES-256 (quantum-safe at 256-bit)"
 
   # ── Existing signing keys auto-rekey at first Sign ────────────────────
   # The engine generates a fresh PQC key, marks the classical one Deprecated,
@@ -54,17 +61,12 @@ rules:
     to: ML-DSA-65
     reason: "Rekey legacy RSA-3072 signing key to ML-DSA-65 at first use"
 
-  # ── Existing key-establishment keys auto-rekey at first Encrypt ───────
-  - type: algorithm_substitution
-    ops: [Encrypt]
-    from: RSA-3072
-    to: ML-KEM-768
-    reason: "Rekey legacy RSA-3072 key transport to ML-KEM-768 at first use"
-  - type: algorithm_substitution
-    ops: [Encrypt]
-    from: ECDH-P256
-    to: ML-KEM-768
-    reason: "Rekey legacy ECDH-P256 key agreement to ML-KEM-768 at first use"
+  # ── Key-establishment auto-rekey — DEFERRED to Phase 5 ───────────────
+  # RSA/ECDH key-establishment → ML-KEM is a cross-primitive migration the
+  # Encrypt path cannot execute (it would rekey to a KEM the Encrypt op can't
+  # drive), so these substitutions are held back until the Encapsulate rekey
+  # path lands in Phase 5 — advertising them now would promise behaviour the
+  # engine rejects (Y5). The Sign-side rekeys above are the live demo.
 
   # ── No NEW classical asymmetric keys while migrating ──────────────────
   - type: algorithm_denylist
@@ -72,7 +74,10 @@ rules:
       - CreateKeyPair
       - "CreateKeyPair:Sign"
       - "CreateKeyPair:KeyAgreement"
-    algorithms: [RSA, RSA-2048, RSA-3072, ECDSA-P256, ECDSA-P384, Ed25519, ECDH-P256]
+    # RSA (family entry) covers every RSA size incl. 4096; curve names listed
+    # exhaustively (family matching is prefix-based, so ECDSA-P521 / Ed448 /
+    # X25519 need their own entries — added 2026-07-02).
+    algorithms: [RSA, ECDSA-P256, ECDSA-P384, ECDSA-P521, Ed25519, Ed448, ECDH-P256, ECDH-P384, X25519, X448]
     reason: "Migration in progress — create PQC keys; legacy keys rekey on use"
 
   # ── Signing only with Active keys ─────────────────────────────────────

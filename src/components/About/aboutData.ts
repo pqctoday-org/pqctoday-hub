@@ -14,7 +14,7 @@ import {
 } from 'lucide-react'
 
 export const MISSION_TAGS = [
-  '59 learning modules',
+  '62 learning modules',
   '34 business planning tools',
   '13-step risk assessment',
   '800+ migration catalog',
@@ -72,16 +72,16 @@ export const NOT_ITEMS = [
 ]
 
 export const DATA_FOUNDATION = [
-  { dataset: 'Timeline Events', records: 246, sources: '80+ orgs, 50+ countries' },
-  { dataset: 'Library Resources', records: 754, sources: '30+ standards bodies' },
+  { dataset: 'Timeline Events', records: 249, sources: '80+ orgs, 37 countries' },
+  { dataset: 'Library Resources', records: 688, sources: '30+ standards bodies' },
   { dataset: 'Algorithm Reference', records: 98, sources: 'FIPS 203/204/205 (+206 draft)' },
   { dataset: 'Compliance Frameworks', records: 170, sources: 'NIST, ACVP, CC, ANSSI' },
-  { dataset: 'Migrate Products', records: 835, sources: '7 infrastructure layers' },
+  { dataset: 'Migrate Products', records: 838, sources: '9 infrastructure layers' },
   { dataset: 'Threat Landscape', records: 110, sources: '8+ industry sectors' },
-  { dataset: 'Industry Leaders', records: 341, sources: 'Public, Private, Academic' },
+  { dataset: 'Industry Leaders', records: 332, sources: 'Public, Private, Academic' },
   { dataset: 'Quiz Questions', records: 909, sources: 'All PQC topic areas' },
-  { dataset: 'Authoritative Sources', records: 143, sources: 'Gov, Academic, Industry' },
-  { dataset: 'Learning Modules', records: 59, sources: '2,800+ min of content' },
+  { dataset: 'Authoritative Sources', records: 187, sources: 'Gov, Academic, Industry' },
+  { dataset: 'Learning Modules', records: 62, sources: '2,800+ min of content' },
   { dataset: 'PQC Patents', records: 1647, sources: 'USPTO, EPO, WIPO' },
 ]
 

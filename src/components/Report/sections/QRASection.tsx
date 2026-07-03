@@ -217,7 +217,7 @@ function CrqcWindow() {
       computer could break today&apos;s RSA/ECC: optimistic ~{CRQC_ESTIMATES.lowerBound} · expected
       ~{CRQC_ESTIMATES.moderate} · pessimistic ~{CRQC_ESTIMATES.upperBound}. This assessment plans
       against a conservative {QC_FIRST_YEAR} anchor for the most sensitive, long-lived data. Source:
-      GRI Quantum Threat Timeline 2025 (median 2029–2032).
+      GRI Quantum Threat Timeline 2025 (expert probability estimates).
     </div>
   )
 }

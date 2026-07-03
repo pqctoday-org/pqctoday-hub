@@ -1,132 +1,43 @@
 {
- "generated": "2026-06-07T00:57:40.415Z",
- "source": "src/data/migrate_vendor_roadmap_06062026.csv",
- "summary": {
-  "downloaded": 9,
-  "skipped": 2,
-  "failed": 1,
-  "persisted_skip": 1,
-  "no_url": 9
- },
- "entries": [
-  {
-   "vendorId": "VND-002",
-   "vendorName": "Apple Inc.",
-   "title": "Quantum-secure cryptography in Apple operating systems",
-   "url": "https://support.apple.com/guide/security/quantum-secure-cryptography-apple-devices-secc7c82e533/web",
-   "status": "downloaded",
-   "filename": "VND-002_Apple_Inc..html",
-   "sizeBytes": 293993,
-   "contentType": "text/html;charset=utf-8"
+  "generated": "2026-07-02T03:51:12.797Z",
+  "source": "src/data/migrate_vendor_roadmap_07012026_r1.csv",
+  "summary": {
+    "downloaded": 3,
+    "skipped": 0,
+    "failed": 0,
+    "persisted_skip": 0,
+    "no_url": 8
   },
-  {
-   "vendorId": "VND-016",
-   "vendorName": "Fortinet Inc.",
-   "title": "Fortinet Quantum Security Solutions",
-   "url": "https://www.fortinet.com/solutions/quantum-security",
-   "status": "downloaded",
-   "filename": "VND-016_Fortinet_Inc..html",
-   "sizeBytes": 337351,
-   "contentType": "text/html;charset=utf-8"
-  },
-  {
-   "vendorId": "VND-017",
-   "vendorName": "Futurex Inc.",
-   "title": "Futurex Post-Quantum Hybrid Certificate Authority Solution",
-   "url": "https://www.futurex.com/news/futurex-announces-post-quantum-hybrid-certificate-authority-solution",
-   "status": "downloaded",
-   "filename": "VND-017_Futurex_Inc..html",
-   "sizeBytes": 610821,
-   "contentType": "text/html; charset=UTF-8"
-  },
-  {
-   "vendorId": "VND-028",
-   "vendorName": "NXP Semiconductors N.V.",
-   "title": "NXP Stands at the Forefront of Post-Quantum Cryptography",
-   "url": "https://www.nxp.com/company/about-nxp/smarter-world-blog/BL-NXP-STANDS-POST-QUANTUM-CRYPTOGRAPHY",
-   "status": "downloaded",
-   "filename": "VND-028_NXP_Semiconductors_N.V..html",
-   "sizeBytes": 56304,
-   "contentType": "text/html; charset=utf-8"
-  },
-  {
-   "vendorId": "VND-029",
-   "vendorName": "Oracle Corporation",
-   "title": "Preparing for Post Quantum Cryptography | Oracle Security",
-   "url": "https://blogs.oracle.com/security/post-quantum-cryptography",
-   "status": "skipped",
-   "reason": "persisted: forbidden"
-  },
-  {
-   "vendorId": "VND-032",
-   "vendorName": "Red Hat Inc.",
-   "title": "Building the levee: Red Hat's post-quantum strategy is already in production",
-   "url": "https://www.redhat.com/en/blog/building-levee-why-red-hats-post-quantum-strategy-already-production",
-   "status": "downloaded",
-   "filename": "VND-032_Red_Hat_Inc..html",
-   "sizeBytes": 634920,
-   "contentType": "text/html; charset=UTF-8"
-  },
-  {
-   "vendorId": "VND-041",
-   "vendorName": "Thales Group",
-   "title": "Post-Quantum Crypto Agility | Thales CPL",
-   "url": "https://cpl.thalesgroup.com/encryption/post-quantum-crypto-agility",
-   "status": "downloaded",
-   "filename": "VND-041_Thales_Group.html",
-   "sizeBytes": 371816,
-   "contentType": "text/html; charset=UTF-8"
-  },
-  {
-   "vendorId": "VND-152",
-   "vendorName": "Adtran Networks SE (formerly ADVA)",
-   "title": "Quantum-Safe Communications | Adtran",
-   "url": "https://www.adtran.com/en/solutions/quantum-safe-communications",
-   "status": "downloaded",
-   "filename": "VND-152_Adtran_Networks_SE_formerly_ADVA_.html",
-   "sizeBytes": 142187,
-   "contentType": "text/html; charset=utf-8"
-  },
-  {
-   "vendorId": "VND-240",
-   "vendorName": "Orange S.A.",
-   "title": "Orange Quantum Defender | Orange Business",
-   "url": "https://www.orange-business.com/en/solutions/orange-quantum-defender",
-   "status": "downloaded",
-   "filename": "VND-240_Orange_S.A..html",
-   "sizeBytes": 251834,
-   "contentType": "text/html; charset=UTF-8"
-  },
-  {
-   "vendorId": "VND-263",
-   "vendorName": "Quranium",
-   "title": "Quranium Blockchain Documentation / 2025 Roadmap",
-   "url": "https://docs.quranium.org/",
-   "status": "skipped",
-   "reason": "root-homepage"
-  },
-  {
-   "vendorId": "VND-140",
-   "vendorName": "Forward Edge-AI Inc.",
-   "title": "Forward Edge-AI 12-Month PQC Implementation Playbook",
-   "url": "https://www.forwardedge-ai.com/post/forward-edge-ai-unveils-12-month-post-quantum-cryptography-implementation-playbook",
-   "status": "failed",
-   "reason": "network-error: fetch failed",
-   "persistent": false
-  },
-  {
-   "vendorId": "VND-391",
-   "vendorName": "Nord Security",
-   "title": "NordVPN launches post-quantum encryption across all applications",
-   "url": "https://nordsecurity.com/press-area/nordvpn-launches-post-quantum-encryption-across-all-its-applications",
-   "status": "downloaded",
-   "filename": "VND-391_Nord_Security.html",
-   "sizeBytes": 87530,
-   "contentType": "text/html; charset=utf-8"
-  }
- ],
- "recovered_via_fetch_resilient": {
-  "date": "2026-06-06",
-  "count": 1
- }
+  "entries": [
+    {
+      "vendorId": "VND-002",
+      "vendorName": "Apple Inc.",
+      "title": "Quantum-secure cryptography in Apple operating systems",
+      "url": "https://support.apple.com/guide/security/quantum-secure-cryptography-apple-devices-secc7c82e533/web",
+      "status": "downloaded",
+      "filename": "VND-002_Apple_Inc..html",
+      "sizeBytes": 727184,
+      "contentType": "text/html;charset=utf-8"
+    },
+    {
+      "vendorId": "VND-028",
+      "vendorName": "NXP Semiconductors N.V.",
+      "title": "Conservative Post-Quantum Security with FrodoKEM",
+      "url": "https://www.nxp.com/company/about-nxp/smarter-world-blog/BL-POST-QUANTUM-SECURITY-WITH-FRODOKEM",
+      "status": "downloaded",
+      "filename": "VND-028_NXP_Semiconductors_N.V..html",
+      "sizeBytes": 70599,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "vendorId": "VND-149",
+      "vendorName": "Arm Ltd.",
+      "title": "Mbed TLS PQC plan — planned, no committed order or date",
+      "url": "https://lists.trustedfirmware.org/archives/list/mbed-tls@lists.trustedfirmware.org/thread/D73QWEQBW5LHMFMG35S3IPV62NTKR4SO/",
+      "status": "downloaded",
+      "filename": "VND-149_Arm_Ltd..html",
+      "sizeBytes": 46192,
+      "contentType": "text/html; charset=utf-8"
+    }
+  ]
 }

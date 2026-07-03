@@ -4,7 +4,7 @@
  *
  * A scenario's anchor dates come from the country's timeline data (the rows tagged
  * `sim_milestone` in the timeline CSV → `TIMELINE_COUNTRY_MILESTONES`). The US scenario is
- * anchored to the June 2026 PQC Executive Order (EO/FR number not yet assigned): key establishment
+ * anchored to the June 2026 PQC Executive Order (EO 14412): key establishment
  * (HNDL) 2030, digital signatures (TNFL) 2031. Other
  * countries become scenarios simply by tagging their timeline rows — no code change.
  *

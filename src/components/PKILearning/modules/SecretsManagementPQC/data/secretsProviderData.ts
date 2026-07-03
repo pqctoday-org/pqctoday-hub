@@ -42,9 +42,9 @@ export const MIGRATION_CHECKLIST: MigrationChecklistItem[] = [
   {
     id: 'vault-master-key',
     phase: 'Phase 2: Quick Wins',
-    title: 'Upgrade Vault Seal Key Wrapping to ML-KEM',
+    title: 'Plan Vault Seal Key PQC Upgrade',
     description:
-      "When HashiCorp Vault 1.18+ supports ML-KEM seal mechanisms, migrate the vault seal key from RSA-OAEP to ML-KEM-1024. This protects the entire vault's secret store from offline decryption if a vault backup is harvested.",
+      "HashiCorp Vault's only PQC capability today is experimental transit ML-DSA/SLH-DSA sign/verify in Vault Enterprise 1.19 — PQC seal mechanisms are not announced. Track the roadmap and plan to migrate seal key wrapping to a quantum-safe mechanism when available, since a harvested vault backup with classical seal wrapping is exposed to offline decryption.",
     priority: 'short-term',
     effort: 'high',
   },

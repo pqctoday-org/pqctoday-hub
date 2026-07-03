@@ -453,11 +453,11 @@ export const KMIP_OPERATIONS: KmipOperation[] = [
     id: 'create',
     name: 'Create',
     description:
-      'Create a new PQC key pair. ML-KEM is asymmetric — KMIP 2.1 uses CreateKeyPair with separate public/private key templates. ML-DSA likewise uses CreateKeyPair.',
+      'Create a new PQC key pair. ML-KEM is asymmetric — KMIP 3.0 uses CreateKeyPair with separate public/private key templates. ML-DSA likewise uses CreateKeyPair.',
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>
-      <Major>2</Major><Minor>1</Minor>
+      <Major>3</Major><Minor>0</Minor>
     </ProtocolVersion>
     <BatchCount>1</BatchCount>
   </RequestHeader>
@@ -496,7 +496,7 @@ export const KMIP_OPERATIONS: KmipOperation[] = [
     kmipResponse: `<ResponseMessage>
   <ResponseHeader>
     <ProtocolVersion>
-      <Major>2</Major><Minor>1</Minor>
+      <Major>3</Major><Minor>0</Minor>
     </ProtocolVersion>
     <BatchCount>1</BatchCount>
   </ResponseHeader>
@@ -566,7 +566,7 @@ curl -X POST https://ciphertrust/api/v1/vault/keys2 \\
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>
-      <Major>2</Major><Minor>1</Minor>
+      <Major>3</Major><Minor>0</Minor>
     </ProtocolVersion>
     <BatchCount>1</BatchCount>
   </RequestHeader>
@@ -584,17 +584,17 @@ curl -X POST https://ciphertrust/api/v1/vault/keys2 \\
     <Operation>Get</Operation>
     <ResultStatus>Success</ResultStatus>
     <ResponsePayload>
-      <ObjectType>SymmetricKey</ObjectType>
+      <ObjectType>PrivateKey</ObjectType>
       <UniqueIdentifier>
         a3b2c1d4-e5f6-7890-abcd-ef1234567890
       </UniqueIdentifier>
-      <SymmetricKey>
+      <PrivateKey>
         <KeyBlock>
           <CryptographicAlgorithm>ML-KEM-768</CryptographicAlgorithm>
           <CryptographicLength>768</CryptographicLength>
           <KeyFormatType>Raw</KeyFormatType>
         </KeyBlock>
-      </SymmetricKey>
+      </PrivateKey>
     </ResponsePayload>
   </BatchItem>
 </ResponseMessage>`,
@@ -647,7 +647,7 @@ curl -X GET https://ciphertrust/api/v1/vault/keys2/a3b2c1d4-... \\
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>
-      <Major>2</Major><Minor>1</Minor>
+      <Major>3</Major><Minor>0</Minor>
     </ProtocolVersion>
     <BatchCount>1</BatchCount>
   </RequestHeader>
@@ -709,7 +709,7 @@ curl -X PATCH https://ciphertrust/api/v1/vault/keys2/a3b2c1d4-... \\
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>
-      <Major>2</Major><Minor>1</Minor>
+      <Major>3</Major><Minor>0</Minor>
     </ProtocolVersion>
     <BatchCount>1</BatchCount>
   </RequestHeader>
@@ -800,7 +800,7 @@ curl -X POST https://ciphertrust/api/v1/vault/keys2/a3b2c1d4-.../encrypt \\
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>
-      <Major>2</Major><Minor>1</Minor>
+      <Major>3</Major><Minor>0</Minor>
     </ProtocolVersion>
     <BatchCount>1</BatchCount>
   </RequestHeader>
@@ -868,7 +868,7 @@ curl -X POST https://ciphertrust/api/v1/vault/keys2/a3b2c1d4-.../rekey \\
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>
-      <Major>2</Major><Minor>1</Minor>
+      <Major>3</Major><Minor>0</Minor>
     </ProtocolVersion>
     <BatchCount>1</BatchCount>
   </RequestHeader>
@@ -1170,9 +1170,9 @@ export const KMIP_READINESS_CHECKLIST: KmipReadinessItem[] = [
   {
     id: 'server-version',
     category: 'Infrastructure',
-    title: 'KMIP Server v2.1+',
+    title: 'KMIP Server v3.0+',
     description:
-      'Verify your KMIP server supports protocol version 2.1 or later, which includes PQC CryptographicAlgorithm enums for ML-KEM and ML-DSA.',
+      'Verify your KMIP server supports protocol version 3.0 or later, which includes PQC CryptographicAlgorithm enums for ML-KEM and ML-DSA.',
     critical: true,
   },
   {

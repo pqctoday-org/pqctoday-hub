@@ -996,13 +996,14 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                 </tr>
                 <tr>
                   <td className="py-2 px-3 font-medium text-foreground">UWB (802.15.4z)</td>
-                  <td className="text-right py-2 px-3">2,048 B</td>
+                  <td className="text-right py-2 px-3">127 B</td>
                   <td className="text-right py-2 px-3">&lt;100 ms</td>
                   <td className="py-2 px-3">
-                    <span className="text-status-success font-medium">Feasible</span>
+                    <span className="text-status-warning font-medium">Marginal</span>
                   </td>
                   <td className="py-2 px-3 text-muted-foreground">
-                    ML-KEM-768 fits in single frame; best PQC transport
+                    Base PSDU is ~127 B, so ML-KEM-768 requires fragmentation; ranging itself uses
+                    quantum-safe AES-128 STS
                   </td>
                 </tr>
               </tbody>
@@ -1295,7 +1296,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               <h5 className="text-sm font-semibold text-foreground">In-Vehicle Networks</h5>
               <ul className="space-y-1 list-disc list-inside">
                 <li>ISO 11898-1:2015 / -2:2016 &mdash; CAN &amp; CAN FD</li>
-                <li>ISO 11898-2:2024 &mdash; CAN XL (up to 2,048 bytes)</li>
+                <li>ISO 11898-1:2024 &mdash; CAN XL (up to 2,048 bytes)</li>
                 <li>ISO 10681:2010 &mdash; FlexRay communication</li>
                 <li>IEEE 802.3 100BASE-T1/1000BASE-T1 &mdash; Automotive Ethernet</li>
                 <li>AUTOSAR SecOC &mdash; Secure Onboard Communication</li>

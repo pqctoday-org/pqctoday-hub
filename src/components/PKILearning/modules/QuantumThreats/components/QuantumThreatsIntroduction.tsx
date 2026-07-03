@@ -251,7 +251,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             },
             {
               org: 'NSA CNSA 2.0',
-              timeline: 'Software PQC by 2025, all NSS by 2033',
+              timeline: 'Exclusive use 2030/2033 by category; NSM-10: all NSS by 2035',
               color: 'destructive',
             },
             {

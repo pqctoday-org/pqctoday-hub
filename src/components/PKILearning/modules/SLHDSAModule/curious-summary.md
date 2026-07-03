@@ -10,7 +10,7 @@ Hash-based signatures were the first quantum-safe construction anyone trusted, b
 
 ## The Key Takeaway
 
-Reach for SLH-DSA when you want **the longest, most conservative security argument available** and you don't sign often: root CAs that issue once a year, firmware images stamped at the factory, code-signing certificates for ten-year-life embedded devices. CNSA 2.0 explicitly permits it as the stateless alternative to LMS/XMSS. Reach for ML-DSA when signature size or throughput actually matters — TLS handshakes, JWTs, anything high-volume.
+Reach for SLH-DSA when you want **the longest, most conservative security argument available** and you don't sign often: root CAs that issue once a year, firmware images stamped at the factory, code-signing certificates for ten-year-life embedded devices. (Note: SLH-DSA is not part of CNSA 2.0 — NSA's picks there are LMS/XMSS for firmware signing and ML-DSA-87 for general signing.) Reach for ML-DSA when signature size or throughput actually matters — TLS handshakes, JWTs, anything high-volume.
 
 ## What's Happening
 

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { Link } from 'react-router-dom'
-import { Briefcase, ArrowRight } from 'lucide-react'
+import { Briefcase, ArrowRight, PlayCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 /**
@@ -29,8 +29,14 @@ export function ExecutiveAboutSummary() {
             what a decision-maker needs.
           </p>
           <div className="flex flex-wrap gap-2">
-            <Link to="/business">
+            <Link to="/simulation?run=exec">
               <Button variant="gradient" size="sm" className="gap-1.5">
+                <PlayCircle size={14} aria-hidden="true" />
+                Watch the guided overview
+              </Button>
+            </Link>
+            <Link to="/business">
+              <Button variant="outline" size="sm" className="gap-1.5">
                 Open the Command Center
                 <ArrowRight size={14} aria-hidden="true" />
               </Button>

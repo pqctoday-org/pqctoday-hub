@@ -550,7 +550,7 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-foreground mb-1">KMIP Interoperability</div>
               <p className="text-xs text-muted-foreground">
-                KMIP 2.1+ supports PQC key types. Use KMIP as the abstraction layer for
+                KMIP 3.0+ supports PQC key types. Use KMIP as the abstraction layer for
                 cross-provider key operations: create, wrap, unwrap, rotate, destroy. Thales
                 CipherTrust and HashiCorp Vault both support KMIP server mode.
               </p>

@@ -26,6 +26,34 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+## [4.7.0] - 2026-07-02
+
+An accuracy, learning, and crypto-agility release: a hub-wide factual re-audit corrects roughly 150 errors, learners get a shorter essentials-first path, executives can watch the whole migration play out as a guided walkthrough, and the crypto-agility playground gains a visual policy editor plus hybrid key exchange.
+
+### Added
+
+- **Watch the whole migration play out as a guided executive walkthrough** [view:/simulation] [persona:executive]: a new Executive Overview runs the real simulation from start to finish as a narrated, board-framed tour — phases advance on their own, the scenario clock is frozen so there's no deadline pressure, and each step reveals the idea behind it (harvest-now-decrypt-later, Mosca's inequality, hybrid, the two-track plan) and the artifacts it produces. Start it from the Executive Overview button or a `?run=exec` link.
+- **A shorter, essentials-first learning path** [view:/learn] [persona:developer] [persona:executive]: My Path now leads with an Essentials track that covers the must-know material first and ends with a capstone on those essentials, so you can get the core in one sitting before deciding how much deeper to go.
+- **Try hybrid (classical + PQC) key exchange in the playground** [view:/playground/cacp]: the in-browser crypto-agility playground now bundles a hybrid KEM and a policy tester, so you can exercise a hybrid-migration policy end-to-end against the real engine.
+- **See your crypto-agility policy as a flowchart** [view:/playground/cacp]: the Policy screen now has a **Visual** tab that draws a policy as a decision pipeline — a request flows top-to-bottom through the rules in order and exits at Allow, Rekey, or Deny. Add rules from a palette, edit them inline, reorder and toggle them, drag nodes around, and switch between a vertical "waterfall" and a left-to-right "pipeline" layout.
+- **Watch a request travel through your policy** [view:/playground/cacp]: build a sample request on the Visual tab's Simulate panel, press Run, and a token animates along the exact path the request takes, ending on the verdict the real in-browser engine returns. The simulator now faithfully honours every rule type — including validity dates, key attributes, usage masks, and mechanism matches — so the animated verdict matches exactly what the engine would decide, with no rule silently passed.
+- **Catch policy mistakes before they bite** [view:/playground/cacp]: the Visual tab's Check panel flags conflicting rules (an algorithm both allowed and denied), dead defaults, empty rules that match nothing, and disabled rekey rules that would stop keys migrating — and clicking an issue jumps to the offending rule. The generated policy YAML is always one click away in a drawer.
+
+### Changed
+
+- **The product catalog is easier to browse and better sourced** [view:/migrate]: the catalog's category taxonomy was consolidated from 130 overlapping labels down to 61 clean categories, and vendor/product entries were re-audited against their source proof so the filters and vendor roadmaps line up with what vendors actually ship.
+- **Crypto-agility policies stay in sync and match the standards** [view:/playground/cacp]: the playground's policy catalog is now guarded by a sync gate, and its CNSA-2.0 and FIPS policies were corrected — single-tree LMS/XMSS only for firmware/software signing, Register/Import gated alongside Create, all 12 SLH-DSA parameter sets recognised, and honest transition dates.
+
+### Fixed
+
+- **A hub-wide accuracy sweep** [view:/algorithms] [view:/learn] [view:/compliance] [view:/faq] [view:/about] [view:/migrate] [view:/library]: a 2026-07-01 re-audit corrected roughly 150 factual errors across rendered pages, Learn modules, the FAQ, data files, and page metadata — including CNSA 2.0 timelines and approved algorithms, FIPS 206 now shown as a draft, removal of a fabricated "Windows enables PQC by default" claim, corrected 3GPP and KMIP references, and site self-description counts derived from real values (62 modules, 838 products, 332 leaders, 688 library entries, 34 tools). A second, web-verified pass on 2026-07-02 corrected a further set of details: vendor roadmap dates (NXP, Arm/Mbed-TLS), a mis-attributed AWS certificate reference, the RFC 9901 vs SD-JWT-VC label, the signature on-ramp status (now nine third-round candidates per NIST IR 8610), the correct Bouncy Castle release that first shipped the final NIST algorithms, the published KMIP version, the Windows PQC update reference, and several chatbot-answer citations — while confirming that RFC 9980 (Post-Quantum Cryptography in OpenPGP) is genuinely published and keeping it cited as an RFC.
+- **Learning paths send the right roles to the right modules, with correct standards** [view:/learn] [persona:developer]: persona paths were reconciled (developer targeting and estimated path times fixed), the TLS module now cites the correct standard (RFC 8446), and the ACME walkthrough carries an accurate disclaimer.
+- **Straight talk about what the playground preview does** [view:/playground/cacp]: corrected the Preview's "no audit" wording and labelled FrodoKEM honestly rather than implying support the engine doesn't provide.
+
+### Data
+
+- **Refreshed datasets and search index** [view:/explore] [view:/migrate] [view:/leaders]: the leaders, compliance, algorithm-reference, library, module-QA, and vendor-roadmap datasets were revised (older files archived) and the site's search/RAG index was rebuilt so search reflects the corrected content.
+
 ## [4.6.0] - 2026-06-30
 
 A simulation-fidelity and executive-experience release: every simulation phase now matches the published migration framework exactly, executives get a purpose-built view across the whole hub, the protocol support matrix is updated to what's actually shipping today, and the product catalog had an accuracy sweep.

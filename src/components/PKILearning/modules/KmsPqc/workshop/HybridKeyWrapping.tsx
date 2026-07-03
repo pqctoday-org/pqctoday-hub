@@ -100,7 +100,7 @@ az keyvault key create \\
   --size 256
 # AES-256 is quantum-resistant for symmetric wrapping`,
     hybrid: `// Azure Key Vault — Hybrid (planned)
-// Microsoft targets CNSA 2.0 compliance by 2029
+// Microsoft targets CNSA 2.0 early adoption by 2029, complete transition by 2033
 // Current approach: RSA + AES-256 dual wrapping
 az keyvault key create \\
   --vault-name my-vault \\
