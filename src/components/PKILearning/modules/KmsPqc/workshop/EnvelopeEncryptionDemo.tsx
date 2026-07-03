@@ -678,7 +678,10 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           gcmIv: gcmIv ?? null,
         })
       }
-      setExecutedSteps((prev) => new Set([...prev, currentStep]))
+      // One Execute runs the whole envelope flow (keygen → DEK → wrap → unwrap →
+      // KCV), so every step's data now exists. Mark them all executed rather than
+      // forcing a redundant re-run per step tab before "Complete & Next" unlocks.
+      setExecutedSteps(new Set(ENVELOPE_ENCRYPTION_STEPS.map((_, i) => i)))
     } catch (e) {
       setLiveError(translateCryptoError(e instanceof Error ? e.message : String(e)))
     } finally {

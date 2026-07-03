@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import {
   Info,
   X,
@@ -731,6 +731,26 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   const [mtu, setMtu] = useState<number>(1500)
   const [allowFragmentation, setAllowFragmentation] = useState<boolean>(true)
   const [ssState, setSsState] = useState<StrongSwanState>('UNINITIALIZED')
+  // Live elapsed-time counter shown while the strongSwan WASM is still booting,
+  // so a slow first-load compile (budgeted up to ~2 min) reads as "working N s"
+  // rather than an indistinguishable hang.
+  const [loadElapsedSec, setLoadElapsedSec] = useState(0)
+  const loadStartRef = useRef<number | null>(null)
+  useEffect(() => {
+    const isBooting = ssState === 'UNINITIALIZED' || ssState === 'LOADING'
+    if (!isBooting) {
+      loadStartRef.current = null
+      setLoadElapsedSec(0)
+      return
+    }
+    if (loadStartRef.current == null) loadStartRef.current = Date.now()
+    const id = setInterval(() => {
+      if (loadStartRef.current != null) {
+        setLoadElapsedSec(Math.floor((Date.now() - loadStartRef.current) / 1000))
+      }
+    }, 1000)
+    return () => clearInterval(id)
+  }, [ssState])
   const [charonFailed, setCharonFailed] = useState(false)
   const [sabError, setSabError] = useState<string | null>(null)
   const [rpcMode, setRpcMode] = useState(() => {
@@ -3351,12 +3371,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         ) : ssState === 'UNINITIALIZED' ? (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
             <Loader2 size={10} className="animate-spin" />
-            Loading strongSwan WASM…
+            Loading strongSwan WASM… ({loadElapsedSec}s)
           </span>
         ) : ssState === 'LOADING' ? (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
             <Loader2 size={10} className="animate-spin" />
-            Compiling strongSwan WASM — can take up to ~2 minutes on first load…
+            Compiling strongSwan WASM ({loadElapsedSec}s) — can take up to ~2 minutes on first load…
           </span>
         ) : ssState === 'ERROR' ? (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-status-error/10 px-2.5 py-0.5 text-xs font-medium text-status-error">

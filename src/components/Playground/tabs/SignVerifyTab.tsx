@@ -1448,10 +1448,16 @@ const SignVerifyTabSoftware: React.FC = () => {
                   logEvent('Playground', 'Sign Message')
                 }}
                 disabled={!selectedSignKeyId || loading}
+                title={!selectedSignKeyId ? 'Select a private key to continue' : ''}
                 className="w-full py-3 rounded-lg bg-success/20 text-success border border-success/30 hover:bg-success/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Sign Message
               </Button>
+              {!selectedSignKeyId && !loading && (
+                <p className="mt-2 text-xs text-muted-foreground text-center">
+                  Generate or pick a signing key above to enable this.
+                </p>
+              )}
             </div>
           </div>
 

@@ -290,19 +290,63 @@ export function CertCapacityCalculator() {
             ).toFixed(1)}
             x
           </span>
-          . However, ML-DSA is heavily optimized for fast signing operations — it requires{' '}
-          <span className="font-mono bg-muted px-1 py-0.5 rounded text-primary">
-            {Math.abs(
-              100 -
-                (results.find((r) => r.algo === 'ML-DSA-44')!.cpuCorePercent /
-                  ecdsaRef.cpuCorePercent) *
-                  100
-            ).toFixed(0)}
-            % less
-          </span>{' '}
-          CPU overhead per handshake compared to ECDSA.
+          . Per-signature <span className="font-semibold">CPU cost</span> is broadly comparable
+          between the two on modern AVX2 hardware and is highly implementation- and
+          platform-dependent (ML-DSA signing is SHAKE/AVX2-bound; ECDSA is
+          modular-arithmetic-bound), so published sign-latency numbers vary by 2–3× across sources
+          and CPUs. The robust, reproducible migration cost here is{' '}
+          <span className="font-semibold text-primary">size and bandwidth</span>, not CPU — treat
+          the CPU chart below as one reference point, not a guarantee.
         </p>
       </div>
+
+      {/* Hybrid / staged-migration worked example */}
+      {(() => {
+        const ec = CERT_CAPACITY_DEFAULTS.find((a) => a.name === 'ECDSA P-256')
+        const ml = CERT_CAPACITY_DEFAULTS.find((a) => a.name === 'ML-DSA-44')
+        if (!ec || !ml) return null
+        // Leaf cert bytes = subject public key + the CA's signature over it + ~512 B ASN.1 overhead.
+        const leaf = (subjectPub: number, caSig: number) => subjectPub + caSig + 512
+        const classicalLeaf = leaf(ec.publicKeyBytes, ec.signatureBytes)
+        const pqcLeaf = leaf(ml.publicKeyBytes, ml.signatureBytes)
+        // Realistic near-term path: roots/intermediates stay ECDSA (small, long-lived,
+        // rarely re-issued) while only the end-entity key becomes PQC — so the leaf carries
+        // an ML-DSA public key but still a small ECDSA CA signature.
+        const hybridLeaf = leaf(ml.publicKeyBytes, ec.signatureBytes)
+        const pct = (n: number) => `${((n / classicalLeaf) * 100 - 100).toFixed(0)}%`
+        return (
+          <div className="glass-panel p-4 border-l-4 border-l-accent bg-accent/5 space-y-2">
+            <h4 className="text-sm font-bold text-foreground">
+              Staged migration: hybrid PKI (classical CA, PQC leaf)
+            </h4>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              A full flag-day switch to an all-PQC chain is rarely the first step. The realistic
+              near-term path keeps roots and intermediates on ECDSA/RSA (small, long-lived, verified
+              rarely) and moves only the end-entity key to PQC — which confines most of the size
+              increase to a single leaf. Worked example, ECDSA P-256 &rarr; ML-DSA-44:
+            </p>
+            <ul className="text-xs font-mono text-foreground space-y-1">
+              <li>
+                All-classical leaf ={' '}
+                <span className="text-primary">{classicalLeaf.toLocaleString()} B</span> (baseline)
+              </li>
+              <li>
+                Hybrid leaf (ECDSA CA sig + ML-DSA-44 key) ={' '}
+                <span className="text-accent">{hybridLeaf.toLocaleString()} B</span> (+
+                {pct(hybridLeaf)})
+              </li>
+              <li>
+                All-PQC leaf (ML-DSA-44 CA sig + key) ={' '}
+                <span className="text-primary">{pqcLeaf.toLocaleString()} B</span> (+{pct(pqcLeaf)})
+              </li>
+            </ul>
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              The hybrid leaf avoids the large PQC CA signature, so a staged rollout absorbs a
+              fraction of the all-PQC bloat while still making the end-entity key quantum-safe.
+            </p>
+          </div>
+        )
+      })()}
 
       {/* Charts */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

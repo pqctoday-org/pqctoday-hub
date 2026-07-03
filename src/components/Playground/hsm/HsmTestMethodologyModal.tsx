@@ -54,9 +54,13 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
           <p className="text-muted-foreground leading-relaxed">
             This playground hosts a browser-native PKCS#11 v3.2 emulator (SoftHSMv3 compiled to
             WebAssembly via Emscripten). The emulator is validated through three independent layers
-            before being exposed in the UI. All operations strictly follow{' '}
-            <span className="font-semibold text-foreground">OASIS PKCS#11 v3.2 (October 2023)</span>
-            .
+            before being exposed in the UI. The PQC mechanisms it emulates (CKM_ML_KEM, CKM_ML_DSA,
+            CKM_SLH_DSA) are defined in{' '}
+            <span className="font-semibold text-foreground">
+              OASIS PKCS#11 v3.2 Committee Specification 01 (November 2025)
+            </span>
+            ; v3.1 is the current ratified OASIS Standard (23 July 2023) and does not yet include
+            these PQC mechanisms.
           </p>
 
           {/* Layer 1: ACVP KAT */}
