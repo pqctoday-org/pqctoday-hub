@@ -69,15 +69,52 @@ interface BuildArgs {
   simplified: boolean
 }
 
-function suggestRotationPeriod(dataSensitivity: string[], cryptoAgility: string): string {
+interface RotationSuggestion {
+  value: string
+  rationale: string
+}
+
+function suggestRotationPeriod(
+  dataSensitivity: string[],
+  cryptoAgility: string
+): RotationSuggestion {
   // Hardcoded crypto can't rotate often → push to longer rotation; agile orgs
   // can run aggressive 90-day rotation safely.
-  if (cryptoAgility === 'hardcoded') return '2-years'
-  if (cryptoAgility === 'agile' && dataSensitivity.includes('critical')) return '90-days'
-  if (dataSensitivity.includes('critical')) return '90-days'
-  if (dataSensitivity.includes('high')) return '180-days'
-  if (dataSensitivity.includes('medium')) return '1-year'
-  return ''
+  if (cryptoAgility === 'hardcoded')
+    return {
+      value: '2-years',
+      rationale:
+        'Suggested from your assessment: hardcoded crypto (no runtime algorithm swap) can’t be rotated often, so this defaults to the longest safe interval.',
+    }
+  if (cryptoAgility === 'agile' && dataSensitivity.includes('critical'))
+    return {
+      value: '90-days',
+      rationale:
+        'Suggested from your assessment: a crypto-agile architecture plus critical data sensitivity supports an aggressive 90-day rotation.',
+    }
+  if (dataSensitivity.includes('critical'))
+    return {
+      value: '90-days',
+      rationale:
+        'Suggested from your assessment: critical data sensitivity favors the shortest rotation window.',
+    }
+  if (dataSensitivity.includes('high'))
+    return {
+      value: '180-days',
+      rationale:
+        'Suggested from your assessment: high data sensitivity favors a moderate rotation window.',
+    }
+  if (dataSensitivity.includes('medium'))
+    return {
+      value: '1-year',
+      rationale:
+        'Suggested from your assessment: medium data sensitivity supports an annual rotation.',
+    }
+  return {
+    value: '',
+    rationale:
+      'No assessment data available to suggest a period — choose based on data sensitivity and crypto agility.',
+  }
 }
 
 function generalSection(args: BuildArgs): ArtifactSection {
@@ -180,7 +217,8 @@ function cryptoAlgorithmSections(args: BuildArgs): ArtifactSection[] {
     { value: 'X25519MLKEM768', label: 'X25519MLKEM768 (hybrid, IETF draft)' },
     {
       value: 'FrodoKEM-1344',
-      label: 'FrodoKEM-1344-SHAKE (NIST PQC alternate — draft, not standardized)',
+      label:
+        'FrodoKEM-1344-SHAKE (BSI/ANSSI-recommended alternate — not on a NIST standardization track)',
     },
     {
       value: 'HQC-128',
@@ -366,7 +404,8 @@ function keyManagementSections(args: BuildArgs): ArtifactSection[] {
             { value: '1-year', label: '1 year' },
             { value: '2-years', label: '2 years' },
           ],
-          defaultValue: suggestedRotation,
+          defaultValue: suggestedRotation.value,
+          helperText: suggestedRotation.rationale,
         },
         {
           id: 'storage',
@@ -683,7 +722,7 @@ function renderKpiDriftRulesMd(rules: KpiDriftRule[]): string {
   }
   md += '\n---\n\n'
   md +=
-    '*Aligned to NIST CSWP 39 §5.2 - Crypto Security Policy Enforcement, and §5.4 - Measuring Migration Progress. https://doi.org/10.6028/NIST.CSWP.39*\n'
+    '*Aligned to NIST CSWP 39 §5.2 - Crypto Security Policy Enforcement, and §5.4 - Measuring Migration Progress. https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
 
   // N5: sanitise non-ASCII punctuation in the exported markdown string only.
   md = md.replace(/—/g, '-').replace(/–/g, '-').replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
@@ -702,6 +741,7 @@ export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = (
 }) => {
   const [activePolicyType, setActivePolicyType] = useState<PolicyType>('crypto-algorithm')
   const { addExecutiveDocument } = useModuleStore()
+  const executiveDocuments = useModuleStore((s) => s.artifacts.executiveDocuments)
   const execData = useExecutiveModuleData()
   const country = useAssessmentStore((s) => s.country)
   const industry = useAssessmentStore((s) => s.industry)
@@ -723,6 +763,23 @@ export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = (
     setKpiDriftRules((prev) => prev.filter((_, i) => i !== idx))
 
   const simplified = selectedPersona === 'executive' || selectedPersona === 'curious'
+
+  // Latest saved draft per policy type — keyed so switching tabs restores that
+  // tab's own draft instead of cross-contaminating it with another type's.
+  const savedFormDataByType = useMemo(() => {
+    const sorted = (executiveDocuments ?? [])
+      .filter((d) => d.type === 'policy-draft' && d.inputs)
+      .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0))
+    const map: Partial<Record<PolicyType, Record<string, Record<string, string | string[]>>>> = {}
+    for (const doc of sorted) {
+      const inputs = doc.inputs as
+        | { policyType?: PolicyType; formData?: Record<string, Record<string, string | string[]>> }
+        | undefined
+      if (!inputs?.policyType || !inputs.formData || map[inputs.policyType]) continue
+      map[inputs.policyType] = inputs.formData
+    }
+    return map
+  }, [executiveDocuments])
 
   const frameworkNames = useMemo(
     () => execData.frameworksByIndustry.map((f) => f.label).slice(0, 12),
@@ -781,6 +838,8 @@ export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = (
         type: 'policy-draft',
         title: policyLabel,
         data: markdown,
+        // Keyed by policyType so a later restore only rehydrates the matching tab.
+        inputs: { policyType: activePolicyType, formData: data },
         createdAt: Date.now(),
       })
     },
@@ -864,6 +923,7 @@ export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = (
         description={POLICY_TYPES.find((p) => p.id === activePolicyType)?.description}
         sections={sections}
         onExport={handleExport}
+        initialData={savedFormDataByType[activePolicyType]}
         exportFilename={`pqc-${activePolicyType}-policy`}
         renderPreview={(data) =>
           renderPolicyPreview(activePolicyType, data) + renderKpiDriftRulesMd(kpiDriftRules)

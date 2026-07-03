@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
 
-interface InfraModernizationState {
+export interface InfraModernizationState {
   // PKI modernization
   rootCaYears: string
   intermediateCaYears: string
@@ -41,8 +41,13 @@ interface InfraModernizationState {
 }
 
 /** Protocols exercised with PQC handshakes during Phase 6 compatibility testing. */
-const PROTOCOL_OPTIONS = ['TLS 1.3', 'IKEv2/IPsec', 'QUIC', 'All production middleboxes'] as const
-type ProtocolId = (typeof PROTOCOL_OPTIONS)[number]
+export const PROTOCOL_OPTIONS = [
+  'TLS 1.3',
+  'IKEv2/IPsec',
+  'QUIC',
+  'All production middleboxes',
+] as const
+export type ProtocolId = (typeof PROTOCOL_OPTIONS)[number]
 
 const yesNo = (on: boolean): string => (on ? 'Yes' : 'No')
 
@@ -75,7 +80,7 @@ export function capacityFlags(cpuImpactPct: string, certStorageMultiplier: strin
   return out
 }
 
-function buildMarkdown(s: InfraModernizationState): string {
+export function buildMarkdown(s: InfraModernizationState): string {
   const lines: string[] = []
   lines.push('# Infrastructure Modernization Plan')
   lines.push('')
@@ -142,6 +147,11 @@ function buildMarkdown(s: InfraModernizationState): string {
     '*Aligned to the Applied Quantum Phase 6 — Infrastructure Modernization & Performance ' +
       '(activities 6.1–6.5).*'
   )
+  lines.push(
+    '*PKI modernization grounded in NIST CSWP 39 §4.2 (Key Store and Certificate Management); ' +
+      'network/protocol compatibility grounded in NIST CSWP 39 §3.2.1 (Algorithm Transitions in ' +
+      'Deployed Protocols). https://doi.org/10.6028/NIST.CSWP.39-upd1*'
+  )
   return lines.join('\n')
 }
 
@@ -206,6 +216,14 @@ export const InfraModernizationPlanner: React.FC = () => {
 
       <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
         <h3 className="text-sm font-semibold text-foreground">PKI Modernization</h3>
+        <p className="text-[11px] text-muted-foreground rounded-md border border-border bg-muted/30 p-2">
+          <span className="font-semibold text-foreground">Why these defaults:</span> the
+          framework&apos;s PKI modernization guidance (activity 6.1) recommends shortening root CA
+          lifetimes from 20+ years to 10 years, intermediate CAs to 5 years, and end-entity
+          certificates to 90–365 days — this limits Trust-Now-Forge-Later exposure on long-lived
+          signing keys and builds the certificate-rotation discipline needed before dual-stack/PQC
+          certificates arrive (NIST CSWP 39 §4.2 — Key Store and Certificate Management).
+        </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="block">
             <label
@@ -301,6 +319,12 @@ export const InfraModernizationPlanner: React.FC = () => {
             onChange={(e) => set('hsmInventory', e.target.value)}
             placeholder="e.g. 4× Luna 7 (fw 7.7, PQC-capable), 2× nCipher (fw 12.6, no PQC)"
           />
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            Framework vendor notes (activity 6.2): Thales Luna 7.8.0+ introduced initial PQC support
+            (ML-KEM, ML-DSA); Luna 7.9 (June 2025) adds further capabilities. Utimaco Quantum
+            Protect is a new hardware variant — not a firmware upgrade for existing devices, so
+            budget for hardware replacement if running older Utimaco models.
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button
@@ -355,7 +379,8 @@ export const InfraModernizationPlanner: React.FC = () => {
         </h3>
         <p className="text-xs text-muted-foreground">
           Mark each protocol verified to complete a PQC handshake through your production network
-          and middleboxes.
+          and middleboxes. Grounded in NIST CSWP 39 §3.2.1 (Algorithm Transitions in Deployed
+          Protocols).
         </p>
         <div className="flex flex-wrap gap-2">
           {PROTOCOL_OPTIONS.map((id) => {
@@ -383,6 +408,14 @@ export const InfraModernizationPlanner: React.FC = () => {
 
       <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
         <h3 className="text-sm font-semibold text-foreground">Capacity Plan</h3>
+        <p className="text-[11px] text-muted-foreground rounded-md border border-border bg-muted/30 p-2">
+          <span className="font-semibold text-foreground">Why these thresholds:</span> the
+          framework&apos;s capacity guidance (activity 6.5) expects roughly a 5–15% CPU increase for
+          signature-heavy workloads and a 2–5× certificate-storage increase at scale. The readiness
+          flags below trigger at ≥20% CPU impact — above that typical range, so headroom needs
+          explicit verification — and at ≥2× storage growth — the low end of the expected range, so
+          provisioning should already be underway.
+        </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="block">
             <label htmlFor="infra-cpu-impact" className="text-xs font-medium text-muted-foreground">

@@ -212,7 +212,7 @@ export function buildArchitectVariant(data: ExecutiveModuleData): PitchVariant {
     md += `${get('actions', 'recommendations')}\n\n---\n\n`
 
     md +=
-      '*Aligned to NIST CSWP 39 §3.2.4 (Hybrid Algorithms), §5.2 (Crypto Security Policy Enforcement), §5.4 (Crypto Architecture). https://doi.org/10.6028/NIST.CSWP.39*\n'
+      '*Aligned to NIST CSWP 39 §3.2.4 (Hybrid Algorithms), §5.2 (Crypto Security Policy Enforcement), §5.4 (Crypto Architecture). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
     md += '*Customized for the Architect role via PQC Today Command Center.*\n'
     return md
   }

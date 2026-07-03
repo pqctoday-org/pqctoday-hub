@@ -12,10 +12,34 @@
  * Use this anywhere markdown needs to be displayed — never roll a hand-line
  * renderer; tables and lists will be mangled.
  */
-import type { HTMLAttributes } from 'react'
+import { useId, type HTMLAttributes } from 'react'
 import ReactMarkdown, { type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { cn } from '@/lib/utils'
+import { MermaidDiagram } from '@/components/Simulation/MermaidDiagram'
+
+function CodeRenderer(props: HTMLAttributes<HTMLElement> & { inline?: boolean }) {
+  const { inline, className, children, ...rest } = props
+  const id = useId()
+  if (!inline && className === 'language-mermaid') {
+    return <MermaidDiagram source={String(children).replace(/\n$/, '')} id={id} />
+  }
+  if (inline) {
+    return (
+      <code
+        className="bg-muted px-1 py-0.5 rounded text-[0.85em] font-mono text-foreground"
+        {...rest}
+      >
+        {children}
+      </code>
+    )
+  }
+  return (
+    <code className={cn('font-mono text-xs text-foreground/90', className)} {...rest}>
+      {children}
+    </code>
+  )
+}
 
 const MD_COMPONENTS: Components = {
   h1: ({ children }) => (
@@ -86,24 +110,7 @@ const MD_COMPONENTS: Components = {
       {children}
     </blockquote>
   ),
-  code: (props: HTMLAttributes<HTMLElement> & { inline?: boolean }) => {
-    const { inline, className, children, ...rest } = props
-    if (inline) {
-      return (
-        <code
-          className="bg-muted px-1 py-0.5 rounded text-[0.85em] font-mono text-foreground"
-          {...rest}
-        >
-          {children}
-        </code>
-      )
-    }
-    return (
-      <code className={cn('font-mono text-xs text-foreground/90', className)} {...rest}>
-        {children}
-      </code>
-    )
-  },
+  code: CodeRenderer,
   pre: ({ children }) => (
     <pre className="bg-muted/60 border border-border rounded-md p-3 my-3 text-xs font-mono overflow-x-auto">
       {children}

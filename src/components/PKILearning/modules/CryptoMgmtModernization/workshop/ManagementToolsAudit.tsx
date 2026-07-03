@@ -67,7 +67,8 @@ const TOOLS: ToolDef[] = [
   {
     id: 'asset-management',
     name: 'Asset Management (CMDB / SBOM pipeline)',
-    description: 'SBOM generation, CBOM enrichment, CMDB feeds to the Information Repository.',
+    description:
+      'SBOM generation, CBOM enrichment, and CMDB feeds that keep the crypto asset inventory current.',
     cpmPillar: 'Inventory',
     cswpRef: 'CSWP.39 §5 (Inventory step)',
     importance: 3,
@@ -75,7 +76,22 @@ const TOOLS: ToolDef[] = [
       0: 'Generate a CycloneDX SBOM for your top 5 critical applications using Syft or cdxgen.',
       1: 'Enrich SBOMs with crypto component metadata (FIPS status, ESV, PQC readiness); store in CMDB.',
       2: 'Automate SBOM generation in CI/CD; set up a nightly CBOM freshness check.',
-      3: 'Verify the pipeline feeds the Information Repository automatically; confirm completeness KPI is tracked.',
+      3: 'Verify the pipeline updates the crypto asset inventory automatically; confirm completeness KPI is tracked.',
+    },
+  },
+  {
+    id: 'config-management',
+    name: 'Configuration Management (Policy-as-Code / CLM)',
+    description:
+      'Crypto policy-as-code enforcement and certificate-lifecycle management — pushing approved algorithms and cert renewals to systems automatically.',
+    cpmPillar: 'Configuration',
+    cswpRef: 'CSWP.39 §5 (Identify Gaps step)',
+    importance: 3,
+    recommendations: {
+      0: 'Adopt a certificate-lifecycle management (CLM) tool (e.g., Venafi, Keyfactor Command, HashiCorp Vault PKI) for at least one critical CA chain.',
+      1: 'Codify your crypto policy baseline (approved algorithms, key sizes, cert lifetimes) as policy-as-code; apply it manually during deployments.',
+      2: 'Automate policy-as-code enforcement in CI/CD and CLM-driven cert renewal across production systems.',
+      3: 'Confirm cert renewal is fully automated (no manual CSR handling) and that policy drift triggers automatic remediation.',
     },
   },
   {
@@ -177,8 +193,10 @@ export const ManagementToolsAudit: React.FC = () => {
     lines.push('')
     lines.push(`**Tool-chain completeness:** ${completeness}%`)
     lines.push('')
-    lines.push('Per NIST CSWP.39 §5 (Identify Gaps step) — automation pipeline that feeds the')
-    lines.push('Information Repository.')
+    lines.push(
+      'Per NIST CSWP.39 §5 — auditing the discovery, assessment, configuration, and enforcement'
+    )
+    lines.push('tooling that keeps your crypto asset inventory and risk data current.')
     lines.push('')
     lines.push('## Coverage by tool category')
     lines.push('')
@@ -231,9 +249,10 @@ export const ManagementToolsAudit: React.FC = () => {
       )}
       <p className="text-sm text-muted-foreground">
         CSWP.39 §5 step 3 (Identify Gaps) requires auditing the Management Tools layer — the
-        automation pipeline that feeds the Information Repository. Without these tools, your Risk
-        Analysis Engine operates on incomplete, manually maintained data. Rate your current coverage
-        for each tool category, then review the gap recommendations.
+        discovery, assessment, configuration, and enforcement tooling that keeps your crypto
+        inventory and risk data current. Without these tools, your Risk Analysis Engine operates on
+        incomplete, manually maintained data. Rate your current coverage for each tool category,
+        then review the gap recommendations.
       </p>
 
       {/* Tool coverage cards */}
@@ -368,17 +387,24 @@ export const ManagementToolsAudit: React.FC = () => {
               ))}
             </div>
           </div>
-        ) : (
+        ) : completeness >= 75 ? (
           <div className="flex items-center gap-2 text-status-success text-sm font-medium">
             <CheckCircle2 size={16} />
             All tool categories at Partial or Automated coverage — proceed to Step 7.
           </div>
+        ) : (
+          <div className="flex items-center gap-2 text-status-warning text-sm font-medium">
+            <AlertCircle size={16} />
+            No category is below Partial, but tool-chain completeness is only {completeness}% —
+            raise categories to Automated before relying on Step 7&apos;s Risk Analysis Engine.
+          </div>
         )}
 
         <div className="text-xs text-muted-foreground border-t border-border pt-3 mt-1">
-          <strong className="text-foreground">CSWP.39 §5.3:</strong> The Information Repository must
-          be fed by automated Management Tools — not manual surveys. Tool-chain completeness below
-          75% means the Risk Analysis Engine (Step 7) is operating on incomplete data.
+          <strong className="text-foreground">CSWP.39 §5:</strong> Discovery, assessment,
+          configuration, and enforcement tooling must be automated — not manual surveys. Tool-chain
+          completeness below 75% means the Risk Analysis Engine (Step 7) is operating on incomplete
+          data.
         </div>
       </div>
 

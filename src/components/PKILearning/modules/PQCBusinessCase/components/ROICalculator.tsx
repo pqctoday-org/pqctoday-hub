@@ -27,6 +27,7 @@ import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import {
   DEFAULT_COMPLIANCE_INCIDENT_RATE,
   composeQuantumMultiplier,
@@ -96,26 +97,35 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
       data.assessmentResult?.complianceImpacts?.filter((c) => c.requiresPQC === true).length ?? 0
     if (mandatedCount > 0) return mandatedCount
     if (data.complianceSelections.length > 0) return data.complianceSelections.length
-    return data.frameworksByIndustry.length
+    // Cold start (no assessment, no compliance selections): don't default to every
+    // framework in the industry (170 on this platform inflates the headline ROI).
+    return Math.min(data.frameworksByIndustry.length, 5)
   }, [
     data.assessmentResult?.complianceImpacts,
     data.complianceSelections.length,
     data.frameworksByIndustry.length,
   ])
 
-  const [assumptions, setAssumptions] = useState<ROIAssumptions>(() => ({
-    productsToMigrate: Math.min(data.totalProducts, 50),
-    costPerProduct: 75_000,
-    annualOpexPct: 15,
-    hndlExposurePct: 50,
-    crqcAttackerUpliftPct: 50,
-    detectionTimelineUpliftPct: 50,
-    breachProbability: 15,
-    applicableFrameworks: defaultApplicableFrameworks,
-    penaltyPerIncident: 2_000_000,
-    horizonYears: 3,
-    discountRatePct: 10,
-  }))
+  // Restore the user's last-saved ROI model (whole assumptions blob) so the
+  // calculator round-trips instead of resetting to cold-start defaults.
+  const savedAssumptions = useSavedArtifactInputs<ROIAssumptions>('roi-model')
+
+  const [assumptions, setAssumptions] = useState<ROIAssumptions>(
+    () =>
+      savedAssumptions ?? {
+        productsToMigrate: Math.min(data.totalProducts, 50),
+        costPerProduct: 75_000,
+        annualOpexPct: 15,
+        hndlExposurePct: 50,
+        crqcAttackerUpliftPct: 50,
+        detectionTimelineUpliftPct: 50,
+        breachProbability: 15,
+        applicableFrameworks: defaultApplicableFrameworks,
+        penaltyPerIncident: 2_000_000,
+        horizonYears: 3,
+        discountRatePct: 10,
+      }
+  )
 
   const updateAssumption = useCallback(
     <K extends keyof ROIAssumptions>(key: K, value: ROIAssumptions[K]) => {
@@ -306,7 +316,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     md += `\n*Educational estimate for planning purposes. Breach baseline: IBM Cost of a Data Breach Report 2024. Compliance penalties: published regulatory enforcement data.*\n`
     md += '\n---\n\n'
     md +=
-      '*Aligned to NIST CSWP 39 §2.4 (Resource and Performance Challenges) and §5 (Strategic Plan). https://doi.org/10.6028/NIST.CSWP.39*\n'
+      '*Aligned to NIST CSWP 39 §2.4 (Resource and Performance Challenges) and §5 (Strategic Plan). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
     return md
   }, [
     assumptions,
@@ -348,25 +358,29 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
         </div>
       )}
 
-      {(() => {
-        const sources: string[] = []
-        if (data.industry) sources.push(`industry (${data.industry})`)
-        if (data.riskScore !== null) sources.push('assessment risk score')
-        if (data.myFrameworks.length > 0)
-          sources.push(
-            `${data.myFrameworks.length} framework${data.myFrameworks.length !== 1 ? 's' : ''} from /compliance`
-          )
-        if (data.myProducts.length > 0)
-          sources.push(
-            `${data.myProducts.length} product${data.myProducts.length !== 1 ? 's' : ''} from /migrate`
-          )
-        if (data.criticalThreatCount > 0 && data.industry)
-          sources.push(`${data.industryThreats.length} industry threats`)
-        if (data.migrationDeadlineYear)
-          sources.push(`deadline ${data.migrationDeadlineYear} from /timeline`)
-        if (sources.length === 0) return null
-        return <PreFilledBanner summary={`ROI defaults pulled from ${sources.join(' + ')}.`} />
-      })()}
+      {savedAssumptions && (
+        <PreFilledBanner summary="Restored your last saved ROI assumptions — adjust the sliders below to update them." />
+      )}
+      {!savedAssumptions &&
+        (() => {
+          const sources: string[] = []
+          if (data.industry) sources.push(`industry (${data.industry})`)
+          if (data.riskScore !== null) sources.push('assessment risk score')
+          if (data.myFrameworks.length > 0)
+            sources.push(
+              `${data.myFrameworks.length} framework${data.myFrameworks.length !== 1 ? 's' : ''} from /compliance`
+            )
+          if (data.myProducts.length > 0)
+            sources.push(
+              `${data.myProducts.length} product${data.myProducts.length !== 1 ? 's' : ''} from /migrate`
+            )
+          if (data.criticalThreatCount > 0 && data.industry)
+            sources.push(`${data.industryThreats.length} industry threats`)
+          if (data.migrationDeadlineYear)
+            sources.push(`deadline ${data.migrationDeadlineYear} from /timeline`)
+          if (sources.length === 0) return null
+          return <PreFilledBanner summary={`ROI defaults pulled from ${sources.join(' + ')}.`} />
+        })()}
 
       {/* Financial Summary KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

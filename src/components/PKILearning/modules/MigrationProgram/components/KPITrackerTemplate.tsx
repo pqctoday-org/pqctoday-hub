@@ -10,8 +10,8 @@ import {
   ExportableArtifact,
   KpiPersonaSelector,
 } from '@/components/PKILearning/common/executive'
-import type { KpiPersonaId } from '@/data/kpiCatalog'
-import { KPI_PERSONAS, buildDimensions } from '@/data/kpiCatalog'
+import type { KpiDefinition, KpiPersonaId } from '@/data/kpiCatalog'
+import { KPI_CATALOG, KPI_PERSONAS, buildDimensions } from '@/data/kpiCatalog'
 import { rowsToCsv } from '@/services/export/csvExport'
 
 const MODULE_ID = 'migration-program'
@@ -33,6 +33,26 @@ function trendSummary(history: { ts: number; score: number }[]): string {
   const delta = last - first
   const arrow = delta > 2 ? '↑' : delta < -2 ? '↓' : '→'
   return `${arrow} ${delta > 0 ? '+' : ''}${delta.toFixed(0)} over ${history.length} snapshots`
+}
+
+// Control-framework cross-references, keyed by KPI id — already computed on
+// every KPI_CATALOG entry but previously never surfaced past the catalog.
+const KPI_MAPPINGS_BY_ID = new Map(KPI_CATALOG.map((k) => [k.id, k.mappings]))
+
+/** Per-layer rows expand a meta-KPI id to `${id}:${layer}` (see
+ *  `buildDimensions`'s vendor-readiness-by-layer handling) — fall back to the
+ *  meta-KPI's own mappings for those synthetic ids. */
+function mappingsFor(dimId: string): KpiDefinition['mappings'] {
+  return KPI_MAPPINGS_BY_ID.get(dimId) ?? KPI_MAPPINGS_BY_ID.get(dimId.split(':')[0])
+}
+
+function formatMappings(m: KpiDefinition['mappings']): string {
+  if (!m) return '—'
+  const parts: string[] = []
+  if (m.csf2) parts.push(`CSF 2.0 ${m.csf2}`)
+  if (m.iso27001) parts.push(`ISO 27001 ${m.iso27001}`)
+  if (m.soc2) parts.push(`SOC 2 ${m.soc2}`)
+  return parts.length > 0 ? parts.join(' · ') : '—'
 }
 
 interface KPITrackerTemplateProps {
@@ -97,10 +117,15 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
 
     const ew = (d: (typeof dimensions)[number]) =>
       d.id in userWeights ? (userWeights[d.id] ?? 0) : d.weight
+    // Manual KPIs with no computed baseline and no score yet read as "not yet
+    // scored" rather than a numeric 0 — excluded from the average so it
+    // doesn't read as alarmingly low before the user has entered anything.
+    const isPending = (d: (typeof dimensions)[number]) =>
+      d.notYetScored === true && (scores[d.id] ?? d.autoScore ?? 0) === 0
     let totalWeight = 0
     let weightedSum = 0
     for (const d of dimensions) {
-      if (d.disabled) continue
+      if (d.disabled || isPending(d)) continue
       const score = scores[d.id] ?? d.autoScore ?? 0
       weightedSum += score * ew(d)
       totalWeight += ew(d)
@@ -110,15 +135,17 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
     md += `**Persona Lens:** ${activePersona}\n`
     md += `**Overall Migration Progress: ${overall}/100**\n\n`
     md += '## KPI Dimensions\n\n'
-    md += '| KPI | Score | Weight | Target | Description |\n'
-    md += '|-----|-------|--------|--------|-------------|\n'
+    md += '| KPI | Score | Weight | Target | Framework Mappings | Description |\n'
+    md += '|-----|-------|--------|--------|---------------------|-------------|\n'
     for (const d of dimensions) {
       if (d.disabled) {
-        md += `| ${d.label} | _locked — ${d.disabledReason ?? 'no data'}_ | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${d.description} |\n`
+        md += `| ${d.label} | _locked — ${d.disabledReason ?? 'no data'}_ | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${formatMappings(mappingsFor(d.id))} | ${d.description} |\n`
         continue
       }
-      const score = scores[d.id] ?? d.autoScore ?? 0
-      md += `| ${d.label} | ${score}/100 | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${d.description} |\n`
+      const scoreCell = isPending(d)
+        ? '_not yet scored_'
+        : `${scores[d.id] ?? d.autoScore ?? 0}/100`
+      md += `| ${d.label} | ${scoreCell} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${formatMappings(mappingsFor(d.id))} | ${d.description} |\n`
     }
     md += '\n## Data Sources\n\n'
     md += `- Vendor / FIPS / threat / compliance KPIs auto-scored from your catalog, threats data, and assessment selections.\n`
@@ -127,7 +154,7 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
 
     md += '\n---\n\n'
     md +=
-      '*Aligned to NIST CSWP 39 §5.4 (Measuring Migration Progress) and §6.5 (Governance, Risk, and Compliance). https://doi.org/10.6028/NIST.CSWP.39*\n'
+      '*Aligned to NIST CSWP 39 §6.5 (Maturity Assessment for Crypto Agility). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
 
     return md
   }, [dimensions, activePersona, riskHistory, userScores, userWeights])
@@ -137,16 +164,28 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
   const exportCsv = useMemo(() => {
     const ew = (d: (typeof dimensions)[number]) =>
       d.id in userWeights ? (userWeights[d.id] ?? 0) : d.weight
-    const header = ['KPI', 'Score', 'Weight %', 'Target', 'Description', 'Persona']
+    const header = [
+      'KPI',
+      'Score',
+      'Weight %',
+      'Target',
+      'Framework Mappings',
+      'Description',
+      'Persona',
+    ]
     const rows = dimensions.map((d) => {
+      const pending = d.notYetScored === true && (userScores[d.id] ?? d.autoScore ?? 0) === 0
       const scoreCell = d.disabled
         ? `locked — ${d.disabledReason ?? 'no data'}`
-        : `${userScores[d.id] ?? d.autoScore ?? 0}/100`
+        : pending
+          ? 'not yet scored'
+          : `${userScores[d.id] ?? d.autoScore ?? 0}/100`
       return [
         d.label,
         scoreCell,
         `${Math.round(ew(d) * 100)}%`,
         d.target ?? '',
+        formatMappings(mappingsFor(d.id)),
         d.description,
         activePersona,
       ]

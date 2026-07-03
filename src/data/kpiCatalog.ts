@@ -664,6 +664,10 @@ export function buildDimensions(
 
     const auto = k.autoScore ? k.autoScore(data) : undefined
     const disabled = k.autoScore !== undefined && auto === null
+    // Pure manual KPIs (no autoScore function at all) have no computed
+    // baseline — until the user sets a value, they should read as "not yet
+    // scored" rather than a numeric 0 dragging the overall average down.
+    const notYetScored = k.autoScore === undefined
     const target = getKpiTarget(persona, country, k.id, k.defaultTarget)
     rows.push({
       id: k.id,
@@ -674,6 +678,7 @@ export function buildDimensions(
       userOverride: k.userOverride ?? true,
       disabled,
       disabledReason: disabled ? k.disabledReason : undefined,
+      notYetScored,
       target,
       targetLabel: target !== undefined ? `Target: ${target}` : undefined,
       disabledActionHref: disabled

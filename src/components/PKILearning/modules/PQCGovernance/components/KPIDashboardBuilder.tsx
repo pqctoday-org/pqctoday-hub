@@ -1,11 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo, useCallback, useRef, useEffect, useState } from 'react'
+import { Info } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { DataDrivenScorecard, KpiPersonaSelector } from '@/components/PKILearning/common/executive'
 import { CompleteStepAction } from '@/components/PKILearning/common/CompleteStepAction'
+import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
+import { MarkdownView } from '@/components/ui/MarkdownView'
 import type { KpiPersonaId } from '@/data/kpiCatalog'
 import { KPI_PERSONAS, buildDimensions } from '@/data/kpiCatalog'
 import type { PolicyOutput } from '../types'
@@ -34,13 +38,24 @@ interface KPIDashboardBuilderProps {
   policyOutput?: PolicyOutput | null
 }
 
+/** Persisted shape of a saved KPI dashboard — the read-back half of `persistScorecard`. */
+interface SavedKpiInputs {
+  scores?: Record<string, number>
+  weights?: Record<string, number>
+  activePersona?: KpiPersonaId
+}
+
 export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policyOutput }) => {
   const { addExecutiveDocument } = useModuleStore()
   const execData = useExecutiveModuleData()
   const globalPersona = usePersonaStore((s) => s.selectedPersona)
+  const savedInputs = useSavedArtifactInputs<SavedKpiInputs>('kpi-dashboard')
 
-  // Scoped persona override (does not mutate global persona store)
-  const [personaOverride, setPersonaOverride] = useState<KpiPersonaId | null>(null)
+  // Scoped persona override (does not mutate global persona store) — restored
+  // from the last saved dashboard if one exists.
+  const [personaOverride, setPersonaOverride] = useState<KpiPersonaId | null>(
+    () => savedInputs?.activePersona ?? null
+  )
   const activePersona: KpiPersonaId = personaOverride ?? coercePersona(globalPersona)
 
   const dimensions = useMemo(
@@ -49,8 +64,8 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
   )
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const scoresRef = useRef<Record<string, number>>({})
-  const weightsRef = useRef<Record<string, number>>({})
+  const scoresRef = useRef<Record<string, number>>(savedInputs?.scores ?? {})
+  const weightsRef = useRef<Record<string, number>>(savedInputs?.weights ?? {})
   useEffect(() => {
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
@@ -98,6 +113,9 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
       type: 'kpi-dashboard',
       title: `PQC Governance KPI Dashboard — ${activePersona}`,
       data: md,
+      // Persist the structured scorecard so it is restorable (round-trips through
+      // useSavedArtifactInputs on next mount).
+      inputs: { scores: scoresRef.current, weights: weightsRef.current, activePersona },
       createdAt: Date.now(),
     })
   }, [dimensions, addExecutiveDocument, activePersona])
@@ -136,6 +154,12 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
     [scheduleSave]
   )
 
+  const lockedDimensions = useMemo(() => dimensions.filter((d) => d.disabled), [dimensions])
+  const lockedWeightPct = useMemo(
+    () => Math.round(lockedDimensions.reduce((sum, d) => sum + d.weight, 0) * 100),
+    [lockedDimensions]
+  )
+
   const seedSources: string[] = []
   if (execData.industry) seedSources.push(`industry (${execData.industry})`)
   if (execData.riskScore !== null) seedSources.push('assessment risk score')
@@ -164,6 +188,15 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
       {seedSources.length > 0 && (
         <PreFilledBanner summary={`KPI defaults derived from ${seedSources.join(' + ')}.`} />
       )}
+      {lockedDimensions.length > 0 && (
+        <div className="rounded-md border border-status-warning/30 bg-status-warning/5 p-3 text-xs text-foreground/80">
+          <strong className="text-status-warning">
+            {lockedDimensions.length} of {dimensions.length} KPIs
+          </strong>{' '}
+          — {lockedWeightPct}% of weight — need assessment or compliance data to unlock. Complete
+          the linked step on each locked KPI below to bring it into the score.
+        </div>
+      )}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground flex-1">
           Adjust KPI sliders to reflect your organization&apos;s PQC migration progress. Vendor
@@ -180,6 +213,14 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
           <KpiPersonaSelector value={activePersona} onChange={setPersonaOverride} />
         </div>
       </div>
+
+      <CollapsibleSection
+        title="How this score is computed"
+        icon={<Info size={14} className="text-primary" aria-hidden="true" />}
+        defaultOpen={false}
+      >
+        <MarkdownView content={METHODOLOGY_MD} />
+      </CollapsibleSection>
 
       {execData.migrationDeadlineYear && (
         <div className="glass-panel p-4 border-primary/20">
@@ -199,6 +240,8 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
         colorScale="readiness"
         onScoreChange={handleScoreChange}
         onWeightChange={handleWeightChange}
+        initialScores={savedInputs?.scores}
+        initialWeights={savedInputs?.weights}
         allowWeightEditing={true}
         showExport={true}
         exportFilename={`pqc-governance-kpi-${activePersona}`}

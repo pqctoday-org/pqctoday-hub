@@ -15,7 +15,8 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
   {
     id: 'pqc-timeline',
     title: 'PQC Timeline Requirements',
-    description: 'Define when vendors must achieve post-quantum cryptographic readiness.',
+    description:
+      'Define when vendors must achieve post-quantum cryptographic readiness. Anchoring vendor deadlines to your own migration timeline is the primary lever for keeping vendor delay off your critical path (NIST CSWP 39 §5.3).',
     fields: [
       {
         id: 'deadline-year',
@@ -34,7 +35,7 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
           {
             value: '2030',
             label:
-              '2030 — CNSA 2.0 software/firmware signing & traditional networking exclusive; NIST IR 8547 RSA/ECC deprecation',
+              '2030 — CNSA 2.0 software/firmware signing & traditional networking exclusive; NIST IR 8547 RSA/ECC deprecation (draft, dates subject to change)',
           },
           {
             value: '2033',
@@ -42,7 +43,8 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
           },
           {
             value: '2035',
-            label: '2035 — CNSA 2.0 full enforcement (all NSS); NIST IR 8547 RSA/ECC disallowed',
+            label:
+              '2035 — CNSA 2.0 full enforcement (all NSS); NIST IR 8547 RSA/ECC disallowed (draft, dates subject to change)',
           },
         ],
       },
@@ -69,7 +71,8 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
   {
     id: 'fips-mandate',
     title: 'FIPS Validation Mandate',
-    description: 'Require FIPS 140-3 validated cryptographic modules for all vendor products.',
+    description:
+      'Require FIPS 140-3 validated cryptographic modules for all vendor products. FIPS validation gives auditable proof that a vendor’s PQC implementation meets a recognized security baseline rather than a marketing claim (NIST CSWP 39 §5.3).',
     fields: [
       {
         id: 'validation-level',
@@ -105,7 +108,8 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
   {
     id: 'cbom-delivery',
     title: 'CBOM Delivery',
-    description: 'Mandate delivery of Cryptographic Bill of Materials for supply chain visibility.',
+    description:
+      'Mandate delivery of Cryptographic Bill of Materials for supply chain visibility. A CBOM is the only way to verify vendor cryptographic claims without relying on self-attestation (NIST CSWP 39 §5.3).',
     fields: [
       {
         id: 'delivery-frequency',
@@ -148,7 +152,8 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
   {
     id: 'change-notification',
     title: 'Crypto Change Notification',
-    description: 'Require advance notice for any changes to cryptographic implementations.',
+    description:
+      'Require advance notice for any changes to cryptographic implementations. Silent algorithm changes break your own inventory and risk assessment the moment they ship (NIST CSWP 39 §5.3).',
     fields: [
       {
         id: 'notice-period',
@@ -185,7 +190,8 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
   {
     id: 'audit-rights',
     title: 'Audit Rights',
-    description: 'Reserve the right to audit vendor cryptographic practices.',
+    description:
+      'Reserve the right to audit vendor cryptographic practices. Audit rights convert vendor PQC commitments from a one-time questionnaire response into an ongoing, verifiable obligation (NIST CSWP 39 §5.3).',
     fields: [
       {
         id: 'audit-frequency',
@@ -361,7 +367,7 @@ function renderContractPreview(data: Record<string, Record<string, string | stri
 
   md += '\n---\n\n'
   md +=
-    '*Aligned to NIST NIST CSWP 39 (Considerations for Achieving Cryptographic Agility) §5.3 — supply-chain considerations. https://doi.org/10.6028/NIST.CSWP.39*\n'
+    '*Aligned to NIST CSWP 39-upd1 (Considerations for Achieving Cryptographic Agility) §5.3 — supply-chain considerations. https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
 
   // N5: sanitise non-ASCII punctuation in the exported markdown string only.
   md = md.replace(/—/g, '-').replace(/–/g, '-').replace(/[‘’]/g, "'").replace(/[“”]/g, '"')

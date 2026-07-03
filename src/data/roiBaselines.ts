@@ -1,7 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Industry breach cost baselines — IBM Cost of a Data Breach Report 2024
-// TODO(F11): refresh to IBM 2025 edition (published July 2025) before Q3 exec
-// reviews — numbers have shifted materially for Healthcare, Finance, and Tech.
+// TODO(F11): refresh to the IBM Cost of a Data Breach Report 2025 (published
+// July 2025). Publicly reported 2025 headline figures (global average $4.44M,
+// down from $4.88M; Healthcare $7.42M, down from $9.77M; Financial Services
+// $5.56M, down from $6.08M) confirm the numbers below have shifted materially,
+// but a safe refresh needs the primary IBM PDF table, not secondary summaries —
+// this file has 11 industry buckets and IBM's public per-sector breakdown for
+// 2025 only reliably covers Healthcare, Financial Services, and the global
+// average; the rest (Government & Defense, Technology, Telecommunications,
+// Energy & Utilities, Retail & E-Commerce, Aerospace, Automotive, Education)
+// need the full 17-industry table from https://www.ibm.com/reports/data-breach
+// to avoid mixing report vintages/methodologies across categories.
 export const INDUSTRY_BREACH_BASELINES_AS_OF = '2024-07'
 export const INDUSTRY_BREACH_BASELINES: Record<string, number> = {
   'Finance & Banking': 6_080_000,
