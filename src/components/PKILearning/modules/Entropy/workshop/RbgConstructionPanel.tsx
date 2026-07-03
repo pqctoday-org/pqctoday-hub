@@ -72,7 +72,7 @@ export const RbgConstructionPanel = () => {
             component of these architectures. A complete RBG construction would additionally include
             an SP 800-90A DRBG for pseudorandom bit generation.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {RBG_TYPES.map((rbg) => (
               <div key={rbg.name} className="bg-muted/30 rounded-lg p-3 border border-border">
                 <div className="text-sm font-semibold text-foreground mb-1">{rbg.name}</div>
