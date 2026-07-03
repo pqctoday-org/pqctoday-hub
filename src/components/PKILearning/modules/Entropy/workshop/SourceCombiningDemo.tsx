@@ -272,6 +272,12 @@ export const SourceCombiningDemo: React.FC = () => {
             </Link>
             ).
           </p>
+          <p className="text-sm text-muted-foreground mt-1">
+            This pipeline isn&rsquo;t a classical-only concern: ML-KEM and ML-DSA key generation
+            both depend on exactly this kind of validated, conditioned entropy. A weak or
+            compromised entropy source undermines a post-quantum key just as it would an RSA or
+            ECDSA one.
+          </p>
         </div>
       </div>
 
@@ -351,7 +357,7 @@ export const SourceCombiningDemo: React.FC = () => {
                   : 'border-border text-muted-foreground'
               }`}
             >
-              Source A (TRNG)
+              Source A (CSPRNG)
             </div>
             <span className="text-muted-foreground">+</span>
             <div className="rounded-md border border-success text-status-success bg-status-success/10 px-3 py-1.5 font-medium">
@@ -419,11 +425,14 @@ export const SourceCombiningDemo: React.FC = () => {
         <div className="flex flex-wrap items-center gap-3">
           <Button variant="gradient" onClick={handleGenerateSourceA}>
             <Play size={16} className="mr-2" />
-            Generate Source A (TRNG)
+            Generate Source A (CSPRNG)
           </Button>
           <span className="text-xs text-muted-foreground">
-            Source B (QRNG) is a pre-loaded reference sample. Both represent validated SP 800-90B
-            entropy source outputs.
+            Source A is browser CSPRNG output (crypto.getRandomValues) — already-conditioned
+            pseudorandom data, not a raw entropy sample. Source B (QRNG) is a pre-loaded reference
+            sample representing what a validated SP 800-90B noise source would look like. Neither is
+            a live hardware entropy source; this demo illustrates the source-combining pipeline, not
+            a certified NRBG.
           </span>
         </div>
 
