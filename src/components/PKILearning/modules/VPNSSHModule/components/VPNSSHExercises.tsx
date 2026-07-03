@@ -42,7 +42,7 @@ export const VPNSSHExercises: React.FC<VPNSSHExercisesProps> = ({
       badge: 'Classical',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        "The total handshake is approximately 1,784 bytes across 2 round trips. The KE payload carries a 384-byte MODP-3072 public value (3072 bits). This baseline is quantum-vulnerable to Shor's algorithm.",
+        "The total handshake is approximately 2,040 bytes across 2 round trips. The KE payload carries a 384-byte MODP-3072 public value (3072 bits, RFC 3526). This baseline is quantum-vulnerable to Shor's algorithm.",
       config: { step: 0, ikev2Mode: 'classical' },
     },
     {

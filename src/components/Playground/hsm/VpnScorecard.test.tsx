@@ -88,20 +88,20 @@ describe('VpnScorecard', () => {
     expect(label.parentElement?.textContent).not.toContain('3')
   })
 
-  it('computes overhead % against the 1,784-byte classical baseline', () => {
-    // Two packets totalling 3,568 bytes = exactly 2× the 1,784 B baseline → +100%.
-    addPacket(EXCHANGE_TYPE.IKE_SA_INIT, 0, 1784)
-    addPacket(EXCHANGE_TYPE.IKE_AUTH, 1, 1784)
+  it('computes overhead % against the 2,040-byte classical baseline', () => {
+    // Two packets totalling 4,080 bytes = exactly 2× the 2,040 B baseline → +100%.
+    addPacket(EXCHANGE_TYPE.IKE_SA_INIT, 0, 2040)
+    addPacket(EXCHANGE_TYPE.IKE_AUTH, 1, 2040)
     render(<VpnScorecard {...defaultProps} keMode="pure-pqc" />)
     const card = screen.getByTestId('vpn-scorecard')
-    expect(card.textContent).toContain('3,568')
-    expect(card.textContent).toContain('1,784')
+    expect(card.textContent).toContain('4,080')
+    expect(card.textContent).toContain('2,040')
     expect(card.textContent).toContain('+100%')
   })
 
   it('shows 0% overhead when total bytes equal the classical baseline', () => {
-    addPacket(EXCHANGE_TYPE.IKE_SA_INIT, 0, 892)
-    addPacket(EXCHANGE_TYPE.IKE_AUTH, 1, 892)
+    addPacket(EXCHANGE_TYPE.IKE_SA_INIT, 0, 1020)
+    addPacket(EXCHANGE_TYPE.IKE_AUTH, 1, 1020)
     render(<VpnScorecard {...defaultProps} />)
     expect(screen.getByTestId('vpn-scorecard').textContent).toContain('+0%')
   })

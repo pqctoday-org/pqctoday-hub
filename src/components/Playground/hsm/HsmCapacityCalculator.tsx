@@ -1323,10 +1323,12 @@ export function HsmCapacityCalculator() {
             </p>
             <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground/60">
               <li>
-                <span className="text-foreground">Equal load split across locations.</span> Traffic
-                is divided evenly by location count. No regional weighting, time-zone shift
-                modelling, or follow-the-sun load curves. If your busiest region carries 60% of
-                traffic, model that region as a separate single-location calculation.
+                <span className="text-foreground">Full workload at every location, not split.</span>{' '}
+                This is geo-redundant active-active: each site independently runs the entire
+                per-site workload you configure, not an even division of it across locations. No
+                regional weighting, time-zone shift modelling, or follow-the-sun load curves. If
+                your traffic is unevenly distributed, model your busiest region&rsquo;s actual
+                volume as the per-site workload rather than an averaged figure.
               </li>
               <li>
                 <span className="text-foreground">Redundancy is site-local.</span> N+1 means each

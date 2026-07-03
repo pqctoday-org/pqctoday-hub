@@ -270,8 +270,8 @@ export function VpnLearnSection() {
             <p className="text-xs text-muted-foreground leading-relaxed">
               The IKE_SA_INIT key exchange travels in plaintext, so an adversary recording VPN
               traffic today can attack it later — Harvest Now, Decrypt Later (HNDL). Classical mode
-              uses DH Group 15 (MODP-3072, 256 B public value); the PQC modes put ML-KEM-768 (NIST
-              Level 3, IKEv2 Key Exchange Method 36) in the primary KE slot.
+              uses DH Group 15 (MODP-3072, 384 B public value, RFC 3526); the PQC modes put
+              ML-KEM-768 (NIST Level 3, IKEv2 Key Exchange Method 36) in the primary KE slot.
             </p>
             <div className="flex flex-wrap gap-2">
               {IKE_V2_MODES.map((mode) => (
@@ -354,7 +354,7 @@ export function VpnLearnSection() {
               </span>
               . An over-MTU SA_INIT (ML-KEM-768 encapsulation key:{' '}
               {(pqcKe?.sizeBytes ?? 1192).toLocaleString()} B payload vs{' '}
-              {(classicalKe?.sizeBytes ?? 264).toLocaleString()} B for MODP-3072) must survive
+              {(classicalKe?.sizeBytes ?? 392).toLocaleString()} B for MODP-3072) must survive
               IP-layer fragmentation — frequently dropped by middleboxes — or the handshake fails.
               This is the core ML-KEM-in-SA_INIT deployment problem.
             </p>

@@ -6,7 +6,11 @@ import { getRandomBytes } from '@/utils/webCrypto'
 import { runAllTests, type TestResult } from '../utils/entropyTests'
 import { BitMatrixGrid } from './BitMatrixGrid'
 
-const SAMPLE_SIZE = 64 // 64 bytes = 512 bits, good for all tests
+// 64 bytes is enough for Frequency/Runs/Chi-Squared, but NOT for Min-Entropy —
+// its SP 800-90B confidence-bound correction dominates below ~1,000 bytes, so
+// Min-Entropy reads as inconclusive here even on unflipped, genuinely random
+// data (see EntropyTestingDemo's allFailuresAreSmallSampleArtifacts handling).
+const SAMPLE_SIZE = 64
 
 function createInitialSample() {
   return getRandomBytes(SAMPLE_SIZE)
