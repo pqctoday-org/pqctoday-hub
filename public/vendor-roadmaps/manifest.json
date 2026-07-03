@@ -32,7 +32,7 @@
     {
       "vendorId": "VND-149",
       "vendorName": "Arm Ltd.",
-      "title": "Mbed TLS PQC plan (ML-DSA first (2026), ML-KEM later) — planned, not yet released",
+      "title": "Mbed TLS PQC plan — planned, no committed order or date",
       "url": "https://lists.trustedfirmware.org/archives/list/mbed-tls@lists.trustedfirmware.org/thread/D73QWEQBW5LHMFMG35S3IPV62NTKR4SO/",
       "status": "downloaded",
       "filename": "VND-149_Arm_Ltd..html",
