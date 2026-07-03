@@ -184,6 +184,14 @@ export const strongestDecision = (audit: AuditEvent[]): PolicyDecision => {
 }
 
 /** What the active policy WOULD decide for an op (no execution). */
+/** One per-rule step of the engine's actual evaluation (1-based `index`). */
+export interface DryRunTraceStep {
+  index: number
+  /** 'resolve' | 'deny' | 'pass' | 'skip' */
+  effect: string
+  note: string
+}
+
 export interface DryRunResult {
   kind: 'Allow' | 'Deny' | 'Rekey'
   algorithm?: string | null
@@ -192,6 +200,8 @@ export interface DryRunResult {
   rule?: number | null
   reason?: string
   denyReason?: string
+  /** Per-rule engine trace — drives the visual simulator's node highlighting. */
+  trace?: DryRunTraceStep[]
 }
 
 export interface DryRunSpec {
