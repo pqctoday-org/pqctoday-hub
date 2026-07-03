@@ -484,13 +484,14 @@ export function GraphCanvas({
         {/* animated token */}
         {token && (
           <div
-            className="pointer-events-none absolute z-20 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-full border-2 px-2 py-0.5 font-mono text-[11px] font-bold text-white"
+            className="pointer-events-none absolute z-20 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-full border-2 px-2 py-0.5 font-mono text-[11px] font-bold"
             style={{
               left: token.x,
               top: token.y,
               background: token.color,
               borderColor: 'rgba(255,255,255,0.7)',
               boxShadow: `0 4px 14px -2px ${token.color}`,
+              color: '#fff',
             }}
           >
             {token.label}
@@ -543,7 +544,7 @@ function RequestNode({
   const port = portOf({ x: 0, y: 0, w: REQ.w, h: REQ.h }, 'out', dir)
   return (
     <div
-      className="absolute flex flex-col gap-1 rounded-2xl p-3 text-white"
+      className="absolute flex flex-col gap-1 rounded-2xl p-3"
       style={{
         left: reqPos.x,
         top: reqPos.y,
@@ -551,6 +552,7 @@ function RequestNode({
         height: REQ.h,
         background: 'linear-gradient(160deg, hsl(var(--foreground)), hsl(222 47% 20%))',
         boxShadow: '0 10px 24px -10px rgba(15,23,42,.5)',
+        color: '#fff',
       }}
     >
       <div className="flex items-center gap-1.5">
@@ -562,11 +564,19 @@ function RequestNode({
       <div className="font-mono text-[15px] font-bold">{request.op || 'Sign'}</div>
       <div className="truncate font-mono text-[11.5px] opacity-90">{request.algorithm || '—'}</div>
       <div className="mt-auto flex gap-1.5">
-        <span className="rounded bg-white/15 px-1.5 py-px text-[9.5px]">
+        <span
+          className="rounded px-1.5 py-px text-[9.5px]"
+          style={{ background: 'rgba(255,255,255,0.15)' }}
+        >
           {request.keyState || 'Active'}
         </span>
         {request.date && (
-          <span className="rounded bg-white/15 px-1.5 py-px text-[9.5px]">{request.date}</span>
+          <span
+            className="rounded px-1.5 py-px text-[9.5px]"
+            style={{ background: 'rgba(255,255,255,0.15)' }}
+          >
+            {request.date}
+          </span>
         )}
       </div>
       <PortDot x={port.x} y={port.y} color="hsl(var(--primary))" />

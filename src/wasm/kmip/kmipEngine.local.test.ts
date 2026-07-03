@@ -12,13 +12,14 @@
 import { describe, it, expect } from 'vitest'
 import { decisionOf, strongestDecision, type AuditEvent, type OpResult } from './kmipEngine'
 
-const p1 = (type: string, extra: Record<string, unknown> = {}): AuditEvent => ({
-  plane: 'p1',
-  event: { type: 'PolicyDecided', outcome: { type, ...extra } },
-} as unknown as AuditEvent)
+const p1 = (type: string, extra: Record<string, unknown> = {}): AuditEvent =>
+  ({
+    plane: 'p1',
+    event: { type: 'PolicyDecided', outcome: { type, ...extra } },
+  }) as unknown as AuditEvent
 
 const other = (): AuditEvent =>
-  ({ plane: 'p2', event: { type: 'KmipDispatched' } } as unknown as AuditEvent)
+  ({ plane: 'p2', event: { type: 'KmipDispatched' } }) as unknown as AuditEvent
 
 describe('decisionOf', () => {
   it('pulls the Plane-1 PolicyDecided outcome from an op result', () => {
