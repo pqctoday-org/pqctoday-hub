@@ -93,9 +93,13 @@ export function GraphCanvas({
   const [drag, setDrag] = useState<DragState>(null)
   const wrapRef = useRef<HTMLDivElement>(null)
 
+  // A rule can briefly exist in `policy.rules` before `layout.pos` has caught up
+  // (the frame right after an add, or a stale/edited layout). Never deref a
+  // missing position — an uncaught read here crashes the whole canvas render.
+  const posOf = (id: string): { x: number; y: number } => layout.pos[id] ?? { x: 0, y: 0 }
   const rectOf = (id: string): Rect => ({
-    x: layout.pos[id].x,
-    y: layout.pos[id].y,
+    x: posOf(id).x,
+    y: posOf(id).y,
     w: nw,
     h: NODE_H,
   })
@@ -357,8 +361,8 @@ export function GraphCanvas({
                   id: r.id,
                   sx: e.clientX,
                   sy: e.clientY,
-                  ox: layout.pos[r.id].x,
-                  oy: layout.pos[r.id].y,
+                  ox: posOf(r.id).x,
+                  oy: posOf(r.id).y,
                 })
               }
               onClick={(e) => {
@@ -377,8 +381,8 @@ export function GraphCanvas({
                 isDecider && 'ring-2 ring-destructive'
               )}
               style={{
-                left: layout.pos[r.id].x,
-                top: layout.pos[r.id].y,
+                left: posOf(r.id).x,
+                top: posOf(r.id).y,
                 width: nw,
                 height: NODE_H,
                 borderColor: sel || matched ? color : 'hsl(var(--border))',
