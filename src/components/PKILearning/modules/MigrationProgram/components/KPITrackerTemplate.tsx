@@ -103,6 +103,14 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
     setUserScores(scores)
   }, [])
 
+  // The scorecard's own touched-set is the authoritative "has the user really
+  // set this" signal — a manual KPI dragged to a deliberate 0 is touched, so
+  // it must not read as "not yet scored" here just because its value is 0.
+  const [touchedIds, setTouchedIds] = useState<Set<string>>(new Set())
+  const handleTouchedChange = useCallback((ids: Set<string>) => {
+    setTouchedIds(ids)
+  }, [])
+
   // Mirror the scorecard's weight edits so the exported/saved artifact reflects
   // the user's weights, not just the per-persona defaults (saved == on-screen).
   const [userWeights, setUserWeights] = useState<Record<string, number>>({})
@@ -120,8 +128,10 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
     // Manual KPIs with no computed baseline and no score yet read as "not yet
     // scored" rather than a numeric 0 — excluded from the average so it
     // doesn't read as alarmingly low before the user has entered anything.
+    // Stops applying the instant the user touches the slider (even to 0),
+    // per the scorecard's own touched-set — not a value-based `=== 0` guess.
     const isPending = (d: (typeof dimensions)[number]) =>
-      d.notYetScored === true && (scores[d.id] ?? d.autoScore ?? 0) === 0
+      d.notYetScored === true && !touchedIds.has(d.id)
     let totalWeight = 0
     let weightedSum = 0
     for (const d of dimensions) {
@@ -157,7 +167,7 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
       '*Aligned to NIST CSWP 39 §6.5 (Maturity Assessment for Crypto Agility). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
 
     return md
-  }, [dimensions, activePersona, riskHistory, userScores, userWeights])
+  }, [dimensions, activePersona, riskHistory, userScores, userWeights, touchedIds])
 
   // Structured CSV (one row per KPI) built from the live dimensions — not the
   // markdown body, so `.csv` opens as real columns in a spreadsheet. Audit C5.
@@ -174,7 +184,7 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
       'Persona',
     ]
     const rows = dimensions.map((d) => {
-      const pending = d.notYetScored === true && (userScores[d.id] ?? d.autoScore ?? 0) === 0
+      const pending = d.notYetScored === true && !touchedIds.has(d.id)
       const scoreCell = d.disabled
         ? `locked — ${d.disabledReason ?? 'no data'}`
         : pending
@@ -191,7 +201,7 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
       ]
     })
     return rowsToCsv([header, ...rows])
-  }, [dimensions, activePersona, userScores, userWeights])
+  }, [dimensions, activePersona, userScores, userWeights, touchedIds])
 
   const handleExport = useCallback(() => {
     addExecutiveDocument({
@@ -288,6 +298,7 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         dimensions={dimensions}
         colorScale="readiness"
         onScoreChange={handleScoreSnapshot}
+        onTouchedChange={handleTouchedChange}
         onWeightChange={handleWeightSnapshot}
         allowWeightEditing={true}
         showExport={false}

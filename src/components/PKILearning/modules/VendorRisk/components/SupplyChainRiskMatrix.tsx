@@ -10,6 +10,10 @@ import { LAYERS } from '@/components/Migrate/InfrastructureStack'
 import { softwareItemToCbomInput } from '@/components/Migrate/cbomExport'
 import { buildCbomDocument, downloadCbomJson } from '@/services/cbom/cycloneDx'
 import { isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
+import {
+  HeatmapGrid,
+  type HeatmapCell,
+} from '@/components/PKILearning/common/executive/HeatmapGrid'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import type { ScorecardOutput } from './VendorScorecardBuilder'
 import {
@@ -220,13 +224,6 @@ function matrixRiskLevel(score: number): 'Critical' | 'High' | 'Medium' | 'Low' 
   return 'Low'
 }
 
-function matrixZoneBg(score: number): string {
-  if (score >= 20) return 'bg-status-error/50 dark:bg-status-error/40'
-  if (score >= 12) return 'bg-status-warning/40 dark:bg-status-warning/30'
-  if (score >= 6) return 'bg-status-warning/20 dark:bg-status-warning/15'
-  return 'bg-status-success/20 dark:bg-status-success/15'
-}
-
 function matrixBadgeClasses(score: number): string {
   if (score >= 20) return 'bg-status-error/10 text-status-error border-status-error/20'
   if (score >= 12) return 'bg-status-warning/10 text-status-warning border-status-warning/20'
@@ -292,68 +289,27 @@ function buildLayerEntriesMap(entries: LayerMatrixEntry[]): Map<string, LayerMat
   return map
 }
 
-/** 5×5 likelihood × impact grid — mirrors RiskHeatmapGenerator's RiskHeatmapGrid
- *  layout/coloring, plotting infrastructure layers instead of individual risks. */
+/** 5×5 likelihood × impact grid — plots infrastructure layers instead of
+ *  individual risks, on top of the shared `HeatmapGrid` component (the same
+ *  one `RiskHeatmapGenerator` is grounded in conceptually) rather than a
+ *  hand-rolled table. */
 function SupplyChainRiskGrid({ entriesMap }: { entriesMap: Map<string, LayerMatrixEntry[]> }) {
-  return (
-    <div className="overflow-x-auto">
-      <table className="w-full border-collapse">
-        <thead>
-          <tr>
-            <th className="p-1.5 text-left text-xs font-medium text-muted-foreground w-[100px]" />
-            {MATRIX_IMPACT_LABELS.map((label, colIdx) => (
-              <th
-                key={label}
-                className="p-1.5 text-center text-xs font-medium text-muted-foreground border-b border-border"
-              >
-                <div className="font-bold">{colIdx + 1}</div>
-                <div className="font-normal">{label}</div>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {MATRIX_LIKELIHOOD_LABELS.map((label, rowIdx) => {
-            const likelihood = 5 - rowIdx
-            return (
-              <tr key={label}>
-                <td className="p-1.5 text-xs font-medium text-foreground border-r border-border whitespace-nowrap align-middle">
-                  <div className="font-bold">{likelihood}</div>
-                  <div className="text-muted-foreground font-normal">{label}</div>
-                </td>
-                {MATRIX_IMPACT_LABELS.map((_, colIdx) => {
-                  const impact = colIdx + 1
-                  const score = likelihood * impact
-                  const key = `${rowIdx}-${colIdx}`
-                  const cellEntries = entriesMap.get(key) ?? []
-                  return (
-                    <td
-                      key={colIdx}
-                      className={`p-1.5 border border-border/50 align-top ${matrixZoneBg(score)}`}
-                      style={{ minWidth: 90, minHeight: 56 }}
-                      title={`Score ${score} (${matrixRiskLevel(score)})`}
-                    >
-                      <div className="flex flex-col gap-1 min-h-[44px]">
-                        <span className="text-[10px] font-bold opacity-60 self-end">{score}</span>
-                        {cellEntries.map((entry) => (
-                          <div
-                            key={entry.layerId}
-                            className="bg-background/80 rounded px-1 py-0.5 text-[11px] font-medium text-foreground truncate leading-tight"
-                          >
-                            {entry.label}
-                          </div>
-                        ))}
-                      </div>
-                    </td>
-                  )
-                })}
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
-    </div>
-  )
+  const rows = MATRIX_LIKELIHOOD_LABELS.map((label, rowIdx) => `${5 - rowIdx} · ${label}`)
+  const columns = MATRIX_IMPACT_LABELS.map((label, colIdx) => `${colIdx + 1} · ${label}`)
+  const cells: HeatmapCell[][] = MATRIX_LIKELIHOOD_LABELS.map((_, rowIdx) => {
+    const likelihood = 5 - rowIdx
+    return MATRIX_IMPACT_LABELS.map((_, colIdx) => {
+      const impact = colIdx + 1
+      const score = likelihood * impact
+      const cellEntries = entriesMap.get(`${rowIdx}-${colIdx}`) ?? []
+      return {
+        value: (score / 25) * 100,
+        labels: cellEntries.map((e) => e.label),
+        tooltip: `Score ${score} (${matrixRiskLevel(score)})`,
+      }
+    })
+  })
+  return <HeatmapGrid rows={rows} columns={columns} cells={cells} colorScale="risk" />
 }
 
 export const SupplyChainRiskMatrix: React.FC<{ scorecardOutput?: ScorecardOutput | null }> = ({

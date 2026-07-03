@@ -6,6 +6,7 @@ import { CompleteStepAction } from '../../../common/CompleteStepAction'
 import { useModuleStore } from '@/store/useModuleStore'
 import { markdownToPdf } from '@/services/export/pdfExport'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { copyToClipboard } from '@/utils/clipboard'
 // Single source of truth for the illustrative demo entries (shared with the
 // store + standalone adapter) so the two can't drift.
 import { DEFAULT_RISK_ENTRIES, useRiskRegisterStore } from '@/store/useRiskRegisterStore'
@@ -171,7 +172,8 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
   }, [exportMarkdown, addExecutiveDocument, lastSavedKey, setLastSavedKey])
 
   const handleCopy = useCallback(async () => {
-    await navigator.clipboard.writeText(exportMarkdown)
+    const ok = await copyToClipboard(exportMarkdown)
+    if (!ok) return
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }, [exportMarkdown])

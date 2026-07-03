@@ -24,7 +24,6 @@ import {
   levelOfPhase,
   liveCompletionContext,
 } from './simAutoRun'
-import { demoDocFor } from './demoDocs'
 
 beforeEach(() => {
   useSimulationStore.getState().reset()
@@ -118,17 +117,29 @@ describe('simAutoRun director', () => {
   })
 
   it('has non-empty demo content for every activity type the trees use', () => {
-    const types = new Set<ExecutiveDocumentType>()
+    // Drives each representative step through the REAL dispatch path
+    // (completeStepGenuine -> docFor -> REAL_DOC_GENERATORS or demoDocFor),
+    // not demoDocFor() directly — otherwise the 7 artifact types now backed
+    // by REAL_DOC_GENERATORS (their hand-authored demoDocs.ts entries were
+    // removed) would only ever exercise demoDocFor's generic placeholder
+    // fallback and this test would pass without ever calling buildMarkdown().
+    const typeToStep = new Map<ExecutiveDocumentType, Parameters<typeof completeStepGenuine>[0]>()
     for (const phase of PHASE_ORDER) {
       for (const step of gatingStepsForPhase(phase)) {
-        if (step.kind === 'activity' && step.artifactType) types.add(step.artifactType)
+        if (step.kind === 'activity' && step.artifactType && !typeToStep.has(step.artifactType)) {
+          typeToStep.set(step.artifactType, step)
+        }
       }
     }
-    expect(types.size).toBeGreaterThan(0)
-    for (const type of types) {
-      const doc = demoDocFor(type)
-      expect(doc.title.length, `empty demo title for ${type}`).toBeGreaterThan(0)
-      expect(doc.data.length, `empty demo body for ${type}`).toBeGreaterThan(0)
+    expect(typeToStep.size).toBeGreaterThan(0)
+    for (const step of typeToStep.values()) completeStepGenuine(step)
+
+    const docs = useModuleStore.getState().artifacts.executiveDocuments ?? []
+    for (const type of typeToStep.keys()) {
+      const doc = docs.find((d) => d.type === type)
+      expect(doc, `no document recorded for ${type}`).toBeDefined()
+      expect(doc?.title.length, `empty demo title for ${type}`).toBeGreaterThan(0)
+      expect(doc?.data.length, `empty demo body for ${type}`).toBeGreaterThan(0)
     }
   })
 })

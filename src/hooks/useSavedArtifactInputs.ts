@@ -1,7 +1,28 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
-import type { ExecutiveDocumentType } from '@/services/storage/types'
+import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
+
+/**
+ * Every saved document of the given executive artifact type that carries an
+ * `inputs` blob, newest first. Most tools only need the single latest one —
+ * use `useSavedArtifactInputs` for that. Reach for this instead when a tool
+ * needs to distinguish between several saved drafts of the same document
+ * type (e.g. Policy Template Generator restoring a separate draft per policy
+ * sub-type), so that grouping logic doesn't have to re-implement this same
+ * filter+sort.
+ */
+export function useSavedArtifactDocuments(
+  type: ExecutiveDocumentType | undefined
+): ExecutiveDocument[] {
+  const executiveDocuments = useModuleStore((s) => s.artifacts.executiveDocuments)
+  return useMemo(() => {
+    if (!type) return []
+    return (executiveDocuments ?? [])
+      .filter((d) => d.type === type && d.inputs !== undefined)
+      .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0))
+  }, [executiveDocuments, type])
+}
 
 /**
  * Restore the most recently saved `inputs` blob for a given executive
@@ -12,12 +33,6 @@ import type { ExecutiveDocumentType } from '@/services/storage/types'
  * save (that half is inherently tool-specific).
  */
 export function useSavedArtifactInputs<T>(type: ExecutiveDocumentType | undefined): T | undefined {
-  const executiveDocuments = useModuleStore((s) => s.artifacts.executiveDocuments)
-  return useMemo(() => {
-    if (!type) return undefined
-    const latest = (executiveDocuments ?? [])
-      .filter((d) => d.type === type && d.inputs !== undefined)
-      .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0))[0]
-    return latest?.inputs as T | undefined
-  }, [executiveDocuments, type])
+  const docs = useSavedArtifactDocuments(type)
+  return docs[0]?.inputs as T | undefined
 }
