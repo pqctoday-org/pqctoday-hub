@@ -14,7 +14,7 @@ import { Code2, ChevronRight, Grip, FlaskConical, ShieldAlert, RotateCcw } from 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { KmipEngine, DryRunResult } from '@/wasm/kmip/kmipEngine'
-import type { PolicyPreset } from '@/wasm/kmip/kmipMeta'
+import { POLICY_PRESETS, type PolicyPreset } from '@/wasm/kmip/kmipMeta'
 import {
   toEditable,
   serialize,
@@ -153,6 +153,10 @@ export function PolicyGraphView({
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [rightTab, setRightTab] = useState<RightTab>('simulate')
   const [yamlOpen, setYamlOpen] = useState(false)
+  // A-grade review item #13 — the YAML drawer is editable + importable, round-
+  // tripping back to the graph. `null` = mirror the graph's generated `yaml`;
+  // once the user types, this holds their draft until they Apply or discard it.
+  const [yamlDraft, setYamlDraft] = useState<string | null>(null)
   const [req, setReq] = useState<SimRequest>({
     op: 'Sign',
     algorithm: 'ECDSA-P256',
@@ -178,6 +182,31 @@ export function PolicyGraphView({
   const modified = yaml !== baseline
   const selectedRule = policy.rules.find((r) => r.id === selectedId) ?? null
   const selectedIndex = policy.rules.findIndex((r) => r.id === selectedId)
+
+  const yamlText = yamlDraft ?? yaml
+  const yamlDirty = yamlDraft !== null && yamlDraft !== yaml
+  // "Parsed N of M" (A-grade review A5) — count `- type:` entries in the raw
+  // text (M) vs how many `toEditable` actually recognised (N), so a grammar
+  // gap the closed parser doesn't model (an unusual list form, an unknown
+  // rule type) is visible immediately instead of silently dropping rules.
+  const yamlParsedCount = useMemo(() => {
+    if (!yamlDirty) return null
+    const raw = (yamlText.match(/^\s*-\s*type\s*:/gm) ?? []).length
+    const parsed = toEditable(yamlText).rules.length
+    return { raw, parsed }
+  }, [yamlText, yamlDirty])
+
+  const applyYamlDraft = () => {
+    if (!yamlDraft) return
+    const next = toEditable(yamlDraft)
+    setPolicy(next)
+    setLayout(relayout(next, dir, null))
+    setSelectedId(null)
+    setSim(null)
+    setToken(null)
+    setYamlDraft(null)
+  }
+  const discardYamlDraft = () => setYamlDraft(null)
 
   // Debounced apply of the edited policy to the engine (graph = source of truth).
   const applyTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -261,6 +290,7 @@ export function PolicyGraphView({
     setSelectedId(null)
     setSim(null)
     setToken(null)
+    setYamlDraft(null)
     onApplyYaml(baseline)
     setEngineWarnings([])
   }
@@ -272,129 +302,139 @@ export function PolicyGraphView({
 
   // ── run simulation: engine verdict (authoritative) + illustrative trace ──
   const rafRef = useRef<number | null>(null)
-  const run = useCallback(() => {
-    const newObject = /^(Create|CreateKeyPair|Register|Import)/.test(req.op)
-    // Authoritative verdict + per-rule trace from the engine FIRST, so the graph
-    // can be driven by what the engine actually did (WP4b: dry_run sees the full
-    // request dimensions — date/attrs/mask/mechanism).
-    let engineDR: DryRunResult | null = null
-    try {
-      const attrs: Record<string, string> = {}
-      for (const a of req.attrs) {
-        const [name, ...rest] = a.split('=')
-        if (name) attrs[name] = rest.join('=')
+  const run = useCallback(
+    (reqOverride?: SimRequest) => {
+      const activeReq = reqOverride ?? req
+      const newObject = /^(Create|CreateKeyPair|Register|Import)/.test(activeReq.op)
+      // Authoritative verdict + per-rule trace from the engine FIRST, so the graph
+      // can be driven by what the engine actually did (WP4b: dry_run sees the full
+      // request dimensions — date/attrs/mask/mechanism).
+      let engineDR: DryRunResult | null = null
+      try {
+        const attrs: Record<string, string> = {}
+        for (const a of activeReq.attrs) {
+          const [name, ...rest] = a.split('=')
+          if (name) attrs[name] = rest.join('=')
+        }
+        const mechanism = {
+          hash: activeReq.hash || undefined,
+          blockMode: activeReq.blockMode || undefined,
+          padding: activeReq.padding || undefined,
+          deterministic:
+            activeReq.deterministic === '' ? undefined : activeReq.deterministic === 'true',
+          mech: activeReq.mechanism || undefined,
+        }
+        engineDR = engine.dryRun({
+          op: activeReq.op,
+          algorithm: activeReq.algorithm || undefined,
+          currentAlgorithm: newObject ? undefined : activeReq.algorithm || undefined,
+          length: activeReq.bits === '' ? undefined : Number(activeReq.bits),
+          state: activeReq.keyState || undefined,
+          date: activeReq.date || undefined,
+          attrs: Object.keys(attrs).length ? attrs : undefined,
+          usageMask: activeReq.usageFlags.length ? activeReq.usageFlags : undefined,
+          activationDate: activeReq.keyActivatedOn || undefined,
+          mechanism: Object.values(mechanism).some((v) => v !== undefined) ? mechanism : undefined,
+        })
+        setEngineVerdict(engineDR)
+      } catch {
+        setEngineVerdict(null)
       }
-      const mechanism = {
-        hash: req.hash || undefined,
-        blockMode: req.blockMode || undefined,
-        padding: req.padding || undefined,
-        deterministic: req.deterministic === '' ? undefined : req.deterministic === 'true',
-        mech: req.mechanism || undefined,
+
+      // Drive the graph from the ENGINE's own trace when available; fall back to
+      // the illustrative evaluatePolicy only if the wasm predates trace support.
+      const result = engineTraceToSim(policy, engineDR) ?? evaluatePolicy(policy, activeReq)
+      setSim(result)
+
+      // Build the flow path points (request → matched nodes → terminal) and the
+      // per-hop token labels (morphs across resolve nodes).
+      const flowIds: string[] = []
+      for (const r of policy.rules) {
+        flowIds.push(r.id)
+        if (result.deciderId && r.id === result.deciderId) break
       }
-      engineDR = engine.dryRun({
-        op: req.op,
-        algorithm: req.algorithm || undefined,
-        currentAlgorithm: newObject ? undefined : req.algorithm || undefined,
-        length: req.bits === '' ? undefined : Number(req.bits),
-        state: req.keyState || undefined,
-        date: req.date || undefined,
-        attrs: Object.keys(attrs).length ? attrs : undefined,
-        usageMask: req.usageFlags.length ? req.usageFlags : undefined,
-        activationDate: req.keyActivatedOn || undefined,
-        mechanism: Object.values(mechanism).some((v) => v !== undefined) ? mechanism : undefined,
-      })
-      setEngineVerdict(engineDR)
-    } catch {
-      setEngineVerdict(null)
-    }
-
-    // Drive the graph from the ENGINE's own trace when available; fall back to
-    // the illustrative evaluatePolicy only if the wasm predates trace support.
-    const result = engineTraceToSim(policy, engineDR) ?? evaluatePolicy(policy, req)
-    setSim(result)
-
-    // Build the flow path points (request → matched nodes → terminal) and the
-    // per-hop token labels (morphs across resolve nodes).
-    const flowIds: string[] = []
-    for (const r of policy.rules) {
-      flowIds.push(r.id)
-      if (result.deciderId && r.id === result.deciderId) break
-    }
-    const nw = nodeW(dir)
-    const reqRect = { x: layout.reqPos.x, y: layout.reqPos.y, w: REQ.w, h: REQ.h }
-    const pts = [portOf(reqRect, 'out', dir)]
-    let label = req.algorithm
-    const labels = [label]
-    for (const id of flowIds) {
-      const p = layout.pos[id]
-      if (!p) continue
-      pts.push({ x: p.x + nw / 2, y: p.y + NODE_H / 2 })
-      const r = policy.rules.find((x) => x.id === id)
-      if (
-        r?.type === 'algorithm_substitution' &&
-        label.toLowerCase() === (r.scalars.from ?? '').toLowerCase()
-      )
-        label = r.scalars.to ?? label
-      if (r?.type === 'algorithm_default' && !label) label = r.scalars.default_algorithm ?? label
-      labels.push(label)
-    }
-    const sinkKey: TerminalKind = result.verdict.kind
-    const skRect = { x: layout.sinks[sinkKey].x, y: layout.sinks[sinkKey].y, w: SINK.w, h: SINK.h }
-    pts.push(sinkInPort(sinkKey, skRect, dir))
-    labels.push(result.verdict.kind === 'deny' ? '✕' : label)
-    const color =
-      result.verdict.kind === 'allow'
-        ? 'hsl(var(--success))'
-        : result.verdict.kind === 'rekey'
-          ? 'hsl(var(--warning))'
-          : 'hsl(var(--destructive))'
-
-    const reduced =
-      typeof window !== 'undefined' &&
-      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-    if (reduced || pts.length < 2) {
-      const last = pts[pts.length - 1]
-      setToken({ x: last.x, y: last.y, label: labels[labels.length - 1], color })
-      return
-    }
-
-    setRunning(true)
-    if (rafRef.current) cancelAnimationFrame(rafRef.current)
-    const segMs = 620
-    const total = (pts.length - 1) * segMs
-    const start = performance.now()
-    const tick = (now: number) => {
-      const el = now - start
-      const gp = Math.min(el / segMs, pts.length - 1)
-      const seg = Math.max(0, Math.min(Math.floor(gp), pts.length - 2))
-      const f = gp - seg
-      const a = pts[seg]
-      const b = pts[seg + 1]
-      // Defensive: the point pair should always exist (pts is dense, length ≥ 2
-      // is guaranteed above), but never let a stale/edge frame deref undefined —
-      // an uncaught throw here surfaces as a global error. Snap to the terminal.
-      if (!a || !b) {
-        const last = pts[pts.length - 1]
-        if (last) setToken({ x: last.x, y: last.y, label: labels[labels.length - 1], color })
-        setRunning(false)
-        return
+      const nw = nodeW(dir)
+      const reqRect = { x: layout.reqPos.x, y: layout.reqPos.y, w: REQ.w, h: REQ.h }
+      const pts = [portOf(reqRect, 'out', dir)]
+      let label = activeReq.algorithm
+      const labels = [label]
+      for (const id of flowIds) {
+        const p = layout.pos[id]
+        if (!p) continue
+        pts.push({ x: p.x + nw / 2, y: p.y + NODE_H / 2 })
+        const r = policy.rules.find((x) => x.id === id)
+        if (
+          r?.type === 'algorithm_substitution' &&
+          label.toLowerCase() === (r.scalars.from ?? '').toLowerCase()
+        )
+          label = r.scalars.to ?? label
+        if (r?.type === 'algorithm_default' && !label) label = r.scalars.default_algorithm ?? label
+        labels.push(label)
       }
-      const ease = f < 0.5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2
-      setToken({
-        x: a.x + (b.x - a.x) * ease,
-        y: a.y + (b.y - a.y) * ease,
-        label: labels[Math.min(seg + (f > 0.6 ? 1 : 0), labels.length - 1)],
-        color,
-      })
-      if (el < total) rafRef.current = requestAnimationFrame(tick)
-      else {
+      const sinkKey: TerminalKind = result.verdict.kind
+      const skRect = {
+        x: layout.sinks[sinkKey].x,
+        y: layout.sinks[sinkKey].y,
+        w: SINK.w,
+        h: SINK.h,
+      }
+      pts.push(sinkInPort(sinkKey, skRect, dir))
+      labels.push(result.verdict.kind === 'deny' ? '✕' : label)
+      const color =
+        result.verdict.kind === 'allow'
+          ? 'hsl(var(--success))'
+          : result.verdict.kind === 'rekey'
+            ? 'hsl(var(--warning))'
+            : 'hsl(var(--destructive))'
+
+      const reduced =
+        typeof window !== 'undefined' &&
+        window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+      if (reduced || pts.length < 2) {
         const last = pts[pts.length - 1]
         setToken({ x: last.x, y: last.y, label: labels[labels.length - 1], color })
-        setRunning(false)
+        return
       }
-    }
-    rafRef.current = requestAnimationFrame(tick)
-  }, [engine, policy, req, dir, layout])
+
+      setRunning(true)
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      const segMs = 620
+      const total = (pts.length - 1) * segMs
+      const start = performance.now()
+      const tick = (now: number) => {
+        const el = now - start
+        const gp = Math.min(el / segMs, pts.length - 1)
+        const seg = Math.max(0, Math.min(Math.floor(gp), pts.length - 2))
+        const f = gp - seg
+        const a = pts[seg]
+        const b = pts[seg + 1]
+        // Defensive: the point pair should always exist (pts is dense, length ≥ 2
+        // is guaranteed above), but never let a stale/edge frame deref undefined —
+        // an uncaught throw here surfaces as a global error. Snap to the terminal.
+        if (!a || !b) {
+          const last = pts[pts.length - 1]
+          if (last) setToken({ x: last.x, y: last.y, label: labels[labels.length - 1], color })
+          setRunning(false)
+          return
+        }
+        const ease = f < 0.5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2
+        setToken({
+          x: a.x + (b.x - a.x) * ease,
+          y: a.y + (b.y - a.y) * ease,
+          label: labels[Math.min(seg + (f > 0.6 ? 1 : 0), labels.length - 1)],
+          color,
+        })
+        if (el < total) rafRef.current = requestAnimationFrame(tick)
+        else {
+          const last = pts[pts.length - 1]
+          setToken({ x: last.x, y: last.y, label: labels[labels.length - 1], color })
+          setRunning(false)
+        }
+      }
+      rafRef.current = requestAnimationFrame(tick)
+    },
+    [engine, policy, req, dir, layout]
+  )
 
   useEffect(
     () => () => {
@@ -410,6 +450,17 @@ export function PolicyGraphView({
       engineVerdict.kind === 'Allow' ? 'allow' : engineVerdict.kind === 'Rekey' ? 'rekey' : 'deny'
     return sim.verdict.kind !== engineKind
   }, [sim, engineVerdict])
+
+  // A-grade review item #16 — "Load this policy's example": seed + run the
+  // one request that demonstrates the preset's `illustrates` line, so a
+  // learner doesn't have to reverse-engineer a probe from the rule list.
+  const example = POLICY_PRESETS.find((p) => p.file === presetFile)?.example
+  const onLoadExample = () => {
+    if (!example) return
+    const merged: SimRequest = { ...req, ...example }
+    setReq(merged)
+    run(merged)
+  }
 
   const rightTabs: { id: RightTab; label: string; icon: typeof Grip; badge?: number }[] = [
     { id: 'inspect', label: 'Inspect', icon: Grip },
@@ -505,11 +556,20 @@ export function PolicyGraphView({
               <RequestSimulator
                 req={req}
                 onChange={setReq}
-                onRun={run}
+                // NOT `onRun={run}` — `run` takes an optional `reqOverride:
+                // SimRequest`, and wiring it straight to a DOM `onClick`
+                // hands it the click's SyntheticEvent as that argument.
+                // `activeReq = reqOverride ?? req` then treats the event as
+                // the request, and `activeReq.attrs.map(...)` throws on
+                // every plain click of "Run through the pipeline".
+                onRun={() => run()}
                 running={running}
                 guided={guided}
                 engineVerdict={engineVerdict}
                 approximated={approximated}
+                policy={policy}
+                example={example}
+                onLoadExample={onLoadExample}
               />
             )}
             {rightTab === 'check' && (
@@ -519,7 +579,7 @@ export function PolicyGraphView({
         </aside>
       </div>
 
-      {/* YAML drawer */}
+      {/* YAML drawer — editable + importable (A-grade review item #13) */}
       <div className="border-t border-border bg-card">
         <Button
           variant="ghost"
@@ -528,7 +588,21 @@ export function PolicyGraphView({
         >
           <Code2 size={14} className="text-primary" />
           <span className="text-[12px] font-semibold text-foreground">policy source (YAML)</span>
-          <span className="text-[10.5px] text-muted-foreground">· generated from the graph</span>
+          <span className="text-[10.5px] text-muted-foreground">
+            · edit, or paste a whole policy to import it
+          </span>
+          {yamlDirty && yamlParsedCount && (
+            <span
+              className={cn(
+                'rounded px-1.5 py-0.5 text-[9.5px] font-semibold uppercase tracking-wide',
+                yamlParsedCount.parsed < yamlParsedCount.raw
+                  ? 'bg-status-warning/15 text-status-warning'
+                  : 'bg-status-success/15 text-status-success'
+              )}
+            >
+              parsed {yamlParsedCount.parsed} of {yamlParsedCount.raw} rules
+            </span>
+          )}
           <ChevronRight
             size={14}
             className={cn(
@@ -538,9 +612,40 @@ export function PolicyGraphView({
           />
         </Button>
         {yamlOpen && (
-          <pre className="max-h-56 overflow-auto whitespace-pre border-t border-border bg-muted/40 px-4 py-2.5 font-mono text-[10.5px] leading-relaxed text-foreground">
-            {yaml}
-          </pre>
+          <div className="border-t border-border bg-muted/40 px-4 py-2.5">
+            <textarea
+              value={yamlText}
+              onChange={(e) => setYamlDraft(e.target.value)}
+              spellCheck={false}
+              className="max-h-56 min-h-[10rem] w-full resize-y overflow-auto whitespace-pre rounded border border-transparent bg-transparent font-mono text-[10.5px] leading-relaxed text-foreground outline-none focus:border-primary/40"
+            />
+            {yamlDirty && (
+              <div className="mt-2 flex items-center gap-2">
+                <Button
+                  variant="gradient"
+                  size="sm"
+                  onClick={applyYamlDraft}
+                  className="h-7 gap-1.5 px-2.5 text-[11px]"
+                >
+                  Apply to graph
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={discardYamlDraft}
+                  className="h-7 px-2.5 text-[11px] text-muted-foreground hover:text-foreground"
+                >
+                  Discard
+                </Button>
+                {yamlParsedCount && yamlParsedCount.parsed < yamlParsedCount.raw && (
+                  <span className="text-[10.5px] text-status-warning">
+                    {yamlParsedCount.raw - yamlParsedCount.parsed} rule(s) in this text won't
+                    survive the round trip — check the grammar against the shipped fixtures.
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

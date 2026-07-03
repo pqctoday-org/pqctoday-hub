@@ -28,3 +28,4 @@ rules:
     ops: [Sign]
     deterministic: true
     reason: "Deterministic signatures mandated by policy"
+    clause: "FIPS 204 §3.4 / FIPS 205 (deterministic variant)"

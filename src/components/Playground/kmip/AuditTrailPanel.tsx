@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
+/* eslint-disable security/detect-object-injection -- `plane` values come from
+   the engine's own AuditEvent union or the fixed local LANES tuple, never
+   user input. */
 //
 // AuditTrailPanel — renders the FULL cross-plane trace, grouped into per-request
 // transactions (by correlation_id). Each event shows its type-specific detail:
@@ -73,6 +76,10 @@ function groupByTxn(events: AuditEvent[]): Txn[] {
   return txns.reverse() // newest transaction first
 }
 
+/** The three planes, left to right — a fixed swimlane order regardless of
+ * which plane a given transaction happens to touch first. */
+const LANES: AuditEvent['plane'][] = ['p1', 'p2', 'p3']
+
 export function AuditTrailPanel({
   events,
   detailed = true,
@@ -97,18 +104,30 @@ export function AuditTrailPanel({
               {t.id.slice(0, 8)}
             </span>
           </div>
+          {/* Swimlanes — one column per plane, so "one op → P1 decision → P2
+              request/response → P3 mechanism call" reads top-to-bottom in its
+              own lane instead of as an undifferentiated flat list. */}
+          <div className="grid grid-cols-3 border-t border-border/30 bg-muted/10 text-[9px] font-semibold uppercase tracking-wide">
+            {LANES.map((p) => (
+              <span key={p} className={`${PLANE_INFO[p]?.tone ?? ''} px-2 py-1`}>
+                {PLANE_INFO[p]?.label ?? p}
+              </span>
+            ))}
+          </div>
           <div className="divide-y divide-border/30">
-            {t.events.map((e, i) => {
-              const info = PLANE_INFO[e.plane] ?? { label: e.plane, tone: 'text-muted-foreground' }
-              return (
-                <div key={i} className="flex items-start gap-2 px-2 py-1 text-[11px]">
-                  <span className={`${info.tone} font-semibold shrink-0 w-28`}>{info.label}</span>
-                  <span className="font-mono text-muted-foreground break-all">
-                    {describe(obj(e.event), detailed)}
+            {t.events.map((e, i) => (
+              <div key={i} className="grid grid-cols-3">
+                {LANES.map((p) => (
+                  <span
+                    key={p}
+                    aria-hidden={p !== e.plane || undefined}
+                    className="border-r border-border/20 px-2 py-1 text-[11px] font-mono text-muted-foreground break-all last:border-r-0"
+                  >
+                    {p === e.plane ? describe(obj(e.event), detailed) : ' '}
                   </span>
-                </div>
-              )
-            })}
+                ))}
+              </div>
+            ))}
           </div>
         </div>
       ))}

@@ -20,13 +20,22 @@ import {
   AlertTriangle,
   CheckCircle2,
   XCircle,
+  SkipForward,
   RotateCcw,
   Wand2,
   ShieldCheck,
   Layers,
+  Info,
+  Route,
+  Sparkles,
+  Ban,
+  ArrowRight,
+  Workflow,
+  Clock,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { cn } from '@/lib/utils'
 import {
   getKmipEngine,
   decisionOf,
@@ -37,12 +46,44 @@ import {
   type AuditEvent,
   type PolicyStatus,
 } from '@/wasm/kmip/kmipEngine'
-import { ALGORITHMS, POLICY_PRESETS, type PolicyPreset } from '@/wasm/kmip/kmipMeta'
+import { ALGORITHMS, AUTO_ALGO, POLICY_PRESETS, type PolicyPreset } from '@/wasm/kmip/kmipMeta'
+import { arrayBufferToHex, getRandomBytes } from '@/utils/webCrypto'
 import { PolicyControlStrip } from './PolicyControlStrip'
 import { PolicyScenario } from './PolicyScenario'
 import { Inspector } from './Inspector'
 import { PolicyView } from './PolicyView'
 import { BatchView } from './BatchView'
+import {
+  useLessonsTour,
+  LessonsHub,
+  TourOverlay,
+  clickByText,
+  dragRangeToMax,
+  type Lesson,
+} from './LessonsTour'
+
+/** Jargon glossary (A-grade review item #8) — hover/focus definitions for the
+ * three protocol acronyms a first-time visitor hits in the very first
+ * sentence, before anything else on the page explains them. Native `<abbr
+ * title>` — no extra dependency, keyboard-focusable, works with a screen
+ * reader's "expand abbreviation" behavior for free. */
+const GLOSSARY = {
+  KMIP: 'Key Management Interoperability Protocol — the standard wire protocol for talking to a key manager / HSM.',
+  'PKCS#11':
+    'The "Cryptoki" C API applications use to drive an HSM; the engine speaks it under the hood.',
+  HSM: 'Hardware Security Module — tamper-resistant hardware that generates and guards keys.',
+} as const
+function Term({ t }: { t: keyof typeof GLOSSARY }) {
+  return (
+    <abbr
+      // eslint-disable-next-line security/detect-object-injection -- `t` is typed `keyof typeof GLOSSARY`, a closed 3-value literal union, never user input.
+      title={GLOSSARY[t]}
+      className="cursor-help border-b border-dotted border-muted-foreground/60 no-underline"
+    >
+      {t}
+    </abbr>
+  )
+}
 
 /** Top-level surface of the CACP playground. */
 type Plane = 'agility' | 'policy' | 'batch'
@@ -59,6 +100,14 @@ const readMode = (): ViewMode => {
     return localStorage.getItem('cacp-mode') === 'expert' ? 'expert' : 'guided'
   } catch {
     return 'guided'
+  }
+}
+
+const readWhyDismissed = (): boolean => {
+  try {
+    return localStorage.getItem('cacp-why-dismissed') === '1'
+  } catch {
+    return false
   }
 }
 
@@ -81,9 +130,29 @@ function engineError(operation: string, err: unknown): OpResult {
   }
 }
 
+/** A synthetic [`OpResult`] for an algorithm `kmipMeta.isRunnable` marks
+ * non-runnable — no KMIP request is even attempted. Distinct from a policy
+ * `Deny` (the policy forbids it) or an engine `Error` (a real request that
+ * failed) — this is "the tool can't do this at all" (A-grade review A1). */
+function skipResult(algo: string): OpResult {
+  return {
+    ok: false,
+    operation: 'CreateKeyPair',
+    status: 'Skip',
+    resultReason: null,
+    message: `${algo} is real PQC vocabulary a policy can reference (allow/denylist it, gate on it) — but this in-browser engine doesn't implement it, so no key can actually be created. Pick a runnable algorithm to drive the lifecycle by hand.`,
+    summary: {},
+    responseWireHex: '',
+    responseWireLen: 0,
+    responseTree: { tag: '', type: '' },
+    audit: [],
+  }
+}
+
 /** Friendly one-liner describing what an op result means. */
 function narrate(r: OpResult): string {
   const s = r.summary
+  if (r.status === 'Skip') return r.message ?? 'Not runnable in this browser engine.'
   if (!r.ok) return r.message ? `Refused: ${r.message}` : 'Operation failed.'
   switch (r.operation) {
     case 'CreateKeyPair':
@@ -100,6 +169,10 @@ function narrate(r: OpResult): string {
       return `Encapsulated a shared secret — ${Number(s.ciphertextLen) || 0}-byte ciphertext for the private-key holder.`
     case 'Decapsulate':
       return `Decapsulated — the same shared secret is re-derived from the ciphertext.`
+    case 'Encrypt':
+      return `Encrypted your message with AES-GCM — ${str(s.ciphertextHex).length / 2} bytes of ciphertext + a ${str(s.tagHex).length / 2}-byte authentication tag.`
+    case 'Decrypt':
+      return `Decrypted — recovered the original message.`
     case 'Query':
       return `Server reports vendor "${str(s.vendorIdentification)}" and ${Number(s.operationCount) || 0} supported operations.`
     case 'Locate':
@@ -115,7 +188,16 @@ function narrate(r: OpResult): string {
 /** Guided-mode "what this means" — one extra sentence of context tying the raw
  * result back to the crypto-agility story. Returns null when there's nothing
  * useful to add (so the callout doesn't render an empty box). */
+/** KMIP 3.0 §9.2 ResultReason wire codepoint for WrongKeyLifecycleState
+ * (0x43) — a base-protocol lifecycle gate, not a Plane-1 policy decision, so
+ * `decisionOf` sees no `PolicyDecided` audit event for it at all. */
+const WRONG_KEY_LIFECYCLE_STATE = 0x43
+
 function whatThisMeans(r: OpResult): string | null {
+  if (r.status === 'Skip')
+    return 'Not a policy denial — the algorithm itself has no implementation here. A real appliance (or a different demo scoped to it) would actually run this.'
+  if (!r.ok && r.operation === 'Sign' && r.resultReason === WRONG_KEY_LIFECYCLE_STATE)
+    return "This is refused before the policy even runs — Sign requires an Active key by protocol, and Revoke just moved this one out of Active. No policy has to name this rule; it's built into the KMIP lifecycle itself."
   const d = decisionOf(r)
   if (d.kind === 'Rekey')
     return `The policy didn't just allow this — it migrated the key to ${d.algorithm ?? 'a quantum-safe algorithm'}. The old key was retired automatically; your application code never changed.`
@@ -127,13 +209,15 @@ function whatThisMeans(r: OpResult): string | null {
   switch (r.operation) {
     case 'CreateKeyPair':
     case 'Create':
-      return 'Nothing is usable yet — a fresh key starts inactive. Activate it next, then sign or encapsulate.'
+      return 'Nothing is usable yet — a fresh key starts inactive. Activate it next, then use it (sign, encapsulate, or encrypt).'
     case 'Activate':
       return 'The key is now live and the policy will govern every operation you run against it.'
     case 'Sign':
       return 'This signature was produced by the HSM engine itself — the same Rust code the appliance ships, running here in your tab.'
     case 'SignatureVerify':
       return 'Verification re-runs the math against the public key; a valid result proves the signature and message match.'
+    case 'Decrypt':
+      return 'The plaintext you get back should exactly match what you encrypted — same key, same IV, real AES-GCM in the HSM engine.'
     default:
       return null
   }
@@ -163,15 +247,40 @@ export function KmipPlaygroundView() {
     }
   }
 
+  const [whyDismissed, setWhyDismissed] = useState<boolean>(readWhyDismissed)
+  const dismissWhy = () => {
+    setWhyDismissed(true)
+    try {
+      localStorage.setItem('cacp-why-dismissed', '1')
+    } catch {
+      /* ignore */
+    }
+  }
+
   const [algo, setAlgo] = useState('ML-DSA-65')
+  // Key-size/curve for RSA/ECDSA (A-grade review item #18) — `undefined` lets
+  // the engine apply its own default (RSA-2048 / P-256). Reset whenever the
+  // algorithm changes so a stale curve choice can't leak onto a PQC pick.
+  const [keyLength, setKeyLength] = useState<number | undefined>(undefined)
+  const onSelectAlgo = (value: string) => {
+    setAlgo(value)
+    setKeyLength(ALGORITHMS.find((a) => a.value === value)?.sizes?.[0]?.length)
+  }
   const [message, setMessage] = useState('hello post-quantum world')
   const [priv, setPriv] = useState<string | null>(null)
   const [pub, setPub] = useState<string | null>(null)
   const [sigHex, setSigHex] = useState<string | null>(null)
   const [ctHex, setCtHex] = useState<string | null>(null)
+  /** Symmetric Encrypt's IV — the engine won't auto-generate one for a plain
+   * `Create`d key, so it's carried from Encrypt's response into Decrypt's
+   * request (mirrors `ctHex`, which for the symmetric path holds
+   * ciphertext+tag concatenated, ready to hand straight back to Decrypt). */
+  const [encIvHex, setEncIvHex] = useState<string | null>(null)
 
   const chosen = ALGORITHMS.find((a) => a.value === algo)
   const isKem = chosen?.kind === 'kem'
+  const isSymmetric = chosen?.kind === 'symmetric'
+  const isSpecOnly = chosen?.runnable === false
 
   // The active policy's friendly label (built-in permissive aliases the
   // training-permissive preset) — shown in the policy-test panel.
@@ -229,12 +338,36 @@ export function KmipPlaygroundView() {
   )
 
   const onCreate = async () => {
-    const r = await run({ op: 'CreateKeyPair', algorithm: algo })
+    if (isSpecOnly) {
+      setPriv(null)
+      setPub(null)
+      setSigHex(null)
+      setCtHex(null)
+      setEncIvHex(null)
+      setResult(skipResult(algo))
+      return
+    }
+    if (isSymmetric) {
+      const r = await run({ op: 'Create', algorithm: algo, length: 256 })
+      if (r?.ok) {
+        setPriv(str(r.summary.uid))
+        setPub(null)
+        setSigHex(null)
+        setCtHex(null)
+        setEncIvHex(null)
+      }
+      return
+    }
+    const spec: OpSpec = chosen?.auto
+      ? { op: 'CreateKeyPair', intent: 'sign' }
+      : { op: 'CreateKeyPair', algorithm: algo, length: chosen?.sizes ? keyLength : undefined }
+    const r = await run(spec)
     if (r?.ok) {
       setPriv(str(r.summary.privateKeyUid))
       setPub(str(r.summary.publicKeyUid))
       setSigHex(null)
       setCtHex(null)
+      setEncIvHex(null)
     }
   }
   const onActivate = async () => {
@@ -258,11 +391,33 @@ export function KmipPlaygroundView() {
   const onDecapsulate = async () => {
     if (priv && ctHex) await run({ op: 'Decapsulate', uid: priv, data: ctHex })
   }
+  const onEncrypt = async () => {
+    if (!priv) return
+    const ivHex = arrayBufferToHex(getRandomBytes(12).buffer as ArrayBuffer)
+    const r = await run({ op: 'Encrypt', uid: priv, text: message, ivHex })
+    if (r?.ok) {
+      setCtHex(str(r.summary.ciphertextHex) + str(r.summary.tagHex))
+      setEncIvHex(ivHex)
+    }
+  }
+  const onDecrypt = async () => {
+    if (priv && ctHex && encIvHex)
+      await run({ op: 'Decrypt', uid: priv, data: ctHex, ivHex: encIvHex })
+  }
   const onGet = async () => {
     if (priv) await run({ op: 'Get', uid: priv })
   }
   const onRevoke = async () => {
     if (priv) await run({ op: 'Revoke', uid: priv })
+  }
+  // A-grade review C3/lifecycle-state-gate demo: Revoke, then immediately
+  // retry the exact same Sign — no policy needed to deny this, the base KMIP
+  // lifecycle gate (Sign requires Active) refuses it. Leaves `result` on the
+  // (denied) Sign attempt, not the Revoke, so that's what the learner sees.
+  const onRevokeThenRetrySign = async () => {
+    if (!priv) return
+    await run({ op: 'Revoke', uid: priv })
+    await run({ op: 'Sign', uid: priv, text: message })
   }
 
   // Reset the workbench scratch state — the audit/activity trail, the last result,
@@ -281,6 +436,7 @@ export function KmipPlaygroundView() {
     setPub(null)
     setSigHex(null)
     setCtHex(null)
+    setEncIvHex(null)
   }
 
   const onLoadPolicy = async (preset: PolicyPreset) => {
@@ -310,6 +466,200 @@ export function KmipPlaygroundView() {
     refresh(engine)
     return res
   }
+
+  // ── Guided lessons (A-grade review item #19) ───────────────────────────────
+  // Five cross-tab lessons that drive the REAL controls — every `act` below
+  // calls the exact same handler a click would. A `setAlgo`/`setPolicy`-style
+  // state update commits on the NEXT render, so a step never both changes a
+  // setting AND immediately acts on the new value in one `act` — each is its
+  // own tour step, letting the state settle before the following step reads
+  // it (avoids a stale-closure read of `algo`, e.g. `onCreate` seeing the
+  // value from before an `onSelectAlgo` in the same step would have committed).
+  const loadPolicyByFile = (file: string) => {
+    const preset = POLICY_PRESETS.find((p) => p.file === file)
+    return preset ? onLoadPolicy(preset) : undefined
+  }
+  const lessons: Lesson[] = [
+    {
+      id: 'flip',
+      title: 'The agility flip',
+      icon: Sparkles,
+      plane: 'agility',
+      blurb: 'Same request, two policies, two algorithms — the core idea.',
+      steps: [
+        {
+          title: 'Why crypto-agility?',
+          body: 'A "harvest-now, decrypt-later" attacker is already recording your encrypted traffic, betting a future quantum computer will crack it. The defence isn\'t a one-time swap to PQC — it\'s changing algorithms by policy, with no code change. Watch that happen live.',
+        },
+        {
+          title: 'Start on the "before"',
+          target: '[data-tour="policy-chip-classical.yaml"]',
+          act: () => loadPolicyByFile('classical.yaml'),
+          body: 'The Classical policy is the pre-migration world — its defaults resolve new keys to RSA / ECDSA. Notice the resolved defaults update instantly.',
+        },
+        {
+          title: 'Ask with "Auto"',
+          target: '[data-testid="kmip-algo"]',
+          act: () => onSelectAlgo(AUTO_ALGO),
+          body: 'Instead of naming an algorithm, we set the picker to Auto — let the policy decide. Your app asks for a signing key and lets policy choose.',
+        },
+        {
+          title: 'Create it',
+          target: '[data-tour="create-btn"]',
+          act: () => onCreate(),
+          body: 'Under Classical, the policy resolved it to a classical algorithm. See the verdict and the plain-English explanation below.',
+        },
+        {
+          title: 'Flip the policy',
+          target: '[data-tour="policy-chip-pqc.yaml"]',
+          act: () => loadPolicyByFile('pqc.yaml'),
+          body: 'Switch the active policy to PQC. Nothing else changes — not the picker, not your request. This one control governs everything below it.',
+        },
+        {
+          title: 'Create again — identical action',
+          target: '[data-tour="create-btn"]',
+          act: () => onCreate(),
+          body: 'The exact same Auto Create now resolves to a PQC algorithm. Same request, zero code change, now quantum-safe. That is crypto-agility.',
+        },
+        {
+          title: "That's the loop",
+          body: 'One policy switch changed every downstream decision. Try the next lessons: denials, rekey-on-use, and how a policy actually decides.',
+        },
+      ],
+    },
+    {
+      id: 'deny',
+      title: 'When a policy says no',
+      icon: Ban,
+      plane: 'agility',
+      blurb: 'A denial names the rule — and how to satisfy it.',
+      steps: [
+        {
+          title: 'Activate PQC',
+          target: '[data-tour="policy-chip-pqc.yaml"]',
+          act: () => loadPolicyByFile('pqc.yaml'),
+          body: 'The PQC policy forbids creating new classical asymmetric keys.',
+        },
+        {
+          title: 'Force a classical key',
+          target: '[data-testid="kmip-algo"]',
+          act: () => onSelectAlgo('RSA'),
+          body: 'We explicitly ask for RSA while PQC is active — overriding Auto.',
+        },
+        {
+          title: 'Watch the denial',
+          target: '[data-tour="create-btn"]',
+          act: () => onCreate(),
+          body: 'Denied before any key was created. The result names the exact rule (algorithm_denylist) and, in Guided mode, what it means. A denial is a next step, not a dead end.',
+        },
+        {
+          title: 'Read the trail',
+          target: '[data-tour="insp-audit-tab"]',
+          act: () => clickByText('[data-tour="insp-audit-tab"]', 'Activity'),
+          body: 'Every step is logged across all three planes — policy decision (P1), KMIP op (P2), PKCS#11 mechanism (P3).',
+        },
+      ],
+    },
+    {
+      id: 'rekey',
+      title: 'Rekey on first use',
+      icon: ArrowRight,
+      plane: 'agility',
+      blurb: 'A legacy key migrates the moment you use it.',
+      steps: [
+        {
+          title: 'Activate Auto-migrate',
+          act: () => loadPolicyByFile('auto-migrate-on-use.yaml'),
+          body: "This policy lets you create classical keys, but rekeys them to PQC the first time they're used — no flag day.",
+        },
+        {
+          title: 'Ask with "Auto"',
+          target: '[data-testid="kmip-algo"]',
+          act: () => onSelectAlgo(AUTO_ALGO),
+          body: 'Auto resolves to a classical algorithm under this policy — a classical key, on purpose.',
+        },
+        {
+          title: 'Create it',
+          target: '[data-tour="create-btn"]',
+          act: () => onCreate(),
+          body: 'A classical key, created deliberately — this policy migrates it later, not now.',
+        },
+        {
+          title: 'Activate it',
+          target: '[data-tour="activate-btn"]',
+          act: () => onActivate(),
+          body: 'Bring the key to Active so it can be used.',
+        },
+        {
+          title: 'Sign — and watch it migrate',
+          target: '[data-tour="sign-btn"]',
+          act: () => onSign(),
+          body: 'The moment you Sign, the policy rekeys the legacy key to its PQC equivalent and signs with the new key. The keystore entry migrates in place.',
+        },
+      ],
+    },
+    {
+      id: 'decide',
+      title: 'How a policy decides',
+      icon: Workflow,
+      plane: 'policy',
+      blurb: 'Read the decision pipeline: resolve, then gate.',
+      steps: [
+        {
+          title: 'The policy library',
+          target: '[data-tour="policy-library"]',
+          body: "Every policy lives here. Let's look at how one actually reaches a verdict.",
+        },
+        {
+          title: 'Open the Visual editor',
+          target: '[data-tour="policy-subtabs"] button',
+          targetText: 'Visual',
+          act: () => clickByText('[data-tour="policy-subtabs"] button', 'Visual'),
+          body: 'This is the decision pipeline: a request enters the top and flows through the rules, in order, to an Allow / Rekey / Deny terminal.',
+        },
+        {
+          title: 'Run a request',
+          target: '[data-tour="run-simulate-btn"]',
+          act: () => clickByText('[data-tour="run-simulate-btn"]', 'Run through the pipeline'),
+          body: 'The token animates along the path the engine actually took. The verdict shows which rule decided — and, on a deny, how to satisfy it.',
+        },
+        {
+          title: 'Two passes, first match wins',
+          target: '[data-tour="precedence-explainer"]',
+          body: 'Resolve runs first (Default / Rekey can change the algorithm); then Gate checks the resolved request in order. The first rule that denies wins — reorder rules and the outcome can change.',
+        },
+      ],
+    },
+    {
+      id: 'time',
+      title: 'Time-travel a policy',
+      icon: Clock,
+      plane: 'policy',
+      blurb: 'Move the clock and watch a cutoff bite.',
+      steps: [
+        {
+          title: 'Pick a dated policy',
+          target: '[data-tour="policy-library"]',
+          act: () => loadPolicyByFile('pqc-migration-2030.yaml'),
+          body: "The 2030-cutoff policy bans classical signing after a date. Let's let the calendar change the verdict.",
+        },
+        {
+          title: 'Open the Timeline',
+          target: '[data-tour="policy-subtabs"] button',
+          targetText: 'Timeline',
+          act: () => clickByText('[data-tour="policy-subtabs"] button', 'Timeline'),
+          body: 'Each time-bounded rule is a bar on a year axis. Drag the slider to move the "as-of" clock.',
+        },
+        {
+          title: 'Cross 2030',
+          target: 'input[aria-label="As-of date"]',
+          act: () => dragRangeToMax('input[aria-label="As-of date"]'),
+          body: 'Past 2030-01-01 the classical-signing cutoff comes into force — and the List matrix + simulator now evaluate at that date too. That is temporal agility.',
+        },
+      ],
+    },
+  ]
+  const tour = useLessonsTour(lessons, setPlane)
 
   if (bootError) {
     return (
@@ -341,14 +691,35 @@ export function KmipPlaygroundView() {
             <span className="text-muted-foreground font-normal text-base">(CACP)</span>
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
-            A real KMIP 3.0 control plane + PKCS#11 HSM, compiled to WebAssembly and running{' '}
+            A real <Term t="KMIP" /> 3.0 control plane + <Term t="PKCS#11" /> <Term t="HSM" />,
+            compiled to WebAssembly and running{' '}
             <span className="font-medium text-foreground">entirely in this tab</span> — no server,
             no Docker. Every operation is a genuine KMIP request answered by the same Rust engine
             the appliance ships.
           </p>
+          {/* In-scope chip (A-grade review item #8) — this sandbox proves the
+              control-plane decision + key-management-at-rest path; it does not
+              stand in for a TLS handshake or persistent storage. */}
+          <p className="mt-1.5 text-[11px] text-muted-foreground">
+            <span className="mr-1.5 rounded bg-muted/60 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-foreground">
+              In scope
+            </span>
+            control plane + key management{' '}
+            <span className="font-medium text-foreground">at rest</span>{' '}
+            <ShieldCheck size={11} className="inline text-status-success" /> ·{' '}
+            <span className="italic">TLS handshake &amp; persistence → full Docker sandbox</span>
+          </p>
         </div>
         {/* VIEW · Guided / Expert progressive-disclosure toggle */}
         <div className="shrink-0 flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={tour.openHub}
+            className="h-7 gap-1.5 px-2.5 text-xs text-muted-foreground hover:text-foreground"
+          >
+            <Route size={13} /> Lessons
+          </Button>
           <span className="hidden sm:inline text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">
             View
           </span>
@@ -376,6 +747,36 @@ export function KmipPlaygroundView() {
           </div>
         </div>
       </div>
+
+      {/* ── Why crypto-agility, not just "post-quantum" (A-grade review E1) ── */}
+      {!whyDismissed && (
+        <div className="mb-4 flex items-start gap-3 rounded-xl border border-status-warning/30 bg-status-warning/10 p-3.5">
+          <Info size={16} className="mt-0.5 shrink-0 text-status-warning" />
+          <div className="min-w-0 flex-1 text-xs text-foreground">
+            <p className="font-semibold">Why crypto-agility, not just "post-quantum"</p>
+            <p className="mt-1 text-muted-foreground">
+              Data encrypted today with classical algorithms can be harvested now and decrypted
+              later, once a cryptographically-relevant quantum computer exists —{' '}
+              <span className="font-medium text-foreground">harvest-now, decrypt-later</span>. The
+              fix isn't swapping in a PQC algorithm once; it's a control plane that can migrate keys
+              again whenever the roadmap changes,{' '}
+              <span className="font-medium text-foreground">
+                with no flag day and no application code change
+              </span>
+              . Everything below is that idea made hands-on — flip the policy strip and watch the
+              same request behave differently.
+            </p>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={dismissWhy}
+            className="h-6 shrink-0 px-2 text-[10px] text-muted-foreground hover:text-foreground"
+          >
+            Got it
+          </Button>
+        </div>
+      )}
 
       {/* ── Top-level tabs ───────────────────────────────────────────────── */}
       <div className="overflow-x-auto no-scrollbar mb-4">
@@ -470,43 +871,120 @@ export function KmipPlaygroundView() {
                 <FilterDropdown
                   items={ALGORITHMS.map((a) => ({
                     id: a.value,
-                    label: a.pqc ? `${a.label} · PQC` : a.label,
+                    label: a.auto
+                      ? a.label
+                      : a.runnable === false
+                        ? a.label
+                        : a.pqc
+                          ? `${a.label} · PQC`
+                          : a.label,
+                    icon: a.auto ? <Wand2 size={13} className="text-primary" /> : undefined,
                   }))}
                   selectedId={algo}
-                  onSelect={setAlgo}
+                  onSelect={onSelectAlgo}
                   label="Algorithm"
                   className="w-full"
                 />
               </div>
+              {isSpecOnly && (
+                <p className="mb-3 -mt-2 text-[10.5px] text-status-warning">
+                  Spec-only: a real algorithm policies can reference, but this in-browser engine
+                  can't create one — see what happens below.
+                </p>
+              )}
+              {chosen?.sizes && (
+                <div className="mb-3 -mt-2" data-testid="kmip-key-size">
+                  <p className="mb-1 text-[10px] font-medium text-muted-foreground">
+                    {algo === 'RSA' ? 'Key size' : 'Curve'} — a real request parameter, not a label;
+                    policies with a minimum (FIPS-only, BSI, 2030 roadmap) gate on it.
+                  </p>
+                  <div className="flex gap-1.5">
+                    {chosen.sizes.map((s) => (
+                      <Button
+                        key={s.length}
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setKeyLength(s.length)}
+                        className={cn(
+                          'h-auto rounded-full border px-2.5 py-0.5 text-[10.5px] font-medium',
+                          keyLength === s.length
+                            ? 'border-primary/60 bg-primary/10 text-primary'
+                            : 'border-border bg-background/60 text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                        )}
+                      >
+                        {s.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-2">
-                <Button disabled={busy} onClick={onCreate} className="col-span-2 gap-1.5">
-                  <Play size={14} /> 1 · Create {isKem ? 'KEM' : 'signing'} key pair
+                <Button
+                  disabled={busy}
+                  onClick={onCreate}
+                  data-tour="create-btn"
+                  className="col-span-2 gap-1.5"
+                >
+                  <Play size={14} />{' '}
+                  {isSpecOnly
+                    ? '1 · Try to create (not runnable)'
+                    : isSymmetric
+                      ? '1 · Create symmetric key'
+                      : `1 · Create ${isKem ? 'KEM' : 'signing'} key pair`}
                 </Button>
                 <Button
                   variant="secondary"
                   disabled={busy || !priv}
                   onClick={onActivate}
+                  data-tour="activate-btn"
                   className="col-span-2"
                 >
                   2 · Activate
                 </Button>
-                {!isKem ? (
-                  <>
-                    <Button variant="secondary" disabled={busy || !priv} onClick={onSign}>
-                      3 · Sign
-                    </Button>
-                    <Button variant="secondary" disabled={busy || !sigHex} onClick={onVerify}>
-                      4 · Verify
-                    </Button>
-                  </>
-                ) : (
+                {isKem ? (
                   <>
                     <Button variant="secondary" disabled={busy || !pub} onClick={onEncapsulate}>
                       3 · Encapsulate
                     </Button>
                     <Button variant="secondary" disabled={busy || !ctHex} onClick={onDecapsulate}>
                       4 · Decapsulate
+                    </Button>
+                  </>
+                ) : isSymmetric ? (
+                  <>
+                    <Button variant="secondary" disabled={busy || !priv} onClick={onEncrypt}>
+                      3 · Encrypt
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      disabled={busy || !ctHex || !encIvHex}
+                      onClick={onDecrypt}
+                    >
+                      4 · Decrypt
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="secondary"
+                      disabled={busy || !priv}
+                      onClick={onSign}
+                      data-tour="sign-btn"
+                    >
+                      3 · Sign
+                    </Button>
+                    <Button variant="secondary" disabled={busy || !sigHex} onClick={onVerify}>
+                      4 · Verify
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      disabled={busy || !priv}
+                      onClick={onRevokeThenRetrySign}
+                      className="col-span-2"
+                    >
+                      5 · Revoke, then try to Sign again
                     </Button>
                   </>
                 )}
@@ -585,14 +1063,16 @@ export function KmipPlaygroundView() {
                 ) : (
                   <div className="mt-2">
                     <div className="flex items-center gap-2 flex-wrap">
-                      {result.ok ? (
+                      {result.status === 'Skip' ? (
+                        <SkipForward size={16} className="text-status-warning" />
+                      ) : result.ok ? (
                         <CheckCircle2 size={16} className="text-status-success" />
                       ) : (
                         <XCircle size={16} className="text-destructive" />
                       )}
                       <span className="text-sm font-medium">{result.operation}</span>
                       <span
-                        className={`text-xs ${result.ok ? 'text-status-success' : 'text-destructive'}`}
+                        className={`text-xs ${result.status === 'Skip' ? 'text-status-warning' : result.ok ? 'text-status-success' : 'text-destructive'}`}
                       >
                         {result.status}
                       </span>
@@ -641,6 +1121,8 @@ export function KmipPlaygroundView() {
                 audit={audit}
                 result={result}
                 lastSpec={lastSpec}
+                policy={policy}
+                policyYaml={policyYaml}
                 expert={expert}
                 onClearAudit={() => {
                   engine.clearAudit()
@@ -682,6 +1164,27 @@ export function KmipPlaygroundView() {
         </a>
         .
       </p>
+
+      {tour.hubOpen && (
+        <LessonsHub
+          lessons={lessons}
+          done={tour.doneLessons}
+          onStart={tour.startLesson}
+          onClose={tour.closeHub}
+        />
+      )}
+      {tour.activeLesson && tour.tourStep >= 0 && (
+        <TourOverlay
+          lessonTitle={tour.activeLesson.title}
+          step={tour.activeLesson.steps[tour.tourStep]}
+          stepIndex={tour.tourStep}
+          stepCount={tour.activeLesson.steps.length}
+          rect={tour.tourRect}
+          onNext={tour.nextStep}
+          onBack={tour.backStep}
+          onEnd={tour.endTour}
+        />
+      )}
     </div>
   )
 }
