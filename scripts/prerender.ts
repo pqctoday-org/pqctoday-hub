@@ -135,6 +135,18 @@ async function renderRoute(browser: Browser, baseUrl: string, route: string): Pr
     // Let any remaining synchronous render flush.
     await page.waitForTimeout(250)
 
+    // Strip transient portal overlays (modals, toasts, backdrops) that React
+    // portals append to <body> OUTSIDE #root. Anything serialized there is a
+    // dead overlay hydration can never remove — a first paint permanently
+    // obscured for real visitors. Only #root and <script> tags belong in the
+    // snapshot's <body>.
+    await page.evaluate(() => {
+      for (const el of Array.from(document.body.children)) {
+        if (el.id === 'root' || el.tagName === 'SCRIPT') continue
+        el.remove()
+      }
+    })
+
     writeFileSync(outputPathFor(route), await page.content(), 'utf-8')
   } finally {
     await page.close()

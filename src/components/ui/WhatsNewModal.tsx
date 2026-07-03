@@ -198,6 +198,14 @@ export const WhatsNewModal = () => {
     const params = new URLSearchParams(window.location.search)
     if (params.has('whatsnew')) {
       useVersionStore.getState().resetForTesting()
+    } else if (window.navigator?.webdriver) {
+      // Automated browsers (E2E, the prerenderer) never get the auto-open:
+      // main.tsx marks the guided tour completed under webdriver, which would
+      // otherwise un-suppress this modal — and the prerenderer then serializes
+      // it into the static HTML as a dead, undismissable overlay (portaled
+      // outside #root, so hydration never removes it). The explicit ?whatsnew
+      // test hook above still opts in.
+      return
     }
 
     const timer = setTimeout(() => {
