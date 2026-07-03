@@ -59,10 +59,14 @@ export const extractKeyFromOpenSSLOutput = async (
     bytes[i / 2] = parseInt(cleanHex.substring(i, i + 2), 16)
   }
 
-  // Sanity Check for Public Keys (secp256k1 uncompressed = 65 bytes)
-  if (type === 'public' && bytes.length !== 65) {
+  // Sanity check for public keys. This function is shared across curves:
+  // secp256k1 uncompressed (Bitcoin/Ethereum) = 65 bytes, Ed25519 raw
+  // (Solana) = 32 bytes. Only warn outside those two legitimate lengths —
+  // this used to warn on every valid 32-byte Ed25519 key.
+  const KNOWN_VALID_PUBLIC_KEY_LENGTHS = [65, 32]
+  if (type === 'public' && !KNOWN_VALID_PUBLIC_KEY_LENGTHS.includes(bytes.length)) {
     console.warn(
-      `[cryptoUtils] Warning: Public key length is ${bytes.length} (expected 65). Hex: ${cleanHex.slice(0, 20)}...`
+      `[cryptoUtils] Warning: Public key length is ${bytes.length} (expected 65 for secp256k1 or 32 for Ed25519). Hex: ${cleanHex.slice(0, 20)}...`
     )
     // Note: If OpenSSL format changed, we might be capturing garbage.
     // Try to clamp to 65 bytes if we have more
