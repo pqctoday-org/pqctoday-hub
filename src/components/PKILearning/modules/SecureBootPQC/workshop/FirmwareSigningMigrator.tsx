@@ -1253,7 +1253,8 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               </li>
               <li>
                 <span className="font-mono font-semibold text-foreground">ML-DSA-87</span> — NIST
-                Level 5 · required by NSA CNSA 2.0 for US government firmware by 2030
+                Level 5 · CNSA 2.0&rsquo;s general-purpose signature (its firmware-signing pick is
+                LMS/XMSS, SP 800-208)
               </li>
               <li>
                 <span className="font-mono font-semibold text-foreground">SLH-DSA-SHA2-128S</span> —
@@ -1647,9 +1648,9 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               This demo uses a stub SignerInfo (issuer=&quot;demo&quot;, serial=1) with no
               certificate chain. In production the CMS{' '}
               <span className="font-mono">certificates</span> field carries an X.509 cert binding
-              the PQC public key: <span className="font-mono">RFC 9481</span> for ML-DSA (
+              the PQC public key: <span className="font-mono">RFC 9881</span> for ML-DSA (
               <span className="font-mono">id-ML-DSA</span> AlgorithmIdentifier in
-              SubjectPublicKeyInfo) or <span className="font-mono">RFC 9482</span> for SLH-DSA. The
+              SubjectPublicKeyInfo) or <span className="font-mono">RFC 9909</span> for SLH-DSA. The
               UEFI db stores that cert as an <span className="font-mono">EFI_CERT_X509</span>{' '}
               signature list entry.
             </p>
@@ -1886,8 +1887,10 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
           <div className="bg-muted/40 rounded-lg p-3 border border-border text-xs flex gap-2">
             <Info size={13} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
             <p className="text-muted-foreground">
-              <strong className="text-foreground">NSA CNSA 2.0</strong> mandates ML-DSA-87 for US
-              government firmware signing by 2030.{' '}
+              <strong className="text-foreground">NSA CNSA 2.0</strong> designates LMS/XMSS (SP
+              800-208, stateful hash-based signatures) specifically for software/firmware signing by
+              2030 — ML-DSA-87 is CNSA 2.0&rsquo;s general-purpose signature algorithm, not its
+              firmware-signing one.{' '}
               <a
                 href="/library?ref=NSA CNSA 2.0"
                 target="_blank"
@@ -1896,8 +1899,9 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               >
                 → View requirements
               </a>{' '}
-              · RFC 9019 (SUIT) defines firmware update manifest format for IoT devices using the
-              same CMS signatures.
+              · RFC 9019 (SUIT) defines firmware update manifest format for IoT devices — SUIT
+              manifests are COSE-signed (CBOR), a distinct format from the CMS (RFC 5652) SignedData
+              this demo generates.
             </p>
           </div>
 
@@ -1922,7 +1926,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
             {/* Step A: cert chain import */}
             <div className="space-y-1">
               <p className="font-medium text-foreground">
-                Step A — Import PQC public key into an X.509 certificate (RFC 9481 / RFC 9482)
+                Step A — Import PQC public key into an X.509 certificate (RFC 9881 / RFC 9909)
               </p>
               <p className="text-muted-foreground">
                 Export the PQC public key from the HSM and wrap it in an X.509 certificate whose
@@ -1937,7 +1941,8 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
                   </span>
                 </li>
                 <li>
-                  Generate a self-signed X.509 cert (OpenSSL ≥ 3.3 with ML-DSA OID support):{' '}
+                  Generate a self-signed X.509 cert (OpenSSL ≥ 3.5, which added native ML-DSA
+                  support):{' '}
                   <span className="font-mono">
                     openssl req -new -x509 -key privkey.pem -out cert.pem \<br />
                     &nbsp;&nbsp;-subj &quot;/CN=PQC-SecureBoot-2026/O=Org&quot; \<br />
@@ -1951,7 +1956,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
                         ? '2.16.840.1.101.3.4.3.20'
                         : OID_ML_DSA[pqcAlgo]}
                     </span>{' '}
-                    per RFC 9481/9482)
+                    per RFC 9881/9909)
                   </span>
                 </li>
                 <li>

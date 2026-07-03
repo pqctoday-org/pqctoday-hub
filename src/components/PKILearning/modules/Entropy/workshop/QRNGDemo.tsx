@@ -157,11 +157,13 @@ export const QRNGDemo: React.FC = () => {
         </span>
         <p className="text-xs text-foreground leading-relaxed">
           <span className="font-semibold text-status-info">Simulated reference:</span> The
-          &ldquo;QRNG&rdquo; sample shown below was generated via Node.js{' '}
-          <code className="font-mono text-primary">crypto.randomBytes()</code> — a classical CSPRNG
-          — and stored as a static constant for offline use. In a production system this data would
-          come from a hardware quantum source (photon detection or vacuum fluctuations). Statistical
-          quality is equivalent; the <em>physical entropy source</em> differs.
+          &ldquo;QRNG&rdquo; sample shown below is generated fresh on load (and on Try Another
+          Sample) via the browser&rsquo;s{' '}
+          <code className="font-mono text-primary">crypto.getRandomValues()</code> — the same
+          classical CSPRNG call used by the &ldquo;CSPRNG&rdquo; panel below. In a production system
+          this data would instead come from a hardware quantum source (photon detection or vacuum
+          fluctuations). Statistical quality is equivalent; the <em>physical entropy source</em>{' '}
+          differs — this demo does not have access to real quantum hardware.
         </p>
       </div>
 
@@ -370,6 +372,13 @@ export const QRNGDemo: React.FC = () => {
                       <td className="py-2 pr-4">
                         <div className="font-medium text-foreground">{qr.name}</div>
                         <div className="text-xs text-muted-foreground">{qr.description}</div>
+                        {/* Surfaces caveats like "small sample — estimate unreliable below
+                            1,000 bytes" next to the pass/fail verdict, same as EntropyTestingDemo —
+                            without this a Min-Entropy fail at the default 64/128-byte sizes reads
+                            as "this data has detectable patterns" with no explanation. */}
+                        <div className="text-[10px] text-muted-foreground/80 font-mono">
+                          {qr.detail}
+                        </div>
                       </td>
                       <td className="text-right py-2 px-3 font-mono text-xs text-foreground">
                         {formatTestValue(qr)}

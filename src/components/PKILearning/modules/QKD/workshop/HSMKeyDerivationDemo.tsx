@@ -247,7 +247,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <LiveHSMToggle hsm={hsm} operations={['C_CreateObject', 'C_DeriveKey']} />
         <WasmModeIndicator
-          isLive={false}
+          isLive={hsm.isReady}
           simulationReason="WASM mode active for SP 800-108 Key Derivation Demo"
         />
       </div>
@@ -769,7 +769,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
       <KatValidationPanel
         specs={QKD_KAT_SPECS}
         label="QKD/HSM PQC Known Answer Tests"
-        authorityNote="ETSI GS QKD 014 · NIST FIPS 203"
+        authorityNote="ETSI GS QKD 014 · NIST FIPS 198-1 (HMAC-SHA-256) · SP 800-108r1 + RFC 5869 (HKDF)"
       />
 
       {/* PKCS#11 Call Log & Key Inspector */}

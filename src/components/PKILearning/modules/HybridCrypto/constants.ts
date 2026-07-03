@@ -156,7 +156,7 @@ export const HYBRID_ALGORITHMS: HybridAlgorithmInfo[] = [
     opensslAlgorithm: 'FUSED',
     publicKeyBytes: 1952 + 33, // ML-DSA-65 + secp256k1 compressed
     privateKeyBytes: 4032 + 32, // ML-DSA-65 + secp256k1
-    ciphertextOrSigBytes: 3293 + 33 + 32, // ML-DSA z + R + s = 3358
+    ciphertextOrSigBytes: 3309 + 33 + 32, // ML-DSA-65 sig + secp256k1 R + s = 3374
     nistLevel: 3,
     description:
       'EC-Schnorr (secp256k1) + ML-DSA-65 fused via adapted Fiat-Shamir. Strong Non-Separability. ePrint 2025/2059.',

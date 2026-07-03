@@ -356,7 +356,7 @@ export function CertCapacityCalculator() {
               Sliders that affect this chart: <em>Certificate count</em>, <em>Renewal cadence</em>.
             </p>
             <p className="text-muted-foreground/70">
-              Size sources: NIST FIPS 204 Table 1 (ML-DSA), RFC 5480 (ECDSA), RFC 3447 (RSA).
+              Size sources: NIST FIPS 204 Table 2 (ML-DSA), RFC 5480 (ECDSA), RFC 3447 (RSA).
             </p>
           </MathDisclosure>
         </div>

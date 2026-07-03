@@ -25,7 +25,7 @@ export const KEM_SIZES: Record<512 | 768 | 1024, { pub: number; ct: number; ss: 
 
 export const DSA_SIZES: Record<44 | 65 | 87, { pub: number; sig: number }> = {
   44: { pub: 1312, sig: 2420 },
-  65: { pub: 1952, sig: 3293 },
+  65: { pub: 1952, sig: 3309 },
   87: { pub: 2592, sig: 4627 },
 }
 

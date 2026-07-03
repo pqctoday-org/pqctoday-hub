@@ -162,6 +162,25 @@ interface ProvisioningStep {
   dataSize: string
 }
 
+// Raw key/exchange-value byte sizes, keyed by the exact algorithm strings used
+// in attestationData.ts (currentSigningAlgo/currentKEM/pqcSigningAlgo/pqcKEM).
+// The "Key size comparison" panel below previously hardcoded the intel-sgx
+// pairing's sizes (ML-DSA-65/ML-KEM-768, ECDSA/ECDH P-256) for every vendor
+// pairing, including ones that use ML-DSA-87/ML-KEM-1024 or P-384.
+const KEY_SIZE_BYTES: Record<string, number> = {
+  'ECDSA P-256': 64, // raw X||Y, no 0x04 prefix
+  'ECDSA P-384': 96,
+  'ECDH P-256 (TLS 1.3 key exchange)': 65, // point with 0x04 prefix, as sent on the wire
+  'ECDH P-384 (TLS 1.3 key exchange)': 97,
+  'ECDH P-256 (TLS 1.3)': 65,
+  'ML-DSA-65': 1952, // FIPS 204 Table 2, public key
+  'ML-DSA-87': 2592,
+  'ML-KEM-768': 1088, // FIPS 203 Table 2, ciphertext
+  'ML-KEM-1024': 1568,
+}
+const formatKeySize = (bytes: number | undefined) =>
+  bytes === undefined ? 'N/A' : `~${bytes.toLocaleString()} B`
+
 function buildProvisioningSteps(
   integration: (typeof TEE_HSM_INTEGRATIONS)[number],
   pqcMode: boolean
@@ -387,7 +406,10 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           false,
           true
         )
-        // provKeyHandle is a DEK: encrypt=true, decrypt=true, wrap/unwrap=false, extractable=false
+        // provKeyHandle is a DEK: encrypt=true, decrypt=true, wrap/unwrap=false,
+        // extractable=true (C_WrapKey requires the wrapped key itself to be
+        // extractable — this was false, which made every Execute run fail
+        // with CKR_KEY_UNEXTRACTABLE at the wrap step below)
         const provKeyHandle = hsm_generateAESKey(
           M,
           hSession,
@@ -397,7 +419,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           false,
           false,
           false,
-          false
+          true
         )
         hsm.addKey({
           handle: wrapKeyHandle,
@@ -564,7 +586,10 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           false,
           false
         )
-        // provKeyHandle is a DEK, so encrypt=true, decrypt=true, wrap/unwrap=false, extractable=false
+        // provKeyHandle is a DEK, so encrypt=true, decrypt=true, wrap/unwrap=false,
+        // extractable=true (same C_WrapKey requirement as the PQC path above —
+        // this was false, which made every Execute run fail with
+        // CKR_KEY_UNEXTRACTABLE at the wrap step below)
         const provKeyHandle = hsm_generateAESKey(
           M,
           hSession,
@@ -574,7 +599,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           false,
           false,
           false,
-          false
+          true
         )
         hsm.addKey({
           handle: wrapKeyHandle,
@@ -721,9 +746,21 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
             </div>
             <div className="flex flex-wrap gap-2 mb-3">
               {[
-                { label: 'Intel SGX + Thales Luna', tee: 'intel', hsm: 'thales' },
-                { label: 'AMD SEV + AWS CloudHSM', tee: 'amd', hsm: 'aws' },
-                { label: 'ARM TrustZone + nCipher', tee: 'arm', hsm: 'ncipher' },
+                // Must match TEE_HSM_INTEGRATIONS' teeVendor/hsmVendor exactly
+                // (attestationData.ts) — the previous ids ('intel'/'thales' etc.)
+                // matched no real integration, so every preset produced
+                // "Integration not available."
+                { label: 'Intel SGX + Thales Luna', tee: 'intel-sgx', hsm: 'Thales Luna HSM 7' },
+                {
+                  label: 'AMD SEV-SNP + Entrust nShield',
+                  tee: 'amd-sev-snp',
+                  hsm: 'Entrust nShield',
+                },
+                {
+                  label: 'Intel TDX + Azure Dedicated HSM',
+                  tee: 'intel-tdx',
+                  hsm: 'Azure Dedicated HSM (Marvell LiquidSecurity)',
+                },
               ].map((preset) => (
                 <Button
                   key={preset.label}
@@ -910,7 +947,11 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                   {pqcMode ? 'PQC Public Key' : 'Classical Public Key'}
                 </div>
                 <div className="text-sm font-mono font-bold text-foreground">
-                  {pqcMode ? '~1,952 B' : '~64 B'}
+                  {formatKeySize(
+                    KEY_SIZE_BYTES[
+                      pqcMode ? (integration.pqcSigningAlgo ?? '') : integration.currentSigningAlgo
+                    ]
+                  )}
                 </div>
               </div>
               <div className="text-center p-2 bg-muted/20 rounded border border-border">
@@ -918,7 +959,9 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                   {pqcMode ? 'PQC Ciphertext' : 'Classical Ciphertext'}
                 </div>
                 <div className="text-sm font-mono font-bold text-foreground">
-                  {pqcMode ? '~1,088 B' : '~65 B'}
+                  {formatKeySize(
+                    KEY_SIZE_BYTES[pqcMode ? (integration.pqcKEM ?? '') : integration.currentKEM]
+                  )}
                 </div>
               </div>
             </div>

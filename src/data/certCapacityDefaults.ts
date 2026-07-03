@@ -4,7 +4,7 @@
  *
  * Size sources:
  * - RSA-2048 / ECDSA-P256: RFC 5280, RFC 3279, RFC 5480
- * - ML-DSA variants: NIST FIPS 204, Table 1
+ * - ML-DSA variants: NIST FIPS 204, Table 2
  * - SLH-DSA: NIST FIPS 205, Table 2 (SLH-DSA-SHA2-128s)
  *
  * Performance sources (all AVX2-optimised, 3 GHz x86-64):
@@ -79,7 +79,7 @@ export const CERT_CAPACITY_DEFAULTS: AlgoCapacityProfile[] = [
     signCpuMicros: 29, // 86 252 cycles ÷ 3 GHz — CRYSTALS Dilithium2 AVX2, Haswell
     verifyCpuMicros: 19, // 57 789 cycles ÷ 3 GHz
     tlsCertOverheadBytes: 2164,
-    sizeSource: 'NIST FIPS 204, Table 1',
+    sizeSource: 'NIST FIPS 204, Table 2',
     perfSource: 'CRYSTALS-Dilithium AVX2, Haswell — NIST PQC Round 3 submission Appendix B',
   },
   {
@@ -91,7 +91,7 @@ export const CERT_CAPACITY_DEFAULTS: AlgoCapacityProfile[] = [
     signCpuMicros: 44, // 130 676 cycles ÷ 3 GHz
     verifyCpuMicros: 28, // 84 906 cycles ÷ 3 GHz
     tlsCertOverheadBytes: 3037,
-    sizeSource: 'NIST FIPS 204, Table 1',
+    sizeSource: 'NIST FIPS 204, Table 2',
     perfSource: 'CRYSTALS-Dilithium AVX2, Haswell — NIST PQC Round 3 submission Appendix B',
   },
   {
@@ -103,7 +103,7 @@ export const CERT_CAPACITY_DEFAULTS: AlgoCapacityProfile[] = [
     signCpuMicros: 66, // 197 960 cycles ÷ 3 GHz
     verifyCpuMicros: 42, // 126 839 cycles ÷ 3 GHz
     tlsCertOverheadBytes: 4339,
-    sizeSource: 'NIST FIPS 204, Table 1',
+    sizeSource: 'NIST FIPS 204, Table 2',
     perfSource: 'CRYSTALS-Dilithium AVX2, Haswell — NIST PQC Round 3 submission Appendix B',
   },
   {
