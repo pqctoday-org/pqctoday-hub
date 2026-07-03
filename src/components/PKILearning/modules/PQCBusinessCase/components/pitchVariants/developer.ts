@@ -179,7 +179,7 @@ export function buildDeveloperVariant(data: ExecutiveModuleData): PitchVariant {
     md += `${get('actions', 'recommendations')}\n\n---\n\n`
 
     md +=
-      '*Aligned to NIST CSWP 39 §5 - Crypto Agility Strategic Plan. https://doi.org/10.6028/NIST.CSWP.39*\n'
+      '*Aligned to NIST CSWP 39 §5 - Crypto Agility Strategic Plan. https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
     md += '*Customized for the Developer role via PQC Today Command Center.*\n'
     return md
   }

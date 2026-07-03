@@ -12,7 +12,7 @@
  * Governance zone.
  */
 import React, { useMemo, useState } from 'react'
-import { ClipboardList } from 'lucide-react'
+import { ClipboardList, ChevronDown, ChevronRight, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
@@ -24,14 +24,14 @@ import { INSTANCES_PER_PRODUCT_ESTIMATE } from '@/data/roleCrosswalk'
 const MAX_SYSTEMS = 20
 const MAX_VENDORS = 10
 
-interface ScopingState {
+export interface ScopingState {
   systems: string[]
   vendors: string[]
   estateInstances: string
   seeded: boolean
 }
 
-function buildMarkdown(s: ScopingState, industry: string): string {
+export function buildMarkdown(s: ScopingState, industry: string): string {
   const lines: string[] = []
   lines.push('# Initial Scoping Assessment')
   lines.push('')
@@ -75,9 +75,81 @@ function buildMarkdown(s: ScopingState, industry: string): string {
   lines.push('')
   lines.push(
     '*Aligned to NIST CSWP 39 §5 (Crypto Agility Strategic Plan — scope) and the Applied ' +
-      'Quantum Phase 0 initial-scoping step. https://doi.org/10.6028/NIST.CSWP.39*'
+      'Quantum Phase 0 initial-scoping step. https://doi.org/10.6028/NIST.CSWP.39-upd1*'
   )
   return lines.join('\n')
+}
+
+/** Collapsible "how this data is sourced" panel — mirrors the pattern in
+ *  CryptoVulnerabilityWatch.tsx, explaining where the caps and the seeding
+ *  come from instead of leaving that grounding only in the export footer. */
+function DataSourcesPanel() {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="glass-panel border border-border rounded-lg">
+      <Button
+        variant="ghost"
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center gap-2 p-3 text-left h-auto"
+        aria-expanded={open}
+      >
+        {open ? (
+          <ChevronDown size={14} className="text-muted-foreground shrink-0" />
+        ) : (
+          <ChevronRight size={14} className="text-muted-foreground shrink-0" />
+        )}
+        <Info size={14} className="text-primary shrink-0" />
+        <span className="text-xs font-semibold text-foreground">How this data is sourced</span>
+      </Button>
+      {open && (
+        <div className="border-t border-border p-4 space-y-4 text-xs text-foreground/80">
+          <section className="space-y-1.5">
+            <h4 className="font-semibold text-foreground">
+              Applied Quantum Framework, Activity 0.5 — Conduct Initial Scoping Assessment
+            </h4>
+            <p>
+              This tool captures the four data points the framework's Phase 0.5 defines: a rapid
+              (2&ndash;4 week) scoping pass that (1) identifies the top 20 revenue-generating or
+              mission-critical systems, (2) records each one&apos;s protocols, data sensitivity,
+              dependents, and vendor ownership, (3) estimates the size of the cryptographic estate,
+              and (4) identifies the 5&ndash;10 vendors whose PQC readiness will most constrain the
+              migration timeline. Its output calibrates Year 1 budget and staffing and becomes the
+              input to Phase 1 discovery prioritization.
+            </p>
+          </section>
+          <section className="space-y-1.5">
+            <h4 className="font-semibold text-foreground">NIST CSWP.39 §5 grounding</h4>
+            <p>
+              The scope you capture here is the input to the Crypto Agility Strategic Plan&apos;s
+              scoping step (
+              <a
+                href="https://doi.org/10.6028/NIST.CSWP.39-upd1"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                NIST CSWP 39
+              </a>{' '}
+              §5) — the estate boundary that Phase 1 (Discovery &amp; Inventory) then discovers
+              against in priority order.
+            </p>
+          </section>
+          <section className="space-y-1.5">
+            <h4 className="font-semibold text-foreground">Seeding from your other pages</h4>
+            <p>
+              When you have a product selection on <code className="text-[11px]">/migrate</code>,
+              the systems and vendor lists open pre-filled from it (systems from the product names,
+              vendors from the distinct vendor ids behind them, each product&apos;s catalog
+              infrastructure layer carried over as a criticality tag). The estate-size estimate is
+              seeded at {INSTANCES_PER_PRODUCT_ESTIMATE} cryptographic instances per selected
+              product — a rough order of magnitude, not a measurement. Everything here is editable;
+              seeding only sets the starting point.
+            </p>
+          </section>
+        </div>
+      )}
+    </div>
+  )
 }
 
 /** Editable text-row list with add/remove, capped at `max` entries. */
@@ -155,9 +227,15 @@ export const InitialScopingAssessment: React.FC = () => {
   const { myProducts, industry, totalProducts } = useExecutiveModuleData()
 
   // Seed systems + vendors from the user's /migrate selection. Systems take the
-  // product (software) names; vendors take the distinct vendor ids behind them.
+  // product (software) names, tagged with the catalog's infrastructure layer as
+  // a lightweight criticality cue; vendors take the distinct vendor ids behind them.
   const seedSystems = useMemo(
-    () => myProducts.slice(0, MAX_SYSTEMS).map((p) => p.softwareName),
+    () =>
+      myProducts
+        .slice(0, MAX_SYSTEMS)
+        .map((p) =>
+          p.infrastructureLayer ? `${p.softwareName} [${p.infrastructureLayer}]` : p.softwareName
+        ),
     [myProducts]
   )
   const seedVendors = useMemo(() => {
@@ -222,7 +300,9 @@ export const InitialScopingAssessment: React.FC = () => {
         </div>
       </header>
 
-      <section className="glass-panel border border-border rounded-lg p-4">
+      <DataSourcesPanel />
+
+      <section className="glass-panel border border-border rounded-lg p-4 space-y-2">
         <RowList
           label={`Top systems in scope`}
           rows={state.systems}
@@ -230,6 +310,12 @@ export const InitialScopingAssessment: React.FC = () => {
           placeholder="e.g. Customer-facing TLS gateway"
           onChange={(systems) => setState((prev) => ({ ...prev, systems }))}
         />
+        <p className="text-[11px] text-muted-foreground">
+          Capped at {MAX_SYSTEMS} — Framework Activity 0.5 scopes the top 20 revenue-generating or
+          mission-critical systems by rapid organizational-knowledge triage. These become your
+          &ldquo;Tier-1&rdquo; set: the first ones Phase 1 discovers under Priority A
+          (internet-exposed + long-lived secrecy data or trust anchors).
+        </p>
       </section>
 
       <section className="glass-panel border border-border rounded-lg p-4 space-y-2">
@@ -266,7 +352,7 @@ export const InitialScopingAssessment: React.FC = () => {
         />
       </section>
 
-      <section className="glass-panel border border-border rounded-lg p-4">
+      <section className="glass-panel border border-border rounded-lg p-4 space-y-2">
         <RowList
           label={`Top vendor dependencies`}
           rows={state.vendors}
@@ -274,6 +360,11 @@ export const InitialScopingAssessment: React.FC = () => {
           placeholder="e.g. OpenSSL / Microsoft / F5"
           onChange={(vendors) => setState((prev) => ({ ...prev, vendors }))}
         />
+        <p className="text-[11px] text-muted-foreground">
+          Capped at {MAX_VENDORS} — Framework Activity 0.5 asks for the 5&ndash;10 vendors whose PQC
+          readiness will most constrain your migration timeline; {MAX_VENDORS} is the upper bound of
+          that range so the list stays focused on genuine critical-path dependencies.
+        </p>
       </section>
 
       <ExportableArtifact

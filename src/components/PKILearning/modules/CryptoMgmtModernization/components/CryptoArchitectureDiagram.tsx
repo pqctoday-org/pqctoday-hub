@@ -23,6 +23,7 @@ import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
 import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import { MermaidDiagram } from '@/components/Simulation/MermaidDiagram'
 
 type ComponentKind =
   | 'application'
@@ -221,6 +222,7 @@ export const CryptoArchitectureDiagram: React.FC = () => {
   const [copied, setCopied] = useState(false)
 
   const markdown = useMemo(() => buildMarkdown(components), [components])
+  const mermaidSource = useMemo(() => buildMermaid(components), [components])
 
   const updateRow = useCallback((id: string, patch: Partial<ArchComponent>) => {
     setComponents((rows) => rows.map((r) => (r.id === id ? { ...r, ...patch } : r)))
@@ -275,7 +277,8 @@ export const CryptoArchitectureDiagram: React.FC = () => {
           <p className="text-sm text-muted-foreground mt-1">
             Capture every cryptographic component (apps, libraries, HSMs, protocols, key stores,
             CAs) and the dependencies between them. The artifact stores both the structured table
-            and a Mermaid graph that renders inside the Command Center viewer.
+            and a Mermaid graph that renders inside the Command Center viewer — the diagram below
+            updates live as you edit.
           </p>
           <p className="text-xs text-muted-foreground mt-2">
             Aligned with NIST CSWP.39 §5.4 — Cryptographic Architecture.
@@ -392,6 +395,13 @@ export const CryptoArchitectureDiagram: React.FC = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <h3 className="text-sm font-semibold text-foreground">Diagram preview</h3>
+        <div className="rounded-md border border-border bg-muted/20 p-4">
+          <MermaidDiagram source={mermaidSource} id="crypto-architecture-live" />
         </div>
       </div>
 

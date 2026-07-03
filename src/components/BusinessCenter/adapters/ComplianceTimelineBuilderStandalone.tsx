@@ -2,13 +2,17 @@
 import { useState, useMemo } from 'react'
 import { Globe, Check, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { ComplianceTimelineBuilder } from '@/components/PKILearning/modules/ComplianceStrategy/components/ComplianceTimelineBuilder'
+import {
+  ComplianceTimelineBuilder,
+  type ComplianceTimelineSavedInputs,
+} from '@/components/PKILearning/modules/ComplianceStrategy/components/ComplianceTimelineBuilder'
 import { JURISDICTIONS_LEGACY as JURISDICTIONS } from '@/data/jurisdictionsData'
 import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { complianceFrameworks } from '@/data/complianceData'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 
 /**
  * Zero-prop wrapper around {@link ComplianceTimelineBuilder} for the Command
@@ -60,17 +64,23 @@ export function ComplianceTimelineBuilderStandalone() {
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
   const toggleMyFramework = useComplianceSelectionStore((s) => s.toggleMyFramework)
   const myTimelineCountries = useBookmarkStore((s) => s.myTimelineCountries)
+  // Restore the user's own last-saved jurisdiction picks (highest priority) so
+  // this picker round-trips like the rest of the timeline's saved state.
+  const savedTimelineInputs =
+    useSavedArtifactInputs<ComplianceTimelineSavedInputs>('compliance-timeline')
+  const savedJurisdictionIds = savedTimelineInputs?.selectedJurisdictions ?? []
   const assessmentJurisdictionIds = deriveJurisdictionIdsFromCountry(input?.country)
   const myFrameworkJurisdictionIds = deriveJurisdictionIdsFromFrameworks(myFrameworks)
   const myTimelineJurisdictionIds = deriveJurisdictionIdsFromTimelineCountries(myTimelineCountries)
-  const seedJurisdictionIds = dedupe(
-    assessmentJurisdictionIds,
-    myFrameworkJurisdictionIds,
-    myTimelineJurisdictionIds
-  )
+  const seedJurisdictionIds =
+    savedJurisdictionIds.length > 0
+      ? savedJurisdictionIds
+      : dedupe(assessmentJurisdictionIds, myFrameworkJurisdictionIds, myTimelineJurisdictionIds)
 
   const [selectedJurisdictions, setSelectedJurisdictions] = useState<string[]>(seedJurisdictionIds)
-  const [seededFromAssessment, setSeededFromAssessment] = useState(seedJurisdictionIds.length > 0)
+  const [seededFromAssessment, setSeededFromAssessment] = useState(
+    savedJurisdictionIds.length === 0 && seedJurisdictionIds.length > 0
+  )
 
   // PQC-required frameworks the user selected, with deadlines, surfaced as a
   // hint above the jurisdiction picker — not auto-applied because frameworks
@@ -111,6 +121,10 @@ export function ComplianceTimelineBuilderStandalone() {
 
   return (
     <div className="space-y-6">
+      {savedJurisdictionIds.length > 0 && (
+        <PreFilledBanner summary="Restored your jurisdiction picks from your last saved timeline." />
+      )}
+
       {seededFromAssessment && (
         <PreFilledBanner
           summary={`${seedJurisdictionIds.length} jurisdiction${seedJurisdictionIds.length !== 1 ? 's' : ''} pre-selected from ${seedSources.join(' + ')}.${pqcImpacts.length > 0 ? ` ${pqcImpacts.length} PQC-required framework${pqcImpacts.length !== 1 ? 's' : ''} also identified.` : ''}`}

@@ -16,6 +16,13 @@ export interface ScorecardDimension {
   /** When true, render dimension as disabled with `disabledReason`. Excluded from weighted sum. */
   disabled?: boolean
   disabledReason?: string
+  /** True when this dimension has no computed baseline (no `autoScore`) and
+   *  hasn't been touched by the user yet. Excluded from the weighted average
+   *  and rendered as "not yet scored" instead of a numeric 0, so a KPI set
+   *  dominated by manual-input dimensions doesn't read as alarmingly low on
+   *  first visit. Stops applying the moment the user sets a value (including
+   *  a deliberate 0). */
+  notYetScored?: boolean
   /** Optional red-line target, rendered as a tick on the slider track (0–100). */
   target?: number
   targetLabel?: string
@@ -40,6 +47,9 @@ interface DataDrivenScorecardProps {
   exportFormats?: ExportFormat[]
   /** When true, append a machine-readable CSV line per dimension to markdown exports. */
   includeTargetsInExport?: boolean
+  /** Restore previously-saved scores / weight overrides on mount (e.g. from a persisted artifact). */
+  initialScores?: Record<string, number>
+  initialWeights?: Record<string, number>
 }
 
 function getScoreColor(value: number, scale: 'risk' | 'readiness' | 'maturity'): string {
@@ -76,20 +86,35 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
   exportFilename = 'scorecard',
   exportFormats = ['markdown'],
   includeTargetsInExport = false,
+  initialScores,
+  initialWeights,
 }) => {
   const [scores, setScores] = useState<Record<string, number>>(() => {
     const initial: Record<string, number> = {}
     for (const d of dimensions) {
-      initial[d.id] = d.autoScore ?? 0
+      initial[d.id] = initialScores?.[d.id] ?? d.autoScore ?? 0
     }
     return initial
   })
 
-  const [weightOverrides, setWeightOverrides] = useState<Record<string, number>>({})
+  const [weightOverrides, setWeightOverrides] = useState<Record<string, number>>(
+    () => initialWeights ?? {}
+  )
   const [showWeights, setShowWeights] = useState(false)
 
-  // Track which dimensions the user has manually adjusted
-  const userOverriddenRef = React.useRef<Set<string>>(new Set())
+  // Track which dimensions the user has manually adjusted. Dimensions restored
+  // from `initialScores` count as already-overridden so the auto-score sync
+  // effect below doesn't immediately clobber the restored value.
+  //
+  // Kept as BOTH a ref and mirrored state: the sync effect below reads the ref
+  // (stable identity, safe to omit from deps — reading it inside an effect is
+  // fine) so it isn't re-triggered by every override and doesn't chain a second
+  // setState off of it; `isPending` reads the state copy instead, since that's
+  // evaluated during render and refs can't be read there.
+  const userOverriddenRef = React.useRef<Set<string>>(new Set(Object.keys(initialScores ?? {})))
+  const [userOverridden, setUserOverridden] = useState<Set<string>>(
+    () => new Set(Object.keys(initialScores ?? {}))
+  )
 
   // Sync auto-scored dimensions from props when they change (e.g., data loads after mount)
   useEffect(() => {
@@ -119,6 +144,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     (dimId: string, value: number) => {
       const clamped = Math.max(0, Math.min(100, value))
       userOverriddenRef.current.add(dimId)
+      setUserOverridden((prev) => (prev.has(dimId) ? prev : new Set(prev).add(dimId)))
       setScores((prev) => {
         const updated = { ...prev, [dimId]: clamped }
         onScoreChange?.(updated)
@@ -132,6 +158,13 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     (d: ScorecardDimension): number =>
       d.id in weightOverrides ? (weightOverrides[d.id] ?? 0) : d.weight,
     [weightOverrides]
+  )
+
+  // Still "not yet scored" — no computed baseline AND the user hasn't set a
+  // value yet. Stops applying the instant the user touches the slider.
+  const isPending = useCallback(
+    (d: ScorecardDimension): boolean => Boolean(d.notYetScored) && !userOverridden.has(d.id),
+    [userOverridden]
   )
 
   const handleWeightChange = useCallback(
@@ -150,23 +183,23 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     let totalWeight = 0
     let weightedSum = 0
     for (const d of dimensions) {
-      if (d.disabled) continue
+      if (d.disabled || isPending(d)) continue
       const score = scores[d.id] ?? 0
       const w = effectiveWeight(d)
       weightedSum += score * w
       totalWeight += w
     }
     return totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
-  }, [scores, dimensions, effectiveWeight])
+  }, [scores, dimensions, effectiveWeight, isPending])
 
   const weightSum = useMemo(() => {
     let s = 0
     for (const d of dimensions) {
-      if (d.disabled) continue
+      if (d.disabled || isPending(d)) continue
       s += effectiveWeight(d)
     }
     return s
-  }, [dimensions, effectiveWeight])
+  }, [dimensions, effectiveWeight, isPending])
 
   const exportMarkdown = useMemo(() => {
     let md = `# ${title}\n\n`
@@ -182,7 +215,8 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
         continue
       }
       const target = hasTargets ? ` | ${d.target !== undefined ? `${d.target}` : '—'}` : ''
-      md += `| ${d.label} | ${scores[d.id] ?? 0}/100 | ${Math.round(effectiveWeight(d) * 100)}%${target} |\n`
+      const scoreCell = isPending(d) ? '_not yet scored_' : `${scores[d.id] ?? 0}/100`
+      md += `| ${d.label} | ${scoreCell} | ${Math.round(effectiveWeight(d) * 100)}%${target} |\n`
     }
     return md
   }, [
@@ -193,6 +227,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     scores,
     includeTargetsInExport,
     effectiveWeight,
+    isPending,
   ])
 
   // Markdown/PDF read the markdown body; `.csv` reads a structured rows export
@@ -211,14 +246,14 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     const rows = dimensions.map((d) => [
       d.id,
       d.label,
-      d.disabled ? '' : String(scores[d.id] ?? 0),
+      d.disabled ? '' : isPending(d) ? 'not yet scored' : String(scores[d.id] ?? 0),
       (effectiveWeight(d) * 100).toFixed(0),
       d.target ?? '',
       d.disabled ? 'true' : 'false',
       d.disabledReason ?? '',
     ])
     return rowsToCsv([header, ...rows])
-  }, [dimensions, scores, effectiveWeight])
+  }, [dimensions, scores, effectiveWeight, isPending])
 
   return (
     <div className="space-y-6">
@@ -307,24 +342,34 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
               </div>
             )
           }
+          const pending = isPending(d)
           return (
-            <div key={d.id} className="glass-panel p-4" data-testid={`kpi-dim-${d.id}`}>
+            <div
+              key={d.id}
+              className="glass-panel p-4"
+              data-testid={`kpi-dim-${d.id}`}
+              data-pending={pending || undefined}
+            >
               <div className="flex items-center justify-between mb-2">
                 <div>
                   <p className="text-sm font-medium text-foreground">{d.label}</p>
                   <p className="text-xs text-muted-foreground">{d.description}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`text-lg font-bold ${getScoreColor(score, colorScale)}`}>
-                    {score}
-                  </span>
+                  {pending ? (
+                    <span className="text-xs italic text-muted-foreground">Not yet scored</span>
+                  ) : (
+                    <span className={`text-lg font-bold ${getScoreColor(score, colorScale)}`}>
+                      {score}
+                    </span>
+                  )}
                   <span className="text-xs text-muted-foreground">({weightPct}%)</span>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden relative">
                   <div
-                    className={`h-full rounded-full transition-all duration-300 ${getBarColor(score, colorScale)}`}
+                    className={`h-full rounded-full transition-all duration-300 ${pending ? 'bg-muted-foreground/30' : getBarColor(score, colorScale)}`}
                     style={{ width: `${score}%` }}
                   />
                   {d.target !== undefined && (

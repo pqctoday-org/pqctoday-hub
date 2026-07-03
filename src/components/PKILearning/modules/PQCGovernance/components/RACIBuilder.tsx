@@ -3,10 +3,12 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { ExportableArtifact } from '../../../common/executive'
 import { Button } from '@/components/ui/button'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import { rowsToCsv } from '@/services/export/csvExport'
 import type { RACIOutput } from '../types'
 
 type RACIValue = 'R' | 'A' | 'C' | 'I' | ''
@@ -96,12 +98,34 @@ function buildSeededMatrix(): MatrixState {
   return matrix
 }
 
+/** Shape guard for a persisted matrix (restored from a saved RACI's `inputs`). */
+function isValidMatrixState(m: unknown): m is MatrixState {
+  if (!m || typeof m !== 'object') return false
+  return Object.values(m as Record<string, unknown>).every(
+    (row) =>
+      !!row &&
+      typeof row === 'object' &&
+      Object.values(row as Record<string, unknown>).every((v) =>
+        (RACI_CYCLE as readonly unknown[]).includes(v)
+      )
+  )
+}
+
+interface SavedRaciInputs {
+  matrix?: unknown
+}
+
 interface RACIBuilderProps {
   onOutput?: (output: RACIOutput) => void
 }
 
 export const RACIBuilder: React.FC<RACIBuilderProps> = ({ onOutput }) => {
-  const [matrix, setMatrix] = useState<MatrixState>(buildSeededMatrix)
+  const savedInputs = useSavedArtifactInputs<SavedRaciInputs>('raci-matrix')
+  const restoredMatrix = useMemo(
+    () => (isValidMatrixState(savedInputs?.matrix) ? savedInputs.matrix : null),
+    [savedInputs]
+  )
+  const [matrix, setMatrix] = useState<MatrixState>(() => restoredMatrix ?? buildSeededMatrix())
   const [seedCleared, setSeedCleared] = useState(false)
   const { addExecutiveDocument } = useModuleStore()
   const { industry } = useExecutiveModuleData()
@@ -170,7 +194,18 @@ export const RACIBuilder: React.FC<RACIBuilderProps> = ({ onOutput }) => {
     }
 
     md += '\n**Legend:** R = Responsible, A = Accountable, C = Consulted, I = Informed\n'
+    md +=
+      '\n*Aligned to NIST CSWP 39 §5 — Strategic Plan (governance roles and responsibilities). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
     return md
+  }, [matrix])
+
+  // Structured CSV so `.csv` opens as real spreadsheet rows, not pipe text.
+  const exportCsv = useMemo(() => {
+    const rows: (string | number)[][] = [['Activity', ...ROLES]]
+    for (const activity of ACTIVITIES) {
+      rows.push([activity, ...ROLES.map((role) => matrix[activity]?.[role] || '')])
+    }
+    return rowsToCsv(rows)
   }, [matrix])
 
   const handleExport = useCallback(() => {
@@ -180,15 +215,20 @@ export const RACIBuilder: React.FC<RACIBuilderProps> = ({ onOutput }) => {
       type: 'raci-matrix',
       title: 'PQC Migration RACI Matrix',
       data: exportMarkdown,
+      inputs: { matrix },
       createdAt: Date.now(),
     })
-  }, [addExecutiveDocument, exportMarkdown])
+  }, [addExecutiveDocument, exportMarkdown, matrix])
 
   return (
     <div className="space-y-6">
       {!seedCleared && (
         <PreFilledBanner
-          summary={`Illustrative default Accountable / Responsible assignments for a PQC governance program${industry ? ` (${industry} context)` : ''}. Refine per your org chart.`}
+          summary={
+            restoredMatrix
+              ? 'Restored your last saved RACI matrix — edit and re-export to update it.'
+              : `Illustrative default Accountable / Responsible assignments for a PQC governance program${industry ? ` (${industry} context)` : ''}. Refine per your org chart.`
+          }
           onClear={() => {
             setMatrix(buildInitialMatrix())
             setSeedCleared(true)
@@ -196,8 +236,12 @@ export const RACIBuilder: React.FC<RACIBuilderProps> = ({ onOutput }) => {
         />
       )}
       <p className="text-sm text-muted-foreground">
-        Assign RACI designations for each PQC migration activity. Click a cell to cycle through
-        Responsible, Accountable, Consulted, Informed, or empty.
+        RACI defines how a role relates to an activity: <strong>Responsible</strong> does the work,{' '}
+        <strong>Accountable</strong> owns the outcome and signs off (answerable if it fails),{' '}
+        <strong>Consulted</strong> gives two-way input before the work happens, and{' '}
+        <strong>Informed</strong> gets a one-way status update after. Exactly one role must be
+        Accountable per activity — accountability split across two people is accountability held by
+        no one. Click a cell to cycle through R, A, C, I, or empty.
       </p>
 
       {/* RACI Matrix Table */}
@@ -305,11 +349,14 @@ export const RACIBuilder: React.FC<RACIBuilderProps> = ({ onOutput }) => {
         title="RACI Matrix Export"
         exportData={exportMarkdown}
         filename="pqc-raci-matrix"
-        formats={['markdown', 'pdf']}
+        formats={['markdown', 'pdf', 'csv']}
+        csvData={exportCsv}
         onExport={handleExport}
         wideTable
       >
-        <p className="text-sm text-muted-foreground">Export your RACI matrix as Markdown.</p>
+        <p className="text-sm text-muted-foreground">
+          Export your RACI matrix as Markdown, PDF, or CSV.
+        </p>
       </ExportableArtifact>
     </div>
   )

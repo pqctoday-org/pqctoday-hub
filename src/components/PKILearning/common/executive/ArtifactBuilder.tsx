@@ -8,6 +8,7 @@ import { ExportableArtifact } from './ExportableArtifact'
 import { CompleteStepAction } from '../CompleteStepAction'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
+import { MarkdownView } from '@/components/ui/MarkdownView'
 
 export interface ArtifactField {
   id: string
@@ -16,6 +17,8 @@ export interface ArtifactField {
   placeholder?: string
   options?: { value: string; label: string }[]
   defaultValue?: string | string[]
+  /** Short explanatory text rendered under the field — e.g. why a value is pre-filled. */
+  helperText?: string
 }
 
 export interface ArtifactSection {
@@ -32,6 +35,10 @@ interface ArtifactBuilderProps {
   onExport?: (data: Record<string, Record<string, string | string[]>>) => void
   exportFilename?: string
   renderPreview?: (data: Record<string, Record<string, string | string[]>>) => string
+  /** Structured CSV builder for the `.csv` export (RFC-4180 rows, not the markdown
+   *  body). Mirrors `renderPreview` — called with the live form data whenever
+   *  the `csv` format is offered. Audit C5. */
+  renderCsv?: (data: Record<string, Record<string, string | string[]>>) => string
   /** Export formats offered on the preview action bar. Defaults to `['markdown']`.
    *  Artifacts with rich narrative structure (e.g., Board Pitch) can opt-in to
    *  `'pptx'` for a slide deck, or `'json'` for raw structured data. */
@@ -41,6 +48,9 @@ interface ArtifactBuilderProps {
   /** Auto-run only: demo values overlaid on field defaults when a playthrough is active
    *  (keyed sectionId → fieldId). Ignored in normal manual use. */
   demoFill?: Record<string, Record<string, string | string[]>>
+  /** Restore a previously-saved form snapshot (e.g. from `useSavedArtifactInputs`).
+   *  Takes priority over `demoFill` and `field.defaultValue` in the lazy initializer. */
+  initialData?: Record<string, Record<string, string | string[]>>
 }
 
 export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
@@ -50,9 +60,11 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
   onExport,
   exportFilename = 'artifact',
   renderPreview,
+  renderCsv,
   exportFormats = ['markdown'],
   wideTable = false,
   demoFill,
+  initialData,
 }) => {
   const [mode, setMode] = useState<'edit' | 'preview'>('edit')
   // Persistent done-state keyed on the form snapshot (survives edits).
@@ -66,9 +78,10 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
       for (const section of sections) {
         initial[section.id] = {}
         for (const field of section.fields) {
+          const saved = initialData?.[section.id]?.[field.id]
           const demo = fill?.[section.id]?.[field.id]
           initial[section.id][field.id] =
-            demo ?? field.defaultValue ?? (field.type === 'checklist' ? [] : '')
+            saved ?? demo ?? field.defaultValue ?? (field.type === 'checklist' ? [] : '')
         }
       }
       return initial
@@ -146,6 +159,11 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
     return md
   }, [formData, title, description, sections, renderPreview])
 
+  const exportCsv = useMemo(
+    () => (renderCsv ? renderCsv(formData) : undefined),
+    [formData, renderCsv]
+  )
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 flex-wrap">
@@ -165,7 +183,9 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
           <Eye size={14} />
           <span className="ml-1.5">Preview</span>
         </Button>
-        {onExport && (
+        {/* In preview mode, ExportableArtifact below renders its own save action —
+            only show this one in edit mode to avoid a duplicate Save button. */}
+        {onExport && mode === 'edit' && (
           <CompleteStepAction
             recordsArtifact
             saved={wasSaved}
@@ -253,6 +273,9 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
                         })}
                       </div>
                     )}
+                    {field.helperText && (
+                      <p className="text-xs text-muted-foreground mt-1">{field.helperText}</p>
+                    )}
                   </div>
                 ))}
               </div>
@@ -267,9 +290,10 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
           formats={exportFormats}
           onExport={handleExport}
           wideTable={wideTable}
+          csvData={exportCsv}
         >
-          <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap font-mono text-sm text-foreground bg-muted/50 rounded-lg p-4 max-h-[600px] overflow-y-auto">
-            {exportMarkdown}
+          <div className="bg-muted/50 rounded-lg p-4 max-h-[600px] overflow-y-auto">
+            <MarkdownView content={exportMarkdown} />
           </div>
         </ExportableArtifact>
       )}

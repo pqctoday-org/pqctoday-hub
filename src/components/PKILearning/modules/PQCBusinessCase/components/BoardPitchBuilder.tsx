@@ -8,6 +8,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PersonaPitchBanner } from './PersonaPitchBanner'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { getPitchVariant } from './pitchVariants'
 import type { FormData } from './pitchVariants'
 
@@ -48,6 +49,10 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
   const { addExecutiveDocument } = useModuleStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const [seedCleared, setSeedCleared] = useState(false)
+  // Restore the last-saved pitch so edits survive navigation — takes priority
+  // over the freshly-computed assessment/ROI defaults below, same as the
+  // Roadmap Builder's saved-plan restore.
+  const savedFormData = useSavedArtifactInputs<FormData>('board-deck')
 
   // Key the variant (and therefore the whole ArtifactBuilder below) on persona
   // so switching roles resets the form state to the new persona's defaults.
@@ -116,6 +121,8 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
         type: 'board-deck',
         title: variant.title,
         data: markdown,
+        // Persist the edited form fields so the pitch is restorable (see savedFormData above).
+        inputs: formData,
         createdAt: Date.now(),
       })
     },
@@ -126,7 +133,11 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
     <div className="space-y-6">
       <PersonaPitchBanner persona={selectedPersona} objective={variant.objective} />
 
-      {sources.length > 0 && (
+      {savedFormData && (
+        <PreFilledBanner summary="Restored your last saved pitch — edit any field and re-export to update it." />
+      )}
+
+      {!savedFormData && sources.length > 0 && (
         <PreFilledBanner
           summary={`Seeded from ${sources.join(' + ')}.`}
           onClear={() => setSeedCleared(true)}
@@ -179,7 +190,35 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
         exportFilename={variant.filename}
         renderPreview={renderPreviewBound}
         exportFormats={['markdown', 'pdf', 'pptx']}
+        initialData={savedFormData}
       />
+
+      <details className="glass-panel p-4">
+        <summary className="text-sm font-medium text-foreground cursor-pointer">
+          How this pitch is built
+        </summary>
+        <div className="mt-3 text-sm text-muted-foreground space-y-2">
+          <p>
+            <strong>Budget band:</strong> a base range keyed to your assessment risk level — Low/
+            Moderate: $0.5M-$1.5M over 18-24 months; High: $1M-$3M over 24 months; Critical: $2M-$6M
+            over 24-36 months.
+          </p>
+          <p>
+            <strong>Scale multiplier:</strong> the band is then scaled by products in scope — ×1.5
+            at 200+ products, ×1.2 at 50+, ×0.7 under 10, ×1 otherwise.
+          </p>
+          <p>
+            <strong>Cost-of-inaction multiplier:</strong> the Cost-Benefit section frames inaction
+            (penalties, breach response, contract loss, reputational damage) as an illustrative 3-5×
+            the migration investment for critical/high risk, or 2-3× for moderate/low risk.
+          </p>
+          <p className="text-xs italic mt-2">
+            Both figures are starting points for board discussion, not a quote — run the ROI
+            Calculator (Step 1 of this workshop) for organization-specific numbers before committing
+            to a budget ask.
+          </p>
+        </div>
+      </details>
     </div>
   )
 }

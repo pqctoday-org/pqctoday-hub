@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
 
@@ -40,6 +41,14 @@ interface TreatmentDecision {
 interface ResidualOverride {
   likelihood: number
   impact: number
+}
+
+interface SavedTreatmentInputs {
+  treatmentDecisions?: Record<string, TreatmentDecision>
+  residualOverrides?: Record<string, ResidualOverride>
+  userPriorityOrder?: string[] | null
+  priorityReasons?: Record<string, string>
+  viewMode?: 'inherent' | 'residual'
 }
 
 interface RiskHeatmapGeneratorProps {
@@ -83,7 +92,7 @@ const TREATMENT_OPTIONS: {
     color: 'text-warning',
     bg: 'bg-warning/10 border-warning/20',
     guidance:
-      'Shift responsibility to a third party (e.g., managed PKI/CA service handling PQC migration, or cyber insurance covering quantum-related breaches).',
+      'Shift responsibility to a third party (e.g., managed PKI/CA service handling PQC migration, or cyber insurance covering quantum-related breaches). Set your expected post-transfer values below.',
   },
   {
     value: 'avoid',
@@ -207,12 +216,12 @@ function TreatmentSelector({
         </label>
       )}
 
-      {/* Residual risk overrides for "mitigate" */}
-      {decision?.strategy === 'mitigate' && (
+      {/* Residual risk overrides for "mitigate" and "transfer" */}
+      {(decision?.strategy === 'mitigate' || decision?.strategy === 'transfer') && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-muted/30 rounded-lg border border-border">
           <div>
             <span className="block text-xs font-medium text-muted-foreground mb-1">
-              Post-mitigation Likelihood
+              Post-{decision.strategy === 'transfer' ? 'transfer' : 'mitigation'} Likelihood
             </span>
             <FilterDropdown
               noContainer
@@ -220,7 +229,11 @@ function TreatmentSelector({
               onSelect={(id) =>
                 onResidualChange(entry.id, {
                   likelihood: Number(id),
-                  impact: residualOverride?.impact ?? entry.impact,
+                  impact:
+                    residualOverride?.impact ??
+                    (decision.strategy === 'transfer'
+                      ? Math.max(1, entry.impact - 1)
+                      : entry.impact),
                 })
               }
               items={[
@@ -234,11 +247,14 @@ function TreatmentSelector({
           </div>
           <div>
             <span className="block text-xs font-medium text-muted-foreground mb-1">
-              Post-mitigation Impact
+              Post-{decision.strategy === 'transfer' ? 'transfer' : 'mitigation'} Impact
             </span>
             <FilterDropdown
               noContainer
-              selectedId={String(residualOverride?.impact ?? entry.impact)}
+              selectedId={String(
+                residualOverride?.impact ??
+                  (decision.strategy === 'transfer' ? Math.max(1, entry.impact - 1) : entry.impact)
+              )}
               onSelect={(id) =>
                 onResidualChange(entry.id, {
                   likelihood: residualOverride?.likelihood ?? entry.likelihood,
@@ -493,14 +509,23 @@ function RiskHeatmapGrid({
 // --- Main Component ---
 
 export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ riskEntries }) => {
+  const savedInputs = useSavedArtifactInputs<SavedTreatmentInputs>('risk-treatment-plan')
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null)
   const [treatmentDecisions, setTreatmentDecisions] = useState<Record<string, TreatmentDecision>>(
-    {}
+    savedInputs?.treatmentDecisions ?? {}
   )
-  const [residualOverrides, setResidualOverrides] = useState<Record<string, ResidualOverride>>({})
-  const [viewMode, setViewMode] = useState<'inherent' | 'residual'>('inherent')
-  const [userPriorityOrder, setUserPriorityOrder] = useState<string[] | null>(null)
-  const [priorityReasons, setPriorityReasons] = useState<Record<string, string>>({})
+  const [residualOverrides, setResidualOverrides] = useState<Record<string, ResidualOverride>>(
+    savedInputs?.residualOverrides ?? {}
+  )
+  const [viewMode, setViewMode] = useState<'inherent' | 'residual'>(
+    savedInputs?.viewMode ?? 'inherent'
+  )
+  const [userPriorityOrder, setUserPriorityOrder] = useState<string[] | null>(
+    savedInputs?.userPriorityOrder ?? null
+  )
+  const [priorityReasons, setPriorityReasons] = useState<Record<string, string>>(
+    savedInputs?.priorityReasons ?? {}
+  )
   const [guideOpen, setGuideOpen] = useState(false)
   const { addExecutiveDocument } = useModuleStore()
 
@@ -541,7 +566,9 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
           return { ...entry, likelihood: override.likelihood, impact: override.impact }
         }
         if (decision?.strategy === 'transfer') {
-          return { ...entry, impact: Math.max(1, entry.impact - 1) }
+          return override
+            ? { ...entry, likelihood: override.likelihood, impact: override.impact }
+            : { ...entry, impact: Math.max(1, entry.impact - 1) }
         }
         return entry
       })
@@ -645,7 +672,10 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
         const s = o.likelihood * o.impact
         residualScore = `${s} (${getRiskColor(s)})`
       } else if (decision?.strategy === 'transfer') {
-        const s = entry.likelihood * Math.max(1, entry.impact - 1)
+        const o = residualOverrides[entry.id]
+        const l = o?.likelihood ?? entry.likelihood
+        const i = o?.impact ?? Math.max(1, entry.impact - 1)
+        const s = l * i
         residualScore = `${s} (${getRiskColor(s)})`
       } else {
         residualScore = `${inherentScore} (${getRiskColor(inherentScore)})`
@@ -669,7 +699,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
 
     md += '\n---\n\n'
     md +=
-      '*Aligned to NIST CSWP 39 \u00a75 (Strategic Plan) and \u00a76.5 (Governance, Risk, and Compliance). https://doi.org/10.6028/NIST.CSWP.39*\n'
+      '*Aligned to NIST CSWP 39 \u00a75 (Strategic Plan) and \u00a76.5 (Maturity Assessment for Crypto Agility). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
 
     return md
   }, [
@@ -689,8 +719,23 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
       data: exportMarkdown,
       createdAt: Date.now(),
       moduleId: 'pqc-risk-management',
+      inputs: {
+        treatmentDecisions,
+        residualOverrides,
+        userPriorityOrder,
+        priorityReasons,
+        viewMode,
+      },
     })
-  }, [exportMarkdown, addExecutiveDocument])
+  }, [
+    exportMarkdown,
+    addExecutiveDocument,
+    treatmentDecisions,
+    residualOverrides,
+    userPriorityOrder,
+    priorityReasons,
+    viewMode,
+  ])
 
   // --- Empty state ---
   if (riskEntries.length === 0) {
@@ -962,7 +1007,19 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
 
 // --- Educational Guide ---
 
-function EducationalGuide({ open, onToggle }: { open: boolean; onToggle: () => void }) {
+/** Shared 1–5 likelihood/impact scoring legend. `variant="heatmap"` (default)
+ *  frames zones spatially for the grid below; `variant="register"` drops the
+ *  spatial framing for use in RiskRegisterBuilder, which has no grid. */
+export function EducationalGuide({
+  open,
+  onToggle,
+  variant = 'heatmap',
+}: {
+  open: boolean
+  onToggle: () => void
+  variant?: 'heatmap' | 'register'
+}) {
+  const isRegister = variant === 'register'
   return (
     <div className="glass-panel overflow-hidden">
       <Button
@@ -972,7 +1029,7 @@ function EducationalGuide({ open, onToggle }: { open: boolean; onToggle: () => v
       >
         <BookOpen size={16} className="text-primary shrink-0" />
         <span className="text-sm font-semibold text-foreground flex-1">
-          How to Read a Risk Heatmap
+          {isRegister ? 'How Likelihood × Impact Scoring Works' : 'How to Read a Risk Heatmap'}
         </span>
         {open ? (
           <ChevronUp size={16} className="text-muted-foreground" />
@@ -992,8 +1049,9 @@ function EducationalGuide({ open, onToggle }: { open: boolean; onToggle: () => v
                 </span>
               </div>
               <p className="text-xs text-muted-foreground">
-                Top-right zone. Immediate action required. Assets using RSA/ECC with near-term CRQC
-                exposure and catastrophic breach consequences. Migrate first.
+                {isRegister ? '' : 'Top-right zone. '}Immediate action required. Assets using
+                RSA/ECC with near-term CRQC exposure and catastrophic breach consequences. Migrate
+                first.
               </p>
             </div>
 
@@ -1014,8 +1072,8 @@ function EducationalGuide({ open, onToggle }: { open: boolean; onToggle: () => v
                 <span className="text-sm font-semibold text-primary">Medium (6&ndash;11)</span>
               </div>
               <p className="text-xs text-muted-foreground">
-                Center zone. Real but manageable risks within normal planning cycles. Schedule for
-                migration as part of broader PQC transition.
+                {isRegister ? '' : 'Center zone. '}Real but manageable risks within normal planning
+                cycles. Schedule for migration as part of broader PQC transition.
               </p>
             </div>
 
@@ -1025,17 +1083,27 @@ function EducationalGuide({ open, onToggle }: { open: boolean; onToggle: () => v
                 <span className="text-sm font-semibold text-success">Low (1&ndash;5)</span>
               </div>
               <p className="text-xs text-muted-foreground">
-                Bottom-left zone. Threat is unlikely or impact is contained. May include
-                quantum-safe algorithms (AES-256) that need monitoring only.
+                {isRegister ? '' : 'Bottom-left zone. '}Threat is unlikely or impact is contained.
+                May include quantum-safe algorithms (AES-256) that need monitoring only.
               </p>
             </div>
           </div>
 
           <div className="p-3 bg-muted/50 rounded-lg border border-border">
             <p className="text-xs text-muted-foreground">
-              <strong>Reading direction:</strong> Scan from top-right (urgent) to bottom-left
-              (safe). Multiple entries in one cell indicate a systemic risk &mdash; an algorithm or
-              threat vector affecting many assets simultaneously.
+              {isRegister ? (
+                <>
+                  <strong>How the score is calculated:</strong> Score = Likelihood &times; Impact
+                  (1&ndash;25). Set both 1&ndash;5 values on each entry above &mdash; the badge
+                  updates live and lands in one of the four bands shown here.
+                </>
+              ) : (
+                <>
+                  <strong>Reading direction:</strong> Scan from top-right (urgent) to bottom-left
+                  (safe). Multiple entries in one cell indicate a systemic risk &mdash; an algorithm
+                  or threat vector affecting many assets simultaneously.
+                </>
+              )}
             </p>
           </div>
         </div>
