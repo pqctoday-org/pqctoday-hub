@@ -568,7 +568,10 @@ const isValid = hsm_eddsaVerify(
 
           result.SoftHSMv3 = `Keys internally generated via SoftHSM3 C_GenerateKeyPair.\nPrivate key is non-extractable (CKA_SENSITIVE=true, CKA_EXTRACTABLE=false) — it never leaves the HSM.\nInspect key attributes in the HSM Key Registry below.`
         } catch (e) {
-          result.SoftHSMv3 = `SoftHSM Error: ${e}`
+          // Re-throw — a failed HSM keygen must not let the wizard mark this
+          // step complete (matches the JS-fallback path below, which throws
+          // uncaught on the same failure class).
+          throw e instanceof Error ? e : new Error(`SoftHSM Error: ${e}`)
         }
       }
 
@@ -595,7 +598,7 @@ const isValid = hsm_eddsaVerify(
           const hsmPubHex = bytesToHex(rawPubKey)
           result.SoftHSMv3 = `Public Key extracted via C_GetAttributeValue(CKA_PUBLIC_KEY_INFO).\n\nPublic Key (Hex): ${hsmPubHex}\n\nPrivate key is non-extractable — it remains inside the HSM.`
         } catch (e) {
-          result.SoftHSMv3 = `SoftHSM Error extracting public key: ${e}`
+          throw e instanceof Error ? e : new Error(`SoftHSM Error extracting public key: ${e}`)
         }
       } else {
         result = `Source Public Key (Hex): ${keyGen.publicKeyHex}`
@@ -643,7 +646,7 @@ Note: Address derived from the HSM Ed25519 public key.`
 
           result.SoftHSMv3 = `Recipient keys internally generated via SoftHSM3 C_GenerateKeyPair.\nInspect key attributes in the HSM Key Registry below.`
         } catch (e) {
-          result.SoftHSMv3 = `SoftHSM Error: ${e}`
+          throw e instanceof Error ? e : new Error(`SoftHSM Error: ${e}`)
         }
       }
 
@@ -764,7 +767,12 @@ Note: Address derived from the HSM Ed25519 public key.`
             : `SHA-256: ${actualDigest} (run step 7 first to establish fingerprint)`
           result.SoftHSMv3 = `Signature computed inside WebAssembly SoftHSM via C_Sign.\nSignature Length: ${hsmSig.length} bytes\nSignature (Hex): ${sigHex}\nSignature (Base58): ${sigBase58}\n\n${integrityLine}\n\nC_SignInit + C_Sign trace in PKCS#11 Log below.`
         } catch (e) {
-          result.SoftHSMv3 = `SoftHSM Error: ${e}`
+          // Re-throw — a failed HSM sign must not mark this step complete.
+          // Previously this only wrote an error string into result.SoftHSMv3
+          // while letting the wizard proceed, so step 9 (Verify) would then
+          // fail with a confusing "missing artifacts" error two steps later
+          // instead of surfacing the real cause here.
+          throw e instanceof Error ? e : new Error(`SoftHSM Error: ${e}`)
         }
       } else {
         // JS fallback — HSM not loaded
@@ -809,7 +817,10 @@ Note: Address derived from the HSM Ed25519 public key.`
             throw new Error('C_Verify: signature verification failed')
           }
         } catch (e) {
-          result.SoftHSMv3 = `SoftHSM Error: ${e}`
+          // Re-throw — an unexpected verification failure (not the
+          // intentional simulateError test-mode path above, which doesn't
+          // throw) must not be presented as if the step completed.
+          throw e instanceof Error ? e : new Error(`SoftHSM Error: ${e}`)
         }
       } else {
         // JS fallback
