@@ -19,10 +19,14 @@
  *                                               backend and drifts, so it is omitted)
  *   tool.url   <- scenario.tool.url
  *
- * A scenario is emitted only when it is (a) not deprecated and (b) referenced by
- * exactly one learning track — mirroring the backend's "only real-PQC scenarios
- * appear in the hub" rule. Deprecated scenarios (e.g. dnssec) and orphaned
- * scenarios are dropped.
+ * A scenario is emitted only when it is (a) not deprecated, (b) not wip, and
+ * (c) referenced by exactly one learning track — mirroring the backend's "only
+ * real-PQC scenarios appear in the hub" rule (the sandbox app's own
+ * ScenarioSelector already hides wip scenarios from its default catalog the
+ * same way; this keeps the hub's projection consistent with that). Deprecated
+ * scenarios (e.g. dnssec), wip scenarios (e.g. tpm-playground — an empty,
+ * unimplemented catalog stub as of 07-2026), and orphaned scenarios are all
+ * dropped.
  *
  * Usage:  npm run sync:sandbox            (writes the file)
  *         npm run sync:sandbox -- --check (fails if the file is out of date)
@@ -83,7 +87,7 @@ for (const track of LEARNING_TRACKS) {
       console.warn(`⚠️  track '${track.id}' references unknown scenario '${id}' — skipped`)
       continue
     }
-    if (s.deprecated) continue
+    if (s.deprecated || s.wip) continue
     if (!s.difficulty) {
       console.warn(`⚠️  scenario '${id}' has no difficulty — skipped`)
       continue
