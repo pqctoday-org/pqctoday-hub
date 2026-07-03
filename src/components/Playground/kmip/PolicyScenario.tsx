@@ -24,7 +24,15 @@
 // the MOST restrictive verdict; a real run reports the strongest decision the
 // engine actually emitted across the batch (e.g. Create allowed but Sign rekeyed).
 import { useState } from 'react'
-import { FlaskConical, Play, Loader2, CheckCircle2, XCircle, ArrowRight, CircleSlash } from 'lucide-react'
+import {
+  FlaskConical,
+  Play,
+  Loader2,
+  CheckCircle2,
+  XCircle,
+  ArrowRight,
+  CircleSlash,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   strongestDecision,

@@ -40,7 +40,9 @@ describe('policy catalog ↔ files sync', () => {
     for (const f of shippedYamls()) {
       const hub = readFileSync(join(POLICY_DIR, f), 'utf8')
       const src = readFileSync(join(HSM_SRC, f), 'utf8')
-      expect(hub, `${f} diverges from kmip/policies/${f} — run scripts/build-kmip-wasm.sh`).toBe(src)
+      expect(hub, `${f} diverges from kmip/policies/${f} — run scripts/build-kmip-wasm.sh`).toBe(
+        src
+      )
     }
   })
 })
