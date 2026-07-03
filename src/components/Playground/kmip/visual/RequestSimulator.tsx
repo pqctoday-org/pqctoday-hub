@@ -2,9 +2,11 @@
 //
 // RequestSimulator — the Simulate tab. Build a KMIP request, run it, and show
 // the AUTHORITATIVE verdict from the WASM engine's dryRun alongside the
-// illustrative flow (which the graph animates). Date + custom attributes only
-// affect the illustrative trace until the engine's dryRun accepts them
-// (implementation plan WP4b).
+// illustrative flow (which the graph animates). Since WP4b the engine's
+// dryRun receives the FULL request (date, custom attrs, usage mask, mechanism
+// params, key activation date), so temporal/attribute/mechanism rules are
+// evaluated authoritatively — the "approximated" banner now signals genuine
+// simulator drift, not a known blind spot.
 import { FlaskConical, Play, Check, ArrowRight, Ban, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
