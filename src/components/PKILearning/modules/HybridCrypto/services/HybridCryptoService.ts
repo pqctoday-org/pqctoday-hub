@@ -41,8 +41,8 @@ import {
   SLH_DSA_SHA2_128S_OID,
   ML_DSA_65_OID,
   ML_DSA_65_OID_STR,
-  COMPOSITE_KEM_X25519_MLKEM768_OID_STR,
-  COMPOSITE_KEM_SECP256R1_MLKEM768_OID_STR,
+  COMPOSITE_KEM_MLKEM768_X25519_OID_STR,
+  COMPOSITE_KEM_MLKEM768_SECP256R1_OID_STR,
   type SignerFn,
 } from './certBuilder'
 
@@ -1070,20 +1070,22 @@ export class HybridCryptoService {
   }
 
   /**
-   * Composite KEM certificate per draft-ietf-lamps-pq-composite-kem-14.
+   * Composite KEM certificate per draft-ietf-lamps-pq-composite-kem-17.
    *
    * The subject public key is a CompositeKEMPublicKey binding ML-KEM-768 with a classical
    * KEM (X25519 or P-256) under a single OID. Like pure KEM certs, the cert itself is signed
    * by a separate signing-capable issuer key (KEM keys cannot self-sign).
    *
-   * draft-composite-kem-14 OIDs:
-   *   id-X25519-MLKEM768  = 2.16.840.1.114027.80.5.2.21
-   *   id-P256-MLKEM768    = 2.16.840.1.114027.80.5.2.22
+   * draft-composite-kem-17 OIDs (IANA PKIX arc; the draft moved off its
+   * earlier 2.16.840.1.114027.80.5.2.x private-enterprise numbering —
+   * verified against the live IETF datatracker as of 2026-07-03):
+   *   id-MLKEM768-X25519-SHA3-256      = 1.3.6.1.5.5.7.6.58
+   *   id-MLKEM768-ECDH-P256-SHA3-256   = 1.3.6.1.5.5.7.6.59
    *
    * Composite KEM (X25519 + ML-KEM-768) X.509 certificate per
-   * `draft-ietf-lamps-pq-composite-kem` (IETF LAMPS WG, currently in
-   * Last Call as of this commit). OID id-X25519-MLKEM768 =
-   * 2.16.840.1.114027.80.5.2.21 (LAMPS draft §6).
+   * `draft-ietf-lamps-pq-composite-kem` (IETF LAMPS WG; AD Evaluation as
+   * of this commit — advanced past Last Call). OID
+   * id-MLKEM768-X25519-SHA3-256 = 1.3.6.1.5.5.7.6.58 (LAMPS draft §6).
    *
    * Why not OpenSSL: the LAMPS composite KEM draft is not yet an RFC.
    * OpenSSL 3.5 ships X25519MLKEM768 as a TLS 1.3 hybrid named group
@@ -1095,8 +1097,10 @@ export class HybridCryptoService {
    * cert minting, in the same pattern used for the Silithium fused-
    * signature path.
    *
-   * Public key layout per LAMPS draft §6 byte concatenation:
-   *   subjectPublicKey ::= x25519PublicKey (32 B) ‖ mlkem768PublicKey (1184 B)
+   * Public key layout per LAMPS draft §6 byte concatenation (ML-KEM
+   * component first, then the traditional component — "mlkemPK ‖
+   * tradPK" per §4.1):
+   *   subjectPublicKey ::= mlkem768PublicKey (1184 B) ‖ x25519PublicKey (32 B)
    *   total length: 1216 B
    *
    * Issuer: a transient ML-DSA-65 keypair (FIPS 204, RFC 9881). KEM
@@ -1104,7 +1108,7 @@ export class HybridCryptoService {
    * issuer key created on the fly.
    *
    * Note: the P-256 classical variant of this format
-   * (id-SecP256r1-MLKEM768 = 2.16.840.1.114027.80.5.2.22) is reserved
+   * (id-MLKEM768-ECDH-P256-SHA3-256 = 1.3.6.1.5.5.7.6.59) is reserved
    * in the LAMPS draft but not yet wired in the workshop UI; it is
    * accepted in the type signature for forward compatibility.
    */
@@ -1125,27 +1129,28 @@ export class HybridCryptoService {
         pem: '',
         parsed: '',
         timingMs: performance.now() - start,
-        error: `Classical variant '${classicalVariant}' is reserved in LAMPS draft-ietf-lamps-pq-composite-kem (id-SecP256r1-MLKEM768) but not wired in this workshop. Only X25519MLKEM768 is implemented.`,
+        error: `Classical variant '${classicalVariant}' is reserved in LAMPS draft-ietf-lamps-pq-composite-kem (id-MLKEM768-ECDH-P256-SHA3-256) but not wired in this workshop. Only id-MLKEM768-X25519-SHA3-256 is implemented.`,
       }
     }
 
     try {
-      const compositeOidStr = COMPOSITE_KEM_X25519_MLKEM768_OID_STR
+      const compositeOidStr = COMPOSITE_KEM_MLKEM768_X25519_OID_STR
       // Acknowledge that the P-256 variant's OID constant is imported for
       // forward compatibility (referenced in the type-signature contract).
-      void COMPOSITE_KEM_SECP256R1_MLKEM768_OID_STR
+      void COMPOSITE_KEM_MLKEM768_SECP256R1_OID_STR
 
       // 1. Generate the composite KEM subject keys via @noble.
       const x25519Pair = x25519.keygen()
       const mlkemPair = ml_kem768.keygen()
 
-      // 2. Build the subject public key per LAMPS draft §6:
-      //    x25519PublicKey(32) ‖ mlkem768PublicKey(1184) = 1216 bytes.
+      // 2. Build the subject public key per LAMPS draft §6 (§4.1 byte
+      //    order — ML-KEM component first, then the traditional component):
+      //    mlkem768PublicKey(1184) ‖ x25519PublicKey(32) = 1216 bytes.
       const compositePubKey = new Uint8Array(
-        x25519Pair.publicKey.length + mlkemPair.publicKey.length
+        mlkemPair.publicKey.length + x25519Pair.publicKey.length
       )
-      compositePubKey.set(x25519Pair.publicKey, 0)
-      compositePubKey.set(mlkemPair.publicKey, x25519Pair.publicKey.length)
+      compositePubKey.set(mlkemPair.publicKey, 0)
+      compositePubKey.set(x25519Pair.publicKey, mlkemPair.publicKey.length)
 
       // 3. Mint a transient ML-DSA-65 issuer (RFC 9881). KEM keys can't
       //    self-sign — the cert binds the composite KEM public key under
@@ -1184,12 +1189,12 @@ export class HybridCryptoService {
         '        Not After : now + 365 days',
         `    Subject: ${cn}`,
         '    Subject Public Key Info:',
-        `        Public Key Algorithm: id-X25519-MLKEM768 (${compositeOidStr})`,
-        `        [LAMPS draft-ietf-lamps-pq-composite-kem §6  — IETF Last Call]`,
+        `        Public Key Algorithm: id-MLKEM768-X25519-SHA3-256 (${compositeOidStr})`,
+        `        [LAMPS draft-ietf-lamps-pq-composite-kem-17 §6  — AD Evaluation]`,
         `            Composite Public Key (1216 bytes):`,
-        `                X25519 component       (32 B):   ${this.toHex(x25519Pair.publicKey).slice(0, 64)}…`,
         `                ML-KEM-768 component   (1184 B): ${this.toHex(mlkemPair.publicKey).slice(0, 64)}…`,
-        '        Encoding: subjectPublicKey ::= x25519PublicKey ‖ mlkem768PublicKey',
+        `                X25519 component       (32 B):   ${this.toHex(x25519Pair.publicKey).slice(0, 64)}…`,
+        '        Encoding: subjectPublicKey ::= mlkem768PublicKey ‖ x25519PublicKey',
         '    X509v3 extensions:',
         '        X509v3 Basic Constraints: critical',
         '            CA:FALSE',
@@ -1197,9 +1202,9 @@ export class HybridCryptoService {
         `    Signature Value: 3309 bytes (ML-DSA-65 signature over TBSCertificate DER)`,
         '',
         '# References:',
-        '#   draft-ietf-lamps-pq-composite-kem  — IETF Last Call',
+        '#   draft-ietf-lamps-pq-composite-kem-17  — AD Evaluation',
         '#     §6  Subject public key encoding',
-        '#     OID id-X25519-MLKEM768 = 2.16.840.1.114027.80.5.2.21',
+        '#     OID id-MLKEM768-X25519-SHA3-256 = 1.3.6.1.5.5.7.6.58',
         '#   RFC 9881  ML-DSA in X.509 (signature algorithm)',
         '#   FIPS 203  ML-KEM',
         '#   FIPS 204  ML-DSA',

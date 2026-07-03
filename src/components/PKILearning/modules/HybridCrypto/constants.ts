@@ -199,7 +199,7 @@ export interface HybridCertFormat {
   standard: string
   standardUrl: string
   oids: string[]
-  status: 'Published' | 'IETF Last Call' | 'Active Draft' | 'Informational'
+  status: 'Published' | 'IETF Last Call' | 'AD Evaluation' | 'Active Draft' | 'Informational'
   statusColor: string
   /** Whether the format is quantum-safe. 'system' = only quantum-safe as a multi-cert system. */
   quantumSafe: boolean | 'system'
@@ -440,8 +440,8 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
     approach: 'Single composite KEM OID',
     standard: 'draft-ietf-lamps-pq-composite-kem',
     standardUrl: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
-    oids: ['2.16.840.1.114027.80.5.2.21'],
-    status: 'IETF Last Call',
+    oids: ['1.3.6.1.5.5.7.6.58'],
+    status: 'AD Evaluation',
     statusColor: 'primary',
     quantumSafe: true,
     legacyCompat: false,
@@ -451,11 +451,11 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: 'Certificate ::= SEQUENCE {', color: 'foreground', indent: 0 },
       { text: 'tbsCertificate {', color: 'muted', indent: 1 },
       { text: 'subjectPublicKeyInfo  CompositeKEMPublicKey {', color: 'primary', indent: 2 },
-      { text: 'x25519PublicKey     X25519 (32 bytes)', color: 'warning', indent: 3 },
       { text: 'mlkem768PublicKey   ML-KEM-768 (1184 bytes)', color: 'success', indent: 3 },
+      { text: 'x25519PublicKey     X25519 (32 bytes)', color: 'warning', indent: 3 },
       { text: '}', color: 'primary', indent: 2 },
       {
-        text: 'subjectPublicKeyOID  id-X25519-MLKEM768 (2.16.840.1.114027.80.5.2.21)',
+        text: 'subjectPublicKeyOID  id-MLKEM768-X25519-SHA3-256 (1.3.6.1.5.5.7.6.58)',
         color: 'primary',
         indent: 2,
       },
@@ -469,7 +469,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '}', color: 'foreground', indent: 0 },
     ],
     educationalNote:
-      'draft-ietf-lamps-pq-composite-kem-14 defines composite KEM public keys binding ML-KEM-768 with a classical KEM (X25519, P-256, P-384, X448, brainpoolP256) under a single OID. Encapsulation runs both KEMs and combines shared secrets via a KDF — both must succeed. Like composite signatures, the wire format is parsed only by composite-aware libraries (OpenSSL 3.5 + oqs-provider). KEM certs are encryption-only (RFC 9935 §4); signing requires a separate CA.',
+      'draft-ietf-lamps-pq-composite-kem-17 defines composite KEM public keys binding ML-KEM-768 with a classical KEM (X25519, P-256, P-384, RSA-2048/3072/4096, brainpoolP256) under a single OID (encoded ML-KEM component first, then the classical component — §4.1). Encapsulation runs both KEMs and combines shared secrets via a KDF — both must succeed. Like composite signatures, the wire format is parsed only by composite-aware libraries (OpenSSL 3.5 + oqs-provider). KEM certs are encryption-only (RFC 9935 §4); signing requires a separate CA.',
     classicalAlg: 'X25519',
     pqcAlg: 'ML-KEM-768',
   },
