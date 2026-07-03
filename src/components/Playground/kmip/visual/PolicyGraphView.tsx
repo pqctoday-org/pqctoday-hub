@@ -617,6 +617,7 @@ export function PolicyGraphView({
               value={yamlText}
               onChange={(e) => setYamlDraft(e.target.value)}
               spellCheck={false}
+              aria-label="Policy YAML source"
               className="max-h-56 min-h-[10rem] w-full resize-y overflow-auto whitespace-pre rounded border border-transparent bg-transparent font-mono text-[10.5px] leading-relaxed text-foreground outline-none focus:border-primary/40"
             />
             {yamlDirty && (
