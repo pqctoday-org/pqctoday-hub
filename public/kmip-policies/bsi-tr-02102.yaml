@@ -61,7 +61,12 @@ rules:
     secondary: ECDSA-P384
     effective_from: "2026-01-01"
     effective_until: "2035-12-31"
-    ops_affected: [Create, CreateKeyPair, Sign]
+    # Scope to the SIGNING intent only — "CreateKeyPair:Sign", NOT bare
+    # CreateKeyPair. Bare CreateKeyPair prefix-matches CreateKeyPair:KeyAgreement,
+    # so a signing mandate would wrongly deny the KEM key-agreement key pairs that
+    # rule 1 allowlists (ML-KEM / FrodoKEM / Classic McEliece). Same guard the
+    # hybrid-migration-window policy documents (fixed 2026-07-03).
+    ops_affected: [Create, "CreateKeyPair:Sign", Sign]
     # id-MLDSA65-ECDSA-P384-SHA512 (LAMPS composite-sigs, IANA arc
     # 1.3.6.1.5.5.7.6; verified on datatracker 2026-07-01).
     composite_oid: "1.3.6.1.5.5.7.6.46"

@@ -29,7 +29,13 @@ import { RulePalette } from './RulePalette'
 import { RuleInspector } from './RuleInspector'
 import { RequestSimulator } from './RequestSimulator'
 import { PolicyValidation } from './PolicyValidation'
-import { evaluatePolicy, type SimRequest, type SimResult } from './policySim'
+import {
+  evaluatePolicy,
+  type SimRequest,
+  type SimResult,
+  type SimVerdict,
+  type TraceStep,
+} from './policySim'
 import { GraphCanvas, type FlowToken } from './GraphCanvas'
 import {
   defaultLayout,
@@ -68,6 +74,55 @@ const EMPTY_POLICY: EditablePolicy = {
     complianceMapping: [],
   },
   rules: [],
+}
+
+/**
+ * Build the graph's SimResult from the ENGINE's own per-rule trace, so node
+ * highlighting reflects exactly what the engine did — not a re-derived guess.
+ * Disabled editor rules are serialized as comments, so the engine only sees
+ * ENABLED rules; map its 1-based `index` to the i-th enabled rule. Returns null
+ * when the engine build predates trace support (caller falls back to the
+ * illustrative evaluatePolicy).
+ */
+function engineTraceToSim(policy: EditablePolicy, dr: DryRunResult | null): SimResult | null {
+  if (!dr?.trace || dr.trace.length === 0) return null
+  const enabledIds = policy.rules.filter((r) => r.enabled).map((r) => r.id)
+  const byId = new Map<string, TraceStep>()
+  let deciderId: string | null = null
+  for (const step of dr.trace) {
+    const ruleId = enabledIds[step.index - 1]
+    if (!ruleId) continue
+    const effect = (
+      ['resolve', 'deny', 'pass', 'skip'].includes(step.effect) ? step.effect : 'pass'
+    ) as TraceStep['effect']
+    byId.set(ruleId, {
+      ruleId,
+      matched: effect === 'resolve' || effect === 'deny',
+      effect,
+      note: step.note,
+    })
+    if (effect === 'deny') deciderId = ruleId
+  }
+  // Every editor node gets a step; disabled ones the engine never saw → 'off'.
+  const trace: TraceStep[] = policy.rules.map(
+    (r) =>
+      byId.get(r.id) ?? {
+        ruleId: r.id,
+        matched: false,
+        effect: r.enabled ? 'skip' : 'off',
+        note: r.enabled ? '' : 'disabled',
+      }
+  )
+  const kind: SimVerdict['kind'] =
+    dr.kind === 'Allow' ? 'allow' : dr.kind === 'Rekey' ? 'rekey' : 'deny'
+  const verdict: SimVerdict = {
+    kind,
+    algorithm: dr.algorithm ?? undefined,
+    from: dr.from,
+    to: dr.to,
+    reason: dr.reason ?? dr.denyReason,
+  }
+  return { verdict, trace, deciderId }
 }
 
 type RightTab = 'inspect' | 'simulate' | 'check'
@@ -218,13 +273,12 @@ export function PolicyGraphView({
   // ── run simulation: engine verdict (authoritative) + illustrative trace ──
   const rafRef = useRef<number | null>(null)
   const run = useCallback(() => {
-    const result = evaluatePolicy(policy, req)
-    setSim(result)
     const newObject = /^(Create|CreateKeyPair|Register|Import)/.test(req.op)
+    // Authoritative verdict + per-rule trace from the engine FIRST, so the graph
+    // can be driven by what the engine actually did (WP4b: dry_run sees the full
+    // request dimensions — date/attrs/mask/mechanism).
+    let engineDR: DryRunResult | null = null
     try {
-      // WP4b: the engine's dry_run accepts the full request dimensions, so the
-      // authoritative verdict sees the same date/attrs/mask/mechanism the
-      // illustrative trace uses.
       const attrs: Record<string, string> = {}
       for (const a of req.attrs) {
         const [name, ...rest] = a.split('=')
@@ -237,23 +291,27 @@ export function PolicyGraphView({
         deterministic: req.deterministic === '' ? undefined : req.deterministic === 'true',
         mech: req.mechanism || undefined,
       }
-      setEngineVerdict(
-        engine.dryRun({
-          op: req.op,
-          algorithm: req.algorithm || undefined,
-          currentAlgorithm: newObject ? undefined : req.algorithm || undefined,
-          length: req.bits === '' ? undefined : Number(req.bits),
-          state: req.keyState || undefined,
-          date: req.date || undefined,
-          attrs: Object.keys(attrs).length ? attrs : undefined,
-          usageMask: req.usageFlags.length ? req.usageFlags : undefined,
-          activationDate: req.keyActivatedOn || undefined,
-          mechanism: Object.values(mechanism).some((v) => v !== undefined) ? mechanism : undefined,
-        })
-      )
+      engineDR = engine.dryRun({
+        op: req.op,
+        algorithm: req.algorithm || undefined,
+        currentAlgorithm: newObject ? undefined : req.algorithm || undefined,
+        length: req.bits === '' ? undefined : Number(req.bits),
+        state: req.keyState || undefined,
+        date: req.date || undefined,
+        attrs: Object.keys(attrs).length ? attrs : undefined,
+        usageMask: req.usageFlags.length ? req.usageFlags : undefined,
+        activationDate: req.keyActivatedOn || undefined,
+        mechanism: Object.values(mechanism).some((v) => v !== undefined) ? mechanism : undefined,
+      })
+      setEngineVerdict(engineDR)
     } catch {
       setEngineVerdict(null)
     }
+
+    // Drive the graph from the ENGINE's own trace when available; fall back to
+    // the illustrative evaluatePolicy only if the wasm predates trace support.
+    const result = engineTraceToSim(policy, engineDR) ?? evaluatePolicy(policy, req)
+    setSim(result)
 
     // Build the flow path points (request → matched nodes → terminal) and the
     // per-hop token labels (morphs across resolve nodes).

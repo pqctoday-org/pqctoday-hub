@@ -425,15 +425,15 @@ export function KmipPlaygroundView() {
             onOpenLibrary={() => setPlane('policy')}
           />
 
-          {/* ── Policy-aware probe: how the SELECTED policy treats key requests ── */}
+          {/* ── Validated test scenarios tied to the SELECTED policy ── */}
           <div className="mb-4">
             <PolicyScenario
               engine={engine}
+              policyFile={activePreset?.file ?? 'training-permissive.yaml'}
               policyFingerprint={policy.fingerprint}
               policyLabel={policyLabel}
               busy={busy}
               onBusyChange={setBusy}
-              onChanged={() => refresh(engine)}
             />
           </div>
 
