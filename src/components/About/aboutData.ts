@@ -14,7 +14,7 @@ import {
 } from 'lucide-react'
 
 export const MISSION_TAGS = [
-  '59 learning modules',
+  '62 learning modules',
   '34 business planning tools',
   '13-step risk assessment',
   '800+ migration catalog',

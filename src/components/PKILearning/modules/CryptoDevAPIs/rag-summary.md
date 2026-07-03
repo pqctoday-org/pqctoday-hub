@@ -17,7 +17,7 @@ Intermediate-level module (120 min, 8 workshop steps) covering post-quantum cryp
   - Zig — liboqs Zig bindings via `@cImport`; bare-metal friendly; used in constrained embedded targets
   - Java — BouncyCastle 1.78+ (`org.bouncycastle.pqc.crypto.mlkem`, `org.bouncycastle.pqc.crypto.mldsa`); JCA provider swap pattern with `KeyPairGenerator.getInstance("ML-DSA-65", "BC")`
   - Python — `pyoqs` (liboqs Python wrapper, `oqs.KEM("ML-KEM-768")`); `cryptography` library 42+ (ML-KEM via OpenSSL 3.x + oqsprovider backend); `pqcrypto` PyPI package
-  - Go — `github.com/cloudflare/circl` (ML-KEM, NTRU, FrodoKEM); `aws-lc-go` (AWS-LC Go bindings, ML-KEM/ML-DSA); standard library `crypto/mlkem` planned for Go 1.24
+  - Go — `github.com/cloudflare/circl` (ML-KEM, NTRU, FrodoKEM); `aws-lc-go` (AWS-LC Go bindings, ML-KEM/ML-DSA); standard library `crypto/mlkem` shipped in Go 1.24 (Feb 2025) — provides ML-KEM-768 and ML-KEM-1024 only (no ML-KEM-512)
   - .NET — `System.Security.Cryptography.MLKem` with `MLKemAlgorithm.MLKem768` (ML-KEM GA in .NET 10); BouncyCastle C# 2.3+ for full coverage today
 - **PQC library comparison**:
   - liboqs (Open Quantum Safe) — C library, 15+ algorithms (ML-KEM/ML-DSA/SLH-DSA/FN-DSA/FrodoKEM/HQC/Classic McEliece), NIST reference implementation, not FIPS-validated, widely used for research and prototyping
@@ -50,7 +50,7 @@ Intermediate-level module (120 min, 8 workshop steps) covering post-quantum cryp
 - PKCS#11 v3.2 `C_EncapsulateKey` mechanism: `CKM_ML_KEM` (OID 2.16.840.1.101.3.4.4.1 for ML-KEM-512) — not backward-compatible with v2.40; requires HSM firmware update
 - AWS-LC FIPS certificate: #4759 (NIST CMVP) — covers ML-KEM-768 and ML-DSA-65; only widely available open-source C library with FIPS validation for PQC (as of early 2026)
 - .NET 10 `MLKem` GA: `System.Security.Cryptography.MLKem.GenerateKey(MLKemAlgorithm.MLKem768)` — no external library needed on .NET 10+ for ML-KEM
-- Go `crypto/mlkem` standard library: planned Go 1.24 (released February 2025) — `mlkem.GenerateKey768()`; cloudflare/circl remains necessary for ML-DSA and SLH-DSA
+- Go `crypto/mlkem` standard library: shipped in Go 1.24 (released February 2025) — provides ML-KEM-768 and ML-KEM-1024 only (no ML-KEM-512); `mlkem.GenerateKey768()`; cloudflare/circl remains necessary for ML-DSA and SLH-DSA
 - JCA algorithm string format: `"ML-KEM-768"` (hyphenated, not `"MLKEM768"` or `"kyber768"`) — BouncyCastle 1.78+ and BCFIPS 2.0+ use FIPS 203 naming
 - Crypto Agility pattern overhead: Strategy pattern adds ~2 µs per operation (interface dispatch) — negligible vs ML-KEM-768 keygen (~200 µs) or ML-DSA-65 sign (~700 µs)
 - PQClean side-channel disclaimer: PQClean implementations explicitly disclaim constant-time guarantees on all platforms — do NOT use in production without profiling for timing leaks on target hardware

@@ -108,7 +108,7 @@ sudo apt install openssl-oqsprovider
     hybridStrategy:
       'Windows Server 2025 is the most advanced — ML-KEM is in the FIPS-validated SymCrypt module. Enable FIPS compliance mode via Group Policy; ML-KEM TLS 1.3 hybrid (X25519MLKEM768) works in FIPS mode.',
     notes:
-      'Windows Server 2025 with KB5036893 includes ML-KEM-768 in the FIPS 140-3 validated SymCrypt module. This makes Windows Server 2025 the first major OS platform with FIPS-validated PQC. ML-DSA signing in SymCrypt is implemented but awaiting FIPS 140-3 certificate update (expected 2026).',
+      'Windows Server 2025 with KB5068861 (November 2025) adds ML-KEM and ML-DSA API support (FIPS 203/204) to the SymCrypt / CNG cryptographic stack. ML-DSA signing is implemented but the SymCrypt FIPS 140-3 certificate update covering the PQC algorithms is expected in 2026.',
     commands: `# Enable FIPS compliance mode (Group Policy):
 # Computer Configuration → Windows Settings → Security Settings →
 # Local Policies → Security Options:
