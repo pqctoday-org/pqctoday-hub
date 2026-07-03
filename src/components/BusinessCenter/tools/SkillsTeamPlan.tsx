@@ -19,6 +19,7 @@ import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import {
   ROLE_CROSSWALK,
@@ -214,6 +215,7 @@ export function buildMarkdown(s: PlanState): string {
 
 export const SkillsTeamPlan: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
+  const savedInputs = useSavedArtifactInputs<PlanState>('skills-team-plan')
   const { myProducts } = useExecutiveModuleData()
 
   // Seed an estate-size order of magnitude from the /migrate selection
@@ -223,20 +225,33 @@ export const SkillsTeamPlan: React.FC = () => {
     [myProducts.length]
   )
 
-  const [state, setState] = useState<PlanState>(() => ({
-    estateInstances: seedInstances,
-    sizingPhase: 'early',
-    sourcing: {
-      qrpm: 'build',
-      'exec-sponsor': 'build',
-      'crypto-architect': 'build',
-      'security-eng': 'borrow',
-      'appsec-lead': 'build',
-      'ot-specialist': 'borrow',
-      'vendor-lead': 'build',
-      'pmo-analyst': 'build',
-    },
-  }))
+  const defaultSourcing: Record<FrameworkRoleId, Sourcing> = {
+    qrpm: 'build',
+    'exec-sponsor': 'build',
+    'crypto-architect': 'build',
+    'security-eng': 'borrow',
+    'appsec-lead': 'build',
+    'ot-specialist': 'borrow',
+    'vendor-lead': 'build',
+    'pmo-analyst': 'build',
+  }
+
+  // A previously-saved plan takes priority over re-seeding from /migrate, so
+  // the user's own sizing-phase and sourcing choices round-trip across visits.
+  const [state, setState] = useState<PlanState>(() => {
+    if (savedInputs) {
+      return {
+        estateInstances: savedInputs.estateInstances ?? seedInstances,
+        sizingPhase: savedInputs.sizingPhase ?? 'early',
+        sourcing: { ...defaultSourcing, ...savedInputs.sourcing },
+      }
+    }
+    return {
+      estateInstances: seedInstances,
+      sizingPhase: 'early',
+      sourcing: defaultSourcing,
+    }
+  })
 
   const setSourcing = (id: FrameworkRoleId, value: Sourcing) =>
     setState((prev) => ({ ...prev, sourcing: { ...prev.sourcing, [id]: value } }))

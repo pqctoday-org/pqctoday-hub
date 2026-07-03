@@ -15,6 +15,7 @@
  */
 import React, { useMemo, useState } from 'react'
 import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { ScrollText, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -174,6 +175,7 @@ export function buildMarkdown(s: CharterState): string {
 
 export const ProgramCharter: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
+  const savedInputs = useSavedArtifactInputs<CharterState>('program-charter')
   const [state, setState] = useState<CharterState>(() => {
     const base: CharterState = {
       programName: '',
@@ -200,16 +202,27 @@ export const ProgramCharter: React.FC = () => {
     }
     // Auto-run demo fill: role titles (no invented names) + framework-anchored
     // illustrative budget (Phase 0 activity 0.2 cost range).
-    if (!isAutoRunFillActive()) return base
-    return {
-      ...base,
-      programName: 'Post-Quantum Cryptography Migration Program',
-      sponsorName: 'Chief Information Security Officer',
-      sponsorTitle: 'Executive Sponsor',
-      qrpmName: 'Head of Cryptographic Engineering',
-      budgetYear1: '$1.5M–$4M — discovery, tooling, 2–3 hybrid pilots, training',
-      budgetMultiYear: 'Phased multi-year program aligned to infrastructure refresh cycles',
+    if (isAutoRunFillActive()) {
+      return {
+        ...base,
+        programName: 'Post-Quantum Cryptography Migration Program',
+        sponsorName: 'Chief Information Security Officer',
+        sponsorTitle: 'Executive Sponsor',
+        qrpmName: 'Head of Cryptographic Engineering',
+        budgetYear1: '$1.5M–$4M — discovery, tooling, 2–3 hybrid pilots, training',
+        budgetMultiYear: 'Phased multi-year program aligned to infrastructure refresh cycles',
+      }
     }
+    // Restore the user's last-saved charter so it round-trips across visits.
+    if (savedInputs) {
+      return {
+        ...base,
+        ...savedInputs,
+        steerCo: { ...base.steerCo, ...savedInputs.steerCo },
+        workstreams: { ...base.workstreams, ...savedInputs.workstreams },
+      }
+    }
+    return base
   })
 
   const set = <K extends keyof CharterState>(key: K, value: CharterState[K]) =>
@@ -539,12 +552,7 @@ export const ProgramCharter: React.FC = () => {
             type: 'program-charter',
             title: `Program Charter — ${new Date().toLocaleDateString()}`,
             data: exportMarkdown,
-            inputs: {
-              sponsorName: state.sponsorName,
-              qrpmName: state.qrpmName,
-              cadence: state.cadence,
-              seatCount,
-            },
+            inputs: state,
             createdAt: Date.now(),
           })
         }}

@@ -18,11 +18,22 @@ import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { INSTANCES_PER_PRODUCT_ESTIMATE } from '@/data/roleCrosswalk'
 
 const MAX_SYSTEMS = 20
 const MAX_VENDORS = 10
+
+function isValidScopingState(s: unknown): s is ScopingState {
+  return (
+    !!s &&
+    typeof s === 'object' &&
+    Array.isArray((s as ScopingState).systems) &&
+    Array.isArray((s as ScopingState).vendors) &&
+    typeof (s as ScopingState).estateInstances === 'string'
+  )
+}
 
 export interface ScopingState {
   systems: string[]
@@ -224,6 +235,7 @@ function RowList({
 
 export const InitialScopingAssessment: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
+  const savedInputs = useSavedArtifactInputs<ScopingState>('initial-scoping')
   const { myProducts, industry, totalProducts } = useExecutiveModuleData()
 
   // Seed systems + vendors from the user's /migrate selection. Systems take the
@@ -263,12 +275,17 @@ export const InitialScopingAssessment: React.FC = () => {
   // The store-backed /migrate selection is available synchronously on first
   // render, so the lazy initializer seeds the scope from it; no re-seed effect
   // needed (and none of the assess data arrives async into an empty form).
-  const [state, setState] = useState<ScopingState>(() => ({
-    systems: seedSystems.length > 0 ? seedSystems : [''],
-    vendors: seedVendors.length > 0 ? seedVendors : [''],
-    estateInstances: seedInstances,
-    seeded: seedSystems.length > 0 || seedVendors.length > 0,
-  }))
+  // A previously-saved scope takes priority over re-seeding from /migrate, so
+  // the user's own edits round-trip across visits instead of being discarded.
+  const [state, setState] = useState<ScopingState>(() => {
+    if (isValidScopingState(savedInputs)) return savedInputs
+    return {
+      systems: seedSystems.length > 0 ? seedSystems : [''],
+      vendors: seedVendors.length > 0 ? seedVendors : [''],
+      estateInstances: seedInstances,
+      seeded: seedSystems.length > 0 || seedVendors.length > 0,
+    }
+  })
 
   const exportMarkdown = useMemo(() => buildMarkdown(state, industry), [state, industry])
 
@@ -373,19 +390,13 @@ export const InitialScopingAssessment: React.FC = () => {
         filename="initial-scoping-assessment"
         formats={['markdown', 'pdf', 'docx']}
         onExport={() => {
-          const systems = state.systems.map((v) => v.trim()).filter(Boolean)
-          const vendors = state.vendors.map((v) => v.trim()).filter(Boolean)
           addExecutiveDocument({
             id: `initial-scoping-${Date.now()}`,
             moduleId: 'pqc-governance',
             type: 'initial-scoping',
             title: `Initial Scoping Assessment — ${new Date().toLocaleDateString()}`,
             data: exportMarkdown,
-            inputs: {
-              systemCount: systems.length,
-              vendorCount: vendors.length,
-              estateInstances: state.estateInstances,
-            },
+            inputs: state,
             createdAt: Date.now(),
           })
         }}

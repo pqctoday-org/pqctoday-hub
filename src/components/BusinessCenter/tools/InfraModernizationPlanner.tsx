@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 
 export interface InfraModernizationState {
   // PKI modernization
@@ -157,26 +158,34 @@ export function buildMarkdown(s: InfraModernizationState): string {
 
 export const InfraModernizationPlanner: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
-  const [state, setState] = useState<InfraModernizationState>(() => ({
-    rootCaYears: '10',
-    intermediateCaYears: '5',
-    endEntityDays: '90',
-    dualStackCa: false,
-    trackingMtc: false,
-    hsmInventory: '',
-    firmwareUpgradeScheduled: false,
-    hardwareReplacementPlanned: false,
-    cloudKmsConfigured: false,
-    protocols: {
-      'TLS 1.3': true,
-      'IKEv2/IPsec': false,
-      QUIC: false,
-      'All production middleboxes': false,
-    },
-    cpuImpactPct: '',
-    bandwidthImpact: '',
-    certStorageMultiplier: '',
-  }))
+  const savedInputs = useSavedArtifactInputs<InfraModernizationState>('infra-modernization-plan')
+  // Restore the user's last-saved plan so it round-trips across visits.
+  const [state, setState] = useState<InfraModernizationState>(() => {
+    const base: InfraModernizationState = {
+      rootCaYears: '10',
+      intermediateCaYears: '5',
+      endEntityDays: '90',
+      dualStackCa: false,
+      trackingMtc: false,
+      hsmInventory: '',
+      firmwareUpgradeScheduled: false,
+      hardwareReplacementPlanned: false,
+      cloudKmsConfigured: false,
+      protocols: {
+        'TLS 1.3': true,
+        'IKEv2/IPsec': false,
+        QUIC: false,
+        'All production middleboxes': false,
+      },
+      cpuImpactPct: '',
+      bandwidthImpact: '',
+      certStorageMultiplier: '',
+    }
+    if (savedInputs) {
+      return { ...base, ...savedInputs, protocols: { ...base.protocols, ...savedInputs.protocols } }
+    }
+    return base
+  })
 
   const set = <K extends keyof InfraModernizationState>(
     key: K,
@@ -487,12 +496,7 @@ export const InfraModernizationPlanner: React.FC = () => {
             type: 'infra-modernization-plan',
             title: `Infrastructure Modernization Plan — ${new Date().toLocaleDateString()}`,
             data: exportMarkdown,
-            inputs: {
-              dualStackCa: state.dualStackCa,
-              cloudKmsConfigured: state.cloudKmsConfigured,
-              protocolCount,
-              certStorageMultiplier: state.certStorageMultiplier,
-            },
+            inputs: state,
             createdAt: Date.now(),
           })
         }}

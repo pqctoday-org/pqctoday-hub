@@ -68,18 +68,21 @@ export function ComplianceTimelineBuilderStandalone() {
   // this picker round-trips like the rest of the timeline's saved state.
   const savedTimelineInputs =
     useSavedArtifactInputs<ComplianceTimelineSavedInputs>('compliance-timeline')
+  // `selectedJurisdictions` is present (even as `[]`) once anything has ever
+  // been saved — check for that, not `.length > 0`, so a deliberately-cleared
+  // selection is respected instead of being re-seeded from assessment data.
+  const hasSavedJurisdictions = savedTimelineInputs?.selectedJurisdictions !== undefined
   const savedJurisdictionIds = savedTimelineInputs?.selectedJurisdictions ?? []
   const assessmentJurisdictionIds = deriveJurisdictionIdsFromCountry(input?.country)
   const myFrameworkJurisdictionIds = deriveJurisdictionIdsFromFrameworks(myFrameworks)
   const myTimelineJurisdictionIds = deriveJurisdictionIdsFromTimelineCountries(myTimelineCountries)
-  const seedJurisdictionIds =
-    savedJurisdictionIds.length > 0
-      ? savedJurisdictionIds
-      : dedupe(assessmentJurisdictionIds, myFrameworkJurisdictionIds, myTimelineJurisdictionIds)
+  const seedJurisdictionIds = hasSavedJurisdictions
+    ? savedJurisdictionIds
+    : dedupe(assessmentJurisdictionIds, myFrameworkJurisdictionIds, myTimelineJurisdictionIds)
 
   const [selectedJurisdictions, setSelectedJurisdictions] = useState<string[]>(seedJurisdictionIds)
   const [seededFromAssessment, setSeededFromAssessment] = useState(
-    savedJurisdictionIds.length === 0 && seedJurisdictionIds.length > 0
+    !hasSavedJurisdictions && seedJurisdictionIds.length > 0
   )
 
   // PQC-required frameworks the user selected, with deadlines, surfaced as a

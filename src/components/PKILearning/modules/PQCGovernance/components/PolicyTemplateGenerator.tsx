@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { useSavedArtifactDocuments } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -741,7 +742,7 @@ export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = (
 }) => {
   const [activePolicyType, setActivePolicyType] = useState<PolicyType>('crypto-algorithm')
   const { addExecutiveDocument } = useModuleStore()
-  const executiveDocuments = useModuleStore((s) => s.artifacts.executiveDocuments)
+  const savedPolicyDrafts = useSavedArtifactDocuments('policy-draft')
   const execData = useExecutiveModuleData()
   const country = useAssessmentStore((s) => s.country)
   const industry = useAssessmentStore((s) => s.industry)
@@ -766,12 +767,12 @@ export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = (
 
   // Latest saved draft per policy type — keyed so switching tabs restores that
   // tab's own draft instead of cross-contaminating it with another type's.
+  // `useSavedArtifactDocuments` already provides the filter-by-type +
+  // newest-first sort; this only adds the per-policyType grouping on top,
+  // instead of re-implementing that filter/sort itself.
   const savedFormDataByType = useMemo(() => {
-    const sorted = (executiveDocuments ?? [])
-      .filter((d) => d.type === 'policy-draft' && d.inputs)
-      .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0))
     const map: Partial<Record<PolicyType, Record<string, Record<string, string | string[]>>>> = {}
-    for (const doc of sorted) {
+    for (const doc of savedPolicyDrafts) {
       const inputs = doc.inputs as
         | { policyType?: PolicyType; formData?: Record<string, Record<string, string | string[]>> }
         | undefined
@@ -779,7 +780,7 @@ export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = (
       map[inputs.policyType] = inputs.formData
     }
     return map
-  }, [executiveDocuments])
+  }, [savedPolicyDrafts])
 
   const frameworkNames = useMemo(
     () => execData.frameworksByIndustry.map((f) => f.label).slice(0, 12),

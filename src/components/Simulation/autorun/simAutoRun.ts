@@ -28,8 +28,15 @@ import { isStepComplete, type StepCompletionContext } from '../embedContract'
 import { PHASE_ORDER, LIFECYCLE_PHASES, type PhaseId } from '@/data/frameworkPhases'
 import { PHASE_WIN_LEVEL } from '@/data/phaseMaturity'
 import { EXEC_TOUR_STAGES } from './execTourConfig'
-import { demoDocFor, type DemoSector } from './demoDocs'
+import { demoDocFor, ORG, type DemoSector } from './demoDocs'
 import { REAL_DOC_GENERATORS } from './realToolDocs'
+
+/** Runtime membership check for `DemoSector` — `ORG` is keyed by every sector
+ *  the demo-content system knows about, so this can't drift from the type. */
+const KNOWN_SECTORS = new Set<string>(Object.keys(ORG))
+function isKnownSector(sector: string): sector is DemoSector {
+  return KNOWN_SECTORS.has(sector)
+}
 
 /** A handful of Command Center tools (Program Charter, Initial Scoping, Skills
  *  & Team Plan, Infra Modernization, Refresh-Cycle Alignment, Accelerated
@@ -41,7 +48,12 @@ import { REAL_DOC_GENERATORS } from './realToolDocs'
 function docFor(type: TreeStep['artifactType'], sector: string) {
   if (!type) return undefined
   const real = REAL_DOC_GENERATORS[type]
-  return real ? real(sector as DemoSector) : demoDocFor(type, sector)
+  // An unrecognized sector (e.g. stale/corrupted persisted state) falls back
+  // to 'general' rather than reaching the real generator's unguarded
+  // Record<DemoSector, ...> lookups, which would otherwise produce
+  // "undefinedNaN"-style garbage instead of degrading gracefully.
+  if (real) return real(isKnownSector(sector) ? sector : 'general')
+  return demoDocFor(type, sector)
 }
 
 /** SIM_TREES is keyed by PhaseId; centralise the typed-key read so the safe

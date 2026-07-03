@@ -39,6 +39,13 @@ interface DataDrivenScorecardProps {
   dimensions: ScorecardDimension[]
   colorScale?: 'risk' | 'readiness' | 'maturity'
   onScoreChange?: (scores: Record<string, number>) => void
+  /** Fires whenever the set of dimension ids the user has actually touched
+   *  changes — the authoritative "is this really pending" signal. Callers
+   *  that re-derive their own pending/"not yet scored" state from the raw
+   *  score value alone can't tell a deliberate 0 from an untouched default;
+   *  consuming this instead keeps them in sync with this component's own
+   *  `isPending` logic. */
+  onTouchedChange?: (touchedIds: Set<string>) => void
   /** Allow users to edit weights via a collapsible panel. */
   allowWeightEditing?: boolean
   onWeightChange?: (weights: Record<string, number>) => void
@@ -80,6 +87,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
   dimensions,
   colorScale = 'readiness',
   onScoreChange,
+  onTouchedChange,
   allowWeightEditing = false,
   onWeightChange,
   showExport = true,
@@ -116,6 +124,11 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     () => new Set(Object.keys(initialScores ?? {}))
   )
 
+  useEffect(() => {
+    onTouchedChange?.(userOverridden)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- onTouchedChange intentionally excluded: callers rarely memoize it, and including it would fire this on every parent render instead of only when the touched set itself changes.
+  }, [userOverridden])
+
   // Sync auto-scored dimensions from props when they change (e.g., data loads after mount)
   useEffect(() => {
     setScores((prev) => {
@@ -123,9 +136,12 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
       let changed = false
       for (const d of dimensions) {
         if (d.disabled) continue
+        // No `> 0` guard here: `notYetScored`/`isPending` (below) already
+        // distinguishes "no computed baseline" (autoScore undefined) from a
+        // real, legitimate 0 — excluding 0 here would mean a dimension whose
+        // live score drops to exactly 0 after mount never gets that update.
         if (
           d.autoScore !== undefined &&
-          d.autoScore > 0 &&
           !userOverriddenRef.current.has(d.id) &&
           next[d.id] !== d.autoScore
         ) {

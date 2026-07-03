@@ -110,22 +110,33 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
   // calculator round-trips instead of resetting to cold-start defaults.
   const savedAssumptions = useSavedArtifactInputs<ROIAssumptions>('roi-model')
 
-  const [assumptions, setAssumptions] = useState<ROIAssumptions>(
-    () =>
-      savedAssumptions ?? {
-        productsToMigrate: Math.min(data.totalProducts, 50),
-        costPerProduct: 75_000,
-        annualOpexPct: 15,
-        hndlExposurePct: 50,
-        crqcAttackerUpliftPct: 50,
-        detectionTimelineUpliftPct: 50,
-        breachProbability: 15,
-        applicableFrameworks: defaultApplicableFrameworks,
-        penaltyPerIncident: 2_000_000,
-        horizonYears: 3,
-        discountRatePct: 10,
-      }
+  const computeDefaultAssumptions = useCallback(
+    (): ROIAssumptions => ({
+      productsToMigrate: Math.min(data.totalProducts, 50),
+      costPerProduct: 75_000,
+      annualOpexPct: 15,
+      hndlExposurePct: 50,
+      crqcAttackerUpliftPct: 50,
+      detectionTimelineUpliftPct: 50,
+      breachProbability: 15,
+      applicableFrameworks: defaultApplicableFrameworks,
+      penaltyPerIncident: 2_000_000,
+      horizonYears: 3,
+      discountRatePct: 10,
+    }),
+    [data.totalProducts, defaultApplicableFrameworks]
   )
+
+  const [assumptions, setAssumptions] = useState<ROIAssumptions>(
+    () => savedAssumptions ?? computeDefaultAssumptions()
+  )
+
+  // A restored saved model never re-derives from the user's current /migrate +
+  // assessment data on its own (the lazy initializer above only runs once) —
+  // this gives an explicit way back to fresh, up-to-date computed defaults.
+  const resetToComputedDefaults = useCallback(() => {
+    setAssumptions(computeDefaultAssumptions())
+  }, [computeDefaultAssumptions])
 
   const updateAssumption = useCallback(
     <K extends keyof ROIAssumptions>(key: K, value: ROIAssumptions[K]) => {
@@ -359,7 +370,10 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
       )}
 
       {savedAssumptions && (
-        <PreFilledBanner summary="Restored your last saved ROI assumptions — adjust the sliders below to update them." />
+        <PreFilledBanner
+          summary="Restored your last saved ROI assumptions — adjust the sliders below to update them, or reset to recompute from your current data."
+          onClear={resetToComputedDefaults}
+        />
       )}
       {!savedAssumptions &&
         (() => {
