@@ -281,10 +281,19 @@ export function PolicyGraphView({
     const tick = (now: number) => {
       const el = now - start
       const gp = Math.min(el / segMs, pts.length - 1)
-      const seg = Math.min(Math.floor(gp), pts.length - 2)
+      const seg = Math.max(0, Math.min(Math.floor(gp), pts.length - 2))
       const f = gp - seg
       const a = pts[seg]
       const b = pts[seg + 1]
+      // Defensive: the point pair should always exist (pts is dense, length ≥ 2
+      // is guaranteed above), but never let a stale/edge frame deref undefined —
+      // an uncaught throw here surfaces as a global error. Snap to the terminal.
+      if (!a || !b) {
+        const last = pts[pts.length - 1]
+        if (last) setToken({ x: last.x, y: last.y, label: labels[labels.length - 1], color })
+        setRunning(false)
+        return
+      }
       const ease = f < 0.5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2
       setToken({
         x: a.x + (b.x - a.x) * ease,
