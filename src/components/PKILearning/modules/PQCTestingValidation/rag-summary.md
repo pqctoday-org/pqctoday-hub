@@ -16,7 +16,7 @@ This module teaches how to design and execute testing strategies for post-quantu
 
 PQC testing introduces challenges absent from classical cryptography assessments:
 
-1. **Algorithm size explosion** — ML-KEM public keys (1,184B), ciphertexts (1,088B), and ML-DSA signatures (3,293B) are orders of magnitude larger than ECDH/ECDSA equivalents. This causes TCP fragmentation, ClientHello oversize, and certificate chain size issues that standard TLS testing tools miss.
+1. **Algorithm size explosion** — ML-KEM public keys (1,184B), ciphertexts (1,088B), and ML-DSA signatures (3,309B) are orders of magnitude larger than ECDH/ECDSA equivalents. This causes TCP fragmentation, ClientHello oversize, and certificate chain size issues that standard TLS testing tools miss.
 
 2. **Hybrid scheme complexity** — Testing hybrid PQC (X25519+ML-KEM-768) requires validating that both the classical and PQC components complete successfully. RFC 9794 prohibits silent downgrade — if either component fails, the shared secret is invalid.
 

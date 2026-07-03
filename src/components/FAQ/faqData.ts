@@ -677,7 +677,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is the PQC Reference Library?',
         answer:
-          'The PQC Reference Library is a curated collection of over 540 standards, RFCs, research papers, and migration guides relevant to post-quantum cryptography, with cross-references linking related documents and enrichment metadata providing summaries and PQC relevance assessments. Documents are categorized by type, issuing organization, and relevance to specific algorithms and use cases. The Library supports full-text search and filtering.',
+          'The PQC Reference Library is a curated collection of over 680 standards, RFCs, research papers, and migration guides relevant to post-quantum cryptography, with cross-references linking related documents and enrichment metadata providing summaries and PQC relevance assessments. Documents are categorized by type, issuing organization, and relevance to specific algorithms and use cases. The Library supports full-text search and filtering.',
         deepLink: '/library',
       },
       {

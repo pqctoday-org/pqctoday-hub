@@ -197,7 +197,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'How many PQC leaders does the platform profile?',
   ],
   Learn: [
-    'How are the 59 learning modules organized?',
+    'How are the 62 learning modules organized?',
     'What tabs does each learning module have?',
     'How many quiz questions are available and how are they organized?',
     "What does the QKD module's BB84 simulator demonstrate?",

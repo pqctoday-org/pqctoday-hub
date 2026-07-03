@@ -20,7 +20,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 1. **Inventory & Key Hierarchy Audit** — Enumerate all encrypted databases using `sys.dm_database_encryption_keys` (SQL Server) or `V$ENCRYPTED_TABLESPACES` (Oracle). Document RSA/ECC-wrapped DEK locations. Generate CBOM.
 
-2. **PQC-Capable External KMS Setup** — Configure Thales CipherTrust 2.15+, AWS KMS (ML-KEM preview), or Azure Key Vault with KMIP v3.0 connectivity. Object type: `CryptographicAlgorithm = ML-KEM`.
+2. **PQC-Capable External KMS Setup** — Configure Thales CipherTrust 2.15+, AWS KMS (ML-KEM preview), or Azure Key Vault with KMIP v2.1 connectivity. Object type: `CryptographicAlgorithm = ML-KEM`.
 
 3. **Master Key Rotation** — Generate ML-KEM-1024 key pair in HSM. Use ML-KEM.Encaps to wrap 256-bit DEK. Store KEM ciphertext (1,568 bytes) + wrapped DEK alongside old RSA entry during transition.
 
@@ -121,7 +121,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 | -------------------- | ------------------------- | ---------- | ---------------------------------------- |
 | Oracle               | Database 23ai + Key Vault | Planned    | 2026 (OKV 22.0, ML-KEM-1024 HYOK)        |
 | Microsoft            | SQL Server / Azure SQL    | Planned    | 2026 (Azure KV ML-KEM-768/1024)          |
-| PostgreSQL / Percona | pg_tde                    | Planned    | 2026 (pg_tde 2.0, KMIP 3.0)              |
+| PostgreSQL / Percona | pg_tde                    | Planned    | 2026 (pg_tde 2.0, KMIP 2.1)              |
 | MongoDB              | Enterprise 7.x / Atlas    | Planned    | 2026 (MongoDB 8.x, FLE 2.0 DEK wrapping) |
 | MySQL / MariaDB      | 8.x / 11.x                | None       | No roadmap announced                     |
 | Cockroach Labs       | CockroachDB 23.x          | None       | KMIP v2 integration only                 |
@@ -135,4 +135,4 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 - **ML-KEM-1024 key sizes**: Public key: 1,568 bytes (vs 256 bytes RSA-2048). Ciphertext: 1,568 bytes. ~6× metadata overhead per DEK — negligible for multi-TB databases.
 - **Online migration**: Oracle (`ALTER TABLESPACE REKEY`) and SQL Server (`ALTER DATABASE ENCRYPTION KEY REGENERATE`) support zero-downtime TDE re-keying.
 - **HNDL risk**: Database backups captured today with RSA-wrapped DEKs may be decryptable after a CRQC arrives. Priority: databases with long data retention (healthcare, financial records, classified).
-- **KMIP 3.0**: Key Management Interoperability Protocol version 3.0 supports `CryptographicAlgorithm = ML-KEM`. Thales CipherTrust 2.15+ supports PQC key types; HashiCorp Vault's only PQC is experimental transit ML-DSA in Vault Enterprise 1.19.
+- **KMIP 2.1**: Key Management Interoperability Protocol version 2.1 (published Dec 2020, latest ratified OASIS standard) supports `CryptographicAlgorithm = ML-KEM` via PQC enumerations; KMIP 3.0 is still a Committee Specification Draft, not ratified. Thales CipherTrust 2.15+ supports PQC key types; HashiCorp Vault's only PQC is experimental transit ML-DSA in Vault Enterprise 1.19.

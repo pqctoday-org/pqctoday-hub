@@ -170,7 +170,7 @@ const IMPLEMENTATION_LINKS = [
   },
   {
     label: 'JOSE / JWT Workshop',
-    desc: 'RFC 9964 ML-DSA signatures + RFC-9504 KEMs',
+    desc: 'RFC 9964 ML-DSA signatures (JOSE/COSE); PQ KEM encryption still an IETF draft',
     to: '/learn/api-security-jwt',
     icon: FlaskConical,
   },

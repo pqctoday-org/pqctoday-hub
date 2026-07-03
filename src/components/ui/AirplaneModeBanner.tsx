@@ -43,7 +43,7 @@ export function AirplaneModeBanner() {
                 Available offline
               </p>
               <ul className="text-xs text-muted-foreground space-y-0.5">
-                <li>All 59 learning modules & workshops</li>
+                <li>All 62 learning modules & workshops</li>
                 <li>Quiz (909 questions)</li>
                 <li>Assessment wizard & PDF report</li>
                 <li>Playground (KEM, DSA, Hashing, HSM)</li>
