@@ -12,7 +12,12 @@ metadata:
     firmware signing exclusively CNSA 2.0 by 2030 (earliest, since firmware
     roots of trust are hardest to update); most other categories by 2033; all
     NSS quantum-resistant by 2035 (NSM-10). This policy denies anything
-    outside the CNSA 2.0 approved list.
+    outside the CNSA 2.0 approved list — at key creation/import AND at use
+    (Sign, Encrypt, Encapsulate). SignatureVerify, Decrypt and Decapsulate
+    stay open so legacy artefacts remain verifiable and recoverable during
+    the transition. The compliance_profile_gate rule at the end is a profile
+    label for reporting tools, not a gate — enforcement comes from the
+    allowlist/denylist rules above it.
 
     Approved suite (CNSA 2.0):
       - Symmetric:   AES-256
@@ -44,8 +49,11 @@ rules:
   # 1. ONLY CNSA 2.0 approved algorithms — strict allowlist.
   #    `CreateKeyPair` (not just symmetric `Create`) is gated so classical
   #    RSA/ECDSA key-pair generation is actually denied (Y2 op-name fix).
+  #    Use ops (Sign/Encrypt/Encapsulate) are gated too — a non-suite key
+  #    already in the store must not keep protecting data (2026-07-02 fix;
+  #    Verify/Decrypt/Decapsulate deliberately stay open for legacy recovery).
   - type: algorithm_allowlist
-    ops: [Create, CreateKeyPair, Register, Import]
+    ops: [Create, CreateKeyPair, Register, Import, Sign, Encrypt, Encapsulate]
     algorithms:
       - AES-256
       - SHA-384

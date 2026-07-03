@@ -82,13 +82,12 @@ describe('hybrid-migration-window — composite signing window', () => {
     expect(r.verdict.kind).toBe('deny')
   })
 
-  it('ENGINE PARITY + KNOWN YAML GAP (Phase 3): the legacy-verify exception is unreachable in-window', () => {
-    // Rule #1 (hybrid_dual_sign_requirement, ops [Create, Sign], no exception
-    // mechanism) fires BEFORE the denylist that carries the
-    // x-pqctoday-purpose=legacy-verify exception — so the exception the policy
-    // advertises can never fire for an asymmetric Create inside the window.
-    // The engine denies this too (parity); the YAML ordering/exception design
-    // is the bug. Phase 3: move the exception onto rule #1 or reorder.
+  it('classical Create in-window is denied with no exception (Phase 3: dead exception rules removed)', () => {
+    // Phase 3 replaced the pure-classical/pure-PQC denylists (and their
+    // never-reachable exception attributes) with the composite requirement:
+    // the description now says the window has NO exceptions. So the old
+    // legacy-verify tag is inert, and classical Create is denied for wanting
+    // a composite — cleanly, by one rule.
     const r = run('hybrid-migration-window.yaml', {
       op: 'Create',
       algorithm: 'ECDSA-P256',
@@ -99,15 +98,13 @@ describe('hybrid-migration-window — composite signing window', () => {
     expect(r.verdict.reason).toMatch(/composite/i)
   })
 
-  it('KNOWN YAML GAP (Phase 3): classical Sign AFTER the window is still allowed — no rule covers it', () => {
+  it('classical Sign AFTER the window is denied (Phase 3: post-window classical-Sign cutoff added)', () => {
     const r = run('hybrid-migration-window.yaml', {
       op: 'Sign',
       algorithm: 'ECDSA-P256',
       date: '2031-12-30',
     })
-    // The prose says classical signing ends with the window; the rules do not.
-    // When Phase 3 adds the post-window classical-Sign cutoff, flip to 'deny'.
-    expect(r.verdict.kind).toBe('allow')
+    expect(r.verdict.kind).toBe('deny')
   })
 })
 
@@ -220,14 +217,29 @@ describe('cnsa-2.0 — level gating + documentational profile gate', () => {
     expect(step?.effect).not.toBe('deny')
   })
 
-  it('KNOWN YAML GAP (Phase 3): RSA Sign is not caught — allow/denylists are Create-scoped', () => {
+  it('RSA Sign is denied at use time (Phase 3: allowlist widened to Sign/Encrypt/Encapsulate)', () => {
     const r = run('cnsa-2.0.yaml', {
       op: 'Sign',
       algorithm: 'RSA-3072',
       attrs: ['x-pqctoday-cnsa-classification=Secret'],
     })
-    // CNSA 2.0 prose bans non-suite algorithms outright; the rules only gate
-    // Create. Flip to 'deny' when Phase 3 widens the op scope.
+    expect(r.verdict.kind).toBe('deny')
+  })
+
+  it('ML-DSA-87 Sign (a suite algorithm) still passes at use time', () => {
+    const r = run('cnsa-2.0.yaml', {
+      op: 'Sign',
+      algorithm: 'ML-DSA-87',
+      attrs: ['x-pqctoday-cnsa-classification=Secret'],
+    })
+    expect(r.verdict.kind).toBe('allow')
+  })
+
+  it('SignatureVerify with a legacy RSA key stays open (recovery of legacy artefacts)', () => {
+    const r = run('cnsa-2.0.yaml', {
+      op: 'SignatureVerify',
+      algorithm: 'RSA-3072',
+    })
     expect(r.verdict.kind).toBe('allow')
   })
 })
@@ -328,6 +340,7 @@ const toDrySpec = (r: SimRequest): Record<string, unknown> => {
   const attrs: Record<string, string> = {}
   for (const a of r.attrs) {
     const [name, ...rest] = a.split('=')
+    // eslint-disable-next-line security/detect-object-injection -- test-local attr names
     if (name) attrs[name] = rest.join('=')
   }
   const mechanism: Record<string, unknown> = {}
@@ -392,11 +405,11 @@ describe('layer 2 — sim verdict ≡ real engine dry_run verdict', () => {
       { op: 'Sign', algorithm: 'ECDSA-P256', date: '2027-06-01' },
       'deny',
     ],
-    // KNOWN YAML GAP (Phase 3): post-window classical Sign — both layers allow
+    // Phase 3: post-window classical Sign is now denied (new Sign cutoff)
     [
       'hybrid-migration-window.yaml',
       { op: 'Sign', algorithm: 'ECDSA-P256', date: '2031-12-30' },
-      'allow',
+      'deny',
     ],
     // usage mask fails closed / passes when declared (composite Sign)
     [
@@ -414,7 +427,8 @@ describe('layer 2 — sim verdict ≡ real engine dry_run verdict', () => {
       },
       'allow',
     ],
-    // KNOWN YAML GAP (Phase 3): composite Create denied by the ML-DSA family denylist
+    // Phase 3: the mandated composite Create now PASSES in-window (the
+    // ML-DSA family denylist that used to catch its own composite is gone)
     [
       'hybrid-migration-window.yaml',
       {
@@ -423,7 +437,7 @@ describe('layer 2 — sim verdict ≡ real engine dry_run verdict', () => {
         date: '2027-06-01',
         usageFlags: ['Sign', 'Verify'],
       },
-      'deny',
+      'allow',
     ],
     // hash allowlist
     ['fips-hashing.yaml', { op: 'Sign', algorithm: 'RSA-3072', hash: 'SHA-1' }, 'deny'],
@@ -471,6 +485,39 @@ describe('layer 2 — sim verdict ≡ real engine dry_run verdict', () => {
       { op: 'Sign', algorithm: 'ECDSA-P256', date: '2026-07-01' },
       'rekey',
     ],
+    // Phase 3: cnsa-2.0 now gates USE, not just creation
+    [
+      'cnsa-2.0.yaml',
+      { op: 'Sign', algorithm: 'RSA-3072', attrs: ['x-pqctoday-cnsa-classification=Secret'] },
+      'deny',
+    ],
+    [
+      'cnsa-2.0.yaml',
+      { op: 'Sign', algorithm: 'ML-DSA-87', attrs: ['x-pqctoday-cnsa-classification=Secret'] },
+      'allow',
+    ],
+    // Phase 3: fips-only likewise gates use — a non-FIPS Encapsulate is denied
+    ['fips-only.yaml', { op: 'Encapsulate', algorithm: 'FrodoKEM-976' }, 'deny'],
+    // Phase 3: pqc-migration-2030 now enforces the 2027–2029 composite window
+    // for NEW signing key pairs (was promised in prose, unbacked by any rule)
+    [
+      'pqc-migration-2030.yaml',
+      { op: 'CreateKeyPair:Sign', algorithm: 'ECDSA-P384', date: '2028-06-01' },
+      'deny',
+    ],
+    [
+      'pqc-migration-2030.yaml',
+      {
+        op: 'CreateKeyPair:Sign',
+        algorithm: 'ML-DSA-65-ED25519',
+        date: '2028-06-01',
+        // production PQC signing keys must also carry x-pqctoday-purpose (rule 6)
+        attrs: ['x-pqctoday-purpose=production'],
+      },
+      'allow',
+    ],
+    // Phase 3: auto-migrate-on-use now defaults a new symmetric key to AES-256
+    ['auto-migrate-on-use.yaml', { op: 'Create', algorithm: '', date: '2026-07-01' }, 'allow'],
   ]
 
   it('every matrix case: sim verdict === engine verdict === expected', () => {

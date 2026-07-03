@@ -12,8 +12,14 @@ schema_version: 1
 metadata:
   name: deterministic-signing
   description: |
-    Force deterministic ML-DSA / SLH-DSA signing. The WD19 `Deterministic`
-    flag is set on every Sign by policy, overriding the client's choice.
+    Force deterministic signing. The WD19 `Deterministic` flag is set by
+    policy on EVERY Sign, overriding the client's choice. The flag is
+    meaningful only for the lattice/hash PQC signature schemes (FIPS 204
+    ML-DSA §3.4: rnd ← 0^32; FIPS 205 SLH-DSA: addrnd ← PK.seed); for
+    classical algorithms the dispatcher carries it harmlessly. Applied
+    unscoped because mechanism_parameter_default takes a single algorithm
+    scalar and the strict loader lint rejects family names — enumerating all
+    15 PQC parameter sets as separate rules would add no behaviour.
   authority: pqctoday-hsm/training
   effective: "always"
 

@@ -13,7 +13,12 @@ metadata:
     Any Round-4 / alternate / non-FIPS algorithm (Falcon, HQC, BIKE, FrodoKEM,
     Classic McEliece) is denied at the policy plane before reaching Plane 2.
     Note: LMS/XMSS are NIST-approved under SP 800-208 (not FIPS 205) and are
-    intentionally out of scope for this FIPS-140-3-module policy.
+    intentionally out of scope for this FIPS-140-3-module policy (the strict
+    allowlist therefore denies them, like every unlisted algorithm).
+    The allowlist gates key creation/import AND use (Sign, Encrypt,
+    Encapsulate); SignatureVerify/Decrypt/Decapsulate stay open so legacy
+    artefacts remain verifiable and recoverable. The compliance_profile_gate
+    at the end is a profile label for reporting tools, not a gate.
   authority: pqctoday-hsm/training
   effective: "2026-01-01"
   compliance_mapping:
@@ -28,9 +33,12 @@ rules:
 
   # 1. PQC algorithm allowlist — FIPS 203/204/205 only.
   #    Gate `CreateKeyPair` too so asymmetric key-pair generation is evaluated
-  #    against the FIPS allowlist, not just symmetric `Create` (Y2).
+  #    against the FIPS allowlist, not just symmetric `Create` (Y2). Use ops
+  #    (Sign/Encrypt/Encapsulate) gated too so an unapproved key already in
+  #    the store can't keep protecting data (2026-07-02 fix; Verify/Decrypt/
+  #    Decapsulate deliberately stay open for legacy recovery).
   - type: algorithm_allowlist
-    ops: [Create, CreateKeyPair, Register, Import]
+    ops: [Create, CreateKeyPair, Register, Import, Sign, Encrypt, Encapsulate]
     algorithms:
       # FIPS 203 — ML-KEM
       - ML-KEM-512
