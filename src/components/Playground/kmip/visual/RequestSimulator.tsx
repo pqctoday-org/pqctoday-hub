@@ -10,7 +10,16 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { DryRunResult } from '@/wasm/kmip/kmipEngine'
 import { FieldLabel, SelectField, TagEditor } from './editorControls'
-import { KMIP_OPS, KEY_STATES, ALGO_SUGGESTIONS } from './ruleCatalog'
+import {
+  KMIP_OPS,
+  KEY_STATES,
+  ALGO_SUGGESTIONS,
+  USAGE_FLAGS,
+  HASH_NAMES,
+  BLOCK_MODES,
+  PADDING_METHODS,
+  CKM_SUGGESTIONS,
+} from './ruleCatalog'
 import type { SimRequest } from './policySim'
 
 interface Props {
@@ -99,15 +108,81 @@ export function RequestSimulator({
       </div>
 
       {!guided && (
-        <div>
-          <FieldLabel>attributes present</FieldLabel>
-          <TagEditor
-            value={req.attrs}
-            suggestions={['x-pqctoday-purpose', 'KeyAgreement', 'Sign', 'Verify']}
-            onChange={(v) => patch('attrs', v)}
-            placeholder="x-attr / flag…"
-          />
-        </div>
+        <>
+          <div>
+            <FieldLabel>custom attributes (name or name=value)</FieldLabel>
+            <TagEditor
+              value={req.attrs}
+              suggestions={['x-pqctoday-purpose=research', 'x-pqctoday-assurance=high']}
+              onChange={(v) => patch('attrs', v)}
+              placeholder="x-attr or x-attr=value…"
+            />
+          </div>
+          <div>
+            <FieldLabel>usage-mask flags on the key</FieldLabel>
+            <TagEditor
+              value={req.usageFlags}
+              suggestions={USAGE_FLAGS}
+              onChange={(v) => patch('usageFlags', v)}
+              placeholder="Sign / Verify / KeyAgreement…"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-2.5">
+            <div>
+              <FieldLabel>hash (Sign/Verify)</FieldLabel>
+              <TagEditor
+                value={req.hash ? [req.hash] : []}
+                suggestions={HASH_NAMES}
+                onChange={(v) => patch('hash', v[v.length - 1] ?? '')}
+                placeholder="SHA-256…"
+              />
+            </div>
+            <div>
+              <FieldLabel>CKM mechanism</FieldLabel>
+              <TagEditor
+                value={req.mechanism ? [req.mechanism] : []}
+                suggestions={CKM_SUGGESTIONS}
+                onChange={(v) => patch('mechanism', v[v.length - 1] ?? '')}
+                placeholder="CKM_AES_GCM…"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-2.5">
+            <div>
+              <FieldLabel>block mode</FieldLabel>
+              <SelectField
+                value={req.blockMode}
+                options={['', ...BLOCK_MODES]}
+                onChange={(v) => patch('blockMode', v)}
+              />
+            </div>
+            <div>
+              <FieldLabel>padding</FieldLabel>
+              <SelectField
+                value={req.padding}
+                options={['', ...PADDING_METHODS]}
+                onChange={(v) => patch('padding', v)}
+              />
+            </div>
+            <div>
+              <FieldLabel>deterministic</FieldLabel>
+              <SelectField
+                value={req.deterministic}
+                options={['', 'true', 'false']}
+                onChange={(v) => patch('deterministic', v as SimRequest['deterministic'])}
+              />
+            </div>
+          </div>
+          <div>
+            <FieldLabel>key activated on (for key-age rules)</FieldLabel>
+            <input
+              type="date"
+              value={/^\d{4}-\d{2}-\d{2}$/.test(req.keyActivatedOn) ? req.keyActivatedOn : ''}
+              onChange={(e) => patch('keyActivatedOn', e.target.value)}
+              className="w-full rounded-lg border border-input bg-background/40 px-2 py-1.5 font-mono text-[12px] text-foreground outline-none focus:border-primary"
+            />
+          </div>
+        </>
       )}
 
       <Button variant="gradient" className="w-full gap-1.5" onClick={onRun} disabled={running}>
