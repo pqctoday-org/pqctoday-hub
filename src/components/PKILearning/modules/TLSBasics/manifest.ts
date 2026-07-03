@@ -38,7 +38,9 @@ const manifest: ModuleManifest = {
   playgroundTool: 'tls-simulator',
   taxonomy: {
     algorithms: ['ML-KEM', 'X25519', 'ECDSA', 'ML-DSA'],
-    standards: ['RFC 9180', 'X.509'],
+    // RFC 8446 is TLS 1.3 — the module's core standard. (Previously listed RFC 9180,
+    // which is HPKE and not covered by this handshake/certificate/cipher-suite module.)
+    standards: ['RFC 8446', 'X.509'],
   },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.TLSBasicsModule })),

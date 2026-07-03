@@ -23,6 +23,14 @@ export interface LearningPersona {
   /** Interleaved path items: module stops + quiz checkpoints */
   pathItems: PathItem[]
   estimatedMinutes: number
+  /**
+   * Core module IDs (a subset of `recommendedPath`, excluding the `quiz`) that make
+   * up the short "Essentials" track. Completing these is what unlocks the capstone
+   * (A1); the remaining recommendedPath modules stay available as optional mastery.
+   */
+  essentials: string[]
+  /** Sum of the essentials' module durations, in minutes (guard-tested vs manifests). */
+  essentialsMinutes: number
   /** Persona-specific quiz card description shown in the learning path */
   quizDescription: string
   /** Quiz categories pre-selected for this persona (matches QuizCategory type) */
@@ -118,7 +126,17 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     // emv / ai / aerospace) were removed from the mandatory executive path so a
     // busy exec reaches the capstone after the governance core (~10h) instead of
     // ~14h; those modules remain available via Browse for anyone who wants them.
-    estimatedMinutes: 650,
+    estimatedMinutes: 555,
+    essentials: [
+      'pqc-101',
+      'exec-quantum-impact',
+      'quantum-threats',
+      'pqc-risk-management',
+      'pqc-business-case',
+      'pqc-governance',
+      'compliance-strategy',
+    ],
+    essentialsMinutes: 200,
     quizDescription:
       'Test your knowledge on quantum threats, risk management, data asset classification, business cases, governance, compliance strategy, cryptographic management modernization, migration planning, vendor risk, and identity & access management.',
     quizCategories: [
@@ -165,6 +183,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'pki-enrollment-protocols',
       'crypto-dev-apis',
       'crypto-mgmt-modernization',
+      'cbom',
       'merkle-tree-certs',
       'slh-dsa',
       'stateful-signatures',
@@ -279,7 +298,18 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1510,
+    estimatedMinutes: 1635,
+    essentials: [
+      'pqc-101',
+      'dev-quantum-impact',
+      'pqc-candidates',
+      'tls-basics',
+      'hybrid-crypto',
+      'crypto-agility',
+      'pki-workshop',
+      'crypto-dev-apis',
+    ],
+    essentialsMinutes: 325,
     quizDescription:
       'Test your knowledge on quantum threats, TLS, VPN/SSH, MLS group messaging, PKI enrollment, cryptographic APIs, hybrid cryptography, crypto agility, PQC testing & validation, protocol integration, cryptographic management modernization, SLH-DSA, and stateful hash signatures.',
     quizCategories: [
@@ -330,6 +360,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'pqc-candidates',
       'crypto-agility',
       'crypto-mgmt-modernization',
+      'cbom',
       'hybrid-crypto',
       'qkd',
       'tls-basics',
@@ -456,7 +487,19 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1600,
+    estimatedMinutes: 1725,
+    essentials: [
+      'pqc-101',
+      'arch-quantum-impact',
+      'pqc-candidates',
+      'crypto-agility',
+      'crypto-mgmt-modernization',
+      'hybrid-crypto',
+      'kms-pqc',
+      'hsm-pqc',
+      'pki-workshop',
+    ],
+    essentialsMinutes: 380,
     quizDescription:
       'Test your knowledge on cryptographic foundations, architecture strategy (crypto agility, crypto management modernization, hybrid crypto, QKD), infrastructure protocols (TLS, network security, MLS group messaging, KMS, HSMs, stateful signatures, SLH-DSA, PKI, Merkle tree certs), PQC testing & validation, identity and credentials, API security, code signing, and IoT/OT security.',
     quizCategories: [
@@ -534,14 +577,14 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'merkle-tree-certs',
       'confidential-computing',
       'crypto-dev-apis',
-      'digital-assets',
-      '5g-security',
       'digital-id',
       'iam-pqc',
       'code-signing',
       'platform-eng-pqc',
       'iot-ot-pqc',
       'ai-security-pqc',
+      'digital-assets',
+      '5g-security',
       'emv-payment-pqc',
       'energy-utilities-pqc',
       'healthcare-pqc',
@@ -712,7 +755,19 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2640,
+    estimatedMinutes: 2765,
+    essentials: [
+      'pqc-101',
+      'research-quantum-impact',
+      'pqc-candidates',
+      'entropy-randomness',
+      'hybrid-crypto',
+      'crypto-agility',
+      'standards-bodies',
+      'tls-basics',
+      'pki-workshop',
+    ],
+    essentialsMinutes: 325,
     quizDescription:
       'Full assessment across all PQC categories — algorithms, protocols, standards, compliance, industries, and applications.',
     quizCategories: [], // empty = all categories shown (full coverage for researcher)
@@ -748,6 +803,8 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'crypto-agility',
       'migration-program',
       'crypto-mgmt-modernization',
+      'cbom',
+      'verification-closure',
       'platform-eng-pqc',
       'iot-ot-pqc',
       'energy-utilities-pqc',
@@ -843,7 +900,19 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1490,
+    estimatedMinutes: 1645,
+    essentials: [
+      'pqc-101',
+      'ops-quantum-impact',
+      'tls-basics',
+      'vpn-ssh-pqc',
+      'pki-workshop',
+      'crypto-agility',
+      'migration-program',
+      'kms-pqc',
+      'hsm-pqc',
+    ],
+    essentialsMinutes: 360,
     quizDescription:
       'Test your knowledge on TLS operations, VPN/SSH, hybrid cryptography, web gateways, PQC testing & validation, PKI certificate management, KMS and HSM operations, stateful hash signatures, crypto management modernization, standards bodies, energy/utilities, and infrastructure migration planning.',
     quizCategories: [
@@ -974,6 +1043,15 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'quiz' },
     ],
     estimatedMinutes: 815,
+    essentials: [
+      'pqc-101',
+      'pqc-candidates',
+      'quantum-threats',
+      'pqc-risk-management',
+      'compliance-strategy',
+      'tls-basics',
+    ],
+    essentialsMinutes: 205,
     quizDescription:
       'Test your understanding of quantum threats, PQC algorithm families, risk basics, compliance timelines, migration concepts, practical security foundations, and real-world digital identity applications.',
     quizCategories: [
@@ -1035,6 +1113,22 @@ export function inferPersonaFromAssessment(assessment: {
     return 'executive'
   }
 
+  // Developer: hands-on implementer actively doing the migration. Checked BEFORE the
+  // infra-count-driven ops/architect branches so a small, hands-on team on an
+  // infra-heavy stack (infraCount >= 3) — or with a partially-abstracted crypto layer —
+  // is not misrouted to ops/architect. `teamSize` is the IC-vs-org-scale discriminator
+  // (previously part of the signature but never read); '1-10' skews to hands-on ICs who
+  // write and deploy the code themselves. Larger teams keep their ops/architect routing
+  // below. `fully-abstracted` is excluded here because it is the strongest architect
+  // (design-first) signal.
+  if (
+    (assessment.migrationStatus === 'started' || assessment.migrationStatus === 'planning') &&
+    assessment.teamSize === '1-10' &&
+    assessment.cryptoAgility !== 'fully-abstracted'
+  ) {
+    return 'developer'
+  }
+
   // Ops: deep infrastructure involvement + actively migrating + hands-on (not fully abstracted)
   if (
     infraCount >= 3 &&
@@ -1062,4 +1156,56 @@ export function inferPersonaFromAssessment(assessment: {
   // users who want to explore without a declared role. Any user who completed the
   // assessment has expressed enough intent to map to a functional persona instead.
   return null
+}
+
+/**
+ * Maps the modules that appear in any persona's `essentials` to their quiz category.
+ * Most module IDs are their own category, but a few differ (e.g. pki-workshop →
+ * pki-infrastructure). Only the essentials union needs coverage here.
+ */
+const ESSENTIALS_MODULE_QUIZ_CATEGORY: Record<string, string> = {
+  'pqc-101': 'pqc-fundamentals',
+  'pqc-candidates': 'pqc-fundamentals',
+  'quantum-threats': 'quantum-threats',
+  'entropy-randomness': 'entropy-randomness',
+  'dev-quantum-impact': 'dev-quantum-impact',
+  'arch-quantum-impact': 'arch-quantum-impact',
+  'ops-quantum-impact': 'ops-quantum-impact',
+  'research-quantum-impact': 'research-quantum-impact',
+  'exec-quantum-impact': 'exec-quantum-impact',
+  'tls-basics': 'tls-basics',
+  'vpn-ssh-pqc': 'vpn-ssh-pqc',
+  'hybrid-crypto': 'hybrid-crypto',
+  'crypto-agility': 'crypto-agility',
+  'crypto-mgmt-modernization': 'crypto-mgmt-modernization',
+  'standards-bodies': 'standards-bodies',
+  'pki-workshop': 'pki-infrastructure',
+  'kms-pqc': 'kms-pqc',
+  'hsm-pqc': 'hsm-pqc',
+  'migration-program': 'migration-program',
+  'crypto-dev-apis': 'crypto-dev-apis',
+  'pqc-risk-management': 'pqc-risk-management',
+  'pqc-business-case': 'pqc-business-case',
+  'pqc-governance': 'pqc-governance',
+  'compliance-strategy': 'compliance-strategy',
+}
+
+/**
+ * Quiz categories that cover a persona's Essentials — used to scope the capstone quiz
+ * so an Essentials-only learner is tested only on what they studied. Intentionally
+ * under-inclusive: a category is included only if it maps from an essential AND is in
+ * the persona's own `quizCategories` (an empty `quizCategories`, as researcher uses,
+ * means "all categories", so no filter is applied). Missing a category just yields
+ * fewer questions; it can never surface questions on unstudied modules.
+ */
+export function essentialsQuizCategories(personaId: PersonaId): string[] {
+  const persona = PERSONAS[personaId]
+  const allowAll = persona.quizCategories.length === 0
+  const allowed = new Set(persona.quizCategories)
+  const cats = new Set<string>()
+  for (const moduleId of persona.essentials) {
+    const cat = ESSENTIALS_MODULE_QUIZ_CATEGORY[moduleId]
+    if (cat && (allowAll || allowed.has(cat))) cats.add(cat)
+  }
+  return [...cats]
 }
