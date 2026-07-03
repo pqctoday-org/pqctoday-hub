@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:pqctoday-cbom-20260630",
+  "serialNumber": "urn:uuid:pqctoday-cbom-20260701",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-06-30T00:00:00.000Z",
+    "timestamp": "2026-07-01T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -5225,7 +5225,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Email Encryption Software"
+          "value": "Email Encryption & Collaboration"
         },
         {
           "name": "pqctoday:layer",
@@ -5276,7 +5276,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Email Encryption Software"
+          "value": "Email Encryption & Collaboration"
         },
         {
           "name": "pqctoday:layer",
@@ -6386,7 +6386,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "CI/CD & Artifact Management"
+          "value": "Supply Chain & DevSecOps"
         },
         {
           "name": "pqctoday:layer",
@@ -6428,7 +6428,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "CI/CD & Artifact Management"
+          "value": "Supply Chain & DevSecOps"
         },
         {
           "name": "pqctoday:layer",
@@ -6868,7 +6868,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Data Security & Protection"
+          "value": "Data Storage & Protection"
         },
         {
           "name": "pqctoday:layer",
@@ -6910,7 +6910,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Data Security & Protection"
+          "value": "Data Storage & Protection"
         },
         {
           "name": "pqctoday:layer",
@@ -6952,7 +6952,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Data Security & Protection"
+          "value": "Data Storage & Protection"
         },
         {
           "name": "pqctoday:layer",
@@ -7025,13 +7025,9 @@
       "version": "Xeon 5th Gen (Emerald Rapids)",
       "purl": "pkg:github/intel/tdx",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
-          "primitive": "KEM"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "Intel TDX provides hardware-isolated Trusted Execution Environments (TEEs) at the VM level using architectural extensions on 4th/5th Gen Xeon processors. TDX Trust Domains protect data-in-use from hypervisor and host OS. PQC attestation report signing planned; current remote attestation uses ECDSA P-256 via Intel PCS. Combines with ML-KEM encrypted memory sealing on roadmap.",
+      "description": "Intel TDX provides hardware-isolated Trusted Execution Environments (TEEs) at the VM level using architectural extensions on 4th/5th Gen Xeon processors. TDX Trust Domains protect data-in-use from hypervisor and host OS. Current remote attestation uses ECDSA P-256 via Intel PCS, with no Intel-published PQC migration timeline for attestation signing. Arqit, a partner, delivers quantum-safe symmetric key agreement for network traffic between workloads running inside TDX Trust Domains -- this is a workload/network-layer capability enabled on top of TDX, not a TDX-native attestation or memory-sealing feature.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -7189,7 +7185,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Cloud Key Management Service (KMS)"
+          "value": "Cloud Key Management"
         },
         {
           "name": "pqctoday:layer",
@@ -7235,7 +7231,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Cloud Key Management Service (KMS)"
+          "value": "Cloud Key Management"
         },
         {
           "name": "pqctoday:layer",
@@ -7281,7 +7277,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Cloud Key Management Service (KMS)"
+          "value": "Cloud Key Management"
         },
         {
           "name": "pqctoday:layer",
@@ -10810,8 +10806,13 @@
       "bom-ref": "55bfee2bbf059bfe",
       "name": "Qualcomm Snapdragon Trusted Execution Environment",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, FN-DSA",
+          "primitive": "KEM"
+        }
       },
+      "description": "No PQC algorithms (ML-KEM, ML-DSA, or Falcon) are currently implemented in the Qualcomm Snapdragon TEE. Qualcomm researchers co-developed the Falcon post-quantum signature scheme (NIST-standardized), but this has not been integrated into TEE hardware/firmware as of mid-2026. FIPS 140-3 cert #4896 for the TEE crypto library covers classical algorithms only.",
       "externalReferences": [
         {
           "type": "website",
@@ -12763,8 +12764,13 @@
       "name": "Arista EOS (Extensible Operating System)",
       "version": "4.33.0F",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "KEM"
+        }
       },
+      "description": "Arista EOS uses AES-256-GCM (TunnelSec, MACsec) for data-plane encryption, which Arista markets as 'quantum-safe' due to AES-256's resistance to brute-force quantum attacks. However, no NIST PQC algorithms (ML-KEM, ML-DSA) have been found integrated for key exchange/authentication in EOS management-plane protocols (SSH, TLS, BGP) as of mid-2026.",
       "externalReferences": [
         {
           "type": "website",
@@ -13376,11 +13382,11 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
           "primitive": "KEM"
         }
       },
-      "description": "Cisco Secure Client (formerly AnyConnect) is the most widely deployed enterprise VPN client. Uses SSL/TLS and IKEv2/IPsec for VPN tunnels. Cisco's quantum-safe roadmap includes ML-KEM hybrid IKEv2 for Secure Client targeting 2027 as part of CNSA 2.0 compliance. Deployed in 100M+ enterprise endpoints. Migration requires both client and headend (ASA/FTD) upgrade simultaneously.",
+      "description": "Cisco Secure Client (formerly AnyConnect) is the most widely deployed enterprise VPN client, using SSL/TLS and IKEv2/IPsec for VPN tunnels. Cisco has published a roadmap for its Secure Firewall headend (ASA/FTD): ML-KEM and ML-DSA support for Remote Access VPN targeted for ASA/FTD 11.0 in H2 2027, pending IETF RFC standardization. This roadmap covers the ASA/FTD headend, not the Secure Client application specifically -- Cisco has not published a separate PQC timeline for the Secure Client app itself. Migration will require both client and headend upgrades.",
       "externalReferences": [
         {
           "type": "website",
@@ -13463,7 +13469,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "Samsung Networks provides 5G RAN and core network equipment competing with Ericsson and Nokia. Samsung has announced PQC integration aligned with 3GPP Release 20/21 specifications for SA2/SA3 security. Deployed in US (Verizon, T-Mobile), Japan, and South Korea networks. No GA PQC release as of Q1 2026.",
+      "description": "Samsung Networks provides 5G RAN and core network equipment competing with Ericsson and Nokia, deployed in US (Verizon, T-Mobile), Japan, and South Korea networks. 3GPP SA3 has an industry-wide study item on PQC transition spanning Release 20/21, but no Samsung Networks-specific PQC commitment or GA release has been found as of 2026-07.",
       "externalReferences": [
         {
           "type": "website",
@@ -14047,7 +14053,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "CI/CD & Artifact Management"
+          "value": "Supply Chain & DevSecOps"
         },
         {
           "name": "pqctoday:layer",
@@ -14093,7 +14099,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "CI/CD & Artifact Management"
+          "value": "Supply Chain & DevSecOps"
         },
         {
           "name": "pqctoday:layer",
@@ -14144,7 +14150,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "CI/CD & Artifact Management"
+          "value": "Supply Chain & DevSecOps"
         },
         {
           "name": "pqctoday:layer",
@@ -14185,7 +14191,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "CI/CD & Artifact Management"
+          "value": "Supply Chain & DevSecOps"
         },
         {
           "name": "pqctoday:layer",
@@ -14226,7 +14232,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "CI/CD & Artifact Management"
+          "value": "Supply Chain & DevSecOps"
         },
         {
           "name": "pqctoday:layer",
@@ -16419,7 +16425,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Email Encryption Software"
+          "value": "Email Encryption & Collaboration"
         },
         {
           "name": "pqctoday:layer",
@@ -17235,7 +17241,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "HSM & Hardware Security"
+          "value": "Hardware Security & Semiconductors"
         },
         {
           "name": "pqctoday:layer",
@@ -17728,7 +17734,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "HSM & Hardware Security"
+          "value": "Hardware Security Module (HSM) Software"
         },
         {
           "name": "pqctoday:layer",
@@ -17949,7 +17955,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Data Security & Protection"
+          "value": "Application Servers"
         },
         {
           "name": "pqctoday:layer",
@@ -18256,7 +18262,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Cryptographic SDKs & Libraries"
+          "value": "Post-Quantum Cryptography Libraries"
         },
         {
           "name": "pqctoday:layer",
@@ -18297,7 +18303,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Security Testing & Discovery"
+          "value": "Cryptographic Discovery Platforms"
         },
         {
           "name": "pqctoday:layer",
@@ -18343,7 +18349,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Platforms"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -18471,7 +18477,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Telecom & 5G Security"
+          "value": "5G & Telecom Security"
         },
         {
           "name": "pqctoday:layer",
@@ -18593,7 +18599,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Security Testing & Discovery"
+          "value": "Cryptographic Discovery Platforms"
         },
         {
           "name": "pqctoday:layer",
@@ -18852,7 +18858,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PKI & Certificate Lifecycle"
+          "value": "Certificate Lifecycle Management"
         },
         {
           "name": "pqctoday:layer",
@@ -18893,7 +18899,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PKI & Certificate Lifecycle"
+          "value": "Certificate Lifecycle Management"
         },
         {
           "name": "pqctoday:layer",
@@ -18934,7 +18940,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PKI & Certificate Lifecycle"
+          "value": "Certificate Lifecycle Management"
         },
         {
           "name": "pqctoday:layer",
@@ -18975,7 +18981,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PKI & Certificate Lifecycle"
+          "value": "Certificate Lifecycle Management"
         },
         {
           "name": "pqctoday:layer",
@@ -19020,7 +19026,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PKI & Certificate Lifecycle"
+          "value": "Certificate Lifecycle Management"
         },
         {
           "name": "pqctoday:layer",
@@ -19065,7 +19071,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PKI & Certificate Lifecycle"
+          "value": "Certificate Lifecycle Management"
         },
         {
           "name": "pqctoday:layer",
@@ -19242,7 +19248,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "VPN & SSH"
+          "value": "SSH Implementation Software"
         },
         {
           "name": "pqctoday:layer",
@@ -19283,7 +19289,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PKI & Certificate Lifecycle"
+          "value": "Public Key Infrastructure (PKI) Software"
         },
         {
           "name": "pqctoday:layer",
@@ -19324,7 +19330,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Platforms"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -19365,7 +19371,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Platforms"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -20203,8 +20209,13 @@
       "bom-ref": "3dd7dc67ab3a2b4e",
       "name": "VMware ESXi 9.0",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "KEM"
+        }
       },
+      "description": "ESXi 9.0 does not currently support post-quantum algorithms such as ML-KEM or ML-DSA. Per Broadcom's April 2026 VMware Cloud Foundation post-quantum readiness blog, only the VMware Avi Load Balancer currently offers hybrid PQC key exchange in TLS; other VCF components, including ESXi/vSphere, will gain PQC support only as upstream cryptographic libraries and higher-layer standards mature, with no ESXi-specific timeline published.",
       "externalReferences": [
         {
           "type": "website",
@@ -20218,7 +20229,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Platforms"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -20261,7 +20272,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Platforms"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -20303,7 +20314,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Platforms"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -20345,7 +20356,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Platforms"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -20391,7 +20402,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Platforms"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -20432,7 +20443,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Platforms"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -20473,7 +20484,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Platforms"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -20898,7 +20909,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Secrets & Data Governance"
+          "value": "Data Storage & Protection"
         },
         {
           "name": "pqctoday:layer",
@@ -20940,7 +20951,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Secrets & Data Governance"
+          "value": "Data Storage & Protection"
         },
         {
           "name": "pqctoday:layer",
@@ -20981,7 +20992,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Secrets & Data Governance"
+          "value": "Data Storage & Protection"
         },
         {
           "name": "pqctoday:layer",
@@ -21022,7 +21033,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Secrets & Data Governance"
+          "value": "Data Storage & Protection"
         },
         {
           "name": "pqctoday:layer",
@@ -21062,7 +21073,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Secrets & Data Governance"
+          "value": "Data Storage & Protection"
         },
         {
           "name": "pqctoday:layer",
@@ -21272,7 +21283,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Platforms"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -21314,7 +21325,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Platforms"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -21355,7 +21366,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Platforms"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -21397,7 +21408,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Platforms"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -21438,7 +21449,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Platforms"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -21479,7 +21490,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Security Testing & Discovery"
+          "value": "Cryptographic Discovery Platforms"
         },
         {
           "name": "pqctoday:layer",
@@ -21520,7 +21531,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Security Testing & Discovery"
+          "value": "Cryptographic Discovery Platforms"
         },
         {
           "name": "pqctoday:layer",
@@ -21561,7 +21572,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Security Testing & Discovery"
+          "value": "Cryptographic Discovery Platforms"
         },
         {
           "name": "pqctoday:layer",
@@ -21726,7 +21737,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "VPN & SSH"
+          "value": "VPN and IPsec Software"
         },
         {
           "name": "pqctoday:layer",
@@ -21768,7 +21779,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "VPN & SSH"
+          "value": "VPN and IPsec Software"
         },
         {
           "name": "pqctoday:layer",
@@ -21813,7 +21824,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "VPN & SSH"
+          "value": "VPN and IPsec Software"
         },
         {
           "name": "pqctoday:layer",
@@ -22066,7 +22077,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Security Testing & Discovery"
+          "value": "Cryptographic Discovery Platforms"
         },
         {
           "name": "pqctoday:layer",
@@ -22148,7 +22159,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "VPN & SSH"
+          "value": "VPN and IPsec Software"
         },
         {
           "name": "pqctoday:layer",
@@ -22412,7 +22423,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Cryptographic SDKs & Libraries"
+          "value": "Cryptographic Libraries"
         },
         {
           "name": "pqctoday:layer",
@@ -26314,7 +26325,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Secrets & Data Governance"
+          "value": "Data Storage & Protection"
         },
         {
           "name": "pqctoday:layer",
@@ -26922,7 +26933,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Storage & Backup"
+          "value": "Data Storage & Protection"
         },
         {
           "name": "pqctoday:layer",
@@ -26968,7 +26979,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Storage & Backup"
+          "value": "Data Storage & Protection"
         },
         {
           "name": "pqctoday:layer",
@@ -27052,7 +27063,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Satellite & Space Security"
+          "value": "Network Security Appliances"
         },
         {
           "name": "pqctoday:layer",
@@ -27178,7 +27189,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Distributions"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -27438,7 +27449,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Smart Card & PKI"
+          "value": "Smart Cards & Secure Elements"
         },
         {
           "name": "pqctoday:layer",
@@ -27480,7 +27491,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Secrets & Data Governance"
+          "value": "Data Storage & Protection"
         },
         {
           "name": "pqctoday:layer",
@@ -27648,7 +27659,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Developer Platforms"
+          "value": "SSH Implementation Software"
         },
         {
           "name": "pqctoday:layer",
@@ -27946,7 +27957,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Secrets & Data Governance"
+          "value": "Data Storage & Protection"
         },
         {
           "name": "pqctoday:layer",
@@ -27992,7 +28003,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Digital Signatures"
+          "value": "Digital Signature Software"
         },
         {
           "name": "pqctoday:layer",
@@ -28420,7 +28431,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Distributions"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -28550,7 +28561,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Message Brokers"
+          "value": "Application Servers"
         },
         {
           "name": "pqctoday:layer",
@@ -28596,7 +28607,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Cloud Security"
+          "value": "Cryptographic Discovery Platforms"
         },
         {
           "name": "pqctoday:layer",
@@ -28638,7 +28649,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Storage & Backup"
+          "value": "Data Storage & Protection"
         },
         {
           "name": "pqctoday:layer",
@@ -29146,7 +29157,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Smart Card & PKI"
+          "value": "Smart Cards & Secure Elements"
         },
         {
           "name": "pqctoday:layer",
@@ -29188,7 +29199,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Enterprise Printing"
+          "value": "Secure Boot and Firmware Security"
         },
         {
           "name": "pqctoday:layer",
@@ -29326,7 +29337,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Distributions"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -29499,7 +29510,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PQC Crypto Provider"
+          "value": "Post-Quantum Cryptography Libraries"
         },
         {
           "name": "pqctoday:layer",
@@ -29541,7 +29552,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Quantum Key Distribution"
+          "value": "Quantum Key Distribution Software"
         },
         {
           "name": "pqctoday:layer",
@@ -29587,7 +29598,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Quantum Key Management"
+          "value": "Quantum Key Distribution Software"
         },
         {
           "name": "pqctoday:layer",
@@ -29629,7 +29640,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Quantum Encryption"
+          "value": "Quantum Random Number Generator (QRNG)"
         },
         {
           "name": "pqctoday:layer",
@@ -29675,7 +29686,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Automotive Security Controller"
+          "value": "Hardware Security & Semiconductors"
         },
         {
           "name": "pqctoday:layer",
@@ -29717,7 +29728,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Automotive Microcontroller"
+          "value": "Hardware Security & Semiconductors"
         },
         {
           "name": "pqctoday:layer",
@@ -29759,7 +29770,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Automotive Microcontroller"
+          "value": "Hardware Security & Semiconductors"
         },
         {
           "name": "pqctoday:layer",
@@ -29801,7 +29812,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Automotive HSM"
+          "value": "Hardware Security & Semiconductors"
         },
         {
           "name": "pqctoday:layer",
@@ -29843,7 +29854,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PQC Hardware IP"
+          "value": "Hardware Security & Semiconductors"
         },
         {
           "name": "pqctoday:layer",
@@ -29885,7 +29896,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Railway Security"
+          "value": "Industrial Control System & OT Security"
         },
         {
           "name": "pqctoday:layer",
@@ -29927,7 +29938,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Quantum Encryption Platform"
+          "value": "Key Management Systems (KMS)"
         },
         {
           "name": "pqctoday:layer",
@@ -29973,7 +29984,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Payment HSM"
+          "value": "Payment Cryptography Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -30015,7 +30026,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Enterprise Secure Messaging"
+          "value": "Secure Messaging and Communication"
         },
         {
           "name": "pqctoday:layer",
@@ -30057,7 +30068,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Secure Communications"
+          "value": "Secure Messaging and Communication"
         },
         {
           "name": "pqctoday:layer",
@@ -30099,7 +30110,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PQC Messaging SDK"
+          "value": "Secure Messaging and Communication"
         },
         {
           "name": "pqctoday:layer",
@@ -30183,7 +30194,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Encrypted Collaboration"
+          "value": "Secure Messaging and Communication"
         },
         {
           "name": "pqctoday:layer",
@@ -30225,7 +30236,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PQC Research Library"
+          "value": "Post-Quantum Cryptography Libraries"
         },
         {
           "name": "pqctoday:layer",
@@ -30271,7 +30282,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Quantum-Safe Blockchain"
+          "value": "Blockchain & DLT Protocols"
         },
         {
           "name": "pqctoday:layer",
@@ -30313,7 +30324,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PQC Hardware Accelerator"
+          "value": "Hardware Security & Semiconductors"
         },
         {
           "name": "pqctoday:layer",
@@ -30355,7 +30366,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Continental PQC Framework"
+          "value": "PQC Programs & Research Initiatives"
         },
         {
           "name": "pqctoday:layer",
@@ -30397,7 +30408,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PQC Messaging"
+          "value": "Secure Messaging and Communication"
         },
         {
           "name": "pqctoday:layer",
@@ -30439,7 +30450,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PQC HSM"
+          "value": "Hardware Security Module (HSM) Software"
         },
         {
           "name": "pqctoday:layer",
@@ -30481,7 +30492,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Bank PQC Migration"
+          "value": "PQC Programs & Research Initiatives"
         },
         {
           "name": "pqctoday:layer",
@@ -30523,7 +30534,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Payment PQC Research"
+          "value": "PQC Programs & Research Initiatives"
         },
         {
           "name": "pqctoday:layer",
@@ -30565,7 +30576,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Quantum-Safe Healthcare"
+          "value": "PQC Programs & Research Initiatives"
         },
         {
           "name": "pqctoday:layer",
@@ -30607,7 +30618,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Telecom QSN"
+          "value": "5G & Telecom Security"
         },
         {
           "name": "pqctoday:layer",
@@ -30649,7 +30660,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Defense PQC R&D"
+          "value": "PQC Programs & Research Initiatives"
         },
         {
           "name": "pqctoday:layer",
@@ -30691,7 +30702,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Telecom PQC"
+          "value": "5G & Telecom Security"
         },
         {
           "name": "pqctoday:layer",
@@ -30733,7 +30744,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Quantum Research Center"
+          "value": "PQC Programs & Research Initiatives"
         },
         {
           "name": "pqctoday:layer",
@@ -30775,7 +30786,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PQC Education/Research"
+          "value": "PQC Programs & Research Initiatives"
         },
         {
           "name": "pqctoday:layer",
@@ -30817,7 +30828,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PQC Hardware"
+          "value": "Hardware Security & Semiconductors"
         },
         {
           "name": "pqctoday:layer",
@@ -30859,7 +30870,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Telecom QSN"
+          "value": "5G & Telecom Security"
         },
         {
           "name": "pqctoday:layer",
@@ -30905,7 +30916,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PQC Smart Card"
+          "value": "Smart Cards & Secure Elements"
         },
         {
           "name": "pqctoday:layer",
@@ -30947,7 +30958,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Enterprise PQC"
+          "value": "Network Security Software"
         },
         {
           "name": "pqctoday:layer",
@@ -30989,7 +31000,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PQC Migration Platform"
+          "value": "Cryptographic Agility Frameworks"
         },
         {
           "name": "pqctoday:layer",
@@ -31031,7 +31042,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PQC TPM Chip"
+          "value": "Hardware Security & Semiconductors"
         },
         {
           "name": "pqctoday:layer",
@@ -31073,7 +31084,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Quantum-Safe Testbed"
+          "value": "PQC Programs & Research Initiatives"
         },
         {
           "name": "pqctoday:layer",
@@ -31115,7 +31126,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PQC TLS Gateway"
+          "value": "Cloud Encryption Gateways"
         },
         {
           "name": "pqctoday:layer",
@@ -31157,7 +31168,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PQC Digital Signature"
+          "value": "Digital Signature Software"
         },
         {
           "name": "pqctoday:layer",
@@ -31579,7 +31590,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Cryptographic Software/Libraries"
+          "value": "Cryptographic Libraries"
         },
         {
           "name": "pqctoday:layer",
@@ -31633,7 +31644,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Cryptographic Software/Libraries"
+          "value": "Cryptographic Libraries"
         },
         {
           "name": "pqctoday:layer",
@@ -31688,7 +31699,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Cryptographic Software/Libraries"
+          "value": "Cryptographic Libraries"
         },
         {
           "name": "pqctoday:layer",
@@ -32332,7 +32343,7 @@
           "primitive": "Signature"
         }
       },
-      "description": "Quantum-resistant code-signing server using ML-DSA (formerly Dilithium); supports OTA firmware updates and SBOM signing. Integrates with NXP S32G secure boot for automotive use cases.",
+      "description": "Certicom's own Code Signing and Key Management Server product page confirms support for 'quantum resistant digital signature algorithms' alongside traditional RSA/ECDSA. The specific claim that it uses ML-DSA (Dilithium) with NXP S32G secure boot for automotive OTA/SBOM signing comes from a separate BlackBerry/NXP joint announcement (electronicspecifier.com), not from Certicom's own documentation directly.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -32378,9 +32389,13 @@
         "name": "BlackBerry QNX"
       },
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "Signature"
+        }
       },
-      "description": "Safety-certified embedded hypervisor with PQC-protected secure boot. Every QNX-based device validates a quantum-safe signature at boot. Used in adopted by Ford, BMW, Tesla.",
+      "description": "Safety-certified embedded hypervisor (ISO 26262 ASIL D, IEC 61508 SIL 4). BlackBerry has demonstrated quantum-resistant (Dilithium) code-signing and secure-boot concepts with NXP for automotive firmware/OTA, but no confirmed PQC integration into Hypervisor 8.0 specifically, and no confirmed automaker adoption of this PQC capability.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -32398,7 +32413,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Hardware Security and Embedded"
+          "value": "Real-Time Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -34547,7 +34562,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "VPN & SSH"
+          "value": "SSH Implementation Software"
         },
         {
           "name": "pqctoday:layer",
@@ -35044,7 +35059,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "VPN & SSH"
+          "value": "VPN and IPsec Software"
         },
         {
           "name": "pqctoday:layer",
@@ -36235,7 +36250,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Secure Messaging Software"
+          "value": "Secure Messaging and Communication"
         },
         {
           "name": "pqctoday:layer",
@@ -36288,7 +36303,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Secure Messaging Software"
+          "value": "Secure Messaging and Communication"
         },
         {
           "name": "pqctoday:layer",
@@ -36337,7 +36352,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Secure Messaging Software"
+          "value": "Secure Messaging and Communication"
         },
         {
           "name": "pqctoday:layer",
@@ -36528,7 +36543,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "IoT Messaging Broker"
+          "value": "Application Servers"
         },
         {
           "name": "pqctoday:layer",
@@ -36578,7 +36593,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Network Time Protocol Daemon"
+          "value": "Network Security Software"
         },
         {
           "name": "pqctoday:layer",
@@ -36632,7 +36647,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Code Signing Tool"
+          "value": "Code Signing and Software Integrity"
         },
         {
           "name": "pqctoday:layer",
@@ -37428,7 +37443,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Software Supply Chain Security"
+          "value": "Code Signing and Software Integrity"
         },
         {
           "name": "pqctoday:layer",
@@ -37470,7 +37485,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "IT Automation"
+          "value": "Supply Chain & DevSecOps"
         },
         {
           "name": "pqctoday:layer",
@@ -37516,7 +37531,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "PKI / Certificate Management"
+          "value": "Public Key Infrastructure (PKI) Software"
         },
         {
           "name": "pqctoday:layer",
@@ -39005,7 +39020,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Operating Systems & Platforms"
+          "value": "Operating Systems"
         },
         {
           "name": "pqctoday:layer",
@@ -40965,7 +40980,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Cryptographic SDKs & Libraries"
+          "value": "Cryptographic Libraries"
         },
         {
           "name": "pqctoday:layer",
@@ -41295,7 +41310,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "Cryptographic SDKs & Libraries"
+          "value": "Cryptographic Libraries"
         },
         {
           "name": "pqctoday:layer",
@@ -41499,7 +41514,7 @@
         },
         {
           "name": "pqctoday:category",
-          "value": "DevOps and Observability"
+          "value": "Supply Chain & DevSecOps"
         },
         {
           "name": "pqctoday:layer",
