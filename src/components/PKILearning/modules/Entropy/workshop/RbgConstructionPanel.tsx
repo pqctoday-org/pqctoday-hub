@@ -8,9 +8,9 @@ const RBG_TYPES = [
     name: 'RBG1 (NRBG)',
     title: 'Non-Deterministic RBG',
     description:
-      'Entropy source output is directly conditioned and output. No DRBG is involved. Source combining occurs at the conditioning stage — multiple noise sources are combined before the conditioning function produces the final output.',
+      'Has no entropy source of its own — it IS a DRBG, but one instantiated exactly once from an external randomness source and never reseeded. Every output ultimately derives from that single external seed. Source combining, if any, happens upstream in whatever produced the external seed.',
     section: 'SP 800-90C §4',
-    flow: 'Noise Sources → Combine → Condition → Output',
+    flow: 'External Seed → DRBG (instantiate once, never reseed) → Output',
   },
   {
     name: 'RBG2 (DRBG + Entropy)',
@@ -27,6 +27,14 @@ const RBG_TYPES = [
       'Combines an NRBG with a DRBG for maximum resilience. Even if the DRBG is compromised (e.g., state leakage), the NRBG contributes independent entropy. Source combining can occur at multiple points in the pipeline.',
     section: 'SP 800-90C §6',
     flow: 'NRBG Output ⊕ DRBG Output → Output',
+  },
+  {
+    name: 'RBGC (Consolidated)',
+    title: 'Consolidated RBG',
+    description:
+      'Added in the final SP 800-90C (Sept 2025). A single construction that can serve both prediction-resistant requests (fresh entropy consulted per-request, RBG1-like) and non-prediction-resistant requests (DRBG-stretched output between reseeds, RBG2-like) from the same underlying components, selected per-request rather than baked into a fixed pipeline.',
+    section: 'SP 800-90C §7',
+    flow: 'Noise Sources → Combine → Condition → (per-request: fresh output, or DRBG-stretched output)',
   },
 ] as const
 
@@ -56,8 +64,8 @@ export const RbgConstructionPanel = () => {
       {isExpanded && (
         <div className="mt-3 space-y-3">
           <p className="text-xs text-muted-foreground leading-relaxed">
-            SP 800-90C defines three Random Bit Generator constructions that use combined entropy
-            sources. The source combining pipeline demonstrated below implements the{' '}
+            SP 800-90C defines four Random Bit Generator constructions (RBG1, RBG2, RBG3, RBGC). The
+            source combining pipeline demonstrated below implements the{' '}
             <span className="font-medium text-foreground">
               source assembly (§3.1) and external conditioning (§3.2)
             </span>{' '}

@@ -1051,8 +1051,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
               {displayStep.step === 1 && (
                 <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
                   <Info size={12} className="shrink-0" />
-                  PQC envelope (ML-KEM-1024) is typically 3–4× larger than RSA-2048 — execute the
-                  demo to see exact sizes.
+                  {step1ComparisonNote ?? 'Execute the demo to see exact envelope sizes.'}
                 </div>
               )}
             </div>
@@ -1115,7 +1114,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
                     'Select an ML-KEM variant to see the size comparison against RSA-2048.')}
                 {displayStep.step === 2 &&
                   'RSA-OAEP directly encrypts the DEK in one operation. ML-KEM produces a random shared secret that must be derived into a wrapping key — a fundamental paradigm difference. ' +
-                    'OAEP (RFC 8017 §7.1) uses randomized padding to achieve IND-CCA2 security: every encryption produces a different ciphertext, preventing chosen-ciphertext attacks. ' +
+                    'OAEP (RFC 8017 §7.1) uses randomized padding to achieve IND-CCA2 security (indistinguishable under adaptive chosen-ciphertext attack — an attacker who can get arbitrary ciphertexts decrypted still cannot distinguish which of two chosen plaintexts a given ciphertext encrypts): every encryption produces a different ciphertext, preventing chosen-ciphertext attacks. ' +
                     'Never use PKCS#1 v1.5 for key transport — it is broken by the 1998 Bleichenbacher padding oracle attack, which lets an adaptive attacker decrypt RSA ciphertexts without the private key using ~1 million queries to a validating server.'}
                 {displayStep.step === 3 &&
                   (isRSA
