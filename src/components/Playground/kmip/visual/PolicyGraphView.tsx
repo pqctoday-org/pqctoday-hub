@@ -104,7 +104,14 @@ export function PolicyGraphView({
     keyState: 'Active',
     bits: '',
     date: '2026-06-01',
-    attrs: ['x-pqctoday-purpose'],
+    attrs: ['x-pqctoday-purpose=research'],
+    usageFlags: ['Sign', 'Verify'],
+    hash: '',
+    blockMode: '',
+    padding: '',
+    mechanism: '',
+    deterministic: '',
+    keyActivatedOn: '',
   })
   const [sim, setSim] = useState<SimResult | null>(null)
   const [engineVerdict, setEngineVerdict] = useState<DryRunResult | null>(null)
@@ -215,6 +222,21 @@ export function PolicyGraphView({
     setSim(result)
     const newObject = /^(Create|CreateKeyPair|Register|Import)/.test(req.op)
     try {
+      // WP4b: the engine's dry_run accepts the full request dimensions, so the
+      // authoritative verdict sees the same date/attrs/mask/mechanism the
+      // illustrative trace uses.
+      const attrs: Record<string, string> = {}
+      for (const a of req.attrs) {
+        const [name, ...rest] = a.split('=')
+        if (name) attrs[name] = rest.join('=')
+      }
+      const mechanism = {
+        hash: req.hash || undefined,
+        blockMode: req.blockMode || undefined,
+        padding: req.padding || undefined,
+        deterministic: req.deterministic === '' ? undefined : req.deterministic === 'true',
+        mech: req.mechanism || undefined,
+      }
       setEngineVerdict(
         engine.dryRun({
           op: req.op,
@@ -222,6 +244,11 @@ export function PolicyGraphView({
           currentAlgorithm: newObject ? undefined : req.algorithm || undefined,
           length: req.bits === '' ? undefined : Number(req.bits),
           state: req.keyState || undefined,
+          date: req.date || undefined,
+          attrs: Object.keys(attrs).length ? attrs : undefined,
+          usageMask: req.usageFlags.length ? req.usageFlags : undefined,
+          activationDate: req.keyActivatedOn || undefined,
+          mechanism: Object.values(mechanism).some((v) => v !== undefined) ? mechanism : undefined,
         })
       )
     } catch {
