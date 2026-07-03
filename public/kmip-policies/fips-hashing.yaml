@@ -24,5 +24,18 @@ metadata:
 rules:
   - type: hash_algorithm_allowlist
     ops: [Sign, SignatureVerify]
-    hashing_algorithms: [SHA-256, SHA-384, SHA-512, SHA3-256, SHA3-384, SHA3-512]
+    # Full FIPS-approved SHA-2 (FIPS 180-4) + SHA-3 (FIPS 202) digest set, incl.
+    # the truncated SHA-512/224, SHA-512/256 and SHA-224 / SHA3-224 previously
+    # (undocumentedly) omitted (corrected 2026-07-01).
+    hashing_algorithms:
+      - SHA-224
+      - SHA-256
+      - SHA-384
+      - SHA-512
+      - SHA-512/224
+      - SHA-512/256
+      - SHA3-224
+      - SHA3-256
+      - SHA3-384
+      - SHA3-512
     reason: "Only FIPS-approved SHA-2 / SHA-3 hashes are permitted for signing"

@@ -235,7 +235,9 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
-    exclude: [...configDefaults.exclude, 'e2e/**', '.claude/**'],
+    // `*.local.test.*` are local-gate-only suites (directive 2026-07-01: new
+    // test suites run locally, not in CI) — excluded here, run via `test:local`.
+    exclude: [...configDefaults.exclude, 'e2e/**', '.claude/**', '**/*.local.test.{ts,tsx}'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

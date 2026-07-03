@@ -86,10 +86,11 @@ function readList(lines: string[], idx: number, inlineAfterColon: string): strin
   if (inline !== '' && !inline.startsWith('{')) return [] // a scalar, not a list
   const items: string[] = []
   for (let i = idx + 1; i < lines.length; i++) {
-    if (lines[i].trim() === '') continue
+    if (lines[i].trim() === '' || /^\s*#/.test(lines[i])) continue // comments interleave in block lists
     if (/^\s*-\s*type\s*:/.test(lines[i])) break
     const m = lines[i].match(/^\s*-\s*(.+)$/)
-    if (m) items.push(unquote(m[1]))
+    if (m)
+      items.push(unquote(m[1].replace(/\s+#.*$/, ''))) // drop trailing same-line comments
     else break
   }
   return items
@@ -113,7 +114,7 @@ function parseCompliance(lines: string[]): ComplianceRow[] {
   if (start === -1) return []
   const rows: ComplianceRow[] = []
   for (let i = start + 1; i < lines.length; i++) {
-    if (lines[i].trim() === '') continue
+    if (lines[i].trim() === '' || /^\s*#/.test(lines[i])) continue // comments interleave
     const m = lines[i].match(/^\s*-\s*\{(.+)\}\s*$/)
     if (!m) break
     const pairs = parseInlineMap(`{${m[1]}}`)

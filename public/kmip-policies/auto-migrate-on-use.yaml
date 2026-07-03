@@ -54,17 +54,12 @@ rules:
     to: ML-DSA-65
     reason: "Rekey legacy RSA-3072 signing key to ML-DSA-65 at first use"
 
-  # ── Existing key-establishment keys auto-rekey at first Encrypt ───────
-  - type: algorithm_substitution
-    ops: [Encrypt]
-    from: RSA-3072
-    to: ML-KEM-768
-    reason: "Rekey legacy RSA-3072 key transport to ML-KEM-768 at first use"
-  - type: algorithm_substitution
-    ops: [Encrypt]
-    from: ECDH-P256
-    to: ML-KEM-768
-    reason: "Rekey legacy ECDH-P256 key agreement to ML-KEM-768 at first use"
+  # ── Key-establishment auto-rekey — DEFERRED to Phase 5 ───────────────
+  # RSA/ECDH key-establishment → ML-KEM is a cross-primitive migration the
+  # Encrypt path cannot execute (it would rekey to a KEM the Encrypt op can't
+  # drive), so these substitutions are held back until the Encapsulate rekey
+  # path lands in Phase 5 — advertising them now would promise behaviour the
+  # engine rejects (Y5). The Sign-side rekeys above are the live demo.
 
   # ── No NEW classical asymmetric keys while migrating ──────────────────
   - type: algorithm_denylist

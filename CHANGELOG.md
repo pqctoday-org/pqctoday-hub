@@ -26,6 +26,12 @@ first time (don't ship dev-speak and reformat later):
 
 ## [Unreleased]
 
+### Added
+
+- **See your crypto-agility policy as a flowchart** [view:/playground/cacp]: the Policy screen now has a **Visual** tab that draws a policy as a decision pipeline — a request flows top-to-bottom through the rules in order and exits at Allow, Rekey, or Deny. Add rules from a palette, edit them inline, reorder and toggle them, drag nodes around, and switch between a vertical "waterfall" and a left-to-right "pipeline" layout.
+- **Watch a request travel through your policy** [view:/playground/cacp]: build a sample request on the Visual tab's Simulate panel, press Run, and a token animates along the exact path the request takes, ending on the verdict the real in-browser engine returns.
+- **Catch policy mistakes before they bite** [view:/playground/cacp]: the Visual tab's Check panel flags conflicting rules (an algorithm both allowed and denied), dead defaults, empty rules that match nothing, and disabled rekey rules that would stop keys migrating — and clicking an issue jumps to the offending rule. The generated policy YAML is always one click away in a drawer.
+
 ## [4.6.0] - 2026-06-30
 
 A simulation-fidelity and executive-experience release: every simulation phase now matches the published migration framework exactly, executives get a purpose-built view across the whole hub, the protocol support matrix is updated to what's actually shipping today, and the product catalog had an accuracy sweep.
