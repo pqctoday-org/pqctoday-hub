@@ -15,6 +15,15 @@
  *   Cycle counts: ML-DSA-44 sign 86 252 / verify 57 789;
  *                 ML-DSA-65 sign 130 676 / verify 84 906;
  *                 ML-DSA-87 sign 197 960 / verify 126 839.
+ *
+ * CAVEAT — the *CpuMicros figures are a single-platform reference point, NOT a
+ * cross-algorithm CPU verdict. Sign latency in particular is heavily
+ * implementation- and platform-dependent: ML-DSA signing is SHAKE/AVX2-bound
+ * (and includes a variable rejection-sampling loop), ECDSA is
+ * modular-arithmetic-bound, and published numbers disagree by 2–3× across
+ * SUPERCOP/eBACS, liboqs, and OpenSSL on different CPUs. The robust, reproducible
+ * migration cost captured here is SIZE/bandwidth; the CPU columns are indicative
+ * only and must not drive a confident "faster/slower than ECDSA" claim in the UI.
  * - SLH-DSA-128s: reference impl (SIMD gives negligible speedup for hash-tree traversal)
  */
 

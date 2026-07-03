@@ -35,6 +35,7 @@ import { Pkcs11LogPanel } from '../shared/Pkcs11LogPanel'
 import { HsmSignCombinedPanel } from './tabs/SignVerifyTab'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
+import { InlineTooltip } from '../ui/InlineTooltip'
 import { logEvent } from '../../utils/analytics'
 import {
   hsm_generateMLDSAKeyPair,
@@ -323,6 +324,23 @@ export const HsmPlayground = () => {
       {showMethodologyModal && (
         <HsmTestMethodologyModal onClose={() => setShowMethodologyModal(false)} />
       )}
+
+      {/* Inline PKCS#11 jargon reference — hover any term for a definition, no modal needed. */}
+      <div className="mb-4 shrink-0 text-xs text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1">
+        <span className="font-semibold text-foreground">New to PKCS#11?</span>
+        <span>Hover a term:</span>
+        <InlineTooltip term="C_GenerateKeyPair" />
+        <span aria-hidden="true">·</span>
+        <InlineTooltip term="CKA_EXTRACTABLE" />
+        <span aria-hidden="true">·</span>
+        <InlineTooltip term="CKA_SENSITIVE" />
+        <span aria-hidden="true">·</span>
+        <InlineTooltip term="C_WrapKey" />
+        <span aria-hidden="true">·</span>
+        <InlineTooltip term="CKM_AES_KW" />
+        <span aria-hidden="true">·</span>
+        <InlineTooltip term="C_EncapsulateKey" />
+      </div>
 
       {/* Tab Navigation */}
       <div className="relative shrink-0 mb-4 sm:mb-6">

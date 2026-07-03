@@ -144,7 +144,7 @@ const MOCK_SIGNATURES: Record<SigningAlgorithm, string> = {
 
 const ALGORITHM_NOTES: Record<SigningAlgorithm, string> = {
   RS256:
-    "RSA PKCS#1 v1.5 with SHA-256. Widely supported but quantum-vulnerable. Shor's algorithm breaks 2048-bit RSA. Must be migrated before CRQC availability.",
+    "RSA PKCS#1 v1.5 with SHA-256. Widely supported but quantum-vulnerable. Shor's algorithm breaks 2048-bit RSA. Must be migrated before a CRQC (cryptographically relevant quantum computer) becomes available.",
   ES256:
     "ECDSA with P-256 curve. Smaller signature than RSA but still quantum-vulnerable via Shor's algorithm. Compact token format may be impacted by ML-DSA signature size increase.",
   'ML-DSA-44':
@@ -783,7 +783,7 @@ export const TokenMigrationLab: React.FC = () => {
                 label: selectedAlgorithm.startsWith('ML-DSA')
                   ? 'C_MessageVerifyInit / C_VerifyMessage'
                   : 'C_VerifyInit / C_Verify',
-                detail: `PKCS#11 v3.2 verify with ${selectedAlgorithm} public key — returns CKR_OK or CKR_SIGNATURE_INVALID`,
+                detail: `PKCS#11 v3.2 verify with ${selectedAlgorithm} public key — returns the PKCS#11 status code CKR_OK (valid) or CKR_SIGNATURE_INVALID (rejected)`,
               },
             ] as const
           ).map(({ step, label, detail }) => (

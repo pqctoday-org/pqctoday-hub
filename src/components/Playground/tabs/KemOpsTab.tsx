@@ -536,10 +536,24 @@ const KemOpsTabSoftware: React.FC = () => {
                   logEvent('Playground', 'KEM Encapsulate')
                 }}
                 disabled={!selectedEncKeyId || (isHybridMode && !secondaryEncKeyId) || loading}
+                title={
+                  !selectedEncKeyId
+                    ? 'Select a public key to continue'
+                    : isHybridMode && !secondaryEncKeyId
+                      ? 'Select the secondary (classical) public key to continue'
+                      : ''
+                }
                 className="w-full py-3 rounded-lg bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Run Encapsulate
               </Button>
+              {!loading && (!selectedEncKeyId || (isHybridMode && !secondaryEncKeyId)) && (
+                <p className="mt-2 text-xs text-muted-foreground text-center">
+                  {!selectedEncKeyId
+                    ? 'Generate or pick a public key above to enable this.'
+                    : 'Pick the secondary classical public key to enable this.'}
+                </p>
+              )}
             </div>
 
             {/* Step 3: Ciphertext Output */}

@@ -2443,5 +2443,51 @@
     "relatedModule": "/learn/slh-dsa",
     "complexity": "advanced",
     "category": "concept"
+  },
+  {
+    "term": "CKA_EXTRACTABLE",
+    "definition": "PKCS#11 key attribute controlling whether a key's raw value may leave the token. When CK_FALSE, the private/secret key can be used for operations but never exported in the clear — the basis of HSM key custody.",
+    "technicalNote": "Paired with CKA_SENSITIVE. A non-extractable, sensitive key can still be wrapped for backup only if CKA_WRAP_WITH_TRUSTED / policy allows; otherwise it is bound to the token for life.",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "CKA_SENSITIVE",
+    "definition": "PKCS#11 key attribute that, when CK_TRUE, prevents a key's value from being revealed by C_GetAttributeValue — the token refuses to disclose the raw secret.",
+    "technicalNote": "Combined with CKA_EXTRACTABLE=CK_FALSE to give a key that can be used but never read out.",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "CKA_TOKEN",
+    "definition": "PKCS#11 attribute marking an object as persistent on the token (CK_TRUE) versus a temporary session object (CK_FALSE) that disappears when the session closes.",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "term": "C_GenerateKeyPair",
+    "definition": "PKCS#11 function that generates an asymmetric key pair (public + private) directly inside the token, so the private key can be created non-extractable and never exists outside the HSM.",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "C_WrapKey",
+    "definition": "PKCS#11 function that encrypts (wraps) one key with another so it can be exported or backed up as ciphertext — e.g. AES key-wrap of a data key under a key-encryption key.",
+    "technicalNote": "The wrapped key's CKA_EXTRACTABLE must be CK_TRUE for C_WrapKey to succeed.",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "C_EncapsulateKey",
+    "definition": "PKCS#11 v3.2 function for KEM encapsulation: given a recipient's public key it produces a ciphertext plus a freshly derived shared-secret key object — used for ML-KEM (FIPS 203).",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "CKM_AES_KW",
+    "definition": "PKCS#11 mechanism for AES Key Wrap (RFC 3394) — deterministic, authenticated wrapping of key material under an AES key-encryption key, with an integrity check value.",
+    "technicalNote": "CKM_AES_KWP (RFC 5649) is the padded variant for wrapping keys whose length is not a multiple of 8 bytes.",
+    "complexity": "intermediate",
+    "category": "concept"
   }
 ]
