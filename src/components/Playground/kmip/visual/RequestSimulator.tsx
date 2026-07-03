@@ -33,6 +33,7 @@ import {
   PADDING_METHODS,
   CKM_SUGGESTIONS,
   RULE_CATALOG,
+  isRuleTypeId,
 } from './ruleCatalog'
 import type { SimRequest } from './policySim'
 import type { EditablePolicy, EditableRule } from './policyEditModel'
@@ -392,7 +393,9 @@ export function RequestSimulator({
                       >
                         <span className="font-mono text-muted-foreground shrink-0">#{s.index}</span>
                         <span className="font-medium text-foreground shrink-0">
-                          {rule ? RULE_CATALOG[rule.type].title : s.effect}
+                          {rule && isRuleTypeId(rule.type)
+                            ? RULE_CATALOG[rule.type].title
+                            : s.effect}
                         </span>
                         <span className="text-muted-foreground">
                           {s.note || EFFECT_FALLBACK[s.effect] || s.effect}
